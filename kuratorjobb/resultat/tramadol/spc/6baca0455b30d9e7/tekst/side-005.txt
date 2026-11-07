@@ -1,0 +1,52 @@
+I publisert litteratur er det rapportert at tramadol gitt postoperativt til barn etter tonsillektomi og/eller
+adenoidektomi ved obstruktiv søvnapnésyndrom har ført til sjeldne, men livstruende uønskede hendelser.
+Stor forsiktighet bør utvises ved administrering av tramadol til barn for postoperativ smertelindring, og
+bør følges opp nøye med hensyn på symptomer på opioidtoksisitet, inkludert respirasjonsdepresjon.
+
+Barn med nedsatt lungefunksjon
+Tramadol anbefales ikke til bruk hos barn med nedsatt lungefunksjon, inkludert ved neuromuskulære
+lidelser, alvorlige hjerte- eller lungelidelser, infeksjoner i de øvre luftveiene eller i lungene, multiple
+traumer eller omfattende kirurgiske inngrep. Disse faktorene kan forverre symptomene på opioidtoksisitet.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Tramadol Actavis skal ikke kombineres med MAO-hemmere (se pkt. 4.3).
+Pasienter behandlet med MAO-hemmere i perioden to uker før behandling med opioidet petidin, har fått
+livstruende interaksjoner med påvirkning av både sentralnervesystemet, respirasjonsfunksjonen og hjerte- og
+karfunksjonen. Muligheten for tilsvarende interaksjoner mellom MAO-hemmere og tramadol kan ikke
+utelukkes.
+
+Ved samtidig behandling med tramadol og andre legemidler som også virker på sentralnervesystemet,
+inkludert alkohol, forsterkes effekten på sentralnervesystemet (se pkt. 4.8.).
+
+Samtidig bruk av opioider og beroligende legemidler, som benzodiazepiner eller lignende legemidler, øker
+risikoen for sedasjon, respirasjonsdepresjon, koma og død på grunn av additiv CNS-depressiv effekt.
+Dosen og varigheten ved samtidig bruk bør være begrenset (se pkt. 4.4).
+
+Samtidig bruk av Tramadol Actavis med gabapentinoider (gabapentin og pregabalin) kan føre til
+respirasjonsdepresjon, hypotensjon, betydelig sedasjon, koma eller død.
+
+Resultatene av farmakokinetiske studier har hittil vist at det er lite sannsynlig med klinisk relevante
+interaksjoner ved samtidig eller tidligere bruk av cimetidin (enzyminhibitor). Samtidig eller tidligere bruk av
+karbamazepin (enzyminduktor) kan redusere den analgetiske effekten og forkorte virkningens varighet.
+
+Tramadol bør ikke kombineres med preparater som har en blandet agonist/antagonist-profil (f.eks.
+buprenorfin, nalbufin, pentazocin), da den smertelindrende (analgetiske) effekten av en ren agonist teoretisk
+sett kan reduseres i slike tilfeller.
+
+Tramadol kan forårsake kramper og øke risikoen for at selektive serotoninreopptakshemmere (SSRI),
+serotonin-noradrenalin-reopptakshemmere (SNRI), trisykliske antidepressiva, antipsykotika og andre
+krampeterskelsenkende legemidler (som f.eks. bupropion, mirtazapin, tetrahydrocannabinol) forårsaker
+kramper.
+
+Samtidig terapeutisk bruk av tramadol og serotonerge legemidler, som for eksempel selektive
+serotoninreopptakshemmere (SSRI), serotonin-noradrenalin-reopptakshemmere (SNRI), MAO-hemmere
+(se pkt. 4.3), trisykliske antidepressiva og mirtazapin kan forårsake serotonergt syndrom, en potensielt
+livstruende tilstand (se pkt. 4.4 og 4.8).
+
+Forsiktighet bør utvises ved samtidig behandling med tramadol og kumarinderivater (f.eks. warfarin) på grunn
+av rapporterte tilfeller av forhøyet INR med stor blødning og ekkymose hos noen pasienter.
+
+Andre legemidler med kjente CYP3A4-hemmende egenskaper, f.eks. ketokonazol og erytromycin, kan
+hemme tramadols metabolisering (N-demetylering), og sannsynligvis også metaboliseringen av den aktive
+O-demetylerte metabolitten. Den kliniske effekten av en slik interaksjon er ikke studert (se pkt. 4.8).

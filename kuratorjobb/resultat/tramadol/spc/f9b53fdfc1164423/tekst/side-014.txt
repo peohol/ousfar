@@ -1,0 +1,57 @@
+del (mindre enn 4 %) blir metabolisert av cytokrom P 450 til et aktivt intermediat (N-
+acetylbenzokinonimin) som, ved normal bruk, raskt blir detoksifisert av redusert glutation og utskilt i
+urin etter konjugering til cystein og merkaptursyre. Imidlertid øker mengden av denne metabolitten
+ved massiv overdose.
+
+Eliminasjon
+
+Tramadol og dets metabolitter blir hovedsakelig utskilt via nyrene. Halveringstiden for paracetamol er
+ca. 2 til 3 timer hos voksne. Den er kortere hos barn og litt lengre hos nyfødte og hos cirrhose-
+pasienter. Paracetamol blir hovedsakelig utskilt ved doseavhengig omdannelse til glukuronider og
+sulfatkonjugater. Mindre enn 9 % av paracetamol utskilles uforandret i urin. Ved nedsatt nyrefunksjon
+er halveringstiden for begge virkestoffene forlenget.
+
+5.3   Prekliniske sikkerhetsdata
+
+Tramadol:
+Hos rotter har tramadoldoser fra 50 mg/kg/dag forårsaket toksiske effekter hos mordyrene og økt
+neonatal mortalitet. Hos avkommet ble det sett forstyrrelser i bendannelse og forsinket vaginal og
+okulær åpning. Fertilitet hos hannrottene ble ikke påvirket. Høye doser (fra 50 mg/kg/dag og høyere)
+reduserte drektighetsfrekvensen hos hunnrottene. Hos kaniner er det sett toksiske effekter hos
+mordyrene fra 125 mg/kg samt skjelettanomalier hos avkommet.
+
+I noen in-vitro testsystemer er det sett mutagene effekter. In-vivo studier viste ingen slike effekter. I
+henhold til nåværende kunnskap kan tramadol klassifiseres som ikke-mutagent. Studier på karsinogent
+potensiale for tramadolhydroklorid er utført på rotter og mus. Studie på rotter ga ingen tegn på
+substansrelatert økning i tumorinsidens. I studie på mus var det en økt insidens av levercelleadenomer
+hos hanndyr (en doseavhengig ikke-signifikant økning fra 15 mg/kg og oppover) og en økning i
+lungetumorer hos hunndyr i alle doser (signifikant, men ikke doserelatert).
+
+Paracetamol
+I dyrestudier for undersøkelse av akutt, sub-kronisk og kronisk toksisitet av paracetamol i rotter og
+mus, ble gastrointestinale lesjoner, blodtallendringer, degenerering av hepatisk og renalt parenkym og
+nekrose observert. Disse endringene er både relatert til virkemekanismen, og til metabolismen av
+paracetamol.
+
+Omfattende studier har ikke vist noen relevant gentoksisk risiko av paracetamol i terapeutiske (dvs.
+ikke-toksiske) doser. Langtidsstudier på rotter og mus ga ingen indikasjon på karsinogen effekt av
+ikke-levertoksiske doser av paracetamol. Paracetamol passerer placentabarrieren. Dyrestudier har ikke
+vist reproduksjonstoksisitet. Konvensjonelle studier utført i henhold til dagens standarder for
+vurdering av reproduksjons- og utviklingstoksisitet er ikke tilgjengelig.
+
+Tramadol/paracetamol kombinasjon
+Kombinasjonen tramadol/paracetamol er vist å være embryotoksisk og føtotoksisk i rotter ved
+maternotoksisk dose (50/434 mg/kg tramadol/paracetamol), dvs. 8,3 ganger maksimal terapeutisk dose
+hos menneske. Ingen teratogene effekter er observert på dette dosenivået. Toksisiteten på embryoet og
+fosteret resulterer i redusert fostervekt og en økning i overtallige ribben. Lavere doser, som forårsaker
+mindre alvorlig maternotoksisk effekt (10/87 og 25/217 mg/kg tramadol/paracetamol), ga ikke toksisk
+effekt på embryo eller foster. Ingen teratogen effekt som kan knyttes til legemidlet er blitt observert i
+avkom til rotter behandlet oralt med kombinasjonen tramadol/paracetamol.
+
+Det er ikke utført prekliniske studier for å evaluere karsinogenisitet, mutagenitet og effekter på
+fertilitet med denne kombinasjonen.
+
+
+
+
+                                                   14

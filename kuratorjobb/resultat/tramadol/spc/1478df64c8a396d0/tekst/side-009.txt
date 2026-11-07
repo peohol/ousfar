@@ -1,0 +1,58 @@
+ligger på ca. 70 %, og er uavhengig av samtidig inntak av føde. Forskjellen mellom absorbert og ikke
+metabolisert tilgjengelig tramadol skyldes sannsynligvis den lave first-pass effekten. First-pass
+effekten etter peroral administrering er maksimalt 30 %.
+
+Tramadol har en høy vevsaffinitet (Vdelta beta=203 pluss/minus 40 l) og en plasmaproteinbinding på ca.
+20 %.
+
+Etter administrering av Nobligan Retard 100 mg nås maksimal plasmakonsentrasjon
+Cmax = 141 ± 40 ng/ml etter 4,9 timer. Etter administrering av Nobligan retard 200 mg nås Cmax
+260 ± 62 ng/ml etter 4,8 timer.
+
+Tramadol passerer blod-hjerne-barrieren og placentabarrieren. Svært små mengder av stoffet og dets
+O-desmetylderivat finnes i morsmelk (henholdsvis 0,1 % og 0,02 % av tilført dose).
+
+Eliminasjons-halveringstiden er ca. 6 timer, uavhengig av administrasjonsmåte. Hos pasienter som er
+eldre enn 75 år kan den være forlenget med ca. 40 %.
+
+Hos mennesker metaboliseres tramadol hovedsakelig gjennom N- og O-demetylering samt ved
+konjugering av O-demetyleringsproduktene med glukuronsyre. Bare O-desmetyltramadol er
+farmakologisk aktiv. Det er betydelige interindividuelle kvantitative forskjeller mellom de andre
+metabolittene. Så langt har 11 metabolitter blitt funnet i urinen. Dyrestudier har vist at O-
+desmetyltramadol er mer potent enn morsubstansen med en faktor 2-4.
+
+O-desmetyltramadols halveringstid t1/2, β (6 friske frivillige) er 7,9 timer (intervall 5,4-9,6 timer) og er
+omtrent den samme som for tramadol.
+Hemmingen av én eller begge typene av isoenzymene CYP3A4 og CYP2D6 som er involvert i
+biotransformasjonen av tramadol kan påvirke plasmakonsentrasjonen av tramadol eller dets aktive
+metabolitt.
+
+Tramadol og dets metabolitter utskilles nesten fullstendig via nyrene. Den kumulative utskillelsen via
+urinen utgjør 90 % av den totale radioaktiviteten av administrert dose. Ved nedsatt lever- og
+nyrefunksjon kan halveringstiden forlenges noe. Hos pasienter med levercirrhose har eliminasjons-
+halveringstid på 13,3 ± 4,9 timer (tramadol) og 18,5 ± 9,4 timer (O-desmetyltramadol), i et ekstremt
+tilfelle henholdsvis 22,3 timer og 36 timer, blitt fastslått. Hos pasienter med nedsatt nyrefunksjon
+(kreatininclearance < 5 ml/min) var verdiene 11 ± 3,2 timer og 16,9 ± 3 timer, i et ekstremt tilfelle
+henholdsvis 19,5 timer og 43,2 timer.
+Tramadol har en lineær farmakokinetisk profil innen det terapeutiske området. Forholdet mellom
+serumkonsentrasjoner og analgetisk effekt er doseavhengig, men varierer betydelig i enkelte tilfeller.
+Serumkonsentrasjon på 100-300 ng/ml er vanligvis virksom.
+
+Pediatrisk populasjon
+Farmakokinetikken for tramadol og O-desmetyltramadol etter enkeltdose og flerdose oral administrasjon
+til individer i alderen 1 år til 16 år ble funnet å være sammenlignbar med voksne etter dosejustering for
+kroppsvekt, men med høyere variasjoner mellom individer hos barn fra 8 år og nedover.
+
+Farmakokinetikken for tramadol og O-desmetyltramadol hos barn under 1 år er undersøkt, men ikke fullt
+karakterisert. Informasjon fra studier som omfattet denne aldersgruppen tyder på at dannelseshastigheten
+for O-desmetyltramadol via CYP2D6 øker kontinuerlig hos nyfødte, og voksennivå av CYP2D6 aktivitet
+antas å bli nådd omkring 1 års alder. I tillegg kan immature glukuroniseringssystemer og immatur renal
+funksjon resultere i langsom eliminasjon og akkumulering av O-desmetyltramadol hos barn under 1 år.
+
+5.3   Prekliniske sikkerhetsdata
+
+Ved gjentatt peroral og parenteral administrering av tramadol til rotter og hunder i 6-26 uker og
+peroral administrering i 12 måneder til hunder viste de hematologiske, klinisk-kjemiske og
+
+
+                                                                                                               9

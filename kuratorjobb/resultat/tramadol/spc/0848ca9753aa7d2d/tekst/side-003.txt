@@ -1,0 +1,55 @@
+nøye observasjon av pasienten, spesielt under behandlingsstart og doseregulering.
+
+Symptomer på serotonergt syndrom kan inkludere endret mental status, autonom ustabilitet,
+nevromuskulære avvik og/eller gastrointestinale symptomer.
+
+Hvis det er mistanke om serotonergt syndrom bør en dosereduksjon eller seponering av behandling
+vurderes avhengig av symptomenes alvorlighetsgrad. Seponering av serotonerge legemidler medfører
+vanligvis rask bedring.
+
+Toleranse og problematisk opioidbruk (misbruk og avhengighet)
+Toleranse, fysisk og psykisk avhengighet, og problematisk opioidbruk (OUD) kan utvikle seg ved
+gjentatt administrasjon av opioider som Nobligan. Gjentatt bruk av Nobligan kan føre til
+problematisk opioidbruk (OUD). En høyere dose og lengere varighet av opioidbehandling kan øke
+risikoen for å utvikle problematisk opioidbruk. Misbruk eller tilsiktet feilbruk av Nobligan kan føre
+til overdose og/eller død. Risikoen for å utvikle OUD er førhøyet hos pasienter med en personlig
+historie eller familiehistorie (foreldre eller søsken) med narkotika-/legemiddelmisbruk (inkludert
+alkoholmisbruk), hos brukere av tobakk, eller hos pasienter med en personlig historie med andre
+psykiske lidelser (f.eks. alvorlig depresjon, angst og personlighetslidelser).
+
+Før oppstart av behandling med Nobligan og under behandlingen skal man bli enig med pasienten om
+behandlingsmål og en seponeringsplan (se pkt. 4.2). Før og under behandlingen skal pasienten også
+få informasjon om risikoene og tegnene på problematisk opioidbruk. Dersom disse tegnene oppstår
+skal pasientene rådes til å kontakte legen.
+
+Pasienter bør følges opp hvis de får en legemiddeloppsøkende atferd (f.eks. ber om ny resept for
+tidlig). Dette inkluderer gjennomgang av samtidig bruk av opioider og psykoaktive stoffer (som
+benzodiazepiner). Det bør vurderes å konsultere en spesialist i avhengighetsmedisin dersom pasienter
+har tegn og symptomer på OUD.
+
+Stor forsiktighet må utvises ved samtidig bruk av MAO-hemmere og i 2 uker etter slik behandling.
+Når en pasient ikke lenger har behov for behandling med tramadol bør dosen gradvis trappes ned for å
+unngå abstinenssymptomer.
+
+Tramadol er ikke egnet som erstatningsmiddel for opioidavhengige pasienter. Selv om tramadol er en
+opioidagonist kan preparatet ikke hemme morfinabstinens.
+
+Metabolisering via CYP2D6
+Tramadol metaboliseres via leverenzymet CYP2D6. Hvis en pasient helt eller delvis mangler dette
+enzymet vil man ikke oppnå tilstrekkelig analgetisk effekt. Estimater tyder på at opp til 7 % av den
+kaukasiske populasjonen kan ha denne mangelen. Hvis en pasient derimot har ultrarask
+legemiddelmetabolisme er det økt risiko for å få bivirkninger forbundet med opioidtoksisitet, selv ved
+vanlige doser.
+
+Vanlige symptomer på opioidtoksisitet omfatter forvirring, søvnighet, overfladisk pust, små pupiller,
+kvalme, oppkast, konstipasjon og manglende appetitt. I alvorlige tilfeller kan dette omfatte symptomer
+på sirkulasjons- og respirasjonsdepresjon, som kan være livstruende og i svært sjeldne tilfeller fatalt.
+Den estimerte forekomsten av ultrarask legemiddelmetabolisme i ulike befolkningsgrupper er
+oppsummert nedenfor:
+
+                   Populasjon                        Forekomst i %
+                   Afrikansk/etiopisk                29 %
+                   Afrikansk-amerikansk              3,4 % til 6,5 %
+                   Asiatisk                          1,2 % til 2 %
+                   Kaukasisk                         3,6 % til 6,5 %
+                   Gresk                             6,0 %

@@ -1,0 +1,59 @@
+Generelt øker morfin tonus i glatt muskulatur, spesielt i lukkemusklene i gastrointestinaltraktus og i
+galleveiene. Morfin kan forårsake spasmer i Oddis sfinkter, og derved øke intrabiliært trykk.
+
+Det kardiovaskulære systemet
+Morfin kan føre til frigjøring av histamin, med eller uten assosiert perifer vasodilasjon. Manifestering
+av histaminfrigjøring og/eller perifer vasodilasjon kan omfatte kløe, ansiktsrødme (flushing), røde
+øyne, svetting og/eller ortostatisk hypotensjon.
+
+Det endokrine systemet
+Opioider kan påvirke hypothalamus-hypofyse-binyre-aksen og hypothalamus-hypofyse-gonade-aksen
+og resultere i henholdsvis binyreinsuffisiens eller hypogonadisme (se pkt. 4.4).
+
+Andre farmakologiske effekter
+In vitro og dyrestudier av naturlige opioider, slik som morfin, indikerer flere effekter på
+immunsystemets komponenter. Den kliniske betydningen av disse funnene er ukjent.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon og distribusjon
+Den maksimale toppkonsentrasjonen nås 1 til 6 timer etter dosering. Etter oral administrasjon undergår
+morfin en stor og variabel grad av første-passasje metabolisme. Biotilgjengeligheten av morfin er
+30 %, i et intervall mellom 10 og 50 %. Biotilgjengeligheten av morfin kan øke hos pasienter med
+leverkreft. Når depottablettene ble tatt med mat ble tmax til morfin ikke endret. Cmax til morfin ble noe
+økt etter at depottablettene ble tatt med mat (fra 9,73 til 10,0 ng/ml).
+Ca. 20-30 % av morfinet bindes til plasmaproteiner. Distribusjonsvolumet er 1-3,8 l/kg.
+Morfin-6-glukuronid passerer blod-hjerne-barrieren.
+Morfin passerer placenta og går over i morsmelk.
+
+Biotransformasjon og eliminasjon
+Morfin elimineres hovedsakelig ved metabolisme. Signifikant førstepassasjemetabolisme skjer i
+leveren, noe som gir lavere biotilgjengelighet sammenlignet med en ekvivalent intravenøs eller
+intramuskulær dose. Morfin metaboliseres også i nyrene og i tarmslimhinnen. Morfin metaboliseres i
+hovedsak til den inaktive metabolitten morfin-3-glukuronid og den aktive metabolitten morfin-6-
+glukuronid. Denne metabolitten er mer potent enn morfin selv.
+Disse metabolittene utskilles hovedsakelig i urinen (90 % på 24 timer). Morfin og dets metabolitter
+gjennomgår enterohepatisk resirkulasjon. Omtrent 7-10 % skilles ut via galle og fæces.
+Halveringstiden er ca. 3 timer. Farmakokinetikken til morfin er uavhengig av dosen. Plasmanivåene av
+det aktive morfin-6-glukuronid kan være vesentlig økt hos pasienter med redusert nyrefunksjon.
+På grunn av stor interindividuell variasjon i farmakokinetikken til morfin og i behovet for
+smertelindring, skal den daglige dosen justeres for den enkelte pasient slik at optimal smertelindring
+oppnås.
+
+5.3   Prekliniske sikkerhetsdata
+
+Gentoksisitet
+Nedsatt fertilitet og kromosomskade i sædceller hos hannrotter er rapportert. Det er ingen studier som
+har evaluert morfins mutagene potensial. Publiserte artikler viser at morfin er mutagent in vitro,
+ettersom det øker DNA-fragmenteringen i humane T-celler. Morfin er mutagent i in vivo tester av
+mikronucleus hos mus og kan indusere kromosomale avvik i spermier hos mus og i lymfocytter hos
+mus og rotter. Musestudier har vist at virkningsmekanisme er in vivo klastogene effekter som kan være
+relatert til økte glukokortikoidnivåer forårsaket av morfin hos disse artene. I motsetning til disse
+positive funnene, indikerer in vitro-litteraturstudier at morfin ikke induserer kromosomavvik i humane
+leukocytter, eller translokasjoner eller dødelige mutasjoner i Drosophila (fruktfluer).
+
+Karsinogenitet
+Hvorvidt morfin kan ha et kreftfremkallende potensial er ikke undersøkt i dyrestudier.
+
+
+                                                    11

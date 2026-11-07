@@ -1,0 +1,59 @@
+Ingen kliniske studier er utført i den pediatriske populasjonen, og produktet vurderes ikke som egnet
+til bruk i denne populasjonen på grunn av sikkerhetsmessige årsaker, se pkt. 4.2.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Maksimal serumkonsentrasjon av morfin, det viktigste alkaloidet til opiumekstraktet, oppnås innen 2
+til 4 timer etter oral administrering.
+
+Distribusjon
+Etter absorpsjon bindes morfin til plasmaproteiner i forholdet 30 %.
+
+Biotransformasjon
+Opiumalkaloider metaboliseres i stor utstrekning til glukuronidkonjugater (3-glukuronid (M3G)
+og 6-glukuronid (M6G)) som gjennomgår en enterohepatisk syklus. 6-glukuronid er en
+morfinmetabolitt omtrent 50 ganger mer aktiv enn opphavsstoffet. Morfin demetyleres også, som fører
+til en annen aktiv metabolitt, normorfin.
+
+Kodein metaboliseres til å gi kodein-6-glukuronid, morfin (den eneste aktive metabolitten) og
+norkodein. Siden kodein finnes i opiumekstrakt i ti ganger lavere nivåer enn morfin, har den hepatiske
+transformasjonen liten effekt på den totale biotilgjengeligheten av morfin.
+
+Eliminasjon
+Eliminasjonshalveringstiden til morfin er ca. 2 timer. En eliminasjonshalveringstid på 2,4 til 6,7 timer
+er rapportert for M3G. Ca. 90 % av totalt morfin skilles ut innen 24 timer, med spor i urin i 48 timer
+eller mer 9.
+
+Eliminasjonen av glukuronidkonjugatderivater skjer hovedsakelig via urinen, både via glomerulær
+filtrering og tubulær sekresjon. Fekal eliminasjon er lav (<10 %).
+
+
+5.3   Prekliniske sikkerhetsdata
+
+Flere studier har vist at morfin induserer kromosomskade hos dyr i somatiske celler og kimceller, og
+humane somatiske celler. Det forventes derfor å ha gentoksisk potensiale for mennesker. Langvarige
+dyrestudier om karsinogent potensiale av morfin er ikke utført.
+Skadelige effekter er ikke observert i kliniske studier, men følgende effekter er sett hos dyr ved doser
+over den vanlige humane eksponering: Fosterveksthemming og økt forekomst av defekter i
+nervesystem og skjelett.
+
+Dyrestudier har vist reproduksjonstoksisitet under hele drektigheten (CNS-misdannelser,
+fosterveksthemming, skjelettdefekter, testisatrofi, endringer i nevrotransmittersystemer og oppførsel,
+avhengighet.
+
+I tillegg hadde morfin en påvirkning på fertiliteten av hankjønnsavkom. Dyrestudier har videre vist at
+morfin kan skade kjønnsorganene eller gametene, og kan ved endokrine forstyrrelser påvirke
+fertiliteten hos hankjønn og hunkjønn negativt.
+Klinisk relevans er ikke kjent.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Fortegnelse over hjelpestoffer
+
+Etanol 96 % vol %
+Renset vann
+
+
+                                                   8

@@ -1,0 +1,56 @@
+kontraindisert ettersom pimozid har smal terapeutisk indeks og er kjent for å forlenge QT-
+intervallet (se pkt. 4.3).
+
+Legemidler som forlenger QT-intervallet
+Risikoen for QT-forlengelse og/eller ventrikulære arytmier (feks. TdP) kan øke med samtidig
+bruk av andre legemider som forlenger QT-intervallet (feks. noen antipsykotika) (se pkt. 4.4).
+Samtidig bruk av tioridazin og paroksetin er kontraindisert fordi paroksetin, som med andre
+legemidler som hemmer leverenzymet CYP450 2D6, kan øke plasmanivåene av tioridazin som
+kan forlenge QT-intervallet (se pkt. 4.3).
+
+Legemiddelmetaboliserende enzymer
+Paroksetins metabolisme og farmakokinetikk kan påvirkes ved induksjon eller inhibisjon av
+legemiddelmetaboliserende enzymer.
+
+Når paroksetin gis samtidig med et legemiddel som er kjent for å hemme
+legemiddelmetaboliserende enzymer, bør det vurderes å bruke doser av paroksetin i den nedre
+delen av doseringsområdet.
+
+Ingen initial dosejustering er ansett som nødvendig når legemidlet blir gitt samtidig med
+legemidler som er kjent for å indusere legemiddelmetaboliserende enzymer (for eksempel
+karbamazepin, rifampicin, fenobarbital, fenytoin) eller med fosamprenavir/ritonavir.
+Dosejustering av paroksetin (enten etter initiering eller opphør av behandling med
+enzyminduserende legemidler) bør foretas ut i fra klinisk effekt (toleranse og virkning).
+
+Nevromuskulære hemmere
+SSRIer kan redusere kolinesteraseaktiviteten i plasma, som resulterer i en forlengelse av den
+nevromuskulære blokkeringsaktiviteten til mivakurium og suksametonium.
+
+Fosamprenavir/ritonavir
+Samtidig administrering av fosamprenavir/ritonavir 700/100 mg to ganger daglig med paroksetin
+20 mg daglig hos friske, frivillige i 10 dager, reduserte plasmanivået av paroksetin signifikant
+med ca 55 %. Plasmanivået for fosamprenavir/ritonavir ved samtidig administrering av
+paroksetin, var det samme som referanseverdier i andre studier, noe som indikerer at paroksetin
+ikke hadde noen signifikant effekt på metabolismen av fosamprenavir/ritonavir. Det finnes ikke
+tilgjengelig data som beskriver effekter ved langtids ko-administrering av paroksetin og
+fosamprenavir/ritonavir utover 10 dager.
+
+Procyklidin
+Daglig administrering av paroksetin gir en signifikant økning i plasmanivå av procyklidin. Om
+antikolinerge symptomer ses, bør dosen av procyklidin reduseres.
+
+Antikonvulsiva: karbamazepin, fenytoin, natriumvalproat
+Samtidig bruk ser ikke ut til å ha noen effekt på farmakokinetisk/dynamisk profil hos pasienter
+med epilepsi.
+
+Paroksetins hemmende effekt på CYP2D6
+I likhet med andre antidepressiva, inkludert andre SSRIer, hemmer paroksetin cytokrom P450
+leverenzymet CYP2D6. Inhibisjon av CYP2D6 medfører økte plasmakonsentrasjoner av
+samtidig administrerte legemidler som metaboliseres av dette enzymet. Dette inkluderer visse
+trisykliske antidepressiva (for eksempel klomipramin, nortriptylin og desipramin), nevroleptika
+av fentiazintypen (for eksempel perfenazin og tioridazin, se pkt. 4.3 og avsnittet «Legemidler som
+forlenger QT-intervallet» i pkt. 4.5 over), risperidon, atomoksetin, visse type 1c antiarytmika (for
+
+
+
+                                                 7

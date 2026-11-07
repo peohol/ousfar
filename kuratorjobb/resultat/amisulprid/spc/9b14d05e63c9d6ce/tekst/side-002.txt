@@ -1,0 +1,58 @@
+Nyresvikt
+Amisulprid skilles ut gjennom nyrene. Ved nedsatt nyrefunksjon bør dosen justeres til det halve hos
+pasienter med kreatininclearance (CRCL) mellom 30-60 ml/min og til en tredjedel i pasienter med
+CRCL mellom 10-30 ml/min. Da man ikke har erfaring med pasienter med alvorlig nyresvikt (CRCL
+< 10 ml/min) bør spesiell forsiktighet utvises hos disse pasientene (se pkt. 4.4).
+
+Leversvikt
+Ettersom legemidlet i liten grad metaboliseres, skulle en reduksjon av dosen være unødvendig.
+
+4.3     Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1. Samtidig
+prolaktin-avhengige tumorer som f.eks. hypofyse prolaktinom og brystkreft (se pkt. 4.4 og 4.8).
+Feokromocytom. Barn opp til puberteten. Kombinasjon med levodopa (se pkt. 4.5).
+
+4.4     Advarsler og forsiktighetsregler
+
+Som for andre nevroleptika kan malignt nevroleptikasyndrom (MNS) forekomme. Dette er en
+potensielt livstruende bivirkning ved bruk av antipsykotiske legemidler. Syndromet er karakterisert
+ved hypertermi, muskelstivhet, autonom ustabilitet, rabdomyolyse og forhøyet kreatinfosfokinase.
+Dersom en pasient utvikler tegn og symptomer på MNS eller får uforklarlig hypertermi, spesielt ved
+høy dagsdose, skal bruk av alle slag antipsykotiske legemidler, inkludert amisulprid, opphøre.
+Rabdomyolyse har også blitt observert hos pasienter uten malignt nevroleptikasyndrom.
+
+Som for andre antidopaminerge midler bør forsiktighet utvises når Solian foreskrives til pasienter med
+parkinsonisme, da dette kan forårsake en forverring av sykdommen. Amisulprid bør kun brukes om
+nevroleptisk behandling ikke kan unngås.
+
+Forlengelse av QT-intervall
+Amisulprid skal brukes med forsiktighet til pasienter med hjerte- og karsykdommer eller som har en
+familieanamnese med forlenget QT-intervall. Samtidig bruk av andre nevroleptika bør unngås.
+
+Hjerneslag
+Det ble observert en tredoblet økning i risiko for cerebrovaskulære hendelser i placebokontrollerte
+randomiserte kliniske studier utført på eldre demente pasienter som brukte visse atypiske
+antipsykotiske legemidler. Mekanismen for denne risikoøkningen er ikke kjent. En økning i risiko med
+andre antipsykotiske midler eller med andre pasientpopulasjoner kan ikke utelukkes. Amisulprid bør
+brukes med forsiktighet hos pasienter med risikofaktorer for hjerneslag.
+
+Eldre pasienter med demens
+Eldre pasienter med demens-relatert psykose som behandles med antipsykotiske legemidler har økt
+dødsrisiko. Analyser av 17 placebokontrollerte studier (formell varighet 10 uker), hovedsakelig i
+pasienter som ble behandlet med atypiske antipsykotiske legemidler, avdekket at dødsrisikoen for
+pasienter behandlet med legemiddel var på mellom 1,6 til 1,7 ganger dødsrisikoen i pasienter
+behandlet med placebo. I løpet av en typisk 10-ukers kontrollert studie, var dødsrisikoen i pasienter
+behandlet med legemiddel rundt 4,5 % sammenlignet med en frekvens på rundt 2,6 % i
+placebogruppen. Selv om dødsårsaken i kliniske studier med atypiske antipsykotika varierte, ser det ut
+til at de fleste dødsfallene enten var kardiovaskulære (f.eks. hjertesvikt, plutselig død) eller av en
+infeksiøs (f.eks. lungebetennelse) natur. Observasjonsstudier antyder at, i likhet med atypiske
+antipsykotiske legemidler, kan behandling med konvensjonelle antipsykotiske legemidler øke
+dødeligheten. I hvilken grad funnene som viste økt mortalitet i observasjonsstudier kan tilskrives
+antipsykotiske legemidler eller noen karakteristikker hos pasientene er ikke klarlagt.
+
+Venøs tromboembolisme
+Det har blitt rapportert tilfeller av venøs tromboembolisme med antipsykotiske legemidler. Siden
+pasienter under behandling med antipsykotiske legemidler ofte har ervervet økt risiko for venøs
+
+                                                       2

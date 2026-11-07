@@ -1,0 +1,59 @@
+(fluoksetin 20–40 mg) skilte seg statistisk signifikant fra placebo med hensyn til endring fra baseline til endt
+studie målt ved totalskår på «Children´s Depression Rating Scale-Revised» (CDRS-R). Avbrutt behandling
+som følge av bivirkninger, for det meste pga. kvalme, forekom oftere hos pasienter som tok duloksetin enn
+hos dem som ble behandlet med fluoksetin. I løpet av akuttbehandlingsperioden på 10 uker ble det rapportert
+om suicidal adferd (duloksetin 0/333 [0 %], fluoksetin 2/225 [0,9 %], placebo 1/220 [0,5 %]). I løpet av hele
+36-ukersperioden av studien opplevde 6 av 333 pasienter, initielt randomisert til duloksetin, og 3 av 225
+pasienter, initielt randomisert til fluoksetin, suicidal adferd (eksponeringsjustert insidens på 0,039 tilfeller per
+pasientår for duloksetin og 0,026 tilfeller for fluoksetin). I tillegg opplevde en pasient som gikk over fra
+placebo til duloksetin, ett tilfelle av suicidal adferd mens han tok duloksetin.
+
+En randomisert, dobbeltblindet, placebokontrollert studie ble utført med 272 pasienter i alderen 7–17 år med
+generalisert angstlidelse. Studien inkluderte en 10-ukers placebokontrollert akuttfase etterfulgt av en
+forlenget behandlingsperiode på 18 uker. En fleksibel dosering ble brukt i denne studien, for å muliggjøre
+langsom doseøkning fra 30 mg daglig én gang daglig til høyere doser (maks 120 mg én gang daglig).
+Behandling med duloksetin ga en statistisk signifikant større forbedring av symptomer på generalisert
+angstlidelse (GAD), målt ved PARS-skår for alvorlighetsgrad av GAD (gjennomsnittlig forskjell mellom
+duloksetin og placebo var 2,7 poeng [95 % CI 1,3-4,0]), etter 10 ukers behandling. Opprettholdelse av
+effekten er ikke vurdert. Det var ingen statistisk signifikant forskjell med hensyn til avbrutt behandling pga.
+bivirkninger mellom duloksetin og placebo i løpet av den 10 uker lange placebokontrollerte akuttfasen. To
+pasienter som gikk over fra placebo til duloksetin etter den akutte fasen, opplevde selvmordsadferd under
+behandling med duloksetin i forlengelsesfasen. En konklusjon på samlet nytte/risiko i denne aldersgruppen
+er ikke fastslått (se også pkt. 4.2 og 4.8).
+
+En studie er utført hos pediatriske pasienter med juvenil primær fibromyalgi syndrom (JPFS). Det var ikke
+forskjell mellom den duloksetinbehandlete gruppen og placebogruppen for primært effektmål. Det er derfor
+ikke vist effekt i denne pediatriske pasientpopulasjonen. Den randomiserte, dobbeltblindede,
+placebokontrollerte, parallellgruppe studien av duloksetin ble gjennomført hos 184 ungdommer i alderen 13
+til 18 år (gjennomsnittlig alder 15,53 år) med JPFS. Studien omfattet en 13- ukers dobbeltblind periode hvor
+pasientene ble randomisert til duloksetin 30 mg/60 mg eller placebo daglig. Duloksetin viste ikke effekt for
+reduksjon av smerte for det primære endepunktet, målt ved smerteskalaen Brief Pain Inventory (BPI)
+gjennomsnittlig smertescore. Minste kvadrat (LS) gjennomsnittlig endring fra baseline i BPI gjennomsnittlig
+smertescore etter 13 uker var -0,97 i placebogruppen, sammenlignet med -1,62 i gruppen duloksetin 30/60
+mg (p = 0,052). Sikkerhetsresultatene fra denne studien var i samsvar med kjente sikkerhetsprofil for
+duloksetin.
+
+Det europeiske legemiddelkontoret (The European Medicines Agency) har gitt unntak fra forpliktelsen til å
+presentere resultater fra studier med duloksetin i alle undergrupper av den pediatriske populasjonen ved
+alvorlig depresjon, smerter ved perifer diabetisk nevropati og generalisert angstlidelse. Se pkt. 4.2 for
+informasjon vedrørende pediatrisk bruk.
+
+5.2   Farmakokinetiske egenskaper
+
+Duloksetin administreres som en enkelt enantiomer. Duloksetin metaboliseres i utstrakt grad av oksiderende
+enzymer (CYP1A2 og det polyforme CYP2D6), etterfulgt av konjugering. Duloksetins farmakokinetikk
+viser stor variasjon mellom pasienter (generelt 50–60 %), delvis på grunn av kjønn, alder, røyker/ikke-røyker
+og CYP2D6-metaboliseringsevne.
+
+Absorpsjon
+Duloksetin absorberes godt etter peroral tilførsel med Cmax 6 timer etter dosering. Absolutt peroral
+biotilgjengelighet varierer fra 32 % til 80 % (gjennomsnitt 50 %). Matinntak forlenger tiden til
+maksimalkonsentrasjon fra 6 til 10 timer og reduserer absorpsjonsgraden marginalt (omtrent 11 %). Disse
+endringene har ingen klinisk signifikans.
+
+Distribusjon
+Duloksetin er bundet omtrent 96 % til humane plasmaproteiner. Duloksetin bindes til både albumin og alfa-
+1-syre-glykoprotein. Proteinbindingen påvirkes ikke av nedsatt nyre- eller leverfunksjon.
+
+
+                                                        14

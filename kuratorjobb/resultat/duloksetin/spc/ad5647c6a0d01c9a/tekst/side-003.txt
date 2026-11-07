@@ -1,0 +1,58 @@
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+
+Samtidig bruk av duloksetin og ikke-selektive, irreversible monoaminoksidasehemmere (MAO-hemmere) er
+kontraindisert (se pkt. 4.5).
+
+Leversykdom som kan resultere i nedsatt leverfunksjon (se pkt. 5.2).
+
+Duloksetin skal ikke brukes i kombinasjon med fluvoksamin, ciprofloksacin eller enoksacin (dvs. potente
+CYP1A2-hemmere), da kombinasjonen kan resultere i forhøyet plasmakonsentrasjon av duloksetin (se
+pkt. 4.5).
+
+Alvorlig nedsatt nyrefunksjon (kreatininclearance < 30 ml/min) (se pkt. 4.4).
+
+Det er kontraindisert å starte behandling med duloksetin hos pasienter med ukontrollert hypertensjon som
+kan utsette pasienter for en potensiell risiko for hypertensiv krise (se pkt. 4.4 og 4.8).
+
+4.4   Advarsler og forsiktighetsregler
+
+Mani og anfall
+Duloksetin bør brukes med forsiktighet hos pasienter med tidligere mani eller en diagnose med bipolar
+lidelse og/eller anfall.
+
+Mydriasis
+Det er rapportert om tilfeller av mydriasis i forbindelse med bruk av duloksetin, og det skal derfor utvises
+forsiktighet ved forskrivning av duloksetin til pasienter med forhøyet intraokulært trykk eller til pasienter
+med risiko for akutt trangvinklet glaukom.
+
+Blodtrykk og hjertefrekvens
+Bruk av duloksetin har hos noen pasienter vært forbundet med økt blodtrykk og klinisk signifikant
+hypertensjon. Dette kan skyldes den noradrenerge virkningen av duloksetin. Tilfeller av hypertensiv krise er
+rapportert med duloksetin, særlig hos pasienter med allerede eksisterende hypertensjon. Hos pasienter med
+kjent hypertensjon og/eller annen hjertesykdom, anbefales derfor blodtrykksmonitorering, særlig i løpet av
+første behandlingsmåned. Duloksetin bør brukes med forsiktighet hos pasienter med tilstander der økt
+hjertefrekvens eller blodtrykksstigning kan medføre risiko. Forsiktighet skal videre utvises når duloksetin
+brukes samtidig med legemidler som kan redusere dets metabolisme (se pkt. 4.5). Hos pasienter som erfarer
+en fortsatt økning i blodtrykk under behandling med duloksetin, bør dosereduksjon eller gradvis seponering
+vurderes (se pkt. 4.8). Behandling med duloksetin bør ikke initieres hos pasienter med ukontrollert
+hypertensjon (se pkt. 4.3).
+
+Nedsatt nyrefunksjon
+Økt plasmakonsentrasjon av duloksetin forekommer hos pasienter med alvorlig nedsatt nyrefunksjon som får
+hemodialyse (kreatininclearance < 30 ml/min). For pasienter med alvorlig nedsatt nyrefunksjon, se pkt. 4.3.
+For pasienter med lett til moderat nedsatt nyrefunksjon, se pkt. 4.2.
+
+Serotonergt syndrom/malignt nevroleptikasyndrom
+Behandling med duloksetin kan, i likhet med andre serotonerge legemidler, føre til utvikling av serotonergt
+syndrom eller malignt nevroleptikasyndrom (MNS). Serotonergt syndrom er en potensielt livstruende
+tilstand, særlig ved samtidig bruk av andre serotonerge legemidler (inkludert SSR-hemmere, SNR-hemmere,
+trisykliske antidepressiva eller triptaner), legemidler som hemmer metaboliseringen av serotonin, som f.eks.
+MAO-hemmere, antipsykotika eller andre dopaminantagonister som kan påvirke det serotonerge
+nevrotransmittersystemet (se pkt. 4.3 og 4.5).
+
+Symptomer på serotonergt syndrom kan omfatte endringer i mental status (f.eks. agitasjon, hallusinasjoner,
+koma), autonom ustabilitet (f.eks. takykardi, ustabilt blodtrykk, hypertermi), nevromuskulære avvik (f.eks.
+
+                                                       3

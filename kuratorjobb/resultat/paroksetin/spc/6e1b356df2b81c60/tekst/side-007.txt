@@ -1,0 +1,57 @@
+Fosamprenavir/ritonavir
+Samtidig administrasjon av fosamprenavir/ritonavir 700/100 mg to ganger daglig sammen med
+paroksetin 20 mg daglig hos friske, frivillige i 10 dager, reduserte plasmanivået av paroksetin
+signifikant med ca 55 %. Plasmanivået for fosamprenavir/ritonavir ved samtidig administrering av
+paroksetin, var det samme som referanseverdier i andre studier, noe som indikerer at paroksetin
+ikke hadde noen signifikant effekt på metabolismen av fosamprenavir/ritonavir. Det foreligger
+ingen data om effekten av langvarig samtidig administrering av paroksetin og
+fosamprenavir/ritonavir ut over 10 dager.
+
+Procyklidin
+Daglig administrasjon av paroksetin gir en signifikant økning i plasmanivå av procyklidin. Om
+antikolinerge symptomer ses, bør dosen av procyklidin reduseres.
+
+Antikonvulsiva
+Karbamazepin, fenytoin, natriumvalproat. Samtidig bruk ser ikke ut til å ha noen effekt på
+farmakokinetisk/dynamisk profil hos pasienter med epilepsi.
+
+Paroksetins CYP2D6-hemmende effekt
+I likhet med andre antidepressiva, inkludert andre SSRIer, hemmer paroksetin det hepatiske
+cytokrom P450-enzymet CYP2D6. Hemming av CYP2D6 kan føre til økte plasmakonsentrasjoner
+av samtidig administrerte legemidler som metaboliseres av dette enzymet. Dette inkluderer visse
+trisykliske antidepressiva (for eksempel klomipramin, nortriptylin og desipramin), nevroleptika av
+fentiazintypen (for eksempel perfenazin og tioridazin, se pkt. 4.3), risperidon, atomoksetin, visse
+type 1c antiarytmika (for eksempel propafenon og flekainid) og metoprolol. Det er ikke anbefalt å
+bruke paroksetin i kombinasjon med metoprolol ved hjertesvikt, på grunn av metoprolols smale
+terapeutiske indeks ved denne indikasjonen.
+
+Farmakokinetiske interaksjoner mellom CYP2D6-hemmere og tamoksifen som viser en reduksjon
+på 65-75 % av plasmanivåene for en av de mer aktive formene for tamoksifen, dvs. endoksifen, er
+beskrevet i litteraturen. I enkelte studier er det rapportert om redusert effekt av tamoksifen ved
+samtidig bruk av noen SSRI antidepressiva. Ettersom en redusert effekt av tamoksifen ikke kan
+utelukkes, bør samtidig administrasjon av potente CYP2D6-hemmere (inkludert paroksetin) unngås
+når det er mulig (se pkt. 4.4).
+
+Alkohol
+I likhet med andre psykotrope legemidler, er det anbefalt at pasienter bør unngå inntak av alkohol
+under behandlingen med paroksetin.
+
+Perorale antikoagulantia
+Det kan oppstå en farmakodynamisk interaksjon mellom paroksetin og perorale antikoagulantia.
+Samtidig bruk av paroksetin og perorale antikoagulantia kan føre til økt antikoagulerende aktivitet
+og blødningsrisiko. Paroksetin må derfor brukes med forsiktighet hos pasienter som behandles med
+perorale antikoagulantia (se punkt 4.4).
+
+NSAIDs og acetylsalisylsyre, og andre platehemmende midler
+En farmakodynamisk interaksjon mellom paroksetin og NSAIDs/acetylsalisylsyre kan
+forekomme. Samtidig bruk av paroksetin og NSAIDs/acetylsalisylsyre kan føre til økt
+blødningsrisiko (se pkt. 4.4).
+
+Forsiktighet tilrådes hos pasienter som tar SSRIer samtidig med perorale antikoagulantia, legemidler
+med effekt på platefunksjonen eller andre legemidler som kan øke blødningsrisikoen (for eksempel
+atypiske antipsykotika som klozapin, fentiaziner, de fleste TCA, acetylsalisylsyre, NSAIDs, COX-2
+hemmere) samt hos pasienter som har eller tidligere har hatt blødningsforstyrrelser eller som er
+predisponerte for blødninger.
+
+4.6   Fertilitet, graviditet og amming
+                                                                                                       7

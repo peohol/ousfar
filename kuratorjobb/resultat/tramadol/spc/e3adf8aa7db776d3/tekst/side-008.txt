@@ -1,0 +1,55 @@
+krampeanfall og respirasjonsdepresjon, som i alvorlige tilfeller kan få fatalt utfall.
+Serotonergt syndrom har også blitt rapportert.
+
+Behandling
+Akutt behandling skal, avhengig av symptomene, foretas for å holde luftveiene åpne (aspirasjon),
+opprettholde respirasjonen og sirkulasjonen. Nalokson kan anvendes til behandling av
+respirasjonsdepresjon. Krampetilstander kan kontrolleres med diazepam. Tramadol elimineres kun i
+liten grad fra serum med hemodialyse eller hemofiltrasjon. Det er derfor ikke tilstrekkelig med bare
+hemodialyse eller hemofiltrering ved behandling av akutt forgiftning med tramadol.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1 Farmakodynamiske egenskaper
+Farmakoterapeutisk gruppe: Analgetika, andre opioider, ATC-kode: N02A X02
+
+Virkningsmekanisme
+Tramadol er en ikke-selektiv agonist på -, - og -opioidreseptorer med en høyere affinitet til -
+reseptorer. Andre mekanismer som kan medvirke til den analgetiske effekten er inhibering av
+gjenopptak av noradrenalin og økning av serotoninfrigjøringen.
+
+Pediatrisk populasjon
+Effekter av enteral og parenteral administrering av tramadol har blitt undersøkt i kliniske studier med
+mer enn 2000 pediatriske pasienter i alderen fra nyfødt til 17 år. Indikasjonene for smertebehandling
+som er undersøkt i disse studiene omfattet smerter etter kirurgi (hovedsakelig i abdomen), smerter
+etter tanntrekking, på grunn av frakturer, forbrenninger og traumer, samt andre smertefulle tilstander
+hvor det sannsynligvis vil være behov for analgetisk behandling i minst 7 dager.
+Ved enkeltdoser opptil 2 mg/kg eller gjentatte doser opp til 8 mg/kg/døgn (maksimalt 400 mg/døgn)
+ble det funnet at tramadols effekt var bedre sammenlignet med placebo, og bedre eller lik
+paracetamol, nalbufin, petidin og lavdose morfin. Studiene bekreftet tramadols effekt.
+Sikkerhetsprofilen til tramadol var lik hos voksne og pediatriske pasienter eldre enn 1 år.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Etter peroralt inntak av en enkeltdose absorberes tramadol nesten fullstendig. Den absolutte
+biotilgjengeligheten ligger på ca. 70% etter en enkeltdose. Tramadol har førstepassasjemetabolisme.
+Mat påvirker ikke biotilgjengeligheten eller den forlengede absorpsjonstiden.
+
+Distribusjon
+Tramadol har høy affinitet til vev. Proteinbinding ca. 20%. Etter inntak av en Tramagetic Retard 75
+mg depottablett fastende oppnås i gjennomsnitt maksimale plasmakonsentrasjoner (Cmax) på 80
+nanog/ml med en median tmax på 5 timer (3-7 timer).
+Virkestoffet tramadol har ikke-lineær farmakokinetikk mens frisetting av tramadol fra Tramagetic
+Retard i enkeltdosestudier med 75 mg, 100 mg, 150 mg og 200 mg viste lineær farmakokinetikk.
+Sammenlignet med tabletter og kapsler med umiddelbar frisetting av tramadol gir tabletter med
+langsom frisetting derfor en mer forutsigbar plasmakonsentrasjon og enklere dosetitrering.
+
+Biotransformasjon
+Tramadol metaboliseres hovedsakelig av CYP2D6 til terapeutisk aktiv O-desmetyltramadol (M1),
+som er vist å ha analgetisk aktivitet hos gnagere, og også via CYP2B6 og CYP3A4 til N-
+desmetylmetabolitten. Disse metabolittene kan gjennomgå videre sulfaterings- og
+glukuronideringsreaksjoner. Hemming av én eller begge typene isoenzymene CYP3A4 og CYP2D6
+
+                                                                                                          8

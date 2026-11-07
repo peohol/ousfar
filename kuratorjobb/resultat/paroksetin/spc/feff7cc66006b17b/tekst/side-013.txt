@@ -1,0 +1,56 @@
+Behandling
+Ingen spesifikk antidot er kjent.
+
+Behandlingen bør følge de vanlige tiltak som benyttes ved håndtering av overdose med
+antidepressiva. Administrasjon av 20-30 g aktivt kull kan vurderes hvis det er mulig innen de
+første timene etter inntak, for å redusere absorpsjon av paroksetin. Støttende behandling med
+hyppig monitorering av vitale tegn og nøye observasjon er nødvendig. Pasienthåndtering bør
+være som klinisk indisert.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antidepressiva – selektive serotoninreopptakshemmere
+ATC kode: N06A B05.
+
+Virkningsmekanisme
+Paroksetin er en potent og selektiv hemmer av 5-hydroksytryptamin (5-HT, serotonin) opptak.
+Antidepressiv virkning og effekt i behandlingen av tvangslidelser, sosial angstlidelse/sosial fobi,
+generell angstlidelse, posttraumatisk stresslidelse og panikklidelse er antatt å være relatert til dens
+spesifikke hemming av 5-HT opptak i hjernens nevroner.
+
+Paroksetin er kjemisk forskjellig fra trisykliske, tetrasykliske og andre tilgjengelige
+antidepressiva. Paroksetin har lav affinitet til muskarinkolinerge reseptorer, og dyrestudier har
+kun antydet svake antikolinerge egenskaper.
+
+I henhold til denne selektive virkningen har in vitro studier antydet at paroksetin, i motsetning til
+trisykliske antidepressiva, har liten affinitet til alfa1, alfa2 og beta-adrenerge reseptorer, dopamin
+(D2), 5-HT1 liknende, 5-HT2 og histamin (H1) reseptorer. Mangel på interaksjon med post-
+synaptiske reseptorer in vitro er dokumentert ved in vivo studier som demonstrerer mangel på
+CNS undertrykkelse og hypotensive egenskaper.
+
+Farmakodynamiske effekter
+Paroksetin nedsetter ikke psykomotorisk funksjon og gir ingen potensering av effekten av etanol.
+
+I likhet med andre selektive 5-HT opptakshemmere, forårsaker paroksetin symptomer på
+overdreven 5-HT reseptorstimulering når det blir gitt til dyr som tidligere har fått
+monoaminoksidase (MAO)-hemmere eller tryptofan.
+
+Atferd og EEG-studier indikerer at paroksetin er svakt aktiverende ved doser som vanligvis er
+høyere enn det som er nødvendig for å hemme 5-HT opptak. De aktiverende egenskapene er ikke
+"amfetaminliknende" av natur. Dyrestudier antyder at paroksetin er godt tolerert av det
+kardiovaskulære system. Paroksetin gir ingen kliniske signifikante endringer i blodtrykk,
+hjertefrekvens og EKG etter administrering til friske personer. I en ukontrollert, åpen C-QT-
+studie med 38 friske deltagere ble det ikke vist QTc-forlengelse som respons på terapeutiske
+doser av paroksetin (20 mg, 40 mg eller 60 mg). Supraterapeutiske kontrolldoser ble ikke
+undersøkt.
+
+I motsetning til antidepressiva som hemmer opptaket av noradrenalin, antyder studier at
+paroksetin har en mye mindre tilbøyelighet til å hemme de antihypertensive effektene til
+guanetidin.
+
+
+
+                                                  13

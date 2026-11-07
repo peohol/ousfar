@@ -1,0 +1,59 @@
+en klinisk farmakologistudie, resulterte imidlertid ikke i en klinisk signifikant endring av INR fra baseline
+eller av farmakokinetikken til R- eller S-warfarin.
+
+Effekten av andre legemidler på duloksetin
+
+Antacida og H2-antagonister: Samtidig administrering av duloksetin og aluminium- og magnesiumholdige
+antacida, eller duloksetin og famotidin, hadde ingen signifikant effekt på absorpsjonshastighet eller
+absorpsjonsgrad av duloksetin etter en peroral dose på 40 mg.
+
+CYP1A2-induktorer: Populasjonsfarmakokinetiske analyser har vist at røykere har nesten 50 % lavere
+plasmakonsentrasjon av duloksetin sammenlignet med ikke-røykere.
+
+4.6   Fertilitet, graviditet og amming
+
+Fertilitet
+Duloksetin hadde ingen effekt på mannlig fertilitet, og effekt hos kvinner ble vist kun ved doser som
+forårsaket maternell toksisitet.
+
+Graviditet
+Dyrestudier har vist reproduksjonstoksiske effekter ved en systemisk eksponering (AUC) for duloksetin som
+er lavere enn maksimal klinisk eksponering (se pkt. 5.3).
+
+To store observasjonsstudier tyder ikke på en samlet økt risiko for store medfødte misdannelser (én fra
+USA med 2500 eksponert for duloksetin i løpet av første trimester, og én fra EU med 1500 eksponert
+for duloksetin i løpet av første trimester). Analysen av spesifikke misdannelser, som
+hjertemisdannelser, viser inkonklusive resultater.
+
+I EU-studien var maternell eksponering for duloksetin sent i graviditeten (når som helst fra uke 20 i
+svangerskapet til fødsel) forbundet med økt risiko for fødsel før termin (mindre enn fordoblet,
+tilsvarende ca. 6 flere premature fødsler per 100 kvinner behandlet med duloksetin sent i graviditeten).
+De fleste forekom mellom 35. og 36. svangerskapsuke. Denne sammenhengen ble ikke sett i
+USA-studien.
+
+Data fra observasjonsstudier i USA har vist en økt risiko (mindre enn fordoblet) for
+postpartumblødning etter eksponering for duloksetin siste måneden før fødsel
+
+Epidemiologiske data har antydet at bruk av SSRI under graviditet, særlig sent i svangerskapet, kan øke
+risikoen for vedvarende pulmonal hypertensjon hos den nyfødte (PPHN). Selv om det ikke har blitt gjort
+studier som undersøker assosiasjonen mellom PPHN og SNRI-behandling, kan ikke denne potensielle
+risikoen utelukkes for duloksetin når man tar i betraktning den beslektede virkningsmekanismen (hemming
+av re-opptak av serotonin).
+
+Som for andre serotonerge legemidler, kan seponeringssymptomer forekomme hos barnet ved bruk av
+duloksetin hos mor nær termin. Seponeringssymptomer som er sett i forbindelse med duloksetin omfatter
+hypotoni, tremor, nervøsitet, sugevansker, åndenød og anfall. Majoriteten av tilfellene har inntruffet enten
+ved fødsel eller i løpet av få dager etter fødselen.
+
+
+Duloksetin bør kun brukes under graviditet dersom den potensielle nytten av behandlingen rettferdiggjør den
+potensielle risikoen for barnet. Kvinner bør rådes til å informere legen dersom de blir gravide, eller
+planlegger å bli gravide, under behandlingen.
+
+Amming
+Ifølge en studie med 6 ammende kvinner som ikke ammet barna sine, utskilles duloksetin i svært liten grad i
+human brystmelk. Beregnet døgndose for barnet i mg/kg utgjør omtrent 0,14 % av morens dose (se pkt. 5.2).
+Da sikkerheten til duloksetin hos spedbarn ikke er kjent, anbefales det ikke å bruke duloksetin under
+amming.
+
+                                                      7

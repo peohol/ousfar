@@ -1,0 +1,53 @@
+metabolittene. Så langt har 11 metabolitter blitt funnet i urinen. Dyrestudier har vist at
+O-desmetyltramadol er mer potent enn morsubstansen med en faktor 2-4.
+
+O-desmetyltramadols halveringstid t1/2, β (6 friske frivillige) er 7,9 timer (intervall 5,4-9,6 timer) og er
+omtrent den samme som for tramadol.
+
+Hemmingen av én eller begge typene av isoenzymene CYP3A4 og CYP2D6 som er involvert i
+biotransformasjonen av tramadol kan påvirke plasmakonsentrasjonen av tramadol eller dets aktive
+metabolitt.
+
+Tramadol og deres metabolitter utskilles nesten fullstendig via nyrene. Den kumulative utskillelsen via
+urinen utgjør 90 % av den totale radioaktiviteten av administrert dose. Ved nedsatt lever- og
+nyrefunksjon kan halveringstiden forlenges noe. Hos pasienter med levercirrhose har eliminasjons-
+halveringstid på 13,3 ± 4,9 timer (tramadol) og 18,5 ± 9,4 timer (O-desmetyltramadol), i et ekstremt
+tilfelle henholdsvis 22,3 timer og 36 timer, blitt fastslått. Hos pasienter med nedsatt nyrefunksjon
+(kreatininclearance < 5 ml/min) var verdiene 11 ± 3,2 timer og 16,9 ± 3 timer, i et ekstremt tilfelle
+henholdsvis 19,5 timer og 43,2 timer.
+
+Tramadol har en lineær farmakokinetisk profil innen det terapeutiske området. Forholdet mellom
+serumkonsentrasjoner og analgetisk effekt er doseavhengig, men varierer betydelig i enkelte tilfeller.
+Serumkonsentrasjoner på 100-300 ng/ml er vanligvis virksomme.
+
+Pediatrisk populasjon
+Farmakokinetikken for tramadol og O-desmetyltramadol etter enkeltdose og flerdose oral administrasjon
+til individer i alderen 1 år til 16 år ble funnet å være sammenlignbar med voksne etter dosejustering for
+kroppsvekt, men med høyere variasjoner mellom individer hos barn fra 8 år og nedover.
+Farmakokinetikken for tramadol og O-desmetyltramadol hos barn under 1 år er undersøkt, men ikke fullt
+karakterisert. Informasjon fra studier som omfattet denne aldersgruppen tyder på at dannelseshastigheten
+for O-desmetyltramadol via CYP2D6 øker kontinuerlig hos nyfødte, og voksennivå av CYP2D6 aktivitet
+antas å bli nådd omkring 1 års alder. I tillegg kan immature glukuroniseringssystemer og immatur renal
+funksjon resultere i langsom eliminasjon og akkumulering av O-desmetyltramadol hos barn under 1 år.
+
+5.3   Prekliniske sikkerhetsdata
+
+Ved gjentatt peroral og parenteral administrering av tramadol til rotter og hunder i 6-26 uker og
+peroral administrering i 12 måneder til hunder viste de hematologiske, klinisk-kjemiske og
+histologiske undersøkelsene ingen tegn til substansrelaterte forandringer. Effekter på CNS (rastløshet,
+økt spyttsekresjon, krampeanfall og redusert vektøkning) oppstod først etter doser som lå langt over de
+terapeutiske dosene. Rotter og hunder tolererte perorale doser på henholdsvis 20 og 10 mg/kg
+kroppsvekt og hunder tolererte rektale doser på 20 mg/kg kroppsvekt uten noen reaksjoner.
+
+Hos rotte ga tramadol toksiske effekter hos mordyrene, og økt dødelighet hos nyfødte ved doser på
+50 mg/kg/dag og oppover. Hos avkommet ble det sett forstyrrelser i bendannelse og forsinket åpning
+av vagina og øyne. Fertiliteten hos hann- og hunnrottene ble ikke påvirket. Hos kaniner ble det sett
+toksiske effekter hos mordyrene fra 125 mg/kg og oppover, samt skjelettforandringer hos avkommet.
+
+I noen testsystemer in vitro- ble det sett mutagene effekter. Tilsvarende ble ikke sett in vivo. I henhold
+til erfaringen så langt kan tramadol klassifiseres som ikke-mutagent.
+
+Karsinogenesestudier med tramadolhydroklorid er utført på rotter og mus. Hos rotte var det ingen tegn
+til substansrelatert økning av svulstforekomster. Hos mus så man en økt forekomst av
+levercelleadenomer hos hanndyr (doserelatert, ikke-signifikant økning fra 15 mg/kg og oppover) og en
+økning i lungesvulster hos hunndyr i alle doseringsgrupper (signifikant, men ikke doserelatert).

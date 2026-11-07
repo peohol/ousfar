@@ -1,0 +1,53 @@
+Generelle lidelser
+Vanlige: Utmattelse.
+
+Undersøkelser
+Sjeldne: Økt blodtrykk.
+
+1
+ Legemiddelavhengighet
+Gjentatt bruk av Tramadol Actavis kan føre til legemiddelavhengighet, også ved terapeutiske doser.
+Risikoen for legemiddelavhengighet kan variere avhengig av pasientens individuelle risikofaktorer,
+dosering og opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Direktoratet
+for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+I prinsippet kan det ved en forgiftning med tramadol forventes lignende symptomer som ved andre
+sentraltvirkende analgetika (opioider). Det omfatter spesielt miose, oppkast, kardiovaskulær kollaps,
+bevissthetsforstyrrelser/koma, kramper og respiratorisk depresjon/respirasjonsstans. Serotonergt syndrom har
+også blitt rapportert.
+
+Behandling
+Generelle akuttiltak gjelder; sørg for åpne luftveier (aspirasjon), å opprettholde respirasjon og sirkulasjon
+avhengig av symptomene. Magen tømmes ved oppkast (våken pasient) eller mageskylling. Aktivt kull eller
+mageskylling er kun anbefalt innen 2 timer etter inntak av tramadol. Ved forgiftning med svært store
+mengder tramadol eller tramadol depottabletter, kan slik behandling være nyttig også på et senere
+tidspunkt.
+Ved respirasjonsdepresjon brukes nalokson som antidot. Ved dyreforsøk hadde nalokson ingen effekt på
+kramper. I slike tilfeller bør diazepam gis intravenøst.
+Ved hemodialyse eller hemofiltrering elimineres tramadol i minimalt omfang fra serum. Det er derfor ikke
+tilstrekkelig med bare hemodialyse eller hemofiltrering ved behandling av akutt forgiftning med tramadol.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, andre opioider. ATC-kode: N02AX02.
+
+Tramadol er et sentralt virkende opioidanalgetikum. Det er en nonselektiv ren agonist på μ-, δ- og κ-
+opioid-reseptorer med en høyere affinitet til my-reseptorer. Andre mekanismer som kan medvirke til den
+analgetiske effekten, er inhibering av nevronalt reopptak av noradrenalin og stimulering av
+serotoninfrigjøring.
+
+Analgetisk, sederende. Tramadol har en antitussiv virkning. I motsetning til morfin har tramadol i
+analgetiske doser over et bredt område ingen respiratorisk hemmende virkning. Den gastrointestinale
+motiliteten påvirkes også i liten grad. Virkningen på det kardiovaskulære systemet er minimal. Styrken av
+tramadols effekt angis med 1/10 til 1/6 av morfins effekt.

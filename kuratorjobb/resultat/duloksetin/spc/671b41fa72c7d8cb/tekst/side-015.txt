@@ -1,0 +1,58 @@
+Absorpsjon: Duloksetin absorberes godt etter oral tilførsel med Cmax 6 timer etter dosering. Absolutt
+oral biotilgjengelighet varierer fra 32 % til 80 % (gjennomsnitt 50 %). Matinntak forlenger tiden til
+Cmax fra 6 til 10 timer og reduserer omfanget av absorpsjonen marginalt (omtrent 11 %). Disse
+endringene har ingen klinisk signifikans.
+
+Distribusjon: Duloksetin er bundet omtrent 96 % til humane plasmaproteiner. Duloksetin bindes til
+både albumin og alfa-1-syre-glykoprotein. Proteinbindingen påvirkes ikke av nedsatt nyre- eller
+leverfunksjon.
+
+Biotransformasjon: Duloksetin metaboliseres i utstrakt grad, og metabolittene utskilles hovedsakelig i
+urin. Begge cytokromene P450-2D6 og 1A2 katalyserer dannelsen av to hovedmetabolitter:
+glukuronidkonjugat av 4-hydroksy-duloksetin og sulfatkonjugat av 5-hydroksy-6-metoksy-duloksetin.
+På bakgrunn av in vitro-forsøk betraktes duloksetins sirkulerende metabolitter som farmakologisk
+inaktive. Duloksetins farmakokinetikk er ikke spesielt undersøkt hos pasienter som har en redusert
+CYP2D6-metabolisme (poor metabolisers). Begrensede data tyder på at plasmanivået av duloksetin er
+høyere hos disse pasientene.
+
+Eliminasjon: Halveringstiden for duloksetin varierer fra 8-17 timer (gjennomsnitt 12 timer). Etter
+intravenøs dosering varierer duloksetins plasmaclearance fra 22 liter/time til 46 liter/time
+(gjennomsnitt 36 liter/time). Etter oral dosering varierer tilsynelatende plasmaclearance for duloksetin
+fra 36-261 liter/time (gjennomsnitt 101 liter/time).
+
+Spesielle populasjoner
+Kjønn: Det er funnet farmakokinetiske forskjeller mellom menn og kvinner (tilsynelatende
+plasmaclearance er omtrent 50 % lavere hos kvinner). Basert på overlappende verdier for clearance,
+rettferdiggjør ikke kjønnsbaserte farmakokinetiske forskjeller å anbefale en lavere dosering til
+kvinnelige pasienter.
+
+Alder: Det er funnet farmakokinetiske forskjeller mellom yngre og eldre kvinner (≥ 65 år) (AUC økes
+med ca. 25 % og halveringstiden forlenges ca. 25 % hos eldre). Størrelsesorden på disse forandringene
+er ikke tilstrekkelig til å anbefale dosejusteringer. En generell anbefaling er å vise forsiktighet ved
+behandling av eldre (se pkt. 4.2 og 4.4).
+
+Nedsatt nyrefunksjon: Pasienter med terminal nyresykdom (ESRD) i dialysebehandling hadde en
+doblet duloksetin-Cmax og doblet AUC verdier sammenlignet med friske. Farmakokinetiske data for
+duloksetin er begrenset hos pasienter med mild til moderat nedsatt nyrefunksjon.
+
+Nedsatt leverfunksjon: Moderat leversykdom (Child-Pugh klasse B) påvirket duloksetins
+farmakokinetikk. Sammenlignet med friske var den tilsynelatende plasmaclearance for duloksetin 79
+% lavere, den tilsynelatende terminale halveringstid 2,3 ganger lengre, og AUC var 3,7 ganger høyere
+hos pasienter med moderat leversykdom. Det er ikke foretatt studier av farmakokinetikken til
+duloksetin og dets metabolitter hos pasienter med lett eller alvorlig nedsatt leverfunksjon.
+
+Ammende mødre: Fordelingen av duloksetin ble studert hos 6 ammende kvinner som var minst 12
+uker post-partum. Duloksetin kan spores i brystmelk, og steady-state konsentrasjonen i brystmelk er
+omtrent en fjerdedel av plasmakonsentrasjonen. Duloksetinmengden i brystmelk er omtrent 7 μg/dag
+ved en dosering på 40 mg to ganger daglig. Laktasjon påvirker ikke farmakokinetikken til duloksetin.
+
+Pediatrisk populasjon: Farmakokinetikk for duloksetin hos pediatriske pasienter med depressiv lidelse
+i alderen 7 til 17 år etter administrering av 20 mg til 120 mg én gang daglig, ble karakterisert ved å
+benytte populasjonsmodelleringsanalyser basert på data fra 3 studier. Duloksetin steady state
+plasmakonsentrasjon hos pediatriske pasienter beregnet iflg. modell, var stort sett innenfor
+konsentrasjonsområdet observert hos voksne pasienter.
+
+5.3   Prekliniske sikkerhetsdata
+
+
+                                                   15

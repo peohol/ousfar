@@ -1,0 +1,59 @@
+En studie er utført hos pediatriske pasienter med juvenil primær fibromyalgi syndrom (JPFS). Det var
+ikke forskjell mellom den duloksetinbehandlete gruppen og placebogruppen for primært effektmål.
+Det er derfor ikke vist effekt i denne pediatriske pasientpopulasjonen. Den randomiserte,
+dobbeltblindede, placebokontrollerte, parallellgruppe studien av duloksetin ble gjennomført hos 184
+ungdommer i alderen 13 til 18 år (gjennomsnittlig alder 15,53 år) med JPFS. Studien omfattet en 13-
+ukers dobbeltblind periode hvor pasientene ble randomisert til duloksetin 30 mg/60 mg eller placebo
+daglig. Duloksetin viste ikke effekt for reduksjon av smerte for det primære endepunktet, målt ved
+smerteskalaen Brief Pain Inventory (BPI) gjennomsnittlig smertescore. Minste kvadrat (LS)
+gjennomsnittlig endring fra baseline i BPI gjennomsnittlig smertescore etter 13 uker var -0,97 i
+placebogruppen, sammenlignet med -1,62 i gruppen duloksetin 30/60 mg (p = 0,052).
+Sikkerhetsresultatene fra denne studien var i samsvar med kjente sikkerhetsprofil for duloksetin.
+
+Det europeiske legemiddelkontoret (The European Medicines Agency) har gitt unntak fra forpliktelsen
+til å presentere resultater fra studier med duloksetinholdige legemidler i alle undergrupper av den
+pediatriske populasjonen for depressive lidelser, smerter ved perifer diabetisk nevropati og generalisert
+angstlidelse. Se pkt. 4.2 for informasjon vedrørende pediatrisk bruk.
+
+5.2   Farmakokinetiske egenskaper
+
+Duloksetin administreres som en enkelt enantiomer. Duloksetin metaboliseres i utstrakt grad av
+oksiderende enzymer (CYP1A2 og det polyforme CYP2D6), etterfulgt av konjugering. Duloksetins
+farmakokinetikk viser stor variasjon mellom pasienter (generelt 50–60 %), delvis på grunn av kjønn,
+alder, røyker/ikke-røyker og CYP2D6-metaboliseringsevne.
+
+Absorpsjon: Duloksetin absorberes godt etter oral tilførsel med Cmax 6 timer etter dosering. Absolutt
+oral biotilgjengelighet varierer fra 32 % til 80 % (gjennomsnitt 50 %). Matinntak forlenger tiden til
+Cmax fra 6 til 10 timer og reduserer omfanget av absorpjonen marginalt (omtrent 11 %). Disse
+endringene har ingen klinisk signifikans.
+
+Distribusjon: Duloksetin er bundet omtrent 96 % til humane plasmaproteiner. Duloksetin bindes til
+både albumin og alfa-1-syre-glykoprotein. Proteinbindingen påvirkes ikke av nedsatt nyre- eller
+leverfunksjon.
+
+Biotransformasjon: Duloksetin metaboliseres i utstrakt grad, og metabolittene utskilles hovedsakelig i
+urin. Begge cytokromene P450-2D6 og 1A2 katalyserer dannelsen av to hovedmetabolitter:
+glukuronidkonjugat av 4-hydroksy-duloksetin og sulfatkonjugat av 5-hydroksy-6-metoksy-duloksetin.
+På bakgrunn av in vitro-forsøk betraktes duloksetins sirkulerende metabolitter som farmakologisk
+inaktive. Duloksetins farmakokinetikk er ikke spesielt undersøkt hos pasienter som har en redusert
+CYP2D6-metabolisme (poor metabolisers). Begrensede data tyder på at plasmanivået av duloksetin er
+høyere hos disse pasientene.
+
+Eliminasjon: Halveringstiden for duloksetin varierer fra 8-17 timer (gjennomsnitt 12 timer). Etter
+intravenøs dosering varierer duloksetins plasmaclearance fra 22 liter/time til 46 liter/time
+(gjennomsnitt 36 liter/time). Etter oral dosering varierer tilsynelatende plasmaclearance for duloksetin
+fra 36-261 liter/time (gjennomsnitt 101 liter/time).
+
+Spesielle populasjoner
+Kjønn: Det er funnet farmakokinetiske forskjeller mellom menn og kvinner (tilsynelatende
+plasmaclearance er omtrent 50 % lavere hos kvinner). Basert på overlappende verdier for clearance,
+rettferdiggjør ikke kjønnsbaserte farmakokinetiske forskjeller å anbefale en lavere dosering til
+kvinnelige pasienter.
+
+Alder: Det er funnet farmakokinetiske forskjeller mellom yngre og eldre kvinner (≥ 65 år) (AUC økes
+med ca. 25 % og halveringstiden forlenges ca. 25 % hos eldre). Størrelsesorden på disse forandringene
+er ikke tilstrekkelig til å anbefale dosejusteringer. En generell anbefaling er å vise forsiktighet ved
+behandling av eldre (se pkt. 4.2 og 4.4).
+
+
+                                                   15

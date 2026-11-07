@@ -1,0 +1,56 @@
+4.9   Overdosering
+
+Symptomer: Tegn på overdosering inkluderer små pupiller, lungeaspirasjon, respirasjonsdepresjon og
+hypotensjon. Sirkulasjonssvikt og koma kan forekomme ved alvorlige tilfeller. Respirasjonssvikt kan
+medføre død.
+
+Behandling: Dersom morfin er tatt peroralt kan mageskylling, kull og laksantia brukes.
+Respirasjonsdepresjon ved morfinforgiftning kan reverseres med intravenøs nalokson som settes
+langsomt, startdose 0,4 mg hos voksne (barn 0,01 mg/kg). Dosen kan økes gradvis hvis nødvendig.
+Kontinuerlig infusjon av nalokson kan enkelte ganger være praktisk.
+Respiratorisk behandling ved behov (med PEEP ved lungeødem). Ved alvorlige forgiftninger kan
+nalokson ikke erstatte respirasjonsbehandling. Intravenøse væsker (elektrolytter, glukose),
+blodgasskontroll, acidosekorreksjon. Symptomatisk behandling.
+
+Toksisitet: Toksisk dose hos voksne (uten toleranseutvikling) er vanligvis 40-60 mg peroralt (30 mg
+parenteralt). Skopolamin, hypnotika og alkohol potenserer de toksiske effektene.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opiumsalkaloider, ATC-kode: N02A A01
+
+Morfin er et opioidanalgetika med sterk analgetisk effekt. Den analgetiske effekten skyldes endret
+smerteoppfattelse og delvis en økt smerteterskel. Sannsynligvis utøver morfin den analgetiske effekten
+på forskjellige nivåer i sentralnervesystemet (CNS).
+
+Den analgetiske effekten av morfin er økt hos eldre. De sentralnervøse effektene av morfin omfatter
+også respirasjonsdepresjon, psykiatriske symptomer, kvalme og oppkast, miose og frisetting av
+antidiuretisk hormon (ADH). Den respirasjonshemmende effekten av morfin skyldes hemming av den
+stimulerende effekten til karbondioksid på respirasjonssenteret i medulla. Denne effekten kan føre til
+utilstrekkelig respirasjon hos pasienter med nedsatt ventilasjonskapasitet på grunn av lungesykdom
+eller effekter av andre legemidler. Etter encefalitt kan effekten av morfin forsterkes. Forgiftning med
+morfin krever respiratorisk støttebehandling og administrering av antidot.
+
+Blant de psykiatriske symptomene er eufori, men også depresjon og søvn-, konsentrasjons- og
+hukommelsesforstyrrelser. På grunn av stimulering av dopaminreseptorene i "triggersonen" i medulla,
+kan kvalme og oppkast forekomme. Den økte frisettingen av antidiuretisk hormon gir redusert
+urinvolum ved morfinbehandling. Morfin øker tonus i glatt muskulatur i fordøyelseskanalen. Dette
+fører til obstipasjon ved at passasjen av føde gjennom fordøyelseskanalen forlenges. Videre øker
+trykket i galle- og urinveiene, noe som gjør morfin mindre egnet ved galleveis- og urinveisspasmer.
+Morfin er vanedannende og toleranse kan utvikles mot effektene av morfin. Dette medfører vanligvis
+ingen problemer ved behandling av alvorlige kreftsmerter.
+
+M6, en hovedmetabolitt av morfin, har andre farmakologiske effekter enn morfin. Under kronisk
+behandling bidrar hovedmetabolitten til en betydelig del av den analgetiske effekten av morfin.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Maksimal blodkonsentrasjon oppnås innen 10-20 minutter.
+
+Distribusjon
+
+                                                   7

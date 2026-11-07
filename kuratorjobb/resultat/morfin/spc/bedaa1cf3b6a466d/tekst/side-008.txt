@@ -1,0 +1,57 @@
+Distribusjonsvolumet er ca. 3 liter/kg med en plasmaproteinbinding på ca. 35 %. Clearance er ca.
+24 ml/minutt/kg og halveringstiden er ca. 2-3 timer.
+
+Biotransformasjon
+Morfin har ingen doseavhengig kinetikk. Hovedmetabolittene er morfin-3-glukuronid (mangler
+analgetisk effekt) og morfin-6-glukuronid (mer potent enn morfin selv). Morfin og metabolittene
+gjennomgår enterohepatisk sirkulasjon.
+
+Eliminasjon
+Eliminasjonen av morfin foregår hovedsakelig ved glukuronidering og utskillelse av uforandret morfin
+i urin er < 0,1 %.
+Biotilgjengeligheten kan være økt ved leverkreft.
+
+5.3     Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesiell fare for mennesker basert på konvensjonelle studier av
+sikkerhetsfarmakologi og toksisitetstester ved gjentatt dosering. Det finnes ingen langtids dyrestudier
+med hensyn til tumorigent potensiale for morfin. Effektene i prekliniske studier ble undersøkt for
+gentoksisitet og toksisitet med hensyn til reproduksjon og utvikling.
+
+Mutagent og tumorigent potensiale
+Det er tydelige funn tilgjengelig med hensyn til mutagenisitet, noe som tyder på at morfin har en
+klastogen effekt og at denne effekten dessuten påvirker kjønnscellene. Morfin må derfor regnes som
+en mutagen substans, og en slik effekt kan også antas hos mennesker.
+
+Reproduksjonstoksisitet
+Dyrestudier har vist et potensiale for skade hos avkom gjennom hele svangerskapsforløpet (CNS-
+misdannelser, vekstretardasjon, testikkelatrofi, forandringer i nevrotransmittersystemene og
+oppførselsmønster, avhengighet). Hos hannrotter har det blitt rapportert om nedsatt fertilitet og
+kromosomskade i spermie. I tillegg hadde morfin en effekt på seksuell oppførsel og fertilitet hos
+hanndyr hos flere arter.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Saltsyre (til pH-justering)
+Vann til injeksjonsvæsker
+
+6.2     Uforlikeligheter
+
+Fysisk-kjemisk inkompatibilitet (danning av utfellinger) har blitt vist mellom oppløsninger av
+morfinsulfat og 5-fluorouracil.
+
+6.3     Holdbarhet
+
+2 år.
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares ved høyst 25 C. Oppbevar ampullen i ytteremballasjen for å beskytte mot lys.
+
+6.5      Emballasje (type og innhold)
+
+
+                                                   8

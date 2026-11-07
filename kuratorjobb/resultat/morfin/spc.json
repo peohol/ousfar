@@ -1,0 +1,2359 @@
+{
+  "stoff": "morfin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-07T04:15:06.366674+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 47,
+    "hentet": 21,
+    "dokumenter": 11,
+    "mangler": [
+      {
+        "merkevare_id": "ID_00FBF542-A872-482B-94C7-C36EEDCAD4FC",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inj, oppl 0,2 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1767DDFA-C248-4814-8EE8-A0C6D09E11BF",
+        "varenavn": "Morfin NAF",
+        "navn_form_styrke": "Morfin NAF inj, oppl 40 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2184C27B-494C-46A2-9CA2-154F3F70C54C",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA stikkpille 10 mg",
+        "produsent": "Sykehusapoteket Oslo, Ullevål",
+        "atc": "N02AA01",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2C218C04-5A4B-474D-8907-71BFBA3175A3",
+        "varenavn": "Sevre-Long",
+        "navn_form_styrke": "Sevre-Long depotkaps, hard 30 mg",
+        "produsent": "Mundipharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2E18977B-F838-4A05-866A-95DD6729BBAF",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA mikst oppl 1 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_31D48522-4A30-40DD-BE77-9CBE52E97E44",
+        "varenavn": "Contalgin Uno specific",
+        "navn_form_styrke": "Contalgin Uno specific depotkaps, hard 90 mg",
+        "produsent": "Mundipharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_33A8ABD8-D1EA-41D1-8234-4815F9632CD3",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA stikkpille 30 mg",
+        "produsent": "Sykehusapoteket Oslo, Ullevål",
+        "atc": "N02AA01",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3B4579A8-D73F-49BE-9B81-EEBCA1655047",
+        "varenavn": "Morfin NAF",
+        "navn_form_styrke": "Morfin NAF inj, oppl 1 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3FE5CA1E-DD18-41BB-BE4C-025555847425",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inf, oppl 5 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_6143C31F-0069-4896-9833-C9A9CB0FEB50",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA mikst oppl 0,5 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_78E3D380-422C-4EF7-A290-0A02BDCDBE11",
+        "varenavn": "Compensan retard",
+        "navn_form_styrke": "Compensan retard depottab 300 mg",
+        "produsent": "G.L. Pharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7A3604B2-B83F-49C5-8B22-2848B0FB4855",
+        "varenavn": "Sevre-Long",
+        "navn_form_styrke": "Sevre-Long depotkaps, hard 200 mg",
+        "produsent": "Mundipharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_90EEE82B-F76D-454C-861D-C8DA8B737BC8",
+        "varenavn": "Compensan retard",
+        "navn_form_styrke": "Compensan retard depottab 200 mg",
+        "produsent": "G.L. Pharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_95990642-679D-4164-ACB9-544D25248E3E",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA mikst oppl 0,1 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_96A0244F-6428-4F4D-AE84-5CAF712970BC",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inf, oppl 2 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_9D1AA2B1-42C5-44B6-BDC4-1AEB0EA7D0B2",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA stikkpille 0,5 mg",
+        "produsent": "Sykehusapoteket Oslo, Ullevål",
+        "atc": "N02AA01",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B70CDE76-5766-4FD7-8964-6E2B1C836D69",
+        "varenavn": "Contalgin Uno specific",
+        "navn_form_styrke": "Contalgin Uno specific depotkaps, hard 150 mg",
+        "produsent": "Mundipharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_BED14E8C-ABBC-4EE9-8989-E7980079336B",
+        "varenavn": "Morfin NAF",
+        "navn_form_styrke": "Morfin NAF mikst oppl 10 mg/ml",
+        "produsent": "Ås produksjonslab AS",
+        "atc": "N02AA01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C717E6FE-7ECE-4111-A337-4E1532674937",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA stikkpille 1 mg",
+        "produsent": "Sykehusapoteket Oslo, Ullevål",
+        "atc": "N02AA01",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CA4AA8FB-B0DE-450E-840B-DF969FBF1140",
+        "varenavn": "Oramorph",
+        "navn_form_styrke": "Oramorph dråper, oppl 20 mg/ml",
+        "produsent": "L. Molteni og C. dei F.lli Alitti Società di Esercizio S.p.A.",
+        "atc": "N02AA01",
+        "legemiddelform": "Dråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CCAE1107-EE62-4EEA-8D0B-2FC538F276B2",
+        "varenavn": "Morfine HCI centrafarm u/kons",
+        "navn_form_styrke": "Morfine HCI centrafarm u/kons inj, oppl uten konserveringsmiddel 10 mg/ml",
+        "produsent": "Centrafarm",
+        "atc": "N02AA01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E19B1994-DB04-4DC9-AC0B-4F7B2B590402",
+        "varenavn": "Compensan retard",
+        "navn_form_styrke": "Compensan retard depottab 100 mg",
+        "produsent": "G.L. Pharma",
+        "atc": "N02AA01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EC36AB58-40D7-43FE-8F37-73614D2C77B8",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inf, oppl uten konserveringsmiddel 20 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F3DFB820-4E67-40FB-8BFD-0711EEEE40AC",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inj, oppl 1 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F81D9148-61B4-498D-A96E-B501C0C4C1A7",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inf, oppl 1 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F83F822D-82EC-4C8D-91D2-8080B69ACFDF",
+        "varenavn": "Morfin SA",
+        "navn_form_styrke": "Morfin SA inf, oppl 10 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA01",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 20 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 20,
+        "ikke_dmp": 0,
+        "uten_omtale": 26
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "26 av 47 preparater i FEST mangler en hentet preparatomtale fra DMP: 26 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 47,
+        "hentet": 21,
+        "mangler": 26,
+        "dokumenter": 11
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01894.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01894.pdf",
+      "hentet_kl": "2026-11-07T18:26:19.671Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "185188",
+        "content-md5": "qzDeoW+DDT7ZyfqUe4V6fA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:51 GMT",
+        "etag": "0x8DE53793D1FA7A0",
+        "date": "Sat, 07 Nov 2026 18:26:20 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_083C5BAB-4769-4089-A13D-2AF3A79169A5",
+          "varenavn": "Oramorph",
+          "navn_form_styrke": "Oramorph mikst oppl 2 mg/ml",
+          "produsent": "2care4 ApS",
+          "atc": "N02AA01",
+          "legemiddelform": "Mikstur, oppløsning"
+        },
+        {
+          "merkevare_id": "ID_BCD7713E-7633-4E75-8F7E-AD7827124920",
+          "varenavn": "Oramorph",
+          "navn_form_styrke": "Oramorph mikst oppl 2 mg/ml",
+          "produsent": "L. Molteni & C. dei F.lli Alitti Società di Esercizio S.p.A.",
+          "atc": "N02AA01",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01894.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (185188 byte).",
+          "antall": {
+            "bytes": 185188
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "fc5ffc51d7b79a6dc7af9cb8846a8a986c787705e8efe454f791aa4b55688314"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07072.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07072.pdf",
+      "hentet_kl": "2026-11-07T18:26:24.078Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:44 GMT",
+        "etag": "0x8DE537938F31326",
+        "date": "Sat, 07 Nov 2026 18:26:24 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0C4C8E52-02ED-45F0-A127-74A69AAF506F",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 100 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07072.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07912.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07912.pdf",
+      "hentet_kl": "2026-11-07T18:26:28.316Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:42 GMT",
+        "etag": "0x8DE537937E1CAA7",
+        "date": "Sat, 07 Nov 2026 18:26:28 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_126555D4-BD72-4ACE-9303-177A415A619C",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 200 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07912.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08687.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08687.pdf",
+      "hentet_kl": "2026-11-07T18:26:28.481Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339647",
+        "content-md5": "e2xK02xMTXmO3BSJsf4+4w==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:25 GMT",
+        "etag": "0x8DF25086E50DA2F",
+        "date": "Sat, 07 Nov 2026 18:26:28 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1CCA83BA-7AE8-4F3C-88C5-6438DB92920A",
+          "varenavn": "Malfin",
+          "navn_form_styrke": "Malfin depottab 100 mg",
+          "produsent": "Teva Sweden AB",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08687.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339647 byte).",
+          "antall": {
+            "bytes": 339647
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9bda0041c681a8ec63ddd5b00c05d475141d421d36b3b8b5a22e7191746fe07d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08684.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08684.pdf",
+      "hentet_kl": "2026-11-07T18:26:34.612Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339647",
+        "content-md5": "e2xK02xMTXmO3BSJsf4+4w==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:25 GMT",
+        "etag": "0x8DF25086E48E61A",
+        "date": "Sat, 07 Nov 2026 18:26:35 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2C5E1C6B-2D24-43E0-B46B-DF4BD792DCEC",
+          "varenavn": "Malfin",
+          "navn_form_styrke": "Malfin depottab 10 mg",
+          "produsent": "Teva Sweden AB",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08684.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339647 byte).",
+          "antall": {
+            "bytes": 339647
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9bda0041c681a8ec63ddd5b00c05d475141d421d36b3b8b5a22e7191746fe07d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08685.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08685.pdf",
+      "hentet_kl": "2026-11-07T18:26:36.012Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339647",
+        "content-md5": "e2xK02xMTXmO3BSJsf4+4w==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:25 GMT",
+        "etag": "0x8DF25086E4BA4C8",
+        "date": "Sat, 07 Nov 2026 18:26:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2C7E20CC-CB1A-4667-9E01-FA19A63AA360",
+          "varenavn": "Malfin",
+          "navn_form_styrke": "Malfin depottab 30 mg",
+          "produsent": "Teva Sweden AB",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08685.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339647 byte).",
+          "antall": {
+            "bytes": 339647
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9bda0041c681a8ec63ddd5b00c05d475141d421d36b3b8b5a22e7191746fe07d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07785.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07785.pdf",
+      "hentet_kl": "2026-11-07T18:26:37.322Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "185833",
+        "content-md5": "hi89egTg0Y6tlNXPzL7Gyg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:47 GMT",
+        "etag": "0x8DE53793AA5DB81",
+        "date": "Sat, 07 Nov 2026 18:26:37 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_4D4794B4-A4BF-4CB4-842D-52242518A951",
+          "varenavn": "Morfin",
+          "navn_form_styrke": "Morfin tab 10 mg",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07785.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (185833 byte).",
+          "antall": {
+            "bytes": 185833
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3f2201ac8002fdadac8a3f1bdb54e0a15a477792029272f29ffcfffd278cd8bc"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08686.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08686.pdf",
+      "hentet_kl": "2026-11-07T18:26:40.727Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339647",
+        "content-md5": "e2xK02xMTXmO3BSJsf4+4w==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:25 GMT",
+        "etag": "0x8DF25086E4E1B7D",
+        "date": "Sat, 07 Nov 2026 18:26:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5D7D7E5A-4DA5-46DB-80E4-8A911941230D",
+          "varenavn": "Malfin",
+          "navn_form_styrke": "Malfin depottab 60 mg",
+          "produsent": "Teva Sweden AB",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-08686.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339647 byte).",
+          "antall": {
+            "bytes": 339647
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9bda0041c681a8ec63ddd5b00c05d475141d421d36b3b8b5a22e7191746fe07d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07561.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07561.pdf",
+      "hentet_kl": "2026-11-07T18:26:40.885Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE537941682486",
+        "date": "Sat, 07 Nov 2026 18:26:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6F5535F7-5588-41BC-8C2B-7D75DC316DA3",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 60 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07561.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11053.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11053.pdf",
+      "hentet_kl": "2026-11-07T18:26:41.384Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "292489",
+        "content-md5": "jzfIy3dxcAFWikdOQNQbPg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:48 GMT",
+        "etag": "0x8DE53793B3D71B6",
+        "date": "Sat, 07 Nov 2026 18:26:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_715C8C8F-6432-417A-BE35-0B7C378378C0",
+          "varenavn": "Morfin Orifarm",
+          "navn_form_styrke": "Morfin Orifarm inj, oppl 10 mg/ml",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11053.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (292489 byte).",
+          "antall": {
+            "bytes": 292489
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "73e5378b9d4883cc22d026f8f04f37ec173a7c409d56fefaab4a62158598113d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01893.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01893.pdf",
+      "hentet_kl": "2026-11-07T18:26:45.600Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "183440",
+        "content-md5": "Kgx9mvzaGZ4Y7fRsQfCYkg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:42 GMT",
+        "etag": "0x8DE537937C371A4",
+        "date": "Sat, 07 Nov 2026 18:26:45 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_74672887-E953-43E4-8E44-B135FE2682E0",
+          "varenavn": "Oramorph",
+          "navn_form_styrke": "Oramorph dråper, oppl 20 mg/ml",
+          "produsent": "L. Molteni & C. dei F.lli Alitti Società di Esercizio S.p.A.",
+          "atc": "N02AA01",
+          "legemiddelform": "Dråper, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1995-01893.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (183440 byte).",
+          "antall": {
+            "bytes": 183440
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a08c3d028994e224a557987d305fb8f82f4c94420f7341f4455d3590b2a68fcf"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07070.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07070.pdf",
+      "hentet_kl": "2026-11-07T18:26:48.671Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:47 GMT",
+        "etag": "0x8DE53793AF1F4AC",
+        "date": "Sat, 07 Nov 2026 18:26:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_791AE6F6-0860-4F87-9AA4-BC62FD38DC04",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 10 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07070.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07233.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07233.pdf",
+      "hentet_kl": "2026-11-07T18:26:48.827Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "185536",
+        "content-md5": "U+zwXtsPkb7PcPKfF7fYAA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793F2195FB",
+        "date": "Sat, 07 Nov 2026 18:26:49 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_7ED2DDC3-1E8D-4D1D-95C5-5614345E7B44",
+          "varenavn": "Morfin Epidural",
+          "navn_form_styrke": "Morfin Epidural inj, oppl 2 mg/ml",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07233.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (185536 byte).",
+          "antall": {
+            "bytes": 185536
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d4def04cd2be0e79387cdd3a805c873ae4036a7886432f1c8dd27605c114728f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07071.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07071.pdf",
+      "hentet_kl": "2026-11-07T18:26:52.415Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:42 GMT",
+        "etag": "0x8DE537937ED61C1",
+        "date": "Sat, 07 Nov 2026 18:26:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_87A6AE9D-EC0A-4831-BD1D-5C2EE19B3D17",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 30 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07071.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11321.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11321.pdf",
+      "hentet_kl": "2026-11-07T18:26:52.573Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "194012",
+        "content-md5": "Vk+RKLUeIDrbuEhMnIGGzA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:49 GMT",
+        "etag": "0x8DE85F8EC5A0F2F",
+        "date": "Sat, 07 Nov 2026 18:26:53 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_87B4B9A5-E2B6-49DA-86B0-52DB6C6215B6",
+          "varenavn": "Dropizol",
+          "navn_form_styrke": "Dropizol dråper, oppl 10 mg/ml",
+          "produsent": "Pharmanovia A/S",
+          "atc": "A07DA02",
+          "legemiddelform": "Dråper, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11321.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (194012 byte).",
+          "antall": {
+            "bytes": 194012
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6243fc4d617d04562d2765ac43c67a20518a32cc132dee4c62bab23efeb6a2b8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9756.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9756.pdf",
+      "hentet_kl": "2026-11-07T18:26:56.491Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "187557",
+        "content-md5": "cn3iZ/e7HaI9TEQMo/HFXw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE5379409B0726",
+        "date": "Sat, 07 Nov 2026 18:26:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_9FADE950-E45D-4EAD-A695-3F8D46E68319",
+          "varenavn": "Morfin Abcur",
+          "navn_form_styrke": "Morfin Abcur inj, oppl 10 mg/ml",
+          "produsent": "Abcur AB",
+          "atc": "N02AA01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9756.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (187557 byte).",
+          "antall": {
+            "bytes": 187557
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "bedaa1cf3b6a466d4a3fbfdd165fae862705baca8637b1d79ff41856a2f52788"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07786.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07786.pdf",
+      "hentet_kl": "2026-11-07T18:27:00.076Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "185833",
+        "content-md5": "hi89egTg0Y6tlNXPzL7Gyg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793EAF5CAD",
+        "date": "Sat, 07 Nov 2026 18:27:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A6490701-659B-46D3-B019-5B72D024A3E3",
+          "varenavn": "Morfin",
+          "navn_form_styrke": "Morfin tab 30 mg",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07786.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (185833 byte).",
+          "antall": {
+            "bytes": 185833
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3f2201ac8002fdadac8a3f1bdb54e0a15a477792029272f29ffcfffd278cd8bc"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06314.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06314.pdf",
+      "hentet_kl": "2026-11-07T18:27:00.231Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "187789",
+        "content-md5": "/s29ZFikFJEXAIL9MHzASw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793F1F9A72",
+        "date": "Sat, 07 Nov 2026 18:27:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_DF2ED120-F1CB-4CD3-9DEE-520E20DFD14D",
+          "varenavn": "Morfin",
+          "navn_form_styrke": "Morfin inj, oppl 10 mg/ml",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06314.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (187789 byte).",
+          "antall": {
+            "bytes": 187789
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3b6ebcf525defc866ffe67299abf77efdcf63b21322ace2b66e928669c5c344e"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11054.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11054.pdf",
+      "hentet_kl": "2026-11-07T18:27:04.025Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "292478",
+        "content-md5": "CnUbak8hWTIFTgQiFpQdyQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793DDF3275",
+        "date": "Sat, 07 Nov 2026 18:27:04 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E3FDA5F9-BF41-44EC-975F-483A8BF9B1DC",
+          "varenavn": "Morfin Orifarm",
+          "navn_form_styrke": "Morfin Orifarm inj, oppl 20 mg/ml",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N02AA01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11054.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (292478 byte).",
+          "antall": {
+            "bytes": 292478
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "82f06553dffe04bee1533abd85229a3a63812c3a69bdbfee82f5d2c765751f57"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07940.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07940.pdf",
+      "hentet_kl": "2026-11-07T18:27:07.916Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "191808",
+        "content-md5": "XDUtOWfp3FLrIgps/7m68Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940A5DAFA",
+        "date": "Sat, 07 Nov 2026 18:27:08 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F11A835C-A970-4853-9947-97361D38D7A9",
+          "varenavn": "Dolcontin",
+          "navn_form_styrke": "Dolcontin depottab 5 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07940.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (191808 byte).",
+          "antall": {
+            "bytes": 191808
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "fc5ffc51d7b79a6dc7af9cb8846a8a986c787705e8efe454f791aa4b55688314",
+      "bytes": 185188,
+      "mappe": "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Fri Nov 17 09:00:51 2023 UTC",
+        "endret": "Fri Nov 17 09:00:51 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/fc5ffc51d7b79a6d/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 16346
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3ba57fd1929bf10483373c4289698ff3eeb415bb73f190c94b6d247150b6e285",
+      "bytes": 191808,
+      "mappe": "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Fri Dec  6 12:19:22 2024 UTC",
+        "endret": "Fri Dec  6 12:19:22 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-009.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-010.txt",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-009.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-010.png",
+          "kuratorjobb/resultat/morfin/spc/3ba57fd1929bf104/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 21009
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "9bda0041c681a8ec63ddd5b00c05d475141d421d36b3b8b5a22e7191746fe07d",
+      "bytes": 339647,
+      "mappe": "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Initial Proposed SmPC plus proposed revisions (with deletions marked by strike trough and additions marked in bold italic)",
+        "laget": "Thu Mar 26 12:48:12 2026 UTC",
+        "endret": "Thu Mar 26 12:48:12 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-009.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-010.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-011.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-012.txt",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-009.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-010.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-011.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-012.png",
+          "kuratorjobb/resultat/morfin/spc/9bda0041c681a8ec/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28141
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3f2201ac8002fdadac8a3f1bdb54e0a15a477792029272f29ffcfffd278cd8bc",
+      "bytes": 185833,
+      "mappe": "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Wed Nov 15 14:45:32 2023 UTC",
+        "endret": "Wed Nov 15 14:45:32 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/3f2201ac8002fdad/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17535
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "73e5378b9d4883cc22d026f8f04f37ec173a7c409d56fefaab4a62158598113d",
+      "bytes": 292489,
+      "mappe": "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Tue Nov 14 06:07:26 2023 UTC",
+        "endret": "Tue Nov 14 06:07:26 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-009.txt",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-009.png",
+          "kuratorjobb/resultat/morfin/spc/73e5378b9d4883cc/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20341
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "a08c3d028994e224a557987d305fb8f82f4c94420f7341f4455d3590b2a68fcf",
+      "bytes": 183440,
+      "mappe": "kuratorjobb/resultat/morfin/spc/a08c3d028994e224",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Fri Nov 17 09:00:51 2023 UTC",
+        "endret": "Fri Nov 17 09:00:51 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/a08c3d028994e224/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 15914
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "d4def04cd2be0e79387cdd3a805c873ae4036a7886432f1c8dd27605c114728f",
+      "bytes": 185536,
+      "mappe": "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Wed Nov 15 15:01:49 2023 UTC",
+        "endret": "Wed Nov 15 15:01:49 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/d4def04cd2be0e79/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17072
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6243fc4d617d04562d2765ac43c67a20518a32cc132dee4c62bab23efeb6a2b8",
+      "bytes": 194012,
+      "mappe": "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Fri Aug 29 07:47:36 2025 UTC",
+        "endret": "Fri Aug 29 07:47:36 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/6243fc4d617d0456/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 18857
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "bedaa1cf3b6a466d4a3fbfdd165fae862705baca8637b1d79ff41856a2f52788",
+      "bytes": 187557,
+      "mappe": "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri Nov  3 07:53:37 2023 UTC",
+        "endret": "Fri Nov  3 07:53:37 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/bedaa1cf3b6a466d/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 19310
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3b6ebcf525defc866ffe67299abf77efdcf63b21322ace2b66e928669c5c344e",
+      "bytes": 187789,
+      "mappe": "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Wed Nov 15 14:49:58 2023 UTC",
+        "endret": "Wed Nov 15 14:49:58 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/3b6ebcf525defc86/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 18023
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "82f06553dffe04bee1533abd85229a3a63812c3a69bdbfee82f5d2c765751f57",
+      "bytes": 292478,
+      "mappe": "kuratorjobb/resultat/morfin/spc/82f06553dffe04be",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Tue Nov 14 06:09:12 2023 UTC",
+        "endret": "Tue Nov 14 06:09:12 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/original.pdf",
+        "tekst": "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-001.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-002.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-003.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-004.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-005.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-006.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-007.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-008.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-009.txt",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-001.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-002.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-003.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-004.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-005.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-006.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-007.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-008.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-009.png",
+          "kuratorjobb/resultat/morfin/spc/82f06553dffe04be/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20341
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

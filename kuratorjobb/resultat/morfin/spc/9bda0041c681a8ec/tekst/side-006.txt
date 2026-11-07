@@ -1,0 +1,58 @@
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Sedativa som benzodiazepiner eller lignende legemidler:
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen for
+sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose og
+varighet ved samtidig bruk bør begrenses (se pkt. 4.4). CNS-hemmende legemidler inkluderer, men
+begrenser seg ikke til: andre opioider, anxiolytika, sedativer og hypnotika (inkludert benzodiazepiner),
+antiepileptika (inkludert gabapentinoider, slik som gabapentin og pregabalin), generelle anestetika
+(inkludert barbiturater), antipsykotika (inkludert fenotiaziner), antidepressiva, sentralt virkende
+antiemetika og alkohol.
+Dersom disse legemidlene brukes i kombinasjon med vanlige doser av morfin, kan denne
+interaksjonen føre til respirasjonsdepresjon, hypotensjon, betydelig sedasjon eller koma.
+
+I en studie på friske frivillige (N=12) ble en depotkapsel med 60 mg morfin administrert 2 timer før en
+kapsel med 600 mg gabapentin. Gjennomsnittlig AUC for gabapentin økte med 44 % sammenlignet
+med når gabapentin ble administrert uten morfin. Pasienter bør derfor overvåkes nøye for tegn på
+CNS-depresjon, slik som somnolens, og gabapentin- eller morfindosen bør reduseres på en
+hensiktsmessig måte.
+
+Legemidler som blokkerer effekten av acetylkolin
+Legemidler som blokkerer effekten av acetylkolin, f.eks. antihistaminer, antiparkinsonmidler og
+antiemetika, kan interagere med morfin og potensere antikolinerge bivirkninger.
+
+Alkohol
+Alkohol kan forsterke de farmakodynamiske effektene til Malfin depottabletter. Samtidig bruk bør
+unngås, da det kan resultere i hurtig frigivelse og absorpsjon av en potensielt dødelig morfindose.
+
+Antacida
+Samtidig administrasjon av antacida kan resultere i en raskere frigivelse av morfin enn forventet.
+Disse skal derfor ikke gis samtidig, men med minimum to timers mellomrom.
+
+Cimetidin
+Cimetidin hemmer metabolismen av morfin.
+
+Monoaminoksidasehemmere (MAO-hemmere)
+Morfin skal ikke administreres samtidig med MAO-hemmere eller de første 14 dagene etter
+seponering av MAO-hemmere (se pkt. 4.3).
+
+Rifampicin
+Rifampicin øker metabolismen av oralt administrert morfin i stor grad, og høyere doser kan derfor være
+nødvendig.
+
+Antidepressiva/Ko-analgetika
+Klomipramin og amitriptylin forsterker morfins analgetiske effekter, noe som til dels kan være et resultat
+av økt biotilgjengelighet. Justering av dosen kan være nødvendig.
+
+P2Y12-hemmere
+En forsinket og redusert eksponering for blodplatehemmende behandling med oral P2Y12-hemmer har
+vært observert hos pasienter med akutt koronarsyndrom behandlet med morfin. Denne interaksjonen
+kan være forbundet med redusert gastrointestinal motilitet og kan gjelde for andre opioider. Den
+kliniske relevansen er ukjent, men data indikerer et potensial for redusert effekt av P2Y12-hemmer
+hos pasienter som samtidig får morfin og en P2Y12-hemmer (se pkt. 4.4). Hos pasienter med akutt
+koronarsyndrom, der morfin ikke kan unngås og rask P2Y12-hemming anses avgjørende, kan bruk av
+en parenteral P2Y12-hemmer vurderes.
+
+
+
+                                                     6

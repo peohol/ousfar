@@ -1,0 +1,59 @@
+Ritonavir
+Det foreligger ikke farmakokinetiske data for samtidig bruk av ritonavir og morfin, men ritonavir
+induserer leverenzymer som glukoroniderer morfin, og dette kan kanskje føre til en lavere
+plasmakonsentrasjon av morfin.
+
+Morfinagonister/-antagonister
+Kombinerte morfinagonister/-antagonister (buprenorfin, nalbufin, pentazocin) skal ikke gis til
+pasienter som har blitt behandlet med rene opioidagonist-analgetika.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Det er ikke anbefalt å bruke morfin under graviditet. Dyrestudier indikerer skader på fosteret/den
+nyfødte ungen. Morfin anbefales ikke brukt under fødsel pga. fare for neonatal respirasjonsdepresjon.
+Malfin skal bare brukes under graviditet dersom potensielle fordeler oppveier mulige risiko for fostret.
+Nyfødte, hvis mødre fikk opioidsmertestillende under graviditeten, bør overvåkes for tegn på neonatalt
+abstinenssyndrom. Behandling kan inkludere et opioid og tilleggsbehandling.
+
+Amming
+Ammende mødre anbefales ikke å bruke morfin fordi morfin utskilles i morsmelk. Abstinenssymptomer
+kan observeres hos nyfødte av mødre under kronisk behandling.
+
+Fertilitet
+Dyrestudier har vist at morfin kan redusere fertilitet (se pkt. 5.3 Prekliniske sikkerhetsdata).
+
+4.7   Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+Morfin har stor påvirkning på pasientens reaksjonsevne (bl.a. redusert oppmerksomhet og økt
+reaksjonstid) i varierende grad, avhengig av dosering og individuell følsomhet.
+
+Pasienten skal ikke kjøre bil eller bruke maskiner dersom vedkommende er påvirket.
+
+Dette kan særlig forventes i starten av behandlingen, når dosen økes og ved samtidig inntak av alkohol
+eller andre beroligende midler.
+
+4.8   Bivirkninger
+
+De vanligste bivirkningene ved normale doser av morfin er kvalme, oppkast, forstoppelse og døsighet.
+Ved kronisk behandling er kvalme og oppkast uvanlig, men dersom disse bivirkningene oppstår, kan
+behandlingen kombineres med antiemetika. Forstoppelse kan behandles med lakserende legemidler.
+
+                     Svært        Vanlige          Mindre vanlige      Sjeldne           Ikke kjent
+                     vanlige      (≥1/100 til      (≥1/1 000 til       (≥1/10 000 til    (kan ikke
+                     (≥1/10)      <1/10)           <1/100)             <1/1 000)         anslås ut ifra
+                                                                                         tilgjengelige
+                                                                                         data)
+  Forstyrrelser                                    Hypersensitivite    Anafylaktiske
+  i                                                t                   og
+  immunsystem                                                          anafylaktoide
+  et                                                                   reaksjoner
+  Psykiatriske                    Forvirring,      Agitasjon,                            Avhengighet
+  lidelser                        insomni          eufori,                               (se pkt. 4.4),
+                                                   hallusinasjoner,                      dysfori, tanke-
+                                                   humørsvingning                        forstyrrelser
+                                                   er,
+                                                   desorientering,
+                                                   sedasjon
+
+                                                     7

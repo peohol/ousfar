@@ -1,0 +1,56 @@
+Interaksjon med tamoksifen
+Paroksetin, en potent inhibitor av CYP2D6, kan redusere konsentrasjon av endoksifen, en av de
+viktigste metabolittene av tamoksifen. Dersom det er mulig skal paroksetin derfor unngås under
+tamoksifen-behandling (se pkt. 4.5).
+
+Symptomer som er sett ved seponering av paroksetinbehandling
+Seponeringsreaksjoner er vanlig når behandling avsluttes, spesielt ved brå seponering (se pkt.
+4.8). I kliniske studier ble bivirkninger ved seponering av behandling sett hos 30 % av pasientene
+som ble behandlet med paroksetin sammenliknet med 20 % av pasientene som fikk placebo.
+Forekomst av seponeringsreaksjoner er ikke det samme som at legemidlet er vanedannende eller
+avhengighetsskapende.
+
+Risikoen for seponeringsreaksjoner kan være avhengig av flere faktorer inkludert dose, varighet
+av behandling, samt hvor hurtig dosen reduseres.
+
+Svimmelhet, sanseforstyrrelser (inklusive parestesier, elektriske sjokkfølelser og tinnitus),
+søvnforstyrrelser (inkludert intense drømmer), agitasjon eller angst, kvalme, tremor, forvirring,
+svetting, hodepine, diaré, palpitasjoner, emosjonell ustabilitet, irritabilitet og synsforstyrrelse har
+blitt rapportert. Hos de fleste er disse symptomene milde til moderate, men hos noen pasienter
+kan de være intense. De forekommer vanligvis i løpet av de første dagene etter at behandlingen er
+avsluttet, men det har i svært sjeldne tilfeller vært rapportert slike symptomer hos pasienter som i
+vanvare har glemt en dose. Normalt er disse symptomene selvbegrensende og opphører vanligvis
+innen to uker, selv om de hos noen pasienter kan vedvare lenger (to-tre måneder eller mer). Når
+behandlingen skal avsluttes er det derfor anbefalt at paroksetin seponeres gradvis over en periode
+på flere uker eller måneder, avhengig av pasientens behov (se pkt. 4.2).
+
+Seksuell dysfunksjon
+Selektive serotonin reopptakshemmere (SSRIer)/serotonin- og noradrenalin reopptakshemmere
+(SNRIer) kan forårsake symptomer på seksuell dysfunksjon (se pkt. 4.8). Det er rapportert om
+langvarig seksuell dysfunksjon der symptomene har fortsatt etter seponering av SSRIer/SNRIer.
+
+Natrium
+Hver tablett med Seroxat inneholder mindre enn 1 mmol natrium (23 mg), og er så godt som
+«natriumfritt».
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Serotonerge legemidler
+I likhet med andre SSRIer, vil samtidig administrering med serotonerge legemidler kunne føre til
+forekomst av 5-HT assosierte effekter (serotonergt syndrom: se pkt. 4.4). Forsiktighet anbefales
+og en grundigere klinisk monitorering påkreves når serotonerge legemidler (eksempelvis L-
+tryptofan, triptaner, tramadol, linezolid, metyltioniniumklorid (metylenblått), SSRIer, litium,
+petidin, buprenorfin, og preparater som inneholder Johannesurt – Hypericum perforatum)
+kombineres med paroksetin. Forsiktighet bør også utvises ved bruk av fentanyl i generell anestesi
+eller i behandling av kronisk smerte. Samtidig bruk av paroksetin og MAO-hemmere er
+kontraindisert grunnet risiko for serotonergt syndrom (se pkt. 4.3).
+
+Pimozid
+Gjennomsnittlig 2,5 ganger forhøyede pimozidnivå har blitt vist i en studie med enkeltdoser av
+lavdose pimozid (2 mg) gitt samtidig med 60 mg paroksetin. Dette kan forklares av de kjente
+CYP2D6 hemmende egenskapene av paroksetin.Samtidig bruk av pimozid og paroksetin er
+
+
+
+
+                                                   6

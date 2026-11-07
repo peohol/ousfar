@@ -1,0 +1,58 @@
+kode: N06A B05.
+
+Virkningsmekanisme
+Paroksetin er en potent og selektiv hemmer av opptak av 5-hydroksytryptamin (5-HT, serotonin), og
+dets antidepressive virkning og effekt ved behandling av tvangslidelser, sosiale angstlidelser/sosial
+fobi, generalisert angstlidelse, posttraumatisk stresslidelse og panikklidelse antas å være relatert til
+dets spesifikke hemming av neuronalt opptak av 5-HT i hjernen.
+
+Paroksetin er kjemisk ikke-relatert til trisykliske, tetrasykliske og andre tilgjengelige antidepressiva.
+
+Paroksetin har lav affinitet for muskarine kolinerge reseptorer, og dyrestudier har indikert kun svake
+antikolinerge egenskaper.
+
+I overensstemmelse med denne selektive virkningen har in vitro-studier vist at paroksetin har liten
+affinitet for alfa 1-, alfa 2- og beta-adrenoseptorer, dopamin (D2), 5-HT1-lignende, 5- HT2- og
+histaminreseptorer (H1) i motsetning til trisykliske antidepressiva. Denne manglende interaksjonen
+med postsynaptiske reseptorer in vitro underbygges av in vivo-studier, som viser manglende CNS-
+depressive og hypotensive egenskaper.
+
+Farmakodynamiske effekter
+Paroksetin svekker ikke den psykomotoriske funksjon, og potenserer ikke den beroligende effekten
+av etanol.
+
+Som for andre selektive 5-HT-opptakshemmere gir paroksetin symptomer på eksessiv 5-HT-
+reseptorstimulering når det gis til dyr som tidligere har fått MAO-hemmere eller tryptofan.
+
+Atferdsstudier og EEG-studier angir at paroksetin er svakt aktiverende ved doser som generelt er
+over de som kreves for å hemme 5-HT-opptaket. De aktiverende egenskapene er ikke av typen
+"amfetaminlignende". Dyrestudier har vist at paroksetin tolereres godt av det kardiovaskulære
+system. Paroksetin gir ingen klinisk signifikante endringer i blodtrykk, hjertefrekvens og EKG etter
+administrering til friske personer.
+
+Studier viser at paroksetin har svært lav tilbøyelighet til å hemme de antihypertensive effektene av
+guanetidin, i motsetning til antidepressiva som hemmer opptaket av noradrenalin. Ved behandling
+av depressive lidelser viser paroksetin sammenlignbar effekt med standard antidepressiva.
+
+Det foreligger også noe bevis på at paroksetin kan ha terapeutisk verdi hos pasienter som ikke har
+respondert på standardbehandling.
+
+Administrering av paroksetin om morgenen påvirker ikke søvnkvaliteten eller -lengden. Pasientene
+vil mest sannsynlig få bedre søvn etter hvert som de responderer på behandlingen med paroksetin.
+
+Klinisk effekt og sikkerhet
+
+Analyse på selvmord hos voksne
+En paroksetin spesifikk analyse av placebokontrollerte kliniske utprøvninger av voksne med
+psykiatriske lidelser, viste en høyere frekvens av suicidal oppførsel hos unge voksne (18-24 år) som
+var behandlet med paroksetin sammenlignet med placebo (2,19 % mot 0,92 %). Det ble ikke
+observert en slik økning hos eldre aldersgrupper. Hos voksne med depressive lidelser (alle aldre), var
+det en økning i frekvens av suicidal oppførsel hos pasienter behandlet med paroksetin sammenlignet
+med placebo (0,32 % mot 0,05 %). Alle hendelsene var selvmordsforsøk. Flertallet av disse
+selvmordsforsøkene (8 av 11) for paroksetin var hos yngre voksne (se også pkt. 4.4).
+
+Doserespons
+Studiene med fast dosering viser en flat doseresponskurve, noe som ikke tyder på fordeler med hensyn
+til effekt ved bruk av høyere doser enn de anbefalte. Det foreligger imidlertid enkelte kliniske data
+som antyder at en opptitrering av dosen kan være nyttig for noen pasienter.
+                                                                                                            13

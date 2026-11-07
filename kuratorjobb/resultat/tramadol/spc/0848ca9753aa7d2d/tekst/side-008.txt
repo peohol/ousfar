@@ -1,0 +1,55 @@
+respirasjonsdepresjon på grunn av tramadol er nalokson. Ved dyreforsøk hadde nalokson ingen effekt
+på konvulsjoner. I slike tilfeller skal diazepam gis intravenøst.
+Ved hemodialyse eller hemofiltrering elimineres tramadol i minimalt omfang fra serum. Det er derfor
+ikke tilstrekkelig med bare hemodialyse eller hemofiltrering ved behandling av akutt forgiftning med
+Nobligan.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1 Farmakodynamiske egenskaper
+Farmakoterapeutisk gruppe: Analgetika, ATC-kode: N02A X02
+
+Virkningsmekanisme
+Tramadol er et sentraltvirkende opioidanalgetikum. Det er en ikke-selektiv ren agonist på my-, delta-
+og kappa- opioid-reseptorer med en høyere affinitet til my-reseptorer. Andre mekanismer som kan
+medvirke til den analgetiske effekt er inhibering av gjenopptak av noradrenalin og stimulering av
+serotoninfrigjøring.
+
+Farmakodynamiske effekter
+Analgetiske, sederende. Tramadol har en hostedempende effekt. I motsetning til morfin har
+analgetiske doser av tramadol over et vidt spekter ingen respirasjonsnedsettende effekt. Den
+gastrointestinale motilitet blir også mindre påvirket. Påvirkning på det kardiovaskulære systemet er
+ubetydelig. Tramadols potens er rapportert å være fra 1/10 til 1/6 av morfins potens.
+
+Pediatrisk populasjon
+Effekten av enteral og parenteral administrasjon av tramadol er undersøkt i kliniske studier som omfattet
+mer enn 2000 pediatriske pasienter fra nyfødte til 17 års alder. Indikasjonene for smertebehandling
+undersøkt i disse studiene omfattet smerter etter operasjon (primært abdominale operasjoner), etter
+kirurgisk tanntrekking, smerter ved frakturer, forbrenning og traumer samt andre smertefulle tilstander
+som normalt krever analgetisk behandling i minst 7 dager.
+
+Ved enkeltdoser på opp til 2 mg/kg eller flere doser på opp til 8 mg/kg per dag (opp til maksimalt 400 mg
+per dag) viste effekten av tramadol seg å være bedre enn placebo og bedre eller like god som paracetamol,
+nalbufin, petidin eller lavdose morfin. De kliniske studiene bekreftet effekten av tramadol.
+Sikkerhetsprofilen for tramadol var lik hos voksne og barn over 1 år (se pkt. 4.2).
+
+5.2   Farmakokinetiske egenskaper
+
+Over 90 % av Nobligan absorberes etter oral administrasjon. Den absolutte biotilgjengeligheten ligger
+på ca. 70 %, og er uavhengig av samtidig inntak av føde.
+Forskjellen mellom absorbert og ikke metabolisert tilgjengelig tramadol skyldes sannsynligvis den
+lave first-pass effekten. First-pass effekten etter peroral administrering er maksimalt 30 %.
+
+Tramadol har høy vevsaffinitet (Vdbeta=203+40 l) og en plasmaproteinbinding rundt 20 %.
+Maximal serumkonsentration oppnås etter 1-2 timer (Tmax).
+
+Tramadol passerer blod-hjerne-barrieren og placentabarrieren. Svært små mengder av stoffet og dets
+O-desmetylderivat finnes i morsmelk (henholdsvis 0,1 % og 0,02 % av tilført dose).
+
+Eliminasjons-halveringstiden er ca. seks timer, uavhengig av administrasjonsmåte. Hos pasienter som
+er eldre enn 75 år kan den være forlenget med ca 40 %.
+
+Hos mennesker metaboliseres tramadol hovedsakelig gjennom N- og O-demetylering samt ved
+konjugering av O-demetyleringsproduktene med glukuronsyre. Bare O-desmetyltramadol er
+farmakologisk aktiv. Det er betydelige interindividuelle kvantitative forskjeller mellom de andre

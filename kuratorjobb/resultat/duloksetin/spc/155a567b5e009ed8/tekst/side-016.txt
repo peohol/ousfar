@@ -1,0 +1,59 @@
+Nedsatt nyrefunksjon: Pasienter med terminal nyresykdom (ESRD) i dialysebehandling hadde en
+doblet duloksetin Cmax og doblet AUC-verdier sammenlignet med friske. Farmakokinetiske data for
+duloksetin er begrenset hos pasienter med mild til moderat nedsatt nyrefunksjon.
+
+Nedsatt leverfunksjon: Moderat leversykdom (Child-Pugh klasse B) påvirket duloksetins
+farmakokinetikk. Sammenlignet med friske var den tilsynelatende plasmaclearance for duloksetin 79
+% lavere, den tilsynelatende terminale halveringstid 2,3 ganger lengre, og AUC var 3,7 ganger høyere
+hos pasienter med moderat leversykdom. Det er ikke foretatt studier av farmakokinetikken til
+duloksetin og dets metabolitter hos pasienter med lett eller alvorlig nedsatt leverfunksjon.
+
+Ammende mødre: Fordelingen av duloksetin ble studert hos 6 ammende kvinner som var minst 12
+uker post-partum. Duloksetin kan spores i brystmelk, og steady-state konsentrasjonen i brystmelk er
+omtrent en fjerdedel av plasmakonsentrasjonen. Duloksetinmengden i brystmelk er omtrent 7 μg/dag
+ved en dosering på 40 mg to ganger daglig. Laktasjon påvirker ikke farmakokinetikken til duloksetin.
+
+Pediatrisk populasjon: Farmakokinetikk for duloksetin hos pediatriske pasienter med depressiv lidelse
+i alderen 7 til 17 år etter administrering av 20 mg til 120 mg én gang daglig, ble karakterisert ved å
+benytte populasjonsmodelleringsanalyser basert på data fra 3 studier. Duloksetins teady state
+plasmakonsentrasjon hos pediatriske pasienter beregnet iflg. modell, var stort sett innenfor
+konsentrasjonsområdet observert hos voksne pasienter.
+
+5.3   Prekliniske sikkerhetsdata
+
+Duloksetin var ikke genotoksisk i en rekke standardtester og var ikke karsinogent hos rotter.
+Det er observert flerkjernede celler i lever ved fravær av andre histopatologiske endringer i
+karsinogenitetsstudier hos rotte. Den underliggende mekanisme og klinisk relevans er
+ukjent.
+Hunnmus som fikk duloksetin i 2 år viste økt insidens av hepatocellulære adenomer og karcinomer
+kun ved den høyeste dosering (144 mg/kg/dag), men disse ble betraktet å være sekundære til den
+mikrosomale enzyminduksjon i leveren. Relevansen av disse funn fra mus i forhold til mennesker er
+ukjent. Hunnrotter som fikk duloksetin (45 mg/kg/dag) før og under parring og i tidlig graviditet
+hadde nedsatt maternalt matinntak og kroppsvekt, avbrutt brunstsyklus, nedsatt indeks for
+levendefødsler og overlevelse hos avkom, samt forsinket vekst hos avkommet estimert til å være på sitt
+høyeste ved eksponeringsnivåer (AUC) tilsvarende maksimalt kliniske nivå. En
+embryotoksisitetsstudie hos kanin viste økt forekomst av kardiovaskulære- og skjelettmisdannelser ved
+lavere eksponeringsnivåer (AUC) enn tilsvarende maksimalt klinisk nivå. En annen studie der det ble
+testet på en høyere dose med et annet salt av duloksetin viste ingen misdannelser. Hos rotte framkalte
+duloksetin adferdsmessige bivirkninger hos avkommet i pre/postnatale toksisitetsstudier med doser
+under den maksimale kliniske eksponering (AUC).
+
+Studier av unge rotter viser forbigående effekt på nevroatferd, signifikant reduksjon i kroppsvekt og
+fødeinntak, induksjon av leverenzymer og forekomst av hepatocellulære vakuoler ved 45 mg/kg/dag.
+Generell toksisitetsprofil for duloksetin hos unge rotter var tilsvarende den for voksne rotter. NOEL
+(no-adverse effect level) ble satt ved 20 mg/kg/dag.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Fortegnelse over hjelpestoffer
+
+Kapselinnhold:
+Hypromellose
+Talkum
+Mikrokrystallinsk celluloseMetakrylsyre-etylakrylat-kopolymer
+Natriumlaurylsulfat
+Polysorbat 80
+Trietylsitrat
+
+                                                  16

@@ -1,18 +1,110 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-42401235229",
     "foresporsel_commit": "b4b8e6902e54d4b32e341d0acd24a9f6876ba296",
     "foresporsel_sha256": "4a9611d40f94e0e41f505ff769a2bb229bdbd2d897fbb3863e795c9d1ab5c37e",
     "kode_commit": "96774078f4bd136fb343e90b1788ec29a673da99",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/42401235229",
-    "startet_kl": "2026-11-07T18:26:10.315Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-07T18:26:12.254Z",
+    "ferdig_kl": "2026-11-07T18:28:51.462Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "morfin",
+      "tramadol",
+      "duloksetin",
+      "amisulprid",
+      "paroksetin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 305
+    }
+  ],
+  "stoffer": {
+    "morfin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/morfin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/morfin/spc.json"
+        }
+      }
+    },
+    "tramadol": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/tramadol/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/tramadol/spc.json"
+        }
+      }
+    },
+    "duloksetin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/duloksetin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/duloksetin/spc.json"
+        }
+      }
+    },
+    "amisulprid": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/amisulprid/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/amisulprid/spc.json"
+        }
+      }
+    },
+    "paroksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/paroksetin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/paroksetin/spc.json"
+        }
+      }
+    }
+  }
 }

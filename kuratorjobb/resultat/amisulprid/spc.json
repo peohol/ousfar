@@ -1,0 +1,343 @@
+{
+  "stoff": "amisulprid",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-07T04:15:06.366674+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 8,
+    "hentet": 7,
+    "dokumenter": 1,
+    "mangler": [
+      {
+        "merkevare_id": "ID_1818B9B2-B88B-43B2-9034-95AAD3E609D9",
+        "varenavn": "Amisulprid puren",
+        "navn_form_styrke": "Amisulprid puren tab 50 mg",
+        "produsent": "Puren",
+        "atc": "N05AL05",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 3 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 3,
+        "ikke_dmp": 0,
+        "uten_omtale": 1
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "1 av 8 preparater i FEST mangler en hentet preparatomtale fra DMP: 1 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 8,
+        "hentet": 7,
+        "mangler": 1,
+        "dokumenter": 1
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-05801.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-05801.pdf",
+      "hentet_kl": "2026-11-07T18:28:27.814Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "181294",
+        "content-md5": "3E3hxHaq3nIpzA1qTS/pNQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:59 GMT",
+        "etag": "0x8DE537941B527FC",
+        "date": "Sat, 07 Nov 2026 18:28:27 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0E5170A9-4CE5-4D60-B56E-855506920500",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 400 mg",
+          "produsent": "Sanofi-aventis Norge (3)",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_A21FBB93-5B66-4CBD-965D-7F63CB27C88E",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 400 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-05801.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (181294 byte).",
+          "antall": {
+            "bytes": 181294
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9b14d05e63c9d6ce120a897c3e3d459b11ee0d31770d7b073c4311c51341cc95"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03714.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03714.pdf",
+      "hentet_kl": "2026-11-07T18:28:31.358Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "181294",
+        "content-md5": "3E3hxHaq3nIpzA1qTS/pNQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D97D382",
+        "date": "Sat, 07 Nov 2026 18:28:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_94A93263-CA46-4B10-8BA5-D13F1AE8AD87",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 50 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett"
+        },
+        {
+          "merkevare_id": "ID_D718DC49-7B35-4844-BBC0-7A3407026AFA",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 50 mg",
+          "produsent": "Abacus Medicine A/S",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03714.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (181294 byte).",
+          "antall": {
+            "bytes": 181294
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9b14d05e63c9d6ce120a897c3e3d459b11ee0d31770d7b073c4311c51341cc95"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03715.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03715.pdf",
+      "hentet_kl": "2026-11-07T18:28:31.512Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "181294",
+        "content-md5": "3E3hxHaq3nIpzA1qTS/pNQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940945151",
+        "date": "Sat, 07 Nov 2026 18:28:32 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_DF3FBBA7-9802-4D10-A406-37219ABC9DC5",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 200 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett"
+        },
+        {
+          "merkevare_id": "ID_EAFA3DC3-87DA-45C1-8479-A4F9FC8106FC",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 200 mg",
+          "produsent": "Abacus Medicine A/S",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett"
+        },
+        {
+          "merkevare_id": "ID_FC9A7D7F-45FE-4D3D-9C75-9DDE963B15C5",
+          "varenavn": "Solian",
+          "navn_form_styrke": "Solian tab 200 mg",
+          "produsent": "Sanofi-aventis Norge (3)",
+          "atc": "N05AL05",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03715.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (181294 byte).",
+          "antall": {
+            "bytes": 181294
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9b14d05e63c9d6ce120a897c3e3d459b11ee0d31770d7b073c4311c51341cc95"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "9b14d05e63c9d6ce120a897c3e3d459b11ee0d31770d7b073c4311c51341cc95",
+      "bytes": 181294,
+      "mappe": "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SmPC)",
+        "laget": "Wed Aug 17 09:51:46 2022 UTC",
+        "endret": "Wed Aug 17 09:51:46 2022 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/original.pdf",
+        "tekst": "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-001.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-002.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-003.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-004.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-005.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-006.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-007.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-008.txt",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-001.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-002.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-003.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-004.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-005.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-006.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-007.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-008.png",
+          "kuratorjobb/resultat/amisulprid/spc/9b14d05e63c9d6ce/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 4,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 19345
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 4."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

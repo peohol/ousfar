@@ -1,0 +1,56 @@
+Bruken av paroksetin til barn under 7 år har ikke blitt undersøkt. Paroksetin bør ikke brukes så lenge
+sikkerheten og effekten hos denne aldersgruppen ikke har blitt etablert.
+
+Pasienter med redusert nyre-/leverfunksjon
+Plasmakonsentrasjoner av paroksetin er forhøyet hos pasienter med alvorlig nedsatt nyrefunksjon
+(kreatininclearance mindre enn 30 ml/min) og hos pasienter med nedsatt leverfunksjon. Dosen bør
+derfor begrenses til den nedre delen av doseringsområdet.
+
+Administrasjonsmåte
+Det er anbefalt at paroksetin tas én gang daglig om morgenen med mat.
+Den filmdrasjerte tabletten bør ikke tygges, men svelges hel.
+
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+Paroksetin er kontraindisert i kombinasjon med monoaminooksidasehemmere (MAO-hemmere). I
+unntakstilfeller kan linezolid (et antibiotikum som er en reversibel og ikke-selektiv MAO- hemmer)
+gis i kombinasjon med paroksetin under forutsetning av at man har fasiliteter for grundig
+observasjon av symptomer på serotonergt syndrom og overvåking av blodtrykket (se punkt 4.5).
+
+Behandling med paroksetin kan startes:
+-    To uker etter seponering av en irreversibel MAO-hemmer, eller
+-    Minst 24 timer etter seponering av en reversibel MAO-hemmer (for eksempel moklobemid,
+     linezolid metyltioniniumklorid (metylenblått).
+
+Det bør gå minst en uke etter avsluttet behandling med paroksetin før man starter behandling med
+en MAO-hemmer.
+Paroksetin skal ikke brukes i kombinasjon med tioridazin, da paroksetin, som andre legemidler som
+hemmer leverenzymet CYP450 2D6, kan gi forhøyet plasmanivå av tioridazin (se pkt. 4.5).
+Administrasjon av tioridazin alene kan føre til forlenget QTc-intervall assosiert med alvorlige
+ventrikkelarytmier, f.eks. torsades de pointes, og plutselig død.
+Paroksetin skal ikke brukes i kombinasjon med pimozid (se pkt. 4.5).
+
+      Advarsler og forsiktighetsregler
+
+Behandling med paroksetin bør forsiktig startes to uker etter avsluttet behandling med en
+irreversibel MAO-hemmer eller 24 timer etter avsluttet behandling med en reversibel MAO-
+hemmer. Dosen av paroksetin bør gradvis økes inntil optimal respons nås (se pkt. 4.3 og pkt. 4.5).
+
+Pediatrisk populasjon
+Paroksetin bør ikke brukes til behandling av barn og ungdom under 18 år. Selvmordsrelatert oppførsel
+(selvmordsforsøk og selvmordstanker), og fiendtlighet (særlig aggresjon, opposisjonell adferd og
+sinne), er sett oftere i kliniske studier hos barn og ungdom behandlet med antidepressiva sammenlignet
+med de som fikk placebo. Dersom man ut fra et klinisk behov likevel bestemmer seg for å behandle,
+bør pasienten overvåkes nøye med hensyn på suicidale symptomer. I tillegg mangler det langtids
+sikkerhetsdata hos barn og unge med hensyn til vekst, modning samt kognitiv- og adferdsutvikling.
+
+Selvmord/ suicidale tanker eller klinisk forverring
+Depresjon er assosiert med en økt risiko for selvmordstanker, selvskading og selvmord
+(selvmordsrelaterte hendelser). Denne risikoen vedvarer til det oppnås signifikant bedring. Siden
+bedring ikke alltid oppstår i løpet av de første ukene av behandlingen, bør pasienter følges opp nøye
+inntil bedring inntrer. Generell klinisk erfaring viser at risikoen for selvmord kan øke i de første
+fasene av bedringen.
+Andre psykiatriske lidelser paroksetin forskrives for, kan også være assosiert med en økt risiko for
+selvmordsrelaterte hendelser. Disse lidelsene kan dessuten opptre i forbindelse med depresjon. Det
+                                                                                                         3

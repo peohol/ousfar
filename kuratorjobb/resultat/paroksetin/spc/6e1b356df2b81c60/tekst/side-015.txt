@@ -1,0 +1,57 @@
+Paroksetin distribueres omfattende i vev, og farmakokinetiske kalkuleringer angir at kun 1 % av
+paroksetin forblir i plasma.
+
+Cirka 95 % av paroksetin er proteinbundet ved terapeutiske konsentrasjoner.
+
+Det er ikke funnet noen korrelasjon mellom plasmakonsentrasjonen av paroksetin og klinisk effekt
+(erfaring om bivirkninger og effekt).
+
+Biotransformasjon
+Hovedmetabolittene av paroksetin er polare og konjugerte oksidasjons- og metyleringsprodukter som
+lett utskilles. På grunn av relativt manglende farmakologiske aktivitet, er det høyst usannsynlig at de
+bidrar til paroksetins terapeutiske effekter.
+Metabolisme innbefatter ikke paroksetins selektive virkning på neuronal 5-HT opptak.
+
+Eliminasjon
+Utskillelse av uendret paroksetin i urin er vanligvis mindre enn 2 % av dosen, mens metabolitter
+utgjør omtrent 64 % av dosen. Omtrent 36 % av dosen utskilles i fæces, trolig via galle, der
+uforandret paroksetin utgjør mindre enn 1 % av dosen. Dermed elimineres paroksetin tilnærmet
+fullstendig ved metabolisme.
+Metabolittene utskilles bifasisk. Først som et resultat av første passasje-metabolisme, og deretter
+kontrollert ved systemisk eliminasjon av paroksetin. Halveringstiden er variabel, men er vanligvis
+omtrent ett døgn.
+
+Spesielle pasientgrupper
+
+Eldre personer og nedsatt nyre-/leverfunksjon
+Økt plasmakonsentrasjon av paroksetin forekommer hos eldre og hos pasienter med alvorlig nedsatt
+nyrefunksjon eller nedsatt leverfunksjon, men plasmakonsentrasjonsområdet overlapper området for
+friske voksne personer.
+
+      Prekliniske sikkerhetsdata
+
+Toksikologiske studier har blitt gjennomført i rhesusaper og albinorotter; i begge arter er
+metabolismeveien liknende den som er beskrevet for mennesker. Slik som forventet med lipofile
+aminer, inklusive trisykliske antidepressiva, ble fosfolipidose sett hos rotter.
+Fosfolipidose ble ikke observert i primatstudier av opptil ett års varighet ved doser som var seks
+ganger høyere enn anbefalt klinisk doseringsområde.
+
+Karsinogenese: I to års-studier gjennomført på mus og rotter hadde paroksetin ingen
+tumorfremkallende effekt.
+
+Gentoksisitet: Gentoksisitet ble ikke observert i en rekke in vitro og in vivo tester.
+
+Reproduksjonstoksisitetsstudier i rotter har vist at paroksetin påvirker fertilitet hos hann- og hunndyr
+ved å redusere fertilitetsindeks og drektighetsrate. Hos rotter ble det observert økt dødelighet for
+avkom og forsinket forbeining. De sistnevnte observasjonene var trolig relatert til maternal toksisitet,
+og er ikke betraktet som en direkte effekt på foster/nyfødt.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+      Fortegnelse over hjelpestoffer
+
+Tablettkjerne
+Kalsiumhydrogenfosfat, dihydrat
+Kalsiumhydrogenfosfat
+                                                                                                       15

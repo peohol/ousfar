@@ -1,0 +1,57 @@
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, ATC-kode: N02A A01.
+
+Virkningsmekanisme
+Morfin virker som en agonist på opioidreseptorene i CNS og direkte på tarmveggens nervepleksus.
+
+Farmakodynamiske effekter
+Analgetiske, respirasjonsdepressive, sedative, og sentralnervøse effekter. Hemmer hosterefleksen,
+virker antidiuretisk og miotisk.
+
+Den respirasjonshemmende effekten av morfin beror på hemming av respirasjonssenteret i den
+forlengede marg. Denne effekten kan gi hypoventilasjon spesielt hos pasienter med nedsatt evne til
+ventilering på grunn av lungesykdom eller påvirkning av legemidler. Etter encefalitt kan effekten av
+morfin være økt. CNS-symptomer er eufori, nedstemthet, søvn-, konsentrasjons- og
+hukommelsesforstyrrelser. Gjennom stimulering av dopaminreseptorene i triggersonen i den
+forlengede marg kan kvalme og brekninger forekomme. Den økte frigjøring av antidiuretisk hormon
+gir redusert urinvolum. Morfin øker tonus i glatt muskulatur i mage-/tarmkanalen og kan gi
+forstoppelse. Trykket i galle og urinveiene øker og gjør morfin mindre egnet hos pasienter med
+galleveis- og urinveiskrampe. Morfin kan føre til avhengighet og pasienten utvikler toleranse.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Subkutan og intramuskulær administrering: Virkning inntrer i løpet av 15-30 minutter, maksimal
+analgetisk effekt etter 45-90 minutter.
+Intravenøs administrering: Virkning inntrer umiddelbart, maksimal analgetisk effekt etter ca.
+20 minutter. Varighet 4-5 timer.
+
+Distribusjon
+Proteinbinding ca. 35 %. Høyest konsentrasjon i parenkymatøst vev, f.eks. nyrer, lever, lunger, milt.
+Lavere i CNS og skjelettmuskulatur.
+
+Biotransformasjon
+Metaboliseres hovedsakelig i lever ved konjugering med glukuronsyre, til morfin-3-glukuronid og
+morfin-6-glukuronid.
+
+Eliminasjon
+Ca. 10 % utskilles via galle og fæces, resten i urin, det meste som konjugater. Ca. 90 % utskilles i
+løpet av 24 timer. Halveringstid: Ca. 2-4 timer. Morfin utskilles langsommere hos eldre, det kan derfor
+være nødvendig å redusere døgndosen. Ved uttalt nyresvikt vil gjentatt tilførsel føre til akkumulering
+av den aktive metabolitten morfin-6-glukuronid, som har lang halveringstid.
+
+Linearitet/ikke-linearitet
+Lineær farmakokinetikk.
+
+5.3     Prekliniske sikkerhetsdata
+
+Prekliniske data er ufullstendige. Hos hannrotter har det blitt rapportert om nedsatt fertilitet og
+kromosomskade i spermie.
+
+
+
+
+                                                                                                        8

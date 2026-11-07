@@ -1,0 +1,54 @@
+Morfin går over i morsmelk. Beregnet dose som overføres til barnet ved amming er maksimalt 6 % av
+morens vektjusterte dose. Hos nyfødte er halveringstiden vesentlig forlenget sammenliknet med hos
+voksne. Det er mulig at barn som ammes kan påvirkes. Preparatet bør derfor ikke brukes under
+amming.
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Dolcontin kan påvirke evnen til å kjøre bil eller bruke maskiner. Morfin kan endre pasientens
+reaksjonsevne i varierende grad, avhengig av dosering og individuell følsomhet. Vær spesielt
+oppmerksom på dette da bilkjøring og bruk av maskiner krever full oppmerksomhet.
+
+4.8     Bivirkninger
+
+De rapporterte bivirkningene er listet opp i tabellen under i henhold til MedDRA system organklasse
+og etter hyppighet. Frekvenser er definert som: svært vanlige ( 1/10), vanlige ( 1/100 til  1/10),
+mindre vanlige ( 1/1000 til  1/100), sjeldne ( 1/10 000 til  1/1000), svært sjeldne ( 1/10 000),
+ikke kjent (kan ikke anslås utifra tilgjengelige data).
+
+Avhengighet og toleranse er sjelden et problem ved behandling av sterke smerter. De vanligste
+bivirkningene er obstipasjon og kvalme samt døsighet. Obstipasjon forekommer hos alle pasienter,
+kvalme hos ca. 30 % av de oppegående pasientene.
+
+                                           Frekvens         Bivirkning
+ Organklassesystem
+ Forstyrrelser i immunsystemet             Mindre           Hypersensitivitet
+                                           vanlige
+                                           Ikke kjent       Anafylaktiske reaksjoner,
+                                                            anafylaktoide reaksjoner
+ Stoffskifte- og ernæringsbetingede        Vanlige          Redusert appetitt
+ sykdommer
+ Psykiatriske lidelser                     Vanlige          Forvirring
+                                           Mindre           Hallusinasjon, agitasjon, eufori,
+                                           vanlige          søvnløshet, humørforandringer
+                                           Ikke kjent       Legemiddelavhengighet (se pkt. 4.4),
+                                                            dysfori, redusert libido, endret
+                                                            tankemønster
+ Nevrologiske sykdommer                    Vanlige          Svimmelhet, hodepine, døsighet,
+                                                            hyperhidrose
+                                           Mindre           Ufrivillige muskelsammentrekninger,
+                                           vanlige          kramper, parestesier, hypertoni,
+                                                            synkope
+                                           Ikke kjent       Allodyni (se pkt. 4.4), hyperalgesi (se
+                                                            pkt. 4.4),
+ Øyesykdommer                              Mindre           Synssvekkelse
+                                           vanlige
+                                           Ikke kjent       Miose
+ Sykdommer i øre og labyrint               Mindre           Vertigo
+                                           vanlige
+ Karsykdommer                              Mindre           Ansiktsrødme, hypotensjon
+                                           vanlige
+                                           Sjeldne          Ortostatisk hypotensjon
+ Sykdommer i respirasjonsorganer,          Mindre           Bronkospasme, lungeødem,
+ thorax og mediastinum                     vanlige          respirasjonsdepresjon
+                                           Ikke kjent       Nedsatt hosterefleks, sentralt

@@ -1,0 +1,57 @@
+Hos dyr, ved høye doser, blokkeres postsynaptiske D2 reseptorer i de limbiske strukturer til fordel for
+de i striatum. I motsetning til klassiske nevroleptika, induserer det ikke katalepsi og overfølsomhet for
+D2 dopaminreseptorer utvikles ikke etter gjentatt behandling. Ved lave doser blokkerer det først og
+fremst presynaptiske D2/D3-reseptorer, dette gir frisetting av dopamin som er ansvarlig for de
+disinhibitoriske effektene.
+
+Denne atypiske farmakologiske profilen kan forklare at amisulprid ved høye doser har antipsykotisk
+effekt grunnet post-synaptisk dopamin-reseptorblokade. Amisulprids effekt på negative symptomer
+ved lavere doser kan skyldes pre-synaptisk dopamin-reseptorblokade.
+Amisulprids reduserte tendens til å forårsake ekstrapyramidale bivirkninger kan være relatert til den
+overveiende limbiske aktiviteten.
+
+I kliniske studier, inkludert schizofrene pasienter med akutt forverring, demper amisulprid sekundære
+negative symptomer så vel som affektive symptomer som nedstemthet og retardering.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Hos mennesker gir amisulprid to absorpsjonstopper: Én som kommer raskt, én time etter inntatt dose,
+den andre kommer mellom 3 og 4 timer etter inntak. Korresponderende plasmakonsentrasjoner er 39 
+3 og 54  4 ng/ml etter en 50 mg dose. Amisulprids kinetiske profil påvirkes ikke av kosthold. Et
+karbohydratrikt måltid (med 68 % væske) reduserer signifikant AUCs, Tmax og Cmax for amisulprid,
+mens ingen endringer ble sett etter et fettrikt måltid. Imidlertid er det ikke kjent hvilken betydning
+dette har for rutinemessig klinisk bruk.
+
+
+Distribusjon
+Distribusjonsvolumet er 5,8 l/kg, plasmaproteinbindingen er lav (16 %) og det er ingen mistanke om
+farmakokinetiske legemiddelinteraksjoner. Absolutt biotilgjengelighet er på 48 %.
+
+
+Biotransformasjon
+Amisulprid metaboliseres i liten grad: To inaktive metabolitter som står for omtrent 4 % av dosen, har
+blitt identifisert. Det er ingen akkumulering av amisulprid, og dets farmakokinetikk forblir uforandret
+etter gjentatte doser. Halveringstiden for amisulprid er på omtrent 12 timer etter inntak av peroral
+dose.
+
+Eliminasjon
+Amisulprid skilles uforandret ut gjennom urinen. 50 % av en intravenøs dose skilles ut via urinen,
+derav skilles 90 % ut de første 24 timene. Nyreclearance er på 20 l/t eller 330 ml/min.
+
+Leversvikt: Ettersom legemidlet i liten grad metaboliseres, burde ikke en reduksjon av dosen for
+pasienter med leverlidelser være nødvendig.
+
+Nyresvikt: Halveringstiden er uforandret hos pasienter med nedsatt nyrefunksjon, mens systemisk
+clearance reduseres med en faktor på 2,5 til 3. AUC for amisulprid ved mild nyresvikt øker til det
+dobbelte, ved moderat nyresvikt til nesten det tidobbelte (se pkt. 4.2). Det er imidlertid liten erfaring
+med denne gruppen, og det er ikke data på doser høyere enn 50 mg.
+
+Amisulprid dialyseres i liten grad.
+
+Eldre:
+Begrensede data på eldre pasienter (> 65 år) viser en 10-30 % økning i Cmax, T1/2 og AUC etter en
+enkelt peroral dose på 50 mg. Data på gjentatt dosering finnes ikke.
+
+
+                                                        7

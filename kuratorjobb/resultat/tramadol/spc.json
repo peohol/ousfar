@@ -1,0 +1,1351 @@
+{
+  "stoff": "tramadol",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-07T04:15:06.366674+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 19,
+    "hentet": 12,
+    "dokumenter": 7,
+    "mangler": [
+      {
+        "merkevare_id": "ID_0192426B-9969-4C97-8CB3-3862D0C35F81",
+        "varenavn": "Zytram XL",
+        "navn_form_styrke": "Zytram XL depottab 150 mg",
+        "produsent": "Purdue Pharma LP",
+        "atc": "N02AX02",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_168F790A-A26A-40E5-B5C8-ABBFB3E893AC",
+        "varenavn": "Tramal",
+        "navn_form_styrke": "Tramal inj/inf, oppl 100 mg/2 ml",
+        "produsent": "Grünenthal",
+        "atc": "N02AX02",
+        "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_301EE9BE-9C1E-4CD3-BFAA-53AD23D0A903",
+        "varenavn": "Zytram BID",
+        "navn_form_styrke": "Zytram BID depottab 75 mg",
+        "produsent": "Mundipharma",
+        "atc": "N02AX02",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_384CC380-A36D-47D3-8E12-3DF3D9B5E971",
+        "varenavn": "Tramadol-ratiopharm",
+        "navn_form_styrke": "Tramadol-ratiopharm dråper, oppl 100 mg/ml",
+        "produsent": "Ratiopharm",
+        "atc": "N02AX02",
+        "legemiddelform": "Dråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4C9A9E8E-89F9-4B66-8296-1000EAF5C520",
+        "varenavn": "Tramadol-ratiopharm",
+        "navn_form_styrke": "Tramadol-ratiopharm inj, oppl 50 mg/ml",
+        "produsent": "Ratiopharm",
+        "atc": "N02AX02",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A324C2A7-162D-47E1-865D-86400A2EEA83",
+        "varenavn": "Tramadol stada",
+        "navn_form_styrke": "Tramadol stada dråper, oppl 100 mg/ml",
+        "produsent": "Stada",
+        "atc": "N02AX02",
+        "legemiddelform": "Dråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A58438AD-1058-41E3-9D54-7EF597656D9E",
+        "varenavn": "Tramadol aliud",
+        "navn_form_styrke": "Tramadol aliud dråper, oppl 100 mg/ml",
+        "produsent": "Aliud Pharma",
+        "atc": "N02AX02",
+        "legemiddelform": "Dråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 11 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 11,
+        "ikke_dmp": 0,
+        "uten_omtale": 7
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "7 av 19 preparater i FEST mangler en hentet preparatomtale fra DMP: 7 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 19,
+        "hentet": 12,
+        "mangler": 7,
+        "dokumenter": 7
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07755.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07755.pdf",
+      "hentet_kl": "2026-11-07T18:27:12.659Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "333645",
+        "content-md5": "7jcG2c4svuxYDXkreyWLxA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:48 GMT",
+        "etag": "0x8DE53793B2B72F1",
+        "date": "Sat, 07 Nov 2026 18:27:13 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_082903CF-94CF-41C6-A2CB-90CC52FC2CAB",
+          "varenavn": "Tramadol Hexal",
+          "navn_form_styrke": "Tramadol Hexal kaps 50 mg",
+          "produsent": "Hexal A/S",
+          "atc": "N02AX02",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07755.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (333645 byte).",
+          "antall": {
+            "bytes": 333645
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d062645bd5f12e1ae1d61af2334889b5e9edcb625436a45643b612ef3143af49"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07689.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07689.pdf",
+      "hentet_kl": "2026-11-07T18:27:18.509Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225918",
+        "content-md5": "gE2Go+iIIJRoEH2ayO8HOw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:42 GMT",
+        "etag": "0x8DE537937D65AA1",
+        "date": "Sat, 07 Nov 2026 18:27:19 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1AA5FF78-DDBD-4BD3-910B-A9DEB517B702",
+          "varenavn": "Tramagetic OD",
+          "navn_form_styrke": "Tramagetic OD depottab 200 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_FA2224B6-2AE0-40CC-B238-9D0F5F7B4C49",
+          "varenavn": "Tramagetic OD",
+          "navn_form_styrke": "Tramagetic OD depottab 200 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07689.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225918 byte).",
+          "antall": {
+            "bytes": 225918
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d9d3ac6ceabe207a7fe2898ef24a4c44ce6a3570b930c807dd808c0c037d2658"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9868.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9868.pdf",
+      "hentet_kl": "2026-11-07T18:27:23.524Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "373611",
+        "content-md5": "2vdhFbVpGl0O5x6MQ3ONZw==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:41 GMT",
+        "etag": "0x8DE85F8E76E67B2",
+        "date": "Sat, 07 Nov 2026 18:27:23 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3CBAC732-0062-460B-9F47-7D61B862264A",
+          "varenavn": "Tramadol/Paracetamol Orion",
+          "navn_form_styrke": "Tramadol/Paracetamol Orion tab 37,5 mg/325 mg",
+          "produsent": "Orion Corporation - Espoo",
+          "atc": "N02AJ13",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9868.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (373611 byte).",
+          "antall": {
+            "bytes": 373611
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f9b53fdfc11644230845da09b0aac541155259acb82cab95fc483802a36302db"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07783.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07783.pdf",
+      "hentet_kl": "2026-11-07T18:27:30.509Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "223838",
+        "content-md5": "m+9unqWMbXw2CL1AmdPIOg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D7F1EFB",
+        "date": "Sat, 07 Nov 2026 18:27:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_848FC66A-3700-49D7-A076-DACDC7E0FE60",
+          "varenavn": "Tramagetic Retard",
+          "navn_form_styrke": "Tramagetic Retard depottab 150 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07783.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (223838 byte).",
+          "antall": {
+            "bytes": 223838
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e3adf8aa7db776d325e5ef5e960ab91159caf06902eda4162cdbfc9966194426"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07782.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07782.pdf",
+      "hentet_kl": "2026-11-07T18:27:35.586Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "223838",
+        "content-md5": "m+9unqWMbXw2CL1AmdPIOg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE537941945E44",
+        "date": "Sat, 07 Nov 2026 18:27:35 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A4BA420E-403B-476F-BC52-3C513FDD21BB",
+          "varenavn": "Tramagetic Retard",
+          "navn_form_styrke": "Tramagetic Retard depottab 100 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07782.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (223838 byte).",
+          "antall": {
+            "bytes": 223838
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e3adf8aa7db776d325e5ef5e960ab91159caf06902eda4162cdbfc9966194426"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6559.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6559.pdf",
+      "hentet_kl": "2026-11-07T18:27:35.889Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "213352",
+        "content-md5": "mbWQYkz9j+8U9SL+feCHlg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:42 GMT",
+        "etag": "0x8DE537937F46598",
+        "date": "Sat, 07 Nov 2026 18:27:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_AA6616C3-9205-4CC7-8D76-07369BD8EAC3",
+          "varenavn": "Tramadol Actavis",
+          "navn_form_styrke": "Tramadol Actavis kaps 50 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N02AX02",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6559.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (213352 byte).",
+          "antall": {
+            "bytes": 213352
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6baca0455b30d9e7d75682e2fdd69f60bf3c76799524a29291464ee8e2ae2169"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02972.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02972.pdf",
+      "hentet_kl": "2026-11-07T18:27:40.697Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "342908",
+        "content-md5": "xb9beQFGK/98HNVSRfQkRg==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:04 GMT",
+        "etag": "0x8DE85F8F528EEE3",
+        "date": "Sat, 07 Nov 2026 18:27:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D2BB4990-E3A7-47D4-8A5E-933C95E9965A",
+          "varenavn": "Nobligan Retard",
+          "navn_form_styrke": "Nobligan Retard depottab 200 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02972.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (342908 byte).",
+          "antall": {
+            "bytes": 342908
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "1478df64c8a396d0e5594c5253d6c639e5353a7cbaf9d9d0281e856d3eb6d8ae"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02970.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02970.pdf",
+      "hentet_kl": "2026-11-07T18:27:45.870Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "342908",
+        "content-md5": "xb9beQFGK/98HNVSRfQkRg==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:04 GMT",
+        "etag": "0x8DE85F8F52238E9",
+        "date": "Sat, 07 Nov 2026 18:27:46 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_DAB4DB17-546F-4E81-A183-3388A395D6E1",
+          "varenavn": "Nobligan Retard",
+          "navn_form_styrke": "Nobligan Retard depottab 100 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02970.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (342908 byte).",
+          "antall": {
+            "bytes": 342908
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "1478df64c8a396d0e5594c5253d6c639e5353a7cbaf9d9d0281e856d3eb6d8ae"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07688.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07688.pdf",
+      "hentet_kl": "2026-11-07T18:27:47.088Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225918",
+        "content-md5": "gE2Go+iIIJRoEH2ayO8HOw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:44 GMT",
+        "etag": "0x8DE537938C94A1E",
+        "date": "Sat, 07 Nov 2026 18:27:47 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E14817B7-8DA6-43CC-BCFE-762276C41D9F",
+          "varenavn": "Tramagetic OD",
+          "navn_form_styrke": "Tramagetic OD depottab 150 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-07688.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225918 byte).",
+          "antall": {
+            "bytes": 225918
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d9d3ac6ceabe207a7fe2898ef24a4c44ce6a3570b930c807dd808c0c037d2658"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02971.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02971.pdf",
+      "hentet_kl": "2026-11-07T18:27:48.133Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "342908",
+        "content-md5": "xb9beQFGK/98HNVSRfQkRg==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:04 GMT",
+        "etag": "0x8DE85F8F52593D2",
+        "date": "Sat, 07 Nov 2026 18:27:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F2DDD9F4-70F6-4128-AE28-6327176245CC",
+          "varenavn": "Nobligan Retard",
+          "navn_form_styrke": "Nobligan Retard depottab 150 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX02",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02971.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (342908 byte).",
+          "antall": {
+            "bytes": 342908
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "1478df64c8a396d0e5594c5253d6c639e5353a7cbaf9d9d0281e856d3eb6d8ae"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08268.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08268.pdf",
+      "hentet_kl": "2026-11-07T18:27:48.437Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "320617",
+        "content-md5": "VfThj+V4UX6feklHp2fdhA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:05 GMT",
+        "etag": "0x8DE85F8D1EA3CEC",
+        "date": "Sat, 07 Nov 2026 18:27:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F3711885-E01D-45A7-A5A5-23637302197A",
+          "varenavn": "Nobligan",
+          "navn_form_styrke": "Nobligan kaps 50 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX02",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08268.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (320617 byte).",
+          "antall": {
+            "bytes": 320617
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0848ca9753aa7d2d4f267bfff662aafaafe12818903b63ccd373bba6909a3920"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "d062645bd5f12e1ae1d61af2334889b5e9edcb625436a45643b612ef3143af49",
+      "bytes": 333645,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Thu Jun 27 07:23:51 2024 UTC",
+        "endret": "Thu Jun 27 07:23:51 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-010.txt",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-010.png",
+          "kuratorjobb/resultat/tramadol/spc/d062645bd5f12e1a/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 24048
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "d9d3ac6ceabe207a7fe2898ef24a4c44ce6a3570b930c807dd808c0c037d2658",
+      "bytes": 225918,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SmPC)",
+        "laget": "Fri Nov 29 12:06:10 2024 UTC",
+        "endret": "Fri Nov 29 12:06:10 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/d9d3ac6ceabe207a/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 21417
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "f9b53fdfc11644230845da09b0aac541155259acb82cab95fc483802a36302db",
+      "bytes": 373611,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri Jan  9 14:32:39 2026 UTC",
+        "endret": "Fri Jan  9 14:32:39 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-010.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-011.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-012.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-013.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-014.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-015.txt",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-010.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-011.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-012.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-013.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-014.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-015.png",
+          "kuratorjobb/resultat/tramadol/spc/f9b53fdfc1164423/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 34954
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e3adf8aa7db776d325e5ef5e960ab91159caf06902eda4162cdbfc9966194426",
+      "bytes": 223838,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SmPC)",
+        "laget": "Fri Nov 29 12:06:09 2024 UTC",
+        "endret": "Fri Nov 29 12:06:09 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/e3adf8aa7db776d3/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 21827
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6baca0455b30d9e7d75682e2fdd69f60bf3c76799524a29291464ee8e2ae2169",
+      "bytes": 213352,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "1",
+        "laget": "Mon Sep 23 05:16:49 2024 UTC",
+        "endret": "Mon Sep 23 05:16:49 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-010.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-011.txt",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-010.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-011.png",
+          "kuratorjobb/resultat/tramadol/spc/6baca0455b30d9e7/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 26539
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "1478df64c8a396d0e5594c5253d6c639e5353a7cbaf9d9d0281e856d3eb6d8ae",
+      "bytes": 342908,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Wed Dec 10 08:12:32 2025 UTC",
+        "endret": "Wed Dec 10 08:12:32 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-010.txt",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-010.png",
+          "kuratorjobb/resultat/tramadol/spc/1478df64c8a396d0/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 25202
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0848ca9753aa7d2d4f267bfff662aafaafe12818903b63ccd373bba6909a3920",
+      "bytes": 320617,
+      "mappe": "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Wed Dec 10 08:12:16 2025 UTC",
+        "endret": "Wed Dec 10 08:12:16 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/original.pdf",
+        "tekst": "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-001.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-002.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-003.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-004.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-005.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-006.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-007.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-008.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-009.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-010.txt",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-001.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-002.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-003.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-004.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-005.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-006.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-007.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-008.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-009.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-010.png",
+          "kuratorjobb/resultat/tramadol/spc/0848ca9753aa7d2d/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 24058
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

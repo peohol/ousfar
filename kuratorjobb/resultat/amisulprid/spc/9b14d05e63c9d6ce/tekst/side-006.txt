@@ -1,0 +1,58 @@
+Sykdommer i lever og galleveier:
+Mindre vanlige: hepatocellulær skade
+
+Hud- og underhudssykdommer:
+Sjeldne: angioødem, urticaria
+Ikke kjent: fotosensitivitetsreaksjoner
+
+Sykdommer i muskler, bindevev og skjelett:
+Mindre vanlige: Osteopeni, osteoporose
+Ikke kjent: rabdomyolyse
+
+Sykdommer i nyre og urinveier:
+Mindre vanlige: urinretensjon
+
+Graviditet, puerperale og perinatale lidelser:
+Ikke kjent: abstinenssymptomer hos nyfødte (se pkt. 4.6)
+
+Undersøkelser:
+Vanlige: vektøkning.
+Mindre vanlige: forhøyede nivåer av leverenzymer, hovedsakelig transaminaser
+Ikke kjent: økt kreatinfosfokinase i blod
+
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer:
+Ikke kjent: fall på grunn av bivirkninger som medfører redusert kroppsbalanse
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+
+4.9     Overdosering
+
+Det er begrenset erfaring med overdosering av amisulprid. Forsterkning av de kjente farmakologiske
+virkningene av legemidlet er rapportert. Disse omfatter sløvhet, sedasjon, hypotensjon,
+ekstrapyramidale symptomer og koma. Tilfeller med fatal utgang er sett, hovedsakelig i kombinasjon
+med andre psykotrope midler. Ved akutt overdose bør muligheten for at det er inntatt flere legemidler
+vurderes. Ettersom amisulprid i liten grad dialyseres, er hemodialyse uegnet for å skille ut legemidlet.
+Det finnes intet spesielt antidot til amisulprid. Symptomatisk behandling bør iverksettes: nøye
+overvåking av pasientens vitale funksjoner og kontinuerlig hjerteovervåkning (risiko for forlenget QT-
+intervall) anbefales inntil allmenntilstanden bedres. I tilfeller av alvorlig ekstrapyramidale symptomer,
+bør antikolinerge legemidler brukes.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antipsykotika. ATC-nr.: N05A L05
+
+Amisulprid binder seg selektivt med stor affinitet til menneskelige dopaminerge D2/D3
+reseptorsubtyper, mens det ikke finnes affinitet for D1, D4 og D5 reseptor subtypene.
+
+I motsetning til klassiske og atypiske nevroleptika, har amisulprid ingen affinitet til serotonin,
+-adrenerge, histamin H1 og kolinerge reseptorer. I tillegg binder ikke amisulprid seg til
+sigmareseptorer.
+                                                        6

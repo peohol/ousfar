@@ -1,0 +1,489 @@
+1.      LEGEMIDLETS NAVN
+
+Solian 50 mg tabletter
+Solian 200 mg tabletter
+Solian 400 mg tabletter, filmdrasjerte
+
+2.      KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+1 tablett inneholder: Amisulprid 50 mg, 200 mg eller 400 mg.
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.      LEGEMIDDELFORM
+
+Tabletter (50 mg og 200 mg).
+Tabletter, filmdrasjerte (400 mg).
+
+
+4.      KLINISKE OPPLYSNINGER
+
+4.1     Indikasjoner
+
+Akutt og kronisk schizofreni.
+
+4.2     Dosering og administrasjonsmåte
+
+Dosering
+
+For akutte psykotiske episoder anbefales perorale doser på mellom 400 mg og 800 mg daglig. I noen
+tilfeller kan den daglige dosen økes opp til 1200 mg daglig. Doser på over 1200 mg daglig har ikke
+blitt tilstrekkelig evaluert med hensyn på sikkerhet, og bør derfor ikke brukes. Det kreves ingen
+spesiell titrering ved oppstart av behandling med amisulprid. Doser bør tilpasses til individuell
+respons.
+
+Hos pasienter med både positive og negative symptomer bør dosen justeres for å oppnå optimal
+kontroll av de positive symptomene.
+
+Vedlikeholdsbehandling bør fastsettes individuelt med minste, effektive dose.
+
+Hos pasienter med overveiende negative symptomer anbefales doser på mellom 50 mg og 300 mg pr.
+døgn. Dosen bør justeres individuelt.
+
+Doser på over 400 mg pr. døgn bør fordeles på 2 ganger daglig.
+
+Pediatrisk populasjon
+Sikkerhet og effekt av amisulprid hos barn opp til 18 år er ikke blitt fastslått. Solian er kontraindisert
+hos barn frem til pubertetsalder. Se pkt. 4.3. Solian bør ikke brukes til barn fra pubertetsalder og opp
+til 18 år.
+
+Eldre
+Sikkerhet av amisulprid er undersøkt i et begrenset antall eldre pasienter. Amisulprid bør brukes med
+særskilt forsiktighet på grunn av mulig risiko for hypotensjon og sedasjon. Dosereduksjon kan være
+nødvendig på grunn av nedsatt nyrefunksjon.
+
+
+                                                         1
+Nyresvikt
+Amisulprid skilles ut gjennom nyrene. Ved nedsatt nyrefunksjon bør dosen justeres til det halve hos
+pasienter med kreatininclearance (CRCL) mellom 30-60 ml/min og til en tredjedel i pasienter med
+CRCL mellom 10-30 ml/min. Da man ikke har erfaring med pasienter med alvorlig nyresvikt (CRCL
+< 10 ml/min) bør spesiell forsiktighet utvises hos disse pasientene (se pkt. 4.4).
+
+Leversvikt
+Ettersom legemidlet i liten grad metaboliseres, skulle en reduksjon av dosen være unødvendig.
+
+4.3     Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1. Samtidig
+prolaktin-avhengige tumorer som f.eks. hypofyse prolaktinom og brystkreft (se pkt. 4.4 og 4.8).
+Feokromocytom. Barn opp til puberteten. Kombinasjon med levodopa (se pkt. 4.5).
+
+4.4     Advarsler og forsiktighetsregler
+
+Som for andre nevroleptika kan malignt nevroleptikasyndrom (MNS) forekomme. Dette er en
+potensielt livstruende bivirkning ved bruk av antipsykotiske legemidler. Syndromet er karakterisert
+ved hypertermi, muskelstivhet, autonom ustabilitet, rabdomyolyse og forhøyet kreatinfosfokinase.
+Dersom en pasient utvikler tegn og symptomer på MNS eller får uforklarlig hypertermi, spesielt ved
+høy dagsdose, skal bruk av alle slag antipsykotiske legemidler, inkludert amisulprid, opphøre.
+Rabdomyolyse har også blitt observert hos pasienter uten malignt nevroleptikasyndrom.
+
+Som for andre antidopaminerge midler bør forsiktighet utvises når Solian foreskrives til pasienter med
+parkinsonisme, da dette kan forårsake en forverring av sykdommen. Amisulprid bør kun brukes om
+nevroleptisk behandling ikke kan unngås.
+
+Forlengelse av QT-intervall
+Amisulprid skal brukes med forsiktighet til pasienter med hjerte- og karsykdommer eller som har en
+familieanamnese med forlenget QT-intervall. Samtidig bruk av andre nevroleptika bør unngås.
+
+Hjerneslag
+Det ble observert en tredoblet økning i risiko for cerebrovaskulære hendelser i placebokontrollerte
+randomiserte kliniske studier utført på eldre demente pasienter som brukte visse atypiske
+antipsykotiske legemidler. Mekanismen for denne risikoøkningen er ikke kjent. En økning i risiko med
+andre antipsykotiske midler eller med andre pasientpopulasjoner kan ikke utelukkes. Amisulprid bør
+brukes med forsiktighet hos pasienter med risikofaktorer for hjerneslag.
+
+Eldre pasienter med demens
+Eldre pasienter med demens-relatert psykose som behandles med antipsykotiske legemidler har økt
+dødsrisiko. Analyser av 17 placebokontrollerte studier (formell varighet 10 uker), hovedsakelig i
+pasienter som ble behandlet med atypiske antipsykotiske legemidler, avdekket at dødsrisikoen for
+pasienter behandlet med legemiddel var på mellom 1,6 til 1,7 ganger dødsrisikoen i pasienter
+behandlet med placebo. I løpet av en typisk 10-ukers kontrollert studie, var dødsrisikoen i pasienter
+behandlet med legemiddel rundt 4,5 % sammenlignet med en frekvens på rundt 2,6 % i
+placebogruppen. Selv om dødsårsaken i kliniske studier med atypiske antipsykotika varierte, ser det ut
+til at de fleste dødsfallene enten var kardiovaskulære (f.eks. hjertesvikt, plutselig død) eller av en
+infeksiøs (f.eks. lungebetennelse) natur. Observasjonsstudier antyder at, i likhet med atypiske
+antipsykotiske legemidler, kan behandling med konvensjonelle antipsykotiske legemidler øke
+dødeligheten. I hvilken grad funnene som viste økt mortalitet i observasjonsstudier kan tilskrives
+antipsykotiske legemidler eller noen karakteristikker hos pasientene er ikke klarlagt.
+
+Venøs tromboembolisme
+Det har blitt rapportert tilfeller av venøs tromboembolisme med antipsykotiske legemidler. Siden
+pasienter under behandling med antipsykotiske legemidler ofte har ervervet økt risiko for venøs
+
+                                                       2
+tromboembolisme, bør alle mulige risikofaktorer for venøs tromboembolisme identifiseres før og
+under behandling med Solian, og forebyggende tiltak iverksettes (se pkt. 4.8).
+
+Brystkreft
+Amisulprid kan øke nivået av prolaktin. Forsiktighet skal derfor utvises og pasienter med brystkreft i
+anamnesen eller i nærmeste familie bør monitoreres nøye ved behandling med amisulprid.
+
+Hyperglykemi har blitt rapportert hos pasienter behandlet med enkelte atypiske antipsykotika,
+inkludert amisulprid. Derfor bør pasienter med kjent diabetes mellitus, eller med risikofaktorer for
+diabetes, få kontrollert blodsukkeret regelmessig ved oppstart av amisulpridbehandling.
+
+Amisulprid kan senke krampeterskelen. Derfor bør pasienter med tidligere epileptiske anfall overvåkes
+nøye under behandling med amisulprid.
+
+Amisulprid skilles ut gjennom nyrene. Ved nedsatt nyrefunksjon, bør dosen reduseres eller
+intermitterende behandling kan vurderes (se pkt. 4.2).
+
+Amisulprid bør brukes med særlig forsiktighet hos eldre pasienter, på grunn av mulig risiko for
+hypotensjon eller sedasjon. Det kan også være nødvendig å redusere dosen på grunn av nedsatt
+nyrefunksjon.
+
+Abstinenssymptomer, inkludert kvalme, oppkast og søvnløshet er rapportert etter brå seponering av
+høye terapeutiske doser av antipsykotiske legemidler. Tilbakefall av psykotiske symptomer kan også
+oppstå. Forekomst av ufrivillige motoriske forstyrrelser (som f.eks. akatisi, dystoni og dyskinesi) er
+rapportert ved bruk av amisulprid. Gradvis seponering av amisulprid er derfor anbefalt.
+
+Leukopeni, nøytropeni og agranulocytose er rapportert ved bruk av antipsykotiske legemidler,
+inkludert amisulprid. Uforklarlige infeksjoner eller feber kan være tegn på bloddyskrasier (se pkt. 4.8)
+og krever øyeblikkelig hematologisk undersøkelse.
+
+Godartet hypofysetumor
+Amisulprid kan øke prolaktinnivået. Tilfeller av godartete hypofysetumorer, som prolaktinomer, er
+sett under amisulpridbehandling (se pkt. 4.8). Ved veldig høye nivåer av prolaktin eller kliniske tegn
+på hypofysetumor (som synsfeltdefekt og hodepine), bør billeddiagnostikk av hypofysen utføres.
+Dersom hypofysetumor diagnostiseres, må amisulprid seponeres. Se også pkt. 4.3 og 4.8.
+
+Alvorlig levertoksisitet har blitt rapportert ved bruk av amisulprid. Pasienter bør instrueres til å
+umiddelbart rapportere tegn som asteni, anoreksi, kvalme, oppkast, magesmerter eller ikterus til en
+lege. Undersøkelser inkludert en klinisk undersøkelse og en biologisk vurdering av leverfunksjon bør
+utføres umiddelbart (se pkt. 4.8).
+
+Dette legemidlet inneholder laktose. Pasienter med sjeldne arvelige problemer med
+galaktoseintoleranse, total laktasemangel eller glukose-galaktose malabsorpsjon bør ikke ta dette
+legemidlet.
+
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver tablett, og er så godt som
+“natriumfritt”.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Legemidler som ikke må kombineres med amisulprid:
+    Levodopa: gjensidig antagonisme av effekten mellom levodopa og nevroleptika. Amisulprid
+      kan motvirke effekten av dopaminagonister, f.eks. bromokriptin og ropinirol.
+
+Kombinasjoner som ikke anbefales:
+    Amisulprid kan forsterke alkohols effekt på sentralnervesystemet.
+
+                                                       3
+Kombinasjoner som må vurderes:
+    Legemidler med dempende effekt på CNS, som: Narkotiske midler, anestetika, analgetika,
+      sedative H1-antihistaminer, barbiturater, benzodiazepiner og andre anxiolytiske legemidler,
+      klonidin og derivater.
+    Antihypertensive legemidler og annen hypotensiv behandling.
+    Forsiktighet tilrådes ved forskrivning av legemidler som kan forlenge QT-intervallet, for
+      eksempel antiarytmika klasse IA (for eksempel kinidin, disopyramid) og antiarytmika klasse
+      III (for eksempel amiodaron, sotalol), enkelte antihistaminer, enkelte andre antipsykotika og
+      noen antimalariamidler (for eksempel meflokin) (se pkt. 4.4).
+    Samtidig behandling med klozapin kan føre til økt amisulpridnivå i plasma.
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+Det foreligger kun begrenset data på bruk av amisulprid hos gravide kvinner. Sikkerhet av amisulprid
+ved bruk under human graviditet er ikke etablert.
+
+Amisulprid krysser placenta.
+
+Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3).
+
+Bruk av amisulprid er ikke anbefalt under graviditet og hos fertile kvinner som ikke bruker
+prevensjon, med mindre fordelene veier opp for de potensielle risikoene.
+
+Nyfødte som er eksponert for antipsykotika, inkludert Solian, under tredje trimester av svangerskapet
+er utsatt for bivirkninger etter fødsel, inkludert ekstrapyramidale og/eller abstinenssymptomer som kan
+variere i alvorlighetsgrad og varighet (se pkt. 4.8). Agitasjon, hypertoni, hypotoni, skjelvinger,
+respirasjonssvikt eller matingsproblemer har blitt rapportert. Nyfødte bør dermed monitoreres nøye.
+
+Amming
+I noen tilfeller utskilles amisulprid i store mengder over den tillate mengden på 10 % av morens
+vektjusterte dose, men konsentrasjonen i blod hos spedbarn som ammes har ikke blitt evaluert. Det er
+utilstrekkelig informasjon om effekten av amisulprid hos nyfødte/spedbarn. Det må tas en vurdering
+om man skal avbryte ammingen eller avstå fra amisulpridbehandling med hensyn til fordelene av
+amming og fordelene av behandlingen for kvinnen.
+
+Fertilitet
+En reduksjon i fertilitet forbundet med de farmakologiske effektene av legemidlet (prolaktinmediert
+effekt) har blitt observert hos behandlede dyr.
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Selv om amisulprid brukes som anbefalt, kan legemidlet forårsake somnolens og tåkesyn slik at evnen
+til å kjøre bil og bruke maskiner nedsettes (se pkt. 4.8).
+
+4.8     Bivirkninger
+
+Bivirkninger er listet opp nedenfor etter følgende frekvens: Svært vanlige (≥ 1/10); vanlige (≥ 1/100;
+< 1/10); mindre vanlige (≥ 1/1000; < 1/100); sjeldne (≥ 1/10 000; < 1/1000); svært sjeldne
+(<1/10 000); ikke kjent (kan ikke anslås ut ifra tilgjengelige data).
+
+
+
+
+                                                       4
+Sykdommer i blod og lymfatiske organer:
+Mindre vanlige: leukopeni, nøytropeni (se pkt. 4.4)
+Sjeldne: Agranulocytose (se pkt. 4.4)
+
+Forstyrrelser i immunsystemet:
+Mindre vanlige: allergiske reaksjoner
+
+Endokrine sykdommer:
+Vanlige: amisulprid forårsaker en økning i plasmaprolaktinnivået, denne er reversibel etter seponering.
+Dette kan føre til galaktoré, amenoré, gynekomasti, brystsmerter og erektil dysfunksjon
+Sjeldne: godartede hypofysetumorer, som prolaktinom (se pkt. 4.3 og 4.4)
+
+Stoffskifte- og ernæringsbetingede sykdommer:
+Mindre vanlige: hyperglykemi (se pkt. 4.4), hypertriglyseridemi og hyperkolesterolemi
+Sjeldne: hyponatremi, SIADH (syndrom med uhensiktsmessig høy sekresjon av antidiuretisk hormon)
+
+Psykiatriske lidelser:
+Vanlige: insomni, engstelse, agitasjon, orgasmedysfunksjon
+Mindre vanlige: forvirring
+
+Nevrologiske sykdommer:
+Svært vanlige: ekstrapyramidale symptomer kan forekomme: Tremor, stivhet, hypokinesi, økt
+spyttsekresjon, akatisi, dyskinesi. Disse symptomene er vanligvis milde ved optimale doser og delvis
+reversible ved administrering av antiparkinsonmidler uten seponering av amisulprid. Insidensen av
+ekstrapyramidale symptomer som er doserelatert, holder seg veldig lav ved behandling av pasienter
+med hovedsakelig negative symptomer, med doser på 50-300 mg/dag
+Vanlige: akutt dystoni (spasme torticollis, okulogyre kriser, trismus) kan forekomme. Dette kan
+reverseres ved behandling med antiparkinsonmidler, uten å måtte seponere amisulprid. Somnolens.
+Mindre vanlige: det har blitt rapportert tardiv dyskinesi som kjennetegnes ved rytmiske, ufrivillige
+bevegelser hovedsakelig av tunge og/eller ansikt, vanligvis etter langvarig bruk. Antiparkinsonmidler
+har ingen virkning eller kan forårsake forverring av disse symptomene. Krampeanfall
+Sjeldne: malignt nevroleptikasyndrom (se pkt. 4.4), som er en potensielt livstruende tilstand
+Ikke kjent: restless legs-syndrom
+
+Øyesykdommer:
+Vanlige: tåkesyn (se pkt. 4.7).
+
+Hjertesykdommer:
+
+Mindre vanlige: bradykardi
+Sjeldne: forlenget QT-intervall, ventrikulære arytmier som torsades de pointes, ventrikkeltakykardi,
+som kan føre til ventrikkelflimmer eller hjertestans, plutselig død (se pkt. 4.4)
+
+Karsykdommer:
+Vanlige: hypotensjon
+Mindre vanlige: hypertensjon
+Sjeldne: venøs tromboembolisme, inkludert lungeembolisme, noen ganger med dødelig utfall, og dyp
+venetrombose (se pkt. 4.4)
+
+Sykdommer i respirasjonsorganer, thorax og mediastinum:
+Mindre vanlige: nesetetthet, aspirasjonspneumoni (hovedsakelig assosiert med andre antipsykotika og
+CNS depressiva)
+
+Gastrointestinale sykdommer:
+Vanlige: forstoppelse, kvalme, oppkast, munntørrhet
+
+                                                      5
+Sykdommer i lever og galleveier:
+Mindre vanlige: hepatocellulær skade
+
+Hud- og underhudssykdommer:
+Sjeldne: angioødem, urticaria
+Ikke kjent: fotosensitivitetsreaksjoner
+
+Sykdommer i muskler, bindevev og skjelett:
+Mindre vanlige: Osteopeni, osteoporose
+Ikke kjent: rabdomyolyse
+
+Sykdommer i nyre og urinveier:
+Mindre vanlige: urinretensjon
+
+Graviditet, puerperale og perinatale lidelser:
+Ikke kjent: abstinenssymptomer hos nyfødte (se pkt. 4.6)
+
+Undersøkelser:
+Vanlige: vektøkning.
+Mindre vanlige: forhøyede nivåer av leverenzymer, hovedsakelig transaminaser
+Ikke kjent: økt kreatinfosfokinase i blod
+
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer:
+Ikke kjent: fall på grunn av bivirkninger som medfører redusert kroppsbalanse
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+
+4.9     Overdosering
+
+Det er begrenset erfaring med overdosering av amisulprid. Forsterkning av de kjente farmakologiske
+virkningene av legemidlet er rapportert. Disse omfatter sløvhet, sedasjon, hypotensjon,
+ekstrapyramidale symptomer og koma. Tilfeller med fatal utgang er sett, hovedsakelig i kombinasjon
+med andre psykotrope midler. Ved akutt overdose bør muligheten for at det er inntatt flere legemidler
+vurderes. Ettersom amisulprid i liten grad dialyseres, er hemodialyse uegnet for å skille ut legemidlet.
+Det finnes intet spesielt antidot til amisulprid. Symptomatisk behandling bør iverksettes: nøye
+overvåking av pasientens vitale funksjoner og kontinuerlig hjerteovervåkning (risiko for forlenget QT-
+intervall) anbefales inntil allmenntilstanden bedres. I tilfeller av alvorlig ekstrapyramidale symptomer,
+bør antikolinerge legemidler brukes.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antipsykotika. ATC-nr.: N05A L05
+
+Amisulprid binder seg selektivt med stor affinitet til menneskelige dopaminerge D2/D3
+reseptorsubtyper, mens det ikke finnes affinitet for D1, D4 og D5 reseptor subtypene.
+
+I motsetning til klassiske og atypiske nevroleptika, har amisulprid ingen affinitet til serotonin,
+-adrenerge, histamin H1 og kolinerge reseptorer. I tillegg binder ikke amisulprid seg til
+sigmareseptorer.
+                                                        6
+Hos dyr, ved høye doser, blokkeres postsynaptiske D2 reseptorer i de limbiske strukturer til fordel for
+de i striatum. I motsetning til klassiske nevroleptika, induserer det ikke katalepsi og overfølsomhet for
+D2 dopaminreseptorer utvikles ikke etter gjentatt behandling. Ved lave doser blokkerer det først og
+fremst presynaptiske D2/D3-reseptorer, dette gir frisetting av dopamin som er ansvarlig for de
+disinhibitoriske effektene.
+
+Denne atypiske farmakologiske profilen kan forklare at amisulprid ved høye doser har antipsykotisk
+effekt grunnet post-synaptisk dopamin-reseptorblokade. Amisulprids effekt på negative symptomer
+ved lavere doser kan skyldes pre-synaptisk dopamin-reseptorblokade.
+Amisulprids reduserte tendens til å forårsake ekstrapyramidale bivirkninger kan være relatert til den
+overveiende limbiske aktiviteten.
+
+I kliniske studier, inkludert schizofrene pasienter med akutt forverring, demper amisulprid sekundære
+negative symptomer så vel som affektive symptomer som nedstemthet og retardering.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Hos mennesker gir amisulprid to absorpsjonstopper: Én som kommer raskt, én time etter inntatt dose,
+den andre kommer mellom 3 og 4 timer etter inntak. Korresponderende plasmakonsentrasjoner er 39 
+3 og 54  4 ng/ml etter en 50 mg dose. Amisulprids kinetiske profil påvirkes ikke av kosthold. Et
+karbohydratrikt måltid (med 68 % væske) reduserer signifikant AUCs, Tmax og Cmax for amisulprid,
+mens ingen endringer ble sett etter et fettrikt måltid. Imidlertid er det ikke kjent hvilken betydning
+dette har for rutinemessig klinisk bruk.
+
+
+Distribusjon
+Distribusjonsvolumet er 5,8 l/kg, plasmaproteinbindingen er lav (16 %) og det er ingen mistanke om
+farmakokinetiske legemiddelinteraksjoner. Absolutt biotilgjengelighet er på 48 %.
+
+
+Biotransformasjon
+Amisulprid metaboliseres i liten grad: To inaktive metabolitter som står for omtrent 4 % av dosen, har
+blitt identifisert. Det er ingen akkumulering av amisulprid, og dets farmakokinetikk forblir uforandret
+etter gjentatte doser. Halveringstiden for amisulprid er på omtrent 12 timer etter inntak av peroral
+dose.
+
+Eliminasjon
+Amisulprid skilles uforandret ut gjennom urinen. 50 % av en intravenøs dose skilles ut via urinen,
+derav skilles 90 % ut de første 24 timene. Nyreclearance er på 20 l/t eller 330 ml/min.
+
+Leversvikt: Ettersom legemidlet i liten grad metaboliseres, burde ikke en reduksjon av dosen for
+pasienter med leverlidelser være nødvendig.
+
+Nyresvikt: Halveringstiden er uforandret hos pasienter med nedsatt nyrefunksjon, mens systemisk
+clearance reduseres med en faktor på 2,5 til 3. AUC for amisulprid ved mild nyresvikt øker til det
+dobbelte, ved moderat nyresvikt til nesten det tidobbelte (se pkt. 4.2). Det er imidlertid liten erfaring
+med denne gruppen, og det er ikke data på doser høyere enn 50 mg.
+
+Amisulprid dialyseres i liten grad.
+
+Eldre:
+Begrensede data på eldre pasienter (> 65 år) viser en 10-30 % økning i Cmax, T1/2 og AUC etter en
+enkelt peroral dose på 50 mg. Data på gjentatt dosering finnes ikke.
+
+
+                                                        7
+5.3     Prekliniske sikkerhetsdata
+
+En total gjennomgang av de fullførte toksikologistudiene indikerer at amisulprid ikke har noen
+generell, organspesifikk, teratogen, mutagen eller karsinogen risiko.
+Endringer sett i rotte og hund, ved doser under maksimum tolerert dose, er enten farmakologiske
+effekter eller mangler større toksikologisk signifikans ved disse forhold.
+
+Sammenlignet med maksimaldoser anbefalt for mennesker, er maksimum tolerert dose hos rotte
+(200 mg/kg/d) og hund (120 mg/kg/d) henholdsvis 2 og 7 ganger høyere med hensyn til AUC. Ingen
+karsinogen risiko relevant for menneske er sett i mus (opptil 120 mg/kg/d) eller rotte (opptil
+240 mg/kg/d). Dette korresponderer til doser for rotte på 1,5 til 4,5 ganger forventet AUC hos
+menneske.
+
+Reproduksjonstoksisitet: Det er sett en liten nedgang i fruktbarhet hos rotter, antagelig grunnet
+amisulprids prolaktinmedierte farmakologiske effekt. Amisulprid krysser også placenta hos rotter og
+føtal plasmakonsentrasjon av substansen var likt nivået hos mordyret. Hos rotter ble det observert en
+forsinket forbeining. Det er ikke observert teratogene effekter hos rotter, kaniner eller mus.
+
+I dyrestudier fremkalte amilsprid en effekt på føtal vekst og utvikling ved doser som tilsvarte en
+menneskelig dose på minst 2000 mg/dag hos en pasient på 50 kg. Det var ikke noe bevis for et
+teratogent potensial for amisulprid. Studier av effekten av amisulprid på avkommets oppførsel har ikke
+blitt utført.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+50 mg og 200 mg: Natriumstivelseglykolat (type A), laktosemonohydrat 34,8 mg resp. 139,2 mg,
+mikrokrystallinsk cellulose, hypromellose, magnesiumstearat.
+400 mg: Natriumstivelseglykolat (type A), laktosemonohydrat 130 mg, mikrokrystallinsk cellulose,
+hypromellose, magnesiumstearat, polyoksyl 40 stearat, titandioksid (E171).
+
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+50 mg, 200 mg og 400 mg tabletter: 3 år
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares ved høyst 30 °C.
+
+6.5     Emballasje (type og innhold)
+
+PVC/Aluminium blisterpakning:
+50 mg og 200 mg tabletter: pakninger à 30 og 90 tabletter.
+400 mg tabletter: Pakning à 30 tabletter.
+
+Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6     Spesielle forholdsregler for destruksjon
+
+Ingen spesielle forholdsregler.
+
+                                                      8
+7.      INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Sanofi-aventis Norge AS, Postboks 133, 1325 Lysaker.
+
+
+8.      MARKEDSFØRINGSTILLATELSESNUMRE
+
+Solian tabletter 50 mg: 97-3714
+Solian tabletter 200 mg: 97-3715
+Solian tabletter, filmdrasjerte 400 mg: 98-5801
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse:
+50 mg og 200 mg: 20. april 1999
+400 mg: 27. september 2000
+
+Dato for siste fornyelse:
+50 mg og 200 mg: 20. april 2009
+400 mg: 27. september 2010
+
+
+10.     OPPDATERINGSDATO
+
+17.08.2022
+
+
+
+
+                                                  9
+

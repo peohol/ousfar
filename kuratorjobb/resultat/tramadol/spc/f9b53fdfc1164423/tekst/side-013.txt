@@ -1,0 +1,59 @@
+5.2   Farmakokinetiske egenskaper
+
+Tramadol administreres i racemisk form, og [-] og [+] formene av tramadol og dets aktive metabolitt
+M1 kan påvises i blodet. Selv om tramadol absorberes raskt er absorpsjonen langsommere (og
+halveringstiden lenger) enn absorpsjonen av paracetamol.
+
+Etter en enkel oral administrasjon av en tramadol/paracetamol (37,5 mg/325 mg) tablett, ble maksimal
+plasmakonsentrasjon på 64,3/55,5 ng/ml [(+)-tramadol/(-)-tramadol] og 4,2 mikrog/ml (paracetamol)
+nådd etter henholdsvis 1,8 timer [(+)-tramadol/(-)-tramadol] og 0,9 timer (paracetamol).
+Gjennomsnittlige halveringstider t1/2 er 5,1/4,7 timer for [(+)-tramadol/(-)-tramadol] og 2,5 timer
+(paracetamol).
+
+I farmakokinetiske studier hos friske frivillige, med enkeltdose og gjentatt administrering av oral
+tramadolhydroklorid/paracetamol, ble det ikke observert noen klinisk signifikant endring i de kinetiske
+parameterne til hvert enkelt virkestoff, sammenlignet med parameterne til virkestoffene administrert
+alene.
+
+Absorpsjon
+
+Racemisk tramadol blir raskt og nesten fullstendig absorbert etter oral administrering. Den
+gjennomsnittlige absolutte biotilgjengelighet av en enkelt 100 mg dose er ca. 75 %. Etter gjentatt
+administrering øker biotilgjengeligheten og når ca. 90 %.
+
+Etter administrasjon av tramadolhydroklorid/paracetamol er den orale absorpsjonen av paracetamol
+rask og nesten fullstendig, og foregår hovedsakelig i tynntarmen. De høyeste plasmakonsentrasjonene
+for paracetamol nås etter ca. en time og blir ikke endret av samtidig administrering med tramadol. Den
+orale administreringen av tramadolhydroklorid/paracetamol sammen med mat hadde ingen signifikant
+påvirkning på høyeste plasmakonsentrasjon, eller grad av absorpsjon av hverken tramadol eller
+paracetamol, så tramadolhydroklorid/paracetamol kan tas uavhengig av måltider.
+
+Distribusjon
+
+Tramadol har høy vevsaffinitet (Vd, β=203 ± 40 l). Det har en plasmaproteinbinding på ca. 20 %.
+
+Paracetamol ser ut til å bli godt distribuert i det meste av kroppsvevet, bortsett fra fett. Tilsynelatende
+distribusjonsvolum er ca. 0,9 l/kg. En relativt liten del (~20 %) paracetamol bindes til plasmaproteiner.
+
+Biotransformasjon
+
+Tramadol blir metabolisert i stor grad etter oral administrering. Ca. 30 % av dosen blir utskilt
+uforandret i urinen, mens 60 % av dosen blir utskilt som metabolitter.
+
+Tramadol blir metabolisert gjennom O-demetylering (katalysert av enzymet CYP2D6) til metabolitten
+M1, og gjennom N-demetylering (katalysert av CYP3A) til metabolitten M2. M1 blir metabolisert
+videre gjennom N-demetylering og ved konjugering med glukoronsyre. Plasmaeliminasjons-
+halveringstiden til M1 er 7 timer.
+
+Metabolitten M1 har analgetiske egenskaper og er mer potent enn modersubstansen.
+Plasmakonsentrasjonene av M1 er flere ganger lavere enn for tramadol og det er usannsynlig at den
+bidrar til den kliniske effekten ved gjentatte doser.
+
+Hemming av én eller begge typene isoenzymene CYP3A4 og CYP2D6 involvert i
+biotransformasjonen av tramadol kan påvirke plasmakonsentrasjonen av tramadol ellers dets aktive
+metabolitt.
+
+Paracetamol blir hovedsakelig metabolisert i leveren gjennom to metabolismeveier: Konjugering til
+glukuronat eller sulfat. Sulfateringsveien kan raskt bli mettet ved doser over de terapeutiske. En liten
+
+                                                   13

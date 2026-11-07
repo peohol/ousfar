@@ -1,0 +1,52 @@
+Linearitet/ikke-linearitet
+Innenfor det terapeutiske doseringsområdet viser tramadol en lineær farmakokinetisk profil.
+
+Farmakokinetisk/farmakodymamisk forhold
+Forholdet mellom serumkonsentrasjoner og analgetisk virkning er doseavhengig, men med store
+variasjoner i enkelte tilfeller. En serumkonsentrasjon på 100-300 ng/ml gir som regel analgetisk effekt.
+
+Pediatrisk populasjon
+De farmakokinetiske egenskapene til tramadol og O-desmetyltramadol etter enkeltdose og flerdose oral
+administrering til individer i alderen 1 år til 16 år ble funnet å være sammenlignbar med voksne etter
+dosejustering for kroppsvekt, men med større variasjon mellom individer hos barn fra 8 år og nedover.
+De farmakokinetiske egenskapene til tramadol og O-desmetyltramadol hos barn under 1 år er undersøkt,
+men er ikke fullstendig karakterisert. Informasjon fra studier som omfattet denne aldersgruppen tyder på at
+dannelsehastigheten for O-desmetyltramadol via CYP2D6 øker kontinuerlig hos nyfødte, og voksennivå
+av CYP2D6-aktivitet antas å bli nådd omkring 1 års alder. I tillegg kan immature
+glukuroniseringssystemer og immatur nyrefunksjon resultere i langsom eliminering og akkumulering av
+O-desmetyltramadol hos barn under 1 år.
+
+5.3   Prekliniske sikkerhetsdata
+
+Ved gjentatt peroral og parenteral administrasjon av tramadol i 6 - 26 uker til rotter og hunder, og peroralt
+i 12 måneder til hunder viste de hematologiske, klinisk-kjemiske og histologiske undersøkelsene ingen
+tegn på substansrelaterte forandringer. Først etter høye doser som lå langt over det terapeutiske området,
+viste det seg CNS-manifestasjoner: rastløshet, økt spyttsekresjon, kramper og redusert vektøkning. Rotter
+og hunder tolererte perorale doser på henholdsvis 20 mg/kg og 10 mg/kg kroppsvekt og hunder tolererte
+rektale doser på 20 mg/kg kroppsvekt, uten noen reaksjoner.
+
+Hos rotter forårsaket tramadol-doseringer fra 50 mg/kg/dag og oppover maternal-toksiske effekter og førte
+til en stigning i dødeligheten av nyfødte. Hos avkommet forekom det retardasjon i form av forstyrrelser i
+ossifiseringen og forsinket åpning av vagina og øyne. Fertiliteten hos hann- og hunnrottene ble ikke
+påvirket. Hos kaniner forekom det maternal-toksiske effekter og skjelettanomalier hos avkommet, fra
+125 mg/kg og oppover.
+
+I noen in vitro-testsystemer ble det observert tegn på mutagene effekter. In vivo-studier viste ingen tegn på
+mutagen effekt. Basert på den kunnskapen som foreligger, kan tramadol klassifiseres som en ikke-
+mutagen substans.
+
+Studier av det tumorfremkallende potensialet i tramadolhydroklorid ble gjennomført på rotter og mus.
+Studien på rotter viste ingen tegn på substansrelatert økning i tumorinsidens. I studien på mus ble det
+observert en økt insidens av levercelle-adenomer hos hanndyr (en doseavhengig, ikke-signifikant stigning
+fra 15 mg/kg og oppover) og en økning i lungetumorer hos hunndyr i alle doseringsgrupper (signifikant,
+men ikke doseavhengig).
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Kapselinnhold
+Maisstivelse, pregelatinisert
+Cellulose, mikrokrystallinsk
+Magnesiumstearat

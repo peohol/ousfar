@@ -1,0 +1,356 @@
+{
+  "stoff": "paroksetin",
+  "status": "ok",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-07T04:15:06.366674+00:00"
+  },
+  "dekning": {
+    "dekket": true,
+    "preparater": 3,
+    "hentet": 3,
+    "dokumenter": 2,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 2 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 2,
+        "ikke_dmp": 0,
+        "uten_omtale": 0
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "ok",
+      "melding": "Alle 3 preparatene FEST oppgir, har en hentet preparatomtale fra DMP.",
+      "antall": {
+        "preparater": 3,
+        "hentet": 3,
+        "mangler": 0,
+        "dokumenter": 2
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf",
+      "hentet_kl": "2026-11-07T18:28:35.394Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "367077",
+        "content-md5": "YKifaV1zaOxx8hY+tbm7zg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:03 GMT",
+        "etag": "0x8DE85F8D0969E80",
+        "date": "Sat, 07 Nov 2026 18:28:35 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1DD8BBF6-6A5C-4BE5-ABED-919F7C1E582D",
+          "varenavn": "Seroxat",
+          "navn_form_styrke": "Seroxat tab 20 mg",
+          "produsent": "GlaxoSmithKline AS",
+          "atc": "N06AB05",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_739FE156-A053-4DA4-9F8C-D09AD46E1222",
+          "varenavn": "Seroxat",
+          "navn_form_styrke": "Seroxat tab 20 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06AB05",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (367077 byte).",
+          "antall": {
+            "bytes": 367077
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "feff7cc66006b17b8e3677298fc27ee45888e5c95628eb61118f5d38c746a57b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7387.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7387.pdf",
+      "hentet_kl": "2026-11-07T18:28:42.693Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "475136",
+        "content-md5": "pTrGMtqaAqBJDQggR1XC9A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:26 GMT",
+        "etag": "0x8DE85F8DE4B32F5",
+        "date": "Sat, 07 Nov 2026 18:28:43 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_C49F4AEE-950A-46A1-8325-C11747C49922",
+          "varenavn": "Paroxetine Oresund Pharma",
+          "navn_form_styrke": "Paroxetine Oresund Pharma tab 20 mg",
+          "produsent": "Oresund Pharma ApS",
+          "atc": "N06AB05",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7387.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (475136 byte).",
+          "antall": {
+            "bytes": 475136
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6e1b356df2b81c602c8f30f67dc27c267b8a90409588ab39a152eb36098d1240"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "feff7cc66006b17b8e3677298fc27ee45888e5c95628eb61118f5d38c746a57b",
+      "bytes": 367077,
+      "mappe": "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "@std Blank Document v2.2",
+        "laget": "Fri Oct 17 12:05:55 2025 UTC",
+        "endret": "Fri Oct 17 12:05:55 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/original.pdf",
+        "tekst": "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-001.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-002.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-003.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-004.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-005.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-006.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-007.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-008.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-009.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-010.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-011.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-012.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-013.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-014.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-015.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-016.txt",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-001.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-002.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-003.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-004.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-005.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-006.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-007.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-008.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-009.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-010.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-011.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-012.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-013.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-014.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-015.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-016.png",
+          "kuratorjobb/resultat/paroksetin/spc/feff7cc66006b17b/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 38754
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6e1b356df2b81c602c8f30f67dc27c267b8a90409588ab39a152eb36098d1240",
+      "bytes": 475136,
+      "mappe": "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Paroxetine",
+        "laget": "Tue Feb 10 11:30:55 2026 UTC",
+        "endret": "Tue Feb 10 11:30:55 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/original.pdf",
+        "tekst": "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-001.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-002.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-003.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-004.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-005.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-006.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-007.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-008.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-009.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-010.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-011.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-012.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-013.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-014.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-015.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-016.txt",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-001.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-002.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-003.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-004.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-005.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-006.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-007.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-008.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-009.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-010.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-011.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-012.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-013.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-014.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-015.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-016.png",
+          "kuratorjobb/resultat/paroksetin/spc/6e1b356df2b81c60/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 17
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 38459
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}
