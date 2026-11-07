@@ -10,12 +10,13 @@
  */
 import { fingeravtrykk, godkjenningsfeil } from '../regler/godkjenning'
 import type { Regel, Regelsett } from '../regler/modell'
+import { FORMULERINGSNAVN } from '../register'
 import { REGELSETT } from '../tilgjengelighet'
 import { BESLUTNINGER } from './beslutninger'
 import { flytoppsett, SAMLET, standardId, vurderFlyt } from './flyt'
 import { katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, betingelserFor } from './katalogkontroll'
 import { apningssvar, etterprov } from './katalogsemantikk'
-import { jaVed, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Svarkilde } from './sporsmal'
+import { jaVed, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Katalogsporsmal, type Svarkilde } from './sporsmal'
 
 export const KATALOGTABELLFIL = 'docs/verktøy-sporsmalskatalog.md'
 
@@ -73,6 +74,10 @@ function stopptabell(r: Regel, g: Parameters<typeof vurderFlyt>[2]): string[] {
   return rader.length === 0 ? [] : ['', '**Svar som stopper planen** (med katalogen):', '', '| Spørsmål | Svar | Det klinikeren får vite |', '| --- | --- | --- |', ...rader]
 }
 
+/** Når svaret følger av valget i steg 1 (B2), i klartekst. */
+const avledning = (id: string, a: Katalogsporsmal['avledesAv']) =>
+  a ? ` _(stilles ikke når «${FORMULERINGSNAVN[a.formulering]}» er valgt for legemidlet det byttes ${a.forlop} i steg 1; svaret er da «${etikett(id, a.svar)}»)_` : ''
+
 /** Etterprøvingen mot regelens egne svar (`katalogsemantikk.ts`), i klartekst. */
 function etterprovingstekst(r: Regel, g: Parameters<typeof vurderFlyt>[2]): string[] {
   const e = etterprov(r, g!)
@@ -102,7 +107,7 @@ function regelavsnitt(r: Regel): string[] {
     const ny = a?.fra
       .map((k) => katalog.sporsmal.find((s) => s.id === k.sporsmal))
       .filter((s) => !!s)
-      .map((s) => (s!.id === SAMLET ? 'Samlet avkrysning til slutt: «Bekreft forutsetningene for planen»' : `${s!.tekst}${s!.hjelp ? ` _(${s!.hjelp})_` : ''}`))
+      .map((s) => (s!.id === SAMLET ? 'Samlet avkrysning til slutt: «Bekreft forutsetningene for planen»' : `${s!.tekst}${s!.hjelp ? ` _(${s!.hjelp})_` : ''}${avledning(s!.id, s!.avledesAv)}`))
       .join(' + ')
     const kategori = KATEGORINAVN[o?.kategori ?? 'uklassifisert']
     const avb =
@@ -173,12 +178,12 @@ export function lagKatalogtabell(regelsett: Regelsett = REGELSETT): string {
     '- **Forklaring per svar.** En svarkilde kan ha sin egen forklaring, som går foran betingelsens. Hvert stoppende svar sier da hvilket forhold som stopper, hvorfor den godkjente planen ikke dekker det, og hva som må planlegges individuelt. Forklaringene skiller mellom kontraindikasjon (bare der regelen sier det) og manglende godkjent standardplan. Tabellen «Svar som stopper planen» under hver regel viser nøyaktig teksten klinikeren får. Feilen der «65 år eller eldre» ga forklaringen for «under 18 år», er rettet.',
     '- **Tidligere seponeringsvansker** spørres som «Har pasienten tidligere fått seponeringssymptomer eller opplevd mislykket nedtrapping eller seponering av …?». Ved «Ja»: «Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker.» Teksten om en «langsom variant», som ikke finnes, er fjernet. Sertralin → mirtazapin og «mange måneder» for sertralin har egne spørsmål som nevner sertralin.',
     '- **Delte spørsmål (`en`: unntaket gjelder når ett er «Ja»):** `ustabil_dose_eller_bytte` = bytte / ustabil dose / uregelmessig bruk; `qt_forlengelse` = kjent QT-forlengelse eller medfødt langt QT / annet QT-forlengende legemiddel.',
-    '- **Delte bekreftelser (`alle`: bekreftet bare når alle gir «Ja»):** indikasjonen i byttene til aripiprazol = alder (voksen) + schizofreni + stabil + følges poliklinisk + årsak til bytte; indikasjonen i depotreglene = alder (voksen) + schizofreni + stabilisert på det perorale legemidlet; `spesialist_risiko` = spesialistvurdert + kan følges tett; `ppp_indikasjon` = annen behandling uten effekt eller ikke tolerert + spesialistvurdering; `fortsetter_valproat` = bruker valproat fast + skal ikke endres; `fortsetter_litium` = bruker litium fast + skal ikke endres + serumlitium følges; `serotonerg_sammedisinering` = øvrige legemidler kontrollert + bruker ikke andre serotonerge eller risikoøkende legemidler.',
+    '- **Delte bekreftelser (`alle`: bekreftet bare når alle gir «Ja»):** indikasjonen i byttene til aripiprazol = alder (voksen) + schizofreni + stabil + følges poliklinisk + årsak til bytte; indikasjonen i depotreglene = alder (voksen) + schizofreni + stabilisert på det perorale legemidlet (Abilify Maintena i tillegg: har tålt peroral aripiprazol); `aktuell_dose` i valproat- og litiumreglene = bruker preparatet + døgndosen er fylt inn i riktig enhet (det andre vises bare etter «Ja» på det første); `spesialist_risiko` = spesialistvurdert + kan følges tett; `ppp_indikasjon` = annen behandling uten effekt eller ikke tolerert + spesialistvurdering; `fortsetter_valproat` = bruker valproat fast + skal ikke endres; `fortsetter_litium` = bruker litium fast + skal ikke endres + serumlitium følges; `serotonerg_sammedisinering` = øvrige legemidler kontrollert + bruker ikke andre serotonerge eller risikoøkende legemidler.',
     '- **Snudd retning** (`ja` ved «Nei», `nei` ved «Ja»), så «Ja» betyr et problem i stoppforholdene: «Skal valproat/litium endres eller seponeres i løpet av opptrappingen?», «Bruker pasienten andre serotonerge legemidler …?» og, i `tilbakefall_innlagt`, «Er pasienten stabil?».',
     '- **Konkrete svar i stedet for ja/nei der «Nei» stoppet:** «Hvordan følges pasienten?» (Poliklinisk / Innlagt / Annet / Vet ikke) avgjør både «følges poliklinisk» i indikasjonen og «innlagt» i `tilbakefall_innlagt`; «Hvorfor byttes …?» (Bivirkninger / Utilstrekkelig effekt / Annen grunn / Vet ikke) avgjør årsaken i indikasjonen.',
-    '- **Avledet av et tidligere svar:** «voksen» i indikasjonene avgjøres av alderen (18–64 år og 65 år eller eldre er voksen, under 18 år er det ikke), så «Er pasienten voksen …?» spørres ikke lenger etter «Hvor gammel er pasienten?». Depotreglene og byttene til aripiprazol spør derfor om alderen.',
+    '- **Avledet av et tidligere svar:** «voksen» i indikasjonene avgjøres av alderen (18–64 år og 65 år eller eldre er voksen, under 18 år er det ikke), så «Er pasienten voksen …?» spørres ikke lenger etter «Hvor gammel er pasienten?». Depotreglene og byttene til aripiprazol spør derfor om alderen. **«Peroral» i byttene til aripiprazol** avgjøres av formuleringen klinikeren valgte i steg 1 (beslutning B2): er «Peroral» valgt der virkestoffet også finnes som depotinjeksjon, stilles «Bruker pasienten peroral …, ikke depotinjeksjon?» ikke, og regelens tekst står i planen som forutsatt. Uten et slikt valg stilles spørsmålet som før.',
     '- **Kortere spørsmål med hjelpetekst:** «Følges pasienten opp ved vurderingspunktene i planen?» i byttene til sertralin har vurderingspunktene i hjelpeteksten. «Er pasienten over 65 år?» har hjelpeteksten «En pasient som er 65 år, svarer «Nei».».',
-    '- **Ikke endret:** `akutt_situasjon` (bare ordlyd), `risperidon_interaksjon`, `seponeringsplager_*`, informasjonen og vurderingene i valproatreglene, siste trinn i byttene til aripiprazol og «peroral» i byttene til aripiprazol. «Peroral» kunne vært avledet av legemiddelformen i steg 2, men bare når formen er valgt av klinikeren og ikke av verktøyet (B4); det er ikke gjort.',
+    '- **Ikke endret:** `akutt_situasjon` (bare ordlyd), `risperidon_interaksjon`, `seponeringsplager_*`, informasjonen og vurderingene i valproatreglene og siste trinn i byttene til aripiprazol.',
     '',
     '## Merknader til kontrollen',
     '',

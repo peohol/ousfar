@@ -22,11 +22,11 @@
  */
 import { describe, expect, it } from 'vitest'
 import { TOMT_SKJEMA } from '../verktoy/doseplan'
-import { flyttilstand } from '../verktoy/flyt'
+import { flyttilstand, valgteFormuleringer } from '../verktoy/flyt'
 import { flytoppsett, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
 import { katalogavtrykk } from '../verktoy/flyt/katalogkontroll'
 import { apningssvar, etterprov, girPlan, regelensSvar, tillatendeSvar } from '../verktoy/flyt/katalogsemantikk'
-import { KATALOGBETINGELSER, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
+import { KATALOGBETINGELSER, KATALOGSPORSMAL, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
 import { erErstattet, erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
 import { tidFor } from '../verktoy/regler/pilotmatrise'
@@ -82,13 +82,27 @@ const OVER_65: readonly Tilfelle[] = [
   [{ alder: '65_eller_eldre', eldre_enn_65: 'ukjent' }, undefined, false],
   [{ alder: 'ukjent' }, undefined, false],
 ]
-/** Depotindikasjonen: voksen med schizofreni, stabilisert på det perorale legemidlet. */
-const depotindikasjon = (stabilisert: string): readonly Tilfelle[] => [
+/** Depotindikasjonen: voksen med schizofreni, stabilisert på det perorale legemidlet (og, for Abilify Maintena, har tålt det: `fast`). */
+const depotindikasjon = (stabilisert: string, fast: Record<string, string> = {}): readonly Tilfelle[] => (<Tilfelle[]>[
   [{ alder: '18_64', schizofreni: 'ja', [stabilisert]: 'ja' }, true, true],
   [{ alder: 'under_18', schizofreni: 'ja', [stabilisert]: 'ja' }, false, false],
   [{ alder: '18_64', schizofreni: 'nei', [stabilisert]: 'ja' }, false, false],
   [{ alder: '18_64', schizofreni: 'ja', [stabilisert]: 'nei' }, false, false],
   [{ alder: '18_64', schizofreni: 'ukjent', [stabilisert]: 'ja' }, false, false],
+]).map(([svar, verdi, plan]): Tilfelle => [{ ...fast, ...svar }, verdi, plan])
+/** Abilify Maintena: også tålt peroral aripiprazol. */
+const MAINTENA_INDIKASJON: readonly Tilfelle[] = [
+  ...depotindikasjon('stabilisert_aripiprazol', { tolererer_aripiprazol: 'ja' }),
+  [{ alder: '18_64', schizofreni: 'ja', stabilisert_aripiprazol: 'ja', tolererer_aripiprazol: 'nei' }, false, false],
+  [{ alder: '18_64', schizofreni: 'ja', stabilisert_aripiprazol: 'ja', tolererer_aripiprazol: 'ukjent' }, false, false],
+]
+/** Preparatet og enheten for døgndosen (valproat og litium): begge må stemme; enheten spørres bare etter «Ja» på preparatet. */
+const aktuellDose = (preparat: string, dose: string): readonly Tilfelle[] => [
+  [{ [preparat]: 'ja', [dose]: 'ja' }, true, true],
+  [{ [preparat]: 'ja', [dose]: 'nei' }, false, false],
+  [{ [preparat]: 'ja', [dose]: 'ukjent' }, false, false],
+  [{ [preparat]: 'nei' }, false, false],
+  [{ [preparat]: 'ukjent' }, false, false],
 ]
 /** Byttene til sertralin: voksne fra 18 til og med 65 år, bytte ved depresjon; 65 er med, 66 er ikke. */
 const K2_INDIKASJON: readonly Tilfelle[] = [
@@ -174,7 +188,7 @@ const FASIT: Fasit = {
   'bytte-escitalopram-sertralin': k2('escitalopram'),
   'bytte-citalopram-sertralin': k2('citalopram'),
   'kryssnedtrapping-sertralin-mirtazapin': { 'bekreftet.serotonerg_sammedisinering': serotonerg('serotonerge_mirtazapin') },
-  'depot-aripiprazol-maintena': { 'bekreftet.indikasjon': depotindikasjon('stabilisert_aripiprazol') },
+  'depot-aripiprazol-maintena': { 'bekreftet.indikasjon': MAINTENA_INDIKASJON },
   'depot-paliperidon-xeplion': { 'bekreftet.indikasjon': depotindikasjon('stabilisert_paliperidon') },
   'depot-risperidon-xeplion': { 'pasientforhold.over_65': OVER_65, 'bekreftet.indikasjon': depotindikasjon('stabilisert_risperidon') },
   'antipsykotikabytte-olanzapin-aripiprazol': k3('olanzapin'),
@@ -202,6 +216,7 @@ const FASIT: Fasit = {
       [{ kan_bli_gravid: 'ja', ppp_prevensjon: 'nei' }, false, false],
       [{ kan_bli_gravid: 'ja', ppp_prevensjon: 'ukjent' }, false, false],
     ],
+    'bekreftet.aktuell_dose': aktuellDose('preparat_natriumvalproat', 'dose_natriumvalproat'),
   },
   'tillegg-litium-lamotrigin': {
     'pasientforhold.under_18': UNDER_18_ALDER,
@@ -219,6 +234,7 @@ const FASIT: Fasit = {
       [{ litium_fast: 'ja', litium_endres: 'nei', serumlitium: 'nei' }, false, false],
       [{ litium_fast: 'ja', litium_endres: 'nei', serumlitium: 'ukjent' }, false, false],
     ],
+    'bekreftet.aktuell_dose': aktuellDose('preparat_lithionit', 'dose_lithionit'),
   },
 }
 
@@ -345,7 +361,7 @@ describe('særskilte kontroller etter integrasjonen med spor B', () => {
 
   it('hvert sikkerhetskritiske stoppforhold i stoppgruppen spør med Ja / Nei / Vet ikke, eller med alder, oppfølging eller årsak med «Vet ikke»', () => {
     for (const r of AKTIVE)
-      for (const s of flytoppsett(r, KATALOG).sporsmal.filter((x) => x.gruppe === 'stopp' && x.kategori === 'sikkerhetsopplysning')) {
+      for (const s of flytoppsett(r, KATALOG).sporsmal.filter((x) => x.gruppe === 'stopp' && (x.kategori === 'sikkerhetsopplysning' || x.kategori === 'avledet'))) {
         const tekster = s.alternativer.map((a) => a.tekst)
         expect(tekster.at(-1), `${r.id} ${s.id}`).toBe('Vet ikke')
         if (tekster.length === 3) expect(tekster, `${r.id} ${s.id}`).toEqual(['Ja', 'Nei', 'Vet ikke'])
@@ -354,5 +370,46 @@ describe('særskilte kontroller etter integrasjonen med spor B', () => {
 
   it('ingen standard-ID fra reservevisningen i katalogen for en aktiv regel', () => {
     for (const r of AKTIVE) expect(flytoppsett(r, KATALOG).sporsmal.filter((s) => s.id.startsWith(standardId('unntak', '').split(':')[0]!))).toEqual([])
+  })
+})
+
+describe('spørsmål som et tidligere valg besvarer, og spørsmål om ett forhold om gangen (U2)', () => {
+  const BYTTE = VERKTOY.find((v) => v.id === 'bytte-antipsykotikum')!
+  const KOMBINERE = VERKTOY.find((v) => v.id === 'kombinere-stemningsstabiliserende')!
+
+  it('tar bare med formuleringer klinikeren faktisk valgte mellom', () => {
+    expect(valgteFormuleringer(BYTTE, { fra: { nokkel: 'olanzapin', formulering: 'standard' }, til: { nokkel: 'aripiprazol', formulering: 'standard' } })).toEqual({ fra: 'standard', til: 'standard' })
+    // Olanzapin har bare én formulering i kombinasjonsverktøyet: ingenting er valgt.
+    expect(valgteFormuleringer(KOMBINERE, { fra: { nokkel: 'olanzapin', formulering: 'standard' } })).toEqual({})
+    expect(valgteFormuleringer(BYTTE, undefined)).toEqual({})
+  })
+
+  it.each(['olanzapin', 'risperidon'])('%s → aripiprazol: «peroral» stilles ikke når «Peroral» er valgt i steg 1, gir samme motorinndata som «Ja», og står i planen som forutsatt', (stoff) => {
+    const r = regel(`antipsykotikabytte-${stoff}-aripiprazol`)
+    const id = `peroral_${stoff}`
+    const valgt: Flytgrunnlag = { ...KATALOG, formuleringer: { fra: 'standard' } }
+    const svar = tillatendeSvar(r, valgt)
+    const avledet = vurderFlyt(r, svar, valgt)
+    expect(avledet.sporsmal.map((s) => s.id)).not.toContain(id)
+    expect(girPlan(avledet)).toBe(true)
+    // Samme som når klinikeren svarer «Ja» selv, uten valget.
+    expect(avledet.felt).toEqual(vurderFlyt(r, { ...svar, [id]: 'ja' }, KATALOG).felt)
+    expect(avledet.forutsatt).toContain(r.bekreftelser.find((b) => b.id === 'peroral_formulering')!.tekst)
+    // Et gammelt svar i skjemaet endrer ikke det valget avgjør.
+    expect(vurderFlyt(r, { ...svar, [id]: 'nei' }, valgt).felt).toEqual(avledet.felt)
+    // Uten valget, eller med en annen formulering, stilles spørsmålet som før, og «Nei» stopper.
+    for (const g of [KATALOG, { ...KATALOG, formuleringer: { fra: 'LA' as const } }]) {
+      const uten = vurderFlyt(r, tillatendeSvar(r, g), g)
+      expect(uten.sporsmal.map((s) => s.id)).toContain(id)
+      expect(vurderFlyt(r, { ...tillatendeSvar(r, g), [id]: 'nei' }, g).stopp.map((x) => x.sporsmal)).toContain(id)
+    }
+    // Uten B2 avledes ingenting.
+    const utenB2: Flytgrunnlag = { ...valgt, beslutninger: { B1: true, B2: false, B4: true, B5: true } }
+    expect(vurderFlyt(r, {}, utenB2).felt.bekreftet).not.toContain('peroral_formulering')
+  })
+
+  // De kliniske vurderingene («Ja / Ikke ennå») er sjekklister for én handling, som stopper aldri; de står samlet med vilje.
+  it('ingen sikkerhetsopplysning eller avledet forutsetning spør om to forhold i samme setning', () => {
+    for (const s of KATALOGSPORSMAL.filter((x) => x.kategori !== 'klinisk_vurdering')) expect(s.tekst, s.id).not.toMatch(/, og /)
   })
 })

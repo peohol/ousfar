@@ -181,6 +181,8 @@ export async function besvarAlt(user: Bruker, ja: RegExp[] = [], svar: (readonly
     for (const navn of grupper) {
       const gruppe = screen.queryByRole('group', { name: navn })
       for (const valg of gruppe ? within(gruppe).queryAllByRole('radiogroup') : []) {
+        // Et svar kan skjule spørsmål som står senere i lista; de besvares ikke.
+        if (!valg.isConnected) continue
         const onsket = onsketSvar(valg, ja, svar, snudd)
         if (onsket.checked) continue
         await user.click(onsket)

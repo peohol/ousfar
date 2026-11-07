@@ -15,6 +15,7 @@
  * kontrollerer, `docs/verktøy-sporsmalskatalog.md`, lages herfra
  * (`katalogtabell.ts`).
  */
+import type { Kildeformulering } from '../kartlegging'
 import type { Kategori, Sporsmalsgruppe, Svaralternativ } from './typer'
 
 /** Svarsettene katalogen bruker. */
@@ -75,6 +76,12 @@ export interface Katalogsporsmal {
   svar: Svarsett
   /** Spørsmålet vises bare når et annet spørsmål har ett av disse svarene. */
   vises?: { sporsmal: string; svar: readonly string[] }
+  /**
+   * Svaret følger av formuleringen klinikeren uttrykkelig valgte for forløpet
+   * i steg 1 (beslutning B2), og spørsmålet stilles da ikke. Bare når
+   * virkestoffet har flere formuleringer å velge mellom; ellers stilles det.
+   */
+  avledesAv?: { forlop: 'fra' | 'til'; formulering: Kildeformulering; svar: string }
 }
 
 /**
@@ -152,7 +159,7 @@ const forHvertSertralinbytte = (lag: (b: Sertralinbytte) => Katalogsporsmal) => 
 
 /** De perorale legemidlene det byttes fra til depot (K3), med spørsmålet om pasienten er stabilisert på dem. */
 const TIL_DEPOT = [
-  { id: 'stabilisert_aripiprazol', tekst: 'Er pasienten stabilisert på peroral aripiprazol, og har pasienten tålt den?' },
+  { id: 'stabilisert_aripiprazol', tekst: 'Er pasienten stabilisert på peroral aripiprazol?' },
   { id: 'stabilisert_paliperidon', tekst: 'Er pasienten stabilisert på peroral paliperidon depottablett?' },
   { id: 'stabilisert_risperidon', tekst: 'Er pasienten stabilisert på peroral risperidon?' },
 ] as const
@@ -183,6 +190,7 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
   { id: 'alder', tekst: 'Hvor gammel er pasienten?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'alder' },
   { id: 'schizofreni', tekst: 'Har pasienten schizofreni?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' },
   ...TIL_DEPOT.map(({ id, tekst }): Katalogsporsmal => ({ id, tekst, gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' })),
+  { id: 'tolererer_aripiprazol', tekst: 'Har pasienten tålt peroral aripiprazol?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' },
   {
     id: 'tolererer_risperidon',
     tekst: 'Er det dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet?',
@@ -198,8 +206,9 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
     id: `peroral_${stoff}`,
     tekst: `Bruker pasienten peroral ${stoff} (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon?`,
     gruppe: 'stopp',
-    kategori: 'sikkerhetsopplysning',
+    kategori: 'avledet',
     svar: 'ja_nei_ukjent',
+    avledesAv: { forlop: 'fra', formulering: 'standard', svar: 'ja' },
   })),
   { id: 'depresjon_bytte', tekst: 'Gjelder byttet behandling av depresjon?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' },
   { id: 'valproat_fast', tekst: 'Bruker pasienten valproat fast?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' },
@@ -208,19 +217,37 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
   // Avledet av valget av preparat (beslutning B2); stilles bare når B2 er akseptert.
   {
     id: 'preparat_lithionit',
-    tekst: 'Bruker pasienten Lithionit 42 mg depottabletter, og er døgndosen fylt inn i mg litium (Li⁺) som antall tabletter × 42 mg?',
-    hjelp: 'Én tablett er 42 mg litium (6 mmol). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen.',
+    tekst: 'Bruker pasienten Lithionit 42 mg depottabletter?',
+    hjelp: 'Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen.',
     gruppe: 'stopp',
     kategori: 'avledet',
     svar: 'ja_nei_ukjent',
   },
   {
-    id: 'preparat_natriumvalproat',
-    tekst: 'Bruker pasienten et natriumvalproatpreparat, og er døgndosen fylt inn i mg natriumvalproat slik den står i legemiddellisten?',
-    hjelp: 'Preparat, styrke og fordeling over døgnet fortsetter uendret. Preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen.',
+    id: 'dose_lithionit',
+    tekst: 'Er døgndosen fylt inn i mg litium (Li⁺), som antall tabletter × 42 mg?',
+    hjelp: 'Én tablett er 42 mg litium (6 mmol).',
     gruppe: 'stopp',
     kategori: 'avledet',
     svar: 'ja_nei_ukjent',
+    vises: { sporsmal: 'preparat_lithionit', svar: ['ja'] },
+  },
+  {
+    id: 'preparat_natriumvalproat',
+    tekst: 'Bruker pasienten et natriumvalproatpreparat?',
+    hjelp: 'Preparat, styrke og fordeling over døgnet fortsetter uendret.',
+    gruppe: 'stopp',
+    kategori: 'avledet',
+    svar: 'ja_nei_ukjent',
+  },
+  {
+    id: 'dose_natriumvalproat',
+    tekst: 'Er døgndosen fylt inn i mg natriumvalproat, slik den står i legemiddellisten?',
+    hjelp: 'Preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen.',
+    gruppe: 'stopp',
+    kategori: 'avledet',
+    svar: 'ja_nei_ukjent',
+    vises: { sporsmal: 'preparat_natriumvalproat', svar: ['ja'] },
   },
 
   // --- Stoppforhold: forhold som utelukker planen («Ja» stopper) ---
@@ -651,17 +678,18 @@ const lamotrigin = (regel: string): Katalogbetingelse[] => [
   { regel, type: 'bekreftelse', id: 'utslett_informert', kategori: 'klinisk_vurdering', fra: fra('utslett_informert') },
 ]
 
-/** Indikasjonen «voksen med schizofreni som er stabilisert på det perorale legemidlet» i depotreglene (K3), spurt som tre enkle spørsmål. */
-const depotindikasjon = (regel: string, stabilisert: (typeof TIL_DEPOT)[number]['id'], legemiddel: string): Katalogbetingelse => ({
+/** Indikasjonen «voksen med schizofreni som er stabilisert på det perorale legemidlet» i depotreglene (K3), spurt som enkle spørsmål; `ekstra` er et vilkår regelen har i tillegg, med spørsmålet og hvordan det står i forklaringen. */
+const depotindikasjon = (regel: string, stabilisert: (typeof TIL_DEPOT)[number]['id'], legemiddel: string, ekstra?: { kilde: Svarkilde; vilkar: string }): Katalogbetingelse => ({
   regel,
   type: 'bekreftelse',
   id: 'indikasjon',
   kategori: 'sikkerhetsopplysning',
-  forklaring: stopp(gjelderBare(`voksne med schizofreni som er stabilisert på ${legemiddel}`), 'depot'),
+  forklaring: stopp(gjelderBare(`voksne med schizofreni som er stabilisert på ${legemiddel}${ekstra ? ` ${ekstra.vilkar}` : ''}`), 'depot'),
   fra: [
     VOKSEN(stopp(gjelderBare('voksne'), 'depot')),
     med('schizofreni', stopp(gjelderBare('pasienter med schizofreni'), 'depot')),
     med(stabilisert, stopp(gjelderBare(`pasienter som er stabilisert på ${legemiddel}`), 'depot')),
+    ...(ekstra ? [ekstra.kilde] : []),
   ],
 })
 
@@ -685,7 +713,7 @@ const tilAripiprazol = ({ regel, stoff }: Bytte): Katalogbetingelse[] => [
     regel,
     type: 'bekreftelse',
     id: 'peroral_formulering',
-    kategori: 'sikkerhetsopplysning',
+    kategori: 'avledet',
     fra: fra(`peroral_${stoff}`),
     forklaring: stopp(gjelderBare(`bytte fra peroral ${stoff}, ikke fra depotinjeksjon`), 'bytte'),
   },
@@ -859,7 +887,7 @@ export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
   ...TIL_SERTRALIN.flatMap(tilSertralin),
 
   // Aripiprazol → Abilify Maintena (v3).
-  depotindikasjon(MAINTENA, 'stabilisert_aripiprazol', 'peroral aripiprazol og har tålt den'),
+  depotindikasjon(MAINTENA, 'stabilisert_aripiprazol', 'peroral aripiprazol', { kilde: med('tolererer_aripiprazol', stopp(gjelderBare('pasienter som har tålt peroral aripiprazol'), 'depot')), vilkar: 'og har tålt den' }),
   {
     regel: MAINTENA,
     type: 'unntak',
@@ -997,7 +1025,10 @@ export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
     type: 'bekreftelse',
     id: 'aktuell_dose',
     kategori: 'avledet',
-    fra: fra('preparat_natriumvalproat'),
+    fra: [
+      med('preparat_natriumvalproat', stopp(gjelderBare('natriumvalproatpreparater'), 'opptrapping')),
+      med('dose_natriumvalproat', stopp(gjelderBare('når døgndosen er fylt inn i mg natriumvalproat'), 'opptrapping')),
+    ],
     forklaring: stopp(gjelderBare('natriumvalproat med dosen fylt inn i mg natriumvalproat'), 'opptrapping'),
   },
 
@@ -1047,7 +1078,10 @@ export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
     type: 'bekreftelse',
     id: 'aktuell_dose',
     kategori: 'avledet',
-    fra: fra('preparat_lithionit'),
+    fra: [
+      med('preparat_lithionit', stopp(gjelderBare('Lithionit 42 mg depottabletter'), 'opptrapping')),
+      med('dose_lithionit', stopp(gjelderBare('når døgndosen er fylt inn i mg litium (Li⁺)'), 'opptrapping')),
+    ],
     forklaring: stopp(gjelderBare('Lithionit 42 mg depottabletter med dosen fylt inn i mg litium'), 'opptrapping'),
   },
 ]

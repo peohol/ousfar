@@ -13,7 +13,7 @@ import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
 import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
 import { tillatende } from '../verktoy/flyt/katalogsemantikk'
 import { FEST_IKKE_FERSK, forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
-import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
+import { flyttilstand, medFlytsvar, reglerMedPlan, valgteFormuleringer } from '../verktoy/flyt'
 import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
 import { KATALOGBETINGELSER, KATALOGSPORSMAL, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
@@ -446,8 +446,14 @@ describe('forbehold, avledede forutsetninger og «Ingen av disse» (B1, B2, B5)'
     expect(vurderFlyt(LITIUM, {}, katalog(LITIUM, { B2: false })).sporsmal.find((s) => s.id === SAMLET)!.punkter).toEqual([LITIUM.bekreftelser.find((b) => b.id === 'aktuell_dose')!.tekst])
     const g = katalog(LITIUM, { B2: true })
     expect(vurderFlyt(LITIUM, {}, g).sporsmal.map((s) => s.id)).toContain('preparat_lithionit')
+    // Enheten for døgndosen spørres for seg, og bare når preparatet er Lithionit.
+    expect(vurderFlyt(LITIUM, {}, g).sporsmal.map((s) => s.id)).not.toContain('dose_lithionit')
     expect(vurderFlyt(LITIUM, {}, g).felt.bekreftet).not.toContain('aktuell_dose')
-    const ja = vurderFlyt(LITIUM, { preparat_lithionit: 'ja' }, g)
+    const preparat = vurderFlyt(LITIUM, { preparat_lithionit: 'ja' }, g)
+    expect(preparat.sporsmal.map((s) => s.id)).toContain('dose_lithionit')
+    expect(preparat.felt.bekreftet).not.toContain('aktuell_dose')
+    expect(vurderFlyt(LITIUM, { preparat_lithionit: 'ja', dose_lithionit: 'nei' }, g).sporsmal.find((s) => s.id === 'dose_lithionit')!.forklaring).toMatch(/døgndosen er fylt inn i mg litium/)
+    const ja = vurderFlyt(LITIUM, { preparat_lithionit: 'ja', dose_lithionit: 'ja' }, g)
     expect(ja.felt.bekreftet).toContain('aktuell_dose')
     expect(ja.forutsatt).toContain(LITIUM.bekreftelser.find((b) => b.id === 'aktuell_dose')!.tekst)
     const nei = vurderFlyt(LITIUM, { preparat_lithionit: 'nei' }, g)
@@ -879,11 +885,13 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     let antall = 0
     for (const [id, t] of Object.entries(TILFELLER)) {
       const r = regel(id)
-      for (const [navn, g] of [
+      for (const [navn, utenValg] of [
         ['katalog', katalog(r)],
         ['reserve', RESERVE],
         ['appen', {}],
       ] as const) {
+        // Med formuleringene fra valget, som i appen: et spørsmål valget besvarer (B2), stilles ikke.
+        const g: Flytgrunnlag = { ...utenValg, formuleringer: valgteFormuleringer(t.verktoy, t.valg) }
         const base = besvarTillatende(r, g)
         const vanlig = vurderFlyt(r, base, g)
         expect(vanlig.stopp, `${id} ${navn}`).toEqual([])
@@ -901,7 +909,7 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
             // Samme svar gir samme utfall og samme stoppgrunn, med flyten gitt …
             expect(forhandskontroll({ ...grunnlag, flyt }), hva).toEqual({ utfall: 'kan_ikke', grunner: flyt.stopp, gjenstar: 0, regler: [r] })
             // … og i hele tilstanden: ingenting står igjen, og planen er ikke neste steg.
-            const ut = flyttilstand({ ...grunnlag, flytgrunnlag: g })
+            const ut = flyttilstand({ ...grunnlag, flytgrunnlag: utenValg })
             expect(ut.tilstand.kontroll, hva).toEqual({ utfall: 'kan_ikke', grunner: flyt.stopp, gjenstar: 0 })
             expect(ut.tilstand.steg, hva).not.toBe('plan')
             // Uten flyten regner forhåndskontrollen den selv fra svarene i skjemaet, med appens katalogoppsett.
