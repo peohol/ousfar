@@ -38,7 +38,7 @@ export const VERKTOY: readonly Verktoy[] = [
   {
     id: 'trappe-ned-antidepressiv',
     navn: 'Trappe ned antidepressiv',
-    beskrivelse: 'Beregnet forslag til de første trinnene når ett antidepressivum skal seponeres.',
+    beskrivelse: 'Komplett nedtrappingsplan til seponering av ett antidepressivum der et godkjent forløp passer. Ellers sier verktøyet hvorfor.',
     type: 'seponering',
     tabell: 'SwitchAntidepressants',
     ikon: 'ned',
@@ -47,7 +47,7 @@ export const VERKTOY: readonly Verktoy[] = [
   {
     id: 'bytte-antidepressiv',
     navn: 'Bytte antidepressiv',
-    beskrivelse: 'Beregnet forslag til starten på et bytte fra ett antidepressivum til et annet.',
+    beskrivelse: 'Komplett plan for bytte mellom antidepressiver der et godkjent forløp passer. Ellers sier verktøyet hvorfor.',
     type: 'bytte',
     tabell: 'SwitchAntidepressants',
     ikon: 'rotate',

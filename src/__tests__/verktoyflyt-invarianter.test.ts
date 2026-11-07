@@ -836,8 +836,8 @@ const INTERNE: readonly [string, RegExp][] = [
   ['formuleringsklasse', /formuleringsklasse/i],
   ['kontrollutfall', /kontrollert, ikke godkjent|til faglig kontroll/i],
 ]
-/** Svaralternativer som ikke sier hva som svares på (P1). */
-const UKLARE_SVAR = /^(Gjelder|Gjelder ikke)$/
+/** Svaralternativer som ikke sier hva som svares på (P1); reservevisningen bruker dem for regelens egne utsagn. */
+const UKLARE_SVAR = /^(Gjelder|Gjelder ikke|Stemmer|Stemmer ikke)$/
 
 /**
  * Regelens egne tekster (spørsmål, unntak, bekreftelser og fortolkning). De er
@@ -876,23 +876,32 @@ function katalogGjelder(r: Regel): boolean {
 }
 /**
  * De godkjente reglene som med vilje står i reservevisningen til katalogen
- * deres er kontrollert (C1, 3da270b: ChatGPT har godkjent avtrykkene for de
- * sju andre; K2-byttene til sertralin, #318, har katalog som ikke er kontrollert ennå). Den som fører et nytt katalogavtrykk, eller får en ny regel
- * godkjent uten avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd
- * først når listen er tom (plan §11).
+ * deres er kontrollert. P2a (07.11.2026) endret hele katalogen, så
+ * avtrykkene ChatGPT godkjente 04.11 for de sju K3- og K4-reglene gjelder
+ * ikke lenger, og alle venter på ChatGPTs kontroll av den nye katalogen. Den
+ * som fører et nytt katalogavtrykk, eller får en ny regel godkjent uten
+ * avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd først når
+ * listen er tom (plan §11).
  */
 const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
+  'antipsykotikabytte-olanzapin-aripiprazol v8',
+  'antipsykotikabytte-risperidon-aripiprazol v8',
+  'bytte-citalopram-sertralin v2',
+  'bytte-escitalopram-sertralin v2',
+  'depot-aripiprazol-maintena v3',
+  'depot-paliperidon-xeplion v3',
+  'depot-risperidon-xeplion v8',
   'kryssnedtrapping-sertralin-mirtazapin v10',
   'seponering-escitalopram v13',
   'seponering-escitalopram-tabletter-og-draper v14',
   'seponering-vortioksetin v12',
-  'bytte-escitalopram-sertralin v2',
-  'bytte-citalopram-sertralin v2',
+  'tillegg-litium-lamotrigin v2',
+  'tillegg-valproat-lamotrigin v2',
 ]
 
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
- * også «Gjelder»/«Gjelder ikke» for unntak, slik dagens skjema viser dem.
+ * også «Stemmer»/«Stemmer ikke» for unntak (P2a; før det «Gjelder»/«Gjelder ikke»).
  * A1 setter `data-reservevisning` på elementet som viser betingelsene slik.
  */
 const RESERVEVISNING = '[data-reservevisning]'

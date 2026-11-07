@@ -47,7 +47,7 @@ const harStoppet = async (p) => /^Ingen plan/m.test(await p.locator('.planpanel'
 const sidetekst = async (p) => p.locator('main').first().innerText().catch(() => p.locator('body').innerText())
 
 /**
- * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Gjelder ikke», «Nei», «Ja» på bekreftelser).
+ * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Stemmer ikke», «Nei», «Ja» på vurderinger og bekreftelser, en voksen under 65 år som følges poliklinisk, bytte for bivirkninger).
  * Stopper så snart planpanelet viser et endelig stopp, så handlingene telles til
  * utfallet og ikke til et ferdig utfylt skjema.
  */
@@ -75,7 +75,7 @@ async function svarAlle(p, svar, logg) {
         logg.push(`☑ ${s.tekst}`)
       } else {
         const lab = s.alt.map((a) => a.lab)
-        const valg = regel?.[1] ?? (lab.includes('Ikke ennå') ? 'Ja' : lab.includes('Gjelder ikke') ? 'Gjelder ikke' : 'Nei')
+        const valg = regel?.[1] ?? (lab.includes('Ikke ennå') ? 'Ja' : ['Stemmer ikke', 'Nei', '18–64 år', 'Poliklinisk', 'Bivirkninger'].find((t) => lab.includes(t)) ?? 'Nei')
         const i = lab.indexOf(valg)
         if (i < 0) throw new Error(`Fant ikke «${valg}» blant ${lab.join('/')} for «${s.tekst}».`)
         await p.locator(`li[data-flytsporsmal="${s.id}"] input[type=radio]`).nth(i).click()
@@ -145,8 +145,16 @@ async function kjor(f) {
   for (const [tekst, fil] of f.bilder ?? []) await p.locator('li[data-flytsporsmal]', { hasText: new RegExp(tekst) }).first().screenshot({ path: `${navn}-${fil}.png` })
   await p.screenshot({ path: `${navn}-steg3.png`, fullPage: true })
 
-  // Steg 4: dosevalgene planen ber om, ett om gangen (den første dosen som tilbys).
+  // Steg 4: dosevalgene planen ber om. Har hvert trinn bare én dose, godtas de samlet med ett trykk (spor B);
+  // ellers ett om gangen (den første dosen som tilbys).
   const dosevalg = []
+  const samlet = p.locator('[data-entydige]')
+  if ((await samlet.count()) > 0) {
+    const doser = await samlet.locator('li').allInnerTexts()
+    await samlet.getByRole('button', { name: 'Bruk disse dosene' }).click()
+    dosevalg.push(...doser.map((d) => `${d} (samlet, ett alternativ)`))
+    await gjort(`godtok ${doser.length} dosevalg med ett alternativ hvert, med ett trykk`)
+  }
   for (let n = 0; n < 30; n++) {
     const region = p.getByRole('region', { name: 'Doser som kan velges' })
     if ((await region.count()) === 0) break

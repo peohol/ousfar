@@ -207,17 +207,90 @@ export const begrunnelseshjelp = (r: Regel): string =>
     ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? startdosenavn(r) : 'Måldose'} ${k.omrade?.[0] === 0 ? 'over' : 'utenfor'} ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
+const liksom = (a: number, b: number) => Math.abs(a - b) < 1e-9
+
+/**
+ * Verdiene en justerbar parameter kan ha i en godkjent plan: det regelens
+ * kliniske omfang er kontrollert med for startdosen og svarene som er gitt
+ * (tilfellets verdi, ellers regelens forslag for tilfellets svar). Et spørsmål
+ * som ikke er besvart, utelukker ingen tilfeller. `undefined` når regelen ikke
+ * har et klinisk omfang: da gjelder godkjenningen hele området.
+ */
+export function godkjenteVerdier(r: Regel, sti: string, svar: Record<string, boolean> = {}, startdose?: number): number[] | undefined {
+  const omfang = r.klinisk_omfang
+  const p = justerbare(r).find(([x]) => x === sti)?.[1]
+  if (!omfang || !p) return undefined
+  const ider = (r.sporsmal ?? []).map((s) => s.id)
+  const nei = Object.fromEntries(ider.map((id) => [id, false]))
+  const verdier = omfang.tilfeller
+    .filter((t) => startdose === undefined || t.startdoser.some((x) => liksom(x, startdose)))
+    .filter((t) => ider.every((id) => !(id in svar) || (t.svar[id] ?? false) === svar[id]))
+    .flatMap((t) => {
+      const x = t.justert?.[sti] ?? forslagsverdi(p, { ...nei, ...t.svar })
+      return x === null ? [] : [x]
+    })
+  return [...new Set(verdier)].sort((a, b) => a - b).filter((x, i, xs) => i === 0 || !liksom(x, xs[i - 1]!))
+}
+
+/** Et felt i «Tilpass planen». `godkjent` er verdiene som gir en godkjent plan, når regelen har et klinisk omfang; med én verdi er feltet låst. */
+export interface Justeringsfelt {
+  sti: string
+  navn: string
+  forslag: string
+  hjelp: string
+  godkjent?: number[]
+  /** Verdiene i `godkjent` med enhet, f.eks. «25 %». */
+  godkjentTekst?: string
+  /** `godkjent` som valg (verdien slik feltet lagrer den, og teksten med enhet), med regelens forslag som standard når det er blant dem. */
+  alternativer?: { verdi: string; tekst: string }[]
+  standard?: string
+}
+
 /**
  * Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst
- * med forslaget og området. Forslaget følger svarene (`Parameter.standard_ved`).
+ * med forslaget og det som er tillatt. Forslaget følger svarene
+ * (`Parameter.standard_ved`). Har regelen et klinisk omfang, sier feltet hvilke
+ * verdier den godkjente planen bruker, ikke hele modellens område, så feltet
+ * aldri tilbyr en verdi som alltid gir «ingen plan» (P0, F1).
  */
-export const justeringsfelt = (r: Regel, svar: Record<string, boolean> = {}): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
+export const justeringsfelt = (r: Regel, svar: Record<string, boolean> = {}, startdose?: number): Justeringsfelt[] =>
   justerbare(r).map(([sti, p]) => {
     const x = forslagsverdi(p, svar)
     const forslag = x === null ? '' : medEnhet(x, p)
+    const godkjent = godkjenteVerdier(r, sti, svar, startdose)
+    if (godkjent) {
+      const godkjentTekst = listeEller(godkjent.map((v) => medEnhet(v, p)))
+      // Ingen godkjent verdi: den godkjente planen dekker ikke dosen eller svarene, så feltet påstår ingen verdi (stoppet sier hvorfor).
+      const hjelp =
+        godkjent.length === 0
+          ? 'Den godkjente planen gjelder ikke for denne dosen eller disse svarene, så verdien kan ikke tilpasses.'
+          : godkjent.length === 1
+            ? `Den godkjente planen bruker ${godkjentTekst} for disse svarene. Andre verdier er ikke godkjent, så feltet kan ikke endres.`
+            : `Den godkjente planen kan bruke ${godkjentTekst}. Andre verdier er ikke godkjent.`
+      const alternativer = godkjent.map((v) => ({ verdi: String(v), tekst: medEnhet(v, p) }))
+      const standard = x !== null && godkjent.some((v) => liksom(v, x)) ? String(godkjent.find((v) => liksom(v, x))) : undefined
+      return { sti, navn: p.justerbar, forslag, hjelp, godkjent, godkjentTekst, alternativer, ...(standard !== undefined && { standard }) }
+    }
     const ved = x !== p.verdi && p.standard_ved ? ` ved ${r.sporsmal?.find((s) => s.id === p.standard_ved!.ved)?.ja ?? p.standard_ved.ved}${p.verdi === null ? '' : ` (ellers ${medEnhet(p.verdi, p)})`}` : ''
     return { sti, navn: p.justerbar, forslag, hjelp: `${forslag ? `Regelens forslag er ${forslag}${ved}; tomt felt bruker forslaget. ` : ''}Regelen tillater ${omradetekst(p)}.` }
   })
+
+const listeEller = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} eller ${xs.at(-1)}`)
+
+/**
+ * De justerte verdiene i skjemaet som ikke gir en godkjent plan, med en
+ * forklaring i klartekst; tom når alle er godkjent eller tomme.
+ */
+export function ikkeGodkjenteJusteringer(r: Regel, skjema: Planskjema): { sti: string; tekst: string }[] {
+  const start = lesDose(skjema.startdose)
+  return justeringsfelt(r, skjema.svar, start).flatMap((f) => {
+    const x = justertVerdi(skjema, f.sti)
+    // Uten noen godkjent verdi stopper planen allerede av en annen grunn (dosen eller svarene), som da er den riktige forklaringen.
+    if (x === undefined || !f.godkjent?.length || f.godkjent.some((v) => liksom(v, x))) return []
+    const p = justerbare(r).find(([s]) => s === f.sti)![1]
+    return [{ sti: f.sti, tekst: `${f.navn} ${medEnhet(x, p)} er ikke godkjent: den godkjente planen bruker ${f.godkjentTekst}.` }]
+  })
+}
 
 /** Forskriverens valg for den justerbare verdien på `sti`; `undefined` når feltet er tomt eller ikke et tall. */
 const justertVerdi = (skjema: Planskjema, sti: string) => lesDose(skjema.justert[sti] ?? '')
@@ -283,6 +356,48 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
 /** Doseplanen, bare når den er klinisk og komplett; ellers en stopp med grunnene. `motor` er en annen bare i kontrollgrunnlag og tester. */
 export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT, settene?: readonly Regelsett[], motor = kliniskDoseplan): Doseplanresultat {
   return motor(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [], regler: regelsett.regler }, settFor(r, regelsett, settene))
+}
+
+/** Ett trinn der forskriveren bare har én dose å velge, og dosen. */
+export interface Entydigvalg {
+  trinn: Trinnvalg
+  dose: Trinnvalg['doser'][number]
+}
+
+/** Høyst så mange trinn går {@link entydigeTrinnvalg} gjennom. */
+export const MAKS_ENTYDIGE = 30
+
+/**
+ * Dosevalgene i trinn som hvert bare har én dose å velge, i rekkefølge, når
+ * de sammen gir en komplett plan (P0 M4): det forskriveren ellers må trykke
+ * fem til sju ganger, ett trinn om gangen. Verktøyet velger ikke: forskriveren
+ * godtar alle med ett trykk, og planen beregnes på nytt fra valgene, som om de
+ * var trykket hver for seg (samme `trinnvalg`, samme regel og fingeravtrykk).
+ * `undefined` når et trinn har flere doser å velge mellom, når planen ikke blir
+ * komplett, eller når planen ikke venter på et dosevalg; da velges dosene ett og
+ * ett som før. Automatisk valg uten forskriverens trykk (B3) krever en ny
+ * regelversjon og er ikke tatt i bruk.
+ */
+export function entydigeTrinnvalg(
+  r: Regel,
+  valg: Verktoyvalg,
+  skjema: Planskjema,
+  utvalg: Legemiddelutvalg,
+  naa: Date,
+  regelsett: Regelsett = REGELSETT,
+  forste: Doseplanresultat = beregnPlan(r, valg, skjema, utvalg, naa, regelsett),
+): Entydigvalg[] | undefined {
+  const ut: Entydigvalg[] = []
+  let s = skjema
+  let res = forste
+  while (res.status === 'stoppet') {
+    const t = res.trinnvalg?.find((x) => !x.mellomtrinn)
+    if (!t || t.doser.length !== 1 || ut.length >= MAKS_ENTYDIGE) return undefined
+    ut.push({ trinn: t, dose: t.doser[0]! })
+    s = medTrinnvalg(s, t, t.doser[0]!.mg)
+    res = beregnPlan(r, valg, s, utvalg, naa, regelsett)
+  }
+  return res.status === 'doseplan' && ut.length > 0 ? ut : undefined
 }
 
 /**
