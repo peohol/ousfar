@@ -276,23 +276,23 @@ Ingen trinn krever forskriverens valg.
 **Komplett plan til sluttmålet: Escitalopram seponert fra dag 197.**
 
 - Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg (valgt av forskriveren (beregnet 7,5 mg; −20 %))
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 29: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 29–56: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 57: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 57–84: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 85: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 85–112: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 113: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 113–140: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 141: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 141–168: Escitalopram peroralt: 2 mg = 2 dråper à 1 mg (valgt av forskriveren (beregnet 2,25 mg; −33,33 %))
-- Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 169: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 169–196: Escitalopram peroralt: 1 mg = 1 dråpe à 1 mg (valgt av forskriveren (beregnet 1,5 mg; −50 %))
-- Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 197: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Fra dag 197: Escitalopram peroralt: Seponert
-- Dag 203: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose.
-- Dag 210: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose.
-- Dag 224: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Dag 203: Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose.
+- Dag 210: Vurdering (Escitalopram): Punkt 3: Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose.
+- Dag 224: Vurdering (Escitalopram): Punkt 4: Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 20 mg, kort behandlingstid
 
@@ -307,29 +307,29 @@ Ingen trinn krever forskriverens valg.
 **Komplett plan til sluttmålet: Escitalopram seponert fra dag 281.**
 
 - Dag 1–28: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 29: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 29–56: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 57: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 57–84: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 85: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 85–112: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 113: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 113–140: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 141: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 141–168: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))
-- Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 169: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 169–196: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))
-- Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 197: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 197–224: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg
-- Dag 225: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 225: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 225–252: Escitalopram peroralt: 2 mg = 2 dråper à 1 mg (valgt av forskriveren (beregnet 2,25 mg; −33,33 %))
-- Dag 253: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 253: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Dag 253–280: Escitalopram peroralt: 1 mg = 1 dråpe à 1 mg (valgt av forskriveren (beregnet 1,5 mg; −50 %))
-- Dag 281: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
+- Dag 281: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.
 - Fra dag 281: Escitalopram peroralt: Seponert
-- Dag 287: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose.
-- Dag 294: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose.
-- Dag 308: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Dag 287: Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose.
+- Dag 294: Vurdering (Escitalopram): Punkt 3: Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose.
+- Dag 308: Vurdering (Escitalopram): Punkt 4: Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 10 mg, lang behandlingstid
 
@@ -360,8 +360,8 @@ Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delp
 
 | ID | K0 | Hva | Regel | Forventet | Resultat |
 | --- | --- | --- | --- | --- | --- |
-| K1-01 | K0-01 | escitalopram 10 mg, kort behandlingstid; pasienten bruker tabletter og går over til dråper med samme døgndose; forskriveren velger 8 mg, 5 mg, 4 mg, 2 mg, 1 mg | den verktøyet tilbyr i dag | Plan: 8 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 6 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 5 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 4 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 3 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 2 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 1 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. → Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-02 | – | escitalopram dråper 20 mg, kort behandlingstid; forskriveren velger 12 mg, 7 mg, 6 mg, 5 mg, 4 mg, 2 mg, 1 mg | den verktøyet tilbyr i dag | Plan: 15 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 12 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 9 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 7 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 6 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 5 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 4 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 3 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 2 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 1 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. → Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
+| K1-01 | K0-01 | escitalopram 10 mg, kort behandlingstid; pasienten bruker tabletter og går over til dråper med samme døgndose; forskriveren velger 8 mg, 5 mg, 4 mg, 2 mg, 1 mg | den verktøyet tilbyr i dag | Plan: 8 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 6 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 5 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 4 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 3 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 2 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 1 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → Seponert → Punkt 2: Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. → Punkt 3: Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. → Punkt 4: Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
+| K1-02 | – | escitalopram dråper 20 mg, kort behandlingstid; forskriveren velger 12 mg, 7 mg, 6 mg, 5 mg, 4 mg, 2 mg, 1 mg | den verktøyet tilbyr i dag | Plan: 15 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 12 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 9 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 7 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 6 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 5 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 4 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 3 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 2 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → 1 mg → Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall. → Seponert → Punkt 2: Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. → Punkt 3: Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. → Punkt 4: Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
 | K1-03 | – | escitalopram dråper 10 mg, før forskriveren har valgt | den verktøyet tilbyr i dag | Ingen plan: escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Tilbyr 8 mg for neste trinn. | som forventet |
 | K1-04 | – | escitalopram dråper 10 mg, valgt ned til 3 mg: minste trinn til 2 mg tilbys; forskriveren velger 8 mg, 5 mg, 4 mg | den verktøyet tilbyr i dag | Ingen plan: Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 3 mg). Tilbyr 2 mg for neste trinn. | som forventet |
 | K1-05 | – | escitalopram dråper 10 mg, valgt ned til 2 mg: minste trinn til 1 mg tilbys; forskriveren velger 8 mg, 5 mg, 4 mg, 2 mg | den verktøyet tilbyr i dag | Ingen plan: Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 2 mg). Tilbyr 1 mg for neste trinn. | som forventet |

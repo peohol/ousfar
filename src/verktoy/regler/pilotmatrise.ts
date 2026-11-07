@@ -20,7 +20,7 @@ import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { beregnPlan, formvalgFor, mangler, omregningsrader, osloDato, TOMT_SKJEMA, type Planskjema } from '../doseplan'
 import { byggesteiner } from '../motor/byggesteiner'
 import { kliniskDoseplan, UTENFOR_OMFANG, type Doseplanresultat } from '../motor/plan'
-import { planTekst, planvisning } from '../planvisning'
+import { planTekst, planvisning, SKIFTEINNRYKK } from '../planvisning'
 import { festkoblinger, KARTLEGGING, VERKTOY } from '../register'
 import { usperrede, verktoysperrer, type Verktoysperre } from '../sperrer'
 import { REGELSETT, REGELSETTENE, samlet, tilgjengelighet, type Regelstatus, type Verktoyvalg } from '../tilgjengelighet'
@@ -170,11 +170,16 @@ const kontrolltid = (u: Festuttrekk) => Date.parse(u.utvalg.kontrollert_kl ?? u.
 /** Tidspunktet kasuset beregnes ved. */
 export const tidFor = (k: Pick<Pilotkasus, 'uttrekk' | 'timer'>, uttrekkene: Uttrekkene) => new Date(kontrolltid(uttrekkene[k.uttrekk]) + (k.timer ?? STANDARD_TIMER) * 3_600_000)
 
-/** Radene i planen, uten overskrift, tittel, undertittel, planutfall og listene under. */
-const planlinjer = (tekst: string, undertittel: string | null) => {
-  const linjer = tekst.split('\n').slice(undertittel ? 5 : 4)
-  const slutt = linjer.indexOf('')
-  return slutt < 0 ? linjer : linjer.slice(0, slutt)
+/**
+ * Radene i planen: linjene mellom den første og den andre tomme linjen
+ * (`planTekst`), uten hodet over, listene under og formskiftene, som står
+ * med innrykk under dosen de gjelder.
+ */
+const planlinjer = (tekst: string) => {
+  const linjer = tekst.split('\n')
+  const start = linjer.indexOf('') + 1
+  const slutt = linjer.indexOf('', start)
+  return linjer.slice(start, slutt < 0 ? undefined : slutt).filter((l) => !l.startsWith(SKIFTEINNRYKK))
 }
 
 /**
@@ -219,10 +224,11 @@ export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readon
   if (uvalgt.length > 0) return { utfall: 'formvalg', forlop: uvalgt.map(([f]) => f) }
 
   const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, sett, settene, motor)
-  const visning = planvisning(resultat, regel, skjema.startdato || undefined)
+  const visning = planvisning(resultat, regel, skjema.startdato || undefined, skjema.formvalg)
   if (!visning) return { utfall: 'stopp', grunner: resultat.status === 'stoppet' ? resultat.stoppgrunner : ['Planen er ikke klinisk og vises ikke.'], resultat }
-  const tekst = planTekst(visning, verktoy.navn)
-  return { utfall: 'plan', linjer: planlinjer(tekst, visning.undertittel), undertittel: visning.undertittel, resultat, tekst }
+  // Hele teksten brukeren kan kopiere: standardplanen med det faglige grunnlaget, som kontrolløren trenger.
+  const tekst = planTekst(visning, verktoy.navn, [], true)
+  return { utfall: 'plan', linjer: planlinjer(tekst), undertittel: visning.undertittel, resultat, tekst }
 }
 
 /** Hvorfor utfallet ikke er det kasuset forventer; tom når det er det. */

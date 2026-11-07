@@ -4,11 +4,13 @@ import { Details } from '../Details'
 
 /**
  * Det et forslag bygger på, samlet ett sted (VDR-3 i
- * `docs/verktøy-omlegging-2026-11.md`): godkjenningen, forutsetningene,
- * usikkerheten og kildene, og for en beregnet plan også det beregningen
- * kontrollerte, preparatene og versjonene. Teksten er den samme som før;
- * bare plasseringen er ny, så hovedvisningen holder seg til valg, plan og
- * det som gjelder akkurat denne planen.
+ * `docs/verktøy-omlegging-2026-11.md`, P3 i
+ * `docs/verktøy-produktrevisjon-2026-11.md`): godkjenningen, forutsetningene,
+ * usikkerheten og kildene, og for en beregnet plan også avvikene fra regelens
+ * kurve, det beregningen kontrollerte, hele preparatlisten, preparatene som
+ * ikke brukes og versjonene. Teksten er den samme som før; bare plasseringen
+ * er ny, så standardplanen holder seg til det klinikeren trenger for å
+ * gjennomføre behandlingen.
  */
 export interface Grunnlag {
   godkjenning: string | null
@@ -16,8 +18,10 @@ export interface Grunnlag {
   usikkerhet: readonly string[]
   kilder: readonly Plankilde[]
   /** Bare for en beregnet plan. */
+  avvik?: readonly string[]
   kontroller?: readonly string[]
   preparater?: readonly string[]
+  ikkeBrukt?: readonly string[]
   versjoner?: readonly string[]
 }
 
@@ -35,8 +39,10 @@ export const plangrunnlag = (p: Planvisning): Grunnlag => ({
   forutsetninger: p.antakelser,
   usikkerhet: p.usikkerhet,
   kilder: p.kilder,
+  avvik: p.avvik,
   kontroller: p.kontroller,
   preparater: p.preparater,
+  ikkeBrukt: p.ikkeBrukt,
   versjoner: p.versjoner,
 })
 
@@ -46,21 +52,28 @@ export const SLIK_VIRKER_DET =
 
 /** Delene i rekkefølgen de står i, med én setning om hva hver del er. */
 const DELER = [
+  { felt: 'avvik', tittel: 'Avvik fra regelens kurve', forklaring: 'Der dosen som kan gis med norske preparater, avviker fra den beregnede dosen.' },
   { felt: 'forutsetninger', tittel: 'Forutsetninger', forklaring: 'Det regelen bygger på om pasienten og behandlingen.' },
   { felt: 'usikkerhet', tittel: 'Usikkerhet og begrensninger', forklaring: 'Det kunnskapsgrunnlaget ikke avgjør, og som må vurderes for den enkelte pasient.' },
   { felt: 'kontroller', tittel: 'Kontrollert ved beregningen', forklaring: 'Svarene og kravene planen ble kontrollert mot.' },
   { felt: 'preparater', tittel: 'Preparater fra FEST', forklaring: 'Preparatene planen bygger på, slik FEST viste dem da planen ble beregnet.' },
+  { felt: 'ikkeBrukt', tittel: 'Preparater i FEST som ikke brukes', forklaring: 'Preparater av legemidlene som planen ikke bruker, med grunnen.' },
 ] as const satisfies readonly { felt: keyof Grunnlag; tittel: string; forklaring: string }[]
+
+/** Overskriften på grunnlaget under en beregnet plan, og under en regel uten plan. */
+export const GRUNNLAG_PLAN = 'Faglig grunnlag og kilder'
+export const GRUNNLAG_REGEL = 'Kilder og grunnlag'
 
 /**
  * Grunnlaget nederst i planen eller fagteksten: lukket til forskriveren åpner
- * det, og åpent i utskriften (`Doseplanvisning`). Det heter «Kilder og
- * versjon» når en beregnet plan har versjonene, ellers «Kilder og grunnlag».
+ * det, og bare med i utskriften når det er åpnet (`Doseplanvisning`). Det
+ * heter {@link GRUNNLAG_PLAN} når en beregnet plan har versjonene, ellers
+ * {@link GRUNNLAG_REGEL}.
  */
 export function FagligGrunnlag({ grunnlag }: { grunnlag: Grunnlag }) {
   return (
     <div className="faglig-grunnlag">
-      <Details summary={(grunnlag.versjoner ?? []).length > 0 ? 'Kilder og versjon' : 'Kilder og grunnlag'} ikon="refs">
+      <Details summary={(grunnlag.versjoner ?? []).length > 0 ? GRUNNLAG_PLAN : GRUNNLAG_REGEL} ikon="refs">
         <div className="faglig-grunnlag__innhold">
           <section className="faglig-grunnlag__del">
             <h3>Slik er forslaget laget</h3>

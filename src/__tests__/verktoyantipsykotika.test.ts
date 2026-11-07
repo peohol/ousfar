@@ -187,7 +187,7 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(linjer(kjor('depot-risperidon-xeplion', '3', { maldose: '75', startdato: '2026-12-01' }))).toEqual([
       'Fra dag 1 (fra 01.12.2026): Risperidon peroralt: Seponert',
       'Dag 1 (01.12.2026): Paliperidon depotinjeksjon 150 mg = 1 injeksjon à 150 mg (deltoideus)',
-      'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+      'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen, punkt 1: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
       'Dag 8 (08.12.2026): Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)',
       'Hver måned fra 1 måned etter dag 8 (første 08.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])
@@ -244,7 +244,7 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(linjer(kjor('depot-consta-xeplion', '37,5', { startdato: '2026-12-15' }))).toEqual([
       'Fra dag 1 (fra 15.12.2026): Risperidon depotinjeksjon: Seponert = ingen flere injeksjoner',
       'Dag 1 (15.12.2026): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (deltoideus eller setemuskel)',
-      'Dag 1 (15.12.2026): Vurdering (Paliperidon): Ved byttet (dag 1) og før hver månedlige injeksjon: effekt og psykotiske symptomer, ekstrapyramidale og andre bivirkninger, toleranse og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+      'Dag 1 (15.12.2026): Vurdering (Paliperidon): Punkt 1: Ved byttet (dag 1) og før hver månedlige injeksjon: effekt og psykotiske symptomer, ekstrapyramidale og andre bivirkninger, toleranse og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
       'Hver måned fra 1 måned etter dag 1 (første 15.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])
     for (const [consta, xeplion] of [['25', 50], ['50', 100]] as const) {
@@ -279,7 +279,7 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     const T = { formvalg: { til: TABLETTER } }
     expect(linjer(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '15', startdato: '2026-12-07' }))).toEqual([
       'Dag 1–7 (07.12.2026–13.12.2026): Aripiprazol peroralt: Seponert; Olanzapin peroralt: 10 mg = 1 tablett à 10 mg',
-      'Dag 8 (14.12.2026): Vurdering (Olanzapin): Før endringen: Ny klinisk vurdering av effekt og bivirkninger, og av at aripiprazol er stoppet, før dosen endres.',
+      'Dag 8 (14.12.2026): Vurdering (Olanzapin): Før endringen, punkt 1: Ny klinisk vurdering av effekt og bivirkninger, og av at aripiprazol er stoppet, før dosen endres.',
       'Fra dag 8 (fra 14.12.2026): Olanzapin peroralt: 15 mg = 2 tabletter à 7,5 mg',
     ])
     // Måldosen er startdosen: ingen endring og ingen vurdering.
@@ -542,7 +542,7 @@ describe('K3: de tre godkjente reglene gir en ekte plan på verktøysiden, uten 
     expect(linjer(planer['depot-risperidon-xeplion'])).toEqual([
       'Fra dag 1 (fra 01.12.2026): Risperidon peroralt: Seponert',
       'Dag 1 (01.12.2026): Paliperidon depotinjeksjon 150 mg = 1 injeksjon à 150 mg (deltoideus)',
-      'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+      'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen, punkt 1: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
       'Dag 8 (08.12.2026): Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)',
       'Hver måned fra 1 måned etter dag 8 (første 08.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])

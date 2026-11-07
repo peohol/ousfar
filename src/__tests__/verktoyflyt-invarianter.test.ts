@@ -736,15 +736,31 @@ describe('S8: kopien inneholder hele planen', () => {
     expect(tidslinjeavvik(tidslinjen(tabell), kopi), 'tabellen mot kopien').toEqual([])
   })
 
-  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: kopien har resten av planen linje for linje', async (_, x) => {
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: kopien har resten av planen linje for linje, og den utvidede kopien hele grunnlaget', async (_, x) => {
     const { r, v, kopi } = await vist(x)
+    const utvidet = planTekst(v, x.verktoy.navn, [], true)
+    const mangler = (tekst: string, deler: readonly string[]) => {
+      const linjer = new Set(tekst.split('\n'))
+      return deler.filter((d) => !linjer.has(`- ${d}`))
+    }
+    // Standardkopien: vurderingspunktene nummerert, preparatene og resepten, det som gjelder planen og forbeholdene.
     const linjer = new Set(kopi.split('\n'))
-    const mangler = (deler: readonly string[]) => deler.filter((d) => !linjer.has(`- ${d}`))
-    expect(mangler(v.vurderinger), 'vurderingspunkter').toEqual([])
-    expect(mangler(r.forbehold), 'forbehold').toEqual([])
-    expect(mangler(preparatliste(r)), 'preparatene').toEqual([])
-    expect(mangler(v.kilder.map(kildelinje)), 'kildene').toEqual([])
-    expect(mangler([regellinje(r.regel)]), 'regelversjon og fingeravtrykk').toEqual([])
+    expect(v.oppfolging.filter((d, i) => !linjer.has(`${i + 1}. ${d}`)), 'vurderingspunkter').toEqual([])
+    expect(v.oppfolging).toHaveLength(v.vurderinger.length)
+    expect(mangler(kopi, v.preparatbehov), 'preparater og resepter').toEqual([])
+    expect(mangler(kopi, r.merknader), 'det som gjelder planen').toEqual([])
+    expect(mangler(kopi, r.forbehold), 'forbehold').toEqual([])
+    expect(linjer.has(v.spor), 'regelversjonen').toBe(true)
+    // Den utvidede kopien har standardkopiens hode og i tillegg hele det faglige grunnlaget.
+    expect(utvidet.split('\n').slice(0, 3)).toEqual(kopi.split('\n').slice(0, 3))
+    expect(mangler(utvidet, preparatliste(r)), 'preparatene').toEqual([])
+    expect(mangler(utvidet, r.avvik), 'avvik fra kurven').toEqual([])
+    expect(mangler(utvidet, v.kontroller), 'kontrollene').toEqual([])
+    expect(mangler(utvidet, v.ikkeBrukt), 'preparater som ikke brukes').toEqual([])
+    expect(mangler(utvidet, v.kilder.map(kildelinje)), 'kildene').toEqual([])
+    expect(mangler(utvidet, [regellinje(r.regel)]), 'regelversjon og fingeravtrykk').toEqual([])
+    // Standardkopien har ikke grunnlaget.
+    expect(mangler(kopi, [regellinje(r.regel)])).toEqual([regellinje(r.regel)])
   })
 
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: en kopi eller tabell som med vilje er gjort feil, gir avvik', async (_, x) => {

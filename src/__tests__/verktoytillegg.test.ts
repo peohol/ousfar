@@ -16,6 +16,7 @@ import { beregn, kortform } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, kontrollutfall } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { tilleggsfeil } from '../verktoy/regler/modell'
+import { planvisning } from '../verktoy/planvisning'
 import { SIMULERT_KONTROLLOR } from '../verktoy/regler/pilotmatrise'
 import { LAMICTAL, LITIUM_LAMOTRIGIN, OPPTRAPPING, TILLEGGSSETT, TILLEGGSVEDTAK, VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG, kjorTilleggskasus, LAMICTAL_25, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS } from '../verktoy/tilleggsgrunnlag'
@@ -62,7 +63,9 @@ describe('Tilleggsreglene', () => {
     const litium = resultat('K4-30').res.tekst!
     const rader = litium.split('\n').filter((l) => l.includes('Litium peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader) expect(l).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke')
+    // Hele forklaringen står i den første raden; deretter er dosen den samme og bare merket uendret (P3).
+    expect(rader[0]).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke')
+    for (const l of rader.slice(1)) expect(l).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose;')
     // Den gamle, tvetydige teksten står ingen steder.
     expect(litium).not.toMatch(/Litium peroralt: 168 mg =/)
     expect(litium).not.toMatch(/Litium fortsetter uendret på 168 mg[;.]/)
@@ -76,8 +79,8 @@ describe('Tilleggsreglene', () => {
     const valproat = resultat('K4-10').res.tekst!
     const rader = valproat.split('\n').filter((l) => l.includes('Valproat peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader)
-      expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
+    expect(rader[0]).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
+    for (const l of rader.slice(1)) expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose;')
     // Den gamle, preparatløse teksten står ingen steder.
     expect(valproat).not.toMatch(/Valproat peroralt: 1000 mg =/)
     expect(valproat).not.toMatch(/Valproat fortsetter uendret på 1000 mg[;.]/)
@@ -131,6 +134,20 @@ describe('Tilleggsreglene', () => {
     // Nei: vilkårene spørres ikke etter og står ikke i planen.
     const nei = resultat('K4-29').res.tekst!
     for (const b of ppp) expect(nei, b.id).not.toContain(b.tekst)
+    // Den korte sikkerhetsoppsummeringen i standardplanen: svaret, og ved ja hvert bekreftede vilkår; ingen plan og ingen oppsummering når et vilkår mangler.
+    const avklart = (id: string) => {
+      const r = resultat(id).res.resultat!
+      return planvisning(r, VALPROAT_LAMOTRIGIN)?.avklart
+    }
+    expect(avklart('K4-14')!.slice(0, 5)).toEqual(['Kan bli gravid.', ...ppp.map((b) => `Bekreftet: ${b.tekst}`)])
+    expect(avklart('K4-29')![0]).toBe('Kan ikke bli gravid.')
+    expect(avklart('K4-29')!.join('\n')).not.toMatch(/graviditetsforebyggende|sikker prevensjon/)
+    for (const id of ['K4-14', 'K4-29']) {
+      expect(avklart(id), id).toContain('Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.')
+      expect(avklart(id), id).toContain('Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.')
+      expect(resultat(id).res.tekst, id).toContain('Avklart for denne pasienten:\n- ')
+    }
+    for (const id of ['K4-26', 'K4-27', 'K4-28']) expect(avklart(id), id).toBeUndefined()
   })
 
   it('stopper ved graviditet sammen med valproat, og sier at det også gjelder valproatbehandlingen', () => {
@@ -184,7 +201,7 @@ describe('Tilleggsreglene', () => {
       expect(doser.length, id).toBe(4)
       for (const l of doser) expect(l, id).toMatch(/Lamotrigin peroralt: \d+ mg( annenhver dag)? = 1 tablett à \d+ mg$/)
       const tekst = u.tekst!
-      const preparater = tekst.slice(tekst.indexOf('Preparater planen bygger på:'), tekst.indexOf('Kontroller:')).split('\n').filter((l) => l.startsWith('- '))
+      const preparater = tekst.split('Preparater planen bygger på:\n')[1]!.split('\n\n')[0]!.split('\n').filter((l) => l.startsWith('- '))
       expect(preparater.length, id).toBeGreaterThan(0)
       for (const linje of preparater) expect(linje, id).toMatch(/^- Lamictal tyggetab\/disperg tab \d+ mg(, varenr\. \d+)? \(/)
     }
@@ -214,7 +231,7 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
       ['K4-30', 'Litium fortsetter uendret på 168 mg Li⁺ (24 mmol)', 'Lamotrigin fortsetter på 200 mg fra dag 36'],
     ] as const) {
       const tekst = resultat(id).res.tekst!
-      expect(tekst).toContain(`Komplett plan til sluttmålet: ${eksisterende}; ${mal}.`)
+      expect(tekst).toContain(`Komplett plan til sluttmålet: ${eksisterende}; ${mal} (14.12.2026).`)
       expect(tekst).toContain('Vurderingspunkter:')
       expect(tekst).toMatch(/før hver doseendring \(dag 15, 29, 36\): Før hver doseøkning: spør etter utslett/)
       expect(tekst).toContain('Kontroller:')
