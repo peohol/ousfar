@@ -18,7 +18,7 @@
  * de faktiske svarene.
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
-import { beregnPlan, formvalgFor, kanKreveBegrunnelse, lesDose, medTrinnvalg, trengerMaldose, type Planskjema } from '../doseplan'
+import { beregnPlan, formvalgFor, ikkeGodkjenteJusteringer, kanKreveBegrunnelse, lesDose, medTrinnvalg, osloDato, trengerMaldose, type Planskjema } from '../doseplan'
 import { festFerskhet, type Doseplanresultat } from '../motor/plan'
 import { inndatagrenser } from '../regler/beregning'
 import { kanonisk } from '../regler/godkjenning'
@@ -27,7 +27,7 @@ import type { Verktoy } from '../register'
 import { SPERRET, usperrede, type Verktoysperre } from '../sperrer'
 import { medlemFor, REGELSETT, tilgjengelighet, type Verktoyvalg } from '../tilgjengelighet'
 import { BESLUTNINGER, type Beslutninger } from './beslutninger'
-import { INDIVIDUELT, medFlytfelt, vurderFlyt, type Flytresultat } from './flyt'
+import { INDIVIDUELT, ingenGodkjentPlan, medFlytfelt, vurderFlyt, type Flytresultat } from './flyt'
 import { stoppforklaringer } from './stopp'
 import { VALG_TRENGS, type Forhandskontroll, type Stoppforklaring, type Stoppkodenavn } from './typer'
 
@@ -247,8 +247,46 @@ function arsaker(r: Regel, g: Parameters<typeof prove>[1], grunnskjema: Planskje
       const { [id]: _bort, ...andre } = grunnskjema.svar
       if (prove(r, g, { ...grunnskjema, svar: andre }).lykkes.length === 0) return []
       const sporsmal = g.flyt!.oppsett.avbildninger.find((a) => a.type === 'sporsmal' && a.id === id)?.fra.at(-1)?.sporsmal
-      return [forklaring('svar_stopper', `Med dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet. ${INDIVIDUELT}`, { ...(sporsmal && { sporsmal }) })]
+      const ja = r.sporsmal?.find((s) => s.id === id)?.ja
+      const tekst = ja ? ingenGodkjentPlan(ja) : `Med dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet. ${INDIVIDUELT}`
+      return [forklaring('svar_stopper', tekst, { ...(sporsmal && { sporsmal }) })]
     })
+}
+
+const utelukketLagret = new Map<string, string[]>()
+
+/**
+ * Spørsmålene i regelen der et ja alene gjør at ingen komplett plan kan lages
+ * for startdosen med preparatene i FEST, selv om det kliniske omfanget har et
+ * tilfelle med ja: prøveberegningen med ja (og de tillatende svarene ellers)
+ * lykkes ikke for noen form. Eksempel: escitalopram ved lang behandlingstid,
+ * der trinn på høyst 10 % ikke kan gis med dråpene helt til seponering (P0 F4).
+ * Svaret står da som stoppende ved spørsmålet, med grunnen, i stedet for at
+ * planen stopper først etter alle spørsmålene. Avhenger ikke av de andre
+ * svarene. Tom før dosen og preparatene er kjent, og når taket nås.
+ */
+export function utelukkendeSvar(g: Forhandsgrunnlag & { regel: Regel }): string[] {
+  const r = g.regel
+  const start = g.skjema ? lesDose(g.skjema.startdose) : undefined
+  // Med en FEST-kopi som ikke er fersk, gir ingen prøveberegning plan; det er FEST-stoppet, ikke svaret, som gjelder da.
+  if (!g.valg || !g.skjema || !g.utvalg || start === undefined || !r.klinisk_omfang || festFerskhet(g.utvalg, g.naa).length > 0) return []
+  const aktuelle = (r.sporsmal ?? []).filter((s) => r.klinisk_omfang!.tilfeller.some((t) => t.svar[s.id] === true && t.startdoser.some((x) => lik(x, start))))
+  if (aktuelle.length === 0) return []
+  const nokkel = kanonisk({ r: [r.id, r.versjon], start, formvalg: g.skjema.formvalg, fritak: g.skjema.godkjenningsfritak, maldose: g.skjema.maldose, utvalg: idFor(g.utvalg), dag: osloDato(g.naa), tak: g.provetak ?? null })
+  const funnet = utelukketLagret.get(nokkel)
+  if (funnet) return funnet
+  const valg = g.valg
+  const ut = aktuelle
+    .filter((s) => {
+      // Uten de andre svarene, valgene i «Tilpass planen» og dosevalgene: bare dosen, formen og dette svaret avgjør.
+      const grunnskjema: Planskjema = { ...g.skjema!, svar: { [s.id]: true }, pasientforhold: {}, bekreftet: [], justert: {}, trinnvalg: [], flytsvar: {} }
+      const p = prove(r, { ...g, valg, skjema: g.skjema!, utvalg: g.utvalg!, flyt: undefined }, grunnskjema)
+      return p.lykkes.length === 0 && !p.avbrutt
+    })
+    .map((s) => s.id)
+  if (utelukketLagret.size > 200) utelukketLagret.delete(utelukketLagret.keys().next().value!)
+  utelukketLagret.set(nokkel, ut)
+  return ut
 }
 
 /** Forhåndskontrollen for valgene og svarene som er gjort. */
@@ -270,7 +308,7 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
 
   // Svarene i flyten gjelder også når bare skjemaet er gitt: flyten regnes da her, med standardoppsettet.
   const flytsvar = g.skjema?.flytsvar
-  const flyt = g.flyt ?? (regler.length === 1 && flytsvar && Object.keys(flytsvar).length > 0 ? vurderFlyt(regler[0]!, flytsvar, { beslutninger: g.beslutninger }) : undefined)
+  const flyt = g.flyt ?? (regler.length === 1 && flytsvar && Object.keys(flytsvar).length > 0 ? vurderFlyt(regler[0]!, flytsvar, { beslutninger: g.beslutninger, utelukket: utelukkendeSvar({ ...g, regel: regler[0]! }) }) : undefined)
   // Et svar i flyten som stopper planen, avgjør før noe beregnes, med flytens egen stoppgrunn.
   if (flyt && flyt.stopp.length > 0) return kanIkke(flyt.stopp, regler)
 
@@ -281,6 +319,13 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const feil = regler.map((r) => dosefeil(r, start, formnavn))
   if (feil.every((f) => f !== undefined)) return kanIkke([forklaring('utenfor_omfang', `${feil[0]} ${INDIVIDUELT}`)], [])
   regler = regler.filter((_, i) => feil[i] === undefined)
+  // En verdi i «Tilpass planen» som den godkjente planen ikke bruker, sies konkret, før noe beregnes (P0 F1).
+  const justert = g.skjema ? regler.map((r) => ikkeGodkjenteJusteringer(r, flyt ? medFlytfelt(g.skjema!, flyt.felt) : g.skjema!)) : []
+  if (justert.length > 0 && justert.every((x) => x.length > 0))
+    return kanIkke(
+      justert[0]!.map((x) => forklaring('utenfor_omfang', x.tekst, { handling: 'Tøm feltet under «Tilpass planen», så brukes verdien som er godkjent.', losning: 'i_verktoyet' })),
+      regler,
+    )
   // FEST gjelder alle reglene likt: er kopien ikke fersk og gyldig, sies det her, før prøveberegningen, med grunnen.
   // Stopp som gjelder pasienten (et svar i flyten) og dosen, sies først, fordi de står også når FEST er oppdatert.
   if (g.utvalg) {

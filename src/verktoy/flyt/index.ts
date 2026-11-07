@@ -11,8 +11,8 @@
 import { lesDose, type Planskjema } from '../doseplan'
 import { komplettfeil, type Regel } from '../regler/modell'
 import { medlemFor, REGELSETT, tilgjengelighet } from '../tilgjengelighet'
-import { medFlytfelt, vurderFlyt, type Flytgrunnlag, type Flytresultat } from './flyt'
-import { forhandskontroll, maldoseMangler, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
+import { begrensninger, medFlytfelt, vurderFlyt, type Flytgrunnlag, type Flytresultat } from './flyt'
+import { forhandskontroll, maldoseMangler, utelukkendeSvar, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
 import type { Flyttilstand } from './typer'
 
 export interface Flytutfall {
@@ -41,7 +41,10 @@ export const medFlytsvar = (s: Planskjema, id: string, verdi: string | undefined
 /** Hele flyten for valgene og skjemaet: synlige spørsmål, forhåndskontrollen og skjemaet til beregningen. */
 export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag }): Flytutfall {
   const regel = g.regel ?? reglerMedPlan(g)[0]
-  const flyt = regel ? vurderFlyt(regel, g.skjema?.flytsvar ?? {}, { beslutninger: g.beslutninger, ...g.flytgrunnlag }) : undefined
+  // Svar som alene utelukker en plan med preparatene i FEST, stopper ved spørsmålet (P0 F4).
+  const utelukket = regel ? utelukkendeSvar({ ...g, regel }) : []
+  const flyt = regel ? vurderFlyt(regel, g.skjema?.flytsvar ?? {}, { beslutninger: g.beslutninger, utelukket, ...g.flytgrunnlag }) : undefined
+  const grenser = regel ? begrensninger(regel, utelukket) : []
   const kontroll = forhandskontroll({ ...g, ...(regel && { regel }), ...(flyt && { flyt }) })
   const formvalg = Object.fromEntries(Object.entries(kontroll.formvalg ?? {}).map(([f, v]) => [f, { ...g.skjema?.formvalg[f], legemiddelform: v.legemiddelform }]))
   const skjema = g.skjema && flyt ? medFlytfelt({ ...g.skjema, formvalg: { ...g.skjema.formvalg, ...formvalg } }, flyt.felt) : g.skjema
@@ -57,7 +60,13 @@ export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag
       steg,
       sporsmal: flyt?.sporsmal ?? [],
       forutsatt: flyt?.forutsatt ?? [],
-      kontroll: { utfall: kontroll.utfall, grunner: kontroll.grunner, gjenstar: kontroll.gjenstar, ...(kontroll.dosevalg && { dosevalg: kontroll.dosevalg }) },
+      kontroll: {
+        utfall: kontroll.utfall,
+        grunner: kontroll.grunner,
+        gjenstar: kontroll.gjenstar,
+        ...(kontroll.dosevalg && { dosevalg: kontroll.dosevalg }),
+        ...(grenser.length > 0 && kontroll.utfall === 'kan_lages_hvis' && { begrensninger: grenser }),
+      },
       ...(flyt?.begrunnelse && { begrunnelse: flyt.begrunnelse }),
       ingenAvDisse: flyt?.ingenAvDisse ?? [],
     },
@@ -68,7 +77,7 @@ export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag
   }
 }
 
-export { KAN_LAGES_HVIS, forhandskontroll, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
+export { KAN_LAGES_HVIS, forhandskontroll, utelukkendeSvar, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
 export { medIngenAvDisse, svarStopper, vurderFlyt, flytoppsett, SAMLET, type Flytresultat } from './flyt'
 export { stoppforklaringer, stoppkoder, klassifiser } from './stopp'
 export type * from './typer'

@@ -87,6 +87,8 @@ export interface Forhandskontroll {
   gjenstar: number
   /** Antall dosevalg i planen prøveberegningen trengte (trinnvalg); de gjøres i planen, ikke i skjemaet. */
   dosevalg?: number
+  /** Forholdene den godkjente planen ikke gjelder for (regelens korte tekst), til steg 2 (P0 U1). */
+  begrensninger?: string[]
 }
 
 export interface Flyttilstand {
