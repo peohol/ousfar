@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-07T19:26:14.574Z. Stoffene sist lest fra databasen 2026-11-07T06:30:03.847Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-07T20:26:08.678Z. Stoffene sist lest fra databasen 2026-11-07T06:30:03.847Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 90 · Publisert: 16 · Blokkert: 12 · Utenfor køen: 1
 
@@ -22,7 +22,7 @@ Ingen kurateringer venter.
 - **morfin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 - **oksykodon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
-- **olanzapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
+- **olanzapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.
 - **paroksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
 - **tramadol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
 - **ziprasidon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
