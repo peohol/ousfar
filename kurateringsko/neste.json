@@ -1,84 +1,19 @@
 {
-  "oppdatert_kl": "2026-11-07T18:25:57.651Z",
+  "oppdatert_kl": "2026-11-07T19:26:14.574Z",
   "malt_kl": "2026-11-07T06:30:03.847Z",
   "antall": {
-    "klar": 95,
+    "klar": 90,
     "reservert": 0,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
     "publisert": 16,
-    "blokkert": 7,
+    "blokkert": 12,
     "utenfor": 1
   },
   "aktive": [],
   "holdes_tilbake": null,
   "neste": [
-    {
-      "stoff": "morfin",
-      "modus": "de_novo",
-      "poeng": 424.8,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "9 av 13 redaksjonelle seksjoner er tomme.",
-        "1 av 9 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "tramadol",
-      "modus": "de_novo",
-      "poeng": 424.2,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "9 av 13 redaksjonelle seksjoner er tomme.",
-        "1 av 10 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "duloksetin",
-      "modus": "de_novo",
-      "poeng": 423.6,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "19 av 27 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "amisulprid",
-      "modus": "de_novo",
-      "poeng": 423.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "21 av 30 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "paroksetin",
-      "modus": "de_novo",
-      "poeng": 423.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "21 av 30 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
     {
       "stoff": "sertralin",
       "modus": "de_novo",
@@ -143,17 +78,104 @@
         "21 av 31 elementer har ingen kilde."
       ],
       "tidligst_kl": null
+    },
+    {
+      "stoff": "klorprotiksen",
+      "modus": "de_novo",
+      "poeng": 421.8,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "18 av 27 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "mirtazapin",
+      "modus": "de_novo",
+      "poeng": 421.8,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "18 av 27 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "nortriptylin",
+      "modus": "de_novo",
+      "poeng": 421.8,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "16 av 24 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "fluoksetin",
+      "modus": "de_novo",
+      "poeng": 421.2,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "19 av 29 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "zuklopentiksol",
+      "modus": "de_novo",
+      "poeng": 421.2,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "17 av 26 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
   "blokkert": [
+    {
+      "stoff": "amisulprid",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "duloksetin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
+          "kilde": "system"
+        }
+      ]
+    },
     {
       "stoff": "klonazepam",
       "blokkeringer": [
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T18:25:57.651Z",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
@@ -164,7 +186,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T18:25:57.651Z",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
@@ -176,6 +198,17 @@
           "kode": "uten_fagside",
           "grunn": "Stoffet har ingen publisert fagside å kuratere.",
           "kl": "2026-10-14T04:50:43.758Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "morfin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
@@ -197,7 +230,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T18:25:57.651Z",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
@@ -207,8 +240,30 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-07T18:25:57.651Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "paroksetin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "tramadol",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
@@ -219,7 +274,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-07T18:25:57.651Z",
+          "kl": "2026-11-07T19:26:14.574Z",
           "kilde": "system"
         }
       ]
