@@ -305,8 +305,11 @@ describe('med en regel godkjent bare i testen', () => {
     expect(within(plan).getByText(/^Komplett plan til sluttmålet: Escitalopram seponert fra dag 29\./)).toBeTruthy()
     // Standardplanen har det som trengs for å gjennomføre behandlingen; det faglige grunnlaget står i den lukkede delen nederst (P3).
     for (const h of ['Legemiddelform og resepter', 'Forbehold']) expect(within(plan).getByRole('heading', { name: h })).toBeTruthy()
+    // Ingen spørsmål styrer vilkår her: ingen sikkerhetsoppsummering, og de avkreftede unntakene står bare i grunnlaget.
+    expect(within(plan).queryByRole('heading', { name: 'Avklart for denne pasienten' })).toBeNull()
     const grunnlag = within(plan).getByText(GRUNNLAG_PLAN).closest('details')!
     expect(grunnlag.open).toBe(false)
+    expect([...plan.querySelectorAll('li')].filter((x) => !grunnlag.contains(x) && /^Avkreftet:/.test(x.textContent!))).toEqual([])
     for (const h of ['Slik er forslaget laget', 'Forutsetninger', 'Kontrollert ved beregningen', 'Preparater fra FEST', 'Sporbarhet']) {
       expect(within(grunnlag).getByRole('heading', { name: h, hidden: true })).toBeTruthy()
     }

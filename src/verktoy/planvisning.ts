@@ -112,11 +112,10 @@ export interface Planvisning {
   /** Styrkene og formene planen bruker per legemiddel, med påminnelse om resept for nye legemidler og nye former. */
   preparatbehov: string[]
   /**
-   * Det forskriveren har avklart for denne pasienten, kort: svarene som
-   * avgjør hvilke vilkår regelen stiller (f.eks. om pasienten kan bli gravid),
-   * med vilkårene som er bekreftet, og forholdene som er avkreftet
-   * ({@link avklart}). Står i standardplanen; hele kontrollskjemaet står i
-   * det faglige grunnlaget.
+   * De klinisk avgjørende forutsetningene for denne pasienten, kort: svarene
+   * som avgjør hvilke vilkår regelen stiller (f.eks. om pasienten kan bli
+   * gravid), med vilkårene som da er bekreftet ({@link avklart}). Står i
+   * standardplanen; alle kontrollene står i det faglige grunnlaget.
    */
   avklart: string[]
   /** Det motoren sier om akkurat denne planen (veiledende grenser, avslutning, krav som ikke er oppfylt); står i standardplanen. */
@@ -555,19 +554,18 @@ function utgangspunkt(forlop: readonly Praktiskforlop[], kolonner: Planvisning['
 
 /** Regelversjonen og datoen for FEST-uttrekket i én linje ({@link Planvisning.spor}). */
 /**
- * Det forskriveren har avklart for pasienten, utledet av motorens kontroller
- * (bare det motoren faktisk har kontrollert og funnet oppfylt) og regelens
- * omfang, med regelens egne tekster:
- * - svaret på hvert spørsmål som avgjør om det kreves egne bekreftelser
- *   (`Bekreftelse.ved`), med svarets korte form fra regelen («Kan bli gravid»),
- *   og hver bekreftelse svaret krever, som «Bekreftet: …»;
- * - hvert unntak som er avkreftet, med første setning («Avkreftet: …»).
- * Ubetingede bekreftelser, svar som ikke styrer vilkår, og begrunnelser i
- * fritekst står bare i det faglige grunnlaget.
+ * De klinisk avgjørende forutsetningene for planen, utledet av motorens
+ * kontroller (bare det motoren faktisk har kontrollert og funnet oppfylt) og
+ * regelens omfang, med regelens egne tekster: svaret på hvert spørsmål som
+ * avgjør om det kreves egne bekreftelser (`Bekreftelse.ved`), i svarets korte
+ * form fra regelen («Kan bli gravid»), og hver bekreftelse svaret krever, som
+ * «Bekreftet: …». Avkreftede unntak, ubetingede bekreftelser, svar som ikke
+ * styrer vilkår, og begrunnelser i fritekst står bare i det faglige
+ * grunnlaget; uten slike spørsmål er listen tom og delen vises ikke.
  */
 function avklart(r: Extract<Doseplanresultat, { status: 'doseplan' }>, regel: Regel): string[] {
   const oppfylt = new Set(r.kontroller.filter((k) => k.oppfylt).map((k) => k.krav))
-  const svarlinjer = (regel.sporsmal ?? []).flatMap((s) => {
+  return (regel.sporsmal ?? []).flatMap((s) => {
     const vilkar = regel.bekreftelser.filter((b) => b.ved?.sporsmal === s.id)
     const svar = [true, false].find((x) => oppfylt.has(KRAV.svar(s, x)))
     if (vilkar.length === 0 || svar === undefined) return []
@@ -578,8 +576,6 @@ function avklart(r: Extract<Doseplanresultat, { status: 'doseplan' }>, regel: Re
       ...vilkar.filter((b) => b.ved!.svar === svar && oppfylt.has(KRAV.bekreftet(b))).map(KRAV.bekreftet),
     ]
   })
-  const avkreftet = regel.unntak.filter((u) => oppfylt.has(KRAV.avkreftet(u))).map((u) => KRAV.avkreftet({ tekst: forsteSetning(u.tekst) }))
-  return [...svarlinjer, ...avkreftet]
 }
 
 export const sporlinje = (versjon: number, festdato: string | null) =>

@@ -12,7 +12,6 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { glemBildet } from '../oppdatering/bevaring'
-import { forsteSetning } from '../verktoy/planvisning'
 import { VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
@@ -60,8 +59,8 @@ const IKKE = /^(Nei|Ikke ennå)$/
 
 /** Vilkårene i det graviditetsforebyggende programmet for valproat, i regelens rekkefølge. */
 const PPP = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved?.sporsmal === 'kan_bli_gravid')
-/** Hvert unntak i valproatregelen, avkreftet, med første setning. */
-const AVKREFTET = VALPROAT_LAMOTRIGIN.unntak.map((u) => `- Avkreftet: ${forsteSetning(u.tekst)}`)
+/** Svarene på de to andre spørsmålene som styrer vilkår, når begge er «Nei». */
+const ANDRE = ['- Kan ikke bli far.', '- Ingen østrogenholdig prevensjon eller behandling.']
 
 /** Linjene under «Avklart for denne pasienten» i en kopi. */
 function avklart(tekst: string) {
@@ -114,8 +113,7 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
     // Kan ikke bli gravid: den korte planen sier det, uten vilkårene i det graviditetsforebyggende programmet.
     const nei = await kopier(user)
-    expect(avklart(nei)).toContain('- Kan ikke bli gravid.')
-    expect(avklart(nei)).toContain('- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.')
+    expect(avklart(nei)).toEqual(['- Kan ikke bli gravid.', ...ANDRE])
     for (const b of PPP) expect(nei, b.id).not.toContain(b.tekst)
     expect(avklartPaSkjermen()).toEqual(avklart(nei).map((l) => l.slice(2)))
 
@@ -127,7 +125,10 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
     // Det står kort i standardplanen: på skjermen, i den korte kopien og utenfor det faglige grunnlaget, så det kommer med i utskriften.
     const ja = await kopier(user)
-    expect(avklart(ja)).toEqual(['- Kan bli gravid.', ...PPP.map((b) => `- Bekreftet: ${b.tekst}`), '- Kan ikke bli far.', expect.stringMatching(/^- Ingen østrogenholdig/), ...AVKREFTET])
+    expect(avklart(ja)).toEqual(['- Kan bli gravid.', ...PPP.map((b) => `- Bekreftet: ${b.tekst}`), ...ANDRE])
+    // Ingen avkreftede unntak i den korte planen; de står i kopien med faglig grunnlag.
+    expect(ja).not.toContain('Avkreftet:')
+    expect(await kopier(user, 'utvidet')).toContain('Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer')
     expect(avklartPaSkjermen()).toEqual(avklart(ja).map((l) => l.slice(2)))
     expect(screen.getByRole('region', { name: 'Avklart for denne pasienten' }).closest('details')).toBeNull()
 

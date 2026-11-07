@@ -139,14 +139,19 @@ describe('Tilleggsreglene', () => {
       const r = resultat(id).res.resultat!
       return planvisning(r, VALPROAT_LAMOTRIGIN)?.avklart
     }
-    expect(avklart('K4-14')!.slice(0, 5)).toEqual(['Kan bli gravid.', ...ppp.map((b) => `Bekreftet: ${b.tekst}`)])
-    expect(avklart('K4-29')![0]).toBe('Kan ikke bli gravid.')
-    expect(avklart('K4-29')!.join('\n')).not.toMatch(/graviditetsforebyggende|sikker prevensjon/)
+    const andre = ['Kan ikke bli far.', 'Ingen østrogenholdig prevensjon eller behandling.']
+    expect(avklart('K4-14')).toEqual(['Kan bli gravid.', ...ppp.map((b) => `Bekreftet: ${b.tekst}`), ...andre])
+    expect(avklart('K4-29')).toEqual(['Kan ikke bli gravid.', ...andre])
     for (const id of ['K4-14', 'K4-29']) {
-      expect(avklart(id), id).toContain('Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.')
-      expect(avklart(id), id).toContain('Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.')
-      expect(resultat(id).res.tekst, id).toContain('Avklart for denne pasienten:\n- ')
+      // Bare de avgjørende svarene og vilkårene de krever: de rutinemessig avkreftede unntakene står i kontrollene i det faglige grunnlaget.
+      const tekst = resultat(id).res.tekst!
+      const standard = tekst.slice(0, tekst.indexOf('FAGLIG GRUNNLAG'))
+      expect(standard, id).toContain('Avklart for denne pasienten:\n- ')
+      expect(standard, id).not.toContain('Avkreftet:')
+      for (const u of VALPROAT_LAMOTRIGIN.unntak) expect(tekst.slice(standard.length), `${id} ${u.id}`).toContain(`Avkreftet: ${u.tekst.replace(/\.$/, '')}: oppfylt`)
     }
+    // Litium har bare spørsmålet om østrogenholdig behandling.
+    expect(planvisning(resultat('K4-30').res.resultat!, LITIUM_LAMOTRIGIN)!.avklart).toEqual(['Ingen østrogenholdig prevensjon eller behandling.'])
     for (const id of ['K4-26', 'K4-27', 'K4-28']) expect(avklart(id), id).toBeUndefined()
   })
 
