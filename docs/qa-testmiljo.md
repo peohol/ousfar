@@ -18,8 +18,8 @@ P0-driveren `scripts/verktoy-p0-app.mjs` og nye skript av samme slag. Vanlige
   nedenfor av seg selv.
 - **Håndheves i `npm test`** (`src/__tests__/qa/nettleservern.test.ts`): bare
   `testmiljo.ts` får laste Playwright (eller Puppeteer) eller starte Chromium,
-  og de navngitte skriptene over, også P0-driveren når den sjekkes inn, må
-  bruke `apneTestmiljo()`. Et skript som styrer nettleseren selv, gjør CI rød
+  og de navngitte skriptene over, også P0-driveren, må finnes og bruke
+  `apneTestmiljo()`. Et skript som styrer nettleseren selv, gjør CI rød
   og kan ikke slås sammen.
 
 ## Kjøring

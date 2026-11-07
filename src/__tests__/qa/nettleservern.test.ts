@@ -23,7 +23,7 @@ const DENNE = relative(ROT, __filename).split(sep).join('/')
 const BIBLIOTEKER = ['playwright', 'playwright-core', '@playwright/test', 'puppeteer', 'puppeteer-core']
 const NETTLESER = new RegExp(`['"\`](${BIBLIOTEKER.map((b) => b.replace(/[/@-]/g, '\\$&')).join('|')})(/[^'"\`]*)?['"\`]|\\bchromium\\s*\\.\\s*launch`)
 
-/** Skriptene `docs/qa-testmiljo.md` nevner ved navn. P0-driveren kommer med #337. */
+/** Skriptene `docs/qa-testmiljo.md` nevner ved navn. Alle er sjekket inn og må finnes. */
 const KJENTE_SKRIPT = ['src/__tests__/qa/appkontroll.ts', 'src/__tests__/qa/maling.ts', 'scripts/verktoy-p0-app.mjs']
 
 function kodefiler(mappe: string): string[] {
@@ -58,9 +58,10 @@ describe('nettleserkontrollene går gjennom testmiljøet', () => {
     expect(selvstendige, 'Disse filene styrer en nettleser selv. Bruk apneTestmiljo() fra src/__tests__/qa/testmiljo.ts i stedet (docs/qa-testmiljo.md).').toEqual([])
   })
 
-  it('de kjente skriptene, også P0-driveren når den er sjekket inn, bruker apneTestmiljo()', () => {
-    const finnes = KJENTE_SKRIPT.filter((f) => existsSync(join(ROT, f)))
-    expect(finnes).toContain('src/__tests__/qa/appkontroll.ts')
-    for (const f of finnes) expect(brukerTestmiljo(les(f)), `${f} må starte med apneTestmiljo()`).toBe(true)
+  it('de kjente skriptene, også den innsjekkede P0-driveren, finnes og bruker apneTestmiljo()', () => {
+    for (const f of KJENTE_SKRIPT) {
+      expect(existsSync(join(ROT, f)), `${f} mangler; er den flyttet, oppdater KJENTE_SKRIPT og docs/qa-testmiljo.md`).toBe(true)
+      expect(brukerTestmiljo(les(f)), `${f} må starte med apneTestmiljo()`).toBe(true)
+    }
   })
 })
