@@ -18,7 +18,7 @@
  * repoet.
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { kontrollerDekning, tomMatrise, type Dekningsmatrise } from '../src/kuratorprotokoll/dekning'
+import { kontrollerDekning, tomMatrise, utsatteOmrader, type Dekningsmatrise } from '../src/kuratorprotokoll/dekning'
 import { tomSelvtest } from '../src/kuratorprotokoll/selvtest'
 import { konsentrasjonsrapport } from '../src/kuratorprotokoll/konsentrasjoner'
 import type { Grendetaljer } from '../src/kuratering/modell'
@@ -59,6 +59,10 @@ function dekning(matrise: unknown) {
     console.log(`Dekningsmatrisen har ${feil.length} mangler:`)
     for (const f of feil) console.log(`- ${f}`)
     process.exitCode = 1
+  }
+  const utsatte = utsatteOmrader(matrise)
+  if (utsatte.length > 0) {
+    console.log(`Stoppet av sikkerhetsfilteret, ikke kontrollert (beviset for porten dekning i selvtesten må nevne hvert): ${utsatte.join('; ')}`)
   }
 }
 

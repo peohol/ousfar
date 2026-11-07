@@ -77,6 +77,7 @@ kurateringer samtidig.
 | `de_novo` | Stoffet er aldri kuratert de novo i runden som gjelder (`de_novo_runde`). Runde 1 var den første piloten (citalopram); runde 2, i kurateringsgrenene, gjelder alle stoffene |
 | `evidensovervaking` | Stoffet er kuratert, og det er gått `evidensovervaking_dager` siden kunnskapsgrensen. Av til den slås på (under) |
 | `oppdatering` | Gis aldri av køen; står i historikken for eldre kurateringer funnet i repoet |
+| `oppfolging` | Den siste publiserte grenen har kontrollpunkter sikkerhetsfilteret stoppet (`sist_kuratert.utsatte`), og det er gått `oppfolging_ventetid_dager` siden den ble publisert. Kuratoren tar bare de punktene, i en `kuratering`-gren. Gis ut uansett `aktive_modi`, men etter de novo og evidensovervåkning når de er forfalt |
 
 Kuratoren kan melde en annen modus enn den reserverte i `fullfort` (`modus`),
 hvis det var det som faktisk ble gjort.
@@ -93,6 +94,7 @@ Køen gir ut det klare stoffet med flest poeng; grunnene står i klartekst i
 | Stoffet står i `forrang` | opptil 500 (den første får mest) |
 | Aldri kuratert | 100, og 200 for alder |
 | De novo i runden som gjelder | 50 |
+| Oppfølging av punkter sikkerhetsfilteret stoppet (nøklene står i grunnen) | 400 |
 | År siden siste kuratering (høyst to) | 100 per år |
 | Tomme redaksjonelle seksjoner | opptil 100 (andelen tomme) |
 | Elementer uten noen kilde | opptil 50 (andelen) |
@@ -119,6 +121,15 @@ Et stoff som venter etter en feil, står sist til `tidligst_kl`.
   korreksjon av et kort eller en SPC-import må ikke gjøre at stoffet
   feilaktig settes opp til en ny de novo-kuratering. Den tidligere
   gjennomførte de novo-runden blir bevart til en nyere runde bestilles.
+- **Stoppet av sikkerhetsfilteret.** Køen leser også nøklene til
+  kontrollpunktene grenens siste dekningsmatrise fører som
+  `utsatt_sikkerhetsfilter` (`utsatte`, bare nøkler). Når grenen publiseres,
+  følger de med i `sist_kuratert` (`utsatte`, `utsatt_kl`), og stoffet blir
+  `klar` til `oppfolging` når `oppfolging_ventetid_dager` er gått. En
+  oppfølging beholder den forrige kurateringens modus, runde, kunnskapsgrense
+  og tid, så den ikke gjør en ny de novo-kuratering forfalt; den fører bare de
+  utsatte punktene som står igjen. Stoppes noen igjen, begynner ventetiden på
+  nytt fra den publiseringen.
 - **Publisering.** Når en PR køen følger, er slått sammen, ser køen etter
   «Produksjonsmigrering» på `main`. Er den vellykket, er kurateringen
   publisert med modus, kunnskapsgrense, de novo-runde og PR. Feilet den, blir
@@ -151,7 +162,8 @@ Et stoff som venter etter en feil, står sist til `tidligst_kl`.
 ## Kurateringsgrenene
 
 Ved hver kjøring leser køen alle kurateringsgrenene i OUSFAR, uten fagtekst
-(ID, stoff, art, status, revisjon, runde og tidene), gjennom
+(ID, stoff, art, status, revisjon, runde, tidene og nøklene til de utsatte
+kontrollpunktene), gjennom
 `/api/kuratering-ko`. Arbeidsflyten logger inn med GitHubs OIDC-token, så det
 finnes ingen hemmelighet å lagre; serveren slipper bare inn «Kurateringskø» på
 `main`. Svarer OUSFAR ikke, går kjøringen videre uten grenene og prøver igjen
@@ -159,7 +171,7 @@ neste time; imens gis bare kurateringer som fortsettes, ut.
 
 - **Riktig stoff og art.** En gren hører bare til et stoff når den gjelder
   det samme stoffet og har arten kurateringen krever: `de_novo` for en de
-  novo-kuratering, `kuratering` for evidensovervåkning og oppdatering. En
+  novo-kuratering, `kuratering` for evidensovervåkning, oppfølging og oppdatering. En
   `gren` i `forny` eller `fullfort` som ikke passer, avvises, og reservasjonen
   står som før. Kunne køen ikke se grenen da den ble meldt, kontrolleres den
   når grenene leses: koblingen brytes, oppgaven står i `gjenoppta` uten grenen,
@@ -270,6 +282,7 @@ committes oppå den, på samme gren.
 | `aktive_modi` | `de_novo` | Legg til `evidensovervaking` for å la køen gi ut evidensovervåkning |
 | `de_novo_runde` | 2 | Øk for en ny de novo-runde gjennom hele registeret |
 | `evidensovervaking_dager` | 180 | Fra kunnskapsgrensen til evidensovervåkningen er forfalt |
+| `oppfolging_ventetid_dager` | 7 | Fra en gren med punkter sikkerhetsfilteret stoppet, er publisert, til oppfølgingen er forfalt. Et nytt forsøk rett etter stoppet ville som regel stoppes igjen |
 | `forrang` | tom | Stoffer som skal først, i rekkefølge, f.eks. for en pilot (citalopram, lurasidon og GHB i piloten for grenene) |
 | `bare_forrang` | av | Køen gir bare ut stoffene i `forrang` (og kurateringer som fortsettes), mens en pilot pågår. Av siden piloten ble bestått 2026-10-16; de novo-runden går gjennom hele registeret |
 | `utelatt` | `teststoff` | Stoffer køen ikke gir ut, som testsiden |

@@ -125,7 +125,9 @@ teksten med kuratorprotokollen etter.
      kuratoren (på kortet, eller på seksjonen når kortet ikke finnes) som begynner «Stoppet av sikkerhetsfilteret:», er ikke i seg
      selv grunn til endringer, og grenen kan godkjennes uten det. Kontroller
      at kortet er urørt fra grunnversjonen (eller ikke lagt til), at
-     evidensjournalen og dekningsmatrisen sier det samme som merknaden, og at
+     evidensjournalen sier det samme som merknaden, at dekningsmatrisen fører
+     punktet som `utsatt_sikkerhetsfilter` (ikke `tomt_begrunnet` eller som
+     kontrollert), at selvtesten nevner det som ikke kontrollert, og at
      ingen annen del av siden bygger på det som mangler. Godkjenningen sier
      hvilke kort som ikke er kontrollert av den grunn. Dine egne oppslag
      gjør du på samme måte: i korte økter, og bare med stoffets rad fra

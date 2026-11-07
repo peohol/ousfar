@@ -303,11 +303,12 @@ describe('kurateringsgrenene i OUSFAR', () => {
     runde: 0,
     oppdatert_kl: T0,
     publisert_kl: null,
+    utsatte: [],
     ...endring,
   })
-  const steg = (t: Kotilstand, grener: Greninfo[] | null, na: string) => {
-    oppdaterGrener(t, grener, na, INNST)
-    vurder(t, na, INNST)
+  const steg = (t: Kotilstand, grener: Greninfo[] | null, na: string, innst = INNST) => {
+    oppdaterGrener(t, grener, na, innst)
+    vurder(t, na, innst)
     return t.stoffer.beta!
   }
 
@@ -631,19 +632,75 @@ describe('kurateringsgrenene i OUSFAR', () => {
     ).toMatchObject({ utfall: 'avvist', melding: expect.stringContaining('en evidensovervaking-kuratering må gjøres i en kuratering-gren') })
   })
 
+  it('tar kontrollpunktene sikkerhetsfilteret stoppet, opp igjen i en oppfølging når ventetiden er gått, til ingen står igjen', () => {
+    const OPPFOLGING = '0b6f3c1e-3333-4000-8000-000000000003'
+    const UTSATT = ['toksisitet_forgiftning/Toksiske konsentrasjoner', 'viktige_data/alvorlig_intoksikasjon']
+    const DAG = 24
+    const t = ny()
+    const a = behandle(t, f('reserver', { stoff: 'beta' }), kontekst('kurateringsko/okt/a')).oppgave!
+    behandle(t, f('fullfort', { oppgave: a.oppgave, gren: GREN, kunnskapsgrense: '2026-11-01' }), kontekst('kurateringsko/okt/a', om(T0, 1)))
+    const publisert = steg(t, [gren('publisert', { publisert_kl: om(T0, 2), utsatte: UTSATT })], om(T0, 2))
+    expect(publisert).toMatchObject({
+      status: 'publisert',
+      modus: null,
+      sist_kuratert: { kl: om(T0, 2), modus: 'de_novo', runde: 1, kunnskapsgrense: '2026-11-01', gren: GREN, utsatte: UTSATT, utsatt_kl: om(T0, 2) },
+    })
+    expect(publisert.historikk.at(-1)!.melding).toContain('2 kontrollpunkter stoppet av sikkerhetsfilteret står igjen')
+
+    // Ikke straks etter stoppet: først når ventetiden i innstillingene er gått.
+    const ventetid = INNST.oppfolging_ventetid_dager * DAG
+    expect(steg(t, [], om(T0, 2 + ventetid - 1))).toMatchObject({ status: 'publisert', modus: null })
+    expect(behandle(t, f('reserver', { stoff: 'beta' }), kontekst('kurateringsko/okt/b', om(T0, 2 + ventetid - 1)))).toMatchObject({ utfall: 'avvist' })
+    expect(steg(t, [], om(T0, 2 + ventetid - 1), { ...INNST, oppfolging_ventetid_dager: 1 })).toMatchObject({ status: 'klar', modus: 'oppfolging' })
+    const forfalt = steg(t, [], om(T0, 2 + ventetid))
+    expect(forfalt).toMatchObject({ status: 'klar', modus: 'oppfolging' })
+    expect(forfalt.prioritet.grunner[0]).toBe(
+      `Oppfølging: 2 kontrollpunkter ble stoppet av sikkerhetsfilteret i kurateringen publisert ${om(T0, 2).slice(0, 10)} (${UTSATT.join('; ')}).`,
+    )
+    expect(rekkefolge(t, om(T0, 2 + ventetid), INNST)[0]!.stoff).toBe('beta')
+
+    // Oppfølgingen gjøres i en kuratering-gren, og får de utsatte punktene i svaret.
+    const avgrenset = (status: Greninfo['status'], endring: Partial<Greninfo> = {}) => gren(status, { id: OPPFOLGING, art: 'kuratering', ...endring })
+    const b = behandle(t, f('reserver'), kontekst('kurateringsko/okt/b', om(T0, 2 + ventetid))).oppgave!
+    expect(b).toMatchObject({ stoff: 'beta', modus: 'oppfolging', gren: null, sist_kuratert: { gren: GREN, utsatte: UTSATT } })
+    expect(
+      behandle(t, f('fullfort', { oppgave: b.oppgave, gren: OPPFOLGING, kunnskapsgrense: '2026-11-15' }), { ...kontekst('kurateringsko/okt/b', om(T0, 3 + ventetid)), grener: [avgrenset('klar')] }),
+    ).toMatchObject({ utfall: 'ok' })
+    expect(steg(t, [avgrenset('klar', { runde: 1 })], om(T0, 4 + ventetid))).toMatchObject({ status: 'venter_godkjenning' })
+
+    // Ett punkt stoppes igjen: det står igjen, og ventetiden begynner på nytt fra den nye publiseringen.
+    const igjen = steg(t, [avgrenset('publisert', { publisert_kl: om(T0, 5 + ventetid), utsatte: UTSATT.slice(0, 1) })], om(T0, 5 + ventetid))
+    expect(igjen).toMatchObject({
+      status: 'publisert',
+      modus: null,
+      // Den forrige kurateringens modus, runde, kunnskapsgrense og tid står; de novo er ikke forfalt på nytt.
+      sist_kuratert: { kl: om(T0, 2), modus: 'de_novo', runde: 1, kunnskapsgrense: '2026-11-01', gren: OPPFOLGING, utsatte: UTSATT.slice(0, 1), utsatt_kl: om(T0, 5 + ventetid) },
+    })
+    expect(steg(t, [], om(T0, 4 + 2 * ventetid))).toMatchObject({ status: 'publisert', modus: null })
+    expect(steg(t, [], om(T0, 5 + 2 * ventetid))).toMatchObject({ status: 'klar', modus: 'oppfolging' })
+
+    // Når ingen står igjen, er stoffet ferdig til neste gang det forfaller.
+    const c = behandle(t, f('reserver', { stoff: 'beta' }), kontekst('kurateringsko/okt/c', om(T0, 5 + 2 * ventetid))).oppgave!
+    behandle(t, f('fullfort', { oppgave: c.oppgave, gren: OPPFOLGING, kunnskapsgrense: '2026-11-20' }), kontekst('kurateringsko/okt/c', om(T0, 6 + 2 * ventetid)))
+    const ferdig = steg(t, [avgrenset('publisert', { revisjon: 2, publisert_kl: om(T0, 7 + 2 * ventetid) })], om(T0, 7 + 2 * ventetid))
+    expect(ferdig).toMatchObject({ status: 'publisert', modus: null, sist_kuratert: { modus: 'de_novo', runde: 1, utsatte: [], utsatt_kl: null } })
+    expect(steg(t, [], om(T0, 7 + 30 * ventetid))).toMatchObject({ status: 'publisert', modus: null })
+  })
+
   it('leser grenene fra OUSFAR med OIDC-tokenet for kjøringen, og bare der det finnes', async () => {
     expect(lagGrenleser({})).toBeNull()
     const kall: { adresse: string; valg?: RequestInit }[] = []
     const hent = async (adresse: string, valg?: RequestInit) => {
       kall.push({ adresse, valg })
       if (adresse.startsWith('https://token')) return Response.json({ value: 'oidc-token' })
-      return Response.json({ grener: [gren('klar'), { id: 'tull' }] })
+      return Response.json({ grener: [gren('klar'), { id: 'tull' }, { ...gren('publisert', { id: ANNEN }), utsatte: ['tdm', 7, ' ', null] }, { ...gren('arbeid', { id: ANNEN }), utsatte: 'tdm' }] })
     }
     const les = lagGrenleser(
       { OUSFAR_KO_ADRESSE: 'https://ousfar.example/api/kuratering-ko', ACTIONS_ID_TOKEN_REQUEST_URL: 'https://token.example/?x=1', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 't' },
       hent,
     )!
-    expect(await les()).toEqual([gren('klar')])
+    // Bare nøklene som tekst blir med som utsatte punkter.
+    expect(await les()).toEqual([gren('klar'), gren('publisert', { id: ANNEN, utsatte: ['tdm'] }), gren('arbeid', { id: ANNEN })])
     expect(kall[0]!.adresse).toBe('https://token.example/?x=1&audience=ousfar')
     expect(kall[1]).toMatchObject({ adresse: 'https://ousfar.example/api/kuratering-ko', valg: { method: 'POST', headers: { Authorization: 'Bearer oidc-token' } } })
   })

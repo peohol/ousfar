@@ -387,26 +387,32 @@ function folgGren(s: Kostoff, a: Kurateringsappgren, g: Greninfo | null, na: str
   }
 }
 
-/** Grenen er publisert: kurateringen er det, og stoffet er ferdig til neste gang det forfaller. */
+/**
+ * Grenen er publisert: kurateringen er det, og stoffet er ferdig til neste
+ * gang det forfaller. Kontrollpunktene sikkerhetsfilteret stoppet i grenen,
+ * følger med (`utsatte`), så køen gir stoffet ut til en oppfølging når
+ * ventetiden er gått. En oppfølging fullfører den forrige kurateringen: den
+ * beholder modusen, runden og kunnskapsgrensen derfra og fører bare de
+ * utsatte punktene som står igjen.
+ */
 function grenPublisert(
   s: Kostoff,
   g: Greninfo,
   spor: Pick<Kurateringsappgren, 'oppgave' | 'modus' | 'runde'> & { kunnskapsgrense: string | null },
   na: string,
 ) {
-  s.sist_kuratert = {
-    kl: g.publisert_kl ?? na,
-    modus: spor.modus,
-    kunnskapsgrense: spor.kunnskapsgrense,
-    runde: spor.runde,
-    pr: null,
-    gren: g.id,
-    kilde: 'ko',
-  }
+  const kl = g.publisert_kl ?? na
+  const utsatte = { utsatte: g.utsatte, utsatt_kl: g.utsatte.length > 0 ? kl : null }
+  const forrige = s.sist_kuratert
+  s.sist_kuratert =
+    spor.modus === 'oppfolging' && forrige
+      ? { ...forrige, gren: g.id, ...utsatte }
+      : { kl, modus: spor.modus, kunnskapsgrense: spor.kunnskapsgrense, runde: spor.runde, pr: null, gren: g.id, kilde: 'ko', ...utsatte }
   s.forsok = 0
   s.tidligst_kl = null
   s.gjenoppta = null
-  logg(s, { kl: na, hendelse: 'publisert', oppgave: spor.oppgave, melding: `Kurateringsgrenen er publisert (revisjon ${g.revisjon}).` })
+  const igjen = g.utsatte.length > 0 ? ` ${g.utsatte.length} kontrollpunkt${g.utsatte.length === 1 ? '' : 'er'} stoppet av sikkerhetsfilteret står igjen til en oppfølging.` : ''
+  logg(s, { kl: na, hendelse: 'publisert', oppgave: spor.oppgave, melding: `Kurateringsgrenen er publisert (revisjon ${g.revisjon}).${igjen}` })
 }
 
 function grenForkastet(s: Kostoff, oppgave: string, na: string) {
@@ -501,7 +507,17 @@ export function utlop(t: Kotilstand, na: string, innst: Koinnstillinger): string
 
 /* --- Status og prioritet ------------------------------------------------- */
 
-/** Modusen en ny kuratering av stoffet skal ha nå, eller `null` når ingen er forfalt. */
+/** Når en oppfølging av kontrollpunktene sikkerhetsfilteret stoppet, tidligst er forfalt; `null` når ingen punkter er utsatt. */
+function oppfolgingForfallerKl(k: Kurateringsspor | null, innst: Koinnstillinger): string | null {
+  if (!k?.utsatte?.length) return null
+  return pluss(k.utsatt_kl ?? k.kl, innst.oppfolging_ventetid_dager * DAG)
+}
+
+/**
+ * Modusen en ny kuratering av stoffet skal ha nå, eller `null` når ingen er
+ * forfalt. En oppfølging gis ut uansett `aktive_modi`, siden den fullfører en
+ * publisert kuratering, men først når ventetiden etter stoppet er gått.
+ */
 export function forfaltModus(s: Kostoff, na: string, innst: Koinnstillinger): Modus | null {
   const k = s.sist_kuratert
   // Aldri kuratert, en annen art kuratering, eller de novo i en eldre runde: de novo i runden som gjelder.
@@ -510,6 +526,8 @@ export function forfaltModus(s: Kostoff, na: string, innst: Koinnstillinger): Mo
     const fra = k.kunnskapsgrense ? `${k.kunnskapsgrense}T00:00:00.000Z` : k.kl
     if (dagerMellom(fra, na) >= innst.evidensovervaking_dager) return 'evidensovervaking'
   }
+  const oppfolging = oppfolgingForfallerKl(k, innst)
+  if (oppfolging && Date.parse(oppfolging) <= Date.parse(na)) return 'oppfolging'
   return null
 }
 
@@ -544,6 +562,13 @@ export function prioriter(s: Kostoff, na: string, innst: Koinnstillinger): Kosto
   if (plass >= 0) legg(v.forrang * (1 - plass / innst.forrang.length), 'Står først i innstillingene.')
   else if (!gisUt(s, innst)) grunner.push('Venter: køen gir bare ut stoffene som står først i innstillingene nå.')
   if (s.modus === 'de_novo') legg(v.de_novo, 'De novo-kuratering i runden som gjelder.')
+  if (s.modus === 'oppfolging' && s.sist_kuratert?.utsatte?.length) {
+    const { utsatte, utsatt_kl, kl } = s.sist_kuratert
+    legg(
+      v.oppfolging,
+      `Oppfølging: ${utsatte.length} kontrollpunkt${utsatte.length === 1 ? '' : 'er'} ble stoppet av sikkerhetsfilteret i kurateringen publisert ${(utsatt_kl ?? kl).slice(0, 10)} (${utsatte.join('; ')}).`,
+    )
+  }
   if (!s.sist_kuratert) {
     legg(v.aldri_kuratert, 'Aldri kuratert.')
     legg(2 * v.alder_per_aar, 'Ingen kuratering å regne alderen fra.')
