@@ -260,10 +260,13 @@ export const justeringsfelt = (r: Regel, svar: Record<string, boolean> = {}, sta
     const godkjent = godkjenteVerdier(r, sti, svar, startdose)
     if (godkjent) {
       const godkjentTekst = listeEller(godkjent.map((v) => medEnhet(v, p)))
+      // Ingen godkjent verdi: den godkjente planen dekker ikke dosen eller svarene, så feltet påstår ingen verdi (stoppet sier hvorfor).
       const hjelp =
-        godkjent.length <= 1
-          ? `Den godkjente planen bruker ${godkjentTekst || forslag} for disse svarene. Andre verdier er ikke godkjent, så feltet kan ikke endres.`
-          : `Den godkjente planen kan bruke ${godkjentTekst}. Andre verdier er ikke godkjent.`
+        godkjent.length === 0
+          ? 'Den godkjente planen gjelder ikke for denne dosen eller disse svarene, så verdien kan ikke tilpasses.'
+          : godkjent.length === 1
+            ? `Den godkjente planen bruker ${godkjentTekst} for disse svarene. Andre verdier er ikke godkjent, så feltet kan ikke endres.`
+            : `Den godkjente planen kan bruke ${godkjentTekst}. Andre verdier er ikke godkjent.`
       const alternativer = godkjent.map((v) => ({ verdi: String(v), tekst: medEnhet(v, p) }))
       const standard = x !== null && godkjent.some((v) => liksom(v, x)) ? String(godkjent.find((v) => liksom(v, x))) : undefined
       return { sti, navn: p.justerbar, forslag, hjelp, godkjent, godkjentTekst, alternativer, ...(standard !== undefined && { standard }) }
@@ -282,9 +285,10 @@ export function ikkeGodkjenteJusteringer(r: Regel, skjema: Planskjema): { sti: s
   const start = lesDose(skjema.startdose)
   return justeringsfelt(r, skjema.svar, start).flatMap((f) => {
     const x = justertVerdi(skjema, f.sti)
-    if (x === undefined || !f.godkjent || f.godkjent.some((v) => liksom(v, x))) return []
+    // Uten noen godkjent verdi stopper planen allerede av en annen grunn (dosen eller svarene), som da er den riktige forklaringen.
+    if (x === undefined || !f.godkjent?.length || f.godkjent.some((v) => liksom(v, x))) return []
     const p = justerbare(r).find(([s]) => s === f.sti)![1]
-    return [{ sti: f.sti, tekst: `${f.navn} ${medEnhet(x, p)} er ikke godkjent: den godkjente planen bruker ${f.godkjentTekst || f.forslag}.` }]
+    return [{ sti: f.sti, tekst: `${f.navn} ${medEnhet(x, p)} er ikke godkjent: den godkjente planen bruker ${f.godkjentTekst}.` }]
   })
 }
 

@@ -459,12 +459,12 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
             return (
               <div key={j.sti} className="skjemafelt" data-last>
                 <p className="skjemafelt">
-                  <span>{j.navn}</span> <strong>{j.godkjentTekst || j.forslag}</strong>
+                  <span>{j.navn}</span> {j.godkjentTekst && <strong>{j.godkjentTekst}</strong>}
                 </p>
                 {hjelp}
                 {skrevet !== '' && (
                   <Button variant="kant" onClick={tom}>
-                    Bruk den godkjente verdien
+                    {j.godkjentTekst ? 'Bruk den godkjente verdien' : 'Tøm feltet'}
                   </Button>
                 )}
               </div>

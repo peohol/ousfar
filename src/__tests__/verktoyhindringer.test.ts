@@ -41,6 +41,17 @@ describe('«Tilpass planen» tilbyr bare det den godkjente planen bruker (F1)', 
     }
   })
 
+  it('en dose eller svar uten godkjent plan (escitalopram 15 mg) gir ingen påstått verdi, og ingen egen stopp for feltet', () => {
+    const r = regel(ESCITALOPRAM)
+    const svar = { lang_behandlingstid: false }
+    for (const f of justeringsfelt(r, svar, 15)) {
+      expect(f.godkjent).toEqual([])
+      expect(f.godkjentTekst).toBe('')
+      expect(f.hjelp).toBe('Den godkjente planen gjelder ikke for denne dosen eller disse svarene, så verdien kan ikke tilpasses.')
+    }
+    expect(ikkeGodkjenteJusteringer(r, { ...TOMT_SKJEMA, startdose: '15', svar, justert: { [PROSENT]: '10' } })).toEqual([])
+  })
+
   it('regler uten klinisk omfang er godkjent for hele området: feltet er som før', () => {
     for (const r of iBruk.filter((x) => !x.klinisk_omfang && justerbare(x).length > 0)) {
       for (const f of justeringsfelt(r)) {
