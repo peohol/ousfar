@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-07T08:26:26.019Z",
+  "oppdatert_kl": "2026-11-07T09:25:54.472Z",
   "malt_kl": "2026-11-07T06:30:03.847Z",
   "antall": {
     "klar": 95,
@@ -153,7 +153,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T08:26:26.019Z",
+          "kl": "2026-11-07T09:25:54.472Z",
           "kilde": "system"
         }
       ]
@@ -164,7 +164,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T08:26:26.019Z",
+          "kl": "2026-11-07T09:25:54.472Z",
           "kilde": "system"
         }
       ]
@@ -197,7 +197,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-07T08:26:26.019Z",
+          "kl": "2026-11-07T09:25:54.472Z",
           "kilde": "system"
         }
       ]
@@ -208,7 +208,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-07T08:26:26.019Z",
+          "kl": "2026-11-07T09:25:54.472Z",
           "kilde": "system"
         }
       ]
@@ -219,7 +219,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-07T08:26:26.019Z",
+          "kl": "2026-11-07T09:25:54.472Z",
           "kilde": "system"
         }
       ]
