@@ -1,0 +1,748 @@
+{
+ "beskrivelse": "Syntetiske brukerforløp for P0 (docs/verktøy-p0-rapport-2026-11.md). svar: [mønster i spørsmålsteksten, svaret]; spørsmål uten mønster får det trygge svaret. Ingen reelle pasienter.",
+ "forlop": [
+  {
+   "id": "P0-A01",
+   "hva": "Escitalopram 10 mg tablett, kort behandlingstid, ingen unntak",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "utskrift": true
+  },
+  {
+   "id": "P0-A02",
+   "hva": "Escitalopram 20 mg tablett, kort behandlingstid, ingen unntak",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "20"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ]
+  },
+  {
+   "id": "P0-A03",
+   "hva": "Escitalopram 10 mg dråper, kort behandlingstid, ingen unntak",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Dråper, oppløsning"
+   ]
+  },
+  {
+   "id": "P0-A04",
+   "hva": "Escitalopram 20 mg dråper, kort behandlingstid, ingen unntak",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "20"
+    ]
+   ],
+   "form": [
+    "Dråper, oppløsning"
+   ]
+  },
+  {
+   "id": "P0-A05",
+   "hva": "Som P0-A01, på mobil (390 punkter)",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "mobil": true
+  },
+  {
+   "id": "P0-N01",
+   "hva": "Escitalopram 10 mg tablett, brukt i mange måneder",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "mange måneder",
+     "Ja"
+    ]
+   ],
+   "bilder": [
+    [
+     "mange måneder",
+     "sporsmal"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N02",
+   "hva": "Escitalopram 10 mg tablett, tidligere seponeringsplager",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "Et tidligere forsøk",
+     "Gjelder"
+    ]
+   ],
+   "bilder": [
+    [
+     "Et tidligere forsøk",
+     "sporsmal"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N03",
+   "hva": "Escitalopram 10 mg tablett, 65 år eller eldre",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "65 år",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N04",
+   "hva": "Escitalopram 15 mg tablett, kort behandlingstid",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "15"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ]
+  },
+  {
+   "id": "P0-N05",
+   "hva": "Escitalopram 10 mg tablett, nedsatt leverfunksjon",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "leverfunksjon",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N06",
+   "hva": "Escitalopram 10 mg tablett, kort behandlingstid, reduksjon per trinn endret til 50 %",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "tilpass": [
+    [
+     "Reduksjon per trinn",
+     "50"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N07",
+   "hva": "Escitalopram 10 mg tablett, kort behandlingstid, minste antall dager per trinn endret til 14",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "tilpass": [
+    [
+     "Minste antall dager",
+     "14"
+    ]
+   ]
+  },
+  {
+   "id": "P0-B01",
+   "hva": "Citalopram 20 mg → sertralin 100 mg, under 8 uker, ingen unntak",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "utskrift": true,
+   "bilder": [
+    [
+     "mer enn 8 uker",
+     "sporsmal"
+    ]
+   ]
+  },
+  {
+   "id": "P0-B02",
+   "hva": "Citalopram 20 mg → sertralin 100 mg, brukt i mer enn 8 uker",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "mer enn 8 uker",
+     "Gjelder"
+    ]
+   ]
+  },
+  {
+   "id": "P0-B03",
+   "hva": "Escitalopram 10 mg → sertralin 100 mg, under 8 uker, ingen unntak",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Escitalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "10"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C01",
+   "hva": "Olanzapin 20 mg tablett → aripiprazol 15 mg",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Olanzapin (peroral) → aripiprazol (peroral)"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "15"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C02",
+   "hva": "Olanzapin 10 mg tablett → aripiprazol 15 mg",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Olanzapin (peroral) → aripiprazol (peroral)"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "10"
+    ],
+    [
+     "Måldose",
+     "15"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C03",
+   "hva": "Risperidon 4 mg tablett → aripiprazol 10 mg",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Risperidon (peroral) → aripiprazol (peroral)"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "4"
+    ],
+    [
+     "Måldose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C04",
+   "hva": "Aripiprazol 15 mg tablett → Abilify Maintena",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Aripiprazol: peroral → depotinjeksjon"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "15"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C05",
+   "hva": "Risperidon 3 mg tablett → Xeplion 75 mg",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "3"
+    ],
+    [
+     "Måldose",
+     "75"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C06",
+   "hva": "Paliperidon 6 mg depottablett → Xeplion",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "6"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-C07",
+   "hva": "Risperidon 3 mg → Xeplion 75 mg, toleranse for risperidon ikke dokumentert i journalen",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "3"
+    ],
+    [
+     "Måldose",
+     "75"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ]
+   ],
+   "bilder": [
+    [
+     "har tålt",
+     "sporsmal"
+    ]
+   ]
+  },
+  {
+   "id": "P0-D01",
+   "hva": "Valproat 1000 mg (natriumvalproat) + lamotrigin til 100 mg",
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Valproat"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "1000"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "fast, og skal",
+     "Ja"
+    ],
+    [
+     "natriumvalproat",
+     "Ja"
+    ],
+    [
+     "Lithionit 42",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-D02",
+   "hva": "Litium 168 mg Li⁺ (4 × Lithionit 42 mg) + lamotrigin til 200 mg",
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Litium"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "168"
+    ],
+    [
+     "Måldose",
+     "200"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "fast, og skal",
+     "Ja"
+    ],
+    [
+     "natriumvalproat",
+     "Ja"
+    ],
+    [
+     "Lithionit 42",
+     "Ja"
+    ]
+   ]
+  }
+ ]
+}

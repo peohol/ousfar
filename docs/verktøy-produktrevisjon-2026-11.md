@@ -37,6 +37,8 @@ Dokumenter per kasus: forventet strategi og sluttmål; valgte inndata; kontrolle
 
 **Leveranse:** En kort, etterprøvbar feil-/friksjonsmatrise og reproduksjon for de viktigste problemene. Finn årsaken til at Peder ikke får escitalopramplan i stedet for å gjette.
 
+**Levert 06.11.2026:** [`verktøy-p0-rapport-2026-11.md`](verktøy-p0-rapport-2026-11.md) med matrise, årsaker, prioriterte rettelser og forslag til parallelle spor.
+
 ### P1 – Avklar hva bytteverktøyet skal anbefale, før motoren endres
 
 **Claude (klinisk spor):** For citalopram → sertralin og minst ett annet vanlig SSRI-bytte: lag en nøytral sammenligning av bestilt funksjon, Psychiatrienets *type* overgang, gjeldende OUSFAR-strategi og uavhengige kilder (norske SPC/Felleskatalogen/DMP, NICE, aktuell faglitteratur). Vurder overlapp, interaksjoner/serotonerg toksisitet, seponering, halveringstid, behandlingstid, indikasjon og klinisk seleksjon. Hvorfor ville man velge kryssnedtrapping, direkte bytte eller sekvensiell overgang? Hva kan forsvares, og for hvem?
@@ -91,16 +93,16 @@ Før Peder involveres, skal Claude og ChatGPT ha dokumentert at testkasusene vir
 
 ## 5. Status som skal holdes oppdatert
 
-| Port | Status ved opprettelsen |
-| --- | --- |
-| Alle PR-er fra foregående runde integrert | Ja, main 1.126.2 06.11.2026 |
-| K1 faktisk lett å bruke i publisert app | Ikke dokumentert; Peder rapporterer at han ikke får plan |
-| Spørsmål og stoppmeldinger tydelige for alle fire | Nei; reservevisning med «Gjelder/Gjelder ikke» |
-| K2-strategien svarer til bestilt klinisk formål | Uavklart/avvik dokumentert for citalopram → sertralin; krever faglig beslutning |
-| Kompakt standardvisning og kopi | Ikke dokumentert; Peder rapporterer for mye tekst |
-| Ny, samlet klinisk/UX-E2E på publisert main etter A1 | Ikke gjennomført/dokumentert |
-| Bred klinisk praksisdekning | Nei, kun avgrensede kasus |
-| Ordinær klinikertilgang | Nei, administratortilgang beholdes |
-| Start K5-D | Ikke åpnet; tidligere og disse kvalitetsportene må vurderes |
+| Port | Status ved opprettelsen | Status etter P0 (06.11.2026, publisert app 1.126.3) |
+| --- | --- | --- |
+| Alle PR-er fra foregående runde integrert | Ja, main 1.126.2 06.11.2026 | Uendret |
+| K1 faktisk lett å bruke i publisert app | Ikke dokumentert; Peder rapporterer at han ikke får plan | Nei. Escitalopram gir plan bare ved kort behandlingstid, ingen unntak og standardvalg i «Tilpass planen», og først etter 5–7 ekstra dosevalg med ett alternativ hvert. «Ja» på lang behandlingstid og enhver tilpasning gir stopp uten konkret grunn ([P0-rapporten](verktøy-p0-rapport-2026-11.md) §3) |
+| Spørsmål og stoppmeldinger tydelige for alle fire | Nei; reservevisning med «Gjelder/Gjelder ikke» | Nei. Fem regler i bruk vises i reservevisningen fordi katalogen deres ikke er kontrollert, og 28 stoppende svar i åtte regler gir bare en generisk melding (rapporten §4, `src/__tests__/verktoyp0.test.ts`) |
+| K2-strategien svarer til bestilt klinisk formål | Uavklart/avvik dokumentert for citalopram → sertralin; krever faglig beslutning | Avvik bekreftet: nedtrapping og så direkte overgang, mens bestillingen bygde på Psychiatrienets overgang med overlapp. Beslutningspunkter P1-1–P1-7 i rapporten §6 |
+| Kompakt standardvisning og kopi | Ikke dokumentert; Peder rapporterer for mye tekst | Nei. Kopien av escitalopramplanen er 15 267 tegn, der under 10 % er selve doseringen, og den inneholder utviklertekst (rapporten §5) |
+| Ny, samlet klinisk/UX-E2E på publisert main etter A1 | Ikke gjennomført/dokumentert | Gjennomført som P0 (24 forløp, `scripts/verktoy-p0-app.mjs`). K3 og K4 ga riktige komplette planer; K1 og K2 har funnene over |
+| Bred klinisk praksisdekning | Nei, kun avgrensede kasus | Uendret |
+| Ordinær klinikertilgang | Nei, administratortilgang beholdes | Uendret |
+| Start K5-D | Ikke åpnet; tidligere og disse kvalitetsportene må vurderes | Ikke åpnet. P2-a/P2-b, P3 og P1 kommer først (rapporten §9) |
 
 **Oppdater denne tabellen med verifiserte funn, ikke med PR-antall eller testantall.**

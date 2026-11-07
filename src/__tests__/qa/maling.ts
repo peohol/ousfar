@@ -1,5 +1,5 @@
 /**
- * Før-måling (tråd D): kjører vanlige forløp i den publiserte appen slik en
+ * Før-måling (tråd D): kjører vanlige forløp i appen (som standard lokalt) slik en
  * kliniker ville gjort det, teller hver nødvendig handling og tar skjermbilder.
  * Bare lesing. Nødstoppen prøves ved å svare appen med en syntetisk sperre
  * (nettverksavskjæring i nettleseren), ikke ved å sette en sperre.
@@ -9,15 +9,16 @@
  * sammenlignes. Ikke en del av `npm test`, fordi den trenger nett og
  * innlogging.
  *
- * Kjøres fra repoets rot: `npx vite-node src/__tests__/qa/maling.ts`
- * Miljø: APP_URL, BOOTSTRAP_ADMIN_USERNAME, BOOTSTRAP_ADMIN_PASSWORD, og valgfritt
- * MALING_UT (mappe, standard en midlertidig mappe), MALING_BILDER=1 (skjermbilder),
+ * Kjøres fra repoets rot: `npx vite-node src/__tests__/qa/maling.ts`, som
+ * standard i det lokale testmiljøet; mot den publiserte appen bare med
+ * `QA_PRODUKSJON=ja` og vernet i `apneTestmiljo()` (`docs/qa-testmiljo.md`).
+ * Miljø, valgfritt: MALING_UT (mappe, standard en midlertidig mappe), MALING_BILDER=1 (skjermbilder),
  * MALING_FORLOP=id,id (bare disse forløpene), MALING_TEMA=dark.
  * Skjermbildene viser administratorkontoen og legges ikke i repoet.
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { createRequire } from 'node:module'
+import { apneTestmiljo, Teststopp } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Side = any
@@ -155,21 +156,8 @@ const F: Forlop[] = [
   },
 ]
 
-const miljo = (n: string) => {
-  const x = process.env[n]
-  if (!x) throw new Error(`${n} mangler`)
-  return x
-}
 const UT = process.env.MALING_UT ?? `${tmpdir()}/verktoy-maling`
 mkdirSync(UT, { recursive: true })
-
-async function loggInn(p: Side, url: string) {
-  await p.goto(url, { waitUntil: 'networkidle' })
-  await p.fill('input[name=username]', miljo('BOOTSTRAP_ADMIN_USERNAME'))
-  await p.fill('input[name=password]', miljo('BOOTSTRAP_ADMIN_PASSWORD'))
-  await p.click('button:has-text("Logg inn")')
-  await p.waitForSelector('input[name=username]', { state: 'detached', timeout: 30_000 })
-}
 
 async function rolig(p: Side) {
   await p.waitForTimeout(400)
@@ -328,18 +316,18 @@ async function kjor(p: Side, url: string, f: Forlop, bredde: number, bilder: boo
 }
 
 async function main() {
-  const url = miljo('APP_URL').replace(/\/$/, '')
-  const kreve = createRequire(import.meta.url)
-  const { chromium } = kreve('playwright') as { chromium: { launch(): Promise<Side> } }
-  const nettleser = await chromium.launch()
+  const testmiljo = await apneTestmiljo()
+  const url = testmiljo.url
+  let stoppet: string | null = null
   const alle: Resultat[] = []
   const bare = process.env.MALING_FORLOP?.split(',')
   const tema = (process.env.MALING_TEMA ?? 'light') as 'light' | 'dark'
-  for (const [bredde, hoyde, mobil] of [
+  bredder: for (const [bredde, hoyde, mobil] of [
     [1440, 900, false],
     [390, 844, true],
   ] as const) {
-    const kontekst = await nettleser.newContext({
+    // Logget inn; forrige kontekst lukkes.
+    const p: Side = await testmiljo.side({
       viewport: { width: bredde, height: hoyde },
       deviceScaleFactor: process.env.MALING_BILDER ? 2 : 1,
       isMobile: mobil,
@@ -349,8 +337,8 @@ async function main() {
       timezoneId: 'Europe/Oslo',
       permissions: ['clipboard-read', 'clipboard-write'],
     })
-    const p = await kontekst.newPage()
-    await loggInn(p, url)
+    // Bare den første siden er allerede i appen (etter innloggingen).
+    if (p.url() === 'about:blank') await p.goto(url, { waitUntil: 'networkidle' })
     const versjon = (
       (await p
         .locator('text=/^v\\d+\\.\\d+\\.\\d+$/')
@@ -360,6 +348,13 @@ async function main() {
     ).trim()
     console.log('versjon', versjon, 'bredde', bredde, 'tema', await p.evaluate(() => document.documentElement.dataset.tema))
     for (const f of F.filter((x) => !bare || bare.includes(x.id))) {
+      try {
+        await testmiljo.forlop()
+      } catch (e) {
+        if (!(e instanceof Teststopp)) throw e
+        stoppet = e.message
+        break bredder
+      }
       if (f.sperre)
         await p.route('**/rpc/les_verktoysperrer*', (r: Side) =>
           r.fulfill({
@@ -380,10 +375,15 @@ async function main() {
       }
     }
     alle.push({ id: `versjon:${versjon}`, bredde, handlinger: [], utfall: '', skjema: { sporsmal: 0, avkrysninger: 0, felt: 0, ord: 0, hoyde: 0 }, stoppForSkjema: false })
-    await kontekst.close()
   }
-  await nettleser.close()
+  const trafikk = await testmiljo.avslutt()
+  // Vernet kan ha stoppet kjøringen under det siste forløpet, uten at et nytt forløp ble forsøkt.
+  stoppet ??= trafikk.stoppet && `Kjøringen er stoppet: ${trafikk.stoppet}.`
   writeFileSync(`${UT}/maling-${tema}.json`, JSON.stringify(alle, null, 2))
+  if (stoppet) {
+    console.error(stoppet)
+    process.exitCode = 1
+  }
 }
 
 await main()
