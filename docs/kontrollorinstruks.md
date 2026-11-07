@@ -122,7 +122,7 @@ teksten med kuratorprotokollen etter.
      trenger, er det en merknad.
    - **Et kort stoppet av sikkerhetsfilteret** (protokollen, «Når
      sikkerhetsfilteret stopper arbeidet»): et kort med en merknad fra
-     kuratoren som begynner «Stoppet av sikkerhetsfilteret:», er ikke i seg
+     kuratoren (på kortet, eller på seksjonen når kortet ikke finnes) som begynner «Stoppet av sikkerhetsfilteret:», er ikke i seg
      selv grunn til endringer, og grenen kan godkjennes uten det. Kontroller
      at kortet er urørt fra grunnversjonen (eller ikke lagt til), at
      evidensjournalen og dekningsmatrisen sier det samme som merknaden, og at

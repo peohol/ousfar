@@ -448,13 +448,16 @@ konsentrasjoner samler seg i den samme økten. Fagansvarlig avgjorde
   konsentrasjoner hentes bare raden for stoffet, ikke hele tabellen.
 - **Et kort som fortsatt stoppes,** skrives ikke. Står det i grunnversjonen,
   står det urørt som der; ellers legges det ikke til. Kuratoren fester en
-  `merknad` til kortet (`anker: {"objekt": …}`) som begynner «Stoppet av
+  `merknad` til kortet (`anker: {"objekt": …}`), eller til seksjonen
+  (`anker: {"seksjon": …}`) når kortet ikke finnes, som begynner «Stoppet av
   sikkerhetsfilteret:» og sier hva som mangler. Evidensjournalen sier det
   samme, og dekningsmatrisen fører området som `tomt_begrunnet` med kildene
   som ble søkt og en begrunnelse som begynner «Stoppet av
   sikkerhetsfilteret:» (det betyr da ikke at dokumentasjon mangler). Resten av
-  siden skrives ferdig, og grenen sendes til kontroll som vanlig. Kortet tas i
-  en senere gren.
+  siden skrives ferdig, og grenen sendes til kontroll som vanlig. Kortet står
+  også under «mangler» i rapporten. Når grenen er publisert, reserverer
+  kuratoren stoffet på nytt i køen (`"stoff"`) og tar de stoppede kortene i en
+  ny gren, så de ikke blir liggende.
 - **Ingen omvei.** Det som ble stoppet, skrives aldri på nytt i en annen form,
   med andre ord eller av en annen økt eller agent for å komme forbi filteret.
   Fagansvarlig kan selv føre inn tekst fra en annen kilde.
