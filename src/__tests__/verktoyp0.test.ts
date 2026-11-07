@@ -14,14 +14,20 @@
  * Alle pasientopplysninger er syntetiske.
  */
 import { describe, expect, it } from 'vitest'
+import { beregnPlan, entydigeTrinnvalg, medTrinnvalg, TOMT_SKJEMA } from '../verktoy/doseplan'
+import { flyttilstand } from '../verktoy/flyt'
 import { flytoppsett, INDIVIDUELT, standardId, UNNTAK_STANDARD, vurderFlyt } from '../verktoy/flyt/flyt'
 import { harKontrollertKatalog } from '../verktoy/flyt/katalogkontroll'
 import { erErstattet, erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
+import { besvartSkjema, tidFor } from '../verktoy/regler/pilotmatrise'
+import { VERKTOY } from '../verktoy/register'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
-import { BRUKERFORLOP, kjorForlop, lesUttrekkene, type Brukerforlop } from './qa/brukerforlop'
+import { BRUKERFORLOP, kjorForlop, lesUttrekkene, uttrekkFor, type Brukerforlop } from './qa/brukerforlop'
 
 const uttrekkene = lesUttrekkene()
+/** Tidspunktet kontrollmatrisen beregner ved, for uttrekket med dette navnet. */
+const tidI = (navn: string) => tidFor({ uttrekk: 'pilot' }, { pilot: uttrekkene[navn]!, aksept: uttrekkene[navn]! })
 const forlop = (id: string) => BRUKERFORLOP.find((f) => f.id === id)!
 const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
 /** Reglene appen faktisk bruker: klinisk godkjent og ikke erstattet av en nyere godkjent versjon. */
@@ -94,17 +100,66 @@ describe('P0-3 stopp uten konkret grunn', () => {
   })
 })
 
-describe('P0-4 lang behandlingstid ved escitalopram med tabletter', () => {
+describe('P0-4 lang behandlingstid ved escitalopram (rettet i spor B)', () => {
   const LANG = standardId('sporsmal', 'lang_behandlingstid')
-  it('reproduksjon: «Ja» stopper ikke ved spørsmålet; planen stopper først i beregningen, uten å si at godkjenningen bare gjelder kort behandlingstid', () => {
-    const r = regel(ESCITALOPRAM)
-    expect(vurderFlyt(r, {}).sporsmal.find((x) => x.id === LANG)?.stopperVed).toBeUndefined()
+  const ESC = { fra: { nokkel: 'escitalopram', formulering: 'standard' as const } }
+  const uttrekk = uttrekkFor(ESC, uttrekkene)
+  const tilstand = (dose: string, legemiddelform: string, flytsvar: Record<string, string> = {}) =>
+    flyttilstand({
+      verktoy: VERKTOY.find((v) => v.type === 'seponering')!,
+      valg: ESC,
+      regelsett: REGELSETT,
+      sperrer: [],
+      regel: regel(ESCITALOPRAM),
+      skjema: { ...TOMT_SKJEMA, startdose: dose, formvalg: { fra: { legemiddelform } }, flytsvar },
+      utvalg: uttrekkene[uttrekk]!.utvalg,
+      naa: tidI(uttrekk),
+    })
+
+  it('uten preparatene kan flyten ikke vite det: regelens omfang har et tilfelle med lang behandlingstid (dråper, 10 %)', () => {
+    expect(vurderFlyt(regel(ESCITALOPRAM), {}).sporsmal.find((x) => x.id === LANG)?.stopperVed).toBeUndefined()
     const k = kjorForlop({ ...forlop('K0-01'), id: 'P0-lang', skjema: { ...forlop('K0-01').skjema, svar: { lang_behandlingstid: true } } }, uttrekkene)
     expect(k.klasse).not.toBe('komplett')
-    expect(k.vist.join(' ')).not.toMatch(/kort behandlingstid/)
   })
 
-  it.fails('ønsket (P2): «Ja» på lang behandlingstid sier straks at den godkjente planen bare gjelder kort behandlingstid', () => {
-    expect(vurderFlyt(regel(ESCITALOPRAM), {}).sporsmal.find((x) => x.id === LANG)?.stopperVed).toContain('ja')
+  it.each([
+    ['10', '53'],
+    ['20', '53'],
+    ['10', '748'],
+    ['20', '748'],
+  ])('%s mg, form %s: «Ja» stopper ved spørsmålet med grunnen, og steg 2 sier det før spørsmålet besvares', (dose, form) => {
+    const for_ = tilstand(dose, form)
+    expect(for_.tilstand.kontroll.utfall).toBe('kan_lages_hvis')
+    expect(for_.tilstand.kontroll.begrensninger).toContain('lang behandlingstid')
+    expect(for_.tilstand.sporsmal.find((x) => x.id === LANG)?.stopperVed).toContain('ja')
+    const ja = tilstand(dose, form, { [LANG]: 'ja' })
+    expect(ja.tilstand.kontroll.utfall).toBe('kan_ikke')
+    expect(ja.tilstand.kontroll.grunner).toEqual([
+      expect.objectContaining({ sporsmal: LANG, tekst: expect.stringMatching(/^Verktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/) }),
+    ])
+    // Nei gir fortsatt en plan (svaret er tillatende).
+    expect(tilstand(dose, form, { [LANG]: 'nei' }).tilstand.kontroll.utfall).toBe('kan_lages_hvis')
+  })
+})
+
+describe('P0-1 rettet i spor B: dosevalgene med ett alternativ hvert godtas med ett trykk', () => {
+  it.each([
+    ['10', '53', 5],
+    ['20', '53', 7],
+    ['10', '748', 5],
+    ['20', '748', 7],
+  ])('%s mg, form %s: alle %i dosevalgene vises samlet, og med dem blir planen komplett', (dose, form, n) => {
+    const f = forlop('K0-01')
+    const r = regel(ESCITALOPRAM)
+    const uttrekk = uttrekkFor(f.valg, uttrekkene)
+    const naa = tidI(uttrekk)
+    const utvalg = uttrekkene[uttrekk]!.utvalg
+    const skjema = besvartSkjema(r, dose, { formvalg: { fra: { legemiddelform: form } } })
+    const valg = entydigeTrinnvalg(r, f.valg, skjema, utvalg, naa)
+    expect(valg).toHaveLength(n)
+    const medValg = valg!.reduce((s, v) => medTrinnvalg(s, v.trinn, v.dose.mg), skjema)
+    // Samme valg som ett og ett: samme regel, samme fingeravtrykk, komplett plan.
+    expect(beregnPlan(r, f.valg, medValg, utvalg, naa).status).toBe('doseplan')
+    expect(valg!.every((v) => v.trinn.doser.length === 1)).toBe(true)
   })
 })

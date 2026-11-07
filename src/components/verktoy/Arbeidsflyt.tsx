@@ -4,6 +4,7 @@ import {
   begrunnelseshjelp,
   beregnPlan,
   doseenhet,
+  entydigeTrinnvalg,
   festIderFor,
   formvalgFor,
   gjelderFortsatt,
@@ -16,6 +17,7 @@ import {
   spennFor,
   trengerMaldose,
   ubesvart,
+  type Entydigvalg,
   type Planskjema,
 } from '../../verktoy/doseplan'
 import { flyttilstand, forhandskontroll, KAN_LAGES_HVIS, medFlytsvar, medIngenAvDisse, type Flyttilstand, type Flytsporsmal, type Stoppforklaring } from '../../verktoy/flyt'
@@ -210,7 +212,7 @@ type Beregning =
   | { nokkel: string; status: 'henter' }
   | { nokkel: string; status: 'feil'; melding: string; sperre?: boolean }
   | { nokkel: string; status: 'formvalg' }
-  | { nokkel: string; status: 'ferdig'; resultat: Doseplanresultat }
+  | { nokkel: string; status: 'ferdig'; resultat: Doseplanresultat; entydige?: Entydigvalg[] }
 
 export interface ArbeidsflytProps {
   verktoy: Verktoy
@@ -314,6 +316,11 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const apne = regel ? ubesvart(regel, fullt) : { sporsmal: [], unntak: [], bekreftelser: [] }
   // Et svar som stopper planen, gir «kan ikke» i forhåndskontrollen (flytens felles kilde); det står ved spørsmålet og i panelet.
   const stopperSvar = kanIkke
+  // Etter et sikkert nei kreves ingen flere svar (P0 N04, spor B punkt 4): stopper valgene i steg 2 (dose, FEST, en verdi i «Tilpass planen»),
+  // trengs ingen spørsmål; stopper et svar, vises bare spørsmålene som er besvart, så svaret kan endres. Ingenting sendes annerledes til motoren.
+  const stoppFørSporsmal = kanIkke && !tilstand?.kontroll.grunner.some((g) => g.sporsmal)
+  const visteSporsmal = kanIkke ? synligeSporsmal.filter((s) => s.valgt !== undefined) : synligeSporsmal
+  const skjulte = synligeSporsmal.length - visteSporsmal.length
   // Planen beregnes bare når forhåndskontrollen sier at en komplett plan kan lages og ingenting gjenstår; den lover likevel aldri en plan (S9).
   // Nådde prøveberegningen taket uten å avgjøre noe, beregnes planen med de faktiske svarene når alt er besvart.
   const beregnes = !!tilstand && (tilstand.kontroll.utfall === 'kan_lages_hvis' || ikkeAvklart(tilstand))
@@ -365,7 +372,10 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       const alt = formvalgFor(regel, valg, sk, utvalg, tid)
       if (Object.entries(alt).some(([f, a]) => (a.klasser.length > 1 && !sk.formvalg[f]?.klasse) || (a.legemiddelformer.length > 1 && !sk.formvalg[f]?.legemiddelform)))
         return setBeregning({ nokkel, status: 'formvalg' })
-      setBeregning({ nokkel, status: 'ferdig', resultat: beregnPlan(regel, valg, sk, utvalg, tid, regelsett) })
+      const resultat = beregnPlan(regel, valg, sk, utvalg, tid, regelsett)
+      // Venter planen bare på trinn med én dose hver, godtas alle med ett trykk i stedet for ett og ett (P0 M4); verktøyet velger ikke selv.
+      const entydige = resultat.status === 'stoppet' && resultat.trinnvalg?.length ? entydigeTrinnvalg(regel, valg, sk, utvalg, tid, regelsett, resultat) : undefined
+      setBeregning({ nokkel, status: 'ferdig', resultat, ...(entydige && { entydige }) })
     } catch (e) {
       if (denne !== siste.current) return
       setBeregning({ nokkel, status: 'feil', melding: e instanceof Error ? e.message : String(e), sperre: e instanceof Sperrefeil })
@@ -383,6 +393,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const sett = <K extends keyof Planskjema>(felt: K, verdi: Planskjema[K]) => setSkjema((s) => ({ ...s, [felt]: verdi }))
   const svarPa = (sid: string, verdi: string | undefined) => setSkjema((s) => medFlytsvar(s, sid, verdi))
   const velgTrinn = (t: Trinnvalg, mg: number) => setSkjema((s) => medTrinnvalg(s, t, mg))
+  const godtaTrinn = (valgene: readonly Entydigvalg[]) => setSkjema((s) => valgene.reduce((x, v) => medTrinnvalg(x, v.trinn, v.dose.mg), s))
 
   const forlopsnavn = (forlop: string) => {
     const f = regel?.plan.forlop.find((x) => x.id === forlop)
@@ -394,7 +405,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const tilAdm = regel && tilForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const startenhet = doseenhet(regel, 'startdose')
   const spenn = regel && spennFor(regel, skjema)
-  const justeringer = regel ? justeringsfelt(regel, fullt.svar) : []
+  const justeringer = regel ? justeringsfelt(regel, fullt.svar, lesDose(skjema.startdose)) : []
   const varsel = regel && <Regelvarsler tilstand={varsler} regel={regel} />
   const stoppet = gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'stoppet' ? gjeldende.resultat : null
   // Begrunnelsen spørres når et svar krever den, når en verdi er justert, når beregningen har stoppet på den, eller når den alt er skrevet.
@@ -435,17 +446,56 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
           <input className="inndatafelt" type="date" value={skjema.startdato} onChange={(e) => sett('startdato', e.target.value)} />
         </label>
         {!skjema.startdato && <p className="flytsteg__hjelp">Uten startdato står planen med dagnummer.</p>}
-        {justeringer.map((j) => (
-          <div key={j.sti} className="skjemafelt">
-            <label className="skjemafelt">
-              <span>{j.navn}</span>
-              <Tallfelt value={skjema.justert[j.sti] ?? ''} placeholder={j.forslag} aria-describedby={`${id}-${j.sti}`} onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })} />
-            </label>
+        {justeringer.map((j) => {
+          const hjelp = (
             <p id={`${id}-${j.sti}`} className="flytsteg__hjelp">
               {/dager/i.test(j.navn) ? `${j.hjelp} Dagene er minstetider.` : j.hjelp}
             </p>
-          </div>
-        ))}
+          )
+          const skrevet = skjema.justert[j.sti]?.trim() ?? ''
+          const tom = () => sett('justert', { ...skjema.justert, [j.sti]: '' })
+          // Med ett godkjent alternativ er feltet låst: verdien står, med grunnen, og kan ikke endres til noe som alltid gir «ingen plan» (P0 F1).
+          if (j.godkjent && j.godkjent.length <= 1)
+            return (
+              <div key={j.sti} className="skjemafelt" data-last>
+                <p className="skjemafelt">
+                  <span>{j.navn}</span> <strong>{j.godkjentTekst || j.forslag}</strong>
+                </p>
+                {hjelp}
+                {skrevet !== '' && (
+                  <Button variant="kant" onClick={tom}>
+                    Bruk den godkjente verdien
+                  </Button>
+                )}
+              </div>
+            )
+          if (j.godkjent)
+            return (
+              <div key={j.sti} className="skjemafelt">
+                <p id={`${id}-${j.sti}-navn`} className="skjemafelt">
+                  {j.navn}
+                </p>
+                <Svarvalg
+                  navn={`${id}-${j.sti}`}
+                  etikett={`${id}-${j.sti}-navn`}
+                  beskrivelse={`${id}-${j.sti}`}
+                  alternativer={j.alternativer ?? []}
+                  valgt={skrevet || j.standard}
+                  onVelg={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })}
+                />
+                {hjelp}
+              </div>
+            )
+          return (
+            <div key={j.sti} className="skjemafelt">
+              <label className="skjemafelt">
+                <span>{j.navn}</span>
+                <Tallfelt value={skjema.justert[j.sti] ?? ''} placeholder={j.forslag} aria-describedby={`${id}-${j.sti}`} onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })} />
+              </label>
+              {hjelp}
+            </div>
+          )
+        })}
         {skjema.trinnvalg.length > 0 && (
           <div className="planpanel__valgte" role="group" aria-label="Valgte doser per trinn">
             <p className="flytsteg__hjelp">Valgte doser per trinn:</p>
@@ -594,6 +644,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       )
     if (gjeldende.status === 'formvalg') return <Panelmelding tittel="Velg legemiddelform">{<p>FEST har flere former. Velg i steg 2 hva pasienten bruker.</p>}</Panelmelding>
     const r = gjeldende.resultat
+    if (r.status === 'stoppet' && gjeldende.entydige)
+      return <Entydigedoser valg={gjeldende.entydige} navn={forlopsnavn} onGodta={godtaTrinn} />
     if (r.status === 'stoppet')
       return (r.trinnvalg ?? []).length > 0 ? (
         <>
@@ -627,9 +679,19 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     return <Doseplanvisning plan={plan} overskrift={verktoy.navn} varsel={varsel} forutsatt={tilstand?.forutsatt} />
   })()
 
+  // Venter planen på dosevalg, står valget nederst på mobil; knappen fører dit (P0 A05).
+  const venterPaDose = !plan && gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'stoppet' && (gjeldende.resultat.trinnvalg ?? []).length > 0
   const hopp =
-    plan || (steg2 && tilstand && !stopperSvar && tilstand.kontroll.gjenstar > 0) ? (
-      <div className="planhopp">{plan ? <Button onClick={tilPlanen}>Se planen</Button> : <Button onClick={tilForsteUbesvarte}>{gjenstartekst(tilstand!.kontroll.gjenstar)}</Button>}</div>
+    plan || venterPaDose || (steg2 && tilstand && !stopperSvar && tilstand.kontroll.gjenstar > 0) ? (
+      <div className="planhopp">
+        {plan ? (
+          <Button onClick={tilPlanen}>Se planen</Button>
+        ) : venterPaDose ? (
+          <Button onClick={tilPlanen}>Velg dosene i planen</Button>
+        ) : (
+          <Button onClick={tilForsteUbesvarte}>{gjenstartekst(tilstand!.kontroll.gjenstar)}</Button>
+        )}
+      </div>
     ) : null
 
   return (
@@ -701,19 +763,26 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
               <Flytsteg nr={3} tittel={titler[2]} ferdig={steg2 && steg3} reservevisning={!!utfall?.flyt && !utfall.flyt.oppsett.katalog}>
                 {!steg2 ? (
                   <p className="flytsteg__hjelp">Spørsmålene kommer når steg 2 er fylt ut.</p>
+                ) : stoppFørSporsmal ? (
+                  <p className="flytsteg__hjelp">Spørsmålene om pasienten trengs ikke, fordi verktøyet ikke kan lage en plan for valgene i steg 2. Endrer du dem, kommer spørsmålene tilbake.</p>
                 ) : tilstand && tilstand.sporsmal.length === 0 ? (
                   <p className="flytsteg__hjelp">Regelen trenger ingen opplysninger om pasienten utover det over.</p>
                 ) : (
                   tilstand && (
                     <div className="sporsmalsflate" data-flytsporsmal-liste>
                       <Sporsmalsliste
-                        sporsmal={synligeSporsmal}
+                        sporsmal={visteSporsmal}
                         grunner={tilstand.kontroll.grunner}
                         mangler={manglerSett}
-                        ingenAvDisse={tilstand.ingenAvDisse}
+                        ingenAvDisse={kanIkke ? [] : tilstand.ingenAvDisse}
                         onSvar={svarPa}
                         onIngenAvDisse={(ider) => setSkjema((s) => ({ ...s, flytsvar: medIngenAvDisse(s.flytsvar ?? {}, ider) }))}
                       />
+                      {skjulte > 0 && (
+                        <p className="flytsteg__hjelp" data-skjulte-sporsmal>
+                          {`${skjulte === 1 ? 'Ett spørsmål til trengs' : `${skjulte} spørsmål til trengs`} ikke, fordi svaret over gjør at verktøyet ikke kan lage en plan. Endrer du svaret, kommer ${skjulte === 1 ? 'det' : 'de'} tilbake.`}
+                        </p>
+                      )}
                     </div>
                   )
                 )}
@@ -756,6 +825,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   )
 }
 
+const listeEller = (xs: readonly string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} eller ${xs.at(-1)}`)
+
 /** «Ett spørsmål igjen» eller «N spørsmål igjen»: det som gjenstår før planen beregnes. */
 const gjenstartekst = (n: number) => (n === 1 ? 'Ett spørsmål igjen' : `${n} spørsmål igjen`)
 
@@ -790,7 +861,7 @@ function Grunnliste({ grunner }: { grunner: readonly Stoppforklaring[] }) {
 const ikkeAvklart = (t: Flyttilstand) => t.kontroll.utfall === 'ukjent' && t.kontroll.grunner.some((g) => g.kode === 'ikke_avklart')
 
 function Kontrollstatus({ tilstand, boks }: { tilstand: Flyttilstand; boks: MutableRefObject<HTMLDivElement | null> }) {
-  const { utfall, grunner, gjenstar } = tilstand.kontroll
+  const { utfall, grunner, gjenstar, begrensninger } = tilstand.kontroll
   const egne = grunner.filter((g) => !g.sporsmal)
   if (utfall === 'kan_ikke' && egne.length > 0)
     return (
@@ -818,6 +889,7 @@ function Kontrollstatus({ tilstand, boks }: { tilstand: Flyttilstand; boks: Muta
       <Ikon navn="done" className="flytstatus__ikon" />
       <div className="flytstatus__tekst">
         <p className="flytstatus__tittel">{KAN_LAGES_HVIS}</p>
+        {begrensninger && begrensninger.length > 0 && <p data-begrensninger>{`Den godkjente planen gjelder ikke ved ${listeEller(begrensninger)}.`}</p>}
         {egne.length > 0 && <Grunnliste grunner={egne} />}
         {gjenstar > 0 && <p>{`${gjenstartekst(gjenstar)}.`}</p>}
       </div>
@@ -898,6 +970,42 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat; 
           </div>
         </div>
       ))}
+    </section>
+  )
+}
+
+/**
+ * Trinnene der planen bare har én dose å velge hver, og der planen blir
+ * komplett med dem (P0 M4): klinikeren ser alle dosene og godtar dem med ett
+ * trykk, i stedet for ett trykk per trinn. Verktøyet velger ikke selv (P7-A,
+ * B3); uten trykket kommer ingen plan.
+ */
+function Entydigedoser({ valg, navn, onGodta }: { valg: readonly Entydigvalg[]; navn: (forlop: string) => string; onGodta: (valg: readonly Entydigvalg[]) => void }) {
+  const id = useId()
+  const flere = new Set(valg.map((v) => v.trinn.forlop)).size > 1
+  return (
+    <section className="trinnvalg" aria-labelledby={id} data-entydige>
+      <Panelmelding>
+        <p id={id} className="planpanel__meldingstittel">
+          Godta dosene for {valg.length === 1 ? 'ett trinn' : `${valg.length} trinn`}
+        </p>
+        <p>
+          Den foretrukne reduksjonen kan ikke gis nøyaktig med preparatene i disse trinnene. For hvert av dem finnes bare én dose innenfor det godkjente området, og med disse dosene blir planen
+          komplett:
+        </p>
+        <ul>
+          {valg.map((v) => (
+            <li key={`${v.trinn.forlop}-${v.trinn.trinn}`}>
+              {flere ? `${navn(v.trinn.forlop)} ` : ''}
+              {`fra ${tall(v.trinn.fra_mg)} mg til ${trinndosetekst(v.dose)}`}
+            </li>
+          ))}
+        </ul>
+        <p className="flytsteg__hjelp">Verktøyet velger ikke selv; planen beregnes fra dosene du godtar.</p>
+        <div className="verktoyskjema__handlinger">
+          <Button onClick={() => onGodta(valg)}>Bruk disse dosene</Button>
+        </div>
+      </Panelmelding>
     </section>
   )
 }

@@ -26,12 +26,25 @@ export const INDIVIDUELT = 'Verktøyet lager ingen plan, og behandlingen må pla
 export const UNNTAK_STANDARD = `Da gjelder ikke regelen. ${INDIVIDUELT}`
 export const UKJENT_FORKLARING = 'Må avklares før verktøyet kan lage en plan.'
 
+/**
+ * Stoppet når et svar ligger utenfor det den godkjente planen dekker: hvilket
+ * forhold, og at det er manglende godkjent plan, ikke nødvendigvis en
+ * medisinsk grunn mot behandlingen (P0-rapporten §8, F3/F4).
+ */
+export const ingenGodkjentPlan = (forhold: string) => `Verktøyet har ingen godkjent plan ved ${forhold}. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig, bare at den må planlegges individuelt.`
+
 /** Det som avgjør hvordan flyten bygges; standardverdiene er de som gjelder i appen. */
 export interface Flytgrunnlag {
   kontrollerte?: readonly Katalogkontroll[]
   beslutninger?: Readonly<Beslutninger>
   katalog?: readonly Katalogbetingelse[]
   sporsmal?: readonly Katalogsporsmal[]
+  /**
+   * Spørsmålene i regelen der et ja alene gjør at ingen komplett plan kan lages
+   * med preparatene i FEST, selv om omfanget har et tilfelle med ja
+   * (`utelukkendeSvar` i forhåndskontrollen). Svaret stopper da ved spørsmålet.
+   */
+  utelukket?: readonly string[]
 }
 
 /** Ett spørsmål slik flyten bygger det, før svarene er kjent. */
@@ -191,6 +204,17 @@ function verdi(a: Avbildning, svarPa: (id: string) => string | undefined): boole
 /** Om regelens kliniske omfang har et tilfelle med dette svaret på spørsmålet; uten omfang gjelder hvert svar. */
 const iOmfang = (r: Regel, sporsmal: string, v: boolean) => !r.klinisk_omfang || r.klinisk_omfang.tilfeller.some((t) => (t.svar[sporsmal] ?? false) === v)
 
+/** Om svaret `v` på regelens spørsmål kan gi en godkjent plan: i omfanget, og for ja ikke utelukket av preparatene. */
+const kanGiPlan = (r: Regel, sporsmal: string, v: boolean, utelukket: readonly string[] = []) => iOmfang(r, sporsmal, v) && !(v && utelukket.includes(sporsmal))
+
+/**
+ * Forholdene den godkjente planen ikke gjelder for, etter regelens spørsmål
+ * (det korte «ja»/«nei» i regelen): til steg 2, så klinikeren ser de viktigste
+ * begrensningene før spørsmålene besvares (P0 U1).
+ */
+export const begrensninger = (r: Regel, utelukket: readonly string[] = []): string[] =>
+  (r.sporsmal ?? []).flatMap((s) => [...(kanGiPlan(r, s.id, true, utelukket) ? [] : [s.ja]), ...(!kanGiPlan(r, s.id, false) && s.nei ? [s.nei] : [])])
+
 export interface Motorfelt {
   svar: Record<string, boolean>
   pasientforhold: Record<string, boolean>
@@ -223,7 +247,7 @@ export interface Flytresultat {
 export const svarStopper = (s: Pick<Flytsporsmal, 'valgt' | 'stopperVed'>): boolean => s.valgt !== undefined && (s.stopperVed?.includes(s.valgt) ?? false)
 
 /** Svarene som gjør at regelen ikke kan gi en plan, og forklaringen. */
-function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[]): { ved: string[]; forklaring?: string } {
+function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[], utelukket: readonly string[] = []): { ved: string[]; forklaring?: string } {
   const ved = new Set<string>()
   let forklaring: string | undefined
   for (const a of avbildninger) {
@@ -236,11 +260,11 @@ function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[]): 
           ? b === 'ja'
           : a.type === 'bekreftelse'
             ? b === 'nei' && def.alternativer !== SVARSETT.ja_ikke_enna
-            : (b === 'ja' && !iOmfang(r, a.id, true)) || (b === 'nei' && !iOmfang(r, a.id, false))
+            : (b === 'ja' && !kanGiPlan(r, a.id, true, utelukket)) || (b === 'nei' && !kanGiPlan(r, a.id, false))
       if (!stopper) continue
       ved.add(alt.verdi)
       const s = a.type === 'sporsmal' ? r.sporsmal?.find((x) => x.id === a.id) : undefined
-      forklaring ??= a.forklaring ?? (s ? `Verktøyet har ingen godkjent plan ved ${b === 'ja' ? s.ja : (s.nei ?? 'dette svaret')}. ${INDIVIDUELT}` : undefined)
+      forklaring ??= a.forklaring ?? (s ? ingenGodkjentPlan(b === 'ja' ? s.ja : (s.nei ?? 'dette svaret')) : undefined)
     }
   }
   return { ved: [...ved], ...(forklaring && { forklaring }) }
@@ -251,7 +275,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
   const oppsett = flytoppsett(r, g)
   const { sporsmal: defs, avbildninger } = oppsett
   const beslutninger = g.beslutninger ?? BESLUTNINGER
-  const stopper = new Map(defs.map((d) => [d.id, stopp(r, d, avbildninger)]))
+  const stopper = new Map(defs.map((d) => [d.id, stopp(r, d, avbildninger, g.utelukket)]))
   const bruker = new Map(defs.map((d) => [d.id, avbildninger.filter((a) => a.fra.some((k) => k.sporsmal === d.id))]))
 
   // Synlighet: en fast punkt-iterasjon fra ingen synlige, så et skjult spørsmål aldri bidrar.

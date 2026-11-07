@@ -97,6 +97,14 @@ export const TEST_TRINNVALG: Regel = (() => {
   return godkjennITest(omkoble(r), 'test-trinnvalg')
 })()
 
+/** Som {@link TEST_TRINNVALG}, uten begrunnelseskrav, så det første trinnet som ikke kan gis nøyaktig, har to doser å velge mellom. */
+export const TEST_TRINNVALG_TO: Regel = (() => {
+  const r = structuredClone(TEST_TRINNVALG)
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell') delete fase.strategi.prosent.begrunnelseskrav
+  return godkjennITest(r, 'test-trinnvalg-to')
+})()
+
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')
 

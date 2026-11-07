@@ -86,19 +86,32 @@ async function beregn(user: Bruker, dose: string, form: string, ja: RegExp[] = [
   return true
 }
 
-/** Velger dosen ved hvert trinn som ikke kan gis nøyaktig, til planen er komplett; siden viser ingen doser før det. */
+/**
+ * Velger dosen ved hvert trinn som ikke kan gis nøyaktig, til planen er komplett; siden viser ingen doser før det.
+ * Har hvert trinn bare én dose, viser siden dem samlet og de godtas med ett trykk (P0 M4); ellers velges de ett og ett.
+ */
 async function velgTilKomplett(user: Bruker, tittel: string) {
   const valgt: string[] = []
+  let trykk = 0
   for (;;) {
-    const neste = await waitFor(() => screen.queryByRole('region', { name: tittel }) ?? screen.getByRole('group', { name: /^Trinn \d+ av Escitalopram$/ }), { timeout: 3000 })
-    if (neste.tagName === 'SECTION') return { valgt, plan: neste }
+    const neste = await waitFor(
+      () => screen.queryByRole('region', { name: tittel }) ?? screen.queryByRole('region', { name: /^Godta dosene for / }) ?? screen.getByRole('group', { name: /^Trinn \d+ av Escitalopram$/ }),
+      { timeout: 3000 },
+    )
+    if (neste.tagName === 'SECTION' && !neste.hasAttribute('data-entydige')) return { valgt, plan: neste, trykk }
     expect(tidslinjen()).toBeNull()
     expect(screen.queryByRole('button', { name: 'Kopier planen' })).toBeNull()
-    // Siden tilbyr nøyaktig én dose ved hvert trinn, som i kontrollgrunnlaget.
-    const [knapp, ...andre] = within(neste).getAllByRole('button')
-    expect(andre).toEqual([])
-    valgt.push(knapp!.textContent!)
-    await user.click(knapp!)
+    if (neste.hasAttribute('data-entydige')) {
+      valgt.push(...within(neste).getAllByRole('listitem').map((x) => x.textContent!.replace(/^fra [\d,]+ mg til /, '')))
+      await user.click(within(neste).getByRole('button', { name: 'Bruk disse dosene' }))
+    } else {
+      // Siden tilbyr nøyaktig én dose ved hvert trinn, som i kontrollgrunnlaget.
+      const [knapp, ...andre] = within(neste).getAllByRole('button')
+      expect(andre).toEqual([])
+      valgt.push(knapp!.textContent!)
+      await user.click(knapp!)
+    }
+    trykk++
     await act(async () => {})
     expect(valgt.length).toBeLessThan(20)
   }
@@ -146,8 +159,10 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
       const user = userEvent.setup()
       vis()
       await beregn(user, dose, form)
-      const { valgt, plan } = await velgTilKomplett(user, V14.tittel)
+      const { valgt, plan, trykk } = await velgTilKomplett(user, V14.tittel)
       expect(valgt).toEqual(valg)
+      // Alle dosevalgene godtas med ett trykk, ikke fem til sju (P0 M4).
+      expect(trykk).toBe(1)
       expect(within(plan).getByText(new RegExp(`^Komplett plan til sluttmålet: Escitalopram seponert fra dag ${seponert}\\.`))).toBeTruthy()
 
       const tekst = await kopier(user, plan)
@@ -189,7 +204,7 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
         '20',
         TABLETT,
         [/mange måneder/],
-        /Ingen plan med disse svareneMed dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet\.[^]*Komplett plan ikke tilgjengelig: escitalopram: /,
+        /Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/,
       ],
       ['20', TABLETT, [/tidligere forsøk/i], /Ingen plan med disse svareneDa gjelder ikke regelen\./],
       ['15', TABLETT, [], /Ingen plan for dette tilfelletDen godkjente planen gjelder bare startdosene 10 og 20 mg\./],
@@ -280,4 +295,60 @@ describe('Versjon 13 gjelder bare til versjon 14 er gyldig godkjent', () => {
       await waitFor(() => expect(document.body.textContent).not.toContain(V14.tittel))
     }, 60_000)
   }
+})
+
+describe('Unødvendige hindringer er fjernet (spor B, P0-rapporten §8)', () => {
+  /** Escitalopram og dosen, og formen når steg 2 spør om den; ingen svar i steg 3. */
+  async function tilSteg3(user: Bruker, dose: string, form: string) {
+    await act(async () => {})
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
+    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av escitalopram/ }), dose)
+    await velgForm(user, 'Legemiddelform av escitalopram', form)
+  }
+
+  it('steg 2 sier hva den godkjente planen ikke gjelder for, før spørsmålene besvares (U1)', async () => {
+    const user = userEvent.setup()
+    vis()
+    await tilSteg3(user, '10', TABLETT)
+    const status = await screen.findByText(/^Den godkjente planen gjelder ikke ved /, {}, { timeout: 5000 })
+    expect(status.textContent).toMatch(/^Den godkjente planen gjelder ikke ved lang behandlingstid, 65 år eller eldre, .*\.$/)
+  })
+
+  it('«Ja» på lang behandlingstid stopper ved spørsmålet med grunnen, og spørsmålene som ikke er besvart, trengs ikke lenger (F4, punkt 4)', async () => {
+    const user = userEvent.setup()
+    vis()
+    await tilSteg3(user, '20', TABLETT)
+    const lang = await screen.findByRole('radiogroup', { name: /mange måneder/ }, { timeout: 5000 })
+    await user.click(within(lang).getByRole('radio', { name: 'Ja' }))
+    await ingenPlan(/Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved lang behandlingstid\./)
+    await waitFor(() => expect(screen.getByText(/spørsmål til trengs ikke, fordi svaret over gjør at verktøyet ikke kan lage en plan/)).toBeTruthy(), { timeout: 3000 })
+    // Bare det besvarte spørsmålet står, så svaret kan endres; ingen stoppmelding ber om «Prøv igjen senere».
+    expect(screen.getAllByRole('radiogroup').filter((g) => g.closest('[data-flytsporsmal-liste]'))).toHaveLength(1)
+    expect(planpanel().textContent).not.toMatch(/Prøv igjen senere/)
+    await user.click(within(screen.getByRole('radiogroup', { name: /mange måneder/ })).getByRole('radio', { name: 'Nei' }))
+    await waitFor(() => expect(screen.getAllByRole('radiogroup').filter((g) => g.closest('[data-flytsporsmal-liste]')).length).toBeGreaterThan(1), { timeout: 3000 })
+  })
+
+  it('en startdose utenfor godkjenningen krever ingen svar i steg 3 (N04)', async () => {
+    const user = userEvent.setup()
+    vis()
+    await beregn(user, '15', TABLETT)
+    await ingenPlan(/Den godkjente planen gjelder bare startdosene 10 og 20 mg\./)
+    expect(screen.getByText(/Spørsmålene om pasienten trengs ikke/)).toBeTruthy()
+    expect(document.querySelector('[data-flytsporsmal-liste]')).toBeNull()
+  })
+
+  it('«Tilpass planen» viser verdiene den godkjente planen bruker, låst, i stedet for felt som alltid gir «ingen plan» (F1)', async () => {
+    const user = userEvent.setup()
+    vis()
+    await beregn(user, '10', TABLETT)
+    const { plan } = await velgTilKomplett(user, V14.tittel)
+    expect(plan).toBeTruthy()
+    Element.prototype.scrollIntoView ??= () => {}
+    await user.click(screen.getByText('Tilpass planen'))
+    const last = [...document.querySelectorAll('[data-last]')].map((x) => x.textContent)
+    expect(last).toEqual([expect.stringMatching(/^Reduksjon per trinn \(% av aktuell dose\) 25 %Den godkjente planen bruker 25 %/), expect.stringMatching(/^Minste antall dager per trinn 28 dager/)])
+    expect(screen.queryByRole('textbox', { name: /Reduksjon per trinn/ })).toBeNull()
+    expect(screen.queryByText(/Regelen tillater 5–50 %/)).toBeNull()
+  }, 30_000)
 })
