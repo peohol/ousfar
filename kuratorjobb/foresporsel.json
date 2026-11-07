@@ -1,0 +1,14 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "morfin",
+    "tramadol",
+    "duloksetin",
+    "amisulprid",
+    "paroksetin"
+  ],
+  "oppgaver": [
+    "funksjonstest",
+    "spc"
+  ]
+}
