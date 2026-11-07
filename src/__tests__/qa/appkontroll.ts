@@ -187,7 +187,7 @@ async function besvar(p: Side, onsket: Readonly<Record<string, string>>) {
       }
       const tekster: string[] = await Promise.all(radioer.map(async (r: Side) => ((await r.evaluate((x: HTMLInputElement) => x.parentElement?.textContent ?? '')) as string).trim()))
       const finn = (m: RegExp) => tekster.findIndex((t) => m.test(t))
-      const i = snudd.has(id) ? finn(/^(Ja|Gjelder)$/) : [finn(/^(Nei|Gjelder ikke)$/), finn(/^Ja$/), finn(/^18–64 år$/)].find((x) => x >= 0)
+      const i = snudd.has(id) ? finn(/^(Ja|Stemmer)$/) : [/^(Nei|Stemmer ikke)$/, /^Ja$/, /^18–64 år$/, /^Poliklinisk$/, /^Bivirkninger$/].map(finn).find((x) => x >= 0)
       if (i === undefined || i < 0) throw new Error(`Vet ikke hva som skal svares på spørsmålet ${id} (${tekster.join(' / ')})`)
       if (await sett(radioer[i]!)) endret = true
     }
@@ -196,7 +196,7 @@ async function besvar(p: Side, onsket: Readonly<Record<string, string>>) {
     for (const id of await ider(p)) {
       const li = p.locator(`[data-flytsporsmal="${id}"]`)
       if (id in onsket || snudd.has(id) || (await li.locator('.sporsmal__merknad:not([data-tone])').count()) === 0) continue
-      const nei = li.getByRole('radio', { name: /^(Nei|Gjelder ikke)$/ })
+      const nei = li.getByRole('radio', { name: /^(Nei|Stemmer ikke)$/ })
       if ((await nei.count()) === 0 || !(await nei.isChecked())) continue
       snudd.add(id)
       endret = true

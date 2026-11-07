@@ -10,12 +10,12 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { beregnPlan, medTrinnvalg, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
-import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
+import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag, type Flytoppsett } from '../verktoy/flyt/flyt'
 import { FEST_IKKE_FERSK, forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
 import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
 import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
-import { KATALOGBETINGELSER, KATALOGSPORSMAL, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
+import { jaVed, KATALOGBETINGELSER, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
 import { FORKLARINGER, klassifiser, stoppforklaringer } from '../verktoy/flyt/stopp'
 import { KOMPLETT_IKKE_TILGJENGELIG, UTENFOR_OMFANG, type Doseplanresultat } from '../verktoy/motor/plan'
 import { VERKTOY } from '../verktoy/register'
@@ -51,8 +51,25 @@ const [NED, BYTTE_AD, BYTTE_AP, TILLEGGSVERKTOY] = VERKTOY as [(typeof VERKTOY)[
 const kontrollertITest = (...regler: Regel[]): Katalogkontroll[] =>
   regler.map((r) => ({ regel: r.id, regelversjon: r.versjon, fingeravtrykk: fingeravtrykk(r), katalogavtrykk: katalogavtrykk(r), dato: '2026-11-04', av: 'Test', merknad: 'Bare i testen.' }))
 const katalog = (r: Regel, b: Partial<Beslutninger> = {}): Flytgrunnlag => ({ kontrollerte: kontrollertITest(r), beslutninger: { ...BESLUTNINGER, ...b } })
+/** Katalogen for hver godkjent regel som har en, ført som kontrollert bare i testen: slik appen blir når ChatGPT har kontrollert katalogen og avtrykkene er ført. */
+const KANDIDATER = kontrollertITest(...GODKJENTE.filter((r) => KATALOGBETINGELSER.some((b) => b.regel === r.id)))
 /** Reservevisningen for hver regel, også de med kontrollert katalog i appen. */
 const RESERVE: Flytgrunnlag = { kontrollerte: [] }
+
+/**
+ * Svaret som tillater en plan: det vanlige forløpet uten særlige forhold. Et
+ * spørsmål en bekreftelse bruker, får svaret som bekrefter (også «Nei» der et
+ * nei bekrefter, og «Poliklinisk» eller «Bivirkninger»), et spørsmål om et
+ * forhold ved pasienten svaret som gjør forholdet usant, og alderen 18–64 år.
+ */
+function tillatende(avbildninger: Flytoppsett['avbildninger'], id: string): string {
+  if (id === 'alder') return '18_64'
+  const kilder = avbildninger.flatMap((a) => a.fra.filter((k) => k.sporsmal === id).map((k) => [a.type, k] as const))
+  const bekreftelse = kilder.find(([type]) => type === 'bekreftelse')?.[1]
+  if (bekreftelse) return jaVed(bekreftelse)[0] ?? 'ja'
+  const forhold = kilder[0]?.[1]
+  return (forhold && neiVed(forhold)[0]) ?? 'nei'
+}
 
 /** Svarene som tillater en plan for hvert synlig spørsmål, til flyten er ferdig. */
 function besvarTillatende(r: Regel, g: Flytgrunnlag, start: Record<string, string> = {}): Record<string, string> {
@@ -61,9 +78,7 @@ function besvarTillatende(r: Regel, g: Flytgrunnlag, start: Record<string, strin
     const f = vurderFlyt(r, svar, g)
     const neste = f.sporsmal.find((s) => s.valgt === undefined)
     if (!neste) return svar
-    // Et bekreftende spørsmål besvares ja, et om et forhold ved pasienten nei: det vanlige forløpet uten særlige forhold.
-    const bekrefter = f.oppsett.avbildninger.some((a) => a.type === 'bekreftelse' && a.fra.some((k) => k.sporsmal === neste.id))
-    svar = { ...svar, [neste.id]: neste.id === 'alder' ? '18_64' : bekrefter ? 'ja' : 'nei' }
+    svar = { ...svar, [neste.id]: tillatende(f.oppsett.avbildninger, neste.id) }
   }
   throw new Error('flyten ble ikke ferdig')
 }
@@ -129,16 +144,9 @@ describe('katalogen dekker hver betingelse i hver godkjent regel (S5)', () => {
 })
 
 describe('katalogavtrykket (S5b)', () => {
-  it('er kontrollert for nøyaktig de sju regelversjonene ChatGPT godkjente 04.11, og ikke for escitalopram v13, vortioksetin eller sertralin → mirtazapin', () => {
-    const godkjent = {
-      'depot-aripiprazol-maintena': 3,
-      'depot-paliperidon-xeplion': 3,
-      'depot-risperidon-xeplion': 8,
-      'antipsykotikabytte-olanzapin-aripiprazol': 8,
-      'antipsykotikabytte-risperidon-aripiprazol': 8,
-      'tillegg-valproat-lamotrigin': 2,
-      'tillegg-litium-lamotrigin': 2,
-    }
+  it('er kontrollert for nøyaktig regelversjonene ChatGPT har godkjent den nåværende katalogen for, og ingen andre', () => {
+    // Tomt til ChatGPT har kontrollert katalogen fra P2a (07.11.2026); avtrykkene fra 04.11 gjaldt katalogen før den.
+    const godkjent: Record<string, number> = {}
     expect(Object.fromEntries(KONTROLLERTE_KATALOGER.map((k) => [k.regel, k.regelversjon]))).toEqual(godkjent)
     expect(KONTROLLERTE_KATALOGER.map((k) => k.regel)).not.toContain(ESC.id)
     for (const k of KONTROLLERTE_KATALOGER) expect(k.merknad).toMatch(/ikke en ny godkjenning av doseringsregelen/)
@@ -320,10 +328,10 @@ describe('felles spørsmål og grenseverdier (S6)', () => {
     expect('eldre' in vurderFlyt(ESC13, { alder: '65_eller_eldre' }, katalog(ESC13)).felt.svar).toBe(false)
     // Et svar for et skjult oppfølgingsspørsmål teller ikke.
     expect(vurderFlyt(ESC13, { alder: '18_64', eldre_enn_65: 'ja' }, katalog(ESC13)).felt.svar.eldre).toBe(false)
-    // «65 år eller eldre» avleder ikke «over 65 år»: regelens eget spørsmål stilles uendret, uten tilleggstekst (kjent avvik for v13, rettet i v14, som har erstattet v13 i appen).
+    // «65 år eller eldre» avleder ikke «over 65 år»: regelens eget spørsmål stilles uendret, med grensen forklart (P2a; v14 har erstattet v13 i appen).
     const oppfolging = vurderFlyt(ESC13, { alder: '65_eller_eldre' }, katalog(ESC13)).sporsmal.find((s) => s.id === 'eldre_enn_65')!
     expect(oppfolging.tekst).toBe(ESC13.sporsmal!.find((s) => s.id === 'eldre')!.tekst)
-    expect(oppfolging.hjelp).toBeUndefined()
+    expect(oppfolging.hjelp).toBe('En pasient som er 65 år, svarer «Nei».')
   })
 
   it('følger aldersgrensen i hvert antipsykotikabytte ved 64/65/66: «over 65 år» til Xeplion, «65 år eller eldre» til aripiprazol', () => {
@@ -397,12 +405,12 @@ describe('progressiv visning og rekkefølge', () => {
     const g = katalog(VALPROAT)
     const ider = (svar: Record<string, string>) => vurderFlyt(VALPROAT, svar, g).sporsmal.map((s) => s.id)
     expect(ider({})).not.toContain('ppp_prevensjon')
-    expect(ider({ kan_bli_gravid: 'ja' })).toEqual(expect.arrayContaining(['ppp_indikasjon', 'ppp_informasjon', 'ppp_prevensjon', 'ppp_graviditet']))
+    expect(ider({ kan_bli_gravid: 'ja' })).toEqual(expect.arrayContaining(['ppp_annen_behandling', 'ppp_spesialist', 'ppp_informasjon', 'ppp_prevensjon', 'ppp_graviditet']))
     expect(ider({ kan_bli_gravid: 'nei' })).not.toContain('ppp_prevensjon')
     expect(ider({ kan_bli_far: 'ja' })).toEqual(expect.arrayContaining(['far_informasjon', 'far_vurdering']))
     expect(ider({ ostrogen: 'ja' })).toContain('ostrogen_maldose')
     expect(ider({ ostrogen: 'nei' })).not.toContain('ostrogen_maldose')
-    const skjult = vurderFlyt(VALPROAT, { kan_bli_gravid: 'nei', ppp_prevensjon: 'ja', ppp_indikasjon: 'ja' }, g)
+    const skjult = vurderFlyt(VALPROAT, { kan_bli_gravid: 'nei', ppp_prevensjon: 'ja', ppp_annen_behandling: 'ja', ppp_spesialist: 'ja' }, g)
     expect(skjult.felt.bekreftet).not.toContain('ppp_prevensjon')
     expect(skjult.felt.bekreftet).not.toContain('ppp_indikasjon')
   })
@@ -413,7 +421,7 @@ describe('progressiv visning og rekkefølge', () => {
     expect(f.sporsmal.every((s) => s.gruppe === 'stopp')).toBe(true)
     const qt = f.sporsmal.find((s) => s.id === 'qt_forlengelse')!
     expect(qt.stopperVed).toEqual(['ja'])
-    expect(qt.forklaring).toMatch(/kontraindikasjon i preparatomtalen/)
+    expect(qt.forklaring).toMatch(/kontraindikasjon for escitalopram i preparatomtalen/)
     expect(f.felt.pasientforhold.qt_forlengelse).toBe(true)
     // Et svar utenfor regelens kliniske omfang stopper også (nedsatt leverfunksjon har ingen godkjent plan).
     const lever = vurderFlyt(ESC, { nedsatt_leverfunksjon: 'ja' }, g).sporsmal.find((s) => s.id === 'nedsatt_leverfunksjon')!
@@ -426,10 +434,11 @@ describe('progressiv visning og rekkefølge', () => {
     const u = (svar: Record<string, string>) => vurderFlyt(ESC, svar, g).felt.pasientforhold.ustabil_dose_eller_bytte
     expect(u({ del_av_bytte: 'ja', ustabil_dose: 'nei' })).toBe(true)
     expect(u({ del_av_bytte: 'nei', ustabil_dose: 'ja' })).toBe(true)
+    expect(u({ del_av_bytte: 'nei', ustabil_dose: 'nei', uregelmessig_bruk: 'ja' })).toBe(true)
     expect(u({ del_av_bytte: 'ukjent', ustabil_dose: 'ja' })).toBe(true)
-    expect(u({ del_av_bytte: 'ukjent', ustabil_dose: 'nei' })).toBeUndefined()
-    expect(u({ del_av_bytte: 'nei' })).toBeUndefined()
-    expect(u({ del_av_bytte: 'nei', ustabil_dose: 'nei' })).toBe(false)
+    expect(u({ del_av_bytte: 'ukjent', ustabil_dose: 'nei', uregelmessig_bruk: 'nei' })).toBeUndefined()
+    expect(u({ del_av_bytte: 'nei', ustabil_dose: 'nei' })).toBeUndefined()
+    expect(u({ del_av_bytte: 'nei', ustabil_dose: 'nei', uregelmessig_bruk: 'nei' })).toBe(false)
   })
 })
 
@@ -465,12 +474,22 @@ describe('forbehold, avledede forutsetninger og «Ingen av disse» (B1, B2, B5)'
     // Ikke forhåndsutfylt: uten det aktive valget er stoppforholdene ubesvart.
     expect(vurderFlyt(ESC, { alder: '18_64' }, katalog(ESC)).felt.pasientforhold).not.toHaveProperty('akutt_situasjon')
     const f = vurderFlyt(ESC, { alder: '18_64', qt_forlengelse: 'ukjent' }, katalog(ESC, { B5: true }))
-    expect(f.ingenAvDisse).toEqual(['akutt_situasjon', 'del_av_bytte', 'ustabil_dose', 'tidligere_seponeringsplager'])
+    expect(f.ingenAvDisse).toEqual(['akutt_situasjon', 'del_av_bytte', 'ustabil_dose', 'uregelmessig_bruk', 'tidligere_seponeringsplager', 'qt_legemiddel'])
     const svar = medIngenAvDisse({ alder: '18_64', qt_forlengelse: 'ukjent' }, f.ingenAvDisse)
-    expect(svar).toEqual({ alder: '18_64', qt_forlengelse: 'ukjent', akutt_situasjon: 'nei', del_av_bytte: 'nei', ustabil_dose: 'nei', tidligere_seponeringsplager: 'nei' })
+    expect(svar).toEqual({
+      alder: '18_64',
+      qt_forlengelse: 'ukjent',
+      akutt_situasjon: 'nei',
+      del_av_bytte: 'nei',
+      ustabil_dose: 'nei',
+      uregelmessig_bruk: 'nei',
+      tidligere_seponeringsplager: 'nei',
+      qt_legemiddel: 'nei',
+    })
     // Bekreftelser om pasienten (indikasjon) er ikke med: der er «nei» ikke det tillatende svaret.
     const maintena = regel('depot-aripiprazol-maintena')
-    expect(vurderFlyt(maintena, {}, katalog(maintena, { B5: true })).ingenAvDisse).not.toContain('indikasjon_aripiprazol')
+    expect(vurderFlyt(maintena, {}, katalog(maintena, { B5: true })).ingenAvDisse).not.toEqual(expect.arrayContaining(['schizofreni']))
+    expect(vurderFlyt(maintena, {}, katalog(maintena, { B5: true })).ingenAvDisse).not.toContain('stabilisert_aripiprazol')
   })
 
   it('krever begrunnelse når et ja trenger det', () => {
@@ -721,7 +740,7 @@ describe('hele flyten til planen (S1, S9)', () => {
   })
 })
 
-describe('ekte brukerforløp med de godkjente katalogene i appen (ChatGPT 04.11)', () => {
+describe('ekte brukerforløp med katalogen ført som kontrollert, slik den føres etter ChatGPTs kontroll', () => {
   type Forlop = { verktoy: (typeof VERKTOY)[number]; valg: Verktoyvalg; fest: Festuttrekk; regel: string; skjema: Partial<Planskjema> }
   const AP = uttrekk(FEST_ANTIPSYKOTIKA)
   const FORLOP: Forlop[] = [
@@ -749,24 +768,23 @@ describe('ekte brukerforløp med de godkjente katalogene i appen (ChatGPT 04.11)
   ]
 
   /**
-   * Klinikerens forløp i appen, uten testkontroller: svarene i `svar` først,
-   * så det vanlige svaret på hvert spørsmål som vises (18–64 år, «Ja» der svaret
-   * bekrefter, ellers «Nei»), formen fra forhåndskontrollen når den må velges,
-   * og planen fra motoren med dosevalgene for trinnene.
+   * Klinikerens forløp i appen, med katalogen ført som kontrollert: svarene i
+   * `svar` først, så det vanlige svaret på hvert spørsmål som vises
+   * ({@link tillatende}), formen fra forhåndskontrollen når den må velges, og
+   * planen fra motoren med dosevalgene for trinnene.
    */
   function forlop(f: Forlop, svar: Record<string, string> = {}) {
     const naa = klokke(f.fest)
     let s: Planskjema = { ...TOMT_SKJEMA, ...f.skjema }
     for (const [id, v] of Object.entries(svar)) s = medFlytsvar(s, id, v)
-    const tilstand = () => flyttilstand({ verktoy: f.verktoy, valg: f.valg, sperrer: [], skjema: s, utvalg: f.fest.utvalg, naa })
+    const tilstand = () => flyttilstand({ verktoy: f.verktoy, valg: f.valg, sperrer: [], skjema: s, utvalg: f.fest.utvalg, naa, flytgrunnlag: { kontrollerte: KANDIDATER } })
     let ut = tilstand()
     for (let i = 0; i < 60; i++) {
       const neste = ut.tilstand.sporsmal.find((q) => q.valgt === undefined)
       const former = Object.entries(ut.kontroll.former ?? {}).filter(([forlop, k]) => k.length > 0 && !s.formvalg[forlop]?.legemiddelform && !ut.kontroll.formvalg?.[forlop])
       if (!neste && former.length === 0) break
       if (neste) {
-        const bekrefter = ut.flyt!.oppsett.avbildninger.some((a) => a.type === 'bekreftelse' && a.fra.some((k) => k.sporsmal === neste.id))
-        s = medFlytsvar(s, neste.id, neste.id === 'alder' ? '18_64' : neste.art === 'avkrysning' || bekrefter ? 'ja' : 'nei')
+        s = medFlytsvar(s, neste.id, neste.art === 'avkrysning' ? 'ja' : tillatende(ut.flyt!.oppsett.avbildninger, neste.id))
       } else s = { ...s, formvalg: { ...s.formvalg, ...Object.fromEntries(former.map(([forlop, k]) => [forlop, { ...s.formvalg[forlop], legemiddelform: k[0]! }])) } }
       ut = tilstand()
     }
@@ -844,7 +862,11 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     fest: TILLEGG,
     skjema: { startdose },
   })
-  /** Hver regel med kontrollert katalog i appen, og escitalopram og byttene til sertralin med katalogen kontrollert i testen. */
+  /**
+   * Hver regel i bruk med en katalog, med katalogen kontrollert i testen.
+   * Vortioksetin og sertralin → mirtazapin er ikke med: de gir bare en
+   * delplan, så forhåndskontrollen stopper med «ikke komplett» før svarene.
+   */
   const TILFELLER: Record<string, Tilfelle> = {
     'depot-aripiprazol-maintena': ap('aripiprazol', 'aripiprazol', 'LA', '15'),
     'depot-paliperidon-xeplion': ap('paliperidon', 'paliperidon', 'ER', '6'),
@@ -862,7 +884,8 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     ),
   }
 
-  it('dekker hver regel med kontrollert katalog', () => {
+  it('dekker hver regel i bruk med en katalog, og hver regel med kontrollert katalog i appen', () => {
+    expect(KANDIDATER.map((k) => k.regel).filter((id) => !(id in TILFELLER)).sort()).toEqual([ESC13.id, 'kryssnedtrapping-sertralin-mirtazapin', VORT.id].sort())
     expect(KONTROLLERTE_KATALOGER.map((k) => k.regel).filter((id) => !(id in TILFELLER))).toEqual([])
   })
 
@@ -924,7 +947,12 @@ describe('stoppforklaringene', () => {
     const f = vurderFlyt(ESC, { ...besvarTillatende(ESC, g), tidligere_seponeringsplager: 'ja' }, g)
     const plan = beregnPlan(ESC, valg, medFlytfelt({ ...TOMT_SKJEMA, startdose: '20', formvalg: { fra: { legemiddelform: '748' } } }, f.felt), AKSEPT.utvalg, klokke(AKSEPT))
     const ut = stoppforklaringer(plan, ESC, f.oppsett)
-    expect(ut[0]).toMatchObject({ kode: 'unntak_gjelder', sporsmal: 'tidligere_seponeringsplager', losning: 'individuelt', tekst: expect.stringMatching(/langsomme varianten/) })
+    expect(ut[0]).toMatchObject({
+      kode: 'unntak_gjelder',
+      sporsmal: 'tidligere_seponeringsplager',
+      losning: 'individuelt',
+      tekst: 'Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker. Nedtrappingen må tilpasses individuelt.',
+    })
     expect(ut[0]!.detalj).toMatch(/^Regelen gjelder ikke: /)
     for (const x of Object.values(FORKLARINGER)) expect(x.tekst).not.toMatch(/omfang|strategi|fingeravtrykk/i)
   })

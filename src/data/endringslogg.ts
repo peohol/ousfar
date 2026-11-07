@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.4',
+    dato: '2026-11-07',
+    sammendrag: 'Spørsmålene i verktøyene er enklere å svare på, og et stopp sier hvorfor',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller nødstopp er endret, og ingen sikkerhetsspørsmål er tatt bort.',
+      'Spørsmålene før planen er skrevet på vanlig norsk og besvares med Ja, Nei eller Vet ikke, i alle fire verktøy, også ved escitalopram og byttene mellom antidepressiver. Sammensatte spørsmål er delt opp, og spørsmål som et tidligere svar allerede avgjør, er tatt bort.',
+      'Et svar som gjør at verktøyet ikke kan lage en plan, sier hva som stopper og hvorfor, for eksempel «Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker. Nedtrappingen må tilpasses individuelt.» «Da gjelder ikke regelen» står ikke lenger noe sted.',
+      'Må et forhold likevel vises med regelens egen tekst, svares det «Stemmer» eller «Stemmer ikke» i stedet for «Gjelder» eller «Gjelder ikke».',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.2',
     dato: '2026-11-07',
     sammendrag: 'Verktøyene ber ikke lenger om valg og svar som likevel ikke kan gi en plan',

@@ -47,7 +47,7 @@ const harStoppet = async (p) => /^Ingen plan/m.test(await p.locator('.planpanel'
 const sidetekst = async (p) => p.locator('main').first().innerText().catch(() => p.locator('body').innerText())
 
 /**
- * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Gjelder ikke», «Nei», «Ja» på bekreftelser).
+ * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Stemmer ikke», «Nei», «Ja» på vurderinger og bekreftelser, en voksen under 65 år som følges poliklinisk, bytte for bivirkninger).
  * Stopper så snart planpanelet viser et endelig stopp, så handlingene telles til
  * utfallet og ikke til et ferdig utfylt skjema.
  */
@@ -75,7 +75,7 @@ async function svarAlle(p, svar, logg) {
         logg.push(`☑ ${s.tekst}`)
       } else {
         const lab = s.alt.map((a) => a.lab)
-        const valg = regel?.[1] ?? (lab.includes('Ikke ennå') ? 'Ja' : lab.includes('Gjelder ikke') ? 'Gjelder ikke' : 'Nei')
+        const valg = regel?.[1] ?? (lab.includes('Ikke ennå') ? 'Ja' : ['Stemmer ikke', 'Nei', '18–64 år', 'Poliklinisk', 'Bivirkninger'].find((t) => lab.includes(t)) ?? 'Nei')
         const i = lab.indexOf(valg)
         if (i < 0) throw new Error(`Fant ikke «${valg}» blant ${lab.join('/')} for «${s.tekst}».`)
         await p.locator(`li[data-flytsporsmal="${s.id}"] input[type=radio]`).nth(i).click()
