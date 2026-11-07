@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.3',
+    dato: '2026-11-07',
+    sammendrag: 'Kurateringen stopper ikke lenger opp en hel fagside når ett kort ikke kan skrives',
+    typer: ['Fag'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fagsidene skrives nå i flere korte deler, og kortene om forgiftning skrives for seg, så kurateringen sjeldnere blir stoppet av et automatisk sikkerhetsfilter.',
+      'Kan et kort likevel ikke skrives, står det som før (eller tomt) med en merknad, mens resten av siden kontrolleres og publiseres. Kortet tas i en senere kuratering.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.2',
     dato: '2026-11-07',
     sammendrag: 'Verktøyene ber ikke lenger om valg og svar som likevel ikke kan gi en plan',

@@ -433,6 +433,32 @@ kontrolløren kommer dit. Reglene presiserer kravene over; de erstatter dem ikke
   at saken venter, fjernes. Selvtesten kvitterer aldri ut det evidensjournalen
   sier er ukontrollert (krav 8).
 
+## Når sikkerhetsfilteret stopper arbeidet
+
+Claude har et automatisk sikkerhetsfilter som kan stoppe en økt midt i
+arbeidet, oftest når mye tekst om forgiftning, misbruk og dødelige
+konsentrasjoner samler seg i den samme økten. Fagansvarlig avgjorde
+2026-11-07 hvordan det håndteres:
+
+- **Korte økter.** En side skrives i flere korte økter (eller hjelpeagenter),
+  hver med bare kildene den delen trenger. Kortene om toksisitet og
+  forgiftning får sin egen korte økt, og den tar ikke med seg kilder eller
+  tekst fra de andre delene.
+- **Bare stoffets rad.** Fra tabeller over terapeutiske, toksiske og dødelige
+  konsentrasjoner hentes bare raden for stoffet, ikke hele tabellen.
+- **Et kort som fortsatt stoppes,** skrives ikke. Står det i grunnversjonen,
+  står det urørt som der; ellers legges det ikke til. Kuratoren fester en
+  `merknad` til kortet (`anker: {"objekt": …}`) som begynner «Stoppet av
+  sikkerhetsfilteret:» og sier hva som mangler. Evidensjournalen sier det
+  samme, og dekningsmatrisen fører området som `tomt_begrunnet` med kildene
+  som ble søkt og en begrunnelse som begynner «Stoppet av
+  sikkerhetsfilteret:» (det betyr da ikke at dokumentasjon mangler). Resten av
+  siden skrives ferdig, og grenen sendes til kontroll som vanlig. Kortet tas i
+  en senere gren.
+- **Ingen omvei.** Det som ble stoppet, skrives aldri på nytt i en annen form,
+  med andre ord eller av en annen økt eller agent for å komme forbi filteret.
+  Fagansvarlig kan selv føre inn tekst fra en annen kilde.
+
 ## Kontrollen
 
 Kontrolløren følger `docs/kontrollorinstruks.md`: uavhengig av kuratoren slår
