@@ -32,9 +32,13 @@ export interface Fasit {
   utfall: 'komplett' | 'stopp' | ('komplett' | 'stopp')[]
   /** Hvor fasiten kommer fra. */
   kilde: string
-  /** Strategitypen planen skal ha (komplett), med eventuelt åpent faglig avvik. */
+  /**
+   * Strategien i ord, til rapporten. Den kontrolleres gjennom `doser`: kopien
+   * skal ha nøyaktig disse dosene og ingen andre, så overlapp, et bytte på
+   * feil dag eller et ekstra trinn gir avvik ({@link ekstraDoser}).
+   */
   strategi?: string
-  /** Dosepunktene en komplett plan skal ha, på skjermen og i kopien. */
+  /** Hele doseforløpet en komplett plan skal ha: hvert punkt skal stå på skjermen, i kopien og i utskriften, og kopien skal ikke ha andre doser. */
   doser?: Dosepunkt[]
   /** Sluttmålet, som tekst i planen. */
   slutt?: RegExp
@@ -75,6 +79,14 @@ const escitalopram = (doser: Dosepunkt[], dag: number): Fasit => ({
 })
 /** Et stopp fordi den godkjente planen ikke dekker tilfellet. */
 const utenfor = (kilde: string, ...grunn: RegExp[]): Fasit => ({ utfall: 'stopp', kilde, grunn, stoppkategori: 'ikke_godkjent' })
+/** En tilpasning bare standardverdien er godkjent for: standardplanen (feltet er låst) eller et stopp som nevner den godkjente verdien. */
+const laast = (standard: Fasit, ...grunn: RegExp[]): Fasit => ({
+  ...standard,
+  utfall: ['komplett', 'stopp'],
+  kilde: `${standard.kilde}: bare standardverdiene er godkjent`,
+  grunn,
+  stoppkategori: 'ikke_godkjent',
+})
 
 /**
  * Fasiten per P0-forløp. Mangler et forløp her, kontrolleres bare de generelle
@@ -91,9 +103,9 @@ export const FASIT: Record<string, Fasit> = {
   'P0-N03': utenfor(`${ESCITALOPRAM_KILDE}: godkjent for voksne under 65 år`, /65 år/),
   'P0-N04': { ...utenfor(`${ESCITALOPRAM_KILDE}: startdosene 10 og 20 mg`, /10 og 20 mg/), stoppAvDose: true },
   'P0-N05': utenfor(`${ESCITALOPRAM_KILDE}: unntaket for nedsatt leverfunksjon`, /leverfunksjon/i),
-  // «Tilpass planen»: enten er feltet låst og standardplanen gis, eller stoppet sier hvilke verdier som er godkjent.
-  'P0-N06': { utfall: ['komplett', 'stopp'], kilde: `${ESCITALOPRAM_KILDE}: bare standardverdiene er godkjent`, grunn: [/25 %/], stoppkategori: 'ikke_godkjent' },
-  'P0-N07': { utfall: ['komplett', 'stopp'], kilde: `${ESCITALOPRAM_KILDE}: bare standardverdiene er godkjent`, grunn: [/28 dager/], stoppkategori: 'ikke_godkjent' },
+  // «Tilpass planen» med 10 mg: enten er feltet låst og standardplanen for 10 mg gis (som A01), eller stoppet sier hvilke verdier som er godkjent.
+  'P0-N06': laast(escitalopram(ESC10, 197), /25 %/),
+  'P0-N07': laast(escitalopram(ESC10, 197), /28 dager/),
   'P0-B01': {
     utfall: 'komplett',
     kilde: K2_KILDE,
@@ -183,6 +195,8 @@ export const FASIT: Record<string, Fasit> = {
     kilde: K4_KILDE,
     strategi: 'langsom opptrapping av lamotrigin ved samtidig valproat',
     doser: [
+      // Valproat fortsetter på dosen fra inndataene, gjennom hele planen.
+      { fra: 1, legemiddel: 'Valproat', dose: '1000 mg natriumvalproat' },
       { fra: 1, til: 14, legemiddel: 'Lamotrigin', dose: '25 mg annenhver dag' },
       { fra: 15, til: 28, legemiddel: 'Lamotrigin', dose: '25 mg' },
       { fra: 29, til: 35, legemiddel: 'Lamotrigin', dose: '50 mg' },
@@ -194,6 +208,8 @@ export const FASIT: Record<string, Fasit> = {
     kilde: K4_KILDE,
     strategi: 'opptrapping av lamotrigin uten interagerende legemidler',
     doser: [
+      // Litium fortsetter på dosen fra inndataene, gjennom hele planen.
+      { fra: 1, legemiddel: 'Litium', dose: '168 mg Li⁺' },
       { fra: 1, til: 14, legemiddel: 'Lamotrigin', dose: '25 mg' },
       { fra: 15, til: 28, legemiddel: 'Lamotrigin', dose: '50 mg' },
       { fra: 29, til: 35, legemiddel: 'Lamotrigin', dose: '100 mg' },
@@ -272,6 +288,44 @@ export function harDosepunkt(tekst: string, p: Dosepunkt): boolean {
   return gir(p.fra) && (p.til === undefined || gir(p.til))
 }
 
+/** Ett legemiddel i en rad i kopien: «Navn form: dose = …» eller, for en injeksjon, «Navn depotinjeksjon dose = …». */
+const LEDD = /^\s*(\p{Lu}\p{Ll}+ (?:peroralt|depotinjeksjon))(?::\s*|\s+)(.*?)(?:\s=\s.*)?$/u
+const SEPONERT = /^seponert$/i
+const likDose = (a: string, b: string) => a.replace(/\s+/g, ' ').trim().toLowerCase() === b.replace(/\s+/g, ' ').trim().toLowerCase()
+
+/**
+ * Dosene i en tekst med én rad per linje (kopien, motorens tekst) som fasiten
+ * ikke har: en dose på en dag der fasiten har en annen eller ingen dose for
+ * legemidlet, et legemiddel fasiten ikke kjenner, eller «Seponert» mens
+ * fasiten fortsatt gir legemidlet. Sammen med kravet om at hvert dosepunkt
+ * finnes, betyr en tom liste at doseforløpet er nøyaktig fasitens. Vurderinger
+ * og de gjentatte vedlikeholdsinjeksjonene («Hver måned …», kontrollert av
+ * `slutt`) er ikke doserader og telles ikke.
+ */
+export function ekstraDoser(tekst: string, f: Pick<Fasit, 'doser'>): string[] {
+  const ut: string[] = []
+  for (const l of tekst.split('\n')) {
+    const m = RAD.exec(l)
+    if (!m) continue
+    const fra = Number(m[2])
+    const til = m[3] ? Number(m[3]) : /^fra/i.test(m[1]!) ? Infinity : fra
+    const dager = til === Infinity ? `fra dag ${fra}` : til === fra ? `dag ${fra}` : `dag ${fra}–${til}`
+    const innhold = m[4]!.replace(/^[^:]*:/, '')
+    if (/^\s*Vurdering\b/.test(innhold)) continue
+    for (const ledd of innhold.split(';')) {
+      const d = LEDD.exec(ledd)
+      if (!d) continue
+      const [, navn, raa] = d
+      const dose = raa!.replace(/\s*\(.*\)$/, '')
+      const punkter = (f.doser ?? []).filter((p) => navn!.toLowerCase().startsWith(p.legemiddel.toLowerCase()))
+      const overlapper = punkter.filter((p) => p.fra <= til && fra <= (p.til ?? Infinity))
+      const riktig = SEPONERT.test(dose) ? overlapper.length === 0 : overlapper.some((p) => p.fra <= fra && til <= (p.til ?? Infinity) && likDose(dose, p.dose))
+      if (!riktig) ut.push(`${navn} ${dose} ${dager}`)
+    }
+  }
+  return ut
+}
+
 /** Avvikene mellom det som ble observert og fasiten for forløpet (tom liste: i samsvar). */
 export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
   const f = FASIT[id]
@@ -296,6 +350,8 @@ export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
       for (const p of mangler) avvik.push({ type: 'klinisk', hva: `${navn} mangler ${p.legemiddel} ${p.dose} ${p.til === undefined ? `fra dag ${p.fra}` : `dag ${p.fra}–${p.til}`}.` })
       if (f.slutt && !f.slutt.test(tekst)) avvik.push({ type: 'klinisk', hva: `${navn} mangler sluttmålet (${f.slutt.source}).` })
     }
+    // Kopien har én rad per linje og de samme radene som skjermen (`planTekst`), så den kan sammenlignes rad for rad.
+    if (f.doser && o.kopi) for (const x of ekstraDoser(o.kopi, f)) avvik.push({ type: 'klinisk', hva: `Kopien har ${x}, som fasiten ikke har.` })
   }
   if (stopp) {
     for (const g of f.grunn ?? []) if (!g.test(o.skjerm)) avvik.push({ type: 'bruk', hva: `Stoppet sier ikke hvilket forhold som stopper (venter ${g.source}).` })
