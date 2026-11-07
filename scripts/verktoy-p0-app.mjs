@@ -26,12 +26,13 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { kontrollerMotFasit } from '../src/__tests__/qa/fasit'
 import { apneTestmiljo, Teststopp } from '../src/__tests__/qa/testmiljo'
 
 const miljo = await apneTestmiljo()
 const URL_ = miljo.url
 const UT = process.env.P0_UT ?? 'p0-utdata'
-const FORLOP = JSON.parse(readFileSync(new URL('./verktoy-p0-forlop.json', import.meta.url), 'utf8')).forlop
+const { forlop: FORLOP, felles: FELLES = [] } = JSON.parse(readFileSync(new URL('./verktoy-p0-forlop.json', import.meta.url), 'utf8'))
 
 /** Venter til siden er ferdig med å hente preparatene og beregne. */
 async function vent(p) {
@@ -68,14 +69,17 @@ async function svarAlle(p, svar, logg) {
     )
     for (const s of sporsmal) {
       if (s.alt.some((a) => a.valgt)) continue
-      const regel = (svar ?? []).find(([re]) => new RegExp(re, 'i').test(s.tekst))
+      // Forløpets egne svar først, så det som gjelder alle de syntetiske pasientene (FELLES), ellers standardsvaret.
+      const regel = [...(svar ?? []), ...FELLES].find(([re]) => new RegExp(re, 'i').test(s.tekst))
       if (s.alt[0]?.type === 'checkbox') {
-        if (regel?.[1] === 'nei') continue
+        if (/^nei/i.test(regel?.[1] ?? '')) continue
         await p.locator(`li[data-flytsporsmal="${s.id}"] input[type=checkbox]`).first().check()
         logg.push(`☑ ${s.tekst}`)
       } else {
         const lab = s.alt.map((a) => a.lab)
-        const valg = regel?.[1] ?? (lab.includes('Ikke ennå') ? 'Ja' : lab.includes('Gjelder ikke') ? 'Gjelder ikke' : 'Nei')
+        // Et svar kan ha flere navn («Gjelder|Stemmer|Ja»), så forløpet virker både i reservevisningen og med katalogen.
+        const standard = lab.includes('Ikke ennå') ? 'Ja' : ['Gjelder ikke', 'Stemmer ikke', 'Nei', '18–64 år', 'Poliklinisk', 'Bivirkninger'].find((t) => lab.includes(t)) ?? 'Nei'
+        const valg = (regel?.[1] ?? standard).split('|').find((t) => lab.includes(t)) ?? regel?.[1] ?? standard
         const i = lab.indexOf(valg)
         if (i < 0) throw new Error(`Fant ikke «${valg}» blant ${lab.join('/')} for «${s.tekst}».`)
         await p.locator(`li[data-flytsporsmal="${s.id}"] input[type=radio]`).nth(i).click()
@@ -134,20 +138,36 @@ async function kjor(f) {
   // Steg 3: spørsmålene om pasienten.
   handlinger += await svarAlle(p, f.svar, logg)
   for (const [felt, verdi] of f.tilpass ?? []) {
-    await p.locator('summary', { hasText: 'Tilpass planen' }).click()
-    await p.getByRole('textbox', { name: new RegExp(felt, 'i') }).first().fill(verdi)
-    await gjort(`Tilpass planen, ${felt}: ${verdi}`)
+    const tilpass = p.locator('details', { has: p.locator('summary', { hasText: 'Tilpass planen' }) })
+    if (!(await tilpass.getAttribute('open').catch(() => null)) && (await tilpass.count()) > 0) await tilpass.locator('summary').click()
+    // Feltet kan være et tekstfelt, et valg mellom de godkjente verdiene eller låst til den ene godkjente verdien.
+    const tekstfelt = tilpass.getByRole('textbox', { name: new RegExp(felt, 'i') })
+    const valg = tilpass.getByRole('radio', { name: new RegExp(`^${verdi}\\b`) })
+    if ((await tekstfelt.count()) > 0) {
+      await tekstfelt.first().fill(verdi)
+      await gjort(`Tilpass planen, ${felt}: ${verdi}`)
+    } else if ((await valg.count()) > 0) {
+      await valg.first().click()
+      await gjort(`Tilpass planen, ${felt}: ${verdi} (valgt blant de godkjente verdiene)`)
+    } else logg.push(`(Tilpass planen: «${felt}» kan ikke settes til ${verdi}; ${(await tilpass.innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 300)})`)
   }
   await vent(p)
   const forPlan = await p.locator('.planpanel').innerText()
   const forSide = await sidetekst(p)
   await p.locator('.planpanel').screenshot({ path: `${navn}-panel.png` })
-  for (const [tekst, fil] of f.bilder ?? []) await p.locator('li[data-flytsporsmal]', { hasText: new RegExp(tekst) }).first().screenshot({ path: `${navn}-${fil}.png` })
+  // Et bilde av et spørsmål som ikke finnes (lenger), er ingen feil i forløpet.
+  for (const [tekst, fil] of f.bilder ?? [])
+    await p
+      .locator('li[data-flytsporsmal]', { hasText: new RegExp(tekst) })
+      .first()
+      .screenshot({ path: `${navn}-${fil}.png`, timeout: 5_000 })
+      .catch(() => logg.push(`(fant ikke spørsmålet «${tekst}» til bildet)`))
   await p.screenshot({ path: `${navn}-steg3.png`, fullPage: true })
 
   // Steg 4: dosevalgene planen ber om. Har hvert trinn bare én dose, godtas de samlet med ett trykk (spor B);
   // ellers ett om gangen (den første dosen som tilbys).
   const dosevalg = []
+  let enkeltvalg = 0
   const samlet = p.locator('[data-entydige]')
   if ((await samlet.count()) > 0) {
     const doser = await samlet.locator('li').allInnerTexts()
@@ -161,6 +181,7 @@ async function kjor(f) {
     const knapper = region.getByRole('group').first().getByRole('button')
     const tilbudt = await knapper.allInnerTexts()
     await knapper.first().click()
+    if (tilbudt.length === 1) enkeltvalg++
     dosevalg.push(`${tilbudt[0]} (tilbudt: ${tilbudt.join(' | ')})`)
     await gjort(`dosevalg ${n + 1}: ${tilbudt[0]} av ${tilbudt.length} mulige`)
   }
@@ -174,12 +195,24 @@ async function kjor(f) {
     await p.waitForTimeout(500)
     kopi = await p.evaluate(() => navigator.clipboard.readText())
   }
+  // Spørsmålene som fortsatt vises til slutt, og hvor mye tekst de har.
+  const sporsmal = await p.$$eval('li[data-flytsporsmal]', (ls) => ls.map((l) => (l.querySelector('[id]')?.innerText || l.innerText).split('\n')[0].trim()))
+  const sporsmalstegn = await p.$$eval('li[data-flytsporsmal]', (ls) => ls.reduce((n, l) => n + l.innerText.length, 0))
+  let utskrift
+  let utskriftsider
   if (f.utskrift && kopi) {
     await p.emulateMedia({ media: 'print' })
-    await p.pdf({ path: `${navn}.pdf`, format: 'A4' })
+    // innerText følger utskriftsstilen, så dette er det som kommer på papiret.
+    utskrift = await p.locator('.planpanel').innerText()
+    const pdf = await p.pdf({ path: `${navn}.pdf`, format: 'A4' })
+    utskriftsider = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length
+    await p.emulateMedia({ media: 'screen' })
   }
   const utfall = /Komplett plan til sluttmålet/.test(plan) ? 'komplett plan' : /Ingen plan|kan ikke lage en plan/.test(plan) ? 'stopp' : 'annet'
-  const sammendrag = { id: f.id, hva: f.hva, versjon, utfall, handlinger, dosevalg: dosevalg.length, skjermtegn: plan.length, kopitegn: kopi.length, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
+  // P4: det appen gir, mot den uavhengige fasiten (src/__tests__/qa/fasit.ts).
+  const avvik = kontrollerMotFasit(f.id, { utfall, skjerm: plan, kopi, utskrift, sporsmal, enkeltvalg })
+  const tall = { handlinger, dosevalg: dosevalg.length, enkeltvalg, sporsmal: sporsmal.length, sporsmalstegn, skjermtegn: plan.length, kopitegn: kopi.length, utskriftsider }
+  const sammendrag = { id: f.id, hva: f.hva, versjon, mobil, utfall, ...tall, avvik, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
   writeFileSync(
     `${navn}.md`,
     [`# ${f.id}: ${f.hva}`, '', '```json', JSON.stringify(sammendrag, null, 2), '```', '', '## Handlinger', ...logg.map((l) => `- ${l}`), '', '## Planpanelet før dosevalg', '```', forPlan, '```', '', '## Planpanelet til slutt', '```', plan, '```', '', '## Hele siden før dosevalg', '```', forSide, '```', '', '## Hele siden til slutt', '```', side, '```', '', `## Kopien (${kopi.length} tegn)`, '```', kopi, '```', ''].join('\n'),
@@ -221,4 +254,10 @@ const feilet = resultater.filter((r) => r.feil).map((r) => r.id)
 if (feilet.length > 0) {
   console.error(`${feilet.length} av ${resultater.length} forløp feilet: ${feilet.join(', ')}`)
   process.exitCode = 1
+}
+// Avvik fra fasiten er funn, ikke kjørefeil: de står i sammendraget, og P4_STRENG=1 gjør dem til feilstatus.
+const medAvvik = resultater.filter((r) => r.avvik?.length > 0)
+if (medAvvik.length > 0) {
+  console.error(`${medAvvik.length} av ${resultater.length} forløp avviker fra fasiten: ${medAvvik.map((r) => `${r.id} (${r.avvik.map((a) => a.hva).join(' ')})`).join('; ')}`)
+  if (process.env.P4_STRENG === '1') process.exitCode = 1
 }

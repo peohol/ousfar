@@ -1,5 +1,51 @@
 {
- "beskrivelse": "Syntetiske brukerforløp for P0 (docs/verktøy-p0-rapport-2026-11.md). svar: [mønster i spørsmålsteksten, svaret]; spørsmål uten mønster får det trygge svaret. Ingen reelle pasienter.",
+ "beskrivelse": "Syntetiske brukerforløp for P0 og P4 (docs/verktøy-p0-rapport-2026-11.md). svar: [mønster i spørsmålsteksten, svaret]; et svar kan ha flere navn adskilt med «|» (det første siden tilbyr, brukes). felles: det som gjelder alle de syntetiske pasientene når forløpet ikke sier noe annet (diagnose, stabil, bruker legemidlet fast), slik at bare forløpets eget avvik fra en vanlig pasient står i forløpet. Spørsmål uten mønster får det trygge svaret. Ingen reelle pasienter.",
+ "felles": [
+  [
+   "Har pasienten schizofreni",
+   "Ja"
+  ],
+  [
+   "Er pasienten stabil",
+   "Ja"
+  ],
+  [
+   "stabilisert på peroral",
+   "Ja"
+  ],
+  [
+   "tålt",
+   "Ja"
+  ],
+  [
+   "behandling av depresjon",
+   "Ja"
+  ],
+  [
+   "valproat fast\\?",
+   "Ja"
+  ],
+  [
+   "natriumvalproat",
+   "Ja"
+  ],
+  [
+   "litium fast\\?",
+   "Ja"
+  ],
+  [
+   "serumlitium",
+   "Ja"
+  ],
+  [
+   "Lithionit 42",
+   "Ja"
+  ],
+  [
+   "Bruker pasienten peroral",
+   "Ja"
+  ]
+ ],
  "forlop": [
   {
    "id": "P0-A01",
@@ -156,13 +202,13 @@
    ],
    "svar": [
     [
-     "Et tidligere forsøk",
-     "Gjelder"
+     "Et tidligere forsøk|tidligere fått seponeringssymptomer",
+     "Gjelder|Stemmer|Ja"
     ]
    ],
    "bilder": [
     [
-     "Et tidligere forsøk",
+     "Et tidligere forsøk|tidligere fått seponeringssymptomer",
      "sporsmal"
     ]
    ]
@@ -187,6 +233,10 @@
     "Tablett"
    ],
    "svar": [
+    [
+     "Hvor gammel",
+     "65 år eller eldre"
+    ],
     [
      "65 år",
      "Ja"
@@ -350,7 +400,7 @@
    "svar": [
     [
      "mer enn 8 uker",
-     "Gjelder"
+     "Gjelder|Stemmer|Ja"
     ]
    ]
   },
@@ -649,6 +699,10 @@
     [
      "Bruker pasienten peroral",
      "Ja"
+    ],
+    [
+     "tålt peroral risperidon",
+     "Nei"
     ]
    ],
    "bilder": [
