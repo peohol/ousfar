@@ -11,6 +11,7 @@
  * - Katalogen brukes bare når avtrykket er kontrollert for regelversjonen; ellers spørres hver betingelse med regelens tekst (S5b).
  */
 import type { Planskjema } from '../doseplan'
+import type { Kildeformulering } from '../kartlegging'
 import { gjeldendeBekreftelser, type Bekreftelse, type Regel } from '../regler/modell'
 import { BESLUTNINGER, type Beslutninger } from './beslutninger'
 import { betingelserFor, katalogGjelder, KONTROLLERTE_KATALOGER, sporsmalFor, type Katalogkontroll } from './katalogkontroll'
@@ -46,6 +47,12 @@ export interface Flytgrunnlag {
    * (`utelukkendeSvar` i forhåndskontrollen). Svaret stopper da ved spørsmålet.
    */
   utelukket?: readonly string[]
+  /**
+   * Formuleringene klinikeren uttrykkelig valgte i steg 1, per forløp, bare
+   * der virkestoffet hadde flere å velge mellom. Et spørsmål med `avledesAv`
+   * som stemmer med valget, får svaret derfra og stilles ikke (beslutning B2).
+   */
+  formuleringer?: Readonly<Partial<Record<'fra' | 'til', Kildeformulering>>>
 }
 
 /** Ett spørsmål slik flyten bygger det, før svarene er kjent. */
@@ -58,6 +65,7 @@ interface Definisjon {
   art: 'valg' | 'avkrysning'
   alternativer: readonly Svaralternativ[]
   vises?: { sporsmal: string; svar: readonly string[] }
+  avledesAv?: Katalogsporsmal['avledesAv']
 }
 
 /** Hvordan én betingelse i regelen avgjøres av spørsmålene. */
@@ -110,6 +118,11 @@ function standard(type: Betingelsestype, x: { id: string; tekst: string }): [Def
         ? { id, tekst: x.tekst, gruppe: 'stopp', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.gjelder }
         : { id, tekst: x.tekst, gruppe: 'endrer', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.ja_nei }
   return [def, { type, id: x.id, fra: [{ sporsmal: id }], kombinasjon: type === 'bekreftelse' ? 'alle' : 'en', ...(type === 'unntak' && { forklaring: UNNTAK_STANDARD }) }]
+}
+
+/** Svarene som følger av formuleringene klinikeren valgte (`Flytgrunnlag.formuleringer`), per spørsmål. */
+function avledeSvar(defs: readonly Definisjon[], formuleringer: Flytgrunnlag['formuleringer'] = {}): Record<string, string> {
+  return Object.fromEntries(defs.flatMap((d) => (d.avledesAv && formuleringer[d.avledesAv.forlop] === d.avledesAv.formulering ? [[d.id, d.avledesAv.svar]] : [])))
 }
 
 const lagret = new WeakMap<Regel, Map<string, Flytoppsett>>()
@@ -165,6 +178,7 @@ export function flytoppsett(r: Regel, g: Flytgrunnlag = {}): Flytoppsett {
     art: 'valg',
     alternativer: SVARSETT[s.svar],
     ...(s.vises && { vises: s.vises }),
+    ...(s.avledesAv && { avledesAv: s.avledesAv }),
   }))
   const sporsmal = [...fraKatalog, ...egne]
   if (samlet.length > 0) {
@@ -279,9 +293,13 @@ function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[], u
 }
 
 /** Flyten for regelen med svarene som er gitt (spørsmålets id → verdien). */
-export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: Flytgrunnlag = {}): Flytresultat {
+export function vurderFlyt(r: Regel, gitt: Readonly<Record<string, string>>, g: Flytgrunnlag = {}): Flytresultat {
   const oppsett = flytoppsett(r, g)
-  const { sporsmal: defs, avbildninger } = oppsett
+  const { avbildninger } = oppsett
+  // Spørsmål som er besvart av formuleringen klinikeren valgte (B2), stilles ikke; svaret derfra går foran.
+  const avledet = (g.beslutninger ?? BESLUTNINGER).B2 ? avledeSvar(oppsett.sporsmal, g.formuleringer) : {}
+  const svar: Readonly<Record<string, string>> = { ...gitt, ...avledet }
+  const defs = oppsett.sporsmal.filter((d) => !(d.id in avledet))
   const beslutninger = g.beslutninger ?? BESLUTNINGER
   const stopper = new Map(defs.map((d) => [d.id, stopp(r, d, avbildninger, g.utelukket)]))
   const bruker = new Map(defs.map((d) => [d.id, avbildninger.filter((a) => a.fra.some((k) => k.sporsmal === d.id))]))
@@ -289,7 +307,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
   // Synlighet: en fast punkt-iterasjon fra ingen synlige, så et skjult spørsmål aldri bidrar.
   let synlige = new Set<string>()
   const svarPa = (sett: Set<string>) => (id: string) => {
-    if (sett.has(id)) return svar[id]
+    if (sett.has(id) || id in avledet) return svar[id]
     const d = defs.find((x) => x.id === id)
     // Et spørsmål som er skjult fordi svaret det avhenger av ikke utløser det, er ikke aktuelt.
     return d?.vises && sett.has(d.vises.sporsmal) && svar[d.vises.sporsmal] !== undefined && !d.vises.svar.includes(svar[d.vises.sporsmal]!) ? 'ikke_aktuell' : undefined
