@@ -113,5 +113,8 @@ Overskriften navngir delen, uten tall, vurderinger eller siteringer
   valgkort i tråden din, og send `blokkert` til køen med en kort, teknisk
   grunn. Avgjørelsen føres inn med «Avgjort av fagansvarlig:» bare etter
   fagansvarliges eget svar.
+- Sikkerhetsfilteret: følg «Når sikkerhetsfilteret stopper arbeidet» i
+  protokollen (korte økter, bare stoffets rad, og et kort som fortsatt
+  stoppes, står over med en merknad mens resten av siden sendes til kontroll).
 - En teknisk feil: `feilet` til køen. Tiden strekker ikke til: lagre i grenen,
   så `frigi`. Neste økt fortsetter i samme gren.

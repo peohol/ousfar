@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { BRUKERFORLOP, kjorForlop, lesUttrekkene } from './brukerforlop'
-import { ekstraDoser, FASIT, harDosepunkt, kontrollerMotFasit } from './fasit'
+import { FASIT, forlopsavvik, harDosepunkt, kontrollerMotFasit } from './fasit'
 
 const uttrekkene = lesUttrekkene()
 
@@ -68,36 +68,70 @@ describe('P4 kontrollen av fasiten', () => {
     ])
   })
 
-  describe('hele doseforløpet', () => {
+  describe('hele doseforløpet, dag for dag', () => {
     const b01 = kjorForlop(BRUKERFORLOP.find((f) => f.id === 'H-15')!, uttrekkene).vist.join('\n')
-    const klinisk = (kopi: string) =>
-      kontrollerMotFasit('P0-B01', { utfall: 'komplett plan', skjerm: b01, kopi })
-        .filter((a) => a.type === 'klinisk')
-        .map((a) => a.hva)
+    const avvik = (kopi: string) => forlopsavvik(kopi, FASIT['P0-B01']!.doser!)
+    const CIT = 'Dag 1–14: Citalopram peroralt: 10 mg = 1 tablett à 10 mg'
+    const SER = 'Fra dag 29: Sertralin peroralt: 100 mg = 1 tablett à 100 mg'
+
+    it('godtar motorens plan og en annen oppdeling av det samme intervallet', () => {
+      expect(avvik(b01)).toEqual([])
+      expect(avvik(b01.replace(CIT, 'Dag 1–7: Citalopram peroralt: 10 mg\nDag 8–14: Citalopram peroralt: 10 mg'))).toEqual([])
+      expect(avvik(b01.replace(SER, 'Dag 29–40: Sertralin peroralt: 100 mg\nFra dag 41: Sertralin peroralt: 100 mg'))).toEqual([])
+    })
 
     it('melder overlapp: sertralin før dag 15', () => {
-      expect(
-        klinisk(b01.replace('Dag 1–14: Citalopram peroralt: 10 mg = 1 tablett à 10 mg', 'Dag 1–14: Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Sertralin peroralt: 50 mg = 1 tablett à 50 mg')),
-      ).toEqual(['Kopien har Sertralin peroralt 50 mg dag 1–14, som fasiten ikke har.'])
+      expect(avvik(b01.replace(CIT, `${CIT}; Sertralin peroralt: 50 mg = 1 tablett à 50 mg`))).toEqual(['Sertralin dag 1–14: 50 mg, fasiten sier ingen dose'])
     })
 
     it('melder citalopram som fortsetter etter dag 14', () => {
-      expect(klinisk(b01.replace('Citalopram peroralt: Seponert;', 'Citalopram peroralt: 10 mg = 1 tablett à 10 mg;'))).toEqual([
-        'Kopien har Citalopram peroralt 10 mg dag 15–28, som fasiten ikke har.',
-      ])
+      expect(avvik(b01.replace('Citalopram peroralt: Seponert;', 'Citalopram peroralt: 10 mg = 1 tablett à 10 mg;'))).toEqual(['Citalopram dag 15–28: 10 mg, fasiten sier ingen dose'])
     })
 
     it('melder et ekstra trinn og et legemiddel fasiten ikke har', () => {
-      const ekstra = `${b01}\nFra dag 60: Sertralin peroralt: 150 mg = 1 tablett à 150 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg`
-      expect(klinisk(ekstra)).toEqual(['Kopien har Sertralin peroralt 150 mg fra dag 60, som fasiten ikke har.', 'Kopien har Mirtazapin peroralt 15 mg fra dag 60, som fasiten ikke har.'])
+      expect(avvik(`${b01}\nFra dag 60: Sertralin peroralt: 150 mg; Mirtazapin peroralt: 15 mg`)).toEqual([
+        'Sertralin fra dag 60: 100 mg + 150 mg, fasiten sier 100 mg',
+        'Mirtazapin peroralt fra dag 60: 15 mg, fasiten sier ingen dose',
+      ])
+    })
+
+    it('melder et hull inne i et doseintervall', () => {
+      expect(avvik(b01.replace(CIT, 'Dag 1–3: Citalopram peroralt: 10 mg\nDag 12–14: Citalopram peroralt: 10 mg'))).toEqual(['Citalopram dag 4–11: ingen dose, fasiten sier 10 mg'])
+    })
+
+    it('melder en avkortet vedlikeholdsperiode', () => {
+      expect(avvik(b01.replace(SER, 'Dag 29: Sertralin peroralt: 100 mg'))).toEqual(['Sertralin fra dag 30: ingen dose, fasiten sier 100 mg'])
+      expect(avvik(b01.replace(SER, 'Dag 29–90: Sertralin peroralt: 100 mg'))).toEqual(['Sertralin fra dag 91: ingen dose, fasiten sier 100 mg'])
+    })
+
+    it('melder feil dose og et legemiddel som seponeres for tidlig', () => {
+      expect(avvik(b01.replace('Dag 15–28: Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg', 'Dag 15–28: Citalopram peroralt: Seponert; Sertralin peroralt: 75 mg'))).toEqual([
+        'Sertralin dag 15–28: 75 mg, fasiten sier 50 mg',
+      ])
+      expect(avvik(b01.replace(CIT, 'Dag 1–14: Citalopram peroralt: Seponert'))).toEqual(['Citalopram dag 1–14: ingen dose, fasiten sier 10 mg'])
     })
 
     it('krever at et legemiddel som fortsetter uendret, har samme dose gjennom hele planen', () => {
       const d01 = kjorForlop(BRUKERFORLOP.find((f) => f.id === 'K0-12')!, uttrekkene).vist.join('\n')
-      expect(ekstraDoser(d01, FASIT['P0-D01']!)).toEqual([])
-      expect(ekstraDoser(d01.replace('Fra dag 36: Valproat peroralt: 1000 mg', 'Fra dag 36: Valproat peroralt: 1500 mg'), FASIT['P0-D01']!)).toEqual([
-        'Valproat peroralt 1500 mg natriumvalproat fra dag 36',
+      expect(forlopsavvik(d01, FASIT['P0-D01']!.doser!)).toEqual([])
+      expect(forlopsavvik(d01.replace('Fra dag 36: Valproat peroralt: 1000 mg', 'Fra dag 36: Valproat peroralt: 1500 mg'), FASIT['P0-D01']!.doser!)).toEqual([
+        'Valproat fra dag 36: 1500 mg natriumvalproat, fasiten sier 1000 mg natriumvalproat',
       ])
+    })
+
+    it('holder skjermen, kopien og utskriften hver for seg mot fasiten', () => {
+      const hull = b01.replace(CIT, 'Dag 1–3: Citalopram peroralt: 10 mg')
+      const o = { utfall: 'komplett plan' as const, skjerm: b01, kopi: b01, utskrift: b01, skjermrader: b01, utskriftsrader: b01 }
+      expect(kontrollerMotFasit('P0-B01', o)).toEqual([])
+      expect(kontrollerMotFasit('P0-B01', { ...o, skjermrader: hull }).map((a) => a.hva)).toEqual(['Skjermen: Citalopram dag 4–14: ingen dose, fasiten sier 10 mg.'])
+      expect(kontrollerMotFasit('P0-B01', { ...o, kopi: hull }).map((a) => a.hva)).toEqual(['Kopien: Citalopram dag 4–14: ingen dose, fasiten sier 10 mg.'])
+      expect(kontrollerMotFasit('P0-B01', { ...o, utskriftsrader: hull }).map((a) => a.hva)).toEqual(['Utskriften: Citalopram dag 4–14: ingen dose, fasiten sier 10 mg.'])
+    })
+
+    it('leser skjermens injeksjonsrader («Injeksjon 400 mg»)', () => {
+      const rader = ['Dag 1–14: Aripiprazol peroralt: 15 mg', 'Dag 1: Aripiprazol depotinjeksjon: Injeksjon 400 mg', 'Fra dag 15: Aripiprazol peroralt: Seponert'].join('\n')
+      expect(forlopsavvik(rader, FASIT['P0-C04']!.doser!)).toEqual([])
+      expect(forlopsavvik(rader.replace('Injeksjon 400 mg', 'Injeksjon 300 mg'), FASIT['P0-C04']!.doser!)).toEqual(['Aripiprazol depotinjeksjon dag 1: 300 mg, fasiten sier 400 mg'])
     })
   })
 

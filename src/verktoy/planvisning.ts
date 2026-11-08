@@ -1,19 +1,30 @@
 /**
  * En klinisk doseplan gjort klar til visning, kopiering og utskrift (P6.7 i
- * `docs/verktøy-utviklingsplan.md`): en dag- og datotabell med døgndosen for
- * hvert virkestoff, preparatstyrkene og antallet med deling, depotinjeksjonene
- * som egne hendelser, og det planen bygger på — advarsler, antakelser, avvik,
- * kontroller, preparater, kildehenvisninger og versjonene. Skjermen og teksten
- * som kopieres, bygger på det samme, så de sier det samme.
+ * `docs/verktøy-utviklingsplan.md`), delt i to (P3 i
+ * `docs/verktøy-produktrevisjon-2026-11.md`):
+ *
+ * - **Standardplanen** er det klinikeren trenger for å gjennomføre
+ *   behandlingen: utgangspunktet og sluttmålet, en dag- og datotabell med
+ *   døgndosen, hva som gis og formskifter, hvilke preparater og resepter
+ *   planen trenger, vurderingspunktene én gang hver, det som gjelder akkurat
+ *   denne planen og forbeholdene.
+ * - **Det faglige grunnlaget** er alt annet planen bygger på: avvik fra
+ *   regelens kurve, antakelser, usikkerhet, hele preparatlisten fra FEST,
+ *   preparater som ikke brukes, kontrollene, godkjenningen, kildene og
+ *   versjonene.
+ *
+ * Ingenting forsvinner: standardplanen står først i begge kopiene, og den
+ * utvidede kopien har i tillegg hele grunnlaget. Skjermen og teksten som
+ * kopieres, bygger på det samme, så de sier det samme.
  *
  * Bare en klinisk plan kan vises ({@link planvisning} gir `null` for alt
  * annet). Kildene står som henvisninger med lenke; Psychiatrienet bare som
  * kildeoppføringen, aldri med innhold.
  */
-import { norskDato, type Doseenhet } from './motor/byggesteiner'
+import { DOSEENHETER, norskDato, type Doseenhet } from './motor/byggesteiner'
 import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, seponeringsdag, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
-import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
+import { avrund, hverTekst, injeksjonstidspunkt, KRAV, valgtTekst } from './regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
 import { kildeFor } from './regler/kilder'
 import { henvisninger, type Regel } from './regler/modell'
@@ -25,14 +36,33 @@ export interface Dosecelle {
   elementer: string[]
   /** Doseenheten for hvert element i `elementer` (tablett, dråpe …), til symbolene i tidslinjen; `null` når elementet ikke er én enhet. */
   enheter?: (Doseenhet | null)[]
-  /** «ideelt 12,5 mg (+20 %)» når dosen avviker fra regelens kurve. */
+  /** «ideelt 12,5 mg (+20 %)» når dosen avviker fra regelens kurve; står bare i det faglige grunnlaget og den utvidede kopien. */
   avvik?: string
+  /** «Over til dråper» når legemidlet gis i en annen form enn før ({@link Formskifte}). */
+  skifte?: Formskifte
+}
+
+/**
+ * Et skifte av legemiddelform: fra forrige periode, eller fra formen
+ * pasienten bruker nå til første periode (P0 U4: tablettene stoppes og
+ * dråpene trenger resept).
+ */
+export interface Formskifte {
+  /** «dråper», «tabletter og dråper». */
+  til: string
+  /** Skiftet skjer på planens første dag for et legemiddel pasienten allerede bruker. */
+  fraNaa: boolean
 }
 
 export type Planrad =
   | { type: 'periode'; dager: string; datoer?: string; celler: (Dosecelle | null)[] }
-  /** Et vurderingspunkt i forløpet i kolonnen (regelmodell 12). */
-  | { type: 'vurdering'; dager: string; datoer?: string; kolonne: number; tekst: string }
+  /**
+   * Vurderingspunktene i kolonnen samme dag, i én rad (regelmodell 12):
+   * `punkter` er numrene i {@link Planvisning.oppfolging}, og `tekst` er en
+   * kort påminnelse med numrene; hele teksten står én gang under
+   * «Vurderingspunkter».
+   */
+  | { type: 'vurdering'; dager: string; datoer?: string; kolonne: number; punkter: number[]; tekst: string }
   | { type: 'injeksjon'; dager: string; datoer?: string; kolonne: number; dose: string; element: string; enhet: Doseenhet; detalj?: string }
 
 export interface Plankilde {
@@ -64,16 +94,36 @@ export interface Planvisning {
   tittel: string
   /** Om planen er komplett eller en delplan, øverst i planen og i kopien. */
   utfall: Planutfall
-  /** Vurderings- og kontrollpunktene i klartekst, med tidspunkt og hva som gjøres ved funn. */
+  /** Dosen pasienten bruker nå av legemidlene planen endrer: «Escitalopram 10 mg per døgn»; `null` når planen bare starter nye legemidler. */
+  utgangspunkt: string | null
+  /** Vurderings- og kontrollpunktene i klartekst, med tidspunkt og hva som gjøres ved funn, som regelen gir dem. */
   vurderinger: string[]
+  /**
+   * De samme vurderingspunktene i standardplanen, nummerert i denne
+   * rekkefølgen (tidslinjen viser numrene): uten legemiddelnavnet når planen
+   * har ett legemiddel, og med «som punkt N» når hva som gjøres ved funn, er
+   * ordrett det samme som i et punkt før.
+   */
+  oppfolging: string[]
   /** Hva planen er når den ikke er en fullstendig nedtrapping, rett under tittelen; ellers `null`. */
   undertittel: string | null
   kolonner: { navn: string; administrasjon: string }[]
   rader: Planrad[]
-  /** Alt som står under «Advarsler» i kopien: de generelle forbeholdene først, så det som gjelder denne planen. */
-  advarsler: string[]
-  /** De generelle forbeholdene, som står for hver plan; siden viser dem for seg, foran det som gjelder akkurat denne planen. */
+  /** Styrkene og formene planen bruker per legemiddel, med påminnelse om resept for nye legemidler og nye former. */
+  preparatbehov: string[]
+  /**
+   * De klinisk avgjørende forutsetningene for denne pasienten, kort: svarene
+   * som avgjør hvilke vilkår regelen stiller (f.eks. om pasienten kan bli
+   * gravid), med vilkårene som da er bekreftet ({@link avklart}). Står i
+   * standardplanen; alle kontrollene står i det faglige grunnlaget.
+   */
+  avklart: string[]
+  /** Det motoren sier om akkurat denne planen (veiledende grenser, avslutning, krav som ikke er oppfylt); står i standardplanen. */
+  viktig: string[]
+  /** De generelle forbeholdene, som står for hver plan. */
   forbehold: string[]
+  /** Regelversjonen og FEST-uttrekket i én kort linje til standardplanen; id og fingeravtrykk står i {@link versjoner}. */
+  spor: string
   /** Hvem som har godkjent regelen, når og for hvilken versjon ({@link godkjenningstekst}). */
   godkjenning: string | null
   antakelser: string[]
@@ -81,9 +131,14 @@ export interface Planvisning {
   avvik: string[]
   kontroller: string[]
   preparater: string[]
+  /** Preparater i FEST for legemidlene som planen ikke bruker, med grunnen (godkjenningsfritak, styrke utenfor omfanget …). */
+  ikkeBrukt: string[]
   kilder: Plankilde[]
   versjoner: string[]
 }
+
+/** Formen pasienten bruker nå, per forløp, slik skjemaet har den (FEST-kode for legemiddelformen). */
+export type Utgangsformer = Readonly<Record<string, { legemiddelform?: string } | undefined>>
 
 const mg = (x: number) => `${String(avrund(x)).replace('.', ',')} mg`
 
@@ -110,8 +165,50 @@ function datotekst(startdato: string | undefined, fra: number, til: number | nul
 const seponert = (f: Praktiskforlop): Dosecelle =>
   f.administrasjon === 'depotinjeksjon' && f.perioder.length === 0 ? { dose: 'Seponert', elementer: ['ingen flere injeksjoner'] } : { dose: 'Seponert', elementer: [] }
 
-/** Periodene i alle forløpene slått sammen til felles dager, og injeksjonene som egne rader, i dagenes rekkefølge. */
-function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderinger: readonly Vurdering[] = []): Planrad[] {
+/** Enhetene en celle gis med, som en fast nøkkel: «drape», «drape+tablett». */
+const formnokkel = (c: Dosecelle | null) => (c ? [...new Set((c.enheter ?? []).filter((e): e is Doseenhet => e !== null))].sort().join('+') : '')
+
+/** «tabletter og dråper» for nøkkelen fra {@link formnokkel}. */
+const formnavn = (nokkel: string) =>
+  nokkel
+    .split('+')
+    .map((e) => DOSEENHETER[e as Doseenhet]?.flere ?? e)
+    .join(' og ')
+
+/**
+ * Om første periode av forløpet gis i en annen legemiddelform enn den
+ * pasienten bruker nå: bare for et legemiddel pasienten allerede bruker, og
+ * bare når skjemaet har formen. Ingen av preparatene i første periode har da
+ * den formen.
+ */
+function nyFormFraStart(f: Praktiskforlop, utgang: Utgangsformer | undefined): boolean {
+  const kode = utgang?.[f.id]?.legemiddelform
+  const forste = f.perioder[0]
+  if (!kode || !forste || !(f.utgangsdose_mg ?? 0)) return false
+  return !forste.elementer.some((e) => e.preparater.some((b) => b.legemiddelform?.kode === kode))
+}
+
+/**
+ * Formskiftene i radene, satt på cellene: når et legemiddel gis i en annen
+ * form enn i perioden før, og når første periode bruker en annen form enn
+ * pasienten bruker nå (`fraStart`, per kolonne).
+ */
+function medFormskifter(rader: Planrad[], fraStart: readonly boolean[]): void {
+  const forrige = new Map<number, string>()
+  for (const r of rader) {
+    if (r.type !== 'periode') continue
+    r.celler.forEach((c, k) => {
+      const ny = formnokkel(c)
+      if (!c || !ny) return
+      const gammel = forrige.get(k)
+      if (gammel === undefined ? fraStart[k] : gammel !== ny) c.skifte = { til: formnavn(ny), fraNaa: gammel === undefined }
+      forrige.set(k, ny)
+    })
+  }
+}
+
+/** Periodene i alle forløpene slått sammen til felles dager, og injeksjonene og vurderingspunktene som egne rader, i dagenes rekkefølge. */
+function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderinger: readonly Vurdering[] = [], utgang?: Utgangsformer): Planrad[] {
   const grenser = new Set<number>()
   for (const f of forlop) {
     for (const p of f.perioder) {
@@ -126,6 +223,8 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
   const starter = [...grenser].sort((a, b) => a - b)
   const apen = forlop.some((f) => f.perioder.some((p) => p.til === null) || f.uendret_mg !== undefined)
   const ut: { dag: number; rad: Planrad }[] = []
+  // Et legemiddel som fortsetter uendret, står med hele forklaringen bare første gang.
+  const forsteUendret = new Set<string>()
   for (const [i, fra] of starter.entries()) {
     const neste = starter[i + 1]
     const til = neste !== undefined ? neste - 1 : apen ? null : fra
@@ -140,7 +239,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
           ...(avvik && { avvik }),
         }
       }
-      if (f.uendret_mg !== undefined && fra >= f.start) return uendretCelle(f)
+      if (f.uendret_mg !== undefined && fra >= f.start) return uendretCelle(f, forsteUendret.has(f.id) ? false : !!forsteUendret.add(f.id))
       return fra === seponeringsdag(f) ? seponert(f) : null
     })
     // Etter siste periode står bare dagen legemidlene er seponert.
@@ -156,7 +255,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
         dag: inj.dag ?? Infinity,
         rad: {
           type: 'injeksjon',
-          dager: tidspunkt.charAt(0).toUpperCase() + tidspunkt.slice(1),
+          dager: storForbokstav(tidspunkt),
           ...(forste && { datoer: `${inj.vedlikehold ? 'første ' : ''}${norskDato(forste)}` }),
           kolonne,
           dose: mg(inj.mg),
@@ -167,15 +266,38 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
       })
     }
   }
-  for (const v of vurderinger) {
+  // Vurderingspunktene i samme kolonne samme dag, og på samme side av endringen, står i én rad.
+  const samme = new Map<string, { dag: number; kolonne: number; for: boolean; d: number; punkter: { nr: number; tekst: string }[] }>()
+  for (const [i, v] of vurderinger.entries()) {
     for (const d of v.dager) {
-      // En vurdering før en endring står foran perioden som starter den dagen, en vurdering etter en endring etter den.
-      ut.push({ dag: v.for ? d - 0.5 : d + 0.25, rad: { type: 'vurdering', dager: `Dag ${d}`, ...(startdato && { datoer: dato(startdato, d) }), kolonne: v.kolonne, tekst: v.for ? `Før endringen: ${v.tekst}` : v.tekst } })
+      const nokkel = `${v.kolonne}|${d}|${v.for}`
+      const rad = samme.get(nokkel) ?? { dag: v.for ? d - 0.5 : d + 0.25, kolonne: v.kolonne, for: v.for, d, punkter: [] }
+      rad.punkter.push({ nr: i + 1, tekst: forsteSetning(v.tekst) })
+      samme.set(nokkel, rad)
     }
   }
+  for (const v of samme.values()) {
+    // En vurdering før en endring står foran perioden som starter den dagen, en vurdering etter en endring etter den.
+    const punkter = v.punkter.map((p, j) => `${j === 0 && v.for ? 'Før endringen, punkt' : 'Punkt'} ${p.nr}: ${p.tekst}`).join(' ')
+    ut.push({ dag: v.dag, rad: { type: 'vurdering', dager: `Dag ${v.d}`, ...(startdato && { datoer: dato(startdato, v.d) }), kolonne: v.kolonne, punkter: v.punkter.map((p) => p.nr), tekst: punkter } })
+  }
   // Stabil sortering: en injeksjon står etter perioden som starter samme dag.
-  return ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
+  const ferdig = ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
+  medFormskifter(
+    ferdig,
+    forlop.map((f) => nyFormFraStart(f, utgang)),
+  )
+  return ferdig
 }
+
+const storForbokstav = (x: string) => x.charAt(0).toUpperCase() + x.slice(1)
+
+/**
+ * Første setning i en vurderingstekst, til påminnelsen i tidslinjen; hele
+ * teksten står under «Vurderingspunkter». En setning slutter med punktum,
+ * spørsmålstegn eller utropstegn foran stor bokstav eller slutten.
+ */
+export const forsteSetning = (tekst: string) => /^[\s\S]*?[.!?](?=\s+[A-ZÆØÅ]|\s*$)/.exec(tekst.trim())?.[0] ?? tekst.trim()
 
 /** Hva planen sier om en uendret dose, etter om den er kontrollert mot regelens doser eller bare bekreftet av forskriveren. */
 export const UENDRET = {
@@ -193,8 +315,16 @@ export function uendretDose(f: Pick<Praktiskforlop, 'uendret_mg' | 'uendret_visn
   return `${tallord(x)} ${f.uendret_visning?.enhet ?? 'mg'}${mmol}`
 }
 
-/** Cellen for et legemiddel som fortsetter med uendret dose: dosen, tablettene den gis med og om den er kontrollert. */
-function uendretCelle(f: Praktiskforlop): Dosecelle {
+/** Det cellen sier om en uendret dose etter første rad; hele forklaringen ({@link UENDRET}) står i første rad. */
+export const UENDRET_KORT = 'uendret dose'
+
+/**
+ * Cellen for et legemiddel som fortsetter med uendret dose: dosen, tablettene
+ * den gis med og om den er kontrollert (`forste`), eller i senere rader bare
+ * dosen og at den er uendret.
+ */
+function uendretCelle(f: Praktiskforlop, forste = true): Dosecelle {
+  if (!forste) return { dose: uendretDose(f), elementer: [UENDRET_KORT] }
   const t = f.uendret_visning?.tablett
   const antall = t ? f.uendret_mg! / t.mg : 0
   const hel = Math.abs(antall - Math.round(antall)) < 1e-9 && Math.round(antall) > 0
@@ -263,9 +393,29 @@ function vurderingerFor(regel: Regel, forlop: readonly Praktiskforlop[]): Vurder
   })
 }
 
-/** Linjen for et vurderingspunkt under «Vurderingspunkter». */
-const vurderingslinje = (v: Vurdering, navn: string) =>
-  `${navn}, ${v.tidspunkt}${v.dager.length > 0 && v.tidspunkt.startsWith('dag') === false ? ` (dag ${v.dager.join(', ')})` : ''}: ${v.tekst}${v.ved_funn ? ` Ved funn: ${v.ved_funn}` : ''}`
+/** Tidspunktet for et vurderingspunkt med dagene: «før hver doseendring (dag 29, 57)», «dag 36». */
+const narTekst = (v: Vurdering) => `${v.tidspunkt}${v.dager.length > 0 && v.tidspunkt.startsWith('dag') === false ? ` (dag ${v.dager.join(', ')})` : ''}`
+
+/** Linjen for et vurderingspunkt, som regelen gir det. */
+const vurderingslinje = (v: Vurdering, navn: string) => `${navn}, ${narTekst(v)}: ${v.tekst}${v.ved_funn ? ` Ved funn: ${v.ved_funn}` : ''}`
+
+/**
+ * Vurderingspunktene i standardplanen, i samme rekkefølge som numrene i
+ * tidslinjen: legemiddelnavnet bare når planen har flere legemidler, og «som
+ * punkt N» når hva som gjøres ved funn, står ordrett i et punkt før.
+ */
+function oppfolgingslinjer(vurderinger: readonly Vurdering[], navn: (kolonne: number) => string, flere: boolean): string[] {
+  const forste = new Map<string, number>()
+  return vurderinger.map((v, i) => {
+    const tidligere = v.ved_funn === undefined ? undefined : forste.get(v.ved_funn)
+    if (v.ved_funn !== undefined && tidligere === undefined) forste.set(v.ved_funn, i + 1)
+    const ved = v.ved_funn === undefined ? '' : ` Ved funn: ${tidligere === undefined ? v.ved_funn : `som punkt ${tidligere}.`}`
+    return `${flere ? `${navn(v.kolonne)}, ${narTekst(v)}` : storForbokstav(narTekst(v))}: ${v.tekst}${ved}`
+  })
+}
+
+/** « (24.05.2027)» når planen har startdato. */
+const datoParentes = (d: string | null | undefined) => (d ? ` (${norskDato(d)})` : '')
 
 /** Sluttmålet for ett forløp, eller hva planen ikke dekker for det. */
 function sluttFor(f: Praktiskforlop, navn: string): { sluttmal?: string; mangler?: string } {
@@ -273,11 +423,11 @@ function sluttFor(f: Praktiskforlop, navn: string): { sluttmal?: string; mangler
   if (ikke) return { mangler: `${navn}: ${ikke}` }
   if (f.uendret_mg !== undefined) return { sluttmal: `${navn} fortsetter uendret på ${uendretDose(f)}` }
   const s = seponeringsdag(f)
-  if (s !== null) return { sluttmal: `${navn} seponert fra dag ${s}` }
+  if (s !== null) return { sluttmal: `${navn} seponert fra dag ${s}${datoParentes(f.seponert_dato)}` }
   const vedlikehold = f.injeksjoner.find((i) => i.vedlikehold)
   if (vedlikehold) return { sluttmal: `${navn} vedlikehold ${mg(vedlikehold.mg)} ${injeksjonstidspunkt(vedlikehold)}` }
   const sist = f.perioder.at(-1)
-  return { sluttmal: `${navn} fortsetter på ${mg(sist!.mg)}${sist!.hver ? ` ${hverTekst(sist!.hver)}` : ''} fra dag ${sist!.fra}` }
+  return { sluttmal: `${navn} fortsetter på ${mg(sist!.mg)}${sist!.hver ? ` ${hverTekst(sist!.hver)}` : ''} fra dag ${sist!.fra}${datoParentes(sist!.fra_dato)}` }
 }
 
 /** Om planen er komplett eller en delplan ({@link Planutfall}). */
@@ -350,26 +500,118 @@ export const settlinje = (s: { id: string; versjon: number }) => `Regelsett ${s.
 /** Én kilde under «Kilder» i teksten som kopieres. */
 export const kildelinje = (k: Plankilde) => `${k.tittel} (${k.utgiver}, ${k.versjon}): ${k.url}${k.steder.length > 0 ? ` – ${k.steder.join('; ')}` : ''}`
 
-/** Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk plan. */
-export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
+/**
+ * Preparatene og resepten planen trenger, én linje per legemiddel planen
+ * doserer: hver styrke og form med dagene den brukes, preparatnavnet når alle
+ * preparatene for styrken har samme navn, og en påminnelse om resept for et
+ * nytt legemiddel og for en legemiddelform pasienten ikke bruker nå (et
+ * formskifte i planen, eller en annen form enn skjemaet sier at pasienten
+ * bruker). Et legemiddel som fortsetter uendret eller bare seponeres, står
+ * ikke her. Hele preparatlisten fra FEST står i det faglige grunnlaget.
+ */
+function preparatbehov(forlop: readonly Praktiskforlop[], navn: (i: number) => string, utgang: Utgangsformer | undefined): string[] {
+  return forlop.flatMap((f, k) => {
+    if (f.uendret_mg !== undefined) return []
+    const grupper = new Map<string, { enhet: Doseenhet; mg: number; dager: [number, number | null][]; navn: Set<string> }>()
+    const nye = new Set<Doseenhet>()
+    let forrige: Set<Doseenhet> | null = null
+    const legg = (e: Praktiskforlop['perioder'][number]['elementer'][number], fra: number | null, til: number | null) => {
+      const g = grupper.get(`${e.doseenhet}|${e.mg}`) ?? { enhet: e.doseenhet, mg: e.mg, dager: [], navn: new Set<string>() }
+      // Sammenhengende perioder slås sammen: «dag 1–28 og 43–56».
+      const sist = g.dager.at(-1)
+      if (fra !== null && sist && sist[1] !== null && sist[1] + 1 === fra) sist[1] = til
+      else if (fra !== null) g.dager.push([fra, til])
+      for (const b of e.preparater) g.navn.add(b.navn_form_styrke)
+      grupper.set(`${e.doseenhet}|${e.mg}`, g)
+    }
+    for (const p of f.perioder) {
+      const enheter = new Set(p.elementer.map((e) => e.doseenhet))
+      const nyeHer = forrige === null ? (nyFormFraStart(f, utgang) ? [...enheter] : []) : [...enheter].filter((e) => !forrige!.has(e))
+      for (const e of nyeHer) nye.add(e)
+      for (const e of p.elementer) legg(e, p.fra, p.til)
+      forrige = enheter
+    }
+    for (const inj of f.injeksjoner) legg(inj.element, null, null)
+    if (grupper.size === 0) return []
+    const deler = [...grupper.values()].map((g) => {
+      const produkt = g.navn.size === 1 ? ` (${[...g.navn][0]})` : ''
+      const dager = g.dager.length === 0 ? '' : ` ${g.dager.map(([fra, til]) => dagtekst(fra, til).toLowerCase()).join(' og ')}`
+      return `${DOSEENHETER[g.enhet].flere} à ${mg(g.mg)}${produkt}${dager}`
+    })
+    const nytt = !(f.utgangsdose_mg ?? 0)
+    const resept = nytt ? ' Nytt i planen: husk resept.' : nye.size > 0 ? ` Ny legemiddelform (${[...nye].map((e) => DOSEENHETER[e].flere).join(' og ')}): husk resept.` : ''
+    return [`${navn(k)}: ${deler.join('; ')}.${resept}`]
+  })
+}
+
+/** Dosen pasienten bruker nå av legemidlene planen endrer ({@link Planvisning.utgangspunkt}). */
+function utgangspunkt(forlop: readonly Praktiskforlop[], kolonner: Planvisning['kolonner']): string | null {
+  const deler = forlop.flatMap((f, i) =>
+    f.uendret_mg !== undefined || !(f.utgangsdose_mg ?? 0) ? [] : [f.administrasjon === 'peroral' ? `${kolonner[i]!.navn} ${mg(f.utgangsdose_mg!)} per døgn` : `${kolonner[i]!.navn} ${kolonner[i]!.administrasjon} ${mg(f.utgangsdose_mg!)}`],
+  )
+  return deler.length > 0 ? deler.join('; ') : null
+}
+
+/** Regelversjonen og datoen for FEST-uttrekket i én linje ({@link Planvisning.spor}). */
+/**
+ * De klinisk avgjørende forutsetningene for planen, utledet av motorens
+ * kontroller (bare det motoren faktisk har kontrollert og funnet oppfylt) og
+ * regelens omfang, med regelens egne tekster: svaret på hvert spørsmål som
+ * avgjør om det kreves egne bekreftelser (`Bekreftelse.ved`), i svarets korte
+ * form fra regelen («Kan bli gravid»), og hver bekreftelse svaret krever, som
+ * «Bekreftet: …». Avkreftede unntak, ubetingede bekreftelser, svar som ikke
+ * styrer vilkår, og begrunnelser i fritekst står bare i det faglige
+ * grunnlaget; uten slike spørsmål er listen tom og delen vises ikke.
+ */
+function avklart(r: Extract<Doseplanresultat, { status: 'doseplan' }>, regel: Regel): string[] {
+  const oppfylt = new Set(r.kontroller.filter((k) => k.oppfylt).map((k) => k.krav))
+  return (regel.sporsmal ?? []).flatMap((s) => {
+    const vilkar = regel.bekreftelser.filter((b) => b.ved?.sporsmal === s.id)
+    const svar = [true, false].find((x) => oppfylt.has(KRAV.svar(s, x)))
+    if (vilkar.length === 0 || svar === undefined) return []
+    // Svaret i regelens korte form, uten instruksen til skjemaet etter semikolon.
+    const kort = (svar ? s.ja : s.nei)?.split(';')[0]?.trim()
+    return [
+      kort ? `${storForbokstav(kort)}.` : KRAV.svar(s, svar),
+      ...vilkar.filter((b) => b.ved!.svar === svar && oppfylt.has(KRAV.bekreftet(b))).map(KRAV.bekreftet),
+    ]
+  })
+}
+
+export const sporlinje = (versjon: number, festdato: string | null) =>
+  `Beregnet etter regelversjon ${versjon} med FEST-uttrekk fra ${festdato ? norskDato(festdato.slice(0, 10)) : 'ukjent dato'}.`
+
+/**
+ * Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk
+ * plan. `utgang` er formen pasienten bruker nå per forløp, fra skjemaet; med
+ * den sier planen fra når første trinn bruker en annen form.
+ */
+export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string, utgang?: Utgangsformer): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
   const kolonner = r.forlop.map((f) => ({ navn: virkestoffnavn(f.virkestoff), administrasjon: ADMINISTRASJON[f.administrasjon] }))
+  const navn = (i: number) => kolonner[i]!.navn
   const vurderinger = vurderingerFor(regel, r.forlop)
   return {
     tittel: regel.tittel,
     undertittel: undertittelFor(r.forlop),
-    utfall: planutfall(r.forlop, (i) => kolonner[i]!.navn),
-    vurderinger: vurderinger.map((v) => vurderingslinje(v, kolonner[v.kolonne]!.navn)),
+    utfall: planutfall(r.forlop, navn),
+    utgangspunkt: utgangspunkt(r.forlop, kolonner),
+    vurderinger: vurderinger.map((v) => vurderingslinje(v, navn(v.kolonne))),
+    oppfolging: oppfolgingslinjer(vurderinger, navn, kolonner.length > 1),
     kolonner,
-    rader: rader(r.forlop, startdato, vurderinger),
-    advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],
+    rader: rader(r.forlop, startdato, vurderinger, utgang),
+    preparatbehov: preparatbehov(r.forlop, (i) => `${navn(i)} ${kolonner[i]!.administrasjon}`, utgang),
+    avklart: avklart(r, regel),
+    viktig: r.merknader,
     forbehold: r.forbehold,
+    spor: sporlinje(r.regel.versjon, r.fest.kildedato),
     godkjenning: godkjenningstekst(regel),
     antakelser: regel.fortolkning.forutsetninger,
     usikkerhet: regel.fortolkning.usikkerhet,
     avvik: r.avvik,
     kontroller: r.kontroller.map((k) => `${k.krav.replace(/[.:]$/, '')}: ${k.oppfylt ? 'oppfylt' : 'ikke oppfylt'} (${k.detalj})`),
     preparater: preparatliste(r),
+    ikkeBrukt: r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${navn(i)}: ${b}`)),
     kilder: kildeliste(regel),
     versjoner: [
       regellinje(r.regel),
@@ -381,55 +623,87 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
   }
 }
 
-/** Advarslene som gjelder akkurat denne planen, uten de generelle forbeholdene foran. */
-export const egneAdvarsler = (v: Pick<Planvisning, 'advarsler' | 'forbehold'>): string[] => v.advarsler.slice(v.forbehold.length)
+type Listefelt = { [K in keyof Planvisning]: Planvisning[K] extends readonly string[] ? K : never }[keyof Planvisning]
 
 /**
- * Listene etter tabellen i teksten som kopieres, i rekkefølgen de står i;
- * kildene og versjonene står etter dem. Skjermen har de samme listene, men
- * viser advarslene for planen ved tabellen og resten under «Faglig grunnlag»
- * (`Doseplanvisning`). Kopien har hver linje i disse listene; godkjenningen
- * ({@link Planvisning.godkjenning}) står bare på skjermen, og
- * regelversjonen står i kopien under «Versjoner».
+ * Delene etter tidslinjen i standardplanen, i rekkefølgen de står i på
+ * skjermen, i utskriften og i begge kopiene. Vurderingspunktene er nummerert,
+ * fordi tidslinjen viser til numrene.
  */
-export const PLANDELER = [
-  { tittel: 'Vurderingspunkter', felt: 'vurderinger' },
-  { tittel: 'Advarsler', felt: 'advarsler' },
+export const STANDARDDELER = [
+  { tittel: 'Avklart for denne pasienten', felt: 'avklart' },
+  { tittel: 'Legemiddelform og resepter', felt: 'preparatbehov' },
+  { tittel: 'Vurderingspunkter', felt: 'oppfolging', nummerert: true },
+  { tittel: 'Viktig for denne planen', felt: 'viktig' },
+  { tittel: 'Forbehold', felt: 'forbehold' },
+] as const satisfies readonly { tittel: string; felt: Listefelt; nummerert?: boolean }[]
+
+/**
+ * Det faglige grunnlaget, i rekkefølgen det står i den utvidede kopien;
+ * kildene og versjonene står etter. På skjermen står de samme delene i den
+ * sammenleggbare delen nederst (`FagligGrunnlag`).
+ */
+export const FAGLIGE_DELER = [
   { tittel: 'Avvik fra regelens kurve', felt: 'avvik' },
   { tittel: 'Antakelser', felt: 'antakelser' },
   { tittel: 'Usikkerhet', felt: 'usikkerhet' },
   { tittel: 'Preparater planen bygger på', felt: 'preparater' },
+  { tittel: 'Preparater i FEST som ikke brukes', felt: 'ikkeBrukt' },
   { tittel: 'Kontroller', felt: 'kontroller' },
-] as const satisfies readonly { tittel: string; felt: keyof Planvisning }[]
+] as const satisfies readonly { tittel: string; felt: Listefelt }[]
 
-const punkter = (overskrift: string, linjer: readonly string[]) => (linjer.length > 0 ? [``, `${overskrift}:`, ...linjer.map((l) => `- ${l}`)] : [])
+const punkter = (overskrift: string, linjer: readonly string[], nummerert = false) =>
+  linjer.length > 0 ? [``, `${overskrift}:`, ...linjer.map((l, i) => `${nummerert ? `${i + 1}.` : '-'} ${l}`)] : []
+
+/** Innrykket som skiller en formskiftelinje i kopien fra radene med doser (`planTekst`). */
+export const SKIFTEINNRYKK = '  '
+
+/** Teksten i tidslinjen når et legemiddel går over til en annen form ({@link Formskifte}). */
+export const skiftetekst = (s: Formskifte) => `Over til ${s.til}${s.fraNaa ? ' fra første dag' : ''} – husk resept`
 
 /**
- * Planen som ren tekst, til utklippstavlen: det samme som står på skjermen,
- * i tidslinjens rekkefølge. `forutsatt` er de avledede svarene og
- * forbeholdene flyten har lagt til grunn (§4.1); de står etter planen.
+ * Planen som ren tekst, til utklippstavlen, i tidslinjens rekkefølge.
+ * Standardkopien har standardplanen: tittelen, sluttmålet og utgangspunktet,
+ * tidslinjen med formskifter, `forutsatt` (de avledede svarene og
+ * forbeholdene flyten har lagt til grunn, §4.1), delene i
+ * {@link STANDARDDELER} og regelversjonen. Den utvidede kopien (`utvidet`)
+ * har i tillegg avvikene fra regelens kurve ved dosene og hele det faglige
+ * grunnlaget med kilder og versjoner.
  */
-export function planTekst(v: Planvisning, overskrift: string, forutsatt: readonly string[] = []): string {
+export function planTekst(v: Planvisning, overskrift: string, forutsatt: readonly string[] = [], utvidet = false): string {
   // Navnet med administrasjonsformen, som kolonnene på skjermen: samme virkestoff kan stå både peroralt og som depot.
   const kolonne = (i: number) => `${v.kolonner[i]!.navn} ${v.kolonner[i]!.administrasjon}`
   const celle = (c: Dosecelle | null, i: number) =>
-    c && `${kolonne(i)}: ${c.dose}${c.elementer.length > 0 ? ` = ${c.elementer.join(' + ')}` : ''}${c.avvik ? ` (${c.avvik})` : ''}`
-  const linjer = v.rader.map((r) => {
+    c && `${kolonne(i)}: ${c.dose}${c.elementer.length > 0 ? ` = ${c.elementer.join(' + ')}` : ''}${utvidet && c.avvik ? ` (${c.avvik})` : ''}`
+  const linjer = v.rader.flatMap((r) => {
     const naar = `${r.dager}${r.datoer ? ` (${r.datoer})` : ''}`
-    if (r.type === 'injeksjon') return `${naar}: ${kolonne(r.kolonne)} ${r.dose} = ${r.element}${r.detalj ? ` (${r.detalj})` : ''}`
-    if (r.type === 'vurdering') return `${naar}: Vurdering (${v.kolonner[r.kolonne]!.navn}): ${r.tekst}`
-    return `${naar}: ${r.celler.map(celle).filter(Boolean).join('; ') || 'ingen dose'}`
+    if (r.type === 'injeksjon') return [`${naar}: ${kolonne(r.kolonne)} ${r.dose} = ${r.element}${r.detalj ? ` (${r.detalj})` : ''}`]
+    if (r.type === 'vurdering') return [`${naar}: Vurdering (${v.kolonner[r.kolonne]!.navn}): ${r.tekst}`]
+    // Et formskifte står på egen linje under dosen, uten kolon, så linjen ikke leses som en celle.
+    const skifter = r.celler.flatMap((c, i) => (c?.skifte ? [`${SKIFTEINNRYKK}${kolonne(i)} – ${skiftetekst(c.skifte).toLowerCase()}`] : []))
+    return [`${naar}: ${r.celler.map(celle).filter(Boolean).join('; ') || 'ingen dose'}`, ...skifter]
   })
   return [
     overskrift,
     v.tittel,
     ...(v.undertittel ? [v.undertittel] : []),
     v.utfall.tekst,
+    ...(v.utgangspunkt ? [`Utgangspunkt: ${v.utgangspunkt}.`] : []),
     '',
     ...linjer,
     ...punkter('Forutsatt', forutsatt),
-    ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
-    ...punkter('Kilder', v.kilder.map(kildelinje)),
-    ...punkter('Versjoner', v.versjoner),
+    ...STANDARDDELER.flatMap((d) => punkter(d.tittel, v[d.felt], 'nummerert' in d && d.nummerert)),
+    '',
+    v.spor,
+    ...(utvidet
+      ? [
+          '',
+          'FAGLIG GRUNNLAG',
+          ...FAGLIGE_DELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
+          ...punkter('Klinisk godkjenning', v.godkjenning ? [v.godkjenning] : []),
+          ...punkter('Kilder', v.kilder.map(kildelinje)),
+          ...punkter('Versjoner', v.versjoner),
+        ]
+      : []),
   ].join('\n')
 }

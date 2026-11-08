@@ -10,7 +10,8 @@
  */
 import { lesDose, type Planskjema } from '../doseplan'
 import { komplettfeil, type Regel } from '../regler/modell'
-import { medlemFor, REGELSETT, tilgjengelighet } from '../tilgjengelighet'
+import { virkestoffvalg, type Verktoy, type Verktoyvirkestoff } from '../register'
+import { medlemFor, REGELSETT, tilgjengelighet, type Verktoyvalg } from '../tilgjengelighet'
 import { begrensninger, medFlytfelt, vurderFlyt, type Flytgrunnlag, type Flytresultat } from './flyt'
 import { forhandskontroll, maldoseMangler, utelukkendeSvar, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
 import type { Flyttilstand } from './typer'
@@ -38,12 +39,21 @@ export const medFlytsvar = (s: Planskjema, id: string, verdi: string | undefined
   return { ...s, flytsvar: verdi === undefined ? andre : { ...andre, [id]: verdi } }
 }
 
+const valgbare = new WeakMap<Verktoy, Verktoyvirkestoff[]>()
+
+/** Formuleringene klinikeren uttrykkelig valgte i steg 1: bare for virkestoff med flere formuleringer i verktøyet. */
+export function valgteFormuleringer(verktoy: Verktoy, valg: Verktoyvalg | undefined): Flytgrunnlag['formuleringer'] {
+  if (!valgbare.has(verktoy)) valgbare.set(verktoy, virkestoffvalg(verktoy))
+  const flere = (nokkel: string) => (valgbare.get(verktoy)!.find((v) => v.nokkel === nokkel)?.formuleringer.length ?? 0) > 1
+  return Object.fromEntries((['fra', 'til'] as const).flatMap((f) => (valg?.[f] && flere(valg[f].nokkel) ? [[f, valg[f].formulering]] : [])))
+}
+
 /** Hele flyten for valgene og skjemaet: synlige spørsmål, forhåndskontrollen og skjemaet til beregningen. */
 export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag }): Flytutfall {
   const regel = g.regel ?? reglerMedPlan(g)[0]
   // Svar som alene utelukker en plan med preparatene i FEST, stopper ved spørsmålet (P0 F4).
   const utelukket = regel ? utelukkendeSvar({ ...g, regel }) : []
-  const flyt = regel ? vurderFlyt(regel, g.skjema?.flytsvar ?? {}, { beslutninger: g.beslutninger, utelukket, ...g.flytgrunnlag }) : undefined
+  const flyt = regel ? vurderFlyt(regel, g.skjema?.flytsvar ?? {}, { beslutninger: g.beslutninger, utelukket, formuleringer: valgteFormuleringer(g.verktoy, g.valg), ...g.flytgrunnlag }) : undefined
   const grenser = regel ? begrensninger(regel, utelukket) : []
   const kontroll = forhandskontroll({ ...g, ...(regel && { regel }), ...(flyt && { flyt }) })
   const formvalg = Object.fromEntries(Object.entries(kontroll.formvalg ?? {}).map(([f, v]) => [f, { ...g.skjema?.formvalg[f], legemiddelform: v.legemiddelform }]))

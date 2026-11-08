@@ -32,13 +32,16 @@ const kasus = (id: string, kategori: Pilotkasus['kategori'], hva: string, valg: 
   ...x,
 })
 
-/** Vurderingen før injeksjonene i Xeplion-planen, som den står i kopien. */
+/**
+ * Vurderingspunktene som de står i tidslinjen: nummeret i planens liste over
+ * vurderingspunkter og den første setningen (P3); hele teksten står i listen.
+ */
 const XEPLION_VURDERING =
-  'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.'
-const ARIPIPRAZOL_OKNING = 'Vurdering (Aripiprazol): Før endringen: Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker).'
+  'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen, punkt 1: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.'
+const ARIPIPRAZOL_OKNING = 'Vurdering (Aripiprazol): Før endringen, punkt 3: Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker).'
 const reduksjon = (stoff: string, plager: string) =>
-  `Vurdering (${stoff}): Før endringen: Før hver reduksjon av ${stoff.toLowerCase()}, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: ${plager}, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet.`
-const seponert = (stoff: string, plager: string) => `Vurdering (${stoff}): ${stoff} er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: ${plager}, og akatisi, dystoni og dyskinesi).`
+  `Vurdering (${stoff}): Før endringen, punkt 1: Før hver reduksjon av ${stoff.toLowerCase()}, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: ${plager}, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet.`
+const seponert = (stoff: string, plager: string) => `Vurdering (${stoff}): Punkt 2: ${stoff} er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: ${plager}, og akatisi, dystoni og dyskinesi).`
 const OLANZAPINPLAGER = 'kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting'
 const RISPERIDONPLAGER = 'kvalme, oppkast, svette og søvnløshet'
 

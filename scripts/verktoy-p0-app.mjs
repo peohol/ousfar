@@ -45,11 +45,31 @@ async function vent(p) {
 /** Planpanelet viser et endelig stopp: klinikeren får ingen plan uansett hvordan resten besvares. */
 const harStoppet = async (p) => /^Ingen plan/m.test(await p.locator('.planpanel').innerText())
 
+/**
+ * Tidslinjen i planpanelet som rader i kopiens form («Dag 1–28: Navn form:
+ * dose; …»), så fasiten kan holde skjermen og utskriften dag for dag mot
+ * planen (`forlopsavvik` i src/__tests__/qa/fasit.ts). Dosen er den synlige
+ * teksten (`innerText`), som følger utskriftsstilen når utskrift emuleres;
+ * navnet er alltid med, også der det bare står for skjermlesere.
+ */
+const tidslinjerader = async (p) =>
+  (
+    await p.$$eval('.planpanel .tidslinje__punkt', (ls) =>
+      ls.map((l) => {
+        const dager = l.querySelector('.tidslinje__dager')?.textContent.trim() ?? ''
+        const ledd = [...l.querySelectorAll('.tidslinje__legemiddel')].map(
+          (d) => `${d.querySelector('[class*="tidslinje__navn"]')?.textContent.trim() ?? ''}: ${(d.querySelector('.tidslinje__dose')?.innerText ?? '').replace(/\s+/g, ' ').trim()}`,
+        )
+        return ledd.length > 0 ? `${dager}: ${ledd.join('; ')}` : `${dager}: Vurdering`
+      }),
+    )
+  ).join('\n')
+
 /** Synlig tekst i hele verktøyet (spørsmål, svaralternativer, meldinger og planpanelet). */
 const sidetekst = async (p) => p.locator('main').first().innerText().catch(() => p.locator('body').innerText())
 
 /**
- * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Gjelder ikke», «Nei», «Ja» på bekreftelser).
+ * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Stemmer ikke», «Nei», «Ja» på vurderinger og bekreftelser, en voksen under 65 år som følges poliklinisk, bytte for bivirkninger).
  * Stopper så snart planpanelet viser et endelig stopp, så handlingene telles til
  * utfallet og ikke til et ferdig utfylt skjema.
  */
@@ -79,7 +99,7 @@ async function svarAlle(p, svar, logg) {
       } else {
         const lab = s.alt.map((a) => a.lab)
         // Et svar kan ha flere navn («Gjelder|Stemmer|Ja»), så forløpet virker både i reservevisningen og med katalogen.
-        const standard = lab.includes('Ikke ennå') ? 'Ja' : ['Gjelder ikke', 'Stemmer ikke', 'Nei', '18–64 år', 'Poliklinisk', 'Bivirkninger'].find((t) => lab.includes(t)) ?? 'Nei'
+        const standard = lab.includes('Ikke ennå') ? 'Ja' : (['Stemmer ikke', 'Nei', '18–64 år', 'Poliklinisk', 'Bivirkninger'].find((t) => lab.includes(t)) ?? 'Nei')
         const valg = (regel?.[1] ?? standard).split('|').find((t) => lab.includes(t)) ?? regel?.[1] ?? standard
         const i = lab.indexOf(valg)
         if (i < 0) throw new Error(`Fant ikke «${valg}» blant ${lab.join('/')} for «${s.tekst}».`)
@@ -188,6 +208,7 @@ async function kjor(f) {
   }
   await p.screenshot({ path: `${navn}.png`, fullPage: true })
   const plan = await p.locator('.planpanel').innerText()
+  const skjermrader = await tidslinjerader(p)
   const side = await sidetekst(p)
   let kopi = ''
   const kopier = p.getByRole('button', { name: 'Kopier planen' })
@@ -200,23 +221,66 @@ async function kjor(f) {
   const sporsmal = await p.$$eval('li[data-flytsporsmal]', (ls) => ls.map((l) => (l.querySelector('[id]')?.innerText || l.innerText).split('\n')[0].trim()))
   const sporsmalstegn = await p.$$eval('li[data-flytsporsmal]', (ls) => ls.reduce((n, l) => n + l.innerText.length, 0))
   let utskrift
+  let utskriftsrader
   let utskriftsider
-  if (f.utskrift && kopi) {
+  // Hver komplett plan skrives ut (P4): innerText følger utskriftsstilen, så dette er det som kommer på papiret.
+  if (kopi) {
     await p.emulateMedia({ media: 'print' })
-    // innerText følger utskriftsstilen, så dette er det som kommer på papiret.
     utskrift = await p.locator('.planpanel').innerText()
+    utskriftsrader = await tidslinjerader(p)
     const pdf = await p.pdf({ path: `${navn}.pdf`, format: 'A4' })
     utskriftsider = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length
     await p.emulateMedia({ media: 'screen' })
   }
-  const utfall = /Komplett plan til sluttmålet/.test(plan) ? 'komplett plan' : /Ingen plan|kan ikke lage en plan/.test(plan) ? 'stopp' : 'annet'
+  const utfall = /Komplett plan til sluttmålet/.test(plan) ? 'komplett plan' : /Ingen plan|kan ikke lage en plan/.test(plan) ? 'stopp' : /Må avklares før/.test(plan) ? 'avklaring' : 'annet'
   // P4: det appen gir, mot den uavhengige fasiten (src/__tests__/qa/fasit.ts).
-  const avvik = kontrollerMotFasit(f.fasit ?? f.id, { utfall, skjerm: plan, kopi, utskrift, sporsmal, enkeltvalg })
+  const avvik = kontrollerMotFasit(f.fasit ?? f.id, { utfall, skjerm: plan, kopi, utskrift, skjermrader, utskriftsrader, sporsmal, enkeltvalg })
   const tall = { handlinger, dosevalg: dosevalg.length, enkeltvalg, sporsmal: sporsmal.length, sporsmalstegn, skjermtegn: plan.length, kopitegn: kopi.length, utskriftsider }
   const sammendrag = { id: f.id, hva: f.hva, versjon, mobil, utfall, ...tall, avvik, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
   writeFileSync(
     `${navn}.md`,
-    [`# ${f.id}: ${f.hva}`, '', '```json', JSON.stringify(sammendrag, null, 2), '```', '', '## Handlinger', ...logg.map((l) => `- ${l}`), '', '## Planpanelet før dosevalg', '```', forPlan, '```', '', '## Planpanelet til slutt', '```', plan, '```', '', '## Hele siden før dosevalg', '```', forSide, '```', '', '## Hele siden til slutt', '```', side, '```', '', `## Kopien (${kopi.length} tegn)`, '```', kopi, '```', ''].join('\n'),
+    [
+      `# ${f.id}: ${f.hva}`,
+      '',
+      '```json',
+      JSON.stringify(sammendrag, null, 2),
+      '```',
+      '',
+      '## Handlinger',
+      ...logg.map((l) => `- ${l}`),
+      '',
+      '## Planpanelet før dosevalg',
+      '```',
+      forPlan,
+      '```',
+      '',
+      '## Planpanelet til slutt',
+      '```',
+      plan,
+      '```',
+      '',
+      '## Hele siden før dosevalg',
+      '```',
+      forSide,
+      '```',
+      '',
+      '## Hele siden til slutt',
+      '```',
+      side,
+      '```',
+      '',
+      `## Kopien (${kopi.length} tegn)`,
+      '```',
+      kopi,
+      '```',
+      '',
+      '## Tidslinjen på skjermen',
+      '```',
+      skjermrader,
+      '```',
+      '',
+      ...(utskrift === undefined ? [] : ['## Utskriften', '```', utskrift, '```', '', '## Tidslinjen i utskriften', '```', utskriftsrader, '```', '']),
+    ].join('\n'),
   )
   return sammendrag
 }

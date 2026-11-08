@@ -16,7 +16,7 @@ import { erKliniskGodkjent, fingeravtrykk, kanonisk, KONTROLLUTFALL, kontrollutf
 import type { Kildehenvisning, Regel, Regelsett } from './regler/modell'
 import { ETTER_RETTELSENE } from './kontrollsett'
 import { NEDTRAPPINGSSETT_FOR_RETTELSENE } from './regler/nedtrapping'
-import { kildelinje, kildeliste, regellinje, settlinje } from './planvisning'
+import { godkjenningstekst, kildelinje, kildeliste, regellinje, settlinje, sporlinje } from './planvisning'
 import { kliniskDelplan } from './motor/plan'
 import { kjorKasus, PILOTKASUS, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
 import { PILOTSETT_FOR_RETTELSENE } from './regler/pilotsett'
@@ -65,7 +65,14 @@ export interface Linjeendring {
   ny: string
   for: string
   hvorfor: string
+  /** Linjen står for seg, ikke som et punkt i en liste («- ») i kopien. */
+  frittstaende?: true
+  /** Regelversjonen før og etter, for linjen med regelversjonen under tidslinjen (se {@link forventetFor}). */
+  versjoner?: { ny: number; for: number }
 }
+
+/** Linjen slik den står i kopien. */
+export const kopilinje = (x: Linjeendring, side: 'ny' | 'for') => `${x.frittstaende ? '' : '- '}${x[side]}`
 
 /**
  * Linjene i teksten brukeren ser og kopierer (`planTekst`) som er ulike med den
@@ -85,7 +92,8 @@ export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<st
       return [
         etter.id,
         [
-          { ny: linje(etter), for: linje(f), hvorfor: 'Den nye regelversjonen.' },
+          { ny: linje(etter), for: linje(f), hvorfor: 'Den nye regelversjonen.', versjoner: { ny: etter.versjon, for: f.versjon } },
+          { ny: godkjenningstekst(etter) ?? '', for: godkjenningstekst(f) ?? '', hvorfor: 'Kontrollørens godkjenning av den nye regelversjonen (i kopien med faglig grunnlag).' },
           ...kilder,
         ],
       ] as const
@@ -99,9 +107,22 @@ export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<st
   return endringer
 }
 
-/** De forventede linjeendringene for en plan: for regelen den er beregnet etter, og for regelsettet den oppgir. */
-export const forventetFor = (endringer: ReadonlyMap<string, readonly Linjeendring[]>, resultat: Kjoring['resultat']): readonly Linjeendring[] =>
-  resultat ? [...(endringer.get(resultat.regel.id) ?? []), ...(resultat.regelsett ? (endringer.get(resultat.regelsett.id) ?? []) : [])] : []
+/**
+ * De forventede linjeendringene for en plan: for regelen den er beregnet
+ * etter, og for regelsettet den oppgir. Linjen med regelversjonen under
+ * tidslinjen har også datoen for FEST-uttrekket, så den lages her, fra planen.
+ */
+export function forventetFor(endringer: ReadonlyMap<string, readonly Linjeendring[]>, resultat: Kjoring['resultat']): readonly Linjeendring[] {
+  if (!resultat) return []
+  const egne = [...(endringer.get(resultat.regel.id) ?? []), ...(resultat.regelsett ? (endringer.get(resultat.regelsett.id) ?? []) : [])]
+  const festdato = resultat.status === 'doseplan' ? resultat.fest.kildedato : null
+  const spor = egne.flatMap((x): Linjeendring[] =>
+    x.versjoner && resultat.status === 'doseplan'
+      ? [{ ny: sporlinje(x.versjoner.ny, festdato), for: sporlinje(x.versjoner.for, festdato), hvorfor: 'Den nye regelversjonen.', frittstaende: true }]
+      : [],
+  )
+  return [...egne, ...spor]
+}
 
 type Kjoring = ReturnType<typeof kjorKasus>
 
@@ -112,7 +133,7 @@ type Kjoring = ReturnType<typeof kjorKasus>
  * har godkjent hvilken versjon; den sammenlignes for seg (avsnitt 3 i rapporten).
  */
 export function synlig({ resultat, tekst, ...u }: Kjoring, endringer: ReadonlyMap<string, readonly Linjeendring[]> = new Map()): string {
-  const tilbake = forventetFor(endringer, resultat).reduce((t, x) => t.split(`\n- ${x.ny}\n`).join(`\n- ${x.for}\n`), `${tekst ?? ''}\n`)
+  const tilbake = forventetFor(endringer, resultat).reduce((t, x) => t.split(`\n${kopilinje(x, 'ny')}\n`).join(`\n${kopilinje(x, 'for')}\n`), `${tekst ?? ''}\n`)
   return JSON.stringify({ ...u, tekst: tilbake })
 }
 

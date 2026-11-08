@@ -736,15 +736,31 @@ describe('S8: kopien inneholder hele planen', () => {
     expect(tidslinjeavvik(tidslinjen(tabell), kopi), 'tabellen mot kopien').toEqual([])
   })
 
-  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: kopien har resten av planen linje for linje', async (_, x) => {
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: kopien har resten av planen linje for linje, og den utvidede kopien hele grunnlaget', async (_, x) => {
     const { r, v, kopi } = await vist(x)
+    const utvidet = planTekst(v, x.verktoy.navn, [], true)
+    const mangler = (tekst: string, deler: readonly string[]) => {
+      const linjer = new Set(tekst.split('\n'))
+      return deler.filter((d) => !linjer.has(`- ${d}`))
+    }
+    // Standardkopien: vurderingspunktene nummerert, preparatene og resepten, det som gjelder planen og forbeholdene.
     const linjer = new Set(kopi.split('\n'))
-    const mangler = (deler: readonly string[]) => deler.filter((d) => !linjer.has(`- ${d}`))
-    expect(mangler(v.vurderinger), 'vurderingspunkter').toEqual([])
-    expect(mangler(r.forbehold), 'forbehold').toEqual([])
-    expect(mangler(preparatliste(r)), 'preparatene').toEqual([])
-    expect(mangler(v.kilder.map(kildelinje)), 'kildene').toEqual([])
-    expect(mangler([regellinje(r.regel)]), 'regelversjon og fingeravtrykk').toEqual([])
+    expect(v.oppfolging.filter((d, i) => !linjer.has(`${i + 1}. ${d}`)), 'vurderingspunkter').toEqual([])
+    expect(v.oppfolging).toHaveLength(v.vurderinger.length)
+    expect(mangler(kopi, v.preparatbehov), 'preparater og resepter').toEqual([])
+    expect(mangler(kopi, r.merknader), 'det som gjelder planen').toEqual([])
+    expect(mangler(kopi, r.forbehold), 'forbehold').toEqual([])
+    expect(linjer.has(v.spor), 'regelversjonen').toBe(true)
+    // Den utvidede kopien har standardkopiens hode og i tillegg hele det faglige grunnlaget.
+    expect(utvidet.split('\n').slice(0, 3)).toEqual(kopi.split('\n').slice(0, 3))
+    expect(mangler(utvidet, preparatliste(r)), 'preparatene').toEqual([])
+    expect(mangler(utvidet, r.avvik), 'avvik fra kurven').toEqual([])
+    expect(mangler(utvidet, v.kontroller), 'kontrollene').toEqual([])
+    expect(mangler(utvidet, v.ikkeBrukt), 'preparater som ikke brukes').toEqual([])
+    expect(mangler(utvidet, v.kilder.map(kildelinje)), 'kildene').toEqual([])
+    expect(mangler(utvidet, [regellinje(r.regel)]), 'regelversjon og fingeravtrykk').toEqual([])
+    // Standardkopien har ikke grunnlaget.
+    expect(mangler(kopi, [regellinje(r.regel)])).toEqual([regellinje(r.regel)])
   })
 
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: en kopi eller tabell som med vilje er gjort feil, gir avvik', async (_, x) => {
@@ -836,8 +852,8 @@ const INTERNE: readonly [string, RegExp][] = [
   ['formuleringsklasse', /formuleringsklasse/i],
   ['kontrollutfall', /kontrollert, ikke godkjent|til faglig kontroll/i],
 ]
-/** Svaralternativer som ikke sier hva som svares på (P1). */
-const UKLARE_SVAR = /^(Gjelder|Gjelder ikke)$/
+/** Svaralternativer som ikke sier hva som svares på (P1); reservevisningen bruker dem for regelens egne utsagn. */
+const UKLARE_SVAR = /^(Gjelder|Gjelder ikke|Stemmer|Stemmer ikke)$/
 
 /**
  * Regelens egne tekster (spørsmål, unntak, bekreftelser og fortolkning). De er
@@ -876,23 +892,17 @@ function katalogGjelder(r: Regel): boolean {
 }
 /**
  * De godkjente reglene som med vilje står i reservevisningen til katalogen
- * deres er kontrollert (C1, 3da270b: ChatGPT har godkjent avtrykkene for de
- * sju andre; K2-byttene til sertralin, #318, har katalog som ikke er kontrollert ennå). Den som fører et nytt katalogavtrykk, eller får en ny regel
- * godkjent uten avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd
- * først når listen er tom (plan §11).
+ * deres er kontrollert. ChatGPT kontrollerte katalogen fra P2a for de tolv
+ * aktive reglene 07.11.2026; bare escitalopram v13, som er erstattet av v14
+ * i appen, står igjen. Den som fører et nytt katalogavtrykk, eller får en ny
+ * regel godkjent uten avtrykk, endrer listen i samme PR. For reglene appen
+ * bruker, er kriterium 2 nådd (plan §11).
  */
-const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
-  'kryssnedtrapping-sertralin-mirtazapin v10',
-  'seponering-escitalopram v13',
-  'seponering-escitalopram-tabletter-og-draper v14',
-  'seponering-vortioksetin v12',
-  'bytte-escitalopram-sertralin v2',
-  'bytte-citalopram-sertralin v2',
-]
+const VENTER_PA_KATALOGKONTROLL: readonly string[] = ['seponering-escitalopram v13']
 
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
- * også «Gjelder»/«Gjelder ikke» for unntak, slik dagens skjema viser dem.
+ * også «Stemmer»/«Stemmer ikke» for unntak (P2a; før det «Gjelder»/«Gjelder ikke»).
  * A1 setter `data-reservevisning` på elementet som viser betingelsene slik.
  */
 const RESERVEVISNING = '[data-reservevisning]'

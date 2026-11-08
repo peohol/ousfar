@@ -15,6 +15,9 @@
  * Ingen pasientopplysninger: alle forløpene er syntetiske.
  */
 
+/** `avklaring`: ingen plan ennå, fordi et svar («Vet ikke») må avklares først; panelet sier hvilket. */
+export type Utfall = 'komplett' | 'stopp' | 'avklaring'
+
 /** Hvorfor det ikke blir plan, slik produktkontrakten skiller det (produktrevisjonen §2). */
 export type Stoppkategori = 'risiko' | 'ikke_godkjent' | 'data' | 'teknisk'
 
@@ -29,16 +32,16 @@ export interface Dosepunkt {
 
 export interface Fasit {
   /** Det klinisk riktige utfallet. To verdier: begge er riktige (for eksempel en låst tilpasning som gir standardplanen). */
-  utfall: 'komplett' | 'stopp' | ('komplett' | 'stopp')[]
+  utfall: Utfall | Utfall[]
   /** Hvor fasiten kommer fra. */
   kilde: string
   /**
    * Strategien i ord, til rapporten. Den kontrolleres gjennom `doser`: kopien
-   * skal ha nøyaktig disse dosene og ingen andre, så overlapp, et bytte på
-   * feil dag eller et ekstra trinn gir avvik ({@link ekstraDoser}).
+   * skal ha nøyaktig disse dosene hver dag og ingen andre, så overlapp, et
+   * bytte på feil dag, et ekstra trinn eller et hull gir avvik ({@link forlopsavvik}).
    */
   strategi?: string
-  /** Hele doseforløpet en komplett plan skal ha: hvert punkt skal stå på skjermen, i kopien og i utskriften, og kopien skal ikke ha andre doser. */
+  /** Hele doseforløpet en komplett plan skal ha, dag for dag, på skjermen, i kopien og i utskriften. Et punkt uten `til` gjelder videre fremover. */
   doser?: Dosepunkt[]
   /** Sluttmålet, som tekst i planen. */
   slutt?: RegExp
@@ -99,6 +102,8 @@ export const FASIT: Record<string, Fasit> = {
   'P0-A04': escitalopram(ESC20, 281),
   'P0-A05': escitalopram(ESC10, 197),
   'P0-N01': utenfor(`${ESCITALOPRAM_KILDE}: godkjenningen gjelder bare kort behandlingstid`, /(kort|lang) behandlingstid/i),
+  'P0-N08': { utfall: 'avklaring', kilde: `${ESCITALOPRAM_KILDE}: godkjenningen gjelder bare kort behandlingstid, som må være avklart`, grunn: [/«Vet ikke»/], stoppkategori: 'data' },
+  'P0-N09': utenfor(`${ESCITALOPRAM_KILDE}: godkjenningen gjelder bare kort behandlingstid`, /(kort|lang) behandlingstid/i),
   'P0-N02': utenfor(`${ESCITALOPRAM_KILDE}: unntaket for tidligere seponeringsvansker`, /seponering(ssymptomer|svansker|splager)|tidligere (forsøk|nedtrapping)/i),
   'P0-N03': utenfor(`${ESCITALOPRAM_KILDE}: godkjent for voksne under 65 år`, /65 år/),
   'P0-N04': { ...utenfor(`${ESCITALOPRAM_KILDE}: startdosene 10 og 20 mg`, /10 og 20 mg/), stoppAvDose: true },
@@ -117,6 +122,7 @@ export const FASIT: Record<string, Fasit> = {
     ],
   },
   'P0-B02': utenfor(`${K2_KILDE}: høyst 8 ukers behandling`, /8 uke/),
+  'P0-B05': utenfor(`${K2_KILDE} og K2-6: voksne 18–65 år`, /over 65 år/),
   'P0-B03': {
     utfall: 'komplett',
     kilde: K2_KILDE,
@@ -218,15 +224,23 @@ export const FASIT: Record<string, Fasit> = {
   },
 }
 
+// Samme plan som forløpet de bygger på: alderen 65 år er innenfor K2 (18–65 år), og et bekreftet graviditetsforebyggende program gir K4-planen (K4-14).
+FASIT['P0-B04'] = { ...FASIT['P0-B01']!, kilde: `${K2_KILDE} og K2-6: voksne 18–65 år, 65 år er innenfor` }
+FASIT['P0-D03'] = { ...FASIT['P0-D01']!, kilde: `${K4_KILDE}, K4.6 og K4-14: alle vilkårene i det graviditetsforebyggende programmet bekreftet` }
+FASIT['P0-D04'] = { utfall: 'stopp', kilde: `${K4_KILDE}, K4.6 og K4-26: sikker prevensjon er ikke bekreftet`, grunn: [/sikker prevensjon/i], stoppkategori: 'risiko' }
+
 /** Det som ble observert i ett forløp: tekst og tellinger. */
 export interface Observasjon {
-  utfall: 'komplett plan' | 'stopp' | 'annet'
+  utfall: 'komplett plan' | 'stopp' | 'avklaring' | 'annet'
   /** Planpanelet til slutt. */
   skjerm: string
   /** Den vanlige (korte) kopien, tom når det ikke finnes noen. */
   kopi: string
   /** Planpanelet slik det skrives ut, når utskriften ble kontrollert. */
   utskrift?: string
+  /** Tidslinjen på skjermen og i utskriften, én rad per linje som i kopien («Dag 1–28: Navn form: dose; …»), når nettleserkjøringen har lest den. */
+  skjermrader?: string
+  utskriftsrader?: string
   /** Synlige spørsmål til slutt. */
   sporsmal?: string[]
   /** Antall dosevalg som bare hadde ett alternativ (ikke et reelt valg). */
@@ -288,49 +302,89 @@ export function harDosepunkt(tekst: string, p: Dosepunkt): boolean {
   return gir(p.fra) && (p.til === undefined || gir(p.til))
 }
 
-/** Ett legemiddel i en rad i kopien: «Navn form: dose = …» eller, for en injeksjon, «Navn depotinjeksjon dose = …». */
-const LEDD = /^\s*(\p{Lu}\p{Ll}+ (?:peroralt|depotinjeksjon))(?::\s*|\s+)(.*?)(?:\s=\s.*)?$/u
+/** Ett legemiddel i en rad: «Navn form: dose = …», og for en injeksjon «Navn depotinjeksjon dose = …» (kopien) eller «Navn depotinjeksjon: Injeksjon dose» (skjermen). */
+const LEDD = /^\s*(\p{Lu}\p{Ll}+ (?:peroralt|depotinjeksjon))(?::\s*|\s+)(?:Injeksjon\s+)?(.*?)(?:\s=\s.*)?$/u
 const SEPONERT = /^seponert$/i
-const likDose = (a: string, b: string) => a.replace(/\s+/g, ' ').trim().toLowerCase() === b.replace(/\s+/g, ' ').trim().toLowerCase()
+const normal = (dose: string) => dose.replace(/\s+/g, ' ').trim().toLowerCase()
+const dagtekst = (fra: number, til: number) => (til === Infinity ? `fra dag ${fra}` : til === fra ? `dag ${fra}` : `dag ${fra}–${til}`)
+
+/** Én dose i tidslinjen: legemidlet får `dose` dag `fra` til og med `til` (`Infinity`: videre fremover). */
+interface Dosering {
+  fra: number
+  til: number
+  legemiddel: string
+  dose: string
+}
 
 /**
- * Dosene i en tekst med én rad per linje (kopien, motorens tekst) som fasiten
- * ikke har: en dose på en dag der fasiten har en annen eller ingen dose for
- * legemidlet, et legemiddel fasiten ikke kjenner, eller «Seponert» mens
- * fasiten fortsatt gir legemidlet. Sammen med kravet om at hvert dosepunkt
- * finnes, betyr en tom liste at doseforløpet er nøyaktig fasitens. Vurderinger
- * og de gjentatte vedlikeholdsinjeksjonene («Hver måned …», kontrollert av
- * `slutt`) er ikke doserader og telles ikke.
+ * Dosene i en tekst med én rad per linje: kopien, motorens tekst og radene
+ * nettleserkjøringen leser fra tidslinjen på skjermen og i utskriften.
+ * «Seponert» er ingen dose. Vurderinger og de gjentatte
+ * vedlikeholdsinjeksjonene («Hver måned …», kontrollert av `slutt`) er ikke
+ * doserader og tas ikke med.
  */
-export function ekstraDoser(tekst: string, f: Pick<Fasit, 'doser'>): string[] {
-  const ut: string[] = []
+export function doseringer(tekst: string): Dosering[] {
+  const ut: Dosering[] = []
   for (const l of tekst.split('\n')) {
     const m = RAD.exec(l)
     if (!m) continue
     const fra = Number(m[2])
     const til = m[3] ? Number(m[3]) : /^fra/i.test(m[1]!) ? Infinity : fra
-    const dager = til === Infinity ? `fra dag ${fra}` : til === fra ? `dag ${fra}` : `dag ${fra}–${til}`
     const innhold = m[4]!.replace(/^[^:]*:/, '')
     if (/^\s*Vurdering\b/.test(innhold)) continue
     for (const ledd of innhold.split(';')) {
       const d = LEDD.exec(ledd)
-      if (!d) continue
-      const [, navn, raa] = d
-      const dose = raa!.replace(/\s*\(.*\)$/, '')
-      const punkter = (f.doser ?? []).filter((p) => navn!.toLowerCase().startsWith(p.legemiddel.toLowerCase()))
-      const overlapper = punkter.filter((p) => p.fra <= til && fra <= (p.til ?? Infinity))
-      const riktig = SEPONERT.test(dose) ? overlapper.length === 0 : overlapper.some((p) => p.fra <= fra && til <= (p.til ?? Infinity) && likDose(dose, p.dose))
-      if (!riktig) ut.push(`${navn} ${dose} ${dager}`)
+      const dose = d?.[2]!.replace(/\s*\(.*\)$/, '')
+      if (d && dose && !SEPONERT.test(dose)) ut.push({ fra, til, legemiddel: d[1]!, dose })
     }
   }
   return ut
+}
+
+/**
+ * Hvor doseforløpet i teksten avviker fra fasiten, dag for dag og per
+ * legemiddel: en dose fasiten ikke har (overlapp, et bytte på feil dag, et
+ * ekstra trinn, et legemiddel fasiten ikke kjenner), og en dose fasiten har,
+ * men teksten mangler (et hull inne i et intervall, en avkortet
+ * vedlikeholdsperiode, seponert for tidlig). Et intervall kan være delt opp
+ * annerledes enn i fasiten så lenge hver dag får samme dose. Et legemiddel i
+ * teksten hører til det lengste fasitnavnet det begynner med («Aripiprazol
+ * peroralt» til «Aripiprazol peroralt» foran «Aripiprazol»). Tom liste: hver
+ * dag, også alle dagene etter siste endring, har nøyaktig fasitens doser.
+ */
+export function forlopsavvik(tekst: string, doser: readonly Dosepunkt[]): string[] {
+  const fasitnavn = (navn: string) =>
+    doser
+      .map((p) => p.legemiddel)
+      .filter((n) => navn.toLowerCase().startsWith(n.toLowerCase()))
+      .sort((x, y) => y.length - x.length)[0] ?? navn
+  const venter: Dosering[] = doser.map((p) => ({ ...p, til: p.til ?? Infinity }))
+  const viser = doseringer(tekst).map((d) => ({ ...d, legemiddel: fasitnavn(d.legemiddel) }))
+  // Dosene er like fra en grense til neste, så det holder å se på hver grense; den siste gjelder videre fremover.
+  const grenser = [...new Set([1, ...[...venter, ...viser].flatMap((d) => [d.fra, d.til + 1])])].filter(Number.isFinite).sort((x, y) => x - y)
+  const navn = [...new Set([...venter, ...viser].map((d) => d.legemiddel))]
+  const pa = (liste: Dosering[], legemiddel: string, dag: number) =>
+    [...new Set(liste.filter((d) => d.legemiddel === legemiddel && d.fra <= dag && dag <= d.til).map((d) => normal(d.dose)))].sort().join(' + ') || 'ingen dose'
+  const ut: { legemiddel: string; fra: number; til: number; venter: string; viser: string }[] = []
+  for (const [i, dag] of grenser.entries()) {
+    const til = (grenser[i + 1] ?? Infinity) - 1
+    for (const l of navn) {
+      const [v, s] = [pa(venter, l, dag), pa(viser, l, dag)]
+      if (v === s) continue
+      const forrige = ut.at(-1)
+      if (forrige && forrige.legemiddel === l && forrige.venter === v && forrige.viser === s && forrige.til === dag - 1) forrige.til = til
+      else ut.push({ legemiddel: l, fra: dag, til, venter: v, viser: s })
+    }
+  }
+  return ut.map((a) => `${a.legemiddel} ${dagtekst(a.fra, a.til)}: ${a.viser}, fasiten sier ${a.venter}`)
 }
 
 /** Avvikene mellom det som ble observert og fasiten for forløpet (tom liste: i samsvar). */
 export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
   const f = FASIT[id]
   const avvik: Avvik[] = []
-  const stopp = o.utfall === 'stopp'
+  // Et stopp og en avklaring gir begge ingen plan, og begge skal si hva som er årsaken.
+  const stopp = o.utfall === 'stopp' || o.utfall === 'avklaring'
   for (const [m, navn] of GENERISKE) if (m.test(o.skjerm) || (o.sporsmal ?? []).some((s) => m.test(s))) avvik.push({ type: 'bruk', hva: `Viser ${navn}.` })
   if (stopp && f?.stoppkategori !== 'teknisk' && PROV_IGJEN.test(o.skjerm)) avvik.push({ type: 'bruk', hva: 'Ber om «Prøv igjen senere» uten at stoppet er teknisk.' })
   if ((o.enkeltvalg ?? 0) > 0) avvik.push({ type: 'bruk', hva: `${o.enkeltvalg} dosevalg med bare ett alternativ måtte trykkes.` })
@@ -338,20 +392,25 @@ export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
 
   const riktige = [f.utfall].flat()
   const faktisk = o.utfall === 'komplett plan' ? 'komplett' : o.utfall
-  if (!riktige.includes(faktisk as 'komplett' | 'stopp')) avvik.push({ type: 'klinisk', hva: `Utfallet er «${o.utfall}», fasiten sier ${riktige.join(' eller ')} (${f.kilde}).` })
+  if (!riktige.includes(faktisk as Utfall)) avvik.push({ type: 'klinisk', hva: `Utfallet er «${o.utfall}», fasiten sier ${riktige.join(' eller ')} (${f.kilde}).` })
 
   if (faktisk === 'komplett') {
-    for (const [navn, tekst] of [['Skjermen', o.skjerm], ['Kopien', o.kopi], ...(o.utskrift !== undefined ? [['Utskriften', o.utskrift]] : [])] as const) {
+    // Kopien har én rad per linje; for skjermen og utskriften leser nettleserkjøringen radene fra tidslinjen. Uten rader kontrolleres bare dosepunktene.
+    const flater: [string, string, string | undefined][] = [
+      ['Skjermen', o.skjerm, o.skjermrader],
+      ['Kopien', o.kopi, o.kopi],
+      ...(o.utskrift !== undefined ? [['Utskriften', o.utskrift, o.utskriftsrader] as [string, string, string | undefined]] : []),
+    ]
+    for (const [navn, tekst, rader] of flater) {
       if (!tekst) {
         avvik.push({ type: 'klinisk', hva: `${navn} er tom.` })
         continue
       }
-      const mangler = (f.doser ?? []).filter((p) => !harDosepunkt(tekst, p))
-      for (const p of mangler) avvik.push({ type: 'klinisk', hva: `${navn} mangler ${p.legemiddel} ${p.dose} ${p.til === undefined ? `fra dag ${p.fra}` : `dag ${p.fra}–${p.til}`}.` })
+      if (rader !== undefined) for (const x of forlopsavvik(rader, f.doser ?? [])) avvik.push({ type: 'klinisk', hva: `${navn}: ${x}.` })
+      else
+        for (const p of (f.doser ?? []).filter((p) => !harDosepunkt(tekst, p))) avvik.push({ type: 'klinisk', hva: `${navn} mangler ${p.legemiddel} ${p.dose} ${dagtekst(p.fra, p.til ?? Infinity)}.` })
       if (f.slutt && !f.slutt.test(tekst)) avvik.push({ type: 'klinisk', hva: `${navn} mangler sluttmålet (${f.slutt.source}).` })
     }
-    // Kopien har én rad per linje og de samme radene som skjermen (`planTekst`), så den kan sammenlignes rad for rad.
-    if (f.doser && o.kopi) for (const x of ekstraDoser(o.kopi, f)) avvik.push({ type: 'klinisk', hva: `Kopien har ${x}, som fasiten ikke har.` })
   }
   if (stopp) {
     for (const g of f.grunn ?? []) if (!g.test(o.skjerm)) avvik.push({ type: 'bruk', hva: `Stoppet sier ikke hvilket forhold som stopper (venter ${g.source}).` })

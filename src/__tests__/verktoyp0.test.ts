@@ -16,13 +16,14 @@
 import { describe, expect, it } from 'vitest'
 import { beregnPlan, entydigeTrinnvalg, medTrinnvalg, TOMT_SKJEMA } from '../verktoy/doseplan'
 import { flyttilstand } from '../verktoy/flyt'
-import { flytoppsett, INDIVIDUELT, standardId, UNNTAK_STANDARD, vurderFlyt } from '../verktoy/flyt/flyt'
-import { harKontrollertKatalog } from '../verktoy/flyt/katalogkontroll'
+import { flytoppsett, INDIVIDUELT, standardId, UNNTAK_STANDARD, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
+import { harKontrollertKatalog, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { erErstattet, erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
 import { besvartSkjema, tidFor } from '../verktoy/regler/pilotmatrise'
 import { VERKTOY } from '../verktoy/register'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
+import { katalogkandidater } from './hjelp/katalogkandidater'
 import { BRUKERFORLOP, kjorForlop, lesUttrekkene, uttrekkFor, type Brukerforlop } from './qa/brukerforlop'
 
 const uttrekkene = lesUttrekkene()
@@ -34,7 +35,8 @@ const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
 const iBruk: Regel[] = REGELSETT.regler.filter((r) => erKliniskGodkjent(r) && !erErstattet(r, REGELSETT.regler))
 
 const ESCITALOPRAM = 'seponering-escitalopram-tabletter-og-draper'
-const RESERVE = [ESCITALOPRAM, 'bytte-citalopram-sertralin', 'bytte-escitalopram-sertralin', 'kryssnedtrapping-sertralin-mirtazapin', 'seponering-vortioksetin']
+/** Katalogen fra P2a ført som kontrollert bare i testen, slik appen blir når avtrykkene er ført. */
+const KANDIDATER = katalogkandidater()
 const TIDLIGERE = standardId('unntak', 'tidligere_seponeringssymptomer')
 
 /** Forløpet kjørt to ganger: med den første og med den siste dosen siden tilbyr i hvert trinnvalg. */
@@ -58,50 +60,67 @@ describe('P0-1 escitalopram: komplett plan bare etter ett dosevalg per trinn, hv
   })
 })
 
-describe('P0-2 reservevisningen med «Gjelder/Gjelder ikke» (reproduksjon)', () => {
-  it('fem godkjente regler i bruk har ingen kontrollert spørsmålskatalog og vises med regelens egne tekster', () => {
-    expect(iBruk.filter((r) => !harKontrollertKatalog(r) && flytoppsett(r).sporsmal.length > 0).map((r) => r.id).sort()).toEqual([...RESERVE].sort())
+describe('P0-2 reservevisningen med «Gjelder/Gjelder ikke» (rettet i P2a, katalogen kontrollert 07.11.2026)', () => {
+  /** Reglene i bruk med spørsmål som vises med reservevisningen, med katalogene i `kontrollerte` (ellers appens). */
+  const iReserve = (kontrollerte?: Katalogkontroll[]) =>
+    iBruk
+      .filter((r) => !flytoppsett(r, kontrollerte && { kontrollerte }).katalog && flytoppsett(r).sporsmal.length > 0)
+      .map((r) => r.id)
+      .sort()
+  const RESERVE: Flytgrunnlag = { kontrollerte: [] }
+
+  it('ingen godkjent regel i bruk vises med reservevisningen i appen; avtrykkene i appen er nøyaktig katalogen slik den er nå', () => {
+    expect(iReserve()).toEqual([])
+    expect(iBruk.filter((r) => flytoppsett(r).sporsmal.length > 0).every(harKontrollertKatalog)).toBe(true)
+    for (const k of KONTROLLERTE_KATALOGER) expect(KANDIDATER.find((x) => x.regel === k.regel)?.katalogavtrykk, k.regel).toBe(k.katalogavtrykk)
   })
 
   it.each([ESCITALOPRAM, 'bytte-citalopram-sertralin', 'bytte-escitalopram-sertralin'])(
-    '%s: «Gjelder» på tidligere seponeringsplager gir «Da gjelder ikke regelen»',
+    '%s: appen spør med Ja / Nei / Vet ikke og sier hvorfor; reservevisningen sier «Stemmer / Stemmer ikke» og aldri «Da gjelder ikke regelen»',
     (id) => {
       const r = regel(id)
-      const s = vurderFlyt(r, {}).sporsmal.find((x) => x.id === TIDLIGERE)!
-      expect(s.alternativer.map((a) => a.tekst)).toEqual(['Gjelder', 'Gjelder ikke'])
-      expect(vurderFlyt(r, { [TIDLIGERE]: 'ja' }).stopp.find((x) => x.sporsmal === TIDLIGERE)?.tekst).toBe(UNNTAK_STANDARD)
+      const q = vurderFlyt(r, {}).sporsmal.find((x) => /^tidligere_seponeringsplager/.test(x.id))!
+      expect(q.alternativer.map((a) => a.tekst)).toEqual(['Ja', 'Nei', 'Vet ikke'])
+      expect(vurderFlyt(r, { [q.id]: 'ja' }).stopp.find((x) => x.sporsmal === q.id)?.tekst).toMatch(
+        /^Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker\. (Nedtrappingen må tilpasses individuelt|Byttet må planlegges individuelt)/,
+      )
+      // Reservevisningen, som gjelder når et avtrykk ikke stemmer lenger.
+      const s = vurderFlyt(r, {}, RESERVE).sporsmal.find((x) => x.id === TIDLIGERE)!
+      expect(s.alternativer.map((a) => a.tekst)).toEqual(['Stemmer', 'Stemmer ikke'])
+      const reserve = vurderFlyt(r, { [TIDLIGERE]: 'ja' }, RESERVE).stopp.find((x) => x.sporsmal === TIDLIGERE)?.tekst
+      expect(reserve).toBe(UNNTAK_STANDARD)
+      expect(reserve).not.toMatch(/gjelder ikke regelen/i)
     },
   )
-
-  it.fails('ønsket (P2): ingen godkjent regel i bruk vises med reservevisningen', () => {
-    expect(iBruk.filter((r) => !harKontrollertKatalog(r) && flytoppsett(r).sporsmal.length > 0).map((r) => r.id)).toEqual([])
-  })
 })
 
-describe('P0-3 stopp uten konkret grunn', () => {
+describe('P0-3 stopp uten konkret grunn (rettet i P2a, katalogen kontrollert 07.11.2026)', () => {
   /** Alle svar på et synlig spørsmål som stopper planen, med forklaringen klinikeren får. */
-  const stoppsvar = (r: Regel) =>
-    flytoppsett(r).sporsmal.flatMap((q) => {
-      const s = vurderFlyt(r, {}).sporsmal.find((x) => x.id === q.id)
-      return (s?.stopperVed ?? []).map((svar) => ({ regel: r.id, sporsmal: q.id, svar, tekst: vurderFlyt(r, { [q.id]: svar }).stopp.find((x) => x.sporsmal === q.id)?.tekst }))
+  const stoppsvar = (r: Regel, g?: Flytgrunnlag) =>
+    flytoppsett(r, g).sporsmal.flatMap((q) => {
+      const s = vurderFlyt(r, {}, g).sporsmal.find((x) => x.id === q.id)
+      return (s?.stopperVed ?? []).map((svar) => ({ regel: r.id, sporsmal: q.id, svar, tekst: vurderFlyt(r, { [q.id]: svar }, g).stopp.find((x) => x.sporsmal === q.id)?.tekst }))
     })
-  const generiske = () => iBruk.flatMap(stoppsvar).filter((x) => x.tekst === INDIVIDUELT || x.tekst === UNNTAK_STANDARD)
+  const generiske = (g?: Flytgrunnlag) => iBruk.flatMap((r) => stoppsvar(r, g)).filter((x) => x.tekst === INDIVIDUELT || x.tekst === UNNTAK_STANDARD || /gjelder ikke regelen/i.test(x.tekst ?? ''))
 
-  it('reproduksjon: 28 stoppende svar i åtte regler gir bare «Da gjelder ikke regelen» eller «Verktøyet lager ingen plan …»', () => {
-    const g = generiske()
-    expect(g).toHaveLength(28)
-    expect([...new Set(g.map((x) => x.regel))].sort()).toEqual(
-      ['bytte-citalopram-sertralin', 'bytte-escitalopram-sertralin', 'depot-risperidon-xeplion', 'kryssnedtrapping-sertralin-mirtazapin', ESCITALOPRAM, 'seponering-vortioksetin', 'tillegg-litium-lamotrigin', 'tillegg-valproat-lamotrigin'].sort(),
-    )
+  it('i appen sier hvert svar som stopper planen, hvilket forhold som stopper og hvorfor', () => {
+    expect(generiske()).toEqual([])
+    // Minst like mange stoppende svar som de 28 generiske i P0-rapporten, og hvert har sin egen tekst.
+    const alle = iBruk.flatMap((r) => stoppsvar(r))
+    expect(alle.length).toBeGreaterThan(28)
+    for (const x of alle) expect(x.tekst, `${x.regel} ${x.sporsmal}=${x.svar}`).toMatch(/\S/)
   })
 
-  it.fails('ønsket (P2): hvert svar som stopper planen, sier hvilket forhold som stopper og hvorfor', () => {
-    expect(generiske()).toEqual([])
+  it('i reservevisningen kommer hvert generiske stopp fra unntakene, og ingen sier «Da gjelder ikke regelen»', () => {
+    const g = generiske({ kontrollerte: [] })
+    expect(g.length).toBeGreaterThan(0)
+    expect(g.filter((x) => /gjelder ikke regelen/i.test(x.tekst ?? ''))).toEqual([])
   })
 })
 
 describe('P0-4 lang behandlingstid ved escitalopram (rettet i spor B)', () => {
-  const LANG = standardId('sporsmal', 'lang_behandlingstid')
+  // Katalogens spørsmål, som avgjør regelspørsmålet `lang_behandlingstid` (P2a).
+  const LANG = 'lang_behandlingstid'
   const ESC = { fra: { nokkel: 'escitalopram', formulering: 'standard' as const } }
   const uttrekk = uttrekkFor(ESC, uttrekkene)
   const tilstand = (dose: string, legemiddelform: string, flytsvar: Record<string, string> = {}) =>
@@ -135,7 +154,7 @@ describe('P0-4 lang behandlingstid ved escitalopram (rettet i spor B)', () => {
     const ja = tilstand(dose, form, { [LANG]: 'ja' })
     expect(ja.tilstand.kontroll.utfall).toBe('kan_ikke')
     expect(ja.tilstand.kontroll.grunner).toEqual([
-      expect.objectContaining({ sporsmal: LANG, tekst: expect.stringMatching(/^Verktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/) }),
+      expect.objectContaining({ sporsmal: LANG, tekst: expect.stringMatching(/^Den godkjente planen gjelder bare kort behandlingstid\. Etter lang bruk anbefales vanligvis mindre reduksjoner/) }),
     ])
     // Nei gir fortsatt en plan (svaret er tillatende).
     expect(tilstand(dose, form, { [LANG]: 'nei' }).tilstand.kontroll.utfall).toBe('kan_lages_hvis')

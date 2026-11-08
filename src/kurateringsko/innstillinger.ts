@@ -27,6 +27,12 @@ export interface Koinnstillinger {
   de_novo_runde: number
   /** Dager fra kunnskapsgrensen til evidensovervåkningen er forfalt. */
   evidensovervaking_dager: number
+  /**
+   * Dager fra en gren med kontrollpunkter sikkerhetsfilteret stoppet, er
+   * publisert, til stoffet gis ut til `oppfolging`. Et nytt forsøk rett etter
+   * et stopp ville som regel stoppes igjen.
+   */
+  oppfolging_ventetid_dager: number
   /** Hvor ofte stoffene og tallene leses fra databasen. */
   maling_timer: number
   /** Øktgrener uten aktiv reservasjon slettes etter så mange dager. */
@@ -47,6 +53,7 @@ export interface Koinnstillinger {
     manglende_innhold: number
     uten_kilde: number
     faa_referanser: number
+    oppfolging: number
   }
   /** Færre referanser enn dette regnes som svak dokumentasjon. */
   faa_referanser: number
@@ -66,6 +73,7 @@ export const INNSTILLINGER: Koinnstillinger = {
   // Runde 2 er den første i kurateringsgrenene, gjennom hele registeret.
   de_novo_runde: 2,
   evidensovervaking_dager: 180,
+  oppfolging_ventetid_dager: 7,
   maling_timer: 20,
   okt_slettes_etter_dager: 14,
   // Piloten for kurateringsgrenene (citalopram, lurasidon, GHB) er bestått
@@ -84,6 +92,8 @@ export const INNSTILLINGER: Koinnstillinger = {
     manglende_innhold: 100,
     uten_kilde: 50,
     faa_referanser: 20,
+    // Foran et nytt stoff (de novo gir 350 eller mer for et som aldri er kuratert), etter forrang og det som fortsettes.
+    oppfolging: 400,
   },
   faa_referanser: 5,
 }

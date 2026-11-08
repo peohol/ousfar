@@ -7,6 +7,7 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import type userEvent from '@testing-library/user-event'
 import { expect } from 'vitest'
+import { KOPIER } from '../../components/verktoy/Doseplanvisning'
 
 export type Bruker = ReturnType<typeof userEvent.setup>
 
@@ -101,9 +102,9 @@ export async function velgForm(user: Bruker, navn: string | RegExp, verdi: strin
   await user.click(radio)
 }
 
-/** Teksten som kopieres med «Kopier planen», når planen er beregnet. */
-export async function kopier(user: Bruker) {
-  await user.click(await screen.findByRole('button', { name: 'Kopier planen' }, { timeout: 3000 }))
+/** Teksten som kopieres med «Kopier planen» (standardplanen) eller «Kopier med faglig grunnlag» (`utvidet`), når planen er beregnet. */
+export async function kopier(user: Bruker, hva: keyof typeof KOPIER = 'kort') {
+  await user.click(await screen.findByRole('button', { name: KOPIER[hva].knapp }, { timeout: 3000 }))
   return navigator.clipboard.readText()
 }
 
@@ -125,18 +126,19 @@ export const BEKREFTELSER = 'Bekreft før planen vises'
 /** Teksten som stiller spørsmålet til en radiogruppe. */
 const sporsmalstekst = (gruppe: HTMLElement) => document.getElementById(gruppe.getAttribute('aria-labelledby') ?? '')?.textContent ?? ''
 
-/** Spørsmålet med teksten `tekst` (Ja/Nei/Ukjent). */
+/** Spørsmålet med teksten `tekst` (Ja/Nei/Vet ikke). */
 export const sporsmal = (tekst: string | RegExp) => screen.getByRole('radiogroup', { name: tekst })
 
-/** Svaret som sier ja (`Ja`, eller «Gjelder» for et unntak i reservevisningen), og svaret som sier nei. */
-const JA = /^(Ja|Gjelder)$/
-const NEI = /^(Nei|Gjelder ikke)$/
+/** Svaret som sier ja (`Ja`, eller «Stemmer» for et unntak i reservevisningen), og svaret som sier nei. */
+const JA = /^(Ja|Stemmer)$/
+const NEI = /^(Nei|Stemmer ikke)$/
 /**
  * Svaret på et spørsmål fra en kontrollert katalog som ikke er ja/nei: en
- * vurdering klinikeren har gjort («Ja» framfor «Ikke ennå»), og en voksen
- * pasient under 65 år (syntetisk standard).
+ * vurdering klinikeren har gjort («Ja» framfor «Ikke ennå»), en voksen
+ * pasient under 65 år som følges poliklinisk, og et bytte på grunn av
+ * bivirkninger (syntetisk standard).
  */
-const STANDARDSVAR = [/^Ja$/, /^18–64 år$/]
+export const STANDARDSVAR = [/^Ja$/, /^18–64 år$/, /^Poliklinisk$/, /^Bivirkninger$/]
 
 /**
  * Svaret testen ønsker på spørsmålet `valg`: et eget svar i `svar`, ja når det
@@ -180,6 +182,8 @@ export async function besvarAlt(user: Bruker, ja: RegExp[] = [], svar: (readonly
     for (const navn of grupper) {
       const gruppe = screen.queryByRole('group', { name: navn })
       for (const valg of gruppe ? within(gruppe).queryAllByRole('radiogroup') : []) {
+        // Et svar kan skjule spørsmål som står senere i lista; de besvares ikke.
+        if (!valg.isConnected) continue
         const onsket = onsketSvar(valg, ja, svar, snudd)
         if (onsket.checked) continue
         await user.click(onsket)

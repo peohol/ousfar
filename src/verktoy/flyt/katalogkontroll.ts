@@ -29,36 +29,45 @@ export interface Katalogkontroll {
   merknad: string
 }
 
-/** ChatGPTs merknad til kontrollen 04.11.2026 (HEAD 8322298 i #329), felles for de sju avtrykkene. */
-const KONTROLL_2026_11_04 =
-  'Avgrenset semantisk godkjenning av spørsmålskatalogen: ingen materiell meningsendring i spørsmål, kategorier eller avbildning. Gjelder bare språk, kategorisering og innmating av de samme kliniske betingelsene, ikke en ny godkjenning av doseringsregelen; doser, risikoavgjørelser, unntak og godkjenningsgrenser håndheves fortsatt av den godkjente regelversjonen.'
+/**
+ * ChatGPTs merknad til kontrollen 07.11.2026 av katalogen fra P2a (#345, HEAD
+ * 02585a4), felles for de tolv avtrykkene.
+ */
+const KONTROLL_2026_11_07 =
+  'Avgrenset semantisk godkjenning: ingen utestående menings- eller avbildningsfeil i katalogen for de 12 aktive reglene. Gjelder kun spørsmålsformuleringer, betingelser, stoppforklaringer og tilhørende motorinndata for de eksakte regel- og katalogavtrykkene, ikke ny godkjenning av doser, kliniske strategier, utvidet omfang eller senere katalogendringer.'
 
 const kontrollert = (regel: string, regelversjon: number, fingeravtrykk: string, katalogavtrykk: string): Katalogkontroll => ({
   regel,
   regelversjon,
   fingeravtrykk,
   katalogavtrykk,
-  dato: '2026-11-04',
+  dato: '2026-11-07',
   av: 'ChatGPT (via Peder)',
-  merknad: KONTROLL_2026_11_04,
+  merknad: KONTROLL_2026_11_07,
 })
 
 /**
- * Avtrykkene som er kontrollert. Escitalopram v13 er bevisst ikke med (regelen
- * spør «over 65 år», godkjenningen gjelder under 65 år; rettes i v14), og
- * heller ikke vortioksetin v12 og sertralin → mirtazapin v10, som ikke er
- * godkjent i denne kontrollen. De beholder reservevisningen. Bupropion og
- * agomelatin har ingen betingelser.
+ * Avtrykkene som er kontrollert, nøyaktig slik `docs/verktøy-sporsmalskatalog.md`
+ * viser dem. Escitalopram v13 er erstattet av v14 i appen og er ikke med. En
+ * endring i katalogen eller regelen gir et nytt avtrykk, og regelen viser da
+ * reservevisningen (S5) til det nye avtrykket er kontrollert og ført; denne
+ * godkjenningen gjenbrukes ikke. Avtrykkene ChatGPT godkjente 04.11.2026 (#329)
+ * gjaldt katalogen før P2a og er erstattet.
  */
-export const KONTROLLERTE_KATALOGER: readonly Katalogkontroll[] = [
-  kontrollert('depot-aripiprazol-maintena', 3, '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20', 'd8332fef6a65e76541133ea29ece36e4fd610b90425a11f3b9051e7bbb819428'),
-  kontrollert('depot-paliperidon-xeplion', 3, '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf', 'f9c3e2226a4ed6dfd415db2df7c36981f7ad9d22f0f04ae970d1c3add5cb8267'),
-  kontrollert('depot-risperidon-xeplion', 8, '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e', '699c4653569a26c396b180d3dc452a9855492c1fd4bf196f6009b0f5391aa4b7'),
-  kontrollert('antipsykotikabytte-olanzapin-aripiprazol', 8, 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e', 'c864b7076a8be14a5637f5600ff44d1cb8107b5bf9fb4f29f3e6385e404989ee'),
-  kontrollert('antipsykotikabytte-risperidon-aripiprazol', 8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870', '3829851fbeff48009199f69e0781e1402a0f92a272d6916fd7dc79fcbff6420d'),
-  kontrollert('tillegg-valproat-lamotrigin', 2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', '5705970026b34e98f4bd8f1e48ea1fe37717e85a0f9dbf4ec0f490987b79d4e9'),
-  kontrollert('tillegg-litium-lamotrigin', 2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b', 'b4da785134bdad4212a1162bc4cf2dacf929bbb8e6bcef809c57841ffe49e264'),
-]
+export const KONTROLLERTE_KATALOGER: readonly Katalogkontroll[] = Object.freeze([
+  kontrollert('kryssnedtrapping-sertralin-mirtazapin', 10, '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a', 'ecb2ff7f8eab6822a8168bb32cf874bf7bf0c99dd88e238ad3a4a5a736b1c794'),
+  kontrollert('depot-aripiprazol-maintena', 3, '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20', '8b42edb2bbfe9df0697e7db4595e05d9c1260525e24b50747cdb246474fdac12'),
+  kontrollert('depot-paliperidon-xeplion', 3, '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf', 'cb84d59b5fa95c77bd5adea92a0c37e56979e8e69bf8f2e5000f244741991c99'),
+  kontrollert('seponering-vortioksetin', 12, 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3', '69b7d1907082e2498e3b30018a5f31300b11d1af741f1b6fc2158279c9ec9ddd'),
+  kontrollert('seponering-escitalopram-tabletter-og-draper', 14, '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f', '2e9c28244fff4aa16e038f94873fd18fc4ce3991960683379dabf1c4c1f2158d'),
+  kontrollert('bytte-escitalopram-sertralin', 2, 'c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c', '225e7e10dddb64c5fb5d29b6cf2785d587fa1288cbb37ed0cfeed415b543e5c3'),
+  kontrollert('bytte-citalopram-sertralin', 2, '2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8', 'fc34ff396c1fe9c4611426f9eba32cb09248aabdf0f36171ced2e579aea6fe12'),
+  kontrollert('depot-risperidon-xeplion', 8, '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e', '4436def26dad4887ada66b80c99aade860287b4a4c85f273f3114bc8db1d9b26'),
+  kontrollert('antipsykotikabytte-olanzapin-aripiprazol', 8, 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e', '53de23f5cbd195cde4f1e7dbd555baf368a01fa2cf05e32d2040cfa57070533e'),
+  kontrollert('antipsykotikabytte-risperidon-aripiprazol', 8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870', 'a26697d8036f71c7f7befac403c7724fef83187ebd3ed4c33253d587c306854d'),
+  kontrollert('tillegg-valproat-lamotrigin', 2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', '35c45eb8dbdb4411dfce0ade5f6438c7653d7f775aa7e7fba295f11c748d9d54'),
+  kontrollert('tillegg-litium-lamotrigin', 2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b', '699ce72181ee0ed3ff667918a3f578c6b77ff8196f1437301906561757bbb05b'),
+])
 
 /** Katalogoppføringene for regelens betingelser, i regelens rekkefølge. */
 export const betingelserFor = (r: Pick<Regel, 'id'>, katalog: readonly Katalogbetingelse[] = KATALOGBETINGELSER): Katalogbetingelse[] => katalog.filter((b) => b.regel === r.id)

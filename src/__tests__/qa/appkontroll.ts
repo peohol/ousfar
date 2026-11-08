@@ -34,8 +34,10 @@ type Side = any
 
 interface Appresultat {
   tabell: boolean
-  /** Kopien når appen viser en plan; ellers teksten i verktøyets resultatdel. */
+  /** Den utvidede kopien når appen viser en plan; ellers teksten i verktøyets resultatdel. */
   tekst: string
+  /** Den korte kopien («Kopier planen»), som har tidslinjen slik skjermen viser den. */
+  kort?: string
   /** Den synlige tidslinjen: kolonneoverskriftene og cellene i hver rad, slik de står på siden. */
   tidslinje?: Tidslinje
   /** Ved formbytte: om appen viste en plan før byttet. */
@@ -187,7 +189,7 @@ async function besvar(p: Side, onsket: Readonly<Record<string, string>>) {
       }
       const tekster: string[] = await Promise.all(radioer.map(async (r: Side) => ((await r.evaluate((x: HTMLInputElement) => x.parentElement?.textContent ?? '')) as string).trim()))
       const finn = (m: RegExp) => tekster.findIndex((t) => m.test(t))
-      const i = snudd.has(id) ? finn(/^(Ja|Gjelder)$/) : [finn(/^(Nei|Gjelder ikke)$/), finn(/^Ja$/), finn(/^18–64 år$/)].find((x) => x >= 0)
+      const i = snudd.has(id) ? finn(/^(Ja|Stemmer)$/) : [/^(Nei|Stemmer ikke)$/, /^Ja$/, /^18–64 år$/, /^Poliklinisk$/, /^Bivirkninger$/].map(finn).find((x) => x >= 0)
       if (i === undefined || i < 0) throw new Error(`Vet ikke hva som skal svares på spørsmålet ${id} (${tekster.join(' / ')})`)
       if (await sett(radioer[i]!)) endret = true
     }
@@ -196,7 +198,7 @@ async function besvar(p: Side, onsket: Readonly<Record<string, string>>) {
     for (const id of await ider(p)) {
       const li = p.locator(`[data-flytsporsmal="${id}"]`)
       if (id in onsket || snudd.has(id) || (await li.locator('.sporsmal__merknad:not([data-tone])').count()) === 0) continue
-      const nei = li.getByRole('radio', { name: /^(Nei|Gjelder ikke)$/ })
+      const nei = li.getByRole('radio', { name: /^(Nei|Stemmer ikke)$/ })
       if ((await nei.count()) === 0 || !(await nei.isChecked())) continue
       snudd.add(id)
       endret = true
@@ -270,6 +272,12 @@ async function kjorIApp(p: Side, url: string, r: Forlopsresultat): Promise<Appre
     await besvar(p, svar)
     await iRo(p)
   }
+  // Trinn med bare én godkjent dose godtas samlet («Bruk disse dosene»), som den lokale kjøringen velger dem.
+  const samlet = p.locator('[data-entydige]')
+  if ((await samlet.count()) > 0) {
+    await samlet.getByRole('button', { name: 'Bruk disse dosene' }).click()
+    await iRo(p)
+  }
   // Der siden lar forskriveren velge dosen for et trinn, velges den samme dosen som i den lokale kjøringen (første eller siste).
   const trinn = p.getByRole('region', { name: 'Doser som kan velges' })
   for (let n = 0; n < r.trinnvalg.length && (await trinn.count()) > 0; n++) {
@@ -281,8 +289,13 @@ async function kjorIApp(p: Side, url: string, r: Forlopsresultat): Promise<Appre
   const liste = p.locator(TIDSLINJE).first()
   if ((await p.locator(TIDSLINJE).count()) === 0) return ingenPlan(ekstra)
   const tidslinje = (await liste.evaluate(lesTidslinje)) as Tidslinje
-  await p.getByRole('button', { name: 'Kopier planen' }).click()
-  return { tabell: true, tekst: await p.evaluate(() => navigator.clipboard.readText()), tidslinje, ...ekstra }
+  // Den korte kopien har tidslinjen slik skjermen viser den; den utvidede har hele planen med det faglige grunnlaget, som den lokale kjøringen (`planTekst` med `utvidet`).
+  const kopier = async (navn: string) => {
+    await p.getByRole('button', { name: navn }).click()
+    return p.evaluate(() => navigator.clipboard.readText())
+  }
+  const kort = await kopier('Kopier planen')
+  return { tabell: true, kort, tekst: await kopier('Kopier med faglig grunnlag'), tidslinje, ...ekstra }
 }
 
 /** Linjer i kopien som avhenger av når FEST ble lest, og derfor ventes å være ulike lokalt og i appen. */
@@ -347,7 +360,7 @@ function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
       ...forutsattavvik(r, forutsatt),
       ...utenMotstykke(lokal, app).map((l) => `«${l}» mangler i appens kopi`),
       ...utenMotstykke(app, lokal).map((l) => `appens kopi har i tillegg «${l}»`),
-      ...(a.tidslinje ? tidslinjeavvik(a.tidslinje, a.tekst) : ['appen viser ingen tidslinje å sammenligne kopien med']),
+      ...(a.tidslinje ? tidslinjeavvik(a.tidslinje, a.kort ?? a.tekst) : ['appen viser ingen tidslinje å sammenligne kopien med']),
     ]
   }
   if (r.klasse === 'fagtekst') return /Beregning er ikke tilgjengelig/.test(a.tekst) ? ['appen sier at beregning ikke er tilgjengelig, men viser ikke fagteksten'] : []
@@ -622,7 +635,7 @@ async function main() {
       '<!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->',
       '# OUSFAR Verktøy – brukerforløpene i den publiserte appen',
       '',
-      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
+      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele den utvidede kopien («Kopier med faglig grunnlag») linje for linje, og den synlige tidslinjen (hver rad og celle) mot den korte kopien («Kopier planen»), som har radene slik skjermen viser dem. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
       '',
       `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
       '',
