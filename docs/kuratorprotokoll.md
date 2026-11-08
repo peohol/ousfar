@@ -206,6 +206,7 @@ kontrollpunkt, med `nokkel`, `status`, `begrunnelse`, `kilder`, `sok`,
 | `beholdt_etter_kontroll` | Det står som før etter en selvstendig kontroll | Kilder og bevis |
 | `automatisk_verifisert` | Et automatisk lag, kontrollert produksjonsnært | Begrunnelse |
 | `tomt_begrunnet` | Ingen relevant dokumentasjon finnes | Hva det ble søkt etter |
+| `utsatt_sikkerhetsfilter` | Sikkerhetsfilteret stoppet arbeidet, så punktet er ikke kontrollert (under, «Når sikkerhetsfilteret stopper arbeidet») | Begrunnelse og hva som ble forsøkt (`sok`); ikke kilder og bevis |
 
 `modell_sha256` er fingeravtrykket av kontrollpunktene; endres modellen, må
 matrisen lages på nytt. Kontrollen bekrefter dekningen, ikke faglig sannhet:
@@ -247,9 +248,12 @@ Databasen stopper `avslutt_blindfase` og `til_kontroll` når et av dokumentene
 mangler disse feltene, har tomme oppføringer, eller ikke dekker hvert
 kontrollpunkt (dekningsmatrisen) eller hvert krav og hver port (selvtesten)
 nøyaktig én gang med belegg; i selvtesten stopper også alt som ikke er bestått
-(`kuratering.dokumentfeil`). Fingeravtrykket `modell_sha256` kontrolleres av
-`npm run kurator -- dekning-gren`. Kontrollen hindrer at portene omgås med
-plassholdere; den erstatter ikke fagkontrollen.
+(`kuratering.dokumentfeil`), og et bevis for porten `dekning` som ikke nevner
+hvert punkt dekningsmatrisen fører som `utsatt_sikkerhetsfilter`.
+Fingeravtrykket `modell_sha256` kontrolleres av
+`npm run kurator -- dekning-gren`, som også lister de utsatte punktene.
+Kontrollen hindrer at portene omgås med plassholdere; den erstatter ikke
+fagkontrollen.
 
 ## Konsentrasjonene i teksten
 
@@ -432,6 +436,38 @@ kontrolløren kommer dit. Reglene presiserer kravene over; de erstatter dem ikke
   i evidensjournalen, dekningsmatrisen, selvtesten og rapporten, og alt som sier
   at saken venter, fjernes. Selvtesten kvitterer aldri ut det evidensjournalen
   sier er ukontrollert (krav 8).
+
+## Når sikkerhetsfilteret stopper arbeidet
+
+Claude har et automatisk sikkerhetsfilter som kan stoppe en økt midt i
+arbeidet, oftest når mye tekst om forgiftning, misbruk og dødelige
+konsentrasjoner samler seg i den samme økten. Fagansvarlig avgjorde
+2026-11-07 hvordan det håndteres:
+
+- **Korte økter.** En side skrives i flere korte økter (eller hjelpeagenter),
+  hver med bare kildene den delen trenger. Kortene om toksisitet og
+  forgiftning får sin egen korte økt, og den tar ikke med seg kilder eller
+  tekst fra de andre delene.
+- **Bare stoffets rad.** Fra tabeller over terapeutiske, toksiske og dødelige
+  konsentrasjoner hentes bare raden for stoffet, ikke hele tabellen.
+- **Et kort som fortsatt stoppes,** skrives ikke. Står det i grunnversjonen,
+  står det urørt som der; ellers legges det ikke til. Kuratoren fester en
+  `merknad` til kortet (`anker: {"objekt": …}`), eller til seksjonen
+  (`anker: {"seksjon": …}`) når kortet ikke finnes, som begynner «Stoppet av
+  sikkerhetsfilteret:» og sier hva som mangler. Evidensjournalen sier det
+  samme, og dekningsmatrisen fører området som `utsatt_sikkerhetsfilter`,
+  både når kortet står urørt og når det ikke finnes: begrunnelsen sier hva som
+  mangler, og `sok` hva som ble forsøkt (ikke `tomt_begrunnet`, som betyr at
+  ingen dokumentasjon finnes). Selvtesten kvitterer ikke ut punktet: beviset
+  for porten `dekning` nevner hver nøkkel som er utsatt, og databasen stopper
+  `til_kontroll` ellers. Resten av siden skrives ferdig, og grenen sendes til
+  kontroll som vanlig. Kortet står også under «mangler» i rapporten. Når
+  grenen er publisert, gir køen stoffet ut igjen til en oppfølging
+  (`oppfolging`) når ventetiden er gått (`docs/kurateringsko.md`), så kortene
+  ikke blir liggende.
+- **Ingen omvei.** Det som ble stoppet, skrives aldri på nytt i en annen form,
+  med andre ord eller av en annen økt eller agent for å komme forbi filteret.
+  Fagansvarlig kan selv føre inn tekst fra en annen kilde.
 
 ## Kontrollen
 

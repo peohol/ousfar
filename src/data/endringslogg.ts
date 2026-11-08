@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.0',
+    dato: '2026-11-07',
+    sammendrag: 'Kort som ikke kan skrives under kurateringen, merkes som ikke kontrollert og tas opp igjen automatisk',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fagsidene skrives nå i flere korte deler, og kortene om forgiftning skrives for seg, så kurateringen sjeldnere blir stoppet av et automatisk sikkerhetsfilter.',
+      'Kan et kort likevel ikke skrives, står det som før (eller tomt) med en merknad, mens resten av siden kontrolleres og publiseres. Kortet føres som ikke kontrollert, ikke som at det mangler dokumentasjon, og siden kan ikke meldes som ferdig kontrollert uten at det står.',
+      'Slike kort tas nå opp igjen automatisk i en ny kuratering en uke etter at siden er publisert, og på nytt til de er skrevet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.2',
     dato: '2026-11-07',
     sammendrag: 'Verktøyene ber ikke lenger om valg og svar som likevel ikke kan gi en plan',

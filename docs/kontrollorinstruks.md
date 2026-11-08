@@ -120,6 +120,18 @@ teksten med kuratorprotokollen etter.
      tvil, retter grenen bare noe i kortet (som en vaktmestergren med et
      annet formål), eller har et kort med ett tema en overskrift det ikke
      trenger, er det en merknad.
+   - **Et kort stoppet av sikkerhetsfilteret** (protokollen, «Når
+     sikkerhetsfilteret stopper arbeidet»): et kort med en merknad fra
+     kuratoren (på kortet, eller på seksjonen når kortet ikke finnes) som begynner «Stoppet av sikkerhetsfilteret:», er ikke i seg
+     selv grunn til endringer, og grenen kan godkjennes uten det. Kontroller
+     at kortet er urørt fra grunnversjonen (eller ikke lagt til), at
+     evidensjournalen sier det samme som merknaden, at dekningsmatrisen fører
+     punktet som `utsatt_sikkerhetsfilter` (ikke `tomt_begrunnet` eller som
+     kontrollert), at selvtesten nevner det som ikke kontrollert, og at
+     ingen annen del av siden bygger på det som mangler. Godkjenningen sier
+     hvilke kort som ikke er kontrollert av den grunn. Dine egne oppslag
+     gjør du på samme måte: i korte økter, og bare med stoffets rad fra
+     konsentrasjonstabellene.
 5. **Kommenter.** For hver endring som må gjøres: `kommenter` med
    `art: "sperrende"` og et `anker` som peker på det det gjelder (`objekt`
    for kortet, `felt` for feltet slik sammenligningen navngir det,

@@ -440,6 +440,74 @@ describe('kontrollen', () => {
     expect(lost.length).toBeGreaterThanOrEqual(15)
   })
 
+  it('fører kort sikkerhetsfilteret stoppet som utsatt, urørt eller ikke lagt til, og selvtesten må si at de ikke er kontrollert', async () => {
+    const k = await kuratertGren('Utsattstoff')
+    const gyldige = await gyldigeDokumenter()
+    const URORT = 'toksisitet_forgiftning/Toksiske konsentrasjoner'
+    const MANGLER = 'viktige_data/alvorlig_intoksikasjon'
+    const utsatt = (nokkel: string, endring: Json = {}) => ({
+      nokkel,
+      status: 'utsatt_sikkerhetsfilter',
+      begrunnelse: 'Stoppet av sikkerhetsfilteret: syntetisk begrunnelse.',
+      kilder: [],
+      sok: ['Syntetisk forsøk i en egen kort økt'],
+      artefakt: '',
+      bevis: '',
+      ...endring,
+    })
+    const matrise = (omrader: Record<string, Json>) => ({
+      ...(gyldige.dekningsmatrise as Json),
+      omrader: (gyldige.dekningsmatrise as { omrader: Json[] }).omrader.map((o) => omrader[o.nokkel as string] ?? o),
+    })
+    // Kortet står urørt fra grunnversjonen (med kilden det har der), eller det er ikke lagt til: begge uten bevis.
+    const begge = matrise({ [URORT]: utsatt(URORT, { kilder: ['Kilden kortet har i grunnversjonen'] }), [MANGLER]: utsatt(MANGLER) })
+    const dbFeil = async (art: string, innhold: unknown) =>
+      (await kall.fasit<{ f: string[] }>(`select kuratering.dokumentfeil($1, $2::jsonb) as f`, [art, JSON.stringify(innhold)]))[0]!.f
+    expect(await dbFeil('dekningsmatrise', begge)).toEqual([])
+    // Men det må si hva som ble forsøkt, og ha en begrunnelse.
+    expect(await dbFeil('dekningsmatrise', matrise({ [MANGLER]: utsatt(MANGLER, { sok: [] }) }))).toEqual([
+      `dekningsmatrise: ${MANGLER}: et område sikkerhetsfilteret stoppet, må si hva som ble forsøkt (sok).`,
+    ])
+    expect(await dbFeil('dekningsmatrise', matrise({ [MANGLER]: utsatt(MANGLER, { begrunnelse: ' ' }) }))).toEqual([`dekningsmatrise: ${MANGLER} mangler begrunnelse.`])
+
+    // Selvtesten må nevne hvert utsatt punkt i beviset for porten dekning; en del av en lengre nøkkel teller ikke.
+    const utsatteFeil = async (bevis: string, m: unknown = begge) =>
+      (
+        await kall.fasit<{ f: string[] }>(`select kuratering.selvtest_utsatte_feil($1::jsonb, $2::jsonb) as f`, [
+          JSON.stringify({ porter: [{ port: 'dekning', status: 'bestatt', bevis }] }),
+          JSON.stringify(m),
+        ])
+      )[0]!.f
+    const melding = (nokkel: string) => `selvtest: beviset for porten dekning må nevne ${nokkel}, som sikkerhetsfilteret stoppet og ikke er kontrollert.`
+    expect(await utsatteFeil('Syntetisk bevis')).toEqual([melding(URORT), melding(MANGLER)].sort())
+    expect(await utsatteFeil(`Ikke kontrollert: ${MANGLER}.`)).toEqual([melding(URORT)])
+    expect(await utsatteFeil(`Ikke kontrollert: ${URORT}; ${MANGLER}.`)).toEqual([])
+    expect(await utsatteFeil(`Ikke kontrollert: ${URORT}.`, matrise({ toksisitet_forgiftning: utsatt('toksisitet_forgiftning') }))).toEqual([melding('toksisitet_forgiftning')])
+    expect(await utsatteFeil('Syntetisk bevis', gyldige.dekningsmatrise)).toEqual([])
+
+    // Sammen med de andre dokumentene i grenen: en selvtest som ikke sier det, stopper til_kontroll.
+    await medDokumenter(k.gren)
+    await agent(claude, 'dokument', { gren: k.gren, art: 'dekningsmatrise', innhold: begge })
+    expect((await adm<{ manglende_dokumenter: string[] }>('les', { gren: k.gren })).manglende_dokumenter).toEqual(['selvtest'])
+    expect((await feilFra(() => agent(claude, 'til_kontroll', { gren: k.gren, revisjon: 1 })))?.message).toContain(melding(MANGLER))
+    const selvtest = gyldige.selvtest as { krav: Json[]; porter: Json[] }
+    await agent(claude, 'dokument', {
+      gren: k.gren,
+      art: 'selvtest',
+      innhold: { ...selvtest, porter: selvtest.porter.map((p) => (p.port === 'dekning' ? { ...p, bevis: `Dekker modellen. Stoppet av sikkerhetsfilteret, ikke kontrollert: ${URORT}; ${MANGLER}.` } : p)) },
+    })
+    expect((await adm<{ manglende_dokumenter: string[] }>('les', { gren: k.gren })).manglende_dokumenter).toEqual([])
+    expect((await agent<Sammendrag>(claude, 'til_kontroll', { gren: k.gren, revisjon: 1 })).status).toBe('klar')
+
+    // Køen får nøklene til de utsatte punktene, i modellens rekkefølge, og ingen fagtekst.
+    const ko = await db.transaction(async (tx) => {
+      await tx.query(`select set_config('role', 'service_role', true)`)
+      return (await tx.query<{ s: Json[] }>('select public.kuratering_kostatus() as s')).rows[0]!.s
+    })
+    expect(ko.find((g) => g.id === k.gren)!.utsatte).toEqual([MANGLER, URORT])
+    expect(JSON.stringify(ko)).not.toContain('Stoppet av sikkerhetsfilteret')
+  })
+
   it('lar en administrator vurdere, stanse, gjenoppta og forkaste', async () => {
     const k = await kuratertGren()
     await medDokumenter(k.gren)
@@ -1333,8 +1401,8 @@ describe('statusen og agentene', () => {
       return rows[0]!.s
     })
     const rad = ko.find((g) => g.id === k.gren)!
-    expect(Object.keys(rad).sort()).toEqual(['art', 'id', 'oppdatert_kl', 'publisert_kl', 'revisjon', 'runde', 'status', 'stoff'])
-    expect(rad).toMatchObject({ stoff: k.slug, art: 'kuratering', status: 'arbeid', revisjon: 1 })
+    expect(Object.keys(rad).sort()).toEqual(['art', 'id', 'oppdatert_kl', 'publisert_kl', 'revisjon', 'runde', 'status', 'stoff', 'utsatte'])
+    expect(rad).toMatchObject({ stoff: k.slug, art: 'kuratering', status: 'arbeid', revisjon: 1, utsatte: [] })
     expect((await feilFra(() => kall.les(admin, 'select public.kuratering_kostatus()')))?.code).toBe('42501')
   })
 
@@ -1396,6 +1464,16 @@ describe('innholdsmodellen i databasen', () => {
     expect(kontrollerDekning(m)).toEqual([])
     expect(await dbFeil(m)).toEqual([])
     m.omrader[0]!.kilder = ['']
+    expect(kontrollerDekning(m)).toHaveLength(1)
+    expect(await dbFeil(m)).toHaveLength(1)
+    m.omrader[0]!.kilder = ['SPC']
+    // Et punkt sikkerhetsfilteret stoppet: urørt fra grunnversjonen eller ikke lagt til, uten bevis, men med det som ble forsøkt.
+    const stoppet = { status: 'utsatt_sikkerhetsfilter' as const, begrunnelse: 'Stoppet av sikkerhetsfilteret.', sok: ['Syntetisk forsøk'], bevis: '' }
+    Object.assign(m.omrader[1]!, stoppet, { kilder: ['Kilden i grunnversjonen'] })
+    Object.assign(m.omrader[2]!, stoppet, { kilder: [] })
+    expect(kontrollerDekning(m)).toEqual([])
+    expect(await dbFeil(m)).toEqual([])
+    m.omrader[2]!.sok = []
     expect(kontrollerDekning(m)).toHaveLength(1)
     expect(await dbFeil(m)).toHaveLength(1)
   })
