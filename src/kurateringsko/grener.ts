@@ -41,6 +41,8 @@ function lesGren(v: unknown): Greninfo | null {
     runde: g.runde,
     oppdatert_kl: g.oppdatert_kl,
     publisert_kl: typeof g.publisert_kl === 'string' ? g.publisert_kl : null,
+    // Bare nøkler; noe annet enn en liste med tekster gir ingen utsatte punkter.
+    utsatte: Array.isArray(g.utsatte) ? g.utsatte.filter((n): n is string => typeof n === 'string' && n.trim() !== '') : [],
   }
 }
 

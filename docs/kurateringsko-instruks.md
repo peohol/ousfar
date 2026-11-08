@@ -49,7 +49,16 @@ ny `id` (`forny-1`, `forny-2`, `fullfort-1` …), og besvares på samme måte.
 
 ## 3. Kurater stoffet
 
-- **Modusen** står i `oppgave.modus` (i dag alltid `de_novo`).
+- **Modusen** står i `oppgave.modus` (i dag `de_novo`, eller `oppfolging`).
+- **En oppfølging** (`oppfolging`) tar bare kontrollpunktene sikkerhetsfilteret
+  stoppet i den siste publiserte grenen (`oppgave.sist_kuratert.utsatte`, grenen
+  i `sist_kuratert.gren`). Åpne en ny gren (`apne`, `"art": "kuratering"`), og
+  følg «Når sikkerhetsfilteret stopper arbeidet» i protokollen for de
+  punktene. Resten av dokumentene føres videre fra den forrige grenen, med
+  «Fra gren <id>:» foran. Det som fortsatt stoppes, føres som
+  `utsatt_sikkerhetsfilter` igjen. Stoppes alt, så grenen ikke har noe å
+  sende til kontroll, send `feilet` med grunnen «Stoppet av
+  sikkerhetsfilteret igjen».
 - **Grenen.** Har `oppgave.gren` en verdi, fortsetter du i den grenen:
   `gjenoppta.grunn` sier hvorfor (et avbrutt forsøk, kontrolløren har bedt om
   endringer, eller grenen er godkjent og kan publiseres). Ellers åpner du en ny

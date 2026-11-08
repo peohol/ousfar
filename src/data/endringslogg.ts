@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.127.3',
+    versjon: '1.128.1',
     dato: '2026-11-07',
     sammendrag: 'Doseplanene i verktøyene er kortere: det som trengs for å gjennomføre planen øverst, det faglige grunnlaget for seg',
     typer: ['Design / layout', 'Funksjonalitet'],
@@ -25,6 +25,19 @@ export const ENDRINGSLOGG: Endring[] = [
       'Avvik fra regelens kurve, forutsetninger, usikkerhet, kontroller, hele preparatlisten, godkjenning, kilder og versjoner står i «Faglig grunnlag og kilder» nederst, lukket til det åpnes.',
       '«Kopier planen» gir den korte planen, og «Kopier med faglig grunnlag» gir alt. Nedtrapping av escitalopram 10 mg fra tabletter er gått fra over 15 000 til om lag 3 700 tegn.',
       'Utskriften har det som vises: det faglige grunnlaget kommer bare med når det er åpnet.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.128.0',
+    dato: '2026-11-07',
+    sammendrag: 'Kort som ikke kan skrives under kurateringen, merkes som ikke kontrollert og tas opp igjen automatisk',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fagsidene skrives nå i flere korte deler, og kortene om forgiftning skrives for seg, så kurateringen sjeldnere blir stoppet av et automatisk sikkerhetsfilter.',
+      'Kan et kort likevel ikke skrives, står det som før (eller tomt) med en merknad, mens resten av siden kontrolleres og publiseres. Kortet føres som ikke kontrollert, ikke som at det mangler dokumentasjon, og siden kan ikke meldes som ferdig kontrollert uten at det står.',
+      'Slike kort tas nå opp igjen automatisk i en ny kuratering en uke etter at siden er publisert, og på nytt til de er skrevet.',
     ],
     utenVarsel: true,
   },
