@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-08T03:27:51.401Z",
+  "oppdatert_kl": "2026-11-08T04:26:27.183Z",
   "malt_kl": "2026-11-08T03:27:51.401Z",
   "teller": 82,
   "stoffer": {
@@ -3221,7 +3221,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 60.3,
+        "poeng": 60.6,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-04.",
@@ -3664,7 +3664,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-08T03:27:51.401Z",
+          "kl": "2026-11-08T04:26:27.183Z",
           "kilde": "system"
         }
       ],
@@ -5005,8 +5005,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-08T03:27:51.401Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
+          "kl": "2026-11-08T04:26:27.183Z",
           "kilde": "system"
         }
       ],
@@ -5360,7 +5360,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-08T03:27:51.401Z",
+          "kl": "2026-11-08T04:26:27.183Z",
           "kilde": "system"
         }
       ],
@@ -6383,7 +6383,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-08T03:27:51.401Z",
+          "kl": "2026-11-08T04:26:27.183Z",
           "kilde": "system"
         }
       ],
