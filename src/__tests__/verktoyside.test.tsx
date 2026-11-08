@@ -42,6 +42,7 @@ import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planen, planpanel, punkter, sporsmal, stoppet, tidslinje, velgForm, type Bruker } from './hjelp/verktoyflyt'
+
 import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TEST_TRINNVALG, TEST_TRINNVALG_TO, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
@@ -633,7 +634,7 @@ describe('valgene som hører sammen', () => {
     await user.click(within(fremgang).getByRole('radio', { name: TEST_DEPOT.tittel }))
     await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose/ }), '6')
     const unntak = (vent = false) => (vent ? screen.findByRole('radiogroup', { name: 'Et syntetisk unntak som må besvares.' }, { timeout: 3000 }) : sporsmal('Et syntetisk unntak som må besvares.'))
-    await user.click(within(await unntak(true)).getByRole('radio', { name: 'Gjelder ikke' }))
+    await user.click(within(await unntak(true)).getByRole('radio', { name: 'Stemmer ikke' }))
     await user.click(screen.getByRole('checkbox', { name: /godkjenningsfritak/ }))
 
     await user.click(within(fremgang).getByRole('radio', { name: annen.tittel }))
@@ -1464,9 +1465,10 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       expect(within(planpanel()).getByText(/^(Ett|\d+) spørsmål igjen$/)).toBeTruthy()
       expect(legemidler.les).toHaveBeenCalledOnce()
       await user.click(hopp)
-      // Regelen har en kontrollert katalog: forutsetningen og forholdene stilles som spørsmål med Ja, Nei og Ukjent, og de som mangler svar, merkes.
+      // Regelen har en kontrollert katalog: forutsetningene og forholdene stilles som spørsmål med Ja, Nei og Vet ikke, og de som mangler svar, merkes.
       const stopp = screen.getByRole('group', { name: 'Forhold som stopper en automatisk plan' })
-      const [forutsetning, forhold] = within(stopp).getAllByRole('radiogroup') as [HTMLElement, HTMLElement]
+      const forutsetning = within(stopp).getByRole('radiogroup', { name: 'Har pasienten schizofreni?' })
+      const forhold = within(stopp).getAllByRole('radiogroup').at(-1)!
       await waitFor(() => expect(forutsetning.getAttribute('aria-invalid')).toBe('true'))
       expect(forhold.getAttribute('aria-invalid')).toBe('true')
       await user.click(within(forutsetning).getByRole('radio', { name: 'Ja' }))

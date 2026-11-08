@@ -17,7 +17,6 @@ import { FEST_K2 } from '../verktoy/k2kontroll'
 import { avregistrert } from '../verktoy/regler/pilotmatrise'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, punkter, sporsmal, stoppet, type Bruker } from './hjelp/verktoyflyt'
-import { UNNTAK_STANDARD } from '../verktoy/flyt/flyt'
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -109,19 +108,20 @@ describe('Bytte antidepressiv til sertralin med de godkjente reglene', () => {
     const user = userEvent.setup()
     vis()
     await fyllInn(user, 'Escitalopram', 'Sertralin', '20', '100', [/mer enn 8 uker/])
-    // Et unntak som gjelder, stopper med en gang: svaret sier det ved spørsmålet og i panelet.
-    await stoppet(new RegExp(`Ingen plan med disse svarene${UNNTAK_STANDARD}`))
-    expect(sporsmal(/mer enn 8 uker/).closest('li')!.textContent).toContain(UNNTAK_STANDARD)
+    // Et svar som stopper, stopper med en gang med katalogens forklaring, ved spørsmålet og i panelet.
+    const OVER_8_UKER = 'Den godkjente planen gjelder bare de første 8 ukene med escitalopram.'
+    await stoppet(new RegExp(`Ingen plan med disse svarene${OVER_8_UKER}`))
+    expect(sporsmal(/mer enn 8 uker/).closest('li')!.textContent).toContain(OVER_8_UKER)
 
-    await besvarAlt(user, [/tidligere forsøk/])
-    await stoppet(new RegExp(`Ingen plan med disse svarene${UNNTAK_STANDARD}`))
-    expect(sporsmal(/tidligere forsøk/).closest('li')!.textContent).toContain(UNNTAK_STANDARD)
+    const TIDLIGERE = 'Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker.'
+    await besvarAlt(user, [/tidligere fått seponeringssymptomer/])
+    await stoppet(new RegExp(`Ingen plan med disse svarene${TIDLIGERE}`))
+    expect(sporsmal(/tidligere fått seponeringssymptomer/).closest('li')!.textContent).toContain(TIDLIGERE)
 
-    // Uten bekreftet interaksjonskontroll gjenstår den, og planen beregnes ikke.
-    await besvarAlt(user)
-    await user.click(screen.getByRole('checkbox', { name: /øvrige legemidler/ }))
+    // Er de øvrige legemidlene ikke kontrollert ennå, gjenstår det, og planen beregnes ikke.
+    await besvarAlt(user, [], [[/øvrige legemidler kontrollert/, /^Ikke ennå$/]])
     await stoppet(/Ett spørsmål igjen/)
-    await user.click(screen.getByRole('checkbox', { name: /øvrige legemidler/ }))
+    await besvarAlt(user)
 
     const dose = screen.getByRole('textbox', { name: /^Aktuell døgndose av escitalopram/ })
     await user.clear(dose)

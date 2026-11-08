@@ -5,7 +5,8 @@
  * spørsmålene og bekreftelsene, stoppene og planen som kopieres, med de
  * godkjente reglene i appen og preparatene i det lagrede FEST-uttrekket.
  * Ingen simulering: reglene er godkjent av den uavhengige kontrolløren for
- * nøyaktig sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`).
+ * nøyaktig sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`), og
+ * spørsmålskatalogen fra P2a er kontrollert av ChatGPT 07.11.2026.
  */
 import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

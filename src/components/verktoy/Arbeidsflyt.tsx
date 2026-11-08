@@ -610,7 +610,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       return (
         <Panelmelding tittel={gjenstartekst(n)}>
           {valg.length > 0 && <Grunnliste grunner={valg} />}
-          {ukjente > 0 && <p>{`${ukjente === 1 ? 'Ett svar er' : `${ukjente} svar er`} «Ukjent». ${UKJENT_FORKLARING}`}</p>}
+          {ukjente > 0 && <p>{`${ukjente === 1 ? 'Ett svar er' : `${ukjente} svar er`} «Vet ikke». ${UKJENT_FORKLARING}`}</p>}
           <p>Planen beregnes så snart alt er besvart.</p>
         </Panelmelding>
       )

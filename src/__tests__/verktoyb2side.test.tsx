@@ -142,6 +142,14 @@ async function stoppet(grunn: RegExp) {
   expect(screen.queryByText(/ mg = \d+ (dråper?|tablett)/)).toBeNull()
 }
 
+/**
+ * Forbeholdene katalogen viser i planen i stedet for å krysses av (beslutning
+ * B1), som kontrollgrunnlaget, regnet uten katalogen, ikke har; resten av
+ * kopien er lik.
+ */
+const FORUTSATT = /\nForutsatt:\n(?:- .*\n)+\n/
+const utenForutsatt = (tekst: string) => tekst.replace(FORUTSATT, '\n')
+
 const FINGERAVTRYKK = `Regel ${V14.id}, versjon 14, fingeravtrykk ${B2_GODKJENNING_0511.fingeravtrykk.slice(0, 12)}`
 
 describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () => {
@@ -195,27 +203,23 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
       expect(k.regel).toBeUndefined()
       const u = kjorKontrollkasus(k, { pilot: AKSEPT, aksept: AKSEPT })
       expect(u.feil).toEqual([])
-      expect(tekst).toBe(u.tekst)
+      expect(tekst).toMatch(/\nForutsatt:\n- Planen er et startforslag, ikke en forhåndsgodkjenning av alle reduksjonene/)
+      expect(utenForutsatt(tekst)).toBe(u.tekst)
     }, 60_000)
   }
 
   it('stopper uten doser utenfor godkjenningen: 65 år eller eldre, lang behandlingstid, tidligere seponeringsplager, en annen startdose og avregistrerte styrker', async () => {
     const user = userEvent.setup()
-    for (const [dose, form, ja, grunn] of [
+    for (const [dose, form, ja, svar, grunn] of [
       // Panelet sier grunnen i klartekst; motorens egen tekst står bak «Vis detaljer».
-      ['20', TABLETT, [/65 år eller eldre/], /Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved 65 år eller eldre\./],
-      ['10', DRAPER, [/65 år eller eldre/], /Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved 65 år eller eldre\./],
-      [
-        '20',
-        TABLETT,
-        [/mange måneder/],
-        /Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/,
-      ],
-      ['20', TABLETT, [/tidligere forsøk/i], /Ingen plan med disse svareneDa gjelder ikke regelen\./],
-      ['15', TABLETT, [], /Ingen plan for dette tilfelletDen godkjente planen gjelder bare startdosene 10 og 20 mg\./],
+      ['20', TABLETT, [], [[/Hvor gammel/, /^65 år eller eldre$/]], /Ingen plan med disse svareneVerktøyet har foreløpig ingen godkjent standardplan for pasienter som er 65 år eller eldre\. Nedtrappingen må planlegges individuelt\./],
+      ['10', DRAPER, [], [[/Hvor gammel/, /^65 år eller eldre$/]], /Ingen plan med disse svareneVerktøyet har foreløpig ingen godkjent standardplan for pasienter som er 65 år eller eldre\./],
+      ['20', TABLETT, [/mange måneder/], [], /Ingen plan med disse svareneDen godkjente planen gjelder bare kort behandlingstid\. Etter lang bruk anbefales vanligvis mindre reduksjoner/],
+      ['20', TABLETT, [/tidligere fått seponeringssymptomer/], [], /Ingen plan med disse svareneVerktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker\. Nedtrappingen må tilpasses individuelt\./],
+      ['15', TABLETT, [], [], /Ingen plan for dette tilfelletDen godkjente planen gjelder bare startdosene 10 og 20 mg\./],
     ] as const) {
       vis()
-      await beregn(user, dose, form, [...ja])
+      await beregn(user, dose, form, [...ja], [...svar])
       await stoppet(grunn)
       cleanup()
       glemBildet()
@@ -255,7 +259,7 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
     expect((await velgTilKomplett(user, V14.tittel)).plan).toBeTruthy()
   }, 60_000)
 
-  it('spør om 65 år eller eldre, ikke om over 65 år', async () => {
+  it('spør om alderen med «65 år eller eldre», ikke om over 65 år', async () => {
     const user = userEvent.setup()
     vis()
     await act(async () => {})
@@ -264,8 +268,8 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
     await velgForm(user, 'Legemiddelform av escitalopram', TABLETT)
     const pasient = await screen.findByRole('region', { name: /^Steg 3(, utfylt)?: Om pasienten$/ }, { timeout: 3000 })
     await waitFor(() => expect(pasient.textContent).not.toContain('Spørsmålene kommer når steg 2 er fylt ut.'), { timeout: 3000 })
-    expect(pasient.textContent).toContain('Er pasienten 65 år eller eldre?')
-    expect(pasient.textContent).not.toContain('Er pasienten over 65 år?')
+    expect(within(screen.getByRole('radiogroup', { name: 'Hvor gammel er pasienten?' })).getByRole('radio', { name: '65 år eller eldre' })).toBeTruthy()
+    expect(pasient.textContent).not.toMatch(/over 65 år/)
   }, 30_000)
 })
 
@@ -325,7 +329,7 @@ describe('Unødvendige hindringer er fjernet (spor B, P0-rapporten §8)', () => 
     await tilSteg3(user, '20', TABLETT)
     const lang = await screen.findByRole('radiogroup', { name: /mange måneder/ }, { timeout: 5000 })
     await user.click(within(lang).getByRole('radio', { name: 'Ja' }))
-    await ingenPlan(/Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved lang behandlingstid\./)
+    await ingenPlan(/Ingen plan med disse svareneDen godkjente planen gjelder bare kort behandlingstid\./)
     await waitFor(() => expect(screen.getByText(/spørsmål til trengs ikke, fordi svaret over gjør at verktøyet ikke kan lage en plan/)).toBeTruthy(), { timeout: 3000 })
     // Bare det besvarte spørsmålet står, så svaret kan endres; ingen stoppmelding ber om «Prøv igjen senere».
     expect(screen.getAllByRole('radiogroup').filter((g) => g.closest('[data-flytsporsmal-liste]'))).toHaveLength(1)
