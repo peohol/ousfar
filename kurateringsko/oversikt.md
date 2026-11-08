@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-08T06:31:13.502Z. Stoffene sist lest fra databasen 2026-11-08T03:27:51.401Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-08T07:26:34.185Z. Stoffene sist lest fra databasen 2026-11-08T03:27:51.401Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 97 · Publisert: 16 · Blokkert: 5 · Utenfor køen: 1
 
@@ -14,7 +14,7 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **kodein**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **kodein**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 - **olanzapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.
