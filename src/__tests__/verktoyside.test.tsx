@@ -28,6 +28,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
 import { AUTOBEREGNING_MS } from '../components/verktoy/Arbeidsflyt'
+import { KOPIER } from '../components/verktoy/Doseplanvisning'
+import { GRUNNLAG_PLAN } from '../components/verktoy/FagligGrunnlag'
 import { UNNTAK_STANDARD as FORHOLD_JA } from '../verktoy/flyt/flyt'
 import { DEKNING_UKONTROLLERT, FEST_NYTT_FORSOK_MS, TILGJENGELIGHET_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { lagRegelvarsellager, UGYLDIGE_REGELVARSLER } from '../verktoy/overvaking/regelvarsler'
@@ -301,30 +303,35 @@ describe('med en regel godkjent bare i testen', () => {
     ])
     expect(linje.lastElementChild!.getAttribute('data-type')).toBe('slutt')
     expect(within(plan).getByText(/^Komplett plan til sluttmålet: Escitalopram seponert fra dag 29\./)).toBeTruthy()
-    // Det som gjelder akkurat denne planen, står ved tidslinjen; kildene og versjonen i den lukkede delen nederst.
-    expect(within(plan).getByRole('heading', { name: 'Viktig for denne planen' })).toBeTruthy()
-    expect(within(plan).getByRole('heading', { name: 'Preparater planen bruker' })).toBeTruthy()
-    const grunnlag = within(plan).getByText('Kilder og versjon').closest('details')!
+    // Standardplanen har det som trengs for å gjennomføre behandlingen; det faglige grunnlaget står i den lukkede delen nederst (P3).
+    for (const h of ['Legemiddelform og resepter', 'Forbehold']) expect(within(plan).getByRole('heading', { name: h })).toBeTruthy()
+    // Ingen spørsmål styrer vilkår her: ingen sikkerhetsoppsummering, og de avkreftede unntakene står bare i grunnlaget.
+    expect(within(plan).queryByRole('heading', { name: 'Avklart for denne pasienten' })).toBeNull()
+    const grunnlag = within(plan).getByText(GRUNNLAG_PLAN).closest('details')!
     expect(grunnlag.open).toBe(false)
-    for (const h of ['Slik er forslaget laget', 'Forutsetninger', 'Kontrollert ved beregningen', 'Sporbarhet']) {
+    expect([...plan.querySelectorAll('li')].filter((x) => !grunnlag.contains(x) && /^Avkreftet:/.test(x.textContent!))).toEqual([])
+    for (const h of ['Slik er forslaget laget', 'Forutsetninger', 'Kontrollert ved beregningen', 'Preparater fra FEST', 'Sporbarhet']) {
       expect(within(grunnlag).getByRole('heading', { name: h, hidden: true })).toBeTruthy()
     }
-    // Preparatene står én gang, i planen.
-    expect(within(grunnlag).queryByRole('heading', { name: 'Preparater fra FEST', hidden: true })).toBeNull()
     expect(within(grunnlag).getByText(/^Regel test-nedtrapping, versjon \d+, fingeravtrykk/)).toBeTruthy()
     // Interne versjoner og fingeravtrykk står bare i den lukkede delen.
     expect([...plan.querySelectorAll('li, p')].filter((x) => !grunnlag.contains(x) && /fingeravtrykk|test-nedtrapping/.test(x.textContent!))).toEqual([])
 
+    // Standardkopien har hver linje i standardplanen, med tidslinjen som dager, og ikke grunnlaget.
     const tekst = await kopier(user)
-    // Kopien har hver linje i planen, også i den lukkede delen, unntatt kildene, som står med lenken, og tidslinjen, som står som dager.
-    expect(tekst).toContain('\nAdvarsler:\n')
-    const kilder = within(grunnlag).queryByRole('heading', { name: 'Kilder', hidden: true })?.parentElement
-    for (const li of plan.querySelectorAll('li')) if (!kilder?.contains(li) && !linje.contains(li)) expect(tekst).toContain(`- ${li.textContent}`)
+    for (const li of plan.querySelectorAll('li')) if (!grunnlag.contains(li) && !linje.contains(li)) expect(tekst).toContain(li.textContent)
     for (const [nar] of rader) expect(tekst).toContain(`\n${nar}: Escitalopram peroralt: `)
-    expect(tekst).toMatch(/\nKontroller:\n- Hver døgndose av escitalopram/)
     expect(tekst).toMatch(/^Trappe ned antidepressiv\n/)
     expect(tekst).toMatch(/Dag 1–14: Escitalopram peroralt: 12,5 mg = 1 tablett à 10 mg \+ ½ tablett à 5 mg/)
-    expect(within(plan).getByRole('status').textContent).toBe('Planen er kopiert.')
+    expect(tekst).not.toMatch(/fingeravtrykk|\nKontroller:/)
+    expect(within(plan).getByRole('status').textContent).toBe(KOPIER.kort.kvittering)
+    // Kopien med faglig grunnlag har i tillegg hver linje i den lukkede delen, unntatt kildene, som står med lenken.
+    const utvidet = await kopier(user, 'utvidet')
+    expect(utvidet.startsWith(tekst.slice(0, tekst.indexOf('\n\n')))).toBe(true)
+    const kilder = within(grunnlag).queryByRole('heading', { name: 'Kilder', hidden: true })?.parentElement
+    for (const li of grunnlag.querySelectorAll('li')) if (!kilder?.contains(li)) expect(utvidet).toContain(`- ${li.textContent}`)
+    expect(utvidet).toMatch(/\nKontroller:\n- Hver døgndose av escitalopram/)
+    expect(within(plan).getByRole('status').textContent).toBe(KOPIER.utvidet.kvittering)
     await user.click(within(plan).getByRole('button', { name: 'Skriv ut' }))
     expect(print).toHaveBeenCalledOnce()
 
@@ -538,7 +545,8 @@ describe('med en regel der forskriveren kan velge dosen for et trinn som ikke ka
     await user.click(within(samlet).getByRole('button', { name: 'Bruk disse dosene' }))
     const plan = await planen(TEST_TRINNVALG.tittel)
     expect(punkter(within(plan).getByRole('list', { name: 'Planen dag for dag' })).at(-1)![1]).toBe('Seponert')
-    expect(within(plan).getByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeTruthy()
+    // Tidslinjen viser bare dosen; hvorfor den avviker fra regelens kurve, står i det faglige grunnlaget (P3).
+    expect(within(plan).queryByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeNull()
     expect(within(plan).getByText(/escitalopram (fra )?dag [\d–]+: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,06 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før\./i)).toBeTruthy()
     expect(within(plan).getByText(/escitalopram (fra )?dag [\d–]+: 8,75 mg, valgt av forskriveren/i)).toBeTruthy()
     expect(
@@ -1274,7 +1282,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte til)' })).getByRole('radio', { name: /^Depotinjeksjon/ }))
     }
 
-    it('fyller ut feltene med et snarvalg, viser et faglig varsel bare ved regelversjonen det gjelder uten å sperre, og skriver ut det faglige grunnlaget', async () => {
+    it('fyller ut feltene med et snarvalg, viser et faglig varsel bare ved regelversjonen det gjelder uten å sperre, og skriver ut det faglige grunnlaget bare når det er åpnet', async () => {
       const user = userEvent.setup()
       // Hele kjeden fra databasesvaret: lageret appen bruker, med `les_regelvarsler` som syntetisk databasekall.
       const kall = vi.fn(async (funksjon: string) => {
@@ -1302,10 +1310,11 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       expect(screen.getAllByRole('note')).toHaveLength(1)
       expect(within(plan).getByRole('note')).toBeTruthy()
 
-      const grunnlag = within(plan).getByText('Kilder og versjon').closest('details')!
+      // Utskriften har det som vises: grunnlaget bare når forskriveren har åpnet det (P3).
+      const grunnlag = within(plan).getByText(GRUNNLAG_PLAN).closest('details')!
       expect(grunnlag.open).toBe(false)
       fireEvent(window, new Event('beforeprint'))
-      expect(grunnlag.open).toBe(true)
+      expect(grunnlag.open).toBe(false)
       fireEvent(window, new Event('afterprint'))
       expect(grunnlag.open).toBe(false)
     })

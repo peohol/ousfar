@@ -787,9 +787,8 @@ const EN_REDUKSJON = 'én mulig reduksjon med revurdering; neste trinn kan ikke 
 /** Escitalopram versjon 13 står over sluttdosen. */
 const overSluttdosen = (mg: number) => `regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på ${tall(mg)} mg)`
 
-/** Vurderingspunktet før hver doseendring i escitalopram versjon 13. */
-const vurderingFor = (dag: number) =>
-  `Dag ${dag}: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.`
+/** Vurderingspunktet før hver doseendring i escitalopram versjon 13: punkt 1 i planens vurderingspunkter, med den første setningen i tidslinjen. */
+const vurderingFor = (dag: number) => `Dag ${dag}: Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og tegn på tilbakefall.`
 /**
  * Radene i en komplett plan med escitalopram dråper og 28 dager per trinn:
  * hvert trinn er `[mg]` eller `[mg, beregnet mg, faktisk reduksjon i %]` når
@@ -807,7 +806,7 @@ function draperTilSeponering(trinn: ([number] | [number, number, number])[]): st
     ...rader,
     vurderingFor(seponert),
     `Fra dag ${seponert}: Escitalopram peroralt: Seponert`,
-    ...[7, 14, 28].map((d) => `Dag ${seponert - 1 + d}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`),
+    ...[7, 14, 28].map((d, i) => `Dag ${seponert - 1 + d}: Vurdering (Escitalopram): Punkt ${i + 2}: Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`),
   ]
 }
 

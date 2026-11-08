@@ -70,7 +70,9 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     const v = planvisning(p, over)!
     expect(v.utfall.komplett).toBe(false)
     expect(v.utfall.tekst.startsWith(DELPLAN)).toBe(true)
-    expect(v.advarsler.join(' ')).toMatch(/avslutning av testoksetin gjelder bare fra 4,99 mg eller lavere, og planen står på 5 mg/)
+    // Hvorfor planen ikke går helt til sluttmålet, står i standardplanen under «Viktig for denne planen».
+    expect(v.viktig.join(' ')).toMatch(/avslutning av testoksetin gjelder bare fra 4,99 mg eller lavere, og planen står på 5 mg/)
+    expect(planTekst(v, 'Trappe ned')).toMatch(/\nViktig for denne planen:\n- .*avslutning av testoksetin gjelder bare fra 4,99 mg/)
   })
 
   it('gir dosen pasienten bruker ett trinn før seponering når ingen reduksjon kan beregnes', () => {
@@ -169,12 +171,13 @@ describe('Vurderingspunktene', () => {
     const r = medAvslutning(5, 5)
     const v = planvisning(plan(r, 20, { startdato: '2026-11-02' }), r, '2026-11-02')!
     const vurderinger = v.rader.filter((x) => x.type === 'vurdering').map((x) => [x.dager, x.datoer, x.type === 'vurdering' && x.tekst])
+    // Tidslinjen har en kort påminnelse med nummeret i «Vurderingspunkter», der hele teksten står én gang.
     expect(vurderinger).toEqual([
-      ['Dag 8', '09.11.2026', 'Følg opp en uke etter endringen.'],
-      ['Dag 15', '16.11.2026', 'Før endringen: Vurder seponeringssymptomer.'],
-      ['Dag 22', '23.11.2026', 'Følg opp en uke etter endringen.'],
-      ['Dag 29', '30.11.2026', 'Før endringen: Vurder seponeringssymptomer.'],
-      ['Dag 36', '07.12.2026', 'Følg opp en uke etter endringen.'],
+      ['Dag 8', '09.11.2026', 'Punkt 2: Følg opp en uke etter endringen.'],
+      ['Dag 15', '16.11.2026', 'Før endringen, punkt 1: Vurder seponeringssymptomer.'],
+      ['Dag 22', '23.11.2026', 'Punkt 2: Følg opp en uke etter endringen.'],
+      ['Dag 29', '30.11.2026', 'Før endringen, punkt 1: Vurder seponeringssymptomer.'],
+      ['Dag 36', '07.12.2026', 'Punkt 2: Følg opp en uke etter endringen.'],
     ])
     // Vurderingen før en endring står foran perioden som starter samme dag.
     const i = v.rader.findIndex((x) => x.type === 'vurdering' && x.dager === 'Dag 15')
@@ -183,10 +186,11 @@ describe('Vurderingspunktene', () => {
       'testoksetin, før hver doseendring (dag 15, 29): Vurder seponeringssymptomer. Ved funn: Hold dosen.',
       'testoksetin, 7 dager etter hver doseendring (dag 8, 22, 36): Følg opp en uke etter endringen.',
     ])
+    expect(v.oppfolging).toEqual(['Før hver doseendring (dag 15, 29): Vurder seponeringssymptomer. Ved funn: Hold dosen.', '7 dager etter hver doseendring (dag 8, 22, 36): Følg opp en uke etter endringen.'])
     const tekst = planTekst(v, 'Trappe ned')
     expect(tekst.split('\n')[2]).toBe(v.utfall.tekst)
-    expect(tekst).toMatch(/\nVurderingspunkter:\n- testoksetin, før hver doseendring/)
-    expect(tekst).toMatch(/Dag 15 \(16\.11\.2026\): Vurdering \(testoksetin\): Før endringen: Vurder seponeringssymptomer\./)
+    expect(tekst).toMatch(/\nVurderingspunkter:\n1\. Før hver doseendring \(dag 15, 29\): Vurder seponeringssymptomer\. Ved funn: Hold dosen\.\n2\. 7 dager etter/)
+    expect(tekst).toMatch(/Dag 15 \(16\.11\.2026\): Vurdering \(testoksetin\): Før endringen, punkt 1: Vurder seponeringssymptomer\./)
   })
 
   it('kan stå bare et antall dager etter siste dose, når planen faktisk seponerer', () => {
@@ -516,7 +520,9 @@ describe('Valg av dose per trinn i prosent av startdosen (K3)', () => {
       expect(med.trinnvalg).toBeUndefined()
       expect(planvisning(med, r)!.utfall.komplett).toBe(true)
       expect(med.kontroller.map((k) => k.krav).join(' ')).toMatch(/Trinn 4 av testoksetin er et mindre siste trinn før seponeringen, valgt av forskriveren i stedet for trinnet fra 5 mg til 0/)
-      expect(planTekst(planvisning(med, r)!, r.tittel)).toMatch(/1,25 mg.*mindre siste trinn valgt av forskriveren \(−75 %\)/)
+      // At trinnet er valgt av forskriveren, står ved dosen i den utvidede kopien, ikke i standardkopien.
+      expect(planTekst(planvisning(med, r)!, r.tittel, [], true)).toMatch(/1,25 mg.*mindre siste trinn valgt av forskriveren \(−75 %\)/)
+      expect(planTekst(planvisning(med, r)!, r.tittel)).not.toMatch(/mindre siste trinn valgt av forskriveren/)
     })
 
     it('godtar bare de tilbudte dosene, ett mellomtrinn og bare når regelen har det', () => {
