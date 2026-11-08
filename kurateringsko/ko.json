@@ -1,7 +1,7 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-08T02:27:59.695Z",
-  "malt_kl": "2026-11-07T06:30:03.847Z",
+  "oppdatert_kl": "2026-11-08T03:27:51.401Z",
+  "malt_kl": "2026-11-08T03:27:51.401Z",
   "teller": 82,
   "stoffer": {
     "alprazolam": {
@@ -20,7 +20,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 46,
         "redaksjonelle_paneler": 13,
@@ -62,7 +62,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 42,
         "redaksjonelle_paneler": 13,
@@ -91,34 +91,32 @@
     "amisulprid": {
       "stoff": "amisulprid",
       "navn": "Amisulprid",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 352.7,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 55 elementer har ingen kilde."
+        ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 30,
+        "elementer": 55,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 8,
-        "referanser": 6,
-        "elementer_uten_kilde": 21
+        "paneler_med_innhold": 13,
+        "referanser": 49,
+        "elementer_uten_kilde": 3
       },
       "reservasjon": null,
       "forsok": 0,
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -147,7 +145,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 28,
         "redaksjonelle_paneler": 13,
@@ -189,7 +187,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -231,7 +229,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 26,
         "redaksjonelle_paneler": 13,
@@ -273,7 +271,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -315,7 +313,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 55,
         "redaksjonelle_paneler": 13,
@@ -357,7 +355,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 20,
         "redaksjonelle_paneler": 13,
@@ -399,7 +397,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -435,7 +433,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -666,7 +664,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -708,7 +706,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 50,
         "redaksjonelle_paneler": 13,
@@ -749,7 +747,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 52,
         "redaksjonelle_paneler": 13,
@@ -785,7 +783,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 50,
         "redaksjonelle_paneler": 13,
@@ -1020,7 +1018,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 45,
         "redaksjonelle_paneler": 13,
@@ -1160,7 +1158,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 47,
         "redaksjonelle_paneler": 13,
@@ -1202,7 +1200,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -1245,7 +1243,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -1281,7 +1279,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 55,
         "redaksjonelle_paneler": 13,
@@ -1514,23 +1512,23 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 423.6,
+        "poeng": 361.4,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Aldri kuratert.",
           "Ingen kuratering å regne alderen fra.",
-          "5 av 13 redaksjonelle seksjoner er tomme.",
-          "19 av 27 elementer har ingen kilde."
+          "1 av 13 redaksjonelle seksjoner er tomme.",
+          "3 av 41 elementer har ingen kilde."
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 27,
+        "elementer": 41,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 8,
-        "referanser": 5,
-        "elementer_uten_kilde": 19
+        "paneler_med_innhold": 12,
+        "referanser": 49,
+        "elementer_uten_kilde": 3
       },
       "reservasjon": null,
       "forsok": 0,
@@ -1566,7 +1564,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -1609,7 +1607,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -1650,7 +1648,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 38,
         "redaksjonelle_paneler": 13,
@@ -1691,7 +1689,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 40,
         "redaksjonelle_paneler": 13,
@@ -1727,7 +1725,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 50,
         "redaksjonelle_paneler": 13,
@@ -1872,7 +1870,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 46,
         "redaksjonelle_paneler": 13,
@@ -1908,7 +1906,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -2110,7 +2108,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 42,
         "redaksjonelle_paneler": 13,
@@ -2352,7 +2350,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 29,
         "redaksjonelle_paneler": 13,
@@ -2394,7 +2392,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 26,
         "redaksjonelle_paneler": 13,
@@ -2436,7 +2434,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 28,
         "redaksjonelle_paneler": 13,
@@ -2478,7 +2476,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -2519,7 +2517,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -2555,7 +2553,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 46,
         "redaksjonelle_paneler": 13,
@@ -2753,7 +2751,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 23,
         "redaksjonelle_paneler": 13,
@@ -2795,7 +2793,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 20,
         "redaksjonelle_paneler": 13,
@@ -2837,7 +2835,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -2879,7 +2877,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -2921,7 +2919,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -2957,7 +2955,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -3191,7 +3189,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 23,
         "redaksjonelle_paneler": 13,
@@ -3231,7 +3229,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 50,
         "redaksjonelle_paneler": 13,
@@ -3279,7 +3277,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 42,
         "redaksjonelle_paneler": 13,
@@ -3487,7 +3485,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 27,
         "redaksjonelle_paneler": 13,
@@ -3516,19 +3514,25 @@
     "klonazepam": {
       "stoff": "klonazepam",
       "navn": "Klonazepam",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 358.9,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "1 av 13 redaksjonelle seksjoner er tomme.",
+          "1 av 43 elementer har ingen kilde."
+        ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 8,
+        "elementer": 43,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 4,
-        "referanser": 5,
+        "paneler_med_innhold": 12,
+        "referanser": 74,
         "elementer_uten_kilde": 1
       },
       "reservasjon": null,
@@ -3536,14 +3540,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3572,7 +3569,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 27,
         "redaksjonelle_paneler": 13,
@@ -3614,7 +3611,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 31,
         "redaksjonelle_paneler": 13,
@@ -3650,7 +3647,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 8,
         "redaksjonelle_paneler": 13,
@@ -3667,7 +3664,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
+          "kl": "2026-11-08T03:27:51.401Z",
           "kilde": "system"
         }
       ],
@@ -3698,7 +3695,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 35,
         "redaksjonelle_paneler": 13,
@@ -3739,7 +3736,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 51,
         "redaksjonelle_paneler": 13,
@@ -3793,7 +3790,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -3829,7 +3826,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 53,
         "redaksjonelle_paneler": 13,
@@ -4071,7 +4068,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -4107,7 +4104,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 53,
         "redaksjonelle_paneler": 13,
@@ -4348,7 +4345,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 24,
         "redaksjonelle_paneler": 13,
@@ -4390,7 +4387,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 20,
         "redaksjonelle_paneler": 13,
@@ -4432,7 +4429,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 52,
         "redaksjonelle_paneler": 13,
@@ -4474,7 +4471,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -4510,7 +4507,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 49,
         "redaksjonelle_paneler": 13,
@@ -4703,7 +4700,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 37,
         "redaksjonelle_paneler": 13,
@@ -4745,7 +4742,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 44,
         "redaksjonelle_paneler": 13,
@@ -4781,7 +4778,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": false,
         "elementer": 0,
         "redaksjonelle_paneler": 13,
@@ -4830,7 +4827,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -4872,7 +4869,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 36,
         "redaksjonelle_paneler": 13,
@@ -4914,7 +4911,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 25,
         "redaksjonelle_paneler": 13,
@@ -4956,7 +4953,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 27,
         "redaksjonelle_paneler": 13,
@@ -4992,12 +4989,12 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 9,
+        "elementer": 41,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 4,
-        "referanser": 8,
+        "paneler_med_innhold": 11,
+        "referanser": 88,
         "elementer_uten_kilde": 1
       },
       "reservasjon": null,
@@ -5008,8 +5005,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-08T03:27:51.401Z",
           "kilde": "system"
         }
       ],
@@ -5041,7 +5038,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -5083,7 +5080,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 46,
         "redaksjonelle_paneler": 13,
@@ -5125,7 +5122,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 24,
         "redaksjonelle_paneler": 13,
@@ -5167,7 +5164,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 48,
         "redaksjonelle_paneler": 13,
@@ -5203,7 +5200,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 51,
         "redaksjonelle_paneler": 13,
@@ -5297,19 +5294,25 @@
     "oksykodon": {
       "stoff": "oksykodon",
       "navn": "Oksykodon",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 374.6,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 13 redaksjonelle seksjoner er tomme.",
+          "1 av 33 elementer har ingen kilde."
+        ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 8,
+        "elementer": 33,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 4,
-        "referanser": 8,
+        "paneler_med_innhold": 10,
+        "referanser": 59,
         "elementer_uten_kilde": 1
       },
       "reservasjon": null,
@@ -5317,14 +5320,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -5347,7 +5343,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 30,
         "redaksjonelle_paneler": 13,
@@ -5364,7 +5360,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
+          "kl": "2026-11-08T03:27:51.401Z",
           "kilde": "system"
         }
       ],
@@ -5395,7 +5391,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 54,
         "redaksjonelle_paneler": 13,
@@ -5424,34 +5420,32 @@
     "paroksetin": {
       "stoff": "paroksetin",
       "navn": "Paroksetin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 352.6,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 57 elementer har ingen kilde."
+        ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 30,
+        "elementer": 57,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 8,
-        "referanser": 6,
-        "elementer_uten_kilde": 21
+        "paneler_med_innhold": 13,
+        "referanser": 48,
+        "elementer_uten_kilde": 3
       },
       "reservasjon": null,
       "forsok": 0,
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -5480,7 +5474,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -5522,7 +5516,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 51,
         "redaksjonelle_paneler": 13,
@@ -5564,7 +5558,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 22,
         "redaksjonelle_paneler": 13,
@@ -5606,7 +5600,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 23,
         "redaksjonelle_paneler": 13,
@@ -5642,7 +5636,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 56,
         "redaksjonelle_paneler": 13,
@@ -5882,7 +5876,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 30,
         "redaksjonelle_paneler": 13,
@@ -5925,7 +5919,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 23,
         "redaksjonelle_paneler": 13,
@@ -5966,7 +5960,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 44,
         "redaksjonelle_paneler": 13,
@@ -6008,7 +6002,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 20,
         "redaksjonelle_paneler": 13,
@@ -6088,7 +6082,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 43,
         "redaksjonelle_paneler": 13,
@@ -6136,7 +6130,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 56,
         "redaksjonelle_paneler": 13,
@@ -6372,7 +6366,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 10,
         "redaksjonelle_paneler": 13,
@@ -6389,7 +6383,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-08T02:27:59.695Z",
+          "kl": "2026-11-08T03:27:51.401Z",
           "kilde": "system"
         }
       ],
@@ -6420,7 +6414,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 59,
         "redaksjonelle_paneler": 13,
@@ -6462,7 +6456,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 54,
         "redaksjonelle_paneler": 13,
@@ -6504,7 +6498,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -6546,7 +6540,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 26,
         "redaksjonelle_paneler": 13,
@@ -6588,7 +6582,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 21,
         "redaksjonelle_paneler": 13,
@@ -6624,7 +6618,7 @@
         "grunner": []
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 54,
         "redaksjonelle_paneler": 13,
@@ -6848,23 +6842,22 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.1,
+        "poeng": 352.5,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Aldri kuratert.",
           "Ingen kuratering å regne alderen fra.",
-          "5 av 13 redaksjonelle seksjoner er tomme.",
-          "22 av 30 elementer har ingen kilde."
+          "3 av 59 elementer har ingen kilde."
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
-        "elementer": 30,
+        "elementer": 59,
         "redaksjonelle_paneler": 13,
-        "paneler_med_innhold": 8,
-        "referanser": 6,
-        "elementer_uten_kilde": 22
+        "paneler_med_innhold": 13,
+        "referanser": 45,
+        "elementer_uten_kilde": 3
       },
       "reservasjon": null,
       "forsok": 0,
@@ -6900,7 +6893,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 48,
         "redaksjonelle_paneler": 13,
@@ -6942,7 +6935,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 46,
         "redaksjonelle_paneler": 13,
@@ -6984,7 +6977,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 26,
         "redaksjonelle_paneler": 13,
@@ -7025,7 +7018,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 47,
         "redaksjonelle_paneler": 13,
@@ -7066,7 +7059,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 36,
         "redaksjonelle_paneler": 13,
@@ -7107,7 +7100,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 50,
         "redaksjonelle_paneler": 13,
@@ -7148,7 +7141,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 40,
         "redaksjonelle_paneler": 13,
@@ -7190,7 +7183,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 33,
         "redaksjonelle_paneler": 13,
@@ -7231,7 +7224,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 47,
         "redaksjonelle_paneler": 13,
@@ -7273,7 +7266,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 39,
         "redaksjonelle_paneler": 13,
@@ -7315,7 +7308,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 42,
         "redaksjonelle_paneler": 13,
@@ -7356,7 +7349,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 37,
         "redaksjonelle_paneler": 13,
@@ -7397,7 +7390,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 29,
         "redaksjonelle_paneler": 13,
@@ -7439,7 +7432,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 35,
         "redaksjonelle_paneler": 13,
@@ -7481,7 +7474,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 37,
         "redaksjonelle_paneler": 13,
@@ -7523,7 +7516,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 33,
         "redaksjonelle_paneler": 13,
@@ -7565,7 +7558,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 36,
         "redaksjonelle_paneler": 13,
@@ -7606,7 +7599,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 38,
         "redaksjonelle_paneler": 13,
@@ -7647,7 +7640,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 48,
         "redaksjonelle_paneler": 13,
@@ -7689,7 +7682,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 32,
         "redaksjonelle_paneler": 13,
@@ -7731,7 +7724,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 31,
         "redaksjonelle_paneler": 13,
@@ -7773,7 +7766,7 @@
         ]
       },
       "maal": {
-        "kl": "2026-11-07T06:30:04.864Z",
+        "kl": "2026-11-08T03:27:51.941Z",
         "side": true,
         "elementer": 37,
         "redaksjonelle_paneler": 13,
