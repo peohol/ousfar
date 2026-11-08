@@ -7,6 +7,7 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import type userEvent from '@testing-library/user-event'
 import { expect } from 'vitest'
+import { KOPIER } from '../../components/verktoy/Doseplanvisning'
 
 export type Bruker = ReturnType<typeof userEvent.setup>
 
@@ -101,9 +102,9 @@ export async function velgForm(user: Bruker, navn: string | RegExp, verdi: strin
   await user.click(radio)
 }
 
-/** Teksten som kopieres med «Kopier planen», når planen er beregnet. */
-export async function kopier(user: Bruker) {
-  await user.click(await screen.findByRole('button', { name: 'Kopier planen' }, { timeout: 3000 }))
+/** Teksten som kopieres med «Kopier planen» (standardplanen) eller «Kopier med faglig grunnlag» (`utvidet`), når planen er beregnet. */
+export async function kopier(user: Bruker, hva: keyof typeof KOPIER = 'kort') {
+  await user.click(await screen.findByRole('button', { name: KOPIER[hva].knapp }, { timeout: 3000 }))
   return navigator.clipboard.readText()
 }
 

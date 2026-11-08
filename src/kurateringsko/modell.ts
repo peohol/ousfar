@@ -44,8 +44,12 @@ export const KURATERINGSPREFIKS = 'kuratering/'
  *   kunnskap etter kunnskapsgrensen.
  * - `oppdatering`: en kuratering av en annen art, f.eks. en eldre full
  *   oppdatering. Køen velger den aldri selv, men den står i historikken.
+ * - `oppfolging`: kontrollpunktene sikkerhetsfilteret stoppet i den siste
+ *   publiserte kurateringen (`Kurateringsspor.utsatte`), tatt i en ny gren
+ *   når ventetiden er gått. Resten av siden står; den siste kurateringens
+ *   modus, runde og kunnskapsgrense gjelder fortsatt.
  */
-export const MODI = ['de_novo', 'evidensovervaking', 'oppdatering'] as const
+export const MODI = ['de_novo', 'evidensovervaking', 'oppdatering', 'oppfolging'] as const
 export type Modus = (typeof MODI)[number]
 
 /**
@@ -93,6 +97,14 @@ export interface Kurateringsspor {
   gren?: string | null
   /** `ko` når køen fulgte den, `repo` når den er funnet i migrasjonene og journalene på main. */
   kilde: 'ko' | 'repo'
+  /**
+   * Kontrollpunktene sikkerhetsfilteret stoppet i grenen som sist ble
+   * publisert (`utsatt_sikkerhetsfilter` i dekningsmatrisen), bare nøklene.
+   * Køen gir stoffet ut til `oppfolging` når de finnes.
+   */
+  utsatte?: string[]
+  /** Når de ble stoppet: publiseringen av grenen. Ventetiden før oppfølgingen regnes herfra. */
+  utsatt_kl?: string | null
 }
 
 /** Det kuratoren har laget i en kuratering som ble avbrutt, så neste forsøk fortsetter der i stedet for å begynne på nytt. */
@@ -146,6 +158,8 @@ export interface Greninfo {
   runde: number
   oppdatert_kl: string
   publisert_kl: string | null
+  /** Nøklene til kontrollpunktene sikkerhetsfilteret stoppet, fra grenens siste dekningsmatrise. */
+  utsatte: string[]
 }
 
 /**

@@ -346,7 +346,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     return () => window.clearInterval(t)
   }, [harPlan])
   const plan: Planvisning | null =
-    harPlan && regel && gjeldende.resultat.status === 'doseplan' && gjelderFortsatt(gjeldende.resultat, klokke()) ? planvisning(gjeldende.resultat, regel, fullt.startdato || undefined) : null
+    harPlan && regel && gjeldende.resultat.status === 'doseplan' && gjelderFortsatt(gjeldende.resultat, klokke()) ? planvisning(gjeldende.resultat, regel, fullt.startdato || undefined, fullt.formvalg) : null
   const planregel = plan && regel ? regel.id : null
   // Mens en melding står, meldes ingenting: planen som sto, er den siden trenger for å si at den ble tatt bort (S6).
   useEffect(() => {

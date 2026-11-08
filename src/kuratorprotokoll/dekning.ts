@@ -7,8 +7,12 @@
 import { createHash } from 'node:crypto'
 import { DATAKORT, PANELER, type Paneldefinisjon } from '../faginnhold/paneler'
 
-/** Hvordan et kontrollpunkt er behandlet. */
-export const DEKNINGSSTATUSER = ['nytt_eller_oppdatert', 'beholdt_etter_kontroll', 'automatisk_verifisert', 'tomt_begrunnet'] as const
+/**
+ * Hvordan et kontrollpunkt er behandlet. `utsatt_sikkerhetsfilter`: Claudes
+ * sikkerhetsfilter stoppet arbeidet med punktet, så det ikke er kontrollert
+ * (protokollen, «Når sikkerhetsfilteret stopper arbeidet»).
+ */
+export const DEKNINGSSTATUSER = ['nytt_eller_oppdatert', 'beholdt_etter_kontroll', 'automatisk_verifisert', 'tomt_begrunnet', 'utsatt_sikkerhetsfilter'] as const
 export type Dekningsstatus = (typeof DEKNINGSSTATUSER)[number]
 
 export interface Dekningsomrade {
@@ -60,7 +64,8 @@ const tekster = (v: unknown): v is string[] => Array.isArray(v) && v.every(tekst
 /**
  * Hva som mangler eller er galt i matrisen; tom når den dekker modellen. Hvert
  * område skal ha en begrunnelse. Det som er skrevet eller beholdt, skal ha
- * kilder og bevis; et tomt område skal si hva det ble søkt etter.
+ * kilder og bevis; et tomt område skal si hva det ble søkt etter, og et
+ * område sikkerhetsfilteret stoppet, hva som ble forsøkt.
  */
 export function kontrollerDekning(matrise: unknown, punkter: readonly string[] = kontrollpunkter()): string[] {
   if (typeof matrise !== 'object' || matrise === null) return ['Matrisen må være et JSON-objekt.']
@@ -82,6 +87,7 @@ export function kontrollerDekning(matrise: unknown, punkter: readonly string[] =
     if (!tekst(o.begrunnelse)) feil.push(`${nokkel}: mangler begrunnelse.`)
     if (!tekster(o.kilder) || !tekster(o.sok)) feil.push(`${nokkel}: kilder og sok må være lister med tekst, uten tomme oppføringer.`)
     else if (o.status === 'tomt_begrunnet' && o.sok.length === 0) feil.push(`${nokkel}: et tomt område må si hva det ble søkt etter.`)
+    else if (o.status === 'utsatt_sikkerhetsfilter' && o.sok.length === 0) feil.push(`${nokkel}: et område sikkerhetsfilteret stoppet, må si hva som ble forsøkt (sok).`)
     else if ((o.status === 'nytt_eller_oppdatert' || o.status === 'beholdt_etter_kontroll') && (o.kilder.length === 0 || !tekst(o.bevis))) {
       feil.push(`${nokkel}: det som er skrevet eller beholdt, må ha kilder og bevis.`)
     }
@@ -92,4 +98,16 @@ export function kontrollerDekning(matrise: unknown, punkter: readonly string[] =
     if (n > 1) feil.push(`${p}: står ${n} ganger.`)
   }
   return feil
+}
+
+/**
+ * Kontrollpunktene sikkerhetsfilteret stoppet (`utsatt_sikkerhetsfilter`), i
+ * matrisens rekkefølge. De er ikke kontrollert: beviset for porten `dekning` i
+ * selvtesten må nevne hvert av dem (`kuratering.selvtest_utsatte_feil`), og
+ * køen tar dem i en oppfølgingskuratering (`docs/kurateringsko.md`).
+ */
+export function utsatteOmrader(matrise: unknown): string[] {
+  const omrader = (matrise as { omrader?: unknown } | null)?.omrader
+  if (!Array.isArray(omrader)) return []
+  return omrader.flatMap((o: Record<string, unknown> | null) => (o?.status === 'utsatt_sikkerhetsfilter' && typeof o.nokkel === 'string' ? [o.nokkel] : []))
 }

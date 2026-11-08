@@ -13,6 +13,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { glemBildet } from '../oppdatering/bevaring'
+import { VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planpanel, sporsmal, stoppet, type Bruker } from './hjelp/verktoyflyt'
@@ -57,6 +58,23 @@ async function fyllInn(user: Bruker, fra: string, dose: string, maldose: string)
 /** Svaret som sier at et vilkår ikke er oppfylt: «Nei», eller «Ikke ennå» for en vurdering. */
 const IKKE = /^(Nei|Ikke ennå)$/
 
+/** Vilkårene i det graviditetsforebyggende programmet for valproat, i regelens rekkefølge. */
+const PPP = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved?.sporsmal === 'kan_bli_gravid')
+/** Svarene på de to andre spørsmålene som styrer vilkår, når begge er «Nei». */
+const ANDRE = ['- Kan ikke bli far.', '- Ingen østrogenholdig prevensjon eller behandling.']
+
+/** Linjene under «Avklart for denne pasienten» i en kopi. */
+function avklart(tekst: string) {
+  const linjer = tekst.split('\n')
+  const fra = linjer.indexOf('Avklart for denne pasienten:') + 1
+  expect(fra).toBeGreaterThan(0)
+  const til = linjer.indexOf('', fra)
+  return linjer.slice(fra, til === -1 ? undefined : til)
+}
+
+/** De samme linjene slik de står på skjermen. */
+const avklartPaSkjermen = () => within(screen.getByRole('region', { name: 'Avklart for denne pasienten' })).getAllByRole('listitem').map((li) => li.textContent)
+
 /** Svarer `verdi` på spørsmålet som passer `tekst`. */
 const svar = (user: Bruker, tekst: RegExp, verdi: RegExp) => user.click(within(sporsmal(tekst)).getByRole('radio', { name: verdi }))
 
@@ -71,17 +89,18 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
 
     // Alt bekreftet, nei på hvert spørsmål og unntak: hele planen, beregnet av seg selv.
     await besvarAlt(user)
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toMatch(/^Kombinere stemningsstabiliserende\n/)
     expect(tekst).toContain(
       'Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.',
     )
     const rader = tekst.split('\n').filter((l) => l.includes('Valproat peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader)
-      expect(l).toContain(
-        'Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
-      )
+    // Hele forklaringen i den første raden; deretter samme dose, merket uendret.
+    expect(rader[0]).toContain(
+      'Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
+    )
+    for (const l of rader.slice(1)) expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose;')
     expect(tekst).toMatch(/Dag 1–14: Valproat peroralt: .*; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg/)
     expect(tekst).toMatch(/Fra dag 36: Valproat peroralt: .*; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg/)
     expect(tekst).toContain('Bekreftet: Pasienten bruker et natriumvalproatpreparat')
@@ -93,20 +112,33 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
       'Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808',
     )
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
+    // Kan ikke bli gravid: den korte planen sier det, uten vilkårene i det graviditetsforebyggende programmet.
+    const nei = await kopier(user)
+    expect(avklart(nei)).toEqual(['- Kan ikke bli gravid.', ...ANDRE])
+    for (const b of PPP) expect(nei, b.id).not.toContain(b.tekst)
+    expect(avklartPaSkjermen()).toEqual(avklart(nei).map((l) => l.slice(2)))
 
     // Pasienten kan bli gravid: vilkårene i programmet stilles som spørsmål; et vilkår som ikke er oppfylt, gir ingen plan.
     await besvarAlt(user, [/kan bli gravid/])
     await svar(user, /sikker prevensjon uten avbrudd/, IKKE)
     await stoppet(/Ingen plan med disse svarene/)
     await svar(user, /sikker prevensjon uten avbrudd/, /^Ja$/)
-    expect(await kopier(user)).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
+    expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
+    // Det står kort i standardplanen: på skjermen, i den korte kopien og utenfor det faglige grunnlaget, så det kommer med i utskriften.
+    const ja = await kopier(user)
+    expect(avklart(ja)).toEqual(['- Kan bli gravid.', ...PPP.map((b) => `- Bekreftet: ${b.tekst}`), ...ANDRE])
+    // Ingen avkreftede unntak i den korte planen; de står i kopien med faglig grunnlag.
+    expect(ja).not.toContain('Avkreftet:')
+    expect(await kopier(user, 'utvidet')).toContain('Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer')
+    expect(avklartPaSkjermen()).toEqual(avklart(ja).map((l) => l.slice(2)))
+    expect(screen.getByRole('region', { name: 'Avklart for denne pasienten' }).closest('details')).toBeNull()
 
     // Pasienten kan bli far: forholdsreglene for menn må være gitt. «Ikke ennå» er en vurdering som gjenstår, ikke en stopp.
     await besvarAlt(user, [/kan gjøre en partner gravid/])
     await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ikke ennå$/)
     await stoppet(/Ett spørsmål igjen/)
     await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ja$/)
-    expect(await kopier(user)).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
+    expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
 
     // Uten natriumvalproatpreparat og dose i mg natriumvalproat: ingen plan.
     await besvarAlt(user)
@@ -119,14 +151,14 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     vis()
     await fyllInn(user, 'Litium', '168', '200')
     await besvarAlt(user)
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toContain('Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.')
     const rader = tekst.split('\n').filter((l) => l.includes('Litium peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader)
-      expect(l).toContain(
-        'Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke',
-      )
+    expect(rader[0]).toContain(
+      'Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke',
+    )
+    for (const l of rader.slice(1)) expect(l).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose;')
     expect(tekst).toMatch(/Fra dag 36: Litium peroralt: .*; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg/)
     expect(tekst).toMatch(/Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 786436a0ea8d/)
 

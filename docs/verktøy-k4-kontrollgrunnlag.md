@@ -45,19 +45,19 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-04T01:47:27
 
 | Kasus | Regel | Kategori | Hva | Dose | Utfall |
 | --- | --- | --- | --- | --- | --- |
-| K4-01 | `tillegg-valproat-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | den godkjente regelen i appen, uten simulering: hele opptrappingen | «1000» | plan (12 rader) |
-| K4-02 | `tillegg-litium-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | den godkjente regelen i appen, uten simulering: hele opptrappingen | «168» | plan (12 rader) |
-| K4-10 | `tillegg-valproat-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | hele opptrappingen med valproat | «1000» | plan (12 rader) |
+| K4-01 | `tillegg-valproat-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | den godkjente regelen i appen, uten simulering: hele opptrappingen | «1000» | plan (8 rader) |
+| K4-02 | `tillegg-litium-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | den godkjente regelen i appen, uten simulering: hele opptrappingen | «168» | plan (8 rader) |
+| K4-10 | `tillegg-valproat-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | hele opptrappingen med valproat | «1000» | plan (8 rader) |
 | K4-11 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | pasienten er under 18 år | «1000» | stopp: Regelen gjelder ikke: Pasienten er under 18 år. |
 | K4-12 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | tidligere utslett på lamotrigin | «1000» | stopp: Regelen gjelder ikke: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin. |
 | K4-13 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | graviditet er ikke vurdert (ubesvart) | «1000» | stopp: Må avklares før beregning (ukjent): Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres. |
-| K4-14 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli gravid, og alle vilkårene i det graviditetsforebyggende programmet er bekreftet hver for seg | «1000» | plan (12 rader) |
+| K4-14 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli gravid, og alle vilkårene i det graviditetsforebyggende programmet er bekreftet hver for seg | «1000» | plan (8 rader) |
 | K4-26 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli gravid, men sikker prevensjon er ikke bekreftet | «1000» | stopp: Må bekreftes før beregning: Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode. |
 | K4-27 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke besvart om pasienten kan bli gravid | «1000» | stopp: Må besvares før beregning: Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet. |
 | K4-28 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli gravid og alle vilkårene er bekreftet, men pasienten planlegger graviditet: stopper, vilkårene løser ikke det | «1000» | stopp: Regelen gjelder ikke: Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres. |
-| K4-29 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan ikke bli gravid: vilkårene i programmet spørres ikke etter | «1000» | plan (12 rader) |
+| K4-29 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan ikke bli gravid: vilkårene i programmet spørres ikke etter | «1000» | plan (8 rader) |
 | K4-43 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke bekreftet at pasienten bruker et natriumvalproatpreparat i den innfylte dosen | «1000» | stopp: Må bekreftes før beregning: Pasienten bruker et natriumvalproatpreparat, og døgndosen som er fylt inn, er den pasienten bruker nå, i mg natriumvalproat slik den står i legemiddellisten. Preparat, styrke og fordeling over døgnet fortsetter uendret som i legemiddellisten; preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare. |
-| K4-44 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli far, og informasjonen og vurderingen for menn som bruker valproat er bekreftet hver for seg | «1000» | plan (12 rader) |
+| K4-44 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli far, og informasjonen og vurderingen for menn som bruker valproat er bekreftet hver for seg | «1000» | plan (8 rader) |
 | K4-45 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | kan bli far, men informasjonen om risiko, prevensjon og sæddonasjon er ikke bekreftet | «1000» | stopp: Må bekreftes før beregning: Pasienten er informert om den mulige risikoen for nevroutviklingsforstyrrelser hos barn som unnfanges mens han bruker valproat eller de 3 første månedene etter at han har sluttet (sammenhengen er usikker), om behovet for effektiv prevensjon, også for en kvinnelig partner, i hele denne perioden, og om at han ikke skal donere sæd i samme periode. |
 | K4-46 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke besvart om pasienten kan bli far | «1000» | stopp: Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid? |
 | K4-15 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | ingen dose av valproat er fylt inn | «» | mangler: Aktuell døgndose må fylles inn som et tall større enn 0. |
@@ -69,10 +69,10 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-04T01:47:27
 | K4-20 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | høyeste dose sammen med valproat: en plan over 200 mg stopper (godkjenningen simulert for den endrede kopien) | «1000» | stopp: lamotrigin fra dag 36: den ideelle dosen 250 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 225 mg (-10 %) og 275 mg (+10 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv. |
 | K4-22 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | forskriveren velger 200 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen | «1000» | stopp: Måldosen 200 mg er utenfor det regelen gjelder for (100 mg). |
 | K4-23 | `tillegg-valproat-lamotrigin` | Interaksjonssperrer | østrogenholdig prevensjon uten skriftlig vurdering av måldosen | «1000» | stopp: Svaret ja (østrogenholdig prevensjon eller behandling, som kan kreve en høyere vedlikeholdsdose av lamotrigin enn måldosen; måldosen krever en særskilt vurdering) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer. |
-| K4-24 | `tillegg-valproat-lamotrigin` | Interaksjonssperrer | østrogenholdig prevensjon med skriftlig vurdering av måldosen | «1000» | plan (12 rader) |
+| K4-24 | `tillegg-valproat-lamotrigin` | Interaksjonssperrer | østrogenholdig prevensjon med skriftlig vurdering av måldosen | «1000» | plan (8 rader) |
 | K4-25 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | spørsmålet om østrogenholdig behandling er ubesvart | «1000» | stopp: Må besvares før beregning: Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? |
 | K4-21 | `tillegg-valproat-lamotrigin` | Nødstoppen | verktøyet er deaktivert med nødstoppen | «1000» | deaktivert med nødstoppen |
-| K4-30 | `tillegg-litium-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | hele opptrappingen med litium | «168» | plan (12 rader) |
+| K4-30 | `tillegg-litium-lamotrigin` | Vanlig dose innenfor det godkjente omfanget | hele opptrappingen med litium | «168» | plan (8 rader) |
 | K4-31 | `tillegg-litium-lamotrigin` | Interaksjonssperrer | pasienten bruker også karbamazepin | «168» | stopp: Regelen gjelder ikke: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir). Da gjelder en annen opptrapping. |
 | K4-32 | `tillegg-litium-lamotrigin` | Interaksjonssperrer | pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin | «168» | stopp: Regelen gjelder ikke: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.) |
 | K4-33 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | moderat nedsatt leverfunksjon | «168» | stopp: Regelen gjelder ikke: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C). |
@@ -80,7 +80,7 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-04T01:47:27
 | K4-35 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå | «168» | stopp: Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen. Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen. |
 | K4-36 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | en usannsynlig litiumdose (0,5 mg) stopper | «0,5» | stopp: Startdosen 0,5 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
 | K4-37 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper | «170» | stopp: Startdosen 170 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
-| K4-38 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | grensen: 10 tabletter (420 mg Li⁺) er innenfor | «420» | plan (12 rader) |
+| K4-38 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | grensen: 10 tabletter (420 mg Li⁺) er innenfor | «420» | plan (8 rader) |
 | K4-39 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper | «462» | stopp: Startdosen 462 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
 | K4-40 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen | «168» | stopp: Måldosen 300 mg er utenfor det regelen gjelder for (200 mg). |
 | K4-41 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | måldosen er ikke bekreftet som pasientens kliniske mål | «168» | stopp: Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen. |
@@ -96,32 +96,39 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -138,6 +145,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -156,6 +166,9 @@ Kontroller:
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
+
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
 
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
@@ -177,32 +190,37 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til litium
-Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.
+Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -220,6 +238,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -240,6 +261,9 @@ Kontroller:
 - Måldosen er 200 mg (bindende): oppfylt (200 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig: oppfylt (4 perioder; største avvik 0 %.)
 
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner.
+
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Li>La
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
@@ -259,32 +283,39 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -301,6 +332,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -319,6 +353,9 @@ Kontroller:
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
+
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
 
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
@@ -340,32 +377,43 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan bli gravid.
+- Bekreftet: Annen behandling har ikke effekt eller tolereres ikke, og spesialist i bipolar lidelse har ved siste årlige gjennomgang vurdert valproat som den mest egnede behandlingen.
+- Bekreftet: Pasienten har fått pasientinformasjonsheftet, har forstått og anerkjent risikoen for misdannelser og nevrologiske utviklingsforstyrrelser hos barnet, og risikoskjemaet er gjennomgått ved siste årlige gjennomgang.
+- Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode.
+- Bekreftet: Graviditet er utelukket med graviditetstest når det er behov for det, og pasienten vet at hun straks skal kontakte lege ved planlagt eller mistenkt graviditet.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -382,6 +430,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -405,6 +456,9 @@ Kontroller:
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
 
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
+
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
@@ -425,32 +479,39 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -467,6 +528,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -485,6 +549,9 @@ Kontroller:
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
+
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
 
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
@@ -506,32 +573,41 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan bli far.
+- Bekreftet: Pasienten er informert om den mulige risikoen for nevroutviklingsforstyrrelser hos barn som unnfanges mens han bruker valproat eller de 3 første månedene etter at han har sluttet (sammenhengen er usikker), om behovet for effektiv prevensjon, også for en kvinnelig partner, i hele denne perioden, og om at han ikke skal donere sæd i samme periode.
+- Bekreftet: Behandlende lege har vurdert at valproat fortsatt er den mest passende behandlingen, og planlegger pasienten å bli far, er andre behandlingsalternativer vurdert og diskutert med ham.
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -548,6 +624,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -569,6 +648,9 @@ Kontroller:
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
 
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
+
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
@@ -589,32 +671,40 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til valproat
-Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.
+Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Østrogenholdig prevensjon eller behandling, som kan kreve en høyere vedlikeholdsdose av lamotrigin enn måldosen.
+- Bekreftet: Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til 100 mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -631,6 +721,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -652,6 +745,9 @@ Kontroller:
 - Måldosen er 100 mg (bindende): oppfylt (100 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig og ikke over 200 mg: oppfylt (4 perioder; største avvik 0 %.)
 
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.
+
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Va>La
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
@@ -672,32 +768,37 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til litium
-Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.
+Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -715,6 +816,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -735,6 +839,9 @@ Kontroller:
 - Måldosen er 200 mg (bindende): oppfylt (200 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig: oppfylt (4 perioder; største avvik 0 %.)
 
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner.
+
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Li>La
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
@@ -754,32 +861,37 @@ Planutfall: Komplett plan til sluttmålet.
 ```text
 Kombinere stemningsstabiliserende
 Legge lamotrigin til litium
-Komplett plan til sluttmålet: Litium fortsetter uendret på 420 mg Li⁺ (60 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.
+Komplett plan til sluttmålet: Litium fortsetter uendret på 420 mg Li⁺ (60 mmol); Lamotrigin fortsetter på 200 mg fra dag 36 (14.12.2026).
 
 Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = uendret dose; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
+Fra dag 36 (fra 14.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
+Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+
+Legemiddelform og resepter:
+- Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.
 
 Vurderingspunkter:
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
-- Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
-- Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
-- Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
+1. Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.
+2. Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.
+3. Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
+4. Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
-Advarsler:
+Forbehold:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
+
+Beregnet etter regelversjon 2 med FEST-uttrekk fra 27.10.2026.
+
+FAGLIG GRUNNLAG
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -797,6 +909,9 @@ Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+Preparater i FEST som ikke brukes:
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Kontroller:
 - Avkreftet: Pasienten er under 18 år: oppfylt (Vurdert og avkreftet av forskriveren.)
@@ -816,6 +931,9 @@ Kontroller:
 - Startdosen er 42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg (bindende): oppfylt (420 mg.)
 - Måldosen er 200 mg (bindende): oppfylt (200 mg.)
 - Hver døgndose av lamotrigin kan gis med preparater i FEST, nøyaktig: oppfylt (4 perioder; største avvik 0 %.)
+
+Klinisk godkjenning:
+- Klinisk godkjent 04.11.2026 av ChatGPT (uavhengig kontrollør), regelversjon 2. Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner.
 
 Kilder:
 - Psychiatrienet, switchtabellene (kildearkivet fra P3) (De Tijdstroom, Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json): https://www.psychiatrienet.nl/switchtabel – kildeoppføring CombiningMoodstabilizers:Li>La

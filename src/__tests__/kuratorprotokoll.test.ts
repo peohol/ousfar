@@ -9,7 +9,7 @@ import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { Agentfeil, ROLLER, lagAgentklient, lesArgumenter, lesRolle } from '../kuratorprotokoll/agentklient'
 import { migrasjonsversjon, nokkelmigrasjon, nokkelSha256, sikreNokler } from '../kuratorprotokoll/nokler'
-import { kontrollerDekning, kontrollpunkter, modellSha256, tomMatrise } from '../kuratorprotokoll/dekning'
+import { kontrollerDekning, kontrollpunkter, modellSha256, tomMatrise, utsatteOmrader } from '../kuratorprotokoll/dekning'
 
 const CITALOPRAM = JSON.parse(readFileSync(new URL('../../docs/kurateringsjournal/citalopram-dekning.json', import.meta.url), 'utf8')) as {
   omrader: { nokkel: string }[]
@@ -49,6 +49,28 @@ describe('dekningen', () => {
       'identitet: står 2 ganger.',
       'viktige_data: mangler i matrisen.',
     ])
+  })
+
+  it('fører et punkt sikkerhetsfilteret stoppet som utsatt, med det som ble forsøkt, men uten bevis, både når kortet står urørt og når det ikke finnes', () => {
+    const m = tomMatrise('de_novo')
+    for (const o of m.omrader) Object.assign(o, { begrunnelse: 'Kontrollert.', kilder: ['SPC'], sok: [], bevis: 'Lest mot punkt 4.2.' })
+    const urort = m.omrader.find((o) => o.nokkel === 'toksisitet_forgiftning/Toksiske konsentrasjoner')!
+    const mangler = m.omrader.find((o) => o.nokkel === 'viktige_data/alvorlig_intoksikasjon')!
+    const stoppet = { status: 'utsatt_sikkerhetsfilter' as const, begrunnelse: 'Stoppet av sikkerhetsfilteret: syntetisk.', sok: ['Egen kort økt med bare stoffets rad'], artefakt: '', bevis: '' }
+    // Urørt fra grunnversjonen, med kilden kortet har der; ikke lagt til, uten kilder.
+    Object.assign(urort, stoppet, { kilder: ['Kilden i grunnversjonen'] })
+    Object.assign(mangler, stoppet, { kilder: [] })
+    expect(kontrollerDekning(m)).toEqual([])
+    expect(utsatteOmrader(m)).toEqual([mangler.nokkel, urort.nokkel])
+
+    mangler.sok = []
+    expect(kontrollerDekning(m)).toEqual([`${mangler.nokkel}: et område sikkerhetsfilteret stoppet, må si hva som ble forsøkt (sok).`])
+    mangler.sok = ['Egen kort økt']
+    urort.begrunnelse = ''
+    expect(kontrollerDekning(m)).toEqual([`${urort.nokkel}: mangler begrunnelse.`])
+    // Et tomt område er noe annet: det betyr at ingen dokumentasjon finnes.
+    expect(utsatteOmrader({ omrader: [{ nokkel: 'tdm', status: 'tomt_begrunnet' }] })).toEqual([])
+    expect(utsatteOmrader(null)).toEqual([])
   })
 
   it('får et nytt fingeravtrykk når modellen endres', () => {
