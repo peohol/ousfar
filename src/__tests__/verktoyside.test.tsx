@@ -48,6 +48,13 @@ import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTR
 beforeEach(() => {
   window.scrollTo = () => {}
   Element.prototype.scrollIntoView ??= function () {}
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
   sessionStorage.clear()
   glemBildet()
 })
@@ -345,13 +352,6 @@ describe('med en regel godkjent bare i testen', () => {
   })
 
   it('åpner planen i et eget ark på smale skjermer og viser den bare der mens arket står; på store skjermer står den i høyre kolonne', async () => {
-    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
-      this.setAttribute('open', '')
-    }
-    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
-      this.removeAttribute('open')
-      this.dispatchEvent(new Event('close'))
-    }
     const user = userEvent.setup()
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett, klokke: TESTKLOKKE })
     await fyllInn(user)
@@ -985,6 +985,23 @@ describe('nødstoppen (P11.6)', () => {
         expect(await nedtrapping()).toBeTruthy()
         expect(tattBort()).toBeNull()
         expect(legemidler.les.mock.calls.length).toBe(hentet + 1)
+      })
+
+      it('lukker planarket på mobil når sperrene ikke kan leses, så meldingen står synlig i panelet', async () => {
+        const { svikt, lager } = ustabil()
+        const user = await medPlan(lager)
+        await user.click(screen.getByRole('button', { name: 'Se planen' }))
+        expect(screen.getByRole('dialog', { name: 'Planen' })).toBeTruthy()
+        svikt.na = true
+        await fokus()
+        expect((await within(planpanel()).findByRole('alert')).textContent).toContain(UKONTROLLERT)
+        expect(screen.queryByRole('dialog')).toBeNull()
+        expect(screen.queryByText('Planen er åpnet i eget vindu.')).toBeNull()
+        // Når sperrene kan leses igjen, åpnes ikke arket av seg selv.
+        svikt.na = false
+        await fokus()
+        await screen.findByRole('heading', { name: /^Steg 2/ })
+        expect(screen.queryByRole('dialog')).toBeNull()
       })
 
       it('viser ikke meldingen når vellykkede lesinger bare bekrefter planen som står, heller ikke etter en ny beregning etter et brudd', async () => {

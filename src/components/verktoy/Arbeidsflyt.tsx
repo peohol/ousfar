@@ -279,13 +279,14 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
   const panel = useRef<HTMLElement | null>(null)
   // På smale flater leses planen i et eget ark over siden; blir flaten bred, står den i høyre kolonne igjen.
+  // Kommer det en melding i stedet for flyten (en sperre, eller sperrene kunne ikke leses), lukkes arket, så meldingen står i panelet.
   const toKolonner = useMediesporring(TO_KOLONNER)
   const [arkApen, setArkApen] = useBevart('plan/ark', false)
-  const planark = arkApen && !toKolonner
+  const planark = arkApen && !toKolonner && aktiv
   const lukkArk = useCallback(() => setArkApen(false), [setArkApen])
   useEffect(() => {
-    if (toKolonner) setArkApen(false)
-  }, [toKolonner, setArkApen])
+    if (toKolonner || !aktiv) setArkApen(false)
+  }, [toKolonner, aktiv, setArkApen])
   const [visMangler, setVisMangler] = useState(false)
   const valgnokkel = JSON.stringify(valg ?? null)
   useEffect(() => setVisMangler(false), [valgnokkel])
@@ -858,11 +859,9 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
               planinnhold
             )}
           </Planpanel>
-          {melding === undefined && (
-            <Modallag apen={planark} tittel={titler[3]} onLukk={lukkArk} ark>
-              {planark && planinnhold}
-            </Modallag>
-          )}
+          <Modallag apen={planark} tittel={titler[3]} onLukk={lukkArk} ark>
+            {planark && planinnhold}
+          </Modallag>
         </>
       }
     />
