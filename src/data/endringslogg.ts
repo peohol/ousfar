@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.3',
+    dato: '2026-11-08',
+    sammendrag: 'Verktøyene er testet samlet etter forbedringene, også i den publiserte appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingenting i appen er endret: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
+      'Alle fire verktøyene er prøvd med syntetiske pasienter etter forbedringene av spørsmålene, stoppmeldingene og doseplanene. Hver komplett plan er holdt dag for dag mot en egen, uavhengig fasit, og det samme gjelder skjermen, den korte kopien og utskriften, på PC og mobil. Alle planene stemte. Hvert stopp sa hva som stopper.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.2',
     dato: '2026-11-07',
     sammendrag: 'Spørsmålene i verktøyene er enklere å svare på, og et stopp sier hvorfor',

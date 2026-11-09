@@ -1,5 +1,5 @@
 {
- "beskrivelse": "Syntetiske brukerforløp for P0 (docs/verktøy-p0-rapport-2026-11.md). svar: [mønster i spørsmålsteksten, svaret]; spørsmål uten mønster får det trygge svaret. Ingen reelle pasienter.",
+ "beskrivelse": "Syntetiske brukerforløp for P0 (docs/verktøy-p0-rapport-2026-11.md) og P4 (docs/verktøy-p4-rapport-2026-11.md). svar: [mønster i spørsmålsteksten, svaret]; spørsmål uten mønster får det trygge svaret. fasit: forløpet i src/__tests__/qa/fasit.ts som gjelder (standard: id). mobil: kjøres på mobilbredde. Hver komplett plan kopieres og skrives ut. Ingen reelle pasienter.",
  "forlop": [
   {
    "id": "P0-A01",
@@ -19,8 +19,7 @@
    ],
    "form": [
     "Tablett"
-   ],
-   "utskrift": true
+   ]
   },
   {
    "id": "P0-A02",
@@ -367,7 +366,6 @@
      "100"
     ]
    ],
-   "utskrift": true,
    "bilder": [
     [
      "mer enn 8 uker",
@@ -1008,6 +1006,153 @@
     ],
     [
      "døgndosen",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P4-M01",
+   "hva": "Som P0-B01 (citalopram → sertralin), på mobil",
+   "fasit": "P0-B01",
+   "mobil": true,
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "behandling av depresjon",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P4-M02",
+   "hva": "Som P0-C05 (risperidon → Xeplion), på mobil",
+   "fasit": "P0-C05",
+   "mobil": true,
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "3"
+    ],
+    [
+     "Måldose",
+     "75"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "schizofreni",
+     "Ja"
+    ],
+    [
+     "stabil",
+     "Ja"
+    ],
+    [
+     "tålt",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P4-M03",
+   "hva": "Som P0-D01 (valproat + lamotrigin), på mobil",
+   "fasit": "P0-D01",
+   "mobil": true,
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Valproat"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "1000"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "valproat fast",
+     "Ja"
+    ],
+    [
+     "natriumvalproatpreparat",
+     "Ja"
+    ],
+    [
+     "døgndosen",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P4-M04",
+   "hva": "Som P0-N01 (escitalopram, lang behandlingstid), på mobil",
+   "fasit": "P0-N01",
+   "mobil": true,
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "mange måneder",
      "Ja"
     ]
    ]
