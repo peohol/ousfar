@@ -30,6 +30,18 @@ export interface Dosepunkt {
   dose: string
 }
 
+/**
+ * Den gjentatte vedlikeholdsinjeksjonen i et depotforløp: `dose` av
+ * `legemiddel` hver måned, første gang én måned etter dag `etterDag`, med
+ * administrasjonsvinduet (`vindu`) i samme rad.
+ */
+export interface Vedlikehold {
+  legemiddel: string
+  dose: string
+  etterDag: number
+  vindu: RegExp
+}
+
 export interface Fasit {
   /** Det klinisk riktige utfallet. To verdier: begge er riktige (for eksempel en låst tilpasning som gir standardplanen). */
   utfall: Utfall | Utfall[]
@@ -43,6 +55,8 @@ export interface Fasit {
   strategi?: string
   /** Hele doseforløpet en komplett plan skal ha, dag for dag, på skjermen, i kopien og i utskriften. Et punkt uten `til` gjelder videre fremover. */
   doser?: Dosepunkt[]
+  /** Vedlikeholdsinjeksjonene etter oppstarten: nøyaktig disse, på skjermen, i kopien og i utskriften ({@link vedlikeholdsavvik}). */
+  vedlikehold?: Vedlikehold[]
   /** Sluttmålet, som tekst i planen. */
   slutt?: RegExp
   /** Et stopp skal nevne alle disse (forholdet som stopper). */
@@ -68,6 +82,9 @@ const ESCITALOPRAM_KILDE = 'docs/verktøy-b2-escitalopram-kontrollgrunnlag.md (v
 const K2_KILDE = 'docs/verktøy-k2-kontrollgrunnlag.md (K2-2a og K2-4, godkjent v2); Cipramil og Zoloft preparatomtale pkt. 4.2'
 const K3_KILDE = 'docs/verktøy-k3-antipsykotikabytter.md (regneeksemplene for v8); Zyprexa, Risperdal og Abilify preparatomtale pkt. 4.2'
 const K4_KILDE = 'docs/verktøy-k4-kontrollgrunnlag.md (godkjent v2); Lamictal preparatomtale pkt. 4.2, tabellen for bipolar lidelse'
+
+/** Xeplion 75 mg hver måned fra én måned etter den andre oppstartsinjeksjonen dag 8, med vinduet ±7 dager (preparatomtalen pkt. 4.2). */
+const XEPLION_75: Vedlikehold = { legemiddel: 'Paliperidon depotinjeksjon', dose: '75 mg', etterDag: 8, vindu: /±\s?7 dager/ }
 
 /** Hvert trinn i escitalopramnedtrappingen varer 28 dager (v14). */
 const trinn28 = (legemiddel: string, doser: string[]): Dosepunkt[] => doser.map((dose, i) => ({ fra: 1 + 28 * i, til: 28 * (i + 1), legemiddel, dose }))
@@ -167,32 +184,38 @@ export const FASIT: Record<string, Fasit> = {
   },
   'P0-C04': {
     utfall: 'komplett',
-    kilde: 'docs/verktøy-k3-antipsykotika.md (depot-aripiprazol-maintena v3); Abilify Maintena preparatomtale pkt. 4.2 (én injeksjon og 14 dager peroral aripiprazol)',
+    kilde:
+      'docs/verktøy-k3-antipsykotika.md (depot-aripiprazol-maintena v3; kontrolltilfellet i src/verktoy/regler/pilotsett.ts: «hver måned fra 1 måned etter dag 1, tidligst 26 dager etter forrige: 400 mg injeksjon»); Abilify Maintena preparatomtale pkt. 4.2 (én injeksjon og 14 dager peroral aripiprazol; vedlikehold 400 mg én gang i måneden, tidligst 26 dager etter forrige injeksjon)',
     strategi: 'oppstart med én injeksjon og peroral overlapp i 14 dager',
     doser: [
       { fra: 1, til: 1, legemiddel: 'Aripiprazol depotinjeksjon', dose: '400 mg' },
       { fra: 1, til: 14, legemiddel: 'Aripiprazol peroralt', dose: '15 mg' },
     ],
+    vedlikehold: [{ legemiddel: 'Aripiprazol depotinjeksjon', dose: '400 mg', etterDag: 1, vindu: /tidligst 26 dager etter forrige/ }],
     slutt: /hver måned[^\n]*400 mg|400 mg[^\n]*hver måned/i,
   },
   'P0-C05': {
     utfall: 'komplett',
-    kilde: 'docs/verktøy-k3-antipsykotika.md (depot-risperidon-xeplion v8: 3 mg risperidon → 150/100 mg, så 75 mg månedlig); Xeplion preparatomtale pkt. 4.2',
+    kilde:
+      'docs/verktøy-k3-antipsykotika.md (depot-risperidon-xeplion v8: 3 mg risperidon → 150 mg dag 1 og 100 mg dag 8 (±4 dager), så 75 mg hver måned fra én måned etter dag 8 (±7 dager); kasus K3-01 i src/verktoy/regler/antipsykotikakasus.ts); Xeplion preparatomtale pkt. 4.2 (månedlig, første gang én måned etter andre dose)',
     strategi: 'oppstartsinjeksjoner dag 1 og 8, så månedlig vedlikehold',
     doser: [
       { fra: 1, til: 1, legemiddel: 'Paliperidon depotinjeksjon', dose: '150 mg' },
       { fra: 8, til: 8, legemiddel: 'Paliperidon depotinjeksjon', dose: '100 mg' },
     ],
+    vedlikehold: [XEPLION_75],
     slutt: /hver måned[^\n]*75 mg|75 mg[^\n]*hver måned/i,
   },
   'P0-C06': {
     utfall: 'komplett',
-    kilde: 'docs/verktøy-k3-antipsykotika.md (depot-paliperidon-xeplion v3); Xeplion preparatomtale pkt. 4.2 (peroral paliperidon 6 mg ↔ 75 mg månedlig)',
+    kilde:
+      'docs/verktøy-k3-antipsykotika.md (depot-paliperidon-xeplion v3); Xeplion preparatomtale pkt. 4.2 (peroral paliperidon 6 mg ↔ 75 mg månedlig; 150 mg dag 1 og 100 mg dag 8 (±4 dager), så månedlig (±7 dager), første gang én måned etter andre dose)',
     strategi: 'oppstartsinjeksjoner dag 1 og 8, så månedlig vedlikehold',
     doser: [
       { fra: 1, til: 1, legemiddel: 'Paliperidon depotinjeksjon', dose: '150 mg' },
       { fra: 8, til: 8, legemiddel: 'Paliperidon depotinjeksjon', dose: '100 mg' },
     ],
+    vedlikehold: [XEPLION_75],
     slutt: /hver måned[^\n]*75 mg|75 mg[^\n]*hver måned/i,
   },
   'P0-C07': utenfor('docs/verktøy-k3-antipsykotika.md (v8: dokumentert toleranse for peroral risperidon er et vilkår)', /tålt|toleranse/i),
@@ -379,6 +402,36 @@ export function forlopsavvik(tekst: string, doser: readonly Dosepunkt[]): string
   return ut.map((a) => `${a.legemiddel} ${dagtekst(a.fra, a.til)}: ${a.viser}, fasiten sier ${a.venter}`)
 }
 
+/** En vedlikeholdsrad: «Hver måned fra 1 måned etter dag 8 (første …): Navn depotinjeksjon dose …». */
+const VEDLIKEHOLD = /^\W*hver måned fra 1 måned etter dag (\d+)\b[^:]*:\s*(.*)$/i
+
+/**
+ * Hvor vedlikeholdsinjeksjonene i teksten avviker fra fasiten: hver forventet
+ * injeksjon skal stå i nøyaktig én rad med riktig legemiddel, dose, første
+ * tidspunkt (én måned etter riktig dag) og administrasjonsvindu, og teksten
+ * skal ikke ha andre vedlikeholdsrader. En første vedlikeholdsinjeksjon som er
+ * flyttet (for eksempel til én måned etter dag 1 i stedet for dag 8), et annet
+ * intervall enn hver måned eller et vindu som mangler, gir avvik.
+ */
+export function vedlikeholdsavvik(tekst: string, forventet: readonly Vedlikehold[]): string[] {
+  const rader = tekst.split('\n').flatMap((l) => {
+    const m = VEDLIKEHOLD.exec(l)
+    const d = m && LEDD.exec(m[2]!)
+    return d ? [{ etterDag: Number(m[1]), legemiddel: d[1]!, dose: d[2]!.replace(/\s*\(.*\)$/, ''), tekst: m[2]! }] : []
+  })
+  const navn = (v: { legemiddel: string; dose: string; etterDag: number }) => `${v.legemiddel} ${v.dose} hver måned fra 1 måned etter dag ${v.etterDag}`
+  const ut: string[] = []
+  const igjen = [...rader]
+  for (const v of forventet) {
+    const i = igjen.findIndex((r) => r.legemiddel.toLowerCase().startsWith(v.legemiddel.toLowerCase()) && r.etterDag === v.etterDag && normal(r.dose) === normal(v.dose))
+    if (i < 0) ut.push(`mangler ${navn(v)}`)
+    else if (!v.vindu.test(igjen[i]!.tekst)) ut.push(`${navn(v)} mangler vinduet (${v.vindu.source})`)
+    if (i >= 0) igjen.splice(i, 1)
+  }
+  for (const r of igjen) ut.push(`har ${navn(r)}, som fasiten ikke har`)
+  return ut
+}
+
 /** Avvikene mellom det som ble observert og fasiten for forløpet (tom liste: i samsvar). */
 export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
   const f = FASIT[id]
@@ -406,7 +459,7 @@ export function kontrollerMotFasit(id: string, o: Observasjon): Avvik[] {
         avvik.push({ type: 'klinisk', hva: `${navn} er tom.` })
         continue
       }
-      if (rader !== undefined) for (const x of forlopsavvik(rader, f.doser ?? [])) avvik.push({ type: 'klinisk', hva: `${navn}: ${x}.` })
+      if (rader !== undefined) for (const x of [...forlopsavvik(rader, f.doser ?? []), ...vedlikeholdsavvik(rader, f.vedlikehold ?? [])]) avvik.push({ type: 'klinisk', hva: `${navn}: ${x}.` })
       else
         for (const p of (f.doser ?? []).filter((p) => !harDosepunkt(tekst, p))) avvik.push({ type: 'klinisk', hva: `${navn} mangler ${p.legemiddel} ${p.dose} ${dagtekst(p.fra, p.til ?? Infinity)}.` })
       if (f.slutt && !f.slutt.test(tekst)) avvik.push({ type: 'klinisk', hva: `${navn} mangler sluttmålet (${f.slutt.source}).` })

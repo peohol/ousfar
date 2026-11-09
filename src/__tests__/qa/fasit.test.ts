@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { BRUKERFORLOP, kjorForlop, lesUttrekkene } from './brukerforlop'
-import { FASIT, forlopsavvik, harDosepunkt, kontrollerMotFasit } from './fasit'
+import { FASIT, forlopsavvik, harDosepunkt, kontrollerMotFasit, vedlikeholdsavvik } from './fasit'
 
 const uttrekkene = lesUttrekkene()
 
@@ -132,6 +132,51 @@ describe('P4 kontrollen av fasiten', () => {
       const rader = ['Dag 1–14: Aripiprazol peroralt: 15 mg', 'Dag 1: Aripiprazol depotinjeksjon: Injeksjon 400 mg', 'Fra dag 15: Aripiprazol peroralt: Seponert'].join('\n')
       expect(forlopsavvik(rader, FASIT['P0-C04']!.doser!)).toEqual([])
       expect(forlopsavvik(rader.replace('Injeksjon 400 mg', 'Injeksjon 300 mg'), FASIT['P0-C04']!.doser!)).toEqual(['Aripiprazol depotinjeksjon dag 1: 300 mg, fasiten sier 400 mg'])
+    })
+  })
+
+  describe('vedlikeholdsinjeksjonene i depotforløpene', () => {
+    const plan = (id: string) => kjorForlop(BRUKERFORLOP.find((f) => f.id === id)!, uttrekkene).vist.join('\n')
+    const xeplion = plan('H-42')
+    const avvik = (tekst: string, id = 'P0-C05') => vedlikeholdsavvik(tekst, FASIT[id]!.vedlikehold!)
+    const VEDLIKEHOLD = 'Hver måned fra 1 måned etter dag 8: Paliperidon depotinjeksjon 75 mg'
+
+    it('godtar motorens planer for Abilify Maintena og Xeplion', () => {
+      expect(avvik(xeplion)).toEqual([])
+      expect(avvik(plan('H-24'), 'P0-C06')).toEqual([])
+      expect(avvik(plan('K0-09'), 'P0-C04')).toEqual([])
+    })
+
+    it('melder en første vedlikeholdsinjeksjon som er flyttet, også når oppstarten og den månedlige dosen er riktige', () => {
+      const flyttet = xeplion.replace(VEDLIKEHOLD, 'Hver måned fra 1 måned etter dag 1: Paliperidon depotinjeksjon 75 mg')
+      expect(forlopsavvik(flyttet, FASIT['P0-C05']!.doser!)).toEqual([])
+      expect(avvik(flyttet)).toEqual([
+        'mangler Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8',
+        'har Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 1, som fasiten ikke har',
+      ])
+      expect(kontrollerMotFasit('P0-C05', { utfall: 'komplett plan', skjerm: xeplion, kopi: flyttet }).map((a) => a.hva)).toEqual([
+        'Kopien: mangler Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8.',
+        'Kopien: har Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 1, som fasiten ikke har.',
+      ])
+    })
+
+    it('melder feil dose, et annet intervall, et vindu som mangler og en ekstra vedlikeholdsrad', () => {
+      expect(avvik(xeplion.replace(VEDLIKEHOLD, 'Hver måned fra 1 måned etter dag 8: Paliperidon depotinjeksjon 100 mg'))).toEqual([
+        'mangler Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8',
+        'har Paliperidon depotinjeksjon 100 mg hver måned fra 1 måned etter dag 8, som fasiten ikke har',
+      ])
+      expect(avvik(xeplion.replace('Hver måned fra 1 måned etter dag 8', 'Hver 2. måned fra 2 måneder etter dag 8'))).toEqual([
+        'mangler Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8',
+      ])
+      expect(avvik(xeplion.replace('±7 dager, ', ''))).toEqual(['Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8 mangler vinduet (±\\s?7 dager)'])
+      expect(avvik(`${xeplion}\n${VEDLIKEHOLD} = 1 injeksjon à 75 mg (±7 dager)`)).toEqual(['har Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8, som fasiten ikke har'])
+    })
+
+    it('leser vedlikeholdsraden slik nettleserkjøringen leser den fra skjermen og utskriften', () => {
+      const skjerm =
+        'Dag 8: Paliperidon depotinjeksjon: Injeksjon 100 mg (±4 dager, deltoideus)\nHver måned fra 1 måned etter dag 8: Paliperidon depotinjeksjon: Injeksjon 75 mg (±7 dager, deltoideus eller setemuskel)'
+      expect(avvik(skjerm)).toEqual([])
+      expect(avvik(skjerm.replace(' (±7 dager, deltoideus eller setemuskel)', ''))).toEqual(['Paliperidon depotinjeksjon 75 mg hver måned fra 1 måned etter dag 8 mangler vinduet (±\\s?7 dager)'])
     })
   })
 

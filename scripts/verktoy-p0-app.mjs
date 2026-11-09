@@ -47,8 +47,9 @@ const harStoppet = async (p) => /^Ingen plan/m.test(await p.locator('.planpanel'
 
 /**
  * Tidslinjen i planpanelet som rader i kopiens form («Dag 1–28: Navn form:
- * dose; …»), så fasiten kan holde skjermen og utskriften dag for dag mot
- * planen (`forlopsavvik` i src/__tests__/qa/fasit.ts). Dosen er den synlige
+ * dose; …», «Hver måned fra 1 måned etter dag 8: Navn depotinjeksjon: dose
+ * (vindu)»), så fasiten kan holde skjermen og utskriften dag for dag mot
+ * planen (`forlopsavvik` og `vedlikeholdsavvik` i src/__tests__/qa/fasit.ts). Dosen er den synlige
  * teksten (`innerText`), som følger utskriftsstilen når utskrift emuleres;
  * navnet er alltid med, også der det bare står for skjermlesere.
  */
@@ -58,7 +59,12 @@ const tidslinjerader = async (p) =>
       ls.map((l) => {
         const dager = l.querySelector('.tidslinje__dager')?.textContent.trim() ?? ''
         const ledd = [...l.querySelectorAll('.tidslinje__legemiddel')].map(
-          (d) => `${d.querySelector('[class*="tidslinje__navn"]')?.textContent.trim() ?? ''}: ${(d.querySelector('.tidslinje__dose')?.innerText ?? '').replace(/\s+/g, ' ').trim()}`,
+          (d) => {
+            const synlig = (sel) => (d.querySelector(sel)?.innerText ?? '').replace(/\s+/g, ' ').trim()
+            // Merknaden ved en injeksjon er administrasjonsvinduet («±7 dager», «tidligst 26 dager etter forrige»).
+            const merknad = synlig('.tidslinje__avvik')
+            return `${d.querySelector('[class*="tidslinje__navn"]')?.textContent.trim() ?? ''}: ${synlig('.tidslinje__dose')}${merknad ? ` (${merknad})` : ''}`
+          },
         )
         return ledd.length > 0 ? `${dager}: ${ledd.join('; ')}` : `${dager}: Vurdering`
       }),
