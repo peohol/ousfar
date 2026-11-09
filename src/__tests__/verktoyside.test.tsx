@@ -27,7 +27,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
-import { AUTOBEREGNING_MS } from '../components/verktoy/Arbeidsflyt'
+import { AUTOBEREGNING_MS, TO_KOLONNER } from '../components/verktoy/Arbeidsflyt'
 import { KOPIER } from '../components/verktoy/Doseplanvisning'
 import { GRUNNLAG_PLAN } from '../components/verktoy/FagligGrunnlag'
 import { UNNTAK_STANDARD as FORHOLD_JA } from '../verktoy/flyt/flyt'
@@ -342,6 +342,47 @@ describe('med en regel godkjent bare i testen', () => {
     expect(screen.queryByRole('region', { name: TEST_NEDTRAPPING.tittel })).toBeNull()
     expect(punkter(within(await nedtrapping()).getByRole('list', { name: 'Planen dag for dag' }))[0]).toEqual(['Dag 1–14', expect.stringMatching(/^10 mg/)])
     expect(legemidler.les.mock.calls.length).toBe(hentet + 1)
+  })
+
+  it('åpner planen i et eget ark på smale skjermer og viser den bare der mens arket står; på store skjermer står den i høyre kolonne', async () => {
+    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+      this.setAttribute('open', '')
+    }
+    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+      this.removeAttribute('open')
+      this.dispatchEvent(new Event('close'))
+    }
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett, klokke: TESTKLOKKE })
+    await fyllInn(user)
+    await nedtrapping()
+    // Panelet har ingen tallsirkel ved overskriften; «Steg 4» står bare for skjermlesere.
+    expect(planpanel().querySelector('.flytsteg__tall')).toBeNull()
+    expect(screen.queryByRole('dialog')).toBeNull()
+
+    // Smal skjerm (testmiljøet har ingen mediespørringer): knappen åpner arket, og planen står bare der, så den aldri vises eller skrives ut to ganger.
+    await user.click(screen.getByRole('button', { name: 'Se planen' }))
+    const ark = screen.getByRole('dialog', { name: 'Planen' })
+    expect(within(ark).getByRole('list', { name: 'Planen dag for dag' })).toBeTruthy()
+    expect(screen.getAllByRole('list', { name: 'Planen dag for dag' })).toHaveLength(1)
+    expect(within(planpanel()).getByText('Planen er åpnet i eget vindu.')).toBeTruthy()
+    await user.click(within(ark).getByRole('button', { name: 'Lukk planen' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(within(planpanel()).getByRole('list', { name: 'Planen dag for dag' })).toBeTruthy()
+    cleanup()
+
+    // Stor skjerm: stegene og planen står side om side, og knappen åpner ikke noe ark.
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q === TO_KOLONNER, media: q, addEventListener() {}, removeEventListener() {} }))
+    try {
+      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett, klokke: TESTKLOKKE })
+      await fyllInn(user)
+      await nedtrapping()
+      await user.click(screen.getByRole('button', { name: 'Se planen' }))
+      expect(screen.queryByRole('dialog')).toBeNull()
+      expect(within(planpanel()).getByRole('list', { name: 'Planen dag for dag' })).toBeTruthy()
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it('viser bare resultatet av den siste beregningen, også når en eldre henting blir ferdig senere', async () => {
@@ -1193,7 +1234,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     vis({ verktoy: 'bytte-antidepressiv', legemidler, klokke: klokke(PILOT) })
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
     await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
-    await stoppet(/^4Steg 4: PlanenIngen plan for dette valgetIngen godkjent regel gir en komplett plan for dette valget ennå\. Verktøyet lager ingen plan/)
+    await stoppet(/^Steg 4: PlanenIngen plan for dette valgetIngen godkjent regel gir en komplett plan for dette valget ennå\. Verktøyet lager ingen plan/)
     expect(screen.queryByRole('heading', { name: /^Steg [23]/ })).toBeNull()
     expect(screen.queryByText(STARTFORLOP)).toBeNull()
     expect(legemidler.les).not.toHaveBeenCalled()
