@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.5',
+    dato: '2026-11-09',
+    sammendrag: 'Fast arbeidsdeling mellom prosjektene som utvikler og kontrollerer appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Arbeidet med OUSFAR er nå delt mellom tre prosjekter: ett for innholdet på fagsidene, ett for verktøyene og ett for resten av appen. Hver endring tilhører nøyaktig ett av dem og kontrolleres bare der, så ingenting gjøres eller kontrolleres to ganger.',
+      'Den uavhengige kontrollen av fagsidene og den faste standarden for kontroll av endringer gjelder som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.4',
     dato: '2026-11-09',
     sammendrag: 'Planen i verktøyene står fast i synsfeltet på PC og åpnes i et eget vindu på mobil',

@@ -15,6 +15,7 @@ FAR er et verktøy for fortolkning og kommentering av farmakologiske analyser. B
 
 ## Arbeidsmåte
 
+- Tre prosjekter (OUSFAR Dev, Fag og Verktøy) arbeider mot repoet. `docs/prosjektansvar.md` avgjør hvilket som eier en oppgave, etter formålet og ikke filene. Hver PR får nøyaktig én etikett (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`) og merkes «Til ChatGPT-kontroll – ikke merge»; Claude slår aldri sammen PR-er. Se etter åpne Issues og PR-er om samme problem før større oppgaver.
 - Les relevante filer før du endrer dem. Gjør små, tydelige endringer direkte; undersøk og lag en kort plan først når endringen er bred, risikofylt eller berører flere systemdeler.
 - Følg eksisterende arkitektur og mønstre. Gjør den minste helhetlige endringen som løser problemet, og rett årsaken fremfor å legge på en omvei. Ikke refaktorer uvedkommende kode.
 - Fullfør oppgaven ende-til-ende: implementer, oppdater eller legg til tester, kjør relevante kontroller, rett feil og kontroller diffen. Ikke stopp ved å fortelle bidragsyteren hva vedkommende må gjøre videre dersom Claude kan gjøre det.

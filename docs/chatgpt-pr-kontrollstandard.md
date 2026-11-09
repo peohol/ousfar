@@ -2,15 +2,16 @@
 
 **Gjelder:** Hver gang ChatGPT vurderer kode, design, kliniske regler, planer eller pull requests fra Claude Code i dette repoet. Skal også brukes når samtalen er ny og ingen tidligere chatthistorikk er tilgjengelig.  
 **Eier:** ChatGPT som uavhengig kontrollør på oppdrag fra Peder.  
-**Oppdatert:** 06.11.2026.  
+**Oppdatert:** 09.11.2026 (prosjektansvaret).  
+**Hvilke PR-er:** bare PR-ene med etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`), etter [prosjektansvar.md](prosjektansvar.md).  
 **Viktig:** Dette er en arbeidsstandard i repoet, ikke en klinisk godkjenning, erstatning for de installerte PR-review-skill-instruksene eller et mandat til å begynne nye oppgaver.
 
 ## 1. Start alltid her – også i helt nye samtaler
 
 Når Peder ber om «se over PR», «sjekk igjen» eller lignende:
 
-1. Les repoets AGENTS.md og relevante punkter i CLAUDE.md, og les dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
-2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen før kontroll og på nytt etterpå.
+1. Les repoets AGENTS.md, [prosjektansvar.md](prosjektansvar.md) og relevante punkter i CLAUDE.md, og les dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
+2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen med etiketter før kontroll og på nytt etterpå, og kontroller bare PR-ene med eget prosjekts etikett. En PR uten gyldig prosjektetikett får ikke ordinær kontroll og slås ikke sammen før eierskapet er avklart; en PR med et annet prosjekts etikett får ingen parallell kontroll herfra.
 3. Sammenlign med sist vurderte eksakte SHA. Ikke kopier gamle kommentarer eller anmeld samme endring uten grunn. Hvis HEAD er uendret: kontroller oppdatert base, CI og faktiske avhengigheter, men ikke lag en duplikatkodegjennomgang.
 4. Les relevant full diff **og omkringliggende kode, kliniske regler, kvalitetstester, kilder og faktisk brukerflyt**. PR-beskrivelsen er en påstand som skal kontrolleres, ikke et bevis. En velformulert dokumentasjon eller grønn CI er heller ikke bevis på produktnytte.
 5. Skill klinisk signoff, teknisk kodegodkjenning, produktaksept og kontroll i publisert app. Disse er forskjellige beslutninger.
@@ -74,7 +75,7 @@ Før merge skriv kort i egen vurdering:
 
 **Kommenter på GitHub bare ved reelle utestående merge-blokkerende funn.** En vanlig toppnivåkommentar må begynne med nøyaktig «Tilbakemelding fra ChatGPT». Ta med eksakt HEAD-SHA, hva som ble kontrollert, hvilke tidligere funn som er rettet, og gjenstående konkrete problemer og akseptkriterier. Ikke dupliser samme funn på uendret HEAD eller skriv om gamle rettede feil.
 
-**Merge** selvstendige, kontrollert klare PR-er med squash (og expected_head_sha når verktøyet støtter det), etter bekreftet CI og avhengigheter. Bekreft faktisk merge-resultat fra GitHub; hent komplett PR-liste igjen. Hvis bare CI/integrasjon mangler, ikke oppfinn kodefeil. Respekter eksplisitt arbeidsdeling og brukerens siste prioritering.
+**Merge** selvstendige, kontrollert klare PR-er med eget prosjekts etikett med squash (og expected_head_sha når verktøyet støtter det), etter bekreftet CI, grønn kontroll «Prosjektansvar» og avhengigheter. Bekreft faktisk merge-resultat fra GitHub; hent komplett PR-liste igjen. Hvis bare CI/integrasjon mangler, ikke oppfinn kodefeil. Respekter eksplisitt arbeidsdeling og brukerens siste prioritering.
 
 ## 5. Etterkontroll og kontinuitet
 
