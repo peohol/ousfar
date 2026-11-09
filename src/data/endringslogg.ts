@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.5',
+    dato: '2026-11-09',
+    sammendrag: 'Kontrollen av verktøyene i appen sammenligner stopp ved et spørsmål riktig',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingenting i appen er endret: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
+      'Den automatiske kontrollen av verktøyene godtar nå at appen stopper ved et spørsmål med den kontrollerte forklaringen, for eksempel ved lang behandlingstid, i stedet for å vente på beregningens senere stoppgrunn. Status for neste fase, de dosefleksible forløpene, er ført: den er ikke startet ennå.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.3',
     dato: '2026-11-08',
     sammendrag: 'Verktøyene er testet samlet etter forbedringene, også i den publiserte appen',

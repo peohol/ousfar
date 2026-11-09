@@ -239,9 +239,11 @@ Peder bestemte 05.11.2026 at [K5-D-planen](verktøy-k5-dosefleksible-forlop.md) 
 
 **K5-D er ikke startet.** Koordinatoren kontrollerer startporten (K5-D-planen §1) og fører resultatet her. Når de andre punktene er dokumentert oppfylt, lager koordinatoren det nye, daterte nullpunktet som første del av K5-D0, og det oppfyller det tredje punktet. Først da gjør koordinatoren resten av K5-D0 (prioritering) og deler arbeidet i parallelle tråder (D1 motor og QA, D2 de fire fagsporene). Ingen annen K5-D-implementering starter før alle fire punktene er oppfylt.
 
-| Startport (K5-D-planen §1) | Status 06.11.2026 |
-| --- | --- |
-| Pågående PR-er integrert eller eksplisitt avsluttet | Oppfylles når denne PR-en er slått sammen: #318, #321 og #326–#330 er slått sammen 05.11 og #331 06.11 (§10.3); ingen er lukket uten merge |
-| Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter at denne PR-en er slått sammen. QA-kontrollen i appen (#321) ble gjort før arbeidsflyten ble endret (#327–#331) og må gjøres på nytt |
-| Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: lages som første del av K5-D0 når de andre punktene er oppfylt |
-| `VERKTOYENE_VISES_FOR` er fortsatt `'admin'` | Oppfylt: uendret, og K5-D endrer den ikke |
+| Startport (K5-D-planen §1) | Status 06.11.2026 | Status 09.11.2026 |
+| --- | --- | --- |
+| Pågående PR-er integrert eller eksplisitt avsluttet | Oppfylles når denne PR-en er slått sammen: #318, #321 og #326–#330 er slått sammen 05.11 og #331 06.11 (§10.3); ingen er lukket uten merge | Oppfylt for de oppførte og senere PR-ene: #343–#348 er slått sammen, og ingen er lukket uten merge. Rettingen av D04-stoppet og denne oppdateringen av appkontrollen er de siste etterarbeidene etter P4 og må slås sammen først |
+| Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter at denne PR-en er slått sammen. QA-kontrollen i appen (#321) ble gjort før arbeidsflyten ble endret (#327–#331) og må gjøres på nytt | Delvis: P4 (#348) kjørte 34 forløp lokalt og 6 i den publiserte administrator-appen (1.128.2, 08.11) med skjerm, kopi og utskrift, men D04 avvek. Rettingen endrer en stopptekst, så P4-forløpene må kjøres på nytt i den publiserte appen etter sammenslåingen. Peders korte aksepttest (P5) er heller ikke gjort; produktrevisjonen §3 P5 og §5 krever den før startporten vurderes |
+| Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: lages som første del av K5-D0 når de andre punktene er oppfylt | Ikke oppfylt: venter på de to punktene over |
+| `VERKTOYENE_VISES_FOR` er fortsatt `'admin'` | Oppfylt: uendret, og K5-D endrer den ikke | Oppfylt: fortsatt `'admin'` |
+
+**Vurdering 09.11.2026: startporten er ikke oppfylt, og K5-D (også K5-D0) starter ikke ennå.** Det som gjenstår, i rekkefølge: (1) rettingen av D04 og appkontrollen slås sammen; (2) P4-forløpene kjøres på nytt, kort, i den publiserte administrator-appen, og D04 nevner da sikker prevensjon; (3) Peder gjør aksepttesten (P5), og vesentlige funn rettes; (4) koordinatoren lager det daterte nullpunktet, som er første del av K5-D0.
