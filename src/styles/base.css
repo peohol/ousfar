@@ -78,8 +78,11 @@ ul {
 
 /* --- Sidelayout ---------------------------------------------------------
    Én skjermfylt scene med innholdet sentrert. Stegene bytter innhold i
-   stedet for å legge til høyde, så det skal aldri bli noe å skrolle i.
-   `overflow-y: auto` er en sikkerhetsventil for svært lave vinduer. */
+   stedet for å legge til høyde. Det er dokumentet som ruller når innholdet
+   blir høyere enn vinduet (`.app` har bare `min-height`). Sidelengs klippes
+   det med `clip`, ikke `hidden`/`auto`: de gjør `.app` til en egen
+   rulleflate, og da står ingenting med `position: sticky` fast når siden
+   ruller (som planen i verktøyene). */
 
 .app {
   min-height: 100dvh;
@@ -88,8 +91,7 @@ ul {
   display: grid;
   /* Innholdet begynner øverst, rett under toppmenyen, som i Atlas. */
   place-items: start center;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .scene {

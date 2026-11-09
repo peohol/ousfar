@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useLayoutEffect, useRef } from 'react'
 import { Ikon } from '../ikon/Ikon'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
@@ -25,11 +25,18 @@ import '../../styles/innholdsfortegnelse.css'
  *   med seksjonsikonet foran hver tittel.
  * - Ellers er den en knapp i toppmenyen (`innhold`, i dokken på smale flater)
  *   som åpner seksjonene i en nedtrekksmeny, med seksjonsikonene.
+ *
+ * Plassen regnes i flaten innholdet står i, uten diskusjonsmenyen, så
+ * fortegnelsen aldri havner under innholdet når menyen står åpen. Den
+ * flaten kan ikke en media query se, så CSS avgjør det i en container query,
+ * og fortegnelsen sier fra til toppmenyen (`useVedSiden`).
  */
 export function Innholdsfortegnelse() {
   const styring = useSeksjonsstyring()
   const apne = styring?.apne
   const punkter = styring?.innhold ?? []
+  const vises = punkter.length >= MINST
+  const [felt, liste] = useVedSiden(vises)
   const gaaTil = useCallback(
     (id: string) => {
       apne?.([id])
@@ -41,31 +48,33 @@ export function Innholdsfortegnelse() {
     },
     [apne],
   )
-  if (punkter.length < MINST) return null
+  if (!vises) return null
 
   return (
     <>
-      <nav className="innholdsfortegnelse" aria-label={ETIKETT}>
-        <p className="innholdsfortegnelse__tittel" aria-hidden="true">
-          Innhold
-        </p>
-        <ol className="innholdsfortegnelse__liste">
-          {punkter.map((punkt) => (
-            <li key={punkt.id}>
-              <button
-                type="button"
-                className="innholdsfortegnelse__punkt"
-                {...gjeldende(punkt)}
-                onClick={() => gaaTil(punkt.id)}
-                data-ih=""
-              >
-                <Ikon navn={punkt.ikon ?? 'fallback'} storrelse="ui" />
-                <span>{punkt.navn}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </nav>
+      <div ref={felt} className="innholdsfelt">
+        <nav ref={liste} className="innholdsfortegnelse" aria-label={ETIKETT}>
+          <p className="innholdsfortegnelse__tittel" aria-hidden="true">
+            Innhold
+          </p>
+          <ol className="innholdsfortegnelse__liste">
+            {punkter.map((punkt) => (
+              <li key={punkt.id}>
+                <button
+                  type="button"
+                  className="innholdsfortegnelse__punkt"
+                  {...gjeldende(punkt)}
+                  onClick={() => gaaTil(punkt.id)}
+                  data-ih=""
+                >
+                  <Ikon navn={punkt.ikon ?? 'fallback'} storrelse="ui" />
+                  <span>{punkt.navn}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </div>
       <ToppmenyInnhold spor="innhold">
         <Nedtrekksmeny
           className="innholdsmeny"
@@ -101,6 +110,38 @@ const MINST = 2
 
 /** Navnet på fortegnelsen og knappen for skjermlesere og som tooltip. */
 const ETIKETT = 'Innhold på siden'
+
+/** Merket på rotelementet når fortegnelsen står ved siden av innholdet. */
+const ROTMERKE = 'innholdsfortegnelse'
+
+/**
+ * Følger med på om fortegnelsen står ved siden av innholdet (CSS avgjør det
+ * ut fra bredden på `felt`), og merker rotelementet så knappen i toppmenyen
+ * skjules da. Merket settes før skjermen tegnes, og fjernes når
+ * fortegnelsen forsvinner.
+ */
+function useVedSiden(aktiv: boolean) {
+  const felt = useRef<HTMLDivElement>(null)
+  const liste = useRef<HTMLElement>(null)
+  useLayoutEffect(() => {
+    const element = felt.current
+    if (!aktiv || !element) return
+    const rot = document.documentElement
+    const maal = () => {
+      const vedSiden = !!liste.current && getComputedStyle(liste.current).display !== 'none'
+      if (vedSiden) rot.dataset[ROTMERKE] = 'ved-siden'
+      else delete rot.dataset[ROTMERKE]
+    }
+    maal()
+    const vakt = typeof ResizeObserver === 'function' ? new ResizeObserver(maal) : undefined
+    vakt?.observe(element)
+    return () => {
+      vakt?.disconnect()
+      delete rot.dataset[ROTMERKE]
+    }
+  }, [aktiv])
+  return [felt, liste] as const
+}
 
 /** Seksjonen som står åpen, er den leseren er i. */
 function gjeldende(punkt: Innholdspunkt) {

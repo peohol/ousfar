@@ -7,8 +7,8 @@
  * toppmenyen. Med pekeren over (eller fokus fra tastaturet) vokser den mot
  * venstre og sier hva den er. Åpen blir den et panel fra samme sted og ned,
  * og resten av appen gir plass til det (`data-diskusjonsmeny` på
- * rotelementet). På smale flater er den skjult til knappen i dokken åpner den
- * over siden.
+ * rotelementet, `--diskusjonsplass`). På smale flater er den skjult til
+ * knappen i dokken åpner den over siden.
  *
  * Åpen kan menyen dras bredere i venstre kanten (`Kanthandtak`). Bredden
  * brukeren har valgt, står i `--diskusjonsbredde` på rotelementet, og holdes
@@ -49,13 +49,25 @@
 
 /* --- Plassen resten av appen gir ------------------------------------------ */
 
+/* `--diskusjonsplass` er bredden menyen tar langs høyre kant. Alt som
+   plasseres etter innholdet, regner med den — også det som er festet til
+   vinduet, som innholdsfortegnelsen — så ingenting havner under menyen eller
+   oppå innholdet. */
+:root {
+  --diskusjonsplass: 0px;
+}
+
 @media (width > 47.5em) {
-  :root[data-diskusjonsmeny='lukket'] .app {
-    padding-right: calc(var(--diskusjonsboble) + var(--diskusjonskant));
+  :root[data-diskusjonsmeny='lukket'] {
+    --diskusjonsplass: calc(var(--diskusjonsboble) + var(--diskusjonskant));
   }
 
-  :root[data-diskusjonsmeny='apen'] .app {
-    padding-right: calc(var(--diskusjonspanel) + var(--diskusjonskant));
+  :root[data-diskusjonsmeny='apen'] {
+    --diskusjonsplass: calc(var(--diskusjonspanel) + var(--diskusjonskant));
+  }
+
+  .app {
+    padding-right: var(--diskusjonsplass);
   }
 }
 

@@ -16,7 +16,7 @@ De fire psykofarmakaverktøyene er implementert i et foreløpig, **administrator
 - [Tidligere plan for brukerflyten](docs/verktøy-brukervennlighet-2026-11.md) – tidligere UX-arbeid; oppfølgingen er i produktrevisjonen.
 - [K5-D, dosefleksible forløp](docs/verktøy-k5-dosefleksible-forlop.md) – ikke startet; startporten skal dokumenteres før arbeidet begynner.
 
-**For ChatGPTs PR-gjennomganger:** Start med [AGENTS.md](AGENTS.md) og [fast PR-kontrollstandard](docs/chatgpt-pr-kontrollstandard.md). Også den opprinnelige bestillingen, faktisk klinisk nytte og unødvendig tekst/brukerarbeid skal vurderes, ikke bare testene.
+**For ChatGPTs PR-gjennomganger:** Start med [AGENTS.md](AGENTS.md), [prosjektansvaret](docs/prosjektansvar.md) og [fast PR-kontrollstandard](docs/chatgpt-pr-kontrollstandard.md). Også den opprinnelige bestillingen, faktisk klinisk nytte og unødvendig tekst/brukerarbeid skal vurderes, ikke bare testene.
 
 ## Kom i gang
 

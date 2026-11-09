@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.128.5',
+    versjon: '1.128.7',
     dato: '2026-11-09',
     sammendrag: 'Kontrollen av verktøyene i appen sammenligner stopp ved et spørsmål riktig',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,33 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Gjelder bare administratorene. Ingenting i appen er endret: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
       'Den automatiske kontrollen av verktøyene godtar nå at appen stopper ved et spørsmål med den kontrollerte forklaringen, for eksempel ved lang behandlingstid, i stedet for å vente på beregningens senere stoppgrunn. Status for neste fase, de dosefleksible forløpene, er ført: den er ikke startet ennå.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.128.5',
+    dato: '2026-11-09',
+    sammendrag: 'Fast arbeidsdeling mellom prosjektene som utvikler og kontrollerer appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Arbeidet med OUSFAR er nå delt mellom tre prosjekter: ett for innholdet på fagsidene, ett for verktøyene og ett for resten av appen. Hver endring tilhører nøyaktig ett av dem og kontrolleres bare der, så ingenting gjøres eller kontrolleres to ganger.',
+      'Den uavhengige kontrollen av fagsidene og den faste standarden for kontroll av endringer gjelder som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.128.4',
+    dato: '2026-11-09',
+    sammendrag: 'Planen i verktøyene står fast i synsfeltet på PC og åpnes i et eget vindu på mobil',
+    typer: ['Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller tekster i planen er endret.',
+      'På PC står plankortet fast til høyre mens resten av siden ruller, og det får alltid plass i vinduet: verken toppen eller bunnen klippes. Overskriften «Planen» står, og det er bare innholdet i kortet som ruller, med rullefeltet inni kortet.',
+      'På mobil står knappen «Se planen» nederst i vinduet så snart planen er klar, og den åpner planen i et eget vindu over siden der den er lett å lese. Den lukkes med krysset eller et trykk utenfor, og «Skriv ut» skriver ut hele planen også derfra.',
+      'Tallet 4 i sirkelen ved overskriften «Planen» er fjernet.',
     ],
     utenVarsel: true,
   },

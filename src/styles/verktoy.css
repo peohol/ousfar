@@ -624,11 +624,38 @@
     padding-bottom: var(--rom-3);
   }
 
-  /* Planpanelet står fast og ruller på store skjermer; på papir skal hele planen flyte over sidene. */
-  .verktoyflyt .verktoyflyt__plan {
+  /* Planpanelet står fast og ruller på store skjermer, og planen kan stå i arket på smale;
+     på papir skal hele planen flyte over sidene. */
+  .verktoyflyt .verktoyflyt__plan,
+  .verktoyflyt .planpanel,
+  .verktoyflyt .planpanel__kropp {
     position: static;
     max-height: none;
     overflow: visible;
+  }
+
+  :root:has(.verktoyflyt dialog[open]) {
+    overflow: visible;
+  }
+
+  .verktoyflyt .modallag[open] {
+    position: absolute;
+  }
+
+  .verktoyflyt .modallag[open],
+  .verktoyflyt .modallag__panel,
+  .verktoyflyt .modallag__kropp {
+    display: block;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .verktoyflyt .modallag::backdrop {
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
@@ -665,10 +692,28 @@
     gap: var(--rom-9) clamp(var(--rom-8), 4vw, var(--rom-10));
   }
 
+  /* Planen står fast i høyre kolonne og holder seg alltid helt innenfor vinduet:
+     kortet blir aldri høyere enn det er plass til, overskriften står, og det er
+     innholdet som ruller — med rullefeltet inni kortet. Plassen regnes fra der
+     kortet begynner (lenger ned før det står fast) til vinduets bunn eller
+     flytens slutt, det som kommer først (`--kant-topp`/`--kant-bunn` fra
+     `useKantIVinduet`). */
   .verktoyflyt__plan {
     position: sticky;
     top: var(--toppmeny-offset);
-    max-height: calc(100dvh - var(--toppmeny-offset) - var(--rom-6));
+    display: flex;
+    flex-direction: column;
+    max-height: calc(
+      min(100dvh - var(--rom-6), var(--kant-bunn, 100dvh)) - max(var(--toppmeny-offset), var(--kant-topp, 0px))
+    );
+  }
+
+  .verktoyflyt__plan .planpanel {
+    min-height: 0;
+  }
+
+  .verktoyflyt__plan .planpanel__kropp {
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
@@ -959,15 +1004,27 @@
 
 /* --- Planpanelet ----------------------------------------------------------------
    Står ved siden av stegene på store skjermer. Før planen kan beregnes, sier
-   det hva som gjenstår; det viser aldri en delplan. */
+   det hva som gjenstår; det viser aldri en delplan. Kortet klipper innholdet
+   ved rundingen, så et rullefelt i kroppen holder seg inni kortet. */
 .planpanel {
   display: flex;
   flex-direction: column;
-  gap: var(--rom-6);
-  padding: var(--rom-7) var(--rom-7) var(--rom-8);
   background: var(--flate);
   border: var(--kant) solid var(--linje);
   border-radius: var(--runding-panel);
+  overflow: hidden;
+}
+
+.planpanel__kropp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
+  padding: var(--rom-6) var(--rom-7) var(--rom-8);
+}
+
+/* Det er kroppen som ruller, ikke det som står i den (se `.modallag__kropp > *`). */
+.planpanel__kropp > * {
+  flex-shrink: 0;
 }
 
 .planpanel__vent {
@@ -1252,22 +1309,16 @@
   }
 }
 
-/* Overskriften i planpanelet: steg 4 med tallet, som de andre stegene. */
+/* Overskriften i planpanelet står fast over det som ruller, skilt fra det med en linje som i Atlas-lagene. */
 .planpanel__tittel {
-  display: flex;
-  align-items: center;
-  gap: var(--rom-4);
+  flex: none;
   margin: 0;
+  padding: var(--rom-7) var(--rom-7) var(--rom-5);
+  border-bottom: var(--kant) solid var(--linje);
   font-family: var(--skrift-display);
   font-size: var(--tekst-seksjon);
   font-weight: var(--vekt-medium);
   line-height: var(--linjehoyde-titler);
-}
-
-.planpanel[data-ferdig] .planpanel__tittel .flytsteg__tall {
-  color: var(--paa-aksent);
-  background: var(--aksent);
-  border-color: var(--aksent);
 }
 
 .planpanel:focus {
