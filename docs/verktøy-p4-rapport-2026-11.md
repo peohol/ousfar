@@ -6,18 +6,20 @@ Uavhengig test av det faktiske produktet etter at P1 (#343), P2-b (#344), P3 (#3
 
 | Nivå | Hva | Grunnlag | Resultat |
 | --- | --- | --- | --- |
-| Motor uten nettleser | `src/__tests__/qa/fasit.test.ts`: de 13 positive P0-forløpene regnet mot appens faktiske godkjenninger og de lagrede FEST-uttrekkene, holdt mot fasiten dag for dag | main 952c0ee | Alle 13 gir komplett plan og nøyaktig fasitens doser |
-| Lokal app i nettleser | `scripts/verktoy-p0-app.mjs`: 34 forløp (30 fra P0 og spor A, 4 på mobil). Skjermens tidslinje, kort kopi og utskrift av hver komplett plan holdes mot fasiten | Lokalt testmiljø med egen database (`docs/qa-testmiljo.md`), app 1.128.2 bygd fra main 952c0ee, FEST fra de lagrede uttrekkene | 1591 kall, 0 feil. Se §2 |
+| Motor uten nettleser | `src/__tests__/qa/fasit.test.ts`: de 13 positive P0-forløpene regnet mot appens faktiske godkjenninger og de lagrede FEST-uttrekkene, holdt mot fasiten dag for dag | main 952c0ee | Alle 13 gir komplett plan og nøyaktig fasitens doser, også de månedlige vedlikeholdsinjeksjonene |
+| Lokal app i nettleser | `scripts/verktoy-p0-app.mjs`: 34 forløp (30 fra P0 og spor A, 4 på mobil). Skjermens tidslinje, kort kopi og utskrift av hver komplett plan holdes mot fasiten | Lokalt testmiljø med egen database (`docs/qa-testmiljo.md`), app 1.128.2 bygd fra main 952c0ee, FEST fra de lagrede uttrekkene. Kjørt på nytt 09.11.2026 med fasiten og driveren fra e62bc8f | 1587 kall, 0 feil. Se §2 |
 | Lokal appkontroll | `src/__tests__/qa/appkontroll.ts`: 57 forløp mot den lokale motoren, med nødstopp og FEST kontrollert for 72 og 47 timer siden | Som over | Se §4 |
 | Publisert admin-app | 6 forløp med `QA_PRODUKSJON=ja`, innenfor vernet (høyst 6 forløp og 400 kall) | https://ousfar.vercel.app, 1.128.2, 08.11.2026 20:58 UTC, dagens FEST | 175 kall, 0 feil, 18 bakgrunnskall blokkert av vernet. Se §3 |
 
-**Fasiten** (`src/__tests__/qa/fasit.ts`) er skrevet for hånd fra kontrollgrunnlagene og preparatomtalene som er oppgitt per forløp. Den er ikke hentet fra motorens utdata. Den angir riktig utfall, alle dosepunktene dag for dag, sluttmålet og hvilket forhold et stopp skal nevne. For hver komplett plan sammenlignes tre ting hver for seg med fasiten: skjermens tidslinje, den korte kopien og tidslinjen slik den skrives ut. Nettleseren emulerer utskrift, og det lages en PDF. Sammenligningen gjelder hver dag og hvert legemiddel, også alle dagene etter siste endring. Et hull inne i et intervall gir avvik, og det samme gjør en avkortet vedlikeholdsperiode, overlapp, et bytte på feil dag, et ekstra trinn, feil dose og et legemiddel som seponeres for tidlig. Det er rettelsen av ChatGPTs funn på #348, og hvert tilfelle har sin egen negative test.
+**Fasiten** (`src/__tests__/qa/fasit.ts`) er skrevet for hånd fra kontrollgrunnlagene og preparatomtalene som er oppgitt per forløp. Den er ikke hentet fra motorens utdata. Den angir riktig utfall, alle dosepunktene dag for dag, de månedlige vedlikeholdsinjeksjonene i depotplanene, sluttmålet og hvilket forhold et stopp skal nevne. For hver komplett plan sammenlignes tre ting hver for seg med fasiten: skjermens tidslinje, den korte kopien og tidslinjen slik den skrives ut. Nettleseren emulerer utskrift, og det lages en PDF. Sammenligningen gjelder hver dag og hvert legemiddel, også alle dagene etter siste endring. Et hull inne i et intervall gir avvik, og det samme gjør en avkortet vedlikeholdsperiode, overlapp, et bytte på feil dag, et ekstra trinn, feil dose og et legemiddel som seponeres for tidlig. Det er rettelsen av ChatGPTs funn på #348, og hvert tilfelle har sin egen negative test.
+
+**Depotplanene (C04–C06)** har i tillegg en egen fasit for den første månedlige vedlikeholdsinjeksjonen: hvilken dag den forankres til, dosen, at intervallet er månedlig og tidsvinduet. For Abilify Maintena er det 400 mg hver måned fra 1 måned etter dag 1, tidligst 26 dager etter forrige injeksjon (pilotsettets kontrolltilfelle K0-09 og preparatomtalen). For Xeplion er det 75 mg hver måned fra 1 måned etter dag 8, ±7 dager (K3-01 og preparatomtalen: første gang én måned etter andre dose). Dette kontrolleres på skjermen, i den korte kopien og i utskriften hver for seg. En vedlikeholdslinje som mangler, er forankret til en annen dag, har en annen dose, et annet intervall eller mangler tidsvinduet, gir avvik, og det samme gjør en ekstra vedlikeholdslinje. Den negative testen er Xeplion med riktig oppstart (150 mg dag 1, 100 mg dag 8) og riktig månedlig dose, men med første vedlikehold forankret til dag 1: den oppdages, selv om alle de andre dosepunktene stemmer. Fasiten bygger på det som allerede er klinisk godkjent. Ingen regel eller gyldighet er endret. Dette rettet ChatGPTs andre funn på #348.
 
 **Hva dette ikke er:** en klinisk prøving eller en klinisk substanskontroll. Fasiten gjengir det som er klinisk godkjent i dag, og utvider ikke noe omfang. At skjerm, kopi og utskrift stemmer med fasiten, er en teknisk ende-til-ende-verifikasjon med syntetiske data.
 
-## 2. Resultat lokalt (34 forløp, main 952c0ee)
+## 2. Resultat lokalt (34 forløp, main 952c0ee, fasit e62bc8f)
 
-**Positive forløp:** alle 21 gir komplett plan. Skjermen, den korte kopien og utskriften stemmer med fasiten i hver dose og hver dag, også på mobilbredde (390 punkter).
+**Positive forløp:** alle 21 gir komplett plan. Skjermen, den korte kopien og utskriften stemmer med fasiten i hver dose og hver dag, også på mobilbredde (390 punkter). I depotplanene (C04, C05, C06 og mobilvarianten av C05) stemmer også den første månedlige vedlikeholdsinjeksjonen på alle tre flatene: «Hver måned fra 1 måned etter dag 1: … 400 mg (tidligst 26 dager etter forrige)» for Abilify Maintena og «Hver måned fra 1 måned etter dag 8: … 75 mg (±7 dager …)» for Xeplion.
 
 | Forløp | Regel (versjon, fingeravtrykk) | Handlinger før → nå | Kort kopi, tegn før → nå | Utskrift, sider før → nå |
 | --- | --- | --- | --- | --- |
@@ -69,7 +71,7 @@ Uavhengig test av det faktiske produktet etter at P1 (#343), P2-b (#344), P3 (#3
 | D01 valproat + lamotrigin | komplett plan, 20 handlinger, 4 635 tegn, 3 sider | i samsvar |
 | N02 tidligere seponeringsplager | konkret stopp, som lokalt | i samsvar |
 
-Den publiserte appen ga de samme tallene og tekstene som den lokale kjøringen, med regelversjonene i §2 og FEST-uttrekk fra 27.10.2026. Kjøringen holdt seg innenfor vernet: 175 kall, 0 svar med 5xx, tregeste kall 2,8 s, ingen sperre eller FEST-data lagret. Nødstopp og foreldet FEST er bare prøvd lokalt, fordi de ikke skal utløses i produksjonen.
+Kjøringen i den publiserte appen ble gjort før fasiten fikk egen kontroll av vedlikeholdsinjeksjonen. Den lagrede utskriften fra C05 viser den samme vedlikeholdslinjen som lokalt (75 mg hver måned fra 1 måned etter dag 8, ±7 dager) i kopien, på skjermen og i utskriften. Appen er ikke endret siden, så den ble ikke belastet med en ny kjøring. Den publiserte appen ga de samme tallene og tekstene som den lokale kjøringen, med regelversjonene i §2 og FEST-uttrekk fra 27.10.2026. Kjøringen holdt seg innenfor vernet: 175 kall, 0 svar med 5xx, tregeste kall 2,8 s, ingen sperre eller FEST-data lagret. Nødstopp og foreldet FEST er bare prøvd lokalt, fordi de ikke skal utløses i produksjonen.
 
 ## 4. Sikkerhetssperrer og FEST (lokalt)
 
@@ -100,6 +102,6 @@ QA_PRODUKSJON=ja npx vite-node scripts/verktoy-p0-app.mjs P0-A01 P0-B01 P0-C01 P
 ```
 
 Målingene ligger i prosjektmappen `verktoy-p2-p4/maling/`:
-- `p4-lokal-main952c0ee.json` og `p4-produksjon-1.128.2.json`
+- `p4-lokal-main952c0ee.json`, `p4-lokal-vedlikehold.json` (ny kjøring med kontroll av vedlikeholdsinjeksjonene) og `p4-produksjon-1.128.2.json`
 - PDF-ene av utskriftene i `p4-pdf/`
 - målingen før endringene (`for-main-1.127.0.json`)
