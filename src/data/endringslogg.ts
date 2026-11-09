@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.4',
+    dato: '2026-11-09',
+    sammendrag: 'Stoppet for valproat sier hvilket vilkår i det graviditetsforebyggende programmet som mangler',
+    typer: ['Design / layout'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret, og planen stopper i nøyaktig de samme tilfellene som før.',
+      'Når lamotrigin skal legges til valproat hos en pasient som kan bli gravid, og et vilkår i det graviditetsforebyggende programmet ikke er bekreftet, sier stoppet nå hvilket vilkår det er, for eksempel «Det er ikke bekreftet at pasienten bruker sikker prevensjon uten avbrudd.» Før sa det bare at et vilkår ikke var oppfylt.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.3',
     dato: '2026-11-08',
     sammendrag: 'Verktøyene er testet samlet etter forbedringene, også i den publiserte appen',
