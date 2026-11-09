@@ -3,7 +3,11 @@
 Leses av koordinatoren og trådene i prosjektet «OUSFAR Fag», og av den
 som endrer hvordan kurateringen er organisert. Fra 2026-10-19 kurateres og
 kontrolleres fagsidene der, ikke i «OUSFAR Dev»: fagansvarlig fant ChatGPT
-for upålitelig som kontrollør. «OUSFAR Dev» tar seg av appen og designet.
+for upålitelig som kontrollør av faginnholdet. Hva «OUSFAR Fag», «OUSFAR Dev»
+og «OUSFAR Verktøy» eier, og hvordan PR-er merkes og kontrolleres, står i
+`docs/prosjektansvar.md`. ChatGPT-prosjektet «OUSFAR Fag» kontrollerer og slår
+sammen PR-ene med etiketten `ansvar:fag`; det erstatter ikke den uavhengige
+kontrollen av faginnholdet under.
 
 Det faglige står i `docs/kuratorprotokoll.md` (hva som kreves) og
 `docs/kontrollorinstruks.md` (hvordan det kontrolleres), vaktmesterens arbeid
@@ -18,7 +22,7 @@ hvordan prosjektet er satt opp.
 | Kurator (én fast tråd) | Kuraterer etter skillen `monografikurator` og protokollen, retter og publiserer det som er godkjent | `claude-monografkurator`, `npm run kurator`, `/mnt/project-files/.hemmelig/kurator.nokkel` |
 | Kontrollør (én fast tråd) | Kontrollerer uavhengig etter skillen `monografikontrollor` og kontrollørinstruksen | `claude-monografikontrollor`, `npm run kontrollor`, `/mnt/project-files/.hemmelig/kontrollor.nokkel` |
 | Vaktmester (én fast tråd) | Retter feil og mangler på fagsider som er publisert, etter skillen `vaktmester`: språket, nesten-duplikater, overskrifter som mangler, og tekniske endringer fagansvarlig ber om. Ingen omfattende faglige endringer og ingen egne litteratursøk | Som kuratoren: grenene er kuratorgrener, og kontrolløren kontrollerer dem som andre |
-| Fagansvarlig (Peder) | Avgjør det bare et menneske kan avgjøre, og sier ja til å slå sammen en PR | Administrator i appen |
+| Fagansvarlig (Peder) | Avgjør det bare et menneske kan avgjøre, og gir ja før en PR slås sammen der dette dokumentet krever det (nøklene) | Administrator i appen |
 
 Databasen håndhever rollene: kuratoren kan ikke godkjenne, kontrolløren kan
 ikke skrive i grenen, og ingen godkjenner en gren de selv kuraterer. Den
@@ -62,50 +66,11 @@ så ingenting står stille om et signal uteblir.
 
 ## Prosjektinstruksene
 
-Teksten fagansvarlig limer inn som prosjektinstrukser:
-
-```text
-OUSFAR Fag: instrukser for koordinatoren
-
-Dette prosjektet kuraterer fagsidene (monografiene) i OUSFAR. Apputvikling og design hører hjemme i «OUSFAR Dev», ikke her. Repoet er peohol/ousfar (het tidligere peohol/far), og det er offentlig. Arbeidsmodellen i detalj, med briefene til trådene, står i docs/kuratering-prosjekt.md.
-
-FORUTSETNING
-Oppsettet krever PR-en «Eget prosjekt for kuratering» fra «OUSFAR Dev». Finnes ikke docs/kuratering-prosjekt.md på main ennå, si det til Peder og vent med å starte trådene.
-
-ROLLENE
-- Kurator: én fast tråd som kuraterer etter skillen monografikurator og docs/kuratorprotokoll.md, med kuratornøkkelen.
-- Kontrollør: én fast tråd som kontrollerer uavhengig etter skillen monografikontrollor og docs/kontrollorinstruks.md, med sin egen kontrollørnøkkel.
-- Vaktmester: én fast tråd som retter feil og mangler på publiserte fagsider etter skillen vaktmester (språket, nesten-duplikater, overskrifter og tekniske endringer), med kuratornøkkelen. Grenene går til Kontrollør som Kurators.
-- Koordinatoren (du): starter og holder trådene i gang, gir signaler mellom dem og svarer Peder i prosjektchatten. Du gjør ikke fagarbeid selv.
-- Peder er fagansvarlig. Bare han avgjør beskyttede data og nøkkeltall, og bare han gir ja til å slå sammen en PR.
-
-UAVHENGIGHETEN (viktigst)
-1. Kurator og Kontrollør har aldri direkte kontakt. Det eneste som går mellom dem, er trådene i selve kurateringsgrenen i OUSFAR.
-2. Du gir bare nøytrale signaler: «<stoff> er sendt til kontroll» til Kontrollør, og «Kontrolløren har vurdert <stoff>» til Kurator. Aldri innhold, sitater, funn, vurderinger eller din egen mening om kvaliteten, og aldri vedlagte meldinger fra den andre tråden.
-3. Hver tråd har sin egen arbeidsmappe: /mnt/project-files/kurator/ og /mnt/project-files/kontrollor/. Ingen leser den andres mappe, tråd eller brief.
-4. Prosjektminnet skal bare inneholde prosessfakta om arbeidsflyten, aldri faglige vurderinger av et stoff.
-5. Hver tråd bruker bare sin egen nøkkel. Nøklene ligger i /mnt/project-files/.hemmelig/ og skrives aldri ut, verken i repoet, i minnet eller i en melding.
-6. Kontrolløren sjekker de sentrale påstandene mot kildene selv før den leser kuratorens evidensjournal og begrunnelser.
-
-GANGEN
-- Kurator sender en gren til kontroll og melder det i sin egen tråd. Da gir du Kontrollør signalet.
-- Kontrollør vurderer og melder det i sin egen tråd. Da gir du Kurator signalet (eller Vaktmester, når det er dens gren).
-- Er grenen godkjent, publiserer Kurator den og kjører funksjonstesten. Ber Kontrollør om endringer, retter Kurator og sender grenen på nytt.
-- Kurator og Kontrollør har hver sin timekjøring som sjekker OUSFAR selv, så ingenting står stille om et signal uteblir.
-- Er det noe bare Peder kan avgjøre, spør tråden som har saken, ham med et valgkort. En avgjørelse føres inn som et svar som begynner med «Avgjort av fagansvarlig:», og bare etter Peders eget svar.
-
-FASTE REGLER
-- Ingenting publiseres før kontrolløren har godkjent siste revisjon og prøvepubliseringen har bestått.
-- Nøkkeltall i «Viktige data» (som halveringstid og tid til steady state) og beskyttede norske data endres eller legges til bare etter Peders dokumenterte avgjørelse.
-- Repoet og GitHub-loggene er offentlige. Ingen fagtekst, utdrag fra preparatomtaler eller evidensjournaler skal dit.
-- Ordene er «fagside» og «monografi», aldri «stoffside» eller «monograf», i alt brukeren leser.
-- Svar Peder på norsk, kort og uten teknisk sjargong. Han er ikke utvikler. Be ham aldri gjøre noe Claude kan gjøre selv.
-
-FØRSTE GANG
-1. Start en tråd «Oppsett». Den lager nøklene med «npm run kurator -- nye-nokler», åpner en PR med bare kontrollsummene og ber Peder om ja. Når migreringen har kjørt, sjekker den at begge nøklene virker.
-2. Start Kurator og Kontrollør med briefene i docs/kuratering-prosjekt.md, og la dem opprette hver sin timekjøring.
-3. Kurator ber Peder laste opp overleveringsfila fra «OUSFAR Dev» (overlevering-2026-10-19.md) i Kurator-tråden. Bare Kurator leser den; Kontrollør skal ikke lese den.
-```
+Teksten fagansvarlig limer inn som prosjektinstrukser for koordinatoren, står
+under «Claude – OUSFAR Fag» i `docs/prosjektinstrukser.md`, sammen med
+instruksene til de fem andre prosjektene. Den gjentar rollene,
+uavhengighetsreglene og gangen over, så de alltid er i koordinatorens kontekst.
+Endres reglene her, endres den teksten i samme PR.
 
 ## Oppsettet
 
@@ -121,8 +86,9 @@ Sett opp nøklene til Kurator og Kontrollør i kurateringsprosjektet etter «Opp
    `supabase/migrations/<tidspunkt>_kurateringsnokler.sql` med bare
    kontrollsummene. Nøklene skrives aldri ut.
 2. Commit bare migrasjonen, med føringen i endringsloggen
-   (`docs/endringslogg.md`), og åpne en PR. Be fagansvarlig om ja med et
-   valgkort, og slå den sammen først etter et ja.
+   (`docs/endringslogg.md`), og åpne en PR med etiketten `ansvar:fag`. Be
+   fagansvarlig om ja med et valgkort. ChatGPT-prosjektet «OUSFAR Fag» slår den
+   sammen først etter dette ja-et.
 3. Når produksjonsmigreringen har kjørt, skal både
    `npm run kurator -- kall oversikt '{}'` og
    `npm run kontrollor -- kall oversikt '{}'` svare med en liste.
@@ -177,8 +143,10 @@ Du er Vaktmester i «OUSFAR Fag». Bruk skillen vaktmester, og les docs/kuratorp
 ## Hva som hører hjemme hvor
 
 - Kurateringen, kontrollen og avgjørelsene om faginnholdet hører hjemme her.
-- Endringer i appen, API-et eller verktøyene gjøres i «OUSFAR Dev». Trenger
-  arbeidet en, sier tråden det til fagansvarlig med én setning om hva og
-  hvorfor.
+- Endringer i appen, API-et eller kurateringsverktøyenes kode gjøres i «OUSFAR
+  Dev», og endringer i verktøyene i verktøymenyen i «OUSFAR Verktøy». Trenger
+  arbeidet en, lager tråden et GitHub Issue med mottakerens etikett (hva og
+  hvorfor, uten faglige vurderinger av stoffer) og sier det til fagansvarlig med
+  én setning (`docs/prosjektansvar.md` §4).
 - Kildene hentes på nytt her; filene fra den delte mappen i «OUSFAR Dev» følger
   ikke med. Kontrolløren henter sine egne kilder.
