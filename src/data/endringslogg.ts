@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.4',
+    dato: '2026-11-09',
+    sammendrag: 'Planen i verktøyene står fast i synsfeltet på PC og åpnes i et eget vindu på mobil',
+    typer: ['Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller tekster i planen er endret.',
+      'På PC står plankortet fast til høyre mens resten av siden ruller, og det får alltid plass i vinduet: verken toppen eller bunnen klippes. Overskriften «Planen» står, og det er bare innholdet i kortet som ruller, med rullefeltet inni kortet.',
+      'På mobil står knappen «Se planen» nederst i vinduet så snart planen er klar, og den åpner planen i et eget vindu over siden der den er lett å lese. Den lukkes med krysset eller et trykk utenfor, og «Skriv ut» skriver ut hele planen også derfra.',
+      'Tallet 4 i sirkelen ved overskriften «Planen» er fjernet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.3',
     dato: '2026-11-08',
     sammendrag: 'Verktøyene er testet samlet etter forbedringene, også i den publiserte appen',
