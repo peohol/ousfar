@@ -7,43 +7,59 @@
  * dokken på smale flater) med seksjonene i en nedtrekksmeny. Det er aldri
  * begge på en gang.
  *
- * Grensen (90em = 1440 px) er der fortegnelsen får minst 11,5rem mellom
- * sidemargen og luften foran innholdet. Den følger av `--bredde-infoside`,
- * `--rom-scene`, `--rom-side` og luften under, og må regnes om om de endres;
- * CSS kan ikke lese et token i en media query.
+ * Plassen måles i `.innholdsfelt`: flaten innholdet står midt i, altså
+ * vinduet uten det diskusjonsmenyen tar til høyre (`--diskusjonsplass`).
+ * Står menyen åpen eller dras bredere, flytter innholdet seg mot venstre, og
+ * fortegnelsen følger med eller går over i toppmenyen i stedet for å havne
+ * under innholdet. Komponenten speiler hvilken av dem som vises, i
+ * `data-innholdsfortegnelse` på rotelementet, som skjuler knappen.
+ *
+ * Grensen (90rem = 1440 px flate) er der fortegnelsen får minst 11,5rem
+ * mellom sidemargen og luften foran innholdet. Den følger av
+ * `--bredde-infoside`, `--rom-scene`, `--rom-side` og luften under, og må
+ * regnes om om de endres; CSS kan ikke lese et token i en container query.
  */
+
+.innholdsfelt {
+  position: fixed;
+  inset: var(--toppmeny-offset) var(--diskusjonsplass, 0px) 0 0;
+  z-index: var(--lag-innhold);
+  container: innholdsfelt / inline-size;
+  /* Feltet er bare et mål; trykk går gjennom til siden under. */
+  pointer-events: none;
+}
 
 .innholdsfortegnelse {
   display: none;
 }
 
-@media (min-width: 90em) {
+@container innholdsfelt (min-width: 90rem) {
   .innholdsfortegnelse {
     /* Luften mellom fortegnelsen og innholdet. */
     --innhold-luft: var(--rom-9);
-    /* Venstre kant av innholdet i scenen, som står midt i vinduet. */
-    --innhold-kant: calc(50% - var(--bredde-infoside) / 2 + var(--rom-scene));
+    /* Venstre kant av innholdet i scenen, som står midt i feltet. */
+    --innhold-kant: calc(50cqi - var(--bredde-infoside) / 2 + var(--rom-scene));
     --innhold-bredde: min(13rem, var(--innhold-kant) - var(--innhold-luft) - var(--rom-side));
 
-    position: fixed;
-    z-index: var(--lag-innhold);
+    position: absolute;
     /* Midt i feltet mellom toppmenyen og bunnen av vinduet. */
-    top: calc(50% + var(--toppmeny-offset) / 2);
+    top: 50%;
     left: calc(var(--innhold-kant) - var(--innhold-luft) - var(--innhold-bredde));
     display: flex;
     flex-direction: column;
     gap: var(--rom-3);
     width: var(--innhold-bredde);
-    max-height: calc(100dvh - var(--toppmeny-offset) - 2 * var(--rom-6));
+    max-height: calc(100% - 2 * var(--rom-6));
     overflow-y: auto;
     overscroll-behavior: contain;
+    pointer-events: auto;
     transform: translateY(-50%);
   }
+}
 
-  /* Knappen i toppmenyen trengs ikke når fortegnelsen står ved siden av. */
-  .innholdsmeny {
-    display: none;
-  }
+/* Knappen i toppmenyen trengs ikke når fortegnelsen står ved siden av. */
+:root[data-innholdsfortegnelse='ved-siden'] .innholdsmeny {
+  display: none;
 }
 
 .innholdsfortegnelse__tittel {
@@ -135,7 +151,7 @@
 }
 
 @media print {
-  .innholdsfortegnelse,
+  .innholdsfelt,
   .innholdsmeny {
     display: none !important;
   }

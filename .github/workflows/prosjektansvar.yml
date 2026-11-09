@@ -1,0 +1,34 @@
+# Hver PR skal ha nøyaktig én prosjektetikett: ansvar:dev, ansvar:fag eller
+# ansvar:verktoy (docs/prosjektansvar.md). Kontrollen leser bare etikettene i
+# hendelsen, har ingen hemmeligheter og kan ikke skrive noe. Den er påkrevd før
+# sammenslåing gjennom regelsettet «Prosjektansvar» på main.
+name: Prosjektansvar
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prosjektansvar-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  etikett:
+    name: Prosjektansvar
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts/prosjektansvar.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Nøyaktig én prosjektetikett
+        env:
+          # Som miljøvariabel, aldri rett inn i skriptet: etikettnavn er fritekst.
+          ETIKETTER: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: node scripts/prosjektansvar.mjs

@@ -126,10 +126,59 @@ describe('innholdsfortegnelsen', () => {
 
   it('står enten ved siden av innholdet eller i toppmenyen, aldri begge, og ikke på utskrift', () => {
     const css = readFileSync('src/styles/innholdsfortegnelse.css', 'utf8')
-    const bred = css.slice(css.indexOf('@media (min-width: 90em)'), css.indexOf('.innholdsfortegnelse__tittel'))
+    const bred = css.slice(css.indexOf('@container innholdsfelt (min-width: 90rem)'), css.indexOf('.innholdsfortegnelse__tittel'))
     expect(css.indexOf('.innholdsfortegnelse {\n  display: none;')).toBeGreaterThanOrEqual(0)
-    expect(bred).toContain('position: fixed')
-    expect(bred).toMatch(/\.innholdsmeny \{\s*display: none;/)
-    expect(css.slice(css.indexOf('@media print'))).toMatch(/\.innholdsfortegnelse,\s*\.innholdsmeny/)
+    expect(bred).toContain('position: absolute')
+    expect(bred).toMatch(/:root\[data-innholdsfortegnelse='ved-siden'\] \.innholdsmeny \{\s*display: none;/)
+    expect(css.slice(css.indexOf('@media print'))).toMatch(/\.innholdsfelt,\s*\.innholdsmeny/)
+  })
+
+  it('måler plassen i flaten innholdet står i, uten det diskusjonsmenyen tar til høyre', () => {
+    // Innholdet og fortegnelsen regner med den samme plassen til menyen, så
+    // fortegnelsen aldri havner under innholdet når menyen står åpen.
+    const fortegnelse = readFileSync('src/styles/innholdsfortegnelse.css', 'utf8')
+    const felt = fortegnelse.slice(fortegnelse.indexOf('.innholdsfelt {'), fortegnelse.indexOf('.innholdsfortegnelse {'))
+    expect(felt).toContain('position: fixed')
+    expect(felt).toMatch(/inset: [^;]*var\(--diskusjonsplass/)
+    expect(felt).toContain('container: innholdsfelt / inline-size')
+    expect(felt).toContain('pointer-events: none')
+    const diskusjoner = readFileSync('src/styles/diskusjoner.css', 'utf8')
+    expect(diskusjoner).toMatch(/\.app \{\s*padding-right: var\(--diskusjonsplass\);/)
+    expect(diskusjoner).toMatch(/\[data-diskusjonsmeny='apen'\] \{\s*--diskusjonsplass: calc\(var\(--diskusjonspanel\)/)
+  })
+
+  it('skjuler knappen i toppmenyen bare mens fortegnelsen står ved siden av innholdet', () => {
+    // Feltet måles på nytt når det endrer bredde, for eksempel når
+    // diskusjonsmenyen åpnes eller dras bredere.
+    const vakter: (() => void)[] = []
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(maal: () => void) {
+          vakter.push(maal)
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+    try {
+      const rot = document.documentElement
+      const { unmount } = render(<Side seksjoner={['Dosering', 'Preparater']} />)
+      // Uten stilark i testen er fortegnelsen synlig, altså ved siden av.
+      expect(rot.dataset.innholdsfortegnelse).toBe('ved-siden')
+      const liste = fortegnelsen()
+      // Feltet blir for smalt, og CSS skjuler fortegnelsen: knappen trengs.
+      liste.style.display = 'none'
+      act(() => vakter.forEach((maal) => maal()))
+      expect(rot.dataset.innholdsfortegnelse).toBeUndefined()
+      // Plass igjen.
+      liste.style.display = ''
+      act(() => vakter.forEach((maal) => maal()))
+      expect(rot.dataset.innholdsfortegnelse).toBe('ved-siden')
+      unmount()
+      expect(rot.dataset.innholdsfortegnelse).toBeUndefined()
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })

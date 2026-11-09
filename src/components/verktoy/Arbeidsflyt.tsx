@@ -1,5 +1,8 @@
 import { useCallback, useDeferredValue, useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react'
+import { useKantIVinduet } from '../../hooks/useKantIVinduet'
+import { useMediesporring } from '../../hooks/useSystemvalg'
 import type { Legemiddelleser, Legemiddelutvalg } from '../../legemiddeldata/lesing'
+import { useBevart } from '../../oppdatering/Bevaring'
 import {
   begrunnelseshjelp,
   beregnPlan,
@@ -32,6 +35,7 @@ import { fraForlop, medlemFor, tilForlop, type Verktoyvalg } from '../../verktoy
 import { Button } from '../Button'
 import { Details } from '../Details'
 import { Lastesirkel } from '../Lasteindikator'
+import { Modallag } from '../Modallag'
 import { Tallfelt } from '../Tallfelt'
 import { Ikon } from '../ikon/Ikon'
 import { Doseplanvisning } from './Doseplanvisning'
@@ -90,8 +94,10 @@ export function Flytsteg({ nr, tittel, ferdig = false, reservevisning = false, c
 
 /** Stegene til venstre og planen til høyre på store skjermer; planen under stegene på smale. */
 export function Flytoppsett({ steg, plan, hopp }: { steg: ReactNode; plan: ReactNode; hopp?: ReactNode }) {
+  // Planen står fast i høyre kolonne og skal alltid få plass i vinduet, også før den står fast og mot slutten av flyten.
+  const flyt = useKantIVinduet()
   return (
-    <div className="verktoyflyt">
+    <div ref={flyt} className="verktoyflyt">
       <div className="verktoyflyt__steg">
         {steg}
         {hopp}
@@ -101,21 +107,23 @@ export function Flytoppsett({ steg, plan, hopp }: { steg: ReactNode; plan: React
   )
 }
 
-/** Panelet planen står i, med steg 4 som overskrift og det som gjelder nå under. */
+/** Når stegene og planen står side om side; på smalere flater står planen under og åpnes i et eget ark. */
+export const TO_KOLONNER = '(min-width: 64rem)'
+
+/**
+ * Panelet planen står i, med steg 4 som overskrift og det som gjelder nå under.
+ * Overskriften står fast og bare innholdet ruller, inni kortet, når panelet er
+ * lavere enn planen (fast i høyre kolonne på store skjermer).
+ */
 export function Planpanel({ tittel, ferdig = false, children, panel }: { tittel: string; ferdig?: boolean; children: ReactNode; panel?: MutableRefObject<HTMLElement | null> }) {
   const id = useId()
   return (
     <section ref={panel} className="planpanel" aria-labelledby={id} tabIndex={-1} data-ferdig={ferdig || undefined}>
       <h2 id={id} className="planpanel__tittel">
-        <span className="flytsteg__tall" aria-hidden="true">
-          4
-        </span>
-        <span>
-          <span className="kun-skjermleser">Steg 4: </span>
-          {tittel}
-        </span>
+        <span className="kun-skjermleser">Steg 4: </span>
+        {tittel}
       </h2>
-      {children}
+      <div className="planpanel__kropp">{children}</div>
     </section>
   )
 }
@@ -270,6 +278,15 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const aktiv = melding === undefined
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
   const panel = useRef<HTMLElement | null>(null)
+  // På smale flater leses planen i et eget ark over siden; blir flaten bred, står den i høyre kolonne igjen.
+  // Kommer det en melding i stedet for flyten (en sperre, eller sperrene kunne ikke leses), lukkes arket, så meldingen står i panelet.
+  const toKolonner = useMediesporring(TO_KOLONNER)
+  const [arkApen, setArkApen] = useBevart('plan/ark', false)
+  const planark = arkApen && !toKolonner && aktiv
+  const lukkArk = useCallback(() => setArkApen(false), [setArkApen])
+  useEffect(() => {
+    if (toKolonner || !aktiv) setArkApen(false)
+  }, [toKolonner, aktiv, setArkApen])
   const [visMangler, setVisMangler] = useState(false)
   const valgnokkel = JSON.stringify(valg ?? null)
   useEffect(() => setVisMangler(false), [valgnokkel])
@@ -430,7 +447,12 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       felt?.scrollIntoView({ block: 'center', behavior: 'smooth' })
     })
   }
+  /** Til planen: i høyre kolonne på store skjermer, ellers i arket. */
   const tilPlanen = () => {
+    if (!toKolonner) {
+      setArkApen(true)
+      return
+    }
     panel.current?.focus({ preventScroll: true })
     panel.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
@@ -701,6 +723,15 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       </div>
     ) : null
 
+  // Planen vises ett sted om gangen: i panelet, eller i arket når det står åpent, så den aldri skrives ut to ganger.
+  const planinnhold = melding ?? (
+    <>
+      {innhold}
+      {visTilpass && <div className="planpanel__tillegg">{tilpass}</div>}
+      {!plan && regel && <FagligGrunnlag grunnlag={regelgrunnlag(regel)} />}
+    </>
+  )
+
   return (
     <Flytoppsett
       steg={
@@ -818,15 +849,20 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       }
       hopp={melding === undefined ? hopp : null}
       plan={
-        <Planpanel tittel={titler[3]} ferdig={!!plan} panel={panel}>
-          {melding ?? (
-            <>
-              {innhold}
-              {visTilpass && <div className="planpanel__tillegg">{tilpass}</div>}
-              {!plan && regel && <FagligGrunnlag grunnlag={regelgrunnlag(regel)} />}
-            </>
-          )}
-        </Planpanel>
+        <>
+          <Planpanel tittel={titler[3]} ferdig={!!plan} panel={panel}>
+            {planark ? (
+              <Panelmelding>
+                <p>Planen er åpnet i eget vindu.</p>
+              </Panelmelding>
+            ) : (
+              planinnhold
+            )}
+          </Planpanel>
+          <Modallag apen={planark} tittel={titler[3]} onLukk={lukkArk} ark>
+            {planark && planinnhold}
+          </Modallag>
+        </>
       }
     />
   )
