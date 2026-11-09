@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-09T20:26:13.017Z. Stoffene sist lest fra databasen 2026-11-09T00:45:56.665Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-09T21:26:06.608Z. Stoffene sist lest fra databasen 2026-11-09T21:26:06.608Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 98 · Publisert: 16 · Blokkert: 4 · Utenfor køen: 1
 
@@ -66,12 +66,12 @@ Ingen kurateringer venter.
 | 41 | bisoprolol | de_novo | 395.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 5 av 13 redaksjonelle seksjoner er tomme. 3 av 22 elementer har ingen kilde. |
 | 42 | labetalol | de_novo | 395.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 5 av 13 redaksjonelle seksjoner er tomme. 3 av 22 elementer har ingen kilde. |
 | 43 | karvedilol | de_novo | 395 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 5 av 13 redaksjonelle seksjoner er tomme. 3 av 23 elementer har ingen kilde. |
-| 44 | kodein | de_novo | 390.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 5 av 13 redaksjonelle seksjoner er tomme. 1 av 23 elementer har ingen kilde. |
-| 45 | oksykodon | de_novo | 374.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. 1 av 33 elementer har ingen kilde. |
-| 46 | maprotilin | de_novo | 374.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. 1 av 42 elementer har ingen kilde. |
-| 47 | penfluridol | de_novo | 373.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. |
-| 48 | tranylcypromin | de_novo | 373.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. |
-| 49 | flufenazin | de_novo | 366.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 33 elementer har ingen kilde. |
+| 44 | oksykodon | de_novo | 374.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. 1 av 33 elementer har ingen kilde. |
+| 45 | maprotilin | de_novo | 374.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. 1 av 42 elementer har ingen kilde. |
+| 46 | penfluridol | de_novo | 373.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. |
+| 47 | tranylcypromin | de_novo | 373.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 13 redaksjonelle seksjoner er tomme. |
+| 48 | flufenazin | de_novo | 366.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 33 elementer har ingen kilde. |
+| 49 | kodein | de_novo | 366.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 32 elementer har ingen kilde. |
 | 50 | promazin | de_novo | 366.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 33 elementer har ingen kilde. |
 | 51 | trifluoperazin | de_novo | 366.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 32 elementer har ingen kilde. |
 | 52 | perisiazin | de_novo | 366.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. 1 av 35 elementer har ingen kilde. |
