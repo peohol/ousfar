@@ -209,22 +209,50 @@
   stroke-linecap: round;
 }
 
-.thc-plot__kurve--gronn {
+/* Kurvene farges etter terskelen de er for bruksmønsteret, ikke etter hvilken
+   kurve det er: den nedre grønn, den øvre rød, og den fortolkningen ikke
+   leser av, tynn, grå og stiplet. */
+.thc-plot__kurve--nedre {
   stroke: var(--referanse-kant);
 }
 
-.thc-plot__kurve--gul {
-  stroke: var(--toksisk-kant);
+.thc-plot__kurve--ovre {
+  stroke: var(--alvorlig-kant);
 }
 
-.thc-plot__kurve--rod {
-  stroke: var(--alvorlig-kant);
+.thc-plot__kurve--ubrukt {
+  stroke: var(--blekk-dempet);
+  stroke-width: 1.5;
+  stroke-dasharray: 7 6;
 }
 
 .thc-plot__punkt {
   fill: var(--blekk-sterk);
   stroke: var(--flate);
   stroke-width: 2;
+}
+
+/* Denne prøven etter hvor den ligger mot tersklene: under den nedre, mellom
+   dem, eller over den øvre. */
+.thc-plot__punkt--gronn {
+  fill: var(--referanse-kant);
+}
+
+.thc-plot__punkt--gul {
+  fill: var(--toksisk-kant);
+}
+
+.thc-plot__punkt--rod {
+  fill: var(--alvorlig-kant);
+}
+
+/* Klammen som samler punktene for denne prøven med alle marginene. */
+.thc-plot__klamme {
+  fill: none;
+  stroke: var(--blekk);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Etikettene får en «glorie» i flatens farge, så de står lesbare også der de
@@ -248,12 +276,24 @@
 }
 
 /* Legenden står i vanlig HTML over figuren, så hvert kurvenavn kan bære et
-   tips om hva profilen står for. Hver oppføring er en liten pille. */
+   tips om hva profilen står for. Hver kurve har sin egen linje: en liten
+   pille, og ved siden av hva kurven skiller i fortolkningen. */
 .thc-legende {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--rom-3);
   width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thc-legende__rad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2) var(--rom-4);
 }
 
 .thc-legende__oppforing {
@@ -277,16 +317,35 @@
   border-radius: var(--runding-pille);
 }
 
-.thc-legende__strek--gronn {
+.thc-legende__strek--nedre {
   background: var(--referanse-kant);
 }
 
-.thc-legende__strek--gul {
-  background: var(--toksisk-kant);
+.thc-legende__strek--ovre {
+  background: var(--alvorlig-kant);
 }
 
-.thc-legende__strek--rod {
-  background: var(--alvorlig-kant);
+.thc-legende__strek--ubrukt {
+  height: 0;
+  border-top: 2px dashed var(--blekk-dempet);
+  border-radius: 0;
+}
+
+.thc-legende__terskel {
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-tett);
+  color: var(--blekk-dempet);
+}
+
+/* Kurven som ikke brukes, får forklaringen i en pille uten fyll med grå,
+   stiplet kant, som kurven selv. */
+.thc-legende__terskel--ubrukt {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(var(--hoyde-liten) - var(--rom-1) / 2);
+  padding: 0 var(--rom-4);
+  border: var(--kant) dashed var(--blekk-dempet);
+  border-radius: var(--runding-pille);
 }
 
 /* Forklaringen under figuren: bolkene side om side når det er plass, hver

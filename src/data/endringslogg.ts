@@ -12,6 +12,22 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.0',
+    dato: '2026-11-10',
+    sammendrag: 'THC-syre: kurvene farges etter hva de skiller i fortolkningen, og prøven kan vises med alle sikkerhetsmarginer',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['fortolkning/thc'],
+    punkter: [
+      'Ingen kommentarer, konklusjoner eller regler er endret. Det er bare visualiseringen under kommentaren som er ny.',
+      'Over visualiseringen velger du mellom «Visualiser med valgt sikkerhetsmargin» og «Visualiser med alle sikkerhetsmarginer». Med alle står det ett punkt for denne prøven per sikkerhetsmargin, og et eget for «Ingen (50 %)» hvis den ikke er blant marginene. En klamme fra etiketten «Denne prøven (ulike sikkerhetsmarginer)» samler punktene. Hold pekeren over et punkt for å se marginen.',
+      'Kurvene har ikke lenger faste farger. Den som skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås», er grønn, og den som skiller «kan ikke fastslås» fra «nytt inntak», er rød. Kurven som ikke brukes for bruksmønsteret, er tynn, grå og stiplet. Ved kronisk bruk er det moderat og treg utskillelse som brukes, ellers normal og moderat.',
+      'Punktet for denne prøven er grønt under den grønne kurven, gult mellom den grønne og den røde, og rødt over den røde.',
+      'Kurvenavnene over figuren står på hver sin linje, med hva kurven skiller ved siden av.',
+      'I oversikten over reglene på redigeringssiden står kurvenavnet ved fargen, siden fargen i figuren nå følger terskelen.',
+    ],
+  },
+  {
     versjon: '1.128.5',
     dato: '2026-11-09',
     sammendrag: 'Fast arbeidsdeling mellom prosjektene som utvikler og kontrollerer appen',

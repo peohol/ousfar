@@ -5,10 +5,12 @@ import { Details } from './Details'
 import { Panelhode } from './Panelhode'
 import { ThcForklaring } from './ThcForklaring'
 import { ThcPlot } from './ThcPlot'
+import { Trinnbryter } from './Trinnbryter'
 import { Ikon } from './ikon/Ikon'
+import { useBevart } from '../oppdatering/Bevaring'
 import type { ThcMildereUtfall, ThcResultat } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
-import { konklusjonsnavnISetning, marginliste, marginmerke } from '../domain/thcVisning'
+import { konklusjonsnavnISetning, marginliste, marginmerke, somProsent } from '../domain/thcVisning'
 
 /**
  * Utfallet av en THC-fortolkning, slik fortolkningsmodulen og simulatoren på
@@ -136,13 +138,39 @@ function grafgrunnlag(resultat: ThcResultat) {
     : null
 }
 
-/** Kurvene med forklaringen under, når det er noe å tegne. */
-export function ThcKurvebilde({ resultat, regler }: { resultat: ThcResultat; regler: ThcRegelsett }) {
+/**
+ * Kurvene med forklaringen under, når det er noe å tegne. Over kurvene velges
+ * om denne prøven vises med den valgte sikkerhetsmarginen eller med alle.
+ * Valget tas vare på under `bevaring` når appen oppdateres; uten navn er det
+ * en vanlig tilstand, som i simulatoren.
+ */
+export function ThcKurvebilde({
+  resultat,
+  regler,
+  bevaring = null,
+}: {
+  resultat: ThcResultat
+  regler: ThcRegelsett
+  bevaring?: string | null
+}) {
+  const [alleMarginer, setAlleMarginer] = useBevart(bevaring, false)
   const graf = grafgrunnlag(resultat)
   if (!graf) return null
   return (
     <>
-      <ThcPlot grunnlag={graf.grunnlag} regler={regler} />
+      <Trinnbryter
+        etikett="Visualisering"
+        valg={[
+          {
+            verdi: false,
+            merke: `Visualiser med valgt sikkerhetsmargin (${somProsent(graf.grunnlag.sikkerhetsmargin)}\u00a0%)`,
+          },
+          { verdi: true, merke: 'Visualiser med alle sikkerhetsmarginer' },
+        ]}
+        verdi={alleMarginer}
+        onVelg={setAlleMarginer}
+      />
+      <ThcPlot grunnlag={graf.grunnlag} regler={regler} alleMarginer={alleMarginer} />
       <Details summary="Forklaring" ikon="fallback">
         <ThcForklaring grunnlag={graf.grunnlag} konklusjon={graf.konklusjon} samlet={graf.samlet} regler={regler} />
       </Details>
@@ -156,7 +184,7 @@ export function ThcVisualisering({ resultat, regler }: { resultat: ThcResultat; 
   return (
     <Card align="start" className="thc-plot">
       <Panelhode ikon="hl">Visualisering</Panelhode>
-      <ThcKurvebilde resultat={resultat} regler={regler} />
+      <ThcKurvebilde resultat={resultat} regler={regler} bevaring="fortolkning/thc/visualisering" />
     </Card>
   )
 }

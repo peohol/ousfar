@@ -30,7 +30,7 @@ som fasit i testene (se [Redigeringen](#redigeringen)).
 | `src/domain/thcKurver.ts` | Kurveregningen, og beviset for at kurvene står i rekkefølge |
 | `src/domain/thcMotor.ts` | Motoren: fra inndata, regler og tekster til kommentar, konklusjon og tallgrunnlag |
 | `src/domain/thcTall.ts` | Tall og datoer slik de tastes og skrives |
-| `src/domain/thcPlot.ts` | Figuren med kurvene og de to prøvene |
+| `src/domain/thcPlot.ts` | Figuren med kurvene og prøvene, tersklene per bruksmønster og punktene for denne prøven per margin |
 | `src/domain/thcVisning.ts` | Det modulen og redigeringssiden skriver om reglene: nivåene, marginene og kurvene per bruksmønster |
 | `src/domain/thc.ts` | Koden, analysemetoden og søkeoppføringen |
 | `src/faginnhold/thcregler.ts` | Fra det databasen gir til en kontrollert modell, eller feilen modulen viser |
@@ -293,6 +293,19 @@ ingen margin). Under bryteren forklarer «Hva er sikkerhetsmarginen?»
 hver margin av `sammenlignMedForrige`, det samme steget fortolkningen bruker.
 Står skjemaet på en margin et nytt regelsett ikke har, gir motoren en mangel
 og ingen kommentar.
+
+**Visualiseringen** (`ThcPlot`, Peders bestilling 10.11.2026) farger kurvene
+etter terskelen de er for bruksmønsteret (`terskler`), ikke etter rollen:
+kurven i `vanskelig_over` er grønn, den i `nytt_inntak_over` rød, og den
+tredje tynn, grå og stiplet med «Brukes ikke i fortolkningen …». Legenden har
+én linje per kurve, med hva den skiller ved siden av. Punktet for denne prøven
+får fargen konklusjonen mot forrige prøve gir for marginen (`marginpunkter`,
+med motorens `korrigertEndring` og `konklusjon`): grønt, gult eller rødt.
+Bryteren over figuren velger den valgte marginen eller alle regelsettets, med
+«Ingen (50 %)» i tillegg når regelsettet ikke har den (den målte endringen,
+z = 0); da samler en klamme punktene. Valget bevares ved oppdatering i
+modulen, ikke i simulatoren. `byggGraf` gir de samme tallene som før når den
+ikke får flere punkter, så tallgrunnlaget i fasiten er uendret.
 
 Redigeringssiden for IRCAK (`#/fortolkning/ircak/rediger`, se
 `docs/fortolkningsregler.md`) har seksjonen med oversikten over reglene,

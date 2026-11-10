@@ -305,6 +305,56 @@ describe('fortolkningsmodulen for THC-syre', () => {
     expect(gruppe('Tidligere prøve 2')).toBeTruthy()
   })
 
+  it('viser tersklene for bruksmønsteret, og denne prøven med den valgte eller alle marginene', async () => {
+    const user = userEvent.setup()
+    // Uten «Ingen» i regelsettet, så den må legges til som eget punkt.
+    const uten = { ...THC_REGELSETT, sikkerhetsmarginer: THC_REGELSETT.sikkerhetsmarginer.filter((m) => m.margin !== 0.5) }
+    visSteg({ status: 'klar', modell: modell(uten) })
+    await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'IRCAK' }), '120')
+    await user.type(gruppe('Forrige prøve').getByLabelText('Prøvedato'), '2026-02-01')
+    await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), '80')
+    await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), '2026-02-08')
+
+    const figur = () => document.querySelector('.thc-plot__figur')!
+    const kurver = () => [...figur().querySelectorAll('.thc-plot__kurve')].map((k) => k.getAttribute('class'))
+    const denne = () => figur().querySelectorAll('circle[class*="thc-plot__punkt--"]')
+
+    // Kronisk bruk: den gule kurven er nedre og den røde øvre terskel.
+    expect(kurver()).toEqual([
+      'thc-plot__kurve thc-plot__kurve--ubrukt',
+      'thc-plot__kurve thc-plot__kurve--nedre',
+      'thc-plot__kurve thc-plot__kurve--ovre',
+    ])
+    expect(screen.getByText('Brukes ikke i fortolkningen ved kronisk bruk')).toBeTruthy()
+    expect(screen.getByText('Skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås»')).toBeTruthy()
+    expect(screen.getByText('Skiller «kan ikke fastslås» fra «nytt inntak»')).toBeTruthy()
+    expect(denne()).toHaveLength(1)
+    expect(figur().textContent).toContain('Denne prøven')
+
+    trykkPaaValg('Visualiser med alle sikkerhetsmarginer')
+    // Ett punkt per margin, og ett for «Ingen (50 %)».
+    expect(denne()).toHaveLength(uten.sikkerhetsmarginer.length + 1)
+    expect(figur().querySelector('.thc-plot__klamme')).toBeTruthy()
+    expect(figur().textContent).toContain('(ulike sikkerhetsmarginer)')
+    expect([...denne()].map((p) => p.querySelector('title')?.textContent?.split(':')[0])).toEqual([
+      'Ingen (50\u00a0%) sikkerhetsmargin',
+      ...uten.sikkerhetsmarginer.map((m) => `${marginvalg(m.margin)} sikkerhetsmargin`),
+    ])
+
+    // Uten kronisk bruk er det den grønne og den gule kurven som er terskler.
+    await user.click(screen.getByLabelText('Legg kronisk bruk til grunn'))
+    expect(kurver()).toEqual([
+      'thc-plot__kurve thc-plot__kurve--nedre',
+      'thc-plot__kurve thc-plot__kurve--ovre',
+      'thc-plot__kurve thc-plot__kurve--ubrukt',
+    ])
+    expect(screen.getByText('Brukes ikke i fortolkningen når kronisk bruk ikke legges til grunn')).toBeTruthy()
+
+    trykkPaaValg('Visualiser med valgt sikkerhetsmargin (90\u00a0%)')
+    expect(denne()).toHaveLength(1)
+    expect(figur().querySelector('.thc-plot__klamme')).toBeNull()
+  })
+
   it('gir ingen kommentar når nye regler ikke har marginen skjemaet står på', async () => {
     const user = userEvent.setup()
     const vis = (m: ThcModell) => (
