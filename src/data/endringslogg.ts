@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.128.8',
+    dato: '2026-11-10',
+    sammendrag: 'Kontrollen av kildeovervåkingen er ikke lenger avhengig av dagens dato',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. To automatiske kontroller av kildeovervåkingen brukte faste datoer og begynte å feile da datoene ble mer enn en uke gamle. De regner nå tidene ut fra dagens dato, så de fortsetter å virke.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.128.6',
     dato: '2026-11-09',
     sammendrag: 'Stoppet for valproat sier hvilket vilkår i det graviditetsforebyggende programmet som mangler',
