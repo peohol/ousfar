@@ -19,10 +19,11 @@
  */
 import { writeFileSync } from 'node:fs'
 import { FEST_FORELDET_ETTER_TIMER } from '../../legemiddeldata/referanser'
-import { flytoppsett, reglerMedPlan } from '../../verktoy/flyt'
+import { flytoppsett } from '../../verktoy/flyt'
 import { jaVed, type Betingelsestype } from '../../verktoy/flyt/sporsmal'
 import { FORMULERINGSNAVN, VALGTEKSTER, virkestoffvalg } from '../../verktoy/register'
 import { BRUKERFORLOP, kjorForlop, KLASSENAVN, lesUttrekkene, tidslinjeavvik, type Brukerforlop, type Forlopsresultat, type Tidslinje } from './brukerforlop'
+import { sammeGrunn } from './sammegrunn'
 import { apneTestmiljo, Teststopp } from './testmiljo'
 import { trafikklinje } from './trafikkvakt'
 
@@ -367,40 +368,6 @@ function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
   return r.vist.length === 0 || sammeGrunn(r, a.tekst) ? [] : [`appens tekst gir ikke samme grunn som «${r.vist[0]!.slice(0, 60)}…»`]
 }
 
-/** Tallene i en tekst, som «10, 20 mg» eller «10 og 20 mg». */
-const tallI = (t: string) => (t.match(/\d+(?:,\d+)?/g) ?? []).join(' ')
-
-/** Forhåndskontrollens stopp når ingen godkjent regel for valget kan gi en komplett plan (`forhandskontroll`, kode `ikke_komplett`). */
-const INGEN_KOMPLETT_REGEL = 'Ingen godkjent regel gir en komplett plan for dette valget ennå.'
-
-/**
- * Om steg 4 i appen gir samme grunn som den lokale kjøringen, for hver mulig
- * grunn for seg (aldri en generisk tekst som kunne dekke flere):
- * - motorens egen stoppgrunn står ordrett i appen (bak «Vis detaljer» når
- *   beregningen er kjørt);
- * - forhåndskontrollen stopper på startdosen: lokalt stopper motoren på
- *   startdosen, og appen viser de samme tillatte startdosene;
- * - forhåndskontrollen stopper fordi ingen godkjent regel for valget kan gi en
- *   komplett plan: lokalt finnes det heller ingen slik regel for valget
- *   (`reglerMedPlan`), uavhengig av hvor motoren stopper.
- * Gir grunnen appen viser, eller `undefined` når den ikke er den samme.
- */
-export function sammeGrunn(r: Forlopsresultat, app: string): string | undefined {
-  const eksakt = r.vist.find((l) => app.includes(l))
-  if (eksakt) return 'motorens tekst'
-  const vist = /Regelen gjelder bare startdoser på ([^.]*)\./.exec(app)
-  if (vist)
-    return r.vist.some((l) => {
-      const start = /^Startdosen [\d,]+ mg er utenfor det regelen gjelder for \(([^)]*)\)/.exec(l)
-      return start && tallI(start[1]!) === tallI(vist[1]!)
-    })
-      ? 'de samme tillatte startdosene'
-      : undefined
-  if (app.includes(INGEN_KOMPLETT_REGEL))
-    return r.verktoy && reglerMedPlan({ verktoy: r.verktoy, valg: r.forlop.valg }).length === 0 ? 'ingen regel for valget gir komplett plan, også lokalt' : undefined
-  return undefined
-}
-
 /** Forklaringen i steg 4 når appen ikke viser noen plan: linjen etter «Ingen plan …», eller en kjent stopptekst. */
 function stopplinje(tekst: string): string | undefined {
   const linjer = tekst
@@ -635,7 +602,7 @@ async function main() {
       '<!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->',
       '# OUSFAR Verktøy – brukerforløpene i den publiserte appen',
       '',
-      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele den utvidede kopien («Kopier med faglig grunnlag») linje for linje, og den synlige tidslinjen (hver rad og celle) mot den korte kopien («Kopier planen»), som har radene slik skjermen viser dem. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
+      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele den utvidede kopien («Kopier med faglig grunnlag») linje for linje, og den synlige tidslinjen (hver rad og celle) mot den korte kopien («Kopier planen»), som har radene slik skjermen viser dem. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller katalogens forklaring ved spørsmålet når forløpet har svart ja på nettopp det forholdet (flyten stopper da før motoren regner), eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
       '',
       `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
       '',

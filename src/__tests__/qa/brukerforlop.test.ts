@@ -30,6 +30,8 @@ import type { Regel } from '../../verktoy/regler/modell'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
 import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
 import { SKIFTEINNRYKK } from '../../verktoy/planvisning'
+import { betingelserFor } from '../../verktoy/flyt/katalogkontroll'
+import { sammeGrunn } from './sammegrunn'
 import {
   BRUKERFORLOP,
   KLASSENAVN,
@@ -278,6 +280,31 @@ describe('QA: K0-01 escitalopram (tablett og dråper)', () => {
     ).toBe(r('H-30').utfall?.tekst)
     // Lang behandlingstid er utenfor det avgrensede omfanget.
     expect([r('H-32').klasse, r('H-32').vist.join(' ')]).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
+  })
+})
+
+describe('QA: appkontrollens sammenligning av stoppgrunnen', () => {
+  // H-32 (P4-rapporten §4): lokalt stopper motoren sent fordi neste trinn ikke kan gis, i appen stopper flyten
+  // ved spørsmålet om lang behandlingstid med katalogens forklaring. Begge gir ingen plan, og grunnen er den samme.
+  const h32 = RESULTATER.find((r) => r.forlop.id === 'H-32')!
+  const forklaring = betingelserFor(h32.regel!).find((b) => b.id === 'lang_behandlingstid')!.forklaring!
+
+  it('godtar katalogens forklaring for et forhold forløpet har svart ja på', () => {
+    expect(h32.skjema?.svar?.lang_behandlingstid).toBe(true)
+    expect(h32.vist.some((l) => forklaring.includes(l) || l.includes(forklaring))).toBe(false)
+    expect(sammeGrunn(h32, `Ingen plan for escitalopram\n${forklaring}`)).toBe('katalogens forklaring for svaret ja (lang_behandlingstid)')
+  })
+
+  it('godtar ikke en forklaring for et forhold forløpet ikke har svart ja på, eller en generisk tekst', () => {
+    const uten = { ...h32, skjema: { ...h32.skjema, svar: { ...h32.skjema?.svar, lang_behandlingstid: false } } }
+    expect(sammeGrunn(uten, forklaring)).toBeUndefined()
+    const annen = betingelserFor(h32.regel!).find((b) => b.id === 'akutt_situasjon')!.forklaring!
+    expect(sammeGrunn(h32, annen)).toBeUndefined()
+    expect(sammeGrunn(h32, 'Nedtrappingen må planlegges individuelt.')).toBeUndefined()
+  })
+
+  it('godtar fortsatt motorens egen stoppgrunn ordrett', () => {
+    expect(sammeGrunn(h32, h32.vist.join('\n'))).toBe('motorens tekst')
   })
 })
 
