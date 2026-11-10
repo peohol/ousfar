@@ -52,6 +52,15 @@ const rapport = (kjort_kl: string, funnene: Overvakingsfunn[], kjort: Funnkilde[
   ...over,
 })
 
+/**
+ * Tidspunktet for en kjøring `dager` (og `timer`) etter den første, som kjøres en time før nå.
+ * Databasen regner med dagens dato (`now()`), så faste datoer ville gått ut på dato.
+ */
+const FORSTE_KJORING = Math.floor((Date.now() - 3_600_000) / 60_000) * 60_000
+const kl = (dager: number, timer = 0) => new Date(FORSTE_KJORING + (dager * 24 + timer) * 3_600_000).toISOString().replace('.000Z', 'Z')
+/** Det samme tidspunktet slik databasen skriver det tilbake. */
+const lagretKl = (dager: number, timer = 0) => kl(dager, timer).replace(/Z$/, '+00:00')
+
 /** Et fullstendig faglig spørsmål til redaktøren. */
 const sporsmal = (over: Record<string, unknown> = {}) => ({
   tittel: 'Kilden for nedtrappingstakten er revidert',
@@ -108,7 +117,7 @@ describe('kildesakene i databasen', () => {
   }, 60_000)
 
   it('tar bare imot kjøringer og agentarbeid fra serveren, og lar bare administratorer se og avgjøre sakene', async () => {
-    const r = melding(rapport('2026-11-02T06:20:00Z', []), 'cron', null)
+    const r = melding(rapport(kl(0), []), 'cron', null)
     for (const hvem of [admin, bruker]) {
       expect(await feilFra(() => kallFor(hvem)('registrer_kildeovervaking', { melding: JSON.stringify(r) }))).toMatchObject({ code: '42501' })
       expect(await feilFra(() => kallFor(hvem)('kildesak_avslutt_prove', { funn: 1, versjon: 1, bevis: 'Syntetisk bevis.', agent: 'Claude' }))).toMatchObject({ code: '42501' })
@@ -133,43 +142,43 @@ describe('kildesakene i databasen', () => {
     const dok = funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'a'.repeat(64) })
     const fest = funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })
     const psy = funn({ id: 'psychiatrienet:x', kilde: 'psychiatrienet', objekt: 'x', prioritet: 'hoy' })
-    expect(await meld(rapport('2026-11-02T06:20:00Z', [dok, fest, psy]))).toMatchObject({ nye: 3, endrede: 0, borte: 0, apne: 3 })
+    expect(await meld(rapport(kl(0), [dok, fest, psy]))).toMatchObject({ nye: 3, endrede: 0, borte: 0, apne: 3 })
     expect((await logg()).funn.map((f) => f.tilstand)).toEqual(['teknisk_utredning', 'teknisk_utredning', 'teknisk_utredning'])
     // Ingen sak for redaktøren, ingen prikk; det tekniske sporet følges opp.
     const oversikt = lesRedaktoroversikt(await kallFor(admin)('les_fagsaker', {}))
-    expect(oversikt).toMatchObject({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: '2026-11-02T06:20:00+00:00' })
+    expect(oversikt).toMatchObject({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: lagretKl(0) })
     expect(redaktorvarsel(oversikt)).toEqual([])
 
     // Den samme siden med nye engangsverdier: detaljene er nye, men tilstandsavtrykket er det samme, så ingenting er endret.
     const igjen = { ...dok, detaljer: ['Nå: dokumentet def (text/html, hentet 2026-11-09T06:00:00Z).'] }
     expect(funnavtrykk(igjen)).toBe(funnavtrykk(dok))
-    expect(await meld(rapport('2026-11-09T06:20:00Z', [igjen, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 0, borte: 0, apne: 3 })
+    expect(await meld(rapport(kl(7), [igjen, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 0, borte: 0, apne: 3 })
     const a = await sak('dokument:a')
-    expect(a).toMatchObject({ versjon: 1, detaljer: igjen.detaljer, sist_sett_kl: '2026-11-09T06:20:00+00:00' })
+    expect(a).toMatchObject({ versjon: 1, detaljer: igjen.detaljer, sist_sett_kl: lagretKl(7) })
 
     // Nytt innhold: samme sak, ny versjon, det gamle innholdet i hendelsen. Psychiatrienet ble ikke kontrollert og står urørt.
-    expect(await meld(rapport('2026-11-16T06:20:00Z', [{ ...dok, tilstandsavtrykk: 'b'.repeat(64) }, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 1, apne: 3 })
+    expect(await meld(rapport(kl(14), [{ ...dok, tilstandsavtrykk: 'b'.repeat(64) }, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 1, apne: 3 })
     const etter = await sak('dokument:a')
     expect(etter).toMatchObject({ id: a.id, versjon: 2, tilstand: 'teknisk_utredning' })
     expect(etter.hendelser.map((h) => h.art)).toEqual(['opprettet', 'nytt_innhold'])
     expect((await db.query<{ n: number }>(`select count(*)::int as n from public.kildefunn where funn = 'dokument:a'`)).rows[0]!.n).toBe(1)
-    expect((await sak('psychiatrienet:x')).sist_sett_kl).toBe('2026-11-02T06:20:00+00:00')
+    expect((await sak('psychiatrienet:x')).sist_sett_kl).toBe(lagretKl(0))
   })
 
   it('avslutter en teknisk sak automatisk bare når en del som faktisk ble kontrollert, fant kilden i samsvar med grunnlaget', async () => {
     const fest = await sak('fest:sertralin:ID_X')
     // FEST stoppet (ikke kjørt), og dokumentdelen kontrollerte ingenting: ingen sak røres.
-    expect(await meld(rapport('2026-11-23T06:20:00Z', [], ['dokument'], { feil: ['FEST: innlogging avvist'], grunnlag: [{ kilde: 'dokument', kjort: true, kontrollert: 0, beskrivelse: 'Ingen' }] }))).toMatchObject({ borte: 0, avsluttede: 0 })
+    expect(await meld(rapport(kl(21), [], ['dokument'], { feil: ['FEST: innlogging avvist'], grunnlag: [{ kilde: 'dokument', kjort: true, kontrollert: 0, beskrivelse: 'Ingen' }] }))).toMatchObject({ borte: 0, avsluttede: 0 })
     // Kilden svarte ikke: nøkkelen står som informativ, så det er ukjent, ikke «uendret».
-    const ukjent = rapport('2026-11-30T06:20:00Z', [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'utilgjengelig', niva: 'informativ', prioritet: undefined })], ['fest'])
+    const ukjent = rapport(kl(28), [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'utilgjengelig', niva: 'informativ', prioritet: undefined })], ['fest'])
     expect(await meld(ukjent)).toMatchObject({ borte: 0, avsluttede: 0 })
     // FEST kontrollert uten avvik for preparatet: tilbake i samsvar med grunnlaget, avsluttet med kjøringen som bevis.
-    expect(await meld(rapport('2026-12-07T06:20:00Z', [], ['fest']))).toMatchObject({ borte: 1, avsluttede: 1 })
+    expect(await meld(rapport(kl(35), [], ['fest']))).toMatchObject({ borte: 1, avsluttede: 1 })
     const lukket = (await logg()).funn.find((f) => f.id === fest.id)!
-    expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'ikke_funnet_igjen', borte_kl: '2026-12-07T06:20:00+00:00' })
+    expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'ikke_funnet_igjen', borte_kl: lagretKl(35) })
     expect(lukket.hendelser.at(-1)).toMatchObject({ art: 'avsluttet', fra: 'teknisk_utredning', til: 'avsluttet' })
     // Kommer avviket tilbake, er det en ny sak, ikke dekket av den gamle.
-    expect(await meld(rapport('2026-12-14T06:20:00Z', [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })], ['fest']))).toMatchObject({ nye: 1 })
+    expect(await meld(rapport(kl(42), [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })], ['fest']))).toMatchObject({ nye: 1 })
     expect(await sak('fest:sertralin:ID_X')).toMatchObject({ erstatter: fest.id, tilstand: 'teknisk_utredning' })
   })
 
@@ -192,8 +201,8 @@ describe('kildesakene i databasen', () => {
     expect(await konkluder({ versjon: a.versjon + 1 })).toBe(a.versjon + 3)
     const lukket = (await logg()).funn.find((f) => f.id === a.id)!
     expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'teknisk_avklart', konklusjon: 'uten_faglig_betydning' })
-    expect(await meld(rapport('2026-12-21T06:20:00Z', [funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'b'.repeat(64) })], ['dokument']))).toMatchObject({ nye: 0, endrede: 0 })
-    expect((await logg()).funn.find((f) => f.id === a.id)).toMatchObject({ tilstand: 'avsluttet', sist_sett_kl: '2026-12-21T06:20:00+00:00' })
+    expect(await meld(rapport(kl(49), [funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'b'.repeat(64) })], ['dokument']))).toMatchObject({ nye: 0, endrede: 0 })
+    expect((await logg()).funn.find((f) => f.id === a.id)).toMatchObject({ tilstand: 'avsluttet', sist_sett_kl: lagretKl(49) })
   })
 
   it('legger et faglig spørsmål frem for redaktøren med valg og virkning, og en beslutning bestiller tiltak i stedet for å lukke saken', async () => {
@@ -266,14 +275,14 @@ describe('kildesakene i databasen', () => {
 
   it('bekrefter et utført nytt grunnlag med neste kontroll, og merker nytt innhold i en sak i det faglige sporet uten å viske ut beslutningen', async () => {
     const dok = funn({ id: 'dokument:b', objekt: 'b', tilstandsavtrykk: 'd'.repeat(64) })
-    await meld(rapport('2027-01-04T06:20:00Z', [dok], ['dokument']))
+    await meld(rapport(kl(63), [dok], ['dokument']))
     let s = await sak('dokument:b')
     s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
     s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmal({ anbefaling: { valg: 'behold', begrunnelse: 'Endringen gjelder ikke det regelen bygger på.', av: 'Claude' } }) })) as number }
     expect(await redaktor().beslutt(String(s.id), s.versjon, 'behold', null)).toBe('registrert')
 
     // Kilden endres igjen mens tiltaket pågår: samme sak, merket med nytt innhold, beslutningen står.
-    expect(await meld(rapport('2027-01-11T06:20:00Z', [{ ...dok, tilstandsavtrykk: 'e'.repeat(64) }], ['dokument']))).toMatchObject({ nye: 0, endrede: 1 })
+    expect(await meld(rapport(kl(70), [{ ...dok, tilstandsavtrykk: 'e'.repeat(64) }], ['dokument']))).toMatchObject({ nye: 0, endrede: 1 })
     const merket = await sak('dokument:b')
     expect(merket).toMatchObject({ id: s.id, tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String), konklusjon: 'faglig_relevant' })
     expect((await redaktor().les()).teknisk).toBe('oppfolging')
@@ -281,13 +290,13 @@ describe('kildesakene i databasen', () => {
 
     // Grunnlaget er lagt inn (utført); en kontroll uten avvik bekrefter det og avslutter saken.
     await agent('tiltak', { tiltak: merket.tiltak[0]!.id, versjon: merket.versjon, status: 'utfort', bevis: 'Nytt grunnlag i kildekontroll-grunnlag.json.' })
-    expect(await meld(rapport('2027-01-18T06:20:00Z', [], ['dokument']))).toMatchObject({ borte: 1, avsluttede: 1 })
+    expect(await meld(rapport(kl(77), [], ['dokument']))).toMatchObject({ borte: 1, avsluttede: 1 })
     const lukket = (await logg()).funn.find((f) => f.id === s.id)!
     expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'tiltak_kontrollert', tiltak: [{ status: 'kontrollert', bevis: expect.stringMatching(/i samsvar med det nye grunnlaget/) }] })
   })
 
   it('setter nødstoppen for de berørte reglene i samme transaksjon som beslutningen om å deaktivere', async () => {
-    await meld(rapport('2027-02-01T06:20:00Z', [funn({ id: 'psychiatrienet:y', kilde: 'psychiatrienet', objekt: 'y', prioritet: 'hoy' })], ['psychiatrienet']))
+    await meld(rapport(kl(91), [funn({ id: 'psychiatrienet:y', kilde: 'psychiatrienet', objekt: 'y', prioritet: 'hoy' })], ['psychiatrienet']))
     let s = await sak('psychiatrienet:y')
     s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })) as number }
     // Sikkerhetsproblemet når redaktøren straks, uten valg, og gir prikk.
@@ -296,7 +305,7 @@ describe('kildesakene i databasen', () => {
     expect(sikker).toMatchObject({ alvor: 'sikkerhet', fase: 'beslutning', anbefaling: null, valg: [], endring: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
     expect(redaktorvarsel(straks)).not.toEqual([])
     // En kontroll uten avvik avslutter ikke et sikkerhetsproblem.
-    expect(await meld(rapport('2027-02-08T06:20:00Z', [], ['psychiatrienet']))).toMatchObject({ avsluttede: 0 })
+    expect(await meld(rapport(kl(98), [], ['psychiatrienet']))).toMatchObject({ avsluttede: 0 })
 
     s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmal() })) as number }
     expect(await redaktor().beslutt(String(s.id), s.versjon, 'deaktiver', 'Sperres til ny versjon finnes.')).toBe('registrert')
@@ -310,7 +319,7 @@ describe('kildesakene i databasen', () => {
     const regel = { ...REGEL, regel: 'syntetisk-regel-ny-kilde' }
     const z = (avtrykk: string) => funn({ id: 'psychiatrienet:z', kilde: 'psychiatrienet', objekt: 'z', berorte: [regel], tilstandsavtrykk: avtrykk.repeat(64) })
     const sporsmalZ = () => sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten de siste ukene' }] })
-    await meld(rapport('2027-02-15T06:20:00Z', [z('1')], ['psychiatrienet']))
+    await meld(rapport(kl(105), [z('1')], ['psychiatrienet']))
     let s = await sak('psychiatrienet:z')
     s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
     s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmalZ() })) as number }
@@ -318,7 +327,7 @@ describe('kildesakene i databasen', () => {
     expect(await redaktor().beslutt(klar.id, klar.versjon, 'utsett', 'Venter på mer.')).toBe('registrert')
 
     // Kilden endres igjen mens spørsmålet venter: spørsmålet trekkes tilbake til faglig gjennomgang.
-    expect(await meld(rapport('2027-02-22T06:20:00Z', [z('2')], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 1 })
+    expect(await meld(rapport(kl(112), [z('2')], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 1 })
     const trukket = await sak('psychiatrienet:z')
     expect(trukket).toMatchObject({ id: s.id, tilstand: 'faglig_gjennomgang', nytt_innhold_kl: expect.any(String) })
     // Redaktøren åpner sakene på nytt: det gamle spørsmålet tilbys ikke, og ingen beslutning tas på det, heller ikke på den nye versjonen.
@@ -339,7 +348,7 @@ describe('kildesakene i databasen', () => {
     expect((await redaktor().les()).saker.find((x) => x.id === String(s.id))).toMatchObject({ beslutning: { valg: 'revider' }, tidligere: [{ valg: 'utsett' }] })
 
     // Ny kildeendring under oppfølgingen: beslutningen og tiltaket står, men saken avsluttes ikke før det nye innholdet er vurdert.
-    expect(await meld(rapport('2027-03-01T06:20:00Z', [z('3')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
+    expect(await meld(rapport(kl(119), [z('3')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
     let o = await sak('psychiatrienet:z')
     expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String), tiltak: [{ art: 'ny_regelversjon', status: 'bestilt' }] })
     // «Faglig relevant» alene er ingen avgjørelse om at det nye innholdet er dekket.
@@ -353,7 +362,7 @@ describe('kildesakene i databasen', () => {
     expect(await redaktor().beslutt(nytt.id, nytt.versjon, 'revider', 'Samme revisjon dekker begge endringene.')).toBe('registrert')
 
     // Enda en endring under oppfølgingen; tiltakene blir utført og kontrollert, men saken står åpen til det nye innholdet er avgjort.
-    expect(await meld(rapport('2027-03-01T12:20:00Z', [z('4')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
+    expect(await meld(rapport(kl(119, 6), [z('4')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
     o = await sak('psychiatrienet:z')
     for (const t of o.tiltak) {
       await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:z')).versjon, status: 'utfort', bevis: 'Ny versjon i PR, godkjent av kontrollør.' })
@@ -373,7 +382,7 @@ describe('kildesakene i databasen', () => {
   it('lukker aldri en oppfølging når nytt innhold er meldt som mulig sikkerhetsproblem eller bare som faglig relevant', async () => {
     const regel = { ...REGEL, regel: 'syntetisk-regel-risiko' }
     const v = (avtrykk: string) => funn({ id: 'psychiatrienet:v', kilde: 'psychiatrienet', objekt: 'v', berorte: [regel], tilstandsavtrykk: avtrykk.repeat(64) })
-    await meld(rapport('2027-03-01T18:20:00Z', [v('5')], ['psychiatrienet']))
+    await meld(rapport(kl(119, 12), [v('5')], ['psychiatrienet']))
     let s = await sak('psychiatrienet:v')
     s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
     s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten' }] }) })) as number }
@@ -381,7 +390,7 @@ describe('kildesakene i databasen', () => {
     expect(await redaktor().beslutt(klar.id, klar.versjon, 'revider', null)).toBe('registrert')
 
     // Ny kildeendring; alle tiltakene fra den forrige beslutningen blir utført og kontrollert.
-    await meld(rapport('2027-03-01T19:20:00Z', [v('6')], ['psychiatrienet']))
+    await meld(rapport(kl(119, 13), [v('6')], ['psychiatrienet']))
     for (const t of (await sak('psychiatrienet:v')).tiltak) {
       await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:v')).versjon, status: 'utfort', bevis: 'Ny versjon i PR, godkjent av kontrollør.' })
       await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:v')).versjon, status: 'kontrollert', bevis: 'Ny versjon publisert.' })
@@ -405,7 +414,7 @@ describe('kildesakene i databasen', () => {
 
   it('trekker tilbake et ventende spørsmål når agenten melder et mulig sikkerhetsproblem på samme kildeinnhold', async () => {
     const regel = { ...REGEL, regel: 'syntetisk-regel-sen-risiko' }
-    await meld(rapport('2027-03-02T01:20:00Z', [funn({ id: 'psychiatrienet:t', kilde: 'psychiatrienet', objekt: 't', berorte: [regel] })], ['psychiatrienet']))
+    await meld(rapport(kl(119, 19), [funn({ id: 'psychiatrienet:t', kilde: 'psychiatrienet', objekt: 't', berorte: [regel] })], ['psychiatrienet']))
     let s = await sak('psychiatrienet:t')
     s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
     const behold = sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten' }], anbefaling: { valg: 'behold', begrunnelse: 'Endringen gjelder ikke det regelen bygger på.', av: 'Claude' } })
@@ -427,7 +436,7 @@ describe('kildesakene i databasen', () => {
 
   it('sier ikke at verktøyet virker når en verktøysperre er aktiv og et eldre funn ikke oppgir regelens verktøy', async () => {
     const eldre = funn({ id: 'psychiatrienet:u', kilde: 'psychiatrienet', objekt: 'u', berorte: [{ ...REGEL, regel: 'syntetisk-regel-eldre' }] })
-    await meld(rapport('2027-03-02T02:20:00Z', [eldre], ['psychiatrienet']))
+    await meld(rapport(kl(119, 20), [eldre], ['psychiatrienet']))
     const u = await sak('psychiatrienet:u')
     expect(u.berorte[0]).not.toHaveProperty('verktoy')
     await agent('teknisk_konklusjon', { funn: u.id, versjon: u.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
@@ -441,7 +450,7 @@ describe('kildesakene i databasen', () => {
     expect(ukjent.status_na).toBe('En nødstopp for et helt verktøy er aktiv, og det kan ikke avgjøres her om den gjelder alle de berørte reglene. Se Adminmeny → Kliniske verktøy.')
 
     // Neste kontroll fyller inn verktøyene uten å endre avtrykket: nå er det kjent at sperren ikke gjelder regelen.
-    expect(await meld(rapport('2027-03-02T03:20:00Z', [{ ...eldre, berorte: eldre.berorte.map((b) => ({ ...b, verktoy: ['trappe-ned-antidepressiv'] })) }], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 0 })
+    expect(await meld(rapport(kl(119, 21), [{ ...eldre, berorte: eldre.berorte.map((b) => ({ ...b, verktoy: ['trappe-ned-antidepressiv'] })) }], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 0 })
     const kjent = await fagsak()
     expect(kjent.berorte).toEqual([expect.objectContaining({ sperret: false })])
     expect(kjent.status_na).toBe('Verktøyet virker som før til en eventuell nødstopp settes.')
@@ -451,7 +460,7 @@ describe('kildesakene i databasen', () => {
   it('sier presist hvilke berørte regler nødstoppen gjelder når bare noen av dem er sperret', async () => {
     const a = { ...REGEL, regel: 'syntetisk-regel-a' }
     const b = { ...REGEL, regel: 'syntetisk-regel-b', verktoy: ['bytte-antidepressiv'] }
-    await meld(rapport('2027-03-02T06:20:00Z', [funn({ id: 'psychiatrienet:w', kilde: 'psychiatrienet', objekt: 'w', berorte: [a, b], prioritet: 'hoy' })], ['psychiatrienet']))
+    await meld(rapport(kl(120), [funn({ id: 'psychiatrienet:w', kilde: 'psychiatrienet', objekt: 'w', berorte: [a, b], prioritet: 'hoy' })], ['psychiatrienet']))
     const w = await sak('psychiatrienet:w')
     await agent('teknisk_konklusjon', { funn: w.id, versjon: w.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
     const fagsak = async () => (await redaktor().les()).saker.find((x) => x.id === String(w.id))!
@@ -477,7 +486,7 @@ describe('kildesakene i databasen', () => {
   })
 
   it('holder prøver for seg, lar dem ikke sperre noe, og avslutter dem bare med testbevis', async () => {
-    const prove = rapport('2027-03-01T10:00:00Z', [PROVEFUNN], [], { provesak: true })
+    const prove = rapport(kl(119, 4), [PROVEFUNN], [], { provesak: true })
     expect(await meld(prove, 'manuell')).toMatchObject({ nye: 1, borte: 0 })
     const forste = await sak('provesak:syntetisk')
     expect(await meld(prove, 'manuell')).toMatchObject({ nye: 1 })
@@ -485,7 +494,7 @@ describe('kildesakene i databasen', () => {
     let p = await sak('provesak:syntetisk')
     expect(p).toMatchObject({ erstatter: forste.id, prove: true })
     // En reell kjøring med dokumentdelen kontrollert rører ikke prøven.
-    await meld(rapport('2027-03-08T06:20:00Z', [], ['dokument']))
+    await meld(rapport(kl(126), [], ['dokument']))
     expect((await sak('provesak:syntetisk')).tilstand).toBe('teknisk_utredning')
 
     p = { ...p, versjon: (await agent('teknisk_konklusjon', { funn: p.id, versjon: p.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Prøve av saksgangen.' })) as number }
