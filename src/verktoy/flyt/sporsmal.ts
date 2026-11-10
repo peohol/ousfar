@@ -562,7 +562,14 @@ const fra = (...sporsmal: (string | Svarkilde)[]): Svarkilde[] => sporsmal.map((
 
 const TIDLIGERE_SEPONERINGSVANSKER = ikkeDekket('ved tidligere seponeringsvansker')
 const UNDER_65 = ikkeDekket('for pasienter som er 65 år eller eldre')
-const PPP_IKKE_OPPFYLT = stopp('Et vilkår i det graviditetsforebyggende programmet for valproat er ikke oppfylt, og den godkjente planen gjelder bare når alle vilkårene er det.', 'opptrapping')
+/** Stoppet når et vilkår i det graviditetsforebyggende programmet for valproat ikke er bekreftet: vilkåret navngis, så programmet. */
+const pppIkkeBekreftet = (vilkar: string) =>
+  stopp(`Det er ikke bekreftet at ${vilkar}. Det er et vilkår i det graviditetsforebyggende programmet for valproat, og den godkjente planen gjelder bare når alle vilkårene er oppfylt.`, 'opptrapping')
+const PPP_VILKAR = {
+  ppp_annen_behandling: 'annen behandling ikke har effekt eller ikke tolereres',
+  ppp_spesialist: 'spesialist i bipolar lidelse ved siste årlige gjennomgang har vurdert valproat som den mest egnede behandlingen',
+  ppp_prevensjon: 'pasienten bruker sikker prevensjon uten avbrudd',
+} as const
 
 /** Betingelsene i nedtrappingsreglene for SSRI og vortioksetin, som har samme oppbygning. */
 const nedtrapping = (regel: string): Katalogbetingelse[] => [
@@ -1012,8 +1019,8 @@ export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
       type: 'bekreftelse',
       id,
       kategori: 'sikkerhetsopplysning',
-      fra: fra(...sporsmal),
-      forklaring: PPP_IKKE_OPPFYLT,
+      fra: sporsmal.length === 1 ? fra(...sporsmal) : sporsmal.map((s) => med(s, pppIkkeBekreftet(PPP_VILKAR[s]))),
+      forklaring: pppIkkeBekreftet(sporsmal.map((s) => PPP_VILKAR[s]).join(', og at ')),
     }),
   ),
   { regel: VALPROAT, type: 'bekreftelse', id: 'ppp_informasjon', kategori: 'klinisk_vurdering', fra: fra('ppp_informasjon') },
