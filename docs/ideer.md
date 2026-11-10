@@ -96,7 +96,7 @@ oppgave. En oppgave går gjennom disse statusene:
 `ta_oppgaver()` og `fullfor_oppgave()` kan ingen i appen kalle. De kjøres som
 migreringer av agenten uten separat samtykke (`*_oppgaver_tatt_*.sql` og
 `*_oppgaver_utfort_*.sql`); de er reversible statusendringer og følger den
-risikobaserte regelen i `CLAUDE.md`. Oppgavene de nevner, finnes bare i
+risikobaserte regelen i `supabase/AGENTS.md`. Oppgavene de nevner, finnes bare i
 produksjon, så migreringene gjør ingenting i en database uten oppgaver.
 
 Prompten er ren tekst: den skal leses av en språkmodell. Ved overføringen

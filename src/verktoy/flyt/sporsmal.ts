@@ -9,7 +9,7 @@
  * bare når katalogavtrykket for den er kontrollert (`katalogkontroll.ts`,
  * S5b); ellers spørres hver betingelse med regelens egen tekst.
  *
- * Teksten er klinisk meningsinnhold (CLAUDE.md). Den gjengir regelens
+ * Teksten er klinisk meningsinnhold (AGENTS.md). Den gjengir regelens
  * innhold med færre og enklere ord og legger ikke til medisinske verdier;
  * `{maldose}` erstattes med måldosen regelen har. Tabellen ChatGPT
  * kontrollerer, `docs/verktøy-sporsmalskatalog.md`, lages herfra

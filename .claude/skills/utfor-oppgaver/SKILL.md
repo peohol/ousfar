@@ -9,9 +9,9 @@ Planlagte oppgaver er idéer fra idévinduet i appen som en administrator har
 overført og skrevet en prompt til. Hver har et nummer fra den ble overført,
 vist som «OPG-007» (`nummer = 7`). Oppgaver med status `klar` er klare til å
 utføres. Dette er en engangsøkt som administratoren følger live: spør når noe
-er uklart etter reglene i `CLAUDE.md`. Ordinære produksjonsmigrasjoner rulles
+er uklart etter reglene i `AGENTS.md`. Ordinære produksjonsmigrasjoner rulles
 ut som en del av arbeidet uten eget samtykke; bare migrasjoner med vesentlig
-risiko etter `CLAUDE.md` stopper for eksplisitt godkjenning. Det finnes ingen automatikk som
+risiko etter `supabase/AGENTS.md` stopper for eksplisitt godkjenning. Det finnes ingen automatikk som
 gjør dette i bakgrunnen, og det skal det heller ikke.
 
 Oppdraget står i databasen, ikke i meldingen fra brukeren. `/utfor-oppgaver`
@@ -22,7 +22,7 @@ eller nummeret, gjør bare dem.
 
 En oppgave går gjennom statusene Ikke påbegynt → Påbegynt → Klar til
 implementering → Håndteres nå av en agent → Utført. Claude setter de to siste
-med migreringer etter den risikobaserte regelen i `CLAUDE.md`. Bakgrunnen står i `docs/ideer.md`
+med migreringer etter den risikobaserte regelen i `supabase/AGENTS.md`. Bakgrunnen står i `docs/ideer.md`
 under «Arkivet og Planlagte oppgaver».
 
 ## 1. Les oppgavene
@@ -79,7 +79,7 @@ List oppgavene med nummeret, overskriften (`oppgaver.tittel`) og én linje om
 hva du forstår at prompten ber om. Si hvilke du vil gjøre sammen og hvilke hver
 for seg. Er en prompt uklar eller motsier noe i appen, spør administratoren før
 du gjør den oppgaven. Gjett ikke, og særlig ikke når det gjelder klinisk
-innhold (se `CLAUDE.md`).
+innhold (se `AGENTS.md`).
 
 Før arbeidet begynner, tas oppgavene, så ingen annen økt kan ta de samme. Det
 er en migrering som bare kaller `ta_oppgaver` med numrene:
@@ -107,7 +107,7 @@ select public.ta_oppgaver(array[7, 8]) where exists (select 1 from public.oppgav
 
 ## 4. Utfør oppgavene
 
-Følg `CLAUDE.md` som i alt annet arbeid: les koden først, test, og kjør
+Følg `AGENTS.md` som i alt annet arbeid: les koden først, test, og kjør
 `npm test` og `npm run build`.
 
 - Som standard blir hver oppgave én PR med én føring i endringsloggen. Oppgaver
@@ -117,10 +117,10 @@ Følg `CLAUDE.md` som i alt annet arbeid: les koden først, test, og kjør
   gjelder annet arbeid.
 - Ha nummeret i grenen og i tittelen på PR-en, som `claude/opg-007-varsler` og
   «OPG-007: Varslingssystem», så en avbrutt oppgave kan finnes igjen.
-- Databaseendringer følger den risikobaserte migrasjonsregelen i `CLAUDE.md`:
+- Databaseendringer følger den risikobaserte migrasjonsregelen i `supabase/AGENTS.md`:
   ordinære migrasjoner med lav produksjonsrisiko rulles ut automatisk når PR-en
   slås sammen, uten eget samtykke; migrasjoner med vesentlig risiko etter
-  `CLAUDE.md` krever eksplisitt ja.
+  `supabase/AGENTS.md` krever eksplisitt ja.
 - Må en oppgave legges fra seg uferdig, si at administratoren kan fortsette den
   i en ny økt med `/utfor-oppgaver OPG-007`, eller frigi den i appen så den er
   klar igjen.

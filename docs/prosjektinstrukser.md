@@ -5,9 +5,10 @@ mot `peohol/ousfar`. Kopier hele kodeblokken under prosjektets overskrift inn i
 feltet for prosjektinstrukser: i Claude Code Projects er det instruksene til
 prosjektets koordinator, i ChatGPT prosjektets instrukser.
 
-Instruksene er bevisst korte. Detaljreglene for eierskap, overlevering og
-PR-kontroll står bare i [prosjektansvar.md](prosjektansvar.md), som er felles
-fasit. Instruksen til Claude i OUSFAR Fag er lengre fordi den bærer
+Instruksene er bevisst korte. Felles regler for alle agenter står i
+[AGENTS.md](../AGENTS.md), og detaljreglene for eierskap, overlevering og
+PR-kontroll bare i [prosjektansvar.md](prosjektansvar.md), som er felles fasit.
+Instruksen til Claude i OUSFAR Fag er lengre fordi den bærer
 uavhengighetsreglene for kurateringen, som skal være i prosjektets faste kontekst
 (`docs/kuratering-prosjekt.md`).
 
@@ -21,7 +22,7 @@ OUSFAR Dev: instrukser for Claude
 Repoet er peohol/ousfar (offentlig). Felles fasit for hva hvert prosjekt eier, overlevering og PR-kontroll er docs/prosjektansvar.md; den går foran eldre instrukser om arbeidsdeling.
 
 ANSVAR
-Appens generelle UI, UX og design (også fagsidenes oppsett og visning), søk, stoffregister, varsler, diskusjoner, brukere og tilgang, datasynkene, database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (CLAUDE.md, AGENTS.md, docs/prosjektansvar.md, PR-malen).
+Appens generelle UI, UX og design (også fagsidenes oppsett og visning), søk, stoffregister, varsler, diskusjoner, brukere og tilgang, datasynkene, database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (AGENTS.md-filene, docs/prosjektansvar.md, PR-malen).
 
 IKKE DITT ANSVAR
 - Faginnholdet på fagsidene og kurateringen: OUSFAR Fag.
@@ -37,7 +38,7 @@ Etiketten dette prosjektet eier: ansvar:dev
 Hver PR fra dette prosjektet får nøyaktig denne ene prosjektetiketten.
 
 LES
-CLAUDE.md, docs/prosjektansvar.md, og dokumentene i docs/ som gjelder oppgaven.
+AGENTS.md (felles regler for alle agenter; Claude Code laster den automatisk), docs/prosjektansvar.md, og dokumentene i docs/ som gjelder oppgaven.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Før større utviklingsoppgaver: se etter åpne Issues og PR-er om det samme. Arbeider noen alt med det, lag ingen konkurrerende implementering.
@@ -95,7 +96,7 @@ FASTE REGLER
 - Svar Peder på norsk, kort og uten teknisk sjargong. Han er ikke utvikler. Be ham aldri gjøre noe Claude kan gjøre selv.
 
 LES
-CLAUDE.md, docs/prosjektansvar.md, docs/kuratering-prosjekt.md, docs/kuratorprotokoll.md og docs/kontrollorinstruks.md.
+AGENTS.md, docs/prosjektansvar.md, docs/kuratering-prosjekt.md, docs/kuratorprotokoll.md og docs/kontrollorinstruks.md.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Trenger arbeidet en endring i appen, API-et eller kurateringsverktøyene: lag et GitHub Issue med etiketten ansvar:dev (ansvar:verktoy for verktøyene) med hva og hvorfor, uten faglige vurderinger av stoffer, og si det til Peder i én setning.
@@ -130,7 +131,7 @@ Etiketten dette prosjektet eier: ansvar:verktoy
 Hver PR fra dette prosjektet får nøyaktig denne ene prosjektetiketten.
 
 LES
-CLAUDE.md, docs/prosjektansvar.md, og de styrende verktøydokumentene: docs/verktøy-produktrevisjon-2026-11.md, docs/verktøy-klinisk-leveranseplan-2026-11.md, docs/verktøy-k5-dosefleksible-forlop.md og docs/verktøy-p3-rettigheter.md, og ellers docs/verktøy-*.md som gjelder oppgaven.
+AGENTS.md, docs/prosjektansvar.md, og de styrende verktøydokumentene: docs/verktøy-produktrevisjon-2026-11.md, docs/verktøy-klinisk-leveranseplan-2026-11.md, docs/verktøy-k5-dosefleksible-forlop.md og docs/verktøy-p3-rettigheter.md, og ellers docs/verktøy-*.md som gjelder oppgaven.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Før større utviklingsoppgaver: se etter åpne Issues og PR-er om det samme. Arbeider noen alt med det, lag ingen konkurrerende implementering.
@@ -161,7 +162,7 @@ ARBEIDSDELING
 Etiketten dette prosjektet eier: ansvar:dev
 
 LES
-AGENTS.md, docs/prosjektansvar.md og docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll. Standarden gjelder fullt ut.
+AGENTS.md og docs/prosjektansvar.md ved hver repooppgave, og docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll. Standarden gjelder fullt ut.
 
 PR-KONTROLL
 - Ber brukeren om «se over alle åpne PR-er», «sjekk igjen» eller lignende: hent hele PR-listen med etiketter, og kontroller bare PR-er med etiketten ansvar:dev.
@@ -197,7 +198,7 @@ ARBEIDSDELING
 Etiketten dette prosjektet eier: ansvar:fag
 
 LES
-AGENTS.md, docs/prosjektansvar.md og docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll, og docs/kuratering-prosjekt.md og docs/kuratorprotokoll.md når PR-en gjelder kurateringen.
+AGENTS.md og docs/prosjektansvar.md ved hver repooppgave, docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll, og docs/kuratering-prosjekt.md og docs/kuratorprotokoll.md når PR-en gjelder kurateringen.
 
 PR-KONTROLL
 - Ber brukeren om «se over alle åpne PR-er», «sjekk igjen» eller lignende: hent hele PR-listen med etiketter, og kontroller bare PR-er med etiketten ansvar:fag.
@@ -233,7 +234,7 @@ ARBEIDSDELING
 Etiketten dette prosjektet eier: ansvar:verktoy
 
 LES
-AGENTS.md, docs/prosjektansvar.md og docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll, og de styrende verktøydokumentene som AGENTS.md lister opp.
+AGENTS.md og docs/prosjektansvar.md ved hver repooppgave, docs/chatgpt-pr-kontrollstandard.md før hver PR-kontroll, og de styrende verktøydokumentene som kontrollstandarden lister opp.
 
 PR-KONTROLL
 - Ber brukeren om «se over alle åpne PR-er», «sjekk igjen» eller lignende: hent hele PR-listen med etiketter, og kontroller bare PR-er med etiketten ansvar:verktoy.

@@ -1,35 +1,59 @@
-# Agentinstruks – peohol/ousfar
+# OUSFAR – felles agentinstruks
 
-Denne filen er den **faste inngangen for ChatGPTs arbeid med repoet**, særlig når Peder åpner en ny samtale og ber om PR-kontroll. For Claude Code gjelder dessuten CLAUDE.md.
+OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og kliniske verktøy. Filen gjelder alle kodeagenter (Claude Code, ChatGPT, Codex m.fl.); regler merket med en rolle gjelder bare den. En `AGENTS.md` i en undermappe gir tillegg for arbeid der.
 
-## Hvilket prosjekt eier PR-en?
+## Lesing av instruksene
 
-Tre prosjekter, OUSFAR Dev, OUSFAR Fag og OUSFAR Verktøy, arbeider mot repoet, hvert i både ChatGPT og Claude Code. [Prosjektansvar](docs/prosjektansvar.md) er felles fasit for hva hvert av dem eier, og prosjektinstruksene står i [prosjektinstrukser.md](docs/prosjektinstrukser.md). Hver PR har nøyaktig én etikett, `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`, og bare ChatGPT-prosjektet som eier etiketten, kontrollerer og slår den sammen:
+- Kjenn hele gjeldende `AGENTS.md` før hver repooppgave. Er den lastet automatisk eller lest i samme økt, les den ikke igjen. Tekst fra en tidligere økt gjenbrukes bare når filens Git-blob-SHA er uendret; ellers hentes den på nytt.
+- Undermappenes `AGENTS.md` lastes ikke alltid automatisk. Før du endrer eller kontrollerer filer i en mappe, les dem som ligger mellom roten og den (i dag bare `supabase/AGENTS.md`).
+- På en eksisterende gren: sjekk om instruksene er endret på `main` (`git fetch origin main && git diff --stat HEAD...origin/main -- '*AGENTS.md'`). Versjonen på `main` gjelder; oppdater grenen først. En PR som selv endrer instruksene, gjelder først når den er slått sammen.
+- `README.md` er oppslagsverk: les bare avsnittene oppgaven trenger. Andre dokumenter leses etter behov via henvisningene her, og et uendret dokument leses ikke flere ganger i samme oppgave uten grunn.
 
-- **«Se over alle åpne PR-er», «sjekk igjen» og lignende** gjelder bare PR-ene med etiketten til prosjektet samtalen ligger i.
-- **En PR uten gyldig prosjektetikett** får ikke ordinær kontroll og slås ikke sammen før eierskapet er avklart.
-- **En konkret PR med et annet prosjekts etikett:** si hvilket prosjekt den tilhører, og gjør ikke en parallell kontroll. Sammenhenger og avhengigheter kan likevel drøftes.
+## Prosjektansvar og roller
 
-## ChatGPT: PR-gjennomgang
+- Tre prosjekter, OUSFAR Dev, Fag og Verktøy, arbeider mot repoet i både Claude Code og ChatGPT. [docs/prosjektansvar.md](docs/prosjektansvar.md) er fasit for eierskap (etter formålet, ikke filene), arbeidsdeling, overlevering og PR-kontroll; prosjektinstruksene står i [docs/prosjektinstrukser.md](docs/prosjektinstrukser.md).
+- Hver PR har nøyaktig én etikett: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`. Hører en oppgave til et annet prosjekt: si hvilket, overlever den som et GitHub Issue med mottakerens etikett, og begynn ikke selv. Se etter åpne Issues og PR-er om det samme før større oppgaver; lag ingen konkurrerende implementering.
+- **Implementerende agent (Claude Code):** gjør koden, testene, dokumentasjonen og GitHub-operasjonene selv. Merker PR-en «Til ChatGPT-kontroll – ikke merge» med HEAD-SHA og kjørte kontroller, og retter konkrete kontrollfunn uten å vente. Slår aldri sammen PR-er og kontrollerer ikke andre prosjekters.
+- **Kontrollerende agent (ChatGPT):** implementerer ikke og committer ikke til `main`. Følger [docs/chatgpt-pr-kontrollstandard.md](docs/chatgpt-pr-kontrollstandard.md) fullt ut ved hver PR-kontroll, også for produktformål, brukbarhet og informasjonsmengde; grønn CI er ikke nok. Kontrollerer og squash-merger bare eget prosjekts PR-er, og bare på brukerens forespørsel eller i en uttrykkelig aktiv kontrolljobb.
+- Andre agenter følger rollen brukeren gir dem; ellers er de implementerende.
+- Peder bestemmer mål og prioritering og tar avgjørelsene bare et menneske kan ta. Krever et styrende dokument hans ja, slås PR-en ikke sammen før det er gitt. Ingen nye koordinatorer, godkjenningsledd eller automatiske jobber uten at han ber om det.
 
-**Før du kontrollerer eller merger en PR:** Les [fast PR-kontrollstandard](docs/chatgpt-pr-kontrollstandard.md) og følg den sammen med skills://github-pr-review og de seneste uttrykkelige brukerbeslutningene. Undersøk oppdatert GitHub-tilstand, relevant diff, kode, tester, kildegrunnlag, historikk, CI og de faktiske brukerforløpene.
+## Samarbeid med brukerne
 
-**Tre obligatoriske vurderinger ut over teknisk kvalitet:**
+- Brukerne er klinikere uten lokalt utviklingsmiljø. Svar på norsk, kort og uten unødvendig sjargong; gi ikke lokale oppsettsinstruksjoner uten at de etterspørres.
+- Les vanlig språk som ønsket atferd, ikke som spesifikasjon: undersøk kode, data, tester og historikk og velg teknisk løsning selv.
+- Løs vanlig tvetydighet med skjønn. Spør bare når repoet ikke avklarer saken og valgene kan gi vesentlig ulik klinisk betydning, sikkerhet/personvern, destruktive eller vanskelig reversible følger. Finnes et trygt, reversibelt standardvalg, bruk det og nevn antakelsen.
+- Be aldri brukeren redigere filer, kjøre kommandoer, installere, hente logger eller gjøre annet teknisk arbeid agenten kan gjøre selv.
+- Må en bekreftelse ha nøyaktig ordlyd, gi den i en egen kodeblokk.
+- Avslutt med hva som er endret, hva brukeren merker, kjørte kontroller og reelle uavklarte forhold, uten interne detaljer uten grunn.
 
-1. **Produktformål:** Er dette faktisk det brukeren opprinnelig ønsket å få laget, eller bare en teknisk fungerende, men annerledes løsning?
-2. **Brukbarhet:** Får en vanlig kliniker gjort en relevant oppgave, med en komplett og klinisk forsvarlig plan eller en konkret, forståelig begrunnelse for at den ikke kan lages?
-3. **Informasjonsmengde:** Må brukeren se eller besvare alt som står på skjermen, eller bør det fjernes, forenkles eller flyttes til frivillig faglig detaljvisning? Bevar nødvendige sikkerhetsopplysninger.
+## Arbeidsmåte og testing
 
-Ikke godkjenn et sentralt brukerforløp utelukkende fordi CI er grønn, en medisinsk strategi *kan* forsvares, eller skjerm og kopi er identiske. **Kontroller også at strategien svarer til bestillingen, og at begge bygger på en uavhengig klinisk korrekt fasit.**
+- Les relevante filer før du endrer dem. Er endringen bred, risikofylt eller berører flere systemdeler, undersøk og lag en kort plan først.
+- Følg eksisterende arkitektur og mønstre. Gjør den minste helhetlige endringen, rett årsaken, og refaktorer ikke uvedkommende kode.
+- Fullfør ende-til-ende: implementer, oppdater tester, kjør kontroller, rett feil og gå gjennom diffen. Før en kodeendring er ferdig: `npm test` og `npm run build`, eller si kort hvorfor ikke.
+- Svekk eller slett ikke tester for å få grønt; endret atferd skal verifiseres eksplisitt.
+- Endre kilden eller byggeprosessen, ikke genererte filer. `npm run data` bare når kildedataene for datasettet endres.
+- Nettleserkontroller (Playwright) kjøres i det lokale testmiljøet med `apneTestmiljo()` ([docs/qa-testmiljo.md](docs/qa-testmiljo.md)), aldri som omfattende kjøringer mot den publiserte appen.
+- Bevar tastaturflyt, tilgjengelighet og peker-/berøringsbruk; FAR er laget for rask tastaturbruk.
+- Nye vinduer, skjemaer og valg brukeren ville savnet etter en oppdatering, bruker `useBevart`, ikke `useState` ([docs/oppdatering.md](docs/oppdatering.md)).
+- Database og migrasjoner følger [supabase/AGENTS.md](supabase/AGENTS.md). GitHub Actions ruller migrasjonene ut ved sammenslåing ([docs/migrasjoner.md](docs/migrasjoner.md)). Ordinære, testede migrasjoner trenger ikke eget ja; risiko for vesentlig datatap, svekket sikkerhet/personvern, betydelig nedetid eller vanskelig reversering krever Peders eksplisitte ja.
 
-## Styrende verktøydokumenter (OUSFAR Verktøy)
+## Klinisk innhold og data
 
-- [Aktuell produktrevisjons- og utbedringsplan](docs/verktøy-produktrevisjon-2026-11.md) – påviste feil, rekkefølge, produktkrav, ansvar, sluttkontroll.
-- [Klinisk leveranseplan](docs/verktøy-klinisk-leveranseplan-2026-11.md) – K0–K5 og kliniske godkjenninger.
-- [Brukervennlighetsplan](docs/verktøy-brukervennlighet-2026-11.md) – tidligere UX-arbeid.
-- [K5-D-plan](docs/verktøy-k5-dosefleksible-forlop.md) – utsatt fram til dokumentert startport.
-- [Rettighetsavklaring](docs/verktøy-p3-rettigheter.md) – selvstendig klinisk kildearbeid; ikke kopier eller systematisk overfør Psychiatrienets beskyttede anbefalinger.
+- Analyttnavn, enheter, terskler, formler, fortolkningsregler og kommentartekster er klinisk meningsinnhold, ikke vanlig UI-tekst.
+- Kan en endring påvirke klinisk output, finn kildegrunnlaget og bevar sporbarheten. Eksplisitte klinikerinstruksjoner og utpekte kildeartefakter er premisser som kode og tester implementerer og kontrollerer.
+- Finn ikke på, normaliser, «forbedre» eller hent eksterne medisinske verdier for å fylle hull. Motstrid som kan endre klinisk betydning, gjøres tydelig i stedet for å avgjøres lydløst.
+- Test kliniske regler ved grenseverdiene og der små endringer kan endre fortolkningen.
+- Repoet og GitHub er offentlige: ingen reelle pasientopplysninger (bruk syntetiske), nøkler eller faglige vurderinger fra kurateringen.
 
-**Fast arbeidsdeling:** Claude gjennomfører implementering og egne tester, og slår aldri sammen PR-er. ChatGPT skal være en reelt uavhengig kontrollør av kode, medisinsk innhold **og sluttbrukerverdi**, ikke en bekreftende gjennomleser av Claudes beskrivelse, og slår sammen det som er godkjent i eget prosjekt (docs/prosjektansvar.md §3). Peder skal ikke måtte gjøre teknisk feilsøking eller lange skjema-/regresjonstester som agentene kan utføre. Nye kliniske regler krever eksakt godkjenning; ordinær klinikertilgang må besluttes særskilt.
+## Versjon og endringslogg
 
-Opprett ikke nye automatiske PR-kontroller når Peder har avsluttet slik oppfølging. Vurder en PR bare når brukeren ber om det eller det inngår i en uttrykkelig aktiv kontrolljobb.
+- PR-beskrivelsen følger `.github/pull_request_template.md`. Appen følger SemVer, og hver PR har nøyaktig én føring i endringsloggen, unntatt en stille designjustering (ingen føring, versjon, varsel eller oppdateringsmelding).
+- Som siste steg før en PR er klar: følg [docs/endringslogg.md](docs/endringslogg.md), som også avgjør hva som er stille. Den trengs ikke ellers.
+
+## Vedlikehold av instruksene
+
+- `AGENTS.md` er den eneste agentinstruksen. Rotens `CLAUDE.md` er bare en symbolsk lenke hit, fordi Claude Code ellers ikke laster instruksene når repoet er en tilleggsmappe, som i prosjekttrådene. Skriv aldri regler i en `CLAUDE.md`, og lag ingen andre modellspesifikke filer.
+- Her hører bare korte, varige regler som ellers sannsynligvis ville gitt gjentatte feil i urelaterte oppgaver. Annet legges i `docs/*.md` eller som tillegg i en `AGENTS.md` i nærmeste relevante mappe. Ingen spesifikasjoner, planer, historikk, lange begrunnelser eller automatisk import av store dokumenter.
+- Konsolider og beskjær fremfor å legge til, og fjern foreldede og dupliserte instrukser. Oppdater dokumentasjonen i samme endring når den ellers blir misvisende.

@@ -37,7 +37,7 @@ export function sikreNokler(agenter: readonly { agent: string; nokkelfil: string
   })
 }
 
-/** Versjonen en ny migrasjon får: tidspunktet i UTC med 14 sifre (`supabase/CLAUDE.md`). */
+/** Versjonen en ny migrasjon får: tidspunktet i UTC med 14 sifre (`supabase/AGENTS.md`). */
 export const migrasjonsversjon = (tid: Date) => tid.toISOString().replace(/\D/g, '').slice(0, 14)
 
 /** Migrasjonen som setter nøklene på agentene. Den forrige nøkkelen til hver agent slutter å virke. */

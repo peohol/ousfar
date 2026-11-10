@@ -1,7 +1,7 @@
 # Migrasjoner og utrullingen til produksjonen
 
 Leses når en migrasjon skal lages, rulles ut eller en utrulling har stoppet.
-Reglene for hva en migrasjon kan inneholde, står i `supabase/CLAUDE.md`.
+Reglene for hva en migrasjon kan inneholde, står i `supabase/AGENTS.md`.
 
 ## Normalflyten
 
@@ -61,7 +61,7 @@ en annen database, for å prøve dem lokalt.
   avhengighetene er installert uten installasjonsskript. GitHub skjuler dem i
   loggene, og skriptet skriver aldri ut argumentene det gir CLI-en.
 - **Destruktive migrasjoner** må godkjennes eksplisitt, etter den risikobaserte
-  regelen i `CLAUDE.md`. De setningene som kan skilles ut sikkert, stoppes
+  regelen i `supabase/AGENTS.md`. De setningene som kan skilles ut sikkert, stoppes
   automatisk: `drop table`, `drop schema`, `drop database`, `drop column`
   (også `alter table … drop <kolonne>`), `truncate` og
   `disable row level security`, også med kommentarer mellom ordene. En migrasjon med noen av dem
