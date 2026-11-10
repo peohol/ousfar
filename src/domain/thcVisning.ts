@@ -140,13 +140,17 @@ export function forventetNedgang(
 
 /**
  * Kurvene konklusjonen mot forrige prøve avgjøres av for et bruksmønster:
- * «Over den gule kurven: kan ikke fastslås. Over den røde: nytt inntak.»
+ * «Over den gule kurven («Moderat utskillelse»): kan ikke fastslås. Over den
+ * røde («Treg utskillelse»): nytt inntak.» Fargen er kurvens navn i
+ * redigeringen; figuren farger kurvene etter terskelen, så navnet fra figuren
+ * står med.
  */
 export function bruksmonsterbeskrivelse(r: ThcRegelsett, kronisk: boolean): string {
   const monster = kronisk ? r.bruksmonstre.kronisk : r.bruksmonstre.ikke_kronisk
+  const navn = (rolle: keyof typeof KURVEFARGE) => `(«${r.kurver[rolle].navn}»)`
   return (
-    `Over den ${KURVEFARGE[monster.vanskelig_over]} kurven: kan ikke fastslås. ` +
-    `Over den ${KURVEFARGE[monster.nytt_inntak_over]}: nytt inntak.`
+    `Over den ${KURVEFARGE[monster.vanskelig_over]} kurven ${navn(monster.vanskelig_over)}: kan ikke fastslås. ` +
+    `Over den ${KURVEFARGE[monster.nytt_inntak_over]} ${navn(monster.nytt_inntak_over)}: nytt inntak.`
   )
 }
 

@@ -155,8 +155,10 @@ describe('THC-syrereglene', () => {
       'Kort tid ved færre enn3 dager',
     ])
     expect(document.querySelector('.regler__monstre')?.textContent).toBe(
-      'Kronisk brukOver den gule kurven: kan ikke fastslås. Over den røde: nytt inntak.' +
-        'EnkeltinntakOver den grønne kurven: kan ikke fastslås. Over den gule: nytt inntak.',
+      'Kronisk brukOver den gule kurven («Moderat utskillelse»): kan ikke fastslås. ' +
+        'Over den røde («Treg utskillelse»): nytt inntak.' +
+        'EnkeltinntakOver den grønne kurven («Normal utskillelse»): kan ikke fastslås. ' +
+        'Over den gule («Moderat utskillelse»): nytt inntak.',
     )
   })
 

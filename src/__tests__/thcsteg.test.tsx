@@ -10,7 +10,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { ThcStep } from '../components/ThcStep'
+import { ThcStep, type ThcStepProps } from '../components/ThcStep'
 import { TipsLag } from '../components/Tips'
 import { fortolkThc, lagThcModell, tomThcInndata, type ThcModell, type ThcRegler } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
@@ -35,12 +35,12 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
-function visSteg(regler: ThcRegler) {
+function visSteg(regler: ThcRegler, visualisering?: ThcStepProps['visualisering']) {
   const copy = vi.fn(async (_tekst: string) => true)
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
-        <ThcStep regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} />
+        <ThcStep regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} visualisering={visualisering} />
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
@@ -303,6 +303,77 @@ describe('fortolkningsmodulen for THC-syre', () => {
     await user.click(screen.getByRole('button', { name: 'Legg til tidligere prøve' }))
     expect(gruppe('Tidligere prøve 1')).toBeTruthy()
     expect(gruppe('Tidligere prøve 2')).toBeTruthy()
+  })
+
+  it('viser tersklene for bruksmønsteret, og denne prøven med den valgte eller alle marginene', async () => {
+    const user = userEvent.setup()
+    // Uten «Ingen» i regelsettet, så den må legges til som eget punkt.
+    const uten = { ...THC_REGELSETT, sikkerhetsmarginer: THC_REGELSETT.sikkerhetsmarginer.filter((m) => m.margin !== 0.5) }
+    visSteg({ status: 'klar', modell: modell(uten) })
+    await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'IRCAK' }), '120')
+    await user.type(gruppe('Forrige prøve').getByLabelText('Prøvedato'), '2026-02-01')
+    await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), '80')
+    await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), '2026-02-08')
+
+    const figur = () => document.querySelector('.thc-plot__figur')!
+    const kurver = () => [...figur().querySelectorAll('.thc-plot__kurve')].map((k) => k.getAttribute('class'))
+    const denne = () => figur().querySelectorAll('circle[class*="thc-plot__punkt--"]')
+
+    // Kronisk bruk: den gule kurven er nedre og den røde øvre terskel.
+    expect(kurver()).toEqual([
+      'thc-plot__kurve thc-plot__kurve--ubrukt',
+      'thc-plot__kurve thc-plot__kurve--nedre',
+      'thc-plot__kurve thc-plot__kurve--ovre',
+    ])
+    expect(screen.getByText('Brukes ikke i fortolkningen ved kronisk bruk')).toBeTruthy()
+    expect(screen.getByText('Skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås»')).toBeTruthy()
+    expect(screen.getByText('Skiller «kan ikke fastslås» fra «nytt inntak»')).toBeTruthy()
+    expect(denne()).toHaveLength(1)
+    expect(figur().textContent).toContain('Denne prøven')
+
+    trykkPaaValg('Visualiser med alle sikkerhetsmarginer')
+    // Ett punkt per margin, og ett for «Ingen (50 %)».
+    expect(denne()).toHaveLength(uten.sikkerhetsmarginer.length + 1)
+    expect(figur().querySelector('.thc-plot__klamme')).toBeTruthy()
+    expect(figur().textContent).toContain('(ulike sikkerhetsmarginer)')
+    expect([...denne()].map((p) => p.querySelector('title')?.textContent?.split(':')[0])).toEqual([
+      'Ingen (50\u00a0%) sikkerhetsmargin',
+      ...uten.sikkerhetsmarginer.map((m) => `${marginvalg(m.margin)} sikkerhetsmargin`),
+    ])
+    // De samme punktene står som tekst under figuren, for tastatur, berøring og skjermleser.
+    const liste = screen.getByRole('list', { name: 'Denne prøven med hver sikkerhetsmargin' })
+    expect(within(liste).getAllByRole('listitem').map((li) => li.textContent)).toEqual(
+      [...denne()].map((p) => p.querySelector('title')?.textContent),
+    )
+
+    // Uten kronisk bruk er det den grønne og den gule kurven som er terskler.
+    await user.click(screen.getByLabelText('Legg kronisk bruk til grunn'))
+    expect(kurver()).toEqual([
+      'thc-plot__kurve thc-plot__kurve--nedre',
+      'thc-plot__kurve thc-plot__kurve--ovre',
+      'thc-plot__kurve thc-plot__kurve--ubrukt',
+    ])
+    expect(screen.getByText('Brukes ikke i fortolkningen når kronisk bruk ikke legges til grunn')).toBeTruthy()
+
+    trykkPaaValg('Visualiser med valgt sikkerhetsmargin (90\u00a0%)')
+    expect(denne()).toHaveLength(1)
+    expect(figur().querySelector('.thc-plot__klamme')).toBeNull()
+    expect(screen.queryByRole('list', { name: 'Denne prøven med hver sikkerhetsmargin' })).toBeNull()
+  })
+
+  it('viser visualiseringen brukeren har lagret, og melder fra når den byttes', async () => {
+    const user = userEvent.setup()
+    const onVelg = vi.fn()
+    visSteg({ status: 'klar', modell: THC_MODELL }, { visning: 'alle', onVelg })
+    await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'IRCAK' }), '120')
+    await user.type(gruppe('Forrige prøve').getByLabelText('Prøvedato'), '2026-02-01')
+    await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), '80')
+    await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), '2026-02-08')
+
+    // Med alle marginene fra start, uten at noe er trykket.
+    expect(document.querySelector('.thc-plot__klamme')).toBeTruthy()
+    trykkPaaValg('Visualiser med valgt sikkerhetsmargin (90\u00a0%)')
+    expect(onVelg).toHaveBeenCalledWith('valgt')
   })
 
   it('gir ingen kommentar når nye regler ikke har marginen skjemaet står på', async () => {
