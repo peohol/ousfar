@@ -275,6 +275,45 @@
   fill: var(--blekk);
 }
 
+/* Punktene med alle marginene som tekst under figuren, med prikken i
+   punktets farge. */
+.thc-marginpunkter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2) var(--rom-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-tett);
+  color: var(--blekk);
+}
+
+.thc-marginpunkter__punkt {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.thc-marginpunkter__prikk {
+  flex: none;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 50%;
+}
+
+.thc-marginpunkter__prikk--gronn {
+  background: var(--referanse-kant);
+}
+
+.thc-marginpunkter__prikk--gul {
+  background: var(--toksisk-kant);
+}
+
+.thc-marginpunkter__prikk--rod {
+  background: var(--alvorlig-kant);
+}
+
 /* Legenden står i vanlig HTML over figuren, så hvert kurvenavn kan bære et
    tips om hva profilen står for. Hver kurve har sin egen linje: en liten
    pille, og ved siden av hva kurven skiller i fortolkningen. */

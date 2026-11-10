@@ -340,6 +340,11 @@ describe('fortolkningsmodulen for THC-syre', () => {
       'Ingen (50\u00a0%) sikkerhetsmargin',
       ...uten.sikkerhetsmarginer.map((m) => `${marginvalg(m.margin)} sikkerhetsmargin`),
     ])
+    // De samme punktene står som tekst under figuren, for tastatur, berøring og skjermleser.
+    const liste = screen.getByRole('list', { name: 'Denne prøven med hver sikkerhetsmargin' })
+    expect(within(liste).getAllByRole('listitem').map((li) => li.textContent)).toEqual(
+      [...denne()].map((p) => p.querySelector('title')?.textContent),
+    )
 
     // Uten kronisk bruk er det den grønne og den gule kurven som er terskler.
     await user.click(screen.getByLabelText('Legg kronisk bruk til grunn'))
@@ -353,6 +358,7 @@ describe('fortolkningsmodulen for THC-syre', () => {
     trykkPaaValg('Visualiser med valgt sikkerhetsmargin (90\u00a0%)')
     expect(denne()).toHaveLength(1)
     expect(figur().querySelector('.thc-plot__klamme')).toBeNull()
+    expect(screen.queryByRole('list', { name: 'Denne prøven med hver sikkerhetsmargin' })).toBeNull()
   })
 
   it('gir ingen kommentar når nye regler ikke har marginen skjemaet står på', async () => {

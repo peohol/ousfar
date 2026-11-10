@@ -303,7 +303,7 @@ får fargen konklusjonen mot forrige prøve gir for marginen (`marginpunkter`,
 med motorens `korrigertEndring` og `konklusjon`): grønt, gult eller rødt.
 Bryteren over figuren velger den valgte marginen eller alle regelsettets, med
 «Ingen (50 %)» i tillegg når regelsettet ikke har den (den målte endringen,
-z = 0); da samler en klamme punktene. Valget bevares ved oppdatering i
+z = 0); da samler en klamme punktene, og punktene står også som en liste under figuren (tastatur, berøring, skjermleser og punkter oppå hverandre). Valget bevares ved oppdatering i
 modulen, ikke i simulatoren. `byggGraf` gir de samme tallene som før når den
 ikke får flere punkter, så tallgrunnlaget i fasiten er uendret.
 

@@ -7,6 +7,7 @@ import {
   marginpunkter,
   terskler,
   visningsmarginer,
+  type Marginpunkt,
   type ThcPunktutfall,
   type ThcTerskel,
 } from '../domain/thcPlot'
@@ -64,6 +65,11 @@ function terskeltekst(terskel: ThcTerskel, kronisk: boolean): string {
   return kronisk
     ? 'Brukes ikke i fortolkningen ved kronisk bruk'
     : 'Brukes ikke i fortolkningen når kronisk bruk ikke legges til grunn'
+}
+
+/** «Ingen (50 %) sikkerhetsmargin: −34 %, nytt inntak» — tipset på punktet og linjen under figuren. */
+function punkttekst({ margin, prosent, utfall }: Marginpunkt): string {
+  return `${marginvalg(margin)} sikkerhetsmargin: ${formaterProsent(prosent)}, ${konklusjonsnavnISetning(utfall, null)}`
 }
 
 /** Klammen er aldri lavere enn dette, så den synes også når punktene nesten faller sammen. */
@@ -205,9 +211,7 @@ export function ThcPlot({
             cy={y(punkt.prosent)}
             r={7}
           >
-            <title>
-              {`${marginvalg(punkt.margin)} sikkerhetsmargin: ${formaterProsent(punkt.prosent)}, ${konklusjonsnavnISetning(punkt.utfall, null)}`}
-            </title>
+            <title>{punkttekst(punkt)}</title>
           </circle>
         ))}
         {alleMarginer ? (
@@ -215,6 +219,7 @@ export function ThcPlot({
             x={x(graf.xMaks) - 12}
             ys={denne.map((p) => y(p.prosent))}
             ovreGrense={topp}
+            nedreGrense={bunn}
           />
         ) : (
           denne.map((punkt) => (
@@ -238,6 +243,23 @@ export function ThcPlot({
           Dager siden forrige prøve
         </text>
       </svg>
+
+      {/* Med alle marginene står punktene også som tekst: de kan ligge oppå
+          hverandre, og tipset i figuren nås verken med tastatur, berøring
+          eller skjermleser. */}
+      {alleMarginer && (
+        <ul className="thc-marginpunkter" aria-label="Denne prøven med hver sikkerhetsmargin">
+          {denne.map((punkt) => (
+            <li key={punkt.margin} className="thc-marginpunkter__punkt">
+              <span
+                className={`thc-marginpunkter__prikk thc-marginpunkter__prikk--${PUNKTTONE[punkt.utfall]}`}
+                aria-hidden="true"
+              />
+              {punkttekst(punkt)}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   )
 }
@@ -259,13 +281,14 @@ function Etikett({ x, y, anker, children }: { x: number; y: number; anker: 'star
  * Klammen fra etiketten «Denne prøven» rundt alle punktene for denne prøven,
  * så det synes at de er mulige verdier for den samme prøven.
  */
-function Klamme({ x, ys, ovreGrense }: { x: number; ys: number[]; ovreGrense: number }) {
+function Klamme({ x, ys, ovreGrense, nedreGrense }: { x: number; ys: number[]; ovreGrense: number; nedreGrense: number }) {
   const midt = (Math.min(...ys) + Math.max(...ys)) / 2
   const halv = Math.max(Math.max(...ys) - Math.min(...ys), MINSTE_KLAMME) / 2
   const y1 = midt - halv
   const y2 = midt + halv
-  // To linjer, midtstilt på spissen, men aldri over toppen av figuren.
-  const forsteLinje = Math.max(midt - 4, ovreGrense + 6)
+  // To linjer, midtstilt på spissen, men aldri over toppen eller under bunnen
+  // av tegneflaten, der dagene står.
+  const forsteLinje = Math.min(Math.max(midt - 4, ovreGrense + 6), nedreGrense - 26)
   return (
     <>
       <path className="thc-plot__klamme" d={klammesti(x, y1, y2)} />

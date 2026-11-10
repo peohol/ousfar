@@ -20,7 +20,7 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['fortolkning/thc'],
     punkter: [
       'Ingen kommentarer, konklusjoner eller regler er endret. Det er bare visualiseringen under kommentaren som er ny.',
-      'Over visualiseringen velger du mellom «Visualiser med valgt sikkerhetsmargin» og «Visualiser med alle sikkerhetsmarginer». Med alle står det ett punkt for denne prøven per sikkerhetsmargin, og et eget for «Ingen (50 %)» hvis den ikke er blant marginene. En klamme fra etiketten «Denne prøven (ulike sikkerhetsmarginer)» samler punktene. Hold pekeren over et punkt for å se marginen.',
+      'Over visualiseringen velger du mellom «Visualiser med valgt sikkerhetsmargin» og «Visualiser med alle sikkerhetsmarginer». Med alle står det ett punkt for denne prøven per sikkerhetsmargin, og et eget for «Ingen (50 %)» hvis den ikke er blant marginene. En klamme fra etiketten «Denne prøven (ulike sikkerhetsmarginer)» samler punktene. Under figuren står hvert punkt som tekst, med marginen, endringen og konklusjonen.',
       'Kurvene har ikke lenger faste farger. Den som skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås», er grønn, og den som skiller «kan ikke fastslås» fra «nytt inntak», er rød. Kurven som ikke brukes for bruksmønsteret, er tynn, grå og stiplet. Ved kronisk bruk er det moderat og treg utskillelse som brukes, ellers normal og moderat.',
       'Punktet for denne prøven er grønt under den grønne kurven, gult mellom den grønne og den røde, og rødt over den røde.',
       'Kurvenavnene over figuren står på hver sin linje, med hva kurven skiller ved siden av.',
