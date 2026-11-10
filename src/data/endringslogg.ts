@@ -20,12 +20,25 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['fortolkning/thc'],
     punkter: [
       'Ingen kommentarer, konklusjoner eller regler er endret. Det er bare visualiseringen under kommentaren som er ny.',
-      'Over visualiseringen velger du mellom «Visualiser med valgt sikkerhetsmargin» og «Visualiser med alle sikkerhetsmarginer». Med alle står det ett punkt for denne prøven per sikkerhetsmargin, og et eget for «Ingen (50 %)» hvis den ikke er blant marginene. En klamme fra etiketten «Denne prøven (ulike sikkerhetsmarginer)» samler punktene. Under figuren står hvert punkt som tekst, med marginen, endringen og konklusjonen.',
-      'Kurvene har ikke lenger faste farger. Den som skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås», er grønn, og den som skiller «kan ikke fastslås» fra «nytt inntak», er rød. Kurven som ikke brukes for bruksmønsteret, er tynn, grå og stiplet. Ved kronisk bruk er det moderat og treg utskillelse som brukes, ellers normal og moderat.',
-      'Punktet for denne prøven er grønt under den grønne kurven, gult mellom den grønne og den røde, og rødt over den røde.',
+      'Over visualiseringen velger du mellom «Visualiser med valgt sikkerhetsmargin» og «Visualiser med alle sikkerhetsmarginer». Med alle står det ett punkt for denne prøven per sikkerhetsmargin, og et eget for «Ingen (50 %)» hvis den ikke er blant marginene. En klamme fra etiketten «Denne prøven (ulike sikkerhetsmarginer)» samler punktene. Under figuren står hvert punkt som tekst, med marginen, endringen og konklusjonen. Valget lagres på brukeren og gjelder neste gang modulen åpnes, også på andre maskiner.',
+      'Kurvene har ikke lenger faste farger. Den som skiller «ikke nødvendigvis nytt» fra «kan ikke fastslås», er grønn, og den som skiller «kan ikke fastslås» fra «nytt inntak», er rød. Kurven som ikke brukes for bruksmønsteret, er tynn, grå og stiplet, og står med «Brukes ikke i fortolkningen …». Ved kronisk bruk er det moderat og treg utskillelse som brukes, ellers normal og moderat.',
+      'Punktet for denne prøven er grønt under den grønne kurven, gult mellom den grønne og den røde, og rødt over den røde, som et trafikklys.',
       'Kurvenavnene over figuren står på hver sin linje, med hva kurven skiller ved siden av.',
       'I oversikten over reglene på redigeringssiden står kurvenavnet ved fargen, siden fargen i figuren nå følger terskelen.',
     ],
+  },
+  {
+    versjon: '1.128.6',
+    dato: '2026-11-09',
+    sammendrag: 'Stoppet for valproat sier hvilket vilkår i det graviditetsforebyggende programmet som mangler',
+    typer: ['Design / layout'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret, og planen stopper i nøyaktig de samme tilfellene som før.',
+      'Når lamotrigin skal legges til valproat hos en pasient som kan bli gravid, og et vilkår i det graviditetsforebyggende programmet ikke er bekreftet, sier stoppet nå hvilket vilkår det er, for eksempel «Det er ikke bekreftet at pasienten bruker sikker prevensjon uten avbrudd.» Før sa det bare at et vilkår ikke var oppfylt.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.128.5',

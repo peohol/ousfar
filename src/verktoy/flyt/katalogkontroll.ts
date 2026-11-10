@@ -36,6 +36,15 @@ export interface Katalogkontroll {
 const KONTROLL_2026_11_07 =
   'Avgrenset semantisk godkjenning: ingen utestående menings- eller avbildningsfeil i katalogen for de 12 aktive reglene. Gjelder kun spørsmålsformuleringer, betingelser, stoppforklaringer og tilhørende motorinndata for de eksakte regel- og katalogavtrykkene, ikke ny godkjenning av doser, kliniske strategier, utvidet omfang eller senere katalogendringer.'
 
+/**
+ * Valproat v2 etter P4 (§5.2 i `docs/verktøy-p4-rapport-2026-11.md`): stoppet
+ * navngir nå vilkåret i det graviditetsforebyggende programmet som ikke er
+ * bekreftet. Avtrykket føres i PR-en til ChatGPT-kontroll og gjelder først når
+ * ChatGPT har godkjent og slått den sammen.
+ */
+const KONTROLL_2026_11_09_PPP =
+  'Erstatter avtrykket fra 07.11.2026 for valproat v2. Bare stoppforklaringene for vilkårene i det graviditetsforebyggende programmet er endret: de navngir vilkåret som ikke er bekreftet (sikker prevensjon, annen behandling uten effekt, årlig spesialistvurdering), med ordlyden fra vilkårene selv. Ingen dose, betingelse, avbildning eller gyldighet er endret. Gjelder kun disse stoppforklaringene for det eksakte regel- og katalogavtrykket, ikke ny godkjenning av doser, kliniske strategier, utvidet omfang eller senere katalogendringer.'
+
 const kontrollert = (regel: string, regelversjon: number, fingeravtrykk: string, katalogavtrykk: string): Katalogkontroll => ({
   regel,
   regelversjon,
@@ -65,7 +74,11 @@ export const KONTROLLERTE_KATALOGER: readonly Katalogkontroll[] = Object.freeze(
   kontrollert('depot-risperidon-xeplion', 8, '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e', '4436def26dad4887ada66b80c99aade860287b4a4c85f273f3114bc8db1d9b26'),
   kontrollert('antipsykotikabytte-olanzapin-aripiprazol', 8, 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e', '53de23f5cbd195cde4f1e7dbd555baf368a01fa2cf05e32d2040cfa57070533e'),
   kontrollert('antipsykotikabytte-risperidon-aripiprazol', 8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870', 'a26697d8036f71c7f7befac403c7724fef83187ebd3ed4c33253d587c306854d'),
-  kontrollert('tillegg-valproat-lamotrigin', 2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', '35c45eb8dbdb4411dfce0ade5f6438c7653d7f775aa7e7fba295f11c748d9d54'),
+  {
+    ...kontrollert('tillegg-valproat-lamotrigin', 2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', '4c15d6d1c40e3e01cc31593167a3ab1e2e1f8f17511bb3635bb6c4f35d7a7cdb'),
+    dato: '2026-11-09',
+    merknad: KONTROLL_2026_11_09_PPP,
+  },
   kontrollert('tillegg-litium-lamotrigin', 2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b', '699ce72181ee0ed3ff667918a3f578c6b77ff8196f1437301906561757bbb05b'),
 ])
 
