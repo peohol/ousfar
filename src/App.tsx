@@ -95,7 +95,9 @@ import {
 import { useRute } from './hooks/useRute'
 import { useNaarLedig } from './hooks/useNaarLedig'
 import { useSokeindeks, type Sokeindekshenter } from './hooks/useSokeindeks'
-import { useKontovalg } from './hooks/useKontovalg'
+import { useKontosynk, useKontovalg } from './hooks/useKontovalg'
+import { useHusketValg } from './hooks/useSystemvalg'
+import { lesThcVisning, THC_VISNING } from './domain/thcPlot'
 import { lesPubliserteRegelsett } from './regler/kommentarer'
 import { slaOpp } from './regler/publiserte'
 import { useBevart } from './oppdatering/Bevaring'
@@ -141,6 +143,11 @@ export default function App() {
   const profil = useProfil()
   const tema = useKontovalg(TEMA, profil.id)
   const bevegelse = useKontovalg(BEVEGELSE, profil.id)
+  // Visualiseringen i THC-syremodulen, med den valgte eller alle
+  // sikkerhetsmarginene, følger brukeren som de andre preferansene.
+  const [thcVisning, settThcVisning] = useHusketValg(THC_VISNING.lagring, lesThcVisning, 'valgt')
+  const velgThcVisning = useKontosynk(THC_VISNING.konto, lesThcVisning, thcVisning, settThcVisning, profil.id)
+  const thcVisualisering = useMemo(() => ({ visning: thcVisning, onVelg: velgThcVisning }), [thcVisning, velgThcVisning])
   const copy = useClipboard()
   const { flash, show } = useCopyFlash(BLINK)
   /**
@@ -851,7 +858,7 @@ export default function App() {
                       />
                     )}
 
-                    {vist === 'thc' && <ThcStep regler={thcRegler} onBack={back} copy={copy} flashAt={show} />}
+                    {vist === 'thc' && <ThcStep regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
 
                     {vist === 'rus' && rusModul && (
                       <RusStep
