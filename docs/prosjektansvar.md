@@ -12,7 +12,7 @@ prosedyrer: kurateringen og den uavhengige kontrollen av fagsidene
 ([kuratering-prosjekt.md](kuratering-prosjekt.md),
 [kontrollorinstruks.md](kontrollorinstruks.md)), ChatGPTs
 [PR-kontrollstandard](chatgpt-pr-kontrollstandard.md), verktøyenes kliniske
-planer og reglene i `CLAUDE.md` gjelder uendret ved siden av det. Eies av OUSFAR
+planer og reglene i `AGENTS.md` gjelder uendret ved siden av det. Eies av OUSFAR
 Dev (`ansvar:dev`); de andre prosjektene foreslår endringer som en oppgave til Dev
 (§5).
 
@@ -22,7 +22,7 @@ Dev (`ansvar:dev`); de andre prosjektene foreslår endringer som en oppgave til 
 | --- | --- | --- | --- |
 | **OUSFAR Fag** | Kuratering og faglig kontroll av innholdet på fagsidene (monografiene): Kurator, Kontrollør og Vaktmester, kuratorprotokollen, kontrollørinstruksen, skillene `monografikurator`, `monografikontrollor` og `vaktmester`, avgjørelser om nøkkeltall og beskyttede data, og nøklene til kurateringsagentene | Appens kode og utseende, kurateringsverktøyenes kode (som kurateringskøen og `npm run kurator`) og verktøyene i verktøymenyen | `ansvar:fag` |
 | **OUSFAR Verktøy** | Alt faglig og teknisk arbeid med verktøyene i verktøymenyen: kliniske regler, doseplanmotoren, spørsmålene og stoppene, verktøyenes UI og UX, kildeovervåkingen og QA av verktøyene, med planene i `docs/verktøy-*.md` | Fagsidenes innhold, appens felles UI og infrastruktur når endringen har et eget formål utenfor verktøyene (§2) | `ansvar:verktoy` |
-| **OUSFAR Dev** | Alt annet: appens generelle UI, UX og design (også fagsidenes oppsett og visning), søk, stoffregister, varsler, diskusjoner, brukere og tilgang, datasynkene (FEST, Farmakologiportalen og andre), database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (dette dokumentet, `CLAUDE.md`, `AGENTS.md`, PR-malen, endringsloggrutinen) | Faginnholdet på fagsidene og verktøyene | `ansvar:dev` |
+| **OUSFAR Dev** | Alt annet: appens generelle UI, UX og design (også fagsidenes oppsett og visning), søk, stoffregister, varsler, diskusjoner, brukere og tilgang, datasynkene (FEST, Farmakologiportalen og andre), database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (dette dokumentet, `AGENTS.md`-filene, PR-malen, endringsloggrutinen) | Faginnholdet på fagsidene og verktøyene | `ansvar:dev` |
 
 Er det uklart hvilket prosjekt en oppgave hører til, avgjør Peder det; Claude
 eller ChatGPT gir én anbefaling med begrunnelse.
@@ -47,7 +47,7 @@ som en egen oppgave til prosjektet som eier den (§4).
 | **Peder** | Bestemmer mål og prioritering, tar de kliniske og faglige avgjørelsene bare et menneske kan ta, gir eksplisitt ja der et styrende dokument krever det, og gjør korte aksepttester | Gjør ikke tekniske operasjoner, videreformidler ikke tekniske meldinger mellom prosjekter og koordinerer ikke tråder |
 
 Krever et styrende dokument Peders ja før sammenslåing (for eksempel en
-destruktiv migrasjon etter `CLAUDE.md`, nøklene i OUSFAR Fag eller en ny klinisk
+destruktiv migrasjon etter `supabase/AGENTS.md`, nøklene i OUSFAR Fag eller en ny klinisk
 regel), slår ChatGPT ikke sammen PR-en før det ja-et er gitt.
 
 I OUSFAR Fag er ChatGPTs PR-kontroll en kontroll av selve PR-en. Den
@@ -117,7 +117,7 @@ informasjonsutveksling.
 
 ## 6. Felles regler for alle tre prosjektene
 
-- `CLAUDE.md` gjelder for Claude i alle prosjektene.
+- `AGENTS.md`, med tilleggene i undermappenes `AGENTS.md`, gjelder for alle agenter i alle prosjektene.
 - Automatiserte nettleserkontroller kjøres i det lokale testmiljøet, aldri som
   omfattende kjøringer mot den publiserte appen ([qa-testmiljo.md](qa-testmiljo.md)).
 - Produksjonsmigrasjoner rulles ut etter [migrasjoner.md](migrasjoner.md).

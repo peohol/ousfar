@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.2',
+    dato: '2026-11-10',
+    sammendrag: 'Felles arbeidsregler for alle KI-agentene som utvikler og kontrollerer appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Arbeidsreglene for KI-agentene som utvikler og kontrollerer OUSFAR, står nå samlet ett sted som alle agentene leser, i stedet for i flere overlappende filer. Ingen regler for sikkerhet, klinisk innhold, godkjenning eller prosjektansvar er fjernet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.1',
     dato: '2026-11-10',
     sammendrag: 'Kontrollen av verktøyene i appen sammenligner stopp ved et spørsmål riktig',

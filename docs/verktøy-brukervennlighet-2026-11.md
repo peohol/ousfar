@@ -56,7 +56,7 @@ Gjelder hver PR i denne planen. Hver invariant håndheves av en test som D eier 
 | S8 | Kopien inneholder hele planen: alle trinn med dager/datoer, doser, preparater, styrker og antall enheter, administrasjon, vurderingspunkter, forbehold, kilder, regelversjon og fingeravtrykk. |
 | S9 | Forhåndskontrollen lover aldri en plan. Den kan si «kan ikke lages» eller «kan lages hvis …»; planen vises bare når motoren har beregnet den med de faktiske svarene. |
 
-**Teknisk eller klinisk.** Hver PR sier i beskrivelsen hvilken av to kategorier hver endring hører til. *Teknisk:* endrer bare presentasjon, rekkefølge, avledning eller tidspunkt for kontroller, med uendret motorutfall (S3). *Klinisk:* endrer hva regelen tillater eller hva motoren velger for en godkjent regel. Kliniske endringer gjøres bare som ny regelversjon med eget kontrollgrunnlag og ChatGPTs faglige kontroll. Teksten i spørsmålene er klinisk meningsinnhold selv når den er teknisk avledet (CLAUDE.md), og kontrolleres av ChatGPT som en egen tabell (§4.4).
+**Teknisk eller klinisk.** Hver PR sier i beskrivelsen hvilken av to kategorier hver endring hører til. *Teknisk:* endrer bare presentasjon, rekkefølge, avledning eller tidspunkt for kontroller, med uendret motorutfall (S3). *Klinisk:* endrer hva regelen tillater eller hva motoren velger for en godkjent regel. Kliniske endringer gjøres bare som ny regelversjon med eget kontrollgrunnlag og ChatGPTs faglige kontroll. Teksten i spørsmålene er klinisk meningsinnhold selv når den er teknisk avledet (AGENTS.md), og kontrolleres av ChatGPT som en egen tabell (§4.4).
 
 ## 3. Ny felles arbeidsflyt
 

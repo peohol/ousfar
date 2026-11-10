@@ -1,6 +1,6 @@
 # Supabase-laget
 
-Tillegg til reglene i rotens `CLAUDE.md`. Gjelder alt under `supabase/`.
+Tillegg til reglene i rotens `AGENTS.md`. Gjelder alt under `supabase/`.
 
 - Bakgrunnen for brukersystemet står i `docs/brukere.md`, og for det
   redigerbare faginnholdet i `docs/faginnhold.md`. Les den som gjelder før

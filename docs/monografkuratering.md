@@ -124,7 +124,7 @@ kjøring (`docs/kurateringsko.md`, `docs/kurateringsko-instruks.md`).
    ikke noe eget samtykke; sammenslåingen er godkjenningen. Hvis migrasjonen
    avviker fra den vanlige malen og innebærer vesentlig risiko for datatap,
    sikkerhet/personvern, produksjonstilgjengelighet eller vanskelig reversering,
-   gjelder den risikobaserte godkjenningsregelen i `CLAUDE.md`. Preflighten
+   gjelder den risikobaserte godkjenningsregelen i `supabase/AGENTS.md`. Preflighten
    gjelder produksjonen slik den er når migrasjonen kjøres: endres siden før
    PR-en slås sammen, stopper migrasjonen uten å endre noe, og må skrives på
    nytt. `apply_migration` direkte er bare en reservevei (`docs/migrasjoner.md`).

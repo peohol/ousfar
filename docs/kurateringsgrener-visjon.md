@@ -197,7 +197,7 @@ Etter innføring skal systemet kunne demonstrere, med automatiserte tester og en
 - `docs/kuratorjobber.md` – autentisert runtimekontroll og SPC-innhenting.
 - `docs/bivirkninger.md` – strukturert SPC-import og kildefidelitet.
 - `docs/diskusjoner.md` – eksisterende generelle tråder, **ikke** samme formål som kontrollkommentarer.
-- `docs/migrasjoner.md`, `docs/endringslogg.md` og `CLAUDE.md` – teknisk migrering, versjonering og arbeidsregler.
+- `docs/migrasjoner.md`, `docs/endringslogg.md` og `AGENTS.md` – teknisk migrering, versjonering og arbeidsregler.
 - OUSFARs monografikuratorskill og alle faglige referansefiler – faglig protokoll som ikke må utvannes.
 
 **Prioritert leveranseprinsipp:** trygg isolasjon og atomisk publisering før sanntidseffekter. Et attraktivt UI må aldri maskere manglende faglig eller teknisk kontroll.

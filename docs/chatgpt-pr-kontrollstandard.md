@@ -2,7 +2,7 @@
 
 **Gjelder:** Hver gang ChatGPT vurderer kode, design, kliniske regler, planer eller pull requests fra Claude Code i dette repoet. Skal også brukes når samtalen er ny og ingen tidligere chatthistorikk er tilgjengelig.  
 **Eier:** ChatGPT som uavhengig kontrollør på oppdrag fra Peder.  
-**Oppdatert:** 09.11.2026 (prosjektansvaret).  
+**Oppdatert:** 10.11.2026 (felles AGENTS.md).  
 **Hvilke PR-er:** bare PR-ene med etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`), etter [prosjektansvar.md](prosjektansvar.md).  
 **Viktig:** Dette er en arbeidsstandard i repoet, ikke en klinisk godkjenning, erstatning for de installerte PR-review-skill-instruksene eller et mandat til å begynne nye oppgaver.
 
@@ -10,7 +10,7 @@
 
 Når Peder ber om «se over PR», «sjekk igjen» eller lignende:
 
-1. Les repoets AGENTS.md, [prosjektansvar.md](prosjektansvar.md) og relevante punkter i CLAUDE.md, og les dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
+1. Les repoets AGENTS.md (og AGENTS.md i undermapper PR-en endrer), [prosjektansvar.md](prosjektansvar.md) og dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
 2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen med etiketter før kontroll og på nytt etterpå, og kontroller bare PR-ene med eget prosjekts etikett. En PR uten gyldig prosjektetikett får ikke ordinær kontroll og slås ikke sammen før eierskapet er avklart; en PR med et annet prosjekts etikett får ingen parallell kontroll herfra.
 3. Sammenlign med sist vurderte eksakte SHA. Ikke kopier gamle kommentarer eller anmeld samme endring uten grunn. Hvis HEAD er uendret: kontroller oppdatert base, CI og faktiske avhengigheter, men ikke lag en duplikatkodegjennomgang.
 4. Les relevant full diff **og omkringliggende kode, kliniske regler, kvalitetstester, kilder og faktisk brukerflyt**. PR-beskrivelsen er en påstand som skal kontrolleres, ikke et bevis. En velformulert dokumentasjon eller grønn CI er heller ikke bevis på produktnytte.
