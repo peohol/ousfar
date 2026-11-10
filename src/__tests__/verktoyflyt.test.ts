@@ -414,6 +414,24 @@ describe('progressiv visning og rekkefølge', () => {
     expect(skjult.felt.bekreftet).not.toContain('ppp_indikasjon')
   })
 
+  it('navngir vilkåret i det graviditetsforebyggende programmet som stopper valproatplanen (P4 §5.2, D04)', () => {
+    const g = katalog(VALPROAT)
+    const forklaring = (id: string) => vurderFlyt(VALPROAT, { kan_bli_gravid: 'ja', [id]: 'nei' }, g).sporsmal.find((s) => s.id === id)!
+    const vilkar: [string, RegExp][] = [
+      ['ppp_prevensjon', /ikke bekreftet at pasienten bruker sikker prevensjon uten avbrudd/],
+      ['ppp_annen_behandling', /ikke bekreftet at annen behandling ikke har effekt eller ikke tolereres/],
+      ['ppp_spesialist', /ikke bekreftet at spesialist i bipolar lidelse .*mest egnede behandlingen/],
+    ]
+    for (const [id, tekst] of vilkar) {
+      const s = forklaring(id)
+      expect(s.stopperVed, id).toEqual(['nei'])
+      expect(s.forklaring, id).toMatch(tekst)
+      expect(s.forklaring, id).toMatch(/vilkår i det graviditetsforebyggende programmet for valproat/)
+    }
+    // Hvert stopp navngir bare sitt eget vilkår.
+    expect(forklaring('ppp_prevensjon').forklaring).not.toMatch(/spesialist|annen behandling/)
+  })
+
   it('skjuler de senere gruppene når et svar stopper planen, med en forklaring ved spørsmålet', () => {
     const g = katalog(ESC)
     const f = vurderFlyt(ESC, { qt_forlengelse: 'ja' }, g)
