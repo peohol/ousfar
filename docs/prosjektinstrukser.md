@@ -38,7 +38,7 @@ Etiketten dette prosjektet eier: ansvar:dev
 Hver PR fra dette prosjektet får nøyaktig denne ene prosjektetiketten.
 
 LES
-AGENTS.md (felles regler for alle agenter; Claude Code laster den automatisk), docs/prosjektansvar.md, og dokumentene i docs/ som gjelder oppgaven.
+Første handling i hver repooppgave, også små: les AGENTS.md i repoets rot. Den lastes ikke automatisk i prosjekttrådene (gjenbruk den bare etter SHA-kontrollen den beskriver). Deretter docs/prosjektansvar.md og dokumentene i docs/ som gjelder oppgaven.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Før større utviklingsoppgaver: se etter åpne Issues og PR-er om det samme. Arbeider noen alt med det, lag ingen konkurrerende implementering.
@@ -96,7 +96,7 @@ FASTE REGLER
 - Svar Peder på norsk, kort og uten teknisk sjargong. Han er ikke utvikler. Be ham aldri gjøre noe Claude kan gjøre selv.
 
 LES
-AGENTS.md, docs/prosjektansvar.md, docs/kuratering-prosjekt.md, docs/kuratorprotokoll.md og docs/kontrollorinstruks.md.
+Første handling i hver repooppgave, også små: les AGENTS.md i repoets rot. Den lastes ikke automatisk i prosjekttrådene (gjenbruk den bare etter SHA-kontrollen den beskriver). Deretter docs/prosjektansvar.md, docs/kuratering-prosjekt.md, docs/kuratorprotokoll.md og docs/kontrollorinstruks.md.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Trenger arbeidet en endring i appen, API-et eller kurateringsverktøyene: lag et GitHub Issue med etiketten ansvar:dev (ansvar:verktoy for verktøyene) med hva og hvorfor, uten faglige vurderinger av stoffer, og si det til Peder i én setning.
@@ -131,7 +131,7 @@ Etiketten dette prosjektet eier: ansvar:verktoy
 Hver PR fra dette prosjektet får nøyaktig denne ene prosjektetiketten.
 
 LES
-AGENTS.md, docs/prosjektansvar.md, og de styrende verktøydokumentene: docs/verktøy-produktrevisjon-2026-11.md, docs/verktøy-klinisk-leveranseplan-2026-11.md, docs/verktøy-k5-dosefleksible-forlop.md og docs/verktøy-p3-rettigheter.md, og ellers docs/verktøy-*.md som gjelder oppgaven.
+Første handling i hver repooppgave, også små: les AGENTS.md i repoets rot. Den lastes ikke automatisk i prosjekttrådene (gjenbruk den bare etter SHA-kontrollen den beskriver). Deretter docs/prosjektansvar.md og de styrende verktøydokumentene: docs/verktøy-produktrevisjon-2026-11.md, docs/verktøy-klinisk-leveranseplan-2026-11.md, docs/verktøy-k5-dosefleksible-forlop.md og docs/verktøy-p3-rettigheter.md, og ellers docs/verktøy-*.md som gjelder oppgaven.
 
 OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER
 - Før større utviklingsoppgaver: se etter åpne Issues og PR-er om det samme. Arbeider noen alt med det, lag ingen konkurrerende implementering.

@@ -55,6 +55,6 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 
 ## Vedlikehold av instruksene
 
-- `AGENTS.md` er den eneste agentinstruksen. Rotens `CLAUDE.md` er bare en symbolsk lenke hit, fordi Claude Code ellers ikke laster instruksene når repoet er en tilleggsmappe, som i prosjekttrådene. Skriv aldri regler i en `CLAUDE.md`, og lag ingen andre modellspesifikke filer.
+- `AGENTS.md` er den eneste agentinstruksen. Lag ingen `CLAUDE.md` (der den finnes, leser Claude Code ikke `AGENTS.md`) eller andre modellspesifikke filer. Der `AGENTS.md` ikke lastes automatisk, som i Claude Code-prosjekttrådene, pålegger prosjektinstruksene å lese den.
 - Her hører bare korte, varige regler som ellers sannsynligvis ville gitt gjentatte feil i urelaterte oppgaver. Annet legges i `docs/*.md` eller som tillegg i en `AGENTS.md` i nærmeste relevante mappe. Ingen spesifikasjoner, planer, historikk, lange begrunnelser eller automatisk import av store dokumenter.
 - Konsolider og beskjær fremfor å legge til, og fjern foreldede og dupliserte instrukser. Oppdater dokumentasjonen i samme endring når den ellers blir misvisende.

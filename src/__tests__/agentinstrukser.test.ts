@@ -1,11 +1,10 @@
 /**
  * Agentinstruksene (`AGENTS.md`): én felles inngang for alle kodeagenter.
- * Claude Code laster ikke `AGENTS.md` når repoet er en tilleggsmappe (som i
- * prosjekttrådene), bare `CLAUDE.md`. Rotens `CLAUDE.md` er derfor en symbolsk
- * lenke til `AGENTS.md`; en `CLAUDE.md` med egne regler ville gitt to
- * instrukser å vedlikeholde, og der den finnes, leser Claude Code ikke `AGENTS.md`.
+ * Der det finnes en `CLAUDE.md`, leser Claude Code ikke `AGENTS.md`. I
+ * prosjekttrådene, der repoet er en tilleggsmappe, lastes `AGENTS.md` ikke
+ * automatisk; Claude-prosjektinstruksene pålegger derfor å lese den først.
  */
-import { existsSync, lstatSync, readFileSync, readdirSync, readlinkSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
@@ -25,11 +24,9 @@ function finn(navn: string[], mappe = ROT): string[] {
 const AGENTFILER = finn(['AGENTS.md'])
 
 describe('agentinstruksene', () => {
-  it('har bare én CLAUDE.md, rotens, og den er en symbolsk lenke til AGENTS.md', () => {
+  it('har ingen CLAUDE.md som skygger for AGENTS.md', () => {
     expect(AGENTFILER).toContain('AGENTS.md')
-    expect(finn(['CLAUDE.md', 'CLAUDE.local.md'])).toEqual(['CLAUDE.md'])
-    expect(lstatSync(join(ROT, 'CLAUDE.md')).isSymbolicLink()).toBe(true)
-    expect(readlinkSync(join(ROT, 'CLAUDE.md'))).toBe('AGENTS.md')
+    expect(finn(['CLAUDE.md', 'CLAUDE.local.md'])).toEqual([])
   })
 
   it('lenker bare til filer som finnes', () => {
@@ -50,11 +47,13 @@ describe('agentinstruksene', () => {
   })
 
   it('lar hver av de seks prosjektinstruksene peke til AGENTS.md', () => {
-    const blokker = [...les('docs/prosjektinstrukser.md').matchAll(/^## .*\n[\s\S]*?```text\n([\s\S]*?)```/gm)]
+    const blokker = [...les('docs/prosjektinstrukser.md').matchAll(/^(## .*)\n[\s\S]*?```text\n([\s\S]*?)```/gm)].map((b) => [b[1], b[2]])
     expect(blokker).toHaveLength(6)
-    for (const [, tekst] of blokker) {
-      expect(tekst).toMatch(/^LES\nAGENTS\.md/m)
+    for (const [overskrift, tekst] of blokker) {
+      expect(tekst).toMatch(/^LES\n[^\n]*AGENTS\.md/m)
       expect(tekst).not.toContain('CLAUDE.md')
+      // Claude laster ikke AGENTS.md selv i prosjekttrådene, så instruksen må kreve at den leses først.
+      if (overskrift!.startsWith('## Claude')) expect(tekst).toMatch(/^LES\nFørste handling i hver repooppgave[^\n]*les AGENTS\.md/m)
     }
   })
 })
