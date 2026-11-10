@@ -25,18 +25,6 @@ import { kontrollstatus, lagKildeovervakingslager, type Kildeovervaking } from '
 import { kallSom } from './hjelp/fest'
 import { feilFra, kjorMigrasjoner, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
-/**
- * Tidspunkter i kildekontrollene, regnet fra dag 0 = i dag (UTC). Databasen
- * regner driftsstatusen mot sin egen klokke (siste kjøring eldre enn 8 dager gir
- * «ukjent»), så faste datoer ville gjort testene avhengige av når de kjøres.
- */
-const DAG0 = Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())
-const dato = (dag: number) => new Date(DAG0 + dag * 86_400_000).toISOString().slice(0, 10)
-/** Tidspunktet slik rapportene skriver det. */
-const kl = (dag: number, tid: string) => `${dato(dag)}T${tid}Z`
-/** Det samme tidspunktet slik databasen gir det tilbake. */
-const pgkl = (dag: number, tid: string) => `${dato(dag)}T${tid}+00:00`
-
 const REGEL = { regelsett: 's', regel: 'syntetisk-regel', versjon: 3, fingeravtrykk: 'f'.repeat(64), hvorfor: 'henviser til kilden' }
 
 const funn = (over: Partial<Overvakingsfunn>): Overvakingsfunn => ({
@@ -46,7 +34,7 @@ const funn = (over: Partial<Overvakingsfunn>): Overvakingsfunn => ({
   niva: 'krever_vurdering',
   objekt: 'syntetisk',
   etikett: 'Syntetisk kilde',
-  detaljer: [`Nå: dokumentet abc (text/html, hentet ${kl(0, '06:00:00')}).`],
+  detaljer: ['Nå: dokumentet abc (text/html, hentet 2026-11-02T06:00:00Z).'],
   berorte: [REGEL],
   prioritet: 'vanlig',
   ...over,
@@ -68,7 +56,7 @@ const rapport = (kjort_kl: string, funnene: Overvakingsfunn[], kjort: Funnkilde[
 const sporsmal = (over: Record<string, unknown> = {}) => ({
   tittel: 'Kilden for nedtrappingstakten er revidert',
   endring: 'Kilden anbefaler nå en langsommere nedtrapping de siste ukene.',
-  kilde: { navn: 'Syntetisk kilde', lenke: 'https://example.invalid/kilde', sammenlignet_kl: kl(0, '06:20:00') },
+  kilde: { navn: 'Syntetisk kilde', lenke: 'https://example.invalid/kilde', sammenlignet_kl: '2026-11-02T06:20:00Z' },
   berorte: [{ regel: REGEL.regel, versjon: REGEL.versjon, hva: 'takten de siste ukene' }],
   relevans: 'Planen kan bli for rask for pasienter med seponeringssymptomer.',
   anbefaling: { valg: 'revider', begrunnelse: 'Den reviderte kilden er godt begrunnet og gjelder akkurat denne delen av planen.', av: 'Claude, kontrollert av ChatGPT' },
@@ -120,7 +108,7 @@ describe('kildesakene i databasen', () => {
   }, 60_000)
 
   it('tar bare imot kjøringer og agentarbeid fra serveren, og lar bare administratorer se og avgjøre sakene', async () => {
-    const r = melding(rapport(kl(0, '06:20:00'), []), 'cron', null)
+    const r = melding(rapport('2026-11-02T06:20:00Z', []), 'cron', null)
     for (const hvem of [admin, bruker]) {
       expect(await feilFra(() => kallFor(hvem)('registrer_kildeovervaking', { melding: JSON.stringify(r) }))).toMatchObject({ code: '42501' })
       expect(await feilFra(() => kallFor(hvem)('kildesak_avslutt_prove', { funn: 1, versjon: 1, bevis: 'Syntetisk bevis.', agent: 'Claude' }))).toMatchObject({ code: '42501' })
@@ -145,43 +133,43 @@ describe('kildesakene i databasen', () => {
     const dok = funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'a'.repeat(64) })
     const fest = funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })
     const psy = funn({ id: 'psychiatrienet:x', kilde: 'psychiatrienet', objekt: 'x', prioritet: 'hoy' })
-    expect(await meld(rapport(kl(0, '06:20:00'), [dok, fest, psy]))).toMatchObject({ nye: 3, endrede: 0, borte: 0, apne: 3 })
+    expect(await meld(rapport('2026-11-02T06:20:00Z', [dok, fest, psy]))).toMatchObject({ nye: 3, endrede: 0, borte: 0, apne: 3 })
     expect((await logg()).funn.map((f) => f.tilstand)).toEqual(['teknisk_utredning', 'teknisk_utredning', 'teknisk_utredning'])
     // Ingen sak for redaktøren, ingen prikk; det tekniske sporet følges opp.
     const oversikt = lesRedaktoroversikt(await kallFor(admin)('les_fagsaker', {}))
-    expect(oversikt).toMatchObject({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: pgkl(0, '06:20:00') })
+    expect(oversikt).toMatchObject({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: '2026-11-02T06:20:00+00:00' })
     expect(redaktorvarsel(oversikt)).toEqual([])
 
     // Den samme siden med nye engangsverdier: detaljene er nye, men tilstandsavtrykket er det samme, så ingenting er endret.
-    const igjen = { ...dok, detaljer: [`Nå: dokumentet def (text/html, hentet ${kl(7, '06:00:00')}).`] }
+    const igjen = { ...dok, detaljer: ['Nå: dokumentet def (text/html, hentet 2026-11-09T06:00:00Z).'] }
     expect(funnavtrykk(igjen)).toBe(funnavtrykk(dok))
-    expect(await meld(rapport(kl(7, '06:20:00'), [igjen, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 0, borte: 0, apne: 3 })
+    expect(await meld(rapport('2026-11-09T06:20:00Z', [igjen, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 0, borte: 0, apne: 3 })
     const a = await sak('dokument:a')
-    expect(a).toMatchObject({ versjon: 1, detaljer: igjen.detaljer, sist_sett_kl: pgkl(7, '06:20:00') })
+    expect(a).toMatchObject({ versjon: 1, detaljer: igjen.detaljer, sist_sett_kl: '2026-11-09T06:20:00+00:00' })
 
     // Nytt innhold: samme sak, ny versjon, det gamle innholdet i hendelsen. Psychiatrienet ble ikke kontrollert og står urørt.
-    expect(await meld(rapport(kl(14, '06:20:00'), [{ ...dok, tilstandsavtrykk: 'b'.repeat(64) }, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 1, apne: 3 })
+    expect(await meld(rapport('2026-11-16T06:20:00Z', [{ ...dok, tilstandsavtrykk: 'b'.repeat(64) }, fest], ['dokument', 'fest']))).toMatchObject({ nye: 0, endrede: 1, apne: 3 })
     const etter = await sak('dokument:a')
     expect(etter).toMatchObject({ id: a.id, versjon: 2, tilstand: 'teknisk_utredning' })
     expect(etter.hendelser.map((h) => h.art)).toEqual(['opprettet', 'nytt_innhold'])
     expect((await db.query<{ n: number }>(`select count(*)::int as n from public.kildefunn where funn = 'dokument:a'`)).rows[0]!.n).toBe(1)
-    expect((await sak('psychiatrienet:x')).sist_sett_kl).toBe(pgkl(0, '06:20:00'))
+    expect((await sak('psychiatrienet:x')).sist_sett_kl).toBe('2026-11-02T06:20:00+00:00')
   })
 
   it('avslutter en teknisk sak automatisk bare når en del som faktisk ble kontrollert, fant kilden i samsvar med grunnlaget', async () => {
     const fest = await sak('fest:sertralin:ID_X')
     // FEST stoppet (ikke kjørt), og dokumentdelen kontrollerte ingenting: ingen sak røres.
-    expect(await meld(rapport(kl(21, '06:20:00'), [], ['dokument'], { feil: ['FEST: innlogging avvist'], grunnlag: [{ kilde: 'dokument', kjort: true, kontrollert: 0, beskrivelse: 'Ingen' }] }))).toMatchObject({ borte: 0, avsluttede: 0 })
+    expect(await meld(rapport('2026-11-23T06:20:00Z', [], ['dokument'], { feil: ['FEST: innlogging avvist'], grunnlag: [{ kilde: 'dokument', kjort: true, kontrollert: 0, beskrivelse: 'Ingen' }] }))).toMatchObject({ borte: 0, avsluttede: 0 })
     // Kilden svarte ikke: nøkkelen står som informativ, så det er ukjent, ikke «uendret».
-    const ukjent = rapport(kl(28, '06:20:00'), [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'utilgjengelig', niva: 'informativ', prioritet: undefined })], ['fest'])
+    const ukjent = rapport('2026-11-30T06:20:00Z', [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'utilgjengelig', niva: 'informativ', prioritet: undefined })], ['fest'])
     expect(await meld(ukjent)).toMatchObject({ borte: 0, avsluttede: 0 })
     // FEST kontrollert uten avvik for preparatet: tilbake i samsvar med grunnlaget, avsluttet med kjøringen som bevis.
-    expect(await meld(rapport(kl(35, '06:20:00'), [], ['fest']))).toMatchObject({ borte: 1, avsluttede: 1 })
+    expect(await meld(rapport('2026-12-07T06:20:00Z', [], ['fest']))).toMatchObject({ borte: 1, avsluttede: 1 })
     const lukket = (await logg()).funn.find((f) => f.id === fest.id)!
-    expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'ikke_funnet_igjen', borte_kl: pgkl(35, '06:20:00') })
+    expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'ikke_funnet_igjen', borte_kl: '2026-12-07T06:20:00+00:00' })
     expect(lukket.hendelser.at(-1)).toMatchObject({ art: 'avsluttet', fra: 'teknisk_utredning', til: 'avsluttet' })
     // Kommer avviket tilbake, er det en ny sak, ikke dekket av den gamle.
-    expect(await meld(rapport(kl(42, '06:20:00'), [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })], ['fest']))).toMatchObject({ nye: 1 })
+    expect(await meld(rapport('2026-12-14T06:20:00Z', [funn({ id: 'fest:sertralin:ID_X', kilde: 'fest', art: 'fjernet', objekt: 'ID_X', prioritet: 'hoy' })], ['fest']))).toMatchObject({ nye: 1 })
     expect(await sak('fest:sertralin:ID_X')).toMatchObject({ erstatter: fest.id, tilstand: 'teknisk_utredning' })
   })
 
@@ -204,8 +192,8 @@ describe('kildesakene i databasen', () => {
     expect(await konkluder({ versjon: a.versjon + 1 })).toBe(a.versjon + 3)
     const lukket = (await logg()).funn.find((f) => f.id === a.id)!
     expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'teknisk_avklart', konklusjon: 'uten_faglig_betydning' })
-    expect(await meld(rapport(kl(49, '06:20:00'), [funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'b'.repeat(64) })], ['dokument']))).toMatchObject({ nye: 0, endrede: 0 })
-    expect((await logg()).funn.find((f) => f.id === a.id)).toMatchObject({ tilstand: 'avsluttet', sist_sett_kl: pgkl(49, '06:20:00') })
+    expect(await meld(rapport('2026-12-21T06:20:00Z', [funn({ id: 'dokument:a', objekt: 'a', tilstandsavtrykk: 'b'.repeat(64) })], ['dokument']))).toMatchObject({ nye: 0, endrede: 0 })
+    expect((await logg()).funn.find((f) => f.id === a.id)).toMatchObject({ tilstand: 'avsluttet', sist_sett_kl: '2026-12-21T06:20:00+00:00' })
   })
 
   it('legger et faglig spørsmål frem for redaktøren med valg og virkning, og en beslutning bestiller tiltak i stedet for å lukke saken', async () => {
@@ -533,8 +521,8 @@ describe('overgangen fra funn med frister til kildesaker', () => {
     const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
     const tjener = kallSom(db, 'service_role')
     const reg = (kl: string, funnene: Overvakingsfunn[]) => registrer(tjener, rapport(kl, funnene, ['dokument']), 'cron', null)
-    await reg(kl(-2, '21:00:00'), [funn({ id: 'dokument:keks', detaljer: ['A'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])
-    await reg(kl(0, '06:50:00'), [funn({ id: 'dokument:keks', detaljer: ['B'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])
+    await reg('2026-10-31T21:00:00Z', [funn({ id: 'dokument:keks', detaljer: ['A'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])
+    await reg('2026-11-02T06:50:00Z', [funn({ id: 'dokument:keks', detaljer: ['B'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])
     await som(db, admin, (tx) => tx.query(`select public.beslutt_kildefunn(3, 'Syntetisk beslutning.')`))
     await tjener('kildefunn_teknisk_fra_agent', { funn: 2, vurdering: 'Syntetisk teknisk vurdering.', agent: 'Claude' })
     await kjorMigrasjoner(db, { fra: MIGRASJON })
@@ -550,7 +538,7 @@ describe('overgangen fra funn med frister til kildesaker', () => {
     ])
     expect((await db.query<{ n: number }>(`select count(*)::int as n from public.kildefunn_hendelser where art = 'migrert'`)).rows[0]!.n).toBe(4)
     // Det samme innholdet som den besluttede saken: beslutningen gjelder fortsatt, ingen ny sak.
-    expect(await reg(kl(7, '06:20:00'), [funn({ id: 'dokument:keks', detaljer: ['B'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])).toMatchObject({ nye: 0, endrede: 0 })
+    expect(await reg('2026-11-09T06:20:00Z', [funn({ id: 'dokument:keks', detaljer: ['B'] }), funn({ id: 'dokument:rcpsych', detaljer: ['A'] }), funn({ id: 'dokument:c', detaljer: ['A'] })])).toMatchObject({ nye: 0, endrede: 0 })
   }, 60_000)
 })
 
@@ -569,7 +557,7 @@ describe('serverendepunktet /api/kildeovervaking', () => {
     const svar = await behandleKildeovervaking(f, MILJO, { githubsjekk, kall })
     return { status: svar.status, innhold: (await svar.json()) as Record<string, unknown>, kall }
   }
-  const r = rapport(kl(0, '06:20:00'), [funn({ tilstandsavtrykk: '0'.repeat(64) }), funn({ id: 'fest:y', kilde: 'fest', niva: 'informativ', prioritet: undefined, berorte: [] })])
+  const r = rapport('2026-11-02T06:20:00Z', [funn({ tilstandsavtrykk: '0'.repeat(64) }), funn({ id: 'fest:y', kilde: 'fest', niva: 'informativ', prioritet: undefined, berorte: [] })])
   const LENKE = 'https://github.com/peohol/ousfar/actions/runs/123'
 
   it('slipper bare inn arbeidsflyten med POST, aldri en administrator eller cron', async () => {
@@ -621,7 +609,7 @@ describe('serverendepunktet /api/kildeovervaking', () => {
       expect(svar.kall).not.toHaveBeenCalled()
     }
     expect(lesRapport(rapport('x', []))).toBeNull()
-    expect(lesRapport(rapport(kl(0, '06:20:00'), [PROVEFUNN], [], { provesak: true }))).toMatchObject({ provesak: true })
+    expect(lesRapport(rapport('2026-11-02T06:20:00Z', [PROVEFUNN], [], { provesak: true }))).toMatchObject({ provesak: true })
   })
 
   it('sender agentoppgaven til databasefunksjonen med hvem som gjorde den, og sier fra når saken er endret siden', async () => {

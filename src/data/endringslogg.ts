@@ -21,7 +21,6 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Gjelder bare administratorene. Ingenting i appen er endret: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
       'Den automatiske kontrollen av verktøyene godtar nå at appen stopper ved et spørsmål med den kontrollerte forklaringen, for eksempel ved lang behandlingstid, i stedet for å vente på beregningens senere stoppgrunn. Status for neste fase, de dosefleksible forløpene, er ført: den er ikke startet ennå.',
-      'Testene av kildeovervåkingen regner nå datoene fra dagen de kjøres, så de ikke lenger feiler når kalenderen passerer en fast dato.',
     ],
     utenVarsel: true,
   },
