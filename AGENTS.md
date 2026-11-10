@@ -4,9 +4,10 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 
 ## Lesing av instruksene
 
-- Kjenn hele gjeldende `AGENTS.md` før hver repooppgave. Er den lastet automatisk eller lest i samme økt, les den ikke igjen. Tekst fra en tidligere økt gjenbrukes bare når filens Git-blob-SHA er uendret; ellers hentes den på nytt.
-- Undermappenes `AGENTS.md` lastes ikke alltid automatisk. Før du endrer eller kontrollerer filer i en mappe, les dem som ligger mellom roten og den (i dag bare `supabase/AGENTS.md`).
-- På en eksisterende gren: sjekk om instruksene er endret på `main` (`git fetch origin main && git diff --stat HEAD...origin/main -- '*AGENTS.md'`). Versjonen på `main` gjelder; oppdater grenen først. En PR som selv endrer instruksene, gjelder først når den er slått sammen.
+- Ved start av hver ny repooppgave, ikke for hvert steg i den: hent `main` (`git fetch origin main`) og finn Git-blob-SHA-en til `AGENTS.md` der (`git rev-parse origin/main:AGENTS.md`, eller filens SHA i GitHub-koblingen). Arbeider du på en eksisterende gren, sammenlign med grenens (`git rev-parse HEAD:AGENTS.md`).
+- Gjenbruk tekst du alt har, også i samme økt, bare når den hører til samme SHA; ellers les filen og merk deg SHA-en. Automatisk innlastet tekst hører til arbeidstreets fil (`git hash-object AGENTS.md`) så lenge du ikke har hentet eller byttet gren siden øktstart.
+- Avviker grenen fra `main`, gjelder `main`: oppdater grenen før videre arbeid. Unntak: en PR som selv endrer instruksene, gjelder først når den er slått sammen.
+- Undermappenes `AGENTS.md` lastes ikke alltid automatisk. Før du endrer eller kontrollerer filer i en mappe, kjenn dem som ligger mellom roten og den (i dag bare `supabase/AGENTS.md`), på samme måte.
 - `README.md` er oppslagsverk: les bare avsnittene oppgaven trenger. Andre dokumenter leses etter behov via henvisningene her, og et uendret dokument leses ikke flere ganger i samme oppgave uten grunn.
 
 ## Prosjektansvar og roller
