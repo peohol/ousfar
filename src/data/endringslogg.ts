@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.3',
+    dato: '2026-11-10',
+    sammendrag: 'Verktøyene er kontrollert på nytt før aksepttesten, og neste fase er vurdert',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
+      'Alle testforløpene for verktøyene er kjørt på nytt uten avvik, også stoppet ved valproat uten sikker prevensjon, som nå nevner prevensjonen. Status før aksepttesten og merknadene før neste fase, de dosefleksible forløpene, er ført. Den fasen er ikke startet ennå.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.2',
     dato: '2026-11-10',
     sammendrag: 'Felles arbeidsregler for alle KI-agentene som utvikler og kontrollerer appen',
