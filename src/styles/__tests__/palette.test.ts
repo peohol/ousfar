@@ -78,6 +78,8 @@ const KRAV: [string, string, number, string][] = [
   ['--blekk', '--aksent-flate', 4.5, 'tekst i et ulest varsel'],
   ['--referanse-kant', '--flate-bunn', 3, 'kant rundt «innenfor»'],
   ['--toksisk-kant', '--flate-bunn', 3, 'kant rundt gult bånd'],
+  // Det trafikklysgule punktet i THC-syrefiguren står på et kort med denne kanten.
+  ['--toksisk-kant', '--flate', 3, 'kant rundt gult punkt i THC-syrefiguren'],
   ['--alvorlig-kant', '--flate-bunn', 3, 'kant rundt «over»'],
   ['--under-kant', '--flate-bunn', 3, 'kant rundt «under»'],
   // Kanten som alene viser hvor et felt er — søkefeltet i fortolkningen.

@@ -10,7 +10,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { ThcStep } from '../components/ThcStep'
+import { ThcStep, type ThcStepProps } from '../components/ThcStep'
 import { TipsLag } from '../components/Tips'
 import { fortolkThc, lagThcModell, tomThcInndata, type ThcModell, type ThcRegler } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
@@ -35,12 +35,12 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
-function visSteg(regler: ThcRegler) {
+function visSteg(regler: ThcRegler, visualisering?: ThcStepProps['visualisering']) {
   const copy = vi.fn(async (_tekst: string) => true)
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
-        <ThcStep regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} />
+        <ThcStep regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} visualisering={visualisering} />
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
@@ -359,6 +359,21 @@ describe('fortolkningsmodulen for THC-syre', () => {
     expect(denne()).toHaveLength(1)
     expect(figur().querySelector('.thc-plot__klamme')).toBeNull()
     expect(screen.queryByRole('list', { name: 'Denne prøven med hver sikkerhetsmargin' })).toBeNull()
+  })
+
+  it('viser visualiseringen brukeren har lagret, og melder fra når den byttes', async () => {
+    const user = userEvent.setup()
+    const onVelg = vi.fn()
+    visSteg({ status: 'klar', modell: THC_MODELL }, { visning: 'alle', onVelg })
+    await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'IRCAK' }), '120')
+    await user.type(gruppe('Forrige prøve').getByLabelText('Prøvedato'), '2026-02-01')
+    await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), '80')
+    await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), '2026-02-08')
+
+    // Med alle marginene fra start, uten at noe er trykket.
+    expect(document.querySelector('.thc-plot__klamme')).toBeTruthy()
+    trykkPaaValg('Visualiser med valgt sikkerhetsmargin (90\u00a0%)')
+    expect(onVelg).toHaveBeenCalledWith('valgt')
   })
 
   it('gir ingen kommentar når nye regler ikke har marginen skjemaet står på', async () => {

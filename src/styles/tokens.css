@@ -209,6 +209,9 @@
   --toksisk-flate: #fbedd2;
   --toksisk-blekk: #7e5200;
   --toksisk-kant: #ac7411;
+  /* Den gule i et trafikklys, gulere enn `--toksisk`: til punkter som står
+     mellom en grønn og en rød grense, som i THC-syrefiguren. */
+  --trafikklys-gul: #e8b500;
   --alvorlig: #d2493a;
   --alvorlig-flate: #f8e0da;
   --alvorlig-blekk: #9e2a1e;
@@ -306,6 +309,7 @@
   --toksisk-flate: #2a2414;
   --toksisk-blekk: #f4cb7a;
   --toksisk-kant: #efbe5e;
+  --trafikklys-gul: #f5d23a;
   --alvorlig: #f08576;
   --alvorlig-flate: #2d1a1c;
   --alvorlig-blekk: #f7a195;

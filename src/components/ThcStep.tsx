@@ -8,7 +8,7 @@ import { StepBar } from './StepBar'
 import { ManualCopy } from './ManualCopy'
 import { Shortcut } from './Shortcut'
 import { ThcSkjema } from './ThcSkjema'
-import { ThcKommentar, ThcVisualisering } from './ThcUtfall'
+import { ThcKommentar, ThcVisualisering, type ThcVisualiseringsvalg } from './ThcUtfall'
 import { Ikon } from './ikon/Ikon'
 import { THC_ANALYSEMETODE, THC_KODE } from '../domain/thc'
 import {
@@ -29,6 +29,11 @@ export interface ThcStepProps {
   copy: (text: string) => Promise<boolean>
   /** Viser kopikvitteringen ved elementet — samme blink som i båndsteget. */
   flashAt: (element: Element | null | undefined) => void
+  /**
+   * Visualiseringen med den valgte eller alle sikkerhetsmarginene, lagret på
+   * brukeren av appen. Uten den husker modulen valget bare mens den står.
+   */
+  visualisering?: ThcVisualiseringsvalg
 }
 
 /**
@@ -37,7 +42,7 @@ export interface ThcStepProps {
  * hentet og har bestått kontrollen: mens de hentes, eller om de ikke kan
  * brukes, sier modulen fra i stedet.
  */
-export function ThcStep({ regler, onBack, copy, flashAt }: ThcStepProps) {
+export function ThcStep({ regler, onBack, copy, flashAt, visualisering }: ThcStepProps) {
   const seksjon = useRef<HTMLElement>(null)
   useKortHopp(true, seksjon)
 
@@ -45,7 +50,7 @@ export function ThcStep({ regler, onBack, copy, flashAt }: ThcStepProps) {
     <section className="steg steg--thc" aria-label="Fortolk THC-syre i urin" ref={seksjon}>
       <StepBar onEsc={onBack}>Bytt analytt</StepBar>
       {regler.status === 'klar' ? (
-        <ThcFortolkning modell={regler.modell} copy={copy} flashAt={flashAt} />
+        <ThcFortolkning modell={regler.modell} copy={copy} flashAt={flashAt} visualisering={visualisering} />
       ) : (
         <div className="thc">
           <Card align="start" className="analyttkort">
@@ -106,10 +111,12 @@ function ThcFortolkning({
   modell,
   copy,
   flashAt,
+  visualisering,
 }: {
   modell: ThcModell
   copy: ThcStepProps['copy']
   flashAt: ThcStepProps['flashAt']
+  visualisering: ThcStepProps['visualisering']
 }) {
   const { regler } = modell
   // Det som er fylt inn, overlever en oppdatering av appen.
@@ -272,7 +279,7 @@ function ThcFortolkning({
         {failedCopy && <ManualCopy comment={failedCopy} />}
       </Card>
 
-      <ThcVisualisering resultat={resultat} regler={regler} />
+      <ThcVisualisering resultat={resultat} regler={regler} valg={visualisering} />
     </form>
   )
 }

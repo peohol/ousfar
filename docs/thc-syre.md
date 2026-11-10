@@ -301,11 +301,18 @@ tredje tynn, grå og stiplet med «Brukes ikke i fortolkningen …». Legenden h
 én linje per kurve, med hva den skiller ved siden av. Punktet for denne prøven
 får fargen konklusjonen mot forrige prøve gir for marginen (`marginpunkter`,
 med motorens `korrigertEndring` og `konklusjon`): grønt, gult eller rødt.
-Bryteren over figuren velger den valgte marginen eller alle regelsettets, med
-«Ingen (50 %)» i tillegg når regelsettet ikke har den (den målte endringen,
-z = 0); da samler en klamme punktene, og punktene står også som en liste under figuren (tastatur, berøring, skjermleser og punkter oppå hverandre). Valget bevares ved oppdatering i
-modulen, ikke i simulatoren. `byggGraf` gir de samme tallene som før når den
-ikke får flere punkter, så tallgrunnlaget i fasiten er uendret.
+Det gule punktet er trafikklysgult (`--trafikklys-gul`) med kant i
+`--toksisk-kant`.
+
+Bryteren midt over figuren velger den valgte marginen eller alle
+regelsettets, med «Ingen (50 %)» i tillegg når regelsettet ikke har den (den
+målte endringen, z = 0). Med alle samler en klamme punktene, og de står også
+som en liste under figuren, for tastatur, berøring, skjermleser og punkter
+som ligger oppå hverandre. I modulen lagres valget på brukeren
+(`thc_visualisering` i brukerinnstillingene, husket i nettleseren og synket
+med `useKontosynk` i `App`); simulatoren holder sitt eget. `byggGraf` gir de
+samme tallene som før når den ikke får flere punkter, så tallgrunnlaget i
+fasiten er uendret.
 
 Redigeringssiden for IRCAK (`#/fortolkning/ircak/rediger`, se
 `docs/fortolkningsregler.md`) har seksjonen med oversikten over reglene,

@@ -155,11 +155,7 @@ export function ThcPlot({
                 <span className="tipsanker__navn">{kurve.navn}</span>
               </Tips>
             </span>
-            <span
-              className={
-                terskel[kurve.tone] === 'ubrukt' ? 'thc-legende__terskel thc-legende__terskel--ubrukt' : 'thc-legende__terskel'
-              }
-            >
+            <span className="thc-legende__terskel">
               {terskeltekst(terskel[kurve.tone], grunnlag.kronisk)}
             </span>
           </li>

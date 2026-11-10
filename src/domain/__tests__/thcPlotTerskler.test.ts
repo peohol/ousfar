@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest'
 import { THC_MODELL, THC_REGELSETT } from '../../__tests__/hjelp/thcgrunnlag'
 import { fortolkThc, korrigertEndring, tomThcInndata, type ThcGrunnlag } from '../thcMotor'
-import { marginpunkter, terskler, visningsmarginer } from '../thcPlot'
+import { lesThcVisning, marginpunkter, terskler, visningsmarginer } from '../thcPlot'
 import { INGEN_SIKKERHETSMARGIN, type ThcRegelsett } from '../thcRegelsett'
 
 const UTEN_INGEN: ThcRegelsett = {
@@ -38,6 +38,14 @@ describe('tersklene i figuren', () => {
   it('følger bruksmønsteret i regelsettet: nedre, øvre og den som ikke brukes', () => {
     expect(terskler(THC_REGELSETT, true)).toEqual({ gronn: 'ubrukt', gul: 'nedre', rod: 'ovre' })
     expect(terskler(THC_REGELSETT, false)).toEqual({ gronn: 'nedre', gul: 'ovre', rod: 'ubrukt' })
+  })
+})
+
+describe('visningen som lagres på brukeren', () => {
+  it('godtar bare de to visningene', () => {
+    expect(lesThcVisning('valgt')).toBe('valgt')
+    expect(lesThcVisning('alle')).toBe('alle')
+    for (const ugyldig of [null, undefined, true, '', 'Alle', 1]) expect(lesThcVisning(ugyldig)).toBeNull()
   })
 })
 

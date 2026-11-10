@@ -238,8 +238,12 @@
   fill: var(--referanse-kant);
 }
 
+/* Den gule er for lys til å skille seg fra kortet alene, så den får en
+   mørkere kant (3:1). */
 .thc-plot__punkt--gul {
-  fill: var(--toksisk-kant);
+  fill: var(--trafikklys-gul);
+  stroke: var(--toksisk-kant);
+  stroke-width: 1.5;
 }
 
 .thc-plot__punkt--rod {
@@ -275,6 +279,13 @@
   fill: var(--blekk);
 }
 
+/* Bryteren for visualiseringen står midt over figuren. */
+.thc-visningsvalg {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 /* Punktene med alle marginene som tekst under figuren, med prikken i
    punktets farge. */
 .thc-marginpunkter {
@@ -307,7 +318,8 @@
 }
 
 .thc-marginpunkter__prikk--gul {
-  background: var(--toksisk-kant);
+  background: var(--trafikklys-gul);
+  box-shadow: inset 0 0 0 1px var(--toksisk-kant);
 }
 
 .thc-marginpunkter__prikk--rod {
@@ -374,17 +386,6 @@
   font-size: var(--tekst-liten);
   line-height: var(--linjehoyde-tett);
   color: var(--blekk-dempet);
-}
-
-/* Kurven som ikke brukes, får forklaringen i en pille uten fyll med grå,
-   stiplet kant, som kurven selv. */
-.thc-legende__terskel--ubrukt {
-  display: inline-flex;
-  align-items: center;
-  min-height: calc(var(--hoyde-liten) - var(--rom-1) / 2);
-  padding: 0 var(--rom-4);
-  border: var(--kant) dashed var(--blekk-dempet);
-  border-radius: var(--runding-pille);
 }
 
 /* Forklaringen under figuren: bolkene side om side når det er plass, hver

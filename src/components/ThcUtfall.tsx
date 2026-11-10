@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Button } from './Button'
 import { Card } from './Card'
 import { Details } from './Details'
@@ -7,8 +7,8 @@ import { ThcForklaring } from './ThcForklaring'
 import { ThcPlot } from './ThcPlot'
 import { Trinnbryter } from './Trinnbryter'
 import { Ikon } from './ikon/Ikon'
-import { useBevart } from '../oppdatering/Bevaring'
 import type { ThcMildereUtfall, ThcResultat } from '../domain/thcMotor'
+import type { ThcVisning } from '../domain/thcPlot'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
 import { konklusjonsnavnISetning, marginliste, marginmerke, somProsent } from '../domain/thcVisning'
 
@@ -139,38 +139,50 @@ function grafgrunnlag(resultat: ThcResultat) {
 }
 
 /**
+ * Valget av visualisering når det holdes utenfor, som i fortolkningsmodulen,
+ * der det er lagret på brukeren.
+ */
+export interface ThcVisualiseringsvalg {
+  visning: ThcVisning
+  onVelg: (visning: ThcVisning) => void
+}
+
+/**
  * Kurvene med forklaringen under, når det er noe å tegne. Over kurvene velges
  * om denne prøven vises med den valgte sikkerhetsmarginen eller med alle.
- * Valget tas vare på under `bevaring` når appen oppdateres; uten navn er det
- * en vanlig tilstand, som i simulatoren.
+ * Uten `valg` holder den valget selv, som i simulatoren.
  */
 export function ThcKurvebilde({
   resultat,
   regler,
-  bevaring = null,
+  valg,
 }: {
   resultat: ThcResultat
   regler: ThcRegelsett
-  bevaring?: string | null
+  valg?: ThcVisualiseringsvalg
 }) {
-  const [alleMarginer, setAlleMarginer] = useBevart(bevaring, false)
+  const [egetValg, setEgetValg] = useState<ThcVisning>('valgt')
+  const visning = valg ? valg.visning : egetValg
+  const velg = valg ? valg.onVelg : setEgetValg
   const graf = grafgrunnlag(resultat)
   if (!graf) return null
   return (
     <>
-      <Trinnbryter
-        etikett="Visualisering"
-        valg={[
-          {
-            verdi: false,
-            merke: `Visualiser med valgt sikkerhetsmargin (${somProsent(graf.grunnlag.sikkerhetsmargin)}\u00a0%)`,
-          },
-          { verdi: true, merke: 'Visualiser med alle sikkerhetsmarginer' },
-        ]}
-        verdi={alleMarginer}
-        onVelg={setAlleMarginer}
-      />
-      <ThcPlot grunnlag={graf.grunnlag} regler={regler} alleMarginer={alleMarginer} />
+      <div className="thc-visningsvalg">
+        <Trinnbryter<ThcVisning>
+          etikett="Visualisering"
+          valg={[
+            {
+              verdi: 'valgt',
+              merke: `Visualiser med valgt sikkerhetsmargin (${somProsent(graf.grunnlag.sikkerhetsmargin)}\u00a0%)`,
+            },
+          { verdi: 'alle', merke: 'Visualiser med alle sikkerhetsmarginer' },
+          ]}
+          verdi={visning}
+          onVelg={velg}
+        />
+      </div>
+      <ThcPlot grunnlag={graf.grunnlag} regler={regler} alleMarginer={visning === 'alle'} />
       <Details summary="Forklaring" ikon="fallback">
         <ThcForklaring grunnlag={graf.grunnlag} konklusjon={graf.konklusjon} samlet={graf.samlet} regler={regler} />
       </Details>
@@ -179,12 +191,20 @@ export function ThcKurvebilde({
 }
 
 /** Kurvene og forklaringen som eget panel i fortolkningsmodulen. */
-export function ThcVisualisering({ resultat, regler }: { resultat: ThcResultat; regler: ThcRegelsett }) {
+export function ThcVisualisering({
+  resultat,
+  regler,
+  valg,
+}: {
+  resultat: ThcResultat
+  regler: ThcRegelsett
+  valg?: ThcVisualiseringsvalg
+}) {
   if (!grafgrunnlag(resultat)) return null
   return (
     <Card align="start" className="thc-plot">
       <Panelhode ikon="hl">Visualisering</Panelhode>
-      <ThcKurvebilde resultat={resultat} regler={regler} bevaring="fortolkning/thc/visualisering" />
+      <ThcKurvebilde resultat={resultat} regler={regler} valg={valg} />
     </Card>
   )
 }

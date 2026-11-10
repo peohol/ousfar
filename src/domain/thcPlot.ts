@@ -171,6 +171,20 @@ export function terskler(r: ThcRegelsett, kronisk: boolean): Record<ThcKurveroll
   >
 }
 
+/**
+ * Hvordan figuren viser denne prøven: med den valgte sikkerhetsmarginen eller
+ * med alle. Valget følger brukeren, i nettleseren og på kontoen.
+ */
+export type ThcVisning = 'valgt' | 'alle'
+
+/** Nøkkelen for visningen i nettleserens minne og i brukerinnstillingene. */
+export const THC_VISNING = { lagring: 'far:thc-visualisering', konto: 'thc_visualisering' } as const
+
+/** Visningen slik den er lagret, eller `null` når den ikke er gyldig. */
+export function lesThcVisning(verdi: unknown): ThcVisning | null {
+  return verdi === 'valgt' || verdi === 'alle' ? verdi : null
+}
+
 /** Konklusjonene et punkt for denne prøven kan ha mot forrige prøve. */
 export type ThcPunktutfall = Exclude<ThcKonklusjon, 'uten_forrige'>
 
