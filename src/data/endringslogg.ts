@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.128.7',
+    versjon: '1.128.9',
     dato: '2026-11-10',
     sammendrag: 'Kontrollen av verktøyene i appen sammenligner stopp ved et spørsmål riktig',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,17 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Gjelder bare administratorene. Ingenting i appen er endret: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
       'Den automatiske kontrollen av verktøyene godtar nå at appen stopper ved et spørsmål med den kontrollerte forklaringen, for eksempel ved lang behandlingstid, i stedet for å vente på beregningens senere stoppgrunn. Status for neste fase, de dosefleksible forløpene, er ført: den er ikke startet ennå.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.128.8',
+    dato: '2026-11-10',
+    sammendrag: 'Kontrollen av kildeovervåkingen er ikke lenger avhengig av dagens dato',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. To automatiske kontroller av kildeovervåkingen brukte faste datoer og begynte å feile da datoene ble mer enn en uke gamle. De regner nå tidene ut fra dagens dato, så de fortsetter å virke.',
     ],
     utenVarsel: true,
   },
