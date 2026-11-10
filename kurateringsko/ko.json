@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-10T17:26:40.281Z",
+  "oppdatert_kl": "2026-11-10T18:27:28.001Z",
   "malt_kl": "2026-11-10T17:26:40.281Z",
   "teller": 82,
   "stoffer": {
@@ -3640,17 +3640,11 @@
     "kodein": {
       "stoff": "kodein",
       "navn": "Kodein",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 366.9,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "2 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 32 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-10T17:26:41.281Z",
@@ -3666,7 +3660,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
+          "kl": "2026-11-10T18:27:28.001Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -6379,7 +6380,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-10T17:26:40.281Z",
+          "kl": "2026-11-10T18:27:28.001Z",
           "kilde": "system"
         }
       ],
