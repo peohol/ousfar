@@ -1,0 +1,603 @@
+{
+  "stoff": "duloksetin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-11T04:15:06.23416+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 8,
+    "hentet": 4,
+    "dokumenter": 3,
+    "mangler": [
+      {
+        "merkevare_id": "ID_4ED49881-5AFF-4F99-A630-F9480FCC63A2",
+        "varenavn": "Yentreve",
+        "navn_form_styrke": "Yentreve enterokaps 20 mg",
+        "produsent": "Eli Lilly",
+        "atc": "N06AX21",
+        "legemiddelform": "Enterokapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_76E3E502-0299-41E4-9893-C1DE38C08D09",
+        "varenavn": "Yentreve",
+        "navn_form_styrke": "Yentreve enterokaps 20 mg",
+        "produsent": "Lilly",
+        "atc": "N06AX21",
+        "legemiddelform": "Enterokapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AADEC01C-0F40-4219-843F-6C0736628073",
+        "varenavn": "Duloxetine Viatris",
+        "navn_form_styrke": "Duloxetine Viatris enterokaps 60 mg",
+        "produsent": "Viatris Limited",
+        "atc": "N06AX21",
+        "legemiddelform": "Enterokapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AEE92631-92EC-408C-BE89-5D62BE4430C8",
+        "varenavn": "Cymbalta",
+        "navn_form_styrke": "Cymbalta enterokaps 60 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N06AX21",
+        "legemiddelform": "Enterokapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 4 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 4,
+        "ikke_dmp": 0,
+        "uten_omtale": 4
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "4 av 8 preparater i FEST mangler en hentet preparatomtale fra DMP: 4 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 8,
+        "hentet": 4,
+        "mangler": 4,
+        "dokumenter": 3
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11637.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11637.pdf",
+      "hentet_kl": "2026-11-11T11:28:26.764Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "403915",
+        "content-md5": "KdiWv8Ka/LqZ54FODdK/tw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D713E56",
+        "date": "Wed, 11 Nov 2026 11:28:27 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_279EA715-4963-47C5-8D4F-24AE2C886B5C",
+          "varenavn": "Duloxetine Medical Valley",
+          "navn_form_styrke": "Duloxetine Medical Valley enterokaps 60 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N06AX21",
+          "legemiddelform": "Enterokapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11637.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (403915 byte).",
+          "antall": {
+            "bytes": 403915
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "ad5647c6a0d01c9aa5963a4d9a27e4a1eb0a44866d80bf0f98c2d28e3d092356"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10274.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10274.pdf",
+      "hentet_kl": "2026-11-11T11:28:35.387Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "320261",
+        "content-md5": "1Q4oY5s7rv/D2XZw9st+PA==",
+        "last-modified": "Fri, 30 Oct 2026 12:02:57 GMT",
+        "etag": "0x8DF367DBCD53869",
+        "date": "Wed, 11 Nov 2026 11:28:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_940A82B5-957F-4613-AB18-759D8BDC7A8C",
+          "varenavn": "Duloxetin Pensa",
+          "navn_form_styrke": "Duloxetin Pensa enterokaps 30 mg",
+          "produsent": "Pensa Pharma AB",
+          "atc": "N06AX21",
+          "legemiddelform": "Enterokapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10274.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (320261 byte).",
+          "antall": {
+            "bytes": 320261
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "671b41fa72c7d8cbd9c78fe35dc799a1e02a43c008d18be6a41865a15cd55f15"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10275.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10275.pdf",
+      "hentet_kl": "2026-11-11T11:28:44.770Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "388332",
+        "content-md5": "OhXRXdPvM45TdVhkc0ErZg==",
+        "last-modified": "Fri, 30 Oct 2026 12:02:54 GMT",
+        "etag": "0x8DF367DBB38E9AC",
+        "date": "Wed, 11 Nov 2026 11:28:45 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_97F8CCCE-44DB-4CE6-8701-3F697ADBB485",
+          "varenavn": "Duloxetin Pensa",
+          "navn_form_styrke": "Duloxetin Pensa enterokaps 60 mg",
+          "produsent": "Pensa Pharma AB",
+          "atc": "N06AX21",
+          "legemiddelform": "Enterokapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10275.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (388332 byte).",
+          "antall": {
+            "bytes": 388332
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "155a567b5e009ed8c448e7604fea52f8037df098690fff91248d024089abd55e"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11636.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11636.pdf",
+      "hentet_kl": "2026-11-11T11:28:54.106Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "403915",
+        "content-md5": "KdiWv8Ka/LqZ54FODdK/tw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793F1514A9",
+        "date": "Wed, 11 Nov 2026 11:28:54 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A4198A5D-E844-42E0-A0A1-9F7AB5DE3663",
+          "varenavn": "Duloxetine Medical Valley",
+          "navn_form_styrke": "Duloxetine Medical Valley enterokaps 30 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N06AX21",
+          "legemiddelform": "Enterokapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11636.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (403915 byte).",
+          "antall": {
+            "bytes": 403915
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "ad5647c6a0d01c9aa5963a4d9a27e4a1eb0a44866d80bf0f98c2d28e3d092356"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "ad5647c6a0d01c9aa5963a4d9a27e4a1eb0a44866d80bf0f98c2d28e3d092356",
+      "bytes": 403915,
+      "mappe": "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanen",
+        "laget": "Tue Sep  3 10:52:17 2024 UTC",
+        "endret": "Tue Sep  3 10:52:17 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/original.pdf",
+        "tekst": "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-001.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-002.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-003.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-004.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-005.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-006.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-007.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-008.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-009.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-010.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-011.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-012.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-013.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-014.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-015.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-016.txt",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-001.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-002.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-003.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-004.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-005.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-006.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-007.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-008.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-009.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-010.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-011.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-012.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-013.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-014.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-015.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-016.png",
+          "kuratorjobb/resultat/duloksetin/spc/ad5647c6a0d01c9a/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 45001
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "671b41fa72c7d8cbd9c78fe35dc799a1e02a43c008d18be6a41865a15cd55f15",
+      "bytes": 320261,
+      "mappe": "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "1 ANNEX I",
+        "laget": "Fri Oct 30 11:47:43 2026 UTC",
+        "endret": "Fri Oct 30 11:47:43 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/original.pdf",
+        "tekst": "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-001.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-002.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-003.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-004.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-005.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-006.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-007.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-008.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-009.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-010.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-011.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-012.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-013.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-014.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-015.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-016.txt",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-001.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-002.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-003.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-004.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-005.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-006.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-007.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-008.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-009.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-010.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-011.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-012.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-013.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-014.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-015.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-016.png",
+          "kuratorjobb/resultat/duloksetin/spc/671b41fa72c7d8cb/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 44360
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "155a567b5e009ed8c448e7604fea52f8037df098690fff91248d024089abd55e",
+      "bytes": 388332,
+      "mappe": "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8",
+      "pdf": {
+        "sider": 18,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "1 ANNEX I",
+        "laget": "Fri Oct 30 11:47:43 2026 UTC",
+        "endret": "Fri Oct 30 11:47:43 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/original.pdf",
+        "tekst": "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-001.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-002.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-003.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-004.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-005.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-006.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-007.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-008.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-009.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-010.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-011.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-012.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-013.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-014.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-015.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-016.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-017.txt",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/tekst/side-018.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-001.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-002.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-003.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-004.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-005.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-006.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-007.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-008.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-009.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-010.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-011.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-012.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-013.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-014.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-015.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-016.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-017.png",
+          "kuratorjobb/resultat/duloksetin/spc/155a567b5e009ed8/sider/side-018.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (18 sider).",
+          "antall": {
+            "sider": 18
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 44907
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 18
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

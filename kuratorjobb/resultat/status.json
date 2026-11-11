@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-43012143687",
     "foresporsel_commit": "ad10fccf65b20ac70277aff55737d2905d10f833",
     "foresporsel_sha256": "b1a103871dacd672ffa075087e0a3f0fd1a2c54432ca87de0e08825036ecf447",
     "kode_commit": "0b89aadf8e5da9af0a33033476a829e1b286fd55",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/43012143687",
-    "startet_kl": "2026-11-11T11:28:20.860Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-11T11:28:23.209Z",
+    "ferdig_kl": "2026-11-11T11:29:10.167Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "duloksetin",
+      "klonazepam"
+    ],
+    "oppgaver": [
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 249
+    }
+  ],
+  "stoffer": {
+    "duloksetin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/duloksetin/spc.json"
+        }
+      }
+    },
+    "klonazepam": {
+      "status": "advarsel",
+      "oppgaver": {
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/klonazepam/spc.json"
+        }
+      }
+    }
+  }
 }

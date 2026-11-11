@@ -1,0 +1,481 @@
+{
+  "stoff": "klonazepam",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-11T04:15:06.23416+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 5,
+    "hentet": 3,
+    "dokumenter": 3,
+    "mangler": [
+      {
+        "merkevare_id": "ID_6F1748C4-3B9C-4629-8FBD-85A0A284E73E",
+        "varenavn": "Rivotril",
+        "navn_form_styrke": "Rivotril kons+væske til inj oppl 1 mg/ml",
+        "produsent": "Cheplapharm",
+        "atc": "N03AE01",
+        "legemiddelform": "Konsentrat og væske til injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_ED5CDFDC-0744-42C2-B833-7A835D074E98",
+        "varenavn": "Rivotril",
+        "navn_form_styrke": "Rivotril dråper, oppl 2,5 mg/ml",
+        "produsent": "Roche (2)",
+        "atc": "N03AE01",
+        "legemiddelform": "Dråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 3 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 3,
+        "ikke_dmp": 0,
+        "uten_omtale": 2
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "2 av 5 preparater i FEST mangler en hentet preparatomtale fra DMP: 2 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 5,
+        "hentet": 3,
+        "mangler": 2,
+        "dokumenter": 3
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13754.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13754.pdf",
+      "hentet_kl": "2026-11-11T11:28:56.483Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "303868",
+        "content-md5": "HF8GVRVFD/Sj6RclYY5inA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE5379403A0960",
+        "date": "Wed, 11 Nov 2026 11:28:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_07971EAD-E217-48E9-B126-DBC131025D6A",
+          "varenavn": "Iqtopam",
+          "navn_form_styrke": "Iqtopam kons til inj/inf oppl 1 mg/ml",
+          "produsent": "XGX Pharma ApS",
+          "atc": "N03AE01",
+          "legemiddelform": "Konsentrat til injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13754.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (303868 byte).",
+          "antall": {
+            "bytes": 303868
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "55c1f701ab7aea058948dcc5c4e2a959cc937a68d21e9f0163beccf4a6dd9f2b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05977.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05977.pdf",
+      "hentet_kl": "2026-11-11T11:29:01.647Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "66192",
+        "content-md5": "BUQxPBz2L1Vw/uULcrvX9w==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:46 GMT",
+        "etag": "0x8DE53793A4EC76E",
+        "date": "Wed, 11 Nov 2026 11:29:02 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0C255083-DDC7-4760-A725-84618ABC7271",
+          "varenavn": "Rivotril",
+          "navn_form_styrke": "Rivotril tab 2 mg",
+          "produsent": "Cheplapharm Arzneimittel GmbH",
+          "atc": "N03AE01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05977.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (66192 byte).",
+          "antall": {
+            "bytes": 66192
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "df0b669424c5644aea717b1b09d6b805f3ac9e9997c8f6f3c311db515f653456"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05976.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05976.pdf",
+      "hentet_kl": "2026-11-11T11:29:06.223Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "66238",
+        "content-md5": "NXleGP/OdGF6g46reApcCg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379412CD1CB",
+        "date": "Wed, 11 Nov 2026 11:29:06 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2C085ED5-07EA-4278-8A96-3E2BE5061E0A",
+          "varenavn": "Rivotril",
+          "navn_form_styrke": "Rivotril tab 0,5 mg",
+          "produsent": "Cheplapharm Arzneimittel GmbH",
+          "atc": "N03AE01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05976.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (66238 byte).",
+          "antall": {
+            "bytes": 66238
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d89564afad262c91e3635cf2c5cb20db9ad14f58fb69873a5ab0436589dcf347"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "55c1f701ab7aea058948dcc5c4e2a959cc937a68d21e9f0163beccf4a6dd9f2b",
+      "bytes": 303868,
+      "mappe": "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Tue Nov 26 07:40:42 2024 UTC",
+        "endret": "Tue Nov 26 07:40:42 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/original.pdf",
+        "tekst": "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-001.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-002.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-003.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-004.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-005.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-006.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-007.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-008.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-009.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-010.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-011.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-012.txt",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-001.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-002.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-003.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-004.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-005.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-006.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-007.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-008.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-009.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-010.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-011.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-012.png",
+          "kuratorjobb/resultat/klonazepam/spc/55c1f701ab7aea05/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 29103
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "df0b669424c5644aea717b1b09d6b805f3ac9e9997c8f6f3c311db515f653456",
+      "bytes": 66192,
+      "mappe": "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "1",
+        "laget": "Tue Oct  5 08:23:04 2021 UTC",
+        "endret": "Tue Oct  5 08:23:04 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/original.pdf",
+        "tekst": "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-001.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-002.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-003.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-004.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-005.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-006.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-007.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-008.txt",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-001.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-002.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-003.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-004.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-005.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-006.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-007.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-008.png",
+          "kuratorjobb/resultat/klonazepam/spc/df0b669424c5644a/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20452
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "d89564afad262c91e3635cf2c5cb20db9ad14f58fb69873a5ab0436589dcf347",
+      "bytes": 66238,
+      "mappe": "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "1",
+        "laget": "Tue Oct  5 08:20:41 2021 UTC",
+        "endret": "Tue Oct  5 08:20:41 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/original.pdf",
+        "tekst": "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-001.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-002.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-003.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-004.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-005.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-006.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-007.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-008.txt",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-001.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-002.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-003.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-004.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-005.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-006.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-007.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-008.png",
+          "kuratorjobb/resultat/klonazepam/spc/d89564afad262c91/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20452
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

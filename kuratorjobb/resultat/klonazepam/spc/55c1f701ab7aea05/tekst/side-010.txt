@@ -1,0 +1,56 @@
+distribusjonsvolumet til klonazepam er anslått å være ca. 3 l/kg. Plasmaproteinbindingen til klonazepam er
+82–86 %.
+
+Biotransformasjon
+Biotransformasjonen av klonazepam involverer oksidativ hydroksylering ved C3-posisjonen og reduksjon
+av 7-nitrogruppen med dannelse via 7-amino til 7-acetylaminforbindelser. Hepatisk cytokrom P-450 3A4 er
+involvert i nitroreduksjonen av klonazepam til farmakologisk inaktive metabolitter. Hovedmetabolitten er 7-
+amino-klonazepam, som viste kun lav antikonvulserende aktivitet i eksperimenter. Fire ytterligere
+sekundære metabolitter er blitt identifisert.
+
+Eliminasjon
+Gjennomsnittlig halveringstid for eliminasjon er 30–40 timer. Clearance er 55 ml/min.
+Eliminasjonshastigheten hos barn er lik den som ble observert hos voksne.
+
+Av total radioaktivitet i radiomerket oral dose ble 50–70 % av klonazepam utskilt i urin og 10–30 % i feces,
+så å si utelukkende i form av frie eller konjugerte metabolitter. Mindre enn 2 % uendret klonazepam
+forekommer i urin. Metabolittene er tilstedeværende i urinen, både som frie og konjugerte (glukuronid og
+sulfat) forbindelser.
+
+Spesielle populasjoner
+
+Pasienter med nyresvikt
+Nyresykdommer påvirker ikke farmakokinetikken til klonazepam. Basert på kinetiske kriterier kreves det
+ikke noen dosejustering hos pasienter med nyresvikt.
+
+Pasienter med leversvikt
+Det er ikke undersøkt hvorvidt leversvikt har innvirkning på farmakokinetikken til klonazepam.
+
+Eldre
+Farmakokinetikken til klonazepam hos eldre har ikke blitt fastslått.
+
+Pediatrisk populasjon
+Generelt er eliminasjonshastigheten hos barn lik den som ble observert hos voksne. Etter at det var gitt
+terapeutiske doser til barn (0,03–0,11 mg/kg), lå serumkonsentrasjonene innenfor det samme området
+(13–72 ng/ml) som de effektive konsentrasjonene hos voksne.
+
+Hos nyfødte barn resulterte doser på 0,10 mg/kg i konsentrasjoner på 28–117 ng/ml på slutten av en
+kort infusjon, og 30 minutter senere gikk de ned til 18–60 ng/ml. Hos nyfødte var clearance-verdiene
+avhengige av postnatal alder. Begrensede data indikerer at eliminasjonshalveringstiden per kilogram
+kroppsvekt hos for tidlig fødte og terminfødte spedbarn (gestasjonsalder 28–42 uker, postnatal alder
+0,5–44 dager) kan sammenliknes med det som er blitt rapportert hos voksne.
+
+Hos barn ble det rapportert clearance-verdier på 0,42 ± 0,32 ml/min/kg (alder 2–18 år) og 0,88 ±
+0,4 ml/min/kg (alder 7–12 år). Disse verdiene sank ved økende kroppsvekt. Ketogen diett hos barn har ingen
+innvirkning på konsentrasjonene av klonazepam.
+
+5.3   Prekliniske sikkerhetsdata
+
+Karsinogenitet
+Det er ikke blitt gjennomført 2-års karsinogenitetsstudier av klonazepam. I en 18-måneders klinisk studie
+hos rotter ble det imidlertid ikke observert behandlingsrelaterte histopatologiske endringer opp til den
+høyeste testede dosen på 300 mg/kg/dag.
+
+Mutagenisitet
+Gentoksisitetstester ved bruk av bakterielle systemer med in vitro eller vertsmediert metabolsk aktivering
+indikerte ikke en gentoksisk sannsynlighet for klonazepam.

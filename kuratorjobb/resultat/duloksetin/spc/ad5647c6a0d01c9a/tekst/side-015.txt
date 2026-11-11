@@ -1,0 +1,59 @@
+Biotransformasjon
+Duloksetin metaboliseres i utstrakt grad, og metabolittene utskilles hovedsakelig i urin. Begge cytokromene
+P450-2D6 og 1A2 katalyserer dannelsen av de to hovedmetabolittene glukuronidkonjugat av 4-hydroksy-
+duloksetin og sulfatkonjugat av 5-hydroksy- 6-metoksy-duloksetin. På bakgrunn av in vitro-studier, betraktes
+duloksetins sirkulerende metabolitter som farmakologisk inaktive. Duloksetins farmakokinetikk er ikke
+spesielt undersøkt hos pasienter som er langsomme omsettere (poor metabolisers) av CYP2D6. Begrensede
+data tyder på at plasmanivået av duloksetin er høyere hos disse pasientene.
+
+Eliminasjon
+Halveringstiden for duloksetin varierer fra 8–17 timer (gjennomsnitt 12 timer). Etter intravenøs dosering
+varierer duloksetins plasmaclearance fra 22 liter/time til 46 liter/time (gjennomsnitt 36 liter/time). Etter
+peroral dosering varierer tilsynelatende plasmaclearance for duloksetin fra 36–261 liter/time (gjennomsnitt
+101 liter/time).
+
+Spesielle pasientgrupper
+
+Kjønn: Det er funnet farmakokinetiske forskjeller mellom menn og kvinner (tilsynelatende plasmaclearance
+er omtrent 50 % lavere hos kvinner). Basert på overlappende verdier for clearance, rettferdiggjør ikke
+kjønnsbaserte farmakokinetiske forskjeller anbefaling av lavere dosering til kvinnelige pasienter.
+
+Alder: Det er funnet farmakokinetiske forskjeller mellom yngre og eldre kvinner (≥65 år). AUC økes med ca.
+25 % og halveringstiden forlenges ca. 25 % hos eldre. Størrelsesordenen for disse forandringene er ikke
+tilstrekkelig til å anbefale dosejusteringer. En generell anbefaling er å vise forsiktighet ved behandling av
+eldre (se pkt. 4.2 og 4.4).
+
+Nedsatt nyrefunksjon: Pasienter med terminal nyresykdom (ESRD) i dialysebehandling som fikk duloksetin,
+hadde doblet Cmax og AUC sammenlignet med friske personer. Farmakokinetiske data for duloksetin er
+begrenset hos pasienter med lett til moderat nedsatt nyrefunksjon.
+
+Nedsatt leverfunksjon: Moderat leversykdom (Child-Pugh klasse B) påvirket duloksetins farmakokinetikk.
+Sammenlignet med friske personer var den tilsynelatende plasmaclearance for duloksetin 79 % lavere, den
+tilsynelatende terminale halveringstiden 2,3 ganger lenger, og AUC 3,7 ganger høyere hos pasienter med
+moderat leversykdom. Det er ikke foretatt studier av farmakokinetikken til duloksetin og dets metabolitter
+hos pasienter med lett eller alvorlig nedsatt leverfunksjon.
+
+Ammende mødre: Fordelingen av duloksetin ble studert hos 6 ammende kvinner som var minst 12 uker post-
+partum. Duloksetin kan spores i brystmelk, og steady-state-konsentrasjoner i brystmelk er omtrent en
+fjerdedel av plasmakonsentrasjonen. Duloksetinmengden i brystmelk er omtrent 7 mikrog/dag ved en
+dosering på 40 mg to ganger daglig. Amming påvirker ikke farmakokinetikken til duloksetin.
+
+Pediatrisk populasjon: Farmakokinetikken til duloksetin hos pediatriske pasienter i alderen 7 til 17 år med
+alvorlig depresjon etter peroral administrering av 20 mg til 120 mg én gang daglig, ble karakterisert ved å
+benytte populasjonsmodelleringsanalyser basert på data fra 3 studier. Steady state plasmakonsentrasjon av
+duloksetin hos pediatriske pasienter beregnet iflg. modell, var i de fleste tilfeller innenfor
+konsentrasjonsområdet observert hos voksne pasienter.
+
+5.3   Prekliniske sikkerhetsdata
+
+Duloksetin var ikke gentoksisk i en rekke standardtester og var ikke karsinogent hos rotter. Hos rotte er det i
+karsinogenitetsstudier observert flerkjernede celler i lever ved fravær av andre histopatologiske endringer.
+Den underliggende mekanismen og klinisk relevans er ukjent. Hunnmus som fikk duloksetin i 2 år, viste økt
+insidens av hepatocellulære adenomer og karsinomer kun ved høyeste dosering (144 mg/kg/dag), men disse
+ble ansett å være sekundære til den mikrosomale enzyminduksjon i leveren. Relevansen av disse funnene fra
+mus i forhold til mennesker er ukjent. Hunnrotter som fikk duloksetin (45 mg/kg/dag) før og under parring
+og i tidlig drektighet, hadde nedsatt matinntak og kroppsvekt, avbrutt brunstsyklus, nedsatt indeks for
+levendefødsler og overlevelse hos avkom, samt forsinket vekst hos avkommet estimert til å være på sitt
+høyeste ved systemisk eksponeringsnivå (AUC) tilsvarende maksimalt klinisk nivå. En
+
+                                                     15

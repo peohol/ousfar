@@ -1,0 +1,59 @@
+Duloxetin Pensa harde enterokapsler inneholder sukrose. Pasienter med sjeldne arvelige lidelser som
+fruktoseintoleranse, glukose-galaktose-malabsorpsjon eller sukrose-isomaltase-svikt bør ikke ta dette
+legemidlet.
+
+Natrium
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver kapsel, og er så godt som
+“natriumfritt”.
+
+4.5   Interaksjoner med andre legemidler og andre former for interaksjoner
+
+Monoaminoksydasehemmere (MAO-hemmere): På grunn av risiko for serotonergt syndrom bør
+duloksetin ikke anvendes i kombinasjon med ikke-selektive irreversible monoaminoksidasehemmere
+(MAO-hemmere) eller før minst 14 dager etter avsluttet behandling med en MAO-hemmer. Basert på
+duloksetins halveringstid, bør det gå minst 5 dager fra avsluttet behandling med Duloxetin Pensa til
+start av behandling med en MAO-hemmer (se pkt. 4.3).
+Samtidig bruk av Duloxetin Pensa og selektive, reversible MAO-hemmere som moklobemid,
+anbefales ikke (se pkt. 4.4). Linezolid, et antibiotikum, er en reversibel ikke-selektiv MAO-hemmer og
+bør ikke gis til pasienter som behandles med Duloxetin Pensa (se pkt. 4.4).
+
+CYP1A2-hemmere: CYP1A2 er involvert i metaboliseringen av duloksetin og samtidig bruk av
+duloksetin og potente CYP1A2-inhibitorer vil sannsynligvis resultere i høyere konsentrasjon av
+duloksetin. Fluvoksamin (100 mg èn gang daglig), en potent CYP1A2-hemmer, reduserte den
+tilsynelatende plasmaclearance for duloksetin med omtrent 77 % og økte AUC0-t 6 ganger.
+Behandling med Duloxetin Pensa bør derfor ikke kombineres med potente CYP1A2-hemmere som
+fluvoksamin (se pkt. 4.3).
+
+CNS-legemidler: Risikoen ved kombinasjon av duloksetin og andre CNS-aktive legemidler er ikke
+systematisk undersøkt, unntatt de som er beskrevet under dette punktet. Det anbefales derfor å utvise
+forsiktighet når Duloxetin Pensa tas sammen med andre sentralstimulerende legemidler eller
+substanser, inkludert alkohol og sederende legemidler (f.eks. benzodiazepiner, morfinmimetika,
+antipsykotika, fenobarbital, sederende antihistaminer).
+
+Serotonerge legemidler: Det er i sjeldne tilfeller rapportert om serotonergt syndrom hos pasienter som
+får behandling med SSRI/SNRI-legemidler i kombinasjon med andre serotonerge legemidler. Det
+anbefales forsiktighet hvis Duloxetin Pensa anvendes sammen med serotonerge legemidler som SSRI-
+legemidler, SNRI-legemidler, trisykliske antidepressiva som klomipramin eller amitriptylin, MAO-
+hemmere som moklobemid eller linezolid, johannesurt (Hypericum perforatum), triptaner, tramadol,
+petidin og tryptofan eller buprenorfin (se pkt. 4.4).
+
+Duloksetins virkning på andre legemidler
+Legemidler metabolisert via CYP1A2: Farmakokinetikken til teofyllin, et CYP1A2-substrat, ble ikke
+signifikant påvirket ved samtidig administrering av duloksetin (60 mg to ganger daglig).
+
+Legemidler metabolisert via CYP2D6: Duloksetin er en moderat CYP2D6-inhibitor. Duloksetin gitt
+som 60 mg 2 ganger daglig sammen med en enkeltdose av desipramin, et CYP2D6-substrat, medførte
+en 3-dobling av AUC for desipramin. Samtidig bruk av duloksetin (40 mg to ganger daglig) øker
+steady-state AUC for tolterodin (2 mg to ganger daglig) med 71 %, men påvirker ikke
+farmakokinetikken for tolterodins aktive 5-hydroksymetabolitt, og det anbefales ingen dosejustering.
+Forsiktighet anbefales ved administrasjon av Duloxetin Pensa sammen med legemidler som
+hovedsakelig metaboliseres via CYP2D6 (risperidon, tricykliske antidepressiva [TCA], som
+nortriptilin, amitryptilin og imipramin), spesielt dersom disse legemidlene har et smalt terapeutisk
+vindu (som flekainid, propafenon og metoprolol).
+
+Orale antikonseptiva og andre steroider: Resultater fra in vitro-studier viser at duloksetin ikke
+induserer CYP3As katalytiske aktivitet. Det er ikke utført spesifikke in vivo-interaksjonsstudier.
+
+
+
+                                                   6

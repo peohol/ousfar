@@ -1,0 +1,59 @@
+man i gjennomsnitt for disse pasientene en trend mot vekt innenfor forventet basislinje vektpersentil,
+basert på populasjonsdata fra alders- og kjønnsmatchede kontroller.
+
+I studier på inntil 9 måneder ble en total gjennomsnittlig 1 % reduksjon i høydepersentil (reduksjon på
+2 % hos barn (7-11 år) og en økning på 0,3 % hos ungdom (12- 17 år)) observert hos pediatriske
+pasienter behandlet med duloksetin.
+
+Melding av mistenkte bivirkninger
+
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9   Overdosering
+
+Det er rapportert tilfeller av overdosering, alene eller i kombinasjon med andre legemidler, med
+duloksetindoser på 5400 mg. Det har forekommet dødsfall, og da hovedsakelig med en kombinasjon
+av overdoser, men også med duloksetin alene i en dose på ca. 1000 mg. Tegn og symptomer på
+overdosering (duloksetin alene eller i kombinasjon med andre legemidler) omfatter somnolens, koma,
+serotonergt syndrom, kramper, brekninger og takykardi.
+
+Det er ingen kjent antidot mot duloksetin, men dersom serotonergt syndrom skulle oppstå, kan
+spesifikk behandling overveies (som cyproheptadin og/eller temperaturregulering). Det skal etableres
+frie luftveier. Det anbefales å monitorere hjertefunksjon og andre vitale funksjoner, samt etablere
+passende symptomatiske og understøttende behandling. Ventrikkelskylling kan være indisert dersom
+denne foretas kort etter inntak eller hos pasienter med symptomer. Aktivt kull kan være nyttig til
+begrensning av absorpsjon. Duloksetin har et stort distribusjonsvolum, og forsert diurese,
+hemoperfusjon og utskiftningstransfusjon har sannsynligvis ingen hensikt.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre antidepressiva. ATC-kode: N06AX21.
+
+Virkningsmekanisme
+Duloksetin er en kombinert serotonin (5-HT)- og noradrenalin (NA)-reopptakshemmer. Det hemmer
+svakt reopptaket av dopamin uten signifikant affinitet for histaminerge, dopaminerge, kolinerge og
+adrenerge reseptorer. Duloksetin gir en doseavhengig økning av ekstracellulære nivåer av serotonin og
+noradrenalin i forskjellige områder i hjernen hos dyr.
+
+Farmakodynamiske effekter
+Duloksetin normaliserte smerteterskelen i flere prekliniske modeller for nevropatisk og inflammatorisk
+smerte og dempet smerteadferden i en modell for vedvarende smerte. Den smertehemmende
+virkningen av duloksetin antas å være et resultat av potensering av nedadgående hemmende
+smertebaner i det sentrale nervesystem.
+
+Klinisk effekt og sikkerhet
+Depressive lidelser: Duloksetin er undersøkt i et klinisk utprøvningsprogram hos 3158 pasienter (1285
+pasientår) som oppfylte DSM-IV kriteriene for depressiv episode. Effekten av duloksetin ved anbefalt
+dose på 60 mg en gang daglig er vist i tre av tre mulige randomiserte, dobbeltblinde,
+placebokontrollerte, fast dose akuttstudier hos voksne hjemmeboende med depressive episoder. Totalt er
+duloksetins effekt vist ved daglige doser mellom 60 og 120 mg i fem av totalt syv randomiserte,
+dobbeltblinde, placebokontrollerte, fast dose akuttstudier hos voksne med depressiv episode.
+
+
+                                                  12

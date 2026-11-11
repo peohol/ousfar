@@ -1,0 +1,59 @@
+Natrium
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver kapsel, og er så godt som
+“natriumfritt”
+
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Monoaminoksidasehemmere (MAO-hemmere): På grunn av risiko for serotonergt syndrom, bør duloksetin
+ikke brukes i kombinasjon med ikke-selektive irreversible monoaminoksidasehemmere (MAO-hemmere)
+eller før det er gått minst 14 dager etter avsluttet behandling med en MAO-hemmer. Basert på
+halveringstiden av duloksetin, bør det gå minst 5 dager fra seponering av duloksetin til behandlingsstart med
+en MAO-hemmer (se pkt. 4.3).
+
+Samtidig bruk av Duloxetine Medical Valley og selektive, reversible MAO-hemmere som moklobemid,
+anbefales ikke (se pkt. 4.4). Antibiotikaet Linezolid er en reversibel ikke-selektiv MAO-hemmer og bør ikke
+gis til pasienter som behandles med duloksetin (se pkt. 4.4).
+
+CYP1A2-hemmere: Siden CYP1A2 er involvert i metaboliseringen av duloksetin, vil samtidig bruk av
+duloksetin og potente CYP1A2-inhibitorer sannsynligvis resultere i høyere konsentrasjon av duloksetin.
+Fluvoksamin (100 mg én gang daglig), en potent CYP1A2-hemmer, reduserte tilsynelatende
+plasmaclearance for duloksetin med omtrent 77 % og økte AUCo-t 6 ganger. Behandling med duloksetin bør
+derfor ikke kombineres med potente CYP1A2-hemmere som fluvoksamin (se pkt. 4.3).
+
+Legemidler som påvirker sentralnervesystemet (CNS-legemidler): Risikoen ved kombinasjon av duloksetin
+og andre CNS-aktive legemidler er ikke systematisk undersøkt, unntatt de som er beskrevet i dette punktet.
+Det anbefales derfor å utvise forsiktighet når duloksetin brukes sammen med andre sentraltvirkende
+legemidler eller substanser, inkludert alkohol og sederende legemidler (f.eks. benzodiazepiner,
+morfinmimetika, antipsykotika, fenobarbital, sedative antihistaminer).
+
+Serotonerge legemidler: Det er i sjeldne tilfeller rapportert om serotonergt syndrom hos pasienter som får
+behandling med SSRI/SNRI i kombinasjon med andre serotonerge legemidler. Det anbefales forsiktighet
+hvis duloksetin brukes sammen med serotonerge legemidler som SSRI, SNRI, trisykliske antidepressiva som
+klomipramin eller amitriptylin, MAO-hemmere som moklobemid eller linezolid, Johannesurt (Hypericum
+perforatum) eller triptaner, tramadol, petidin og tryptofan (se pkt. 4.4).
+
+Duloksetins effekt på andre legemidler
+
+Legemidler metabolisert via CYP1A2: Farmakokinetikken til teofyllin, et CYP1A2-substrat, ble ikke
+signifikant påvirket ved samtidig administrering av duloksetin (60 mg to ganger daglig).
+
+Legemidler metabolisert via CYP2D6: Duloksetin er en moderat CYP2D6-hemmer. Duloksetin gitt som
+60 mg to ganger daglig sammen med en enkeltdose av desipramin, et CYP2D6-substrat, medførte 3 ganger
+høyere AUC for desipramin. Samtidig bruk av duloksetin (40 mg to ganger daglig) øker steady-state AUC
+for tolterodin (2 mg to ganger daglig) med 71 %, men påvirker ikke farmakokinetikken til tolterodins aktive
+5-hydroksymetabolitt, og det anbefales ingen dosejustering. Forsiktighet anbefales ved samtidig
+administrering av duloksetin med legemidler som hovedsakelig metaboliseres via CYP2D6 (risperidon,
+trisykliske antidepressiva (TCA), som nortriptilin, amitryptilin og imipramin), spesielt dersom disse
+legemidlene har et smalt terapeutisk vindu (som flekainid, propafenon og metoprolol).
+
+Perorale antikonseptiva og andre steroider: Resultater fra studier in vitro viser at duloksetin ikke induserer
+CYP3As katalytiske aktivitet. Det er ikke utført spesifikke interaksjonsstudier in vivo.
+
+Antikoagulasjonsmidler og antiblodplatemidler: Det bør utvises forsiktighet når duloksetin kombineres med
+perorale antikoagulasjonsmidler eller antiblodplatemidler, på grunn av en potensiell økt blødningsrisiko som
+kan tilskrives en farmakodynamisk interaksjon. Det er videre rapportert en økning av INR (internasjonalt
+normalisert forholdstall) når duloksetin ble administrert til pasienter som samtidig ble behandlet med
+warfarin. Samtidig administrering av duloksetin og warfarin ved steady-state hos friske frivillige som del av
+
+                                                     6
