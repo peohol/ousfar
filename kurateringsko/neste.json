@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-11T10:26:11.902Z",
+  "oppdatert_kl": "2026-11-11T11:26:05.497Z",
   "malt_kl": "2026-11-10T17:26:40.281Z",
   "antall": {
     "klar": 97,
@@ -164,7 +164,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-11T10:26:11.902Z",
+          "kl": "2026-11-11T11:26:05.497Z",
           "kilde": "system"
         }
       ]
@@ -186,7 +186,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-11T10:26:11.902Z",
+          "kl": "2026-11-11T11:26:05.497Z",
           "kilde": "system"
         }
       ]
@@ -197,7 +197,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-11T10:26:11.902Z",
+          "kl": "2026-11-11T11:26:05.497Z",
           "kilde": "system"
         }
       ]
