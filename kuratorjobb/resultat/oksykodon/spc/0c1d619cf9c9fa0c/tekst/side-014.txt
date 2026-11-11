@@ -1,0 +1,47 @@
+i døgndoser mellom 10 mg/5 mg og 80 mg/40 mg oksykodonhydroklorid/naloksonhydroklorid. Bivirkninger
+forbundet med oksykodon/nalokson brukt mot smerter, men som ikke er observert i RLS-studiepopulasjonen, er
+tilføyd med frekvens ikke kjent.
+ Organklassesystem       Svært vanlige     Vanlige             Mindre vanlige       Ikke kjent
+ MedDRA
+ Forstyrrelser i                                                                    Overfølsomhet
+ immunsystemet
+ Stoffskifte- og                           Nedsatt appetitt,
+ ernæringsbetingede                        inkludert tap av
+ sykdommer                                 appetitt
+ Psykiatriske lidelser                     Søvnløshet          Nedsatt libido       Unormal tankegang
+                                           Depresjon           Søvnanfall           Angst
+                                                                                    Forvirring
+                                                                                    Nervøsitet
+                                                                                    Rastløshet
+                                                                                    Euforisk humør
+                                                                                    Hallusinasjoner
+                                                                                    Mareritt
+                                                                                    Aggresjon
+                                                                                    Legemiddelavhengighet
+ Nevrologiske-           Hodepine          Svimmelhet      Dysgeusi                 Kramper1
+ sykdommer               Søvnighet         Oppmerksomhets-                          Sedasjon
+                                           forstyrrelser                            Taleforstyrrelser
+                                           Tremor                                   Synkope
+                                           Parestesi                                Letargi
+ Øyesykdommer                              Svekket syn
+ Sykdommer i øre og                        Vertigo
+ labyrint
+ Hjertesykdommer                                                                    Angina pectoris2
+                                                                                    Palpitasjoner
+                                                                                    Takykardi
+ Karsykdommer                              Hetetokter
+                                           Blodtrykksfall
+                                           Blodtrykksøkning
+ Sykdommer i                                                   Dyspné               Hoste
+ respirasjonsorganer,                                                               Rhinoré
+ thorax og mediastinum                                                              Respirasjonsdepresjon
+                                                                                    Gjesping
+ Gastrointestinale       Forstoppelse      Magesmerter         Flatulens            Abdominal distensjon
+ sykdommer               Kvalme            Munntørrhet                              Diaré
+                                           Oppkast                                  Dyspepsi
+                                                                                    Raping
+                                                                                    Tannproblemer
+ Sykdommer i lever og                      Økte                                     Galleveiskolikk
+ galleveier                                leverenzymer3
+ Hud- og                 Hyperhidrose      Kløe
+ underhudssykdommer                        Hudreaksjoner

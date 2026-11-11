@@ -1,0 +1,52 @@
+Sykdommer i lever og galleveier
+Oksykodon kan forårsake dysfunksjon og spasmer i Oddis sfinkter og dermed øke risikoen for
+galleveissymptomer og pankreatitt. Derfor må oksykodon/nalokson administreres med forsiktighet hos
+pasienter med pankreatitt og sykdommer i galleveiene.
+
+Bruk av Targiniq kan gi positive resultater i dopingkontroller.
+Bruk av Targiniq som dopingmiddel kan medføre helsefare.
+
+Dette legemidlet inneholder laktose. Pasienter med sjeldne arvelige problemer med galaktoseintoleranse,
+total laktasemangel eller glukose-galaktosemalabsorpsjon bør ikke ta Targiniq.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig bruk av opioider og sedativa, for eksempel benzodiazepiner eller relaterte legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av en additiv CNS-depressiv effekt. Dosen
+og varigheten av samtidig bruk bør begrenses (se pkt. 4.4)
+Legemidler som hemmer CNS inkluderer, men er ikke begrenset til, andre opioider, gabapentinoider slik
+som pregabalin, anxiolytika, hypnotika og sedativa (inkludert benzodiazepiner), antidepressiva,
+antipsykotika, antihistaminer og antiemetika.
+
+Samtidig administrering av oksykodon og antikolinergika eller legemidler med antikolinerg aktivitet (f.eks.
+trisykliske antidepressiva, antihistaminer, antipsykotika, muskelavslappende midler, legemidler mot
+Parkinsons sykdom) kan føre til økte antikolinerge bivirkninger.
+
+Targiniq skal administreres med forsiktighet hos pasienter som bruker MAO-hemmere eller som har tatt
+MAO-hemmere de siste to ukene.
+
+Samtidig bruk av oksykodon og serotonerge legemidler, som en selektiv serotoninreopptakshemmer (SSRI)
+eller en serotonin- og noradrenalinreopptakshemmer (SNRI), kan forårsake serotonintoksisitet. Symptomene
+på serotonintoksisitet kan inkludere endringer i mental status (f.eks. agitasjon, hallusinasjoner, koma),
+autonome forstyrrelser (f.eks. takykardi, ustabilt blodtrykk, hypertermi), nevromuskulære avvik (f.eks.
+hyperrefleksi, koordinasjonsproblemer, stivhet) og/eller gastrointestinale symptomer (f.eks. kvalme, oppkast,
+diaré). Oksykodon skal brukes med forsiktighet hos pasienter som bruker disse legemidlene. Hos enkelte
+pasienter kan det være behov for dosereduksjon.
+
+Alkohol kan øke de farmakodynamiske effektene til Targiniq; samtidig bruk bør unngås.
+
+Klinisk relevante endringer i INR (International Normalized Ratio) eller Quick-verdi i begge retninger er sett
+hos individer som samtidig har fått oksykodon og kumarin-antikoagulantia.
+
+Oksykodon metaboliseres hovedsakelig via CYP3A4 og delvis via CYP2D6 (se pkt. 5.2). Aktiviteten til
+disse metabolismeveiene kan hemmes eller induseres av forskjellige legemidler og kostelementer som inntas
+samtidig. Det kan derfor være nødvendig å justere Targiniqdosen.
+
+CYP3A4-hemmere, som makrolidantibiotika (f.eks. klaritromycin, erytromycin, telitromycin), antimykotika
+av azoltypen (f.eks. ketokonazol, vorikonazol, itrakonazol, posakonazol), proteasehemmere (f.eks. ritonavir,
+indinavir, nelfinavir, sakinavir), cimetidin og grapefruktjuice kan gi redusert clearance av oksykodon og
+medføre økt plasmakonsentrasjon av oksykodon. Reduksjon av dosen av disse tablettene og påfølgende
+retitrering kan være nødvendig.
+
+CYP3A4-induserende midler, som rifampicin, karbamazepin, fenytoin og johannesurt, kan indusere
+oksykodons metabolisme og gi økt clearance av legemidlet, noe som medfører redusert plasmakonsentrasjon

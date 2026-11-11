@@ -1,0 +1,57 @@
+Pediatrisk populasjon
+Reltebon Depot anbefales ikke til bruk hos barn under 12 år på grunn av utilstrekkelig data på sikkerhet og
+effekt.
+
+Hjelpestoffer
+Laktose
+Pasienter med sjeldne arvelige problemer med galaktoseintoleranse, total laktasemangel eller glukose-
+galaktose malabsorpsjon bør ikke ta dette legemidlet.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen for
+sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose og
+varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Legemidler som hemmer CNS inkluderer, men er ikke begrenset til: andre opioider, gabapentinoider som
+pregabalin, anxiolytika, hypnotika og sedativa (inkl. benzodiazepiner), antipsykotika, antidepressiva,
+fentiaziner, nevroleptika, anestetika, muskelrelaksantia, antihistaminer, antiemetika og alkohol.
+
+Alkohol kan forsterke de farmakodynamiske effektene av oksykodon. Derfor bør samtidig bruk unngås.
+
+Det er kjent at MAO-hemmere interagerer med narkotiske analgetika. MAO-hemmere gir CNS-stimulering
+eller -hemming forbundet med hyper- eller hypotensive kriser (se pkt. 4.4). Oksykodon bør brukes med
+forsiktighet hos pasienter som bruker MAO-hemmere eller som har vært behandlet med MAO-hemmere de
+to siste ukene (se pkt. 4.4).
+
+Samtidig bruk av oksykodon og serotonerge legemidler, som en selektiv serotoninreopptakshemmer (SSRI)
+eller en serotonin- og noradrenalinreopptakshemmer (SNRI), kan forårsake serotonintoksisitet. Symptomene
+på serotonintoksisitet kan inkludere endringer i mental status (f.eks. agitasjon, hallusinasjoner, koma),
+autonome forstyrrelser (f.eks. takykardi, ustabilt blodtrykk, hypertermi), nevromuskulære avvik (f.eks.
+hyperrefleksi, koordinasjonsproblemer, stivhet) og/eller gastrointestinale symptomer (f.eks. kvalme, oppkast,
+diaré). Oksykodon skal brukes med forsiktighet hos pasienter som bruker disse legemidlene. Hos enkelte
+pasienter kan det være behov for dosereduksjon.
+
+Legemidler med antikolinerge virkninger (f.eks. antipsykotika, trisykliske antidepressiva, antihistaminer,
+antiemetika, muskelrelaksantia, legemidler mot Parkinsons sykdom) kan forsterke de antikolinerge
+bivirkningene av oksykodon, som forstoppelse, munntørrhet eller dysfunksjonell vannlating).
+
+Oksykodon metaboliseres hovedsakelig av CYP3A4 med bidrag fra CYP2D6. Aktiviteten til disse enzymene
+kan hemmes eller induseres av forskjellige legemidler og kosttilskudd som inntas samtidig, noe som kan føre
+til endret plasmakonsentrasjon av oksykodon. Det kan derfor være nødvendig å justere oksykodondosen.
+
+CYP3A4-hemmere, som makrolidantibiotika (f.eks. klaritromycin, erytromycin og telitromycin),
+antimykotika av azoltypen (f.eks. ketokonazol, vorikonazol, itrakonazol og posakonazol), proteasehemmere
+(f.eks. boceprevir, ritonavir, indinavir, nelfinavir og sakinavir), cimetidin og grapefruktjuice kan gi redusert
+clearance av oksykodon og medføre økt plasmakonsentrasjon av oksykodon. Justering av oksykodondosen
+kan derfor være nødvendig.
+
+Eksempler:
+
+-     Etter fem dagers oral administrasjon av 200 mg itrakonazol, en potent CYP3A4-hemmer, økte AUC
+      for oralt oksykodon. Gjennomsnittlig AUC var ca. 2,4 ganger høyere, i området 1,5-3,4.
+-     Etter fire dagers oral administrasjon av 200 mg vorikonazol, en CYP3A4-hemmer, to ganger daglig
+      (første dag 2 x 400 mg), økte AUC for oralt oksykodon. Gjennomsnittlig AUC var ca. 3,6 ganger
+      høyere (i området 2,7-5,6).
+
+                                                       7

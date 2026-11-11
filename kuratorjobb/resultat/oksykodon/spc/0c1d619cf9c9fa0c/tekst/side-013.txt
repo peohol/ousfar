@@ -1,0 +1,48 @@
+ Organklassesystem        Vanlige                Mindre vanlige               Sjeldne               Svært sjeldne
+ MedDRA
+ Forstyrrelser i                                                                                    Anafylaktisk
+ immunsystemet                                                                                      reaksjon
+ Stoffskifte- og                                 Dehydrering                  Øket appetitt
+ ernæringsbetingede
+ sykdommer
+ Psykiatriske lidelser    Endret                 Uro,
+                          stemningsleie og       persepsjonsforstyrrelser
+                          personlighetsforand    (f.eks. derealisasjon)
+                          -ring, nedsatt
+                          aktivitet,
+                          psykomotorisk
+                          hyperaktivitet
+ Nevrologiske                                    Svekket konsentrasjon,                             Hyperalgesi
+ sykdommer                                       migrene, hypertoni,
+                                                 ufrivillige
+                                                 muskelsammentrekninger,
+                                                 hypestesi,
+                                                 koordinasjonsforstyrrelser
+ Sykdommer i øre og                              Nedsatt hørsel
+ labyrint
+ Karsykdommer                                    Vasodilasjon
+
+ Sykdommer i                                     Dysfoni
+ respirasjonsorganer,
+ thorax og mediastinum
+ Gastrointestinale        Hikke                  Dysfagia, ileus, munnsår,    Melena,               Tannråte
+ sykdommer                                       stomatitt                    tannkjøttsblødning
+
+ Sykdommer i lever og                                                                               Kolestase
+ galleveier                                                                                         Dysfunksjon i
+                                                                                                    Oddis sfinkter
+
+ Hud- og                                         Tørr hud                     Urtikaria
+ underhudssykdommer
+ Sykdommer i nyre og      Dysuri
+ urinveier
+ Lidelser i                                      Hypogonadisme                                      Amenorrhoea
+ kjønnsorganer og
+ brystsykdommer
+ Generelle lidelser og                           Ødem,                                              Abstinenssyndrom
+ reaksjoner på                                   legemiddeltoleranse                                hos nyfødte
+ administrasjonsstedet
+
+Bivirkninger ved behandling av restless legs-syndrom
+Listen nedenfor viser bivirkninger som er sett med oksykodon/nalokson i en 12-ukers, randomisert,
+placebokontrollert klinisk studie der totalt 150 pasienter fikk oksykodon/nalokson og 154 pasienter fikk placebo

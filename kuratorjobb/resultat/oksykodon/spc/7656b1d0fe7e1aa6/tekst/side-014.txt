@@ -1,0 +1,53 @@
+Karsykdommer
+Vanlige: Hetetokter, redusert blodtrykk, økt blodtrykk
+
+Sykdommer i respirasjonsorganer, thorax og mediastinum
+Mindre      Dyspné
+vanlige:
+Ikke kjent: Hoste, rhinoré, respirasjonsdepresjon, gjesping
+
+Gastrointestinale sykdommer
+Svært        Forstoppelse, kvalme
+vanlige:
+Vanlige:     Abdominalsmerte, munntørrhet, oppkast
+Mindre       Flatulens
+vanlige:
+Ikke kjent: Abdominal distensjon, diaré, dyspepsi, raping, tannsykdom
+
+Sykdommer i lever og galleveier
+Vanlige:    Økte leverenzymer (økt ALAT, økt γ-GT)
+Ikke kjent: Galleveiskolikk
+
+
+Hud- og underhudssykdommer
+Svært      Hyperhidrose
+vanlige:
+Vanlige:   Kløe, hudreaksjoner
+
+Sykdommer i muskler, bindevev og skjelett
+Ikke kjent: Muskelkramper, muskelrykninger, myalgi
+
+Sykdommer i nyre og urinveier
+Ikke kjent: Akutt vannlatingsbehov, urinretensjon
+
+Lidelser i kjønnsorganer og brystsykdommer
+Mindre       Erektil dysfunksjon
+vanlige:
+
+Generelle lidelser og reaksjoner på administrasjonsstedet
+Svært        Fatigue
+vanlige:
+Vanlige:     Brystsmerter, frysninger, tørste, smerter
+Mindre       Seponeringssyndrom, perifert ødem
+vanlige:
+Ikke kjent: Malaise, asteni
+
+Undersøkelser
+Ikke kjent: Vekttap, vektøkning
+
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer
+Mindre      Ulykkesskader
+vanlige:
+
+
+Legemiddelavhengighet

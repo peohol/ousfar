@@ -1,0 +1,52 @@
+CYP3A4-hemmere, som makrolidantibiotika (f.eks. klaritromycin, erytromycin, telitromycin),
+antimykotika av azoltypen (f.eks. ketokonazol, vorikonazol, itrakonazol, posakonazol),
+proteasehemmere (f.eks. ritonavir, indinavir, nelfinavir, sakinavir), cimetidin og grapefruktjuice kan gi
+redusert clearance av oksykodon som kan medføre økt plasmakonsentrasjon av oksykodon. Reduksjon
+av dosen av disse tablettene og påfølgende retitrering kan være nødvendig.
+
+CYP3A4-induktorer, som rifampicin, karbamazepin, fenytoin og johannesurt, kan indusere
+oksykodons metabolisme og gi økt clearance av legemidlet, noe som medfører redusert
+plasmakonsentrasjon av oksykodon. Forsiktighet anbefales og ytterligere titrering kan være nødvendig
+for å oppnå et adekvat nivå av smertekontroll.
+
+Teoretisk sett kan legemidler som hemmer CYP2D6-aktivitet, som paroksetin, fluoksetin og kinidin,
+gi redusert clearance av oksykodon som kan medføre økt plasmakonsentrasjon av oksykodon.
+Samtidig bruk av CYP2D6-hemmere hadde en ubetydelig effekt på eliminasjonen av oksykodon og
+påvirket heller ikke oksykodons farmakodynamiske effekter.
+
+Metabolismestudier in vitro indikerer at det ikke bør forventes klinisk relevante interaksjoner mellom
+oksykodon og nalokson. Sannsynligheten for klinisk relevante interaksjoner mellom paracetamol,
+acetylsalisylsyre eller naltrekson og kombinasjonen av oksykodon og nalokson i terapeutiske
+konsentrasjoner, er minimal.
+
+4.6    Fertilitet, graviditet og amming
+
+Graviditet
+
+Det foreligger ikke data på bruk av Targiniq hos gravide kvinner eller under fødsel. Begrensede data
+på bruk av oksykodon under graviditet hos mennesker ga ingen holdepunkter for en økt risiko for
+medfødte misdannelser. For nalokson foreligger det ikke tilstrekkelige kliniske data på bruk under
+graviditet. Systemisk eksponering for nalokson hos kvinner etter bruk av disse tablettene er imidlertid
+relativt lav (se pkt. 5.2). Både oksykodon og nalokson passerer placenta. Ingen dyrestudier er blitt
+utført med oksykodon og nalokson i kombinasjon (se pkt. 5.3). Dyrestudier med oksykodon eller
+nalokson gitt som eneste legemiddel har ikke vist teratogene eller embryotoksiske effekter.
+
+Langtidsbruk av oksykodon under graviditet kan gi abstinenssymptomer hos den nyfødte. Gitt under
+fødsel kan oksykodon utløse respirasjonsdepresjon hos den nyfødte.
+
+Disse tablettene skal kun brukes under graviditet hvis nytten oppveier mulig risiko for ufødte barn
+eller nyfødte.
+
+Amming
+
+Oksykodon går over i morsmelk. Det er målt et forhold mellom konsentrasjonen i melk og plasma på
+3,4:1, og oksykodoneffekter hos barn som ammes er derfor mulig. Det er ukjent om nalokson også går
+over i morsmelk. Etter inntak av disse tablettene er imidlertid det systemiske naloksonnivået svært lavt
+(se pkt. 5.2).
+
+Risiko for barn som ammes kan ikke utelukkes, spesielt etter at den ammende moren har inntatt flere
+doser av disse tablettene.
+
+Amming bør avbrytes under behandling med Targiniq.
+
+Fertilitet

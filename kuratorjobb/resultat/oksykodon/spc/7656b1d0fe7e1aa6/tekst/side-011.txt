@@ -1,0 +1,53 @@
+Karsykdommer
+Vanlige: Hetetokter
+Mindre   Redusert blodtrykk, økt blodtrykk
+vanlige:
+
+Sykdommer i respirasjonsorganer, thorax og mediastinum
+Mindre      Dyspné, rhinoré, hoste
+vanlige:
+Sjeldne: Gjesping
+Ikke kjent: Respirasjonsdepresjon, sentralt søvnapnésyndrom
+
+Gastrointestinale sykdommer
+Vanlige: Abdominalsmerte, forstoppelse, diaré, munntørrhet, dyspepsi, oppkast, kvalme, flatulens
+Mindre      Abdominal distensjon
+vanlige:
+Sjeldne: Tannlidelse
+Ikke kjent: Raping
+
+Sykdommer i lever og galleveier
+Mindre   Økte leverenzymer, galleveiskolikk
+vanlige:
+
+
+Hud- og underhudssykdommer
+Vanlige: Kløe, hudreaksjoner, hyperhidrose
+
+Sykdommer i muskler, bindevev og skjelett
+Mindre   Muskelkramper, muskelrykninger, myalgi
+vanlige:
+
+Sykdommer i nyre og urinveier
+Mindre      Akutt vannlatingsbehov
+vanlige:
+Ikke kjent: Urinretensjon
+
+Lidelser i kjønnsorganer og brystsykdommer
+Ikke kjent: Erektil dysfunksjon
+
+Generelle lidelser og reaksjoner på administrasjonsstedet
+Vanlige: Asteni, fatigue
+Mindre      Seponeringssyndrom, brystsmerter, frysninger, malaise, smerter, perifert ødem, tørste
+vanlige:
+
+Undersøkelser
+Mindre    Vekttap
+vanlige:
+Sjeldne: Vektøkning
+
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer
+Mindre     Ulykkesskader
+vanlige:
+
+For virkestoffet oksykodonhydroklorid er i tillegg følgende bivirkninger kjent:

@@ -1,0 +1,52 @@
+Gjentatt bruk av Targiniq kan føre til legemiddelavhengighet, også ved terapeutiske doser. Risikoen for
+legemiddelavhengighet kan variere avhengig av pasientens individuelle risikofaktorer, dosering og
+opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å overvåke
+forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å melde enhver
+mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Direktoratet for medisinske
+produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer på forgiftning
+Avhengig av pasientens anamnese kan overdosering med Targiniq manifesteres ved symptomer som er utløst
+enten av oksykodon (opioidreseptoragonist) eller nalokson (opioidreseptorantagonist).
+
+Symptomer på overdosering med oksykodon omfatter miose, respirasjonsdepresjon, søvnighet som utvikles
+til apati, hypotoni, bradykardi og hypotensjon. Koma, ikke-kardiogent lungeødem og sirkulasjonssvikt kan
+oppstå i alvorligere tilfeller og kan medføre et fatalt utfall.
+Toksisk leukoencefalopati har vært observert ved overdose av oksykodon.
+
+Symptomer på overdosering med nalokson alene er lite sannsynlig.
+
+Behandling av forgiftning
+Abstinenssymptomer som følge av overdosering med nalokson bør behandles symptomatisk under tett
+overvåking.
+
+Kliniske symptomer som indikerer overdosering med oksykodon kan behandles ved administrasjon av
+opioidantagonister (f.eks. naloksonhydroklorid 0,4-2 mg intravenøst). Administrasjon bør gjentas med 2-3
+minutters mellomrom, etter klinisk behov. Det er også mulig å gi en infusjon med 2 mg naloksonhydroklorid
+i 500 ml 0,9 % natriumklorid eller 5 % dekstrose (0,004 mg/ml nalokson). Infusjonen bør skje i en hastighet
+tilpasset tidligere bolusdoser og pasientens respons.
+
+Ventrikkeltømming kan vurderes.
+
+Støttetiltak (kunstig åndedrett, oksygen, karkontraherende midler og væskeinfusjoner) bør om nødvendig
+brukes for å behandle sirkulatorisk sjokk etter overdosering. Hjertestans eller arytmier kan kreve
+hjertemassasje eller defibrillering. Kunstig åndedrett bør gis ved behov. Væske- og elektrolyttbalanse bør
+opprettholdes.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika; Opioider; Opiumsalkaloider; ATC-kode: N02AA55.
+
+Virkningsmekanisme
+Oksykodon og nalokson har affinitet til opioide kappa-, my- og deltareseptorer i hjerne, ryggmarg og perifere
+organer (f.eks. tarm). Oksykodon virker som opioidreseptoragonist ved disse reseptorene og bindes til
+endogene opioidreseptorer i CNS. Nalokson derimot, er en ren antagonist som virker på alle typer
+opioidreseptorer.

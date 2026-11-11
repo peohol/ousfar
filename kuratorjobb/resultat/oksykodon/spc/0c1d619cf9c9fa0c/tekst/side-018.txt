@@ -1,0 +1,48 @@
+Farmakokinetiske/farmakodynamiske forhold
+De farmakokinetiske egenskapene til oksykodon fra Tanonalla er ekvivalente med egenskapene fra
+oksykodonhydroklorid depottabletter gitt sammen med naloksonhydroklorid depottabletter.
+
+Byttbarhet mellom alle dosestyrker av Tanonalla er demonstrert.
+
+Etter oral administrasjon av maksimaldose av oksykodon/nalokson hos friske forsøkspersoner er
+plasmakonsentrasjonen av nalokson så lav at det ikke er mulig å gjennomføre en farmakokinetikkanalyse. For å
+gjennomføre en farmakokinetikkanalyse brukes nalokson-3-glukuronid som surrogatmarkør, da dets
+plasmakonsentrasjon er høy nok til å måles.
+
+Etter inntak av fettrik frokost øker biotilgjengelighet og maksimal plasmakonsentrasjon (Cmax) av oksykodon i
+gjennomsnitt med henholdsvis 16 % og 30 % sammenlignet med administrasjon i fastende tilstand. Dette ble
+ikke ansett som klinisk relevant, så Tanonalla kan tas med eller uten mat (se pkt. 4.2).
+Legemiddelmetabolismestudier in vitro tyder på at klinisk relevante interaksjoner med oksykodon/nalokson er
+lite sannsynlig.
+
+Eldre pasienter
+Oksykodon
+Oksykodons AUCt var i gjennomsnitt økt til 118 % (90 % KI: 103, 135) hos eldre sammenlignet med yngre,
+frivillige forsøkspersoner. Oksykodons Cmax var i gjennomsnitt økt til 114 % (90 % KI: 102, 127).
+Oksykodons Cmin var i gjennomsnitt økt til 128 % (90 % KI: 107, 152).
+
+Nalokson
+Naloksons AUCt var i gjennomsnitt økt til 182 % (90 % KI: 123, 270) hos eldre sammenlignet med yngre,
+frivillige forsøkspersoner. Naloksons Cmax var i gjennomsnitt økt til 173 % (90 % KI: 107, 280). Naloksons Cmin
+var i gjennomsnitt økt til 317 % (90 % KI: 142, 708).
+
+Nalokson-3-glukuronid
+Nalokson-3-glukuronids AUCt var i gjennomsnitt økt til 128 % (90 % KI: 113, 147) hos eldre sammenlignet med
+yngre, frivillige forsøkspersoner. Nalokson-3-glukuronids Cmax var i gjennomsnitt økt til 127 % (90 % KI: 112,
+144). Nalokson-3-glukuronids Cmin var i gjennomsnitt økt til 125 % (90 % KI: 105, 148).
+
+Pasienter med nedsatt leverfunksjon
+Oksykodon
+Oksykodons AUCINF var i gjennomsnitt økt til 143 % (90 % KI: 111, 184), 319 % (90 % KI: 248, 411) og 310 %
+(90 % KI: 241, 398) hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon,
+sammenlignet med friske forsøkspersoner. Oksykodons Cmax var i gjennomsnitt økt til 120 % (90 % KI: 99, 144),
+201 % (90 % KI: 166, 242) og 191 % (90 % KI: 158, 231) hos individer med henholdsvis lett, moderat og
+alvorlig nedsatt leverfunksjon, sammenlignet med friske forsøkspersoner. Oksykodons t1/2Z var i gjennomsnitt
+økt til 108 % (90 % KI: 70, 146), 176 % (90 % KI: 138, 215) og 183 % (90 % KI: 145, 221)
+hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon, sammenlignet med friske
+forsøkspersoner.
+
+Nalokson
+Naloksons AUCt var i gjennomsnitt økt til 411 % (90 % KI: 152, 1112), 11518 % (90 % KI: 4259, 31149) og
+10666 % (90 % KI: 3944, 28847) hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon,
+sammenlignet med friske forsøkspersoner. Naloksons Cmax var i gjennomsnitt økt til 193 % (90 % KI: 115, 324),

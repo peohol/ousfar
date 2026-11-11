@@ -1,18 +1,76 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/oksykodon-spc-20261111",
     "foresporsel_commit": "b23ac69d6ff953d2f961677122599c948a866bae",
     "foresporsel_sha256": "e1882b5ffee6be49e722ef640bcd2187222460f1b0325ccf10e52376a3be71ab",
     "kode_commit": "0b89aadf8e5da9af0a33033476a829e1b286fd55",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/43005987408",
-    "startet_kl": "2026-11-11T10:44:01.475Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-11T10:44:03.448Z",
+    "ferdig_kl": "2026-11-11T10:45:15.785Z"
   },
-  "foresporsel": null,
-  "referanse": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "oksykodon"
+    ],
+    "oppgaver": [
+      "spc"
+    ],
+    "spc": {
+      "adresser": [
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5180.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5981.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6097.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8802.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9215.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9216.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9284.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9286.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9287.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11701.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11702.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02769.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13800.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13803.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13804.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-02425.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07401.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09979.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13878.pdf"
+      ],
+      "maks": 25,
+      "dpi": 150
+    },
+    "referanse": "kurator: kortene som ble stoppet av sikkerhetsfilteret, 11.11.2026"
+  },
+  "referanse": "kurator: kortene som ble stoppet av sikkerhetsfilteret, 11.11.2026",
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 246
+    }
+  ],
+  "stoffer": {
+    "oksykodon": {
+      "status": "advarsel",
+      "oppgaver": {
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/oksykodon/spc.json"
+        }
+      }
+    }
+  }
 }

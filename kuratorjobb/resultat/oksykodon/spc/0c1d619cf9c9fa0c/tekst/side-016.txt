@@ -1,0 +1,49 @@
+Abstinenssymptomer som følge av overdosering med nalokson bør behandles symptomatisk under tett
+overvåking.
+
+Kliniske symptomer som indikerer overdosering med oksykodon kan behandles ved administrasjon av
+opioidantagonister (f.eks. naloksonhydroklorid 0,4-2 mg intravenøst). Administrasjon bør gjentas med 2-3
+minutters mellomrom, etter klinisk behov. Det er også mulig å gi en infusjon med 2 mg naloksonhydroklorid i
+500 ml 0,9 % natriumklorid eller 5 % dekstrose (0,004 mg/ml nalokson). Infusjonen bør skje i en hastighet
+tilpasset tidligere bolusdoser og pasientens respons.
+
+Ventrikkeltømming kan vurderes.
+
+Støttetiltak (kunstig åndedrett, oksygen, karkontraherende midler og væskeinfusjoner) bør om nødvendig brukes
+for å behandle sirkulatorisk sjokk etter overdosering. Hjertestans eller arytmier kan kreve hjertekompresjon eller
+defibrillering. Kunstig åndedrett bør gis ved behov. Væske- og elektrolyttbalanse bør opprettholdes.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika; opioider; opiumsalkaloider; ATC-kode: N02AA55.
+
+Virkningsmekanisme
+Oksykodon og nalokson har affinitet til opioide kappa-, my- og deltareseptorer i hjerne, ryggmarg og perifere
+organer (f.eks. tarm). Oksykodon virker som opioidreseptoragonist ved disse reseptorene og bindes til endogene
+opioidreseptorer i CNS. Nalokson derimot, er en ren antagonist som virker på alle typer opioidreseptorer.
+
+Farmakodynamiske effekter
+Grunnet uttalt "first pass"-metabolisme er naloksons biotilgjengelighet etter oral administrasjon <3 %, så en
+klinisk relevant systemisk effekt er lite sannsynlig. Som følge av at nalokson utøver lokal kompetitiv
+antagonisme av den opioidreseptormedierte oksykodoneffekten i tarm, reduserer nalokson
+tarmfunksjonsforstyrrelsene som er karakteristiske ved opioidbehandling.
+
+Klinisk effekt og sikkerhet
+For effekter av opioider på endokrinsystemet, se pkt. 4.4.
+
+Prekliniske studier har vist ulike effekter av naturlige opioider på immunsystemets komponenter. Klinisk
+signifikans av disse funnene er ukjent. Det er ukjent om oksykodon, et semisyntetisk opioid, har tilsvarende
+effekter på immunsystemet som naturlige opioider.
+
+Analgesi
+I en 12 ukers dobbelblindet parallellgruppestudie med 322 pasienter med opioidindusert forstoppelse, hadde
+pasienter som ble behandlet med oksykodonhydroklorid-naloksonhydroklorid gjennomsnittlig én ekstra spontan
+(uten laksantia) og fullstendig avføring den siste behandlingsuken, sammenlignet med pasienter som fortsatte å
+bruke tilsvarende doser av oksykodonhydroklorid depottabletter (p<0,0001). Bruk av laksantia de første fire
+ukene var signifikant lavere i gruppen som fikk oksykodon-nalokson sammenlignet med gruppen som fikk
+oksykodon monoterapi (henholdsvis 31 % mot 55 %, p<0,0001). Tilsvarende resultater ble vist i en studie med
+265 pasienter med smerter som ikke skyldtes kreft, hvor det ble sammenlignet døgndoser av
+oksykodonhydroklorid/naloksonhydroklorid på 60 mg/30 mg opp til 80 mg/40 mg med oksykodonhydroklorid

@@ -1,0 +1,54 @@
+Oksykodon:
+Oksykodons AUCINF var i gjennomsnitt økt til 143 % (90 % KI: 111, 184), 319 % (90 % KI: 248, 411)
+og 310 % (90 % KI: 241, 398) hos individer med henholdsvis lett, moderat og alvorlig nedsatt
+leverfunksjon, sammenlignet med friske forsøkspersoner. Oksykodons Cmax var i gjennomsnitt økt til
+120 % (90 % KI: 99, 144), 201 % (90 % KI: 166, 242) og 191 % (90 % KI: 158, 231) hos individer
+med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon, sammenlignet med friske
+forsøkspersoner. Oksykodons t1/2Z var i gjennomsnitt økt til 108 % (90 % KI: 70, 146), 176 % (90 %
+KI: 138, 215) og 183 % (90 % KI: 145, 221) hos individer med henholdsvis lett, moderat og alvorlig
+nedsatt leverfunksjon, sammenlignet med friske forsøkspersoner.
+
+Nalokson:
+Naloksons AUCt var i gjennomsnitt økt til 411 % (90 % KI: 152, 1112), 11518 % (90 % KI: 4259,
+31149) og 10666 % (90 % KI: 3944, 28847) hos individer med henholdsvis lett, moderat og alvorlig
+nedsatt leverfunksjon, sammenlignet med friske forsøkspersoner. Naloksons Cmax var i gjennomsnitt
+økt til 193 % (90 % KI: 115, 324), 5292 % (90 % KI: 3148, 8896) og 5252 % (90 % KI: 3124, 8830)
+hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon, sammenlignet med
+friske forsøkspersoner. Da det ikke foreligger tilstrekkelige data er t1/2Z og tilsvarende AUCINF for
+nalokson ikke beregnet. Sammenligninger av biotilgjengelighet for nalokson er derfor basert på AUCt-
+verdier.
+
+Nalokson-3-glukuronid:
+Nalokson-3-glukuronids AUCINF var i gjennomsnitt økt til 157 % (90 % KI: 89, 279), 128 % (90 %
+KI: 72, 227) og 125 % (90 % KI: 71, 222) hos individer med henholdsvis lett, moderat og alvorlig
+nedsatt leverfunksjon, sammenlignet med friske forsøkspersoner. Nalokson-3-glukuronids Cmax var i
+gjennomsnitt økt til 141 % (90 % KI: 100, 197), 118 % (90 % KI: 84, 166) og redusert til 98 % (90 %
+KI: 70, 137) hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon,
+sammenlignet med friske forsøkspersoner. Nalokson-3-glukuronids t1/2Z var i gjennomsnitt økt til 117
+% (90 % KI: 72, 161), redusert til 77 % (90 % KI: 32, 121) og redusert til 94 % (90 % KI: 49, 139)
+hos individer med henholdsvis lett, moderat og alvorlig nedsatt leverfunksjon, sammenlignet med
+friske forsøkspersoner.
+
+Pasienter med nedsatt nyrefunksjon
+
+Oksykodon:
+Oksykodons AUCINF var i gjennomsnitt økt til 153 % (90 % KI: 130, 182), 166 % (90 % KI: 140, 196)
+og 224 % (90 % KI: 190, 266) hos individer med henholdsvis lett, moderat og alvorlig nedsatt
+nyrefunksjon, sammenlignet med friske forsøkspersoner. Oksykodons Cmax var i gjennomsnitt økt til
+110 % (90 % KI: 94, 129), 135 % (90 % KI: 115, 159) og 167 % (90 % KI: 142, 196) hos individer
+med henholdsvis lett, moderat og alvorlig nedsatt nyrefunksjon, sammenlignet med friske
+forsøkspersoner. Oksykodons t1/2Z var i gjennomsnitt økt til 149 %, 123 % og 142 % hos individer med
+henholdsvis lett, moderat og alvorlig nedsatt nyrefunksjon, sammenlignet med friske forsøkspersoner.
+
+Nalokson:
+Naloksons AUCt var i gjennomsnitt økt til 2850 % (90 % KI: 369, 22042), 3910 % (90 % KI: 506,
+30243) og 7612 % (90 % KI: 984, 58871) hos individer med henholdsvis lett, moderat og alvorlig
+nedsatt nyrefunksjon, sammenlignet med friske forsøkspersoner. Naloksons Cmax var i gjennomsnitt
+økt til 1076 % (90 % KI: 154, 7502), 858 % (90 % KI: 123, 5981) og 1675 % (90 % KI: 240, 11676)
+hos individer med henholdsvis lett, moderat og alvorlig nedsatt nyrefunksjon, sammenlignet med
+friske forsøkspersoner. Da det ikke foreligger tilstrekkelige data er t1/2Z og tilsvarende AUCINF for
+nalokson ikke beregnet. Sammenligninger av biotilgjengelighet for nalokson er derfor basert på AUCt-
+verdier. Forholdstall kan ha blitt påvirket av manglende mulighet til å karakterisere naloksons
+plasmaprofil fullt ut hos friske forsøkspersoner.
+
+Nalokson-3-glukuronid:

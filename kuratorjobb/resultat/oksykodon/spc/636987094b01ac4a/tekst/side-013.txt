@@ -1,0 +1,55 @@
+Etter oral administrasjon har nalokson svært lav systemisk tilgjengelighet på <3 %.
+
+Distribusjon
+Nalokson passerer placenta. Det er ukjent om nalokson også går over i morsmelk.
+
+Biotransformasjon og eliminasjon
+Etter parenteral administrasjon er plasmahalveringstiden ca. én time. Virketiden avhenger av dose og
+administrasjonsvei. Intramuskulær injeksjon gir mer langvarig effekt enn intravenøse doser. Nalokson
+metaboliseres i lever og utskilles i urin. Hovedmetabolittene er naloksonglukuronid, 6β-naloksol og
+dets glukuronid.
+
+Oksykodonhydroklorid/naloksonhydroklorid i kombinasjon (Targiniq)
+Farmakokinetiske/farmakodynamiske forhold
+De farmakokinetiske egenskapene til oksykodon fra Targiniq er ekvivalente med egenskapene fra
+oksykodonhydroklorid depottabletter gitt sammen med naloksonhydroklorid depottabletter.
+
+Tabletter med ulike dosestyrker kan kombineres når individuelle doser tilpasses i henhold til
+pasientens behov for smertestillende medikamenter og toleranse. Hvis dosestyrker byttes om, bør man
+imidlertid være oppmerksom på at for 2,5 mg/1,25 mg styrken er den dose-korrigerte Cmax litt høyere
+(med 27,6 %) enn det som er assosiert med referansegruppen 40 mg/20 mg. Dette kan sammenlignes
+med andre styrker der dose-korrigerte Cmax-verdier fra 15 mg/7,5 mg og 30 mg/15 mg tabletter er
+18,6 % og 18,7 % høyere enn referansen.
+
+Etter oral administrasjon av maksimaldose av Targiniq hos friske forsøkspersoner er
+plasmakonsentrasjonen av nalokson så lav at det ikke er mulig å gjennomføre en
+farmakokinetikkanalyse. For å gjennomføre en farmakokinetikkanalyse brukes nalokson-3-glukuronid
+som surrogatmarkør, da dets plasmakonsentrasjon er høy nok til å måles.
+
+Etter inntak av fettrik frokost øker biotilgjengelighet og maksimal plasmakonsentrasjon (Cmax) av
+oksykodon i gjennomsnitt med henholdsvis 16 % og 30 % sammenlignet med administrasjon i
+fastende tilstand. Dette ble ikke ansett som klinisk relevant, så Targiniq kan tas med eller uten mat (se
+pkt. 4.2).
+
+Legemiddelmetabolismestudier in vitro tyder på at klinisk relevante interaksjoner med Targiniq er lite
+sannsynlig.
+
+Eldre pasienter
+
+Oksykodon:
+Oksykodons AUCt var i gjennomsnitt økt til 118 % (90 % KI: 103, 135) hos eldre sammenlignet med
+yngre, frivillige forsøkspersoner. Oksykodons Cmax var i gjennomsnitt økt til 114 % (90 % KI: 102,
+127). Oksykodons Cmin var i gjennomsnitt økt til 128 % (90 % KI: 107, 152).
+
+Nalokson:
+Naloksons AUCt var i gjennomsnitt økt til 182 % (90 % KI: 123, 270) hos eldre sammenlignet med
+yngre, frivillige forsøkspersoner. Naloksons Cmax var i gjennomsnitt økt til 173 % (90 % KI: 107, 280).
+Naloksons Cmin var i gjennomsnitt økt til 317 % (90 % KI: 142, 708).
+
+Nalokson-3-glukuronid:
+Nalokson-3-glukuronids AUCt var i gjennomsnitt økt til 128 % (90 % KI: 113, 147) hos eldre
+sammenlignet med yngre, frivillige forsøkspersoner. Nalokson-3-glukuronids Cmax var i gjennomsnitt
+økt til 127 % (90 % KI: 112, 144). Nalokson-3-glukuronids Cmin var i gjennomsnitt økt til 125 % (90
+% KI: 105, 148).
+
+Pasienter med nedsatt leverfunksjon

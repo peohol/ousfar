@@ -1,0 +1,59 @@
+Oksykodon metaboliseres hovedsakelig via CYP3A4, med bidrag fra CYP2D6. Aktiviteten av disse
+metaboliseringsveiene kan hemmes eller induseres av forskjellige legemidler gitt samtidig eller av
+matinntak. CYP3A4-hemmere, slik som makrolidantibiotika (f.eks. klaritromycin, erytromycin og
+telitromycin), soppmidler av azoltypen (f.eks. ketokonazol, vorikonazol, itrakonazol og posakonazol),
+proteasehemmere (f.eks. boceprevir, ritonavir, indinavir, nelfinavir og sakviniavir), cimetidin og
+grapefruktjuice kan forårsake reduksjon i clearance av oksykodon og en økning av
+plasmakonsentrasjonen av oksykodon. Derfor kan det være nødvendig å justere oksykodondosen
+tilsvarende.
+
+Noen spesifikke eksempler er gitt nedenfor:
+
+          Itrakonazol, en potent CYP3A4-hemmer, 200 mg gitt oralt i fem dager, økte AUC av oral
+           oksykodon. AUC var gjennomsnittlig ca. 2,4 ganger høyere (variasjonsbredde 1,5-3,4).
+
+          Vorikonazol, en CYP3A4-hemmer, 200 mg gitt to ganger daglig i fire dager (400 mg gitt som
+           de to første dosene), økte AUC av oral oksykodon. AUC var gjennomsnittlig 3,6 ganger
+           høyere (variasjonsbredde 2,7-5,6).
+
+          Telitromycin, en CYP3A4-hemmer, 800 mg gitt oralt i fire dager, økte AUC av oral
+           oksykodon. AUC var gjennomsnittlig 1,8 ganger høyere (variasjonsbredde 1,3-2,3).
+
+          Grapefruktjuice, en CYP3A4-hemmer, 200 ml gitt tre ganger daglig i fem dager, økte AUC av
+           oral oksykodon. AUC var gjennomsnittlig 1,7 ganger høyere (variasjonsbredde 1,1-2,1).
+
+CYP3A4-induserere, slik som rifampicin, karbamazepin, fenytoin og Johannesurt, kan indusere
+metabolisme og øke clearance av oksykodon, som kan føre til en reduksjon i plasmakonsentrasjonen
+av oksykodon. Det kan være nødvendig å justere oksykodondosen tilsvarende.
+
+Noen spesifikke eksempler er gitt nedenfor:
+
+          Johannesurt, en CYP3A4-induser, 300 mg gitt tre ganger daglig i femten dager, reduserte
+           AUC av oral oksykodon. AUC var gjennomsnittlig 50 % lavere (variasjonsbredde 37-57 %).
+
+          Rifampicin, en CYP3A4-induser, 600 mg gitt én gang daglig i syv dager, reduserte AUC av
+           oral oksykodon. AUC var gjennomsnittlig 86 % lavere.
+
+Legemidler som hemmer aktiviteten av CYP2D6, slik som paroksetin og kinidin, kan redusere
+clearance av oksykodon, som kan føre til en økning i plasmakonsentrasjon av oksykodon.
+
+4.6       Fertilitet, graviditet og amming
+
+Bruk av dette legemidlet skal om mulig unngås, hos pasienter som er gravide eller ammer.
+
+Graviditet
+Det er begrensede data på bruk av oksykodon hos gravide kvinner. Oksykodon passerer placenta.
+Spedbarn som er født av mødre som er behandlet med opioider i løpet av de siste 3-4 ukene før fødsel,
+skal overvåkes mht. respirasjonsdepresjon. Abstinenssymptomer kan observeres hos nyfødte av mødre
+som får behandling med oksykodon. Dyrestudier med oksykodon har ikke vist teratogene eller
+embryotoksiske effekter. Oksykodon bør kun brukes under graviditet dersom fordelen oppveier mulig
+risiko for fosteret eller det nyfødte barnet.
+
+Amming
+Oksykodon kan skilles ut i morsmelk og kan forårsake respirasjonsdepresjon hos nyfødte. Oksykodon
+skal derfor ikke brukes hos kvinner som ammer.
+
+Fertilitet
+Dyrestudier indikerer ikke at oksykodon påvirker fertiliteten (se pkt. 5.3).
+
+                                                    6

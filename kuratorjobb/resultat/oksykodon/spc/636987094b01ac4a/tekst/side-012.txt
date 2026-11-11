@@ -1,0 +1,55 @@
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, Opioider, Opiumsalkaloider, Oksykodon, kombinasjoner
+ATC-kode: N02AA55.
+
+Virkningsmekanisme
+Oksykodon og nalokson har affinitet til opioide my-, kappa og deltareseptorer i hjerne, ryggmarg og
+perifere organer (f.eks. tarm). Oksykodon virker som opioidreseptoragonist ved disse reseptorene og
+gir smertelindring ved binding til endogene opioidreseptorer i CNS. Nalokson derimot, er en ren
+antagonist som virker på alle typer opioidreseptorer.
+
+Farmakodynamiske effekter
+Grunnet uttalt "first pass"-metabolisme er naloksons biotilgjengelighet etter oral administrasjon <3 %,
+så en klinisk relevant systemisk effekt er lite sannsynlig. Som følge av at nalokson utøver lokal
+kompetitiv antagonisme av den opioidreseptormedierte oksykodoneffekten i tarm, reduserer nalokson
+tarmfunksjonsforstyrrelsene som er karakteristiske ved opioidbehandling.
+
+Klinisk effekt og sikkerhet
+I en 12 ukers dobbelblindet parallellgruppestudie med 322 pasienter med opioidindusert forstoppelse,
+hadde pasienter som ble behandlet med oksykodonhydroklorid-naloksonhydroklorid gjennomsnittlig
+én ekstra spontan (uten laksantia) og fullstendig avføring den siste behandlingsuken, sammenlignet
+med pasienter som fortsatte å bruke tilsvarende doser av oksykodonhydroklorid depottabletter
+(p<0,0001). Bruk av laksantia de første fire ukene var signifikant lavere i gruppen som fikk
+oksykodon-nalokson sammenlignet med gruppen som fikk oksykodon monoterapi (henholdsvis 31 %
+mot 55 %, p<0,0001). Tilsvarende resultater ble vist i en studie med 265 ikke-kreft pasienter, hvor det
+ble sammenlignet døgndoser av oksykodonhydroklorid/naloksonhydroklorid på 60 mg/30 mg opp til
+80 mg/40 mg med oksykodonhydroklorid monoterapi i samme doseområde.
+
+For effekter av opioider på endokrinsystemet, se pkt. 4.4.
+
+Prekliniske studier har vist ulike effekter av naturlige opioider på immunsystemets komponenter.
+Klinisk signifikans av disse funnene er ukjent. Det er ukjent om oksykodon, et semisyntetisk opioid,
+har tilsvarende effekter på immunsystemet som naturlige opioider.
+
+5.2   Farmakokinetiske egenskaper
+
+Oksykodonhydroklorid
+Absorpsjon
+Oksykodon har en høy absolutt biotilgjengelighet på inntil 87 % etter oral administrasjon.
+
+Distribusjon
+Etter absorpsjon distribueres oksykodon til hele kroppen. Omtrent 45 % er bundet til plasmaproteiner.
+Oksykodon passerer placenta og kan påvises i morsmelk.
+
+Biotransformasjon
+Oksykodon metaboliseres i tarm og lever til noroksykodon og oksymorfon og til ulike
+glukuronidkonjugater. Noroksykodon, oksymorfon og noroksymorfon dannes via cytokrom P450-
+systemet. Kinidin reduserer dannelse av oksymorfon hos mennesker uten betydelig påvirkning av
+oksykodons farmakodynamikk. Metabolittene bidrar ubetydelig til samlet farmakodynamisk effekt.
+
+Eliminasjon
+Oksykodon og metabolittene utskilles i både urin og fæces.
+
+Naloksonhydroklorid
+Absorpsjon
