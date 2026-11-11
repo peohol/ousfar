@@ -1,0 +1,31 @@
+{
+  "versjon": 1,
+  "stoffer": ["oksykodon"],
+  "oppgaver": ["spc"],
+  "referanse": "kurator: kortene som ble stoppet av sikkerhetsfilteret, 11.11.2026",
+  "spc": {
+    "maks": 25,
+    "adresser": [
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5180.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5981.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6097.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8802.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9215.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9216.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9284.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9286.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9287.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11701.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11702.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02769.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13800.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13803.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13804.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-02425.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07401.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09979.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13878.pdf"
+    ]
+  }
+}
