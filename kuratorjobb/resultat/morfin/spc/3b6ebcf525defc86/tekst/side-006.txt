@@ -1,0 +1,59 @@
+ Organklasse-           Vanlige         Mindre            Sjeldne           Ikke kjent
+ system                                 vanlige
+                        (≥ 1/100 til                      (≥ 1/10 000 til   (kan ikke anslås ut i
+                        < 1/10)         (≥ 1/1000 til     < 1/1000)         fra tilgjengelige data)
+                                        < 1/100)
+ Gastrointestinale      Obstipasjon                                         Munntørrhet
+ sykdommer              Kvalme                                              Pankreatitt
+                        Brekninger
+ Sykdommer i lever                      Galleveis-                          Spasmer i Oddis
+ og galleveier                          spasme                              sfinkter
+ Hud- og                                Kløe                                Urtikaria
+ underhuds-                                                                 Utslett
+ sykdommer                                                                  Akutt generalisert
+                                                                            eksantematøs
+                                                                            pustulose (AGEP)
+ Forstyrrelser i                                                            Anafylaktiske
+ immunsystemet                                                              reaksjoner
+ Sykdommer i nyre       Urinretensjo    Urinveisspasm
+ og urinveier           n (økt ADH-     e
+                        frisetting)
+ Generelle lidelser                                       Opphovnet         Abstinens-syndrom*
+ og reaksjoner på                                         flammende         Abstinens-symptomer
+ administrasjonssted                                      striper over      er sett hos spedbarn av
+ et                                                       venen ved         mødre som har brukt
+                                                          injeksjon         morfin (se pkt. 4.6)
+                                                                            Legemiddeltoleranse
+* Legemiddelavhengighet og abstinenssyndrom:
+
+Legemiddelavhengighet
+Gjentatt bruk av Morfin kan føre til legemiddelavhengighet, selv ved terapeutiske doser. Risikoen for
+rusgiftavhengighet kan variere etter en pasients individuelle risikofaktorer, dosering og varigheten av
+opioidbehandlingen (se pkt. 4.4).
+
+Bruk av opioidsmertestillende kan være forbundet med utvikling av fysisk og/eller fysiologisk
+avhengighet eller toleranse. Abstinenssyndrom kan fremskyndes hvis opioidbehandlingen avsluttes
+plutselig eller opioidantagonister administreres, eller kan noen ganger oppleves mellom doser. Se pkt.
+4.4 for behandling. Fysiologiske abstinenssymptomer inkluderer: Kroppsverk, skjelving, rastløse bein-
+syndrom, diaré, magekolikk, kvalme, influensalignende symptomer, takykardi og pupillutvidelse.
+Psykologiske symptomer inkluderer dysfori, angst og irritabilitet. Ved legemiddelavhengighet er «sug
+etter legemiddel» ofte involvert.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9     Overdosering
+
+Toksisitet
+Stor individuell variasjon. Toksisk dose for voksne 40-60 mg, 30 mg intravenøst gir risiko for alvorlig
+forgiftning. Barn 5-10 mg per os. Letal dose for voksne (uten tilvenning) 200-300 mg per os, for små
+barn ca. 20 mg per os.
+
+Symptomer
+CNS-depresjon er hovedproblemet. Miose (pupillekontraksjon), respirasjonsdepresjon, apné, svakhet i
+
+
+                                                                                                      6

@@ -1,0 +1,41 @@
+Mindre vanlige (≥1/1000 til <1/100)
+Sjeldne (≥1/10 000 til <1/1000)
+Svært sjeldne (<1/10 000)
+Ikke kjent (kan ikke anslås ut ifra tilgjengelige data)
+
+Innenfor hver frekvensgruppering er bivirkninger presentert etter synkende alvorlighetsgrad.
+
+Bivirkninger ved behandling av smerter
+
+ Organklassesystem          Vanlige            Mindre vanlige         Sjeldne            Svært sjeldne
+ MedDRA
+ Forstyrrelser i                               Overfølsomhet
+ immunsystemet
+ Stoffskifte- og            Nedsatt
+ ernæringsbetingede         appetitt,
+ sykdommer                  inkludert tap
+                            av appetitt
+ Psykiatriske lidelser      Søvnløshet         Unormal tankegang,     Legemiddel-        Euforisk humør,
+                                               angst,                 avhengighet        hallusinasjoner,
+                                               forvirringstilstand,                      mareritt, aggresjon
+                                               depresjon, nedsatt
+                                               libido, nervøsitet,
+                                               rastløshet
+ Nevrologiske               Svimmelhet,        Kramper1,                                 Parestesi, sedasjon
+ sykdommer                  hodepine,          oppmerksomhets-
+                            søvnighet          forstyrrelser,
+                                               dysgeusi,
+                                               taleforstyrrelser,
+                                               synkope, tremor,
+                                               letargi
+ Øyesykdommer                                  Redusert syn
+
+ Sykdommer i øre og         Vertigo
+ labyrint
+ Hjertesykdommer                               Angina pectoris2,      Takykardi
+                                               palpitasjoner
+ Karsykdommer               Hetetokter         Blodtrykksfall,
+                                               blodtrykksøkning
+ Sykdommer i                                   Dyspné, rhinoré,       Gjesping           Respirasjonsdepresjon
+ respirasjonsorganer,                          hoste                                     Sentral
+ thorax og mediastinum                                                                   søvnapnésyndrom

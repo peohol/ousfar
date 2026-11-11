@@ -1,0 +1,58 @@
+-     Etter fire dagers oral administrasjon av 800 mg telitromycin, en CYP3A4-hemmer, økte AUC for oralt
+      oksykodon. Gjennomsnittlig AUC var ca. 1,8 ganger høyere (i området 1,3-2,3).
+-     Etter fem dagers oral administrasjon av 200 ml grapefruktjuice, en CYP3A4-hemmer, tre ganger
+      daglig, økte AUC for oralt oksykodon. Gjennomsnittlig AUC var ca. 1,7 ganger høyere (i området
+      1,1-2,1).
+
+CYP3A4-induktorer, som rifampicin, karbamazepin, fenytoin og johannesurt, kan indusere oksykodons
+metabolisme og gi økt clearance av legemidlet, noe som kan medføre redusert plasmakonsentrasjon av
+oksykodon. En justering av oksykodondosen kan derfor være nødvendig.
+Eksempler:
+
+-     Johannesurt, en CYP3A4-induktor, gitt som 300 mg tre ganger daglig i femten dager, reduserte AUC
+      for oralt oksykodon. I gjennomsnitt var AUC ca. 50 % lavere (spredning 37-57 %).
+-     Rifampicin, en CYP3A4-induktor, gitt som 600 mg en gang daglig i syv dager, reduserte AUC for
+      oralt oksykodon. I gjennomsnitt var AUC ca. 86 % lavere.
+
+Legemidler som hemmer CYP2D6-aktivitet, som paroksetin, fluoksetin og kinidin, kan gi redusert clearance
+av oksykodon som kan medføre økt plasmakonsentrasjon av oksykodon. Samtidig bruk av CYP2D6-
+hemmere har imidlertid kun medført en liten påvirkning på oksykodons eliminasjon og ingen påvirkning på
+oksykodons farmakodynamiske effekter.
+
+Effekten av andre relevante isoenzym-inhibitorer på metaboliseringen av oksykodon er ikke kjent.
+Potensielle interaksjoner bør tas med i betraktning.
+
+Klinisk relevante forandringer i INR i begge retninger er sett dersom kumarin-antikoagulantia gis sammen
+med oksykodon.
+
+Det foreligger ingen studier som har undersøkt effekten av oksykodon på den CYP-katalyserte metabolismen
+av andre virkestoffer.
+
+4.6   Fertilitet, graviditet og amming
+
+Bruk av dette legemidlet bør i størst mulig grad unngås hos pasienter som er gravide eller ammer.
+
+Graviditet
+Det foreligger begrenset med data på bruk av oksykodon hos gravide. Barn av mødre som har brukt opioider
+i løpet av de 3-4 siste ukene før fødselen, bør overvåkes for svekket respirasjon. Det kan ses
+abstinenssymptomer hos nyfødte barn av mødre som behandles med oksykodon.
+
+Amming
+Oksykodon kan skilles ut i morsmelk hos mennesker og forårsake respirasjonshemming hos barn som
+ammes. Oksykodon skal derfor ikke brukes av mødre som ammer.
+
+Fertilitet
+Det er ingen tilgjengelige data fra mennesker vedrørende effekt av oksykodon på fertilitet. Studier på rotter
+har ikke vist effekt på fertilitet (se pkt. 5.3).
+
+4.7   Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+Oksykodon kan svekke evnen til å kjøre bil eller å bruke maskiner. Dette gjelder spesielt i starten av
+behandlingen med oksykodon, etter doseøkning eller ved bytte av produkt, og dersom oksykodon brukes
+sammen med andre CNS-dempende legemidler.
+
+Pasienter som er stabilisert på en bestemt dose behøver ikke nødvendigvis å bli begrenset. Legen skal derfor
+avgjøre om pasienten får lov til å kjøre bil eller bruke maskiner.
+
+
+                                                      8

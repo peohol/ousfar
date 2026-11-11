@@ -1,0 +1,49 @@
+10 mg/ 5 mg; 20 mg/10 mg; 30 mg/15 mg; 40 mg/20 mg:
+kan deles i like doser.
+
+I tillegg har nalokson langsommere eliminasjonshastighet når det administreres intranasalt. Begge egenskaper
+medfører at misbruk av Tanonalla ikke vil ha tilsiktet effekt. Hos oksykodonavhengige rotter førte intravenøs
+administrasjon av oksykodonhydroklorid/naloksonhydroklorid i forholdet 2:1 til abstinenssymptomer.
+
+5.3   Prekliniske sikkerhetsdata
+
+Det foreligger ingen data fra studier av reproduksjonstoksisitet av kombinasjonen oksykodon og nalokson.
+
+Studier med enkeltkomponentene viste at oksykodon ikke påvirket fertilitet eller tidlig embryoutvikling hos
+hann- og hunnrotter ved doser inntil 8 mg/kg/døgn og ikke induserte misdannelser hos rotter ved doser inntil 8
+mg/kg/døgn eller hos kaniner ved doser inntil 125 mg/kg/døgn. Hos kaniner ble det imidlertid observert en
+doserelatert økning i utviklingsavvik (økt forekomst av 27 presakrale ryggvirvler, ekstra ribbenpar) når
+individuelle fostre ble brukt ved statistisk analyse. Når disse parametrene ble statistisk vurdert med hensyn til
+kull, var kun forekomst av 27 presakrale ryggvirvler økt og kun i gruppen med 125 mg/kg, et dosenivå som ga
+alvorlige farmakotoksiske effekter hos drektige dyr. I en studie av pre- og postnatal utvikling hos rotter var
+kroppsvekt hos F1 lavere ved 6 mg/kg/døgn sammenlignet med kroppsvekt i kontrollgruppen ved doser som
+reduserte mordyrets vekt og fødeinntak (NOAEL 2 mg/kg kroppsvekt). Det var verken effekter på fysiske,
+refleksologiske eller sensoriske utviklingsparametre eller på atferds- eller reproduksjonsindikatorer.
+Standardstudier av reproduksjonstoksisitet viste at en høy oral naloksondose ikke var teratogen og/eller
+embryo/fostertoksisk, og ikke påvirket perinatal/postnatal utvikling. I svært høye doser (800 mg/kg/døgn) ga
+nalokson økt ungedød i umiddelbar post-partumperiode ved doser som ga signifikant toksisitet hos mordyret
+(f.eks. vekttap, kramper). Hos overlevende unger ble det imidlertid ikke observert effekter på utvikling eller
+atferd.
+
+Langtidsstudier av karsinogenitet med oksykodon/nalokson i kombinasjon er ikke utført. Karsinogenitet ble
+undersøkt i en 2-årig oral sonde-studie på Sprague-Dawley-rotter. Oksykodon økte ikke forekomsten av tumorer
+hos hann- eller hunnrotter ved doser opptil 6 mg/kg/dag. Dosene var begrenset av de opioidrelaterte
+farmakologiske effektene av oksykodon.
+For nalokson er det utført en 24-måneders oral studie av karsinogenitet hos rotter med doser opptil 100
+mg/kg/døgn. Det er også utført en 6-måneders karsinogenitetsstudie på TgrasH2-mus ved doser opptil 200
+mg/kg/dag. Resultatene fra de to studiene indikerer at nalokson ikke var karsinogent ved disse betingelser.
+
+Oksykodon og nalokson alene viser klastogent potensiale in vitro. Det er imidlertid ikke sett tilsvarende effekter
+in vivo, selv ved toksiske doser. Resultatene indikerer at man med god sikkerhet kan utelukke mutagen risiko for
+mennesker ved terapeutiske konsentrasjoner av oksykodon/nalokson.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Tanonalla 5 mg/2,5 mg depottablett
+Tablettkjerne:
+Polyvinylacetat
+Povidon K30
+Natriumlaurylsulfat

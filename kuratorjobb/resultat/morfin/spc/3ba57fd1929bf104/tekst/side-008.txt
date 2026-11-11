@@ -1,0 +1,54 @@
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9     Overdosering
+
+Akutt overdosering med morfin manifesteres ved respirasjonssvikt som kan medføre dødsfall,
+lungeaspirasjon, døsighet som kan utvikle seg til sløvhet eller koma, aspirasjonspneumoni,
+knappenålspupiller, rabdomyolyse som kan utvikle seg til nyresvikt, muskelslapphet, bradykardi,
+hypotensjon og død.
+
+Toksisk leukoencefalopati er observert ved overdosering av morfin.
+
+Knusing av depottablettene før inntak vil gi umiddelbar frisetting av morfin og kan føre til en
+livstruende overdose.
+
+Frie luftveier må opprettholdes. Andre støttende tiltak bør iverksettes etter behov. Rene
+opioidantagonister er spesifikke antidoter mot effekten av opioidoverdose. Nalokson gis intravenøst
+med 0,4 mg til voksne (barn vanligvis 0,01 mg/kg). Doseringen kan gjentas hvert 3.- 4. minutt inntil
+normal respirasjon er gjenopprettet. Deretter gis 1-2 ganger initialdosen intramuskulært (dvs. 0,4-0,8
+mg til voksne). Hvis respirasjonen er under kontroll kan man først gi nalokson intramuskulært, og
+senere intravenøst for å vekke pasienten. Etter intravenøs injeksjon inntreffer virkningen etter 30-60
+sekunder og varer vanligvis i 45-60 minutter. Dosen gjentas. Etter intramuskulær injeksjon inntreffer
+virkningen vanligvis etter 10 minutter og varer i 2-3 timer. Pasienten bør observeres i 24 timer grunnet
+risiko for gjentatte respirasjonsvansker.
+
+Dersom det ikke sees effekt etter 2-3 doser nalokson, tyder det på at forgiftningen skyldes ikke-
+narkotiske stoffer. Nalokson kan fremkalle kraftige abstinensreaksjoner og må brukes med forsiktighet
+hos analgetikaavhengige individer.
+
+Dødelig dose hos voksne som ikke har utviklet toleranse er 200-300 mg peroralt, for små barn ca.
+20 mg peroralt. Toksisk dose for voksne er 60-100 mg peroralt, hos små barn 5-10 mg peroralt.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Opiumsalkaloider. Morfin er et opioidanalgetikum med sentral
+smertestillende effekt. ATC-kode: N02A A01.
+
+Virkningsmekanisme
+Den analgetiske effekten skyldes dels en forandret smerteopplevelse og dels en høyning av
+smerteterskelen. Morfin utøver trolig sin analgetiske effekt på ulike nivå i CNS.
+
+Farmakodynamiske effekter
+Til morfinets sentralnervøse effekt hører også respirasjonsdepresjon, psykiske symptomer, kvalme,
+brekninger, miose samt frisetting av antidiuretisk hormon.
+
+Den respirasjonsdepressive effekten av morfin skyldes en hemming av karbondioksidets stimulerende
+virkning på respirasjonssentret i den forlengede marg. Denne effekten kan føre til respirasjonssvikt hos
+pasienter med nedsatt lungekapasitet som følge av lungesykdom eller ved påvirkning av andre
+legemidler.

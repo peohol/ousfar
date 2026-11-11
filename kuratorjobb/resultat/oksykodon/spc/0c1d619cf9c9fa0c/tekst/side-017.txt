@@ -1,0 +1,48 @@
+monoterapi i samme doseområde.
+
+Restless legs-syndrom
+I en 12-ukers, dobbelblindet effektstudie ble 150 pasienter med alvorlig til svært alvorlig idiopatisk restless legs-
+syndrom ved randomisering behandlet med oksykodonhydroklorid/naloksonhydroklorid. Alvorlig syndrom er
+definert som en IRLS-skår mellom 21 og 30, og svært alvorlig er definert som en skår mellom 31 og 40.
+Pasienter viste en klinisk relevant og statistisk signifikant forbedring av gjennomsnittlig IRLS-skår
+sammenlignet med placebo under hele behandlingsperioden, med en reduksjon i gjennomsnittlig IRLS-skår på
+5,9 poeng sammenlignet med placebo ved uke 12 (forutsatt en effekt hos pasienter som avbrøt studien
+tilsvarende den hos de som fullførte på placebo, som representerer en svært konservativ tilnærming).
+Begynnende effekt ble påvist så tidlig som i første behandlingsuke. Lignende resultater ble vist for bedring av
+alvorlighetsgrad av RLS-symptomer (målt på RLS-6-skalaen), i livskvalitet målt i et spørreskjema om RLS og
+livskvalitet, i søvnkvalitet (målt på MOS søvnskala) og for andelen med bedring av IRLS-skår. Ingen pasienter
+hadde bekreftede tilfeller av forsterkning i løpet av studien.
+
+5.2   Farmakokinetiske egenskaper
+
+Oksykodonhydroklorid
+Absorpsjon
+Oksykodon har en høy absolutt biotilgjengelighet på inntil 87 % etter oral administrasjon.
+
+Distribusjon
+Etter absorpsjon distribueres oksykodon til hele kroppen. Omtrent 45 % er bundet til plasmaproteiner.
+Oksykodon passerer placenta og kan påvises i morsmelk.
+
+Biotransformasjon
+Oksykodon metaboliseres i tarm og lever til noroksykodon og oksymorfon og til ulike glukuronidkonjugater.
+Noroksykodon, oksymorfon og noroksymorfon dannes via cytokrom P450-systemet. Kinidin reduserer dannelse
+av oksymorfon hos mennesker uten betydelig påvirkning av oksykodons farmakodynamikk.
+Metabolittenes bidrar ubetydelig til samlet farmakodynamisk effekt.
+
+Eliminasjon
+Oksykodon og metabolittene utskilles i urin og fæces.
+
+Naloksonhydroklorid
+Absorpsjon
+Etter oral administrasjon har nalokson svært lav systemisk tilgjengelighet på <3 %.
+
+Distribusjon
+Nalokson passerer placenta. Det er ukjent om nalokson også går over i morsmelk.
+
+Biotransformasjon og eliminasjon
+Etter parenteral administrasjon er plasmahalveringstiden ca én time. Virketiden avhenger av dose og
+administrasjonsvei. Intramuskulær injeksjon gir mer langvarig effekt enn intravenøse doser. Nalokson
+metaboliseres i lever og utskilles i urin. Hovedmetabolittene er naloksonglukuronid, 6β-naloksol og dets
+glukuronid.
+
+Oksykodonhydroklorid/naloksonhydroklorid i kombinasjon (Tanonalla)

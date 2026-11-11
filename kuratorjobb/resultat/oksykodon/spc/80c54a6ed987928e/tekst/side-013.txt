@@ -1,0 +1,58 @@
+Tablettene må ikke knuses, deles eller tygges, da dette kan føre til for rask frisetting og absorpsjon av en
+potensielt dødelig dose av oksykodon på grunn av ødelagt effekt av depotformuleringen.
+
+Distribusjon
+Den absolutte biotilgjengeligheten av oksykodon er ca. to tredjedeler i forhold til parenteral administrasjon.
+Ved ”steady-state” er distribusjonsvolumet for oksykodon 2,6 l/kg, plasmaproteinbindingen 38-45 %,
+halveringstiden 4-6 timer og plasma clearance 0,8 l/min.
+
+Biotransformasjon
+Oksykodon metaboliseres i tarm og lever til noroksykodon og oksymorfin så vel som til flere glukuronid-
+konjugater. CYP3A4 og CYP2D6 er sannsynligvis involvert i dannelsen av henholdsvis noroksykodon og
+oksymorfon. Oksymorfon har analgetisk aktivitet, men finnes i plasma i lave konsentrasjoner, og er ikke
+antatt å bidra til oksykodons farmakologiske effekt.
+
+Eliminasjon
+Oksykodon og dets metabolitter skilles ut via urin og fæces. Oksykodon passerer placenta og gjenfinnes i
+morsmelk.
+
+Linearitet/ikke-linearitet
+Depottablettene er doseproporsjonalt bioekvivalente med hensyn til mengde virkestoff som absorberes og
+sammenlignbare med hensyn til absorpsjonshastighet.
+
+Eldre
+Oksykodons plasmakonsentrasjon er 15 % høyere hos eldre enn hos yngre pasienter.
+
+Kjønn
+Kvinnelige pasienter har i gjennomsnitt inntil 25 % høyere oksykodonplasmakonsentrasjon enn menn selv
+etter justering for kroppsvekt. Årsaken til denne forskjellen er ukjent.
+
+Pasienter med nedsatt nyrefunksjon
+Pasienter med lett, moderat og sterkt nedsatt nyrefunksjon viste henholdsvis 1,1, 1,4 og 1,7 ganger økt
+plasmakonsentrasjon sammenlignet med pasienter med normal leverfunksjon. AUC-verdien var i
+gjennomsnitt økt henholdsvis 1,5, 1,7 og 2,3 ganger sammenlignet med pasienter med normal nyrefunksjon.
+Eliminasjonshalveringstiden for oksykodon var økt henholdsvis 1,5, 1,2 og 1,4 ganger sammenlignet med
+pasienter med normal nyrefunksjon.
+
+Pasienter med nedsatt leverfunksjon
+Pasienter med lett, moderat og sterkt nedsatt leverfunksjon viste henholdsvis 1,2, 2,0 og 1,9 ganger økt
+plasmakonsentrasjon sammenlignet med pasienter med normal leverfunksjon. AUC-verdien var i
+gjennomsnitt økt henholdsvis 1,4, 3,2 og 3,2 ganger sammenlignet med pasienter med normal leverfunksjon.
+Eliminasjonshalveringstiden for oksykodon var økt henholdsvis 1,1, 1,8 og 1,8 ganger sammenlignet med
+pasienter med normal leverfunksjon.
+
+5.3   Prekliniske sikkerhetsdata
+
+Teratogenitet
+Oksykodon hadde ingen effekt på fertilitet og tidlig embryoutvikling hos hann- og hunnrotter i doser på
+opptil 8 mg/kg kroppsvekt og induserte ingen misdannelser hos rotter i doser på opptil 8 mg/kg eller hos
+kaniner i doser på 125 mg/kg kroppsvekt. I en statistisk undersøkelse med individuelle fostre ble det
+imidlertid observert en doserelatert økning av misdannelser hos kaniner (økt forekomst av 27 presakrale
+ryggvirvler, et ekstra par ribben). Når disse parametrene ble statistisk evaluert i kull, var det bare økt
+forekomst av 27 presakrale ryggvirvler og bare i gruppen som fikk 125 mg/kg, et dosenivå som induserte
+alvorlige farmakotoksiske effekter i drektige dyr.
+I en studie av peri- og postnatal utvikling hos rotter ble parametrene maternell kroppsvekt og matinntak
+redusert for doser ≥ 2 mg/kg/d sammenlignet med kontrollgruppen. Kroppsvekten var lavere i F1-
+generasjonen fra maternelle rotter i dosegruppen 6 mg/kg/d. Det var ingen effekter på fysiske,
+refleksologiske eller sensoriske utviklingsparametre eller på de atferdsmessige og reproduktive indeksene
+                                                      13

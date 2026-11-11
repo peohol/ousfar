@@ -1,0 +1,56 @@
+Organklasse-system         Vanlige         Mindre vanlige      Sjeldne         Ikke kjent
+                                                                               (kan ikke anslås ut i
+                           (≥ 1/100 til    (≥ 1/1000 til       (≥ 1/10 000     fra tilgjengelige data)
+                           < 1/10)         < 1/100)            til < 1/1000)
+Nevrologiske               Sedasjon        Svimmelhet                          Hodepine
+sykdommer                                  Dysfori                             Økt intrakranielt
+                                                                               trykk hos pasienter
+                                                                               med alvorlig
+                                                                               hodeskade
+                                                                               Allodyni Hyperalgesi
+                                                                               (se pkt. 4.4)
+                                                                               Hyperhidrose
+
+Øyesykdommer               Miose
+Hjertesykdommer                                                                Bradykardi
+                                                                               Palpitasjoner
+Karsykdommer                                                   Ortostatisk
+                                                               hypotensjon     Hypotensjon
+Sykdommer i                                Respirasjons-                       Sentralt
+respirasjonsorganer,                       depresjon                           søvnapnésyndrom
+thorax og mediastinum                      Bronko-
+                                           konstriksjon
+Gastrointestinale          Obstipasjon                                         Munntørrhet
+sykdommer                  Kvalme                                              Pankreatitt
+                           Brekninger
+Sykdommer i lever og                       Galleveisspasme                     Spasmer i Oddis
+galleveier                                                                     sfinkter
+Hud- og                                    Kløe                                Urtikaria
+underhudssykdommer                                                             Utslett
+                                                                               Akutt generalisert
+                                                                               eksantematøs
+                                                                               pustulose (AGEP)
+Forstyrrelser i                                                                Anafylaktiske
+immunsystemet                                                                  reaksjoner
+Sykdommer i nyre og        Urinretensjo    Urinveisspasme
+urinveier                  n (økt ADH-
+                           frisetting)
+Generelle lidelser og                                                          Abstinens-syndrom*
+reaksjoner på                                                                  Abstinens-
+administrasjonsstedet                                                          symptomer er sett
+                                                                               hos spedbarn av
+                                                                               mødre som har brukt
+                                                                               morfin (se pkt. 4.6)
+                                                                               Legemiddel-
+                                                                               toleranse
+   * Legemiddelavhengighet og abstinenssyndrom:
+
+   Legemiddelavhengighet
+   Gjentatt bruk av Morfin kan føre til legemiddelavhengighet, selv ved terapeutiske doser. Risikoen for
+   rusgiftavhengighet kan variere etter en pasients individuelle risikofaktorer, dosering og varigheten av
+   opioidbehandlingen (se pkt. 4.4).
+
+   Bruk av opioidsmertestillende kan være forbundet med utvikling av fysisk og/eller fysiologisk
+   avhengighet eller toleranse. Abstinenssyndrom kan fremskyndes hvis opioidbehandlingen avsluttes
+   plutselig eller opioidantagonister administreres, eller kan noen ganger oppleves mellom doser. Se pkt.
+   4.4 for behandling. Fysiologiske abstinenssymptomer inkluderer: Kroppsverk, skjelving, rastløse bein-

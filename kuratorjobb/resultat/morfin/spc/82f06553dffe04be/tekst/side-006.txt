@@ -1,0 +1,56 @@
+b.    Tabell med oppsummering av bivirkninger
+
+Frekvensgruppene er definert etter følgende konvensjon:
+-     Vanlige (≥1/100 til <1/10),
+-     Mindre vanlige (≥1/1000 til <1/100),
+-     Sjeldne (≥1/10 000 til <1/1000),
+-     Ikke kjent (kan ikke anslås ut i fra tilgjengelige data)
+
+ Organklasse-           Vanlige              Mindre vanlige      Sjeldne           Ikke kjent
+ system
+                        (≥ 1/100 til         (≥ 1/1000 til       (≥ 1/10 000 til   (kan ikke anslås
+                        < 1/10)              < 1/100)            < 1/1000)         ut i fra
+                                                                                   tilgjengelige data)
+ Psykiatriske                                                                      Euforisk humør,
+ lidelser                                                                          hallusinasjoner,
+                                                                                   desorientering,
+                                                                                   avhengighet,
+                                                                                   humørforandringer
+ Nevrologiske           Døsighet             Svimmelhet,                           Hodepine,
+ sykdommer                                   dysfori                               økt intrakranielt
+                                                                                   trykk hos pasienter
+                                                                                   med alvorlig
+                                                                                   hodeskade,
+                                                                                   allodyni,
+                                                                                   hyperalgesi (se
+                                                                                   pkt. 4.4),
+                                                                                   hyperhidrose
+ Øyesykdommer           Miose
+ Hjerte-sykdommer                                                                  Bradykardi,
+                                                                                   palpitasjoner
+ Karsykdommer                                                    Ortostatisk
+                                                                 hypotensjon
+ Sykdommer i                                 Bronko-                               Sentralt
+ respirasjonsorgane                          konstriksjon,                         søvnapnésyndrom
+ r, thorax og                                respirasjons-
+ mediastinum                                 depresjon
+ Gastrointestinale      Obstipasjon,                                               Munntørrhet
+ sykdommer              kvalme,                                                    Pankreatitt
+                        brekninger
+ Sykdommer i lever                           Galleveisspasme                       Spasmer i Oddis
+ og galleveier                                                                     sfinkter
+ Hud- og                                     Kløe                                  Urtikaria,
+ underhuds-                                                                        Utslett
+ sykdommer                                                                         Akutt generalisert
+                                                                                   eksantematøs
+                                                                                   pustulose (AGEP)
+ Forstyrrelser i                                                                   Anafylaktiske
+ immunsystemet                                                                     reaksjoner
+ Sykdommer i nyre       Urinretensjon        Urinveisspasme
+ og urinveier           (økt ADH-
+                        frisetting)
+
+
+
+
+                                                                                                    6

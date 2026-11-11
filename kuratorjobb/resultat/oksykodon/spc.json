@@ -1,0 +1,2347 @@
+{
+  "stoff": "oksykodon",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-11T04:15:06.23416+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 48,
+    "hentet": 21,
+    "dokumenter": 9,
+    "mangler": [
+      {
+        "merkevare_id": "ID_85A30C7F-D6FE-4950-856D-D376C93C6F4F",
+        "varenavn": "OxyContin",
+        "navn_form_styrke": "OxyContin depottab 60 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5180.pdf"
+      },
+      {
+        "merkevare_id": "ID_92B4C908-2C40-439D-AFEF-C907DDD52912",
+        "varenavn": "Targiniq",
+        "navn_form_styrke": "Targiniq depottab 10 mg/5 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6097.pdf"
+      },
+      {
+        "merkevare_id": "ID_9A1D5474-CAF8-4A57-9DDE-443384838A2B",
+        "varenavn": "Reltebon Depot",
+        "navn_form_styrke": "Reltebon Depot depottab 40 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9287.pdf"
+      },
+      {
+        "merkevare_id": "ID_9E04084F-FA17-4783-BEFE-22401A684DC8",
+        "varenavn": "OxyContin",
+        "navn_form_styrke": "OxyContin depottab 80 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-02425.pdf"
+      },
+      {
+        "merkevare_id": "ID_A4949A35-0011-4AAB-9951-CE0FA23EB8DB",
+        "varenavn": "Targiniq",
+        "navn_form_styrke": "Targiniq depottab 5 mg/2,5 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5981.pdf"
+      },
+      {
+        "merkevare_id": "ID_B40A0009-D12E-4A4F-988A-848A2058FEA7",
+        "varenavn": "Targiniq",
+        "navn_form_styrke": "Targiniq depottab 15 mg/7,5 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9215.pdf"
+      },
+      {
+        "merkevare_id": "ID_B8597A67-78DD-40FB-9BB0-714EB8B11166",
+        "varenavn": "Tanonalla",
+        "navn_form_styrke": "Tanonalla depottab 30 mg/15 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13803.pdf"
+      },
+      {
+        "merkevare_id": "ID_B874C77F-4D26-4C3C-87BD-4E54D7E60179",
+        "varenavn": "Tanonalla",
+        "navn_form_styrke": "Tanonalla depottab 5 mg/2,5 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13800.pdf"
+      },
+      {
+        "merkevare_id": "ID_B8B4A1E4-F05B-49B7-A8C2-C79AD59465E6",
+        "varenavn": "Oxycodone Hameln",
+        "navn_form_styrke": "Oxycodone Hameln inj/inf, oppl 10 mg/ml",
+        "produsent": "hameln pharma GmbH",
+        "atc": "N02AA05",
+        "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11701.pdf"
+      },
+      {
+        "merkevare_id": "ID_C15939C4-264D-47E7-ACBA-4B7FF07BFDCE",
+        "varenavn": "Oxycodone Actavis",
+        "navn_form_styrke": "Oxycodone Actavis kaps 20 mg",
+        "produsent": "Actavis Group PTC ehf",
+        "atc": "N02AA05",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8802.pdf"
+      },
+      {
+        "merkevare_id": "ID_C2D63DDB-35A9-473F-BC0A-0FC41336E5B6",
+        "varenavn": "OxyNorm",
+        "navn_form_styrke": "OxyNorm mikst oppl 10 mg/ml",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf"
+      },
+      {
+        "merkevare_id": "ID_EE7C39E5-C197-4986-9331-9275399AA2DA",
+        "varenavn": "OxyNorm",
+        "navn_form_styrke": "OxyNorm mikst oppl 10 mg/ml",
+        "produsent": "Orifarm AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf"
+      },
+      {
+        "merkevare_id": "ID_C3825FCC-F776-41E5-8ACC-7E8832ED7B31",
+        "varenavn": "OxyContin",
+        "navn_form_styrke": "OxyContin depottab 20 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02769.pdf"
+      },
+      {
+        "merkevare_id": "ID_C98CC8F9-CE4A-4BA5-8F31-3810481FDEC9",
+        "varenavn": "Oxycodone Orifarm",
+        "navn_form_styrke": "Oxycodone Orifarm mikst oppl 10 mg/ml",
+        "produsent": "Orifarm Generics A/S",
+        "atc": "N02AA05",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13878.pdf"
+      },
+      {
+        "merkevare_id": "ID_DA5735AF-AB77-4C38-8B20-8BE9273023DC",
+        "varenavn": "Oxycodone Hameln",
+        "navn_form_styrke": "Oxycodone Hameln inj/inf, oppl 50 mg/ml",
+        "produsent": "hameln pharma GmbH",
+        "atc": "N02AA05",
+        "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11702.pdf"
+      },
+      {
+        "merkevare_id": "ID_DB3E2D74-4C09-4E14-BE3E-E505E0398066",
+        "varenavn": "Reltebon Depot",
+        "navn_form_styrke": "Reltebon Depot depottab 15 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9284.pdf"
+      },
+      {
+        "merkevare_id": "ID_DCC22FB2-E478-441C-86A7-5BF1C51CF8FC",
+        "varenavn": "Reltebon Depot",
+        "navn_form_styrke": "Reltebon Depot depottab 30 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N02AA05",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9286.pdf"
+      },
+      {
+        "merkevare_id": "ID_E620427D-0E41-4C57-A4B8-771BC280C03F",
+        "varenavn": "Tanonalla",
+        "navn_form_styrke": "Tanonalla depottab 40 mg/20 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13804.pdf"
+      },
+      {
+        "merkevare_id": "ID_EA4CAF4B-9315-45D9-BE9B-B038A6D0A971",
+        "varenavn": "OxyNorm",
+        "navn_form_styrke": "OxyNorm mikst oppl 1 mg/ml",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09979.pdf"
+      },
+      {
+        "merkevare_id": "ID_EB4AA413-35A4-4A78-872A-86A18B9D82E5",
+        "varenavn": "Targiniq",
+        "navn_form_styrke": "Targiniq depottab 30 mg/15 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA55",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9216.pdf"
+      },
+      {
+        "merkevare_id": "ID_F339C0B4-6F20-4C68-A855-8DD8ACD7E901",
+        "varenavn": "OxyNorm",
+        "navn_form_styrke": "OxyNorm kaps 5 mg",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AA05",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07401.pdf"
+      },
+      {
+        "merkevare_id": "ID_5BD2CB2F-EC9F-4B23-8AFB-0322668465D6",
+        "varenavn": "Oksykodon SA",
+        "navn_form_styrke": "Oksykodon SA inf, oppl 20 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA05",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_6EA03DE7-FCA6-4B42-A40D-F059903EFA37",
+        "varenavn": "Oxycodone renaudin",
+        "navn_form_styrke": "Oxycodone renaudin inf, oppl 1 mg/ml",
+        "produsent": "Laboratoire Renaudin",
+        "atc": "N02AA05",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7F0900CB-6632-44FA-917C-32D090DAA28E",
+        "varenavn": "Oksykodon SA",
+        "navn_form_styrke": "Oksykodon SA inf, oppl 1 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA05",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_87B92C91-DBF9-4701-AC63-28654BF6645E",
+        "varenavn": "Oksykodon SA",
+        "navn_form_styrke": "Oksykodon SA inf, oppl 10 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA05",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AD8A1E33-D3B7-4A31-89D2-9AE11531F5FF",
+        "varenavn": "Oksykodon SA",
+        "navn_form_styrke": "Oksykodon SA inj, oppl 20 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N02AA05",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_BBE7057B-A9AF-4DF4-B21A-20B76C627C79",
+        "varenavn": "Oksykodon SA",
+        "navn_form_styrke": "Oksykodon SA inf, oppl 5 mg/ml",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N02AA05",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 40 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 40,
+        "ikke_dmp": 0,
+        "uten_omtale": 6
+      }
+    },
+    {
+      "id": "maks",
+      "status": "advarsel",
+      "melding": "20 preparatomtaler er utelatt (maks 20); se «utelatt»."
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "27 av 48 preparater i FEST mangler en hentet preparatomtale fra DMP: 6 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA); 21 utelatt over grensen. SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 48,
+        "hentet": 21,
+        "mangler": 27,
+        "dokumenter": 9
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9282.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9282.pdf",
+      "hentet_kl": "2026-11-11T10:25:30.596Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "256662",
+        "content-md5": "yXOxM9KAEho4c4uAX2QL6A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C88387C",
+        "date": "Wed, 11 Nov 2026 10:25:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_05109A3E-688C-42BF-8AB2-C4CC3C2496BD",
+          "varenavn": "Reltebon Depot",
+          "navn_form_styrke": "Reltebon Depot depottab 5 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9282.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (256662 byte).",
+          "antall": {
+            "bytes": 256662
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02768.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02768.pdf",
+      "hentet_kl": "2026-11-11T10:25:34.447Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225059",
+        "content-md5": "n/WAG7+Z7EtNBUbgYBPa5g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C67E3E6",
+        "date": "Wed, 11 Nov 2026 10:25:34 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_05ADD144-EEDE-418D-B4D7-8B46A109DED7",
+          "varenavn": "OxyContin",
+          "navn_form_styrke": "OxyContin depottab 10 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02768.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225059 byte).",
+          "antall": {
+            "bytes": 225059
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e119312f5f08525d56fd11bdd1c50248c10aba28a57fe45b910fc8df4406ed03"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14094.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14094.pdf",
+      "hentet_kl": "2026-11-11T10:25:38.215Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "217460",
+        "content-md5": "N2KM4mwQKRKDmeEZY78mng==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:53 GMT",
+        "etag": "0x8DE53793E837105",
+        "date": "Wed, 11 Nov 2026 10:25:38 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_073E341E-D2CC-415C-BBEB-1C5D1286EC78",
+          "varenavn": "Oxycodone Abboxia",
+          "navn_form_styrke": "Oxycodone Abboxia inj/inf, oppl 1 mg/ml",
+          "produsent": "Abboxia AB",
+          "atc": "N02AA05",
+          "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14094.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (217460 byte).",
+          "antall": {
+            "bytes": 217460
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3cdb23e222977628accab1383551849d3cec407053d1c98d6f0d3a11239be235"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07402.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07402.pdf",
+      "hentet_kl": "2026-11-11T10:25:41.272Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "210795",
+        "content-md5": "RPj2p1ttVYlXl324yed78w==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793DF0BC21",
+        "date": "Wed, 11 Nov 2026 10:25:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_18A87DE3-6C69-469D-A07E-388FA9CFA7D7",
+          "varenavn": "OxyNorm",
+          "navn_form_styrke": "OxyNorm kaps 10 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07402.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (210795 byte).",
+          "antall": {
+            "bytes": 210795
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "616fa3e534f8eff287774129bf648dd9b2d406bf98af9c41a571d2ce0fec2d34"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02770.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02770.pdf",
+      "hentet_kl": "2026-11-11T10:25:44.574Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225059",
+        "content-md5": "n/WAG7+Z7EtNBUbgYBPa5g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793DE858E5",
+        "date": "Wed, 11 Nov 2026 10:25:44 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1B88A96A-99DC-45CB-8F7D-9EFB9A47A1A1",
+          "varenavn": "OxyContin",
+          "navn_form_styrke": "OxyContin depottab 40 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02770.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225059 byte).",
+          "antall": {
+            "bytes": 225059
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e119312f5f08525d56fd11bdd1c50248c10aba28a57fe45b910fc8df4406ed03"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6098.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6098.pdf",
+      "hentet_kl": "2026-11-11T10:25:44.730Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "368709",
+        "content-md5": "AMT6mrEdQBE6dJRi3MepRA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE537940141052",
+        "date": "Wed, 11 Nov 2026 10:25:45 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_240A6DBF-CE70-4799-B18B-67F62ADE46F1",
+          "varenavn": "Targin",
+          "navn_form_styrke": "Targin depottab 20 mg/10 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N02AA55",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_A2A664BA-2DF3-4E79-A80C-BE0D9F674C1D",
+          "varenavn": "Targiniq",
+          "navn_form_styrke": "Targiniq depottab 20 mg/10 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA55",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6098.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (368709 byte).",
+          "antall": {
+            "bytes": 368709
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7656b1d0fe7e1aa6bec066072901902e7d527c4a8256b48ed72dff22038873a6"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9283.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9283.pdf",
+      "hentet_kl": "2026-11-11T10:25:50.290Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "256662",
+        "content-md5": "yXOxM9KAEho4c4uAX2QL6A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:43 GMT",
+        "etag": "0x8DE537938325003",
+        "date": "Wed, 11 Nov 2026 10:25:51 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3252E9D2-CFBA-4B48-BCB6-2B7D89781F61",
+          "varenavn": "Reltebon Depot",
+          "navn_form_styrke": "Reltebon Depot depottab 10 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9283.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (256662 byte).",
+          "antall": {
+            "bytes": 256662
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9288.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9288.pdf",
+      "hentet_kl": "2026-11-11T10:25:51.832Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "256662",
+        "content-md5": "yXOxM9KAEho4c4uAX2QL6A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:49 GMT",
+        "etag": "0x8DE53793BAFD20E",
+        "date": "Wed, 11 Nov 2026 10:25:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_33AB4ACC-6953-43C6-8423-731942926A27",
+          "varenavn": "Reltebon Depot",
+          "navn_form_styrke": "Reltebon Depot depottab 60 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9288.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (256662 byte).",
+          "antall": {
+            "bytes": 256662
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4848.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4848.pdf",
+      "hentet_kl": "2026-11-11T10:25:53.016Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225059",
+        "content-md5": "n/WAG7+Z7EtNBUbgYBPa5g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE53793FE7AF8F",
+        "date": "Wed, 11 Nov 2026 10:25:53 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3E142B15-95A7-4A4E-BD64-AC2BE3F46570",
+          "varenavn": "OxyContin",
+          "navn_form_styrke": "OxyContin depottab 30 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4848.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225059 byte).",
+          "antall": {
+            "bytes": 225059
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e119312f5f08525d56fd11bdd1c50248c10aba28a57fe45b910fc8df4406ed03"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13802.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13802.pdf",
+      "hentet_kl": "2026-11-11T10:25:53.165Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "400608",
+        "content-md5": "7zz3T1/gVgOu0AFsRP0cZw==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:09 GMT",
+        "etag": "0x8DE85F8F85A07C9",
+        "date": "Wed, 11 Nov 2026 10:25:53 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_46C96577-3CC7-4A27-909B-46881DC57754",
+          "varenavn": "Tanonalla",
+          "navn_form_styrke": "Tanonalla depottab 20 mg/10 mg",
+          "produsent": "Sandoz - København",
+          "atc": "N02AA55",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13802.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (400608 byte).",
+          "antall": {
+            "bytes": 400608
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0c1d619cf9c9fa0cf7d61f8363490039822ff0b45d0843f31e6fae60ee594b02"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13801.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13801.pdf",
+      "hentet_kl": "2026-11-11T10:25:59.402Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "400608",
+        "content-md5": "7zz3T1/gVgOu0AFsRP0cZw==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:09 GMT",
+        "etag": "0x8DE85F8F856D3EC",
+        "date": "Wed, 11 Nov 2026 10:26:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_4BF04135-E6AD-45C2-B72B-AC1B09342C21",
+          "varenavn": "Tanonalla",
+          "navn_form_styrke": "Tanonalla depottab 10 mg/5 mg",
+          "produsent": "Sandoz - København",
+          "atc": "N02AA55",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13801.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (400608 byte).",
+          "antall": {
+            "bytes": 400608
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0c1d619cf9c9fa0cf7d61f8363490039822ff0b45d0843f31e6fae60ee594b02"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1153.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1153.pdf",
+      "hentet_kl": "2026-11-11T10:26:00.969Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "225059",
+        "content-md5": "n/WAG7+Z7EtNBUbgYBPa5g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379418F7CF5",
+        "date": "Wed, 11 Nov 2026 10:26:01 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_52EC2A00-FCD5-4C41-A22D-6F2CE375AB97",
+          "varenavn": "OxyContin",
+          "navn_form_styrke": "OxyContin depottab 5 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1153.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (225059 byte).",
+          "antall": {
+            "bytes": 225059
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e119312f5f08525d56fd11bdd1c50248c10aba28a57fe45b910fc8df4406ed03"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00216.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00216.pdf",
+      "hentet_kl": "2026-11-11T10:26:02.132Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "218444",
+        "content-md5": "KABDik4/wCGUMcgp+vgTdw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:39 GMT",
+        "etag": "0x8DE537935CE52A9",
+        "date": "Wed, 11 Nov 2026 10:26:02 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5782C500-12A7-4A72-9F7F-E5E5443D63FB",
+          "varenavn": "OxyNorm",
+          "navn_form_styrke": "OxyNorm inj/inf, oppl 10 mg/ml",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00216.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (218444 byte).",
+          "antall": {
+            "bytes": 218444
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "71e51a170d87d25b29954cf0ffac7ef8841e41e79499a288cf034b4c02ad77f1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07403.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07403.pdf",
+      "hentet_kl": "2026-11-11T10:26:05.795Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "210795",
+        "content-md5": "RPj2p1ttVYlXl324yed78w==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:49 GMT",
+        "etag": "0x8DE53793BB80E3E",
+        "date": "Wed, 11 Nov 2026 10:26:05 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_61112B67-340C-4C28-B23F-22B2D20C212A",
+          "varenavn": "OxyNorm",
+          "navn_form_styrke": "OxyNorm kaps 20 mg",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07403.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (210795 byte).",
+          "antall": {
+            "bytes": 210795
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "616fa3e534f8eff287774129bf648dd9b2d406bf98af9c41a571d2ce0fec2d34"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8800.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8800.pdf",
+      "hentet_kl": "2026-11-11T10:26:05.947Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "223841",
+        "content-md5": "/lDnmXMfolFHoDAe+1iK2A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:34 GMT",
+        "etag": "0x8DE85F8E3416048",
+        "date": "Wed, 11 Nov 2026 10:26:06 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_633CF129-D255-47D5-8EC1-0F67B41D9471",
+          "varenavn": "Oxycodone Actavis",
+          "navn_form_styrke": "Oxycodone Actavis kaps 5 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N02AA05",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8800.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (223841 byte).",
+          "antall": {
+            "bytes": 223841
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "af2ebed16d93574edc252de3b95ff80a3336d75e92fa236a7fcd8085451e87be"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9289.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9289.pdf",
+      "hentet_kl": "2026-11-11T10:26:09.724Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "256662",
+        "content-md5": "yXOxM9KAEho4c4uAX2QL6A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793ED8B0A2",
+        "date": "Wed, 11 Nov 2026 10:26:09 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_63B78265-E8DC-4C4C-BE36-36B5C07E64F6",
+          "varenavn": "Reltebon Depot",
+          "navn_form_styrke": "Reltebon Depot depottab 80 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9289.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (256662 byte).",
+          "antall": {
+            "bytes": 256662
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13877.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13877.pdf",
+      "hentet_kl": "2026-11-11T10:26:09.878Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "369902",
+        "content-md5": "w0WMa/Abnld6mI2TbUdvow==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C5BFEBA",
+        "date": "Wed, 11 Nov 2026 10:26:10 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_65106C0F-CDBE-4B5E-944D-FC941CD64ED4",
+          "varenavn": "Oxycodone Orifarm",
+          "navn_form_styrke": "Oxycodone Orifarm mikst oppl 1 mg/ml",
+          "produsent": "Orifarm Generics A/S",
+          "atc": "N02AA05",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13877.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (369902 byte).",
+          "antall": {
+            "bytes": 369902
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91903e68a850c0a7d31946787d76abfbd405a00cc854d1f3335eb8bf52b57970"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8801.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8801.pdf",
+      "hentet_kl": "2026-11-11T10:26:13.419Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "223841",
+        "content-md5": "/lDnmXMfolFHoDAe+1iK2A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:34 GMT",
+        "etag": "0x8DE85F8E3441F0B",
+        "date": "Wed, 11 Nov 2026 10:26:13 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_67E2DEA4-0F3D-4559-A94E-87CCA1E1B8F0",
+          "varenavn": "Oxycodone Actavis",
+          "navn_form_styrke": "Oxycodone Actavis kaps 10 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N02AA05",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8801.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (223841 byte).",
+          "antall": {
+            "bytes": 223841
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "af2ebed16d93574edc252de3b95ff80a3336d75e92fa236a7fcd8085451e87be"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5504.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5504.pdf",
+      "hentet_kl": "2026-11-11T10:26:13.571Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "218444",
+        "content-md5": "KABDik4/wCGUMcgp+vgTdw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE5379405C8088",
+        "date": "Wed, 11 Nov 2026 10:26:14 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_693ED947-6184-41C3-9AB7-07269862A930",
+          "varenavn": "OxyNorm",
+          "navn_form_styrke": "OxyNorm inj/inf, oppl 50 mg/ml",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AA05",
+          "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5504.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (218444 byte).",
+          "antall": {
+            "bytes": 218444
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "71e51a170d87d25b29954cf0ffac7ef8841e41e79499a288cf034b4c02ad77f1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9285.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9285.pdf",
+      "hentet_kl": "2026-11-11T10:26:14.071Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "256662",
+        "content-md5": "yXOxM9KAEho4c4uAX2QL6A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379412AAF39",
+        "date": "Wed, 11 Nov 2026 10:26:14 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_7FE220F9-1D8C-4355-B57E-0933EAF903EF",
+          "varenavn": "Reltebon Depot",
+          "navn_form_styrke": "Reltebon Depot depottab 20 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AA05",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9285.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (256662 byte).",
+          "antall": {
+            "bytes": 256662
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "80c54a6ed987928e010a9d655bac2248118df17295f733b99686bc553dac0733",
+      "bytes": 256662,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri Jun 27 09:11:30 2025 UTC",
+        "endret": "Fri Jun 27 09:11:30 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-013.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-014.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-015.txt",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-013.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-014.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-015.png",
+          "kuratorjobb/resultat/oksykodon/spc/80c54a6ed987928e/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32173
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e119312f5f08525d56fd11bdd1c50248c10aba28a57fe45b910fc8df4406ed03",
+      "bytes": 225059,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "2",
+        "laget": "Wed Mar 26 12:52:13 2025 UTC",
+        "endret": "Wed Mar 26 12:52:13 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-013.txt",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-013.png",
+          "kuratorjobb/resultat/oksykodon/spc/e119312f5f08525d/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32031
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3cdb23e222977628accab1383551849d3cec407053d1c98d6f0d3a11239be235",
+      "bytes": 217460,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Wed Apr 23 10:59:06 2025 UTC",
+        "endret": "Wed Apr 23 10:59:06 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/3cdb23e222977628/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 24953
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "616fa3e534f8eff287774129bf648dd9b2d406bf98af9c41a571d2ce0fec2d34",
+      "bytes": 210795,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "2",
+        "laget": "Wed Mar 26 12:52:17 2025 UTC",
+        "endret": "Wed Mar 26 12:52:17 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/616fa3e534f8eff2/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 27773
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "7656b1d0fe7e1aa6bec066072901902e7d527c4a8256b48ed72dff22038873a6",
+      "bytes": 368709,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6",
+      "pdf": {
+        "sider": 22,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri May  2 09:28:44 2025 UTC",
+        "endret": "Fri May  2 09:28:44 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-013.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-014.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-015.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-016.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-017.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-018.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-019.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-020.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-021.txt",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/tekst/side-022.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-013.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-014.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-015.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-016.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-017.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-018.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-019.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-020.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-021.png",
+          "kuratorjobb/resultat/oksykodon/spc/7656b1d0fe7e1aa6/sider/side-022.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (22 sider).",
+          "antall": {
+            "sider": 22
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 44245
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 22
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0c1d619cf9c9fa0cf7d61f8363490039822ff0b45d0843f31e6fae60ee594b02",
+      "bytes": 400608,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c",
+      "pdf": {
+        "sider": 23,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Tue Mar 17 14:22:47 2026 UTC",
+        "endret": "Tue Mar 17 14:22:47 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-013.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-014.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-015.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-016.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-017.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-018.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-019.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-020.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-021.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-022.txt",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/tekst/side-023.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-013.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-014.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-015.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-016.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-017.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-018.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-019.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-020.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-021.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-022.png",
+          "kuratorjobb/resultat/oksykodon/spc/0c1d619cf9c9fa0c/sider/side-023.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (23 sider).",
+          "antall": {
+            "sider": 23
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 44538
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 23
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "71e51a170d87d25b29954cf0ffac7ef8841e41e79499a288cf034b4c02ad77f1",
+      "bytes": 218444,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "2",
+        "laget": "Wed Mar 26 12:52:16 2025 UTC",
+        "endret": "Wed Mar 26 12:52:16 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/71e51a170d87d25b/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 31014
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "af2ebed16d93574edc252de3b95ff80a3336d75e92fa236a7fcd8085451e87be",
+      "bytes": 223841,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Hreferralspcen",
+        "laget": "Fri Sep  5 12:10:13 2025 UTC",
+        "endret": "Fri Sep  5 12:10:13 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-012.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-013.txt",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-012.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-013.png",
+          "kuratorjobb/resultat/oksykodon/spc/af2ebed16d93574e/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 27115
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "91903e68a850c0a7d31946787d76abfbd405a00cc854d1f3335eb8bf52b57970",
+      "bytes": 369902,
+      "mappe": "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Apr 23 10:36:44 2025 UTC",
+        "endret": "Wed Apr 23 10:36:44 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/original.pdf",
+        "tekst": "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-001.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-002.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-003.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-004.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-005.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-006.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-007.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-008.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-009.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-010.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-011.txt",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-001.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-002.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-003.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-004.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-005.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-006.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-007.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-008.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-009.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-010.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-011.png",
+          "kuratorjobb/resultat/oksykodon/spc/91903e68a850c0a7/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 25832
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": [
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5180.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6097.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9287.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-02425.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5981.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9215.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13803.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13800.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11701.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8802.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1994-02769.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13878.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11702.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9284.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9286.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13804.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09979.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9216.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-07401.pdf"
+  ]
+}

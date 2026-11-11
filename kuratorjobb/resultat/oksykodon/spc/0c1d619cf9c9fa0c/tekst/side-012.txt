@@ -1,0 +1,49 @@
+    Organklassesystem        Vanlige          Mindre vanlige         Sjeldne              Svært sjeldne
+    MedDRA
+    Gastrointestinale        Magesmerter,     Flatulens              Tannproblemer        Raping
+    sykdommer                forstoppelse,
+                             diaré,
+                             munntørrhet,
+                             dyspepsi,
+                             oppkast,
+                             kvalme,
+                             flatulens
+    Sykdommer i lever og                      Økte leverenzymer,
+    galleveier                                galleveiskolikk
+    Hud- og                  Kløe,
+    underhudssykdommer       hudreaksjoner,
+                             svetting
+    Sykdommer i muskler,                      Muskelspasmer,
+    bindevev og skjelett                      muskelrykninger,
+                                              myalgi
+    Sykdommer i nyre og                       Akutt                                       Urinretensjon
+    urinveier                                 vannlatingsbehov
+
+    Lidelser i                                                                            Erektil dysfunksjon
+    kjønnsorganer og
+    brystsykdommer
+    Generelle lidelser og    Asteni,          Abstinenssyndrom,
+    reaksjoner på            utmattelse       brystsmerter,
+    administrasjonsstedet                     frysninger,
+                                              sykdomsfølelse,
+                                              smerter, perifert
+                                              ødem, tørste
+    Undersøkelser                             Vekttap                Vektøkning
+
+    Skader, forgiftninger                     Ulykkesskader
+    og komplikasjoner ved
+    medisinske prosedyrer
+1
+    spesielt hos personer med epileptisk sykdom eller disposisjon for kramper
+2
+    spesielt hos pasienter med koronarsykdom i anamnesen
+
+For virkestoffet oksykodonhydroklorid er i tillegg følgende bivirkninger kjent
+Som følge av sine farmakologiske egenskaper kan oksykodonhydroklorid gi respirasjonsdepresjon, miose,
+bronkialspasmer og spasmer i glatt muskulatur, samt undertrykke hosterefleksen.
+
+    Organklassesystem        Vanlige               Mindre vanlige               Sjeldne             Svært sjeldne
+    MedDRA
+    Infeksiøse og                                                               Herpes simplex
+    parasittære
+    sykdommer
