@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen: ingen regler, doser, godkjenninger, spørsmål, sperrer eller tekster.',
-      'Alle testforløpene for verktøyene er kjørt på nytt uten avvik, også stoppet ved valproat uten sikker prevensjon, som nå nevner prevensjonen. Status er ført: den korte kontrollen i den publiserte appen gjenstår før aksepttesten. Merknadene før neste fase, de dosefleksible forløpene, er ført. Den fasen er ikke startet ennå.',
+      'Alle testforløpene for verktøyene er kjørt på nytt uten avvik, også stoppet ved valproat uten sikker prevensjon, som nå nevner prevensjonen. Den korte kontrollen i den publiserte appen er også bestått, og status før aksepttesten er ført. Merknadene før neste fase, de dosefleksible forløpene, er ført. Den fasen er ikke startet ennå.',
     ],
     utenVarsel: true,
   },
