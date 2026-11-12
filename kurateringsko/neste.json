@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-12T00:43:51.784Z",
+  "oppdatert_kl": "2026-11-12T01:26:52.738Z",
   "malt_kl": "2026-11-11T14:26:40.260Z",
   "antall": {
     "klar": 99,
@@ -175,7 +175,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-12T00:43:51.784Z",
+          "kl": "2026-11-12T01:26:52.738Z",
           "kilde": "system"
         }
       ]
