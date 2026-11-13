@@ -10,10 +10,12 @@ og ingen e-post i det hele tatt. En administrator oppretter kontoen og gir
 brukeren et midlertidig passord. Brukeren logger inn med **brukernavn og
 passord**, velger sitt eget passord med én gang, og er inne.
 
-Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det er
-foreløpig bare registrert, ikke tatt i bruk: rettighetene avgjøres fortsatt av
-rollen `user`/`admin` alene. Se «Fagmiljø og systemroller» under og
-`docs/fagmiljoer.md`.
+Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det avgjør
+foreløpig bare hvem som kan gi nytt passord og endre adminrollen til hvem;
+ellers avgjøres rettighetene fortsatt av rollen `user`/`admin` alene. En
+systemarkitekt eller lokal administrator uten adminrollen ser derfor bare
+«Brukere» i adminmenyen, med knappene databasen tillater. Se «Fagmiljø og
+systemroller» under og `docs/fagmiljoer.md`.
 
 ## Delene det består av
 
@@ -69,21 +71,26 @@ Alle går gjennom en Edge-funksjon, og alle følger samme rekkefølge:
 autentiser, les bruker-ID fra JWT-en, slå opp rollen server-side i
 profiltabellen, valider det som er sendt inn — og først da bruk den
 privilegerte klienten. Fellesdelen ligger i `functions/_edge/kontekst.ts`.
+`nytt-passord` og `sett-rolle` gjelder andres kontoer: der avgjør databasen
+myndigheten, med den innloggedes ID, i samme transaksjon som endringen
+(«Myndighet over kontoer» i `docs/fagmiljoer.md`).
 
 | Funksjon | Hva den gjør |
 | --- | --- |
 | `opprett-bruker` | Oppretter konto og returnerer et midlertidig passord |
-| `nytt-passord` | Gir en bruker et nytt midlertidig passord |
-| `sett-rolle` | Gir eller fjerner adminstatus hos en annen |
+| `nytt-passord` | Gir en bruker et nytt midlertidig passord: systemarkitekten til alle utenom systemarkitekter, en lokal administrator bare til vanlige brukere i egne fagmiljøer |
+| `sett-rolle` | Gir eller fjerner adminstatus hos en annen; bare systemarkitekter |
 | `fullfor-oppsett` | Fullfører førstegangsoppsettet for den innloggede |
 
 Det midlertidige passordet vises én gang, til administratoren som ba om det.
 Det lagres ingen steder, logges ikke, og kan ikke hentes fram igjen. Mistes
 det, lages et nytt.
 
-`sett-rolle` endrer bare `profiles.role`. Den gir ikke lokal
-administratortildeling i et fagmiljø; det kommer når adminoperasjonene får
-hierarki (P1.2) og administrasjonen av medlemskap (P3).
+`sett-rolle` gir den nye administratoren også lokal administratortildeling i
+sitt primære fagmiljø, og den som mister rollen, slutter som lokal
+administrator. Den gjør ikke en konto med midlertidig passord til
+administrator, og fjerner ikke den siste. Administrasjonen av medlemskap og
+lokale administratorer for seg kommer i P3.
 
 ## Fagmiljø og systemroller
 
@@ -100,8 +107,8 @@ uforanderlig tilgangslogg. Modellen, reglene og hvem som har hva står i
   et aktivt fagmiljø, og den siste systemarkitekten: den kontoen må først
   avløses av en annen.
 - Nettleseren kan bare lese egne medlemskap og navnet på egne fagmiljøer.
-  Ingen eksisterende regel, funksjon eller Edge-funksjon bruker tabellene
-  ennå; `er_admin()` betyr det samme som før.
+  Bare `nytt-passord` og `sett-rolle` bruker tabellene ennå (P1.2a);
+  `er_admin()` og alle andre regler betyr det samme som før.
 
 ## Førstegangsoppsettet
 
@@ -186,10 +193,16 @@ innstillinger; se `docs/legemiddeldata.md`.
 `npm run bootstrap:admin` oppretter den, idempotent. Den leser
 `BOOTSTRAP_ADMIN_USERNAME`, `BOOTSTRAP_ADMIN_PASSWORD`, `SUPABASE_URL` og
 `SUPABASE_SECRET_KEY` fra miljøet. Finnes brukeren fra før, blir passordet
-stående urørt og skriptet sørger bare for at adminrollen er på plass.
+stående urørt og skriptet sørger bare for at adminrollen er på plass. Rollen
+følges av lokal administratortildeling i brukerens primære fagmiljø, og i et
+prosjekt uten systemarkitekt blir kontoen den første
+(`docs/fagmiljoer.md`, «Myndighet over kontoer»).
 
 ### Om alle administratorene blir borte
 
-Ingen kan gi seg selv adminstatus, så da må rollen settes utenfra: kjør
-bootstrap-skriptet på nytt for en konto som finnes, eller sett
-`role = 'admin'` i `public.profiles` med den hemmelige nøkkelen.
+Ingen kan gi seg selv adminstatus, og bare en systemarkitekt kan gi den til
+andre, så da må rollen settes utenfra: kjør bootstrap-skriptet på nytt for en
+konto som finnes, eller sett `role = 'admin'` i `public.profiles` med den
+hemmelige nøkkelen. Det samme gjelder en systemarkitekt som har mistet
+passordet sitt, siden ingen kan gi en systemarkitekt nytt passord gjennom
+appen: passordet settes da med den hemmelige nøkkelen (Supabase Auth).

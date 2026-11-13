@@ -3,9 +3,11 @@ import { brukernavnFeil, normaliserBrukernavn } from '@delt/brukernavn'
 import { visningsnavn, type Profil } from '@delt/profil'
 import {
   hentAlleProfiler,
+  hentMineKontohandlinger,
   nyttMidlertidigPassord,
   opprettBruker,
   settRolle,
+  type Kontohandlinger,
   type Midlertidig,
 } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
@@ -19,19 +21,25 @@ import { Modallag } from '../Modallag'
 import { Avatar } from './Avatar'
 import { Felt } from './Felt'
 
+const INGEN_HANDLINGER: ReadonlyMap<string, Kontohandlinger> = new Map()
+
 /**
  * Brukerlista.
  *
- * Alle innloggede ser hvem som finnes. Administratorer får i tillegg
- * knappene for å opprette en bruker, gi eller ta adminstatus og lage et nytt
- * midlertidig passord. Knappene er et grensesnitt, ikke en tilgangskontroll:
- * hver av handlingene går gjennom en Edge-funksjon som slår opp rollen på
- * nytt server-side.
+ * Alle innloggede ser hvem som finnes. Administratorer får i tillegg knappen
+ * for å opprette en bruker. Knappene for nytt midlertidig passord og for å gi
+ * eller ta adminstatus står på hver bruker den innloggede har myndighet over,
+ * slik databasen avgjør det (`hentMineKontohandlinger`): en systemarkitekt
+ * eller lokal administrator får dem også uten den gamle adminrollen, og en
+ * lokal administrator får aldri rolleknappen. Knappene er et grensesnitt, ikke
+ * en tilgangskontroll: hver handling går gjennom en Edge-funksjon som
+ * kontrollerer myndigheten på nytt server-side.
  */
 export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => void }) {
   const meg = useProfil()
   const erAdmin = meg.role === 'admin'
   const [profiler, setProfiler] = useState<Profil[]>([])
+  const [handlinger, setHandlinger] = useState<ReadonlyMap<string, Kontohandlinger>>(INGEN_HANDLINGER)
   const [feil, setFeil] = useState<string | null>(null)
   const [laster, setLaster] = useState(false)
   const [oppretter, setOppretter] = useState(false)
@@ -42,12 +50,15 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
 
   const hent = useCallback(async () => {
     setLaster(true)
+    // Uten svar om myndigheten vises ingen handlinger, men lista står.
+    const myndighet = (async () => hentMineKontohandlinger())().catch(() => INGEN_HANDLINGER)
     try {
       setProfiler(await hentAlleProfiler())
       setFeil(null)
     } catch {
       setFeil('Fikk ikke hentet brukerlista.')
     } finally {
+      setHandlinger(await myndighet)
       setLaster(false)
     }
   }, [])
@@ -172,6 +183,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         <ul className="brukerliste">
           {profiler.map((profil) => {
             const navn = visningsnavn(profil)
+            const kan = profil.id === meg.id ? undefined : handlinger.get(profil.id)
             return (
               <li key={profil.id} className="brukerrad">
                 <Avatar
@@ -197,26 +209,30 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
                   {maaGjennomOppsett(profil) && <Merke tone="toksisk">Må bytte passord</Merke>}
                 </span>
 
-                {erAdmin && profil.id !== meg.id && (
+                {(kan?.nyttPassord || kan?.endreRolle) && (
                   <span className="brukerrad__knapper">
-                    <Button
-                      variant="kant"
-                      icon={<Ikon navn="key" />}
-                      aria-label={`Nytt passord for ${navn}`}
-                      disabled={arbeider !== null}
-                      onClick={() => void nyttPassord(profil)}
-                    >
-                      Nytt passord
-                    </Button>
-                    <Button
-                      variant="kant"
-                      icon={<Ikon navn="shield" />}
-                      aria-label={`${profil.role === 'admin' ? 'Fjern admin' : 'Gjør til admin'}: ${navn}`}
-                      disabled={arbeider !== null}
-                      onClick={() => void byttRolle(profil)}
-                    >
-                      {profil.role === 'admin' ? 'Fjern admin' : 'Gjør til admin'}
-                    </Button>
+                    {kan.nyttPassord && (
+                      <Button
+                        variant="kant"
+                        icon={<Ikon navn="key" />}
+                        aria-label={`Nytt passord for ${navn}`}
+                        disabled={arbeider !== null}
+                        onClick={() => void nyttPassord(profil)}
+                      >
+                        Nytt passord
+                      </Button>
+                    )}
+                    {kan.endreRolle && (
+                      <Button
+                        variant="kant"
+                        icon={<Ikon navn="shield" />}
+                        aria-label={`${profil.role === 'admin' ? 'Fjern admin' : 'Gjør til admin'}: ${navn}`}
+                        disabled={arbeider !== null}
+                        onClick={() => void byttRolle(profil)}
+                      >
+                        {profil.role === 'admin' ? 'Fjern admin' : 'Gjør til admin'}
+                      </Button>
+                    )}
                   </span>
                 )}
               </li>

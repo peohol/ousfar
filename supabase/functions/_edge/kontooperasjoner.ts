@@ -4,7 +4,6 @@
  */
 import type { SupabaseContext } from 'npm:@supabase/server@1'
 import { genererMidlertidigPassord } from '../_delt/passord.ts'
-import type { Profil } from '../_delt/profil.ts'
 import { Avvist } from './kontekst.ts'
 
 type Adminklient = SupabaseContext['supabaseAdmin']
@@ -31,26 +30,48 @@ export async function frigiBrukernavn(admin: Adminklient, brukernavn: string): P
   await admin.from('kontoreservasjoner').delete().eq('username', brukernavn)
 }
 
-/** Profilen til en bruker, eller en lesbar feil når ingen finnes. */
-export async function hentProfil(admin: Adminklient, brukerId: string): Promise<Profil> {
-  const { data, error } = await admin
-    .from('profiles')
-    .select('*')
-    .eq('id', brukerId)
-    .maybeSingle()
-
-  if (error) throw error
-  if (!data) throw new Avvist('Ukjent bruker.', 404)
-  return data as Profil
+/**
+ * Svarene fra kontooperasjonene i databasen som er ment for den som kalte,
+ * med HTTP-statusen de skal gi. Meldingen skrives i databasen; alt annet blir
+ * en generisk feil.
+ */
+const AVSLAG: Readonly<Record<string, number>> = {
+  '42501': 403, // nektet: mangler myndighet
+  P0002: 404, // ukjent bruker
+  '22023': 400, // ugyldig forespørsel
+  '23514': 409, // ville brutt en regel, som å fjerne den siste administratoren
+  '40001': 409, // tilgangene ble endret underveis
+  '55000': 409, // kontoen er ikke klar, som før førstegangsoppsettet
+  '55P03': 409, // en annen tilbakestilling av samme konto er i gang
 }
 
 /**
- * Gir brukeren et nytt midlertidig passord og setter kontoen tilbake i
- * førstegangsoppsett.
+ * Kaller en av kontooperasjonene i databasen (`kontooperasjon_*`). De
+ * kontrollerer selv om den innloggede har myndighet, med den felles låsen
+ * holdt, og gjør endringen i samme transaksjon.
+ */
+export async function kontofunksjon<T>(
+  admin: Adminklient,
+  navn: string,
+  argumenter: Record<string, unknown>,
+): Promise<T> {
+  const { data, error } = await admin.rpc(navn, argumenter)
+  if (error) {
+    const status = AVSLAG[error.code ?? '']
+    if (status !== undefined) throw new Avvist(error.message, status)
+    throw error
+  }
+  return data as T
+}
+
+/**
+ * Gir brukeren et nytt midlertidig passord i Auth.
  *
- * Passordet returneres én gang, til den administratoren som ba om det. Det
- * lagres ingen steder og kan ikke hentes fram igjen — mistes det, må det
- * lages et nytt.
+ * Bare passordet: myndigheten kontrolleres, og kontoen settes tilbake i
+ * førstegangsoppsett, av kontooperasjonene i databasen før og etter (se
+ * `nytt-passord`). Passordet returneres én gang, til den administratoren som
+ * ba om det. Det lagres ingen steder og kan ikke hentes fram igjen — mistes
+ * det, må det lages et nytt.
  */
 export async function settMidlertidigPassord(
   admin: Adminklient,
@@ -58,16 +79,8 @@ export async function settMidlertidigPassord(
 ): Promise<string> {
   const midlertidig = genererMidlertidigPassord()
 
-  const { error: passordfeil } = await admin.auth.admin.updateUserById(brukerId, {
-    password: midlertidig,
-  })
-  if (passordfeil) throw passordfeil
-
-  const { error: profilfeil } = await admin
-    .from('profiles')
-    .update({ must_change_password: true })
-    .eq('id', brukerId)
-  if (profilfeil) throw profilfeil
+  const { error } = await admin.auth.admin.updateUserById(brukerId, { password: midlertidig })
+  if (error) throw error
 
   return midlertidig
 }
