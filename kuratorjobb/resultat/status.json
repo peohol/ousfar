@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-43445592025",
     "foresporsel_commit": "cafa107926cd0bd2a4571829955594a7c438ef92",
     "foresporsel_sha256": "719b4dcac4d92f5885270827ffb303eb15b6ece0bd35a77d15e32c784c0e9f64",
     "kode_commit": "7ff2ac8b8e9b7d6a5fcabe862e1dc76974ff7d70",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/43445592025",
-    "startet_kl": "2026-11-13T14:45:09.386Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-13T14:45:11.387Z",
+    "ferdig_kl": "2026-11-13T14:45:24.233Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "oksykodon",
+      "morfin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 592
+    }
+  ],
+  "stoffer": {
+    "oksykodon": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/oksykodon/funksjonstest.json"
+        }
+      }
+    },
+    "morfin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/morfin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
