@@ -57,7 +57,7 @@ som nye oppføringer når tabellene deres kommer (P5, P6).
 
 `leggInnTestdata` lager, gjennom appens egne funksjoner, en publisert
 fortolkningskommentar og et kommentarutkast (av `adminA`), en tråd på en
-fortolkningsside og en på en fagside, og en idé (av `vanligA`). Alt er
+fortolkningsside og en på en fagside, en idé og et profilbilde (av `vanligA`). Alt er
 syntetisk; ingen kliniske verdier.
 
 **Funn: en konto uten aktivt medlemskap kan ikke finnes i dag.** Regel 1 i
@@ -87,7 +87,7 @@ Alle har radsikkerhet, og visningene kjører som den innloggede
 | Annet | 1 | `objektrevisjoner` (publiserte revisjoner for alle, alt for admin) |
 
 I tillegg `storage.objects`: alle innloggede leser alle profilbilder i bøtta
-`avatarer`, eieren skriver sitt eget.
+`avatarer`, eieren skriver sitt eget. Testgrunnlaget gir nettleserrollene de samme rettighetene på tabellen som Supabase gjør (`migrasjonskjoring.ts`), slik at den er med i kartleggingen og prototypen.
 
 Fordelt på P2: (a) 37 tabeller og de 5 visningene, (b) 12, (c) 3 og
 `storage.objects`, (d) 7.
@@ -171,12 +171,12 @@ testen følger det P2.0 velger.
 
 ## Tilgangsmatrisen
 
-`tilgangsmatrise.test.ts` har 42 scenarioer. Hvert har person, etappe,
+`tilgangsmatrise.test.ts` har 44 scenarioer. Hvert har person, etappe,
 utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 
 | Etappe | Hull i dag | Eksempler |
 | --- | --- | --- |
-| P2.0 | 21 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, egne varsler, stoffregisteret; opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus |
+| P2.0 | 23 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, stoffregisteret; opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus |
 | P2a | 5 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar; lokal admin i B leser, lagrer og publiserer A sitt utkast. Forutsetter `ressursomfang` (P4a) og D3 |
 | P2b | 6 | B-bruker får varsel om A sin publisering, leser og slår opp A sin fortolkningstråd, gir nytt navn til andres tråd, flytter en lokal tråd til en fagside; vanlig bruker rydder idéarkivet |
 | P2c | 1 | B-bruker leser rollen til en administrator i A |

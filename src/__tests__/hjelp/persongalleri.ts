@@ -287,6 +287,8 @@ export interface Testdata {
   fagsidetraad: string
   /** En idé, av en vanlig bruker i A. */
   ide: string
+  /** Profilbildet til en vanlig bruker i A (`storage.objects`, bøtta `avatarer`). */
+  profilbilde: string
 }
 
 const DOK = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
@@ -332,5 +334,11 @@ export async function leggInnTestdata(db: PGlite, galleri: Persongalleri): Promi
     'insert into public.ideer (kategori, tittel, tekst) values ($1, $2, $3) returning id',
     ['fag', 'Syntetisk idé', JSON.stringify(DOK('Idétekst'))],
   )
-  return { publisertKommentar, kommentarutkast, fortolkningstraad, fagsidetraad, ide }
+  const profilbilde = await somBruker<string>(
+    db,
+    vanligA,
+    `insert into storage.objects (bucket_id, name) values ('avatarer', $1) returning id`,
+    [`${vanligA}/avatar.webp`],
+  )
+  return { publisertKommentar, kommentarutkast, fortolkningstraad, fagsidetraad, ide, profilbilde }
 }

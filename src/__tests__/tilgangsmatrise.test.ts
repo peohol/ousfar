@@ -75,6 +75,7 @@ const SCENARIOER: readonly Scenario[] = [
     { navn: 'slår opp en tråd med direktelenke', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, `select public.direktelenke('diskusjon', $1)`, [k.d.fagsidetraad]) },
     { navn: 'leser idéoversikten', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => nevner(k, 'public.ideoversikt()', k.d.ide) },
     { navn: 'leser andres profil', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligA]) },
+    { navn: 'leser andres profilbilde', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from storage.objects where id = $1', [k.d.profilbilde]) },
     { navn: 'leser egne varsler', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.mine_varsler() -> 'varsler') > 0`) },
     { navn: 'leser stoffregisterets kategorier', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.stoffkategorier') },
     { navn: 'oppretter en tråd', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_diskusjonskategori('stoff:proeve', 'Prøve', '🧪')`) },

@@ -57,6 +57,11 @@ describe('kartleggingen', () => {
     expect(new Set(innganger.map(omradeFor))).toEqual(new Set(Object.keys(OMRADER)))
   })
 
+  it('tar med profilbildene i storage.objects', () => {
+    const filer = tabeller.find((t) => t.navn === 'storage.objects')
+    expect(filer?.rettigheter).toContain('authenticated:SELECT')
+  })
+
   it('kjenner lesetilgangen til hver tabell', () => {
     const tabellerUtenVisninger = tabeller.filter((t) => !t.visning)
     expect(tabellerUtenVisninger.filter((t) => lesetilgang(t) === 'ingen-regel').map((t) => t.navn)).toEqual([])
