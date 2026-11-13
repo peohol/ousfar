@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-43464354664",
     "foresporsel_commit": "4e0da958c5789e49c451a5970a96b2cbe63f20be",
     "foresporsel_sha256": "fd4304bac7c6f367a9106f2e1190b6e411f6ca43bb9a7a4f98b8e9836152e4b6",
     "kode_commit": "7ff2ac8b8e9b7d6a5fcabe862e1dc76974ff7d70",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/43464354664",
-    "startet_kl": "2026-11-13T16:36:37.590Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-13T16:36:39.584Z",
+    "ferdig_kl": "2026-11-13T16:36:46.601Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "metylfenidat"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 676
+    }
+  ],
+  "stoffer": {
+    "metylfenidat": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/metylfenidat/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
