@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.6',
+    dato: '2026-11-13',
+    sammendrag: 'Serverfunksjonene for brukeradministrasjon legges nå ut automatisk',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Etter en vellykket første utrulling for hånd legges serverfunksjonene for brukeradministrasjon nå ut automatisk når en godkjent endring tas i bruk, med de samme kontrollene før og etter.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.5',
     dato: '2026-11-13',
     sammendrag: 'Strengere regler for hvem som kan gi nytt passord og endre adminstatus',
