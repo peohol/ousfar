@@ -62,11 +62,12 @@ brukere (prosjektet står på gratisplanen).
 
 **Anbefalt første kodeetappe.** «P1.1 Rollegrunnlag uten atferdsendring»
 (§8): additive tabeller for fagmiljø, medlemskap, systemrolle og en
-uforanderlig tilgangslogg; tilbakefylling av dagens brukere til det
-opprinnelige fagmiljøet; og to katalogtester (radsikkerhet på alle tabeller og
+uforanderlig tilgangslogg; de to første fagmiljøene, «OUS Klinisk
+farmakologi» og «OUS Rettstoksikologi», med dagens brukere fordelt slik Peder
+har bestemt; og to katalogtester (radsikkerhet på alle tabeller og
 en erklært tilgangskontroll for hver funksjon innloggede kan kalle). Ingen
-eksisterende regel endres. Den forutsetter Peders svar på beslutning D1 og D2
-(§7). Rett etter følger en liten sikkerhetsherding (P1.2) av adminoperasjonene.
+eksisterende regel endres. Peder har svart på D1 og D2 (§7.2), så den kan
+bestilles. Rett etter følger en liten sikkerhetsherding (P1.2) av adminoperasjonene.
 
 ---
 
@@ -386,8 +387,11 @@ dokumentene uansett må oppdateres; denne PR-en endrer bare rapportfilen.
 | Varsler, favoritter, innstillinger | **Personlig** | | Nei |
 | Kurateringsgrener, kildesaker, verktøysperrer | **Felles forvaltning** (systemarkitekt/Fag/Verktøy) | | Nei |
 
-Uavklart behandles som utilgjengelig for nye fagmiljøer (deny by default), men
-fortsetter å virke for det opprinnelige.
+«Lokalt» og «det opprinnelige fagmiljøet» betyr her **OUS Klinisk
+farmakologi**: Peder har bestemt at alle nåværende fortolkningssystemer gjelder
+bare det fagmiljøet (D1). Uavklart innhold behandles som utilgjengelig for
+andre fagmiljøer, også OUS Rettstoksikologi (deny by default), men fortsetter å
+virke for OUS Klinisk farmakologi.
 
 ---
 
@@ -652,12 +656,13 @@ ChatGPT-kontroll.
 
 ### 7.2 Det som bare Peder kan avgjøre
 
-Hvert punkt har et anbefalt standardvalg. Ingenting her er besluttet.
+Hvert punkt har et anbefalt standardvalg. D1 og D2 er besvart av Peder
+13.11.2026 (i prosjekttråden); resten er ikke besluttet.
 
 | Nr. | Spørsmål | Anbefalt standardvalg | Trengs før |
 | --- | --- | --- | --- |
-| **D1** | Hva skal det opprinnelige fagmiljøet hete i appen? | Laboratoriets offisielle navn, slik Peder skriver det; teknisk nøkkel lages av det | P1.1 |
-| **D2** | Bekreft at kontoene `peohol` og `maxhag` tilhører de tiltenkte personene, og si ja til at begge blir systemarkitekter | Ja til begge; tildelingen gjøres på konto-ID, ikke brukernavn | P1.1 (registrering), P1.2 (rettighetene tas i bruk) |
+| **D1** | Hva skal det opprinnelige fagmiljøet hete i appen? | **Besluttet:** «OUS Klinisk farmakologi». Alle nåværende fortolkningssystemer gjelder bare dette fagmiljøet. I tillegg opprettes «OUS Rettstoksikologi». Alle nåværende medlemmer unntatt `maxhag` tilhører OUS Klinisk farmakologi; `maxhag` tilhører OUS Rettstoksikologi | P1.1 |
+| **D2** | Bekreft at kontoene `peohol` og `maxhag` tilhører de tiltenkte personene, og si ja til at begge blir systemarkitekter | **Besluttet:** Peder bekrefter at `peohol` er hans konto og `maxhag` Max sin. Begge blir systemarkitekter, som i visjonen #363; tildelingen gjøres på konto-ID, ikke brukernavn | P1.1 (registrering), P1.2 (rettighetene tas i bruk) |
 | **D3** | Hva skjer med dagens øvrige administrator(er)? | De blir lokale administratorer i det opprinnelige fagmiljøet, ikke systemarkitekter, etter gjennomgang med Peder | P2 |
 | **D4** | Er THC-kurvene/marginene og TDM-referanseområdene felles fagkunnskap eller laboratoriets valg? | Behandles som lokale til Fag har vurdert dem | P4b |
 | **D5** | Skal systemarkitekter og administratorer ha tofaktorinnlogging før eksterne brukere? | Ja | S4 |
@@ -683,13 +688,22 @@ merker noe, og sette opp vaktene som hindrer nye hull.
    `fagmiljoadministratorer` og `tilgangslogg` (§5.1), med radsikkerhet på, uten
    rettigheter for nettleseren ut over lesing av egne medlemskap, og med
    integritetskravene som `check`/unike indekser/utløsere.
-2. Datamigrasjon: det opprinnelige fagmiljøet (navn fra D1), aktivt
-   primærmedlemskap for alle profiler, dagens administratorer som
-   fagmiljøadministratorer, og systemarkitektrollen for kontoene Peder har
-   bekreftet (D2), slått opp på ID og stoppet hvis de ikke finnes. Telling før
-   og etter i rapporten.
-3. Ny konto får automatisk medlemskap i det opprinnelige fagmiljøet
-   (utvidelse av `paa_ny_auth_bruker`) inntil P3.
+2. Datamigrasjon (D1, D2):
+   - fagmiljøene «OUS Klinisk farmakologi» (nøkkel `ous-klinisk-farmakologi`)
+     og «OUS Rettstoksikologi» (`ous-rettstoksikologi`);
+   - aktivt primærmedlemskap i OUS Klinisk farmakologi for alle profiler
+     unntatt `maxhag`, og i OUS Rettstoksikologi for `maxhag`;
+   - dagens administratorer som fagmiljøadministratorer i OUS Klinisk
+     farmakologi, og `maxhag` som fagmiljøadministrator i OUS Rettstoksikologi,
+     fordi et aktivt fagmiljø aldri kan stå uten administrator;
+   - systemarkitektrollen for `peohol` og `maxhag`.
+
+   Kontoene slås opp på ID, og migrasjonen stopper hvis de ikke finnes.
+   Telling før og etter står i rapporten.
+3. En ny konto får automatisk medlemskap i OUS Klinisk farmakologi
+   (utvidelse av `paa_ny_auth_bruker`) frem til P3. En ny bruker i OUS
+   Rettstoksikologi flyttes dit av en systemarkitekt med en kontrollert
+   datamigrasjon, inntil P3 gir en brukerflate for det.
 4. Katalogtestene 1 og 2 i §6.4, med dagens 123 funksjoner erklært slik de er.
 5. Tester for invariantene: ingen bruker uten aktivt primærmedlemskap, ingen
    aktivt fagmiljø uten admin, ingen systemarkitekt uten konto, loggen kan ikke
@@ -705,19 +719,28 @@ brukerflate. Ingen klinisk data berøres.
 
 - `npm test` og `npm run build` grønne; alle eksisterende tester uendret.
 - Migrasjonen kjører i testdatabasen og er additiv (ingen destruktiv setning).
-- Etter migrasjonen: antall aktive primærmedlemskap = antall profiler; antall
-  fagmiljøadministratorer = antall administratorer; systemroller bare for de
-  bekreftede kontoene.
+- Etter migrasjonen: antall aktive primærmedlemskap = antall profiler; alle
+  unntatt `maxhag` er i OUS Klinisk farmakologi; antall
+  fagmiljøadministratorer = antall administratorer + 1 (`maxhag` i OUS
+  Rettstoksikologi); systemroller bare for `peohol` og `maxhag`.
 - Katalogtestene feiler hvis en tabell uten radsikkerhet eller en ny funksjon
   uten erklært kontroll legges til (bevist med en negativ test).
 - Ingen synlig endring i appen; ingen føring som varsles.
 
-**Avhengigheter.** D1 og D2. Ingen avhengighet til Fag eller Verktøy.
+**Avhengigheter.** D1 og D2 er besvart. Det som gjenstår, er Peders bestilling av
+etappen etter kontrollen av P0. Ingen avhengighet til Fag eller Verktøy.
+
+**Merk om OUS Rettstoksikologi (F/A).** Fagmiljøet får ingen fortolkningsregler,
+fordi alle nåværende gjelder OUS Klinisk farmakologi. Frem til P2/P4b håndhever
+appen ikke rekkevidde, så medlemmer der ser og bruker fortsatt det samme som i
+dag. Etter P4b får de tydelig stopp i fortolkningen, inntil de har egne regler
+eller noe er delt eksplisitt med dem. `maxhag` er systemarkitekt og har tilgang
+til alt uansett.
 
 **Neste PR (P1.2, også før P2):** hierarki i `nytt-passord` og `sett-rolle`
 (ingen kan gi nytt passord til eller endre rollen til noen med like høy eller
-høyere myndighet, ingen fjerner siste admin; så lenge det bare finnes ett
-fagmiljø, er regelen fra §4 om kontoglobale operasjoner oppfylt), avslutning
+høyere myndighet, ingen fjerner siste admin; så lenge ingen har medlemskap i
+mer enn ett fagmiljø, er regelen fra §4 om kontoglobale operasjoner oppfylt), avslutning
 av medlemskap, sperring i Auth når siste medlemskap avsluttes, og sjekk av
 aktiv bruker i `er_admin()`/`krev_admin()`,
 automatisk utrulling av Edge-funksjonene, og opprydding av `delt-test`.
