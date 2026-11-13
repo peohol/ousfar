@@ -16,6 +16,9 @@ Tillegg til reglene i rotens `AGENTS.md`. Gjelder alt under `supabase/`.
   sammen, og historikken kontrolleres automatisk (`docs/migrasjoner.md`).
   Rull dem ikke ut selv; `apply_migration` er bare en reservevei, beskrevet
   der.
+- Edge-funksjonene i `functions/` rulles ut fra `main` av GitHub Actions,
+  som stopper hvis produksjonen kjører kode repoet ikke har
+  (`docs/edge-funksjoner.md`). Legg dem ikke ut selv med CLI-en eller MCP.
 - Vurder risikoen før PR-en slås sammen. Nye eller utvidende skjemaendringer,
   kontrollerte datamigrasjoner og andre testede endringer med lav
   produksjonsrisiko slås sammen og rulles ut uten separat samtykke. Stopp for

@@ -2,6 +2,8 @@
 
 Leses når en migrasjon skal lages, rulles ut eller en utrulling har stoppet.
 Reglene for hva en migrasjon kan inneholde, står i `supabase/AGENTS.md`.
+Edge-funksjonene har sin egen utrulling, som venter på denne
+(`docs/edge-funksjoner.md`).
 
 ## Normalflyten
 

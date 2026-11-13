@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.4',
+    dato: '2026-11-13',
+    sammendrag: 'Serverfunksjonene for brukeradministrasjon legges ut på en kontrollert måte',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Serverfunksjonene som oppretter brukere, setter roller og nye passord, legges nå ut automatisk fra den godkjente koden, med kontroll før og etter av at det som kjører er nøyaktig det som er godkjent. En gammel, ubrukt testfunksjon er fjernet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.3',
     dato: '2026-11-13',
     sammendrag: 'Grunnlaget for flere fagmiljøer er lagt inn, uten endring i appen',
