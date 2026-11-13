@@ -1,7 +1,7 @@
 {
   "name": "far",
   "private": true,
-  "version": "1.129.3",
+  "version": "1.129.4",
   "type": "module",
   "description": "Verktøy for å kommentere farmakologiske analyser",
   "scripts": {
@@ -27,6 +27,7 @@
     "kontroller:migrasjoner": "vite-node scripts/kontroller-migrasjoner.ts --",
     "berorer:migrasjoner": "vite-node scripts/berorer-migrasjoner.ts --",
     "produksjonsmigrering": "vite-node scripts/produksjonsmigrering.ts --",
+    "edgeutrulling": "vite-node scripts/edgeutrulling.ts --",
     "data": "python3 scripts/build_data.py && python3 scripts/build_antihypertensiver.py",
     "bootstrap:admin": "node scripts/bootstrap-admin.ts"
   },

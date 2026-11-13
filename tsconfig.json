@@ -33,6 +33,7 @@
     "scripts/berorer-migrasjoner.ts",
     "scripts/migrasjonsmappe.ts",
     "scripts/produksjonsmigrering.ts",
+    "scripts/edgeutrulling.ts",
     "scripts/kuratorjobb.ts",
     "scripts/kurateringsko.ts",
     "scripts/kurateringsagent.ts",
