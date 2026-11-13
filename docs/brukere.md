@@ -161,7 +161,9 @@ historikk, så de skal ikke endres i ettertid.
 
 Edge-funksjonene rulles ut fra `main` av GitHub Actions, som også kontrollerer
 at koden som kjører i produksjonen er nøyaktig den i repoet
-(`docs/edge-funksjoner.md`). De legges ikke ut for hånd.
+(`docs/edge-funksjoner.md`). De legges ikke ut for hånd. Testfunksjonen
+`delt-test`, som bare fantes i produksjonen, ble undersøkt og slettet
+2026-11-13; funnet står samme sted.
 
 Serverfunksjonene i `api/` kjører i Vercels region Stockholm (`arn1`), samme
 sted som databasen (Supabase `eu-north-1`). Regionen settes ett sted, med
