@@ -547,19 +547,25 @@ innganger.
 
 | Etappe | Tekniske forutsetninger og avhengigheter (F/A) | Forslag |
 | --- | --- | --- |
-| **P1** Fagmiljø, medlemskap, rollegrunnlag | Additivt mulig uten atferdsendring. `er_admin()` beholder betydningen til P2 | Del i **P1.1** (tabeller, tilbakefylling, katalogtester; §8) og **P1.2** (herding av adminoperasjonene: hierarki for nytt passord og rolle, ingen fjerning av siste admin, deaktivering i stedet for sletting, `delt-test` fjernet eller forklart, automatisk utrulling av Edge-funksjonene) |
-| **P2** Rettighetsmotor | 39 regler, 92 `security definer`-funksjoner og 3 Edge-funksjoner. Størst i volum | Del per område: (a) faginnhold og regler, (b) samhandling og varsler, (c) profiler og bilder, (d) register og administrasjon. Hver del med negative tester. `er_admin()` blir «systemarkitekt eller (overgang) dagens admin» til alle kall er byttet |
-| **P3** Administrasjon og livssyklus | Krever P1.2s hierarki | Uendret; deaktivering bør ligge i P1.2 fordi den mangler i dag |
-| **P4** Felles/lokal ressursmodell | **Undervurdert i planen.** Unike nøkler per kode, statisk katalog, EtG i koden, referanseområder via fagsiden | Del i **P4a** (rekkevidde på alle eksisterende objekter, alt lokalt til opprinnelig fagmiljø, uten atferdsendring), **P4b** (nøkler og lesing med fagmiljø, stopp uten regler, paritet), **P4c** (katalog og EtG-tekster flyttet fra klienten til databasen, uendrede verdier). P4 må være ferdig før noe eksternt fagmiljø får fortolkning |
+| **P1** Fagmiljø, medlemskap, rollegrunnlag | Additivt mulig uten atferdsendring. `er_admin()` beholder betydningen til P2 | Del i **P1.1** (tabeller, tilbakefylling, katalogtester; §8) og **P1.2** (herding av adminoperasjonene: hierarki for nytt passord og rolle, ingen fjerning av siste admin, `delt-test` fjernet eller forklart, automatisk utrulling av Edge-funksjonene). Deaktivering hører **ikke** til P1.2: den tas i bruk først i P3, etter at alle datainnganger sjekker aktivt medlemskap (P2.0) |
+| **P2** Rettighetsmotor | 39 regler, 92 `security definer`-funksjoner og 3 Edge-funksjoner. Størst i volum. De ressursbaserte kontrollene trenger `ressursomfang`, derfor kommer P4a før P2 | Start med **P2.0**: kontroll av aktivt medlemskap i **alle** datainnganger (alle SELECT- og skriveregler, `intern.krev_innlogget`, `intern.krev_registerbruker`, `er_admin`/`krev_admin` og alle `security definer`-funksjoner innloggede kan kalle), med negative tester for en bruker med gyldig token men uten aktivt medlemskap. Del så per område: (a) faginnhold og regler, (b) samhandling og varsler, (c) profiler og bilder, (d) register og administrasjon. Hver del med negative tester. `er_admin()` blir «systemarkitekt eller (overgang) dagens admin» til alle kall er byttet |
+| **P3** Administrasjon og livssyklus | Krever P1.2s hierarki og P2.0s kontroll av aktivt medlemskap | Her tas avslutning av medlemskap og sperring i Auth i bruk. Det skjer først når P2.0 er ute, fordi sperring i Auth ikke trekker tilbake tilgangstokener som alt er utstedt (gyldige i inntil en time) |
+| **P4** Felles/lokal ressursmodell | **Undervurdert i planen.** Unike nøkler per kode, statisk katalog, EtG i koden, referanseområder via fagsiden | Del i **P4a** (tabellen `ressursomfang` og tilbakefylling: alle eksisterende objekter får rekkevidde, lokalt til OUS Klinisk farmakologi eller felles etter §3, uten atferdsendring; kommer **før P2**, fordi P2s ressursbaserte kontroller bygger på den), **P4b** (nøkler og lesing med fagmiljø, stopp uten regler, paritet), **P4c** (katalog og EtG-tekster flyttet fra klienten til databasen, uendrede verdier). P4 må være ferdig før noe eksternt fagmiljø får fortolkning |
 | **P5** Delegert redigering og forslag | Avhenger av Fags faglige godkjenningsmodell for felles fagsider (§9) | Kan starte med lokale ressurser før felles |
 | **P6** Grupper, forum og idéer | Avhenger bare av P2(b) og P3 | Kan gå **foran P4/P5** hvis samarbeid er prioritet; det berører ikke klinisk output |
 | **P7** Chat | Ny sanntidsflate (ingen i dag) | Uendret |
 | **P8** Filer | Ny bøtte og policy | Uendret; avhenger av D6 |
 | **P9** Drift og pilot | Gratisplanen; ingen egen gjenopprettingsprøve | Sikkerhetskopi og gjenoppretting prøves før første eksterne bruker (D7) |
 
-**Revidert rekkefølge (A):** P1.1 → P1.2 → P2(a–d) → P3 → P4a → P6 → P4b → P4c
-→ P5 → P9 (pilot uten chat/filer) → P7 → P8. Ingen eksterne brukere før P2,
-P3 og P4b er ferdige.
+**Revidert rekkefølge (A):** P1.1 → P1.2 → P4a → P2.0 → P2(a–d) → P3 → P6 →
+P4b → P4c → **S2** → P5 → P9 (pilot uten chat/filer) → P7 → P8.
+
+Det finnes én startport for nye fagmiljøer: **S2** (§6.3). Før den er passert,
+får ingen andre enn systemarkitektene medlemskap i et annet fagmiljø enn OUS
+Klinisk farmakologi. Det gjelder konto, lesetilgang og fortolkning samlet.
+Brukerflaten i P3 for nye medlemmer tilbyr bare OUS Klinisk farmakologi inntil
+da, og databasen avviser andre medlemskap for alle andre enn
+systemarkitekter.
 
 ### 6.2 Migrering og kompatibilitet (A)
 
@@ -587,9 +593,9 @@ P3 og P4b er ferdige.
 
 | Port | Før | Krav |
 | --- | --- | --- |
-| S1 | P2 starter | P1.1 og P1.2 ferdige; katalogtestene grønne |
-| S2 | Første medlem av et nytt fagmiljø får konto | P2 og P3 ferdige; full negativ matrise A↔B grønn; ingen `security definer`-funksjon uten erklært kontroll |
-| S3 | Første fortolkning for et nytt fagmiljø | P4b ferdig; paritet for opprinnelig fagmiljø; stopp uten regler; ingen statiske lokale data for det nye fagmiljøet |
+| S1 | P2 starter | P1.1, P1.2 og P4a ferdige; katalogtestene grønne; alle eksisterende objekter har rekkevidde |
+| S2 | Første medlem utenom systemarkitektene i et annet fagmiljø enn OUS Klinisk farmakologi. Gjelder konto, lesetilgang og fortolkning **samlet** | P2.0, P2(a–d), P3, P4a, P4b og P4c ferdige og testet: full negativ matrise A↔B grønn, også med gyldig token etter avsluttet medlemskap; ingen `security definer`-funksjon uten erklært kontroll; paritet for OUS Klinisk farmakologi; tydelig stopp uten egne regler; ingen lokale koder eller regler fra OUS i katalogen eller søket et annet fagmiljø ser |
+| S3 | Avsluttet medlemskap og sperring i Auth tas i bruk (P3) | P2.0 ute; negative tester for direkte tabell- og RPC-kall med fortsatt gyldig token etter avslutning, også diskusjoner og søk |
 | S4 | Pilot med eksternt laboratorium | D5 (MFA), D7 (sikkerhetskopi/drift) og B9 avklart; uavhengig sikkerhetsgjennomgang |
 | S5 | Chat / filer | Egen personvernvurdering (D6) |
 
@@ -613,7 +619,10 @@ bruker C uten gruppe; deaktivert bruker A; systemarkitekt. Alt syntetisk.
 for A mot B og B mot A, direkte i tabellen, gjennom hver funksjon, med fremmed
 objekt-ID og med manipulert fagmiljø-ID. Selvheving: ingen kan gi seg selv eller
 andre mer enn egen myndighet. Siste admin og siste systemarkitekt.
-Deaktivering: deaktivert bruker med gyldig token får ingen data. Kontoglobale
+Deaktivering (fra P2.0, før S3): en bruker med fortsatt gyldig token etter
+avsluttet medlemskap får verken lest eller skrevet noe, verken direkte i
+tabellene, gjennom funksjonene (også `security definer`), i diskusjonene, i
+idéene, i søket (`les_stoffer`, `les_*sok`) eller via direktelenker. Kontoglobale
 operasjoner: lokal admin A kan verken gi nytt passord til eller sperre en
 bruker som også er aktiv i B; avsluttet medlemskap i A lar tilgangen til B stå.
 
@@ -701,9 +710,10 @@ merker noe, og sette opp vaktene som hindrer nye hull.
    Kontoene slås opp på ID, og migrasjonen stopper hvis de ikke finnes.
    Telling før og etter står i rapporten.
 3. En ny konto får automatisk medlemskap i OUS Klinisk farmakologi
-   (utvidelse av `paa_ny_auth_bruker`) frem til P3. En ny bruker i OUS
-   Rettstoksikologi flyttes dit av en systemarkitekt med en kontrollert
-   datamigrasjon, inntil P3 gir en brukerflate for det.
+   (utvidelse av `paa_ny_auth_bruker`). Databasen avviser medlemskap i et
+   annet fagmiljø for alle andre enn systemarkitekter, helt til startporten
+   S2 er passert (§6.3). Nye brukere i OUS Rettstoksikologi venter derfor til
+   S2.
 4. Katalogtestene 1 og 2 i §6.4, med dagens 123 funksjoner erklært slik de er.
 5. Tester for invariantene: ingen bruker uten aktivt primærmedlemskap, ingen
    aktivt fagmiljø uten admin, ingen systemarkitekt uten konto, loggen kan ikke
@@ -731,19 +741,19 @@ brukerflate. Ingen klinisk data berøres.
 etappen etter kontrollen av P0. Ingen avhengighet til Fag eller Verktøy.
 
 **Merk om OUS Rettstoksikologi (F/A).** Fagmiljøet får ingen fortolkningsregler,
-fordi alle nåværende gjelder OUS Klinisk farmakologi. Frem til P2/P4b håndhever
-appen ikke rekkevidde, så medlemmer der ser og bruker fortsatt det samme som i
-dag. Etter P4b får de tydelig stopp i fortolkningen, inntil de har egne regler
-eller noe er delt eksplisitt med dem. `maxhag` er systemarkitekt og har tilgang
-til alt uansett.
+fordi alle nåværende gjelder OUS Klinisk farmakologi. Det eneste medlemmet før S2
+er `maxhag`, som er systemarkitekt og har tilgang til alt uansett. Etter S2 får
+andre medlemmer der tydelig stopp i fortolkningen inntil de har egne regler
+eller noe er delt eksplisitt med dem.
 
 **Neste PR (P1.2, også før P2):** hierarki i `nytt-passord` og `sett-rolle`
 (ingen kan gi nytt passord til eller endre rollen til noen med like høy eller
 høyere myndighet, ingen fjerner siste admin; så lenge ingen har medlemskap i
-mer enn ett fagmiljø, er regelen fra §4 om kontoglobale operasjoner oppfylt), avslutning
-av medlemskap, sperring i Auth når siste medlemskap avsluttes, og sjekk av
-aktiv bruker i `er_admin()`/`krev_admin()`,
+mer enn ett fagmiljø, er regelen fra §4 om kontoglobale operasjoner oppfylt),
 automatisk utrulling av Edge-funksjonene, og opprydding av `delt-test`.
+Avslutning av medlemskap og sperring i Auth er bevisst **ikke** med. De kommer
+i P3, etter at P2.0 kontrollerer aktivt medlemskap i alle datainnganger (port
+S3), fordi en sperret bruker ellers kunne fortsette med et gyldig token.
 
 ---
 
