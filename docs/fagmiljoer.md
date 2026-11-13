@@ -169,13 +169,22 @@ committed` (som data-API-et bruker), slik at kontrollen etter låsen ser det en
 annen transaksjon nettopp lagret; i strengere isolasjon stoppes de (`25001`).
 
 **Nytt passord** byttes i Auth, utenfor databasen, og går derfor i tre steg:
-`kontooperasjon_klarer_passord` kontrollerer og gir et merke for tilgangene
-til kontoen (siste rad om den i tilgangsloggen), Edge-funksjonen bytter
-passordet, og `kontooperasjon_fullfor_passord` kontrollerer på nytt og krever
-uendret merke. Først da settes kontoen i førstegangsoppsett og passordet gis
-ut. Er noe endret underveis, også om det er endret tilbake, gis passordet ikke
-ut (`40001`), og kontoen står med et passord ingen kjenner til noen med
-myndighet gir et nytt. Ingen uten myndighet kommer forbi første steg.
+`kontooperasjon_klarer_passord` kontrollerer og reserverer kontoen
+(`intern.passordreservasjoner`, med et merke for tilgangene til kontoen, siste
+rad om den i tilgangsloggen, og en nøkkel), Edge-funksjonen bytter passordet,
+og `kontooperasjon_fullfor_passord` kontrollerer på nytt og krever den samme
+reservasjonen og uendret merke. Først da settes kontoen i førstegangsoppsett
+og passordet gis ut. Er noe endret underveis, også om det er endret tilbake,
+gis passordet ikke ut (`40001`), og kontoen står med et passord ingen kjenner
+til noen med myndighet gir et nytt. Ingen uten myndighet kommer forbi første
+steg.
+
+Bare én tilbakestilling av en konto kan være i gang om gangen (`55P03` for
+den andre); ellers kunne to administratorer skrevet hvert sitt passord til
+Auth, og den ene fått utlevert et som alt var overskrevet. Feiler byttet eller
+siste kontroll, frigir Edge-funksjonen reservasjonen
+(`kontooperasjon_frigi_passord`); ellers er den ute etter ti minutter, lenger
+enn en Edge-funksjon kan kjøre, og den gamle kan da ikke fullføres.
 
 **Loggen.** Endringer av `profiles.role` føres i tilgangsloggen
 (`profiles.update`), og hvert nytt passord som `passord.update`. Aktøren er

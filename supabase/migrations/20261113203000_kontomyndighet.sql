@@ -278,43 +278,94 @@ revoke all on function intern.tilgangsmerke(uuid) from public, anon, authenticat
 
 -- Passordet byttes i Auth, utenfor databasen, så operasjonen går i tre steg:
 --
---  1. `kontooperasjon_klarer_passord` kontrollerer myndigheten og gir et merke
---     for tilgangene til kontoen.
+--  1. `kontooperasjon_klarer_passord` kontrollerer myndigheten og reserverer
+--     kontoen for denne tilbakestillingen. Reservasjonen husker merket for
+--     tilgangene til kontoen og får en nøkkel som bare den som reserverte, får.
 --  2. Edge-funksjonen gir kontoen et nytt, tilfeldig passord i Auth.
---  3. `kontooperasjon_fullfor_passord` kontrollerer myndigheten på nytt og at
---     merket er uendret, setter kontoen tilbake i førstegangsoppsett og fører
---     det i loggen. Først da gis passordet ut.
+--  3. `kontooperasjon_fullfor_passord` kontrollerer myndigheten på nytt, at
+--     reservasjonen fortsatt er den samme og at merket er uendret, setter
+--     kontoen tilbake i førstegangsoppsett og fører det i loggen. Først da gis
+--     passordet ut.
 --
 -- Endres tilgangene til kontoen mellom steg 1 og 3, stopper steg 3, og
 -- passordet gis aldri ut. Kontoen står da med et passord ingen kjenner, til
 -- noen med myndighet gir et nytt. Steg 1 gjør at ingen uten myndighet kan
 -- komme så langt.
+--
+-- Bare én tilbakestilling av en konto kan være i gang om gangen, ellers kunne
+-- to administratorer skrevet hvert sitt passord til Auth og den ene fått
+-- utlevert et som alt var overskrevet. En reservasjon står til den fullføres
+-- eller frigis (`kontooperasjon_frigi_passord`, når steg 2 eller 3 feiler), og
+-- er uansett ute etter ti minutter, lenger enn en Edge-funksjon kan kjøre.
+create table intern.passordreservasjoner (
+  bruker_id uuid primary key references public.profiles (id) on delete cascade,
+  aktor uuid not null,
+  merke bigint not null,
+  nokkel uuid not null default gen_random_uuid(),
+  reservert_kl timestamptz not null default now()
+);
+
+comment on table intern.passordreservasjoner is
+  'Tilbakestillinger av passord som er i gang: én per konto. Se kontooperasjon_klarer_passord.';
+
+revoke all on intern.passordreservasjoner from public, anon, authenticated, service_role;
+
 create function public.kontooperasjon_klarer_passord(aktor uuid, mal uuid)
-returns bigint
+returns uuid
 language plpgsql
 security definer
 set search_path = ''
 as $$
+declare
+  nokkel uuid;
 begin
   perform intern.las_tilgang(aktor, 'nytt-passord: kontroll');
   perform intern.krev_myndighet_over(aktor, mal, 'passord');
-  return intern.tilgangsmerke(mal);
+
+  if exists (
+    select 1 from intern.passordreservasjoner r
+    where r.bruker_id = mal and r.reservert_kl > now() - interval '10 minutes'
+  ) then
+    raise exception 'Brukeren får allerede nytt passord av en annen administrator. Prøv igjen om litt.'
+      using errcode = '55P03';
+  end if;
+
+  insert into intern.passordreservasjoner as r (bruker_id, aktor, merke)
+  values (mal, aktor, intern.tilgangsmerke(mal))
+  on conflict (bruker_id) do update
+    set aktor = excluded.aktor, merke = excluded.merke,
+        nokkel = gen_random_uuid(), reservert_kl = now()
+  returning r.nokkel into nokkel;
+
+  return nokkel;
 end;
 $$;
 
-create function public.kontooperasjon_fullfor_passord(aktor uuid, mal uuid, merke bigint)
+create function public.kontooperasjon_fullfor_passord(aktor uuid, mal uuid, reservasjon uuid)
 returns text
 language plpgsql
 security definer
 set search_path = ''
 as $$
 declare
+  merke bigint;
   brukernavn text;
 begin
   perform intern.las_tilgang(aktor, 'nytt-passord');
   perform intern.krev_myndighet_over(aktor, mal, 'passord');
 
-  if merke is distinct from intern.tilgangsmerke(mal) then
+  -- Er reservasjonen ute og tatt over av en annen, har den andre kanskje
+  -- skrevet sitt passord etter dette; da gis ikke dette ut.
+  delete from intern.passordreservasjoner r
+  where r.bruker_id = mal and r.aktor = kontooperasjon_fullfor_passord.aktor and r.nokkel = reservasjon
+  returning r.merke into merke;
+
+  if merke is null then
+    raise exception 'Tilbakestillingen ble avbrutt eller tatt over av en annen, så passordet ble ikke gitt ut. Prøv igjen.'
+      using errcode = '40001';
+  end if;
+
+  if merke <> intern.tilgangsmerke(mal) then
     raise exception 'Tilgangene til brukeren ble endret mens passordet ble laget, så det ble ikke gitt ut. Prøv igjen.'
       using errcode = '40001';
   end if;
@@ -328,6 +379,20 @@ begin
 
   return brukernavn;
 end;
+$$;
+
+-- Frigir en reservasjon når passordet ikke ble byttet eller ikke gitt ut, så
+-- en ny tilbakestilling kan starte med en gang. Bare den som har nøkkelen.
+create function public.kontooperasjon_frigi_passord(aktor uuid, mal uuid, reservasjon uuid)
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  delete from intern.passordreservasjoner r
+  where r.bruker_id = kontooperasjon_frigi_passord.mal
+    and r.aktor = kontooperasjon_frigi_passord.aktor
+    and r.nokkel = kontooperasjon_frigi_passord.reservasjon
 $$;
 
 -- --- Rolle -------------------------------------------------------------------
@@ -443,10 +508,12 @@ $$;
 
 -- Bare serveren, med den hemmelige nøkkelen, kan kalle operasjonene.
 revoke all on function public.kontooperasjon_klarer_passord(uuid, uuid) from public, anon, authenticated;
-revoke all on function public.kontooperasjon_fullfor_passord(uuid, uuid, bigint) from public, anon, authenticated;
+revoke all on function public.kontooperasjon_fullfor_passord(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function public.kontooperasjon_frigi_passord(uuid, uuid, uuid) from public, anon, authenticated;
 revoke all on function public.kontooperasjon_sett_rolle(uuid, uuid, public.brukerrolle) from public, anon, authenticated;
 grant execute on function public.kontooperasjon_klarer_passord(uuid, uuid) to service_role;
-grant execute on function public.kontooperasjon_fullfor_passord(uuid, uuid, bigint) to service_role;
+grant execute on function public.kontooperasjon_fullfor_passord(uuid, uuid, uuid) to service_role;
+grant execute on function public.kontooperasjon_frigi_passord(uuid, uuid, uuid) to service_role;
 grant execute on function public.kontooperasjon_sett_rolle(uuid, uuid, public.brukerrolle) to service_role;
 revoke all on function public.kontooperasjon_forste_administrator(uuid) from public, anon, authenticated;
 grant execute on function public.kontooperasjon_forste_administrator(uuid) to service_role;

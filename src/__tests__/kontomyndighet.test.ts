@@ -137,21 +137,21 @@ async function isolert(arbeid: (tx: Transaction) => Promise<unknown>) {
   )
 }
 
-async function klarer(tx: Transaction, aktor: string, mal: string): Promise<number> {
+async function klarer(tx: Transaction, aktor: string, mal: string): Promise<string> {
   await somServer(tx)
-  const { rows } = await tx.query<{ v: number }>('select public.kontooperasjon_klarer_passord($1, $2)::int as v', [
+  const { rows } = await tx.query<{ v: string }>('select public.kontooperasjon_klarer_passord($1, $2) as v', [
     aktor,
     mal,
   ])
   return rows[0]!.v
 }
 
-async function fullfor(tx: Transaction, aktor: string, mal: string, merke: number): Promise<string> {
+async function fullfor(tx: Transaction, aktor: string, mal: string, reservasjon: string): Promise<string> {
   await somServer(tx)
   const { rows } = await tx.query<{ v: string }>('select public.kontooperasjon_fullfor_passord($1, $2, $3) as v', [
     aktor,
     mal,
-    merke,
+    reservasjon,
   ])
   return rows[0]!.v
 }
@@ -315,6 +315,72 @@ describe('nytt passord', () => {
   })
 })
 
+describe('to tilbakestillinger av samme konto', () => {
+  const reservasjoner = (tx: Transaction) =>
+    tx.query<{ n: number }>(`select count(*)::int as n from intern.passordreservasjoner where bruker_id = $1`, [id.brukerKF])
+
+  it('lar bare én være i gang om gangen, så ingen får et passord som alt er overskrevet', async () => {
+    const feil = await isolert(async (tx) => {
+      const forste = await klarer(tx, id.adminKF, id.brukerKF)
+      const andre = await feilFra(() => tx.query('savepoint s').then(() => klarer(tx, id.peohol, id.brukerKF)))
+      expect(andre?.code).toBe('55P03')
+      await tx.query('rollback to savepoint s')
+      expect(await fullfor(tx, id.adminKF, id.brukerKF, forste)).toBe('brukerkf')
+      await tx.query(`select set_config('role', 'postgres', true)`)
+      expect((await reservasjoner(tx)).rows[0]!.n).toBe(0)
+      // Når den første er ferdig, kan en ny starte.
+      const tredje = await klarer(tx, id.peohol, id.brukerKF)
+      expect(await fullfor(tx, id.peohol, id.brukerKF, tredje)).toBe('brukerkf')
+    })
+    expect(feil).toBeNull()
+  })
+
+  it('lar en ny starte med en gang når den første frigis, og gir ikke ut den første etterpå', async () => {
+    const feil = await isolert(async (tx) => {
+      const forste = await klarer(tx, id.adminKF, id.brukerKF)
+      // Bare den som reserverte, med nøkkelen, kan frigi.
+      await tx.query('select public.kontooperasjon_frigi_passord($1, $2, $3)', [id.peohol, id.brukerKF, forste])
+      await tx.query('select public.kontooperasjon_frigi_passord($1, $2, gen_random_uuid())', [id.adminKF, id.brukerKF])
+      await tx.query(`select set_config('role', 'postgres', true)`)
+      expect((await reservasjoner(tx)).rows[0]!.n).toBe(1)
+      await somServer(tx)
+      await tx.query('select public.kontooperasjon_frigi_passord($1, $2, $3)', [id.adminKF, id.brukerKF, forste])
+      const andre = await klarer(tx, id.peohol, id.brukerKF)
+      await tx.query('savepoint s')
+      const sen = await feilFra(() => fullfor(tx, id.adminKF, id.brukerKF, forste))
+      expect(sen?.code).toBe('40001')
+      await tx.query('rollback to savepoint s')
+      expect(await fullfor(tx, id.peohol, id.brukerKF, andre)).toBe('brukerkf')
+    })
+    expect(feil).toBeNull()
+  })
+
+  it('slipper en ny til etter ti minutter, og den gamle kan da ikke fullføres', async () => {
+    const feil = await isolert(async (tx) => {
+      const forste = await klarer(tx, id.adminKF, id.brukerKF)
+      await tx.query(`select set_config('role', 'postgres', true)`)
+      await tx.query(
+        `update intern.passordreservasjoner set reservert_kl = now() - interval '11 minutes' where bruker_id = $1`,
+        [id.brukerKF],
+      )
+      const andre = await klarer(tx, id.peohol, id.brukerKF)
+      await tx.query('savepoint s')
+      expect((await feilFra(() => fullfor(tx, id.adminKF, id.brukerKF, forste)))?.code).toBe('40001')
+      await tx.query('rollback to savepoint s')
+      expect(await fullfor(tx, id.peohol, id.brukerKF, andre)).toBe('brukerkf')
+    })
+    expect(feil).toBeNull()
+  })
+
+  it('fullfører ikke med en annens reservasjon', async () => {
+    const feil = await isolert(async (tx) => {
+      const nokkel = await klarer(tx, id.adminKF, id.brukerKF)
+      await fullfor(tx, id.peohol, id.brukerKF, nokkel)
+    })
+    expect(feil?.code).toBe('40001')
+  })
+})
+
 describe('rolle', () => {
   it('lar en systemarkitekt gjøre en vanlig bruker til administrator i sitt primære fagmiljø', async () => {
     for (const [aktor, mal, nokkel] of [
@@ -427,7 +493,8 @@ describe('rolle', () => {
 describe('tilgangen til operasjonene', () => {
   const KALL = [
     `select public.kontooperasjon_klarer_passord($1, $2)`,
-    `select public.kontooperasjon_fullfor_passord($1, $2, 0)`,
+    `select public.kontooperasjon_fullfor_passord($1, $2, gen_random_uuid())`,
+    `select public.kontooperasjon_frigi_passord($1, $2, gen_random_uuid())`,
     `select public.kontooperasjon_sett_rolle($1, $2, 'admin')`,
     `select public.kontooperasjon_forste_administrator($2) from (select $1::uuid) x`,
   ]
@@ -512,7 +579,7 @@ describe('den første administratoren', () => {
       // Kan nå gi andre nytt passord og adminstatus, som før P1.2a.
       await tom.transaction(async (tx) => {
         await somServer(tx)
-        const { rows } = await tx.query<{ v: number }>('select public.kontooperasjon_klarer_passord($1, $2)::int as v', [forste, andre])
+        const { rows } = await tx.query<{ v: string }>('select public.kontooperasjon_klarer_passord($1, $2) as v', [forste, andre])
         await tx.query('select public.kontooperasjon_fullfor_passord($1, $2, $3)', [forste, andre, rows[0]!.v])
       })
       // Ikke den som ble kjørt på nytt: den andre blir ikke systemarkitekt.
@@ -537,9 +604,14 @@ describe('Edge-funksjonene', () => {
   )
 
   it('kaller bare kontooperasjoner som finnes, og bare serveren kan kalle', async () => {
-    const kalt = Object.values(kode).flatMap((k) => [...k.matchAll(/kontofunksjon<[^>]+>\(\s*admin,\s*'([a-z_]+)'/g)].map((m) => m[1]!))
+    const kalt = Object.values(kode).flatMap((k) => [...k.matchAll(/(?:kontofunksjon<[^>]+>\(\s*admin,|admin\.rpc\()\s*'([a-z_]+)'/g)].map((m) => m[1]!))
     expect(new Set(kalt)).toEqual(
-      new Set(['kontooperasjon_klarer_passord', 'kontooperasjon_fullfor_passord', 'kontooperasjon_sett_rolle']),
+      new Set([
+        'kontooperasjon_klarer_passord',
+        'kontooperasjon_fullfor_passord',
+        'kontooperasjon_frigi_passord',
+        'kontooperasjon_sett_rolle',
+      ]),
     )
     for (const navn of kalt) {
       const { rows } = await db.query<{ server: boolean; nettleser: boolean; anonym: boolean }>(
@@ -569,5 +641,8 @@ describe('Edge-funksjonene', () => {
     expect(forst).toBeLessThan(bytte)
     expect(bytte).toBeLessThan(sist)
     expect(k.indexOf('return { brukernavn, midlertidigPassord }')).toBeGreaterThan(sist)
+    // Feiler byttet eller den siste kontrollen, frigis reservasjonen.
+    expect(k.indexOf("admin.rpc('kontooperasjon_frigi_passord'")).toBeGreaterThan(k.indexOf('} catch (feil) {'))
+    expect(k.indexOf('} catch (feil) {')).toBeGreaterThan(sist)
   })
 })

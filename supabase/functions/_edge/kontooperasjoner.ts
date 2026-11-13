@@ -41,6 +41,7 @@ const AVSLAG: Readonly<Record<string, number>> = {
   '22023': 400, // ugyldig forespørsel
   '23514': 409, // ville brutt en regel, som å fjerne den siste administratoren
   '40001': 409, // tilgangene ble endret underveis
+  '55P03': 409, // en annen tilbakestilling av samme konto er i gang
 }
 
 /**
