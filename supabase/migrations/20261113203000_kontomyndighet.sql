@@ -146,16 +146,16 @@ $$;
 
 revoke all on function intern.administrerte_fagmiljoer(uuid) from public, anon, authenticated, service_role;
 
--- Stopper handlingen med en lesbar melding når `aktor` ikke har myndighet til
--- å gjøre den med `mal`. `handling` er 'passord' eller 'rolle'.
---
--- Kontrollen skal kjøres med den felles låsen holdt (`intern.las_tilgang()`),
--- slik at ingen tilgang kan endres mellom kontrollen og handlingen.
+-- Avgjør om `aktor` har myndighet til å gjøre `handling` ('passord' eller
+-- 'rolle') med `mal`. Gir `null` når det er lov, ellers avslaget som
+-- `{sqlstate, melding}`. Den ene avgjørelsen alt annet bygger på: operasjonene
+-- stopper med den (`intern.krev_myndighet_over`), og appen viser bare de
+-- handlingene den tillater (`public.mine_kontohandlinger`).
 --
 -- Meldingene vises for administratoren som prøvde. Kodene oversettes til
 -- HTTP-svar i Edge-funksjonene: 42501 nektet, P0002 ukjent, 22023 ugyldig.
-create function intern.krev_myndighet_over(aktor uuid, mal uuid, handling text)
-returns void
+create function intern.kontoavslag(aktor uuid, mal uuid, handling text)
+returns text[]
 language plpgsql
 stable
 security definer
@@ -164,47 +164,45 @@ as $$
 declare
   fremmed_fagmiljo text;
 begin
-  if handling not in ('passord', 'rolle') then
-    raise exception 'Ukjent kontooperasjon.' using errcode = '22023';
+  if handling is null or handling not in ('passord', 'rolle') then
+    return array['22023', 'Ukjent kontooperasjon.'];
   end if;
   if aktor is null or not exists (select 1 from public.profiles p where p.id = aktor) then
-    raise exception 'Kontoen din finnes ikke lenger.' using errcode = '42501';
+    return array['42501', 'Kontoen din finnes ikke lenger.'];
   end if;
   if mal is null or not exists (select 1 from public.profiles p where p.id = mal) then
-    raise exception 'Ukjent bruker.' using errcode = 'P0002';
+    return array['P0002', 'Ukjent bruker.'];
   end if;
 
   if aktor = mal then
-    raise exception '%', case handling
+    return array['42501', case handling
       when 'rolle' then 'Du kan ikke endre din egen rolle.'
       else 'Du kan ikke gi deg selv nytt passord her. Bytt det fra kontoen din.'
-    end using errcode = '42501';
+    end];
   end if;
 
   if intern.er_systemarkitekt(aktor) then
     if intern.myndighetsniva(mal) >= 3 then
-      raise exception '%', case handling
+      return array['42501', case handling
         when 'rolle' then 'Rollen til en systemarkitekt kan ikke endres her.'
         else 'En systemarkitekt kan ikke få nytt passord av en annen.'
-      end using errcode = '42501';
+      end];
     end if;
-    return;
+    return null;
   end if;
 
   -- Den gamle globale rollen gir adminrettigheter i alle fagmiljøer, så bare
   -- en systemarkitekt kan gi eller ta den.
   if handling = 'rolle' then
-    raise exception 'Bare en systemarkitekt kan gjøre noen til administrator eller fjerne adminstatus.'
-      using errcode = '42501';
+    return array['42501', 'Bare en systemarkitekt kan gjøre noen til administrator eller fjerne adminstatus.'];
   end if;
 
   if not exists (select 1 from intern.administrerte_fagmiljoer(aktor)) then
-    raise exception 'Handlingen krever at du er administrator i et fagmiljø.' using errcode = '42501';
+    return array['42501', 'Handlingen krever at du er administrator i et fagmiljø.'];
   end if;
 
   if intern.myndighetsniva(mal) >= 2 then
-    raise exception 'En administrator eller systemarkitekt kan ikke få nytt passord av deg.'
-      using errcode = '42501';
+    return array['42501', 'En administrator eller systemarkitekt kan ikke få nytt passord av deg.'];
   end if;
 
   -- Passordet gjelder hele kontoen, så alle fagmiljøene brukeren hører til
@@ -212,7 +210,7 @@ begin
   if not exists (
     select 1 from public.medlemskap m where m.bruker_id = mal and m.status <> 'deaktivert'
   ) then
-    raise exception 'Brukeren er ikke medlem av noe fagmiljø du administrerer.' using errcode = '42501';
+    return array['42501', 'Brukeren er ikke medlem av noe fagmiljø du administrerer.'];
   end if;
 
   select f.navn into fremmed_fagmiljo
@@ -224,13 +222,68 @@ begin
   limit 1;
 
   if fremmed_fagmiljo is not null then
-    raise exception 'Brukeren hører også til «%», som du ikke administrerer. Be en systemarkitekt om hjelp.',
-      fremmed_fagmiljo using errcode = '42501';
+    return array['42501', format(
+      'Brukeren hører også til «%s», som du ikke administrerer. Be en systemarkitekt om hjelp.', fremmed_fagmiljo
+    )];
+  end if;
+
+  return null;
+end;
+$$;
+
+revoke all on function intern.kontoavslag(uuid, uuid, text) from public, anon, authenticated, service_role;
+
+-- Stopper handlingen med avslaget fra `intern.kontoavslag`.
+--
+-- Kontrollen skal kjøres med den felles låsen holdt (`intern.las_tilgang()`),
+-- slik at ingen tilgang kan endres mellom kontrollen og handlingen.
+create function intern.krev_myndighet_over(aktor uuid, mal uuid, handling text)
+returns void
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  avslag text[] := intern.kontoavslag(aktor, mal, handling);
+begin
+  if avslag is not null then
+    raise exception '%', avslag[2] using errcode = avslag[1];
   end if;
 end;
 $$;
 
 revoke all on function intern.krev_myndighet_over(uuid, uuid, text) from public, anon, authenticated, service_role;
+
+-- Kontoene den innloggede kan gi nytt passord til eller endre rollen til, slik
+-- `intern.kontoavslag` avgjør det. Bare for visningen: appen viser
+-- adminmenyens «Brukere» og knappene i brukerlista etter dette, også for en
+-- systemarkitekt eller lokal administrator uten den gamle adminrollen.
+-- Operasjonene kontrollerer på nytt selv. Uten myndighet over noen er svaret
+-- tomt, etter ett oppslag.
+create function public.mine_kontohandlinger()
+returns table (bruker_id uuid, nytt_passord boolean, endre_rolle boolean)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  with meg as (select (select auth.uid()) as id)
+  select x.bruker_id, x.nytt_passord, x.endre_rolle
+  from meg
+  cross join lateral (
+    select p.id as bruker_id,
+           intern.kontoavslag(meg.id, p.id, 'passord') is null as nytt_passord,
+           intern.kontoavslag(meg.id, p.id, 'rolle') is null as endre_rolle
+    from public.profiles p
+  ) x
+  where meg.id is not null
+    and (intern.er_systemarkitekt(meg.id) or exists (select 1 from intern.administrerte_fagmiljoer(meg.id)))
+    and (x.nytt_passord or x.endre_rolle)
+$$;
+
+revoke all on function public.mine_kontohandlinger() from public, anon;
+grant execute on function public.mine_kontohandlinger() to authenticated;
 
 -- Tar den felles låsen fra P1.1 og oppgir hvem som handler og hvorfor, for
 -- resten av transaksjonen.
@@ -422,7 +475,7 @@ begin
     -- skal ikke få mer myndighet før eieren har valgt sitt eget.
     if profil.role <> 'admin' and (profil.must_change_password or not profil.onboarding_completed) then
       raise exception 'Brukeren må ha logget inn og valgt sitt eget passord før den kan bli administrator.'
-        using errcode = '42501';
+        using errcode = '55000';
     end if;
 
     update public.profiles p set role = 'admin' where p.id = mal returning * into profil;

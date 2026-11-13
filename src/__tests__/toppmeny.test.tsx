@@ -633,6 +633,49 @@ describe('kontomenyen', () => {
 })
 
 describe('adminmenyen', () => {
+  it('viser bare «Brukere» for en systemarkitekt eller lokal administrator uten den gamle adminrollen', async () => {
+    rolle.verdi = 'user'
+    const kontohandlinger = vi.fn(async () => new Map([['b', { nyttPassord: true, endreRolle: false }]]))
+    render(
+      <Ramme>
+        <Adminmeny kontohandlinger={kontohandlinger} />
+      </Ramme>,
+    )
+    const knapp = await screen.findByRole('button', { name: 'Administrasjon' })
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere'])
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Brukere' }))
+    expect(screen.getByText('Brukerlista')).toBeTruthy()
+  })
+
+  it('vises ikke for en vanlig bruker uten myndighet over noen, eller når svaret feiler', async () => {
+    rolle.verdi = 'user'
+    for (const kontohandlinger of [
+      vi.fn(async () => new Map()),
+      vi.fn(async () => Promise.reject(new Error('nede'))),
+    ]) {
+      render(
+        <Ramme>
+          <Adminmeny kontohandlinger={kontohandlinger} />
+        </Ramme>,
+      )
+      await waitFor(() => expect(kontohandlinger).toHaveBeenCalledOnce())
+      expect(screen.queryByRole('button', { name: 'Administrasjon' })).toBeNull()
+      cleanup()
+    }
+  })
+
+  it('spør ikke databasen om kontomyndigheten for en administrator', () => {
+    const kontohandlinger = vi.fn(async () => new Map())
+    render(
+      <Ramme>
+        <Adminmeny kontohandlinger={kontohandlinger} />
+      </Ramme>,
+    )
+    expect(screen.getByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+    expect(kontohandlinger).not.toHaveBeenCalled()
+  })
+
   it('fører til brukerne, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
     render(
       <Ramme>

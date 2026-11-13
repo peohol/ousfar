@@ -88,6 +88,10 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
     case 'eier':
       if (!f.definer) return 'er ikke security definer'
       return BRUKER_INNLOGGET.test(f.kilde) ? null : 'ser ikke på den innloggede'
+    case 'kontomyndighet':
+      if (!f.definer) return 'er ikke security definer'
+      if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
+      return /\bintern\s*\.\s*kontoavslag\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.kontoavslag'
     case 'innlogget':
     case 'felles-lesing':
       return f.definer ? null : 'er ikke security definer'

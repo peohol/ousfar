@@ -457,7 +457,7 @@ describe('rolle', () => {
 
   it('gjør ikke en konto med midlertidig passord til administrator', async () => {
     const feil = await rolle('peohol', 'nyBruker', 'admin')
-    expect(feil?.code).toBe('42501')
+    expect(feil?.code).toBe('55000')
     expect(feil?.message).toContain('valgt sitt eget passord')
   })
 
@@ -487,6 +487,62 @@ describe('rolle', () => {
     expect((await rolle('peohol', 'maxhag', 'admin'))?.code).toBe('42501')
     expect(await nyttPassord('adminRT', 'maxhag')).toBe('42501')
     expect(await nyttPassord('peohol', 'maxhag')).toBe('42501')
+  })
+})
+
+describe('det appen får vite om myndigheten', () => {
+  type Svar = Map<Navn, { nyttPassord: boolean; endreRolle: boolean }>
+  const navn = Object.keys(GALLERI) as Navn[]
+
+  /** `mine_kontohandlinger` slik nettleseren kaller den, med kontoene etter navn. */
+  async function handlinger(aktor: Navn): Promise<Svar> {
+    const { rows } = await som(db, id[aktor], (tx) =>
+      tx.query<{ bruker_id: string; nytt_passord: boolean; endre_rolle: boolean }>(
+        'select * from public.mine_kontohandlinger()',
+      ),
+    )
+    const etterId = new Map(navn.map((n) => [id[n], n]))
+    return new Map(rows.map((r) => [etterId.get(r.bruker_id)!, { nyttPassord: r.nytt_passord, endreRolle: r.endre_rolle }]))
+  }
+
+  it.each(navn)('stemmer med det operasjonene tillater, for %s', async (aktor) => {
+    const svar = await handlinger(aktor)
+    for (const mal of navn) {
+      const kan = svar.get(mal)
+      expect(kan === undefined || kan.nyttPassord || kan.endreRolle, `${aktor} → ${mal} uten handlinger`).toBe(true)
+      expect(kan?.nyttPassord ?? false, `${aktor} → ${mal}: passord`).toBe((await nyttPassord(aktor, mal)) === null)
+      // Rollen kan stoppe på andre regler (siste administrator, midlertidig
+      // passord), men aldri på myndigheten når knappen vises.
+      const nekterRolle = (await rolle(aktor, mal, GALLERI[mal].rolle === 'admin' ? 'user' : 'admin'))?.code === '42501'
+      expect(kan?.endreRolle ?? false, `${aktor} → ${mal}: rolle`).toBe(!nekterRolle)
+    }
+  })
+
+  it('gir en systemarkitekt med vanlig brukerrolle begge handlingene, men ikke over en annen systemarkitekt', async () => {
+    const svar = await handlinger('maxhag')
+    expect(svar.get('brukerKF')).toEqual({ nyttPassord: true, endreRolle: true })
+    expect(svar.get('adminKF')).toEqual({ nyttPassord: true, endreRolle: true })
+    expect(svar.has('peohol')).toBe(false)
+    expect(svar.has('maxhag')).toBe(false)
+  })
+
+  it('gir en lokal administrator uten den gamle rollen bare nytt passord, og bare i eget fagmiljø', async () => {
+    const svar = await handlinger('lokalUtenRolle')
+    expect(svar.get('brukerKF')).toEqual({ nyttPassord: true, endreRolle: false })
+    expect([...svar.values()].some((kan) => kan.endreRolle)).toBe(false)
+    expect(svar.has('brukerRT')).toBe(false)
+    expect(svar.has('brukerBegge')).toBe(false)
+  })
+
+  it('er tomt for den som ikke har myndighet over noen', async () => {
+    for (const aktor of ['brukerKF', 'gammelAdmin', 'tidligereAdmin', 'nyBruker'] as const) {
+      expect((await handlinger(aktor)).size, aktor).toBe(0)
+    }
+  })
+
+  it('kan ikke kalles uten innlogging', async () => {
+    const feil = await feilFra(() => som(db, null, (tx) => tx.query('select * from public.mine_kontohandlinger()')))
+    expect(feil?.code).toBe('42501')
   })
 })
 

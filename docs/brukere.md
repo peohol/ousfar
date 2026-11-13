@@ -12,8 +12,10 @@ passord**, velger sitt eget passord med én gang, og er inne.
 
 Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det avgjør
 foreløpig bare hvem som kan gi nytt passord og endre adminrollen til hvem;
-ellers avgjøres rettighetene fortsatt av rollen `user`/`admin` alene. Se
-«Fagmiljø og systemroller» under og `docs/fagmiljoer.md`.
+ellers avgjøres rettighetene fortsatt av rollen `user`/`admin` alene. En
+systemarkitekt eller lokal administrator uten adminrollen ser derfor bare
+«Brukere» i adminmenyen, med knappene databasen tillater. Se «Fagmiljø og
+systemroller» under og `docs/fagmiljoer.md`.
 
 ## Delene det består av
 

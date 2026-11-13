@@ -21,6 +21,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'Gjelder bare administratorene. Ingen kan lenger gi nytt passord til eller endre rollen til noen med samme eller høyere myndighet, og ingen kan endre sin egen.',
       'En lokal administrator kan gi nytt passord til vanlige brukere i sitt eget fagmiljø, men ikke til brukere som også hører til et annet fagmiljø, og ikke til andre administratorer eller systemarkitekter.',
       'Bare systemarkitektene kan gjøre noen til administrator eller fjerne adminstatus. En ny administrator må ha valgt sitt eget passord først, og den siste administratoren kan ikke fjernes. Alle slike endringer føres i tilgangsloggen med hvem som gjorde dem.',
+      'En lokal administrator eller systemarkitekt uten adminrollen finner «Brukere» i adminmenyen, og ser bare knappene vedkommende faktisk kan bruke.',
     ],
     utenVarsel: true,
   },

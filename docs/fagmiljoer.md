@@ -149,12 +149,22 @@ I tillegg:
   primære fagmiljø, slik tilbakefyllingen gjorde med dem som var det. Den som
   mister rollen, slutter som lokal administrator overalt.
 - En konto med midlertidig passord (ikke ferdig førstegangsoppsett) kan ikke
-  gjøres til administrator. Passordet kan være kjent av den som laget det.
+  gjøres til administrator. Passordet kan være kjent av den som laget det. (`55000`)
 - Den siste med adminrollen, og den eneste lokale administratoren i et aktivt
   fagmiljø, kan ikke fjernes.
 - To systemarkitekter kan ikke gi hverandre nytt passord. Har en
   systemarkitekt mistet passordet, settes det utenfra, som når alle
   administratorene er borte (`docs/brukere.md`).
+
+**Det appen viser.** `public.mine_kontohandlinger()` gir den innloggede
+kontoene vedkommende har myndighet over, med hvilke av de to handlingene
+databasen tillater. Den bygger på den samme avgjørelsen som operasjonene
+(`intern.kontoavslag`), så knappene stemmer med det som går gjennom. En
+systemarkitekt eller lokal administrator uten den gamle rollen får
+adminmenyen med bare «Brukere», og en lokal administrator får aldri
+rolleknappen. Knappene er et grensesnitt: operasjonene kontrollerer på nytt.
+«Opprett bruker» og de andre adminpanelene krever fortsatt den gamle rollen
+til P2.
 
 **Den første administratoren.** `npm run bootstrap:admin` og det lokale
 testmiljøet bruker `kontooperasjon_forste_administrator`: adminrollen og lokal
@@ -217,6 +227,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `felles-lesing` | `security definer` som leser felles data uten egen kontroll |
 | `innlogget` | `security definer` som bare krever innlogging, også for skriving |
 | `eier` | `security definer` som bare rører den innloggedes egne rader |
+| `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
 
