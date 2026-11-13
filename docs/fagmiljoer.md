@@ -67,6 +67,29 @@ server-side.
 Regel 1–5 kontrolleres når transaksjonen avsluttes (utsatte utløsere), slik at
 en endring kan gjøres i flere steg. Regel 6–8 gjelder med en gang.
 
+### Samtidige endringer
+
+To transaksjoner som hver fjerner én av de to siste administratorene i et
+fagmiljø, eller hver én av de to siste systemarkitektene, kunne begge ha sett
+den andres rad som aktiv og sluppet gjennom. Derfor tar hver setning som endrer
+`fagmiljoer`, `medlemskap`, `systemroller` eller `fagmiljoadministratorer`,
+først én felles transaksjonslås (`intern.serialiser_tilgang()`, en
+`pg_advisory_xact_lock`), og holder den til transaksjonen er ferdig. Endringer
+i tilgangene skjer derfor én transaksjon om gangen; de er sjeldne, så ventingen
+merkes ikke. Låsen tas før radene, slik at to transaksjoner ikke kan vente på
+hverandre i ring.
+
+Kontrollen av regel 1, 3 og 4 teller radene med `for share`:
+
+- i `read committed` (standarden) ser den ventende transaksjonen den andres
+  endring og stoppes av regelen (SQLSTATE `23514`);
+- i `repeatable read` og strengere stoppes den med serialiseringsfeil
+  (`40001`).
+
+`src/__tests__/fagmiljoer.samtidighet.test.ts` viser dette med to egne
+forbindelser mot ekte Postgres 17, i begge isolasjonsnivåene. Den kjører i CI
+(Postgres 17 som tjeneste) og lokalt når `OUSFAR_POSTGRES_URL` er satt.
+
 Hver endring føres i `tilgangslogg` av databasen selv. `aktor` er den
 innloggede, eller tom for migrasjoner og server. En migrasjon eller et
 serverkall oppgir begrunnelsen med

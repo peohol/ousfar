@@ -392,6 +392,52 @@ insert into public.fagmiljoer (nokkel, navn, standard, apent_for_medlemmer) valu
 
 select set_config('ousfar.tilgangsgrunn', '', true);
 
+-- --- Samtidige endringer ---------------------------------------------------
+
+-- Invariantene under kontrolleres ved slutten av transaksjonen. Uten mer ville
+-- to samtidige transaksjoner som hver avslutter én av de to siste
+-- administratorene i et fagmiljø (eller én av de to siste systemarkitektene),
+-- begge se den andres rad som aktiv og begge slippe gjennom.
+--
+-- Derfor tar hver setning som endrer de fire tabellene, én felles
+-- transaksjonslås før den rører noen rad. Den holdes til transaksjonen er
+-- ferdig, så endringene skjer én transaksjon om gangen, og den neste ser
+-- resultatet av den forrige: i `read committed` får kontrollen et nytt
+-- øyeblikksbilde, og i `repeatable read` stopper `for share` i kontrollen den
+-- med en serialiseringsfeil i stedet for å slippe den gjennom på et gammelt
+-- bilde. Låsen tas før radene, så to transaksjoner aldri venter på hverandre i
+-- kryss. Endringene er sjeldne (kontoer, roller), så én lås for alt koster
+-- ingenting merkbart.
+create function intern.serialiser_tilgang()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform pg_advisory_xact_lock(hashtextextended('ousfar.tilgang', 0));
+  return null;
+end;
+$$;
+
+revoke all on function intern.serialiser_tilgang() from public, anon, authenticated, service_role;
+
+create trigger fagmiljoer_serialiser
+before insert or update or delete on public.fagmiljoer
+for each statement execute function intern.serialiser_tilgang();
+
+create trigger medlemskap_serialiser
+before insert or update or delete on public.medlemskap
+for each statement execute function intern.serialiser_tilgang();
+
+create trigger systemroller_serialiser
+before insert or update or delete on public.systemroller
+for each statement execute function intern.serialiser_tilgang();
+
+create trigger fagmiljoadministratorer_serialiser
+before insert or update or delete on public.fagmiljoadministratorer
+for each statement execute function intern.serialiser_tilgang();
+
 -- --- Invariantene, kontrollert når transaksjonen avsluttes ------------------
 
 -- 1. Hver konto har nøyaktig ett aktivt primærmedlemskap.
@@ -402,6 +448,9 @@ select set_config('ousfar.tilgangsgrunn', '', true);
 -- 5. Nøyaktig ett fagmiljø er standard for nye kontoer (og dermed aktivt og
 --    åpent, etter `fagmiljoer_standard_er_apent`), så standarden kan byttes,
 --    men aldri mangle.
+-- Samtidige endringer serialiseres av `intern.serialiser_tilgang()` (under),
+-- og radene kontrollen regner med, låses `for share`, slik at to transaksjoner
+-- aldri kan fjerne hver sin av de to siste.
 -- Utsatt, så en endring kan gjøres i flere steg i én transaksjon. Kontrollen
 -- ser på tilstanden ved slutten, ikke på raden slik den var.
 create function intern.kontroller_tilgangsinvarianter()
@@ -417,8 +466,11 @@ declare
   konto_finnes boolean := bruker is not null and exists (select 1 from public.profiles p where p.id = bruker);
 begin
   if tg_table_name in ('medlemskap', 'fagmiljoadministratorer') and konto_finnes then
-    if (select count(*) from public.medlemskap m
-        where m.bruker_id = bruker and m.primaer and m.status = 'aktiv') <> 1 then
+    if (select count(*) from (
+          select 1 from public.medlemskap m
+          where m.bruker_id = bruker and m.primaer and m.status = 'aktiv'
+          for share
+        ) x) <> 1 then
       raise exception 'En konto må ha nøyaktig ett aktivt primærmedlemskap.'
         using errcode = '23514';
     end if;
@@ -439,7 +491,11 @@ begin
       or (tg_table_name = 'fagmiljoer'
           and (tg_op = 'INSERT' or (to_jsonb(old) ->> 'status') is distinct from (rad ->> 'status'))))
     and exists (select 1 from public.fagmiljoer f where f.id = fagmiljo and f.status = 'aktiv')
-    and not exists (select 1 from public.fagmiljoadministratorer a where a.fagmiljo_id = fagmiljo and a.til is null)
+    and (select count(*) from (
+          select 1 from public.fagmiljoadministratorer a
+          where a.fagmiljo_id = fagmiljo and a.til is null
+          for share
+        ) x) = 0
   then
     raise exception 'Et aktivt fagmiljø må ha minst én aktiv administrator.'
       using errcode = '23514';
@@ -451,9 +507,11 @@ begin
   end if;
 
   if tg_table_name = 'systemroller'
-    and not exists (
-      select 1 from public.systemroller s where s.rolle = 'systemarkitekt' and s.tilbakekalt_kl is null
-    )
+    and (select count(*) from (
+          select 1 from public.systemroller s
+          where s.rolle = 'systemarkitekt' and s.tilbakekalt_kl is null
+          for share
+        ) x) = 0
   then
     raise exception 'Den siste systemarkitekten kan ikke fjernes.'
       using errcode = '23514';
