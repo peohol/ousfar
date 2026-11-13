@@ -1,35 +1,28 @@
 /**
  * «Gjør til administrator» og veien tilbake.
  *
- * Rollen kan bare settes herfra: nettleseren har ikke skriverett på kolonnen,
- * og ingen kan endre sin egen rolle — verken gi seg selv rettigheter eller ta
- * dem fra seg selv, som ellers kunne etterlatt systemet uten administrator
- * ved et uhell.
+ * Rollen kan bare settes herfra: nettleseren har ikke skriverett på kolonnen.
+ * Hvem som får endre hvem, avgjøres i databasen
+ * (`supabase/migrations/20261113203000_kontomyndighet.sql`), i samme
+ * transaksjon som endringen: bare en systemarkitekt kan gi eller ta
+ * adminrollen, ingen kan endre sin egen eller en annen systemarkitekts, og den
+ * siste administratoren kan ikke fjernes.
  */
-import { erRolle } from '../_delt/profil.ts'
+import { erRolle, type Profil } from '../_delt/profil.ts'
 import { Avvist, brukerIdFelt, endepunkt, tekstfelt } from '../_edge/kontekst.ts'
-import { hentProfil } from '../_edge/kontooperasjoner.ts'
+import { kontofunksjon } from '../_edge/kontooperasjoner.ts'
 
 Deno.serve(
-  endepunkt({ krevAdmin: true }, async ({ kropp, innlogget, admin }) => {
+  endepunkt({ krevAdmin: false }, async ({ kropp, innlogget, admin }) => {
     const brukerId = brukerIdFelt(kropp)
     const rolle = tekstfelt(kropp, 'rolle')
     if (!erRolle(rolle)) throw new Avvist('Ukjent rolle.')
 
-    if (brukerId === innlogget.id) {
-      throw new Avvist('Du kan ikke endre din egen rolle.', 403)
-    }
-
-    await hentProfil(admin, brukerId)
-
-    const { data, error } = await admin
-      .from('profiles')
-      .update({ role: rolle })
-      .eq('id', brukerId)
-      .select('*')
-      .single()
-
-    if (error) throw error
-    return { profil: data }
+    const profil = await kontofunksjon<Profil>(admin, 'kontooperasjon_sett_rolle', {
+      aktor: innlogget.id,
+      mal: brukerId,
+      rolle,
+    })
+    return { profil }
   }),
 )

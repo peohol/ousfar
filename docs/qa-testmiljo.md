@@ -50,7 +50,9 @@ kjøringen uten at passordet skrives inn.
   som bare kan kjøres i produksjonen og uten bivirkningsimportene for fagsider
   en ny database ikke har. Databasen gjenbrukes til migrasjonene endres.
 - En syntetisk administrator, `qa-admin`, med et tilfeldig passord som bare
-  ligger i miljømappen (`$TMPDIR/ousfar-qa-lokal`).
+  ligger i miljømappen (`$TMPDIR/ousfar-qa-lokal`). Den er også lokal
+  administrator og, i den tomme databasen, systemarkitekt
+  (`docs/fagmiljoer.md`, «Myndighet over kontoer»).
 - Appen bygges hver gang mot den lokale databasen og serveres på
   `127.0.0.1:4173`. Innloggingsveggen på Vercels kant finnes ikke lokalt.
 - Den lokale databasen har ingen FEST-kopi og ikke fagsidene fra produksjonen.

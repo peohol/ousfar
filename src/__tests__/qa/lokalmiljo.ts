@@ -151,7 +151,7 @@ async function sikreDatabase(): Promise<Status> {
   return ny
 }
 
-/** Den syntetiske administratoren, med navn, adminrolle og ferdig oppsett. Passordet gjenbrukes. */
+/** Den syntetiske administratoren, med navn, adminrolle (og systemarkitekt i den tomme databasen) og ferdig oppsett. Passordet gjenbrukes. */
 async function sikreAdministrator(s: Status): Promise<string> {
   const passordfil = join(MAPPE, 'passord.txt')
   const passord = existsSync(passordfil) ? readFileSync(passordfil, 'utf8') : randomBytes(18).toString('base64url')
@@ -172,9 +172,12 @@ async function sikreAdministrator(s: Status): Promise<string> {
   }
   const { error } = await admin
     .from('profiles')
-    .update({ role: 'admin', first_name: 'QA', last_name: 'Testadministrator', must_change_password: false, onboarding_completed: true })
+    .update({ first_name: 'QA', last_name: 'Testadministrator', must_change_password: false, onboarding_completed: true })
     .eq('id', id)
   if (error) throw error
+  // Adminrollen med tildelingene som følger med den, som `npm run bootstrap:admin`.
+  const { error: rollefeil } = await admin.rpc('kontooperasjon_forste_administrator', { bruker: id })
+  if (rollefeil) throw rollefeil
   return passord
 }
 

@@ -8,10 +8,11 @@ i `docs/ousfar-nasjonal-p0-kartlegging.md` (§5–8); brukersystemet ellers i
 ## Status
 
 P1.1 har lagt grunnmuren: tabellene, vaktene og dagens kontoer fordelt på to
-fagmiljøer. **Ingen rettigheter bygger på dem ennå.** `er_admin()`,
-`profiles.role`, alle radsikkerhetsregler, funksjoner og Edge-funksjoner er
-som før, og ingen bruker merker noe. Rettighetene per fagmiljø kommer i P2,
-etter herdingen av adminoperasjonene i P1.2 og `ressursomfang` i P4a.
+fagmiljøer. P1.2a bruker dem for det første: **myndigheten over andres
+kontoer** (nytt passord og adminrolle, under). Ellers bygger ingen rettigheter
+på dem ennå: `er_admin()`, `profiles.role`, alle radsikkerhetsregler og
+funksjonene er som før. Rettighetene per fagmiljø kommer i P2, etter
+`ressursomfang` i P4a.
 
 ## Fagmiljøene
 
@@ -112,8 +113,79 @@ Den kjøres bare i produksjonen, siden den stopper uten kontoene `peohol` og
 loggen. `src/__tests__/fagmiljoer.test.ts` kjører den mot syntetiske kontoer,
 med `maxhag` både som tidligere administrator og som vanlig bruker.
 
-En administrator som får `role = 'admin'` etter dette, blir **ikke**
-automatisk lokal administrator; det kommer med P1.2 og P3.
+En administrator som får `role = 'admin'` gjennom `sett-rolle`, blir lokal
+administrator i sitt primære fagmiljø (P1.2a, over). Utpeking av lokale
+administratorer for seg kommer i P3.
+
+## Myndighet over kontoer
+
+`supabase/migrations/20261113203000_kontomyndighet.sql` (P1.2a) avgjør hvem som
+kan gi nytt passord til og endre adminrollen til hvem. Edge-funksjonene
+`nytt-passord` og `sett-rolle` kaller kontooperasjonene der med den innloggedes
+ID fra JWT-en; nettleseren kan ikke kalle dem.
+
+**Myndighetsnivået** til den det gjelder (`intern.myndighetsniva`): 3 for en
+systemarkitekt, 2 for en administrator (lokal administrator hvor som helst,
+eller den gamle rollen `admin`), 1 for alle andre. Alt som kan gi myndighet,
+teller, så en konto aldri regnes lavere enn den er; en systemarkitekt er
+beskyttet uansett `profiles.role`.
+
+**Den som handler**, har myndighet som systemarkitekt, eller i fagmiljøene
+vedkommende administrerer nå (`intern.administrerte_fagmiljoer`: aktiv
+tildeling, aktivt medlemskap og aktivt fagmiljø). Den gamle rollen alene gir
+ingen myndighet over andres kontoer, og den kreves heller ikke: den nye
+modellen avgjør.
+
+| | Nytt passord | Gi eller ta adminrollen |
+| --- | --- | --- |
+| Systemarkitekt | Alle unntatt systemarkitekter | Alle unntatt systemarkitekter |
+| Lokal administrator | Vanlige brukere (nivå 1) som bare hører til fagmiljøer vedkommende administrerer, også inviterte medlemskap | Ingen |
+| Andre | Ingen | Ingen |
+
+I tillegg:
+
+- Ingen kan gjøre noe av dette med sin egen konto.
+- Den som gjøres til administrator, blir også lokal administrator i sitt
+  primære fagmiljø, slik tilbakefyllingen gjorde med dem som var det. Den som
+  mister rollen, slutter som lokal administrator overalt.
+- En konto med midlertidig passord (ikke ferdig førstegangsoppsett) kan ikke
+  gjøres til administrator. Passordet kan være kjent av den som laget det.
+- Den siste med adminrollen, og den eneste lokale administratoren i et aktivt
+  fagmiljø, kan ikke fjernes.
+- To systemarkitekter kan ikke gi hverandre nytt passord. Har en
+  systemarkitekt mistet passordet, settes det utenfra, som når alle
+  administratorene er borte (`docs/brukere.md`).
+
+**Den første administratoren.** `npm run bootstrap:admin` og det lokale
+testmiljøet bruker `kontooperasjon_forste_administrator`: adminrollen og lokal
+tildeling i det primære fagmiljøet, og systemarkitekt hvis det ikke finnes
+noen (en ny, tom database). I produksjonen finnes systemarkitektene, og ingen
+blir det på den måten.
+
+**Samtidighet.** Hver operasjon tar den felles låsen (`intern.las_tilgang`)
+før kontrollen og holder den til endringen er gjort, og endringer av
+`profiles.role` venter også på den. Operasjonene kjøres bare i `read
+committed` (som data-API-et bruker), slik at kontrollen etter låsen ser det en
+annen transaksjon nettopp lagret; i strengere isolasjon stoppes de (`25001`).
+
+**Nytt passord** byttes i Auth, utenfor databasen, og går derfor i tre steg:
+`kontooperasjon_klarer_passord` kontrollerer og gir et merke for tilgangene
+til kontoen (siste rad om den i tilgangsloggen), Edge-funksjonen bytter
+passordet, og `kontooperasjon_fullfor_passord` kontrollerer på nytt og krever
+uendret merke. Først da settes kontoen i førstegangsoppsett og passordet gis
+ut. Er noe endret underveis, også om det er endret tilbake, gis passordet ikke
+ut (`40001`), og kontoen står med et passord ingen kjenner til noen med
+myndighet gir et nytt. Ingen uten myndighet kommer forbi første steg.
+
+**Loggen.** Endringer av `profiles.role` føres i tilgangsloggen
+(`profiles.update`), og hvert nytt passord som `passord.update`. Aktøren er
+den innloggede, eller den et serverkall oppgir med
+`set_config('ousfar.tilgangsaktor', …, true)`; den innloggede går alltid
+foran.
+
+`src/__tests__/kontomyndighet.test.ts` prøver tilfellene med et persongalleri
+i begge fagmiljøene, og `fagmiljoer.samtidighet.test.ts` to samtidige
+rollefjerninger mot ekte Postgres.
 
 ## Katalogvaktene
 

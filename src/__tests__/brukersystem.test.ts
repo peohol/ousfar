@@ -201,9 +201,17 @@ describe('Auth-oppsettet', () => {
 })
 
 describe('Edge-funksjonene', () => {
-  it('krever administrator på alle adminoperasjonene', () => {
-    for (const navn of ['opprett-bruker', 'sett-rolle', 'nytt-passord'] as const) {
-      expect(endepunkter[navn], navn).toContain('endepunkt({ krevAdmin: true }')
+  it('krever administrator for å opprette brukere', () => {
+    expect(endepunkter['opprett-bruker']).toContain('endepunkt({ krevAdmin: true }')
+  })
+
+  it('lar databasen avgjøre myndigheten for nytt passord og rolle', () => {
+    // Hvem som får gjøre hva med hvem, kontrolleres i kontooperasjonene
+    // (kontomyndighet.test.ts), ikke av den gamle rollen alene.
+    for (const navn of ['sett-rolle', 'nytt-passord'] as const) {
+      expect(endepunkter[navn], navn).toContain('endepunkt({ krevAdmin: false }')
+      expect(endepunkter[navn], navn).toMatch(/kontofunksjon<[^>]+>\(admin, 'kontooperasjon_/)
+      expect(utenKommentarer(endepunkter[navn]), navn).not.toMatch(/\.from\('profiles'\)/)
     }
   })
 
@@ -224,7 +232,8 @@ describe('Edge-funksjonene', () => {
   })
 
   it('lar ingen endre sin egen rolle', () => {
-    expect(endepunkter['sett-rolle']).toContain('brukerId === innlogget.id')
+    expect(lesMigrasjon('kontomyndighet')).toContain("'Du kan ikke endre din egen rolle.'")
+    expect(endepunkter['sett-rolle']).toContain('aktor: innlogget.id')
   })
 
   it('kontrollerer at profilbildet i oppsettet er brukerens eget', () => {

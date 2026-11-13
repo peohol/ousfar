@@ -10,6 +10,10 @@
  *  4. valider det som er sendt inn
  *  5. først da: gjør jobben med en klient som har forhøyede rettigheter
  *
+ * Operasjonene på andres kontoer (`nytt-passord`, `sett-rolle`) slår ikke opp
+ * adminstatusen her: myndigheten avhenger av hvem den gjelder, og avgjøres i
+ * databasen med den innloggedes ID (`kontooperasjoner.ts`, `kontofunksjon`).
+ *
  * `withSupabase` fra @supabase/server gjør de to første leddene og svarer
  * selv på forespørsler uten gyldig JWT. Den håndterer også CORS, slik at
  * appen kan kalle funksjonene rett fra nettleseren.

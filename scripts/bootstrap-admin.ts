@@ -4,7 +4,7 @@
  * Kjøres med `npm run bootstrap:admin` mot et prosjekt som har fått
  * migrasjonene. Skriptet er idempotent: finnes kontoen fra før, blir
  * passordet stående urørt, og skriptet sørger bare for at profilen har
- * adminrollen.
+ * adminrollen og tildelingene som følger med den.
  *
  * Miljøvariabler:
  *   SUPABASE_URL            prosjektets URL (VITE_SUPABASE_URL godtas også)
@@ -41,22 +41,26 @@ const admin = createClient(url, hemmelig, {
   auth: { autoRefreshToken: false, persistSession: false },
 })
 
-/** Setter adminrollen dersom den ikke alt er satt. */
-async function sikreAdminrolle(id: string, rolle: string): Promise<void> {
-  if (rolle === 'admin') return
-  const { error } = await admin.from('profiles').update({ role: 'admin' }).eq('id', id)
+/**
+ * Gir kontoen adminrollen og lokal administratortildeling i sitt primære
+ * fagmiljø, og gjør den til systemarkitekt hvis det ikke finnes noen
+ * (docs/fagmiljoer.md, «Myndighet over kontoer»). Uten det kunne den første
+ * administratoren i et nytt prosjekt ikke administrere de andre kontoene.
+ */
+async function sikreAdminrolle(id: string): Promise<void> {
+  const { error } = await admin.rpc('kontooperasjon_forste_administrator', { bruker: id })
   if (error) throw error
 }
 
 const { data: fra_for, error: oppslagsfeil } = await admin
   .from('profiles')
-  .select('id, role')
+  .select('id')
   .eq('username', brukernavn)
   .maybeSingle()
 if (oppslagsfeil) throw oppslagsfeil
 
 if (fra_for) {
-  await sikreAdminrolle(fra_for.id, fra_for.role)
+  await sikreAdminrolle(fra_for.id)
   console.log(`«${brukernavn}» finnes fra før. Passordet er urørt; adminrollen er på plass.`)
 } else {
   // Klareringen databasetriggeren krever. Den kan bare legges inn med
@@ -81,9 +85,10 @@ if (fra_for) {
 
   const { error: profilfeil } = await admin
     .from('profiles')
-    .update({ role: 'admin', must_change_password: true, onboarding_completed: false })
+    .update({ must_change_password: true, onboarding_completed: false })
     .eq('id', id)
   if (profilfeil) throw profilfeil
+  await sikreAdminrolle(id)
 
   console.log(
     `«${brukernavn}» er opprettet som administrator, med det midlertidige passordet fra BOOTSTRAP_ADMIN_PASSWORD. Det må byttes ved første innlogging.`,

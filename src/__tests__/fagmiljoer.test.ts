@@ -88,10 +88,9 @@ async function primaermedlemskap(db: PGlite): Promise<Record<string, string>> {
   return Object.fromEntries(rows.map((r) => [r.username, r.nokkel]))
 }
 
-it('legger tilbakefyllingen rett etter strukturen og holder den utenfor nye databaser', () => {
+it('legger tilbakefyllingen rett etter strukturen', () => {
   const filer = migrasjonsfiler()
   expect(filer.indexOf(TILBAKEFYLLING)).toBe(filer.indexOf(STRUKTUR) + 1)
-  expect(filer.at(-1)).toBe(TILBAKEFYLLING)
 })
 
 describe.each<Rolle>(['admin', 'user'])('tilbakefyllingen med maxhag som %s fra før', (maxhagRolle) => {
