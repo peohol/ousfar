@@ -10,6 +10,11 @@ og ingen e-post i det hele tatt. En administrator oppretter kontoen og gir
 brukeren et midlertidig passord. Brukeren logger inn med **brukernavn og
 passord**, velger sitt eget passord med én gang, og er inne.
 
+Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det er
+foreløpig bare registrert, ikke tatt i bruk: rettighetene avgjøres fortsatt av
+rollen `user`/`admin` alene. Se «Fagmiljø og systemroller» under og
+`docs/fagmiljoer.md`.
+
 ## Delene det består av
 
 | Hvor | Hva |
@@ -76,6 +81,28 @@ Det midlertidige passordet vises én gang, til administratoren som ba om det.
 Det lagres ingen steder, logges ikke, og kan ikke hentes fram igjen. Mistes
 det, lages et nytt.
 
+`sett-rolle` endrer bare `profiles.role`. Den gir ikke lokal
+administratortildeling i et fagmiljø; det kommer når adminoperasjonene får
+hierarki (P1.2) og administrasjonen av medlemskap (P3).
+
+## Fagmiljø og systemroller
+
+Fra P1.1 (`supabase/migrations/20261113140000_fagmiljoer.sql`) har databasen
+fagmiljøer, medlemskap, systemroller, lokale administratorer og en
+uforanderlig tilgangslogg. Modellen, reglene og hvem som har hva står i
+`docs/fagmiljoer.md`. For brukersystemet betyr det:
+
+- En ny konto får automatisk aktivt primærmedlemskap i standardfagmiljøet,
+  OUS Klinisk farmakologi, i samme transaksjon som profilen. Ellers er
+  kontoopprettelsen uendret.
+- En konto kan slettes som før. Medlemskapene og rollene følger med i
+  kaskaden, men loggen står. Unntaket er den siste lokale administratoren i
+  et aktivt fagmiljø, og den siste systemarkitekten: den kontoen må først
+  avløses av en annen.
+- Nettleseren kan bare lese egne medlemskap og navnet på egne fagmiljøer.
+  Ingen eksisterende regel, funksjon eller Edge-funksjon bruker tabellene
+  ennå; `er_admin()` betyr det samme som før.
+
 ## Førstegangsoppsettet
 
 `must_change_password` eller `onboarding_completed` avgjør om brukeren sendes
@@ -128,9 +155,15 @@ fortsatt beskyttet av radsikkerhet og Edge-funksjoner, uavhengig av dette.
 
 ## Oppsett og drift
 
-Migrasjoner og Edge-funksjoner ligger i repoet og rulles ut mot prosjektet
-med Supabase CLI eller MCP. Filnavnene på migrasjonene følger versjonene i
-prosjektets historikk, så de skal ikke endres i ettertid.
+Migrasjonene rulles ut til produksjonen av GitHub Actions når en PR slås
+sammen (`docs/migrasjoner.md`). Filnavnene følger versjonene i prosjektets
+historikk, så de skal ikke endres i ettertid.
+
+Edge-funksjonene ligger i repoet, men har **ingen** automatisk utrulling: de
+legges ut for hånd med Supabase CLI eller MCP, og det finnes ingen kontroll av
+at den kjørende koden er lik repoet. Produksjonen har i tillegg funksjonen
+`delt-test`, som ikke finnes i repoet. Begge deler ryddes i P1.2
+(`docs/ousfar-nasjonal-p0-kartlegging.md` §8).
 
 Serverfunksjonene i `api/` kjører i Vercels region Stockholm (`arn1`), samme
 sted som databasen (Supabase `eu-north-1`). Regionen settes ett sted, med

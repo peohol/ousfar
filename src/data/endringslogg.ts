@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.3',
+    dato: '2026-11-13',
+    sammendrag: 'Grunnlaget for flere fagmiljøer er lagt inn, uten endring i appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Første steg mot at flere laboratorier kan bruke OUSFAR: databasen kjenner nå fagmiljøene OUS Klinisk farmakologi og OUS Rettstoksikologi, hvem som tilhører hvilket, hvem som er lokale administratorer og systemarkitekter, og fører alle endringer i en logg som ikke kan endres. Rettighetene, fortolkningen og innholdet er som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.2',
     dato: '2026-11-10',
     sammendrag: 'Felles arbeidsregler for alle KI-agentene som utvikler og kontrollerer appen',

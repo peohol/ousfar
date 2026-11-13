@@ -686,7 +686,25 @@ er anbefalt, men ikke gjennomført.
 
 ## 8. Første implementerings-PR: P1.1 «Rollegrunnlag uten atferdsendring»
 
-**Ikke utført.** Beskrevet her slik at den kan bestilles uten ny strategirunde.
+**Utført** etter Peders bestilling 13.11.2026. Resultatet og reglene står i
+`docs/fagmiljoer.md`. Avvik fra beskrivelsen under:
+
+- Medlemskapet for nye kontoer gis av en egen utløser på `profiles`
+  (`profiles_standardmedlemskap`), ikke ved å endre `paa_ny_auth_bruker`;
+  kontoopprettelsen er dermed urørt.
+- Tilbakefyllingen kjøres bare i produksjonen, fordi den krever kontoene
+  `peohol` og `maxhag`. Testene kjører den mot syntetiske kontoer.
+- «Ingen aktivt fagmiljø uten admin» håndheves når en administrator
+  avsluttes eller fagmiljøet opprettes eller gjenåpnes, og kontrolleres av
+  tilbakefyllingen. En ny, tom database (testene, det lokale testmiljøet) har
+  de to fagmiljøene uten administrator, fordi den ikke har kontoer.
+- Nettleseren kan i tillegg lese navnet på fagmiljøene den er aktivt medlem
+  av, slik at medlemskapet kan vises.
+- Katalogvakt 1 omfatter også visninger, som må ha `security_invoker`.
+- Den siste lokale administratoren i et aktivt fagmiljø og den siste
+  systemarkitekten kan ikke slettes som konto før de er avløst.
+
+Beskrivelsen slik den ble bestilt:
 
 **Formål.** Legge grunnmuren for fagmiljø og systemroller uten at noen bruker
 merker noe, og sette opp vaktene som hindrer nye hull.

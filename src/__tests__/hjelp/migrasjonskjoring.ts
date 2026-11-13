@@ -70,9 +70,11 @@ const SUPABASE_GRUNNLAG = /* sql */ `
  * finnes i en ny database. De senere gjør ingenting der (se skillen
  * `utfor-oppgaver`), og kjøres som alle andre. Koblingen av stoffsidene til
  * FEST-virkestoffene ble kjørt direkte i produksjonen og lagt inn her etterpå,
- * slik den ble kjørt; den stopper uten administratoren `peohol`.
+ * slik den ble kjørt; den stopper uten administratoren `peohol`. Det gjør også
+ * tilbakefyllingen av fagmiljøene, som i tillegg krever `maxhag`; testene
+ * kjører den selv (`fagmiljoer.test.ts`).
  */
-const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_virkestoff)\.sql$/
+const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_virkestoff|fagmiljoer_tilbakefylling)\.sql$/
 
 /**
  * Navnet en ny monografkuratering skal ha (`docs/monografkuratering.md`):
