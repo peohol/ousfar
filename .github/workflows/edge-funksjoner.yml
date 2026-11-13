@@ -45,8 +45,8 @@ env:
   # Bryteren for automatisk utrulling. «nei»: sammenslåinger til main og
   # produksjonsmigreringene gir bare en kontroll (tørrkjøring), og utrullingen
   # startes for hånd med modus «utrull». «ja»: de ruller ut det som avviker.
-  # Slås på i en egen PR (docs/edge-funksjoner.md, «Ta automatikken i bruk»).
-  AUTOMATISK_UTRULLING: nei
+  # Slått på 2026-11-13 etter første utrulling for hånd (docs/edge-funksjoner.md).
+  AUTOMATISK_UTRULLING: ja
   # Prosjekt-ref-en til OUSFAR i Supabase; den er ikke hemmelig.
   SUPABASE_PROJECT_REF: jfzqowsmjtthpbipnxnf
 
