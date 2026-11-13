@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-13T16:26:34.585Z",
+  "oppdatert_kl": "2026-11-13T17:26:08.632Z",
   "malt_kl": "2026-11-13T07:26:08.330Z",
   "teller": 82,
   "stoffer": {
@@ -3724,7 +3724,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 71,
+        "poeng": 71.3,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-05.",
@@ -4853,11 +4853,17 @@
     "metylfenidat": {
       "stoff": "metylfenidat",
       "navn": "Metylfenidat",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 359.1,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "1 av 13 redaksjonelle seksjoner er tomme.",
+          "1 av 36 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-13T07:26:08.902Z",
@@ -4873,14 +4879,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-13T16:26:34.585Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
