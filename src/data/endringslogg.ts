@@ -12,13 +12,24 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.129.4',
+    versjon: '1.129.5',
     dato: '2026-11-13',
     sammendrag: 'Testgrunnlaget for tilgang per fagmiljø er forberedt, uten endring i appen',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen. Neste steg mot flere fagmiljøer er forberedt: alle veier inn til dataene er kartlagt, og testene prøver nå med syntetiske brukere i to fagmiljøer hva hver av dem kan lese og endre. Rettighetene er som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.129.4',
+    dato: '2026-11-13',
+    sammendrag: 'Serverfunksjonene for brukeradministrasjon legges ut på en kontrollert måte',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Serverfunksjonene som oppretter brukere, setter roller og nye passord, legges nå ut automatisk fra den godkjente koden, med kontroll før og etter av at det som kjører er nøyaktig det som er godkjent. En gammel, ubrukt testfunksjon er fjernet.',
     ],
     utenVarsel: true,
   },

@@ -107,7 +107,7 @@ selv.
 | --- | --- | --- |
 | Edge-funksjonen `fullfor-oppsett` | `supabase/functions/fullfor-oppsett` | Gjelder bare den innloggede selv. Bør kreve aktivt medlemskap, slik at en avsluttet konto ikke kan fullføre oppsettet |
 | Edge-funksjonene `opprett-bruker`, `nytt-passord`, `sett-rolle` | `supabase/functions/*`, felles kode i `_edge/kontekst.ts` | Herdes i P1.2a (tråd A eier koden og den felles myndighetsfunksjonen). P2.0 legger kravet om aktivt medlemskap i den felles innloggingskontrollen (`hentInnlogget`), etter at P1.2a er slått sammen |
-| Edge-funksjonen `delt-test` (bare i produksjonen) | — | Undersøkes i P1.2b |
+| Edge-funksjonen `delt-test` (tidligere bare i produksjonen) | — | Undersøkt og fjernet i P1.2b; leste ingen data (`docs/edge-funksjoner.md`) |
 | Vercel-funksjonene for synker, kildeovervåking og kuratering | `api/*.ts`, `src/server/tilgang.ts` | Slipper inn innloggede via `er_admin()`, og dekkes derfor når `er_admin()` krever aktivt medlemskap. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
 | Varslene som lages av utløsere | `intern.varsle_publisering`, `intern.varsle_ny_ide` | Sender til **alle** profiler, også dem uten aktivt medlemskap. Etter P2.0 kan de ikke lese varslene, men mottakerlistene bør filtreres (P2b) |
 | Innloggingsveggen i kanten | `middleware.ts` | Sjekker bare at tokenet er gyldig. Ingen datagrense; uendret |
@@ -196,7 +196,7 @@ kontoglobale operasjoner (nytt passord, rolle) testes i P1.2a.
   i `tilgangsomrader.ts` (reglene for (d) dekker alt med `fagmiljo`,
   `medlemskap`, `systemrolle`, `tilgang`, `administrator`, `passord` og `rolle` i
   navnet). Persongalleriet kan brukes i P1.2a sine databasetester.
-- **P1.2b (utrulling av Edge-funksjonene):** ingen felles filer. En ny
+- **P1.2b (utrulling av Edge-funksjonene, slått sammen):** ingen felles filer. En ny
   Edge-funksjon må nevnes i dette dokumentet (testen krever det).
 - **P4a (`ressursomfang`):** ingen felles filer. Får tabellen rettigheter for
   nettleseren, må den plasseres i `tilgangsomrader.ts`. Når rekkevidden finnes,
