@@ -54,16 +54,18 @@ server-side.
 3. Et aktivt fagmiljø mister aldri sin siste aktive administrator, og et
    fagmiljø som opprettes eller gjenåpnes, må få en i samme transaksjon.
 4. Den siste systemarkitekten kan ikke tilbakekalles.
-5. Et gjeldende medlemskap krever et aktivt fagmiljø som er åpent for
+5. Nøyaktig ett fagmiljø er standard. Standarden kan byttes i én
+   transaksjon, men aldri mangle, slik at nye kontoer alltid får medlemskap.
+6. Et gjeldende medlemskap krever et aktivt fagmiljø som er åpent for
    medlemmer, eller at brukeren er systemarkitekt (startporten S2).
-6. Rader avsluttes, de slettes ikke. De forsvinner bare i kaskaden når selve
+7. Rader avsluttes, de slettes ikke. De forsvinner bare i kaskaden når selve
    kontoen slettes, slik at sletting av brukere virker som før; regel 3 og 4
    gjelder også da. Feltene som identifiserer en rad (bruker, fagmiljø,
    rolle, starttidspunkt, fagmiljøets nøkkel) kan ikke endres.
-7. Tilgangsloggen kan verken endres, slettes eller tømmes.
+8. Tilgangsloggen kan verken endres, slettes eller tømmes.
 
-Regel 1–4 kontrolleres når transaksjonen avsluttes (utsatte utløsere), slik at
-en endring kan gjøres i flere steg. Regel 5–7 gjelder med en gang.
+Regel 1–5 kontrolleres når transaksjonen avsluttes (utsatte utløsere), slik at
+en endring kan gjøres i flere steg. Regel 6–8 gjelder med en gang.
 
 Hver endring føres i `tilgangslogg` av databasen selv. `aktor` er den
 innloggede, eller tom for migrasjoner og server. En migrasjon eller et

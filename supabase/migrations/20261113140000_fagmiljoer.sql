@@ -399,6 +399,9 @@ select set_config('ousfar.tilgangsgrunn', '', true);
 -- 3. Et aktivt fagmiljø mister aldri sin siste aktive administrator, og et
 --    fagmiljø som opprettes eller gjenåpnes, må ha en.
 -- 4. Den siste aktive systemarkitekten kan ikke tilbakekalles.
+-- 5. Nøyaktig ett fagmiljø er standard for nye kontoer (og dermed aktivt og
+--    åpent, etter `fagmiljoer_standard_er_apent`), så standarden kan byttes,
+--    men aldri mangle.
 -- Utsatt, så en endring kan gjøres i flere steg i én transaksjon. Kontrollen
 -- ser på tilstanden ved slutten, ikke på raden slik den var.
 create function intern.kontroller_tilgangsinvarianter()
@@ -432,11 +435,18 @@ begin
     end if;
   end if;
 
-  if tg_table_name in ('fagmiljoadministratorer', 'fagmiljoer')
+  if (tg_table_name = 'fagmiljoadministratorer'
+      or (tg_table_name = 'fagmiljoer'
+          and (tg_op = 'INSERT' or (to_jsonb(old) ->> 'status') is distinct from (rad ->> 'status'))))
     and exists (select 1 from public.fagmiljoer f where f.id = fagmiljo and f.status = 'aktiv')
     and not exists (select 1 from public.fagmiljoadministratorer a where a.fagmiljo_id = fagmiljo and a.til is null)
   then
     raise exception 'Et aktivt fagmiljø må ha minst én aktiv administrator.'
+      using errcode = '23514';
+  end if;
+
+  if tg_table_name = 'fagmiljoer' and (select count(*) from public.fagmiljoer f where f.standard) <> 1 then
+    raise exception 'Nøyaktig ett fagmiljø må være standard for nye kontoer.'
       using errcode = '23514';
   end if;
 
@@ -474,9 +484,9 @@ for each row execute function intern.kontroller_tilgangsinvarianter();
 
 -- Etter at de to første fagmiljøene er lagt inn: de får administratorene sine
 -- i tilbakefyllingen. Et nytt fagmiljø må opprettes sammen med sin første
--- administrator.
+-- administrator, og standarden må stå.
 create constraint trigger fagmiljoer_invarianter
-after insert or update of status on public.fagmiljoer
+after insert or update of status, standard on public.fagmiljoer
 deferrable initially deferred
 for each row execute function intern.kontroller_tilgangsinvarianter();
 

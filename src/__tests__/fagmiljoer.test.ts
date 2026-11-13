@@ -303,6 +303,21 @@ describe('reglene etter tilbakefyllingen', () => {
     expect(feil?.message).toMatch(/minst én aktiv administrator/)
   })
 
+  it('krever nøyaktig ett standardfagmiljø, men lar standarden byttes i én transaksjon', async () => {
+    const utenStandard = await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set standard = false`))
+    expect(utenStandard?.message).toMatch(/Nøyaktig ett fagmiljø må være standard/)
+    // Kontrollen er utsatt: den kjøres først når begge stegene er gjort.
+    const bytte = await feilFra(() =>
+      o.db.transaction(async (tx) => {
+        await tx.exec(`update public.fagmiljoer set standard = false where nokkel = '${KF}'`)
+        await tx.exec(`update public.fagmiljoer set apent_for_medlemmer = true, standard = true where nokkel = '${RT}'`)
+        await tx.exec('set constraints all immediate')
+        await tx.rollback()
+      }),
+    )
+    expect(bytte).toBeNull()
+  })
+
   it('lar ikke den siste systemarkitekten tilbakekalles', async () => {
     const tilbakekall = (bruker: string) => (tx: Transaction) =>
       tx.query(`update public.systemroller set tilbakekalt_kl = now() where bruker_id = $1`, [bruker])
@@ -381,6 +396,18 @@ describe('reglene etter tilbakefyllingen', () => {
           expect((await feilFra(() => som(o.db, bruker, (tx) => tx.query(sql))))?.code, sql).toBe('42501')
         }
       }
+    })
+
+    it('gir verken innloggede eller anonyme rettigheter på sekvensen bak tilgangsloggen', async () => {
+      const { rows } = await o.db.query<{ rolle: string; rett: string; har: boolean }>(
+        `select r.rolle, p.rett, has_sequence_privilege(r.rolle, 'public.tilgangslogg_id_seq', p.rett) as har
+         from unnest(array['anon', 'authenticated']) as r(rolle), unnest(array['USAGE', 'SELECT', 'UPDATE']) as p(rett)`,
+      )
+      expect(rows.filter((r) => r.har)).toEqual([])
+      const setval = await feilFra(() =>
+        som(o.db, o.id.bruker1, (tx) => tx.query(`select setval('public.tilgangslogg_id_seq', 1)`)),
+      )
+      expect(setval?.code).toBe('42501')
     })
 
     it('gir en anonym ingenting', async () => {
