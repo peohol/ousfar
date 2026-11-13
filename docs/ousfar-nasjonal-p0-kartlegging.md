@@ -267,13 +267,32 @@ Diskusjonene på fortolkningen har siden `fortolkning:<kode>`
 (`docs/diskusjoner.md`).
 
 **Konsekvens ved flere fagmiljøer (A):** De unike nøklene må få fagmiljøet
-med, `finn_*`/`les_*` må ta fagmiljøet fra den innloggedes aktive medlemskap
-(server-side, ikke fra et parameter klienten velger fritt), og klienten må
-slutte å anta at en kode har én betydning. Ett regelsett for to laboratorier
+med, `finn_*`/`les_*` må ta fagmiljøet fra én entydig **arbeidskontekst**
+(under), og klienten må slutte å anta at en kode har én betydning. Ett regelsett for to laboratorier
 må være et eksplisitt delingsvalg, ikke en følge av at kodene er like. Den
 eksisterende «mangler»-tilstanden på steg 2 (`src/components/BandStep.tsx`)
 er rett sted for den tydelige stoppen når et fagmiljø ikke har godkjente
 regler.
+
+**Entydig arbeidskontekst (A).** Har en bruker aktive medlemskap i både A og B
+(som B1 tillater i modellen), kan fagmiljøet ikke utledes av «de aktive
+medlemskapene»: med samme kode i begge ville oppslaget gi to regelsett eller et
+tilfeldig valgt. Regelen er derfor:
+
+1. Fortolkningen bruker alltid nøyaktig **ett** fagmiljø, arbeidskonteksten.
+   I første versjon er det brukerens aktive primærmedlemskap, og ingenting
+   annet.
+2. Når bytte av fagmiljø innføres, lagres valgt kontekst på serveren (egen
+   rad per bruker), og hver lesing og skriving validerer den mot et aktivt
+   medlemskap. Klienten kan be om bytte, men et fagmiljø-ID i et kall brukes
+   aldri uten den valideringen. Mangler gyldig kontekst, stopper fortolkningen
+   tydelig.
+3. Fortolkningen viser hvilket fagmiljø og hvilken regelversjon resultatet
+   gjelder, og et bytte tømmer reglene og mellomlageret i nettleseren før noe
+   nytt vises.
+4. Testene dekker en bruker med medlemskap i A og B, samme kode i begge:
+   resultatet følger konteksten, bytte gir den andres regler, og et kall med
+   B-kontekst etter at B-medlemskapet er deaktivert, avvises.
 
 ### 2.7 Delte objekter
 
@@ -406,9 +425,10 @@ som bare beskytter selve apppakken; alle dataganger går direkte mot Supabase.
 | Profil: skrive egen | kolonnerettigheter, utløser | Egen rad, tre felt | Uendret | Ingen | Lav | Finnes (`brukersystem.test.ts`) |
 | Profilbilde | bøtta `avatarer` | Alle leser alle; eier skriver | Som profil | Lesepolicy med rekkevidde | Lav | DB-test |
 | Opprette bruker | Edge `opprett-bruker` | Admin | Lokal admin (i eget fagmiljø), systemarkitekt | Medlemskap opprettes i samme operasjon; fagmiljø fra den innloggedes myndighet | **Høy** | Edge-enhetstest + DB-test |
-| Nytt passord | Edge `nytt-passord` | Admin på alle | Lokal admin bare på egne medlemmer som ikke er admin/systemarkitekt; systemarkitekt på alle | Hierarkisjekk | **Kritisk** (kontoovertakelse) | Edge-test |
+| Nytt passord | Edge `nytt-passord` | Admin på alle | Systemarkitekt. Lokal admin bare for en bruker hvis **eneste** aktive medlemskap er i eget fagmiljø, og som ikke er admin, redaktør med felles ansvar eller systemarkitekt | Kontoen er global i Auth: et passord gir tilgang til alle brukerens fagmiljøer. Sjekk av alle medlemskap og roller, ikke bare hierarkiet i eget fagmiljø | **Kritisk** (kontoovertakelse, også på tvers av fagmiljøer) | Edge-test, også med bruker i A og B |
 | Rolle/administrator | Edge `sett-rolle` | Admin på alle andre | Systemarkitekt utpeker lokale admin; ingen fjerner siste admin | Erstattes av medlemskaps-/administratorfunksjoner | **Kritisk** (privilegieheving) | Edge-test + DB-test |
-| Deaktivere bruker | — (finnes ikke) | — | Lokal admin i eget fagmiljø; systemarkitekt globalt | Status på medlemskap + sperring i Auth; radsikkerheten sjekker aktiv | **Høy** (avsluttede beholder tilgang) | DB-test + manuell |
+| Avslutte medlemskap | — (finnes ikke) | — | Lokal admin i eget fagmiljø | Status på medlemskapet i A; radsikkerheten sjekker aktivt medlemskap per fagmiljø. Berører ikke brukerens medlemskap i B | **Høy** (avsluttede beholder tilgang) | DB-test, også med bruker i A og B |
+| Sperre kontoen (Auth) | — (finnes ikke) | — | Systemarkitekt; automatisk når siste aktive medlemskap avsluttes | Sperring i Auth og ugyldiggjøring av økter er kontoglobal og skal aldri utløses av en lokal admin mens brukeren har andre aktive medlemskap | **Høy** (lokal admin stenger ute fra B) | DB-test + Edge-test + manuell |
 | Synker og kildeovervåking | `api/*`, `src/server/tilgang.ts` | Cron, GitHub OIDC, admin | Cron, OIDC, systemarkitekt | `er_admin()` → systemarkitekt | Lav | Eksisterende tester |
 | Kuratering | `kuratering_agent`, `kuratering_admin`, `api/kuratering*.ts` | Agentnøkkel med roller; admin = alle roller | Agentnøkkel; systemarkitekt for administrasjon; felles redaktør får ikke kontrollørrollen automatisk | Skill administrasjon fra faglige roller | Middels | DB-test |
 | Verktøysperrer og kildesaker | `sett_verktoysperre`, `beslutt_fagsak` m.fl. | Admin | Systemarkitekt (og etter Verktøys behov) | `er_admin()` → systemarkitekt | Lav | Eksisterende |
@@ -497,8 +517,9 @@ gjennom Fags kontroll.
 | Endre rekkevidde (lokalt → felles) | Nei | Nei | Nei | Nei | Nei | Ja, loggført, med forhåndsvisning |
 | Tildele lokal redaktør | Nei | Nei | Nei | Eget | Nei | Ja |
 | Tildele felles redaktør | Nei | Nei | Nei | Nei | Nei | Ja |
-| Opprette/deaktivere medlem | Nei | Nei | Nei | Eget (ikke admin/systemarkitekt) | Nei | Ja |
-| Nytt passord | Nei | Nei | Nei | Eget, vanlige medlemmer og redaktører | Nei | Ja |
+| Legge til/avslutte medlemskap | Nei | Nei | Nei | Eget fagmiljø (ikke admin/systemarkitekt) | Nei | Ja |
+| Nytt passord (kontoglobalt) | Nei | Nei | Nei | Bare brukere med eneste aktive medlemskap i eget fagmiljø, uten admin- eller felles roller | Nei | Ja |
+| Sperre konto i Auth (kontoglobalt) | Nei | Nei | Nei | Nei (skjer automatisk når siste medlemskap avsluttes) | Nei | Ja |
 | Utpeke/fjerne lokal admin | Nei | Nei | Nei | Nei | Nei | Ja (ikke siste) |
 | Opprette/arkivere fagmiljø | Nei | Nei | Nei | Nei | Nei | Ja |
 | Tildele systemarkitekt | Nei | Nei | Nei | Nei | Nei | Ja (ikke seg selv bort som siste) |
@@ -588,7 +609,9 @@ bruker C uten gruppe; deaktivert bruker A; systemarkitekt. Alt syntetisk.
 for A mot B og B mot A, direkte i tabellen, gjennom hver funksjon, med fremmed
 objekt-ID og med manipulert fagmiljø-ID. Selvheving: ingen kan gi seg selv eller
 andre mer enn egen myndighet. Siste admin og siste systemarkitekt.
-Deaktivering: deaktivert bruker med gyldig token får ingen data.
+Deaktivering: deaktivert bruker med gyldig token får ingen data. Kontoglobale
+operasjoner: lokal admin A kan verken gi nytt passord til eller sperre en
+bruker som også er aktiv i B; avsluttet medlemskap i A lar tilgangen til B stå.
 
 **Klinisk paritet (P4):** de eksisterende fasitene gjelder uendret og skal
 kjøres for det opprinnelige fagmiljøet: `src/__tests__/fortolkningUendret.test.ts`,
@@ -693,8 +716,10 @@ brukerflate. Ingen klinisk data berøres.
 
 **Neste PR (P1.2, også før P2):** hierarki i `nytt-passord` og `sett-rolle`
 (ingen kan gi nytt passord til eller endre rollen til noen med like høy eller
-høyere myndighet, ingen fjerner siste admin), deaktivering av medlemskap med
-sperring i Auth og sjekk av aktiv bruker i `er_admin()`/`krev_admin()`,
+høyere myndighet, ingen fjerner siste admin; så lenge det bare finnes ett
+fagmiljø, er regelen fra §4 om kontoglobale operasjoner oppfylt), avslutning
+av medlemskap, sperring i Auth når siste medlemskap avsluttes, og sjekk av
+aktiv bruker i `er_admin()`/`krev_admin()`,
 automatisk utrulling av Edge-funksjonene, og opprydding av `delt-test`.
 
 ---
