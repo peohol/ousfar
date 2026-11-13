@@ -4,7 +4,8 @@
  *
  * - `a` faginnhold og kliniske regler, med de felles kildedataene fagsidene viser;
  * - `b` samhandling og varsler: diskusjoner, idéer, oppgaver, varsler, direktelenker;
- * - `c` profiler og bilder, og det andre som bare er brukerens eget (innstillinger, favoritter);
+ * - `c` profiler og bilder (alt i Supabase sitt `storage`), og det andre som bare er brukerens eget
+ *   (innstillinger, favoritter);
  * - `d` stoffregisteret og administrasjon: synker, kildesaker, verktøysperrer,
  *   kuratering, fagmiljøer og tilgang.
  *
@@ -24,7 +25,7 @@ export const OMRADER = {
 export type Omrade = keyof typeof OMRADER
 
 export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
-  ['c', /^(public\.profiles|storage\.objects|public\.brukerinnstillinger)\b|^profiles_|stoffavoritt/],
+  ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|stoffavoritt/],
   ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
   ['d', /fagmiljo|medlemskap|systemrolle|tilgang|administrator|passord|(sett|endre)_rolle/],

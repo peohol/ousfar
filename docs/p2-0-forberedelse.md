@@ -73,7 +73,7 @@ transaksjon), fordi P2.0 skal være bevist for den før P3 tar den i bruk
 Tallene er fra databasen bygd av migrasjonene på `main` etter P1.1. Testene
 leser katalogen på nytt hver gang, så tallene her er et øyeblikksbilde.
 
-### Tabeller og visninger (59 tabeller og 5 visninger)
+### Tabeller og visninger (59 tabeller og 5 visninger i `public`, 2 tabeller i `storage`)
 
 Alle har radsikkerhet, og visningene kjører som den innloggede
 (katalogvaktene fra P1.1). Ingen er tilgjengelige for `anon`.
@@ -86,11 +86,23 @@ Alle har radsikkerhet, og visningene kjører som den innloggede
 | Bare admin | 5 | `innholdsendringer`, `innholdshendelser`, `slettede_referanser`, `slettede_stoffsider`, `diskusjon_skjulte_tekster` |
 | Annet | 1 | `objektrevisjoner` (publiserte revisjoner for alle, alt for admin) |
 
-I tillegg `storage.objects`: alle innloggede leser alle profilbilder i bøtta
-`avatarer`, eieren skriver sitt eget. Testgrunnlaget gir nettleserrollene de samme rettighetene på tabellen som Supabase gjør (`migrasjonskjoring.ts`), slik at den er med i kartleggingen og prototypen.
+I tillegg Supabase sine tabeller for filer, som nettleseren når gjennom
+Storage-API-et: `storage.objects`, der alle innloggede leser alle profilbilder
+i bøtta `avatarer` og eieren laster opp, bytter og fjerner sitt eget, og
+`storage.buckets`, som har radsikkerhet uten leseregel og derfor ikke gir noe.
+Testgrunnlaget (`migrasjonskjoring.ts`) gir nettleserrollene de samme
+rettighetene og radsikkerheten på dem som Supabase gjør.
 
-Fordelt på P2: (a) 37 tabeller og de 5 visningene, (b) 12, (c) 3 og
-`storage.objects`, (d) 7.
+Kartleggingen tar med **alle** skjemaer utenom Postgres sine egne og
+migrasjonshistorikken, ikke en fast liste. En ny tabell nettleseren får
+rettigheter på, også i `storage`, kommer dermed med av seg selv: testen krever
+at den har radsikkerhet, et P2-område og (når P2.0 er aktivert) kontrollen av
+aktivt medlemskap. Det er vist med en tabell som lages med vilje og rulles
+tilbake. Katalogvakten fra P1.1 (`tilgangskatalog.test.ts`) gjelder fortsatt
+bare prosjektets egne skjemaer.
+
+Fordelt på P2: (a) 37 tabeller og de 5 visningene, (b) 12, (c) 3 og de 2 i
+`storage`, (d) 7.
 
 ### Funksjonene nettleseren kan kalle (123, hvorav 92 `security definer`)
 
@@ -125,7 +137,7 @@ rulles tilbake, og viser at det virker:
 2. `intern.krev_aktivt_medlemskap()`: stopper med `42501` ellers.
 3. **Én begrensende regel per tabell** (`as restrictive for all to
    authenticated using ((select public.har_aktivt_medlemskap()))`) på alle 59
-   tabellene og `storage.objects`. Begrensende regler gjelder i tillegg til de
+   tabellene i `public` og de 2 i `storage`. Begrensende regler gjelder i tillegg til de
    tillatende, så ingen av dagens 85 regler må skrives om, og visningene og de
    27 funksjonene som kjøres som den innloggede, følger med.
 4. Kontrollen i de fire portene P0 §2.2 peker ut: `intern.krev_innlogget`,
@@ -137,6 +149,10 @@ Prototypen viser at:
 
 - en bruker uten aktivt medlemskap (og en tidligere administrator) ser **null
   rader** i alle tabeller, får `42501` ved skriving, og `er_admin()` blir usann;
+- det gjelder også profilbildene: uten prototypen leser de andres bilde og
+  laster opp sitt eget, med den avvises begge deler, mens aktive brukere
+  fortsatt leser bildene, bytter og laster opp sitt eget, og fortsatt ikke kan
+  laste opp i en annens navn;
 - de syv aktive personene ser **nøyaktig de samme radene** som før, tabell for
   tabell.
 
@@ -171,12 +187,12 @@ testen følger det P2.0 velger.
 
 ## Tilgangsmatrisen
 
-`tilgangsmatrise.test.ts` har 44 scenarioer. Hvert har person, etappe,
+`tilgangsmatrise.test.ts` har 46 scenarioer. Hvert har person, etappe,
 utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 
 | Etappe | Hull i dag | Eksempler |
 | --- | --- | --- |
-| P2.0 | 23 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, stoffregisteret; opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus |
+| P2.0 | 25 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, laste opp eget profilbilde, stoffregisteret; opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus |
 | P2a | 5 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar; lokal admin i B leser, lagrer og publiserer A sitt utkast. Forutsetter `ressursomfang` (P4a) og D3 |
 | P2b | 6 | B-bruker får varsel om A sin publisering, leser og slår opp A sin fortolkningstråd, gir nytt navn til andres tråd, flytter en lokal tråd til en fagside; vanlig bruker rydder idéarkivet |
 | P2c | 1 | B-bruker leser rollen til en administrator i A |

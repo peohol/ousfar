@@ -16,7 +16,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { OMRADER, omradeFor } from './data/tilgangsomrader'
-import { byggPersongalleri, leggInnTestdata, type Person, type Persongalleri } from './hjelp/persongalleri'
+import { byggPersongalleri, leggInnTestdata, type Person, type Persongalleri, type Testdata } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
 import {
   funksjonsinnganger,
@@ -36,12 +36,13 @@ const DOKUMENT = readFileSync(resolve(__dirname, '../../docs/p2-0-forberedelse.m
 
 let db: PGlite
 let galleri: Persongalleri
+let data: Testdata
 let tabeller: Tabellinngang[]
 
 beforeAll(async () => {
   db = await nyDatabase()
   galleri = await byggPersongalleri(db)
-  await leggInnTestdata(db, galleri)
+  data = await leggInnTestdata(db, galleri)
   tabeller = await tabellinnganger(db)
 }, 120_000)
 
@@ -57,14 +58,33 @@ describe('kartleggingen', () => {
     expect(new Set(innganger.map(omradeFor))).toEqual(new Set(Object.keys(OMRADER)))
   })
 
-  it('tar med profilbildene i storage.objects', () => {
-    const filer = tabeller.find((t) => t.navn === 'storage.objects')
-    expect(filer?.rettigheter).toContain('authenticated:SELECT')
+  it('tar med Supabase sine tabeller for filer, med radsikkerhet på alle tabeller', () => {
+    for (const navn of ['storage.objects', 'storage.buckets']) {
+      expect(tabeller.find((t) => t.navn === navn)?.rettigheter, navn).toContain('authenticated:SELECT')
+    }
+    expect(tabeller.filter((t) => !t.visning && !t.radsikkerhet).map((t) => t.navn)).toEqual([])
+  })
+
+  it('fanger en ny tabell nettleseren når, også i storage', async () => {
+    const funnet = await iTilbakerulling(async (tx) => {
+      await tx.exec(`
+        create table storage.hull (id int);
+        grant select on storage.hull to authenticated;
+      `)
+      const innganger = await tabellinnganger(tx)
+      return {
+        inngang: innganger.find((t) => t.navn === 'storage.hull'),
+        udekket: (await medlemskapsdekning(tx, KONTROLL)).tabeller,
+      }
+    })
+    expect(funnet.inngang).toMatchObject({ radsikkerhet: false, rettigheter: ['authenticated:SELECT'] })
+    expect(lesetilgang(funnet.inngang!)).toBe('uten-radsikkerhet')
+    expect(funnet.udekket).toContain('storage.hull')
   })
 
   it('kjenner lesetilgangen til hver tabell', () => {
     const tabellerUtenVisninger = tabeller.filter((t) => !t.visning)
-    expect(tabellerUtenVisninger.filter((t) => lesetilgang(t) === 'ingen-regel').map((t) => t.navn)).toEqual([])
+    expect(tabellerUtenVisninger.filter((t) => lesetilgang(t) === 'uten-radsikkerhet').map((t) => t.navn)).toEqual([])
     // P0 §2.2: 18 tabeller kan leses av alle innloggede. Tallet kan bare gå ned.
     expect(tabellerUtenVisninger.filter((t) => lesetilgang(t) === 'alle-innloggede').length).toBeLessThanOrEqual(18)
   })
@@ -238,6 +258,42 @@ describe('prototypen av P2.0 (rulles tilbake)', () => {
       )
     })
     expect(erAdmin).toBe(false)
+  })
+
+  it('stopper lesing og skriving av profilbilder for en bruker uten aktivt medlemskap, og lar de aktive beholde sine', async () => {
+    const eget = (id: string) => `${id}/avatar.webp`
+    const lastOpp = `insert into storage.objects (bucket_id, name) values ('avatarer', $1)`
+    const prov = (bruker: string, sql: string, parametre: unknown[], medPrototype: boolean) =>
+      iTilbakerulling(async (tx) => {
+        if (medPrototype) await innforPrototype(tx, tabellerUtenVisninger())
+        return feilFra(() => somInnlogget(tx, bruker, () => tx.query(sql, parametre)))
+      })
+    const lese = (bruker: string, medPrototype: boolean) =>
+      iTilbakerulling(async (tx) => {
+        if (medPrototype) await innforPrototype(tx, tabellerUtenVisninger())
+        return somInnlogget(tx, bruker, async () =>
+          (await tx.query('select id from storage.objects where id = $1', [data.profilbilde])).rows.length,
+        )
+      })
+    const endreEget = `update storage.objects set name = name where id = $1 and name = $2`
+
+    for (const p of UTESTENGTE) {
+      const id = galleri.id[p]
+      // I dag: leser andres bilde og laster opp sitt eget, som en vanlig innlogget.
+      expect(await lese(id, false), p).toBe(1)
+      expect(await prov(id, lastOpp, [eget(id)], false), p).toBeNull()
+      // Med P2.0: ingenting.
+      expect(await lese(id, true), p).toBe(0)
+      expect((await prov(id, lastOpp, [eget(id)], true))?.code, p).toBe('42501')
+    }
+    for (const p of ['vanligA', 'vanligB', 'adminB'] as const) {
+      expect(await lese(galleri.id[p], true), p).toBe(1)
+    }
+    const { vanligA, adminB } = galleri.id
+    expect(await prov(vanligA, endreEget, [data.profilbilde, eget(vanligA)], true)).toBeNull()
+    expect(await prov(adminB, lastOpp, [eget(adminB)], true)).toBeNull()
+    // Radsikkerheten fra før står: ingen laster opp i en annens navn.
+    expect((await prov(adminB, lastOpp, [eget(vanligA)], true))?.code).toBe('42501')
   })
 
   it('gir restlisten av security definer-funksjoner som må få kontrollen én for én', async () => {

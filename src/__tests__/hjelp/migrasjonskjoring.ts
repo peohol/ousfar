@@ -56,11 +56,12 @@ const SUPABASE_GRUNNLAG = /* sql */ `
     allowed_mime_types text[]
   );
   create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text, name text);
-  -- Som i Supabase: nettleseren når filene gjennom Storage-API-et, og
-  -- radsikkerheten avgjør hva den får.
+  -- Som i Supabase: nettleseren når bøttene og filene gjennom Storage-API-et,
+  -- og radsikkerheten avgjør hva den får.
+  alter table storage.buckets enable row level security;
   alter table storage.objects enable row level security;
   grant usage on schema storage to anon, authenticated, service_role;
-  grant select, insert, update, delete on storage.objects to anon, authenticated, service_role;
+  grant select, insert, update, delete on storage.buckets, storage.objects to anon, authenticated, service_role;
   create function storage.foldername(name text) returns text[] language sql immutable as $$
     select string_to_array(name, '/')
   $$;

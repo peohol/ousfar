@@ -20,10 +20,16 @@ type Db = PGlite | Transaction
 const NETTLESERROLLER = ['anon', 'authenticated'] as const
 
 /**
- * Tabellene i Supabase sine egne skjemaer som nettleseren når og som
- * prosjektet har radsikkerhetsregler på (i dag bare profilbildene).
+ * Skjemaene der en tabell nettleseren har rettigheter på, er en datainngang:
+ * alle utenom Postgres sine egne og migrasjonshistorikken. Supabase sine
+ * skjemaer (som `storage`, der profilbildene ligger) er med, slik at en ny
+ * inngang der ikke kan falle utenfor kartleggingen.
  */
-const PLATTFORMTABELLER = ['storage.objects'] as const
+const INNGANGSSKJEMA = /* sql */ `
+  select n.oid from pg_namespace n
+  where n.nspname not like 'pg\\_%'
+    and n.nspname not in ('information_schema', 'supabase_migrations')
+`
 
 /** Skjemaene prosjektet eier, der funksjoner kan være kontrollpunkter. */
 const PROSJEKTSKJEMA = /* sql */ `
@@ -46,19 +52,21 @@ export interface Tabellinngang {
   /** `skjema.tabell`. */
   navn: string
   visning: boolean
+  /** Om radsikkerheten er slått på (gjelder tabeller; visningene arver den). */
+  radsikkerhet: boolean
   /** Rettighetene nettleserrollene har, som `authenticated:SELECT`. */
   rettigheter: string[]
   regler: Regel[]
 }
 
 /**
- * Tabellene og visningene i `public` og `storage.objects` som en av
+ * Tabellene og visningene i alle skjemaene (`INNGANGSSKJEMA`) som en av
  * nettleserrollene har en rettighet på, med radsikkerhetsreglene.
  */
 export async function tabellinnganger(db: Db): Promise<Tabellinngang[]> {
   const rettigheter = ['SELECT', 'INSERT', 'UPDATE', 'DELETE']
-  const { rows } = await db.query<{ navn: string; visning: boolean; rettigheter: string[] }>(
-    `select n.nspname || '.' || c.relname as navn, c.relkind in ('v', 'm') as visning,
+  const { rows } = await db.query<{ navn: string; visning: boolean; radsikkerhet: boolean; rettigheter: string[] }>(
+    `select n.nspname || '.' || c.relname as navn, c.relkind in ('v', 'm') as visning, c.relrowsecurity as radsikkerhet,
             array(
               select r || ':' || p from unnest($1::text[]) r, unnest($2::text[]) p
               where has_table_privilege(r, c.oid, p) or (p = 'UPDATE' and has_any_column_privilege(r, c.oid, p))
@@ -67,9 +75,9 @@ export async function tabellinnganger(db: Db): Promise<Tabellinngang[]> {
             ) as rettigheter
      from pg_class c join pg_namespace n on n.oid = c.relnamespace
      where c.relkind in ('r', 'p', 'v', 'm')
-       and (n.nspname = 'public' or n.nspname || '.' || c.relname = any ($3::text[]))
+       and c.relnamespace in (${INNGANGSSKJEMA})
      order by 1`,
-    [NETTLESERROLLER, rettigheter, PLATTFORMTABELLER],
+    [NETTLESERROLLER, rettigheter],
   )
   const regler = await db.query<Regel & { tabell: string }>(
     `select schemaname || '.' || tablename as tabell, policyname as navn, cmd as kommando,
@@ -85,11 +93,20 @@ export async function tabellinnganger(db: Db): Promise<Tabellinngang[]> {
 }
 
 /** Hva en tillatende leseregel gir, grovt sortert. */
-export type Lesetilgang = 'alle-innloggede' | 'publisert-eller-admin' | 'admin' | 'egne' | 'annet' | 'ingen-regel'
+export type Lesetilgang =
+  | 'alle-innloggede'
+  | 'publisert-eller-admin'
+  | 'admin'
+  | 'egne'
+  | 'annet'
+  | 'ingen'
+  | 'uten-radsikkerhet'
 
 export function lesetilgang(t: Tabellinngang): Lesetilgang {
+  if (!t.radsikkerhet) return 'uten-radsikkerhet'
   const les = t.regler.filter((r) => r.tillatende && (r.kommando === 'SELECT' || r.kommando === 'ALL'))
-  if (les.length === 0) return 'ingen-regel'
+  // Uten en tillatende leseregel slipper radsikkerheten ingen rader gjennom.
+  if (les.length === 0) return 'ingen'
   const bruk = les.map((r) => (r.bruk ?? '').replace(/\s+/g, ' '))
   if (bruk.some((b) => b === 'true')) return 'alle-innloggede'
   if (bruk.every((b) => /tilstand = 'publisert'/.test(b) && /er_admin\(\)/.test(b))) return 'publisert-eller-admin'
