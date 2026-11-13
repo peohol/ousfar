@@ -275,7 +275,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  if tg_op = 'TRUNCATE' or tg_table_name = 'fagmiljoer'
+  if tg_level = 'STATEMENT' or tg_table_name = 'fagmiljoer'
     or exists (select 1 from public.profiles p where p.id = (to_jsonb(old) ->> 'bruker_id')::uuid)
   then
     raise exception 'Fagmiljøer, medlemskap og roller slettes ikke; de avsluttes, og står i tilgangsloggen.'
@@ -496,6 +496,7 @@ revoke all on public.medlemskap from anon, authenticated;
 revoke all on public.systemroller from anon, authenticated;
 revoke all on public.fagmiljoadministratorer from anon, authenticated;
 revoke all on public.tilgangslogg from anon, authenticated;
+revoke all on sequence public.tilgangslogg_id_seq from anon, authenticated;
 
 grant select on public.fagmiljoer to authenticated;
 grant select on public.medlemskap to authenticated;
