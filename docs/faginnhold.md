@@ -110,8 +110,9 @@ Begrepene holdes fra hverandre:
   at navnene ligner.
 - **Laboratorieanalytt i databasen** (`laboratorieanalytter`,
   `analyttkomponenter`) — tabellene fra før, med hovedside og komponenter. De
-  står med sin historikk, men appen bruker dem ikke lenger til å finne eller
-  lage sider.
+  står med sin historikk, og appen bruker dem ikke lenger til å finne eller
+  lage sider. Fortolkningens referanseområder leses likevel fortsatt gjennom
+  dem (`les_referanseomrader`), så de er en levende klinisk avhengighet.
 - **Innholdselement** — et kort, felt eller tekststykke på en
   fagside. `panel` og `elementtype` er nøkler (små bokstaver, tall og
   understrek), og `data` er et JSON-objekt hvis form bestemmes av
