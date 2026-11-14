@@ -8,6 +8,9 @@
  * Kategoriene er forklart i docs/fagmiljoer.md, «Katalogvaktene». Lista
  * beskriver tilstanden slik den er, ikke slik den skal bli: P2 bytter
  * `admin`, `innlogget` og `felles-lesing` ut med rettigheter per fagmiljø.
+ *
+ * Siden P2.0 krever alle utenom `offentlig` og `utloser` i tillegg et aktivt
+ * medlemskap; det prøves for hver funksjon i `aktivtmedlemskap.test.ts`.
  */
 
 export const KONTROLLER = [
@@ -68,6 +71,9 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'admin',
   'gjenopprett_stoff(stoff text)': 'admin-utvidet',
   'gjenopprett_varsler(varsler uuid[])': 'eier',
+  // P2.0: den innloggedes eget svar om aktivt medlemskap, og det eneste en
+  // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
+  'har_aktivt_medlemskap()': 'eier',
   'ide_er_apen(ide uuid)': 'felles-lesing',
   'ideer_med_nytt()': 'radsikkerhet',
   'ideoversikt()': 'innlogget',

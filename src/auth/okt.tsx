@@ -47,6 +47,8 @@ export function OktProvider({ children }: { children: ReactNode }) {
   /** Brukeren profilen i tilstanden hører til. Holder de to i takt. */
   const [profilFor, setProfilFor] = useState<string | null>(null)
   const [profilfeil, setProfilfeil] = useState(false)
+  /** Sant når kontoen ikke har et aktivt medlemskap (P2.0). */
+  const [avsluttet, setAvsluttet] = useState(false)
   /** Økes for å hente profilen på nytt etter en feil. */
   const [forsok, setForsok] = useState(0)
 
@@ -74,6 +76,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
       setProfil(null)
       setProfilFor(null)
       setProfilfeil(false)
+      setAvsluttet(false)
       return
     }
     let gjelder = true
@@ -83,13 +86,26 @@ export function OktProvider({ children }: { children: ReactNode }) {
         const hentet = await api.hentProfil(brukerId)
         if (!gjelder) return
         if (!hentet) {
-          // Økten står, men raden er borte: kontoen er fjernet mens fanen sto
-          // åpen. Da hører brukeren hjemme på innloggingssiden.
+          // Økten står, men profilen er ikke synlig. Enten er medlemskapet
+          // avsluttet, og da gir databasen ingenting (P2.0): brukeren skal få
+          // vite det, ikke se tomme sider. Det som er lagret i nettleseren,
+          // tømmes. Ellers er kontoen fjernet mens fanen sto åpen, og
+          // brukeren hører hjemme på innloggingssiden.
+          if (!(await api.harAktivtMedlemskap())) {
+            if (!gjelder) return
+            await tomMellomlageret()
+            setProfil(null)
+            setProfilfeil(false)
+            setAvsluttet(true)
+            setProfilFor(brukerId)
+            return
+          }
           await api.loggUt()
           return
         }
         setProfil(hentet)
         setProfilfeil(false)
+        setAvsluttet(false)
         setProfilFor(brukerId)
       } catch {
         if (!gjelder) return
@@ -109,6 +125,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
 
   const forsokPaaNytt = useCallback(() => {
     setProfilfeil(false)
+    setAvsluttet(false)
     setProfilFor(null)
     setForsok((runde) => runde + 1)
   }, [])
@@ -128,7 +145,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
   const verdi = useMemo<Oktverdi>(() => {
     const klar = oktAvklart && (brukerId === null || profilFor === brukerId)
     return {
-      tilgang: tilgangFor({ klar, harOkt: brukerId !== null, profil, profilfeil }),
+      tilgang: tilgangFor({ klar, harOkt: brukerId !== null, profil, profilfeil, avsluttet }),
       profil,
       mangler,
       forsokPaaNytt,
@@ -146,6 +163,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
     profilFor,
     profil,
     profilfeil,
+    avsluttet,
     mangler,
     loggUt,
     forsokPaaNytt,

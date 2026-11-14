@@ -6,7 +6,8 @@
  *
  *  1. autentiser den innloggede brukeren
  *  2. fastslå bruker-ID-en fra JWT-en
- *  3. slå opp adminstatus server-side, i profiltabellen
+ *  3. kontroller at kontoen har et aktivt medlemskap (P2.0), og slå opp
+ *     adminstatus server-side, i profiltabellen
  *  4. valider det som er sendt inn
  *  5. først da: gjør jobben med en klient som har forhøyede rettigheter
  *
@@ -19,7 +20,7 @@
  * appen kan kalle funksjonene rett fra nettleseren.
  */
 import { withSupabase, type SupabaseContext } from 'npm:@supabase/server@1'
-import type { Profil } from '../_delt/profil.ts'
+import { AVSLUTTET_MEDLEMSKAP, type Profil } from '../_delt/profil.ts'
 
 /**
  * En feil som skal bli et svar til den som kalte, med en melding vedkommende
@@ -98,6 +99,15 @@ async function hentInnlogget(ctx: SupabaseContext): Promise<Profil> {
 
   if (error) throw error
   if (!data) throw new Avvist('Kontoen din finnes ikke lenger.', 403)
+
+  // Et gyldig token er ikke nok: kontoen må ha et aktivt medlemskap i et
+  // aktivt fagmiljø, eller være systemarkitekt. Avgjøres av den samme regelen
+  // som radsikkerheten bruker (`intern.har_aktivt_medlemskap`).
+  const { data: aktiv, error: medlemskapsfeil } = await ctx.supabaseAdmin.rpc('kontooperasjon_aktivt_medlemskap', {
+    bruker: id,
+  })
+  if (medlemskapsfeil) throw medlemskapsfeil
+  if (aktiv !== true) throw new Avvist(AVSLUTTET_MEDLEMSKAP, 403)
   return data as Profil
 }
 

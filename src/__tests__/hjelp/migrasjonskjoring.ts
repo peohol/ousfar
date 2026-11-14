@@ -83,6 +83,26 @@ const SUPABASE_GRUNNLAG = /* sql */ `
 const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_virkestoff|fagmiljoer_tilbakefylling)\.sql$/
 
 /**
+ * Det testdatabasen får i stedet for en migrasjon som bare kjøres i
+ * produksjonen, når sluttilstanden trengs videre. Tilbakefyllingen av
+ * fagmiljøene ga hver konto som fantes, et aktivt primærmedlemskap; her får
+ * kontoene testene har laget før fagmiljøene, det i standardfagmiljøet.
+ * Uten det ville de stått uten aktivt medlemskap, og databasen gitt dem
+ * ingenting (P2.0). `fagmiljoer.test.ts` kjører selve tilbakefyllingen.
+ */
+const ERSTATNING_I_TESTENE: Readonly<Record<string, string>> = {
+  fagmiljoer_tilbakefylling: /* sql */ `
+    begin;
+    select set_config('ousfar.tilgangsgrunn', 'Testdatabasen: medlemskap for kontoer fra før fagmiljøene', true);
+    insert into public.medlemskap (bruker_id, fagmiljo_id, primaer)
+    select p.id, f.id, true
+    from public.profiles p cross join public.fagmiljoer f
+    where f.standard and not exists (select 1 from public.medlemskap m where m.bruker_id = p.id);
+    commit;
+  `,
+}
+
+/**
  * Navnet en ny monografkuratering skal ha (`docs/monografkuratering.md`):
  * `<versjon>_<stoff>_monografkuratering*.sql`, men ikke hjelpefunksjonene
  * (`*_monografkuratering_hjelpere*.sql`), som alltid kjøres. Gruppen er stoffet.
@@ -284,6 +304,8 @@ export async function kjorKuratering(db: PGlite, fil: string, sql: string): Prom
  * `kurateringer` er satt (se `erMonografkuratering`), og en bivirkningsimport
  * når fagsiden den gjelder, ikke finnes (se `BIVIRKNINGSIMPORT`). Gir
  * kurateringene som ble kjørt, med det hver endret (`kjorKuratering`).
+ * En migrasjon som bare kjøres i produksjonen, byttes ut med det
+ * `ERSTATNING_I_TESTENE` har for den, unntatt med `erstatninger: false`.
  * `kjort` får hver fil som faktisk ble kjørt, slik det lokale testmiljøet
  * (`qa/lokalmiljo.ts`) kan bygge en database av de samme filene.
  */
@@ -294,13 +316,25 @@ export async function kjorMigrasjoner(
     til,
     bare,
     kurateringer = false,
+    erstatninger = true,
     kjort: kjortFil,
-  }: { fra?: string; til?: string; bare?: readonly string[]; kurateringer?: boolean; kjort?: (fil: string) => void } = {},
+  }: {
+    fra?: string
+    til?: string
+    bare?: readonly string[]
+    kurateringer?: boolean
+    erstatninger?: boolean
+    kjort?: (fil: string) => void
+  } = {},
 ): Promise<KjortKuratering[]> {
   const kjort: KjortKuratering[] = []
   for (const fil of migrasjonsfiler()) {
-    if (BARE_I_PRODUKSJON.test(fil)) continue
     if (bare ? !bare.includes(fil) : fil < fra || (til !== undefined && fil >= til)) continue
+    if (BARE_I_PRODUKSJON.test(fil)) {
+      const erstatning = Object.entries(ERSTATNING_I_TESTENE).find(([navn]) => fil.endsWith(`_${navn}.sql`))?.[1]
+      if (erstatning && erstatninger && !bare) await db.exec(erstatning)
+      continue
+    }
     let sql = readFileSync(`${MIGRASJONER}/${fil}`, 'utf8')
     const kuratering = erMonografkuratering(fil, sql)
     if (kuratering) {

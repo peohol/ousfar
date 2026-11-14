@@ -9,7 +9,9 @@
  * `mal` (se `apneHull`). Ingen tilgangsregel endres her.
  *
  * Målene er rettighetsmatrisen i P0 §5.2. Scenarioene for P2a forutsetter
- * rekkevidden fra P4a (`ressursomfang`) og at D3 er avklart.
+ * rekkevidden fra P4a (`ressursomfang`) og at D3 er avklart. P2.0 er slått
+ * sammen og holder; hver inngang prøves i tillegg for seg i
+ * `aktivtmedlemskap.test.ts`.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
@@ -29,10 +31,10 @@ import { nyDatabase, som } from './hjelp/testdatabase'
 type Utfall = 'tilgang' | 'avvist'
 
 /** Etappen som skal gi målet (P0 §6.1). */
-type Etappe = (typeof HOLDER)[number] | 'P2.0' | 'P2a' | 'P2b' | 'P2c' | 'P2d'
+type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2c' | 'P2d'
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -73,21 +75,30 @@ const lesKommentar = (tilstand: 'publisert' | 'utkast', hvilken: keyof Testdata)
 const SCENARIOER: readonly Scenario[] = [
   // --- P2.0: gyldig token, men ingen aktive medlemskap ---------------------
   ...(['utenMedlemskap', 'tidligereAdmin'] as const).flatMap((person): Scenario[] => [
-    { navn: 'leser en publisert kommentar', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
-    { navn: 'leser en tråd i tabellen', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fagsidetraad]) },
-    { navn: 'slår opp en tråd med direktelenke', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, `select public.direktelenke('diskusjon', $1)`, [k.d.fagsidetraad]) },
-    { navn: 'leser idéoversikten', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => nevner(k, 'public.ideoversikt()', k.d.ide) },
-    { navn: 'leser andres profil', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligA]) },
-    { navn: 'leser andres profilbilde', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from storage.objects where id = $1', [k.d.profilbilde]) },
-    { navn: 'laster opp eget profilbilde', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `insert into storage.objects (bucket_id, name) values ('avatarer', $1)`, [`${k.g.id[person]}/avatar.webp`]) },
-    { navn: 'leser egne varsler', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.mine_varsler() -> 'varsler') > 0`) },
-    { navn: 'leser stoffregisterets kategorier', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.stoffkategorier') },
-    { navn: 'oppretter en tråd', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_diskusjonskategori('stoff:proeve', 'Prøve', '🧪')`) },
-    { navn: 'oppretter en kategori i stoffregisteret', person, etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
+    { navn: 'leser en publisert kommentar', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
+    { navn: 'leser en tråd i tabellen', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fagsidetraad]) },
+    { navn: 'slår opp en tråd med direktelenke', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.direktelenke('diskusjon', $1)`, [k.d.fagsidetraad]) },
+    { navn: 'leser idéoversikten', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => nevner(k, 'public.ideoversikt()', k.d.ide) },
+    { navn: 'leser andres profil', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligA]) },
+    { navn: 'leser andres profilbilde', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from storage.objects where id = $1', [k.d.profilbilde]) },
+    { navn: 'laster opp eget profilbilde', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `insert into storage.objects (bucket_id, name) values ('avatarer', $1)`, [`${k.g.id[person]}/avatar.webp`]) },
+    { navn: 'leser egne varsler', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.mine_varsler() -> 'varsler') > 0`) },
+    { navn: 'leser stoffregisterets kategorier', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.stoffkategorier') },
+    { navn: 'oppretter en tråd', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_diskusjonskategori('stoff:proeve', 'Prøve', '🧪')`) },
+    { navn: 'oppretter en kategori i stoffregisteret', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
+    { navn: 'endrer egen profil direkte i tabellen', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `update public.profiles set first_name = 'Endret' where id = $1 returning id`, [k.g.id[person]]) },
+    { navn: 'gir et hjerte til en idé direkte i tabellen', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'insert into public.idehjerter (ide_id, bruker_id) values ($1, $2)', [k.d.ide, k.g.id[person]]) },
+    { navn: 'leser sitt eget medlemskap', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.medlemskap where bruker_id = $1', [k.g.id[person]]) },
+    { navn: 'leser de felles kildedataene', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.les_kurateringer() <> '[]'::jsonb`) },
+    { navn: 'leser endringsloggen', person, etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.les_endringslogg('{}'::jsonb, false, false, null, 30) -> 'endringer') > 0`) },
   ]),
-  { navn: 'leser et utkast med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
-  { navn: 'lagrer et utkast med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
-  { navn: 'leser datakildestatusen med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
+  // Fortsatt aktive: medlemskapet i B holder, og et dobbeltmedlem beholder begge.
+  { navn: 'leser en tråd med aktivt medlemskap bare i B', person: 'avsluttetA', etappe: 'P2.0', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fagsidetraad]) },
+  { navn: 'leser idéoversikten med aktivt medlemskap i både A og B', person: 'dobbeltAB', etappe: 'P2.0', idag: 'tilgang', mal: 'tilgang', prov: (k) => nevner(k, 'public.ideoversikt()', k.d.ide) },
+  { navn: 'leser datakildestatusen som systemarkitekt med den gamle adminrollen', person: 'systemarkitekt', etappe: 'P2.0', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
+  { navn: 'leser et utkast med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
+  { navn: 'lagrer et utkast med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
+  { navn: 'leser datakildestatusen med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
 
   // --- P2a: faginnhold og regler (lokalt for A etter P0 §3) ---------------
   { navn: 'leser A sin publiserte fortolkningskommentar', person: 'vanligB', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
@@ -211,7 +222,7 @@ describe('tilgangsmatrisen', () => {
 
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
-    expect(Object.keys(hull).sort()).toEqual(['P2.0', 'P2a', 'P2b', 'P2c', 'P2d'])
+    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2c', 'P2d'])
     for (const etappe of HOLDER) {
       expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
       expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])

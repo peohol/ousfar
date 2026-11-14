@@ -1,4 +1,5 @@
 import { Component, Suspense, lazy, useId, type ReactNode } from 'react'
+import { AVSLUTTET_MEDLEMSKAP } from '@delt/profil'
 import { useOkt } from '../../auth/okt'
 import type { Tilgang } from '../../domain/tilgang'
 import { BEVEGELSE, TEMA } from '../../domain/systemvalg'
@@ -53,10 +54,11 @@ const TITTEL: Record<Portvisning, string> = {
   innlogging: 'Logg inn',
   oppsett: 'Velg ditt eget passord',
   feil: 'Ingen kontakt',
+  avsluttet: 'Ingen tilgang',
 }
 
 /**
- * Innlogging, førstegangsoppsett og kontaktfeil.
+ * Innlogging, førstegangsoppsett, kontaktfeil og avsluttet medlemskap.
  *
  * Her står bare det som må stå utenfor innloggingsveggen. Endringsloggen er
  * ikke blant det: den hører til inne i appen, og skal ikke kunne leses av noen
@@ -72,6 +74,7 @@ function Portskall({ viser }: { viser: Portvisning }) {
       {viser === 'oppsett' && <Forstegangsoppsett />}
       {viser === 'innlogging' && <Innlogging />}
       {viser === 'feil' && <Kontaktfeil />}
+      {viser === 'avsluttet' && <AvsluttetMedlemskap />}
     </Portramme>
   )
 }
@@ -142,6 +145,28 @@ function Kontaktfeil() {
         <Button variant="subtle" onClick={() => void loggUt()}>
           Logg ut
         </Button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Innlogget, men uten et aktivt medlemskap i noe fagmiljø.
+ *
+ * Databasen gir da ingen data (P2.0), og den kliniske appen hentes ikke.
+ * Beskjeden sier hva som har skjedd og hvem som kan hjelpe, uten å vise noe
+ * annet om kontoen.
+ */
+function AvsluttetMedlemskap() {
+  const { loggUt } = useOkt()
+
+  return (
+    <div className="skjema">
+      <p className="skjemafeil" role="alert">
+        {AVSLUTTET_MEDLEMSKAP} Ta kontakt med administratoren i fagmiljøet ditt hvis du mener dette er feil.
+      </p>
+      <div className="skjema__knapper">
+        <Button onClick={() => void loggUt()}>Logg ut</Button>
       </div>
     </div>
   )

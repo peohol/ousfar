@@ -80,6 +80,17 @@ export async function hentProfil(brukerId: string): Promise<Profil | null> {
   return (data as Profil | null) ?? null
 }
 
+/**
+ * Om den innloggede har et aktivt medlemskap i et aktivt fagmiljø (eller er
+ * systemarkitekt). Uten det gir databasen ingenting annet (P2.0), og appen
+ * viser en beskjed i stedet for tomme sider.
+ */
+export async function harAktivtMedlemskap(): Promise<boolean> {
+  const { data, error } = await klient().rpc('har_aktivt_medlemskap')
+  if (error) throw error
+  return data === true
+}
+
 /** Alle profiler, sortert slik brukerlista viser dem. */
 export async function hentAlleProfiler(): Promise<Profil[]> {
   const { data, error } = await klient()

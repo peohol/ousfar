@@ -46,7 +46,8 @@ async function opprettDagensKontoer(db: PGlite, maxhag: Rolle): Promise<Record<K
 async function oppsett(maxhag: Rolle, { utenTilbakefylling = false } = {}): Promise<Oppsett> {
   const db = await nyDatabase({ til: STRUKTUR })
   const id = await opprettDagensKontoer(db, maxhag)
-  await kjorMigrasjoner(db, { fra: STRUKTUR })
+  // Tilbakefyllingen kjøres her selv, ikke det testene ellers får i stedet for den.
+  await kjorMigrasjoner(db, { fra: STRUKTUR, erstatninger: false })
   if (!utenTilbakefylling) await db.exec(tilbakefyllingen)
   const { rows } = await db.query<{ nokkel: typeof KF; id: string }>('select nokkel, id from public.fagmiljoer')
   return { db, id, fagmiljo: Object.fromEntries(rows.map((r) => [r.nokkel, r.id])) as Oppsett['fagmiljo'] }

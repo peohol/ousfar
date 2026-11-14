@@ -4,11 +4,11 @@
  * Postgres-katalogen, og hvilke av dem som kontrollerer at den innloggede har
  * et aktivt medlemskap.
  *
- * P2.0 skal la en bruker med gyldig token, men uten aktivt medlemskap, verken
- * lese eller skrive noe (P0 §6.1 og §6.4). Kontrollen finnes ikke ennå, så
- * navnet på den er en parameter: `medlemskapsdekning` tar et mønster for den,
- * og testene prøver mønsteret mot en prototype i en transaksjon som rulles
- * tilbake.
+ * P2.0 lar en bruker med gyldig token, men uten aktivt medlemskap, verken
+ * lese eller skrive noe (P0 §6.1 og §6.4). `medlemskapsdekning` tar et
+ * mønster for kontrollen og gir inngangene som ikke har den; testene krever
+ * at listene er tomme (`tilgangsinnganger.test.ts`), og prøver hver inngang
+ * som en slik bruker (`aktivtmedlemskap.test.ts`).
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { FUNKSJONSKONTROLLER } from '../data/funksjonskontroller'
@@ -134,6 +134,9 @@ export async function funksjonsinnganger(db: Db): Promise<Funksjonsinngang[]> {
   }))
 }
 
+/** Rollene en regel kan gjelde nettleseren gjennom. */
+const NETTLESERROLLER_OG_PUBLIC = new Set<string>([...NETTLESERROLLER, 'public'])
+
 /** Kontrollene som ikke gir data, og som P2.0 derfor ikke gjelder. */
 const UTEN_DATA = new Set(['offentlig', 'utloser'])
 
@@ -149,7 +152,10 @@ export interface Medlemskapsdekning {
  *
  * - En tabell (ikke visning: visningene kjører som den innloggede og arver
  *   tabellenes regler) er dekket når den har en begrensende regel for alle
- *   kommandoer der `kontroll` inngår.
+ *   kommandoer der `kontroll` inngår, eller når radsikkerheten er på uten
+ *   noen tillatende regel for nettleseren (da gir den ingen rader til noen,
+ *   som `storage.buckets`). Får en slik tabell en tillatende regel, må den
+ *   også få den begrensende.
  * - En `security definer`-funksjon går forbi radsikkerheten og er dekket når
  *   den selv bruker `kontroll`, eller kaller en portfunksjon (`PORTER`) som
  *   er dekket. Funksjoner som kjøres som den innloggede, dekkes av tabellene.
@@ -166,6 +172,7 @@ export async function medlemskapsdekning(
 ): Promise<Medlemskapsdekning> {
   const tabeller = (await tabellinnganger(db))
     .filter((t) => !t.visning && !unntak.includes(t.navn))
+    .filter((t) => !(t.radsikkerhet && !t.regler.some((r) => r.tillatende && r.roller.some((rolle) => NETTLESERROLLER_OG_PUBLIC.has(rolle)))))
     .filter(
       (t) =>
         !t.regler.some(

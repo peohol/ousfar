@@ -13,6 +13,13 @@ export type Rolle = (typeof ROLLER)[number]
 /** Lengste fornavn eller etternavn. Samme grense som databasen setter. */
 export const NAVN_MEST = 60
 
+/**
+ * Beskjeden en innlogget får når kontoen ikke har et aktivt medlemskap i et
+ * aktivt fagmiljø (P2.0). Den samme teksten står i databasen
+ * (`intern.krev_aktivt_medlemskap`), og en test holder dem like.
+ */
+export const AVSLUTTET_MEDLEMSKAP = 'Du har ikke lenger et aktivt medlemskap i OUSFAR.'
+
 /** Bøtta profilbildene ligger i. Privat — se migrasjonen for policyene. */
 export const AVATAR_BOTTE = 'avatarer'
 
