@@ -4,9 +4,10 @@
  * Svarene huskes en stund, så flere lenkebrikker til samme tråd i en tekst,
  * og forhåndsvisningen når pekeren kommer over en av dem, bare spør én gang.
  * Det som skal avgjøre noe — om en lenke kan settes inn, hvor den fører —
- * spør på nytt (`fersk`).
+ * spør på nytt (`fersk`). Svarene glemmes når kontoen i fanen skifter.
  */
 import { klient } from '../auth/klient'
+import { vedOktskifte } from '../auth/oktskifte'
 import { malnokkel, type Lenkemal } from './mal'
 import { lesLenkemaal, type Lenkemaal } from './modell'
 
@@ -37,3 +38,6 @@ export function hentLenkemaal(mal: Lenkemal, { fersk = false }: { fersk?: boolea
 export function glemLenkemaal(): void {
   husket.clear()
 }
+
+// Svarene gjelder den som var logget inn: en annen konto kan ha en annen tilgang.
+vedOktskifte(glemLenkemaal)
