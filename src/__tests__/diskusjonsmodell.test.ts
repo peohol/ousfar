@@ -16,12 +16,14 @@ import {
   flyttKategori,
   grupper,
   kanSletteDiskusjon,
+  kanStyreDiskusjon,
   kategorinavnFeil,
   lesDiskusjonsoversikt,
   lesDiskusjonsside,
   lesDiskusjonstekster,
   lesDiskusjonstraad,
   ruteForSide,
+  siderekkevidde,
   sokIDiskusjoner,
   type Diskusjon,
   type Diskusjonskategori,
@@ -57,6 +59,7 @@ const OVERSIKT: Diskusjonsoversikt = {
     traad('5', 'a', 2, { arkivert_kl: '2026-09-29T10:00:00Z' }),
     traad('6', 'b', 1, { arkivert_kl: '2026-09-30T09:00:00Z' }),
   ],
+  kan_moderere: false,
 }
 
 describe('sidene', () => {
@@ -123,8 +126,24 @@ describe('slettingen', () => {
     expect(kanSletteDiskusjon(traadMed({ arkivert_kl: '2026-09-29T10:00:00Z' }), 'ada', false)).toBe(false)
   })
 
-  it('lar en administrator slette alle tråder, også arkiverte med andres innlegg', () => {
+  it('lar en moderator slette alle tråder, også arkiverte med andres innlegg', () => {
     expect(kanSletteDiskusjon(traadMed({ arkivert_kl: '2026-09-29T10:00:00Z', kommentarer: [kommentar('bo')] }), 'admin', true)).toBe(true)
+  })
+})
+
+describe('styringen', () => {
+  it('lar bare den som startet tråden, eller en moderator, endre overskriften, flytte og arkivere', () => {
+    expect(kanStyreDiskusjon({ forfatter_id: 'ada' }, 'ada', false)).toBe(true)
+    expect(kanStyreDiskusjon({ forfatter_id: 'ada' }, 'bo', false)).toBe(false)
+    expect(kanStyreDiskusjon({ forfatter_id: 'ada' }, 'bo', true)).toBe(true)
+    // En tråd fra en slettet bruker styres bare av moderatorene.
+    expect(kanStyreDiskusjon({ forfatter_id: null }, 'bo', false)).toBe(false)
+  })
+
+  it('skiller sidene som er felles for alle, fra fortolkningene som hører til et fagmiljø', () => {
+    expect(siderekkevidde('stoff:litium')).toBe('felles')
+    expect(siderekkevidde(STOFFREGISTERSIDE)).toBe('felles')
+    expect(siderekkevidde('fortolkning:li')).toBe('fortolkning')
   })
 })
 
@@ -137,13 +156,19 @@ describe('lesingen', () => {
     expect(lest.kategorier).toEqual([{ id: 'a', navn: 'Dosering', emoji: '💊', posisjon: 0 }])
     expect(lest.diskusjoner).toHaveLength(1)
     expect(lest.diskusjoner[0]).toMatchObject({ id: '1', posisjon: 2, kommentarer: 3, usett: true, siste_kl: 'k', arkivert_kl: null })
-    expect(lesDiskusjonsoversikt(null)).toEqual({ kategorier: [], diskusjoner: [] })
+    // Bare et uttrykkelig ja fra databasen gjør den innloggede til moderator.
+    expect(lest.kan_moderere).toBe(false)
+    expect(lesDiskusjonsoversikt({ kategorier: [], diskusjoner: [], kan_moderere: 'ja' }).kan_moderere).toBe(false)
+    expect(lesDiskusjonsoversikt({ kategorier: [], diskusjoner: [], kan_moderere: true }).kan_moderere).toBe(true)
+    expect(lesDiskusjonsoversikt(null)).toEqual({ kategorier: [], diskusjoner: [], kan_moderere: false })
   })
 
   it('leser tråden, og tar ikke med teksten i et skjult innlegg', () => {
     const tekst = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hei' }] }] }
     const rad = { id: 't', side: 'stoff:x', tittel: 'T', tekst, skjult: false, opprettet_kl: 'k', lest_kl: 'l', kommentarer: [] }
     expect(lesDiskusjonstraad(rad)?.tekst.content?.[0]?.content?.[0]?.text).toBe('Hei')
+    expect(lesDiskusjonstraad(rad)?.kan_moderere).toBe(false)
+    expect(lesDiskusjonstraad({ ...rad, kan_moderere: true })?.kan_moderere).toBe(true)
     expect(lesDiskusjonstraad({ ...rad, skjult: true })?.tekst.content?.[0]?.content).toBeUndefined()
     // Om det skjulte kan vises igjen, gjelder bare det som er skjult.
     expect(lesDiskusjonstraad({ ...rad, skjult: true, kan_vises: true })?.kan_vises).toBe(true)

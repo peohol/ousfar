@@ -1,14 +1,14 @@
 ---
 name: utfor-oppgaver
-description: Utfører de planlagte oppgavene i FAR som en administrator har merket «Klar til implementering», og merker dem «Utført». Kjøres med /utfor-oppgaver uten noe mer, eller når brukeren ber om å utføre, implementere eller gå løs på de planlagte oppgavene (f.eks. «Utfør de planlagte oppgavene»), eller viser til en planlagt oppgave med overskriften eller med nummer som OPG-007, også for å gjenoppta en avbrutt oppgave.
+description: Utfører de planlagte oppgavene i FAR som en systemarkitekt har merket «Klar til implementering», og merker dem «Utført». Kjøres med /utfor-oppgaver uten noe mer, eller når brukeren ber om å utføre, implementere eller gå løs på de planlagte oppgavene (f.eks. «Utfør de planlagte oppgavene»), eller viser til en planlagt oppgave med overskriften eller med nummer som OPG-007, også for å gjenoppta en avbrutt oppgave.
 ---
 
 # Utfør de planlagte oppgavene
 
-Planlagte oppgaver er idéer fra idévinduet i appen som en administrator har
+Planlagte oppgaver er idéer fra idévinduet i appen som en systemarkitekt har
 overført og skrevet en prompt til. Hver har et nummer fra den ble overført,
 vist som «OPG-007» (`nummer = 7`). Oppgaver med status `klar` er klare til å
-utføres. Dette er en engangsøkt som administratoren følger live: spør når noe
+utføres. Dette er en engangsøkt som systemarkitekten følger live: spør når noe
 er uklart etter reglene i `AGENTS.md`. Ordinære produksjonsmigrasjoner rulles
 ut som en del av arbeidet uten eget samtykke; bare migrasjoner med vesentlig
 risiko etter `supabase/AGENTS.md` stopper for eksplisitt godkjenning. Det finnes ingen automatikk som
@@ -70,14 +70,14 @@ Claude Code på nettet. Har økten ingen av dem, hopp over steget uten å si noe
 - Flere: «Oppgaver: OPG-007, OPG-008». Blir navnet lengre enn 80 tegn, kort
   det ned til de første numrene og antallet resten, som «Oppgaver: OPG-007,
   OPG-008 + 3 til».
-- Endres utvalget senere, for eksempel fordi administratoren vil vente med én
+- Endres utvalget senere, for eksempel fordi systemarkitekten vil vente med én
   av dem, gi tråden nytt navn etter de oppgavene som faktisk gjøres.
 
 ## 3. Vis planen og ta oppgavene
 
 List oppgavene med nummeret, overskriften (`oppgaver.tittel`) og én linje om
 hva du forstår at prompten ber om. Si hvilke du vil gjøre sammen og hvilke hver
-for seg. Er en prompt uklar eller motsier noe i appen, spør administratoren før
+for seg. Er en prompt uklar eller motsier noe i appen, spør systemarkitekten før
 du gjør den oppgaven. Gjett ikke, og særlig ikke når det gjelder klinisk
 innhold (se `AGENTS.md`).
 
@@ -96,7 +96,7 @@ select public.ta_oppgaver(array[7, 8]) where exists (select 1 from public.oppgav
   er slått sammen. Navnet er `oppgaver_tatt_` og numrene. Oppgavene står da som
   «Håndteres nå av en agent» i appen.
 - Funksjonen tar alle eller ingen. Stopper den fordi en oppgave ikke er klar
-  lenger (en annen økt har tatt den, eller administratoren har endret den), si
+  lenger (en annen økt har tatt den, eller systemarkitekten har endret den), si
   hvilken, ta den ut av planen, og rull om nødvendig ut en ny migrasjon for
   resten uten eget samtykke.
 - Legg fila i `supabase/migrations/` med versjonen prosjektet registrerte
@@ -121,7 +121,7 @@ Følg `AGENTS.md` som i alt annet arbeid: les koden først, test, og kjør
   ordinære migrasjoner med lav produksjonsrisiko rulles ut automatisk når PR-en
   slås sammen, uten eget samtykke; migrasjoner med vesentlig risiko etter
   `supabase/AGENTS.md` krever eksplisitt ja.
-- Må en oppgave legges fra seg uferdig, si at administratoren kan fortsette den
+- Må en oppgave legges fra seg uferdig, si at systemarkitekten kan fortsette den
   i en ny økt med `/utfor-oppgaver OPG-007`, eller frigi den i appen så den er
   klar igjen.
 
@@ -145,12 +145,12 @@ select public.fullfor_oppgave(7, '<x.y.z>') where exists (select 1 from public.o
   PR, med en føring som har `utenVarsel: true`. Den rulles ut automatisk når
   PR-en slås sammen (`docs/migrasjoner.md`); ikke be om et eget ja.
 - Funksjonen stopper hvis oppgaven verken håndteres av en agent eller er klar,
-  for eksempel hvis administratoren har flyttet den tilbake i mellomtiden, eller
+  for eksempel hvis systemarkitekten har flyttet den tilbake i mellomtiden, eller
   alt har merket den utført i appen («Merk som utført»); da er det ingenting å
   merke. Les
   statusen med `execute_sql` før PR-en lages, og merk den ikke hvis den har
   endret seg; si det. Stopper utrullingen likevel på dette, fjernes fila i en ny
   PR (den er ikke kjørt).
 
-Til slutt: oppsummer for administratoren hvilke oppgaver som ble utført, med
+Til slutt: oppsummer for systemarkitekten hvilke oppgaver som ble utført, med
 nummeret og versjonen hver av dem.

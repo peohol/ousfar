@@ -22,6 +22,7 @@ import {
   flyttDiskusjon,
   flyttKategori,
   grupper,
+  kanStyreDiskusjon,
   sokIDiskusjoner,
   type Diskusjonskategori,
   type Diskusjonsoversikt as Oversikt,
@@ -36,6 +37,7 @@ import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Toppmenyknapp } from '../toppmeny/Toppmenyknapp'
+import { useProfil } from '../../auth/okt'
 import { Forfatterkilde } from '../traad/Forfatterkontekst'
 import type { Fremheving } from '../traad/Kommentartraad'
 import { Diskusjonsoversikt, Traadknapp } from './Diskusjonsoversikt'
@@ -325,6 +327,7 @@ function Diskusjonsflate({
   /** En tråd et varsel ba om, er åpnet. */
   onVarslet: () => void
 }) {
+  const meg = useProfil()
   const [oversikt, setOversikt] = useState<Oversikt | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [visning, setVisning] = useBevart<Visning>('visning', LISTE)
@@ -512,6 +515,7 @@ function Diskusjonsflate({
         onLosOpp={(k) => void losOpp(k)}
         onFlyttKategori={(id, indeks) => void flyttKat(id, indeks).catch(() => undefined)}
         onFlyttTraad={(id, kategori, indeks) => void flyttTraad(id, kategori, indeks).catch(() => undefined)}
+        kanStyre={(d) => kanStyreDiskusjon(d, meg.id, data.kan_moderere)}
       />
     )
   }

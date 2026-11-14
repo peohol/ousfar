@@ -20,6 +20,12 @@
   transition: opacity var(--fart-rask) var(--kurve);
 }
 
+/* Plassen til håndtaket i en rad som ikke kan dras, så radene står likt. */
+.draghandtak-plass {
+  flex: none;
+  width: 1.5rem;
+}
+
 .draghandtak .ikon {
   transform: rotate(90deg);
 }

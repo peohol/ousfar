@@ -29,7 +29,9 @@ Når appen åpnes med en slik adresse, eller den limes inn i en åpen app, leser
 ikke er lagret, spør det først, som tilbakeknappen (`forlatIdelagene`,
 `useMeldVakt`). Kommentaren lenken peker på, rulles frem, åpnes om den står under
 en lukket gren, og uthevet en liten stund (`fremhev` på `Kommentartraad`).
-Finnes ikke målet lenger, sier `Lenkemelding` det.
+Finnes ikke målet lenger, eller hører en tråd til et fagmiljø den innloggede
+ikke er medlem av, sier `Lenkemelding` det samme: `direktelenke()` skiller ikke
+de to (P2b), så en lenke ikke røper at tråden finnes.
 
 ## Brikkene
 

@@ -106,6 +106,11 @@ async function medGrunn<T>(db: PGlite, arbeid: (tx: Transaction) => Promise<T>):
   })
 }
 
+/** Gjør brukeren til systemarkitekt, med en grunn i tilgangsloggen. */
+export async function gjorTilSystemarkitekt(db: PGlite, brukerId: string): Promise<void> {
+  await medGrunn(db, (tx) => tx.query(`insert into public.systemroller (bruker_id, rolle) values ($1, 'systemarkitekt')`, [brukerId]))
+}
+
 /** ID-en til fagmiljøet med nøkkelen. */
 export async function fagmiljoId(db: PGlite | Transaction, nokkel: string): Promise<string> {
   const { rows } = await db.query<{ id: string }>('select id from public.fagmiljoer where nokkel = $1', [nokkel])
@@ -232,11 +237,7 @@ export async function byggPersongalleri(
   // Systemarkitektene først: medlemskap og administratorer kan da bygges i
   // hvilken som helst rekkefølge.
   for (const p of navn) {
-    if (personer[p].systemarkitekt) {
-      await medGrunn(db, (tx) =>
-        tx.query(`insert into public.systemroller (bruker_id, rolle) values ($1, 'systemarkitekt')`, [id[p]]),
-      )
-    }
+    if (personer[p].systemarkitekt) await gjorTilSystemarkitekt(db, id[p])
   }
 
   for (const p of navn) {

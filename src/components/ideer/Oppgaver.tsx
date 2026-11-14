@@ -7,6 +7,7 @@ import type { Oppgave } from '../../ideer/oppgaver'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Modallag } from '../Modallag'
+import { useSystemarkitekt } from '../../auth/systemrolle'
 import { Forfatterkilde } from '../traad/Forfatterkontekst'
 import { veksleSkuff } from '../Skuff'
 import { Oppgaveliste } from './Oppgaveliste'
@@ -15,11 +16,12 @@ import { useForlatvakt, useMeldVakt, type Forlat } from './useForlatvakt'
 import '../../styles/ideer.css'
 
 /**
- * Planlagte oppgaver: idéene en administrator har overført fra Idéer, under
+ * Planlagte oppgaver: idéene en systemarkitekt har overført fra Idéer, under
  * statusene «Ikke påbegynt», «Påbegynt», «Klar til implementering» og
  * «Håndteres nå av en agent», og de utførte i en skuff nederst.
  *
- * Alle kan lese. Bare en administrator arbeider med oppgavene: skriver
+ * Laget er bare for systemarkitektene (D8): bare de leser oppgavene, og bare
+ * de arbeider med dem (`Ideknapp` viser det ikke for andre). De skriver
  * prompten en språkmodell skal utføre oppgaven etter, merker den klar, eller
  * flytter den tilbake til idéene. Claude tar oppgaven når arbeidet begynner,
  * og merker den utført når det er gjort (se `.claude/skills/utfor-oppgaver`).
@@ -44,6 +46,7 @@ export function Oppgaver({
   /** Til Idéer. */
   onIdeer: () => void
 }) {
+  const systemarkitekt = useSystemarkitekt()
   // Siden i laget, og det som skrives på den, overlever en oppdatering av appen.
   const [visning, setVisning, visningGjenopprettet] = useBevart<Visning>('oppgaver', LISTE)
   const [oppgaver, setOppgaver] = useState<Oppgave[]>([])
@@ -130,7 +133,7 @@ export function Oppgaver({
         ) : null
       }
     >
-      <Forfatterkilde profiler={profiler}>
+      <Forfatterkilde profiler={profiler} systemarkitekt={systemarkitekt}>
         <Bevaringsomrade navn="oppgaver">
           <div ref={rot} className="idevindu" key={`${apning}:${visning.side === 'oppgave' ? visning.id : visning.side}`}>
             {feil && visning.side === 'liste' && (

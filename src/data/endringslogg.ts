@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.3',
+    dato: '2026-11-14',
+    sammendrag: 'Diskusjonene og varslene følger fagmiljøet de hører til, og planlagte oppgaver er for systemarkitektene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Diskusjonene i fortolkningen hører til fagmiljøet fortolkningen hører til, og bare medlemmene der ser dem, kommenterer i dem og får varsler om dem. Diskusjonene på fagsidene er fortsatt felles for alle.',
+      'Bare den som startet en tråd, og en moderator, kan endre overskriften, flytte den eller legge den i arkivet. Moderatorene er administratorene i fagmiljøet for fortolkningen, og systemarkitektene for fagsidene.',
+      'En tråd kan bare flyttes til en side som deles med de samme.',
+      'Varsler fra et fagmiljø man ikke lenger er medlem av, vises ikke.',
+      'Idéene deles fortsatt av alle. Planlagte oppgaver, og det å legge idéer i «Ikke aktuelt», overføre dem til oppgaver eller hente dem tilbake, er nå bare for systemarkitektene. Andre ser bare Idéer i menyen.',
+    ],
+  },
+  {
     versjon: '1.130.2',
     dato: '2026-11-14',
     sammendrag: 'Felles byggeklosser for tilgang per fagmiljø, uten endring i appen',

@@ -29,6 +29,17 @@ export const STOFFREGISTERSIDE: Diskusjonsside = 'register:stoffregister'
 /** Sidene med diskusjoner som verken er en fagside eller en fortolkning, med navnet. */
 export const ANDRE_DISKUSJONSSIDER: readonly Sidevalg[] = [{ side: STOFFREGISTERSIDE, navn: 'Stoffregisteret' }]
 
+/**
+ * Hvilken rekkevidde siden har, slik databasen avgjør det
+ * (`intern.diskusjonsomfang`): fagsidene og stoffregisteret er felles,
+ * fortolkningen hører til fagmiljøet som eier den. En tråd kan bare flyttes
+ * mellom sider med samme rekkevidde. Appen bruker det bare til å vise valgene;
+ * databasen kontrollerer selv.
+ */
+export function siderekkevidde(side: Diskusjonsside): 'felles' | 'fortolkning' {
+  return side.startsWith('fortolkning:') ? 'fortolkning' : 'felles'
+}
+
 /** Siden ruten viser, når den har diskusjoner: en fagside, fortolkningen av én analytt eller stoffregisteret. */
 export function diskusjonssideFor(rute: Rute): Diskusjonsside | null {
   if (rute.side === 'stoff') return NOKKEL.test(rute.stoff) ? `stoff:${rute.stoff}` : null
@@ -134,6 +145,12 @@ export interface Diskusjon {
 }
 
 export interface Diskusjonsoversikt {
+  /**
+   * Den innloggede kan moderere diskusjonene på siden: en lokal administrator
+   * på sidene til eget fagmiljø, en systemarkitekt overalt (P2b). Databasen
+   * avgjør det og kontrollerer på nytt.
+   */
+  kan_moderere: boolean
   kategorier: Diskusjonskategori[]
   diskusjoner: Diskusjon[]
 }
@@ -141,13 +158,15 @@ export interface Diskusjonsoversikt {
 /** Én tråd med det første innlegget og kommentarene. */
 export interface Diskusjonstraad extends Innlegg {
   side: Diskusjonsside
+  /** Som i oversikten: den innloggede kan moderere diskusjonene på siden. */
+  kan_moderere: boolean
   kategori_id: string | null
   tittel: string
   /** Renset for visning. Tomt når innlegget er skjult. */
   tekst: Riktekstdokument
-  /** En administrator har skjult innholdet i det første innlegget. */
+  /** En moderator har skjult innholdet i det første innlegget. */
   skjult: boolean
-  /** Det skjulte kan vises igjen. Bare administratorene får vite det. */
+  /** Det skjulte kan vises igjen. Bare moderatorene får vite det. */
   kan_vises: boolean
   arkivert_kl: string | null
   /** Når tråden ble lest; det er det tråden merkes som sett etter. */
@@ -158,7 +177,16 @@ export interface Diskusjonstraad extends Innlegg {
 }
 
 /**
- * Om brukeren kan slette tråden: en administrator alltid, ellers den som
+ * Om brukeren kan styre tråden (endre overskriften, flytte og arkivere den):
+ * den som startet den, og en moderator. Samme regel som
+ * `intern.kan_styre_diskusjon()`.
+ */
+export function kanStyreDiskusjon(traad: Pick<Diskusjon, 'forfatter_id'>, bruker: string, moderator: boolean): boolean {
+  return moderator || traad.forfatter_id === bruker
+}
+
+/**
+ * Om brukeren kan slette tråden: en moderator alltid, ellers den som
  * startet den, så lenge den ikke er arkivert og ingen andre har skrevet i
  * den. En kommentar som står igjen som «Slettet», teller ikke. Samme regel
  * som `public.slett_diskusjon()`.
@@ -166,9 +194,9 @@ export interface Diskusjonstraad extends Innlegg {
 export function kanSletteDiskusjon(
   traad: Pick<Diskusjonstraad, 'forfatter_id' | 'arkivert_kl' | 'kommentarer'>,
   bruker: string,
-  admin: boolean,
+  moderator: boolean,
 ): boolean {
-  if (admin) return true
+  if (moderator) return true
   return (
     traad.forfatter_id === bruker &&
     !traad.arkivert_kl &&
@@ -183,7 +211,7 @@ export interface Diskusjonstekster {
   tekster: string[]
 }
 
-export const TOM_OVERSIKT: Diskusjonsoversikt = { kategorier: [], diskusjoner: [] }
+export const TOM_OVERSIKT: Diskusjonsoversikt = { kan_moderere: false, kategorier: [], diskusjoner: [] }
 
 function liste(verdi: unknown): Record<string, unknown>[] {
   return Array.isArray(verdi) ? verdi.filter(erObjekt) : []
@@ -192,6 +220,7 @@ function liste(verdi: unknown): Record<string, unknown>[] {
 export function lesDiskusjonsoversikt(data: unknown): Diskusjonsoversikt {
   if (!erObjekt(data)) return TOM_OVERSIKT
   return {
+    kan_moderere: data.kan_moderere === true,
     kategorier: liste(data.kategorier)
       .map((k) => ({ id: tekst(k.id), navn: tekst(k.navn), emoji: tekst(k.emoji), posisjon: tall(k.posisjon) }))
       .filter((k) => k.id && k.navn && k.emoji),
@@ -224,6 +253,7 @@ export function lesDiskusjonstraad(data: unknown): Diskusjonstraad | null {
   return {
     ...innlegg,
     side,
+    kan_moderere: data.kan_moderere === true,
     kategori_id: tekstEllerNull(data.kategori_id),
     tittel: tekst(data.tittel),
     tekst: rensInnleggstekst(skjult ? null : data.tekst),
