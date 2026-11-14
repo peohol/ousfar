@@ -38,9 +38,13 @@ describe('katalogvaktene', () => {
     expect(avvikFraErklaeringene(funksjoner)).toEqual([])
   })
 
-  it('gir ikke nettleseren noen ny funksjon med fagmiljøene', async () => {
+  it('gir ikke nettleseren noen funksjon med fagmiljøene utenom svaret om eget medlemskap', async () => {
     const signaturer = (await kallbareFunksjoner(db)).map((f) => f.signatur)
-    expect(signaturer.filter((s) => /fagmilj|medlemskap|systemrolle|tilgang/.test(s))).toEqual([])
+    // P2.0: begge svarer bare om den innloggede selv.
+    expect(signaturer.filter((s) => /fagmilj|medlemskap|systemrolle|tilgang/.test(s)).sort()).toEqual([
+      'har_aktivt_medlemskap()',
+      'min_medlemskapsstatus()',
+    ])
   })
 
   it('stopper en ny tabell uten radsikkerhet og en ny funksjon uten erklæring', async () => {

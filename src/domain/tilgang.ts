@@ -17,6 +17,11 @@ export type Tilgang =
   | 'app'
   /** Innlogget, men profilen lot seg ikke hente. */
   | 'feil'
+  /**
+   * Innlogget med et gyldig token, men uten aktivt medlemskap i noe
+   * fagmiljø (P2.0). Databasen gir da ingenting; brukeren får en beskjed.
+   */
+  | 'avsluttet'
 
 export interface Oktstatus {
   /** Sant når økten og profilen er ferdig hentet. */
@@ -25,6 +30,8 @@ export interface Oktstatus {
   profil: Profil | null
   /** Sant når oppslaget mot profilen feilet — nett eller tjeneste nede. */
   profilfeil: boolean
+  /** Sant når databasen har svart at kontoen ikke har et aktivt medlemskap. */
+  avsluttet?: boolean
 }
 
 /**
@@ -44,6 +51,7 @@ export function tilgangFor(status: Oktstatus): Tilgang {
   // Gikk oppslaget galt, skal brukeren få vite det og kunne prøve igjen. Uten
   // dette skillet ville en kortvarig nettfeil sett ut som evig lasting.
   if (status.profilfeil) return 'feil'
+  if (status.avsluttet) return 'avsluttet'
   // Økt uten profil ennå: raden hentes fortsatt. Appen skal ikke blinke fram
   // i mellomtiden.
   if (!status.profil) return 'venter'

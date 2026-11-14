@@ -5,6 +5,7 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -56,12 +57,37 @@ export function lagZip(navn: string, innhold: string): Buffer {
   return Buffer.concat([lokal, navnBuf, komprimert, sentral, navnBuf, slutt])
 }
 
+/**
+ * Kontoen kallene som `authenticated` gjøres som: en vanlig bruker som fikk
+ * medlemskapet i standardfagmiljøet da den ble opprettet, slik en ny konto
+ * får det. Uten aktivt medlemskap ville databasen ikke gitt noe (P2.0).
+ */
+export const INNLOGGET_TESTBRUKER = '00000000-0000-0000-0000-000000000001'
+
+const testbrukere = new WeakMap<PGlite, Promise<void>>()
+
+/** Oppretter testkontoen én gang per database, når den ikke finnes. */
+function sikreInnloggetTestbruker(db: PGlite): Promise<void> {
+  let klar = testbrukere.get(db)
+  if (!klar) {
+    klar = db.transaction(async (tx) => {
+      const { rows } = await tx.query('select 1 from auth.users where id = $1', [INNLOGGET_TESTBRUKER])
+      if (rows.length > 0) return
+      await tx.query('insert into public.kontoreservasjoner (username) values ($1)', ['test.innlogget'])
+      await tx.query('insert into auth.users (id, email) values ($1, $2)', [INNLOGGET_TESTBRUKER, `test.innlogget@${INTERN_AUTH_DOMENE}`])
+    })
+    testbrukere.set(db, klar)
+  }
+  return klar
+}
+
 export function kallSom(db: PGlite, rolle: 'service_role' | 'authenticated' | 'anon'): Databasekall {
-  return (funksjon, argumenter) =>
-    db.transaction(async (tx) => {
+  return async (funksjon, argumenter) => {
+    if (rolle === 'authenticated') await sikreInnloggetTestbruker(db)
+    return db.transaction(async (tx) => {
       await tx.query(`select set_config('role', $1, true)`, [rolle])
       await tx.query(`select set_config('request.jwt.claims', $1, true)`, [
-        JSON.stringify(rolle === 'authenticated' ? { sub: '00000000-0000-0000-0000-000000000001', role: rolle } : { role: rolle }),
+        JSON.stringify(rolle === 'authenticated' ? { sub: INNLOGGET_TESTBRUKER, role: rolle } : { role: rolle }),
       ])
       const navn = Object.keys(argumenter)
       // Som data-API-et: et argument av typen json/jsonb sendes som JSON, en
@@ -84,6 +110,7 @@ export function kallSom(db: PGlite, rolle: 'service_role' | 'authenticated' | 'a
       )
       return rows[0]?.r ?? null
     })
+  }
 }
 
 export function svar(body: string | Buffer | null, status = 200, headers: Record<string, string> = {}): Response {

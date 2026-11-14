@@ -12,9 +12,10 @@ fagmiljøer. P1.2a bruker dem for det første: **myndigheten over andres
 kontoer** (nytt passord og adminrolle, under). P4a har gitt hvert objekt i
 faginnholdet en rekkevidde, felles eller lokal
 ([Rekkevidden](#rekkevidden-ressursomfang)), men ingenting leser den ennå.
-Ellers bygger ingen rettigheter på dem: `er_admin()`, `profiles.role`, alle
-radsikkerhetsregler og funksjonene er som før. Rettighetene per fagmiljø
-kommer i P2.
+P2.0 krever **aktivt medlemskap** for alt
+([Aktivt medlemskap](#aktivt-medlemskap)). Ellers bygger ingen rettigheter
+på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
+aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d.
 
 ## Fagmiljøene
 
@@ -277,6 +278,79 @@ de lokale statiske filene flyttes til databasen i P4c.
 **Tilbakeføring.** Ingenting leser tabellen, så den kan stå. Utløserne kan
 tas bort i en ny migrasjon uten at noe annet endres.
 
+## Aktivt medlemskap
+
+P2.0 (`supabase/migrations/20261114103000_aktivt_medlemskap.sql`): en
+innlogget bruker med fortsatt gyldig tilgangstoken, men uten et aktivt
+medlemskap, får verken lese eller skrive noe, verken gjennom tabellene,
+funksjonene, profilbildene eller Edge-funksjonene. Ingen medlemskap avsluttes
+av dette, og Auth sperres ikke (P3).
+
+**Regelen.** `intern.har_aktivt_medlemskap(bruker)` er den eneste
+definisjonen: et medlemskap med status `aktiv` i et fagmiljø med status
+`aktiv`, eller systemarkitekt (`intern.er_systemarkitekt`). Et invitert,
+suspendert eller avsluttet medlemskap teller ikke, og heller ikke et aktivt
+medlemskap i et arkivert fagmiljø. Om fagmiljøet er åpent for ordinære
+brukere (`apent`), spiller ingen rolle her. Den gamle adminrollen
+(`profiles.role`) gir ingenting alene: `er_admin()` krever nå også aktivt
+medlemskap. En systemarkitekt uten adminrollen blir ikke administrator av
+dette.
+
+**Der den håndheves.**
+
+| Inngang | Hvordan |
+| --- | --- |
+| Tabellene i `public` nettleseren når, og `storage.objects` (profilbildene) | Den begrensende regelen `aktivt_medlemskap` for `authenticated`, for alle kommandoer, i tillegg til de tillatende reglene, som ikke er skrevet om. Den legges på alle tabellene en innlogget har en rettighet på, så en tabell som får en ny rettighet, må få regelen (katalogvakten under) |
+| `storage.buckets` og Supabase sine andre tabeller | Radsikkerhet uten noen tillatende regel for nettleseren; gir ingen rader til noen |
+| Visningene | Kjøres som den innloggede (`security_invoker`) og arver tabellenes regler |
+| Portfunksjonene `intern.krev_innlogget`, `intern.krev_registerbruker`, `intern.krev_admin` og `public.er_admin` | Kontrollen er bygd inn, og dekker funksjonene som går gjennom dem |
+| De andre 40 `security definer`-funksjonene nettleseren kan kalle | `intern.krev_aktivt_medlemskap()` som første setning; listen står i `docs/p2-0-forberedelse.md` («Restlisten») |
+| Edge-funksjonene | `hentInnlogget` (`supabase/functions/_edge/kontekst.ts`) spør `kontooperasjon_aktivt_medlemskap` og avviser med 403 |
+| Vercel-endepunktene (`api/*.ts`) | Slipper inn en innlogget bare når `er_admin()` svarer ja for vedkommende (`src/server/tilgang.ts`), og det krever nå aktivt medlemskap. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
+
+Tre funksjoner svarer i stedet for å stoppe, og bare om den innloggede selv:
+`er_admin()` svarer nei, `har_aktivt_medlemskap()` (som reglene bruker)
+svarer nei, og `min_medlemskapsstatus()` svarer `avsluttet`. Det er de eneste
+opplysningene en bruker uten medlemskap får.
+
+**Serverprosesser.** `intern.krev_aktivt_medlemskap()` slipper gjennom et
+kall uten innlogget bruker når rollen er `service_role` eller det ikke finnes
+noen JWT (migrasjoner, `pg_cron`-jobber, synkene med den hemmelige nøkkelen).
+Et kall med en bruker-ID i JWT-en prøves alltid, også om rollen er
+`service_role`, og et anonymt kall stoppes. Den begrensende regelen gjelder
+bare `authenticated`; `service_role` går forbi radsikkerheten som før.
+
+**I appen.** Når profilen ikke kommer, spør økten (`src/auth/okt.tsx`)
+`min_medlemskapsstatus()`. Er svaret `avsluttet` (kontoen finnes, men uten
+aktivt medlemskap), tømmes mellomlageret i nettleseren, og porten viser
+«Ingen tilgang» med beskjeden og en utloggingsknapp
+(`src/components/konto/Port.tsx`), uten å vise noe annet. Er svaret
+`ingen_konto`, er kontoen slettet mens tokenet fortsatt gjelder, og brukeren
+logges ut som før; det samme ved `aktiv`. Spørsmålet
+stilles bare når profilen lastes: en fane som står åpen, beholder det den
+allerede har hentet til siden lastes på nytt, men får ingenting nytt fra
+databasen.
+
+**Ytelse.** Regelen er én oppslagsspørring på indeksen
+`medlemskap_bruker_idx`, og databasen regner den ut én gang per spørring
+(planen viser én `InitPlan`), ikke per rad. Målt i produksjonen 14.11.2026
+(bare lesing): om lag 0,2 ms og seks blokker fra hurtigminnet, ingen
+disklesing. I testdatabasen (`ytelse` før og etter, medianer) økte de
+vanligste spørringene med 0,0–1,0 ms. Produksjonen hadde om lag 54 600 kall
+fra innloggede brukere fra 5. til 14.11.2026, i snitt 139 ms hvert; det
+regelen legger til, er godt under én prosent.
+
+**Tilbakeføring.** En ny migrasjon som setter funksjonene tilbake til
+definisjonene i migrasjonene før, og fjerner reglene `aktivt_medlemskap`.
+Ingen data endres av P2.0.
+
+**Testene.** `src/__tests__/aktivtmedlemskap.test.ts` prøver hver inngang
+som en bruker uten aktivt medlemskap og som en tidligere administrator;
+`tilgangsinnganger.test.ts` krever at hver tabell og funksjon har kontrollen;
+`tilgangsmatrise.test.ts` har scenarioene for direkte tabell- og
+funksjonskall med gyldig token; `avsluttetmedlemskap.test.tsx` prøver
+beskjeden i appen.
+
 ## Katalogvaktene
 
 `src/__tests__/tilgangskatalog.test.ts` kontrollerer databasen bygd av alle
@@ -303,8 +377,10 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `admin` | Krever administrator for alt |
 
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk
-har. P2 bytter `admin`, `innlogget` og `felles-lesing` ut med rettigheter per
-fagmiljø.
+har. Alle kategoriene unntatt `offentlig` og `utloser` krever i tillegg aktivt
+medlemskap (P2.0), og `tilgangsinnganger.test.ts` stopper en tabell eller
+`security definer`-funksjon uten den kontrollen. P2a–d bytter `admin`,
+`innlogget` og `felles-lesing` ut med rettigheter per fagmiljø.
 
 Kartleggingen av alle datainngangene, persongalleriet til tilgangstestene og
 de negative scenarioene for P2 står i `docs/p2-0-forberedelse.md`.

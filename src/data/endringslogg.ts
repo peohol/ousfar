@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.0',
+    dato: '2026-11-14',
+    sammendrag: 'Bare brukere med et aktivt medlemskap i et fagmiljø får tilgang til innholdet',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring for dere som bruker appen i dag. Neste steg mot at flere laboratorier kan bruke OUSFAR: en konto uten et aktivt medlemskap i et fagmiljø får ikke lenger lese eller endre noe, heller ikke om den fortsatt er logget inn.',
+      'En slik bruker får beskjed om at medlemskapet ikke lenger er aktivt, og om å kontakte administratoren i fagmiljøet sitt, i stedet for tomme sider.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.9',
     dato: '2026-11-14',
     sammendrag: 'Beskrivelsen av hver endring begynner nå med et kort sammendrag i vanlig språk',

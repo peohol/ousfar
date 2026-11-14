@@ -7,21 +7,17 @@ planlegges eller bygges. Planen og begrunnelsene står i
 
 ## Status
 
-Bare forberedelse. **Ingen tilgangsregel, funksjon, Edge-funksjon eller
-migrasjon er endret**, og ingen bruker merker noe. Det som er lagt inn, er
-tester og testhjelpere som:
+Forberedelsen er brukt: **P2.0 er bygd** (migrasjonen
+`20261114103000_aktivt_medlemskap.sql`). Utformingen og reglene står i
+`docs/fagmiljoer.md`, «Aktivt medlemskap». Prototypen er fjernet fra testene,
+og testene krever nå at hver inngang har kontrollen
+(`tilgangsinnganger.test.ts`) og prøver hver inngang som en bruker uten
+aktivt medlemskap (`aktivtmedlemskap.test.ts`). Dokumentet står som
+grunnlag for P2(a–d): kartleggingen, persongalleriet og tilgangsmatrisen
+gjelder videre.
 
-1. kartlegger alle inngangene nettleseren når, og stopper en ny inngang som
-   ikke er plassert i en del av P2;
-2. bygger et fast, syntetisk persongalleri i to fagmiljøer;
-3. viser med en prototype, som rulles tilbake i testen, at P2.0 kan gjøres med
-   én begrensende regel per tabell og kontrollen i fire portfunksjoner, og
-   gir restlisten av funksjoner som må endres én for én;
-4. beskriver de negative scenarioene fra P0 §4 og §6.4 med utfallet i dag og
-   målet, slik at hver etappe kan bevise at den har lukket sine hull.
-
-Sikkerhetsport S1 (P0 §6.3) gjelder fortsatt: P2 aktiveres ikke før P1.2 og
-P4a er ferdige, produksjonsstatus er verifisert og D3 er avklart.
+Sikkerhetsport S1 (P0 §6.3) ble kontrollert som bestått 14.11.2026 før P2.0
+ble bygd ([#369](https://github.com/peohol/ousfar/issues/369)).
 
 ## Filene
 
@@ -30,7 +26,8 @@ P4a er ferdige, produksjonsstatus er verifisert og D3 er avklart.
 | `src/__tests__/hjelp/persongalleri.ts` | Personene, fagmiljøene og de syntetiske testdataene, og hjelperne `opprettFagmiljo`, `opprettMedlem`, `avsluttMedlemskap` og `fjernAlleMedlemskap` |
 | `src/__tests__/hjelp/tilgangsinnganger.ts` | Kartleggingen fra Postgres-katalogen (`tabellinnganger`, `funksjonsinnganger`, `lesetilgang`) og `medlemskapsdekning`, som gir inngangene uten kontroll av aktivt medlemskap |
 | `src/__tests__/data/tilgangsomrader.ts` | Hvilken del av P2 (a–d) hver inngang hører til, som regler på navnet |
-| `src/__tests__/tilgangsinnganger.test.ts` | Kartleggingen, at P2.0 ikke er aktivert, og prototypen |
+| `src/__tests__/tilgangsinnganger.test.ts` | Kartleggingen, at hver inngang har kontrollen fra P2.0, og at den begrensende regelen ikke endrer hva aktive brukere ser |
+| `src/__tests__/aktivtmedlemskap.test.ts` | Hver inngang prøvd som en bruker uten aktivt medlemskap (P2.0) |
 | `src/__tests__/tilgangsmatrise.test.ts` | Persongalleriet og de negative scenarioene |
 
 ## Persongalleriet
@@ -117,18 +114,19 @@ selv.
 
 | Inngang | Hvor | Til P2.0 |
 | --- | --- | --- |
-| Edge-funksjonen `fullfor-oppsett` | `supabase/functions/fullfor-oppsett` | Gjelder bare den innloggede selv. Bør kreve aktivt medlemskap, slik at en avsluttet konto ikke kan fullføre oppsettet |
-| Edge-funksjonene `opprett-bruker`, `nytt-passord`, `sett-rolle` | `supabase/functions/*`, felles kode i `_edge/kontekst.ts` | Herdet i P1.2a (slått sammen): `nytt-passord` og `sett-rolle` avgjøres i databasen av `intern.kontoavslag`, som alt krever systemarkitekt eller aktivt adminskap i et aktivt fagmiljø. `opprett-bruker` og `fullfor-oppsett` slår bare opp profilen. P2.0 legger kravet om aktivt medlemskap i den felles innloggingskontrollen (`hentInnlogget` i `endepunkt`), så det gjelder alle fire |
+| Edge-funksjonen `fullfor-oppsett` | `supabase/functions/fullfor-oppsett` | Gjelder bare den innloggede selv. Krever aktivt medlemskap fra P2.0, slik at en avsluttet konto ikke kan fullføre oppsettet |
+| Edge-funksjonene `opprett-bruker`, `nytt-passord`, `sett-rolle` | `supabase/functions/*`, felles kode i `_edge/kontekst.ts` | Herdet i P1.2a (slått sammen): `nytt-passord` og `sett-rolle` avgjøres i databasen av `intern.kontoavslag`, som alt krever systemarkitekt eller aktivt adminskap i et aktivt fagmiljø. `opprett-bruker` og `fullfor-oppsett` slår bare opp profilen. P2.0 la kravet om aktivt medlemskap i den felles innloggingskontrollen (`hentInnlogget` i `endepunkt`), så det gjelder alle fire |
 | Edge-funksjonen `delt-test` (tidligere bare i produksjonen) | — | Undersøkt og fjernet i P1.2b; leste ingen data (`docs/edge-funksjoner.md`) |
-| Vercel-funksjonene for synker, kildeovervåking og kuratering | `api/*.ts`, `src/server/tilgang.ts` | Slipper inn innloggede via `er_admin()`, og dekkes derfor når `er_admin()` krever aktivt medlemskap. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
+| Vercel-funksjonene for synker, kildeovervåking og kuratering | `api/*.ts`, `src/server/tilgang.ts` | Slipper inn innloggede via `er_admin()`, som krever aktivt medlemskap fra P2.0. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
 | Varslene som lages av utløsere | `intern.varsle_publisering`, `intern.varsle_ny_ide` | Sender til **alle** profiler, også dem uten aktivt medlemskap. Etter P2.0 kan de ikke lese varslene, men mottakerlistene bør filtreres (P2b) |
 | Innloggingsveggen i kanten | `middleware.ts` | Sjekker bare at tokenet er gyldig. Ingen datagrense; uendret |
-| Mellomlageret i nettleseren | `src/auth/mellomlager.ts` | Tømmes ved utlogging. En avsluttet bruker kan se det som alt er lagret lokalt til det tømmes; vurderes i P3 |
+| Mellomlageret i nettleseren | `src/auth/mellomlager.ts` | Tømmes ved utlogging, og fra P2.0 også når appen finner at medlemskapet er avsluttet (da hentes ikke den kliniske appen). En fane som alt står åpen, ser det den har hentet til den lastes på nytt; vurderes i P3 |
 
-## Anbefalt utforming av P2.0, prøvd i prototypen
+## Utformingen av P2.0, prøvd i prototypen og bygd
 
-Prototypen i `tilgangsinnganger.test.ts` innfører dette i en transaksjon som
-rulles tilbake, og viser at det virker:
+Prototypen (fjernet etter at P2.0 ble bygd) innførte dette i en transaksjon
+som ble rullet tilbake, og viste at det virker. P2.0 bygde det slik, med
+regelen i én funksjon, `intern.har_aktivt_medlemskap(bruker)`:
 
 1. `public.har_aktivt_medlemskap()` (`stable security definer`, kan kalles av
    innloggede): sann når den innloggede har et aktivt medlemskap i et aktivt
@@ -170,30 +168,30 @@ står her, så lista holdes oppdatert:
 | Hjelpere i reglene (b) | `diskusjon_er_apen`, `ide_er_apen` (svarer bare ja/nei, men kan kalles direkte) |
 | Myndighet over kontoer (d), fra P1.2a | `mine_kontohandlinger`. Holder alt: gir bare svar til en systemarkitekt eller en med aktivt adminskap i et aktivt fagmiljø (`intern.administrerte_fagmiljoer`), og operasjonene kontrollerer på nytt selv (tilgangsmatrisen viser det). Får likevel `krev_aktivt_medlemskap()` i P2.0, slik at alle innganger har samme kontroll og lista blir tom uten unntak |
 
-Når P2.0 bygges, byttes testen «ingen tabell og ingen security
-definer-funksjon kontrollerer aktivt medlemskap ennå» ut med at
-`medlemskapsdekning` er tom (med eventuelle unntak begrunnet her), og
-prototypen fjernes. Navnene i prototypen er forslag; mønsteret `KONTROLL` i
-testen følger det P2.0 velger.
+Når P2.0 ble bygd, fikk hver av dem `intern.krev_aktivt_medlemskap()` som
+første setning, og testen «ingen tabell og ingen security definer-funksjon
+kontrollerer aktivt medlemskap ennå» ble byttet ut med at `medlemskapsdekning`
+er tom, uten unntak. `tilgangsinnganger.test.ts` krever at hver funksjon i
+listen over har kontrollen først.
 
-**Til avklaring i P2.0 (tekniske valg, ikke Peders):**
+**Avklart i P2.0 (tekniske valg):**
 
-- Om `har_aktivt_medlemskap()` skal være eneste inngang for en avsluttet
-  bruker (anbefalt), eller om egne `medlemskap`-rader også skal kunne leses.
-- Ytelse: den begrensende regelen evalueres én gang per spørring
-  (`(select …)`), men måles med `npm run db:maling` i testmiljøet før og etter
-  (P0 §6.2 punkt 6).
-- Rekkefølgen med P1.2a: Edge-kravet legges i den felles kontrollen tråd A
-  innfører, ikke i en parallell kopi.
+- `har_aktivt_medlemskap()` og `min_medlemskapsstatus()` er eneste innganger
+  for en bruker uten aktivt medlemskap, og svarer bare om vedkommende selv;
+  egne `medlemskap`-rader er heller ikke synlige. Statusen skiller en konto
+  uten aktivt medlemskap (beskjeden) fra en slettet konto (utlogging).
+- Ytelsen er målt før og etter (`docs/fagmiljoer.md`, «Ytelse»).
+- Edge-kravet ligger i den felles innloggingskontrollen (`hentInnlogget` i
+  `_edge/kontekst.ts`), ikke i en kopi per funksjon.
 
 ## Tilgangsmatrisen
 
-`tilgangsmatrise.test.ts` har 52 scenarioer. Hvert har person, etappe,
+`tilgangsmatrise.test.ts` har scenarioer for hver etappe. Hvert har person, etappe,
 utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 
 | Etappe | Hull i dag | Eksempler |
 | --- | --- | --- |
-| P2.0 | 25 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, laste opp eget profilbilde, stoffregisteret; opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus |
+| P2.0 (holder alt) | 0 av 38 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, eget medlemskap, kildedata, endringsloggen, stoffregisteret; laste opp eget profilbilde, endre egen profil, gi hjerte, opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus. Og at medlem bare i B, dobbeltmedlem og systemarkitekt beholder tilgangen |
 | P2a | 5 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar; lokal admin i B leser, lagrer og publiserer A sitt utkast. Forutsetter `ressursomfang` (P4a) og D3 |
 | P2b | 6 | B-bruker får varsel om A sin publisering, leser og slår opp A sin fortolkningstråd, gir nytt navn til andres tråd, flytter en lokal tråd til en fagside; vanlig bruker rydder idéarkivet |
 | P2c | 1 | B-bruker leser rollen til en administrator i A |

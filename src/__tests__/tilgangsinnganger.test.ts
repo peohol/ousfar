@@ -1,15 +1,17 @@
 /**
- * Kartleggingen av datainngangene før P2.0 (docs/p2-0-forberedelse.md).
+ * Kartleggingen av datainngangene (docs/p2-0-forberedelse.md) og dekningen
+ * etter P2.0 (docs/fagmiljoer.md, «Aktivt medlemskap»).
  *
  * 1. Hver tabell, visning og funksjon nettleseren når, hører til et område i
  *    P2 (a–d), og hver Edge-funksjon står i dokumentet.
- * 2. P2.0 er ikke aktivert: ingen inngang kontrollerer aktivt medlemskap ennå.
- * 3. En prototype av P2.0, i en transaksjon som rulles tilbake, viser at én
- *    begrensende regel per tabell og kontrollen i de fire portfunksjonene
- *    stenger en bruker uten aktivt medlemskap ute, uten å endre hva aktive
- *    brukere ser. Den gir også restlisten av funksjoner som må endres én for én.
+ * 2. P2.0 er aktivert: hver tabell har den begrensende regelen, og hver
+ *    `security definer`-funksjon kontrollerer aktivt medlemskap selv eller
+ *    gjennom en port. En ny inngang uten kontrollen stopper testen.
+ * 3. Den begrensende regelen stenger en bruker uten aktivt medlemskap ute fra
+ *    alle tabeller, uten å endre hva aktive brukere ser: radene telles med og
+ *    uten reglene (som fjernes i en transaksjon som rulles tilbake).
  *
- * Ingen regel endres i databasen; alt i prototypen rulles tilbake.
+ * Hver inngang prøves som en slik bruker i `aktivtmedlemskap.test.ts`.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { readdirSync, readFileSync } from 'node:fs'
@@ -17,7 +19,7 @@ import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { OMRADER, omradeFor } from './data/tilgangsomrader'
 import { byggPersongalleri, leggInnTestdata, type Person, type Persongalleri, type Testdata } from './hjelp/persongalleri'
-import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
+import { feilFra, nyDatabase } from './hjelp/testdatabase'
 import {
   funksjonsinnganger,
   lesetilgang,
@@ -26,11 +28,11 @@ import {
   type Tabellinngang,
 } from './hjelp/tilgangsinnganger'
 
-/** Mønsteret for kontrollen P2.0 innfører (prototypens navn; P2.0 kan velge andre). */
+/** Mønsteret for kontrollen P2.0 innførte. */
 const KONTROLL = /\b(har_aktivt_medlemskap|krev_aktivt_medlemskap)\s*\(/
 
-/** Portfunksjonene P0 §2.2 peker ut; prototypen legger kontrollen inn i dem. */
-const PORTER = ['intern.krev_innlogget', 'intern.krev_registerbruker', 'intern.krev_admin'] as const
+/** Navnet på den begrensende regelen P2.0 la på hver tabell. */
+const REGEL = 'aktivt_medlemskap'
 
 const DOKUMENT = readFileSync(resolve(__dirname, '../../docs/p2-0-forberedelse.md'), 'utf8')
 
@@ -98,74 +100,54 @@ describe('kartleggingen', () => {
   })
 })
 
-describe('P2.0 er ikke aktivert', () => {
-  it('ingen tabell og ingen security definer-funksjon kontrollerer aktivt medlemskap ennå', async () => {
-    // Når P2.0 innføres, byttes denne testen ut med at begge listene er tomme
-    // (bortsett fra unntakene P2.0 dokumenterer).
-    const udekket = await medlemskapsdekning(db, KONTROLL)
-    const tabellerMedData = tabeller.filter((t) => !t.visning).map((t) => t.navn)
-    const funksjonerMedData = (await funksjonsinnganger(db)).filter(
-      (f) => f.definer && f.kontroll !== 'offentlig' && f.kontroll !== 'utloser',
-    )
-    expect(udekket.tabeller).toEqual(tabellerMedData)
-    expect(udekket.funksjoner.length).toBe(funksjonerMedData.length)
+describe('P2.0 er aktivert', () => {
+  it('har kontrollen i hver tabell og hver security definer-funksjon nettleseren når', async () => {
+    expect(await medlemskapsdekning(db, KONTROLL)).toEqual({ tabeller: [], funksjoner: [] })
   })
 
-  it('lar en bruker uten aktivt medlemskap lese og skrive som før', async () => {
-    const { utenMedlemskap, tidligereAdmin } = galleri.id
-    const diskusjoner = await som(db, utenMedlemskap, async (tx) => (await tx.query('select id from public.diskusjoner')).rows)
-    expect(diskusjoner.length).toBeGreaterThan(0)
-    const erAdmin = await som(db, tidligereAdmin, async (tx) =>
-      (await tx.query<{ a: boolean }>('select public.er_admin() as a')).rows[0]!.a,
-    )
-    expect(erAdmin).toBe(true)
+  it('har den begrensende regelen på hver tabell i public og på profilbildene, for alle kommandoer', () => {
+    const uten = tabeller
+      .filter((t) => !t.visning && (t.navn.startsWith('public.') || t.navn === 'storage.objects'))
+      .filter((t) => !t.regler.some((r) => r.navn === REGEL && !r.tillatende && r.kommando === 'ALL'))
+      .map((t) => t.navn)
+    expect(uten).toEqual([])
+  })
+
+  it('fanger en ny tabell eller funksjon uten kontrollen', async () => {
+    const udekket = await iTilbakerulling(async (tx) => {
+      await tx.exec(`
+        create table public.hull (id int);
+        alter table public.hull enable row level security;
+        create policy hull_alle on public.hull for select to authenticated using (true);
+        create function public.hullfunksjon() returns int language sql stable security definer set search_path = '' as 'select 1';
+      `)
+      return medlemskapsdekning(tx, KONTROLL)
+    })
+    expect(udekket).toEqual({ tabeller: ['public.hull'], funksjoner: ['hullfunksjon()'] })
+  })
+
+  it('har kontrollen som første setning i hver funksjon fra restlisten i dokumentet', async () => {
+    const restliste = DOKUMENT.slice(DOKUMENT.indexOf('**Restlisten'), DOKUMENT.indexOf('Når P2.0 ble bygd'))
+    const navn = [...new Set([...restliste.matchAll(/`([a-z_]+)`/g)].map((m) => m[1]!))]
+    expect(navn.length).toBe(40)
+    const funksjoner = await funksjonsinnganger(db)
+    for (const n of navn) {
+      const f = funksjoner.find((x) => x.navn === n)
+      expect(f, n).toBeDefined()
+      expect(forsteSetning(f!.kilde), n).toMatch(/^(select|perform) intern\.krev_aktivt_medlemskap\(\);$/)
+    }
   })
 })
 
-/** Prototypen av P2.0, i transaksjonen `tx`. Rulles tilbake av den som kaller. */
-async function innforPrototype(tx: Transaction, tabellnavn: readonly string[]) {
-  await tx.exec(/* sql */ `
-    create function public.har_aktivt_medlemskap() returns boolean
-    language sql stable security definer set search_path = '' as $$
-      select exists (
-        select 1 from public.medlemskap m join public.fagmiljoer f on f.id = m.fagmiljo_id
-        where m.bruker_id = (select auth.uid()) and m.status = 'aktiv' and f.status = 'aktiv'
-      ) or exists (
-        select 1 from public.systemroller s
-        where s.bruker_id = (select auth.uid()) and s.tilbakekalt_kl is null
-      )
-    $$;
-    grant execute on function public.har_aktivt_medlemskap() to authenticated;
-
-    create function intern.krev_aktivt_medlemskap() returns void
-    language plpgsql stable security definer set search_path = '' as $$
-    begin
-      if not public.har_aktivt_medlemskap() then
-        raise exception 'Du har ikke et aktivt medlemskap.' using errcode = '42501';
-      end if;
-    end;
-    $$;
-
-    create or replace function public.er_admin() returns boolean
-    language sql stable security definer set search_path = '' as $$
-      select public.har_aktivt_medlemskap() and exists (
-        select 1 from public.profiles p where p.id = (select auth.uid()) and p.role = 'admin'
-      )
-    $$;
-  `)
-  for (const port of PORTER) {
-    const { rows } = await tx.query<{ def: string }>(`select pg_get_functiondef($1::regproc) as def`, [port])
-    const def = rows[0]!.def
-    const ny = def.replace(/\nbegin\n/, '\nbegin\n  perform intern.krev_aktivt_medlemskap();\n')
-    if (ny === def) throw new Error(`Fant ikke begin i ${port}.`)
-    await tx.exec(ny)
-  }
-  for (const tabell of tabellnavn) {
-    await tx.exec(
-      `create policy p20_aktivt_medlemskap on ${tabell} as restrictive for all to authenticated
-       using ((select public.har_aktivt_medlemskap())) with check ((select public.har_aktivt_medlemskap()))`,
-    )
-  }
+/**
+ * Den første setningen i funksjonskroppen som gjør noe: i PL/pgSQL den første
+ * etter den ytterste `begin` (deklarasjonene foran leser bare argumentene og
+ * den innloggedes egen status), ellers den første i SQL-funksjonen.
+ */
+function forsteSetning(kilde: string): string {
+  const begin = /^\s*begin\s*$/im.exec(kilde)
+  const etter = begin ? kilde.slice(begin.index + begin[0].length) : kilde
+  return etter.trim().split('\n')[0]!.trim()
 }
 
 /** Kjører `arbeid` i en transaksjon som alltid rulles tilbake. */
@@ -193,6 +175,13 @@ async function somInnlogget<T>(tx: Transaction, brukerId: string, arbeid: () => 
   }
 }
 
+/** Fjerner P2.0-regelen fra hver tabell i transaksjonen, for å se hva radsikkerheten ellers gir. */
+async function utenRegelen(tx: Transaction) {
+  for (const t of tabeller.filter((t) => t.regler.some((r) => r.navn === REGEL))) {
+    await tx.exec(`drop policy ${REGEL} on ${t.navn}`)
+  }
+}
+
 /** Radene hver person ser i hver tabell nettleseren kan lese. */
 async function synligeRader(tx: Transaction, personer: readonly Person[]) {
   const lesbare = tabeller.filter((t) => t.rettigheter.includes('authenticated:SELECT')).map((t) => t.navn)
@@ -209,40 +198,28 @@ async function synligeRader(tx: Transaction, personer: readonly Person[]) {
   return resultat
 }
 
-describe('prototypen av P2.0 (rulles tilbake)', () => {
+describe('den begrensende regelen', () => {
   const AKTIVE: readonly Person[] = ['systemarkitekt', 'vanligA', 'vanligB', 'adminA', 'adminB', 'dobbeltAB', 'avsluttetA']
   const UTESTENGTE: readonly Person[] = ['utenMedlemskap', 'tidligereAdmin']
-  const tabellerUtenVisninger = () => tabeller.filter((t) => !t.visning).map((t) => t.navn)
-
-  it('dekker alle tabellene med én begrensende regel hver', async () => {
-    const udekket = await iTilbakerulling(async (tx) => {
-      await innforPrototype(tx, tabellerUtenVisninger())
-      return medlemskapsdekning(tx, KONTROLL)
-    })
-    expect(udekket.tabeller).toEqual([])
-  })
 
   it('stenger en bruker uten aktivt medlemskap ute fra alle tabeller, og endrer ingenting for de aktive', async () => {
-    const for_ = await iTilbakerulling((tx) => synligeRader(tx, [...AKTIVE, ...UTESTENGTE]))
-    const etter = await iTilbakerulling(async (tx) => {
-      await innforPrototype(tx, tabellerUtenVisninger())
+    const uten = await iTilbakerulling(async (tx) => {
+      await utenRegelen(tx)
       return synligeRader(tx, [...AKTIVE, ...UTESTENGTE])
     })
-    for (const p of AKTIVE) expect(etter[p], p).toEqual(for_[p])
+    const med = await iTilbakerulling((tx) => synligeRader(tx, [...AKTIVE, ...UTESTENGTE]))
+    for (const p of AKTIVE) expect(med[p], p).toEqual(uten[p])
     for (const p of UTESTENGTE) {
-      // Før prototypen ser de det samme som en vanlig bruker i A.
-      expect(Object.values(for_[p]!).some((n) => n > 0), p).toBe(true)
-      expect(Object.entries(etter[p]!).filter(([, n]) => n > 0), p).toEqual([])
+      // Uten regelen ser de det samme som en vanlig bruker i A.
+      expect(Object.values(uten[p]!).some((n) => n > 0), p).toBe(true)
+      expect(Object.entries(med[p]!).filter(([, n]) => n > 0), p).toEqual([])
     }
   })
 
   it('stopper skriving og adminrettigheter for en bruker uten aktivt medlemskap gjennom portfunksjonene', async () => {
     const { utenMedlemskap, tidligereAdmin, vanligA } = galleri.id
     const prov = (bruker: string, sql: string, parametre: unknown[] = []) =>
-      iTilbakerulling(async (tx) => {
-        await innforPrototype(tx, tabellerUtenVisninger())
-        return feilFra(() => somInnlogget(tx, bruker, () => tx.query(sql, parametre)))
-      })
+      iTilbakerulling((tx) => feilFra(() => somInnlogget(tx, bruker, () => tx.query(sql, parametre))))
     const nyKategori = `select public.opprett_stoffkategori('Prøve', null)`
     const nyTraad = `select public.opprett_diskusjonskategori('stoff:proeve', 'Prøve', '🧪')`
     const nyttUtkast = `select public.opprett_utkast('kommentar', '{"navn": "Prøve", "tekst": "Prøve.", "plassholdere": []}')`
@@ -251,26 +228,25 @@ describe('prototypen av P2.0 (rulles tilbake)', () => {
     expect((await prov(tidligereAdmin, nyttUtkast))?.code).toBe('42501')
     expect(await prov(vanligA, nyKategori)).toBeNull()
     expect(await prov(vanligA, nyTraad)).toBeNull()
-    const erAdmin = await iTilbakerulling(async (tx) => {
-      await innforPrototype(tx, tabellerUtenVisninger())
-      return somInnlogget(tx, tidligereAdmin, async () =>
-        (await tx.query<{ a: boolean }>('select public.er_admin() as a')).rows[0]!.a,
+    const erAdmin = (bruker: string) =>
+      iTilbakerulling((tx) =>
+        somInnlogget(tx, bruker, async () => (await tx.query<{ a: boolean }>('select public.er_admin() as a')).rows[0]!.a),
       )
-    })
-    expect(erAdmin).toBe(false)
+    expect(await erAdmin(tidligereAdmin)).toBe(false)
+    expect(await erAdmin(galleri.id.adminA)).toBe(true)
   })
 
   it('stopper lesing og skriving av profilbilder for en bruker uten aktivt medlemskap, og lar de aktive beholde sine', async () => {
     const eget = (id: string) => `${id}/avatar.webp`
     const lastOpp = `insert into storage.objects (bucket_id, name) values ('avatarer', $1)`
-    const prov = (bruker: string, sql: string, parametre: unknown[], medPrototype: boolean) =>
+    const prov = (bruker: string, sql: string, parametre: unknown[], medRegelen = true) =>
       iTilbakerulling(async (tx) => {
-        if (medPrototype) await innforPrototype(tx, tabellerUtenVisninger())
+        if (!medRegelen) await utenRegelen(tx)
         return feilFra(() => somInnlogget(tx, bruker, () => tx.query(sql, parametre)))
       })
-    const lese = (bruker: string, medPrototype: boolean) =>
+    const lese = (bruker: string, medRegelen = true) =>
       iTilbakerulling(async (tx) => {
-        if (medPrototype) await innforPrototype(tx, tabellerUtenVisninger())
+        if (!medRegelen) await utenRegelen(tx)
         return somInnlogget(tx, bruker, async () =>
           (await tx.query('select id from storage.objects where id = $1', [data.profilbilde])).rows.length,
         )
@@ -279,38 +255,20 @@ describe('prototypen av P2.0 (rulles tilbake)', () => {
 
     for (const p of UTESTENGTE) {
       const id = galleri.id[p]
-      // I dag: leser andres bilde og laster opp sitt eget, som en vanlig innlogget.
+      // Uten regelen: leser andres bilde og laster opp sitt eget, som en vanlig innlogget.
       expect(await lese(id, false), p).toBe(1)
       expect(await prov(id, lastOpp, [eget(id)], false), p).toBeNull()
-      // Med P2.0: ingenting.
-      expect(await lese(id, true), p).toBe(0)
-      expect((await prov(id, lastOpp, [eget(id)], true))?.code, p).toBe('42501')
+      // Med regelen: ingenting.
+      expect(await lese(id), p).toBe(0)
+      expect((await prov(id, lastOpp, [eget(id)]))?.code, p).toBe('42501')
     }
     for (const p of ['vanligA', 'vanligB', 'adminB'] as const) {
-      expect(await lese(galleri.id[p], true), p).toBe(1)
+      expect(await lese(galleri.id[p]), p).toBe(1)
     }
     const { vanligA, adminB } = galleri.id
-    expect(await prov(vanligA, endreEget, [data.profilbilde, eget(vanligA)], true)).toBeNull()
-    expect(await prov(adminB, lastOpp, [eget(adminB)], true)).toBeNull()
+    expect(await prov(vanligA, endreEget, [data.profilbilde, eget(vanligA)])).toBeNull()
+    expect(await prov(adminB, lastOpp, [eget(adminB)])).toBeNull()
     // Radsikkerheten fra før står: ingen laster opp i en annens navn.
-    expect((await prov(adminB, lastOpp, [eget(vanligA)], true))?.code).toBe('42501')
-  })
-
-  it('gir restlisten av security definer-funksjoner som må få kontrollen én for én', async () => {
-    const udekket = await iTilbakerulling(async (tx) => {
-      await innforPrototype(tx, tabellerUtenVisninger())
-      return medlemskapsdekning(tx, KONTROLL)
-    })
-    const alle = (await funksjonsinnganger(db)).filter((f) => f.definer && f.kontroll !== 'offentlig' && f.kontroll !== 'utloser')
-    // Portene dekker en god del; resten leser forbi radsikkerheten uten port.
-    expect(udekket.funksjoner.length).toBeLessThan(alle.length)
-    for (const dekket of ['opprett_diskusjon(', 'opprett_stoffkategori(', 'lagre_utkast(', 'publiser_utkast(']) {
-      expect(udekket.funksjoner.filter((f) => f.startsWith(dekket)), dekket).toEqual([])
-    }
-    for (const igjen of ['direktelenke(', 'mine_varsler(', 'ideoversikt(', 'les_kjemi(']) {
-      expect(udekket.funksjoner.some((f) => f.startsWith(igjen)), igjen).toBe(true)
-    }
-    // Restlisten står i dokumentet, slik at P2.0 kan planlegges ut fra den.
-    expect(udekket.funksjoner.filter((f) => !DOKUMENT.includes(`\`${f.slice(0, f.indexOf('('))}\``))).toEqual([])
+    expect((await prov(adminB, lastOpp, [eget(vanligA)]))?.code).toBe('42501')
   })
 })

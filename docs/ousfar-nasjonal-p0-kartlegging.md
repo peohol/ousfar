@@ -672,13 +672,20 @@ ChatGPT-kontroll.
 ### 7.2 Det som bare Peder kan avgjøre
 
 Hvert punkt har et anbefalt standardvalg. D1 og D2 er besvart av Peder
-13.11.2026 (i prosjekttråden); resten er ikke besluttet.
+13.11.2026 (i prosjekttråden), D4 av OUSFAR Fag 13.11.2026 og D3 av Peder
+14.11.2026; resten er ikke besluttet.
+
+**Status 14.11.2026.** P1.1, P1.2a, P1.2b og P4a er ute i produksjonen, og
+sikkerhetsporten S1 er passert (kontrollene står i
+[#369](https://github.com/peohol/ousfar/issues/369)). P2.0, kravet om aktivt
+medlemskap, er bygd og venter på kontroll (`docs/fagmiljoer.md`, «Aktivt
+medlemskap»).
 
 | Nr. | Spørsmål | Anbefalt standardvalg | Trengs før |
 | --- | --- | --- | --- |
 | **D1** | Hva skal det opprinnelige fagmiljøet hete i appen? | **Besluttet:** «OUS Klinisk farmakologi». Alle nåværende fortolkningssystemer gjelder bare dette fagmiljøet. I tillegg opprettes «OUS Rettstoksikologi». Alle nåværende medlemmer unntatt `maxhag` tilhører OUS Klinisk farmakologi; `maxhag` tilhører OUS Rettstoksikologi | P1.1 |
 | **D2** | Bekreft at kontoene `peohol` og `maxhag` tilhører de tiltenkte personene, og si ja til at begge blir systemarkitekter | **Besluttet:** Peder bekrefter at `peohol` er hans konto og `maxhag` Max sin. Begge blir systemarkitekter, som i visjonen #363; tildelingen gjøres på konto-ID, ikke brukernavn | P1.1 (registrering), P1.2 (rettighetene tas i bruk) |
-| **D3** | Hva skjer med dagens øvrige administrator(er)? | Hver blir lokal administrator i sitt eget fagmiljø (der primærmedlemskapet er), ikke systemarkitekt, etter gjennomgang med Peder; P1.1 gjør dette som utgangspunkt (§8) | P2 |
+| **D3** | Hva skjer med dagens øvrige administrator(er)? | **Besluttet** av Peder 14.11.2026 (formidlet i [#369](https://github.com/peohol/ousfar/issues/369)): `peohol` og `ilny` har den gamle adminrollen; `peohol` og `maxhag` er systemarkitekter; `ilny` er fortsatt lokal administrator i OUS Klinisk farmakologi, men ikke systemarkitekt; ingen andre får utvidede rettigheter. Produksjonen stemte med dette ved S1 (14.11.2026), og ingen rettigheter ble endret for å kontrollere det | P2 |
 | **D4** | Er THC-kurvene/marginene og TDM-referanseområdene felles fagkunnskap eller laboratoriets valg? | **Besluttet** av OUSFAR Fag 13.11.2026 ([#374](https://github.com/peohol/ousfar/issues/374)): referanseområdene felles uten lokal overstyring på fagsiden (lokale grenser i egne fortolkningsdata); THC-kurvene og -regelsettet lokale til deling er særskilt godkjent; TDM-kort og serumtabeller felles, kontrollert for laboratoriespesifikke opplysninger før S2 | P4b |
 | **D5** | Skal systemarkitekter og administratorer ha tofaktorinnlogging før eksterne brukere? | Ja | S4 |
 | **D6** | Regler for filer og chat (pasientdata, lagringstid, moderering) | Utsettes; filer og chat av til avklart | P7/P8 |

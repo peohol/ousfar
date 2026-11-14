@@ -222,6 +222,17 @@ describe('porten', () => {
     expect(within(kort).getByRole('button', { name: 'Lagre og gå videre' })).toBeTruthy()
     expect(screen.queryByText(/Kontoer opprettes av en administrator/)).toBeNull()
   })
+
+  it('gir en bruker uten aktivt medlemskap en beskjed og en vei ut, uten noe av appen', () => {
+    okt.tilgang = 'avsluttet'
+    okt.profil = null
+    render(<Port />)
+    const kort = screen.getByRole('region', { name: 'Ingen tilgang' })
+    expect(within(kort).getByRole('alert').textContent).toMatch(/^Du har ikke lenger et aktivt medlemskap i OUSFAR\. Ta kontakt med administratoren/)
+    expect(within(kort).getByRole('button', { name: 'Logg ut' })).toBeTruthy()
+    expect(within(kort).queryByLabelText('Brukernavn')).toBeNull()
+    expect(screen.queryByText(/Kontoer opprettes av en administrator/)).toBeNull()
+  })
 })
 
 const BEGGE = { nyttPassord: true, endreRolle: true }
