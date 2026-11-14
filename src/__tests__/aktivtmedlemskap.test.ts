@@ -28,15 +28,18 @@ import { funksjonsinnganger, tabellinnganger, type Funksjonsinngang } from './hj
 const UTESTENGTE = ['utenMedlemskap', 'tidligereAdmin'] as const satisfies readonly Person[]
 
 /** Funksjonene som bare svarer om den innloggede selv, og derfor ikke stopper; med svaret til en utestengt. */
-const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly string[]>> = {
+/** `null`: ingen rader. */
+const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly string[] | null>> = {
   'er_admin()': false,
   'er_systemarkitekt()': false,
   'har_aktivt_medlemskap()': false,
   // P2b: om den innloggede kan moderere diskusjonene på en side.
   'kan_moderere_diskusjoner(side text)': false,
   'min_medlemskapsstatus()': 'avsluttet',
+  'min_profil()': null,
   'mine_administrerte_fagmiljoer()': [],
   'mine_lesbare_fagmiljoer()': [],
+  'mine_synlige_profiler()': [],
 }
 
 let db: PGlite
@@ -142,7 +145,8 @@ describe('en bruker uten aktivt medlemskap', () => {
         const f = funksjoner.find((x) => x.signatur === signatur)!
         const { feil, svar } = await kall(person, f)
         expect(feil, signatur).toBeNull()
-        expect(Object.values(svar![0]!)[0], `${person}: ${signatur}`).toEqual(ventet)
+        if (ventet === null) expect(svar, `${person}: ${signatur}`).toEqual([])
+        else expect(Object.values(svar![0]!)[0], `${person}: ${signatur}`).toEqual(ventet)
       }
     }
   })

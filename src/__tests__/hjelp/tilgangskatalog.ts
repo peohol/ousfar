@@ -87,6 +87,8 @@ export const REKKEVIDDEHJELPERE = [
   'kan_lese_diskusjonsside',
   'lesbar_diskusjon',
   'krev_moderering',
+  // P2c: profilene (supabase/migrations/*_profiler_dataminimering.sql).
+  'synlige_profiler',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

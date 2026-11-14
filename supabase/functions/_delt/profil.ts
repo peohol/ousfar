@@ -39,6 +39,17 @@ export interface Profil {
   updated_at: string
 }
 
+/**
+ * Feltene i en annen brukers profil som nettleseren får lese: profilkortet
+ * (P2c, dataminimering). Rollen og kontostatusen leses bare av kontoen selv
+ * (`min_profil()`) og av administrasjonen (`brukeroversikt()`). Samme liste
+ * som kolonnerettighetene i databasen; en test holder dem like.
+ */
+export const PROFILKORT = ['id', 'username', 'first_name', 'last_name', 'avatar_path', 'updated_at'] as const
+
+/** Det en innlogget ser om en annen bruker. */
+export type Profilkort = Pick<Profil, (typeof PROFILKORT)[number]>
+
 /** Feltene en bruker selv får endre på sin egen profil. */
 export interface Profilendring {
   first_name: string

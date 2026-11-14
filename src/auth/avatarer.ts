@@ -17,7 +17,7 @@ const FORNYES_ETTER = AVATARLENKE_LEVETID * 0.75 * 1000
 
 type Bildebærer = Pick<Profil, 'avatar_path' | 'updated_at'>
 
-export function useAvatarlenker(profiler: Bildebærer[]): Map<string, string> {
+export function useAvatarlenker(profiler: readonly Bildebærer[]): Map<string, string> {
   const [lenker, setLenker] = useState<Map<string, string>>(new Map())
   /** Økes når lenkene skal fornyes. */
   const [runde, setRunde] = useState(0)

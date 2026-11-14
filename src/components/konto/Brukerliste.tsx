@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { brukernavnFeil, normaliserBrukernavn } from '@delt/brukernavn'
-import { visningsnavn, type Profil } from '@delt/profil'
+import { visningsnavn } from '@delt/profil'
 import {
-  hentAlleProfiler,
+  hentBrukeroversikt,
   hentMineKontohandlinger,
   nyttMidlertidigPassord,
   opprettBruker,
   settRolle,
   type Kontohandlinger,
+  type Kontooversikt,
   type Midlertidig,
 } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
@@ -26,7 +27,9 @@ const INGEN_HANDLINGER: ReadonlyMap<string, Kontohandlinger> = new Map()
 /**
  * Brukerlista.
  *
- * Alle innloggede ser hvem som finnes. Administratorer får i tillegg knappen
+ * Viser kontoene den innloggede administrerer, med rollen og om kontoen må
+ * gjennom oppsettet (`hentBrukeroversikt`): en systemarkitekt ser alle, en
+ * lokal administrator medlemmene i egne fagmiljøer. Administratorer får i tillegg knappen
  * for å opprette en bruker. Knappene for nytt midlertidig passord og for å gi
  * eller ta adminstatus står på hver bruker den innloggede har myndighet over,
  * slik databasen avgjør det (`hentMineKontohandlinger`): en systemarkitekt
@@ -38,7 +41,7 @@ const INGEN_HANDLINGER: ReadonlyMap<string, Kontohandlinger> = new Map()
 export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => void }) {
   const meg = useProfil()
   const erAdmin = meg.role === 'admin'
-  const [profiler, setProfiler] = useState<Profil[]>([])
+  const [profiler, setProfiler] = useState<Kontooversikt[]>([])
   const [handlinger, setHandlinger] = useState<ReadonlyMap<string, Kontohandlinger>>(INGEN_HANDLINGER)
   const [feil, setFeil] = useState<string | null>(null)
   const [laster, setLaster] = useState(false)
@@ -53,7 +56,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     // Uten svar om myndigheten vises ingen handlinger, men lista står.
     const myndighet = (async () => hentMineKontohandlinger())().catch(() => INGEN_HANDLINGER)
     try {
-      setProfiler(await hentAlleProfiler())
+      setProfiler(await hentBrukeroversikt())
       setFeil(null)
     } catch {
       setFeil('Fikk ikke hentet brukerlista.')
@@ -96,7 +99,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     }
   }
 
-  const byttRolle = async (profil: Profil) => {
+  const byttRolle = async (profil: Kontooversikt) => {
     if (arbeider) return
     setArbeider(profil.id)
     setFeil(null)
@@ -110,7 +113,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     }
   }
 
-  const nyttPassord = async (profil: Profil) => {
+  const nyttPassord = async (profil: Kontooversikt) => {
     if (arbeider) return
     setArbeider(profil.id)
     setFeil(null)

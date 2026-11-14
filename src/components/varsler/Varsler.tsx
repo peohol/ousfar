@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react'
-import { visningsnavn, type Profil } from '@delt/profil'
-import { hentAlleProfiler } from '../../auth/api'
+import { visningsnavn, type Profilkort } from '@delt/profil'
+import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
 import { stoffadresse } from '../../domain/rute'
@@ -60,14 +60,14 @@ type Side = 'liste' | 'innstillinger'
  */
 export function Varsler({ apen, onLukk, status }: { apen: boolean; onLukk: () => void; status: Varselstatus }) {
   const [side, setSide] = useState<Side>('liste')
-  const [profiler, setProfiler] = useState<Profil[]>([])
+  const [profiler, setProfiler] = useState<Profilkort[]>([])
   const { hent } = status
 
   useEffect(() => {
     if (!apen) return
     setSide('liste')
     hent()
-    void hentAlleProfiler().then(setProfiler, () => undefined)
+    void hentProfilkort().then(setProfiler, () => undefined)
   }, [apen, hent])
 
   const uleste = status.varsler?.some((v) => !v.lest) ?? false
@@ -99,7 +99,7 @@ export function Varsler({ apen, onLukk, status }: { apen: boolean; onLukk: () =>
   )
 }
 
-function Varselliste({ status, profiler, onLukk }: { status: Varselstatus; profiler: Profil[]; onLukk: () => void }) {
+function Varselliste({ status, profiler, onLukk }: { status: Varselstatus; profiler: Profilkort[]; onLukk: () => void }) {
   const meg = useProfil()
   const [arkivApent, setArkivApent] = useBevart('varsler/arkiv', false)
   const navn = useMemo(() => {
