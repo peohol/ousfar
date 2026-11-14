@@ -398,7 +398,7 @@ adminrollen (`profiles.role = 'admin'`) gir ingen av dem; `er_admin()` og
 | Endre stoffregisteret (kategorier, plasseringer, arkiv, papirkurv, utkast) | Systemarkitektene; P5 legger til tildelte redaktører | `intern.har_registerrett`, `intern.krev_registerbruker` |
 | Slette for godt og tømme papirkurven, se utkast i registeret | Systemarkitektene | `intern.krev_systemarkitekt`, `intern.er_systemarkitekt` |
 | Datakildestatus, kildeovervåking og kildesaker, verktøysperrene, styring av kurateringene, autoerstatt-reglene | Systemarkitektene | `intern.krev_systemarkitekt`, `public.er_systemarkitekt()` i reglene |
-| Opprette brukere | Systemarkitektene og de lokale administratorene i standardfagmiljøet, der nye kontoer blir medlemmer | `intern.opprettelsesavslag`, kontrollert av `public.kontooperasjon_klarer_konto` under låsen (`intern.las_tilgang`) før Edge-funksjonen gjør noe |
+| Opprette brukere | Systemarkitektene og de lokale administratorene i standardfagmiljøet, der nye kontoer blir medlemmer | `intern.opprettelsesavslag`, kontrollert av `public.kontooperasjon_klarer_konto` under låsen (`intern.las_tilgang`) før Edge-funksjonen gjør noe, og på nytt under låsen i utløseren på `auth.users` når kontoen opprettes (klareringen husker aktøren i `kontoreservasjoner.aktor`) |
 | Serverendepunktene i Vercel for en innlogget (synker, kjemi, kurateringer) | Systemarkitektene | `erSystemarkitekt` i `src/server/tilgang.ts`; jobbene uten bruker (cron, GitHub OIDC, agentnøklene) er som før |
 
 `intern.krev_systemarkitekt(melding)` krever aktivt medlemskap og
