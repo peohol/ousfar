@@ -32,7 +32,7 @@ vi.mock('../auth/okt', () => ({
 }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/api', () => ({
-  hentAlleProfiler: vi.fn(async () => BRUKERE),
+  hentBrukeroversikt: vi.fn(async () => BRUKERE),
   hentMineKontohandlinger: vi.fn(async () => okt.handlinger),
   nyttMidlertidigPassord: vi.fn(async () => ({ brukernavn: 'ola.s', midlertidigPassord: 'kvist-mose-47-lind' })),
   opprettBruker: vi.fn(),

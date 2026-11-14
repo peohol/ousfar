@@ -16,7 +16,9 @@ P2.0 krever **aktivt medlemskap** for alt
 ([Aktivt medlemskap](#aktivt-medlemskap)). Ellers bygger ingen rettigheter
 på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
 aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d, bygd på de
-felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)). P2c
+har gjort det for profilene og profilbildene
+([Profiler og profilbilder](#profiler-og-profilbilder)).
 
 ## Fagmiljøene
 
@@ -382,6 +384,79 @@ Systemarkitekten er «medlem» av alle fagmiljøer her, fordi rettighetsmatrisen
 (P0 §5.2) lar systemarkitekten lese alt. Ingenting er tatt i bruk av
 migrasjonen selv; rettighetene endres i P2a–d. Testene står i
 `src/__tests__/rettighetshjelpere.test.ts`.
+
+## Profiler og profilbilder
+
+P2c (`supabase/migrations/20261114121500_profiler_dataminimering.sql`) gir
+dataminimering i brukeropplysningene (P0 §2.8, §4): man ser navnet og bildet
+til dem man samhandler med, ikke en nasjonal katalog med roller.
+
+**Hva andre får lese.** Andres profil er et *profilkort*: ID, brukernavn,
+fornavn, etternavn, bildesti og når profilen sist ble endret (`PROFILKORT` i
+`supabase/functions/_delt/profil.ts`, samme liste som kolonnerettighetene).
+Rollen (`role`), `must_change_password`, `onboarding_completed` og
+`created_at` kan ikke leses fra tabellen av noen i nettleseren, heller ikke
+for egen rad. Skriveretten er uendret: navn og bildesti på egen rad.
+
+**Hvem man ser.** Den tillatende leseregelen på `profiles` gir profilkortet
+til:
+
+| Hvem | Hvorfor |
+| --- | --- |
+| Seg selv | Egen konto |
+| Alle, for en systemarkitekt | Systemarkitekten kan lese alt (P0 §5.2) |
+| De aktive medlemmene i fagmiljøene man selv er aktivt medlem av | Eget fagmiljø (`intern.er_medlem_i`) |
+| Medlemmene, også de inviterte, i fagmiljøene man administrerer | De samme kontoene administrasjonen kan handle på (`intern.er_lokal_admin_i`) |
+| Den som står bak en hendelse i et av egne varsler | Varselet sier «Ada kommenterte …» |
+| Forfatteren av en tråd, kommentar eller idé man selv kan lese | Felles samhandlingspartnere |
+
+De fire første radene og varslene regnes ut én gang per spørring av
+`intern.synlige_profiler(seer)` (den eneste definisjonen, gjennom
+`public.mine_synlige_profiler()` i regelen). Forfatterne prøves med `exists`
+mot `diskusjoner`, `diskusjonskommentarer`, `ideer` og `idekommentarer`,
+kjørt som den innloggede: en rad man ikke kan lese, gjør ikke forfatteren
+synlig. Når P2b strammer inn hvem som leser trådene og idéene, følger
+profilene etter av seg selv. Reglene på de fire tabellene må derfor aldri lese
+`public.profiles` direkte (det ville gått i ring); bruk `security
+definer`-hjelpere. En ny tabell med `forfatter_id` som nettleseren leser,
+må med i regelen (`profiler.test.ts` stopper den).
+
+Navn som `security definer`-funksjoner selv slår opp og gir sammen med
+innholdet (endringsloggen, direktelenkene, stoffregisteret), følger
+innholdet de står i, og hører til P2a, P2b og P2d.
+
+**Profilbildene.** Leseregelen på `storage.objects` i bøtta `avatarer` gir
+et bilde når den innloggede ser profilen som peker på det (oppslaget går
+gjennom `profiles` som den innloggede), og eieren ser alltid sin egen fil,
+også før profilen peker på den (opplastingen i førstegangsoppsettet). Et
+bilde ingen profil peker på, er usynlig for andre. Skrivereglene er uendret.
+
+**Egen profil og brukerlista.**
+
+- `public.min_profil()` gir den innloggedes egen profil med alle feltene, som
+  appen trenger for førstegangsoppsettet og visningen. Den er tom uten aktivt
+  medlemskap, som tabellen var; appen spør da `min_medlemskapsstatus()`.
+- `public.brukeroversikt()` gir brukerlista i administrasjonen profilkortet,
+  rollen og kontostatusen, bare for kontoene den innloggede administrerer:
+  alle for en systemarkitekt, medlemmene (også inviterte) i egne fagmiljøer
+  for en lokal administrator, ingen for andre. Knappene på hver rad avgjøres
+  fortsatt av `mine_kontohandlinger()`.
+
+**Ytelse.** Systemarkitekten og mengden regnes ut én gang per spørring, og
+forfatterne og bildene slås opp med indeks (`*_forfatter_idx`,
+`profiles_avatar_path_idx`). Målt i testdatabasen med 1 000 syntetiske
+brukere og 300 tråder: om lag 10 ms for alle profilkortene mot 6 ms før,
+og 5 ms for en bruker som bare ser forfatterne. Med dagens 14 profiler er
+forskjellen umerkelig.
+
+**Tilbakeføring.** En ny migrasjon som gir tilbake `select` på hele
+`profiles`, setter de to lesereglene tilbake til `true` og `bucket_id =
+'avatarer'`, og fjerner funksjonene og indeksene. Ingen data endres.
+
+**Testene.** `src/__tests__/profiler.test.ts` prøver regelen for hvert par i
+persongalleriet, forfatterne og varslene, at rollen ikke kan leses, egen
+profil, brukerlista og bildene; `tilgangsmatrise.test.ts` har scenarioene for
+P2c.
 
 ## Katalogvaktene
 

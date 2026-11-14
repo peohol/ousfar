@@ -83,7 +83,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
 
     void (async () => {
       try {
-        const hentet = await api.hentProfil(brukerId)
+        const hentet = await api.hentProfil()
         if (!gjelder) return
         if (!hentet) {
           // Økten står, men profilen er ikke synlig. Enten er medlemskapet
@@ -132,7 +132,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
 
   const oppfriskProfil = useCallback(async () => {
     if (brukerId === null) return
-    const hentet = await api.hentProfil(brukerId)
+    const hentet = await api.hentProfil()
     setProfil(hentet)
     setProfilfeil(false)
     setProfilFor(brukerId)

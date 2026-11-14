@@ -107,7 +107,7 @@ vi.mock('../ideer/api', () => api)
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
-vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI, ADMIN]) }))
+vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, ADMIN]) }))
 
 const { Oppgaver } = await import('../components/ideer/Oppgaver')
 const { Angretoast } = await import('../components/Angretoast')

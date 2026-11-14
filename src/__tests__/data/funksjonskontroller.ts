@@ -62,6 +62,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'diskusjonstraad(diskusjon uuid)': 'radsikkerhet',
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'innlogget',
   'endre_stoffkategori(kategori uuid, navn text)': 'innlogget',
+  // P2c: brukerlista i administrasjonen, bare kontoene den innloggede administrerer.
+  'brukeroversikt()': 'rekkevidde',
   'er_admin()': 'felles-lesing',
   'er_systemarkitekt()': 'eier',
   'finn_infosider(navn text[], sidetilstand objekttilstand)': 'radsikkerhet',
@@ -140,7 +142,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'min_medlemskapsstatus()': 'eier',
   'mine_administrerte_fagmiljoer()': 'eier',
   'mine_lesbare_fagmiljoer()': 'eier',
+  // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).
+  'min_profil()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
+  // P2c: kontoene den innloggede ser profilkortet til; regelen på profiles og bildene bygger på den.
+  'mine_synlige_profiler()': 'rekkevidde',
   'mine_varsler()': 'eier',
   'oppgave(oppgave uuid)': 'innlogget',
   'oppgaveoversikt()': 'innlogget',

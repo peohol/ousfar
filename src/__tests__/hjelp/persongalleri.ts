@@ -340,5 +340,10 @@ export async function leggInnTestdata(db: PGlite, galleri: Persongalleri): Promi
     `insert into storage.objects (bucket_id, name) values ('avatarer', $1) returning id`,
     [`${vanligA}/avatar.webp`],
   )
+  // Profilen peker på bildet, slik appen lagrer det (lagreEgenProfil).
+  await somBruker(db, vanligA, 'update public.profiles set avatar_path = $1 where id = $2 returning id', [
+    `${vanligA}/avatar.webp`,
+    vanligA,
+  ])
   return { publisertKommentar, kommentarutkast, fortolkningstraad, fagsidetraad, ide, profilbilde }
 }

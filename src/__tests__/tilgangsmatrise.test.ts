@@ -31,10 +31,10 @@ import { nyDatabase, som } from './hjelp/testdatabase'
 type Utfall = 'tilgang' | 'avvist'
 
 /** Etappen som skal gi målet (P0 §6.1). */
-type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2c' | 'P2d'
+type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2d'
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2c'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -120,7 +120,24 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'rydder idéarkivet', person: 'vanligA', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.rydd_idearkiv()') },
 
   // --- P2c: profiler og bilder --------------------------------------------
-  { navn: 'leser rollen til en administrator i et annet fagmiljø', person: 'vanligB', etappe: 'P2c', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, 'select role from public.profiles where id = $1', [k.g.id.adminA]) },
+  // Andre leser bare profilkortet, og bare til dem de samhandler med
+  // (docs/fagmiljoer.md, «Profiler og profilbilder»).
+  { navn: 'leser rollen til en administrator i et annet fagmiljø', person: 'vanligB', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select role from public.profiles where id = $1', [k.g.id.adminA]) },
+  { navn: 'leser om en kollega må bytte passord', person: 'vanligA', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select must_change_password is not null from public.profiles where id = $1', [k.g.id.adminA]) },
+  { navn: 'leser profilkortet til en i et annet fagmiljø uten samhandling', person: 'vanligA', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.adminB]) },
+  { navn: 'leser profilkortet til en i et annet fagmiljø som lokal admin', person: 'adminA', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligB]) },
+  { navn: 'leser profilkortet til en i eget fagmiljø', person: 'vanligA', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.adminA]) },
+  { navn: 'leser profilkortet til en i det andre av sine fagmiljøer', person: 'dobbeltAB', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.adminB]) },
+  { navn: 'leser profilkortet til forfatteren av en tråd den kan lese', person: 'vanligB', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligA]) },
+  { navn: 'ser profilbildet til forfatteren av en tråd den kan lese', person: 'vanligB', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from storage.objects where id = $1', [k.d.profilbilde]) },
+  { navn: 'leser profilkortet til alle', person: 'systemarkitekt', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.vanligB]) },
+  { navn: 'leser sin egen hele profil med rollen', person: 'vanligA', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select role is not null from public.min_profil()') },
+  { navn: 'ser kontoene i brukerlista uten å administrere noen', person: 'vanligA', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.brukeroversikt()') },
+  { navn: 'ser en konto i et annet fagmiljø i brukerlista', person: 'adminB', etappe: 'P2c', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.brukeroversikt() where id = $1', [k.g.id.vanligA]) },
+  { navn: 'ser rollen til et medlem i eget fagmiljø i brukerlista', person: 'adminA', etappe: 'P2c', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select role is not null from public.brukeroversikt() where id = $1', [k.g.id.vanligA]) },
+  // Varselet om A sin lokale publisering går i dag til alle (P2b filtrerer
+  // mottakerne); den som står bak, er da synlig for mottakeren.
+  { navn: 'leser profilkortet til en i et annet fagmiljø gjennom et varsel om lokalt innhold', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.profiles where id = $1', [k.g.id.adminA]) },
 
   // --- P2d: stoffregister og administrasjon -------------------------------
   { navn: 'oppretter en kategori i stoffregisteret uten redaktøransvar', person: 'vanligA', etappe: 'P2d', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
@@ -222,7 +239,7 @@ describe('tilgangsmatrisen', () => {
 
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
-    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2c', 'P2d'])
+    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2d'])
     for (const etappe of HOLDER) {
       expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
       expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])

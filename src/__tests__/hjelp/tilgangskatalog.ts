@@ -77,7 +77,7 @@ const BRUKER_INNLOGGET = /\bauth\s*\.\s*uid\s*\(/
  * «Hjelperne for tilgang per fagmiljø»). En funksjon erklært `rekkevidde` må
  * kalle minst én av dem selv. Nye hjelpere som bygger på dem, føres opp her.
  */
-export const REKKEVIDDEHJELPERE = ['kan_lese_omfang', 'er_medlem_i', 'er_lokal_admin_i'] as const
+export const REKKEVIDDEHJELPERE = ['kan_lese_omfang', 'er_medlem_i', 'er_lokal_admin_i', 'synlige_profiler'] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
 )

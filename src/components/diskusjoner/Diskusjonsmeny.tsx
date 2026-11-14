@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type FocusEvent, type ReactNode } from 'react'
-import type { Profil } from '@delt/profil'
+import type { Profilkort } from '@delt/profil'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { hentAlleProfiler } from '../../auth/api'
+import { hentProfilkort } from '../../auth/api'
 import {
   flyttDiskusjonTil,
   flyttKategoriTil,
@@ -330,7 +330,7 @@ function Diskusjonsflate({
   const [visning, setVisning] = useBevart<Visning>('visning', LISTE)
   const [sok, setSok] = useBevart('sok', '')
   const [tekster, setTekster] = useState<Diskusjonstekster[] | null>(null)
-  const [profiler, setProfiler] = useState<Profil[]>([])
+  const [profiler, setProfiler] = useState<Profilkort[]>([])
   /** Kommentaren en direktelenke førte til, i tråden som står åpen. */
   const [fremhev, setFremhev] = useState<Fremheving | null>(null)
   const kropp = useRef<HTMLDivElement>(null)
@@ -353,7 +353,7 @@ function Diskusjonsflate({
   useEffect(() => {
     if (!apen || profilerHentet.current) return
     profilerHentet.current = true
-    void hentAlleProfiler().then(setProfiler, () => undefined)
+    void hentProfilkort().then(setProfiler, () => undefined)
   }, [apen])
 
   // Tekstene til søket hentes når det søkes, og på nytt når trådene er endret.

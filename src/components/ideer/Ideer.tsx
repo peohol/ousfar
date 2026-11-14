@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MutableRefObject } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import type { Profil } from '@delt/profil'
-import { hentAlleProfiler } from '../../auth/api'
+import type { Profilkort } from '@delt/profil'
+import { hentProfilkort } from '../../auth/api'
 import { flyttOppgaveTilbake, gjenopprettIde, hentIdeer, hentSortering, lagreSortering, ryddIdearkiv } from '../../ideer/api'
 import { STANDARDSORTERING, type Ide, type Idekategori, type Idetraad, type Sortering } from '../../ideer/modell'
 import { Angretoast, type Angring } from '../Angretoast'
@@ -61,7 +61,7 @@ export function Ideer({
   // Siden i laget, og det som skrives på den, overlever en oppdatering av appen.
   const [visning, setVisning, visningGjenopprettet] = useBevart<Visning>('ideer', LISTE)
   const [ideer, setIdeer] = useState<Ide[]>([])
-  const [profiler, setProfiler] = useState<Profil[]>([])
+  const [profiler, setProfiler] = useState<Profilkort[]>([])
   const [sortering, setSortering] = useState<Sortering>(STANDARDSORTERING)
   const [feil, setFeil] = useState<string | null>(null)
   const [apneSkuffer, setApneSkuffer] = useState<ReadonlySet<string>>(new Set())
@@ -107,7 +107,7 @@ export function Ideer({
     void ryddIdearkiv()
       .catch(() => undefined)
       .then(hentListe)
-    void hentAlleProfiler().then(setProfiler, () => undefined)
+    void hentProfilkort().then(setProfiler, () => undefined)
     void hentSortering().then(setSortering, () => undefined)
     // `kommentar` følger `nr`, som er ny for hver lenke.
     // eslint-disable-next-line react-hooks/exhaustive-deps
