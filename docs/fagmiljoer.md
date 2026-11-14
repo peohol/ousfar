@@ -991,17 +991,21 @@ databasen per fagmiljø siden P4c
 **De gamle nøklene.** De globale unike nøklene (én per kode i hele
 databasen: `laboratorieanalytter_kode_entydig`,
 `intervallregelsett_analyttkode_entydig`, `scenarioregelsett_modul_idx`,
-`scenarioanalytter_kode_idx`, `thc_regelsett_ett_idx`) står til erstatningen
-er kontrollert. Så lenge de står, kan to fagmiljøer ikke ha samme kode, og
-ingenting endres for OUS Klinisk farmakologi. De fjernes i en egen migrasjon
-som krever Peders godkjenning (P0 §6.2, `supabase/AGENTS.md`).
+`scenarioanalytter_kode_idx`, `thc_regelsett_ett_idx`) er fjernet i
+`20261115050000_fjern_globale_fortolkningsnokler.sql`, etter Peders
+godkjenning (P0 §6.2, `supabase/AGENTS.md`). Migrasjonen stopper hvis en rad
+mangler fagmiljø eller en av nøklene per fagmiljø mangler. Nå kan to
+fagmiljøer ha samme kode og modul med hver sine regler og kommentarer; innenfor
+ett fagmiljø er det fortsatt ett regelsett per kode og modul. Tilbakeføringen
+(nøklene inn igjen) står i migrasjonen og går så lenge ingen kode finnes i to
+fagmiljøer.
 
 **Tester.** `src/__tests__/fortolkningPerFagmiljo.test.ts` prøver
 arbeidskonteksten for hver person i persongalleriet; at A får nøyaktig de
 samme regelsettene som den gamle lesingen ga; den tydelige stoppen i B, også
 for systemarkitekten med B som arbeidskontekst; at B sine egne regler,
 analytter og kommentarer ikke når A; at et regelsett ikke kan peke på et annet
-fagmiljøs kommentarer; at samme kode stoppes av de gamle nøklene og, uten dem,
+fagmiljøs kommentarer; at bare nøklene per fagmiljø står, og at samme kode
 gir hvert fagmiljø sitt uten at en endring i B rører A; rekkevidden til nye og
 flyttede objekter; og endringsloggen og diskusjonene. De kliniske fasitene
 (`fortolkningUendret.test.ts`, `steg2regler.test.tsx`,

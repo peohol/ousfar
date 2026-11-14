@@ -13,9 +13,9 @@
  * 4. Isolasjon: B sine egne regler, analytter og kommentarer når ikke A, og
  *    et regelsett kan ikke peke på kommentarer i et annet fagmiljø, heller
  *    ikke med en manipulert ID.
- * 5. Samme kode i begge: stoppes av de gamle globale nøklene så lenge de
- *    står; med den gamle nøkkelen fjernet (sist i fila, avsnitt 8) får hvert
- *    fagmiljø sitt, og en endring i B rører ikke A.
+ * 5. Samme kode i begge: de gamle globale nøklene er borte og de nye per
+ *    fagmiljø står; hvert fagmiljø får sitt (sist i fila, avsnitt 8), og en
+ *    endring i B rører ikke A.
  * 6. Rekkevidden: nye objekter hører til fagmiljøet de lages i, kolonnen
  *    følger en flytting av regelsettet og kommentarene sammen, en flytting som
  *    ville gitt kommentarer på tvers stoppes uten å endre noe (et regelsett
@@ -266,12 +266,38 @@ describe('egne regler i B', () => {
 
 /* --- 5. Samme kode i begge ------------------------------------------------------ */
 
+const GAMLE_NOKLER = [
+  'laboratorieanalytter_kode_entydig',
+  'intervallregelsett_analyttkode_entydig',
+  'scenarioregelsett_modul_idx',
+  'scenarioanalytter_kode_idx',
+  'thc_regelsett_ett_idx',
+]
+const NYE_NOKLER = [
+  'laboratorieanalytter_fagmiljo_kode_entydig',
+  'intervallregelsett_fagmiljo_analyttkode_entydig',
+  'scenarioregelsett_fagmiljo_modul_entydig',
+  'scenarioanalytter_fagmiljo_kode_entydig',
+  'thc_regelsett_fagmiljo_entydig',
+]
+
+/** De unike nøklene på fortolkningstabellene, med definisjonene. */
+const UNIKE_NOKLER = `
+  select c.relname as nokkel, pg_get_indexdef(i.indexrelid) as definisjon
+  from pg_index i
+  join pg_class c on c.oid = i.indexrelid
+  join pg_class t on t.oid = i.indrelid
+  join pg_namespace s on s.oid = t.relnamespace
+  where s.nspname = 'public' and i.indisunique and not i.indisprimary
+    and t.relname in ('laboratorieanalytter', 'intervallregelsett', 'scenarioregelsett', 'scenarioanalytter', 'thc_regelsett')
+  order by 1`
+
 describe('samme kode i to fagmiljøer', () => {
-  it('stoppes av de gamle globale nøklene så lenge de står', async () => {
-    const under = (await kall.opprett('kommentar', kommentar('B samme kode under'), g.id.adminB)).id
-    const over = (await kall.opprett('kommentar', kommentar('B samme kode over'), g.id.adminB)).id
-    const feil = await feilFra(() => kall.opprett('intervallregelsett', regelsett(kodeA, under, over), g.id.adminB))
-    expect(feil).toMatchObject({ code: '23505' })
+  it('har bare nøklene per fagmiljø, ikke de gamle globale', async () => {
+    const { rows } = await db.query<{ nokkel: string; definisjon: string }>(UNIKE_NOKLER)
+    const nokler = new Map(rows.map((r) => [r.nokkel, r.definisjon]))
+    for (const gammel of GAMLE_NOKLER) expect(nokler.has(gammel), gammel).toBe(false)
+    for (const ny of NYE_NOKLER) expect(nokler.get(ny), ny).toContain('fagmiljo_id')
   })
 })
 
@@ -441,11 +467,8 @@ describe('endringsloggen og diskusjonene på fortolkningen', () => {
 /* --- 8. Uten de gamle globale nøklene ------------------------------------------ */
 
 describe('samme kode i to fagmiljøer, uten de gamle globale nøklene', () => {
-  it('gir hvert fagmiljø sitt når de gamle nøklene er borte, og en endring i B rører ikke A', async () => {
+  it('gir hvert fagmiljø sitt, og en endring i B rører ikke A', async () => {
     const a = await intervallregelsettFor('vanligA')
-    // Det neste steget (egen migrasjon med Peders godkjenning). Testen kjøres
-    // sist, så resten av fila prøves med de gamle nøklene på plass.
-    await db.exec('alter table public.intervallregelsett drop constraint intervallregelsett_analyttkode_entydig')
     const b = await lagRegelsett('adminB', kodeA, 'B samme kode')
     expect((await finnFor('vanligB', kodeA))?.id).toBe(b.objekt)
     expect((await finnFor('vanligA', kodeA))?.id).toBe(regelsettA)
