@@ -6,7 +6,7 @@ interface Direktelenkekontekst {
   sidenavn: (side: Diskusjonsside) => string
 }
 
-const INGEN_SIDER: Diskusjonssider = { fagsider: [], fortolkninger: [] }
+const INGEN_SIDER: Diskusjonssider = { fagsider: [], fortolkninger: [], grupper: [] }
 
 const Kontekst = createContext<Direktelenkekontekst>({ sidenavn: (side) => navnPaaSide(INGEN_SIDER, side) })
 

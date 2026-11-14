@@ -12,6 +12,7 @@ import type { Datakildestatus, Kjoring } from '../datakilder/status'
 import type { Fagsak, Redaktoroversikt } from '../verktoy/overvaking/fagsak'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
 import type { Trinn } from '../components/toppmeny/Toppmeny'
+import type { Gruppekilde } from '../grupper/kilde'
 import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/rettigheter'
 
 const loggUt = vi.fn(async () => {})
@@ -98,6 +99,8 @@ const { Toppmeny, faarPlass, trengerToRader, velgTrinn } = await import('../comp
 const { ToppmenyKilde, ToppmenyInnhold } = await import('../components/toppmeny/Toppmenykilde')
 const { Fagsokfelt, erFagsokSnarvei } = await import('../components/toppmeny/Fagsokfelt')
 const { Kontomeny } = await import('../components/konto/Kontomeny')
+const { GruppekildeProvider } = await import('../grupper/kilde')
+const { INGEN_GRUPPER } = await import('../grupper/modell')
 const { Adminmeny } = await import('../components/konto/Adminmeny')
 const { DATAKILDER } = await import('../datakilder/status')
 const { Ideknapp } = await import('../components/ideer/Ideknapp')
@@ -516,13 +519,15 @@ describe('kontomenyen', () => {
     )
   }
 
-  function vis() {
+  function vis(grupper: Partial<Gruppekilde> = {}) {
     render(
-      <Ramme>
-        <Konto />
-      </Ramme>,
+      <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined, ...grupper }}>
+        <Ramme>
+          <Konto />
+        </Ramme>
+      </GruppekildeProvider>,
     )
-    return screen.getByRole('button', { name: 'Kontoen din – Anne Admin' })
+    return screen.getByRole('button', { name: /^Kontoen din – Anne Admin/ })
   }
 
   it('åpnes fra avataren, er et lag mens den står åpen, og lukkes med Escape', async () => {
@@ -544,11 +549,24 @@ describe('kontomenyen', () => {
     expect(document.activeElement).toBe(knapp)
   })
 
-  it('har bare profilen, preferansene og utloggingen', async () => {
+  it('har bare profilen, gruppene, preferansene og utloggingen', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
     const valg = within(panel(knapp)).getAllByRole('button')
-    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Preferanser', 'Logg ut'])
+    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Grupper', 'Preferanser', 'Logg ut'])
+    expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
+
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
+    expect(window.location.hash).toBe('#/grupper')
+  })
+
+  it('viser en prikk når en invitasjon til en gruppe venter', async () => {
+    const gruppe = { id: 'g', navn: 'G', beskrivelse: '', art: 'tverrfaglig' as const, status: 'aktiv' as const, fagmiljo: null }
+    const knapp = vis({ invitasjoner: [{ gruppe, invitert_kl: '2026-11-14T00:00:00Z', invitert_av: null }] })
+    expect(knapp.getAttribute('aria-label')).toBe('Kontoen din – Anne Admin (én ny invitasjon)')
+    expect(document.querySelector('.kontomeny .toppmeny__prikk')).not.toBeNull()
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getByRole('img', { name: 'én ny invitasjon' })).toBeTruthy()
   })
 
   it('folder ut preferansene med hurtigtastene, temaet og måleenheten, og de virker derfra', async () => {

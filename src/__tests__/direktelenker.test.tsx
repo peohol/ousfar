@@ -66,7 +66,7 @@ const { lyttEtterDiskusjon, taDiskusjon } = await import('../components/diskusjo
 const { lyttEtterIde, meldIdelagene } = await import('../components/ideer/idevisning')
 const { useRute } = await import('../hooks/useRute')
 
-const SIDER = { fagsider: [{ side: 'stoff:bupropion' as const, navn: 'Bupropion' }], fortolkninger: [] }
+const SIDER = { fagsider: [{ side: 'stoff:bupropion' as const, navn: 'Bupropion' }], fortolkninger: [], grupper: [] }
 
 function tekstMed(...brikker: Record<string, unknown>[]): Riktekstdokument {
   return rensDokument({

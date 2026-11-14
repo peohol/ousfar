@@ -7,7 +7,7 @@
  */
 import { klartekst, type Riktekstdokument } from '../faginnhold/riktekst'
 import { erObjekt, tall, tekst, tekstEllerNull } from '../ideer/lesing'
-import { adresse, fortolkningsnokkel, fortolkningsrute, stoffadresse, type Rute } from '../domain/rute'
+import { adresse, erId, fortolkningsnokkel, fortolkningsrute, gruppeadresse, stoffadresse, type Rute } from '../domain/rute'
 import { lesInnlegg, lesKommentarer, rensInnleggstekst, type Innlegg, type Kommentar } from '../traad/modell'
 
 /* --- Sidene ------------------------------------------------------------------- */
@@ -15,13 +15,22 @@ import { lesInnlegg, lesKommentarer, rensInnleggstekst, type Innlegg, type Komme
 /**
  * Siden trådene står på, slik databasen lagrer den: `stoff:<nøkkel>` for en
  * fagside, `fortolkning:<nøkkel>` for fortolkningen av en analytt og
- * `register:stoffregister` for helsiden med stoffregisteret. Samme form som
- * `intern.er_diskusjonsside()`.
+ * `register:stoffregister` for helsiden med stoffregisteret og `gruppe:<ID>`
+ * for siden til en gruppe. Samme form som `intern.er_diskusjonsside()`.
  */
-export type Diskusjonsside = `stoff:${string}` | `fortolkning:${string}` | `register:${string}`
+export type Diskusjonsside = `stoff:${string}` | `fortolkning:${string}` | `register:${string}` | `gruppe:${string}`
 
 const NOKKEL = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-const SIDE = /^(stoff|fortolkning|register):([a-z0-9]+(?:-[a-z0-9]+)*)$/
+const SIDE = /^(stoff|fortolkning|register|gruppe):([a-z0-9]+(?:-[a-z0-9]+)*)$/
+
+/** Siden til diskusjonene i en gruppe. */
+export const gruppeside = (gruppe: string): Diskusjonsside => `gruppe:${gruppe.toLowerCase()}`
+
+/** ID-en til gruppen siden hører til, eller `null` for en side utenfor gruppene. */
+export function gruppeForSide(side: Diskusjonsside): string | null {
+  const [, type, nokkel] = SIDE.exec(side) ?? []
+  return type === 'gruppe' && nokkel ? nokkel : null
+}
 
 /** Diskusjonssiden til helsiden med stoffregisteret. */
 export const STOFFREGISTERSIDE: Diskusjonsside = 'register:stoffregister'
@@ -31,12 +40,14 @@ export const ANDRE_DISKUSJONSSIDER: readonly Sidevalg[] = [{ side: STOFFREGISTER
 
 /**
  * Hvilken rekkevidde siden har, slik databasen avgjør det
- * (`intern.diskusjonsomfang`): fagsidene og stoffregisteret er felles,
- * fortolkningen hører til fagmiljøet som eier den. En tråd kan bare flyttes
- * mellom sider med samme rekkevidde. Appen bruker det bare til å vise valgene;
- * databasen kontrollerer selv.
+ * (`intern.gi_diskusjonsomfang`): fagsidene og stoffregisteret er felles,
+ * fortolkningen hører til fagmiljøet som eier den, og siden til en gruppe er
+ * gruppens alene. En tråd kan bare flyttes mellom sider med samme
+ * rekkevidde, så en tråd i en gruppe blir i gruppen. Appen bruker det bare til
+ * å vise valgene; databasen kontrollerer selv.
  */
-export function siderekkevidde(side: Diskusjonsside): 'felles' | 'fortolkning' {
+export function siderekkevidde(side: Diskusjonsside): 'felles' | 'fortolkning' | `gruppe:${string}` {
+  if (gruppeForSide(side)) return side as `gruppe:${string}`
   return side.startsWith('fortolkning:') ? 'fortolkning' : 'felles'
 }
 
@@ -45,11 +56,14 @@ export function diskusjonssideFor(rute: Rute): Diskusjonsside | null {
   if (rute.side === 'stoff') return NOKKEL.test(rute.stoff) ? `stoff:${rute.stoff}` : null
   if (rute.side === 'fortolkning' && rute.analytt) return NOKKEL.test(rute.analytt) ? `fortolkning:${rute.analytt}` : null
   if (rute.side === 'stoffregister') return STOFFREGISTERSIDE
+  if (rute.side === 'grupper' && rute.gruppe) return erId(rute.gruppe) ? gruppeside(rute.gruppe) : null
   return null
 }
 
 export function lesDiskusjonsside(verdi: unknown): Diskusjonsside | null {
-  return typeof verdi === 'string' && SIDE.test(verdi) ? (verdi as Diskusjonsside) : null
+  if (typeof verdi !== 'string' || !SIDE.test(verdi)) return null
+  const gruppe = gruppeForSide(verdi as Diskusjonsside)
+  return gruppe === null || erId(gruppe) ? (verdi as Diskusjonsside) : null
 }
 
 /** Adressen til siden tråden står på. */
@@ -57,6 +71,7 @@ export function adresseForSide(side: Diskusjonsside): string {
   const [, type, nokkel] = SIDE.exec(side) ?? []
   if (!nokkel) return '#/'
   if (type === 'register') return adresse(ruteForSide(side))
+  if (type === 'gruppe') return gruppeadresse(nokkel)
   return type === 'stoff' ? stoffadresse(nokkel) : `#/fortolkning/${nokkel}`
 }
 
@@ -64,6 +79,7 @@ export function adresseForSide(side: Diskusjonsside): string {
 export function ruteForSide(side: Diskusjonsside): Rute {
   const [, type, nokkel = ''] = SIDE.exec(side) ?? []
   if (type === 'register') return { side: 'stoffregister' }
+  if (type === 'gruppe') return { side: 'grupper', gruppe: nokkel }
   return type === 'stoff' ? { side: 'stoff', stoff: nokkel } : fortolkningsrute(nokkel)
 }
 
@@ -73,10 +89,14 @@ export interface Sidevalg {
   navn: string
 }
 
-/** Alle sidene med diskusjoner, delt i fagsidene og fortolkningene, hver alfabetisk. */
+/**
+ * Alle sidene med diskusjoner, delt i fagsidene, fortolkningene og gruppene
+ * den innloggede er med i, hver alfabetisk.
+ */
 export interface Diskusjonssider {
   fagsider: Sidevalg[]
   fortolkninger: Sidevalg[]
+  grupper: Sidevalg[]
 }
 
 /** Navnet på fortolkningssiden til en analytt. */
@@ -84,14 +104,18 @@ export function fortolkningssidenavn(analytt: { kode: string; visningsnavn?: str
   return `Fortolkning av ${analytt.visningsnavn || analytt.kode}`
 }
 
+/** Navnet på siden til en gruppe, slik den står over diskusjonene og i varslene. */
+export const gruppesidenavn = (gruppe: { navn: string }): string => `Gruppen ${gruppe.navn}`
+
 /**
- * Sidene en tråd kan stå på: fagsiden til hvert stoff og fortolkningen av hver
- * analytt. En nøkkel som ikke kan være en side, og en side som går igjen, tas
- * med én gang.
+ * Sidene en tråd kan stå på: fagsiden til hvert stoff, fortolkningen av hver
+ * analytt og siden til hver gruppe. En nøkkel som ikke kan være en side, og en
+ * side som går igjen, tas med én gang.
  */
 export function diskusjonssider(
   stoffer: readonly { slug: string; navn: string }[],
   analytter: readonly { kode: string; visningsnavn?: string | null }[],
+  grupper: readonly { id: string; navn: string }[] = [],
 ): Diskusjonssider {
   const valg = (par: [string, string][]): Sidevalg[] => {
     const sider = new Map<string, Sidevalg>()
@@ -101,6 +125,7 @@ export function diskusjonssider(
   return {
     fagsider: valg(stoffer.map((s) => [`stoff:${s.slug}`, s.navn])),
     fortolkninger: valg(analytter.map((a) => [`fortolkning:${fortolkningsnokkel(a.kode)}`, fortolkningssidenavn(a)])),
+    grupper: valg(grupper.map((g) => [gruppeside(g.id), gruppesidenavn(g)])),
   }
 }
 
@@ -109,9 +134,10 @@ export function diskusjonssider(
  * fagside som er ny siden lista ble laget), får nøkkelen sin.
  */
 export function navnPaaSide(sider: Diskusjonssider, side: Diskusjonsside): string {
-  const funnet = [...sider.fagsider, ...sider.fortolkninger, ...ANDRE_DISKUSJONSSIDER].find((s) => s.side === side)
+  const funnet = [...sider.fagsider, ...sider.fortolkninger, ...sider.grupper, ...ANDRE_DISKUSJONSSIDER].find((s) => s.side === side)
   if (funnet) return funnet.navn
   const [, type, nokkel = side] = SIDE.exec(side) ?? []
+  if (type === 'gruppe') return 'En gruppe'
   return type === 'fortolkning' ? fortolkningssidenavn({ kode: nokkel.toUpperCase() }) : nokkel
 }
 

@@ -40,6 +40,8 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'min_profil()': null,
   'mine_administrerte_fagmiljoer()': [],
   'mine_lesbare_fagmiljoer()': [],
+  // P6: gruppene den innloggede kan lese.
+  'mine_lesbare_grupper()': [],
   'mine_synlige_profiler()': [],
   'leser_alt_lokale_innhold()': false,
   'kan_endre_lokalt_innhold()': false,

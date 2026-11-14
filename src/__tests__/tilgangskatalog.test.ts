@@ -42,8 +42,10 @@ describe('katalogvaktene', () => {
     const signaturer = (await kallbareFunksjoner(db)).map((f) => f.signatur)
     // P2.0 og hjelperne for P2a–d svarer bare om den innloggede selv. P3:
     // administrasjonen av medlemskapene, som kontrollerer myndigheten selv
-    // (`medlemskapsmyndighet`), og et nytt fagmiljø for systemarkitektene.
+    // (`medlemskapsmyndighet`), og et nytt fagmiljø for systemarkitektene. P6:
+    // gruppene, som kontrollerer myndigheten i gruppen selv (`gruppemyndighet`).
     expect(signaturer.filter((s) => /fagmilj|medlemskap|systemrolle|tilgang/.test(s)).sort()).toEqual([
+      'avslutt_gruppemedlemskap(gruppe uuid, bruker uuid)',
       'avslutt_medlemskap(bruker uuid, fagmiljo uuid)',
       'gi_medlemskap(bruker uuid, fagmiljo uuid)',
       'har_aktivt_medlemskap()',
@@ -55,10 +57,11 @@ describe('katalogvaktene', () => {
       // P4b: fagmiljøet fortolkningen gjelder for den innloggede selv.
       'mitt_arbeidsfagmiljo()',
       'opprett_fagmiljo(navn text)',
+      'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
     ])
     for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_)/.test(s))) {
-      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|systemarkitekt)$/)
+      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|systemarkitekt)$/)
     }
   })
 

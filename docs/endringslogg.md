@@ -150,6 +150,7 @@ adressen, uten `#/` og uten seksjonen på siden, og gjelder også sidene under:
 | `sok` | Søkesiden i fagstoffet |
 | `stoffregister` | Stoffregisteret |
 | `verktoy` | Verktøyene: oversikten og hvert verktøy (`verktoy/bytte-antidepressiv`) |
+| `grupper` | Gruppene: oversikten og siden til hver gruppe |
 | `vinduer` | Vinduene som åpnes over sidene, som idéene, varslene og endringsloggen |
 | `hele appen` | Noe som står på alle sider, som toppmenyen, sidemenyen og diskusjonene, eller noe felles for dem |
 

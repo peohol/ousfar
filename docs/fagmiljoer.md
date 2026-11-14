@@ -32,8 +32,10 @@ avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). P4c
 har flyttet **analyttkatalogen** — kodene, metodene, måleområdene,
 søkeordene, modulene og koblingene til stoffene — og EtG/EtS-tekstene fra
 klientpakken til databasen per fagmiljø
-([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)). Alle
-bygger på de felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)). P6 gir
+**gruppene**: grupper i ett fagmiljø og på tvers, med egne diskusjoner bare
+medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
+([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
 
@@ -330,6 +332,91 @@ Planlagte oppgaver og handlingene bare for systemarkitektene.
 settes tilbake til forrige versjon i en ny migrasjon; kolonnene kan stå.
 Varslene om fortolkningen har fått gruppen per fagmiljø og beholder den.
 
+## Gruppene
+
+P6 (`supabase/migrations/20261114232000_grupper.sql`) gir grupper med egne
+diskusjoner. En gruppe hører til **ett fagmiljø** (`art = 'fagmiljo'`) eller
+går **på tvers** av fagmiljøene (`art = 'tverrfaglig'`). Det er ingen chat og
+ingen fildeling i gruppene (krever D6 og S5).
+
+**Tabellene.** `grupper` (navn, beskrivelse, art, fagmiljø, status `aktiv`
+eller `arkivert`) og `gruppemedlemskap` (rolle `medlem`, `moderator` eller
+`ansvarlig`; status `invitert`, `aktiv` eller `avsluttet`; høyst én gjeldende
+rad per gruppe og bruker). Som de andre tilgangstabellene: radsikkerhet uten
+regler og ingen rettigheter for nettleseren, alt føres i tilgangsloggen med
+grunnen, faste felter kan ikke endres, og ingenting slettes. Et medlemskap
+som avsluttes, får status `avsluttet` og står.
+
+**Hvem som er med.** Én definisjon, `intern.grupperolle(gruppe, bruker)`: et
+aktivt medlemskap i en aktiv gruppe, **og** at brukeren kan være med i
+gruppen nå (`intern.kan_vaere_med_i_gruppe`): aktivt medlemskap i gruppens
+fagmiljø for en gruppe i et fagmiljø, aktivt medlemskap i OUSFAR for en
+gruppe på tvers. Tilgangen regnes ut hver gang. Avsluttes medlemskapet i
+fagmiljøet, ser brukeren straks ingenting i gruppene der, uten at noe må
+ryddes; får hen medlemskapet igjen, er gruppene tilbake. De ansvarlige ser
+det som «Uten tilgang nå» i medlemslista.
+
+| Hvem | Lese gruppen | Moderere diskusjonene | Styre gruppen |
+| --- | --- | --- | --- |
+| Medlem | ja | nei | nei |
+| Moderator | ja | ja | nei |
+| Ansvarlig | ja | ja | ja |
+| Systemarkitekt | ja, alle | ja, alle | ja, alle |
+| Lokal administrator som ikke er med | nei | nei | nei |
+
+*Styre* er å invitere, endre roller, fjerne medlemmer, endre navnet og
+beskrivelsen og arkivere. En gruppe i et fagmiljø opprettes av en lokal
+administrator der; en gruppe på tvers bare av en systemarkitekt
+(`intern.gruppeopprettelsesavslag`). Den som oppretter, blir ansvarlig.
+
+**Ingen tilgang til et annet fagmiljø.** Gruppene gir bare tilgang til
+gruppens egne sider. Rekkevidden til alt annet er uendret: en bruker i B som
+er med i en gruppe sammen med A, leser fortsatt ingenting lokalt i A,
+verken faginnhold, fortolkning, tråder, kommentarer eller varsler derfra.
+
+**Diskusjonene.** Hver gruppe har én diskusjonsside, `gruppe:<ID>`, med de
+vanlige trådene, kategoriene, kommentarene, hjertene, varslene og lenkene
+(`docs/diskusjoner.md`). Databasen setter `omfang = 'gruppe'` og `gruppe_id`
+på tråden og kategorien, og radsikkerheten `rekkevidde` og funksjonene leser
+dem gjennom `intern.kan_lese_samhandling(fagmiljo, gruppe)`. En tråd kan
+aldri flyttes inn i eller ut av en gruppe. Varslene om en tråd i en gruppe
+har `gruppe_id` og går bare til dem som leser gruppen. Fjernes et medlem, mister hen med en
+gang trådene, kommentarene, varslene, søket og direktelenkene i gruppen; det
+hen har skrevet, blir stående.
+
+**Invitasjonene.** En ansvarlig inviterer med brukernavnet. Svaret er det
+samme for et brukernavn som ikke finnes og for en konto som ikke kan være med
+(`Fant ingen som kan inviteres med det brukernavnet.`), så skjemaet ikke kan
+brukes til å finne ut hvem som har konto. Den inviterte ser invitasjonen
+under «Grupper» i kontomenyen, med en prikk, og har ingen tilgang før den er
+godtatt. Medlemmene ser profilkortet til de inviterte.
+
+**Minst én ansvarlig.** En aktiv gruppe har alltid minst én aktiv ansvarlig.
+Operasjonene sier fra før noe skjer (`intern.gruppeavslag`, også grunnlaget
+for knappene), og en utsatt regel på tabellene stopper resten (23514). Den
+slår bare til når status eller rolle endres, så å slette en konto stoppes
+aldri av den.
+
+**Arkiv.** En ansvarlig kan arkivere gruppen. Da leser bare
+systemarkitektene den, og bare de kan åpne den igjen.
+
+**Operasjonene** (alle krever aktivt medlemskap, låser gruppens rad og gir
+samme svar når de alt er utført): `opprett_gruppe`, `endre_gruppe`,
+`arkiver_gruppe`, `inviter_til_gruppe`, `svar_paa_gruppeinvitasjon`,
+`sett_grupperolle` og `avslutt_gruppemedlemskap` (for seg selv: forlate
+gruppen eller avslå invitasjonen). Lesingen: `mine_grupper()` (gruppene,
+invitasjonene og hvor nye grupper kan opprettes), `gruppeoversikt(gruppe)`
+(medlemmene og handlingene) og `mine_lesbare_grupper()` (for
+radsikkerheten).
+
+**Idéene** er uendret (D8): felles for alle med aktivt medlemskap. Gruppene
+har ingen egne idéer.
+
+**Tilbakeføring.** Tabellene, kolonnene og funksjonene kan stå. En ny
+migrasjon kan ta grenen for grupper ut av `rekkevidde`-reglene og funksjonene
+(som da ser alt med `omfang = 'gruppe'` som ulesbart), eller arkivere alle
+gruppene.
+
 ## Aktivt medlemskap
 
 P2.0 (`supabase/migrations/20261114103000_aktivt_medlemskap.sql`): en
@@ -558,6 +645,7 @@ til:
 | Alle, for en systemarkitekt | Systemarkitekten kan lese alt (P0 §5.2) |
 | De aktive medlemmene i fagmiljøene man selv er aktivt medlem av | Eget fagmiljø (`intern.er_medlem_i`) |
 | Medlemmene, også de inviterte, i fagmiljøene man administrerer | De samme kontoene administrasjonen kan handle på (`intern.er_lokal_admin_i`) |
+| Medlemmene og de inviterte i gruppene man selv er med i nå | Medlemslista i gruppen ([Gruppene](#gruppene)) |
 | Den som står bak en hendelse i et av egne varsler man fortsatt kan lese | Varselet sier «Ada kommenterte …» |
 | Forfatteren av en tråd, kommentar eller idé man selv kan lese | Felles samhandlingspartnere |
 
