@@ -66,6 +66,8 @@ async function kall(person: Person | 'bareRollen', f: Funksjonsinngang): Promise
 }
 
 const avKontroll = (kontroll: string) => funksjoner.filter((f) => f.kontroll === kontroll)
+/** Systemrettighetene i område d (P2d); idéene og oppgavene (P2b, D8) testes i `samhandling`-testene. */
+const arkitektfunksjoner = () => avKontroll('systemarkitekt').filter((f) => omradeFor(f.signatur) === 'd')
 
 describe('den gamle adminrollen i området', () => {
   it('brukes ikke av noen funksjon eller radsikkerhetsregel i stoffregisteret og administrasjonen', async () => {
@@ -93,8 +95,8 @@ describe('den gamle adminrollen i området', () => {
 })
 
 describe('funksjonene som krever systemarkitekt', () => {
-  it('finnes, og er alle i stoffregisteret og administrasjonen', () => {
-    const navn = avKontroll('systemarkitekt').map((f) => f.navn)
+  it('finnes i stoffregisteret og administrasjonen', () => {
+    const navn = arkitektfunksjoner().map((f) => f.navn)
     expect(navn.sort()).toEqual(
       [
         'beslutt_fagsak',
@@ -109,13 +111,12 @@ describe('funksjonene som krever systemarkitekt', () => {
         'verktoysperrehistorikk',
       ].sort(),
     )
-    for (const f of avKontroll('systemarkitekt')) expect(omradeFor(f.signatur), f.signatur).toBe('d')
   })
 
   it('stopper vanlige brukere, lokale administratorer og den gamle adminrollen med 42501', async () => {
     const slapp: string[] = []
     for (const person of [...UTEN_RETTIGHETER, 'bareRollen'] as const) {
-      for (const f of avKontroll('systemarkitekt')) {
+      for (const f of arkitektfunksjoner()) {
         const feil = await kall(person, f)
         if (feil !== '42501') slapp.push(`${person}: ${f.signatur}: ${feil ?? 'svarte'}`)
       }
@@ -126,7 +127,7 @@ describe('funksjonene som krever systemarkitekt', () => {
   it('slipper systemarkitektene forbi kontrollen, også uten den gamle adminrollen', async () => {
     const stoppet: string[] = []
     for (const person of ARKITEKTER) {
-      for (const f of avKontroll('systemarkitekt')) {
+      for (const f of arkitektfunksjoner()) {
         // Prøveargumentene er uten mening, så funksjonen kan si nei til dem
         // etterpå; det som teller, er at den ikke sier nei til personen.
         if ((await kall(person, f)) === '42501') stoppet.push(`${person}: ${f.signatur}`)
