@@ -212,7 +212,7 @@ alle må holde. Kontooperasjonene selv (nytt passord, rolle) testes grundig i
 - **P1.2a (adminoperasjonene, slått sammen):** ga nettleseren én ny funksjon,
   `mine_kontohandlinger()`. Den er plassert i (d) og står i restlisten over.
   Reglene for (d) i `tilgangsomrader.ts` dekker alt med `fagmiljo`,
-  `medlemskap`, `systemrolle`, `tilgang`, `administrator`, `passord`, `konto`
+  `medlemskap`, `systemrolle`, `systemarkitekt`, `tilgang`, `administrator`, `passord`, `konto`
   og `rolle` i navnet; en ny funksjon i `public` som ingen regel treffer,
   stopper testen.
 - **P1.2b (utrulling av Edge-funksjonene, slått sammen):** ingen felles filer. En ny
