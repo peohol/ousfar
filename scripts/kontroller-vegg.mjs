@@ -48,6 +48,7 @@ export const APNE_MODULER = new Map(
       'src/auth/api.ts',
       'src/auth/okt.tsx',
       'src/auth/mellomlager.ts',
+      'src/auth/oktskifte.ts',
       'src/domain/tilgang.ts',
       'src/components/konto/Port.tsx',
     ],
