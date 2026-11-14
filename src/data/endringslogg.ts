@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.8',
+    dato: '2026-11-14',
+    sammendrag: 'Beskrivelsen av hver endring begynner nå med et kort sammendrag i vanlig språk',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. KI-agentene som utvikler og kontrollerer OUSFAR, skal nå begynne beskrivelsen av hver endring med et kort sammendrag i vanlig språk: hva som er gjort, hvorfor, og om et menneske må ta stilling til noe. Tekniske detaljer for kontrollen kan stå under.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.6',
     dato: '2026-11-13',
     sammendrag: 'Serverfunksjonene for brukeradministrasjon legges nå ut automatisk',

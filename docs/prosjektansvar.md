@@ -94,9 +94,12 @@ informasjonsutveksling.
 1. **Nøyaktig én prosjektetikett** på hver PR, også dokumentasjonsendringer og
    små feilrettinger: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`. Claude
    setter den når PR-en opprettes, etter formålet.
-2. **PR-beskrivelsen** følger malen (`.github/pull_request_template.md`): ansvarlig
-   prosjekt, avhengigheter til andre oppgaver eller PR-er, og mulige virkninger
-   utenfor prosjektets ansvarsområde.
+2. **PR-beskrivelsen** følger malen (`.github/pull_request_template.md`): øverst
+   et kort sammendrag i enkelt språk for mennesker (hva som er gjort, hvorfor, og
+   om en menneskelig systemarkitekt må ta stilling til noe), deretter ansvarlig
+   prosjekt, avhengigheter til andre oppgaver eller PR-er, mulige virkninger
+   utenfor prosjektets ansvarsområde og eventuelle tekniske detaljer for
+   kontrollen.
 3. **Den automatiske kontrollen** «Prosjektansvar»
    (`.github/workflows/prosjektansvar.yml`) består bare med nøyaktig én gyldig
    etikett, feiler med en kort forklaring ellers, og kjøres på nytt når etiketter
