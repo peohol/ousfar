@@ -387,6 +387,12 @@ dokumentene uansett må oppdateres; denne PR-en endrer bare rapportfilen.
 | Varsler, favoritter, innstillinger | **Personlig** | | Nei |
 | Kurateringsgrener, kildesaker, verktøysperrer | **Felles forvaltning** (systemarkitekt/Fag/Verktøy) | | Nei |
 
+**Gjennomført i P4a** for objektene og erklært for resten av ressursene;
+resultatet står i `docs/fagmiljoer.md`, «Rekkevidden». D4 er avgjort av
+OUSFAR Fag ([#374](https://github.com/peohol/ousfar/issues/374)):
+referanseområdene på fagsidene er felles, THC-syrens kurver og regelsett
+lokale.
+
 «Lokalt» og «det opprinnelige fagmiljøet» betyr her **OUS Klinisk
 farmakologi**: Peder har bestemt at alle nåværende fortolkningssystemer gjelder
 bare det fagmiljøet (D1). Uavklart innhold behandles som utilgjengelig for
@@ -594,7 +600,7 @@ systemarkitekter.
 | Port | Før | Krav |
 | --- | --- | --- |
 | S1 | P2 starter | P1.1, P1.2 og P4a ferdige; katalogtestene grønne; alle eksisterende objekter har rekkevidde |
-| S2 | Første medlem utenom systemarkitektene i et annet fagmiljø enn OUS Klinisk farmakologi. Gjelder konto, lesetilgang og fortolkning **samlet** | P2.0, P2(a–d), P3, P4a, P4b og P4c ferdige og testet: full negativ matrise A↔B grønn, også med gyldig token etter avsluttet medlemskap; ingen `security definer`-funksjon uten erklært kontroll; paritet for OUS Klinisk farmakologi; tydelig stopp uten egne regler; ingen lokale koder eller regler fra OUS i katalogen eller søket et annet fagmiljø ser |
+| S2 | Første medlem utenom systemarkitektene i et annet fagmiljø enn OUS Klinisk farmakologi. Gjelder konto, lesetilgang og fortolkning **samlet** | P2.0, P2(a–d), P3, P4a, P4b og P4c ferdige og testet; TDM-kortene og serumtabellene kontrollert for laboratoriespesifikke opplysninger (D4); full negativ matrise A↔B grønn, også med gyldig token etter avsluttet medlemskap; ingen `security definer`-funksjon uten erklært kontroll; paritet for OUS Klinisk farmakologi; tydelig stopp uten egne regler; ingen lokale koder eller regler fra OUS i katalogen eller søket et annet fagmiljø ser |
 | S3 | Avsluttet medlemskap og sperring i Auth tas i bruk (P3) | P2.0 ute; negative tester for direkte tabell- og RPC-kall med fortsatt gyldig token etter avslutning, også diskusjoner og søk |
 | S4 | Pilot med eksternt laboratorium | D5 (MFA), D7 (sikkerhetskopi/drift) og B9 avklart; uavhengig sikkerhetsgjennomgang |
 | S5 | Chat / filer | Egen personvernvurdering (D6) |
@@ -673,7 +679,7 @@ Hvert punkt har et anbefalt standardvalg. D1 og D2 er besvart av Peder
 | **D1** | Hva skal det opprinnelige fagmiljøet hete i appen? | **Besluttet:** «OUS Klinisk farmakologi». Alle nåværende fortolkningssystemer gjelder bare dette fagmiljøet. I tillegg opprettes «OUS Rettstoksikologi». Alle nåværende medlemmer unntatt `maxhag` tilhører OUS Klinisk farmakologi; `maxhag` tilhører OUS Rettstoksikologi | P1.1 |
 | **D2** | Bekreft at kontoene `peohol` og `maxhag` tilhører de tiltenkte personene, og si ja til at begge blir systemarkitekter | **Besluttet:** Peder bekrefter at `peohol` er hans konto og `maxhag` Max sin. Begge blir systemarkitekter, som i visjonen #363; tildelingen gjøres på konto-ID, ikke brukernavn | P1.1 (registrering), P1.2 (rettighetene tas i bruk) |
 | **D3** | Hva skjer med dagens øvrige administrator(er)? | Hver blir lokal administrator i sitt eget fagmiljø (der primærmedlemskapet er), ikke systemarkitekt, etter gjennomgang med Peder; P1.1 gjør dette som utgangspunkt (§8) | P2 |
-| **D4** | Er THC-kurvene/marginene og TDM-referanseområdene felles fagkunnskap eller laboratoriets valg? | Behandles som lokale til Fag har vurdert dem | P4b |
+| **D4** | Er THC-kurvene/marginene og TDM-referanseområdene felles fagkunnskap eller laboratoriets valg? | **Besluttet** av OUSFAR Fag 13.11.2026 ([#374](https://github.com/peohol/ousfar/issues/374)): referanseområdene felles uten lokal overstyring på fagsiden (lokale grenser i egne fortolkningsdata); THC-kurvene og -regelsettet lokale til deling er særskilt godkjent; TDM-kort og serumtabeller felles, kontrollert for laboratoriespesifikke opplysninger før S2 | P4b |
 | **D5** | Skal systemarkitekter og administratorer ha tofaktorinnlogging før eksterne brukere? | Ja | S4 |
 | **D6** | Regler for filer og chat (pasientdata, lagringstid, moderering) | Utsettes; filer og chat av til avklart | P7/P8 |
 | **D7** | Drift før pilot: sikkerhetskopi/gjenoppretting og kapasitet (prosjektet står på gratisplanen, og Peder har sagt nei til oppgradering nå) | Oppgradering eller annen dokumentert gjenoppretting vurderes før S4, ikke før | S4 |

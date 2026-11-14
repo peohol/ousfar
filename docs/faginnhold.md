@@ -43,6 +43,7 @@ kjernen og stegene ikke henter noe fra faginnholdet selv.
 | `supabase/migrations/*_farmakodynamikk_mekanismekort_*.sql` | Farmakodynamikktekstene gjort om til mekanismekort (2026-09-30; verktøyet som lagde dem, er fjernet) |
 | `src/faginnhold/mekanismer.ts` | Mekanismetypene, virkningene (trafikklyset), systemene målene hører til, og subtypene i målnavnene |
 | `supabase/migrations/*_scenarioregelsett*.sql`, `*_rusregler_import.sql`, `*_scenarioregler_lesing.sql` | Scenarioregelsettene for analytter som vurderes samlet, importen av rusmiddelreglene og lesingen fortolkningen gjør (`docs/scenarioregler.md`) |
+| `supabase/migrations/*_ressursomfang*.sql` | Rekkevidden til hvert objekt, felles eller lokal (`docs/fagmiljoer.md`) |
 | `src/faginnhold/modell.ts` | Formen på innholdet per objekttype, og typene appen bruker |
 | `src/faginnhold/lagring.ts`, `lesing.ts` | Kallene appen gjør for å endre og lese, og konflikter gjort om til en egen feil |
 | `src/faginnhold/paneler.ts` | Panelene 1–7 og formen på hver elementtype |

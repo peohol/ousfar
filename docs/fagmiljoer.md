@@ -9,10 +9,12 @@ i `docs/ousfar-nasjonal-p0-kartlegging.md` (§5–8); brukersystemet ellers i
 
 P1.1 har lagt grunnmuren: tabellene, vaktene og dagens kontoer fordelt på to
 fagmiljøer. P1.2a bruker dem for det første: **myndigheten over andres
-kontoer** (nytt passord og adminrolle, under). Ellers bygger ingen rettigheter
-på dem ennå: `er_admin()`, `profiles.role`, alle radsikkerhetsregler og
-funksjonene er som før. Rettighetene per fagmiljø kommer i P2, etter
-`ressursomfang` i P4a.
+kontoer** (nytt passord og adminrolle, under). P4a har gitt hvert objekt i
+faginnholdet en rekkevidde, felles eller lokal
+([Rekkevidden](#rekkevidden-ressursomfang)), men ingenting leser den ennå.
+Ellers bygger ingen rettigheter på dem: `er_admin()`, `profiles.role`, alle
+radsikkerhetsregler og funksjonene er som før. Rettighetene per fagmiljø
+kommer i P2.
 
 ## Fagmiljøene
 
@@ -39,7 +41,8 @@ Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 | `medlemskap` | Hvem som tilhører hvor: `status` (`aktiv`, `invitert`, `deaktivert`), `primaer`, `fra`/`til`. Høyst ett aktivt primærmedlemskap per konto og ett gjeldende per fagmiljø |
 | `systemroller` | Systemarkitektene, knyttet til konto-ID-en. Tilbakekalles med `tilbakekalt_kl` |
 | `fagmiljoadministratorer` | Lokale administratorer. Aktiv så lenge `til` står tom |
-| `tilgangslogg` | Hver endring i de fire tabellene over, med aktør, før og etter og begrunnelse |
+| `tilgangslogg` | Hver endring i de fire tabellene over og i `ressursomfang`, med aktør, før og etter og begrunnelse |
+| `ressursomfang` | Rekkevidden til hvert redigerbare objekt (P4a, under) |
 
 Alle ligger i `public` med radsikkerhet på. Nettleseren kan bare lese sine
 egne medlemskap og navnet på fagmiljøene den er aktivt medlem av; resten har
@@ -205,6 +208,74 @@ foran.
 `src/__tests__/kontomyndighet.test.ts` prøver tilfellene med et persongalleri
 i begge fagmiljøene, og `fagmiljoer.samtidighet.test.ts` to samtidige
 rollefjerninger mot ekte Postgres.
+
+## Rekkevidden (`ressursomfang`)
+
+Hvert objekt i `redigerbare_objekter` har nøyaktig én rad i `ressursomfang`:
+`felles`, eller `fagmiljo` med fagmiljøet det hører til. (`gruppe` er
+forberedt for P6, men avvist til gruppene finnes.) Klassifiseringen følger
+P0-rapporten §3 og beslutningen D4 fra OUSFAR Fag
+([#374](https://github.com/peohol/ousfar/issues/374)), etter objekttypen, og
+står i én regel, `intern.ressursomfang_for(objekt)`, som både
+tilbakefyllingen og nye objekter bruker. Regelen har typens navn.
+
+| Objekt | Rekkevidde |
+| --- | --- |
+| Fagside (`infoside`) | Felles |
+| Kort og tekst på en fagside (`innholdselement`), også referanseområdene, TDM-kortene og tabellene over serumkonsentrasjoner | Felles |
+| Referanse | Felles |
+| Laboratorieanalytt | OUS Klinisk farmakologi |
+| Intervallregelsett | OUS Klinisk farmakologi |
+| Scenarioregelsett (rusmodulene) | OUS Klinisk farmakologi |
+| Fortolkningskommentar, også THC-syretekstene | OUS Klinisk farmakologi |
+| THC-syreregelsettet: kurvene, måleusikkerheten, sikkerhetsmarginene og grensene | OUS Klinisk farmakologi |
+
+**D4 (#374).** Referanseområdene i «Viktige data» er felles og like for alle
+fagmiljøer, uten lokal overstyring på fagsiden. Et fagmiljøs egne
+vurderings- eller beslutningsgrenser hører hjemme i dets lokale
+fortolkningsdata og skal aldri erstatte det felles referanseområdet; skillet
+mellom dem lages i P4b, uten å endre dagens kliniske output. THC-syrens kurver
+og regelsett er lokale til en deling er særskilt og kildeforankret godkjent;
+motoren er felles. TDM-kortene og tabellene over serumkonsentrasjoner er
+felles, men kontrolleres for laboratoriespesifikke opplysninger før noe
+fagmiljø utenom OUS får tilgang (startporten S2).
+
+Reglene databasen håndhever:
+
+1. Et nytt objekt får rekkevidden etter regelen i samme transaksjon
+   (utløseren `redigerbare_objekter_ressursomfang`). En objekttype uten regel
+   stopper; en ny type må få en regel her først.
+2. Ingenting endres av seg selv etterpå: et lokalt objekt blir bare felles ved
+   at noen endrer raden. En rad satt for hånd har tom `regel`, og
+   tilbakefyllingen godtar den.
+3. Raden kan endres, men ikke fjernes, tømmes eller flyttes til et annet
+   objekt. Den forsvinner bare sammen med objektet, når det slettes for godt
+   (kontrollert ved slutten av transaksjonen).
+4. Hver endring føres i `tilgangslogg` (`ressursomfang.update`), med
+   begrunnelsen fra `ousfar.tilgangsgrunn`. Nye rader føres ikke; de følger av
+   regelen.
+5. Nettleseren har ingen tilgang til tabellen. P2 leser den gjennom egne
+   funksjoner.
+
+`supabase/migrations/20261113210100_ressursomfang_tilbakefylling.sql` ga
+objektene som fantes, rekkevidden etter regelen. Den tåler å kjøres på nytt,
+kontrollerer selv at hvert objekt har nøyaktig én rekkevidde lik regelens
+(utenom dem som er satt for hånd), og
+skriver antall per regel i loggen. Den kjøres også i testene
+(`src/__tests__/ressursomfang.test.ts`), mot objekter som finnes før
+strukturen.
+
+**Resten av ressursene.** Tabellene som ikke er objekter, og de statiske
+datafilene i klientpakken og repoet, har rekkevidden sin erklært i
+`src/__tests__/data/ressurskatalog.ts`: per objekt, avledet (av objektet,
+fagsiden eller sidenøkkelen), felles, lokal, personlig, felles forvaltning
+eller tilgang. Testen stopper en tabell, visning eller fil under `src/data/`
+og `originaldata/` uten erklæring, og en erklæring for noe som ikke finnes.
+Diskusjonene får rekkevidde per tråd først i P2b, avledet av sidenøkkelen;
+de lokale statiske filene flyttes til databasen i P4c.
+
+**Tilbakeføring.** Ingenting leser tabellen, så den kan stå. Utløserne kan
+tas bort i en ny migrasjon uten at noe annet endres.
 
 ## Katalogvaktene
 
