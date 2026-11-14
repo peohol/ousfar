@@ -78,7 +78,7 @@ export type Action =
   | { type: 'velg-band'; key: string }
   /** Stiller kontrollspørsmålet, i stedet for å kopiere med én gang. */
   | { type: 'spor'; kontroll: Kontroll }
-  | { type: 'velg-etg'; valg: EtgValg }
+  | { type: 'velg-etg'; valg: EtgValg | null }
   | { type: 'sett-metodefilter'; metode: string | null }
   | { type: 'tilbake' }
   /** Ut av analytten og tilbake til søket, med søket i behold — som når adressen går tilbake til `#/`. */

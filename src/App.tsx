@@ -718,6 +718,13 @@ function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
   const valgtValg = state.bandKey ? valgene.find((v) => v.key === state.bandKey) : undefined
   const rusModul = state.analyte ? rusModulFor(state.analyte) : undefined
   const etgAlternativ = state.etgValg ? etgAlternativer.find((a) => a.id === state.etgValg) : undefined
+  // Et valgt tilfelle reglene ikke har: mens de hentes eller ikke kunne
+  // hentes, vises valget av tilfelle med statusen deres, og har de det ikke
+  // (lenger), for eksempel etter en oppdatering, velges det på nytt.
+  const etgValgUtenTilfelle = state.etgValg !== null && !etgAlternativ
+  useEffect(() => {
+    if (etgValgUtenTilfelle && etgtilfeller?.status === 'klar') dispatch({ type: 'velg-etg', valg: null })
+  }, [etgValgUtenTilfelle, etgtilfeller, dispatch])
 
   /**
    * Steget som vises. Det henger etter `stage` i det korte øyeblikket knappene
@@ -957,7 +964,7 @@ function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
                       />
                     )}
 
-                    {vist === 'etg' && state.analyte && etgtilfeller && (
+                    {(vist === 'etg' || (vist === 'etg-paste' && etgValgUtenTilfelle)) && state.analyte && etgtilfeller && (
                       <EtgStep
                         analyte={state.analyte}
                         tilfeller={etgtilfeller}
