@@ -299,7 +299,7 @@ describe('synkroniseringen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
     leser = lagKjemileser(kall.klientFor(bruker))
@@ -461,7 +461,7 @@ describe('endepunktet', () => {
   const synkroniser = async () => ({ status: 'fullfort' as const, synk: 1, forbindelser: 0, hentet: 0, endret: 0, feilet: 0, konflikter: 0, strukturavvik: 0, uavklarte: [] })
 
   it('kjører for Vercels cron og for administratorer, og avviser alle andre', async () => {
-    const be = (init: RequestInit) => behandlePubchemSynk(new Request('https://ousfar/api/pubchem-synk', init), miljo, { synkroniser, adminsjekk: async (t) => t === 'admin' })
+    const be = (init: RequestInit) => behandlePubchemSynk(new Request('https://ousfar/api/pubchem-synk', init), miljo, { synkroniser, arkitektsjekk: async (t) => t === 'admin' })
     expect((await be({ headers: { authorization: 'Bearer hemmelig' } })).status).toBe(200)
     expect((await be({ method: 'POST', headers: { authorization: 'Bearer admin' } })).status).toBe(200)
     expect((await be({ headers: { authorization: 'Bearer feil' } })).status).toBe(401)

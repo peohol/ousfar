@@ -516,7 +516,7 @@ describe('endepunktet', () => {
 
   it('synkroniserer for Vercels ukentlige kall og for en administrator', async () => {
     const synkroniser = vi.fn(async (_valg: object) => ferdig)
-    const valg = { synkroniser, adminsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
+    const valg = { synkroniser, arkitektsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
     expect((await behandleCpicSynk(foresporsel('GET', 'hemmelig'), MILJO, valg)).status).toBe(200)
     expect(synkroniser).toHaveBeenLastCalledWith(expect.objectContaining({ utlostAv: 'cron' }))
     expect((await behandleCpicSynk(foresporsel('POST', 'admin-token'), MILJO, valg)).status).toBe(200)
@@ -525,7 +525,7 @@ describe('endepunktet', () => {
 
   it('avviser kall uten tilgang og uten oppkoblingen mot databasen, og gjør en feilet kjøring synlig', async () => {
     const synkroniser = vi.fn(async () => ferdig)
-    const valg = { synkroniser, adminsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
+    const valg = { synkroniser, arkitektsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
     expect((await behandleCpicSynk(foresporsel('GET'), MILJO, valg)).status).toBe(401)
     expect((await behandleCpicSynk(foresporsel('POST', 'hemmelig'), MILJO, valg)).status).toBe(401)
     expect((await behandleCpicSynk(foresporsel('GET', 'admin-token'), MILJO, valg)).status).toBe(401)

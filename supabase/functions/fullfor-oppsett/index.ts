@@ -14,7 +14,7 @@ import { avatarSti, navnFeil, normaliserNavn } from '../_delt/profil.ts'
 import { Avvist, endepunkt, tekstfelt } from '../_edge/kontekst.ts'
 
 Deno.serve(
-  endepunkt({ krevAdmin: false }, async ({ kropp, innlogget, admin }) => {
+  endepunkt(async ({ kropp, innlogget, admin }) => {
     const passord = tekstfelt(kropp, 'passord')
     const fornavn = normaliserNavn(tekstfelt(kropp, 'fornavn'))
     const etternavn = normaliserNavn(tekstfelt(kropp, 'etternavn'))

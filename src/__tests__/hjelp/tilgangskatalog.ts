@@ -69,7 +69,9 @@ export async function kallbareFunksjoner(db: PGlite): Promise<KallbarFunksjon[]>
   return rows
 }
 
-const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt)\s*\(/
+const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt|er_systemarkitekt|krev_systemarkitekt)\s*\(/
+const KALLER_ARKITEKTKONTROLL = /\b(krev_systemarkitekt|admin_aktor)\s*\(/
+const KALLER_REGISTERKONTROLL = /\bkrev_registerbruker\s*\(/
 const BRUKER_INNLOGGET = /\bauth\s*\.\s*uid\s*\(/
 
 /**
@@ -95,6 +97,12 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
     case 'admin-utvidet':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_ADMINKONTROLL.test(f.kilde) ? null : 'kaller ingen adminkontroll'
+    case 'systemarkitekt':
+      if (!f.definer) return 'er ikke security definer'
+      return KALLER_ARKITEKTKONTROLL.test(f.kilde) ? null : 'krever ikke systemarkitekt'
+    case 'stoffregister':
+      if (!f.definer) return 'er ikke security definer'
+      return KALLER_REGISTERKONTROLL.test(f.kilde) ? null : 'krever ikke rett til å endre stoffregisteret'
     case 'eier':
       if (!f.definer) return 'er ikke security definer'
       return BRUKER_INNLOGGET.test(f.kilde) ? null : 'ser ikke på den innloggede'

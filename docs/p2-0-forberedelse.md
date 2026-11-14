@@ -195,7 +195,7 @@ utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 | P2a | 5 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar; lokal admin i B leser, lagrer og publiserer A sitt utkast. Forutsetter `ressursomfang` (P4a) og D3 |
 | P2b | 6 | B-bruker får varsel om A sin publisering, leser og slår opp A sin fortolkningstråd, gir nytt navn til andres tråd, flytter en lokal tråd til en fagside; vanlig bruker rydder idéarkivet |
 | P2c | 1 | B-bruker leser rollen til en administrator i A |
-| P2d | 2 | Vanlig bruker endrer stoffregisteret; lokal admin leser datakildestatus |
+| P2d (holder alt) | 0 av 15 | Vanlig bruker og lokal admin i A og B endrer stoffregisteret, tømmer papirkurven, leser datakildestatus og kildesaker, setter verktøysperrer, styrer kurateringene og lager autoerstatt-regler; og at systemarkitekten og systemarkitekten med lokal admin i B beholder dem. Rettighetene appen viser, kommer fra `mine_rettigheter()` (`docs/fagmiljoer.md`, «Systemrettighetene») |
 | P1.1 (holder alt) | 0 av 7 | Lese andres medlemskap, gjøre seg selv til systemarkitekt eller lokal admin, utkast for vanlig bruker; og at systemarkitekt, lokal admin i eget fagmiljø og dobbeltmedlem fortsatt har tilgangen sin |
 | P1.2a (holder alt) | 0 av 6 | Uten aktivt medlemskap, tidligere admin og vanlig bruker får ingen kontohandlinger; lokal admin får nytt passord for en vanlig bruker i A, men ikke for et medlem som også hører til B; systemarkitekt kan endre rollen til en lokal admin |
 

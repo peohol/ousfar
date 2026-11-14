@@ -16,7 +16,10 @@ P2.0 krever **aktivt medlemskap** for alt
 ([Aktivt medlemskap](#aktivt-medlemskap)). Ellers bygger ingen rettigheter
 på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
 aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d, bygd på de
-felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)). P2d har
+gjort stoffregisteret, administrasjonen og datakildene til
+**systemrettigheter**: den gamle adminrollen gir dem ikke lenger
+([Systemrettighetene](#systemrettighetene)).
 
 ## Fagmiljøene
 
@@ -383,6 +386,35 @@ Systemarkitekten er «medlem» av alle fagmiljøer her, fordi rettighetsmatrisen
 migrasjonen selv; rettighetene endres i P2a–d. Testene står i
 `src/__tests__/rettighetshjelpere.test.ts`.
 
+## Systemrettighetene
+
+`supabase/migrations/20261114124500_systemrettigheter.sql` (P2d) gir det som
+gjelder hele OUSFAR, bare til systemarkitektene (P0 §5.2). Den gamle
+adminrollen (`profiles.role = 'admin'`) gir ingen av dem; `er_admin()` og
+`krev_admin()` står urørt for det P2a–c bytter ut.
+
+| Rettighet | Hvem | Kontroll |
+| --- | --- | --- |
+| Endre stoffregisteret (kategorier, plasseringer, arkiv, papirkurv, utkast) | Systemarkitektene; P5 legger til tildelte redaktører | `intern.har_registerrett`, `intern.krev_registerbruker` |
+| Slette for godt og tømme papirkurven, se utkast i registeret | Systemarkitektene | `intern.krev_systemarkitekt`, `intern.er_systemarkitekt` |
+| Datakildestatus, kildeovervåking og kildesaker, verktøysperrene, styring av kurateringene, autoerstatt-reglene | Systemarkitektene | `intern.krev_systemarkitekt`, `public.er_systemarkitekt()` i reglene |
+| Opprette brukere | Systemarkitektene og de lokale administratorene i standardfagmiljøet, der nye kontoer blir medlemmer | `intern.opprettelsesavslag`, kontrollert av `public.kontooperasjon_klarer_konto` under låsen (`intern.las_tilgang`) før Edge-funksjonen gjør noe |
+| Serverendepunktene i Vercel for en innlogget (synker, kjemi, kurateringer) | Systemarkitektene | `erSystemarkitekt` i `src/server/tilgang.ts`; jobbene uten bruker (cron, GitHub OIDC, agentnøklene) er som før |
+
+`intern.krev_systemarkitekt(melding)` krever aktivt medlemskap og
+systemarkitekt, og gir profilen tilbake; alle funksjonene i tabellen bruker
+den eller `intern.er_systemarkitekt` direkte. Edge-funksjonene slår ikke opp
+noen rolle (`endepunkt` i `supabase/functions/_edge/kontekst.ts`):
+myndigheten avgjøres i databasen i samme kall som handlingen.
+
+Appen viser menyer og knapper etter `public.mine_rettigheter()`
+(`{systemarkitekt, administrerer, stoffregister, opprett_bruker}`), som
+bygger på de samme avgjørelsene som funksjonene og hjelperne, og leses med
+`useRettigheter()` (`src/auth/rettigheter.tsx`). Det er et grensesnitt, ikke
+en kontroll; hver funksjon kontrollerer på nytt. Testene står i
+`src/__tests__/systemrettigheter.test.ts` og i P2d-radene i
+`tilgangsmatrise.test.ts`.
+
 ## Katalogvaktene
 
 `src/__tests__/tilgangskatalog.test.ts` kontrollerer databasen bygd av alle
@@ -407,6 +439,8 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
+| `stoffregister` | Krever rett til å endre stoffregisteret (`intern.krev_registerbruker`) |
+| `systemarkitekt` | Krever systemarkitekt for alt (`intern.krev_systemarkitekt` eller `kuratering.admin_aktor`); den gamle adminrollen gir ingenting |
 | `rekkevidde` | `security definer` som kontrollerer rekkevidden per fagmiljø og rettigheten per objekt, og kaller selv minst én av hjelperne for tilgang per fagmiljø (`REKKEVIDDEHJELPERE` i `src/__tests__/hjelp/tilgangskatalog.ts`, eller `mine_lesbare_fagmiljoer()`) |
 
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk

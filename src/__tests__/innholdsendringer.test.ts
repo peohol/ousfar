@@ -130,7 +130,7 @@ const delFor = (l: Logg, objekt: string) => delerFor(l, objekt)[0]
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   leser = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
 }, 120_000)
@@ -391,13 +391,13 @@ describe('delte referanser og kort som flyttes', () => {
 describe('stoffregisteret', () => {
   it('fører kategoriene og plasseringene, med navnene slik de var, og viser dem i begge loggene', async () => {
     const { side, slug } = await nyFagside('Registerstoff')
-    const [{ k: a }] = (await sql<{ k: string }>(leser, `select public.opprett_stoffkategori('Syntetisk A') as k`)) as [{ k: string }]
-    const [{ k: b }] = (await sql<{ k: string }>(leser, `select public.opprett_stoffkategori('Syntetisk B') as k`)) as [{ k: string }]
-    await sql(leser, 'select public.plasser_stoff($1, null, $2)', [slug, a])
-    await sql(leser, 'select public.plasser_stoff($1, $2, $3)', [slug, a, b])
-    await sql(leser, `select public.endre_stoffkategori($1, 'Syntetisk B2')`, [b])
-    await sql(leser, 'select public.arkiver_stoff($1, true)', [slug])
-    await sql(leser, 'select public.arkiver_stoff($1, false)', [slug])
+    const [{ k: a }] = (await sql<{ k: string }>(admin, `select public.opprett_stoffkategori('Syntetisk A') as k`)) as [{ k: string }]
+    const [{ k: b }] = (await sql<{ k: string }>(admin, `select public.opprett_stoffkategori('Syntetisk B') as k`)) as [{ k: string }]
+    await sql(admin, 'select public.plasser_stoff($1, null, $2)', [slug, a])
+    await sql(admin, 'select public.plasser_stoff($1, $2, $3)', [slug, a, b])
+    await sql(admin, `select public.endre_stoffkategori($1, 'Syntetisk B2')`, [b])
+    await sql(admin, 'select public.arkiver_stoff($1, true)', [slug])
+    await sql(admin, 'select public.arkiver_stoff($1, false)', [slug])
 
     const register = await logg(leser, { stoffregister: true })
     const hendelser = register.endringer.slice(0, 6).map((e) => e.hendelser!.map((h) => h.hendelse))
@@ -411,7 +411,7 @@ describe('stoffregisteret', () => {
     ])
     expect(register.endringer[2]!.hendelser![0]!.data).toMatchObject({ navn: 'Syntetisk B2', fra: 'Syntetisk B' })
     expect(register.endringer[3]!.hendelser![0]!.data).toMatchObject({ stoff: slug, kategorinavn: 'Syntetisk B' })
-    expect(register.endringer[3]).toMatchObject({ aktor: 'bruker', person: { fornavn: 'Lars' } })
+    expect(register.endringer[3]).toMatchObject({ aktor: 'bruker', person: { fornavn: 'Rita' } })
 
     const fagside = await logg(leser, { stoff: slug })
     expect(fagside.endringer[0]!.hendelser![0]!.hendelse).toBe('stoff_hentet_fra_arkivet')
@@ -420,14 +420,14 @@ describe('stoffregisteret', () => {
 
   it('fører en flytting opp eller ned blant søsknene som én hendelse, og ingenting når plassen er den samme', async () => {
     const opprett = async (navn: string, forelder: string | null = null) =>
-      ((await sql<{ k: string }>(leser, 'select public.opprett_stoffkategori($1, $2) as k', [navn, forelder])) as [{ k: string }])[0].k
+      ((await sql<{ k: string }>(admin, 'select public.opprett_stoffkategori($1, $2) as k', [navn, forelder])) as [{ k: string }])[0].k
     const forelder = await opprett('Syntetisk forelder')
     const forste = await opprett('Syntetisk en', forelder)
     await opprett('Syntetisk to', forelder)
     const tredje = await opprett('Syntetisk tre', forelder)
 
     const for_ = await antall('public.innholdsendringer')
-    await sql(leser, 'select public.flytt_stoffkategori($1, $2, 0)', [tredje, forelder])
+    await sql(admin, 'select public.flytt_stoffkategori($1, $2, 0)', [tredje, forelder])
     expect(await antall('public.innholdsendringer')).toBe(for_ + 1)
     const [endring] = (await logg(leser, { stoffregister: true })).endringer
     expect(endring!.hendelser).toEqual([
@@ -436,10 +436,10 @@ describe('stoffregisteret', () => {
         data: expect.objectContaining({ kategori: tredje, navn: 'Syntetisk tre', forelder: 'Syntetisk forelder', fra: 3, til: 1 }),
       }),
     ])
-    expect(endring).toMatchObject({ aktor: 'bruker', person: { fornavn: 'Lars' } })
+    expect(endring).toMatchObject({ aktor: 'bruker', person: { fornavn: 'Rita' } })
 
     // Samme plass som før: ingen endring.
-    await sql(leser, 'select public.flytt_stoffkategori($1, $2, 1)', [forste, forelder])
+    await sql(admin, 'select public.flytt_stoffkategori($1, $2, 1)', [forste, forelder])
     expect(await antall('public.innholdsendringer')).toBe(for_ + 1)
   })
 
@@ -454,7 +454,7 @@ describe('stoffregisteret', () => {
     const { slug } = await nyFagside('Gammelt stoff')
     await sql(admin, 'select public.slett_stoff($1)', [slug])
     await db.query(`update public.stoffstatus set endret_kl = now() - interval '40 days' where stoff = $1`, [slug])
-    await sql(leser, 'select public.rydd_stoffpapirkurven()')
+    await sql(admin, 'select public.rydd_stoffpapirkurven()')
 
     const [rydding] = await kall.fasit<{ aktor: string; agent: string }>(
       `select e.aktor, e.agent from public.innholdshendelser h join public.innholdsendringer e on e.id = h.endring_id

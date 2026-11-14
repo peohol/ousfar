@@ -7,13 +7,14 @@
  *  1. autentiser den innloggede brukeren
  *  2. fastslå bruker-ID-en fra JWT-en
  *  3. kontroller at kontoen har et aktivt medlemskap (P2.0), og slå opp
- *     adminstatus server-side, i profiltabellen
+ *     profilen server-side
  *  4. valider det som er sendt inn
  *  5. først da: gjør jobben med en klient som har forhøyede rettigheter
  *
- * Operasjonene på andres kontoer (`nytt-passord`, `sett-rolle`) slår ikke opp
- * adminstatusen her: myndigheten avhenger av hvem den gjelder, og avgjøres i
- * databasen med den innloggedes ID (`kontooperasjoner.ts`, `kontofunksjon`).
+ * Ingen rolle slås opp her. Den gamle adminrollen gir ingen myndighet (P2d):
+ * hva den innloggede får gjøre (opprette en bruker, gi nytt passord, endre
+ * rollen), avgjøres i databasen med den innloggedes ID, i samme kall som
+ * handlingen (`kontooperasjoner.ts`, `kontofunksjon`).
  *
  * `withSupabase` fra @supabase/server gjør de to første leddene og svarer
  * selv på forespørsler uten gyldig JWT. Den håndterer også CORS, slik at
@@ -45,16 +46,8 @@ export interface Endepunktinput {
   admin: SupabaseContext['supabaseAdmin']
 }
 
-/**
- * Bygger et endepunkt.
- *
- * `krevAdmin` slår opp rollen i profiltabellen — aldri i `user_metadata`, som
- * brukeren selv kan skrive til.
- */
-export function endepunkt(
-  oppsett: { krevAdmin: boolean },
-  handling: (input: Endepunktinput) => Promise<unknown>,
-): (request: Request) => Promise<Response> {
+/** Bygger et endepunkt. Profilen slås opp i profiltabellen — aldri i `user_metadata`, som brukeren selv kan skrive til. */
+export function endepunkt(handling: (input: Endepunktinput) => Promise<unknown>): (request: Request) => Promise<Response> {
   return withSupabase({ auth: 'user' }, async (request: Request, ctx: SupabaseContext) => {
     try {
       if (request.method !== 'POST') {
@@ -62,9 +55,6 @@ export function endepunkt(
       }
 
       const innlogget = await hentInnlogget(ctx)
-      if (oppsett.krevAdmin && innlogget.role !== 'admin') {
-        throw new Avvist('Handlingen krever at du er administrator.', 403)
-      }
 
       const resultat = await handling({
         kropp: await lesKropp(request),

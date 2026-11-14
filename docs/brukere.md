@@ -6,16 +6,18 @@ gjøre skal endres. Den kliniske delen av appen berøres ikke av noe her.
 ## Kort fortalt
 
 OUSFAR er lukket. Det finnes ingen registrering, ingen «glemt passord»-lenke
-og ingen e-post i det hele tatt. En administrator oppretter kontoen og gir
+og ingen e-post i det hele tatt. En systemarkitekt eller en lokal
+administrator i standardfagmiljøet oppretter kontoen og gir
 brukeren et midlertidig passord. Brukeren logger inn med **brukernavn og
 passord**, velger sitt eget passord med én gang, og er inne.
 
 Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det avgjør
-foreløpig bare hvem som kan gi nytt passord og endre adminrollen til hvem;
-ellers avgjøres rettighetene fortsatt av rollen `user`/`admin` alene. En
-systemarkitekt eller lokal administrator uten adminrollen ser derfor bare
-«Brukere» i adminmenyen, med knappene databasen tillater. Se «Fagmiljø og
-systemroller» under og `docs/fagmiljoer.md`.
+hvem som kan opprette brukere, gi nytt passord og endre adminrollen til hvem,
+og bare systemarkitektene kan endre stoffregisteret, se datakildene og styre
+appen (`docs/fagmiljoer.md`, «Systemrettighetene»). Adminmenyen viser det
+`mine_rettigheter()` svarer. Resten avgjøres foreløpig av rollen
+`user`/`admin`, til P2a–c bytter den ut. Se «Fagmiljø og systemroller» under
+og `docs/fagmiljoer.md`.
 
 ## Delene det består av
 

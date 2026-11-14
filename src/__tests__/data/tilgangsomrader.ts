@@ -29,7 +29,7 @@ export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
   ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
   ['d', /fagmiljo|medlemskap|systemrolle|systemarkitekt|tilgang|administrator|passord|konto|(sett|endre)_rolle/],
-  ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin/],
+  ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin|rettigheter/],
   [
     'a',
     /utkast|revisjon|objekt|regelsett|regler|kommentar|referans|infosider|innhold|scenari|thc_|laborator|analytt|stoff|sideversjon|bivirkning|kjemi|cpic|farmakogenetikk|legemid|interaksjon|preparat|virkestoff|sokedata|endringslogg|maleenhet|historikk/,

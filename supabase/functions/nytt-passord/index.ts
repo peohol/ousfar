@@ -17,7 +17,7 @@ import { brukerIdFelt, endepunkt } from '../_edge/kontekst.ts'
 import { kontofunksjon, settMidlertidigPassord } from '../_edge/kontooperasjoner.ts'
 
 Deno.serve(
-  endepunkt({ krevAdmin: false }, async ({ kropp, innlogget, admin }) => {
+  endepunkt(async ({ kropp, innlogget, admin }) => {
     const brukerId = brukerIdFelt(kropp)
     const parter = { aktor: innlogget.id, mal: brukerId }
 
