@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.3',
+    dato: '2026-11-14',
+    sammendrag: 'Dere ser navnet og bildet til dem dere samarbeider med, men ikke andres rolle',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Ingen endring i det dere ser i dag. Neste steg mot at flere laboratorier kan bruke OUSFAR: navnet og profilbildet til en annen bruker vises bare for kolleger i samme fagmiljø og for dem som møter hverandre i trådene, idéene og varslene.',
+      'Om en annen bruker er administrator eller ennå ikke har fullført oppsettet, ser bare administrasjonen av fagmiljøet. Brukerlista viser kontoene i fagmiljøene du administrerer.',
+    ],
+  },
+  {
     versjon: '1.130.2',
     dato: '2026-11-14',
     sammendrag: 'Felles byggeklosser for tilgang per fagmiljø, uten endring i appen',

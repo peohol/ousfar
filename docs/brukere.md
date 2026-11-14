@@ -58,8 +58,10 @@ Det er grunnen til at reservasjonen finnes.
 
 ## Hva den innloggede kan gjøre selv
 
-Radsikkerheten lar alle innloggede lese alle profiler, og skrive bare i sin
-egen rad. Kolonnerettighetene smalner det ytterligere inn: nettleseren har
+Andre profiler leses bare som profilkort (navn, brukernavn og bilde), og bare
+for dem man samhandler med; egen hele profil gis av `min_profil()`
+(`docs/fagmiljoer.md`, «Profiler og profilbilder»). Skriving går bare i egen
+rad, og kolonnerettighetene smalner det ytterligere inn: nettleseren har
 skriverett på `first_name`, `last_name` og `avatar_path`, og ingenting annet.
 En trigger avviser i tillegg endringer i `username`, `role`,
 `must_change_password` og `onboarding_completed` når det er `authenticated`
@@ -121,8 +123,9 @@ en time senere.
 ## Profilbilder
 
 Privat bøtte `avatarer`, én fast sti per bruker: `<bruker-id>/avatar.webp`.
-Alle innloggede kan se bildene gjennom signerte lenker; bare eieren kan
-skrive i sin egen mappe. Bildet beskjæres, roteres og komprimeres i
+Bildene vises med signerte lenker, og et bilde kan bare sees av dem som ser
+profilen som peker på det, og av eieren; bare eieren kan skrive i sin egen
+mappe. Bildet beskjæres, roteres og komprimeres i
 nettleseren til 512 × 512 WebP før det lastes opp.
 
 ## Innloggingsveggen

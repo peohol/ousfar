@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MutableRefObject } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import type { Profil } from '@delt/profil'
-import { hentAlleProfiler } from '../../auth/api'
+import type { Profilkort } from '@delt/profil'
+import { hentProfilkort } from '../../auth/api'
 import { hentOppgaver } from '../../ideer/api'
 import type { Oppgave } from '../../ideer/oppgaver'
 import { Button } from '../Button'
@@ -47,7 +47,7 @@ export function Oppgaver({
   // Siden i laget, og det som skrives på den, overlever en oppdatering av appen.
   const [visning, setVisning, visningGjenopprettet] = useBevart<Visning>('oppgaver', LISTE)
   const [oppgaver, setOppgaver] = useState<Oppgave[]>([])
-  const [profiler, setProfiler] = useState<Profil[]>([])
+  const [profiler, setProfiler] = useState<Profilkort[]>([])
   const [feil, setFeil] = useState<string | null>(null)
   const [apneSkuffer, setApneSkuffer] = useState<ReadonlySet<string>>(new Set())
   const vakt = useForlatvakt()
@@ -86,7 +86,7 @@ export function Oppgaver({
       setApneSkuffer(new Set())
     }
     void hentListe()
-    void hentAlleProfiler().then(setProfiler, () => undefined)
+    void hentProfilkort().then(setProfiler, () => undefined)
   }, [apen, oppgave, hentListe, nullstill])
 
   const gaaTil = (neste: Visning) => {

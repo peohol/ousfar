@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
-import { visningsnavn, type Profil } from '@delt/profil'
+import { visningsnavn, type Profil, type Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
 import { Avatar, type Avatarstorrelse } from '../konto/Avatar'
@@ -12,15 +12,15 @@ import { Avatar, type Avatarstorrelse } from '../konto/Avatar'
 interface Forfatterkontekst {
   meg: Profil
   admin: boolean
-  profiler: ReadonlyMap<string, Profil>
+  profiler: ReadonlyMap<string, Profilkort>
   lenker: ReadonlyMap<string, string>
 }
 
 const Kontekst = createContext<Forfatterkontekst | null>(null)
 
-export function Forfatterkilde({ profiler, children }: { profiler: readonly Profil[]; children: ReactNode }) {
+export function Forfatterkilde({ profiler, children }: { profiler: readonly Profilkort[]; children: ReactNode }) {
   const meg = useProfil()
-  const lenker = useAvatarlenker(profiler as Profil[])
+  const lenker = useAvatarlenker(profiler)
   const verdi = useMemo(
     () => ({ meg, admin: meg.role === 'admin', profiler: new Map(profiler.map((p) => [p.id, p])), lenker }),
     [meg, profiler, lenker],
@@ -35,7 +35,7 @@ export function useForfatterkontekst(): Forfatterkontekst {
 }
 
 /** Profilen til en forfatter. Den innloggede er alltid med, også før profilene er hentet. */
-export function useForfatter(id: string | null): Profil | null {
+export function useForfatter(id: string | null): Profilkort | null {
   const { meg, profiler } = useForfatterkontekst()
   if (id === null) return null
   return profiler.get(id) ?? (id === meg.id ? meg : null)

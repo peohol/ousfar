@@ -127,7 +127,7 @@ const visDiskusjon = vi.hoisted(() => vi.fn())
 
 vi.mock('../varsler/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => KARI }))
-vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI, OLA]) }))
+vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, OLA]) }))
 vi.mock('../components/ideer/idevisning', () => ({ visIde }))
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../components/diskusjoner/diskusjonsvisning', () => ({ visDiskusjon }))

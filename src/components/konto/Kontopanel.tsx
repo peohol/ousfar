@@ -80,7 +80,7 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
     try {
       const sti = bilde ? await lastOppAvatar(profil.id, bilde) : undefined
       settProfil(
-        await lagreEgenProfil(profil.id, {
+        await lagreEgenProfil(profil, {
           first_name: rentFornavn,
           last_name: rentEtternavn,
           ...(sti ? { avatar_path: sti } : {}),
