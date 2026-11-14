@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { hentMineKontohandlinger, type Kontohandlinger } from '../../auth/api'
 import { klient } from '../../auth/klient'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { useProfil } from '../../auth/okt'
@@ -42,10 +43,33 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
 }
 
 /**
+ * Om den innloggede har myndighet over andres kontoer uten den gamle
+ * adminrollen: en systemarkitekt eller lokal administrator med rollen `user`.
+ * Spørres bare når `aktiv`; et svar som feiler, gir ingen meny.
+ */
+function useKontomyndighet(aktiv: boolean, hent: () => Promise<ReadonlyMap<string, Kontohandlinger>>): boolean {
+  const [har, setHar] = useState(false)
+  useEffect(() => {
+    if (!aktiv) return
+    let gjeldende = true
+    ;(async () => hent())().then(
+      (handlinger) => gjeldende && setHar(handlinger.size > 0),
+      () => gjeldende && setHar(false),
+    )
+    return () => {
+      gjeldende = false
+    }
+  }, [aktiv, hent])
+  return aktiv && har
+}
+
+/**
  * Administratorenes egen meny i toppmenyen, til venstre for kontoen: brukerne,
  * driftstatusen for datakildene, kildeovervåkingen og nødstoppen for de
- * kliniske verktøyene, og autoerstatt-reglene i teksteditorene. Andre ser den
- * ikke. Den er et grensesnitt, ikke en tilgangskontroll: databasen og
+ * kliniske verktøyene, og autoerstatt-reglene i teksteditorene. En
+ * systemarkitekt eller lokal administrator uten den gamle adminrollen ser den
+ * med bare «Brukere», der vedkommende kan gi nytt passord eller endre roller
+ * etter myndigheten sin. Andre ser den ikke. Den er et grensesnitt, ikke en tilgangskontroll: databasen og
  * Edge-funksjonene slår opp rollen selv. Bør en datakilde ses over, eller
  * venter en faglig kildesak på beslutning (eller et mulig sikkerhetsproblem
  * vurderes), står det en prikk på knappen og på valget. Tekniske avvik i
@@ -56,8 +80,16 @@ export function Adminmeny({
   kuratering,
   kildelager,
   fagsaker,
-}: { leser?: Datakildeleser; kuratering?: Kurateringsklient; kildelager?: Kildeovervakingslager; fagsaker?: Fagsaklager } = {}) {
+  kontohandlinger = hentMineKontohandlinger,
+}: {
+  leser?: Datakildeleser
+  kuratering?: Kurateringsklient
+  kildelager?: Kildeovervakingslager
+  fagsaker?: Fagsaklager
+  kontohandlinger?: () => Promise<ReadonlyMap<string, Kontohandlinger>>
+} = {}) {
   const admin = useProfil().role === 'admin'
+  const bareBrukere = useKontomyndighet(!admin, kontohandlinger)
   const [panel, setPanel] = useBevart<Panel>('adminmeny', null)
   // Bare én endring per datakilde hentes; vurderingen er den samme som i panelet.
   const datakilder = useTilsyn(
@@ -93,7 +125,7 @@ export function Adminmeny({
   const kildevarsel = kilder.meldinger.length ? kilder.meldinger.join('; ') : undefined
   const varsel = [sesOver, kildevarsel].filter(Boolean).join('; ') || undefined
 
-  if (!admin) return null
+  if (!admin && !bareBrukere) return null
 
   return (
     <>
@@ -120,31 +152,39 @@ export function Adminmeny({
               <li>
                 <Menyvalg ikon="user" tekst="Brukere" onClick={apne('brukere')} />
               </li>
-              <li>
-                <Menyvalg ikon="reset" tekst="Datakilder" nytt={sesOver} onClick={apne('datakilder')} />
-              </li>
-              <li>
-                <Menyvalg ikon="oppgaver" tekst="Kurateringer" onClick={apne('kurateringer')} />
-              </li>
-              <li>
-                <Menyvalg ikon="refs" tekst="Kildeovervåking" nytt={kildevarsel} onClick={apne('kildeovervaking')} />
-              </li>
-              <li>
-                <Menyvalg ikon="lock" tekst="Kliniske verktøy" onClick={apne('verktoysperrer')} />
-              </li>
-              <li>
-                <Menyvalg ikon="edit" tekst="Autoerstatt" onClick={apne('autoerstatt')} />
-              </li>
+              {admin && (
+                <>
+                  <li>
+                    <Menyvalg ikon="reset" tekst="Datakilder" nytt={sesOver} onClick={apne('datakilder')} />
+                  </li>
+                  <li>
+                    <Menyvalg ikon="oppgaver" tekst="Kurateringer" onClick={apne('kurateringer')} />
+                  </li>
+                  <li>
+                    <Menyvalg ikon="refs" tekst="Kildeovervåking" nytt={kildevarsel} onClick={apne('kildeovervaking')} />
+                  </li>
+                  <li>
+                    <Menyvalg ikon="lock" tekst="Kliniske verktøy" onClick={apne('verktoysperrer')} />
+                  </li>
+                  <li>
+                    <Menyvalg ikon="edit" tekst="Autoerstatt" onClick={apne('autoerstatt')} />
+                  </li>
+                </>
+              )}
             </ul>
           )
         }}
       </Nedtrekksmeny>
       <Brukerliste apen={panel === 'brukere'} onLukk={lukk.brukere} />
-      <Datakilder apen={panel === 'datakilder'} onLukk={lukk.datakilder} />
-      <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukk.autoerstatt} />
-      <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukk.kurateringer} />
-      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} fagsaker={fagsaker} onNodstopp={() => setPanel('verktoysperrer')} onLukk={lukk.kildeovervaking} />
-      <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukk.verktoysperrer} />
+      {admin && (
+        <>
+          <Datakilder apen={panel === 'datakilder'} onLukk={lukk.datakilder} />
+          <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukk.autoerstatt} />
+          <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukk.kurateringer} />
+          <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} fagsaker={fagsaker} onNodstopp={() => setPanel('verktoysperrer')} onLukk={lukk.kildeovervaking} />
+          <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukk.verktoysperrer} />
+        </>
+      )}
     </>
   )
 }

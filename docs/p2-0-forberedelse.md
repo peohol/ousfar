@@ -104,13 +104,13 @@ bare prosjektets egne skjemaer.
 Fordelt på P2: (a) 37 tabeller og de 5 visningene, (b) 12, (c) 3 og de 2 i
 `storage`, (d) 7.
 
-### Funksjonene nettleseren kan kalle (123, hvorav 92 `security definer`)
+### Funksjonene nettleseren kan kalle (124, hvorav 93 `security definer`)
 
 Kontrollen hver har i dag, står i `src/__tests__/data/funksjonskontroller.ts`
 (31 `admin`, 27 `radsikkerhet`, 25 `innlogget`, 24 `felles-lesing`, 6 `eier`,
-6 `admin-utvidet`, 3 `offentlig`, 1 `utloser`). Fordelt på P2: (a) 47,
-(b) 43, (c) 3, (d) 30. De 27 som kjøres som den innloggede, arver
-tabellenes regler; de 92 andre leser forbi radsikkerheten og må kontrollere
+6 `admin-utvidet`, 3 `offentlig`, 1 `utloser`, 1 `kontomyndighet`). Fordelt på P2: (a) 47,
+(b) 43, (c) 3, (d) 31. De 27 som kjøres som den innloggede, arver
+tabellenes regler; de 93 andre leser forbi radsikkerheten og må kontrollere
 selv.
 
 ### Utenfor databasekatalogen
@@ -118,7 +118,7 @@ selv.
 | Inngang | Hvor | Til P2.0 |
 | --- | --- | --- |
 | Edge-funksjonen `fullfor-oppsett` | `supabase/functions/fullfor-oppsett` | Gjelder bare den innloggede selv. Bør kreve aktivt medlemskap, slik at en avsluttet konto ikke kan fullføre oppsettet |
-| Edge-funksjonene `opprett-bruker`, `nytt-passord`, `sett-rolle` | `supabase/functions/*`, felles kode i `_edge/kontekst.ts` | Herdes i P1.2a (tråd A eier koden og den felles myndighetsfunksjonen). P2.0 legger kravet om aktivt medlemskap i den felles innloggingskontrollen (`hentInnlogget`), etter at P1.2a er slått sammen |
+| Edge-funksjonene `opprett-bruker`, `nytt-passord`, `sett-rolle` | `supabase/functions/*`, felles kode i `_edge/kontekst.ts` | Herdet i P1.2a (slått sammen): `nytt-passord` og `sett-rolle` avgjøres i databasen av `intern.kontoavslag`, som alt krever systemarkitekt eller aktivt adminskap i et aktivt fagmiljø. `opprett-bruker` og `fullfor-oppsett` slår bare opp profilen. P2.0 legger kravet om aktivt medlemskap i den felles innloggingskontrollen (`hentInnlogget` i `endepunkt`), så det gjelder alle fire |
 | Edge-funksjonen `delt-test` (tidligere bare i produksjonen) | — | Undersøkt og fjernet i P1.2b; leste ingen data (`docs/edge-funksjoner.md`) |
 | Vercel-funksjonene for synker, kildeovervåking og kuratering | `api/*.ts`, `src/server/tilgang.ts` | Slipper inn innloggede via `er_admin()`, og dekkes derfor når `er_admin()` krever aktivt medlemskap. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
 | Varslene som lages av utløsere | `intern.varsle_publisering`, `intern.varsle_ny_ide` | Sender til **alle** profiler, også dem uten aktivt medlemskap. Etter P2.0 kan de ikke lese varslene, men mottakerlistene bør filtreres (P2b) |
@@ -142,7 +142,7 @@ rulles tilbake, og viser at det virker:
    27 funksjonene som kjøres som den innloggede, følger med.
 4. Kontrollen i de fire portene P0 §2.2 peker ut: `intern.krev_innlogget`,
    `intern.krev_registerbruker`, `intern.krev_admin` og `public.er_admin()`.
-   Det dekker 53 av de 92 `security definer`-funksjonene, også
+   Det dekker 53 av de 93 `security definer`-funksjonene, også
    `intern.krev_idevalg_admin` og alt bak `opprett_objekt`/`admin_aktor`.
 
 Prototypen viser at:
@@ -156,7 +156,7 @@ Prototypen viser at:
 - de syv aktive personene ser **nøyaktig de samme radene** som før, tabell for
   tabell.
 
-**Restlisten (39 funksjoner) som må få kontrollen én for én**, fordi de leser
+**Restlisten (40 funksjoner) som må få kontrollen én for én**, fordi de leser
 forbi radsikkerheten uten å gå gjennom en port. Testen krever at hver av dem
 står her, så lista holdes oppdatert:
 
@@ -168,6 +168,7 @@ står her, så lista holdes oppdatert:
 | Samhandling (b), bare innlogging | `direktelenke`, `ideoversikt`, `idetraad`, `oppgave`, `oppgaveoversikt`, `les_regelvarsler`, `rydd_idearkiv` |
 | Egne varsler og besøk (b) | `mine_varsler`, `arkiver_varsler`, `gjenopprett_varsler`, `merk_varsler_lest`, `merk_diskusjon_sett`, `merk_ide_sett` |
 | Hjelpere i reglene (b) | `diskusjon_er_apen`, `ide_er_apen` (svarer bare ja/nei, men kan kalles direkte) |
+| Myndighet over kontoer (d), fra P1.2a | `mine_kontohandlinger`. Holder alt: gir bare svar til en systemarkitekt eller en med aktivt adminskap i et aktivt fagmiljø (`intern.administrerte_fagmiljoer`), og operasjonene kontrollerer på nytt selv (tilgangsmatrisen viser det). Får likevel `krev_aktivt_medlemskap()` i P2.0, slik at alle innganger har samme kontroll og lista blir tom uten unntak |
 
 Når P2.0 bygges, byttes testen «ingen tabell og ingen security
 definer-funksjon kontrollerer aktivt medlemskap ennå» ut med at
@@ -187,7 +188,7 @@ testen følger det P2.0 velger.
 
 ## Tilgangsmatrisen
 
-`tilgangsmatrise.test.ts` har 46 scenarioer. Hvert har person, etappe,
+`tilgangsmatrise.test.ts` har 52 scenarioer. Hvert har person, etappe,
 utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 
 | Etappe | Hull i dag | Eksempler |
@@ -198,20 +199,24 @@ utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 | P2c | 1 | B-bruker leser rollen til en administrator i A |
 | P2d | 2 | Vanlig bruker endrer stoffregisteret; lokal admin leser datakildestatus |
 | P1.1 (holder alt) | 0 av 7 | Lese andres medlemskap, gjøre seg selv til systemarkitekt eller lokal admin, utkast for vanlig bruker; og at systemarkitekt, lokal admin i eget fagmiljø og dobbeltmedlem fortsatt har tilgangen sin |
+| P1.2a (holder alt) | 0 av 6 | Uten aktivt medlemskap, tidligere admin og vanlig bruker får ingen kontohandlinger; lokal admin får nytt passord for en vanlig bruker i A, men ikke for et medlem som også hører til B; systemarkitekt kan endre rollen til en lokal admin |
 
 Testen krever at utfallet i dag er det som står. Lukker en etappe et hull,
 feiler scenarioet med «Hullet er lukket: sett idag til …»; da settes `idag`
 lik `mal` i samme PR, som bevis. En etappe er ferdig når ingen av scenarioene
-dens har `idag` ulik `mal`. Nye scenarioer (fra P0 §4) legges til i lista;
-kontoglobale operasjoner (nytt passord, rolle) testes i P1.2a.
+dens har `idag` ulik `mal`. Nye scenarioer (fra P0 §4) legges til i lista.
+Etappene som er slått sammen (`HOLDER` i testen), skal ha scenarioer, og
+alle må holde. Kontooperasjonene selv (nytt passord, rolle) testes grundig i
+`kontomyndighet.test.ts` fra P1.2a.
 
 ## Avhengigheter til de parallelle oppgavene
 
-- **P1.2a (adminoperasjonene):** ingen felles filer. Ny funksjon i `public`
-  må, som før, føres i `funksjonskontroller.ts`, og her plasseres av en regel
-  i `tilgangsomrader.ts` (reglene for (d) dekker alt med `fagmiljo`,
-  `medlemskap`, `systemrolle`, `tilgang`, `administrator`, `passord` og `rolle` i
-  navnet). Persongalleriet kan brukes i P1.2a sine databasetester.
+- **P1.2a (adminoperasjonene, slått sammen):** ga nettleseren én ny funksjon,
+  `mine_kontohandlinger()`. Den er plassert i (d) og står i restlisten over.
+  Reglene for (d) i `tilgangsomrader.ts` dekker alt med `fagmiljo`,
+  `medlemskap`, `systemrolle`, `tilgang`, `administrator`, `passord`, `konto`
+  og `rolle` i navnet; en ny funksjon i `public` som ingen regel treffer,
+  stopper testen.
 - **P1.2b (utrulling av Edge-funksjonene, slått sammen):** ingen felles filer. En ny
   Edge-funksjon må nevnes i dette dokumentet (testen krever det).
 - **P4a (`ressursomfang`):** ingen felles filer. Får tabellen rettigheter for

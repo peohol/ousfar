@@ -28,7 +28,7 @@ export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
   ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|stoffavoritt/],
   ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
-  ['d', /fagmiljo|medlemskap|systemrolle|tilgang|administrator|passord|(sett|endre)_rolle/],
+  ['d', /fagmiljo|medlemskap|systemrolle|tilgang|administrator|passord|konto|(sett|endre)_rolle/],
   ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin/],
   [
     'a',

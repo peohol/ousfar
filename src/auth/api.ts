@@ -168,12 +168,32 @@ export function opprettBruker(brukernavn: string): Promise<Midlertidig> {
   return kall<Midlertidig>('opprett-bruker', { brukernavn })
 }
 
-/** Gir en bruker et nytt midlertidig passord. Krever administrator. */
+/** Gir en bruker et nytt midlertidig passord. Krever myndighet over kontoen — kontrolleres server-side. */
 export function nyttMidlertidigPassord(brukerId: string): Promise<Midlertidig> {
   return kall<Midlertidig>('nytt-passord', { brukerId })
 }
 
-/** Endrer rollen til en annen bruker. Krever administrator. */
+/** Hva den innloggede kan gjøre med en annens konto. */
+export interface Kontohandlinger {
+  nyttPassord: boolean
+  endreRolle: boolean
+}
+
+/**
+ * Kontoene den innloggede kan gi nytt passord til eller endre rollen til, med
+ * bruker-ID-en som nøkkel. Avgjøres i databasen etter systemroller, lokale
+ * administratorer og medlemskap (docs/fagmiljoer.md, «Myndighet over
+ * kontoer»). Bare for visningen; operasjonene kontrollerer på nytt selv. Tom
+ * for den som ikke har myndighet over noen.
+ */
+export async function hentMineKontohandlinger(): Promise<Map<string, Kontohandlinger>> {
+  const { data, error } = await klient().rpc('mine_kontohandlinger')
+  if (error) throw error
+  const rader = (data ?? []) as { bruker_id: string; nytt_passord: boolean; endre_rolle: boolean }[]
+  return new Map(rader.map((r) => [r.bruker_id, { nyttPassord: r.nytt_passord, endreRolle: r.endre_rolle }]))
+}
+
+/** Endrer rollen til en annen bruker. Krever systemarkitekt — kontrolleres server-side. */
 export async function settRolle(brukerId: string, rolle: Rolle): Promise<Profil> {
   const svar = await kall<{ profil: Profil }>('sett-rolle', { brukerId, rolle })
   return svar.profil

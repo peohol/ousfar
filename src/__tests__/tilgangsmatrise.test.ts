@@ -28,8 +28,11 @@ import { nyDatabase, som } from './hjelp/testdatabase'
 
 type Utfall = 'tilgang' | 'avvist'
 
-/** Etappen som skal gi målet (P0 §6.1); `P1.1` er kontroller som alt holder. */
-type Etappe = 'P1.1' | 'P2.0' | 'P2a' | 'P2b' | 'P2c' | 'P2d'
+/** Etappen som skal gi målet (P0 §6.1). */
+type Etappe = (typeof HOLDER)[number] | 'P2.0' | 'P2a' | 'P2b' | 'P2c' | 'P2d'
+
+/** Etappene som er slått sammen: kontrollene deres skal alt holde. */
+const HOLDER = ['P1.1', 'P1.2a'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -116,6 +119,16 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'leser andres medlemskap', person: 'vanligB', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.medlemskap where bruker_id = $1', [k.g.id.vanligA]) },
   { navn: 'gjør seg selv til systemarkitekt', person: 'adminA', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `insert into public.systemroller (bruker_id, rolle) values ($1, 'systemarkitekt')`, [k.g.id.adminA]) },
   { navn: 'gjør seg selv til lokal admin', person: 'vanligA', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [k.g.id.vanligA, k.g.fagmiljo.A]) },
+
+  // --- Kontroller fra P1.2a som alt holder (myndighet over kontoer) -------
+  // `mine_kontohandlinger()` krever selv et aktivt adminskap i et aktivt
+  // fagmiljø, eller systemarkitekt, før den gir noe.
+  ...(['utenMedlemskap', 'tidligereAdmin', 'vanligA'] as const).map((person): Scenario => (
+    { navn: 'ser kontoer den kan gi nytt passord eller ny rolle', person, etappe: 'P1.2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select bruker_id from public.mine_kontohandlinger()') }
+  )),
+  { navn: 'kan gi nytt passord til en vanlig bruker i eget fagmiljø', person: 'adminA', etappe: 'P1.2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select nytt_passord from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.vanligA]) },
+  { navn: 'kan gi nytt passord til et medlem som også hører til B', person: 'adminA', etappe: 'P1.2a', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select nytt_passord from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.dobbeltAB]) },
+  { navn: 'kan endre rollen til en lokal admin', person: 'systemarkitekt', etappe: 'P1.2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select endre_rolle from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.adminA]) },
 ]
 
 /** Scenarioene der målet ikke er nådd ennå, per etappe. */
@@ -199,7 +212,10 @@ describe('tilgangsmatrisen', () => {
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
     expect(Object.keys(hull).sort()).toEqual(['P2.0', 'P2a', 'P2b', 'P2c', 'P2d'])
-    expect(SCENARIOER.filter((s) => s.etappe === 'P1.1' && s.idag !== s.mal)).toEqual([])
+    for (const etappe of HOLDER) {
+      expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
+      expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])
+    }
     expect(new Set(SCENARIOER.map((s) => `${s.person}|${s.navn}`)).size).toBe(SCENARIOER.length)
   })
 })

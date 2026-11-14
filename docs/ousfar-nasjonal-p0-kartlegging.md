@@ -780,6 +780,10 @@ er `maxhag`, som er systemarkitekt og har tilgang til alt uansett. Etter S2 får
 andre medlemmer der tydelig stopp i fortolkningen inntil de har egne regler
 eller noe er delt eksplisitt med dem.
 
+**P1.2a (hierarkiet) er utført**, med reglene i `docs/fagmiljoer.md`
+(«Myndighet over kontoer»); utrullingen av Edge-funksjonene og `delt-test` er
+P1.2b.
+
 **Neste PR (P1.2, også før P2):** hierarki i `nytt-passord` og `sett-rolle`
 (ingen kan gi nytt passord til eller endre rollen til noen med like høy eller
 høyere myndighet, ingen fjerner siste admin; så lenge ingen har medlemskap i

@@ -15,6 +15,8 @@ import type { Tilgang } from '../domain/tilgang'
 const okt = vi.hoisted(() => ({
   tilgang: 'innlogging' as Tilgang,
   profil: null as Profil | null,
+  // Det databasen svarer på `mine_kontohandlinger` for den innloggede.
+  handlinger: new Map<string, { nyttPassord: boolean; endreRolle: boolean }>(),
 }))
 
 vi.mock('../auth/okt', () => ({
@@ -31,6 +33,7 @@ vi.mock('../auth/okt', () => ({
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/api', () => ({
   hentAlleProfiler: vi.fn(async () => BRUKERE),
+  hentMineKontohandlinger: vi.fn(async () => okt.handlinger),
   nyttMidlertidigPassord: vi.fn(async () => ({ brukernavn: 'ola.s', midlertidigPassord: 'kvist-mose-47-lind' })),
   opprettBruker: vi.fn(),
   settRolle: vi.fn(),
@@ -221,12 +224,25 @@ describe('porten', () => {
   })
 })
 
+const BEGGE = { nyttPassord: true, endreRolle: true }
+const BARE_PASSORD = { nyttPassord: true, endreRolle: false }
+
+/** Rendrer lista for `meg` med svaret databasen gir om myndigheten. */
+async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][]) {
+  okt.profil = meg
+  okt.handlinger = new Map(handlinger)
+  render(<Brukerliste apen onLukk={() => {}} />)
+  const lag = screen.getByRole('dialog', { name: 'Brukere' })
+  const rader = await within(lag).findAllByRole('listitem')
+  return { lag, rader }
+}
+
 describe('brukerlista', () => {
   it('viser rollen i tekst, hvem som må bytte passord, og handlinger med navnet i', async () => {
-    okt.profil = MEG
-    render(<Brukerliste apen onLukk={() => {}} />)
-    const lag = screen.getByRole('dialog', { name: 'Brukere' })
-    const rader = await within(lag).findAllByRole('listitem')
+    const { lag, rader } = await brukerlista(MEG, [
+      ['2', BEGGE],
+      ['3', BEGGE],
+    ])
     expect(rader.map((rad) => rad.querySelector('.brukerrad__merker')?.textContent)).toEqual([
       'Administrator',
       'Bruker',
@@ -242,6 +258,35 @@ describe('brukerlista', () => {
     expect(within(kvittering).getByText(/vises bare nå/)).toBeTruthy()
     await userEvent.click(within(kvittering).getByRole('button', { name: 'Jeg har notert passordet' }))
     await waitFor(() => expect(within(lag).queryByRole('alert')).toBeNull())
+  })
+
+  it('gir en systemarkitekt med vanlig brukerrolle knappene databasen tillater, men ikke «Opprett bruker»', async () => {
+    const arkitekt = profil('1', 'Anne', 'Admin')
+    const { lag, rader } = await brukerlista(arkitekt, [
+      ['2', BEGGE],
+      ['3', BEGGE],
+    ])
+    expect(await within(rader[1]!).findByRole('button', { name: 'Gjør til admin: Kari Nordmann' })).toBeTruthy()
+    expect(within(rader[2]!).getByRole('button', { name: 'Nytt passord for Ola Svendsen' })).toBeTruthy()
+    expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+  })
+
+  it('gir en lokal administrator uten adminrollen bare «Nytt passord», og bare der databasen tillater det', async () => {
+    const lokal = profil('1', 'Anne', 'Admin')
+    const { lag, rader } = await brukerlista(lokal, [['2', BARE_PASSORD]])
+    expect(await within(rader[1]!).findByRole('button', { name: 'Nytt passord for Kari Nordmann' })).toBeTruthy()
+    expect(within(lag).queryByRole('button', { name: /Gjør til admin|Fjern admin/ })).toBeNull()
+    expect(within(rader[2]!).queryAllByRole('button')).toEqual([])
+    expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+  })
+
+  it('viser ingen handlinger på egen rad, selv om svaret skulle ha med den innloggede', async () => {
+    const { rader } = await brukerlista(MEG, [
+      ['1', BEGGE],
+      ['2', BEGGE],
+    ])
+    await within(rader[1]!).findByRole('button', { name: 'Nytt passord for Kari Nordmann' })
+    expect(within(rader[0]!).queryAllByRole('button')).toEqual([])
   })
 })
 

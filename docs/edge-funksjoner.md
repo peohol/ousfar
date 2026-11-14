@@ -73,18 +73,17 @@ Kjøringene står under *Actions → Edge-funksjoner* i GitHub. Den starter:
 | `nei` | Bare kontroll og plan | `kontroll` eller `utrull` |
 | `ja` | Ruller ut det som avviker | `kontroll` eller `utrull` |
 
-Den står på `nei` til automatikken er prøvd (under).
+Den står på `ja`. Den ble slått på 2026-11-13, etter at automatikken var prøvd:
 
-### Ta automatikken i bruk
+1. Den første kontrollen på `main` viste at produksjonen kjørte det repoet
+   hadde: alle fire funksjonene var like repoet fil for fil.
+2. Etter P1.2a (#377, ny myndighetsmodell i `nytt-passord` og `sett-rolle`)
+   og migreringen planla kontrollen alle fire funksjonene, siden P1.2a også
+   endret de felles filene i `_edge/`. Den første utrullingen ble startet for
+   hånd (kjøring 43512866624): fire nye versjoner, og etterkontrollen var grønn.
 
-1. Etter sammenslåingen av denne utrullingen viser den første kontrollen at
-   produksjonen kjører det repoet har (det var tilfellet 2026-11-13: alle fire
-   funksjonene var like repoet fil for fil).
-2. Når P1.2a (ny myndighetsmodell i `nytt-passord` og `sett-rolle`) er slått
-   sammen og migreringen er ferdig, viser kontrollen hvilke funksjoner som
-   skal rulles ut. Planen kontrolleres mot PR-en, og den første utrullingen
-   startes for hånd med modus `utrull`. Etterkontrollen skal være grønn.
-3. Deretter settes `AUTOMATISK_UTRULLING: ja` i en egen, liten PR.
+Settes bryteren tilbake til `nei` (for eksempel mens noe undersøkes), går
+utrullingen tilbake til bare kontroll ved sammenslåinger.
 
 Går noe galt ved en utrulling, er rettingen å sette koden tilbake i en ny PR
 (for eksempel en `git revert`): utrullingen legger da ut den forrige versjonen,

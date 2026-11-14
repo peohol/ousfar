@@ -25,6 +25,8 @@ export const KONTROLLER = [
   'eier',
   /** Innlogget, men en administrator får gjøre eller se mer (`er_admin()`). */
   'admin-utvidet',
+  /** `security definer` som viser den innloggedes egen myndighet over kontoer (`intern.kontoavslag`). */
+  'kontomyndighet',
   /** Krever administrator (`er_admin()`, `krev_admin()` e.l.) for alt. */
   'admin',
 ] as const
@@ -122,6 +124,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_oppgave_utfort(oppgave uuid, endringslogg text)': 'admin',
   'merk_varsler_lest(varsler uuid[], til timestamp with time zone)': 'eier',
+  'mine_kontohandlinger()': 'kontomyndighet',
   'mine_varsler()': 'eier',
   'oppgave(oppgave uuid)': 'innlogget',
   'oppgaveoversikt()': 'innlogget',
