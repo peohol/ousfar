@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
 import { RettigheterKilde, useMineRettigheter } from './auth/rettigheter'
+import { redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
 import { nettleserlager } from './auth/mellomlager'
@@ -193,11 +194,14 @@ export default function App() {
   // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
   const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
   const regelvarsler = useMemo(() => lagRegelvarsellager(kallMot(klient())), [])
-  const faginnhold = useMemo<Faginnholdskilde>(
+  // Hva den innloggede får redigere: fagsidene (felles) og fortolkningen
+  // (lokalt), etter rettighetene i databasen (P2a).
+  const lokalEndringsrett = useLokalEndringsrett(profil.id)
+  const redigering = useMemo(() => redigeringsrett(rettigheter, lokalEndringsrett), [rettigheter, lokalEndringsrett])
+  const faginnholdsklienter = useMemo(
     () => ({
       leser: lagFaginnholdsleser(klient()),
       lager: lagFaginnholdslager(klient()),
-      kanRedigere: profil.role === 'admin',
       legemidler: lagLegemiddelleser(klient()),
       farmakogenetikk: lagFarmakogenetikkleser(klient()),
       cpic: lagCpicleserOmIBruk(klient()),
@@ -206,11 +210,15 @@ export default function App() {
       laboratorier: lagLableser(klient()),
       kuratering: lagKurateringsklient(klient()),
     }),
-    [profil.role],
+    [],
+  )
+  const faginnhold = useMemo<Faginnholdskilde>(
+    () => ({ ...faginnholdsklienter, kanRedigere: redigering.felles }),
+    [faginnholdsklienter, redigering.felles],
   )
   // Redigeringen av reglene og kommentarene en fortolkning gir, for
-  // administratorene, på en egen adresse under fortolkningen.
-  const redigererFortolkning = erRedigering(rute) && faginnhold.kanRedigere && state.analyte !== null
+  // administratorene i fagmiljøet, på en egen adresse under fortolkningen.
+  const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
   // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
   const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
@@ -336,12 +344,12 @@ export default function App() {
     hentScenarioreglerPaNytt()
   }, [hentPaNytt, hentThcPaNytt, hentScenarioreglerPaNytt])
 
-  // Redigeringen er bare for administratorene; for andre er adressen fortolkningen.
+  // Redigeringen er bare for dem med endringsrett; for andre er adressen fortolkningen.
   useEffect(() => {
-    if (erRedigering(rute) && !faginnhold.kanRedigere && rute.side === 'fortolkning') {
+    if (erRedigering(rute) && redigering.kjent && !redigering.lokalt && rute.side === 'fortolkning') {
       gaaTil({ side: 'fortolkning', analytt: rute.analytt }, { erstatt: true })
     }
-  }, [rute, faginnhold.kanRedigere, gaaTil])
+  }, [rute, redigering.kjent, redigering.lokalt, gaaTil])
 
   // Verktøyene vises bare for dem som skal se dem (`src/verktoy/synlighet.ts`);
   // for andre er adressen fortolkningen.
@@ -509,11 +517,11 @@ export default function App() {
    */
   const kanRedigeres = useMemo(() => {
     const analytt = state.analyte
-    if (!faginnhold.kanRedigere || !analytt) return false
+    if (!redigering.lokalt || !analytt) return false
     if (rusModulFor(analytt) || analytt.kode === THC_KODE) return true
     const { tilstand } = regler
     return tilstand.status === 'klar' && analytterForFortolkning(analytt, katalog).some((a) => tilstand.etterKode.has(a.kode))
-  }, [faginnhold.kanRedigere, state.analyte, regler, katalog])
+  }, [redigering.lokalt, state.analyte, regler, katalog])
 
   const settMetodefilter = useCallback((metode: string | null) => {
     dispatch({ type: 'sett-metodefilter', metode })
@@ -921,7 +929,7 @@ export default function App() {
                         side={endringsside}
                         sidenavn={sidenavn}
                         leser={endringsloggleser}
-                        admin={faginnhold.kanRedigere}
+                        admin={redigering.felles || redigering.lokalt}
                       />
                     </FaginnholdskildeProvider>
                   )}

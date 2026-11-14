@@ -379,7 +379,7 @@ describe('bivirkningene i databasen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    const admin = await opprettBruker(db, { brukernavn: 'syntetisk', fornavn: 'Syntetisk', etternavn: 'Redaktør', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'syntetisk', fornavn: 'Syntetisk', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     const kall = faginnholdskall(db, admin)
     await kall.opprett('infoside', { navn: 'Syntetisk teststoff', slug: 'syntetisk-teststoff' })
     await kall.opprett('infoside', { navn: 'Syntetisk annet stoff', slug: 'syntetisk-annet' })

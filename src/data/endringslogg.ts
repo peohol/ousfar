@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.6',
+    dato: '2026-11-14',
+    sammendrag: 'Fortolkningens regler og kommentarer hører til eget fagmiljø, og fagsidene endres av systemarkitektene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff', 'fortolkning/*/rediger'],
+    punkter: [
+      'Reglene og kommentarene i fortolkningen hører til fagmiljøet som har laget dem, og bare medlemmene der ser dem. For OUS Klinisk farmakologi er alt som før, og fortolkningen gir de samme svarene.',
+      'Fagsidene og referansene er felles for alle fagmiljøer. Til det finnes egne redaktører for det felles innholdet, er det bare systemarkitektene som kan endre og publisere dem, og redigeringen vises bare for dem.',
+      'Fortolkningen redigeres av administratorene i fagmiljøet den hører til, og av systemarkitektene. Utkast vises bare for dem som kan endre dem.',
+    ],
+  },
+  {
     versjon: '1.130.5',
     dato: '2026-11-14',
     sammendrag: 'Stoffregisteret, datakildene og styringen av appen er nå forbeholdt systemarkitektene',

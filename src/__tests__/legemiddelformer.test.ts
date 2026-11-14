@@ -169,7 +169,7 @@ describe('spørringen som lager listen', () => {
   beforeAll(async () => {
     const db = await nyDatabase()
     await synkroniserUtdrag(db)
-    const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     const lager = lagFaginnholdslager(faginnholdskall(db, admin).klientFor(admin))
 
     const kobling = async (side: string, fest_id: string, navn: string) =>

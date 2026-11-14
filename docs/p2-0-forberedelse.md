@@ -192,7 +192,7 @@ utfallet i dag (`idag`) og målet (`mal`) etter rettighetsmatrisen i P0 §5.2:
 | Etappe | Hull i dag | Eksempler |
 | --- | --- | --- |
 | P2.0 (holder alt) | 0 av 38 | Uten aktivt medlemskap: lese kommentar, tråd, direktelenke, idéoversikt, profiler, profilbilder, egne varsler, eget medlemskap, kildedata, endringsloggen, stoffregisteret; laste opp eget profilbilde, endre egen profil, gi hjerte, opprette tråd og kategori. Tidligere admin: lese og lagre utkast, lese datakildestatus. Og at medlem bare i B, dobbeltmedlem og systemarkitekt beholder tilgangen |
-| P2a | 5 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar; lokal admin i B leser, lagrer og publiserer A sitt utkast. Forutsetter `ressursomfang` (P4a) og D3 |
+| P2a (holder alt) | 0 av 17 | B-bruker og avsluttet A-medlem leser A sin lokale fortolkningskommentar, objektet, revisjonene, publiseringene, historikken og rekkevidden; lokal admin i B leser, lagrer, publiserer, gjenoppretter og oppretter i A; tidligere admin leser utkast. Og at vanlig bruker i A leser rekkevidden, lokal admin i A oppretter og publiserer eget, og systemarkitekten lagrer. Alle personene mot alle tabellene i `rekkevidde.test.ts` (`docs/fagmiljoer.md`, «Faginnholdet etter rekkevidden») |
 | P2b (holder alt) | 0 av 27 | Lukket: B-bruker får varsel om A sin publisering, leser, slår opp, kommenterer og gir hjerte i A sin fortolkningstråd; avsluttet A-medlem leser den; vanlig bruker gir nytt navn til andres tråd eller flytter en lokal tråd til en fagside; lokal admin i B skjuler i A sin tråd, og den gamle adminrollen skjuler på en fagside. Etter D8: vanlig bruker rydder idéarkivet eller leser oppgavene, lokal admin arkiverer en idé eller leser oppgavene. Holder: dobbeltmedlem, systemarkitekt (moderering, idéarkiv og oppgaver), lokal admin i egen fortolkning, og B-bruker på en felles tråd og en idé fra A |
 | P2c (holder alt) | 0 av 14 | Rollen og kontostatusen til andre; profilkortet til en i et annet fagmiljø uten samhandling, også som lokal admin, og gjennom et varsel om et annet fagmiljøs innhold; brukerlista uten å administrere, og med en konto i et annet fagmiljø. Og at eget fagmiljø, dobbeltmedlem, forfatteren av en tråd man kan lese (med bildet), systemarkitekten, egen hele profil og lokal admin i brukerlista beholder tilgangen (docs/fagmiljoer.md, «Profiler og profilbilder») |
 | P2d (holder alt) | 0 av 15 | Vanlig bruker og lokal admin i A og B endrer stoffregisteret, tømmer papirkurven, leser datakildestatus og kildesaker, setter verktøysperrer, styrer kurateringene og lager autoerstatt-regler; og at systemarkitekten og systemarkitekten med lokal admin i B beholder dem. Rettighetene appen viser, kommer fra `mine_rettigheter()` (`docs/fagmiljoer.md`, «Systemrettighetene») |
@@ -217,6 +217,6 @@ alle må holde. Kontooperasjonene selv (nytt passord, rolle) testes grundig i
   stopper testen.
 - **P1.2b (utrulling av Edge-funksjonene, slått sammen):** ingen felles filer. En ny
   Edge-funksjon må nevnes i dette dokumentet (testen krever det).
-- **P4a (`ressursomfang`):** ingen felles filer. Får tabellen rettigheter for
-  nettleseren, må den plasseres i `tilgangsomrader.ts`. Når rekkevidden finnes,
-  kan P2a-scenarioene bruke den direkte.
+- **P4a (`ressursomfang`):** ingen felles filer. Tabellen fikk rettigheter for
+  nettleseren i P2a og står i (a) i `tilgangsomrader.ts`; P2a-scenarioene
+  bruker rekkevidden direkte.

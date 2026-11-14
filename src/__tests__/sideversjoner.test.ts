@@ -88,7 +88,7 @@ async function nyReferanse(tittel: string) {
 beforeAll(async () => {
   db = await grunnlagsdatabase()
   await kjorMigrasjoner(db, { til: MIGRASJON })
-  admin = await opprettBruker(db, { brukernavn: 'versjonsadmin', fornavn: 'Vera', etternavn: 'Versjon', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'versjonsadmin', fornavn: 'Vera', etternavn: 'Versjon', rolle: 'admin', systemarkitekt: true })
   leser = await opprettBruker(db, { brukernavn: 'versjonsleser', fornavn: 'Lise', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   // En side som er publisert før sideversjonene kom til, og en som ikke er det.

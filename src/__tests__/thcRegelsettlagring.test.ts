@@ -124,7 +124,7 @@ async function nyKommentar(tekst: string, plassholdere: string[] = [], publiser 
 
 beforeAll(async () => {
   db = await nyDatabase({ til: IMPORT })
-  peder = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'P', rolle: 'admin' })
+  peder = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'P', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'vanlig.thc', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
   await kjorMigrasjoner(db, { fra: IMPORT })
   k = faginnholdskall(db, peder)

@@ -63,7 +63,7 @@ const kinetikk = (tittel: string, tekst: string) => ({ tittel, dokument: dokumen
 
 beforeAll(async () => {
   db = await nyDatabase()
-  const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+  const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   lager = lagFaginnholdslager(kall.klientFor(admin))

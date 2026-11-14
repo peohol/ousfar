@@ -27,7 +27,7 @@ let peder: string
 
 beforeAll(async () => {
   db = await nyDatabase({ til: IMPORT })
-  peder = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'P', rolle: 'admin' })
+  peder = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'P', rolle: 'admin', systemarkitekt: true })
   const vanlig = await opprettBruker(db, { brukernavn: 'vanlig.red', fornavn: 'Vera', etternavn: 'V', rolle: 'user' })
   await kjorMigrasjoner(db, { fra: IMPORT })
   const kall = faginnholdskall(db, peder)

@@ -11,18 +11,19 @@ P1.1 har lagt grunnmuren: tabellene, vaktene og dagens kontoer fordelt på to
 fagmiljøer. P1.2a bruker dem for det første: **myndigheten over andres
 kontoer** (nytt passord og adminrolle, under). P4a har gitt hvert objekt i
 faginnholdet en rekkevidde, felles eller lokal
-([Rekkevidden](#rekkevidden-ressursomfang)), men ingenting leser den ennå.
-P2.0 krever **aktivt medlemskap** for alt
-([Aktivt medlemskap](#aktivt-medlemskap)). P2b avgrenser diskusjonene,
-varslene og lenkene per fagmiljø ([Samhandlingen](#samhandlingen)). Ellers bygger ingen rettigheter
-på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
-aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d, bygd på de
-felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)). P2c
-har gjort det for profilene og profilbildene
-([Profiler og profilbilder](#profiler-og-profilbilder)). P2d har
+([Rekkevidden](#rekkevidden-ressursomfang)). P2.0 krever **aktivt
+medlemskap** for alt ([Aktivt medlemskap](#aktivt-medlemskap)). P2a lar
+rekkevidden styre **faginnholdet og fortolkningsressursene**: lokalt innhold
+leses bare i fagmiljøet det hører til, og utkast og endringer krever
+endringsrett til objektet
+([Faginnholdet etter rekkevidden](#faginnholdet-etter-rekkevidden)). P2b
+avgrenser diskusjonene, varslene og lenkene per fagmiljø
+([Samhandlingen](#samhandlingen)). P2c har gjort det for profilene og
+profilbildene ([Profiler og profilbilder](#profiler-og-profilbilder)). P2d har
 gjort stoffregisteret, administrasjonen og datakildene til
 **systemrettigheter**: den gamle adminrollen gir dem ikke lenger
-([Systemrettighetene](#systemrettighetene)).
+([Systemrettighetene](#systemrettighetene)). Alle bygger på de felles
+hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
 
@@ -262,8 +263,10 @@ Reglene databasen håndhever:
 4. Hver endring føres i `tilgangslogg` (`ressursomfang.update`), med
    begrunnelsen fra `ousfar.tilgangsgrunn`. Nye rader føres ikke; de følger av
    regelen.
-5. Nettleseren har ingen tilgang til tabellen. P2 leser den gjennom egne
-   funksjoner.
+5. Nettleseren kan bare lese, og bare rekkevidden til det den innloggede kan
+   lese (P2a): felles, og lokalt for fagmiljøene i
+   `public.mine_lesbare_fagmiljoer()`. Ingen kan skrive i tabellen fra
+   nettleseren.
 
 `supabase/migrations/20261113210100_ressursomfang_tilbakefylling.sql` ga
 objektene som fantes, rekkevidden etter regelen. Den tåler å kjøres på nytt,
@@ -283,8 +286,9 @@ Diskusjonene har fått rekkevidde per tråd i P2b, avledet av sidenøkkelen
 ([Samhandlingen](#samhandlingen)); de lokale statiske filene flyttes til
 databasen i P4c.
 
-**Tilbakeføring.** Ingenting leser tabellen, så den kan stå. Utløserne kan
-tas bort i en ny migrasjon uten at noe annet endres.
+**Tilbakeføring.** Reglene i faginnholdet (P2a) slår opp i tabellen; den må
+stå så lenge de gjør. Utløserne kan tas bort i en ny migrasjon uten at noe
+annet endres.
 
 ## Samhandlingen
 
@@ -414,7 +418,7 @@ brukeren får gjøre.
 
 Systemarkitekten er «medlem» av alle fagmiljøer her, fordi rettighetsmatrisen
 (P0 §5.2) lar systemarkitekten lese alt. Ingenting er tatt i bruk av
-migrasjonen selv; rettighetene endres i P2a–d. Testene står i
+migrasjonen selv; rettighetene endres i P2a–d (faginnholdet: under). Testene står i
 `src/__tests__/rettighetshjelpere.test.ts`.
 
 ## Profiler og profilbilder
@@ -522,6 +526,163 @@ bygger på de samme avgjørelsene som funksjonene og hjelperne, og leses med
 en kontroll; hver funksjon kontrollerer på nytt. Testene står i
 `src/__tests__/systemrettigheter.test.ts` og i P2d-radene i
 `tilgangsmatrise.test.ts`.
+
+## Faginnholdet etter rekkevidden
+
+`supabase/migrations/20261114133000_rekkevidde_faginnhold.sql` (P2a) lar
+rekkevidden i `ressursomfang` styre hvem som leser og endrer objektene i
+faginnholdet: fagsidene med kortene og referansene (felles), og
+laboratorieanalyttene, regelsettene og kommentarene fortolkningen bruker
+(lokale). Det følger rettighetsmatrisen i P0-rapporten §5.2, med rollene som
+finnes i dag:
+
+| Hvem | Felles publisert | Eget lokalt publisert | Et annet fagmiljøs lokale | Utkast | Endre og publisere |
+| --- | --- | --- | --- | --- | --- |
+| Vanlig bruker | Ja | Ja | Nei | Nei | Nei |
+| Lokal administrator | Ja | Ja | Nei | Eget lokalt | Eget lokalt |
+| Systemarkitekt | Ja | Ja | Ja | Alt | Alt |
+| Uten aktivt medlemskap | Nei | Nei | Nei | Nei | Nei |
+
+Felles innhold endres bare av systemarkitektene til felles redaktører finnes
+(P5); lokale redaktører kommer også i P5. Den gamle adminrollen kreves ikke
+for faginnholdet og gir ingenting alene: en systemarkitekt eller lokal
+administrator uten den (som `maxhag`) har sine rettigheter, og en med bare
+rollen har ingen (`er_admin()` og `krev_admin()` står urørt for resten av
+appen). Kliniske regler, verdier og tekster er ikke endret, og ingen data
+er flyttet.
+
+**Rettigheten per objekt.** Tre hjelpere bygger på
+[hjelperne for tilgang per fagmiljø](#hjelperne-for-tilgang-per-fagmiljø):
+
+| Funksjon | Svarer |
+| --- | --- |
+| `intern.kan_lese_objekt(objekt, bruker)` | Rekkevidden kan leses (`intern.kan_lese_omfang`). Nei uten rekkevidde |
+| `intern.kan_endre_objekt(objekt, bruker)` | Lokalt: `intern.er_lokal_admin_i` i fagmiljøet. Felles (og grupper): systemarkitekt |
+| `public.leser_alt_lokale_innhold()` | Om den innloggede kan lese hvert fagmiljø som har lokalt innhold (`intern.er_medlem_i`). Snarvei for radsikkerhetsreglene; svarer bare om den innloggede |
+| `public.kan_endre_lokalt_innhold()` | Om den innloggede har endringsrett til noe av det lokale innholdet, i fagmiljøet det hører til (`intern.kan_endre_omfang`, ett oppslag per rekkevidde). Appen viser redigeringen av fortolkningen etter den; svarer bare om den innloggede |
+| `intern.krev_endringsrett(objekt, ny)` | Stopper en innlogget uten endringsrett: PT404 «Fant ikke objektet.» når objektet ikke kan leses (samme svar som for et objekt som ikke finnes), ellers 42501. Serverprosessene uten innlogget bruker (migrasjonene, kurateringsagentene, jobbene) berøres ikke |
+
+**Skriveveien.** Porten er `intern.krev_redaktor()` i stedet for
+`intern.krev_admin()`: et aktivt medlemskap og endringsrett til noe
+(`intern.har_endringsrett_noe`: systemarkitekt eller lokal administrator).
+Den gjelder `lagre_utkast`, `publiser_utkast`, `gjenopprett_revisjon`,
+`slett_referanse`, `opprett_utkast`, `valider_scenarioregelsett` og de tre
+`lagre_*regelsett`, og gir forfatteren som før. All lagring, publisering, gjenoppretting og sletting låser
+utkastet gjennom `intern.laas_utkast`, også publiseringen fra en
+kurateringsgren; der kontrolleres endringsretten først, så et fremmed objekt
+heller ikke gir en konflikt (PT409) som røper at det finnes. Et nytt objekt
+kontrolleres i `intern.opprett_objekt_som`, etter at det har fått
+rekkevidden etter regelen: en administrator i B kan ikke lage et objekt som
+hører til A, og en lokal administrator kan ikke lage en fagside eller en
+referanse. Regelsettene som lagres sammen med kommentarene
+(`lagre_intervallregelsett`, `lagre_scenarioregelsett`,
+`lagre_thc_regelsett`), kontrollerer regelsettet før kommentarene.
+
+**Lesingen.** Hver tabell i faginnholdet (ressurskatalogens tabeller per
+objekt, og `referansekoblinger`) har to endringer:
+
+- Den begrensende regelen `rekkevidde` for `authenticated`: raden hører til
+  et objekt den innloggede kan lese.
+- De tillatende reglene som slapp utkastene (og revisjoner som aldri er
+  publisert) gjennom for den gamle adminrollen (`er_admin()`), slipper dem nå
+  gjennom bare med endringsrett til objektet: `public.kan_se_utkast()`
+  (systemarkitekt eller lokal administrator, med eller uten rollen) og
+  endringsretten til objektet raden hører til. Ellers er de som før.
+  (`objektpubliseringer` har ingen utkast.) Kravet står i den tillatende
+  regelen og ikke i en egen begrensende, så planleggeren ser det samme som
+  før for dem uten endringsrett.
+
+Reglene slår opp rekkevidden på primærnøkkelen i `ressursomfang`, utenom
+snarveiene under «Ytelse», og bruker
+`public.mine_lesbare_fagmiljoer()`, `public.mine_administrerte_fagmiljoer()`
+og `public.er_systemarkitekt()`, som regnes ut én gang per spørring.
+Visningene (`objektstatus`, `objekthistorikk`, `objektutgaver`,
+`referansebruk`) er `security_invoker` og arver dem. `innholdsendringer`
+leses direkte bare av systemarkitektene, `innholdshendelser` bare for objekter
+den innloggede kan lese (systemarkitektene ser disse to og
+`slettede_referanser` også uten den gamle adminrollen), og
+`analyttkoblede_stoffer` bare av medlemmene i fagmiljøet dagens fortolkning
+hører til (`public.leser_analyttkoblingene()`: OUS Klinisk farmakologi, D1)
+og systemarkitektene. Tabellen har bare stoffet; koblingene får fagmiljøet
+sitt i P4b, og til da ser ikke et annet fagmiljø dem, heller ikke med egne
+analytter. `public.les_endringslogg` (`security definer`)
+viser bare objektene den innloggede kan lese, og utkastene bare med
+endringsrett til alle sidens objekter. De andre lesefunksjonene for
+faginnholdet (`les_stoff`, `les_kommentarer`, `les_intervallregelsett` og de
+andre) kjøres som den innloggede, så reglene gjelder. Fagsidefunksjonene som
+går forbi radsikkerheten (`les_sideversjon`, `les_sideversjoner`,
+`les_bivirkninger`), leser bare publisert felles innhold; stoffregisterets
+utkast (`les_stoffregister`) er bare for systemarkitektene
+([Systemrettighetene](#systemrettighetene)).
+
+**Appen** viser redigeringen av fagsidene bare for systemarkitektene, og
+redigeringen av fortolkningen for administratorene som har endringsrett i
+fagmiljøet den hører til (`public.kan_endre_lokalt_innhold()`: lokal
+administrator der eller systemarkitekt). Å administrere et annet fagmiljø
+gir den ikke. Databasen avgjør; appen viser bare det brukeren får gjøre.
+Svaret gjelder fortolkningen samlet, fordi den i dag hører til ett
+fagmiljø; når fagmiljøene får hver sin fortolkning (P4b), må appen spørre
+per modul.
+
+**Kjent grense til P4b.** Et regelsett kan peke på kommentarer i et annet
+fagmiljø (ID-er i regelinnholdet). I dag hører alt lokalt innhold til OUS
+Klinisk farmakologi, så det skjer ikke; P4b lager nøklene og lesingen per
+fagmiljø, og må hindre slike pekere.
+
+**Ytelse.** Målt i testdatabasen i minnet med syntetiske fagsider i
+produksjonens størrelse, dagens regelsett og produksjonens arbeidsminne
+(`src/__tests__/ytelse/rekkeviddeytelse.test.ts`, median av 5 kall, 14.11.2026).
+Testdatabasen kjører Postgres i WebAssembly med én tråd, så tidene er
+lengre enn i produksjonen; det er forholdet som teller:
+
+| Kall | Før P2a | Etter P2a |
+| --- | --- | --- |
+| `les_stoff`, publisert, vanlig bruker | 10 ms | 19 ms |
+| `les_stoff`, utkast, systemarkitekt | 10 ms | 18 ms |
+| `les_stoffer`, publisert, vanlig bruker | 555 ms | 568 ms |
+| `les_referanser`, publisert, vanlig bruker | 166 ms | 203 ms |
+| `les_intervallregelsett`, publisert, vanlig bruker | 4 ms | 7 ms |
+| `les_intervallregelsett`, utkast, lokal administrator | 3 ms | 8 ms |
+| `les_kommentarer`, publisert, vanlig bruker | 76 ms | 120 ms |
+| `les_scenarioregler`, publisert, vanlig bruker | 67 ms | 118 ms |
+| `les_endringslogg`, en analytt, vanlig bruker | 134 ms | 127 ms |
+| `les_endringslogg`, en fagside, systemarkitekt | 1870 ms | 1738 ms |
+
+Tidene varierer med 20–40 % mellom kjøringene. Reglene koster noen
+millisekunder per kall, og kommentarene og scenarioreglene (som leses én gang
+når fortolkningen åpnes) tar rundt 1,6 ganger så lang tid. Det kommer av at
+planleggeren ikke kjenner svarene fra hjelperne på forhånd og velger en
+annen rekkefølge for sammenføyningene, ikke av oppslag per rad. To snarveier
+holder kostnaden nede: den som kan lese alt lokalt innhold som finnes
+(`public.leser_alt_lokale_innhold()`: systemarkitektene, og i dag alle i OUS
+Klinisk farmakologi), slipper oppslaget per rad, og uten endringsrett til noe
+(`public.kan_se_utkast()`) slås endringsretten ikke opp. Den første målingen,
+uten snarveiene, ga 2–6 ganger lengre tid for kommentarene, scenarioreglene og
+referansene, og en egen begrensende regel for utkastene ga rundt 2 ganger
+for kommentarene og scenarioreglene. En lokal administrator som ikke er
+systemarkitekt, får ikke lenger utkastene av fagsidene (`les_stoffer` med
+utkast: 543 ms før, 2 ms etter), fordi felles utkast bare er for
+systemarkitektene.
+
+**Tester.** `src/__tests__/rekkevidde.test.ts` bygger persongalleriet med
+felles innhold, dagens regelsett og et regelsett og to kommentarer flyttet til
+B, og prøver: at hver tabell har reglene; at hver person ser nøyaktig fasiten
+i hver tabell (det personen så før P2a, regnet med reglene fjernet i en
+transaksjon som rulles tilbake og med utkastene for alle med endringsrett til
+noe, deretter med bare det personen kan lese og utkastene bare med
+endringsrett), og at en vanlig bruker i A og systemarkitekten ser det
+samme som før; skriveveiene for hver rolle, også med et annet fagmiljøs ID og
+en ID som ikke finnes; og endringsloggen og kommentarlesingen. Matrisen i
+`tilgangsmatrise.test.ts` har P2a-scenarioene som `avvist` i dag.
+
+**Tilbakeføring.** En ny migrasjon som fjerner reglene `rekkevidde`, setter
+de tillatende reglene i faginnholdet tilbake til `er_admin()`, fjerner
+regelen på `ressursomfang` og rettigheten nettleseren fikk der, og setter `intern.laas_utkast`,
+`intern.opprett_objekt_som`, `public.les_endringslogg` og de tre
+`lagre_*regelsett` tilbake til definisjonene i migrasjonene før. Hjelperne
+per objekt, `public.leser_alt_lokale_innhold()` og
+`public.kan_endre_lokalt_innhold()` fjernes til slutt (appen leser da ingen
+rett til å redigere fortolkningen, og viser ingen redigering).
 
 ## Katalogvaktene
 

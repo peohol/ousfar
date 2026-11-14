@@ -94,6 +94,15 @@ export const REKKEVIDDEHJELPERE = [
   'krev_moderering',
   // P2c: profilene (supabase/migrations/*_profiler_dataminimering.sql).
   'synlige_profiler',
+  // P2a: rettigheten per objekt, bygd på de tre over.
+  'kan_lese_objekt',
+  'kan_endre_omfang',
+  'kan_endre_objekt',
+  'krev_endringsrett',
+  // P2a: porten til endringene i faginnholdet, og opprettingen gjennom den.
+  'har_endringsrett_noe',
+  'krev_redaktor',
+  'opprett_objekt',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

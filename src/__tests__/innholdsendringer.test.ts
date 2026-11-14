@@ -177,7 +177,7 @@ describe('en lagring i appen', () => {
   })
 
   it('bruker ikke en annen brukers handling, og tåler en ugyldig oppsummering', async () => {
-    const annen = await opprettBruker(db, { brukernavn: 'annen.admin', fornavn: 'Anne', etternavn: 'Annen', rolle: 'admin' })
+    const annen = await opprettBruker(db, { brukernavn: 'annen.admin', fornavn: 'Anne', etternavn: 'Annen', rolle: 'admin', systemarkitekt: true })
     const { side, kort } = await nyFagside()
     const operasjon = crypto.randomUUID()
     await kall.rpc(admin, 'lagre_utkast', { objekt: kort, forventet_revisjon: 1, innhold: kortinnhold(side, 'A') }, { 'x-far-endring': operasjon })
@@ -704,7 +704,7 @@ describe('endringene fra før loggen fantes', () => {
     // har syntetiske navn, så de virkelige kurateringene i migrasjonene etterpå
     // ikke finner dem.
     const eldre = await nyDatabase({ til: LOGGMIGRASJON })
-    const redaktor = await opprettBruker(eldre, { brukernavn: 'kurator', fornavn: 'Kari', etternavn: 'Kurator', rolle: 'admin' })
+    const redaktor = await opprettBruker(eldre, { brukernavn: 'kurator', fornavn: 'Kari', etternavn: 'Kurator', rolle: 'admin', systemarkitekt: true })
     const vanlig = await opprettBruker(eldre, { brukernavn: 'vanlig', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
     const k = faginnholdskall(eldre, redaktor)
     const kuratering = async (kilde: string, arbeid: (kall: (f: string, a: string) => Promise<string>) => Promise<void>) =>
@@ -749,7 +749,7 @@ describe('endringene fra før loggen fantes', () => {
 
   it('settes sammen av revisjonene og publiseringene etter tidspunkt og person', async () => {
     const eldre = await nyDatabase({ til: LOGGMIGRASJON })
-    const redaktor = await opprettBruker(eldre, { brukernavn: 'redaktor', fornavn: 'Eli', etternavn: 'Eldre', rolle: 'admin' })
+    const redaktor = await opprettBruker(eldre, { brukernavn: 'redaktor', fornavn: 'Eli', etternavn: 'Eldre', rolle: 'admin', systemarkitekt: true })
     const vanlig = await opprettBruker(eldre, { brukernavn: 'vanlig', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
     const k = faginnholdskall(eldre, redaktor)
     const side = await k.opprett('infoside', { navn: 'Eldre stoff' })

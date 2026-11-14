@@ -79,7 +79,7 @@ async function registrer(type: string): Promise<string> {
 
 beforeAll(async () => {
   db = await nyDatabase({ til: STRUKTUR })
-  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   lager = lagFaginnholdslager(faginnholdskall(db, admin).klientFor(admin))
 
   // Objektene som finnes før P4a.
@@ -216,16 +216,20 @@ describe('vaktene', () => {
     ])
   })
 
-  it('gir ikke nettleseren noen tilgang til tabellen', async () => {
-    const { rows } = await db.query<{ rolle: string; tilgang: boolean }>(
-      `select r as rolle, has_table_privilege(r, 'public.ressursomfang', 'select, insert, update, delete') as tilgang
+  it('lar nettleseren bare lese, fra P2a, og bare rekkevidden til det den innloggede kan lese', async () => {
+    const { rows } = await db.query<{ rolle: string; lese: boolean; skrive: boolean }>(
+      `select r as rolle, has_table_privilege(r, 'public.ressursomfang', 'select') as lese,
+              has_table_privilege(r, 'public.ressursomfang', 'insert, update, delete, truncate') as skrive
        from unnest(array['anon', 'authenticated']) r`,
     )
     expect(rows).toEqual([
-      { rolle: 'anon', tilgang: false },
-      { rolle: 'authenticated', tilgang: false },
+      { rolle: 'anon', lese: false, skrive: false },
+      { rolle: 'authenticated', lese: true, skrive: false },
     ])
-    expect(await feilFra(() => som(db, admin, (tx) => tx.query('select * from public.ressursomfang')))).toMatchObject({ code: '42501' })
+    // Testens administrator er medlem av OUS Klinisk farmakologi og ser alt; hva andre ser, prøver rekkevidde.test.ts.
+    const sett = await som(db, admin, async (tx) => (await tx.query('select * from public.ressursomfang')).rows.length)
+    expect(sett).toBe((await db.query('select * from public.ressursomfang')).rows.length)
+    expect(await feilFra(() => som(db, admin, (tx) => tx.query(`update public.ressursomfang set regel = null`)))).toMatchObject({ code: '42501' })
   })
 })
 

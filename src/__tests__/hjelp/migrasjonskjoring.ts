@@ -86,9 +86,10 @@ const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_vir
  * Det testdatabasen får i stedet for en migrasjon som bare kjøres i
  * produksjonen, når sluttilstanden trengs videre. Tilbakefyllingen av
  * fagmiljøene ga hver konto som fantes, et aktivt primærmedlemskap; her får
- * kontoene testene har laget før fagmiljøene, det i standardfagmiljøet.
- * Uten det ville de stått uten aktivt medlemskap, og databasen gitt dem
- * ingenting (P2.0). `fagmiljoer.test.ts` kjører selve tilbakefyllingen.
+ * kontoene testene har laget før fagmiljøene, det i standardfagmiljøet, og
+ * administratorene blir lokale administratorer der og systemarkitekter, så
+ * de fortsatt kan endre alt faginnhold (P2a). Uten det ville de stått uten
+ * aktivt medlemskap, og databasen gitt dem ingenting (P2.0). `fagmiljoer.test.ts` kjører selve tilbakefyllingen.
  */
 const ERSTATNING_I_TESTENE: Readonly<Record<string, string>> = {
   fagmiljoer_tilbakefylling: /* sql */ `
@@ -98,6 +99,15 @@ const ERSTATNING_I_TESTENE: Readonly<Record<string, string>> = {
     select p.id, f.id, true
     from public.profiles p cross join public.fagmiljoer f
     where f.standard and not exists (select 1 from public.medlemskap m where m.bruker_id = p.id);
+    -- Administratorene testene har laget før fagmiljøene, kan fortsatt endre
+    -- alt faginnhold (P2a): lokal administrator i standardfagmiljøet, slik
+    -- dagens administratorer ble det (D3), og systemarkitekt.
+    insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id)
+    select p.id, f.id
+    from public.profiles p cross join public.fagmiljoer f
+    where f.standard and p.role = 'admin';
+    insert into public.systemroller (bruker_id, rolle)
+    select p.id, 'systemarkitekt' from public.profiles p where p.role = 'admin';
     commit;
   `,
 }

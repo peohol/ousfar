@@ -18,9 +18,16 @@ export interface Testbruker {
   rolle: Rolle
   /**
    * Gjør kontoen til systemarkitekt (`public.systemroller`), som det som
-   * gjelder hele OUSFAR krever siden P2d; den gamle adminrollen gir det ikke.
+   * gjelder hele OUSFAR krever siden P2d, og endringer i faginnholdet siden
+   * P2a (felles innhold endres bare av systemarkitektene); den gamle
+   * adminrollen gir det ikke.
    */
   systemarkitekt?: boolean
+  /**
+   * Gjør kontoen til lokal administrator i det primære fagmiljøet, som det
+   * lokale faginnholdet (fortolkningen) krever siden P2a.
+   */
+  lokalAdmin?: boolean
 }
 
 /**
@@ -42,8 +49,25 @@ export async function opprettBruker(db: PGlite, bruker: Testbruker): Promise<str
        where id = $1`,
       [id, bruker.fornavn, bruker.etternavn, bruker.rolle],
     )
+    // En database bygd til før fagmiljøene har ingen av tabellene; der gir
+    // den gamle adminrollen alt, og tilbakefyllingen gjør kontoen til
+    // systemarkitekt og lokal administrator når resten kjøres.
+    const { rows: tabeller } = await tx.query<{ finnes: boolean }>(
+      `select to_regclass('public.systemroller') is not null as finnes`,
+    )
+    if (!tabeller[0]!.finnes) return id
+    if (bruker.lokalAdmin || bruker.systemarkitekt) {
+      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Testbruker med tilganger (syntetisk)', true)`)
+    }
+    if (bruker.lokalAdmin) {
+      await tx.query(
+        `insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id)
+         select m.bruker_id, m.fagmiljo_id from public.medlemskap m
+         where m.bruker_id = $1 and m.primaer and m.status = 'aktiv'`,
+        [id],
+      )
+    }
     if (bruker.systemarkitekt) {
-      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Systemarkitekt i testene (syntetisk)', true)`)
       await tx.query(`insert into public.systemroller (bruker_id, rolle) values ($1, 'systemarkitekt')`, [id])
     }
     return id

@@ -416,7 +416,7 @@ describe('funksjonstesten', () => {
   beforeAll(async () => {
     db = await nyDatabase()
     await synkroniserUtdrag(db)
-    admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'kuratortest', fornavn: 'Kurator', etternavn: 'Test', rolle: 'user' })
     kall = faginnholdskall(db, admin)
     const lager = lagFaginnholdslager(kall.klientFor(admin))
@@ -531,7 +531,7 @@ describe('funksjonstesten: kjemiske grunndata og laboratorieanalysene', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: 'kuratortest', fornavn: 'Kurator', etternavn: 'Test', rolle: 'user' })
     const kall = faginnholdskall(db, admin)
     const lager = lagFaginnholdslager(kall.klientFor(admin))
