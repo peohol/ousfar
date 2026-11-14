@@ -7,6 +7,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
+import { gjorTilSystemarkitekt } from './hjelp/persongalleri'
 
 const DOK = (tekst: string) => JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
 
@@ -54,7 +55,10 @@ interface Varsel {
 
 describe('diskusjonene i databasen', () => {
   let db: PGlite
+  /** Moderator overalt: en systemarkitekt (P2b). Har også den gamle adminrollen. */
   let admin: string
+  /** Den gamle adminrollen alene, uten å være systemarkitekt eller lokal administrator: ingen moderator (D3). */
+  let gammelAdmin: string
   let ada: string
   let bo: string
   let cy: string
@@ -90,6 +94,8 @@ describe('diskusjonene i databasen', () => {
   beforeAll(async () => {
     db = await nyDatabase()
     admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    await gjorTilSystemarkitekt(db, admin)
+    gammelAdmin = await opprettBruker(db, { brukernavn: 'gammel.admin', fornavn: 'Gam', etternavn: 'Mel', rolle: 'admin' })
     ada = await opprettBruker(db, { brukernavn: 'ada.l', fornavn: 'Ada', etternavn: 'Lovelace', rolle: 'user' })
     bo = await opprettBruker(db, { brukernavn: 'bob', fornavn: 'Bo', etternavn: 'Bruker', rolle: 'user' })
     cy = await opprettBruker(db, { brukernavn: 'cyrus', fornavn: 'Cy', etternavn: 'Brukersen', rolle: 'user' })
@@ -164,13 +170,15 @@ describe('diskusjonene i databasen', () => {
     const t3 = await nyTraad(ada, side, a, 'Tre')
     expect(await rekkefolge(ada, side, a)).toEqual(['En', 'To', 'Tre'])
 
-    await flytt(bo, t3, a, 0)
+    // Andre enn den som startet tråden, og en moderator, flytter den ikke.
+    for (const bruker of [bo, gammelAdmin]) expect(await feilFra(() => flytt(bruker, t3, a, 0))).toMatchObject({ code: '42501' })
+    await flytt(ada, t3, a, 0)
     expect(await rekkefolge(ada, side, a)).toEqual(['Tre', 'En', 'To'])
-    await flytt(bo, t3, a, 9)
+    await flytt(admin, t3, a, 9)
     expect(await rekkefolge(ada, side, a)).toEqual(['En', 'To', 'Tre'])
 
-    await flytt(bo, t1, b, 0)
-    await flytt(bo, t2, b, 0)
+    await flytt(ada, t1, b, 0)
+    await flytt(ada, t2, b, 0)
     expect(await rekkefolge(ada, side, a)).toEqual(['Tre'])
     expect(await rekkefolge(ada, side, b)).toEqual(['To', 'En'])
     expect((await oversikt(ada, side)).diskusjoner.map((d) => d.posisjon).sort()).toEqual([0, 0, 1])
@@ -180,7 +188,7 @@ describe('diskusjonene i databasen', () => {
 
     // En kategori på en annen side tar ikke imot tråden.
     const annen = await nyKategori(ada, nySide(), 'Annen', '🧭')
-    expect(await feilFra(() => flytt(bo, t1, annen, 0))).toMatchObject({ code: '23503' })
+    expect(await feilFra(() => flytt(ada, t1, annen, 0))).toMatchObject({ code: '23503' })
   })
 
   it('løser opp en kategori: trådene står sist under «Ukategoriserte», og kan flyttes ut, men ikke inn', async () => {
@@ -198,16 +206,20 @@ describe('diskusjonene i databasen', () => {
     expect(liste.kategorier).toMatchObject([{ id: c, posisjon: 0 }])
     expect(await rekkefolge(ada, side, null)).toEqual(['A1', 'A2', 'B1'])
 
-    await flytt(cy, b1, c, 0)
+    await flytt(ada, b1, c, 0)
     expect(await rekkefolge(ada, side, null)).toEqual(['A1', 'A2'])
     expect(await rekkefolge(ada, side, c)).toEqual(['B1'])
-    expect(await feilFra(() => flytt(cy, b1, null, 0))).toMatchObject({ code: '23503' })
+    expect(await feilFra(() => flytt(ada, b1, null, 0))).toMatchObject({ code: '23503' })
   })
 
-  it('lar alle endre overskriften, men bare forfatteren det første innlegget', async () => {
+  it('lar den som startet tråden og en moderator endre overskriften, men bare forfatteren det første innlegget', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🔑'), 'Før')
-    await sql(bo, 'select public.sett_diskusjonstittel($1, $2)', [id, 'Etter'])
+    for (const bruker of [bo, gammelAdmin]) {
+      expect(await feilFra(() => sql(bruker, 'select public.sett_diskusjonstittel($1, $2)', [id, 'Kapret']))).toMatchObject({ code: '42501' })
+    }
+    await sql(ada, 'select public.sett_diskusjonstittel($1, $2)', [id, 'Underveis'])
+    await sql(admin, 'select public.sett_diskusjonstittel($1, $2)', [id, 'Etter'])
     expect(await traad(ada, id)).toMatchObject({ tittel: 'Etter', endret_kl: null })
 
     expect(await feilFra(() => sql(bo, 'select public.sett_diskusjonstekst($1, $2)', [id, DOK('Kapret')]))).toMatchObject({ code: '42501' })
@@ -225,7 +237,8 @@ describe('diskusjonene i databasen', () => {
     await nyTraad(ada, side, kategori, 'Blir')
     const kommentar = await nyKommentar(bo, id)
 
-    await arkiver(cy, id)
+    expect(await feilFra(() => arkiver(cy, id))).toMatchObject({ code: '42501' })
+    await arkiver(ada, id)
     expect((await oversikt(ada, side)).diskusjoner.find((d) => d.id === id)!.arkivert_kl).not.toBeNull()
     expect(await rekkefolge(ada, side, kategori)).toEqual(['Blir'])
 
@@ -236,7 +249,8 @@ describe('diskusjonene i databasen', () => {
     expect(await feilFra(() => sql(bo, 'select public.sett_diskusjonstittel($1, $2)', [id, 'Nei']))).toMatchObject({ code: '42501' })
     expect(await feilFra(() => flytt(bo, id, kategori, 0))).toMatchObject({ code: '42501' })
 
-    await arkiver(bo, id, false)
+    expect(await feilFra(() => arkiver(bo, id, false))).toMatchObject({ code: '42501' })
+    await arkiver(admin, id, false)
     expect(await rekkefolge(ada, side, kategori)).toEqual(['Blir', 'Arkiveres'])
     await expect(nyKommentar(bo, id)).resolves.toBeTruthy()
   })
@@ -261,12 +275,14 @@ describe('diskusjonene i databasen', () => {
     expect(kommentarer).toEqual([])
   })
 
-  it('lar bare en administrator skjule innholdet, og da er teksten borte for alle andre', async () => {
+  it('lar bare en moderator skjule innholdet, og da er teksten borte for alle andre', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🙈'), 'Tråd', DOK('Noe som ikke skulle stått her'))
     const kommentar = await nyKommentar(bo, id, null, 'Heller ikke dette')
 
-    expect(await feilFra(() => sql(ada, 'select public.skjul_i_diskusjon($1, null)', [id]))).toMatchObject({ code: '42501' })
+    for (const bruker of [ada, gammelAdmin]) {
+      expect(await feilFra(() => sql(bruker, 'select public.skjul_i_diskusjon($1, null)', [id]))).toMatchObject({ code: '42501' })
+    }
     await sql(admin, 'select public.skjul_i_diskusjon($1, null)', [id])
     await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, kommentar])
 
@@ -275,8 +291,8 @@ describe('diskusjonene i databasen', () => {
     expect(etter!.kommentarer).toMatchObject([{ id: kommentar, skjult: true, kan_vises: false, tekst: null, forfatter_id: bo }])
     const [rad] = await sql<{ tekst: unknown }>(admin, 'select tekst from public.diskusjonskommentarer where id = $1', [kommentar])
     expect(rad!.tekst).toBeNull()
-    // Den lagrede teksten leses bare av administratorene.
-    for (const bruker of [ada, bo, cy]) expect(await sql(bruker, 'select * from public.diskusjon_skjulte_tekster')).toEqual([])
+    // Den lagrede teksten leses bare av moderatorene, ikke med den gamle adminrollen alene.
+    for (const bruker of [ada, bo, cy, gammelAdmin]) expect(await sql(bruker, 'select * from public.diskusjon_skjulte_tekster')).toEqual([])
     expect(await feilFra(() => sql(null, 'select * from public.diskusjon_skjulte_tekster'))).toMatchObject({ code: '42501' })
     expect(
       await feilFra(() => sql(admin, 'insert into public.diskusjon_skjulte_tekster (diskusjon_id, tekst) values ($1, $2)', [id, DOK('Juks')])),
@@ -293,7 +309,7 @@ describe('diskusjonene i databasen', () => {
     expect(await sql(admin, 'select 1 from public.diskusjon_skjulte_tekster where diskusjon_id = $1 and kommentar_id is null', [id])).toEqual([])
   })
 
-  it('lar en administrator vise skjult innhold igjen, slik det var', async () => {
+  it('lar en moderator vise skjult innhold igjen, slik det var', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '👀'), 'Tråd', DOK('Innlegget'))
     const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
@@ -322,7 +338,7 @@ describe('diskusjonene i databasen', () => {
     expect((await traad(cy, id))!.kommentarer).toMatchObject([{ skjult: false, tekst: JSON.parse(DOK('Endret')) }])
   })
 
-  it('lar en administrator fjerne skjult innhold for godt', async () => {
+  it('lar en moderator fjerne skjult innhold for godt', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🗑️'), 'Tråd', DOK('Innlegget'))
     const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
@@ -339,7 +355,7 @@ describe('diskusjonene i databasen', () => {
     expect(await feilFra(() => sql(admin, 'select public.vis_i_diskusjon($1, $2)', [id, kommentar]))).toMatchObject({ code: 'P0002' })
   })
 
-  it('lar heller ikke en administrator skjule, vise igjen eller fjerne noe i en arkivert tråd', async () => {
+  it('lar heller ikke en moderator skjule, vise igjen eller fjerne noe i en arkivert tråd', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🧊'), 'Tråd', DOK('Innlegget'))
     const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
@@ -375,7 +391,7 @@ describe('diskusjonene i databasen', () => {
     expect(await sql(admin, 'select 1 from public.diskusjon_skjulte_tekster where diskusjon_id = $1', [id])).toEqual([])
   })
 
-  it('lar den som startet tråden slette den før andre har skrevet i den, og en administrator alltid', async () => {
+  it('lar den som startet tråden slette den før andre har skrevet i den, og en moderator alltid', async () => {
     const side = nySide()
     const kategori = await nyKategori(ada, side, 'K', '🧹')
     const slett = (bruker: string, id: string) => sql(bruker, 'select public.slett_diskusjon($1)', [id])
@@ -385,7 +401,7 @@ describe('diskusjonene i databasen', () => {
 
     // Egne kommentarer hindrer ikke, og andre kan ikke slette den.
     await nyKommentar(ada, egen)
-    expect(await feilFra(() => slett(bo, egen))).toMatchObject({ code: '42501' })
+    for (const bruker of [bo, gammelAdmin]) expect(await feilFra(() => slett(bruker, egen))).toMatchObject({ code: '42501' })
     await slett(ada, egen)
     expect(await traad(bo, egen)).toBeNull()
     expect(await rekkefolge(ada, side, kategori)).toEqual(['Første', 'Tredje'])
@@ -438,12 +454,14 @@ describe('diskusjonene i databasen', () => {
       sql(bruker, 'select public.flytt_diskusjon_til_side($1, $2, $3, $4, $5)', [id, side, kategori, ny?.[0] ?? null, ny?.[1] ?? null])
 
     // Kategorien må være på siden tråden flyttes til, og siden må være en annen.
-    expect(await feilFra(() => flyttTil(bo, til, kategori))).toMatchObject({ code: '23503' })
-    expect(await feilFra(() => flyttTil(bo, til, null))).toMatchObject({ code: '23503' })
-    expect(await feilFra(() => flyttTil(bo, fra, kategori))).toMatchObject({ code: '22023' })
+    expect(await feilFra(() => flyttTil(ada, til, kategori))).toMatchObject({ code: '23503' })
+    expect(await feilFra(() => flyttTil(ada, til, null))).toMatchObject({ code: '23503' })
+    expect(await feilFra(() => flyttTil(ada, fra, kategori))).toMatchObject({ code: '22023' })
     expect(await feilFra(() => sql(null, 'select public.flytt_diskusjon_til_side($1, $2, $3)', [id, til, der]))).toMatchObject({ code: '42501' })
+    // Andre enn den som startet tråden, og en moderator, flytter den ikke.
+    for (const bruker of [bo, gammelAdmin]) expect(await feilFra(() => flyttTil(bruker, til, der))).toMatchObject({ code: '42501' })
 
-    await flyttTil(bo, til, der)
+    await flyttTil(admin, til, der)
     expect(await rekkefolge(ada, fra, kategori)).toEqual(['Blir'])
     expect((await oversikt(ada, fra)).diskusjoner[0]).toMatchObject({ posisjon: 0 })
     expect(await rekkefolge(ada, til, der)).toEqual(['Var der', 'Flyttes'])

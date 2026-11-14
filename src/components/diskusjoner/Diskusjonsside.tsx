@@ -18,6 +18,7 @@ import {
 } from '../../diskusjoner/api'
 import {
   kanSletteDiskusjon,
+  kanStyreDiskusjon,
   type Diskusjonskategori,
   type Diskusjonsside as Side,
   type Diskusjonssider,
@@ -45,10 +46,11 @@ const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', y
  * som endrer den, står i `hode` når menyen har en plass til den over det som
  * rulles, så den alltid er synlig.
  *
- * Alle kan endre overskriften, flytte tråden (også til en annen side) og legge
- * den i arkivet; bare den som skrev innlegget, kan endre det. Den som startet
- * tråden, kan slette den til noen andre har skrevet i den; en administrator
- * kan slette alle. En administrator kan også skjule innholdet i et innlegg
+ * Den som startet tråden, og en moderator for siden (`kan_moderere`), kan
+ * endre overskriften, flytte tråden (også til en annen side med samme
+ * rekkevidde) og legge den i arkivet; bare den som skrev innlegget, kan endre
+ * det. Den som startet tråden, kan slette den til noen andre har skrevet i
+ * den; en moderator kan slette alle. En moderator kan også skjule innholdet i et innlegg
  * eller en kommentar, for eksempel pasientopplysninger som havnet der ved en
  * feil: en merknad står i stedet. Det skjulte kan vises igjen, eller fjernes
  * for godt.
@@ -92,7 +94,7 @@ export function Diskusjonsside({
   /** Plassen over det som rulles, der overskriften står fast. Uten den står den øverst i tråden. */
   hode?: HTMLElement | null
 }) {
-  const { meg, admin } = useForfatterkontekst()
+  const { meg } = useForfatterkontekst()
   const [traad, setTraad] = useState<Diskusjonstraad | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
@@ -132,6 +134,7 @@ export function Diskusjonsside({
   }, [lastet])
 
   const forfatter = useForfatternavn(traad?.forfatter_id ?? null)
+  const moderator = traad?.kan_moderere === true
 
   const kanal = useMemo<Kommentarkanal>(
     () => ({
@@ -140,11 +143,12 @@ export function Diskusjonsside({
       opprett: (forelder, tekst) => opprettKommentar(id, forelder, tekst),
       endre: (kommentar, tekst) => endreKommentar(kommentar, tekst),
       slett: (kommentar) => slettKommentar(kommentar),
-      // Ingen kan slette andres kommentarer i diskusjonene, heller ikke en administrator.
-      adminSletter: false,
-      skjuling: (handling, kommentar) => skjuling[handling](id, kommentar),
+      // Ingen kan slette andres kommentarer i diskusjonene, heller ikke en moderator.
+      sletterAndres: false,
+      // Bare en moderator for siden kan skjule (databasen avgjør det og kontrollerer på nytt).
+      skjuling: moderator ? (handling, kommentar) => skjuling[handling](id, kommentar) : undefined,
     }),
-    [id],
+    [id, moderator],
   )
 
   /** Hjertet vises med én gang; går lagringen galt, hentes tråden på nytt. */
@@ -209,6 +213,7 @@ export function Diskusjonsside({
 
   const arkivert = Boolean(traad.arkivert_kl)
   const eier = traad.forfatter_id === meg.id
+  const styrer = kanStyreDiskusjon(traad, meg.id, moderator)
 
   const tittel =
     endrerTittel && !arkivert ? (
@@ -224,7 +229,7 @@ export function Diskusjonsside({
         <h3 ref={overskrift} id={`diskusjon-${traad.id}`} className="diskusjonsside__tittel" tabIndex={-1}>
           {traad.tittel}
         </h3>
-        {!arkivert && (
+        {!arkivert && styrer && (
           <Ikonknapp ikon="edit" etikett="Endre overskriften" variant="stille" storrelse="liten" onClick={() => setEndrerTittel(true)} />
         )}
       </div>
@@ -249,7 +254,7 @@ export function Diskusjonsside({
           </Idehandling>
         )}
         <Kopilenkeknapp mal={{ slag: 'diskusjon', id: traad.id, kommentar: null }} hva="tråden" />
-        {!arkivert && (
+        {!arkivert && styrer && (
           <Bekreftknapp
             ikon="arkiv"
             tekst="Arkiver"
@@ -259,15 +264,15 @@ export function Diskusjonsside({
             onBekreft={() => void utfor(() => arkiverDiskusjon(traad.id, true))}
           />
         )}
-        {!arkivert && (
+        {!arkivert && styrer && (
           <Idehandling ikon="ext" aria-label="Flytt tråden" aria-haspopup="dialog" onClick={() => setFlytter(true)}>
             Flytt
           </Idehandling>
         )}
-        {kanSletteDiskusjon(traad, meg.id, admin) && (
+        {kanSletteDiskusjon(traad, meg.id, moderator) && (
           <Slettknapp hva="tråden" onSlett={() => void utfor(() => slettDiskusjon(traad.id), onSlettet)} />
         )}
-        {admin && !eier && !arkivert && (
+        {moderator && !eier && !arkivert && (
           <Skjulehandlinger
             hva="innlegget"
             skjulTekst="Skjul innlegget"
@@ -291,20 +296,22 @@ export function Diskusjonsside({
             <strong>Arkivert {DATO.format(new Date(traad.arkivert_kl))}.</strong> Tråden kan leses, men ikke endres eller
             kommenteres.
           </p>
-          <div className="idemerknad__handlinger">
-            <Button
-              variant="kant"
-              icon={<Ikon navn="reset" storrelse="ui" />}
-              disabled={arbeider}
-              onClick={() => void utfor(() => arkiverDiskusjon(traad.id, false))}
-            >
-              Hent tilbake
-            </Button>
-          </div>
+          {styrer && (
+            <div className="idemerknad__handlinger">
+              <Button
+                variant="kant"
+                icon={<Ikon navn="reset" storrelse="ui" />}
+                disabled={arbeider}
+                onClick={() => void utfor(() => arkiverDiskusjon(traad.id, false))}
+              >
+                Hent tilbake
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
-      {flytter && !arkivert && (
+      {flytter && !arkivert && styrer && (
         <Flytteskjema
           id={traad.id}
           side={side}
@@ -333,7 +340,7 @@ export function Diskusjonsside({
           }}
         />
       ) : traad.skjult ? (
-        <p className="kommentar__skjultmerknad">Innholdet er skjult av en administrator.</p>
+        <p className="kommentar__skjultmerknad">Innholdet er skjult av en moderator.</p>
       ) : (
         <Langtekst hva="innlegget">
           <UnderOverskrift niva={3}>

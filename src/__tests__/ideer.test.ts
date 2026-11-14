@@ -5,6 +5,7 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
+import { gjorTilSystemarkitekt } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 const DOK = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
@@ -12,6 +13,7 @@ const DOK = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph', co
 describe('idéene i databasen', () => {
   let db: PGlite
   let admin: string
+  let gammelAdmin: string
   let ada: string
   let bo: string
 
@@ -46,6 +48,9 @@ describe('idéene i databasen', () => {
   beforeAll(async () => {
     db = await nyDatabase()
     admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    // D8: systemarkitektene sletter andres idéer og kommentarer; den gamle adminrollen gir ingenting.
+    await gjorTilSystemarkitekt(db, admin)
+    gammelAdmin = await opprettBruker(db, { brukernavn: 'gammel.admin', fornavn: 'Gam', etternavn: 'Mel', rolle: 'admin' })
     ada = await opprettBruker(db, { brukernavn: 'ada.l', fornavn: 'Ada', etternavn: 'Lovelace', rolle: 'user' })
     bo = await opprettBruker(db, { brukernavn: 'bob', fornavn: 'Bo', etternavn: 'Bruker', rolle: 'user' })
   }, 60_000)
@@ -70,7 +75,7 @@ describe('idéene i databasen', () => {
     expect(await feilFra(() => sql(ada, `insert into public.ideer (kategori, tittel) values ('ukjent', 'x')`))).toMatchObject({ code: '22P02' })
   })
 
-  it('lar bare forfatteren endre, og forfatteren eller en administrator slette', async () => {
+  it('lar bare forfatteren endre, og forfatteren eller en systemarkitekt slette', async () => {
     const id = await nyIde(ada, 'Før')
     expect(await sql(bo, `update public.ideer set tittel = 'Kapret' where id = $1 returning id`, [id])).toEqual([])
     expect(await sql(admin, `update public.ideer set tittel = 'Kapret' where id = $1 returning id`, [id])).toEqual([])
@@ -82,6 +87,7 @@ describe('idéene i databasen', () => {
     expect(endret).toMatchObject({ tittel: 'Etter', endret_kl: expect.anything() })
 
     expect(await sql(bo, 'delete from public.ideer where id = $1 returning id', [id])).toEqual([])
+    expect(await sql(gammelAdmin, 'delete from public.ideer where id = $1 returning id', [id])).toEqual([])
     expect(await sql(admin, 'delete from public.ideer where id = $1 returning id', [id])).toHaveLength(1)
 
     const egen = await nyIde(bo)
@@ -125,7 +131,7 @@ describe('idéene i databasen', () => {
     expect((await traad(bo, ide))!.kommentarer).toEqual([])
   })
 
-  it('lar bare forfatteren endre en kommentar, og en administrator slette andres', async () => {
+  it('lar bare forfatteren endre en kommentar, og en systemarkitekt slette andres', async () => {
     const ide = await nyIde(ada)
     const k = await nyKommentar(bo, ide)
     expect(await sql(ada, `update public.idekommentarer set tekst = $2 where id = $1 returning id`, [k, DOK('x')])).toEqual([])
@@ -136,6 +142,7 @@ describe('idéene i databasen', () => {
       [k, DOK('Rettet')],
     )
     expect(endret!.endret_kl).not.toBeNull()
+    expect(await sql(gammelAdmin, 'delete from public.idekommentarer where id = $1 returning id', [k])).toEqual([])
     expect(await sql(admin, 'delete from public.idekommentarer where id = $1 returning id', [k])).toHaveLength(1)
   })
 

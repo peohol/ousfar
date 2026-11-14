@@ -71,13 +71,23 @@ export async function kallbareFunksjoner(db: PGlite): Promise<KallbarFunksjon[]>
 
 const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt)\s*\(/
 const BRUKER_INNLOGGET = /\bauth\s*\.\s*uid\s*\(/
+/** D8: idéene og oppgavene går gjennom porten, som krever en systemarkitekt. */
+const KALLER_SYSTEMARKITEKTKONTROLL = /\b(er_systemarkitekt|krev_idevalg_admin)\s*\(/
 
 /**
  * De felles hjelperne for rekkevidde per fagmiljø (docs/fagmiljoer.md,
  * «Hjelperne for tilgang per fagmiljø»). En funksjon erklært `rekkevidde` må
  * kalle minst én av dem selv. Nye hjelpere som bygger på dem, føres opp her.
  */
-export const REKKEVIDDEHJELPERE = ['kan_lese_omfang', 'er_medlem_i', 'er_lokal_admin_i'] as const
+export const REKKEVIDDEHJELPERE = [
+  'kan_lese_omfang',
+  'er_medlem_i',
+  'er_lokal_admin_i',
+  // P2b: diskusjonene (supabase/migrations/*_samhandling_per_fagmiljo.sql).
+  'kan_lese_diskusjonsside',
+  'lesbar_diskusjon',
+  'krev_moderering',
+] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
 )
@@ -105,6 +115,9 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
     case 'rekkevidde':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'
+    case 'systemarkitekt':
+      if (!f.definer) return 'er ikke security definer'
+      return KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) ? null : 'krever ingen systemarkitekt'
     case 'innlogget':
     case 'felles-lesing':
       return f.definer ? null : 'er ikke security definer'

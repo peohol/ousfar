@@ -29,30 +29,53 @@ ingen diskusjoner. Fortolkningen av en analytt har sin egen adresse,
 `#/fortolkning/<nøkkel>`, så et varsel kan lenke dit. Får en fagside ny nøkkel,
 flytter trådene og kategoriene med.
 
+## Hvem som ser diskusjonene
+
+Rekkevidden følger siden (`intern.diskusjonsomfang`, P2b; se
+`docs/fagmiljoer.md`, «Samhandlingen»). Trådene og kategoriene på en fagside og
+på stoffregisteret er **felles**: alle med et aktivt medlemskap ser dem.
+Trådene og kategoriene i fortolkningen hører til **fagmiljøet** fortolkningen
+hører til (i dag OUS Klinisk farmakologi), og bare medlemmene der ser dem.
+Databasen setter `omfang` og `fagmiljo_id` på hver tråd og kategori fra siden
+(utløseren `gi_diskusjonsomfang`), og radsikkerheten (`rekkevidde`) og
+funksjonene avgrenser til det; kommentarene, hjertene, besøkene og de skjulte
+tekstene følger tråden. En tråd kan bare flyttes til en side med samme
+rekkevidde, så en tråd fra en fagside aldri havner i et fagmiljø, og omvendt.
+Det gjelder også varslene (`docs/varsler.md`) og lenkene
+(`docs/direktelenker.md`).
+
 ## Hvem som får gjøre hva
 
-- Alle innloggede lager, endrer, flytter, arkiverer og henter tilbake tråder, og
-  lager, endrer, flytter og løser opp kategorier.
+- Alle som ser siden, lager tråder og kategorier, og endrer, flytter og løser
+  opp kategorier.
+- **Styre en tråd** (endre overskriften, flytte den, arkivere og hente den
+  tilbake) kan den som startet den, og en moderator (`intern.kan_styre_diskusjon`,
+  `kanStyreDiskusjon`). Andre ser ikke knappene, og kan ikke dra tråden i lista.
+- **Moderatorene** er systemarkitektene på de felles sidene, og de lokale
+  administratorene i fagmiljøet på sidene som hører til det (systemarkitektene
+  bare der de selv er medlem). Den gamle adminrollen (`profiles.role`) gir ikke
+  lenger noe her. Appen får svaret fra databasen (`kan_moderere` i
+  `diskusjonsoversikt()` og `diskusjonstraad()`, fra
+  `kan_moderere_diskusjoner(side)`).
 - «Flytt» på en tråd åpner et lag (`Flytteskjema`) med siden den står på
   valgt, så den kan flyttes sist i en annen kategori eller en ny her. Velges en
-  annen side (en fagside eller fortolkning), flyttes den sist i en kategori der
-  eller i en ny, med kommentarene og hjertene (`flytt_diskusjon_til_side()`).
-  Appen følger tråden dit.
+  annen side med samme rekkevidde, flyttes den sist i en kategori der eller i
+  en ny, med kommentarene og hjertene (`flytt_diskusjon_til_side()`). Appen
+  følger tråden dit.
 - Den som startet en tråd, kan slette den så lenge den ikke er arkivert og
   ingen andre har skrevet i den; en kommentar som står igjen som «Slettet»,
-  teller ikke. En administrator kan slette alle tråder, også arkiverte
+  teller ikke. En moderator kan slette alle tråder, også arkiverte
   (`slett_diskusjon()`, `kanSletteDiskusjon`). Alt i tråden går med.
 - En arkivert tråd kan leses, men er frosset til den er hentet tilbake, og står
   i arkivet nederst i lista. Arkivet er lukket til man åpner det.
-- Alle kan endre overskriften; bare den som skrev tråden, endrer det første
-  innlegget.
+- Bare den som skrev tråden, endrer det første innlegget.
 - Kommentarene er som under idéene (svar i svar, hjerter, «Slettet» der det er
   svar), men bare forfatteren endrer og sletter sin egen, også for
-  administratorer. En administrator kan i stedet **skjule** andres kommentarer
+  moderatorer. En moderator kan i stedet **skjule** andres kommentarer
   eller det første innlegget i en tråd («Skjul innlegget»; tråden og
   kommentarene står). Plassen står med en merknad, og teksten tas vare på i
-  `diskusjon_skjulte_tekster`, som bare administratorene leser. Da kan en
-  administrator **vise den igjen** («Vis igjen») eller **fjerne den for godt**
+  `diskusjon_skjulte_tekster`, som bare moderatorene for siden leser. Da kan en
+  moderator **vise den igjen** («Vis igjen») eller **fjerne den for godt**
   («Fjern for godt»; merknaden står). Det som ble skjult før teksten ble tatt
   vare på (november 2026), kan ikke vises igjen. Eget innhold skjules ikke; det
   endres eller slettes. Appen tilbyr ingen av delene i en arkivert tråd; den
@@ -138,7 +161,9 @@ Tekstene hentes først når man søker (`diskusjonstekster()`).
 Kategoriene og trådene dras loddrett med `@peohol/smett`, et lag over dnd-kit,
 også mellom kategoriene. Hvilke lister som tar imot hva, står i markeringen
 (`data-slag` og `data-tar`; se `useSortering`). Tastaturet løfter en rad med
-mellomrom og flytter den med piltastene. Alle flyttinger kan også gjøres med
+mellomrom og flytter den med piltastene. En tråd den innloggede ikke kan styre,
+står uten håndtak og kan ikke dras (`data-slag="traad-laast"`), men holder
+plassen sin i lista. Alle flyttinger kan også gjøres med
 knapper: «Flytt opp»/«Flytt ned» på kategoriene, og «Flytt» inne i en tråd
 (til en annen kategori, sist).
 

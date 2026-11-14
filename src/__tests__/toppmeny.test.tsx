@@ -20,6 +20,9 @@ vi.mock('../auth/okt', () => ({
   useOkt: () => ({ loggUt }),
 }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+// Planlagte oppgaver er bare for systemarkitektene (D8); databasen svarer i appen.
+const systemarkitekt = vi.hoisted(() => ({ verdi: true }))
+vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => systemarkitekt.verdi }))
 const ideerMedNytt = vi.hoisted(() => ({ antall: 0 }))
 vi.mock('../ideer/api', () => ({ hentIdeerMedNytt: async () => ideerMedNytt.antall }))
 // Dialogene bak valgene har egne tester; her holder det at riktig åpnes.
@@ -110,6 +113,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
   loggUt.mockClear()
   rolle.verdi = 'admin'
+  systemarkitekt.verdi = true
 })
 
 function Ramme({ children }: { children: React.ReactNode }) {
@@ -834,6 +838,18 @@ describe('idémenyen', () => {
     await userEvent.click(within(meny).getByRole('button', { name: 'Idéer' }))
     expect(screen.getByText('Idéene')).toBeTruthy()
     expect(meny.hidden).toBe(true)
+  })
+
+  it('har bare idéene for andre enn systemarkitektene, også for den gamle adminrollen', async () => {
+    systemarkitekt.verdi = false
+    render(
+      <Ramme>
+        <Ideknapp />
+      </Ramme>,
+    )
+    const knapp = screen.getByRole('button', { name: 'Idéer' })
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual(['Idéer'])
   })
 
   it('åpner de planlagte oppgavene rett fra menyen, og går mellom lagene med bare ett åpent', async () => {

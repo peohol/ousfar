@@ -29,17 +29,17 @@ import type { Skjemastatus } from './useForlatvakt'
  * Én planlagt oppgave: statusen, prompten og idéen den kom fra, med den
  * frosne kommentartråden.
  *
- * En administrator gir oppgaven en overskrift og skriver prompten — oppgaven
+ * En systemarkitekt gir oppgaven en overskrift og skriver prompten — oppgaven
  * formulert så godt at en språkmodell kan lese den og utføre den — og merker
  * oppgaven klar til implementering når den er det. Den første lagringen gjør
  * oppgaven påbegynt. Oppgaven kan også flyttes tilbake til idéene, som er den eneste
  * måten å ta den bort på. Andre leser.
  *
- * Mens en agent håndterer oppgaven, kan den ikke endres. En administrator kan
+ * Mens en agent håndterer oppgaven, kan den ikke endres. En systemarkitekt kan
  * frigi den, så den blir klar igjen. En utført oppgave har en knapp til
  * føringen i endringsloggen, og kan ikke endres.
  *
- * Er oppgaven gjort uten at en agent tok den fra køen, kan en administrator
+ * Er oppgaven gjort uten at en agent tok den fra køen, kan en systemarkitekt
  * merke den utført selv, med føringen i endringsloggen eller uten, og gjøre
  * det om igjen. En oppgave en agent har merket utført, står.
  */
@@ -63,7 +63,7 @@ export function Oppgaveside({
   /** Oppgaven er endret, så lista bør hentes på nytt. */
   onEndret: () => void
 }) {
-  const { admin } = useForfatterkontekst()
+  const { systemarkitekt } = useForfatterkontekst()
   const [oppgave, setOppgave] = useState<Oppgavedetaljer | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
@@ -120,9 +120,9 @@ export function Oppgaveside({
 
   const utfort = oppgave.status === 'utfort'
   const handteres = oppgave.status === 'haandteres'
-  const redigerer = admin && !utfort && !handteres
+  const redigerer = systemarkitekt && !utfort && !handteres
   const publisert = iEndringsloggen(oppgave.endringslogg)
-  const kanGjoresOm = admin && oppgave.merket_utfort
+  const kanGjoresOm = systemarkitekt && oppgave.merket_utfort
   const merkUtfort = (versjon: string | null) => utfor(() => merkOppgaveUtfort(oppgave.id, versjon))
 
   return (
@@ -172,7 +172,7 @@ export function Oppgaveside({
           <Ikon navn="done" storrelse="ui" />
           <p>
             <strong>Utført{oppgave.nummer !== null && ` som ${oppgavekode(oppgave.nummer)}`}.</strong>{' '}
-            {oppgave.merket_utfort && 'Merket utført av en administrator. '}
+            {oppgave.merket_utfort && 'Merket utført av en systemarkitekt. '}
             {oppgave.endringslogg === null
               ? 'Den har ingen føring i endringsloggen.'
               : publisert
@@ -205,9 +205,9 @@ export function Oppgaveside({
           <p>
             <strong>Håndteres nå av en agent.</strong> Oppgaven kan ikke endres imens.
             {oppgave.nummer !== null && ` En avbrutt økt fortsetter med /utfor-oppgaver ${oppgavekode(oppgave.nummer)}.`}
-            {admin && ' Er agenten stoppet, kan du frigi oppgaven, så den blir klar igjen, eller merke den utført om arbeidet er gjort.'}
+            {systemarkitekt && ' Er agenten stoppet, kan du frigi oppgaven, så den blir klar igjen, eller merke den utført om arbeidet er gjort.'}
           </p>
-          {admin && (
+          {systemarkitekt && (
             <div className="idemerknad__handlinger">
               <Bekreftknapp
                 ikon="reset"
@@ -392,7 +392,7 @@ interface Oppgaveinnhold {
 }
 
 /**
- * Det en administrator skriver på oppgaven: overskriften, som oppgaven vises
+ * Det en systemarkitekt skriver på oppgaven: overskriften, som oppgaven vises
  * og omtales med, og prompten. De lagres sammen.
  */
 function Oppgaveskjema({

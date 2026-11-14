@@ -64,12 +64,23 @@ gjorde det, varsles ikke.
   `favorittdiskusjoner` til dem som har siden som favoritt, ett varsel per
   tråd. Å åpne tråden merker varslene om den lest.
 - **Fortolkningen** (`objektpubliseringer_varsle`): hver publisering av en
-  kommentar eller et regelsett (`intern.er_fortolkning`) varsler alle andre.
+  kommentar eller et regelsett (`intern.er_fortolkning`) varsler alle andre
+  som kan lese det.
   Et utkast som lagres, varsler ingen: varselet kommer når endringen er
   publisert.
 
-Uleste varsler om det samme er **ett varsel**: ett om fortolkningen, og ett
-per idé eller tråd og kategori (`gruppe`). En ny hendelse legges i det uleste varselet;
+**Mottakerne** er bare dem som kan lese det varselet gjelder (P2b,
+`intern.varselomfang`): et varsel om fortolkningen eller en tråd der får bare
+medlemmene i fagmiljøet den hører til, og et om noe felles (en idé, en fagside,
+en tråd på en fagside) alle med et aktivt medlemskap. Databasen setter
+`fagmiljo_id` på varselet (null for felles). Varsler fra et fagmiljø der
+medlemskapet er avsluttet, vises ikke lenger, verken i `mine_varsler()`,
+tellingen eller tabellen (radsikkerheten `rekkevidde`); de blir liggende til
+de ryddes som de andre, og kommer tilbake om medlemskapet blir aktivt igjen.
+
+Uleste varsler om det samme er **ett varsel**: ett om fortolkningen per
+fagmiljø (`fortolkning:<fagmiljø>`), og ett per idé eller tråd og kategori
+(`gruppe`). En ny hendelse legges i det uleste varselet;
 når varselet er lest, begynner neste på et nytt. Samme fortolkningsobjekt
 står bare én gang, med den siste publiseringen.
 

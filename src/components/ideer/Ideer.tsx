@@ -8,6 +8,7 @@ import { Angretoast, type Angring } from '../Angretoast'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Modallag } from '../Modallag'
+import { useSystemarkitekt } from '../../auth/systemrolle'
 import { Forfatterkilde } from '../traad/Forfatterkontekst'
 import type { Fremheving } from '../traad/Kommentartraad'
 import { Ideliste } from './Ideliste'
@@ -25,9 +26,10 @@ import '../../styles/ideer.css'
  * kommentartråden, og skjemaet for en ny eller endret idé. Tilbakeknappen i
  * hodet går til lista, der fokus står på kortet man kom fra.
  *
- * En administrator kan legge en idé i arkivet («Ikke aktuelt») eller overføre
+ * En systemarkitekt kan legge en idé i arkivet («Ikke aktuelt») eller overføre
  * den til Planlagte oppgaver, som er et eget lag (`Oppgaver`). Begge kan
- * angres i ti sekunder fra meldingen nederst i laget.
+ * angres i ti sekunder fra meldingen nederst i laget. Bare systemarkitektene
+ * ser Planlagte oppgaver, og bare de rydder arkivet (D8).
  */
 type Visning =
   | { side: 'liste' }
@@ -58,6 +60,9 @@ export function Ideer({
   /** Til Planlagte oppgaver, eventuelt rett til én oppgave. */
   onOppgaver: (oppgave?: string) => void
 }) {
+  const systemarkitekt = useSystemarkitekt()
+  /** Til Planlagte oppgaver, bare for systemarkitektene. */
+  const tilOppgaver = systemarkitekt ? onOppgaver : undefined
   // Siden i laget, og det som skrives på den, overlever en oppdatering av appen.
   const [visning, setVisning, visningGjenopprettet] = useBevart<Visning>('ideer', LISTE)
   const [ideer, setIdeer] = useState<Ide[]>([])
@@ -86,8 +91,7 @@ export function Ideer({
   }, [])
 
   // Hver åpning begynner på lista, eller på idéen laget ble åpnet på, med alt
-  // hentet på nytt. Arkivet ryddes for idéer som har passert fristen, før
-  // lista hentes. Stod laget åpent da appen ble oppdatert, fortsetter det der
+  // hentet på nytt. Stod laget åpent da appen ble oppdatert, fortsetter det der
   // det var.
   useEffect(() => {
     if (!apen) {
@@ -104,14 +108,18 @@ export function Ideer({
     }
     // Bare den første åpningen fortsetter; en ny idé mens laget står åpent, vises.
     fortsetter.current = false
-    void ryddIdearkiv()
-      .catch(() => undefined)
-      .then(hentListe)
+    void hentListe()
     void hentAlleProfiler().then(setProfiler, () => undefined)
     void hentSortering().then(setSortering, () => undefined)
     // `kommentar` følger `nr`, som er ny for hver lenke.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apen, ide, nr, hentListe, nullstill])
+
+  // En systemarkitekt som åpner laget, sletter idéene som har stått i arkivet
+  // lenger enn fristen. Lesefunksjonene viser dem ikke uansett.
+  useEffect(() => {
+    if (apen && systemarkitekt) void ryddIdearkiv().catch(() => undefined)
+  }, [apen, systemarkitekt])
 
   const kropp = () => rot.current?.closest<HTMLElement>('.modallag__kropp') ?? null
 
@@ -186,9 +194,11 @@ export function Ideer({
       handling={
         visning.side === 'liste' ? (
           <>
-            <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="oppgaver" />} onClick={() => onOppgaver()}>
-              Planlagte oppgaver
-            </Button>
+            {tilOppgaver && (
+              <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="oppgaver" />} onClick={() => tilOppgaver()}>
+                Planlagte oppgaver
+              </Button>
+            )}
             <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={() => gaaTil({ side: 'skjema' })}>
               Ny idé
             </Button>
@@ -197,7 +207,7 @@ export function Ideer({
       }
       fot={angring ? <Angretoast key={angring.nokkel} angring={angring} onFerdig={() => setAngring(null)} /> : undefined}
     >
-      <Forfatterkilde profiler={profiler}>
+      <Forfatterkilde profiler={profiler} systemarkitekt={systemarkitekt}>
         <Bevaringsomrade navn="ideer">
           <div ref={rot} className="idevindu" key={visning.side === 'ide' ? visning.id : visning.side}>
             {feil && visning.side === 'liste' && (
@@ -212,7 +222,7 @@ export function Ideer({
                 onSortering={endreSortering}
                 onApne={apneIde}
                 onNy={(kategori) => gaaTil({ side: 'skjema', kategori })}
-                onOppgave={onOppgaver}
+                onOppgave={tilOppgaver}
                 apneSkuffer={apneSkuffer}
                 onVeksleSkuff={(navn) => setApneSkuffer((apne) => veksleSkuff(apne, navn))}
               />
@@ -228,7 +238,7 @@ export function Ideer({
                 }}
                 onArkivert={(ide) => flyttet('Idéen er lagt i «Ikke aktuelt».', () => gjenopprettIde(ide.id))}
                 onOverfort={(_ide, oppgave) => flyttet('Idéen er overført til planlagte oppgaver.', () => flyttOppgaveTilbake(oppgave))}
-                onOppgave={onOppgaver}
+                onOppgave={tilOppgaver}
               />
             )}
             {visning.side === 'skjema' && (
