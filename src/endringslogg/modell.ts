@@ -8,7 +8,7 @@
  * før og etter, og hendelsene som ikke har revisjoner. Det er ikke appens egen
  * endringslogg over versjonene (`src/data/endringslogg.ts`).
  */
-import type { Profil } from '@delt/profil'
+import type { Profilkort } from '@delt/profil'
 
 /** Repoet migrasjonene og agentenes endringer ligger i. */
 export const REPO = 'https://github.com/peohol/ousfar'
@@ -22,7 +22,7 @@ export type Endringsside =
 export type Aktor = 'bruker' | 'agent' | 'system'
 
 /** Profilen en endring vises med: personens egen, eller den en agent har fått. */
-export type Endringsprofil = Pick<Profil, 'id' | 'username' | 'first_name' | 'last_name' | 'avatar_path' | 'updated_at'>
+export type Endringsprofil = Profilkort
 
 export interface Endringsagent {
   nokkel: string

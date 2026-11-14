@@ -1,16 +1,19 @@
 /**
  * Alt appen sier til Supabase om brukere og profiler.
  *
- * Lesing går rett mot profiltabellen, som radsikkerheten åpner for alle
- * innloggede. Alt som endrer rettigheter eller passord går gjennom
- * Edge-funksjonene; nettleseren har ikke rettigheter til det selv.
+ * Den egne profilen hentes hel (`min_profil`). Andre brukere leses som
+ * profilkort rett fra profiltabellen, der radsikkerheten bare gir dem den
+ * innloggede samhandler med (docs/fagmiljoer.md, «Profiler og
+ * profilbilder»). Brukerlista i administrasjonen har sin egen funksjon. Alt
+ * som endrer rettigheter eller passord går gjennom Edge-funksjonene;
+ * nettleseren har ikke rettigheter til det selv.
  */
 import {
   erGyldigBrukernavn,
   internAuthAdresse,
   normaliserBrukernavn,
 } from '@delt/brukernavn'
-import { AVATAR_BOTTE, avatarSti, type Profil, type Rolle } from '@delt/profil'
+import { AVATAR_BOTTE, avatarSti, PROFILKORT, type Profil, type Profilkort, type Rolle } from '@delt/profil'
 import { klient } from './klient'
 
 /**
@@ -69,13 +72,12 @@ export async function loggUt(): Promise<void> {
   await klient().auth.signOut()
 }
 
-/** Profilen til én bruker, eller `null` når raden ikke finnes. */
-export async function hentProfil(brukerId: string): Promise<Profil | null> {
-  const { data, error } = await klient()
-    .from('profiles')
-    .select('*')
-    .eq('id', brukerId)
-    .maybeSingle()
+/**
+ * Den innloggedes egen profil, hel, eller `null` når den ikke er synlig:
+ * kontoen er uten aktivt medlemskap eller slettet (`hentMedlemskapsstatus`).
+ */
+export async function hentProfil(): Promise<Profil | null> {
+  const { data, error } = await klient().rpc('min_profil').maybeSingle()
   if (error) throw error
   return (data as Profil | null) ?? null
 }
@@ -94,30 +96,43 @@ export async function hentMedlemskapsstatus(): Promise<Medlemskapsstatus> {
   return data
 }
 
-/** Alle profiler, sortert slik brukerlista viser dem. */
-export async function hentAlleProfiler(): Promise<Profil[]> {
-  const { data, error } = await klient()
-    .from('profiles')
-    .select('*')
-    .order('first_name', { ascending: true })
-    .order('username', { ascending: true })
+/** Profilkortene den innloggede får se: navn og bilde til dem hen samhandler med. */
+export async function hentProfilkort(): Promise<Profilkort[]> {
+  const { data, error } = await klient().from('profiles').select(PROFILKORT.join(','))
   if (error) throw error
-  return (data ?? []) as Profil[]
+  return (data ?? []) as unknown as Profilkort[]
 }
 
-/** De ordinære profilopplysningene brukeren selv rår over. */
+/** En konto i brukerlista: profilkortet med rollen og kontostatusen. */
+export type Kontooversikt = Profilkort & Pick<Profil, 'role' | 'must_change_password' | 'onboarding_completed'>
+
+/**
+ * Kontoene den innloggede administrerer, sortert slik brukerlista viser dem.
+ * Avgjøres i databasen; tom for den som ikke administrerer noen.
+ */
+export async function hentBrukeroversikt(): Promise<Kontooversikt[]> {
+  const { data, error } = await klient().rpc('brukeroversikt')
+  if (error) throw error
+  return (data ?? []) as Kontooversikt[]
+}
+
+/**
+ * De ordinære profilopplysningene brukeren selv rår over. Endringen og svaret
+ * er én forespørsel: profilkortet som ble lagret, lagt over den egne profilen
+ * (rollen og kontostatusen kan ikke endres herfra).
+ */
 export async function lagreEgenProfil(
-  brukerId: string,
+  profil: Profil,
   endring: { first_name: string; last_name: string; avatar_path?: string | null },
 ): Promise<Profil> {
   const { data, error } = await klient()
     .from('profiles')
     .update(endring)
-    .eq('id', brukerId)
-    .select('*')
+    .eq('id', profil.id)
+    .select(PROFILKORT.join(','))
     .single()
   if (error) throw error
-  return data as Profil
+  return { ...profil, ...(data as unknown as Profilkort) }
 }
 
 /** Bytter passordet til den som allerede er logget inn. */

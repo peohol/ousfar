@@ -109,7 +109,7 @@ vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 // Systemarkitekten (D8) er Anne; databasen avgjør det i appen.
 vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => tilstand.meg.id === ADMIN.id }))
-vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI, ADMIN]) }))
+vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, ADMIN]) }))
 
 const { Oppgaver } = await import('../components/ideer/Oppgaver')
 const { Angretoast } = await import('../components/Angretoast')

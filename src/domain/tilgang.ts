@@ -41,7 +41,7 @@ export interface Oktstatus {
  * administrator gir brukeren et nytt midlertidig passord, og da skal veien
  * gå gjennom oppsettet på nytt.
  */
-export function maaGjennomOppsett(profil: Profil): boolean {
+export function maaGjennomOppsett(profil: Pick<Profil, 'must_change_password' | 'onboarding_completed'>): boolean {
   return profil.must_change_password || !profil.onboarding_completed
 }
 
