@@ -2,8 +2,9 @@
  * P4b: fortolkningsreglene per fagmiljø (docs/fagmiljoer.md, «Fortolkningen
  * per fagmiljø», og docs/ousfar-nasjonal-p0-kartlegging.md §2.6 og §6.4).
  *
- * Databasen fylles med dagens konsentrasjonsregelsett (lokale for A, OUS
- * Klinisk farmakologi) og persongalleriet. Det som prøves:
+ * Databasen fylles med dagens konsentrasjonsregelsett, rusmodulene og
+ * THC-syreregelsettet med kommentarene deres (lokale for A, OUS Klinisk
+ * farmakologi), og persongalleriet. Det som prøves:
  *
  * 1. Arbeidskonteksten: hvilket fagmiljø fortolkningen gjelder for hver person.
  * 2. Klinisk paritet: A får nøyaktig de samme regelsettene som før.
@@ -17,17 +18,30 @@
  *    fagmiljø sitt, og en endring i B rører ikke A.
  * 6. Rekkevidden: nye objekter hører til fagmiljøet de lages i, kolonnen
  *    følger en flytting av regelsettet og kommentarene sammen, en flytting som
- *    ville gitt kommentarer på tvers stoppes, og en lokal regel kan ikke gjøres
- *    felles (D4).
+ *    ville gitt kommentarer på tvers stoppes uten å endre noe (et regelsett
+ *    med intervall- og cut-off-kommentarer, og en brukt kommentar i et
+ *    intervall, en cut-off, en rusmodul og THC-syreregelsettet), og en lokal
+ *    regel kan ikke gjøres felles (D4).
  * 7. Endringsloggen og diskusjonene på fortolkningen følger konteksten.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Intervallregelsettinnhold } from '../regler/modell'
 import { regelimportSql } from '../regler/import'
+import { lesPubliserteRegelsett } from '../regler/kommentarer'
+import { lagFaginnholdsleser } from '../faginnhold/lesing'
 import { DAGENS_IMPORT } from './hjelp/dagensregler'
 import { byggPersongalleri, PERSONER, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
-import { faginnholdskall, feilFra, nyDatabase, som, type Faginnholdskall } from './hjelp/testdatabase'
+import {
+  faginnholdskall,
+  feilFra,
+  kjorMigrasjoner,
+  migrasjonsfiler,
+  nyDatabase,
+  opprettBruker,
+  som,
+  type Faginnholdskall,
+} from './hjelp/testdatabase'
 
 const PERSONENE = Object.keys(PERSONER) as Person[]
 
@@ -105,8 +119,14 @@ async function fagmiljoTil(objekt: string): Promise<Fagmiljo | 'felles'> {
   return r.fagmiljo_id === g.fagmiljo.A ? 'A' : 'B'
 }
 
+/** Importen av THC-syreregelsettet, som bare kjøres når administratoren som bestilte den, finnes. */
+const THC_IMPORT = migrasjonsfiler().find((f) => f.endsWith('_thc_regelsett_import.sql'))!
+
 beforeAll(async () => {
-  db = await nyDatabase()
+  // Med THC-syreregelsettet og kommentarene det bruker, slik produksjonen har dem.
+  db = await nyDatabase({ til: THC_IMPORT })
+  await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'P', rolle: 'admin' })
+  await kjorMigrasjoner(db, { fra: THC_IMPORT })
   g = await byggPersongalleri(db)
   kall = faginnholdskall(db, g.id.systemarkitekt)
   await db.exec(regelimportSql(DAGENS_IMPORT, 'test.systemarkitekt'))
@@ -291,17 +311,62 @@ describe('rekkevidden til fortolkningen', () => {
     expect(await fagmiljoTil(regelsettA)).toBe('A')
   })
 
-  it('stopper en flytting som ville latt et regelsett bruke et annet fagmiljøs kommentarer', async () => {
-    const { rows } = await db.query<{ kommentar_id: string }>(
-      'select kommentar_id from public.intervallregler where regelsett_id = $1 limit 1',
-      [regelsettA],
+  it('stopper en flytting som ville latt et regelsett bruke et annet fagmiljøs kommentarer, uten å endre noe', async () => {
+    // (a) Et regelsett med både intervall- og cut-off-kommentarer.
+    const { rows: medCutoff } = await db.query<{ objekt_id: string; analyttkode: string; cutoff: string }>(
+      `select objekt_id, analyttkode, coalesce(cutoff_kommentar_id, cutoff_innledning_id) as cutoff
+       from public.intervallregelsett
+       where tilstand = 'publisert' and coalesce(cutoff_kommentar_id, cutoff_innledning_id) is not null
+       order by analyttkode limit 1`,
     )
-    // Regelsettet alene, og en kommentar det bruker alene.
-    expect(await settRekkevidde(regelsettA, 'fagmiljo', g.fagmiljo.B)).toMatchObject(FLYTTING_PAA_TVERS)
-    expect(await settRekkevidde(rows[0]!.kommentar_id, 'fagmiljo', g.fagmiljo.B)).toMatchObject(FLYTTING_PAA_TVERS)
-    expect(await fagmiljoTil(regelsettA)).toBe('A')
-    expect(await fagmiljoTil(rows[0]!.kommentar_id)).toBe('A')
-    expect((await finnFor('vanligA', kodeA))?.id).toBe(regelsettA)
+    expect(medCutoff, 'et regelsett med cut-off-kommentar').toHaveLength(1)
+    const regelsettMedCutoff = medCutoff[0]!
+    const intervallkommentarer = (
+      await db.query<{ id: string }>('select distinct kommentar_id as id from public.intervallregler where regelsett_id = $1', [
+        regelsettMedCutoff.objekt_id,
+      ])
+    ).rows.map((r) => r.id)
+    expect(intervallkommentarer.length).toBeGreaterThan(0)
+
+    // (b) Kommentarer i bruk: i et intervall, som cut-off, i en rusmodul og i THC-regelsettet.
+    const bruktIModul = await db.query<{ id: string }>('select kommentar_id as id from public.scenarioplasseringer limit 1')
+    const bruktITHC = await db.query<{ id: string }>('select kommentar_id as id from public.thc_tekstbolker limit 1')
+    expect(bruktIModul.rows, 'en kommentar i en rusmodul').toHaveLength(1)
+    expect(bruktITHC.rows, 'en kommentar i THC-regelsettet').toHaveLength(1)
+    const brukte = [intervallkommentarer[0]!, regelsettMedCutoff.cutoff, ...bruktIModul.rows.map((r) => r.id), ...bruktITHC.rows.map((r) => r.id)]
+
+    const tilstand = async () => ({
+      rekkevidde: (await db.query('select objekt_id, omfang, fagmiljo_id, regel from public.ressursomfang order by objekt_id')).rows,
+      kolonner: (
+        await db.query(
+          `select objekt_id, tilstand, fagmiljo_id from public.intervallregelsett
+           union all select objekt_id, tilstand, fagmiljo_id from public.scenarioregelsett
+           union all select objekt_id, tilstand, fagmiljo_id from public.thc_regelsett
+           order by 1, 2`,
+        )
+      ).rows,
+      intervallA: await intervallregelsettFor('vanligA'),
+      scenarioA: await forste<unknown>('vanligA', `select public.les_scenarioregler('publisert')`),
+      thcA: await forste<unknown>('vanligA', `select public.les_thc_regelsett('publisert')`),
+      intervallB: await intervallregelsettFor('vanligB'),
+    })
+    const for_ = await tilstand()
+
+    const forsok: Array<[string, string[]]> = [
+      ['regelsettet alene', [regelsettMedCutoff.objekt_id]],
+      ['regelsettet med intervallkommentarene, uten cut-off', [regelsettMedCutoff.objekt_id, ...intervallkommentarer.filter((k) => k !== regelsettMedCutoff.cutoff)]],
+      ...brukte.map((k, i): [string, string[]] => [`brukt kommentar ${i + 1} alene`, [k]]),
+    ]
+    for (const [hva, objekter] of forsok) {
+      expect(await settRekkevidde(objekter, 'fagmiljo', g.fagmiljo.B), hva).toMatchObject(FLYTTING_PAA_TVERS)
+    }
+    expect(await tilstand()).toEqual(for_)
+
+    // Fortolkningen leser fortsatt alle regelsettene med tekstene i A, og ingen i B.
+    const iA = await lesPubliserteRegelsett(lagFaginnholdsleser(kall.klientFor(g.id.vanligA)))
+    expect(iA.map((r) => r.analyttkode)).toContain(regelsettMedCutoff.analyttkode)
+    expect((await finnFor('vanligA', regelsettMedCutoff.analyttkode))?.id).toBe(regelsettMedCutoff.objekt_id)
+    expect(await finnFor('vanligB', regelsettMedCutoff.analyttkode)).toBeNull()
   })
 
   it('lar fagmiljøet på reglene følge en flytting av regelsettet og kommentarene sammen, og kan ikke settes for seg', async () => {
