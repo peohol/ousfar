@@ -21,7 +21,7 @@ let { rpc, les, fasit, opprett, lagre, gjenopprett, publiser, revisjoner, forven
 
 beforeAll(async () => {
   db = await nyDatabase()
-  const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+  const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'vanlig', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
   ;({ rpc, les, fasit, opprett, lagre, gjenopprett, publiser, revisjoner, forventSamsvar } = faginnholdskall(
     db,

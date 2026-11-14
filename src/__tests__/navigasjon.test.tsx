@@ -36,7 +36,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 /** Kallene appen har gjort til databasen, i rekkefølge. */
 const databasen = vi.hoisted(() => ({ kall: [] as { funksjon: string; argumenter: Record<string, unknown> }[] }))
 /** Rollen til den innloggede; en vanlig bruker, med mindre testen sier noe annet. */
-const okt = vi.hoisted(() => ({ rolle: 'user' }))
+// `lokalAdmin`: lokal administrator i KF uten den gamle adminrollen (P2a).
+const okt = vi.hoisted(() => ({ rolle: 'user', lokalAdmin: false }))
 
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: okt.rolle, first_name: 'Lars', last_name: 'Leser', username: 'leser' }),
@@ -77,6 +78,21 @@ vi.mock('../auth/klient', async () => {
     klient: () => ({
       rpc: async (funksjon: string, argumenter: Record<string, unknown> = {}) => {
         databasen.kall.push({ funksjon, argumenter })
+        // En administrator her er lokal administrator og systemarkitekt (P2a, P2d).
+        if (funksjon === 'mine_rettigheter') {
+          const fagmiljo = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
+          const admin = okt.rolle === 'admin'
+          return {
+            data: {
+              systemarkitekt: admin,
+              administrerer: admin || okt.lokalAdmin ? [fagmiljo] : [],
+              stoffregister: admin,
+              opprett_bruker: admin,
+            },
+            error: null,
+          }
+        }
+        if (funksjon === 'kan_endre_lokalt_innhold') return { data: okt.rolle === 'admin' || okt.lokalAdmin, error: null }
         // Stoffsiden leses etter nøkkelen; bare teststoffet har en side.
         if (funksjon === 'les_stoff') return { data: argumenter.stoff === teststoff.slug ? stoffside : null, error: null }
         // Regelsettet for én analyttkode, slik stoffsiden leser det.
@@ -111,6 +127,7 @@ beforeEach(() => {
   window.location.hash = ''
   databasen.kall = []
   okt.rolle = 'user'
+  okt.lokalAdmin = false
 })
 
 afterEach(() => {
@@ -445,6 +462,16 @@ describe('redigeringen av fortolkningen', { timeout: 20_000 }, () => {
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
     expect(window.location.hash).toBe('#/fortolkning/nor')
     expect(screen.getByRole('region', { name: 'Velg konsentrasjon' })).toBeTruthy()
+  })
+
+  it('åpnes for en lokal administrator uten den gamle adminrollen', async () => {
+    okt.lokalAdmin = true
+    const user = userEvent.setup()
+    visApp()
+    await velgNortriptylin(user)
+    await user.click(await screen.findByRole('button', { name: 'Rediger fortolkningen' }))
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/nor/rediger'))
+    expect(fortolkningen().hidden).toBe(true)
   })
 
   it('er ikke der for andre, og adressen til den er bare fortolkningen', async () => {

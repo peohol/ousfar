@@ -44,8 +44,8 @@ let { rpc, les, fasit, opprett, lagre, gjenopprett, publiser, revisjoner, forven
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'admin.en', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin' })
-  admin2 = await opprettBruker(db, { brukernavn: 'admin.to', fornavn: 'Bo', etternavn: 'Bestyrer', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'admin.en', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin', systemarkitekt: true })
+  admin2 = await opprettBruker(db, { brukernavn: 'admin.to', fornavn: 'Bo', etternavn: 'Bestyrer', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'vanlig', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
   ;({ rpc, les, fasit, opprett, lagre, gjenopprett, publiser, revisjoner, forventSamsvar, klientFor } =
     faginnholdskall(db, admin))

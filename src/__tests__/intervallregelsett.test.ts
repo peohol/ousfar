@@ -117,7 +117,7 @@ function ordnet(regelsett: Intervallregelsett): Intervallregelsett {
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'regel.admin', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'regel.admin', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin', lokalAdmin: true })
   bruker = await opprettBruker(db, { brukernavn: 'regel.bruker', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   await db.exec(regelimportSql(DAGENS_IMPORT, 'regel.admin'))

@@ -111,7 +111,7 @@ async function publisertSide(
 beforeAll(async () => {
   db = await nyDatabase()
   await synkroniserUtdrag(db)
-  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   const lager = lagFaginnholdslager(kall.klientFor(admin))

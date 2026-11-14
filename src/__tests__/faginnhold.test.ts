@@ -55,12 +55,14 @@ beforeAll(async () => {
     fornavn: 'Ada',
     etternavn: 'Adminsen',
     rolle: 'admin',
+    systemarkitekt: true,
   })
   admin2 = await opprettBruker(db, {
     brukernavn: 'admin.to',
     fornavn: 'Bo',
     etternavn: 'Bestyrer',
     rolle: 'admin',
+    systemarkitekt: true,
   })
   bruker = await opprettBruker(db, {
     brukernavn: 'vanlig',
@@ -377,6 +379,7 @@ describe('revisjonshistorikken', () => {
       fornavn: 'Gammelt',
       etternavn: 'Navn',
       rolle: 'admin',
+      systemarkitekt: true,
     })
     const side = await opprett('infoside', { navn: 'Side før navnebytte' }, skribent)
 
@@ -795,7 +798,7 @@ describe('lagringsmodulen i appen', () => {
   it('gir databasens melding når en vanlig bruker prøver å endre', async () => {
     const lager = lagFaginnholdslager(klientFor(bruker))
     await expect(lager.opprettUtkast('infoside', { navn: 'Nei' })).rejects.toThrow(
-      'Bare administratorer kan endre faginnholdet.',
+      'Bare systemarkitektene og administratorene i fagmiljøene kan endre faginnholdet.',
     )
   })
 

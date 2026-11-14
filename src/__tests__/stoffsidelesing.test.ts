@@ -66,7 +66,7 @@ async function publiser(...objekter: Objektstatus[]) {
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   adminleser = lagFaginnholdsleser(kall.klientFor(admin))

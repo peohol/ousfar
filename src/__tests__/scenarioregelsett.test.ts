@@ -56,7 +56,7 @@ async function nyKommentar(innhold: Kommentarinnhold, publiser = true): Promise<
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin', lokalAdmin: true })
   bruker = await opprettBruker(db, { brukernavn: 'vanlig', fornavn: 'Vera', etternavn: 'Vanlig', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   for (const [id, tekst] of RUS_KOMMENTARER) {

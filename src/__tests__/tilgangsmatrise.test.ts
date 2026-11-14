@@ -31,10 +31,10 @@ import { nyDatabase, som } from './hjelp/testdatabase'
 type Utfall = 'tilgang' | 'avvist'
 
 /** Etappen som skal gi målet (P0 §6.1). */
-type Etappe = (typeof HOLDER)[number] | 'P2a'
+type Etappe = (typeof HOLDER)[number]
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2b', 'P2c', 'P2d'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -48,7 +48,7 @@ interface Scenario {
   etappe: Etappe
   idag: Utfall
   mal: Utfall
-  /** Gir `true` når personen fikk tilgang (lest noe eller fått skrive). En nektet tilgang (42501) gir `avvist`. */
+  /** Gir `true` når personen fikk tilgang (lest noe eller fått skrive). En nektet tilgang (42501, eller PT404 for et objekt personen ikke kan lese) gir `avvist`. */
   prov: (k: Kontekst) => Promise<boolean>
 }
 
@@ -101,11 +101,23 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'leser datakildestatusen med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2.0', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
 
   // --- P2a: faginnhold og regler (lokalt for A etter P0 §3) ---------------
-  { navn: 'leser A sin publiserte fortolkningskommentar', person: 'vanligB', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
-  { navn: 'leser A sin publiserte fortolkningskommentar etter avsluttet medlemskap i A', person: 'avsluttetA', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
-  { navn: 'leser A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
-  { navn: 'lagrer A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
-  { navn: 'publiserer A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.publiser_utkast($1, 1)', [k.d.kommentarutkast]) },
+  { navn: 'leser A sin publiserte fortolkningskommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
+  { navn: 'leser A sin publiserte fortolkningskommentar etter avsluttet medlemskap i A', person: 'avsluttetA', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: lesKommentar('publisert', 'publisertKommentar') },
+  { navn: 'leser A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
+  { navn: 'lagrer A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
+  { navn: 'publiserer A sitt utkast som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.publiser_utkast($1, 1)', [k.d.kommentarutkast]) },
+  { navn: 'leser A sin publiserte kommentar direkte i tabellen', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.kommentarer where objekt_id = $1', [k.d.publisertKommentar]) },
+  { navn: 'leser A sitt publiserte objekt i objektregisteret', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.redigerbare_objekter where id = $1', [k.d.publisertKommentar]) },
+  { navn: 'leser revisjonene og publiseringene til A sin kommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.objektrevisjoner where objekt_id = $1 union all select 1 from public.objektpubliseringer where objekt_id = $1', [k.d.publisertKommentar]) },
+  { navn: 'leser historikken til A sin kommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.les_historikk($1) -> 'hendelser') > 0`, [k.d.publisertKommentar]) },
+  { navn: 'leser rekkevidden til A sin kommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.ressursomfang where objekt_id = $1', [k.d.publisertKommentar]) },
+  { navn: 'leser rekkevidden til A sin kommentar som medlem i A', person: 'vanligA', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select 1 from public.ressursomfang where objekt_id = $1', [k.d.publisertKommentar]) },
+  { navn: 'oppretter en fortolkningskommentar, som hører til A, som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_utkast('kommentar', $1)`, [JSON.stringify(KOMMENTAR)]) },
+  { navn: 'gjenoppretter en revisjon av A sin kommentar som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.gjenopprett_revisjon($1, 1, 1)', [k.d.publisertKommentar]) },
+  { navn: 'leser A sitt utkast etter avsluttet medlemskap i A med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
+  { navn: 'oppretter en fortolkningskommentar som lokal admin i eget fagmiljø', person: 'adminA', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `select public.opprett_utkast('kommentar', $1)`, [JSON.stringify(KOMMENTAR)]) },
+  { navn: 'publiserer et utkast som lokal admin i eget fagmiljø', person: 'adminA', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.publiser_utkast($1, 1)', [k.d.kommentarutkast]) },
+  { navn: 'lagrer A sitt utkast som systemarkitekt', person: 'systemarkitekt', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
   { navn: 'leser A sin publiserte kommentar med aktivt medlemskap i A', person: 'dobbeltAB', etappe: 'P1.1', idag: 'tilgang', mal: 'tilgang', prov: lesKommentar('publisert', 'publisertKommentar') },
   { navn: 'leser et utkast som vanlig bruker', person: 'vanligA', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
   { navn: 'leser et utkast som systemarkitekt', person: 'systemarkitekt', etappe: 'P1.1', idag: 'tilgang', mal: 'tilgang', prov: lesKommentar('utkast', 'kommentarutkast') },
@@ -237,7 +249,8 @@ async function utfall(s: Scenario): Promise<Utfall> {
       }
     })
   } catch (feil) {
-    if ((feil as { code?: string }).code === '42501') return 'avvist'
+    // 42501 er nektet; PT404 er svaret P2a gir for et objekt personen ikke kan lese, likt som for et som ikke finnes.
+    if (['42501', 'PT404'].includes((feil as { code?: string }).code ?? '')) return 'avvist'
     throw feil
   }
 }
@@ -285,7 +298,7 @@ describe('tilgangsmatrisen', () => {
 
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
-    expect(Object.keys(hull).sort()).toEqual(['P2a'])
+    expect(Object.keys(hull).sort()).toEqual([])
     for (const etappe of HOLDER) {
       expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
       expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])

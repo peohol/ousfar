@@ -229,7 +229,7 @@ describe('monografmigrasjoner uten kuratorprofil', () => {
   let side: string
 
   it('hopper over også når en tidligere migrasjon har laget siden, så lenge ingen profiler finnes', async () => {
-    const importen = await opprettBruker(tom, { brukernavn: 'import', fornavn: 'Im', etternavn: 'Port', rolle: 'admin' })
+    const importen = await opprettBruker(tom, { brukernavn: 'import', fornavn: 'Im', etternavn: 'Port', rolle: 'admin', systemarkitekt: true })
     side = (await eksempelside(faginnholdskall(tom, importen), 'Eksempelstoff')).side
     // Siden står igjen uten noen profiler, slik den gjør etter en import i en fersk kjede.
     await tom.exec(`set session_replication_role = replica; delete from public.profiles; set session_replication_role = origin;`)
@@ -239,7 +239,7 @@ describe('monografmigrasjoner uten kuratorprofil', () => {
   })
 
   it('stopper når siden og andre profiler finnes, men ikke kuratoren, i stedet for å hoppe over i stillhet', async () => {
-    await opprettBruker(tom, { brukernavn: 'rita', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+    await opprettBruker(tom, { brukernavn: 'rita', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     await forventStopp(tom, side, MAL, /finnes, men ikke administratoren peohol/)
   })
 })
@@ -258,7 +258,7 @@ describe('monografkuratering med kuratorprofil', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    const peohol = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'Kurator', rolle: 'admin' })
+    const peohol = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'Kurator', rolle: 'admin', systemarkitekt: true })
     kall = faginnholdskall(db, peohol)
   }, 240_000)
 

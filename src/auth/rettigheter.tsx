@@ -11,8 +11,8 @@
  * jevnlig, så en endring slår gjennom uten ny innlogging. Et svar som feiler,
  * endrer ingenting; før det første svaret vises ingen rettigheter.
  */
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
-import { useJevnligSjekk } from '../hooks/useJevnligSjekk'
+import { createContext, useContext, type ReactNode } from 'react'
+import { useKontoensSvar } from '../hooks/useKontoensSvar'
 import { klient } from './klient'
 
 export interface Fagmiljoreferanse {
@@ -82,19 +82,5 @@ export function useRettigheter(): Rettigheter {
  * kommer.
  */
 export function useMineRettigheter(bruker: string, hent: () => Promise<Rettigheter> = hentMineRettigheter): Rettigheter {
-  const [svar, setSvar] = useState<{ bruker: string; rettigheter: Rettigheter } | null>(null)
-  const sjekk = useCallback(() => {
-    hent().then(
-      // Samme svar gir samme objekt, så ingenting tegnes på nytt uten grunn.
-      (rettigheter) =>
-        setSvar((forrige) =>
-          forrige !== null && forrige.bruker === bruker && JSON.stringify(forrige.rettigheter) === JSON.stringify(rettigheter)
-            ? forrige
-            : { bruker, rettigheter },
-        ),
-      () => undefined,
-    )
-  }, [bruker, hent])
-  useJevnligSjekk(sjekk)
-  return svar !== null && svar.bruker === bruker ? svar.rettigheter : INGEN_RETTIGHETER
+  return useKontoensSvar(bruker, hent, INGEN_RETTIGHETER)
 }

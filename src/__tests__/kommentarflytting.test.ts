@@ -28,7 +28,7 @@ import {
 } from './hjelp/testdatabase'
 
 /** Administratoren de historiske importmigreringene er skrevet for. */
-const IMPORTADMIN = { brukernavn: 'peohol', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin' } as const
+const IMPORTADMIN = { brukernavn: 'peohol', fornavn: 'Ada', etternavn: 'Adminsen', rolle: 'admin', systemarkitekt: true } as const
 const IMPORTFILER = migrasjonsfiler().filter((f) => /_importer_intervallregelsett_\d+\.sql$/.test(f))
 const OMLEGGING = migrasjonsfiler().find((f) => f.endsWith('_intervallregelsett_kommentarobjekter.sql'))!
 

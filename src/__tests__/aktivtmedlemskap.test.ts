@@ -41,6 +41,10 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'mine_administrerte_fagmiljoer()': [],
   'mine_lesbare_fagmiljoer()': [],
   'mine_synlige_profiler()': [],
+  'leser_alt_lokale_innhold()': false,
+  'kan_endre_lokalt_innhold()': false,
+  'leser_analyttkoblingene()': false,
+  'kan_se_utkast()': false,
 }
 
 let db: PGlite
