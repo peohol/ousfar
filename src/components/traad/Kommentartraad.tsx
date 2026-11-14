@@ -29,9 +29,9 @@ export interface Kommentarkanal {
   endre: (kommentar: string, tekst: Riktekstdokument) => Promise<void>
   /** En kommentar med svar står igjen uten tekst; databasen avgjør det. */
   slett: (kommentar: string) => Promise<void>
-  /** En administrator kan slette andres kommentarer (idéene). */
-  adminSletter: boolean
-  /** En administrator kan skjule innholdet i en kommentar, og vise det igjen (diskusjonene). */
+  /** Den innloggede kan slette andres kommentarer (en systemarkitekt under idéene). */
+  sletterAndres: boolean
+  /** En moderator kan skjule innholdet i en kommentar, og vise det igjen (diskusjonene). Bare satt for en moderator. */
   skjuling?: (handling: Skjulehandling, kommentar: string) => Promise<void>
 }
 
@@ -169,7 +169,7 @@ function Kommentarvisning({
   fremhevNr: number | null
 }) {
   const { kommentar, svar, antallSvar } = node
-  const { meg, admin } = useForfatterkontekst()
+  const { meg } = useForfatterkontekst()
   const navn = useForfatternavn(kommentar.forfatter_id)
   const [apen, setApen] = useState(true)
   // Et svar eller en endring som skrives, overlever en oppdatering av appen.
@@ -248,7 +248,7 @@ function Kommentarvisning({
               onAvbryt={() => setEndrer(false)}
             />
           ) : skjult ? (
-            <p className="kommentar__skjultmerknad">Innholdet er skjult av en administrator.</p>
+            <p className="kommentar__skjultmerknad">Innholdet er skjult av en moderator.</p>
           ) : (
             !kommentar.slettet && (
               <Langtekst hva="kommentaren">
@@ -277,8 +277,8 @@ function Kommentarvisning({
                 </Idehandling>
               )}
               <Kopilenkeknapp mal={{ slag: kanal.slag, id: kanal.traad, kommentar: kommentar.id }} hva="kommentaren" />
-              {!laast && (eier || (admin && kanal.adminSletter)) && <Slettknapp hva="kommentaren" onSlett={() => void utfor(kanal.slett)} />}
-              {admin && kanal.skjuling && !laast && !eier && (
+              {!laast && (eier || kanal.sletterAndres) && <Slettknapp hva="kommentaren" onSlett={() => void utfor(kanal.slett)} />}
+              {kanal.skjuling && !laast && !eier && (
                 <Skjulehandlinger
                   hva="kommentaren"
                   skjult={skjult}

@@ -31,7 +31,8 @@ export const SKUFF_ARKIV = 'arkiv'
  * idé i den.
  *
  * Nederst står to skuffer: idéene som er overført til Planlagte oppgaver, som
- * åpner oppgaven, og arkivet med dem som ikke er aktuelle.
+ * åpner oppgaven for en systemarkitekt og idéen for andre, og arkivet med dem
+ * som ikke er aktuelle.
  */
 export function Ideliste({
   ideer,
@@ -48,8 +49,8 @@ export function Ideliste({
   onSortering: (sortering: Sortering) => void
   onApne: (id: string) => void
   onNy: (kategori?: Idekategori) => void
-  /** Et kort for en overført idé åpner oppgaven i Planlagte oppgaver. */
-  onOppgave: (oppgave: string) => void
+  /** Et kort for en overført idé åpner oppgaven i Planlagte oppgaver; uten den åpnes idéen. */
+  onOppgave?: (oppgave: string) => void
   apneSkuffer: ReadonlySet<string>
   onVeksleSkuff: (navn: string) => void
 }) {
@@ -79,11 +80,11 @@ export function Ideliste({
           tittel="Planlagte oppgaver"
           ikon="oppgaver"
           antall={overforte.length}
-          forklaring="Idéene som er overført til Planlagte oppgaver. Et trykk åpner oppgaven."
+          forklaring={`Idéene som er overført til Planlagte oppgaver. Et trykk åpner ${onOppgave ? 'oppgaven' : 'idéen'}.`}
           apen={apneSkuffer.has(SKUFF_OVERFORT)}
           onVeksle={() => onVeksleSkuff(SKUFF_OVERFORT)}
         >
-          <Kortliste ideer={overforte} onApne={(ide) => onOppgave(ide.oppgave!.id)} />
+          <Kortliste ideer={overforte} onApne={(ide) => (onOppgave ? onOppgave(ide.oppgave!.id) : onApne(ide.id))} />
         </Skuff>
       )}
       {arkiverte.length > 0 && (

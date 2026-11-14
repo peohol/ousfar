@@ -37,6 +37,7 @@ export function Diskusjonsoversikt({
   onLosOpp,
   onFlyttKategori,
   onFlyttTraad,
+  kanStyre,
 }: {
   gruppering: Gruppering
   kategorier: readonly Diskusjonskategori[]
@@ -48,6 +49,8 @@ export function Diskusjonsoversikt({
   onLosOpp: (kategori: Diskusjonskategori) => void
   onFlyttKategori: (kategori: string, indeks: number) => void
   onFlyttTraad: (traad: string, kategori: string, indeks: number) => void
+  /** Om den innloggede kan flytte tråden: den som startet den, og en moderator (`kanStyreDiskusjon`). */
+  kanStyre: (diskusjon: Diskusjon) => boolean
 }) {
   const brett = useRef<HTMLDivElement>(null)
   const [arkivApent, setArkivApent] = useBevart('arkiv', false)
@@ -85,7 +88,7 @@ export function Diskusjonsoversikt({
               <span className="diskusjonskategori__navn">{UKATEGORISERTE.navn}</span>
             </h3>
             <p className="diskusjonskategori__merknad">Trådene her har mistet kategorien sin. Flytt dem til en kategori.</p>
-            <Traadliste liste={UKATEGORISERT_LISTE} diskusjoner={ukategoriserte} onApne={onApne} />
+            <Traadliste liste={UKATEGORISERT_LISTE} diskusjoner={ukategoriserte} onApne={onApne} kanStyre={kanStyre} />
           </section>
         )}
 
@@ -107,6 +110,7 @@ export function Diskusjonsoversikt({
               onLosOpp={() => onLosOpp(kategori)}
               onFlytt={(til) => onFlyttKategori(kategori.id, til)}
               indeks={indeks}
+              kanStyre={kanStyre}
             />
           ))}
         </ol>
@@ -160,6 +164,7 @@ function Kategori({
   onEndre,
   onLosOpp,
   onFlytt,
+  kanStyre,
 }: {
   kategori: Diskusjonskategori
   diskusjoner: Diskusjon[]
@@ -171,6 +176,7 @@ function Kategori({
   onEndre: () => void
   onLosOpp: () => void
   onFlytt: (indeks: number) => void
+  kanStyre: (diskusjon: Diskusjon) => boolean
 }) {
   const [handlinger, setHandlinger] = useState(false)
   const id = useId()
@@ -235,7 +241,7 @@ function Kategori({
           </div>
         )}
       </div>
-      <Traadliste liste={kategori.id} tar="traad" diskusjoner={diskusjoner} onApne={onApne} />
+      <Traadliste liste={kategori.id} tar="traad" diskusjoner={diskusjoner} onApne={onApne} kanStyre={kanStyre} />
       <button type="button" className="nytraadknapp nytraadknapp--kategori" onClick={onNyTraad}>
         <Ikon navn="plus" storrelse="ui" />
         <span>Ny tråd</span>
@@ -244,28 +250,44 @@ function Kategori({
   )
 }
 
-/** Trådene i én liste. Lista har bare trådene i seg, så Smett kan ordne dem. */
+/** Slaget til en tråd brukeren ikke kan flytte: ingen liste tar imot det, og det har ikke håndtak. */
+const LAAST_TRAAD = 'traad-laast'
+
+/**
+ * Trådene i én liste. Lista har bare trådene i seg, så Smett kan ordne dem.
+ * En tråd brukeren ikke kan styre, står i lista (så plassene stemmer med
+ * databasen), men kan ikke dras.
+ */
 function Traadliste({
   liste,
   tar,
   diskusjoner,
   onApne,
+  kanStyre,
 }: {
   liste: string
   tar?: string
   diskusjoner: Diskusjon[]
   onApne: (id: string) => void
+  kanStyre: (diskusjon: Diskusjon) => boolean
 }) {
   return (
     <ol className="traadliste" data-dnd-container={liste} data-tar={tar}>
-      {diskusjoner.map((d) => (
-        <li key={d.id} className="traadrad" data-dnd-id={d.id} data-slag="traad" data-navn={d.tittel}>
-          <span className={HANDTAK.slice(1)} aria-hidden="true" title="Dra for å flytte tråden">
-            <Ikon navn="more" storrelse="ui" />
-          </span>
-          <Traadknapp diskusjon={d} onApne={onApne} />
-        </li>
-      ))}
+      {diskusjoner.map((d) => {
+        const styres = kanStyre(d)
+        return (
+          <li key={d.id} className="traadrad" data-dnd-id={d.id} data-slag={styres ? 'traad' : LAAST_TRAAD} data-navn={d.tittel}>
+            {styres ? (
+              <span className={HANDTAK.slice(1)} aria-hidden="true" title="Dra for å flytte tråden">
+                <Ikon navn="more" storrelse="ui" />
+              </span>
+            ) : (
+              <span className="draghandtak-plass" aria-hidden="true" />
+            )}
+            <Traadknapp diskusjon={d} onApne={onApne} />
+          </li>
+        )
+      })}
     </ol>
   )
 }

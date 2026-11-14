@@ -43,7 +43,7 @@ const k = (rekkevidde: Rekkevidde, grunnlag: string): Klassifisering => ({ rekke
 
 const OBJEKT = (hva: string) => k('objekt', `Del av objektet ${hva}`)
 const FAGSIDE = k('avledet', 'Fagsidene er felles (§3)')
-const SIDENOKKEL = k('avledet', 'Fra sidenøkkelen: stoff:/register: felles, fortolkning: lokal (§3); radnivå i P2b')
+const SIDENOKKEL = k('avledet', 'Fra sidenøkkelen: stoff:/register: felles, fortolkning: lokal (§3); per rad siden P2b (omfang, fagmiljo_id)')
 const IDE = k('felles', 'Idéer og planlagte oppgaver er felles (§3)')
 const OFFENTLIG_KILDE = k('felles', 'Offentlig kilde (§3)')
 
@@ -120,7 +120,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),
   'public.stoffavoritter': k('personlig', 'Favoritter (§3)'),
-  'public.varsler': k('personlig', 'Varsler (§3)'),
+  'public.varsler': k('personlig', 'Varsler (§3); avgrenset også til fagmiljøet det gjelder (fagmiljo_id, P2b)'),
   'public.diskusjonsbesok': k('personlig', 'Hva brukeren har lest'),
   'public.idebesok': k('personlig', 'Hva brukeren har lest'),
 

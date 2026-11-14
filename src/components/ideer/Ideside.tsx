@@ -27,19 +27,19 @@ const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', y
 
 /**
  * Én idé: overskriften, hvem som skrev den og når, beskrivelsen, hjertene og
- * kommentartråden. Forfatteren kan endre og slette idéen; en administrator
+ * kommentartråden. Forfatteren kan endre og slette idéen; en systemarkitekt
  * kan slette den, legge den i arkivet («Ikke aktuelt») eller overføre den til
  * Planlagte oppgaver.
  *
  * En arkivert eller overført idé er frosset: den kan leses, men ikke endres,
- * kommenteres eller gis hjerter. En administrator kan gjenopprette en
+ * kommenteres eller gis hjerter. En systemarkitekt kan gjenopprette en
  * arkivert idé eller slette den for godt.
  *
  * Å åpne idéen merker den som sett. Kommentarene som var nye da den ble
  * åpnet, står merket som nye til man går ut av den.
  *
  * `innebygd`: idéen står inni en planlagt oppgave, som bakgrunn for den. Da
- * tar den ikke fokus og har ingen av handlingene for administratorer.
+ * tar den ikke fokus og har ingen av handlingene for systemarkitektene.
  */
 export function Ideside({
   id,
@@ -55,16 +55,16 @@ export function Ideside({
   innebygd?: boolean
   onEndre?: (ide: Idetraad) => void
   onSlettet?: () => void
-  /** En administrator har lagt idéen i arkivet. */
+  /** En systemarkitekt har lagt idéen i arkivet. */
   onArkivert?: (ide: Idetraad) => void
-  /** En administrator har overført idéen; `oppgave` er ID-en til oppgaven. */
+  /** En systemarkitekt har overført idéen; `oppgave` er ID-en til oppgaven. */
   onOverfort?: (ide: Idetraad, oppgave: string) => void
   /** Til oppgaven en overført idé ble til. */
   onOppgave?: (oppgave: string) => void
   /** Kommentaren en direktelenke førte til. */
   fremhev?: Fremheving | null
 }) {
-  const { meg, admin } = useForfatterkontekst()
+  const { meg, systemarkitekt } = useForfatterkontekst()
   const [traad, setTraad] = useState<Idetraad | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
@@ -100,7 +100,7 @@ export function Ideside({
 
   const forfatter = useForfatternavn(traad?.forfatter_id ?? null)
 
-  /** Kommentarene under idéen. En administrator kan slette alle, slik idéene alltid har latt dem. */
+  /** Kommentarene under idéen. En systemarkitekt kan slette alle (D8). */
   const kanal = useMemo<Kommentarkanal>(
     () => ({
       slag: 'ide',
@@ -108,9 +108,9 @@ export function Ideside({
       opprett: (forelder, tekst) => opprettKommentar(id, forelder, tekst),
       endre: (kommentar, tekst) => endreKommentar(kommentar, tekst),
       slett: (kommentar) => slettKommentar(kommentar),
-      adminSletter: true,
+      sletterAndres: systemarkitekt,
     }),
-    [id],
+    [id, systemarkitekt],
   )
 
   /**
@@ -165,7 +165,7 @@ export function Ideside({
   const tilstand = idetilstand(traad)
   const laast = tilstand !== 'apen'
   const eier = traad.forfatter_id === meg.id
-  const administrerer = admin && !innebygd
+  const administrerer = systemarkitekt && !innebygd
   const niva = innebygd ? 4 : 3
   const Overskrift = niva === 4 ? 'h4' : 'h3'
 
@@ -248,7 +248,7 @@ export function Ideside({
             Rediger
           </Idehandling>
         )}
-        {!laast && (eier || admin) && !innebygd && <Slettknapp hva="idéen" onSlett={slett} />}
+        {!laast && (eier || systemarkitekt) && !innebygd && <Slettknapp hva="idéen" onSlett={slett} />}
         <Kopilenkeknapp mal={{ slag: 'ide', id: traad.id, kommentar: null }} hva="idéen" />
       </div>
 

@@ -57,6 +57,7 @@ const traad = (id: string, kategori_id: string | null, posisjon: number, tittel:
 })
 
 const OVERSIKT: Diskusjonsoversikt = {
+  kan_moderere: false,
   kategorier: [
     { id: 'dos', navn: 'Dosering', emoji: '💊', posisjon: 0 },
     { id: 'biv', navn: 'Bivirkninger', emoji: '🩺', posisjon: 1 },
@@ -73,6 +74,7 @@ const OVERSIKT: Diskusjonsoversikt = {
 const TRAAD: Diskusjonstraad = {
   id: 't1',
   side: 'stoff:litium',
+  kan_moderere: false,
   kategori_id: 'dos',
   forfatter_id: 'ola',
   tittel: 'Nyresvikt',
@@ -102,6 +104,7 @@ const SIDER: Diskusjonssider = {
 
 /** Diskusjonene på siden en tråd flyttes til. */
 const VALPROAT: Diskusjonsoversikt = {
+  kan_moderere: false,
   kategorier: [{ id: 'vdos', navn: 'Dosering', emoji: '💊', posisjon: 0 }],
   diskusjoner: [],
 }
@@ -159,8 +162,13 @@ beforeAll(() => {
 
 beforeEach(() => {
   tilstand.meg = KARI
-  api.hentDiskusjoner.mockImplementation(async (side: string) => (side === 'stoff:valproat' ? VALPROAT : OVERSIKT))
-  api.hentDiskusjonstraad.mockResolvedValue(TRAAD)
+  // Databasen sier om den innloggede kan moderere siden; i testene er det moderatoren Anne.
+  const moderator = () => tilstand.meg.id === ADMIN.id
+  api.hentDiskusjoner.mockImplementation(async (side: string) => ({
+    ...(side === 'stoff:valproat' ? VALPROAT : OVERSIKT),
+    kan_moderere: moderator(),
+  }))
+  api.hentDiskusjonstraad.mockImplementation(async () => ({ ...TRAAD, kan_moderere: moderator() }))
   api.hentDiskusjonstekster.mockResolvedValue([
     { id: 't2', tittel: 'Barn', tekster: ['Dosering hos barn under 12 år'] },
     { id: 't5', tittel: 'Gammel sak', tekster: ['Kvalme og dosering'] },
@@ -396,6 +404,21 @@ describe('lista', () => {
     expect(within(panel()).queryByRole('button', { name: /Gammel sak/ })).toBeNull()
   })
 
+  it.each([
+    ['den som startet dem', () => OLA, true],
+    ['en moderator', () => ADMIN, true],
+    ['andre', () => KARI, false],
+  ])('lar trådene dras av %s', async (_, hvem, dras) => {
+    tilstand.meg = hvem()
+    await apne()
+    const rader = panel().querySelectorAll<HTMLElement>('.traadrad[data-dnd-id]')
+    expect(rader.length).toBe(4)
+    for (const rad of rader) {
+      expect(rad.dataset.slag).toBe(dras ? 'traad' : 'traad-laast')
+      expect(rad.querySelector('.draghandtak') !== null).toBe(dras)
+    }
+  })
+
   it('flytter en kategori med knappene og lagrer plassen', async () => {
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: 'Handlinger for Dosering' }))
@@ -460,25 +483,40 @@ describe('en ny tråd', () => {
 })
 
 describe('én tråd', () => {
-  it('merkes som sett, og lar alle arkivere og endre overskriften, men bare forfatteren endre innlegget', async () => {
+  it('merkes som sett, men lar bare den som startet den eller en moderator styre den, og bare forfatteren endre innlegget', async () => {
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
-    await waitFor(() => expect(api.merkDiskusjonSett).toHaveBeenCalledWith(TRAAD))
+    await waitFor(() => expect(api.merkDiskusjonSett).toHaveBeenCalledWith({ ...TRAAD, kan_moderere: false }))
 
     expect(within(panel()).queryByRole('button', { name: 'Rediger innlegget' })).toBeNull()
-    expect(within(panel()).getByRole('button', { name: 'Endre overskriften' })).toBeTruthy()
+    // Kari startet ikke tråden og er ingen moderator.
+    for (const navn of ['Endre overskriften', 'Legg tråden i arkivet', 'Flytt tråden']) {
+      expect(within(panel()).queryByRole('button', { name: navn })).toBeNull()
+    }
     // Egen kommentar kan slettes, andres ikke.
     const kommentarer = panel().querySelectorAll<HTMLElement>('.kommentar')
     expect(within(kommentarer[0]!).getByRole('button', { name: 'Slett kommentaren' })).toBeTruthy()
     expect(within(kommentarer[1]!).queryByRole('button', { name: 'Slett kommentaren' })).toBeNull()
+  })
 
+  it.each([
+    ['den som startet tråden', () => OLA],
+    ['en moderator', () => ADMIN],
+  ])('kan arkiveres og få ny overskrift av %s', async (_, hvem) => {
+    tilstand.meg = hvem()
+    const bruker = await apne()
+    await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
+    await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
+    expect(within(panel()).getByRole('button', { name: 'Endre overskriften' })).toBeTruthy()
+    expect(within(panel()).getByRole('button', { name: 'Flytt tråden' })).toBeTruthy()
     await bruker.click(within(panel()).getByRole('button', { name: 'Legg tråden i arkivet' }))
     await bruker.click(within(panel()).getByRole('button', { name: 'Bekreft at tråden legges i arkivet' }))
     expect(api.arkiverDiskusjon).toHaveBeenCalledWith('t1', true)
   })
 
   it('har «Alle tråder» fast over tråden, utenfor det som rulles, som søket i lista', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     const kropp = panel().querySelector<HTMLElement>('.diskusjonspanel__kropp')!
     expect(kropp.contains(within(panel()).getByRole('searchbox', { name: 'Søk i trådene' }))).toBe(false)
@@ -510,7 +548,7 @@ describe('én tråd', () => {
     expect(within(panel()).getByRole('heading', { name: /^Dosering/ })).toBeTruthy()
   })
 
-  it('lar en administrator skjule innhold, men ikke slette andres kommentarer', async () => {
+  it('lar en moderator skjule innhold, men ikke slette andres kommentarer', async () => {
     tilstand.meg = ADMIN
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
@@ -526,11 +564,12 @@ describe('én tråd', () => {
     expect(api.skjuling.skjul).toHaveBeenCalledWith('t1', 'k1')
   })
 
-  it('lar en administrator vise skjult innhold igjen, eller fjerne det for godt', async () => {
+  it('lar en moderator vise skjult innhold igjen, eller fjerne det for godt', async () => {
     tilstand.meg = ADMIN
     const [forste, andre] = TRAAD.kommentarer
     api.hentDiskusjonstraad.mockResolvedValue({
       ...TRAAD,
+      kan_moderere: true,
       tekst: DOK(''),
       skjult: true,
       kan_vises: true,
@@ -542,7 +581,7 @@ describe('én tråd', () => {
     })
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
-    expect(await within(panel()).findAllByText('Innholdet er skjult av en administrator.')).toHaveLength(3)
+    expect(await within(panel()).findAllByText('Innholdet er skjult av en moderator.')).toHaveLength(3)
     expect(within(panel()).queryByRole('button', { name: /^Skjul (innlegget|innholdet)/ })).toBeNull()
 
     await bruker.click(within(panel()).getByRole('button', { name: 'Vis igjen innholdet i innlegget' }))
@@ -563,11 +602,12 @@ describe('én tråd', () => {
     })
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
-    await within(panel()).findByText('Innholdet er skjult av en administrator.')
+    await within(panel()).findByText('Innholdet er skjult av en moderator.')
     expect(within(panel()).queryByRole('button', { name: /^Skjul (innlegget|innholdet)|^Vis igjen|^Fjern for godt/ })).toBeNull()
   })
 
   it('er frosset i arkivet til den hentes tilbake', async () => {
+    tilstand.meg = OLA
     api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, arkivert_kl: '2026-09-29T10:00:00Z' })
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
@@ -578,9 +618,9 @@ describe('én tråd', () => {
     expect(api.arkiverDiskusjon).toHaveBeenCalledWith('t1', false)
   })
 
-  it('lar heller ikke en administrator skjule noe i arkivet', async () => {
+  it('lar heller ikke en moderator skjule noe i arkivet', async () => {
     tilstand.meg = ADMIN
-    api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, arkivert_kl: '2026-09-29T10:00:00Z' })
+    api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, kan_moderere: true, arkivert_kl: '2026-09-29T10:00:00Z' })
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText(/Tråden kan leses, men ikke endres/)
@@ -610,7 +650,7 @@ describe('én tråd', () => {
     expect(api.hentDiskusjonstraad).toHaveBeenCalledTimes(hentinger)
   })
 
-  it('kan ikke slettes av andre, men av en administrator, også i arkivet', async () => {
+  it('kan ikke slettes av andre, men av en moderator, også i arkivet', async () => {
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -618,7 +658,7 @@ describe('én tråd', () => {
     cleanup()
 
     tilstand.meg = ADMIN
-    api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, arkivert_kl: '2026-09-29T10:00:00Z' })
+    api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, kan_moderere: true, arkivert_kl: '2026-09-29T10:00:00Z' })
     const admin = await apne()
     await admin.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText(/Tråden kan leses, men ikke endres/)
@@ -628,6 +668,7 @@ describe('én tråd', () => {
   })
 
   it('flyttes til en annen side, i en kategori der, og følges dit', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -635,7 +676,8 @@ describe('én tråd', () => {
     const skjema = flyttelag()
     const sidevalg = within(skjema).getByRole('combobox', { name: 'Side' }) as HTMLSelectElement
     // Siden tråden står på, er valgt, med kategorien den står i; da er det ingenting å flytte.
-    expect([...sidevalg.options].map((o) => o.value)).toEqual(['stoff:litium', 'stoff:valproat', 'fortolkning:li', 'register:stoffregister'])
+    // En fortolkning hører til et fagmiljø, så en tråd fra en fagside kan ikke flyttes dit.
+    expect([...sidevalg.options].map((o) => o.value)).toEqual(['stoff:litium', 'stoff:valproat', 'register:stoffregister'])
     expect(sidevalg.value).toBe('stoff:litium')
     expect(sidevalg.selectedOptions[0]!.textContent).toBe('Litium (denne siden)')
     expect((within(skjema).getByRole('combobox', { name: 'Kategori' }) as HTMLSelectElement).value).toBe('dos')
@@ -653,6 +695,7 @@ describe('én tråd', () => {
   })
 
   it('flyttes til en ny kategori på den andre siden, med samme regler for navn og emoji', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -674,6 +717,7 @@ describe('én tråd', () => {
   })
 
   it('flyttes til en annen kategori på siden den står på, sist der', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -689,6 +733,7 @@ describe('én tråd', () => {
   })
 
   it('flyttes til en ny kategori på siden den står på', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -704,6 +749,7 @@ describe('én tråd', () => {
   })
 
   it('henter lista på nytt når den nye kategorien er laget, men flyttingen feiler', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
@@ -721,6 +767,7 @@ describe('én tråd', () => {
   })
 
   it('Escape lukker flyttelaget, ikke menyen', async () => {
+    tilstand.meg = OLA
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')

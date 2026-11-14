@@ -13,7 +13,8 @@ kontoer** (nytt passord og adminrolle, under). P4a har gitt hvert objekt i
 faginnholdet en rekkevidde, felles eller lokal
 ([Rekkevidden](#rekkevidden-ressursomfang)), men ingenting leser den ennå.
 P2.0 krever **aktivt medlemskap** for alt
-([Aktivt medlemskap](#aktivt-medlemskap)). Ellers bygger ingen rettigheter
+([Aktivt medlemskap](#aktivt-medlemskap)). P2b avgrenser diskusjonene,
+varslene og lenkene per fagmiljø ([Samhandlingen](#samhandlingen)). Ellers bygger ingen rettigheter
 på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
 aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d, bygd på de
 felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
@@ -273,11 +274,39 @@ datafilene i klientpakken og repoet, har rekkevidden sin erklært i
 fagsiden eller sidenøkkelen), felles, lokal, personlig, felles forvaltning
 eller tilgang. Testen stopper en tabell, visning eller fil under `src/data/`
 og `originaldata/` uten erklæring, og en erklæring for noe som ikke finnes.
-Diskusjonene får rekkevidde per tråd først i P2b, avledet av sidenøkkelen;
-de lokale statiske filene flyttes til databasen i P4c.
+Diskusjonene har fått rekkevidde per tråd i P2b, avledet av sidenøkkelen
+([Samhandlingen](#samhandlingen)); de lokale statiske filene flyttes til
+databasen i P4c.
 
 **Tilbakeføring.** Ingenting leser tabellen, så den kan stå. Utløserne kan
 tas bort i en ny migrasjon uten at noe annet endres.
+
+## Samhandlingen
+
+P2b avgrenser diskusjonene, kommentarene, varslene og lenkene til fagmiljøene
+den innloggede kan lese (`docs/diskusjoner.md`, «Hvem som ser diskusjonene»,
+og `docs/varsler.md`). Rekkevidden til en tråd følger siden: fagsidene og
+stoffregisteret er felles, fortolkningen hører til fagmiljøet sitt. Den står
+på tråden og kategorien (`omfang`, `fagmiljo_id`) og på varselet
+(`fagmiljo_id`), satt av databasen, og radsikkerheten `rekkevidde` (restriktiv,
+som `aktivt_medlemskap`) og funksjonene leser den. Moderering følger
+rettighetsmatrisen (P0 §5.2): de lokale administratorene på fagmiljøets egne
+sider, systemarkitektene på de felles; den gamle adminrollen gir ingenting her.
+Å styre en tråd (overskrift, flytting, arkiv) kan den som startet den, og en
+moderator.
+
+**Idéene og de planlagte oppgavene** følger Peders beslutning D8
+(2026-11-14): idéene deles av alle med et aktivt medlemskap, uansett
+fagmiljø, og varslene om dem går bare til dem. De planlagte oppgavene, og det
+å arkivere, overføre, gjenopprette og rydde idéer, er forbeholdt
+systemarkitektene (`intern.krev_idevalg_admin()`, radsikkerheten på
+`oppgaver`, og slettingen av idéer og kommentarer). Den gamle adminrollen gir
+ingenting her; appen spør databasen (`er_systemarkitekt()`) og viser
+Planlagte oppgaver og handlingene bare for systemarkitektene.
+
+**Tilbakeføring.** Radsikkerheten `rekkevidde` kan tas bort og funksjonene
+settes tilbake til forrige versjon i en ny migrasjon; kolonnene kan stå.
+Varslene om fortolkningen har fått gruppen per fagmiljø og beholder den.
 
 ## Aktivt medlemskap
 
@@ -408,6 +437,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
 | `rekkevidde` | `security definer` som kontrollerer rekkevidden per fagmiljø og rettigheten per objekt, og kaller selv minst én av hjelperne for tilgang per fagmiljø (`REKKEVIDDEHJELPERE` i `src/__tests__/hjelp/tilgangskatalog.ts`, eller `mine_lesbare_fagmiljoer()`) |
+| `systemarkitekt` | `security definer` som krever en systemarkitekt med aktivt medlemskap (`public.er_systemarkitekt()`, eller porten `intern.krev_idevalg_admin()` for idéene og oppgavene) |
 
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk
 har. Alle kategoriene unntatt `offentlig` og `utloser` krever i tillegg aktivt
