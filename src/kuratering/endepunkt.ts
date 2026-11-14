@@ -21,7 +21,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Greninfo } from '../kurateringsko/modell.js'
-import { bearer, erAdmin, hvem, serverklient, svar, type Adminsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
+import { bearer, erSystemarkitekt, hvem, serverklient, svar, type Arkitektsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
 import { AGENTHANDLINGER, AGENTHANDLINGSNAVN, KLIENT_ID } from './handlinger.js'
 
 export const MCP_PROTOKOLL = '2025-06-18'
@@ -268,14 +268,14 @@ export async function behandleKurateringMcp(
 /** Arbeidsflyten som kjører kurateringskøen. */
 export const KO_ARBEIDSFLYT = '.github/workflows/kurateringsko.yml'
 
-/** `/api/kuratering-ko`: grenene slik køen følger dem, for køen og administratorene. */
+/** `/api/kuratering-ko`: grenene slik køen følger dem, for køen og systemarkitektene. */
 export async function behandleKurateringsko(
   foresporsel: Request,
   miljo: Miljo,
-  { klient, adminsjekk = erAdmin, githubsjekk }: Avhengigheter & { adminsjekk?: Adminsjekk; githubsjekk?: Githubsjekk } = {},
+  { klient, arkitektsjekk = erSystemarkitekt, githubsjekk }: Avhengigheter & { arkitektsjekk?: Arkitektsjekk; githubsjekk?: Githubsjekk } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'POST') return svar(405, { feil: 'Bare POST.' })
-  if (!(await hvem(foresporsel, miljo, adminsjekk, { arbeidsflyt: KO_ARBEIDSFLYT, sjekk: githubsjekk }))) return svar(401, { feil: 'Ikke tilgang.' })
+  if (!(await hvem(foresporsel, miljo, arkitektsjekk, { arbeidsflyt: KO_ARBEIDSFLYT, sjekk: githubsjekk }))) return svar(401, { feil: 'Ikke tilgang.' })
   const db = klient === undefined ? serverklient(miljo) : klient
   if (!db) return svar(500, { feil: 'Mangler oppkoblingen mot databasen.' })
   const { data, error } = await db.rpc('kuratering_kostatus')

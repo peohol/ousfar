@@ -217,7 +217,7 @@ describe('den begrensende regelen', () => {
   })
 
   it('stopper skriving og adminrettigheter for en bruker uten aktivt medlemskap gjennom portfunksjonene', async () => {
-    const { utenMedlemskap, tidligereAdmin, vanligA } = galleri.id
+    const { utenMedlemskap, tidligereAdmin, vanligA, systemarkitekt } = galleri.id
     const prov = (bruker: string, sql: string, parametre: unknown[] = []) =>
       iTilbakerulling((tx) => feilFra(() => somInnlogget(tx, bruker, () => tx.query(sql, parametre))))
     const nyKategori = `select public.opprett_stoffkategori('Prøve', null)`
@@ -226,7 +226,8 @@ describe('den begrensende regelen', () => {
     expect((await prov(utenMedlemskap, nyKategori))?.code).toBe('42501')
     expect((await prov(utenMedlemskap, nyTraad))?.code).toBe('42501')
     expect((await prov(tidligereAdmin, nyttUtkast))?.code).toBe('42501')
-    expect(await prov(vanligA, nyKategori)).toBeNull()
+    // Stoffregisteret endres bare med rett til det (P2d); kontrollen av medlemskapet kommer først.
+    expect(await prov(systemarkitekt, nyKategori)).toBeNull()
     expect(await prov(vanligA, nyTraad)).toBeNull()
     const erAdmin = (bruker: string) =>
       iTilbakerulling((tx) =>

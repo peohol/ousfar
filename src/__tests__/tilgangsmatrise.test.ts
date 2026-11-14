@@ -31,10 +31,10 @@ import { nyDatabase, som } from './hjelp/testdatabase'
 type Utfall = 'tilgang' | 'avvist'
 
 /** Etappen som skal gi målet (P0 §6.1). */
-type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2c' | 'P2d'
+type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2c'
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2d'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -122,9 +122,32 @@ const SCENARIOER: readonly Scenario[] = [
   // --- P2c: profiler og bilder --------------------------------------------
   { navn: 'leser rollen til en administrator i et annet fagmiljø', person: 'vanligB', etappe: 'P2c', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, 'select role from public.profiles where id = $1', [k.g.id.adminA]) },
 
-  // --- P2d: stoffregister og administrasjon -------------------------------
-  { navn: 'oppretter en kategori i stoffregisteret uten redaktøransvar', person: 'vanligA', etappe: 'P2d', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
-  { navn: 'leser datakildestatusen som lokal admin', person: 'adminB', etappe: 'P2d', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
+  // --- P2d: stoffregister og administrasjon (holder) ----------------------
+  // Den gamle adminrollen gir ingenting her: det som gjelder hele OUSFAR,
+  // krever systemarkitekt, og stoffregisteret rett til å endre det
+  // (docs/fagmiljoer.md, «Systemrettigheter»). Utfallene prøves også for
+  // hver funksjon for seg i `systemrettigheter.test.ts`.
+  { navn: 'oppretter en kategori i stoffregisteret uten redaktøransvar', person: 'vanligA', etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
+  { navn: 'plasserer et stoff i stoffregisteret', person: 'vanligB', etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.plasser_stoff('syntetisk-stoff', null, null)`) },
+  { navn: 'leser datakildestatusen som lokal admin', person: 'adminB', etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
+  ...(['adminA', 'adminB'] as const).flatMap((person): Scenario[] => [
+    { navn: 'oppretter en kategori i stoffregisteret med den gamle adminrollen', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
+    { navn: 'tømmer papirkurven for fagsider', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.tom_stoffpapirkurven()') },
+    { navn: 'deaktiverer et klinisk verktøy', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.sett_verktoysperre('alle', null, 'Prøve')`) },
+    { navn: 'leser kildesakene', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.les_fagsaker()') },
+    { navn: 'styrer kurateringene', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.kuratering_admin('les', '{}')`) },
+    { navn: 'legger inn en autoerstatt-regel', person, etappe: 'P2d', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `insert into public.autoerstatt_regler (finn, erstatt) values ('prøve', 'Prøve') returning id`) },
+  ]),
+  // Systemarkitektene beholder alt, også uten den gamle adminrollen (maxhag).
+  ...(['systemarkitekt', 'arkitektB'] as const).flatMap((person): Scenario[] => [
+    { navn: 'oppretter en kategori i stoffregisteret som systemarkitekt', person, etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `select public.opprett_stoffkategori('Prøve', null)`) },
+    { navn: 'leser datakildestatusen som systemarkitekt', person, etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select public.datakilder_status(1)') },
+    { navn: 'deaktiverer et klinisk verktøy som systemarkitekt', person, etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `select public.sett_verktoysperre('alle', null, 'Prøve')`) },
+    { navn: 'legger inn en autoerstatt-regel som systemarkitekt', person, etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, `insert into public.autoerstatt_regler (finn, erstatt) values ('prøve', 'Prøve') returning id`) },
+  ]),
+  // Det felles registeret og nødstoppen leses fortsatt av alle aktive medlemmer.
+  { navn: 'leser stoffregisteret', person: 'vanligB', etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, `select jsonb_array_length(public.les_stoffregister('publisert') -> 'sider') >= 0`) },
+  { navn: 'leser de aktive verktøysperrene', person: 'vanligA', etappe: 'P2d', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, `select public.les_verktoysperrer() is not null`) },
 
   // --- Kontroller fra P1.1 som alt holder ---------------------------------
   { navn: 'leser andres medlemskap', person: 'vanligB', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.medlemskap where bruker_id = $1', [k.g.id.vanligA]) },
@@ -195,7 +218,7 @@ describe('persongalleriet', () => {
       'select bruker_id from public.fagmiljoadministratorer where til is null union all select bruker_id from public.systemroller where tilbakekalt_kl is null',
     )
     expect(rows.map((r) => r.bruker_id).sort()).toEqual(
-      [galleri.id.adminA, galleri.id.adminB, galleri.id.systemarkitekt].sort(),
+      [galleri.id.adminA, galleri.id.adminB, galleri.id.arkitektB, galleri.id.arkitektB, galleri.id.systemarkitekt].sort(),
     )
   })
 
@@ -222,7 +245,7 @@ describe('tilgangsmatrisen', () => {
 
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
-    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2c', 'P2d'])
+    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2c'])
     for (const etappe of HOLDER) {
       expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
       expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])

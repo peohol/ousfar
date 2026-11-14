@@ -12,9 +12,13 @@ import type { Datakildestatus, Kjoring } from '../datakilder/status'
 import type { Fagsak, Redaktoroversikt } from '../verktoy/overvaking/fagsak'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
 import type { Trinn } from '../components/toppmeny/Toppmeny'
+import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/rettigheter'
 
 const loggUt = vi.fn(async () => {})
 const rolle = vi.hoisted(() => ({ verdi: 'admin' }))
+/** Det databasen svarer på `mine_rettigheter` for den innloggede; som standard en systemarkitekt. */
+const ARKITEKT: Rettigheter = { systemarkitekt: true, administrerer: [], stoffregister: true, opprettBruker: true }
+const rett = vi.hoisted(() => ({ verdi: null as Rettigheter | null }))
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: rolle.verdi, first_name: 'Anne', last_name: 'Admin', username: 'aadmin', avatar_path: null }),
   useOkt: () => ({ loggUt }),
@@ -110,13 +114,16 @@ afterEach(() => {
   vi.unstubAllGlobals()
   loggUt.mockClear()
   rolle.verdi = 'admin'
+  rett.verdi = null
 })
 
 function Ramme({ children }: { children: React.ReactNode }) {
   return (
-    <ShortcutVisibilityProvider>
-      <TipsLag>{children}</TipsLag>
-    </ShortcutVisibilityProvider>
+    <RettigheterKilde verdi={rett.verdi ?? ARKITEKT}>
+      <ShortcutVisibilityProvider>
+        <TipsLag>{children}</TipsLag>
+      </ShortcutVisibilityProvider>
+    </RettigheterKilde>
   )
 }
 
@@ -426,8 +433,8 @@ describe('plassene i toppmenyen', () => {
     for (const knapp of knapper) expect(knapp.querySelector('svg.ikon')).not.toBeNull()
   })
 
-  it('viser ikke adminmenyen for andre enn administratorer', () => {
-    rolle.verdi = 'user'
+  it('viser ikke adminmenyen for dem uten rettigheter i administrasjonen', () => {
+    rett.verdi = INGEN_RETTIGHETER
     render(
       <Ramme>
         <ToppmenyKilde>
@@ -633,47 +640,48 @@ describe('kontomenyen', () => {
 })
 
 describe('adminmenyen', () => {
-  it('viser bare «Brukere» for en systemarkitekt eller lokal administrator uten den gamle adminrollen', async () => {
-    rolle.verdi = 'user'
-    const kontohandlinger = vi.fn(async () => new Map([['b', { nyttPassord: true, endreRolle: false }]]))
-    render(
-      <Ramme>
-        <Adminmeny kontohandlinger={kontohandlinger} />
-      </Ramme>,
-    )
-    const knapp = await screen.findByRole('button', { name: 'Administrasjon' })
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere'])
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Brukere' }))
-    expect(screen.getByText('Brukerlista')).toBeTruthy()
-  })
-
-  it('vises ikke for en vanlig bruker uten myndighet over noen, eller når svaret feiler', async () => {
-    rolle.verdi = 'user'
-    for (const kontohandlinger of [
-      vi.fn(async () => new Map()),
-      vi.fn(async () => Promise.reject(new Error('nede'))),
-    ]) {
+  it('viser bare «Brukere» for en lokal administrator, også med den gamle adminrollen', async () => {
+    for (const r of ['user', 'admin']) {
+      rolle.verdi = r
+      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }], opprettBruker: true }
       render(
         <Ramme>
-          <Adminmeny kontohandlinger={kontohandlinger} />
+          <Adminmeny />
         </Ramme>,
       )
-      await waitFor(() => expect(kontohandlinger).toHaveBeenCalledOnce())
-      expect(screen.queryByRole('button', { name: 'Administrasjon' })).toBeNull()
+      const knapp = await screen.findByRole('button', { name: 'Administrasjon' })
+      await userEvent.click(knapp)
+      expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent), r).toEqual(['Brukere'])
+      await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Brukere' }))
+      expect(screen.getByText('Brukerlista')).toBeTruthy()
       cleanup()
     }
   })
 
-  it('spør ikke databasen om kontomyndigheten for en administrator', () => {
-    const kontohandlinger = vi.fn(async () => new Map())
+  it('vises ikke uten rettigheter i administrasjonen, heller ikke med den gamle adminrollen', () => {
+    for (const r of ['user', 'admin']) {
+      rolle.verdi = r
+      rett.verdi = INGEN_RETTIGHETER
+      render(
+        <Ramme>
+          <Adminmeny />
+        </Ramme>,
+      )
+      expect(screen.queryByRole('button', { name: 'Administrasjon' }), r).toBeNull()
+      cleanup()
+    }
+  })
+
+  it('viser alt for en systemarkitekt uten den gamle adminrollen', async () => {
+    rolle.verdi = 'user'
     render(
       <Ramme>
-        <Adminmeny kontohandlinger={kontohandlinger} />
+        <Adminmeny />
       </Ramme>,
     )
-    expect(screen.getByRole('button', { name: 'Administrasjon' })).toBeTruthy()
-    expect(kontohandlinger).not.toHaveBeenCalled()
+    const knapp = screen.getByRole('button', { name: 'Administrasjon' })
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getAllByRole('button')).toHaveLength(6)
   })
 
   it('fører til brukerne, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {

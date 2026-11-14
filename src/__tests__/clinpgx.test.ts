@@ -437,7 +437,7 @@ describe('synkroniseringen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
     side = (await kall.opprett('infoside', { navn: 'Sertralin' })).id
@@ -841,8 +841,8 @@ describe('endepunktene', () => {
 
   it('synkroniserer alt for Vercels ukentlige kall, og bare det en administrator ber om', async () => {
     const synkroniser = vi.fn(async (_valg: object) => ferdig)
-    const adminsjekk = vi.fn(async (token: string) => token === 'admin-token')
-    const valg = { synkroniser, adminsjekk, api: falskApi() }
+    const arkitektsjekk = vi.fn(async (token: string) => token === 'admin-token')
+    const valg = { synkroniser, arkitektsjekk, api: falskApi() }
 
     expect((await behandleClinpgxSynk(foresporsel('GET', 'hemmelig'), MILJO, valg)).status).toBe(200)
     expect(synkroniser).toHaveBeenLastCalledWith(expect.objectContaining({ utlostAv: 'cron' }))
@@ -857,7 +857,7 @@ describe('endepunktene', () => {
     const githubsjekk = vi.fn(async (token: string, arbeidsflyt: string) =>
       token === 'github-token' && arbeidsflyt === CLINPGX_ARBEIDSFLYT ? ('cron' as const) : null,
     )
-    const valg = { synkroniser, githubsjekk, adminsjekk: async () => false, api: falskApi() }
+    const valg = { synkroniser, githubsjekk, arkitektsjekk: async () => false, api: falskApi() }
 
     expect((await behandleClinpgxSynk(foresporsel('POST', 'github-token'), MILJO, valg)).status).toBe(200)
     expect(synkroniser.mock.lastCall![0]).toMatchObject({ utlostAv: 'cron' })
@@ -881,7 +881,7 @@ describe('endepunktene', () => {
 
   it('avviser kall uten tilgang, med feil innhold og uten oppkoblingen mot databasen', async () => {
     const synkroniser = vi.fn(async () => ferdig)
-    const valg = { synkroniser, adminsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
+    const valg = { synkroniser, arkitektsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
     expect((await behandleClinpgxSynk(foresporsel('GET'), MILJO, valg)).status).toBe(401)
     expect((await behandleClinpgxSynk(foresporsel('GET', 'feil'), MILJO, valg)).status).toBe(401)
     // Cron-hemmeligheten gjelder bare for GET, og en administrators token bare for POST.
@@ -897,7 +897,7 @@ describe('endepunktene', () => {
   })
 
   it('lar bare administratorer slå opp i ClinPGx', async () => {
-    const valg = { adminsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
+    const valg = { arkitektsjekk: async (t: string) => t === 'admin-token', api: falskApi() }
     const sok = (token: string | undefined, q: string) =>
       behandleClinpgxSok(foresporsel('GET', token, undefined, `/api/clinpgx-sok?q=${encodeURIComponent(q)}`), MILJO, valg)
     expect((await sok(undefined, 'PA10026')).status).toBe(401)

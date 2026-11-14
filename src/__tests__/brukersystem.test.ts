@@ -201,26 +201,32 @@ describe('Auth-oppsettet', () => {
 })
 
 describe('Edge-funksjonene', () => {
-  it('krever administrator for å opprette brukere', () => {
-    expect(endepunkter['opprett-bruker']).toContain('endepunkt({ krevAdmin: true }')
+  it('lar databasen avgjøre myndigheten til å opprette brukere, før noe annet slås opp', () => {
+    // Systemarkitekt eller lokal administrator i standardfagmiljøet
+    // (systemrettigheter.test.ts); den gamle rollen gir ingenting (P2d).
+    const kode = utenKommentarer(endepunkter['opprett-bruker'])
+    expect(kode).toContain('reserverBrukernavn(admin, innlogget.id, brukernavn)')
+    expect(kode.indexOf('reserverBrukernavn(')).toBeLessThan(kode.indexOf(".from('profiles')"))
+    expect(utenKommentarer(les('supabase/functions/_edge/kontooperasjoner.ts'))).toMatch(/kontofunksjon<void>\(admin, 'kontooperasjon_klarer_konto'/)
   })
 
   it('lar databasen avgjøre myndigheten for nytt passord og rolle', () => {
     // Hvem som får gjøre hva med hvem, kontrolleres i kontooperasjonene
     // (kontomyndighet.test.ts), ikke av den gamle rollen alene.
     for (const navn of ['sett-rolle', 'nytt-passord'] as const) {
-      expect(endepunkter[navn], navn).toContain('endepunkt({ krevAdmin: false }')
+      expect(endepunkter[navn], navn).toContain('endepunkt(async (')
       expect(endepunkter[navn], navn).toMatch(/kontofunksjon<[^>]+>\(admin, 'kontooperasjon_/)
       expect(utenKommentarer(endepunkter[navn]), navn).not.toMatch(/\.from\('profiles'\)/)
     }
   })
 
   it('lar brukeren fullføre sitt eget førstegangsoppsett', () => {
-    expect(endepunkter['fullfor-oppsett']).toContain('endepunkt({ krevAdmin: false }')
+    expect(endepunkter['fullfor-oppsett']).toContain('endepunkt(async (')
   })
 
-  it('slår opp rollen i profiltabellen, ikke i noe brukeren selv kan skrive', () => {
-    expect(kontekst).toContain("innlogget.role !== 'admin'")
+  it('slår opp profilen i profiltabellen, ikke i noe brukeren selv kan skrive, og gir ingen myndighet etter rollen', () => {
+    expect(utenKommentarer(kontekst)).not.toMatch(/\.role\b/)
+    for (const [navn, kode] of Object.entries(endepunkter)) expect(utenKommentarer(kode), navn).not.toMatch(/role\s*[!=]==\s*'admin'/)
     expect(kontekst).toContain(".from('profiles')")
     // Rollen skal aldri leses av noe brukeren selv kan skrive til.
     expect(utenKommentarer(kontekst)).not.toMatch(/_metadata/)

@@ -25,7 +25,7 @@ export function Fagsidemeny({ slug, navn }: { slug: string; navn?: string }) {
   const { utfor } = useRegisterhandling()
   const [versjoner, setVersjoner] = useBevart('versjoner', false)
   const stoff = kilde?.register.menystoff(slug)
-  const register = kilde && stoff && kilde.register.status(slug) === 'aktiv' ? { ...kilde, stoff } : null
+  const register = kilde?.kanEndre && stoff && kilde.register.status(slug) === 'aktiv' ? { ...kilde, stoff } : null
   if (!register && !kuratering) return null
   const slett = register ? kanSletteStoff(register.stoff, register.admin) : null
   return (
@@ -90,7 +90,7 @@ export function Fagsidemeny({ slug, navn }: { slug: string; navn?: string }) {
   )
 }
 
-/** Meldingen øverst på en arkivert fagside, eller en i papirkurven (som bare administratorer ser). */
+/** Meldingen øverst på en arkivert fagside, eller en i papirkurven (som bare systemarkitektene ser). */
 export function Fagsidebanner({ slug }: { slug: string }) {
   const kilde = useStoffregisterkilde()
   const { utfor } = useRegisterhandling()
@@ -105,9 +105,11 @@ export function Fagsidebanner({ slug }: { slug: string }) {
           Fagsiden er arkivert{rad?.endret_av ? ` av ${rad.endret_av}` : ''}. Den står ikke i stoffregisteret eller i
           søket før den hentes tilbake.
         </p>
-        <Button variant="subtle" onClick={() => void utfor(() => handlinger.arkiverStoff(slug, false))}>
-          Hent tilbake
-        </Button>
+        {kilde.kanEndre && (
+          <Button variant="subtle" onClick={() => void utfor(() => handlinger.arkiverStoff(slug, false))}>
+            Hent tilbake
+          </Button>
+        )}
       </div>
     )
   }
@@ -117,7 +119,7 @@ export function Fagsidebanner({ slug }: { slug: string }) {
       <div className="sidevarsel" role="status">
         <p>
           Fagsiden ligger i papirkurven{rad ? ` og slettes for godt ${slettesForGodt(rad.endret_kl)}` : ''}. Bare
-          administratorer ser den.
+          systemarkitektene ser den.
         </p>
         <Button variant="subtle" onClick={() => void utfor(() => handlinger.gjenopprettStoff(slug))}>
           Gjenopprett

@@ -447,7 +447,7 @@ describe('synkroniseringen', () => {
 
   it('vises i «Datakilder» med siste kjøring og det som bør vurderes', async () => {
     await synk()
-    const admin = await opprettBruker(db, { brukernavn: `admin${Date.now()}`, fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: `admin${Date.now()}`, fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const kall = faginnholdskall(db, admin)
     const status = lesDatakildestatus((await kall.klientFor(admin).rpc('datakilder_status', {})).data)
     const fp = vurderKilder(status).find((v) => v.kilde === 'farmakologiportalen')!
@@ -489,8 +489,8 @@ describe('endepunktet', () => {
       method: metode,
       headers: token ? { authorization: `Bearer ${token}` } : {},
     })
-  const behandle = (req: Request, adminsjekk = async () => false) =>
-    behandleFpSynk(req, miljo, { synkroniser: ok, adminsjekk, githubsjekk: github })
+  const behandle = (req: Request, arkitektsjekk = async () => false) =>
+    behandleFpSynk(req, miljo, { synkroniser: ok, arkitektsjekk, githubsjekk: github })
 
   it('avviser kall uten gyldig token', async () => {
     expect((await behandle(kall('POST'))).status).toBe(401)
@@ -505,8 +505,8 @@ describe('endepunktet', () => {
       utlost.push(utlostAv!)
       return ok()
     }
-    const med = (req: Request, adminsjekk = async () => false) =>
-      behandleFpSynk(req, { ...miljo, SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'k' }, { synkroniser, adminsjekk, githubsjekk: github })
+    const med = (req: Request, arkitektsjekk = async () => false) =>
+      behandleFpSynk(req, { ...miljo, SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'k' }, { synkroniser, arkitektsjekk, githubsjekk: github })
     expect((await med(kall('POST', 'github-planlagt'))).status).toBe(200)
     expect((await med(kall('POST', 'github-hand'))).status).toBe(200)
     expect((await med(kall('POST', 'admin'), async () => true)).status).toBe(200)
@@ -592,7 +592,7 @@ describe('visningen på fagsidene', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
     klient = faginnholdskall(db, admin).klientFor(bruker)
     leser = lagLableser(klient)

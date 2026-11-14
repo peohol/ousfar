@@ -70,9 +70,21 @@ describe('stoffregisteret i databasen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
+    // Retten til å endre registeret har i dag bare systemarkitektene (P2d,
+    // `systemrettigheter.test.ts`). `bruker` står her for en tildelt
+    // registerredaktør uten systemarkitekt (P5), så skillet mellom de to
+    // prøves: retten gis vedkommende i denne testdatabasen, på det ene stedet
+    // den er definert.
+    await db.query(
+      `create or replace function intern.har_registerrett(bruker uuid) returns boolean language sql stable security definer
+       set search_path = '' as $$
+         select intern.har_aktivt_medlemskap(har_registerrett.bruker)
+           and (intern.er_systemarkitekt(har_registerrett.bruker) or har_registerrett.bruker = '${bruker}'::uuid)
+       $$`,
+    )
   }, 60_000)
 
   it('har inndelingen fra datafilen, med hvert stoff plassert', async () => {
@@ -104,7 +116,7 @@ describe('stoffregisteret i databasen', () => {
     expect(data.plasseringer.filter((p) => p.stoff === 'ketamin')).toHaveLength(2)
   })
 
-  it('lar innloggede lage, gi nytt navn til og flytte kategorier i to nivåer', async () => {
+  it('lar dem med rett til registeret lage, gi nytt navn til og flytte kategorier i to nivåer', async () => {
     const a = await nyKategori(bruker, 'Testkategori A')
     const b = await nyKategori(bruker, 'Testkategori B')
     expect((await feilFra(() => nyKategori(bruker, 'testkategori a')))?.message).toMatch(/alt en kategori/)
@@ -135,7 +147,7 @@ describe('stoffregisteret i databasen', () => {
     expect(topp.at(-1)?.id).toBe(k)
   })
 
-  it('plasserer stoffer, og lar bare administratorer slette kategorier med stoffer', async () => {
+  it('plasserer stoffer, og lar bare systemarkitektene slette kategorier med stoffer', async () => {
     const fra = await nyKategori(bruker, 'Fra')
     const til = await nyKategori(bruker, 'Til')
     await sql(bruker, 'select public.plasser_stoff($1, null, $2)', ['litium', fra])
@@ -161,7 +173,7 @@ describe('stoffregisteret i databasen', () => {
     expect(await status('gabapentin')).toBeNull()
   })
 
-  it('lar alle slette en side med bare navn, og bare administratorer en med innhold', async () => {
+  it('lar alle slette en side med bare navn, og bare systemarkitektene en med innhold', async () => {
     const tom = await nySide('Tomside')
     const full = await nySide('Fullside', true)
     const data = await les(bruker)
@@ -174,7 +186,7 @@ describe('stoffregisteret i databasen', () => {
     expect((await feilFra(() => sql(bruker, 'select public.slett_stoff($1)', ['etanol'])))?.code).toBe('22023')
     expect((await feilFra(() => sql(bruker, 'select public.arkiver_stoff($1, true)', ['tomside'])))?.code).toBe('22023')
 
-    // Den som slettet, kan angre det; ingen andre enn administratorene.
+    // Den som slettet, kan angre det; ingen andre enn systemarkitektene.
     const annen = await opprettBruker(db, { brukernavn: 'annen', fornavn: 'Anne', etternavn: 'Annen', rolle: 'user' })
     expect((await feilFra(() => sql(annen, 'select public.gjenopprett_stoff($1)', ['tomside'])))?.code).toBe('42501')
     await sql(bruker, 'select public.gjenopprett_stoff($1)', ['tomside'])

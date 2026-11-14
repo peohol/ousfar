@@ -586,7 +586,7 @@ describe('strukturkontrollen av uttrekket', () => {
       expect(await tjeneste('legemiddeldata_forrige_synk', { kilde: 'FEST' })).toMatchObject({ etag: '"a"' })
 
       // Administratoren ser feilen, og at de gamle dataene brukes, i «Datakilder».
-      const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+      const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
       const { data } = await faginnholdskall(db, admin).klientFor(admin).rpc('datakilder_status', {})
       const fest = vurderKilder(lesDatakildestatus(data), Date.now(), { fest: 1 }).find((v) => v.kilde === 'fest')!
       expect(fest).toMatchObject({ tilstand: 'feil', versjon: '2026-09-08T03:09:06' })
@@ -855,29 +855,29 @@ describe('endepunktet for synkroniseringen', () => {
       method,
       headers: autorisasjon ? { authorization: autorisasjon } : {},
     })
-  const adminsjekk = async (token: string) => token === 'admin-token'
+  const arkitektsjekk = async (token: string) => token === 'admin-token'
 
   it('avviser kall uten riktig hemmelighet, og når hemmeligheten mangler', async () => {
     let kjort = 0
     const synkroniser = async () => (kjort++, { status: 'uendret' as const, synk: 1 })
-    expect((await behandleSynk(kall(), miljo, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer feil'), miljo, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer '), { ...miljo, CRON_SECRET: '' }, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer undefined'), { ...miljo, CRON_SECRET: undefined }, { synkroniser, adminsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall(), miljo, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer feil'), miljo, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer '), { ...miljo, CRON_SECRET: '' }, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer undefined'), { ...miljo, CRON_SECRET: undefined }, { synkroniser, arkitektsjekk })).status).toBe(401)
     expect(kjort).toBe(0)
   })
 
   it('lar Vercel hente med hemmeligheten og en administrator med sin innlogging, men ikke omvendt', async () => {
     const utlost: unknown[] = []
     const synkroniser = async (valg: { utlostAv?: string }) => (utlost.push(valg.utlostAv), { status: 'uendret' as const, synk: 1 })
-    expect((await behandleSynk(kall('Bearer hemmelig'), miljo, { synkroniser, adminsjekk })).status).toBe(200)
-    expect((await behandleSynk(kall('Bearer admin-token', 'POST'), miljo, { synkroniser, adminsjekk })).status).toBe(200)
+    expect((await behandleSynk(kall('Bearer hemmelig'), miljo, { synkroniser, arkitektsjekk })).status).toBe(200)
+    expect((await behandleSynk(kall('Bearer admin-token', 'POST'), miljo, { synkroniser, arkitektsjekk })).status).toBe(200)
     expect(utlost).toEqual(['cron', 'manuell'])
     // Hemmeligheten gjelder bare Vercels GET, og en administrators innlogging bare POST.
-    expect((await behandleSynk(kall('Bearer hemmelig', 'POST'), miljo, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer admin-token'), miljo, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer bruker-token', 'POST'), miljo, { synkroniser, adminsjekk })).status).toBe(401)
-    expect((await behandleSynk(kall('Bearer hemmelig', 'DELETE'), miljo, { synkroniser, adminsjekk })).status).toBe(405)
+    expect((await behandleSynk(kall('Bearer hemmelig', 'POST'), miljo, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer admin-token'), miljo, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer bruker-token', 'POST'), miljo, { synkroniser, arkitektsjekk })).status).toBe(401)
+    expect((await behandleSynk(kall('Bearer hemmelig', 'DELETE'), miljo, { synkroniser, arkitektsjekk })).status).toBe(405)
     expect(utlost).toHaveLength(2)
   })
 
