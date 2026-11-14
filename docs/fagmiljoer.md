@@ -22,8 +22,11 @@ avgrenser diskusjonene, varslene og lenkene per fagmiljø
 profilbildene ([Profiler og profilbilder](#profiler-og-profilbilder)). P2d har
 gjort stoffregisteret, administrasjonen og datakildene til
 **systemrettigheter**: den gamle adminrollen gir dem ikke lenger
-([Systemrettighetene](#systemrettighetene)). Alle bygger på de felles
-hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+([Systemrettighetene](#systemrettighetene)). P4b gir **fortolkningen nøkler
+og oppslag per fagmiljø**: hvert fagmiljø får bare sine egne regler, og et
+fagmiljø uten egne regler får en tydelig stopp
+([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)). Alle bygger på de
+felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
 
@@ -604,8 +607,8 @@ den innloggede kan lese (systemarkitektene ser disse to og
 `analyttkoblede_stoffer` bare av medlemmene i fagmiljøet dagens fortolkning
 hører til (`public.leser_analyttkoblingene()`: OUS Klinisk farmakologi, D1)
 og systemarkitektene. Tabellen har bare stoffet; koblingene får fagmiljøet
-sitt i P4b, og til da ser ikke et annet fagmiljø dem, heller ikke med egne
-analytter. `public.les_endringslogg` (`security definer`)
+sitt når de flyttes fra den statiske datafilen til databasen (P4c), og til
+da ser ikke et annet fagmiljø dem, heller ikke med egne analytter. `public.les_endringslogg` (`security definer`)
 viser bare objektene den innloggede kan lese, og utkastene bare med
 endringsrett til alle sidens objekter. De andre lesefunksjonene for
 faginnholdet (`les_stoff`, `les_kommentarer`, `les_intervallregelsett` og de
@@ -620,14 +623,9 @@ redigeringen av fortolkningen for administratorene som har endringsrett i
 fagmiljøet den hører til (`public.kan_endre_lokalt_innhold()`: lokal
 administrator der eller systemarkitekt). Å administrere et annet fagmiljø
 gir den ikke. Databasen avgjør; appen viser bare det brukeren får gjøre.
-Svaret gjelder fortolkningen samlet, fordi den i dag hører til ett
-fagmiljø; når fagmiljøene får hver sin fortolkning (P4b), må appen spørre
-per modul.
-
-**Kjent grense til P4b.** Et regelsett kan peke på kommentarer i et annet
-fagmiljø (ID-er i regelinnholdet). I dag hører alt lokalt innhold til OUS
-Klinisk farmakologi, så det skjer ikke; P4b lager nøklene og lesingen per
-fagmiljø, og må hindre slike pekere.
+Siden P4b gjelder svaret fortolkningen i arbeidskonteksten
+([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)), også før den har
+egne regler.
 
 **Ytelse.** Målt i testdatabasen i minnet med syntetiske fagsider i
 produksjonens størrelse, dagens regelsett og produksjonens arbeidsminne
@@ -683,6 +681,96 @@ regelen på `ressursomfang` og rettigheten nettleseren fikk der, og setter `inte
 per objekt, `public.leser_alt_lokale_innhold()` og
 `public.kan_endre_lokalt_innhold()` fjernes til slutt (appen leser da ingen
 rett til å redigere fortolkningen, og viser ingen redigering).
+
+## Fortolkningen per fagmiljø
+
+P4b lar flere fagmiljøer ha samme analyttkode med hver sine regler og
+kommentarer, uten at de blandes
+(`supabase/migrations/20261114202000_fortolkning_per_fagmiljo.sql`, P0 §2.6 og
+§6.2).
+
+**Arbeidskonteksten.** Fortolkningen bruker alltid nøyaktig ett fagmiljø:
+den innloggedes aktive primærmedlemskap i et aktivt fagmiljø
+(`intern.arbeidsfagmiljo(bruker)`, for oppslagene
+`public.mitt_arbeidsfagmiljo()`). Uten det finnes ingen regler å bruke, heller
+ikke for en systemarkitekt: ingen får et annet fagmiljøs regler som reserve.
+Appen får fagmiljøet med navnet i `mine_rettigheter().arbeidsfagmiljo` og
+viser det i meldingen når regler mangler. Byttes det, tømmer appen reglene
+den har, før de nye hentes (`useKontekstbytte`). Bytte av fagmiljø innenfor
+appen finnes ikke ennå; når det kommer, lagres valget på serveren og
+kontrolleres mot et aktivt medlemskap (P0 §2.6).
+
+**Fagmiljøet på reglene.** `laboratorieanalytter`, `intervallregelsett`,
+`scenarioregelsett`, `scenarioanalytter` og `thc_regelsett` har kolonnen
+`fagmiljo_id`. Den settes av databasen fra rekkevidden objektet har
+(`intern.gi_fortolkningsfagmiljo`, ved hver innsetting og endring) og kan
+ikke settes fra nettleseren. Flytter en systemarkitekt et objekt til et
+annet fagmiljø (`ressursomfang`, loggført), følger kolonnen med. De nye unike
+nøklene har fagmiljøet med: én analytt, ett regelsett og ett
+THC-syreregelsett per kode eller modul i hvert fagmiljø, kontrollert også av
+lagringsfunksjonene med de samme meldingene som før.
+
+**Reglene databasen håndhever:**
+
+1. Alle oppslag etter kode eller modul gir bare arbeidskontekstens:
+   `finn_intervallregelsett`, `les_intervallregelsett`, `les_scenarioregler`
+   (også kommentarene), `les_thc_regelsett`, `les_referanseomrader`,
+   `les_analyttside`, `les_analyttsider`, `les_stoffside`, visningen
+   `stoffsider_uten_kode` og endringsloggen for en analytt eller modul
+   (`intern.endringsrotter`). Radsikkerheten fra P2a står i tillegg: en
+   bruker som bare er medlem i A, får aldri B sine rader, heller ikke direkte
+   i tabellene eller med en manipulert ID.
+2. Et fagmiljø uten egne regler får ingen. Appen viser den tydelige stoppen
+   som fantes fra før («Det finnes ingen publiserte fortolkningsregler for …
+   i <fagmiljø>»), aldri svaret fra OUS Klinisk farmakologi.
+3. Et nytt lokalt objekt hører til arbeidskonteksten til den som lager det
+   (`intern.nytt_lokalt_fagmiljo`, brukt av `intern.ressursomfang_for`); en
+   innlogget uten arbeidskontekst får ikke lage noe lokalt. Migrasjonene og
+   importene, uten innlogget, lager det i OUS Klinisk farmakologi som før.
+4. Et regelsett kan bare peke på kommentarer i sitt eget fagmiljø
+   (`intern.krev_kommentarer_i_fagmiljoet` på `intervallregler`, cut-off i
+   `intervallregelsett`, `scenarioplasseringer` og `thc_tekstbolker`).
+5. Fortolkningsregler, laboratorieanalytter og kommentarer kan ikke gjøres
+   felles (D4): `intern.fortolkningsfagmiljo` stopper det. Deling krever en
+   egen, særskilt godkjent endring.
+6. En diskusjon på fortolkningen (`fortolkning:<kode>`) hører til
+   arbeidskonteksten til den som starter den, og beholder rekkevidden sin
+   ([Samhandlingen](#samhandlingen)). En bruker med medlemskap i to
+   fagmiljøer ser trådene fra begge på samme side; det rettes når bytte av
+   fagmiljø kommer.
+7. Redigeringen av fortolkningen vises for den som har endringsrett i
+   arbeidskonteksten (`public.kan_endre_lokalt_innhold()`): lokal
+   administrator der, eller systemarkitekt.
+
+Referanseområdene på fagsidene er felles (D4) og kobles til koden gjennom
+laboratorieanalytten i arbeidskonteksten; de overstyres ikke lokalt.
+Analyttkatalogen, analyttkoblingene til stoffene og EtG/EtS-tekstene er
+fortsatt statiske i klientpakken; de flyttes til databasen per fagmiljø i
+P4c.
+
+**De gamle nøklene.** De globale unike nøklene (én per kode i hele
+databasen: `laboratorieanalytter_kode_entydig`,
+`intervallregelsett_analyttkode_entydig`, `scenarioregelsett_modul_idx`,
+`scenarioanalytter_kode_idx`, `thc_regelsett_ett_idx`) står til erstatningen
+er kontrollert. Så lenge de står, kan to fagmiljøer ikke ha samme kode, og
+ingenting endres for OUS Klinisk farmakologi. De fjernes i en egen migrasjon
+som krever Peders godkjenning (P0 §6.2, `supabase/AGENTS.md`).
+
+**Tester.** `src/__tests__/fortolkningPerFagmiljo.test.ts` prøver
+arbeidskonteksten for hver person i persongalleriet; at A får nøyaktig de
+samme regelsettene som den gamle lesingen ga; den tydelige stoppen i B, også
+for systemarkitekten med B som arbeidskontekst; at B sine egne regler,
+analytter og kommentarer ikke når A; at et regelsett ikke kan peke på et annet
+fagmiljøs kommentarer; at samme kode stoppes av de gamle nøklene og, uten dem,
+gir hvert fagmiljø sitt uten at en endring i B rører A; rekkevidden til nye og
+flyttede objekter; og endringsloggen og diskusjonene. De kliniske fasitene
+(`fortolkningUendret.test.ts`, `steg2regler.test.tsx`,
+`intervallregelsett.test.ts`, THC- og scenariotestene) kjøres uendret for OUS
+Klinisk farmakologi.
+
+**Tilbakeføring.** En ny migrasjon som setter funksjonene og visningen tilbake
+til definisjonene i migrasjonene før, fjerner utløserne og de nye nøklene, og
+tar bort kolonnene. Ingen data endres.
 
 ## Katalogvaktene
 

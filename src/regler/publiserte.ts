@@ -31,6 +31,16 @@ export type Regeloppslag =
   | { status: 'mangler'; referanseomrade: Referanseomrade | null }
   | { status: 'klar'; regelsett: Intervallregelsett; referanseomrade: Referanseomrade | null }
 
+/**
+ * « i <fagmiljø>», til meldingen om at reglene mangler: databasen gir bare
+ * reglene til fagmiljøet fortolkningen gjelder (arbeidskonteksten), så et
+ * fagmiljø uten egne regler får en tydelig stopp, aldri et annets regler.
+ * Tom når fagmiljøet ikke er kjent ennå.
+ */
+export function iFagmiljoet(fagmiljo: string | null | undefined): string {
+  return fagmiljo ? ` i ${fagmiljo}` : ''
+}
+
 /** Regelsettene ordnet etter analyttkoden de gjelder. */
 export function etterKode(regelsett: Intervallregelsett[]): ReadonlyMap<string, Intervallregelsett> {
   return new Map(regelsett.map((r) => [r.analyttkode, r]))

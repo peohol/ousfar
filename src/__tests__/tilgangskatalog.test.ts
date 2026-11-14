@@ -46,6 +46,8 @@ describe('katalogvaktene', () => {
       'min_medlemskapsstatus()',
       'mine_administrerte_fagmiljoer()',
       'mine_lesbare_fagmiljoer()',
+      // P4b: fagmiljøet fortolkningen gjelder for den innloggede selv.
+      'mitt_arbeidsfagmiljo()',
     ])
   })
 

@@ -25,6 +25,7 @@ import type { Felt } from './historikk'
 import type { Faginnholdslager } from './lagring'
 import type { Regelsettutgave } from './lesing'
 import { tallTilFelt } from './paneler'
+import { iFagmiljoet } from '../regler/publiserte'
 import { REGLENE_KUNNE_IKKE_HENTES } from './scenarioregler'
 
 export type ThcRegelsettutgave = Regelsettutgave<ThcRegelsettinnhold>
@@ -46,7 +47,11 @@ const SI_FRA = 'Si fra til den som redigerer fortolkningsreglene.'
  * mangler eller ikke er gyldig, gir en feil med forklaring; da fortolkes det
  * ikke.
  */
-export function thcReglerFra(henting: Henting<ThcRegelsettutgave | null>, provIgjen: () => void): ThcRegler {
+export function thcReglerFra(
+  henting: Henting<ThcRegelsettutgave | null>,
+  provIgjen: () => void,
+  fagmiljo?: string | null,
+): ThcRegler {
   if (henting.status === 'laster') return henting
   if (henting.status === 'feil') {
     return { status: 'feil', melding: `${REGLENE_KUNNE_IKKE_HENTES} ${henting.melding}`, provIgjen }
@@ -54,7 +59,7 @@ export function thcReglerFra(henting: Henting<ThcRegelsettutgave | null>, provIg
   if (!henting.data) {
     return {
       status: 'feil',
-      melding: `Det finnes ingen publiserte regler for THC-syre i urin. ${SI_FRA}`,
+      melding: `Det finnes ingen publiserte regler for THC-syre i urin${iFagmiljoet(fagmiljo)}. ${SI_FRA}`,
       provIgjen,
     }
   }

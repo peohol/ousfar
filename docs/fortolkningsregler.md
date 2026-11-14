@@ -41,7 +41,7 @@ rusmiddelreglene og THC-syre har egne regeltyper.
 ## Modellen
 
 Et **regelsett** er ett redigerbart objekt (objekttypen `intervallregelsett`)
-per analyttkode. Det har utkast, publisering, revisjoner og gjenoppretting
+per analyttkode i hvert fagmiljø. Det har utkast, publisering, revisjoner og gjenoppretting
 som alt annet faginnhold, og hele regelsettet — grensene og reglene — står i
 det samme øyeblikksbildet. Derfor lagres, publiseres og gjenopprettes det
 alltid helt, aldri halvveis. Tekstene er ikke en del av det: reglene peker på
@@ -112,7 +112,9 @@ eller ikke stiger, feil antall intervaller, ukjent nivå eller handling,
 manglende kommentar, en kommentar som ikke er et kommentarobjekt eller har
 plassholdere, nivåer som går nedover, feil med ringingen eller ringegrensen,
 en cut-off som ikke bygger på en av kommentarene, og ukjente felt. En
-analyttkode kan bare ha ett regelsett.
+analyttkode kan bare ha ett regelsett i hvert fagmiljø, og reglene kan bare
+peke på kommentarer i regelsettets eget fagmiljø (`docs/fagmiljoer.md`,
+«Fortolkningen per fagmiljø»).
 
 Etter skrivingen kontrollerer `intern.krev_sammenhengende_intervaller` de
 lagrede radene: intervallene nummerert fortløpende, det første åpent nedover,

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useKontekstbytte } from './useKontekstbytte'
 
 /** Noe appen henter: på vei, ikke mulig å hente, eller hentet. */
 export type Henting<T> =
@@ -12,8 +13,15 @@ export type Henting<T> =
  * `hentPaNytt` henter det igjen: etter en feil, eller når en administrator kan
  * ha publisert noe nytt. Har appen det alt, blir det stående til det nye er
  * hentet, så det som bruker det ikke blinker; en feil da beholder det gamle.
+ *
+ * `kontekst` er det svaret gjelder for, som fagmiljøet fortolkningsreglene
+ * hører til. Byttes den, tømmes det appen har, før det nye hentes: noe som
+ * hørte til den forrige, skal ikke vises i mellomtiden.
  */
-export function useHenting<T>(hent: () => Promise<T>): { tilstand: Henting<T>; hentPaNytt: () => void } {
+export function useHenting<T>(
+  hent: () => Promise<T>,
+  kontekst?: string | null,
+): { tilstand: Henting<T>; hentPaNytt: () => void } {
   const [tilstand, setTilstand] = useState<Henting<T>>({ status: 'laster' })
   // Bare det siste svaret teller, om to hentinger skulle krysse hverandre.
   const siste = useRef(0)
@@ -34,6 +42,12 @@ export function useHenting<T>(hent: () => Promise<T>): { tilstand: Henting<T>; h
   }, [hent])
 
   useEffect(hentPaNytt, [hentPaNytt])
+
+  const hentForfra = useCallback(() => {
+    setTilstand({ status: 'laster' })
+    hentPaNytt()
+  }, [hentPaNytt])
+  useKontekstbytte(kontekst, hentForfra)
 
   return { tilstand, hentPaNytt }
 }

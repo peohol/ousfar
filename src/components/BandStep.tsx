@@ -15,7 +15,7 @@ import { grensepiller, type Pilleslag } from '../domain/piller'
 import { CUTOFF_NOKKEL, type Kommentarvalg } from '../domain/valg'
 import { indexToDigit } from '../hooks/useKeyboard'
 import { useShortcutVisibility } from '../hooks/useShortcutVisibility'
-import { referanseomradet, type Regeloppslag } from '../regler/publiserte'
+import { iFagmiljoet, referanseomradet, type Regeloppslag } from '../regler/publiserte'
 import type { Analyte } from '../types'
 
 export interface BandStepProps {
@@ -30,6 +30,8 @@ export interface BandStepProps {
   onProvIgjen: () => void
   /** Kommentaren som skal kopieres for hånd, når utklippstavlen er utilgjengelig. */
   failed: { message: string; comment: string } | null
+  /** Fagmiljøet reglene gjelder (arbeidskonteksten), når det er kjent; står i meldingen når regler mangler. */
+  fagmiljo?: string | null
 }
 
 /**
@@ -89,10 +91,12 @@ function Regelmelding({
   regler,
   kode,
   onProvIgjen,
+  fagmiljo,
 }: {
   regler: Exclude<Regeloppslag, { status: 'klar' }>
   kode: string
   onProvIgjen: () => void
+  fagmiljo?: string | null | undefined
 }) {
   if (regler.status === 'laster') {
     return (
@@ -104,7 +108,8 @@ function Regelmelding({
   if (regler.status === 'mangler') {
     return (
       <p className="bandkort__melding" role="alert">
-        Det finnes ingen publiserte fortolkningsregler for {kode}.
+        Det finnes ingen publiserte fortolkningsregler for {kode}
+        {iFagmiljoet(fagmiljo)}.
       </p>
     )
   }
@@ -127,7 +132,7 @@ function Regelmelding({
  * konsentrasjon: stoffet er til stede, men under påvisningsgrensen. Det står
  * etter båndene, i sin egen skrift, og fortsetter nummereringen deres.
  */
-export function BandStep({ analyte, regler, valg: alle, onPick, onBack, onProvIgjen, failed }: BandStepProps) {
+export function BandStep({ analyte, regler, valg: alle, onPick, onBack, onProvIgjen, failed, fagmiljo }: BandStepProps) {
   const { visible: merker } = useShortcutVisibility()
   const regelsett = regler.status === 'klar' ? regler.regelsett : null
 
@@ -160,7 +165,7 @@ export function BandStep({ analyte, regler, valg: alle, onPick, onBack, onProvIg
       <Card align="start" className="bandkort">
         <Panelhode>Målt konsentrasjon</Panelhode>
         {regler.status !== 'klar' && (
-          <Regelmelding regler={regler} kode={analyte.kode} onProvIgjen={onProvIgjen} />
+          <Regelmelding regler={regler} kode={analyte.kode} onProvIgjen={onProvIgjen} fagmiljo={fagmiljo} />
         )}
         {/* Antallet bånd varierer med analytten, og båndene skal stå på én
             linje. CSS-en deler bredden på antallet for å finne hvor stor
