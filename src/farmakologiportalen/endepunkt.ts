@@ -2,12 +2,12 @@
  * Serverendepunktet `/api/farmakologiportalen-synk`, som synkroniserer
  * laboratorieanalysene fra Farmakologiportalen (`docs/farmakologiportalen.md`).
  * Jobben i GitHub Actions kaller det hver natt med `POST` og et OIDC-token for
- * arbeidsflyten; en administrator kan be om det samme med sin egen innlogging
+ * arbeidsflyten; en systemarkitekt kan be om det samme med sin egen innlogging
  * («Hent nå» i «Datakilder»). Kallene til portalen går fra Vercel i Stockholm,
  * den eneste veien portalen svarer.
  */
 import { kallMot } from '../legemiddeldata/lager.js'
-import { erAdmin, hvem, serverklient, svar, type Adminsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
+import { erSystemarkitekt, hvem, serverklient, svar, type Arkitektsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
 import { lagFpApi, type FpApi } from './api.js'
 import { lagFplager } from './lager.js'
 import { synkroniserFarmakologiportalen, type Fpsynkresultat, type Fpsynkvalg } from './synk.js'
@@ -22,13 +22,13 @@ export async function behandleFpSynk(
   miljo: Miljo,
   {
     synkroniser = synkroniserFarmakologiportalen,
-    adminsjekk = erAdmin,
+    arkitektsjekk = erSystemarkitekt,
     githubsjekk,
     api,
-  }: { synkroniser?: Synkroniser; adminsjekk?: Adminsjekk; githubsjekk?: Githubsjekk; api?: FpApi } = {},
+  }: { synkroniser?: Synkroniser; arkitektsjekk?: Arkitektsjekk; githubsjekk?: Githubsjekk; api?: FpApi } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'GET' && foresporsel.method !== 'POST') return svar(405, { feil: 'Bare GET og POST.' })
-  const utlostAv = await hvem(foresporsel, miljo, adminsjekk, { arbeidsflyt: FP_ARBEIDSFLYT, sjekk: githubsjekk })
+  const utlostAv = await hvem(foresporsel, miljo, arkitektsjekk, { arbeidsflyt: FP_ARBEIDSFLYT, sjekk: githubsjekk })
   if (!utlostAv) return svar(401, { feil: 'Ikke tilgang.' })
 
   const klient = serverklient(miljo)

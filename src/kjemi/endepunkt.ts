@@ -1,11 +1,11 @@
 /**
  * Serverendepunktet `/api/pubchem-synk`, som synkroniserer de kjemiske
  * grunndataene fra PubChem (`docs/kjemi.md`). Vercel kaller det hver uke med
- * `GET` og `Authorization: Bearer <CRON_SECRET>`; en administrator kan be om
+ * `GET` og `Authorization: Bearer <CRON_SECRET>`; en systemarkitekt kan be om
  * det samme med `POST` og sin egen innlogging («Hent nå» i «Datakilder»).
  */
 import { kallMot } from '../legemiddeldata/lager.js'
-import { erAdmin, hvem, serverklient, svar, type Adminsjekk, type Miljo } from '../server/tilgang.js'
+import { erSystemarkitekt, hvem, serverklient, svar, type Arkitektsjekk, type Miljo } from '../server/tilgang.js'
 import { lagKjemilager } from './lager.js'
 import { lagPubchemApi, type PubchemApi } from './pubchem.js'
 import { synkroniserKjemi, type Kjemisynkresultat, type Kjemisynkvalg } from './synk.js'
@@ -15,10 +15,10 @@ type Synkroniser = (valg: Pick<Kjemisynkvalg, 'lager' | 'api' | 'utlostAv'>) => 
 export async function behandlePubchemSynk(
   foresporsel: Request,
   miljo: Miljo,
-  { synkroniser = synkroniserKjemi, adminsjekk = erAdmin, api }: { synkroniser?: Synkroniser; adminsjekk?: Adminsjekk; api?: PubchemApi } = {},
+  { synkroniser = synkroniserKjemi, arkitektsjekk = erSystemarkitekt, api }: { synkroniser?: Synkroniser; arkitektsjekk?: Arkitektsjekk; api?: PubchemApi } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'GET' && foresporsel.method !== 'POST') return svar(405, { feil: 'Bare GET og POST.' })
-  const utlostAv = await hvem(foresporsel, miljo, adminsjekk)
+  const utlostAv = await hvem(foresporsel, miljo, arkitektsjekk)
   if (!utlostAv) return svar(401, { feil: 'Ikke tilgang.' })
 
   const klient = serverklient(miljo)

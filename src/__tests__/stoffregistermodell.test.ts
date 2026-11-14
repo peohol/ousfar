@@ -145,7 +145,7 @@ describe('hva som kan slettes', () => {
     expect(kanSletteStoff(stoff('tom'), false)).toEqual({ lov: true })
     expect(kanSletteStoff(stoff('full'), false)).toEqual({
       lov: false,
-      grunn: 'Bare administratorer kan slette en fagside med innhold. Arkiver den i stedet.',
+      grunn: 'Bare systemarkitektene kan slette en fagside med innhold. Arkiver den i stedet.',
     })
     expect(kanSletteStoff(stoff('full'), true)).toEqual({ lov: true })
   })

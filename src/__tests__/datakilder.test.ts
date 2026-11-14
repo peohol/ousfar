@@ -34,7 +34,7 @@ describe('lesefunksjonen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
 
@@ -150,7 +150,7 @@ describe('lesefunksjonen', () => {
 describe('FEST i lesefunksjonen', () => {
   it('gir FEST-kjøringene med uttrekksdatoen som versjon og radene som ble byttet inn', async () => {
     const db = await nyDatabase()
-    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     await db.exec(`
       insert into legemiddeldata.synkroniseringer (kilde, status, utlost_av, startet_kl, avsluttet_kl, kildedato, antall, feil)
       values ('FEST', 'fullfort', 'cron', '2026-09-24T04:15:00Z', '2026-09-24T04:16:00Z', '2026-09-08T03:09:06',
@@ -173,7 +173,7 @@ describe('FEST i lesefunksjonen', () => {
 
   it('vet når siste vellykkede henting var, også etter flere feilede enn kjøringene som følger med', async () => {
     const db = await nyDatabase()
-    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    const admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     await db.exec(`
       insert into legemiddeldata.synkroniseringer (kilde, status, startet_kl, avsluttet_kl, kildedato, antall)
       values ('FEST', 'fullfort', '2026-09-10T04:15:00Z', '2026-09-10T04:16:00Z', '2026-09-08T03:09:06', '{}');

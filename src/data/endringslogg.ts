@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.5',
+    dato: '2026-11-14',
+    sammendrag: 'Stoffregisteret, datakildene og styringen av appen er nå forbeholdt systemarkitektene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Neste steg mot at flere laboratorier kan bruke OUSFAR: det som gjelder hele appen – å endre stoffregisteret, se datakildene og kildeovervåkingen, sperre verktøy og styre kurateringene – kan bare systemarkitektene gjøre. Den gamle administratorrollen gir ikke lenger disse rettighetene.',
+      'Lokale administratorer i fagmiljøet nye brukere blir medlemmer av, kan fortsatt opprette brukere. Alle andre ser stoffregisteret som før, men uten knappene for å endre det.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.130.4',
     dato: '2026-11-14',
     sammendrag: 'Dere ser navnet og bildet til dem dere samarbeider med, men ikke andres rolle',

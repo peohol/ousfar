@@ -49,8 +49,8 @@ const FANER: readonly Trinnvalg<Fane>[] = [
  *
  * «Rediger» bytter til redigeringen (`Redigeringsbrett`): kategoriene og
  * underkategoriene kan lages, gis nytt navn, flyttes, arkiveres og slettes,
- * og stoffene dras mellom dem. Nederst står arkivet, og for administratorer
- * papirkurven.
+ * og stoffene dras mellom dem; knappen vises bare for dem som kan endre
+ * registeret. Nederst står arkivet, og for systemarkitektene papirkurven.
  *
  * Fanen «Kurateringer» (`Kurateringsfane`) viser i stedet hver fagside med
  * statusen til kurateringene av den.
@@ -89,7 +89,8 @@ function Innhold({ katalog, onApneFortolkning, onLukk, kuratering }: Stoffregist
 
   if (!kilde) return null
   const { register } = kilde
-  const redigerer = modus === 'rediger'
+  // Redigeringen er bare for dem som kan endre registeret, også om modusen er bevart fra før.
+  const redigerer = modus === 'rediger' && kilde.kanEndre
   // Redigeringen gjelder registeret, så den viser alltid det.
   const kurateringer = kuratering && !redigerer && fane === 'kurateringer' ? kuratering : null
   const ekte = register.kategorier.filter((k) => k.id !== ANDRE_STOFFER_ID)
@@ -103,7 +104,8 @@ function Innhold({ katalog, onApneFortolkning, onLukk, kuratering }: Stoffregist
           </Toppmenyknapp>
         </ToppmenyInnhold>
       ) : (
-        !kurateringer && (
+        !kurateringer &&
+        kilde.kanEndre && (
           <ToppmenyInnhold spor="redigering">
             <Ikonknapp ikon="edit" etikett="Rediger stoffregisteret" aria-pressed="false" onClick={() => setModus('rediger')} />
           </ToppmenyInnhold>
@@ -223,12 +225,13 @@ function Hvemnaar({ hvem, iso }: { hvem: string | null; iso: string }) {
 }
 
 /**
- * Det som er arkivert: stoffene og kategoriene. Alle kan hente dem tilbake,
- * og slette det de ellers kunne slettet. En arkivert kategori står utenfor
- * registeret; stoffene i den står i «Andre stoffer» til den hentes tilbake.
+ * Det som er arkivert: stoffene og kategoriene. Alle ser det; de som kan endre
+ * registeret, kan hente dem tilbake og slette det de ellers kunne slettet. En
+ * arkivert kategori står utenfor registeret; stoffene i den står i «Andre
+ * stoffer» til den hentes tilbake.
  */
 function Arkiv({ kilde }: { kilde: Stoffregisterkilde }) {
-  const { register, handlinger, admin } = kilde
+  const { register, handlinger, admin, kanEndre } = kilde
   const { utfor } = useRegisterhandling()
   const { arkiv, arkiverteKategorier } = register
   const tomt = arkiv.length === 0 && arkiverteKategorier.length === 0
@@ -258,20 +261,22 @@ function Arkiv({ kilde }: { kilde: Stoffregisterkilde }) {
                   {s.navn}
                 </a>
                 <Hvemnaar hvem={s.endret_av} iso={s.endret_kl} />
-                <span className="registerrad__handlinger">
-                  <Idehandling
-                    ikon="reset"
-                    onClick={() =>
-                      void utfor(() => handlinger.arkiverStoff(s.slug, false), {
-                        melding: `${s.navn} er hentet tilbake.`,
-                        angre: () => handlinger.arkiverStoff(s.slug, true),
-                      })
-                    }
-                  >
-                    Hent tilbake
-                  </Idehandling>
-                  {slett.lov && <Slettknapp hva={s.navn} onSlett={() => void utfor(() => handlinger.slettStoff(s.slug))} />}
-                </span>
+                {kanEndre && (
+                  <span className="registerrad__handlinger">
+                    <Idehandling
+                      ikon="reset"
+                      onClick={() =>
+                        void utfor(() => handlinger.arkiverStoff(s.slug, false), {
+                          melding: `${s.navn} er hentet tilbake.`,
+                          angre: () => handlinger.arkiverStoff(s.slug, true),
+                        })
+                      }
+                    >
+                      Hent tilbake
+                    </Idehandling>
+                    {slett.lov && <Slettknapp hva={s.navn} onSlett={() => void utfor(() => handlinger.slettStoff(s.slug))} />}
+                  </span>
+                )}
               </li>
             )
           })}
@@ -287,14 +292,16 @@ function Arkiv({ kilde }: { kilde: Stoffregisterkilde }) {
                 <span className="registerrad__meta">
                   {antall(k.antall, 'stoff', 'stoffer')} · <Tidspunkt iso={k.arkivert_kl} />
                 </span>
-                <span className="registerrad__handlinger">
-                  <Idehandling ikon="reset" onClick={() => void utfor(() => handlinger.arkiverKategori(k.id, false))}>
-                    Hent tilbake
-                  </Idehandling>
-                  {kanSletteKategori({ stoffer: Array(k.antall) }, admin).lov && (
-                    <Slettknapp hva={navn} onSlett={() => void utfor(() => handlinger.slettKategori(k.id))} />
-                  )}
-                </span>
+                {kanEndre && (
+                  <span className="registerrad__handlinger">
+                    <Idehandling ikon="reset" onClick={() => void utfor(() => handlinger.arkiverKategori(k.id, false))}>
+                      Hent tilbake
+                    </Idehandling>
+                    {kanSletteKategori({ stoffer: Array(k.antall) }, admin).lov && (
+                      <Slettknapp hva={navn} onSlett={() => void utfor(() => handlinger.slettKategori(k.id))} />
+                    )}
+                  </span>
+                )}
               </li>
             )
           })}
@@ -305,7 +312,7 @@ function Arkiv({ kilde }: { kilde: Stoffregisterkilde }) {
 }
 
 /**
- * Papirkurven, som bare administratorer ser: fagsidene som er slettet. De kan
+ * Papirkurven, som bare systemarkitektene ser: fagsidene som er slettet. De kan
  * hentes tilbake, eller slettes for godt med en gang; ellers slettes de for
  * godt etter 30 dager. En side noe annet i historikken peker på, blir liggende.
  */
@@ -342,7 +349,7 @@ function Papirkurv({ kilde }: { kilde: Stoffregisterkilde }) {
       }
     >
       <p className="registerarkiv__hjelp">
-        Bare administratorer ser papirkurven. Det som ligger her, slettes for godt etter {PAPIRKURVDAGER} dager.
+        Bare systemarkitektene ser papirkurven. Det som ligger her, slettes for godt etter {PAPIRKURVDAGER} dager.
       </p>
       {papirkurv.length === 0 ? (
         <p className="registerarkiv__tomt">Papirkurven er tom.</p>

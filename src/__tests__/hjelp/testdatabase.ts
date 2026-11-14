@@ -16,6 +16,11 @@ export interface Testbruker {
   fornavn: string
   etternavn: string
   rolle: Rolle
+  /**
+   * Gjør kontoen til systemarkitekt (`public.systemroller`), som det som
+   * gjelder hele OUSFAR krever siden P2d; den gamle adminrollen gir det ikke.
+   */
+  systemarkitekt?: boolean
 }
 
 /**
@@ -37,6 +42,10 @@ export async function opprettBruker(db: PGlite, bruker: Testbruker): Promise<str
        where id = $1`,
       [id, bruker.fornavn, bruker.etternavn, bruker.rolle],
     )
+    if (bruker.systemarkitekt) {
+      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Systemarkitekt i testene (syntetisk)', true)`)
+      await tx.query(`insert into public.systemroller (bruker_id, rolle) values ($1, 'systemarkitekt')`, [id])
+    }
     return id
   })
 }

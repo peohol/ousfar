@@ -26,8 +26,13 @@ export const KONTROLLER = [
   'innlogget',
   /** `security definer` som bare rører den innloggedes egne rader. */
   'eier',
-  /** Innlogget, men en administrator får gjøre eller se mer (`er_admin()`). */
+  /** Innlogget, men en administrator eller systemarkitekt får gjøre eller se mer (`er_admin()`, `er_systemarkitekt()`). */
   'admin-utvidet',
+  /**
+   * Krever rett til å endre stoffregisteret (`intern.krev_registerbruker`,
+   * `intern.har_registerrett`): i dag systemarkitektene (P2d).
+   */
+  'stoffregister',
   /** `security definer` som viser den innloggedes egen myndighet over kontoer (`intern.kontoavslag`). */
   'kontomyndighet',
   /** Krever administrator (`er_admin()`, `krev_admin()` e.l.) for alt. */
@@ -39,8 +44,9 @@ export const KONTROLLER = [
   'rekkevidde',
   /**
    * `security definer` som krever en systemarkitekt med aktivt medlemskap
-   * (`public.er_systemarkitekt()`, eller porten `intern.krev_idevalg_admin()`
-   * for idéene og oppgavene etter D8).
+   * (`public.er_systemarkitekt()`, `intern.krev_systemarkitekt()`, eller porten
+   * `intern.krev_idevalg_admin()` for idéene og oppgavene etter D8); den gamle
+   * adminrollen gir ingenting (P2b, P2d).
    */
   'systemarkitekt',
 ] as const
@@ -52,22 +58,22 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'angre_oppgave_utfort(oppgave uuid)': 'systemarkitekt',
   'arkiver_diskusjon(diskusjon uuid, arkivert boolean)': 'rekkevidde',
   'arkiver_ide(ide uuid)': 'systemarkitekt',
-  'arkiver_stoff(stoff text, arkivert boolean)': 'innlogget',
-  'arkiver_stoffkategori(kategori uuid, arkivert boolean)': 'innlogget',
+  'arkiver_stoff(stoff text, arkivert boolean)': 'stoffregister',
+  'arkiver_stoffkategori(kategori uuid, arkivert boolean)': 'stoffregister',
   'arkiver_varsler(varsler uuid[], til timestamp with time zone)': 'eier',
-  'beslutt_fagsak(sak bigint, versjon integer, valg text, merknad text)': 'admin',
+  'beslutt_fagsak(sak bigint, versjon integer, valg text, merknad text)': 'systemarkitekt',
   'brukernavn_er_gyldig(brukernavn text)': 'offentlig',
   'brukernavn_normalisert(raatekst text)': 'offentlig',
   'clinpgx_status()': 'felles-lesing',
   'cpic_status()': 'felles-lesing',
-  'datakilder_status(antall integer)': 'admin',
+  'datakilder_status(antall integer)': 'systemarkitekt',
   'direktelenke(slag text, id uuid, kommentar uuid)': 'rekkevidde',
   'diskusjon_er_apen(diskusjon uuid)': 'rekkevidde',
   'diskusjonsoversikt(side text)': 'radsikkerhet',
   'diskusjonstekster(side text)': 'radsikkerhet',
   'diskusjonstraad(diskusjon uuid)': 'radsikkerhet',
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'rekkevidde',
-  'endre_stoffkategori(kategori uuid, navn text)': 'innlogget',
+  'endre_stoffkategori(kategori uuid, navn text)': 'stoffregister',
   // P2c: brukerlista i administrasjonen, bare kontoene den innloggede administrerer.
   'brukeroversikt()': 'rekkevidde',
   'er_admin()': 'felles-lesing',
@@ -79,11 +85,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'flytt_diskusjon_til_side(diskusjon uuid, side text, kategori uuid, ny_kategori text, ny_emoji text)': 'rekkevidde',
   'flytt_diskusjonskategori(kategori uuid, indeks integer)': 'rekkevidde',
   'flytt_oppgave_tilbake(oppgave uuid)': 'systemarkitekt',
-  'flytt_stoffkategori(kategori uuid, forelder uuid, indeks integer)': 'innlogget',
+  'flytt_stoffkategori(kategori uuid, forelder uuid, indeks integer)': 'stoffregister',
   'frigi_oppgave(oppgave uuid)': 'systemarkitekt',
   'gjenopprett_ide(ide uuid)': 'systemarkitekt',
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'admin',
-  'gjenopprett_stoff(stoff text)': 'admin-utvidet',
+  'gjenopprett_stoff(stoff text)': 'stoffregister',
   'gjenopprett_varsler(varsler uuid[])': 'eier',
   // P2.0: den innloggedes eget svar om aktivt medlemskap, og det eneste en
   // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
@@ -95,7 +101,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'ideoversikt()': 'innlogget',
   'idetraad(ide uuid)': 'innlogget',
   'intern_auth_domene()': 'offentlig',
-  'kuratering_admin(handling text, data jsonb)': 'admin',
+  'kuratering_admin(handling text, data jsonb)': 'systemarkitekt',
   'lagre_intervallregelsett(objekt uuid, forventet_revisjon integer, innhold jsonb, kommentarer jsonb)': 'admin',
   'lagre_oppgave(oppgave uuid, tittel text, prompt text)': 'systemarkitekt',
   'lagre_scenarioregelsett(objekt uuid, forventet_revisjon integer, innhold jsonb, kommentarer jsonb)': 'admin',
@@ -108,14 +114,14 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_cpic(clinpgx_ider text[])': 'felles-lesing',
   'les_cpic_diplotyper(gensymbol text)': 'felles-lesing',
   'les_endringslogg(side jsonb, med_utkast boolean, med_rutiner boolean, etter jsonb, antall integer)': 'admin-utvidet',
-  'les_fagsaker()': 'admin',
+  'les_fagsaker()': 'systemarkitekt',
   'les_farmakogenetikk(kjemikalie_ider text[])': 'felles-lesing',
   'les_farmakogenetikk_sok(kjemikalie_ider text[])': 'felles-lesing',
   'les_historikk(objekt uuid)': 'radsikkerhet',
   'les_interaksjoner(atc_koder text[], virkestoff_ider text[])': 'felles-lesing',
   'les_interaksjonssok(sider jsonb)': 'felles-lesing',
   'les_intervallregelsett(sidetilstand objekttilstand)': 'radsikkerhet',
-  'les_kildeovervaking(historikk integer)': 'admin',
+  'les_kildeovervaking(historikk integer)': 'systemarkitekt',
   'les_kjemi(cider integer[])': 'felles-lesing',
   'les_kommentarer(kommentartilstand objekttilstand, ider uuid[])': 'radsikkerhet',
   'les_kurateringer()': 'felles-lesing',
@@ -153,40 +159,42 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).
   'min_profil()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
+  // P2d: den innloggedes egne rettigheter, som appen viser menyer og knapper etter.
+  'mine_rettigheter()': 'eier',
   // P2c: kontoene den innloggede ser profilkortet til; regelen på profiles og bildene bygger på den.
   'mine_synlige_profiler()': 'rekkevidde',
   'mine_varsler()': 'eier',
   'oppgave(oppgave uuid)': 'systemarkitekt',
   'oppgaveoversikt()': 'systemarkitekt',
-  'opphev_verktoysperre(sperre uuid, grunn text)': 'admin',
+  'opphev_verktoysperre(sperre uuid, grunn text)': 'systemarkitekt',
   'opprett_diskusjon(side text, kategori uuid, tittel text, tekst jsonb, ny_kategori text, ny_emoji text)': 'rekkevidde',
   'opprett_diskusjonskategori(side text, navn text, emoji text)': 'rekkevidde',
-  'opprett_stoffkategori(navn text, forelder uuid)': 'innlogget',
+  'opprett_stoffkategori(navn text, forelder uuid)': 'stoffregister',
   'opprett_utkast(objekttype objekttype, innhold jsonb)': 'admin',
   'overfor_ide(ide uuid)': 'systemarkitekt',
-  'plasser_stoff(stoff text, fra uuid, til uuid)': 'innlogget',
+  'plasser_stoff(stoff text, fra uuid, til uuid)': 'stoffregister',
   'profiles_beskytt_felter()': 'utloser',
   'publiser_utkast(objekt uuid, forventet_revisjon integer)': 'admin',
   'rydd_idearkiv()': 'systemarkitekt',
-  'rydd_stoffpapirkurven()': 'innlogget',
+  'rydd_stoffpapirkurven()': 'stoffregister',
   'sett_diskusjonstekst(diskusjon uuid, tekst jsonb)': 'rekkevidde',
   'sett_diskusjonstittel(diskusjon uuid, tittel text)': 'rekkevidde',
   'sett_oppgave_klar(oppgave uuid, klar boolean)': 'systemarkitekt',
   'sett_stoffavoritt(stoff text, favoritt boolean)': 'radsikkerhet',
-  'sett_verktoysperre(omfang text, mal text, grunn text)': 'admin',
+  'sett_verktoysperre(omfang text, mal text, grunn text)': 'systemarkitekt',
   'skjul_i_diskusjon(diskusjon uuid, kommentar uuid)': 'rekkevidde',
   'slett_diskusjon(diskusjon uuid)': 'rekkevidde',
   'slett_referanse(objekt uuid, forventet_revisjon integer)': 'admin',
-  'slett_stoff(stoff text)': 'admin-utvidet',
-  'slett_stoff_for_godt(stoff text)': 'admin',
-  'slett_stoffkategori(kategori uuid)': 'admin-utvidet',
+  'slett_stoff(stoff text)': 'stoffregister',
+  'slett_stoff_for_godt(stoff text)': 'systemarkitekt',
+  'slett_stoffkategori(kategori uuid)': 'stoffregister',
   'sok_virkestoff(sok text, antall integer)': 'felles-lesing',
   'sokedata_versjoner()': 'felles-lesing',
   'stoffsider_som_json(sider uuid[], sidetilstand objekttilstand)': 'radsikkerhet',
-  'tom_stoffpapirkurven()': 'admin',
+  'tom_stoffpapirkurven()': 'systemarkitekt',
   'uleste_varsler()': 'radsikkerhet',
   'utgave_som_json(u objektutgaver)': 'radsikkerhet',
   'valider_scenarioregelsett(innhold jsonb)': 'admin',
-  'verktoysperrehistorikk()': 'admin',
+  'verktoysperrehistorikk()': 'systemarkitekt',
   'vis_i_diskusjon(diskusjon uuid, kommentar uuid)': 'rekkevidde',
 }

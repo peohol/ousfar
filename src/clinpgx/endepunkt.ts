@@ -4,41 +4,41 @@
  * - `/api/clinpgx-synk` synkroniserer. Jobben i GitHub Actions kaller det hver
  *   uke med `POST` og et OIDC-token for arbeidsflyten, og igjen med
  *   `{ "fortsett": <kjøringen> }` så lenge svaret har `fortsett`: én omgang
- *   rekker ikke alle kjemikaliene innenfor Vercels grense. En administrator kan
+ *   rekker ikke alle kjemikaliene innenfor Vercels grense. En systemarkitekt kan
  *   be om det samme med sin egen innlogging, for alle kjemikaliene eller bare
  *   noen (`{ "kjemikalier": ["PA…"] }`). `GET` med
  *   `Authorization: Bearer <CRON_SECRET>` virker fortsatt, for Vercels cron.
  * - `/api/clinpgx-sok` slår opp et kjemikalie i ClinPGx på navnet eller
- *   ID-en, så en administrator kan velge hva en stoffside kobles til. Bare for
- *   administratorer.
+ *   ID-en, så en systemarkitekt kan velge hva en stoffside kobles til. Bare for
+ *   systemarkitektene.
  *
  * Den hemmelige Supabase-nøkkelen leses fra miljøet her på serveren og
- * forlater den aldri. En administrator kjennes igjen på innloggingen: tokenet
- * nettleseren sender, brukes mot databasen, som svarer på `er_admin()` for den
+ * forlater den aldri. En systemarkitekt kjennes igjen på innloggingen: tokenet
+ * nettleseren sender, brukes mot databasen, som svarer på `er_systemarkitekt()` for den
  * innloggede — et token som ikke er gyldig, avvises der.
  */
 import { kallMot } from '../legemiddeldata/lager.js'
-import { bearer, erAdmin, hvem, serverklient, svar, type Adminsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
+import { bearer, erSystemarkitekt, hvem, serverklient, svar, type Arkitektsjekk, type Githubsjekk, type Miljo } from '../server/tilgang.js'
 import { lagClinpgxApi, type ClinpgxApi } from './api.js'
 import { lagClinpgxlager } from './lager.js'
 import { lesKjemikaliesvar, type Kjemikalie } from './modell.js'
 import { synkroniserClinpgx, type Synkresultat, type Synkvalg } from './synk.js'
 
-export { erAdmin, type Adminsjekk, type Miljo }
+export { erSystemarkitekt, type Arkitektsjekk, type Miljo }
 
 type Synkroniser = (valg: Pick<Synkvalg, 'lager' | 'api' | 'utlostAv' | 'bare' | 'fortsett'>) => Promise<Synkresultat>
 
 /** Arbeidsflyten som kjører synkroniseringen hver uke. */
 export const CLINPGX_ARBEIDSFLYT = '.github/workflows/clinpgx-synk.yml'
 
-/** Flest kjemikalier en administrator kan be om å få hentet i ett kall. */
+/** Flest kjemikalier en systemarkitekt kan be om å få hentet i ett kall. */
 export const MAKS_MANUELLE = 20
 
 /** Det kallet ber om: bare noen kjemikalier, eller neste omgang av en kjøring. */
 type Bestilling = { bare?: string[]; fortsett?: number }
 
 /**
- * Kjemikaliene en administrator ba om, eller kjøringen en omgang skal
+ * Kjemikaliene en systemarkitekt ba om, eller kjøringen en omgang skal
  * fortsette. Tomt: alle kjemikaliene, i en ny kjøring. Ugyldige ID-er, og
  * begge deler på en gang, avvises.
  */
@@ -74,13 +74,13 @@ export async function behandleClinpgxSynk(
   miljo: Miljo,
   {
     synkroniser = synkroniserClinpgx,
-    adminsjekk = erAdmin,
+    arkitektsjekk = erSystemarkitekt,
     githubsjekk,
     api,
-  }: { synkroniser?: Synkroniser; adminsjekk?: Adminsjekk; githubsjekk?: Githubsjekk; api?: ClinpgxApi } = {},
+  }: { synkroniser?: Synkroniser; arkitektsjekk?: Arkitektsjekk; githubsjekk?: Githubsjekk; api?: ClinpgxApi } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'GET' && foresporsel.method !== 'POST') return svar(405, { feil: 'Bare GET og POST.' })
-  const utlostAv = await hvem(foresporsel, miljo, adminsjekk, { arbeidsflyt: CLINPGX_ARBEIDSFLYT, sjekk: githubsjekk })
+  const utlostAv = await hvem(foresporsel, miljo, arkitektsjekk, { arbeidsflyt: CLINPGX_ARBEIDSFLYT, sjekk: githubsjekk })
   if (!utlostAv) return svar(401, { feil: 'Ikke tilgang.' })
 
   const bestilt = await bestilling(foresporsel, utlostAv === 'manuell')
@@ -135,10 +135,10 @@ export async function slaOppKjemikalie(api: ClinpgxApi, sok: string): Promise<Kj
 export async function behandleClinpgxSok(
   foresporsel: Request,
   miljo: Miljo,
-  { adminsjekk = erAdmin, api = lagClinpgxApi() }: { adminsjekk?: Adminsjekk; api?: ClinpgxApi } = {},
+  { arkitektsjekk = erSystemarkitekt, api = lagClinpgxApi() }: { arkitektsjekk?: Arkitektsjekk; api?: ClinpgxApi } = {},
 ): Promise<Response> {
   const token = bearer(foresporsel)
-  if (!token || !(await adminsjekk(token, miljo).catch(() => false))) return svar(401, { feil: 'Ikke tilgang.' })
+  if (!token || !(await arkitektsjekk(token, miljo).catch(() => false))) return svar(401, { feil: 'Ikke tilgang.' })
   const sok = new URL(foresporsel.url).searchParams.get('q')?.trim() ?? ''
   if (sok.length < 2 || sok.length > 100) return svar(400, { feil: 'Søk på 2–100 tegn.' })
   try {

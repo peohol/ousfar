@@ -13,7 +13,7 @@ import { Avvist, brukerIdFelt, endepunkt, tekstfelt } from '../_edge/kontekst.ts
 import { kontofunksjon } from '../_edge/kontooperasjoner.ts'
 
 Deno.serve(
-  endepunkt({ krevAdmin: false }, async ({ kropp, innlogget, admin }) => {
+  endepunkt(async ({ kropp, innlogget, admin }) => {
     const brukerId = brukerIdFelt(kropp)
     const rolle = tekstfelt(kropp, 'rolle')
     if (!erRolle(rolle)) throw new Avvist('Ukjent rolle.')

@@ -3,9 +3,10 @@
  * oppkoblingen mot databasen, og svaret.
  *
  * Vercels cron kaller med `GET` og `Authorization: Bearer <CRON_SECRET>`. En
- * administrator kaller med `POST` og sin egen innlogging; tokenet nettleseren
- * sender, brukes mot databasen, som svarer på `er_admin()` for den
- * innloggede — et token som ikke er gyldig, avvises der.
+ * systemarkitekt kaller med `POST` og sin egen innlogging; tokenet nettleseren
+ * sender, brukes mot databasen, som svarer på `er_systemarkitekt()` for den
+ * innloggede — et token som ikke er gyldig, avvises der. Den gamle
+ * adminrollen gir ikke tilgang (P2d, docs/fagmiljoer.md).
  *
  * En jobb i GitHub Actions kaller med `POST` og et OIDC-token GitHub har
  * utstedt for kjøringen (`githubkjoring`): ingen hemmelighet å lagre, og
@@ -19,15 +20,15 @@ import { createRemoteJWKSet, decodeJwt, jwtVerify } from 'jose'
 
 export type Miljo = Record<string, string | undefined>
 
-/** Om den innloggede bak et token er administrator. Byttes ut i testene. */
-export type Adminsjekk = (token: string, miljo: Miljo) => Promise<boolean>
+/** Om den innloggede bak et token er systemarkitekt. Byttes ut i testene. */
+export type Arkitektsjekk = (token: string, miljo: Miljo) => Promise<boolean>
 
 export function supabaseUrl(miljo: Miljo): string | undefined {
   return miljo.SUPABASE_URL ?? miljo.VITE_SUPABASE_URL
 }
 
-/** Spør databasen, som den innloggede, om den innloggede er administrator. */
-export const erAdmin: Adminsjekk = async (token, miljo) => {
+/** Spør databasen, som den innloggede, om den innloggede er systemarkitekt (med aktivt medlemskap). */
+export const erSystemarkitekt: Arkitektsjekk = async (token, miljo) => {
   const url = supabaseUrl(miljo)
   const nokkel = miljo.SUPABASE_PUBLISHABLE_KEY ?? miljo.VITE_SUPABASE_PUBLISHABLE_KEY
   if (!url || !nokkel) return false
@@ -35,7 +36,7 @@ export const erAdmin: Adminsjekk = async (token, miljo) => {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${token}` } },
   })
-  const { data, error } = await klient.rpc('er_admin')
+  const { data, error } = await klient.rpc('er_systemarkitekt')
   return !error && data === true
 }
 
@@ -104,12 +105,12 @@ export interface Githubtilgang {
 
 /**
  * Vercels cron-kall, en jobb i GitHub Actions (når endepunktet tar imot
- * det), eller en innlogget administrator. `null` når ingen av dem.
+ * det), eller en innlogget systemarkitekt. `null` når ingen av dem.
  */
 export async function hvem(
   foresporsel: Request,
   miljo: Miljo,
-  adminsjekk: Adminsjekk,
+  arkitektsjekk: Arkitektsjekk,
   github?: Githubtilgang,
 ): Promise<Utlost | null> {
   const token = bearer(foresporsel)
@@ -121,7 +122,7 @@ export async function hvem(
     const kjoring = await (github.sjekk ?? githubkjoring)(token, github.arbeidsflyt).catch(() => null)
     if (kjoring) return kjoring
   }
-  return (await adminsjekk(token, miljo).catch(() => false)) ? 'manuell' : null
+  return (await arkitektsjekk(token, miljo).catch(() => false)) ? 'manuell' : null
 }
 
 /** En klient med den hemmelige nøkkelen, eller `null` når oppkoblingen mangler i miljøet. */

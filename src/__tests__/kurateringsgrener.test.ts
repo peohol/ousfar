@@ -203,7 +203,7 @@ async function tilGodkjent(gren: string) {
 
 beforeAll(async () => {
   db = await nyDatabase()
-  admin = await opprettBruker(db, { brukernavn: 'grenadmin', fornavn: 'Gro', etternavn: 'Gren', rolle: 'admin' })
+  admin = await opprettBruker(db, { brukernavn: 'grenadmin', fornavn: 'Gro', etternavn: 'Gren', rolle: 'admin', systemarkitekt: true })
   leser = await opprettBruker(db, { brukernavn: 'grenleser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
   claude = (await adm<{ nokkel: string }>('ny_agentnokkel', { agent: 'claude-monografkurator' })).nokkel

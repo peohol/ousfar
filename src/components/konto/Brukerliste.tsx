@@ -13,6 +13,7 @@ import {
 } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
+import { useRettigheter } from '../../auth/rettigheter'
 import { maaGjennomOppsett } from '../../domain/tilgang'
 import { useClipboard } from '../../hooks/useClipboard'
 import { Button } from '../Button'
@@ -29,8 +30,9 @@ const INGEN_HANDLINGER: ReadonlyMap<string, Kontohandlinger> = new Map()
  *
  * Viser kontoene den innloggede administrerer, med rollen og om kontoen må
  * gjennom oppsettet (`hentBrukeroversikt`): en systemarkitekt ser alle, en
- * lokal administrator medlemmene i egne fagmiljøer. Administratorer får i tillegg knappen
- * for å opprette en bruker. Knappene for nytt midlertidig passord og for å gi
+ * lokal administrator medlemmene i egne fagmiljøer. En systemarkitekt, og en
+ * lokal administrator i fagmiljøet nye brukere blir medlemmer av, får i
+ * tillegg knappen for å opprette en bruker (`useRettigheter`). Knappene for nytt midlertidig passord og for å gi
  * eller ta adminstatus står på hver bruker den innloggede har myndighet over,
  * slik databasen avgjør det (`hentMineKontohandlinger`): en systemarkitekt
  * eller lokal administrator får dem også uten den gamle adminrollen, og en
@@ -40,7 +42,7 @@ const INGEN_HANDLINGER: ReadonlyMap<string, Kontohandlinger> = new Map()
  */
 export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => void }) {
   const meg = useProfil()
-  const erAdmin = meg.role === 'admin'
+  const kanOpprette = useRettigheter().opprettBruker
   const [profiler, setProfiler] = useState<Kontooversikt[]>([])
   const [handlinger, setHandlinger] = useState<ReadonlyMap<string, Kontohandlinger>>(INGEN_HANDLINGER)
   const [feil, setFeil] = useState<string | null>(null)
@@ -135,7 +137,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
       bred
       onLukk={onLukk}
       handling={
-        erAdmin && !oppretter ? (
+        kanOpprette && !oppretter ? (
           <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={() => setOppretter(true)}>
             Opprett bruker
           </Button>
