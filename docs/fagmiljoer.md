@@ -705,7 +705,11 @@ kontrolleres mot et aktivt medlemskap (P0 §2.6).
 `fagmiljo_id`. Den settes av databasen fra rekkevidden objektet har
 (`intern.gi_fortolkningsfagmiljo`, ved hver innsetting og endring) og kan
 ikke settes fra nettleseren. Flytter en systemarkitekt et objekt til et
-annet fagmiljø (`ressursomfang`, loggført), følger kolonnen med. De nye unike
+annet fagmiljø (`ressursomfang`, loggført), følger kolonnen med. En flytting
+som ville latt et regelsett bruke kommentarer i et annet fagmiljø, stoppes
+(`intern.kommentarer_paa_tvers`), enten det er regelsettet eller en kommentar
+det bruker som flyttes; regelsettet og kommentarene flyttes derfor sammen, i
+én oppdatering. De nye unike
 nøklene har fagmiljøet med: én analytt, ett regelsett og ett
 THC-syreregelsett per kode eller modul i hvert fagmiljø, kontrollert også av
 lagringsfunksjonene med de samme meldingene som før.

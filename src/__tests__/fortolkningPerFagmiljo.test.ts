@@ -16,7 +16,9 @@
  *    står; med den gamle nøkkelen fjernet (sist i fila, avsnitt 8) får hvert
  *    fagmiljø sitt, og en endring i B rører ikke A.
  * 6. Rekkevidden: nye objekter hører til fagmiljøet de lages i, kolonnen
- *    følger en flytting, og en lokal regel kan ikke gjøres felles (D4).
+ *    følger en flytting av regelsettet og kommentarene sammen, en flytting som
+ *    ville gitt kommentarer på tvers stoppes, og en lokal regel kan ikke gjøres
+ *    felles (D4).
  * 7. Endringsloggen og diskusjonene på fortolkningen følger konteksten.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
@@ -255,18 +257,26 @@ describe('samme kode i to fagmiljøer', () => {
 
 /* --- 6. Rekkevidden -------------------------------------------------------------- */
 
-/** Endrer rekkevidden som en systemarkitekt gjør det, med begrunnelse; feilen, eller null. */
-const settRekkevidde = (objekt: string, omfang: string, fagmiljo: string | null) =>
+/**
+ * Endrer rekkevidden som en systemarkitekt gjør det, med begrunnelse, i én
+ * oppdatering for alle objektene; feilen, eller null.
+ */
+const settRekkevidde = (objekter: string | string[], omfang: string, fagmiljo: string | null) =>
   feilFra(() =>
     db.transaction(async (tx: Transaction) => {
       await tx.query(`select set_config('ousfar.tilgangsgrunn', 'P4b-test (syntetisk)', true)`)
-      await tx.query('update public.ressursomfang set omfang = $2, fagmiljo_id = $3, regel = null where objekt_id = $1', [
-        objekt,
+      await tx.query('update public.ressursomfang set omfang = $2, fagmiljo_id = $3, regel = null where objekt_id = any ($1)', [
+        ([] as string[]).concat(objekter),
         omfang,
         fagmiljo,
       ])
     }),
   )
+
+const FLYTTING_PAA_TVERS = {
+  code: '42501',
+  message: 'Flyttingen ville latt et regelsett bruke kommentarer fra et annet fagmiljø. Flytt regelsettet og kommentarene sammen.',
+}
 
 describe('rekkevidden til fortolkningen', () => {
   it('gir et nytt lokalt objekt fagmiljøet det lages i', async () => {
@@ -281,13 +291,25 @@ describe('rekkevidden til fortolkningen', () => {
     expect(await fagmiljoTil(regelsettA)).toBe('A')
   })
 
-  it('lar fagmiljøet på reglene følge en flytting, og kan ikke settes for seg', async () => {
-    const { rows } = await db.query<{ objekt_id: string; analyttkode: string }>(
-      `select objekt_id, analyttkode from public.intervallregelsett where tilstand = 'publisert' order by analyttkode offset 1 limit 1`,
+  it('stopper en flytting som ville latt et regelsett bruke et annet fagmiljøs kommentarer', async () => {
+    const { rows } = await db.query<{ kommentar_id: string }>(
+      'select kommentar_id from public.intervallregler where regelsett_id = $1 limit 1',
+      [regelsettA],
     )
-    const { objekt_id: id, analyttkode: kode } = rows[0]!
+    // Regelsettet alene, og en kommentar det bruker alene.
+    expect(await settRekkevidde(regelsettA, 'fagmiljo', g.fagmiljo.B)).toMatchObject(FLYTTING_PAA_TVERS)
+    expect(await settRekkevidde(rows[0]!.kommentar_id, 'fagmiljo', g.fagmiljo.B)).toMatchObject(FLYTTING_PAA_TVERS)
+    expect(await fagmiljoTil(regelsettA)).toBe('A')
+    expect(await fagmiljoTil(rows[0]!.kommentar_id)).toBe('A')
+    expect((await finnFor('vanligA', kodeA))?.id).toBe(regelsettA)
+  })
+
+  it('lar fagmiljøet på reglene følge en flytting av regelsettet og kommentarene sammen, og kan ikke settes for seg', async () => {
+    const kode = 'TESTA1'
+    const { objekt: id, under, over } = await lagRegelsett('adminA', kode, 'A flyttes')
+    const sammen = [id, under, over]
     try {
-      expect(await settRekkevidde(id, 'fagmiljo', g.fagmiljo.B)).toBeNull()
+      expect(await settRekkevidde(sammen, 'fagmiljo', g.fagmiljo.B)).toBeNull()
       const kolonne = await db.query<{ f: string }>('select distinct fagmiljo_id as f from public.intervallregelsett where objekt_id = $1', [id])
       expect(kolonne.rows).toEqual([{ f: g.fagmiljo.B }])
       // Kolonnen settes alltid fra rekkevidden.
@@ -297,7 +319,7 @@ describe('rekkevidden til fortolkningen', () => {
       expect(await finnFor('vanligA', kode)).toBeNull()
       expect((await finnFor('vanligB', kode))?.id).toBe(id)
     } finally {
-      expect(await settRekkevidde(id, 'fagmiljo', g.fagmiljo.A)).toBeNull()
+      expect(await settRekkevidde(sammen, 'fagmiljo', g.fagmiljo.A)).toBeNull()
     }
     expect((await finnFor('vanligA', kode))?.id).toBe(id)
   })

@@ -43,6 +43,8 @@ let td: Testdata
 
 /** Objektene testene bruker, ut over persongalleriets testdata. */
 const obj = { fagside: '', kort: '', referanse: '', kommentarB: '', kommentarutkastB: '', regelsettA: '', regelsettB: '', analyttB: '' }
+/** Kommentarene regelsettet i B bruker, flyttet til B sammen med det. */
+let kommentarerTilRegelsettB: string[] = []
 const koder = { A: '', B: '' }
 
 interface Tabell {
@@ -78,12 +80,15 @@ async function utkastet(objekt: string): Promise<number> {
   return rows[0]!.revisjon
 }
 
-/** Flytter objektet til et annet fagmiljø, slik systemarkitektene gjør det, med begrunnelse. */
-async function flyttTil(objekt: string, fagmiljo: string) {
+/**
+ * Flytter objektene til et annet fagmiljø, slik systemarkitektene gjør det, med
+ * begrunnelse, i én oppdatering (et regelsett flyttes sammen med kommentarene sine).
+ */
+async function flyttTil(objekter: string | string[], fagmiljo: string) {
   await db.transaction(async (tx) => {
     await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Rekkeviddetest: lokalt for B (syntetisk)', true)`)
-    await tx.query(`update public.ressursomfang set omfang = 'fagmiljo', fagmiljo_id = $2, regel = null where objekt_id = $1`, [
-      objekt,
+    await tx.query(`update public.ressursomfang set omfang = 'fagmiljo', fagmiljo_id = $2, regel = null where objekt_id = any ($1)`, [
+      ([] as string[]).concat(objekter),
       fagmiljo,
     ])
   })
@@ -130,7 +135,15 @@ beforeAll(async () => {
   // Og en egen laboratorieanalytt, publisert.
   obj.analyttB = (await kall.opprett('laboratorieanalytt', { kode: 'TESTB', hovedside: obj.fagside, komponenter: [obj.fagside] })).id
   await kall.publiser(obj.analyttB, 1)
-  for (const id of [obj.kommentarB, obj.kommentarutkastB, obj.regelsettB, obj.analyttB]) await flyttTil(id, g.fagmiljo.B)
+  for (const id of [obj.kommentarB, obj.kommentarutkastB, obj.analyttB]) await flyttTil(id, g.fagmiljo.B)
+  // Regelsettet sammen med kommentarene det bruker (ingen andre regelsett bruker dem).
+  const kommentarerB = await db.query<{ id: string }>(
+    `select kommentar_id as id from public.intervallregler where regelsett_id = $1
+     union select unnest(array[cutoff_innledning_id, cutoff_kommentar_id]) from public.intervallregelsett where objekt_id = $1`,
+    [obj.regelsettB],
+  )
+  kommentarerTilRegelsettB = kommentarerB.rows.map((r) => r.id).filter(Boolean)
+  await flyttTil([obj.regelsettB, ...kommentarerTilRegelsettB], g.fagmiljo.B)
 
   // Kolonnen hver regel slår opp objektet med, og hvordan raden er publisert.
   const { rows } = await db.query<{ navn: string; visning: boolean; qual: string | null; tilstand: boolean }>(
@@ -390,7 +403,8 @@ describe('hva hver person ser i faginnholdet', () => {
       for (const t of tabeller) {
         // Det som er flyttet til B, så den vanlige brukeren i A ikke før heller.
         const for_ = rader.for[p][t.navn]!
-        const forventet = p === 'systemarkitekt' ? for_ : for_.filter((r) => !Object.values(lokaleB()).some((id) => r.includes(id)))
+        const flyttet = [...Object.values(lokaleB()), ...kommentarerTilRegelsettB]
+        const forventet = p === 'systemarkitekt' ? for_ : for_.filter((r) => !flyttet.some((id) => r.includes(id)))
         expect(avvik(rader.na[p][t.navn]!, forventet), `${p} i ${t.navn}`).toEqual(INGEN_AVVIK)
       }
     }

@@ -244,9 +244,40 @@ comment on column public.scenarioanalytter.fagmiljo_id is
 comment on column public.thc_regelsett.fagmiljo_id is
   'P4b: fagmiljøet regelsettet hører til, avledet av rekkevidden (intern.fortolkningsfagmiljo). Settes av databasen.';
 
+-- Koblinger fra en regel til en kommentar i et annet fagmiljø (eller uten
+-- fagmiljø). Med et objekt: bare koblingene der objektet er regelsettet eller
+-- kommentaren; uten: alle. Brukes av kontrollen av tilbakefyllingen og av
+-- flyttingen under, så de to ikke kan gi ulike svar.
+create function intern.kommentarer_paa_tvers(objekt uuid default null)
+returns bigint
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*)
+  from (
+    select r.regelsett_id as eier, r.kommentar_id as kommentar from public.intervallregler r
+    union all select s.objekt_id, s.cutoff_innledning_id from public.intervallregelsett s where s.cutoff_innledning_id is not null
+    union all select s.objekt_id, s.cutoff_kommentar_id from public.intervallregelsett s where s.cutoff_kommentar_id is not null
+    union all select p.objekt_id, p.kommentar_id from public.scenarioplasseringer p
+    union all select b.objekt_id, b.kommentar_id from public.thc_tekstbolker b
+  ) k
+  join public.ressursomfang re on re.objekt_id = k.eier
+  left join public.ressursomfang rk on rk.objekt_id = k.kommentar
+  where (kommentarer_paa_tvers.objekt is null or kommentarer_paa_tvers.objekt in (k.eier, k.kommentar))
+    and (rk.omfang is distinct from 'fagmiljo' or rk.fagmiljo_id is distinct from re.fagmiljo_id)
+$$;
+
+revoke all on function intern.kommentarer_paa_tvers(uuid) from public, anon, authenticated, service_role;
+
 -- Flytter en systemarkitekt et fortolkningsobjekt til et annet fagmiljø
 -- (`ressursomfang`, loggført), følger kolonnen med. Å gjøre det felles
--- stoppes av `intern.fortolkningsfagmiljo` (D4).
+-- stoppes av `intern.fortolkningsfagmiljo` (D4). En flytting som ville latt
+-- et regelsett peke på kommentarer i et annet fagmiljø, stoppes, enten det er
+-- regelsettet eller en kommentar det bruker som flyttes. Regelsettet og
+-- kommentarene flyttes derfor sammen, i én oppdatering: utløseren kjøres når
+-- hele oppdateringen er gjort.
 create function intern.flytt_fortolkningsfagmiljo()
 returns trigger
 language plpgsql
@@ -267,6 +298,10 @@ begin
     else
       null;
   end case;
+  if intern.kommentarer_paa_tvers(new.objekt_id) > 0 then
+    raise exception 'Flyttingen ville latt et regelsett bruke kommentarer fra et annet fagmiljø. Flytt regelsettet og kommentarene sammen.'
+      using errcode = '42501';
+  end if;
   return null;
 end;
 $$;
@@ -351,17 +386,7 @@ begin
     raise exception 'P4b: % rader har et annet fagmiljø enn rekkevidden gir.', avvik;
   end if;
 
-  select count(*) into avvik
-  from (
-    select r.regelsett_id as eier, r.kommentar_id as kommentar from public.intervallregler r
-    union all select s.objekt_id, s.cutoff_innledning_id from public.intervallregelsett s where s.cutoff_innledning_id is not null
-    union all select s.objekt_id, s.cutoff_kommentar_id from public.intervallregelsett s where s.cutoff_kommentar_id is not null
-    union all select p.objekt_id, p.kommentar_id from public.scenarioplasseringer p
-    union all select b.objekt_id, b.kommentar_id from public.thc_tekstbolker b
-  ) k
-  join public.ressursomfang re on re.objekt_id = k.eier
-  left join public.ressursomfang rk on rk.objekt_id = k.kommentar
-  where rk.omfang is distinct from 'fagmiljo' or rk.fagmiljo_id is distinct from re.fagmiljo_id;
+  avvik := intern.kommentarer_paa_tvers();
   if avvik > 0 then
     raise exception 'P4b: % regler peker på en kommentar i et annet fagmiljø.', avvik;
   end if;
