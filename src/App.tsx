@@ -221,8 +221,15 @@ export default function App() {
   const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
   // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
   const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
+  // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
+  // (arbeidskonteksten, P4b). Byttes det, tømmes reglene før de nye hentes.
+  const regelkontekst = rettigheter.arbeidsfagmiljo?.id ?? null
+  const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
-  const scenarioregler = useHentScenarioregler(useCallback(() => lesScenarioregler(klient()), []))
+  const scenarioregler = useHentScenarioregler(
+    useCallback(() => lesScenarioregler(klient()), []),
+    regelkontekst,
+  )
   const hits = useMemo(() => search(state.query, pool), [state.query, pool])
 
   // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
@@ -235,12 +242,18 @@ export default function App() {
     ])
     return { regelsett, referanseomrader }
   }, [faginnhold.leser])
-  const regler = usePubliserteRegler(hentRegler)
+  const regler = usePubliserteRegler(hentRegler, regelkontekst)
 
   // THC-syremodulen fortolker med regelsettet og tekstene som er publisert.
-  const thc = useHenting(useCallback(() => faginnhold.leser.lesThcRegelsett('publisert'), [faginnhold.leser]))
+  const thc = useHenting(
+    useCallback(() => faginnhold.leser.lesThcRegelsett('publisert'), [faginnhold.leser]),
+    regelkontekst,
+  )
   const { hentPaNytt: hentThcPaNytt } = thc
-  const thcRegler = useMemo(() => thcReglerFra(thc.tilstand, hentThcPaNytt), [thc.tilstand, hentThcPaNytt])
+  const thcRegler = useMemo(
+    () => thcReglerFra(thc.tilstand, hentThcPaNytt, regelfagmiljo),
+    [thc.tilstand, hentThcPaNytt, regelfagmiljo],
+  )
 
   // Stoffregisteret: datafilen, med navnene fagsidene i databasen har og
   // sidene registeret ikke kjenner, og inndelingen, arkivet og papirkurven.
@@ -861,6 +874,7 @@ export default function App() {
                         onBack={back}
                         onProvIgjen={hentPaNytt}
                         failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
+                        fagmiljo={regelfagmiljo}
                       />
                     )}
 
@@ -883,7 +897,7 @@ export default function App() {
                         // rydde i den fra utsiden.
                         key={rusModul.id}
                         modul={rusModul}
-                        regler={reglerForModul(scenarioregler.tilstand, rusModul, scenarioregler.provIgjen)}
+                        regler={reglerForModul(scenarioregler.tilstand, rusModul, scenarioregler.provIgjen, regelfagmiljo)}
                         onBack={back}
                         onFinish={reset}
                         copy={copy}

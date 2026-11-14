@@ -11,6 +11,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Kommentarinnhold, Kommentaroppslag } from '../domain/kommentarobjekt'
 import type { Rusregler } from '../domain/rus'
 import { validerScenarioregelsett, type Scenarioregelsett } from '../domain/scenario'
+import { iFagmiljoet } from '../regler/publiserte'
 import { tilFeil } from './lagring'
 import type { Utgave } from './lesing'
 import type { Tilstand } from './modell'
@@ -69,6 +70,7 @@ export function reglerForModul(
   tilstand: Scenarioreglertilstand,
   modul: { id: string; navn: string },
   provIgjen: () => void,
+  fagmiljo?: string | null,
 ): Rusregler {
   if (tilstand.status === 'laster') return { status: 'laster' }
   if (tilstand.status === 'feil') return { status: 'feil', melding: tilstand.melding, provIgjen }
@@ -77,6 +79,6 @@ export function reglerForModul(
   if (utgave) return { status: 'klar', regelsett: utgave.innhold, kommentarer: regler.kommentarer }
   const melding = regler.ugyldige.has(modul.id)
     ? `Reglene for ${modul.navn} er ikke gyldige og brukes ikke. Si fra til den som redigerer fortolkningsreglene.`
-    : `Det finnes ingen publiserte regler for ${modul.navn}. Si fra til den som redigerer fortolkningsreglene.`
+    : `Det finnes ingen publiserte regler for ${modul.navn}${iFagmiljoet(fagmiljo)}. Si fra til den som redigerer fortolkningsreglene.`
   return { status: 'feil', melding, provIgjen }
 }

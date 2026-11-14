@@ -169,6 +169,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'mine_kontohandlinger()': 'kontomyndighet',
   // P2d: den innloggedes egne rettigheter, som appen viser menyer og knapper etter.
   'mine_rettigheter()': 'eier',
+  'mitt_arbeidsfagmiljo()': 'eier',
   // P2c: kontoene den innloggede ser profilkortet til; regelen på profiles og bildene bygger på den.
   'mine_synlige_profiler()': 'rekkevidde',
   'mine_varsler()': 'eier',

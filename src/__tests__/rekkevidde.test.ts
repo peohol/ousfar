@@ -43,6 +43,8 @@ let td: Testdata
 
 /** Objektene testene bruker, ut over persongalleriets testdata. */
 const obj = { fagside: '', kort: '', referanse: '', kommentarB: '', kommentarutkastB: '', regelsettA: '', regelsettB: '', analyttB: '' }
+/** Kommentarene regelsettet i B bruker, flyttet til B sammen med det. */
+let kommentarerTilRegelsettB: string[] = []
 const koder = { A: '', B: '' }
 
 interface Tabell {
@@ -78,12 +80,15 @@ async function utkastet(objekt: string): Promise<number> {
   return rows[0]!.revisjon
 }
 
-/** Flytter objektet til et annet fagmiljø, slik systemarkitektene gjør det, med begrunnelse. */
-async function flyttTil(objekt: string, fagmiljo: string) {
+/**
+ * Flytter objektene til et annet fagmiljø, slik systemarkitektene gjør det, med
+ * begrunnelse, i én oppdatering (et regelsett flyttes sammen med kommentarene sine).
+ */
+async function flyttTil(objekter: string | string[], fagmiljo: string) {
   await db.transaction(async (tx) => {
     await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Rekkeviddetest: lokalt for B (syntetisk)', true)`)
-    await tx.query(`update public.ressursomfang set omfang = 'fagmiljo', fagmiljo_id = $2, regel = null where objekt_id = $1`, [
-      objekt,
+    await tx.query(`update public.ressursomfang set omfang = 'fagmiljo', fagmiljo_id = $2, regel = null where objekt_id = any ($1)`, [
+      ([] as string[]).concat(objekter),
       fagmiljo,
     ])
   })
@@ -130,7 +135,15 @@ beforeAll(async () => {
   // Og en egen laboratorieanalytt, publisert.
   obj.analyttB = (await kall.opprett('laboratorieanalytt', { kode: 'TESTB', hovedside: obj.fagside, komponenter: [obj.fagside] })).id
   await kall.publiser(obj.analyttB, 1)
-  for (const id of [obj.kommentarB, obj.kommentarutkastB, obj.regelsettB, obj.analyttB]) await flyttTil(id, g.fagmiljo.B)
+  for (const id of [obj.kommentarB, obj.kommentarutkastB, obj.analyttB]) await flyttTil(id, g.fagmiljo.B)
+  // Regelsettet sammen med kommentarene det bruker (ingen andre regelsett bruker dem).
+  const kommentarerB = await db.query<{ id: string }>(
+    `select kommentar_id as id from public.intervallregler where regelsett_id = $1
+     union select unnest(array[cutoff_innledning_id, cutoff_kommentar_id]) from public.intervallregelsett where objekt_id = $1`,
+    [obj.regelsettB],
+  )
+  kommentarerTilRegelsettB = kommentarerB.rows.map((r) => r.id).filter(Boolean)
+  await flyttTil([obj.regelsettB, ...kommentarerTilRegelsettB], g.fagmiljo.B)
 
   // Kolonnen hver regel slår opp objektet med, og hvordan raden er publisert.
   const { rows } = await db.query<{ navn: string; visning: boolean; qual: string | null; tilstand: boolean }>(
@@ -244,12 +257,12 @@ describe('snarveien når alt lokalt innhold kan leses', () => {
 })
 
 describe('svaret appen viser redigeringen av fortolkningen etter', () => {
-  it('er ja bare med endringsrett i et fagmiljø som har lokalt innhold', async () => {
+  it('er ja bare med endringsrett i arbeidskonteksten (P4b), også før den har lokalt innhold', async () => {
     const svar = async (p: Person) =>
       som(db, g.id[p], async (tx) => (await tx.query<{ ja: boolean }>('select public.kan_endre_lokalt_innhold() as ja')).rows[0]!.ja)
     const alle = async () => Object.fromEntries(await Promise.all(PERSONENE.map(async (p) => [p, await svar(p)] as const)))
-    // Både A og B har lokalt innhold her.
-    const iBegge = {
+    // Fortolkningen den innloggede ser, er arbeidskontekstens (primærmedlemskapet).
+    const fasit = {
       systemarkitekt: true,
       arkitektB: true,
       vanligA: false,
@@ -261,16 +274,16 @@ describe('svaret appen viser redigeringen av fortolkningen etter', () => {
       utenMedlemskap: false,
       tidligereAdmin: false,
     }
-    expect(await alle()).toEqual(iBegge)
-    // Uten lokalt innhold i B gir det ingenting å administrere B, slik
-    // fortolkningen i dag bare hører til OUS Klinisk farmakologi.
+    expect(await alle()).toEqual(fasit)
+    // Uten lokalt innhold i B kan administratoren i B likevel lage B sine egne
+    // regler; å administrere B gir ingenting i A.
     await db.transaction(async (tx) => {
       await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Rekkeviddetest: tilbake til A (syntetisk)', true)`)
       await tx.query(`update public.ressursomfang set fagmiljo_id = $1 where fagmiljo_id = $2`, [g.fagmiljo.A, g.fagmiljo.B])
       await tx.query(`select set_config('role', 'authenticated', true), set_config('request.jwt.claims', $1, true)`, [
         JSON.stringify({ sub: g.id.adminB, role: 'authenticated' }),
       ])
-      expect((await tx.query<{ ja: boolean }>('select public.kan_endre_lokalt_innhold() as ja')).rows[0]!.ja).toBe(false)
+      expect((await tx.query<{ ja: boolean }>('select public.kan_endre_lokalt_innhold() as ja')).rows[0]!.ja).toBe(true)
       await tx.rollback()
     })
   })
@@ -390,7 +403,8 @@ describe('hva hver person ser i faginnholdet', () => {
       for (const t of tabeller) {
         // Det som er flyttet til B, så den vanlige brukeren i A ikke før heller.
         const for_ = rader.for[p][t.navn]!
-        const forventet = p === 'systemarkitekt' ? for_ : for_.filter((r) => !Object.values(lokaleB()).some((id) => r.includes(id)))
+        const flyttet = [...Object.values(lokaleB()), ...kommentarerTilRegelsettB]
+        const forventet = p === 'systemarkitekt' ? for_ : for_.filter((r) => !flyttet.some((id) => r.includes(id)))
         expect(avvik(rader.na[p][t.navn]!, forventet), `${p} i ${t.navn}`).toEqual(INGEN_AVVIK)
       }
     }
@@ -552,10 +566,20 @@ describe('hvem som kan endre faginnholdet', () => {
   it('nye objekter opprettes bare med endringsrett til rekkevidden de får', async () => {
     const opprett = (p: Person, type: 'kommentar' | 'infoside' | 'referanse', innhold: object) =>
       kode(() => kall.rpc(g.id[p], 'opprett_utkast', { objekttype: type, innhold }))
-    // En kommentar blir lokal for A (P4a): bare administratorene der og systemarkitekten.
+    // En kommentar blir lokal for fagmiljøet den lages i (arbeidskonteksten,
+    // P4b): bare administratorene der og systemarkitekten kan lage den.
     expect(await opprett('adminA', 'kommentar', kommentar('Ny i A'))).toBe('ok')
-    expect(await opprett('adminB', 'kommentar', kommentar('Ny fra B'))).toBe('42501')
+    expect(await opprett('adminB', 'kommentar', kommentar('Ny i B'))).toBe('ok')
+    expect(await opprett('vanligB', 'kommentar', kommentar('Ny fra B'))).toBe('42501')
+    expect(await opprett('dobbeltAB', 'kommentar', kommentar('Ny fra B'))).toBe('42501')
     expect(await opprett('systemarkitekt', 'kommentar', kommentar('Ny av systemarkitekten'))).toBe('ok')
+    const fagmiljoTil = async (navn: string) =>
+      (await db.query<{ f: string }>(
+        `select r.fagmiljo_id as f from public.kommentarer k join public.ressursomfang r on r.objekt_id = k.objekt_id where k.navn = $1`,
+        [navn],
+      )).rows.map((r) => r.f)
+    expect(await fagmiljoTil('Ny i A')).toEqual([g.fagmiljo.A])
+    expect(await fagmiljoTil('Ny i B')).toEqual([g.fagmiljo.B])
     // Fagsider og referanser er felles.
     expect(await opprett('adminA', 'infoside', { navn: 'Ny fagside fra A' })).toBe('42501')
     expect(await opprett('adminA', 'referanse', { tittel: 'T', forfattere: 'F', aar: '2020', lenke: 'https://example.org/n' })).toBe('42501')

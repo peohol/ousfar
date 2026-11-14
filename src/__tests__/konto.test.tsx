@@ -240,7 +240,7 @@ const BEGGE = { nyttPassord: true, endreRolle: true }
 const BARE_PASSORD = { nyttPassord: true, endreRolle: false }
 
 const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
-const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [], stoffregister: true, opprettBruker: true }
+const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [], arbeidsfagmiljo: null, stoffregister: true, opprettBruker: true }
 
 /** Rendrer lista for `meg` med svarene databasen gir om myndigheten og rettighetene. */
 async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][], rettigheter = INGEN_RETTIGHETER) {

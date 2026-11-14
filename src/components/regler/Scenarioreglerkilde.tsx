@@ -5,6 +5,7 @@ import {
   type Scenarioregeldata,
   type Scenarioreglertilstand,
 } from '../../faginnhold/scenarioregler'
+import { useKontekstbytte } from '../../hooks/useKontekstbytte'
 
 /** Reglene appen har hentet, og en måte å hente dem på nytt. */
 export interface Scenarioreglerkilde {
@@ -15,9 +16,13 @@ export interface Scenarioreglerkilde {
 /**
  * Henter de publiserte scenarioreglene én gang når appen starter, og på nytt
  * når noen ber om det: etter en feil, eller når en administrator har
- * publisert. `les` er kallet mot databasen; testene gir sitt eget.
+ * publisert. `les` er kallet mot databasen; testene gir sitt eget. Byttes
+ * fagmiljøet reglene gjelder (`kontekst`), tømmes de før de nye hentes.
  */
-export function useHentScenarioregler(les: () => Promise<Scenarioregeldata>): Scenarioreglerkilde {
+export function useHentScenarioregler(
+  les: () => Promise<Scenarioregeldata>,
+  kontekst?: string | null,
+): Scenarioreglerkilde {
   const [tilstand, setTilstand] = useState<Scenarioreglertilstand>({ status: 'laster' })
   const [runde, setRunde] = useState(0)
 
@@ -42,5 +47,10 @@ export function useHentScenarioregler(les: () => Promise<Scenarioregeldata>): Sc
   }, [les, runde])
 
   const provIgjen = useCallback(() => setRunde((r) => r + 1), [])
+  const hentForfra = useCallback(() => {
+    setTilstand({ status: 'laster' })
+    setRunde((r) => r + 1)
+  }, [])
+  useKontekstbytte(kontekst, hentForfra)
   return { tilstand, provIgjen }
 }
