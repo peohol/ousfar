@@ -234,6 +234,86 @@ async function somIGjeldende<T>(tx: Transaction, bruker: string, sql: string): P
   }
 }
 
+/**
+ * Sikkerhetsport S3 (P0 §6.3): én og samme innlogging før og etter at
+ * medlemskapet avsluttes. Tokenet gjelder fortsatt (de samme kravene i
+ * JWT-en), men etter avslutningen skal både tabellene, søket, diskusjonene,
+ * skrivingen og Edge-svaret stenge, uten at noe annet endres.
+ */
+describe('S3: samme gyldige innlogging før og etter avsluttet medlemskap', () => {
+  /** Kjører `sql` som brukeren innenfor et lagringspunkt, så en feil ikke avbryter transaksjonen. */
+  async function proev(tx: Transaction, bruker: string, sql: string) {
+    await tx.exec('savepoint s3')
+    await tx.query(`select set_config('role', 'authenticated', true)`)
+    await tx.query(`select set_config('request.jwt.claims', $1, true)`, [JSON.stringify({ sub: bruker, role: 'authenticated' })])
+    let resultat: { feil: string | null; rader: Record<string, unknown>[] }
+    try {
+      resultat = { feil: null, rader: (await tx.query<Record<string, unknown>>(sql)).rows }
+    } catch (feil) {
+      resultat = { feil: (feil as { code?: string }).code ?? 'ukjent', rader: [] }
+    }
+    // Tilbake til lagringspunktet uansett: også rollen og kravene går tilbake.
+    await tx.exec('rollback to savepoint s3')
+    return resultat
+  }
+
+  it('stenger tabeller, søk, diskusjoner, skriving og Edge-svaret når medlemskapet avsluttes', async () => {
+    const bruker = galleri.id.vanligA
+    const svar = await utenInvarianter(async (tx) => {
+      const side = (await tx.query<{ side: string }>('select side from public.diskusjoner limit 1')).rows[0]!.side
+      const kall = {
+        diskusjoner: 'select count(*)::int as n from public.diskusjoner',
+        egenProfil: `select count(*)::int as n from public.profiles where id = '${bruker}'`,
+        egneMedlemskap: `select count(*)::int as n from public.medlemskap where bruker_id = '${bruker}'`,
+        sokedata: 'select count(*)::int as n from public.sokedata_versjoner()',
+        virkestoffsok: `select count(*)::int as n from public.sok_virkestoff('a', 5)`,
+        // Ett jsonb-svar: tellingen er trådene i det.
+        diskusjonsoversikt: `select jsonb_array_length(public.diskusjonsoversikt('${side}') -> 'diskusjoner') as n`,
+        varsler: 'select count(*)::int as n from public.mine_varsler()',
+        skrivProfil: `update public.profiles set first_name = first_name where id = '${bruker}' returning id`,
+        skrivVarsler: 'select count(*)::int as n from public.merk_varsler_lest(array[]::uuid[], now())',
+        status: 'select public.min_medlemskapsstatus() as s',
+      }
+      const kjor = async () => {
+        const ut: Record<string, Awaited<ReturnType<typeof proev>>> = {}
+        for (const [k, sql] of Object.entries(kall)) ut[k] = await proev(tx, bruker, sql)
+        return ut as Record<keyof typeof kall, Awaited<ReturnType<typeof proev>>>
+      }
+      const edge = async () =>
+        (await tx.query<{ a: boolean }>('select public.kontooperasjon_aktivt_medlemskap($1) as a', [bruker])).rows[0]!.a
+
+      const foer = { ...(await kjor()), edge: await edge() }
+      await tx.query(`update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1 and status = 'aktiv'`, [bruker])
+      const etter = { ...(await kjor()), edge: await edge() }
+      return { foer, etter }
+    })
+
+    const { foer, etter } = svar
+    // Før: alt virker som for enhver aktiv bruker.
+    for (const k of ['diskusjoner', 'egenProfil', 'egneMedlemskap', 'sokedata', 'virkestoffsok', 'diskusjonsoversikt', 'varsler', 'skrivVarsler'] as const)
+      expect(foer[k].feil, `før: ${k}`).toBeNull()
+    expect(foer.diskusjoner.rader[0]!.n, 'før: diskusjoner').toBeGreaterThan(0)
+    expect(foer.diskusjonsoversikt.rader[0]!.n, 'før: diskusjonsoversikt').toBeGreaterThan(0)
+    expect(foer.egenProfil.rader[0]!.n).toBe(1)
+    expect(foer.skrivProfil.rader).toHaveLength(1)
+    expect(foer.status.rader[0]!.s).toBe('aktiv')
+    expect(foer.edge).toBe(true)
+
+    // Etter: med de samme kravene gir tabellene ingenting, og funksjonene stopper.
+    // `diskusjonsoversikt` kjøres som den innloggede, så radsikkerheten tømmer den.
+    for (const k of ['diskusjoner', 'egenProfil', 'egneMedlemskap', 'diskusjonsoversikt'] as const) {
+      expect(etter[k].feil, `etter: ${k}`).toBeNull()
+      expect(etter[k].rader[0]!.n, `etter: ${k}`).toBe(0)
+    }
+    for (const k of ['sokedata', 'virkestoffsok', 'varsler', 'skrivVarsler'] as const)
+      expect(etter[k].feil, `etter: ${k}`).toBe('42501')
+    expect(etter.skrivProfil.feil).toBeNull()
+    expect(etter.skrivProfil.rader).toHaveLength(0)
+    expect(etter.status.rader[0]!.s).toBe('avsluttet')
+    expect(etter.edge).toBe(false)
+  })
+})
+
 describe('hva som gir aktivt medlemskap', () => {
   it('gir systemarkitekten tilgangen også uten medlemskap', async () => {
     const svar = await utenInvarianter(async (tx) => {

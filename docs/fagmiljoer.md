@@ -345,7 +345,10 @@ definisjonene i migrasjonene før, og fjerner reglene `aktivt_medlemskap`.
 Ingen data endres av P2.0.
 
 **Testene.** `src/__tests__/aktivtmedlemskap.test.ts` prøver hver inngang
-som en bruker uten aktivt medlemskap og som en tidligere administrator;
+som en bruker uten aktivt medlemskap og som en tidligere administrator, og
+sikkerhetsport S3 med én og samme innlogging før og etter at medlemskapet
+avsluttes: tabellene, egen profil, diskusjonene, søket, varslene, skrivingen
+og Edge-svaret virker før og stenger etter;
 `tilgangsinnganger.test.ts` krever at hver tabell og funksjon har kontrollen;
 `tilgangsmatrise.test.ts` har scenarioene for direkte tabell- og
 funksjonskall med gyldig token; `avsluttetmedlemskap.test.tsx` prøver
