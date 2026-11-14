@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Rolle } from '@delt/profil'
-import { feilFra, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
+import { feilFra, grunnlagsdatabase, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 const STRUKTUR = '20261113140000_fagmiljoer.sql'
 const TILBAKEFYLLING = '20261113140100_fagmiljoer_tilbakefylling.sql'
@@ -88,9 +88,14 @@ async function primaermedlemskap(db: PGlite): Promise<Record<string, string>> {
   return Object.fromEntries(rows.map((r) => [r.username, r.nokkel]))
 }
 
-it('legger tilbakefyllingen rett etter strukturen', () => {
+it('legger tilbakefyllingen rett etter strukturen og holder den utenfor nye databaser', async () => {
   const filer = migrasjonsfiler()
   expect(filer.indexOf(TILBAKEFYLLING)).toBe(filer.indexOf(STRUKTUR) + 1)
+  const kjort: string[] = []
+  const db = await grunnlagsdatabase()
+  await kjorMigrasjoner(db, { bare: [TILBAKEFYLLING], kjort: (fil) => kjort.push(fil) })
+  await db.close()
+  expect(kjort).toEqual([])
 })
 
 describe.each<Rolle>(['admin', 'user'])('tilbakefyllingen med maxhag som %s fra før', (maxhagRolle) => {
