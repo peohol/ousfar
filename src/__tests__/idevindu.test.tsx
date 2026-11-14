@@ -88,6 +88,8 @@ const api = vi.hoisted(() => ({
 vi.mock('../ideer/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+// Systemarkitekten (D8) er Anne; databasen avgjør det i appen.
+vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => tilstand.meg.id === ADMIN.id }))
 vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI, OLA, ADMIN]) }))
 
 const { Ideer } = await import('../components/ideer/Ideer')
@@ -152,7 +154,8 @@ describe('lista', () => {
     expect(within(ola).queryByRole('button', { name: /Ny idé/ })).toBeNull()
   })
 
-  it('har de overførte idéene i en lukket skuff, der et kort åpner oppgaven', async () => {
+  it('har de overførte idéene i en lukket skuff, der et kort åpner oppgaven for en systemarkitekt', async () => {
+    tilstand.meg = ADMIN
     const bruker = userEvent.setup()
     apne()
     const skuff = await screen.findByRole('button', { name: /Planlagte oppgaver 1/ })
@@ -164,6 +167,20 @@ describe('lista', () => {
     expect(within(kort).getByText('OPG-007')).toBeTruthy()
     await bruker.click(kort)
     expect(onOppgaver).toHaveBeenCalledWith('o1')
+  })
+
+  it('viser ikke Planlagte oppgaver for andre enn systemarkitektene, og et kort for en overført idé åpner idéen', async () => {
+    const bruker = userEvent.setup()
+    apne()
+    const skuff = await screen.findByRole('button', { name: /Planlagte oppgaver 1/ })
+    expect(screen.queryByRole('button', { name: 'Planlagte oppgaver' })).toBeNull()
+    await bruker.click(skuff)
+    api.hentIdetraad.mockResolvedValue({ ...TRAAD, tittel: 'Overført idé' })
+    await bruker.click(screen.getByRole('button', { name: /Overført idé/ }))
+    expect(onOppgaver).not.toHaveBeenCalled()
+    expect(await screen.findByRole('heading', { name: 'Overført idé' })).toBeTruthy()
+    // Arkivet ryddes bare av en systemarkitekt.
+    expect(api.ryddIdearkiv).not.toHaveBeenCalled()
   })
 
   it('har arkivet i en lukket skuff nederst, med når idéene slettes, og arkiverte idéer kan leses men ikke kommenteres', async () => {

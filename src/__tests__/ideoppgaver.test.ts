@@ -7,6 +7,7 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
+import { gjorTilSystemarkitekt } from './hjelp/persongalleri'
 import { feilFra, kjorMigrasjoner, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 const MIGRASJON = '20260929103534_ideer_arkiv_og_oppgaver.sql'
@@ -38,6 +39,7 @@ interface Oppgave {
 describe('arkivet og de planlagte oppgavene', () => {
   let db: PGlite
   let admin: string
+  let gammelAdmin: string
   let ada: string
   let bo: string
 
@@ -59,7 +61,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     const id = await overfor(await nyIde(ada))
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, 'Gjør det.'])
     await sql(admin, 'select public.sett_oppgave_klar($1, true)', [id])
-    return { id, nummer: (await oppgave(bo, id))!.nummer! }
+    return { id, nummer: (await oppgave(admin, id))!.nummer! }
   }
   /** Det Claude kjører som migrering: uten innlogget bruker og uten rolle. */
   const migrering = (tekst: string, parametre: unknown[] = []) => db.query(tekst, parametre)
@@ -67,11 +69,42 @@ describe('arkivet og de planlagte oppgavene', () => {
   beforeAll(async () => {
     db = await nyDatabase()
     admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    // D8: idéene administreres av systemarkitektene; den gamle adminrollen gir ingenting.
+    await gjorTilSystemarkitekt(db, admin)
+    gammelAdmin = await opprettBruker(db, { brukernavn: 'gammel.admin', fornavn: 'Gam', etternavn: 'Mel', rolle: 'admin' })
     ada = await opprettBruker(db, { brukernavn: 'ada.l', fornavn: 'Ada', etternavn: 'Lovelace', rolle: 'user' })
     bo = await opprettBruker(db, { brukernavn: 'bob', fornavn: 'Bo', etternavn: 'Bruker', rolle: 'user' })
   }, 60_000)
 
-  it('lar bare en administrator arkivere og gjenopprette, og fryser idéen imens', async () => {
+  it('er bare for systemarkitektene: ikke for den gamle adminrollen eller en vanlig bruker', async () => {
+    const ide = await nyIde(ada)
+    const arkivert = await nyIde(ada)
+    await sql(admin, 'select public.arkiver_ide($1)', [arkivert])
+    const id = await overfor(await nyIde(ada))
+    for (const bruker of [gammelAdmin, bo]) {
+      for (const [kall, parametre] of [
+        ['select public.arkiver_ide($1)', [ide]],
+        ['select public.gjenopprett_ide($1)', [arkivert]],
+        ['select public.overfor_ide($1)', [ide]],
+        ['select public.rydd_idearkiv()', []],
+        ['select public.oppgaveoversikt()', []],
+        ['select public.oppgave($1)', [id]],
+        ['select public.lagre_oppgave($1, $$X$$, $$Y$$)', [id]],
+        ['select public.flytt_oppgave_tilbake($1)', [id]],
+      ] as const) {
+        expect(await feilFra(() => sql(bruker, kall, [...parametre])), kall).toMatchObject({ code: '42501' })
+      }
+      // Tabellen gir ingenting, og andres idéer og kommentarer kan ikke slettes.
+      expect(await sql(bruker, 'select id from public.oppgaver')).toEqual([])
+      expect(await sql(bruker, 'delete from public.ideer where id = $1 returning id', [arkivert])).toEqual([])
+    }
+    // Idéene deles fortsatt av alle.
+    expect(await oversikt(bo, ide)).toBeDefined()
+    expect(await oversikt(gammelAdmin, ide)).toBeDefined()
+    expect(await sql(admin, 'select id from public.oppgaver where id = $1', [id])).toEqual([{ id }])
+  })
+
+  it('lar bare en systemarkitekt arkivere og gjenopprette, og fryser idéen imens', async () => {
     const ide = await nyIde(ada)
     const kommentar = await nyKommentar(bo, ide)
     expect(await feilFra(() => sql(ada, 'select public.arkiver_ide($1)', [ide]))).toMatchObject({ code: '42501' })
@@ -97,7 +130,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => sql(admin, 'select public.gjenopprett_ide($1)', [ide]))).toMatchObject({ code: '55000' })
   })
 
-  it('lar en administrator slette en arkivert idé, med tråden', async () => {
+  it('lar en systemarkitekt slette en arkivert idé, med tråden', async () => {
     const ide = await nyIde(ada)
     await nyKommentar(bo, ide)
     await sql(admin, 'select public.arkiver_ide($1)', [ide])
@@ -119,9 +152,9 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => sql(admin, 'select public.gjenopprett_ide($1)', [gammel]))).toMatchObject({ code: '55000' })
     expect(await oversikt(bo, ny)).toBeDefined()
 
-    expect(await en<number>(bo, 'select public.rydd_idearkiv()')).toBe(1)
+    expect(await en<number>(admin, 'select public.rydd_idearkiv()')).toBe(1)
     expect(await db.query('select id from public.ideer where id = $1', [gammel])).toMatchObject({ rows: [] })
-    expect(await en<number>(bo, 'select public.rydd_idearkiv()')).toBe(0)
+    expect(await en<number>(admin, 'select public.rydd_idearkiv()')).toBe(0)
     expect(await feilFra(() => sql(null, 'select public.rydd_idearkiv()'))).toMatchObject({ code: '42501' })
   })
 
@@ -132,8 +165,8 @@ describe('arkivet og de planlagte oppgavene', () => {
 
     expect((await oversikt(bo, ide))!.oppgave).toEqual({ id, status: 'ikke_paabegynt', nummer: expect.any(Number) })
     // Uten beskrivelse starter prompten med overskriften.
-    expect(await oppgave(bo, id)).toMatchObject({ ide_id: ide, tittel: 'Mørk modus', status: 'ikke_paabegynt', prompt: 'Mørk modus', har_prompt: true })
-    expect((await en<Oppgave[]>(bo, 'select public.oppgaveoversikt()')).find((o) => o.id === id)).not.toHaveProperty('prompt')
+    expect(await oppgave(admin, id)).toMatchObject({ ide_id: ide, tittel: 'Mørk modus', status: 'ikke_paabegynt', prompt: 'Mørk modus', har_prompt: true })
+    expect((await en<Oppgave[]>(admin, 'select public.oppgaveoversikt()')).find((o) => o.id === id)).not.toHaveProperty('prompt')
 
     expect(await feilFra(() => overfor(ide))).toMatchObject({ code: '55000' })
     expect(await feilFra(() => sql(admin, 'select public.arkiver_ide($1)', [ide]))).toMatchObject({ code: '55000' })
@@ -187,7 +220,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     }
     const ide = await en<string>(ada, `insert into public.ideer (kategori, tittel, tekst) values ('fag', 'Knapp', $1) returning id`, [JSON.stringify(tekst)])
     const id = await overfor(ide)
-    expect(await oppgave(bo, id)).toMatchObject({
+    expect(await oppgave(admin, id)).toMatchObject({
       status: 'ikke_paabegynt',
       har_prompt: true,
       prompt: [
@@ -206,38 +239,38 @@ describe('arkivet og de planlagte oppgavene', () => {
     const tom = await en<string>(ada, `insert into public.ideer (kategori, tittel, tekst) values ('fag', 'Tom', $1) returning id`, [
       JSON.stringify({ type: 'doc', content: [{ type: 'paragraph' }, { type: 'paragraph', content: [{ type: 'text', text: '  ' }] }] }),
     ])
-    expect((await oppgave(bo, await overfor(tom)))!.prompt).toBe('Tom')
+    expect((await oppgave(admin, await overfor(tom)))!.prompt).toBe('Tom')
   })
 
   it('setter oppgaven under arbeid ved første endring, og klar bare med prompt', async () => {
     const id = await overfor(await nyIde(ada))
     expect(await feilFra(() => sql(bo, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, 'Gjør det']))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, ''])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'under_arbeid', prompt: '', har_prompt: false })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'under_arbeid', prompt: '', har_prompt: false })
     expect(await feilFra(() => sql(admin, 'select public.sett_oppgave_klar($1, true)', [id]))).toMatchObject({ code: '23514' })
 
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, 'Legg til en knapp.'])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'under_arbeid', prompt: 'Legg til en knapp.', har_prompt: true, klar_kl: null })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'under_arbeid', prompt: 'Legg til en knapp.', har_prompt: true, klar_kl: null })
 
     expect(await feilFra(() => sql(bo, 'select public.sett_oppgave_klar($1, true)', [id]))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.sett_oppgave_klar($1, true)', [id])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'klar', klar_kl: expect.any(String) })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'klar', klar_kl: expect.any(String) })
     // En endring i prompten holder den klar; en tom prompt gjør det ikke.
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, 'Legg til to knapper.'])
-    expect((await oppgave(bo, id))!.status).toBe('klar')
+    expect((await oppgave(admin, id))!.status).toBe('klar')
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, '  '])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'under_arbeid', klar_kl: null })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'under_arbeid', klar_kl: null })
 
     await sql(admin, 'select public.lagre_oppgave($1, $$En oppgave$$, $2)', [id, 'Legg til en knapp.'])
     await sql(admin, 'select public.sett_oppgave_klar($1, true)', [id])
     await sql(admin, 'select public.sett_oppgave_klar($1, false)', [id])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'under_arbeid', klar_kl: null })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'under_arbeid', klar_kl: null })
   })
 
-  it('gir oppgaven idéens overskrift, som bare en administrator kan endre uten at idéen endres', async () => {
+  it('gir oppgaven idéens overskrift, som bare en systemarkitekt kan endre uten at idéen endres', async () => {
     const ide = await nyIde(ada, 'Mørk modus i PDF')
     const id = await overfor(ide)
-    expect(await oppgave(bo, id)).toMatchObject({ tittel: 'Mørk modus i PDF' })
+    expect(await oppgave(admin, id)).toMatchObject({ tittel: 'Mørk modus i PDF' })
 
     const lagre = (bruker: string, tittel: string, prompt = '') =>
       sql(bruker, 'select public.lagre_oppgave($1, $2, $3)', [id, tittel, prompt])
@@ -246,8 +279,8 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => lagre(admin, 'x'.repeat(141)))).toMatchObject({ code: '23514' })
 
     await lagre(admin, '  Mørkt tema i utskriften  ')
-    expect(await oppgave(bo, id)).toMatchObject({ tittel: 'Mørkt tema i utskriften', status: 'under_arbeid' })
-    const liste = await en<{ id: string; tittel: string }[]>(bo, 'select public.oppgaveoversikt()')
+    expect(await oppgave(admin, id)).toMatchObject({ tittel: 'Mørkt tema i utskriften', status: 'under_arbeid' })
+    const liste = await en<{ id: string; tittel: string }[]>(admin, 'select public.oppgaveoversikt()')
     expect(liste.find((o) => o.id === id)!.tittel).toBe('Mørkt tema i utskriften')
     expect(await en(bo, 'select tittel from public.ideer where id = $1', [ide])).toBe('Mørk modus i PDF')
 
@@ -255,27 +288,27 @@ describe('arkivet og de planlagte oppgavene', () => {
     await lagre(admin, 'Mørkt tema i utskriften', 'Gjør det.')
     await sql(admin, 'select public.sett_oppgave_klar($1, true)', [id])
     await lagre(admin, 'Mørkt tema i PDF-en', 'Gjør det.')
-    expect(await oppgave(bo, id)).toMatchObject({ tittel: 'Mørkt tema i PDF-en', status: 'klar' })
+    expect(await oppgave(admin, id)).toMatchObject({ tittel: 'Mørkt tema i PDF-en', status: 'klar' })
   })
 
   it('gir hver oppgave neste nummer når den overføres, og gir aldri et nummer igjen', async () => {
     const forste = await overfor(await nyIde(ada))
-    const nummer = (await oppgave(bo, forste))!.nummer!
+    const nummer = (await oppgave(admin, forste))!.nummer!
     expect(nummer).toBeGreaterThan(0)
     const andre = await overfor(await nyIde(ada))
-    expect((await oppgave(bo, andre))!.nummer).toBe(nummer + 1)
+    expect((await oppgave(admin, andre))!.nummer).toBe(nummer + 1)
 
     // En oppgave som flyttes tilbake, tar ikke nummeret med seg til en annen.
     await sql(admin, 'select public.flytt_oppgave_tilbake($1)', [andre])
     const tredje = await overfor(await nyIde(ada))
-    expect((await oppgave(bo, tredje))!.nummer).toBe(nummer + 2)
+    expect((await oppgave(admin, tredje))!.nummer).toBe(nummer + 2)
   })
 
   it('lar bare en migrering ta klare oppgaver, alle eller ingen, så to økter ikke tar den samme', async () => {
     const a = await klarOppgave()
     const b = await klarOppgave()
     const ikkeKlar = await overfor(await nyIde(ada))
-    const ikkeKlarNummer = (await oppgave(bo, ikkeKlar))!.nummer!
+    const ikkeKlarNummer = (await oppgave(admin, ikkeKlar))!.nummer!
 
     expect(await feilFra(() => sql(admin, 'select public.ta_oppgaver($1)', [[a.nummer]]))).toMatchObject({ code: '42501' })
     expect(await feilFra(() => migrering('select public.ta_oppgaver($1)', [[]]))).toMatchObject({ code: '22023' })
@@ -284,12 +317,12 @@ describe('arkivet og de planlagte oppgavene', () => {
     const feil = await feilFra(() => migrering('select public.ta_oppgaver($1)', [[a.nummer, ikkeKlarNummer]]))
     expect(feil).toMatchObject({ code: '55000' })
     expect(feil!.message).toContain(`OPG-${String(ikkeKlarNummer).padStart(3, '0')} (ikke_paabegynt)`)
-    expect((await oppgave(bo, a.id))!.status).toBe('klar')
+    expect((await oppgave(admin, a.id))!.status).toBe('klar')
 
     await migrering('select public.ta_oppgaver($1)', [[a.nummer, b.nummer]])
-    expect(await oppgave(bo, a.id)).toMatchObject({ status: 'haandteres', tatt_kl: expect.any(String), klar_kl: expect.any(String) })
-    expect((await oppgave(bo, b.id))!.status).toBe('haandteres')
-    const liste = await en<Oppgave[]>(bo, 'select public.oppgaveoversikt()')
+    expect(await oppgave(admin, a.id)).toMatchObject({ status: 'haandteres', tatt_kl: expect.any(String), klar_kl: expect.any(String) })
+    expect((await oppgave(admin, b.id))!.status).toBe('haandteres')
+    const liste = await en<Oppgave[]>(admin, 'select public.oppgaveoversikt()')
     expect(liste.find((o) => o.id === a.id)).toMatchObject({ status: 'haandteres', tatt_kl: expect.any(String) })
 
     // En annen økt får ikke ta dem.
@@ -297,7 +330,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => migrering('select public.ta_oppgaver($1)', [[99999]]))).toMatchObject({ code: '55000' })
   })
 
-  it('låser en oppgave en agent håndterer, til en administrator frigir den', async () => {
+  it('låser en oppgave en agent håndterer, til en systemarkitekt frigir den', async () => {
     const { id, nummer } = await klarOppgave()
     await migrering('select public.ta_oppgaver($1)', [[nummer]])
 
@@ -306,21 +339,21 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => sql(admin, 'select public.sett_oppgave_klar($1, false)', [id]))).toMatchObject(handteres)
     expect(await feilFra(() => sql(admin, 'select public.sett_oppgave_klar($1, true)', [id]))).toMatchObject(handteres)
     expect(await feilFra(() => sql(admin, 'select public.flytt_oppgave_tilbake($1)', [id]))).toMatchObject(handteres)
-    expect((await oppgave(bo, id))!.prompt).toBe('Gjør det.')
+    expect((await oppgave(admin, id))!.prompt).toBe('Gjør det.')
 
     expect(await feilFra(() => sql(bo, 'select public.frigi_oppgave($1)', [id]))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.frigi_oppgave($1)', [id])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'klar', tatt_kl: null, nummer })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'klar', tatt_kl: null, nummer })
     expect(await feilFra(() => sql(admin, 'select public.frigi_oppgave($1)', [id]))).toMatchObject({ code: '55000' })
 
     // Frigitt kan den tas på nytt.
     await migrering('select public.ta_oppgaver($1)', [[nummer]])
-    expect((await oppgave(bo, id))!.status).toBe('haandteres')
+    expect((await oppgave(admin, id))!.status).toBe('haandteres')
   })
 
   it('lar bare en migrering merke en oppgave utført, med endringslogg og nummeret den har', async () => {
     const pabegynt = await overfor(await nyIde(ada))
-    const pabegyntNummer = (await oppgave(bo, pabegynt))!.nummer!
+    const pabegyntNummer = (await oppgave(admin, pabegynt))!.nummer!
     expect(await feilFra(() => migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [pabegyntNummer]))).toMatchObject({ code: '55000' })
 
     const { id, nummer } = await klarOppgave()
@@ -329,7 +362,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => migrering(`select public.fullfor_oppgave($1, 'v1.53')`, [nummer]))).toMatchObject({ code: '23514' })
 
     await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [nummer])
-    expect(await oppgave(bo, id)).toMatchObject({ status: 'utfort', nummer, endringslogg: '1.53.0', utfort_kl: expect.any(String), tatt_kl: expect.any(String) })
+    expect(await oppgave(admin, id)).toMatchObject({ status: 'utfort', nummer, endringslogg: '1.53.0', utfort_kl: expect.any(String), tatt_kl: expect.any(String) })
 
     // En utført oppgave står for alltid.
     expect(await feilFra(() => sql(admin, 'select public.flytt_oppgave_tilbake($1)', [id]))).toMatchObject({ code: '55000' })
@@ -341,16 +374,16 @@ describe('arkivet og de planlagte oppgavene', () => {
     // En klar oppgave som ble utført før agentene tok oppgavene, kan fortsatt merkes utført.
     const gammel = await klarOppgave()
     await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [gammel.nummer])
-    expect(await oppgave(bo, gammel.id)).toMatchObject({ status: 'utfort', tatt_kl: expect.any(String) })
+    expect(await oppgave(admin, gammel.id)).toMatchObject({ status: 'utfort', tatt_kl: expect.any(String) })
   })
 
-  it('lar en administrator merke en oppgave utført i appen, med eller uten versjon, og gjøre det om', async () => {
+  it('lar en systemarkitekt merke en oppgave utført i appen, med eller uten versjon, og gjøre det om', async () => {
     // Fra «Ikke påbegynt», uten føring i endringsloggen.
     const id = await overfor(await nyIde(ada))
-    const { nummer } = (await oppgave(bo, id))!
+    const { nummer } = (await oppgave(admin, id))!
     expect(await feilFra(() => sql(bo, 'select public.merk_oppgave_utfort($1, null)', [id]))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.merk_oppgave_utfort($1, null)', [id])
-    expect(await oppgave(bo, id)).toMatchObject({
+    expect(await oppgave(admin, id)).toMatchObject({
       status: 'utfort',
       nummer,
       endringslogg: null,
@@ -358,7 +391,7 @@ describe('arkivet og de planlagte oppgavene', () => {
       utfort_kl: expect.any(String),
       tatt_kl: null,
     })
-    expect((await en<Oppgave[]>(bo, 'select public.oppgaveoversikt()')).find((o) => o.id === id)).toMatchObject({ merket_utfort: true })
+    expect((await en<Oppgave[]>(admin, 'select public.oppgaveoversikt()')).find((o) => o.id === id)).toMatchObject({ merket_utfort: true })
 
     // Utført er utført: den kan ikke merkes igjen, endres eller tas av en agent.
     expect(await feilFra(() => sql(admin, 'select public.merk_oppgave_utfort($1, null)', [id]))).toMatchObject({ code: '55000' })
@@ -368,7 +401,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     // Gjort om får den statusen tilbake, som om den aldri var merket.
     expect(await feilFra(() => sql(bo, 'select public.angre_oppgave_utfort($1)', [id]))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.angre_oppgave_utfort($1)', [id])
-    expect(await oppgave(bo, id)).toMatchObject({
+    expect(await oppgave(admin, id)).toMatchObject({
       status: 'ikke_paabegynt',
       endringslogg: null,
       merket_utfort: false,
@@ -380,16 +413,16 @@ describe('arkivet og de planlagte oppgavene', () => {
     // En agent håndterer den, men arbeidet er gjort: med versjonen, og blanke tegn rundt.
     const tatt = await klarOppgave()
     await migrering('select public.ta_oppgaver($1)', [[tatt.nummer]])
-    const { klar_kl, tatt_kl } = (await oppgave(bo, tatt.id))!
+    const { klar_kl, tatt_kl } = (await oppgave(admin, tatt.id))!
     expect(await feilFra(() => sql(admin, `select public.merk_oppgave_utfort($1, 'v1.53')`, [tatt.id]))).toMatchObject({ code: '23514' })
     await sql(admin, `select public.merk_oppgave_utfort($1, ' 1.53.0 ')`, [tatt.id])
-    expect(await oppgave(bo, tatt.id)).toMatchObject({ status: 'utfort', endringslogg: '1.53.0', merket_utfort: true, klar_kl, tatt_kl })
+    expect(await oppgave(admin, tatt.id)).toMatchObject({ status: 'utfort', endringslogg: '1.53.0', merket_utfort: true, klar_kl, tatt_kl })
     await sql(admin, 'select public.angre_oppgave_utfort($1)', [tatt.id])
-    expect(await oppgave(bo, tatt.id)).toMatchObject({ status: 'haandteres', endringslogg: null, klar_kl, tatt_kl })
+    expect(await oppgave(admin, tatt.id)).toMatchObject({ status: 'haandteres', endringslogg: null, klar_kl, tatt_kl })
 
     // En oppgave en agent har merket utført, kan ikke gjøres om i appen.
     await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [tatt.nummer])
-    expect((await oppgave(bo, tatt.id))!.merket_utfort).toBe(false)
+    expect((await oppgave(admin, tatt.id))!.merket_utfort).toBe(false)
     expect(await feilFra(() => sql(admin, 'select public.angre_oppgave_utfort($1)', [tatt.id]))).toMatchObject({ code: '55000' })
     expect(await feilFra(() => sql(admin, 'select public.merk_oppgave_utfort(gen_random_uuid(), null)'))).toMatchObject({ code: '55000' })
   })
@@ -400,7 +433,7 @@ describe('arkivet og de planlagte oppgavene', () => {
     expect(await feilFra(() => sql(bo, 'select public.flytt_oppgave_tilbake($1)', [id]))).toMatchObject({ code: '42501' })
     await sql(admin, 'select public.flytt_oppgave_tilbake($1)', [id])
     expect((await oversikt(bo, ide))!.oppgave).toBeNull()
-    expect(await oppgave(bo, id)).toBeNull()
+    expect(await oppgave(admin, id)).toBeNull()
     await nyKommentar(bo, ide)
     expect(await feilFra(() => sql(admin, 'select public.flytt_oppgave_tilbake($1)', [id]))).toMatchObject({ code: '55000' })
   })

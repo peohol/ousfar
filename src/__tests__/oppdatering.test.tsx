@@ -57,6 +57,7 @@ vi.mock('../ideer/api', () => api)
 vi.mock('../varsler/api', () => ({ oppfriskVarsler: () => {} }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => true }))
 vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI]) }))
 
 const { Ideknapp } = await import('../components/ideer/Ideknapp')

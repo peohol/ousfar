@@ -194,7 +194,7 @@ export function Lenkeforhandsvisning({ mal, tilstand, deler }: { mal: Lenkemal; 
         {[maal.forfatter ?? 'Ukjent bruker', kortTid(maal.opprettet_kl), kommentarer, ...merknader].join(' · ')}
       </span>
       {maal.skjult ? (
-        <span className="lenkevisning__utdrag lenkevisning__utdrag--merknad">Innholdet er skjult av en administrator.</span>
+        <span className="lenkevisning__utdrag lenkevisning__utdrag--merknad">Innholdet er skjult av en moderator.</span>
       ) : (
         maal.utdrag && <span className="lenkevisning__utdrag">{maal.utdrag}</span>
       )}
@@ -207,7 +207,7 @@ export function Lenkeforhandsvisning({ mal, tilstand, deler }: { mal: Lenkemal; 
               : `Kommentar fra ${maal.kommentar.forfatter ?? 'ukjent bruker'} · ${kortTid(maal.kommentar.opprettet_kl)}`}
           </span>
           {maal.kommentar.skjult ? (
-            <span className="lenkevisning__utdrag lenkevisning__utdrag--merknad">Innholdet er skjult av en administrator.</span>
+            <span className="lenkevisning__utdrag lenkevisning__utdrag--merknad">Innholdet er skjult av en moderator.</span>
           ) : (
             maal.kommentar.utdrag && <span className="lenkevisning__utdrag">{maal.kommentar.utdrag}</span>
           )}

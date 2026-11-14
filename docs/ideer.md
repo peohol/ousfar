@@ -21,24 +21,30 @@ teksten) står i `docs/direktelenker.md`.
 
 Idéer og Planlagte oppgaver åpnes fra idémenyen i toppmenyen (`Ideknapp`, en
 `Nedtrekksmeny` med ett valg for hvert), og hvert av lagene har en knapp øverst
-til det andre. Begge bruker `Modallag`, med `tilbake` i hodet på sidene inni.
+til det andre. Planlagte oppgaver vises bare for systemarkitektene
+(`useSystemarkitekt`, som spør `er_systemarkitekt()`); andre ser bare Idéer. Begge bruker `Modallag`, med `tilbake` i hodet på sidene inni.
 `Ideknapp` eier begge lagene, og bare ett står åpent om gangen.
 
 ## Hvem som får gjøre hva
 
-Alt håndheves av radsikkerheten og kolonnerettighetene i databasen:
+Alt håndheves av radsikkerheten og kolonnerettighetene i databasen. Etter
+Peders beslutning D8 (2026-11-14) deles idéene av alle med et aktivt
+medlemskap, uansett fagmiljø, mens oppgavene og administrasjonen av idéene er
+forbeholdt systemarkitektene. Den gamle adminrollen gir ingenting her.
 
-- Alle innloggede leser alt, skriver idéer og kommentarer og gir hjerter.
+- Alle med et aktivt medlemskap leser idéene, skriver idéer og kommentarer og
+  gir hjerter.
 - Forfatter og tidspunkt settes av databasen og kan ikke velges fra nettleseren.
 - Bare forfatteren endrer en idé eller kommentar.
-- Forfatteren eller en administrator sletter den.
+- Forfatteren eller en systemarkitekt sletter den.
 - Et hjerte kan bare tas tilbake av den som ga det.
-- Bare en administrator arkiverer, gjenoppretter og overfører idéer, og
-  arbeider med oppgavene. Det går gjennom funksjonene nedenfor; tabellen
-  `oppgaver` kan bare leses direkte.
+- Bare en systemarkitekt arkiverer, gjenoppretter, overfører og rydder idéer,
+  og leser og arbeider med oppgavene. Det går gjennom funksjonene nedenfor,
+  som alle krever det (`intern.krev_idevalg_admin()`); tabellen `oppgaver`
+  kan bare leses direkte, og bare av systemarkitektene.
 - En arkivert eller overført idé er frosset (`ide_er_apen()`): ingen kan endre
   den, kommentere, gi hjerter eller slette noe i tråden. Forfatteren kan heller
-  ikke slette den. En administrator kan slette en arkivert idé; en overført
+  ikke slette den. En systemarkitekt kan slette en arkivert idé; en overført
   kan ingen slette.
 
 ## Sletting i tråden
@@ -51,22 +57,23 @@ dette, så appen bare ber om å slette.
 
 ## Arkivet og Planlagte oppgaver
 
-En åpen idé har to veier ut av lista, og begge velges av en administrator på
+En åpen idé har to veier ut av lista, og begge velges av en systemarkitekt på
 siden for idéen. Valget gjøres med én gang, og en melding nederst i vinduet
 har «Angre» i ti sekunder (`Angretoast`). Angre bruker de samme funksjonene
 som snur valget.
 
 **Ikke aktuelt** (`arkiver_ide()`) setter `arkivert_kl`. Idéen står i skuffen
-«Ikke aktuelt» nederst i lista, og alle kan lese den. En administrator kan
+«Ikke aktuelt» nederst i lista, og alle kan lese den. En systemarkitekt kan
 gjenopprette den (`gjenopprett_ide()`) i 60 dager, eller slette den. Etter 60
 dager er den borte fra lesefunksjonene, og `rydd_idearkiv()` sletter den.
-Appen kaller den når Idéer åpnes, så det trengs ingen jobb i bakgrunnen.
+Appen kaller den når en systemarkitekt åpner Idéer, så det trengs ingen jobb i
+bakgrunnen; lesefunksjonene viser dem ikke uansett.
 Fristen står både i `intern.arkivfrist()` og i `ARKIVFRIST_DAGER`.
 
 **Overfør til planlagte oppgaver** (`overfor_ide()`) lager en rad i
 `oppgaver`. Idéen står i skuffen «Planlagte oppgaver» i lista, og et kort der
-åpner oppgaven. Oppgaven får idéens overskrift, men har sin egen
-(`oppgaver.tittel`) som en administrator kan endre. Det er den oppgaven vises
+åpner oppgaven for en systemarkitekt, og idéen for andre. Oppgaven får idéens overskrift, men har sin egen
+(`oppgaver.tittel`) som en systemarkitekt kan endre. Det er den oppgaven vises
 og omtales med; idéen beholder sin. Oppgaven får også et løpenummer når den
 overføres (`oppgaver.nummer`, vist som «OPG-001»), så den kan omtales og
 gjenopptas med det hele veien. `overfor_ide()` gir neste nummer fra sekvensen
@@ -77,19 +84,19 @@ oppgave. En oppgave går gjennom disse statusene:
 1. `ikke_paabegynt`: rett etter overføringen.
 2. `under_arbeid` («Påbegynt»): fra første gang overskriften eller prompten
    lagres (`lagre_oppgave()`).
-3. `klar`: satt av en administrator (`sett_oppgave_klar()`), og bare med en
+3. `klar`: satt av en systemarkitekt (`sett_oppgave_klar()`), og bare med en
    prompt. Blir prompten tømt, er den påbegynt igjen.
 4. `haandteres` («Håndteres nå av en agent»): satt av Claude med
    `ta_oppgaver(numre)` når arbeidet begynner, med `tatt_kl`. Alle numrene tas,
    eller ingen, så to økter kan ikke ta samme oppgave. Imens kan oppgaven ikke
-   endres, merkes eller flyttes; en administrator kan frigi den
+   endres, merkes eller flyttes; en systemarkitekt kan frigi den
    (`frigi_oppgave()`), så den er klar igjen.
 5. `utfort`: satt av Claude med `fullfor_oppgave(nummer, versjon)` når arbeidet
    er slått sammen, med versjonen i endringsloggen. Er oppgaven gjort uten at
-   en agent tok den fra køen, kan en administrator merke den utført selv fra
+   en agent tok den fra køen, kan en systemarkitekt merke den utført selv fra
    hvilken som helst annen status («Merk som utført», `merk_oppgave_utfort()`),
    med en føring fra endringsloggen eller uten. Statusen den hadde, lagres i
-   `utfort_fra` (`merket_utfort` i lesefunksjonene), og administratoren kan
+   `utfort_fra` (`merket_utfort` i lesefunksjonene), og systemarkitekten kan
    gjøre det om («Ikke utført likevel», `angre_oppgave_utfort()`), så den får
    statusen tilbake. En oppgave Claude har merket utført, kan ikke gjøres om.
 
@@ -115,7 +122,7 @@ laget med føringen utfoldet. Knappen står bare når versjonen er publisert i
 appen.
 
 Slik Claude utfører oppgavene, står i skillen
-`.claude/skills/utfor-oppgaver/`, som administratoren kjører med
+`.claude/skills/utfor-oppgaver/`, som en systemarkitekt kjører med
 `/utfor-oppgaver` i Claude Code.
 
 ## Det nye

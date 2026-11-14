@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /**
  * Planlagte oppgaver: lista under statusene med de utførte i en skuff, siden
- * for én oppgave med prompten og den frosne idéen, det bare en administrator
+ * for én oppgave med prompten og den frosne idéen, det bare en systemarkitekt
  * kan gjøre, lenken til endringsloggen, og meldingen som lar en angre.
  *
  * Økten og kallene mot databasen er erstattet; det er skjermbildene som prøves.
@@ -107,6 +107,8 @@ vi.mock('../ideer/api', () => api)
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+// Systemarkitekten (D8) er Anne; databasen avgjør det i appen.
+vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => tilstand.meg.id === ADMIN.id }))
 vi.mock('../auth/api', () => ({ hentAlleProfiler: vi.fn(async () => [KARI, ADMIN]) }))
 
 const { Oppgaver } = await import('../components/ideer/Oppgaver')
@@ -188,7 +190,7 @@ describe('én oppgave', () => {
     expect(screen.queryByRole('button', { name: 'Svar' })).toBeNull()
   })
 
-  it('er bare til lesing for andre enn administratorer', async () => {
+  it('er bare til lesing for andre enn systemarkitektene', async () => {
     api.hentOppgave.mockResolvedValue(detaljer(OPPGAVER[1]!, 'Legg til en knapp.'))
     apne('b')
     expect(await screen.findByText('Legg til en knapp.')).toBeTruthy()
@@ -199,7 +201,7 @@ describe('én oppgave', () => {
     expect(screen.queryByRole('button', { name: 'Merk som utført' })).toBeNull()
   })
 
-  it('lar en administrator skrive prompten, og merke oppgaven klar først når den er lagret', async () => {
+  it('lar en systemarkitekt skrive prompten, og merke oppgaven klar først når den er lagret', async () => {
     const bruker = userEvent.setup()
     tilstand.meg = ADMIN
     apne('a')
@@ -219,7 +221,7 @@ describe('én oppgave', () => {
     expect(api.settOppgaveKlar).toHaveBeenCalledWith('a', true)
   })
 
-  it('lar en administrator gi oppgaven en egen overskrift, mens idéen beholder sin', async () => {
+  it('lar en systemarkitekt gi oppgaven en egen overskrift, mens idéen beholder sin', async () => {
     const bruker = userEvent.setup()
     tilstand.meg = ADMIN
     apne('a')
@@ -290,7 +292,7 @@ describe('én oppgave', () => {
     await waitFor(() => expect((screen.getByRole('textbox', { name: 'Prompt' }) as HTMLTextAreaElement).value).toBe(''))
   })
 
-  it('lar en administrator flytte oppgaven tilbake til idéene, i to trykk', async () => {
+  it('lar en systemarkitekt flytte oppgaven tilbake til idéene, i to trykk', async () => {
     const bruker = userEvent.setup()
     tilstand.meg = ADMIN
     apne('b')
@@ -312,7 +314,7 @@ describe('én oppgave', () => {
     expect(screen.queryByRole('button', { name: /Frigi/ })).toBeNull()
   })
 
-  it('lar en administrator frigi en oppgave en agent har tatt, i to trykk, men ikke endre den imens', async () => {
+  it('lar en systemarkitekt frigi en oppgave en agent har tatt, i to trykk, men ikke endre den imens', async () => {
     const bruker = userEvent.setup()
     tilstand.meg = ADMIN
     api.hentOppgave.mockResolvedValue(detaljer(OPPGAVER[2]!, 'Legg til en knapp.'))
@@ -361,7 +363,7 @@ describe('én oppgave', () => {
 })
 
 describe('merke en oppgave utført i appen', () => {
-  it('lar en administrator velge føringen i endringsloggen før oppgaven merkes', async () => {
+  it('lar en systemarkitekt velge føringen i endringsloggen før oppgaven merkes', async () => {
     const bruker = userEvent.setup()
     tilstand.meg = ADMIN
     api.hentOppgave.mockResolvedValue(detaljer(OPPGAVER[1]!, 'Legg til en knapp.'))
@@ -384,7 +386,7 @@ describe('merke en oppgave utført i appen', () => {
     await bruker.click(screen.getByRole('button', { name: 'Merk utført' }))
     expect(api.merkOppgaveUtfort).toHaveBeenCalledWith('b', PUBLISERT)
     const merknad = await screen.findByRole('note')
-    expect(merknad.textContent).toMatch(/Utført som OPG-004\. Merket utført av en administrator\. Endringsloggen sier/)
+    expect(merknad.textContent).toMatch(/Utført som OPG-004\. Merket utført av en systemarkitekt\. Endringsloggen sier/)
     expect(screen.getByRole('button', { name: 'Se i endringsloggen' })).toBeTruthy()
   })
 
@@ -408,12 +410,12 @@ describe('merke en oppgave utført i appen', () => {
     expect(knapp.title).toBe('Lagre eller forkast endringene først.')
   })
 
-  it('lar en administrator gjøre om en oppgave som er merket utført i appen, i to trykk', async () => {
+  it('lar en systemarkitekt gjøre om en oppgave som er merket utført i appen, i to trykk', async () => {
     const bruker = userEvent.setup()
     const merket = oppgave('f', 'utfort', { nummer: 6, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-29T10:00:00Z', merket_utfort: true })
     api.hentOppgave.mockResolvedValue(detaljer(merket))
     apne('f')
-    expect((await screen.findByRole('note')).textContent).toMatch(/Merket utført av en administrator\. Den har ingen føring i endringsloggen\./)
+    expect((await screen.findByRole('note')).textContent).toMatch(/Merket utført av en systemarkitekt\. Den har ingen føring i endringsloggen\./)
     expect(screen.queryByRole('button', { name: 'Se i endringsloggen' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Ikke utført likevel' })).toBeNull()
     cleanup()

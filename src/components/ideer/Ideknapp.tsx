@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSystemarkitekt } from '../../auth/systemrolle'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { hentIdeerMedNytt } from '../../ideer/api'
@@ -18,7 +19,8 @@ type Vindu = { lag: 'ideer'; ide?: string; kommentar?: string; nr?: number } | {
 
 /**
  * Idéer og Planlagte oppgaver, fra en egen meny i toppmenyen med ett valg for
- * hver. Har idéene kommentarer brukeren ikke har sett, står det en prikk på
+ * hver. Planlagte oppgaver er bare for systemarkitektene (D8); andre ser bare
+ * Idéer. Har idéene kommentarer brukeren ikke har sett, står det en prikk på
  * knappen og på valget, og antallet i navnet.
  *
  * Bare ett av de to lagene står åpent om gangen; man går også mellom dem fra
@@ -29,6 +31,8 @@ type Vindu = { lag: 'ideer'; ide?: string; kommentar?: string; nr?: number } | {
  */
 export function Ideknapp() {
   const [vindu, setVindu] = useBevart<Vindu>('ideknapp', null)
+  const systemarkitekt = useSystemarkitekt()
+  const menynavn = systemarkitekt ? 'Idéer og planlagte oppgaver' : 'Idéer'
   /** Antall idéer med kommentarer brukeren ikke har sett. Sjekkes når appen og fanen åpnes, etter vinduet og jevnlig. */
   const [medNytt, setMedNytt] = useState(0)
   const sjekkNytt = useCallback(() => {
@@ -78,11 +82,11 @@ export function Ideknapp() {
         className="idemeny"
         knapp={{
           ikon: 'ideoppgaver',
-          etikett: `Idéer og planlagte oppgaver${nytt ? ` (${nytt})` : ''}`,
+          etikett: `${menynavn}${nytt ? ` (${nytt})` : ''}`,
           variant: 'stille',
           storrelse: 'liten',
         }}
-        etikett="Idéer og planlagte oppgaver"
+        etikett={menynavn}
         lag="idemeny"
         ved={nytt && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
       >
@@ -97,9 +101,11 @@ export function Ideknapp() {
               <li>
                 <Menyvalg ikon="idea" tekst="Idéer" nytt={nytt} onClick={apne({ lag: 'ideer' })} />
               </li>
-              <li>
-                <Menyvalg ikon="oppgaver" tekst="Planlagte oppgaver" onClick={apne({ lag: 'oppgaver' })} />
-              </li>
+              {systemarkitekt && (
+                <li>
+                  <Menyvalg ikon="oppgaver" tekst="Planlagte oppgaver" onClick={apne({ lag: 'oppgaver' })} />
+                </li>
+              )}
             </ul>
           )
         }}
@@ -112,7 +118,7 @@ export function Ideknapp() {
         vakt={vakt}
         onLukk={lukkIdeer} onOppgaver={(oppgave) => setVindu({ lag: 'oppgaver', oppgave })} />
       <Oppgaver
-        apen={vindu?.lag === 'oppgaver'}
+        apen={systemarkitekt && vindu?.lag === 'oppgaver'}
         oppgave={vindu?.lag === 'oppgaver' ? vindu.oppgave : undefined}
         vakt={vakt}
         onLukk={lukkOppgaver}

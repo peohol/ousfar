@@ -8,6 +8,7 @@ import {
   emojiFeil,
   grupper,
   kategorinavnFeil,
+  siderekkevidde,
   type Diskusjonskategori,
   type Diskusjonsside,
   type Diskusjonssider,
@@ -302,8 +303,10 @@ export function Traadskjema({
 /**
  * «Flytt»: hvor tråden skal stå, i et lag over appen. Siden den står på, er
  * valgt fra start, så den kan flyttes til en annen kategori her, eller til en
- * ny. Velges en annen side — en fagside eller fortolkningen av en analytt —
- * flyttes den sist i en kategori der, eller i en ny; kommentarene følger med.
+ * ny. Velges en annen side med samme rekkevidde (`siderekkevidde`) — en
+ * fagside eller stoffregisteret for en felles tråd, fortolkningen av en annen
+ * analytt for en lokal — flyttes den sist i en kategori der, eller i en ny;
+ * kommentarene følger med.
  */
 export function Flytteskjema({
   id,
@@ -390,10 +393,12 @@ export function Flytteskjema({
   }
 
   const finnes = [sider.fagsider, sider.fortolkninger, ANDRE_DISKUSJONSSIDER].some((valg) => valg.some((v) => v.side === side))
+  // Bare sidene med samme rekkevidde som tråden har nå, kan ta imot den.
+  const rekkevidde = siderekkevidde(side)
   const gruppe = (etikett: string, valg: readonly Sidevalg[]) =>
-    valg.length > 0 && (
+    valg.some((v) => siderekkevidde(v.side) === rekkevidde) && (
       <optgroup label={etikett}>
-        {valg.map((v) => (
+        {valg.filter((v) => siderekkevidde(v.side) === rekkevidde).map((v) => (
           <option key={v.side} value={v.side}>
             {v.side === side ? `${v.navn} (denne siden)` : v.navn}
           </option>

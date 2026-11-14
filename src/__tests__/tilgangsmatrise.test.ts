@@ -34,7 +34,7 @@ type Utfall = 'tilgang' | 'avvist'
 type Etappe = (typeof HOLDER)[number] | 'P2a' | 'P2b' | 'P2c' | 'P2d'
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2b'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -112,12 +112,35 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'lagrer et utkast som lokal admin i eget fagmiljø', person: 'adminA', etappe: 'P1.1', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
 
   // --- P2b: samhandling og varsler ----------------------------------------
-  { navn: 'får varsel om publisering av A sin fortolkning', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, `select id from public.varsler where kategori = 'fortolkning'`) },
-  { navn: 'leser en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
-  { navn: 'slår opp en tråd på A sin fortolkningsside med direktelenke', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, `select public.direktelenke('diskusjon', $1)`, [k.d.fortolkningstraad]) },
-  { navn: 'gir nytt navn til en annens tråd', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.sett_diskusjonstittel($1, $2)', [k.d.fagsidetraad, 'Nytt navn']) },
-  { navn: 'flytter en lokal tråd til en felles fagside', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, `select public.flytt_diskusjon_til_side($1, 'stoff:syntetisk-stoff', null, 'Flyttet', '📦')`, [k.d.fortolkningstraad]) },
-  { navn: 'rydder idéarkivet', person: 'vanligA', etappe: 'P2b', idag: 'tilgang', mal: 'avvist', prov: (k) => lykkes(k, 'select public.rydd_idearkiv()') },
+  { navn: 'får varsel om publisering av A sin fortolkning', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `select id from public.varsler where kategori = 'fortolkning'`) },
+  { navn: 'leser en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
+  { navn: 'slår opp en tråd på A sin fortolkningsside med direktelenke', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.direktelenke('diskusjon', $1)`, [k.d.fortolkningstraad]) },
+  { navn: 'gir nytt navn til en annens tråd', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.sett_diskusjonstittel($1, $2)', [k.d.fagsidetraad, 'Nytt navn']) },
+  { navn: 'flytter en lokal tråd til en felles fagside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.flytt_diskusjon_til_side($1, 'stoff:syntetisk-stoff', null, 'Flyttet', '📦')`, [k.d.fortolkningstraad]) },
+  { navn: 'flytter sin egen lokale tråd til en felles fagside', person: 'vanligA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.flytt_diskusjon_til_side($1, 'stoff:syntetisk-stoff', null, 'Flyttet', '📦')`, [k.d.fortolkningstraad]) },
+  { navn: 'leser en tråd på A sin fortolkningsside etter avsluttet medlemskap i A', person: 'avsluttetA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
+  { navn: 'leser kommentarene i en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.diskusjonstraad($1)`, [k.d.fortolkningstraad]) },
+  { navn: 'leser kategoriene på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `select id from public.diskusjonskategorier where side = 'fortolkning:syntetisk-analytt'`) },
+  { navn: 'starter en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_diskusjon('fortolkning:syntetisk-analytt', null, 'Inntrenger', null, 'Ny', '🚪')`) },
+  { navn: 'kommenterer en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `insert into public.diskusjonskommentarer (diskusjon_id, tekst) values ($1, '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hei"}]}]}')`, [k.d.fortolkningstraad]) },
+  { navn: 'gir et hjerte i en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'insert into public.diskusjonshjerter (diskusjon_id) values ($1)', [k.d.fortolkningstraad]) },
+  { navn: 'skjuler innlegget i en tråd på A sin fortolkningsside som lokal admin i B', person: 'adminB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.skjul_i_diskusjon($1, null)', [k.d.fortolkningstraad]) },
+  { navn: 'skjuler innlegget i en tråd på en felles fagside med den gamle adminrollen', person: 'adminA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.skjul_i_diskusjon($1, null)', [k.d.fagsidetraad]) },
+  { navn: 'leser en tråd på A sin fortolkningsside med aktivt medlemskap i både A og B', person: 'dobbeltAB', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
+  { navn: 'leser en tråd på en felles fagside', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => nevner(k, `public.direktelenke('diskusjon', $1)`, k.d.fagsidetraad, [k.d.fagsidetraad]) },
+  { navn: 'skjuler innlegget i en tråd på eget fagmiljøs fortolkningsside som lokal admin', person: 'adminA', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.skjul_i_diskusjon($1, null)', [k.d.fortolkningstraad]) },
+  { navn: 'skjuler innlegget i en tråd på en felles fagside', person: 'systemarkitekt', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.skjul_i_diskusjon($1, null)', [k.d.fagsidetraad]) },
+  { navn: 'leser en tråd på A sin fortolkningsside', person: 'systemarkitekt', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
+  // D8 (Peder 2026-11-14): idéene deles av alle aktive medlemmer; oppgavene og
+  // administrasjonen av idéene er forbeholdt systemarkitektene.
+  { navn: 'rydder idéarkivet', person: 'vanligA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.rydd_idearkiv()') },
+  { navn: 'legger en idé i arkivet med den gamle adminrollen', person: 'adminA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.arkiver_ide($1)', [k.d.ide]) },
+  { navn: 'leser de planlagte oppgavene', person: 'vanligA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.oppgaveoversikt()') },
+  { navn: 'leser de planlagte oppgavene som lokal administrator', person: 'adminB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.oppgaveoversikt()') },
+  { navn: 'legger en idé i arkivet som systemarkitekt', person: 'systemarkitekt', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.arkiver_ide($1)', [k.d.ide]) },
+  { navn: 'leser de planlagte oppgavene som systemarkitekt', person: 'systemarkitekt', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.oppgaveoversikt()') },
+  { navn: 'leser en idé fra en bruker i A', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => nevner(k, 'public.ideoversikt()', k.d.ide) },
+  { navn: 'kommenterer en idé fra en bruker i A', person: 'vanligB', etappe: 'P2b', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `insert into public.idekommentarer (ide_id, tekst) values ($1, '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hei"}]}]}')`, [k.d.ide]) },
 
   // --- P2c: profiler og bilder --------------------------------------------
   { navn: 'leser rollen til en administrator i et annet fagmiljø', person: 'vanligB', etappe: 'P2c', idag: 'tilgang', mal: 'avvist', prov: (k) => verdi(k, 'select role from public.profiles where id = $1', [k.g.id.adminA]) },
@@ -222,7 +245,7 @@ describe('tilgangsmatrisen', () => {
 
   it('har et mål for hver etappe som ikke er nådd, og kontroller som alt holder', () => {
     const hull = apneHull()
-    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2b', 'P2c', 'P2d'])
+    expect(Object.keys(hull).sort()).toEqual(['P2a', 'P2c', 'P2d'])
     for (const etappe of HOLDER) {
       expect(SCENARIOER.some((s) => s.etappe === etappe), etappe).toBe(true)
       expect(SCENARIOER.filter((s) => s.etappe === etappe && s.idag !== s.mal), etappe).toEqual([])

@@ -32,6 +32,8 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'er_admin()': false,
   'er_systemarkitekt()': false,
   'har_aktivt_medlemskap()': false,
+  // P2b: om den innloggede kan moderere diskusjonene på en side.
+  'kan_moderere_diskusjoner(side text)': false,
   'min_medlemskapsstatus()': 'avsluttet',
   'mine_administrerte_fagmiljoer()': [],
   'mine_lesbare_fagmiljoer()': [],

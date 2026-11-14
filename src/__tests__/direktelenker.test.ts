@@ -7,6 +7,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
+import { gjorTilSystemarkitekt } from './hjelp/persongalleri'
 
 const DOK = (tekst: string) => JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
 
@@ -61,6 +62,8 @@ describe('direktelenkene i databasen', () => {
   beforeAll(async () => {
     db = await nyDatabase()
     admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    // Moderatoren på fagsidene og den som administrerer idéene (P2b, D8).
+    await gjorTilSystemarkitekt(db, admin)
     ada = await opprettBruker(db, { brukernavn: 'ada.l', fornavn: 'Ada', etternavn: 'Lovelace', rolle: 'user' })
     bo = await opprettBruker(db, { brukernavn: 'bob', fornavn: '', etternavn: '', rolle: 'user' })
   }, 60_000)

@@ -6,24 +6,33 @@ import { Avatar, type Avatarstorrelse } from '../konto/Avatar'
 
 /**
  * Det trådene trenger — i idévinduet og i diskusjonene: hvem som er logget
- * inn, om det er en administrator, og profilene og profilbildene til dem som
- * har skrevet noe. Profilene hentes av den som viser trådene.
+ * inn, om det er en systemarkitekt (som administrerer idéene, D8), og
+ * profilene og profilbildene til dem som har skrevet noe. Profilene og
+ * svaret om systemarkitekten hentes av den som viser trådene.
  */
 interface Forfatterkontekst {
   meg: Profil
-  admin: boolean
+  systemarkitekt: boolean
   profiler: ReadonlyMap<string, Profil>
   lenker: ReadonlyMap<string, string>
 }
 
 const Kontekst = createContext<Forfatterkontekst | null>(null)
 
-export function Forfatterkilde({ profiler, children }: { profiler: readonly Profil[]; children: ReactNode }) {
+export function Forfatterkilde({
+  profiler,
+  systemarkitekt = false,
+  children,
+}: {
+  profiler: readonly Profil[]
+  systemarkitekt?: boolean
+  children: ReactNode
+}) {
   const meg = useProfil()
   const lenker = useAvatarlenker(profiler as Profil[])
   const verdi = useMemo(
-    () => ({ meg, admin: meg.role === 'admin', profiler: new Map(profiler.map((p) => [p.id, p])), lenker }),
-    [meg, profiler, lenker],
+    () => ({ meg, systemarkitekt, profiler: new Map(profiler.map((p) => [p.id, p])), lenker }),
+    [meg, systemarkitekt, profiler, lenker],
   )
   return <Kontekst.Provider value={verdi}>{children}</Kontekst.Provider>
 }
