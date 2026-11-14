@@ -30,7 +30,8 @@
 -- sperres (i produksjonen 14.11.2026: ingen). Ingen setninger er destruktive.
 --
 -- Tilbakeføring: en ny migrasjon som fjerner utløserne `*_kontosperre`,
--- opphever sperrene i `intern.kontosperrer` (`banned_until = null` for dem),
+-- opphever sperrene i `intern.kontosperrer` (`banned_until = forrige_sperre`
+-- der den fortsatt er vår verdi),
 -- fjerner funksjonene herfra og setter `intern.kontroller_tilgangsinvarianter`
 -- og `public.mine_rettigheter` tilbake til definisjonene før denne. Regel 1
 -- må da ha alle kontoer med et aktivt primærmedlemskap igjen.
@@ -121,7 +122,11 @@ $$;
 create table intern.kontosperrer (
   bruker_id uuid primary key references public.profiles (id) on delete cascade,
   sperret_kl timestamptz not null default now(),
-  sperret_til timestamptz not null
+  sperret_til timestamptz not null,
+  -- Sperren kontoen alt hadde i Auth da vi sperret den (en administrativ
+  -- eller tidsbegrenset sperre satt utenom medlemskapene). Den settes
+  -- tilbake når vår sperre oppheves, så den aldri forkortes.
+  forrige_sperre timestamptz
 );
 
 comment on table intern.kontosperrer is
@@ -170,7 +175,7 @@ begin
   if intern.har_aktivt_medlemskap(bruker) then
     if sperre.bruker_id is not null then
       delete from intern.kontosperrer k where k.bruker_id = bruker;
-      update auth.users u set banned_until = null
+      update auth.users u set banned_until = sperre.forrige_sperre
       where u.id = bruker and u.banned_until = sperre.sperret_til;
     end if;
     return false;
@@ -178,9 +183,13 @@ begin
 
   if sperre.bruker_id is null then
     -- Som når Supabase sperrer for «alltid»: om lag hundre år.
-    insert into intern.kontosperrer (bruker_id, sperret_til)
-    values (bruker, date_trunc('second', now()) + interval '100 years')
+    insert into intern.kontosperrer (bruker_id, sperret_til, forrige_sperre)
+    select bruker, date_trunc('second', now()) + interval '100 years', u.banned_until
+    from auth.users u where u.id = bruker
     returning * into sperre;
+    if sperre.bruker_id is null then
+      return false;
+    end if;
   end if;
   update auth.users u set banned_until = sperre.sperret_til
   where u.id = bruker and (u.banned_until is null or u.banned_until < sperre.sperret_til);

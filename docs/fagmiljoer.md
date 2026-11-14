@@ -440,7 +440,9 @@ følge `intern.har_aktivt_medlemskap`. Uten aktivt medlemskap settes
 time), men databasen og Edge-funksjonene gir det ingenting (P2.0). Sperren
 står i `intern.kontosperrer`; når kontoen får et aktivt medlemskap igjen,
 oppheves den, men bare om `banned_until` fortsatt er vår verdi, så en sperre
-noen andre har satt i Auth, står. En systemarkitekt sperres aldri.
+noen andre har satt i Auth, står. Hadde kontoen alt en sperre da vi sperret
+den, også en tidsbegrenset, settes den tilbake (`forrige_sperre`), så den
+aldri forkortes. En systemarkitekt sperres aldri.
 
 Synkroniseringen kjøres av utsatte utløsere på `medlemskap`, `systemroller`
 og statusen til `fagmiljoer`, når transaksjonen avsluttes. Den følger derfor
@@ -484,8 +486,8 @@ feil passord, så den ikke røper hvem som har konto.
 
 **Tilbakeføring.** En ny migrasjon som fjerner de tre utløserne, funksjonene
 og `intern.kontosperrer`, setter regel 1 og `mine_rettigheter()` tilbake, og
-opphever sperrene som står i tabellen (`banned_until = null` der den er vår
-verdi). Ingen medlemskap endres av tilbakeføringen.
+opphever sperrene som står i tabellen (`banned_until = forrige_sperre` der
+den er vår verdi). Ingen medlemskap endres av tilbakeføringen.
 
 **Testene.** `src/__tests__/medlemskapsadministrasjon.test.ts`: A→B og B→A,
 flere medlemskap, det siste medlemskapet (sperren, øktene, loggen), det samme

@@ -325,6 +325,19 @@ describe('reaktivering', () => {
   })
 })
 
+describe('sperrer satt utenom medlemskapene', () => {
+  it('setter en tidsbegrenset sperre kontoen alt hadde, tilbake når den får tilgang igjen', async () => {
+    const { rows } = await db.query<{ til: Date }>(
+      `update auth.users set banned_until = date_trunc('second', now()) + interval '10 days' where id = $1 returning banned_until as til`,
+      [id('vanligA')],
+    )
+    await avslutt('adminA', 'vanligA', 'A')
+    expect((await sperre('vanligA')).banned_until!.getUTCFullYear()).toBeGreaterThan(new Date().getUTCFullYear() + 90)
+    await gi('adminA', 'vanligA', 'A')
+    expect((await sperre('vanligA')).banned_until!.getTime()).toBe(rows[0]!.til.getTime())
+  })
+})
+
 describe('gjentakelse og feil', () => {
   it('gir det samme svaret uten å endre noe når en handling gjentas, for eksempel etter brutt nett', async () => {
     const forste = await avslutt('adminA', 'vanligA', 'A')
