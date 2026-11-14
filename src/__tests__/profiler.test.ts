@@ -189,6 +189,11 @@ describe('profilkortet', () => {
       return (await tx.query<{ first_name: string; role: string }>('select first_name, role from public.min_profil()')).rows[0]
     })
     expect(endret).toEqual({ first_name: 'Endret', role: 'user' })
+    // Appen lagrer og får profilkortet tilbake i samme forespørsel (lagreEgenProfil).
+    const tilbake = await somPerson('vanligA', async (tx) =>
+      (await tx.query(`update public.profiles set last_name = 'Lagret' where id = $1 returning ${PROFILKORT.join(', ')}`, [vanligA])).rows,
+    )
+    expect(tilbake).toMatchObject([{ id: vanligA, last_name: 'Lagret' }])
     const andres = await somPerson('vanligA', async (tx) =>
       (await tx.query(`update public.profiles set first_name = 'Endret' where id = $1 returning id`, [adminA])).rows,
     )

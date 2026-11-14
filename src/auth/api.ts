@@ -116,16 +116,23 @@ export async function hentBrukeroversikt(): Promise<Kontooversikt[]> {
   return (data ?? []) as Kontooversikt[]
 }
 
-/** De ordinære profilopplysningene brukeren selv rår over. Gir den egne profilen tilbake. */
+/**
+ * De ordinære profilopplysningene brukeren selv rår over. Endringen og svaret
+ * er én forespørsel: profilkortet som ble lagret, lagt over den egne profilen
+ * (rollen og kontostatusen kan ikke endres herfra).
+ */
 export async function lagreEgenProfil(
-  brukerId: string,
+  profil: Profil,
   endring: { first_name: string; last_name: string; avatar_path?: string | null },
 ): Promise<Profil> {
-  const { error } = await klient().from('profiles').update(endring).eq('id', brukerId)
+  const { data, error } = await klient()
+    .from('profiles')
+    .update(endring)
+    .eq('id', profil.id)
+    .select(PROFILKORT.join(','))
+    .single()
   if (error) throw error
-  const profil = await hentProfil()
-  if (!profil) throw new Error(UVENTET_FEIL)
-  return profil
+  return { ...profil, ...(data as unknown as Profilkort) }
 }
 
 /** Bytter passordet til den som allerede er logget inn. */
