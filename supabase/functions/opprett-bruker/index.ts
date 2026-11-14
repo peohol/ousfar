@@ -23,7 +23,9 @@ Deno.serve(
     // Klareringen triggeren i databasen krever, som også avgjør om den
     // innloggede har myndighet til å opprette brukere. Den legges inn først,
     // slik at ingen uten myndighet får vite noe om brukernavnene, og trekkes
-    // tilbake igjen dersom kontoen ikke blir noe av.
+    // tilbake igjen dersom kontoen ikke blir noe av. Triggeren kontrollerer
+    // myndigheten på nytt når kontoen opprettes, så en administrator som
+    // mister den i mellomtiden, får ingen konto.
     await reserverBrukernavn(admin, innlogget.id, brukernavn)
 
     // Den unike indeksen i databasen er den endelige sperren; dette oppslaget

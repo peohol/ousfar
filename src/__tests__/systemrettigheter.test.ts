@@ -14,7 +14,8 @@
  * - Serverprosessene (synkene, kurateringsagentene) går ikke gjennom
  *   kontrollene og berøres ikke.
  */
-import type { PGlite } from '@electric-sql/pglite'
+import type { PGlite, Transaction } from '@electric-sql/pglite'
+import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { omradeFor } from './data/tilgangsomrader'
 import { byggPersongalleri, leggInnTestdata, type Person, type Persongalleri } from './hjelp/persongalleri'
@@ -256,6 +257,28 @@ describe('opprettelse av brukere', () => {
       expect(await klarer(hvem(person), 'ny.bruker'), person).toEqual({ feil: '42501', reservert: false })
     }
     expect(await klarer('00000000-0000-4000-8000-000000000000', 'ny.bruker')).toEqual({ feil: '42501', reservert: false })
+  })
+
+  it('kontrollerer myndigheten på nytt når kontoen opprettes, så en tilbakekalt lokal administrator ikke får noen konto', async () => {
+    /** Klarerer som `aktor`, kjører `imellom`, og oppretter så Auth-brukeren slik Auth gjør det. */
+    const opprett = (aktor: string, brukernavn: string, imellom: (tx: Transaction) => Promise<unknown> = async () => {}) =>
+      db.transaction(async (tx) => {
+        await tx.exec(`set local role service_role`)
+        await tx.query(`select set_config('request.jwt.claims', '{"role": "service_role"}', true)`)
+        await tx.query('select public.kontooperasjon_klarer_konto($1, $2)', [aktor, brukernavn])
+        await tx.exec('reset role')
+        await imellom(tx)
+        await tx.exec('savepoint opprettelse')
+        const feil = await feilFra(() => tx.query('insert into auth.users (email) values ($1)', [`${brukernavn}@${INTERN_AUTH_DOMENE}`]))
+        if (feil) await tx.exec('rollback to savepoint opprettelse')
+        const { rows } = await tx.query<{ n: number }>('select count(*)::int as n from public.profiles where username = $1', [brukernavn])
+        await tx.rollback()
+        return { feil: feil?.code ?? null, konto: rows[0]!.n === 1 }
+      })
+    expect(await opprett(galleri.id.adminA, 'ny.bruker')).toEqual({ feil: null, konto: true })
+    const tilbakekall = (tx: Transaction) =>
+      tx.query(`update public.fagmiljoadministratorer set til = now() where bruker_id = $1 and til is null`, [galleri.id.adminA])
+    expect(await opprett(galleri.id.adminA, 'ny.bruker', tilbakekall)).toEqual({ feil: '42501', konto: false })
   })
 
   it('kan ikke kalles fra nettleseren', async () => {

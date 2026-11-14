@@ -122,11 +122,20 @@ $$;
 
 revoke all on function intern.opprettelsesavslag(uuid) from public, anon, authenticated, service_role;
 
+-- Klareringen husker hvem som ba om kontoen, slik at myndigheten kan
+-- kontrolleres på nytt når kontoen faktisk opprettes. En klarering uten
+-- aktør kommer fra en server-side jobb med hemmelig nøkkel (oppstartsskriptet,
+-- testene), som før.
+alter table public.kontoreservasjoner add column aktor uuid;
+
+comment on column public.kontoreservasjoner.aktor is
+  'Hvem som ba om kontoen (opprett-bruker). Myndigheten kontrolleres på nytt når kontoen opprettes. Tom for server-side jobber.';
+
 -- Kontrollerer myndigheten og klarerer brukernavnet for `opprett-bruker`, med
--- den felles låsen holdt slik at en samtidig fjerning av den lokale
--- administratoren ikke slipper forbi. Klareringen er den samme som
--- Edge-funksjonen la inn selv før (`kontoreservasjoner`), og brukes opp av
--- utløseren på `auth.users`.
+-- den felles låsen holdt, før Edge-funksjonen slår opp noe. Klareringen er
+-- den samme som Edge-funksjonen la inn selv før (`kontoreservasjoner`), og
+-- brukes opp av utløseren på `auth.users`, som kontrollerer myndigheten på
+-- nytt under låsen (`handter_ny_auth_bruker`).
 create function public.kontooperasjon_klarer_konto(aktor uuid, brukernavn text)
 returns void
 language plpgsql
@@ -141,14 +150,64 @@ begin
   if avslag is not null then
     raise exception '%', avslag[2] using errcode = avslag[1];
   end if;
-  insert into public.kontoreservasjoner as r (username, reservert_kl)
-  values (kontooperasjon_klarer_konto.brukernavn, now())
-  on conflict (username) do update set reservert_kl = excluded.reservert_kl;
+  insert into public.kontoreservasjoner as r (username, reservert_kl, aktor)
+  values (kontooperasjon_klarer_konto.brukernavn, now(), kontooperasjon_klarer_konto.aktor)
+  on conflict (username) do update set reservert_kl = excluded.reservert_kl, aktor = excluded.aktor;
 end;
 $$;
 
 revoke all on function public.kontooperasjon_klarer_konto(uuid, text) from public, anon, authenticated;
 grant execute on function public.kontooperasjon_klarer_konto(uuid, text) to service_role;
+
+-- Utløseren på `auth.users`, som før, men med myndigheten kontrollert på nytt
+-- under den felles låsen i samme transaksjon som kontoen opprettes. Mister
+-- aktøren myndigheten mellom klareringen og opprettelsen, blir det ingen
+-- konto (P0 §5.2, som passordflyten i P1.2a).
+create or replace function public.handter_ny_auth_bruker()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  nytt_brukernavn text;
+  bestiller uuid;
+  avslag text[];
+begin
+  if lower(split_part(coalesce(new.email, ''), '@', 2)) <> public.intern_auth_domene() then
+    raise exception 'OUSFAR er lukket. Kontoer opprettes bare av en administrator.'
+      using errcode = '42501';
+  end if;
+
+  nytt_brukernavn := public.brukernavn_normalisert(split_part(new.email, '@', 1));
+  if not public.brukernavn_er_gyldig(nytt_brukernavn) then
+    raise exception 'Ugyldig brukernavn: %', nytt_brukernavn using errcode = '22023';
+  end if;
+
+  delete from public.kontoreservasjoner
+  where reservert_kl < now() - interval '15 minutes';
+
+  delete from public.kontoreservasjoner where username = nytt_brukernavn
+  returning aktor into bestiller;
+  if not found then
+    raise exception 'OUSFAR er lukket. Kontoer opprettes bare av en administrator.'
+      using errcode = '42501';
+  end if;
+
+  if bestiller is not null then
+    perform intern.las_tilgang(bestiller, 'opprett-bruker');
+    avslag := intern.opprettelsesavslag(bestiller);
+    if avslag is not null then
+      raise exception '%', avslag[2] using errcode = avslag[1];
+    end if;
+  end if;
+
+  insert into public.profiles (id, username) values (new.id, nytt_brukernavn);
+  return new;
+end;
+$$;
+
+revoke all on function public.handter_ny_auth_bruker() from public, anon, authenticated;
 
 -- --- Det appen spør om ----------------------------------------------------
 
