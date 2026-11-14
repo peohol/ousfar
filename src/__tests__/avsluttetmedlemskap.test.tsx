@@ -42,7 +42,12 @@ vi.mock('../auth/klient', () => ({
   }),
 }))
 
+const glemt = vi.hoisted(() => vi.fn())
+vi.mock('../auth/oktskifte', () => ({ meldOktskifte: glemt }))
+
 const { OktProvider, useOkt } = await import('../auth/okt')
+const { lesTilgangFra } = await import('../auth/tilgangsstans')
+const { AVSLUTTET_MEDLEMSKAP } = await import('@delt/profil')
 
 function Vis() {
   return <p data-testid="tilgang">{useOkt().tilgang}</p>
@@ -112,6 +117,58 @@ describe('økten uten aktivt medlemskap', () => {
     db.profil = PROFIL
     expect(await tilgang()).toBe('app')
     expect(api.hentMedlemskapsstatus).not.toHaveBeenCalled()
+  })
+})
+
+describe('en åpen fane når medlemskapet avsluttes (P3)', () => {
+  /** Svaret databasen gir på neste forespørsel, sett gjennom klientens `fetch`. */
+  const svar = (status: number, kropp: string) => lesTilgangFra(new Response(kropp, { status }))
+  const AVSLAG = JSON.stringify({ code: '42501', message: AVSLUTTET_MEDLEMSKAP })
+
+  async function iAppen() {
+    db.profil = PROFIL
+    db.status = 'aktiv'
+    expect(await tilgang()).toBe('app')
+    db.status = 'avsluttet'
+    tom.mockClear()
+    glemt.mockClear()
+  }
+
+  it('stenger appen forståelig og glemmer det som er lagret, når et svar sier at medlemskapet er avsluttet', async () => {
+    await iAppen()
+    svar(403, AVSLAG)
+    await waitFor(() => expect(screen.getByTestId('tilgang').textContent).toBe('avsluttet'))
+    expect(tom).toHaveBeenCalled()
+    expect(glemt).toHaveBeenCalled()
+    expect(api.loggUt).not.toHaveBeenCalled()
+  })
+
+  it('gjelder også avslaget fra en Edge-funksjon', async () => {
+    await iAppen()
+    svar(403, JSON.stringify({ feil: AVSLUTTET_MEDLEMSKAP }))
+    await waitFor(() => expect(screen.getByTestId('tilgang').textContent).toBe('avsluttet'))
+  })
+
+  it('lar appen stå for andre avslag, og når databasen sier at medlemskapet fortsatt er aktivt', async () => {
+    await iAppen()
+    svar(403, JSON.stringify({ code: '42501', message: 'Du administrerer ikke dette fagmiljøet.' }))
+    svar(200, AVSLUTTET_MEDLEMSKAP)
+    await new Promise((r) => setTimeout(r, 20))
+    expect(api.hentMedlemskapsstatus).not.toHaveBeenCalled()
+
+    db.status = 'aktiv'
+    svar(403, AVSLAG)
+    await waitFor(() => expect(api.hentMedlemskapsstatus).toHaveBeenCalled())
+    expect(screen.getByTestId('tilgang').textContent).toBe('app')
+    expect(tom).not.toHaveBeenCalled()
+  })
+
+  it('lar appen stå når spørsmålet om medlemskapet ikke får svar (brutt nett)', async () => {
+    await iAppen()
+    db.medlemskapsfeil = true
+    svar(403, AVSLAG)
+    await waitFor(() => expect(api.hentMedlemskapsstatus).toHaveBeenCalled())
+    expect(screen.getByTestId('tilgang').textContent).toBe('app')
   })
 })
 

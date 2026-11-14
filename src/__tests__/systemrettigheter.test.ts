@@ -105,6 +105,7 @@ describe('funksjonene som krever systemarkitekt', () => {
         'les_fagsaker',
         'les_kildeovervaking',
         'opphev_verktoysperre',
+        'opprett_fagmiljo',
         'sett_verktoysperre',
         'slett_stoff_for_godt',
         'tom_stoffpapirkurven',
@@ -199,11 +200,17 @@ describe('mine_rettigheter()', () => {
     })
 
   it('svarer for hver person det funksjonene gjør', async () => {
-    const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
-    const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi' }
+    // Med om fagmiljøet er standard (der nye brukere opprettes) og åpent for medlemmer (P3).
+    // B er åpnet i testdatabasen (S2 simulert); i produksjonen er det lukket.
+    const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
+    const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
     const ingen = { systemarkitekt: false, administrerer: [], stoffregister: false, opprett_bruker: false }
     // En systemarkitekt administrerer alle fagmiljøene (`public.mine_administrerte_fagmiljoer`).
-    const alle = (await db.query<{ id: string; nokkel: string; navn: string }>('select id, nokkel, navn from public.fagmiljoer order by navn')).rows
+    const alle = (
+      await db.query<{ id: string; nokkel: string; navn: string; standard: boolean; apent: boolean }>(
+        'select id, nokkel, navn, standard, apent_for_medlemmer as apent from public.fagmiljoer order by navn',
+      )
+    ).rows
     const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
     expect(await rettigheter('systemarkitekt')).toEqual(arkitekt)

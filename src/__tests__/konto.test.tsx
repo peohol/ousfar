@@ -15,8 +15,8 @@ import type { Tilgang } from '../domain/tilgang'
 const okt = vi.hoisted(() => ({
   tilgang: 'innlogging' as Tilgang,
   profil: null as Profil | null,
-  // Det databasen svarer på `mine_kontohandlinger` for den innloggede.
-  handlinger: new Map<string, { nyttPassord: boolean; endreRolle: boolean }>(),
+  // Det databasen svarer på `medlemsoversikt`, per fagmiljø.
+  medlemmer: {} as Record<string, unknown[]>,
 }))
 
 vi.mock('../auth/okt', () => ({
@@ -32,8 +32,12 @@ vi.mock('../auth/okt', () => ({
 }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/api', () => ({
-  hentBrukeroversikt: vi.fn(async () => BRUKERE),
-  hentMineKontohandlinger: vi.fn(async () => okt.handlinger),
+  hentMedlemsoversikt: vi.fn(async (fagmiljo: string) => okt.medlemmer[fagmiljo] ?? []),
+  avsluttMedlemskap: vi.fn(async () => ({ sperret: true })),
+  giMedlemskap: vi.fn(async () => ({ sperret: false })),
+  leggTilMedlem: vi.fn(async () => ({ sperret: false })),
+  settFagmiljoadministrator: vi.fn(async () => ({ sperret: false })),
+  opprettFagmiljo: vi.fn(async (navn: string) => ({ id: 'nytt', nokkel: 'nytt', navn })),
   nyttMidlertidigPassord: vi.fn(async () => ({ brukernavn: 'ola.s', midlertidigPassord: 'kvist-mose-47-lind' })),
   opprettBruker: vi.fn(),
   settRolle: vi.fn(),
@@ -73,11 +77,6 @@ function profil(id: string, fornavn: string, etternavn: string, ekstra: Partial<
 }
 
 const MEG = profil('1', 'Anne', 'Admin', { role: 'admin' })
-const BRUKERE = [
-  MEG,
-  profil('2', 'Kari', 'Nordmann'),
-  profil('3', 'Ola', 'Svendsen', { must_change_password: true }),
-]
 
 beforeAll(() => {
   globalThis.ResizeObserver ??= class {
@@ -236,16 +235,47 @@ describe('porten', () => {
   })
 })
 
-const BEGGE = { nyttPassord: true, endreRolle: true }
-const BARE_PASSORD = { nyttPassord: true, endreRolle: false }
+const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
+const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: false }
+const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [KF, RT], stoffregister: true, opprettBruker: true }
+const LOKAL_I_KF = { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBruker: true }
 
-const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
-const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [], stoffregister: true, opprettBruker: true }
+/** Ingen handlinger; testene slår på det databasen ville tillatt. */
+const INGEN = {
+  kan_avslutte: false,
+  kan_gi_tilgang: false,
+  kan_gjore_til_administrator: false,
+  kan_fjerne_som_administrator: false,
+  nytt_passord: false,
+  endre_rolle: false,
+}
 
-/** Rendrer lista for `meg` med svarene databasen gir om myndigheten og rettighetene. */
-async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][], rettigheter = INGEN_RETTIGHETER) {
+/** En rad i medlemsoversikten, slik databasen gir den. */
+function medlem(p: Profil, ekstra: Record<string, unknown> = {}) {
+  return {
+    ...p,
+    status: 'aktiv',
+    fra: '2026-09-01T00:00:00Z',
+    til: null,
+    administrator: false,
+    systemarkitekt: false,
+    rolle: p.role,
+    maa_bytte_passord: p.must_change_password,
+    sperret: false,
+    eneste_medlemskap: true,
+    ...INGEN,
+    ...ekstra,
+  }
+}
+
+const KARI = profil('2', 'Kari', 'Nordmann')
+const OLA = profil('3', 'Ola', 'Svendsen', { must_change_password: true })
+const ALT = { kan_avslutte: true, nytt_passord: true, endre_rolle: true, kan_gjore_til_administrator: true }
+
+/** Rendrer lista for `meg` med svarene databasen gir om medlemmene og rettighetene. */
+async function brukerlista(meg: Profil, medlemmer: Record<string, unknown[]>, rettigheter: typeof SYSTEMARKITEKT | typeof LOKAL_I_KF = LOKAL_I_KF) {
   okt.profil = meg
-  okt.handlinger = new Map(handlinger)
+  okt.medlemmer = medlemmer
   render(
     <RettigheterKilde verdi={rettigheter}>
       <Brukerliste apen onLukk={() => {}} />
@@ -257,19 +287,19 @@ async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][], re
 }
 
 describe('brukerlista', () => {
-  it('viser rollen i tekst, hvem som må bytte passord, og handlinger med navnet i', async () => {
-    const { lag, rader } = await brukerlista(MEG, [
-      ['2', BEGGE],
-      ['3', BEGGE],
-    ])
+  it('viser hvem som er administrator, hvem som må bytte passord, og handlinger med navnet i', async () => {
+    const { lag, rader } = await brukerlista(MEG, {
+      kf: [medlem(MEG, { administrator: true, ...ALT }), medlem(KARI, ALT), medlem(OLA, { nytt_passord: true })],
+    })
     expect(rader.map((rad) => rad.querySelector('.brukerrad__merker')?.textContent)).toEqual([
-      'Administrator',
+      'AdministratorAdminrolle',
       'Bruker',
       'BrukerMå bytte passord',
     ])
-    // Egen rad har ingen handlinger.
+    // Egen rad har ingen handlinger, selv om svaret skulle si noe annet.
     expect(within(rader[0]!).queryAllByRole('button')).toEqual([])
-    expect(within(rader[1]!).getByRole('button', { name: 'Gjør til admin: Kari Nordmann' })).toBeTruthy()
+    expect(within(rader[1]!).getByRole('button', { name: 'Gi adminrollen: Kari Nordmann' })).toBeTruthy()
+    expect(within(rader[1]!).getByRole('button', { name: 'Gjør Kari Nordmann til administrator i OUS Klinisk farmakologi' })).toBeTruthy()
 
     await userEvent.click(within(rader[2]!).getByRole('button', { name: 'Nytt passord for Ola Svendsen' }))
     const kvittering = await within(lag).findByRole('alert')
@@ -279,48 +309,94 @@ describe('brukerlista', () => {
     await waitFor(() => expect(within(lag).queryByRole('alert')).toBeNull())
   })
 
-  it('gir en systemarkitekt med vanlig brukerrolle knappene databasen tillater, og «Opprett bruker»', async () => {
-    const arkitekt = profil('1', 'Anne', 'Admin')
-    const { lag, rader } = await brukerlista(
-      arkitekt,
-      [
-        ['2', BEGGE],
-        ['3', BEGGE],
-      ],
-      SYSTEMARKITEKT,
+  it('viser bare handlingene databasen tillater på hver rad', async () => {
+    const { rader } = await brukerlista(MEG, { kf: [medlem(KARI, { nytt_passord: true }), medlem(OLA)] })
+    expect(within(rader[0]!).getAllByRole('button').map((b) => b.textContent)).toEqual(['Nytt passord'])
+    expect(within(rader[1]!).queryAllByRole('button')).toEqual([])
+  })
+
+  it('ber om bekreftelse før et medlemskap avsluttes, og sier at kontoen sperres når det er det siste', async () => {
+    const api = await import('../auth/api')
+    const { lag, rader } = await brukerlista(MEG, { kf: [medlem(KARI, { kan_avslutte: true })] })
+    await userEvent.click(within(rader[0]!).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
+    const bekreft = within(lag).getByRole('group', { name: 'Avslutte medlemskapet til Kari Nordmann i OUS Klinisk farmakologi?' })
+    expect(bekreft.textContent).toMatch(/kontoen sperres og logges ut på alle enheter/)
+    // «Avbryt» har fokus, så et tastetrykk for mye ikke fjerner noe.
+    expect(document.activeElement?.textContent).toBe('Avbryt')
+    expect(api.avsluttMedlemskap).not.toHaveBeenCalled()
+
+    await userEvent.click(within(bekreft).getByRole('button', { name: 'Avslutt medlemskapet' }))
+    expect(api.avsluttMedlemskap).toHaveBeenCalledWith('2', 'kf')
+    expect((await within(lag).findByRole('status')).textContent).toBe(
+      'Kari Nordmann er ikke lenger medlem av OUS Klinisk farmakologi. Kontoen er sperret og logget ut.',
     )
-    expect(await within(rader[1]!).findByRole('button', { name: 'Gjør til admin: Kari Nordmann' })).toBeTruthy()
-    expect(within(rader[2]!).getByRole('button', { name: 'Nytt passord for Ola Svendsen' })).toBeTruthy()
+  })
+
+  it('sier at de andre medlemskapene står, og lar en avbrutt bekreftelse være uten følger', async () => {
+    const api = await import('../auth/api')
+    vi.mocked(api.avsluttMedlemskap).mockClear()
+    const { lag, rader } = await brukerlista(MEG, {
+      kf: [medlem(KARI, { kan_avslutte: true, eneste_medlemskap: false, administrator: true })],
+    })
+    await userEvent.click(within(rader[0]!).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
+    const bekreft = within(lag).getByRole('group')
+    expect(bekreft.textContent).toMatch(/også administrator her/)
+    expect(bekreft.textContent).toMatch(/Medlemskapene i andre fagmiljøer står/)
+    await userEvent.click(within(bekreft).getByRole('button', { name: 'Avbryt' }))
+    expect(within(lag).queryByRole('group')).toBeNull()
+    expect(api.avsluttMedlemskap).not.toHaveBeenCalled()
+  })
+
+  it('viser de tidligere medlemmene for seg, med «Gi tilgang igjen» der det er lov', async () => {
+    const api = await import('../auth/api')
+    const { lag } = await brukerlista(MEG, {
+      kf: [medlem(MEG), medlem(KARI, { status: 'avsluttet', sperret: true, kan_gi_tilgang: true }), medlem(OLA, { status: 'avsluttet' })],
+    })
+    const tidligere = within(lag).getByRole('list', { name: 'Tidligere medlemmer i OUS Klinisk farmakologi' })
+    const [kari, ola] = within(tidligere).getAllByRole('listitem')
+    expect(kari!.querySelector('.brukerrad__merker')?.textContent).toBe('BrukerSperret')
+    expect(within(ola!).queryAllByRole('button')).toEqual([])
+    await userEvent.click(within(kari!).getByRole('button', { name: 'Gi Kari Nordmann tilgang igjen' }))
+    expect(api.giMedlemskap).toHaveBeenCalledWith('2', 'kf')
+  })
+
+  it('legger til en eksisterende bruker med brukernavnet', async () => {
+    const api = await import('../auth/api')
+    const { lag } = await brukerlista(MEG, { kf: [medlem(MEG)] })
+    await userEvent.click(within(lag).getByRole('button', { name: 'Legg til medlem' }))
+    await userEvent.type(within(lag).getByLabelText('Brukernavn'), 'Kari.N')
+    await userEvent.click(within(lag).getByRole('button', { name: 'Legg til' }))
+    expect(api.leggTilMedlem).toHaveBeenCalledWith('kari.n', 'kf')
+    expect((await within(lag).findByRole('status')).textContent).toBe('kari.n er medlem av OUS Klinisk farmakologi.')
+  })
+
+  it('lar en systemarkitekt velge fagmiljø, og sier fra når det ikke er åpnet for medlemmer', async () => {
+    const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)], rt: [medlem(OLA)] }, SYSTEMARKITEKT)
+    expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
+    expect(within(lag).getByRole('button', { name: 'Nytt fagmiljø' })).toBeTruthy()
+    await userEvent.selectOptions(within(lag).getByLabelText('Fagmiljø'), 'rt')
+    expect(await within(lag).findByText('Ola Svendsen')).toBeTruthy()
+    expect(within(lag).getByText(/OUS Rettstoksikologi er ikke åpnet for medlemmer ennå/)).toBeTruthy()
+    // Nye brukere opprettes bare i standardfagmiljøet.
+    expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+  })
+
+  it('gir en lokal administrator ingen fagmiljøvelger, men «Opprett bruker» i standardfagmiljøet', async () => {
+    const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)] })
+    expect(within(lag).queryByLabelText('Fagmiljø')).toBeNull()
+    expect(within(lag).queryByRole('button', { name: 'Nytt fagmiljø' })).toBeNull()
     expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
   })
 
-  it('gir en lokal administrator uten adminrollen bare «Nytt passord» der databasen tillater det, og «Opprett bruker» i standardfagmiljøet', async () => {
-    const lokal = profil('1', 'Anne', 'Admin')
-    const { lag, rader } = await brukerlista(lokal, [['2', BARE_PASSORD]], { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBruker: true })
-    expect(await within(rader[1]!).findByRole('button', { name: 'Nytt passord for Kari Nordmann' })).toBeTruthy()
-    expect(within(lag).queryByRole('button', { name: /Gjør til admin|Fjern admin/ })).toBeNull()
-    expect(within(rader[2]!).queryAllByRole('button')).toEqual([])
-    expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
-  })
-
-  it('gir ikke «Opprett bruker» for den gamle adminrollen alene, eller en lokal administrator utenfor standardfagmiljøet', async () => {
+  it('gir ikke «Opprett bruker» uten retten til det, eller utenfor standardfagmiljøet', async () => {
     for (const rettigheter of [
-      INGEN_RETTIGHETER,
-      { ...INGEN_RETTIGHETER, administrerer: [{ id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi' }] },
+      { ...LOKAL_I_KF, opprettBruker: false },
+      { ...INGEN_RETTIGHETER, administrerer: [RT], opprettBruker: true },
     ]) {
-      const { lag } = await brukerlista(MEG, [], rettigheter)
+      const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)], rt: [medlem(KARI)] }, rettigheter)
       expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
       cleanup()
     }
-  })
-
-  it('viser ingen handlinger på egen rad, selv om svaret skulle ha med den innloggede', async () => {
-    const { rader } = await brukerlista(MEG, [
-      ['1', BEGGE],
-      ['2', BEGGE],
-    ])
-    await within(rader[1]!).findByRole('button', { name: 'Nytt passord for Kari Nordmann' })
-    expect(within(rader[0]!).queryAllByRole('button')).toEqual([])
   })
 })
 

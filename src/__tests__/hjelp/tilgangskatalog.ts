@@ -131,6 +131,13 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       if (!f.definer) return 'er ikke security definer'
       if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
       return /\bintern\s*\.\s*kontoavslag\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.kontoavslag'
+    case 'medlemskapsmyndighet':
+      if (!f.definer) return 'er ikke security definer'
+      if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
+      // Direkte, eller gjennom operasjonen som gjør det (`intern.gi_medlemskap`).
+      return /\bintern\s*\.\s*(medlemskapsavslag|krev_medlemskapsmyndighet|gi_medlemskap)\s*\(/.test(f.kilde)
+        ? null
+        : 'bruker ikke intern.medlemskapsavslag'
     case 'rekkevidde':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'

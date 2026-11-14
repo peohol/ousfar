@@ -681,7 +681,10 @@ sikkerhetsporten S1 er passert (kontrollene står i
 medlemskap, er ute i produksjonen og kontrollert der (`docs/fagmiljoer.md`,
 «Aktivt medlemskap»). De negative testene S3 krever, med fortsatt gyldig
 innlogging etter avsluttet medlemskap, også for diskusjoner og søk, er
-grønne; S3 passeres når P3 tas i bruk.
+grønne; S3 passeres når P3 tas i bruk. P3 (avslutning av medlemskap og
+sperring i Auth, `docs/fagmiljoer.md`, «Medlemskap og kontosperring») er
+levert til kontroll med de samme testene kjørt mot en konto som har mistet
+medlemskapet gjennom operasjonene selv.
 
 | Nr. | Spørsmål | Anbefalt standardvalg | Trengs før |
 | --- | --- | --- | --- |

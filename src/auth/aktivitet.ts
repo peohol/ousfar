@@ -7,8 +7,11 @@
  * telles ikke: da ville indikatoren stå på uten grunn.
  *
  * En henting telles til svaret begynner å komme, ikke til hele svaret er lest.
+ * Hvert svar vises også til tilgangsvakten, som merker et avsluttet
+ * medlemskap (`tilgangsstans.ts`).
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { lesTilgangFra } from './tilgangsstans'
 
 let pagaende = 0
 const lyttere = new Set<() => void>()
@@ -35,13 +38,19 @@ export function abonnerPaHentinger(lytter: () => void): () => void {
 
 /** `fetch`, talt med i {@link pagaendeHentinger}. */
 export const sporetFetch: typeof fetch = async (input, init) => {
-  if (init?.signal && BAKGRUNN.has(init.signal)) return fetch(input, init)
+  if (init?.signal && BAKGRUNN.has(init.signal)) return medTilgangen(await fetch(input, init))
   endre(1)
   try {
-    return await fetch(input, init)
+    return medTilgangen(await fetch(input, init))
   } finally {
     endre(-1)
   }
+}
+
+/** Hvert svar vises til tilgangsvakten (`tilgangsstans.ts`) før det gis videre. */
+function medTilgangen(svar: Response): Response {
+  lesTilgangFra(svar)
+  return svar
 }
 
 /**

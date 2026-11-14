@@ -93,8 +93,13 @@ det, lages et nytt.
 `sett-rolle` gir den nye administratoren også lokal administratortildeling i
 sitt primære fagmiljø, og den som mister rollen, slutter som lokal
 administrator. Den gjør ikke en konto med midlertidig passord til
-administrator, og fjerner ikke den siste. Administrasjonen av medlemskap og
-lokale administratorer for seg kommer i P3.
+administrator, og fjerner ikke den siste.
+
+Medlemskapene og de lokale administratorene administreres for seg i «Brukere»
+(P3): medlemmer legges til og avsluttes per fagmiljø, og en konto som mister
+sitt siste aktive medlemskap, sperres i Auth og logges ut overalt. Den kan få
+tilgang igjen senere. Reglene står i «Medlemskap og kontosperring» i
+`docs/fagmiljoer.md`.
 
 ## Fagmiljø og systemroller
 

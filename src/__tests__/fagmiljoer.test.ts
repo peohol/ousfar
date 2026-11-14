@@ -169,6 +169,11 @@ describe.each<Rolle>(['admin', 'user'])('tilbakefyllingen med maxhag som %s fra 
     expect(rows).toEqual([
       { handling: 'fagmiljoadministratorer.insert', n: 3, uten_grunn: 0, med_aktor: 0 },
       { handling: 'fagmiljoer.insert', n: 2, uten_grunn: 0, med_aktor: 0 },
+      // Her kjøres tilbakefyllingen etter de senere migrasjonene, så kontoene
+      // står uten medlemskap til den kommer: P3 sperrer dem, og
+      // tilbakefyllingen opphever sperren (i produksjonen kom den først).
+      { handling: 'kontosperrer.delete', n: 5, uten_grunn: 0, med_aktor: 0 },
+      { handling: 'kontosperrer.insert', n: 5, uten_grunn: 0, med_aktor: 0 },
       { handling: 'medlemskap.insert', n: 5, uten_grunn: 0, med_aktor: 0 },
       { handling: 'systemroller.insert', n: 2, uten_grunn: 0, med_aktor: 0 },
     ])
@@ -269,11 +274,21 @@ describe('reglene etter tilbakefyllingen', () => {
     expect(arkitekt).toBeNull()
   })
 
-  it('krever nøyaktig ett aktivt primærmedlemskap per konto', async () => {
+  it('krever nøyaktig ett aktivt primærmedlemskap per konto med aktive medlemskap, og ingen uten (P3)', async () => {
+    // Uten aktive medlemskap er kontoen sperret (P3), ikke ulovlig.
     const avsluttet = await provIsolert(o.db, (tx) =>
       tx.query(`update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1`, [o.id.bruker1]),
     )
-    expect(avsluttet?.message).toMatch(/nøyaktig ett aktivt primærmedlemskap/)
+    expect(avsluttet).toBeNull()
+    // Et aktivt medlemskap som ikke er primært, og ingen andre: ulovlig.
+    const utenPrimaer = await provIsolert(o.db, async (tx) => {
+      await tx.query(`update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1`, [o.id.bruker1])
+      await tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id, primaer) values ($1, $2, false)`, [
+        o.id.bruker1,
+        o.fagmiljo[KF],
+      ])
+    })
+    expect(utenPrimaer?.message).toMatch(/nøyaktig ett av dem som primærmedlemskap/)
   })
 
   it('krever aktivt medlemskap i samme fagmiljø for en lokal administrator', async () => {

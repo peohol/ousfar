@@ -647,7 +647,7 @@ describe('adminmenyen', () => {
   it('viser bare «Brukere» for en lokal administrator, også med den gamle adminrollen', async () => {
     for (const r of ['user', 'admin']) {
       rolle.verdi = r
-      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }], opprettBruker: true }
+      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }], opprettBruker: true }
       render(
         <Ramme>
           <Adminmeny />

@@ -19,6 +19,10 @@ export interface Fagmiljoreferanse {
   id: string
   nokkel: string
   navn: string
+  /** Nye brukere opprettes som medlemmer her. */
+  standard: boolean
+  /** Tar imot ordinære medlemmer (startporten S2 er passert for det). */
+  apent: boolean
 }
 
 export interface Rettigheter {
@@ -39,17 +43,22 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   opprettBruker: false,
 }
 
-const erFagmiljo = (v: unknown): v is Fagmiljoreferanse =>
-  typeof v === 'object' &&
-  v !== null &&
-  ['id', 'nokkel', 'navn'].every((felt) => typeof (v as Record<string, unknown>)[felt] === 'string')
+/** Et fagmiljø i svaret, eller `null` når formen er feil. Det som mangler av standard og åpent, regnes som nei. */
+function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
+  if (typeof v !== 'object' || v === null) return null
+  const f = v as Record<string, unknown>
+  if (!['id', 'nokkel', 'navn'].every((felt) => typeof f[felt] === 'string')) return null
+  return { id: f.id as string, nokkel: f.nokkel as string, navn: f.navn as string, standard: f.standard === true, apent: f.apent === true }
+}
 
 /** Svaret fra databasen, der alt som mangler eller har feil form, regnes som nei. */
 export function lesRettigheter(svar: unknown): Rettigheter {
   const r = typeof svar === 'object' && svar !== null ? (svar as Record<string, unknown>) : {}
   return {
     systemarkitekt: r.systemarkitekt === true,
-    administrerer: Array.isArray(r.administrerer) ? r.administrerer.filter(erFagmiljo) : [],
+    administrerer: Array.isArray(r.administrerer)
+      ? r.administrerer.map(lesFagmiljo).filter((f): f is Fagmiljoreferanse => f !== null)
+      : [],
     stoffregister: r.stoffregister === true,
     opprettBruker: r.opprett_bruker === true,
   }

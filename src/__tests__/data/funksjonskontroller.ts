@@ -35,6 +35,12 @@ export const KONTROLLER = [
   'stoffregister',
   /** `security definer` som viser den innloggedes egen myndighet over kontoer (`intern.kontoavslag`). */
   'kontomyndighet',
+  /**
+   * `security definer` som gir, avslutter eller viser medlemskap og lokale
+   * administratorer etter den innloggedes myndighet i fagmiljøet
+   * (`intern.medlemskapsavslag`, P3).
+   */
+  'medlemskapsmyndighet',
   /** Krever administrator (`er_admin()`, `krev_admin()` e.l.) for alt. */
   'admin',
   /**
@@ -61,6 +67,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'arkiver_stoff(stoff text, arkivert boolean)': 'stoffregister',
   'arkiver_stoffkategori(kategori uuid, arkivert boolean)': 'stoffregister',
   'arkiver_varsler(varsler uuid[], til timestamp with time zone)': 'eier',
+  // P3: medlemskapene og de lokale administratorene, etter myndigheten i fagmiljøet.
+  'avslutt_medlemskap(bruker uuid, fagmiljo uuid)': 'medlemskapsmyndighet',
   'beslutt_fagsak(sak bigint, versjon integer, valg text, merknad text)': 'systemarkitekt',
   'brukernavn_er_gyldig(brukernavn text)': 'offentlig',
   'brukernavn_normalisert(raatekst text)': 'offentlig',
@@ -87,6 +95,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'flytt_oppgave_tilbake(oppgave uuid)': 'systemarkitekt',
   'flytt_stoffkategori(kategori uuid, forelder uuid, indeks integer)': 'stoffregister',
   'frigi_oppgave(oppgave uuid)': 'systemarkitekt',
+  'gi_medlemskap(bruker uuid, fagmiljo uuid)': 'medlemskapsmyndighet',
   'gjenopprett_ide(ide uuid)': 'systemarkitekt',
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'rekkevidde',
   'gjenopprett_stoff(stoff text)': 'stoffregister',
@@ -112,6 +121,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'lagre_thc_regelsett(objekt uuid, forventet_revisjon integer, innhold jsonb, kommentarer jsonb)': 'rekkevidde',
   'lagre_utkast(objekt uuid, forventet_revisjon integer, innhold jsonb)': 'rekkevidde',
   'legemiddeldata_status()': 'felles-lesing',
+  'legg_til_medlem(brukernavn text, fagmiljo uuid)': 'medlemskapsmyndighet',
   'les_analyttside(analyttkode text, sidetilstand objekttilstand)': 'radsikkerhet',
   'les_analyttsider(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_bivirkninger(stoff text)': 'felles-lesing',
@@ -156,6 +166,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2a: stoffkoblingene til fortolkningens analytter, til P4b; svarer bare om den innloggede.
   'leser_analyttkoblingene()': 'rekkevidde',
   'los_opp_diskusjonskategori(kategori uuid)': 'rekkevidde',
+  'medlemsoversikt(fagmiljo uuid)': 'medlemskapsmyndighet',
   'merk_diskusjon_sett(diskusjon uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_oppgave_utfort(oppgave uuid, endringslogg text)': 'systemarkitekt',
@@ -177,6 +188,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'opphev_verktoysperre(sperre uuid, grunn text)': 'systemarkitekt',
   'opprett_diskusjon(side text, kategori uuid, tittel text, tekst jsonb, ny_kategori text, ny_emoji text)': 'rekkevidde',
   'opprett_diskusjonskategori(side text, navn text, emoji text)': 'rekkevidde',
+  // P3: et nytt, lukket fagmiljø.
+  'opprett_fagmiljo(navn text)': 'systemarkitekt',
   'opprett_stoffkategori(navn text, forelder uuid)': 'stoffregister',
   'opprett_utkast(objekttype objekttype, innhold jsonb)': 'rekkevidde',
   'overfor_ide(ide uuid)': 'systemarkitekt',
@@ -187,6 +200,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'rydd_stoffpapirkurven()': 'stoffregister',
   'sett_diskusjonstekst(diskusjon uuid, tekst jsonb)': 'rekkevidde',
   'sett_diskusjonstittel(diskusjon uuid, tittel text)': 'rekkevidde',
+  'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)': 'medlemskapsmyndighet',
   'sett_oppgave_klar(oppgave uuid, klar boolean)': 'systemarkitekt',
   'sett_stoffavoritt(stoff text, favoritt boolean)': 'radsikkerhet',
   'sett_verktoysperre(omfang text, mal text, grunn text)': 'systemarkitekt',
