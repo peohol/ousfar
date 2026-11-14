@@ -1,6 +1,6 @@
 /**
  * P2c: profiler og profilbilder etter dataminimering
- * (`supabase/migrations/20261114121500_profiler_dataminimering.sql`,
+ * (`supabase/migrations/20261114130000_profiler_dataminimering.sql`,
  * docs/fagmiljoer.md «Profiler og profilbilder»).
  *
  * Prøver regelen for hvem som ser hvem for hvert par i persongalleriet, at
@@ -11,8 +11,16 @@
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { PROFILKORT } from '@delt/profil'
-import { byggPersongalleri, PERSONER, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
-import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
+import {
+  avsluttMedlemskap,
+  byggPersongalleri,
+  opprettMedlem,
+  PERSONER,
+  type Fagmiljo,
+  type Person,
+  type Persongalleri,
+} from './hjelp/persongalleri'
+import { feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 let db: PGlite
 let galleri: Persongalleri
@@ -52,8 +60,8 @@ function skalSe(seer: Person, bruker: Person): boolean {
 }
 
 /** Kjører spørringen som personen i en transaksjon som alltid rulles tilbake. */
-async function somPerson<T>(person: Person, arbeid: (tx: Transaction) => Promise<T>): Promise<T> {
-  return som(db, galleri.id[person], async (tx) => {
+async function somPerson<T>(person: Person | { id: string }, arbeid: (tx: Transaction) => Promise<T>): Promise<T> {
+  return som(db, typeof person === 'string' ? galleri.id[person] : person.id, async (tx) => {
     try {
       return await arbeid(tx)
     } finally {
@@ -62,7 +70,7 @@ async function somPerson<T>(person: Person, arbeid: (tx: Transaction) => Promise
   })
 }
 
-const synlige = (person: Person) =>
+const synlige = (person: Person | { id: string }) =>
   somPerson(person, async (tx) => (await tx.query<{ id: string }>('select id from public.profiles')).rows.map((r) => r.id))
 
 const navnFor = (ider: readonly string[]) =>
@@ -283,5 +291,65 @@ describe('ytelsen', () => {
        and indexname in ('diskusjoner_forfatter_idx', 'diskusjonskommentarer_forfatter_idx', 'ideer_forfatter_idx', 'idekommentarer_forfatter_idx', 'profiles_avatar_path_idx')`,
     )
     expect(rows).toHaveLength(5)
+  })
+})
+
+describe('varsler som ikke kan leses lenger', () => {
+  // Kjøres sist: kontoen som opprettes her, står igjen i databasen.
+  it('gir ikke innsyn i profilen eller bildet til den som står bak, når medlemskapet i fagmiljøet er avsluttet', async () => {
+    const { A, B } = galleri.fagmiljo
+    // Primærmedlem i B og aktiv i A, så avsluttet i A, som `avsluttetA`.
+    const ny = { id: await opprettBruker(db, { brukernavn: 'test.flytter', fornavn: 'Test', etternavn: 'Flytter', rolle: 'user' }) }
+    await opprettMedlem(db, ny.id, B, { primaer: true })
+    await opprettMedlem(db, ny.id, A)
+    // Aktørene er synlige for kontoen bare gjennom varslene: ingen av dem har
+    // et aktivt medlemskap, og kontoen administrerer ingenting.
+    const lokal = galleri.id.tidligereAdmin
+    const fellesAktor = galleri.id.utenMedlemskap
+    const bilde = (id: string) => `${id}/avatar.webp`
+    const varsel = (fagmiljo: string | null, kategori: string, gruppe: string, av: string) =>
+      `insert into public.varsler (mottaker_id, kategori, gruppe, fagmiljo_id, hendelser)
+       values ('${ny.id}', '${kategori}', '${gruppe}', ${fagmiljo ? `'${fagmiljo}'` : 'null'},
+         jsonb_build_array(jsonb_build_object('kl', now(), 'av', '${av}'::uuid)))
+       returning id`
+    const sett = () =>
+      somPerson(ny, async (tx) => {
+        const profiler = (await tx.query<{ id: string }>('select id from public.profiles where id = any($1)', [[lokal, fellesAktor]])).rows
+        const bilder = (await tx.query<{ name: string }>('select name from storage.objects where name = any($1)', [[bilde(lokal), bilde(fellesAktor)]])).rows
+        const varsler = (await tx.query<{ id: string }>('select id from public.varsler')).rows
+        const iAppen = (await tx.query<{ m: { varsler: { id: string }[] } }>('select public.mine_varsler() as m')).rows[0]!.m.varsler
+        return {
+          profiler: profiler.map((r) => r.id).sort(),
+          bilder: bilder.map((r) => r.name).sort(),
+          varsler: varsler.map((r) => r.id).sort(),
+          iAppen: iAppen.map((v) => v.id),
+        }
+      })
+    const ider: Record<'lokalt' | 'felles', string> = { lokalt: '', felles: '' }
+    const { for: før, etter } = await medData(
+      async (tx) => {
+        for (const id of [lokal, fellesAktor]) {
+          await tx.query(`insert into storage.objects (bucket_id, name) values ('avatarer', $1)`, [bilde(id)])
+          await tx.query('update public.profiles set avatar_path = $1 where id = $2', [bilde(id), id])
+        }
+        ider.lokalt = (await tx.query<{ id: string }>(varsel(A, 'fortolkning', `fortolkning:${A}`, lokal))).rows[0]!.id
+        ider.felles = (await tx.query<{ id: string }>(varsel(null, 'nye_ideer', 'syntetisk', fellesAktor))).rows[0]!.id
+      },
+      async () => {
+        const forAvslutningen = await sett()
+        await avsluttMedlemskap(db, ny.id, A)
+        return { for: forAvslutningen, etter: await sett() }
+      },
+    )
+    // Mens kontoen var medlem i A, ga begge varslene innsyn.
+    expect(før.varsler).toEqual([ider.lokalt, ider.felles].sort())
+    expect(før.profiler).toEqual([lokal, fellesAktor].sort())
+    expect(før.bilder).toEqual([bilde(lokal), bilde(fellesAktor)].sort())
+    // Etter avslutningen er varselet fra A skjult, og med det profilen og
+    // bildet til den som står bak. Det felles varselet gir innsyn som før.
+    expect(etter.varsler).toEqual([ider.felles])
+    expect(etter.iAppen).not.toContain(ider.lokalt)
+    expect(etter.profiler).toEqual([fellesAktor])
+    expect(etter.bilder).toEqual([bilde(fellesAktor)])
   })
 })

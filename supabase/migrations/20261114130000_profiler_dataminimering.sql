@@ -12,10 +12,11 @@
 --      ikke av andre enn kontoen selv (kolonnerettighetene).
 --   2. En innlogget ser profilkortet til seg selv, til dem hen har et aktivt
 --      fagmiljø felles med, til medlemmene i fagmiljøene hen administrerer, til
---      dem som står bak hendelsene i egne varsler, og til forfatterne av
---      trådene, kommentarene og idéene hen selv kan lese. En systemarkitekt
---      ser alle. Forfatterdelen kjøres som den innloggede og følger dermed
---      radsikkerheten på samhandlingstabellene (P2b) av seg selv.
+--      dem som står bak hendelsene i egne varsler hen fortsatt kan lese, og
+--      til forfatterne av trådene, kommentarene og idéene hen selv kan lese.
+--      En systemarkitekt ser alle. Varsel- og forfatterdelen kjøres som den
+--      innloggede og følger dermed radsikkerheten på varslene og
+--      samhandlingstabellene (P2b) av seg selv.
 --   3. Et profilbilde kan sees av den som kan se profilen som peker på det,
 --      og eieren ser alltid sin egen fil.
 --   4. Den egne, hele profilen gis av `public.min_profil()`.
@@ -59,19 +60,12 @@ as $$
   from public.medlemskap m
   where m.status <> 'deaktivert'
     and m.fagmiljo_id in (select f.id from public.fagmiljoer f where intern.er_lokal_admin_i(f.id, synlige_profiler.seer))
-  union
-  -- De som står bak en hendelse i et av seerens egne varsler.
-  select (h ->> 'av')::uuid
-  from public.varsler v
-  cross join lateral jsonb_array_elements(v.hendelser) h
-  where v.mottaker_id = synlige_profiler.seer
-    and (h ->> 'av') ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
 $$;
 
 revoke all on function intern.synlige_profiler(uuid) from public, anon, authenticated, service_role;
 
 comment on function intern.synlige_profiler(uuid) is
-  'P2c: kontoene seer ser profilkortet til, uten forfatterne i samhandlingen (de prøves i regelen på profiles). Se docs/fagmiljoer.md.';
+  'P2c: kontoene seer ser profilkortet til gjennom fagmiljøene, uten forfatterne og varslene (de prøves som den innloggede i regelen på profiles). Se docs/fagmiljoer.md.';
 
 -- Den innloggedes mengde, til regelen på `profiles`, som bruker den som
 -- `(select public.mine_synlige_profiler())`. Tom for en bruker uten aktivt
@@ -94,7 +88,7 @@ revoke all on function public.mine_synlige_profiler() from public, anon, authent
 grant execute on function public.mine_synlige_profiler() to authenticated;
 
 comment on function public.mine_synlige_profiler() is
-  'P2c: kontoene den innloggede ser profilkortet til (uten forfatterdelen). Brukes av radsikkerheten på profiles.';
+  'P2c: kontoene den innloggede ser profilkortet til gjennom fagmiljøene. Brukes av radsikkerheten på profiles.';
 
 -- Forfatterdelen slås opp per profil; indeksene gjør hvert oppslag til ett
 -- indekstreff. Tabellene er små, så indeksene lages uten å låse lenge.
@@ -111,15 +105,25 @@ create unique index if not exists profiles_avatar_path_idx on public.profiles (a
 
 drop policy "Innloggede kan lese alle profiler" on public.profiles;
 
--- Systemarkitekten og mengden over regnes ut én gang per spørring. Forfatterne
--- prøves med `exists` som den innloggede, bare for profilene som ikke alt er
--- synlige: bare rader hen selv kan lese, teller. Reglene på de fire tabellene må derfor aldri lese
+-- Systemarkitekten og mengden over regnes ut én gang per spørring, og det
+-- samme gjør dem som står bak hendelsene i egne varsler. Varslene og
+-- forfatterne leses som den innloggede: bare et varsel eller en rad hen selv
+-- kan lese nå, teller. Et varsel som ikke lenger kan leses (P2b: fra et
+-- fagmiljø hen ikke lenger er medlem av), gjør altså ingen synlig. Reglene på
+-- varslene og de fire samhandlingstabellene må derfor aldri lese
 -- `public.profiles` direkte (det ville gått i ring).
 create policy "Innloggede ser profilene de samhandler med"
 on public.profiles for select to authenticated
 using (
   (select public.er_systemarkitekt())
   or id in (select unnest((select public.mine_synlige_profiler())))
+  or id in (
+    select (h ->> 'av')::uuid
+    from public.varsler v
+    cross join lateral jsonb_array_elements(v.hendelser) h
+    where v.mottaker_id = (select auth.uid())
+      and (h ->> 'av') ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  )
   or exists (select 1 from public.diskusjoner d where d.forfatter_id = profiles.id)
   or exists (select 1 from public.diskusjonskommentarer k where k.forfatter_id = profiles.id)
   or exists (select 1 from public.ideer i where i.forfatter_id = profiles.id)

@@ -416,7 +416,7 @@ migrasjonen selv; rettighetene endres i P2a–d. Testene står i
 
 ## Profiler og profilbilder
 
-P2c (`supabase/migrations/20261114121500_profiler_dataminimering.sql`) gir
+P2c (`supabase/migrations/20261114130000_profiler_dataminimering.sql`) gir
 dataminimering i brukeropplysningene (P0 §2.8, §4): man ser navnet og bildet
 til dem man samhandler med, ikke en nasjonal katalog med roller.
 
@@ -436,16 +436,20 @@ til:
 | Alle, for en systemarkitekt | Systemarkitekten kan lese alt (P0 §5.2) |
 | De aktive medlemmene i fagmiljøene man selv er aktivt medlem av | Eget fagmiljø (`intern.er_medlem_i`) |
 | Medlemmene, også de inviterte, i fagmiljøene man administrerer | De samme kontoene administrasjonen kan handle på (`intern.er_lokal_admin_i`) |
-| Den som står bak en hendelse i et av egne varsler | Varselet sier «Ada kommenterte …» |
+| Den som står bak en hendelse i et av egne varsler man fortsatt kan lese | Varselet sier «Ada kommenterte …» |
 | Forfatteren av en tråd, kommentar eller idé man selv kan lese | Felles samhandlingspartnere |
 
-De fire første radene og varslene regnes ut én gang per spørring av
+De fire første radene regnes ut én gang per spørring av
 `intern.synlige_profiler(seer)` (den eneste definisjonen, gjennom
-`public.mine_synlige_profiler()` i regelen). Forfatterne prøves med `exists`
-mot `diskusjoner`, `diskusjonskommentarer`, `ideer` og `idekommentarer`,
-kjørt som den innloggede: en rad man ikke kan lese, gjør ikke forfatteren
-synlig. Når P2b strammer inn hvem som leser trådene og idéene, følger
-profilene etter av seg selv. Reglene på de fire tabellene må derfor aldri lese
+`public.mine_synlige_profiler()` i regelen). Varslene og forfatterne leses
+derimot i regelen selv, som den innloggede: aktørene i egne varsler som én
+mengde per spørring, forfatterne med `exists` mot `diskusjoner`,
+`diskusjonskommentarer`, `ideer` og `idekommentarer`. Et varsel eller en rad
+man ikke kan lese, gjør derfor ingen synlig. Varsler fra et fagmiljø man ikke
+lenger er medlem av (regelen `rekkevidde` på `varsler`, P2b), gir altså ikke
+innsyn i profilen eller bildet til den som står bak. Når radsikkerheten på
+varslene, trådene eller idéene strammes inn, følger profilene etter av seg
+selv. Reglene på `varsler` og de fire tabellene må derfor aldri lese
 `public.profiles` direkte (det ville gått i ring); bruk `security
 definer`-hjelpere. En ny tabell med `forfatter_id` som nettleseren leser,
 må med i regelen (`profiler.test.ts` stopper den).
