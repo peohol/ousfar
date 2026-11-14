@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.131.0',
+    dato: '2026-11-14',
+    sammendrag: 'Administratorene styrer medlemmene i sitt eget fagmiljø, og en konto uten medlemskap sperres',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      '«Brukere» i administrasjonen viser medlemmene i ett fagmiljø om gangen. Administratoren der kan legge til en bruker som har konto fra før, avslutte et medlemskap og gi et tidligere medlem tilgang igjen. Systemarkitektene velger blant alle fagmiljøene, utpeker administratorer og kan opprette nye fagmiljøer, som er lukket til de er godkjent åpnet.',
+      'Før et medlemskap avsluttes, sier appen hva som skjer. Er det brukerens siste medlemskap, sperres kontoen og logges ut på alle enheter. Medlemskap i andre fagmiljøer berøres ikke.',
+      'Har du appen åpen når medlemskapet ditt avsluttes, får du beskjed om det med en gang, og det som var lagret i nettleseren, fjernes.',
+    ],
+  },
+  {
     versjon: '1.130.7',
     dato: '2026-11-14',
     sammendrag: 'Fortolkningen bruker reglene til fagmiljøet du arbeider i',

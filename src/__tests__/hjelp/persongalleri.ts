@@ -12,12 +12,9 @@
  * funksjon, så nye roller (lokal redaktør, felles redaktør og gruppeansvarlig
  * fra P5/P6) legges til som nye oppføringer når tabellene deres finnes.
  *
- * To personer har ingen aktive medlemskap. Det tillater ikke databasen i dag
- * (regel 1 i docs/fagmiljoer.md: hver konto har nøyaktig ett aktivt
- * primærmedlemskap), og det blir først mulig med avslutning av medlemskap i
- * P3. Tilstanden lages derfor utenom invariantene, slik P3 vil gi den, fordi
- * P2.0 skal vise at en slik bruker med fortsatt gyldig token verken leser
- * eller skriver noe.
+ * To personer har ingen aktive medlemskap, slik avslutningen av medlemskap gir
+ * det (P3), fordi P2.0 skal vise at en slik bruker med fortsatt gyldig token
+ * verken leser eller skriver noe. Databasen sperrer da kontoen i Auth.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import type { Rolle } from '@delt/profil'
@@ -185,19 +182,17 @@ export async function avsluttMedlemskap(db: PGlite, brukerId: string, fagmiljoId
 }
 
 /**
- * Avslutter alle brukerens aktive medlemskap, slik avslutningen i P3 vil gjøre
- * det. Invariantene (regel 1) tillater det ikke i dag, så utløserne slås av
- * for denne ene transaksjonen (`session_replication_role = replica`).
- * Bare for testdatabasen.
+ * Avslutter alle brukerens aktive medlemskap i én transaksjon. Siden P3 er
+ * det en tillatt tilstand, og databasen sperrer da kontoen i Auth av seg selv
+ * (docs/fagmiljoer.md, «Medlemskap og kontosperring»).
  */
 export async function fjernAlleMedlemskap(db: PGlite, brukerId: string): Promise<void> {
-  await db.transaction(async (tx) => {
-    await tx.exec(`set local session_replication_role = replica`)
-    await tx.query(
+  await medGrunn(db, (tx) =>
+    tx.query(
       `update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1 and status = 'aktiv'`,
       [brukerId],
-    )
-  })
+    ),
+  )
 }
 
 /** Gjør fagmiljøet til standard; byttet skjer i én transaksjon, slik regel 5 krever. */

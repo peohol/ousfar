@@ -22,6 +22,7 @@ import * as api from './api'
 import { erKonfigurert, klient } from './klient'
 import { tomMellomlageret } from './mellomlager'
 import { meldOktskifte } from './oktskifte'
+import { vedAvsluttetTilgang } from './tilgangsstans'
 
 interface Oktverdi {
   /** Hva som skal vises nå. Se `domain/tilgang.ts`. */
@@ -78,6 +79,47 @@ export function OktProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe()
   }, [mangler])
 
+  /**
+   * Kontoen står uten aktivt medlemskap: appen viser hvorfor (porten), og det
+   * som er lagret i nettleseren og husket i minnet om kontoen, glemmes. Økten
+   * står til den går ut eller brukeren logger ut; databasen gir den
+   * ingenting i mellomtiden.
+   */
+  const stengUte = useCallback(async (bruker: string) => {
+    await tomMellomlageret()
+    meldOktskifte()
+    setProfil(null)
+    setProfilfeil(false)
+    setAvsluttet(true)
+    setProfilFor(bruker)
+  }, [])
+
+  // Medlemskapet kan avsluttes mens fanen står åpen (P3). Sier et svar fra
+  // databasen det, spørres databasen om det gjelder denne kontoen nå, før
+  // appen stenges; et svar som feiler, endrer ingenting.
+  useEffect(() => {
+    if (brukerId === null || avsluttet) return
+    let sjekker = false
+    let gjelder = true
+    const avmeld = vedAvsluttetTilgang(() => {
+      if (sjekker) return
+      sjekker = true
+      api
+        .hentMedlemskapsstatus()
+        .then(async (status) => {
+          if (gjelder && status === 'avsluttet') await stengUte(brukerId)
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          sjekker = false
+        })
+    })
+    return () => {
+      gjelder = false
+      avmeld()
+    }
+  }, [brukerId, avsluttet, stengUte])
+
   useEffect(() => {
     if (brukerId === null) {
       setProfil(null)
@@ -99,12 +141,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
           // tømmes. Ellers er kontoen fjernet mens fanen sto åpen, og
           // brukeren hører hjemme på innloggingssiden.
           if ((await api.hentMedlemskapsstatus()) === 'avsluttet') {
-            if (!gjelder) return
-            await tomMellomlageret()
-            setProfil(null)
-            setProfilfeil(false)
-            setAvsluttet(true)
-            setProfilFor(brukerId)
+            if (gjelder) await stengUte(brukerId)
             return
           }
           await api.loggUt()
@@ -128,7 +165,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
     return () => {
       gjelder = false
     }
-  }, [brukerId, forsok])
+  }, [brukerId, forsok, stengUte])
 
   const forsokPaaNytt = useCallback(() => {
     setProfilfeil(false)

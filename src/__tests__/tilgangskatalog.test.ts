@@ -40,15 +40,26 @@ describe('katalogvaktene', () => {
 
   it('gir ikke nettleseren noen funksjon med fagmiljøene utenom svaret om eget medlemskap', async () => {
     const signaturer = (await kallbareFunksjoner(db)).map((f) => f.signatur)
-    // P2.0 og hjelperne for P2a–d: alle svarer bare om den innloggede selv.
+    // P2.0 og hjelperne for P2a–d svarer bare om den innloggede selv. P3:
+    // administrasjonen av medlemskapene, som kontrollerer myndigheten selv
+    // (`medlemskapsmyndighet`), og et nytt fagmiljø for systemarkitektene.
     expect(signaturer.filter((s) => /fagmilj|medlemskap|systemrolle|tilgang/.test(s)).sort()).toEqual([
+      'avslutt_medlemskap(bruker uuid, fagmiljo uuid)',
+      'gi_medlemskap(bruker uuid, fagmiljo uuid)',
       'har_aktivt_medlemskap()',
+      'legg_til_medlem(brukernavn text, fagmiljo uuid)',
+      'medlemsoversikt(fagmiljo uuid)',
       'min_medlemskapsstatus()',
       'mine_administrerte_fagmiljoer()',
       'mine_lesbare_fagmiljoer()',
       // P4b: fagmiljøet fortolkningen gjelder for den innloggede selv.
       'mitt_arbeidsfagmiljo()',
+      'opprett_fagmiljo(navn text)',
+      'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
     ])
+    for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_)/.test(s))) {
+      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|systemarkitekt)$/)
+    }
   })
 
   it('stopper en ny tabell uten radsikkerhet og en ny funksjon uten erklæring', async () => {

@@ -12,12 +12,11 @@
  *
  * Testen lager egne, midlertidige databaser på serveren og sletter dem etterpå.
  */
-import { spawn, spawnSync, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { Okt, psql, SERVER } from './hjelp/ektepostgres'
 
-const SERVER = process.env.OUSFAR_POSTGRES_URL
 const migrasjon = (fil: string) => readFileSync(resolve(__dirname, '../../supabase/migrations', fil), 'utf8')
 const STRUKTUR = migrasjon('20261113140000_fagmiljoer.sql')
 const KONTOMYNDIGHET = migrasjon('20261113203000_kontomyndighet.sql')
@@ -71,68 +70,6 @@ const KONTOER = /* sql */ `
     where f.nokkel = 'ous-klinisk-farmakologi' and p.id in ('${ADMIN_EN}', '${ADMIN_TO}');
   commit;
 `
-
-function url(database: string): string {
-  const u = new URL(SERVER!)
-  u.pathname = `/${database}`
-  return u.toString()
-}
-
-/** Kjører SQL med psql og stopper ved første feil. */
-function psql(database: string, sql: string): string {
-  const r = spawnSync('psql', ['-X', '-q', '-A', '-t', '-v', 'ON_ERROR_STOP=1', url(database)], {
-    input: sql,
-    encoding: 'utf8',
-  })
-  if (r.status !== 0) throw new Error(`psql feilet: ${r.stderr || r.error?.message}`)
-  return r.stdout.trim()
-}
-
-/**
- * Én forbindelse, styrt steg for steg. Hvert steg gir SQLSTATE for det siste
- * kallet (00000 når det gikk bra), lest av psql selv.
- */
-class Okt {
-  private readonly prosess: ChildProcessWithoutNullStreams
-  private utdata = ''
-  private teller = 0
-
-  constructor(database: string) {
-    this.prosess = spawn('psql', ['-X', '-q', '-A', '-t', '-v', 'ON_ERROR_STOP=0', url(database)])
-    this.prosess.stdout.on('data', (d: Buffer) => (this.utdata += d.toString()))
-    this.prosess.stderr.on('data', () => undefined)
-  }
-
-  /** Sender et steg uten å vente; svaret hentes med `svar()`. */
-  send(sql: string): () => Promise<string> {
-    const merke = `__steg_${++this.teller}__`
-    this.prosess.stdin.write(`${sql}\n\\echo ${merke} :SQLSTATE\n`)
-    return () => this.vent(merke)
-  }
-
-  async kjor(sql: string): Promise<string> {
-    return this.send(sql)()
-  }
-
-  /** Om steget fortsatt venter (for eksempel på en lås) etter `ms`. */
-  async venterFortsatt(svar: Promise<string>, ms: number): Promise<boolean> {
-    return Promise.race([svar.then(() => false), new Promise<boolean>((r) => setTimeout(() => r(true), ms))])
-  }
-
-  private async vent(merke: string, frist = 20_000): Promise<string> {
-    const slutt = Date.now() + frist
-    for (;;) {
-      const treff = new RegExp(`${merke} (\\w+)`).exec(this.utdata)
-      if (treff) return treff[1]!
-      if (Date.now() > slutt) throw new Error(`Ingen svar på ${merke}`)
-      await new Promise((r) => setTimeout(r, 20))
-    }
-  }
-
-  avslutt(): void {
-    this.prosess.stdin.end('\\q\n')
-  }
-}
 
 const SCENARIER = [
   {

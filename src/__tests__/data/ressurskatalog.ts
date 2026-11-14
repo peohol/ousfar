@@ -144,6 +144,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.tilgangslogg': k('tilgang', 'P1.1'),
   'public.ressursomfang': k('tilgang', 'P4a: rekkevidden selv'),
   'intern.passordreservasjoner': k('tilgang', 'P1.2a: tilbakestillinger av passord som er i gang'),
+  'intern.kontosperrer': k('tilgang', 'P3: kontoene som er sperret i Auth fordi de står uten aktivt medlemskap'),
 
   // Offentlige kilder.
   'legemiddeldata.*': OFFENTLIG_KILDE,

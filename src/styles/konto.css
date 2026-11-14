@@ -398,6 +398,55 @@
   }
 }
 
+/* Merknaden om et lukket fagmiljø, kvitteringen etter en handling og
+   overskriften over de tidligere medlemmene. */
+.brukerliste__merknad,
+.brukerliste__kvittering {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
+.brukerliste__kvittering {
+  color: var(--blekk);
+}
+
+.brukerliste__overskrift {
+  margin: var(--rom-4) 0 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+/* Bekreftelsen før en handling som fjerner tilgang: samme kort som
+   passordkvitteringen, med teksten i advarselsfargen. */
+.tilgangsbekreftelse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
+  padding: var(--rom-6) var(--rom-7);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje-sterk);
+  border-radius: var(--runding-kort);
+  box-shadow: var(--skygge-modal);
+}
+
+.tilgangsbekreftelse > p {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+}
+
+.tilgangsbekreftelse > .tilgangsbekreftelse__tittel {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  color: var(--toksisk-blekk);
+}
+
 /* --- Autoerstatt-reglene ------------------------------------------------- */
 
 /* Samme kort og rader som brukerlista: regelen til venstre, knappene til høyre. */

@@ -4,9 +4,10 @@
  * Den egne profilen hentes hel (`min_profil`). Andre brukere leses som
  * profilkort rett fra profiltabellen, der radsikkerheten bare gir dem den
  * innloggede samhandler med (docs/fagmiljoer.md, «Profiler og
- * profilbilder»). Brukerlista i administrasjonen har sin egen funksjon. Alt
- * som endrer rettigheter eller passord går gjennom Edge-funksjonene;
- * nettleseren har ikke rettigheter til det selv.
+ * profilbilder»). Medlemslista i administrasjonen har sin egen funksjon.
+ * Medlemskapene endres med databasefunksjoner som kontrollerer myndigheten
+ * selv (docs/fagmiljoer.md, «Medlemskap og kontosperring»); passord og den
+ * gamle adminrollen går gjennom Edge-funksjonene.
  */
 import {
   erGyldigBrukernavn,
@@ -103,19 +104,6 @@ export async function hentProfilkort(): Promise<Profilkort[]> {
   return (data ?? []) as unknown as Profilkort[]
 }
 
-/** En konto i brukerlista: profilkortet med rollen og kontostatusen. */
-export type Kontooversikt = Profilkort & Pick<Profil, 'role' | 'must_change_password' | 'onboarding_completed'>
-
-/**
- * Kontoene den innloggede administrerer, sortert slik brukerlista viser dem.
- * Avgjøres i databasen; tom for den som ikke administrerer noen.
- */
-export async function hentBrukeroversikt(): Promise<Kontooversikt[]> {
-  const { data, error } = await klient().rpc('brukeroversikt')
-  if (error) throw error
-  return (data ?? []) as Kontooversikt[]
-}
-
 /**
  * De ordinære profilopplysningene brukeren selv rår over. Endringen og svaret
  * er én forespørsel: profilkortet som ble lagret, lagt over den egne profilen
@@ -202,26 +190,6 @@ export function nyttMidlertidigPassord(brukerId: string): Promise<Midlertidig> {
   return kall<Midlertidig>('nytt-passord', { brukerId })
 }
 
-/** Hva den innloggede kan gjøre med en annens konto. */
-export interface Kontohandlinger {
-  nyttPassord: boolean
-  endreRolle: boolean
-}
-
-/**
- * Kontoene den innloggede kan gi nytt passord til eller endre rollen til, med
- * bruker-ID-en som nøkkel. Avgjøres i databasen etter systemroller, lokale
- * administratorer og medlemskap (docs/fagmiljoer.md, «Myndighet over
- * kontoer»). Bare for visningen; operasjonene kontrollerer på nytt selv. Tom
- * for den som ikke har myndighet over noen.
- */
-export async function hentMineKontohandlinger(): Promise<Map<string, Kontohandlinger>> {
-  const { data, error } = await klient().rpc('mine_kontohandlinger')
-  if (error) throw error
-  const rader = (data ?? []) as { bruker_id: string; nytt_passord: boolean; endre_rolle: boolean }[]
-  return new Map(rader.map((r) => [r.bruker_id, { nyttPassord: r.nytt_passord, endreRolle: r.endre_rolle }]))
-}
-
 /** Endrer rollen til en annen bruker. Krever systemarkitekt — kontrolleres server-side. */
 export async function settRolle(brukerId: string, rolle: Rolle): Promise<Profil> {
   const svar = await kall<{ profil: Profil }>('sett-rolle', { brukerId, rolle })
@@ -250,4 +218,82 @@ export async function fullforOppsett(oppsett: {
     throw new Error('Passordet er byttet. Logg inn på nytt med det nye passordet.')
   }
   return svar.profil
+}
+
+/* --- Medlemskapene ---------------------------------------------------------- */
+
+/** Avslagene databasen gir med en melding til den som prøvde. Alt annet er en uventet feil. */
+const AVSLAG_MED_MELDING = new Set(['42501', 'P0002', '22023', '23505', '23514', '55000'])
+
+/** Kaller en databasefunksjon og gjør et avslag om til en lesbar feil. */
+async function rpc<T>(navn: string, argumenter: Record<string, unknown>): Promise<T> {
+  const { data, error } = await klient().rpc(navn, argumenter)
+  if (error) throw new Error(AVSLAG_MED_MELDING.has(error.code) && error.message ? error.message : UVENTET_FEIL)
+  return data as T
+}
+
+/** Ett medlem i medlemslista, med handlingene databasen tillater den innloggede. */
+export interface Medlem extends Profilkort {
+  status: 'aktiv' | 'invitert' | 'avsluttet'
+  fra: string
+  til: string | null
+  /** Lokal administrator i fagmiljøet. */
+  administrator: boolean
+  systemarkitekt: boolean
+  /** Den gamle adminrollen (`profiles.role`). */
+  rolle: Rolle
+  maa_bytte_passord: boolean
+  /** Står uten aktivt medlemskap noe sted, og er sperret i Auth. */
+  sperret: boolean
+  /** Det aktive medlemskapet her er kontoens eneste. */
+  eneste_medlemskap: boolean
+  kan_avslutte: boolean
+  kan_gi_tilgang: boolean
+  kan_gjore_til_administrator: boolean
+  kan_fjerne_som_administrator: boolean
+  nytt_passord: boolean
+  endre_rolle: boolean
+}
+
+/** Svaret etter en endring av et medlemskap. */
+export interface Medlemskapssvar {
+  bruker: string
+  fagmiljo: string
+  status: 'aktiv' | 'invitert' | 'avsluttet' | 'ingen'
+  administrator: boolean
+  sperret: boolean
+}
+
+/**
+ * Medlemmene i et fagmiljø den innloggede administrerer, de gjeldende først
+ * og de tidligere etter. Bare for visningen; operasjonene kontrollerer på nytt.
+ */
+export async function hentMedlemsoversikt(fagmiljo: string): Promise<Medlem[]> {
+  const rader = await rpc<(Omit<Medlem, 'id'> & { bruker_id: string })[] | null>('medlemsoversikt', { fagmiljo })
+  return (rader ?? []).map(({ bruker_id, ...rad }) => ({ ...rad, id: bruker_id }))
+}
+
+/** Avslutter medlemskapet. Var det det siste, sperres kontoen og logges ut overalt. */
+export function avsluttMedlemskap(bruker: string, fagmiljo: string): Promise<Medlemskapssvar> {
+  return rpc('avslutt_medlemskap', { bruker, fagmiljo })
+}
+
+/** Gir en konto (igjen) aktivt medlemskap i fagmiljøet. */
+export function giMedlemskap(bruker: string, fagmiljo: string): Promise<Medlemskapssvar> {
+  return rpc('gi_medlemskap', { bruker, fagmiljo })
+}
+
+/** Gir en eksisterende konto, oppgitt med brukernavnet, medlemskap i fagmiljøet. */
+export function leggTilMedlem(brukernavn: string, fagmiljo: string): Promise<Medlemskapssvar> {
+  return rpc('legg_til_medlem', { brukernavn, fagmiljo })
+}
+
+/** Utpeker eller fjerner en lokal administrator. Bare systemarkitektene. */
+export function settFagmiljoadministrator(bruker: string, fagmiljo: string, administrator: boolean): Promise<Medlemskapssvar> {
+  return rpc('sett_fagmiljoadministrator', { bruker, fagmiljo, administrator })
+}
+
+/** Oppretter et nytt, lukket fagmiljø. Bare systemarkitektene. */
+export function opprettFagmiljo(navn: string): Promise<{ id: string; nokkel: string; navn: string }> {
+  return rpc('opprett_fagmiljo', { navn })
 }

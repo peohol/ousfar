@@ -25,8 +25,11 @@ gjort stoffregisteret, administrasjonen og datakildene til
 ([Systemrettighetene](#systemrettighetene)). P4b gir **fortolkningen nøkler
 og oppslag per fagmiljø**: hvert fagmiljø får bare sine egne regler, og et
 fagmiljø uten egne regler får en tydelig stopp
-([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)). Alle bygger på de
-felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)). P3 lar
+systemarkitektene og de lokale administratorene **administrere
+medlemskapene**, og sperrer en konto i Auth når det siste aktive medlemskapet
+avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). Alle
+bygger på de felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
 
@@ -63,8 +66,9 @@ server-side.
 
 ## Reglene databasen håndhever
 
-1. Hver konto har nøyaktig ett aktivt primærmedlemskap. En ny konto får det
-   i standardfagmiljøet med en gang (utløseren
+1. En konto med aktive medlemskap har nøyaktig ett av dem som primært, og
+   en konto uten har ingen (P3: da er den sperret, under). En ny konto får
+   primærmedlemskapet i standardfagmiljøet med en gang (utløseren
    `profiles_standardmedlemskap`).
 2. En aktiv lokal administrator har aktivt medlemskap i samme fagmiljø.
 3. Et aktivt fagmiljø mister aldri sin siste aktive administrator, og et
@@ -129,8 +133,9 @@ loggen. `src/__tests__/fagmiljoer.test.ts` kjører den mot syntetiske kontoer,
 med `maxhag` både som tidligere administrator og som vanlig bruker.
 
 En administrator som får `role = 'admin'` gjennom `sett-rolle`, blir lokal
-administrator i sitt primære fagmiljø (P1.2a, over). Utpeking av lokale
-administratorer for seg kommer i P3.
+administrator i sitt primære fagmiljø (P1.2a, over). Siden P3 utpeker
+systemarkitektene lokale administratorer for seg
+([Medlemskap og kontosperring](#medlemskap-og-kontosperring)).
 
 ## Myndighet over kontoer
 
@@ -368,10 +373,10 @@ aktivt medlemskap), tømmes mellomlageret i nettleseren, og porten viser
 «Ingen tilgang» med beskjeden og en utloggingsknapp
 (`src/components/konto/Port.tsx`), uten å vise noe annet. Er svaret
 `ingen_konto`, er kontoen slettet mens tokenet fortsatt gjelder, og brukeren
-logges ut som før; det samme ved `aktiv`. Spørsmålet
-stilles bare når profilen lastes: en fane som står åpen, beholder det den
-allerede har hentet til siden lastes på nytt, men får ingenting nytt fra
-databasen.
+logges ut som før; det samme ved `aktiv`. Spørsmålet stilles når profilen
+lastes, og siden P3 også i en fane som står åpen, så snart et svar fra
+databasen eller en Edge-funksjon sier at medlemskapet er avsluttet
+([Medlemskap og kontosperring](#medlemskap-og-kontosperring)).
 
 **Ytelse.** Regelen er én oppslagsspørring på indeksen
 `medlemskap_bruker_idx`, og databasen regner den ut én gang per spørring
@@ -395,6 +400,107 @@ og Edge-svaret virker før og stenger etter;
 `tilgangsmatrise.test.ts` har scenarioene for direkte tabell- og
 funksjonskall med gyldig token; `avsluttetmedlemskap.test.tsx` prøver
 beskjeden i appen.
+
+## Medlemskap og kontosperring
+
+P3 (`supabase/migrations/20261114221500_medlemskapsadministrasjon.sql`).
+Systemarkitektene administrerer fagmiljøene og medlemskapene; en lokal
+administrator legger til og avslutter medlemskap i sitt eget fagmiljø. Når en
+konto mister sitt siste aktive medlemskap, sperres den i Supabase Auth.
+
+**Hvem kan hva.** Den ene avgjørelsen er `intern.medlemskapsavslag(aktor,
+mal, fagmiljo, handling)`: operasjonene stopper med den, og medlemslista i
+appen viser knappene etter den. Den som handler, må administrere fagmiljøet
+nå (`intern.er_lokal_admin_i`: aktiv tildeling, aktivt medlemskap og aktivt
+fagmiljø, eller systemarkitekt), og ingen kan handle på sin egen konto.
+
+| Handling | Systemarkitekt | Lokal administrator i fagmiljøet |
+| --- | --- | --- |
+| Gi medlemskap (`gi_medlemskap`, `legg_til_medlem` med brukernavnet) | Alle kontoer | Vanlige brukere (`intern.myndighetsniva` 1). En sperret konto bare i et fagmiljø den har vært medlem av før |
+| Avslutte medlemskap (`avslutt_medlemskap`) | Alle, unntatt den siste administratoren i fagmiljøet og det siste medlemskapet til en systemarkitekt | Vanlige brukere |
+| Utpeke og fjerne lokale administratorer (`sett_fagmiljoadministrator`) | Ja, aldri den siste; den nye må være aktivt medlem og ha valgt sitt eget passord | Nei |
+| Opprette et fagmiljø (`opprett_fagmiljo`) | Ja: lukket, ikke standard, med seg selv som medlem og administrator | Nei |
+
+En lokal administrator endrer aldri en systemarkitekt, en annen
+administrator (eller en med den gamle adminrollen) eller noen utenfor sitt
+fagmiljø. Den som ikke administrerer fagmiljøet, får vite det før noe om
+brukeren (ukjent brukernavn gir samme avslag). **Startporten S2 står:** et
+lukket fagmiljø tar bare imot systemarkitekter, både i avgjørelsen og i regel
+6. Et fagmiljø åpnes fortsatt bare i en egen, godkjent migrasjon.
+
+**Flere fagmiljøer.** En konto kan være medlem av flere. Å avslutte
+medlemskapet i A rører ikke B; var A primært, blir det eldste av de andre
+aktive primært (regel 1). Er brukeren lokal administrator i A, avsluttes det
+samtidig. Historikken står: en rad avsluttes med `status = 'deaktivert'` og
+`til`, og et nytt medlemskap er en ny rad.
+
+**Sperren i Auth.** `intern.synkroniser_kontosperre(bruker)` lar sperren
+følge `intern.har_aktivt_medlemskap`. Uten aktivt medlemskap settes
+`auth.users.banned_until` om lag hundre år fram, som Supabase gjør for
+«alltid», og øktene og fornyingsnøklene (`auth.sessions`,
+`auth.refresh_tokens`) slettes. Auth avviser da innlogging og fornying av
+økten. Et tilgangstoken som alt er utstedt, gjelder til det går ut (høyst en
+time), men databasen og Edge-funksjonene gir det ingenting (P2.0). Sperren
+står i `intern.kontosperrer`; når kontoen får et aktivt medlemskap igjen,
+oppheves den, men bare om `banned_until` fortsatt er vår verdi, så en sperre
+noen andre har satt i Auth, står. Hadde kontoen alt en sperre da vi sperret
+den, også en tidsbegrenset, settes den tilbake (`forrige_sperre`), så den
+aldri forkortes. En systemarkitekt sperres aldri.
+
+Synkroniseringen kjøres av utsatte utløsere på `medlemskap`, `systemroller`
+og statusen til `fagmiljoer`, når transaksjonen avsluttes. Den følger derfor
+tilgangen uansett hvem som endret den: operasjonene, en migrasjon eller en
+systemarkitekt i Supabase. Sperren skrives i samme transaksjon som
+medlemskapet: feiler den, rulles alt tilbake, og ingenting er halvveis.
+Migrasjonen sperret kontoene som alt sto uten aktivt medlemskap (ingen i
+produksjonen 14.11.2026).
+
+**Samtidige endringer.** Operasjonene tar den felles låsen
+(`intern.las_tilgang`, bare i `read committed`) før de kontrollerer, og
+synkroniseringen leser medlemskapene `for share`. To administratorer som
+samtidig avslutter de to siste medlemskapene til samme konto, gjør det én
+etter én, og kontoen ender sperret. Endres medlemskapene direkte i
+`repeatable read`, stoppes den andre med serialiseringsfeil (`40001`) i
+stedet for å la kontoen stå usperret.
+
+**Gjentakelse.** En handling som alt er gjort, gir det samme svaret uten å
+endre noe, så et kall som ble brutt av nettet, kan sendes igjen. Svaret er
+`{bruker, fagmiljo, status, administrator, sperret}`.
+
+**Loggen.** Hver endring føres i `tilgangslogg` med den innloggede som
+aktør og en begrunnelse: medlemskapene, administratorene og sperrene
+(`kontosperrer.insert` og `.delete`).
+
+**I appen.** «Brukere» i adminmenyen viser medlemmene i ett fagmiljø om
+gangen (`public.medlemsoversikt`, med handlingene databasen tillater på hver
+rad), og de tidligere medlemmene for seg med «Gi tilgang igjen». En
+systemarkitekt velger blant alle fagmiljøene og kan opprette nye. Det som
+fjerner tilgang, må bekreftes, og bekreftelsen sier at kontoen sperres og
+logges ut når det er det siste medlemskapet. Nye brukere opprettes i
+standardfagmiljøet som før. I en fane som står åpen, ser
+`src/auth/tilgangsstans.ts` etter avslaget om avsluttet medlemskap i hvert
+svar klienten får; da spør økten `min_medlemskapsstatus()`, og er svaret
+`avsluttet`, tømmes mellomlageret og det som er husket om kontoen, og porten
+viser «Ingen tilgang». Et brudd i nettet endrer ingenting.
+
+**Ikke med.** Arkivering og navnebytte av fagmiljøer, og invitasjoner, kommer
+når de trengs. Innloggingssiden sier det samme til en sperret konto som ved
+feil passord, så den ikke røper hvem som har konto.
+
+**Tilbakeføring.** En ny migrasjon som fjerner de tre utløserne, funksjonene
+og `intern.kontosperrer`, setter regel 1 og `mine_rettigheter()` tilbake, og
+opphever sperrene som står i tabellen (`banned_until = forrige_sperre` der
+den er vår verdi). Ingen medlemskap endres av tilbakeføringen.
+
+**Testene.** `src/__tests__/medlemskapsadministrasjon.test.ts`: A→B og B→A,
+flere medlemskap, det siste medlemskapet (sperren, øktene, loggen), det samme
+gyldige tokenet etterpå, tilbakekalt administrator, vernet av administratorer
+og systemarkitekter, reaktivering, gjentakelse, feil i Auth, startporten og at
+knappene i medlemslista stemmer med operasjonene.
+`src/__tests__/medlemskap.samtidighet.test.ts`: samtidige avslutninger på ekte
+Postgres 17, i begge rekkefølger og isolasjonsnivåer.
+`avsluttetmedlemskap.test.tsx`: den åpne fanen; `konto.test.tsx`:
+medlemslista.
 
 ## Hjelperne for tilgang per fagmiljø
 
@@ -523,7 +629,9 @@ noen rolle (`endepunkt` i `supabase/functions/_edge/kontekst.ts`):
 myndigheten avgjøres i databasen i samme kall som handlingen.
 
 Appen viser menyer og knapper etter `public.mine_rettigheter()`
-(`{systemarkitekt, administrerer, stoffregister, opprett_bruker}`), som
+(`{systemarkitekt, administrerer, arbeidsfagmiljo, stoffregister,
+opprett_bruker}`; hvert fagmiljø i samme form, `intern.fagmiljoreferanse`:
+`{id, nokkel, navn, standard, apent}`), som
 bygger på de samme avgjørelsene som funksjonene og hjelperne, og leses med
 `useRettigheter()` (`src/auth/rettigheter.tsx`). Det er et grensesnitt, ikke
 en kontroll; hver funksjon kontrollerer på nytt. Testene står i
@@ -798,6 +906,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `innlogget` | `security definer` som bare krever innlogging, også for skriving |
 | `eier` | `security definer` som bare rører den innloggedes egne rader |
 | `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
+| `medlemskapsmyndighet` | `security definer` som endrer eller viser medlemskap etter den innloggedes myndighet i fagmiljøet (`intern.medlemskapsavslag`, P3) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
 | `stoffregister` | Krever rett til å endre stoffregisteret (`intern.krev_registerbruker`) |
