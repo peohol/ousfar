@@ -100,6 +100,14 @@ describe('dokumentene sier det samme', () => {
     expect(mal).toMatch(/utenfor/)
   })
 
+  it('PR-malen begynner med sammendraget for mennesker, og AGENTS.md krever det', () => {
+    expect(mal.trimStart()).toMatch(/^## Sammendrag\n/)
+    const sammendrag = mal.split(/^## /m)[1]!
+    for (const del of ['Hva er gjort', 'Hvorfor', 'menneskelig systemarkitekt']) expect(sammendrag).toContain(del)
+    expect(les('AGENTS.md')).toMatch(/Øverst står et kort sammendrag for mennesker/)
+    expect(ansvar).toMatch(/øverst\s+et kort sammendrag/)
+  })
+
   it('har seks prosjektinstrukser, én per prosjekt og agent, som hver peker til fasiten og eier riktig etikett', () => {
     const blokker = [...instrukser.matchAll(/^## (Claude|ChatGPT) – (OUSFAR \S+)\n[\s\S]*?```text\n([\s\S]*?)```/gm)]
     const navn = blokker.map((b) => `${b[1]} – ${b[2]}`)
