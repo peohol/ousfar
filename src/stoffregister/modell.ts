@@ -167,7 +167,7 @@ const nei = (grunn: string): Lov => ({ lov: false, grunn })
 
 /**
  * Om fagsiden kan legges i papirkurven. Alle kan slette en side som bare har
- * et navn; en side med innhold bare en administrator. Et stoff uten side i
+ * et navn; en side med innhold bare en systemarkitekt. Et stoff uten side i
  * databasen, eller som fortolkningen lenker til, kan bare arkiveres: siden
  * lenkene dit skal virke, kan den ikke forsvinne.
  */
@@ -176,14 +176,14 @@ export function kanSletteStoff(stoff: Registerstoff, admin: boolean): Lov {
     return nei('Fagsiden er koblet til laboratorieanalyser i fortolkningen og kan ikke slettes. Arkiver den i stedet.')
   }
   if (!stoff.side) return nei('Stoffet har ingen fagside å slette. Arkiver det i stedet.')
-  if (stoff.innhold && !admin) return nei('Bare administratorer kan slette en fagside med innhold. Arkiver den i stedet.')
+  if (stoff.innhold && !admin) return nei('Bare systemarkitektene kan slette en fagside med innhold. Arkiver den i stedet.')
   return JA
 }
 
-/** Om kategorien kan slettes. En kategori med stoffer bare av en administrator. */
+/** Om kategorien kan slettes. En kategori med stoffer bare av en systemarkitekt. */
 export function kanSletteKategori(kategori: Pick<Registerkategori, 'stoffer'>, admin: boolean): Lov {
   if (kategori.stoffer.length > 0 && !admin) {
-    return nei('Kategorien har stoffer. Flytt dem først, eller be en administrator slette den.')
+    return nei('Kategorien har stoffer. Flytt dem først, eller be en systemarkitekt slette den.')
   }
   return JA
 }

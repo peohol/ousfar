@@ -1,6 +1,7 @@
 /**
  * Nødstoppen for de kliniske verktøyene i databasen (P11.6): bare en
- * administrator kan sette og oppheve en sperre, alle innloggede kan lese de
+ * systemarkitekt kan sette og oppheve en sperre (P2d; den gamle adminrollen
+ * gir det ikke), alle innloggede kan lese de
  * aktive, ingen kan lese eller skrive tabellen direkte, og ingen sperre
  * forsvinner — mot en ekte database bygd av migrasjonene. Til slutt hele
  * tilbakerullingsscenariet slik appen ser det, gjennom den samme lesingen.
@@ -39,12 +40,15 @@ describe('nødstoppen for de kliniske verktøyene', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'bo.lege', fornavn: 'Bo', etternavn: 'Lege', rolle: 'user' })
   }, 60_000)
 
-  it('lar bare en administrator sette og oppheve en sperre, og alle innloggede lese de aktive', async () => {
+  it('lar bare en systemarkitekt sette og oppheve en sperre, og alle innloggede lese de aktive', async () => {
     expect(await feilFra(() => sett(bruker, 'alle', null, 'Ikke min sak.'))).toMatchObject({ code: '42501' })
+    const gammelAdmin = await opprettBruker(db, { brukernavn: 'gammel.admin', fornavn: 'Gro', etternavn: 'Admin', rolle: 'admin' })
+    expect(await feilFra(() => sett(gammelAdmin, 'alle', null, 'Med den gamle rollen.'))).toMatchObject({ code: '42501' })
+    expect(await feilFra(() => en(gammelAdmin, 'select public.verktoysperrehistorikk()'))).toMatchObject({ code: '42501' })
     const id = await sett(admin, 'verktoy', 'trappe-ned-antidepressiv', '  Feil i pilot.  ')
     expect(await aktive(bruker)).toEqual([{ id, omfang: 'verktoy', mal: 'trappe-ned-antidepressiv', grunn: 'Feil i pilot.', satt_kl: expect.any(String), satt_av: 'Ada Admin' }])
     // Uten innlogging kan sperrene ikke leses, og tabellen kan ikke leses eller skrives direkte av noen.
@@ -100,7 +104,7 @@ describe('nødstoppen for de kliniske verktøyene', () => {
     const id = await leder.sett('regel', 'depot-paliperidon-xeplion', 'Syntetisk kritisk feil: feil injeksjonsdag i pilot.')
     expect(usperrede(await lege.les(), verktoy, regler)).toEqual([regler[1]])
     // En vanlig bruker kan ikke oppheve den; lesingen kaster ikke for det, men kallet avvises.
-    await expect(lagVerktoysperrelager(klientFor(bruker)).opphev(id, 'Prøver.')).rejects.toThrow(/Bare administratorer/)
+    await expect(lagVerktoysperrelager(klientFor(bruker)).opphev(id, 'Prøver.')).rejects.toThrow(/Bare systemarkitektene/)
     await leder.opphev(id, 'Rettet i ny regelversjon etter uavhengig kontroll.')
     expect(usperrede(await lege.les(), verktoy, regler)).toEqual(regler)
     expect((await leder.historikk()).find((h) => h.id === id)).toMatchObject({ omfang: 'regel', mal: 'depot-paliperidon-xeplion', opphevet_av: 'Ada Admin', opphevet_grunn: 'Rettet i ny regelversjon etter uavhengig kontroll.' })

@@ -47,6 +47,7 @@ const { Endringslogg } = await import('../components/Endringslogg')
 const { ENDRINGSLOGG } = await import('../data/endringslogg')
 const { Port } = await import('../components/konto/Port')
 const { Brukerliste } = await import('../components/konto/Brukerliste')
+const { INGEN_RETTIGHETER, RettigheterKilde } = await import('../auth/rettigheter')
 const { INGENTING_A_PUBLISERE, Redigeringshandlinger, statustekst } = await import(
   '../components/stoffside/Redigeringslinje'
 )
@@ -238,11 +239,18 @@ describe('porten', () => {
 const BEGGE = { nyttPassord: true, endreRolle: true }
 const BARE_PASSORD = { nyttPassord: true, endreRolle: false }
 
-/** Rendrer lista for `meg` med svaret databasen gir om myndigheten. */
-async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][]) {
+const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
+const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [], stoffregister: true, opprettBruker: true }
+
+/** Rendrer lista for `meg` med svarene databasen gir om myndigheten og rettighetene. */
+async function brukerlista(meg: Profil, handlinger: [string, typeof BEGGE][], rettigheter = INGEN_RETTIGHETER) {
   okt.profil = meg
   okt.handlinger = new Map(handlinger)
-  render(<Brukerliste apen onLukk={() => {}} />)
+  render(
+    <RettigheterKilde verdi={rettigheter}>
+      <Brukerliste apen onLukk={() => {}} />
+    </RettigheterKilde>,
+  )
   const lag = screen.getByRole('dialog', { name: 'Brukere' })
   const rader = await within(lag).findAllByRole('listitem')
   return { lag, rader }
@@ -271,24 +279,39 @@ describe('brukerlista', () => {
     await waitFor(() => expect(within(lag).queryByRole('alert')).toBeNull())
   })
 
-  it('gir en systemarkitekt med vanlig brukerrolle knappene databasen tillater, men ikke «Opprett bruker»', async () => {
+  it('gir en systemarkitekt med vanlig brukerrolle knappene databasen tillater, og «Opprett bruker»', async () => {
     const arkitekt = profil('1', 'Anne', 'Admin')
-    const { lag, rader } = await brukerlista(arkitekt, [
-      ['2', BEGGE],
-      ['3', BEGGE],
-    ])
+    const { lag, rader } = await brukerlista(
+      arkitekt,
+      [
+        ['2', BEGGE],
+        ['3', BEGGE],
+      ],
+      SYSTEMARKITEKT,
+    )
     expect(await within(rader[1]!).findByRole('button', { name: 'Gjør til admin: Kari Nordmann' })).toBeTruthy()
     expect(within(rader[2]!).getByRole('button', { name: 'Nytt passord for Ola Svendsen' })).toBeTruthy()
-    expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+    expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
   })
 
-  it('gir en lokal administrator uten adminrollen bare «Nytt passord», og bare der databasen tillater det', async () => {
+  it('gir en lokal administrator uten adminrollen bare «Nytt passord» der databasen tillater det, og «Opprett bruker» i standardfagmiljøet', async () => {
     const lokal = profil('1', 'Anne', 'Admin')
-    const { lag, rader } = await brukerlista(lokal, [['2', BARE_PASSORD]])
+    const { lag, rader } = await brukerlista(lokal, [['2', BARE_PASSORD]], { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBruker: true })
     expect(await within(rader[1]!).findByRole('button', { name: 'Nytt passord for Kari Nordmann' })).toBeTruthy()
     expect(within(lag).queryByRole('button', { name: /Gjør til admin|Fjern admin/ })).toBeNull()
     expect(within(rader[2]!).queryAllByRole('button')).toEqual([])
-    expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+    expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
+  })
+
+  it('gir ikke «Opprett bruker» for den gamle adminrollen alene, eller en lokal administrator utenfor standardfagmiljøet', async () => {
+    for (const rettigheter of [
+      INGEN_RETTIGHETER,
+      { ...INGEN_RETTIGHETER, administrerer: [{ id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi' }] },
+    ]) {
+      const { lag } = await brukerlista(MEG, [], rettigheter)
+      expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
+      cleanup()
+    }
   })
 
   it('viser ingen handlinger på egen rad, selv om svaret skulle ha med den innloggede', async () => {

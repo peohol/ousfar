@@ -111,7 +111,7 @@ describe('kildesakene fra databasen til redaktørvisningen', () => {
 
   beforeAll(async () => {
     db = await nyDatabase()
-    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin' })
+    admin = await opprettBruker(db, { brukernavn: 'admin', fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     tjener = kallSom(db, 'service_role')
   }, 60_000)
 

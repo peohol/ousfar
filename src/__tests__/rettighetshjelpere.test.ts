@@ -95,7 +95,7 @@ describe('intern.kan_lese_omfang', () => {
 
   it('gir grupper bare til systemarkitekten, og nei for alt den ikke kjenner', async () => {
     for (const p of PERSONLISTE) {
-      const forventet = p === 'systemarkitekt'
+      const forventet = (PERSONER[p] as { systemarkitekt?: boolean }).systemarkitekt === true
       expect(await svar(`select intern.kan_lese_omfang('gruppe', null, $1)`, [galleri.id[p]]), p).toBe(forventet)
       expect(await svar(`select intern.kan_lese_omfang('ukjent', $1, $2)`, [galleri.fagmiljo.A, galleri.id[p]]), p).toBe(false)
       expect(await svar(`select intern.kan_lese_omfang(null, $1, $2)`, [galleri.fagmiljo.A, galleri.id[p]]), p).toBe(false)
@@ -120,7 +120,7 @@ describe('funksjonene radsikkerhetsreglene og appen bruker', () => {
         (await tx.query<{ adm: string[]; sa: boolean }>('select public.mine_administrerte_fagmiljoer() as adm, public.er_systemarkitekt() as sa')).rows[0]!,
       )
       expect([...adm].sort(), p).toEqual(adminI(p).map((f) => galleri.fagmiljo[f]).sort())
-      expect(sa, p).toBe(p === 'systemarkitekt')
+      expect(sa, p).toBe((PERSONER[p] as { systemarkitekt?: boolean }).systemarkitekt === true)
     }
   })
 

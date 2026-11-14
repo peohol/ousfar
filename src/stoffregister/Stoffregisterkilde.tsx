@@ -18,8 +18,9 @@ import { endreStruktur, type Registerdatabase, type Registerendring } from './mo
  * vises, rettes av hentingen. Registeret hentes på nytt når fanen blir synlig
  * igjen, så endringer fra andre kommer med.
  *
- * Når registeret er hentet første gang, ryddes papirkurven for det som har
- * ligget der i mer enn 30 dager (`rydd_stoffpapirkurven`).
+ * Når registeret er hentet første gang av noen som kan endre det, ryddes
+ * papirkurven for det som har ligget der i mer enn 30 dager
+ * (`rydd_stoffpapirkurven`).
  */
 /**
  * `oppsummering` er det brukeren skrev om endringen til endringsloggen, der
@@ -49,8 +50,10 @@ export interface Stoffregisterkilde {
   /** Den korte oppsummeringen av stoffet, fra fagsiden. `null` når den ikke er skrevet. */
   oppsummering: (slug: string) => Riktekstdokument | null
   handlinger: Registerhandlinger
-  /** Om den innloggede er administrator: ser papirkurven og kan slette det som har innhold. */
+  /** Om den innloggede er systemarkitekt: ser utkastene og papirkurven, og kan slette det som har innhold. */
   admin: boolean
+  /** Om den innloggede kan endre inndelingen og arkivet (`mine_rettigheter().stoffregister`). Ellers bare lesing. */
+  kanEndre: boolean
   /** Meldingen når registeret ikke kunne hentes, ellers `null`. */
   feil: string | null
   hentPaNytt: () => void
@@ -59,6 +62,7 @@ export interface Stoffregisterkilde {
 interface Valg {
   lager: Registerlager
   admin: boolean
+  kanEndre: boolean
   /** Lager utkastet til en ny fagside, som en del av handlingen. Bare for administratorer. */
   opprettSide?: (navn: string, slug: string, endring: Endringskontekst) => Promise<void>
 }
@@ -69,7 +73,7 @@ interface Lokal {
   struktur: Registerstruktur
 }
 
-export function useLagStoffregisterkilde({ lager, admin, opprettSide }: Valg): Stoffregisterkilde {
+export function useLagStoffregisterkilde({ lager, admin, kanEndre, opprettSide }: Valg): Stoffregisterkilde {
   const henting = useHenting(useCallback(() => lager.les(admin ? 'utkast' : 'publisert'), [lager, admin]))
   const { hentPaNytt } = henting
   const data = henting.tilstand.status === 'klar' ? henting.tilstand.data : null
@@ -102,6 +106,7 @@ export function useLagStoffregisterkilde({ lager, admin, opprettSide }: Valg): S
   )
 
   useEffect(() => {
+    if (!kanEndre) return
     let aktuell = true
     lager.rydd().then(
       (antall) => {
@@ -109,15 +114,18 @@ export function useLagStoffregisterkilde({ lager, admin, opprettSide }: Valg): S
       },
       () => undefined,
     )
+    return () => {
+      aktuell = false
+    }
+  }, [lager, hentPaNytt, kanEndre])
+
+  useEffect(() => {
     const naarSynlig = () => {
       if (document.visibilityState === 'visible' && underveis.current === 0) hentPaNytt()
     }
     document.addEventListener('visibilitychange', naarSynlig)
-    return () => {
-      aktuell = false
-      document.removeEventListener('visibilitychange', naarSynlig)
-    }
-  }, [lager, hentPaNytt])
+    return () => document.removeEventListener('visibilitychange', naarSynlig)
+  }, [hentPaNytt])
 
   const handlinger = useMemo<Registerhandlinger>(
     () => ({
@@ -180,8 +188,8 @@ export function useLagStoffregisterkilde({ lager, admin, opprettSide }: Valg): S
 
   const feil = henting.tilstand.status === 'feil' ? henting.tilstand.melding : null
   return useMemo(
-    () => ({ register, oppsummering, handlinger, admin, feil, hentPaNytt }),
-    [register, oppsummering, handlinger, admin, feil, hentPaNytt],
+    () => ({ register, oppsummering, handlinger, admin, kanEndre, feil, hentPaNytt }),
+    [register, oppsummering, handlinger, admin, kanEndre, feil, hentPaNytt],
   )
 }
 

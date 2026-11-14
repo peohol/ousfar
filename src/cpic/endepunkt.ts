@@ -1,11 +1,11 @@
 /**
  * Serverendepunktet for CPIC: `/api/cpic-synk` synkroniserer. Vercel kaller
  * det hver uke med `GET` og `Authorization: Bearer <CRON_SECRET>`. En
- * administrator kan be om det samme med `POST` og sin egen innlogging.
+ * systemarkitekt kan be om det samme med `POST` og sin egen innlogging.
  * Tilgangen og oppkoblingen står i `src/server/tilgang.ts`.
  */
 import { kallMot } from '../legemiddeldata/lager.js'
-import { erAdmin, hvem, serverklient, svar, type Adminsjekk, type Miljo } from '../server/tilgang.js'
+import { erSystemarkitekt, hvem, serverklient, svar, type Arkitektsjekk, type Miljo } from '../server/tilgang.js'
 import { lagCpicApi, type CpicApi } from './api.js'
 import { lagCpiclager } from './lager.js'
 import { synkroniserCpic, type Synkresultat, type Synkvalg } from './synk.js'
@@ -15,10 +15,10 @@ type Synkroniser = (valg: Pick<Synkvalg, 'lager' | 'api' | 'utlostAv'>) => Promi
 export async function behandleCpicSynk(
   foresporsel: Request,
   miljo: Miljo,
-  { synkroniser = synkroniserCpic, adminsjekk = erAdmin, api }: { synkroniser?: Synkroniser; adminsjekk?: Adminsjekk; api?: CpicApi } = {},
+  { synkroniser = synkroniserCpic, arkitektsjekk = erSystemarkitekt, api }: { synkroniser?: Synkroniser; arkitektsjekk?: Arkitektsjekk; api?: CpicApi } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'GET' && foresporsel.method !== 'POST') return svar(405, { feil: 'Bare GET og POST.' })
-  const utlostAv = await hvem(foresporsel, miljo, adminsjekk)
+  const utlostAv = await hvem(foresporsel, miljo, arkitektsjekk)
   if (!utlostAv) return svar(401, { feil: 'Ikke tilgang.' })
 
   const klient = serverklient(miljo)

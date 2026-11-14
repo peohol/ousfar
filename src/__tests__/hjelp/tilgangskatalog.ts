@@ -69,10 +69,15 @@ export async function kallbareFunksjoner(db: PGlite): Promise<KallbarFunksjon[]>
   return rows
 }
 
-const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt)\s*\(/
+const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt|er_systemarkitekt|krev_systemarkitekt)\s*\(/
+const KALLER_REGISTERKONTROLL = /\bkrev_registerbruker\s*\(/
 const BRUKER_INNLOGGET = /\bauth\s*\.\s*uid\s*\(/
-/** D8: idéene og oppgavene går gjennom porten, som krever en systemarkitekt. */
-const KALLER_SYSTEMARKITEKTKONTROLL = /\b(er_systemarkitekt|krev_idevalg_admin)\s*\(/
+/**
+ * Krever systemarkitekt: idéene og oppgavene gjennom porten (D8), og
+ * systemrettighetene gjennom `intern.krev_systemarkitekt` eller kuratoren
+ * (`kuratering.admin_aktor`) (P2d).
+ */
+const KALLER_SYSTEMARKITEKTKONTROLL = /\b(er_systemarkitekt|krev_idevalg_admin|krev_systemarkitekt|admin_aktor)\s*\(/
 
 /**
  * De felles hjelperne for rekkevidde per fagmiljø (docs/fagmiljoer.md,
@@ -107,6 +112,9 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
     case 'admin-utvidet':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_ADMINKONTROLL.test(f.kilde) ? null : 'kaller ingen adminkontroll'
+    case 'stoffregister':
+      if (!f.definer) return 'er ikke security definer'
+      return KALLER_REGISTERKONTROLL.test(f.kilde) ? null : 'krever ikke rett til å endre stoffregisteret'
     case 'eier':
       if (!f.definer) return 'er ikke security definer'
       return BRUKER_INNLOGGET.test(f.kilde) ? null : 'ser ikke på den innloggede'

@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { hentMineKontohandlinger, type Kontohandlinger } from '../../auth/api'
+import { useCallback, useMemo, useState } from 'react'
 import { klient } from '../../auth/klient'
+import { harAdministrasjon, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
-import { useProfil } from '../../auth/okt'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
@@ -43,34 +42,14 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
 }
 
 /**
- * Om den innloggede har myndighet over andres kontoer uten den gamle
- * adminrollen: en systemarkitekt eller lokal administrator med rollen `user`.
- * Spørres bare når `aktiv`; et svar som feiler, gir ingen meny.
- */
-function useKontomyndighet(aktiv: boolean, hent: () => Promise<ReadonlyMap<string, Kontohandlinger>>): boolean {
-  const [har, setHar] = useState(false)
-  useEffect(() => {
-    if (!aktiv) return
-    let gjeldende = true
-    ;(async () => hent())().then(
-      (handlinger) => gjeldende && setHar(handlinger.size > 0),
-      () => gjeldende && setHar(false),
-    )
-    return () => {
-      gjeldende = false
-    }
-  }, [aktiv, hent])
-  return aktiv && har
-}
-
-/**
- * Administratorenes egen meny i toppmenyen, til venstre for kontoen: brukerne,
- * driftstatusen for datakildene, kildeovervåkingen og nødstoppen for de
- * kliniske verktøyene, og autoerstatt-reglene i teksteditorene. En
- * systemarkitekt eller lokal administrator uten den gamle adminrollen ser den
- * med bare «Brukere», der vedkommende kan gi nytt passord eller endre roller
- * etter myndigheten sin. Andre ser den ikke. Den er et grensesnitt, ikke en tilgangskontroll: databasen og
- * Edge-funksjonene slår opp rollen selv. Bør en datakilde ses over, eller
+ * Administrasjonsmenyen i toppmenyen, til venstre for kontoen, etter
+ * rettighetene databasen gir den innloggede (`useRettigheter`), ikke den gamle
+ * adminrollen. Systemarkitektene får brukerne, driftstatusen for datakildene,
+ * kurateringene, kildeovervåkingen og nødstoppen for de kliniske verktøyene,
+ * og autoerstatt-reglene i teksteditorene. En lokal administrator får bare
+ * «Brukere», der vedkommende kan gi nytt passord og opprette brukere etter
+ * myndigheten sin. Andre ser den ikke. Den er et grensesnitt, ikke en
+ * tilgangskontroll: databasen og Edge-funksjonene kontrollerer selv. Bør en datakilde ses over, eller
  * venter en faglig kildesak på beslutning (eller et mulig sikkerhetsproblem
  * vurderes), står det en prikk på knappen og på valget. Tekniske avvik i
  * kildeovervåkingen gir ingen prikk; de følges opp i det tekniske sporet.
@@ -80,16 +59,14 @@ export function Adminmeny({
   kuratering,
   kildelager,
   fagsaker,
-  kontohandlinger = hentMineKontohandlinger,
 }: {
   leser?: Datakildeleser
   kuratering?: Kurateringsklient
   kildelager?: Kildeovervakingslager
   fagsaker?: Fagsaklager
-  kontohandlinger?: () => Promise<ReadonlyMap<string, Kontohandlinger>>
 } = {}) {
-  const admin = useProfil().role === 'admin'
-  const bareBrukere = useKontomyndighet(!admin, kontohandlinger)
+  const rettigheter = useRettigheter()
+  const admin = rettigheter.systemarkitekt
   const [panel, setPanel] = useBevart<Panel>('adminmeny', null)
   // Bare én endring per datakilde hentes; vurderingen er den samme som i panelet.
   const datakilder = useTilsyn(
@@ -125,7 +102,7 @@ export function Adminmeny({
   const kildevarsel = kilder.meldinger.length ? kilder.meldinger.join('; ') : undefined
   const varsel = [sesOver, kildevarsel].filter(Boolean).join('; ') || undefined
 
-  if (!admin && !bareBrukere) return null
+  if (!harAdministrasjon(rettigheter)) return null
 
   return (
     <>

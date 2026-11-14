@@ -9,20 +9,17 @@ import { Avvist } from './kontekst.ts'
 type Adminklient = SupabaseContext['supabaseAdmin']
 
 /**
- * Klarerer ett brukernavn for kontoopprettelse.
+ * Klarerer ett brukernavn for kontoopprettelse, når `aktor` har myndighet til
+ * å opprette brukere (systemarkitekt, eller lokal administrator i fagmiljøet
+ * nye kontoer blir medlemmer av). Myndigheten og klareringen avgjøres i
+ * databasen i samme kall (`kontooperasjon_klarer_konto`).
  *
  * Databasetriggeren på `auth.users` krever en slik reservasjon og bruker den
  * opp. Den kan bare legges inn med hemmelig nøkkel, og er dermed beviset på
  * at kontoen kommer fra adminveien og ikke fra en selvregistrering.
  */
-export async function reserverBrukernavn(
-  admin: Adminklient,
-  brukernavn: string,
-): Promise<void> {
-  const { error } = await admin
-    .from('kontoreservasjoner')
-    .upsert({ username: brukernavn, reservert_kl: new Date().toISOString() })
-  if (error) throw error
+export async function reserverBrukernavn(admin: Adminklient, aktor: string, brukernavn: string): Promise<void> {
+  await kontofunksjon<void>(admin, 'kontooperasjon_klarer_konto', { aktor, brukernavn })
 }
 
 /** Tar reservasjonen tilbake når kontoen likevel ikke ble opprettet. */

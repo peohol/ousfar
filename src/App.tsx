@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
+import { RettigheterKilde, useMineRettigheter } from './auth/rettigheter'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
 import { nettleserlager } from './auth/mellomlager'
@@ -141,6 +142,9 @@ export default function App() {
   const dispatch = useCallback((action: Action) => setState((forrige) => reducer(forrige, action)), [setState])
   const [failedCopy, setFailedCopy] = useState<string | null>(null)
   const profil = useProfil()
+  // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
+  // rettighetene i databasen, ikke den gamle adminrollen (P2d).
+  const rettigheter = useMineRettigheter(profil.id)
   const tema = useKontovalg(TEMA, profil.id)
   const bevegelse = useKontovalg(BEVEGELSE, profil.id)
   // Visualiseringen i THC-syremodulen, med den valgte eller alle
@@ -241,10 +245,14 @@ export default function App() {
     },
     [faginnhold.lager],
   )
+  // Utkastene og papirkurven er for systemarkitektene, inndelingen for dem
+  // med rett til å endre registeret. En ny fagside krever begge deler og
+  // retten til å redigere faginnholdet.
   const stoffregister = useLagStoffregisterkilde({
     lager: registerlager,
-    admin: faginnhold.kanRedigere,
-    ...(faginnhold.kanRedigere && { opprettSide }),
+    admin: rettigheter.systemarkitekt,
+    kanEndre: rettigheter.stoffregister,
+    ...(faginnhold.kanRedigere && rettigheter.systemarkitekt && rettigheter.stoffregister && { opprettSide }),
   })
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
   // Favorittene står både på stoffsidene og i menyen, med stoffets egen
@@ -938,6 +946,11 @@ export default function App() {
       </StoffregisterkildeProvider>
     </ToppmenyKilde>
   )
-  // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt.
-  return <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
+  // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
+  // og det samme gjør rettighetene.
+  return (
+    <RettigheterKilde verdi={rettigheter}>
+      <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
+    </RettigheterKilde>
+  )
 }

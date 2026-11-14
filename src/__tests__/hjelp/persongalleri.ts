@@ -64,6 +64,15 @@ export const PERSONER = {
     systemarkitekt: true,
     beskrivelse: 'Systemarkitekt, primærmedlem i A',
   },
+  // Som maxhag: systemarkitekt og lokal administrator i B, uten den gamle
+  // adminrollen (D3). Viser at systemrettighetene ikke bygger på rollen (P2d).
+  arkitektB: {
+    rolle: 'user',
+    primaer: 'B',
+    lokalAdminI: ['B'],
+    systemarkitekt: true,
+    beskrivelse: 'Systemarkitekt og lokal administrator i B, uten den gamle adminrollen',
+  },
   vanligA: { rolle: 'user', primaer: 'A', beskrivelse: 'Vanlig bruker i A' },
   vanligB: { rolle: 'user', primaer: 'B', beskrivelse: 'Vanlig bruker i B' },
   adminA: { rolle: 'admin', primaer: 'A', lokalAdminI: ['A'], beskrivelse: 'Lokal administrator i A' },

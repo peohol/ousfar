@@ -104,17 +104,20 @@ function lagLager(): Registerlager & { data: Registerdatabase } {
 function Side({
   lager,
   admin,
+  kanEndre = true,
   opprettSide,
   kuratering,
   children,
 }: {
   lager: Registerlager
   admin: boolean
+  /** Om den innloggede kan endre registeret; i de fleste testene kan vedkommende det. */
+  kanEndre?: boolean
   opprettSide?: (navn: string, slug: string, endring: Endringskontekst) => Promise<void>
   kuratering?: Kurateringsklient
   children?: ReactNode
 }) {
-  const kilde = useLagStoffregisterkilde({ lager, admin, ...(opprettSide && { opprettSide }) })
+  const kilde = useLagStoffregisterkilde({ lager, admin, kanEndre, ...(opprettSide && { opprettSide }) })
   return (
     <ToppmenyKilde>
       <Toppmeny meny={null} konto={null} />
@@ -130,12 +133,17 @@ function Side({
 const onApneFortolkning = vi.fn()
 const onLukk = vi.fn()
 
-async function vis({ admin = false, lager = lagLager(), kuratering }: { admin?: boolean; lager?: ReturnType<typeof lagLager>; kuratering?: Kurateringsklient } = {}) {
+async function vis({
+  admin = false,
+  kanEndre = true,
+  lager = lagLager(),
+  kuratering,
+}: { admin?: boolean; kanEndre?: boolean; lager?: ReturnType<typeof lagLager>; kuratering?: Kurateringsklient } = {}) {
   onApneFortolkning.mockClear()
   onLukk.mockClear()
   render(
     <TipsLag>
-      <Side lager={lager} admin={admin} kuratering={kuratering} />
+      <Side lager={lager} admin={admin} kanEndre={kanEndre} kuratering={kuratering} />
     </TipsLag>,
   )
   await screen.findByText(/stoffer i \d+ kategorier/)
@@ -332,7 +340,24 @@ describe('arkivet og papirkurven', () => {
     await waitFor(() => expect(within(arkiv).getByText('Ingenting er arkivert.')).toBeTruthy())
   })
 
-  it('lar alle slette en side med bare et navn, men bare administratorer ser papirkurven', async () => {
+  it('lar den som ikke kan endre registeret, lese det og arkivet, men ikke endre noe eller rydde papirkurven', async () => {
+    const lager = lagLager()
+    lager.data.struktur = endreStruktur(lager.data.struktur, { type: 'sett-status', stoff: 'teststoff', status: 'arkivert' })
+    await vis({ kanEndre: false, lager })
+    const toppmeny = screen.getByRole('navigation', { name: 'Toppmeny' })
+    expect(within(toppmeny).queryByRole('button', { name: 'Rediger stoffregisteret' })).toBeNull()
+    const arkiv = await apne('Arkiv')
+    expect(within(arkiv).getByRole('link', { name: 'Teststoff' })).toBeTruthy()
+    expect(within(arkiv).queryAllByRole('button')).toEqual([])
+    expect(lager.rydd).not.toHaveBeenCalled()
+  })
+
+  it('rydder papirkurven når den som kan endre registeret, åpner det', async () => {
+    const lager = await vis()
+    await waitFor(() => expect(lager.rydd).toHaveBeenCalledOnce())
+  })
+
+  it('lar alle med rett til registeret slette en side med bare et navn, men bare systemarkitektene ser papirkurven', async () => {
     const lager = await vis()
     expect(screen.queryByRole('heading', { name: 'Papirkurv' })).toBeNull()
     await rediger()
@@ -521,10 +546,10 @@ describe('en ny fagside', () => {
 
 describe('på fagsiden', () => {
   /** Menyen og meldingen øverst på fagsiden til stoffet, slik `Stoffside` viser dem. */
-  async function visFagside(slug: string, { admin = false, lager = lagLager() } = {}) {
+  async function visFagside(slug: string, { admin = false, kanEndre = true, lager = lagLager() } = {}) {
     render(
       <TipsLag>
-        <Side lager={lager} admin={admin}>
+        <Side lager={lager} admin={admin} kanEndre={kanEndre}>
           <Registerhandlingskilde>
             <Fagsidebanner slug={slug} />
             <Fagsidemeny slug={slug} />
@@ -548,6 +573,17 @@ describe('på fagsiden', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Hent tilbake' }))
     expect(lager.arkiverStoff).toHaveBeenLastCalledWith('teststoff', false)
     expect(await screen.findByRole('button', { name: 'Mer for fagsiden' })).toBeTruthy()
+  })
+
+  it('gir ingen meny for registeret og ingen «Hent tilbake» til den som ikke kan endre det', async () => {
+    const lager = lagLager()
+    lager.data.struktur = endreStruktur(lager.data.struktur, { type: 'sett-status', stoff: 'teststoff', status: 'arkivert' })
+    await visFagside('teststoff', { kanEndre: false, lager })
+    expect(await screen.findByText(/Fagsiden er arkivert/)).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Hent tilbake' })).toBeNull()
+    cleanup()
+    await visFagside('sertralin', { kanEndre: false })
+    expect(screen.queryByRole('button', { name: 'Mer for fagsiden' })).toBeNull()
   })
 
   it('lar ikke en fagside fortolkningen lenker til, slettes', async () => {
