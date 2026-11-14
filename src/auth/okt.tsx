@@ -91,7 +91,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
           // vite det, ikke se tomme sider. Det som er lagret i nettleseren,
           // tømmes. Ellers er kontoen fjernet mens fanen sto åpen, og
           // brukeren hører hjemme på innloggingssiden.
-          if (!(await api.harAktivtMedlemskap())) {
+          if ((await api.hentMedlemskapsstatus()) === 'avsluttet') {
             if (!gjelder) return
             await tomMellomlageret()
             setProfil(null)

@@ -176,8 +176,10 @@ listen over har kontrollen først.
 
 **Avklart i P2.0 (tekniske valg):**
 
-- `har_aktivt_medlemskap()` er eneste inngang for en bruker uten aktivt
-  medlemskap; egne `medlemskap`-rader er heller ikke synlige.
+- `har_aktivt_medlemskap()` og `min_medlemskapsstatus()` er eneste innganger
+  for en bruker uten aktivt medlemskap, og svarer bare om vedkommende selv;
+  egne `medlemskap`-rader er heller ikke synlige. Statusen skiller en konto
+  uten aktivt medlemskap (beskjeden) fra en slettet konto (utlogging).
 - Ytelsen er målt før og etter (`docs/fagmiljoer.md`, «Ytelse»).
 - Edge-kravet ligger i den felles innloggingskontrollen (`hentInnlogget` i
   `_edge/kontekst.ts`), ikke i en kopi per funksjon.

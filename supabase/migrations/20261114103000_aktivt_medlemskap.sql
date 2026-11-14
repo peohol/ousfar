@@ -57,8 +57,7 @@ revoke all on function intern.har_aktivt_medlemskap(uuid) from public, anon, aut
 comment on function intern.har_aktivt_medlemskap(uuid) is
   'P2.0: aktivt medlemskap i et aktivt fagmiljø, eller systemarkitekt. Se docs/fagmiljoer.md.';
 
--- Den innloggedes eget svar. Radsikkerhetsreglene bruker den, og appen spør
--- den for å vise en forståelig beskjed i stedet for tomme sider. Den sier
+-- Den innloggedes eget svar, som radsikkerhetsreglene bruker. Den sier
 -- ingenting om noen andre.
 create function public.har_aktivt_medlemskap()
 returns boolean
@@ -74,7 +73,31 @@ revoke all on function public.har_aktivt_medlemskap() from public, anon, authent
 grant execute on function public.har_aktivt_medlemskap() to authenticated;
 
 comment on function public.har_aktivt_medlemskap() is
-  'Om den innloggede har et aktivt medlemskap (P2.0). Eneste opplysning en bruker uten aktivt medlemskap får.';
+  'Om den innloggede har et aktivt medlemskap (P2.0). Brukes av radsikkerhetsreglene.';
+
+-- Hva appen skal vise når den innloggede ikke får se profilen sin: `aktiv`,
+-- `avsluttet` (kontoen finnes, men uten aktivt medlemskap: beskjeden om det)
+-- eller `ingen_konto` (kontoen er slettet mens tokenet fortsatt gjelder:
+-- utlogging som før). Den sier bare noe om den innloggede selv.
+create function public.min_medlemskapsstatus()
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case
+    when not exists (select 1 from public.profiles p where p.id = (select auth.uid())) then 'ingen_konto'
+    when intern.har_aktivt_medlemskap((select auth.uid())) then 'aktiv'
+    else 'avsluttet'
+  end
+$$;
+
+revoke all on function public.min_medlemskapsstatus() from public, anon, authenticated, service_role;
+grant execute on function public.min_medlemskapsstatus() to authenticated;
+
+comment on function public.min_medlemskapsstatus() is
+  'Den innloggedes egen kontostatus for appen (P2.0): aktiv, avsluttet eller ingen_konto. Se docs/fagmiljoer.md.';
 
 -- For Edge-funksjonene, som kjører med den hemmelige nøkkelen og kjenner den
 -- innloggede fra JWT-en (`supabase/functions/_edge/kontekst.ts`).
@@ -227,8 +250,8 @@ $$;
 -- docs/p2-0-forberedelse.md). Hver får kontrollen som første setning, ellers
 -- uendret: definisjonene er de gjeldende, hentet fra databasen bygd av
 -- migrasjonene. `create or replace` beholder rettighetene og kommentarene.
--- Unntakene, `er_admin()` og `har_aktivt_medlemskap()`, svarer bare ja eller
--- nei om den innloggede selv.
+-- Unntakene, `er_admin()`, `har_aktivt_medlemskap()` og
+-- `min_medlemskapsstatus()`, svarer bare om den innloggede selv.
 
 -- arkiver_varsler(varsler uuid[], til timestamp with time zone)
 CREATE OR REPLACE FUNCTION public.arkiver_varsler(varsler uuid[], til timestamp with time zone)

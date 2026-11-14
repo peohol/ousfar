@@ -27,10 +27,11 @@ import { funksjonsinnganger, tabellinnganger, type Funksjonsinngang } from './hj
 /** Personene med gyldig token, men uten aktive medlemskap. */
 const UTESTENGTE = ['utenMedlemskap', 'tidligereAdmin'] as const satisfies readonly Person[]
 
-/** Funksjonene som bare svarer ja eller nei om den innloggede selv, og derfor ikke stopper. */
-const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean>> = {
+/** Funksjonene som bare svarer om den innloggede selv, og derfor ikke stopper; med svaret til en utestengt. */
+const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string>> = {
   'er_admin()': false,
   'har_aktivt_medlemskap()': false,
+  'min_medlemskapsstatus()': 'avsluttet',
 }
 
 let db: PGlite
@@ -130,7 +131,7 @@ describe('en bruker uten aktivt medlemskap', () => {
     }
   })
 
-  it('får bare nei fra funksjonene som svarer om den innloggede selv', async () => {
+  it('får bare nei eller «avsluttet» fra funksjonene som svarer om den innloggede selv', async () => {
     for (const person of UTESTENGTE) {
       for (const [signatur, ventet] of Object.entries(SVARER_OM_SEG_SELV)) {
         const f = funksjoner.find((x) => x.signatur === signatur)!
@@ -269,6 +270,16 @@ describe('hva som gir aktivt medlemskap', () => {
       )
       expect(aktiv, person).toBe(true)
     }
+  })
+
+  it('skiller en konto uten aktivt medlemskap fra en slettet konto i statusen appen spør om', async () => {
+    const status = (bruker: string) =>
+      som(db, bruker, async (tx) => (await tx.query<{ s: string }>('select public.min_medlemskapsstatus() as s')).rows[0]!.s)
+    expect(await status(galleri.id.vanligA)).toBe('aktiv')
+    expect(await status(galleri.id.systemarkitekt)).toBe('aktiv')
+    for (const person of UTESTENGTE) expect(await status(galleri.id[person]), person).toBe('avsluttet')
+    // Et fortsatt gyldig token for en konto som er slettet: ingen profil.
+    expect(await status('00000000-0000-4000-8000-0000000000ff')).toBe('ingen_konto')
   })
 
   it('lar ikke den gamle adminrollen alene gi adminrettigheter', async () => {

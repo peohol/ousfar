@@ -130,6 +130,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_oppgave_utfort(oppgave uuid, endringslogg text)': 'admin',
   'merk_varsler_lest(varsler uuid[], til timestamp with time zone)': 'eier',
+  // P2.0: den innloggedes egen status for beskjeden i appen (docs/fagmiljoer.md).
+  'min_medlemskapsstatus()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
   'mine_varsler()': 'eier',
   'oppgave(oppgave uuid)': 'innlogget',

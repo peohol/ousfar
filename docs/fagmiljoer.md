@@ -308,10 +308,10 @@ dette.
 | Edge-funksjonene | `hentInnlogget` (`supabase/functions/_edge/kontekst.ts`) spør `kontooperasjon_aktivt_medlemskap` og avviser med 403 |
 | Vercel-endepunktene (`api/*.ts`) | Slipper inn en innlogget bare når `er_admin()` svarer ja for vedkommende (`src/server/tilgang.ts`), og det krever nå aktivt medlemskap. Cron, GitHub OIDC og kurateringsagentenes nøkler er ingen brukere og berøres ikke |
 
-To funksjoner svarer i stedet for å stoppe: `er_admin()` svarer nei, og
-`har_aktivt_medlemskap()` svarer på om den innloggede selv har et aktivt
-medlemskap. Det siste er den eneste opplysningen en bruker uten medlemskap
-får, og appen bruker den til beskjeden under.
+Tre funksjoner svarer i stedet for å stoppe, og bare om den innloggede selv:
+`er_admin()` svarer nei, `har_aktivt_medlemskap()` (som reglene bruker)
+svarer nei, og `min_medlemskapsstatus()` svarer `avsluttet`. Det er de eneste
+opplysningene en bruker uten medlemskap får.
 
 **Serverprosesser.** `intern.krev_aktivt_medlemskap()` slipper gjennom et
 kall uten innlogget bruker når rollen er `service_role` eller det ikke finnes
@@ -321,10 +321,12 @@ Et kall med en bruker-ID i JWT-en prøves alltid, også om rollen er
 bare `authenticated`; `service_role` går forbi radsikkerheten som før.
 
 **I appen.** Når profilen ikke kommer, spør økten (`src/auth/okt.tsx`)
-`har_aktivt_medlemskap()`. Er svaret nei, tømmes mellomlageret i
-nettleseren, og porten viser «Ingen tilgang» med beskjeden og en
-utloggingsknapp (`src/components/konto/Port.tsx`), uten å vise noe annet.
-Er svaret ja, er kontoen fjernet, og brukeren logges ut som før. Spørsmålet
+`min_medlemskapsstatus()`. Er svaret `avsluttet` (kontoen finnes, men uten
+aktivt medlemskap), tømmes mellomlageret i nettleseren, og porten viser
+«Ingen tilgang» med beskjeden og en utloggingsknapp
+(`src/components/konto/Port.tsx`), uten å vise noe annet. Er svaret
+`ingen_konto`, er kontoen slettet mens tokenet fortsatt gjelder, og brukeren
+logges ut som før; det samme ved `aktiv`. Spørsmålet
 stilles bare når profilen lastes: en fane som står åpen, beholder det den
 allerede har hentet til siden lastes på nytt, men får ingenting nytt fra
 databasen.

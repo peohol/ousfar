@@ -10,19 +10,20 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
+import type { Medlemskapsstatus } from '../auth/api'
 import { tilgangFor } from '../domain/tilgang'
 
 const db = vi.hoisted(() => ({
   profil: null as Profil | null,
-  aktiv: false,
+  status: 'avsluttet' as Medlemskapsstatus,
   medlemskapsfeil: false,
 }))
 
 const api = vi.hoisted(() => ({
   hentProfil: vi.fn(async () => db.profil),
-  harAktivtMedlemskap: vi.fn(async () => {
+  hentMedlemskapsstatus: vi.fn(async () => {
     if (db.medlemskapsfeil) throw new Error('nede')
-    return db.aktiv
+    return db.status
   }),
   loggUt: vi.fn(async () => {}),
   loggInn: vi.fn(async () => null),
@@ -62,7 +63,7 @@ const PROFIL: Profil = {
 
 beforeEach(() => {
   db.profil = null
-  db.aktiv = false
+  db.status = 'avsluttet'
   db.medlemskapsfeil = false
   vi.clearAllMocks()
 })
@@ -81,20 +82,26 @@ async function tilgang() {
 describe('økten uten aktivt medlemskap', () => {
   it('viser beskjeden, tømmer mellomlageret og logger ikke ut av seg selv', async () => {
     expect(await tilgang()).toBe('avsluttet')
-    expect(api.harAktivtMedlemskap).toHaveBeenCalledTimes(1)
+    expect(api.hentMedlemskapsstatus).toHaveBeenCalledTimes(1)
     expect(tom).toHaveBeenCalled()
     expect(api.loggUt).not.toHaveBeenCalled()
   })
 
-  it('logger ut som før når kontoen er fjernet, men medlemskapet svarer ja', async () => {
-    db.aktiv = true
-    render(
-      <OktProvider>
-        <Vis />
-      </OktProvider>,
-    )
-    await waitFor(() => expect(api.loggUt).toHaveBeenCalled())
-  })
+  it.each(['ingen_konto', 'aktiv'] as const)(
+    'logger ut som før, uten beskjeden og uten å tømme noe selv, når statusen er %s',
+    async (status) => {
+      // `ingen_konto`: kontoen er slettet mens tokenet fortsatt gjelder.
+      db.status = status
+      render(
+        <OktProvider>
+          <Vis />
+        </OktProvider>,
+      )
+      await waitFor(() => expect(api.loggUt).toHaveBeenCalled())
+      expect(screen.getByTestId('tilgang').textContent).not.toBe('avsluttet')
+      expect(tom).not.toHaveBeenCalled()
+    },
+  )
 
   it('viser kontaktfeilen når spørsmålet om medlemskapet ikke får svar', async () => {
     db.medlemskapsfeil = true
@@ -104,7 +111,7 @@ describe('økten uten aktivt medlemskap', () => {
   it('spør ikke om medlemskapet når profilen kommer', async () => {
     db.profil = PROFIL
     expect(await tilgang()).toBe('app')
-    expect(api.harAktivtMedlemskap).not.toHaveBeenCalled()
+    expect(api.hentMedlemskapsstatus).not.toHaveBeenCalled()
   })
 })
 

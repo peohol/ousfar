@@ -80,15 +80,18 @@ export async function hentProfil(brukerId: string): Promise<Profil | null> {
   return (data as Profil | null) ?? null
 }
 
+/** Den innloggedes egen kontostatus, sett fra databasen (P2.0). */
+export type Medlemskapsstatus = 'aktiv' | 'avsluttet' | 'ingen_konto'
+
 /**
- * Om den innloggede har et aktivt medlemskap i et aktivt fagmiljø (eller er
- * systemarkitekt). Uten det gir databasen ingenting annet (P2.0), og appen
- * viser en beskjed i stedet for tomme sider.
+ * Hvorfor profilen ikke kom: kontoen er uten aktivt medlemskap (`avsluttet`;
+ * databasen gir da ingenting annet), eller den er slettet (`ingen_konto`).
  */
-export async function harAktivtMedlemskap(): Promise<boolean> {
-  const { data, error } = await klient().rpc('har_aktivt_medlemskap')
+export async function hentMedlemskapsstatus(): Promise<Medlemskapsstatus> {
+  const { data, error } = await klient().rpc('min_medlemskapsstatus')
   if (error) throw error
-  return data === true
+  if (data !== 'aktiv' && data !== 'avsluttet' && data !== 'ingen_konto') throw new Error(`Ukjent medlemskapsstatus: ${String(data)}`)
+  return data
 }
 
 /** Alle profiler, sortert slik brukerlista viser dem. */
