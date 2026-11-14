@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { brukernavnFeil, normaliserBrukernavn } from '@delt/brukernavn'
 import { visningsnavn } from '@delt/profil'
 import {
@@ -33,8 +33,18 @@ type Skjema = 'opprett' | 'legg_til' | 'nytt_fagmiljo' | null
 /** En handling som fjerner tilgang, og som derfor må bekreftes. */
 interface Bekreftelse {
   medlem: Medlem
+  /** Fagmiljøet raden ble hentet fra; handlingen gjelder alltid det. */
+  fagmiljo: Fagmiljoreferanse
   handling: 'avslutt' | 'fjern_admin'
 }
+
+/** Medlemmene slik de ble hentet, sammen med fagmiljøet de hører til. */
+interface Medlemsliste {
+  fagmiljo: string | null
+  medlemmer: Medlem[]
+}
+
+const TOM_LISTE: Medlemsliste = { fagmiljo: null, medlemmer: [] }
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
@@ -73,7 +83,16 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const valgt =
     fagmiljoer.find((f) => f.id === valgtId) ?? fagmiljoer.find((f) => f.standard) ?? fagmiljoer[0] ?? null
 
-  const [medlemmer, setMedlemmer] = useState<Medlem[]>([])
+  const [liste, setListe] = useState<Medlemsliste>(TOM_LISTE)
+  // Bare rader hentet fra fagmiljøet som er valgt nå, vises og kan handles på.
+  // Et svar som kommer etter at et annet fagmiljø er valgt, vises aldri.
+  const listensFagmiljo = valgt !== null && liste.fagmiljo === valgt.id ? valgt : null
+  const medlemmer = listensFagmiljo ? liste.medlemmer : TOM_LISTE.medlemmer
+  /** Økes for hver henting; bare svaret på den siste brukes. */
+  const sisteHenting = useRef(0)
+  /** Fagmiljøet som vises nå, eller `null` når vinduet er lukket. */
+  const vistFagmiljo = useRef<string | null>(null)
+  vistFagmiljo.current = apen ? (valgt?.id ?? null) : null
   const [feil, setFeil] = useState<string | null>(null)
   const [kvittering, setKvittering] = useState<string | null>(null)
   const [laster, setLaster] = useState(false)
@@ -85,40 +104,57 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const lenker = useAvatarlenker(medlemmer)
   const velgerId = useId()
 
+  /**
+   * Henter medlemmene i fagmiljøet. Svaret brukes bare om det er svaret på
+   * den siste hentingen og fagmiljøet fortsatt vises; ellers forkastes det.
+   */
   const hent = useCallback(async (fagmiljo: string | undefined) => {
+    const denne = ++sisteHenting.current
+    const gjelder = () => denne === sisteHenting.current && vistFagmiljo.current === fagmiljo
     if (!fagmiljo) {
-      setMedlemmer([])
+      setListe(TOM_LISTE)
       return
     }
     setLaster(true)
     try {
-      setMedlemmer(await hentMedlemsoversikt(fagmiljo))
+      const hentet = await hentMedlemsoversikt(fagmiljo)
+      if (!gjelder()) return
+      setListe({ fagmiljo, medlemmer: hentet })
       setFeil(null)
     } catch (aarsak) {
-      setMedlemmer([])
+      if (!gjelder()) return
+      setListe(TOM_LISTE)
       setFeil(aarsak instanceof Error && aarsak.message !== UVENTET ? aarsak.message : 'Fikk ikke hentet medlemmene.')
     } finally {
-      setLaster(false)
+      if (denne === sisteHenting.current) setLaster(false)
     }
   }, [])
 
   useEffect(() => {
-    if (!apen) return
+    if (!apen) {
+      // En henting som er på vei når vinduet lukkes, brukes ikke.
+      sisteHenting.current++
+      return
+    }
     setMidlertidig(null)
     setBekreft(null)
     setKvittering(null)
     void hent(valgt?.id)
   }, [apen, valgt?.id, hent])
 
-  /** Gjør arbeidet, viser kvitteringen eller feilen, og henter lista på nytt. */
-  const utfor = async (hva: string, arbeid: () => Promise<string | null>) => {
+  /**
+   * Gjør arbeidet, viser kvitteringen eller feilen, og henter lista for
+   * fagmiljøet handlingen gjaldt, på nytt. Fagmiljøet kan ikke byttes mens
+   * arbeidet pågår.
+   */
+  const utfor = async (hva: string, fagmiljo: string | null, arbeid: () => Promise<string | null>) => {
     if (arbeider) return
     setArbeider(hva)
     setFeil(null)
     setKvittering(null)
     try {
       setKvittering(await arbeid())
-      await hent(valgt?.id)
+      if (fagmiljo) await hent(fagmiljo)
     } catch (aarsak) {
       setFeil(melding(aarsak))
     } finally {
@@ -135,7 +171,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const sendSkjema = (hendelse: FormEvent) => {
     hendelse.preventDefault()
     if (skjema === 'nytt_fagmiljo') {
-      void utfor('skjema', async () => {
+      void utfor('skjema', null, async () => {
         const ny = await opprettFagmiljo(tekst)
         setNye((forrige) => [...forrige, { ...ny, standard: false, apent: false }])
         setValgtId(ny.id)
@@ -150,32 +186,33 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
       setFeil(lokalFeil)
       return
     }
-    void utfor('skjema', async () => {
+    // Fagmiljøet skjemaet ble sendt for; det står fast til svaret er kommet.
+    const her = valgt
+    if (!her) return
+    void utfor('skjema', her.id, async () => {
       if (skjema === 'opprett') {
         setMidlertidig(await opprettBruker(brukernavn))
         apneSkjema(null)
         return null
       }
-      if (!valgt) return null
-      await leggTilMedlem(brukernavn, valgt.id)
+      await leggTilMedlem(brukernavn, her.id)
       apneSkjema(null)
-      return `${brukernavn} er medlem av ${valgt.navn}.`
+      return `${brukernavn} er medlem av ${her.navn}.`
     })
   }
 
-  const bekreftet = (b: Bekreftelse) => {
-    if (!valgt) return
-    const navn = visningsnavn(b.medlem)
-    void utfor(b.medlem.id, async () => {
+  const bekreftet = ({ medlem, fagmiljo: f, handling }: Bekreftelse) => {
+    const navn = visningsnavn(medlem)
+    void utfor(medlem.id, f.id, async () => {
       setBekreft(null)
-      if (b.handling === 'fjern_admin') {
-        await settFagmiljoadministrator(b.medlem.id, valgt.id, false)
-        return `${navn} er ikke lenger administrator i ${valgt.navn}.`
+      if (handling === 'fjern_admin') {
+        await settFagmiljoadministrator(medlem.id, f.id, false)
+        return `${navn} er ikke lenger administrator i ${f.navn}.`
       }
-      const svar = await avsluttMedlemskap(b.medlem.id, valgt.id)
+      const svar = await avsluttMedlemskap(medlem.id, f.id)
       return svar.sperret
-        ? `${navn} er ikke lenger medlem av ${valgt.navn}. Kontoen er sperret og logget ut.`
-        : `${navn} er ikke lenger medlem av ${valgt.navn}.`
+        ? `${navn} er ikke lenger medlem av ${f.navn}. Kontoen er sperret og logget ut.`
+        : `${navn} er ikke lenger medlem av ${f.navn}.`
     })
   }
 
@@ -183,7 +220,8 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const tidligere = medlemmer.filter((m) => m.status === 'avsluttet')
   const kanOpprette = rettigheter.opprettBruker && valgt?.standard === true
 
-  const rad = (medlem: Medlem) => {
+  /** Raden til et medlem av `f`, fagmiljøet lista ble hentet fra. Hver handling gjelder `f`. */
+  const rad = (f: Fagmiljoreferanse) => (medlem: Medlem) => {
     const navn = visningsnavn(medlem)
     const egen = medlem.id === meg.id
     const opptatt = arbeider !== null
@@ -197,43 +235,45 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     if (!egen && medlem.status !== 'avsluttet') {
       if (medlem.nytt_passord) {
         knapp('passord', 'key', `Nytt passord for ${navn}`, 'Nytt passord', () =>
-          void utfor(medlem.id, async () => {
+          void utfor(medlem.id, f.id, async () => {
             setMidlertidig(await nyttMidlertidigPassord(medlem.id))
             return null
           }),
         )
       }
       if (medlem.kan_gjore_til_administrator) {
-        knapp('admin', 'shield', `Gjør ${navn} til administrator i ${valgt?.navn}`, 'Gjør til administrator', () =>
-          void utfor(medlem.id, async () => {
-            await settFagmiljoadministrator(medlem.id, valgt!.id, true)
-            return `${navn} er administrator i ${valgt!.navn}.`
+        knapp('admin', 'shield', `Gjør ${navn} til administrator i ${f.navn}`, 'Gjør til administrator', () =>
+          void utfor(medlem.id, f.id, async () => {
+            await settFagmiljoadministrator(medlem.id, f.id, true)
+            return `${navn} er administrator i ${f.navn}.`
           }),
         )
       }
       if (medlem.kan_fjerne_som_administrator) {
-        knapp('fjern_admin', 'shield', `Fjern ${navn} som administrator i ${valgt?.navn}`, 'Fjern som administrator', () =>
-          setBekreft({ medlem, handling: 'fjern_admin' }),
+        knapp('fjern_admin', 'shield', `Fjern ${navn} som administrator i ${f.navn}`, 'Fjern som administrator', () =>
+          setBekreft({ medlem, fagmiljo: f, handling: 'fjern_admin' }),
         )
       }
       if (medlem.endre_rolle) {
         const har = medlem.rolle === 'admin'
         knapp('rolle', 'shield', `${har ? 'Fjern adminrollen' : 'Gi adminrollen'}: ${navn}`, har ? 'Fjern adminrollen' : 'Gi adminrollen', () =>
-          void utfor(medlem.id, async () => {
+          void utfor(medlem.id, f.id, async () => {
             await settRolle(medlem.id, har ? 'user' : 'admin')
             return null
           }),
         )
       }
       if (medlem.kan_avslutte) {
-        knapp('avslutt', 'close', `Avslutt medlemskapet til ${navn}`, 'Avslutt medlemskap', () => setBekreft({ medlem, handling: 'avslutt' }))
+        knapp('avslutt', 'close', `Avslutt medlemskapet til ${navn}`, 'Avslutt medlemskap', () =>
+          setBekreft({ medlem, fagmiljo: f, handling: 'avslutt' }),
+        )
       }
     }
     if (!egen && medlem.status === 'avsluttet' && medlem.kan_gi_tilgang) {
       knapp('gi', 'reset', `Gi ${navn} tilgang igjen`, 'Gi tilgang igjen', () =>
-        void utfor(medlem.id, async () => {
-          await giMedlemskap(medlem.id, valgt!.id)
-          return `${navn} er medlem av ${valgt!.navn} igjen.`
+        void utfor(medlem.id, f.id, async () => {
+          await giMedlemskap(medlem.id, f.id)
+          return `${navn} er medlem av ${f.navn} igjen.`
         }),
       )
     }
@@ -297,6 +337,8 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
             id={velgerId}
             className="felt__inndata"
             value={valgt?.id ?? ''}
+            // Ikke mens en handling pågår: den hører til fagmiljøet som vises.
+            disabled={arbeider !== null}
             onChange={(hendelse) => {
               setValgtId(hendelse.target.value)
               apneSkjema(null)
@@ -370,10 +412,9 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         </form>
       )}
 
-      {bekreft && valgt && (
+      {bekreft && bekreft.fagmiljo.id === valgt?.id && (
         <Tilgangsbekreftelse
           bekreftelse={bekreft}
-          fagmiljo={valgt.navn}
           opptatt={arbeider !== null}
           onBekreft={() => bekreftet(bekreft)}
           onAvbryt={() => setBekreft(null)}
@@ -396,18 +437,18 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
 
       {!valgt ? (
         <p className="brukerliste__tomt">Du administrerer ingen fagmiljøer.</p>
-      ) : laster && medlemmer.length === 0 ? (
-        <p className="brukerliste__tomt">Henter medlemmene …</p>
+      ) : !listensFagmiljo ? (
+        laster && <p className="brukerliste__tomt">Henter medlemmene …</p>
       ) : (
         <>
-          <ul className="brukerliste" aria-label={`Medlemmer i ${valgt.navn}`}>
-            {gjeldende.map(rad)}
+          <ul className="brukerliste" aria-label={`Medlemmer i ${listensFagmiljo.navn}`}>
+            {gjeldende.map(rad(listensFagmiljo))}
           </ul>
           {tidligere.length > 0 && (
             <>
               <h3 className="brukerliste__overskrift">Tidligere medlemmer</h3>
-              <ul className="brukerliste" aria-label={`Tidligere medlemmer i ${valgt.navn}`}>
-                {tidligere.map(rad)}
+              <ul className="brukerliste" aria-label={`Tidligere medlemmer i ${listensFagmiljo.navn}`}>
+                {tidligere.map(rad(listensFagmiljo))}
               </ul>
             </>
           )}
@@ -423,14 +464,16 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
  * «Avbryt» har fokus, så et tastetrykk for mye ikke fjerner noe.
  */
 function Tilgangsbekreftelse({
-  bekreftelse: { medlem, handling },
-  fagmiljo,
+  bekreftelse: {
+    medlem,
+    handling,
+    fagmiljo: { navn: fagmiljo },
+  },
   opptatt,
   onBekreft,
   onAvbryt,
 }: {
   bekreftelse: Bekreftelse
-  fagmiljo: string
   opptatt: boolean
   onBekreft: () => void
   onAvbryt: () => void

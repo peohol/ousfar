@@ -381,6 +381,60 @@ describe('brukerlista', () => {
     expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
   })
 
+  it('viser og handler aldri på et fagmiljø som ikke er valgt, når svarene kommer i en annen rekkefølge', async () => {
+    const api = await import('../auth/api')
+    vi.mocked(api.avsluttMedlemskap).mockClear()
+    // Svarene holdes tilbake og slippes i den rekkefølgen testen bestemmer.
+    const ventende = new Map<string, (rader: unknown[]) => void>()
+    vi.mocked(api.hentMedlemsoversikt).mockImplementation(
+      (fagmiljo: string) => new Promise((svar) => ventende.set(fagmiljo, svar as (rader: unknown[]) => void)) as never,
+    )
+    const slipp = async (fagmiljo: string, rader: unknown[]) => {
+      await waitFor(() => expect(ventende.has(fagmiljo)).toBe(true))
+      const svar = ventende.get(fagmiljo)!
+      ventende.delete(fagmiljo)
+      await act(async () => svar(rader))
+    }
+    try {
+      okt.profil = MEG
+      render(
+        <RettigheterKilde verdi={SYSTEMARKITEKT}>
+          <Brukerliste apen onLukk={() => {}} />
+        </RettigheterKilde>,
+      )
+      const lag = screen.getByRole('dialog', { name: 'Brukere' })
+      // Kari er medlem begge steder; svaret fra KF er på vei når RT velges.
+      const kariKf = medlem(KARI, { kan_avslutte: true })
+      const kariRt = medlem(KARI, { kan_avslutte: true, eneste_medlemskap: false })
+      await userEvent.selectOptions(within(lag).getByLabelText('Fagmiljø'), 'rt')
+      await slipp('rt', [kariRt])
+      await slipp('kf', [kariKf, medlem(OLA)])
+      // Det sene svaret fra KF vises ikke under RT.
+      const liste = within(lag).getByRole('list', { name: 'Medlemmer i OUS Rettstoksikologi' })
+      expect(within(liste).getAllByRole('listitem')).toHaveLength(1)
+      expect(within(lag).queryByText('Ola Svendsen')).toBeNull()
+      expect(within(lag).queryByRole('list', { name: /OUS Klinisk farmakologi/ })).toBeNull()
+
+      // Handlingen på raden gjelder fagmiljøet raden ble hentet fra.
+      await userEvent.click(within(liste).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
+      const bekreft = within(lag).getByRole('group', { name: 'Avslutte medlemskapet til Kari Nordmann i OUS Rettstoksikologi?' })
+      await userEvent.click(within(bekreft).getByRole('button', { name: 'Avslutt medlemskapet' }))
+      expect(api.avsluttMedlemskap).toHaveBeenCalledWith('2', 'rt')
+      // Mens lista hentes på nytt etter handlingen, kan fagmiljøet ikke byttes.
+      expect((within(lag).getByLabelText('Fagmiljø') as HTMLSelectElement).disabled).toBe(true)
+      await slipp('rt', [])
+      await waitFor(() => expect((within(lag).getByLabelText('Fagmiljø') as HTMLSelectElement).disabled).toBe(false))
+
+      // Byttes det tilbake mens svaret fra RT er på vei, vises bare KF.
+      await userEvent.selectOptions(within(lag).getByLabelText('Fagmiljø'), 'kf')
+      await slipp('kf', [kariKf])
+      expect(within(lag).getByRole('list', { name: 'Medlemmer i OUS Klinisk farmakologi' })).toBeTruthy()
+      expect(api.avsluttMedlemskap).toHaveBeenCalledTimes(1)
+    } finally {
+      vi.mocked(api.hentMedlemsoversikt).mockImplementation(async (fagmiljo: string) => (okt.medlemmer[fagmiljo] ?? []) as never)
+    }
+  })
+
   it('gir en lokal administrator ingen fagmiljøvelger, men «Opprett bruker» i standardfagmiljøet', async () => {
     const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)] })
     expect(within(lag).queryByLabelText('Fagmiljø')).toBeNull()
