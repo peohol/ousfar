@@ -64,10 +64,12 @@ async function regelsettene(db: PGlite): Promise<Regelsettrad[]> {
   ).rows
 }
 
+/** Kommentarene i konsentrasjonsreglene; ikke de scenarioreglene bruker (som EtG/EtS, importert etter omleggingen). */
 async function kommentarene(db: PGlite): Promise<Kommentarrad[]> {
   return (
     await db.query<Kommentarrad>(
       `select objekt_id as id, tilstand::text, navn, tekst, plassholdere from public.kommentarer
+       where objekt_id not in (select kommentar_id from public.scenarioplasseringer)
        order by objekt_id, tilstand`,
     )
   ).rows

@@ -12,7 +12,8 @@
 import { describe, expect, it } from 'vitest'
 import { FASITMODULER, forventFasit } from '../../__tests__/hjelp/rusparitet'
 import { RUS_GRUNNLAG, RUS_KOMMENTARER, RUS_REGELSETT } from '../../__tests__/hjelp/rusgrunnlag'
-import { moduleKoder, RUS_MODULER } from '../rus'
+import { moduleKoder } from '../rus'
+import { RUS_MODULER } from '../ouskatalog'
 import { validerScenarioregelsett } from '../scenario'
 
 describe('de importerte rusmiddelreglene', () => {

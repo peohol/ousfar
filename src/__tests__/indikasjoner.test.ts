@@ -21,7 +21,6 @@ import {
   RUSMIDLER_INDIKASJONER,
 } from '../faginnhold/indikasjoner'
 import { MIGRERTE_SAMMENSLATTE } from '../faginnhold/historiskesider'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import { ELEMENTTYPER, lesRiktekst } from '../faginnhold/paneler'
 import { klartekst } from '../faginnhold/riktekst'
 import { stoffsideplan } from '../faginnhold/stoffsider'
@@ -34,6 +33,7 @@ import {
   opprettBruker,
   type Faginnholdskall,
 } from './hjelp/testdatabase'
+import { OUS_REGISTER } from '../domain/ouskatalog'
 
 /** Kilden revisjonene får, med datoen omgangen ble hentet. */
 const fkkilde = (hentet: string) => `Hentet fra Felleskatalogen ${hentet.split('-').reverse().join('.')}`
@@ -190,7 +190,7 @@ describe('datasettet', () => {
     for (const [metabolitt, moderstoff] of Object.entries(MIGRERTE_SAMMENSLATTE)) {
       expect(rus.koder.map((k) => k.hovedside.navn)).not.toContain(metabolitt)
       // I stoffregisteret er metabolitten et annet navn på moderstoffet.
-      expect(STOFFREGISTER.kanonisk(metabolitt)?.navn, metabolitt).toBe(moderstoff)
+      expect(OUS_REGISTER.kanonisk(metabolitt)?.navn, metabolitt).toBe(moderstoff)
     }
     expect(tekst('Buprenorfin', rus)).toContain('opioidavhengighet')
     expect(tekst('Metadon', rus)).toContain('Levopidon')

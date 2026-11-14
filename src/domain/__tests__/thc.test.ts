@@ -26,7 +26,8 @@ import {
   verdiPaaKurve,
   FIGURKURVER,
 } from './hjelp/thcOpprinnelig'
-import { erThcAnalytt, THC_ANALYTT } from '../thc'
+import { erThcAnalytt } from '../thc'
+import { THC_ANALYTT } from '../ouskatalog'
 import { byggGraf, formaterProsent } from '../thcPlot'
 import { initialState, reducer, stageOf } from '../../state'
 

@@ -32,9 +32,9 @@ import { kortnavn as sideKortnavn } from '../faginnhold/sidesammenligning'
 import { erTomt, klartekst, rensDokument, tomtDokument } from '../faginnhold/riktekst'
 import { fold, indekserSide, sok, sokeord, sti, stoffidentitet, treffIntervaller, utdrag } from '../faginnhold/sok'
 import { analytterForStoff } from '../domain/koblinger'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import type { ThcRegelsettinnhold } from '../domain/thcTekster'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 
 describe('rikteksten', () => {
   it('beholder den tillatte formateringen og siteringene', () => {
@@ -590,8 +590,8 @@ describe('sidemodellen', () => {
   })
 
   it('gir stoffet identiteten sin fra registeret og koblingene: aliasene, primære koder, og analyttenes navn og sekundære koder som komponent', () => {
-    const nortriptylin = STOFFREGISTER.finn('nortriptylin')!
-    const identitet = stoffidentitet(nortriptylin, analytterForStoff('nortriptylin'))
+    const nortriptylin = OUS_REGISTER.finn('nortriptylin')!
+    const identitet = stoffidentitet(nortriptylin, analytterForStoff('nortriptylin', OUS_REGISTER, OUS_KATALOG))
     expect(identitet).toEqual({
       stoff: 'nortriptylin',
       navn: 'Nortriptylin',
@@ -600,7 +600,7 @@ describe('sidemodellen', () => {
       komponenter: ['Nortriptylin', 'Nortriptylin', 'Amitriptylin + nortriptylin', 'Amitriptylin', 'Nortriptylin', 'AMTNORSUM'],
       aliaser: ['nortriptyline'],
     })
-    const bupropion = stoffidentitet(STOFFREGISTER.finn('bupropion')!, analytterForStoff('bupropion'))
+    const bupropion = stoffidentitet(OUS_REGISTER.finn('bupropion')!, analytterForStoff('bupropion', OUS_REGISTER, OUS_KATALOG))
     expect(bupropion).toMatchObject({ stoff: 'bupropion', navn: 'Bupropion', koder: ['HBUP'], aliaser: ['Hydroksybupropion', 'hydroxybupropion'] })
     // Indeksert står metabolittens navn bare én gang, og alt peker på Bupropion.
     const dokumenter = indekserSide(bupropion, byggSidemodell(TOM_STOFFSIDE))

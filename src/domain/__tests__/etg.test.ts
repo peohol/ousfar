@@ -1,17 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { analytes } from '../analytes'
-import {
-  erEtgAnalytt,
-  ETG_ALTERNATIVER,
-  ETG_ANALYTT,
-  ETG_KODE,
-  ETS_KODE,
-  type EtgAlternativ,
-  type EtgValg,
-} from '../etg'
-import { RUS_ANALYTTER } from '../rus'
+import { erEtgAnalytt, type EtgAlternativ, type EtgValg } from '../etg'
+import { ETG_ANALYTT, ETG_KODE, ETS_KODE } from '../ouskatalog'
+import { ETG_ALTERNATIVER } from '../../__tests__/hjelp/etggrunnlag'
+import { RUS_ANALYTTER } from '../ouskatalog'
 import { search } from '../search'
-import { THC_ANALYTT } from '../thc'
+import { THC_ANALYTT } from '../ouskatalog'
 
 /** Alternativet med denne id-en. */
 function alternativ(id: EtgValg): EtgAlternativ {

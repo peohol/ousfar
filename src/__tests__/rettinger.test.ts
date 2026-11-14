@@ -7,14 +7,14 @@
 import { readFileSync } from 'node:fs'
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { Importfeil } from '../faginnhold/import'
 import { FJERNET, type Doserad } from '../faginnhold/paneler'
 import { kontrollerRettinger, rettingskilde, rettingSql, type Rettingsfil } from '../faginnhold/rettinger'
 import fil from '../../supabase/import/rettinger/referanseomradeprosjektet.json'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 const RETTING = migrasjonsfiler().find((f) => f.endsWith('_referanseomradeprosjektet_rettinger.sql'))!
 const MIGRASJONSMAPPE = new URL('../../supabase/migrations/', import.meta.url)

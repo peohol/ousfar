@@ -24,9 +24,9 @@
  * 100 %), så en endring der slår ut.
  */
 import { analytes } from '../../domain/analytes'
-import { ETG_ALTERNATIVER } from '../../domain/etg'
+import { ETG_ALTERNATIVER } from './etggrunnlag'
 import { grensepiller } from '../../domain/piller'
-import { RUS_MODULER } from '../../domain/rus'
+import { RUS_MODULER } from '../../domain/ouskatalog'
 import { kjorScenarier, verdifelter } from '../../domain/scenario'
 import { byggKommentar, konklusjon, velgKommentar, THC_KONKLUSJONER } from '../../domain/thcMotor'
 import { cutoffvalg, regelsettvalg } from '../../domain/valg'

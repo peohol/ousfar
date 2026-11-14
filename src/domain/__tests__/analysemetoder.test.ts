@@ -1,17 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import {
-  ANALYSEMETODER,
-  AV_SNARVEI,
-  filtrertPool,
-  menyanalytter,
-  metodefarger,
-  metodesnarvei,
-} from '../analysemetoder'
+import { AV_SNARVEI, filtrertPool, menyanalytter, metodefarger, metodesnarvei } from '../analysemetoder'
+import { ANALYSEMETODER, OUS_KATALOG } from '../ouskatalog'
 import { analytes } from '../analytes'
-import { ETG_ANALYTT, ETG_KODE, ETS_KODE } from '../etg'
-import { RUS_ANALYTTER } from '../rus'
+import { ETG_ANALYTT, ETG_KODE, ETS_KODE } from '../ouskatalog'
+import { RUS_ANALYTTER } from '../ouskatalog'
 import { search } from '../search'
-import { THC_ANALYTT, THC_KODE } from '../thc'
+import { THC_ANALYTT, THC_KODE } from '../ouskatalog'
 import type { Analyte } from '../../types'
 
 /**
@@ -69,20 +63,20 @@ describe('analysemetoden på analyttene', () => {
 describe('fargen en metode bærer', () => {
   it('er den samme hver gang den slås opp', () => {
     for (const m of ANALYSEMETODER) {
-      expect(metodefarger(m.kode)).toEqual(metodefarger(m.kode))
+      expect(metodefarger(m.kode, OUS_KATALOG.metoder)).toEqual(metodefarger(m.kode, OUS_KATALOG.metoder))
     }
   })
 
   it('er forskjellig for hver metode', () => {
-    const hues = ANALYSEMETODER.map((m) => metodefarger(m.kode)['--alt-hue'])
+    const hues = ANALYSEMETODER.map((m) => metodefarger(m.kode, OUS_KATALOG.metoder)['--alt-hue'])
     expect(new Set(hues).size).toBe(ANALYSEMETODER.length)
   })
 
   it('følger metodens plass i lista og ikke hvor den vises', () => {
     // Menyen, pillen i analyttkortet, pillen i søket og menyknappen slår alle
     // opp på koden, så SPFA er den samme fargen overalt.
-    expect(metodefarger('SPFA')['--alt-hue']).toBe('0')
-    expect(metodefarger('UCAK')['--alt-hue']).toBe(String((2 * 360) / ANALYSEMETODER.length))
+    expect(metodefarger('SPFA', OUS_KATALOG.metoder)['--alt-hue']).toBe('0')
+    expect(metodefarger('UCAK', OUS_KATALOG.metoder)['--alt-hue']).toBe(String((2 * 360) / ANALYSEMETODER.length))
   })
 })
 
@@ -243,18 +237,18 @@ describe('filteret', () => {
 
 describe('hurtigtasten som setter filteret', () => {
   it('følger metodens plass i lista, fra Alt + 1', () => {
-    expect(metodesnarvei('SPFA')).toBe('Alt + 1')
-    expect(metodesnarvei('SRUS')).toBe('Alt + 2')
-    expect(metodesnarvei('UCAK')).toBe('Alt + 3')
-    expect(metodesnarvei('UETGHB')).toBe('Alt + 4')
-    expect(metodesnarvei('AHT')).toBe('Alt + 5')
+    expect(metodesnarvei('SPFA', OUS_KATALOG.metoder)).toBe('Alt + 1')
+    expect(metodesnarvei('SRUS', OUS_KATALOG.metoder)).toBe('Alt + 2')
+    expect(metodesnarvei('UCAK', OUS_KATALOG.metoder)).toBe('Alt + 3')
+    expect(metodesnarvei('UETGHB', OUS_KATALOG.metoder)).toBe('Alt + 4')
+    expect(metodesnarvei('AHT', OUS_KATALOG.metoder)).toBe('Alt + 5')
   })
 
   it('gir hver metode sin egen tast, og ingen til en ukjent kode', () => {
-    const taster = ANALYSEMETODER.map((m) => metodesnarvei(m.kode))
+    const taster = ANALYSEMETODER.map((m) => metodesnarvei(m.kode, OUS_KATALOG.metoder))
     expect(taster.every((t) => t !== null)).toBe(true)
     expect(new Set(taster).size).toBe(ANALYSEMETODER.length)
-    expect(metodesnarvei('XYZ')).toBe(null)
+    expect(metodesnarvei('XYZ', OUS_KATALOG.metoder)).toBe(null)
   })
 
   it('rekker over alle metodene appen har', () => {
@@ -266,6 +260,6 @@ describe('hurtigtasten som setter filteret', () => {
   it('holder tasten som slår filteret av utenfor metodenes', () => {
     // Null hører ikke til noen metode, og kan derfor stå for «ingen av dem».
     expect(AV_SNARVEI).toBe('Alt + 0')
-    expect(ANALYSEMETODER.map((m) => metodesnarvei(m.kode))).not.toContain(AV_SNARVEI)
+    expect(ANALYSEMETODER.map((m) => metodesnarvei(m.kode, OUS_KATALOG.metoder))).not.toContain(AV_SNARVEI)
   })
 })

@@ -134,6 +134,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_historikk(objekt uuid)': 'radsikkerhet',
   'les_interaksjoner(atc_koder text[], virkestoff_ider text[])': 'felles-lesing',
   'les_interaksjonssok(sider jsonb)': 'felles-lesing',
+  // P4c: analyttkatalogen til den innloggedes arbeidskontekst (docs/fagmiljoer.md).
+  'les_analyttkatalog()': 'rekkevidde',
   'les_intervallregelsett(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_kildeovervaking(historikk integer)': 'systemarkitekt',
   'les_kjemi(cider integer[])': 'felles-lesing',

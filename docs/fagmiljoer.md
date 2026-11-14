@@ -28,7 +28,11 @@ fagmiljø uten egne regler får en tydelig stopp
 ([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)). P3 lar
 systemarkitektene og de lokale administratorene **administrere
 medlemskapene**, og sperrer en konto i Auth når det siste aktive medlemskapet
-avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). Alle
+avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). P4c
+har flyttet **analyttkatalogen** — kodene, metodene, måleområdene,
+søkeordene, modulene og koblingene til stoffene — og EtG/EtS-tekstene fra
+klientpakken til databasen per fagmiljø
+([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)). Alle
 bygger på de felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
@@ -291,8 +295,9 @@ fagsiden eller sidenøkkelen), felles, lokal, personlig, felles forvaltning
 eller tilgang. Testen stopper en tabell, visning eller fil under `src/data/`
 og `originaldata/` uten erklæring, og en erklæring for noe som ikke finnes.
 Diskusjonene har fått rekkevidde per tråd i P2b, avledet av sidenøkkelen
-([Samhandlingen](#samhandlingen)); de lokale statiske filene flyttes til
-databasen i P4c.
+([Samhandlingen](#samhandlingen)). De lokale datafilene for analyttkatalogen
+er flyttet til databasen i P4c og er nå bare importgrunnlag, som aldri skal i
+klientpakken ([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)).
 
 **Tilbakeføring.** Reglene i faginnholdet (P2a) slår opp i tabellen; den må
 stå så lenge de gjør. Utløserne kan tas bort i en ny migrasjon uten at noe
@@ -516,6 +521,7 @@ egen variant. Bygg nye regler og funksjoner på disse:
 | `public.mine_lesbare_fagmiljoer()` | Fagmiljøene den innloggede kan lese lokalt innhold i: de aktive medlemskapene i aktive fagmiljøer, alle for en systemarkitekt, ingen uten aktivt medlemskap |
 | `public.mine_administrerte_fagmiljoer()` | Fagmiljøene den innloggede administrerer nå (`intern.er_lokal_admin_i`), alle for en systemarkitekt, ingen uten aktivt medlemskap |
 | `public.er_systemarkitekt()` | Om den innloggede er systemarkitekt; nei uten aktivt medlemskap |
+| `intern.arbeidsfagmiljo(bruker)` | Arbeidskonteksten (P4b, [under](#fortolkningen-per-fagmiljø)): det aktive primærmedlemskapet i et aktivt fagmiljø, null uten det, også for en systemarkitekt |
 
 Funksjonene i `intern` er `stable security definer` uten rettigheter for
 nettleseren, og brukes i `security definer`-funksjoner og utløsere.
@@ -715,8 +721,8 @@ den innloggede kan lese (systemarkitektene ser disse to og
 `analyttkoblede_stoffer` bare av medlemmene i fagmiljøet dagens fortolkning
 hører til (`public.leser_analyttkoblingene()`: OUS Klinisk farmakologi, D1)
 og systemarkitektene. Tabellen har bare stoffet; koblingene får fagmiljøet
-sitt når de flyttes fra den statiske datafilen til databasen (P4c), og til
-da ser ikke et annet fagmiljø dem, heller ikke med egne analytter. `public.les_endringslogg` (`security definer`)
+sitt i analyttkatalogen (P4c); tabellen står som vernet for stoffregisteret,
+og et annet fagmiljø ser den ikke, heller ikke med egne analytter. `public.les_endringslogg` (`security definer`)
 viser bare objektene den innloggede kan lese, og utkastene bare med
 endringsrett til alle sidens objekter. De andre lesefunksjonene for
 faginnholdet (`les_stoff`, `les_kommentarer`, `les_intervallregelsett` og de
@@ -856,9 +862,9 @@ lagringsfunksjonene med de samme meldingene som før.
 
 Referanseområdene på fagsidene er felles (D4) og kobles til koden gjennom
 laboratorieanalytten i arbeidskonteksten; de overstyres ikke lokalt.
-Analyttkatalogen, analyttkoblingene til stoffene og EtG/EtS-tekstene er
-fortsatt statiske i klientpakken; de flyttes til databasen per fagmiljø i
-P4c.
+Analyttkatalogen, analyttkoblingene til stoffene og EtG/EtS-tekstene står i
+databasen per fagmiljø siden P4c
+([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)).
 
 **De gamle nøklene.** De globale unike nøklene (én per kode i hele
 databasen: `laboratorieanalytter_kode_entydig`,
@@ -883,6 +889,77 @@ Klinisk farmakologi.
 **Tilbakeføring.** En ny migrasjon som setter funksjonene og visningen tilbake
 til definisjonene i migrasjonene før, fjerner utløserne og de nye nøklene, og
 tar bort kolonnene. Ingen data endres.
+
+## Analyttkatalogen per fagmiljø
+
+P4c flytter det som er laboratoriets eget, ut av klientpakken og inn i
+databasen per fagmiljø (P0 §2.5 og §3):
+`supabase/migrations/20261114230000_analyttkatalog_per_fagmiljo.sql`
+(tabellene og lesingen), `…230100_analyttkatalog_ous_import.sql` (katalogen
+til OUS Klinisk farmakologi) og `…230200_etg_regler_import.sql` (EtG og EtS).
+
+**Katalogen.** Fire tabeller, alle med `fagmiljo_id`:
+`analyttkatalog_metoder` (analysemetodene i filterets rekkefølge, som også gir
+fargen og hurtigtasten), `analyttkatalog_oppforinger` (oppføringene i søket:
+navn, gruppe, metode, kategori, enhet, måleområde, grensene for
+antihypertensivene, søkeord og hvordan oppføringen fortolkes — med
+konsentrasjonsbånd, som scenariomodul, THC-syre eller EtG/EtS),
+`analyttkatalog_koder` (analyttkodene hver oppføring dekker, hver kode høyst
+én gang per fagmiljø) og `analyttkatalog_koblinger` (koblingene fra kodene
+til stoffene i stoffregisteret, høyst ett primært stoff per kode). Tabellene
+har radsikkerhet uten regler og ingen rettigheter for nettleseren. Den eneste
+veien inn er `public.les_analyttkatalog()`, som gir katalogen til
+arbeidskonteksten ([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø))
+med fagmiljøets navn, og ingenting annet. Funksjonen tar ingen argumenter, så
+et annet fagmiljø kan ikke bes om. Katalogen endres med en ny migrasjon; appen
+skriver ikke til den.
+
+**Appen.** Katalogen hentes når appen åpnes, før noe tegnes opp
+(`src/katalog/Analyttkatalogkilde.tsx`, `App.tsx`), og settes opp på nytt når
+arbeidskonteksten byttes, så ingenting fra det forrige fagmiljøet blir
+stående. Den lagres ikke i nettleseren. Søket i fortolkningen, filteret med
+metodene, fortolkningsmodulene, kodepillene, lenkene mellom koder og
+fagsider, stoffregisteret, fagsøket og endringsloggen bruker den hentede
+katalogen. Klientpakken har ingen katalog: `src/domain/analyttkatalog.ts`
+har bare formen, og `lesKatalogdata` avviser et svar som ikke har den.
+
+**Tydelig stopp.** Et fagmiljø uten egen katalog får en tom en, og
+fortolkningen viser «Analyttkatalogen mangler: Fortolkningen er ikke satt opp
+for <fagmiljø> ennå» i stedet for søket. Kunne katalogen ikke hentes, står
+feilen med «Prøv igjen». Det finnes ingen reserve: aldri katalogen til OUS
+Klinisk farmakologi, verken fra klientpakken, fra søkeindeksen eller fra
+nettleserens lager.
+
+**EtG og EtS.** Tilfellene og kommentartekstene sto i `src/domain/etg.ts`. De
+er nå scenarioregelsettet for modulen `etg` med tre kommentarobjekter, i OUS
+Klinisk farmakologi, ordrett slik de sto (grunnlaget:
+`src/domain/__tests__/fasit/etg-import.json`, `scripts/etg-import.ts`).
+Modulen viser ett valg per scenario, i regelsettets rekkefølge, med «Begge
+påvist» når alle kodene er påvist; et regelsett med forholdstall eller
+manuell vurdering kan den ikke vise, og da sier den fra. Redigeringen av
+reglene i appen er ikke laget for modulen ennå; til da endres de med en
+migrasjon.
+
+**Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
+filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser
+`src/data/analytter.json`, `antihypertensiver.json`, `aliaser.json` og
+`analyttkoblinger.json`). De står igjen for skriptene og testene;
+byggekontrollen (`scripts/kontroller-vegg.mjs`, `LABORATORIEDATA`) stopper en
+pakke, også bak innloggingsveggen, som drar dem inn. THC-kurvene
+(`src/domain/thcKurver.ts`) er ikke en del av katalogen og står der de sto
+(D4, #374).
+
+**Tester.** `src/__tests__/analyttkatalogPerFagmiljo.test.ts` prøver at
+importene er de grunnlaget gir; at A får nøyaktig katalogen, metodene,
+koblingene og EtG/EtS-tilfellene som sto i klientpakken før (kontrollsummer
+regnet av `main` før flyttingen), og EtG/EtS-tekstene ordrett; at B, også
+systemarkitekten med B som arbeidskontekst, og en uten aktivt medlemskap får
+en tom katalog og ingen EtG-regler; at tabellene ikke kan leses direkte; og
+at en ny kjøring av importene ikke endrer noe. De kliniske fasitene kjøres
+uendret med katalogen til OUS Klinisk farmakologi.
+
+**Tilbakeføring.** En ny migrasjon som fjerner funksjonen og tabellene, og
+regelsettet og kommentarene for `etg`; appen før P4c bruker dem ikke.
 
 ## Katalogvaktene
 

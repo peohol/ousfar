@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useMineRettigheter, type Rettigheter } from './auth/rettigheter'
 import { redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
@@ -41,14 +41,13 @@ import { AutoerstattProvider } from './autoerstatt/Autoerstattkilde'
 import { MaleenhetKilde } from './enheter/Maleenhet'
 import { lagAutoerstattlager } from './autoerstatt/lagring'
 import { lagFavorittlager } from './favoritter/lagring'
-import { ANALYSEMETODER, filtrertPool } from './domain/analysemetoder'
-import { FORTOLKNINGSOPPFORINGER, byggKatalog } from './domain/analyttkatalog'
-import { alternativFor, ETG_ALTERNATIVER, type EtgAlternativ } from './domain/etg'
+import { filtrertPool } from './domain/analysemetoder'
+import { erEtgAnalytt, etgTilfeller, type EtgAlternativ, type Etgtilfeller } from './domain/etg'
 import type { Rute } from './domain/flytting'
 import { erRedigering, fortolkningsnokkel, fortolkningsrute, lesRute, redigeringsrute, sidesti } from './domain/rute'
 import { analytterForFortolkning, stoffbeskrivelse, stofferForFortolkning } from './domain/koblinger'
 import { rusModulFor } from './domain/rus'
-import { THC_KODE } from './domain/thc'
+import { erThcAnalytt } from './domain/thc'
 import { search } from './domain/search'
 import { BEVEGELSE, TEMA } from './domain/systemvalg'
 import {
@@ -95,6 +94,13 @@ import {
   useKeyboard,
 } from './hooks/useKeyboard'
 import { useRute } from './hooks/useRute'
+import {
+  AnalyttkatalogKilde,
+  katalogkildeFor,
+  lesAnalyttkatalog,
+  useAnalyttkatalog,
+  useHentAnalyttkatalog,
+} from './katalog/Analyttkatalogkilde'
 import { useNaarLedig } from './hooks/useNaarLedig'
 import { useSokeindeks, type Sokeindekshenter } from './hooks/useSokeindeks'
 import { useKontosynk, useKontovalg } from './hooks/useKontovalg'
@@ -124,13 +130,8 @@ const KOPIFEIL = 'Fikk ikke tilgang til utklippstavlen. Kopier teksten manuelt.'
  * kommentaren er kopiert, slik at et tastetrykk i mellomtiden gjør det samme
  * som ellers i limsteget i stedet for å falle på gulvet.
  */
-/** Fortolkningen overlever en oppdatering av appen, med analytten lest tilbake etter koden. */
-const FORTOLKNINGSFORM = fortolkningsform(FORTOLKNINGSOPPFORINGER)
-
-/** Analyttene etter nøkkelen fortolkningssiden deres har i adressen. */
-const ANALYTT_ETTER_NOKKEL = new Map(FORTOLKNINGSOPPFORINGER.map((a) => [fortolkningsnokkel(a.kode), a]))
-
 const BLINK = 500
+const INGEN_ALTERNATIVER: EtgAlternativ[] = []
 const STEGBYTTE = 130
 
 /** Enter og mellomrom skal ikke både trykke en fokusert knapp og utløse stegets handling. */
@@ -138,14 +139,54 @@ function buttonHasFocus(): boolean {
   return document.activeElement?.tagName === 'BUTTON'
 }
 
+/**
+ * Appen, når analyttkatalogen til fagmiljøet fortolkningen gjelder
+ * (arbeidskonteksten) er hentet.
+ *
+ * Katalogen er laboratoriets egen og står i databasen per fagmiljø; appen har
+ * ingen i klientpakken. Til den er hentet, tegnes ingenting opp, så
+ * fortolkningen aldri rekker å vise noe uten den. Byttes fagmiljøet, settes
+ * appen opp på nytt med det nye fagmiljøets katalog: ingenting fra det
+ * forrige blir stående. Kunne den ikke hentes, eller har fagmiljøet ingen,
+ * er katalogen tom, og fortolkningen sier fra i stedet for å fortolke.
+ */
 export default function App() {
-  const [state, setState] = useBevart('fortolkning', initialState, FORTOLKNINGSFORM)
-  const dispatch = useCallback((action: Action) => setState((forrige) => reducer(forrige, action)), [setState])
-  const [failedCopy, setFailedCopy] = useState<string | null>(null)
   const profil = useProfil()
   // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
   // rettighetene i databasen, ikke den gamle adminrollen (P2d).
   const rettigheter = useMineRettigheter(profil.id)
+  const katalogtilstand = useHentAnalyttkatalog(
+    useCallback(() => lesAnalyttkatalog(klient()), []),
+    rettigheter.arbeidsfagmiljo?.id ?? null,
+  )
+  const kilde = useMemo(
+    () => (katalogtilstand.status === 'laster' ? null : katalogkildeFor(katalogtilstand)),
+    [katalogtilstand],
+  )
+  if (!kilde) return <div className="port" aria-busy="true" />
+  return (
+    <AnalyttkatalogKilde verdi={kilde}>
+      <Arbeidsflate key={kilde.katalog.fagmiljo?.id ?? ''} rettigheter={rettigheter} />
+    </AnalyttkatalogKilde>
+  )
+}
+
+function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
+  // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
+  // egen katalog. Fagsidene er stoffenes, i stoffregisteret; koblingene i
+  // katalogen er veien mellom de to.
+  const katalog = useAnalyttkatalog()
+  // Fortolkningen overlever en oppdatering av appen, med analytten lest tilbake etter koden.
+  const fortolkningsformen = useMemo(() => fortolkningsform(katalog.fortolkninger), [katalog])
+  // Analyttene etter nøkkelen fortolkningssiden deres har i adressen.
+  const analyttEtterNokkel = useMemo(
+    () => new Map(katalog.fortolkninger.map((a) => [fortolkningsnokkel(a.kode), a])),
+    [katalog],
+  )
+  const [state, setState] = useBevart('fortolkning', initialState, fortolkningsformen)
+  const dispatch = useCallback((action: Action) => setState((forrige) => reducer(forrige, action)), [setState])
+  const [failedCopy, setFailedCopy] = useState<string | null>(null)
+  const profil = useProfil()
   const tema = useKontovalg(TEMA, profil.id)
   const bevegelse = useKontovalg(BEVEGELSE, profil.id)
   // Visualiseringen i THC-syremodulen, med den valgte eller alle
@@ -171,25 +212,12 @@ export default function App() {
   // binde `kopierOgGaaVidere` til en ny utgave for hver rendring.
   const staaende = useRef(stage)
   staaende.current = stage
-  // Søket dekker alt appen kan fortolke — se `FORTOLKNINGSOPPFORINGER`.
-  const alleAnalytter = FORTOLKNINGSOPPFORINGER
-  // Filteret på hovedsiden smalner inn hva søket kan finne.
+  // Søket dekker alt fagmiljøet kan fortolke, og filteret på hovedsiden
+  // smalner inn hva det kan finne.
   const pool = useMemo(
-    () => filtrertPool(alleAnalytter, state.metodefilter),
-    [alleAnalytter, state.metodefilter],
+    () => filtrertPool(katalog.fortolkninger, state.metodefilter),
+    [katalog, state.metodefilter],
   )
-  // Laboratorieanalyttene: én per analyttkode i søkeoppføringene. Fagsidene er
-  // stoffenes, i stoffregisteret; koblingene der er veien mellom de to.
-  const katalog = useMemo(() => byggKatalog(alleAnalytter), [alleAnalytter])
-  const [rute, gaaTil] = useRute(apneFraAdressen)
-  // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
-  const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
-  // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
-  // versjonen berører siden, og å gå til en annen side er et rolig øyeblikk
-  // der den kan tas i bruk i stillhet (`src/oppdatering/sider.ts`).
-  const side = sidesti(rute)
-  useEffect(() => meldSide(side), [side])
-  useEffect(() => () => meldSide(null), [])
 
   // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
   const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
@@ -216,11 +244,6 @@ export default function App() {
     () => ({ ...faginnholdsklienter, kanRedigere: redigering.felles }),
     [faginnholdsklienter, redigering.felles],
   )
-  // Redigeringen av reglene og kommentarene en fortolkning gir, for
-  // administratorene i fagmiljøet, på en egen adresse under fortolkningen.
-  const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
-  // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
-  const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
   // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
   // (arbeidskonteksten, P4b). Byttes det, tømmes reglene før de nye hentes.
   const regelkontekst = rettigheter.arbeidsfagmiljo?.id ?? null
@@ -231,6 +254,14 @@ export default function App() {
     regelkontekst,
   )
   const hits = useMemo(() => search(state.query, pool), [state.query, pool])
+  // Tilfellene EtG-modulen velger mellom: scenariene i modulens regelsett.
+  const etgtilfeller = useMemo<Etgtilfeller | null>(() => {
+    const analytt = state.analyte
+    if (!analytt?.modul || !erEtgAnalytt(analytt)) return null
+    const modul = { id: analytt.modul.id, navn: analytt.navn }
+    return etgTilfeller(analytt, reglerForModul(scenarioregler.tilstand, modul, scenarioregler.provIgjen, regelfagmiljo))
+  }, [state.analyte, scenarioregler, regelfagmiljo])
+  const etgAlternativer = etgtilfeller?.status === 'klar' ? etgtilfeller.alternativer : INGEN_ALTERNATIVER
 
   // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
   // når appen åpnes, sammen med referanseområdet stoffsidene har for
@@ -238,10 +269,10 @@ export default function App() {
   const hentRegler = useCallback(async () => {
     const [regelsett, referanseomrader] = await Promise.all([
       lesPubliserteRegelsett(faginnhold.leser),
-      faginnhold.leser.lesReferanseomrader('publisert'),
+      faginnhold.leser.lesReferanseomrader('publisert', katalog.koblinger),
     ])
     return { regelsett, referanseomrader }
-  }, [faginnhold.leser])
+  }, [faginnhold.leser, katalog])
   const regler = usePubliserteRegler(hentRegler, regelkontekst)
 
   // THC-syremodulen fortolker med regelsettet og tekstene som er publisert.
@@ -271,11 +302,28 @@ export default function App() {
   // retten til å redigere faginnholdet.
   const stoffregister = useLagStoffregisterkilde({
     lager: registerlager,
+    koblinger: katalog.koblinger,
     admin: rettigheter.systemarkitekt,
     kanEndre: rettigheter.stoffregister,
     ...(faginnhold.kanRedigere && rettigheter.systemarkitekt && rettigheter.stoffregister && { opprettSide }),
   })
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
+  // En gammel adresse til en analytt tolkes med koblingene og katalogen.
+  const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
+  const [rute, gaaTil] = useRute(apneFraAdressen, adressegrunnlag)
+  // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
+  const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
+  // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
+  // versjonen berører siden, og å gå til en annen side er et rolig øyeblikk
+  // der den kan tas i bruk i stillhet (`src/oppdatering/sider.ts`).
+  const side = sidesti(rute)
+  useEffect(() => meldSide(side), [side])
+  useEffect(() => () => meldSide(null), [])
+  // Redigeringen av reglene og kommentarene en fortolkning gir, for
+  // administratorene i fagmiljøet, på en egen adresse under fortolkningen.
+  const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
+  // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
+  const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
   // Favorittene står både på stoffsidene og i menyen, med stoffets egen
   // nøkkel også for en gammel adresse til det.
   const favorittlager = useMemo(() => lagFavorittlager(klient()), [])
@@ -316,7 +364,10 @@ export default function App() {
     return { ...sokbar, indeks: utenSider(sokbar.indeks, skjult) }
   }, [sokbar, register])
   const beskrivSide = useCallback((stoff: string) => stoffbeskrivelse(stoff, register, katalog), [register, katalog])
-  const gaaTilAdresse = useCallback((adresse: string) => gaaTil(lesRute(adresse)), [gaaTil])
+  const gaaTilAdresse = useCallback(
+    (adresse: string) => gaaTil(lesRute(adresse, register, katalog)),
+    [gaaTil, register, katalog],
+  )
   const regeloppslag = useMemo(
     () => (state.analyte ? slaOpp(regler.tilstand, state.analyte.kode) : null),
     [regler.tilstand, state.analyte],
@@ -503,7 +554,7 @@ export default function App() {
     forrigeAnalytt.current = analyttnokkel
     if (rute.side !== 'fortolkning' || rute.analytt === analyttnokkel) return
     if ((oppstart && rute.analytt) || (adresseEndret && !analyttEndret)) {
-      const analytt = rute.analytt ? ANALYTT_ETTER_NOKKEL.get(rute.analytt) : undefined
+      const analytt = rute.analytt ? analyttEtterNokkel.get(rute.analytt) : undefined
       if (analytt) velgAnalytt(analytt)
       else if (rute.analytt) gaaTil(fortolkningsrute(state.analyte?.kode), { erstatt: true })
       else {
@@ -514,7 +565,7 @@ export default function App() {
       return
     }
     gaaTil(fortolkningsrute(state.analyte?.kode), { erstatt: oppstart })
-  }, [rute, analyttnokkel, state.analyte, velgAnalytt, gaaTil, slippBildet, dispatch])
+  }, [rute, analyttnokkel, state.analyte, velgAnalytt, gaaTil, slippBildet, dispatch, analyttEtterNokkel])
 
   /**
    * Stoffsidene til modulen som fortolkes: toppmenyens «Åpne stoffside», eller
@@ -531,7 +582,7 @@ export default function App() {
   const kanRedigeres = useMemo(() => {
     const analytt = state.analyte
     if (!redigering.lokalt || !analytt) return false
-    if (rusModulFor(analytt) || analytt.kode === THC_KODE) return true
+    if (rusModulFor(analytt) || erThcAnalytt(analytt)) return true
     const { tilstand } = regler
     return tilstand.status === 'klar' && analytterForFortolkning(analytt, katalog).some((a) => tilstand.etterKode.has(a.kode))
   }, [redigering.lokalt, state.analyte, regler, katalog])
@@ -582,16 +633,16 @@ export default function App() {
       const truffet = /^Digit(\d)$/.exec(event.code)
       if (!truffet?.[1]) return
       const tall = Number(truffet[1])
-      if (tall > ANALYSEMETODER.length || modaltLagLiggerOver() || sidemenyenErApen()) return
+      if (tall > katalog.metoder.length || modaltLagLiggerOver() || sidemenyenErApen()) return
       event.preventDefault()
       dispatch({
         type: 'sett-metodefilter',
-        metode: tall === 0 ? null : (ANALYSEMETODER[tall - 1]?.kode ?? null),
+        metode: tall === 0 ? null : (katalog.metoder[tall - 1]?.kode ?? null),
       })
     }
     window.addEventListener('keydown', paaTast)
     return () => window.removeEventListener('keydown', paaTast)
-  }, [])
+  }, [katalog, dispatch])
 
   // Enter og mellomrom bekrefter det samme, overalt i appen.
   const confirm = useCallback(
@@ -649,7 +700,7 @@ export default function App() {
             e.preventDefault()
             svar()
           } else if (stage === 'etg') {
-            const alternativ = ETG_ALTERNATIVER[index]
+            const alternativ = etgAlternativer[index]
             if (!alternativ) return
             e.preventDefault()
             void pickEtg(alternativ)
@@ -666,7 +717,7 @@ export default function App() {
 
   const valgtValg = state.bandKey ? valgene.find((v) => v.key === state.bandKey) : undefined
   const rusModul = state.analyte ? rusModulFor(state.analyte) : undefined
-  const etgAlternativ = state.etgValg ? alternativFor(state.etgValg) : undefined
+  const etgAlternativ = state.etgValg ? etgAlternativer.find((a) => a.id === state.etgValg) : undefined
 
   /**
    * Steget som vises. Det henger etter `stage` i det korte øyeblikket knappene
@@ -692,7 +743,7 @@ export default function App() {
     [rute, state.analyte, katalog, kanoniskStoff],
   )
   // Sidene en tråd kan flyttes til.
-  const sider = useMemo(() => diskusjonssider(register.stoffer, FORTOLKNINGSOPPFORINGER), [register])
+  const sider = useMemo(() => diskusjonssider(register.stoffer, katalog.fortolkninger), [register, katalog])
 
   const app = (
     <ToppmenyKilde>
@@ -888,14 +939,15 @@ export default function App() {
                       />
                     )}
 
-                    {vist === 'thc' && <ThcStep regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
+                    {vist === 'thc' && state.analyte && <ThcStep analyte={state.analyte} regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
 
-                    {vist === 'rus' && rusModul && (
+                    {vist === 'rus' && state.analyte && rusModul && (
                       <RusStep
                         // Modulen holder sine egne valg. Bytter analytten, skal de nulles,
                         // og nøkkelen gir modulen en frisk tilstand i stedet for å måtte
                         // rydde i den fra utsiden.
                         key={rusModul.id}
+                        analyte={state.analyte}
                         modul={rusModul}
                         regler={reglerForModul(scenarioregler.tilstand, rusModul, scenarioregler.provIgjen, regelfagmiljo)}
                         onBack={back}
@@ -905,8 +957,10 @@ export default function App() {
                       />
                     )}
 
-                    {vist === 'etg' && (
+                    {vist === 'etg' && state.analyte && etgtilfeller && (
                       <EtgStep
+                        analyte={state.analyte}
+                        tilfeller={etgtilfeller}
                         onPick={(alternativ) => void pickEtg(alternativ)}
                         onBack={back}
                         failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}

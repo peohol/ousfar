@@ -1,5 +1,6 @@
 import { Pill } from './Pill'
 import { metodefarger } from '../domain/analysemetoder'
+import { useAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 
 export interface MetodepilleProps {
   /** Koden til analysemetoden, f.eks. «SPFA». */
@@ -23,8 +24,9 @@ export interface MetodepilleProps {
  * Hva koden betyr, står i tipset på filterpillen for den som trenger det.
  */
 export function Metodepille({ metode, kategori }: MetodepilleProps) {
+  const { metoder } = useAnalyttkatalog()
   return (
-    <Pill tone="metode" style={metodefarger(metode)}>
+    <Pill tone="metode" style={metodefarger(metode, metoder)}>
       <span className="metodepille__kode">{metode}</span>
       {kategori && (
         <>

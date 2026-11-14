@@ -15,7 +15,8 @@
  *
  * Modulen brukes av importskriptet og testene, ikke av appen.
  */
-import { byggKatalog, FORTOLKNINGSOPPFORINGER, type Analyttkatalog } from '../domain/analyttkatalog'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, datasett, type Importkilde, type Importplan } from './import'
 
 export const ANTIHYPERTENSIV_DATASETT = datasett(
@@ -30,6 +31,6 @@ export const ANTIHYPERTENSIV_KILDE: Importkilde = {
   felleskatalogen: '',
 }
 
-export function antihypertensivplan(katalog: Analyttkatalog = byggKatalog(FORTOLKNINGSOPPFORINGER)): Importplan {
+export function antihypertensivplan(katalog: Analyttkatalog = OUS_KATALOG): Importplan {
   return byggImportplan(ANTIHYPERTENSIV_DATASETT.filer, ANTIHYPERTENSIV_DATASETT.referanser, katalog, ANTIHYPERTENSIV_KILDE)
 }

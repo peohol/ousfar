@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.131.1',
+    dato: '2026-11-14',
+    sammendrag: 'Analyttene i fortolkningen hentes fra fagmiljøet du arbeider i',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['fortolkning'],
+    punkter: [
+      'Analyttene og kodene i søket, analysemetodene i filteret, måleområdene, søkeordene og koblingene til fagsidene er laboratoriets egne og hentes nå fra fagmiljøet du arbeider i. For OUS Klinisk farmakologi er alt som før, og fortolkningen gir de samme svarene.',
+      'Tekstene for EtG og EtS ligger nå sammen med de andre fortolkningsreglene til fagmiljøet, i stedet for i selve appen. Tekstene og valgene er de samme som før.',
+      'Et fagmiljø som ennå ikke har satt opp fortolkningen, får en tydelig melding om det i stedet for analyttene til et annet fagmiljø.',
+    ],
+  },
+  {
     versjon: '1.131.0',
     dato: '2026-11-14',
     sammendrag: 'Administratorene styrer medlemmene i sitt eget fagmiljø, og en konto uten medlemskap sperres',

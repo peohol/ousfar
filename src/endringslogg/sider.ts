@@ -8,7 +8,7 @@ import type { Analyte } from '../types'
 import { analytterForFortolkning } from '../domain/koblinger'
 import { scenariomoduler } from '../domain/rus'
 import type { Rute } from '../domain/rute'
-import { THC_KODE } from '../domain/thc'
+import { erThcAnalytt } from '../domain/thc'
 import type { Endringsside } from './modell'
 
 export function endringssideFor(
@@ -27,7 +27,7 @@ export function endringssideFor(
   return {
     analyttkoder,
     moduler: scenariomoduler(analytter.map((a) => a.fortolkning)).map((m) => m.id),
-    thc: analyttkoder.includes(THC_KODE),
+    thc: analytter.some((a) => erThcAnalytt(a.fortolkning)),
   }
 }
 

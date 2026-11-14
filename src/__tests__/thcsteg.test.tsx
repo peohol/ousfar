@@ -21,6 +21,7 @@ import { formaterProsent } from '../domain/thcPlot'
 import { margineksempel, marginvalg } from '../domain/thcVisning'
 import { medPekerhendelser, trykkPaaValg } from './hjelp/pekerhendelser'
 import { THC_MODELL, THC_REGELSETT, THC_TEKSTER, thcRegelsettutgave } from './hjelp/thcgrunnlag'
+import { THC_ANALYTT } from '../domain/ouskatalog'
 
 beforeAll(() => {
   globalThis.ResizeObserver ??= class {
@@ -40,7 +41,7 @@ function visSteg(regler: ThcRegler, visualisering?: ThcStepProps['visualisering'
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
-        <ThcStep regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} visualisering={visualisering} />
+        <ThcStep analyte={THC_ANALYTT} regler={regler} onBack={vi.fn()} copy={copy} flashAt={vi.fn()} visualisering={visualisering} />
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
@@ -381,7 +382,7 @@ describe('fortolkningsmodulen for THC-syre', () => {
     const vis = (m: ThcModell) => (
       <TipsLag>
         <ShortcutVisibilityProvider>
-          <ThcStep regler={{ status: 'klar', modell: m }} onBack={vi.fn()} copy={vi.fn()} flashAt={vi.fn()} />
+          <ThcStep analyte={THC_ANALYTT} regler={{ status: 'klar', modell: m }} onBack={vi.fn()} copy={vi.fn()} flashAt={vi.fn()} />
         </ShortcutVisibilityProvider>
       </TipsLag>
     )

@@ -26,7 +26,8 @@ import { navnenokkel } from './sokenavn'
  *   det fører til stoffet, og i søket teller et eksakt alias som et eksakt
  *   navn. Det er den eneste lista over søkenavn for stoffsidene i fagsøket.
  *   Søket etter analytter i fortolkningen bruker den ikke.
- * - `analyttkoblinger`: analyttkoden, stoffet, hva analytten er for stoffet
+ * - `analyttkoblinger` (fra fagmiljøets analyttkatalog i databasen):
+ *   analyttkoden, stoffet, hva analytten er for stoffet
  *   ({@link Analyttrelasjon}) og om stoffet er analyttens primære stoff
  *   (`primar`, standard sann). Hver kode har høyst ett primært stoff: det er
  *   dit koden lenker, og der fortolkningsreglene og datakortene for koden står.
@@ -80,10 +81,16 @@ export interface StoffAnalyttKobling {
 
 export interface Registerdata {
   stoffer: { slug: string; navn: string; aliaser?: string[] }[]
-  analyttkoblinger: { kode: string; stoff: string; relasjon: string; primar?: boolean; merknad?: string }[]
+  analyttkoblinger: readonly { kode: string; stoff: string; relasjon: string; primar?: boolean; merknad?: string | null }[]
 }
 
-export const STOFFREGISTERDATA: Registerdata = registerdata
+/**
+ * Stoffene i datafilen. Koblingene til analyttkodene er laboratoriets egne og
+ * står i fagmiljøets analyttkatalog i databasen (`src/domain/analyttkatalog.ts`);
+ * appen gir dem til {@link byggStoffregister} når katalogen er hentet. Uten
+ * den har registeret ingen koblinger.
+ */
+export const STOFFREGISTERDATA: Registerdata = { stoffer: (registerdata as Pick<Registerdata, 'stoffer'>).stoffer, analyttkoblinger: [] }
 
 /** En fagside slik databasen har den (`les_stoffregister`). */
 export interface Stoffoppforing {

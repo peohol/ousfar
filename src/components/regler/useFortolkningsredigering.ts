@@ -13,9 +13,9 @@ import type { Tilstand } from '../../faginnhold/modell'
 import { kommentarendringer, utenKommentarer } from '../../regler/kommentarer'
 import type { Intervallregelsett } from '../../regler/modell'
 import { scenariokommentarendringer, type Scenarioutkast } from '../../regler/scenarioredigering'
-import { modulMedId, scenariomoduler } from '../../domain/rus'
+import { scenariomoduler } from '../../domain/rus'
 import type { Laboratorieanalytt } from '../../domain/analyttkatalog'
-import { THC_KODE } from '../../domain/thc'
+import { erThcAnalytt } from '../../domain/thc'
 import { lagreThcUtkast, type ThcRegelsettutgave, type ThcUtkast } from '../../faginnhold/thcregler'
 import { useFaginnholdskilde } from '../stoffside/Faginnholdskilde'
 
@@ -52,10 +52,13 @@ export function useFortolkningsredigering(analytter: readonly Laboratorieanalytt
   // Kodene og modulene som tekst, så en ny liste med de samme ikke leser alt på nytt.
   const kodeliste = analytter.map((a) => a.kode).join(' ')
   const koder = useMemo(() => (kodeliste ? kodeliste.split(' ') : []), [kodeliste])
-  const modulliste = scenariomoduler(analytter.map((a) => a.fortolkning))
-    .map((m) => m.id)
-    .join(' ')
+  const scenarier = scenariomoduler(analytter.map((a) => a.fortolkning))
+  const modulliste = scenarier.map((m) => m.id).join(' ')
   const moduler = useMemo(() => (modulliste ? modulliste.split(' ') : []), [modulliste])
+  // Navnene på modulene, til kommentarene som lages for dem.
+  const modulnavn = useRef<ReadonlyMap<string, string>>(new Map())
+  modulnavn.current = new Map(scenarier.map((m) => [m.id, m.navn]))
+  const medThc = analytter.some((a) => erThcAnalytt(a.fortolkning))
   const [tilstand, setTilstand] = useState<Regeltilstand>({ status: 'laster', regler: INGEN_REGLER, feil: null })
   const [publisert, setPublisert] = useState<Regeldata>(INGEN_REGLER)
   const [konflikt, setKonflikt] = useState(false)
@@ -68,14 +71,14 @@ export function useFortolkningsredigering(analytter: readonly Laboratorieanalytt
     async (t: Tilstand): Promise<Regeldata> => {
       const [intervall, thcregelsett, scenario] = await Promise.all([
         Promise.all(koder.map(async (kode) => [kode, await leser.finnIntervallregelsett(kode, t)] as const)),
-        koder.includes(THC_KODE) ? leser.lesThcRegelsett(t) : null,
+        medThc ? leser.lesThcRegelsett(t) : null,
         Promise.all(moduler.map(async (id) => [id, await leser.finnScenarioregelsett(id, t)] as const)),
       ])
       const utfylt = <T,>(par: readonly (readonly [string, T | null])[]) =>
         Object.fromEntries(par.filter((p): p is readonly [string, T] => p[1] !== null))
       return { regelsett: utfylt(intervall), thcregelsett, scenarioregelsett: utfylt(scenario) }
     },
-    [leser, koder, moduler],
+    [leser, koder, moduler, medThc],
   )
 
   useEffect(() => {
@@ -202,14 +205,14 @@ export function useFortolkningsredigering(analytter: readonly Laboratorieanalytt
       endre(
         async (lager) => {
           const apnet = utkastet().scenarioregelsett[modulId]
-          const modul = modulMedId(modulId)
-          if (!apnet || !modul) throw new Error(IKKE_KLAR)
+          const navn = modulnavn.current.get(modulId)
+          if (!apnet || !navn) throw new Error(IKKE_KLAR)
           const mot = grunnlag ?? apnet
           await lager.lagreScenarioregelsett(
             mot.regelsett.id,
             mot.regelsett.revisjon,
             utkast.regelsett,
-            scenariokommentarendringer(utkast, modul.navn, mot.kommentarer, apnet.kommentarer),
+            scenariokommentarendringer(utkast, navn, mot.kommentarer, apnet.kommentarer),
           )
         },
         oppsummering,

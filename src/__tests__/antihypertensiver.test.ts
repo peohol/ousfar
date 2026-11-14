@@ -8,8 +8,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
-import { STOFFREGISTER } from '../domain/stoffregister'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { ANTIHYPERTENSIV_DATASETT, ANTIHYPERTENSIV_KILDE, antihypertensivplan } from '../faginnhold/antihypertensiver'
 import { byggImportplan, importmigrasjoner, type Importfil } from '../faginnhold/import'
 import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing'
@@ -17,7 +16,7 @@ import { lesDosetabell, lesKinetikk } from '../faginnhold/paneler'
 import { klartekst } from '../faginnhold/riktekst'
 import { faginnholdskall, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const plan = antihypertensivplan(katalog)
 // I nummerrekkefølgen importen lager dem: i produksjonen ble de rullet ut fem om gangen, så versjonene står ikke i samme rekkefølge.
 const nummer = (f: string) => Number(/_antihypertensiver_import_(\d+)\.sql$/.exec(f)?.[1])
@@ -54,7 +53,7 @@ describe('datasettet', () => {
   it('har én side for hvert av de 25 stoffene, med navnet og nøkkelen fra stoffregisteret', () => {
     expect(plan.koder).toHaveLength(25)
     for (const k of plan.koder) {
-      const stoff = STOFFREGISTER.finn(k.hovedside.slug!)
+      const stoff = OUS_REGISTER.finn(k.hovedside.slug!)
       expect(stoff, k.hovedside.navn).toBeDefined()
       expect(k.hovedside.navn).toBe(stoff!.navn)
       expect(k.kode, k.hovedside.navn).toBeNull()

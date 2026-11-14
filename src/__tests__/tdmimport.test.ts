@@ -6,14 +6,14 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, importSql, kildetilleggskilde, type Importfil, type Plankode } from '../faginnhold/import'
 import { lesKinetikk, panelFor } from '../faginnhold/paneler'
 import { klartekst } from '../faginnhold/riktekst'
 import { TDM_DATASETT, TDM_KILDE, tdmplan } from '../faginnhold/tdm'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const plan = tdmplan(katalog)
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 const TDM = migrasjonsfiler().filter((f) => /_tdm_referanseomrader_\d+\.sql$/.test(f))

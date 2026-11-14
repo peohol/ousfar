@@ -21,7 +21,7 @@ import type { Labsokedata } from '../farmakologiportalen/lesing'
 import { alleLabkomponenter, labsted } from '../farmakologiportalen/stoffside'
 import { FORBINDELSER } from '../kjemi/forbindelser'
 import { analytterForStoff, stoffbeskrivelse } from '../domain/koblinger'
-import { STOFFREGISTER, STOFFREGISTERDATA, byggStoffregister, stoffslug, type Registerdata } from '../domain/stoffregister'
+import { byggStoffregister, stoffslug, type Registerdata } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { byggSidemodell, publiseringsplan } from '../faginnhold/stoffside'
 import {
@@ -70,6 +70,8 @@ import {
 } from '../legemiddeldata/stoffside'
 import { AMITRIPTYLIN, KODEIN, synkroniserUtdrag } from './hjelp/fest'
 import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { OUS_KATALOG, OUS_REGISTER, OUS_REGISTERDATA } from '../domain/ouskatalog'
+import { OUS_VALG } from './hjelp/ousvalg'
 
 function dokument(...innhold: unknown[]) {
   return { type: 'doc', content: [{ type: 'paragraph', content: innhold }] }
@@ -214,14 +216,14 @@ describe('lesingen av kunnskapsbasen', () => {
     const tom: Sideleser = { lesStoffsider: async () => [] }
     const base = await lesKunnskapsbase({ sider: tom })
     expect(base.sider).toEqual([])
-    const [treff] = sokGlobalt(lagSokeindeks(indekserKunnskapsbase(base)), 'kvetiapin')
+    const [treff] = sokGlobalt(lagSokeindeks(indekserKunnskapsbase(base, OUS_VALG)), 'kvetiapin')
     expect(treff!.dokument).toMatchObject({ felt: 'navn', sted: { side: { stoff: 'kvetiapin', navn: 'Kvetiapin' } } })
     expect(sokeadresse(treff!.dokument.sted)).toBe('#/stoff/kvetiapin')
   })
 
   it('gir hver side de samme søkedokumentene som søket på siden selv', async () => {
     const base = await lesKunnskapsbase({ sider: sideleser, legemidler: legemiddelsok })
-    const globale = indekserKunnskapsbase(base)
+    const globale = indekserKunnskapsbase(base, OUS_VALG)
 
     for (const slug of ['amitriptylin', 'kodein', 'nortriptylin']) {
       // Slik siden selv gjør det (Stoffside.tsx): én side og legemidlene for koblingen den har.
@@ -237,7 +239,7 @@ describe('lesingen av kunnskapsbasen', () => {
           ...interaksjonstekster(byggInteraksjoner(await legemidler.interaksjoner(nokler), nokler).interaksjoner),
         )
       }
-      const paSiden = indekserSide(stoffidentitet(STOFFREGISTER.finn(slug)!, analytterForStoff(slug)), modell, tillegg)
+      const paSiden = indekserSide(stoffidentitet(OUS_REGISTER.finn(slug)!, analytterForStoff(slug, OUS_REGISTER, OUS_KATALOG)), modell, tillegg)
       expect(globale.filter((d) => d.sted.side.stoff === slug), slug).toEqual(paSiden)
     }
     // Kodeinsiden fikk ikke amitriptylinpreparatene, selv om alt ble lest sammen.
@@ -253,7 +255,7 @@ describe('lesingen av kunnskapsbasen', () => {
       },
       interaksjoner: legemiddelsok.interaksjoner,
     }
-    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: nede, ventetider: [] })
+    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: nede, ventetider: [] }, OUS_VALG)
     expect(indeks.mangler).toEqual({ preparater: 'Preparatene svarer ikke' })
     expect(sokGlobalt(indeks, 'sarotex')).toEqual([])
     expect(sokGlobalt(indeks, 'terbinafin')).not.toEqual([])
@@ -266,7 +268,7 @@ describe('lesingen av kunnskapsbasen', () => {
         throw new Error('Sidene svarer ikke')
       },
     }
-    const indeks = await lesSokeindeks({ sider: nede, legemidler: legemiddelsok, ventetider: [] })
+    const indeks = await lesSokeindeks({ sider: nede, legemidler: legemiddelsok, ventetider: [] }, OUS_VALG)
     expect(indeks.mangler).toEqual({ sider: 'Sidene svarer ikke' })
     expect(sokGlobalt(indeks, 'kvetiapin').map((t) => t.dokument.sted.side.stoff)).toEqual(['kvetiapin'])
   })
@@ -281,7 +283,7 @@ describe('lesingen av kunnskapsbasen', () => {
         return legemiddelsok.preparater(sider)
       },
     }
-    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: ustabil, ventetider: [0, 0] })
+    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: ustabil, ventetider: [0, 0] }, OUS_VALG)
     expect(forsok).toBe(3)
     expect(indeks.mangler).toBeUndefined()
     expect(sokGlobalt(indeks, 'sarotex')).not.toEqual([])
@@ -289,7 +291,9 @@ describe('lesingen av kunnskapsbasen', () => {
 
   it('gir indekser over det som er lest, før de andre kildene er der', async () => {
     const delvise: Kunnskapsindeks[] = []
-    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok }, {}, (d) => delvise.push(d))
+    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok }, OUS_VALG, (d) =>
+      delvise.push(d),
+    )
     // Registeret, sidene, og så preparatene og interaksjonene hver for seg.
     expect(delvise).toHaveLength(4)
     const [forst, sa] = delvise as [Kunnskapsindeks, Kunnskapsindeks]
@@ -327,12 +331,14 @@ describe('mellomlagringen', () => {
   it('viser det lagrede med én gang, og leser bare versjonene når ingenting er endret', async () => {
     const lager = minnelager()
     const forste = tellendeKlient()
-    const ny = await lesSokeindeks(kilderFor(forste.klient, { mellomlager: lager }))
+    const ny = await lesSokeindeks(kilderFor(forste.klient, { mellomlager: lager }), OUS_VALG)
     expect([...lager.innhold.keys()].sort()).toEqual(['sok:interaksjoner', 'sok:preparater', 'sok:sider'])
 
     const andre = tellendeKlient()
     const delvise: Kunnskapsindeks[] = []
-    const lagret = await lesSokeindeks(kilderFor(andre.klient, { mellomlager: lager }), {}, (d) => delvise.push(d))
+    const lagret = await lesSokeindeks(kilderFor(andre.klient, { mellomlager: lager }), OUS_VALG, (d) =>
+      delvise.push(d),
+    )
     expect(andre.kalt).toEqual(['sokedata_versjoner'])
     // Registeret, og så alt fra lageret i én omgang, før noe er spurt om.
     expect(delvise).toHaveLength(2)
@@ -342,21 +348,22 @@ describe('mellomlagringen', () => {
 
   it('leser på nytt bare kildene som er endret', async () => {
     const lager = minnelager()
-    await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }))
+    await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }), OUS_VALG)
     // En ny FEST-synkronisering gir en ny versjon for preparatene og interaksjonene.
     const { kalt, klient } = tellendeKlient()
     const versjoner = lagVersjonsleser(klient)
     await lesSokeindeks(
       kilderFor(klient, { mellomlager: lager, versjoner: async () => ({ ...(await versjoner()), fest: 'ny' }) }),
+      OUS_VALG,
     )
     expect(kalt).toEqual(['sokedata_versjoner', 'les_preparatsok', 'les_interaksjonssok'])
   })
 
   it('bruker det lagrede når en kilde ikke kan leses, og leser alt når versjonene ikke kan leses', async () => {
     const lager = minnelager()
-    const ny = await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }))
+    const ny = await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }), OUS_VALG)
     const { kalt, klient } = tellendeKlient((f) => f !== 'les_stoffer')
-    const indeks = await lesSokeindeks(kilderFor(klient, { mellomlager: lager }))
+    const indeks = await lesSokeindeks(kilderFor(klient, { mellomlager: lager }), OUS_VALG)
     expect(kalt).toEqual(['sokedata_versjoner', 'les_stoffer', 'les_preparatsok', 'les_interaksjonssok'])
     expect(indeks.mangler).toBeUndefined()
     expect(indeks.dokumenter).toEqual(ny.dokumenter)
@@ -364,12 +371,12 @@ describe('mellomlagringen', () => {
 
   it('bruker ikke det som er lagret for andre koblinger', async () => {
     const lager = minnelager()
-    await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }))
+    await lesSokeindeks(kilderFor(tellendeKlient().klient, { mellomlager: lager }), OUS_VALG)
     const bareAmitriptylin: Sideleser = {
       lesStoffsider: async (t) => (await sideleser.lesStoffsider(t)).filter((s) => s.stoff?.slug !== 'kodein'),
     }
     const { klient } = tellendeKlient((f) => f.startsWith('les_') && f !== 'les_stoffer')
-    const indeks = await lesSokeindeks({ ...kilderFor(klient, { mellomlager: lager }), sider: bareAmitriptylin, versjoner: null })
+    const indeks = await lesSokeindeks({ ...kilderFor(klient, { mellomlager: lager }), sider: bareAmitriptylin, versjoner: null }, OUS_VALG)
     // Preparatene som var lagret, gjaldt også Kodein, og brukes ikke.
     expect(indeks.mangler).toEqual({ preparater: 'les_preparatsok svarer ikke', interaksjoner: 'les_interaksjonssok svarer ikke' })
   })
@@ -393,7 +400,7 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
 
   it('finner laboratoriet og metoden på fagsiden, og bare det seksjonen viser', async () => {
     const les = vi.fn(async () => sokedata)
-    const indeks = await lesSokeindeks({ sider: sideleser, laboratorier: { les }, ventetider: [] })
+    const indeks = await lesSokeindeks({ sider: sideleser, laboratorier: { les }, ventetider: [] }, OUS_VALG)
     expect(les).toHaveBeenCalledOnce()
     expect(les).toHaveBeenCalledWith(alleLabkomponenter())
     expect(indeks.mangler).toBeUndefined()
@@ -418,7 +425,7 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
         { id: 'syn4', data: { komponent_id: citalopram, laboratorium_id: 'l1', metode: 'Syntetisk elektroforese', status: 'Active', synlighet: null } },
       ],
     }
-    const indeks = await lesSokeindeks({ sider: sideleser, laboratorier: { les: async () => medCitalopram }, ventetider: [] })
+    const indeks = await lesSokeindeks({ sider: sideleser, laboratorier: { les: async () => medCitalopram }, ventetider: [] }, OUS_VALG)
     expect((await sideleser.lesStoffsider('publisert')).some((s) => s.stoff?.slug === 'citalopram')).toBe(false)
     expect(sokGlobalt(indeks, 'syntetisk elektroforese').map((t) => sti(t.dokument.sted))).toEqual([
       ['Citalopram', 'Analyse ved norske laboratorier', 'Citalopram · Syntetisk laboratorium'],
@@ -427,7 +434,7 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
 
   it('indekserer resten og sier fra når analysene ikke kan leses', async () => {
     const nede = { les: async () => Promise.reject(new Error('Analysene svarer ikke')) }
-    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok, laboratorier: nede, ventetider: [] })
+    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok, laboratorier: nede, ventetider: [] }, OUS_VALG)
     expect(indeks.mangler).toEqual({ laboratorier: 'Analysene svarer ikke' })
     expect(manglertekst(indeks.mangler)).toBe('Søket mangler nå laboratorieanalysene fra Farmakologiportalen, som ikke kunne hentes.')
     expect(sokGlobalt(indeks, 'sarotex')).not.toEqual([])
@@ -443,11 +450,11 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
       mellomlager: lager,
       ventetider: [],
     })
-    await lesSokeindeks(kilder('1'))
-    const igjen = await lesSokeindeks(kilder('1'))
+    await lesSokeindeks(kilder('1'), OUS_VALG)
+    const igjen = await lesSokeindeks(kilder('1'), OUS_VALG)
     expect(les).toHaveBeenCalledOnce()
     expect(sokGlobalt(igjen, 'syntetisk laboratorium')).toHaveLength(1)
-    await lesSokeindeks(kilder('2'))
+    await lesSokeindeks(kilder('2'), OUS_VALG)
     expect(les).toHaveBeenCalledTimes(2)
   })
 })
@@ -455,7 +462,7 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
 describe('søket i kunnskapsbasen', () => {
   let indeks: Awaited<ReturnType<typeof lesSokeindeks>>
   beforeAll(async () => {
-    indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok })
+    indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok }, OUS_VALG)
   })
 
   it('finner et preparat og peker på detaljkortet for legemiddelformen', async () => {
@@ -541,7 +548,7 @@ describe('søket i kunnskapsbasen', () => {
 
 describe('hvert treff er et stoff, og analytten er sekundær kontekst', () => {
   /** Registeret med kategoriene, som i appen når inndelingen er hentet. */
-  const MED_INNDELING = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
+  const MED_INNDELING = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
   let indeks: Sokeindeks
   beforeAll(() => {
     // Som i databasen før migrasjonen: en gammel komponentside ved siden av stoffsiden.
@@ -550,7 +557,7 @@ describe('hvert treff er et stoff, og analytten er sekundær kontekst', () => {
       side('hydroksybupropion', 'Hydroksybupropion', { tekst: 'Syntetisk tekst på den gamle komponentsiden.' }),
     ]
     indeks = lagSokeindeks(
-      indekserKunnskapsbase({ sider }),
+      indekserKunnskapsbase({ sider }, OUS_VALG),
     )
   })
 
@@ -558,7 +565,7 @@ describe('hvert treff er et stoff, og analytten er sekundær kontekst', () => {
   function forste(sporring: string) {
     const [treff] = sokGlobalt(indeks, sporring)
     expect(treff, sporring).toBeDefined()
-    return { treff: treff!, visning: visTreff(treff!, sokeord(sporring), (stoff) => stoffbeskrivelse(stoff, MED_INNDELING)) }
+    return { treff: treff!, visning: visTreff(treff!, sokeord(sporring), (stoff) => stoffbeskrivelse(stoff, MED_INNDELING, OUS_KATALOG)) }
   }
 
   it.each(['bupropion', 'hydroksybupropion', 'HBUP'])('«%s» gir stoffet Bupropion på #/stoff/bupropion', (sporring) => {
@@ -570,7 +577,7 @@ describe('hvert treff er et stoff, og analytten er sekundær kontekst', () => {
     expect(visning.sti[0]).toContain('analytt HBUP · hydroksybupropion (kun aktiv metabolitt)')
 
     for (const t of sokGlobalt(indeks, sporring)) {
-      const vist = visTreff(t, sokeord(sporring), (stoff) => stoffbeskrivelse(stoff, MED_INNDELING))
+      const vist = visTreff(t, sokeord(sporring), (stoff) => stoffbeskrivelse(stoff, MED_INNDELING, OUS_KATALOG))
       expect(vist.tittel.tekst).not.toBe('Hydroksybupropion')
       expect(vist.adresse).not.toMatch(/HBUP/i)
       expect(vist.adresse).not.toMatch(/hydroksybupropion/i)
@@ -621,7 +628,7 @@ describe('hvert treff er et stoff, og analytten er sekundær kontekst', () => {
     const { treff, visning } = forste('kvetiapin')
     expect(treff.dokument).toMatchObject({ felt: 'navn', sted: { side: { stoff: 'kvetiapin', navn: 'Kvetiapin' } } })
     expect(visning.adresse).toBe('#/stoff/kvetiapin')
-    expect(visning.sti).toEqual([stoffbeskrivelse('kvetiapin', MED_INNDELING)])
+    expect(visning.sti).toEqual([stoffbeskrivelse('kvetiapin', MED_INNDELING, OUS_KATALOG)])
   })
 
   it('indekserer innholdet på stoffsiden, men ikke på siden med et alias som nøkkel', () => {
@@ -686,6 +693,7 @@ describe('rangeringen', () => {
 
   it('indekserer et stoff med flere analytter én gang, med kodene som andre veier inn', () => {
     const dokumenter = indekserKunnskapsbase(utenTillegg([side('diazepam', 'Diazepam')]), {
+      ...OUS_VALG,
       registerdata: register(
         [{ slug: 'diazepam', navn: 'Diazepam' }],
         [
@@ -704,6 +712,7 @@ describe('rangeringen', () => {
 
   it('gir en analytt som gjelder flere stoffer, det primære stoffet som kode og de andre som komponent', () => {
     const dokumenter = indekserKunnskapsbase(utenTillegg([]), {
+      ...OUS_VALG,
       registerdata: register(
         [
           { slug: 'amitriptylin', navn: 'Amitriptylin' },
@@ -731,6 +740,7 @@ describe('rangeringen', () => {
 
   it('finner stoffene i registeret som ennå ikke har noen side', () => {
     const dokumenter = indekserKunnskapsbase(utenTillegg([side('diazepam', 'Diazepam')]), {
+      ...OUS_VALG,
       registerdata: register(
         [
           { slug: 'diazepam', navn: 'Diazepam' },
@@ -764,6 +774,7 @@ describe('rangeringen', () => {
         side('hydroksybupropion', 'Hydroksybupropion', { tekst: 'Gammel komponenttekst.' }),
       ]),
       {
+        ...OUS_VALG,
         registerdata: register(
           [{ slug: 'bupropion', navn: 'Bupropion', aliaser: ['Hydroksybupropion'] }],
           [{ kode: 'HBUP', stoff: 'bupropion', relasjon: 'metabolitt' }],
@@ -780,6 +791,7 @@ describe('rangeringen', () => {
 
   it('indekserer en side registeret ikke kjenner, som et eget stoff', () => {
     const dokumenter = indekserKunnskapsbase(utenTillegg([side('nytt-stoff', 'Nytt stoff', { tekst: 'Syntetisk tekst.' })]), {
+      ...OUS_VALG,
       registerdata: register([]),
     })
     expect(dokumenter.map((d) => [d.felt, d.tekst, d.sted.side.stoff])).toEqual([

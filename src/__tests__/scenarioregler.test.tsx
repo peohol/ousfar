@@ -6,7 +6,8 @@
  * importert fra); at de gir det samme som den opprinnelige fortolkningen,
  * prøves i `rusparitet.test.ts`.
  */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, screen, waitFor, within } from '@testing-library/react'
+import { renderMedOusKatalog } from './hjelp/ouskatalogkilde'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Stoffside } from '../components/stoffside/Stoffside'
@@ -14,10 +15,9 @@ import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskil
 import { Scenarioregler } from '../components/regler/Scenarioregler'
 import { Fortolkningsredigering } from '../components/regler/Fortolkningsredigering'
 import { TipsLag } from '../components/Tips'
-import { FORTOLKNINGSOPPFORINGER, byggKatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
 import { rusModulFor } from '../domain/rus'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import type { Faginnholdsleser, Scenarioregelsettutgave, Utgave } from '../faginnhold/lesing'
 import type { Objektstatus, Tilstand } from '../faginnhold/modell'
 import type { Scenarioregelsett } from '../domain/scenario'
@@ -45,7 +45,7 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 
 /** Reglene for modulen koden fortolkes i. */
 function regler(kode: string) {
@@ -58,12 +58,12 @@ function regler(kode: string) {
 function visSide(stoff: string) {
   const leser = falskLeser()
   const lager = {} as Faginnholdslager
-  render(
+  renderMedOusKatalog(
     <TipsLag>
       <FaginnholdskildeProvider kilde={{ leser, lager, kanRedigere: false }}>
         <Stoffside
           stoff={stoff}
-          register={STOFFREGISTER}
+          register={OUS_REGISTER}
           katalog={katalog}
           onApneFortolkning={vi.fn()}
           onLukk={vi.fn()}
@@ -76,7 +76,7 @@ function visSide(stoff: string) {
 
 /** Reglene for modulen, med seksjonen og simulatoren åpnet slik brukeren gjør det. */
 async function visSimulator(user: ReturnType<typeof userEvent.setup>, kode: string) {
-  render(<Scenarioregler {...regler(kode)} />)
+  renderMedOusKatalog(<Scenarioregler {...regler(kode)} />)
   await user.click(screen.getByRole('button', { name: 'Fortolkningsregler' }))
   await user.click(screen.getByRole('button', { name: 'Prøv reglene' }))
 }
@@ -99,7 +99,7 @@ describe('på fagsiden', () => {
 describe('seksjonen', () => {
   it('står lukket, med antall scenarier og grensene i oppsummeringen', async () => {
     const user = userEvent.setup()
-    render(<Scenarioregler {...regler('DIAZ')} />)
+    renderMedOusKatalog(<Scenarioregler {...regler('DIAZ')} />)
     const knapp = screen.getByRole('button', { name: 'Fortolkningsregler' })
     expect(knapp.getAttribute('aria-expanded')).toBe('false')
     expect(document.querySelector('.skuff__oppsummering')?.textContent).toBe(
@@ -115,7 +115,7 @@ describe('seksjonen', () => {
   })
 
   it('viser en modul med én analytt uten simulator', () => {
-    render(<Scenarioregler {...regler('MDO')} />)
+    renderMedOusKatalog(<Scenarioregler {...regler('MDO')} />)
     expect(document.querySelectorAll('.scenario')).toHaveLength(1)
     expect(screen.queryByRole('heading', { name: 'Prøv reglene' })).toBeNull()
   })
@@ -123,7 +123,7 @@ describe('seksjonen', () => {
 
 describe('reglene', () => {
   it('viser hvert scenario med hva som er påvist, vilkårene og hvor kommentarene havner', () => {
-    render(<Scenarioregler {...regler('DIAZ')} />)
+    renderMedOusKatalog(<Scenarioregler {...regler('DIAZ')} />)
     const rader = [...document.querySelectorAll('.scenario')]
     expect(rader).toHaveLength(8)
     expect(screen.getByText('10 %')).toBeTruthy()
@@ -136,7 +136,7 @@ describe('reglene', () => {
   })
 
   it('viser gråsonen for kodein og morfin som manuell vurdering', () => {
-    render(<Scenarioregler {...regler('KOD')} />)
+    renderMedOusKatalog(<Scenarioregler {...regler('KOD')} />)
     const grasone = [...document.querySelectorAll('.scenario')].find((r) =>
       r.textContent?.includes('Vurder manuelt'),
     )!
@@ -266,7 +266,7 @@ describe('redigeringen', () => {
       publiserUtkast: vi.fn(async (id: string) => status(id)),
     } as unknown as Faginnholdslager
     const onPublisert = vi.fn()
-    render(
+    renderMedOusKatalog(
       <TipsLag>
         <FaginnholdskildeProvider kilde={{ leser, lager, kanRedigere: true }}>
           <Fortolkningsredigering
@@ -298,7 +298,7 @@ describe('redigeringen', () => {
     expect(within(seksjon).getByRole('button', { name: 'Historikken for hver kommentar' })).toBeTruthy()
     cleanup()
     // Uten redigeringen er det de publiserte reglene, uten knappen.
-    render(<Scenarioregler {...regler('OXA')} />)
+    renderMedOusKatalog(<Scenarioregler {...regler('OXA')} />)
     expect(screen.getByRole('heading', { level: 2, name: 'Fortolkningsregler' })).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Rediger reglene' })).toBeNull()
   })

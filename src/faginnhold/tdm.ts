@@ -22,7 +22,8 @@
  *
  * Modulen brukes av importskriptet og testene, ikke av appen.
  */
-import { byggKatalog, FORTOLKNINGSOPPFORINGER, type Analyttkatalog } from '../domain/analyttkatalog'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, datasett, type Importkilde, type Importplan } from './import'
 
 export const TDM_DATASETT = datasett(
@@ -35,6 +36,6 @@ export const TDM_KILDE: Importkilde = {
   felleskatalogen: '',
 }
 
-export function tdmplan(katalog: Analyttkatalog = byggKatalog(FORTOLKNINGSOPPFORINGER)): Importplan {
+export function tdmplan(katalog: Analyttkatalog = OUS_KATALOG): Importplan {
   return byggImportplan(TDM_DATASETT.filer, TDM_DATASETT.referanser, katalog, TDM_KILDE)
 }

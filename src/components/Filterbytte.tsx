@@ -1,9 +1,10 @@
-import type { MouseEvent } from 'react'
+import { useMemo, type MouseEvent } from 'react'
 import { Metodepille } from './Metodepille'
 import { Pill } from './Pill'
 import { Shortcut } from './Shortcut'
 import { useTips } from './Tips'
-import { ANALYSEMETODER, AV_SNARVEI, metodesnarvei } from '../domain/analysemetoder'
+import { AV_SNARVEI, metodesnarvei, type Analysemetode } from '../domain/analysemetoder'
+import { useAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 
 /**
  * Filteret for søket: én rad med alle analysemetodene som piller, og «Alle»
@@ -34,20 +35,26 @@ interface Filtervalg {
   snarvei: string | null
 }
 
-/** «Alle» først, så metodene i den rekkefølgen registeret har dem. */
-const VALG: Filtervalg[] = [
-  { kode: null, beskrivelse: 'Søk i alle analysemetodene', snarvei: AV_SNARVEI },
-  ...ANALYSEMETODER.map((m) => ({
-    kode: m.kode,
-    beskrivelse: m.beskrivelse,
-    snarvei: metodesnarvei(m.kode),
-  })),
-]
+/** «Alle» først, så metodene i den rekkefølgen katalogen har dem. */
+function valgFor(metoder: readonly Analysemetode[]): Filtervalg[] {
+  return [
+    { kode: null, beskrivelse: 'Søk i alle analysemetodene', snarvei: AV_SNARVEI },
+    ...metoder.map((m) => ({
+      kode: m.kode,
+      beskrivelse: m.beskrivelse,
+      snarvei: metodesnarvei(m.kode, metoder),
+    })),
+  ]
+}
 
 export function Filterbytte({ metodefilter, onFilter }: FilterbytteProps) {
+  const { metoder } = useAnalyttkatalog()
+  const valg = useMemo(() => valgFor(metoder), [metoder])
+  // Uten metoder i katalogen er det ingenting å begrense søket til.
+  if (metoder.length === 0) return null
   return (
     <div className="sokfilter" role="group" aria-label="Begrens søket til analysemetode">
-      {VALG.map((valg) => (
+      {valg.map((valg) => (
         <Filterpille
           key={valg.kode ?? ''}
           valg={valg}

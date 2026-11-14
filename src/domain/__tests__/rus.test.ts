@@ -1,22 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { fortolkRus, RUS_KOMMENTARER, RUS_REGELSETT, rusRegelsett } from '../../__tests__/hjelp/rusgrunnlag'
 import { analytes } from '../analytes'
-import {
-  erRusAnalytt,
-  moduleKoder,
-  rusModulFor,
-  RUS_ANALYTTER,
-  RUS_MODULER,
-  TOM_RUS_INNDATA,
-  viserKommentartekst,
-  type RusInndata,
-  type RusModul,
-  type RusPlassering,
-  type RusResultat,
-} from '../rus'
+import { erRusAnalytt, moduleKoder, rusModulFor, TOM_RUS_INNDATA, viserKommentartekst, type RusInndata, type RusModul, type RusPlassering, type RusResultat } from '../rus'
+import { RUS_ANALYTTER, RUS_MODULER } from '../ouskatalog'
 import { lesKonsentrasjon, verdifelter } from '../scenario'
 import { search } from '../search'
-import { THC_ANALYTT } from '../thc'
+import { THC_ANALYTT } from '../ouskatalog'
 
 /**
  * Rusmiddelmodulene, med reglene som er publisert i Supabase (grunnlaget de

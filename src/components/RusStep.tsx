@@ -1,28 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
-import { Button } from './Button'
 import { Card } from './Card'
 import { Kommentarliste } from './Kommentarliste'
 import { Metalinje } from './Metalinje'
-import { Panelhode } from './Panelhode'
 import { Rusutfall } from './Rusutfall'
 import { Rusvalg } from './Rusvalg'
 import { StepBar } from './StepBar'
-import { Ikon } from './ikon/Ikon'
+import { Regelstatus } from './Regelstatus'
 import {
   moduleKoder,
   rusVerdifelter,
   viserKommentartekst,
-  RUS_ANALYSEMETODE,
   TOM_RUS_INNDATA,
   type RusModul,
   type Rusregler,
 } from '../domain/rus'
 import { flettInn, kjorScenarier, verdifelter as verdifelterFor } from '../domain/scenario'
 import { useKortHopp } from '../hooks/useKortHopp'
+import type { Analyte } from '../types'
 import { indexToDigit, skrivesIFelt, useKeyboard } from '../hooks/useKeyboard'
 
 export interface RusStepProps {
+  /** Søkeoppføringen modulen ble åpnet fra, med analysemetoden. */
+  analyte: Analyte
   modul: RusModul
   /** Regelsettet og kommentarene modulen fortolkes med, eller hvorfor de ikke er der. */
   regler: Rusregler
@@ -50,7 +50,7 @@ export interface RusStepProps {
  * Selve kopieringen av kommentarene er felles for fortolkningsmodulene og
  * ligger i {@link Kommentarliste}.
  */
-export function RusStep({ modul, regler, onBack, onFinish, copy, flashAt }: RusStepProps) {
+export function RusStep({ analyte, modul, regler, onBack, onFinish, copy, flashAt }: RusStepProps) {
   // Svarene overlever en oppdatering av appen.
   const [inndata, setInndata] = useBevart(`fortolkning/rus/${modul.id}`, TOM_RUS_INNDATA)
   /**
@@ -124,7 +124,7 @@ export function RusStep({ modul, regler, onBack, onFinish, copy, flashAt }: RusS
 
       <div className="modul">
         <Card align="start" className="analyttkort">
-          <Metalinje koder={koder} metode={RUS_ANALYSEMETODE} kategori={modul.kategori} lenker />
+          <Metalinje koder={koder} metode={analyte.analysemetode} kategori={modul.kategori} lenker />
           <h1 className="analytt__navn">{modul.navn}</h1>
 
           <Rusvalg
@@ -155,23 +155,8 @@ export function RusStep({ modul, regler, onBack, onFinish, copy, flashAt }: RusS
                 />
               )}
             />
-          ) : regler.status === 'feil' ? (
-            <>
-              <Panelhode ikon="fallback" tone="toksisk">
-                Reglene mangler
-              </Panelhode>
-              <ul className="mangelliste" role="alert">
-                <li>{regler.melding}</li>
-              </ul>
-              <Button variant="subtle" icon={<Ikon navn="reset" />} onClick={regler.provIgjen}>
-                Prøv igjen
-              </Button>
-            </>
           ) : (
-            <>
-              <Panelhode>Henter reglene</Panelhode>
-              <p role="status">Fortolkningsreglene hentes …</p>
-            </>
+            <Regelstatus regler={regler} />
           )}
         </Card>
       </div>

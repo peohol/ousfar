@@ -13,7 +13,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { byggSidemodell } from '../faginnhold/stoffside'
 import {
   byggImportplan,
@@ -31,7 +31,6 @@ import {
   type Importplan,
 } from '../faginnhold/import'
 import { historiskSidenavn } from '../faginnhold/historiskesider'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import { lesIntervallverdi, lesRiktekst } from '../faginnhold/paneler'
 import { PSYKOFARMAKA_FILER, PSYKOFARMAKA_KILDE, PSYKOFARMAKA_REFERANSER, psykofarmakaplan } from '../faginnhold/psykofarmaka'
 import { lesSideEtterKode, type Historiskside } from './hjelp/historisklesing'
@@ -44,7 +43,7 @@ import {
   type Faginnholdskall,
 } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const MIGRASJONSMAPPE = new URL('../../supabase/migrations/', import.meta.url)
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 /**
@@ -110,7 +109,7 @@ describe('datasettet', () => {
     // Sidene med analyttens navn er i dag et annet navn på stoffet koden er koblet til.
     for (const [kode, navn] of Object.entries(HISTORISKE_HOVEDSIDE_NAVN)) {
       expect(plan.koder.find((k) => k.kode === kode)?.hovedside.navn, kode).toBe(navn)
-      expect(STOFFREGISTER.kanonisk(navn)?.slug, kode).toBe(STOFFREGISTER.primartStoffFor(kode)?.slug)
+      expect(OUS_REGISTER.kanonisk(navn)?.slug, kode).toBe(OUS_REGISTER.primartStoffFor(kode)?.slug)
     }
   })
 

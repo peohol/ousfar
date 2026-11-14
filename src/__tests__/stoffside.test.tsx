@@ -20,10 +20,9 @@ import { Stoffside } from '../components/stoffside/Stoffside'
 import { detaljanker } from '../components/seksjoner/Seksjon'
 import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskilde'
 import { TipsLag } from '../components/Tips'
-import { ANALYTTKATALOG } from '../domain/analyttkatalog'
-import { STOFFREGISTERDATA, byggStoffregister, type Stoffregister } from '../domain/stoffregister'
+import { ANALYTTKATALOG, OUS_REGISTERDATA, THC_KODE } from '../domain/ouskatalog'
+import { byggStoffregister, type Stoffregister } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
-import { THC_KODE } from '../domain/thc'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
 import {
   TOM_STOFFSIDE,
@@ -527,7 +526,7 @@ const finnVerdi = (tekst: string) => screen.findByText(erVerdi(tekst))
 const hentVerdi = (tekst: string) => screen.getByText(erVerdi(tekst))
 
 /** Registeret med inndelingen databasen får første gang. */
-const REGISTER = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
+const REGISTER = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
 
 interface Visningsvalg {
   sted?: string[]
@@ -580,7 +579,7 @@ describe('stoffet er sidens identitet', () => {
 
   it('viser et stoff i databasen som registeret ikke kjenner, uten kode og uten veien til fortolkningen', async () => {
     const teststoff = { id: 'stoff', slug: 'teststoff', navn: 'Teststoff' }
-    const register = byggStoffregister([teststoff], STOFFREGISTERDATA, GRUNNSTRUKTUR)
+    const register = byggStoffregister([teststoff], OUS_REGISTERDATA, GRUNNSTRUKTUR)
     const { leser } = vis('teststoff', kilde({ data: enkelSide(teststoff, { nedre: 30, ovre: 60, enhet: 'µmol/L' }) }), {
       register,
     })
@@ -691,7 +690,7 @@ describe('Bupropion: metabolitten er sekundær informasjon', () => {
 
   it('gir ikke en gammel side for metabolitten en egen stoffside', () => {
     // En side som fortsatt heter etter metabolitten, er et alias og ikke et stoff.
-    const register = byggStoffregister([BUPROPION, { id: 'gammel', slug: 'hydroksybupropion', navn: 'Hydroksybupropion' }])
+    const register = byggStoffregister([BUPROPION, { id: 'gammel', slug: 'hydroksybupropion', navn: 'Hydroksybupropion' }], OUS_REGISTERDATA)
     expect(register.finn('hydroksybupropion')).toBeUndefined()
     expect(register.kanonisk('Hydroksybupropion')?.slug).toBe('bupropion')
     expect(register.primartStoffFor('HBUP')?.navn).toBe('Bupropion')

@@ -1,4 +1,4 @@
-import { ANALYTTKATALOG } from './analyttkatalog'
+import type { Analyttkatalog } from './analyttkatalog'
 import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
 
 /**
@@ -190,7 +190,7 @@ const MAKS_STEDSLEDD = 2
  * stoffet de fører til; {@link kanoniskAdresse} sier om adressefeltet bør
  * skrives om.
  */
-export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER): Rute {
+export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, katalog?: Analyttkatalog): Rute {
   const sok = SOK.exec(hash)
   if (sok) return { side: 'sok', q: new URLSearchParams(sok[1] ?? '').get('q') ?? '' }
   if (STOFFREGISTERSIDE.test(hash)) return { side: 'stoffregister' }
@@ -219,7 +219,7 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER): 
     // Seksjonen «fortolkning» på den gamle siden for koden var reglene, som
     // nå står på fortolkningssiden til modulen koden fortolkes i.
     if (analytt.sted?.[0] === GAMMEL_REGELSEKSJON) {
-      return fortolkningsrute(ANALYTTKATALOG.finn(analytt.nokkel)?.fortolkning.kode)
+      return fortolkningsrute(katalog?.finn(analytt.nokkel)?.fortolkning.kode)
     }
     const tilStoff = register.primartStoffFor(analytt.nokkel)
     return tilStoff ? stoffrute(tilStoff.slug, analytt.sted) : FORTOLKNING
@@ -238,9 +238,9 @@ function stoffrute(stoff: string, sted?: readonly string[]): Rute {
  * historikken, så den gamle adressen ikke blir stående. En gammel adresse til
  * reglene for en kode går til fortolkningssiden.
  */
-export function kanoniskAdresse(hash: string, register: Stoffregister = STOFFREGISTER): string | null {
+export function kanoniskAdresse(hash: string, register: Stoffregister = STOFFREGISTER, katalog?: Analyttkatalog): string | null {
   if (!STOFF.test(hash) && !GAMMEL_ANALYTT.test(hash)) return null
-  const rute = lesRute(hash, register)
+  const rute = lesRute(hash, register, katalog)
   if (rute.side === 'fortolkning' && rute.analytt) return adresse(rute)
   if (rute.side !== 'stoff') return null
   const kanonisk = adresse(rute)

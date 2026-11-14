@@ -6,9 +6,9 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { STOFFREGISTERDATA } from '../domain/stoffregister'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
+import { OUS_REGISTERDATA } from '../domain/ouskatalog'
 
 interface Kategorirad {
   id: string
@@ -111,7 +111,7 @@ describe('stoffregisteret i databasen', () => {
     expect(data.kategorier.find((k) => k.id === ssri.forelder)?.navn).toBe('Antidepressiver')
     expect(data.plasseringer.filter((p) => p.kategori === ssri.id).map((p) => p.stoff)).toContain('sertralin')
     const plassert = new Set(data.plasseringer.map((p) => p.stoff))
-    for (const s of STOFFREGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(!PLASSERT_MED_SIDEN.has(s.slug))
+    for (const s of OUS_REGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(!PLASSERT_MED_SIDEN.has(s.slug))
     // Ketamin står to steder, som i datafilen.
     expect(data.plasseringer.filter((p) => p.stoff === 'ketamin')).toHaveLength(2)
   })
@@ -211,7 +211,7 @@ describe('stoffregisteret i databasen', () => {
 
   it('kjenner de samme analyttkoblede stoffene som datafilen', async () => {
     const iDatabasen = await sql<{ stoff: string }>(bruker, 'select stoff from public.analyttkoblede_stoffer order by stoff')
-    const iDatafilen = [...new Set(STOFFREGISTERDATA.analyttkoblinger.map((k) => k.stoff))].sort()
+    const iDatafilen = [...new Set(OUS_REGISTERDATA.analyttkoblinger.map((k) => k.stoff))].sort()
     // Går de fra hverandre, føres endringen inn i databasen med en migrasjon.
     expect(iDatabasen.map((r) => r.stoff)).toEqual(iDatafilen)
   })

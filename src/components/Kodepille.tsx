@@ -1,6 +1,7 @@
 import { useTips } from './Tips'
 import { stoffadresseForAnalytt } from '../domain/koblinger'
 import { STOFFREGISTER } from '../domain/stoffregister'
+import { useStoffregisterkilde } from '../stoffregister/Stoffregisterkilde'
 
 /**
  * En analyttkode i metalinjen til en fortolkningsmodul, som lenke til
@@ -16,8 +17,11 @@ import { STOFFREGISTER } from '../domain/stoffregister'
  * lenke per kode, og hver fører til sitt stoff.
  */
 export function Kodepille({ kode }: { kode: string }) {
-  const stoff = STOFFREGISTER.primartStoffFor(kode)
-  const adresse = stoffadresseForAnalytt(kode)
+  // Koblingene er fagmiljøets, i registeret appen har hentet; uten det er
+  // det ingen å lenke etter.
+  const register = useStoffregisterkilde()?.register ?? STOFFREGISTER
+  const stoff = register.primartStoffFor(kode)
+  const adresse = stoffadresseForAnalytt(kode, register)
   const tips = useTips(`Åpne fagsiden for ${stoff?.navn ?? kode}`, { skjermleser: false })
   if (!stoff || !adresse) return <span className="metalinje__kode">{kode}</span>
   return (

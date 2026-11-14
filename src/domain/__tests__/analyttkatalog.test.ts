@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { menyanalytter } from '../analysemetoder'
-import { ANALYTTKATALOG, FORTOLKNINGSOPPFORINGER } from '../analyttkatalog'
+import { ANALYTTKATALOG, FORTOLKNINGSOPPFORINGER } from '../ouskatalog'
 import { search } from '../search'
 
 /**

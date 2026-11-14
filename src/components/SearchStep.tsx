@@ -8,6 +8,8 @@ import { splitName } from '../domain/names'
 import { optionColourVars } from '../domain/optionColours'
 import type { SearchHit } from '../domain/search'
 import type { Analyte } from '../types'
+import { katalogstopp, useKatalogkilde } from '../katalog/Analyttkatalogkilde'
+import { Regelstatus } from './Regelstatus'
 
 export interface SearchStepProps {
   query: string
@@ -59,6 +61,7 @@ export function SearchStep({
 }: SearchStepProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const tomt = query === ''
+  const stopp = katalogstopp(useKatalogkilde())
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -88,7 +91,13 @@ export function SearchStep({
         Nullstill
       </StepBar>
 
-      <div className="sok">
+      {stopp && (
+        <div className="sok sok--stopp">
+          <Regelstatus tittel="Analyttkatalogen mangler" regler={{ status: 'feil', ...stopp }} />
+        </div>
+      )}
+
+      <div className="sok" hidden={stopp !== null}>
         <p className={`instruks${tomt ? '' : ' instruks--skjult'}`} aria-hidden={!tomt}>
           <span className="instruks__sirkel" data-ih="">
             <Ikon navn="search" className="instruks__ikon" />

@@ -1,0 +1,114 @@
+{
+  "kommentarer": [
+    {
+      "id": "etg/begge",
+      "innhold": {
+        "navn": "EtG og EtS – begge påvist – hovedkommentar",
+        "tekst": "Omdannelsesprodukter av etanol, etylglukuronid (EtG) og etylsulfat (EtS), er påvist i urin. Dette viser at etanol (alkohol) er inntatt.",
+        "plassholdere": []
+      }
+    },
+    {
+      "id": "etg/se-ets",
+      "innhold": {
+        "navn": "EtG og EtS – begge påvist – tilleggskommentar",
+        "tekst": "Se kommentar for EtS i urin.",
+        "plassholdere": []
+      }
+    },
+    {
+      "id": "etg/en-av-dem",
+      "innhold": {
+        "navn": "EtG og EtS – én av dem påvist – hovedkommentar",
+        "tekst": "Omdannelsesprodukt av etanol, etylglukuronid (EtG) eller etylsulfat (EtS), er påvist i urin. Dette kan være forenlig med inntak av etanol (alkohol). I enkelte tilfeller kan dette ses etter inntak av alkoholfri vin/øl eller andre mat-/drikkevarer.",
+        "plassholdere": []
+      }
+    }
+  ],
+  "regelsett": [
+    {
+      "modul": "etg",
+      "analytter": [
+        "UETGS",
+        "UETS"
+      ],
+      "verdihjelp": "",
+      "forhold": [],
+      "parametere": [],
+      "scenarier": [
+        {
+          "nokkel": "begge",
+          "pavist": [
+            "UETGS",
+            "UETS"
+          ],
+          "vilkar": [],
+          "utfall": {
+            "type": "kommentarer",
+            "plasseringer": [
+              {
+                "rolle": "hoved",
+                "merke": "Hovedkommentar",
+                "kommentar": "etg/begge",
+                "koder": [
+                  "UETS"
+                ]
+              },
+              {
+                "rolle": "tillegg",
+                "merke": "Tilleggskommentar",
+                "kommentar": "etg/se-ets",
+                "koder": [
+                  "UETGS"
+                ]
+              }
+            ],
+            "notiser": []
+          }
+        },
+        {
+          "nokkel": "etg",
+          "pavist": [
+            "UETGS"
+          ],
+          "vilkar": [],
+          "utfall": {
+            "type": "kommentarer",
+            "plasseringer": [
+              {
+                "rolle": "hoved",
+                "merke": "Hovedkommentar",
+                "kommentar": "etg/en-av-dem",
+                "koder": [
+                  "UETGS"
+                ]
+              }
+            ],
+            "notiser": []
+          }
+        },
+        {
+          "nokkel": "ets",
+          "pavist": [
+            "UETS"
+          ],
+          "vilkar": [],
+          "utfall": {
+            "type": "kommentarer",
+            "plasseringer": [
+              {
+                "rolle": "hoved",
+                "merke": "Hovedkommentar",
+                "kommentar": "etg/en-av-dem",
+                "koder": [
+                  "UETS"
+                ]
+              }
+            ],
+            "notiser": []
+          }
+        }
+      ]
+    }
+  ]
+}

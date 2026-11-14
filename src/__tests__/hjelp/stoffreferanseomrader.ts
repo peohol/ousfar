@@ -10,10 +10,11 @@
  */
 import type { Referanseomrade } from '../../domain/piller'
 import type { Stoffreferanseomrade } from '../../domain/koblinger'
-import { STOFFREGISTER, type Stoffregister } from '../../domain/stoffregister'
+import { type Stoffregister } from '../../domain/stoffregister'
 import type { Intervallregelsett } from '../../regler/modell'
 import { publiserteRader } from './dagensregler'
 import { REFERANSEOMRADER } from './referanseomrader'
+import { OUS_REGISTER } from '../../domain/ouskatalog'
 
 /**
  * Kortene referanseområdene etter kode gir: på siden til kodens primære stoff,
@@ -22,7 +23,7 @@ import { REFERANSEOMRADER } from './referanseomrader'
  */
 export function stoffreferanseomrader(
   perKode: Readonly<Record<string, Referanseomrade>> = REFERANSEOMRADER,
-  register: Stoffregister = STOFFREGISTER,
+  register: Stoffregister = OUS_REGISTER,
 ): Stoffreferanseomrade[] {
   return Object.entries(perKode).flatMap(([kode, verdi]) => {
     const stoff = register.primartStoffFor(kode)

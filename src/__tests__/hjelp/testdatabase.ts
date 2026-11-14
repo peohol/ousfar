@@ -231,7 +231,7 @@ export function faginnholdskall(db: PGlite, admin: string) {
    */
   function klientFor(brukerId: string): SupabaseClient {
     return {
-      rpc: (funksjon: string, argumenter: Record<string, unknown>) => {
+      rpc: (funksjon: string, argumenter: Record<string, unknown> = {}) => {
         const overskrifter: Record<string, string> = {}
         const utfor = async () => {
           try {

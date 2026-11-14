@@ -18,7 +18,7 @@ import importerteTekster from '../domain/__tests__/fasit/thc-tekster-import.json
 import gjeldende from '../domain/__tests__/fasit/thc-regelsett.json'
 import gjeldendeTekster from '../domain/__tests__/fasit/thc-tekster.json'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
-import { THC_KODE } from '../domain/thc'
+import { THC_KODE } from '../domain/ouskatalog'
 import { sammenlign, type Kurve } from '../domain/thcKurver'
 import { lagThcModell } from '../domain/thcMotor'
 import { validerThcRegelsett, visIrcak, type ThcRegelsett } from '../domain/thcRegelsett'

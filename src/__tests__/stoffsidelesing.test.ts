@@ -28,8 +28,9 @@ import { TOM_STOFFSIDE, lagFaginnholdsleser, type Faginnholdsleser } from '../fa
 import type { Objektstatus } from '../faginnhold/modell'
 import { ENKELTELEMENTER, PANELER_MED_FASTE_KORT, enkeltnokkel, fasteKort, panelFor } from '../faginnhold/paneler'
 import { SITERING } from '../faginnhold/referanser'
-import { STOFFREGISTER, stoffslug } from '../domain/stoffregister'
+import { stoffslug } from '../domain/stoffregister'
 import { primareAnalytter } from '../domain/koblinger'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import {
   faginnholdskall,
   feilFra,
@@ -441,16 +442,16 @@ describe('referanseområdene', () => {
   })
 
   it('gir HBUP referanseområdet fra kortet på Bupropion-siden, gjennom koblingen i registeret', async () => {
-    expect(STOFFREGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
-    const omrader = await brukerleser.lesReferanseomrader('publisert')
+    expect(OUS_REGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
+    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
     expect(omrader.get('HBUP')).toEqual({ nedre: 100, ovre: 200, enhet: 'nmol/L', forbehold: '' })
     // Et stoff uten kobling gir ingen kode noe.
     expect([...omrader.values()].some((o) => o.ovre === 20)).toBe(false)
   })
 
   it('gir ikke OTRAM tramadolsidens kort, bare TRAM, som er stoffets hovedanalytt', async () => {
-    expect(primareAnalytter('tramadol').map((a) => a.kode)).toEqual(['TRAM', 'OTRAM'])
-    const omrader = await brukerleser.lesReferanseomrader('publisert')
+    expect(primareAnalytter('tramadol', OUS_REGISTER, OUS_KATALOG).map((a) => a.kode)).toEqual(['TRAM', 'OTRAM'])
+    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
     expect(omrader.get('TRAM')).toEqual({ nedre: null, ovre: 300, enhet: 'nmol/L', forbehold: '' })
     expect(omrader.has('OTRAM')).toBe(false)
 
@@ -464,7 +465,7 @@ describe('referanseområdene', () => {
       referanser: [],
     })
     await publiser(otram)
-    const etter = await brukerleser.lesReferanseomrader('publisert')
+    const etter = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
     expect(etter.get('OTRAM')).toMatchObject({ ovre: 40 })
     expect(etter.get('TRAM')).toMatchObject({ ovre: 300 })
   })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ANALYTTKATALOG } from '../analyttkatalog'
+import { ANALYTTKATALOG, OUS_KATALOG, OUS_REGISTER, OUS_REGISTERDATA } from '../ouskatalog'
 import {
   analytterForFortolkning,
   analytterForStoff,
@@ -13,7 +13,7 @@ import {
   stofferForFortolkning,
 } from '../koblinger'
 import { GRUNNSTRUKTUR } from '../../__tests__/hjelp/registerstruktur'
-import { STOFFREGISTER, STOFFREGISTERDATA, byggStoffregister, type Registerdata } from '../stoffregister'
+import { byggStoffregister, type Registerdata } from '../stoffregister'
 
 /**
  * Koblingene mellom stoffene (fagsidene) og laboratorieanalyttene
@@ -22,8 +22,8 @@ import { STOFFREGISTER, STOFFREGISTERDATA, byggStoffregister, type Registerdata 
  */
 
 const koblinger = (slug: string) =>
-  analytterForStoff(slug).map(({ kobling }) => [kobling.kode, kobling.relasjon, kobling.primar] as const)
-const primartStoff = (kode: string) => STOFFREGISTER.primartStoffFor(kode)?.slug
+  analytterForStoff(slug, OUS_REGISTER, OUS_KATALOG).map(({ kobling }) => [kobling.kode, kobling.relasjon, kobling.primar] as const)
+const primartStoff = (kode: string) => OUS_REGISTER.primartStoffFor(kode)?.slug
 
 describe('koblingene klinikeren har bestemt', () => {
   it('kobler hver analytt til sitt stoff', () => {
@@ -71,20 +71,20 @@ describe('koblingene klinikeren har bestemt', () => {
       ['NOR', 'selve_stoffet', true],
       ['AMTNORSUM', 'sumanalyse', false],
     ])
-    expect(STOFFREGISTER.stofferFor('AMTNORSUM').map((k) => k.stoff)).toEqual(['amitriptylin', 'nortriptylin'])
-    expect(primareAnalytter('nortriptylin').map((a) => a.kode)).toEqual(['NOR'])
+    expect(OUS_REGISTER.stofferFor('AMTNORSUM').map((k) => k.stoff)).toEqual(['amitriptylin', 'nortriptylin'])
+    expect(primareAnalytter('nortriptylin', OUS_REGISTER, OUS_KATALOG).map((a) => a.kode)).toEqual(['NOR'])
   })
 
   it('gjør aldri en kode eller en metabolitt til et stoff', () => {
     for (const nokkel of ['hbup', 'dmi', 'otram', 'ircak', 'uetgs', 'uets', 'hydroksybupropion', 'n-desmetyldiazepam']) {
-      expect(STOFFREGISTER.finn(nokkel), nokkel).toBeUndefined()
+      expect(OUS_REGISTER.finn(nokkel), nokkel).toBeUndefined()
     }
   })
 
   it('har et primært stoff for hver kode, og stoffer uten analytt', () => {
     for (const { kode } of ANALYTTKATALOG.oppforinger) expect(primartStoff(kode), kode).toBeDefined()
-    expect(analytterForStoff('litium')).toEqual([])
-    expect(analytterForStoff('karbamazepin')).toEqual([])
+    expect(analytterForStoff('litium', OUS_REGISTER, OUS_KATALOG)).toEqual([])
+    expect(analytterForStoff('karbamazepin', OUS_REGISTER, OUS_KATALOG)).toEqual([])
   })
 })
 
@@ -107,31 +107,31 @@ describe('koblingene fra en datafil', () => {
     expect(register.primartStoffFor('HBUP')?.slug).toBe('moderstoff')
     // DIAZ har ingen kobling i denne datafilen: ingen fagside, selv om «Diazepam» er et kjent navn ellers.
     expect(register.primartStoffFor('DIAZ')).toBeUndefined()
-    expect(stoffadresseForAnalytt('DIAZ', [], register)).toBeUndefined()
-    expect(analytterForStoff('uten', register)).toEqual([])
+    expect(stoffadresseForAnalytt('DIAZ', register)).toBeUndefined()
+    expect(analytterForStoff('uten', register, OUS_KATALOG)).toEqual([])
   })
 
   it('tillater mange til mange', () => {
-    expect(analytterForStoff('moderstoff', register).map((a) => a.kobling.kode)).toEqual(['HBUP', 'AMTNORSUM'])
+    expect(analytterForStoff('moderstoff', register, OUS_KATALOG).map((a) => a.kobling.kode)).toEqual(['HBUP', 'AMTNORSUM'])
     expect(register.stofferFor('AMTNORSUM').map((k) => k.stoff)).toEqual(['annet', 'moderstoff'])
-    expect(primareAnalytter('moderstoff', register).map((a) => a.kode)).toEqual(['HBUP'])
+    expect(primareAnalytter('moderstoff', register, OUS_KATALOG).map((a) => a.kode)).toEqual(['HBUP'])
   })
 })
 
 describe('veiene mellom fortolkningen og stoffsidene', () => {
   it('lenker en analyttkode til det primære stoffets side', () => {
-    expect(stoffadresseForAnalytt('HBUP')).toBe('#/stoff/bupropion')
-    expect(stoffadresseForAnalytt('dmi')).toBe('#/stoff/diazepam')
-    expect(stoffadresseForAnalytt('OTRAM')).toBe('#/stoff/tramadol')
-    expect(stoffadresseForAnalytt('IRCAK')).toBe('#/stoff/thc')
-    expect(stoffadresseForAnalytt('UETS')).toBe('#/stoff/etanol')
-    expect(stoffadresseForAnalytt('AMTNORSUM')).toBe('#/stoff/amitriptylin')
-    expect(stoffadresseForAnalytt('NOR', ['farmakokinetikk'])).toBe('#/stoff/nortriptylin/farmakokinetikk')
-    expect(stoffadresseForAnalytt('FINNESIKKE')).toBeUndefined()
+    expect(stoffadresseForAnalytt('HBUP', OUS_REGISTER)).toBe('#/stoff/bupropion')
+    expect(stoffadresseForAnalytt('dmi', OUS_REGISTER)).toBe('#/stoff/diazepam')
+    expect(stoffadresseForAnalytt('OTRAM', OUS_REGISTER)).toBe('#/stoff/tramadol')
+    expect(stoffadresseForAnalytt('IRCAK', OUS_REGISTER)).toBe('#/stoff/thc')
+    expect(stoffadresseForAnalytt('UETS', OUS_REGISTER)).toBe('#/stoff/etanol')
+    expect(stoffadresseForAnalytt('AMTNORSUM', OUS_REGISTER)).toBe('#/stoff/amitriptylin')
+    expect(stoffadresseForAnalytt('NOR', OUS_REGISTER, ['farmakokinetikk'])).toBe('#/stoff/nortriptylin/farmakokinetikk')
+    expect(stoffadresseForAnalytt('FINNESIKKE', OUS_REGISTER)).toBeUndefined()
   })
 
   it('fører fra en modul til stoffene kodene i den hører til, hvert én gang', () => {
-    const slugger = (kode: string) => stofferForFortolkning(ANALYTTKATALOG.finn(kode)!.fortolkning).map((s) => s.slug)
+    const slugger = (kode: string) => stofferForFortolkning(ANALYTTKATALOG.finn(kode)!.fortolkning, OUS_REGISTER).map((s) => s.slug)
     expect(slugger('HBUP')).toEqual(['bupropion'])
     // EtG og EtS hører begge til etanol.
     expect(slugger('UETGS')).toEqual(['etanol'])
@@ -142,15 +142,15 @@ describe('veiene mellom fortolkningen og stoffsidene', () => {
   })
 
   it('åpner fortolkningen fra stoffsiden når stoffets analytter er i én modul', () => {
-    expect(fortolkningForStoff('bupropion')).toBe(ANALYTTKATALOG.finn('HBUP')!.fortolkning)
-    expect(fortolkningForStoff('diazepam')).toBe(ANALYTTKATALOG.finn('DMI')!.fortolkning)
-    expect(fortolkningForStoff('thc')).toBeUndefined()
-    expect(fortolkningForStoff('litium')).toBeUndefined()
+    expect(fortolkningForStoff('bupropion', OUS_REGISTER, OUS_KATALOG)).toBe(ANALYTTKATALOG.finn('HBUP')!.fortolkning)
+    expect(fortolkningForStoff('diazepam', OUS_REGISTER, OUS_KATALOG)).toBe(ANALYTTKATALOG.finn('DMI')!.fortolkning)
+    expect(fortolkningForStoff('thc', OUS_REGISTER, OUS_KATALOG)).toBeUndefined()
+    expect(fortolkningForStoff('litium', OUS_REGISTER, OUS_KATALOG)).toBeUndefined()
   })
 
   it('samler stoffets primære analytter i fortolkningsmodulene deres', () => {
     const moduler = (slug: string) =>
-      fortolkningsmoduler(slug).map((m) => [m.fortolkning.kode, m.analytter.map((a) => a.kode)] as const)
+      fortolkningsmoduler(slug, OUS_REGISTER, OUS_KATALOG).map((m) => [m.fortolkning.kode, m.analytter.map((a) => a.kode)] as const)
     expect(moduler('bupropion')).toEqual([['HBUP', ['HBUP']]])
     expect(moduler('diazepam')).toEqual([['DIAZ · DMI · OXA', ['DIAZ', 'DMI']]])
     expect(moduler('thc')).toEqual([
@@ -163,27 +163,27 @@ describe('veiene mellom fortolkningen og stoffsidene', () => {
   })
 
   it('gir hver kode i en fortolkningsmodul, og fortolkningssiden reglene for en kode står på', () => {
-    const koder = (kode: string) => analytterForFortolkning(ANALYTTKATALOG.finn(kode)!.fortolkning).map((a) => a.kode)
+    const koder = (kode: string) => analytterForFortolkning(ANALYTTKATALOG.finn(kode)!.fortolkning, OUS_KATALOG).map((a) => a.kode)
     expect(koder('HBUP')).toEqual(['HBUP'])
     // Modulen dekker alle tre kodene, også oksazepam, som har sin egen fagside.
     expect(koder('DMI')).toEqual(['DIAZ', 'DMI', 'OXA'])
     expect(koder('IRCAK')).toEqual(['IRCAK'])
-    expect(fortolkningsadresseForAnalytt('hbup')).toBe('#/fortolkning/hbup')
-    expect(fortolkningsadresseForAnalytt('DMI')).toBe('#/fortolkning/diaz-dmi-oxa')
-    expect(fortolkningsadresseForAnalytt('IRCAK')).toBe('#/fortolkning/ircak')
-    expect(fortolkningsadresseForAnalytt('FINNESIKKE')).toBeUndefined()
+    expect(fortolkningsadresseForAnalytt('hbup', OUS_KATALOG)).toBe('#/fortolkning/hbup')
+    expect(fortolkningsadresseForAnalytt('DMI', OUS_KATALOG)).toBe('#/fortolkning/diaz-dmi-oxa')
+    expect(fortolkningsadresseForAnalytt('IRCAK', OUS_KATALOG)).toBe('#/fortolkning/ircak')
+    expect(fortolkningsadresseForAnalytt('FINNESIKKE', OUS_KATALOG)).toBeUndefined()
   })
 
   it('beskriver stoffet i søketreffene med kategorien og analyttene som sekundær informasjon', () => {
-    const register = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
-    const beskriv = (slug: string) => stoffbeskrivelse(slug, register)
+    const register = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
+    const beskriv = (slug: string) => stoffbeskrivelse(slug, register, OUS_KATALOG)
     expect(beskriv('bupropion')).toBe('Antidepressiver › NDRI · analytt HBUP · hydroksybupropion (kun aktiv metabolitt)')
     expect(beskriv('sertralin')).toBe('Antidepressiver › SSRI · analytt SERT')
     expect(beskriv('litium')).toBe('Stemningsstabiliserende')
     // Forkortelser med blandet skrift står som de er, midt i linja.
     expect(beskriv('etanol')).toContain('analytt UETGS · EtG')
     // Før inndelingen er hentet, er det bare analyttene.
-    expect(stoffbeskrivelse('sertralin')).toBe('analytt SERT')
+    expect(stoffbeskrivelse('sertralin', OUS_REGISTER, OUS_KATALOG)).toBe('analytt SERT')
   })
 })
 
@@ -195,7 +195,7 @@ describe('referanseområdet fortolkningen viser for en kode', () => {
       { stoff: 'diazepam', gjelder: 'DMI', verdi: 'dmi' },
       { stoff: 'tramadol', gjelder: null, verdi: 'tram' },
       { stoff: 'nortriptylin', gjelder: null, verdi: 'nor' },
-    ])
+    ], OUS_REGISTER.koblinger)
     expect(omrader.get('HBUP')).toBe('hbup')
     expect(omrader.get('DIAZ')).toBe('diaz')
     expect(omrader.get('DMI')).toBe('dmi')

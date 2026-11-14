@@ -1,4 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react'
+import type { Analyttkatalog } from '../../domain/analyttkatalog'
+import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
@@ -346,13 +348,13 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 }
 
 /** Adressen til fortolkningssiden reglene for en analyttkode hører til, når appen kjenner koden. */
-function regeladresse(kode: string | null): string | undefined {
-  return kode ? fortolkningsadresseForAnalytt(kode) : undefined
+function regeladresse(kode: string | null, katalog: Analyttkatalog): string | undefined {
+  return kode ? fortolkningsadresseForAnalytt(kode, katalog) : undefined
 }
 
 function Objektlenke({ objekt, onGa }: { objekt: Fortolkningsobjekt; onGa: () => void }) {
   const tekst = objekttekst(objekt)
-  const adresse = regeladresse(objekt.analyttkode)
+  const adresse = regeladresse(objekt.analyttkode, useAnalyttkatalog())
   return adresse ? (
     <a className="varsel__lenke" href={adresse} onClick={onGa}>
       {tekst}

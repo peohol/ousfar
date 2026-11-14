@@ -37,6 +37,7 @@ import { byggGraf, figurkurver } from '../domain/thcPlot'
 import { thcReglerFra, thcUtkastFra, tilThcModell } from '../faginnhold/thcregler'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
 import { THC_MODELL, thcRegelsettutgave } from './hjelp/thcgrunnlag'
+import { THC_ANALYTT } from '../domain/ouskatalog'
 
 const FASIT = fasitfil as Fasit
 
@@ -246,7 +247,7 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     render(
       <TipsLag>
         <ShortcutVisibilityProvider>
-          <ThcStep regler={{ status: 'klar', modell: modulmodell() }} onBack={vi.fn()} copy={vi.fn()} flashAt={vi.fn()} />
+          <ThcStep analyte={THC_ANALYTT} regler={{ status: 'klar', modell: modulmodell() }} onBack={vi.fn()} copy={vi.fn()} flashAt={vi.fn()} />
         </ShortcutVisibilityProvider>
       </TipsLag>,
     )

@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { malFraAdresse, type Lenkemal } from '../direktelenker/mal'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
 import { adresse, kanoniskAdresse, lesRute, sammeRute, type Rute } from '../domain/rute'
+import { STOFFREGISTER, type Stoffregister } from '../domain/stoffregister'
+
+/** Det adressene tolkes med: stoffregisteret med koblingene, og analyttkatalogen. */
+export interface Adressegrunnlag {
+  register: Stoffregister
+  katalog?: Analyttkatalog
+}
 
 /**
  * Skriver en eldre adresse til en fagside — et navn, et alias eller en gammel
@@ -8,13 +16,14 @@ import { adresse, kanoniskAdresse, lesRute, sammeRute, type Rute } from '../doma
  * noe nytt i historikken. Tilbakeknappen går da dit man kom fra, ikke til den
  * gamle adressen.
  */
-function rettAdressen(): void {
-  const kanonisk = kanoniskAdresse(window.location.hash)
+function rettAdressen({ register, katalog }: Adressegrunnlag): void {
+  const kanonisk = kanoniskAdresse(window.location.hash, register, katalog)
   if (kanonisk) window.history.replaceState(window.history.state, '', kanonisk)
 }
 
 /**
- * Ruten adressefeltet peker på, og veien til en annen.
+ * Ruten adressefeltet peker på, og veien til en annen. En gammel adresse til
+ * en analytt tolkes med koblingene og katalogen i `grunnlag`.
  *
  * Adressefeltet er fasit: tilbake- og framknappene i nettleseren, et bokmerke
  * og en lenke åpnet i samme fane går alle gjennom `hashchange`, og appen
@@ -29,8 +38,11 @@ function rettAdressen(): void {
  */
 export function useRute(
   onDirektelenke?: (mal: Lenkemal) => void,
+  grunnlag: Adressegrunnlag = { register: STOFFREGISTER },
 ): [Rute, (rute: Rute, valg?: { erstatt?: boolean }) => void] {
-  const [rute, setRute] = useState<Rute>(() => lesRute(window.location.hash))
+  const tolkning = useRef(grunnlag)
+  tolkning.current = grunnlag
+  const [rute, setRute] = useState<Rute>(() => lesRute(window.location.hash, grunnlag.register, grunnlag.katalog))
   const gjeldende = useRef(rute)
   gjeldende.current = rute
   const tilLenke = useRef(onDirektelenke)
@@ -45,12 +57,12 @@ export function useRute(
       tilLenke.current?.(mal)
       return true
     }
-    if (!folgLenke()) rettAdressen()
+    if (!folgLenke()) rettAdressen(tolkning.current)
     const oppdater = () => {
       if (folgLenke()) return
-      rettAdressen()
+      rettAdressen(tolkning.current)
       setRute((forrige) => {
-        const ny = lesRute(window.location.hash)
+        const ny = lesRute(window.location.hash, tolkning.current.register, tolkning.current.katalog)
         return sammeRute(forrige, ny) ? forrige : ny
       })
     }

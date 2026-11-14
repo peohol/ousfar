@@ -1,4 +1,4 @@
-import { alternativFor, erEtgAnalytt, type EtgValg } from './domain/etg'
+import { erEtgAnalytt, type EtgValg } from './domain/etg'
 import { erRusAnalytt } from './domain/rus'
 import { erThcAnalytt } from './domain/thc'
 import type { Bevaringsform } from './oppdatering/Bevaring'
@@ -207,7 +207,8 @@ export function fortolkningsform(analytter: readonly Analyte[]): Bevaringsform<S
         analyte: analyte ?? null,
         bandKey: tekstEllerNull(l.bandKey),
         kontroll: l.kontroll === 'cutoff' ? 'cutoff' : null,
-        etgValg: etgValg && alternativFor(etgValg) ? etgValg : null,
+        // Tilfellet står i regelsettet; finnes det ikke der, vises valget igjen.
+        etgValg: analyte && erEtgAnalytt(analyte) ? etgValg : null,
         autoPick: typeof l.autoPick === 'boolean' ? l.autoPick : true,
         metodefilter: tekstEllerNull(l.metodefilter),
       }
