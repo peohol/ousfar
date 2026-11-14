@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.1',
+    dato: '2026-11-14',
+    sammendrag: 'Ny kontroll av at en avsluttet bruker stenges ute med en gang, uten endring i appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. En ny automatisk kontroll bekrefter at en bruker som fortsatt er logget inn, mister tilgangen til alt, også diskusjonene og søket, i det øyeblikket medlemskapet avsluttes.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.130.0',
     dato: '2026-11-14',
     sammendrag: 'Bare brukere med et aktivt medlemskap i et fagmiljø får tilgang til innholdet',

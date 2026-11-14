@@ -678,8 +678,10 @@ Hvert punkt har et anbefalt standardvalg. D1 og D2 er besvart av Peder
 **Status 14.11.2026.** P1.1, P1.2a, P1.2b og P4a er ute i produksjonen, og
 sikkerhetsporten S1 er passert (kontrollene står i
 [#369](https://github.com/peohol/ousfar/issues/369)). P2.0, kravet om aktivt
-medlemskap, er bygd og venter på kontroll (`docs/fagmiljoer.md`, «Aktivt
-medlemskap»).
+medlemskap, er ute i produksjonen og kontrollert der (`docs/fagmiljoer.md`,
+«Aktivt medlemskap»). De negative testene S3 krever, med fortsatt gyldig
+innlogging etter avsluttet medlemskap, også for diskusjoner og søk, er
+grønne; S3 passeres når P3 tas i bruk.
 
 | Nr. | Spørsmål | Anbefalt standardvalg | Trengs før |
 | --- | --- | --- | --- |
