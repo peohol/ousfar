@@ -28,10 +28,13 @@ import { funksjonsinnganger, tabellinnganger, type Funksjonsinngang } from './hj
 const UTESTENGTE = ['utenMedlemskap', 'tidligereAdmin'] as const satisfies readonly Person[]
 
 /** Funksjonene som bare svarer om den innloggede selv, og derfor ikke stopper; med svaret til en utestengt. */
-const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string>> = {
+const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly string[]>> = {
   'er_admin()': false,
+  'er_systemarkitekt()': false,
   'har_aktivt_medlemskap()': false,
   'min_medlemskapsstatus()': 'avsluttet',
+  'mine_administrerte_fagmiljoer()': [],
+  'mine_lesbare_fagmiljoer()': [],
 }
 
 let db: PGlite
@@ -137,7 +140,7 @@ describe('en bruker uten aktivt medlemskap', () => {
         const f = funksjoner.find((x) => x.signatur === signatur)!
         const { feil, svar } = await kall(person, f)
         expect(feil, signatur).toBeNull()
-        expect(Object.values(svar![0]!)[0], `${person}: ${signatur}`).toBe(ventet)
+        expect(Object.values(svar![0]!)[0], `${person}: ${signatur}`).toEqual(ventet)
       }
     }
   })

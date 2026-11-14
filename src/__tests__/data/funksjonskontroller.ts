@@ -32,6 +32,11 @@ export const KONTROLLER = [
   'kontomyndighet',
   /** Krever administrator (`er_admin()`, `krev_admin()` e.l.) for alt. */
   'admin',
+  /**
+   * `security definer` som kontrollerer rekkevidden per fagmiljø og rettigheten
+   * per objekt, gjennom de felles hjelperne (P2a–d, docs/fagmiljoer.md).
+   */
+  'rekkevidde',
 ] as const
 
 export type Kontroll = (typeof KONTROLLER)[number]
@@ -58,6 +63,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'innlogget',
   'endre_stoffkategori(kategori uuid, navn text)': 'innlogget',
   'er_admin()': 'felles-lesing',
+  'er_systemarkitekt()': 'eier',
   'finn_infosider(navn text[], sidetilstand objekttilstand)': 'radsikkerhet',
   'finn_intervallregelsett(analyttkode text, sidetilstand objekttilstand)': 'radsikkerhet',
   'fjern_skjult_i_diskusjon(diskusjon uuid, kommentar uuid)': 'admin',
@@ -132,6 +138,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'merk_varsler_lest(varsler uuid[], til timestamp with time zone)': 'eier',
   // P2.0: den innloggedes egen status for beskjeden i appen (docs/fagmiljoer.md).
   'min_medlemskapsstatus()': 'eier',
+  'mine_administrerte_fagmiljoer()': 'eier',
+  'mine_lesbare_fagmiljoer()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
   'mine_varsler()': 'eier',
   'oppgave(oppgave uuid)': 'innlogget',

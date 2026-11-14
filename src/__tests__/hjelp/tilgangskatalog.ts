@@ -72,6 +72,16 @@ export async function kallbareFunksjoner(db: PGlite): Promise<KallbarFunksjon[]>
 const KALLER_ADMINKONTROLL = /\b(er_admin|krev_admin|krev_idevalg_admin|admin_aktor|opprett_objekt)\s*\(/
 const BRUKER_INNLOGGET = /\bauth\s*\.\s*uid\s*\(/
 
+/**
+ * De felles hjelperne for rekkevidde per fagmiljø (docs/fagmiljoer.md,
+ * «Hjelperne for tilgang per fagmiljø»). En funksjon erklært `rekkevidde` må
+ * kalle minst én av dem selv. Nye hjelpere som bygger på dem, føres opp her.
+ */
+export const REKKEVIDDEHJELPERE = ['kan_lese_omfang', 'er_medlem_i', 'er_lokal_admin_i'] as const
+const KALLER_REKKEVIDDEKONTROLL = new RegExp(
+  `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
+)
+
 /** Det som må stemme med funksjonen for at kontrollen den er erklært med, kan være riktig. */
 function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
   if (f.anon && kontroll !== 'offentlig' && kontroll !== 'utloser') return 'kan kalles uten innlogging'
@@ -92,6 +102,9 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       if (!f.definer) return 'er ikke security definer'
       if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
       return /\bintern\s*\.\s*kontoavslag\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.kontoavslag'
+    case 'rekkevidde':
+      if (!f.definer) return 'er ikke security definer'
+      return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'
     case 'innlogget':
     case 'felles-lesing':
       return f.definer ? null : 'er ikke security definer'

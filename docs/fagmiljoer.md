@@ -15,7 +15,8 @@ faginnholdet en rekkevidde, felles eller lokal
 P2.0 krever **aktivt medlemskap** for alt
 ([Aktivt medlemskap](#aktivt-medlemskap)). Ellers bygger ingen rettigheter
 på fagmiljøene: hvem som får se og endre hva, er som før for alle med et
-aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d.
+aktivt medlemskap. Rettighetene per fagmiljø kommer i P2a–d, bygd på de
+felles hjelperne ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
 
@@ -354,6 +355,34 @@ og Edge-svaret virker før og stenger etter;
 funksjonskall med gyldig token; `avsluttetmedlemskap.test.tsx` prøver
 beskjeden i appen.
 
+## Hjelperne for tilgang per fagmiljø
+
+`supabase/migrations/20261114113500_rettighetshjelpere.sql` gir P2a–d de
+samme svarene på de spørsmålene alle delene stiller, slik at ingen lager sin
+egen variant. Bygg nye regler og funksjoner på disse:
+
+| Funksjon | Svarer |
+| --- | --- |
+| `intern.er_medlem_i(fagmiljo, bruker default auth.uid())` | Aktivt medlemskap i det aktive fagmiljøet, eller systemarkitekt. Nei for et tomt fagmiljø eller en tom bruker |
+| `intern.kan_lese_omfang(omfang, fagmiljo, bruker default auth.uid())` | `felles`: aktivt medlemskap (`intern.har_aktivt_medlemskap`). `fagmiljo`: `intern.er_medlem_i`. `gruppe`: bare systemarkitekter til gruppene finnes (P6). Alt annet: nei |
+| `intern.er_lokal_admin_i(fagmiljo, bruker default auth.uid())` | Administrerer fagmiljøet nå (`intern.administrerte_fagmiljoer`: aktiv tildeling, aktivt medlemskap, aktivt fagmiljø), eller systemarkitekt. Den gamle adminrollen teller ikke |
+| `public.mine_lesbare_fagmiljoer()` | Fagmiljøene den innloggede kan lese lokalt innhold i: de aktive medlemskapene i aktive fagmiljøer, alle for en systemarkitekt, ingen uten aktivt medlemskap |
+| `public.mine_administrerte_fagmiljoer()` | Fagmiljøene den innloggede administrerer nå (`intern.er_lokal_admin_i`), alle for en systemarkitekt, ingen uten aktivt medlemskap |
+| `public.er_systemarkitekt()` | Om den innloggede er systemarkitekt; nei uten aktivt medlemskap |
+
+Funksjonene i `intern` er `stable security definer` uten rettigheter for
+nettleseren, og brukes i `security definer`-funksjoner og utløsere.
+Radsikkerhetsreglene kjøres som den innloggede og kan ikke kalle `intern`;
+de bruker de tre i `public` som `(select public.mine_lesbare_fagmiljoer())`,
+som regnes ut én gang per spørring, slik `har_aktivt_medlemskap()` gjør. De
+svarer bare om den innloggede selv, og appen bruker dem til å vise det
+brukeren får gjøre.
+
+Systemarkitekten er «medlem» av alle fagmiljøer her, fordi rettighetsmatrisen
+(P0 §5.2) lar systemarkitekten lese alt. Ingenting er tatt i bruk av
+migrasjonen selv; rettighetene endres i P2a–d. Testene står i
+`src/__tests__/rettighetshjelpere.test.ts`.
+
 ## Katalogvaktene
 
 `src/__tests__/tilgangskatalog.test.ts` kontrollerer databasen bygd av alle
@@ -378,6 +407,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
+| `rekkevidde` | `security definer` som kontrollerer rekkevidden per fagmiljø og rettigheten per objekt, og kaller selv minst én av hjelperne for tilgang per fagmiljø (`REKKEVIDDEHJELPERE` i `src/__tests__/hjelp/tilgangskatalog.ts`, eller `mine_lesbare_fagmiljoer()`) |
 
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk
 har. Alle kategoriene unntatt `offentlig` og `utloser` krever i tillegg aktivt
