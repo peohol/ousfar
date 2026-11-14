@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.129.7',
+    dato: '2026-11-14',
+    sammendrag: 'Testgrunnlaget for tilgang per fagmiljø er forberedt, uten endring i appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Neste steg mot flere fagmiljøer er forberedt: alle veier inn til dataene er kartlagt, og testene prøver nå med syntetiske brukere i to fagmiljøer hva hver av dem kan lese og endre. Rettighetene er som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.129.6',
     dato: '2026-11-13',
     sammendrag: 'Serverfunksjonene for brukeradministrasjon legges nå ut automatisk',

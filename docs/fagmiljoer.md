@@ -234,3 +234,6 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk
 har. P2 bytter `admin`, `innlogget` og `felles-lesing` ut med rettigheter per
 fagmiljø.
+
+Kartleggingen av alle datainngangene, persongalleriet til tilgangstestene og
+de negative scenarioene for P2 står i `docs/p2-0-forberedelse.md`.
