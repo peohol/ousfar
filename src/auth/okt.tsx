@@ -21,6 +21,7 @@ import { tilgangFor, type Tilgang } from '../domain/tilgang'
 import * as api from './api'
 import { erKonfigurert, klient } from './klient'
 import { tomMellomlageret } from './mellomlager'
+import { meldOktskifte } from './oktskifte'
 
 interface Oktverdi {
   /** Hva som skal vises nå. Se `domain/tilgang.ts`. */
@@ -56,9 +57,15 @@ export function OktProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (mangler) return
+    /** Kontoen som sist var logget inn i fanen. */
+    let forrige: string | null = null
     const { data } = klient().auth.onAuthStateChange((hendelse, ny) => {
       // Det som er lagret i nettleseren, hører til den som var logget inn.
       if (hendelse === 'SIGNED_OUT') void tomMellomlageret()
+      // Det som er husket i minnet, også, når en annen konto tar over.
+      const naa = ny?.user.id ?? null
+      if (hendelse === 'SIGNED_OUT' || naa !== forrige) meldOktskifte()
+      forrige = naa
       setOkt(ny)
     })
 
