@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.130.2',
+    dato: '2026-11-14',
+    sammendrag: 'Felles byggeklosser for tilgang per fagmiljø, uten endring i appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Neste steg mot at flere laboratorier kan bruke OUSFAR: databasen har fått én felles måte å avgjøre om en bruker er medlem av et fagmiljø, kan lese noe som hører til det, eller administrerer det. Rettighetene per fagmiljø bygges på den i de neste endringene; hvem som kan lese og endre hva, er som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.130.1',
     dato: '2026-11-14',
     sammendrag: 'Ny kontroll av at en avsluttet bruker stenges ute med en gang, uten endring i appen',
