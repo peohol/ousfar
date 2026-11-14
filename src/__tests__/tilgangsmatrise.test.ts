@@ -34,7 +34,7 @@ type Utfall = 'tilgang' | 'avvist'
 type Etappe = (typeof HOLDER)[number]
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -112,7 +112,6 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'leser historikken til A sin kommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.les_historikk($1) -> 'hendelser') > 0`, [k.d.publisertKommentar]) },
   { navn: 'leser rekkevidden til A sin kommentar', person: 'vanligB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.ressursomfang where objekt_id = $1', [k.d.publisertKommentar]) },
   { navn: 'leser rekkevidden til A sin kommentar som medlem i A', person: 'vanligA', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => rader(k, 'select 1 from public.ressursomfang where objekt_id = $1', [k.d.publisertKommentar]) },
-  { navn: 'oppretter en fortolkningskommentar, som hører til A, som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_utkast('kommentar', $1)`, [JSON.stringify(KOMMENTAR)]) },
   { navn: 'gjenoppretter en revisjon av A sin kommentar som lokal admin i B', person: 'adminB', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.gjenopprett_revisjon($1, 1, 1)', [k.d.publisertKommentar]) },
   { navn: 'leser A sitt utkast etter avsluttet medlemskap i A med den gamle adminrollen', person: 'tidligereAdmin', etappe: 'P2a', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
   { navn: 'oppretter en fortolkningskommentar som lokal admin i eget fagmiljø', person: 'adminA', etappe: 'P2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `select public.opprett_utkast('kommentar', $1)`, [JSON.stringify(KOMMENTAR)]) },
@@ -122,6 +121,38 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'leser et utkast som vanlig bruker', person: 'vanligA', etappe: 'P1.1', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
   { navn: 'leser et utkast som systemarkitekt', person: 'systemarkitekt', etappe: 'P1.1', idag: 'tilgang', mal: 'tilgang', prov: lesKommentar('utkast', 'kommentarutkast') },
   { navn: 'lagrer et utkast som lokal admin i eget fagmiljø', person: 'adminA', etappe: 'P1.1', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
+
+  // --- P4b: fortolkningen per fagmiljø (arbeidskonteksten) ----------------
+  // Et nytt lokalt objekt hører til fagmiljøet det lages i, så en lokal admin
+  // i B lager B sitt, aldri A sitt; og B sin fortolkningsside for en kode er
+  // B sin egen, ved siden av A sin.
+  { navn: 'oppretter en fortolkningskommentar som lokal admin i B, som hører til B', person: 'adminB', etappe: 'P4b', idag: 'tilgang', mal: 'tilgang', prov: async (k) => {
+    const { rows } = await k.tx.query<{ id: string }>(`select (public.opprett_utkast('kommentar', $1)).id`, [JSON.stringify(KOMMENTAR)])
+    return verdi(k, 'select fagmiljo_id = $2 from public.ressursomfang where objekt_id = $1', [rows[0]!.id, k.g.fagmiljo.B])
+  } },
+  { navn: 'starter en tråd på fortolkningssiden til samme kode, som hører til B', person: 'vanligB', etappe: 'P4b', idag: 'tilgang', mal: 'tilgang', prov: async (k) => {
+    const { rows } = await k.tx.query<{ id: string }>(`select public.opprett_diskusjon('fortolkning:syntetisk-analytt', null, 'B sin egen', null, 'Ny', '🚪') as id`)
+    return verdi(k, 'select fagmiljo_id = $2 from public.diskusjoner where id = $1', [rows[0]!.id, k.g.fagmiljo.B])
+  } },
+  ...(['adminB', 'arkitektB'] as const).map((person): Scenario => ({
+    navn: 'lager et regelsett i B som peker på A sin kommentar (manipulert ID)',
+    person,
+    etappe: 'P4b',
+    idag: 'avvist',
+    mal: 'avvist',
+    prov: (k) =>
+      lykkes(k, `select public.opprett_utkast('intervallregelsett', $1)`, [
+        JSON.stringify({
+          analyttkode: 'TESTB',
+          enhet: 'nmol/L',
+          desimaler: 0,
+          skillepunkter: [],
+          intervaller: [{ niva: 'innenfor', handling: null, kommentar: k.d.publisertKommentar }],
+          ringegrense: null,
+          cutoff: null,
+        }),
+      ]),
+  })),
 
   // --- P2b: samhandling og varsler ----------------------------------------
   { navn: 'får varsel om publisering av A sin fortolkning', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `select id from public.varsler where kategori = 'fortolkning'`) },
@@ -133,7 +164,6 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'leser en tråd på A sin fortolkningsside etter avsluttet medlemskap i A', person: 'avsluttetA', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select id from public.diskusjoner where id = $1', [k.d.fortolkningstraad]) },
   { navn: 'leser kommentarene i en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select public.diskusjonstraad($1)`, [k.d.fortolkningstraad]) },
   { navn: 'leser kategoriene på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, `select id from public.diskusjonskategorier where side = 'fortolkning:syntetisk-analytt'`) },
-  { navn: 'starter en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.opprett_diskusjon('fortolkning:syntetisk-analytt', null, 'Inntrenger', null, 'Ny', '🚪')`) },
   { navn: 'kommenterer en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `insert into public.diskusjonskommentarer (diskusjon_id, tekst) values ($1, '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hei"}]}]}')`, [k.d.fortolkningstraad]) },
   { navn: 'gir et hjerte i en tråd på A sin fortolkningsside', person: 'vanligB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'insert into public.diskusjonshjerter (diskusjon_id) values ($1)', [k.d.fortolkningstraad]) },
   { navn: 'skjuler innlegget i en tråd på A sin fortolkningsside som lokal admin i B', person: 'adminB', etappe: 'P2b', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.skjul_i_diskusjon($1, null)', [k.d.fortolkningstraad]) },

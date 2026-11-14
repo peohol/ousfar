@@ -25,6 +25,18 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.130.7',
+    dato: '2026-11-14',
+    sammendrag: 'Fortolkningen bruker reglene til fagmiljøet du arbeider i',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['fortolkning'],
+    punkter: [
+      'Fortolkningen henter analyttene, reglene og kommentarene fra fagmiljøet du arbeider i, og aldri fra et annet. For OUS Klinisk farmakologi er alt som før, og fortolkningen gir de samme svarene.',
+      'Et fagmiljø som ennå ikke har egne fortolkningsregler, får en tydelig melding om det i stedet for reglene til et annet fagmiljø.',
+    ],
+  },
+  {
     versjon: '1.130.6',
     dato: '2026-11-14',
     sammendrag: 'Fortolkningens regler og kommentarer hører til eget fagmiljø, og fagsidene endres av systemarkitektene',

@@ -728,9 +728,25 @@ begin
 end;
 $$;
 
--- Rettighetene appen viser menyene etter (P2d), med fagmiljøene den
--- innloggede administrerer utvidet med om de er standard (der nye brukere
--- opprettes) og åpne for medlemmer, og om den kan opprette fagmiljøer.
+-- Ett fagmiljø i svarene til appen: navnet og om det er standard (der nye
+-- brukere opprettes) og åpent for medlemmer.
+create function intern.fagmiljoreferanse(f public.fagmiljoer)
+returns jsonb
+language sql
+immutable
+set search_path = ''
+as $$
+  select jsonb_build_object(
+    'id', f.id, 'nokkel', f.nokkel, 'navn', f.navn,
+    'standard', f.standard, 'apent', f.apent_for_medlemmer
+  )
+$$;
+
+revoke all on function intern.fagmiljoreferanse(public.fagmiljoer) from public, anon, authenticated, service_role;
+
+-- Rettighetene appen viser menyene etter (P2d, P4b), med fagmiljøene den
+-- innloggede administrerer og arbeidsfagmiljøet i samme form
+-- (`intern.fagmiljoreferanse`).
 create or replace function public.mine_rettigheter()
 returns jsonb
 language sql
@@ -742,13 +758,15 @@ as $$
   select jsonb_build_object(
     'systemarkitekt', public.er_systemarkitekt(),
     'administrerer', coalesce((
-      select jsonb_agg(jsonb_build_object(
-        'id', f.id, 'nokkel', f.nokkel, 'navn', f.navn,
-        'standard', f.standard, 'apent', f.apent_for_medlemmer
-      ) order by f.navn)
+      select jsonb_agg(intern.fagmiljoreferanse(f) order by f.navn)
       from public.fagmiljoer f
       where f.id = any (public.mine_administrerte_fagmiljoer())
     ), '[]'::jsonb),
+    'arbeidsfagmiljo', (
+      select intern.fagmiljoreferanse(f)
+      from public.fagmiljoer f
+      where f.id = intern.arbeidsfagmiljo((select auth.uid()))
+    ),
     'stoffregister', intern.har_registerrett((select auth.uid())),
     'opprett_bruker', intern.opprettelsesavslag((select auth.uid())) is null
   )

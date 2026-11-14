@@ -30,6 +30,12 @@ export interface Rettigheter {
   systemarkitekt: boolean
   /** Fagmiljøene den innloggede er lokal administrator i nå. */
   administrerer: readonly Fagmiljoreferanse[]
+  /**
+   * Fagmiljøet fortolkningen gjelder (arbeidskonteksten, det aktive
+   * primærmedlemskapet). Reglene databasen gir, er dette fagmiljøets; `null`
+   * uten et slikt, og før det første svaret.
+   */
+  arbeidsfagmiljo: Fagmiljoreferanse | null
   /** Kan endre stoffregisterets inndeling og arkiv. */
   stoffregister: boolean
   /** Kan opprette nye brukere. */
@@ -39,6 +45,7 @@ export interface Rettigheter {
 export const INGEN_RETTIGHETER: Rettigheter = {
   systemarkitekt: false,
   administrerer: [],
+  arbeidsfagmiljo: null,
   stoffregister: false,
   opprettBruker: false,
 }
@@ -59,6 +66,7 @@ export function lesRettigheter(svar: unknown): Rettigheter {
     administrerer: Array.isArray(r.administrerer)
       ? r.administrerer.map(lesFagmiljo).filter((f): f is Fagmiljoreferanse => f !== null)
       : [],
+    arbeidsfagmiljo: lesFagmiljo(r.arbeidsfagmiljo),
     stoffregister: r.stoffregister === true,
     opprettBruker: r.opprett_bruker === true,
   }

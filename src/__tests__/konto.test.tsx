@@ -237,7 +237,7 @@ describe('porten', () => {
 
 const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
 const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: false }
-const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [KF, RT], stoffregister: true, opprettBruker: true }
+const SYSTEMARKITEKT = { systemarkitekt: true, administrerer: [KF, RT], arbeidsfagmiljo: KF, stoffregister: true, opprettBruker: true }
 const LOKAL_I_KF = { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBruker: true }
 
 /** Ingen handlinger; testene slår på det databasen ville tillatt. */

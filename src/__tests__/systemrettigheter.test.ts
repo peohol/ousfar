@@ -213,13 +213,14 @@ describe('mine_rettigheter()', () => {
     ).rows
     const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
-    expect(await rettigheter('systemarkitekt')).toEqual(arkitekt)
-    expect(await rettigheter('arkitektB')).toEqual(arkitekt)
+    // P4b: fagmiljøet fortolkningen gjelder (det aktive primærmedlemskapet).
+    expect(await rettigheter('systemarkitekt')).toEqual({ ...arkitekt, arbeidsfagmiljo: A })
+    expect(await rettigheter('arkitektB')).toEqual({ ...arkitekt, arbeidsfagmiljo: B })
     // Nye kontoer blir medlemmer av A (standarden), så bare den lokale administratoren der kan opprette dem.
-    expect(await rettigheter('adminA')).toEqual({ ...ingen, administrerer: [A], opprett_bruker: true })
-    expect(await rettigheter('adminB')).toEqual({ ...ingen, administrerer: [B] })
-    for (const person of ['vanligA', 'vanligB', 'dobbeltAB', 'avsluttetA', 'bareRollen'] as const) {
-      expect(await rettigheter(person), person).toEqual(ingen)
+    expect(await rettigheter('adminA')).toEqual({ ...ingen, administrerer: [A], opprett_bruker: true, arbeidsfagmiljo: A })
+    expect(await rettigheter('adminB')).toEqual({ ...ingen, administrerer: [B], arbeidsfagmiljo: B })
+    for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
+      expect(await rettigheter(person), person).toEqual({ ...ingen, arbeidsfagmiljo: f })
     }
   })
 

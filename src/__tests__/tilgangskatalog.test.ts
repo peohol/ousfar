@@ -52,10 +52,12 @@ describe('katalogvaktene', () => {
       'min_medlemskapsstatus()',
       'mine_administrerte_fagmiljoer()',
       'mine_lesbare_fagmiljoer()',
+      // P4b: fagmiljøet fortolkningen gjelder for den innloggede selv.
+      'mitt_arbeidsfagmiljo()',
       'opprett_fagmiljo(navn text)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
     ])
-    for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_)/.test(s))) {
+    for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_)/.test(s))) {
       expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|systemarkitekt)$/)
     }
   })

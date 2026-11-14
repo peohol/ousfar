@@ -17,7 +17,7 @@ import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/r
 const loggUt = vi.fn(async () => {})
 const rolle = vi.hoisted(() => ({ verdi: 'admin' }))
 /** Det databasen svarer på `mine_rettigheter` for den innloggede; som standard en systemarkitekt. */
-const ARKITEKT: Rettigheter = { systemarkitekt: true, administrerer: [], stoffregister: true, opprettBruker: true }
+const ARKITEKT: Rettigheter = { systemarkitekt: true, administrerer: [], arbeidsfagmiljo: null, stoffregister: true, opprettBruker: true }
 const rett = vi.hoisted(() => ({ verdi: null as Rettigheter | null }))
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: rolle.verdi, first_name: 'Anne', last_name: 'Admin', username: 'aadmin', avatar_path: null }),
