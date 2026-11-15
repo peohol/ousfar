@@ -29,12 +29,11 @@ import { internAuthAdresse } from '@delt/brukernavn'
 import { grunnlagsdatabase, kjorMigrasjoner, migrasjonsfiler } from '../hjelp/migrasjonskjoring'
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { lesUttrekkene } from './brukerforlop'
+import { SUPABASE_CLI } from '../../drift/supabaseCli'
 
-/** Supabase-CLI-en, i en fast versjon, så miljøet blir det samme fra gang til gang. */
-const SUPABASE_CLI = ['-y', 'supabase@2.120.0']
 
 /** Tjenestene kontrollene ikke bruker, og som derfor ikke startes. */
-const UTELATT = 'studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit'
+export const UTELATT = 'studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit'
 
 const DENNE = fileURLToPath(import.meta.url)
 const REPO = resolve(dirname(DENNE), '../../..')
@@ -65,7 +64,7 @@ const supabase = (...argumenter: string[]) => kjor('npx', [...SUPABASE_CLI, ...a
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 
 /** Docker må svare. I skymiljøet startes tjenesten her når den ikke kjører. */
-async function sikreDocker(): Promise<void> {
+export async function sikreDocker(): Promise<void> {
   const svarer = () => spawnSync('docker', ['info'], { stdio: 'ignore' }).status === 0
   if (svarer()) return
   if (process.getuid?.() !== 0) throw new Error('Docker kjører ikke. Start Docker og prøv igjen.')
@@ -80,7 +79,7 @@ async function sikreDocker(): Promise<void> {
  * (`kjorMigrasjoner`), altså uten dem som bare kan kjøres i produksjonen og uten
  * bivirkningsimportene for fagsider en ny database ikke har.
  */
-async function valgteMigrasjoner(): Promise<string[]> {
+export async function valgteMigrasjoner(): Promise<string[]> {
   const kjort: string[] = []
   await kjorMigrasjoner(await grunnlagsdatabase(), { kjort: (fil) => kjort.push(fil) })
   return kjort
