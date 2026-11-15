@@ -14,7 +14,12 @@ import {
   type Fingeravtrykk,
 } from '../drift/sikkerhetskopi/tilpasninger'
 import { KRYPTERTE_FAKTORER_SQL } from '../drift/sikkerhetskopi/manifest'
-import { Stopp, taKopi } from '../drift/sikkerhetskopi/kopi'
+import { Stopp, gjenopprett, kontrollerFil, taKopi } from '../drift/sikkerhetskopi/kopi'
+import { lagSigneringsnokler, signer, verifiser } from '../drift/sikkerhetskopi/signatur'
+import { createHash } from 'node:crypto'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
 const MIGRASJONER = resolve(__dirname, '../../supabase/migrations')
 const migrasjonstekster = () => migrasjonsfiler().map((f) => readFileSync(resolve(MIGRASJONER, f), 'utf8'))
@@ -131,8 +136,80 @@ describe('tofaktornøklene og en ufullstendig kopi', () => {
   }, 120_000)
 
   it('stopper før noe tas når prosjektet er oppgitt uten token', async () => {
-    const valg = { dbUrl: 'postgresql://x', apiUrl: 'http://x', nokkel: 'x', referanse: { versjoner: {}, objekter: [] }, mottakere: ['age1x'], ut: '/tmp', migrasjoner: '/tmp' }
+    const valg = {
+      dbUrl: 'postgresql://x', apiUrl: 'http://x', nokkel: 'x', referanse: { versjoner: {}, objekter: [] },
+      mottakere: ['age1x'], ut: '/tmp', migrasjoner: '/tmp', signeringsnokkel: lagSigneringsnokler().privat,
+    }
     await expect(taKopi({ ...valg, prosjekt: 'prosjekt' })).rejects.toBeInstanceOf(Stopp)
     await expect(taKopi({ ...valg, prosjekt: 'prosjekt', token: '' })).rejects.toThrow(/SUPABASE_ACCESS_TOKEN/)
+  })
+})
+
+describe('filene i Storage knyttes til kopipunktet', () => {
+  const innhold = new Uint8Array([1, 2, 3, 4])
+  const annet = new Uint8Array([9, 9, 9, 9])
+  const md5 = createHash('md5').update(innhold).digest('hex')
+
+  it('godtar innhold med samme versjon, eller med riktig md5', () => {
+    expect(kontrollerFil({ storrelse: '4', etag: '"abc-2"', versjon: 'v1' }, innhold, { etag: '"abc-2"', versjon: 'v1' })).toBeNull()
+    expect(kontrollerFil({ storrelse: '4', etag: `"${md5}"`, versjon: null }, innhold, { etag: `"${md5}"`, versjon: null })).toBeNull()
+  })
+
+  it('avviser en like stor fil som er byttet, også når eTagen ikke er en md5-sum', () => {
+    // Flerdels-eTag eller ingen eTag: bare versjonen avslører byttet.
+    expect(kontrollerFil({ storrelse: '4', etag: '"abc-2"', versjon: 'v1' }, annet, { etag: `"${md5}"`, versjon: 'v2' })).toEqual({ endret: expect.any(String) })
+    expect(kontrollerFil({ storrelse: '4', etag: null, versjon: 'v1' }, annet, { etag: null, versjon: 'v2' })).toEqual({ endret: expect.any(String) })
+    expect(kontrollerFil({ storrelse: '4', etag: `"${md5}"`, versjon: 'v1' }, annet, { etag: `"${md5}"`, versjon: 'v1' })).toEqual({ endret: expect.any(String) })
+    expect(kontrollerFil({ storrelse: '4', etag: null, versjon: 'v1' }, innhold, undefined)).toEqual({ endret: expect.any(String) })
+  })
+
+  it('stopper når fila verken har versjon eller md5-sum', () => {
+    expect(kontrollerFil({ storrelse: '4', etag: '"abc-2"', versjon: null }, innhold, { etag: '"abc-2"', versjon: null })).toEqual({ upalitelig: expect.any(String) })
+    expect(kontrollerFil({ storrelse: '4', etag: null, versjon: null }, innhold, { etag: null, versjon: null })).toEqual({ upalitelig: expect.any(String) })
+  })
+})
+
+describe('signaturen til kopien', () => {
+  const jobben = lagSigneringsnokler()
+  const angriper = lagSigneringsnokler()
+  const sum = 'a'.repeat(64)
+  const fil = 'ousfar-kopi-2026-11-15T16-00-00-000Z.tar.age'
+
+  it('godtar en kopi signert av kopijobben', () => {
+    expect(verifiser(signer(fil, sum, '2026-11-15T16:00:00.000Z', jobben.privat), fil, sum, jobben.offentlig).laget).toBe('2026-11-15T16:00:00.000Z')
+  })
+
+  it('avviser et byttet innhold, et annet filnavn, en annen avsender og en skadet signatur', () => {
+    const sig = signer(fil, sum, '2026-11-15T16:00:00.000Z', jobben.privat)
+    expect(() => verifiser(sig, fil, 'b'.repeat(64), jobben.offentlig)).toThrow(/ikke den som ble signert/)
+    expect(() => verifiser(sig, 'annen.tar.age', sum, jobben.offentlig)).toThrow(Stopp)
+    // En forfalsker kan signere med sin egen nøkkel og legge den i fila; tilliten kommer bare fra --avsender.
+    const forfalsket = signer(fil, sum, '2026-11-15T16:00:00.000Z', angriper.privat)
+    expect(() => verifiser(forfalsket, fil, sum, jobben.offentlig)).toThrow(/ikke laget med nøkkelen/)
+    expect(() => verifiser({ ...sig, laget: '2030-01-01T00:00:00.000Z' }, fil, sum, jobben.offentlig)).toThrow(/ikke laget med nøkkelen/)
+    expect(() => verifiser(null, fil, sum, jobben.offentlig)).toThrow(/ugyldig eller mangler/)
+    expect(() => verifiser(sig, fil, sum, 'ikke en nøkkel')).toThrow(Stopp)
+    expect(() => signer(fil, sum, 'x', 'ikke en nøkkel')).toThrow(Stopp)
+  })
+
+  it('gjenoppretter ikke en utskiftet kopi, og rører ikke målet', async () => {
+    const mappe = mkdtempSync(join(tmpdir(), 'ousfar-signaturprove-'))
+    try {
+      const ekte = join(mappe, 'ekte.tar.age')
+      writeFileSync(ekte, 'den ekte kopien')
+      const ekteSum = createHash('sha256').update('den ekte kopien').digest('hex')
+      const utskiftet = join(mappe, fil)
+      writeFileSync(utskiftet, 'en forfalsket kopi med egne SQL-filer')
+      // Målet finnes ikke: et forsøk på å nå det ville gitt en annen feil enn signaturens.
+      const valg = { kopi: utskiftet, identitet: join(mappe, 'ingen'), avsender: jobben.offentlig, dbUrl: 'postgresql://127.0.0.1:1/ingen', apiUrl: 'http://127.0.0.1:1', nokkel: 'x' }
+      writeFileSync(`${utskiftet}.sig`, JSON.stringify(signer(fil, ekteSum, '2026-11-15T16:00:00.000Z', jobben.privat)))
+      await expect(gjenopprett(valg)).rejects.toThrow(/ikke den som ble signert/)
+      writeFileSync(`${utskiftet}.sig`, JSON.stringify(signer(fil, createHash('sha256').update('en forfalsket kopi med egne SQL-filer').digest('hex'), '2026-11-15T16:00:00.000Z', angriper.privat)))
+      await expect(gjenopprett(valg)).rejects.toThrow(/ikke laget med nøkkelen/)
+      rmSync(`${utskiftet}.sig`)
+      await expect(gjenopprett(valg)).rejects.toThrow(/Signaturen .* finnes ikke/)
+    } finally {
+      rmSync(mappe, { recursive: true, force: true })
+    }
   })
 })

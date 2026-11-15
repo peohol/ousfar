@@ -18,7 +18,8 @@ kopiene lagres og hvem som har nøkkelen.
 Én fil, `ousfar-kopi-<tid>.tar.age`, kryptert med [age](https://age-encryption.org)
 til én eller flere offentlige nøkler. Uten den private nøkkelen kan den ikke
 leses. Kopien inneholder passordhasher og tofaktornøkler, så den lagres aldri
-i repoet og aldri ukryptert.
+i repoet og aldri ukryptert. Ved siden av ligger signaturen,
+`ousfar-kopi-<tid>.tar.age.sig` (se «Hvem som laget kopien»).
 
 | Del | Hvordan |
 | --- | --- |
@@ -41,11 +42,15 @@ før og etter:
   samme gjør fingeravtrykket, radtallene og kontrollsummene i manifestet og
   listen over filer. Det som skrives underveis, kommer verken med i dumpene
   eller i manifestet.
-- Filene i Storage ligger utenfor databasen. Hver fil sammenlignes med
-  størrelsen og md5-summen øyeblikksbildet har for den. Er en fil byttet eller
-  fjernet underveis, forkastes forsøket og kopien tas på nytt i et nytt
+- Filene i Storage ligger utenfor databasen. Storage gir hver opplasting en
+  ny versjon, og innholdet til en versjon endres aldri. Når alle filene er
+  hentet, leses radene i `storage.objects` på nytt: har en fil fått en annen
+  versjon eller eTag enn i øyeblikksbildet, er den byttet eller fjernet
+  underveis. Størrelsen, og md5-summen der eTagen er en, kontrolleres i
+  tillegg. Da forkastes forsøket og kopien tas på nytt i et nytt
   øyeblikksbilde, høyst tre ganger; går det ikke, stopper kopien uten å lagre
-  noe.
+  noe. Har en fil verken versjon eller md5-sum, kan innholdet ikke knyttes til
+  øyeblikksbildet, og kopien stopper i stedet for å godta den.
 - Kopipunktet holdes i én åpen transaksjon, så `--db-url` må være en direkte
   tilkobling eller en tilkobling i sesjonsmodus, ikke i transaksjonsmodus.
 
@@ -86,6 +91,24 @@ der. Verktøyet behandler dette uttrykkelig:
 I dag er det ingen faktorer i produksjonen (15.11.2026). Prøven lager en
 slik kryptert faktor for en syntetisk bruker og viser begge veiene.
 
+## Hvem som laget kopien
+
+`age` krypterer til en offentlig nøkkel, så hvem som helst som kjenner den,
+kan lage en fil som lar seg dekryptere, også med egne SQL-filer og et
+manifest som passer til dem. Derfor signeres hver kopi:
+
+- Kopijobben har en privat Ed25519-nøkkel (`KOPI_SIGNERINGSNOKKEL`) og
+  signerer filnavnet, tidspunktet og sha256 av hele den krypterte fila. Den
+  ligger aldri i kopilageret.
+- Den som gjenoppretter, oppgir den offentlige nøkkelen med `--avsender`, fra
+  et sted utenfor kopilageret. Nøkkelen i signaturfila brukes aldri.
+- Gjenopprettingen kopierer fila til sin private mappe og kontrollerer
+  signaturen på den før noe dekrypteres, pakkes ut eller kjøres. En utskiftet
+  kopi, en signatur med en annen nøkkel eller en manglende signatur stopper
+  den uten at målet røres.
+- `npm run sikkerhetskopi -- signeringsnokler --ut <mappe>` lager et par.
+  Hvor de oppbevares, avgjøres med tiltak 3.
+
 Det som ikke er med, og som gjenskapes på andre måter: Edge-funksjonene
 rulles ut fra `main` (`docs/edge-funksjoner.md`); hemmelighetene og
 nøklene i Vercel og GitHub settes på nytt av eieren, fordi et nytt prosjekt
@@ -121,28 +144,33 @@ prøver dette i testdatabasen ved hver CI-kjøring.
 ## Bruk
 
 Nøklene leses fra miljøet: `KOPI_SECRET_KEY` er den hemmelige nøkkelen for
-Storage i prosjektet kommandoen gjelder. `pg_dump` må ha minst serverens
+Storage i prosjektet kommandoen gjelder, og `KOPI_SIGNERINGSNOKKEL` er den
+private signeringsnøkkelen (PEM) til `ta`. `pg_dump` må ha minst serverens
 hovedversjon (17); har maskinen en eldre, settes `KOPI_PG_BILDE` til et
 Postgres-bilde med den (for eksempel `postgres:17`), og dumpene kjøres i Docker.
 
 ```
+# 0. Signeringsnøklene, én gang
+npm run sikkerhetskopi -- signeringsnokler --ut <mappe>
+
 # 1. Referansen: et nytt, tomt Supabase-prosjekt (eller det lokale miljøet uten migrasjoner)
 npm run sikkerhetskopi -- referanse --db-url <ren> --ut referanse.json
 
 # 2. Kopien
-KOPI_SECRET_KEY=… npm run sikkerhetskopi -- ta --db-url <kilde> --api-url <kilde> \
+KOPI_SECRET_KEY=… KOPI_SIGNERINGSNOKKEL=… npm run sikkerhetskopi -- ta --db-url <kilde> --api-url <kilde> \
   --referanse referanse.json --mottaker <offentlig age-nøkkel> --ut <mappe> [--prosjekt <ref>] \
   [--kontrollnokkel <privat age-nøkkel>]
 
 # 3. Gjenopprettingen, alltid til et nytt, tomt prosjekt
 KOPI_SECRET_KEY=… npm run sikkerhetskopi -- gjenopprett --kopi <fil.tar.age> \
-  --identitet <privat age-nøkkel> --db-url <mål> --api-url <mål> [--fjern-krypterte-faktorer]
+  --identitet <privat age-nøkkel> --avsender <offentlig signeringsnøkkel> \
+  --db-url <mål> --api-url <mål> [--signatur <fil.sig>] [--fjern-krypterte-faktorer]
 ```
 
 Med `--prosjekt` kreves `SUPABASE_ACCESS_TOKEN`; mangler den, stopper kopien
 i stedet for å bli ufullstendig.
 
-Rekkefølgen ved gjenoppretting: roller, struktur og data i én transaksjon
+Rekkefølgen ved gjenoppretting: signaturen, deretter roller, struktur og data i én transaksjon
 (dataene med `session_replication_role = replica`, så utløserne ikke slår til),
 deretter tilpasningene, deretter migrasjonshistorikken, deretter filene.
 Verktøyet nekter produksjonsprosjektet og et mål som ikke er tomt. Til slutt
@@ -163,9 +191,10 @@ npm run sikkerhetskopi:prove
 
 Prøven bruker bare syntetiske brukere i Docker og sletter alt etterpå. Den
 lager referansen fra en ren Supabase, bygger kilden med migrasjonene, en
-syntetisk administrator og en bruker med profilbilde, tar en kryptert kopi
+syntetisk administrator og en bruker med profilbilde, tar en kryptert og signert kopi
 mens en egen tilkobling hele tiden skriver til to tabeller i samme transaksjon
-og profilbildet byttes i første forsøk,
+og profilbildet, som har fått en eTag som ikke er en md5-sum, byttes med et
+like stort bilde i første forsøk,
 sletter databasen, gjenoppretter i en ny, ren Supabase og kontrollerer
 punktene i planens §3.2:
 
@@ -183,7 +212,9 @@ punktene i planens §3.2:
 og dessuten at administratoren når tofaktornivået med sin gamle nøkkel, at
 gjenopprettingen ikke begynner med en kryptert tofaktornøkkel uten valget og
 lar målet være urørt, og at faktoren med valget fjernes etter kontrollen og
-brukeren logger inn med passordet;
+brukeren logger inn med passordet; og at to forfalskede kopier, kryptert til
+den samme mottakeren med egne SQL-filer, avvises før noe åpnes, med målet
+urørt: den ene med den ekte signaturen, den andre signert med en annen nøkkel;
 
 og dessuten at skrivingen underveis ga ett sammenhengende kopipunkt (like
 mange rader i begge tabellene, uten hull, og færre enn kilden fikk), og at
@@ -194,6 +225,7 @@ nytt med det nye bildet.
 
 | Dato | Miljø | Resultat | Tid |
 | --- | --- | --- | --- |
+| 15.11.2026, etter andre kontroll | Som under, med et like stort profilbilde uten md5-eTag og to forfalskede kopier | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 207 skrivinger i kopien og 360 i kilden da skrivingen stoppet; byttet av det like store bildet ble avslørt av versjonen, og kopien tatt på nytt; begge forfalskede kopier avvist før noe ble åpnet, med målet urørt; tofaktor som under. Punkt 6 som over | 13 s for gjenopprettingen |
 | 15.11.2026, etter kontrollen | Som over, med samtidig skriving, et byttet profilbilde og tofaktor | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 206 skrivinger i kopien og 362 i kilden da skrivingen stoppet (ett sammenhengende punkt), første forsøk forkastet og kopien tatt på nytt med det nye bildet, kopien pakket ut og prøvd før den ble godtatt. Administratoren nådde `aal2` med sin gamle nøkkel; uten valget ble gjenopprettingen stoppet med målet urørt, med valget ble den krypterte faktoren fjernet og brukeren listet. Punkt 6 som over | 13 s for gjenopprettingen |
 | 15.11.2026 | Det lokale testmiljøet (Supabase-CLI 2.120.0), syntetiske brukere | Alle punktene 1–8 i orden: 145 tabeller og 1 fil like kilden, 7 tilpasninger på plass og ingen ekstra, gammel innlogging virker, ny bruker får profil og medlemskap, uten myndighet avvist, profilbildereglene holder. Punkt 6 brukte databasekallene `opprett-bruker` gjør, fordi Edge-kjøretøyet i skymiljøet ikke når npm-registeret; prøven bruker selve funksjonen der den kan starte | 14 s for gjenopprettingen |
 

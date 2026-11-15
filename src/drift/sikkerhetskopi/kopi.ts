@@ -33,9 +33,9 @@
 import { createClient } from '@supabase/supabase-js'
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { chmodSync, closeSync, createReadStream, existsSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { chmodSync, closeSync, copyFileSync, createReadStream, existsSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import {
   FINGERAVTRYKK_SQL,
   VERSJONSTABELLER,
@@ -51,6 +51,8 @@ import {
   type Objekt,
 } from './tilpasninger'
 import { SUPABASE_CLI } from '../supabaseCli'
+import { Endret, Stopp } from './feil'
+import { signer, verifiser } from './signatur'
 import { KRYPTERTE_FAKTORER_SQL, PLATTFORMTABELLER, TABELLER_SQL, sammenlign, tabellsumSql, type Fil, type Manifest, type Tabellsum } from './manifest'
 
 
@@ -59,10 +61,7 @@ export const PRODUKSJONSREF = 'jfzqowsmjtthpbipnxnf'
 
 const logg = (tekst: string) => console.log(`[sikkerhetskopi] ${tekst}`)
 
-export class Stopp extends Error {}
-
-/** Kilden ble endret mens kopien ble tatt, på en måte øyeblikksbildet ikke dekker: forsøket tas på nytt. */
-export class Endret extends Error {}
+export { Endret, Stopp }
 
 // --- Postgres gjennom psql ----------------------------------------------------
 
@@ -274,48 +273,81 @@ const lagringsklient = (apiUrl: string, nokkel: string) =>
 
 const sha256 = (data: Uint8Array) => createHash('sha256').update(data).digest('hex')
 
-interface Lagret {
+export interface Lagret {
   bucket: string
   navn: string
   type: string | null
   storrelse: string | null
   etag: string | null
+  /** Storage gir hver opplasting en ny versjon, og innholdet til en versjon endres aldri. */
+  versjon: string | null
 }
 
 const lagredeObjekter = (dbUrl: string, bilde?: string) =>
   sporring<Lagret>(
     dbUrl,
     `select bucket_id as bucket, name as navn, metadata->>'mimetype' as type,
-       metadata->>'size' as storrelse, metadata->>'eTag' as etag
+       metadata->>'size' as storrelse, metadata->>'eTag' as etag, version as versjon
      from storage.objects order by 1, 2`,
     bilde,
   )
 
+const md5Av = (etag: string | null) => /^"?([0-9a-f]{32})"?$/i.exec(etag ?? '')?.[1]?.toLowerCase()
+
 /**
- * Om innholdet er det øyeblikksbildet beskriver: samme størrelse, og samme
- * md5 der Storage har lagret den som eTag (vanlige opplastinger).
+ * Om det hentede innholdet sikkert er det øyeblikksbildet beskriver, ut fra
+ * raden i bildet og raden slik den er etter at filene er hentet (`naa`).
+ *
+ * - Med en versjon i bildet må raden ha den samme versjonen etterpå. Storage
+ *   gir hver opplasting en ny versjon og serverer innholdet til den versjonen
+ *   raden har, så da er det hentede innholdet versjonen i bildet, uansett hva
+ *   eTagen er.
+ * - Uten versjon må eTagen være innholdets md5, og raden den samme etterpå.
+ * - Har raden ingen av delene, kan innholdet ikke knyttes til bildet, og
+ *   kopien stopper i stedet for å godta det.
+ *
+ * Gir `null` når innholdet er riktig, og ellers hva som er galt.
  */
-export function sammeSomIBildet(o: Pick<Lagret, 'storrelse' | 'etag'>, innhold: Uint8Array): boolean {
-  if (o.storrelse !== null && Number(o.storrelse) !== innhold.length) return false
-  const md5 = /^"?([0-9a-f]{32})"?$/i.exec(o.etag ?? '')?.[1]
-  return !md5 || createHash('md5').update(innhold).digest('hex') === md5.toLowerCase()
+export function kontrollerFil(
+  o: Pick<Lagret, 'storrelse' | 'etag' | 'versjon'>,
+  innhold: Uint8Array,
+  naa: Pick<Lagret, 'etag' | 'versjon'> | undefined,
+): { endret: string } | { upalitelig: string } | null {
+  const md5 = md5Av(o.etag)
+  if (!o.versjon && !md5) return { upalitelig: 'Storage har verken versjon eller md5-sum for den' }
+  if (!naa) return { endret: 'fjernet underveis' }
+  if (naa.versjon !== o.versjon || naa.etag !== o.etag) return { endret: 'byttet etter øyeblikksbildet' }
+  if (o.storrelse !== null && Number(o.storrelse) !== innhold.length) return { endret: 'har en annen størrelse enn i øyeblikksbildet' }
+  if (md5 && createHash('md5').update(innhold).digest('hex') !== md5) return { endret: 'har et annet innhold enn i øyeblikksbildet' }
+  return null
 }
 
-/** Filene øyeblikksbildet har, hentet fra Storage; er en endret eller borte, er kilden {@link Endret}. */
+/**
+ * Filene øyeblikksbildet har, hentet fra Storage og kontrollert mot det
+ * ({@link kontrollerFil}). Er en endret eller borte, er kilden {@link Endret};
+ * kan en ikke knyttes til bildet, stopper kopien.
+ */
 async function hentFiler(dbUrl: string, bilde: string, apiUrl: string, nokkel: string, mappe: string): Promise<Fil[]> {
   const lager = lagringsklient(apiUrl, nokkel)
-  const filer: Fil[] = []
-  for (const o of lagredeObjekter(dbUrl, bilde)) {
+  const iBildet = lagredeObjekter(dbUrl, bilde)
+  const hentet: { o: Lagret; innhold: Uint8Array }[] = []
+  for (const o of iBildet) {
     const { data, error } = await lager.from(o.bucket).download(o.navn)
     if (error) throw new Endret(`${o.bucket}/${o.navn} kunne ikke hentes (${error.message}); den kan være fjernet underveis`)
     const innhold = new Uint8Array(await data.arrayBuffer())
-    if (!sammeSomIBildet(o, innhold)) throw new Endret(`${o.bucket}/${o.navn} er endret siden øyeblikksbildet`)
     const sti = join(mappe, 'filer', o.bucket, o.navn)
     mkdirSync(dirname(sti), { recursive: true })
     writeFileSync(sti, innhold)
-    filer.push({ bucket: o.bucket, navn: o.navn, bytes: innhold.length, sha256: sha256(innhold) })
+    hentet.push({ o, innhold })
   }
-  return filer
+  // Radene slik de er nå, etter at alt er hentet: en opplasting underveis har gitt en ny versjon.
+  const naa = new Map(lagredeObjekter(dbUrl).map((o) => [`${o.bucket}/${o.navn}`, o]))
+  return hentet.map(({ o, innhold }) => {
+    const feil = kontrollerFil(o, innhold, naa.get(`${o.bucket}/${o.navn}`))
+    if (feil && 'upalitelig' in feil) throw new Stopp(`${o.bucket}/${o.navn} kan ikke knyttes sikkert til kopipunktet: ${feil.upalitelig}.`)
+    if (feil) throw new Endret(`${o.bucket}/${o.navn} er ${feil.endret}`)
+    return { bucket: o.bucket, navn: o.navn, bytes: innhold.length, sha256: sha256(innhold) }
+  })
 }
 
 async function leggTilbakeFiler(manifest: Manifest, dbUrl: string, apiUrl: string, nokkel: string, mappe: string): Promise<void> {
@@ -386,6 +418,11 @@ export interface TaValg {
    * bare at pakkingen og krypteringen lyktes.
    */
   kontrollnokkel?: string
+  /**
+   * Den private Ed25519-nøkkelen (PEM) kopien signeres med. Gjenopprettingen
+   * krever signaturen, kontrollert mot den offentlige nøkkelen.
+   */
+  signeringsnokkel: string
   /** Kalles i hvert forsøk etter dumpene og før filene hentes. Bare for prøvene. */
   underveis?: (forsok: number) => Promise<void>
   /** Høyst så mange forsøk når kilden endres underveis. Standard 3. */
@@ -394,6 +431,8 @@ export interface TaValg {
 
 export interface Kopi {
   fil: string
+  /** Signaturen, `<fil>.sig`. */
+  signatur: string
   forsok: number
 }
 
@@ -401,10 +440,13 @@ export async function taKopi(valg: TaValg): Promise<Kopi> {
   if (!valg.mottakere.length) throw new Stopp('Kopien må krypteres: oppgi minst én mottaker (offentlig age-nøkkel).')
   // En kopi uten Auth-innstillingene og navnene på hemmelighetene er ufullstendig: den skal ikke se vellykket ut.
   if (valg.prosjekt && !valg.token) throw new Stopp('Med --prosjekt kreves SUPABASE_ACCESS_TOKEN, for Auth-innstillingene og navnene på hemmelighetene.')
+  // En nøkkel som ikke kan signere, skal stoppe kopien før den tas, ikke etter.
+  signer('kontroll', '', '', valg.signeringsnokkel)
   const maks = valg.forsok ?? 3
   for (let forsok = 1; ; forsok++) {
     try {
-      return { fil: await taEttForsok(valg, forsok), forsok }
+      const fil = await taEttForsok(valg, forsok)
+      return { fil, signatur: `${fil}.sig`, forsok }
     } catch (e) {
       if (!(e instanceof Endret) || forsok >= maks) {
         if (e instanceof Endret) throw new Stopp(`Kilden ble endret under alle ${maks} forsøkene: ${e.message}. Ingen kopi er lagret.`)
@@ -481,11 +523,12 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
     await pakk(mappe, fil, ['age', ...valg.mottakere.flatMap((m) => ['-r', m])])
     if (!statSync(fil).size) throw new Stopp('Den krypterte kopien er tom.')
     if (valg.kontrollnokkel) await provArkivet(fil, valg.kontrollnokkel, pakket)
+    writeFileSync(`${fil}.sig`, JSON.stringify(signer(basename(fil), await filsum(fil), manifest.laget, valg.signeringsnokkel), null, 2))
     logg(`kopien er kryptert${valg.kontrollnokkel ? ' og prøvd' : ''}: ${fil} (${tabeller.length} tabeller, ${filer.length} filer)`)
     return fil
   } catch (e) {
     // En kopi som ikke ble ferdig, blir ikke liggende.
-    if (fil) rmSync(fil, { force: true })
+    if (fil) for (const f of [fil, `${fil}.sig`]) rmSync(f, { force: true })
     throw e
   } finally {
     await bilde.slipp()
@@ -513,6 +556,13 @@ export interface GjenopprettValg {
   kopi: string
   /** Fila med den private `age`-nøkkelen. */
   identitet: string
+  /**
+   * Den offentlige Ed25519-nøkkelen (PEM) til kopijobben, fra et sted
+   * utenfor kopilageret. Kopien gjenopprettes bare med en gyldig signatur fra den.
+   */
+  avsender: string
+  /** Signaturfila; standard `<kopi>.sig`. */
+  signatur?: string
   dbUrl: string
   apiUrl: string
   /** Hemmelig nøkkel (service role) for Storage i målet. */
@@ -561,8 +611,25 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-gjenoppretting-'))
   chmodSync(mappe, 0o700)
   try {
-    await pakkUt(valg.kopi, mappe, ['age', '-d', '-i', valg.identitet])
-    const manifest = JSON.parse(readFileSync(join(mappe, 'manifest.json'), 'utf8')) as Manifest & {
+    // Hvem som laget kopien, kontrolleres på en egen kopi av fila før den åpnes, så den ikke kan byttes underveis.
+    if (!existsSync(valg.kopi)) throw new Stopp(`Kopien ${valg.kopi} finnes ikke.`)
+    const kopi = join(mappe, 'kopi.tar.age')
+    copyFileSync(valg.kopi, kopi)
+    const sigFil = valg.signatur ?? `${valg.kopi}.sig`
+    if (!existsSync(sigFil)) throw new Stopp(`Signaturen ${sigFil} finnes ikke. Ingenting er gjenopprettet.`)
+    let sig: unknown
+    try {
+      sig = JSON.parse(readFileSync(sigFil, 'utf8'))
+    } catch {
+      sig = null
+    }
+    const signert = verifiser(sig, basename(valg.kopi), await filsum(kopi), valg.avsender)
+    logg(`signaturen er gyldig: kopien ble laget ${signert.laget} av kopijobben`)
+    const innhold = join(mappe, 'innhold')
+    mkdirSync(innhold, { mode: 0o700 })
+    await pakkUt(kopi, innhold, ['age', '-d', '-i', valg.identitet])
+    rmSync(kopi)
+    const manifest = JSON.parse(readFileSync(join(innhold, 'manifest.json'), 'utf8')) as Manifest & {
       referanse: Fingeravtrykk
       tilpasninger: Objekt[]
     }
@@ -583,7 +650,7 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
     if (forMal.length) throw new Stopp(`Målet er ikke likt referansen:\n- ${forMal.join('\n- ')}`)
 
     logg('legger inn roller, struktur og data')
-    const fil = (n: string) => join(mappe, n)
+    const fil = (n: string) => join(innhold, n)
     // `roller.sql` kjøres ikke: den har bare Supabases egne innstillinger, som
     // målet alt har. OUSFARs endringer på rollene er blant tilpasningene.
     psql(valg.dbUrl, [
@@ -597,7 +664,7 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
     logg('legger inn migrasjonshistorikken')
     psql(valg.dbUrl, ['--single-transaction', '-f', fil('historikk_struktur.sql'), '-f', fil('historikk_data.sql')])
     logg('legger tilbake filene i Storage')
-    await leggTilbakeFiler(manifest, valg.dbUrl, valg.apiUrl, valg.nokkel, mappe)
+    await leggTilbakeFiler(manifest, valg.dbUrl, valg.apiUrl, valg.nokkel, innhold)
 
     const resultat = kontroller(manifest, valg, await filsummer(manifest, valg.apiUrl, valg.nokkel))
     // Faktorene fjernes først når det gjenopprettede er kontrollert likt kilden.

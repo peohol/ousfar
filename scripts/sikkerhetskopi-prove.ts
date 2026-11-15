@@ -12,7 +12,11 @@
  *    Mens kopien tas, skriver en egen tilkobling hele tiden til to tabeller i
  *    samme transaksjon, og i første forsøk byttes profilbildet etter at
  *    databasen er lest: forsøket skal forkastes og kopien tas på nytt.
- * 3. Databasen slettes, en ny, ren Supabase startes, og kopien gjenopprettes.
+ *    Før kopien tas, får profilbildet en eTag som ikke er en md5-sum, så bare
+ *    versjonen i Storage kan avsløre byttet.
+ * 3. Databasen slettes, og en ny, ren Supabase startes. To forfalskede kopier,
+ *    kryptert til den samme mottakeren, skal avvises uten at målet røres. Så
+ *    gjenopprettes den ekte.
  * 4. Prøven kontrollerer punktene i §3.2: like tabeller, filer og
  *    tilpasninger; administratoren logger inn med sitt gamle passord; en ny
  *    bruker opprettes gjennom adminflyten (Edge-funksjonen `opprett-bruker`) og får profil og
@@ -27,12 +31,13 @@ import { execFileSync, spawn } from 'node:child_process'
 import { createHash, createHmac, randomBytes } from 'node:crypto'
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { genererMidlertidigPassord } from '@delt/passord'
 import { SUPABASE_CLI } from '../src/drift/supabaseCli'
-import { Stopp, gjenopprett, lagReferanse, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
+import { Stopp, filsum, gjenopprett, lagReferanse, pakk, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
+import { lagSigneringsnokler, signer } from '../src/drift/sikkerhetskopi/signatur'
 import { lokaltOppsett, sikreDocker, UTELATT, valgteMigrasjoner } from '../src/__tests__/qa/lokalmiljo'
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -144,7 +149,7 @@ async function opprettGjennomAdminflyten(s: Status, innlogget: SupabaseClient, a
 }
 
 const BILDE = Buffer.from('UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/v3AgAA=', 'base64')
-/** Det nye profilbildet i første forsøk: like stort, annet innhold, så bare innholdssummen avslører det. */
+/** Det nye profilbildet i første forsøk: like stort, annet innhold, og eTagen er ikke en md5-sum, så bare versjonen i Storage avslører det. */
 const NYTT_BILDE = Buffer.from(BILDE.map((b, i) => (i === BILDE.length - 2 ? b ^ 0xff : b)))
 const sha = (b: Uint8Array) => createHash('sha256').update(b).digest('hex')
 
@@ -223,6 +228,7 @@ async function prove(): Promise<void> {
   await sikreDocker()
   execFileSync('age-keygen', ['-o', join(MAPPE, 'nokkel.txt')], { stdio: 'ignore' })
   const mottaker = execFileSync('age-keygen', ['-y', join(MAPPE, 'nokkel.txt')], { encoding: 'utf8' }).trim()
+  const jobben = lagSigneringsnokler()
   stopp()
 
   logg('1. ren Supabase: referansen')
@@ -247,6 +253,9 @@ async function prove(): Promise<void> {
   if (opplasting.error) throw opplasting.error
   const { error: sti } = await bruker.from('profiles').update({ avatar_path: `${brukerId}/avatar.webp` }).eq('id', brukerId)
   if (sti) throw sti
+  // En eTag som ikke er en md5-sum (som ved flerdelsopplasting): da må versjonen avsløre et bytte av like stor fil.
+  execFileSync('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', kilde.DB_URL, '-c',
+    `update storage.objects set metadata = jsonb_set(metadata, '{eTag}', '"\\"0123456789abcdef-2\\""') where bucket_id = 'avatarer'`])
   // pg_dump må ha minst serverens versjon; Postgres-bildet til miljøet har den.
   process.env.KOPI_PG_BILDE ??= execFileSync('docker', ['inspect', '--format', '{{.Config.Image}}', 'supabase_db_ousfar-kopiprove'], { encoding: 'utf8' }).trim()
   const skriver = samtidigSkriver(kilde.DB_URL)
@@ -260,6 +269,7 @@ async function prove(): Promise<void> {
     ut: join(MAPPE, 'kopier'),
     migrasjoner: join(REPO, 'supabase/migrations'),
     kontrollnokkel: join(MAPPE, 'nokkel.txt'),
+    signeringsnokkel: jobben.privat,
     underveis: async (forsok) => {
       if (forsok !== 1) return
       const { error } = await klient(kilde, kilde.SECRET_KEY).storage.from('avatarer')
@@ -274,7 +284,33 @@ async function prove(): Promise<void> {
 
   logg('3. ny, ren Supabase: gjenopprettingen')
   const mal = await start([])
-  const malValg = { kopi, identitet: join(MAPPE, 'nokkel.txt'), dbUrl: mal.DB_URL, apiUrl: mal.API_URL, nokkel: mal.SECRET_KEY }
+  const malValg = { kopi, identitet: join(MAPPE, 'nokkel.txt'), avsender: jobben.offentlig, dbUrl: mal.DB_URL, apiUrl: mal.API_URL, nokkel: mal.SECRET_KEY }
+  const urort = () =>
+    execFileSync('psql', ['-X', '-At', '--dbname', mal.DB_URL, '-c',
+      `select (select count(*) from auth.users) = 0 and to_regclass('public.forfalsket') is null`], { encoding: 'utf8' }).trim() === 't'
+
+  // En forfalsket kopi: gyldig kryptert til den samme mottakeren, med egne SQL-filer og eget manifest.
+  const falsk = join(MAPPE, 'falsk')
+  mkdirSync(falsk)
+  writeFileSync(join(falsk, 'struktur.sql'), 'create table public.forfalsket (x int);')
+  writeFileSync(join(falsk, 'data.sql'), '')
+  writeFileSync(join(falsk, 'manifest.json'), JSON.stringify({ laget: new Date().toISOString(), kilde: 'forfalsket', versjoner: referanse.versjoner, tabeller: [], filer: [], hemmeligheter: [], referanse, tilpasninger: [] }))
+  const utskiftet = join(MAPPE, 'utskiftet', basename(kopi))
+  mkdirSync(dirname(utskiftet))
+  await pakk(falsk, utskiftet, ['age', '-r', mottaker])
+  const angriper = lagSigneringsnokler()
+  for (const [hva, sig] of [
+    ['med den ekte signaturen', readFileSync(fraKilden.signatur, 'utf8')],
+    ['signert med en annen nøkkel', JSON.stringify(signer(basename(kopi), await filsum(utskiftet), new Date().toISOString(), angriper.privat))],
+  ] as const) {
+    writeFileSync(`${utskiftet}.sig`, sig)
+    const svar = await gjenopprett({ ...malValg, kopi: utskiftet, krypterteFaktorer: 'fjern' }).then(() => null, (e: unknown) => e)
+    sjekk(
+      `en utskiftet, gyldig kryptert kopi ${hva} avvises før noe åpnes, og målet er urørt`,
+      svar instanceof Stopp && urort(),
+      svar instanceof Error ? svar.message.slice(0, 80) : 'ble ikke avvist',
+    )
+  }
   const utenValg = await gjenopprett(malValg).then(() => null, (e: unknown) => e)
   const brukereIMalet = execFileSync('psql', ['-X', '-At', '--dbname', mal.DB_URL, '-c', 'select count(*) from auth.users'], { encoding: 'utf8' }).trim()
   sjekk(
@@ -295,7 +331,7 @@ async function prove(): Promise<void> {
     r.fjernedeFaktorer.length === 1 && r.fjernedeFaktorer[0] === internAuthAdresse('kopi-bruker'),
     r.fjernedeFaktorer.join(', '),
   )
-  sjekk('samtidig endring av en fil: første forsøk ble forkastet og kopien tatt på nytt', fraKilden.forsok === 2, `${fraKilden.forsok} forsøk`)
+  sjekk('samtidig bytte av en like stor fil uten md5-eTag: første forsøk ble forkastet og kopien tatt på nytt', fraKilden.forsok === 2, `${fraKilden.forsok} forsøk`)
 
   logg('4. kontrollene etter gjenopprettingen')
   const admin = await innlogget(mal, 'kopi-admin', adminPassord).catch((e: Error) => e)
