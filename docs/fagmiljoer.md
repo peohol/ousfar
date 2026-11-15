@@ -653,8 +653,10 @@ bruk, stoppes før Auth og av den unike nøkkelen.
    gir fagmiljøet tilbake, som kvitteringen viser, og nøkkelen. Uten fagmiljø gjelder standarden, som for en eldre
    versjon av appen.
 2. Auth oppretter brukeren. Utløseren på `auth.users`
-   (`handter_ny_auth_bruker`) tar låsen før den låser reservasjonen (samme
-   rekkefølge som klareringen), leser reservasjonen på nytt, kontrollerer
+   (`handter_ny_auth_bruker`) tar låsen før den rører noen reservasjon, også
+   når reservasjonen er uten aktør (samme rekkefølge som klareringen: låsen,
+   så raden). Så rydder den bort utløpte reservasjoner, leser og låser
+   reservasjonen, kontrollerer
    myndigheten igjen og legger inn profilen. Medlemskapet legges inn av
    `profiles_standardmedlemskap` med fagmiljøet fra reservasjonen, og
    reservasjonen brukes opp. Alt skjer i transaksjonen som oppretter
@@ -678,7 +680,9 @@ fagmiljø står (`55P03`); ellers kunne den ene administratoren fått ut passord
 til en konto den andre bestilte i sitt fagmiljø. Samme aktør og fagmiljø kan
 klarere på nytt, så et brutt kall kan gjentas. Edge-funksjonen trekker bare
 tilbake reservasjonen med nøkkelen fra sin egen klarering, så oppryddingen
-etter et gammelt forsøk ikke fjerner et nyere.
+etter et gammelt forsøk ikke fjerner et nyere. Fordi utløseren tar låsen før
+den rydder bort utløpte reservasjoner, kan en opprettelse og en klarering som
+overtar en utløpt reservasjon, ikke vente på hverandre i kryss (vranglås).
 
 **Det appen viser.** `mine_rettigheter().opprett_bruker_i` er fagmiljøene den
 innloggede kan opprette brukere i, etter samme avgjørelse (`opprett_bruker`
@@ -709,7 +713,9 @@ administratoren i B, ikke den i A, kan gi kontoen nytt passord etterpå.
 `src/__tests__/opprettelse.samtidighet.test.ts`: tilbakekalling og opprettelse
 samtidig, i begge rekkefølger, to administratorer som klarerer samme
 brukernavn, og oppryddingen etter et gammelt forsøk mens den samme
-administratoren prøver igjen, på ekte Postgres 17. `konto.test.tsx`: skjemaet og kvitteringen.
+administratoren prøver igjen, og en opprettelse mens en klarering overtar en
+utløpt reservasjon (uten vranglås, også uten aktør), på ekte Postgres 17.
+`konto.test.tsx`: skjemaet og kvitteringen.
 
 ## Hjelperne for tilgang per fagmiljø
 

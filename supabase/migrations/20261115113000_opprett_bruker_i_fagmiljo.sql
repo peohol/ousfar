@@ -147,12 +147,33 @@ grant execute on function public.kontooperasjon_klarer_konto(uuid, text, uuid) t
 
 -- --- Opprettelsen ---------------------------------------------------------------
 
+-- Den felles låsen (`intern.serialiser_tilgang`) uten å sette aktør eller
+-- grunn, for en opprettelse uten aktør (oppstartsskriptet): grunnen
+-- skriptet har satt, står da i tilgangsloggen som før.
+create function intern.ta_tilgangslasen()
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  select pg_advisory_xact_lock(hashtextextended('ousfar.tilgang', 0))
+$$;
+
+revoke all on function intern.ta_tilgangslasen() from public, anon, authenticated, service_role;
+
 -- Utløseren på `auth.users`, som før, men med fagmiljøet fra reservasjonen.
--- Låsen tas før reservasjonen låses, i samme rekkefølge som klareringen, så
--- de to aldri venter på hverandre i kryss. Reservasjonen leses på nytt under
--- låsen, myndigheten i fagmiljøet kontrolleres igjen, og profilen legges inn
--- mens reservasjonen fortsatt står, slik at medlemskapet (under) får
--- fagmiljøet derfra. Reservasjonen brukes opp til slutt.
+--
+-- Den felles låsen tas først, før utløseren rører en eneste reservasjon, også
+-- når reservasjonen er uten aktør, i samme rekkefølge som klareringen (låsen,
+-- så raden). Ellers kunne utløseren rydde bort en utløpt reservasjon for et
+-- brukernavn og så vente på låsen, mens en klarering med låsen ventet på
+-- nettopp den raden (vranglås, `40P01`).
+--
+-- Under låsen ryddes de utløpte bort, og reservasjonen leses og låses. Har den
+-- en aktør, føres den som aktør (`intern.las_tilgang`, samme lås), og
+-- myndigheten i fagmiljøet kontrolleres igjen. Profilen legges inn mens
+-- reservasjonen fortsatt står, slik at medlemskapet (under) får fagmiljøet
+-- derfra. Reservasjonen brukes opp til slutt.
 create or replace function public.handter_ny_auth_bruker()
 returns trigger
 language plpgsql
@@ -175,18 +196,10 @@ begin
     raise exception 'Ugyldig brukernavn: %', nytt_brukernavn using errcode = '22023';
   end if;
 
+  perform intern.ta_tilgangslasen();
+
   delete from public.kontoreservasjoner
   where reservert_kl < now() - interval '15 minutes';
-
-  select r.aktor into bestiller from public.kontoreservasjoner r where r.username = nytt_brukernavn;
-  if not found then
-    raise exception 'OUSFAR er lukket. Kontoer opprettes bare av en administrator.'
-      using errcode = '42501';
-  end if;
-
-  if bestiller is not null then
-    perform intern.las_tilgang(bestiller, 'Ny konto opprettet i fagmiljøet');
-  end if;
 
   select r.aktor, r.fagmiljo_id into bestiller, fagmiljo
   from public.kontoreservasjoner r where r.username = nytt_brukernavn
@@ -197,6 +210,7 @@ begin
   end if;
 
   if bestiller is not null then
+    perform intern.las_tilgang(bestiller, 'Ny konto opprettet i fagmiljøet');
     avslag := intern.opprettelsesavslag(bestiller, intern.opprettelsesfagmiljo(fagmiljo));
     if avslag is not null then
       raise exception '%', avslag[2] using errcode = avslag[1];

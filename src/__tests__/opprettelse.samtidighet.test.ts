@@ -14,6 +14,10 @@
  *   opp etter en feil. Oppryddingen, med nøkkelen fra det første forsøket,
  *   fjerner ikke det nye forsøkets reservasjon, og det nye forsøket får
  *   kontoen.
+ * - Auth oppretter én konto mens en klarering med den felles låsen overtar en
+ *   utløpt reservasjon for et annet brukernavn. Utløseren tar låsen før den
+ *   rydder bort utløpte reservasjoner, så begge blir ferdige uten vranglås,
+ *   også når den nye kontoen er uten aktør (oppstartsskriptet).
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
@@ -192,6 +196,52 @@ describe.skipIf(!SERVER)('samtidig opprettelse av brukere i et fagmiljø (ekte P
     }
     expect(tilstand(db, 'nytt.forsok')).toMatchObject({ konto: true, medlemskap: ['ous-rettstoksikologi'], reservert_av: null })
   }, 30_000)
+
+  it.each([
+    ['en administrator', `'${KONTO.adminB}'`],
+    ['oppstartsskriptet (uten aktør)', 'null'],
+  ] as const)(
+    'gir ingen vranglås når Auth oppretter én konto mens en klarering overtar en utløpt reservasjon (ny konto bestilt av %s)',
+    async (_bestiller, aktor) => {
+      const db = nyDb()
+      // En utløpt reservasjon for X, og en fersk for Y som Auth skal opprette nå.
+      psql(
+        db,
+        `insert into public.kontoreservasjoner (username, reservert_kl, aktor, fagmiljo_id)
+           values ('utlopt.x', now() - interval '1 hour', '${KONTO.adminB}', ${B}),
+                  ('ny.y', now(), ${aktor}, ${aktor === 'null' ? 'null' : B});`,
+      )
+      const auth = new Okt(db)
+      const overtakelse = new Okt(db)
+      try {
+        // Klareringen av X har tatt den felles låsen og skal til å overta raden.
+        expect(await overtakelse.kjor('begin;')).toBe('00000')
+        expect(await overtakelse.kjor(SOM_SERVER)).toBe('00000')
+        expect(await overtakelse.kjor(`select pg_advisory_xact_lock(hashtextextended('ousfar.tilgang', 0));`)).toBe('00000')
+
+        // Auth oppretter Y og venter på låsen uten å ha rørt X.
+        expect(await auth.kjor('begin;')).toBe('00000')
+        const opprettelse = auth.send(authBruker('ny.y'))()
+        expect(await auth.venterFortsatt(opprettelse, 500)).toBe(true)
+
+        // Klareringen får X og blir ferdig; så blir Auth ferdig.
+        expect(await overtakelse.kjor(klarering(KONTO.adminA, 'utlopt.x', A))).toBe('00000')
+        expect(await overtakelse.kjor('commit;')).toBe('00000')
+        expect(await opprettelse).toBe('00000')
+        expect(await auth.kjor('commit;')).toBe('00000')
+      } finally {
+        auth.avslutt()
+        overtakelse.avslutt()
+      }
+      expect(tilstand(db, 'utlopt.x')).toMatchObject({ konto: false, reservert_av: KONTO.adminA })
+      expect(tilstand(db, 'ny.y')).toMatchObject({
+        konto: true,
+        medlemskap: [aktor === 'null' ? 'ous-klinisk-farmakologi' : 'ous-rettstoksikologi'],
+        reservert_av: null,
+      })
+    },
+    30_000,
+  )
 
   it.each([
     ['adminA', 'adminB'],
