@@ -44,7 +44,7 @@ Kontrollen 15.11.2026 viser fire ting som betyr mest:
    andre virksomheter inviteres (B9).
 
 Planen i §4 deler tiltakene i **ti som Claude gjennomfører uten nye
-beslutninger** og **elleve som krever Peders uttrykkelige ja**. Beslutningene står
+beslutninger** og **tolv som krever Peders uttrykkelige ja**. Beslutningene står
 samlet i §5 med anbefalt standardvalg. Porten S4 er passert når
 akseptlisten i §6 er oppfylt og Peder har godkjent åpningen av det første
 eksterne fagmiljøet gjennom startporten (S2-rapporten §8.4).
@@ -164,26 +164,66 @@ passord og en kode fra en autentiseringsapp. Det kan bygges på gratisplanen.
    telefon).
 2. Ved innlogging spør appen om koden når kontoen har en faktor, før noe
    annet vises.
-3. **Serverkravet:** en felles kontroll `intern.krev_tofaktor()` (tokenets
-   `aal` = `aal2`) i de samme portene som i dag sjekker myndighet
-   (`krev_admin`, `er_admin`, systemarkitekt- og administratorkontrollene,
-   `kuratering_admin`) og i Edge-funksjonene for kontooperasjoner
-   (`hentInnlogget`). Kravet gjelder handlingene, ikke lesingen, slik at en
-   administrator kan lese uten koden men må oppgi den før noe endres.
-4. **Tapt telefon:** appen har ingen e-post, så gjenoppretting skjer ved at
-   den som har myndighet etter samme hierarki som for nytt passord (P1.2a)
-   fjerner faktoren, loggført i `tilgangslogg`. En systemarkitekt kan alltid;
-   for den siste systemarkitekten trengs en nødvei med den hemmelige nøkkelen,
-   på samme måte som `npm run bootstrap:admin`.
-5. Kravet slås på i en egen migrasjon etter Peders ja (D5), først når alle
-   som omfattes har meldt inn en faktor, slik at ingen stenges ute.
+3. **Serverkravet: privilegiene krever koden, medlemskapet gjør det ikke.**
+   De samme predikatene brukes i dag både til lesing og til skriving, også i
+   radsikkerheten: `public.er_admin()` i lesingen av stoffregisteret og i
+   SELECT-regler, `public.er_systemarkitekt()` både i SELECT-regler
+   (`20261114133000_rekkevidde_faginnhold.sql`) og i direkte
+   INSERT/UPDATE/DELETE-regler (`20261114131500_systemrettigheter.sql`, for
+   eksempel `autoerstatt_regler`). Et krav som bare ligger i RPC-ene og
+   Edge-funksjonene, ville latt direkte tabellskriving gå på `aal1`. Kravet
+   legges derfor i **den privilegerte grenen av hvert slikt predikat**, ikke i
+   medlemskapskontrollen:
+   - En felles kontroll `intern.privilegier_tilgjengelige()` er sann når
+     tokenets `aal` er `aal2`, når kontoen ikke er i en rolle som krever
+     tofaktor (tabellen over), eller når kravet ikke er slått på. Kall uten
+     innlogget bruker (tjenestenøkkelen) behandles som i
+     `intern.krev_aktivt_medlemskap()`.
+   - Hvert predikat som gir mer enn vanlig medlemskap, kaller den i sin
+     privilegerte gren: systemarkitekt (`er_systemarkitekt`,
+     `krev_systemarkitekt`), adminrollen (`er_admin`, `krev_admin`), lokal
+     administrator (`er_lokal_admin_i`, `krev_medlemskapsmyndighet`,
+     `krev_myndighet_over`), redaktør- og registerrettene (`krev_redaktor`,
+     `har_registerrett`, `krev_endringsrett`, `kan_endre_*`), moderering
+     (`kan_moderere_diskusjonsside`, `krev_moderering`), idé- og
+     gruppemyndighet (`krev_idevalg_admin`, `krev_gruppemyndighet`) og
+     kuratering (`kuratering.krev_rolle`). Listen fastsettes fra katalogen,
+     ikke for hånd (punkt 6).
+   - Virkningen: en konto som krever tofaktor, har på `aal1` nøyaktig
+     rettighetene til et vanlig medlem. Lesing som medlem (fagsider,
+     fortolkning, diskusjoner, egne grupper) er uendret. Privilegert lesing
+     (utkast, medlemslister, tilgangslogg, stoffregister) og all privilegert
+     skriving, gjennom RPC, Edge og direkte i tabellene, krever `aal2`.
+     Edge-funksjonene bruker tjenestenøkkelen etter at databasen har avgjort
+     myndigheten med den innloggedes ID; de må derfor sende tokenets `aal`
+     med til myndighetskontrollen (`hentInnlogget`, `kontooperasjon_*`), så
+     den ikke ser et tjenestekall.
+4. **Tapt telefon før D5b:** inntil Peder har bestemt hvem som kan nullstille
+   en annens faktor (D5b), kan bare personen selv fjerne sin egen faktor, og
+   bare på `aal2`. Nullstilling av andres faktor og nødveien for den siste
+   systemarkitekten er et eget tiltak etter D5b (tiltak 7b). Anbefalt i D5b:
+   den som etter hierarkiet kan gi nytt passord (P1.2a), loggført i
+   `tilgangslogg`, og for den siste systemarkitekten en nødvei med den
+   hemmelige nøkkelen, som `npm run bootstrap:admin`.
+5. **Påslag:** kravet slås på i en egen migrasjon etter Peders ja (D5a),
+   først når alle som omfattes har meldt inn en faktor, slik at ingen stenges
+   ute. Før det er `intern.privilegier_tilgjengelige()` alltid sann.
+6. **Dekning fra katalogen:** testene henter listen over privilegerte
+   innganger fra den eksisterende katalogen (`funksjonskontroller.ts`,
+   `tilgangsinnganger.ts`) og fra `pg_policies` for hver regel som bruker et
+   av predikatene i punkt 3. En ny privilegert funksjon eller regel uten
+   negativ `aal1`-test stopper testen, slik katalogtestene i P1.1 gjør.
 
-**Akseptkriterier:** negative tester med gyldig token på nivå `aal1` for
-hver privilegert inngang (direkte RPC og Edge) gir avslag, og `aal2` slipper
-gjennom; innlogging uten faktor er uendret for vanlige brukere; innmelding og
-kodesteg fungerer med tastatur og skjermleser; tilbakestilling av faktor
-følger hierarkiet og loggføres; alle privilegerte kontoer har faktor før
-kravet slås på.
+**Akseptkriterier:** med kravet slått på gir et gyldig token på `aal1` for
+en konto som krever tofaktor avslag på hver privilegert inngang: hver
+privilegert RPC, hver Edge-funksjon for kontooperasjoner, og direkte
+INSERT, UPDATE og DELETE i hver tabell der en skriveregel bruker et
+privilegert predikat; privilegert lesing gir ingen rader. Det samme tokenet
+leser fortsatt det et vanlig medlem kan lese. `aal2` slipper gjennom.
+Dekningen kommer fra katalogen (punkt 6). Innlogging uten faktor er uendret
+for vanlige brukere; innmelding og kodesteg fungerer med tastatur og
+skjermleser; alle privilegerte kontoer har faktor før kravet slås på; etter
+tiltak 7b følger nullstilling hierarkiet og loggføres.
 
 ### 3.2 Sikkerhetskopi og gjenoppretting (D7)
 
@@ -191,23 +231,40 @@ kravet slås på.
 (RPO ≤ 24 t), og appen skal kunne være i drift igjen innen én arbeidsdag (RTO
 ≤ 8 t), bevist med en dokumentert gjenopprettingsprøve.
 
-| Valg | Hva det gir | Ulemper |
-| --- | --- | --- |
-| **a. Supabase Pro (anbefalt)** | Daglige kopier i 7 dager med gjenoppretting i dashbordet; kvoten 8 GB i stedet for 500 MB; kontroll mot lekkede passord, øktgrenser og 7 dagers logger. Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro) | Kostnad; krever betaling fra Peder eller organisasjonen |
-| b. Gratisplan og egen kopi | En ny, planlagt GitHub Actions-jobb tar en logisk kopi (`supabase db dump`), krypterer den og lagrer den utenfor Supabase | Ny automatisk jobb; repoet er offentlig, så kopien må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
-| c. Begge | Pro og en månedlig kryptert kopi utenfor Supabase | Mest arbeid; vern også mot at Supabase-kontoen går tapt |
+**Hva en fullstendig kopi må inneholde (F, etter Supabases dokumentasjon):**
+databasen i `public`, `intern`, `kuratering` og de andre egne skjemaene;
+**Auth-dataene** (`auth.users` med passordhashene, `auth.identities`,
+`auth.mfa_factors`), uten dem kan ingen logge inn etter gjenopprettingen;
+migrasjonshistorikken (`supabase_migrations`); **profilbildene i Storage**,
+som aldri er med i en databasekopi; og Auth-innstillingene i §2.1, som står i
+prosjektet og ikke i databasen. Hemmelighetene (JWT-nøkkel, API-nøkler) følger
+ikke med; et nytt prosjekt får nye, og alle må logge inn på nytt.
 
-**Gjenopprettingsprøven (A):** en kopi gjenopprettes i et eget, midlertidig
-miljø (et nytt Supabase-prosjekt eller en lokal Postgres 17), og det
-kontrolleres at radtall og kontrollsummer for tabellene i §2.3 stemmer med
-kilden, at migrasjonshistorikken er lik, og at appen kan logge inn og vise en
-fagside mot det gjenopprettede miljøet. Kopien inneholder persondata (også
-passordhasher) og slettes etter prøven. Tid og resultat føres i
-`docs/drift-gjenoppretting.md`.
+| Valg | Kopiering | Gjenoppretting og prøve | Ulemper |
+| --- | --- | --- | --- |
+| **a. Supabase Pro (anbefalt)** | Supabases daglige fysiske kopi av hele databasen, også `auth` og migrasjonshistorikken, i 7 dager. Profilbildene kopieres i tillegg med et skript mot Storage-API-et (4 filer i dag), og Auth-innstillingene lagres som JSON fra Management API-et (ingen hemmeligheter) | Prøven gjøres ved å gjenopprette en daglig kopi til **et nytt, midlertidig prosjekt** (Supabases «restore to new project»), aldri over produksjonen. Ved et reelt tap gjenopprettes produksjonen fra dashbordet, med nedetid så lenge det tar | Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro), og en kort ekstra kostnad for det midlertidige prosjektet under prøven. Gir også 8 GB, kontroll mot lekkede passord, øktgrenser og 7 dagers logger |
+| b. Gratisplan og egen kopi | Supabases dokumenterte CLI-metode i tre deler: `supabase db dump --role-only`, `supabase db dump` (struktur) og `supabase db dump --data-only --use-copy` (data, også for `auth`; strukturen til `auth` og `storage` er Supabases egen og tas ikke med), migrasjonshistorikken for seg, profilbildene og Auth-innstillingene som i a. Alt pakkes og krypteres før det lagres utenfor Supabase | Gjenopprettes i **et Supabase-miljø**, ikke i en ren Postgres, fordi `auth` og `storage` må finnes fra før: det lokale testmiljøet i Docker (`docs/qa-testmiljo.md`) for prøven, et nytt Supabase-prosjekt ved et reelt tap. `psql --single-transaction` med `session_replication_role = replica` under dataene, slik veiledningen sier | Ny automatisk jobb; repoet er offentlig, så kopien (med passordhasher og tofaktornøkler) må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
+| c. Begge | a, og i tillegg en månedlig kryptert kopi etter b utenfor Supabase | Som a og b | Mest arbeid; vern også mot at Supabase-kontoen går tapt |
 
-**Akseptkriterier:** valgt løsning i drift; én vellykket, dokumentert
-gjenopprettingsprøve med målt tid; rutinen beskriver hvem som kan sette i
-gang en gjenoppretting og hvordan profilbildene (Storage) håndteres.
+**Gjenopprettingsprøven (A):** kopien gjenopprettes i det midlertidige
+miljøet for valget over, og det kontrolleres at
+
+1. radtall og kontrollsummer stemmer med kilden for tabellene i §2.3,
+   **også `auth.users`, `auth.identities` og `auth.mfa_factors`**;
+2. migrasjonshistorikken er lik `main`;
+3. profilbildene finnes og kan hentes;
+4. **testbrukeren for kuratorjobbene logger inn** med sitt vanlige passord
+   mot det gjenopprettede miljøet, og en fagside og en fortolkning kan vises
+   (det beviser at passordhashene og Auth fulgte med);
+5. tiden fra start til innlogging er målt.
+
+Kopien inneholder persondata og slettes sammen med miljøet etter prøven. Tid
+og resultat føres i `docs/drift-gjenoppretting.md`.
+
+**Akseptkriterier:** valgt løsning i drift; verktøyet og rutinen er prøvd med
+syntetiske brukere i det lokale testmiljøet (tiltak 2); én vellykket,
+dokumentert prøve med en ekte kopi etter punkt 1–5 (tiltak 4); rutinen
+beskriver hvem som kan sette i gang en gjenoppretting.
 
 ### 3.3 Uavhengig sikkerhetsgjennomgang (B9)
 
@@ -312,13 +369,14 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | # | Tiltak | Type | Avhenger av | Akseptkriterium |
 | --- | --- | --- | --- | --- |
 | 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge) | J (D7) | – | Valget skrevet i planen |
-| 2 | Gjenopprettingsverktøy og rutine: skript som gjenoppretter en logisk kopi i en tom Postgres 17 og sammenligner radtall og kontrollsummer per tabell i §2.3 med en manifestfil; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i CI med syntetiske data: kopi → gjenoppretting → identiske tall |
+| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, migrasjonshistorikk, profilbilder, Auth-innstillinger) og gjenoppretter den i et Supabase-miljø, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) for både a og b | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, og en syntetisk bruker logger inn |
 | 3 | Sikkerhetskopien i drift etter valget i 1 | J (gjennomføring) | 1, 2 | Første kopi finnes og er lesbar |
-| 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J | 2, 3 | Dokumentert prøve med målt tid, alle kontroller grønne |
+| 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–5 med målt tid, også innlogging med testbrukeren |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
 | 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene |
-| 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging, tilbakestilling etter hierarkiet med logg; serverkravet `intern.krev_tofaktor()` bygget og testet, men ikke slått på | U | – | Kriteriene i §3.1 utenom selve kravet |
-| 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5) | 7, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
+| 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging og at personen selv kan fjerne egen faktor på `aal2`; `intern.privilegier_tilgjengelige()` i de privilegerte grenene og katalogtestene (§3.1 punkt 3 og 6) bygget og testet, men kravet ikke slått på. **Ingen nullstilling av andres faktor** | U | – | Kriteriene i §3.1 utenom selve kravet og nullstillingen; med kravet slått på i testene er alle negative `aal1`-tester grønne |
+| 7b | **Nullstilling av en annens faktor** og nødveien for den siste systemarkitekten, slik Peder bestemmer i D5b | J (D5b) | 7 | Nullstillingen følger det besluttede hierarkiet, loggføres, og har negative tester for den som ikke har myndigheten |
+| 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5a) | 7, 7b, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
 | 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger; med Pro også kontroll mot lekkede passord og utlogging etter inaktivitet (A: 12 t) | J | 6; Pro for de to siste | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
 | 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger`: testene skal aldri kunne nå en ekte Supabase, uansett hva miljøet inneholder. **Gjort i denne PR-en** (`vite.config.ts`, `testisolasjon.test.ts`) | U | – | Testen for isolasjonen er grønn; ingen forespørsler med brukeragent `node` mot `brukerinnstillinger` i loggen et døgn etter sammenslåingen |
 | 11 | Oppdatere utviklingsverktøyene med kjente sårbarheter (vitest, vite m.fl.) | U | – | `npm audit` uten høye og kritiske funn; alle tester grønne |
@@ -351,7 +409,7 @@ Hver har et anbefalt standardvalg. Ingen er tatt.
 | **D7a** | Skal vi betale for Supabase Pro (om lag 25 USD i måneden) for å få daglige sikkerhetskopier og mer plass, eller ta egne krypterte kopier på gratisplanen? | Pro. Det gir også mer plass, sterkere passordkontroll og øktgrenser | 1, 3, 9 |
 | **D7b** | Kan en kopi av produksjonsdataene (med brukerdata) gjenopprettes i et midlertidig miljø for å prøve at gjenopprettingen virker, og slettes etterpå? | Ja | 4 |
 | **D5a** | Skal systemarkitekter, alle med adminrollen og lokale administratorer måtte bruke tofaktor (kode fra en app på telefonen) før en ekstern pilot? | Ja, og frivillig for andre | 8 |
-| **D5b** | Hvem kan nullstille tofaktor for den som mister telefonen? | Den som i dag kan gi nytt passord, med logg | 7, 8 |
+| **D5b** | Hvem kan nullstille tofaktor for den som mister telefonen? | Den som i dag kan gi nytt passord, med logg | 7b, 8 |
 | **D5c** | Kan Claude endre innloggingsinnstillingene i Supabase (passordlengde, gjeldende passord ved bytte, kryptert databasetilkobling)? | Ja | 9 |
 | **B9a** | Hvem er ansvarlig for brukerdataene: OUS ved avdelingen, eller du personlig? Skal personvernombudet involveres? | OUS ved avdelingen, med personvernombudet | 14 |
 | **B9b** | Hvem skal gjøre den uavhengige sikkerhetsgjennomgangen? | OUS' informasjonssikkerhet, ekstern test hvis det finnes midler | 18 |
@@ -373,7 +431,9 @@ S4 er passert når alt under er oppfylt og kontrollert i S4-rapporten (tiltak
    med målt tid (§3.2).
 2. Tofaktor påkrevd og registrert for alle systemarkitekter, alle med
    adminrollen og alle lokale administratorer; negative tester med
-   `aal1`-token grønne for hver privilegert inngang (§3.1).
+   `aal1`-token grønne for hver privilegert inngang, også direkte skriving i
+   tabellene, med dekningen hentet fra katalogen; nullstilling etter D5b
+   (§3.1).
 3. Innloggingen herdet: passordregel, gjeldende passord ved bytte og
    sikkerhetshoder (tiltak 5, 6, 9).
 4. Intern og uavhengig sikkerhetsgjennomgang gjort, uten åpne høye eller
