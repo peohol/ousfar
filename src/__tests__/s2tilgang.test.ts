@@ -175,7 +175,8 @@ async function leggInnLokaledata(side: Fagmiljo): Promise<Lokaledata> {
   })
   await publiser(regelsett)
 
-  const kategori = await somBruker<string>(g.id[medlem], 'select public.opprett_diskusjonskategori($1, $2, $3)', [SIDE, `S2 ${side}`, ['🔒', '🔑'][SIDER.indexOf(side)]])
+  // Samme navn og emoji i begge: kategoriene er unike i hvert fagmiljøs rom (#395).
+  const kategori = await somBruker<string>(g.id[medlem], 'select public.opprett_diskusjonskategori($1, $2, $3)', [SIDE, 'S2', '🔒'])
   const traad = await somBruker<string>(g.id[medlem], 'select public.opprett_diskusjon($1, $2, $3, $4)', [SIDE, kategori, `Tråd i ${side}`, DOK('Første innlegg')])
 
   // Katalogen endres bare med migrasjoner; testen legger inn en syntetisk oppføring direkte.

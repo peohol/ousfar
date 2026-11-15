@@ -86,6 +86,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'direktelenke(slag text, id uuid, kommentar uuid)': 'rekkevidde',
   'diskusjon_er_apen(diskusjon uuid)': 'rekkevidde',
   'diskusjonsoversikt(side text)': 'radsikkerhet',
+  // #395: den innloggedes rom på en diskusjonsside (arbeidskonteksten på fortolkningen).
+  'diskusjonsrom(side text)': 'eier',
   'diskusjonstekster(side text)': 'radsikkerhet',
   'diskusjonstraad(diskusjon uuid)': 'radsikkerhet',
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'rekkevidde',
@@ -114,6 +116,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
   'har_aktivt_medlemskap()': 'eier',
   'inviter_til_gruppe(gruppe uuid, brukernavn text)': 'gruppemyndighet',
+  // #395: om den innloggede kan moderere tråden, i rommet den står i.
+  'kan_moderere_diskusjon(diskusjon uuid)': 'eier',
   // P2b: om den innloggede kan moderere diskusjonene på en side, til knappene i appen.
   'kan_moderere_diskusjoner(side text)': 'eier',
   'ide_er_apen(ide uuid)': 'felles-lesing',

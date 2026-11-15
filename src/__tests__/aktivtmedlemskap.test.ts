@@ -36,6 +36,9 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'har_aktivt_medlemskap()': false,
   // P2b: om den innloggede kan moderere diskusjonene på en side.
   'kan_moderere_diskusjoner(side text)': false,
+  // #395: rommet på en diskusjonsside, og om den innloggede kan moderere en tråd.
+  'diskusjonsrom(side text)': null,
+  'kan_moderere_diskusjon(diskusjon uuid)': false,
   'min_medlemskapsstatus()': 'avsluttet',
   'min_profil()': null,
   'mine_administrerte_fagmiljoer()': [],
