@@ -29,7 +29,8 @@ Kontrollen 15.11.2026 viser fire ting som betyr mest:
    kopier er tom og gjenoppretting til et tidspunkt er av. Kuratert
    faginnhold, revisjoner, kurateringsgrener, brukere, medlemskap og
    diskusjoner finnes bare der (§2.3). Dette gjelder allerede i dag, ikke
-   bare for piloten, og er planens første prioritet.
+   bare for piloten, og er planens første prioritet. Peder har valgt egne
+   krypterte kopier på gratisplanen (D7a, §3.2 valg b).
 2. **Tofaktor er slått på i Supabase, men ikke tatt i bruk i appen (F).**
    Ingen av de 14 kontoene har en faktor, og ingen operasjon krever den.
    Teknisk kan alt bygges uten kostnad på dagens plan (§3.1).
@@ -242,8 +243,8 @@ ikke med; et nytt prosjekt får nye, og alle må logge inn på nytt.
 
 | Valg | Kopiering | Gjenoppretting og prøve | Ulemper |
 | --- | --- | --- | --- |
-| **a. Supabase Pro (anbefalt)** | Supabases daglige fysiske kopi av hele databasen, også `auth` og migrasjonshistorikken, i 7 dager. Profilbildene kopieres i tillegg med et skript mot Storage-API-et (4 filer i dag), og Auth-innstillingene lagres som JSON fra Management API-et (ingen hemmeligheter) | Prøven gjøres ved å gjenopprette en daglig kopi til **et nytt, midlertidig prosjekt** (Supabases «restore to new project»), aldri over produksjonen. Ved et reelt tap gjenopprettes produksjonen fra dashbordet, med nedetid så lenge det tar | Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro), og en kort ekstra kostnad for det midlertidige prosjektet under prøven. Gir også 8 GB, kontroll mot lekkede passord, øktgrenser og 7 dagers logger |
-| b. Gratisplan og egen kopi | Supabases dokumenterte CLI-metode i tre deler: `supabase db dump --role-only`, `supabase db dump` (struktur) og `supabase db dump --data-only --use-copy` (data, også for `auth`; strukturen til `auth` og `storage` er Supabases egen og tas ikke med), migrasjonshistorikken for seg, profilbildene og Auth-innstillingene som i a. Alt pakkes og krypteres før det lagres utenfor Supabase | Gjenopprettes i **et Supabase-miljø**, ikke i en ren Postgres, fordi `auth` og `storage` må finnes fra før: det lokale testmiljøet i Docker (`docs/qa-testmiljo.md`) for prøven, et nytt Supabase-prosjekt ved et reelt tap. `psql --single-transaction` med `session_replication_role = replica` under dataene, slik veiledningen sier | Ny automatisk jobb; repoet er offentlig, så kopien (med passordhasher og tofaktornøkler) må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
+| a. Supabase Pro | Supabases daglige fysiske kopi av hele databasen, også `auth` og migrasjonshistorikken, i 7 dager. Profilbildene kopieres i tillegg med et skript mot Storage-API-et (4 filer i dag), og Auth-innstillingene lagres som JSON fra Management API-et (ingen hemmeligheter) | Prøven gjøres ved å gjenopprette en daglig kopi til **et nytt, midlertidig prosjekt** (Supabases «restore to new project»), aldri over produksjonen. Ved et reelt tap gjenopprettes produksjonen fra dashbordet, med nedetid så lenge det tar | Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro), og en kort ekstra kostnad for det midlertidige prosjektet under prøven. Gir også 8 GB, kontroll mot lekkede passord, øktgrenser og 7 dagers logger |
+| **b. Gratisplan og egen kopi (valgt av Peder 15.11.2026)** | Supabases dokumenterte CLI-metode i tre deler: `supabase db dump --role-only`, `supabase db dump` (struktur) og `supabase db dump --data-only --use-copy` (data, også for `auth`; strukturen til `auth` og `storage` er Supabases egen og tas ikke med), migrasjonshistorikken for seg, profilbildene og Auth-innstillingene som i a. Alt pakkes og krypteres før det lagres utenfor Supabase | Gjenopprettes i **et Supabase-miljø**, ikke i en ren Postgres, fordi `auth` og `storage` må finnes fra før: det lokale testmiljøet i Docker (`docs/qa-testmiljo.md`) for prøven, et nytt Supabase-prosjekt ved et reelt tap. `psql --single-transaction` med `session_replication_role = replica` under dataene, slik veiledningen sier | Ny automatisk jobb; repoet er offentlig, så kopien (med passordhasher og tofaktornøkler) må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
 | c. Begge | a, og i tillegg en månedlig kryptert kopi etter b utenfor Supabase | Som a og b | Mest arbeid; vern også mot at Supabase-kontoen går tapt |
 
 **Gjenopprettingsprøven (A):** kopien gjenopprettes i det midlertidige
@@ -321,8 +322,8 @@ og tilgjengelig i appen; regel for lagringstid og avviksrutine vedtatt.
 - **Kvoten er det trange punktet (F):** 437,6 av 500 MB. Et nytt fagmiljø
   med egne regler, diskusjoner og grupper tar lite plass, men kurateringen
   vokser, og når kvoten er nådd, settes databasen i skrivebeskyttet modus.
-  Pro (8 GB) fjerner problemet. På gratisplanen trengs en grense for tiltak
-  (A: 460 MB) og en plan for hva som ryddes (P0-rapporten og
+  Pro (8 GB) ville fjernet problemet, men etter D7a blir vi på gratisplanen,
+  så det trengs en grense for tiltak (A: 460 MB) og en plan for hva som ryddes (P0-rapporten og
   databasemålingen har kandidatene).
 - **Last (F):** 6 kontoer har logget inn de siste 30 dagene; dagens Nano-maskin har
   minnepress, men normal svartid (`docs/db-maling.md`, #342). En pilot med
@@ -350,8 +351,8 @@ over fordi tekniske tester er grønne:
   støtteverktøy og at klinisk ansvar for fortolkningen ligger hos
   laboratoriet, ingen pasientdata, kontaktpunkt og responstid,
   avslutningsregler.
-- **Kostnader og finansiering:** Pro-planen, eventuelt Vercel Pro og en
-  ekstern sikkerhetstest.
+- **Kostnader og finansiering:** eventuelt Vercel Pro og en ekstern
+  sikkerhetstest (Supabase Pro er valgt bort i D7a).
 - **Agentenes tilgang:** når andre virksomheters data ligger i databasen,
   bør det avgjøres om KI-agentene fortsatt skal ha full teknisk tilgang til
   produksjonen, eller bare lesetilgang mens endringer går gjennom PR og
@@ -368,16 +369,16 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 
 | # | Tiltak | Type | Avhenger av | Akseptkriterium |
 | --- | --- | --- | --- | --- |
-| 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge) | J (D7) | – | Valget skrevet i planen |
+| 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge). **Besluttet 15.11.2026: b, egne krypterte kopier på gratisplanen** | J (D7) | – | Valget skrevet i planen (gjort) |
 | 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, migrasjonshistorikk, profilbilder, Auth-innstillinger) og gjenoppretter den i et Supabase-miljø, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) for både a og b | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, og en syntetisk bruker logger inn |
-| 3 | Sikkerhetskopien i drift etter valget i 1 | J (gjennomføring) | 1, 2 | Første kopi finnes og er lesbar |
+| 3 | Sikkerhetskopien i drift etter valget i 1: en planlagt, kryptert kopi etter §3.2 b, lagret utenfor Supabase og utenfor det offentlige repoet, med nøkkelen hos en navngitt eier | J (gjennomføring: lagringssted og nøkkeleier) | 1, 2 | Første kopi finnes, kan dekrypteres av nøkkeleieren og er lesbar |
 | 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–5 med målt tid, også innlogging med testbrukeren |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
 | 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene |
 | 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging og at personen selv kan fjerne egen faktor på `aal2`; `intern.privilegier_tilgjengelige()` i de privilegerte grenene og katalogtestene (§3.1 punkt 3 og 6) bygget og testet, men kravet ikke slått på. **Ingen nullstilling av andres faktor** | U | – | Kriteriene i §3.1 utenom selve kravet og nullstillingen; med kravet slått på i testene er alle negative `aal1`-tester grønne |
 | 7b | **Nullstilling av en annens faktor** og nødveien for den siste systemarkitekten, slik Peder bestemmer i D5b | J (D5b) | 7 | Nullstillingen følger det besluttede hierarkiet, loggføres, og har negative tester for den som ikke har myndigheten |
 | 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5a) | 7, 7b, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
-| 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger; med Pro også kontroll mot lekkede passord og utlogging etter inaktivitet (A: 12 t) | J | 6; Pro for de to siste | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
+| 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger. Kontroll mot lekkede passord og utlogging etter inaktivitet finnes bare på Pro og faller bort etter D7a; listen over vanlige passord i tiltak 6 og tofaktor for de privilegerte er vernet i stedet | J | 6 | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
 | 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger`: testene skal aldri kunne nå en ekte Supabase, uansett hva miljøet inneholder. **Gjort i denne PR-en** (`vite.config.ts`, `testisolasjon.test.ts`) | U | – | Testen for isolasjonen er grønn; ingen forespørsler med brukeragent `node` mot `brukerinnstillinger` i loggen et døgn etter sammenslåingen |
 | 11 | Oppdatere utviklingsverktøyene med kjente sårbarheter (vitest, vite m.fl.) | U | – | `npm audit` uten høye og kritiske funn; alle tester grønne |
 | 12 | Påminnelse om at pasientopplysninger ikke skal skrives, i skrivefeltene for diskusjoner, idéer og grupper (B4 er besluttet) | U | – | Teksten vises i alle skrivefelt for samhandling; komponenttest |
@@ -402,11 +403,11 @@ gjennomgangen ser det som faktisk skal i pilot.
 
 ## 5. Beslutninger som gjenstår fra D5, D7 og B9
 
-Hver har et anbefalt standardvalg. Ingen er tatt.
+Hver har et anbefalt standardvalg. D7a er tatt; de andre gjenstår.
 
 | Nr. | Spørsmål i vanlig språk | Anbefalt | Tiltak |
 | --- | --- | --- | --- |
-| **D7a** | Skal vi betale for Supabase Pro (om lag 25 USD i måneden) for å få daglige sikkerhetskopier og mer plass, eller ta egne krypterte kopier på gratisplanen? | Pro. Det gir også mer plass, sterkere passordkontroll og øktgrenser | 1, 3, 9 |
+| **D7a** | Skal vi betale for Supabase Pro (om lag 25 USD i måneden) for å få daglige sikkerhetskopier og mer plass, eller ta egne krypterte kopier på gratisplanen? | **Besluttet av Peder 15.11.2026: egne krypterte kopier på gratisplanen** (anbefalt var Pro) | 1, 3, 9 |
 | **D7b** | Kan en kopi av produksjonsdataene (med brukerdata) gjenopprettes i et midlertidig miljø for å prøve at gjenopprettingen virker, og slettes etterpå? | Ja | 4 |
 | **D5a** | Skal systemarkitekter, alle med adminrollen og lokale administratorer måtte bruke tofaktor (kode fra en app på telefonen) før en ekstern pilot? | Ja, og frivillig for andre | 8 |
 | **D5b** | Hvem kan nullstille tofaktor for den som mister telefonen? | Den som i dag kan gi nytt passord, med logg | 7b, 8 |
@@ -455,5 +456,5 @@ S4 er passert når alt under er oppfylt og kontrollert i S4-rapporten (tiltak
 
 - Ingen ekstern pilot åpnes, og ingen fagmiljøer opprettes, før punkt 9 i §6.
 - Ingen nye automatiske jobber eller kontrollordninger uten Peders ja; en
-  planlagt kopijobb (D7a valg b) er en slik og hører til tiltak 3.
+  planlagt kopijobb etter D7a valg b er en slik og settes i drift i tiltak 3.
 - Chat og filer (P7, P8, S5) og delegert redigering (P5) er egne etapper.
