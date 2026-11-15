@@ -252,32 +252,54 @@ myndigheten når en konto opprettes, og reglene for profilbildene på
 `20260922115504` og `20261114130000`). Uten dem slutter kontoopprettelsen og
 profilbildene å virke, selv om alle data er på plass. Metoden:
 
-1. **Hentes fra katalogen, ikke fra migrasjonene.** Kopiverktøyet leser ved
-   hver kopi alle egne utløsere (`pg_trigger` uten `tgisinternal`) og alle
-   regler (`pg_policy`) på tabeller i `auth` og `storage`, og tilganger
-   (`GRANT`) som appens roller har fått der, og skriver dem som en fjerde
-   fil, `tilpasninger.sql`, med `pg_get_triggerdef` og reglenes uttrykk fra
-   `pg_get_expr`. Funksjonene utløserne kaller (som
+1. **Bare OUSFARs egne objekter, skilt ut mot en ren Supabase.** At en
+   utløser ikke er intern (`tgisinternal`), betyr ikke at OUSFAR har laget
+   den; Supabase har egne utløsere, regler og tilganger i `auth` og
+   `storage`, og de finnes alt i et nytt prosjekt. Kopiverktøyet lager derfor
+   et **fingeravtrykk** av alle utløsere (`pg_get_triggerdef`), regler
+   (`pg_policy` med `pg_get_expr`) og tilganger (`GRANT`) på objekter i `auth`
+   og `storage`, både i kilden og i **en ren referanse**: en Supabase-
+   installasjon med samme versjoner av Auth og Storage som produksjonen og
+   uten OUSFARs migrasjoner (det lokale testmiljøet startet uten migrasjoner,
+   eller et nytt, tomt prosjekt), med versjonene lest fra begge og lagt i
+   manifestet. **Tilpasningene er forskjellen:** det som finnes i kilden og
+   ikke i referansen, skrives til en fjerde fil, `tilpasninger.sql`. Et
+   objekt som finnes i begge med **ulik** definisjon, stopper kopien med
+   feil, fordi det betyr enten at vi har endret et plattformobjekt, eller at
+   versjonene ikke stemmer; det rettes for hånd, aldri ved å overskrive.
+   Supabases egen motor for dette (`pg-delta`, se veiledningen) brukes når
+   den gir samme resultat, og forskjellslisten er da kontrollen på den.
+2. **Eksplisitt dekning av det vi vet at vi har.** En test i repoet leser
+   migrasjonene og lager listen over objekter OUSFAR har laget på tabeller i
+   `auth` og `storage` (i dag `paa_ny_auth_bruker` og de fire reglene for
+   profilbildene, med endringene i `20260922115504` og `20261114130000`).
+   Kopien stopper hvis et objekt fra listen mangler i forskjellen, så
+   verken referansen eller en plattformoppdatering kan få et av dem til å
+   forsvinne i stillhet. Funksjonene utløserne kaller (som
    `public.handter_ny_auth_bruker`), ligger i egne skjemaer og er alt med i
-   strukturfila. Slik følger det med som faktisk står i produksjonen, også
-   det som er endret av senere migrasjoner, og ingen migrasjon kjøres to
-   ganger.
-2. **Rekkefølgen ved gjenoppretting:** roller, struktur, data (med
+   strukturfila. Ingen migrasjon kjøres to ganger.
+3. **Rekkefølgen ved gjenoppretting:** roller, struktur, data (med
    `session_replication_role = replica`, så utløserne ikke slår til under
    innlastingen), deretter `tilpasninger.sql`, deretter
    migrasjonshistorikken. Historikken legges tilbake **som data, slik den
    står i kilden** (`supabase_migrations.schema_migrations`); den skrives
    aldri for hånd, og migrasjonene kjøres ikke på nytt.
-3. **Det som ikke ligger i databasen** gjenskapes fra repoet og
+4. **Det som ikke ligger i databasen** gjenskapes fra repoet og
    manifestet: Edge-funksjonene rulles ut fra `main` med den vanlige
    arbeidsflyten mot det nye prosjektet; Storage-bøttene følger med som rader
    i `storage.buckets`, filene kopieres for seg; Auth-innstillingene settes
    fra JSON-fila; **navnene** på Edge-hemmelighetene og Vercel-variablene
    står i manifestet (aldri verdiene), og verdiene settes på nytt av eieren.
-4. **Kontrollen er generell:** etter gjenopprettingen sammenlignes listen
-   over egne utløsere, regler og tilganger i `auth` og `storage` med
-   manifestet fra kilden. Avvik i noen retning stopper prøven, så en ny
-   tilpasning i en senere migrasjon blir med uten at verktøyet må endres.
+5. **Kontrollen er generell og går begge veier:** før `tilpasninger.sql`
+   kjøres, sammenlignes målets fingeravtrykk med referansens; et mål med
+   andre versjoner eller med noen av OUSFARs objekter fra før stopper
+   gjenopprettingen. Fila kjøres i én transaksjon uten `or replace` og uten
+   `drop`, så den kan aldri overskrive et plattformobjekt, og et duplikat
+   gir feil i stedet for en dobbel regel. Etterpå skal målets fingeravtrykk
+   være **nøyaktig** referansen pluss tilpasningene: ingen duplikate
+   plattformobjekter, ingen manglende og ingen ekstra regler eller
+   tilganger. Et avvik i noen retning stopper prøven, så en ny tilpasning i
+   en senere migrasjon blir med uten at verktøyet må endres.
 
 | Valg | Kopiering | Gjenoppretting og prøve | Ulemper |
 | --- | --- | --- | --- |
@@ -295,8 +317,10 @@ miljøet for valget over, og det kontrolleres at
 4. **testbrukeren for kuratorjobbene logger inn** med sitt vanlige passord
    mot det gjenopprettede miljøet, og en fagside og en fortolkning kan vises
    (det beviser at passordhashene og Auth fulgte med);
-5. listen over egne utløsere, regler og tilganger i `auth` og `storage` er
-   lik manifestet fra kilden (metoden over, punkt 4);
+5. målet er gjenopprettet **uten duplikate plattformobjekter**, og
+   fingeravtrykket i `auth` og `storage` er nøyaktig referansen pluss
+   tilpasningene, med `paa_ny_auth_bruker` og profilbildereglene til stede;
+   et avvik i tilgangsreglene stopper prøven (metoden over, punkt 1, 2 og 5);
 6. **en ny, syntetisk bruker opprettes gjennom adminflyten** (Edge-funksjonen
    `opprett-bruker`, utrullet fra `main` til det gjenopprettede miljøet), får
    profil og riktig medlemskap av utløseren, og kan logge inn; et forsøk uten
@@ -421,7 +445,7 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | # | Tiltak | Type | Avhenger av | Akseptkriterium |
 | --- | --- | --- | --- | --- |
 | 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge). **Besluttet 15.11.2026: b, egne krypterte kopier på gratisplanen** | J (D7) | – | Valget skrevet i planen (gjort) |
-| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, tilpasningene i `auth` og `storage` hentet fra katalogen, migrasjonshistorikk, profilbilder, Auth-innstillinger, navnene på hemmelighetene) og gjenoppretter den i et Supabase-miljø i riktig rekkefølge, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`, og tilpasningene; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall og tilpasninger, en eksisterende syntetisk bruker logger inn, en ny bruker opprettes gjennom adminflyten og får profil og medlemskap, og profilbildereglene holder (§3.2 punkt 4–7). Ingen produksjonsdata eller hemmeligheter i repoet |
+| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, OUSFARs tilpasninger i `auth` og `storage` skilt ut mot en ren, versjonslik Supabase-referanse, migrasjonshistorikk, profilbilder, Auth-innstillinger, navnene på hemmelighetene) og gjenoppretter den i et Supabase-miljø i riktig rekkefølge, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`, og tilpasningene; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, ingen duplikate plattformobjekter og fingeravtrykket lik referansen pluss tilpasningene, en eksisterende syntetisk bruker logger inn, en ny bruker opprettes gjennom adminflyten og får profil og medlemskap, og profilbildereglene holder (§3.2 prøven punkt 4–7). Ingen produksjonsdata eller hemmeligheter i repoet |
 | 3 | Sikkerhetskopien i drift etter valget i 1: en planlagt, kryptert kopi etter §3.2 b, lagret utenfor Supabase og utenfor det offentlige repoet, med nøkkelen hos en navngitt eier | J (gjennomføring: lagringssted og nøkkeleier) | 1, 2 | Første kopi finnes, kan dekrypteres av nøkkeleieren og er lesbar |
 | 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–8 med målt tid: innlogging med testbrukeren, ny bruker gjennom adminflyten og profilbilderettighetene |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
