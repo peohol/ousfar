@@ -500,6 +500,22 @@
   flex: 1;
 }
 
+/* Et valg med en forklaring under: teksten og forklaringen står over
+   hverandre, og knappen vokser med dem. */
+.nedtrekk__tekst--forklart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  padding: var(--rom-3) 0;
+}
+
+.nedtrekk__forklaring {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-normal);
+  line-height: var(--linjehoyde-ui);
+  color: var(--blekk-dempet);
+}
+
 .nedtrekk__hint {
   font-size: var(--tekst-merke);
   font-weight: var(--vekt-halvfet);

@@ -83,17 +83,21 @@ myndigheten, med den innloggedes ID, i samme transaksjon som endringen
 | --- | --- |
 | `opprett-bruker` | Oppretter en konto i et fagmiljø den innloggede administrerer, og returnerer et midlertidig passord («Opprettelse av brukere» i `docs/fagmiljoer.md`) |
 | `nytt-passord` | Gir en bruker et nytt midlertidig passord: systemarkitekten til alle utenom systemarkitekter, en lokal administrator bare til vanlige brukere i egne fagmiljøer |
-| `sett-rolle` | Gir eller fjerner adminstatus hos en annen; bare systemarkitekter |
+| `sett-rolle` | Gir eller fjerner den gamle adminrollen («tilgang til verktøyene» i brukerlista) hos en annen; bare systemarkitekter |
 | `fullfor-oppsett` | Fullfører førstegangsoppsettet for den innloggede |
 
 Det midlertidige passordet vises én gang, til administratoren som ba om det.
 Det lagres ingen steder, logges ikke, og kan ikke hentes fram igjen. Mistes
 det, lages et nytt.
 
-`sett-rolle` gir den nye administratoren også lokal administratortildeling i
-sitt primære fagmiljø, og den som mister rollen, slutter som lokal
-administrator. Den gjør ikke en konto med midlertidig passord til
-administrator, og fjerner ikke den siste.
+`sett-rolle` endrer bare rollen. Lokal administrasjon av et fagmiljø følger
+ikke med; den gis og tas i «Brukere» med «Gjør til administrator» og «Fjern
+som administrator» (`20261115111500_adminrolle_uten_lokal_administrasjon.sql`).
+Rollen gir ingen myndighet over andre. Den viser verktøyene som er under
+utprøving, og den gjør kontoen til nivå 2 (`intern.myndighetsniva`), så bare
+en systemarkitekt kan gi den nytt passord eller endre medlemskapet. Den gis
+ikke til en konto med midlertidig passord, og den siste med rollen kan ikke
+miste den.
 
 Medlemskapene og de lokale administratorene administreres for seg i «Brukere»
 (P3): medlemmer legges til og avsluttes per fagmiljø, og en konto som mister

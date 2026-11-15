@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
 import { brukernavnFeil, normaliserBrukernavn } from '@delt/brukernavn'
 import { visningsnavn } from '@delt/profil'
 import {
@@ -24,6 +24,7 @@ import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
+import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Avatar } from './Avatar'
 import { Bekreftelseskort } from './Bekreftelseskort'
 import { Felt } from './Felt'
@@ -37,6 +38,15 @@ interface Bekreftelse {
   /** Fagmiljøet raden ble hentet fra; handlingen gjelder alltid det. */
   fagmiljo: Fagmiljoreferanse
   handling: 'avslutt' | 'fjern_admin'
+}
+
+/** En handling i menyen på en rad. */
+interface Radhandling {
+  ikon: Ikonnavn
+  tekst: string
+  /** Hva handlingen gjør, der teksten alene ikke sier det. */
+  forklaring?: string
+  gjor: () => void
 }
 
 /** Medlemmene slik de ble hentet, sammen med fagmiljøet de hører til. */
@@ -56,13 +66,15 @@ const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message :
  *
  * Den innloggede velger et av fagmiljøene hen administrerer
  * (`useRettigheter().administrerer`; en systemarkitekt har alle) og ser
- * medlemmene der, og de tidligere medlemmene for seg. På hver rad står bare
- * handlingene databasen tillater (`hentMedlemsoversikt`): avslutte
- * medlemskapet, gi et tidligere medlem tilgang igjen, nytt midlertidig
- * passord, og for systemarkitektene å utpeke eller fjerne lokale
- * administratorer og den gamle adminrollen. Det som fjerner tilgang, må
- * bekreftes, og bekreftelsen sier hva som skjer, også at kontoen sperres når
- * det er det siste medlemskapet.
+ * medlemmene der, og de tidligere medlemmene for seg. Hver rad viser hvem det
+ * er og ett merke for hva de er (systemarkitekt, administrator eller bruker),
+ * med statusene ved siden av. Handlingene står i en meny på raden, og bare de
+ * databasen tillater (`hentMedlemsoversikt`): nytt midlertidig passord, gjøre
+ * til eller fjerne som administrator i fagmiljøet, for systemarkitektene
+ * tilgangen til verktøyene (den gamle adminrollen, som er uavhengig av
+ * administrasjonen), avslutte medlemskapet og gi et tidligere medlem tilgang
+ * igjen. Det som fjerner tilgang, må bekreftes, og bekreftelsen sier hva som
+ * skjer, også at kontoen sperres når det er det siste medlemskapet.
  *
  * Eksisterende kontoer legges til med brukernavnet. Nye brukere opprettes
  * direkte i fagmiljøet som vises, der den innloggede har lov
@@ -228,66 +240,106 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const tidligere = medlemmer.filter((m) => m.status === 'avsluttet')
   const kanOpprette = valgt !== null && rettigheter.opprettBrukerI.includes(valgt.id)
 
-  /** Raden til et medlem av `f`, fagmiljøet lista ble hentet fra. Hver handling gjelder `f`. */
-  const rad = (f: Fagmiljoreferanse) => (medlem: Medlem) => {
+  /**
+   * Handlingene på et medlem av `f`, fagmiljøet lista ble hentet fra: bare de
+   * databasen tillater (`hentMedlemsoversikt`), og ingen på egen rad. Hver
+   * handling gjelder `f`. Det som fjerner tilgang, står for seg til slutt.
+   */
+  const handlinger = (f: Fagmiljoreferanse, medlem: Medlem): Radhandling[][] => {
     const navn = visningsnavn(medlem)
-    const egen = medlem.id === meg.id
-    const opptatt = arbeider !== null
-    const knapper: ReactNode[] = []
-    const knapp = (nokkel: string, ikon: Ikonnavn, etikett: string, synlig: string, gjor: () => void) =>
-      knapper.push(
-        <Button key={nokkel} variant="kant" icon={<Ikon navn={ikon} />} aria-label={etikett} disabled={opptatt} onClick={gjor}>
-          {synlig}
-        </Button>,
-      )
-    if (!egen && medlem.status !== 'avsluttet') {
-      if (medlem.nytt_passord) {
-        knapp('passord', 'key', `Nytt passord for ${navn}`, 'Nytt passord', () =>
+    if (medlem.id === meg.id) return []
+    if (medlem.status === 'avsluttet') {
+      return medlem.kan_gi_tilgang
+        ? [
+            [
+              {
+                ikon: 'reset',
+                tekst: 'Gi tilgang igjen',
+                forklaring: `Blir medlem av ${f.navn} igjen.`,
+                gjor: () =>
+                  void utfor(medlem.id, f.id, async () => {
+                    await giMedlemskap(medlem.id, f.id)
+                    return `${navn} er medlem av ${f.navn} igjen.`
+                  }),
+              },
+            ],
+          ]
+        : []
+    }
+    const vanlige: Radhandling[] = []
+    if (medlem.nytt_passord) {
+      vanlige.push({
+        ikon: 'key',
+        tekst: 'Lag nytt midlertidig passord',
+        gjor: () =>
           void utfor(medlem.id, f.id, async () => {
             setMidlertidig(await nyttMidlertidigPassord(medlem.id))
             return null
           }),
-        )
-      }
-      if (medlem.kan_gjore_til_administrator) {
-        knapp('admin', 'shield', `Gjør ${navn} til administrator i ${f.navn}`, 'Gjør til administrator', () =>
+      })
+    }
+    if (medlem.kan_gjore_til_administrator) {
+      vanlige.push({
+        ikon: 'shield',
+        tekst: 'Gjør til administrator',
+        forklaring: `Kan administrere medlemmene og det lokale innholdet i ${f.navn}.`,
+        gjor: () =>
           void utfor(medlem.id, f.id, async () => {
             await settFagmiljoadministrator(medlem.id, f.id, true)
             return `${navn} er administrator i ${f.navn}.`
           }),
-        )
-      }
-      if (medlem.kan_fjerne_som_administrator) {
-        knapp('fjern_admin', 'shield', `Fjern ${navn} som administrator i ${f.navn}`, 'Fjern som administrator', () =>
-          setBekreft({ medlem, fagmiljo: f, handling: 'fjern_admin' }),
-        )
-      }
-      if (medlem.endre_rolle) {
-        const har = medlem.rolle === 'admin'
-        knapp('rolle', 'shield', `${har ? 'Fjern adminrollen' : 'Gi adminrollen'}: ${navn}`, har ? 'Fjern adminrollen' : 'Gi adminrollen', () =>
+      })
+    }
+    if (medlem.kan_fjerne_som_administrator) {
+      vanlige.push({
+        ikon: 'shield',
+        tekst: 'Fjern som administrator',
+        forklaring: `Er fortsatt medlem av ${f.navn}.`,
+        gjor: () => setBekreft({ medlem, fagmiljo: f, handling: 'fjern_admin' }),
+      })
+    }
+    if (medlem.endre_rolle) {
+      // Den gamle adminrollen (`profiles.role`). Den gir ingen myndighet over
+      // andre; det brukerne merker, er at verktøyene under utprøving vises
+      // (`src/verktoy/synlighet.ts`). Derfor heter den det her. Kontoen
+      // regnes da som nivå 2 (`intern.myndighetsniva`), så lokale
+      // administratorer kan ikke lenger endre passordet eller medlemskapet;
+      // det sier forklaringen.
+      const har = medlem.rolle === 'admin'
+      vanlige.push({
+        ikon: 'verktoy',
+        tekst: har ? 'Fjern tilgangen til verktøyene' : 'Gi tilgang til verktøyene',
+        forklaring: har
+          ? 'Verktøyene under utprøving skjules. Administratorene i fagmiljøet kan igjen endre passord og medlemskap.'
+          : 'Ser verktøyene under utprøving. Passord og medlemskap kan da bare endres av systemarkitekter.',
+        gjor: () =>
           void utfor(medlem.id, f.id, async () => {
             await settRolle(medlem.id, har ? 'user' : 'admin')
-            return null
+            return har ? `${navn} ser ikke lenger verktøyene.` : `${navn} ser nå verktøyene.`
           }),
-        )
-      }
-      if (medlem.kan_avslutte) {
-        knapp('avslutt', 'close', `Avslutt medlemskapet til ${navn}`, 'Avslutt medlemskap', () =>
-          setBekreft({ medlem, fagmiljo: f, handling: 'avslutt' }),
-        )
-      }
+      })
     }
-    if (!egen && medlem.status === 'avsluttet' && medlem.kan_gi_tilgang) {
-      knapp('gi', 'reset', `Gi ${navn} tilgang igjen`, 'Gi tilgang igjen', () =>
-        void utfor(medlem.id, f.id, async () => {
-          await giMedlemskap(medlem.id, f.id)
-          return `${navn} er medlem av ${f.navn} igjen.`
-        }),
-      )
-    }
+    const avslutt: Radhandling[] = medlem.kan_avslutte
+      ? [
+          {
+            ikon: 'close',
+            tekst: 'Avslutt medlemskapet',
+            forklaring: `Mister tilgangen til ${f.navn}.`,
+            gjor: () => setBekreft({ medlem, fagmiljo: f, handling: 'avslutt' }),
+          },
+        ]
+      : []
+    return [vanlige, avslutt].filter((gruppe) => gruppe.length > 0)
+  }
+
+  /** Raden til et medlem av `f`: hvem, hva de er, og menyen med handlingene. */
+  const rad = (f: Fagmiljoreferanse) => (medlem: Medlem) => {
+    const navn = visningsnavn(medlem)
+    const egen = medlem.id === meg.id
+    const grupper = handlinger(f, medlem)
 
     return (
-      <li key={medlem.id} className="brukerrad">
+      <li key={medlem.id} className="brukerrad brukerrad--meny">
         <Avatar profil={medlem} lenke={medlem.avatar_path ? (lenker.get(medlem.avatar_path) ?? null) : null} />
         <span className="brukerrad__navn">
           <span className="brukerrad__fullt">
@@ -298,24 +350,64 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         </span>
 
         <span className="brukerrad__merker">
-          {medlem.systemarkitekt && (
+          {medlem.systemarkitekt ? (
             <Merke tone="aksent" ikon={<Ikon navn="shield" />}>
               Systemarkitekt
             </Merke>
-          )}
-          {medlem.administrator && (
+          ) : medlem.administrator ? (
             <Merke tone="aksent" ikon={<Ikon navn="shield" />}>
               Administrator
             </Merke>
+          ) : (
+            <Merke>Bruker</Merke>
           )}
-          {!medlem.systemarkitekt && !medlem.administrator && <Merke>Bruker</Merke>}
-          {medlem.rolle === 'admin' && <Merke>Adminrolle</Merke>}
+          {medlem.rolle === 'admin' && <Merke ikon={<Ikon navn="verktoy" />}>Verktøy</Merke>}
           {medlem.status === 'invitert' && <Merke>Invitert</Merke>}
           {medlem.sperret && <Merke tone="toksisk">Sperret</Merke>}
           {medlem.status !== 'avsluttet' && medlem.maa_bytte_passord && <Merke tone="toksisk">Må bytte passord</Merke>}
         </span>
 
-        {knapper.length > 0 && <span className="brukerrad__knapper">{knapper}</span>}
+        <span className="brukerrad__meny">
+          {grupper.length > 0 && (
+            <Nedtrekksmeny
+              className="brukermeny"
+              knapp={{
+                ikon: 'more',
+                etikett: `Handlinger for ${navn}`,
+                variant: 'stille',
+                storrelse: 'liten',
+                utenTips: true,
+                disabled: arbeider !== null,
+              }}
+              etikett={`Handlinger for ${navn}`}
+              lag="brukermeny"
+              lat
+            >
+              {(lukk) => (
+                <ul className="nedtrekk__valg">
+                  {grupper.flatMap((gruppe, i) => [
+                    ...(i > 0 ? [<li key={`skille-${i}`} className="brukermeny__skille" role="separator" />] : []),
+                    ...gruppe.map((h) => (
+                      <li key={h.tekst}>
+                        <Menyvalg
+                          ikon={h.ikon}
+                          tekst={h.tekst}
+                          forklaring={h.forklaring}
+                          onClick={() => {
+                            // Menyen lukkes først, så fokus er tilbake på knappen
+                            // når handlingen eller bekreftelsen tar over.
+                            lukk()
+                            h.gjor()
+                          }}
+                        />
+                      </li>
+                    )),
+                  ])}
+                </ul>
+              )}
+            </Nedtrekksmeny>
+          )}
+        </span>
       </li>
     )
   }
@@ -449,13 +541,13 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         laster && <p className="brukerliste__tomt">Henter medlemmene …</p>
       ) : (
         <>
-          <ul className="brukerliste" aria-label={`Medlemmer i ${listensFagmiljo.navn}`}>
+          <ul className="brukerliste brukerliste--menyer" aria-label={`Medlemmer i ${listensFagmiljo.navn}`}>
             {gjeldende.map(rad(listensFagmiljo))}
           </ul>
           {tidligere.length > 0 && (
             <>
               <h3 className="brukerliste__overskrift">Tidligere medlemmer</h3>
-              <ul className="brukerliste" aria-label={`Tidligere medlemmer i ${listensFagmiljo.navn}`}>
+              <ul className="brukerliste brukerliste--menyer" aria-label={`Tidligere medlemmer i ${listensFagmiljo.navn}`}>
                 {tidligere.map(rad(listensFagmiljo))}
               </ul>
             </>

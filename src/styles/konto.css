@@ -398,6 +398,72 @@
   }
 }
 
+/* Brukerlista i «Brukere» (Atlas: `UserRow`): avatar, navn, merker og en
+   meny med handlingene. Merkene står i en egen kolonne, så rollene står under
+   hverandre; der det er trangt, legger de seg under navnet. Plassen til
+   menyen står der også uten meny, så merkene står likt på alle radene.
+   Menyene henger utenfor kortet, så det klipper ikke. */
+.brukerliste--menyer {
+  overflow: visible;
+}
+
+.brukerrad--meny {
+  grid-template-columns: auto minmax(8rem, 1fr) auto var(--hoyde-liten);
+}
+
+.brukerrad--meny .brukerrad__fullt {
+  overflow-wrap: anywhere;
+}
+
+/* Rollen står først i koden, men lengst til høyre, så rollene står rett
+   under hverandre; statusene legger seg til venstre for den. */
+.brukerrad--meny .brukerrad__merker {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  max-width: 28rem;
+}
+
+.brukerrad__meny {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.brukermeny .nedtrekk__panel {
+  position: absolute;
+  top: calc(100% + var(--rom-1));
+  right: 0;
+  z-index: var(--lag-popover);
+  width: min(19rem, calc(100vw - 2 * var(--rom-side)));
+}
+
+.brukermeny .nedtrekk__valgknapp {
+  min-height: var(--hoyde-liten);
+  font-size: var(--tekst-liten);
+}
+
+.brukermeny__skille {
+  margin: var(--rom-2) var(--rom-4);
+  border-top: var(--kant) solid var(--linje);
+}
+
+@media (max-width: 47.5em) {
+  .brukerrad--meny {
+    grid-template-columns: auto minmax(0, 1fr) var(--hoyde-liten);
+  }
+
+  .brukerrad--meny .brukerrad__merker {
+    flex-direction: row;
+    grid-row: 2;
+    grid-column: 2 / -1;
+    max-width: none;
+  }
+
+  .brukerrad__meny {
+    grid-row: 1;
+    grid-column: 3;
+  }
+}
+
 /* Merknaden om et lukket fagmiljø, kvitteringen etter en handling og
    overskriften over de tidligere medlemmene. */
 .brukerliste__merknad,

@@ -25,6 +25,18 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
+    versjon: '1.133.3',
+    dato: '2026-11-15',
+    sammendrag: 'Ryddigere brukerliste, med handlingene i en meny per bruker',
+    typer: ['Design / layout', 'Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      '«Brukere» i administrasjonen viser hver bruker på én rolig rad: navnet, ett merke for rollen og eventuelle statuser. Handlingene ligger i en meny bak knappen med tre prikker, og hver av dem sier kort hva den gjør.',
+      'Den gamle adminrollen heter nå «Tilgang til verktøyene», siden det er det den gir. Den er skilt fra «Gjør til administrator»: å gi eller fjerne tilgangen til verktøyene endrer ikke hvem som administrerer et fagmiljø.',
+    ],
+  },
+  {
     versjon: '1.133.2',
     dato: '2026-11-15',
     sammendrag: 'Hvert fagmiljø har egne diskusjonskategorier i fortolkningen',
