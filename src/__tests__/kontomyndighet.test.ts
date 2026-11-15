@@ -307,7 +307,11 @@ describe('nytt passord', () => {
     it('og når den som gir passordet mister myndigheten', async () => {
       const feil = await isolert(async (tx) => {
         const merke = await klarer(tx, id.adminKF, id.brukerKF)
-        await settRolle(tx, id.peohol, id.adminKF, 'user')
+        // Den gamle rollen gir ingen myndighet; det er den lokale tildelingen som avsluttes.
+        await tx.query(`select set_config('role', 'postgres', true)`)
+        await tx.query('update public.fagmiljoadministratorer set til = now() where bruker_id = $1 and til is null', [
+          id.adminKF,
+        ])
         await fullfor(tx, id.adminKF, id.brukerKF, merke)
       })
       expect(feil?.code).toBe('42501')
@@ -382,53 +386,66 @@ describe('to tilbakestillinger av samme konto', () => {
 })
 
 describe('rolle', () => {
-  it('lar en systemarkitekt gjøre en vanlig bruker til administrator i sitt primære fagmiljø', async () => {
-    for (const [aktor, mal, nokkel] of [
-      ['peohol', 'brukerKF', KF],
-      ['maxhag', 'brukerRT', RT],
-      ['peohol', 'brukerBegge', KF],
+  /** Rollen og de aktive lokale tildelingene til `mal`, etter fagmiljø. */
+  async function rolleOgTildelinger(tx: Transaction, mal: string) {
+    await tx.query(`select set_config('role', 'postgres', true)`)
+    await tx.exec('set constraints all immediate')
+    const { rows } = await tx.query<{ role: string; fagmiljoer: string[] }>(
+      `select p.role, array(select f.nokkel from public.fagmiljoadministratorer a
+                            join public.fagmiljoer f on f.id = a.fagmiljo_id
+                            where a.bruker_id = p.id and a.til is null order by f.nokkel) as fagmiljoer
+       from public.profiles p where p.id = $1`,
+      [mal],
+    )
+    return rows[0]
+  }
+
+  // Rollen og den lokale administrasjonen er uavhengige
+  // (20261115111500_adminrolle_uten_lokal_administrasjon.sql): operasjonen
+  // setter bare rollen.
+  it('lar en systemarkitekt gi den gamle rollen uten å gjøre noen til lokal administrator', async () => {
+    for (const [aktor, mal] of [
+      ['peohol', 'brukerKF'],
+      ['maxhag', 'brukerRT'],
+      ['peohol', 'brukerBegge'],
     ] as const) {
       const feil = await isolert(async (tx) => {
         await settRolle(tx, id[aktor], id[mal], 'admin')
-        await tx.query(`select set_config('role', 'postgres', true)`)
-        await tx.exec('set constraints all immediate')
-        const { rows } = await tx.query<{ role: string; fagmiljoer: string[] }>(
-          `select p.role, array(select f.nokkel from public.fagmiljoadministratorer a
-                                join public.fagmiljoer f on f.id = a.fagmiljo_id
-                                where a.bruker_id = p.id and a.til is null and a.tildelt_av = $2) as fagmiljoer
-           from public.profiles p where p.id = $1`,
-          [id[mal], id[aktor]],
-        )
-        expect(rows[0]).toEqual({ role: 'admin', fagmiljoer: [nokkel] })
+        expect(await rolleOgTildelinger(tx, id[mal])).toEqual({ role: 'admin', fagmiljoer: [] })
         const { rows: logg } = await tx.query<{ handling: string; aktor: string; grunn: string }>(
           `select handling, aktor, grunn from public.tilgangslogg where bruker_id = $1 order by id`,
           [id[mal]],
         )
-        expect(logg.slice(-2)).toEqual([
-          { handling: 'profiles.update', aktor: id[aktor], grunn: 'sett-rolle: admin' },
-          { handling: 'fagmiljoadministratorer.insert', aktor: id[aktor], grunn: 'sett-rolle: admin' },
-        ])
+        expect(logg.at(-1)).toEqual({ handling: 'profiles.update', aktor: id[aktor], grunn: 'sett-rolle: admin' })
+        expect(logg.some((l) => l.handling.startsWith('fagmiljoadministratorer'))).toBe(false)
       })
       expect(feil, `${aktor} → ${mal}`).toBeNull()
     }
   })
 
-  it('lar en systemarkitekt fjerne adminstatus, også den lokale', async () => {
-    for (const mal of ['adminKF', 'lokalUtenRolle', 'gammelAdmin'] as const) {
+  it('lar en systemarkitekt ta den gamle rollen uten å røre den lokale administrasjonen', async () => {
+    for (const mal of ['adminKF', 'gammelAdmin'] as const) {
       const feil = await isolert(async (tx) => {
-        await settRolle(tx, id.peohol, id[mal], 'user')
-        await tx.query(`select set_config('role', 'postgres', true)`)
-        await tx.exec('set constraints all immediate')
-        const { rows } = await tx.query<{ role: string; aktive: number }>(
-          `select p.role, (select count(*)::int from public.fagmiljoadministratorer a
-                           where a.bruker_id = p.id and a.til is null) as aktive
-           from public.profiles p where p.id = $1`,
+        const foer = await tx.query<{ fagmiljoer: string[] }>(
+          `select array(select f.nokkel from public.fagmiljoadministratorer a
+                        join public.fagmiljoer f on f.id = a.fagmiljo_id
+                        where a.bruker_id = $1 and a.til is null order by f.nokkel) as fagmiljoer`,
           [id[mal]],
         )
-        expect(rows[0]).toEqual({ role: 'user', aktive: 0 })
+        await settRolle(tx, id.peohol, id[mal], 'user')
+        expect(await rolleOgTildelinger(tx, id[mal])).toEqual({ role: 'user', fagmiljoer: foer.rows[0]!.fagmiljoer })
       })
       expect(feil, mal).toBeNull()
     }
+  })
+
+  it('lar en lokal administrator uten den gamle rollen forbli det når rollen gis og tas', async () => {
+    const feil = await isolert(async (tx) => {
+      await settRolle(tx, id.peohol, id.lokalUtenRolle, 'admin')
+      await settRolle(tx, id.peohol, id.lokalUtenRolle, 'user')
+      expect(await rolleOgTildelinger(tx, id.lokalUtenRolle)).toEqual({ role: 'user', fagmiljoer: [KF] })
+    })
+    expect(feil).toBeNull()
   })
 
   const NEKTET: [Navn, Navn, Rolle, string][] = [
@@ -461,16 +478,16 @@ describe('rolle', () => {
     expect(feil?.message).toContain('valgt sitt eget passord')
   })
 
-  it('fjerner ikke den eneste administratoren i et aktivt fagmiljø', async () => {
+  it('tar rollen også fra den eneste administratoren i et aktivt fagmiljø, som forblir administrator', async () => {
     const feil = await isolert(async (tx) => {
       await tx.query(
         `update public.fagmiljoadministratorer set til = now() where bruker_id = $1 and fagmiljo_id = $2`,
         [id.maxhag, fagmiljo[RT]],
       )
       await settRolle(tx, id.peohol, id.adminRT, 'user')
+      expect(await rolleOgTildelinger(tx, id.adminRT)).toEqual({ role: 'user', fagmiljoer: [RT] })
     })
-    expect(feil?.code).toBe('23514')
-    expect(feil?.message).toContain('OUS Rettstoksikologi')
+    expect(feil).toBeNull()
   })
 
   it('fjerner ikke den siste med den gamle adminrollen', async () => {
@@ -479,7 +496,7 @@ describe('rolle', () => {
       await settRolle(tx, id.peohol, id.gammelAdmin, 'user')
     })
     expect(feil?.code).toBe('23514')
-    expect(feil?.message).toContain('siste administratoren')
+    expect(feil?.message).toContain('siste med adminrollen')
   })
 
   it('beskytter systemarkitekten uansett den gamle rollen', async () => {
