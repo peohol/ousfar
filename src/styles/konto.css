@@ -628,6 +628,13 @@
   word-break: break-all;
 }
 
+.passordkvittering__fagmiljo {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
 .passordkvittering__advarsel {
   margin: 0;
   font-size: var(--tekst-etikett);

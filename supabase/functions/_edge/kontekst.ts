@@ -124,11 +124,23 @@ export function tekstfelt(kropp: Record<string, unknown>, navn: string): string 
   return verdi
 }
 
+/** Formen en UUID har. */
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /** En bruker-ID fra kroppen, kontrollert mot formen en UUID har. */
 export function brukerIdFelt(kropp: Record<string, unknown>, navn = 'brukerId'): string {
   const verdi = tekstfelt(kropp, navn)
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(verdi)) {
-    throw new Avvist('Ukjent bruker.')
-  }
+  if (!UUID.test(verdi)) throw new Avvist('Ukjent bruker.')
+  return verdi
+}
+
+/**
+ * En valgfri ID fra kroppen: `null` når feltet mangler eller er tomt, ellers
+ * kontrollert mot formen en UUID har, med `melding` når den ikke stemmer.
+ */
+export function valgfriIdFelt(kropp: Record<string, unknown>, navn: string, melding: string): string | null {
+  const verdi = kropp[navn]
+  if (verdi === undefined || verdi === null) return null
+  if (typeof verdi !== 'string' || !UUID.test(verdi)) throw new Avvist(melding)
   return verdi
 }

@@ -2,8 +2,8 @@
  * Den innloggedes egne rettigheter, slik databasen svarer på dem
  * (`public.mine_rettigheter()`, docs/fagmiljoer.md, «Systemrettigheter»).
  *
- * Appen viser menyer og knapper etter dem: adminmenyen, «Opprett bruker» og
- * redigeringen av stoffregisteret. Det er et grensesnitt, ikke en kontroll;
+ * Appen viser menyer og knapper etter dem: adminmenyen, «Opprett bruker» per
+ * fagmiljø og redigeringen av stoffregisteret. Det er et grensesnitt, ikke en kontroll;
  * databasen og Edge-funksjonene kontrollerer hver handling på nytt. Den
  * gamle adminrollen (`profiles.role`) spiller ingen rolle her.
  *
@@ -19,7 +19,7 @@ export interface Fagmiljoreferanse {
   id: string
   nokkel: string
   navn: string
-  /** Nye brukere opprettes som medlemmer her. */
+  /** Standardfagmiljøet, som oppstartsskriptet gir nye kontoer. */
   standard: boolean
   /** Tar imot ordinære medlemmer (startporten S2 er passert for det). */
   apent: boolean
@@ -43,8 +43,8 @@ export interface Rettigheter {
   mineFagmiljoer: readonly Fagmiljoreferanse[]
   /** Kan endre stoffregisterets inndeling og arkiv. */
   stoffregister: boolean
-  /** Kan opprette nye brukere. */
-  opprettBruker: boolean
+  /** Fagmiljøene den innloggede kan opprette nye brukere i (id-ene); nye kontoer blir medlemmer der. */
+  opprettBrukerI: readonly string[]
 }
 
 export const INGEN_RETTIGHETER: Rettigheter = {
@@ -53,7 +53,7 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   arbeidsfagmiljo: null,
   mineFagmiljoer: [],
   stoffregister: false,
-  opprettBruker: false,
+  opprettBrukerI: [],
 }
 
 /** Et fagmiljø i svaret, eller `null` når formen er feil. Det som mangler av standard og åpent, regnes som nei. */
@@ -77,7 +77,7 @@ export function lesRettigheter(svar: unknown): Rettigheter {
     arbeidsfagmiljo: lesFagmiljo(r.arbeidsfagmiljo),
     mineFagmiljoer: lesFagmiljoer(r.mine_fagmiljoer),
     stoffregister: r.stoffregister === true,
-    opprettBruker: r.opprett_bruker === true,
+    opprettBrukerI: lesFagmiljoer(r.opprett_bruker_i).map((f) => f.id),
   }
 }
 
@@ -122,7 +122,7 @@ export const arbeidskontekst = (r: Rettigheter, kjent: boolean): string | null =
 
 /** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
-  r.systemarkitekt || r.opprettBruker || r.administrerer.length > 0
+  r.systemarkitekt || r.opprettBrukerI.length > 0 || r.administrerer.length > 0
 
 const Kontekst = createContext<Rettigheter>(INGEN_RETTIGHETER)
 /** Tar i bruk `nye` rettigheter en endring alt ga tilbake, eller henter dem på nytt uten. */

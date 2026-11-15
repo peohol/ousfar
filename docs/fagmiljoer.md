@@ -28,7 +28,9 @@ fagmiljø uten egne regler får en tydelig stopp
 ([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø)). P3 lar
 systemarkitektene og de lokale administratorene **administrere
 medlemskapene**, og sperrer en konto i Auth når det siste aktive medlemskapet
-avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). P4c
+avsluttes ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)); nye
+brukere **opprettes direkte i fagmiljøet** den som oppretter, administrerer
+([Opprettelse av brukere](#opprettelse-av-brukere)). P4c
 har flyttet **analyttkatalogen** — kodene, metodene, måleområdene,
 søkeordene, modulene og koblingene til stoffene — og EtG/EtS-tekstene fra
 klientpakken til databasen per fagmiljø
@@ -47,8 +49,11 @@ medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
 Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 (beslutning D1). OUS Rettstoksikologi har ingen fortolkningsregler.
 
-- **Standard** er fagmiljøet en ny konto får som primærmedlemskap. Nøyaktig
-  ett fagmiljø er standard, og det må være aktivt og åpent.
+- **Standard** er fagmiljøet en ny konto får som primærmedlemskap når den
+  opprettes uten et fagmiljø (oppstartsskriptet, en eldre versjon av appen);
+  ellers velger den som oppretter, et fagmiljø hen administrerer
+  ([Opprettelse av brukere](#opprettelse-av-brukere)). Nøyaktig ett fagmiljø er
+  standard, og det må være aktivt og åpent.
 - **Åpent for medlemmer** (`apent_for_medlemmer`) avgjør om andre enn
   systemarkitektene kan få et gjeldende medlemskap. Bare standarden var åpen
   inntil startporten S2 var passert (§6.3 i P0-rapporten); et fagmiljø åpnes
@@ -81,14 +86,15 @@ server-side.
 
 1. En konto med aktive medlemskap har nøyaktig ett av dem som primært, og
    en konto uten har ingen (P3: da er den sperret, under). En ny konto får
-   primærmedlemskapet i standardfagmiljøet med en gang (utløseren
-   `profiles_standardmedlemskap`).
+   primærmedlemskapet i fagmiljøet den ble opprettet i, eller i
+   standardfagmiljøet, med en gang (utløseren `profiles_standardmedlemskap`).
 2. En aktiv lokal administrator har aktivt medlemskap i samme fagmiljø.
 3. Et aktivt fagmiljø mister aldri sin siste aktive administrator, og et
    fagmiljø som opprettes eller gjenåpnes, må få en i samme transaksjon.
 4. Den siste systemarkitekten kan ikke tilbakekalles.
 5. Nøyaktig ett fagmiljø er standard. Standarden kan byttes i én
-   transaksjon, men aldri mangle, slik at nye kontoer alltid får medlemskap.
+   transaksjon, men aldri mangle, slik at nye kontoer uten oppgitt fagmiljø
+   alltid får medlemskap.
 6. Et gjeldende medlemskap krever et aktivt fagmiljø som er åpent for
    medlemmer, eller at brukeren er systemarkitekt (startporten S2).
 7. Rader avsluttes, de slettes ikke. De forsvinner bare i kaskaden når selve
@@ -203,8 +209,8 @@ databasen tillater. Den bygger på den samme avgjørelsen som operasjonene
 systemarkitekt eller lokal administrator uten den gamle rollen får
 adminmenyen med bare «Brukere», og en lokal administrator får aldri
 rolleknappen. Knappene er et grensesnitt: operasjonene kontrollerer på nytt.
-«Opprett bruker» og de andre adminpanelene krever fortsatt den gamle rollen
-til P2.
+«Opprett bruker» følger myndigheten i fagmiljøet
+([Opprettelse av brukere](#opprettelse-av-brukere)).
 
 **Den første administratoren.** `npm run bootstrap:admin` og det lokale
 testmiljøet bruker `kontooperasjon_forste_administrator`: adminrollen og lokal
@@ -595,7 +601,8 @@ statusene ved siden av, og handlingene i en meny på raden, hver med en
 setning om hva den gjør. Det som
 fjerner tilgang, må bekreftes, og bekreftelsen sier at kontoen sperres og
 logges ut når det er det siste medlemskapet. Nye brukere opprettes i
-standardfagmiljøet som før. I en fane som står åpen, ser
+fagmiljøet som vises ([Opprettelse av brukere](#opprettelse-av-brukere)). I en
+fane som står åpen, ser
 `src/auth/tilgangsstans.ts` etter avslaget om avsluttet medlemskap i hvert
 svar klienten får; da spør økten `min_medlemskapsstatus()`, og er svaret
 `avsluttet`, tømmes mellomlageret og det som er husket om kontoen, og porten
@@ -619,6 +626,108 @@ knappene i medlemslista stemmer med operasjonene.
 Postgres 17, i begge rekkefølger og isolasjonsnivåer.
 `avsluttetmedlemskap.test.tsx`: den åpne fanen; `konto.test.tsx`:
 medlemslista.
+
+## Opprettelse av brukere
+
+`supabase/migrations/20261115113000_opprett_bruker_i_fagmiljo.sql` (issue
+#395, punkt 2). En ny konto opprettes direkte i fagmiljøet den som oppretter,
+administrerer, uten å bli medlem av standardfagmiljøet først.
+
+**Hvem kan hva.** Den ene avgjørelsen er `intern.opprettelsesavslag(aktor,
+fagmiljo)`: den som oppretter, må ha aktivt medlemskap og administrere
+fagmiljøet nå (`intern.er_lokal_admin_i`: aktiv tildeling i
+`fagmiljoadministratorer`, aktivt medlemskap og aktivt fagmiljø, eller
+systemarkitekt). Fagmiljøet må være aktivt (`55000` ellers) og åpent for
+medlemmer, siden en ny konto aldri er systemarkitekt (startporten S2, regel 6).
+Et ukjent fagmiljø og et fagmiljø aktøren ikke administrerer gir det samme
+svaret (`42501`), så svaret ikke røper noe om andre fagmiljøer. Den gamle
+adminrollen teller ikke.
+
+| | Kan opprette brukere i |
+| --- | --- |
+| Systemarkitekt | Alle aktive og åpne fagmiljøer |
+| Lokal administrator | Fagmiljøene hen administrerer, når de er åpne |
+| Andre, og kontoer uten aktivt medlemskap | Ingen |
+
+Kontoen blir en vanlig bruker (`intern.myndighetsniva` 1) med ett
+primærmedlemskap i fagmiljøet, og bestilleren står som `tildelt_av` og som
+aktør i tilgangsloggen. Ingen roller, adminskap eller andre medlemskap følger
+med; en lokal administrator kan dermed verken opprette brukere utenfor sitt
+fagmiljø eller gi noen, seg selv inkludert, mer enn et vanlig medlemskap.
+Opprettelsen endrer heller ingen eksisterende konto: et brukernavn som er i
+bruk, stoppes før Auth og av den unike nøkkelen.
+
+**Stegene.** Edge-funksjonen `opprett-bruker` tar brukernavnet og fagmiljøet.
+
+1. `kontooperasjon_klarer_konto(aktor, brukernavn, fagmiljo)` tar den felles
+   låsen, kontrollerer myndigheten og legger inn reservasjonen med aktøren og
+   fagmiljøet (`kontoreservasjoner`), med en ny nøkkel for hver klarering. Den
+   gir fagmiljøet tilbake, som kvitteringen viser, og nøkkelen. Uten fagmiljø gjelder standarden, som for en eldre
+   versjon av appen.
+2. Auth oppretter brukeren. Utløseren på `auth.users`
+   (`handter_ny_auth_bruker`) tar låsen før den rører noen reservasjon, også
+   når reservasjonen er uten aktør (samme rekkefølge som klareringen: låsen,
+   så raden). Så rydder den bort utløpte reservasjoner, leser og låser
+   reservasjonen, kontrollerer
+   myndigheten igjen og legger inn profilen. Medlemskapet legges inn av
+   `profiles_standardmedlemskap` med fagmiljøet fra reservasjonen, og
+   reservasjonen brukes opp. Alt skjer i transaksjonen som oppretter
+   Auth-brukeren: stopper noe, blir det verken Auth-bruker, profil eller
+   medlemskap.
+3. Edge-funksjonen kontrollerer at kontoen har det aktive primærmedlemskapet i
+   fagmiljøet, og sletter kontoen igjen om ikke. Først da gis det midlertidige
+   passordet ut.
+
+Feiler noe før Auth-brukeren finnes (brukernavnet er i bruk, Auth svarer med
+feil), trekker Edge-funksjonen tilbake sin egen reservasjon; ellers går den ut
+etter 15 minutter. Brytes svaret fra Auth etter at kontoen er laget, finnes den
+med et passord ingen kjenner; administratoren gir den da nytt passord fra
+medlemslista, siden hen har myndighet over vanlige brukere i fagmiljøet.
+
+**Samtidige endringer.** Klareringen og utløseren tar den felles låsen, så en
+tilbakekalling av administratoren og en opprettelse skjer én etter én: kom
+opprettelsen først, finnes kontoen; kom tilbakekallingen først, blir det ingen.
+En fersk reservasjon av samme brukernavn for en annen aktør eller et annet
+fagmiljø står (`55P03`); ellers kunne den ene administratoren fått ut passordet
+til en konto den andre bestilte i sitt fagmiljø. Samme aktør og fagmiljø kan
+klarere på nytt, så et brutt kall kan gjentas. Edge-funksjonen trekker bare
+tilbake reservasjonen med nøkkelen fra sin egen klarering, så oppryddingen
+etter et gammelt forsøk ikke fjerner et nyere. Fordi utløseren tar låsen før
+den rydder bort utløpte reservasjoner, kan en opprettelse og en klarering som
+overtar en utløpt reservasjon, ikke vente på hverandre i kryss (vranglås).
+
+**Det appen viser.** `mine_rettigheter().opprett_bruker_i` er fagmiljøene den
+innloggede kan opprette brukere i, etter samme avgjørelse (`opprett_bruker`
+står for eldre versjoner av appen). «Brukere» viser «Opprett bruker» når
+fagmiljøet som vises, er blant dem, og velger fagmiljøet den innloggede
+arbeider i når hen administrerer det. Skjemaet har bare brukernavnet;
+fagmiljøet er det som vises, og hjelpeteksten og kvitteringen navngir det. En
+lokal administrator i ett fagmiljø får ingen fagmiljøvelger.
+
+**Uendret.** Det midlertidige passordet, førstegangsoppsettet, at bare
+adminveien kan opprette kontoer (reservasjonen kan bare skrives med den
+hemmelige nøkkelen), og kontosperringen etter P3. Oppstartsskriptet og
+testene, som reserverer uten aktør, får standardfagmiljøet som før.
+
+**Tilbakeføring.** En ny migrasjon som setter `opprettelsesavslag(aktor)`,
+klareringen med to argumenter, utløseren, `gi_standardmedlemskap` og
+`mine_rettigheter()` tilbake til definisjonene i
+`20261114131500_systemrettigheter.sql`, `20261113140000_fagmiljoer.sql` og
+`20261115020000_velg_arbeidsfagmiljo.sql`. Kolonnen `fagmiljo_id` kan stå.
+Kontoer som alt er opprettet, beholder medlemskapene sine.
+
+**Testene.** `src/__tests__/opprettelse.test.ts` går hele veien med
+persongalleriet: en administrator i B oppretter en vanlig bruker bare i B,
+myndigheten for hver person og hvert fagmiljø (også lukket, arkivert og
+ukjent) stemmer med `opprett_bruker_i`, myndigheten som forsvinner underveis,
+et brukernavn i bruk, en annens reservasjon, tilgangsloggen, og at
+administratoren i B, ikke den i A, kan gi kontoen nytt passord etterpå.
+`src/__tests__/opprettelse.samtidighet.test.ts`: tilbakekalling og opprettelse
+samtidig, i begge rekkefølger, to administratorer som klarerer samme
+brukernavn, og oppryddingen etter et gammelt forsøk mens den samme
+administratoren prøver igjen, og en opprettelse mens en klarering overtar en
+utløpt reservasjon (uten vranglås, også uten aktør), på ekte Postgres 17.
+`konto.test.tsx`: skjemaet og kvitteringen.
 
 ## Hjelperne for tilgang per fagmiljø
 
@@ -739,7 +848,7 @@ adminrollen (`profiles.role = 'admin'`) gir ingen av dem; `er_admin()` og
 | Endre stoffregisteret (kategorier, plasseringer, arkiv, papirkurv, utkast) | Systemarkitektene; P5 legger til tildelte redaktører | `intern.har_registerrett`, `intern.krev_registerbruker` |
 | Slette for godt og tømme papirkurven, se utkast i registeret | Systemarkitektene | `intern.krev_systemarkitekt`, `intern.er_systemarkitekt` |
 | Datakildestatus, kildeovervåking og kildesaker, verktøysperrene, styring av kurateringene, autoerstatt-reglene | Systemarkitektene | `intern.krev_systemarkitekt`, `public.er_systemarkitekt()` i reglene |
-| Opprette brukere | Systemarkitektene og de lokale administratorene i standardfagmiljøet, der nye kontoer blir medlemmer | `intern.opprettelsesavslag`, kontrollert av `public.kontooperasjon_klarer_konto` under låsen (`intern.las_tilgang`) før Edge-funksjonen gjør noe, og på nytt under låsen i utløseren på `auth.users` når kontoen opprettes (klareringen husker aktøren i `kontoreservasjoner.aktor`) |
+| Opprette brukere | Systemarkitektene og de lokale administratorene, i fagmiljøet den nye kontoen blir medlem av ([Opprettelse av brukere](#opprettelse-av-brukere)) | `intern.opprettelsesavslag(aktor, fagmiljo)`, kontrollert av `public.kontooperasjon_klarer_konto` under låsen (`intern.las_tilgang`) før Edge-funksjonen gjør noe, og på nytt under låsen i utløseren på `auth.users` når kontoen opprettes (klareringen husker aktøren og fagmiljøet i `kontoreservasjoner`) |
 | Serverendepunktene i Vercel for en innlogget (synker, kjemi, kurateringer) | Systemarkitektene | `erSystemarkitekt` i `src/server/tilgang.ts`; jobbene uten bruker (cron, GitHub OIDC, agentnøklene) er som før |
 
 `intern.krev_systemarkitekt(melding)` krever aktivt medlemskap og
@@ -749,8 +858,9 @@ noen rolle (`endepunkt` i `supabase/functions/_edge/kontekst.ts`):
 myndigheten avgjøres i databasen i samme kall som handlingen.
 
 Appen viser menyer og knapper etter `public.mine_rettigheter()`
-(`{systemarkitekt, administrerer, arbeidsfagmiljo, stoffregister,
-opprett_bruker}`; hvert fagmiljø i samme form, `intern.fagmiljoreferanse`:
+(`{systemarkitekt, administrerer, arbeidsfagmiljo, mine_fagmiljoer,
+stoffregister, opprett_bruker, opprett_bruker_i}`; hvert fagmiljø i samme form,
+`intern.fagmiljoreferanse`:
 `{id, nokkel, navn, standard, apent}`), som
 bygger på de samme avgjørelsene som funksjonene og hjelperne, og leses med
 `useRettigheter()` (`src/auth/rettigheter.tsx`). Det er et grensesnitt, ikke

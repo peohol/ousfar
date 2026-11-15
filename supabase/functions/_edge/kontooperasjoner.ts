@@ -8,23 +8,52 @@ import { Avvist } from './kontekst.ts'
 
 type Adminklient = SupabaseContext['supabaseAdmin']
 
-/**
- * Klarerer ett brukernavn for kontoopprettelse, når `aktor` har myndighet til
- * å opprette brukere (systemarkitekt, eller lokal administrator i fagmiljøet
- * nye kontoer blir medlemmer av). Myndigheten og klareringen avgjøres i
- * databasen i samme kall (`kontooperasjon_klarer_konto`).
- *
- * Databasetriggeren på `auth.users` krever en slik reservasjon og bruker den
- * opp. Den kan bare legges inn med hemmelig nøkkel, og er dermed beviset på
- * at kontoen kommer fra adminveien og ikke fra en selvregistrering.
- */
-export async function reserverBrukernavn(admin: Adminklient, aktor: string, brukernavn: string): Promise<void> {
-  await kontofunksjon<void>(admin, 'kontooperasjon_klarer_konto', { aktor, brukernavn })
+/** Fagmiljøet en ny konto blir medlem av, slik klareringen gir det tilbake. */
+export interface Opprettelsesfagmiljo {
+  id: string
+  navn: string
 }
 
-/** Tar reservasjonen tilbake når kontoen likevel ikke ble opprettet. */
-export async function frigiBrukernavn(admin: Adminklient, brukernavn: string): Promise<void> {
-  await admin.from('kontoreservasjoner').delete().eq('username', brukernavn)
+/** Klareringen: fagmiljøet og nøkkelen som kreves for å trekke den tilbake. */
+export interface Kontoklarering {
+  fagmiljo: Opprettelsesfagmiljo
+  reservasjon: string
+}
+
+/**
+ * Klarerer ett brukernavn for en ny konto i `fagmiljo`, når `aktor` har
+ * myndighet til å opprette brukere der (systemarkitekt, eller lokal
+ * administrator i fagmiljøet). Uten fagmiljø gjelder standardfagmiljøet.
+ * Myndigheten og klareringen avgjøres i databasen i samme kall
+ * (`kontooperasjon_klarer_konto`), som gir fagmiljøet og nøkkelen til
+ * klareringen tilbake.
+ *
+ * Databasetriggeren på `auth.users` krever en slik reservasjon, kontrollerer
+ * myndigheten på nytt, gir kontoen medlemskapet i fagmiljøet og bruker
+ * reservasjonen opp. Den kan bare legges inn med hemmelig nøkkel, og er dermed
+ * beviset på at kontoen kommer fra adminveien og ikke fra en selvregistrering.
+ */
+export async function reserverBrukernavn(
+  admin: Adminklient,
+  aktor: string,
+  brukernavn: string,
+  fagmiljo: string | null,
+): Promise<Kontoklarering> {
+  const svar = await kontofunksjon<Opprettelsesfagmiljo & { reservasjon: string }>(admin, 'kontooperasjon_klarer_konto', {
+    aktor,
+    brukernavn,
+    fagmiljo,
+  })
+  return { fagmiljo: { id: svar.id, navn: svar.navn }, reservasjon: svar.reservasjon }
+}
+
+/**
+ * Tar reservasjonen tilbake når kontoen likevel ikke ble opprettet. Bare den
+ * med nøkkelen fra denne klareringen, så verken en annens klarering av det
+ * samme navnet eller et nyere forsøk fra den samme aktøren fjernes.
+ */
+export async function frigiBrukernavn(admin: Adminklient, brukernavn: string, reservasjon: string): Promise<void> {
+  await admin.from('kontoreservasjoner').delete().eq('username', brukernavn).eq('nokkel', reservasjon)
 }
 
 /**

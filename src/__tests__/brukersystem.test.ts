@@ -202,12 +202,22 @@ describe('Auth-oppsettet', () => {
 
 describe('Edge-funksjonene', () => {
   it('lar databasen avgjøre myndigheten til å opprette brukere, før noe annet slås opp', () => {
-    // Systemarkitekt eller lokal administrator i standardfagmiljøet
-    // (systemrettigheter.test.ts); den gamle rollen gir ingenting (P2d).
+    // Systemarkitekt eller lokal administrator i fagmiljøet kontoen skal høre
+    // til (opprettelse.test.ts); den gamle rollen gir ingenting (P2d).
     const kode = utenKommentarer(endepunkter['opprett-bruker'])
-    expect(kode).toContain('reserverBrukernavn(admin, innlogget.id, brukernavn)')
+    expect(kode).toContain('reserverBrukernavn(admin, innlogget.id, brukernavn, onsket)')
     expect(kode.indexOf('reserverBrukernavn(')).toBeLessThan(kode.indexOf(".from('profiles')"))
-    expect(utenKommentarer(les('supabase/functions/_edge/kontooperasjoner.ts'))).toMatch(/kontofunksjon<void>\(admin, 'kontooperasjon_klarer_konto'/)
+    const operasjoner = utenKommentarer(les('supabase/functions/_edge/kontooperasjoner.ts'))
+    expect(operasjoner).toMatch(/kontofunksjon<[^>]+>\(admin, 'kontooperasjon_klarer_konto', \{\s*aktor,\s*brukernavn,\s*fagmiljo,?\s*\}\)/)
+    // Bare denne klareringen tas tilbake (nøkkelen), så en annens eller et nyere forsøk står.
+    expect(operasjoner).toContain(".delete().eq('username', brukernavn).eq('nokkel', reservasjon)")
+    expect(kode).toContain('frigiBrukernavn(admin, brukernavn, reservasjon)')
+  })
+
+  it('kontrollerer at kontoen fikk medlemskapet i fagmiljøet, og sletter den ellers', () => {
+    const kode = utenKommentarer(endepunkter['opprett-bruker'])
+    expect(kode).toMatch(/\.from\('medlemskap'\)[\s\S]*\.eq\('fagmiljo_id', fagmiljo\.id\)[\s\S]*\.eq\('status', 'aktiv'\)/)
+    expect(kode.indexOf(".from('medlemskap')")).toBeLessThan(kode.indexOf('deleteUser(nyId)'))
   })
 
   it('lar databasen avgjøre myndigheten for nytt passord og rolle', () => {
