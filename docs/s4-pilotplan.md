@@ -1,8 +1,9 @@
 # S4: sikker drift og ekstern pilot – gjennomføringsplan
 
 **Status:** plan, 15.11.2026. Ingen migrasjoner, ingen endring i appen og
-ingen endring i produksjonen; det eneste som er gjennomført, er tiltak 10 i
-testoppsettet. Ingen ekstern pilot er åpnet.
+ingen endring i produksjonen. Gjennomført: tiltak 10 i testoppsettet og
+tiltak 2, verktøyet for sikkerhetskopi og gjenoppretting, prøvd lokalt
+(`docs/drift-gjenoppretting.md`). Ingen ekstern pilot er åpnet.
 **Grunnlag:** plan [#364](https://github.com/peohol/ousfar/issues/364) (§6,
 §10 P9, §12, §15 B9), P0-rapporten
 ([ousfar-nasjonal-p0-kartlegging.md](ousfar-nasjonal-p0-kartlegging.md), §6.3
@@ -269,6 +270,10 @@ profilbildene å virke, selv om alle data er på plass. Metoden:
    versjonene ikke stemmer; det rettes for hånd, aldri ved å overskrive.
    Supabases egen motor for dette (`pg-delta`, se veiledningen) brukes når
    den gir samme resultat, og forskjellslisten er da kontrollen på den.
+   Rollene, medlemskapene i dem og innstillingene på dem tas med på samme
+   måte, fordi de gjelder hele serveren og ikke er i `db dump` (OUSFAR har
+   satt tidsgrensen for `service_role`); rollefila fra `--role-only` har
+   bare Supabases egne innstillinger og kjøres ikke.
 2. **Eksplisitt dekning av det vi vet at vi har.** En test i repoet leser
    migrasjonene og lager listen over objekter OUSFAR har laget på tabeller i
    `auth` og `storage` (i dag `paa_ny_auth_bruker` og de fire reglene for
@@ -445,7 +450,7 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | # | Tiltak | Type | Avhenger av | Akseptkriterium |
 | --- | --- | --- | --- | --- |
 | 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge). **Besluttet 15.11.2026: b, egne krypterte kopier på gratisplanen** | J (D7) | – | Valget skrevet i planen (gjort) |
-| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, OUSFARs tilpasninger i `auth` og `storage` skilt ut mot en ren, versjonslik Supabase-referanse, migrasjonshistorikk, profilbilder, Auth-innstillinger, navnene på hemmelighetene) og gjenoppretter den i et Supabase-miljø i riktig rekkefølge, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`, og tilpasningene; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, ingen duplikate plattformobjekter og fingeravtrykket lik referansen pluss tilpasningene, en eksisterende syntetisk bruker logger inn, en ny bruker opprettes gjennom adminflyten og får profil og medlemskap, og profilbildereglene holder (§3.2 prøven punkt 4–7). Ingen produksjonsdata eller hemmeligheter i repoet |
+| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, OUSFARs tilpasninger i `auth` og `storage` skilt ut mot en ren, versjonslik Supabase-referanse, migrasjonshistorikk, profilbilder, Auth-innstillinger, navnene på hemmelighetene) og gjenoppretter den i et Supabase-miljø i riktig rekkefølge, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`, og tilpasningene; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, ingen duplikate plattformobjekter og fingeravtrykket lik referansen pluss tilpasningene, en eksisterende syntetisk bruker logger inn, en ny bruker opprettes gjennom adminflyten og får profil og medlemskap, og profilbildereglene holder (§3.2 prøven punkt 4–7). Ingen produksjonsdata eller hemmeligheter i repoet. **Gjort 15.11.2026** (`docs/drift-gjenoppretting.md`, `npm run sikkerhetskopi:prove`) |
 | 3 | Sikkerhetskopien i drift etter valget i 1: en planlagt, kryptert kopi etter §3.2 b, lagret utenfor Supabase og utenfor det offentlige repoet, med nøkkelen hos en navngitt eier | J (gjennomføring: lagringssted og nøkkeleier) | 1, 2 | Første kopi finnes, kan dekrypteres av nøkkeleieren og er lesbar |
 | 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–8 med målt tid: innlogging med testbrukeren, ny bruker gjennom adminflyten og profilbilderettighetene |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
