@@ -387,7 +387,10 @@ export function strukturskript(): string {
     if (BARE_I_PRODUKSJON.test(fil)) continue
     const sql = readFileSync(`${MIGRASJONER}/${fil}`, 'utf8')
     if (erMonografkuratering(fil, sql) || BIVIRKNINGSIMPORT.test(sql)) continue
-    deler.push(`-- ${fil}\n${sql}`)
+    // Hver migrasjon i én transaksjon, som i utrullingen (`supabase db push`):
+    // det transaksjonslokale, som slippet gjennom startporten, gjelder da hele
+    // fila og ikke bare én setning.
+    deler.push(`-- ${fil}\nbegin;\n${sql}\n;\ncommit`)
   }
   return deler.join('\n;\n')
 }

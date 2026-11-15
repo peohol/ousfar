@@ -327,10 +327,11 @@ arbeidsfagmiljø over er løst.
 
 ## 10. Åpningen (egen PR)
 
-Åpningen av OUS Rettstoksikologi er en egen migrasjon i en egen PR, merket
-«venter på Peders godkjenning». Den setter `apent_for_medlemmer = true` for
+Åpningen av OUS Rettstoksikologi er en egen migrasjon i en egen PR. Peder
+godkjente den uttrykkelig 2026-11-15, og merket med godkjenningen står i
+migrasjonen. Den setter `apent_for_medlemmer = true` for
 det ene fagmiljøet gjennom slippet i §8.4, med begrunnelsen i tilgangsloggen, stopper hvis
 fagmiljøet ikke finnes eller er arkivert, og gjør ingenting om det alt er
-åpent. Den gir ingen medlemskap selv. Den stoppes av vernet i §8.4 til merket
-med Peders godkjenning er skrevet, så den kan verken slås sammen med grønn
-kontroll eller rulles ut uten det.
+åpent. Den gir ingen medlemskap selv. Uten merket ville vernet i §8.4 stoppet
+den, så den kunne verken slås sammen med grønn kontroll eller rulles ut uten
+godkjenningen.

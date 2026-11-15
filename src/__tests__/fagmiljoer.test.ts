@@ -170,6 +170,8 @@ describe.each<Rolle>(['admin', 'user'])('tilbakefyllingen med maxhag som %s fra 
     expect(rows).toEqual([
       { handling: 'fagmiljoadministratorer.insert', n: 3, uten_grunn: 0, med_aktor: 0 },
       { handling: 'fagmiljoer.insert', n: 2, uten_grunn: 0, med_aktor: 0 },
+      // Åpningen av OUS Rettstoksikologi (startporten S2).
+      { handling: 'fagmiljoer.update', n: 1, uten_grunn: 0, med_aktor: 0 },
       // Her kjøres tilbakefyllingen etter de senere migrasjonene, så kontoene
       // står uten medlemskap til den kommer: P3 sperrer dem, og
       // tilbakefyllingen opphever sperren (i produksjonen kom den først).
@@ -260,19 +262,16 @@ describe('reglene etter tilbakefyllingen', () => {
     expect(rows[0]!.n).toBe(1)
   })
 
-  it('lar ingen andre enn systemarkitektene bli medlem av OUS Rettstoksikologi før startporten S2', async () => {
-    const vanlig = await provIsolert(o.db, (tx) =>
-      tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id) values ($1, $2)`, [o.id.bruker1, o.fagmiljo[RT]]),
-    )
-    expect(vanlig?.message).toMatch(/tar ikke imot medlemmer ennå \(startport S2\)/)
-    const admin = await provIsolert(o.db, (tx) =>
-      tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id) values ($1, $2)`, [o.id.admin2, o.fagmiljo[RT]]),
-    )
-    expect(admin?.message).toMatch(/startport S2/)
-    const arkitekt = await provIsolert(o.db, (tx) =>
-      tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id) values ($1, $2)`, [o.id.peohol, o.fagmiljo[RT]]),
-    )
-    expect(arkitekt).toBeNull()
+  it('lar ingen andre enn systemarkitektene bli medlem av et lukket fagmiljø (startporten S2)', async () => {
+    // OUS Rettstoksikologi er åpnet med S2-migrasjonen; regelen prøves med fagmiljøet lukket igjen.
+    const medlem = (bruker: string) =>
+      provIsolert(o.db, async (tx) => {
+        await tx.query('update public.fagmiljoer set apent_for_medlemmer = false where id = $1', [o.fagmiljo[RT]])
+        await tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id) values ($1, $2)`, [bruker, o.fagmiljo[RT]])
+      })
+    expect((await medlem(o.id.bruker1))?.message).toMatch(/tar ikke imot medlemmer ennå \(startport S2\)/)
+    expect((await medlem(o.id.admin2))?.message).toMatch(/startport S2/)
+    expect(await medlem(o.id.peohol)).toBeNull()
   })
 
   it('lar ingen SQL-form åpne et fagmiljø for medlemmer uten at startporten navngir det', async () => {
