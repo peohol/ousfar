@@ -18,7 +18,7 @@ import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/r
 const loggUt = vi.fn(async () => {})
 const rolle = vi.hoisted(() => ({ verdi: 'admin' }))
 /** Det databasen svarer på `mine_rettigheter` for den innloggede; som standard en systemarkitekt. */
-const ARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true, stoffregister: true, opprettBruker: true }
+const ARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true, stoffregister: true, opprettBrukerI: ['a'] }
 const rett = vi.hoisted(() => ({ verdi: null as Rettigheter | null }))
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: rolle.verdi, first_name: 'Anne', last_name: 'Admin', username: 'aadmin', avatar_path: null }),
@@ -665,7 +665,7 @@ describe('adminmenyen', () => {
   it('viser bare «Brukere» for en lokal administrator, også med den gamle adminrollen', async () => {
     for (const r of ['user', 'admin']) {
       rolle.verdi = r
-      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }], opprettBruker: true }
+      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }], opprettBrukerI: ['a'] }
       render(
         <Ramme>
           <Adminmeny />

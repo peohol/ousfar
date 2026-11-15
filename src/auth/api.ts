@@ -178,11 +178,17 @@ export async function signerteAvatarer(stier: string[]): Promise<Map<string, str
 export interface Midlertidig {
   brukernavn: string
   midlertidigPassord: string
+  /** Fagmiljøet en ny bruker ble medlem av (bare når kontoen nettopp er opprettet). */
+  fagmiljo?: { id: string; navn: string }
 }
 
-/** Oppretter en ny bruker. Krever administrator — kontrolleres server-side. */
-export function opprettBruker(brukernavn: string): Promise<Midlertidig> {
-  return kall<Midlertidig>('opprett-bruker', { brukernavn })
+/**
+ * Oppretter en ny bruker som medlem av `fagmiljo`. Krever myndighet til å
+ * opprette brukere der (`useRettigheter().opprettBrukerI`) — kontrolleres
+ * server-side.
+ */
+export function opprettBruker(brukernavn: string, fagmiljo: string): Promise<Midlertidig> {
+  return kall<Midlertidig>('opprett-bruker', { brukernavn, fagmiljo })
 }
 
 /** Gir en bruker et nytt midlertidig passord. Krever myndighet over kontoen — kontrolleres server-side. */

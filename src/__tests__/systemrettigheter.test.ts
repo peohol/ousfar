@@ -9,8 +9,9 @@
  *   administratorer og den gamle adminrollen med 42501, og slipper
  *   systemarkitektene gjennom, også uten den gamle rollen (som maxhag).
  * - `mine_rettigheter()` svarer for hver person det funksjonene gjør.
- * - Bare en systemarkitekt, eller en lokal administrator i fagmiljøet nye
- *   kontoer blir medlemmer av, kan opprette brukere.
+ * - Bare en systemarkitekt, eller en lokal administrator i fagmiljøet den nye
+ *   kontoen blir medlem av, kan opprette brukere; uten oppgitt fagmiljø er det
+ *   standardfagmiljøet. Opprettelse i andre fagmiljøer: `opprettelse.test.ts`.
  * - Serverprosessene (synkene, kurateringsagentene) går ikke gjennom
  *   kontrollene og berøres ikke.
  */
@@ -204,14 +205,15 @@ describe('mine_rettigheter()', () => {
     // B er åpnet i testdatabasen (S2 simulert); i produksjonen er det lukket.
     const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
     const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
-    const ingen = { systemarkitekt: false, administrerer: [], stoffregister: false, opprett_bruker: false }
+    const ingen = { systemarkitekt: false, administrerer: [], stoffregister: false, opprett_bruker: false, opprett_bruker_i: [] }
     // En systemarkitekt administrerer alle fagmiljøene (`public.mine_administrerte_fagmiljoer`).
     const alle = (
       await db.query<{ id: string; nokkel: string; navn: string; standard: boolean; apent: boolean }>(
         'select id, nokkel, navn, standard, apent_for_medlemmer as apent from public.fagmiljoer order by navn',
       )
     ).rows
-    const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true }
+    // Nye brukere kan opprettes i de åpne fagmiljøene (startporten S2).
+    const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true, opprett_bruker_i: alle.filter((f) => f.apent) }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
     // Fagmiljøene personen har aktivt medlemskap i, som arbeidsfagmiljøet kan velges blant, etter navn.
     const ref = { A, B } as const satisfies Record<Fagmiljo, unknown>
@@ -223,15 +225,23 @@ describe('mine_rettigheter()', () => {
     // P4b: fagmiljøet fortolkningen gjelder (det aktive primærmedlemskapet).
     expect(await rettigheter('systemarkitekt')).toEqual({ ...arkitekt, arbeidsfagmiljo: A, mine_fagmiljoer: mine('systemarkitekt') })
     expect(await rettigheter('arkitektB')).toEqual({ ...arkitekt, arbeidsfagmiljo: B, mine_fagmiljoer: mine('arkitektB') })
-    // Nye kontoer blir medlemmer av A (standarden), så bare den lokale administratoren der kan opprette dem.
+    // En lokal administrator oppretter nye brukere i fagmiljøet hen administrerer, og bare der.
     expect(await rettigheter('adminA')).toEqual({
       ...ingen,
       administrerer: [A],
       opprett_bruker: true,
+      opprett_bruker_i: [A],
       arbeidsfagmiljo: A,
       mine_fagmiljoer: mine('adminA'),
     })
-    expect(await rettigheter('adminB')).toEqual({ ...ingen, administrerer: [B], arbeidsfagmiljo: B, mine_fagmiljoer: mine('adminB') })
+    expect(await rettigheter('adminB')).toEqual({
+      ...ingen,
+      administrerer: [B],
+      opprett_bruker: true,
+      opprett_bruker_i: [B],
+      arbeidsfagmiljo: B,
+      mine_fagmiljoer: mine('adminB'),
+    })
     for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
       expect(await rettigheter(person), person).toEqual({ ...ingen, arbeidsfagmiljo: f, mine_fagmiljoer: mine(person) })
     }
@@ -256,7 +266,11 @@ describe('mine_rettigheter()', () => {
 })
 
 describe('opprettelse av brukere', () => {
-  /** Klarerer et brukernavn slik Edge-funksjonen `opprett-bruker` gjør det: med den hemmelige nøkkelen og den innloggedes ID. */
+  /**
+   * Klarerer et brukernavn slik Edge-funksjonen `opprett-bruker` gjør det fra
+   * en eldre versjon av appen: med den hemmelige nøkkelen og den innloggedes
+   * ID, uten fagmiljø, så standardfagmiljøet gjelder.
+   */
   const klarer = (aktor: string, brukernavn: string) =>
     db.transaction(async (tx) => {
       await tx.exec(`set local role service_role`)
@@ -275,7 +289,7 @@ describe('opprettelse av brukere', () => {
     }
   })
 
-  it('stopper alle andre før noe er klarert, også den gamle adminrollen og lokale administratorer i andre fagmiljøer', async () => {
+  it('stopper alle andre før noe er klarert, også den gamle adminrollen og lokale administratorer i andre fagmiljøer enn standarden', async () => {
     for (const person of ['adminB', 'vanligA', 'dobbeltAB', 'utenMedlemskap', 'tidligereAdmin', 'bareRollen'] as const) {
       expect(await klarer(hvem(person), 'ny.bruker'), person).toEqual({ feil: '42501', reservert: false })
     }

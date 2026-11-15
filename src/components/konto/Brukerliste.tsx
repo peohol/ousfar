@@ -64,8 +64,10 @@ const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message :
  * bekreftes, og bekreftelsen sier hva som skjer, også at kontoen sperres når
  * det er det siste medlemskapet.
  *
- * Eksisterende kontoer legges til med brukernavnet. Nye brukere opprettes i
- * standardfagmiljøet, av den som har lov (`opprettBruker`). Systemarkitektene
+ * Eksisterende kontoer legges til med brukernavnet. Nye brukere opprettes
+ * direkte i fagmiljøet som vises, der den innloggede har lov
+ * (`useRettigheter().opprettBrukerI`); brukernavnet er det eneste som må
+ * oppgis. Systemarkitektene
  * kan opprette nye fagmiljøer, som er lukket for andre enn dem til
  * startporten er godkjent. Knappene er et grensesnitt, ikke en
  * tilgangskontroll: databasen og Edge-funksjonene kontrollerer hver handling
@@ -81,8 +83,13 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     [rettigheter.administrerer, nye],
   )
   const [valgtId, setValgtId] = useBevart<string | null>('brukerliste.fagmiljo', null)
+  // Uten et valg vises fagmiljøet den innloggede arbeider i, når hen administrerer det.
   const valgt =
-    fagmiljoer.find((f) => f.id === valgtId) ?? fagmiljoer.find((f) => f.standard) ?? fagmiljoer[0] ?? null
+    fagmiljoer.find((f) => f.id === valgtId) ??
+    fagmiljoer.find((f) => f.id === rettigheter.arbeidsfagmiljo?.id) ??
+    fagmiljoer.find((f) => f.standard) ??
+    fagmiljoer[0] ??
+    null
 
   const [liste, setListe] = useState<Medlemsliste>(TOM_LISTE)
   // Bare rader hentet fra fagmiljøet som er valgt nå, vises og kan handles på.
@@ -192,7 +199,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     if (!her) return
     void utfor('skjema', her.id, async () => {
       if (skjema === 'opprett') {
-        setMidlertidig(await opprettBruker(brukernavn))
+        setMidlertidig(await opprettBruker(brukernavn, her.id))
         apneSkjema(null)
         return null
       }
@@ -219,7 +226,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
 
   const gjeldende = medlemmer.filter((m) => m.status !== 'avsluttet')
   const tidligere = medlemmer.filter((m) => m.status === 'avsluttet')
-  const kanOpprette = rettigheter.opprettBruker && valgt?.standard === true
+  const kanOpprette = valgt !== null && rettigheter.opprettBrukerI.includes(valgt.id)
 
   /** Raden til et medlem av `f`, fagmiljøet lista ble hentet fra. Hver handling gjelder `f`. */
   const rad = (f: Fagmiljoreferanse) => (medlem: Medlem) => {
@@ -528,6 +535,9 @@ function Passordkvittering({ midlertidig, onLukk }: { midlertidig: Midlertidig; 
           Midlertidig passord for <strong>{midlertidig.brukernavn}</strong>
         </span>
       </p>
+      {midlertidig.fagmiljo && (
+        <p className="passordkvittering__fagmiljo">Kontoen er opprettet som medlem av {midlertidig.fagmiljo.navn}.</p>
+      )}
       <p className="passordkvittering__passord">
         <code>{midlertidig.midlertidigPassord}</code>
         <Button

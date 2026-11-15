@@ -7,7 +7,7 @@ gjøre skal endres. Den kliniske delen av appen berøres ikke av noe her.
 
 OUSFAR er lukket. Det finnes ingen registrering, ingen «glemt passord»-lenke
 og ingen e-post i det hele tatt. En systemarkitekt eller en lokal
-administrator i standardfagmiljøet oppretter kontoen og gir
+administrator oppretter kontoen direkte i fagmiljøet hen administrerer, og gir
 brukeren et midlertidig passord. Brukeren logger inn med **brukernavn og
 passord**, velger sitt eget passord med én gang, og er inne.
 
@@ -81,7 +81,7 @@ myndigheten, med den innloggedes ID, i samme transaksjon som endringen
 
 | Funksjon | Hva den gjør |
 | --- | --- |
-| `opprett-bruker` | Oppretter konto og returnerer et midlertidig passord |
+| `opprett-bruker` | Oppretter en konto i et fagmiljø den innloggede administrerer, og returnerer et midlertidig passord («Opprettelse av brukere» i `docs/fagmiljoer.md`) |
 | `nytt-passord` | Gir en bruker et nytt midlertidig passord: systemarkitekten til alle utenom systemarkitekter, en lokal administrator bare til vanlige brukere i egne fagmiljøer |
 | `sett-rolle` | Gir eller fjerner adminstatus hos en annen; bare systemarkitekter |
 | `fullfor-oppsett` | Fullfører førstegangsoppsettet for den innloggede |
@@ -108,9 +108,9 @@ fagmiljøer, medlemskap, systemroller, lokale administratorer og en
 uforanderlig tilgangslogg. Modellen, reglene og hvem som har hva står i
 `docs/fagmiljoer.md`. For brukersystemet betyr det:
 
-- En ny konto får automatisk aktivt primærmedlemskap i standardfagmiljøet,
-  OUS Klinisk farmakologi, i samme transaksjon som profilen. Ellers er
-  kontoopprettelsen uendret.
+- En ny konto får automatisk aktivt primærmedlemskap i fagmiljøet den ble
+  opprettet i, i samme transaksjon som profilen. Uten oppgitt fagmiljø
+  (oppstartsskriptet) er det standardfagmiljøet, OUS Klinisk farmakologi.
 - En konto kan slettes som før. Medlemskapene og rollene følger med i
   kaskaden, men loggen står. Unntaket er den siste lokale administratoren i
   et aktivt fagmiljø, og den siste systemarkitekten: den kontoen må først

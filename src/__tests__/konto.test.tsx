@@ -10,6 +10,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
+import type { Rettigheter } from '../auth/rettigheter'
 import type { Tilgang } from '../domain/tilgang'
 
 const okt = vi.hoisted(() => ({
@@ -237,8 +238,11 @@ describe('porten', () => {
 
 const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
 const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: false }
-const SYSTEMARKITEKT = { ...INGEN_RETTIGHETER, systemarkitekt: true, administrerer: [KF, RT], arbeidsfagmiljo: KF, stoffregister: true, opprettBruker: true }
-const LOKAL_I_KF = { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBruker: true }
+// RT er lukket her, så nye brukere kan bare opprettes i KF (`opprett_bruker_i`).
+const SYSTEMARKITEKT = { ...INGEN_RETTIGHETER, systemarkitekt: true, administrerer: [KF, RT], arbeidsfagmiljo: KF, stoffregister: true, opprettBrukerI: ['kf'] }
+const LOKAL_I_KF = { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBrukerI: ['kf'] }
+const RT_APENT = { ...RT, apent: true }
+const LOKAL_I_RT = { ...INGEN_RETTIGHETER, administrerer: [RT_APENT], arbeidsfagmiljo: RT_APENT, opprettBrukerI: ['rt'] }
 
 /** Ingen handlinger; testene slår på det databasen ville tillatt. */
 const INGEN = {
@@ -273,7 +277,7 @@ const OLA = profil('3', 'Ola', 'Svendsen', { must_change_password: true })
 const ALT = { kan_avslutte: true, nytt_passord: true, endre_rolle: true, kan_gjore_til_administrator: true }
 
 /** Rendrer lista for `meg` med svarene databasen gir om medlemmene og rettighetene. */
-async function brukerlista(meg: Profil, medlemmer: Record<string, unknown[]>, rettigheter: typeof SYSTEMARKITEKT | typeof LOKAL_I_KF = LOKAL_I_KF) {
+async function brukerlista(meg: Profil, medlemmer: Record<string, unknown[]>, rettigheter: Rettigheter = LOKAL_I_KF) {
   okt.profil = meg
   okt.medlemmer = medlemmer
   render(
@@ -377,7 +381,7 @@ describe('brukerlista', () => {
     await userEvent.selectOptions(within(lag).getByLabelText('Fagmiljø'), 'rt')
     expect(await within(lag).findByText('Ola Svendsen')).toBeTruthy()
     expect(within(lag).getByText(/OUS Rettstoksikologi er ikke åpnet for medlemmer ennå/)).toBeTruthy()
-    // Nye brukere opprettes bare i standardfagmiljøet.
+    // Et lukket fagmiljø tar ikke imot nye brukere (startporten S2).
     expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()
   })
 
@@ -435,17 +439,41 @@ describe('brukerlista', () => {
     }
   })
 
-  it('gir en lokal administrator ingen fagmiljøvelger, men «Opprett bruker» i standardfagmiljøet', async () => {
+  it('gir en lokal administrator ingen fagmiljøvelger, men «Opprett bruker» i sitt fagmiljø', async () => {
     const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)] })
     expect(within(lag).queryByLabelText('Fagmiljø')).toBeNull()
     expect(within(lag).queryByRole('button', { name: 'Nytt fagmiljø' })).toBeNull()
     expect(within(lag).getByRole('button', { name: 'Opprett bruker' })).toBeTruthy()
   })
 
-  it('gir ikke «Opprett bruker» uten retten til det, eller utenfor standardfagmiljøet', async () => {
+  it('oppretter en bruker direkte i fagmiljøet en lokal administrator utenfor standarden administrerer', async () => {
+    const api = await import('../auth/api')
+    vi.mocked(api.opprettBruker).mockClear()
+    vi.mocked(api.opprettBruker).mockResolvedValueOnce({
+      brukernavn: 'ny.bruker',
+      midlertidigPassord: 'eik-sten-12-fjell',
+      fagmiljo: { id: 'rt', navn: 'OUS Rettstoksikologi' },
+    })
+    const { lag } = await brukerlista(MEG, { rt: [medlem(KARI)] }, LOKAL_I_RT)
+    // Ingen valg å ta stilling til: bare fagmiljøet hen administrerer, og bare brukernavnet.
+    expect(within(lag).queryByLabelText('Fagmiljø')).toBeNull()
+    await userEvent.click(within(lag).getByRole('button', { name: 'Opprett bruker' }))
+    const skjema = lag.querySelector<HTMLElement>('form.skjema')!
+    expect(within(skjema).getAllByRole('textbox')).toEqual([within(skjema).getByLabelText('Brukernavn')])
+    expect(within(skjema).queryByRole('combobox')).toBeNull()
+    expect(skjema.textContent).toMatch(/Brukeren blir medlem av OUS Rettstoksikologi/)
+    await userEvent.type(within(lag).getByLabelText('Brukernavn'), 'Ny.Bruker')
+    await userEvent.click(within(lag).getByRole('button', { name: 'Opprett' }))
+    expect(api.opprettBruker).toHaveBeenCalledWith('ny.bruker', 'rt')
+    const kvittering = await within(lag).findByRole('alert')
+    expect(within(kvittering).getByText('eik-sten-12-fjell')).toBeTruthy()
+    expect(kvittering.textContent).toMatch(/Kontoen er opprettet som medlem av OUS Rettstoksikologi\./)
+  })
+
+  it('gir ikke «Opprett bruker» uten retten til det i fagmiljøet som vises', async () => {
     for (const rettigheter of [
-      { ...LOKAL_I_KF, opprettBruker: false },
-      { ...INGEN_RETTIGHETER, administrerer: [RT], opprettBruker: true },
+      { ...LOKAL_I_KF, opprettBrukerI: [] },
+      { ...INGEN_RETTIGHETER, administrerer: [RT], opprettBrukerI: ['kf'] },
     ]) {
       const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)], rt: [medlem(KARI)] }, rettigheter)
       expect(within(lag).queryByRole('button', { name: 'Opprett bruker' })).toBeNull()

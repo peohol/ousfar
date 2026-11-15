@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.0',
+    dato: '2026-11-15',
+    sammendrag: 'Administratorer oppretter nye brukere direkte i sitt eget fagmiljø',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    punkter: [
+      'En administrator i et fagmiljø, også utenfor OUS Klinisk farmakologi, kan nå opprette nye brukere under «Brukere». Den nye brukeren blir medlem av fagmiljøet som vises der, og ikke noe annet sted.',
+      'Brukernavnet er fortsatt det eneste som må fylles inn. Kvitteringen med det midlertidige passordet sier hvilket fagmiljø kontoen ble opprettet i.',
+      'Ingen kan opprette brukere i et fagmiljø de ikke administrerer, eller i et fagmiljø som ikke er åpnet for medlemmer.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.133.1',
     dato: '2026-11-15',
     sammendrag: 'To fagmiljøer kan ha egne fortolkningsregler for samme analytt',
