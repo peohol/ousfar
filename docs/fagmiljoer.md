@@ -926,8 +926,15 @@ lesing og deltakelse følger alle aktive medlemskap som før. Uten dette ble
 alle stående i det første fagmiljøet, fordi et nytt medlemskap ikke blir
 primært når kontoen alt har et (`intern.gi_medlemskap`).
 `mine_rettigheter().mine_fagmiljoer` er fagmiljøene det kan velges blant;
-med ett vises ikke valget. Prøvd i `src/__tests__/arbeidsfagmiljo.test.ts` og
-`arbeidsfagmiljovalg.test.tsx`.
+med ett vises ikke valget, med mindre det ikke er det hen arbeider i (som når
+det hen arbeidet i, er arkivert; da arbeider hen ikke i noe til hen velger).
+Appen tar i bruk rettighetene byttet gir, og et eldre svar fra
+`mine_rettigheter()` overskriver aldri et nyere (`useKontoensSvarMedSjekk`).
+Det som hentes for arbeidskonteksten, følger `arbeidskontekst` i
+`src/auth/rettigheter.tsx`: å miste arbeidsfagmiljøet er et bytte som det
+andre, så katalogen og reglene fra det forrige tømmes og fortolkningen
+stopper til et nytt er valgt. Prøvd i `src/__tests__/arbeidsfagmiljo.test.ts`,
+`arbeidsfagmiljovalg.test.tsx` og `arbeidskontekst.test.tsx`.
 
 **Fagmiljøet på reglene.** `laboratorieanalytter`, `intervallregelsett`,
 `scenarioregelsett`, `scenarioanalytter` og `thc_regelsett` har kolonnen

@@ -156,12 +156,12 @@ export default function App() {
   const profil = useProfil()
   // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
   // rettighetene i databasen, ikke den gamle adminrollen (P2d).
-  const { rettigheter, oppdater: oppdaterRettigheter } = useMineRettigheter(profil.id)
+  const { rettigheter, oppdater: oppdaterRettigheter, arbeidskontekst } = useMineRettigheter(profil.id)
   // Gruppene følger kontoen, ikke fagmiljøet fortolkningen gjelder (P6).
   const grupper = useMineGrupper(profil.id)
   const katalogtilstand = useHentAnalyttkatalog(
     useCallback(() => lesAnalyttkatalog(klient()), []),
-    rettigheter.arbeidsfagmiljo?.id ?? null,
+    arbeidskontekst,
   )
   const kilde = useMemo(
     () => (katalogtilstand.status === 'laster' ? null : katalogkildeFor(katalogtilstand)),
@@ -174,6 +174,7 @@ export default function App() {
         key={kilde.katalog.fagmiljo?.id ?? ''}
         rettigheter={rettigheter}
         oppdaterRettigheter={oppdaterRettigheter}
+        arbeidskontekst={arbeidskontekst}
         grupper={grupper}
       />
     </AnalyttkatalogKilde>
@@ -183,10 +184,13 @@ export default function App() {
 function Arbeidsflate({
   rettigheter,
   oppdaterRettigheter,
+  arbeidskontekst,
   grupper,
 }: {
   rettigheter: Rettigheter
   oppdaterRettigheter: OppdaterRettigheter
+  /** Fagmiljøet fortolkningen gjelder, som det hentede følger (`arbeidskontekst`). */
+  arbeidskontekst: string | null
   grupper: Gruppekilde
 }) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
@@ -262,8 +266,8 @@ function Arbeidsflate({
     [faginnholdsklienter, redigering.felles],
   )
   // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
-  // (arbeidskonteksten, P4b). Byttes det, tømmes reglene før de nye hentes.
-  const regelkontekst = rettigheter.arbeidsfagmiljo?.id ?? null
+  // (arbeidskonteksten, P4b). Byttes det, også til ingen, tømmes reglene før de nye hentes.
+  const regelkontekst = arbeidskontekst
   const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
   const scenarioregler = useHentScenarioregler(

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useJevnligSjekk } from './useJevnligSjekk'
 
 /**
@@ -15,15 +15,20 @@ export function useKontoensSvar<T>(bruker: string, hent: () => Promise<T>, ingen
 /**
  * Som {@link useKontoensSvar}, med `sjekk` for å hente på nytt med en gang,
  * etter en endring den innloggede selv gjorde, og `sett` for å ta i bruk et
- * svar endringen alt ga tilbake. Begge har fast identitet.
+ * svar endringen alt ga tilbake. Begge har fast identitet. Bare det nyeste
+ * tas i bruk: en henting som startet før en nyere henting eller før `sett`,
+ * forkastes når den kommer, så et eldre svar aldri overskriver et nyere.
+ * `kjent` sier om kontoen har fått et svar ennå.
  */
 export function useKontoensSvarMedSjekk<T>(
   bruker: string,
   hent: () => Promise<T>,
   ingen: T,
-): { verdi: T; sjekk: () => void; sett: (verdi: T) => void } {
+): { verdi: T; kjent: boolean; sjekk: () => void; sett: (verdi: T) => void } {
   const [svar, setSvar] = useState<{ bruker: string; verdi: T } | null>(null)
-  const sett = useCallback(
+  // Nummeret på det siste som ble bedt om; eldre svar forkastes.
+  const siste = useRef(0)
+  const ta = useCallback(
     (verdi: T) =>
       setSvar((forrige) =>
         forrige !== null && forrige.bruker === bruker && JSON.stringify(forrige.verdi) === JSON.stringify(verdi)
@@ -32,9 +37,23 @@ export function useKontoensSvarMedSjekk<T>(
       ),
     [bruker],
   )
+  const sett = useCallback(
+    (verdi: T) => {
+      siste.current += 1
+      ta(verdi)
+    },
+    [ta],
+  )
   const sjekk = useCallback(() => {
-    hent().then(sett, () => undefined)
-  }, [hent, sett])
+    const denne = (siste.current += 1)
+    hent().then(
+      (verdi) => {
+        if (denne === siste.current) ta(verdi)
+      },
+      () => undefined,
+    )
+  }, [hent, ta])
   useJevnligSjekk(sjekk)
-  return { verdi: svar !== null && svar.bruker === bruker ? svar.verdi : ingen, sjekk, sett }
+  const kjent = svar !== null && svar.bruker === bruker
+  return { verdi: kjent ? svar.verdi : ingen, kjent, sjekk, sett }
 }

@@ -107,6 +107,19 @@ export const kanVelgeArbeidsfagmiljo = (r: Rettigheter): boolean =>
   r.mineFagmiljoer.length > 1 ||
   (r.mineFagmiljoer.length === 1 && r.mineFagmiljoer[0]!.id !== r.arbeidsfagmiljo?.id)
 
+/** Arbeidskonteksten når rettighetene er kjent og den innloggede ikke arbeider i noe fagmiljø. */
+export const UTEN_ARBEIDSFAGMILJO = 'uten-arbeidsfagmiljo'
+
+/**
+ * Fagmiljøet fortolkningen gjelder, slik det hentede følger det
+ * (`useKontekstbytte`): id-en, {@link UTEN_ARBEIDSFAGMILJO} når rettighetene er
+ * kjent og hen ikke arbeider i noe (som når det er arkivert), og `null` før
+ * de er kjent. Et skifte til eller fra «uten» er et bytte som det andre, så
+ * ingenting hentet i det forrige fagmiljøet blir stående.
+ */
+export const arbeidskontekst = (r: Rettigheter, kjent: boolean): string | null =>
+  kjent ? (r.arbeidsfagmiljo?.id ?? UTEN_ARBEIDSFAGMILJO) : null
+
 /** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
   r.systemarkitekt || r.opprettBruker || r.administrerer.length > 0
@@ -151,8 +164,8 @@ export function useRettigheter(): Rettigheter {
 export function useMineRettigheter(
   bruker: string,
   hent: () => Promise<Rettigheter> = hentMineRettigheter,
-): { rettigheter: Rettigheter; oppdater: OppdaterRettigheter } {
-  const { verdi, sjekk, sett } = useKontoensSvarMedSjekk(bruker, hent, INGEN_RETTIGHETER)
+): { rettigheter: Rettigheter; oppdater: OppdaterRettigheter; arbeidskontekst: string | null } {
+  const { verdi, kjent, sjekk, sett } = useKontoensSvarMedSjekk(bruker, hent, INGEN_RETTIGHETER)
   const oppdater = useCallback<OppdaterRettigheter>((nye) => (nye ? sett(nye) : sjekk()), [sett, sjekk])
-  return { rettigheter: verdi, oppdater }
+  return { rettigheter: verdi, oppdater, arbeidskontekst: arbeidskontekst(verdi, kjent) }
 }
