@@ -167,11 +167,21 @@ export function datakortnokkel(analytt: Datakortanalytt | undefined): string | n
 }
 
 /**
+ * Analyttkodene som står i `gjelder` på datakort fra før kortene ble koblet til
+ * forbindelsen, med forbindelsen koden måler. Kortene er felles, så hvert
+ * fagmiljø leser dem slik, også uten koden i sin katalog. I produksjonen er det
+ * bare `OTRAM` (lest 15.11.2026); testen holder lista lik katalogen til OUS
+ * Klinisk farmakologi. Fjernes når kortene er skrevet om (#405).
+ */
+export const ELDRE_DATAKORTKODER: ReadonlyMap<string, string> = new Map([['OTRAM', 'o-desmetyltramadol']])
+
+/**
  * Forbindelsen et datakort gjelder (`gjelder` på kortet), også for et kort som
  * fra før har en analyttkode der: det regnes som kortet for forbindelsen koden
- * måler, etter katalogen. Overgangen varer til kortene er skrevet om, når appen
- * før 1.133.3 ikke er i bruk lenger (#405, `docs/fagmiljoer.md`,
- * «Overgangen»); fram til da finner den gamle appen kortet med koden.
+ * måler, etter katalogen eller ellers `ELDRE_DATAKORTKODER`. Overgangen varer
+ * til kortene er skrevet om, når appen før 1.133.4 ikke er i bruk lenger
+ * (#405, `docs/fagmiljoer.md`, «Overgangen»); fram til da finner den gamle
+ * appen kortet med koden.
  */
 export function kortetsForbindelse(
   gjelder: string | null,
@@ -179,7 +189,8 @@ export function kortetsForbindelse(
 ): string | null {
   if (gjelder === null) return null
   const analytt = finn(gjelder)
-  return analytt?.datakort === 'forbindelse' && analytt.forbindelse ? analytt.forbindelse : gjelder
+  if (analytt?.datakort === 'forbindelse' && analytt.forbindelse) return analytt.forbindelse
+  return ELDRE_DATAKORTKODER.get(gjelder) ?? gjelder
 }
 
 /** Det koblingen til datakortene trenger av en analyttkatalog: koblingene, og analyttene etter koden. */

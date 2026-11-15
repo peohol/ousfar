@@ -926,6 +926,15 @@ describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer'
     expect(vi.mocked(lager.opprettUtkast).mock.calls[0]![1]).toMatchObject({ data: { ovre: 45, gjelder: 'o-desmetyltramadol' } })
   })
 
+  it('merker et kort som fortsatt har koden i gjelder, med metabolitten også uten OUS sine analyttkoder', async () => {
+    // Slik produksjonen står til kortet er skrevet om (#405).
+    const register = byggStoffregister([], { ...OUS_REGISTERDATA, analyttkoblinger: [] }, GRUNNSTRUKTUR)
+    vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }), { register, analyttkatalog: TOM_KATALOG })
+    await finnVerdi('20–40 nmol/L')
+    expect(overskrifter()).toEqual(FORVENTET)
+    expect(document.body.textContent).not.toContain('OTRAM')
+  })
+
   it('viser et kort som fortsatt har koden i gjelder, på plassen til forbindelsen koden måler', async () => {
     // Overgangen til kortene er skrevet om: ett kort for metabolitten, ikke to.
     vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }))

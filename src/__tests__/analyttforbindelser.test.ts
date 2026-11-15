@@ -24,7 +24,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { analyttforbindelserSql } from '../../scripts/analyttforbindelser'
-import { datakorteiere, referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
+import { datakorteiere, ELDRE_DATAKORTKODER, referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
 import { byggKatalog, lesKatalogdata } from '../domain/analyttkatalog'
 import { OUS_ANALYTTFORBINDELSER, OUS_KATALOG, OUS_KATALOGDATA } from '../domain/ouskatalog'
 import { FORBINDELSER } from '../kjemi/forbindelser'
@@ -63,6 +63,15 @@ describe('grunnlaget', () => {
     expect(OUS_KATALOG.finn('OTRAM')).toMatchObject({ forbindelse: 'o-desmetyltramadol', datakort: 'forbindelse' })
     expect(OUS_KATALOG.finn('HBUP')).toMatchObject({ forbindelse: 'hydroksybupropion', datakort: 'egne' })
     for (const kode of URINANALYSER) expect(OUS_KATALOG.finn(kode)?.datakort, kode).toBeNull()
+  })
+})
+
+describe('kodene fra før i gjelder', () => {
+  it('leser hver kode slik katalogen til OUS Klinisk farmakologi gjør, og bare koder for en metabolitt med egne kort', () => {
+    for (const [kode, forbindelse] of ELDRE_DATAKORTKODER) {
+      expect(OUS_KATALOG.finn(kode), kode).toMatchObject({ forbindelse, datakort: 'forbindelse' })
+    }
+    expect([...ELDRE_DATAKORTKODER.keys()]).toContain('OTRAM')
   })
 })
 

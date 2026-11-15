@@ -164,8 +164,8 @@ describe('lesReferanseomrader', () => {
 
   it('leser et kort som fra før har analyttkoden i gjelder, som kortet for forbindelsen koden måler', () => {
     // Overgangen til kortene er skrevet om: appen fra før finner kortet med
-    // koden, den nye gjennom katalogen. En katalog som ikke kjenner koden,
-    // kobler ingenting til det.
+    // koden, den nye gjennom katalogen eller `ELDRE_DATAKORTKODER`, så også et
+    // annet fagmiljø med en egen kode for metabolitten får kortet.
     const kortene = [
       { stoff: 'tramadol', gjelder: null, verdi: 'tramadol' },
       { stoff: 'tramadol', gjelder: 'OTRAM', verdi: 'o-desmetyltramadol' },
@@ -174,7 +174,10 @@ describe('lesReferanseomrader', () => {
       ['OTRAM', 'o-desmetyltramadol'],
       ['TRAM', 'tramadol'],
     ])
-    expect([...referanseomraderPerAnalytt(kortene, annenKatalog())]).toEqual([['TRML', 'tramadol']])
+    expect([...referanseomraderPerAnalytt(kortene, annenKatalog())].sort()).toEqual([
+      ['ODMT', 'o-desmetyltramadol'],
+      ['TRML', 'tramadol'],
+    ])
   })
 
   it('gir en sumanalyse ikke kortet på siden til et stoff den bare er sekundært koblet til', async () => {

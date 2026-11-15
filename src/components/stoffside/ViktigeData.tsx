@@ -225,7 +225,7 @@ function Datakort({
 }: Kortplass & { definisjon: Paneldefinisjon; kontekst: Panelkontekst }) {
   const { ikon, tone } = UTSEENDE[type]
   // Et kort som står fra før, beholder nøkkelen det er lagret med, også en
-  // analyttkode fra før kortene ble koblet til forbindelsen: appen før 1.133.3
+  // analyttkode fra før kortene ble koblet til forbindelsen: appen før 1.133.4
   // finner det bare med den, til kortene skrives om (#405).
   const lagret = element ? datakortGjelder(element.data) : gjelder
   const lagre =

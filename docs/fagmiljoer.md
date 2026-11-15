@@ -1110,20 +1110,23 @@ analyse gjelder, er ikke en del av katalogen ennå.
 står åpen, kjører appen den ble lastet med. Derfor i to trinn, så ingen
 rekkefølge gjør at et referanseområde forsvinner:
 
-1. *Trinn 1 (1.133.3)* endrer ikke faginnholdet: kortet for
+1. *Trinn 1 (1.133.4)* endrer ikke faginnholdet: kortet for
    O-desmetyltramadol har fortsatt `OTRAM` i `gjelder`, så appen fra før
    finner det. Migrasjonen setter verdiene og lar `les_analyttkatalog()` gi
    dem, i én transaksjon. Den nye appen leser et kort med en kode i `gjelder`
-   som kortet for forbindelsen koden måler, etter katalogen
-   (`kortetsForbindelse` i `src/domain/koblinger.ts`), og et svar uten feltene
+   som kortet for forbindelsen koden måler, etter katalogen eller ellers en
+   uttrykkelig, midlertidig liste over kodene som står i kortene
+   (`kortetsForbindelse` og `ELDRE_DATAKORTKODER` i `src/domain/koblinger.ts`;
+   i produksjonen bare `OTRAM`). Kortet merkes derfor med O-desmetyltramadol
+   og kobles til et annet fagmiljøs kode for den i alle fagmiljøer, også uten
+   katalog. Et svar uten feltene
    (før migrasjonen, eller om den stopper) med den gamle koblingen
    (`medEldreDatakort` i `src/domain/analyttkatalog.ts`). Redigeres kortet i
    den nye appen, beholder det nøkkelen det er lagret med (`ViktigeData`), så
    den gamle finner det også etterpå; et nytt kort får forbindelsen.
 2. *Trinn 2 (#405)*, tidligst sju dager etter at trinn 1 er ute: kortet skrives
    om til `o-desmetyltramadol`, databasen stenger for analyttkoder i `gjelder`,
-   og overgangen fjernes fra appen. Først da kobles kortet også til et annet
-   fagmiljøs kode for O-desmetyltramadol; til da bare til OUS-koden.
+   og overgangen fjernes fra appen.
 
 **Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
 filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser
