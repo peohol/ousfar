@@ -13,6 +13,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { Okt, psql, SERVER } from './hjelp/ektepostgres'
+import { startportSql } from '../faginnhold/migrasjonshistorikk'
 import { strukturskript } from './hjelp/migrasjonskjoring'
 
 const KONTO = {
@@ -40,6 +41,7 @@ const KONTOER = /* sql */ `
   insert into public.systemroller (bruker_id, rolle)
     select '${KONTO.arkitekt}', 'systemarkitekt'
     where not exists (select 1 from public.systemroller where bruker_id = '${KONTO.arkitekt}');
+  ${startportSql('ous-rettstoksikologi')}
   update public.fagmiljoer set apent_for_medlemmer = true where id = ${B};
   insert into public.medlemskap (bruker_id, fagmiljo_id) values ('${KONTO.adminB}', ${B}), ('${KONTO.medlem}', ${B});
   insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ('${KONTO.adminA}', ${A}), ('${KONTO.adminB}', ${B})

@@ -25,6 +25,18 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
+    versjon: '1.132.1',
+    dato: '2026-11-15',
+    sammendrag: 'Kontrollen før nye fagmiljøer kan åpnes, uten endring i appen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. En samlet kontroll viser at ingen i et annet fagmiljø får lese, endre eller fortolke med OUS Klinisk farmakologi sine egne regler, kommentarer og analyser, og omvendt, og at fortolkningen er den samme som før.',
+      'Et nytt fagmiljø kan bare åpnes for medlemmer etter en egen godkjenning: databasen nekter selv å åpne det uten et uttrykkelig slipp, og endringen som gir slippet, stoppes automatisk til godkjenningen er gitt.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.132.0',
     dato: '2026-11-14',
     sammendrag: 'Grupper med egne diskusjoner, i eget fagmiljø eller på tvers',

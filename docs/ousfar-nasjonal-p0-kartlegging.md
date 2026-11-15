@@ -605,6 +605,9 @@ systemarkitekter.
 | S4 | Pilot med eksternt laboratorium | D5 (MFA), D7 (sikkerhetskopi/drift) og B9 avklart; uavhengig sikkerhetsgjennomgang |
 | S5 | Chat / filer | Egen personvernvurdering (D6) |
 
+Kontrollen av S2 står i `docs/s2-kontrollrapport.md` (15.11.2026); porten er
+ikke passert før Peder har godkjent åpningsmigrasjonen.
+
 ### 6.4 Testspesifikasjon (A)
 
 **Testgrunnlag.** Utvid `src/__tests__/hjelp/testdatabase.ts` med

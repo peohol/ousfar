@@ -52,7 +52,14 @@ Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 - **Åpent for medlemmer** (`apent_for_medlemmer`) avgjør om andre enn
   systemarkitektene kan få et gjeldende medlemskap. Bare standarden er åpen
   inntil startporten S2 er passert (§6.3 i P0-rapporten); da åpnes et
-  fagmiljø i en egen, godkjent migrasjon.
+  fagmiljø i en egen, godkjent migrasjon. Kontrollen før S2 står i
+  `docs/s2-kontrollrapport.md`, med den samlede tilgangsmatrisen A↔B
+  (`src/__tests__/s2tilgang.test.ts`). Databasen nekter å åpne et fagmiljø uten
+  at innstillingen `ousfar.startport` i samme transaksjon navngir det
+  (`20261115003000_startportvern.sql`; i testene `apneFagmiljo` og
+  `startportSql`), og en migrasjon som gir slippet eller endrer vernet, stoppes
+  i CI og før utrullingen til den har Peders godkjenningsmerke
+  (`docs/migrasjoner.md`).
 
 ## Tabellene
 
