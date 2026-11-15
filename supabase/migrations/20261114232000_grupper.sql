@@ -181,6 +181,45 @@ after insert or update of status, rolle on public.gruppemedlemskap
 deferrable initially deferred
 for each row execute function intern.kontroller_gruppeansvar();
 
+-- Et medlemskap slettes bare når kontoen slettes (`avvis_tilgangssletting`).
+-- Var det den siste aktive ansvarlige i en aktiv gruppe, arkiveres gruppen,
+-- så den aldri står aktiv uten noen som kan styre den. Ingenting annet
+-- endres, og en systemarkitekt kan åpne den igjen. Kontrollen skjer ved
+-- commit, som regelen over, og låser radene den teller.
+create function intern.arkiver_gruppe_uten_ansvarlig()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  grunn text := current_setting('ousfar.tilgangsgrunn', true);
+begin
+  if old.status <> 'aktiv' or old.rolle <> 'ansvarlig' then
+    return null;
+  end if;
+  if exists (select 1 from public.grupper g where g.id = old.gruppe_id and g.status = 'aktiv')
+    and (select count(*) from (
+          select 1 from public.gruppemedlemskap m
+          where m.gruppe_id = old.gruppe_id and m.status = 'aktiv' and m.rolle = 'ansvarlig'
+          for share
+        ) x) = 0
+  then
+    perform set_config('ousfar.tilgangsgrunn', 'Arkivert: den siste ansvarlige ble slettet', true);
+    update public.grupper g set status = 'arkivert', endret_kl = now() where g.id = old.gruppe_id and g.status = 'aktiv';
+    perform set_config('ousfar.tilgangsgrunn', coalesce(grunn, ''), true);
+  end if;
+  return null;
+end;
+$$;
+
+revoke all on function intern.arkiver_gruppe_uten_ansvarlig() from public, anon, authenticated, service_role;
+
+create constraint trigger gruppemedlemskap_slettet_ansvarlig
+after delete on public.gruppemedlemskap
+deferrable initially deferred
+for each row execute function intern.arkiver_gruppe_uten_ansvarlig();
+
 -- --- Hvem som er med -------------------------------------------------------------
 
 -- Kan brukeren være med i gruppen nå? Et aktivt medlemskap i et fagmiljø, og
@@ -1121,9 +1160,12 @@ begin
   select * into g from public.grupper x where x.id = las_gruppe.gruppe for update;
   if g.id is null or not (
     intern.kan_lese_gruppe(g.id)
-    or exists (
-      select 1 from public.gruppemedlemskap m
-      where m.gruppe_id = g.id and m.bruker_id = (select auth.uid()) and m.status = 'invitert'
+    or (
+      exists (
+        select 1 from public.gruppemedlemskap m
+        where m.gruppe_id = g.id and m.bruker_id = (select auth.uid()) and m.status = 'invitert'
+      )
+      and intern.kan_vaere_med_i_gruppe(g, (select auth.uid()))
     )
   ) then
     raise exception 'Gruppen finnes ikke, eller du har ikke tilgang til den.' using errcode = 'P0002';
@@ -1499,6 +1541,9 @@ as $$
       from public.gruppemedlemskap m
       join public.grupper g on g.id = m.gruppe_id
       where m.bruker_id = (select auth.uid()) and m.status = 'invitert' and g.status = 'aktiv'
+        -- Bare så lenge den inviterte kan være med: en invitasjon til en
+        -- gruppe i et fagmiljø hen ikke lenger er medlem av, viser ingenting.
+        and intern.kan_vaere_med_i_gruppe(g, (select auth.uid()))
     ), '[]'::jsonb),
     'kan_opprette', jsonb_build_object(
       'tverrfaglig', intern.gruppeopprettelsesavslag((select auth.uid()), null) is null,

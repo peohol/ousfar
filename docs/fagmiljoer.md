@@ -389,13 +389,20 @@ samme for et brukernavn som ikke finnes og for en konto som ikke kan være med
 (`Fant ingen som kan inviteres med det brukernavnet.`), så skjemaet ikke kan
 brukes til å finne ut hvem som har konto. Den inviterte ser invitasjonen
 under «Grupper» i kontomenyen, med en prikk, og har ingen tilgang før den er
-godtatt. Medlemmene ser profilkortet til de inviterte.
+godtatt. En invitasjon vises bare så lenge den inviterte kan være med:
+mister hen medlemskapet i gruppens fagmiljø, ser hen verken invitasjonen,
+navnet eller beskrivelsen, og den kan ikke godtas. Medlemmene ser
+profilkortet til de inviterte.
 
 **Minst én ansvarlig.** En aktiv gruppe har alltid minst én aktiv ansvarlig.
 Operasjonene sier fra før noe skjer (`intern.gruppeavslag`, også grunnlaget
 for knappene), og en utsatt regel på tabellene stopper resten (23514). Den
 slår bare til når status eller rolle endres, så å slette en konto stoppes
-aldri av den.
+aldri av den. Slettes kontoen til den siste aktive ansvarlige, arkiveres
+gruppen ved commit (`intern.arkiver_gruppe_uten_ansvarlig`, grunnen
+«Arkivert: den siste ansvarlige ble slettet» i tilgangsloggen); resten av
+medlemskapene står, og en systemarkitekt kan åpne gruppen igjen og gi den en
+ny ansvarlig.
 
 **Arkiv.** En ansvarlig kan arkivere gruppen. Da leser bare
 systemarkitektene den, og bare de kan åpne den igjen.

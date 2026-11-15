@@ -137,6 +137,25 @@ async function serTraad(person: Person, diskusjon: string, side: string) {
 const SER_ALT = { tabell: 1, kommentarer: 1, kategorier: 1, oversikt: 1, tekster: 1, traad: true, lenke: true, apen: true }
 const SER_INGENTING = { tabell: 0, kommentarer: 0, kategorier: 0, oversikt: 0, tekster: 0, traad: false, lenke: false, apen: false }
 
+/**
+ * Avslutter medlemskapet til dobbeltAB i A. A er primærmedlemskapet, så B
+ * blir primært i samme transaksjon.
+ */
+async function avsluttDobbeltIA() {
+  await db.transaction(async (tx) => {
+    await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Syntetisk test', true)`)
+    await tx.query(
+      `update public.medlemskap set primaer = false, status = 'deaktivert', til = now()
+        where bruker_id = $1 and fagmiljo_id = $2 and status = 'aktiv'`,
+      [id('dobbeltAB'), fm('A')],
+    )
+    await tx.query(`update public.medlemskap set primaer = true where bruker_id = $1 and fagmiljo_id = $2 and status = 'aktiv'`, [
+      id('dobbeltAB'),
+      fm('B'),
+    ])
+  })
+}
+
 /** Varslene personen har om tråden: i lista appen viser, i tellingen og rett fra tabellen. */
 async function varslerOm(person: Person, diskusjon: string) {
   return som(db, id(person), async (tx) => {
@@ -271,6 +290,25 @@ describe('invitasjonene', () => {
     }
   })
 
+  it('viser ingenting om en invitasjon til et fagmiljø den inviterte ikke lenger er medlem av', async () => {
+    const g = await opprett('adminA', 'Privat i A', fm('A'))
+    await inviter('adminA', g, 'dobbeltAB')
+    const tverr = await opprett('systemarkitekt', 'Åpen på tvers', null)
+    await inviter('systemarkitekt', tverr, 'dobbeltAB')
+    expect((await mine('dobbeltAB')).invitasjoner.map((i) => i.gruppe.id).sort()).toEqual([g, tverr].sort())
+
+    await avsluttDobbeltIA()
+    // Invitasjonen til A-gruppen er borte, med navnet, beskrivelsen og hvem som inviterte;
+    // den på tvers står og kan godtas.
+    const etter = await mine('dobbeltAB')
+    expect(etter.invitasjoner.map((i) => i.gruppe.id)).toEqual([tverr])
+    expect(JSON.stringify(etter)).not.toContain('Privat i A')
+    expect((await feilFra(() => oversikt('dobbeltAB', g)))?.code).toBe('P0002')
+    expect((await feilFra(() => svar('dobbeltAB', g, true)))?.code).toBe('42501')
+    expect(await serTraad('dobbeltAB', agrupptraad, `gruppe:${agruppe}`)).toEqual(SER_INGENTING)
+    expect(await svar('dobbeltAB', tverr, true)).toMatchObject({ status: 'aktiv' })
+  })
+
   it('lar bare de ansvarlige og systemarkitektene invitere', async () => {
     for (const person of ['vanligA', 'dobbeltAB'] as const) {
       expect((await feilFra(() => inviter(person, agruppe, 'systemarkitekt')))?.message).toBe('Bare de ansvarlige i gruppen kan gjøre dette.')
@@ -395,17 +433,7 @@ describe('fjerningen', () => {
   })
 
   it('stenger en gruppe i fagmiljøet når medlemskapet der avsluttes, og lar gruppen på tvers stå', async () => {
-    // A er primærmedlemskapet, så B blir primært i samme transaksjon.
-    await db.transaction(async (tx) => {
-      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Syntetisk test', true)`)
-      const avslutt = `update public.medlemskap set primaer = false, status = 'deaktivert', til = now()
-                        where bruker_id = $1 and fagmiljo_id = $2 and status = 'aktiv'`
-      await tx.query(avslutt, [id('dobbeltAB'), fm('A')])
-      await tx.query(`update public.medlemskap set primaer = true where bruker_id = $1 and fagmiljo_id = $2 and status = 'aktiv'`, [
-        id('dobbeltAB'),
-        fm('B'),
-      ])
-    })
+    await avsluttDobbeltIA()
     expect(await serTraad('dobbeltAB', agrupptraad, `gruppe:${agruppe}`)).toEqual(SER_INGENTING)
     expect(await serTraad('dobbeltAB', tverrtraad, `gruppe:${tverrgruppe}`)).toEqual(SER_ALT)
     // Den ansvarlige ser at medlemmet ikke lenger har tilgang.
@@ -431,18 +459,49 @@ describe('fjerningen', () => {
     expect(await serTraad('adminA', agrupptraad, `gruppe:${agruppe}`)).toEqual(SER_INGENTING)
   })
 
-  it('lar en konto slettes som før, også den siste ansvarlige og den som inviterte', async () => {
+  it('arkiverer gruppen når kontoen til den siste ansvarlige slettes, og lar resten stå', async () => {
     const g = await opprett('systemarkitekt', 'Slettegruppen', null)
     await medlem('systemarkitekt', g, 'vanligB')
+    await medlem('systemarkitekt', g, 'vanligA')
     await settRolle('systemarkitekt', g, 'vanligB', 'ansvarlig')
     await avslutt('systemarkitekt', g, 'systemarkitekt')
     await inviter('vanligB', g, 'adminB')
     expect(await feilFra(() => db.query('delete from auth.users where id = $1', [id('vanligB')]))).toBeNull()
-    const { rows } = await db.query<{ bruker_id: string; invitert_av: string | null }>(
-      `select bruker_id, invitert_av from public.gruppemedlemskap where gruppe_id = $1 and status <> 'avsluttet'`,
+
+    const gruppe = await db.query<{ status: string }>('select status from public.grupper where id = $1', [g])
+    expect(gruppe.rows).toEqual([{ status: 'arkivert' }])
+    const { rows } = await db.query<{ bruker_id: string; status: string; invitert_av: string | null }>(
+      `select bruker_id, status, invitert_av from public.gruppemedlemskap where gruppe_id = $1 and status <> 'avsluttet' order by status`,
       [g],
     )
-    expect(rows).toEqual([{ bruker_id: id('adminB'), invitert_av: null }])
+    expect(rows).toEqual([
+      { bruker_id: id('vanligA'), status: 'aktiv', invitert_av: id('systemarkitekt') },
+      { bruker_id: id('adminB'), status: 'invitert', invitert_av: null },
+    ])
+    const logg = await db.query<{ grunn: string }>(
+      `select grunn from public.tilgangslogg where handling = 'grupper.update' and etter ->> 'id' = $1 and etter ->> 'status' = 'arkivert'`,
+      [g],
+    )
+    expect(logg.rows).toEqual([{ grunn: 'Arkivert: den siste ansvarlige ble slettet' }])
+    // Medlemmet ser ikke lenger gruppen; en systemarkitekt kan åpne den igjen.
+    expect((await feilFra(() => oversikt('vanligA', g)))?.code).toBe('P0002')
+    expect(await oversikt('systemarkitekt', g)).toMatchObject({ status: 'arkivert', kan_gjenapne: true })
+  })
+
+  it('lar gruppen stå aktiv når en annen ansvarlig er igjen etter at en konto slettes', async () => {
+    const g = await opprett('systemarkitekt', 'To ansvarlige', null)
+    await medlem('systemarkitekt', g, 'vanligB')
+    await medlem('systemarkitekt', g, 'vanligA')
+    await settRolle('systemarkitekt', g, 'vanligB', 'ansvarlig')
+    await settRolle('systemarkitekt', g, 'vanligA', 'ansvarlig')
+    await avslutt('systemarkitekt', g, 'systemarkitekt')
+    expect(await feilFra(() => db.query('delete from auth.users where id = $1', [id('vanligB')]))).toBeNull()
+    expect((await db.query<{ status: string }>('select status from public.grupper where id = $1', [g])).rows).toEqual([{ status: 'aktiv' }])
+    expect(await oversikt('vanligA', g)).toMatchObject({ status: 'aktiv', rolle: 'ansvarlig', kan_styre: true })
+    // En vanlig medlemskonto som slettes, endrer heller ingenting.
+    await medlem('vanligA', g, 'adminB')
+    expect(await feilFra(() => db.query('delete from auth.users where id = $1', [id('adminB')]))).toBeNull()
+    expect((await db.query<{ status: string }>('select status from public.grupper where id = $1', [g])).rows).toEqual([{ status: 'aktiv' }])
   })
 
   it('holder regelen om minst én ansvarlig også rett i tabellen', async () => {
