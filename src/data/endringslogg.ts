@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.133.2',
+    versjon: '1.133.3',
     dato: '2026-11-15',
     sammendrag: 'Ryddigere brukerliste, med handlingene i en meny per bruker',
     typer: ['Design / layout', 'Funksjonalitet'],
@@ -22,6 +22,20 @@ export const ENDRINGSLOGG: Endring[] = [
       '«Brukere» i administrasjonen viser hver bruker på én rolig rad: navnet, ett merke for rollen og eventuelle statuser. Handlingene ligger i en meny bak knappen med tre prikker, og hver av dem sier kort hva den gjør.',
       'Den gamle adminrollen heter nå «Tilgang til verktøyene», siden det er det den gir. Den er skilt fra «Gjør til administrator»: å gi eller fjerne tilgangen til verktøyene endrer ikke hvem som administrerer et fagmiljø.',
     ],
+  },
+  {
+    versjon: '1.133.2',
+    dato: '2026-11-15',
+    sammendrag: 'Hvert fagmiljø har egne diskusjonskategorier i fortolkningen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    punkter: [
+      'I diskusjonene på en fortolkningsside har hvert fagmiljø nå sine egne kategorier. To fagmiljøer kan bruke samme navn og symbol, og ingen kan se eller få vite hvilke kategorier et annet fagmiljø har.',
+      'Er du med i flere fagmiljøer, viser diskusjonene i fortolkningen trådene til fagmiljøet du har valgt under «Fagmiljø» i kontomenyen, som reglene. Varsler og lenker til tråder i de andre fagmiljøene dine virker som før.',
+      'En lokal administrator modererer bare trådene i sitt eget fagmiljø, også når hen er medlem andre steder.',
+      'Diskusjonene på fagsidene og i gruppene er som før.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.133.1',
