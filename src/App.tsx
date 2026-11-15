@@ -290,7 +290,7 @@ function Arbeidsflate({
   const hentRegler = useCallback(async () => {
     const [regelsett, referanseomrader] = await Promise.all([
       lesPubliserteRegelsett(faginnhold.leser),
-      faginnhold.leser.lesReferanseomrader('publisert', katalog.koblinger),
+      faginnhold.leser.lesReferanseomrader('publisert', katalog),
     ])
     return { regelsett, referanseomrader }
   }, [faginnhold.leser, katalog])

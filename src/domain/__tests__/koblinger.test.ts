@@ -188,14 +188,14 @@ describe('veiene mellom fortolkningen og stoffsidene', () => {
 })
 
 describe('referanseområdet fortolkningen viser for en kode', () => {
-  it('tar kortet på det primære stoffets side: uten «gjelder» for hovedanalytten, med koden for de andre', () => {
+  it('tar kortet på det primære stoffets side: uten «gjelder» for hovedanalytten, med forbindelsen for de andre', () => {
     const omrader = referanseomraderPerAnalytt([
       { stoff: 'bupropion', gjelder: null, verdi: 'hbup' },
       { stoff: 'diazepam', gjelder: null, verdi: 'diaz' },
-      { stoff: 'diazepam', gjelder: 'DMI', verdi: 'dmi' },
+      { stoff: 'diazepam', gjelder: 'nordiazepam', verdi: 'dmi' },
       { stoff: 'tramadol', gjelder: null, verdi: 'tram' },
       { stoff: 'nortriptylin', gjelder: null, verdi: 'nor' },
-    ], OUS_REGISTER.koblinger)
+    ], OUS_KATALOG)
     expect(omrader.get('HBUP')).toBe('hbup')
     expect(omrader.get('DIAZ')).toBe('diaz')
     expect(omrader.get('DMI')).toBe('dmi')

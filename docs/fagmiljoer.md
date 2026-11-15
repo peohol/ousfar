@@ -1066,6 +1066,33 @@ manuell vurdering kan den ikke vise, og da sier den fra. Redigeringen av
 reglene i appen er ikke laget for modulen ennå; til da endres de med en
 migrasjon.
 
+**De felles datakortene.** Datakortene i «Viktige data» på fagsidene er
+felles for alle fagmiljøer, og vet ingenting om laboratorienes koder. Et kort
+for en metabolitt sier hvilken forbindelse det gjelder, med nøkkelen i
+forbindelsesregisteret (`data.gjelder = 'o-desmetyltramadol'`, se
+`docs/faginnhold.md`, «Datakortene per forbindelse»), og vises for alle,
+også i et fagmiljø uten egen katalog. Katalogen sier for hver kode hvilken
+forbindelse analysen måler (`analyttkatalog_koder.forbindelse`, `null` for
+sumanalysene) og uttrykkelig hvilke kort på siden til kodens primære stoff den
+bruker (`analyttkatalog_koder.datakort`): sidens egne (`egne`), dem for
+forbindelsen (`forbindelse`), eller ingen (`null`). Det er dette
+referanseområdet fortolkningen viser under analyttnavnet
+(`datakortnokkel`/`referanseomraderPerAnalytt` i `src/domain/koblinger.ts`).
+Ingen kode får et kort av rekkefølgen i katalogen, og en ny katalog får ingen
+før det er sagt (#395 punkt 3:
+`20261115112000_datakort_per_forbindelse.sql` og
+`…112100_analyttforbindelser_ous.sql`, laget med
+`scripts/analyttforbindelser.ts` av `src/data/analyttforbindelser.json`).
+For OUS Klinisk farmakologi er verdiene de appen brukte før: sidens egne for
+den første primære koden for hvert stoff, og dem for forbindelsen for de
+andre (OTRAM, DMI). Urinanalysene (THC-syre, EtG og EtS) bruker ingen, siden
+kortene gjelder serum; ingen av dem fikk noe referanseområde i produksjonen.
+Sidens egne kort sier ikke selv hvilken forbindelse de gjelder: på noen sider
+er det metabolitten eller summen laboratoriet måler (bupropion, enalapril,
+spironolakton, sumanalysene). Derfor må et nytt fagmiljøs katalog si
+uttrykkelig for hver kode at den bruker dem. Hvilket prøvemateriale en
+analyse gjelder, er ikke en del av katalogen ennå.
+
 **Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
 filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser
 `src/data/analytter.json`, `antihypertensiver.json`, `aliaser.json` og
@@ -1082,7 +1109,13 @@ regnet av `main` før flyttingen), og EtG/EtS-tekstene ordrett; at B, også
 systemarkitekten med B som arbeidskontekst, og en uten aktivt medlemskap får
 en tom katalog og ingen EtG-regler; at tabellene ikke kan leses direkte; og
 at en ny kjøring av importene ikke endrer noe. De kliniske fasitene kjøres
-uendret med katalogen til OUS Klinisk farmakologi.
+uendret med katalogen til OUS Klinisk farmakologi. `src/__tests__/analyttforbindelser.test.ts` prøver
+forbindelsene og datakortene: at grunnlaget stemmer med forbindelsesregisteret
+og koblingene, at OUS Klinisk farmakologi får de samme referanseområdene som
+med regelen fra før for alle sider og koder, og at migrasjonen skriver om
+kortet med OUS-koden i det publiserte og i et upublisert utkast hver for seg,
+uten å endre noe annet. `referanseomrader.test.ts` og `stoffside.test.tsx`
+prøver et annet fagmiljø med egne koder og et uten katalog.
 
 **Tilbakeføring.** En ny migrasjon som fjerner funksjonen og tabellene, og
 regelsettet og kommentarene for `etg`; appen før P4c bruker dem ikke.

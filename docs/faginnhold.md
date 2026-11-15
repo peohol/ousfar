@@ -469,7 +469,7 @@ styrer søket og nummereringen av referansene):
 | Panel | Nøkkel | Elementer |
 | --- | --- | --- |
 | Identitet | `identitet` | `riktekst`: `{ dokument }` — den korte oppsummeringen av stoffet, som også står i kortet på helsiden for stoffregisteret. Navnet, kategoriene og de koblede analyttene kommer fra siden og stoffregisteret |
-| Viktige data | `viktige_data` | Ett kort per type og kode (`gjelder`, se «Sammenslåtte sider») — `referanseomrade`, `toksisk_omrade`, `alvorlig_intoksikasjon` (gruppen konsentrasjoner), `halveringstid`, `steady_state` (gruppen kinetikk). Konsentrasjonene har `{ nedre, ovre, enhet }`; t½ og tss har `{ former: [{ stoff?, form, typisk, min, maks, enhet }] }`, én rad per legemiddelform eller stoff |
+| Viktige data | `viktige_data` | Ett kort per type og forbindelse (`gjelder`, se «Datakortene per forbindelse») — `referanseomrade`, `toksisk_omrade`, `alvorlig_intoksikasjon` (gruppen konsentrasjoner), `halveringstid`, `steady_state` (gruppen kinetikk). Konsentrasjonene har `{ nedre, ovre, enhet }`; t½ og tss har `{ former: [{ stoff?, form, typisk, min, maks, enhet }] }`, én rad per legemiddelform eller stoff |
 | Farmakodynamikk | `farmakodynamikk` | `mekanismekort`: `{ maal, mekanisme, dokument? }`, i rekkefølge, som regel ett per målprotein eller mekanisme (se «Farmakodynamikken som mekanismekort»). En `riktekst` fra en senere import vises under kortene |
 | Virkninger | `virkninger` | `kinetikkort`: `{ tittel, dokument }`, i rekkefølge, som i farmakokinetikken, og foran dem det faste kortet «Fenomenologi» (`kort` og `frieKort` i `PANELER`), bare for psykoaktive stoffer (`veiledning`, se `docs/monografkuratering.md`). Seksjonen kom til 2026-10-02 uten innhold, og fikk «Fenomenologi» 2026-10-22; i lesemodus står den først når den har kort |
 | Bivirkninger | `bivirkninger` | `kinetikkort`: `{ tittel, dokument }`, i rekkefølge, som i farmakokinetikken. Kom til sammen med virkningene, uten innhold. Over kortene står bivirkningene fra preparatomtalene, gruppert etter frekvens eller organsystem; de importeres og redigeres ikke her (se `docs/bivirkninger.md`) |
@@ -601,16 +601,25 @@ merknaden koblingen har. Er koden koblet til andre stoffer også, lenker «Se
 også» til sidene deres. «Åpne fortolkning» i toppmenyen står bare når stoffets
 primære analytter hører til én modul.
 
-**Datakortene per analytt.** Er stoffet primært stoff for flere analytter —
-DIAZ og DMI på diazepamsiden, TRAM og OTRAM på tramadolsiden — har hver analytt
-sine egne kort i viktige data, merket med analyttens navn. Kortene til
-hovedanalytten (den første primære koblingen) står uten `gjelder`, de andre
-med koden i `data.gjelder` (`datakortGjelder`). Databasen lar hvert datakort
-stå én gang per kode. Referanseområdet fortolkningen viser for en kode
-(`les_stoffreferanseomrader` og `referanseomraderPerAnalytt`), er kortet på
-det primære stoffets side med koden i `gjelder`, eller kortet uten når koden er
-stoffets hovedanalytt. HBUP får altså kortet på bupropionsiden, og en
-metabolitt får aldri moderstoffets referanseområde.
+**Datakortene per forbindelse.** Har stoffet egne tall for en metabolitt
+som måles — O-desmetyltramadol på tramadolsiden, N-desmetyldiazepam på
+diazepamsiden — står de i egne kort i viktige data, merket med navnet.
+Sidens egne kort står uten `gjelder`; kortene for metabolitten har nøkkelen
+til forbindelsen i forbindelsesregisteret i `data.gjelder`
+(`'o-desmetyltramadol'`, `datakortGjelder`), aldri et laboratoriums
+analyttkode: kortene er felles for alle fagmiljøer. Databasen lar hvert
+datakort stå én gang per forbindelse, og tar ikke imot noe annet enn en
+forbindelsesnøkkel i `gjelder` (`innholdselementer_gjelder_forbindelse`).
+Plassene på siden står i `datakorteiere` (`src/domain/koblinger.ts`): sidens
+egne, hver forbindelse siden har kort for, og hver forbindelse
+arbeidskontekstens katalog bruker kort for. Referanseområdet fortolkningen
+viser for en kode (`les_stoffreferanseomrader` og
+`referanseomraderPerAnalytt`), er kortet på det primære stoffets side som
+fagmiljøets katalog sier at koden bruker (`docs/fagmiljoer.md`, «De felles
+datakortene»). HBUP får altså sidens egne kort på bupropionsiden, og en
+metabolitt får aldri moderstoffets referanseområde. Før #395 sto koden i
+`gjelder` (`'OTRAM'`), og den første primære koden for et stoff fikk sidens
+egne kort; `*_analyttforbindelser_ous.sql` skrev kortet om.
 
 **Historikken.** Før stoffet ble identiteten, hørte hver side til en
 analyttkode, og noen metabolitter var slått sammen med moderstoffets side.

@@ -63,7 +63,9 @@ const dokument = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph
 const kinetikk = (tittel: string, tekst: string) => ({ tittel, dokument: dokument(tekst) })
 
 beforeAll(async () => {
-  db = await nyDatabase()
+  // Som da migrasjonen ble kjørt: før datakortene ble koblet til forbindelsene,
+  // og kodene i `gjelder` ble stengt ute.
+  db = await nyDatabase({ til: migrasjonsfiler().find((f) => f.endsWith('_analyttforbindelser_ous.sql')) })
   const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
@@ -143,11 +145,19 @@ describe('sammenslåingen i databasen', () => {
       'les_stoffreferanseomrader',
       { sidetilstand: 'publisert' },
     )
-    const perKode = referanseomraderPerAnalytt(kort, REGISTER.koblinger) as Map<string, { ovre: number }>
-    expect([...perKode].map(([kode, o]) => [kode, o.ovre]).sort()).toEqual([
-      ['TMET', 400],
-      ['TMOD', 3000],
+    // Koden i `gjelder` er fra før datakortene ble koblet til forbindelsen
+    // analysen måler (`*_analyttforbindelser_ous.sql`, som skriver dem om):
+    // appen kobler ikke lenger et kort til en analyttkode. Koblingen gjennom
+    // forbindelsen prøves i referanseomrader.test.ts og analyttforbindelser.test.ts.
+    const analytter = new Map([
+      ['TMOD', { kode: 'TMOD', forbindelse: null, datakort: 'egne' as const }],
+      ['TMET', { kode: 'TMET', forbindelse: 'testmetabolitt', datakort: 'forbindelse' as const }],
     ])
+    const perKode = referanseomraderPerAnalytt(kort, { koblinger: REGISTER.koblinger, finn: (kode) => analytter.get(kode) }) as Map<
+      string,
+      { ovre: number }
+    >
+    expect([...perKode].map(([kode, o]) => [kode, o.ovre]).sort()).toEqual([['TMOD', 3000]])
 
     // Og slik den utgåtte funksjonen ga dem, etter analyttenes hovedside.
     const { les_referanseomrader: utgatt } = await kall.rpc<{

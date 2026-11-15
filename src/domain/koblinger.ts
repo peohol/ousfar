@@ -4,6 +4,7 @@ import { adresse, fortolkningsrute, stoffadresse } from './rute'
 import { iSetning } from './names'
 import { ANDRE_STOFFER, type Stoff, type StoffAnalyttKobling, type Stoffregister } from './stoffregister'
 import type { Analyte } from '../types'
+import { FORBINDELSER, type Forbindelsesregister } from '../kjemi/forbindelser'
 
 /**
  * Veiene mellom de to domenene: stoffregisteret (fagsidene, etter stoffets
@@ -140,32 +141,107 @@ export function stoffadresseForAnalytt(
 export interface Stoffreferanseomrade {
   /** Nøkkelen til stoffsiden kortet står på. */
   stoff: string
-  /** Koden kortet gjelder, eller `null` for stoffets hovedanalytt. */
+  /** Forbindelsen kortet gjelder (`data.gjelder`), eller `null` for sidens egne kort. */
   gjelder: string | null
   verdi: unknown
 }
 
+/** En analytt slik koblingen til datakortene trenger den. */
+export type Datakortanalytt = Pick<Laboratorieanalytt, 'kode' | 'forbindelse' | 'datakort'>
+
+/**
+ * Datakortene på siden til analysens primære stoff som analysen bruker, som
+ * `gjelder` på kortene: `null` for sidens egne, nøkkelen til forbindelsen for
+ * en metabolitt med egne tall, og `undefined` når den ikke bruker noen.
+ *
+ * Datakortene er felles for alle fagmiljøer og vet ingenting om laboratorienes
+ * koder; et kort for en metabolitt sier hvilken forbindelse det gjelder
+ * (O-desmetyltramadol på tramadolsiden). Hvilke kort en analyse bruker, sier
+ * fagmiljøets egen katalog uttrykkelig for hver kode, så ingen kode får et
+ * kort av at den står først, og en ny katalog får ingen før det er sagt.
+ */
+export function datakortnokkel(analytt: Datakortanalytt | undefined): string | null | undefined {
+  if (analytt?.datakort === 'egne') return null
+  if (analytt?.datakort === 'forbindelse' && analytt.forbindelse) return analytt.forbindelse
+  return undefined
+}
+
+/** Det koblingen til datakortene trenger av en analyttkatalog: koblingene, og analyttene etter koden. */
+export interface Datakortkatalog {
+  koblinger: readonly Pick<StoffAnalyttKobling, 'kode' | 'stoff' | 'primar'>[]
+  finn: (kode: string) => Datakortanalytt | undefined
+}
+
 /**
  * Referanseområdet for hver analyttkode, slik fortolkningen viser det: kortet
- * på det primære stoffets side som gjelder koden, eller — for stoffets
- * hovedanalytt — kortet uten `gjelder`. En metabolitt på moderstoffets side
- * får altså aldri moderstoffets referanseområde, og et stoff uten analytt gir
- * ingen.
+ * på det primære stoffets side som analysen bruker (`datakortnokkel`). En
+ * metabolitt på moderstoffets side får aldri moderstoffets referanseområde,
+ * og et stoff uten analytt gir ingen.
  */
 export function referanseomraderPerAnalytt(
   kort: readonly Stoffreferanseomrade[],
-  koblinger: readonly Pick<StoffAnalyttKobling, 'kode' | 'stoff' | 'primar'>[],
+  katalog: Datakortkatalog,
 ): Map<string, unknown> {
   const svar = new Map<string, unknown>()
-  const primare = koblinger.filter((k) => k.primar)
-  for (const { kode, stoff } of primare) {
-    const hovedanalytt = primare.find((k) => k.stoff === stoff)?.kode === kode
-    const treff =
-      kort.find((k) => k.stoff === stoff && k.gjelder === kode) ??
-      (hovedanalytt ? kort.find((k) => k.stoff === stoff && k.gjelder === null) : undefined)
+  for (const { kode, stoff } of katalog.koblinger.filter((k) => k.primar)) {
+    const gjelder = datakortnokkel(katalog.finn(kode))
+    if (gjelder === undefined) continue
+    const treff = kort.find((k) => k.stoff === stoff && k.gjelder === gjelder)
     if (treff) svar.set(kode, treff.verdi)
   }
   return svar
+}
+
+/** En plass for datakortene i «Viktige data»: sidens egne, eller dem for en forbindelse. */
+export interface Datakorteier {
+  /** Forbindelsen kortene gjelder (`data.gjelder`), eller `null` for sidens egne. */
+  gjelder: string | null
+  /** Navnet kortene merkes med når siden har kort for flere. */
+  navn: string
+}
+
+/**
+ * Plassene for datakortene på et stoffs fagside, sidens egne først: sidens
+ * egne kort, en plass for hver forbindelse siden alt har kort for — uansett
+ * fagmiljø, siden kortene er felles — og en for hver forbindelse fagmiljøets
+ * primære analytter for stoffet bruker kort for (`datakortnokkel`), så de kan
+ * legges inn. Forbindelsene står i registerets rekkefølge og merkes med
+ * navnet analysen har i katalogen, ellers navnet i registeret.
+ */
+export function datakorteiere({
+  stoff,
+  stoffnavn,
+  analytter,
+  kortnokler,
+  forbindelser = FORBINDELSER,
+}: {
+  stoff: string
+  stoffnavn: string
+  /** Stoffets primære analytter i arbeidskontekstens katalog (`primareAnalytter`). */
+  analytter: readonly (Datakortanalytt & { navn?: string })[]
+  /** `gjelder` på kortene siden har. */
+  kortnokler: readonly (string | null)[]
+  forbindelser?: Forbindelsesregister
+}): Datakorteier[] {
+  const finnes = new Set(kortnokler.filter((k): k is string => k !== null))
+  const nye = analytter.flatMap((a) => {
+    const gjelder = datakortnokkel(a)
+    return gjelder ? [gjelder] : []
+  })
+  const rekkefolge = forbindelser.forStoff(stoff).map((f) => f.nokkel)
+  const plass = (nokkel: string) => {
+    const i = rekkefolge.indexOf(nokkel)
+    return i < 0 ? rekkefolge.length : i
+  }
+  const andre = [...new Set([...finnes, ...nye])].sort((a, b) => plass(a) - plass(b) || a.localeCompare(b, 'nb'))
+  return [
+    { gjelder: null, navn: stoffnavn },
+    ...andre.map((gjelder) => ({
+      gjelder,
+      navn:
+        analytter.find((a) => a.navn && datakortnokkel(a) === gjelder)?.navn ?? forbindelser.finn(gjelder)?.navn ?? gjelder,
+    })),
+  ]
 }
 
 /**

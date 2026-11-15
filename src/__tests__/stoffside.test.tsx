@@ -21,6 +21,7 @@ import { detaljanker } from '../components/seksjoner/Seksjon'
 import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskilde'
 import { TipsLag } from '../components/Tips'
 import { ANALYTTKATALOG, OUS_REGISTERDATA, THC_KODE } from '../domain/ouskatalog'
+import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
 import { byggStoffregister, type Stoffregister } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
@@ -532,10 +533,12 @@ interface Visningsvalg {
   sted?: string[]
   /** Stoffregisteret siden slår opp i; standard er registeret med inndelingen fra databasen. */
   register?: Stoffregister
+  /** Analyttkatalogen til arbeidskonteksten; standard er den til OUS Klinisk farmakologi. */
+  analyttkatalog?: Analyttkatalog
 }
 
 /** Stoffsiden for stoffet med nøkkelen, slik appen viser den på `#/stoff/<nøkkel>`. */
-function vis(stoff: string, k = kilde(), { sted, register = REGISTER }: Visningsvalg = {}) {
+function vis(stoff: string, k = kilde(), { sted, register = REGISTER, analyttkatalog = katalog }: Visningsvalg = {}) {
   const onApneFortolkning = vi.fn()
   const onLukk = vi.fn()
   render(
@@ -545,7 +548,7 @@ function vis(stoff: string, k = kilde(), { sted, register = REGISTER }: Visnings
           stoff={stoff}
           sted={sted}
           register={register}
-          katalog={katalog}
+          katalog={analyttkatalog}
           onApneFortolkning={onApneFortolkning}
           onLukk={onLukk}
         />
@@ -778,13 +781,13 @@ describe('Diazepam: datakort for hver primære analytt', () => {
   const DIAZEPAM = { id: 'diaz', slug: 'diazepam', navn: 'Diazepam' }
   const kort = (id: string, data: Record<string, unknown>) =>
     utgave(id, { infoside: 'diaz', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
-  /** Referanseområdet for diazepam (uten `gjelder`) og for N-desmetyldiazepam (`gjelder: 'DMI'`). */
+  /** Referanseområdet for diazepam (uten `gjelder`) og for N-desmetyldiazepam (`gjelder: 'nordiazepam'`). */
   const diazepamside = (): Stoffsidedata => ({
     stoff: DIAZEPAM,
     infoside: utgave('diaz', { navn: 'Diazepam', slug: 'diazepam' }),
     elementer: [
       kort('diaz-kort', { nedre: 100, ovre: 200, enhet: 'nmol/L' }),
-      kort('dmi-kort', { nedre: 300, ovre: 400, enhet: 'nmol/L', gjelder: 'DMI' }),
+      kort('dmi-kort', { nedre: 300, ovre: 400, enhet: 'nmol/L', gjelder: 'nordiazepam' }),
     ],
     referanser: [],
   })
@@ -820,7 +823,7 @@ describe('Diazepam: datakort for hver primære analytt', () => {
     expect(document.querySelector('.regler')).toBeNull()
   })
 
-  it('lagrer kortet for DMI med koden det gjelder', async () => {
+  it('lagrer kortet for DMI med forbindelsen det gjelder, ikke koden', async () => {
     const user = userEvent.setup()
     const { lager } = vis('diazepam', kilde({ kanRedigere: true, data: diazepamside, regler: () => null }))
     await finnVerdi('100–200 nmol/L')
@@ -837,9 +840,48 @@ describe('Diazepam: datakort for hver primære analytt', () => {
       panel: 'viktige_data',
       elementtype: 'referanseomrade',
       posisjon: 0,
-      data: { nedre: 300, ovre: 450, enhet: 'nmol/L', gjelder: 'DMI' },
+      data: { nedre: 300, ovre: 450, enhet: 'nmol/L', gjelder: 'nordiazepam' },
       referanser: [],
     })
+  })
+})
+
+describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer', () => {
+  const TRAMADOL = { id: 'tram', slug: 'tramadol', navn: 'Tramadol' }
+  const kort = (id: string, data: Record<string, unknown>) =>
+    utgave(id, { infoside: 'tram', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
+  const tramadolside = (): Stoffsidedata => ({
+    stoff: TRAMADOL,
+    infoside: utgave('tram', { navn: 'Tramadol', slug: 'tramadol' }),
+    elementer: [
+      kort('tram-kort', { nedre: 100, ovre: 300, enhet: 'nmol/L' }),
+      kort('otram-kort', { nedre: 20, ovre: 40, enhet: 'nmol/L', gjelder: 'o-desmetyltramadol' }),
+    ],
+    referanser: [],
+  })
+  const overskrifter = () =>
+    within(
+      within(screen.getByRole('region', { name: 'Viktige data' })).getByRole('group', { name: 'Konsentrasjoner i serum' }),
+    )
+      .getAllByRole('listitem')
+      .map((li) => [li.querySelector('h3')!.textContent, li.querySelector('.datakort__verdi')!.textContent])
+  const FORVENTET = [
+    ['Referanseområde, Tramadol', '100–300 nmol/L'],
+    ['Referanseområde, O-desmetyltramadol', '20–40 nmol/L'],
+  ]
+
+  it('viser begge kortene for OUS Klinisk farmakologi, merket med navnene', async () => {
+    vis('tramadol', kilde({ data: tramadolside, regler: () => null }))
+    await finnVerdi('20–40 nmol/L')
+    expect(overskrifter()).toEqual(FORVENTET)
+  })
+
+  it('viser de samme kortene i et fagmiljø uten OUS sine analyttkoder', async () => {
+    const register = byggStoffregister([], { ...OUS_REGISTERDATA, analyttkoblinger: [] }, GRUNNSTRUKTUR)
+    vis('tramadol', kilde({ data: tramadolside, regler: () => null }), { register, analyttkatalog: TOM_KATALOG })
+    await finnVerdi('20–40 nmol/L')
+    expect(overskrifter()).toEqual(FORVENTET)
+    expect(document.body.textContent).not.toContain('OTRAM')
   })
 })
 

@@ -2,10 +2,12 @@ import { useId, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import type { Laboratorieanalytt } from '../../domain/analyttkatalog'
 import type { Sideelement } from '../../faginnhold/stoffside'
+import { datakorteiere } from '../../domain/koblinger'
 import {
   DATAKORT,
   DATAKORTGRUPPER,
   OVER,
+  datakortFor,
   datakortGjelder,
   datakortHarVerdi,
   delFormverdi,
@@ -56,47 +58,59 @@ const UTSEENDE: Record<Datakorttype, { ikon: Ikonnavn; tone?: 'referanse' | 'tok
  * ordet (det står for skjermlesere), og en verdi per legemiddelform eller
  * stoff (moderstoffet og en aktiv metabolitt), side om side, når kortet har flere.
  *
- * Er stoffet primært stoff for flere analytter — moderstoffet og en metabolitt
- * — har hver analytt sine egne kort, merket med analyttens navn: tramadolsiden
- * viser både referanseområdet for tramadol og for O-desmetyltramadol. Kortene
- * til hovedanalytten (den første i `analytter`) lagres uten `gjelder`, de
- * andre med koden (`datakortGjelder`).
+ * Kortene er felles for alle fagmiljøer. Har stoffet egne tall for en
+ * metabolitt, står de i egne kort merket med forbindelsens navn:
+ * tramadolsiden viser både referanseområdet for tramadol og for
+ * O-desmetyltramadol. Sidens egne kort lagres uten `gjelder`, de andre med
+ * nøkkelen til forbindelsen i forbindelsesregisteret (`datakortGjelder`),
+ * aldri med et laboratoriums analyttkode. Plassene står i `datakorteiere`;
+ * analyttene i arbeidskontekstens katalog gir bare plass til kort som ennå
+ * ikke finnes. Navnene står når siden viser kort for flere.
  */
 export function ViktigeData({
   definisjon,
   kontekst,
+  stoff,
+  stoffnavn,
   analytter = [],
 }: {
   definisjon: Paneldefinisjon
   kontekst: Panelkontekst
+  stoff: string
+  stoffnavn: string
   /** Analyttene stoffet er primært stoff for, hovedanalytten først (`primareAnalytter`). */
   analytter?: readonly Laboratorieanalytt[]
 }) {
   const elementer = kontekst.modell.paneler.get(definisjon.nokkel) ?? []
-  const flere = analytter.length > 1
-  const hovedkode = analytter[0]?.kode ?? null
-  const eiere = flere ? analytter : [null]
+  const eiere = datakorteiere({
+    stoff,
+    stoffnavn,
+    analytter,
+    kortnokler: elementer.filter((e) => datakortFor(e.elementtype)).map((e) => datakortGjelder(e.data)),
+  })
   const kort = DATAKORT.flatMap((def, plass) =>
-    eiere.map((eier): Kortplass => {
-      const gjelder = eier && eier.kode !== hovedkode ? eier.kode : null
-      return {
+    eiere.map(
+      ({ gjelder, navn }): Kortplass => ({
         def: def as Datakortdefinisjon,
         type: def.type,
         plass,
         gjelder,
-        etikett: eier?.navn ?? null,
-        element:
-          elementer.find((e) => {
-            if (e.elementtype !== def.type) return false
-            const kode = datakortGjelder(e.data)
-            return gjelder ? kode === gjelder : kode === null || kode === hovedkode
-          }) ?? null,
-      }
-    }),
+        etikett: navn,
+        element: elementer.find((e) => e.elementtype === def.type && datakortGjelder(e.data) === gjelder) ?? null,
+      }),
+    ),
   )
   const synlige = kort.filter(({ def, element }) => element && datakortHarVerdi(def, element.data))
   if (synlige.length === 0 && !kontekst.redigerer) return null
-  return <Flate definisjon={definisjon} kontekst={kontekst} kort={kontekst.redigerer ? kort : synlige} />
+  const viste = kontekst.redigerer ? kort : synlige
+  const flere = new Set(viste.map((k) => k.gjelder)).size > 1
+  return (
+    <Flate
+      definisjon={definisjon}
+      kontekst={kontekst}
+      kort={flere ? viste : viste.map((k) => ({ ...k, etikett: null }))}
+    />
+  )
 }
 
 interface Kortplass {
@@ -104,7 +118,7 @@ interface Kortplass {
   type: Datakorttype
   /** Plassen i `DATAKORT`, som kortet lagres med. */
   plass: number
-  /** Koden kortet gjelder når det ikke er hovedkodens, som lagres i kortet. */
+  /** Forbindelsen kortet gjelder når det ikke er sidens eget, som lagres i kortet. */
   gjelder: string | null
   /** Stoffet kortet gjelder, når siden har kort for flere. */
   etikett: string | null
