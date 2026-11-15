@@ -10,9 +10,10 @@ import { Ikon } from '../ikon/Ikon'
 import { Avatar } from './Avatar'
 import { Bildevelgerlast } from './Bildevelgerlast'
 import { Felt, Lastfelt } from './Felt'
+import { Tofaktor } from './Tofaktor'
 
 /**
- * Kontoen din: navn, profilbilde, passord og veien ut.
+ * Kontoen din: navn, profilbilde, passord, tofaktor og veien ut.
  *
  * Brukernavnet vises, men kan ikke endres — verken her eller noe annet sted.
  * Passordbyttet går på den økten som allerede er autentisert, og trenger
@@ -208,6 +209,10 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
           {bytter ? 'Bytter …' : 'Bytt passord'}
         </Button>
       </form>
+
+      <hr className="skille" />
+
+      {apen && <Tofaktor />}
 
       <hr className="skille" />
 

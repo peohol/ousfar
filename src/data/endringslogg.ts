@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.135.0',
+    dato: '2026-11-15',
+    sammendrag: 'Frivillig tofaktor med en autentiseringsapp',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'Under «Kontoen din» kan du nå legge til en autentiseringsapp på telefonen. Etter det spør innloggingen om koden appen viser, i tillegg til passordet.',
+      'Du kan ha to apper, for eksempel når du bytter telefon, og du kan selv fjerne en av dem.',
+      'Det er frivillig for alle foreløpig.',
+    ],
+  },
+  {
     versjon: '1.134.3',
     dato: '2026-11-15',
     sammendrag: 'Strengere regel for nye passord, og en påminnelse om pasientopplysninger der man skriver sammen',

@@ -540,7 +540,7 @@ describe('kontomenyen', () => {
     expect(meny.hidden).toBe(false)
     expect(screen.getByRole('group', { name: 'Konto' })).toBe(meny)
     expect(meny.getAttribute('data-lag')).toBe('kontomeny')
-    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /Endre navn og profilbilde/ }))
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: 'Kontoen din' }))
     expect(within(meny).getByText('Admin', { selector: '.kontomeny__merke' })).toBeTruthy()
 
     await userEvent.keyboard('{Escape}')
@@ -553,7 +553,7 @@ describe('kontomenyen', () => {
     const knapp = vis()
     await userEvent.click(knapp)
     const valg = within(panel(knapp)).getAllByRole('button')
-    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Grupper', 'Preferanser', 'Logg ut'])
+    expect(valg.map((v) => v.textContent)).toEqual(['Kontoen din', 'Grupper', 'Preferanser', 'Logg ut'])
     expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
 
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
@@ -651,7 +651,7 @@ describe('kontomenyen', () => {
   it('fører til profilen og utloggingen', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
-    await userEvent.click(screen.getByRole('button', { name: /Endre navn og profilbilde/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Kontoen din' }))
     expect(screen.getByText('Kontopanelet')).toBeTruthy()
     expect(panel(knapp).hidden).toBe(true)
 

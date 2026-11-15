@@ -9,6 +9,7 @@ import { Button } from '../Button'
 import { Temaknapp } from '../toppmeny/Temaknapp'
 import { Forstegangsoppsett } from './Forstegangsoppsett'
 import { Innlogging } from './Innlogging'
+import { Kodesteg } from './Kodesteg'
 import { Logomerke } from './Logomerke'
 
 /**
@@ -52,13 +53,15 @@ type Portvisning = Exclude<Tilgang, 'app' | 'venter'>
 /** Overskriften på kortet for hver av skjermene porten kan vise. */
 const TITTEL: Record<Portvisning, string> = {
   innlogging: 'Logg inn',
+  kode: 'Kode fra appen',
   oppsett: 'Velg ditt eget passord',
   feil: 'Ingen kontakt',
   avsluttet: 'Ingen tilgang',
 }
 
 /**
- * Innlogging, førstegangsoppsett, kontaktfeil og avsluttet medlemskap.
+ * Innlogging, koden fra autentiseringsappen, førstegangsoppsett,
+ * kontaktfeil og avsluttet medlemskap.
  *
  * Her står bare det som må stå utenfor innloggingsveggen. Endringsloggen er
  * ikke blant det: den hører til inne i appen, og skal ikke kunne leses av noen
@@ -73,6 +76,7 @@ function Portskall({ viser }: { viser: Portvisning }) {
     >
       {viser === 'oppsett' && <Forstegangsoppsett />}
       {viser === 'innlogging' && <Innlogging />}
+      {viser === 'kode' && <Kodesteg />}
       {viser === 'feil' && <Kontaktfeil />}
       {viser === 'avsluttet' && <AvsluttetMedlemskap />}
     </Portramme>

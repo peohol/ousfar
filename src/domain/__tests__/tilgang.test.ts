@@ -74,6 +74,17 @@ describe('tilgangFor', () => {
     expect(tilgangFor(status({ profilfeil: true }))).toBe('feil')
   })
 
+  it('spør om koden fra autentiseringsappen før noe annet, også før oppsettet, feilen og beskjeden om medlemskapet', () => {
+    expect(tilgangFor(status({ kode: true }))).toBe('kode')
+    expect(tilgangFor(status({ kode: true, profil: profil({ must_change_password: true }) }))).toBe('kode')
+    expect(tilgangFor(status({ kode: true, profilfeil: true }))).toBe('kode')
+    expect(tilgangFor(status({ kode: true, avsluttet: true }))).toBe('kode')
+    expect(tilgangFor(status({ kode: true, profil: null }))).toBe('kode')
+    // Uten økt er det innloggingen, og før økten er avklart, ingenting.
+    expect(tilgangFor(status({ kode: true, harOkt: false }))).toBe('innlogging')
+    expect(tilgangFor(status({ kode: true, klar: false }))).toBe('venter')
+  })
+
   it('krever innlogging framfor å melde feil når økten er borte', () => {
     expect(tilgangFor(status({ harOkt: false, profil: null, profilfeil: true }))).toBe(
       'innlogging',

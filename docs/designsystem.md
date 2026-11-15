@@ -241,7 +241,7 @@ Resten av grensesnitteksten:
 | Viktige data | «Konsentrasjoner i serum», «Kinetikk», «Ikke oppgitt» |
 | Fagsøket | «↑ ↓ velg · Enter åpne · Esc lukk», «Vis alle treff (N)», «Ingen treff i fagstoffet.» |
 | Søkesiden | «Søk i fagstoff», fanene «Alle», «Stoff», «Preparater», «Tekst», «Referanser», og gruppen «I teksten» |
-| Toppmenyen, høyre side | «Idéer», «Administrasjon» med «Brukere» og «Datakilder», og kontomenyen med «Endre navn og profilbilde», «Preferanser» («Vis hurtigtaster», «Tema» med Lyst, Mørkt og Følg system, «Reduser bevegelse» med Ja, Nei og Følg system, vist som «System») og «Logg ut» |
+| Toppmenyen, høyre side | «Idéer», «Administrasjon» med «Brukere» og «Datakilder», og kontomenyen med «Kontoen din» (navn, profilbilde, passord og tofaktor), «Preferanser» («Vis hurtigtaster», «Tema» med Lyst, Mørkt og Følg system, «Reduser bevegelse» med Ja, Nei og Følg system, vist som «System») og «Logg ut» |
 | Versjonspillen | klokka og versjonen, «Vis endringslogg» |
 
 Hurtigtastmerkene vises ikke i søkefeltene på smale flater: der er det
@@ -435,7 +435,7 @@ Helt til høyre står tre knapper:
   kliniske verktøyene («Kliniske verktøy», `docs/verktøy-p11-publisering.md`)
   og autoerstatt.
 - **Kontoen** (`src/components/konto/Kontomeny.tsx`), avataren: hvem som er
-  logget inn, «Endre navn og profilbilde», «Preferanser» og «Logg ut».
+  logget inn, «Kontoen din», «Preferanser» og «Logg ut».
   «Preferanser» er en skuff i menyen med bryteren for hurtigtastene
   (`Bryter`) og trinnbryterne for «Tema» og «Reduser bevegelse»
   (`Trinnbryter`), og glir opp som skuffene ellers (`useSkjuling`). Tema og

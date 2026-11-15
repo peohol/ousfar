@@ -56,6 +56,17 @@ secure_password_change = false
 [auth.sms]
 enable_signup = false
 
+# Tofaktor med autentiseringsapp (TOTP), som i produksjonen: frivillig under
+# Konto, og innloggingen spør om koden når kontoen har en app
+# (src/auth/tofaktor.ts, docs/s4-pilotplan.md §3.1). Grensen er som i
+# produksjonen; appen selv godtar to bekreftede per person (FAKTORER_MEST).
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
 [storage]
 enabled = true
 
