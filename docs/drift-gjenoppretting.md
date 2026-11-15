@@ -30,6 +30,40 @@ i repoet og aldri ukryptert.
 | Navnene på Edge-hemmelighetene | Bare navnene, aldri verdiene (bare med `--prosjekt`) |
 | `manifest.json` | Radtall og kontrollsum per tabell, filene, versjonene av Auth og Storage, referansen og tilpasningene |
 
+## Ett kopipunkt, også når appen er i bruk
+
+Kopien kan tas mens noen skriver i appen, uten at den blir en blanding av
+før og etter:
+
+- En egen tilkobling holder et øyeblikksbilde av databasen åpent
+  (`pg_export_snapshot()`) mens kopien tas. Alle dumpene leses i det
+  (`pg_dump --snapshot`, lagt til i skriptene Supabase-CLI-en lager), og det
+  samme gjør fingeravtrykket, radtallene og kontrollsummene i manifestet og
+  listen over filer. Det som skrives underveis, kommer verken med i dumpene
+  eller i manifestet.
+- Filene i Storage ligger utenfor databasen. Hver fil sammenlignes med
+  størrelsen og md5-summen øyeblikksbildet har for den. Er en fil byttet eller
+  fjernet underveis, forkastes forsøket og kopien tas på nytt i et nytt
+  øyeblikksbilde, høyst tre ganger; går det ikke, stopper kopien uten å lagre
+  noe.
+- Kopipunktet holdes i én åpen transaksjon, så `--db-url` må være en direkte
+  tilkobling eller en tilkobling i sesjonsmodus, ikke i transaksjonsmodus.
+
+`src/__tests__/sikkerhetskopi.samtidighet.test.ts` prøver kopipunktet med
+samtidig skriving på Postgres 17 ved hver CI-kjøring, og prøven under gjør
+det samme med hele verktøyet.
+
+## Strømmet, uten grense i minnet
+
+Pakkingen, krypteringen, dekrypteringen og utpakkingen går rett fra prosess
+til prosess (`tar | age` og `age -d | tar`), og dumpene skrives rett til fil.
+Ingenting av kopien går gjennom Node, så størrelsen begrenses bare av disken.
+Feiler ett av leddene, stopper kopien, og en halvferdig fil slettes.
+Med `--kontrollnokkel` pakkes den krypterte kopien ut igjen før den godtas,
+og hver fil sammenlignes med det som ble pakket.
+`src/__tests__/sikkerhetskopi-pakking.test.ts` strømmer en fil på 192 MiB
+gjennom kryptering og tilbake og krever at minnet ikke vokser med den.
+
 Det som ikke er med, og som gjenskapes på andre måter: Edge-funksjonene
 rulles ut fra `main` (`docs/edge-funksjoner.md`); hemmelighetene og
 nøklene i Vercel og GitHub settes på nytt av eieren, fordi et nytt prosjekt
@@ -65,7 +99,9 @@ prøver dette i testdatabasen ved hver CI-kjøring.
 ## Bruk
 
 Nøklene leses fra miljøet: `KOPI_SECRET_KEY` er den hemmelige nøkkelen for
-Storage i prosjektet kommandoen gjelder.
+Storage i prosjektet kommandoen gjelder. `pg_dump` må ha minst serverens
+hovedversjon (17); har maskinen en eldre, settes `KOPI_PG_BILDE` til et
+Postgres-bilde med den (for eksempel `postgres:17`), og dumpene kjøres i Docker.
 
 ```
 # 1. Referansen: et nytt, tomt Supabase-prosjekt (eller det lokale miljøet uten migrasjoner)
@@ -73,7 +109,8 @@ npm run sikkerhetskopi -- referanse --db-url <ren> --ut referanse.json
 
 # 2. Kopien
 KOPI_SECRET_KEY=… npm run sikkerhetskopi -- ta --db-url <kilde> --api-url <kilde> \
-  --referanse referanse.json --mottaker <offentlig age-nøkkel> --ut <mappe> [--prosjekt <ref>]
+  --referanse referanse.json --mottaker <offentlig age-nøkkel> --ut <mappe> [--prosjekt <ref>] \
+  [--kontrollnokkel <privat age-nøkkel>]
 
 # 3. Gjenopprettingen, alltid til et nytt, tomt prosjekt
 KOPI_SECRET_KEY=… npm run sikkerhetskopi -- gjenopprett --kopi <fil.tar.age> \
@@ -100,7 +137,9 @@ npm run sikkerhetskopi:prove
 
 Prøven bruker bare syntetiske brukere i Docker og sletter alt etterpå. Den
 lager referansen fra en ren Supabase, bygger kilden med migrasjonene, en
-syntetisk administrator og en bruker med profilbilde, tar en kryptert kopi,
+syntetisk administrator og en bruker med profilbilde, tar en kryptert kopi
+mens en egen tilkobling hele tiden skriver til to tabeller i samme transaksjon
+og profilbildet byttes i første forsøk,
 sletter databasen, gjenoppretter i en ny, ren Supabase og kontrollerer
 punktene i planens §3.2:
 
@@ -113,12 +152,18 @@ punktene i planens §3.2:
    medlemskap og kan logge inn, og at en bruker uten myndighet avvises;
 7. at profilbildereglene holder: egne bilder kan legges inn, byttes og
    fjernes, en annens kan ikke;
-8. tiden gjenopprettingen tok.
+8. tiden gjenopprettingen tok;
+
+og dessuten at skrivingen underveis ga ett sammenhengende kopipunkt (like
+mange rader i begge tabellene, uten hull, og færre enn kilden fikk), og at
+første forsøk ble forkastet fordi profilbildet ble byttet, og kopien tatt på
+nytt med det nye bildet.
 
 ### Resultater
 
 | Dato | Miljø | Resultat | Tid |
 | --- | --- | --- | --- |
+| 15.11.2026, etter kontrollen | Som over, med samtidig skriving og et byttet profilbilde | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 199 skrivinger i kopien og 346 i kilden da skrivingen stoppet (ett sammenhengende punkt), første forsøk forkastet og kopien tatt på nytt med det nye bildet, kopien pakket ut og prøvd før den ble godtatt. Punkt 6 som over | 12 s for gjenopprettingen |
 | 15.11.2026 | Det lokale testmiljøet (Supabase-CLI 2.120.0), syntetiske brukere | Alle punktene 1–8 i orden: 145 tabeller og 1 fil like kilden, 7 tilpasninger på plass og ingen ekstra, gammel innlogging virker, ny bruker får profil og medlemskap, uten myndighet avvist, profilbildereglene holder. Punkt 6 brukte databasekallene `opprett-bruker` gjør, fordi Edge-kjøretøyet i skymiljøet ikke når npm-registeret; prøven bruker selve funksjonen der den kan starte | 14 s for gjenopprettingen |
 
 Prøven med en ekte kopi av produksjonen (tiltak 4) er ikke gjort; den krever

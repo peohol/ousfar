@@ -7,18 +7,22 @@
  * 1. En ren Supabase i Docker (uten OUSFARs migrasjoner) gir referansen.
  * 2. Den samme med migrasjonene er kilden: en syntetisk administrator og en
  *    syntetisk bruker med profilbilde legges inn, og kopien tas og krypteres.
+ *    Mens kopien tas, skriver en egen tilkobling hele tiden til to tabeller i
+ *    samme transaksjon, og i første forsøk byttes profilbildet etter at
+ *    databasen er lest: forsøket skal forkastes og kopien tas på nytt.
  * 3. Databasen slettes, en ny, ren Supabase startes, og kopien gjenopprettes.
  * 4. Prøven kontrollerer punktene i §3.2: like tabeller, filer og
  *    tilpasninger; administratoren logger inn med sitt gamle passord; en ny
  *    bruker opprettes gjennom adminflyten (Edge-funksjonen `opprett-bruker`) og får profil og
- *    medlemskap; en bruker uten myndighet avvises; profilbildereglene holder.
+ *    medlemskap; en bruker uten myndighet avvises; profilbildereglene holder;
+ *    og skrivingen under kopieringen ga ett sammenhengende kopipunkt.
  *
  * Ingen produksjonsdata er med. Alt ligger i en midlertidig mappe som
  * slettes, og databasen stoppes uten å lagre noe.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { execFileSync } from 'node:child_process'
-import { randomBytes } from 'node:crypto'
+import { execFileSync, spawn } from 'node:child_process'
+import { createHash, randomBytes } from 'node:crypto'
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -136,6 +140,41 @@ async function opprettGjennomAdminflyten(s: Status, innlogget: SupabaseClient, a
 }
 
 const BILDE = Buffer.from('UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/v3AgAA=', 'base64')
+/** Det nye profilbildet i første forsøk: like stort, annet innhold, så bare innholdssummen avslører det. */
+const NYTT_BILDE = Buffer.from(BILDE.map((b, i) => (i === BILDE.length - 2 ? b ^ 0xff : b)))
+const sha = (b: Uint8Array) => createHash('sha256').update(b).digest('hex')
+
+/**
+ * Skriver hele tiden til to tabeller i én transaksjon, med et løpenummer, til
+ * `stopp()`: et sammenhengende kopipunkt har like mange rader i begge, uten
+ * hull, og færre enn kilden har når skrivingen er stoppet.
+ */
+function samtidigSkriver(dbUrl: string): { stopp(): Promise<void> } {
+  execFileSync('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', dbUrl, '-c',
+    'create table public.kopiprove_a (n int primary key); create table public.kopiprove_b (n int primary key);'])
+  const p = spawn('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', dbUrl], { stdio: ['pipe', 'ignore', 'inherit'] })
+  let n = 0
+  const tikk = setInterval(() => {
+    n++
+    p.stdin.write(`begin; insert into public.kopiprove_a values (${n}); select pg_sleep(0.01); insert into public.kopiprove_b values (${n}); commit;\n`)
+  }, 20)
+  return {
+    stopp: () =>
+      new Promise((ok, avvis) => {
+        clearInterval(tikk)
+        p.once('exit', (kode) => (kode === 0 ? ok() : avvis(new Error(`skriveren feilet (${kode})`))))
+        p.stdin.end()
+      }),
+  }
+}
+
+const tellinger = (dbUrl: string) => {
+  const ut = execFileSync('psql', ['-X', '-At', '--dbname', dbUrl, '-c',
+    `select (select count(*) from public.kopiprove_a) || ',' || (select coalesce(max(n), 0) from public.kopiprove_a) || ',' ||
+            (select count(*) from public.kopiprove_b) || ',' || (select coalesce(max(n), 0) from public.kopiprove_b)`], { encoding: 'utf8' })
+  const [a, maksA, b, maksB] = ut.trim().split(',').map(Number) as [number, number, number, number]
+  return { a, maksA, b, maksB }
+}
 
 const punkter: { punkt: string; ok: boolean; detalj?: string }[] = []
 function sjekk(punkt: string, ok: boolean, detalj?: string) {
@@ -167,7 +206,11 @@ async function prove(): Promise<void> {
   if (opplasting.error) throw opplasting.error
   const { error: sti } = await bruker.from('profiles').update({ avatar_path: `${brukerId}/avatar.webp` }).eq('id', brukerId)
   if (sti) throw sti
-  const kopi = await taKopi({
+  // pg_dump må ha minst serverens versjon; Postgres-bildet til miljøet har den.
+  process.env.KOPI_PG_BILDE ??= execFileSync('docker', ['inspect', '--format', '{{.Config.Image}}', 'supabase_db_ousfar-kopiprove'], { encoding: 'utf8' }).trim()
+  const skriver = samtidigSkriver(kilde.DB_URL)
+  await new Promise((ok) => setTimeout(ok, 1000))
+  const fraKilden = await taKopi({
     dbUrl: kilde.DB_URL,
     apiUrl: kilde.API_URL,
     nokkel: kilde.SECRET_KEY,
@@ -175,13 +218,30 @@ async function prove(): Promise<void> {
     mottakere: [mottaker],
     ut: join(MAPPE, 'kopier'),
     migrasjoner: join(REPO, 'supabase/migrations'),
+    kontrollnokkel: join(MAPPE, 'nokkel.txt'),
+    underveis: async (forsok) => {
+      if (forsok !== 1) return
+      const { error } = await klient(kilde, kilde.SECRET_KEY).storage.from('avatarer')
+        .update(`${brukerId}/avatar.webp`, NYTT_BILDE, { contentType: 'image/webp' })
+      if (error) throw error
+    },
   })
+  await skriver.stopp()
+  const iKilden = tellinger(kilde.DB_URL)
+  const kopi = fraKilden.fil
   stopp()
 
   logg('3. ny, ren Supabase: gjenopprettingen')
   const mal = await start([])
   const r = await gjenopprett({ kopi, identitet: join(MAPPE, 'nokkel.txt'), dbUrl: mal.DB_URL, apiUrl: mal.API_URL, nokkel: mal.SECRET_KEY })
   sjekk('1–3, 5: tabeller, kontrollsummer, filer, migrasjonshistorikk og tilpasninger er like kilden', r.avvik.length === 0, r.avvik.join('; ') || undefined)
+  const iKopien = tellinger(mal.DB_URL)
+  sjekk(
+    'samtidig skriving: kopien er ett sammenhengende punkt, og skrivingen fortsatte etter det',
+    iKopien.a > 0 && iKopien.a === iKopien.b && iKopien.a === iKopien.maksA && iKopien.maksA === iKopien.maksB && iKilden.maksA > iKopien.maksA,
+    `${iKopien.a} skrivinger i kopien, ${iKilden.maksA} i kilden da skrivingen stoppet`,
+  )
+  sjekk('samtidig endring av en fil: første forsøk ble forkastet og kopien tatt på nytt', fraKilden.forsok === 2, `${fraKilden.forsok} forsøk`)
 
   logg('4. kontrollene etter gjenopprettingen')
   const admin = await innlogget(mal, 'kopi-admin', adminPassord).catch((e: Error) => e)
@@ -206,7 +266,10 @@ async function prove(): Promise<void> {
   sjekk('6: en bruker uten myndighet avvises', uten.avvist && !utenProfil, [uten.vei, uten.feil].filter(Boolean).join(': '))
 
   const eget = await brukerMal.storage.from('avatarer').download(`${brukerId}/avatar.webp`)
-  sjekk('7: det gjenopprettede profilbildet kan hentes av eieren', !eget.error && (await eget.data!.arrayBuffer()).byteLength === BILDE.length)
+  sjekk(
+    '7: det gjenopprettede profilbildet kan hentes av eieren, og er det nye',
+    !eget.error && sha(new Uint8Array(await eget.data!.arrayBuffer())) === sha(NYTT_BILDE),
+  )
   if (!(nyInnlogget instanceof Error) && nyProfil) {
     const egen = await nyInnlogget.storage.from('avatarer').upload(`${nyProfil.id}/avatar.webp`, BILDE, { contentType: 'image/webp' })
     sjekk('7: den nye brukeren kan legge inn sitt eget profilbilde', !egen.error, egen.error?.message)

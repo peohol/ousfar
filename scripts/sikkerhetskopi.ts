@@ -3,7 +3,8 @@
  *
  *   npm run sikkerhetskopi -- referanse --db-url <ren Supabase> --ut referanse.json
  *   npm run sikkerhetskopi -- ta --db-url <kilde> --api-url <kilde> --referanse referanse.json \
- *       --mottaker <offentlig age-nøkkel> [--mottaker …] --ut <mappe> [--prosjekt <ref>]
+ *       --mottaker <offentlig age-nøkkel> [--mottaker …] --ut <mappe> [--prosjekt <ref>] \
+ *       [--kontrollnokkel <privat age-nøkkelfil>]
  *   npm run sikkerhetskopi -- gjenopprett --kopi <fil.tar.age> --identitet <privat age-nøkkelfil> \
  *       --db-url <nytt, tomt prosjekt> --api-url <samme>
  *
@@ -11,6 +12,11 @@
  * den hemmelige nøkkelen (service role) for Storage i prosjektet kommandoen
  * gjelder, og `SUPABASE_ACCESS_TOKEN` brukes bare med `--prosjekt`, for
  * Auth-innstillingene og navnene på hemmelighetene.
+ *
+ * `--db-url` for `ta` må være en direkte tilkobling eller en tilkobling i
+ * sesjonsmodus, fordi kopipunktet holdes i én åpen transaksjon. `pg_dump` må
+ * ha minst serverens hovedversjon; ellers settes `KOPI_PG_BILDE` til et
+ * Postgres-bilde med den, og dumpene kjøres i Docker.
  *
  * `gjenopprett` nekter produksjonen og et mål som ikke er tomt, og stopper
  * med avvikene hvis noe ikke er likt kilden etterpå.
@@ -48,7 +54,8 @@ async function main(argv: string[]): Promise<void> {
     console.log(`Referansen er skrevet til ${ut}.`)
   } else if (kommando === 'ta') {
     const [prosjekt] = valg('prosjekt', resten)
-    await taKopi({
+    const [kontrollnokkel] = valg('kontrollnokkel', resten)
+    const { fil, forsok } = await taKopi({
       dbUrl: ett('db-url', resten),
       apiUrl: ett('api-url', resten),
       nokkel: nokkel(),
@@ -58,7 +65,9 @@ async function main(argv: string[]): Promise<void> {
       migrasjoner: resolve(dirname(fileURLToPath(import.meta.url)), '../supabase/migrations'),
       prosjekt,
       token: prosjekt ? process.env.SUPABASE_ACCESS_TOKEN : undefined,
+      kontrollnokkel,
     })
+    console.log(`Kopien er tatt${forsok > 1 ? ` i forsøk ${forsok}` : ''}: ${fil}`)
   } else if (kommando === 'gjenopprett') {
     const r = await gjenopprett({
       kopi: ett('kopi', resten),

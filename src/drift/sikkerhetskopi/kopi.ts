@@ -13,14 +13,27 @@
  *   manifest.json                           radtall, kontrollsummer, filer, versjoner,
  *                                           referansen og navnene på hemmelighetene
  *
+ * **Ett kopipunkt.** Alle delene leses i det samme øyeblikksbildet av
+ * databasen: en transaksjon eksporterer et øyeblikksbilde
+ * (`pg_export_snapshot()`), hver `pg_dump` tar det i bruk (`--snapshot`), og
+ * manifestet, fingeravtrykket og listen over filer leses i det samme. Endringer
+ * som skjer mens kopien tas, kommer derfor verken med i dumpen eller i
+ * manifestet. Filene i Storage ligger utenfor databasen; de sammenlignes med
+ * størrelsen og md5-summen øyeblikksbildet har for dem, og er en fil endret
+ * eller borte, forkastes forsøket og tas på nytt (høyst tre ganger).
+ *
+ * **Strømmet.** Pakking, kryptering, dekryptering og utpakking går rett fra
+ * prosess til prosess (`tar | age`), uten at kopien er i minnet, så størrelsen
+ * begrenses bare av disken.
+ *
  * Kopien inneholder passordhasher og tofaktornøkler. Den ukrypterte mappen
  * ligger bare i en midlertidig mappe med tilgang for eieren, og slettes når
  * den er kryptert eller gjenopprettet.
  */
 import { createClient } from '@supabase/supabase-js'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawn, type ChildProcess } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, closeSync, createReadStream, existsSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import {
@@ -48,6 +61,9 @@ const logg = (tekst: string) => console.log(`[sikkerhetskopi] ${tekst}`)
 
 export class Stopp extends Error {}
 
+/** Kilden ble endret mens kopien ble tatt, på en måte øyeblikksbildet ikke dekker: forsøket tas på nytt. */
+export class Endret extends Error {}
+
 // --- Postgres gjennom psql ----------------------------------------------------
 
 function psql(dbUrl: string, argumenter: string[]): string {
@@ -58,26 +74,65 @@ function psql(dbUrl: string, argumenter: string[]): string {
   })
 }
 
-/** Radene fra en spørring som JSON. */
-export function sporring<T = Record<string, unknown>>(dbUrl: string, sql: string): T[] {
-  const ut = psql(dbUrl, ['-At', '-c', `select coalesce(json_agg(x), '[]'::json) from (${sql}) x`])
+/**
+ * Radene fra en spørring som JSON. Med `bilde` leses de i det eksporterte
+ * øyeblikksbildet, slik dumpene leser dataene.
+ */
+export function sporring<T = Record<string, unknown>>(dbUrl: string, sql: string, bilde?: string): T[] {
+  const i = bilde ? `begin isolation level repeatable read read only; set transaction snapshot '${bilde.replaceAll("'", '')}'; ` : ''
+  const ut = psql(dbUrl, ['-At', '-c', `${i}select coalesce(json_agg(x), '[]'::json) from (${sql}) x`])
   return JSON.parse(ut.trim() || '[]') as T[]
 }
 
-export function fingeravtrykk(dbUrl: string): Fingeravtrykk {
+export function fingeravtrykk(dbUrl: string, bilde?: string): Fingeravtrykk {
   const versjoner: Fingeravtrykk['versjoner'] = {}
   for (const [skjema, tabell] of Object.entries(VERSJONSTABELLER) as [keyof typeof VERSJONSTABELLER, string][]) {
-    const [{ finnes }] = sporring<{ finnes: boolean }>(dbUrl, finnesSql(tabell)) as [{ finnes: boolean }]
-    versjoner[skjema] = finnes ? (sporring<{ versjon: string | null }>(dbUrl, versjonSql(skjema))[0]?.versjon ?? null) : null
+    const [{ finnes }] = sporring<{ finnes: boolean }>(dbUrl, finnesSql(tabell), bilde) as [{ finnes: boolean }]
+    versjoner[skjema] = finnes ? (sporring<{ versjon: string | null }>(dbUrl, versjonSql(skjema), bilde)[0]?.versjon ?? null) : null
   }
-  return { versjoner, objekter: somObjekter(sporring(dbUrl, FINGERAVTRYKK_SQL)) }
+  return { versjoner, objekter: somObjekter(sporring(dbUrl, FINGERAVTRYKK_SQL, bilde)) }
 }
 
-export function tabellsummer(dbUrl: string): Tabellsum[] {
-  const tabeller = sporring<{ tabell: string }>(dbUrl, TABELLER_SQL).map((r) => r.tabell)
+export function tabellsummer(dbUrl: string, bilde?: string): Tabellsum[] {
+  const tabeller = sporring<{ tabell: string }>(dbUrl, TABELLER_SQL, bilde).map((r) => r.tabell)
   return tabeller.map((t) => {
-    const [rad] = sporring<Tabellsum>(dbUrl, tabellsumSql(t))
+    const [rad] = sporring<Tabellsum>(dbUrl, tabellsumSql(t), bilde)
     return { tabell: t, rader: Number(rad!.rader), sum: rad!.sum }
+  })
+}
+
+/**
+ * Et eksportert øyeblikksbilde, holdt åpent av en egen tilkobling til
+ * `slipp()` kalles. Alt som leses med navnet, ser databasen slik den var da.
+ */
+export interface Oyeblikksbilde {
+  navn: string
+  slipp(): Promise<void>
+}
+
+export function holdOyeblikksbilde(dbUrl: string): Promise<Oyeblikksbilde> {
+  const p = spawn('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '--dbname', dbUrl], { stdio: ['pipe', 'pipe', 'pipe'] })
+  let feil = ''
+  p.stderr.on('data', (d: Buffer) => (feil += d.toString()))
+  return new Promise((ok, avvis) => {
+    let ut = ''
+    const lytt = (d: Buffer) => {
+      ut += d.toString()
+      const navn = ut.split('\n').map((l) => l.trim()).find((l) => /^[0-9A-F]+-[0-9A-F]+-\d+$/i.test(l))
+      if (!navn) return
+      p.stdout.off('data', lytt)
+      ok({
+        navn,
+        slipp: () =>
+          new Promise<void>((ferdig) => {
+            p.once('exit', () => ferdig())
+            p.stdin.end('commit;\n')
+          }),
+      })
+    }
+    p.stdout.on('data', lytt)
+    p.once('exit', (kode) => avvis(new Stopp(`Øyeblikksbildet kunne ikke holdes (${kode}): ${feil.trim()}`)))
+    p.stdin.write('begin isolation level repeatable read read only;\nselect pg_export_snapshot();\n')
   })
 }
 
@@ -105,11 +160,111 @@ export function utenSkrivetilgang(dbUrl: string): string[] {
   ).map((r) => r.tabell)
 }
 
-function dump(dbUrl: string, fil: string, ...valg: string[]): void {
-  execFileSync('npx', [...SUPABASE_CLI, 'db', 'dump', '--db-url', dbUrl, '-f', fil, ...valg], {
-    stdio: ['ignore', 'ignore', 'pipe'],
-    maxBuffer: 64 * 1024 * 1024,
+/**
+ * Skriptet Supabase-CLI-en ville kjørt for `db dump` med valgene (`--dry-run`),
+ * med `--snapshot` lagt til hver `pg_dump`, så CLI-en fortsatt avgjør hva som
+ * tas med og hvordan det skrives, men alt leses i det samme øyeblikksbildet.
+ */
+export function dumpskript(dbUrl: string, bilde: string, valg: readonly string[]): string {
+  const skript = execFileSync('npx', [...SUPABASE_CLI, 'db', 'dump', '--db-url', dbUrl, '--dry-run', ...valg], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
   })
+  return medOyeblikksbilde(skript, bilde)
+}
+
+/** `--snapshot` på hver `pg_dump` i et dumpskript; stopper hvis skriptet ikke har noen. */
+export function medOyeblikksbilde(skript: string, bilde: string): string {
+  if (!/^[0-9A-F]+-[0-9A-F]+-\d+$/i.test(bilde)) throw new Stopp(`Ugyldig øyeblikksbilde: ${bilde}`)
+  let antall = 0
+  const ut = skript.replace(/^pg_dump \\$/gm, () => {
+    antall++
+    return `pg_dump --snapshot "${bilde}" \\`
+  })
+  if (!antall) throw new Stopp('Fant ingen pg_dump i skriptet fra Supabase-CLI-en; den kan ha endret seg.')
+  return ut
+}
+
+/**
+ * Kjører et dumpskript og strømmer det til fila. `pg_dump` må ha minst
+ * serverens hovedversjon; har maskinen ingen slik, kjøres skriptet i
+ * Postgres-bildet i `KOPI_PG_BILDE` (Docker, vertsnettet).
+ */
+export async function kjorDumpskript(skript: string, fil: string): Promise<void> {
+  const bilde = process.env.KOPI_PG_BILDE
+  const ut = openSync(fil, 'w', 0o600)
+  try {
+    const prosess = bilde
+      ? spawn('docker', ['run', '--rm', '-i', '--network', 'host', '--entrypoint', 'bash', bilde, '-s'], { stdio: ['pipe', ut, 'pipe'] })
+      : spawn('bash', ['-s'], { stdio: ['pipe', ut, 'pipe'] })
+    prosess.stdin!.end(skript)
+    await ferdig(prosess, 'pg_dump')
+  } finally {
+    closeSync(ut)
+  }
+}
+
+/** Venter til prosessen er ferdig, og stopper med feilmeldingen dens hvis den ikke lyktes. */
+function ferdig(p: ChildProcess, navn: string): Promise<void> {
+  let feil = ''
+  p.stderr?.on('data', (d: Buffer) => (feil = (feil + d.toString()).slice(-4000)))
+  return new Promise((ok, avvis) => {
+    p.once('error', (e) => avvis(new Stopp(`${navn}: ${e.message}`)))
+    p.once('close', (kode) => (kode === 0 ? ok() : avvis(new Stopp(`${navn} feilet (${kode}): ${feil.trim()}`))))
+  })
+}
+
+// --- Pakking og kryptering, strømmet ------------------------------------------
+
+/**
+ * Pakker mappen med `tar` og sender strømmen rett videre til `krypter`
+ * (som `age -r <nøkkel>`), som skriver til fila. Ingenting av kopien går
+ * gjennom Node.
+ */
+export async function pakk(mappe: string, fil: string, krypter: readonly string[]): Promise<void> {
+  const ut = openSync(fil, 'w', 0o600)
+  try {
+    await ror(['tar', '-C', mappe, '-cf', '-', '.'], krypter, ['ignore', ut])
+  } finally {
+    closeSync(ut)
+  }
+}
+
+/** Det motsatte av {@link pakk}: `dekrypter` (som `age -d -i <fil>`) leser fila, og `tar` pakker ut i mappen. */
+export async function pakkUt(fil: string, mappe: string, dekrypter: readonly string[]): Promise<void> {
+  if (!existsSync(fil)) throw new Stopp(`Kopien ${fil} finnes ikke.`)
+  await ror([...dekrypter, fil], ['tar', '-C', mappe, '-xf', '-'], ['ignore', 'ignore'])
+}
+
+/**
+ * `forste | andre` som en rørledning i operativsystemet: den andre arver den
+ * første sin utgang direkte, og Node slipper sin ende av røret, så ingenting
+ * av strømmen går gjennom Node. Stopper hvis en av dem feiler.
+ */
+async function ror(forste: readonly string[], andre: readonly string[], [inn, ut]: ['ignore', 'ignore' | number]): Promise<void> {
+  const a = spawn(forste[0]!, forste.slice(1), { stdio: [inn, 'pipe', 'pipe'] })
+  const b = spawn(andre[0]!, andre.slice(1), { stdio: [a.stdout!, ut, 'pipe'] })
+  a.stdout!.destroy()
+  await Promise.all([ferdig(a, forste[0]!), ferdig(b, andre[0]!)])
+}
+
+/** sha256 av en fil, lest i biter. */
+export function filsum(fil: string): Promise<string> {
+  return new Promise((ok, avvis) => {
+    const h = createHash('sha256')
+    createReadStream(fil).on('data', (d) => h.update(d)).on('end', () => ok(h.digest('hex'))).on('error', avvis)
+  })
+}
+
+/** sha256 av hver fil under mappen, med stien relativ til den. */
+async function innholdssummer(mappe: string, under = ''): Promise<Record<string, string>> {
+  const ut: Record<string, string> = {}
+  for (const navn of readdirSync(join(mappe, under)).sort()) {
+    const rel = under ? `${under}/${navn}` : navn
+    if (statSync(join(mappe, rel)).isDirectory()) Object.assign(ut, await innholdssummer(mappe, rel))
+    else ut[rel] = await filsum(join(mappe, rel))
+  }
+  return ut
 }
 
 // --- Storage ------------------------------------------------------------------
@@ -123,18 +278,38 @@ interface Lagret {
   bucket: string
   navn: string
   type: string | null
+  storrelse: string | null
+  etag: string | null
 }
 
-const lagredeObjekter = (dbUrl: string) =>
-  sporring<Lagret>(dbUrl, `select bucket_id as bucket, name as navn, metadata->>'mimetype' as type from storage.objects order by 1, 2`)
+const lagredeObjekter = (dbUrl: string, bilde?: string) =>
+  sporring<Lagret>(
+    dbUrl,
+    `select bucket_id as bucket, name as navn, metadata->>'mimetype' as type,
+       metadata->>'size' as storrelse, metadata->>'eTag' as etag
+     from storage.objects order by 1, 2`,
+    bilde,
+  )
 
-async function hentFiler(dbUrl: string, apiUrl: string, nokkel: string, mappe: string): Promise<Fil[]> {
+/**
+ * Om innholdet er det øyeblikksbildet beskriver: samme størrelse, og samme
+ * md5 der Storage har lagret den som eTag (vanlige opplastinger).
+ */
+export function sammeSomIBildet(o: Pick<Lagret, 'storrelse' | 'etag'>, innhold: Uint8Array): boolean {
+  if (o.storrelse !== null && Number(o.storrelse) !== innhold.length) return false
+  const md5 = /^"?([0-9a-f]{32})"?$/i.exec(o.etag ?? '')?.[1]
+  return !md5 || createHash('md5').update(innhold).digest('hex') === md5.toLowerCase()
+}
+
+/** Filene øyeblikksbildet har, hentet fra Storage; er en endret eller borte, er kilden {@link Endret}. */
+async function hentFiler(dbUrl: string, bilde: string, apiUrl: string, nokkel: string, mappe: string): Promise<Fil[]> {
   const lager = lagringsklient(apiUrl, nokkel)
   const filer: Fil[] = []
-  for (const o of lagredeObjekter(dbUrl)) {
+  for (const o of lagredeObjekter(dbUrl, bilde)) {
     const { data, error } = await lager.from(o.bucket).download(o.navn)
-    if (error) throw new Stopp(`Kunne ikke hente ${o.bucket}/${o.navn}: ${error.message}`)
+    if (error) throw new Endret(`${o.bucket}/${o.navn} kunne ikke hentes (${error.message}); den kan være fjernet underveis`)
     const innhold = new Uint8Array(await data.arrayBuffer())
+    if (!sammeSomIBildet(o, innhold)) throw new Endret(`${o.bucket}/${o.navn} er endret siden øyeblikksbildet`)
     const sti = join(mappe, 'filer', o.bucket, o.navn)
     mkdirSync(dirname(sti), { recursive: true })
     writeFileSync(sti, innhold)
@@ -205,34 +380,71 @@ export interface TaValg {
   /** Prosjekt og token for Auth-innstillingene og navnene på hemmelighetene. */
   prosjekt?: string
   token?: string
+  /**
+   * En privat `age`-nøkkel kopien prøves med etter krypteringen: den pakkes ut
+   * igjen og hver fil sammenlignes med det som ble pakket. Uten den kontrolleres
+   * bare at pakkingen og krypteringen lyktes.
+   */
+  kontrollnokkel?: string
+  /** Kalles i hvert forsøk etter dumpene og før filene hentes. Bare for prøvene. */
+  underveis?: (forsok: number) => Promise<void>
+  /** Høyst så mange forsøk når kilden endres underveis. Standard 3. */
+  forsok?: number
 }
 
-export async function taKopi(valg: TaValg): Promise<string> {
-  if (!valg.mottakere.length) throw new Stopp('Kopien må krypteres: oppgi minst én mottaker (offentlig age-nøkkel).')
-  const kilde = fingeravtrykk(valg.dbUrl)
-  const f = forskjell(kilde, valg.referanse)
-  const feil = avvik(f)
-  if (feil.length) throw new Stopp(`Tilpasningene kan ikke skilles ut mot referansen:\n- ${feil.join('\n- ')}`)
-  const fraMigrasjoner = objekterFraMigrasjoner(
-    readdirSync(valg.migrasjoner).filter((n) => n.endsWith('.sql')).sort().map((n) => readFileSync(join(valg.migrasjoner, n), 'utf8')),
-  )
-  const mangler = manglendeDekning(f.tilpasninger, fraMigrasjoner)
-  if (mangler.length) throw new Stopp(`Objekter fra migrasjonene finnes ikke blant tilpasningene: ${mangler.join(', ')}`)
+export interface Kopi {
+  fil: string
+  forsok: number
+}
 
+export async function taKopi(valg: TaValg): Promise<Kopi> {
+  if (!valg.mottakere.length) throw new Stopp('Kopien må krypteres: oppgi minst én mottaker (offentlig age-nøkkel).')
+  const maks = valg.forsok ?? 3
+  for (let forsok = 1; ; forsok++) {
+    try {
+      return { fil: await taEttForsok(valg, forsok), forsok }
+    } catch (e) {
+      if (!(e instanceof Endret) || forsok >= maks) {
+        if (e instanceof Endret) throw new Stopp(`Kilden ble endret under alle ${maks} forsøkene: ${e.message}. Ingen kopi er lagret.`)
+        throw e
+      }
+      logg(`forsøk ${forsok} forkastet: ${e.message}; prøver på nytt`)
+    }
+  }
+}
+
+async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-kopi-'))
   chmodSync(mappe, 0o700)
+  const bilde = await holdOyeblikksbilde(valg.dbUrl)
+  let fil: string | undefined
   try {
-    logg('tar roller, struktur og data')
-    dump(valg.dbUrl, join(mappe, 'roller.sql'), '--role-only')
-    dump(valg.dbUrl, join(mappe, 'struktur.sql'))
-    dump(valg.dbUrl, join(mappe, 'data.sql'), '--data-only', '--use-copy', ...utenSkrivetilgang(valg.dbUrl).flatMap((t) => ['-x', t]))
-    dump(valg.dbUrl, join(mappe, 'historikk_struktur.sql'), '--schema', 'supabase_migrations')
-    dump(valg.dbUrl, join(mappe, 'historikk_data.sql'), '--data-only', '--use-copy', '--schema', 'supabase_migrations')
-    writeFileSync(join(mappe, 'tilpasninger.sql'), tilpasningsskript(f.tilpasninger))
-    logg(`${f.tilpasninger.length} tilpasninger i auth og storage`)
+    // Tilpasningene, dekningen og alt som skrives, leses i det samme øyeblikksbildet.
+    const kilde = fingeravtrykk(valg.dbUrl, bilde.navn)
+    const f = forskjell(kilde, valg.referanse)
+    const feil = avvik(f)
+    if (feil.length) throw new Stopp(`Tilpasningene kan ikke skilles ut mot referansen:\n- ${feil.join('\n- ')}`)
+    const fraMigrasjoner = objekterFraMigrasjoner(
+      readdirSync(valg.migrasjoner).filter((n) => n.endsWith('.sql')).sort().map((n) => readFileSync(join(valg.migrasjoner, n), 'utf8')),
+    )
+    const mangler = manglendeDekning(f.tilpasninger, fraMigrasjoner)
+    if (mangler.length) throw new Stopp(`Objekter fra migrasjonene finnes ikke blant tilpasningene: ${mangler.join(', ')}`)
 
+    logg(`forsøk ${forsok}: tar struktur, data og historikk i øyeblikksbildet ${bilde.navn}`)
+    const dump = (navn: string, ...v: string[]) => kjorDumpskript(dumpskript(valg.dbUrl, bilde.navn, v), join(mappe, navn))
+    // Rollefila tas med som dokumentasjon; den kjøres ikke ved gjenoppretting (se gjenopprett()).
+    execFileSync('npx', [...SUPABASE_CLI, 'db', 'dump', '--db-url', valg.dbUrl, '--role-only', '-f', join(mappe, 'roller.sql')], { stdio: 'ignore' })
+    await dump('struktur.sql')
+    await dump('data.sql', '--data-only', '--use-copy', ...utenSkrivetilgang(valg.dbUrl).flatMap((t) => ['-x', t]))
+    await dump('historikk_struktur.sql', '--schema', 'supabase_migrations')
+    await dump('historikk_data.sql', '--data-only', '--use-copy', '--schema', 'supabase_migrations')
+    writeFileSync(join(mappe, 'tilpasninger.sql'), tilpasningsskript(f.tilpasninger))
+    logg(`${f.tilpasninger.length} tilpasninger i auth, storage og på rollene`)
+    const tabeller = tabellsummer(valg.dbUrl, bilde.navn)
+
+    await valg.underveis?.(forsok)
     logg('henter filene i Storage')
-    const filer = await hentFiler(valg.dbUrl, valg.apiUrl, valg.nokkel, mappe)
+    const filer = await hentFiler(valg.dbUrl, bilde.navn, valg.apiUrl, valg.nokkel, mappe)
 
     let hemmeligheter: string[] = []
     if (valg.prosjekt && valg.token) {
@@ -244,24 +456,47 @@ export async function taKopi(valg: TaValg): Promise<string> {
       hemmeligheter = ((await managementApi(valg.prosjekt, '/secrets', valg.token)) as { name: string }[]).map((s) => s.name).sort()
     }
 
-    const manifest: Manifest & { referanse: Fingeravtrykk; tilpasninger: Objekt[] } = {
+    const manifest: Manifest & { referanse: Fingeravtrykk; tilpasninger: Objekt[]; oyeblikksbilde: string; forsok: number } = {
       laget: new Date().toISOString(),
       kilde: new URL(valg.apiUrl).host,
       versjoner: kilde.versjoner as Record<string, string | null>,
-      tabeller: tabellsummer(valg.dbUrl),
+      tabeller,
       filer,
       hemmeligheter,
       referanse: valg.referanse,
       tilpasninger: f.tilpasninger,
+      oyeblikksbilde: bilde.navn,
+      forsok,
     }
     writeFileSync(join(mappe, 'manifest.json'), JSON.stringify(manifest, null, 2))
+    const pakket = await innholdssummer(mappe)
 
     mkdirSync(valg.ut, { recursive: true })
-    const fil = resolve(valg.ut, `ousfar-kopi-${manifest.laget.replaceAll(/[:.]/g, '-')}.tar.age`)
-    const tar = execFileSync('tar', ['-C', mappe, '-cf', '-', '.'], { maxBuffer: 2 * 1024 ** 3 })
-    execFileSync('age', [...valg.mottakere.flatMap((m) => ['-r', m]), '-o', fil], { input: tar })
-    logg(`kopien er kryptert: ${fil} (${manifest.tabeller.length} tabeller, ${filer.length} filer)`)
+    fil = resolve(valg.ut, `ousfar-kopi-${manifest.laget.replaceAll(/[:.]/g, '-')}.tar.age`)
+    await pakk(mappe, fil, ['age', ...valg.mottakere.flatMap((m) => ['-r', m])])
+    if (!statSync(fil).size) throw new Stopp('Den krypterte kopien er tom.')
+    if (valg.kontrollnokkel) await provArkivet(fil, valg.kontrollnokkel, pakket)
+    logg(`kopien er kryptert${valg.kontrollnokkel ? ' og prøvd' : ''}: ${fil} (${tabeller.length} tabeller, ${filer.length} filer)`)
     return fil
+  } catch (e) {
+    // En kopi som ikke ble ferdig, blir ikke liggende.
+    if (fil) rmSync(fil, { force: true })
+    throw e
+  } finally {
+    await bilde.slipp()
+    rmSync(mappe, { recursive: true, force: true })
+  }
+}
+
+/** Pakker ut den krypterte kopien og krever at hver fil er lik den som ble pakket. */
+async function provArkivet(fil: string, identitet: string, pakket: Record<string, string>): Promise<void> {
+  const mappe = mkdtempSync(join(tmpdir(), 'ousfar-kopiprove-'))
+  chmodSync(mappe, 0o700)
+  try {
+    await pakkUt(fil, mappe, ['age', '-d', '-i', identitet])
+    const utpakket = await innholdssummer(mappe)
+    const ulike = [...new Set([...Object.keys(pakket), ...Object.keys(utpakket)])].filter((n) => pakket[n] !== utpakket[n])
+    if (ulike.length) throw new Stopp(`Den krypterte kopien er ikke lik det som ble pakket: ${ulike.slice(0, 5).join(', ')}`)
   } finally {
     rmSync(mappe, { recursive: true, force: true })
   }
@@ -312,8 +547,7 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-gjenoppretting-'))
   chmodSync(mappe, 0o700)
   try {
-    const tar = execFileSync('age', ['-d', '-i', valg.identitet, valg.kopi], { maxBuffer: 2 * 1024 ** 3 })
-    execFileSync('tar', ['-C', mappe, '-xf', '-'], { input: tar })
+    await pakkUt(valg.kopi, mappe, ['age', '-d', '-i', valg.identitet])
     const manifest = JSON.parse(readFileSync(join(mappe, 'manifest.json'), 'utf8')) as Manifest & {
       referanse: Fingeravtrykk
       tilpasninger: Objekt[]
