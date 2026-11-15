@@ -114,6 +114,11 @@ export function Nedtrekksmeny({ knapp: knappProps, etikett, lag, className, onAp
 export interface MenyvalgProps {
   ikon: Ikonnavn
   tekst: string
+  /**
+   * En setning under teksten om hva valget gjør, der navnet alene ikke sier
+   * det. Den er beskrivelsen av knappen, ikke en del av navnet.
+   */
+  forklaring?: string
   /** En kort merknad til høyre, som «Admin». */
   hint?: string
   /** Noe nytt venter bak valget, og det får en prikk med denne teksten. */
@@ -126,9 +131,10 @@ export interface MenyvalgProps {
   aktiv?: boolean
 }
 
-/** Ett valg i en nedtrekksmeny: ikon, tekst og eventuelt et hint eller en pil. */
-export function Menyvalg({ ikon, tekst, hint, nytt, onClick, utvidet, kontrollerer, aktiv }: MenyvalgProps) {
+/** Ett valg i en nedtrekksmeny: ikon, tekst og eventuelt en forklaring, et hint eller en pil. */
+export function Menyvalg({ ikon, tekst, forklaring, hint, nytt, onClick, utvidet, kontrollerer, aktiv }: MenyvalgProps) {
   const skuff = utvidet !== undefined
+  const forklaringId = useId()
   return (
     <button
       type="button"
@@ -137,9 +143,20 @@ export function Menyvalg({ ikon, tekst, hint, nytt, onClick, utvidet, kontroller
       onClick={onClick}
       {...(aktiv && { 'aria-current': 'true' })}
       {...(skuff && { 'aria-expanded': utvidet, 'aria-controls': kontrollerer })}
+      // Navnet er teksten; forklaringen leses som beskrivelsen etter den.
+      {...(forklaring && { 'aria-label': tekst, 'aria-describedby': forklaringId })}
     >
       <Ikon navn={ikon} storrelse="ui" />
-      <span className="nedtrekk__tekst">{tekst}</span>
+      {forklaring ? (
+        <span className="nedtrekk__tekst nedtrekk__tekst--forklart">
+          <span>{tekst}</span>
+          <span id={forklaringId} className="nedtrekk__forklaring">
+            {forklaring}
+          </span>
+        </span>
+      ) : (
+        <span className="nedtrekk__tekst">{tekst}</span>
+      )}
       {nytt && <span className="nyprikk" role="img" aria-label={nytt} />}
       {hint && <span className="nedtrekk__hint">{hint}</span>}
       {skuff && (
