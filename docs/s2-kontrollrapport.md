@@ -29,8 +29,9 @@ han har godkjent den (§10).
   opplysninger i felles fagsidekort (til OUSFAR Fag,
   [#393](https://github.com/peohol/ousfar/issues/393)), om verktøymenyen skal
   vises for andre fagmiljøer (til OUSFAR Verktøy,
-  [#394](https://github.com/peohol/ousfar/issues/394)), tre mindre
-  Dev-forhold ([#395](https://github.com/peohol/ousfar/issues/395)) og de gamle
+  [#394](https://github.com/peohol/ousfar/issues/394)), fire Dev-forhold
+  ([#395](https://github.com/peohol/ousfar/issues/395)), der ett må løses før
+  vanlige brukere kan arbeide i det nye fagmiljøet, og de gamle
   globale nøklene ([#389](https://github.com/peohol/ousfar/pull/389)), som
   venter på Peders ja.
 - **Et nytt vern:** databasen nekter nå selv å åpne et fagmiljø for medlemmer
@@ -144,7 +145,13 @@ og at medlemmene får det.
 En bruker med medlemskap i to fagmiljøer fortolker alltid med det primære;
 bytte av fagmiljø i appen finnes ikke ennå, og på samme fortolkningsside ser
 brukeren trådene fra begge (docs/fagmiljoer.md, «Fortolkningen per
-fagmiljø»). Det gir ingen tilgang utover medlemskapene.
+fagmiljø»). Det gir ingen tilgang utover medlemskapene, men det betyr at en
+bruker som alt er med i A og får medlemskap i B, fortsatt arbeider i A: et nytt
+medlemskap blir bare primært når brukeren ikke har et annet aktivt primært
+(`intern.gi_medlemskap`), og alle vanlige kontoer har A som primært. Bare en
+systemarkitekt kan i dag flytte arbeidskonteksten, ved å avslutte medlemskapet
+i A; en lokal administrator i B kan det ikke. Se §9 og
+[#395](https://github.com/peohol/ousfar/issues/395) punkt 4.
 
 ## 5. Ingen lokale OUS-regler brukes av andre fagmiljøer
 
@@ -305,12 +312,16 @@ produksjonen. Endringer i selve opptaksreglene (`intern.kontroller_opptak`,
 | Kategorier i diskusjonene per fagmiljø ([#395](https://github.com/peohol/ousfar/issues/395) punkt 1) | Dev | Bør | B kan ikke bruke et kategorinavn A har på samme fortolkningsside, og feilen røper det |
 | Opprette kontoer direkte i et annet fagmiljø (#395 punkt 2) | Dev | Bør | I dag går en ny konto via OUS Klinisk farmakologi; trygt bare når en systemarkitekt gjør alle stegene før passordet gis ut |
 | Datakort knyttet til OUS-kode (#395 punkt 3) | Dev | Bør | Ett kort (tramadol) |
+| Velge arbeidsfagmiljø for den som er med i flere (#395 punkt 4) | Dev, med Peders valg av hvem som kan bytte | **Må** før vanlige brukere skal arbeide i B | Et medlemskap i B blir ikke primært når brukeren alt er primær i A, så fortolkningen bruker fortsatt As regler; i dag kan bare en systemarkitekt flytte det ved å avslutte medlemskapet i A (§4.3) |
 | P6, grupper (#392) | Dev | Nei | Ikke et krav for S2; testes for seg |
 | S4: tofaktorinnlogging, sikkerhetskopi, uavhengig sikkerhetsvurdering | Peder (D5, D7, B9) | Må før eksternt laboratorium | Ikke før S2 |
 
 Det nye fagmiljøet har ingen fortolkningsregler og ingen analyttkatalog. Etter
 åpningen får medlemmene der fagsidene, søket i fagstoffet, diskusjonene og
-idéene, og en tydelig stopp i fortolkningen til egne regler er lagt inn.
+idéene. Den som har B som primært fagmiljø, får en tydelig stopp i
+fortolkningen til egne regler er lagt inn; den som også er med i A og har A som
+primært, fortolker fortsatt med As regler (§4.3) til punktet om
+arbeidsfagmiljø over er løst.
 
 ## 10. Åpningen (egen PR)
 
