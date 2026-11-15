@@ -42,7 +42,7 @@ medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
 | Nøkkel | Navn | Standard | Åpent for medlemmer |
 | --- | --- | --- | --- |
 | `ous-klinisk-farmakologi` | OUS Klinisk farmakologi | Ja | Ja |
-| `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Nei, til startporten S2 |
+| `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Ja, fra startporten S2 (`20261115010000_s2_apne_rettstoksikologi.sql`, etter Peders godkjenning) |
 
 Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 (beslutning D1). OUS Rettstoksikologi har ingen fortolkningsregler.
@@ -50,9 +50,9 @@ Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 - **Standard** er fagmiljøet en ny konto får som primærmedlemskap. Nøyaktig
   ett fagmiljø er standard, og det må være aktivt og åpent.
 - **Åpent for medlemmer** (`apent_for_medlemmer`) avgjør om andre enn
-  systemarkitektene kan få et gjeldende medlemskap. Bare standarden er åpen
-  inntil startporten S2 er passert (§6.3 i P0-rapporten); da åpnes et
-  fagmiljø i en egen, godkjent migrasjon. Kontrollen før S2 står i
+  systemarkitektene kan få et gjeldende medlemskap. Bare standarden var åpen
+  inntil startporten S2 var passert (§6.3 i P0-rapporten); et fagmiljø åpnes
+  bare i en egen, godkjent migrasjon, slik OUS Rettstoksikologi ble åpnet. Kontrollen før S2 står i
   `docs/s2-kontrollrapport.md`, med den samlede tilgangsmatrisen A↔B
   (`src/__tests__/s2tilgang.test.ts`). Databasen nekter å åpne et fagmiljø uten
   at innstillingen `ousfar.startport` i samme transaksjon navngir det

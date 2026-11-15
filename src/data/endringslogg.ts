@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.133.0',
+    dato: '2026-11-15',
+    sammendrag: 'OUS Rettstoksikologi er åpnet for medlemmer',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    punkter: [
+      'Administratorene i OUS Rettstoksikologi kan nå gi brukere medlemskap der. Den som har OUS Rettstoksikologi som sitt fagmiljø, får en tydelig melding om at fortolkningen ikke er satt opp der ennå, i stedet for analyttene og reglene til OUS Klinisk farmakologi.',
+      'Den som også er med i OUS Klinisk farmakologi, velger selv under «Fagmiljø» i kontomenyen hvilket av dem fortolkningen skal bruke.',
+      'For OUS Klinisk farmakologi er alt som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.132.1',
     dato: '2026-11-15',
     sammendrag: 'Kontrollen før nye fagmiljøer kan åpnes, uten endring i appen',
