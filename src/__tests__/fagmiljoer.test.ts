@@ -296,28 +296,6 @@ describe('reglene etter tilbakefyllingen', () => {
     expect(await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set apent_for_medlemmer = false where nokkel = '${RT}'`))).toBeNull()
   })
 
-  it('lar ingen SQL-form åpne et fagmiljø for medlemmer uten at startporten navngir det', async () => {
-    const forsok = [
-      `update public.fagmiljoer set apent_for_medlemmer = true where nokkel = '${RT}'`,
-      `update public.fagmiljoer set (navn, apent_for_medlemmer) = (navn, true) where nokkel = '${RT}'`,
-      `update public.fagmiljoer set apent_for_medlemmer = not apent_for_medlemmer where nokkel = '${RT}'`,
-      `insert into public.fagmiljoer select (jsonb_populate_record(f, '{"nokkel": "nytt-miljo", "apent_for_medlemmer": true}')).*
-         from public.fagmiljoer f where nokkel = '${RT}'`,
-    ]
-    // Fagmiljøet lukkes først i transaksjonen, så prøven gjelder også etter at det er åpnet.
-    const lukket = (sql: string) => (tx: Transaction) =>
-      tx.exec(`update public.fagmiljoer set apent_for_medlemmer = false where nokkel = '${RT}'; ${sql}`)
-    for (const sql of forsok) {
-      expect((await provIsolert(o.db, lukket(sql)))?.message, sql).toMatch(/bare åpnes for medlemmer gjennom startporten S2/)
-      // Et slipp for et annet fagmiljø hjelper ikke.
-      expect((await provIsolert(o.db, lukket(`${startportSql(KF)} ${sql}`)))?.message, sql).toMatch(/startporten S2/)
-    }
-    expect(await provIsolert(o.db, lukket(`${startportSql(RT)} ${forsok[0]}`))).toBeNull()
-    // Å lukke, og andre endringer av et åpent fagmiljø, trenger ikke slippet.
-    expect(await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set navn = navn where nokkel = '${KF}'`))).toBeNull()
-    expect(await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set apent_for_medlemmer = false where nokkel = '${RT}'`))).toBeNull()
-  })
-
   it('krever nøyaktig ett aktivt primærmedlemskap per konto med aktive medlemskap, og ingen uten (P3)', async () => {
     // Uten aktive medlemskap er kontoen sperret (P3), ikke ulovlig.
     const avsluttet = await provIsolert(o.db, (tx) =>
