@@ -286,22 +286,51 @@ async function brukerlista(meg: Profil, medlemmer: Record<string, unknown[]>, re
   return { lag, rader }
 }
 
+/** Åpner menyen på raden til `navn`. */
+async function apneMeny(rad: HTMLElement, navn: string) {
+  await userEvent.click(within(rad).getByRole('button', { name: `Handlinger for ${navn}` }))
+  return within(rad).getByRole('group', { name: `Handlinger for ${navn}` })
+}
+
+/** Velger `valg` i menyen på raden til `navn`. */
+async function velg(rad: HTMLElement, navn: string, valg: string) {
+  await userEvent.click(within(await apneMeny(rad, navn)).getByRole('button', { name: valg }))
+}
+
 describe('brukerlista', () => {
-  it('viser hvem som er administrator, hvem som må bytte passord, og handlinger med navnet i', async () => {
+  it('viser én rolle per rad, statusene, og handlingene i en meny per bruker', async () => {
     const { lag, rader } = await brukerlista(MEG, {
       kf: [medlem(MEG, { administrator: true, ...ALT }), medlem(KARI, ALT), medlem(OLA, { nytt_passord: true })],
     })
     expect(rader.map((rad) => rad.querySelector('.brukerrad__merker')?.textContent)).toEqual([
-      'AdministratorAdminrolle',
+      'AdministratorVerktøy',
       'Bruker',
       'BrukerMå bytte passord',
     ])
     // Egen rad har ingen handlinger, selv om svaret skulle si noe annet.
     expect(within(rader[0]!).queryAllByRole('button')).toEqual([])
-    expect(within(rader[1]!).getByRole('button', { name: 'Gi adminrollen: Kari Nordmann' })).toBeTruthy()
-    expect(within(rader[1]!).getByRole('button', { name: 'Gjør Kari Nordmann til administrator i OUS Klinisk farmakologi' })).toBeTruthy()
+    // Radene har bare menyknappen; handlingene står i menyen.
+    expect(within(rader[1]!).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Handlinger for Kari Nordmann'])
+    const meny = await apneMeny(rader[1]!, 'Kari Nordmann')
+    const valg = within(meny).getAllByRole('button')
+    expect(valg.map((b) => b.getAttribute('aria-label') ?? b.textContent)).toEqual([
+      'Lag nytt midlertidig passord',
+      'Gjør til administrator',
+      'Gi tilgang til verktøyene',
+      'Avslutt medlemskapet',
+    ])
+    // Det menyen ikke sier i navnet, sier den i forklaringen.
+    const forklaring = (b: HTMLElement) => document.getElementById(b.getAttribute('aria-describedby') ?? '')?.textContent
+    expect(forklaring(valg[1]!)).toBe('Kan administrere medlemmene og det lokale innholdet i OUS Klinisk farmakologi.')
+    expect(forklaring(valg[2]!)).toBe('Ser verktøyene under utprøving. Passord og medlemskap kan da bare endres av systemarkitekter.')
+    expect(within(meny).getByRole('separator')).toBeTruthy()
+    // Fokus står på det første valget, og Escape lukker menyen og gir fokus tilbake.
+    expect(document.activeElement).toBe(valg[0])
+    await userEvent.keyboard('{Escape}')
+    expect(meny.hidden).toBe(true)
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Handlinger for Kari Nordmann')
 
-    await userEvent.click(within(rader[2]!).getByRole('button', { name: 'Nytt passord for Ola Svendsen' }))
+    await velg(rader[2]!, 'Ola Svendsen', 'Lag nytt midlertidig passord')
     const kvittering = await within(lag).findByRole('alert')
     expect(within(kvittering).getByText('kvist-mose-47-lind')).toBeTruthy()
     expect(within(kvittering).getByText(/vises bare nå/)).toBeTruthy()
@@ -311,14 +340,36 @@ describe('brukerlista', () => {
 
   it('viser bare handlingene databasen tillater på hver rad', async () => {
     const { rader } = await brukerlista(MEG, { kf: [medlem(KARI, { nytt_passord: true }), medlem(OLA)] })
-    expect(within(rader[0]!).getAllByRole('button').map((b) => b.textContent)).toEqual(['Nytt passord'])
+    const meny = await apneMeny(rader[0]!, 'Kari Nordmann')
+    expect(within(meny).getAllByRole('button').map((b) => b.textContent)).toEqual(['Lag nytt midlertidig passord'])
+    expect(within(meny).queryByRole('separator')).toBeNull()
     expect(within(rader[1]!).queryAllByRole('button')).toEqual([])
+  })
+
+  it('holder tilgangen til verktøyene og administratorrollen fra hverandre', async () => {
+    const api = await import('../auth/api')
+    const { lag, rader } = await brukerlista(
+      MEG,
+      { kf: [medlem({ ...KARI, role: 'admin' }, { endre_rolle: true, kan_fjerne_som_administrator: true, administrator: true })] },
+      SYSTEMARKITEKT,
+    )
+    expect(rader[0]!.querySelector('.brukerrad__merker')?.textContent).toBe('AdministratorVerktøy')
+    const meny = await apneMeny(rader[0]!, 'Kari Nordmann')
+    expect(within(meny).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual([
+      'Fjern som administrator',
+      'Fjern tilgangen til verktøyene',
+    ])
+    await userEvent.click(within(meny).getByRole('button', { name: 'Fjern tilgangen til verktøyene' }))
+    // Bare rollen endres, uten bekreftelse; administratorrollen står.
+    expect(api.settRolle).toHaveBeenCalledWith('2', 'user')
+    expect(api.settFagmiljoadministrator).not.toHaveBeenCalled()
+    expect((await within(lag).findByRole('status')).textContent).toBe('Kari Nordmann ser ikke lenger verktøyene.')
   })
 
   it('ber om bekreftelse før et medlemskap avsluttes, og sier at kontoen sperres når det er det siste', async () => {
     const api = await import('../auth/api')
     const { lag, rader } = await brukerlista(MEG, { kf: [medlem(KARI, { kan_avslutte: true })] })
-    await userEvent.click(within(rader[0]!).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
+    await velg(rader[0]!, 'Kari Nordmann', 'Avslutt medlemskapet')
     const bekreft = within(lag).getByRole('group', { name: 'Avslutte medlemskapet til Kari Nordmann i OUS Klinisk farmakologi?' })
     expect(bekreft.textContent).toMatch(/kontoen sperres og logges ut på alle enheter/)
     // «Avbryt» har fokus, så et tastetrykk for mye ikke fjerner noe.
@@ -338,12 +389,12 @@ describe('brukerlista', () => {
     const { lag, rader } = await brukerlista(MEG, {
       kf: [medlem(KARI, { kan_avslutte: true, eneste_medlemskap: false, administrator: true })],
     })
-    await userEvent.click(within(rader[0]!).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
-    const bekreft = within(lag).getByRole('group')
+    await velg(rader[0]!, 'Kari Nordmann', 'Avslutt medlemskapet')
+    const bekreft = within(lag).getByRole('group', { name: /^Avslutte medlemskapet/ })
     expect(bekreft.textContent).toMatch(/også administrator her/)
     expect(bekreft.textContent).toMatch(/Medlemskapene i andre fagmiljøer står/)
     await userEvent.click(within(bekreft).getByRole('button', { name: 'Avbryt' }))
-    expect(within(lag).queryByRole('group')).toBeNull()
+    expect(within(lag).queryByRole('group', { name: /^Avslutte medlemskapet/ })).toBeNull()
     expect(api.avsluttMedlemskap).not.toHaveBeenCalled()
   })
 
@@ -356,7 +407,7 @@ describe('brukerlista', () => {
     const [kari, ola] = within(tidligere).getAllByRole('listitem')
     expect(kari!.querySelector('.brukerrad__merker')?.textContent).toBe('BrukerSperret')
     expect(within(ola!).queryAllByRole('button')).toEqual([])
-    await userEvent.click(within(kari!).getByRole('button', { name: 'Gi Kari Nordmann tilgang igjen' }))
+    await velg(kari!, 'Kari Nordmann', 'Gi tilgang igjen')
     expect(api.giMedlemskap).toHaveBeenCalledWith('2', 'kf')
   })
 
@@ -416,7 +467,7 @@ describe('brukerlista', () => {
       expect(within(lag).queryByRole('list', { name: /OUS Klinisk farmakologi/ })).toBeNull()
 
       // Handlingen på raden gjelder fagmiljøet raden ble hentet fra.
-      await userEvent.click(within(liste).getByRole('button', { name: 'Avslutt medlemskapet til Kari Nordmann' }))
+      await velg(within(liste).getByRole('listitem'), 'Kari Nordmann', 'Avslutt medlemskapet')
       const bekreft = within(lag).getByRole('group', { name: 'Avslutte medlemskapet til Kari Nordmann i OUS Rettstoksikologi?' })
       await userEvent.click(within(bekreft).getByRole('button', { name: 'Avslutt medlemskapet' }))
       expect(api.avsluttMedlemskap).toHaveBeenCalledWith('2', 'rt')
