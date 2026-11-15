@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useBevart } from '../../oppdatering/Bevaring'
 import type { Lenkeslag } from '../../direktelenker/mal'
 import { tomtDokument, type Riktekstdokument } from '../../faginnhold/riktekst'
-import { byggTraad, erNyKommentar, tekstTilLagring, type Kommentar, type Kommentarnode, type Skjulehandling } from '../../traad/modell'
+import { IKKE_PASIENTOPPLYSNINGER, byggTraad, erNyKommentar, tekstTilLagring, type Kommentar, type Kommentarnode, type Skjulehandling } from '../../traad/modell'
 import { useSkjuling } from '../../hooks/useSkjuling'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
 import { UnderOverskrift } from '../Overskriftsniva'
@@ -399,7 +399,7 @@ function Kommentarskriver({
         }
       }}
     >
-      <Rikteksteditor key={runde} dokument={tekst} onEndre={setTekst} etikett={etikett} referanser={false} direktelenker autofokus kompakt />
+      <Rikteksteditor key={runde} dokument={tekst} onEndre={setTekst} etikett={etikett} referanser={false} direktelenker autofokus kompakt hjelp={IKKE_PASIENTOPPLYSNINGER} />
       {feil && (
         <p className="skjemafeil" role="alert">
           {feil}

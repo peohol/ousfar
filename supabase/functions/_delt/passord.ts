@@ -8,12 +8,57 @@
  */
 
 /**
- * Korteste passord en bruker kan velge.
+ * Korteste passord en bruker kan velge (`docs/s4-pilotplan.md` tiltak 6).
  *
- * Følger passordpolicyen i Supabase-prosjektet. Skrus den opp der, skal tallet
- * her opp samtidig — ellers sier feltet i appen noe annet enn serveren gjør.
+ * Følger passordpolicyen i Supabase-prosjektet (`minimum_password_length`),
+ * som håndhever lengden også når noen går utenom appen. De to skal alltid
+ * være like; en test holder `supabase/config.toml` lik. Passord som alt er
+ * satt, gjelder til de byttes.
  */
-export const PASSORD_MINST = 6
+export const PASSORD_MINST = 12
+
+/** Hjelpeteksten ved passordfeltene. */
+export const PASSORDHJELP = `Minst ${PASSORD_MINST} tegn, uten brukernavnet. Flere ord satt sammen er lett å huske.`
+
+/**
+ * Ord som gjør et passord lett å gjette når resten bare er tall og tegn,
+ * som «Passord2024!!» eller «sommersommer». Med små bokstaver og uten tall
+ * og tegn. Lista er bevisst kort: lengden gjør det meste av jobben.
+ */
+const VANLIGE_ORD = [
+  'passord', 'password', 'passw', 'qwerty', 'qwertz', 'asdf', 'zxcv', 'letmein', 'welcome', 'velkommen',
+  'hemmelig', 'secret', 'admin', 'administrator', 'bruker', 'user', 'login', 'logginn', 'test', 'abc',
+  'iloveyou', 'jegelskerdeg', 'monkey', 'dragon', 'football', 'fotball', 'sommer', 'vinter', 'host', 'var',
+  'januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'desember',
+  'norge', 'norway', 'oslo', 'ous', 'ousfar', 'far', 'farmakologi', 'klinisk', 'sykehus', 'lege',
+]
+
+/** Rekker som er lette å taste: tall, alfabetet og tastaturradene, også baklengs. */
+const REKKER = ['0123456789', 'abcdefghijklmnopqrstuvwxyzæøå', 'qwertyuiopåasdfghjkløæzxcvbnm', 'qwertzuiopasdfghjklyxcvbnm']
+
+/** Om teksten bare er ett og samme stykke gjentatt (`abcabcabc`), eller stykket selv. */
+function gjentakAv(tekst: string, ord: string): boolean {
+  return tekst.length >= ord.length && tekst.length % ord.length === 0 && ord.repeat(tekst.length / ord.length) === tekst
+}
+
+/**
+ * Om passordet er et av de vanligste mønstrene: en sammenhengende rekke
+ * (`123456789012`, `qwertyuiopå`), et vanlig ord med bare tall og tegn rundt,
+ * eller et kort stykke gjentatt.
+ */
+function erVanlig(passord: string): boolean {
+  const smaa = passord.toLowerCase()
+  const iRekke = REKKER.some((r) => {
+    const lang = r.repeat(Math.ceil(smaa.length / r.length) + 1)
+    return lang.includes(smaa) || [...lang].reverse().join('').includes(smaa)
+  })
+  if (iRekke) return true
+  const bokstaver = smaa.replace(/[^a-zæøå]/g, '')
+  if (bokstaver === '') return [...new Set(smaa.replace(/[^0-9]/g, ''))].length <= 2
+  if (VANLIGE_ORD.some((o) => gjentakAv(bokstaver, o))) return true
+  for (let n = 1; n <= smaa.length / 2; n++) if (gjentakAv(smaa, smaa.slice(0, n))) return true
+  return false
+}
 
 /** Lengden på et midlertidig passord. */
 export const MIDLERTIDIG_PASSORD_LENGDE = 16
@@ -31,12 +76,21 @@ const STORE = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
 const TALL = '23456789'
 const ALLE = SMAA + STORE + TALL
 
-/** Feilen med passordet, i vanlig språk — eller `null` når det holder mål. */
-export function passordFeil(passord: string): string | null {
+/**
+ * Feilen med et nytt passord, i vanlig språk — eller `null` når det holder
+ * mål: minst {@link PASSORD_MINST} tegn, uten brukernavnet, med minst fem
+ * ulike tegn og ikke et av de vanligste mønstrene. Den samme regelen gjelder
+ * i appen og på serveren.
+ */
+export function passordFeil(passord: string, brukernavn?: string | null): string | null {
   if (passord === '') return 'Skriv inn et passord.'
   if (passord.length < PASSORD_MINST) {
     return `Passordet må ha minst ${PASSORD_MINST} tegn.`
   }
+  const navn = brukernavn?.trim().toLowerCase()
+  if (navn && navn.length >= 3 && passord.toLowerCase().includes(navn)) return 'Passordet kan ikke inneholde brukernavnet.'
+  if (new Set(passord).size < 5) return 'Passordet har for få ulike tegn.'
+  if (erVanlig(passord)) return 'Passordet er for lett å gjette. Velg et annet, gjerne flere ord satt sammen.'
   return null
 }
 

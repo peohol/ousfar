@@ -294,6 +294,11 @@ export interface RikteksteditorProps {
    * redigering. Høyden følger brukeren til neste felt og neste maskin.
    */
   justerbar?: boolean
+  /**
+   * En kort tekst under feltet, som skjermlesere leser med feltet, f.eks.
+   * påminnelsen om pasientopplysninger i samhandlingen.
+   */
+  hjelp?: string
 }
 
 /** Høyden brukeren har dratt et justerbart felt til (`justerbar`). */
@@ -313,7 +318,9 @@ export function Rikteksteditor({
   autofokus = false,
   kompakt = false,
   justerbar = false,
+  hjelp,
 }: RikteksteditorProps) {
+  const hjelpId = useId()
   const [panel, setPanel] = useState<Verktoypanel>(null)
   const valgt = useDrattLengde('teksthoyde', justerbar ? TEKSTHOYDE : null)
   // Høyden mens kanten dras; den lagres når draget er ferdig.
@@ -353,6 +360,7 @@ export function Rikteksteditor({
         'aria-label': etikett,
         'aria-multiline': 'true',
         role: 'textbox',
+        ...(hjelp ? { 'aria-describedby': hjelpId } : {}),
       },
     },
     onUpdate: ({ editor: e }) => onEndre(rensDokument(e.getJSON())),
@@ -361,87 +369,94 @@ export function Rikteksteditor({
   if (!editor) return null
 
   return (
-    <div
-      className="rikteksteditor"
-      data-hoyde={hoyde !== null || undefined}
-      style={hoyde !== null ? ({ '--tekstfelt-valgt': `${hoyde}px` } as CSSProperties) : undefined}
-    >
-      <Verktoylinje
-        editor={editor}
-        panel={panel}
-        // Ett panel eller tegnmenyen av gangen.
-        onPanel={(p) => {
-          setTegnmeny(null)
-          setPanel(p)
-        }}
-        tegnmenyApen={tegnmeny !== null}
-        tegnknapp={tegnknapp}
-        onTegnmeny={(medTastatur) => {
-          setPanel(null)
-          setTegnmeny(tegnmeny ? null : { medTastatur })
-        }}
-        etikett={etikett}
-        referanser={referanser}
-        direktelenker={direktelenker}
-      />
-      {tegnmeny && tegnknapp.current && (
-        <Tegnmeny
-          anker={tegnknapp.current}
-          medTastatur={tegnmeny.medTastatur}
-          onSett={(tegn, iTeksten) => (iTeksten ? editor.chain().focus() : editor.chain()).insertContent(tegn).run()}
-          onLukk={(iMenyen) => {
+    <>
+      <div
+        className="rikteksteditor"
+        data-hoyde={hoyde !== null || undefined}
+        style={hoyde !== null ? ({ '--tekstfelt-valgt': `${hoyde}px` } as CSSProperties) : undefined}
+      >
+        <Verktoylinje
+          editor={editor}
+          panel={panel}
+          // Ett panel eller tegnmenyen av gangen.
+          onPanel={(p) => {
             setTegnmeny(null)
-            if (iMenyen) editor.commands.focus()
+            setPanel(p)
           }}
-        />
-      )}
-      {panel === 'lenke' && <Lenkepanel editor={editor} onLukk={() => setPanel(null)} />}
-      {panel === 'referanse' && <Siteringspanel editor={editor} onLukk={() => setPanel(null)} />}
-      {panel === 'konsentrasjon' && <Konsentrasjonspanel editor={editor} onLukk={() => setPanel(null)} />}
-      {panel === 'direktelenke' && (
-        <Direktelenkepanel
-          onLukk={() => {
+          tegnmenyApen={tegnmeny !== null}
+          tegnknapp={tegnknapp}
+          onTegnmeny={(medTastatur) => {
             setPanel(null)
-            editor.commands.focus()
+            setTegnmeny(tegnmeny ? null : { medTastatur })
           }}
-          onSett={(maal, etikett) => {
-            editor
-              .chain()
-              .focus()
-              .insertContent([{ type: NODER.direktelenke, attrs: { ...maal.mal, etikett } }, { type: NODER.tekst, text: ' ' }])
-              .run()
-            setPanel(null)
-          }}
+          etikett={etikett}
+          referanser={referanser}
+          direktelenker={direktelenker}
         />
+        {tegnmeny && tegnknapp.current && (
+          <Tegnmeny
+            anker={tegnknapp.current}
+            medTastatur={tegnmeny.medTastatur}
+            onSett={(tegn, iTeksten) => (iTeksten ? editor.chain().focus() : editor.chain()).insertContent(tegn).run()}
+            onLukk={(iMenyen) => {
+              setTegnmeny(null)
+              if (iMenyen) editor.commands.focus()
+            }}
+          />
+        )}
+        {panel === 'lenke' && <Lenkepanel editor={editor} onLukk={() => setPanel(null)} />}
+        {panel === 'referanse' && <Siteringspanel editor={editor} onLukk={() => setPanel(null)} />}
+        {panel === 'konsentrasjon' && <Konsentrasjonspanel editor={editor} onLukk={() => setPanel(null)} />}
+        {panel === 'direktelenke' && (
+          <Direktelenkepanel
+            onLukk={() => {
+              setPanel(null)
+              editor.commands.focus()
+            }}
+            onSett={(maal, etikett) => {
+              editor
+                .chain()
+                .focus()
+                .insertContent([{ type: NODER.direktelenke, attrs: { ...maal.mal, etikett } }, { type: NODER.tekst, text: ' ' }])
+                .run()
+              setPanel(null)
+            }}
+          />
+        )}
+        <EditorContent editor={editor} className="rikteksteditor__tekst" />
+        {justerbar && (
+          <Kanthandtak
+            etikett="Høyden på tekstfeltet"
+            kant="bunn"
+            maal={(handtak) => {
+              const felt = handtak.parentElement!
+              return {
+                lengde: felt.querySelector('.rikteksteditor__tekst')!.getBoundingClientRect().height,
+                minst: maalLengde(felt, 'var(--tekstfelt-min)', 'hoyde'),
+                mest: maalLengde(felt, 'var(--tekstfelt-dratt-mest)', 'hoyde'),
+              }
+            }}
+            onEndre={(ny) => {
+              valgt.endrer()
+              setUnderveis(ny)
+            }}
+            onFerdig={(ny) => {
+              valgt.sett(ny)
+              setUnderveis(null)
+            }}
+            onNullstill={() => {
+              valgt.sett(null)
+              setUnderveis(null)
+            }}
+          />
+        )}
+      </div>
+      {hjelp && (
+        <p id={hjelpId} className="felt__hjelp rikteksteditor__hjelp">
+          {hjelp}
+        </p>
       )}
-      <EditorContent editor={editor} className="rikteksteditor__tekst" />
-      {justerbar && (
-        <Kanthandtak
-          etikett="Høyden på tekstfeltet"
-          kant="bunn"
-          maal={(handtak) => {
-            const felt = handtak.parentElement!
-            return {
-              lengde: felt.querySelector('.rikteksteditor__tekst')!.getBoundingClientRect().height,
-              minst: maalLengde(felt, 'var(--tekstfelt-min)', 'hoyde'),
-              mest: maalLengde(felt, 'var(--tekstfelt-dratt-mest)', 'hoyde'),
-            }
-          }}
-          onEndre={(ny) => {
-            valgt.endrer()
-            setUnderveis(ny)
-          }}
-          onFerdig={(ny) => {
-            valgt.sett(ny)
-            setUnderveis(null)
-          }}
-          onNullstill={() => {
-            valgt.sett(null)
-            setUnderveis(null)
-          }}
-        />
-      )}
-    </div>
+    </>
   )
 }
 

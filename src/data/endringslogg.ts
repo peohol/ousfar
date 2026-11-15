@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.3',
+    dato: '2026-11-15',
+    sammendrag: 'Strengere regel for nye passord, og en påminnelse om pasientopplysninger der man skriver sammen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Et nytt passord må nå ha minst 12 tegn, kan ikke inneholde brukernavnet og kan ikke være et av de vanligste mønstrene, som «Passord2024!!» eller «123456789012». Flere ord satt sammen er både sikkert og lett å huske.',
+      'Passordet du har i dag, virker som før til du bytter det.',
+      'Under skrivefeltene i diskusjonene, idéene og kommentarene, og under beskrivelsen av en gruppe, står det nå at pasientopplysninger ikke skal skrives der.',
+      'Utviklingsverktøyene er oppdatert. Det merkes ikke i appen.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.2',
     dato: '2026-11-15',
     sammendrag: 'Strengere sikkerhetsregler for appen i nettleseren',

@@ -8,7 +8,7 @@ import {
   type Idekategori,
   type Idetraad,
 } from '../../ideer/modell'
-import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
+import { IKKE_PASIENTOPPLYSNINGER, TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
@@ -118,7 +118,7 @@ export function Ideskjema({
         <span className="felt__merkelapp" id={beskrivelseId}>
           Beskrivelse
         </span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker hjelp={IKKE_PASIENTOPPLYSNINGER} />
       </div>
 
       {feil && (

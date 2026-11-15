@@ -48,6 +48,7 @@ const { Grupperside } = await import('../components/grupper/Grupperside')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt, lesMineGrupper } = await import('../grupper/modell')
 const { adresse, lesRute, sidesti } = await import('../domain/rute')
+const { IKKE_PASIENTOPPLYSNINGER } = await import('../traad/modell')
 const { adresseForSide, diskusjonssideFor, diskusjonssider, lesDiskusjonsside, navnPaaSide, ruteForSide, siderekkevidde } =
   await import('../diskusjoner/modell')
 
@@ -177,6 +178,9 @@ describe('oversikten', () => {
     const ny = screen.getByRole('region', { name: 'Ny gruppe' })
     // Bare fagmiljøet hen administrerer; ikke «på tvers».
     expect(within(ny).getAllByRole('option').map((o) => o.textContent)).toEqual(['OUS Klinisk farmakologi'])
+    // Beskrivelsen er fritekst i samhandlingen, og minner om pasientopplysningene.
+    const beskrivelse = within(ny).getByLabelText('Beskrivelse')
+    expect(document.getElementById(beskrivelse.getAttribute('aria-describedby')!)?.textContent).toBe(IKKE_PASIENTOPPLYSNINGER)
     await userEvent.type(within(ny).getByLabelText('Navn'), ' Ny gruppe ')
     await userEvent.click(within(ny).getByRole('button', { name: 'Opprett gruppen' }))
     expect(api.opprettGruppe).toHaveBeenCalledWith('Ny gruppe', '', 'a')
