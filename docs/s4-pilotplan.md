@@ -237,14 +237,52 @@ databasen i `public`, `intern`, `kuratering` og de andre egne skjemaene;
 **Auth-dataene** (`auth.users` med passordhashene, `auth.identities`,
 `auth.mfa_factors`), uten dem kan ingen logge inn etter gjenopprettingen;
 migrasjonshistorikken (`supabase_migrations`); **profilbildene i Storage**,
-som aldri er med i en databasekopi; og Auth-innstillingene i §2.1, som står i
-prosjektet og ikke i databasen. Hemmelighetene (JWT-nøkkel, API-nøkler) følger
-ikke med; et nytt prosjekt får nye, og alle må logge inn på nytt.
+som aldri er med i en databasekopi; **OUSFARs egne tilpasninger i `auth` og
+`storage`** (se under); og Auth-innstillingene i §2.1, som står i prosjektet
+og ikke i databasen. Hemmelighetene (JWT-nøkkel, API-nøkler) følger ikke med;
+et nytt prosjekt får nye, og alle må logge inn på nytt.
+
+**Tilpasningene i `auth` og `storage` (F, A):** strukturen i disse skjemaene
+eies av Supabase og er ikke med i `supabase db dump`, og Supabases veiledning
+sier at egne endringer der må gjenopprettes for seg. OUSFAR har slike:
+utløseren `paa_ny_auth_bruker` på `auth.users`
+(`20260922092042_profiler_og_roller.sql`), som lager profilen og kontrollerer
+myndigheten når en konto opprettes, og reglene for profilbildene på
+`storage.objects` (`20260922101921_profilbilder.sql`, endret i
+`20260922115504` og `20261114130000`). Uten dem slutter kontoopprettelsen og
+profilbildene å virke, selv om alle data er på plass. Metoden:
+
+1. **Hentes fra katalogen, ikke fra migrasjonene.** Kopiverktøyet leser ved
+   hver kopi alle egne utløsere (`pg_trigger` uten `tgisinternal`) og alle
+   regler (`pg_policy`) på tabeller i `auth` og `storage`, og tilganger
+   (`GRANT`) som appens roller har fått der, og skriver dem som en fjerde
+   fil, `tilpasninger.sql`, med `pg_get_triggerdef` og reglenes uttrykk fra
+   `pg_get_expr`. Funksjonene utløserne kaller (som
+   `public.handter_ny_auth_bruker`), ligger i egne skjemaer og er alt med i
+   strukturfila. Slik følger det med som faktisk står i produksjonen, også
+   det som er endret av senere migrasjoner, og ingen migrasjon kjøres to
+   ganger.
+2. **Rekkefølgen ved gjenoppretting:** roller, struktur, data (med
+   `session_replication_role = replica`, så utløserne ikke slår til under
+   innlastingen), deretter `tilpasninger.sql`, deretter
+   migrasjonshistorikken. Historikken legges tilbake **som data, slik den
+   står i kilden** (`supabase_migrations.schema_migrations`); den skrives
+   aldri for hånd, og migrasjonene kjøres ikke på nytt.
+3. **Det som ikke ligger i databasen** gjenskapes fra repoet og
+   manifestet: Edge-funksjonene rulles ut fra `main` med den vanlige
+   arbeidsflyten mot det nye prosjektet; Storage-bøttene følger med som rader
+   i `storage.buckets`, filene kopieres for seg; Auth-innstillingene settes
+   fra JSON-fila; **navnene** på Edge-hemmelighetene og Vercel-variablene
+   står i manifestet (aldri verdiene), og verdiene settes på nytt av eieren.
+4. **Kontrollen er generell:** etter gjenopprettingen sammenlignes listen
+   over egne utløsere, regler og tilganger i `auth` og `storage` med
+   manifestet fra kilden. Avvik i noen retning stopper prøven, så en ny
+   tilpasning i en senere migrasjon blir med uten at verktøyet må endres.
 
 | Valg | Kopiering | Gjenoppretting og prøve | Ulemper |
 | --- | --- | --- | --- |
 | a. Supabase Pro | Supabases daglige fysiske kopi av hele databasen, også `auth` og migrasjonshistorikken, i 7 dager. Profilbildene kopieres i tillegg med et skript mot Storage-API-et (4 filer i dag), og Auth-innstillingene lagres som JSON fra Management API-et (ingen hemmeligheter) | Prøven gjøres ved å gjenopprette en daglig kopi til **et nytt, midlertidig prosjekt** (Supabases «restore to new project»), aldri over produksjonen. Ved et reelt tap gjenopprettes produksjonen fra dashbordet, med nedetid så lenge det tar | Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro), og en kort ekstra kostnad for det midlertidige prosjektet under prøven. Gir også 8 GB, kontroll mot lekkede passord, øktgrenser og 7 dagers logger |
-| **b. Gratisplan og egen kopi (valgt av Peder 15.11.2026)** | Supabases dokumenterte CLI-metode i tre deler: `supabase db dump --role-only`, `supabase db dump` (struktur) og `supabase db dump --data-only --use-copy` (data, også for `auth`; strukturen til `auth` og `storage` er Supabases egen og tas ikke med), migrasjonshistorikken for seg, profilbildene og Auth-innstillingene som i a. Alt pakkes og krypteres før det lagres utenfor Supabase | Gjenopprettes i **et Supabase-miljø**, ikke i en ren Postgres, fordi `auth` og `storage` må finnes fra før: det lokale testmiljøet i Docker (`docs/qa-testmiljo.md`) for prøven, et nytt Supabase-prosjekt ved et reelt tap. `psql --single-transaction` med `session_replication_role = replica` under dataene, slik veiledningen sier | Ny automatisk jobb; repoet er offentlig, så kopien (med passordhasher og tofaktornøkler) må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
+| **b. Gratisplan og egen kopi (valgt av Peder 15.11.2026)** | Supabases dokumenterte CLI-metode i tre deler: `supabase db dump --role-only`, `supabase db dump` (struktur) og `supabase db dump --data-only --use-copy` (data, også for `auth`; strukturen til `auth` og `storage` er Supabases egen og tas ikke med), migrasjonshistorikken for seg, profilbildene og Auth-innstillingene som i a. Alt pakkes og krypteres før det lagres utenfor Supabase | Gjenopprettes i **et Supabase-miljø**, ikke i en ren Postgres, fordi `auth` og `storage` må finnes fra før: det lokale testmiljøet i Docker (`docs/qa-testmiljo.md`) for prøven, et nytt Supabase-prosjekt ved et reelt tap. `psql --single-transaction` med `session_replication_role = replica` under dataene, slik veiledningen sier, og tilpasningene i `auth` og `storage` etter dataene (over) | Ny automatisk jobb; repoet er offentlig, så kopien (med passordhasher og tofaktornøkler) må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
 | c. Begge | a, og i tillegg en månedlig kryptert kopi etter b utenfor Supabase | Som a og b | Mest arbeid; vern også mot at Supabase-kontoen går tapt |
 
 **Gjenopprettingsprøven (A):** kopien gjenopprettes i det midlertidige
@@ -257,14 +295,27 @@ miljøet for valget over, og det kontrolleres at
 4. **testbrukeren for kuratorjobbene logger inn** med sitt vanlige passord
    mot det gjenopprettede miljøet, og en fagside og en fortolkning kan vises
    (det beviser at passordhashene og Auth fulgte med);
-5. tiden fra start til innlogging er målt.
+5. listen over egne utløsere, regler og tilganger i `auth` og `storage` er
+   lik manifestet fra kilden (metoden over, punkt 4);
+6. **en ny, syntetisk bruker opprettes gjennom adminflyten** (Edge-funksjonen
+   `opprett-bruker`, utrullet fra `main` til det gjenopprettede miljøet), får
+   profil og riktig medlemskap av utløseren, og kan logge inn; et forsøk uten
+   myndighet avvises som i produksjonen;
+7. **rettighetene til profilbildene virker:** den syntetiske brukeren kan
+   laste opp, bytte og fjerne sitt eget profilbilde, men ikke en annens, og
+   ser bare profilbildene reglene tillater; et eksisterende profilbilde kan
+   hentes;
+8. tiden fra start til innlogging er målt.
+
+Den syntetiske brukeren lages bare i det midlertidige miljøet og slettes med
+det.
 
 Kopien inneholder persondata og slettes sammen med miljøet etter prøven. Tid
 og resultat føres i `docs/drift-gjenoppretting.md`.
 
 **Akseptkriterier:** valgt løsning i drift; verktøyet og rutinen er prøvd med
 syntetiske brukere i det lokale testmiljøet (tiltak 2); én vellykket,
-dokumentert prøve med en ekte kopi etter punkt 1–5 (tiltak 4); rutinen
+dokumentert prøve med en ekte kopi etter punkt 1–8 (tiltak 4); rutinen
 beskriver hvem som kan sette i gang en gjenoppretting.
 
 ### 3.3 Uavhengig sikkerhetsgjennomgang (B9)
@@ -370,9 +421,9 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | # | Tiltak | Type | Avhenger av | Akseptkriterium |
 | --- | --- | --- | --- | --- |
 | 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge). **Besluttet 15.11.2026: b, egne krypterte kopier på gratisplanen** | J (D7) | – | Valget skrevet i planen (gjort) |
-| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, migrasjonshistorikk, profilbilder, Auth-innstillinger) og gjenoppretter den i et Supabase-miljø, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) for både a og b | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall, og en syntetisk bruker logger inn |
+| 2 | Gjenopprettingsverktøy og rutine: skript som tar en fullstendig kopi etter §3.2 (database med Auth-data, tilpasningene i `auth` og `storage` hentet fra katalogen, migrasjonshistorikk, profilbilder, Auth-innstillinger, navnene på hemmelighetene) og gjenoppretter den i et Supabase-miljø i riktig rekkefølge, med en manifestfil som sammenligner radtall og kontrollsummer per tabell i §2.3 og `auth`, og tilpasningene; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i det lokale testmiljøet med syntetiske brukere: kopi → gjenoppretting i et nytt lokalt miljø → identiske tall og tilpasninger, en eksisterende syntetisk bruker logger inn, en ny bruker opprettes gjennom adminflyten og får profil og medlemskap, og profilbildereglene holder (§3.2 punkt 4–7). Ingen produksjonsdata eller hemmeligheter i repoet |
 | 3 | Sikkerhetskopien i drift etter valget i 1: en planlagt, kryptert kopi etter §3.2 b, lagret utenfor Supabase og utenfor det offentlige repoet, med nøkkelen hos en navngitt eier | J (gjennomføring: lagringssted og nøkkeleier) | 1, 2 | Første kopi finnes, kan dekrypteres av nøkkeleieren og er lesbar |
-| 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–5 med målt tid, også innlogging med testbrukeren |
+| 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–8 med målt tid: innlogging med testbrukeren, ny bruker gjennom adminflyten og profilbilderettighetene |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
 | 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene |
 | 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging og at personen selv kan fjerne egen faktor på `aal2`; `intern.privilegier_tilgjengelige()` i de privilegerte grenene og katalogtestene (§3.1 punkt 3 og 6) bygget og testet, men kravet ikke slått på. **Ingen nullstilling av andres faktor** | U | – | Kriteriene i §3.1 utenom selve kravet og nullstillingen; med kravet slått på i testene er alle negative `aal1`-tester grønne |
