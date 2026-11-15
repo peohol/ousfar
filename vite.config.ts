@@ -3,6 +3,7 @@ import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { KLINISK_PAKKE } from './src/auth/vegg'
 import { systemvalgskript } from './src/domain/systemvalg'
+import { medInnholdsregler } from './src/drift/sikkerhetshoder'
 import { ENDRINGSLOGG } from './src/data/endringslogg'
 import { endringsomrader, nyesteVersjon, oppdateringsversjon } from './src/domain/versjon'
 import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/versjon'
@@ -45,6 +46,24 @@ function systemvalg(): Plugin {
 }
 
 /**
+ * Sikkerhetsreglene for siden (`src/drift/sikkerhetshoder.ts`), lagt inn i
+ * `index.html` når den er ferdig, så de innebygde skriptene den har da, får
+ * sin sum, og Supabase-adressen bygget bruker, er den ene som er tillatt.
+ * Bare i bygget: utviklingstjeneren legger inn egne skript underveis.
+ */
+function sikkerhetsregler(): Plugin {
+  let supabaseUrl: string | undefined
+  return {
+    name: 'ousfar-sikkerhetsregler',
+    apply: 'build',
+    configResolved: (config) => {
+      supabaseUrl = config.env.VITE_SUPABASE_URL as string | undefined
+    },
+    transformIndexHtml: { order: 'post', handler: (html) => medInnholdsregler(html, supabaseUrl) },
+  }
+}
+
+/**
  * Oppsettet for Vitest. Testene ser samme miljø som i CI, uten
  * produksjonsadressen og -nøklene (`src/__tests__/hjelp/utenProduksjon.ts`).
  * Det står for seg fordi Vitest har sin egen utgave av Vite-typene.
@@ -54,7 +73,7 @@ const testoppsett = {
 }
 
 export default defineConfig({
-  plugins: [react(), versjonsfil(), systemvalg()],
+  plugins: [react(), versjonsfil(), systemvalg(), sikkerhetsregler()],
   base: './',
   build: {
     outDir: 'dist',

@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.2',
+    dato: '2026-11-15',
+    sammendrag: 'Strengere sikkerhetsregler for appen i nettleseren',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Nettleseren får nå beskjed om at appen bare kan laste sine egne filer og snakke med sin egen database, at den ikke kan vises inne i et annet nettsted, og at den ikke trenger kamera, mikrofon eller posisjon. Det gjør det vanskeligere å misbruke appen gjennom et annet nettsted eller et innsmuglet skript.',
+      'Appen ser ut og virker som før.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.1',
     dato: '2026-11-15',
     sammendrag: 'Verktøy for kryptert sikkerhetskopi av databasen og gjenoppretting av den',
