@@ -1,0 +1,397 @@
+# S4: sikker drift og ekstern pilot – gjennomføringsplan
+
+**Status:** plan, 15.11.2026. Bare dokumentasjon: ingen kode, ingen
+migrasjoner og ingen endring i produksjonen. Ingen ekstern pilot er åpnet.
+**Grunnlag:** plan [#364](https://github.com/peohol/ousfar/issues/364) (§6,
+§10 P9, §12, §15 B9), P0-rapporten
+([ousfar-nasjonal-p0-kartlegging.md](ousfar-nasjonal-p0-kartlegging.md), §6.3
+og §7), S2-rapporten ([s2-kontrollrapport.md](s2-kontrollrapport.md), §8.3 og
+§9) og fremdriften i [#369](https://github.com/peohol/ousfar/issues/369).
+**Eier:** OUSFAR Dev (`ansvar:dev`).
+
+Merkingen følger P0-rapporten: **(F)** funn, kontrollert i kode eller
+produksjon; **(A)** teknisk anbefaling; **(U)** antakelse som må avklares.
+
+---
+
+## 0. Sammendrag
+
+Sikkerhetsporten **S4** står mellom dagens drift (to fagmiljøer i OUS) og den
+første brukeren fra et laboratorium utenfor OUS. P0 satte tre krav: tofaktor
+for de privilegerte (D5), sikkerhetskopi og drift (D7), og organisasjon,
+avtaler og en uavhengig sikkerhetsgjennomgang (B9).
+
+Kontrollen 15.11.2026 viser fire ting som betyr mest:
+
+1. **Det finnes ingen sikkerhetskopi av produksjonsdatabasen (F).** Prosjektet
+   står på Supabases gratisplan, som ikke tar daglige kopier; listen over
+   kopier er tom og gjenoppretting til et tidspunkt er av. Kuratert
+   faginnhold, revisjoner, kurateringsgrener, brukere, medlemskap og
+   diskusjoner finnes bare der (§2.3). Dette gjelder allerede i dag, ikke
+   bare for piloten, og er planens første prioritet.
+2. **Tofaktor er slått på i Supabase, men ikke tatt i bruk i appen (F).**
+   Ingen av de 14 kontoene har en faktor, og ingen operasjon krever den.
+   Teknisk kan alt bygges uten kostnad på dagens plan (§3.1).
+3. **Innloggingen er svakere enn resten av tilgangsmodellen (F):** minst 6
+   tegn i passordet, ingen kontroll mot lekkede passord, passordet kan byttes
+   uten å oppgi det gamle, og appen sender ingen sikkerhetshoder som demper
+   skriptinjeksjon, selv om økten ligger i en informasjonskapsel som skript
+   kan lese (§2.1).
+4. **Organisatorisk er alt knyttet til én person (F/U).** Supabase-, Vercel-
+   og GitHub-kontoene står på Peders personlige kontoer, uten avtaler,
+   behandlingsansvar eller supportordning beskrevet. Det må på plass før
+   andre virksomheter inviteres (B9).
+
+Planen i §4 deler tiltakene i **ti som Claude gjennomfører uten nye
+beslutninger** og **elleve som krever Peders uttrykkelige ja**. Beslutningene står
+samlet i §5 med anbefalt standardvalg. Porten S4 er passert når
+akseptlisten i §6 er oppfylt og Peder har godkjent åpningen av det første
+eksterne fagmiljøet gjennom startporten (S2-rapporten §8.4).
+
+---
+
+## 1. Hva «ekstern pilot» betyr
+
+- Et **eksternt fagmiljø** er et fagmiljø der medlemmene arbeider i en annen
+  virksomhet enn OUS. OUS Klinisk farmakologi og OUS Rettstoksikologi er
+  interne.
+- Piloten er **ett** eksternt laboratorium med et lite antall navngitte
+  brukere (U: 3–10), uten pasientopplysninger (B4), uten chat og filer (B5),
+  med felles fagsider, egne diskusjoner og grupper, og egne
+  fortolkningsregler bare når de er lagt inn og godkjent for fagmiljøet.
+- Det tekniske slippet er det samme som for S2: et fagmiljø åpnes bare med en
+  egen migrasjon med Peders godkjenningsmerke (S2-rapporten §8.4). S4 legger
+  ikke til et nytt automatisk vern; godkjenningen av åpningen skal vise til
+  at listen i §6 er oppfylt.
+- Før piloten må også de gjenstående Dev-punktene i
+  [#395](https://github.com/peohol/ousfar/issues/395) være levert (kategorier
+  per fagmiljø, kontoer opprettet direkte i riktig fagmiljø, datakort uten
+  OUS-kode), og Fag- og Verktøy-punktene i #393 og #394 være avklart. De
+  arbeides med i egne tråder og PR-er.
+
+---
+
+## 2. Kontrollert status 15.11.2026
+
+Lest skrivebeskyttet fra Supabase Management API, Vercel-API-et, én
+HEAD-forespørsel mot `ousfar.vercel.app` og repoet på `main` `7fdadf9`. Bare
+aggregater og innstillinger; ingen persondata er hentet ut.
+
+### 2.1 Innlogging og økt (F)
+
+| Del | Status | Kilde |
+| --- | --- | --- |
+| Registrering | Av, og i tillegg sperret i databasen (`paa_ny_auth_bruker`, `kontoreservasjoner`) | Auth-innstillinger, `docs/brukere.md` |
+| Innlogging | Brukernavn og passord; ingen e-post, ingen «glemt passord»; anonym innlogging av | Auth-innstillinger |
+| Tofaktor | TOTP (autentiseringsapp) slått på i Supabase; telefon og WebAuthn av. **0 faktorer** registrert, og ingen kontroll av innloggingsnivå (`aal`) i databasen eller Edge-funksjonene | Auth-innstillinger, `auth.mfa_factors`, søk i `supabase/` |
+| Passordregel | Minst **6** tegn i både app (`_delt/passord.ts`, `PASSORD_MINST`) og Supabase; ingen krav til tegn; kontroll mot lekkede passord **av** (krever betalt plan) | Auth-innstillinger, security-advisor |
+| Passordbytte | Krever verken gjeldende passord eller ny innlogging (`security_update_password_require_current_password` og `…_reauthentication` av); appen kaller `updateUser` direkte | Auth-innstillinger, `src/auth/api.ts` |
+| Økt | Tilgangstoken 3600 s, rotasjon av fornyingstoken på; ingen maksimal øktlengde eller utlogging ved inaktivitet (krever betalt plan) | Auth-innstillinger |
+| Midlertidig passord | 16 tegn, gis bare av den som har myndighet (P1.2a) | `_delt/passord.ts`, `docs/fagmiljoer.md` |
+| Sikkerhetshoder | Bare `Strict-Transport-Security`. Ingen `Content-Security-Policy`, `frame-ancestors`/`X-Frame-Options`, `X-Content-Type-Options` eller `Referrer-Policy`. Økten ligger i en informasjonskapsel som skript kan lese (`createBrowserClient`), så en skriptinjeksjon ville kunne lese tokenet | HEAD mot produksjonen, `vercel.json`, `src/auth/klient.ts` |
+| Innloggingsveggen | Kanten slipper bare inn med gyldig signert token; ingen laboratoriegrense (uendret siden P0) | `middleware.ts` |
+| Forhåndsvisninger i Vercel | Beskyttet med Vercel-innlogging for alt unntatt egne domener | Vercel-prosjektet |
+| Revisjonslogg for Auth | Lagres ikke i databasen (`audit_log_disable_postgres`), bare i Supabases logger med kort oppbevaring på gratisplanen. Appens egen `tilgangslogg` dekker medlemskap, roller og kontooperasjoner | Auth-innstillinger |
+
+### 2.2 Database og tilkoblinger (F)
+
+| Del | Status |
+| --- | --- |
+| Plan og maskin | Gratisplan, Nano (0,5 GB minne), ingen tillegg; Postgres 17.6; region eu-north-1 (Stockholm) |
+| Kvote | **437,6 MB av 500 MB** (sum av databasene, slik Supabase måler); stabil siden 7.11 (438,2 MB). Disken 2 GB, 1,3 GB ledig |
+| Største områder | `kuratering` 142 MB, `legemiddeldata` 125 MB, `public` 68 MB, `datakilder` 32 MB |
+| Sikkerhetskopi | `backups: []`, gjenoppretting til tidspunkt av; gratisplanen tar ingen daglige kopier (Supabase anbefaler egne kopier med `db dump`) |
+| Direkte tilkoblinger | Åpne fra alle adresser (`0.0.0.0/0`); SSL er ikke påkrevd. Utrullingen av migrasjonene bruker direkte tilkobling fra GitHub Actions med databasepassordet, så en adressebegrensning ville stoppet den |
+| Sikkerhetsråd (advisor) | 126 varsler om `security definer`-funksjoner innloggede kan kalle (alle står med erklært kontroll i `funksjonskontroller.ts` og testes, P1.1/P2.0), 1 om lekkede passord, 23 informasjonsmerknader om tabeller med radsikkerhet uten regler (bevisst lukkede) |
+| Ytelsesråd | 3 varsler om flere tillatende regler på samme tabell; øvrige er informasjon (ubrukte indekser, fremmednøkler uten indeks) |
+| Helse | Auth, database, REST og lagring friske; én gjentakende feil uten innlogging, `permission denied for table brukerinnstillinger` (~40 i timen siden 8.11, S2-rapporten §8.2) |
+| Lagring | Én privat bøtte (profilbilder), 4 filer, 105 kB. Filene er ikke med i en databasekopi |
+
+### 2.3 Data som bare finnes i produksjonen (F)
+
+En gjenoppretting må dekke det som ikke kan bygges opp igjen fra repoet eller
+fra de offentlige kildene. Radtall er Postgres' estimater.
+
+| Gruppe | Eksempler (rader) | Kan bygges opp igjen? |
+| --- | --- | --- |
+| Brukere og tilgang | `auth.users` 14, `profiles` 14, `medlemskap`, `fagmiljoadministratorer`, `systemroller`, `tilgangslogg` | **Nei** |
+| Kuratert faginnhold | `objektrevisjoner` 11 308, `innholdselementer` 9 076, `referanser` 8 243, `referansekoblinger` 63 780, `sideversjoner` 398, `ressursomfang` 9 620 | **Nei** (bare den første importen ligger i migrasjonene) |
+| Kurateringsgrener | `kuratering.grenrevisjoner` 748, `dokumenter` 1 808, `kommentarer` 5 402, `hendelser` 9 189 | **Nei** |
+| Fortolkningsregler | `intervallregelsett` 120, `scenarioregelsett` 34, `thc_*`, analyttkatalogen | Delvis (importert fra repoet, deretter redigert i appen) |
+| Samhandling | `diskusjoner`, `ideer` 15, `varsler` 79, grupper | **Nei** |
+| Legemiddeldata og kildesynker | `legemiddeldata`, `farmakologiportalen`, `clinpgx`, `pubchem`, `bivirkninger` | Ja, fra kildene (synkene) |
+| Profilbilder | 4 filer i Storage | Nei, men små og ikke kritiske |
+
+### 2.4 Drift og organisasjon (F/U)
+
+| Del | Status |
+| --- | --- |
+| Eierskap | Supabase-organisasjonen og Vercel-teamet («peohol's projects») og repoet `peohol/ousfar` står på Peders personlige kontoer (F). Om Max eller andre er medeiere, er ikke kontrollert (tokenet i miljøet kan ikke lese organisasjonen) (U) |
+| Vercel-plan | Ikke kontrollert. Er det Hobby-planen, er den etter Vercels vilkår for personlig, ikke-kommersiell bruk (U) |
+| Overvåking | Databasemålingen hver tredje time (`docs/db-maling.md`) og varsler fra GitHub Actions ved feil. Ingen oppetidsvarsling, ingen vaktordning |
+| Tilbakeføring | Appen: tidligere Vercel-utrulling kan settes tilbake. Database: ny migrasjon (hver etappe har beskrevet tilbakeføring). Uten sikkerhetskopi finnes ingen vei tilbake etter tap eller ødeleggelse av data |
+| Avhengigheter | Ingen kjente sårbarheter i pakkene som sendes til nettleseren; 12 i utviklingsverktøyene (`npm audit`, bl.a. vitest og vite) |
+| Hemmeligheter | Produksjonsnøklene ligger som GitHub-miljøhemmeligheter (`produksjon`) og i agentmiljøene. Agentene (Claude, ChatGPT) har i dag full teknisk tilgang til Supabase-prosjektet gjennom miljøets tilgangstoken (F) |
+| Personvern | Ingen behandlingsoversikt, personvernerklæring, databehandleravtaler eller avviksrutine er dokumentert i repoet (F). Appen behandler navn, brukernavn, profilbilder, fritekst i diskusjoner og idéer, tilgangslogg og øktdata (IP og nettleser i Auth); ingen pasientdata etter B4, men fritekst kan få det ved et uhell |
+
+---
+
+## 3. Vurdering per område
+
+### 3.1 Tofaktorinnlogging (D5)
+
+**Mål (A):** de som kan endre andres tilgang eller faginnhold, logger inn med
+passord og en kode fra en autentiseringsapp. Det kan bygges på gratisplanen.
+
+**Hvem (A):**
+
+| Rolle | Krav før ekstern pilot | Begrunnelse |
+| --- | --- | --- |
+| Systemarkitekt | **Påkrevd** | Full myndighet overalt |
+| Adminrollen (`role = 'admin'`) | **Påkrevd** | Skriver og publiserer faginnhold (`krev_admin`) |
+| Lokal administrator | **Påkrevd** | Oppretter kontoer, gir passord og medlemskap |
+| Redaktør (P5) | Påkrevd når rollen kommer | Endrer faginnhold |
+| Gruppeansvarlig | Frivillig | Myndighet bare i egen gruppe, ingen kliniske ressurser |
+| Vanlig bruker | Frivillig | Leser og deltar; kravet ville gitt mye støtte for lite gevinst |
+| Testbrukeren for kuratorjobbene | Ikke aktuelt | Vanlig bruker uten myndighet, brukes av maskiner (`docs/kuratorjobber.md`) |
+
+**Teknisk løsning (A):**
+
+1. Innmelding under Konto: QR-kode og bekreftelseskode (Supabase `mfa.enroll`,
+   `challenge`, `verify`), med mulighet for to faktorer per person (ny
+   telefon).
+2. Ved innlogging spør appen om koden når kontoen har en faktor, før noe
+   annet vises.
+3. **Serverkravet:** en felles kontroll `intern.krev_tofaktor()` (tokenets
+   `aal` = `aal2`) i de samme portene som i dag sjekker myndighet
+   (`krev_admin`, `er_admin`, systemarkitekt- og administratorkontrollene,
+   `kuratering_admin`) og i Edge-funksjonene for kontooperasjoner
+   (`hentInnlogget`). Kravet gjelder handlingene, ikke lesingen, slik at en
+   administrator kan lese uten koden men må oppgi den før noe endres.
+4. **Tapt telefon:** appen har ingen e-post, så gjenoppretting skjer ved at
+   den som har myndighet etter samme hierarki som for nytt passord (P1.2a)
+   fjerner faktoren, loggført i `tilgangslogg`. En systemarkitekt kan alltid;
+   for den siste systemarkitekten trengs en nødvei med den hemmelige nøkkelen,
+   på samme måte som `npm run bootstrap:admin`.
+5. Kravet slås på i en egen migrasjon etter Peders ja (D5), først når alle
+   som omfattes har meldt inn en faktor, slik at ingen stenges ute.
+
+**Akseptkriterier:** negative tester med gyldig token på nivå `aal1` for
+hver privilegert inngang (direkte RPC og Edge) gir avslag, og `aal2` slipper
+gjennom; innlogging uten faktor er uendret for vanlige brukere; innmelding og
+kodesteg fungerer med tastatur og skjermleser; tilbakestilling av faktor
+følger hierarkiet og loggføres; alle privilegerte kontoer har faktor før
+kravet slås på.
+
+### 3.2 Sikkerhetskopi og gjenoppretting (D7)
+
+**Mål (A):** et tap av databasen skal ikke koste mer enn ett døgns arbeid
+(RPO ≤ 24 t), og appen skal kunne være i drift igjen innen én arbeidsdag (RTO
+≤ 8 t), bevist med en dokumentert gjenopprettingsprøve.
+
+| Valg | Hva det gir | Ulemper |
+| --- | --- | --- |
+| **a. Supabase Pro (anbefalt)** | Daglige kopier i 7 dager med gjenoppretting i dashbordet; kvoten 8 GB i stedet for 500 MB; kontroll mot lekkede passord, øktgrenser og 7 dagers logger. Om lag 25 USD i måneden (inkluderer 10 USD til maskinen, som dekker Micro) | Kostnad; krever betaling fra Peder eller organisasjonen |
+| b. Gratisplan og egen kopi | En ny, planlagt GitHub Actions-jobb tar en logisk kopi (`supabase db dump`), krypterer den og lagrer den utenfor Supabase | Ny automatisk jobb; repoet er offentlig, så kopien må krypteres sterkt og nøkkelen ligge utenfor GitHub; noen må eie nøkkelen; løser ikke kvoten |
+| c. Begge | Pro og en månedlig kryptert kopi utenfor Supabase | Mest arbeid; vern også mot at Supabase-kontoen går tapt |
+
+**Gjenopprettingsprøven (A):** en kopi gjenopprettes i et eget, midlertidig
+miljø (et nytt Supabase-prosjekt eller en lokal Postgres 17), og det
+kontrolleres at radtall og kontrollsummer for tabellene i §2.3 stemmer med
+kilden, at migrasjonshistorikken er lik, og at appen kan logge inn og vise en
+fagside mot det gjenopprettede miljøet. Kopien inneholder persondata (også
+passordhasher) og slettes etter prøven. Tid og resultat føres i
+`docs/drift-gjenoppretting.md`.
+
+**Akseptkriterier:** valgt løsning i drift; én vellykket, dokumentert
+gjenopprettingsprøve med målt tid; rutinen beskriver hvem som kan sette i
+gang en gjenoppretting og hvordan profilbildene (Storage) håndteres.
+
+### 3.3 Uavhengig sikkerhetsgjennomgang (B9)
+
+Plan #364 §6 krever uavhengig kontroll ved milepæler. ChatGPT og Codex har
+kontrollert hver PR, men ingen har gått gjennom helheten utenfra.
+
+1. **Intern, adversarial gjennomgang først (A, uten beslutning):** en egen
+   agent som ikke har implementert, går gjennom løsningen mot de relevante
+   delene av OWASP ASVS nivå 2 (autentisering, økt, tilgangskontroll,
+   validering, konfigurasjon, logging) og Supabase-spesifikke punkter
+   (radsikkerhet, `security definer`, Edge-funksjoner, lagring, nøkler,
+   CI/CD-hemmeligheter, agenttilgang), og prøver A↔B-isolasjonen i det lokale
+   testmiljøet. Funn blir Issues; rapporten blir
+   `docs/s4-sikkerhetsgjennomgang.md`.
+2. **Menneskelig, uavhengig gjennomgang (krever ja):** av noen utenfor
+   prosjektet, etter at tiltakene i §4 er ute, slik at den kontrollerer det
+   som faktisk skal i pilot. Anbefalt: OUS' informasjonssikkerhetsfunksjon
+   (eventuelt sammen med pilotlaboratoriets), og en avgrenset ekstern
+   penetrasjonstest hvis det finnes midler. Agentene kan forberede
+   arkitekturbeskrivelse, tilgangsmatrise og testbrukere.
+
+**Akseptkriterier:** begge gjennomganger er gjort; ingen åpne funn med høy
+eller kritisk alvorlighet; funn med middels alvorlighet har en plan og en
+eier.
+
+### 3.4 Personvern og datalagring (B9)
+
+- **Behandlingsansvar (U):** hvem som er behandlingsansvarlig for
+  brukerdataene (OUS ved avdelingen, eller Peder personlig), og om
+  personvernombudet ved OUS skal involveres. Ved en ekstern pilot behandles
+  personopplysninger om ansatte i en annen virksomhet.
+- **Databehandlere:** Supabase (database, innlogging; EU-region), Vercel
+  (appen og kanten), GitHub (kode og hemmeligheter, ingen persondata etter
+  regelen i `AGENTS.md`) og KI-tjenestene som agentene kjører på, i den grad
+  de leser produksjonsdata. Avtalene (DPA) må være inngått på riktig konto.
+- **Dataminimering:** ingen e-post; profilene vises bare for dem man
+  samhandler med (P2c); diskusjonene og idéene er fritekst.
+- **Lagringstid (A):** medlemskap avsluttes og kontoer sperres, men slettes
+  ikke (B7). Det trengs en regel for endelig sletting, for eksempel
+  sletting av profil og bilde etter en fastsatt tid, med bidragene beholdt
+  under «tidligere bruker».
+- **Pasientdata:** forbudt i samhandlingen (B4). Skrivefeltene bør minne om
+  det, og en administrator kan alt skjule en kommentar
+  (`Diskusjonsside.tsx`). En avviksrutine må si hva som gjøres hvis det skjer.
+- **DPIA (U):** vurderes av behandlingsansvarlig. Uten pasientdata og med få
+  brukere er det trolig ikke påkrevd, men vurderingen bør dokumenteres.
+
+**Akseptkriterier:** behandlingsansvar avklart skriftlig; databehandleravtaler
+inngått eller bekreftet; behandlingsoversikt og personvernerklæring godkjent
+og tilgjengelig i appen; regel for lagringstid og avviksrutine vedtatt.
+
+### 3.5 Kapasitet og driftsstabilitet (D7)
+
+- **Kvoten er det trange punktet (F):** 437,6 av 500 MB. Et nytt fagmiljø
+  med egne regler, diskusjoner og grupper tar lite plass, men kurateringen
+  vokser, og når kvoten er nådd, settes databasen i skrivebeskyttet modus.
+  Pro (8 GB) fjerner problemet. På gratisplanen trengs en grense for tiltak
+  (A: 460 MB) og en plan for hva som ryddes (P0-rapporten og
+  databasemålingen har kandidatene).
+- **Last (F):** 6 kontoer har logget inn de siste 30 dagene; dagens Nano-maskin har
+  minnepress, men normal svartid (`docs/db-maling.md`, #342). En pilot med
+  under ti brukere endrer dette lite; målingen fortsetter som i dag.
+- **Feil og oppfølging (A):** en driftshåndbok med hvem som følger med, hva
+  som gjøres ved feil (tilbakeføring i Vercel, ny migrasjon, stenge
+  fagmiljøet med `apent_for_medlemmer = false`), og hvordan pilotbrukerne
+  får beskjed. Ingen ny automatisk overvåking uten at Peder ber om det.
+- **Gratisplanens begrensninger:** ingen tjenestenivåavtale, korte logger og
+  pause av prosjektet ved lang inaktivitet (ikke aktuelt med daglige synker).
+
+**Akseptkriterier:** valgt plan og kapasitet; kvoten under grensen med
+plass til pilotens forventede vekst; driftshåndboken finnes; den gjentakende
+feilen i loggen er rettet.
+
+### 3.6 Organisasjon, avtaler, support og finansiering (B9)
+
+Dette er det plan #364 kaller en obligatorisk pilotport som ikke kan hoppes
+over fordi tekniske tester er grønne:
+
+- **Eierskap og kontinuitet:** minst to personer med eiertilgang og tofaktor
+  på Supabase, Vercel og GitHub (A: Peder og Max), helst flyttet til en
+  organisasjonskonto, slik at driften ikke står og faller på én person.
+- **Avtale med pilotlaboratoriet:** formål, hvilke brukere, at appen er et
+  støtteverktøy og at klinisk ansvar for fortolkningen ligger hos
+  laboratoriet, ingen pasientdata, kontaktpunkt og responstid,
+  avslutningsregler.
+- **Kostnader og finansiering:** Pro-planen, eventuelt Vercel Pro og en
+  ekstern sikkerhetstest.
+- **Agentenes tilgang:** når andre virksomheters data ligger i databasen,
+  bør det avgjøres om KI-agentene fortsatt skal ha full teknisk tilgang til
+  produksjonen, eller bare lesetilgang mens endringer går gjennom PR og
+  GitHub Actions (A).
+
+---
+
+## 4. Gjennomføringsplan
+
+Rekkefølgen er prioritet, ikke tid. **U** = Claude gjennomfører uten nye
+beslutninger, hver som egen PR med `ansvar:dev` og ChatGPT-kontroll. **J** =
+krever Peders uttrykkelige ja (§5). Ingen av U-tiltakene endrer noe i
+produksjonen utover vanlig utrulling av en kontrollert PR.
+
+| # | Tiltak | Type | Avhenger av | Akseptkriterium |
+| --- | --- | --- | --- | --- |
+| 1 | **Velg løsning for sikkerhetskopi** (Pro, egen kopi eller begge) | J (D7) | – | Valget skrevet i planen |
+| 2 | Gjenopprettingsverktøy og rutine: skript som gjenoppretter en logisk kopi i en tom Postgres 17 og sammenligner radtall og kontrollsummer per tabell i §2.3 med en manifestfil; `docs/drift-gjenoppretting.md` med mål (RPO 24 t, RTO 8 t) | U | – | Prøvd i CI med syntetiske data: kopi → gjenoppretting → identiske tall |
+| 3 | Sikkerhetskopien i drift etter valget i 1 | J (gjennomføring) | 1, 2 | Første kopi finnes og er lesbar |
+| 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J | 2, 3 | Dokumentert prøve med målt tid, alle kontroller grønne |
+| 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass |
+| 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene |
+| 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging, tilbakestilling etter hierarkiet med logg; serverkravet `intern.krev_tofaktor()` bygget og testet, men ikke slått på | U | – | Kriteriene i §3.1 utenom selve kravet |
+| 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5) | 7, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
+| 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger; med Pro også kontroll mot lekkede passord og utlogging etter inaktivitet (A: 12 t) | J | 6; Pro for de to siste | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
+| 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger` | U | – | Feilen borte fra loggen et døgn etter utrulling |
+| 11 | Oppdatere utviklingsverktøyene med kjente sårbarheter (vitest, vite m.fl.) | U | – | `npm audit` uten høye og kritiske funn; alle tester grønne |
+| 12 | Påminnelse om at pasientopplysninger ikke skal skrives, i skrivefeltene for diskusjoner, idéer og grupper (B4 er besluttet) | U | – | Teksten vises i alle skrivefelt for samhandling; komponenttest |
+| 13 | Utkast til **personvern- og driftsdokumenter**: behandlingsoversikt, personvernerklæring for appen, databehandleroversikt, avviksrutine, regel for lagringstid og driftshåndbok med kapasitetsgrense | U (utkast) | – | Dokumentene ligger i `docs/`; ikke vist i appen før 14 |
+| 14 | **Behandlingsansvar, avtaler og godkjenning av dokumentene i 13**, avtale med pilotlaboratoriet | J (B9) | 13 | Skriftlig avklart; erklæringen kan vises i appen |
+| 15 | **Eierskap og kontinuitet**: minst to eiere med tofaktor på Supabase, Vercel og GitHub; Vercel-planen kontrollert mot vilkårene | J (B9) | – | Bekreftet av Peder |
+| 16 | **Agentenes tilgang** til produksjonen under piloten | J (B9) | – | Valget dokumentert og miljøene satt opp etter det |
+| 17 | Intern, adversarial sikkerhetsgjennomgang etter §3.3 punkt 1, med funn som Issues | U | 5–7, 10–12 | Rapport i `docs/s4-sikkerhetsgjennomgang.md`; ingen åpne høye eller kritiske funn |
+| 18 | **Menneskelig, uavhengig sikkerhetsgjennomgang** | J (B9) | 17, helst 8 og 9 | Rapport mottatt; ingen åpne høye eller kritiske funn |
+| 19 | **Kostnader, finansiering og supportansvar** for piloten | J (B9) | 1, 18 | Avklart |
+| 20 | S4-kontrollrapport: hele listen i §6 kontrollert, med lesing fra produksjonen | U | alle over | Rapport som S2-rapporten |
+| 21 | **Valg av pilotlaboratorium og åpning** gjennom startporten | J | 20 og #395 1–3 | Peders uttrykkelige ja i åpnings-PR-en |
+
+**Rekkefølgen i praksis (A):** 2, 5, 6, 7, 10, 11, 12 og 13 kan starte nå og
+gå parallelt i små PR-er, fordi de ikke rører de samme filene som #395-trådene
+(unntatt endringsloggen og versjonsnummeret, som tas ved rebase). 1, 14, 15 og
+19 har lengst ledetid hos Peder og organisasjonen og bør avgjøres tidlig.
+17 gjøres når de tekniske tiltakene er ute, og 18 til slutt, slik at
+gjennomgangen ser det som faktisk skal i pilot.
+
+---
+
+## 5. Beslutninger som gjenstår fra D5, D7 og B9
+
+Hver har et anbefalt standardvalg. Ingen er tatt.
+
+| Nr. | Spørsmål i vanlig språk | Anbefalt | Tiltak |
+| --- | --- | --- | --- |
+| **D7a** | Skal vi betale for Supabase Pro (om lag 25 USD i måneden) for å få daglige sikkerhetskopier og mer plass, eller ta egne krypterte kopier på gratisplanen? | Pro. Det gir også mer plass, sterkere passordkontroll og øktgrenser | 1, 3, 9 |
+| **D7b** | Kan en kopi av produksjonsdataene (med brukerdata) gjenopprettes i et midlertidig miljø for å prøve at gjenopprettingen virker, og slettes etterpå? | Ja | 4 |
+| **D5a** | Skal systemarkitekter, alle med adminrollen og lokale administratorer måtte bruke tofaktor (kode fra en app på telefonen) før en ekstern pilot? | Ja, og frivillig for andre | 8 |
+| **D5b** | Hvem kan nullstille tofaktor for den som mister telefonen? | Den som i dag kan gi nytt passord, med logg | 7, 8 |
+| **D5c** | Kan Claude endre innloggingsinnstillingene i Supabase (passordlengde, gjeldende passord ved bytte, kryptert databasetilkobling)? | Ja | 9 |
+| **B9a** | Hvem er ansvarlig for brukerdataene: OUS ved avdelingen, eller du personlig? Skal personvernombudet involveres? | OUS ved avdelingen, med personvernombudet | 14 |
+| **B9b** | Hvem skal gjøre den uavhengige sikkerhetsgjennomgangen? | OUS' informasjonssikkerhet, ekstern test hvis det finnes midler | 18 |
+| **B9c** | Hvem skal være medeier av kontoene (Supabase, Vercel, GitHub), og skal de flyttes til en organisasjonskonto? | Max som medeier nå; organisasjonskonto før bredere utrulling | 15 |
+| **B9d** | Skal KI-agentene ha full teknisk tilgang til produksjonen under piloten, eller bare lesetilgang? | Bare lesetilgang; endringer gjennom PR | 16 |
+| **B9e** | Hvem betaler, og hvem svarer pilotlaboratoriet når noe ikke virker? | Avklares med avdelingen | 19 |
+| **B9f** | Hvilket laboratorium blir piloten, og når? | Avgjøres når 1–20 er ferdige | 21 |
+
+D6 (chat og filer) hører til S5 og er ikke med her.
+
+---
+
+## 6. Akseptliste for S4
+
+S4 er passert når alt under er oppfylt og kontrollert i S4-rapporten (tiltak
+20):
+
+1. Sikkerhetskopi i drift, og én dokumentert, vellykket gjenopprettingsprøve
+   med målt tid (§3.2).
+2. Tofaktor påkrevd og registrert for alle systemarkitekter, alle med
+   adminrollen og alle lokale administratorer; negative tester med
+   `aal1`-token grønne for hver privilegert inngang (§3.1).
+3. Innloggingen herdet: passordregel, gjeldende passord ved bytte og
+   sikkerhetshoder (tiltak 5, 6, 9).
+4. Intern og uavhengig sikkerhetsgjennomgang gjort, uten åpne høye eller
+   kritiske funn (§3.3).
+5. Behandlingsansvar, databehandleravtaler, personvernerklæring,
+   lagringsregel og avviksrutine avklart og godkjent (§3.4).
+6. Kapasitet valgt og kvoten under grensen; driftshåndbok finnes; den
+   kjente loggfeilen rettet (§3.5).
+7. Minst to eiere med tofaktor på driftskontoene; agenttilgangen avgjort;
+   avtale med pilotlaboratoriet; finansiering og support avklart (§3.6).
+8. Dev-punktene 1–3 i #395 levert, og #393 og #394 avklart av Fag og
+   Verktøy.
+9. Peders uttrykkelige ja til åpningen av det eksterne fagmiljøet, i
+   åpnings-PR-en.
+
+---
+
+## 7. Utenfor denne planen
+
+- Ingen ekstern pilot åpnes, og ingen fagmiljøer opprettes, før punkt 9 i §6.
+- Ingen nye automatiske jobber eller kontrollordninger uten Peders ja; en
+  planlagt kopijobb (D7a valg b) er en slik og hører til tiltak 3.
+- Chat og filer (P7, P8, S5) og delegert redigering (P5) er egne etapper.
