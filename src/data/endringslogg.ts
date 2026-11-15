@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.133.1',
+    dato: '2026-11-15',
+    sammendrag: 'To fagmiljøer kan ha egne fortolkningsregler for samme analytt',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Hvert fagmiljø kan nå ha sine egne regler og kommentarer for den samme analytten. For OUS Klinisk farmakologi er alt som før, og fortolkningen gir de samme svarene.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.133.0',
     dato: '2026-11-15',
     sammendrag: 'OUS Rettstoksikologi er åpnet for medlemmer',
