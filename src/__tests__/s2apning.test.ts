@@ -3,10 +3,11 @@
  * (`supabase/migrations/*_s2_apne_rettstoksikologi.sql`,
  * docs/s2-kontrollrapport.md §10).
  *
- * Migrasjonen skal bare rulles ut etter Peders uttrykkelige godkjenning.
- * Kontrollen i CI og utrullingen stopper den til godkjenningsmerket står i
- * fila; testen holder det fast, og prøver at migrasjonen åpner nøyaktig det
- * ene fagmiljøet, loggført, og at en vanlig bruker først da kan bli medlem.
+ * Migrasjonen rulles bare ut med Peders uttrykkelige godkjenning, som han ga
+ * 2026-11-15. Kontrollen i CI og utrullingen stopper en åpning uten
+ * godkjenningsmerket; testen holder fast at merket står i fila, og prøver at
+ * migrasjonen åpner nøyaktig det ene fagmiljøet, loggført, og at en vanlig
+ * bruker først da kan bli medlem.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { readdirSync, readFileSync } from 'node:fs'
@@ -49,12 +50,13 @@ afterAll(async () => {
 })
 
 describe('åpningen av OUS Rettstoksikologi (startporten S2)', () => {
-  it('finnes én gang, og stoppes i kontrollen og utrullingen så lenge Peders godkjenningsmerke mangler', () => {
+  it('finnes én gang, bærer Peders godkjenning, og stoppes uten den', () => {
     expect(readdirSync(MIGRASJONER).filter((f) => f.endsWith('_s2_apne_rettstoksikologi.sql'))).toEqual([APNING])
-    const fil = lesMigrasjonsfil(APNING, SQL)
-    const feil = destruktivfeil([fil])
-    if (DESTRUKTIV_GODKJENT.test(SQL)) expect(feil).toEqual([])
-    else expect(feil).toEqual([expect.stringContaining('åpning av et fagmiljø for medlemmer')])
+    expect(SQL).toMatch(/^-- destruktiv-godkjent: Peder 2026-11-15, åpner OUS Rettstoksikologi/m)
+    expect(destruktivfeil([lesMigrasjonsfil(APNING, SQL)])).toEqual([])
+    // Uten merket stoppes den, i kontrollen av PR-en og før utrullingen.
+    const umerket = SQL.replace(DESTRUKTIV_GODKJENT, '-- (merket fjernet)')
+    expect(destruktivfeil([lesMigrasjonsfil(APNING, umerket)])).toEqual([expect.stringContaining('åpning av et fagmiljø for medlemmer')])
   })
 
   it('lar ingen vanlig bruker bli medlem før den har kjørt, og gjør det mulig etterpå', async () => {

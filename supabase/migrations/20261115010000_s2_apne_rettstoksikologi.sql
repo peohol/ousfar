@@ -1,11 +1,11 @@
 -- Startporten S2: OUS Rettstoksikologi åpnes for medlemmer
 -- (docs/s2-kontrollrapport.md, docs/fagmiljoer.md «Fagmiljøene»).
 --
--- VENTER PÅ PEDERS GODKJENNING. Kontrollen i CI og utrullingen stopper fila
--- (åpning av et fagmiljø for medlemmer, docs/migrasjoner.md) til den har en
--- egen linje som begynner med «-- destruktiv-godkjent:» og sier hvem som
--- godkjente, når og hva. Den linja skrives bare etter at Peder uttrykkelig har
--- godkjent åpningen.
+-- destruktiv-godkjent: Peder 2026-11-15, åpner OUS Rettstoksikologi for medlemmer (startporten S2), skrevet i tråden for kontrollrapporten: «Ja, åpne OUS Rettstoksikologi for medlemmer»
+--
+-- Kontrollen i CI og utrullingen stopper fila (åpning av et fagmiljø for
+-- medlemmer, docs/migrasjoner.md) uten linja over. Den ble skrevet etter at
+-- Peder uttrykkelig godkjente åpningen.
 --
 -- Etter åpningen kan systemarkitektene og fagmiljøets lokale administratorer
 -- gi vanlige brukere medlemskap der. Migrasjonen gir ingen medlemskap selv og
