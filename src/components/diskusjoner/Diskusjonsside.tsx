@@ -24,7 +24,7 @@ import {
   type Diskusjonssider,
   type Diskusjonstraad,
 } from '../../diskusjoner/modell'
-import { TITTEL_MEST, tekstTilLagring, type Kommentar } from '../../traad/modell'
+import { IKKE_PASIENTOPPLYSNINGER, TITTEL_MEST, tekstTilLagring, type Kommentar } from '../../traad/modell'
 import { UnderOverskrift } from '../Overskriftsniva'
 import { Riktekst } from '../stoffside/Riktekst'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
@@ -427,7 +427,7 @@ function Tekstskjema({
   const [tekst, setTekst] = useBevart<Riktekstdokument>(`traad:${id}/tekst`, () => start ?? tomtDokument())
   return (
     <div className="kommentarskriver">
-      <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegget" referanser={false} direktelenker autofokus kompakt />
+      <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegget" referanser={false} direktelenker autofokus kompakt hjelp={IKKE_PASIENTOPPLYSNINGER} />
       <div className="skjema__knapper kommentarskriver__knapper">
         <Button variant="subtle" onClick={onAvbryt}>
           Avbryt

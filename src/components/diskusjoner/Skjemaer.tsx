@@ -14,7 +14,7 @@ import {
   type Diskusjonssider,
   type Sidevalg,
 } from '../../diskusjoner/modell'
-import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
+import { IKKE_PASIENTOPPLYSNINGER, TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Button } from '../Button'
 import { Felt } from '../konto/Felt'
@@ -281,7 +281,7 @@ export function Traadskjema({
         <span className="felt__merkelapp" id={tekstId}>
           Innlegg
         </span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegg" referanser={false} direktelenker kompakt />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegg" referanser={false} direktelenker kompakt hjelp={IKKE_PASIENTOPPLYSNINGER} />
       </div>
       {feil && (
         <p className="skjemafeil" role="alert">

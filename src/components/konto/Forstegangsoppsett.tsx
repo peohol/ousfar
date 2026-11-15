@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { PASSORD_MINST, passordFeil } from '@delt/passord'
+import { PASSORDHJELP, passordFeil } from '@delt/passord'
 import { navnFeil, normaliserNavn } from '@delt/profil'
 import { fullforOppsett, lastOppAvatar } from '../../auth/api'
 import { useOkt, useProfil } from '../../auth/okt'
@@ -43,7 +43,7 @@ export function Forstegangsoppsett() {
     const lokalFeil =
       navnFeil(rentFornavn, 'Fornavn') ??
       navnFeil(rentEtternavn, 'Etternavn') ??
-      passordFeil(passord) ??
+      passordFeil(passord, profil.username) ??
       (passord === gjentatt ? null : 'De to passordene er ikke like.')
     if (lokalFeil) {
       setFeil(lokalFeil)
@@ -105,7 +105,7 @@ export function Forstegangsoppsett() {
           type="password"
           autoComplete="new-password"
           value={passord}
-          hjelp={`Minst ${PASSORD_MINST} tegn.`}
+          hjelp={PASSORDHJELP}
           onChange={(hendelse) => setPassord(hendelse.target.value)}
         />
         <Felt

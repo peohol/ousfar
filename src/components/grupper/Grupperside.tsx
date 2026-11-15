@@ -26,6 +26,7 @@ import {
 } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
+import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
@@ -165,8 +166,12 @@ function Gruppefelter({
           maxLength={1000}
           value={beskrivelse}
           disabled={disabled}
+          aria-describedby={`${beskrivelseId}-hjelp`}
           onChange={(e) => onBeskrivelse(e.target.value)}
         />
+        <span id={`${beskrivelseId}-hjelp`} className="felt__hjelp">
+          {IKKE_PASIENTOPPLYSNINGER}
+        </span>
       </div>
     </>
   )

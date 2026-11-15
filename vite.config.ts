@@ -69,7 +69,13 @@ function sikkerhetsregler(): Plugin {
  * Det står for seg fordi Vitest har sin egen utgave av Vite-typene.
  */
 const testoppsett = {
-  test: { setupFiles: ['./src/__tests__/hjelp/utenProduksjon.ts'] },
+  test: {
+    setupFiles: ['./src/__tests__/hjelp/utenProduksjon.ts'],
+    // Noen kontroller av katalogene og migrasjonene regner synkront i 5–30 s.
+    // Vitest 2 lot slike gå forbi grensen på 5 s; Vitest 5 håndhever den.
+    // Grensen gjelder også en test som henger, som da stoppes etter ett minutt.
+    testTimeout: 60_000,
+  },
 }
 
 export default defineConfig({
