@@ -283,12 +283,15 @@ describe('reglene etter tilbakefyllingen', () => {
       `insert into public.fagmiljoer select (jsonb_populate_record(f, '{"nokkel": "nytt-miljo", "apent_for_medlemmer": true}')).*
          from public.fagmiljoer f where nokkel = '${RT}'`,
     ]
+    // Fagmiljøet lukkes først i transaksjonen, så prøven gjelder også etter at det er åpnet.
+    const lukket = (sql: string) => (tx: Transaction) =>
+      tx.exec(`update public.fagmiljoer set apent_for_medlemmer = false where nokkel = '${RT}'; ${sql}`)
     for (const sql of forsok) {
-      expect((await provIsolert(o.db, (tx) => tx.exec(sql)))?.message, sql).toMatch(/bare åpnes for medlemmer gjennom startporten S2/)
+      expect((await provIsolert(o.db, lukket(sql)))?.message, sql).toMatch(/bare åpnes for medlemmer gjennom startporten S2/)
       // Et slipp for et annet fagmiljø hjelper ikke.
-      expect((await provIsolert(o.db, (tx) => tx.exec(`${startportSql(KF)} ${sql}`)))?.message, sql).toMatch(/startporten S2/)
+      expect((await provIsolert(o.db, lukket(`${startportSql(KF)} ${sql}`)))?.message, sql).toMatch(/startporten S2/)
     }
-    expect(await provIsolert(o.db, (tx) => tx.exec(`${startportSql(RT)} ${forsok[0]}`))).toBeNull()
+    expect(await provIsolert(o.db, lukket(`${startportSql(RT)} ${forsok[0]}`))).toBeNull()
     // Å lukke, og andre endringer av et åpent fagmiljø, trenger ikke slippet.
     expect(await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set navn = navn where nokkel = '${KF}'`))).toBeNull()
     expect(await provIsolert(o.db, (tx) => tx.exec(`update public.fagmiljoer set apent_for_medlemmer = false where nokkel = '${RT}'`))).toBeNull()
