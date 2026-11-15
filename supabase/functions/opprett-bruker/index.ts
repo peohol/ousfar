@@ -11,7 +11,8 @@
  * og som brukeren må bytte ved første innlogging. Det sendes ingen e-post;
  * den interne Auth-adressen er en teknisk nøkkel utledet av brukernavnet.
  *
- * Feiler noe før Auth-brukeren finnes, trekkes klareringen tilbake. Auth-
+ * Feiler noe før Auth-brukeren finnes, trekkes denne klareringen tilbake
+ * (med nøkkelen sin, så et nyere forsøk står). Auth-
  * brukeren, profilen og medlemskapet blir til i én transaksjon i databasen;
  * mangler noe av det likevel etterpå, slettes kontoen igjen, så ingen konto
  * blir liggende halvferdig.
@@ -32,8 +33,8 @@ Deno.serve(
     // innloggede har myndighet til å opprette brukere i fagmiljøet. Den legges
     // inn først, slik at ingen uten myndighet får vite noe om brukernavnene,
     // og trekkes tilbake igjen dersom kontoen ikke blir noe av.
-    const fagmiljo = await reserverBrukernavn(admin, innlogget.id, brukernavn, onsket)
-    const frigi = () => frigiBrukernavn(admin, innlogget.id, brukernavn)
+    const { fagmiljo, reservasjon } = await reserverBrukernavn(admin, innlogget.id, brukernavn, onsket)
+    const frigi = () => frigiBrukernavn(admin, brukernavn, reservasjon)
 
     // Den unike indeksen i databasen er den endelige sperren; dette oppslaget
     // er her for å kunne si tydelig fra før kontoen forsøkes opprettet.

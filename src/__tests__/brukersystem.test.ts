@@ -208,9 +208,10 @@ describe('Edge-funksjonene', () => {
     expect(kode).toContain('reserverBrukernavn(admin, innlogget.id, brukernavn, onsket)')
     expect(kode.indexOf('reserverBrukernavn(')).toBeLessThan(kode.indexOf(".from('profiles')"))
     const operasjoner = utenKommentarer(les('supabase/functions/_edge/kontooperasjoner.ts'))
-    expect(operasjoner).toMatch(/kontofunksjon<Opprettelsesfagmiljo>\(admin, 'kontooperasjon_klarer_konto', \{ aktor, brukernavn, fagmiljo \}\)/)
-    // Bare egen klarering tas tilbake, så en annens står.
-    expect(operasjoner).toContain(".delete().eq('username', brukernavn).eq('aktor', aktor)")
+    expect(operasjoner).toMatch(/kontofunksjon<[^>]+>\(admin, 'kontooperasjon_klarer_konto', \{\s*aktor,\s*brukernavn,\s*fagmiljo,?\s*\}\)/)
+    // Bare denne klareringen tas tilbake (nøkkelen), så en annens eller et nyere forsøk står.
+    expect(operasjoner).toContain(".delete().eq('username', brukernavn).eq('nokkel', reservasjon)")
+    expect(kode).toContain('frigiBrukernavn(admin, brukernavn, reservasjon)')
   })
 
   it('kontrollerer at kontoen fikk medlemskapet i fagmiljøet, og sletter den ellers', () => {

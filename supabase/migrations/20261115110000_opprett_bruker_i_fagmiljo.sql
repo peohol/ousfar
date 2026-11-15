@@ -24,10 +24,13 @@
 -- --- Reservasjonen husker fagmiljøet -----------------------------------------
 
 alter table public.kontoreservasjoner
-  add column fagmiljo_id uuid references public.fagmiljoer (id);
+  add column fagmiljo_id uuid references public.fagmiljoer (id),
+  add column nokkel uuid not null default gen_random_uuid();
 
 comment on column public.kontoreservasjoner.fagmiljo_id is
   'Fagmiljøet kontoen blir medlem av (opprett-bruker). Tom gir standardfagmiljøet, for server-side jobber.';
+comment on column public.kontoreservasjoner.nokkel is
+  'Ny for hver klarering. Edge-funksjonen trekker bare tilbake reservasjonen med sin egen nøkkel, så opprydding etter et gammelt forsøk ikke fjerner et nyere.';
 
 -- --- Avgjørelsen --------------------------------------------------------------
 
@@ -93,7 +96,8 @@ drop function public.kontooperasjon_klarer_konto(uuid, text);
 -- `opprett-bruker`, med den felles låsen holdt, før Edge-funksjonen slår opp
 -- noe. Uten fagmiljø gjelder standarden, som for en eldre versjon av appen.
 -- Gir fagmiljøet tilbake (`intern.fagmiljoreferanse`), så kvitteringen kan si
--- hvor brukeren ble medlem.
+-- hvor brukeren ble medlem, med nøkkelen til denne klareringen
+-- (`reservasjon`), som kreves for å trekke den tilbake.
 --
 -- En fersk klarering av det samme brukernavnet for en annen aktør eller et
 -- annet fagmiljø står (`55P03`). Ellers kunne den ene administratoren fått ut
@@ -110,6 +114,7 @@ declare
   mal uuid := intern.opprettelsesfagmiljo(kontooperasjon_klarer_konto.fagmiljo);
   avslag text[];
   annen public.kontoreservasjoner;
+  ny_nokkel uuid;
 begin
   perform intern.las_tilgang(aktor, 'opprett-bruker: kontroll');
   avslag := intern.opprettelsesavslag(aktor, mal);
@@ -129,9 +134,11 @@ begin
   insert into public.kontoreservasjoner as r (username, reservert_kl, aktor, fagmiljo_id)
   values (kontooperasjon_klarer_konto.brukernavn, now(), kontooperasjon_klarer_konto.aktor, mal)
   on conflict (username) do update
-    set reservert_kl = excluded.reservert_kl, aktor = excluded.aktor, fagmiljo_id = excluded.fagmiljo_id;
+    set reservert_kl = excluded.reservert_kl, aktor = excluded.aktor, fagmiljo_id = excluded.fagmiljo_id,
+        nokkel = gen_random_uuid()
+  returning r.nokkel into ny_nokkel;
 
-  return (select intern.fagmiljoreferanse(f) from public.fagmiljoer f where f.id = mal);
+  return (select intern.fagmiljoreferanse(f) || jsonb_build_object('reservasjon', ny_nokkel) from public.fagmiljoer f where f.id = mal);
 end;
 $$;
 

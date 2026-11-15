@@ -55,7 +55,7 @@ async function somServer(tx: Transaction): Promise<void> {
 /** Klarerer `brukernavn` i `tx` slik `opprett-bruker` gjør det. Gir fagmiljøet tilbake. */
 async function klarerI(tx: Transaction, aktor: string, brukernavn: string, fagmiljo: string | null) {
   await somServer(tx)
-  const { rows } = await tx.query<{ f: { id: string; navn: string } }>(
+  const { rows } = await tx.query<{ f: { id: string; navn: string; reservasjon: string } }>(
     'select public.kontooperasjon_klarer_konto($1, $2, $3) as f',
     [aktor, brukernavn, fagmiljo],
   )
@@ -295,6 +295,29 @@ describe('feil underveis', () => {
     const r = await opprett(galleri.id.adminB, vanligB, galleri.fagmiljo.B)
     expect(r.feil).not.toBeNull()
     expect({ ...r, feil: null, reservasjon: false }).toEqual({ ...for_, feil: null, reservasjon: false })
+  })
+
+  it('lar oppryddingen etter et gammelt forsøk stå urørt når den samme administratoren alt har prøvd igjen', async () => {
+    const feil = await iProve(async (tx) => {
+      const gammel = await klarerI(tx, galleri.id.adminB, 'nytt.forsok', galleri.fagmiljo.B)
+      const ny = await klarerI(tx, galleri.id.adminB, 'nytt.forsok', galleri.fagmiljo.B)
+      expect(ny.reservasjon).not.toBe(gammel.reservasjon)
+      // Som `frigiBrukernavn` i Edge-funksjonen: bare reservasjonen med nøkkelen.
+      const frigi = (nokkel: string) =>
+        tx.query('delete from public.kontoreservasjoner where username = $1 and nokkel = $2', ['nytt.forsok', nokkel])
+      await frigi(gammel.reservasjon)
+      await authBruker(tx, 'nytt.forsok')
+      expect((await kontoen(tx, 'nytt.forsok')).medlemskap).toEqual([
+        { fagmiljo: galleri.fagmiljo.B, primaer: true, status: 'aktiv', tildelt_av: galleri.id.adminB },
+      ])
+    })
+    expect(feil).toBeNull()
+    const frigitt = await iProve(async (tx) => {
+      const { reservasjon } = await klarerI(tx, galleri.id.adminB, 'nytt.forsok', galleri.fagmiljo.B)
+      await tx.query('delete from public.kontoreservasjoner where username = $1 and nokkel = $2', ['nytt.forsok', reservasjon])
+      expect((await kontoen(tx, 'nytt.forsok')).reservasjon).toBe(false)
+    })
+    expect(frigitt).toBeNull()
   })
 
   it('lar en annens ferske klarering av samme brukernavn stå, men tar over en som er gått ut', async () => {

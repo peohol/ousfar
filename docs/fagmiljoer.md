@@ -649,8 +649,8 @@ bruk, stoppes før Auth og av den unike nøkkelen.
 
 1. `kontooperasjon_klarer_konto(aktor, brukernavn, fagmiljo)` tar den felles
    låsen, kontrollerer myndigheten og legger inn reservasjonen med aktøren og
-   fagmiljøet (`kontoreservasjoner`). Den gir fagmiljøet tilbake, som
-   kvitteringen viser. Uten fagmiljø gjelder standarden, som for en eldre
+   fagmiljøet (`kontoreservasjoner`), med en ny nøkkel for hver klarering. Den
+   gir fagmiljøet tilbake, som kvitteringen viser, og nøkkelen. Uten fagmiljø gjelder standarden, som for en eldre
    versjon av appen.
 2. Auth oppretter brukeren. Utløseren på `auth.users`
    (`handter_ny_auth_bruker`) tar låsen før den låser reservasjonen (samme
@@ -677,7 +677,8 @@ En fersk reservasjon av samme brukernavn for en annen aktør eller et annet
 fagmiljø står (`55P03`); ellers kunne den ene administratoren fått ut passordet
 til en konto den andre bestilte i sitt fagmiljø. Samme aktør og fagmiljø kan
 klarere på nytt, så et brutt kall kan gjentas. Edge-funksjonen trekker bare
-tilbake reservasjoner med seg selv som aktør.
+tilbake reservasjonen med nøkkelen fra sin egen klarering, så oppryddingen
+etter et gammelt forsøk ikke fjerner et nyere.
 
 **Det appen viser.** `mine_rettigheter().opprett_bruker_i` er fagmiljøene den
 innloggede kan opprette brukere i, etter samme avgjørelse (`opprett_bruker`
