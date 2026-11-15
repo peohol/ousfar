@@ -608,8 +608,9 @@ Sidens egne kort står uten `gjelder`; kortene for metabolitten har nøkkelen
 til forbindelsen i forbindelsesregisteret i `data.gjelder`
 (`'o-desmetyltramadol'`, `datakortGjelder`), aldri et laboratoriums
 analyttkode: kortene er felles for alle fagmiljøer. Databasen lar hvert
-datakort stå én gang per forbindelse, og tar ikke imot noe annet enn en
-forbindelsesnøkkel i `gjelder` (`innholdselementer_gjelder_forbindelse`).
+datakort stå én gang per forbindelse. Et kort som fra før har en analyttkode
+i `gjelder` (`'OTRAM'`), står på plassen til forbindelsen koden måler, etter
+katalogen (`kortetsForbindelse`), til det er skrevet om (#405).
 Plassene på siden står i `datakorteiere` (`src/domain/koblinger.ts`): sidens
 egne, hver forbindelse siden har kort for, og hver forbindelse
 arbeidskontekstens katalog bruker kort for. Referanseområdet fortolkningen
@@ -619,7 +620,7 @@ fagmiljøets katalog sier at koden bruker (`docs/fagmiljoer.md`, «De felles
 datakortene»). HBUP får altså sidens egne kort på bupropionsiden, og en
 metabolitt får aldri moderstoffets referanseområde. Før #395 sto koden i
 `gjelder` (`'OTRAM'`), og den første primære koden for et stoff fikk sidens
-egne kort; `*_analyttforbindelser_ous.sql` skrev kortet om.
+egne kort.
 
 **Historikken.** Før stoffet ble identiteten, hørte hver side til en
 analyttkode, og noen metabolitter var slått sammen med moderstoffets side.

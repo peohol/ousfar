@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Minimalt omfang',
     gjelder: ['stoff', 'fortolkning'],
     punkter: [
-      'Et eget referanseområde for en metabolitt på fagsiden, som O-desmetyltramadol på tramadolsiden, er nå knyttet til stoffet det gjelder, ikke til analysekoden ved OUS Klinisk farmakologi. Alle fagmiljøer ser det, og et annet laboratorium kan bruke det for sin egen analyse.',
+      'Hvert fagmiljø sier nå i sin egen analyseliste hvilke referanseområder på fagsidene analysene bruker, i stedet for at det følger av analysekodene ved OUS Klinisk farmakologi. Et eget referanseområde for en metabolitt, som O-desmetyltramadol på tramadolsiden, vises for alle fagmiljøer.',
       'For OUS Klinisk farmakologi er tallene og fortolkningen som før.',
       'Står det bare ett sett tall på siden, merkes de ikke lenger med et analysenavn.',
     ],

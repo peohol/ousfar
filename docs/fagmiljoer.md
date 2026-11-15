@@ -1069,7 +1069,8 @@ migrasjon.
 **De felles datakortene.** Datakortene i «Viktige data» på fagsidene er
 felles for alle fagmiljøer, og vet ingenting om laboratorienes koder. Et kort
 for en metabolitt sier hvilken forbindelse det gjelder, med nøkkelen i
-forbindelsesregisteret (`data.gjelder = 'o-desmetyltramadol'`, se
+forbindelsesregisteret (`data.gjelder = 'o-desmetyltramadol'`, etter
+overgangen under; se
 `docs/faginnhold.md`, «Datakortene per forbindelse»), og vises for alle,
 også i et fagmiljø uten egen katalog. Katalogen sier for hver kode hvilken
 forbindelse analysen måler (`analyttkatalog_koder.forbindelse`, `null` for
@@ -1092,6 +1093,23 @@ er det metabolitten eller summen laboratoriet måler (bupropion, enalapril,
 spironolakton, sumanalysene). Derfor må et nytt fagmiljøs katalog si
 uttrykkelig for hver kode at den bruker dem. Hvilket prøvemateriale en
 analyse gjelder, er ikke en del av katalogen ennå.
+
+**Overgangen.** Appen og databasen rulles ut hver for seg, og en fane som
+står åpen, kjører appen den ble lastet med. Derfor i to trinn, så ingen
+rekkefølge gjør at et referanseområde forsvinner:
+
+1. *Trinn 1 (1.133.2)* endrer ikke faginnholdet: kortet for
+   O-desmetyltramadol har fortsatt `OTRAM` i `gjelder`, så appen fra før
+   finner det. Migrasjonen setter verdiene og lar `les_analyttkatalog()` gi
+   dem, i én transaksjon. Den nye appen leser et kort med en kode i `gjelder`
+   som kortet for forbindelsen koden måler, etter katalogen
+   (`kortetsForbindelse` i `src/domain/koblinger.ts`), og et svar uten feltene
+   (før migrasjonen, eller om den stopper) med den gamle koblingen
+   (`medEldreDatakort` i `src/domain/analyttkatalog.ts`).
+2. *Trinn 2 (#405)*, tidligst sju dager etter at trinn 1 er ute: kortet skrives
+   om til `o-desmetyltramadol`, databasen stenger for analyttkoder i `gjelder`,
+   og overgangen fjernes fra appen. Først da kobles kortet også til et annet
+   fagmiljøs kode for O-desmetyltramadol; til da bare til OUS-koden.
 
 **Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
 filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser

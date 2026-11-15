@@ -166,6 +166,22 @@ export function datakortnokkel(analytt: Datakortanalytt | undefined): string | n
   return undefined
 }
 
+/**
+ * Forbindelsen et datakort gjelder (`gjelder` på kortet), også for et kort som
+ * fra før har en analyttkode der: det regnes som kortet for forbindelsen koden
+ * måler, etter katalogen. Overgangen varer til kortene er skrevet om, når appen
+ * før 1.133.2 ikke er i bruk lenger (#405, `docs/fagmiljoer.md`,
+ * «Overgangen»); fram til da finner den gamle appen kortet med koden.
+ */
+export function kortetsForbindelse(
+  gjelder: string | null,
+  finn: (kode: string) => Datakortanalytt | undefined,
+): string | null {
+  if (gjelder === null) return null
+  const analytt = finn(gjelder)
+  return analytt?.datakort === 'forbindelse' && analytt.forbindelse ? analytt.forbindelse : gjelder
+}
+
 /** Det koblingen til datakortene trenger av en analyttkatalog: koblingene, og analyttene etter koden. */
 export interface Datakortkatalog {
   koblinger: readonly Pick<StoffAnalyttKobling, 'kode' | 'stoff' | 'primar'>[]
@@ -186,10 +202,15 @@ export function referanseomraderPerAnalytt(
   for (const { kode, stoff } of katalog.koblinger.filter((k) => k.primar)) {
     const gjelder = datakortnokkel(katalog.finn(kode))
     if (gjelder === undefined) continue
-    const treff = kort.find((k) => k.stoff === stoff && k.gjelder === gjelder)
+    const treff = kort.find((k) => k.stoff === stoff && kortetsForbindelse(k.gjelder, katalog.finn) === gjelder)
     if (treff) svar.set(kode, treff.verdi)
   }
   return svar
+}
+
+/** Analyttene etter koden, slik `kortetsForbindelse` slår opp i dem. */
+export function analyttFinner<A extends Datakortanalytt>(analytter: readonly A[]): (kode: string) => A | undefined {
+  return (kode) => analytter.find((a) => a.kode === kode)
 }
 
 /** En plass for datakortene i «Viktige data»: sidens egne, eller dem for en forbindelse. */
@@ -223,7 +244,8 @@ export function datakorteiere({
   kortnokler: readonly (string | null)[]
   forbindelser?: Forbindelsesregister
 }): Datakorteier[] {
-  const finnes = new Set(kortnokler.filter((k): k is string => k !== null))
+  const finn = analyttFinner(analytter)
+  const finnes = new Set(kortnokler.flatMap((k) => kortetsForbindelse(k, finn) ?? []))
   const nye = analytter.flatMap((a) => {
     const gjelder = datakortnokkel(a)
     return gjelder ? [gjelder] : []

@@ -9,7 +9,7 @@
 -- `data.gjelder = 'OTRAM'`. Et annet fagmiljø med en annen kode fikk ikke
 -- kortet koblet til sin analyse, og så ikke kortet på fagsiden.
 --
--- Nå sier kortet hvilken forbindelse det gjelder, med nøkkelen i
+-- Nå sier et nytt kort hvilken forbindelse det gjelder, med nøkkelen i
 -- forbindelsesregisteret (src/data/forbindelser.ts):
 -- `data.gjelder = 'o-desmetyltramadol'`. Kortene uten `gjelder` er sidens
 -- egne, som før. Fagmiljøets analyttkatalog sier for hver av sine koder hvilken
@@ -20,10 +20,15 @@
 -- gjennom det (`datakortnokkel` i src/domain/koblinger.ts). Til nå fulgte det av
 -- rekkefølgen: den første primære koden for et stoff fikk sidens egne kort.
 --
--- Her: kolonnene, og katalogen gir dem med. Verdiene for kodene til OUS
--- Klinisk farmakologi og omskrivingen av kortet kommer i neste migrasjon
--- (`*_analyttforbindelser_ous.sql`), som også stenger for analyttkoder i
--- `gjelder`.
+-- Her: kolonnene. Verdiene for kodene til OUS Klinisk farmakologi og katalogen
+-- med de nye feltene kommer i neste migrasjon (`*_analyttforbindelser_ous.sql`),
+-- i én transaksjon. Til den er kjørt, gir katalogen feltene ikke, og appen
+-- bruker den gamle koblingen (`lesKatalogdata` i src/domain/analyttkatalog.ts).
+-- Kortet med `OTRAM` står som før, så appen fra før denne endringen finner det
+-- fortsatt; den nye leser det som kortet for forbindelsen koden måler
+-- (`kortetsForbindelse`). Omskrivingen av kortet og stengingen for
+-- analyttkoder i `gjelder` kommer i et senere trinn, når den gamle appen ikke
+-- er i bruk lenger (docs/fagmiljoer.md, «De felles datakortene»).
 --
 -- Tilbakeføring: en ny migrasjon som fjerner kolonnene og gir katalogen uten
 -- dem. Appen før denne endringen leser ikke feltene.
@@ -42,68 +47,6 @@ comment on column public.analyttkatalog_koder.forbindelse is
   'Forbindelsen analysen måler: nøkkelen i forbindelsesregisteret (src/data/forbindelser.ts), eller null når den ikke er én forbindelse (sumanalysene). Se docs/fagmiljoer.md.';
 comment on column public.analyttkatalog_koder.datakort is
   'De felles datakortene på siden til kodens primære stoff analysen bruker: egne (sidens egne, uten gjelder), forbindelse (dem med forbindelsen i gjelder) eller null (ingen; kortene gjelder serum). Se docs/fagmiljoer.md.';
-
--- Som i P4c, med forbindelsen og datakortene til hver kode.
-create or replace function public.les_analyttkatalog()
-returns jsonb
-language plpgsql
-stable
-security definer
-set search_path = ''
-as $$
-begin
-  perform intern.krev_aktivt_medlemskap();
-  return (
-  with kontekst as (
-    select f.id, f.navn
-    from public.fagmiljoer f
-    where intern.har_aktivt_medlemskap((select auth.uid()))
-      and f.id = intern.arbeidsfagmiljo((select auth.uid()))
-  )
-  select jsonb_build_object(
-    'fagmiljo', (select jsonb_build_object('id', k.id, 'navn', k.navn) from kontekst k),
-    'metoder', coalesce((
-      select jsonb_agg(jsonb_build_object('kode', m.kode, 'beskrivelse', m.beskrivelse) order by m.posisjon)
-      from public.analyttkatalog_metoder m
-      where m.fagmiljo_id = (select id from kontekst)
-    ), '[]'::jsonb),
-    'oppforinger', coalesce((
-      select jsonb_agg(jsonb_build_object(
-        'nokkel', o.nokkel,
-        'type', o.type,
-        'navn', o.navn,
-        'visningsnavn', o.visningsnavn,
-        'undertittel', o.undertittel,
-        'komponenter', to_jsonb(o.komponenter),
-        'gruppe', o.gruppe,
-        'analysemetode', o.analysemetode,
-        'kategori', o.kategori,
-        'enhet', o.enhet,
-        'maleomrade', o.maleomrade,
-        'antihypertensiv', o.antihypertensiv,
-        'aliaser', to_jsonb(o.aliaser),
-        'koder', coalesce((
-          select jsonb_agg(jsonb_build_object(
-            'kode', k.kode, 'navn', k.navn, 'forbindelse', k.forbindelse, 'datakort', k.datakort
-          ) order by k.posisjon)
-          from public.analyttkatalog_koder k
-          where k.fagmiljo_id = o.fagmiljo_id and k.nokkel = o.nokkel
-        ), '[]'::jsonb)
-      ) order by o.posisjon)
-      from public.analyttkatalog_oppforinger o
-      where o.fagmiljo_id = (select id from kontekst)
-    ), '[]'::jsonb),
-    'koblinger', coalesce((
-      select jsonb_agg(jsonb_build_object(
-        'kode', k.kode, 'stoff', k.stoff, 'relasjon', k.relasjon, 'primar', k.primar, 'merknad', k.merknad
-      ) order by k.posisjon)
-      from public.analyttkatalog_koblinger k
-      where k.fagmiljo_id = (select id from kontekst)
-    ), '[]'::jsonb)
-  )
-  );
-end;
-$$;
 
 comment on index public.innholdselementer_enkeltelement_idx is
   'Kortene som bare kan stå én gang per side og panel — datakortene én gang per forbindelse (data.gjelder). Samme typer som ENKELTELEMENTER i src/faginnhold/paneler.ts.';

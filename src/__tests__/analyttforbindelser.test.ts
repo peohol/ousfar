@@ -12,24 +12,26 @@
  *    som med den gamle regelen (koden i `gjelder`, den første primære koden
  *    får sidens egne kort), for alle sider og koder, med de tre
  *    urinanalysene som eneste, uttrykkelige unntak — de bruker ingen av
- *    kortene, som gjelder serum, og ingen av dem fikk noe i produksjonen.
- * 3. Migrasjonen: fila er den grunnlaget gir; den skriver om et kort med en
- *    kode i `gjelder` til forbindelsen, i det publiserte og i et upublisert
- *    utkast hver for seg, uten å endre noe annet, som en endring fra Claude
- *    Code; en ny kjøring endrer ingenting; og en kode kommer ikke inn igjen.
+ *    kortene, som gjelder serum, og ingen av dem fikk noe i produksjonen. Og
+ *    nøyaktig det samme som før så lenge databasen ikke har migrasjonen
+ *    (appen kan være ute først), og så lenge kortene har koden i `gjelder`.
+ * 3. Migrasjonen: fila er den grunnlaget gir; den setter verdiene og lar
+ *    katalogen gi dem i samme transaksjon, uten å endre faginnholdet; og
+ *    fortolkningen får de samme referanseområdene før og etter den. Appen fra
+ *    før finner altså kortene som før, og den nye fungerer i begge tilstander.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { analyttforbindelserSql } from '../../scripts/analyttforbindelser'
 import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
-import { OUS_ANALYTTFORBINDELSER, OUS_KATALOG } from '../domain/ouskatalog'
+import { byggKatalog, lesKatalogdata } from '../domain/analyttkatalog'
+import { OUS_ANALYTTFORBINDELSER, OUS_KATALOG, OUS_KATALOGDATA } from '../domain/ouskatalog'
 import { FORBINDELSER } from '../kjemi/forbindelser'
 import { lagFaginnholdslager, type Faginnholdslager } from '../faginnhold/lagring'
 import { lagFaginnholdsleser } from '../faginnhold/lesing'
 import type { Objektstatus } from '../faginnhold/modell'
-import { DATAKORT } from '../faginnhold/paneler'
-import { faginnholdskall, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { faginnholdskall, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 
 const MIGRASJON = migrasjonsfiler().find((f) => f.endsWith('_analyttforbindelser_ous.sql'))!
 const SQL = readFileSync(new URL(`../../supabase/migrations/${MIGRASJON}`, import.meta.url), 'utf8')
@@ -105,6 +107,61 @@ describe('klinisk paritet for OUS Klinisk farmakologi', () => {
     expect(na.get('AMTNORSUM')).toBe('amitriptylin')
   })
 
+  /** Svaret fra databasen med eller uten de nye feltene på kodene. */
+  function katalogsvar(felt: 'uten' | 'tomme') {
+    const svar = structuredClone(OUS_KATALOGDATA) as unknown as { oppforinger: { koder: Record<string, unknown>[] }[] }
+    for (const o of svar.oppforinger) {
+      for (const k of o.koder) {
+        delete k.forbindelse
+        delete k.datakort
+        if (felt === 'tomme') Object.assign(k, { forbindelse: null, datakort: null })
+      }
+    }
+    return byggKatalog(lesKatalogdata(svar))
+  }
+
+  it('gir det samme som før så lenge databasen ikke har migrasjonen', () => {
+    // Appen og databasen rulles ut hver for seg. Til migrasjonen er kjørt, gir
+    // katalogen ikke feltene, og kortene har fortsatt koden i `gjelder`.
+    const katalog = katalogsvar('uten')
+    const stoffer = [...new Set(katalog.koblinger.map((k) => k.stoff))]
+    const primare = katalog.koblinger.filter((k) => k.primar)
+    const andre = primare.filter((k) => primare.find((p) => p.stoff === k.stoff)!.kode !== k.kode)
+    const gamle = [
+      ...stoffer.map((stoff) => ({ stoff, gjelder: null, verdi: `${stoff}` })),
+      ...andre.map((k) => ({ stoff: k.stoff, gjelder: k.kode, verdi: `${k.stoff}/${k.kode}` })),
+    ]
+    const na = referanseomraderPerAnalytt(gamle, katalog)
+    expect([...na].sort()).toEqual([...somFor(gamle)].sort())
+    expect(na.get('OTRAM')).toBe('tramadol/OTRAM')
+    expect(na.get('TRAM')).toBe('tramadol')
+  })
+
+  it('gir det samme som før når katalogen har feltene og kortene fortsatt har koden', () => {
+    // Etter migrasjonen, før kortene er skrevet om: et kort med koden i
+    // `gjelder` er kortet for forbindelsen koden måler (`kortetsForbindelse`).
+    const primare = OUS_KATALOG.koblinger.filter((k) => k.primar)
+    const andre = primare.filter((k) => primare.find((p) => p.stoff === k.stoff)!.kode !== k.kode)
+    const stoffer = [...new Set(OUS_KATALOG.koblinger.map((k) => k.stoff))]
+    const gamle = [
+      ...stoffer.map((stoff) => ({ stoff, gjelder: null, verdi: `${stoff}` })),
+      ...andre.map((k) => ({ stoff: k.stoff, gjelder: k.kode, verdi: `${k.stoff}/${k.kode}` })),
+    ]
+    const for_ = somFor(gamle)
+    for (const kode of URINANALYSER) for_.delete(kode)
+    const na = referanseomraderPerAnalytt(gamle, OUS_KATALOG)
+    expect([...na].sort()).toEqual([...for_].sort())
+    expect(na.get('OTRAM')).toBe('tramadol/OTRAM')
+  })
+
+  it('bruker ikke den gamle koblingen når katalogen har feltene, også tomme', () => {
+    const kort = [
+      { stoff: 'tramadol', gjelder: null, verdi: 'tramadol' },
+      { stoff: 'tramadol', gjelder: 'OTRAM', verdi: 'OTRAM' },
+    ]
+    expect(referanseomraderPerAnalytt(kort, katalogsvar('tomme')).size).toBe(0)
+  })
+
   it('gir urinanalysene ingenting, slik ingen av dem fikk noe i produksjonen', () => {
     // I produksjonen har verken THC- eller etanolsiden et referanseområde.
     const kort = [
@@ -122,55 +179,43 @@ describe('klinisk paritet for OUS Klinisk farmakologi', () => {
 describe('migrasjonen', () => {
   let db: PGlite
   let kall: Faginnholdskall
-  let lager: Faginnholdslager
   let leser: ReturnType<typeof lagFaginnholdsleser>
+  let bruker: string
   let otram: Objektstatus
   let dmi: Objektstatus
-  let utenKode: Objektstatus
+  let for_: { katalog: unknown; innhold: unknown; revisjoner: number }
 
   const omrade = (ovre: number, gjelder?: string) => ({ nedre: null, ovre, enhet: 'nmol/L', forbehold: '', ...(gjelder && { gjelder }) })
-  const kort = (infoside: string, elementtype: string, data: Record<string, unknown>) =>
-    lager.opprettUtkast('innholdselement', { infoside, panel: 'viktige_data', posisjon: 0, elementtype, data, referanser: [] })
-  const tilstander = (id: string) =>
-    kall.fasit<{ tilstand: string; data: Record<string, unknown> }>(
-      `select tilstand::text, data from public.innholdselementer where objekt_id = $1 order by tilstand::text desc`,
-      [id],
-    )
+  const innhold = () => kall.fasit('select objekt_id, tilstand::text, data from public.innholdselementer order by 1, 2')
   const revisjoner = async () => (await kall.fasit<{ n: number }>('select count(*)::int as n from public.objektrevisjoner'))[0]!.n
+  /** Katalogen slik et medlem av OUS Klinisk farmakologi får den. */
+  const katalogsvaret = () =>
+    som(db, bruker, async (tx) => (await tx.query<{ k: unknown }>('select public.les_analyttkatalog() as k')).rows[0]!.k)
 
   beforeAll(async () => {
-    // Som i produksjonen før migrasjonen: kortet for O-desmetyltramadol har
-    // OUS sin kode i `gjelder`.
+    // Som i produksjonen: kortet for O-desmetyltramadol har OUS sin kode i `gjelder`.
     db = await nyDatabase({ til: MIGRASJON })
     const admin = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'Test', rolle: 'admin', systemarkitekt: true })
-    const bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
+    bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
-    lager = lagFaginnholdslager(kall.klientFor(admin))
+    const lager: Faginnholdslager = lagFaginnholdslager(kall.klientFor(admin))
     leser = lagFaginnholdsleser(kall.klientFor(bruker))
+    const kort = (infoside: string, elementtype: string, data: Record<string, unknown>) =>
+      lager.opprettUtkast('innholdselement', { infoside, panel: 'viktige_data', posisjon: 0, elementtype, data, referanser: [] })
 
     const tramadol = await lager.opprettUtkast('infoside', { navn: 'Tramadol' })
     const diazepam = await lager.opprettUtkast('infoside', { navn: 'Diazepam' })
     const tram = await kort(tramadol.id, 'referanseomrade', omrade(3000))
     otram = await kort(tramadol.id, 'referanseomrade', omrade(400, 'OTRAM'))
     const diaz = await kort(diazepam.id, 'referanseomrade', omrade(3500))
-    dmi = await kort(diazepam.id, 'toksisk_omrade', omrade(5000, 'DMI'))
-    utenKode = await kort(diazepam.id, 'halveringstid', { former: [] })
-    for (const o of [tramadol, diazepam, tram, otram, diaz, dmi, utenKode]) await lager.publiserUtkast(o.id, o.revisjon!)
-    // Et upublisert utkast med en annen verdi står på DMI-kortet.
-    dmi = await lager.lagreUtkast(dmi.id, dmi.revisjon!, {
-      infoside: diazepam.id,
-      panel: 'viktige_data',
-      posisjon: 0,
-      elementtype: 'toksisk_omrade',
-      data: omrade(6000, 'DMI'),
-      referanser: [],
-    })
+    dmi = await kort(diazepam.id, 'referanseomrade', omrade(5000, 'DMI'))
+    for (const o of [tramadol, diazepam, tram, otram, diaz, dmi]) await lager.publiserUtkast(o.id, o.revisjon!)
+    for_ = { katalog: await katalogsvaret(), innhold: await innhold(), revisjoner: await revisjoner() }
     await kjorMigrasjoner(db, { fra: MIGRASJON })
   }, 120_000)
 
   it('ligger i migrasjonene slik grunnlaget gir den', () => {
-    expect(SQL).toBe(analyttforbindelserSql('peohol', MIGRASJON))
-    for (const k of DATAKORT) expect(SQL).toContain(`'${k.type}'`)
+    expect(SQL).toBe(analyttforbindelserSql(MIGRASJON))
   })
 
   it('setter forbindelsen og datakortene på kodene til OUS Klinisk farmakologi', async () => {
@@ -181,45 +226,40 @@ describe('migrasjonen', () => {
     expect(rader.find((r) => r.kode === 'OTRAM')).toEqual({ kode: 'OTRAM', forbindelse: 'o-desmetyltramadol', datakort: 'forbindelse' })
   })
 
-  it('skriver om koden i gjelder til forbindelsen, og ingenting annet', async () => {
-    expect(await tilstander(otram.id)).toEqual([
-      { tilstand: 'utkast', data: omrade(400, 'o-desmetyltramadol') },
-      { tilstand: 'publisert', data: omrade(400, 'o-desmetyltramadol') },
-    ])
-    // Det publiserte og utkastet hver for seg: utkastet beholder sin egen verdi.
-    expect(await tilstander(dmi.id)).toEqual([
-      { tilstand: 'utkast', data: omrade(6000, 'nordiazepam') },
-      { tilstand: 'publisert', data: omrade(5000, 'nordiazepam') },
-    ])
-    expect((await tilstander(utenKode.id)).map((t) => t.data)).toEqual([{ former: [] }, { former: [] }])
+  it('lar katalogen gi feltene først når verdiene er satt, i samme transaksjon', async () => {
+    // Før den er kjørt, får appen katalogen uten feltene, og bruker den gamle koblingen.
+    const koderFor = byggKatalog(lesKatalogdata(for_.katalog)).oppforinger
+    expect(koderFor.find((a) => a.kode === 'OTRAM')).toMatchObject({ forbindelse: 'OTRAM', datakort: 'forbindelse' })
+    expect(JSON.stringify(for_.katalog)).not.toContain('"datakort"')
+    expect(byggKatalog(lesKatalogdata(await katalogsvaret())).finn('OTRAM')).toMatchObject({
+      forbindelse: 'o-desmetyltramadol',
+      datakort: 'forbindelse',
+    })
   })
 
-  it('fører endringen som Claude Codes, med nye revisjoner i historikken', async () => {
-    const endringer = await kall.fasit<{ agent: string; migrasjon: string }>(
-      `select e.agent, e.migrasjon from public.innholdsendringer e
-       join public.objektrevisjoner r on r.endring_id = e.id
-       where r.objekt_id = $1 and r.revisjon > 1`,
-      [otram.id],
-    )
-    expect(endringer).toEqual([{ agent: 'claude-code', migrasjon: MIGRASJON }])
+  it('endrer ikke faginnholdet, så appen fra før finner kortene som før', async () => {
+    expect(await innhold()).toEqual(for_.innhold)
+    expect(await revisjoner()).toBe(for_.revisjoner)
   })
 
-  it('gir fortolkningen det samme referanseområdet for OTRAM som før', async () => {
-    const omrader = await leser.lesReferanseomrader('publisert', OUS_KATALOG)
-    expect(omrader.get('OTRAM')).toEqual(omrade(400))
-    expect(omrader.get('TRAM')).toEqual(omrade(3000))
-    expect(omrader.get('DIAZ')).toEqual(omrade(3500))
+  it('gir fortolkningen de samme referanseområdene før og etter migrasjonen', async () => {
+    const katalogFor = byggKatalog(lesKatalogdata(for_.katalog))
+    const katalogEtter = byggKatalog(lesKatalogdata(await katalogsvaret()))
+    const forventet = [
+      ['DIAZ', omrade(3500)],
+      ['DMI', omrade(5000)],
+      ['OTRAM', omrade(400)],
+      ['TRAM', omrade(3000)],
+    ]
+    const sortert = (m: ReadonlyMap<string, unknown>) => [...m].sort(([a], [b]) => a.localeCompare(b))
+    expect(sortert(await leser.lesReferanseomrader('publisert', katalogFor))).toEqual(forventet)
+    expect(sortert(await leser.lesReferanseomrader('publisert', katalogEtter))).toEqual(forventet)
   })
 
   it('endrer ingenting når den kjøres på nytt', async () => {
-    const for_ = await revisjoner()
-    await db.exec(SQL.slice(0, SQL.indexOf('-- Et datakort for en metabolitt')))
-    expect(await revisjoner()).toBe(for_)
-  })
-
-  it('slipper ikke en analyttkode inn i gjelder igjen', async () => {
-    const side = (await kall.fasit<{ infoside_id: string }>('select infoside_id from public.innholdselementer where objekt_id = $1', [otram.id]))[0]!
-    await expect(kort(side.infoside_id, 'toksisk_omrade', omrade(900, 'OTRAM'))).rejects.toThrow(/ikke godtatt/)
-    await expect(kort(side.infoside_id, 'toksisk_omrade', omrade(900, 'o-desmetyltramadol'))).resolves.toBeDefined()
+    const katalog = await katalogsvaret()
+    await db.exec(SQL)
+    expect(await katalogsvaret()).toEqual(katalog)
+    expect(await innhold()).toEqual(for_.innhold)
   })
 })

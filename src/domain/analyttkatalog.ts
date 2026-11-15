@@ -286,7 +286,8 @@ function oppforing(verdi: unknown): Katalogoppforing {
   if (!FORTOLKNINGSTYPER.includes(type)) throw new UgyldigKatalog(`${hva} har en ukjent type.`)
   const koder = liste(f.koder, `${hva}: kodene`).map((k) => {
     const kode = objekt(k, hva)
-    // Forbindelsen og datakortene kom til etter katalogen; et svar uten dem har ingen.
+    // Forbindelsen og datakortene kom til etter katalogen; et svar uten dem
+    // får den gamle koblingen (`medEldreDatakort`).
     const forbindelse = kode.forbindelse ?? null
     if (forbindelse !== null && (typeof forbindelse !== 'string' || !FORBINDELSESNOKKEL.test(forbindelse))) {
       throw new UgyldigKatalog(`${hva}: forbindelsen er ugyldig.`)
@@ -324,6 +325,35 @@ function oppforing(verdi: unknown): Katalogoppforing {
 }
 
 /**
+ * Datakortene slik koblingen var før katalogen sa hvilke kort hver kode bruker:
+ * den første primære koden for et stoff fikk sidens egne kort, og de andre
+ * primære kortene med koden i `gjelder`. Bare for et svar fra en database der
+ * `*_analyttforbindelser_ous.sql` ikke er kjørt ennå. Der står koden fortsatt i
+ * `gjelder`, så `forbindelse` er her koden, ikke en nøkkel i
+ * forbindelsesregisteret. Appen og databasen rulles ut hver for seg, og
+ * referanseområdene skal ikke forsvinne i mellomtiden.
+ */
+function medEldreDatakort(oppforinger: Katalogoppforing[], koblinger: readonly Analyttkoblingsdata[]): Katalogoppforing[] {
+  const bruk = new Map<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>>()
+  const medEgne = new Set<string>()
+  for (const { kode, stoff, primar } of koblinger) {
+    if (!primar || bruk.has(kode)) continue
+    const egne = !medEgne.has(stoff)
+    medEgne.add(stoff)
+    bruk.set(kode, egne ? { forbindelse: null, datakort: 'egne' } : { forbindelse: kode, datakort: 'forbindelse' })
+  }
+  return oppforinger.map((o) => ({
+    ...o,
+    koder: o.koder.map((k) => ({ ...k, ...(bruk.get(k.kode) ?? { forbindelse: null, datakort: null }) })),
+  }))
+}
+
+/** Om svaret er fra før katalogen sa hvilke datakort kodene bruker. Oppføringene er alt lest (`oppforing`). */
+function utenDatakort(oppforinger: unknown[]): boolean {
+  return (oppforinger as Felt[]).every((o) => (o.koder as Felt[]).every((k) => !('datakort' in k)))
+}
+
+/**
  * Katalogen i svaret fra `les_analyttkatalog()`. Et svar som ikke har
  * formen, avvises i sin helhet: fortolkningen skal heller stoppe enn bruke
  * en katalog som kan være feil.
@@ -348,10 +378,12 @@ export function lesKatalogdata(svar: unknown): Katalogdata {
       merknad,
     }
   })
+  const svarene = liste(f.oppforinger, 'Oppføringene')
+  const oppforinger = svarene.map(oppforing)
   return {
     fagmiljo: fagmiljo && { id: tekst(fagmiljo, 'id', 'Fagmiljøet'), navn: tekst(fagmiljo, 'navn', 'Fagmiljøet') },
     metoder,
-    oppforinger: liste(f.oppforinger, 'Oppføringene').map(oppforing),
+    oppforinger: utenDatakort(svarene) ? medEldreDatakort(oppforinger, koblinger) : oppforinger,
     koblinger,
   }
 }

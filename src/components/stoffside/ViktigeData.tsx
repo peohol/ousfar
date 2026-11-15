@@ -2,7 +2,7 @@ import { useId, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import type { Laboratorieanalytt } from '../../domain/analyttkatalog'
 import type { Sideelement } from '../../faginnhold/stoffside'
-import { datakorteiere } from '../../domain/koblinger'
+import { analyttFinner, datakorteiere, kortetsForbindelse } from '../../domain/koblinger'
 import {
   DATAKORT,
   DATAKORTGRUPPER,
@@ -63,9 +63,10 @@ const UTSEENDE: Record<Datakorttype, { ikon: Ikonnavn; tone?: 'referanse' | 'tok
  * tramadolsiden viser både referanseområdet for tramadol og for
  * O-desmetyltramadol. Sidens egne kort lagres uten `gjelder`, de andre med
  * nøkkelen til forbindelsen i forbindelsesregisteret (`datakortGjelder`),
- * aldri med et laboratoriums analyttkode. Plassene står i `datakorteiere`;
- * analyttene i arbeidskontekstens katalog gir bare plass til kort som ennå
- * ikke finnes. Navnene står når siden viser kort for flere.
+ * aldri med et laboratoriums analyttkode; et kort med en kode fra før står på
+ * plassen til forbindelsen koden måler (`kortetsForbindelse`). Plassene står
+ * i `datakorteiere`; analyttene i arbeidskontekstens katalog gir bare plass
+ * til kort som ennå ikke finnes. Navnene står når siden viser kort for flere.
  */
 export function ViktigeData({
   definisjon,
@@ -82,6 +83,7 @@ export function ViktigeData({
   analytter?: readonly Laboratorieanalytt[]
 }) {
   const elementer = kontekst.modell.paneler.get(definisjon.nokkel) ?? []
+  const finn = analyttFinner(analytter)
   const eiere = datakorteiere({
     stoff,
     stoffnavn,
@@ -96,7 +98,9 @@ export function ViktigeData({
         plass,
         gjelder,
         etikett: navn,
-        element: elementer.find((e) => e.elementtype === def.type && datakortGjelder(e.data) === gjelder) ?? null,
+        element:
+          elementer.find((e) => e.elementtype === def.type && kortetsForbindelse(datakortGjelder(e.data), finn) === gjelder) ??
+          null,
       }),
     ),
   )

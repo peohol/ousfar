@@ -28,7 +28,7 @@ import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing
 import type { Objektstatus } from '../faginnhold/modell'
 import { FJERNET } from '../faginnhold/paneler'
 import type { Analyte } from '../types'
-import { faginnholdskall, feilFra, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
 
 let kall: Faginnholdskall
 let bruker: string
@@ -162,9 +162,19 @@ describe('lesReferanseomrader', () => {
     expect([...(await brukerleser.lesReferanseomrader('publisert', tom))]).toEqual([])
   })
 
-  it('tar ikke imot en analyttkode i gjelder', async () => {
-    const feil = await feilFra(() => kort(ider.tramadol, 'toksisk_omrade', { nedre: 1, ovre: 2, enhet: 'nmol/L', forbehold: '', gjelder: 'OTRAM' }))
-    expect(feil?.message).toMatch(/Innholdet ble ikke godtatt/)
+  it('leser et kort som fra før har analyttkoden i gjelder, som kortet for forbindelsen koden måler', () => {
+    // Overgangen til kortene er skrevet om: appen fra før finner kortet med
+    // koden, den nye gjennom katalogen. En katalog som ikke kjenner koden,
+    // kobler ingenting til det.
+    const kortene = [
+      { stoff: 'tramadol', gjelder: null, verdi: 'tramadol' },
+      { stoff: 'tramadol', gjelder: 'OTRAM', verdi: 'o-desmetyltramadol' },
+    ]
+    expect([...referanseomraderPerAnalytt(kortene, OUS_KATALOG)].sort()).toEqual([
+      ['OTRAM', 'o-desmetyltramadol'],
+      ['TRAM', 'tramadol'],
+    ])
+    expect([...referanseomraderPerAnalytt(kortene, annenKatalog())]).toEqual([['TRML', 'tramadol']])
   })
 
   it('gir en sumanalyse ikke kortet på siden til et stoff den bare er sekundært koblet til', async () => {

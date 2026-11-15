@@ -850,15 +850,16 @@ describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer'
   const TRAMADOL = { id: 'tram', slug: 'tramadol', navn: 'Tramadol' }
   const kort = (id: string, data: Record<string, unknown>) =>
     utgave(id, { infoside: 'tram', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
-  const tramadolside = (): Stoffsidedata => ({
+  const side = (gjelder: string) => (): Stoffsidedata => ({
     stoff: TRAMADOL,
     infoside: utgave('tram', { navn: 'Tramadol', slug: 'tramadol' }),
     elementer: [
       kort('tram-kort', { nedre: 100, ovre: 300, enhet: 'nmol/L' }),
-      kort('otram-kort', { nedre: 20, ovre: 40, enhet: 'nmol/L', gjelder: 'o-desmetyltramadol' }),
+      kort('otram-kort', { nedre: 20, ovre: 40, enhet: 'nmol/L', gjelder }),
     ],
     referanser: [],
   })
+  const tramadolside = side('o-desmetyltramadol')
   const overskrifter = () =>
     within(
       within(screen.getByRole('region', { name: 'Viktige data' })).getByRole('group', { name: 'Konsentrasjoner i serum' }),
@@ -882,6 +883,13 @@ describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer'
     await finnVerdi('20–40 nmol/L')
     expect(overskrifter()).toEqual(FORVENTET)
     expect(document.body.textContent).not.toContain('OTRAM')
+  })
+
+  it('viser et kort som fortsatt har koden i gjelder, på plassen til forbindelsen koden måler', async () => {
+    // Overgangen til kortene er skrevet om: ett kort for metabolitten, ikke to.
+    vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }))
+    await finnVerdi('20–40 nmol/L')
+    expect(overskrifter()).toEqual(FORVENTET)
   })
 })
 
