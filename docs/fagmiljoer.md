@@ -912,9 +912,29 @@ den innloggedes aktive primærmedlemskap i et aktivt fagmiljø
 ikke for en systemarkitekt: ingen får et annet fagmiljøs regler som reserve.
 Appen får fagmiljøet med navnet i `mine_rettigheter().arbeidsfagmiljo` og
 viser det i meldingen når regler mangler. Byttes det, tømmer appen reglene
-den har, før de nye hentes (`useKontekstbytte`). Bytte av fagmiljø innenfor
-appen finnes ikke ennå; når det kommer, lagres valget på serveren og
-kontrolleres mot et aktivt medlemskap (P0 §2.6).
+den har, før de nye hentes (`useKontekstbytte`).
+
+**Å velge arbeidsfagmiljø.** Den som er aktivt medlem av flere fagmiljøer,
+velger selv hvilket hen arbeider i (Peders valg 15.11.2026), under «Fagmiljø» i
+kontomenyen (`Arbeidsfagmiljovalg`). Valget er primærmedlemskapet og lagres på
+serveren: `public.velg_arbeidsfagmiljo(fagmiljo)`
+(`20261115020000_velg_arbeidsfagmiljo.sql`) gjør det valgte medlemskapet
+primært, bare for den innloggede selv og bare blant egne aktive medlemskap i
+aktive fagmiljøer, med begrunnelsen og den innloggede som aktør i
+tilgangsloggen (P0 §2.6). Det flytter fortolkningen og ingenting annet:
+lesing og deltakelse følger alle aktive medlemskap som før. Uten dette ble
+alle stående i det første fagmiljøet, fordi et nytt medlemskap ikke blir
+primært når kontoen alt har et (`intern.gi_medlemskap`).
+`mine_rettigheter().mine_fagmiljoer` er fagmiljøene det kan velges blant;
+med ett vises ikke valget, med mindre det ikke er det hen arbeider i (som når
+det hen arbeidet i, er arkivert; da arbeider hen ikke i noe til hen velger).
+Appen tar i bruk rettighetene byttet gir, og et eldre svar fra
+`mine_rettigheter()` overskriver aldri et nyere (`useKontoensSvarMedSjekk`).
+Det som hentes for arbeidskonteksten, følger `arbeidskontekst` i
+`src/auth/rettigheter.tsx`: å miste arbeidsfagmiljøet er et bytte som det
+andre, så katalogen og reglene fra det forrige tømmes og fortolkningen
+stopper til et nytt er valgt. Prøvd i `src/__tests__/arbeidsfagmiljo.test.ts`,
+`arbeidsfagmiljovalg.test.tsx` og `arbeidskontekst.test.tsx`.
 
 **Fagmiljøet på reglene.** `laboratorieanalytter`, `intervallregelsett`,
 `scenarioregelsett`, `scenarioanalytter` og `thc_regelsett` har kolonnen

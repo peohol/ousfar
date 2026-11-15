@@ -18,7 +18,7 @@ import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { omradeFor } from './data/tilgangsomrader'
-import { byggPersongalleri, leggInnTestdata, type Person, type Persongalleri } from './hjelp/persongalleri'
+import { byggPersongalleri, leggInnTestdata, PERSONER, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { provargumenter } from './hjelp/provargumenter'
 import { feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 import { funksjonsinnganger, tabellinnganger, type Funksjonsinngang } from './hjelp/tilgangsinnganger'
@@ -213,15 +213,29 @@ describe('mine_rettigheter()', () => {
     ).rows
     const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
-    // P4b: fagmiljøet fortolkningen gjelder (det aktive primærmedlemskapet).
-    expect(await rettigheter('systemarkitekt')).toEqual({ ...arkitekt, arbeidsfagmiljo: A })
-    expect(await rettigheter('arkitektB')).toEqual({ ...arkitekt, arbeidsfagmiljo: B })
-    // Nye kontoer blir medlemmer av A (standarden), så bare den lokale administratoren der kan opprette dem.
-    expect(await rettigheter('adminA')).toEqual({ ...ingen, administrerer: [A], opprett_bruker: true, arbeidsfagmiljo: A })
-    expect(await rettigheter('adminB')).toEqual({ ...ingen, administrerer: [B], arbeidsfagmiljo: B })
-    for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
-      expect(await rettigheter(person), person).toEqual({ ...ingen, arbeidsfagmiljo: f })
+    // Fagmiljøene personen har aktivt medlemskap i, som arbeidsfagmiljøet kan velges blant, etter navn.
+    const ref = { A, B } as const satisfies Record<Fagmiljo, unknown>
+    const mine = (person: Person | 'bareRollen') => {
+      const def = person === 'bareRollen' ? { primaer: 'A' as const } : PERSONER[person]
+      const aktive: Fagmiljo[] = [...(def.primaer ? [def.primaer] : []), ...('ogsaAktivI' in def ? def.ogsaAktivI : [])]
+      return aktive.map((f) => ref[f]).sort((x, y) => x.navn.localeCompare(y.navn))
     }
+    // P4b: fagmiljøet fortolkningen gjelder (det aktive primærmedlemskapet).
+    expect(await rettigheter('systemarkitekt')).toEqual({ ...arkitekt, arbeidsfagmiljo: A, mine_fagmiljoer: mine('systemarkitekt') })
+    expect(await rettigheter('arkitektB')).toEqual({ ...arkitekt, arbeidsfagmiljo: B, mine_fagmiljoer: mine('arkitektB') })
+    // Nye kontoer blir medlemmer av A (standarden), så bare den lokale administratoren der kan opprette dem.
+    expect(await rettigheter('adminA')).toEqual({
+      ...ingen,
+      administrerer: [A],
+      opprett_bruker: true,
+      arbeidsfagmiljo: A,
+      mine_fagmiljoer: mine('adminA'),
+    })
+    expect(await rettigheter('adminB')).toEqual({ ...ingen, administrerer: [B], arbeidsfagmiljo: B, mine_fagmiljoer: mine('adminB') })
+    for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
+      expect(await rettigheter(person), person).toEqual({ ...ingen, arbeidsfagmiljo: f, mine_fagmiljoer: mine(person) })
+    }
+    expect(mine('dobbeltAB')).toEqual([A, B].sort((x, y) => x.navn.localeCompare(y.navn)))
   })
 
   it('stopper en bruker uten aktivt medlemskap, og kan ikke kalles uten innlogging', async () => {
