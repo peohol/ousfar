@@ -12,7 +12,7 @@
  * endrer ingenting; før det første svaret vises ingen rettigheter.
  */
 import { createContext, useContext, type ReactNode } from 'react'
-import { useKontoensSvar } from '../hooks/useKontoensSvar'
+import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
 import { klient } from './klient'
 
 export interface Fagmiljoreferanse {
@@ -36,6 +36,11 @@ export interface Rettigheter {
    * uten et slikt, og før det første svaret.
    */
   arbeidsfagmiljo: Fagmiljoreferanse | null
+  /**
+   * De aktive fagmiljøene den innloggede er aktivt medlem av, etter navn.
+   * Arbeidsfagmiljøet velges blant dem (`velgArbeidsfagmiljo`).
+   */
+  mineFagmiljoer: readonly Fagmiljoreferanse[]
   /** Kan endre stoffregisterets inndeling og arkiv. */
   stoffregister: boolean
   /** Kan opprette nye brukere. */
@@ -46,6 +51,7 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   systemarkitekt: false,
   administrerer: [],
   arbeidsfagmiljo: null,
+  mineFagmiljoer: [],
   stoffregister: false,
   opprettBruker: false,
 }
@@ -58,15 +64,18 @@ function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
   return { id: f.id as string, nokkel: f.nokkel as string, navn: f.navn as string, standard: f.standard === true, apent: f.apent === true }
 }
 
+/** En liste fagmiljøer i svaret, uten dem som har feil form. */
+const lesFagmiljoer = (v: unknown): Fagmiljoreferanse[] =>
+  Array.isArray(v) ? v.map(lesFagmiljo).filter((f): f is Fagmiljoreferanse => f !== null) : []
+
 /** Svaret fra databasen, der alt som mangler eller har feil form, regnes som nei. */
 export function lesRettigheter(svar: unknown): Rettigheter {
   const r = typeof svar === 'object' && svar !== null ? (svar as Record<string, unknown>) : {}
   return {
     systemarkitekt: r.systemarkitekt === true,
-    administrerer: Array.isArray(r.administrerer)
-      ? r.administrerer.map(lesFagmiljo).filter((f): f is Fagmiljoreferanse => f !== null)
-      : [],
+    administrerer: lesFagmiljoer(r.administrerer),
     arbeidsfagmiljo: lesFagmiljo(r.arbeidsfagmiljo),
+    mineFagmiljoer: lesFagmiljoer(r.mine_fagmiljoer),
     stoffregister: r.stoffregister === true,
     opprettBruker: r.opprett_bruker === true,
   }
@@ -78,14 +87,47 @@ export async function hentMineRettigheter(): Promise<Rettigheter> {
   return lesRettigheter(data)
 }
 
+/**
+ * Gjør `fagmiljo` til fagmiljøet den innloggede arbeider i, blant egne aktive
+ * medlemskap, og gir rettighetene etter byttet. Databasen kontrollerer
+ * medlemskapet og lagrer valget; det gjelder fortolkningen og ingenting annet.
+ */
+export async function velgArbeidsfagmiljo(fagmiljo: string): Promise<Rettigheter> {
+  const { data, error } = await klient().rpc('velg_arbeidsfagmiljo', { fagmiljo })
+  if (error) throw error
+  return lesRettigheter(data)
+}
+
+/** Om den innloggede kan velge hvilket fagmiljø hen arbeider i. */
+export const kanVelgeArbeidsfagmiljo = (r: Rettigheter): boolean => r.mineFagmiljoer.length > 1
+
 /** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
   r.systemarkitekt || r.opprettBruker || r.administrerer.length > 0
 
 const Kontekst = createContext<Rettigheter>(INGEN_RETTIGHETER)
+const Oppdatering = createContext<() => void>(() => undefined)
 
-export function RettigheterKilde({ verdi, children }: { verdi: Rettigheter; children: ReactNode }) {
-  return <Kontekst.Provider value={verdi}>{children}</Kontekst.Provider>
+/** Gir rettighetene videre, og `oppdater` for å hente dem på nytt etter en endring den innloggede selv gjorde. */
+export function RettigheterKilde({
+  verdi,
+  oppdater = () => undefined,
+  children,
+}: {
+  verdi: Rettigheter
+  oppdater?: () => void
+  children: ReactNode
+}) {
+  return (
+    <Kontekst.Provider value={verdi}>
+      <Oppdatering.Provider value={oppdater}>{children}</Oppdatering.Provider>
+    </Kontekst.Provider>
+  )
+}
+
+/** Henter rettighetene på nytt med en gang (`RettigheterKilde`). */
+export function useOppdaterRettigheter(): () => void {
+  return useContext(Oppdatering)
 }
 
 /** Rettighetene appen er gitt (`RettigheterKilde`); ingen utenfor den. */
@@ -94,10 +136,14 @@ export function useRettigheter(): Rettigheter {
 }
 
 /**
- * Henter rettighetene til kontoen og holder dem oppdatert. `bruker` er
- * kontoen de gjelder; en annen konto starter uten rettigheter til svaret
- * kommer.
+ * Henter rettighetene til kontoen og holder dem oppdatert, med `oppdater` for
+ * å hente dem på nytt med en gang. `bruker` er kontoen de gjelder; en annen
+ * konto starter uten rettigheter til svaret kommer.
  */
-export function useMineRettigheter(bruker: string, hent: () => Promise<Rettigheter> = hentMineRettigheter): Rettigheter {
-  return useKontoensSvar(bruker, hent, INGEN_RETTIGHETER)
+export function useMineRettigheter(
+  bruker: string,
+  hent: () => Promise<Rettigheter> = hentMineRettigheter,
+): { rettigheter: Rettigheter; oppdater: () => void } {
+  const { verdi, sjekk } = useKontoensSvarMedSjekk(bruker, hent, INGEN_RETTIGHETER)
+  return { rettigheter: verdi, oppdater: sjekk }
 }

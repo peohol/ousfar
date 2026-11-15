@@ -14,6 +14,7 @@ import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Trinnbryter, type Trinnvalg } from '../Trinnbryter'
 import { Menyskuff, Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
 import { Kontopanel } from './Kontopanel'
 
@@ -44,7 +45,8 @@ const ENHETSVALG: readonly Trinnvalg<Visningsenhet>[] = VISNINGSENHETER.map((e) 
 
 /**
  * Kontoen, fra avataren helt til høyre i toppmenyen: hvem appen er logget inn
- * som, veien til egen profil, gruppene, preferansene og utlogging. Venter en
+ * som, veien til egen profil, gruppene, fagmiljøet en med flere medlemskap
+ * arbeider i, preferansene og utlogging. Venter en
  * invitasjon til en gruppe, står det en prikk på avataren og på «Grupper».
  */
 export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
@@ -58,7 +60,9 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
     invitasjoner.length === 0 ? undefined : invitasjoner.length === 1 ? 'én ny invitasjon' : `${invitasjoner.length} nye invitasjoner`
 
   const [kontopanel, setKontopanel] = useBevart('kontopanel', false)
-  const [preferanser, setPreferanser] = useState(false)
+  // Skuffen som står åpen i menyen; høyst én om gangen.
+  const [skuff, setSkuff] = useState<'fagmiljo' | 'preferanser' | null>(null)
+  const veksle = (s: 'fagmiljo' | 'preferanser') => () => setSkuff((apen) => (apen === s ? null : s))
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukkKontopanel = useCallback(() => setKontopanel(false), [])
 
@@ -76,8 +80,8 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         etikett="Konto"
         lag="kontomeny"
         ved={invitert && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
-        // Neste gang menyen åpnes, står preferansene lukket igjen.
-        onApne={() => setPreferanser(false)}
+        // Neste gang menyen åpnes, står skuffene lukket igjen.
+        onApne={() => setSkuff(null)}
       >
         {(lukk) => (
           <>
@@ -117,9 +121,10 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   }}
                 />
               </li>
+              <Arbeidsfagmiljovalg apen={skuff === 'fagmiljo'} onVeksle={veksle('fagmiljo')} />
               <Preferanser
-                apen={preferanser}
-                onVeksle={() => setPreferanser((a) => !a)}
+                apen={skuff === 'preferanser'}
+                onVeksle={veksle('preferanser')}
                 tema={tema}
                 bevegelse={bevegelse}
               />

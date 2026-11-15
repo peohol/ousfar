@@ -156,7 +156,7 @@ export default function App() {
   const profil = useProfil()
   // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
   // rettighetene i databasen, ikke den gamle adminrollen (P2d).
-  const rettigheter = useMineRettigheter(profil.id)
+  const { rettigheter, oppdater: oppdaterRettigheter } = useMineRettigheter(profil.id)
   // Gruppene følger kontoen, ikke fagmiljøet fortolkningen gjelder (P6).
   const grupper = useMineGrupper(profil.id)
   const katalogtilstand = useHentAnalyttkatalog(
@@ -170,12 +170,25 @@ export default function App() {
   if (!kilde) return <div className="port" aria-busy="true" />
   return (
     <AnalyttkatalogKilde verdi={kilde}>
-      <Arbeidsflate key={kilde.katalog.fagmiljo?.id ?? ''} rettigheter={rettigheter} grupper={grupper} />
+      <Arbeidsflate
+        key={kilde.katalog.fagmiljo?.id ?? ''}
+        rettigheter={rettigheter}
+        oppdaterRettigheter={oppdaterRettigheter}
+        grupper={grupper}
+      />
     </AnalyttkatalogKilde>
   )
 }
 
-function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grupper: Gruppekilde }) {
+function Arbeidsflate({
+  rettigheter,
+  oppdaterRettigheter,
+  grupper,
+}: {
+  rettigheter: Rettigheter
+  oppdaterRettigheter: () => void
+  grupper: Gruppekilde
+}) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
   // egen katalog. Fagsidene er stoffenes, i stoffregisteret; koblingene i
   // katalogen er veien mellom de to.
@@ -1051,7 +1064,7 @@ function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grup
   // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
   // og det samme gjør rettighetene og gruppene.
   return (
-    <RettigheterKilde verdi={rettigheter}>
+    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter}>
       <GruppekildeProvider verdi={grupper}>
         <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
       </GruppekildeProvider>
