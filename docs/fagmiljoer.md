@@ -1107,7 +1107,9 @@ rekkefølge gjør at et referanseområde forsvinner:
    som kortet for forbindelsen koden måler, etter katalogen
    (`kortetsForbindelse` i `src/domain/koblinger.ts`), og et svar uten feltene
    (før migrasjonen, eller om den stopper) med den gamle koblingen
-   (`medEldreDatakort` i `src/domain/analyttkatalog.ts`).
+   (`medEldreDatakort` i `src/domain/analyttkatalog.ts`). Redigeres kortet i
+   den nye appen, beholder det nøkkelen det er lagret med (`ViktigeData`), så
+   den gamle finner det også etterpå; et nytt kort får forbindelsen.
 2. *Trinn 2 (#405)*, tidligst sju dager etter at trinn 1 er ute: kortet skrives
    om til `o-desmetyltramadol`, databasen stenger for analyttkoder i `gjelder`,
    og overgangen fjernes fra appen. Først da kobles kortet også til et annet

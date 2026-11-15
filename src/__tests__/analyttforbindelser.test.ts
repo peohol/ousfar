@@ -24,7 +24,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { analyttforbindelserSql } from '../../scripts/analyttforbindelser'
-import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
+import { datakorteiere, referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
 import { byggKatalog, lesKatalogdata } from '../domain/analyttkatalog'
 import { OUS_ANALYTTFORBINDELSER, OUS_KATALOG, OUS_KATALOGDATA } from '../domain/ouskatalog'
 import { FORBINDELSER } from '../kjemi/forbindelser'
@@ -184,6 +184,8 @@ describe('migrasjonen', () => {
   let otram: Objektstatus
   let dmi: Objektstatus
   let for_: { katalog: unknown; innhold: unknown; revisjoner: number }
+  let lager: Faginnholdslager
+  let tramadolside: string
 
   const omrade = (ovre: number, gjelder?: string) => ({ nedre: null, ovre, enhet: 'nmol/L', forbehold: '', ...(gjelder && { gjelder }) })
   const innhold = () => kall.fasit('select objekt_id, tilstand::text, data from public.innholdselementer order by 1, 2')
@@ -198,12 +200,13 @@ describe('migrasjonen', () => {
     const admin = await opprettBruker(db, { brukernavn: 'peohol', fornavn: 'Peder', etternavn: 'Test', rolle: 'admin', systemarkitekt: true })
     bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
     kall = faginnholdskall(db, admin)
-    const lager: Faginnholdslager = lagFaginnholdslager(kall.klientFor(admin))
+    lager = lagFaginnholdslager(kall.klientFor(admin))
     leser = lagFaginnholdsleser(kall.klientFor(bruker))
     const kort = (infoside: string, elementtype: string, data: Record<string, unknown>) =>
       lager.opprettUtkast('innholdselement', { infoside, panel: 'viktige_data', posisjon: 0, elementtype, data, referanser: [] })
 
     const tramadol = await lager.opprettUtkast('infoside', { navn: 'Tramadol' })
+    tramadolside = tramadol.id
     const diazepam = await lager.opprettUtkast('infoside', { navn: 'Diazepam' })
     const tram = await kort(tramadol.id, 'referanseomrade', omrade(3000))
     otram = await kort(tramadol.id, 'referanseomrade', omrade(400, 'OTRAM'))
@@ -261,5 +264,35 @@ describe('migrasjonen', () => {
     await db.exec(SQL)
     expect(await katalogsvaret()).toEqual(katalog)
     expect(await innhold()).toEqual(for_.innhold)
+  })
+
+  it('lar appen fra før finne kortet også etter at den nye har redigert og publisert det', async () => {
+    // Den nye appen lagrer et kort som står fra før, med nøkkelen det har
+    // (stoffside.test.tsx, «beholder koden i gjelder»), her `OTRAM`.
+    const ny = await lager.lagreUtkast(otram.id, otram.revisjon!, {
+      infoside: tramadolside,
+      panel: 'viktige_data',
+      posisjon: 0,
+      elementtype: 'referanseomrade',
+      data: omrade(450, 'OTRAM'),
+      referanser: [],
+    })
+    await lager.publiserUtkast(ny.id, ny.revisjon!)
+    const gammel = byggKatalog(lesKatalogdata(for_.katalog))
+    const nyKatalog = byggKatalog(lesKatalogdata(await katalogsvaret()))
+    expect((await leser.lesReferanseomrader('publisert', gammel)).get('OTRAM')).toEqual(omrade(450))
+    expect((await leser.lesReferanseomrader('publisert', nyKatalog)).get('OTRAM')).toEqual(omrade(450))
+    // Og den nye appen har fortsatt nøyaktig ett kort for O-desmetyltramadol.
+    const kortnokler = (
+      await kall.fasit<{ gjelder: string | null }>(
+        `select data ->> 'gjelder' as gjelder from public.innholdselementer where infoside_id = $1 and tilstand = 'publisert'`,
+        [tramadolside],
+      )
+    ).map((r) => r.gjelder)
+    const analytter = nyKatalog.oppforinger.filter((a) => ['TRAM', 'OTRAM'].includes(a.kode))
+    expect(datakorteiere({ stoff: 'tramadol', stoffnavn: 'Tramadol', analytter, kortnokler }).map((e) => e.gjelder)).toEqual([
+      null,
+      'o-desmetyltramadol',
+    ])
   })
 })
