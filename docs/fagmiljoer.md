@@ -617,7 +617,7 @@ medlemslista.
 
 ## Opprettelse av brukere
 
-`supabase/migrations/20261115110000_opprett_bruker_i_fagmiljo.sql` (issue
+`supabase/migrations/20261115113000_opprett_bruker_i_fagmiljo.sql` (issue
 #395, punkt 2). En ny konto opprettes direkte i fagmiljøet den som oppretter,
 administrerer, uten å bli medlem av standardfagmiljøet først.
 
@@ -707,8 +707,9 @@ ukjent) stemmer med `opprett_bruker_i`, myndigheten som forsvinner underveis,
 et brukernavn i bruk, en annens reservasjon, tilgangsloggen, og at
 administratoren i B, ikke den i A, kan gi kontoen nytt passord etterpå.
 `src/__tests__/opprettelse.samtidighet.test.ts`: tilbakekalling og opprettelse
-samtidig, i begge rekkefølger, og to administratorer som klarerer samme
-brukernavn, på ekte Postgres 17. `konto.test.tsx`: skjemaet og kvitteringen.
+samtidig, i begge rekkefølger, to administratorer som klarerer samme
+brukernavn, og oppryddingen etter et gammelt forsøk mens den samme
+administratoren prøver igjen, på ekte Postgres 17. `konto.test.tsx`: skjemaet og kvitteringen.
 
 ## Hjelperne for tilgang per fagmiljø
 

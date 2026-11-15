@@ -10,6 +10,10 @@
  * - Administratorene i A og B klarerer det samme brukernavnet samtidig. Den
  *   andre venter og stoppes (`55P03`), så ingen kan få ut passordet til en
  *   konto den andre bestilte i sitt fagmiljø.
+ * - Den samme administratoren prøver igjen mens det første forsøket rydder
+ *   opp etter en feil. Oppryddingen, med nøkkelen fra det første forsøket,
+ *   fjerner ikke det nye forsøkets reservasjon, og det nye forsøket får
+ *   kontoen.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
@@ -159,6 +163,34 @@ describe.skipIf(!SERVER)('samtidig opprettelse av brukere i et fagmiljø (ekte P
     if (opprettet) expect(etter).toMatchObject({ konto: true, medlemskap: ['ous-rettstoksikologi'], reservert_av: null })
     // Reservasjonen står til Edge-funksjonen trekker den tilbake.
     else expect(etter).toEqual({ konto: false, medlemskap: [], adminB: false, reservert_av: KONTO.adminB })
+  }, 30_000)
+
+  it('lar oppryddingen etter et gammelt forsøk stå urørt når den samme administratoren alt har prøvd igjen', async () => {
+    const db = nyDb()
+    const gammelt = new Okt(db)
+    const nytt = new Okt(db)
+    /** Nøkkelen fra klareringen (`reservasjon`), som Edge-funksjonen bruker for å trekke den tilbake. */
+    const nokkel = (sql: string) => /([0-9a-f-]{36})\s*$/.exec(psql(db, sql))![1]!
+    const klareringMedNokkel = `begin; ${SOM_SERVER}
+      select public.kontooperasjon_klarer_konto('${KONTO.adminB}', 'nytt.forsok', ${B}) ->> 'reservasjon'; commit;`
+    /** Som `frigiBrukernavn`: bare reservasjonen med nøkkelen. */
+    const frigi = (n: string) => `delete from public.kontoreservasjoner where username = 'nytt.forsok' and nokkel = '${n}';`
+    try {
+      // Det første forsøket klarerer, og feiler så (for eksempel hos Auth).
+      const forste = nokkel(klareringMedNokkel)
+      // Det nye forsøket klarerer på nytt og er i gang med å opprette kontoen.
+      const andre = nokkel(klareringMedNokkel)
+      expect(andre).not.toBe(forste)
+      expect(await nytt.kjor('begin;')).toBe('00000')
+      // Det første forsøket rydder opp mens det nye venter på Auth.
+      expect(await gammelt.kjor(frigi(forste))).toBe('00000')
+      expect(await nytt.kjor(authBruker('nytt.forsok'))).toBe('00000')
+      expect(await nytt.kjor('commit;')).toBe('00000')
+    } finally {
+      gammelt.avslutt()
+      nytt.avslutt()
+    }
+    expect(tilstand(db, 'nytt.forsok')).toMatchObject({ konto: true, medlemskap: ['ous-rettstoksikologi'], reservert_av: null })
   }, 30_000)
 
   it.each([
