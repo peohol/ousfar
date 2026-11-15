@@ -51,7 +51,7 @@ import {
   type Objekt,
 } from './tilpasninger'
 import { SUPABASE_CLI } from '../supabaseCli'
-import { PLATTFORMTABELLER, TABELLER_SQL, sammenlign, tabellsumSql, type Fil, type Manifest, type Tabellsum } from './manifest'
+import { KRYPTERTE_FAKTORER_SQL, PLATTFORMTABELLER, TABELLER_SQL, sammenlign, tabellsumSql, type Fil, type Manifest, type Tabellsum } from './manifest'
 
 
 /** Produksjonsprosjektet. En gjenoppretting går aldri dit: et reelt tap gjenopprettes i et nytt prosjekt. */
@@ -377,7 +377,7 @@ export interface TaValg {
   ut: string
   /** Migrasjonsmappen dekningen leses fra. */
   migrasjoner: string
-  /** Prosjekt og token for Auth-innstillingene og navnene på hemmelighetene. */
+  /** Prosjekt og token for Auth-innstillingene og navnene på hemmelighetene; med prosjekt kreves token. */
   prosjekt?: string
   token?: string
   /**
@@ -399,6 +399,8 @@ export interface Kopi {
 
 export async function taKopi(valg: TaValg): Promise<Kopi> {
   if (!valg.mottakere.length) throw new Stopp('Kopien må krypteres: oppgi minst én mottaker (offentlig age-nøkkel).')
+  // En kopi uten Auth-innstillingene og navnene på hemmelighetene er ufullstendig: den skal ikke se vellykket ut.
+  if (valg.prosjekt && !valg.token) throw new Stopp('Med --prosjekt kreves SUPABASE_ACCESS_TOKEN, for Auth-innstillingene og navnene på hemmelighetene.')
   const maks = valg.forsok ?? 3
   for (let forsok = 1; ; forsok++) {
     try {
@@ -441,19 +443,21 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
     writeFileSync(join(mappe, 'tilpasninger.sql'), tilpasningsskript(f.tilpasninger))
     logg(`${f.tilpasninger.length} tilpasninger i auth, storage og på rollene`)
     const tabeller = tabellsummer(valg.dbUrl, bilde.navn)
+    const krypterteFaktorer = sporring(valg.dbUrl, KRYPTERTE_FAKTORER_SQL, bilde.navn).length
+    if (krypterteFaktorer) logg(`${krypterteFaktorer} tofaktornøkler er kryptert av plattformen og må meldes inn på nytt etter en gjenoppretting`)
 
     await valg.underveis?.(forsok)
     logg('henter filene i Storage')
     const filer = await hentFiler(valg.dbUrl, bilde.navn, valg.apiUrl, valg.nokkel, mappe)
 
     let hemmeligheter: string[] = []
-    if (valg.prosjekt && valg.token) {
-      const innstillinger = (await managementApi(valg.prosjekt, '/config/auth', valg.token)) as Record<string, unknown>
+    if (valg.prosjekt) {
+      const innstillinger = (await managementApi(valg.prosjekt, '/config/auth', valg.token!)) as Record<string, unknown>
       writeFileSync(
         join(mappe, 'auth-innstillinger.json'),
         JSON.stringify(Object.fromEntries(Object.entries(innstillinger).filter(([k]) => !HEMMELIG.test(k))), null, 2),
       )
-      hemmeligheter = ((await managementApi(valg.prosjekt, '/secrets', valg.token)) as { name: string }[]).map((s) => s.name).sort()
+      hemmeligheter = ((await managementApi(valg.prosjekt, '/secrets', valg.token!)) as { name: string }[]).map((s) => s.name).sort()
     }
 
     const manifest: Manifest & { referanse: Fingeravtrykk; tilpasninger: Objekt[]; oyeblikksbilde: string; forsok: number } = {
@@ -463,6 +467,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
       tabeller,
       filer,
       hemmeligheter,
+      krypterteFaktorer,
       referanse: valg.referanse,
       tilpasninger: f.tilpasninger,
       oyeblikksbilde: bilde.navn,
@@ -512,11 +517,20 @@ export interface GjenopprettValg {
   apiUrl: string
   /** Hemmelig nøkkel (service role) for Storage i målet. */
   nokkel: string
+  /**
+   * Hva som gjøres med tofaktornøkler plattformen har kryptert (se
+   * `KRYPTERTE_FAKTORER_SQL`). `stopp` (standard): gjenopprettingen begynner
+   * ikke. `fjern`: faktorene fjernes etter kontrollen, og brukerne listes; de
+   * logger inn med passordet og melder inn tofaktor på nytt.
+   */
+  krypterteFaktorer?: 'stopp' | 'fjern'
 }
 
 export interface Resultat {
   sekunder: number
   avvik: string[]
+  /** Brukerne som fikk tofaktorfaktoren fjernet og må melde den inn på nytt. */
+  fjernedeFaktorer: string[]
 }
 
 /** Avvikene i målets fingeravtrykk fra referansen pluss tilpasningene, tomt når de er like. */
@@ -553,6 +567,14 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
       tilpasninger: Objekt[]
     }
 
+    const krypterte = manifest.krypterteFaktorer ?? 0
+    if (krypterte && valg.krypterteFaktorer !== 'fjern') {
+      throw new Stopp(
+        `Kopien har ${krypterte} tofaktornøkler plattformen har kryptert, og de kan ikke leses i et nytt prosjekt. ` +
+          'Gjenopprett med --fjern-krypterte-faktorer: faktorene fjernes etter kontrollen, og brukerne melder inn tofaktor på nytt.',
+      )
+    }
+
     await ventPaTjenestene(valg.apiUrl, valg.nokkel)
     // Målet må være en ren Supabase med de samme versjonene og plattformobjektene som referansen.
     const egne = harEgneData(valg.dbUrl)
@@ -578,10 +600,23 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
     await leggTilbakeFiler(manifest, valg.dbUrl, valg.apiUrl, valg.nokkel, mappe)
 
     const resultat = kontroller(manifest, valg, await filsummer(manifest, valg.apiUrl, valg.nokkel))
-    return { sekunder: Math.round((Date.now() - start) / 1000), avvik: resultat }
+    // Faktorene fjernes først når det gjenopprettede er kontrollert likt kilden.
+    let fjernedeFaktorer: string[] = []
+    const krypterteIMalet = resultat.length ? [] : sporring<{ id: string; bruker: string }>(valg.dbUrl, KRYPTERTE_FAKTORER_SQL)
+    if (krypterteIMalet.length && valg.krypterteFaktorer === 'fjern') fjernedeFaktorer = fjernFaktorer(valg.dbUrl, krypterteIMalet)
+    else if (krypterteIMalet.length) resultat.push(`${krypterteIMalet.length} tofaktornøkler i målet er kryptert av plattformen og kan ikke leses`)
+    return { sekunder: Math.round((Date.now() - start) / 1000), avvik: resultat, fjernedeFaktorer }
   } finally {
     rmSync(mappe, { recursive: true, force: true })
   }
+}
+
+/** Fjerner faktorene (utfordringene deres følger med) og gir brukerne, som melder inn tofaktor på nytt. */
+function fjernFaktorer(dbUrl: string, krypterte: readonly { id: string; bruker: string }[]): string[] {
+  const ider = krypterte.map((f) => `'${f.id.replaceAll("'", '')}'::uuid`).join(', ')
+  psql(dbUrl, ['-c', `delete from auth.mfa_factors where id in (${ider})`])
+  logg(`fjernet ${krypterte.length} tofaktorfaktorer plattformen hadde kryptert; brukerne melder dem inn på nytt`)
+  return [...new Set(krypterte.map((f) => f.bruker))]
 }
 
 function kontroller(manifest: Manifest & { referanse: Fingeravtrykk; tilpasninger: Objekt[] }, valg: GjenopprettValg, filer: Fil[]): string[] {

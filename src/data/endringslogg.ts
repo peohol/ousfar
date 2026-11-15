@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.1',
+    dato: '2026-11-15',
+    sammendrag: 'Verktøy for kryptert sikkerhetskopi av databasen og gjenoppretting av den',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Det finnes nå et verktøy som tar en fullstendig, kryptert sikkerhetskopi av databasen, med brukere, innlogging, faginnhold og profilbilder, og som legger den tilbake i et nytt prosjekt og kontrollerer at alt er likt. Kopien kan tas mens appen er i bruk.',
+      'Appen er uendret. Kopiene tas ikke fast ennå; det kommer når det er bestemt hvor de skal lagres.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.0',
     dato: '2026-11-15',
     sammendrag: 'Administratorer oppretter nye brukere direkte i sitt eget fagmiljø',

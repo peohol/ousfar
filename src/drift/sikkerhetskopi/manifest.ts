@@ -78,7 +78,27 @@ export interface Manifest {
   filer: Fil[]
   /** Navnene på hemmelighetene som må settes på nytt, aldri verdiene. */
   hemmeligheter: string[]
+  /**
+   * Tofaktornøkler Auth har kryptert med en nøkkel bare plattformen har. De
+   * kan ikke leses i et nytt prosjekt (se `KRYPTERTE_FAKTORER_SQL`).
+   */
+  krypterteFaktorer?: number
 }
+
+/**
+ * Tofaktornøklene (`auth.mfa_factors.secret`) Auth har kryptert. Er
+ * kryptering av dem slått på, lagrer Auth dem som `{"key_id":…,"alg":…,…}`,
+ * kryptert med en nøkkel i plattformen som ikke følger med en kopi. Et nytt
+ * prosjekt har en annen nøkkel, så de kan ikke brukes etter en gjenoppretting.
+ * Ukrypterte nøkler er base32 og virker som før. Bare id og bruker leses,
+ * aldri selve nøkkelen.
+ */
+export const KRYPTERTE_FAKTORER_SQL = `
+  select f.id::text as id, coalesce(u.email, u.id::text) as bruker
+  from auth.mfa_factors f join auth.users u on u.id = f.user_id
+  where f.secret ~ '^\\s*\\{.*"key_id"'
+  order by 2, 1
+`
 
 /** Avvikene mellom to manifester, tomt når de er like. */
 export function sammenlign(kilde: Pick<Manifest, 'tabeller' | 'filer'>, mal: Pick<Manifest, 'tabeller' | 'filer'>): string[] {

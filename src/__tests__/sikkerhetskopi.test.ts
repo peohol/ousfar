@@ -13,6 +13,8 @@ import {
   tilpasningsskript,
   type Fingeravtrykk,
 } from '../drift/sikkerhetskopi/tilpasninger'
+import { KRYPTERTE_FAKTORER_SQL } from '../drift/sikkerhetskopi/manifest'
+import { Stopp, taKopi } from '../drift/sikkerhetskopi/kopi'
 
 const MIGRASJONER = resolve(__dirname, '../../supabase/migrations')
 const migrasjonstekster = () => migrasjonsfiler().map((f) => readFileSync(resolve(MIGRASJONER, f), 'utf8'))
@@ -105,5 +107,32 @@ describe('tilpasningene i auth og storage', () => {
     const mangler = forskjell({ ...migrert, objekter: migrert.objekter.filter((o) => o.nokkel !== 'storage.objects') }, referanse)
     expect(mangler.fjernet.map((o) => o.nokkel)).toContain('storage.objects')
     expect(avvik(mangler).length).toBeGreaterThan(0)
+  })
+})
+
+describe('tofaktornøklene og en ufullstendig kopi', () => {
+  it('finner bare nøklene plattformen har kryptert, ikke vanlige base32-nøkler', async () => {
+    const db = await nyDatabase()
+    await db.exec(`
+      create table if not exists auth.mfa_factors (id uuid primary key, user_id uuid not null, secret text);
+      -- Kontoene legges inn slik gjenopprettingen gjør, uten utløseren for nye kontoer.
+      set session_replication_role = replica;
+      insert into auth.users (id, email) values
+        ('00000000-0000-4000-8000-0000000000a1', 'kryptert@prove.invalid'),
+        ('00000000-0000-4000-8000-0000000000a2', 'vanlig@prove.invalid');
+      insert into auth.mfa_factors (id, user_id, secret) values
+        ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-0000000000a1',
+         '{"key_id":"k1","alg":"aes-gcm-hkdf","data":"c3ludGV0aXNr","nonce":"bm9uY2U="}'),
+        ('00000000-0000-4000-8000-0000000000b2', '00000000-0000-4000-8000-0000000000a2', 'JBSWY3DPEHPK3PXP'),
+        ('00000000-0000-4000-8000-0000000000b3', '00000000-0000-4000-8000-0000000000a2', null);
+    `)
+    const { rows } = await db.query<{ id: string; bruker: string }>(KRYPTERTE_FAKTORER_SQL)
+    expect(rows).toEqual([{ id: '00000000-0000-4000-8000-0000000000b1', bruker: 'kryptert@prove.invalid' }])
+  }, 120_000)
+
+  it('stopper før noe tas når prosjektet er oppgitt uten token', async () => {
+    const valg = { dbUrl: 'postgresql://x', apiUrl: 'http://x', nokkel: 'x', referanse: { versjoner: {}, objekter: [] }, mottakere: ['age1x'], ut: '/tmp', migrasjoner: '/tmp' }
+    await expect(taKopi({ ...valg, prosjekt: 'prosjekt' })).rejects.toBeInstanceOf(Stopp)
+    await expect(taKopi({ ...valg, prosjekt: 'prosjekt', token: '' })).rejects.toThrow(/SUPABASE_ACCESS_TOKEN/)
   })
 })

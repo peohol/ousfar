@@ -6,7 +6,7 @@
  *       --mottaker <offentlig age-nøkkel> [--mottaker …] --ut <mappe> [--prosjekt <ref>] \
  *       [--kontrollnokkel <privat age-nøkkelfil>]
  *   npm run sikkerhetskopi -- gjenopprett --kopi <fil.tar.age> --identitet <privat age-nøkkelfil> \
- *       --db-url <nytt, tomt prosjekt> --api-url <samme>
+ *       --db-url <nytt, tomt prosjekt> --api-url <samme> [--fjern-krypterte-faktorer]
  *
  * Nøklene leses fra miljøet, aldri fra kommandolinjen: `KOPI_SECRET_KEY` er
  * den hemmelige nøkkelen (service role) for Storage i prosjektet kommandoen
@@ -19,7 +19,10 @@
  * Postgres-bilde med den, og dumpene kjøres i Docker.
  *
  * `gjenopprett` nekter produksjonen og et mål som ikke er tomt, og stopper
- * med avvikene hvis noe ikke er likt kilden etterpå.
+ * med avvikene hvis noe ikke er likt kilden etterpå. Har kopien tofaktornøkler
+ * plattformen har kryptert, begynner den bare med `--fjern-krypterte-faktorer`:
+ * de kan ikke leses i et nytt prosjekt, så faktorene fjernes etter kontrollen,
+ * og brukerne som må melde inn tofaktor på nytt, skrives ut.
  */
 import { writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -75,9 +78,11 @@ async function main(argv: string[]): Promise<void> {
       dbUrl: ett('db-url', resten),
       apiUrl: ett('api-url', resten),
       nokkel: nokkel(),
+      krypterteFaktorer: resten.includes('--fjern-krypterte-faktorer') ? 'fjern' : 'stopp',
     })
     if (r.avvik.length) throw new Stopp(`Gjenopprettingen er ikke lik kilden:\n- ${r.avvik.join('\n- ')}`)
     console.log(`Gjenopprettet og kontrollert på ${r.sekunder} s: like tabeller, filer og tilpasninger.`)
+    if (r.fjernedeFaktorer.length) console.log(`Melder inn tofaktor på nytt: ${r.fjernedeFaktorer.join(', ')}`)
   } else {
     throw new Stopp('Bruk: referanse | ta | gjenopprett (se docs/drift-gjenoppretting.md).')
   }

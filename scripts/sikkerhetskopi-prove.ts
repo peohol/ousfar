@@ -5,8 +5,10 @@
  *   npm run sikkerhetskopi:prove
  *
  * 1. En ren Supabase i Docker (uten OUSFARs migrasjoner) gir referansen.
- * 2. Den samme med migrasjonene er kilden: en syntetisk administrator og en
- *    syntetisk bruker med profilbilde legges inn, og kopien tas og krypteres.
+ * 2. Den samme med migrasjonene er kilden: en syntetisk administrator med
+ *    tofaktor og en syntetisk bruker med profilbilde legges inn, og kopien tas
+ *    og krypteres. Brukeren får dessuten en tofaktorfaktor slik Auth lagrer
+ *    den når plattformen krypterer nøklene, som ikke kan leses i et nytt prosjekt.
  *    Mens kopien tas, skriver en egen tilkobling hele tiden til to tabeller i
  *    samme transaksjon, og i første forsøk byttes profilbildet etter at
  *    databasen er lest: forsøket skal forkastes og kopien tas på nytt.
@@ -22,7 +24,7 @@
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { execFileSync, spawn } from 'node:child_process'
-import { createHash, randomBytes } from 'node:crypto'
+import { createHash, createHmac, randomBytes } from 'node:crypto'
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -30,7 +32,7 @@ import { fileURLToPath } from 'node:url'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { genererMidlertidigPassord } from '@delt/passord'
 import { SUPABASE_CLI } from '../src/drift/supabaseCli'
-import { gjenopprett, lagReferanse, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
+import { Stopp, gjenopprett, lagReferanse, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
 import { lokaltOppsett, sikreDocker, UTELATT, valgteMigrasjoner } from '../src/__tests__/qa/lokalmiljo'
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -57,7 +59,7 @@ interface Status {
  */
 function oppsett(ren: boolean): string {
   let seksjon = ''
-  return lokaltOppsett(readFileSync(join(REPO, 'supabase/config.toml'), 'utf8'))
+  const tekst = lokaltOppsett(readFileSync(join(REPO, 'supabase/config.toml'), 'utf8'))
     .replace(/^project_id\s*=.*$/m, 'project_id = "ousfar-kopiprove"')
     .split('\n')
     .filter((linje) => {
@@ -65,6 +67,8 @@ function oppsett(ren: boolean): string {
       return !(ren && seksjon.startsWith('storage.buckets'))
     })
     .join('\n')
+  // Tofaktor med autentiseringsapp, som i produksjonen, når oppsettet ikke sier noe om det.
+  return /^\[auth\.mfa\.totp\]/m.test(tekst) ? tekst : `${tekst}\n[auth.mfa.totp]\nenroll_enabled = true\nverify_enabled = true\n`
 }
 
 /** Starter en ren Supabase, med migrasjonene som er gitt. */
@@ -144,6 +148,39 @@ const BILDE = Buffer.from('UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAQAcJaQAA3AA/
 const NYTT_BILDE = Buffer.from(BILDE.map((b, i) => (i === BILDE.length - 2 ? b ^ 0xff : b)))
 const sha = (b: Uint8Array) => createHash('sha256').update(b).digest('hex')
 
+/** Koden en autentiseringsapp viser nå for en base32-nøkkel (RFC 6238: SHA-1, 30 s, 6 sifre). */
+function totp(nokkel: string, tid = Date.now()): string {
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+  const biter = [...nokkel.replace(/=+$/, '').toUpperCase()].map((c) => alfabet.indexOf(c).toString(2).padStart(5, '0')).join('')
+  const k = Buffer.from(biter.match(/.{8}/g)!.map((b) => parseInt(b, 2)))
+  const teller = Buffer.alloc(8)
+  teller.writeBigUInt64BE(BigInt(Math.floor(tid / 30_000)))
+  const h = createHmac('sha1', k).update(teller).digest()
+  return String((h.readUInt32BE(h[h.length - 1]! & 15) & 0x7fffffff) % 1_000_000).padStart(6, '0')
+}
+
+/** Melder inn og bekrefter tofaktor for den innloggede, og gir nøkkelen. */
+async function meldInnTofaktor(k: SupabaseClient): Promise<string> {
+  const { data, error } = await k.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'prove' })
+  if (error) throw error
+  const { error: bekreftet } = await k.auth.mfa.challengeAndVerify({ factorId: data.id, code: totp(data.totp.secret) })
+  if (bekreftet) throw bekreftet
+  return data.totp.secret
+}
+
+/** Logger inn med tofaktor, og gir innloggingsnivået etterpå. */
+async function medTofaktor(k: SupabaseClient, nokkel: string): Promise<string> {
+  const { data: faktorer, error } = await k.auth.mfa.listFactors()
+  if (error) throw error
+  const faktor = faktorer.totp[0]
+  if (!faktor) return 'ingen faktor'
+  const { error: feil } = await k.auth.mfa.challengeAndVerify({ factorId: faktor.id, code: totp(nokkel) })
+  if (feil) return feil.message
+  return (await k.auth.mfa.getAuthenticatorAssuranceLevel()).data?.currentLevel ?? 'ukjent'
+}
+
+const KRYPTERT_NOKKEL = JSON.stringify({ key_id: 'plattformen', alg: 'aes-gcm-hkdf', data: randomBytes(32).toString('base64'), nonce: randomBytes(12).toString('base64') })
+
 /**
  * Skriver hele tiden til to tabeller i én transaksjon, med et løpenummer, til
  * `stopp()`: et sammenhengende kopipunkt har like mange rader i begge, uten
@@ -200,7 +237,11 @@ async function prove(): Promise<void> {
   const adminId = await lagKonto(kilde, 'kopi-admin', adminPassord)
   const { error: rolle } = await klient(kilde, kilde.SECRET_KEY).rpc('kontooperasjon_forste_administrator', { bruker: adminId })
   if (rolle) throw rolle
+  const adminNokkel = await meldInnTofaktor(await innlogget(kilde, 'kopi-admin', adminPassord))
   const brukerId = await lagKonto(kilde, 'kopi-bruker', brukerPassord)
+  execFileSync('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', kilde.DB_URL, '-c',
+    `insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, created_at, updated_at, secret)
+     values (gen_random_uuid(), '${brukerId}', 'kryptert', 'totp', 'verified', now(), now(), '${KRYPTERT_NOKKEL}')`])
   const bruker = await innlogget(kilde, 'kopi-bruker', brukerPassord)
   const opplasting = await bruker.storage.from('avatarer').upload(`${brukerId}/avatar.webp`, BILDE, { contentType: 'image/webp' })
   if (opplasting.error) throw opplasting.error
@@ -233,7 +274,15 @@ async function prove(): Promise<void> {
 
   logg('3. ny, ren Supabase: gjenopprettingen')
   const mal = await start([])
-  const r = await gjenopprett({ kopi, identitet: join(MAPPE, 'nokkel.txt'), dbUrl: mal.DB_URL, apiUrl: mal.API_URL, nokkel: mal.SECRET_KEY })
+  const malValg = { kopi, identitet: join(MAPPE, 'nokkel.txt'), dbUrl: mal.DB_URL, apiUrl: mal.API_URL, nokkel: mal.SECRET_KEY }
+  const utenValg = await gjenopprett(malValg).then(() => null, (e: unknown) => e)
+  const brukereIMalet = execFileSync('psql', ['-X', '-At', '--dbname', mal.DB_URL, '-c', 'select count(*) from auth.users'], { encoding: 'utf8' }).trim()
+  sjekk(
+    'krypterte tofaktornøkler: uten valget begynner gjenopprettingen ikke, og målet er urørt',
+    utenValg instanceof Stopp && brukereIMalet === '0',
+    utenValg instanceof Error ? utenValg.message.slice(0, 80) : 'ble ikke stoppet',
+  )
+  const r = await gjenopprett({ ...malValg, krypterteFaktorer: 'fjern' })
   sjekk('1–3, 5: tabeller, kontrollsummer, filer, migrasjonshistorikk og tilpasninger er like kilden', r.avvik.length === 0, r.avvik.join('; ') || undefined)
   const iKopien = tellinger(mal.DB_URL)
   sjekk(
@@ -241,12 +290,19 @@ async function prove(): Promise<void> {
     iKopien.a > 0 && iKopien.a === iKopien.b && iKopien.a === iKopien.maksA && iKopien.maksA === iKopien.maksB && iKilden.maksA > iKopien.maksA,
     `${iKopien.a} skrivinger i kopien, ${iKilden.maksA} i kilden da skrivingen stoppet`,
   )
+  sjekk(
+    'krypterte tofaktornøkler: med valget fjernes faktoren etter kontrollen, og brukeren listes',
+    r.fjernedeFaktorer.length === 1 && r.fjernedeFaktorer[0] === internAuthAdresse('kopi-bruker'),
+    r.fjernedeFaktorer.join(', '),
+  )
   sjekk('samtidig endring av en fil: første forsøk ble forkastet og kopien tatt på nytt', fraKilden.forsok === 2, `${fraKilden.forsok} forsøk`)
 
   logg('4. kontrollene etter gjenopprettingen')
   const admin = await innlogget(mal, 'kopi-admin', adminPassord).catch((e: Error) => e)
   sjekk('4: administratoren logger inn med sitt gamle passord', !(admin instanceof Error), admin instanceof Error ? admin.message : undefined)
   if (admin instanceof Error) return
+  const niva = await medTofaktor(admin, adminNokkel)
+  sjekk('4: administratoren når tofaktornivået (aal2) med koden fra sin gamle autentiseringsapp', niva === 'aal2', niva)
   const { data: profil } = await admin.from('profiles').select('username').eq('id', adminId).maybeSingle()
   sjekk('4: profilen kan leses som innlogget', profil?.username === 'kopi-admin')
 
@@ -261,6 +317,8 @@ async function prove(): Promise<void> {
   sjekk('6: den nye brukeren kan logge inn', !(nyInnlogget instanceof Error))
 
   const brukerMal = await innlogget(mal, 'kopi-bruker', brukerPassord)
+  const brukersFaktorer = (await brukerMal.auth.mfa.listFactors()).data?.all.length
+  sjekk('4: brukeren med den fjernede faktoren logger inn med passordet og kan melde inn tofaktor på nytt', brukersFaktorer === 0)
   const uten = await opprettGjennomAdminflyten(mal, brukerMal, brukerId, 'kopi-uten')
   const { data: utenProfil } = await service.from('profiles').select('id').eq('username', 'kopi-uten').maybeSingle()
   sjekk('6: en bruker uten myndighet avvises', uten.avvist && !utenProfil, [uten.vei, uten.feil].filter(Boolean).join(': '))

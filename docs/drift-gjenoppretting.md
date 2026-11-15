@@ -64,6 +64,28 @@ og hver fil sammenlignes med det som ble pakket.
 `src/__tests__/sikkerhetskopi-pakking.test.ts` strømmer en fil på 192 MiB
 gjennom kryptering og tilbake og krever at minnet ikke vokser med den.
 
+## Tofaktor etter en gjenoppretting
+
+Tofaktorfaktorene (`auth.mfa_factors`) følger med kopien. En nøkkel Auth har
+lagret som vanlig base32 virker som før: prøven viser at en administrator når
+tofaktornivået (`aal2`) med koden fra sin gamle autentiseringsapp.
+
+Har plattformen slått på kryptering av nøklene, lagres de som
+`{"key_id":…,"alg":…}`, kryptert med en nøkkel som bare plattformen har og som
+ikke følger med en kopi. Et nytt prosjekt har en annen, så de kan ikke leses
+der. Verktøyet behandler dette uttrykkelig:
+
+- Kopien teller slike nøkler (`krypterteFaktorer` i manifestet) og sier fra.
+- Gjenopprettingen begynner ikke når kopien har noen, før den som gjenoppretter
+  har valgt `--fjern-krypterte-faktorer`. Da fjernes de faktorene etter at
+  alt er kontrollert likt kilden, og brukerne skrives ut. De logger inn med
+  passordet og melder inn tofaktor på nytt. Til de har gjort det, har de bare
+  det vanlige innloggingsnivået (`aal1`), så krever en rolle tofaktor, får de
+  ikke den myndigheten før faktoren er meldt inn igjen.
+
+I dag er det ingen faktorer i produksjonen (15.11.2026). Prøven lager en
+slik kryptert faktor for en syntetisk bruker og viser begge veiene.
+
 Det som ikke er med, og som gjenskapes på andre måter: Edge-funksjonene
 rulles ut fra `main` (`docs/edge-funksjoner.md`); hemmelighetene og
 nøklene i Vercel og GitHub settes på nytt av eieren, fordi et nytt prosjekt
@@ -114,8 +136,11 @@ KOPI_SECRET_KEY=… npm run sikkerhetskopi -- ta --db-url <kilde> --api-url <kil
 
 # 3. Gjenopprettingen, alltid til et nytt, tomt prosjekt
 KOPI_SECRET_KEY=… npm run sikkerhetskopi -- gjenopprett --kopi <fil.tar.age> \
-  --identitet <privat age-nøkkel> --db-url <mål> --api-url <mål>
+  --identitet <privat age-nøkkel> --db-url <mål> --api-url <mål> [--fjern-krypterte-faktorer]
 ```
+
+Med `--prosjekt` kreves `SUPABASE_ACCESS_TOKEN`; mangler den, stopper kopien
+i stedet for å bli ufullstendig.
 
 Rekkefølgen ved gjenoppretting: roller, struktur og data i én transaksjon
 (dataene med `session_replication_role = replica`, så utløserne ikke slår til),
@@ -125,7 +150,8 @@ sammenligner det radtall, kontrollsummer, filer og tilpasninger med kilden, og
 stopper med avvikene hvis noe er ulikt.
 
 Ved et reelt tap: lag et nytt prosjekt i samme region, gjenopprett dit, sett
-Auth-innstillingene fra `auth-innstillinger.json`, sett hemmelighetene i
+Auth-innstillingene fra `auth-innstillinger.json`, gi beskjed til brukerne
+verktøyet lister med fjernede tofaktorfaktorer, sett hemmelighetene i
 manifestet på nytt, rull ut Edge-funksjonene og pek Vercel og GitHub til det
 nye prosjektet. Hvem som kan sette i gang dette, avgjøres sammen med tiltak 3.
 
@@ -154,6 +180,11 @@ punktene i planens §3.2:
    fjernes, en annens kan ikke;
 8. tiden gjenopprettingen tok;
 
+og dessuten at administratoren når tofaktornivået med sin gamle nøkkel, at
+gjenopprettingen ikke begynner med en kryptert tofaktornøkkel uten valget og
+lar målet være urørt, og at faktoren med valget fjernes etter kontrollen og
+brukeren logger inn med passordet;
+
 og dessuten at skrivingen underveis ga ett sammenhengende kopipunkt (like
 mange rader i begge tabellene, uten hull, og færre enn kilden fikk), og at
 første forsøk ble forkastet fordi profilbildet ble byttet, og kopien tatt på
@@ -163,7 +194,7 @@ nytt med det nye bildet.
 
 | Dato | Miljø | Resultat | Tid |
 | --- | --- | --- | --- |
-| 15.11.2026, etter kontrollen | Som over, med samtidig skriving og et byttet profilbilde | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 199 skrivinger i kopien og 346 i kilden da skrivingen stoppet (ett sammenhengende punkt), første forsøk forkastet og kopien tatt på nytt med det nye bildet, kopien pakket ut og prøvd før den ble godtatt. Punkt 6 som over | 12 s for gjenopprettingen |
+| 15.11.2026, etter kontrollen | Som over, med samtidig skriving, et byttet profilbilde og tofaktor | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 206 skrivinger i kopien og 362 i kilden da skrivingen stoppet (ett sammenhengende punkt), første forsøk forkastet og kopien tatt på nytt med det nye bildet, kopien pakket ut og prøvd før den ble godtatt. Administratoren nådde `aal2` med sin gamle nøkkel; uten valget ble gjenopprettingen stoppet med målet urørt, med valget ble den krypterte faktoren fjernet og brukeren listet. Punkt 6 som over | 13 s for gjenopprettingen |
 | 15.11.2026 | Det lokale testmiljøet (Supabase-CLI 2.120.0), syntetiske brukere | Alle punktene 1–8 i orden: 145 tabeller og 1 fil like kilden, 7 tilpasninger på plass og ingen ekstra, gammel innlogging virker, ny bruker får profil og medlemskap, uten myndighet avvist, profilbildereglene holder. Punkt 6 brukte databasekallene `opprett-bruker` gjør, fordi Edge-kjøretøyet i skymiljøet ikke når npm-registeret; prøven bruker selve funksjonen der den kan starte | 14 s for gjenopprettingen |
 
 Prøven med en ekte kopi av produksjonen (tiltak 4) er ikke gjort; den krever
