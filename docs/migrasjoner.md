@@ -66,7 +66,9 @@ en annen database, for å prøve dem lokalt.
   regelen i `supabase/AGENTS.md`. De setningene som kan skilles ut sikkert, stoppes
   automatisk: `drop table`, `drop schema`, `drop database`, `drop column`
   (også `alter table … drop <kolonne>`), `truncate` og
-  `disable row level security`, også med kommentarer mellom ordene. En migrasjon med noen av dem
+  `disable row level security`, og en åpning av et fagmiljø for medlemmer
+  (`apent_for_medlemmer` satt til noe annet enn `false`, startporten S2 i
+  `docs/fagmiljoer.md`), også med kommentarer mellom ordene. En migrasjon med noen av dem
   stoppes både i CI og før utrullingen, til den har en kommentarlinje med
   hvem som godkjente, når og hva:
 

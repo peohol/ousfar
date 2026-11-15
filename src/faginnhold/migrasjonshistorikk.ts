@@ -207,6 +207,12 @@ const DESTRUKTIVE: ReadonlyArray<readonly [RegExp, string]> = [
   // Ikke `truncate` som hendelse i en trigger (`before truncate on …`, `insert or truncate`).
   [/(?<!\b(?:before|after|or|of)\s+)\btruncate\b/i, 'truncate'],
   [/\bdisable\s+row\s+level\s+security\b/i, 'disable row level security'],
+  // Startporten S2 (docs/fagmiljoer.md): et fagmiljø åpnes for andre enn
+  // systemarkitektene bare med Peders godkjenning, i en egen migrasjon.
+  [
+    /\bset\b[^;]*?\bapent_for_medlemmer\s*=\s*(?!\s|false\b)|\binsert\s+into\s+(?:public\.)?fagmiljoer\b[^;]*?\bapent_for_medlemmer\b[^;]*?\btrue\b/i,
+    'åpning av et fagmiljø for medlemmer',
+  ],
 ]
 
 /**
