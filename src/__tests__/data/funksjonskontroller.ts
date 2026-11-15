@@ -49,6 +49,12 @@ export const KONTROLLER = [
    */
   'rekkevidde',
   /**
+   * `security definer` som oppretter, styrer eller viser grupper og
+   * gruppemedlemskap etter den innloggedes myndighet i gruppen
+   * (`intern.gruppeavslag`, `intern.gruppeopprettelsesavslag`, P6).
+   */
+  'gruppemyndighet',
+  /**
    * `security definer` som krever en systemarkitekt med aktivt medlemskap
    * (`public.er_systemarkitekt()`, `intern.krev_systemarkitekt()`, eller porten
    * `intern.krev_idevalg_admin()` for idéene og oppgavene etter D8); den gamle
@@ -63,10 +69,12 @@ export type Kontroll = (typeof KONTROLLER)[number]
 export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'angre_oppgave_utfort(oppgave uuid)': 'systemarkitekt',
   'arkiver_diskusjon(diskusjon uuid, arkivert boolean)': 'rekkevidde',
+  'arkiver_gruppe(gruppe uuid, arkivert boolean)': 'gruppemyndighet',
   'arkiver_ide(ide uuid)': 'systemarkitekt',
   'arkiver_stoff(stoff text, arkivert boolean)': 'stoffregister',
   'arkiver_stoffkategori(kategori uuid, arkivert boolean)': 'stoffregister',
   'arkiver_varsler(varsler uuid[], til timestamp with time zone)': 'eier',
+  'avslutt_gruppemedlemskap(gruppe uuid, bruker uuid)': 'gruppemyndighet',
   // P3: medlemskapene og de lokale administratorene, etter myndigheten i fagmiljøet.
   'avslutt_medlemskap(bruker uuid, fagmiljo uuid)': 'medlemskapsmyndighet',
   'beslutt_fagsak(sak bigint, versjon integer, valg text, merknad text)': 'systemarkitekt',
@@ -81,6 +89,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'diskusjonstekster(side text)': 'radsikkerhet',
   'diskusjonstraad(diskusjon uuid)': 'radsikkerhet',
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'rekkevidde',
+  'endre_gruppe(gruppe uuid, navn text, beskrivelse text)': 'gruppemyndighet',
   'endre_stoffkategori(kategori uuid, navn text)': 'stoffregister',
   // P2c: brukerlista i administrasjonen, bare kontoene den innloggede administrerer.
   'brukeroversikt()': 'rekkevidde',
@@ -100,9 +109,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'rekkevidde',
   'gjenopprett_stoff(stoff text)': 'stoffregister',
   'gjenopprett_varsler(varsler uuid[])': 'eier',
+  'gruppeoversikt(gruppe uuid)': 'gruppemyndighet',
   // P2.0: den innloggedes eget svar om aktivt medlemskap, og det eneste en
   // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
   'har_aktivt_medlemskap()': 'eier',
+  'inviter_til_gruppe(gruppe uuid, brukernavn text)': 'gruppemyndighet',
   // P2b: om den innloggede kan moderere diskusjonene på en side, til knappene i appen.
   'kan_moderere_diskusjoner(side text)': 'eier',
   'ide_er_apen(ide uuid)': 'felles-lesing',
@@ -176,10 +187,12 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2.0: den innloggedes egen status for beskjeden i appen (docs/fagmiljoer.md).
   'min_medlemskapsstatus()': 'eier',
   'mine_administrerte_fagmiljoer()': 'eier',
+  'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).
   'min_profil()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
+  'mine_lesbare_grupper()': 'eier',
   // P2d: den innloggedes egne rettigheter, som appen viser menyer og knapper etter.
   'mine_rettigheter()': 'eier',
   'mitt_arbeidsfagmiljo()': 'eier',
@@ -193,6 +206,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'opprett_diskusjonskategori(side text, navn text, emoji text)': 'rekkevidde',
   // P3: et nytt, lukket fagmiljø.
   'opprett_fagmiljo(navn text)': 'systemarkitekt',
+  'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)': 'gruppemyndighet',
   'opprett_stoffkategori(navn text, forelder uuid)': 'stoffregister',
   'opprett_utkast(objekttype objekttype, innhold jsonb)': 'rekkevidde',
   'overfor_ide(ide uuid)': 'systemarkitekt',
@@ -204,6 +218,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'sett_diskusjonstekst(diskusjon uuid, tekst jsonb)': 'rekkevidde',
   'sett_diskusjonstittel(diskusjon uuid, tittel text)': 'rekkevidde',
   'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)': 'medlemskapsmyndighet',
+  'sett_grupperolle(gruppe uuid, bruker uuid, rolle text)': 'gruppemyndighet',
   'sett_oppgave_klar(oppgave uuid, klar boolean)': 'systemarkitekt',
   'sett_stoffavoritt(stoff text, favoritt boolean)': 'radsikkerhet',
   'sett_verktoysperre(omfang text, mal text, grunn text)': 'systemarkitekt',
@@ -216,6 +231,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'sok_virkestoff(sok text, antall integer)': 'felles-lesing',
   'sokedata_versjoner()': 'felles-lesing',
   'stoffsider_som_json(sider uuid[], sidetilstand objekttilstand)': 'radsikkerhet',
+  'svar_paa_gruppeinvitasjon(gruppe uuid, godta boolean)': 'eier',
   'tom_stoffpapirkurven()': 'systemarkitekt',
   'uleste_varsler()': 'radsikkerhet',
   'utgave_som_json(u objektutgaver)': 'radsikkerhet',

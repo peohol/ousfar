@@ -1,0 +1,139 @@
+/**
+ * Gruppene (`#/grupper`, `src/components/grupper/`): oversikten, skjemaet for
+ * en ny gruppe og siden til én gruppe. Radene og bekreftelsene er de samme
+ * som i brukerlista (`konto.css`); her står bare sidens egen oppbygning.
+ */
+
+.gruppeside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-7);
+  padding-block: var(--rom-9);
+}
+
+.gruppeside__hode,
+.gruppeside__del {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.gruppeside__overtittel {
+  margin: 0;
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-halvfet);
+  letter-spacing: var(--sperring-meta);
+  text-transform: uppercase;
+  color: var(--blekk-dempet);
+}
+
+.gruppeside__overtittel a {
+  color: inherit;
+}
+
+.gruppeside__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-sidetittel);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.gruppeside__tittel:focus {
+  outline: none;
+}
+
+.gruppeside__ingress {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-style: italic;
+  color: var(--blekk-dempet);
+  text-wrap: pretty;
+  white-space: pre-line;
+}
+
+.gruppeside__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+  margin: 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+}
+
+.gruppeside__hint,
+.gruppeside__kvittering {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
+.gruppeside__kvittering {
+  color: var(--blekk);
+}
+
+.gruppeside__deltittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+.gruppeside__handlinger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+}
+
+.gruppeside__handlinger:empty {
+  display: none;
+}
+
+.gruppeside__skjema {
+  max-width: 32rem;
+}
+
+/* Rollen som et lite valg på raden, på høyde med merkene. */
+.gruppeside__rolle {
+  width: auto;
+  min-height: 0;
+  padding-block: var(--rom-1);
+  font-size: var(--tekst-liten);
+}
+
+/* En gruppe eller en invitasjon: navnet til venstre, merkene eller knappene til høyre. */
+.grupperad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4);
+  padding: var(--rom-4) var(--rom-5);
+}
+
+.grupperad + .grupperad {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.grupperad__navn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  min-width: 0;
+}
+
+.grupperad__lenke {
+  color: inherit;
+  text-decoration: none;
+}
+
+.grupperad__lenke:hover .brukerrad__fullt,
+.grupperad__lenke:focus-visible .brukerrad__fullt {
+  text-decoration: underline;
+}

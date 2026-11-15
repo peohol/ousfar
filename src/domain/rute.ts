@@ -75,6 +75,12 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *
  *   #/versjon/bupropion/3
  *   #/kuratering/<gren-ID>
+ *
+ * Gruppene har en oversikt, og hver gruppe sin side etter ID-en, med
+ * medlemmene og diskusjonene i gruppen:
+ *
+ *   #/grupper
+ *   #/grupper/<gruppe-ID>
  */
 
 export type Rute =
@@ -116,6 +122,11 @@ export type Rute =
       side: 'kuratering'
       /** ID-en til kurateringsgrenen. */
       gren: string
+    }
+  | {
+      side: 'grupper'
+      /** ID-en til gruppen. Utelatt på oversikten. */
+      gruppe?: string
     }
 
 export const FORTOLKNING: Rute = { side: 'fortolkning' }
@@ -170,7 +181,15 @@ const VERKTOYSIDE = /^#\/verktoy(?:\/([a-z0-9]+(?:-[a-z0-9]+)*))?\/?$/i
 
 const VERSJON = /^#\/versjon\/([a-z0-9]+(?:-[a-z0-9]+)*)\/([1-9][0-9]{0,8})\/?$/i
 
-const KURATERING = /^#\/kuratering\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i
+/** En ID slik databasen lager dem. */
+const ID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+/** Sant når verdien er en ID slik databasen lager dem. */
+export const erId = (verdi: string): boolean => new RegExp(`^${ID}$`, 'i').test(verdi)
+
+const KURATERING = new RegExp(`^#\\/kuratering\\/(${ID})\\/?$`, 'i')
+
+const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID}))?\\/?$`, 'i')
 
 /** Adressen til helsiden for stoffregisteret. */
 export const STOFFREGISTERADRESSE = '#/stoffregister'
@@ -200,6 +219,8 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
   if (versjon?.[1] && versjon[2]) return { side: 'versjon', stoff: versjon[1].toLowerCase(), nr: Number(versjon[2]) }
   const gren = KURATERING.exec(hash)
   if (gren?.[1]) return { side: 'kuratering', gren: gren[1].toLowerCase() }
+  const gruppe = GRUPPER.exec(hash)
+  if (gruppe) return gruppe[1] ? { side: 'grupper', gruppe: gruppe[1].toLowerCase() } : { side: 'grupper' }
   const fortolkning = FORTOLKNINGSSIDE.exec(hash)
   if (fortolkning?.[1]) {
     const analytt = fortolkning[1].toLowerCase()
@@ -291,6 +312,8 @@ export function adresse(rute: Rute): string {
       return versjonsadresse(rute.stoff, rute.nr)
     case 'kuratering':
       return kurateringsadresse(rute.gren)
+    case 'grupper':
+      return gruppeadresse(rute.gruppe)
     default:
       if (!rute.analytt) return '#/'
       if (!rute.rediger) return `#/fortolkning/${rute.analytt}`
@@ -308,6 +331,11 @@ export function kurateringsadresse(gren: string): string {
   return `#/kuratering/${gren}`
 }
 
+/** Adressen til gruppeoversikten, eller til én gruppe etter ID-en. */
+export function gruppeadresse(gruppe?: string): string {
+  return gruppe ? `#/grupper/${gruppe}` : '#/grupper'
+}
+
 /** Adressen til søkesiden for et søk. */
 export function sokeside(q: string): string {
   return q ? `#/sok?${new URLSearchParams({ q })}` : '#/sok'
@@ -321,7 +349,8 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
 /**
  * Siden ruten står på, uten stedet på den og uten søket: `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
- * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3` og `kuratering/<gren-ID>`. Det er formen områdene i endringsloggen skrives på
+ * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3`, `kuratering/<gren-ID>`,
+ * `grupper` og `grupper/<gruppe-ID>`. Det er formen områdene i endringsloggen skrives på
  * (`src/oppdatering/sider.ts`), og det som skifter når brukeren går til en
  * annen side — ikke når en seksjon åpnes eller søket skrives om.
  */
@@ -335,6 +364,8 @@ export function sidesti(rute: Rute): string {
       return `kuratering/${rute.gren}`
     case 'verktoy':
       return rute.verktoy ? `verktoy/${rute.verktoy}` : 'verktoy'
+    case 'grupper':
+      return rute.gruppe ? `grupper/${rute.gruppe}` : 'grupper'
     case 'fortolkning':
       return ['fortolkning', rute.analytt, rute.rediger ? REDIGER : undefined].filter(Boolean).join('/')
     default:

@@ -25,6 +25,7 @@ import type { Ikonnavn } from '../ikon/register'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
 import { Avatar } from './Avatar'
+import { Bekreftelseskort } from './Bekreftelseskort'
 import { Felt } from './Felt'
 
 /** Skjemaet som står åpent øverst i lista. */
@@ -461,7 +462,6 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
 /**
  * Bekreftelsen før en handling som fjerner tilgang. Den sier hva som skjer,
  * også at kontoen sperres og logges ut når det er det siste medlemskapet.
- * «Avbryt» har fokus, så et tastetrykk for mye ikke fjerner noe.
  */
 function Tilgangsbekreftelse({
   bekreftelse: {
@@ -484,28 +484,25 @@ function Tilgangsbekreftelse({
     ? `Avslutte medlemskapet til ${navn} i ${fagmiljo}?`
     : `Fjerne ${navn} som administrator i ${fagmiljo}?`
   return (
-    <div className="tilgangsbekreftelse" role="group" aria-label={tittel}>
-      <p className="tilgangsbekreftelse__tittel">{tittel}</p>
+    <Bekreftelseskort
+      tittel={tittel}
+      bekreft={avslutt ? 'Avslutt medlemskapet' : 'Fjern som administrator'}
+      opptatt={opptatt}
+      onBekreft={onBekreft}
+      onAvbryt={onAvbryt}
+    >
       {avslutt ? (
-        <p>
+        <>
           {navn} mister tilgangen til {fagmiljo}.
           {medlem.administrator && ` ${navn} er også administrator her, og det avsluttes samtidig.`}{' '}
           {medlem.eneste_medlemskap
             ? `Dette er det eneste medlemskapet til ${navn}, så kontoen sperres og logges ut på alle enheter. Du kan gi tilgang igjen senere under «Tidligere medlemmer».`
             : 'Medlemskapene i andre fagmiljøer står.'}
-        </p>
+        </>
       ) : (
-        <p>{navn} er fortsatt medlem, men kan ikke lenger administrere medlemmene her.</p>
+        `${navn} er fortsatt medlem, men kan ikke lenger administrere medlemmene her.`
       )}
-      <div className="skjema__knapper">
-        <Button disabled={opptatt} onClick={onBekreft}>
-          {avslutt ? 'Avslutt medlemskapet' : 'Fjern som administrator'}
-        </Button>
-        <Button variant="subtle" autoFocus onClick={onAvbryt}>
-          Avbryt
-        </Button>
-      </div>
-    </div>
+    </Bekreftelseskort>
   )
 }
 

@@ -306,7 +306,7 @@ export function Traadskjema({
  * ny. Velges en annen side med samme rekkevidde (`siderekkevidde`) — en
  * fagside eller stoffregisteret for en felles tråd, fortolkningen av en annen
  * analytt for en lokal — flyttes den sist i en kategori der, eller i en ny;
- * kommentarene følger med.
+ * kommentarene følger med. En tråd i en gruppe blir i gruppen.
  */
 export function Flytteskjema({
   id,
@@ -392,7 +392,7 @@ export function Flytteskjema({
     }
   }
 
-  const finnes = [sider.fagsider, sider.fortolkninger, ANDRE_DISKUSJONSSIDER].some((valg) => valg.some((v) => v.side === side))
+  const finnes = [sider.fagsider, sider.fortolkninger, sider.grupper, ANDRE_DISKUSJONSSIDER].some((valg) => valg.some((v) => v.side === side))
   // Bare sidene med samme rekkevidde som tråden har nå, kan ta imot den.
   const rekkevidde = siderekkevidde(side)
   const gruppe = (etikett: string, valg: readonly Sidevalg[]) =>
@@ -418,6 +418,7 @@ export function Flytteskjema({
             {gruppe('Fagsider', sider.fagsider)}
             {gruppe('Fortolkning', sider.fortolkninger)}
             {gruppe('Andre sider', ANDRE_DISKUSJONSSIDER)}
+            {gruppe('Grupper', sider.grupper)}
           </select>
         </div>
         {!hentet && !feil && <p className="felt__hjelp">Henter kategoriene …</p>}

@@ -35,7 +35,8 @@ import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
 import { Direktelenkekilde } from './components/direktelenker/Direktelenkekilde'
 import { Lenkemelding } from './components/direktelenker/Lenkemelding'
 import { apneFraAdressen } from './components/direktelenker/navigasjon'
-import { diskusjonssideFor, diskusjonssider, fortolkningssidenavn } from './diskusjoner/modell'
+import { diskusjonssideFor, diskusjonssider, fortolkningssidenavn, gruppeForSide, gruppesidenavn } from './diskusjoner/modell'
+import { GruppekildeProvider, useMineGrupper, type Gruppekilde } from './grupper/kilde'
 import { FavorittkildeProvider } from './favoritter/Favorittkilde'
 import { AutoerstattProvider } from './autoerstatt/Autoerstattkilde'
 import { MaleenhetKilde } from './enheter/Maleenhet'
@@ -74,6 +75,7 @@ import { lagRegisterlager } from './stoffregister/api'
 import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffregister/Stoffregisterkilde'
 import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
 import { Verktoyside } from './components/verktoy/Verktoyside'
+import { Grupperside } from './components/grupper/Grupperside'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
@@ -155,6 +157,8 @@ export default function App() {
   // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
   // rettighetene i databasen, ikke den gamle adminrollen (P2d).
   const rettigheter = useMineRettigheter(profil.id)
+  // Gruppene følger kontoen, ikke fagmiljøet fortolkningen gjelder (P6).
+  const grupper = useMineGrupper(profil.id)
   const katalogtilstand = useHentAnalyttkatalog(
     useCallback(() => lesAnalyttkatalog(klient()), []),
     rettigheter.arbeidsfagmiljo?.id ?? null,
@@ -166,12 +170,12 @@ export default function App() {
   if (!kilde) return <div className="port" aria-busy="true" />
   return (
     <AnalyttkatalogKilde verdi={kilde}>
-      <Arbeidsflate key={kilde.katalog.fagmiljo?.id ?? ''} rettigheter={rettigheter} />
+      <Arbeidsflate key={kilde.katalog.fagmiljo?.id ?? ''} rettigheter={rettigheter} grupper={grupper} />
     </AnalyttkatalogKilde>
   )
 }
 
-function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
+function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grupper: Gruppekilde }) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
   // egen katalog. Fagsidene er stoffenes, i stoffregisteret; koblingene i
   // katalogen er veien mellom de to.
@@ -733,24 +737,33 @@ function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
    */
   const vist = dveler ?? stage
 
-  // Diskusjonene hører til siden som står åpen: en fagside, eller
-  // fortolkningen av én analytt. Forsiden har ingen.
-  const diskusjonsside = diskusjonssideFor(rute)
+  // Diskusjonene hører til siden som står åpen: en fagside, fortolkningen
+  // av én analytt, stoffregisteret eller en gruppe den innloggede leser.
+  // Forsiden har ingen.
+  const sidensGruppe = rute.side === 'grupper' && rute.gruppe ? grupper.grupper.find((g) => g.id === rute.gruppe) : undefined
+  const sidesDiskusjoner = diskusjonssideFor(rute)
+  const diskusjonsside =
+    sidesDiskusjoner && gruppeForSide(sidesDiskusjoner) && sidensGruppe?.status !== 'aktiv' ? null : sidesDiskusjoner
   const sidenavn =
     rute.side === 'stoff'
       ? (register.menystoff(rute.stoff)?.navn ?? rute.stoff)
       : rute.side === 'stoffregister'
         ? 'Stoffregisteret'
-        : state.analyte
-        ? fortolkningssidenavn(state.analyte)
-        : 'Fortolkningen'
+        : sidensGruppe
+          ? gruppesidenavn(sidensGruppe)
+          : state.analyte
+            ? fortolkningssidenavn(state.analyte)
+            : 'Fortolkningen'
   // Endringsloggen for innholdet på siden som står åpen.
   const endringsside = useMemo(
     () => endringssideFor(rute, { fortolkning: state.analyte, katalog, kanonisk: kanoniskStoff }),
     [rute, state.analyte, katalog, kanoniskStoff],
   )
   // Sidene en tråd kan flyttes til.
-  const sider = useMemo(() => diskusjonssider(register.stoffer, katalog.fortolkninger), [register, katalog])
+  const sider = useMemo(
+    () => diskusjonssider(register.stoffer, katalog.fortolkninger, grupper.grupper),
+    [register, katalog, grupper.grupper],
+  )
 
   const app = (
     <ToppmenyKilde>
@@ -886,6 +899,12 @@ function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
                   {rute.side === 'verktoy' && visVerktoy && (
                     <main className="scene scene--verktoy">
                       <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
+                    </main>
+                  )}
+
+                  {rute.side === 'grupper' && (
+                    <main className="scene scene--infoside">
+                      <Grupperside gruppe={rute.gruppe} onLukk={lukkInfoside} />
                     </main>
                   )}
 
@@ -1030,10 +1049,12 @@ function Arbeidsflate({ rettigheter }: { rettigheter: Rettigheter }) {
     </ToppmenyKilde>
   )
   // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
-  // og det samme gjør rettighetene.
+  // og det samme gjør rettighetene og gruppene.
   return (
     <RettigheterKilde verdi={rettigheter}>
-      <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
+      <GruppekildeProvider verdi={grupper}>
+        <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
+      </GruppekildeProvider>
     </RettigheterKilde>
   )
 }

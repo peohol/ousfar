@@ -105,6 +105,8 @@ export const REKKEVIDDEHJELPERE = [
   'opprett_objekt',
   // P4b: arbeidskonteksten, det ene fagmiljøet fortolkningen gjelder for brukeren.
   'arbeidsfagmiljo',
+  // P6: trådene og varslene med gruppen (supabase/migrations/*_grupper.sql).
+  'kan_lese_samhandling',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
@@ -140,6 +142,13 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       return /\bintern\s*\.\s*(medlemskapsavslag|krev_medlemskapsmyndighet|gi_medlemskap)\s*\(/.test(f.kilde)
         ? null
         : 'bruker ikke intern.medlemskapsavslag'
+    case 'gruppemyndighet':
+      if (!f.definer) return 'er ikke security definer'
+      if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
+      // Direkte, eller gjennom låsen som også kontrollerer at gruppen kan ses (`intern.las_gruppe`).
+      return /\bintern\s*\.\s*(gruppeavslag|krev_gruppemyndighet|gruppeopprettelsesavslag|las_gruppe)\s*\(/.test(f.kilde)
+        ? null
+        : 'bruker ikke intern.gruppeavslag'
     case 'rekkevidde':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'
