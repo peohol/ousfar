@@ -299,8 +299,8 @@ idéene, og en tydelig stopp i fortolkningen til egne regler er lagt inn.
 
 Åpningen av OUS Rettstoksikologi er en egen migrasjon i en egen PR, merket
 «venter på Peders godkjenning». Den setter `apent_for_medlemmer = true` for
-det ene fagmiljøet, med begrunnelsen i tilgangsloggen, og stopper hvis
-fagmiljøet ikke finnes, er arkivert eller allerede åpent på en annen måte enn
-ventet. Den stoppes av vernet i §8.4 til merket med Peders godkjenning er
-skrevet, så den kan verken slås sammen med grønn kontroll eller rulles ut uten
-det.
+det ene fagmiljøet, med begrunnelsen i tilgangsloggen, stopper hvis
+fagmiljøet ikke finnes eller er arkivert, og gjør ingenting om det alt er
+åpent. Den gir ingen medlemskap selv. Den stoppes av vernet i §8.4 til merket
+med Peders godkjenning er skrevet, så den kan verken slås sammen med grønn
+kontroll eller rulles ut uten det.
