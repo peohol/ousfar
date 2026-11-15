@@ -8,8 +8,10 @@
  *  2. fastslå bruker-ID-en fra JWT-en
  *  3. kontroller at kontoen har et aktivt medlemskap (P2.0), og slå opp
  *     profilen server-side
- *  4. valider det som er sendt inn
- *  5. først da: gjør jobben med en klient som har forhøyede rettigheter
+ *  4. kontroller at en konto i en rolle som krever tofaktor, er logget inn med
+ *     koden (`aal2` i tokenet), når kravet er slått på (S4 tiltak 7)
+ *  5. valider det som er sendt inn
+ *  6. først da: gjør jobben med en klient som har forhøyede rettigheter
  *
  * Ingen rolle slås opp her. Den gamle adminrollen gir ingen myndighet (P2d):
  * hva den innloggede får gjøre (opprette en bruker, gi nytt passord, endre
@@ -46,8 +48,24 @@ export interface Endepunktinput {
   admin: SupabaseContext['supabaseAdmin']
 }
 
+/** Det som skiller endepunktene fra hverandre i kontrollene. */
+export interface Endepunktvalg {
+  /**
+   * Om endepunktet bruker kontoens privilegier, og derfor krever tofaktor av
+   * de rollene som skal ha det. Bare det som gjelder kontoen selv og må kunne
+   * gjøres før tofaktoren er satt opp (førstegangsoppsettet), slår det av.
+   */
+  privilegert?: boolean
+}
+
+/** Svaret når en konto som krever tofaktor, ikke er logget inn med koden. */
+export const KREVER_TOFAKTOR = 'Logg inn med koden fra autentiseringsappen først.'
+
 /** Bygger et endepunkt. Profilen slås opp i profiltabellen — aldri i `user_metadata`, som brukeren selv kan skrive til. */
-export function endepunkt(handling: (input: Endepunktinput) => Promise<unknown>): (request: Request) => Promise<Response> {
+export function endepunkt(
+  handling: (input: Endepunktinput) => Promise<unknown>,
+  { privilegert = true }: Endepunktvalg = {},
+): (request: Request) => Promise<Response> {
   return withSupabase({ auth: 'user' }, async (request: Request, ctx: SupabaseContext) => {
     try {
       if (request.method !== 'POST') {
@@ -55,6 +73,7 @@ export function endepunkt(handling: (input: Endepunktinput) => Promise<unknown>)
       }
 
       const innlogget = await hentInnlogget(ctx)
+      if (privilegert) await krevTofaktor(ctx, innlogget.id)
 
       const resultat = await handling({
         kropp: await lesKropp(request),
@@ -99,6 +118,21 @@ async function hentInnlogget(ctx: SupabaseContext): Promise<Profil> {
   if (medlemskapsfeil) throw medlemskapsfeil
   if (aktiv !== true) throw new Avvist(AVSLUTTET_MEDLEMSKAP, 403)
   return data as Profil
+}
+
+/**
+ * Avviser en konto i en rolle som krever tofaktor når tokenet ikke er `aal2`.
+ * Regelen er den samme som i databasen (`intern.privilegier_med`), slik at
+ * Edge-funksjonene og radsikkerheten aldri svarer ulikt.
+ */
+async function krevTofaktor(ctx: SupabaseContext, bruker: string): Promise<void> {
+  const aal = ctx.jwtClaims?.aal
+  const { data, error } = await ctx.supabaseAdmin.rpc('kontooperasjon_privilegier_tilgjengelige', {
+    bruker,
+    aal: typeof aal === 'string' ? aal : null,
+  })
+  if (error) throw error
+  if (data !== true) throw new Avvist(KREVER_TOFAKTOR, 403)
 }
 
 /** JSON-kroppen, eller et tomt objekt når det ikke fulgte noen med. */

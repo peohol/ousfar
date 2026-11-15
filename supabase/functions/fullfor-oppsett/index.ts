@@ -8,6 +8,9 @@
  * `must_change_password` og `onboarding_completed` kan bare settes herfra.
  *
  * Passord logges aldri, verken det gamle eller det nye.
+ *
+ * Endepunktet bruker ingen privilegier og må virke før tofaktoren er satt
+ * opp, så det krever ikke koden (`privilegert: false`).
  */
 import { passordFeil } from '../_delt/passord.ts'
 import { avatarSti, navnFeil, normaliserNavn } from '../_delt/profil.ts'
@@ -63,5 +66,5 @@ Deno.serve(
 
     if (error) throw error
     return { profil: data }
-  }),
+  }, { privilegert: false }),
 )
