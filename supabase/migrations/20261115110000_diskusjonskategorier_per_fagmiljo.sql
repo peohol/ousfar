@@ -701,7 +701,7 @@ as $$
     select intern.kan_moderere_diskusjon(d)
     from public.diskusjoner d
     where d.id = kan_moderere_diskusjon.diskusjon
-      and (select auth.uid()) is not null
+      and intern.har_aktivt_medlemskap((select auth.uid()))
       and intern.kan_lese_samhandling(d.fagmiljo_id, d.gruppe_id)
   ), false)
 $$;
