@@ -19,11 +19,8 @@ Deno.serve(
     const fornavn = normaliserNavn(tekstfelt(kropp, 'fornavn'))
     const etternavn = normaliserNavn(tekstfelt(kropp, 'etternavn'))
 
-    // Brukernavnet hentes her, ikke fra kroppen, så regelen ikke kan lures.
-    const { data: egen, error: oppslagsfeil } = await admin.from('profiles').select('username').eq('id', innlogget.id).single()
-    if (oppslagsfeil) throw oppslagsfeil
     const feil =
-      passordFeil(passord, egen.username) ?? navnFeil(fornavn, 'Fornavn') ?? navnFeil(etternavn, 'Etternavn')
+      passordFeil(passord) ?? navnFeil(fornavn, 'Fornavn') ?? navnFeil(etternavn, 'Etternavn')
     if (feil) throw new Avvist(feil)
 
     // Bildet er valgfritt, men stien må være brukerens egen. Ellers kunne en

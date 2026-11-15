@@ -36,7 +36,7 @@ enable_manual_linking = false
 
 # Minstekravet appen og Edge-funksjonene kontrollerer mot står i
 # functions/_delt/passord.ts. Skrus dette opp, skal tallet der opp samtidig.
-minimum_password_length = 12
+minimum_password_length = 6
 password_requirements = ""
 
 [auth.email]

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { PASSORDHJELP, passordFeil } from '@delt/passord'
+import { PASSORD_MINST, passordFeil } from '@delt/passord'
 import { navnFeil, normaliserNavn } from '@delt/profil'
 import { byttPassord, lagreEgenProfil, lastOppAvatar } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
@@ -100,7 +100,7 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
     if (bytter) return
 
     const lokalFeil =
-      passordFeil(passord, profil.username) ?? (passord === gjentatt ? null : 'De to passordene er ikke like.')
+      passordFeil(passord) ?? (passord === gjentatt ? null : 'De to passordene er ikke like.')
     if (lokalFeil) {
       setPassordfeilmelding(lokalFeil)
       setPassordkvittering(null)
@@ -183,7 +183,7 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
             type="password"
             autoComplete="new-password"
             value={passord}
-            hjelp={PASSORDHJELP}
+            hjelp={`Minst ${PASSORD_MINST} tegn.`}
             onChange={(hendelse) => setPassord(hendelse.target.value)}
           />
           <Felt

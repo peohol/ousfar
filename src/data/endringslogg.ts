@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.4',
+    dato: '2026-11-15',
+    sammendrag: 'Passordregelen er som før: minst 6 tegn',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Et nytt passord trenger igjen bare å ha minst 6 tegn, slik det var før forrige versjon. Den strengere regelen er satt til side inntil videre.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.3',
     dato: '2026-11-15',
     sammendrag: 'Strengere regel for nye passord, og en påminnelse om pasientopplysninger der man skriver sammen',
