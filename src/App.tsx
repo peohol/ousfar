@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter, type Rettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
@@ -156,12 +156,12 @@ export default function App() {
   const profil = useProfil()
   // Det den innloggede får gjøre i administrasjonen og stoffregisteret, etter
   // rettighetene i databasen, ikke den gamle adminrollen (P2d).
-  const rettigheter = useMineRettigheter(profil.id)
+  const { rettigheter, oppdater: oppdaterRettigheter, arbeidskontekst } = useMineRettigheter(profil.id)
   // Gruppene følger kontoen, ikke fagmiljøet fortolkningen gjelder (P6).
   const grupper = useMineGrupper(profil.id)
   const katalogtilstand = useHentAnalyttkatalog(
     useCallback(() => lesAnalyttkatalog(klient()), []),
-    rettigheter.arbeidsfagmiljo?.id ?? null,
+    arbeidskontekst,
   )
   const kilde = useMemo(
     () => (katalogtilstand.status === 'laster' ? null : katalogkildeFor(katalogtilstand)),
@@ -170,12 +170,29 @@ export default function App() {
   if (!kilde) return <div className="port" aria-busy="true" />
   return (
     <AnalyttkatalogKilde verdi={kilde}>
-      <Arbeidsflate key={kilde.katalog.fagmiljo?.id ?? ''} rettigheter={rettigheter} grupper={grupper} />
+      <Arbeidsflate
+        key={kilde.katalog.fagmiljo?.id ?? ''}
+        rettigheter={rettigheter}
+        oppdaterRettigheter={oppdaterRettigheter}
+        arbeidskontekst={arbeidskontekst}
+        grupper={grupper}
+      />
     </AnalyttkatalogKilde>
   )
 }
 
-function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grupper: Gruppekilde }) {
+function Arbeidsflate({
+  rettigheter,
+  oppdaterRettigheter,
+  arbeidskontekst,
+  grupper,
+}: {
+  rettigheter: Rettigheter
+  oppdaterRettigheter: OppdaterRettigheter
+  /** Fagmiljøet fortolkningen gjelder, som det hentede følger (`arbeidskontekst`). */
+  arbeidskontekst: string | null
+  grupper: Gruppekilde
+}) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
   // egen katalog. Fagsidene er stoffenes, i stoffregisteret; koblingene i
   // katalogen er veien mellom de to.
@@ -249,8 +266,8 @@ function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grup
     [faginnholdsklienter, redigering.felles],
   )
   // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
-  // (arbeidskonteksten, P4b). Byttes det, tømmes reglene før de nye hentes.
-  const regelkontekst = rettigheter.arbeidsfagmiljo?.id ?? null
+  // (arbeidskonteksten, P4b). Byttes det, også til ingen, tømmes reglene før de nye hentes.
+  const regelkontekst = arbeidskontekst
   const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
   const scenarioregler = useHentScenarioregler(
@@ -1051,7 +1068,7 @@ function Arbeidsflate({ rettigheter, grupper }: { rettigheter: Rettigheter; grup
   // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
   // og det samme gjør rettighetene og gruppene.
   return (
-    <RettigheterKilde verdi={rettigheter}>
+    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter}>
       <GruppekildeProvider verdi={grupper}>
         <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
       </GruppekildeProvider>

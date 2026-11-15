@@ -59,8 +59,11 @@ describe('katalogvaktene', () => {
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
+      // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
+      'velg_arbeidsfagmiljo(fagmiljo uuid)',
     ])
-    for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_)/.test(s))) {
+    expect(FUNKSJONSKONTROLLER['velg_arbeidsfagmiljo(fagmiljo uuid)']).toBe('eier')
+    for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_|velg_)/.test(s))) {
       expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|systemarkitekt)$/)
     }
   })

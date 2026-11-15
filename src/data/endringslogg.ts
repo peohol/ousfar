@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.132.2',
+    dato: '2026-11-15',
+    sammendrag: 'Den som er med i flere fagmiljøer, velger selv hvilket hen arbeider i',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    punkter: [
+      'Er du medlem av mer enn ett fagmiljø, kan du velge under «Fagmiljø» i kontomenyen hvilket av dem fortolkningen skal bruke. Valget huskes til du endrer det.',
+      'Du ser og deltar i alle fagmiljøene du er med i, som før; valget gjelder bare hvilke regler og analyser fortolkningen bruker.',
+      'Med bare ett fagmiljø ser du ingen forskjell.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.132.1',
     dato: '2026-11-15',
     sammendrag: 'Kontrollen før nye fagmiljøer kan åpnes, uten endring i appen',
