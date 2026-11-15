@@ -42,7 +42,7 @@ medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
 | Nøkkel | Navn | Standard | Åpent for medlemmer |
 | --- | --- | --- | --- |
 | `ous-klinisk-farmakologi` | OUS Klinisk farmakologi | Ja | Ja |
-| `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Ja, fra startporten S2 (`20261115010000_s2_apne_rettstoksikologi.sql`, etter Peders godkjenning) |
+| `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Ja, fra startporten S2 (`20261115040000_s2_apne_rettstoksikologi.sql`, etter Peders godkjenning) |
 
 Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 (beslutning D1). OUS Rettstoksikologi har ingen fortolkningsregler.
