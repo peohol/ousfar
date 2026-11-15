@@ -294,12 +294,17 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     if (medlem.endre_rolle) {
       // Den gamle adminrollen (`profiles.role`). Den gir ingen myndighet over
       // andre; det brukerne merker, er at verktøyene under utprøving vises
-      // (`src/verktoy/synlighet.ts`). Derfor heter den det her.
+      // (`src/verktoy/synlighet.ts`). Derfor heter den det her. Kontoen
+      // regnes da som nivå 2 (`intern.myndighetsniva`), så lokale
+      // administratorer kan ikke lenger endre passordet eller medlemskapet;
+      // det sier forklaringen.
       const har = medlem.rolle === 'admin'
       vanlige.push({
         ikon: 'verktoy',
         tekst: har ? 'Fjern tilgangen til verktøyene' : 'Gi tilgang til verktøyene',
-        forklaring: har ? 'Verktøyene under utprøving skjules.' : 'Ser verktøyene som er under utprøving.',
+        forklaring: har
+          ? 'Verktøyene under utprøving skjules. Administratorene i fagmiljøet kan igjen endre passord og medlemskap.'
+          : 'Ser verktøyene under utprøving. Passord og medlemskap kan da bare endres av systemarkitekter.',
         gjor: () =>
           void utfor(medlem.id, f.id, async () => {
             await settRolle(medlem.id, har ? 'user' : 'admin')

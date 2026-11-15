@@ -189,7 +189,9 @@ I tillegg:
 - Den siste med adminrollen kan ikke miste den.
 - Det brukerne merker av rollen i dag, er at verktøyene som er under
   utprøving, vises (`src/verktoy/synlighet.ts`). I brukerlista heter den
-  derfor «tilgang til verktøyene» og merket «Verktøy».
+  derfor «tilgang til verktøyene» og merket «Verktøy». Forklaringen i menyen
+  sier også at kontoen da regnes som nivå 2, så bare en systemarkitekt kan gi
+  den nytt passord eller endre medlemskapet.
 - To systemarkitekter kan ikke gi hverandre nytt passord. Har en
   systemarkitekt mistet passordet, settes det utenfra, som når alle
   administratorene er borte (`docs/brukere.md`).

@@ -322,7 +322,7 @@ describe('brukerlista', () => {
     // Det menyen ikke sier i navnet, sier den i forklaringen.
     const forklaring = (b: HTMLElement) => document.getElementById(b.getAttribute('aria-describedby') ?? '')?.textContent
     expect(forklaring(valg[1]!)).toBe('Kan administrere medlemmene og det lokale innholdet i OUS Klinisk farmakologi.')
-    expect(forklaring(valg[2]!)).toBe('Ser verktøyene som er under utprøving.')
+    expect(forklaring(valg[2]!)).toBe('Ser verktøyene under utprøving. Passord og medlemskap kan da bare endres av systemarkitekter.')
     expect(within(meny).getByRole('separator')).toBeTruthy()
     // Fokus står på det første valget, og Escape lukker menyen og gir fokus tilbake.
     expect(document.activeElement).toBe(valg[0])
