@@ -8,9 +8,6 @@
  * `must_change_password` og `onboarding_completed` kan bare settes herfra.
  *
  * Passord logges aldri, verken det gamle eller det nye.
- *
- * Endepunktet bruker ingen privilegier og må virke før tofaktoren er satt
- * opp, så det krever ikke koden (`privilegert: false`).
  */
 import { passordFeil } from '../_delt/passord.ts'
 import { avatarSti, navnFeil, normaliserNavn } from '../_delt/profil.ts'
@@ -22,11 +19,8 @@ Deno.serve(
     const fornavn = normaliserNavn(tekstfelt(kropp, 'fornavn'))
     const etternavn = normaliserNavn(tekstfelt(kropp, 'etternavn'))
 
-    // Brukernavnet hentes her, ikke fra kroppen, så regelen ikke kan lures.
-    const { data: egen, error: oppslagsfeil } = await admin.from('profiles').select('username').eq('id', innlogget.id).single()
-    if (oppslagsfeil) throw oppslagsfeil
     const feil =
-      passordFeil(passord, egen.username) ?? navnFeil(fornavn, 'Fornavn') ?? navnFeil(etternavn, 'Etternavn')
+      passordFeil(passord) ?? navnFeil(fornavn, 'Fornavn') ?? navnFeil(etternavn, 'Etternavn')
     if (feil) throw new Avvist(feil)
 
     // Bildet er valgfritt, men stien må være brukerens egen. Ellers kunne en
@@ -66,5 +60,5 @@ Deno.serve(
 
     if (error) throw error
     return { profil: data }
-  }, { privilegert: false }),
+  }),
 )

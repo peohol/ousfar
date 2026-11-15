@@ -1106,35 +1106,3 @@
 .fagsak__teknisk--merk {
   color: var(--blekk);
 }
-
-/* --- Tofaktor under Konto (`Tofaktor.tsx`) ------------------------------- */
-
-.tofaktor__liste {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tofaktor__app {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--rom-3);
-}
-
-/* QR-koden står på hvitt i begge temaer (`--qr-bakgrunn`). */
-.tofaktor__qr {
-  align-self: flex-start;
-  padding: var(--rom-2);
-  background: var(--qr-bakgrunn);
-  border-radius: var(--runding-felt);
-}
-
-.tofaktor__hemmelighet {
-  font-family: var(--skrift-mono);
-  overflow-wrap: anywhere;
-  user-select: all;
-}

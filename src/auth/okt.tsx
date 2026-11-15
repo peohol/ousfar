@@ -23,7 +23,6 @@ import { erKonfigurert, klient } from './klient'
 import { tomMellomlageret } from './mellomlager'
 import { meldOktskifte } from './oktskifte'
 import { vedAvsluttetTilgang } from './tilgangsstans'
-import * as tofaktor from './tofaktor'
 
 interface Oktverdi {
   /** Hva som skal vises nå. Se `domain/tilgang.ts`. */
@@ -34,8 +33,6 @@ interface Oktverdi {
   /** Henter profilen på nytt etter at oppslaget gikk galt. */
   forsokPaaNytt: () => void
   loggInn: (brukernavn: string, passord: string) => Promise<string | null>
-  /** Det andre steget i innloggingen, når kontoen har en autentiseringsapp. Se `tofaktor.ts`. */
-  loggInnMedKode: (kode: string) => Promise<string | null>
   loggUt: () => Promise<void>
   /** Legger en nyskrevet profil til grunn uten å hente den på nytt. */
   settProfil: (profil: Profil) => void
@@ -56,34 +53,8 @@ export function OktProvider({ children }: { children: ReactNode }) {
   const [avsluttet, setAvsluttet] = useState(false)
   /** Økes for å hente profilen på nytt etter en feil. */
   const [forsok, setForsok] = useState(0)
-  /**
-   * Om økten mangler koden fra autentiseringsappen, og for hvilken bruker.
-   * Svaret for en bruker står til det nye er klart, så appen ikke forsvinner
-   * et øyeblikk når økten fornyes eller løftes til `aal2`.
-   */
-  const [kode, setKode] = useState<{ bruker: string; trengs: boolean } | null>(null)
 
   const brukerId = okt?.user.id ?? null
-  const token = okt?.access_token ?? null
-
-  useEffect(() => {
-    if (brukerId === null) {
-      setKode(null)
-      return
-    }
-    let gjelder = true
-    tofaktor
-      .trengerKode()
-      // Svaret leses av økten i nettleseren og feiler bare uten økt. Det er
-      // ingen sikkerhetsgrense: den er databasen (`domain/tilgang.ts`).
-      .catch(() => false)
-      .then((trengs) => {
-        if (gjelder) setKode({ bruker: brukerId, trengs })
-      })
-    return () => {
-      gjelder = false
-    }
-  }, [brukerId, token])
 
   useEffect(() => {
     if (mangler) return
@@ -216,15 +187,13 @@ export function OktProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const verdi = useMemo<Oktverdi>(() => {
-    const kodeAvklart = kode !== null && kode.bruker === brukerId
-    const klar = oktAvklart && (brukerId === null || (profilFor === brukerId && kodeAvklart))
+    const klar = oktAvklart && (brukerId === null || profilFor === brukerId)
     return {
-      tilgang: tilgangFor({ klar, harOkt: brukerId !== null, profil, profilfeil, avsluttet, kode: kodeAvklart && kode.trengs }),
+      tilgang: tilgangFor({ klar, harOkt: brukerId !== null, profil, profilfeil, avsluttet }),
       profil,
       mangler,
       forsokPaaNytt,
       loggInn: api.loggInn,
-      loggInnMedKode: tofaktor.loggInnMedKode,
       loggUt,
       settProfil: (ny) => {
         setProfil(ny)
@@ -239,7 +208,6 @@ export function OktProvider({ children }: { children: ReactNode }) {
     profil,
     profilfeil,
     avsluttet,
-    kode,
     mangler,
     loggUt,
     forsokPaaNytt,

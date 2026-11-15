@@ -75,10 +75,6 @@ Alle går gjennom en Edge-funksjon, og alle følger samme rekkefølge:
 autentiser, les bruker-ID fra JWT-en, slå opp rollen server-side i
 profiltabellen, valider det som er sendt inn — og først da bruk den
 privilegerte klienten. Fellesdelen ligger i `functions/_edge/kontekst.ts`.
-Når tofaktorkravet er slått på (`docs/s4-pilotplan.md` §3.1), avviser den
-også en konto i en rolle som krever tofaktor, til den er logget inn med koden;
-bare `fullfor-oppsett` er unntatt, fordi det må kunne gjøres før tofaktoren er
-satt opp.
 `nytt-passord` og `sett-rolle` gjelder andres kontoer: der avgjør databasen
 myndigheten, med den innloggedes ID, i samme transaksjon som endringen
 («Myndighet over kontoer» i `docs/fagmiljoer.md`).

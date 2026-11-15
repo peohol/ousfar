@@ -11,10 +11,6 @@
  */
 
 :root {
-  /* Bakgrunnen bak en QR-kode: hvit i begge temaer, ellers kan en
-     autentiseringsapp ikke lese den. */
-  --qr-bakgrunn: #ffffff;
-
   /* --- Skrift -----------------------------------------------------------
      Newsreader (serif) til stoffnavn, titler, nøkkeltall og klinisk tekst;
      Public Sans til alt UI. Begge ligger i appen selv (se `main.tsx`), så et

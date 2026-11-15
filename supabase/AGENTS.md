@@ -63,8 +63,6 @@ Tillegg til reglene i rotens `AGENTS.md`. Gjelder alt under `supabase/`.
 - En privilegert klient skal aldri tas i bruk før den innloggede er
   autentisert, bruker-ID-en er lest fra JWT-en, rollen er slått opp
   server-side og inndataene er validert. `functions/_edge/kontekst.ts` gjør
-  det i riktig rekkefølge, og krever tofaktor av de rollene som skal ha det;
-  nye endepunkter skal bygges på den, og bare et endepunkt som ikke bruker
-  privilegier, får `{ privilegert: false }`.
+  det i riktig rekkefølge; nye endepunkter skal bygges på den.
 - Hemmelige nøkler hører hjemme i miljøet, aldri i repoet eller i noe som
   bygges inn i klienten.

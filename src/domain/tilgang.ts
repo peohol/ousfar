@@ -13,11 +13,6 @@ export type Tilgang =
   /** Økten er ikke avklart ennå. Ingenting skal vises. */
   | 'venter'
   | 'innlogging'
-  /**
-   * Innlogget med passordet, men kontoen har en autentiseringsapp, og koden
-   * fra den mangler (`aal1`). Ingenting annet vises før koden er gitt.
-   */
-  | 'kode'
   | 'oppsett'
   | 'app'
   /** Innlogget, men profilen lot seg ikke hente. */
@@ -37,8 +32,6 @@ export interface Oktstatus {
   profilfeil: boolean
   /** Sant når databasen har svart at kontoen ikke har et aktivt medlemskap. */
   avsluttet?: boolean
-  /** Sant når kontoen har en autentiseringsapp og økten mangler koden fra den. */
-  kode?: boolean
 }
 
 /**
@@ -55,8 +48,6 @@ export function maaGjennomOppsett(profil: Pick<Profil, 'must_change_password' | 
 export function tilgangFor(status: Oktstatus): Tilgang {
   if (!status.klar) return 'venter'
   if (!status.harOkt) return 'innlogging'
-  // Koden kommer før alt annet, også før beskjeden om et avsluttet medlemskap.
-  if (status.kode) return 'kode'
   // Gikk oppslaget galt, skal brukeren få vite det og kunne prøve igjen. Uten
   // dette skillet ville en kortvarig nettfeil sett ut som evig lasting.
   if (status.profilfeil) return 'feil'

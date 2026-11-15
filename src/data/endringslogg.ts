@@ -12,17 +12,16 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.135.0',
+    versjon: '1.134.4',
     dato: '2026-11-15',
-    sammendrag: 'Frivillig tofaktor med en autentiseringsapp',
+    sammendrag: 'Passordregelen er som før: minst 6 tegn',
     typer: ['Funksjonalitet'],
     omfang: 'Mindre omfang',
-    gjelder: ['vinduer'],
+    gjelder: ['hele appen'],
     punkter: [
-      'Under «Kontoen din» kan du nå legge til en autentiseringsapp på telefonen. Etter det spør innloggingen om koden appen viser, i tillegg til passordet.',
-      'Du kan ha to apper, for eksempel når du bytter telefon, og du kan selv fjerne en av dem.',
-      'Det er frivillig for alle foreløpig.',
+      'Et nytt passord trenger igjen bare å ha minst 6 tegn, slik det var før forrige versjon. Den strengere regelen er satt til side inntil videre.',
     ],
+    utenVarsel: true,
   },
   {
     versjon: '1.134.3',
