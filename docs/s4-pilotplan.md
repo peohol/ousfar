@@ -1,7 +1,8 @@
 # S4: sikker drift og ekstern pilot – gjennomføringsplan
 
-**Status:** plan, 15.11.2026. Bare dokumentasjon: ingen kode, ingen
-migrasjoner og ingen endring i produksjonen. Ingen ekstern pilot er åpnet.
+**Status:** plan, 15.11.2026. Ingen migrasjoner, ingen endring i appen og
+ingen endring i produksjonen; det eneste som er gjennomført, er tiltak 10 i
+testoppsettet. Ingen ekstern pilot er åpnet.
 **Grunnlag:** plan [#364](https://github.com/peohol/ousfar/issues/364) (§6,
 §10 P9, §12, §15 B9), P0-rapporten
 ([ousfar-nasjonal-p0-kartlegging.md](ousfar-nasjonal-p0-kartlegging.md), §6.3
@@ -104,7 +105,7 @@ aggregater og innstillinger; ingen persondata er hentet ut.
 | Direkte tilkoblinger | Åpne fra alle adresser (`0.0.0.0/0`); SSL er ikke påkrevd. Utrullingen av migrasjonene bruker direkte tilkobling fra GitHub Actions med databasepassordet, så en adressebegrensning ville stoppet den |
 | Sikkerhetsråd (advisor) | 126 varsler om `security definer`-funksjoner innloggede kan kalle (alle står med erklært kontroll i `funksjonskontroller.ts` og testes, P1.1/P2.0), 1 om lekkede passord, 23 informasjonsmerknader om tabeller med radsikkerhet uten regler (bevisst lukkede) |
 | Ytelsesråd | 3 varsler om flere tillatende regler på samme tabell; øvrige er informasjon (ubrukte indekser, fremmednøkler uten indeks) |
-| Helse | Auth, database, REST og lagring friske; én gjentakende feil uten innlogging, `permission denied for table brukerinnstillinger` (~40 i timen siden 8.11, S2-rapporten §8.2) |
+| Helse | Auth, database, REST og lagring friske; én gjentakende feil uten innlogging, `permission denied for table brukerinnstillinger` (~40 i timen siden 8.11, S2-rapporten §8.2; årsaken står i §2.4) |
 | Lagring | Én privat bøtte (profilbilder), 4 filer, 105 kB. Filene er ikke med i en databasekopi |
 
 ### 2.3 Data som bare finnes i produksjonen (F)
@@ -131,7 +132,8 @@ fra de offentlige kildene. Radtall er Postgres' estimater.
 | Overvåking | Databasemålingen hver tredje time (`docs/db-maling.md`) og varsler fra GitHub Actions ved feil. Ingen oppetidsvarsling, ingen vaktordning |
 | Tilbakeføring | Appen: tidligere Vercel-utrulling kan settes tilbake. Database: ny migrasjon (hver etappe har beskrevet tilbakeføring). Uten sikkerhetskopi finnes ingen vei tilbake etter tap eller ødeleggelse av data |
 | Avhengigheter | Ingen kjente sårbarheter i pakkene som sendes til nettleseren; 12 i utviklingsverktøyene (`npm audit`, bl.a. vitest og vite) |
-| Hemmeligheter | Produksjonsnøklene ligger som GitHub-miljøhemmeligheter (`produksjon`) og i agentmiljøene. Agentene (Claude, ChatGPT) har i dag full teknisk tilgang til Supabase-prosjektet gjennom miljøets tilgangstoken (F) |
+| Hemmeligheter | Produksjonsnøklene ligger som GitHub-miljøhemmeligheter (`produksjon`). Claude-miljøet har i tillegg den hemmelige nøkkelen, databasepassordet, et tilgangstoken til Supabase-kontoen og produksjonsadressen som miljøvariabler, altså full teknisk tilgang til produksjonen (F) |
+| Tester mot produksjonen | Fordi produksjonsadressen står i Claude-miljøet, kontakter komponenttestene (`npm test`) den ekte databasen uten innlogging. Det er hele årsaken til den gjentakende feilen `permission denied for table brukerinnstillinger`: alle forespørslene har brukeragent `node` og klienten `createBrowserClient`, og spør etter innstillingen `redigering.teksthoyde` (Supabase-loggene 14.–15.11). I CI er adressen ikke satt, så der skjer det ikke (F). Rettet i denne PR-en (tiltak 10) |
 | Personvern | Ingen behandlingsoversikt, personvernerklæring, databehandleravtaler eller avviksrutine er dokumentert i repoet (F). Appen behandler navn, brukernavn, profilbilder, fritekst i diskusjoner og idéer, tilgangslogg og øktdata (IP og nettleser i Auth); ingen pasientdata etter B4, men fritekst kan få det ved et uhell |
 
 ---
@@ -318,7 +320,7 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging, tilbakestilling etter hierarkiet med logg; serverkravet `intern.krev_tofaktor()` bygget og testet, men ikke slått på | U | – | Kriteriene i §3.1 utenom selve kravet |
 | 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5) | 7, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
 | 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger; med Pro også kontroll mot lekkede passord og utlogging etter inaktivitet (A: 12 t) | J | 6; Pro for de to siste | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
-| 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger` | U | – | Feilen borte fra loggen et døgn etter utrulling |
+| 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger`: testene skal aldri kunne nå en ekte Supabase, uansett hva miljøet inneholder. **Gjort i denne PR-en** (`vite.config.ts`, `testisolasjon.test.ts`) | U | – | Testen for isolasjonen er grønn; ingen forespørsler med brukeragent `node` mot `brukerinnstillinger` i loggen et døgn etter sammenslåingen |
 | 11 | Oppdatere utviklingsverktøyene med kjente sårbarheter (vitest, vite m.fl.) | U | – | `npm audit` uten høye og kritiske funn; alle tester grønne |
 | 12 | Påminnelse om at pasientopplysninger ikke skal skrives, i skrivefeltene for diskusjoner, idéer og grupper (B4 er besluttet) | U | – | Teksten vises i alle skrivefelt for samhandling; komponenttest |
 | 13 | Utkast til **personvern- og driftsdokumenter**: behandlingsoversikt, personvernerklæring for appen, databehandleroversikt, avviksrutine, regel for lagringstid og driftshåndbok med kapasitetsgrense | U (utkast) | – | Dokumentene ligger i `docs/`; ikke vist i appen før 14 |
