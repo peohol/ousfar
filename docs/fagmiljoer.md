@@ -178,13 +178,20 @@ modellen avgjør.
 I tillegg:
 
 - Ingen kan gjøre noe av dette med sin egen konto.
-- Den som gjøres til administrator, blir også lokal administrator i sitt
-  primære fagmiljø, slik tilbakefyllingen gjorde med dem som var det. Den som
-  mister rollen, slutter som lokal administrator overalt.
-- En konto med midlertidig passord (ikke ferdig førstegangsoppsett) kan ikke
-  gjøres til administrator. Passordet kan være kjent av den som laget det. (`55000`)
-- Den siste med adminrollen, og den eneste lokale administratoren i et aktivt
-  fagmiljø, kan ikke fjernes.
+- Rollen og den lokale administrasjonen er uavhengige
+  (`20261115111500_adminrolle_uten_lokal_administrasjon.sql`): å gi eller ta
+  rollen endrer bare `profiles.role`. Lokale administratorer utpekes og
+  fjernes bare med `sett_fagmiljoadministrator`
+  ([Medlemskap og kontosperring](#medlemskap-og-kontosperring)). Før fulgte
+  den lokale administrasjonen i det primære fagmiljøet med rollen.
+- En konto med midlertidig passord (ikke ferdig førstegangsoppsett) får ikke
+  rollen. Passordet kan være kjent av den som laget det. (`55000`)
+- Den siste med adminrollen kan ikke miste den.
+- Det brukerne merker av rollen i dag, er at verktøyene som er under
+  utprøving, vises (`src/verktoy/synlighet.ts`). I brukerlista heter den
+  derfor «tilgang til verktøyene» og merket «Verktøy». Forklaringen i menyen
+  sier også at kontoen da regnes som nivå 2, så bare en systemarkitekt kan gi
+  den nytt passord eller endre medlemskapet.
 - To systemarkitekter kan ikke gi hverandre nytt passord. Har en
   systemarkitekt mistet passordet, settes det utenfra, som når alle
   administratorene er borte (`docs/brukere.md`).
@@ -582,7 +589,10 @@ aktør og en begrunnelse: medlemskapene, administratorene og sperrene
 **I appen.** «Brukere» i adminmenyen viser medlemmene i ett fagmiljø om
 gangen (`public.medlemsoversikt`, med handlingene databasen tillater på hver
 rad), og de tidligere medlemmene for seg med «Gi tilgang igjen». En
-systemarkitekt velger blant alle fagmiljøene og kan opprette nye. Det som
+systemarkitekt velger blant alle fagmiljøene og kan opprette nye. Hver rad
+har ett merke for rollen (systemarkitekt, administrator eller bruker), med
+statusene ved siden av, og handlingene i en meny på raden, hver med en
+setning om hva den gjør. Det som
 fjerner tilgang, må bekreftes, og bekreftelsen sier at kontoen sperres og
 logges ut når det er det siste medlemskapet. Nye brukere opprettes i
 standardfagmiljøet som før. I en fane som står åpen, ser
