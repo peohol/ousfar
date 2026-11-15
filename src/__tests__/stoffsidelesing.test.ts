@@ -443,7 +443,7 @@ describe('referanseområdene', () => {
 
   it('gir HBUP referanseområdet fra kortet på Bupropion-siden, gjennom koblingen i registeret', async () => {
     expect(OUS_REGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
-    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
+    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)
     expect(omrader.get('HBUP')).toEqual({ nedre: 100, ovre: 200, enhet: 'nmol/L', forbehold: '' })
     // Et stoff uten kobling gir ingen kode noe.
     expect([...omrader.values()].some((o) => o.ovre === 20)).toBe(false)
@@ -451,21 +451,22 @@ describe('referanseområdene', () => {
 
   it('gir ikke OTRAM tramadolsidens kort, bare TRAM, som er stoffets hovedanalytt', async () => {
     expect(primareAnalytter('tramadol', OUS_REGISTER, OUS_KATALOG).map((a) => a.kode)).toEqual(['TRAM', 'OTRAM'])
-    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
+    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)
     expect(omrader.get('TRAM')).toEqual({ nedre: null, ovre: 300, enhet: 'nmol/L', forbehold: '' })
     expect(omrader.has('OTRAM')).toBe(false)
 
-    // Et eget kort for OTRAM på tramadolsiden gir koden sitt eget område.
+    // Et eget kort for O-desmetyltramadol på tramadolsiden gir koden sitt eget
+    // område, gjennom forbindelsen den måler.
     const otram = await lager.opprettUtkast('innholdselement', {
       infoside: ref.tramadol,
       panel: 'viktige_data',
       posisjon: 0,
       elementtype: 'referanseomrade',
-      data: { nedre: null, ovre: 40, enhet: 'nmol/L', forbehold: '', gjelder: 'OTRAM' },
+      data: { nedre: null, ovre: 40, enhet: 'nmol/L', forbehold: '', gjelder: 'o-desmetyltramadol' },
       referanser: [],
     })
     await publiser(otram)
-    const etter = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
+    const etter = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)
     expect(etter.get('OTRAM')).toMatchObject({ ovre: 40 })
     expect(etter.get('TRAM')).toMatchObject({ ovre: 300 })
   })
@@ -527,7 +528,7 @@ describe('de faste kortene', () => {
     const tilfeller = [
       innhold('graviditet_amming', 'kinetikkort', { tittel: 'Amming', dokument: tekst('Syntetisk.') }),
       innhold('dosering', 'riktekst', { dokument: tekst('Syntetisk.') }),
-      innhold('viktige_data', 'referanseomrade', { nedre: 1, ovre: 2, enhet: 'nmol/L', gjelder: 'OTRAM' }),
+      innhold('viktige_data', 'referanseomrade', { nedre: 1, ovre: 2, enhet: 'nmol/L', gjelder: 'o-desmetyltramadol' }),
     ]
     for (const endring of tilfeller) {
       await lager.opprettUtkast('innholdselement', endring)

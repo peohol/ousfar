@@ -44,6 +44,15 @@ function systemvalg(): Plugin {
   }
 }
 
+/**
+ * Oppsettet for Vitest. Testene ser samme miljø som i CI, uten
+ * produksjonsadressen og -nøklene (`src/__tests__/hjelp/utenProduksjon.ts`).
+ * Det står for seg fordi Vitest har sin egen utgave av Vite-typene.
+ */
+const testoppsett = {
+  test: { setupFiles: ['./src/__tests__/hjelp/utenProduksjon.ts'] },
+}
+
 export default defineConfig({
   plugins: [react(), versjonsfil(), systemvalg()],
   base: './',
@@ -76,6 +85,7 @@ export default defineConfig({
       },
     },
   },
+  ...testoppsett,
   resolve: {
     alias: {
       // Reglene for brukernavn, passord og profilfelter deles med

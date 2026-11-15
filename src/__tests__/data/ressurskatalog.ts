@@ -192,6 +192,7 @@ export const STATISKE_RESSURSER: Readonly<Record<string, StatiskKlassifisering>>
   'src/data/antihypertensiver.json': s('lokal', 'OUS sine analyttkoder, metoder og måleområder (§3)'),
   'src/data/aliaser.json': s('lokal', 'Søkeord per analyttkode (§3)'),
   'src/data/analyttkoblinger.json': s('lokal', 'Koblingene fra OUS sine analyttkoder til stoffene (§3); importgrunnlag (P4c)'),
+  'src/data/analyttforbindelser.json': s('lokal', 'Forbindelsen hver av OUS sine analyttkoder måler, og datakortene den bruker (#395); importgrunnlag'),
   'src/data/stoffregister.json': s('felles', 'Stoffene er felles (§3); koblingene står i analyttkatalogen (P4c)'),
   'src/data/forbindelser.ts': s('felles', 'Forbindelsesregisteret (§3)'),
   'src/data/endringslogg.ts': s('felles', 'Appens endringslogg (§3)'),

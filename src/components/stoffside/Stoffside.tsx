@@ -421,7 +421,16 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
                         />
                       )
                     case 'datakort':
-                      return <ViktigeData key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} analytter={primare} />
+                      return (
+                        <ViktigeData
+                          key={definisjon.nokkel}
+                          definisjon={definisjon}
+                          kontekst={kontekst}
+                          stoff={slug}
+                          stoffnavn={navn || slug}
+                          analytter={primare}
+                        />
+                      )
                     case 'tekst':
                       return <Tekstpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
                     case 'kort':

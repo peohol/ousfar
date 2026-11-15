@@ -1,7 +1,15 @@
 import registerdata from '../data/stoffregister.json'
 import koblingsdata from '../data/analyttkoblinger.json'
+import forbindelsesdata from '../data/analyttforbindelser.json'
 import { antihypertensivdatasett, dataset } from './analytes'
-import { byggKatalog, type Analysemetode, type Analyttkoblingsdata, type Katalogdata, type Katalogoppforing } from './analyttkatalog'
+import {
+  byggKatalog,
+  type Analysemetode,
+  type Analyttkoblingsdata,
+  type Katalogdata,
+  type Katalogkodedata,
+  type Katalogoppforing,
+} from './analyttkatalog'
 import { displayName } from './names'
 import type { RusModul } from './rus'
 import { byggStoffregister, type Registerdata } from './stoffregister'
@@ -26,7 +34,14 @@ import type { Analyte } from '../types'
  *   `rus.ts` og `etg.ts`, nedenfor uendret;
  * - analysemetodene, som sto i `src/domain/analysemetoder.ts`;
  * - koblingene fra kodene til stoffene, som sto i `src/data/stoffregister.json`
- *   og nå står i `src/data/analyttkoblinger.json`.
+ *   og nå står i `src/data/analyttkoblinger.json`;
+ * - forbindelsen hver kode måler, i forbindelsesregisteret, og hvilke
+ *   datakort på fagsidene den bruker, fra `src/data/analyttforbindelser.json`
+ *   (kom til etter flyttingen, med sin egen migrasjon:
+ *   `scripts/analyttforbindelser.ts`). Datakortene er de appen brukte før:
+ *   sidens egne for den første primære koden for hvert stoff, og dem for
+ *   forbindelsen for de andre — unntatt urinanalysene (THC-syre, EtG og EtS),
+ *   som ikke bruker kortene, siden de gjelder serum.
  */
 
 /* --- Analysemetodene ----------------------------------------------------- */
@@ -168,6 +183,12 @@ const ETG_OPPFORING: Analyte = {
 
 /* --- Katalogen ----------------------------------------------------------- */
 
+/** Forbindelsen hver analyttkode måler og datakortene den bruker, etter koden. */
+export const OUS_ANALYTTFORBINDELSER: ReadonlyMap<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>> = new Map(
+  (forbindelsesdata as { analyttforbindelser: ({ kode: string } & Pick<Katalogkodedata, 'forbindelse' | 'datakort'>)[] })
+    .analyttforbindelser.map(({ kode, forbindelse, datakort }) => [kode, { forbindelse, datakort }] as const),
+)
+
 function oppforing(
   a: Analyte,
   type: Katalogoppforing['type'],
@@ -189,7 +210,12 @@ function oppforing(
     maleomrade: a.maleomrade,
     antihypertensiv: a.antihypertensiv ?? null,
     aliaser: [...a.aliaser],
-    koder: koder.map((k) => ({ ...k })),
+    koder: koder.map(({ kode, navn }) => ({
+      kode,
+      navn,
+      forbindelse: OUS_ANALYTTFORBINDELSER.get(kode)?.forbindelse ?? null,
+      datakort: OUS_ANALYTTFORBINDELSER.get(kode)?.datakort ?? null,
+    })),
   }
 }
 

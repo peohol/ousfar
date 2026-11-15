@@ -17,10 +17,19 @@ import { createHash } from 'node:crypto'
 import type { Katalogdata } from '../src/domain/analyttkatalog'
 import { OUS_KATALOGDATA } from '../src/domain/ouskatalog'
 
-/** Grunnlaget slik det legges inn: alt utenom fagmiljøet, som databasen setter. */
-export function analyttkatalogGrunnlag(data: Katalogdata = OUS_KATALOGDATA): Omit<Katalogdata, 'fagmiljo'> {
+/**
+ * Grunnlaget slik det legges inn: alt utenom fagmiljøet, som databasen
+ * setter, og forbindelsene og datakortene til kodene, som kom til etterpå med sin egen
+ * migrasjon (`scripts/analyttforbindelser.ts`). Migrasjonen med importen er
+ * kjørt og endres ikke.
+ */
+export function analyttkatalogGrunnlag(data: Katalogdata = OUS_KATALOGDATA) {
   const { metoder, oppforinger, koblinger } = data
-  return { metoder, oppforinger, koblinger }
+  return {
+    metoder,
+    oppforinger: oppforinger.map((o) => ({ ...o, koder: o.koder.map(({ kode, navn }) => ({ kode, navn })) })),
+    koblinger,
+  }
 }
 
 /** SQL-en som legger katalogen inn i det opprinnelige fagmiljøet. */
