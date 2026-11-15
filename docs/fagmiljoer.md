@@ -324,7 +324,9 @@ som `aktivt_medlemskap`) og funksjonene leser den. Moderering følger
 rettighetsmatrisen (P0 §5.2): de lokale administratorene på fagmiljøets egne
 sider, systemarkitektene på de felles; den gamle adminrollen gir ingenting her.
 Å styre en tråd (overskrift, flytting, arkiv) kan den som startet den, og en
-moderator.
+moderator. På en fortolkningsside har hvert fagmiljø sitt eget rom med egne
+kategorier, unike bare der, og modereringen følger trådens rom
+(`docs/diskusjoner.md`, «Rommene»; #395).
 
 **Idéene og de planlagte oppgavene** følger Peders beslutning D8
 (2026-11-14): idéene deles av alle med et aktivt medlemskap, uansett
