@@ -5,9 +5,10 @@
  * (`stoffregisterdb.test.ts`); her prøves det appen sier før noen trykker.
  */
 import { describe, expect, it } from 'vitest'
-import { ANDRE_STOFFER_ID, byggStoffregister, STOFFREGISTERDATA, type Registerstruktur } from '../domain/stoffregister'
+import { ANDRE_STOFFER_ID, byggStoffregister, type Registerstruktur } from '../domain/stoffregister'
 import { endreStruktur, erEkteKategori, kanSletteKategori, kanSletteStoff, lesRegisterdatabase } from '../stoffregister/modell'
 import { GRUNNSTRUKTUR, kategoriid } from './hjelp/registerstruktur'
+import { OUS_REGISTERDATA } from '../domain/ouskatalog'
 
 const NAA = '2026-10-02T08:00:00.000Z'
 
@@ -136,7 +137,7 @@ describe('hva som kan slettes', () => {
       { id: '2', slug: 'full', navn: 'Full', innhold: true },
       { id: '3', slug: 'bupropion', navn: 'Bupropion', innhold: false },
     ],
-    STOFFREGISTERDATA,
+    OUS_REGISTERDATA,
     GRUNNSTRUKTUR,
   )
   const stoff = (slug: string) => register.menystoff(slug)!

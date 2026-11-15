@@ -94,6 +94,26 @@ export const APNE_MODULER = new Map(
 )
 
 /**
+ * Laboratoriets egne data, som ikke skal ligge i noen pakke, heller ikke bak
+ * veggen: analyttkatalogen står per fagmiljø i databasen og hentes for
+ * fagmiljøet fortolkningen gjelder (P4c, docs/fagmiljoer.md, «Analyttkatalogen
+ * per fagmiljø»). Lå OUS sin katalog i pakken, ville den kunnet bli brukt i et
+ * annet fagmiljø. Filene er importgrunnlaget for skriptene og testene.
+ */
+export const LABORATORIEDATA = new Map(
+  Object.entries({
+    'importgrunnlaget for analyttkatalogen til OUS Klinisk farmakologi': [
+      'src/domain/ouskatalog.ts',
+      'src/domain/analytes.ts',
+      'src/data/analytter.json',
+      'src/data/antihypertensiver.json',
+      'src/data/aliaser.json',
+      'src/data/analyttkoblinger.json',
+    ],
+  }).flatMap(([grunn, stier]) => stier.map((sti) => [sti, grunn])),
+)
+
+/**
  * Tekstbiter som bare finnes i det kliniske innholdet. En ekstra skanse, i
  * tilfelle innhold skulle komme inn en vei kildekartene ikke viser.
  */
@@ -115,8 +135,10 @@ function erEgenKode(sti) {
  * `beskyttede` er navnene på de kliniske pakkene, `apne` resten. For hver åpen
  * pakke oppgis modulene den er satt sammen av og teksten som utleveres;
  * `kilder: null` betyr at kildekartet manglet, og da vet vi ingenting.
+ * `beskyttedeKilder` er de samme opplysningene for de kliniske pakkene, som
+ * heller ikke skal ha laboratoriets data i seg ({@link LABORATORIEDATA}).
  */
-export function kontroller({ beskyttede, apne }) {
+export function kontroller({ beskyttede, apne, beskyttedeKilder = [] }) {
   const feil = []
   const brukteUnntak = new Set()
 
@@ -124,6 +146,13 @@ export function kontroller({ beskyttede, apne }) {
     feil.push(
       `Fant ${beskyttede.length} kliniske pakker (ventet nøyaktig én som begynner med «${KLINISK_PAKKE}-»).`,
     )
+  }
+
+  for (const { navn, kilder } of [...beskyttedeKilder, ...apne]) {
+    for (const kilde of kilder ?? []) {
+      const sti = ryddSti(kilde)
+      if (LABORATORIEDATA.has(sti)) feil.push(`${sti} ligger i ${navn}: ${LABORATORIEDATA.get(sti)} hører ikke hjemme i appen.`)
+    }
   }
 
   for (const { navn, kilder, innhold } of apne) {
@@ -168,17 +197,18 @@ export function kontroller({ beskyttede, apne }) {
 /** Leser pakkene byggingen la igjen, slik `kontroller` vil ha dem. */
 function lesBygget(mappe) {
   const filer = readdirSync(mappe).filter((navn) => navn.endsWith('.js'))
+  const pakke = (navn) => ({
+    navn,
+    kilder: existsSync(`${mappe}/${navn}.map`)
+      ? (JSON.parse(readFileSync(`${mappe}/${navn}.map`, 'utf8')).sources ?? [])
+      : null,
+    innhold: readFileSync(`${mappe}/${navn}`, 'utf8'),
+  })
+  const beskyttede = filer.filter((navn) => navn.startsWith(`${KLINISK_PAKKE}-`))
   return {
-    beskyttede: filer.filter((navn) => navn.startsWith(`${KLINISK_PAKKE}-`)),
-    apne: filer
-      .filter((navn) => !navn.startsWith(`${KLINISK_PAKKE}-`))
-      .map((navn) => ({
-        navn,
-        kilder: existsSync(`${mappe}/${navn}.map`)
-          ? (JSON.parse(readFileSync(`${mappe}/${navn}.map`, 'utf8')).sources ?? [])
-          : null,
-        innhold: readFileSync(`${mappe}/${navn}`, 'utf8'),
-      })),
+    beskyttede,
+    beskyttedeKilder: beskyttede.map(pakke),
+    apne: filer.filter((navn) => !navn.startsWith(`${KLINISK_PAKKE}-`)).map(pakke),
   }
 }
 

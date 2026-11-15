@@ -15,7 +15,8 @@
  * som alt står der, være. Modulen brukes av importskriptet og testene, ikke
  * av appen.
  */
-import { byggKatalog, FORTOLKNINGSOPPFORINGER, type Analyttkatalog } from '../domain/analyttkatalog'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, datasett, filnokkel, type Importkilde, type Importplan } from './import'
 import { STOFFSIDE_DATASETT } from './stoffsider'
 
@@ -79,7 +80,7 @@ export function indikasjonskilde(omgang: Indikasjonsimport): Importkilde {
 
 export function indikasjonsplan(
   omgang: Indikasjonsimport,
-  katalog: Analyttkatalog = byggKatalog(FORTOLKNINGSOPPFORINGER),
+  katalog: Analyttkatalog = OUS_KATALOG,
 ): Importplan {
   const filer = INDIKASJONSDATASETT.filer.filter((f) => omgang.filer.includes(filnokkel(f)))
   return byggImportplan(filer, INDIKASJONSDATASETT.referanser, katalog, indikasjonskilde(omgang))

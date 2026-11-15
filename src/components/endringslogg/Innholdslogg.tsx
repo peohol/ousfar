@@ -10,12 +10,13 @@ import {
   type Endringsside,
   type Rapport,
 } from '../../endringslogg/modell'
-import { beskrivelser, delnavn, endringslinjer, sammendrag } from '../../endringslogg/oppsummering'
+import { beskrivelser, delnavn, endringslinjer, sammendrag, type Modulnavn } from '../../endringslogg/oppsummering'
 import { endringssidenokkel } from '../../endringslogg/sider'
 import { fulltNavn, tidspunkt } from '../../faginnhold/historikk'
 import { innholdsfelter } from '../../faginnhold/innholdsfelter'
 import { OBJEKTTYPER, type Objekttype } from '../../faginnhold/modell'
 import { panelFor } from '../../faginnhold/paneler'
+import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Bryter } from '../Bryter'
 import { Button } from '../Button'
@@ -101,6 +102,7 @@ function Loggvindu({
   const [apenSkuff, setApenSkuff] = useBevart<string | null>('innholdslogg/apen', null)
   const [lasting, setLasting] = useState<Lasting>({ status: 'laster', endringer: [] })
   const [sammenligner, setSammenligner] = useState<Endringsdel | null>(null)
+  const modulnavn = useModulnavn()
   const nokkel = endringssidenokkel(side)
   const profiler = useMemo(() => lasting.endringer.flatMap((e) => (e.profil ? [e.profil] : [])), [lasting.endringer])
   const lenker = useAvatarlenker(profiler)
@@ -180,7 +182,7 @@ function Loggvindu({
       {sammenligner && erObjekttype(sammenligner.type) && (
         <Historikkvindu
           apen
-          navn={delnavn(sammenligner)}
+          navn={delnavn(sammenligner, modulnavn)}
           objekt={sammenligner.objekt}
           felter={(innhold) => innholdsfelter(sammenligner.type as Objekttype, innhold as never)}
           forstValgt={sammenligner.til}
@@ -237,6 +239,7 @@ function Foring({
   onSammenlign: (del: Endringsdel) => void
 }) {
   const aktor = AKTOR[endring.aktor]
+  const modulnavn = useModulnavn()
   return (
     <Loggskuff
       apen={apen}
@@ -249,7 +252,7 @@ function Foring({
           <span className="innholdslogg__tid">{tidspunkt(endring.kl)}</span>
         </span>
       }
-      sammendrag={sammendrag(endring)}
+      sammendrag={sammendrag(endring, modulnavn)}
       merker={
         <>
           <Merke tone={aktor.tone}>{aktor.navn}</Merke>
@@ -262,6 +265,12 @@ function Foring({
       <Detaljer endring={endring} onSammenlign={onSammenlign} />
     </Loggskuff>
   )
+}
+
+/** Navnene modulene har i analyttkatalogen, til regelsettene i loggen. */
+function useModulnavn(): Modulnavn {
+  const katalog = useAnalyttkatalog()
+  return useCallback((modul: string) => katalog.modulMedId(modul)?.navn, [katalog])
 }
 
 function Blokk({ tittel, children }: { tittel: string; children: ReactNode }) {
@@ -284,7 +293,8 @@ function Punkter({ punkter }: { punkter: readonly ReactNode[] }) {
 }
 
 function Detaljer({ endring, onSammenlign }: { endring: Endring; onSammenlign: (del: Endringsdel) => void }) {
-  const endret = beskrivelser(endringslinjer(endring))
+  const modulnavn = useModulnavn()
+  const endret = beskrivelser(endringslinjer(endring, modulnavn))
   return (
     <div className="innholdslogg__kropp">
       {endring.delt && (
@@ -315,7 +325,7 @@ function Detaljer({ endring, onSammenlign }: { endring: Endring; onSammenlign: (
           <ul className="innholdslogg__punkter">
             {endring.deler.map((del) => (
               <li key={`${del.objekt}:${del.til}`} className="innholdslogg__del">
-                <span className="innholdslogg__del-tekst">{delnavn(del)}</span>
+                <span className="innholdslogg__del-tekst">{delnavn(del, modulnavn)}</span>
                 {erObjekttype(del.type) && (
                   <button type="button" className="innholdslogg__sammenlign" onClick={() => onSammenlign(del)}>
                     {del.fra === null ? 'Vis' : 'Sammenlign'}

@@ -1,8 +1,8 @@
-import { ANALYTTKATALOG, type Analyttkatalog, type Laboratorieanalytt } from './analyttkatalog'
+import type { Analyttkatalog, Laboratorieanalytt } from './analyttkatalog'
 import { menyanalytter } from './analysemetoder'
 import { adresse, fortolkningsrute, stoffadresse } from './rute'
 import { iSetning } from './names'
-import { ANDRE_STOFFER, STOFFREGISTER, type Stoff, type StoffAnalyttKobling, type Stoffregister } from './stoffregister'
+import { ANDRE_STOFFER, type Stoff, type StoffAnalyttKobling, type Stoffregister } from './stoffregister'
 import type { Analyte } from '../types'
 
 /**
@@ -26,8 +26,8 @@ export interface KobletAnalytt {
 /** Analyttene koblet til stoffet, i registerets rekkefølge. Koder fortolkningen ikke kjenner, utelates. */
 export function analytterForStoff(
   slug: string,
-  register: Stoffregister = STOFFREGISTER,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  register: Stoffregister,
+  katalog: Analyttkatalog,
 ): KobletAnalytt[] {
   return register.analytterFor(slug).flatMap((kobling) => {
     const analytt = katalog.finn(kobling.kode)
@@ -41,8 +41,8 @@ export function analytterForStoff(
  */
 export function primareAnalytter(
   slug: string,
-  register: Stoffregister = STOFFREGISTER,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  register: Stoffregister,
+  katalog: Analyttkatalog,
 ): Laboratorieanalytt[] {
   return analytterForStoff(slug, register, katalog)
     .filter(({ kobling }) => kobling.primar)
@@ -61,8 +61,8 @@ export interface Fortolkningsmodul {
  */
 export function fortolkningsmoduler(
   slug: string,
-  register: Stoffregister = STOFFREGISTER,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  register: Stoffregister,
+  katalog: Analyttkatalog,
 ): Fortolkningsmodul[] {
   const moduler: Fortolkningsmodul[] = []
   for (const analytt of primareAnalytter(slug, register, katalog)) {
@@ -80,7 +80,7 @@ export function fortolkningsmoduler(
  */
 export function analytterForFortolkning(
   fortolkning: Analyte,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  katalog: Analyttkatalog,
 ): Laboratorieanalytt[] {
   return katalog.oppforinger.filter((a) => a.fortolkning.kode === fortolkning.kode)
 }
@@ -92,8 +92,8 @@ export function analytterForFortolkning(
  */
 export function fortolkningForStoff(
   slug: string,
-  register: Stoffregister = STOFFREGISTER,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  register: Stoffregister,
+  katalog: Analyttkatalog,
 ): Analyte | undefined {
   const moduler = fortolkningsmoduler(slug, register, katalog)
   return moduler.length === 1 ? moduler[0]!.fortolkning : undefined
@@ -104,7 +104,7 @@ export function fortolkningForStoff(
  * primært hører til, hvert én gang, i kodenes rekkefølge. EtG og EtS fører
  * begge til Etanol; DIAZ · DMI · OXA fører til Diazepam og Oksazepam.
  */
-export function stofferForFortolkning(analyte: Analyte, register: Stoffregister = STOFFREGISTER): Stoff[] {
+export function stofferForFortolkning(analyte: Analyte, register: Stoffregister): Stoff[] {
   const stoffer = new Map<string, Stoff>()
   for (const { kode } of menyanalytter(analyte)) {
     const stoff = register.primartStoffFor(kode)
@@ -117,7 +117,7 @@ export function stofferForFortolkning(analyte: Analyte, register: Stoffregister 
  * Adressen til fortolkningssiden der reglene for en analyttkode fortolkes og
  * redigeres: modulen koden hører til. `undefined` når appen ikke kjenner koden.
  */
-export function fortolkningsadresseForAnalytt(kode: string, katalog: Analyttkatalog = ANALYTTKATALOG): string | undefined {
+export function fortolkningsadresseForAnalytt(kode: string, katalog: Analyttkatalog): string | undefined {
   const analytt = katalog.finn(kode)
   return analytt && adresse(fortolkningsrute(analytt.fortolkning.kode))
 }
@@ -129,8 +129,8 @@ export function fortolkningsadresseForAnalytt(kode: string, katalog: Analyttkata
  */
 export function stoffadresseForAnalytt(
   kode: string,
+  register: Stoffregister,
   sted: readonly string[] = [],
-  register: Stoffregister = STOFFREGISTER,
 ): string | undefined {
   const stoff = register.primartStoffFor(kode)
   return stoff && stoffadresse(stoff.slug, sted)
@@ -154,12 +154,12 @@ export interface Stoffreferanseomrade {
  */
 export function referanseomraderPerAnalytt(
   kort: readonly Stoffreferanseomrade[],
-  register: Stoffregister = STOFFREGISTER,
+  koblinger: readonly Pick<StoffAnalyttKobling, 'kode' | 'stoff' | 'primar'>[],
 ): Map<string, unknown> {
   const svar = new Map<string, unknown>()
-  for (const { kode, stoff, primar } of register.koblinger) {
-    if (!primar) continue
-    const hovedanalytt = register.analytterFor(stoff).find((k) => k.primar)?.kode === kode
+  const primare = koblinger.filter((k) => k.primar)
+  for (const { kode, stoff } of primare) {
+    const hovedanalytt = primare.find((k) => k.stoff === stoff)?.kode === kode
     const treff =
       kort.find((k) => k.stoff === stoff && k.gjelder === kode) ??
       (hovedanalytt ? kort.find((k) => k.stoff === stoff && k.gjelder === null) : undefined)
@@ -176,8 +176,8 @@ export function referanseomraderPerAnalytt(
  */
 export function stoffbeskrivelse(
   slug: string,
-  register: Stoffregister = STOFFREGISTER,
-  katalog: Analyttkatalog = ANALYTTKATALOG,
+  register: Stoffregister,
+  katalog: Analyttkatalog,
 ): string | undefined {
   const stoff = register.finn(slug)
   const kategori = register.kategorierFor(slug).find((k) => k.kategori !== ANDRE_STOFFER)

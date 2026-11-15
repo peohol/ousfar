@@ -4,8 +4,8 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
+import { OUS_REGISTER } from '../domain/ouskatalog'
 
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 const CBD_STOFFSIDE = migrasjonsfiler().find((f) => f.endsWith('_cbd_stoffside.sql'))!
@@ -61,7 +61,7 @@ describe('CBD-siden', () => {
   })
 
   it('beholder sideobjektet og gir det registerets navn og nøkkel, publisert', async () => {
-    const cbd = STOFFREGISTER.finn('cbd')!
+    const cbd = OUS_REGISTER.finn('cbd')!
     expect(cbd.navn).toBe('CBD')
     expect((await sider()).map((s) => [s.objekt_id, s.tilstand, s.navn, s.slug])).toEqual([
       [for_[0]!.objekt_id, 'publisert', cbd.navn, cbd.slug],

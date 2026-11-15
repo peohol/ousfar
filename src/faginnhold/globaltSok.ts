@@ -36,7 +36,7 @@ import { tilFeil } from './lagring'
 import { TOM_STOFFSIDE, type Stoffsidedata, type Utgave } from './lesing'
 import type { Referanseinnhold, Tilstand } from './modell'
 import { indekserSide, lagSokeindeks, stoffidentitet, type Sokedokument, type Sokeindeks, type Tilleggstekst } from './sok'
-import { ANALYTTKATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
+import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
 import { analytterForStoff } from '../domain/koblinger'
 import { byggStoffregister, STOFFREGISTERDATA, type Registerdata } from '../domain/stoffregister'
 import type { Interaksjonssokerad, Legemiddelsok, Preparatsokerad } from '../legemiddeldata/lesing'
@@ -420,9 +420,15 @@ function labtekster(base: Kunnskapsbase, stoff: string): Tilleggstekst[] {
 }
 
 export interface Indekseringsvalg {
-  /** Stoffregisteret sidene hører til. Datafilen når det ikke er gitt. */
+  /**
+   * Stoffregisteret sidene hører til. Når det ikke er gitt: stoffene i
+   * datafilen med koblingene i katalogen.
+   */
   registerdata?: Registerdata
-  /** Laboratorieanalyttene koblingene peker på. */
+  /**
+   * Fagmiljøets analyttkatalog: laboratorieanalyttene og koblingene fra dem
+   * til stoffene. En tom når den ikke er gitt — da indekseres ingen analytter.
+   */
   katalog?: Analyttkatalog
 }
 
@@ -442,7 +448,7 @@ const TOM_MODELL = byggSidemodell(TOM_STOFFSIDE)
  */
 export function indekserKunnskapsbase(
   base: Kunnskapsbase,
-  { registerdata = STOFFREGISTERDATA, katalog = ANALYTTKATALOG }: Indekseringsvalg = {},
+  { katalog = TOM_KATALOG, registerdata = { ...STOFFREGISTERDATA, analyttkoblinger: [...katalog.koblinger] } }: Indekseringsvalg = {},
 ): Sokedokument[] {
   const register = byggStoffregister(
     base.sider.flatMap((s) => s.stoff ?? []),

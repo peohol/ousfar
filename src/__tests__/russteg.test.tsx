@@ -11,7 +11,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { RusStep } from '../components/RusStep'
 import { TipsLag } from '../components/Tips'
-import { RUS_MODULER, type Rusregler } from '../domain/rus'
+import { type Rusregler } from '../domain/rus'
+import { RUS_ANALYTTER, RUS_MODULER } from '../domain/ouskatalog'
 import { reglerForModul, tilScenarioregler, type Scenarioreglertilstand } from '../faginnhold/scenarioregler'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
 import { RUS_KOMMENTARER, rusRegelsett, rusScenarioregeldata } from './hjelp/rusgrunnlag'
@@ -36,7 +37,7 @@ function visSteg(id: string, regler: Rusregler) {
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
-        <RusStep modul={modul(id)} regler={regler} onBack={vi.fn()} onFinish={vi.fn()} copy={copy} flashAt={vi.fn()} />
+        <RusStep analyte={RUS_ANALYTTER.find((a) => a.modul?.id === id)!} modul={modul(id)} regler={regler} onBack={vi.fn()} onFinish={vi.fn()} copy={copy} flashAt={vi.fn()} />
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )

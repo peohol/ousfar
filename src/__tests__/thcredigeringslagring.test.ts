@@ -7,7 +7,7 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { THC_KODE } from '../domain/thc'
+import { THC_KODE } from '../domain/ouskatalog'
 import { fortolkThc, tomThcInndata } from '../domain/thcMotor'
 import { normalkvantil } from '../domain/thcRegelsett'
 import { regelplan } from '../faginnhold/stoffside'

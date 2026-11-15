@@ -8,7 +8,8 @@
  */
 import { describe, expect, it } from 'vitest'
 // @ts-expect-error - byggeskriptet er vanlig JavaScript uten typer.
-import { APNE_MODULER, kontroller } from '../../scripts/kontroller-vegg.mjs'
+import { APNE_MODULER, kontroller, LABORATORIEDATA } from '../../scripts/kontroller-vegg.mjs'
+import { STATISKE_RESSURSER } from './data/ressurskatalog'
 
 const KLINISK = 'klinisk-abc123.js'
 const APEN = 'index-abc123.js'
@@ -83,5 +84,28 @@ describe('listen over åpne moduler', () => {
     for (const [sti, grunn] of APNE_MODULER as Map<string, string>) {
       expect(grunn, sti).toMatch(/\S/)
     }
+  })
+})
+
+describe('laboratoriets data', () => {
+  const data = [...(LABORATORIEDATA as Map<string, string>).keys()]
+
+  it('stanser analyttkatalogen til OUS også bak veggen', () => {
+    for (const sti of data) {
+      const feil = kontroller({
+        beskyttede: [KLINISK],
+        beskyttedeKilder: [{ navn: KLINISK, kilder: [`../../${sti}`], innhold: '' }],
+        apne: [pakke(ALLE_APNE)],
+      }).feil as string[]
+      expect(feil, sti).toEqual([expect.stringContaining(`${sti} ligger i ${KLINISK}`)])
+    }
+  })
+
+  it('dekker hver lokale datafil og hver modul som bygger på dem (P4c)', () => {
+    const lokaleFiler = Object.entries(STATISKE_RESSURSER)
+      .filter(([sti, k]) => k.rekkevidde === 'lokal' && /^src\/data\/[^/]+\.json$/.test(sti))
+      .map(([sti]) => sti)
+    expect(lokaleFiler.filter((sti) => !data.includes(sti))).toEqual([])
+    expect(data).toEqual(expect.arrayContaining(['src/domain/ouskatalog.ts', 'src/domain/analytes.ts']))
   })
 })

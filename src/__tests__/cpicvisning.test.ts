@@ -41,6 +41,7 @@ import {
 import { indekserKunnskapsbase, lesKunnskapsbase, lesSokeindeks } from '../faginnhold/globaltSok'
 import type { Stoffsidedata } from '../faginnhold/lesing'
 import { sokeadresse, sokGlobalt } from '../faginnhold/sok'
+import { OUS_VALG } from './hjelp/ousvalg'
 
 type Rad = Record<string, unknown>
 const UTDRAG = JSON.parse(readFileSync(new URL('./data/cpic-utdrag.json', import.meta.url), 'utf8')) as Record<string, Rad[]>
@@ -335,7 +336,7 @@ describe('søket', () => {
     const les = vi.fn(async (ider: readonly string[]) => cpicFor(HELE, ider))
     const cpic: Cpicleser = { les, diplotyper: async () => lesDiplotypegrunnlag(null), hent: async () => ({ status: 'uendret' }) }
     const sideleser = { lesStoffsider: async () => [amitriptylinside()] }
-    const indeks = await lesSokeindeks({ sider: sideleser, cpic })
+    const indeks = await lesSokeindeks({ sider: sideleser, cpic }, OUS_VALG)
     expect(les).toHaveBeenCalledWith([AMITRIPTYLIN])
     const [treff] = sokGlobalt(indeks, 'CYP2D6 poor metabolizer')
     expect(sokeadresse(treff!.dokument.sted)).toBe(`#/stoff/amitriptylin/farmakogenetikk/${cpickort('100414')}`)
@@ -352,6 +353,6 @@ describe('søket', () => {
     const sideleser = { lesStoffsider: async () => [amitriptylinside()] }
     const base = await lesKunnskapsbase({ sider: sideleser, cpic: nede, ventetider: [] })
     expect(base.mangler).toEqual({ cpic: 'CPIC-kopien svarer ikke' })
-    expect(indekserKunnskapsbase(base).some((d) => d.tekst.includes('Metabolizer'))).toBe(false)
+    expect(indekserKunnskapsbase(base, OUS_VALG).some((d) => d.tekst.includes('Metabolizer'))).toBe(false)
   })
 })

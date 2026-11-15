@@ -9,7 +9,8 @@
  *
  * Modulen brukes av importskriptet og testene, ikke av appen.
  */
-import { byggKatalog, FORTOLKNINGSOPPFORINGER, type Analyttkatalog } from '../domain/analyttkatalog'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, datasett, type Importkilde, type Importplan } from './import'
 
 const DATASETT = datasett(
@@ -27,6 +28,6 @@ export const PSYKOFARMAKA_FILER = DATASETT.filer
 /** Referansene flere sider deler, med nøklene filene bruker. */
 export const PSYKOFARMAKA_REFERANSER = DATASETT.referanser
 
-export function psykofarmakaplan(katalog: Analyttkatalog = byggKatalog(FORTOLKNINGSOPPFORINGER)): Importplan {
+export function psykofarmakaplan(katalog: Analyttkatalog = OUS_KATALOG): Importplan {
   return byggImportplan(PSYKOFARMAKA_FILER, PSYKOFARMAKA_REFERANSER, katalog, PSYKOFARMAKA_KILDE)
 }

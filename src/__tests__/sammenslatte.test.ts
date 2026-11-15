@@ -23,9 +23,10 @@ import type { Objektstatus } from '../faginnhold/modell'
 import { ELEMENTTYPER, FJERNET } from '../faginnhold/paneler'
 import { MIGRERTE_SAMMENSLATTE, SAMMENSLAINGSKILDE, sammenslaingSql } from '../faginnhold/sammenslatte'
 import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
-import { byggStoffregister, STOFFREGISTER } from '../domain/stoffregister'
+import { byggStoffregister } from '../domain/stoffregister'
 import { lesSideEtterKode } from './hjelp/historisklesing'
 import { faginnholdskall, feilFra, migrasjonsfiler, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { OUS_REGISTER } from '../domain/ouskatalog'
 
 const SAMMENSLATTE = { Testmetabolitt: 'Testmoderstoff', Utkastmetabolitt: 'Testmoderstoff' }
 const MIGRASJONSFIL = migrasjonsfiler().find((f) => f.endsWith('_sammenslatte_stoffsider.sql'))!
@@ -113,7 +114,7 @@ describe('migrasjonen', () => {
 
   it('slo sammen metabolittene som i dag er et annet navn på moderstoffet i stoffregisteret', () => {
     for (const [metabolitt, moderstoff] of Object.entries(MIGRERTE_SAMMENSLATTE)) {
-      const stoff = STOFFREGISTER.kanonisk(metabolitt)
+      const stoff = OUS_REGISTER.kanonisk(metabolitt)
       expect(stoff?.navn, metabolitt).toBe(moderstoff)
       expect(stoff?.aliaser, metabolitt).toContain(metabolitt)
     }
@@ -142,7 +143,7 @@ describe('sammenslåingen i databasen', () => {
       'les_stoffreferanseomrader',
       { sidetilstand: 'publisert' },
     )
-    const perKode = referanseomraderPerAnalytt(kort, REGISTER) as Map<string, { ovre: number }>
+    const perKode = referanseomraderPerAnalytt(kort, REGISTER.koblinger) as Map<string, { ovre: number }>
     expect([...perKode].map(([kode, o]) => [kode, o.ovre]).sort()).toEqual([
       ['TMET', 400],
       ['TMOD', 3000],

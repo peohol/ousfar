@@ -11,8 +11,8 @@ import {
   kontrollerFormverdier,
   lesFormverdier,
 } from '../faginnhold/paneler'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
+import { OUS_REGISTER } from '../domain/ouskatalog'
 
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 const migrasjon = (navn: string) => migrasjonsfiler().find((f) => f.endsWith(`_${navn}.sql`))!
@@ -350,8 +350,8 @@ describe('kanoniske stoffsider skiller virkestoff fra laboratorieanalytt', () =>
       `select slug from public.infosider where tilstand = 'publisert' and navn = 'Hydroksybupropion'`,
     )
     expect(rows.map((r) => r.slug)).toEqual(['hydroksybupropion'])
-    expect(STOFFREGISTER.finn('hydroksybupropion')).toBeUndefined()
-    expect(STOFFREGISTER.kanonisk('hydroksybupropion')?.slug).toBe('bupropion')
+    expect(OUS_REGISTER.finn('hydroksybupropion')).toBeUndefined()
+    expect(OUS_REGISTER.kanonisk('hydroksybupropion')?.slug).toBe('bupropion')
   })
 
   it('beholder faginnholdet på de samme sideobjektene', async () => {

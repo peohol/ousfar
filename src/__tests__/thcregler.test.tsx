@@ -14,9 +14,8 @@ import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskil
 import { Thcregler } from '../components/regler/Thcregler'
 import { Fortolkningsredigering } from '../components/regler/Fortolkningsredigering'
 import { TipsLag } from '../components/Tips'
-import { FORTOLKNINGSOPPFORINGER, byggKatalog } from '../domain/analyttkatalog'
-import { STOFFREGISTER } from '../domain/stoffregister'
-import { THC_ANALYTT } from '../domain/thc'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { THC_ANALYTT } from '../domain/ouskatalog'
 import { fortolkThc, tomThcInndata } from '../domain/thcMotor'
 import {
   kommentarerFor,
@@ -44,7 +43,7 @@ beforeAll(() => {
 
 afterEach(cleanup)
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 
 /** Fagsiden for THC, med THC-syreregelsettet i databasen. Gir leseren tilbake. */
 function visSide(): Faginnholdsleser {
@@ -52,7 +51,7 @@ function visSide(): Faginnholdsleser {
   render(
     <TipsLag>
       <FaginnholdskildeProvider kilde={{ leser, lager: {} as Faginnholdslager, kanRedigere: false }}>
-        <Stoffside stoff="thc" register={STOFFREGISTER} katalog={katalog} onApneFortolkning={vi.fn()} onLukk={vi.fn()} />
+        <Stoffside stoff="thc" register={OUS_REGISTER} katalog={katalog} onApneFortolkning={vi.fn()} onLukk={vi.fn()} />
       </FaginnholdskildeProvider>
     </TipsLag>,
   )

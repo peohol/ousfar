@@ -21,7 +21,8 @@
  *
  * Modulen brukes av importskriptet og testene, ikke av appen.
  */
-import { byggKatalog, FORTOLKNINGSOPPFORINGER, type Analyttkatalog } from '../domain/analyttkatalog'
+import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, datasett, type Importplan } from './import'
 import { TDM_KILDE } from './tdm'
 
@@ -29,6 +30,6 @@ export const STOFFSIDE_DATASETT = datasett(
   import.meta.glob<Record<string, unknown>>('../../supabase/import/stoffsider/*.json', { eager: true, import: 'default' }),
 )
 
-export function stoffsideplan(katalog: Analyttkatalog = byggKatalog(FORTOLKNINGSOPPFORINGER)): Importplan {
+export function stoffsideplan(katalog: Analyttkatalog = OUS_KATALOG): Importplan {
   return byggImportplan(STOFFSIDE_DATASETT.filer, STOFFSIDE_DATASETT.referanser, katalog, TDM_KILDE)
 }

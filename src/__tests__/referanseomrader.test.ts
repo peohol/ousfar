@@ -19,7 +19,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { grensepiller } from '../domain/piller'
 import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
-import { STOFFREGISTER } from '../domain/stoffregister'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { lagFaginnholdslager, type Faginnholdslager } from '../faginnhold/lagring'
 import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing'
 import type { Objektstatus } from '../faginnhold/modell'
@@ -78,17 +78,17 @@ beforeAll(async () => {
 
 describe('lesReferanseomrader', () => {
   it('bygger på koblingene i stoffregisteret', () => {
-    expect(STOFFREGISTER.analytterFor('tramadol').map((k) => [k.kode, k.primar])).toEqual([
+    expect(OUS_REGISTER.analytterFor('tramadol').map((k) => [k.kode, k.primar])).toEqual([
       ['TRAM', true],
       ['OTRAM', true],
     ])
-    expect(STOFFREGISTER.primartStoffFor('AMTNORSUM')?.slug).toBe('amitriptylin')
-    expect(STOFFREGISTER.primartStoffFor('NOR')?.slug).toBe('nortriptylin')
-    expect(STOFFREGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
+    expect(OUS_REGISTER.primartStoffFor('AMTNORSUM')?.slug).toBe('amitriptylin')
+    expect(OUS_REGISTER.primartStoffFor('NOR')?.slug).toBe('nortriptylin')
+    expect(OUS_REGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
   })
 
   it('gir hver kode kortet på siden til sitt primære stoff: hovedanalytten det uten koden, de andre sitt eget', async () => {
-    const omrader = await brukerleser.lesReferanseomrader('publisert')
+    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)
     expect([...omrader].sort(([a], [b]) => a.localeCompare(b))).toEqual([
       ['NOR', { nedre: 30, ovre: 60, enhet: 'nmol/L', forbehold: '' }],
       ['OTRAM', { nedre: null, ovre: 5, enhet: 'nmol/L', forbehold: '' }],
@@ -108,16 +108,16 @@ describe('lesReferanseomrader', () => {
       ['tramadol', null],
       ['tramadol', 'OTRAM'],
     ])
-    expect([...referanseomraderPerAnalytt(kortene).keys()].sort()).toEqual(['NOR', 'OTRAM', 'TRAM'])
+    expect([...referanseomraderPerAnalytt(kortene, OUS_REGISTER.koblinger).keys()].sort()).toEqual(['NOR', 'OTRAM', 'TRAM'])
   })
 
   it('gir en sumanalyse ikke kortet på siden til et stoff den bare er sekundært koblet til', async () => {
-    expect((await brukerleser.lesReferanseomrader('publisert')).has('AMTNORSUM')).toBe(false)
+    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)).has('AMTNORSUM')).toBe(false)
   })
 
   it('gir en vanlig bruker ingenting av utkastet', async () => {
-    expect([...(await brukerleser.lesReferanseomrader('utkast'))]).toEqual([])
-    expect([...(await adminleser.lesReferanseomrader('utkast'))].map(([kode]) => kode).sort()).toEqual([
+    expect([...(await brukerleser.lesReferanseomrader('utkast', OUS_KATALOG.koblinger))]).toEqual([])
+    expect([...(await adminleser.lesReferanseomrader('utkast', OUS_KATALOG.koblinger))].map(([kode]) => kode).sort()).toEqual([
       'NOR',
       'OTRAM',
       'TRAM',
@@ -127,7 +127,7 @@ describe('lesReferanseomrader', () => {
   it('følger siden: en endring gjelder i steg 2 først når den er publisert', async () => {
     const analyte = { kode: 'TRAM', enhet: 'nmol/L' } as Analyte
     const pille = async (tilstand: 'utkast' | 'publisert') =>
-      grensepiller(analyte, null, (await adminleser.lesReferanseomrader(tilstand)).get('TRAM') ?? null)[0]?.verdi
+      grensepiller(analyte, null, (await adminleser.lesReferanseomrader(tilstand, OUS_KATALOG.koblinger)).get('TRAM') ?? null)[0]?.verdi
 
     const endret = await lager.lagreUtkast(ider.kort, 1, {
       infoside: ider.tramadol,
@@ -143,7 +143,7 @@ describe('lesReferanseomrader', () => {
     await publiser(endret)
     expect(await pille('publisert')).toBe('12 – 25 nmol/L')
     // Metabolitten beholder sitt eget.
-    expect((await brukerleser.lesReferanseomrader('publisert')).get('OTRAM')).toMatchObject({ ovre: 5 })
+    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)).get('OTRAM')).toMatchObject({ ovre: 5 })
   })
 
   it('tar ikke med et kort uten tall', async () => {
@@ -163,6 +163,6 @@ describe('lesReferanseomrader', () => {
     )
     // Kortet står nå på siden, men har ingen tall å vise.
     expect(kortene.some((k) => k.stoff === 'bupropion')).toBe(true)
-    expect((await brukerleser.lesReferanseomrader('publisert')).has('HBUP')).toBe(false)
+    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG.koblinger)).has('HBUP')).toBe(false)
   })
 })

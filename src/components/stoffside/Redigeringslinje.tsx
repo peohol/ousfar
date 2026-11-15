@@ -3,7 +3,7 @@ import type { Publiseringssteg } from '../../faginnhold/stoffside'
 import { endredeFelt } from '../../faginnhold/historikk'
 import { INGEN_REGLER, TOM_STOFFSIDE, type Regeldata, type Stoffsidedata } from '../../faginnhold/lesing'
 import { korttittel, panelFor } from '../../faginnhold/paneler'
-import { modulMedId } from '../../domain/rus'
+import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { losRegelsett } from '../../regler/kommentarer'
 import { tilScenarioutkast, utkastfelter } from '../../regler/scenarioredigering'
 import { regelsettfelterMedTekst } from '../regler/Fortolkningsregler'
@@ -57,6 +57,8 @@ export function Redigeringshandlinger({
   const status = statustekst(laster, plan.length, ferdig)
   const antall = laster ? 0 : plan.length
   const tips = useTips(status, { skjermleser: false })
+  const katalog = useAnalyttkatalog()
+  const modulnavn = (modul: string) => katalog.modulMedId(modul)?.navn
 
   const publiser = async () => {
     setPubliserer(true)
@@ -121,7 +123,7 @@ export function Redigeringshandlinger({
         <p className="publisering__ingress">Dette blir publisert og synlig for alle:</p>
         <ul className="publisering__liste">
           {plan.map((steg) => (
-            <li key={steg.id}>{beskrivSteg(steg, data, regler, publisert)}</li>
+            <li key={steg.id}>{beskrivSteg(steg, data, regler, publisert, modulnavn)}</li>
           ))}
         </ul>
         {feil && (
@@ -162,6 +164,8 @@ export function beskrivSteg(
   data: Stoffsidedata,
   regler: Regeldata = INGEN_REGLER,
   publisert: Regeldata = INGEN_REGLER,
+  /** Navnet på modulen et scenarioregelsett gjelder, fra analyttkatalogen. */
+  modulnavn: (modul: string) => string | undefined = () => undefined,
 ): string {
   const medEndringer = (navn: string, endret: string[] | null) =>
     endret && endret.length > 0 ? `${navn} (${endret.join(', ')})` : navn
@@ -181,7 +185,7 @@ export function beskrivSteg(
         Object.entries(regler.scenarioregelsett).find(([, r]) => r.regelsett.id === steg.id) ?? []
       const forrige = modul ? publisert.scenarioregelsett[modul] : undefined
       return medEndringer(
-        `Fortolkningsreglene for ${(modul && modulMedId(modul)?.navn) ?? 'modulen'}`,
+        `Fortolkningsreglene for ${(modul && modulnavn(modul)) ?? 'modulen'}`,
         regelsett && forrige
           ? endredeFelt(utkastfelter(tilScenarioutkast(forrige)), utkastfelter(tilScenarioutkast(regelsett)))
           : null,

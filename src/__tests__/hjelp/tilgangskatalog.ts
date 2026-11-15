@@ -103,6 +103,8 @@ export const REKKEVIDDEHJELPERE = [
   'har_endringsrett_noe',
   'krev_redaktor',
   'opprett_objekt',
+  // P4b: arbeidskonteksten, det ene fagmiljøet fortolkningen gjelder for brukeren.
+  'arbeidsfagmiljo',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

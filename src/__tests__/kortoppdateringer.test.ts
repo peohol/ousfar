@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs'
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { Importfeil, tilDokument } from '../faginnhold/import'
 import {
   kontrollerOppdateringer,
@@ -18,7 +18,7 @@ import { FJERNET } from '../faginnhold/paneler'
 import fil from '../../supabase/import/oppdateringer/antiepileptika2017.json'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const FORSTE_IMPORTMIGRASJON = '20260923072247'
 const OPPDATERING = migrasjonsfiler().find((f) => f.endsWith('_antiepileptika_2017.sql'))!
 const MIGRASJONSMAPPE = new URL('../../supabase/migrations/', import.meta.url)

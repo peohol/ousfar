@@ -1,41 +1,17 @@
-import { ETG_ANALYTTER, erEtgAnalytt } from './etg'
-import { rusModulFor } from './rus'
-import { displayName } from './names'
+import { kodeneI, type Analysemetode } from './analyttkatalog'
 import { optionColourVars } from './optionColours'
-import { THC_KODE, erThcAnalytt } from './thc'
 import type { Analyte } from '../types'
 
-/**
- * Analysemetodene appen dekker, og filteret søket i fortolkningen kan
- * begrenses med.
- *
- * Hvilken metode og kategori en analytt hører til står på analytten selv, satt
- * av skriptene som bygger datasettene. Ingenting her lister opp analytter.
- * Sidemenyen er stoffregisteret, ordnet etter farmakologisk klasse
- * (`stoffregister.ts`), og bygges av katalogen.
- */
-
-export interface Analysemetode {
-  /** Koden metoden rekvireres med, f.eks. «SPFA». */
-  kode: string
-  /** Hva metoden er, i klartekst. */
-  beskrivelse: string
-}
+export type { Analysemetode } from './analyttkatalog'
 
 /**
- * Metodene i den rekkefølgen filterraden viser dem. Beskrivelsene er metodenes
- * egne navn i labsystemet.
+ * Analysemetodene i fagmiljøets analyttkatalog, og filteret søket i
+ * fortolkningen kan begrenses med.
  *
- * Rekkefølgen her bestemmer også fargen hver metode bærer — se
- * {@link metodefarger} — så en omrokering bytter om på fargene.
+ * Hvilke metoder som finnes, og i hvilken rekkefølge filterraden viser dem,
+ * står i katalogen i databasen (`src/domain/analyttkatalog.ts`). Ingenting her
+ * lister opp metoder eller analytter.
  */
-export const ANALYSEMETODER: Analysemetode[] = [
-  { kode: 'SPFA', beskrivelse: 'Antidepressiver og antipsykotika i serum' },
-  { kode: 'SRUS', beskrivelse: 'Stoffer med ruspotensial i serum' },
-  { kode: 'UCAK', beskrivelse: 'THC-syre i urin' },
-  { kode: 'UETGHB', beskrivelse: 'Etanolmetabolitter i urin' },
-  { kode: 'AHT', beskrivelse: 'Antihypertensiver' },
-]
 
 /**
  * Fargen metoden bærer overalt i appen: pillen i analyttkortet, pillen i
@@ -43,24 +19,23 @@ export const ANALYSEMETODER: Analysemetode[] = [
  * fargen uansett hvor den dukker opp.
  *
  * Fargene kommer fra det samme settet som søkealternativene bruker, spredt
- * jevnt rundt fargesirkelen etter metodens plass i {@link ANALYSEMETODER}.
- * En kode som ikke står der, får den første fargen; at alle metodene i
- * datasettene er registrert, holdes av testene.
+ * jevnt rundt fargesirkelen etter metodens plass i katalogen. En kode som
+ * ikke står der, får den første fargen.
  */
-export function metodefarger(kode: string): Record<string, string> {
-  const plass = ANALYSEMETODER.findIndex((m) => m.kode === kode)
-  return optionColourVars(Math.max(plass, 0), ANALYSEMETODER.length)
+export function metodefarger(kode: string, metoder: readonly Analysemetode[]): Record<string, string> {
+  const plass = metoder.findIndex((m) => m.kode === kode)
+  return optionColourVars(Math.max(plass, 0), Math.max(metoder.length, 1))
 }
 
 /**
  * Hurtigtasten som setter filteret på metoden: Alt + plassen i lista, fra 1.
  * `null` for en metode som ligger utenfor talltastene, og for ukjente koder.
  *
- * Tasten leses av det samme registeret som fargen og rekkefølgen, så merket i
+ * Tasten leses av den samme lista som fargen og rekkefølgen, så merket i
  * filterraden og tasten som faktisk virker ikke kan komme i utakt.
  */
-export function metodesnarvei(kode: string): string | null {
-  const plass = ANALYSEMETODER.findIndex((m) => m.kode === kode)
+export function metodesnarvei(kode: string, metoder: readonly Analysemetode[]): string | null {
+  const plass = metoder.findIndex((m) => m.kode === kode)
   return plass >= 0 && plass < 9 ? `Alt + ${plass + 1}` : null
 }
 
@@ -85,21 +60,15 @@ export interface Menyanalytt {
 /**
  * Virkestoffene én søkeoppføring dekker: ett per analyttkode.
  *
- * De fleste oppføringene er én analytt med én kode, og blir én linje. De tre
- * fortolkningsmodulene dekker flere koder hver, og deles opp — det er
- * virkestoffene brukeren leter etter, ikke modulen de deler. Delingen følger
- * de samme skillene som ruteren i `state.ts` bruker, så en oppføring havner
- * ett sted og bare ett.
+ * De fleste oppføringene er én analytt med én kode, og blir én linje.
+ * Fortolkningsmodulene kan dekke flere koder hver, og deles opp — det er
+ * virkestoffene brukeren leter etter, ikke modulen de deler.
  *
  * Sumanalyser som «Amitriptylin + nortriptylin» deles ikke: de har én kode og
  * kommenteres under ett.
  */
 export function menyanalytter(analyte: Analyte): Menyanalytt[] {
-  const modul = rusModulFor(analyte)
-  if (modul) return modul.analytter.map((a) => ({ kode: a.kode, navn: a.navn, analyte }))
-  if (erEtgAnalytt(analyte)) return ETG_ANALYTTER.map((a) => ({ ...a, analyte }))
-  if (erThcAnalytt(analyte)) return [{ kode: THC_KODE, navn: analyte.navn, analyte }]
-  return [{ kode: analyte.kode, navn: displayName(analyte), analyte }]
+  return kodeneI(analyte).map(({ kode, navn }) => ({ kode, navn, analyte }))
 }
 
 /* --- Filteret ------------------------------------------------------------ */
@@ -108,7 +77,7 @@ export function menyanalytter(analyte: Analyte): Menyanalytt[] {
  * Analyttene søket skal lete i. `null` betyr alle metodene — det er filteret
  * slått av.
  */
-export function filtrertPool(pool: Analyte[], metode: string | null): Analyte[] {
+export function filtrertPool(pool: readonly Analyte[], metode: string | null): readonly Analyte[] {
   if (metode === null) return pool
   return pool.filter((a) => a.analysemetode === metode)
 }

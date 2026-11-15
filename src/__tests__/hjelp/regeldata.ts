@@ -4,17 +4,17 @@
  * Intervallregelsettet for hver kode, THC-syreregelsettet når en av kodene er
  * THC-syre, og scenarioregelsettet når modulen fortolkes med dem.
  */
-import { ANALYTTKATALOG } from '../../domain/analyttkatalog'
+import { ANALYTTKATALOG, OUS_KATALOG } from '../../domain/ouskatalog'
 import { analytterForFortolkning } from '../../domain/koblinger'
 import { rusModulFor } from '../../domain/rus'
-import { THC_KODE } from '../../domain/thc'
+import { THC_KODE } from '../../domain/ouskatalog'
 import type { Faginnholdsleser, Regeldata } from '../../faginnhold/lesing'
 import type { Tilstand } from '../../faginnhold/modell'
 
 export async function lesRegeldata(leser: Faginnholdsleser, kode: string, tilstand: Tilstand): Promise<Regeldata> {
   const analytt = ANALYTTKATALOG.finn(kode)
   if (!analytt) throw new Error(`Ukjent analyttkode: ${kode}`)
-  const analytter = analytterForFortolkning(analytt.fortolkning)
+  const analytter = analytterForFortolkning(analytt.fortolkning, OUS_KATALOG)
   const koder = analytter.map((a) => a.kode)
   const modul = rusModulFor(analytt.fortolkning)
   const [intervall, thcregelsett, scenario] = await Promise.all([

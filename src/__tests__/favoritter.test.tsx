@@ -31,7 +31,8 @@ vi.mock('../auth/okt', () => ({
 vi.mock('../auth/klient', async () => {
   const { DAGENS_REGELSETT } = await import('./hjelp/dagensregler')
   const { publiserteStoffrader } = await import('./hjelp/stoffreferanseomrader')
-  const { rusScenarioregeldata } = await import('./hjelp/rusgrunnlag')
+  const { scenarioregeldata } = await import('./hjelp/etggrunnlag')
+  const { OUS_KATALOGSVAR } = await import('./hjelp/ouskatalogkilde')
   const { thcRegelsettutgave } = await import('./hjelp/thcgrunnlag')
   const vanlige = publiserteStoffrader(DAGENS_REGELSETT)
   const thc = thcRegelsettutgave()
@@ -39,7 +40,8 @@ vi.mock('../auth/klient', async () => {
     ...vanlige,
     les_kommentarer: [...vanlige.les_kommentarer, ...thc.kommentarer],
     les_thc_regelsett: thc.regelsett,
-    les_scenarioregler: rusScenarioregeldata(),
+    les_scenarioregler: scenarioregeldata(),
+    les_analyttkatalog: OUS_KATALOGSVAR,
     les_stoffregister: { kategorier: [], plasseringer: [], status: [], sider: [] },
   }
   return {
@@ -90,7 +92,7 @@ afterEach(() => {
   cleanup()
 })
 
-function visApp() {
+async function visApp() {
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
@@ -98,6 +100,8 @@ function visApp() {
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
+  // Appen tegnes opp når analyttkatalogen er hentet.
+  await waitFor(() => expect(document.querySelector('.port[aria-busy]')).toBeNull())
 }
 
 function menyen() {
@@ -113,10 +117,10 @@ function favorittene() {
   return document.getElementById(favorittskuffen().getAttribute('aria-controls')!)!
 }
 
-describe('favorittskuffen i stoffregisteret', () => {
+describe('favorittskuffen i stoffregisteret', { timeout: 20_000 }, () => {
   it('står lukket mellom bryteren og den første kategorien, og sier hvordan en favoritt legges til', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     const skuff = favorittskuffen()
     expect(skuff.getAttribute('aria-expanded')).toBe('false')
@@ -137,12 +141,13 @@ describe('favorittskuffen i stoffregisteret', () => {
 })
 
 // Hele appen tegnes opp og klikkes gjennom; alene tar det rundt fire sekunder,
-// så standardgrensen på fem gir ingen margin på en travel CI-maskin.
+// så standardgrensen på fem gir ingen margin på en travel CI-maskin. Det
+// samme gjelder skuffen over.
 describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
   it('legger stoffet til i favorittene og fjerner det igjen, og skuffen følger med', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
-    visApp()
+    await visApp()
     await screen.findByRole('heading', { level: 1, name: 'Bupropion' })
 
     await user.click(await screen.findByRole('button', { name: 'Legg til i favoritter' }))
@@ -166,7 +171,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     databasen.favoritter = ['nortriptylin', 'bupropion']
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
-    visApp()
+    await visApp()
     await screen.findByRole('button', { name: 'Fjern fra favoritter' })
 
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
@@ -186,7 +191,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     databasen.favoritter = ['hydroksybupropion']
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
-    visApp()
+    await visApp()
     await user.click(await screen.findByRole('button', { name: 'Fjern fra favoritter' }))
     await waitFor(() =>
       expect(databasen.kall).toContainEqual({
@@ -201,7 +206,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     databasen.avviser = true
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
-    visApp()
+    await visApp()
     await user.click(await screen.findByRole('button', { name: 'Legg til i favoritter' }))
     // Favorittene hentes på nytt etter avvisningen, og stjernen er av.
     await waitFor(() => expect(databasen.kall.filter((k) => k.funksjon === 'les_stoffavoritter')).toHaveLength(2))

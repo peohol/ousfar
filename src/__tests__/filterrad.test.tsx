@@ -3,11 +3,12 @@
  * Filterraden under søket: alle analysemetodene står framme som piller, med
  * «Alle» først, og pillen som gjelder er markert som valgt.
  */
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, screen, within } from '@testing-library/react'
+import { renderMedOusKatalog } from './hjelp/ouskatalogkilde'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Filterbytte } from '../components/Filterbytte'
-import { ANALYSEMETODER } from '../domain/analysemetoder'
+import { ANALYSEMETODER } from '../domain/ouskatalog'
 
 afterEach(cleanup)
 
@@ -23,7 +24,7 @@ function valgt() {
 
 describe('filterraden', () => {
   it('viser «Alle» først og deretter hver metode, uten å måtte åpne noe', () => {
-    render(<Filterbytte metodefilter={null} onFilter={() => {}} />)
+    renderMedOusKatalog(<Filterbytte metodefilter={null} onFilter={() => {}} />)
     const tekster = within(rad())
       .getAllByRole('button')
       .map((knapp) => knapp.textContent)
@@ -31,20 +32,20 @@ describe('filterraden', () => {
   })
 
   it('har «Alle» valgt når søket ikke er begrenset', () => {
-    render(<Filterbytte metodefilter={null} onFilter={() => {}} />)
+    renderMedOusKatalog(<Filterbytte metodefilter={null} onFilter={() => {}} />)
     expect(valgt()).toHaveLength(1)
     expect(valgt()[0]?.textContent).toBe('Alle')
   })
 
   it('markerer metoden filteret står på, og bare den', () => {
-    render(<Filterbytte metodefilter="SRUS" onFilter={() => {}} />)
+    renderMedOusKatalog(<Filterbytte metodefilter="SRUS" onFilter={() => {}} />)
     expect(valgt()).toHaveLength(1)
     expect(valgt()[0]?.textContent).toBe('SRUS')
   })
 
   it('setter filteret på metoden som trykkes, og slår det av med «Alle»', async () => {
     const onFilter = vi.fn()
-    render(<Filterbytte metodefilter="SPFA" onFilter={onFilter} />)
+    renderMedOusKatalog(<Filterbytte metodefilter="SPFA" onFilter={onFilter} />)
     await userEvent.click(screen.getByRole('button', { name: /^UCAK/ }))
     expect(onFilter).toHaveBeenLastCalledWith('UCAK')
     await userEvent.click(screen.getByRole('button', { name: 'Alle analysemetoder' }))
@@ -52,7 +53,7 @@ describe('filterraden', () => {
   })
 
   it('lar fokus bli i søkefeltet når en pille klikkes', async () => {
-    render(
+    renderMedOusKatalog(
       <>
         <input aria-label="Søk" />
         <Filterbytte metodefilter={null} onFilter={() => {}} />
@@ -65,7 +66,7 @@ describe('filterraden', () => {
   })
 
   it('oppgir hurtigtasten på hver pille', () => {
-    render(<Filterbytte metodefilter={null} onFilter={() => {}} />)
+    renderMedOusKatalog(<Filterbytte metodefilter={null} onFilter={() => {}} />)
     const snarvei = (navn: string | RegExp) =>
       screen.getByRole('button', { name: navn }).getAttribute('aria-keyshortcuts')
     expect(snarvei('Alle analysemetoder')).toBe('Alt+0')

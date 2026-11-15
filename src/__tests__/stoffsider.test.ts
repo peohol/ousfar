@@ -21,8 +21,10 @@ import { TOM_STOFFSIDE, lagFaginnholdsleser, type Faginnholdsleser } from '../fa
 import { SITERING } from '../faginnhold/referanser'
 import { indekserSide, lagSokeindeks, sokGlobalt, sokeadresse, stoffidentitet } from '../faginnhold/sok'
 import { ANDRE_STOFFER, byggStoffregister } from '../domain/stoffregister'
+import { OUS_REGISTERDATA } from '../domain/ouskatalog'
 import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
 import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
+import { OUS_VALG } from './hjelp/ousvalg'
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -125,7 +127,7 @@ describe('les_stoffliste', () => {
   it('gir stoffregisteret et nytt stoff, og ingen egen side for et alias', async () => {
     const { sider, struktur } = await lagRegisterlager(kall.klientFor(admin)).les('utkast')
     expect(sider.map((s) => s.slug)).toEqual((await adminleser.lesStoffliste('utkast')).map((s) => s.slug))
-    const register = byggStoffregister(sider, undefined, struktur)
+    const register = byggStoffregister(sider, OUS_REGISTERDATA, struktur)
     expect(register.finn('teststoff')).toEqual({ slug: 'teststoff', navn: 'Teststoff', aliaser: [] })
     expect(register.kategorierFor('teststoff')).toEqual([{ kategori: ANDRE_STOFFER }])
     const andre = register.kategorier.find((k) => k.navn === ANDRE_STOFFER)?.stoffer.map((s) => s.slug)
@@ -182,7 +184,7 @@ describe('når sidene er publisert', () => {
 
   it('finnes i søket i hele kunnskapsbasen, med adresse etter stoffets nøkkel', async () => {
     const base = await lesKunnskapsbase({ sider: lagSideleser(kall.klientFor(bruker)) })
-    const dokumenter = indekserKunnskapsbase(base)
+    const dokumenter = indekserKunnskapsbase(base, OUS_VALG)
     const paStoffet = dokumenter.filter((d) => d.sted.side.stoff === 'teststoff')
 
     // De samme dokumentene som søket på siden selv, og ingen kode.
@@ -198,7 +200,7 @@ describe('når sidene er publisert', () => {
 
   it('fører analyttkoden og aliaset til stoffet, og indekserer ikke aliasets gamle side for seg', async () => {
     const base = await lesKunnskapsbase({ sider: lagSideleser(kall.klientFor(bruker)) })
-    const indeks = lagSokeindeks(indekserKunnskapsbase(base))
+    const indeks = lagSokeindeks(indekserKunnskapsbase(base, OUS_VALG))
     expect(indeks.dokumenter.some((d) => d.sted.side.stoff === 'hydroksybupropion')).toBe(false)
 
     const [kode] = sokGlobalt(indeks, 'HBUP')

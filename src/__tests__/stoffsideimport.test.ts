@@ -8,14 +8,13 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { byggImportplan, importmigrasjoner, type Importfil } from '../faginnhold/import'
 import { lesKinetikk } from '../faginnhold/paneler'
 import { klartekst } from '../faginnhold/riktekst'
 import { STOFFSIDE_DATASETT, stoffsideplan } from '../faginnhold/stoffsider'
 import { TDM_KILDE } from '../faginnhold/tdm'
 import { historiskSidenavn } from '../faginnhold/historiskesider'
-import { STOFFREGISTER } from '../domain/stoffregister'
 import { lesSideEtterNavn, lesSidenavnUtenKode } from './hjelp/historisklesing'
 import {
   faginnholdskall,
@@ -26,7 +25,7 @@ import {
   type Faginnholdskall,
 } from './hjelp/testdatabase'
 
-const katalog = byggKatalog(FORTOLKNINGSOPPFORINGER)
+const katalog = OUS_KATALOG
 const plan = stoffsideplan(katalog)
 const MIGRASJONER = migrasjonsfiler().filter((f) => /_stoffsider_import_\d+\.sql$/.test(f))
 const MIGRASJONSMAPPE = new URL('../../supabase/migrations/', import.meta.url)
@@ -67,8 +66,8 @@ describe('datasettet', () => {
         k.hovedside.navn,
       ).toEqual([])
       // … og i stoffregisteret er stoffet et stoff uten laboratorieanalytt.
-      expect(STOFFREGISTER.kanonisk(k.hovedside.navn)?.navn, k.hovedside.navn).toBe(k.hovedside.navn)
-      expect(STOFFREGISTER.analytterFor(STOFFREGISTER.kanonisk(k.hovedside.navn)!.slug), k.hovedside.navn).toEqual([])
+      expect(OUS_REGISTER.kanonisk(k.hovedside.navn)?.navn, k.hovedside.navn).toBe(k.hovedside.navn)
+      expect(OUS_REGISTER.analytterFor(OUS_REGISTER.kanonisk(k.hovedside.navn)!.slug), k.hovedside.navn).toEqual([])
     }
   })
 

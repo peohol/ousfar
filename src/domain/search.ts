@@ -85,7 +85,7 @@ export interface SearchHit {
  * slik at «amitriptylin nortriptylin» finner sumanalysen de to inngår i.
  * Resultatet er sortert med beste treff først og kuttet ved {@link MAX_RESULTS}.
  */
-export function search(query: string, pool: Analyte[]): SearchHit[] {
+export function search(query: string, pool: readonly Analyte[]): SearchHit[] {
   const tokens = normalise(query).split(/\s+/).filter(Boolean)
   if (tokens.length === 0) return []
 

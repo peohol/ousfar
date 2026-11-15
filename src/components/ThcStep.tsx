@@ -3,14 +3,14 @@ import { useBevart } from '../oppdatering/Bevaring'
 import { Button } from './Button'
 import { Card } from './Card'
 import { Metalinje } from './Metalinje'
-import { Panelhode } from './Panelhode'
 import { StepBar } from './StepBar'
 import { ManualCopy } from './ManualCopy'
 import { Shortcut } from './Shortcut'
 import { ThcSkjema } from './ThcSkjema'
 import { ThcKommentar, ThcVisualisering, type ThcVisualiseringsvalg } from './ThcUtfall'
 import { Ikon } from './ikon/Ikon'
-import { THC_ANALYSEMETODE, THC_KODE } from '../domain/thc'
+import type { Analyte } from '../types'
+import { Regelstatus } from './Regelstatus'
 import {
   fortolkThc,
   mildereVedHoyereMargin,
@@ -22,6 +22,8 @@ import { erBekreftelse } from '../hooks/useKeyboard'
 import { rullTilKort, useKortHopp } from '../hooks/useKortHopp'
 
 export interface ThcStepProps {
+  /** Søkeoppføringen modulen ble åpnet fra: koden, metoden og navnet. */
+  analyte: Analyte
   /** Reglene og tekstene som er publisert, eller hvorfor de ikke kan brukes ennå. */
   regler: ThcRegler
   onBack: () => void
@@ -42,39 +44,22 @@ export interface ThcStepProps {
  * hentet og har bestått kontrollen: mens de hentes, eller om de ikke kan
  * brukes, sier modulen fra i stedet.
  */
-export function ThcStep({ regler, onBack, copy, flashAt, visualisering }: ThcStepProps) {
+export function ThcStep({ analyte, regler, onBack, copy, flashAt, visualisering }: ThcStepProps) {
   const seksjon = useRef<HTMLElement>(null)
   useKortHopp(true, seksjon)
 
   return (
-    <section className="steg steg--thc" aria-label="Fortolk THC-syre i urin" ref={seksjon}>
+    <section className="steg steg--thc" aria-label={`Fortolk ${analyte.visningsnavn}`} ref={seksjon}>
       <StepBar onEsc={onBack}>Bytt analytt</StepBar>
       {regler.status === 'klar' ? (
-        <ThcFortolkning modell={regler.modell} copy={copy} flashAt={flashAt} visualisering={visualisering} />
+        <ThcFortolkning analyte={analyte} modell={regler.modell} copy={copy} flashAt={flashAt} visualisering={visualisering} />
       ) : (
         <div className="thc">
           <Card align="start" className="analyttkort">
-            <Korthode />
+            <Korthode analyte={analyte} />
           </Card>
           <Card align="start" className="thc-resultat">
-            {regler.status === 'feil' ? (
-              <>
-                <Panelhode ikon="fallback" tone="toksisk">
-                  Reglene mangler
-                </Panelhode>
-                <ul className="mangelliste" role="alert">
-                  <li>{regler.melding}</li>
-                </ul>
-                <Button variant="subtle" icon={<Ikon navn="reset" />} onClick={regler.provIgjen}>
-                  Prøv igjen
-                </Button>
-              </>
-            ) : (
-              <>
-                <Panelhode>Henter reglene</Panelhode>
-                <p role="status">Fortolkningsreglene hentes …</p>
-              </>
-            )}
+            <Regelstatus regler={regler} />
           </Card>
         </div>
       )}
@@ -83,15 +68,15 @@ export function ThcStep({ regler, onBack, copy, flashAt, visualisering }: ThcSte
 }
 
 /** Ikonet, koden og navnet øverst i modulen, med plass til en handling i hjørnet. */
-function Korthode({ children }: { children?: ReactNode }) {
+function Korthode({ analyte, children }: { analyte: Analyte; children?: ReactNode }) {
   return (
     <div className="thc-korthode">
       <span className="thc-korthode__ikon" data-ih="">
         <Ikon navn="cup" />
       </span>
       <div className="thc-korthode__tittel">
-        <Metalinje koder={[THC_KODE]} metode={THC_ANALYSEMETODE} lenker />
-        <h1 className="analytt__navn">THC-syre i urin</h1>
+        <Metalinje koder={(analyte.modul?.analytter ?? []).map((a) => a.kode)} metode={analyte.analysemetode} lenker />
+        <h1 className="analytt__navn">{analyte.visningsnavn}</h1>
       </div>
       {children}
     </div>
@@ -108,11 +93,13 @@ function Korthode({ children }: { children?: ReactNode }) {
  * stedet for å rulle jevnt.
  */
 function ThcFortolkning({
+  analyte,
   modell,
   copy,
   flashAt,
   visualisering,
 }: {
+  analyte: Analyte
   modell: ThcModell
   copy: ThcStepProps['copy']
   flashAt: ThcStepProps['flashAt']
@@ -244,7 +231,7 @@ function ThcFortolkning({
       }}
     >
       <Card ref={inndatakort} align="start" className="analyttkort">
-        <Korthode>
+        <Korthode analyte={analyte}>
           <div className="thc-nullstillhjorne" data-nullstill>
             <Button variant="kant" icon={<Ikon navn="reset" />} onClick={nullstill}>
               Nullstill

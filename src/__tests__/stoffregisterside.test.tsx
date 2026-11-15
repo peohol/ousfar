@@ -17,7 +17,7 @@ import { Stoffregisterside } from '../components/stoffregister/Stoffregisterside
 import { Toppmeny } from '../components/toppmeny/Toppmeny'
 import { ToppmenyKilde } from '../components/toppmeny/Toppmenykilde'
 import { TipsLag } from '../components/Tips'
-import { ANALYTTKATALOG } from '../domain/analyttkatalog'
+import { ANALYTTKATALOG } from '../domain/ouskatalog'
 import type { Endringskontekst } from '../endringslogg/operasjon'
 import type { Kurateringsklient } from '../kuratering/klient'
 import type { Kurateringsrad } from '../kuratering/sidestatus'
@@ -117,7 +117,7 @@ function Side({
   kuratering?: Kurateringsklient
   children?: ReactNode
 }) {
-  const kilde = useLagStoffregisterkilde({ lager, admin, kanEndre, ...(opprettSide && { opprettSide }) })
+  const kilde = useLagStoffregisterkilde({ lager, koblinger: ANALYTTKATALOG.koblinger, admin, kanEndre, ...(opprettSide && { opprettSide }) })
   return (
     <ToppmenyKilde>
       <Toppmeny meny={null} konto={null} />

@@ -1,17 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { ANALYTTKATALOG, FORTOLKNINGSOPPFORINGER } from '../domain/analyttkatalog'
+import { ANALYTTKATALOG, FORTOLKNINGSOPPFORINGER, OUS_REGISTER, OUS_REGISTERDATA } from '../domain/ouskatalog'
 import { search } from '../domain/search'
 import { navnenokkel } from '../domain/sokenavn'
-import {
-  STOFFREGISTER,
-  STOFFREGISTERDATA,
-  byggStoffregister,
-  kontrollerStoffregister,
-  type Registerdata,
-} from '../domain/stoffregister'
+import { byggStoffregister, kontrollerStoffregister, type Registerdata } from '../domain/stoffregister'
 import type { Sidemodell } from '../faginnhold/stoffside'
 import { indekserKunnskapsbase } from '../faginnhold/globaltSok'
 import { indekserSide, lagSokeindeks, sokGlobalt, type Sokedokument } from '../faginnhold/sok'
+import { OUS_VALG } from './hjelp/ousvalg'
 
 /**
  * Aliasene i stoffregisteret er likestilte søkenavn for stoffet i fagsøket:
@@ -19,7 +14,7 @@ import { indekserSide, lagSokeindeks, sokGlobalt, type Sokedokument } from '../f
  * annen side. Søket etter analytter i fortolkningen bruker dem ikke.
  */
 
-const indeks = lagSokeindeks(indekserKunnskapsbase({ sider: [] }))
+const indeks = lagSokeindeks(indekserKunnskapsbase({ sider: [] }, OUS_VALG))
 
 /** Det beste treffet i fagsøket: stoffet og poengene. */
 function forste(sporring: string) {
@@ -104,13 +99,13 @@ describe('aliasene i fagsøket', () => {
   })
 
   it('finner hvert stoff først på hvert av aliasene sine', () => {
-    for (const stoff of STOFFREGISTER.stoffer) {
+    for (const stoff of OUS_REGISTER.stoffer) {
       for (const alias of stoff.aliaser) expect(forste(alias), `${alias} → ${stoff.slug}`).toEqual({ stoff: stoff.slug, poeng: 0 })
     }
   })
 
   it('lar aldri et alias føre til en annen side enn stoffets', () => {
-    for (const stoff of STOFFREGISTER.stoffer) {
+    for (const stoff of OUS_REGISTER.stoffer) {
       for (const alias of stoff.aliaser) {
         const andre = sokGlobalt(indeks, alias).filter(
           (t) => t.dokument.felt === 'alias' && t.dokument.sted.side.stoff !== stoff.slug && t.poeng === 0,
@@ -154,7 +149,7 @@ describe('søket etter analytter i fortolkningen', () => {
 
 describe('kollisjonskontrollen', () => {
   function med(stoffer: Registerdata['stoffer']): Registerdata {
-    return { ...STOFFREGISTERDATA, stoffer: [...STOFFREGISTERDATA.stoffer, ...stoffer] }
+    return { ...OUS_REGISTERDATA, stoffer: [...OUS_REGISTERDATA.stoffer, ...stoffer] }
   }
 
   it('godtar registeret slik det står', () => {
@@ -176,11 +171,11 @@ describe('kollisjonskontrollen', () => {
   it('lar ingen alias være koden til en analytt et annet stoff er primært stoff for', () => {
     const kodeeier = new Map(
       ANALYTTKATALOG.oppforinger.flatMap((a) => {
-        const stoff = STOFFREGISTER.primartStoffFor(a.kode)
+        const stoff = OUS_REGISTER.primartStoffFor(a.kode)
         return stoff ? [[navnenokkel(a.kode), stoff.slug] as const] : []
       }),
     )
-    for (const stoff of STOFFREGISTER.stoffer) {
+    for (const stoff of OUS_REGISTER.stoffer) {
       for (const alias of stoff.aliaser) {
         const eier = kodeeier.get(navnenokkel(alias))
         if (eier) expect(eier, alias).toBe(stoff.slug)
@@ -189,10 +184,10 @@ describe('kollisjonskontrollen', () => {
   })
 
   it('fører et navn skrevet på en annen måte til stoffet, som for en gammel adresse', () => {
-    expect(STOFFREGISTER.kanonisk('Quetiapin')?.slug).toBe('kvetiapin')
-    expect(STOFFREGISTER.kanonisk('delta 9 THC')?.slug).toBe('thc')
-    expect(STOFFREGISTER.kanonisk('hydroksyrisperidon')?.slug).toBe('paliperidon')
-    expect(STOFFREGISTER.kanonisk('ukjentstoff')).toBeUndefined()
+    expect(OUS_REGISTER.kanonisk('Quetiapin')?.slug).toBe('kvetiapin')
+    expect(OUS_REGISTER.kanonisk('delta 9 THC')?.slug).toBe('thc')
+    expect(OUS_REGISTER.kanonisk('hydroksyrisperidon')?.slug).toBe('paliperidon')
+    expect(OUS_REGISTER.kanonisk('ukjentstoff')).toBeUndefined()
     // En side som har fått nytt navn i databasen, finnes på det nye navnet, skrevet på hvilken som helst måte.
     const omdopt = byggStoffregister([{ id: '1', slug: 'kvetiapin', navn: 'Kvetiapinfumarat' }])
     expect(omdopt.kanonisk('Kvetiapin-fumarat')?.slug).toBe('kvetiapin')

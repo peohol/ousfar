@@ -34,18 +34,25 @@ const svar = vi.hoisted(() => ({
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: 'user', first_name: 'Lars', last_name: 'Leser', username: 'leser' }),
 }))
-vi.mock('../auth/klient', () => ({
-  klient: () => ({
-    rpc: async (funksjon: string) => {
-      if (funksjon === 'les_intervallregelsett' && svar.neste.length > 0) svar.aktivt = svar.neste.shift()!()
-      if (!['les_intervallregelsett', 'les_kommentarer', 'les_stoffreferanseomrader'].includes(funksjon) || !svar.aktivt) {
-        return { data: null, error: null }
-      }
-      const { data, error } = await svar.aktivt
-      return { data: data?.[funksjon] ?? null, error }
-    },
-  }),
-}))
+vi.mock('../auth/klient', async () => {
+  const { OUS_KATALOGSVAR } = await import('./hjelp/ouskatalogkilde')
+  return {
+    klient: () => ({
+      rpc: async (funksjon: string) => {
+        if (funksjon === 'les_analyttkatalog') return { data: OUS_KATALOGSVAR, error: null }
+        if (funksjon === 'les_intervallregelsett' && svar.neste.length > 0) svar.aktivt = svar.neste.shift()!()
+        if (
+          !['les_intervallregelsett', 'les_kommentarer', 'les_stoffreferanseomrader'].includes(funksjon) ||
+          !svar.aktivt
+        ) {
+          return { data: null, error: null }
+        }
+        const { data, error } = await svar.aktivt
+        return { data: data?.[funksjon] ?? null, error }
+      },
+    }),
+  }
+})
 vi.mock('../components/konto/Kontomeny', () => ({ Kontomeny: () => null }))
 
 const { default: App } = await import('../App')
@@ -101,6 +108,7 @@ async function tilSteg2(kode: string) {
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
+  await waitFor(() => expect(document.querySelector('.port[aria-busy]')).toBeNull())
   await user.keyboard(kode.toLowerCase())
   // Står bare analytten igjen i søket, velger den seg selv. På en travel
   // testmaskin (CI) kan det skje før koden er skrevet ferdig (HBUP etter «hb»),
@@ -162,9 +170,9 @@ describe('steg 2 på regelsettene i databasen', () => {
     await waitFor(() => expect(knappene(steg).length).toBeGreaterThan(0))
     // Fortolkningen står på analytten, og koden lenker til stoffet kortet står på.
     expect(within(steg).getByRole('heading', { level: 1 }).textContent).toMatch(/^Hydroksybupropion/)
-    expect(
-      within(steg).getByRole('link', { name: 'HBUP – åpne fagsiden for Bupropion' }).getAttribute('href'),
-    ).toBe('#/stoff/bupropion')
+    expect(within(steg).getByRole('link', { name: 'HBUP – åpne fagsiden for Bupropion' }).getAttribute('href')).toBe(
+      '#/stoff/bupropion',
+    )
     expect(within(steg).getByText('510 – 3900 nmol/L')).toBeTruthy()
     expect(within(steg).queryByText('1 – 2 nmol/L')).toBeNull()
     expect(within(steg).queryByText('200 – 600 nmol/L')).toBeNull()

@@ -67,8 +67,26 @@ export interface Analyte {
   maleomrade: MeasuringRange
   /** Satt for antihypertensiver, som viser andre referansetall enn psykofarmaka. */
   antihypertensiv?: Antihypertensivgrenser
-  /** Ekstra søkeord, vedlikeholdt i `src/data/aliaser.json`. */
+  /** Ekstra søkeord. */
   aliaser: string[]
+  /**
+   * Fortolkningsmodulen oppføringen åpner, når den ikke fortolkes med
+   * konsentrasjonsbånd: en scenariomodul (stoffene med ruspotensial),
+   * THC-syre eller EtG og EtS. Satt av analyttkatalogen
+   * (`src/domain/analyttkatalog.ts`).
+   */
+  modul?: Analyttmodul
+}
+
+/** En fortolkningsmodul i analyttkatalogen og analyttkodene den dekker. */
+export interface Analyttmodul {
+  type: 'scenario' | 'thc' | 'etg'
+  /** Nøkkelen i katalogen, den samme som scenarioregelsettets `modul`. */
+  id: string
+  /** Kodene modulen dekker, med navnene, i rekkefølge. */
+  analytter: { kode: string; navn: string }[]
+  /** Linja under navnet i modulen. */
+  undertittel?: string
 }
 
 /** En rettelse gjort i teksten fra kilden, for etterprøving. */

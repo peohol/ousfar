@@ -7,8 +7,15 @@
  * (`modell.ts`), med panelene og kortene slik appen ellers kaller dem.
  */
 import { FJERNET, ELEMENTTYPER, PANELER, datakortFor, erKortserie, korttittel, panelFor } from '../faginnhold/paneler'
-import { modulMedId } from '../domain/rus'
 import type { Endring, Endringsdel, Hendelse } from './modell'
+
+/**
+ * Navnet en fortolkningsmodul har i analyttkatalogen, etter nøkkelen
+ * (`Analyttkatalog.modulMedId`). Uten det står nøkkelen.
+ */
+export type Modulnavn = (modul: string) => string | undefined
+
+const UTEN_NAVN: Modulnavn = () => undefined
 
 export type Handling = 'nytt' | 'endret' | 'fjernet' | 'rekkefolge' | 'kilder'
 
@@ -133,7 +140,7 @@ function deltLinje(seksjon: string, hva: string, del: Endringsdel, navn: string)
 }
 
 /** Det én del gjorde, som linjer i én eller flere seksjoner. */
-export function dellinjer(del: Endringsdel): Endringslinje[] {
+export function dellinjer(del: Endringsdel, modulnavn: Modulnavn = UTEN_NAVN): Endringslinje[] {
   switch (del.type) {
     case 'innholdselement':
       return elementlinjer(del)
@@ -152,7 +159,7 @@ export function dellinjer(del: Endringsdel): Endringslinje[] {
     case 'intervallregelsett':
     case 'scenarioregelsett':
     case 'thc_regelsett': {
-      const seksjon = `Fortolkningsreglene for ${regelsettnavn(del)}`
+      const seksjon = `Fortolkningsreglene for ${regelsettnavn(del, modulnavn)}`
       return [{ seksjon, handling: del.fra === null ? 'nytt' : 'endret', tekst: `${seksjon} ${del.fra === null ? 'lagt til' : 'oppdatert'}` }]
     }
     case 'laboratorieanalytt':
@@ -162,14 +169,14 @@ export function dellinjer(del: Endringsdel): Endringslinje[] {
   }
 }
 
-function regelsettnavn(del: Endringsdel): string {
+function regelsettnavn(del: Endringsdel, modulnavn: Modulnavn): string {
   if (del.type === 'thc_regelsett') return 'THC-syre i urin'
-  if (del.type === 'scenarioregelsett') return modulMedId(tekst(del.etter.modul))?.navn ?? tekst(del.etter.modul)
+  if (del.type === 'scenarioregelsett') return modulnavn(tekst(del.etter.modul)) ?? tekst(del.etter.modul)
   return tekst(del.etter.analyttkode)
 }
 
 /** Hva en del gjelder, kort: «Farmakodynamikk › D2», «Referanse: Tittel». Til listen over delene. */
-export function delnavn(del: Endringsdel): string {
+export function delnavn(del: Endringsdel, modulnavn: Modulnavn = UTEN_NAVN): string {
   switch (del.type) {
     case 'innholdselement': {
       const fjernet = del.etter.panel === FJERNET
@@ -190,7 +197,7 @@ export function delnavn(del: Endringsdel): string {
     case 'intervallregelsett':
     case 'scenarioregelsett':
     case 'thc_regelsett':
-      return `Fortolkningsreglene for ${regelsettnavn(del)}`
+      return `Fortolkningsreglene for ${regelsettnavn(del, modulnavn)}`
     case 'laboratorieanalytt':
       return `Analytten ${tekst(del.etter.kode)}`
     default:
@@ -297,10 +304,13 @@ export function hendelseslinjer(hendelser: readonly Hendelse[]): Endringslinje[]
 /* --- Sammendraget ------------------------------------------------------------ */
 
 /** Alle linjene i endringen, i den rekkefølgen seksjonene står på siden. */
-export function endringslinjer(endring: Pick<Endring, 'deler' | 'hendelser'>): Endringslinje[] {
+export function endringslinjer(
+  endring: Pick<Endring, 'deler' | 'hendelser'>,
+  modulnavn: Modulnavn = UTEN_NAVN,
+): Endringslinje[] {
   const rekkefolge = new Map<string, number>(PANELER.map((p, i) => [p.tittel, i]))
   const plass = (l: Endringslinje) => (l.seksjon === 'Siden' ? -1 : (rekkefolge.get(l.seksjon) ?? PANELER.length))
-  return [...endring.deler.flatMap(dellinjer), ...hendelseslinjer(endring.hendelser)]
+  return [...endring.deler.flatMap((del) => dellinjer(del, modulnavn)), ...hendelseslinjer(endring.hendelser)]
     .map((linje, i) => ({ linje, i }))
     .sort((a, b) => plass(a.linje) - plass(b.linje) || a.i - b.i)
     .map(({ linje }) => linje)
@@ -364,8 +374,8 @@ function gruppetekst(gruppe: Endringslinje[]): string {
 const I_SAMMENDRAGET = 3
 
 /** Endringen beskrevet på én linje, ut fra det som ble endret. */
-export function autosammendrag(endring: Pick<Endring, 'deler' | 'hendelser'>): string {
-  const alle = beskrivelser(endringslinjer(endring))
+export function autosammendrag(endring: Pick<Endring, 'deler' | 'hendelser'>, modulnavn: Modulnavn = UTEN_NAVN): string {
+  const alle = beskrivelser(endringslinjer(endring, modulnavn))
   if (alle.length === 0) return 'Ingen synlige endringer'
   const vist = alle.slice(0, I_SAMMENDRAGET).join(' · ')
   const resten = alle.length - I_SAMMENDRAGET
@@ -373,6 +383,9 @@ export function autosammendrag(endring: Pick<Endring, 'deler' | 'hendelser'>): s
 }
 
 /** Sammendraget loggen viser: det personen eller agenten skrev, ellers det som ble endret. */
-export function sammendrag(endring: Pick<Endring, 'oppsummering' | 'deler' | 'hendelser'>): string {
-  return endring.oppsummering ?? autosammendrag(endring)
+export function sammendrag(
+  endring: Pick<Endring, 'oppsummering' | 'deler' | 'hendelser'>,
+  modulnavn: Modulnavn = UTEN_NAVN,
+): string {
+  return endring.oppsummering ?? autosammendrag(endring, modulnavn)
 }

@@ -45,7 +45,8 @@ vi.mock('../auth/okt', () => ({
 vi.mock('../auth/klient', async () => {
   const { DAGENS_REGELSETT } = await import('./hjelp/dagensregler')
   const { publiserteStoffrader } = await import('./hjelp/stoffreferanseomrader')
-  const { rusScenarioregeldata } = await import('./hjelp/rusgrunnlag')
+  const { scenarioregeldata } = await import('./hjelp/etggrunnlag')
+  const { OUS_KATALOGSVAR } = await import('./hjelp/ouskatalogkilde')
   const { thcRegelsettutgave } = await import('./hjelp/thcgrunnlag')
   const { GRUNNSTRUKTUR } = await import('./hjelp/registerstruktur')
   // Ett stoff registeret ikke kjenner, har en publisert side i databasen.
@@ -71,7 +72,8 @@ vi.mock('../auth/klient', async () => {
     ...vanlige,
     les_kommentarer: [...vanlige.les_kommentarer, ...thc.kommentarer],
     les_thc_regelsett: thc.regelsett,
-    les_scenarioregler: rusScenarioregeldata(),
+    les_scenarioregler: scenarioregeldata(),
+    les_analyttkatalog: OUS_KATALOGSVAR,
     les_stoffregister: { ...GRUNNSTRUKTUR, sider: [teststoff] },
   }
   return {
@@ -135,7 +137,7 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-function visApp() {
+async function visApp() {
   render(
     <TipsLag>
       <ShortcutVisibilityProvider>
@@ -143,6 +145,8 @@ function visApp() {
       </ShortcutVisibilityProvider>
     </TipsLag>,
   )
+  // Appen tegnes opp når analyttkatalogen er hentet.
+  await waitFor(() => expect(document.querySelector('.port[aria-busy]')).toBeNull())
 }
 
 /** Fortolkningen, synlig eller skjult. */
@@ -192,7 +196,7 @@ function knappene(steg: HTMLElement): string[] {
 describe('sidemenyen', { timeout: 20_000 }, () => {
   it('er stoffregisteret, og lenker hvert stoff til stoffsiden etter nøkkelen, med kodene som sekundær tekst', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     // Stoffregisteret er fanen menyen åpner med.
     expect(screen.getByRole('tab', { name: 'Stoffregister' }).getAttribute('aria-selected')).toBe('true')
@@ -228,7 +232,7 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
   it('har verktøyene i en egen fane, med piltastene, og åpner et verktøy på sin egen adresse', async () => {
     okt.rolle = 'admin'
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.keyboard('{Control>}m{/Control}')
     const meny = screen.getByRole('navigation', { name: 'Meny' })
     expect(meny.getAttribute('data-apen')).toBe('ja')
@@ -276,7 +280,7 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
 
   it('lar filteret for søket stå som det er', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     // Alt + tall setter filteret på hovedsiden, men ikke mens registeret står åpent.
     await user.keyboard('{Alt>}1{/Alt}')
@@ -289,7 +293,7 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
 describe('stoffene uten analyttkode', { timeout: 20_000 }, () => {
   it('står i registeret, og fører til siden etter nøkkelen', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     // Teststoffet står ikke i registeret, og havner derfor i «Andre stoffer».
     await user.click(await screen.findByRole('button', { name: /^Andre stoffer/ }))
@@ -312,7 +316,7 @@ describe('stoffene uten analyttkode', { timeout: 20_000 }, () => {
 describe('fortolkningssidene', () => {
   it('gir analytten som fortolkes, sin egen adresse, og tilbakeknappen går til søket med søket i behold', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
     expect(window.location.hash).toBe('#/fortolkning/nor')
 
@@ -324,19 +328,19 @@ describe('fortolkningssidene', () => {
 
   it('åpner analytten direkte fra adressen, også en modul med flere koder', async () => {
     window.location.hash = '#/fortolkning/nor'
-    visApp()
+    await visApp()
     await screen.findByRole('region', { name: 'Velg konsentrasjon' })
     cleanup()
 
     window.location.hash = '#/fortolkning/diaz-dmi-oxa'
-    visApp()
+    await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/diaz-dmi-oxa'))
     expect(await within(fortolkningen()).findByRole('link', { name: pillenavn('DMI', 'Diazepam') })).toBeTruthy()
   })
 
   it('går til søket for en analytt som ikke finnes, uten å legge noe i historikken', async () => {
     window.location.hash = '#/fortolkning/finnesikke'
-    visApp()
+    await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/'))
     expect(within(fortolkningen()).getByRole('textbox', { name: 'Søk etter analytt eller kode' })).toBeTruthy()
   })
@@ -345,14 +349,14 @@ describe('fortolkningssidene', () => {
 describe('adressene', () => {
   it('åpner en stoffside direkte fra adressen, med stoffnavnet som tittel', async () => {
     window.location.hash = '#/stoff/nortriptylin'
-    visApp()
+    await visApp()
     await stoffsideFor('Nortriptylin')
     expect(document.title).toBe('Nortriptylin – OUSFAR')
   })
 
   it('følger tilbakeknappen', async () => {
     window.location.hash = '#/stoff/nortriptylin'
-    visApp()
+    await visApp()
     await stoffsideFor('Nortriptylin')
     window.location.hash = '#/'
     window.dispatchEvent(new HashChangeEvent('hashchange'))
@@ -370,7 +374,7 @@ describe('adressene', () => {
     ['bupropion', 'Bupropion'],
   ])('har stoffnavnet som tittel på #/stoff/%s', async (slug, navn) => {
     window.location.hash = `#/stoff/${slug}`
-    visApp()
+    await visApp()
     const overskrift = await stoffsideFor(navn)
     expect(overskrift.textContent).toBe(navn)
     expect(document.title).toBe(`${navn} – OUSFAR`)
@@ -387,7 +391,7 @@ describe('gamle adresser etter analyttkoden', () => {
     const oppforinger = window.history.length
     const erstatt = vi.spyOn(window.history, 'replaceState')
     const legg = vi.spyOn(window.history, 'pushState')
-    visApp()
+    await visApp()
     await stoffsideFor('Bupropion')
     await waitFor(() => expect(window.location.hash).toBe('#/stoff/bupropion'))
     expect(erstatt.mock.calls.map(([, , adresse]) => adresse)).toEqual(['#/stoff/bupropion'])
@@ -412,7 +416,7 @@ describe('gamle adresser etter analyttkoden', () => {
   ])('sender #/analytt/%s videre til #/stoff/%s', async (kode, slug, navn) => {
     window.location.hash = `#/analytt/${kode}`
     const erstatt = vi.spyOn(window.history, 'replaceState')
-    visApp()
+    await visApp()
     await stoffsideFor(navn)
     await waitFor(() => expect(window.location.hash).toBe(`#/stoff/${slug}`))
     expect(erstatt.mock.calls.map(([, , adresse]) => adresse)).toEqual([`#/stoff/${slug}`])
@@ -420,7 +424,7 @@ describe('gamle adresser etter analyttkoden', () => {
 
   it('sender den gamle adressen til fortolkningsreglene til fortolkningen for koden', async () => {
     window.location.hash = '#/analytt/IRCAK/fortolkning'
-    visApp()
+    await visApp()
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
     await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/ircak'))
     expect(stoffsiden()).toBeNull()
@@ -429,7 +433,7 @@ describe('gamle adresser etter analyttkoden', () => {
   it('åpner ingen fagside for en kode som ikke er koblet til noe stoff', async () => {
     window.location.hash = '#/analytt/FINNESIKKE'
     const erstatt = vi.spyOn(window.history, 'replaceState')
-    visApp()
+    await visApp()
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
     expect(stoffsiden()).toBeNull()
     expect(screen.queryByRole('heading', { level: 1 })).toBeNull()
@@ -444,7 +448,7 @@ describe('redigeringen av fortolkningen', { timeout: 20_000 }, () => {
   it('åpnes med «Rediger fortolkningen» for administratorer, og går tilbake til samme modul', async () => {
     okt.rolle = 'admin'
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
 
     await user.click(screen.getByRole('button', { name: 'Rediger fortolkningen' }))
@@ -467,7 +471,7 @@ describe('redigeringen av fortolkningen', { timeout: 20_000 }, () => {
   it('åpnes for en lokal administrator uten den gamle adminrollen', async () => {
     okt.lokalAdmin = true
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
     await user.click(await screen.findByRole('button', { name: 'Rediger fortolkningen' }))
     await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/nor/rediger'))
@@ -476,7 +480,7 @@ describe('redigeringen av fortolkningen', { timeout: 20_000 }, () => {
 
   it('er ikke der for andre, og adressen til den er bare fortolkningen', async () => {
     window.location.hash = '#/fortolkning/nor/rediger'
-    visApp()
+    await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/nor'))
     await screen.findByRole('region', { name: 'Velg konsentrasjon' })
     expect(fortolkningen().hidden).toBe(false)
@@ -497,7 +501,7 @@ describe('kodepillene i fortolkningen', () => {
     ['NOR', 'Nortriptylin', '#/stoff/nortriptylin'],
   ])('fører %s til stoffsiden for %s, uten at koden blir tittel eller adresse', async (kode, navn, adresse) => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     const pille = await velgKode(user, kode, navn)
     expect(pille.getAttribute('href')).toBe(adresse)
     expect(pille.textContent).toBe(kode)
@@ -515,7 +519,7 @@ describe('kodepillene i fortolkningen', () => {
 describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
   it('går fra kodepillen til siden og tilbake til samme modul', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
     const pille = await screen.findByRole('link', { name: pillenavn('NOR', 'Nortriptylin') })
     expect(pille.getAttribute('href')).toBe('#/stoff/nortriptylin')
@@ -532,7 +536,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
 
   it('har «Åpne fagside» i toppmenyen mens en modul fortolkes, og kommer tilbake til samme modul', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     // Uten valgt analytt er det ingen stoffside å åpne.
     expect(screen.queryByRole('button', { name: 'Åpne fagside' })).toBeNull()
     await velgNortriptylin(user)
@@ -550,7 +554,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
 
   it('går fra «Åpne fagside» mens HBUP fortolkes til Bupropion-siden', async () => {
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgKode(user, 'HBUP', 'Bupropion')
     await user.click(screen.getByRole('button', { name: 'Åpne fagside' }))
     await stoffsideFor('Bupropion')
@@ -560,7 +564,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
   it('åpner HBUP-modulen fra «Åpne fortolkning» på Bupropion-siden, med reglene lest etter koden', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
-    visApp()
+    await visApp()
     await stoffsideFor('Bupropion')
     // Fortolkningsreglene står ikke på fagsiden; de redigeres i fortolkningen.
     expect(screen.queryByRole('heading', { level: 2, name: 'Fortolkning' })).toBeNull()
@@ -595,7 +599,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
   it('har ingen felles «Åpne fortolkning» på THC-siden, men en kodeknapp for THC og for IRCAK', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/stoff/thc'
-    visApp()
+    await visApp()
     await stoffsideFor('THC')
     // THC og IRCAK fortolkes i hver sin modul, med hver sin knapp på siden.
     expect(await screen.findByRole('button', { name: 'THC – åpne fortolkningen' })).toBeTruthy()
@@ -611,7 +615,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
   it('åpner riktig modul fra en stoffside, også for koder som deler modul', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/stoff/oksazepam'
-    visApp()
+    await visApp()
     await stoffsideFor('Oksazepam')
     await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
@@ -639,7 +643,7 @@ describe('mellom fortolkningen og stoffsiden', { timeout: 20_000 }, () => {
   it('lar fortolkningen ligge i ro mens stoffsiden vises', async () => {
     // Utklippstavlen er user-events egen, og er tom når testen starter.
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
     const pille = await screen.findByRole('link', { name: pillenavn('NOR', 'Nortriptylin') })
     await user.click(pille)
@@ -666,7 +670,7 @@ describe('fagsøket i hele appen', () => {
     // Utklippstavlen kan ha noe fra testen før; merket viser om noe kopieres.
     const urort = 'ingenting kopiert'
     await navigator.clipboard.writeText(urort)
-    visApp()
+    await visApp()
     await velgNortriptylin(user)
 
     await user.keyboard('{Control>}k{/Control}')
@@ -697,7 +701,7 @@ describe('fagsøket i hele appen', () => {
   it('viser verktøyene som egne treff, og åpner et verktøy med Enter', async () => {
     okt.rolle = 'admin'
     const user = userEvent.setup()
-    visApp()
+    await visApp()
     await user.keyboard('{Control>}k{/Control}')
     await user.keyboard('bytte')
     const liste = await screen.findByRole('listbox', { name: 'Treff i søket' })
@@ -715,7 +719,7 @@ describe('fagsøket i hele appen', () => {
   it('åpner et verktøy og verktøyoversikten direkte fra adressen, og følger tilbake og fram', async () => {
     okt.rolle = 'admin'
     window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
-    visApp()
+    await visApp()
     expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
     expect(fortolkningen().hidden).toBe(true)
     expect(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' })).toBeTruthy()
@@ -733,7 +737,7 @@ describe('fagsøket i hele appen', () => {
   it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir fortolkningen', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/verktoy/bytte-antidepressiv'
-    visApp()
+    await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/'))
     expect(fortolkningen().hidden).toBe(false)
     expect(screen.queryByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeNull()
@@ -756,7 +760,7 @@ describe('fagsøket i hele appen', () => {
 
   it('åpner søkesiden direkte fra adressen, med søket i feltet', async () => {
     window.location.hash = '#/sok?q=kvetiapin'
-    visApp()
+    await visApp()
     expect(await screen.findByRole('heading', { level: 1, name: '«kvetiapin»' })).toBeTruthy()
     expect((screen.getByRole('combobox', { name: 'Søk i fagstoffet' }) as HTMLInputElement).value).toBe('kvetiapin')
     // Databasen her har ingen side for kvetiapin, men stoffet står i
