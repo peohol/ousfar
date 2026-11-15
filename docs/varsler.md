@@ -72,8 +72,11 @@ gjorde det, varsles ikke.
 **Mottakerne** er bare dem som kan lese det varselet gjelder (P2b,
 `intern.varselomfang`): et varsel om fortolkningen eller en tråd der får bare
 medlemmene i fagmiljøet den hører til, og et om noe felles (en idé, en fagside,
-en tråd på en fagside) alle med et aktivt medlemskap. Databasen setter
-`fagmiljo_id` på varselet (null for felles). Varsler fra et fagmiljø der
+en tråd på en fagside) alle med et aktivt medlemskap. Et varsel om en tråd i
+en gruppe får bare dem som leser gruppen nå (`docs/fagmiljoer.md`,
+«Gruppene»). Databasen setter `fagmiljo_id` eller `gruppe_id` på varselet
+(begge null for felles). Den som fjernes fra en gruppe, ser ikke lenger
+varslene derfra. Varsler fra et fagmiljø der
 medlemskapet er avsluttet, vises ikke lenger, verken i `mine_varsler()`,
 tellingen eller tabellen (radsikkerheten `rekkevidde`); de blir liggende til
 de ryddes som de andre, og kommer tilbake om medlemskapet blir aktivt igjen.

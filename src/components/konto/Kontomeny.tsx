@@ -4,7 +4,9 @@ import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useOkt, useProfil } from '../../auth/okt'
 import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
+import { gruppeadresse } from '../../domain/rute'
 import { SYSTEM, type Bevegelse, type Tema, type Valg, type Valgstyring } from '../../domain/systemvalg'
+import { useGrupper } from '../../grupper/kilde'
 import { VISNINGSENHETER, type Visningsenhet } from '../../enheter/konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { Bryter } from '../Bryter'
@@ -42,7 +44,8 @@ const ENHETSVALG: readonly Trinnvalg<Visningsenhet>[] = VISNINGSENHETER.map((e) 
 
 /**
  * Kontoen, fra avataren helt til høyre i toppmenyen: hvem appen er logget inn
- * som, veien til egen profil, preferansene og utlogging.
+ * som, veien til egen profil, gruppene, preferansene og utlogging. Venter en
+ * invitasjon til en gruppe, står det en prikk på avataren og på «Grupper».
  */
 export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const profil = useProfil()
@@ -50,6 +53,9 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const lenker = useAvatarlenker([profil])
   const lenke = profil.avatar_path ? (lenker.get(profil.avatar_path) ?? null) : null
   const navn = visningsnavn(profil)
+  const { invitasjoner } = useGrupper()
+  const invitert =
+    invitasjoner.length === 0 ? undefined : invitasjoner.length === 1 ? 'én ny invitasjon' : `${invitasjoner.length} nye invitasjoner`
 
   const [kontopanel, setKontopanel] = useBevart('kontopanel', false)
   const [preferanser, setPreferanser] = useState(false)
@@ -62,13 +68,14 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         className="kontomeny"
         knapp={{
           ikon: 'user',
-          etikett: `Kontoen din – ${navn}`,
+          etikett: `Kontoen din – ${navn}${invitert ? ` (${invitert})` : ''}`,
           variant: 'aksent',
           className: 'kontomeny__knapp',
           innhold: <Avatar profil={profil} lenke={lenke} storrelse="liten" />,
         }}
         etikett="Konto"
         lag="kontomeny"
+        ved={invitert && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
         // Neste gang menyen åpnes, står preferansene lukket igjen.
         onApne={() => setPreferanser(false)}
       >
@@ -96,6 +103,17 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                     // Menyen lukkes først, så vinduet gir fokus tilbake til avataren.
                     lukk()
                     setKontopanel(true)
+                  }}
+                />
+              </li>
+              <li>
+                <Menyvalg
+                  ikon="diskusjon"
+                  tekst="Grupper"
+                  nytt={invitert}
+                  onClick={() => {
+                    lukk()
+                    window.location.hash = gruppeadresse()
                   }}
                 />
               </li>

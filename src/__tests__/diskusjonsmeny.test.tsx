@@ -100,6 +100,7 @@ const SIDER: Diskusjonssider = {
     { side: 'stoff:valproat', navn: 'Valproat' },
   ],
   fortolkninger: [{ side: 'fortolkning:li', navn: 'Fortolkning av Litium' }],
+  grupper: [],
 }
 
 /** Diskusjonene på siden en tråd flyttes til. */

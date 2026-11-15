@@ -118,6 +118,7 @@ describe('navnet på siden', () => {
   const sider: Diskusjonssider = {
     fagsider: [{ side: 'stoff:bupropion', navn: 'Bupropion' }],
     fortolkninger: [{ side: 'fortolkning:hbup', navn: 'Fortolkning av Hydroksybupropion' }],
+    grupper: [],
   }
   it('er navnet brukerne kjenner, eller nøkkelen når siden er ny', () => {
     expect(navnPaaSide(sider, 'stoff:bupropion')).toBe('Bupropion')

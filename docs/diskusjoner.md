@@ -23,8 +23,9 @@ teksten) står i `docs/direktelenker.md`.
 
 En side er en nøkkel: `stoff:<stoffets nøkkel>` for en fagside,
 `fortolkning:<analyttens nøkkel>` for fortolkningen av én analytt og
-`register:stoffregister` for helsiden for stoffregisteret
-(`diskusjonssideFor`). Forsiden, søket og fortolkningen uten valgt analytt har
+`register:stoffregister` for helsiden for stoffregisteret og `gruppe:<ID>`
+for siden til en gruppe, `#/grupper/<ID>` (`diskusjonssideFor`; se
+`docs/fagmiljoer.md`, «Gruppene»). Forsiden, søket og fortolkningen uten valgt analytt har
 ingen diskusjoner. Fortolkningen av en analytt har sin egen adresse,
 `#/fortolkning/<nøkkel>`, så et varsel kan lenke dit. Får en fagside ny nøkkel,
 flytter trådene og kategoriene med.
@@ -36,11 +37,14 @@ Rekkevidden følger siden (`intern.diskusjonsomfang`, P2b; se
 på stoffregisteret er **felles**: alle med et aktivt medlemskap ser dem.
 Trådene og kategoriene i fortolkningen hører til **fagmiljøet** fortolkningen
 hører til (i dag OUS Klinisk farmakologi), og bare medlemmene der ser dem.
+Trådene og kategoriene i en **gruppe** ser bare dem som er med i gruppen nå,
+og systemarkitektene (`omfang = 'gruppe'`, `gruppe_id`).
 Databasen setter `omfang` og `fagmiljo_id` på hver tråd og kategori fra siden
 (utløseren `gi_diskusjonsomfang`), og radsikkerheten (`rekkevidde`) og
 funksjonene avgrenser til det; kommentarene, hjertene, besøkene og de skjulte
 tekstene følger tråden. En tråd kan bare flyttes til en side med samme
-rekkevidde, så en tråd fra en fagside aldri havner i et fagmiljø, og omvendt.
+rekkevidde, så en tråd fra en fagside aldri havner i et fagmiljø, og omvendt,
+og en tråd i en gruppe blir i gruppen.
 Det gjelder også varslene (`docs/varsler.md`) og lenkene
 (`docs/direktelenker.md`).
 
@@ -53,7 +57,8 @@ Det gjelder også varslene (`docs/varsler.md`) og lenkene
   `kanStyreDiskusjon`). Andre ser ikke knappene, og kan ikke dra tråden i lista.
 - **Moderatorene** er systemarkitektene på de felles sidene, og de lokale
   administratorene i fagmiljøet på sidene som hører til det (systemarkitektene
-  bare der de selv er medlem). Den gamle adminrollen (`profiles.role`) gir ikke
+  bare der de selv er medlem). I en gruppe er det gruppens moderatorer og
+  ansvarlige, og systemarkitektene; ikke de lokale administratorene. Den gamle adminrollen (`profiles.role`) gir ikke
   lenger noe her. Appen får svaret fra databasen (`kan_moderere` i
   `diskusjonsoversikt()` og `diskusjonstraad()`, fra
   `kan_moderere_diskusjoner(side)`).

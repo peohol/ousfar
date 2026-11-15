@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.131.2',
+    versjon: '1.132.1',
     dato: '2026-11-15',
     sammendrag: 'Kontrollen før nye fagmiljøer kan åpnes, uten endring i appen',
     typer: ['Funksjonalitet'],
@@ -22,6 +22,20 @@ export const ENDRINGSLOGG: Endring[] = [
       'Et nytt fagmiljø kan bare åpnes for medlemmer etter en egen godkjenning: databasen nekter selv å åpne det uten et uttrykkelig slipp, og endringen som gir slippet, stoppes automatisk til godkjenningen er gitt.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.132.0',
+    dato: '2026-11-14',
+    sammendrag: 'Grupper med egne diskusjoner, i eget fagmiljø eller på tvers',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Under «Grupper» i kontomenyen finner du gruppene du er med i. Hver gruppe har sine egne diskusjoner, som bare medlemmene ser. Å være med i en gruppe gir aldri tilgang til et annet fagmiljøs fortolkning eller lokale innhold.',
+      'Administratorene kan opprette grupper i sitt eget fagmiljø, og systemarkitektene grupper på tvers av fagmiljøene. Den som oppretter en gruppe, blir ansvarlig, og kan invitere andre med brukernavnet, gjøre dem til moderatorer eller ansvarlige, og fjerne dem.',
+      'En invitasjon vises med en prikk på kontoen din, og du er med først når du har godtatt den. Den som går ut av eller fjernes fra en gruppe, mister med en gang trådene, varslene og lenkene der. Det hen har skrevet, blir stående.',
+      'Idéene er som før, felles for alle.',
+    ],
   },
   {
     versjon: '1.131.1',

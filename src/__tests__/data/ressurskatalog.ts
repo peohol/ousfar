@@ -43,7 +43,10 @@ const k = (rekkevidde: Rekkevidde, grunnlag: string): Klassifisering => ({ rekke
 
 const OBJEKT = (hva: string) => k('objekt', `Del av objektet ${hva}`)
 const FAGSIDE = k('avledet', 'Fagsidene er felles (§3)')
-const SIDENOKKEL = k('avledet', 'Fra sidenøkkelen: stoff:/register: felles, fortolkning: lokal (§3); per rad siden P2b (omfang, fagmiljo_id)')
+const SIDENOKKEL = k(
+  'avledet',
+  'Fra sidenøkkelen: stoff:/register: felles, fortolkning: lokal (§3), gruppe: gruppen (P6); per rad siden P2b (omfang, fagmiljo_id, gruppe_id)',
+)
 const IDE = k('felles', 'Idéer og planlagte oppgaver er felles (§3)')
 const OFFENTLIG_KILDE = k('felles', 'Offentlig kilde (§3)')
 
@@ -126,7 +129,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),
   'public.stoffavoritter': k('personlig', 'Favoritter (§3)'),
-  'public.varsler': k('personlig', 'Varsler (§3); avgrenset også til fagmiljøet det gjelder (fagmiljo_id, P2b)'),
+  'public.varsler': k('personlig', 'Varsler (§3); avgrenset også til fagmiljøet (fagmiljo_id, P2b) eller gruppen (gruppe_id, P6) det gjelder'),
   'public.diskusjonsbesok': k('personlig', 'Hva brukeren har lest'),
   'public.idebesok': k('personlig', 'Hva brukeren har lest'),
 
@@ -150,6 +153,8 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.tilgangslogg': k('tilgang', 'P1.1'),
   'public.ressursomfang': k('tilgang', 'P4a: rekkevidden selv'),
   'intern.passordreservasjoner': k('tilgang', 'P1.2a: tilbakestillinger av passord som er i gang'),
+  'public.grupper': k('tilgang', 'P6: gruppene, i ett fagmiljø eller på tvers; leses bare gjennom funksjonene'),
+  'public.gruppemedlemskap': k('tilgang', 'P6: medlemmene og invitasjonene i gruppene; leses bare gjennom funksjonene'),
   'intern.kontosperrer': k('tilgang', 'P3: kontoene som er sperret i Auth fordi de står uten aktivt medlemskap'),
 
   // Offentlige kilder.

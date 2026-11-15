@@ -68,7 +68,7 @@ testdatabasen, slik den blir etter S2; i produksjonen er B lukket.
 | P4b | Fortolkningsregler per fagmiljø | #388 | Produksjonsverifisert |
 | P4b, siste steg | Fjerne de gamle globale nøklene | #389 | **Venter på Peders ja** (§9) |
 | P4c | Analyttkatalogen og EtG/EtS-tekstene i databasen per fagmiljø | #391 | Utrullet; produksjonen kontrollert her (§6) |
-| P6 | Grupper | #392 | Til kontroll. Ikke et krav for S2 |
+| P6 | Grupper | #392 | Slått sammen 15.11.2026 (`4175bfd`), etter at denne kontrollen ble gjort. Ikke et krav for S2 |
 
 Produksjonen har 252 migrasjoner, den siste `20261114230200`
 (EtG-importen), og ingen migrasjon uten fil.
@@ -138,7 +138,7 @@ og at medlemmene får det.
 | Avsluttet medlemskap med gyldig token leser eller skriver (S3) | `aktivtmedlemskap.test.ts`, `s2tilgang.test.ts` | Avvist |
 | Avsluttet medlemskap i A rører tilgangen i B | `medlemskapsadministrasjon.test.ts`, `s2tilgang.test.ts` | Tilgangen i B står |
 | En åpen fane etter avsluttet medlemskap | `avsluttetmedlemskap.test.tsx` | Stengt, mellomlageret tømt |
-| En fjernet gruppedeltaker | P6 (#392, ikke slått sammen) | Prøves i P6 |
+| En fjernet gruppedeltaker | P6 (#392, slått sammen etter kontrollen) | Prøvd i P6s egne tester |
 
 ### 4.3 Kjent begrensning
 
@@ -313,7 +313,7 @@ produksjonen. Endringer i selve opptaksreglene (`intern.kontroller_opptak`,
 | Opprette kontoer direkte i et annet fagmiljø (#395 punkt 2) | Dev | Bør | I dag går en ny konto via OUS Klinisk farmakologi; trygt bare når en systemarkitekt gjør alle stegene før passordet gis ut |
 | Datakort knyttet til OUS-kode (#395 punkt 3) | Dev | Bør | Ett kort (tramadol) |
 | Velge arbeidsfagmiljø for den som er med i flere (#395 punkt 4) | Dev, med Peders valg av hvem som kan bytte | **Må** før vanlige brukere skal arbeide i B | Et medlemskap i B blir ikke primært når brukeren alt er primær i A, så fortolkningen bruker fortsatt As regler; i dag kan bare en systemarkitekt flytte det ved å avslutte medlemskapet i A (§4.3) |
-| P6, grupper (#392) | Dev | Nei | Ikke et krav for S2; testes for seg |
+| P6, grupper (#392) | Dev | Nei (slått sammen) | Ikke et krav for S2; testet for seg |
 | S4: tofaktorinnlogging, sikkerhetskopi, uavhengig sikkerhetsvurdering | Peder (D5, D7, B9) | Må før eksternt laboratorium | Ikke før S2 |
 
 Det nye fagmiljøet har ingen fortolkningsregler og ingen analyttkatalog. Etter
