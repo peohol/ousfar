@@ -151,7 +151,9 @@ medlemskap blir bare primært når brukeren ikke har et annet aktivt primært
 (`intern.gi_medlemskap`), og alle vanlige kontoer har A som primært. Bare en
 systemarkitekt kan i dag flytte arbeidskonteksten, ved å avslutte medlemskapet
 i A; en lokal administrator i B kan det ikke. Se §9 og
-[#395](https://github.com/peohol/ousfar/issues/395) punkt 4.
+[#395](https://github.com/peohol/ousfar/issues/395) punkt 4. Peder valgte
+15.11.2026 at personen selv skal velge blant egne aktive medlemskap; det er
+levert i [#398](https://github.com/peohol/ousfar/pull/398).
 
 ## 5. Ingen lokale OUS-regler brukes av andre fagmiljøer
 
@@ -312,7 +314,7 @@ produksjonen. Endringer i selve opptaksreglene (`intern.kontroller_opptak`,
 | Kategorier i diskusjonene per fagmiljø ([#395](https://github.com/peohol/ousfar/issues/395) punkt 1) | Dev | Bør | B kan ikke bruke et kategorinavn A har på samme fortolkningsside, og feilen røper det |
 | Opprette kontoer direkte i et annet fagmiljø (#395 punkt 2) | Dev | Bør | I dag går en ny konto via OUS Klinisk farmakologi; trygt bare når en systemarkitekt gjør alle stegene før passordet gis ut |
 | Datakort knyttet til OUS-kode (#395 punkt 3) | Dev | Bør | Ett kort (tramadol) |
-| Velge arbeidsfagmiljø for den som er med i flere (#395 punkt 4) | Dev, med Peders valg av hvem som kan bytte | **Må** før vanlige brukere skal arbeide i B | Et medlemskap i B blir ikke primært når brukeren alt er primær i A, så fortolkningen bruker fortsatt As regler; i dag kan bare en systemarkitekt flytte det ved å avslutte medlemskapet i A (§4.3) |
+| Velge arbeidsfagmiljø for den som er med i flere (#395 punkt 4) | Dev: [#398](https://github.com/peohol/ousfar/pull/398), etter Peders valg (personen selv) | **Må** før vanlige brukere skal arbeide i B | Et medlemskap i B blir ikke primært når brukeren alt er primær i A, så fortolkningen bruker fortsatt As regler; i dag kan bare en systemarkitekt flytte det ved å avslutte medlemskapet i A (§4.3) |
 | P6, grupper (#392) | Dev | Nei (slått sammen) | Ikke et krav for S2; testet for seg |
 | S4: tofaktorinnlogging, sikkerhetskopi, uavhengig sikkerhetsvurdering | Peder (D5, D7, B9) | Må før eksternt laboratorium | Ikke før S2 |
 
