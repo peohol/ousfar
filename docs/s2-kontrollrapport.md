@@ -33,9 +33,10 @@ han har godkjent den (§10).
   Dev-forhold ([#395](https://github.com/peohol/ousfar/issues/395)) og de gamle
   globale nøklene ([#389](https://github.com/peohol/ousfar/pull/389)), som
   venter på Peders ja.
-- **Et nytt vern:** en migrasjon som åpner et fagmiljø for medlemmer, stoppes
-  nå automatisk både i kontrollen av PR-en og før utrullingen, til den har
-  merket med Peders godkjenning (§8.4).
+- **Et nytt vern:** databasen nekter nå selv å åpne et fagmiljø for medlemmer
+  uten et uttrykkelig slipp for nettopp det fagmiljøet, og en migrasjon som gir
+  slippet eller rokker ved vernet, stoppes både i kontrollen av PR-en og før
+  utrullingen, til den har merket med Peders godkjenning (§8.4).
 - **S4 gjelder fortsatt** før et eksternt laboratorium: tofaktorinnlogging,
   sikkerhetskopi og gjenoppretting, og en uavhengig sikkerhetsvurdering.
   Prosjektet står på gratisplanen.
@@ -238,7 +239,7 @@ referanseområder overstyres lokalt.
 | `npm test` på denne grenen | Se PR-en |
 | `s2tilgang.test.ts` (ny) | 422 av 422 |
 | Samtidighetstestene mot ekte Postgres (`fagmiljoer.samtidighet`, `medlemskap.samtidighet`) | Grønne lokalt mot Postgres 16 (13 bestått, 1 hoppet over), bortsett fra de to som krever Postgres 17 slik produksjonen har; CI kjører dem på 17 |
-| `migrasjonshistorikk.test.ts` med det nye vernet | Grønn |
+| `migrasjonshistorikk.test.ts` og `fagmiljoer.test.ts` med det nye vernet | Grønne |
 
 ### 8.2 Produksjonen (lest 15.11.2026)
 
@@ -270,12 +271,28 @@ referanseområder overstyres lokalt.
 
 ### 8.4 Nytt vern i utrullingen
 
-En migrasjon som setter `apent_for_medlemmer` til noe annet enn `false`, eller
-oppretter et åpent fagmiljø, regnes nå som en endring som åpner tilgang
-(`src/faginnhold/migrasjonshistorikk.ts`, `docs/migrasjoner.md`). Den stoppes
-både i kontrollen av PR-en og før utrullingen, til den har merket
-`-- destruktiv-godkjent: <hvem, når, hva>`. Merket skrives bare etter Peders
-uttrykkelige ja. Startporten står dermed ikke bare på kontrollen av PR-en.
+Vernet har to lag, slik at det ikke avhenger av å kjenne igjen hver SQL-form:
+
+1. **I databasen** (`20261115003000_startportvern.sql`): en trigger på
+   `fagmiljoer` nekter at et fagmiljø blir åpent for medlemmer, ved innsetting
+   eller endring og uansett hvordan setningen er skrevet, med mindre
+   innstillingen `ousfar.startport` i samme transaksjon navngir nettopp det
+   fagmiljøets nøkkel. Å lukke et fagmiljø og alle andre endringer er uendret.
+   `fagmiljoer.test.ts` prøver vanlig og tuppel-`update`, `not`, innsetting uten
+   kolonneliste og slipp for feil fagmiljø.
+2. **I utrullingen** (`src/faginnhold/migrasjonshistorikk.ts`,
+   `docs/migrasjoner.md`): en migrasjon som setter innstillingen, eller som
+   fjerner, erstatter eller kobler ut triggeren (`drop`/`alter trigger`,
+   `create or replace`/`drop function`, `disable trigger` på `fagmiljoer`,
+   `session_replication_role`), stoppes både i kontrollen av PR-en og før
+   utrullingen, til den har merket `-- destruktiv-godkjent: <hvem, når, hva>`.
+   Merket skrives bare etter Peders uttrykkelige ja.
+
+En migrasjon som prøver å åpne et fagmiljø uten slippet, feiler dermed i testene
+i CI og, fordi migrasjonene kjøres i én transaksjon, uten virkning i
+produksjonen. Endringer i selve opptaksreglene (`intern.kontroller_opptak`,
+`intern.medlemskapsavslag`) dekkes av testene for lukkede fagmiljøer i
+`fagmiljoer.test.ts` og `s2tilgang.test.ts`.
 
 ## 9. Hva som gjenstår før et nytt fagmiljø kan åpnes
 
@@ -299,7 +316,7 @@ idéene, og en tydelig stopp i fortolkningen til egne regler er lagt inn.
 
 Åpningen av OUS Rettstoksikologi er en egen migrasjon i en egen PR, merket
 «venter på Peders godkjenning». Den setter `apent_for_medlemmer = true` for
-det ene fagmiljøet, med begrunnelsen i tilgangsloggen, stopper hvis
+det ene fagmiljøet gjennom slippet i §8.4, med begrunnelsen i tilgangsloggen, stopper hvis
 fagmiljøet ikke finnes eller er arkivert, og gjør ingenting om det alt er
 åpent. Den gir ingen medlemskap selv. Den stoppes av vernet i §8.4 til merket
 med Peders godkjenning er skrevet, så den kan verken slås sammen med grønn

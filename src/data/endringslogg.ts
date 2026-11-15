@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen. En samlet kontroll viser at ingen i et annet fagmiljø får lese, endre eller fortolke med OUS Klinisk farmakologi sine egne regler, kommentarer og analyser, og omvendt, og at fortolkningen er den samme som før.',
-      'Et nytt fagmiljø kan bare åpnes for medlemmer etter en egen godkjenning; endringen som åpner det, stoppes automatisk til godkjenningen er gitt.',
+      'Et nytt fagmiljø kan bare åpnes for medlemmer etter en egen godkjenning: databasen nekter selv å åpne det uten et uttrykkelig slipp, og endringen som gir slippet, stoppes automatisk til godkjenningen er gitt.',
     ],
     utenVarsel: true,
   },

@@ -15,7 +15,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Rolle } from '@delt/profil'
-import { feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
+import { apneFagmiljo, feilFra, nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 const KF = 'ous-klinisk-farmakologi'
 const RT = 'ous-rettstoksikologi'
@@ -61,7 +61,7 @@ async function byggGalleri(): Promise<void> {
   const { rows } = await db.query<{ nokkel: string; id: string }>('select nokkel, id from public.fagmiljoer')
   for (const r of rows) fagmiljo[r.nokkel] = r.id
   // Bare standarden er åpen før S2; testen trenger medlemmer i begge.
-  await db.query('update public.fagmiljoer set apent_for_medlemmer = true where nokkel = $1', [RT])
+  await apneFagmiljo(db, RT)
 
   for (const [navn, p] of Object.entries(GALLERI) as [Navn, Person][]) {
     id[navn] = await opprettBruker(db, { brukernavn: navn.toLowerCase(), fornavn: 'Test', etternavn: navn, rolle: p.rolle })

@@ -7,9 +7,22 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { expect } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import type { Rolle } from '@delt/profil'
+import { startportSql } from '../../faginnhold/migrasjonshistorikk'
 import type { Innhold, Objektstatus, Objekttype } from '../../faginnhold/modell'
 
 export * from './migrasjonskjoring'
+
+/**
+ * Åpner fagmiljøet `nokkel` for medlemmer gjennom startporten, slik en godkjent
+ * åpningsmigrasjon gjør. I en gitt transaksjon gjelder slippet resten av den.
+ */
+export async function apneFagmiljo(db: PGlite | Transaction, nokkel: string): Promise<void> {
+  const apne = async (tx: PGlite | Transaction) => {
+    await tx.exec(startportSql(nokkel))
+    await tx.query('update public.fagmiljoer set apent_for_medlemmer = true where nokkel = $1', [nokkel])
+  }
+  await ('transaction' in db ? db.transaction(apne) : apne(db))
+}
 
 export interface Testbruker {
   brukernavn: string

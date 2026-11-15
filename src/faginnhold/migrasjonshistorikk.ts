@@ -189,6 +189,23 @@ $kontroll$;`
 }
 
 /**
+ * Vernet om startporten S2 i databasen (`20261115003000_startportvern.sql`): et
+ * fagmiljø blir bare åpent for medlemmer i en transaksjon der `innstilling`
+ * navngir fagmiljøets nøkkel.
+ */
+export const STARTPORT = {
+  innstilling: 'ousfar.startport',
+  trigger: 'fagmiljoer_startport',
+  funksjon: 'fagmiljo_startport',
+} as const
+
+/** SQL-en som slipper fagmiljøet `nokkel` gjennom startporten i resten av transaksjonen. */
+export function startportSql(nokkel: string): string {
+  if (!/^[a-z0-9-]+$/.test(nokkel)) throw new Error(`Ugyldig fagmiljønøkkel: ${nokkel}`)
+  return `select set_config('${STARTPORT.innstilling}', '${nokkel}', true);`
+}
+
+/**
  * Setningene som kan gi vesentlig og vanskelig reversibelt datatap eller åpne
  * tilgang, og som derfor må være eksplisitt godkjent før en migrasjon rulles ut
  * automatisk (`docs/migrasjoner.md`). Listen er snever med vilje: den skal
@@ -207,11 +224,20 @@ const DESTRUKTIVE: ReadonlyArray<readonly [RegExp, string]> = [
   // Ikke `truncate` som hendelse i en trigger (`before truncate on …`, `insert or truncate`).
   [/(?<!\b(?:before|after|or|of)\s+)\btruncate\b/i, 'truncate'],
   [/\bdisable\s+row\s+level\s+security\b/i, 'disable row level security'],
-  // Startporten S2 (docs/fagmiljoer.md): et fagmiljø åpnes for andre enn
-  // systemarkitektene bare med Peders godkjenning, i en egen migrasjon.
+  // Startporten S2 (docs/fagmiljoer.md): databasen lar et fagmiljø bli åpent
+  // for medlemmer bare når innstillingen navngir det (20261115003000_startportvern.sql).
+  // Å sette innstillingen er derfor eneste vei, uansett SQL-form; bare lesingen
+  // i vernet selv slipper gjennom.
+  [new RegExp(String.raw`(?<!current_setting\s*\(\s*')\b${STARTPORT.innstilling.replace('.', '\\.')}\b`, 'i'), 'åpning av et fagmiljø for medlemmer'],
   [
-    /\bset\b[^;]*?\bapent_for_medlemmer\s*=\s*(?!\s|false\b)|\binsert\s+into\s+(?:public\.)?fagmiljoer\b[^;]*?\bapent_for_medlemmer\b[^;]*?\btrue\b/i,
-    'åpning av et fagmiljø for medlemmer',
+    new RegExp(
+      String.raw`\b(?:drop|alter)\s+trigger\b[^;]*?\b${STARTPORT.trigger}\b` +
+        String.raw`|\b(?:create\s+or\s+replace|drop|alter)\s+function\s+(?:intern\.)?${STARTPORT.funksjon}\b` +
+        String.raw`|\balter\s+table\b[^;]*?\bfagmiljoer\b[^;]*?\bdisable\s+trigger\b` +
+        String.raw`|\bsession_replication_role\b`,
+      'i',
+    ),
+    'endring av vernet om startporten',
   ],
 ]
 

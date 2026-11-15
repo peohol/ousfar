@@ -18,7 +18,8 @@
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import type { Rolle } from '@delt/profil'
-import { opprettBruker, som } from './testdatabase'
+import { startportSql } from '../../faginnhold/migrasjonshistorikk'
+import { apneFagmiljo, opprettBruker, som } from './testdatabase'
 
 /** Fagmiljøene galleriet bruker, etter rollen de har i testene. */
 export const FAGMILJOER = {
@@ -133,6 +134,7 @@ export async function opprettFagmiljo(
   { nokkel, navn, administrator }: { nokkel: string; navn: string; administrator: string },
 ): Promise<string> {
   return medGrunn(db, async (tx) => {
+    await tx.exec(startportSql(nokkel))
     const { rows } = await tx.query<{ id: string }>(
       `insert into public.fagmiljoer (nokkel, navn, apent_for_medlemmer) values ($1, $2, true) returning id`,
       [nokkel, navn],
@@ -215,7 +217,7 @@ export async function byggPersongalleri(
     A: await fagmiljoId(db, FAGMILJOER.A),
     B: await fagmiljoId(db, FAGMILJOER.B),
   }
-  await db.query('update public.fagmiljoer set apent_for_medlemmer = true where id = $1', [fagmiljo.B])
+  await apneFagmiljo(db, FAGMILJOER.B)
 
   const navn = Object.keys(personer) as Person[]
   const startI = (def: Persondefinisjon): Fagmiljo => def.avsluttetI ?? def.primaer ?? 'A'

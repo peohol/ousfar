@@ -193,15 +193,33 @@ describe('destruktive migrasjoner', () => {
     expect(destruktiveSetninger('do $$ begin alter table a drop b; end $$;')).toEqual(['drop column'])
   })
 
-  it('finner en migrasjon som åpner et fagmiljø for medlemmer (startporten S2)', () => {
+  it('finner en migrasjon som åpner et fagmiljø for medlemmer eller endrer vernet om startporten S2', () => {
     const apning = 'åpning av et fagmiljø for medlemmer'
-    expect(destruktiveSetninger(`update public.fagmiljoer set apent_for_medlemmer = true where nokkel = 'x';`)).toEqual([apning])
-    expect(destruktiveSetninger('update public.fagmiljoer f\n  set navn = navn, apent_for_medlemmer=not apent_for_medlemmer;')).toEqual([apning])
-    expect(destruktiveSetninger(`insert into public.fagmiljoer (nokkel, navn, apent_for_medlemmer) values ('x', 'X', true);`)).toEqual([apning])
-    // Å lukke et fagmiljø, eller opprette et lukket, åpner ingenting.
+    const vern = 'endring av vernet om startporten'
+    // Databasen åpner bare et fagmiljø innstillingen navngir; å sette den er eneste vei.
+    expect(destruktiveSetninger(`select set_config('ousfar.startport', 'x', true);`)).toEqual([apning])
+    expect(destruktiveSetninger(`set local ousfar.startport = 'x';`)).toEqual([apning])
+    expect(destruktiveSetninger(`do $$ begin perform set_config( 'OUSFAR.STARTPORT' , 'x', true); end $$;`)).toEqual([apning])
+    // Å fjerne, erstatte eller koble ut vernet.
+    for (const sql of [
+      'drop trigger if exists fagmiljoer_startport on public.fagmiljoer;',
+      'alter trigger fagmiljoer_startport on public.fagmiljoer rename to x;',
+      'create or replace function intern.fagmiljo_startport() returns trigger language sql as $$ select null $$;',
+      'drop function intern.fagmiljo_startport();',
+      'alter table only public.fagmiljoer disable trigger all;',
+      'set session_replication_role = replica;',
+    ]) {
+      expect(destruktiveSetninger(sql), sql).toEqual([vern])
+    }
+    // Vernet selv, og vanlige endringer av fagmiljøer, slipper gjennom.
+    const vernet = readFileSync(
+      fileURLToPath(new URL('../../supabase/migrations/20261115003000_startportvern.sql', import.meta.url)),
+      'utf8',
+    )
+    expect(destruktiveSetninger(vernet)).toEqual([])
     expect(destruktiveSetninger('update public.fagmiljoer set apent_for_medlemmer = false where id = $1;')).toEqual([])
-    expect(destruktiveSetninger(`insert into public.fagmiljoer (nokkel, navn, apent_for_medlemmer) values ('x', 'X', false);`)).toEqual([])
-    expect(destruktiveSetninger('select nokkel from public.fagmiljoer where apent_for_medlemmer;')).toEqual([])
+    expect(destruktiveSetninger(`update public.fagmiljoer set navn = 'Nytt navn' where nokkel = 'x';`)).toEqual([])
+    expect(destruktiveSetninger('alter table public.medlemskap disable trigger medlemskap_logg;')).toEqual([])
   })
 
   it('lar ikke en kommentar mellom ordene gjemme dem', () => {

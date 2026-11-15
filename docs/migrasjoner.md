@@ -67,8 +67,11 @@ en annen database, for å prøve dem lokalt.
   automatisk: `drop table`, `drop schema`, `drop database`, `drop column`
   (også `alter table … drop <kolonne>`), `truncate` og
   `disable row level security`, og en åpning av et fagmiljø for medlemmer
-  (`apent_for_medlemmer` satt til noe annet enn `false`, startporten S2 i
-  `docs/fagmiljoer.md`), også med kommentarer mellom ordene. En migrasjon med noen av dem
+  (slippet `ousfar.startport` som databasen krever, startporten S2 i
+  `docs/fagmiljoer.md`) eller en endring av vernet om den (triggeren
+  `fagmiljoer_startport`, funksjonen `intern.fagmiljo_startport`,
+  `disable trigger` på `fagmiljoer` og `session_replication_role`), også med
+  kommentarer mellom ordene. En migrasjon med noen av dem
   stoppes både i CI og før utrullingen, til den har en kommentarlinje med
   hvem som godkjente, når og hva:
 
