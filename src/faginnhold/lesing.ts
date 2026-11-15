@@ -16,8 +16,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { tilFeil } from './lagring'
 import type { Historikk } from './historikk'
 import type { Infosideinnhold, Innholdselementinnhold, Referanseinnhold, Tilstand } from './modell'
-import type { Analyttkatalog } from '../domain/analyttkatalog'
-import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
+import { referanseomraderPerAnalytt, type Datakortkatalog, type Stoffreferanseomrade } from '../domain/koblinger'
 import type { Stoffoppforing } from '../domain/stoffregister'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
 import { harVerdi, lesIntervallverdi, type Intervallverdi } from './paneler'
@@ -126,12 +125,12 @@ export interface Faginnholdsleser {
   /**
    * Referanseområdet for hver analyttkode som har et, i én tilstand: kortet
    * på det primære stoffets side (se `referanseomraderPerAnalytt`), etter
-   * koblingene i fagmiljøets analyttkatalog. Fortolkningen viser det samme
-   * tallet under analyttnavnet.
+   * koblingene og forbindelsene i fagmiljøets analyttkatalog. Fortolkningen
+   * viser det samme tallet under analyttnavnet.
    */
   lesReferanseomrader(
     tilstand: Tilstand,
-    koblinger: Analyttkatalog['koblinger'],
+    katalog: Datakortkatalog,
   ): Promise<ReadonlyMap<string, Intervallverdi>>
   /**
    * Historikken til ett objekt: hendelsene og øyeblikksbildene. Leseren ser
@@ -190,10 +189,10 @@ export function lagFaginnholdsleser(klient: SupabaseClient): Faginnholdsleser {
       (await kall<Utgave<Intervallregelsettinnhold>[]>('les_intervallregelsett', { sidetilstand: tilstand })) ?? [],
     lesThcRegelsett,
     lesKommentarer,
-    lesReferanseomrader: async (tilstand, koblinger) => {
+    lesReferanseomrader: async (tilstand, katalog) => {
       const kort = (await kall<Stoffreferanseomrade[]>('les_stoffreferanseomrader', { sidetilstand: tilstand })) ?? []
       return new Map(
-        [...referanseomraderPerAnalytt(kort, koblinger)].flatMap(([kode, verdi]) => {
+        [...referanseomraderPerAnalytt(kort, katalog)].flatMap(([kode, verdi]) => {
           const omrade = lesIntervallverdi(verdi)
           return harVerdi(omrade) ? [[kode, omrade] as const] : []
         }),

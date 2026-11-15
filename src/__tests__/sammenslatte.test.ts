@@ -143,7 +143,17 @@ describe('sammenslåingen i databasen', () => {
       'les_stoffreferanseomrader',
       { sidetilstand: 'publisert' },
     )
-    const perKode = referanseomraderPerAnalytt(kort, REGISTER.koblinger) as Map<string, { ovre: number }>
+    // Koden i `gjelder` er fra før datakortene ble koblet til forbindelsen
+    // analysen måler; appen leser kortet som kortet for forbindelsen koden
+    // måler, etter katalogen (`kortetsForbindelse`), til det er skrevet om (#405).
+    const analytter = new Map([
+      ['TMOD', { kode: 'TMOD', forbindelse: null, datakort: 'egne' as const }],
+      ['TMET', { kode: 'TMET', forbindelse: 'testmetabolitt', datakort: 'forbindelse' as const }],
+    ])
+    const perKode = referanseomraderPerAnalytt(kort, { koblinger: REGISTER.koblinger, finn: (kode) => analytter.get(kode) }) as Map<
+      string,
+      { ovre: number }
+    >
     expect([...perKode].map(([kode, o]) => [kode, o.ovre]).sort()).toEqual([
       ['TMET', 400],
       ['TMOD', 3000],

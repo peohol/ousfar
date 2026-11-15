@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.133.4',
+    dato: '2026-11-15',
+    sammendrag: 'Referanseområdet for en metabolitt på fagsiden er felles for alle fagmiljøer',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['stoff', 'fortolkning'],
+    punkter: [
+      'Hvert fagmiljø sier nå i sin egen analyseliste hvilke referanseområder på fagsidene analysene bruker, i stedet for at det følger av analysekodene ved OUS Klinisk farmakologi. Et eget referanseområde for en metabolitt, som O-desmetyltramadol på tramadolsiden, vises for alle fagmiljøer.',
+      'For OUS Klinisk farmakologi er tallene og fortolkningen som før.',
+      'Står det bare ett sett tall på siden, merkes de ikke lenger med et analysenavn.',
+    ],
+  },
+  {
     versjon: '1.133.3',
     dato: '2026-11-15',
     sammendrag: 'Ryddigere brukerliste, med handlingene i en meny per bruker',

@@ -8,7 +8,8 @@
  * referanseområdet og TDM-kortene fra Tidsskriftet — flyttes den over:
  *
  * - Datakortene (viktige data) flyttes til moderstoffets side, merket med
- *   koden (`gjelder`, se `datakortGjelder`), så koden beholder sine egne tall.
+ *   koden (`gjelder`), så koden beholder sine egne tall. Nå sier kortene
+ *   forbindelsen i stedet (`datakortGjelder`, `kortetsForbindelse`, #405).
  * - Et kort som står likt på moderstoffets side, tas bort (`fjernet`).
  * - Et kinetikkort som er ulikt, flyttes til moderstoffets side, sist i
  *   panelet, med metabolitten i tittelen: «Referansegrense for

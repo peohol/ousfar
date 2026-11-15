@@ -390,13 +390,15 @@ export function datakortFor(type: string): Datakortdefinisjon | undefined {
 }
 
 /**
- * Analyttkoden et datakort gjelder, på en side flere koder deler — når en
- * metabolitt er slått sammen med moderstoffet, har den egne tall:
- * O-desmetyltramadol har sitt eget referanseområde på tramadolsiden. Står i
- * `data.gjelder`. `null` for kortene til hovedkoden, og på alle andre sider.
- * Hvert datakort kan stå én gang per kode; databasen håndhever det
- * (`innholdselementer_enkeltelement_idx`), og `les_referanseomrader` gir hver
- * kode sitt kort.
+ * Forbindelsen et datakort gjelder, på en side med egne tall for en
+ * metabolitt: O-desmetyltramadol har sitt eget referanseområde på
+ * tramadolsiden. Står i `data.gjelder`, som nøkkelen i forbindelsesregisteret
+ * (`src/data/forbindelser.ts`), aldri som en analyttkode, siden kortene er
+ * felles for alle fagmiljøer. `null` for sidens egne kort. Hvert datakort kan
+ * stå én gang per forbindelse; databasen håndhever det
+ * (`innholdselementer_enkeltelement_idx`), og fagmiljøets katalog sier hvilke
+ * kort hver kode bruker (`datakortnokkel` i `src/domain/koblinger.ts`). Et kort
+ * med en analyttkode fra før leses gjennom `kortetsForbindelse`.
  */
 export function datakortGjelder(data: unknown): string | null {
   return erObjekt(data) && typeof data.gjelder === 'string' && data.gjelder.trim() !== '' ? data.gjelder.trim() : null
@@ -782,7 +784,7 @@ export function lesDosetabell(data: unknown): Dosetabelldata {
 
 /**
  * Elementtypene som står én gang i panelet sitt: koblingene til
- * legemiddeldataene og ClinPGx, hvert datakort (én gang per kode, se
+ * legemiddeldataene og ClinPGx, hvert datakort (én gang per forbindelse, se
  * {@link datakortGjelder}), rikteksten i tekstpanelene og tabellen.
  * Farmakokinetikken kan ha mange kort.
  *

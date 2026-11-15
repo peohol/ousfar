@@ -1,4 +1,5 @@
 import { displayName } from './names'
+import { FORBINDELSESNOKKEL } from '../enheter/konsentrasjon'
 import type { Analyte, Analyttmodul, Antihypertensivgrenser, Interval, MeasuringRange } from '../types'
 
 /**
@@ -23,6 +24,28 @@ export const FORTOLKNINGSTYPER: readonly Fortolkningstype[] = ['konsentrasjon', 
 export interface Katalogkode {
   kode: string
   navn: string
+}
+
+/**
+ * Hvilke av de felles datakortene på siden til kodens primære stoff analysen
+ * bruker (referanseområdet fortolkningen viser): sidens egne (`egne`), eller
+ * dem for forbindelsen analysen måler (`forbindelse`). Kortene gjelder serum;
+ * en analyse de ikke gjelder for, bruker ingen (`null`).
+ */
+export type Datakortbruk = 'egne' | 'forbindelse'
+
+export const DATAKORTBRUK: readonly Datakortbruk[] = ['egne', 'forbindelse']
+
+/**
+ * En analyttkode slik katalogen har den, med forbindelsen analysen måler —
+ * nøkkelen i forbindelsesregisteret (`src/data/forbindelser.ts`), eller
+ * `null` når den ikke er én forbindelse (sumanalysene) — og hvilke datakort
+ * den bruker. Koblingen til de felles datakortene på fagsidene går gjennom
+ * dette, aldri gjennom koden (`datakortnokkel` i `src/domain/koblinger.ts`).
+ */
+export interface Katalogkodedata extends Katalogkode {
+  forbindelse: string | null
+  datakort: Datakortbruk | null
 }
 
 export interface Analysemetode {
@@ -56,7 +79,7 @@ export interface Katalogoppforing {
   antihypertensiv: Antihypertensivgrenser | null
   aliaser: string[]
   /** Analyttkodene oppføringen dekker, i rekkefølge. */
-  koder: Katalogkode[]
+  koder: Katalogkodedata[]
 }
 
 /** En kobling fra en analyttkode til et stoff i stoffregisteret. */
@@ -101,6 +124,10 @@ export interface Laboratorieanalytt {
   komponenter: string[]
   /** Oppføringen som åpner fortolkningen — den samme som søket gir. */
   fortolkning: Analyte
+  /** Forbindelsen analysen måler (`Katalogkodedata.forbindelse`), eller `null`. */
+  forbindelse: string | null
+  /** Datakortene analysen bruker (`Katalogkodedata.datakort`), eller `null`. */
+  datakort: Datakortbruk | null
 }
 
 export interface Analyttkatalog {
@@ -126,7 +153,7 @@ export function tilFortolkning(o: Katalogoppforing): Analyte {
   const modul: Analyttmodul | undefined =
     o.type === 'konsentrasjon'
       ? undefined
-      : { type: o.type, id: o.nokkel, analytter: o.koder.map((k) => ({ ...k })), ...(o.undertittel !== null && { undertittel: o.undertittel }) }
+      : { type: o.type, id: o.nokkel, analytter: o.koder.map(({ kode, navn }) => ({ kode, navn })), ...(o.undertittel !== null && { undertittel: o.undertittel }) }
   return {
     kode: o.koder.map((k) => k.kode).join(KODESKILLE),
     navn: o.navn,
@@ -152,7 +179,7 @@ export function kodeneI(analyte: Analyte): Katalogkode[] {
   return analyte.modul ? analyte.modul.analytter : [{ kode: analyte.kode, navn: displayName(analyte) }]
 }
 
-function laboratorieanalytter(analyte: Analyte): Laboratorieanalytt[] {
+function laboratorieanalytter(analyte: Analyte, koder: ReadonlyMap<string, Katalogkodedata>): Laboratorieanalytt[] {
   return kodeneI(analyte).map(({ kode, navn }) => {
     const hele = kode === analyte.kode
     return {
@@ -162,6 +189,8 @@ function laboratorieanalytter(analyte: Analyte): Laboratorieanalytt[] {
       kategori: analyte.kategori,
       komponenter: hele && analyte.komponenter.length > 0 ? [...analyte.komponenter] : [navn],
       fortolkning: analyte,
+      forbindelse: koder.get(kode)?.forbindelse ?? null,
+      datakort: koder.get(kode)?.datakort ?? null,
     }
   })
 }
@@ -169,7 +198,8 @@ function laboratorieanalytter(analyte: Analyte): Laboratorieanalytt[] {
 /** Katalogen appen bruker, bygd av det databasen ga. */
 export function byggKatalog(data: Katalogdata): Analyttkatalog {
   const fortolkninger = data.oppforinger.map(tilFortolkning)
-  const oppforinger = fortolkninger.flatMap(laboratorieanalytter)
+  const koder = new Map(data.oppforinger.flatMap((o) => o.koder.map((k) => [k.kode, k] as const)))
+  const oppforinger = fortolkninger.flatMap((f) => laboratorieanalytter(f, koder))
   const perKode = new Map(oppforinger.map((o) => [o.kode, o]))
   const perModul = new Map(fortolkninger.flatMap((f) => (f.modul ? [[f.modul.id, f] as const] : [])))
   return {
@@ -256,7 +286,22 @@ function oppforing(verdi: unknown): Katalogoppforing {
   if (!FORTOLKNINGSTYPER.includes(type)) throw new UgyldigKatalog(`${hva} har en ukjent type.`)
   const koder = liste(f.koder, `${hva}: kodene`).map((k) => {
     const kode = objekt(k, hva)
-    return { kode: tekst(kode, 'kode', hva), navn: tekst(kode, 'navn', hva) }
+    // Forbindelsen og datakortene kom til etter katalogen; et svar uten dem
+    // får den gamle koblingen (`medEldreDatakort`).
+    const forbindelse = kode.forbindelse ?? null
+    if (forbindelse !== null && (typeof forbindelse !== 'string' || !FORBINDELSESNOKKEL.test(forbindelse))) {
+      throw new UgyldigKatalog(`${hva}: forbindelsen er ugyldig.`)
+    }
+    const datakort = kode.datakort ?? null
+    if (datakort !== null && !DATAKORTBRUK.includes(datakort as Datakortbruk)) {
+      throw new UgyldigKatalog(`${hva}: datakortene er ugyldige.`)
+    }
+    return {
+      kode: tekst(kode, 'kode', hva),
+      navn: tekst(kode, 'navn', hva),
+      forbindelse,
+      datakort: datakort as Datakortbruk | null,
+    }
   })
   if (koder.length === 0) throw new UgyldigKatalog(`${hva} har ingen analyttkoder.`)
   const undertittel = f.undertittel ?? null
@@ -277,6 +322,35 @@ function oppforing(verdi: unknown): Katalogoppforing {
     aliaser: tekster(f, 'aliaser', hva),
     koder,
   }
+}
+
+/**
+ * Datakortene slik koblingen var før katalogen sa hvilke kort hver kode bruker:
+ * den første primære koden for et stoff fikk sidens egne kort, og de andre
+ * primære kortene med koden i `gjelder`. Bare for et svar fra en database der
+ * `*_analyttforbindelser_ous.sql` ikke er kjørt ennå. Der står koden fortsatt i
+ * `gjelder`, så `forbindelse` er her koden, ikke en nøkkel i
+ * forbindelsesregisteret. Appen og databasen rulles ut hver for seg, og
+ * referanseområdene skal ikke forsvinne i mellomtiden.
+ */
+function medEldreDatakort(oppforinger: Katalogoppforing[], koblinger: readonly Analyttkoblingsdata[]): Katalogoppforing[] {
+  const bruk = new Map<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>>()
+  const medEgne = new Set<string>()
+  for (const { kode, stoff, primar } of koblinger) {
+    if (!primar || bruk.has(kode)) continue
+    const egne = !medEgne.has(stoff)
+    medEgne.add(stoff)
+    bruk.set(kode, egne ? { forbindelse: null, datakort: 'egne' } : { forbindelse: kode, datakort: 'forbindelse' })
+  }
+  return oppforinger.map((o) => ({
+    ...o,
+    koder: o.koder.map((k) => ({ ...k, ...(bruk.get(k.kode) ?? { forbindelse: null, datakort: null }) })),
+  }))
+}
+
+/** Om svaret er fra før katalogen sa hvilke datakort kodene bruker. Oppføringene er alt lest (`oppforing`). */
+function utenDatakort(oppforinger: unknown[]): boolean {
+  return (oppforinger as Felt[]).every((o) => (o.koder as Felt[]).every((k) => !('datakort' in k)))
 }
 
 /**
@@ -304,10 +378,12 @@ export function lesKatalogdata(svar: unknown): Katalogdata {
       merknad,
     }
   })
+  const svarene = liste(f.oppforinger, 'Oppføringene')
+  const oppforinger = svarene.map(oppforing)
   return {
     fagmiljo: fagmiljo && { id: tekst(fagmiljo, 'id', 'Fagmiljøet'), navn: tekst(fagmiljo, 'navn', 'Fagmiljøet') },
     metoder,
-    oppforinger: liste(f.oppforinger, 'Oppføringene').map(oppforing),
+    oppforinger: utenDatakort(svarene) ? medEldreDatakort(oppforinger, koblinger) : oppforinger,
     koblinger,
   }
 }

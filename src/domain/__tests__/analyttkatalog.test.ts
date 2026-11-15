@@ -39,8 +39,19 @@ describe('laboratorieanalyttene', () => {
   })
 
   it('har ingen sideidentitet: ingen sidenavn, sidetittel eller kanonisk side', () => {
+    // Forbindelsen og datakortene kobler analysen til de felles kortene på
+    // fagsiden uten å gjøre analytten til en side.
     for (const o of katalog.oppforinger) {
-      expect(Object.keys(o).sort()).toEqual(['analysemetode', 'fortolkning', 'kategori', 'kode', 'komponenter', 'navn'])
+      expect(Object.keys(o).sort()).toEqual([
+        'analysemetode',
+        'datakort',
+        'forbindelse',
+        'fortolkning',
+        'kategori',
+        'kode',
+        'komponenter',
+        'navn',
+      ])
     }
   })
 
