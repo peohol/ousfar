@@ -5,21 +5,23 @@ import {
   useRettigheter,
   velgArbeidsfagmiljo,
   type Fagmiljoreferanse,
+  type Rettigheter,
 } from '../../auth/rettigheter'
 import { Menyskuff, Menyvalg } from '../toppmeny/Nedtrekksmeny'
 
 export interface ArbeidsfagmiljovalgProps {
   apen: boolean
   onVeksle: () => void
-  /** Velger fagmiljøet; som standard i databasen (`velgArbeidsfagmiljo`). */
-  velg?: (fagmiljo: string) => Promise<unknown>
+  /** Velger fagmiljøet og gir rettighetene etter byttet; som standard i databasen (`velgArbeidsfagmiljo`). */
+  velg?: (fagmiljo: string) => Promise<Rettigheter>
 }
 
 /**
  * «Fagmiljø» i kontomenyen, for den som er aktivt medlem av flere: hvilket av
  * dem appen fortolker med (arbeidsfagmiljøet). Valget lagres i databasen og
  * gjelder bare fortolkningen; lesing og deltakelse følger alle medlemskapene.
- * Med ett fagmiljø vises ingenting.
+ * Med ett fagmiljø vises ingenting, med mindre det ikke er det hen arbeider i
+ * (`kanVelgeArbeidsfagmiljo`).
  */
 export function Arbeidsfagmiljovalg({ apen, onVeksle, velg = velgArbeidsfagmiljo }: ArbeidsfagmiljovalgProps) {
   const rettigheter = useRettigheter()
@@ -34,8 +36,9 @@ export function Arbeidsfagmiljovalg({ apen, onVeksle, velg = velgArbeidsfagmiljo
     setBytter(f.id)
     setFeil(false)
     try {
-      await velg(f.id)
-      oppdater()
+      // Rettighetene byttet ga, tas i bruk med en gang, så appen aldri
+      // fortolker med det forrige fagmiljøet etter at serveren har byttet.
+      oppdater(await velg(f.id))
     } catch {
       setFeil(true)
     } finally {

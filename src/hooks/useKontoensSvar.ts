@@ -14,21 +14,27 @@ export function useKontoensSvar<T>(bruker: string, hent: () => Promise<T>, ingen
 
 /**
  * Som {@link useKontoensSvar}, med `sjekk` for å hente på nytt med en gang,
- * etter en endring den innloggede selv gjorde. `sjekk` har fast identitet.
+ * etter en endring den innloggede selv gjorde, og `sett` for å ta i bruk et
+ * svar endringen alt ga tilbake. Begge har fast identitet.
  */
-export function useKontoensSvarMedSjekk<T>(bruker: string, hent: () => Promise<T>, ingen: T): { verdi: T; sjekk: () => void } {
+export function useKontoensSvarMedSjekk<T>(
+  bruker: string,
+  hent: () => Promise<T>,
+  ingen: T,
+): { verdi: T; sjekk: () => void; sett: (verdi: T) => void } {
   const [svar, setSvar] = useState<{ bruker: string; verdi: T } | null>(null)
+  const sett = useCallback(
+    (verdi: T) =>
+      setSvar((forrige) =>
+        forrige !== null && forrige.bruker === bruker && JSON.stringify(forrige.verdi) === JSON.stringify(verdi)
+          ? forrige
+          : { bruker, verdi },
+      ),
+    [bruker],
+  )
   const sjekk = useCallback(() => {
-    hent().then(
-      (verdi) =>
-        setSvar((forrige) =>
-          forrige !== null && forrige.bruker === bruker && JSON.stringify(forrige.verdi) === JSON.stringify(verdi)
-            ? forrige
-            : { bruker, verdi },
-        ),
-      () => undefined,
-    )
-  }, [bruker, hent])
+    hent().then(sett, () => undefined)
+  }, [hent, sett])
   useJevnligSjekk(sjekk)
-  return { verdi: svar !== null && svar.bruker === bruker ? svar.verdi : ingen, sjekk }
+  return { verdi: svar !== null && svar.bruker === bruker ? svar.verdi : ingen, sjekk, sett }
 }

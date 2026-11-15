@@ -113,4 +113,25 @@ describe('velg_arbeidsfagmiljo', () => {
     expect((await feilFra(() => velg('systemarkitekt', 'B')))?.message).toMatch(/aktivt medlem/)
     expect(await arbeidsfagmiljo('systemarkitekt')).toBe(g.fagmiljo.A)
   })
+
+  // Sist, fordi den arkiverer B for resten av fila.
+  it('lar den som arbeidet i et fagmiljø som er arkivert, velge et av de andre', async () => {
+    await velg('dobbeltAB', 'B')
+    await db.exec(`
+      begin;
+      select set_config('ousfar.tilgangsgrunn', 'Test: B arkiveres', true);
+      update public.fagmiljoer set status = 'arkivert' where id = '${g.fagmiljo.B}';
+      commit;`)
+    const rettigheter = () =>
+      forste<{ arbeidsfagmiljo: { id: string } | null; mine_fagmiljoer: { id: string }[] }>(
+        'dobbeltAB',
+        'select public.mine_rettigheter()',
+      )
+    // Uten arbeidsfagmiljø, men med A å velge (appen viser da valget, `kanVelgeArbeidsfagmiljo`).
+    expect(await rettigheter()).toMatchObject({ arbeidsfagmiljo: null, mine_fagmiljoer: [{ id: g.fagmiljo.A }] })
+    // Det arkiverte kan ikke velges igjen.
+    expect((await feilFra(() => velg('dobbeltAB', 'B')))?.code).toBe('42501')
+    expect((await velg('dobbeltAB', 'A')).arbeidsfagmiljo?.id).toBe(g.fagmiljo.A)
+    expect(await arbeidsfagmiljo('dobbeltAB')).toBe(g.fagmiljo.A)
+  })
 })

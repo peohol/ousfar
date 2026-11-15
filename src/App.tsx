@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter, type Rettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
@@ -186,7 +186,7 @@ function Arbeidsflate({
   grupper,
 }: {
   rettigheter: Rettigheter
-  oppdaterRettigheter: () => void
+  oppdaterRettigheter: OppdaterRettigheter
   grupper: Gruppekilde
 }) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets

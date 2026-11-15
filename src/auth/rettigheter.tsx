@@ -11,7 +11,7 @@
  * jevnlig, så en endring slår gjennom uten ny innlogging. Et svar som feiler,
  * endrer ingenting; før det første svaret vises ingen rettigheter.
  */
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, type ReactNode } from 'react'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
 import { klient } from './klient'
 
@@ -98,24 +98,32 @@ export async function velgArbeidsfagmiljo(fagmiljo: string): Promise<Rettigheter
   return lesRettigheter(data)
 }
 
-/** Om den innloggede kan velge hvilket fagmiljø hen arbeider i. */
-export const kanVelgeArbeidsfagmiljo = (r: Rettigheter): boolean => r.mineFagmiljoer.length > 1
+/**
+ * Om den innloggede kan velge hvilket fagmiljø hen arbeider i: med flere å
+ * velge mellom, eller når det hen arbeider i, ikke lenger er blant dem (som
+ * når det er arkivert) og et annet kan velges.
+ */
+export const kanVelgeArbeidsfagmiljo = (r: Rettigheter): boolean =>
+  r.mineFagmiljoer.length > 1 ||
+  (r.mineFagmiljoer.length === 1 && r.mineFagmiljoer[0]!.id !== r.arbeidsfagmiljo?.id)
 
 /** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
   r.systemarkitekt || r.opprettBruker || r.administrerer.length > 0
 
 const Kontekst = createContext<Rettigheter>(INGEN_RETTIGHETER)
-const Oppdatering = createContext<() => void>(() => undefined)
+/** Tar i bruk `nye` rettigheter en endring alt ga tilbake, eller henter dem på nytt uten. */
+export type OppdaterRettigheter = (nye?: Rettigheter) => void
+const Oppdatering = createContext<OppdaterRettigheter>(() => undefined)
 
-/** Gir rettighetene videre, og `oppdater` for å hente dem på nytt etter en endring den innloggede selv gjorde. */
+/** Gir rettighetene videre, og `oppdater` for å ta i bruk eller hente nye etter en endring den innloggede selv gjorde. */
 export function RettigheterKilde({
   verdi,
   oppdater = () => undefined,
   children,
 }: {
   verdi: Rettigheter
-  oppdater?: () => void
+  oppdater?: OppdaterRettigheter
   children: ReactNode
 }) {
   return (
@@ -125,8 +133,8 @@ export function RettigheterKilde({
   )
 }
 
-/** Henter rettighetene på nytt med en gang (`RettigheterKilde`). */
-export function useOppdaterRettigheter(): () => void {
+/** Tar i bruk eller henter nye rettigheter med en gang (`RettigheterKilde`). */
+export function useOppdaterRettigheter(): OppdaterRettigheter {
   return useContext(Oppdatering)
 }
 
@@ -143,7 +151,8 @@ export function useRettigheter(): Rettigheter {
 export function useMineRettigheter(
   bruker: string,
   hent: () => Promise<Rettigheter> = hentMineRettigheter,
-): { rettigheter: Rettigheter; oppdater: () => void } {
-  const { verdi, sjekk } = useKontoensSvarMedSjekk(bruker, hent, INGEN_RETTIGHETER)
-  return { rettigheter: verdi, oppdater: sjekk }
+): { rettigheter: Rettigheter; oppdater: OppdaterRettigheter } {
+  const { verdi, sjekk, sett } = useKontoensSvarMedSjekk(bruker, hent, INGEN_RETTIGHETER)
+  const oppdater = useCallback<OppdaterRettigheter>((nye) => (nye ? sett(nye) : sjekk()), [sett, sjekk])
+  return { rettigheter: verdi, oppdater }
 }

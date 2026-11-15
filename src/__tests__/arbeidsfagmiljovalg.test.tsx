@@ -15,7 +15,7 @@ const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 
 
 afterEach(cleanup)
 
-function vis(rettigheter: Rettigheter, velg: (id: string) => Promise<unknown>, oppdater = vi.fn()) {
+function vis(rettigheter: Rettigheter, velg: (id: string) => Promise<Rettigheter>, oppdater = vi.fn()) {
   render(
     <RettigheterKilde verdi={rettigheter} oppdater={oppdater}>
       <ul>
@@ -32,8 +32,15 @@ describe('Arbeidsfagmiljovalg', () => {
     expect(screen.queryByText(/Fagmiljø:/)).toBeNull()
   })
 
+  it('vises når det eneste aktive fagmiljøet ikke er det hen arbeider i (som når det er arkivert)', () => {
+    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: null, mineFagmiljoer: [KF] }, vi.fn())
+    expect(screen.getByRole('button', { name: /Fagmiljø: ikke valgt/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'OUS Klinisk farmakologi' }).getAttribute('aria-current')).toBeNull()
+  })
+
   it('viser fagmiljøet hen arbeider i, og bytter til et annet og henter rettighetene på nytt', async () => {
-    const velg = vi.fn().mockResolvedValue(undefined)
+    const etter = { ...INGEN_RETTIGHETER, arbeidsfagmiljo: RT, mineFagmiljoer: [KF, RT] }
+    const velg = vi.fn().mockResolvedValue(etter)
     const oppdater = vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF, RT] }, velg)
     expect(screen.getByRole('button', { name: /Fagmiljø: OUS Klinisk farmakologi/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'OUS Klinisk farmakologi' }).getAttribute('aria-current')).toBe('true')
@@ -45,7 +52,8 @@ describe('Arbeidsfagmiljovalg', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'OUS Rettstoksikologi' }))
     expect(velg).toHaveBeenCalledWith('rt')
-    await waitFor(() => expect(oppdater).toHaveBeenCalledTimes(1))
+    // Rettighetene byttet ga, tas i bruk direkte, uten en ny henting som kunne feile.
+    await waitFor(() => expect(oppdater).toHaveBeenCalledWith(etter))
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
