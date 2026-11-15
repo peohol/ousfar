@@ -324,7 +324,9 @@ som `aktivt_medlemskap`) og funksjonene leser den. Moderering følger
 rettighetsmatrisen (P0 §5.2): de lokale administratorene på fagmiljøets egne
 sider, systemarkitektene på de felles; den gamle adminrollen gir ingenting her.
 Å styre en tråd (overskrift, flytting, arkiv) kan den som startet den, og en
-moderator.
+moderator. På en fortolkningsside har hvert fagmiljø sitt eget rom med egne
+kategorier, unike bare der, og modereringen følger trådens rom
+(`docs/diskusjoner.md`, «Rommene»; #395).
 
 **Idéene og de planlagte oppgavene** følger Peders beslutning D8
 (2026-11-14): idéene deles av alle med et aktivt medlemskap, uansett
@@ -1098,7 +1100,7 @@ analyse gjelder, er ikke en del av katalogen ennå.
 står åpen, kjører appen den ble lastet med. Derfor i to trinn, så ingen
 rekkefølge gjør at et referanseområde forsvinner:
 
-1. *Trinn 1 (1.133.2)* endrer ikke faginnholdet: kortet for
+1. *Trinn 1 (1.133.3)* endrer ikke faginnholdet: kortet for
    O-desmetyltramadol har fortsatt `OTRAM` i `gjelder`, så appen fra før
    finner det. Migrasjonen setter verdiene og lar `les_analyttkatalog()` gi
    dem, i én transaksjon. Den nye appen leser et kort med en kode i `gjelder`

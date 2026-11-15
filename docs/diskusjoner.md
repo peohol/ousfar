@@ -48,6 +48,29 @@ og en tråd i en gruppe blir i gruppen.
 Det gjelder også varslene (`docs/varsler.md`) og lenkene
 (`docs/direktelenker.md`).
 
+### Rommene
+
+Trådene og kategoriene på en side deles i **rom**: siden og fagmiljøet
+(`side`, `fagmiljo_id`; null for en felles side og for en gruppe, der siden
+alt bestemmer gruppen). På en felles side og i en gruppe er det ett rom. På en
+fortolkningsside har hvert fagmiljø sitt eget, som fortolkningen selv
+(P4b), og hvert rom er sitt eget sett med kategorier og tråder (#395):
+
+- Oversikten og tekstene til siden (`diskusjonsoversikt`, `diskusjonstekster`)
+  viser rommet den innloggede arbeider i (`public.diskusjonsrom`): på en
+  fortolkningsside arbeidskontekstens. Den som er med i flere fagmiljøer,
+  ser det andre rommet ved å bytte arbeidsfagmiljø; tråder der nås ellers
+  gjennom varsler og lenker.
+- Navn, emoji og plassene er unike og tettpakket i rommet, så to fagmiljøer
+  kan ha like kategorier, og ingenting i svarene røper hva et annet fagmiljø
+  har.
+- En tråd står bare i en kategori i sitt eget rom (`intern.kategori_i_rom`,
+  utløseren `diskusjoner_rom`). En kategori fra et annet rom avvises med samme
+  svar som en som ikke finnes.
+- Modereringen av en tråd følger rommet den står i (`intern.kan_moderere_rom`,
+  `public.kan_moderere_diskusjon`), ikke siden i arbeidskonteksten: en lokal
+  administrator i B som også er vanlig medlem i A, modererer ikke As tråder.
+
 ## Hvem som får gjøre hva
 
 - Alle som ser siden, lager tråder og kategorier, og endrer, flytter og løser
@@ -92,10 +115,11 @@ tabellene.
 
 ## Kategoriene
 
-Hver kategori har navn og én emoji, og begge er unike på siden (uten hensyn
-til store og små bokstaver i navnet). Reglene står både i databasen (unike
-indekser) og i `kategorinavnFeil`/`emojiFeil`, så skjemaet sier fra før
-lagring. En kategori slettes ikke når den blir tom.
+Hver kategori har navn og én emoji, og begge er unike i rommet (uten hensyn
+til store og små bokstaver i navnet; se «Rommene»). Reglene står både i
+databasen (unike indekser på `side, fagmiljo_id`, `nulls not distinct`) og i
+`kategorinavnFeil`/`emojiFeil` mot kategoriene oversikten viser, så skjemaet
+sier fra før lagring. En kategori slettes ikke når den blir tom.
 
 Å **løse opp** en kategori sletter den og legger trådene sist under
 «🫧 Ukategoriserte» (kategori null). Den vises bare når den har tråder, tar

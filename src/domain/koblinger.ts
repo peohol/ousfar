@@ -170,7 +170,7 @@ export function datakortnokkel(analytt: Datakortanalytt | undefined): string | n
  * Forbindelsen et datakort gjelder (`gjelder` på kortet), også for et kort som
  * fra før har en analyttkode der: det regnes som kortet for forbindelsen koden
  * måler, etter katalogen. Overgangen varer til kortene er skrevet om, når appen
- * før 1.133.2 ikke er i bruk lenger (#405, `docs/fagmiljoer.md`,
+ * før 1.133.3 ikke er i bruk lenger (#405, `docs/fagmiljoer.md`,
  * «Overgangen»); fram til da finner den gamle appen kortet med koden.
  */
 export function kortetsForbindelse(
