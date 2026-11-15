@@ -607,6 +607,8 @@ systemarkitekter.
 
 Kontrollen av S2 står i `docs/s2-kontrollrapport.md` (15.11.2026); porten er
 ikke passert før Peder har godkjent åpningsmigrasjonen.
+Planen for S4, med tiltak, akseptkriterier og de gjenstående beslutningene
+fra D5, D7 og B9, står i `docs/s4-pilotplan.md`.
 
 ### 6.4 Testspesifikasjon (A)
 
