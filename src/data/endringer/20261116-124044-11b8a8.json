@@ -1,0 +1,13 @@
+{
+  "id": "20261116-124044-11b8a8",
+  "semver": "patch",
+  "opprettet": "2026-11-16T12:40:44Z",
+  "sammendrag": "Grunnlaget for redaktører og endringsforslag er lagt",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Databasen vet nå hvilken fagside eller hvilket regelsett et kort eller en kommentar hører til, og hvem som skal behandle forslag til dem. Det er grunnlaget for at brukerne snart kan foreslå endringer og redaktører behandle dem.",
+    "Ingenting endres for brukerne ennå."
+  ],
+  "utenVarsel": true
+}

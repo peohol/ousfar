@@ -107,6 +107,9 @@ export const REKKEVIDDEHJELPERE = [
   'arbeidsfagmiljo',
   // P6: trådene og varslene med gruppen (supabase/migrations/*_grupper.sql).
   'kan_lese_samhandling',
+  // P5: hvem som behandler forslag til en ressurs (supabase/migrations/*_p5_ressurser.sql).
+  'kan_behandle_forslag',
+  'har_ressursmyndighet',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
