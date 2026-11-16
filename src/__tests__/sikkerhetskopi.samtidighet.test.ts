@@ -19,7 +19,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { Stopp, holdOyeblikksbilde, kjorDumpskript, medOyeblikksbilde, sporring } from '../drift/sikkerhetskopi/kopi'
-import { psql, SERVER, url } from './hjelp/ektepostgres'
+import { psql, SERVER, url, slettDatabaser } from './hjelp/ektepostgres'
 
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 const tall = (db: string, sql: string) => Number(psql(db, sql))
@@ -60,7 +60,7 @@ describe.skipIf(!SERVER)('kopipunktet ved samtidig skriving (ekte Postgres)', ()
     if (forrigeBilde === undefined) delete process.env.KOPI_PG_BILDE
     else process.env.KOPI_PG_BILDE = forrigeBilde
     rmSync(mappe, { recursive: true, force: true })
-    for (const db of [kilde, mal]) psql('postgres', `drop database if exists ${db} with (force);`)
+    slettDatabaser([mal, kilde])
   })
 
   it('gir nøyaktig radene i øyeblikksbildet, selv om skrivingen fortsetter under kopien', async () => {

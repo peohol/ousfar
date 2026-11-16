@@ -21,7 +21,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
-import { Okt, psql, SERVER } from './hjelp/ektepostgres'
+import { Okt, psql, SERVER, slettDatabaser } from './hjelp/ektepostgres'
 import { startportSql } from '../faginnhold/migrasjonshistorikk'
 import { strukturskript } from './hjelp/migrasjonskjoring'
 
@@ -111,7 +111,7 @@ describe.skipIf(!SERVER)('samtidig opprettelse av brukere i et fagmiljø (ekte P
   }, 120_000)
 
   afterAll(() => {
-    for (const db of databaser.reverse()) psql('postgres', `drop database if exists ${db} with (force);`)
+    slettDatabaser(databaser)
   })
 
   /** En ny database fra malen, for ett tilfelle. */
