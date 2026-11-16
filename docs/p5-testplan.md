@@ -103,7 +103,7 @@ testmiljøet (D3). Kolonnen «Ventet» er det brukeren skal oppleve.
 | BF-R7 | «Åpne utkastet» | Den vanlige redigeringen av `RA1`; lagring virker; ingen publiseringsknapp |
 | BF-R8 | Lagrer endringen og «Marker som innarbeidet» | Revisjonen utkastet står på er forhåndsvalgt; status «Innarbeidet»; forslagsstilleren får varsel |
 | BF-R9 | Et forslag der `RA1` er publisert på nytt etter at forslaget ble skrevet | Konfliktvisningen: revisjonen forslaget bygger på, den publiserte nå, om utkastet har upubliserte endringer, og lenke til historikken |
-| BF-R10 | Prøver å åpne redigeringen av `RA2` eller et forslag til `RA2` (direkte adresse) | Samme svar som for noe som ikke finnes |
+| BF-R10 | Prøver å lagre `RA2`, som redaktøren kan lese, men ikke redigere; og åpner et forslag til `RA2` med direkte adresse | Lagringen avvises som manglende rett (`42501`, en forståelig melding); forslaget, som redaktøren ikke kan se, gir samme svar som et som ikke finnes (`PT404`) |
 | BF-R11 | Redaktøransvaret tilbakekalles mens fanen står åpen | Neste handling avvises med en forståelig melding; fanen forsvinner ved neste lasting |
 
 ### Lokal administrator (BF-L)
@@ -135,7 +135,7 @@ de andre (`navn`, `person`, `etappe`, `idag`, `mal`, `prov`). Hver rad kjøres i
 en transaksjon som rulles tilbake. Når en rad er ventet avvist, prøves også at
 feilkoden er den kontrakten sier (avsnitt 1).
 
-Forkortelser: **V** = forventet tilgang, **–** = forventet avvist.
+Forkortelser: **V** = forventet tilgang, **–** = forventet avvist. Er koden ikke oppgitt, følger den regelen i avsnitt 1: `PT404` for det personen ikke kan lese, ellers `42501`.
 
 ### 3.1 Foreslå og følge (tråd B)
 
@@ -209,11 +209,11 @@ revisjonen av `RA1` uendret (avsnitt 7, REG-P1).
 | Fagsidene, eller `F` som ressurs | `adminA` | – (42501) |
 | Fagsidene, eller `F` som ressurs (bryteren av) | `systemarkitekt` | – (42501) |
 | Fagsidene (bryteren slått på i testen) | `systemarkitekt` | V |
-| Det samme ansvaret en gang til mens det første er aktivt | `adminA` | – (ett aktivt) |
+| Det samme ansvaret en gang til mens det første er aktivt | `adminA` | V, uten virkning: samme ID tilbake, fortsatt ett aktivt ansvar og ingen ny rad |
 
 `tilbakekall_redaktoransvar` på ansvaret til `redaktorFortolkningA`: `adminA`
 og `systemarkitekt` V; `adminB` – (PT404); `redaktorFortolkningA` og
-`vanligA` –; et ansvar som alt er tilbakekalt `PT409`.
+`vanligA` –. Et ansvar som alt er tilbakekalt, kan tilbakekalles igjen uten feil og uten endring (tidspunktet og hvem som tilbakekalte, står som før).
 
 Lesingen:
 
@@ -231,14 +231,14 @@ Lesingen:
 | --- | --- | --- |
 | Lese utkastet til `RA1` (`kan_se_utkast`, `les_kommentarer('utkast')`) | V | V |
 | Lagre `RA1` med en ny kommentar regelsettet tar i bruk | V | V |
-| Lagre `RA2` | – | V |
+| Lagre `RA2` | – (42501) | V |
 | Lagre `RA1.kommentar` | V | V |
-| Lagre `delt.kommentar`, som også `RA2` bruker | – (se under) | V |
+| Lagre `delt.kommentar`, som også `RA2` bruker | – (42501, se under) | V |
 | Lagre `RA1` slik at det tar i bruk `delt.kommentar` uendret | V | V |
-| Lagre en lokal kommentar i A som ikke hører til `RA1` | – | V |
+| Lagre en lokal kommentar i A som ikke hører til `RA1` | – (42501) | V |
 | Lagre `RB` eller en kommentar i B | – (PT404) | – (PT404) |
-| Lagre utkastet til `F` eller `F.kort` | – | – |
-| `publiser_utkast` på noe | – | – |
+| Lagre utkastet til `F` eller `F.kort` | – (42501) | – (42501) |
+| `publiser_utkast` på noe | – (42501) | – (42501) |
 | `gjenopprett_revisjon` på `RA1` | Som lagring (V), aldri publisering | V |
 | Opprette en fagside eller en referanse; `slett_referanse` | – | – |
 
