@@ -350,6 +350,20 @@ som ikke administrerer noe. `ressursens_redaktoransvar` viser redaktørene for
 ikke kan lese, gir `PT404`. `mine_redaktoransvar` viser egne ansvar, og
 `mine_rettigheter` har `redaktor` og `behandler_forslag`.
 
+**Skjermbildene.** «Redaktører» i administrasjonsmenyen
+(`src/components/konto/Redaktorer.tsx`), for de lokale administratorene og
+systemarkitektene: redaktørene i fagmiljøet, «Gi redaktøransvar» (et aktivt
+medlem, hele fortolkningen eller ett regelsett, valgfri merknad), «Ta tilbake»
+etter en bekreftelse, og regelsettene uten redaktør. Systemarkitektene ser i
+tillegg det nasjonale valget, avslått med forklaringen til B2 er slått på.
+«Mitt redaktøransvar» i kontomenyen viser en redaktør hva hen har ansvar for.
+Redigeringen av fortolkningen vises for en redaktør for fortolkningen og, for
+en redaktør for ett regelsett, bare for kodene i det
+(`src/faginnhold/redigeringsrett.ts`); en redaktør har ingen «Publiser», bare
+beskjeden om at en administrator publiserer. Redigeringen viser hvem som er
+redaktør for regelsettene (`Redaktorlinje`). Fagsidene får det samme når
+nasjonale redaktører slås på.
+
 **Ytelsen.** Målt med
 `MAAL_REKKEVIDDE=1 MAAL_ENDRING=_redaktoransvar.sql npx vitest run src/__tests__/ytelse/rekkeviddeytelse.test.ts`
 (16.11.2026, median av 5 kall): ingen av kallene ble merkbart tregere

@@ -8,8 +8,9 @@ import type { Analyte } from '../../types'
 import { Button } from '../Button'
 import { SeksjonsstyringKilde, useAdressested } from '../seksjoner/Seksjonsstyring'
 import { Redigeringskilde, type Redigeringsverdi } from '../stoffside/Redigeringskontekst'
-import { Redigeringshandlinger } from '../stoffside/Redigeringslinje'
+import { PUBLISERES_AV_ADMINISTRATOR, Redigeringshandlinger } from '../stoffside/Redigeringslinje'
 import { Fortolkningsregler, FORTOLKNING } from './Fortolkningsregler'
+import { Redaktorlinje } from './Redaktorlinje'
 import { Scenarioregler, useScenarioreglerFor } from './Scenarioregler'
 import { Thcregler } from './Thcregler'
 import { harRegler, useFortolkningsredigering, type Fortolkningsredigering as Redigering } from './useFortolkningsredigering'
@@ -21,6 +22,8 @@ export interface FortolkningsredigeringProps {
   sted?: readonly string[]
   /** Laboratorieanalyttene, så reglene for hver kode i modulen kan leses. */
   katalog: Analyttkatalog
+  /** Om den innloggede publiserer selv; en redaktør endrer bare utkastet (P5). */
+  kanPublisere?: boolean
   /** Etter en publisering, så fortolkningen henter de nye reglene. */
   onPublisert: () => void
   /** Tilbake til fortolkningen. */
@@ -58,7 +61,7 @@ export function Fortolkningsredigering(props: FortolkningsredigeringProps) {
   )
 }
 
-function Innhold({ fortolkning, sted, katalog, onPublisert, onAvslutt }: FortolkningsredigeringProps) {
+function Innhold({ fortolkning, sted, katalog, kanPublisere = true, onPublisert, onAvslutt }: FortolkningsredigeringProps) {
   useLukkMedEscape(onAvslutt)
   const pekerPaaSted = useAdressested(sted)
   const overskrift = useId()
@@ -103,6 +106,15 @@ function Innhold({ fortolkning, sted, katalog, onPublisert, onAvslutt }: Fortolk
   )
   // Én del står åpen med en gang; flere har hver sin tittel og adresse på siden.
   const ene = deler.length === 1
+  // Regelsettene på siden, for å vise hvem som er redaktør for dem.
+  const ressurser = useMemo(
+    () => [
+      ...Object.values(regler.regelsett).map((r) => r.regelsett.id),
+      ...Object.values(regler.scenarioregelsett).map((r) => r.regelsett.id),
+      ...(regler.thcregelsett ? [regler.thcregelsett.regelsett.id] : []),
+    ],
+    [regler],
+  )
 
   return (
     <section className="stoffside fortolkningsredigering" aria-labelledby={overskrift}>
@@ -111,6 +123,7 @@ function Innhold({ fortolkning, sted, katalog, onPublisert, onAvslutt }: Fortolk
         publisert={publisert}
         plan={plan}
         laster={!kanEndres}
+        kanPublisere={kanPublisere}
         onPubliser={async (oppsummering) => {
           await redigering.publiser(oppsummering)
           onPublisert()
@@ -125,8 +138,9 @@ function Innhold({ fortolkning, sted, katalog, onPublisert, onAvslutt }: Fortolk
         </h1>
         <p className="regler__ingress">
           Velg reglene eller kommentarene du vil endre. Endringene lagres som utkast og gjelder i fortolkningen først
-          når de er publisert.
+          når de er publisert.{!kanPublisere && ` ${PUBLISERES_AV_ADMINISTRATOR}`}
         </p>
+        <Redaktorlinje ressurser={ressurser} />
       </header>
 
       {konflikt && (
