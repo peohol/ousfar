@@ -3,6 +3,7 @@
  * (`docs/kurateringsko.md`, «Kurateringsgrenene»). Køen kaller med et
  * OIDC-token GitHub utsteder for kjøringen, så ingen hemmelighet lagres.
  */
+import { jobbgrenI } from '../kuratorjobb/rydding'
 import { GRENSTATUSER, type Greninfo } from './modell'
 
 type Miljo = Record<string, string | undefined>
@@ -43,6 +44,8 @@ function lesGren(v: unknown): Greninfo | null {
     publisert_kl: typeof g.publisert_kl === 'string' ? g.publisert_kl : null,
     // Bare nøkler; noe annet enn en liste med tekster gir ingen utsatte punkter.
     utsatte: Array.isArray(g.utsatte) ? g.utsatte.filter((n): n is string => typeof n === 'string' && n.trim() !== '') : [],
+    // Bare gyldige navn på jobbgrener; resten av teksten i evidensjournalen tas aldri med.
+    ...(Array.isArray(g.kuratorjobber) ? { kuratorjobber: [...new Set(g.kuratorjobber.map(jobbgrenI).filter((n): n is string => n !== null))] } : {}),
   }
 }
 

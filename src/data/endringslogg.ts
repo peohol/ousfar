@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.134.5',
+    dato: '2026-11-16',
+    sammendrag: 'Ferdige kuratorjobber ryddes nå bort automatisk',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Den daglige oppryddingen av kuratorjobbene i GitHub ser nå på kurateringene i OUSFAR for å avgjøre om en jobb er ferdig brukt, og ikke på kurateringskøen, som ikke visste om de fleste kurateringene. Derfor ble nesten ingen jobber ryddet før.',
+      'En jobb beholdes så lenge en kuratering av stoffet pågår eller viser til den, og ryddes når stoffet er publisert etter jobben. Jobber som feilet, ble avbrutt eller aldri ble brukt, ryddes også etter en frist.',
+      'Hver kjøring viser hvilke jobber som er ryddet og hvilke som er beholdt, med grunnen, og advarer hvis noen blir liggende lenge.',
+      'Appen er uendret.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.3',
     dato: '2026-11-15',
     sammendrag: 'Strengere regel for nye passord, og en påminnelse om pasientopplysninger der man skriver sammen',
