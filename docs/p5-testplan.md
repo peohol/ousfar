@@ -153,7 +153,7 @@ Forkortelser: **V** = forventet tilgang, **–** = forventet avvist.
 
 Manipulerte og ugyldige verdier, som `vanligA` (alle avvist):
 
-- ressursen er et kort, en kommentar eller en referanse, ikke en ressurs (`22023`);
+- ressursen er et kort, en kommentar eller en referanse, ikke en ressurs (`PT404`, som en ressurs som ikke finnes);
 - `Rutkast`, som ikke er publisert;
 - elementet `RB.kommentar` med ressursen `RA1` (elementet hører til en annen
   ressurs; svaret skal ikke røpe at `RB.kommentar` finnes);
