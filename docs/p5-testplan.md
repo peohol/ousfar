@@ -82,7 +82,7 @@ testmiljøet (D3). Kolonnen «Ventet» er det brukeren skal oppleve.
 | BF-V3 | Åpner fortolkningen for en analytt, visningen av reglene | «Foreslå endring» ved regelsettet og ved hver kommentar |
 | BF-V4 | Fyller ut forslaget, begrunnelsen og to kilder (en lenke, en referanse) og sender | Kvittering med lenke til forslaget; status «Ny» |
 | BF-V5 | Sender med tomt forslag, tom begrunnelse, for lang tekst eller en `http://`-lenke | Sendes ikke; feilen står ved feltet, på norsk |
-| BF-V6 | Skriver halvveis, oppdaterer siden (eller appen oppdateres) | Utkastet til forslaget står der det stod (`useBevart`) |
+| BF-V6 | Skriver halvveis, og appen oppdateres til en ny versjon | Utkastet til forslaget står der det stod (`useBevart`; en vanlig omlasting av siden bevarer ikke, etter `docs/oppdatering.md`) |
 | BF-V7 | Åpner «Mine forslag» fra kontomenyen | Egne forslag, nyeste først, med status i tekst |
 | BF-V8 | Behandleren ber om presisering; brukeren får varsel, åpner forslaget og svarer | Status tilbake til «Under behandling»; svaret står i tidslinjen |
 | BF-V9 | Trekker forslaget mens det er «Ny», «Under behandling» eller «Venter på deg» | Status «Trukket»; ingen «Trekk tilbake» etter godkjenning eller avvisning |
@@ -397,3 +397,10 @@ Fylles ut i D3, på integrert kode.
 | Samtidighet (avsnitt 4) | — | — |
 | Tilgjengelighet og mobil (avsnitt 5) | — | — |
 | Regresjon (avsnitt 7) | — | — |
+
+**Tidlig kontroll av del B (16.11.2026).** Forslagsstillerens flyt (BF-V1–V5,
+V7, V9, V11, tastatur og en annen brukers direkte adresse) er prøvd i det
+lokale testmiljøet på tråd Bs databasedel og brukerflate før PR-en for
+brukerflaten. Flyten virker. Fem funn er sendt til tråd B: fokus forsvinner
+etter innsendingen, ingen inngang for hele fagsiden, ikonet kan forveksles med
+diskusjonene, og to mindre om skjermleser. Sluttkontrollen prøver dem på nytt.
