@@ -217,9 +217,9 @@ kan utvides av eieren med standardverdier.
 
 | Funksjon | Eier | Hva |
 | --- | --- | --- |
-| `public.tildel_redaktoransvar(bruker, omrade, ressurs default null, fagmiljo default null, merknad default null) → uuid` | A | Gir ansvar etter myndigheten. Nasjonalt avvises (42501) til B2 er slått på |
-| `public.tilbakekall_redaktoransvar(ansvar) → void` | A | Avslutter ansvaret |
-| `public.les_redaktoransvar(fagmiljo default null) → jsonb` | A | Oversikten for den som tildeler: ansvarene og ressursene uten ansvarlig redaktør, innenfor egen myndighet |
+| `public.tildel_redaktoransvar(bruker, omrade, ressurs default null, fagmiljo default null, merknad default null) → uuid` | A | Gir ansvar etter myndigheten. Nasjonalt avvises (42501) til B2 er slått på. Idempotent: det samme aktive ansvaret igjen gir samme id |
+| `public.tilbakekall_redaktoransvar(ansvar) → void` | A | Avslutter ansvaret. Idempotent: et ansvar som alt er tilbakekalt, kan tilbakekalles igjen uten feil og uten endring |
+| `public.les_redaktoransvar(fagmiljo default null) → jsonb` | A | Oversikten for den som tildeler: ansvarene og `ressurser` (alle ressursene innenfor egen myndighet, med `har_redaktor` og `analyttkoder`) |
 | `public.mine_redaktoransvar() → jsonb` | A | Den innloggedes egne ansvar, med ressursbeskrivelsene |
 | `public.ressursens_redaktoransvar(ressurs) → jsonb` | A | Redaktørene for én ressurs, for dem som kan behandle forslag til den eller administrere den |
 | `public.mine_rettigheter()` | A | Får `redaktor` (har aktivt ansvar) og `behandler_forslag` (kan behandle forslag til noe) |
