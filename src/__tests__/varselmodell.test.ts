@@ -22,6 +22,10 @@ import {
   favorittside,
   favorittsted,
   idetekst,
+  erForslagsvarsel,
+  forslagstekst,
+  ressurstekst,
+  varselforslag,
   lesEndringsloggstatus,
   lesVarselliste,
   lesVarselvalg,
@@ -31,6 +35,7 @@ import {
   objekttekst,
   samleVarsler,
   startstatus,
+  VARSELKATEGORIER,
   type Databasevarsel,
 } from '../varsler/modell'
 
@@ -70,10 +75,20 @@ describe('kategoriene og valgene', () => {
 
   it('grupperer kategoriene etter hva de gjelder, hver kategori i én gruppe', () => {
     const grupper = kategorierIGrupper()
-    expect(grupper.map((g) => g.gruppe)).toEqual(['fortolkning', 'ideer', 'diskusjoner', 'favoritter', 'appen'])
+    expect(grupper.map((g) => g.gruppe)).toEqual(['fortolkning', 'ideer', 'diskusjoner', 'forslag', 'favoritter', 'appen'])
     expect(grupper.flatMap((g) => g.kategorier).sort()).toEqual([...KATEGORIREKKEFOLGE].sort())
     expect(grupper.find((g) => g.gruppe === 'ideer')!.kategorier).toEqual(['mine_ideer', 'aktive_ideer', 'nye_ideer'])
     expect(grupper.find((g) => g.gruppe === 'favoritter')!.kategorier).toEqual(['favoritter', 'favorittdiskusjoner'])
+    expect(grupper.find((g) => g.gruppe === 'forslag')!.kategorier).toEqual(['mine_forslag', 'forslag_til_behandling'])
+  })
+
+  it('viser kategorien for forslag til behandling bare for behandlerne', () => {
+    const forslag = (behandler: boolean) => kategorierIGrupper(behandler).find((g) => g.gruppe === 'forslag')!.kategorier
+    expect(forslag(true)).toEqual(['mine_forslag', 'forslag_til_behandling'])
+    expect(forslag(false)).toEqual(['mine_forslag'])
+    expect(VARSELKATEGORIER.mine_forslag.obligatorisk).toBe(true)
+    expect(erValgt('forslag_til_behandling', {})).toBe(true)
+    expect(erValgt('forslag_til_behandling', { forslag_til_behandling: false })).toBe(false)
   })
 
   it('holder de obligatoriske på, og bruker standarden til brukeren har valgt', () => {
@@ -346,5 +361,52 @@ describe('tekstene for diskusjonene', () => {
     expect(erValgt('aktive_diskusjoner', {})).toBe(true)
     expect(erValgt('favorittdiskusjoner', {})).toBe(false)
     expect(erValgt('favorittdiskusjoner', { favorittdiskusjoner: true })).toBe(true)
+  })
+})
+
+describe('endringsforslagene', () => {
+  const lest = (hendelser: unknown[], kategori = 'mine_forslag') =>
+    lesVarselliste({ lest_kl: 'x', varsler: [{ id: 'f1', kategori, hendelser, oppdatert_kl: 'x', lest_kl: null }] }).varsler[0]!
+  const citalopram = { id: 'f', ressurs: { type: 'infoside', navn: 'Citalopram', analyttkode: null } }
+
+  it('leser forslaget og hva som skjedde, og hopper over et forslag med feil form', () => {
+    const varsel = lest([
+      { kl: 'x', av: 'ola', art: 'tatt', forslag: citalopram },
+      { kl: 'x', av: 'ola', art: 'godkjent', forslag: { id: 'f' } },
+    ])
+    expect(erForslagsvarsel(varsel)).toBe(true)
+    expect(varsel.hendelser.map((h) => [h.art, h.forslag?.id])).toEqual([
+      ['tatt', 'f'],
+      ['godkjent', undefined],
+    ])
+    expect(varselforslag(varsel)).toEqual(citalopram)
+    expect(erForslagsvarsel(lest([{ kl: 'x', av: 'ola' }], 'mine_ideer'))).toBe(false)
+  })
+
+  it('sier det siste som skjedde, med dem som gjorde det', () => {
+    const mitt = lest([
+      { kl: 'x', av: 'ola', art: 'tatt', forslag: citalopram },
+      { kl: 'x', av: 'ola', art: 'presisering_bedt', forslag: citalopram },
+    ])
+    if (!erForslagsvarsel(mitt)) throw new Error('ikke et forslagsvarsel')
+    expect(forslagstekst(mitt, navn)).toBe('Ola ber om en presisering av forslaget ditt')
+    const nytt = lest(
+      [
+        { kl: 'x', av: 'ola', art: 'opprettet', forslag: citalopram },
+        { kl: 'x', av: 'per', art: 'opprettet', forslag: citalopram },
+      ],
+      'forslag_til_behandling',
+    )
+    if (!erForslagsvarsel(nytt)) throw new Error('ikke et forslagsvarsel')
+    expect(forslagstekst(nytt, navn)).toBe('Per og Ola foreslo en endring')
+    const ukjent = lest([{ kl: 'x', av: 'ola', art: 'noe_nytt', forslag: citalopram }])
+    if (!erForslagsvarsel(ukjent)) throw new Error('ikke et forslagsvarsel')
+    expect(forslagstekst(ukjent, navn)).toBe('Ola oppdaterte et forslag')
+  })
+
+  it('navngir fagsiden eller regelsettet', () => {
+    expect(ressurstekst(citalopram.ressurs)).toBe('Citalopram')
+    expect(ressurstekst({ type: 'intervallregelsett', navn: 'AMIS', analyttkode: 'AMIS' })).toBe('Reglene for AMIS')
+    expect(ressurstekst({ type: 'thc_regelsett', navn: null, analyttkode: 'THC' })).toBe('Reglene for THC')
   })
 })
