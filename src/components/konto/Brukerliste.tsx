@@ -27,6 +27,7 @@ import { Modallag } from '../Modallag'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Avatar } from './Avatar'
 import { Bekreftelseskort } from './Bekreftelseskort'
+import { etterNavn, grupperEtterRolle } from './brukerroller'
 import { Felt } from './Felt'
 
 /** Skjemaet som står åpent øverst i lista. */
@@ -66,9 +67,9 @@ const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message :
  *
  * Den innloggede velger et av fagmiljøene hen administrerer
  * (`useRettigheter().administrerer`; en systemarkitekt har alle) og ser
- * medlemmene der, og de tidligere medlemmene for seg. Hver rad viser hvem det
- * er og ett merke for hva de er (systemarkitekt, administrator eller bruker),
- * med statusene ved siden av. Handlingene står i en meny på raden, og bare de
+ * medlemmene der, gruppert etter rolle (systemarkitekter, administratorer og
+ * brukere, se `brukerroller.ts`) og alfabetisk i hver gruppe, og de tidligere
+ * medlemmene for seg. Hver rad viser hvem det er, med statusene ved siden av. Handlingene står i en meny på raden, og bare de
  * databasen tillater (`hentMedlemsoversikt`): nytt midlertidig passord, gjøre
  * til eller fjerne som administrator i fagmiljøet, for systemarkitektene
  * tilgangen til verktøyene (den gamle adminrollen, som er uavhengig av
@@ -123,6 +124,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const [bekreft, setBekreft] = useState<Bekreftelse | null>(null)
   const lenker = useAvatarlenker(medlemmer)
   const velgerId = useId()
+  const gruppeId = useId()
 
   /**
    * Henter medlemmene i fagmiljøet. Svaret brukes bare om det er svaret på
@@ -350,17 +352,6 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         </span>
 
         <span className="brukerrad__merker">
-          {medlem.systemarkitekt ? (
-            <Merke tone="aksent" ikon={<Ikon navn="shield" />}>
-              Systemarkitekt
-            </Merke>
-          ) : medlem.administrator ? (
-            <Merke tone="aksent" ikon={<Ikon navn="shield" />}>
-              Administrator
-            </Merke>
-          ) : (
-            <Merke>Bruker</Merke>
-          )}
           {medlem.rolle === 'admin' && <Merke ikon={<Ikon navn="verktoy" />}>Verktøy</Merke>}
           {medlem.status === 'invitert' && <Merke>Invitert</Merke>}
           {medlem.sperret && <Merke tone="toksisk">Sperret</Merke>}
@@ -416,7 +407,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     <Modallag
       apen={apen}
       tittel="Brukere"
-      ikon="shield"
+      ikon="user"
       bred
       onLukk={onLukk}
       undertittel={valgt && fagmiljoer.length === 1 ? valgt.navn : undefined}
@@ -541,14 +532,36 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         laster && <p className="brukerliste__tomt">Henter medlemmene …</p>
       ) : (
         <>
-          <ul className="brukerliste brukerliste--menyer" aria-label={`Medlemmer i ${listensFagmiljo.navn}`}>
-            {gjeldende.map(rad(listensFagmiljo))}
-          </ul>
+          <div className="rollegrupper">
+            {grupperEtterRolle(gjeldende).map(({ definisjon: d, medlemmer: iGruppen }) => (
+              <section
+                key={d.rolle}
+                className="rollegruppe"
+                data-rolle={d.rolle}
+                data-ih
+                aria-labelledby={`${gruppeId}-${d.rolle}`}
+              >
+                <div className="rollegruppe__hode">
+                  <span className="rollegruppe__ikon">
+                    <Ikon navn={d.ikon} storrelse="underpunkt" />
+                  </span>
+                  <h3 id={`${gruppeId}-${d.rolle}`} className="rollegruppe__tittel">
+                    {d.tittel}
+                    <span className="rollegruppe__antall">{iGruppen.length}</span>
+                  </h3>
+                  <p className="rollegruppe__forklaring">{d.forklaring(listensFagmiljo.navn)}</p>
+                </div>
+                <ul className="brukerliste brukerliste--menyer" aria-label={`${d.tittel} i ${listensFagmiljo.navn}`}>
+                  {iGruppen.map(rad(listensFagmiljo))}
+                </ul>
+              </section>
+            ))}
+          </div>
           {tidligere.length > 0 && (
             <>
               <h3 className="brukerliste__overskrift">Tidligere medlemmer</h3>
               <ul className="brukerliste brukerliste--menyer" aria-label={`Tidligere medlemmer i ${listensFagmiljo.navn}`}>
-                {tidligere.map(rad(listensFagmiljo))}
+                {etterNavn(tidligere).map(rad(listensFagmiljo))}
               </ul>
             </>
           )}
