@@ -553,10 +553,12 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
 | A1 Redaktøransvar i databasen | [#421](https://github.com/peohol/ousfar/pull/421) | Slått sammen |
-| A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Til kontroll |
-| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
-| B2 Foreslå endring i appen | — | Under arbeid |
-| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C3 Brukerflaten for behandlerne | — | Ferdig, venter på B2 |
+| A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Slått sammen |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
+| B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
+| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
+| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
+| C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Til kontroll |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |
+| D2 Krysstestene på tvers av trådene | [#426](https://github.com/peohol/ousfar/pull/426) | Til kontroll |
+| D3 Sluttkontrollen i nettleseren | — | Venter på B2 og C3 |
