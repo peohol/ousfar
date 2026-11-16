@@ -286,14 +286,14 @@ hvert scenario stemmer statusen med den siste hendelsen i tidslinjen.
 
 | # | Scenario | Ventet |
 | --- | --- | --- |
-| SAM-1 | To behandlere tar samme forslag | Den ene får det, den andre `PT409`; én hendelse `tatt` |
+| SAM-1 | To behandlere tar samme nye forslag | Den andre venter på låsen og tar så forslaget over, slik en annen behandler kan ta over et forslag: status `under_behandling`, to hendelser `tatt`, og behandleren er den som tok det sist. Vedtakene serialiseres som i SAM-2 |
 | SAM-2 | Den ene godkjenner, den andre avviser | Ett vedtak; den andre `PT409` |
 | SAM-3 | Behandleren godkjenner mens forslagsstilleren trekker | Én av dem lykkes; aldri både `godkjent` og `trukket` |
-| SAM-4 | Forslagsstilleren svarer mens behandleren avviser | Én av dem lykkes; tidslinjen og statusen stemmer |
+| SAM-4 | Forslagsstilleren svarer mens behandleren avviser | Kommer svaret først, er forslaget under behandling igjen og avvisningen lykkes etterpå; kommer avvisningen først, avvises svaret (`PT409`). Statusen er `avvist` i begge rekkefølger, og tidslinjen stemmer |
 | SAM-5 | `RA1` publiseres på nytt mens forslaget behandles | `les_forslag` viser konflikten etterpå; ingenting skrives over |
 | SAM-6 | To redaktører lagrer samme utkast mot samme revisjon | Den andre `PT409` (den vanlige konfliktkontrollen, nå også for redaktører) |
-| SAM-7 | To administratorer gir samme ansvar samtidig | Ett aktivt ansvar; den andre får en forståelig avvisning, ikke en ubehandlet feil |
-| SAM-8 | Ansvaret tilbakekalles mens redaktøren lagrer | Lagringen er enten ferdig før tilbakekallingen, eller avvist etter; aldri lagret etter |
+| SAM-7 | To administratorer gir samme ansvar samtidig | Den andre venter på låsen og får samme ID tilbake uten feil (tildelingen er idempotent, som i 3.3); ett aktivt ansvar |
+| SAM-8 | Ansvaret tilbakekalles mens redaktøren lagrer | Er tilbakekallingen lagret, avvises lagringen, også i en transaksjon som begynte før. Kommer lagringen mens tilbakekallingen ennå ikke er lagret, regnes den som gjort før (kontrakten, «Konflikter og samtidighet»). Etterpå avvises neste lagring |
 | SAM-9 | Medlemskapet avsluttes mens redaktøren lagrer eller forslagsstilleren sender | Som SAM-8 |
 | SAM-10 | `marker_forslag_innarbeidet` mens forslagsstilleren trekker et godkjent forslag | Trekkingen avvises (`PT409`) uansett rekkefølge; forslaget blir innarbeidet |
 | SAM-11 | Mange forslag fra samme person samtidig, ved grensen for åpne forslag | Grensen holder |
