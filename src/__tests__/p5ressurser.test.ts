@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { regelimportSql } from '../regler/import'
 import type { Intervallregelsettinnhold } from '../regler/modell'
 import { DAGENS_IMPORT } from './hjelp/dagensregler'
-import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
+import { byggPersongalleri, fjernAlleMedlemskap, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { faginnholdskall, nyDatabase } from './hjelp/testdatabase'
 
 let db: PGlite
@@ -155,6 +155,12 @@ describe('hvem som behandler forslag', () => {
   it('beskjed går til dem med myndighet når ingen redaktør har ansvaret', async () => {
     expect(await behandlere(obj.fagside)).toEqual([g.id.systemarkitekt, g.id.arkitektB].sort())
     expect(await behandlere(obj.regelsettB)).toEqual([g.id.adminB, g.id.arkitektB, g.id.systemarkitekt].sort())
+  })
+
+  it('en systemarkitekt uten medlemskap får også beskjed (kjøres sist: endrer galleriet)', async () => {
+    await fjernAlleMedlemskap(db, g.id.systemarkitekt)
+    expect(await kanBehandle(obj.fagside, 'systemarkitekt')).toBe(true)
+    expect(await behandlere(obj.fagside)).toEqual([g.id.systemarkitekt, g.id.arkitektB].sort())
   })
 
   it('ingen av funksjonene kan kalles fra nettleseren', async () => {
