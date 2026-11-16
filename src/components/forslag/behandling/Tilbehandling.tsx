@@ -110,9 +110,10 @@ function Koradtillegg({ rad, ferdig }: { rad: Korad; ferdig: boolean }) {
 /**
  * «Til behandling» i kontomenyen, med tallet på forslag som venter: de ingen
  * har tatt, og dem den innloggede behandler. Bare for dem som behandler
- * forslag; tallet hentes hver gang menyen åpnes.
+ * forslag. Tallet hentes på nytt hver gang `apning` endres, det vil si hver
+ * gang menyen åpnes, siden menyen står i dokumentet også når den er lukket.
  */
-export function TilbehandlingMenyvalg({ onGaa }: { onGaa: () => void }) {
+export function TilbehandlingMenyvalg({ onGaa, apning = 0 }: { onGaa: () => void; apning?: number }) {
   const behandler = useRettigheter().behandlerForslag
   const [antall, setAntall] = useState<number | null>(null)
   useEffect(() => {
@@ -124,7 +125,7 @@ export function TilbehandlingMenyvalg({ onGaa }: { onGaa: () => void }) {
     return () => {
       gjelder = false
     }
-  }, [behandler])
+  }, [behandler, apning])
   if (!behandler) return null
   return (
     <li>
