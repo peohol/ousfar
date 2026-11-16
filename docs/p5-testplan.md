@@ -11,8 +11,8 @@ uendret.
 Dokumentet har tre deler: planen (avsnitt 1–7), fordelingen mellom trådene
 (avsnitt 8) og rapporten fra sluttkontrollen (avsnitt 9), som fylles ut når
 A–C er integrert. Planen endrer ikke kontrakten. Der den forutsetter noe
-kontrakten ikke sier, står det under [Åpne spørsmål](#åpne-spørsmål), avklart
-med P5-tråden.
+kontrakten ikke sier, står det under [Avklaringer](#avklaringer), avklart med
+P5-tråden.
 
 ## 1. Grunnlaget
 
@@ -362,15 +362,15 @@ Trådene tester sine egne funksjoner i sine egne PR-er (kontrakten,
 Funn i en annen tråds del meldes til den tråden med steg for å gjenskape dem;
 D retter ikke i andres filer.
 
-## Åpne spørsmål
+## Avklaringer
 
-Spørsmål kontrakten ikke avgjør, sendt til P5-tråden. Svarene føres her.
+Spørsmål kontrakten først ikke avgjorde, avklart med P5-tråden 16.11.2026 og
+ført inn i kontrakten («Rettighetene»):
 
-1. Kan en behandler (en administrator eller redaktør) behandle sitt eget
-   forslag? Planen forutsetter ja, fordi vedkommende kan endre utkastet uansett;
-   tidslinjen viser det.
-2. Kan en redaktør tilbakekalle sitt eget ansvar? Planen forutsetter nei: bare
-   den som kan gi ansvaret, kan ta det tilbake.
+1. En behandler (en administrator eller redaktør) kan behandle sitt eget
+   forslag; tidslinjen viser det.
+2. En redaktør kan ikke tilbakekalle sitt eget ansvar. Bare den som kan gi
+   ansvaret, kan ta det tilbake.
 
 ## 9. Rapport fra sluttkontrollen
 
