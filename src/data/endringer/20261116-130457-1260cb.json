@@ -1,0 +1,15 @@
+{
+  "id": "20261116-130457-1260cb",
+  "semver": "patch",
+  "opprettet": "2026-11-16T13:04:57Z",
+  "sammendrag": "Databasen kan ta imot forslag til endringer i faginnholdet",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Databasen kan nå ta vare på forslag til endringer i en fagside eller et regelsett, med begrunnelse, kilder og en tidslinje. Forslaget gir aldri rett til å endre eller publisere innholdet.",
+    "Bare den som foreslo og de som skal behandle forslaget, kan se det. Knappen for å foreslå endringer kommer i en senere versjon; ingenting endres for brukerne ennå."
+  ],
+  "utenVarsel": true
+}
