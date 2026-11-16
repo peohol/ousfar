@@ -110,6 +110,9 @@ export const REKKEVIDDEHJELPERE = [
   // P5: hvem som behandler forslag til en ressurs (supabase/migrations/*_p5_ressurser.sql).
   'kan_behandle_forslag',
   'har_ressursmyndighet',
+  // P5 B: hvem som ser et forslag, og forslagsstillerens eget (supabase/migrations/*_p5_endringsforslag.sql).
+  'kan_se_forslag',
+  'eget_forslag',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
