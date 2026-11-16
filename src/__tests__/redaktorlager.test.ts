@@ -7,7 +7,7 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { lagRedaktorlager, redigerbareKoder, type Redaktorlager } from '../redaktorer/ansvar'
+import { lagRedaktorlager, redigerbareRegelsett, type Redaktorlager } from '../redaktorer/ansvar'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { faginnholdskall, nyDatabase, type Faginnholdskall } from './hjelp/testdatabase'
 
@@ -67,9 +67,12 @@ describe('redaktørlageret mot databasen', () => {
 
     const mine = await lager('vanligA').mine()
     expect(mine.map((a) => a.id)).toEqual([id])
-    expect([...redigerbareKoder(mine, g.fagmiljo.A)]).toEqual(['P5LAGER'])
-    // I et annet fagmiljø gir det ingen koder.
-    expect([...redigerbareKoder(mine, g.fagmiljo.B)]).toEqual([])
+    const iA = redigerbareRegelsett(mine, g.fagmiljo.A)
+    expect([...iA.koder]).toEqual(['P5LAGER'])
+    expect([...iA.ider]).toEqual([regelsett])
+    // I et annet fagmiljø gir det ingen.
+    const iB = redigerbareRegelsett(mine, g.fagmiljo.B)
+    expect([...iB.koder, ...iB.ider]).toEqual([])
     expect((await lager('adminA').forRessurs(regelsett)).map((a) => a.bruker.id)).toContain(g.id.vanligA)
 
     await admin.tilbakekall(id)

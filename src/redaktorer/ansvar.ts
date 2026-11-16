@@ -176,15 +176,24 @@ export function ansvarstekst(a: Pick<Redaktoransvar, 'omrade' | 'ressurs' | 'fag
 /** Navnet på en fagside eller et regelsett, som i listene. */
 export const ressursnavn = (r: Redaktorressurs): string => (r.type === 'infoside' ? `Fagsiden ${r.navn}` : `Regelsettet ${r.navn}`)
 
+/** Regelsettene en redaktør for enkelte regelsett får redigere: id-ene, og analyttkodene de gjelder. */
+export interface RedigerbareRegelsett {
+  /** Id-ene til regelsettene; bare de kan redigeres på en side med flere. */
+  ider: ReadonlySet<string>
+  /** Analyttkodene i dem; fortolkningen for disse kodene får «Rediger». */
+  koder: ReadonlySet<string>
+}
+
+export const INGEN_REGELSETT: RedigerbareRegelsett = { ider: new Set(), koder: new Set() }
+
 /**
- * Analyttkodene den innloggede er redaktør for gjennom et ansvar for ett
+ * Regelsettene den innloggede er redaktør for gjennom et ansvar for ett
  * regelsett i fagmiljøet hen arbeider i, og som gjelder nå. Appen viser
- * redigeringen av fortolkningen for dem; databasen avgjør hva som kan lagres.
+ * redigeringen av akkurat dem; databasen avgjør hva som kan lagres.
  */
-export function redigerbareKoder(ansvar: readonly Redaktoransvar[], arbeidsfagmiljo: string | null): ReadonlySet<string> {
-  return new Set(
-    ansvar
-      .filter((a) => a.gjelder && a.omrade === 'ressurs' && a.ressurs && a.ressurs.type !== 'infoside' && a.ressurs.fagmiljoId === arbeidsfagmiljo)
-      .flatMap((a) => a.ressurs!.analyttkoder),
-  )
+export function redigerbareRegelsett(ansvar: readonly Redaktoransvar[], arbeidsfagmiljo: string | null): RedigerbareRegelsett {
+  const regelsett = ansvar
+    .filter((a) => a.gjelder && a.omrade === 'ressurs' && a.ressurs && a.ressurs.type !== 'infoside' && a.ressurs.fagmiljoId === arbeidsfagmiljo)
+    .map((a) => a.ressurs!)
+  return { ider: new Set(regelsett.map((r) => r.id)), koder: new Set(regelsett.flatMap((r) => r.analyttkoder)) }
 }

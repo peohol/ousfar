@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { INGEN_RETTIGHETER, lesRettigheter } from '../auth/rettigheter'
-import { kanRedigereKodene, redigeringsrett } from '../faginnhold/redigeringsrett'
+import { kanRedigereKodene, kanRedigereRegelsettet, redigeringsrett } from '../faginnhold/redigeringsrett'
 
 const KF = { id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
 const RT = { id: 'b', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi' }
@@ -39,13 +39,16 @@ describe('redigeringsretten', () => {
 
   it('lar en redaktør for fortolkningen redigere alt i fagmiljøet, men ikke publisere (P5)', () => {
     const rett = redigeringsrett(lesRettigheter({ redaktor: true, arbeidsfagmiljo: KF }), true)
-    expect(rett).toMatchObject({ lokalt: true, koder: null, publisere: false, kjent: true })
+    expect(rett).toMatchObject({ lokalt: true, koder: null, regelsett: null, publisere: false, kjent: true })
     expect(kanRedigereKodene(rett, ['UAMFE'])).toBe(true)
+    expect(kanRedigereRegelsettet(rett.regelsett, 'r2')).toBe(true)
   })
 
-  it('lar en redaktør for ett regelsett redigere bare fortolkningen for kodene i det (P5)', () => {
-    const rett = redigeringsrett(lesRettigheter({ redaktor: true, arbeidsfagmiljo: KF }), false, new Set(['SDIAZ']))
+  it('lar en redaktør for ett regelsett redigere bare fortolkningen for kodene i det, og der bare regelsettet (P5)', () => {
+    const rett = redigeringsrett(lesRettigheter({ redaktor: true, arbeidsfagmiljo: KF }), false, { ider: new Set(['r1']), koder: new Set(['SDIAZ']) })
     expect(rett).toMatchObject({ lokalt: true, publisere: false, kjent: true })
+    expect(kanRedigereRegelsettet(rett.regelsett, 'r1')).toBe(true)
+    expect(kanRedigereRegelsettet(rett.regelsett, 'r2')).toBe(false)
     expect(kanRedigereKodene(rett, ['SDIAZ', 'SNDIA'])).toBe(true)
     expect(kanRedigereKodene(rett, ['UAMFE'])).toBe(false)
     expect(kanRedigereKodene(redigeringsrett(lesRettigheter({}), false), ['SDIAZ'])).toBe(false)

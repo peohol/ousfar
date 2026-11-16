@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo } from 'react'
+import { kanRedigereRegelsettet } from '../../faginnhold/redigeringsrett'
 import { analytterForFortolkning } from '../../domain/koblinger'
 import type { Analyttkatalog, Laboratorieanalytt } from '../../domain/analyttkatalog'
 import { rusModulFor } from '../../domain/rus'
@@ -24,6 +25,11 @@ export interface FortolkningsredigeringProps {
   katalog: Analyttkatalog
   /** Om den innloggede publiserer selv; en redaktør endrer bare utkastet (P5). */
   kanPublisere?: boolean
+  /**
+   * Regelsettene (id-ene) den innloggede får redigere, for en redaktør for
+   * enkelte regelsett; `null` (standard) er alle. De andre delene vises ikke.
+   */
+  regelsett?: ReadonlySet<string> | null
   /** Etter en publisering, så fortolkningen henter de nye reglene. */
   onPublisert: () => void
   /** Tilbake til fortolkningen. */
@@ -61,7 +67,7 @@ export function Fortolkningsredigering(props: FortolkningsredigeringProps) {
   )
 }
 
-function Innhold({ fortolkning, sted, katalog, kanPublisere = true, onPublisert, onAvslutt }: FortolkningsredigeringProps) {
+function Innhold({ fortolkning, sted, katalog, kanPublisere = true, regelsett = null, onPublisert, onAvslutt }: FortolkningsredigeringProps) {
   useLukkMedEscape(onAvslutt)
   const pekerPaaSted = useAdressested(sted)
   const overskrift = useId()
@@ -96,14 +102,23 @@ function Innhold({ fortolkning, sted, katalog, kanPublisere = true, onPublisert,
     [redigering.gjenopprett],
   )
 
-  const deler = useMemo<Regeldel[]>(
-    () => [
-      ...(modul && regler.scenarioregelsett[modul.id] ? [{ slag: 'scenario' as const }] : []),
-      ...(regler.thcregelsett ? [{ slag: 'thc' as const }] : []),
-      ...analytter.filter((a) => regler.regelsett[a.kode]).map((analytt) => ({ slag: 'intervall' as const, analytt })),
-    ],
-    [modul, regler, analytter],
+  // Delene med regelsettet hver hører til; en redaktør for enkelte regelsett får bare sine.
+  const alleDeler = useMemo<{ del: Regeldel; regelsett: string }[]>(() => {
+    const scenario = modul ? regler.scenarioregelsett[modul.id] : undefined
+    return [
+      ...(scenario ? [{ del: { slag: 'scenario' as const }, regelsett: scenario.regelsett.id }] : []),
+      ...(regler.thcregelsett ? [{ del: { slag: 'thc' as const }, regelsett: regler.thcregelsett.regelsett.id }] : []),
+      ...analytter.flatMap((analytt) => {
+        const utgave = regler.regelsett[analytt.kode]
+        return utgave ? [{ del: { slag: 'intervall' as const, analytt }, regelsett: utgave.regelsett.id }] : []
+      }),
+    ]
+  }, [modul, regler, analytter])
+  const deler = useMemo(
+    () => alleDeler.filter((d) => kanRedigereRegelsettet(regelsett, d.regelsett)).map((d) => d.del),
+    [alleDeler, regelsett],
   )
+  const andreDeler = alleDeler.length - deler.length
   // Én del står åpen med en gang; flere har hver sin tittel og adresse på siden.
   const ene = deler.length === 1
   // Regelsettene på siden, for å vise hvem som er redaktør for dem.
@@ -140,6 +155,12 @@ function Innhold({ fortolkning, sted, katalog, kanPublisere = true, onPublisert,
           Velg reglene eller kommentarene du vil endre. Endringene lagres som utkast og gjelder i fortolkningen først
           når de er publisert.{!kanPublisere && ` ${PUBLISERES_AV_ADMINISTRATOR}`}
         </p>
+        {andreDeler > 0 && (
+          <p className="regler__ingress">
+            Her redigerer du bare regelsettene du er redaktør for.{' '}
+            {andreDeler === 1 ? 'Ett annet regelsett' : `${andreDeler} andre regelsett`} i fortolkningen vises ikke her.
+          </p>
+        )}
         <Redaktorlinje ressurser={ressurser} />
       </header>
 

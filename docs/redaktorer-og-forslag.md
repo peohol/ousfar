@@ -359,7 +359,10 @@ tillegg det nasjonale valget, avslått med forklaringen til B2 er slått på.
 «Mitt redaktøransvar» i kontomenyen viser en redaktør hva hen har ansvar for.
 Redigeringen av fortolkningen vises for en redaktør for fortolkningen og, for
 en redaktør for ett regelsett, bare for kodene i det
-(`src/faginnhold/redigeringsrett.ts`); en redaktør har ingen «Publiser», bare
+(`src/faginnhold/redigeringsrett.ts`). Der vises bare regelsettene redaktøren
+har ansvar for, også når siden har flere (scenarioreglene, THC-syren og
+intervallreglene for hver kode er hvert sitt regelsett), med en linje om hvor
+mange andre som ikke vises; en redaktør har ingen «Publiser», bare
 beskjeden om at en administrator publiserer. Redigeringen viser hvem som er
 redaktør for regelsettene (`Redaktorlinje`). Fagsidene får det samme når
 nasjonale redaktører slås på.

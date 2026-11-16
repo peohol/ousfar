@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
 import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
-import { redigerbareKoder } from './redaktorer/ansvar'
+import { redigerbareRegelsett } from './redaktorer/ansvar'
 import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
@@ -251,13 +251,13 @@ function Arbeidsflate({
   const lokalEndringsrett = useLokalEndringsrett(profil.id)
   const mineRedaktoransvar = useMineRedaktoransvar(profil.id, rettigheter.redaktor)
   const arbeidsfagmiljoId = rettigheter.arbeidsfagmiljo?.id ?? null
-  const regelsettkoder = useMemo(
-    () => (mineRedaktoransvar === null ? null : redigerbareKoder(mineRedaktoransvar, arbeidsfagmiljoId)),
+  const redaktorensRegelsett = useMemo(
+    () => (mineRedaktoransvar === null ? null : redigerbareRegelsett(mineRedaktoransvar, arbeidsfagmiljoId)),
     [mineRedaktoransvar, arbeidsfagmiljoId],
   )
   const redigering = useMemo(
-    () => redigeringsrett(rettigheter, lokalEndringsrett, regelsettkoder),
-    [rettigheter, lokalEndringsrett, regelsettkoder],
+    () => redigeringsrett(rettigheter, lokalEndringsrett, redaktorensRegelsett),
+    [rettigheter, lokalEndringsrett, redaktorensRegelsett],
   )
   const faginnholdsklienter = useMemo(
     () => ({
@@ -871,6 +871,7 @@ function Arbeidsflate({
                           sted={rute.side === 'fortolkning' ? rute.sted : undefined}
                           katalog={katalog}
                           kanPublisere={redigering.publisere}
+                          regelsett={redigering.regelsett}
                           onPublisert={reglerPublisert}
                           onAvslutt={lukkInfoside}
                         />
