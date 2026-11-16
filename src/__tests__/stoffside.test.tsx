@@ -25,6 +25,7 @@ import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
 import { byggStoffregister, type Stoffregister } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
+import { onskRedigering } from '../faginnhold/redigeringsonske'
 import {
   TOM_STOFFSIDE,
   type Faginnholdsleser,
@@ -1649,6 +1650,21 @@ describe('redigeringsmodus', () => {
     }
     expect(screen.getAllByText('Sist redigert av Rita Redaktør 22.09.2026 kl. 14:32').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Legg til: Halveringstid' })).toBeTruthy()
+  })
+
+  it('åpnes rett i redigeringen fra «Åpne utkastet», bare for den som kan redigere og bare én gang', async () => {
+    onskRedigering('amitriptylin')
+    vis('amitriptylin', kilde({ kanRedigere: false }))
+    await finnVerdi('10–20 nmol/L')
+    expect(screen.queryByRole('button', { name: 'Avslutt redigering' })).toBeNull()
+    cleanup()
+    const { leser } = vis('amitriptylin', kilde({ kanRedigere: true }))
+    await waitFor(() => expect(leser.lesStoffside).toHaveBeenLastCalledWith('amitriptylin', 'utkast'))
+    expect(screen.getByRole('button', { name: 'Avslutt redigering' })).toBeTruthy()
+    cleanup()
+    vis('amitriptylin', kilde({ kanRedigere: true }))
+    await finnVerdi('10–20 nmol/L')
+    expect(screen.getByRole('button', { name: 'Rediger' })).toBeTruthy()
   })
 
   it('har tomme seksjoner for virkninger og bivirkninger mellom farmakodynamikken og indikasjonen', async () => {

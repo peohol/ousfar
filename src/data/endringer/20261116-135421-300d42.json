@@ -1,0 +1,16 @@
+{
+  "id": "20261116-135421-300d42",
+  "semver": "minor",
+  "opprettet": "2026-11-16T13:54:21Z",
+  "sammendrag": "De som behandler endringsforslag, har fått en arbeidskø i appen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Under «Til behandling» i kontomenyen ser redaktørene, de lokale administratorene og systemarkitektene forslagene til innholdet de har ansvaret for, som nye, pågående og ferdige, og hvor mange som venter.",
+    "På hvert forslag kan de ta det, kommentere, be om en presisering, godkjenne eller avvise med begrunnelse, og åpne utkastet. Siden sier fra når innholdet er endret siden forslaget ble skrevet, og viser hva som er endret.",
+    "Et godkjent forslag publiserer ingenting. Det arbeides inn i utkastet og markeres som innarbeidet når det er gjort."
+  ],
+  "gjelder": ["hele appen"]
+}

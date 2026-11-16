@@ -519,6 +519,45 @@ prøvd i `src/__tests__/forslagsbehandling.test.ts`):
   den innloggede kan se det (`intern.varselforslag`); et varsel uten
   hendelser vises ikke og telles ikke.
 
+**C3, appen** (`src/components/forslag/behandling/`, `src/forslag/behandling.ts`,
+prøvd i `src/__tests__/forslagsbehandling.ui.test.tsx`):
+
+- Fanen «Til behandling» (`#/forslag/til-behandling`) står for dem
+  rettighetene sier behandler forslag (`Rettigheter.behandlerForslag`:
+  systemarkitektene, de lokale administratorene og redaktørene). Arbeidskøen
+  henter `les_forslagsko('alle')` og viser «Nye», «Pågående» og «Ferdige»
+  med tallet i hver, og bryteren «Bare uten redaktør». Hvert forslag viser
+  hva det gjelder, statusen slik behandleren leser den («Ny», «Venter på
+  forslagsstilleren»), hvem det er fra, hvem som behandler det, og merkene
+  «Uten redaktør» og «Innholdet er endret siden».
+- På siden til ett forslag står delen «Behandling» når `kan_behandle` er
+  sant. Knappene følger statusen (`muligeBehandlinger`): «Ta forslaget» eller
+  «Ta over», «Kommenter», «Be om presisering», «Godkjenn», «Avvis» (med
+  begrunnelse) og, for et godkjent forslag, «Marker som innarbeidet», som
+  kobler forslaget til revisjonen utkastet står på nå. Hver tekst skrives i
+  et eget skjema med fokus i feltet; skjemaet og teksten tas vare på ved en
+  oppdatering av appen (`useBevart`). Avslaget fra databasen (som `PT409` når
+  en annen kom først) vises der.
+- Er innholdet endret siden forslaget ble skrevet (`konflikt`), sier siden
+  hva som er endret, og gir en vei til hver slags endring. Ingenting skrives
+  over.
+  - Er det publiserte i det forslaget gjelder, endret (`endret_siden`), åpner
+    «Se hva som er endret» historikkvinduet. Der sammenlignes revisjonen
+    forslaget ble skrevet mot, med den publiserte.
+  - Er fagsiden publisert i en ny versjon (`side_endret_siden`), lenker
+    merknaden til versjonen forslaget ble skrevet mot (`#/versjon/<stoff>/<nr>`).
+    Der kan den sammenlignes med den gjeldende.
+  - Har utkastet upubliserte endringer (`utkast_endret`), åpner «Se utkastet»
+    den vanlige redigeringen. Historikken viser ikke utkast for andre enn
+    administratorene.
+  - Knappen for historikken vises bare når de to revisjonene er forskjellige.
+- «Åpne utkastet» går til den vanlige redigeringen: redigeringssiden for
+  fortolkningen (`#/fortolkning/<analytt>/rediger`), eller fagsiden, som da
+  åpnes rett i redigeringsmodus for den som kan redigere
+  (`src/faginnhold/redigeringsonske.ts`).
+- Kontomenyen har «Til behandling» for behandlerne, med tallet som venter
+  (`nye` og `mine` fra `les_forslagsko('antall')`), hentet når menyen åpnes.
+
 ## Nasjonale redaktører (B2)
 
 Tildeling av nasjonalt redaktøransvar bygges ferdig, men er avslått i
@@ -584,19 +623,12 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
-| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
-| A Redaktøransvar | [#421](https://github.com/peohol/ousfar/pull/421) (databasen); skjermbildene i en egen PR | Databasen til kontroll |
-| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
-| B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
-| C Redaktørens arbeidsflyt | — | — |
-| D Brukervennlighet og testing | D1 testplanen [p5-testplan.md](p5-testplan.md): #419 | Til kontroll |
-
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
 | A1 Redaktøransvar i databasen | [#421](https://github.com/peohol/ousfar/pull/421) | Slått sammen |
-| A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Til kontroll |
-| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
-| B2 Foreslå endring i appen | — | Under arbeid |
-| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C3 Brukerflaten for behandlerne | — | Ferdig, venter på B2 |
+| A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Slått sammen |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
+| B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Slått sammen |
+| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
+| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
+| C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Til kontroll |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |

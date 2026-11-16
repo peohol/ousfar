@@ -1,0 +1,87 @@
+/**
+ * Behandlingen av endringsforslagene (`src/components/forslag/behandling/`):
+ * arbeidskøen under «Til behandling» og behandlerens del av siden til ett
+ * forslag. Bygger på `forslag.css` og de vanlige feltene, knappene og merkene.
+ */
+
+/* Valget av liste og filteret: på én linje der det er plass, under hverandre ellers. */
+.forslagsko {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+}
+
+.forslagsko__valg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4);
+}
+
+.forslagsko__utvalg {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--tekst-ui);
+  cursor: pointer;
+}
+
+.forslagsko__utvalg[aria-pressed='true'] {
+  background: var(--flate-bunn);
+  color: var(--blekk);
+  font-weight: var(--vekt-halvfet);
+}
+
+.forslagsko__tall {
+  font-variant-numeric: tabular-nums;
+  color: var(--blekk-dempet);
+}
+
+.forslagsko__merker {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+  margin-inline-start: var(--rom-3);
+  vertical-align: middle;
+}
+
+.forslagsko__merker .merke {
+  white-space: normal;
+}
+
+/* --- Ett forslag --------------------------------------------------------- */
+
+.behandling__hvem {
+  margin: 0;
+  line-height: var(--linjehoyde-lesing);
+}
+
+.behandling__konflikt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--rom-3);
+  padding: var(--rom-4) var(--rom-5);
+  border-inline-start: 3px solid var(--alvorlig-kant);
+  border-radius: var(--runding-kort);
+  background: var(--alvorlig-flate);
+  color: var(--blekk);
+}
+
+.behandling__konflikt p {
+  margin: 0;
+  line-height: var(--linjehoyde-lesing);
+}
+
+/* «Åpne utkastet» er en lenke som ser ut som knappene ved siden av. */
+.forslagsvisning a.knapp {
+  color: var(--blekk);
+  text-decoration: none;
+}
+
+.behandling__konfliktvalg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+}

@@ -18,7 +18,7 @@ import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/r
 const loggUt = vi.fn(async () => {})
 const rolle = vi.hoisted(() => ({ verdi: 'admin' }))
 /** Det databasen svarer på `mine_rettigheter` for den innloggede; som standard en systemarkitekt. */
-const ARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true, stoffregister: true, opprettBrukerI: ['a'] }
+const ARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true, stoffregister: true, opprettBrukerI: ['a'], behandlerForslag: true }
 const rett = vi.hoisted(() => ({ verdi: null as Rettigheter | null }))
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: rolle.verdi, first_name: 'Anne', last_name: 'Admin', username: 'aadmin', avatar_path: null }),
@@ -30,6 +30,12 @@ const systemarkitekt = vi.hoisted(() => ({ verdi: true }))
 vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => systemarkitekt.verdi }))
 const ideerMedNytt = vi.hoisted(() => ({ antall: 0 }))
 vi.mock('../ideer/api', () => ({ hentIdeerMedNytt: async () => ideerMedNytt.antall }))
+// Tallet på endringsforslag som venter på den som behandler dem (P5 tråd C).
+const forslagsantall = vi.hoisted(() => ({ nye: 2, pagaende: 4, uten_redaktor: 0, mine: 1 }))
+vi.mock('../forslag/behandling', async (original) => ({
+  ...(await original<typeof import('../forslag/behandling')>()),
+  hentForslagsantall: async () => ({ ...forslagsantall }),
+}))
 // Dialogene bak valgene har egne tester; her holder det at riktig åpnes.
 vi.mock('../components/konto/Kontopanel', () => ({
   Kontopanel: ({ apen }: { apen: boolean }) => (apen ? <p>Kontopanelet</p> : null),
@@ -552,10 +558,42 @@ describe('kontomenyen', () => {
   it('har bare profilen, gruppene, forslagene, preferansene og utloggingen', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
+    // En behandler har også forslagene til behandling, med tallet som venter.
+    await within(panel(knapp)).findByText('3 forslag venter')
     const valg = within(panel(knapp)).getAllByRole('button')
-    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Grupper', 'Mine forslag', 'Preferanser', 'Logg ut'])
+    expect(valg.map((v) => v.textContent)).toEqual([
+      'Endre navn og profilbilde',
+      'Grupper',
+      'Mine forslag',
+      'Til behandling3 forslag venter',
+      'Preferanser',
+      'Logg ut',
+    ])
     expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
 
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
+    expect(window.location.hash).toBe('#/grupper')
+  })
+
+  it('henter tallet som venter, på nytt hver gang menyen åpnes', async () => {
+    const knapp = vis()
+    await userEvent.click(knapp)
+    await within(panel(knapp)).findByText('3 forslag venter')
+    await userEvent.click(knapp)
+    forslagsantall.nye = 4
+    try {
+      await userEvent.click(knapp)
+      await within(panel(knapp)).findByText('5 forslag venter')
+    } finally {
+      forslagsantall.nye = 2
+    }
+  })
+
+  it('har ikke «Til behandling» for den som ikke behandler forslag', async () => {
+    rett.verdi = INGEN_RETTIGHETER
+    const knapp = vis()
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).queryByRole('button', { name: 'Til behandling' })).toBeNull()
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
     expect(window.location.hash).toBe('#/grupper')
   })

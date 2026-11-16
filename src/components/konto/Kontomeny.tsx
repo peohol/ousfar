@@ -15,6 +15,7 @@ import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Trinnbryter, type Trinnvalg } from '../Trinnbryter'
 import { Menyskuff, Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { TilbehandlingMenyvalg } from '../forslag/behandling/Tilbehandling'
 import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
 import { Kontopanel } from './Kontopanel'
@@ -64,6 +65,8 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const [kontopanel, setKontopanel] = useBevart('kontopanel', false)
   // Skuffen som står åpen i menyen; høyst én om gangen.
   const [skuff, setSkuff] = useState<'fagmiljo' | 'preferanser' | null>(null)
+  // Teller åpningene, så det som skal være ferskt når menyen åpnes, kan hentes på nytt.
+  const [apninger, setApninger] = useState(0)
   const veksle = (s: 'fagmiljo' | 'preferanser') => () => setSkuff((apen) => (apen === s ? null : s))
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukkKontopanel = useCallback(() => setKontopanel(false), [])
@@ -86,7 +89,10 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         lag="kontomeny"
         ved={invitert && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
         // Neste gang menyen åpnes, står skuffene lukket igjen.
-        onApne={() => setSkuff(null)}
+        onApne={() => {
+          setSkuff(null)
+          setApninger((n) => n + 1)
+        }}
       >
         {(lukk) => (
           <>
@@ -136,6 +142,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   }}
                 />
               </li>
+              <TilbehandlingMenyvalg onGaa={lukk} apning={apninger} />
               {redaktor && (
                 <li>
                   <Menyvalg
