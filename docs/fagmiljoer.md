@@ -745,7 +745,7 @@ egen variant. Bygg nye regler og funksjoner på disse:
 | `public.mine_lesbare_fagmiljoer()` | Fagmiljøene den innloggede kan lese lokalt innhold i: de aktive medlemskapene i aktive fagmiljøer, alle for en systemarkitekt, ingen uten aktivt medlemskap |
 | `public.mine_administrerte_fagmiljoer()` | Fagmiljøene den innloggede administrerer nå (`intern.er_lokal_admin_i`), alle for en systemarkitekt, ingen uten aktivt medlemskap |
 | `public.er_systemarkitekt()` | Om den innloggede er systemarkitekt; nei uten aktivt medlemskap |
-| `intern.arbeidsfagmiljo(bruker)` | Arbeidskonteksten (P4b, [under](#fortolkningen-per-fagmiljø)): det aktive primærmedlemskapet i et aktivt fagmiljø, null uten det, også for en systemarkitekt |
+| `intern.arbeidsfagmiljo(bruker)` | Arbeidskonteksten (P4b, [under](#fortolkningen-per-fagmiljø)): fagmiljøet en systemarkitekt har valgt å se (når det er aktivt), ellers det aktive primærmedlemskapet i et aktivt fagmiljø, ellers null |
 
 Funksjonene i `intern` er `stable security definer` uten rettigheter for
 nettleseren, og brukes i `security definer`-funksjoner og utløsere.
@@ -1032,8 +1032,9 @@ kommentarer, uten at de blandes
 **Arbeidskonteksten.** Fortolkningen bruker alltid nøyaktig ett fagmiljø:
 den innloggedes aktive primærmedlemskap i et aktivt fagmiljø
 (`intern.arbeidsfagmiljo(bruker)`, for oppslagene
-`public.mitt_arbeidsfagmiljo()`). Uten det finnes ingen regler å bruke, heller
-ikke for en systemarkitekt: ingen får et annet fagmiljøs regler som reserve.
+`public.mitt_arbeidsfagmiljo()`), eller for en systemarkitekt fagmiljøet hen
+har valgt å se (under). Uten det finnes ingen regler å bruke: ingen får et
+annet fagmiljøs regler som reserve.
 Appen får fagmiljøet med navnet i `mine_rettigheter().arbeidsfagmiljo` og
 viser det i meldingen når regler mangler. Byttes det, tømmer appen reglene
 den har, før de nye hentes (`useKontekstbytte`).
@@ -1049,7 +1050,8 @@ tilgangsloggen (P0 §2.6). Det flytter fortolkningen og ingenting annet:
 lesing og deltakelse følger alle aktive medlemskap som før. Uten dette ble
 alle stående i det første fagmiljøet, fordi et nytt medlemskap ikke blir
 primært når kontoen alt har et (`intern.gi_medlemskap`).
-`mine_rettigheter().mine_fagmiljoer` er fagmiljøene det kan velges blant;
+`mine_rettigheter().velgbare_fagmiljoer` er fagmiljøene det kan velges blant
+(for andre enn systemarkitektene de samme som `mine_fagmiljoer`);
 med ett vises ikke valget, med mindre det ikke er det hen arbeider i (som når
 det hen arbeidet i, er arkivert; da arbeider hen ikke i noe til hen velger).
 Appen tar i bruk rettighetene byttet gir, og et eldre svar fra
@@ -1059,6 +1061,22 @@ Det som hentes for arbeidskonteksten, følger `arbeidskontekst` i
 andre, så katalogen og reglene fra det forrige tømmes og fortolkningen
 stopper til et nytt er valgt. Prøvd i `src/__tests__/arbeidsfagmiljo.test.ts`,
 `arbeidsfagmiljovalg.test.tsx` og `arbeidskontekst.test.tsx`.
+
+**Systemarkitektene velger fritt.** En systemarkitekt kan velge et hvilket
+som helst aktivt fagmiljø under «Fagmiljø», også et hen ikke er medlem av
+(Peders ønske 16.11.2026,
+`20261116100000_arkitektens_visningsfagmiljo.sql`). Det er et visningsvalg,
+ikke et medlemskap: det lagres i `public.visningsfagmiljoer`, som bare
+`velg_arbeidsfagmiljo` skriver og nettleseren ikke når, og medlemskapene,
+primærmedlemskapet og tilgangsloggen røres ikke. Det gir ingen tilgang
+systemarkitekten ikke alt har (`intern.er_medlem_i`, `intern.er_lokal_admin_i`):
+fortolkningen, analyttkatalogen, rommene i diskusjonene på
+fortolkningssidene og nye lokale objekter følger da det valgte fagmiljøet.
+Valget gjelder bare så lenge personen er systemarkitekt og fagmiljøet er
+aktivt; ellers er arbeidskonteksten igjen primærmedlemskapet. Velger hen et
+fagmiljø hen er medlem av, fjernes visningsvalget og primærmedlemskapet
+velges som for alle andre. I menyen er fagmiljøene hen ikke er medlem av,
+merket «Ikke medlem».
 
 **Fagmiljøet på reglene.** `laboratorieanalytter`, `intervallregelsett`,
 `scenarioregelsett`, `scenarioanalytter` og `thc_regelsett` har kolonnen

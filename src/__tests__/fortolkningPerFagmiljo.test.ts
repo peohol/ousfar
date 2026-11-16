@@ -212,6 +212,22 @@ describe('et fagmiljø uten egne regler', () => {
     expect(await forste<number>('arkitektB', 'select count(*)::int from public.intervallregelsett')).toBe(DAGENS_IMPORT.length * 2)
   })
 
+  it('gir en systemarkitekt i B reglene i A når hen velger å se A, og tilbake', async () => {
+    const velg = (f: Fagmiljo) => forste(`arkitektB`, 'select public.velg_arbeidsfagmiljo($1)', [g.fagmiljo[f]])
+    const iA = await intervallregelsettFor('vanligA')
+    await velg('A')
+    try {
+      expect(await intervallregelsettFor('arkitektB')).toEqual(iA)
+      expect((await finnFor('arkitektB', kodeA))?.id).toBe(regelsettA)
+      expect(await forste('arkitektB', `select public.les_thc_regelsett('publisert')`)).toEqual(
+        await forste('vanligA', `select public.les_thc_regelsett('publisert')`),
+      )
+    } finally {
+      await velg('B')
+    }
+    expect(await intervallregelsettFor('arkitektB')).toEqual([])
+  })
+
   it('får ingen regler uten aktivt medlemskap', async () => {
     for (const p of ['utenMedlemskap', 'tidligereAdmin'] as const) {
       expect(await intervallregelsettFor(p), p).toEqual([])

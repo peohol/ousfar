@@ -128,6 +128,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),
+  'public.visningsfagmiljoer': k('personlig', 'Fagmiljøet en systemarkitekt har valgt å se fortolkningen for, uten medlemskap'),
   'public.stoffavoritter': k('personlig', 'Favoritter (§3)'),
   'public.varsler': k('personlig', 'Varsler (§3); avgrenset også til fagmiljøet (fagmiljo_id, P2b) eller gruppen (gruppe_id, P6) det gjelder'),
   'public.diskusjonsbesok': k('personlig', 'Hva brukeren har lest'),

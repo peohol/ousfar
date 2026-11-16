@@ -212,6 +212,11 @@ describe('mine_rettigheter()', () => {
         'select id, nokkel, navn, standard, apent_for_medlemmer as apent from public.fagmiljoer order by navn',
       )
     ).rows
+    // En systemarkitekt kan velge å se fortolkningen i alle de aktive, uten å være medlem.
+    const aktive = (
+      await db.query<{ id: string }>(`select id from public.fagmiljoer where status = 'aktiv'`)
+    ).rows.map((r) => r.id)
+    const velgbareForArkitekt = alle.filter((f) => aktive.includes(f.id))
     // Nye brukere kan opprettes i de åpne fagmiljøene (startporten S2).
     const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true, opprett_bruker_i: alle.filter((f) => f.apent) }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
@@ -223,8 +228,18 @@ describe('mine_rettigheter()', () => {
       return aktive.map((f) => ref[f]).sort((x, y) => x.navn.localeCompare(y.navn))
     }
     // P4b: fagmiljøet fortolkningen gjelder (det aktive primærmedlemskapet).
-    expect(await rettigheter('systemarkitekt')).toEqual({ ...arkitekt, arbeidsfagmiljo: A, mine_fagmiljoer: mine('systemarkitekt') })
-    expect(await rettigheter('arkitektB')).toEqual({ ...arkitekt, arbeidsfagmiljo: B, mine_fagmiljoer: mine('arkitektB') })
+    expect(await rettigheter('systemarkitekt')).toEqual({
+      ...arkitekt,
+      arbeidsfagmiljo: A,
+      mine_fagmiljoer: mine('systemarkitekt'),
+      velgbare_fagmiljoer: velgbareForArkitekt,
+    })
+    expect(await rettigheter('arkitektB')).toEqual({
+      ...arkitekt,
+      arbeidsfagmiljo: B,
+      mine_fagmiljoer: mine('arkitektB'),
+      velgbare_fagmiljoer: velgbareForArkitekt,
+    })
     // En lokal administrator oppretter nye brukere i fagmiljøet hen administrerer, og bare der.
     expect(await rettigheter('adminA')).toEqual({
       ...ingen,
@@ -233,6 +248,7 @@ describe('mine_rettigheter()', () => {
       opprett_bruker_i: [A],
       arbeidsfagmiljo: A,
       mine_fagmiljoer: mine('adminA'),
+      velgbare_fagmiljoer: mine('adminA'),
     })
     expect(await rettigheter('adminB')).toEqual({
       ...ingen,
@@ -241,9 +257,15 @@ describe('mine_rettigheter()', () => {
       opprett_bruker_i: [B],
       arbeidsfagmiljo: B,
       mine_fagmiljoer: mine('adminB'),
+      velgbare_fagmiljoer: mine('adminB'),
     })
     for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
-      expect(await rettigheter(person), person).toEqual({ ...ingen, arbeidsfagmiljo: f, mine_fagmiljoer: mine(person) })
+      expect(await rettigheter(person), person).toEqual({
+        ...ingen,
+        arbeidsfagmiljo: f,
+        mine_fagmiljoer: mine(person),
+        velgbare_fagmiljoer: mine(person),
+      })
     }
     expect(mine('dobbeltAB')).toEqual([A, B].sort((x, y) => x.navn.localeCompare(y.navn)))
   })
