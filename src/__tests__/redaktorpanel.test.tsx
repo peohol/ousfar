@@ -146,6 +146,46 @@ describe('«Redaktører» i administrasjonen', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('Rita Redaktør er ikke aktivt medlem av fagmiljøet.')
   })
 
+  it('sier fra når medlemmene ikke kan hentes, og prøver igjen', async () => {
+    const user = userEvent.setup()
+    const { lager } = minnelager()
+    const hent = vi.fn().mockRejectedValueOnce(new Error('nett')).mockResolvedValue(MEDLEMMER)
+    render(<Redaktorer apen onLukk={() => {}} lager={lager} hentMedlemmer={hent} />)
+    expect((await screen.findByRole('alert')).textContent).toBe('Fikk ikke hentet medlemmene.')
+    await user.click(screen.getByRole('button', { name: 'Prøv igjen' }))
+    expect(await screen.findByRole('option', { name: /Rita Redaktør/ })).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(hent).toHaveBeenCalledTimes(2)
+  })
+
+  it('tar ikke med valgene fra ett fagmiljø til et annet', async () => {
+    const user = userEvent.setup()
+    const { lager } = minnelager()
+    const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
+    const oversikt = lager.oversikt
+    lager.oversikt = async () => ({ ...(await oversikt()), fagmiljoer: [KF, RT] })
+    const hent = async (f: string) => (f === KF.id ? MEDLEMMER : [medlem('tor', 'Tor', 'Toks')])
+    render(<Redaktorer apen onLukk={() => {}} lager={lager} hentMedlemmer={hent} />)
+
+    await user.selectOptions(await screen.findByRole('combobox', { name: 'Hvem' }), 'rita')
+    await user.click(screen.getByRole('radio', { name: 'Ett regelsett' }))
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Regelsettet' }), 'r1')
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Fagmiljø' }), 'rt')
+    await screen.findByRole('option', { name: /Tor Toks/ })
+    expect((screen.getByRole('combobox', { name: 'Hvem' }) as HTMLSelectElement).value).toBe('')
+    expect(screen.getByRole('radio', { name: 'Hele fortolkningen i OUS Rettstoksikologi' })).toHaveProperty('checked', true)
+    await user.click(screen.getByRole('button', { name: 'Gi ansvaret' }))
+    expect(screen.getByRole('alert').textContent).toBe('Velg hvem som skal få ansvaret.')
+    expect(lager.tildel).not.toHaveBeenCalled()
+
+    // Tilbake i det første står valgene der.
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Fagmiljø' }), 'kf')
+    await screen.findByRole('option', { name: /Rita Redaktør/ })
+    expect((screen.getByRole('combobox', { name: 'Hvem' }) as HTMLSelectElement).value).toBe('rita')
+    expect((screen.getByRole('combobox', { name: 'Regelsettet' }) as HTMLSelectElement).value).toBe('r1')
+  })
+
   it('viser systemarkitekten det nasjonale valget avslått, med forklaringen', async () => {
     const { lager } = minnelager({ vises: true, aktivert: false })
     render(<Redaktorer apen onLukk={() => {}} lager={lager} hentMedlemmer={hentMedlemmer} />)

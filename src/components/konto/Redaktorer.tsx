@@ -57,13 +57,15 @@ export function Redaktorer({
   const { arbeidsfagmiljo } = useRettigheter()
   const [oversikt, setOversikt] = useState<Redaktoroversikt | null>(null)
   const [medlemmer, setMedlemmer] = useState<Medlem[] | null>(null)
+  const [medlemsfeil, setMedlemsfeil] = useState(false)
+  const [medlemsforsok, setMedlemsforsok] = useState(0)
   const [feil, setFeil] = useState<string | null>(null)
   const [melding, setMelding] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
   const [tilbakekaller, setTilbakekaller] = useState<string | null>(null)
   const [valgt, setValgt] = useBevart<string>('redaktorer-fagmiljo', '')
-  // Tildelingen som skrives, overlever en oppdatering av appen.
-  const [utkast, setUtkast] = useBevart<Utkast>('redaktorer-utkast', TOMT)
+  // Tildelingen som skrives, per fagmiljø, så et bytte aldri tar med valg fra et annet; overlever en oppdatering av appen.
+  const [utkastene, setUtkastene] = useBevart<Record<string, Utkast>>('redaktorer-utkast', {})
   const id = useId()
   // Svaret på en handling står øverst; det rulles fram, så det ses også på en smal skjerm.
   const svar = useRef<HTMLDivElement>(null)
@@ -91,18 +93,26 @@ export function Redaktorer({
   const fagmiljo =
     fagmiljoer.find((f) => f.id === valgt) ?? fagmiljoer.find((f) => f.id === arbeidsfagmiljo?.id) ?? fagmiljoer[0] ?? null
 
+  const utkast = (fagmiljo && utkastene[fagmiljo.id]) || TOMT
+  const setUtkast = (u: Utkast) => fagmiljo && setUtkastene({ ...utkastene, [fagmiljo.id]: u })
+
   useEffect(() => {
     if (!apen || !fagmiljo) return
     let gjeldende = true
     setMedlemmer(null)
+    setMedlemsfeil(false)
     hentMedlemmer(fagmiljo.id).then(
       (m) => gjeldende && setMedlemmer(m),
-      () => gjeldende && setMedlemmer([]),
+      () => {
+        if (!gjeldende) return
+        setMedlemmer([])
+        setMedlemsfeil(true)
+      },
     )
     return () => {
       gjeldende = false
     }
-  }, [apen, fagmiljo?.id, hentMedlemmer]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [apen, fagmiljo?.id, hentMedlemmer, medlemsforsok]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const ansvar = useMemo(() => (oversikt?.ansvar ?? []).filter((a) => (fagmiljo ? a.fagmiljo?.id === fagmiljo.id : false)), [oversikt, fagmiljo])
   const nasjonale = useMemo(() => (oversikt?.ansvar ?? []).filter((a) => a.nasjonalt), [oversikt])
@@ -134,9 +144,10 @@ export function Redaktorer({
   const gi = async (h: FormEvent) => {
     h.preventDefault()
     if (!fagmiljo) return
-    if (!utkast.bruker) return setFeil('Velg hvem som skal få ansvaret.')
-    if (utkast.omrade === 'ressurs' && !utkast.ressurs) return setFeil('Velg regelsettet.')
+    // Bare valg som står i listene for dette fagmiljøet, sendes.
     const mottaker = aktive.find((m) => m.id === utkast.bruker)
+    if (!mottaker) return setFeil('Velg hvem som skal få ansvaret.')
+    if (utkast.omrade === 'ressurs' && !regelsett.some((r) => r.id === utkast.ressurs)) return setFeil('Velg regelsettet.')
     const tildelt = await utfor(
       () =>
         lager.tildel({
@@ -146,13 +157,13 @@ export function Redaktorer({
           ...(utkast.omrade === 'fortolkning' && { fagmiljo: fagmiljo.id }),
           merknad: utkast.merknad,
         }),
-      `${mottaker ? `${mottaker.first_name} ${mottaker.last_name}`.trim() : 'Kollegaen'} har fått redaktøransvaret.`,
+      `${`${mottaker.first_name} ${mottaker.last_name}`.trim() || mottaker.username} har fått redaktøransvaret.`,
     )
     if (tildelt) setUtkast(TOMT)
   }
 
   const giNasjonalt = async () => {
-    if (!utkast.bruker) return setFeil('Velg hvem som skal få ansvaret.')
+    if (!aktive.some((m) => m.id === utkast.bruker)) return setFeil('Velg hvem som skal få ansvaret.')
     if (await utfor(() => lager.tildel({ bruker: utkast.bruker, omrade: 'fagsider', merknad: utkast.merknad }), 'Ansvaret for fagsidene er gitt.')) setUtkast(TOMT)
   }
 
@@ -253,6 +264,18 @@ export function Redaktorer({
                 ))}
               </select>
             </label>
+            {medlemsfeil && (
+              <>
+                <p className="skjemafeil" role="alert">
+                  Fikk ikke hentet medlemmene.
+                </p>
+                <div className="autoerstatt__knapper">
+                  <Button variant="kant" onClick={() => setMedlemsforsok((n) => n + 1)}>
+                    Prøv igjen
+                  </Button>
+                </div>
+              </>
+            )}
             <fieldset className="verktoysperrer__omfang">
               <legend className="felt__merkelapp">Ansvar for</legend>
               <label className="avkryssing">
