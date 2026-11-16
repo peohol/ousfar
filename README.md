@@ -141,7 +141,7 @@ src/data/aliaser.json       Håndholdte ekstra søkeord per analyttkode
 src/data/endringer/         Én fil per endring, uten versjonsnummer (håndholdt)
 src/data/endringslogg.ts    Endringsloggen appen viser: de nye endringene over arkivet
 src/data/endringshistorikk.ts
-                            Det frosne arkivet med føringene fra før 1.134.5
+                            Det frosne arkivet med føringene til og med 1.134.5
 src/types.ts                Datamodellen
 src/state.ts                Tilstandsmaskinen for stegene
 src/domain/                 Bånd, klassifisering, søk, navn, fargespredning, kontrast,

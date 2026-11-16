@@ -8,9 +8,10 @@
  *   HTTP), for ChatGPT og andre MCP-klienter, og verktøyet `instruks` med
  *   kontrollørinstruksen. Nøkkelen står i `Authorization: Bearer`, eller i
  *   adressen (`?nokkel=`) for klienter som ikke kan sende den.
- * - `/api/kuratering-ko`: grenene uten fagtekst, for kurateringskøen. Den
- *   kaller med GitHubs OIDC-token for arbeidsflyten «Kurateringskø» på main,
- *   uten noen hemmelighet å lagre (`docs/kurateringsko.md`).
+ * - `/api/kuratering-ko`: grenene uten fagtekst, for kurateringskøen og
+ *   oppryddingen av kuratorjobbgrenene. De kaller med GitHubs OIDC-token for
+ *   arbeidsflytene «Kurateringskø» og «Rydd ferdige kuratorjobbgrener» på
+ *   main, uten noen hemmelighet å lagre (`docs/kurateringsko.md`).
  *
  * Endepunktet kontrollerer ikke nøkkelen selv: databasen gjør det
  * (`public.kuratering_agent`, bare for tjenesterollen), sammen med rollen og
@@ -268,14 +269,17 @@ export async function behandleKurateringMcp(
 /** Arbeidsflyten som kjører kurateringskøen. */
 export const KO_ARBEIDSFLYT = '.github/workflows/kurateringsko.yml'
 
-/** `/api/kuratering-ko`: grenene slik køen følger dem, for køen og systemarkitektene. */
+/** Arbeidsflyten som rydder kuratorjobbgrenene, og som leser grenene for å se hvilke jobber som er ferdig brukt (`docs/kuratorjobber.md`). */
+export const RYDDE_ARBEIDSFLYT = '.github/workflows/rydd-kuratorjobbgrener.yml'
+
+/** `/api/kuratering-ko`: grenene slik køen følger dem, for køen, oppryddingen av jobbgrenene og systemarkitektene. */
 export async function behandleKurateringsko(
   foresporsel: Request,
   miljo: Miljo,
   { klient, arkitektsjekk = erSystemarkitekt, githubsjekk }: Avhengigheter & { arkitektsjekk?: Arkitektsjekk; githubsjekk?: Githubsjekk } = {},
 ): Promise<Response> {
   if (foresporsel.method !== 'POST') return svar(405, { feil: 'Bare POST.' })
-  if (!(await hvem(foresporsel, miljo, arkitektsjekk, { arbeidsflyt: KO_ARBEIDSFLYT, sjekk: githubsjekk }))) return svar(401, { feil: 'Ikke tilgang.' })
+  if (!(await hvem(foresporsel, miljo, arkitektsjekk, { arbeidsflyt: [KO_ARBEIDSFLYT, RYDDE_ARBEIDSFLYT], sjekk: githubsjekk }))) return svar(401, { feil: 'Ikke tilgang.' })
   const db = klient === undefined ? serverklient(miljo) : klient
   if (!db) return svar(500, { feil: 'Mangler oppkoblingen mot databasen.' })
   const { data, error } = await db.rpc('kuratering_kostatus')

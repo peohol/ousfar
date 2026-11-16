@@ -48,24 +48,49 @@ er ferdig, skal grenen slettes automatisk etter reglene nedenfor.
 
 ## Automatisk opprydding av jobbgrener
 
-Arbeidsflyten `.github/workflows/rydd-kuratorjobbgrener.yml` går daglig,
-kan startes manuelt (og har en «kun vis»-innstilling), og starter også når
-arbeidsflytfilen endres på `main`. Den bruker GitHubs egen token; ingen
-ekstern tjeneste eller egen hemmelig nøkkel trengs.
+Arbeidsflyten `.github/workflows/rydd-kuratorjobbgrener.yml` går daglig fra
+`main`, kan startes for hånd (med «kun vis» for en forhåndsvisning uten
+sletting), og starter også når arbeidsflyten eller reglene endres på `main`.
+Reglene står i `src/kuratorjobb/rydding.ts`, kjøringen i
+`src/kuratorjobb/ryddekjoring.ts`, med tester i
+`src/__tests__/kuratorjobbrydding.test.ts`. Den bruker GitHubs egen nøkkel og
+et OIDC-token for å lese kurateringsgrenene; ingen egen hemmelighet trengs.
 
-- **Preparatomtaler (SPC):** En jobbgren slettes tidligst ett døgn etter
-  avsluttet jobb, og bare når *alle* stoffene i forespørselen står som
-  `publisert` i kurateringskøen og har vært publisert minst ett døgn.
-  Godkjenning alene er ikke nok: kuratoren må ha publisert siden.
-- **Bare funksjonstest:** En vellykket jobbgren slettes tidligst ett døgn
-  etter avslutning. Grener med advarsler beholdes minst tre døgn.
-- **Behold alltid:** Jobber som fortsatt kjører, har feil, mangler et gyldig
-  resultat, er referert av en aktiv oppgave/gjenopptak/kurateringsgren/PR
-  i køen, eller er koblet til en åpen GitHub-PR. Grener som er endret under
-  oppryddingen, slettes heller ikke.
-- **Stopp ved usikkerhet:** Hvis køens tilstand mangler eller er eldre enn
-  24 timer, avbrytes oppryddingen uten sletting. Hver sletting og årsaken
-  registreres i GitHub Actions-kjøringens oppsummering.
+**Fasiten er kurateringsgrenene i OUSFAR**, lest uten fagtekst gjennom
+`/api/kuratering-ko` (`public.kuratering_kostatus`), ikke stoffets status i
+kurateringskøen. Køen sier hva den vil gjøre *neste* gang (et stoff står som
+`klar` igjen for en ny runde), og den ser ikke kurateringer som er gjort uten
+en reservasjon i den. En kuratering *pågår* når stoffet har en gren som ikke
+er `publisert` eller `arkivert`. Utfallet `feil` eller `advarsel` på jobben
+sier bare hvordan den tekniske kjøringen gikk, ikke om kurateringen er ferdig.
+
+Grenene deles i fire grupper:
+
+| Gruppe | Hva | Hva skjer |
+| --- | --- | --- |
+| **I bruk** | Jobben kjører; en åpen PR kommer fra grenen; kurateringskøen har koblet grenen til en oppgave; GitHub beskytter grenen; en pågående kuratering av et av stoffene; eller en pågående kuratering (av hvilket som helst stoff) har grenen i evidensjournalens `kuratorjobber` | Beholdes, uansett alder |
+| **Venter** | Jobben er ferdig, men fristen nedenfor er ikke gått, eller preparatomtalene er ennå ikke brukt i noen kuratering | Beholdes til fristen; oversikten sier når |
+| **Ferdig** | Preparatomtaler: *hvert* av stoffene har en kuratering publisert *etter* jobben. Bare funksjonstest (også `"alle"`): testen er ferdig | Slettes ett døgn etter den siste publiseringen, ett døgn etter en bestått funksjonstest og tre døgn etter en med advarsel eller feil |
+| **Ubrukelig** | Forespørselen ble avvist (ingen kjente stoffer); jobben ble avbrutt (står som `kjorer` i over et døgn); grenen har aldri fått et gyldig resultat, eller resultatet gjelder en annen forespørsel enn den som står på grenen nå (`foresporsel_sha256`); eller preparatomtalene er ikke brukt på 30 døgn uten at noen kuratering pågår | Slettes tre døgn etter en avvist forespørsel, sju døgn etter en avbrutt jobb eller siste commit, og 30 døgn etter en ubrukt jobb |
+
+Fristene står i `RYDDEFRISTER`. Preparatomtalene som slettes med en gren, er
+DMPs offentlige PDF-er; de hentes på nytt med en ny jobb om en senere
+kuratering trenger dem. Navnet på grenen står fortsatt i evidensjournalen.
+
+**Stopp ved usikkerhet:** Oppryddingen krever hele datasettet om
+kurateringsgrenene i OUSFAR før den sletter noe: minst én gren, ingen
+oppføring med ukjent form, og koblingene til jobbgrenene (`kuratorjobber`,
+en liste, tom når evidensjournalen ikke viser til noen) på hver gren. Svarer
+OUSFAR uten dette, også om appen er rullet ut før databasen har fått
+migrasjonen, prøver kjøringen igjen (ti forsøk med et minutts mellomrom).
+Går det fortsatt ikke, eller mangler køens tilstand, har ukjent form eller er
+eldre enn ett døgn, stopper kjøringen uten å slette noe og feiler synlig. En gren som er endret mens kjøringen pågikk, slettes ikke. Bare
+grener under `kuratorjobb/` kan slettes.
+
+**Oversikten:** Hver kjøring skriver en tabell i oppsummeringen i GitHub
+Actions med hver jobbgren, om den er slettet eller beholdt, gruppen og
+hvorfor. Er en gren beholdt mer enn 30 døgn etter jobben, vises en advarsel
+på kjøringen, så en opprydding som «lykkes» uten å rydde blir synlig.
 
 Denne ordningen gjelder bare `kuratorjobb/`-grenene. Køens varige gren
 `kurateringsko/tilstand` må bevares; gamle `kurateringsko/okt/`-grener

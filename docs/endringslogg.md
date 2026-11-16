@@ -218,7 +218,7 @@ førsteforelder-historikken til commiten som bygges
 (`src/drift/endringshistorikk.ts`): commitene slik de ble lagt på `main`, én per
 sammenslått PR. En endring regnes som publisert i commiten som la fila dens
 dit, og endringene nummereres i den rekkefølgen, fra den øverste versjonen i
-det frosne arkivet (`src/data/endringshistorikk.ts`, siste versjon 1.134.4).
+det frosne arkivet (`src/data/endringshistorikk.ts`, siste versjon 1.134.5).
 Bare endringer i samme commit ordnes etter `opprettet` og så ID-en
 (`src/domain/versjonering.ts`). Resultatet bygges inn i appen; nettleseren spør
 ikke GitHub om noe.

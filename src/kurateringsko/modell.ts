@@ -160,6 +160,8 @@ export interface Greninfo {
   publisert_kl: string | null
   /** Nøklene til kontrollpunktene sikkerhetsfilteret stoppet, fra grenens siste dekningsmatrise. */
   utsatte: string[]
+  /** Kuratorjobbgrenene grenens siste evidensjournal viser til (`kuratorjobber`), bare navnene. */
+  kuratorjobber?: string[]
 }
 
 /**
