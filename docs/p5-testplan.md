@@ -130,10 +130,12 @@ testmiljøet (D3). Kolonnen «Ventet» er det brukeren skal oppleve.
 
 ## 3. Den negative matrisen
 
-Radene legges i `tilgangsmatrise.test.ts` med etappen `P5`, i samme form som
-de andre (`navn`, `person`, `etappe`, `idag`, `mal`, `prov`). Hver rad kjøres i
-en transaksjon som rulles tilbake. Når en rad er ventet avvist, prøves også at
-feilkoden er den kontrakten sier (avsnitt 1).
+Tabellene prøves i `p5tvers.test.ts`, én test per inngang for hele
+persongalleriet, med dataene fra `hjelp/p5data.ts`. Hvert kall kjøres i en
+transaksjon som rulles tilbake. Når et kall er ventet avvist, prøves også at
+feilkoden er den kontrakten sier (avsnitt 1). Tråd A har sine rader i
+`tilgangsmatrise.test.ts`; tabellene her ligger for seg, så trådene ikke endrer
+den samme listen samtidig.
 
 Forkortelser: **V** = forventet tilgang, **–** = forventet avvist. Er koden ikke oppgitt, følger den regelen i avsnitt 1: `PT404` for det personen ikke kan lese, ellers `42501`.
 
@@ -341,7 +343,7 @@ personen ikke kan lese.
 | --- | --- |
 | REG-P1 | Et øyeblikksbilde av alt publisert (publisert revisjon per objekt, `objektpubliseringer`, `les_kommentarer('publisert')` og regelsettene appen leser) før og etter et helt forløp: sende, ta, presisere, svare, godkjenne, arbeide inn i utkastet og markere innarbeidet. Bildene er like; bare utkastet har endret seg |
 | REG-P2 | Det samme for et forslag som avvises og et som trekkes |
-| REG-P3 | Fortolkningen for analytten til `RA1` gir samme utfall som før forløpet (`fortolkningsutfall`) |
+| REG-P3 | Grunnlaget for fortolkningen er uendret: `les_intervallregelsett('publisert')` og `les_kommentarer('publisert')` slik en vanlig bruker leser dem, er like før og etter forløpet. Fortolkningen regnes ut i appen fra dette grunnlaget, og utregningen selv er prøvd i REG-K1 |
 
 ### Manuelle kontroller i D3 (lokalt testmiljø)
 
@@ -361,10 +363,10 @@ Trådene tester sine egne funksjoner i sine egne PR-er (kontrakten,
 
 | Del | Hvor | Når |
 | --- | --- | --- |
-| Avsnitt 3.1, 3.2 | Rader i `tilgangsmatrise.test.ts` (etappen `P5`), og det som trengs utover i en samlet `p5tvers.test.ts` | D2, når B1 og C2 har PR-er |
-| Avsnitt 3.3, 3.4 | Det tråd A ikke alt har i sine tester, som rader i `tilgangsmatrise.test.ts` | D2, når A1 har PR |
-| Avsnitt 3.6 | Mottakerne for hele forløpet i `p5tvers.test.ts`; kategoriene selv er Cs | D2 |
-| Avsnitt 4 | `p5.samtidighet.test.ts` for SAM-3, SAM-4, SAM-8–SAM-10 (på tvers av trådene); SAM-1, SAM-2, SAM-6, SAM-7 og SAM-11 hos eieren hvis de ikke alt er der | D2 |
+| Avsnitt 3.1, 3.2, 3.5 | Tabellene for hele persongalleriet i `p5tvers.test.ts` | D2 |
+| Avsnitt 3.3, 3.4 | Tråd A (`redaktoransvar.test.ts` og radene i `tilgangsmatrise.test.ts`); det A ikke har for alle personene, i `p5tvers.test.ts` | D2 |
+| Avsnitt 3.6 | Mottakerne for hele forløpet, og at ingen har et varsel om et forslag de ikke kan se, i `p5tvers.test.ts`; kategoriene selv er Cs | D2 |
+| Avsnitt 4 | `p5.samtidighet.test.ts` for SAM-1, SAM-3, SAM-4, SAM-8–SAM-10 (på tvers av trådene); SAM-2, SAM-6, SAM-7 og SAM-11 hos eieren | D2 |
 | Avsnitt 5, 6 | Komponenttestene hos eierne; nettleserkontrollen i D3 | D3 |
 | REG-P1–P3 | `p5tvers.test.ts` | D2 |
 | D3 | Brukerflytene i avsnitt 2 med Playwright i det lokale testmiljøet (`apneTestmiljo()`), skjermbilder i prosjektmappen | Når A–C er integrert |
@@ -403,4 +405,12 @@ V7, V9, V11, tastatur og en annen brukers direkte adresse) er prøvd i det
 lokale testmiljøet på tråd Bs databasedel og brukerflate før PR-en for
 brukerflaten. Flyten virker. Fem funn er sendt til tråd B: fokus forsvinner
 etter innsendingen, ingen inngang for hele fagsiden, ikonet kan forveksles med
-diskusjonene, og to mindre om skjermleser. Sluttkontrollen prøver dem på nytt.
+diskusjonene, og to mindre om skjermleser. Tråd B rettet dem, og en ny kontroll
+samme dag fant alle fem i orden. Sluttkontrollen prøver dem på nytt.
+
+**Krysstestene (D2, 16.11.2026).** Prøvd på A1, B1 og C slått sammen.
+Tabellene i avsnitt 3 og samtidigheten i avsnitt 4 holder. To funn ved
+sammenslåingen er rettet av eierne: testene for behandlingen bygde på at
+ingen i A hadde redaktøransvar (rettet i C), og `p5ressurser.test.ts` manglet
+tidsfrist for oppsettet (rettet i P5.0). Samtidigheten på ekte Postgres
+avklarte fasiten for SAM-1, SAM-4, SAM-7, SAM-8 og SAM-9 over.
