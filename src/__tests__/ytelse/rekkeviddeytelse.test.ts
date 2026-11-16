@@ -11,6 +11,11 @@
  * `MAAL_REKKEVIDDE=1 npx vitest run src/__tests__/ytelse/rekkeviddeytelse.test.ts`;
  * hoppes over i `npm test`. Resultatene står i docs/fagmiljoer.md
  * («Faginnholdet etter rekkevidden»).
+ *
+ * En senere endring av reglene måles på samme måte med `MAAL_ENDRING` satt
+ * til slutten av navnet på migrasjonen, for eksempel `_redaktoransvar.sql`
+ * (P5 tråd A, docs/redaktorer-og-forslag.md). «Før» er da alle migrasjonene
+ * før den.
  */
 import type { Transaction } from '@electric-sql/pglite'
 import { it } from 'vitest'
@@ -19,7 +24,9 @@ import { DAGENS_IMPORT } from '../hjelp/dagensregler'
 import { PRODUKSJONSFORM, syntetiskeFagsiderSql } from '../hjelp/syntetiskeFagsider'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som } from '../hjelp/testdatabase'
 
-const ENDRINGEN = migrasjonsfiler().find((f) => f.endsWith('_rekkevidde_faginnhold.sql'))!
+const MAALT = process.env.MAAL_ENDRING ?? '_rekkevidde_faginnhold.sql'
+const ENDRINGEN = migrasjonsfiler().find((f) => f.endsWith(MAALT))!
+const NAVN = MAALT === '_rekkevidde_faginnhold.sql' ? 'P2a' : MAALT.replace(/^_|\.sql$/g, '')
 /** Arbeidsminnet i produksjonen 06.11.2026. */
 const WORK_MEM = '2184kB'
 const GJENTAKELSER = Number(process.env.GJENTAKELSER ?? 5)
@@ -91,10 +98,10 @@ async function main() {
   const etter = await mal()
 
   console.log(`\nwork_mem ${WORK_MEM}, median av ${GJENTAKELSER} kall\n`)
-  console.log('| Kall | Før P2a | Etter P2a |')
+  console.log(`| Kall | Før ${NAVN} | Etter ${NAVN} |`)
   console.log('|---|---|---|')
   for (const [i, k] of kall.entries()) console.log(`| ${k.navn} | ${for_[i]!.toFixed(0)} ms | ${etter[i]!.toFixed(0)} ms |`)
   await db.close()
 }
 
-it.skipIf(!process.env.MAAL_REKKEVIDDE)('måler lesingen av faginnholdet før og etter P2a', main, 3_600_000)
+it.skipIf(!process.env.MAAL_REKKEVIDDE)(`måler lesingen av faginnholdet før og etter ${NAVN}`, main, 3_600_000)

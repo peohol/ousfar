@@ -46,6 +46,8 @@ export interface Persondefinisjon {
   avsluttetI?: Fagmiljo
   /** Fagmiljøer der personen er lokal administrator. */
   lokalAdminI?: readonly Fagmiljo[]
+  /** Fagmiljøer der personen har redaktøransvar for fortolkningen (P5). */
+  redaktorForFortolkningI?: readonly Fagmiljo[]
   systemarkitekt?: boolean
   /** Hva personen står for i testene. */
   beskrivelse: string
@@ -93,6 +95,26 @@ export const PERSONER = {
     primaer: null,
     avsluttetI: 'A',
     beskrivelse: 'Administrator uten aktive medlemskap; den gamle adminrollen står igjen',
+  },
+  // P5 (docs/redaktorer-og-forslag.md): redaktørene. Ansvaret for ett
+  // regelsett gis av testen med `giRedaktoransvar` når regelsettet finnes, og
+  // det nasjonale bare når bryteren er slått på (`slaPaNasjonaleRedaktorer`);
+  // uten det er de vanlige brukere i A.
+  redaktorRessursA: {
+    rolle: 'user',
+    primaer: 'A',
+    beskrivelse: 'Redaktør for ett regelsett i A (ansvaret gis av testen med giRedaktoransvar)',
+  },
+  redaktorFortolkningA: {
+    rolle: 'user',
+    primaer: 'A',
+    redaktorForFortolkningI: ['A'],
+    beskrivelse: 'Redaktør for fortolkningen i A',
+  },
+  redaktorNasjonal: {
+    rolle: 'user',
+    primaer: 'A',
+    beskrivelse: 'Nasjonal redaktør for fagsidene når bryteren er på (ansvaret gis av testen); ellers vanlig bruker i A',
   },
 } as const satisfies Record<string, Persondefinisjon>
 
@@ -255,9 +277,43 @@ export async function byggPersongalleri(
         tx.query('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [id[p], fagmiljo[f]]),
       )
     }
+    for (const f of def.redaktorForFortolkningI ?? []) {
+      await giRedaktoransvar(db, id[p], { omrade: 'fortolkning', fagmiljo: fagmiljo[f] })
+    }
     if (def.primaer === null) await fjernAlleMedlemskap(db, id[p])
   }
   return { id, fagmiljo }
+}
+
+/** Målet for et redaktøransvar (P5, `public.redaktoransvar`). */
+export type Redaktormal =
+  | { omrade: 'ressurs'; ressurs: string }
+  | { omrade: 'fortolkning'; fagmiljo: string }
+  | { omrade: 'fagsider' }
+
+/**
+ * Gir brukeren redaktøransvar direkte i tabellen, med en grunn i
+ * tilgangsloggen, slik galleriet gir de andre rollene. Nasjonalt ansvar krever
+ * at bryteren er slått på (`slaPaNasjonaleRedaktorer`). Gir ansvarets ID.
+ */
+export async function giRedaktoransvar(db: PGlite, brukerId: string, mal: Redaktormal): Promise<string> {
+  return medGrunn(db, async (tx) => {
+    const { rows } = await tx.query<{ id: string }>(
+      `insert into public.redaktoransvar (bruker_id, omrade, ressurs_id, fagmiljo_id) values ($1, $2, $3, $4) returning id`,
+      [brukerId, mal.omrade, mal.omrade === 'ressurs' ? mal.ressurs : null, mal.omrade === 'fortolkning' ? mal.fagmiljo : null],
+    )
+    return rows[0]!.id
+  })
+}
+
+/**
+ * Slår bryteren for nasjonale redaktører (B2, `intern.nasjonale_redaktorer_aktivert`)
+ * på eller av i testdatabasen, slik den egne aktiveringsmigrasjonen vil gjøre.
+ */
+export async function settNasjonaleRedaktorer(db: PGlite, pa: boolean): Promise<void> {
+  await db.exec(
+    `create or replace function intern.nasjonale_redaktorer_aktivert() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$`,
+  )
 }
 
 /** Medlemskapene slik de faktisk ligger i databasen, per person. */

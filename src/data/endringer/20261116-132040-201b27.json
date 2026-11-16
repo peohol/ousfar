@@ -1,0 +1,14 @@
+{
+  "id": "20261116-132040-201b27",
+  "semver": "patch",
+  "opprettet": "2026-11-16T13:20:40Z",
+  "sammendrag": "Databasen kan nå gi redaktøransvar",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["fortolkning"],
+  "punkter": [
+    "Administratorene i et fagmiljø kan snart gi en kollega ansvar for å redigere ett regelsett eller hele fortolkningen i fagmiljøet. Redaktøren kan endre utkastene, men publiserer ikke.",
+    "Ingenting endres for brukerne ennå; skjermbildene kommer i en egen oppdatering."
+  ],
+  "utenVarsel": true
+}

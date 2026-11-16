@@ -34,7 +34,7 @@ type Utfall = 'tilgang' | 'avvist'
 type Etappe = (typeof HOLDER)[number]
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b', 'P5'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -245,6 +245,21 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'kan gi nytt passord til en vanlig bruker i eget fagmiljø', person: 'adminA', etappe: 'P1.2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select nytt_passord from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.vanligA]) },
   { navn: 'kan gi nytt passord til et medlem som også hører til B', person: 'adminA', etappe: 'P1.2a', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select nytt_passord from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.dobbeltAB]) },
   { navn: 'kan endre rollen til en lokal admin', person: 'systemarkitekt', etappe: 'P1.2a', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select endre_rolle from public.mine_kontohandlinger() where bruker_id = $1', [k.g.id.adminA]) },
+
+  // --- P5: redaktøransvaret (docs/redaktorer-og-forslag.md) ----------------
+  // Redaktøren for fortolkningen i A leser og endrer utkastene der, men publiserer ikke og gir ikke ansvar.
+  { navn: 'leser A sitt utkast som redaktør for fortolkningen i A', person: 'redaktorFortolkningA', etappe: 'P5', idag: 'tilgang', mal: 'tilgang', prov: lesKommentar('utkast', 'kommentarutkast') },
+  { navn: 'lagrer A sitt utkast som redaktør for fortolkningen i A', person: 'redaktorFortolkningA', etappe: 'P5', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.d.kommentarutkast, JSON.stringify(KOMMENTAR)]) },
+  { navn: 'publiserer A sitt utkast som redaktør for fortolkningen i A', person: 'redaktorFortolkningA', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, 'select public.publiser_utkast($1, 1)', [k.d.kommentarutkast]) },
+  { navn: 'gir redaktøransvar som redaktør', person: 'redaktorFortolkningA', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fortolkning', null, $2)`, [k.g.id.vanligA, k.g.fagmiljo.A]) },
+  // Uten ansvar gir galleriets andre redaktører ingenting.
+  { navn: 'leser A sitt utkast uten redaktøransvar', person: 'redaktorNasjonal', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: lesKommentar('utkast', 'kommentarutkast') },
+  { navn: 'gir seg selv redaktøransvar', person: 'vanligA', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fortolkning', null, $2)`, [k.g.id.vanligA, k.g.fagmiljo.A]) },
+  { navn: 'gir redaktøransvar i A som lokal admin i B', person: 'adminB', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fortolkning', null, $2)`, [k.g.id.dobbeltAB, k.g.fagmiljo.A]) },
+  { navn: 'gir redaktøransvar i eget fagmiljø som lokal admin', person: 'adminA', etappe: 'P5', idag: 'tilgang', mal: 'tilgang', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fortolkning', null, $2)`, [k.g.id.vanligA, k.g.fagmiljo.A]) },
+  { navn: 'gir nasjonalt redaktøransvar før B2 er slått på', person: 'systemarkitekt', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fagsider')`, [k.g.id.redaktorNasjonal]) },
+  { navn: 'leser redaktøroversikten for A som lokal admin i B', person: 'adminB', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.les_redaktoransvar($1)', [k.g.fagmiljo.A]) },
+  { navn: 'leser redaktøransvarene direkte i tabellen', person: 'adminA', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.redaktoransvar') },
 ]
 
 /** Scenarioene der målet ikke er nådd ennå, per etappe. */

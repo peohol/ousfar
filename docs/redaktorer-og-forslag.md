@@ -112,7 +112,7 @@ og lager ingen egne varianter av dem:
 | `tilhorer_ressurs(objekt, ressurs)` | Om objektet er ressursen eller et element i den | — |
 | `ressursbeskrivelse(ressurs)` | `{id, type, navn, stoff, analyttkode, omfang, fagmiljo_id, publisert_revisjon}`. Leser forbi radsikkerheten: kall den bare for en ressurs den innloggede kan lese | — |
 | `har_ressursmyndighet(ressurs, bruker)` | Systemarkitekt (felles) eller lokal administrator (lokalt), uten redaktøransvar. Det som gir publiseringsretten | — |
-| `ressursens_redaktorer(ressurs)` | De aktive redaktørene med ansvar for ressursen. **Tom i grunnmuren** | Tråd A, med samme signatur |
+| `ressursens_redaktorer(ressurs)` | De aktive redaktørene med ansvar for ressursen. Tom i grunnmuren, fylt av tråd A | Tråd A, med samme signatur (levert) |
 | `kan_behandle_forslag(ressurs, bruker)` | Aktivt medlemskap og (myndighet eller redaktøransvar) | — (følger A gjennom funksjonen over) |
 | `forslagsbehandlere(ressurs)` | Mottakerne av et nytt forslag: redaktørene, og når ingen har ansvaret, de med myndighet (ansvarskøen) | — |
 
@@ -276,6 +276,61 @@ fungerer med tastatur, berøring og på smal skjerm.
 Vanlige brukere ser ingen administrative valg. En redaktør som ikke er
 administrator, ser ikke adminmenyen, men får redigeringen i området sitt og
 fanen «Til behandling».
+
+## Redaktøransvar (tråd A)
+
+`supabase/migrations/20261116130500_redaktoransvar.sql`, prøvd i
+`src/__tests__/redaktoransvar.test.ts`, `redaktoransvar.samtidighet.test.ts`
+(ekte Postgres) og P5-radene i `tilgangsmatrise.test.ts`.
+
+**Hva ansvaret gir.** En redaktør leser og lagrer utkastet for området sitt,
+som administratoren: hele ressursen (fagsiden med kortene, eller regelsettet
+med kommentarene det bruker), alle fortolkningsressursene til ett fagmiljø
+(`fortolkning`), eller alle fagsidene (`fagsider`, nasjonalt, av til B2).
+`intern.kan_endre_objekt` og `intern.har_endringsrett_noe` svarer ja gjennom
+`intern.redaktoransvar_dekker`, og reglene for utkast slipper redaktøren til
+gjennom `public.mine_redigerbare_objekter()` (ressursansvar) og
+`public.mine_redigerbare_fagmiljoer()` (fortolkningsansvar, i stedet for
+`mine_administrerte_fagmiljoer`). En redaktør med ansvar for ett regelsett kan
+lage nye kommentarer i samme lagring, men bare kommentarer regelsettet bruker
+(ellers `22023`, og ingenting lagres).
+
+**Hva ansvaret ikke gir.** Redaktøren publiserer ikke, sletter ikke referanser
+og lager ikke nye fagsider eller referanser (`42501`). Kontrollen står ett sted,
+`intern.krev_myndighet`, som `intern.publiser_objekt` (alle publiseringene,
+også fra kurateringsgrenene) og `public.slett_referanse` kaller først. Det krever
+`har_ressursmyndighet`, som før.
+
+**Hvem gir det.** Lokalt ansvar gis og tas tilbake av de lokale
+administratorene i fagmiljøet og systemarkitektene, nasjonalt bare av
+systemarkitektene og bare når B2 er slått på
+(`intern.kan_administrere_redaktoransvar`). Ingen kan gi seg selv ansvar, og
+mottakeren må være aktivt medlem av fagmiljøet (lokalt) eller av et fagmiljø
+(nasjonalt). Å gi det samme ansvaret igjen gir det samme ansvaret tilbake.
+Tildelingene og tilbakekallingene går gjennom den felles låsen for tilgangene
+(`intern.las_tilgang`) og loggføres i `tilgangslogg` med hvem og hvorfor.
+Et tilbakekalt ansvar kan ikke gjenopplives; det gis på nytt som en ny rad.
+
+**Når det gjelder.** Ansvaret slås opp ved hvert kall
+(`intern.redaktoransvar_gjelder`): redaktøren må ha aktivt medlemskap, et
+lokalt ansvar gjelder bare mens redaktøren er aktivt medlem av det aktive
+fagmiljøet, og et nasjonalt bare mens B2 er på. Avsluttes medlemskapet,
+tilbakekalles ansvaret i fagmiljøet også i tabellen
+(`medlemskap_redaktoransvar`), så det ikke kommer tilbake med et nytt
+medlemskap.
+
+**Hvem ser hva.** `les_redaktoransvar` viser ansvarene og ressursene uten
+redaktør innenfor egen myndighet; et annet fagmiljø gir `42501`, som for en
+som ikke administrerer noe. `ressursens_redaktoransvar` viser redaktørene for
+én ressurs til dem som kan behandle forslag til den; en ressurs den innloggede
+ikke kan lese, gir `PT404`. `mine_redaktoransvar` viser egne ansvar, og
+`mine_rettigheter` har `redaktor` og `behandler_forslag`.
+
+**Ytelsen.** Målt med
+`MAAL_REKKEVIDDE=1 MAAL_ENDRING=_redaktoransvar.sql npx vitest run src/__tests__/ytelse/rekkeviddeytelse.test.ts`
+(16.11.2026, median av 5 kall): ingen av kallene ble merkbart tregere
+(`les_stoffer` publisert 434 → 439 ms, `les_endringslogg` for en fagside
+1265 → 1323 ms, utkastene for en lokal administrator 1–5 ms før og etter).
 
 ## Nasjonale redaktører (B2)
 
