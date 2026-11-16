@@ -3,34 +3,42 @@
  * opprydding av jobbgrener»): når en gren slettes, når den må beholdes, og at
  * en kjøring aldri sletter noe når grunnlaget er usikkert.
  */
+import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { KO_ARBEIDSFLYT, RYDDE_ARBEIDSFLYT } from '../kuratering/endepunkt'
 import type { Greninfo } from '../kurateringsko/modell'
 import { jobbgrenerIKoen, kjorRydding, KOFIL, KOGREN, lagRyddegithub, type Ryddegithub } from '../kuratorjobb/ryddekjoring'
+import { FORESPORSELSFIL, STATUSFIL } from '../kuratorjobb/modell'
 import { jobbgrenI, MISTENKELIG_ALDER, RYDDEFRISTER, ryddeMarkdown, vurderAlle, vurderJobbgren, type Jobbgren, type Ryddegrunnlag } from '../kuratorjobb/rydding'
 
 const ROT = fileURLToPath(new URL('../../', import.meta.url))
 const NA = '2026-11-16T04:00:00.000Z'
 const dogn = (n: number) => new Date(Date.parse(NA) - n * 86_400_000).toISOString()
 
-function status(gren: string, endring: { status?: string; ferdig?: number; oppgaver?: string[]; stoffer?: string[] | 'alle'; funnet?: string[] } = {}) {
+function status(gren: string, endring: { status?: string; ferdig?: number; oppgaver?: string[]; stoffer?: string[] | 'alle'; funnet?: string[]; utenSha?: boolean } = {}) {
   const stoffer = endring.stoffer ?? ['alfa']
   const funnet = endring.funnet ?? (stoffer === 'alle' ? ['alfa', 'beta'] : stoffer)
   const ferdig = dogn(endring.ferdig ?? 10)
   return {
     versjon: 1,
     status: endring.status ?? 'advarsel',
-    jobb: { gren, startet_kl: ferdig, ferdig_kl: endring.status === 'kjorer' ? null : ferdig },
+    jobb: { gren, startet_kl: ferdig, ferdig_kl: endring.status === 'kjorer' ? null : ferdig, foresporsel_sha256: endring.utenSha ? null : 'f1' },
     foresporsel: { versjon: 1, stoffer, oppgaver: endring.oppgaver ?? ['funksjonstest', 'spc'] },
     stoffer: Object.fromEntries(funnet.map((s) => [s, { status: 'ok', oppgaver: {} }])),
   }
 }
 
-function jobb(navn: string, endring: Parameters<typeof status>[1] & { commit?: number; beskyttet?: boolean; uten?: boolean } = {}): Jobbgren {
+function jobb(navn: string, endring: Parameters<typeof status>[1] & { commit?: number; beskyttet?: boolean; uten?: boolean; foresporsel?: string | null } = {}): Jobbgren {
   const gren = `kuratorjobb/${navn}`
-  return { navn: gren, beskyttet: endring.beskyttet ?? false, commit_kl: dogn(endring.commit ?? endring.ferdig ?? 10), status: endring.uten ? null : status(gren, endring) }
+  return {
+    navn: gren,
+    beskyttet: endring.beskyttet ?? false,
+    commit_kl: dogn(endring.commit ?? endring.ferdig ?? 10),
+    status: endring.uten ? null : status(gren, endring),
+    foresporsel_sha256: endring.foresporsel === undefined ? 'f1' : endring.foresporsel,
+  }
 }
 
 function gren(stoff: string, status: Greninfo['status'], publisert?: number, kuratorjobber: string[] = []): Greninfo {
@@ -127,10 +135,18 @@ describe('reglene', () => {
     expect(vurderJobbgren(jobb('x', { status: 'kjorer', ferdig: 8 }), grunnlag())).toMatchObject({ slett: true, kategori: 'ubrukelig' })
   })
 
-  it('beholder en gren med nye commits etter resultatet i sju døgn', () => {
+  it('beholder en gren med en ny forespørsel resultatet ikke gjelder i sju døgn, uansett hvor fort den kom', () => {
     const g = grunnlag({ grener: [gren('alfa', 'publisert', 5)] })
-    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 2 }), g)).toMatchObject({ slett: false, grunn: expect.stringContaining('nye commits') })
-    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 8 }), g)).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    // Ny forespørsel ett minutt etter jobben: resultatet gjelder den forrige.
+    expect(vurderJobbgren(jobb('x', { ferdig: 2, commit: 2 - 1 / 1440, foresporsel: 'f2' }), g)).toMatchObject({ slett: false, grunn: expect.stringContaining('ny forespørsel') })
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 2, foresporsel: 'f2' }), g)).toMatchObject({ slett: false })
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 8, foresporsel: 'f2' }), g)).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 8, foresporsel: null }), g)).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    // Samme forespørsel: en senere commit endrer ingenting.
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 2 }), g)).toMatchObject({ slett: true, kategori: 'ferdig' })
+    // Uten SHA i resultatet avgjør tiden: en commit mer enn ti minutter etter jobben er noe nytt.
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 2, utenSha: true }), g)).toMatchObject({ slett: false, grunn: expect.stringContaining('ny forespørsel') })
+    expect(vurderJobbgren(jobb('x', { ferdig: 10, commit: 10 - 1 / 1440, utenSha: true }), g)).toMatchObject({ slett: true })
   })
 
   it('leser grennavnet først i en oppføring i evidensjournalen', () => {
@@ -165,7 +181,13 @@ function falskGithub(jobber: Jobbgren[], ko: unknown, endring: Partial<Ryddegith
   const github: Ryddegithub = {
     grener: async () => [...shaer].map(([navn, sha]) => ({ navn, sha, beskyttet: jobber.find((j) => j.navn === navn)?.beskyttet ?? false })),
     gren: async (navn) => (shaer.has(navn) ? { sha: shaer.get(navn)!, commit_kl: jobber.find((j) => j.navn === navn)?.commit_kl ?? null } : null),
-    jsonfil: async (sti, navn) => (sti === KOFIL && navn === KOGREN ? ko : (jobber.find((j) => j.navn === navn)?.status ?? null)),
+    fil: async (sti, ref) => {
+      if (sti === KOFIL) return ref === KOGREN && ko !== null ? Buffer.from(JSON.stringify(ko)) : null
+      const j = jobber.find((x) => `sha-${x.navn}` === ref)
+      if (!j) return null
+      if (sti === STATUSFIL) return j.status === null ? null : Buffer.from(JSON.stringify(j.status))
+      return sti === FORESPORSELSFIL ? Buffer.from(FORESPORSEL) : null
+    },
     apnePr: async () => [],
     slett: async (navn) => {
       slettet.push(navn)
@@ -176,10 +198,13 @@ function falskGithub(jobber: Jobbgren[], ko: unknown, endring: Partial<Ryddegith
   return { github, slettet, shaer }
 }
 
+const FORESPORSEL = '{"versjon":1,"stoffer":["alfa"]}'
 const KO = { versjon: 1, oppdatert_kl: dogn(0.1), stoffer: { alfa: { status: 'klar', reservasjon: null } } }
 
 describe('kjøringen', () => {
-  const jobber = [jobb('ferdig'), jobb('pagar', { stoffer: ['beta'] })]
+  const sha = createHash('sha256').update(FORESPORSEL).digest('hex')
+  const medSha = (j: Jobbgren): Jobbgren => ({ ...j, status: { ...(j.status as object), jobb: { ...(j.status as { jobb: object }).jobb, foresporsel_sha256: sha } } })
+  const jobber = [medSha(jobb('ferdig')), medSha(jobb('pagar', { stoffer: ['beta'] })), jobb('ny-foresporsel', { commit: 1 })]
   const grener = async () => [gren('alfa', 'publisert', 5), gren('beta', 'arbeid')]
 
   it('sletter bare de ferdige jobbgrenene, og aldri køens gren eller andre grener', async () => {
@@ -187,7 +212,8 @@ describe('kjøringen', () => {
     const u = await kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} })
     expect(f.slettet).toEqual(['kuratorjobb/ferdig'])
     expect([...u.slettet]).toEqual(['kuratorjobb/ferdig'])
-    expect(u.oversikt.beholdes.map((v) => v.gren)).toEqual(['kuratorjobb/pagar'])
+    // Den siste har et resultat for en annen forespørsel enn den som står på grenen.
+    expect(u.oversikt.beholdes.map((v) => v.gren)).toEqual(['kuratorjobb/ny-foresporsel', 'kuratorjobb/pagar'])
     expect(f.shaer.has(KOGREN)).toBe(true)
   })
 
@@ -246,7 +272,7 @@ describe('kjøringen', () => {
     expect(jobbgrenerIKoen(null).size).toBe(0)
   })
 
-  it('sletter bare grener under kuratorjobb/ gjennom GitHubs API', async () => {
+  it('slår opp en gren med hele navnet som én parameter, og sletter bare grener under kuratorjobb/', async () => {
     const kall: string[] = []
     const gh = lagRyddegithub('eier/repo', 't', async (adresse, valg) => {
       kall.push(`${valg?.method} ${adresse}`)
@@ -255,7 +281,8 @@ describe('kjøringen', () => {
     await expect(gh.slett('kurateringsko/tilstand')).rejects.toThrow('Sletter bare jobbgrener')
     await expect(gh.slett('main')).rejects.toThrow('Sletter bare jobbgrener')
     await gh.slett('kuratorjobb/a b')
-    expect(kall).toEqual(['DELETE https://api.github.com/repos/eier/repo/git/refs/heads/kuratorjobb/a%20b'])
+    await gh.gren('kuratorjobb/a')
+    expect(kall).toEqual(['DELETE https://api.github.com/repos/eier/repo/git/refs/heads/kuratorjobb/a%20b', 'GET https://api.github.com/repos/eier/repo/branches/kuratorjobb%2Fa'])
   })
 })
 

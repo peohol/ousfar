@@ -41,7 +41,11 @@ export const RYDDEFRISTER = {
   ubrukt: 30,
 } as const
 
-/** Jobben committer resultatet sitt sekunder etter at den er ferdig; en commit senere enn dette er noe nytt. */
+/**
+ * Jobben committer resultatet sitt sekunder etter at den er ferdig; en commit
+ * senere enn dette er noe nytt. Brukes bare når resultatet ikke sier hvilken
+ * forespørsel det gjelder (`foresporsel_sha256`).
+ */
 const NY_COMMIT_SLARK = 10 * 60_000
 
 /** Beholdt lenger enn dette, er grenen trolig hengt opp i noe og vises som en advarsel. */
@@ -77,6 +81,8 @@ export interface Jobbgren {
   beskyttet: boolean
   /** Tidspunktet for den siste commiten på grenen. */
   commit_kl: string | null
+  /** SHA-256 av `kuratorjobb/foresporsel.json` slik den står på grenen nå, eller `null` når den mangler. */
+  foresporsel_sha256: string | null
   /** `kuratorjobb/resultat/status.json`, eller `null` når den mangler eller ikke kan leses. */
   status: unknown
 }
@@ -121,6 +127,7 @@ export function lesJobbstatus(v: unknown, gren: string) {
     status: s.status as Jobbstatus['status'],
     startet: tid(s.jobb.startet_kl),
     ferdig: tid(s.jobb.ferdig_kl),
+    foresporsel: typeof s.jobb.foresporsel_sha256 === 'string' && s.jobb.foresporsel_sha256 ? s.jobb.foresporsel_sha256 : null,
     oppgaver,
     alle: forespurt === 'alle',
     // Nøklene jobben fant i stoffregisteret; et navn den ikke kjente, gir ingen.
@@ -152,8 +159,9 @@ const liste = (navn: readonly string[]) => (navn.length <= 3 ? navn.join(', ') :
  *    PR fra grenen, en kobling i kurateringskøen, en pågående kuratering som
  *    viser til grenen i evidensjournalen, en pågående kuratering av et av
  *    stoffene, og en jobb som fortsatt kjører.
- * 2. Ubrukelig: en avbrutt jobb, en gren uten resultat eller med nye commits
- *    etter resultatet, og en forespørsel jobben avviste, slettes etter fristen.
+ * 2. Ubrukelig: en avbrutt jobb, en gren uten resultat eller med en ny
+ *    forespørsel resultatet ikke gjelder, og en forespørsel jobben avviste,
+ *    slettes etter fristen.
  * 3. Bare funksjonstest: slettes ett døgn etter en bestått test, tre døgn
  *    etter en med avvik.
  * 4. Preparatomtaler: slettes når hvert av stoffene har en kuratering
@@ -195,9 +203,12 @@ export function vurderJobbgren(j: Jobbgren, g: Ryddegrunnlag): Ryddevurdering {
   const pagar = [...new Set(aktive.filter((k) => s.stoffer.includes(k.stoff)).map((k) => k.stoff))]
   if (pagar.length > 0) return behold('i_bruk', `kurateringen av ${liste(pagar)} pågår`, sist)
 
-  // En ny forespørsel (eller noe annet) er committet etter jobben, og resultatet gjelder ikke lenger grenen.
-  if (s.status !== 'kjorer' && Number.isFinite(commit) && Number.isFinite(sist) && commit - sist > NY_COMMIT_SLARK) {
-    return etterFrist(j.navn, 'ubrukelig', commit, RYDDEFRISTER.avbrutt, na, 'grenen fikk nye commits etter jobben, men aldri et nytt resultat', 'grenen har fått nye commits etter jobben')
+  // Resultatet gjelder en annen forespørsel enn den som står på grenen nå: en ny er committet og ennå ikke kjørt.
+  const nyForesporsel = s.foresporsel
+    ? s.foresporsel !== j.foresporsel_sha256
+    : s.status !== 'kjorer' && Number.isFinite(commit) && Number.isFinite(sist) && commit - sist > NY_COMMIT_SLARK
+  if (nyForesporsel) {
+    return etterFrist(j.navn, 'ubrukelig', commit, RYDDEFRISTER.avbrutt, na, 'grenen har en ny forespørsel som aldri fikk et resultat', 'grenen har en ny forespørsel uten resultat')
   }
 
   if (s.status === 'kjorer') {

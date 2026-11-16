@@ -5,8 +5,9 @@
  * som kan slettes. GitHub og OUSFAR kommer inn utenfra, så kjøringen kan
  * prøves uten nettverk.
  */
+import { createHash } from 'node:crypto'
 import type { Greninfo } from '../kurateringsko/modell'
-import { JOBBGRENPREFIKS, STATUSFIL } from './modell'
+import { FORESPORSELSFIL, JOBBGRENPREFIKS, STATUSFIL } from './modell'
 import { vurderAlle, type Jobbgren, type Ryddeoversikt } from './rydding'
 
 /** Grenen kurateringskøen holder tilstanden sin på. Ligger utenfor `kuratorjobb/` og røres aldri her. */
@@ -22,8 +23,8 @@ export interface Ryddegithub {
   grener(): Promise<{ navn: string; sha: string; beskyttet: boolean }[]>
   /** Én gren nå, med tidspunktet for commiten; `null` når den er borte. */
   gren(navn: string): Promise<{ sha: string; commit_kl: string | null } | null>
-  /** En JSON-fil på en gren, eller `null` når den mangler eller ikke er gyldig JSON. */
-  jsonfil(sti: string, gren: string): Promise<unknown>
+  /** En fil på en gren, eller `null` når den mangler. */
+  fil(sti: string, gren: string): Promise<Buffer | null>
   /** Grenene i dette repoet som åpne PR-er kommer fra. */
   apnePr(): Promise<string[]>
   slett(navn: string): Promise<void>
@@ -42,6 +43,16 @@ export interface Ryddeutfall {
   oversikt: Ryddeoversikt
   slettet: Set<string>
   alleGrener: number
+}
+
+/** Innholdet som JSON, eller `null` når det mangler eller ikke er gyldig JSON. */
+function json(bytes: Buffer | null): unknown {
+  if (!bytes) return null
+  try {
+    return JSON.parse(bytes.toString('utf8'))
+  } catch {
+    return null
+  }
 }
 
 /** Jobbgrenene kurateringskøen har koblet til noe: en reservasjon, et gjenopptak, en kurateringsgren eller en PR. */
@@ -69,7 +80,7 @@ function kontrollerKo(ko: unknown, na: number) {
 
 export async function kjorRydding({ github, grener: lesGrener, kunVis, na, logg = console.log }: Ryddevalg): Promise<Ryddeutfall> {
   const naTid = Date.parse(na)
-  const ko = await github.jsonfil(KOFIL, KOGREN)
+  const ko = json(await github.fil(KOFIL, KOGREN))
   kontrollerKo(ko, naTid)
   // Kurateringsgrenene er fasiten for hva som pågår; uten dem slettes ingenting.
   const kurateringsgrener = await lesGrener()
@@ -78,9 +89,17 @@ export async function kjorRydding({ github, grener: lesGrener, kunVis, na, logg 
 
   const jobber: (Jobbgren & { sha: string })[] = []
   for (const g of jobbgrener) {
-    const [detaljer, status] = await Promise.all([github.gren(g.navn), github.jsonfil(STATUSFIL, g.navn)])
+    // Filene leses fra commiten grenen ble listet med, så de hører sammen.
+    const [detaljer, status, foresporsel] = await Promise.all([github.gren(g.navn), github.fil(STATUSFIL, g.sha), github.fil(FORESPORSELSFIL, g.sha)])
     if (!detaljer) continue // Slettet av noen andre underveis.
-    jobber.push({ navn: g.navn, sha: g.sha, beskyttet: g.beskyttet, commit_kl: detaljer.sha === g.sha ? detaljer.commit_kl : null, status })
+    jobber.push({
+      navn: g.navn,
+      sha: g.sha,
+      beskyttet: g.beskyttet,
+      commit_kl: detaljer.sha === g.sha ? detaljer.commit_kl : null,
+      status: json(status),
+      foresporsel_sha256: foresporsel ? createHash('sha256').update(foresporsel).digest('hex') : null,
+    })
   }
 
   const oversikt = vurderAlle(jobber, { na, apnePr: new Set(apnePr), iKoen: jobbgrenerIKoen(ko), grener: kurateringsgrener })
@@ -128,18 +147,15 @@ export function lagRyddegithub(repo: string, token: string, hent: typeof fetch =
       }
     },
     async gren(navn) {
-      const r = (await api(`branches/${refsti(navn)}`)) as { commit?: { sha?: string; commit?: { committer?: { date?: string } } } } | null
+      // Hele navnet er én parameter i GitHubs API, også skråstreken.
+      const r = (await api(`branches/${encodeURIComponent(navn)}`)) as { commit?: { sha?: string; commit?: { committer?: { date?: string } } } } | null
       if (!r?.commit?.sha) return null
       return { sha: r.commit.sha, commit_kl: r.commit.commit?.committer?.date ?? null }
     },
-    async jsonfil(sti, gren) {
-      const f = (await api(`contents/${sti}?ref=${encodeURIComponent(gren)}`)) as { type?: string; encoding?: string; content?: string } | null
-      if (!f || f.type !== 'file' || f.encoding !== 'base64' || !f.content) return null
-      try {
-        return JSON.parse(Buffer.from(f.content.replace(/\s/g, ''), 'base64').toString('utf8'))
-      } catch {
-        return null
-      }
+    async fil(sti, ref) {
+      const f = (await api(`contents/${sti}?ref=${encodeURIComponent(ref)}`)) as { type?: string; encoding?: string; content?: string } | null
+      if (!f || f.type !== 'file' || f.encoding !== 'base64' || typeof f.content !== 'string') return null
+      return Buffer.from(f.content.replace(/\s/g, ''), 'base64')
     },
     async apnePr() {
       const ut: string[] = []
