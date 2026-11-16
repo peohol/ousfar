@@ -427,7 +427,10 @@
   max-width: 28rem;
 }
 
+/* Menyen står alltid i siste kolonne, så den står likt også på rader uten
+   statuser (der merkene ikke tar plass). */
 .brukerrad__meny {
+  grid-column: -2 / -1;
   display: flex;
   justify-content: flex-end;
 }
