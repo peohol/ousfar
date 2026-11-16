@@ -34,6 +34,7 @@ import { kinetikkikon, mekanismeikon, seksjonsikon, tekstvisning } from './panel
 import { Serumtabell } from './Serumtabell'
 import { Effektpille, Maalnavn, mekanismeklasse } from './Mekanismevisning'
 import '../../styles/monograf.css'
+import { Forslagsknapp } from '../forslag/Forslagsknapp'
 
 /**
  * Seksjonene på stoffsiden, i lese- og redigeringsmodus. Identiteten
@@ -187,6 +188,7 @@ export function Redigerbar({
           {element && <Sistredigert utgave={element.utgave} type="innholdselement" navn={navn} />}
         </div>
       )}
+      {!redigerer && element && <Forslagsknapp element={element.id} navn={navn} />}
       {apen && <Bevaringsomrade navn={skjemanavn}>{skjema(() => setApen(false))}</Bevaringsomrade>}
     </>
   )

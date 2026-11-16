@@ -549,15 +549,22 @@ describe('kontomenyen', () => {
     expect(document.activeElement).toBe(knapp)
   })
 
-  it('har bare profilen, gruppene, preferansene og utloggingen', async () => {
+  it('har bare profilen, gruppene, forslagene, preferansene og utloggingen', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
     const valg = within(panel(knapp)).getAllByRole('button')
-    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Grupper', 'Preferanser', 'Logg ut'])
+    expect(valg.map((v) => v.textContent)).toEqual(['Endre navn og profilbilde', 'Grupper', 'Mine forslag', 'Preferanser', 'Logg ut'])
     expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
 
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
     expect(window.location.hash).toBe('#/grupper')
+  })
+
+  it('går til «Mine forslag»', async () => {
+    const knapp = vis()
+    await userEvent.click(knapp)
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Mine forslag' }))
+    expect(window.location.hash).toBe('#/forslag')
   })
 
   it('viser en prikk når en invitasjon til en gruppe venter', async () => {

@@ -4,6 +4,7 @@ import { lagerFor, Samtidighetskonflikt, type Faginnholdslager } from '../../fag
 import { nyEndring } from '../../endringslogg/operasjon'
 import {
   INGEN_REGLER,
+  lesRegeldata,
   type Regeldata,
   type Regelsettutgave,
   type Scenarioregelsettutgave,
@@ -67,19 +68,7 @@ export function useFortolkningsredigering(analytter: readonly Laboratorieanalytt
   const siste = useRef<Regeldata | null>(null)
 
   /** Reglene for analyttene i én tilstand. */
-  const lesRegler = useCallback(
-    async (t: Tilstand): Promise<Regeldata> => {
-      const [intervall, thcregelsett, scenario] = await Promise.all([
-        Promise.all(koder.map(async (kode) => [kode, await leser.finnIntervallregelsett(kode, t)] as const)),
-        medThc ? leser.lesThcRegelsett(t) : null,
-        Promise.all(moduler.map(async (id) => [id, await leser.finnScenarioregelsett(id, t)] as const)),
-      ])
-      const utfylt = <T,>(par: readonly (readonly [string, T | null])[]) =>
-        Object.fromEntries(par.filter((p): p is readonly [string, T] => p[1] !== null))
-      return { regelsett: utfylt(intervall), thcregelsett, scenarioregelsett: utfylt(scenario) }
-    },
-    [leser, koder, moduler, medThc],
-  )
+  const lesRegler = useCallback((t: Tilstand) => lesRegeldata(leser, { koder, moduler, medThc }, t), [leser, koder, moduler, medThc])
 
   useEffect(() => {
     let gjelder = true

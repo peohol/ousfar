@@ -76,6 +76,9 @@ import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffreg
 import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
 import { Verktoyside } from './components/verktoy/Verktoyside'
 import { Grupperside } from './components/grupper/Grupperside'
+import { ForslagskildeProvider } from './components/forslag/Forslagskilde'
+import { Forslagsside } from './components/forslag/Forslagsside'
+import { Fortolkningsforslag } from './components/forslag/Fortolkningsforslag'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
@@ -596,17 +599,23 @@ function Arbeidsflate({
   const fagsider = useMemo(() => (state.analyte ? stofferForFortolkning(state.analyte, register) : []), [state.analyte, register])
 
   /**
-   * Fortolkningen har regler og kommentarer administratorene kan redigere: en
-   * modul med scenarioregler, THC-syre, eller en kode med et publisert
-   * regelsett. EtG og EtS har ingen.
+   * Fortolkningen har regler og kommentarer: en modul med scenarioregler,
+   * THC-syre, eller en kode med et publisert regelsett. EtG og EtS har ingen.
+   * Administratorene kan redigere dem, og alle kan foreslå endringer i dem.
    */
-  const kanRedigeres = useMemo(() => {
+  // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene.
+  const fortolkningsanalytter = useMemo(
+    () => (state.analyte ? analytterForFortolkning(state.analyte, katalog) : []),
+    [state.analyte, katalog],
+  )
+  const harRegler = useMemo(() => {
     const analytt = state.analyte
-    if (!redigering.lokalt || !analytt) return false
+    if (!analytt) return false
     if (rusModulFor(analytt) || erThcAnalytt(analytt)) return true
     const { tilstand } = regler
-    return tilstand.status === 'klar' && analytterForFortolkning(analytt, katalog).some((a) => tilstand.etterKode.has(a.kode))
-  }, [redigering.lokalt, state.analyte, regler, katalog])
+    return tilstand.status === 'klar' && fortolkningsanalytter.some((a) => tilstand.etterKode.has(a.kode))
+  }, [state.analyte, regler, fortolkningsanalytter])
+  const kanRedigeres = redigering.lokalt && harRegler
 
   const settMetodefilter = useCallback((metode: string | null) => {
     dispatch({ type: 'sett-metodefilter', metode })
@@ -837,13 +846,23 @@ function Arbeidsflate({
                       ))}
                     </ToppmenyInnhold>
                   )}
-                  {!fortolkningSkjult && kanRedigeres && state.analyte && (
+                  {!fortolkningSkjult && state.analyte && (
                     <ToppmenyInnhold spor="redigering">
-                      <Ikonknapp
-                        ikon="edit"
-                        etikett="Rediger fortolkningen"
-                        onClick={() => state.analyte && gaaTil(redigeringsrute(state.analyte.kode))}
-                      />
+                      {kanRedigeres && (
+                        <Ikonknapp
+                          ikon="edit"
+                          etikett="Rediger fortolkningen"
+                          onClick={() => state.analyte && gaaTil(redigeringsrute(state.analyte.kode))}
+                        />
+                      )}
+                      {harRegler && (
+                        <Fortolkningsforslag
+                          key={state.analyte.kode}
+                          sidenavn={fortolkningssidenavn(state.analyte)}
+                          analytter={fortolkningsanalytter}
+                          leser={faginnhold.leser}
+                        />
+                      )}
                     </ToppmenyInnhold>
                   )}
 
@@ -922,6 +941,14 @@ function Arbeidsflate({
                   {rute.side === 'grupper' && (
                     <main className="scene scene--infoside">
                       <Grupperside gruppe={rute.gruppe} onLukk={lukkInfoside} />
+                    </main>
+                  )}
+
+                  {rute.side === 'forslag' && (
+                    <main className="scene scene--infoside">
+                      <FaginnholdskildeProvider kilde={faginnhold}>
+                        <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
+                      </FaginnholdskildeProvider>
                     </main>
                   )}
 
@@ -1070,7 +1097,9 @@ function Arbeidsflate({
   return (
     <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter}>
       <GruppekildeProvider verdi={grupper}>
-        <MaleenhetKilde brukerId={profil.id}>{app}</MaleenhetKilde>
+        <MaleenhetKilde brukerId={profil.id}>
+          <ForslagskildeProvider>{app}</ForslagskildeProvider>
+        </MaleenhetKilde>
       </GruppekildeProvider>
     </RettigheterKilde>
   )
