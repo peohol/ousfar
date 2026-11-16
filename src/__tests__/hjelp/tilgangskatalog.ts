@@ -110,6 +110,8 @@ export const REKKEVIDDEHJELPERE = [
   // P5: hvem som behandler forslag til en ressurs (supabase/migrations/*_p5_ressurser.sql).
   'kan_behandle_forslag',
   'har_ressursmyndighet',
+  // P5 tråd A: om redaktøransvaret dekker et objekt (supabase/migrations/*_redaktoransvar.sql).
+  'redaktoransvar_dekker',
   // P5 B: hvem som ser et forslag, og forslagsstillerens eget (supabase/migrations/*_p5_endringsforslag.sql).
   'kan_se_forslag',
   'eget_forslag',
@@ -150,6 +152,12 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       return /\bintern\s*\.\s*(medlemskapsavslag|krev_medlemskapsmyndighet|gi_medlemskap)\s*\(/.test(f.kilde)
         ? null
         : 'bruker ikke intern.medlemskapsavslag'
+    case 'redaktormyndighet':
+      if (!f.definer) return 'er ikke security definer'
+      if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
+      return /\bintern\s*\.\s*kan_administrere_redaktoransvar\s*\(/.test(f.kilde)
+        ? null
+        : 'bruker ikke intern.kan_administrere_redaktoransvar'
     case 'gruppemyndighet':
       if (!f.definer) return 'er ikke security definer'
       if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'

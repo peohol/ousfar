@@ -52,6 +52,9 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'kan_se_utkast()': false,
   // P4b: fagmiljøet fortolkningen gjelder; ingen uten aktivt medlemskap.
   'mitt_arbeidsfagmiljo()': null,
+  // P5: det den innloggede kan endre utkastene i som redaktør; ingenting uten aktivt medlemskap.
+  'mine_redigerbare_fagmiljoer()': [],
+  'mine_redigerbare_objekter()': [],
 }
 
 let db: PGlite

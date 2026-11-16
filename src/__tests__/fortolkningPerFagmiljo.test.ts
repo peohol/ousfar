@@ -57,6 +57,9 @@ const KONTEKST: Record<Person, Fagmiljo | null> = {
   avsluttetA: 'B',
   utenMedlemskap: null,
   tidligereAdmin: null,
+  redaktorRessursA: 'A',
+  redaktorFortolkningA: 'A',
+  redaktorNasjonal: 'A',
 }
 
 let db: PGlite

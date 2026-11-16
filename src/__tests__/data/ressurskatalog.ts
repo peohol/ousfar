@@ -160,6 +160,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.grupper': k('tilgang', 'P6: gruppene, i ett fagmiljø eller på tvers; leses bare gjennom funksjonene'),
   'public.gruppemedlemskap': k('tilgang', 'P6: medlemmene og invitasjonene i gruppene; leses bare gjennom funksjonene'),
   'intern.kontosperrer': k('tilgang', 'P3: kontoene som er sperret i Auth fordi de står uten aktivt medlemskap'),
+  'public.redaktoransvar': k('forvaltning', 'P5: redaktøransvaret for en ressurs, fortolkningen i et fagmiljø eller fagsidene; leses bare gjennom funksjonene'),
 
   // Offentlige kilder.
   'legemiddeldata.*': OFFENTLIG_KILDE,

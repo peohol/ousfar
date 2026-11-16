@@ -41,6 +41,12 @@ export const KONTROLLER = [
    * (`intern.medlemskapsavslag`, P3).
    */
   'medlemskapsmyndighet',
+  /**
+   * `security definer` som gir, tilbakekaller eller viser redaktøransvar
+   * etter den innloggedes myndighet (`intern.kan_administrere_redaktoransvar`,
+   * P5): lokal administrator i fagmiljøet eller systemarkitekt.
+   */
+  'redaktormyndighet',
   /** Krever administrator (`er_admin()`, `krev_admin()` e.l.) for alt. */
   'admin',
   /**
@@ -169,6 +175,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_legemidler(virkestoff_ider text[])': 'felles-lesing',
   'les_mine_forslag()': 'eier',
   'les_preparatsok(sider jsonb)': 'felles-lesing',
+  'les_redaktoransvar(fagmiljo uuid)': 'redaktormyndighet',
   'les_referanseomrader(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_referanser(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_regelvarsler()': 'innlogget',
@@ -207,9 +214,15 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'min_profil()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
   'mine_lesbare_grupper()': 'eier',
+  'mine_redaktoransvar()': 'eier',
+  'mine_redigerbare_fagmiljoer()': 'eier',
+  'mine_redigerbare_objekter()': 'eier',
   // P2d: den innloggedes egne rettigheter, som appen viser menyer og knapper etter.
   'mine_rettigheter()': 'eier',
   'mitt_arbeidsfagmiljo()': 'eier',
+  'ressursens_redaktoransvar(ressurs uuid)': 'rekkevidde',
+  'tilbakekall_redaktoransvar(ansvar uuid)': 'redaktormyndighet',
+  'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)': 'redaktormyndighet',
   // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
   'ta_forslag(forslag uuid)': 'rekkevidde',
   'velg_arbeidsfagmiljo(fagmiljo uuid)': 'eier',

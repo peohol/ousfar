@@ -202,7 +202,10 @@ describe('reglene i faginnholdet', () => {
       expect(tillatende.rows.some((r) => r.qual.includes('er_admin')), t.navn).toBe(false)
       if (t.navn !== 'objektpubliseringer')
         expect(
-          tillatende.rows.some((r) => r.qual.includes('kan_se_utkast()') && r.qual.includes('mine_administrerte_fagmiljoer()')),
+          // P5: også redaktørene, for fortolkningen i et fagmiljø og for objektene i ansvaret sitt.
+          tillatende.rows.some(
+            (r) => r.qual.includes('kan_se_utkast()') && r.qual.includes('mine_redigerbare_fagmiljoer()') && r.qual.includes('mine_redigerbare_objekter()'),
+          ),
           t.navn,
         ).toBe(true)
     }
@@ -242,6 +245,9 @@ describe('snarveien når alt lokalt innhold kan leses', () => {
       avsluttetA: false,
       utenMedlemskap: false,
       tidligereAdmin: false,
+      redaktorRessursA: false,
+      redaktorFortolkningA: false,
+      redaktorNasjonal: false,
     })
     // Uten lokalt innhold i B kan en vanlig bruker i A lese alt.
     await db.transaction(async (tx) => {
@@ -273,6 +279,10 @@ describe('svaret appen viser redigeringen av fortolkningen etter', () => {
       avsluttetA: false,
       utenMedlemskap: false,
       tidligereAdmin: false,
+      // P5: redaktøren for fortolkningen i arbeidskonteksten.
+      redaktorRessursA: false,
+      redaktorFortolkningA: true,
+      redaktorNasjonal: false,
     }
     expect(await alle()).toEqual(fasit)
     // Uten lokalt innhold i B kan administratoren i B likevel lage B sine egne
@@ -438,10 +448,11 @@ describe('hva hver person ser i faginnholdet', () => {
       rader.na[p].objekttilstander!.some((r) => r.includes(id) && r.includes('utkast')) ||
       rader.na[p].kommentarer!.some((r) => r.includes(id) && r.includes('utkast'))
     // Felles utkast: bare systemarkitektene, også uten den gamle adminrollen
-    // (arkitektB); felles redaktører kommer i P5.
+    // (arkitektB); nasjonale redaktører er avslått til B2 slås på (P5).
     expect(PERSONENE.filter((p) => utkast(p, obj.fagside))).toEqual(['systemarkitekt', 'arkitektB'])
-    // Lokale utkast: administratoren i fagmiljøet og systemarkitektene.
-    expect(PERSONENE.filter((p) => utkast(p, td.kommentarutkast))).toEqual(['systemarkitekt', 'arkitektB', 'adminA'])
+    // Lokale utkast: administratoren i fagmiljøet, systemarkitektene og
+    // redaktøren for fortolkningen der (P5).
+    expect(PERSONENE.filter((p) => utkast(p, td.kommentarutkast))).toEqual(['systemarkitekt', 'arkitektB', 'adminA', 'redaktorFortolkningA'])
     expect(PERSONENE.filter((p) => utkast(p, obj.kommentarutkastB))).toEqual(['systemarkitekt', 'arkitektB', 'adminB'])
   })
 
