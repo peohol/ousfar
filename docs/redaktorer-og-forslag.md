@@ -462,11 +462,11 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
-| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
+| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
 | A Redaktøransvar | — | — |
 | B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
 | B2 Foreslå endring i appen | — | Under arbeid |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C2 Behandlingen i databasen | — | Til kontroll |
-| C3 Brukerflaten for behandlerne | — | Venter på B2 |
+| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
+| C3 Brukerflaten for behandlerne | — | Ferdig, venter på B2 |
 | D Brukervennlighet og testing | — | — |
