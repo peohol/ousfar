@@ -27,7 +27,11 @@ import { byggPersongalleri, FAGMILJOER, PERSONER, type Fagmiljo, type Person, ty
 import { nyDatabase, som } from './hjelp/testdatabase'
 
 type Utfall = 'tilgang' | 'avvist'
-type Rett = 'lese' | 'endre' | 'administrere' | 'fortolke'
+/**
+ * `redigere`: lese og lagre utkast, som også redaktøren for fortolkningen får
+ * (P5). `endre`: publisere og moderere, som bare administratorene får.
+ */
+type Rett = 'lese' | 'redigere' | 'endre' | 'administrere' | 'fortolke'
 
 /** Det hvert fagmiljø får av lokale data i testen. */
 interface Lokaledata {
@@ -84,8 +88,8 @@ const HANDLINGER: readonly Handling[] = [
   { navn: 'leser historikken til kommentaren', rett: 'lese', prov: (k) => verdi(k, `select jsonb_array_length(public.les_historikk($1) -> 'hendelser') > 0`, [k.x.kommentar]) },
   { navn: 'leser rekkevidden til kommentaren', rett: 'lese', prov: (k) => rader(k, 'select 1 from public.ressursomfang where objekt_id = $1', [k.x.kommentar]) },
   { navn: 'leser regelsettet direkte i tabellen', rett: 'lese', prov: (k) => rader(k, `select 1 from public.intervallregelsett where analyttkode = $1 and fagmiljo_id = $2`, [k.x.kode, k.g.fagmiljo[k.side]]) },
-  { navn: 'leser utkastet', rett: 'endre', prov: (k) => nevner(k, `public.les_kommentarer('utkast', array[$1]::uuid[])`, k.x.utkast, [k.x.utkast]) },
-  { navn: 'lagrer utkastet', rett: 'endre', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.x.utkast, JSON.stringify(KOMMENTAR('Endret'))]) },
+  { navn: 'leser utkastet', rett: 'redigere', prov: (k) => nevner(k, `public.les_kommentarer('utkast', array[$1]::uuid[])`, k.x.utkast, [k.x.utkast]) },
+  { navn: 'lagrer utkastet', rett: 'redigere', prov: (k) => lykkes(k, 'select public.lagre_utkast($1, 1, $2)', [k.x.utkast, JSON.stringify(KOMMENTAR('Endret'))]) },
   { navn: 'publiserer utkastet', rett: 'endre', prov: (k) => lykkes(k, 'select public.publiser_utkast($1, 1)', [k.x.utkast]) },
 
   // Samhandlingen (P2b): tråden på fortolkningssiden, varslene og lenkene.
@@ -113,8 +117,10 @@ function forventet(def: Persondefinisjon, side: Fagmiljo, rett: Rett): Utfall {
   const medlem = aktiv && (def.primaer === side || (def.ogsaAktivI ?? []).includes(side))
   const admin = aktiv && (def.lokalAdminI ?? []).includes(side)
   const arkitekt = aktiv && def.systemarkitekt === true
+  const redaktor = medlem && (def.redaktorForFortolkningI ?? []).includes(side)
   const svar: Record<Rett, boolean> = {
     lese: medlem || arkitekt,
+    redigere: admin || arkitekt || redaktor,
     endre: admin || arkitekt,
     administrere: admin || arkitekt,
     fortolke: def.primaer === side,

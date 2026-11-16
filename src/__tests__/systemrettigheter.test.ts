@@ -205,7 +205,16 @@ describe('mine_rettigheter()', () => {
     // B er åpnet i testdatabasen (S2 simulert); i produksjonen er det lukket.
     const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
     const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
-    const ingen = { systemarkitekt: false, administrerer: [], stoffregister: false, opprett_bruker: false, opprett_bruker_i: [] }
+    // P5: `redaktor` (har et redaktøransvar som gjelder) og `behandler_forslag` (kan behandle forslag til noe).
+    const ingen = {
+      systemarkitekt: false,
+      administrerer: [],
+      stoffregister: false,
+      opprett_bruker: false,
+      opprett_bruker_i: [],
+      redaktor: false,
+      behandler_forslag: false,
+    }
     // En systemarkitekt administrerer alle fagmiljøene (`public.mine_administrerte_fagmiljoer`).
     const alle = (
       await db.query<{ id: string; nokkel: string; navn: string; standard: boolean; apent: boolean }>(
@@ -218,7 +227,15 @@ describe('mine_rettigheter()', () => {
     ).rows.map((r) => r.id)
     const velgbareForArkitekt = alle.filter((f) => aktive.includes(f.id))
     // Nye brukere kan opprettes i de åpne fagmiljøene (startporten S2).
-    const arkitekt = { systemarkitekt: true, administrerer: alle, stoffregister: true, opprett_bruker: true, opprett_bruker_i: alle.filter((f) => f.apent) }
+    const arkitekt = {
+      ...ingen,
+      systemarkitekt: true,
+      administrerer: alle,
+      stoffregister: true,
+      opprett_bruker: true,
+      opprett_bruker_i: alle.filter((f) => f.apent),
+      behandler_forslag: true,
+    }
     expect(alle).toEqual(expect.arrayContaining([A, B]))
     // Fagmiljøene personen har aktivt medlemskap i, som arbeidsfagmiljøet kan velges blant, etter navn.
     const ref = { A, B } as const satisfies Record<Fagmiljo, unknown>
@@ -243,6 +260,7 @@ describe('mine_rettigheter()', () => {
     // En lokal administrator oppretter nye brukere i fagmiljøet hen administrerer, og bare der.
     expect(await rettigheter('adminA')).toEqual({
       ...ingen,
+      behandler_forslag: true,
       administrerer: [A],
       opprett_bruker: true,
       opprett_bruker_i: [A],
@@ -252,6 +270,7 @@ describe('mine_rettigheter()', () => {
     })
     expect(await rettigheter('adminB')).toEqual({
       ...ingen,
+      behandler_forslag: true,
       administrerer: [B],
       opprett_bruker: true,
       opprett_bruker_i: [B],
@@ -259,7 +278,25 @@ describe('mine_rettigheter()', () => {
       mine_fagmiljoer: mine('adminB'),
       velgbare_fagmiljoer: mine('adminB'),
     })
-    for (const [person, f] of [['vanligA', A], ['vanligB', B], ['dobbeltAB', A], ['avsluttetA', B], ['bareRollen', A]] as const) {
+    // Redaktøren for fortolkningen i A er redaktør og kan behandle forslag (P5).
+    expect(await rettigheter('redaktorFortolkningA')).toEqual({
+      ...ingen,
+      redaktor: true,
+      behandler_forslag: true,
+      arbeidsfagmiljo: A,
+      mine_fagmiljoer: mine('redaktorFortolkningA'),
+      velgbare_fagmiljoer: mine('redaktorFortolkningA'),
+    })
+    for (const [person, f] of [
+      ['vanligA', A],
+      ['vanligB', B],
+      ['dobbeltAB', A],
+      ['avsluttetA', B],
+      ['bareRollen', A],
+      // Uten ansvar (regelsettet og bryteren gis av testene som trenger dem) er de vanlige brukere.
+      ['redaktorRessursA', A],
+      ['redaktorNasjonal', A],
+    ] as const) {
       expect(await rettigheter(person), person).toEqual({
         ...ingen,
         arbeidsfagmiljo: f,
