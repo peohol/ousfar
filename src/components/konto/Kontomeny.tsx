@@ -14,6 +14,7 @@ import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Trinnbryter, type Trinnvalg } from '../Trinnbryter'
 import { Menyskuff, Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { TilbehandlingMenyvalg } from '../forslag/behandling/Tilbehandling'
 import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
 import { Kontopanel } from './Kontopanel'
@@ -131,6 +132,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   }}
                 />
               </li>
+              <TilbehandlingMenyvalg onGaa={lukk} />
               <Arbeidsfagmiljovalg apen={skuff === 'fagmiljo'} onVeksle={veksle('fagmiljo')} />
               <Preferanser
                 apen={skuff === 'preferanser'}

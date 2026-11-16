@@ -6,7 +6,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
-import { stoffadresse } from '../../domain/rute'
+import { forslagsadresse, stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
@@ -206,12 +206,9 @@ const KATEGORIIKON: Record<Varsel['kategori'], Ikonnavn> = {
   mine_diskusjoner: 'diskusjon',
   aktive_diskusjoner: 'diskusjon',
   favorittdiskusjoner: 'diskusjon',
-  mine_forslag: 'edit',
-  forslag_til_behandling: 'edit',
+  mine_forslag: 'foresla',
+  forslag_til_behandling: 'foresla',
 }
-
-/** Adressen til ett endringsforslag. */
-const forslagslenke = (id: string) => `#/forslag/${id}`
 
 interface RadProps {
   varsel: Varsel
@@ -322,7 +319,7 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
     return (
       <>
         {forslag ? (
-          <a className="varsel__tittel" data-ih="" href={forslagslenke(forslag.id)} onClick={() => onGa(varsel)}>
+          <a className="varsel__tittel" data-ih="" href={forslagsadresse(forslag.id)} onClick={() => onGa(varsel)}>
             {tekst}
           </a>
         ) : (
@@ -397,7 +394,7 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
   fortolkning: 'interp',
   ideer: 'idea',
   diskusjoner: 'diskusjon',
-  forslag: 'edit',
+  forslag: 'foresla',
   favoritter: 'star',
   appen: 'history',
 }

@@ -499,6 +499,36 @@ prøvd i `src/__tests__/forslagsbehandling.test.ts`):
   den innloggede kan se det (`intern.varselforslag`); et varsel uten
   hendelser vises ikke og telles ikke.
 
+**C3, appen** (`src/components/forslag/behandling/`, `src/forslag/behandling.ts`,
+prøvd i `src/__tests__/forslagsbehandling.ui.test.tsx`):
+
+- Fanen «Til behandling» (`#/forslag/til-behandling`) står for dem
+  rettighetene sier behandler forslag (`Rettigheter.behandlerForslag`:
+  systemarkitektene, de lokale administratorene og redaktørene). Arbeidskøen
+  henter `les_forslagsko('alle')` og viser «Nye», «Pågående» og «Ferdige»
+  med tallet i hver, og bryteren «Bare uten redaktør». Hvert forslag viser
+  hva det gjelder, statusen slik behandleren leser den («Ny», «Venter på
+  forslagsstilleren»), hvem det er fra, hvem som behandler det, og merkene
+  «Uten redaktør» og «Innholdet er endret siden».
+- På siden til ett forslag står delen «Behandling» når `kan_behandle` er
+  sant. Knappene følger statusen (`muligeBehandlinger`): «Ta forslaget» eller
+  «Ta over», «Kommenter», «Be om presisering», «Godkjenn», «Avvis» (med
+  begrunnelse) og, for et godkjent forslag, «Marker som innarbeidet», som
+  kobler forslaget til revisjonen utkastet står på nå. Hver tekst skrives i
+  et eget skjema med fokus i feltet; skjemaet og teksten tas vare på ved en
+  oppdatering av appen (`useBevart`). Avslaget fra databasen (som `PT409` når
+  en annen kom først) vises der.
+- Er innholdet endret siden forslaget ble skrevet (`konflikt`), sier siden
+  det med revisjonene og om utkastet har upubliserte endringer, og «Se hva som
+  er endret» åpner historikkvinduet med revisjonen forslaget ble skrevet mot
+  og den publiserte. Ingenting skrives over.
+- «Åpne utkastet» går til den vanlige redigeringen: redigeringssiden for
+  fortolkningen (`#/fortolkning/<analytt>/rediger`), eller fagsiden, som da
+  åpnes rett i redigeringsmodus for den som kan redigere
+  (`src/faginnhold/redigeringsonske.ts`).
+- Kontomenyen har «Til behandling» for behandlerne, med tallet som venter
+  (`nye` og `mine` fra `les_forslagsko('antall')`), hentet når menyen åpnes.
+
 ## Nasjonale redaktører (B2)
 
 Tildeling av nasjonalt redaktøransvar bygges ferdig, men er avslått i
@@ -571,5 +601,5 @@ Fylles ut av trådene.
 | B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
 | C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
-| C3 Brukerflaten for behandlerne | — | Ferdig, venter på B2 |
+| C3 Brukerflaten for behandlerne | (fylles inn) | Til kontroll, etter #424 |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |

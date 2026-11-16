@@ -3,6 +3,7 @@ import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import type { Analyttkatalog, Laboratorieanalytt } from '../../domain/analyttkatalog'
 import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
 import { PANELER } from '../../faginnhold/paneler'
+import { taRedigeringsonske } from '../../faginnhold/redigeringsonske'
 import { indekserSide, sokeord, stoffidentitet } from '../../faginnhold/sok'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import type { Analyte } from '../../types'
@@ -146,6 +147,10 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   const favoritter = utgave ? null : favorittene
   const registerkilde = useStoffregisterkilde()
   const [modus, setModus] = useBevart<Sidemodus>('modus', 'lese')
+  // «Åpne utkastet» fra et endringsforslag åpner siden rett i redigeringen.
+  useEffect(() => {
+    if (kanRedigere && taRedigeringsonske(slug)) setModus('rediger')
+  }, [kanRedigere, slug, setModus])
   const [sporring, setSporring] = useBevart('sok', '')
   const beholder = useRef<HTMLElement>(null)
   const overskrift = useId()
