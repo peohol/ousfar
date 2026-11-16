@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useAutoerstattFelt } from '../../autoerstatt/felt'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
+import { lesVersjon } from '../../domain/versjon'
 import {
   angreOppgaveUtfort,
   flyttOppgaveTilbake,
@@ -13,7 +14,7 @@ import {
 } from '../../ideer/api'
 import { oppgavekode } from '../../ideer/modell'
 import { TITTEL_MEST } from '../../traad/modell'
-import { PROMPT_MEST, iEndringsloggen, type Oppgavedetaljer } from '../../ideer/oppgaver'
+import { PROMPT_MEST, publisertEndring, type Oppgavedetaljer } from '../../ideer/oppgaver'
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
@@ -121,7 +122,7 @@ export function Oppgaveside({
   const utfort = oppgave.status === 'utfort'
   const handteres = oppgave.status === 'haandteres'
   const redigerer = systemarkitekt && !utfort && !handteres
-  const publisert = iEndringsloggen(oppgave.endringslogg)
+  const publisert = publisertEndring(oppgave.endringslogg)
   const kanGjoresOm = systemarkitekt && oppgave.merket_utfort
   const merkUtfort = (versjon: string | null) => utfor(() => merkOppgaveUtfort(oppgave.id, versjon))
 
@@ -177,12 +178,14 @@ export function Oppgaveside({
               ? 'Den har ingen føring i endringsloggen.'
               : publisert
                 ? 'Endringsloggen sier hva som ble gjort.'
-                : `Føringen i endringsloggen (versjon ${oppgave.endringslogg}) er ikke publisert ennå.`}
+                : lesVersjon(oppgave.endringslogg)
+                  ? `Føringen i endringsloggen (versjon ${oppgave.endringslogg}) er ikke publisert ennå.`
+                  : 'Føringen i endringsloggen er ikke publisert ennå.'}
           </p>
           {(publisert || kanGjoresOm) && (
             <div className="idemerknad__handlinger">
               {publisert && (
-                <Button variant="kant" icon={<Ikon navn="history" storrelse="ui" />} onClick={() => visEndringslogg(oppgave.endringslogg)}>
+                <Button variant="kant" icon={<Ikon navn="history" storrelse="ui" />} onClick={() => visEndringslogg(publisert.versjon)}>
                   Se i endringsloggen
                 </Button>
               )}
@@ -351,7 +354,7 @@ function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof M
         >
           <option value="">Ingen føring</option>
           {ENDRINGSLOGG.map((e) => (
-            <option key={e.versjon} value={e.versjon}>
+            <option key={e.id} value={e.id}>
               {e.versjon} – {e.sammendrag}
             </option>
           ))}

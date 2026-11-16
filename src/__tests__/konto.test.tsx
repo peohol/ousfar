@@ -197,6 +197,20 @@ describe('endringsloggen', () => {
     expect(foring.getAttribute('aria-expanded')).toBe('true')
     expect(document.activeElement).toBe(foring)
   })
+
+  it('åpnes på en ny endring med ID-en, og pillen viser versjonen byggingen ga den øverste', () => {
+    render(
+      <TipsLag>
+        <Versjonspille />
+      </TipsLag>,
+    )
+    const ny = ENDRINGSLOGG.find((e) => e.semver)!
+    expect(screen.getByRole('button', { name: `Versjon ${ENDRINGSLOGG[0]!.versjon} – vis endringslogg` })).toBeTruthy()
+    act(() => visEndringslogg(ny.id))
+    const lag = screen.getByRole('dialog', { name: 'Endringslogg' })
+    const foring = within(lag).getByRole('button', { name: new RegExp(ny.versjon.replaceAll('.', '\\.')) })
+    expect(foring.getAttribute('aria-expanded')).toBe('true')
+  })
 })
 
 describe('porten', () => {

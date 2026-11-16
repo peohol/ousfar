@@ -1,33 +1,80 @@
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { KLINISK_PAKKE } from './src/auth/vegg'
 import { systemvalgskript } from './src/domain/systemvalg'
 import { medInnholdsregler } from './src/drift/sikkerhetshoder'
-import { ENDRINGSLOGG } from './src/data/endringslogg'
-import { endringsomrader, nyesteVersjon, oppdateringsversjon } from './src/domain/versjon'
-import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/versjon'
+import { HISTORISKE_ENDRINGER } from './src/data/endringshistorikk'
+import { beregnNyeEndringer, ENDRINGSMAPPE } from './src/drift/endringshistorikk'
+import { endringsomrader, nyesteVersjon, oppdateringsversjon, type Endring } from './src/domain/versjon'
+import { settSammen } from './src/domain/versjonering'
+import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/byggopplysninger'
 
 /**
- * Identiteten og versjonene til bygget, i appen som `__BYGG__` og i
+ * Modulene appen leser bygget og de nummererte endringene fra. De er to, så
+ * opplysningene om bygget kan nå innloggingssiden uten at endringsloggen
+ * følger med utenfor innloggingsveggen.
+ */
+const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: 'virtual:ousfar-endringer' } as const
+
+/**
+ * Identiteten og versjonene til bygget, i appen som `BYGG` og i
  * `versjon.json` ved siden av `index.html`. Appen som kjører, spør etter fila
  * og ber brukeren oppdatere når en annen versjon er lagt ut
  * (`src/oppdatering/versjon.ts`). Bygget er commiten på Vercel; ellers
  * tidspunktet, så hvert lokale bygg er nytt. Fila sier også hvilke sider de
  * nyeste føringene gjelder; det trenger bare appen som spør, ikke den som
  * kjører.
+ *
+ * Versjonene til endringene med egen fil beregnes her, fra rekkefølgen de ble
+ * slått sammen i `main` (`src/drift/endringshistorikk.ts`), og legges inn i
+ * appen som en ferdig modul. Nettleseren spør ikke GitHub om noe. Kan
+ * versjonen ikke beregnes sikkert, stopper byggingen. Beregningen gjøres først
+ * når appen trenger den, så skript som bare bruker oppsettet, ikke leser Git.
  */
 function versjonsfil(): Plugin {
-  const opplysninger: Byggopplysninger = {
-    bygg: process.env.VERCEL_GIT_COMMIT_SHA || Date.now().toString(36),
-    versjon: nyesteVersjon(ENDRINGSLOGG),
-    oppdatering: oppdateringsversjon(ENDRINGSLOGG),
+  const rot = fileURLToPath(new URL('.', import.meta.url))
+  // Uten det vanlige `\0` foran: da står modulene med navn i kildekartene, og
+  // kontrollen av innloggingsveggen (`scripts/kontroller-vegg.mjs`) ser hvor de havnet.
+  const virtuell = (id: string) => id
+  let beregnet: { nye: Endring[]; logg: Endring[]; bygg: Byggopplysninger } | undefined
+  const beregn = () => {
+    if (beregnet) return beregnet
+    const nye = beregnNyeEndringer(rot)
+    const logg = settSammen(nye, HISTORISKE_ENDRINGER)
+    const bygg: Byggopplysninger = {
+      bygg: process.env.VERCEL_GIT_COMMIT_SHA || Date.now().toString(36),
+      versjon: nyesteVersjon(logg),
+      oppdatering: oppdateringsversjon(logg),
+    }
+    return (beregnet = { nye, logg, bygg })
   }
   return {
     name: 'ousfar-versjonsfil',
-    config: () => ({ define: { __BYGG__: JSON.stringify(opplysninger) } }),
+    resolveId: (id) => (Object.values(MODULER).includes(id as never) ? virtuell(id) : undefined),
+    load(id) {
+      if (id === virtuell(MODULER.bygg)) return `export const BYGG = ${JSON.stringify(beregn().bygg)}\n`
+      if (id === virtuell(MODULER.endringer)) return `export const NYE_ENDRINGER = ${JSON.stringify(beregn().nye)}\n`
+      return undefined
+    },
+    // I utviklingsserveren: en ny eller endret endringsfil gir ny nummerering med en gang.
+    configureServer(server) {
+      const mappe = join(rot, ENDRINGSMAPPE)
+      server.watcher.add(mappe)
+      server.watcher.on('all', (_hendelse, fil) => {
+        if (!fil.startsWith(mappe)) return
+        beregnet = undefined
+        for (const id of Object.values(MODULER)) {
+          const node = server.moduleGraph.getModuleById(virtuell(id))
+          if (node) server.moduleGraph.invalidateModule(node)
+        }
+        server.ws.send({ type: 'full-reload' })
+      })
+    },
     generateBundle() {
-      const fil: Byggopplysninger = { ...opplysninger, endringer: endringsomrader(ENDRINGSLOGG) }
+      const { logg, bygg } = beregn()
+      const fil: Byggopplysninger = { ...bygg, endringer: endringsomrader(logg) }
       this.emitFile({ type: 'asset', fileName: VERSJONSFIL, source: JSON.stringify(fil) })
     },
   }

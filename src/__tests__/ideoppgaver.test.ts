@@ -375,6 +375,14 @@ describe('arkivet og de planlagte oppgavene', () => {
     const gammel = await klarOppgave()
     await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [gammel.nummer])
     expect(await oppgave(admin, gammel.id)).toMatchObject({ status: 'utfort', tatt_kl: expect.any(String) })
+
+    // Nye oppgaver viser til ID-en til endringen, som er kjent før versjonen.
+    const ny = await klarOppgave()
+    await migrering('select public.ta_oppgaver($1)', [[ny.nummer]])
+    for (const ugyldig of ['20261116-094849-3170dg', '20261116-094849', '1.53', 'v1.53.0'])
+      expect(await feilFra(() => migrering(`select public.fullfor_oppgave($1, $2)`, [ny.nummer, ugyldig])), ugyldig).toMatchObject({ code: '23514' })
+    await migrering(`select public.fullfor_oppgave($1, '20261116-094849-3170df')`, [ny.nummer])
+    expect(await oppgave(admin, ny.id)).toMatchObject({ status: 'utfort', endringslogg: '20261116-094849-3170df' })
   })
 
   it('lar en systemarkitekt merke en oppgave utført i appen, med eller uten versjon, og gjøre det om', async () => {

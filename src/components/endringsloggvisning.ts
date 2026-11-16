@@ -7,7 +7,7 @@ import { lagSignal } from '../domain/signal'
  */
 const endringslogg = lagSignal<string | null>()
 
-/** Åpner endringsloggen, med føringen for `versjon` foldet ut. */
+/** Åpner endringsloggen, med føringen for `versjon` (versjonen eller ID-en) foldet ut. */
 export function visEndringslogg(versjon: string | null = null): void {
   endringslogg.send(versjon)
 }

@@ -35,6 +35,7 @@ const OLA = profil('ola', 'Ola')
 const I_GAAR = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
 
 const endring = (versjon: string, sammendrag: string): Endring => ({
+  id: versjon,
   versjon,
   dato: I_GAAR,
   sammendrag,

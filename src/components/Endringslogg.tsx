@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ENDRINGSLOGG } from '../data/endringslogg'
 import { formaterDato, type Endring, type Endringstype } from '../domain/versjon'
+import { finnEndring } from '../domain/versjonering'
 import { FORSTE_FORING, Loggskuff } from './Loggskuff'
 import { Modallag } from './Modallag'
 
@@ -31,7 +32,10 @@ export function Endringslogg({
   onLukk,
 }: {
   apen: boolean
-  /** Føringen som foldes ut og hentes fram når loggen åpnes, som fra en utført oppgave. */
+  /**
+   * Føringen som foldes ut og hentes fram når loggen åpnes, som fra en utført
+   * oppgave: versjonen eller ID-en til endringen.
+   */
   versjon?: string | null
   onLukk: () => void
 }) {
@@ -40,9 +44,10 @@ export function Endringslogg({
 
   // Lukket lag: neste åpning skal begynne på toppen, med alle skuffer igjen.
   // Åpnet på en føring: den står utfoldet og fram i bildet.
+  const valgt = finnEndring(ENDRINGSLOGG, versjon)?.versjon ?? null
   useEffect(() => {
-    setApenSkuff(apen ? versjon : null)
-  }, [apen, versjon])
+    setApenSkuff(apen ? valgt : null)
+  }, [apen, valgt])
 
   const veksle = useCallback((versjon: string) => {
     setApenSkuff((forrige) => (forrige === versjon ? null : versjon))
@@ -54,7 +59,7 @@ export function Endringslogg({
       tittel="Endringslogg"
       ikon="history"
       onLukk={onLukk}
-      autofokus={versjon ? `[data-versjon="${versjon}"] ${FORSTE_FORING}` : FORSTE_FORING}
+      autofokus={valgt ? `[data-versjon="${valgt}"] ${FORSTE_FORING}` : FORSTE_FORING}
       tettKropp
     >
       <ul className="logg__liste">

@@ -1,0 +1,13 @@
+{
+  "id": "20261116-094849-3170df",
+  "semver": "patch",
+  "opprettet": "2026-11-16T09:48:49Z",
+  "sammendrag": "Versjonsnummeret settes automatisk når en endring tas i bruk",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Hver endring beskrives nå for seg, og versjonsnummeret gis automatisk i den rekkefølgen endringene tas i bruk. Det gjør at flere endringer kan gjøres ferdig samtidig uten å stå i veien for hverandre.",
+    "Endringsloggen, versjonsnumrene og lenkene fra utførte oppgaver er som før."
+  ],
+  "utenVarsel": true
+}

@@ -80,6 +80,9 @@ export const APNE_MODULER = new Map(
     'meldingen om en ny versjon, som også skal nå den som står på innloggingssiden': [
       'src/components/Oppdateringsmelding.tsx',
       'src/oppdatering/versjon.ts',
+      'src/oppdatering/byggopplysninger.ts',
+      // Versjonene til bygget, beregnet når det bygges (vite.config.ts); endringsloggen ligger i en egen modul bak veggen.
+      'virtual:ousfar-bygg',
       'src/oppdatering/sider.ts',
       'src/oppdatering/bevaring.ts',
       'src/oppdatering/Bevaring.tsx',

@@ -4,12 +4,17 @@ Leses som **siste steg før en PR er klar til å slås sammen** — ikke underve
 arbeidet. Da er det klart hva endringen faktisk ble, og føringen kan skrives én
 gang i stedet for å måtte rettes for hver push.
 
+Kort sagt: avgjør om endringen er MAJOR, MINOR, PATCH eller stille, og skriv
+én føring i en egen, ny fil. Skriv aldri et versjonsnummer, og rør ikke
+`package.json` eller låsefila for å føre en versjon. Nummeret settes
+automatisk når PR-en er slått sammen og appen bygges. Reglene er de samme for
+OUSFAR Dev, Fag og Verktøy.
+
 ## 0. Er det en stille designjustering?
 
 En PR som **bare** justerer hvordan appen ser ut, uten at det betyr noe for hva
-den gjør eller hva den viser, er stille: den får **ingen føring**, ingen ny
-versjon (`package.json` står urørt), intet varsel og ingen melding om å
-oppdatere siden. Slikt er bare støy for brukerne, og de får endringen neste
+den gjør eller hva den viser, er stille: den får **ingen føring**, og dermed ingen ny
+versjon, intet varsel og ingen melding om å oppdatere siden. Slikt er bare støy for brukerne, og de får endringen neste
 gang de laster siden uansett.
 
 Stille er for eksempel:
@@ -41,30 +46,47 @@ Det skal være **nøyaktig én føring per PR** som ikke er stille (steg 0),
 uansett hvor mange pushes den har.
 
 ```
-git show origin/main:src/data/endringslogg.ts | grep -m1 versjon
+git diff --name-only --diff-filter=A origin/main...HEAD -- src/data/endringer/
 ```
 
-Er den øverste versjonen der ulik den øverste i arbeidstreet, ligger føringen
-alt inne på grenen: **rediger den**. Legg aldri til en føring nummer to.
+Viser den en fil, ligger føringen alt inne på grenen: **rediger den**. Legg
+aldri til en føring nummer to.
 
 ## 2. Skriv føringen
 
-Øverst i `src/data/endringslogg.ts`. Nyest først.
+```
+npm run endring -- patch     # eller minor / major, etter steg 3
+```
 
-```ts
+Det lager `src/data/endringer/<id>.json` med en ny, permanent ID (tidspunktet i
+UTC og seks tilfeldige tegn) og `opprettet`, og tomme tekstfelt. Fyll den ut:
+
+```json
 {
-  versjon: '1.1.0',
-  dato: '2026-09-03',        // ISO. Datoen PR-en slås sammen.
-  sammendrag: 'Én ekstremt kort linje om hva som ble gjort',
-  typer: ['Funksjonalitet'],
-  omfang: 'Mindre omfang',
-  gjelder: ['fortolkning/thc'], // Sidene endringen gjelder; se steg 4.
-  punkter: [
-    'Det konkrete, i vanlig språk.',
-    'Ett punkt per ting brukeren vil merke.',
-  ],
+  "id": "20261116-094849-3170df",
+  "semver": "minor",
+  "opprettet": "2026-11-16T09:48:49Z",
+  "sammendrag": "Én ekstremt kort linje om hva som ble gjort",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["fortolkning/thc"],
+  "punkter": [
+    "Det konkrete, i vanlig språk.",
+    "Ett punkt per ting brukeren vil merke."
+  ]
 }
 ```
+
+- `id` er lik filnavnet og endres aldri. Den er kjent før PR-en slås sammen,
+  og det er den oppgaver og lenker viser til (steg 7).
+- `semver` er leddet endringen øker (steg 3). **Ingen `versjon` og ingen
+  dato:** versjonen og datoen i loggen får endringen når den slås sammen.
+- `gjelder` utelates for en føring med `utenVarsel` (steg 4).
+- Feil form, et ukjent felt eller et tomt felt stopper testene og byggingen
+  med en melding om hva som er galt.
+
+Filene ordnes ikke etter navnet eller `opprettet`; rekkefølgen i loggen er
+rekkefølgen PR-ene slås sammen i.
 
 ## 3. Hvilket tall som økes
 
@@ -74,7 +96,8 @@ alt inne på grenen: **rediger den**. Legg aldri til en føring nummer to.
 | MINOR | Appen kan noe den ikke kunne før: ny modul, ny kategori, ny valgmulighet, ny snarvei. |
 | PATCH | Retting eller justering av noe som fantes fra før — utseende, ordlyd, tastaturdetaljer, og feil i eksisterende fortolkning. En ren designjustering er stille og får ingen versjon (steg 0). |
 
-Ledd til høyre nullstilles: `0.5.4` → `0.6.0` → `1.0.0`.
+Ledd til høyre nullstilles: `0.5.4` → `0.6.0` → `1.0.0`. Det gjør byggingen;
+føringen sier bare hvilket ledd (`"semver": "major" | "minor" | "patch"`).
 
 ## 4. Merker
 
@@ -177,16 +200,72 @@ konkrete.
 
 ## 6. Fullfør
 
-1. Sett `version` i `package.json` lik den nye versjonen, og oppdater låsefila
-   med den: `npm install --package-lock-only`. Uten det blir versjonen stående
-   igjen to steder i `package-lock.json`.
-2. Kjør `npm test`. Testen i `src/domain/__tests__/versjon.test.ts` kontrollerer
-   rekkefølge, datoer, merker og at `package.json` og `package-lock.json`
-   stemmer.
+Kjør `npm test`. Testene kontrollerer formen på føringen, merkene og sidene i
+`gjelder`, og at hele loggen henger sammen. `package.json` og
+`package-lock.json` har en fast, intern versjon (`0.0.0`) som ikke endres.
 
-## Vedlikehold
+## 7. Oppgaver som viser til føringen
 
-Filen vokser med rundt femten linjer per PR. Blir den upraktisk lang — over
-noen hundre føringer — deles den per år (`src/data/endringslogg/2026.ts`) og
-settes sammen igjen i `src/data/endringslogg.ts`. Ingenting annet trenger å
-endres, siden appen bare leser `ENDRINGSLOGG`.
+En planlagt oppgave merkes utført med **ID-en** til føringen
+(`select public.fullfor_oppgave(7, '20261116-094849-3170df')`), som er kjent
+før PR-en slås sammen. Appen slår opp føringen med ID-en og viser versjonen
+den fikk. Eldre oppgaver viser til versjonen, og det virker fortsatt.
+
+## Slik settes versjonsnummeret
+
+Når appen bygges (`vite.config.ts`, også i testene), leses
+førsteforelder-historikken til commiten som bygges
+(`src/drift/endringshistorikk.ts`): commitene slik de ble lagt på `main`, én per
+sammenslått PR. En endring regnes som publisert i commiten som la fila dens
+dit, og endringene nummereres i den rekkefølgen, fra den øverste versjonen i
+det frosne arkivet (`src/data/endringshistorikk.ts`, siste versjon 1.134.4).
+Bare endringer i samme commit ordnes etter `opprettet` og så ID-en
+(`src/domain/versjonering.ts`). Resultatet bygges inn i appen; nettleseren spør
+ikke GitHub om noe.
+
+- **Stabilt:** samme commit gir alltid samme numre, også når den bygges på nytt
+  senere. En ny sammenslåing legger bare til commits etter de gamle, så den
+  endrer aldri numrene til endringer som alt er publisert.
+- **Konfliktfritt:** to PR-er legger til hver sin nye fil og rører ikke de
+  samme linjene, så de kan slås sammen i hvilken som helst rekkefølge.
+- **Grunne kloner:** Vercel kloner bare de siste ti commitene, og GitHub
+  Actions ofte bare én eller to. Byggingen henter da resten av historikken fra
+  `origin`, eller fra repoet byggetjenesten oppgir (repoet er offentlig).
+- **Byggingen stopper heller enn å gjette** når historikken ikke kan hentes,
+  når en publisert endring er slettet eller har fått nytt navn, når leddet en
+  publisert endring økte, er endret, eller når en fil har feil form. Appen som
+  alt er lagt ut, står da urørt.
+- **Forhåndsvisninger:** i bygget av en PR-gren regnes grenens commits som om de
+  var slått sammen nå. Numrene der er ikke endelige. Endringer som bare finnes
+  i arbeidstreet, ikke i en commit, får foreløpige numre etter de andre.
+- Datoen i loggen er datoen (norsk tid) for commiten som tok endringen inn i
+  `main`.
+
+## Tilbakerulling og retting
+
+- En publisert føring fjernes aldri, og den får aldri nytt navn eller nytt ledd.
+  En tilbakerulling er en ny endring med sin egen føring, som sier hva som er
+  tatt bort. Byggingen stopper på en PR som sletter en publisert føring, som en
+  ren «Revert» i GitHub gjør; legg da fila tilbake og skriv en ny føring.
+- Teksten i en publisert føring kan rettes (skrivefeil, bedre ordlyd) uten at
+  versjonen endres.
+- Arkivet er frosset: ingenting legges til, endres eller fjernes der
+  (`src/__tests__/endringsarkiv.test.ts`).
+
+## PR-er laget før ordningen
+
+En PR som ble laget før denne ordningen, har en føring øverst i det som nå er
+arkivet, og en ny versjon i `package.json` og `package-lock.json`. Når den
+oppdateres mot `main`, gir det konflikt i de tre filene. Én gang per PR, av
+tråden som eier den:
+
+1. Ta `main` sin utgave av `src/data/endringshistorikk.ts`,
+   `src/data/endringslogg.ts`, `package.json` og `package-lock.json`
+   (`git checkout origin/main -- <filene>` under sammenslåingen), og ta med
+   eventuelle andre endringer PR-en har i `package.json` på nytt.
+2. Lag føringen på nytt med `npm run endring -- <ledd>` og flytt teksten,
+   merkene og `gjelder` over. Utelat `versjon` og `dato`.
+3. Fjern versjonsnummeret fra tittelen på PR-en, og kjør `npm test`.
+
+En oppgave som alt er merket utført med et versjonsnummer som ikke ble
+publisert, merkes om med ID-en i en ny migrasjon.

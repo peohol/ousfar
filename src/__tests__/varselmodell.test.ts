@@ -35,6 +35,7 @@ import {
 } from '../varsler/modell'
 
 const endring = (versjon: string, dato: string, ekstra: Partial<Endring> = {}): Endring => ({
+  id: versjon,
   versjon,
   dato,
   sammendrag: `Versjon ${versjon}`,
