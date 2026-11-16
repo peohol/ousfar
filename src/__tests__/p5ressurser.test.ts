@@ -110,6 +110,20 @@ describe('beskrivelsen av en ressurs', () => {
     expect(rows[0]!.b).toMatchObject({ type: 'intervallregelsett', analyttkode: rows[0]!.kode, omfang: 'fagmiljo', fagmiljo_id: g.fagmiljo.B })
   })
 
+  it('bruker utkastet når regelsettet ikke er publisert', async () => {
+    const kode = 'P5UTKAST'
+    const kall = faginnholdskall(db, g.id.systemarkitekt)
+    const { rows: mal } = await db.query<{ innhold: Record<string, unknown> }>(
+      `select r.innhold from public.objektrevisjoner r
+       join public.objekttilstander t on t.objekt_id = r.objekt_id and t.revisjon = r.revisjon and t.tilstand = 'publisert'
+       where r.objekt_id = $1`,
+      [obj.regelsettA],
+    )
+    const nytt = await kall.opprett('intervallregelsett', { ...mal[0]!.innhold, analyttkode: kode })
+    const { rows } = await db.query<{ b: Record<string, unknown> }>('select intern.ressursbeskrivelse($1) as b', [nytt.id])
+    expect(rows[0]!.b).toMatchObject({ type: 'intervallregelsett', navn: kode, analyttkode: kode, publisert_revisjon: null })
+  })
+
   it('gir ingenting for noe som ikke er en ressurs', async () => {
     const { rows } = await db.query<{ b: unknown }>('select intern.ressursbeskrivelse($1) as b', [obj.kort])
     expect(rows[0]!.b).toBeNull()

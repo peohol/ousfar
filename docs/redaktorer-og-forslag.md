@@ -337,7 +337,7 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
-| P5.0 delplan og grunnmur | — | Til kontroll |
+| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
 | A Redaktøransvar | — | — |
 | B Foreslå endring | — | — |
 | C Redaktørens arbeidsflyt | — | — |

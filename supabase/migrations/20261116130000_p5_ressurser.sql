@@ -104,10 +104,32 @@ begin
     where i.objekt_id = ressursbeskrivelse.ressurs
     order by i.tilstand = 'publisert' desc
     limit 1;
-  else
-    select jsonb_build_object('navn', f ->> 'navn', 'stoff', null, 'analyttkode', f ->> 'analyttkode')
+  elsif typ = 'intervallregelsett' then
+    select jsonb_build_object('navn', s.analyttkode, 'stoff', null, 'analyttkode', s.analyttkode)
       into svar
-    from intern.fortolkningsobjekt(ressursbeskrivelse.ressurs) f;
+    from public.intervallregelsett s
+    where s.objekt_id = ressursbeskrivelse.ressurs
+    order by s.tilstand = 'publisert' desc
+    limit 1;
+  elsif typ = 'scenarioregelsett' then
+    select jsonb_build_object(
+             'navn', string_agg(a.kode, ' · ' order by a.posisjon),
+             'stoff', null,
+             'analyttkode', (array_agg(a.kode order by a.posisjon))[1]
+           )
+      into svar
+    from public.scenarioanalytter a
+    where a.objekt_id = ressursbeskrivelse.ressurs
+      and a.tilstand = (
+        select t.tilstand from public.objekttilstander t
+        where t.objekt_id = ressursbeskrivelse.ressurs
+        order by t.tilstand = 'publisert' desc
+        limit 1
+      )
+    having count(*) > 0;
+  else
+    -- THC-syreregelsettet; det finnes bare ett (docs/thc-syre.md).
+    svar := jsonb_build_object('navn', 'IRCAK', 'stoff', null, 'analyttkode', 'IRCAK');
   end if;
   return coalesce(svar, '{}'::jsonb) || jsonb_build_object(
     'id', ressursbeskrivelse.ressurs,
