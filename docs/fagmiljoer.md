@@ -887,7 +887,7 @@ finnes i dag:
 | Uten aktivt medlemskap | Nei | Nei | Nei | Nei | Nei |
 
 Felles innhold endres bare av systemarkitektene til felles redaktører finnes
-(P5); lokale redaktører kommer også i P5. Den gamle adminrollen kreves ikke
+(P5); lokale redaktører kommer også i P5 (`docs/redaktorer-og-forslag.md`). Den gamle adminrollen kreves ikke
 for faginnholdet og gir ingenting alene: en systemarkitekt eller lokal
 administrator uten den (som `maxhag`) har sine rettigheter, og en med bare
 rollen har ingen (`er_admin()` og `krev_admin()` står urørt for resten av
