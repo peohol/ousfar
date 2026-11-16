@@ -359,4 +359,4 @@ Fylles ut av trådene.
 | A Redaktøransvar | — | — |
 | B Foreslå endring | — | — |
 | C Redaktørens arbeidsflyt | — | — |
-| D Brukervennlighet og testing | — | — |
+| D Brukervennlighet og testing | D1 testplanen [p5-testplan.md](p5-testplan.md): #419 | Til kontroll |
