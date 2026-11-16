@@ -230,11 +230,16 @@ as $$
   )
   select bruker from redaktorer
   union
-  select distinct m.bruker_id
-  from public.medlemskap m
+  select k.bruker
+  from (
+    -- Kandidatene: de aktive medlemmene, og systemarkitektene, som har
+    -- myndighet også uten medlemskap (`intern.har_aktivt_medlemskap`).
+    select m.bruker_id as bruker from public.medlemskap m where m.status = 'aktiv'
+    union
+    select s.bruker_id from public.systemroller s where s.rolle = 'systemarkitekt' and s.tilbakekalt_kl is null
+  ) k
   where not exists (select 1 from redaktorer)
-    and m.status = 'aktiv'
-    and intern.har_ressursmyndighet(forslagsbehandlere.ressurs, m.bruker_id)
+    and intern.har_ressursmyndighet(forslagsbehandlere.ressurs, k.bruker)
 $$;
 
 revoke all on function intern.forslagsbehandlere(uuid) from public, anon, authenticated, service_role;
