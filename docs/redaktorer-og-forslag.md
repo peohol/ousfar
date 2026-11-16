@@ -604,5 +604,5 @@ Fylles ut av trådene.
 | B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
 | C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
-| C3 Brukerflaten for behandlerne | (fylles inn) | Til kontroll, etter #424 |
+| C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Til kontroll, etter #424 |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |
