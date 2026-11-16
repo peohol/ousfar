@@ -144,6 +144,12 @@ fra de offentlige kildene. Radtall er Postgres' estimater.
 
 ### 3.1 Tofaktorinnlogging (D5)
 
+> **Satt til side 15.11.2026.** Peder valgte bort kode fra en app på telefonen,
+> også for administratorer, og ønsker i stedet innlogging med en engangskode
+> på e-post for alle (tiltak 7e, D5d). Avsnittet står igjen som bakgrunn for
+> det som ble bygget i den lukkede #409, og for testene av de privilegerte
+> inngangene, som også trengs med e-postkode.
+
 **Mål (A):** de som kan endre andres tilgang eller faginnhold, logger inn med
 passord og en kode fra en autentiseringsapp. Det kan bygges på gratisplanen.
 
@@ -454,11 +460,12 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | 3 | Sikkerhetskopien i drift etter valget i 1: en planlagt, kryptert kopi etter §3.2 b, lagret utenfor Supabase og utenfor det offentlige repoet, med nøkkelen hos en navngitt eier | J (gjennomføring: lagringssted og nøkkeleier) | 1, 2 | Første kopi finnes, kan dekrypteres av nøkkeleieren og er lesbar |
 | 4 | **Gjenopprettingsprøve** med en ekte kopi i et eget, midlertidig miljø; kopien slettes etterpå | J (D7b) | 2, 3 | Dokumentert prøve etter §3.2 punkt 1–8 med målt tid: innlogging med testbrukeren, ny bruker gjennom adminflyten og profilbilderettighetene |
 | 5 | Sikkerhetshoder i nettleseren: `Content-Security-Policy` (bare egne og Supabase-adresser), `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | U | – | Hodene står på svarene i forhåndsvisningen; appen virker i det lokale testmiljøet uten brudd på reglene; test i repoet holder dem på plass. **Gjort 15.11.2026** (`src/drift/sikkerhetshoder.ts`, `vercel.json`) |
-| 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene. **Delvis gjort 15.11.2026.** Hva som faktisk håndheves hvor: (a) **førstegangsoppsettet**, som hver ny konto og hvert nytt midlertidig passord går gjennom: hele regelen på serveren (`fullfor-oppsett`); (b) **vanlig passordbytte i appen**: hele regelen i appen; (c) **et passord satt utenom appen** (`PUT /auth/v1/user` med eget token): bare minstelengden i Supabase Auth. Minstelengden er 12 i `supabase/config.toml` (lokalt og i testene), men står på **6 i produksjonen** til innstillingen endres med tiltak 9 (D5c). Den verifiseres da ved å lese innstillingene tilbake fra Management API (`GET /v1/projects/{ref}/config/auth`, `password_min_length = 12`), uten prøveinnlogginger mot produksjonen. **Begrensning som gjenstår:** Supabase Auth har ingen hook når et passord settes (hooken for passordkontroll gjelder innlogging), og egen passordendring kan ikke stenges, så en ekstra Edge-funksjon ville ikke endret noe. Den som med vilje går utenom appen, kan derfor velge et passord på minst 12 tegn med brukernavnet eller et vanlig mønster, for sin egen konto. Tofaktor (7, 8) er vernet for de privilegerte som ikke avhenger av passordet. Tiltaket regnes som ferdig når produksjonsinnstillingen er lest tilbake og Peder har godtatt begrensningen (D5c) |
-| 7 | Tofaktor som **frivillig** valg: innmelding, kodesteg ved innlogging og at personen selv kan fjerne egen faktor på `aal2`; `intern.privilegier_tilgjengelige()` i de privilegerte grenene og katalogtestene (§3.1 punkt 3 og 6) bygget og testet, men kravet ikke slått på. **Ingen nullstilling av andres faktor** | U | – | Kriteriene i §3.1 utenom selve kravet og nullstillingen; med kravet slått på i testene er alle negative `aal1`-tester grønne |
-| 7b | **Nullstilling av en annens faktor** og nødveien for den siste systemarkitekten, slik Peder bestemmer i D5b | J (D5b) | 7 | Nullstillingen følger det besluttede hierarkiet, loggføres, og har negative tester for den som ikke har myndigheten |
-| 8 | **Krav om tofaktor** for systemarkitekter, adminrollen og lokale administratorer | J (D5a) | 7, 7b, alle omfattede har faktor | Negative `aal1`-tester grønne i produksjonsmigrasjonen; ingen privilegert konto uten faktor |
-| 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger. Kontroll mot lekkede passord og utlogging etter inaktivitet finnes bare på Pro og faller bort etter D7a; listen over vanlige passord i tiltak 6 og tofaktor for de privilegerte er vernet i stedet | J | 6 | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL |
+| 6 | Strengere passordregel for **nye** passord: minst 12 tegn, ikke lik brukernavnet, avvis de vanligste passordene; eksisterende passord gjelder til de byttes | U | – | Felles regel i `_delt/passord.ts` for app og server; tester ved grensene. **Delvis gjort 15.11.2026.** Hva som faktisk håndheves hvor: (a) **førstegangsoppsettet**, som hver ny konto og hvert nytt midlertidig passord går gjennom: hele regelen på serveren (`fullfor-oppsett`); (b) **vanlig passordbytte i appen**: hele regelen i appen; (c) **et passord satt utenom appen** (`PUT /auth/v1/user` med eget token): bare minstelengden i Supabase Auth. Minstelengden er 12 i `supabase/config.toml` (lokalt og i testene), men står på **6 i produksjonen** til innstillingen endres med tiltak 9 (D5c). Den verifiseres da ved å lese innstillingene tilbake fra Management API (`GET /v1/projects/{ref}/config/auth`, `password_min_length = 12`), uten prøveinnlogginger mot produksjonen. **Begrensning som gjenstår:** Supabase Auth har ingen hook når et passord settes (hooken for passordkontroll gjelder innlogging), og egen passordendring kan ikke stenges, så en ekstra Edge-funksjon ville ikke endret noe. Den som med vilje går utenom appen, kan derfor velge et passord på minst 12 tegn med brukernavnet eller et vanlig mønster, for sin egen konto. Et vern for de privilegerte som ikke avhenger av passordet, kommer med innloggingen i tiltak 7e. Tiltaket regnes som ferdig når produksjonsinnstillingen er lest tilbake og Peder har godtatt begrensningen (D5c). **Peder valgte 16.11.2026 å beholde regelen i appen** (12 tegn og de vanligste mønstrene avvist) mens innloggingen med kode på e-post venter (tiltak 7e) |
+| 7 | Tofaktor med autentiseringsapp som frivillig valg | – | – | **Satt til side 15.11.2026:** Peder valgte bort kode fra en app på telefonen, også for administratorer; erstattes av tiltak 7e. Det som ble bygget, ligger i den lukkede #409 |
+| 7b | Nullstilling av en annens faktor | – | – | **Satt til side 15.11.2026:** Peder valgte bort kode fra en app på telefonen, også for administratorer; erstattes av tiltak 7e. Det som ble bygget, ligger i den lukkede #409 |
+| 8 | Krav om tofaktor for de privilegerte | – | – | **Satt til side 15.11.2026:** Peder valgte bort kode fra en app på telefonen, også for administratorer; erstattes av tiltak 7e. Det som ble bygget, ligger i den lukkede #409 |
+| 7e | **Innlogging med engangskode på e-post** for alle, med mulighet for å forbli innlogget på enheten (Peders valg 15.11.2026) | J (domenet e-posten sendes fra, avklares med ledelsen) | – | Utformes og avtales når domenet er avklart; innstillingene 7e trenger i Supabase Auth, er en egen del her og påvirker ikke tiltak 9; til da beholdes innloggingen med brukernavn og passord, med passordregelen i tiltak 6 |
+| 9 | Innloggingsinnstillinger i produksjonen: minstelengde 12 også i Supabase, krav om gjeldende passord ved bytte, SSL påkrevd på databasetilkoblinger. Kontroll mot lekkede passord og utlogging etter inaktivitet finnes bare på Pro og faller bort etter D7a; listen over vanlige passord i tiltak 6 er vernet i stedet. Herder den passordinnloggingen som finnes i dag, og venter ikke på tiltak 7e; endringer i innloggingsinnstillingene som 7e selv trenger, er en senere, særskilt del av 7e | J (D5c) | 6 | Innstillingene lest tilbake; appens passordbytte sender gjeldende passord; migrasjonsutrullingen virker med SSL. Kravet om gjeldende passord ved bytte gjelder så lenge det finnes innlogging med passord |
 | 10 | Rette den gjentakende feilen `permission denied for table brukerinnstillinger`: testene skal aldri kunne nå en ekte Supabase, uansett hva miljøet inneholder. **Gjort i denne PR-en** (`vite.config.ts`, `testisolasjon.test.ts`) | U | – | Testen for isolasjonen er grønn; ingen forespørsler med brukeragent `node` mot `brukerinnstillinger` i loggen et døgn etter sammenslåingen |
 | 11 | Oppdatere utviklingsverktøyene med kjente sårbarheter (vitest, vite m.fl.) | U | – | `npm audit` uten høye og kritiske funn; alle tester grønne **Gjort 15.11.2026**: `vitest` 5, `vite` 6.4.6 og `vite-node` 3 som egen avhengighet (skriptene bruker den, og Vitest 5 tar den ikke lenger med); `npm audit` gir 0 funn, også for utviklingsverktøyene |
 | 12 | Påminnelse om at pasientopplysninger ikke skal skrives, i skrivefeltene for diskusjoner, idéer og grupper (B4 er besluttet) | U | – | Teksten vises i alle skrivefelt for samhandling; komponenttest **Gjort 15.11.2026**: `IKKE_PASIENTOPPLYSNINGER` i `src/traad/modell.ts` under hvert skrivefelt for diskusjoner, idéer, kommentarer og gruppebeskrivelser, lest med feltet; `pasientpaaminnelse.test.tsx` holder hver tekstredigerer i samhandlingen til den |
@@ -466,13 +473,13 @@ produksjonen utover vanlig utrulling av en kontrollert PR.
 | 14 | **Behandlingsansvar, avtaler og godkjenning av dokumentene i 13**, avtale med pilotlaboratoriet | J (B9) | 13 | Skriftlig avklart; erklæringen kan vises i appen |
 | 15 | **Eierskap og kontinuitet**: minst to eiere med tofaktor på Supabase, Vercel og GitHub; Vercel-planen kontrollert mot vilkårene | J (B9) | – | Bekreftet av Peder |
 | 16 | **Agentenes tilgang** til produksjonen under piloten | J (B9) | – | Valget dokumentert og miljøene satt opp etter det |
-| 17 | Intern, adversarial sikkerhetsgjennomgang etter §3.3 punkt 1, med funn som Issues | U | 5–7, 10–12 | Rapport i `docs/s4-sikkerhetsgjennomgang.md`; ingen åpne høye eller kritiske funn |
-| 18 | **Menneskelig, uavhengig sikkerhetsgjennomgang** | J (B9) | 17, helst 8 og 9 | Rapport mottatt; ingen åpne høye eller kritiske funn |
+| 17 | Intern, adversarial sikkerhetsgjennomgang etter §3.3 punkt 1, med funn som Issues | U | 5, 6, 10–12 | Rapport i `docs/s4-sikkerhetsgjennomgang.md`; ingen åpne høye eller kritiske funn |
+| 18 | **Menneskelig, uavhengig sikkerhetsgjennomgang** | J (B9) | 17, helst 7e og 9 | Rapport mottatt; ingen åpne høye eller kritiske funn |
 | 19 | **Kostnader, finansiering og supportansvar** for piloten | J (B9) | 1, 18 | Avklart |
 | 20 | S4-kontrollrapport: hele listen i §6 kontrollert, med lesing fra produksjonen | U | alle over | Rapport som S2-rapporten |
 | 21 | **Valg av pilotlaboratorium og åpning** gjennom startporten | J | 20 og #395 1–3 | Peders uttrykkelige ja i åpnings-PR-en |
 
-**Rekkefølgen i praksis (A):** 2, 5, 6, 7, 10, 11, 12 og 13 kan starte nå og
+**Rekkefølgen i praksis (A):** 2, 5, 6, 10, 11, 12 og 13 kan starte nå og
 gå parallelt i små PR-er, fordi de ikke rører de samme filene som #395-trådene
 (unntatt endringsloggen og versjonsnummeret, som tas ved rebase). 1, 14, 15 og
 19 har lengst ledetid hos Peder og organisasjonen og bør avgjøres tidlig.
@@ -485,12 +492,22 @@ gjennomgangen ser det som faktisk skal i pilot.
 
 Hver har et anbefalt standardvalg. D7a er tatt; de andre gjenstår.
 
+**Innloggingen, slik Peder bestemte 15.11.2026.** Ingen kode fra en app på
+telefonen, heller ikke for administratorer, så tiltak 7, 7b og 8 og D5a og D5b
+bortfaller. Peder ønsker i stedet innlogging med en
+engangskode på e-post, med mulighet for å forbli innlogget på enheten, men
+venter med det til det er avklart med ledelsen hvilket domene e-posten skal
+sendes fra. Inntil videre beholdes innloggingen med brukernavn og passord. Peder
+valgte 16.11.2026 å beholde passordregelen fra tiltak 6 i appen: nye passord
+må ha minst 12 tegn og kan ikke være de vanligste mønstrene.
+
 | Nr. | Spørsmål i vanlig språk | Anbefalt | Tiltak |
 | --- | --- | --- | --- |
 | **D7a** | Skal vi betale for Supabase Pro (om lag 25 USD i måneden) for å få daglige sikkerhetskopier og mer plass, eller ta egne krypterte kopier på gratisplanen? | **Besluttet av Peder 15.11.2026: egne krypterte kopier på gratisplanen** (anbefalt var Pro) | 1, 3, 9 |
 | **D7b** | Kan en kopi av produksjonsdataene (med brukerdata) gjenopprettes i et midlertidig miljø for å prøve at gjenopprettingen virker, og slettes etterpå? | Ja | 4 |
-| **D5a** | Skal systemarkitekter, alle med adminrollen og lokale administratorer måtte bruke tofaktor (kode fra en app på telefonen) før en ekstern pilot? | Ja, og frivillig for andre | 8 |
-| **D5b** | Hvem kan nullstille tofaktor for den som mister telefonen? | Den som i dag kan gi nytt passord, med logg | 7b, 8 |
+| **D5a** | ~~Skal de privilegerte måtte bruke tofaktor med en app på telefonen?~~ **Bortfalt 15.11.2026:** Peder valgte kode på e-post for alle i stedet (tiltak 7e) | – | 8 |
+| **D5b** | ~~Hvem kan nullstille tofaktor for den som mister telefonen?~~ **Bortfalt 15.11.2026** sammen med D5a | – | 7b |
+| **D5d** | Hvilket domene skal e-posten med innloggingskoden sendes fra? | Avklares av Peder med ledelsen | 7e |
 | **D5c** | Kan Claude endre innloggingsinnstillingene i Supabase (passordlengde, gjeldende passord ved bytte, kryptert databasetilkobling)? Og godtas det at resten av passordregelen (brukernavnet, vanlige mønstre) ved senere bytte bare sjekkes i appen, fordi Supabase ikke kan sjekke det på serveren (tiltak 6)? | Ja til begge | 6, 9 |
 | **B9a** | Hvem er ansvarlig for brukerdataene: OUS ved avdelingen, eller du personlig? Skal personvernombudet involveres? | OUS ved avdelingen, med personvernombudet | 14 |
 | **B9b** | Hvem skal gjøre den uavhengige sikkerhetsgjennomgangen? | OUS' informasjonssikkerhet, ekstern test hvis det finnes midler | 18 |
@@ -510,13 +527,11 @@ S4 er passert når alt under er oppfylt og kontrollert i S4-rapporten (tiltak
 
 1. Sikkerhetskopi i drift, og én dokumentert, vellykket gjenopprettingsprøve
    med målt tid (§3.2).
-2. Tofaktor påkrevd og registrert for alle systemarkitekter, alle med
-   adminrollen og alle lokale administratorer; negative tester med
-   `aal1`-token grønne for hver privilegert inngang, også direkte skriving i
-   tabellene, med dekningen hentet fra katalogen; nullstilling etter D5b
-   (§3.1).
-3. Innloggingen herdet: passordregel, gjeldende passord ved bytte og
-   sikkerhetshoder (tiltak 5, 6, 9).
+2. Innloggingen med engangskode på e-post i drift slik den besluttes når
+   domenet er avklart (tiltak 7e, D5d), med tester for hver privilegert
+   inngang. Tofaktor med app (§3.1) gjelder ikke lenger.
+3. Innloggingen herdet: passordregel, gjeldende passord ved bytte (så lenge
+   det finnes innlogging med passord) og sikkerhetshoder (tiltak 5, 6, 9).
 4. Intern og uavhengig sikkerhetsgjennomgang gjort, uten åpne høye eller
    kritiske funn (§3.3).
 5. Behandlingsansvar, databehandleravtaler, personvernerklæring,
