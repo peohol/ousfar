@@ -402,20 +402,24 @@ ligger i `p5/qa/skript/` (`d3.ts`, `d3b.ts`, `d3c.ts`).
 | Brukerflytene (avsnitt 2) | BF-V1–V5, V7–V11; BF-R1–R8, R10, R11 (ved neste innlogging); BF-L1–L3, L5, L6; BF-S1, S2. Lokal administrator, forslagsstiller, redaktør og systemarkitekt i nettleseren, i ett sammenhengende forløp | Holder. Statusen forslagsstilleren ser for et nytt forslag, er «Sendt» (rettet i BF-V4) |
 | Den negative matrisen (avsnitt 3) | Hele matrisen i `p5tvers.test.ts` (D2). I nettleseren: en annen bruker i samme fagmiljø, en bruker i et annet fagmiljø og redaktøren åpner forslag de ikke kan se, med direkte adresse | Holder. Alle tre får «Fant ikke forslaget», med samme side som for en ID som ikke finnes |
 | Samtidighet (avsnitt 4) | `p5.samtidighet.test.ts` på ekte Postgres (D2) og trådenes egne | Holder, med fasiten over |
-| Tilgjengelighet og mobil (avsnitt 5) | Tastatur i «Redaktører», i køen, i behandlingen og i menyen «Mer for fagsiden». Fokus inn og ut av lagene. Én `h1`. Tallet i kontomenyen. Den avslåtte nasjonale knappen med forklaring. Smal skjerm (390 × 844, berøring) på fem flater. Mørk modus | Holder, med to funn om trykkflater på smal skjerm (under) |
+| Tilgjengelighet og mobil (avsnitt 5) | Tastatur i «Redaktører», i køen, i behandlingen og i menyen «Mer for fagsiden». Fokus inn og ut av lagene. Én `h1`. Tallet i kontomenyen. Den avslåtte nasjonale knappen med forklaring. Smal skjerm (390 × 844, berøring) på fem flater. Mørk modus | Holder ikke helt: trykkflatene i funn 1 og 2 under er mindre enn 44 × 44 px på smal skjerm, og kontrollen står åpen til de er rettet og prøvd på nytt. Resten holder |
 | Dataskillet (avsnitt 6) | Køen, tellingen og «Mine forslag» for redaktøren, for en bruker i et annet fagmiljø og for systemarkitekten | Holder. Redaktøren ser bare forslagene til sitt regelsett, og forslaget til fagsiden står bare hos systemarkitekten |
 | Regresjon (avsnitt 7) | REG-K1–K5 i `npm test` og REG-P1–P3 (D2). I nettleseren: en vanlig bruker har ikke «Rediger fortolkningen», og systemarkitekten har den fortsatt. Etter tilbakekallingen har redaktøren mistet både redigeringen og køen | Holder |
 
 Det som ikke er prøvd i nettleseren, er prøvd i testene. BF-V12 prøves i
-`endringsforslag.test.ts` (ingen forslag uten aktivt medlemskap). BF-V6 og
-filteret over en ny versjon (`useBevart`) prøves i komponenttestene. BF-R9
+`endringsforslag.test.ts` (ingen forslag uten aktivt medlemskap). BF-V6, og
+utvalget og filteret i køen, prøves i `p5bevaring.test.tsx`: etter en
+oppdatering til en ny versjon (`oppdaterOgTaVare`, så monteres alt på nytt)
+står det halvskrevne forslaget og køen som før, og etter en vanlig omlasting
+gjør de ikke det. BF-R9
 (konflikten) prøves i `forslagsbehandling.test.ts`. BF-L4 (to redaktører får
 begge varsel) og BF-L7 (forslag uten redaktør går til administratorene) prøves
 i `p5tvers.test.ts` (avsnitt 3.6), og BF-S3 prøves i `redaktoransvar.test.ts`. BF-L8 og BF-S4 er den
 vanlige publiseringen og kurateringen, som REG-K3 og REG-K4 prøver.
 
-**Funn i sluttkontrollen**, alle om utseende. Ingen stopper bruken, og alle
-er sendt til eierne gjennom P5-tråden:
+**Funn i sluttkontrollen**, alle om utseende. Ingen stopper bruken, men funn 1
+og 2 betyr at kravet om trykkflater i avsnitt 5 ennå ikke er oppfylt. Alle er
+sendt til eierne gjennom P5-tråden:
 
 1. Utvalgsknappene «Nye», «Pågående» og «Ferdige» i køen er 35 px høye på
    smal skjerm, mot 44 px i avsnitt 5 (tråd C).
