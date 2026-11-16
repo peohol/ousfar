@@ -36,11 +36,14 @@ export interface Rettigheter {
    * uten et slikt, og før det første svaret.
    */
   arbeidsfagmiljo: Fagmiljoreferanse | null
-  /**
-   * De aktive fagmiljøene den innloggede er aktivt medlem av, etter navn.
-   * Arbeidsfagmiljøet velges blant dem (`velgArbeidsfagmiljo`).
-   */
+  /** De aktive fagmiljøene den innloggede er aktivt medlem av, etter navn. */
   mineFagmiljoer: readonly Fagmiljoreferanse[]
+  /**
+   * Fagmiljøene arbeidsfagmiljøet kan velges blant (`velgArbeidsfagmiljo`),
+   * etter navn: de i {@link mineFagmiljoer}, og alle aktive for en
+   * systemarkitekt, som kan se fortolkningen i et fagmiljø uten å være medlem.
+   */
+  velgbareFagmiljoer: readonly Fagmiljoreferanse[]
   /** Kan endre stoffregisterets inndeling og arkiv. */
   stoffregister: boolean
   /** Fagmiljøene den innloggede kan opprette nye brukere i (id-ene); nye kontoer blir medlemmer der. */
@@ -52,6 +55,7 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   administrerer: [],
   arbeidsfagmiljo: null,
   mineFagmiljoer: [],
+  velgbareFagmiljoer: [],
   stoffregister: false,
   opprettBrukerI: [],
 }
@@ -71,11 +75,14 @@ const lesFagmiljoer = (v: unknown): Fagmiljoreferanse[] =>
 /** Svaret fra databasen, der alt som mangler eller har feil form, regnes som nei. */
 export function lesRettigheter(svar: unknown): Rettigheter {
   const r = typeof svar === 'object' && svar !== null ? (svar as Record<string, unknown>) : {}
+  const mineFagmiljoer = lesFagmiljoer(r.mine_fagmiljoer)
   return {
     systemarkitekt: r.systemarkitekt === true,
     administrerer: lesFagmiljoer(r.administrerer),
     arbeidsfagmiljo: lesFagmiljo(r.arbeidsfagmiljo),
-    mineFagmiljoer: lesFagmiljoer(r.mine_fagmiljoer),
+    mineFagmiljoer,
+    // En database uten feltet gir bare medlemskapene å velge blant, som før.
+    velgbareFagmiljoer: 'velgbare_fagmiljoer' in r ? lesFagmiljoer(r.velgbare_fagmiljoer) : mineFagmiljoer,
     stoffregister: r.stoffregister === true,
     opprettBrukerI: lesFagmiljoer(r.opprett_bruker_i).map((f) => f.id),
   }
@@ -88,9 +95,10 @@ export async function hentMineRettigheter(): Promise<Rettigheter> {
 }
 
 /**
- * Gjør `fagmiljo` til fagmiljøet den innloggede arbeider i, blant egne aktive
- * medlemskap, og gir rettighetene etter byttet. Databasen kontrollerer
- * medlemskapet og lagrer valget; det gjelder fortolkningen og ingenting annet.
+ * Gjør `fagmiljo` til fagmiljøet den innloggede arbeider i, blant
+ * {@link Rettigheter.velgbareFagmiljoer}, og gir rettighetene etter byttet.
+ * Databasen kontrollerer valget og lagrer det; det gjelder fortolkningen og
+ * ingenting annet, og en systemarkitekt blir ikke medlem av fagmiljøet.
  */
 export async function velgArbeidsfagmiljo(fagmiljo: string): Promise<Rettigheter> {
   const { data, error } = await klient().rpc('velg_arbeidsfagmiljo', { fagmiljo })
@@ -103,9 +111,8 @@ export async function velgArbeidsfagmiljo(fagmiljo: string): Promise<Rettigheter
  * velge mellom, eller når det hen arbeider i, ikke lenger er blant dem (som
  * når det er arkivert) og et annet kan velges.
  */
-export const kanVelgeArbeidsfagmiljo = (r: Rettigheter): boolean =>
-  r.mineFagmiljoer.length > 1 ||
-  (r.mineFagmiljoer.length === 1 && r.mineFagmiljoer[0]!.id !== r.arbeidsfagmiljo?.id)
+export const kanVelgeArbeidsfagmiljo = ({ velgbareFagmiljoer: v, arbeidsfagmiljo }: Rettigheter): boolean =>
+  v.length > 1 || (v.length === 1 && v[0]!.id !== arbeidsfagmiljo?.id)
 
 /** Arbeidskonteksten når rettighetene er kjent og den innloggede ikke arbeider i noe fagmiljø. */
 export const UTEN_ARBEIDSFAGMILJO = 'uten-arbeidsfagmiljo'
