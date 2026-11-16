@@ -427,11 +427,14 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
   på smal skjerm) med forslag, begrunnelse og høyst ti kilder (tekst, lenke
   eller en av referansene på siden). Det som er skrevet, bevares med
   `useBevart`, og vinduet spør før det lukkes med noe skrevet. Kvitteringen
-  lenker til forslaget og viser til «Mine forslag» (varslene kommer med C).
+  lenker til forslaget, sier at forslagsstilleren får varsel (`mine_forslag`
+  fra C1, som ikke kan slås av) og viser til «Mine forslag».
 - Åpnes skjemaet fra en fagside, leser det fagsidens nyeste versjon med en gang
   (`hentSideversjon`, `les_sideversjoner`) og sender den som `sideversjon`, så
   konflikten måles fra siden slik den var da, ikke da forslaget ble sendt. Den
-  bevares med resten av skjemaet; uten den lagrer databasen den nyeste.
+  bevares med resten av skjemaet. Innsendingen venter på oppslaget; mislykkes
+  det, sendes ingenting, skjemaet sier fra, og neste innsending prøver igjen.
+  Bare en side uten noen versjon sendes uten.
 - `#/forslag` er «Mine forslag» (også i kontomenyen), `#/forslag/<ID>` ett
   forslag med tidslinjen, svaret og «Trekk tilbake», og
   `#/forslag/til-behandling` fanen tråd C fyller (`forslagsadresse`).

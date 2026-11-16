@@ -17,6 +17,11 @@ const FORSTE_FELT = '.forslagsskjema textarea'
 /** Der fokus lander i kvitteringen: veien videre, så tastaturet og skjermleseren ikke mister plassen. */
 const KVITTERINGSFOKUS = '.forslagsskjema__kvittering [data-autofokus]'
 
+/** Fagsiden har ingen versjon å vise til; da har heller ikke databasen noen. */
+const INGEN_VERSJON = 0
+/** Når versjonen av fagsiden ikke kan leses: forslaget sendes ikke uten den. */
+const VERSJONSFEIL = 'Fant ikke hvilken versjon av fagsiden forslaget gjelder, så det er ikke sendt. Prøv å sende igjen.'
+
 /** Feltet feilen i skjemaet gjelder: et av tekstfeltene, eller en kilde etter plassen i lista. */
 type Feilfelt = 'forslag' | 'begrunnelse' | number | null
 
@@ -37,8 +42,10 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
   const [begrunnelse, setBegrunnelse] = useBevart('begrunnelse', '')
   const [kilder, setKilder] = useBevart<Kildeutkast[]>('kilder', [])
   const [sendt, setSendt] = useBevart<string | null>('sendt', null)
-  // Fagsidens versjon da skjemaet ble åpnet; den bevares, så en oppdatering ikke henter en nyere.
+  // Fagsidens versjon da skjemaet ble åpnet (`INGEN_VERSJON` når siden ikke har noen); den
+  // bevares, så en oppdatering ikke henter en nyere. `null`: ikke lest ennå.
   const [sideversjon, setSideversjon] = useBevart<number | null>('sideversjon', null)
+  const versjonsoppslag = useRef<Promise<number> | null>(null)
   const [feil, setFeil] = useState<{ melding: string; felt: Feilfelt } | null>(null)
   const [sender, setSender] = useState(false)
   const [forlater, setForlater] = useState(false)
@@ -50,17 +57,30 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
 
   const mal = apning.valg[Math.min(valgt, apning.valg.length - 1)] ?? apning.valg[0]!
 
-  useEffect(() => {
-    if (!apning.fagside || sideversjon !== null) return
-    let aktiv = true
-    // Uten versjonen (feil, eller ingen versjon) lagrer databasen den nyeste.
-    hentSideversjon(apning.fagside).then(
-      (nr) => aktiv && setSideversjon(nr),
-      () => undefined,
+  /**
+   * Versjonen forslaget gjelder: den som ble lest da skjemaet ble åpnet, eller
+   * oppslaget som pågår. Et mislykket oppslag glemmes, så neste innsending
+   * prøver igjen; det faller aldri tilbake til den nyeste ved innsendingen.
+   */
+  const lesSideversjon = (fagside: string): Promise<number> => {
+    if (sideversjon !== null) return Promise.resolve(sideversjon)
+    versjonsoppslag.current ??= hentSideversjon(fagside).then(
+      (nr) => {
+        const versjon = nr ?? INGEN_VERSJON
+        setSideversjon(versjon)
+        return versjon
+      },
+      (aarsak: unknown) => {
+        versjonsoppslag.current = null
+        throw aarsak
+      },
     )
-    return () => {
-      aktiv = false
-    }
+    return versjonsoppslag.current
+  }
+
+  useEffect(() => {
+    // Leses med en gang skjemaet åpnes; en feil vises først ved innsendingen.
+    if (apning.fagside) lesSideversjon(apning.fagside).catch(() => undefined)
     // Bare når skjemaet åpnes for en fagside.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apning.fagside])
@@ -89,8 +109,25 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
     if (kildene) return visFeil(kildene.melding, kildene.indeks)
     setSender(true)
     setFeil(null)
+    let versjon: number | null = null
+    if (apning.fagside) {
+      try {
+        versjon = await lesSideversjon(apning.fagside)
+      } catch {
+        setSender(false)
+        return setFeil({ melding: VERSJONSFEIL, felt: null })
+      }
+    }
     try {
-      setSendt(await sendForslag({ mal, sideversjon, forslag: forslag.trim(), begrunnelse: begrunnelse.trim(), kilder }))
+      setSendt(
+        await sendForslag({
+          mal,
+          sideversjon: versjon === INGEN_VERSJON ? null : versjon,
+          forslag: forslag.trim(),
+          begrunnelse: begrunnelse.trim(),
+          kilder,
+        }),
+      )
     } catch (e) {
       setFeil({ melding: (e as Error).message, felt: null })
     } finally {
@@ -370,8 +407,8 @@ function Kvittering({ id, onLukk }: { id: string; onLukk: () => void }) {
   return (
     <div className="forslagsskjema__kvittering" role="status">
       <p>
-        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Under «Mine forslag» kan du følge det, svare når
-        noen spør, og trekke det tilbake.
+        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Du får et varsel når det får ny status, en
+        kommentar eller et spørsmål, og under «Mine forslag» kan du følge det, svare og trekke det tilbake.
       </p>
       <div className="skjema__knapper">
         <Button variant="subtle" onClick={onLukk}>
