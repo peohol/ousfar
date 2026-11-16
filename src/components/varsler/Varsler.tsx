@@ -4,6 +4,7 @@ import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
+import { useRettigheter, type Rettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
 import { stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
@@ -17,14 +18,18 @@ import {
   diskusjonstekst,
   endredeDeler,
   erDiskusjonsvarsel,
+  erForslagsvarsel,
   erValgt,
   favorittside,
   favorittsted,
+  forslagstekst,
   fortolkningsobjekter,
   idetekst,
   kategorierIGrupper,
   navneliste,
   objekttekst,
+  ressurstekst,
+  varselforslag,
   type Databasevarsel,
   type Endringsvarsel,
   type Fortolkningsobjekt,
@@ -201,7 +206,12 @@ const KATEGORIIKON: Record<Varsel['kategori'], Ikonnavn> = {
   mine_diskusjoner: 'diskusjon',
   aktive_diskusjoner: 'diskusjon',
   favorittdiskusjoner: 'diskusjon',
+  mine_forslag: 'edit',
+  forslag_til_behandling: 'edit',
 }
+
+/** Adressen til ett endringsforslag. */
+const forslagslenke = (id: string) => `#/forslag/${id}`
 
 interface RadProps {
   varsel: Varsel
@@ -306,6 +316,25 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
     )
   }
 
+  if (erForslagsvarsel(varsel)) {
+    const forslag = varselforslag(varsel)
+    const tekst = forslagstekst(varsel, navn)
+    return (
+      <>
+        {forslag ? (
+          <a className="varsel__tittel" data-ih="" href={forslagslenke(forslag.id)} onClick={() => onGa(varsel)}>
+            {tekst}
+          </a>
+        ) : (
+          <p className="varsel__tittel">{tekst}</p>
+        )}
+        <p className="varsel__meta">
+          {forslag && <span className="varsel__ide">{ressurstekst(forslag.ressurs)}</span>} · {tid}
+        </p>
+      </>
+    )
+  }
+
   if (erDiskusjonsvarsel(varsel)) {
     const diskusjon = varsel.diskusjon
     const tekst = diskusjonstekst(varsel, meg, navn)
@@ -368,8 +397,17 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
   fortolkning: 'interp',
   ideer: 'idea',
   diskusjoner: 'diskusjon',
+  forslag: 'edit',
   favoritter: 'star',
   appen: 'history',
+}
+
+/**
+ * Om den innloggede kan behandle endringsforslag: de lokale administratorene
+ * og systemarkitektene, og redaktørene når rettighetene sier det.
+ */
+function behandlerForslag(rettigheter: Rettigheter): boolean {
+  return rettigheter.systemarkitekt || rettigheter.administrerer.length > 0
 }
 
 /**
@@ -377,10 +415,11 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
  * med ikon og overskrift. De obligatoriske står på og kan ikke slås av.
  */
 function Innstillinger({ status }: { status: Varselstatus }) {
+  const behandler = behandlerForslag(useRettigheter())
   return (
     <div className="varselinnstillinger">
       <p className="varselinnstillinger__ingress">Velg hva du vil få varsel om. Endringer i fortolkningen, kritiske faglige meldinger og svar til deg får alle.</p>
-      {kategorierIGrupper().map(({ gruppe, kategorier }) => (
+      {kategorierIGrupper(behandler).map(({ gruppe, kategorier }) => (
         <Innstillingsgruppe key={gruppe} gruppe={gruppe}>
           {kategorier.map((kategori) => {
             const { tittel, forklaring, obligatorisk } = VARSELKATEGORIER[kategori]

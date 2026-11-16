@@ -11,6 +11,7 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `supabase/migrations/*_favorittvarsler*.sql` | Varslene om endringer på favorittsidene, og hvordan hendelsene leses |
 | `supabase/migrations/*_nye_ideer_varsler.sql` | Varslene om nye idéer |
 | `supabase/migrations/*_diskusjoner.sql` | Varslene om diskusjonene (se `docs/diskusjoner.md`) |
+| `supabase/migrations/*_p5_forslagsvarsler.sql` | Kategoriene for endringsforslagene (se `docs/redaktorer-og-forslag.md`) |
 | `src/varsler/modell.ts` | Kategoriene, valgene, føringene i endringsloggen som varsler, sorteringen og tekstene (rene funksjoner) |
 | `src/varsler/api.ts` | Kallene mot Supabase og brukerinnstillingene |
 | `src/components/varsler/` | Bjella (`Varselknapp`), tilstanden (`useVarsler`) og vinduet (`Varsler`) |
@@ -28,14 +29,18 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `nye_ideer` | Noen skriver en ny idé | Ja, av som standard |
 | `mine_diskusjoner` | Noen kommenterer en tråd du startet, eller svarer på en kommentar du skrev i en tråd | Nei |
 | `aktive_diskusjoner` | Noen kommenterer en tråd du har kommentert, uten at det er et svar til deg | Ja, på som standard |
+| `mine_forslag` | Et endringsforslag du har sendt, får ny status, en kommentar eller et spørsmål | Nei |
+| `forslag_til_behandling` | Noen foreslår en endring i innhold du behandler forslag til, eller forslagsstilleren svarer eller trekker forslaget | Ja, på som standard; vises bare for dem som kan behandle forslag |
 | `funksjonalitet` | En føring eksplisitt merket `varsleFunksjonsendring` | Ja, på som standard |
 | `favoritter` | Noen publiserer endringer på en fagside du har som favoritt | Ja, av som standard |
 | `favorittdiskusjoner` | Noen starter en ny tråd på en fagside du har som favoritt | Ja, av som standard |
 
 Kategoriene står i `VARSELKATEGORIER`. Hver har en `gruppe` fra
-`VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Favorittsider, Appen):
+`VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Endringsforslag, Favorittsider, Appen):
 innstillingene viser gruppene i den rekkefølgen, hver med ikon og overskrift
-og kategoriene sine under. Ikonene for gruppene står i `Varsler.tsx`. En ny
+og kategoriene sine under. Ikonene for gruppene står i `Varsler.tsx`. En
+kategori med `bareForBehandlere` vises i innstillingene bare for dem som kan
+behandle endringsforslag. En ny
 kategori får en gruppe; den trenger ingen ny gruppe med mindre den gjelder
 noe helt annet. De som lages av databasen, er de
 samme som `public.varselkategori`; en test passer på at de stemmer.
@@ -63,6 +68,13 @@ gjorde det, varsles ikke.
 - **Nye tråder** (`diskusjoner_varsle`): en ny tråd på en fagside gir
   `favorittdiskusjoner` til dem som har siden som favoritt, ett varsel per
   tråd. Å åpne tråden merker varslene om den lest.
+- **Endringsforslagene** (P5, `docs/redaktorer-og-forslag.md`, «Varsler»):
+  hver hendelse i et forslags tidslinje kan gi varsel, ett varsel per forslag
+  og kategori. Forslagsstilleren får `mine_forslag` når en behandler gjør noe
+  med forslaget, og behandlerne `forslag_til_behandling` når det kommer et nytt
+  forslag eller forslagsstilleren svarer. Hendelsen har `forslag` og `art`;
+  varselet viser det siste som skjedde og lenker til forslaget. Bare den som
+  kan se forslaget, får og ser varselet.
 - **Fortolkningen** (`objektpubliseringer_varsle`): hver publisering av en
   kommentar eller et regelsett (`intern.er_fortolkning`) varsler alle andre
   som kan lese det.

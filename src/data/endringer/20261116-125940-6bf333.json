@@ -1,0 +1,15 @@
+{
+  "id": "20261116-125940-6bf333",
+  "semver": "minor",
+  "opprettet": "2026-11-16T12:59:40Z",
+  "sammendrag": "Varsler om endringsforslag har fått sin egen gruppe",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Varselinnstillingene har fått gruppen «Endringsforslag»: varsel når et forslag du har sendt, får svar eller ny status, og for dem som behandler forslag, varsel om nye forslag.",
+    "Varslene kommer når det blir mulig å sende og behandle endringsforslag."
+  ],
+  "utenVarsel": true
+}
