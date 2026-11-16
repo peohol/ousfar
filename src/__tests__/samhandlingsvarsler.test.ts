@@ -68,7 +68,10 @@ describe('varslene per fagmiljø', () => {
   }, 120_000)
 
   it('varsler om fortolkningen bare medlemmene i fagmiljøet den hører til', async () => {
-    expect(await mottakere('fortolkning')).toEqual(['arkitektB', 'dobbeltAB', 'systemarkitekt', 'vanligA'])
+    expect(await mottakere('fortolkning')).toEqual(
+      // P5: redaktørene i persongalleriet er vanlige medlemmer av A.
+      ['arkitektB', 'dobbeltAB', 'redaktorFortolkningA', 'redaktorNasjonal', 'redaktorRessursA', 'systemarkitekt', 'vanligA'].sort(),
+    )
     for (const v of await alleVarsler(db, 'fortolkning')) {
       expect(v).toMatchObject({ fagmiljo_id: galleri.fagmiljo.A, gruppe: `fortolkning:${galleri.fagmiljo.A}` })
     }
@@ -76,7 +79,7 @@ describe('varslene per fagmiljø', () => {
 
   it('varsler om en idé alle med et aktivt medlemskap, men ingen uten', async () => {
     expect(await mottakere('nye_ideer')).toEqual(
-      ['adminA', 'adminB', 'arkitektB', 'avsluttetA', 'dobbeltAB', 'systemarkitekt', 'vanligB'].sort(),
+      ['adminA', 'adminB', 'arkitektB', 'avsluttetA', 'dobbeltAB', 'redaktorFortolkningA', 'redaktorNasjonal', 'redaktorRessursA', 'systemarkitekt', 'vanligB'].sort(),
     )
     expect((await alleVarsler(db, 'nye_ideer')).every((v) => v.fagmiljo_id === null)).toBe(true)
   })

@@ -798,7 +798,7 @@ describe('lagringsmodulen i appen', () => {
   it('gir databasens melding når en vanlig bruker prøver å endre', async () => {
     const lager = lagFaginnholdslager(klientFor(bruker))
     await expect(lager.opprettUtkast('infoside', { navn: 'Nei' })).rejects.toThrow(
-      'Bare systemarkitektene og administratorene i fagmiljøene kan endre faginnholdet.',
+      'Bare systemarkitektene, administratorene i fagmiljøene og redaktørene kan endre faginnholdet.',
     )
   })
 

@@ -407,7 +407,7 @@ Fylles ut av trådene.
 | Del | PR | Status |
 | --- | --- | --- |
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
-| A Redaktøransvar | — | — |
+| A Redaktøransvar | [#421](https://github.com/peohol/ousfar/pull/421) (databasen); skjermbildene i en egen PR | Databasen til kontroll |
 | B Foreslå endring | — | — |
 | C Redaktørens arbeidsflyt | — | — |
 | D Brukervennlighet og testing | — | — |
