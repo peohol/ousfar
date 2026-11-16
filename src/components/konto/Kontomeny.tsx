@@ -3,6 +3,7 @@ import { useBevart } from '../../oppdatering/Bevaring'
 import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useOkt, useProfil } from '../../auth/okt'
+import { useRettigheter } from '../../auth/rettigheter'
 import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
 import { gruppeadresse } from '../../domain/rute'
 import { SYSTEM, type Bevegelse, type Tema, type Valg, type Valgstyring } from '../../domain/systemvalg'
@@ -17,6 +18,7 @@ import { Menyskuff, Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
 import { Kontopanel } from './Kontopanel'
+import { MittRedaktoransvar } from './MittRedaktoransvar'
 
 export interface KontomenyProps {
   tema: Valgstyring<Tema>
@@ -45,7 +47,7 @@ const ENHETSVALG: readonly Trinnvalg<Visningsenhet>[] = VISNINGSENHETER.map((e) 
 
 /**
  * Kontoen, fra avataren helt til høyre i toppmenyen: hvem appen er logget inn
- * som, veien til egen profil, gruppene, fagmiljøet en med flere medlemskap
+ * som, veien til egen profil, gruppene, redaktøransvaret for en redaktør, fagmiljøet en med flere medlemskap
  * arbeider i, preferansene og utlogging. Venter en
  * invitasjon til en gruppe, står det en prikk på avataren og på «Grupper».
  */
@@ -65,6 +67,9 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const veksle = (s: 'fagmiljo' | 'preferanser') => () => setSkuff((apen) => (apen === s ? null : s))
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukkKontopanel = useCallback(() => setKontopanel(false), [])
+  const { redaktor } = useRettigheter()
+  const [redaktoransvar, setRedaktoransvar] = useBevart('mitt-redaktoransvar', false)
+  const lukkRedaktoransvar = useCallback(() => setRedaktoransvar(false), [])
 
   return (
     <>
@@ -121,6 +126,18 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   }}
                 />
               </li>
+              {redaktor && (
+                <li>
+                  <Menyvalg
+                    ikon="edit"
+                    tekst="Mitt redaktøransvar"
+                    onClick={() => {
+                      lukk()
+                      setRedaktoransvar(true)
+                    }}
+                  />
+                </li>
+              )}
               <Arbeidsfagmiljovalg apen={skuff === 'fagmiljo'} onVeksle={veksle('fagmiljo')} />
               <Preferanser
                 apen={skuff === 'preferanser'}
@@ -136,6 +153,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         )}
       </Nedtrekksmeny>
       <Kontopanel apen={kontopanel} onLukk={lukkKontopanel} />
+      {redaktor && <MittRedaktoransvar apen={redaktoransvar} onLukk={lukkRedaktoransvar} />}
     </>
   )
 }

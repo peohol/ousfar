@@ -28,6 +28,11 @@ export interface RedigeringshandlingerProps {
   laster: boolean
   /** Publiserer, med oppsummeringen til endringsloggen når brukeren skrev en. */
   onPubliser: (oppsummering?: string) => Promise<void>
+  /**
+   * Om den innloggede publiserer selv. En redaktør (P5) endrer utkastet, men
+   * publiserer ikke: da står ingen «Publiser», bare at en administrator gjør det.
+   */
+  kanPublisere?: boolean
   onAvslutt: () => void
 }
 
@@ -48,6 +53,7 @@ export function Redigeringshandlinger({
   laster,
   onPubliser,
   onAvslutt,
+  kanPublisere = true,
 }: RedigeringshandlingerProps) {
   const [bekrefter, setBekrefter] = useState(false)
   const [publiserer, setPubliserer] = useState(false)
@@ -92,22 +98,25 @@ export function Redigeringshandlinger({
             Redigeringsmodus. Du ser utkastet. Endringene blir synlige for andre først når de publiseres.
           </span>
           <span className="kun-skjermleser">{status}</span>
+          {!kanPublisere && <span className="kun-skjermleser">{PUBLISERES_AV_ADMINISTRATOR}</span>}
         </span>
       </ToppmenyInnhold>
-      <ToppmenyInnhold spor="hovedhandling">
-        <Toppmenyknapp
-          ikon="publish"
-          variant="primar"
-          avslatt={laster ? status : plan.length === 0 ? INGENTING_A_PUBLISERE : undefined}
-          aria-haspopup="dialog"
-          onClick={() => {
-            setFeil(null)
-            setBekrefter(true)
-          }}
-        >
-          Publiser
-        </Toppmenyknapp>
-      </ToppmenyInnhold>
+      {kanPublisere && (
+        <ToppmenyInnhold spor="hovedhandling">
+          <Toppmenyknapp
+            ikon="publish"
+            variant="primar"
+            avslatt={laster ? status : plan.length === 0 ? INGENTING_A_PUBLISERE : undefined}
+            aria-haspopup="dialog"
+            onClick={() => {
+              setFeil(null)
+              setBekrefter(true)
+            }}
+          >
+            Publiser
+          </Toppmenyknapp>
+        </ToppmenyInnhold>
+      )}
       <ToppmenyInnhold spor="lukk">
         <Toppmenyknapp ikon="close" aria-pressed="true" onClick={onAvslutt}>
           Avslutt redigering
@@ -144,6 +153,9 @@ export function Redigeringshandlinger({
     </>
   )
 }
+
+/** For en redaktør, som endrer utkastet, men ikke publiserer (P5). */
+export const PUBLISERES_AV_ADMINISTRATOR = 'En administrator i fagmiljøet publiserer endringene dine.'
 
 /** Grunnen til at «Publiser» står avslått når utkastet er likt det publiserte. */
 export const INGENTING_A_PUBLISERE = 'Det er ikke noe nytt å publisere'

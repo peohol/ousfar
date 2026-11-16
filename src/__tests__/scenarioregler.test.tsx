@@ -18,7 +18,7 @@ import { TipsLag } from '../components/Tips'
 import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
 import { rusModulFor } from '../domain/rus'
-import type { Faginnholdsleser, Scenarioregelsettutgave, Utgave } from '../faginnhold/lesing'
+import type { Faginnholdsleser, Regelsettutgave, Scenarioregelsettutgave, Utgave } from '../faginnhold/lesing'
 import type { Objektstatus, Tilstand } from '../faginnhold/modell'
 import type { Scenarioregelsett } from '../domain/scenario'
 import { RUS_GRUNNLAG, RUS_KOMMENTARER, rusRegelsett } from './hjelp/rusgrunnlag'
@@ -410,5 +410,76 @@ describe('redigeringen', () => {
     await user.click(within(vindu).getByRole('button', { name: 'Publiser nå' }))
     await waitFor(() => expect(lager.publiserUtkast).toHaveBeenCalledWith(REGELSETT_ID, 2))
     await waitFor(() => expect(onPublisert).toHaveBeenCalled())
+  })
+
+  /**
+   * En redaktør for enkelte regelsett (P5) får bare dem på en side med flere:
+   * diazepamgruppen har scenarioreglene og et intervallregelsett for DIAZ og
+   * for DMI, hvert sitt regelsett.
+   */
+  describe('for en redaktør for enkelte regelsett', () => {
+    const intervall = (kode: string): Regelsettutgave => ({
+      regelsett: utgave(`regelsett/${kode.toLowerCase()}`, {
+        analyttkode: kode,
+        enhet: 'nmol/L',
+        desimaler: 0,
+        skillepunkter: [],
+        intervaller: [{ niva: 'innenfor', handling: null, kommentar: `k-${kode}` }],
+        ringegrense: null,
+        cutoff: null,
+      }),
+      kommentarer: [utgave(`k-${kode}`, { navn: `${kode} – syntetisk`, tekst: 'Syntetisk kommentar.', plassholdere: [] })],
+    })
+
+    function visSide(regelsett?: ReadonlySet<string> | null) {
+      const leser: Faginnholdsleser = falskLeser({
+        finnScenarioregelsett: vi.fn(async (_modul: string, tilstand: Tilstand) => scenarioutgave(tilstand)),
+        finnIntervallregelsett: vi.fn(async (kode: string) => (kode === 'DIAZ' || kode === 'DMI' ? intervall(kode) : null)),
+        lesHistorikk: vi.fn(async () => ({ hendelser: [], revisjoner: [] })),
+      })
+      renderMedOusKatalog(
+        <TipsLag>
+          <FaginnholdskildeProvider kilde={{ leser, lager: {} as Faginnholdslager, kanRedigere: true }}>
+            <Fortolkningsredigering
+              fortolkning={katalog.finn('OXA')!.fortolkning}
+              katalog={katalog}
+              kanPublisere={false}
+              regelsett={regelsett}
+              onPublisert={vi.fn()}
+              onAvslutt={vi.fn()}
+            />
+          </FaginnholdskildeProvider>
+        </TipsLag>,
+      )
+    }
+
+    it('viser alle delene for administratorene og redaktørene for hele fortolkningen', async () => {
+      visSide(null)
+      await screen.findByRole('region', { name: 'Fortolkningsregler – DMI' })
+      expect(screen.getByRole('region', { name: /^Fortolkningsregler – Diazepam/ })).toBeTruthy()
+      expect(screen.getByRole('region', { name: 'Fortolkningsregler – DIAZ' })).toBeTruthy()
+      expect(screen.queryByText(/vises ikke her/)).toBeNull()
+    })
+
+    it('viser bare regelsettet hen er redaktør for, ikke de andre på siden og ikke scenarioreglene', async () => {
+      visSide(new Set(['regelsett/dmi']))
+      // Den ene delen står åpen, med redigeringen sin.
+      const seksjon = await screen.findByRole('region', { name: 'Fortolkning' })
+      expect(within(seksjon).getAllByRole('button', { name: 'Rediger reglene' })).toHaveLength(1)
+      expect(within(seksjon).queryAllByText(/DMI/).length).toBeGreaterThan(0)
+      expect(within(seksjon).queryAllByText(/DIAZ/)).toEqual([])
+      expect(screen.getAllByRole('button', { name: 'Rediger reglene' })).toHaveLength(1)
+      expect(screen.queryByRole('region', { name: /^Fortolkningsregler – / })).toBeNull()
+      expect(screen.queryByText(/Oksazepam som andel/)).toBeNull()
+      expect(screen.getByText(/2 andre regelsett i fortolkningen vises ikke her\./)).toBeTruthy()
+    })
+
+    it('viser scenarioreglene og ett intervallregelsett når hen er redaktør for begge', async () => {
+      visSide(new Set(['regelsett/diazepamgruppen', 'regelsett/diaz']))
+      await screen.findByRole('region', { name: 'Fortolkningsregler – DIAZ' })
+      expect(screen.getByRole('region', { name: /^Fortolkningsregler – Diazepam/ })).toBeTruthy()
+      expect(screen.queryByRole('region', { name: 'Fortolkningsregler – DMI' })).toBeNull()
+      expect(screen.getByText(/Ett annet regelsett i fortolkningen vises ikke her\./)).toBeTruthy()
+    })
   })
 })
