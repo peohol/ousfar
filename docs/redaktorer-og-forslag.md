@@ -499,6 +499,6 @@ Fylles ut av trådene.
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
 | A Redaktøransvar | [#421](https://github.com/peohol/ousfar/pull/421) (databasen); skjermbildene i en egen PR | Databasen til kontroll |
 | B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
-| B2 Foreslå endring i appen | (fylles inn) | Til kontroll |
+| B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
 | C Redaktørens arbeidsflyt | — | — |
 | D Brukervennlighet og testing | D1 testplanen [p5-testplan.md](p5-testplan.md): #419 | Til kontroll |
