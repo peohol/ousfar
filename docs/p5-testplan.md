@@ -402,7 +402,7 @@ ligger i `p5/qa/skript/` (`d3.ts`, `d3b.ts`, `d3c.ts`).
 | Brukerflytene (avsnitt 2) | BF-V1–V5, V7–V11; BF-R1–R8, R10, R11 (ved neste innlogging); BF-L1–L3, L5, L6; BF-S1, S2. Lokal administrator, forslagsstiller, redaktør og systemarkitekt i nettleseren, i ett sammenhengende forløp | Holder. Statusen forslagsstilleren ser for et nytt forslag, er «Sendt» (rettet i BF-V4) |
 | Den negative matrisen (avsnitt 3) | Hele matrisen i `p5tvers.test.ts` (D2). I nettleseren: en annen bruker i samme fagmiljø, en bruker i et annet fagmiljø og redaktøren åpner forslag de ikke kan se, med direkte adresse | Holder. Alle tre får «Fant ikke forslaget», med samme side som for en ID som ikke finnes |
 | Samtidighet (avsnitt 4) | `p5.samtidighet.test.ts` på ekte Postgres (D2) og trådenes egne | Holder, med fasiten over |
-| Tilgjengelighet og mobil (avsnitt 5) | Tastatur i «Redaktører», i køen, i behandlingen og i menyen «Mer for fagsiden». Fokus inn og ut av lagene. Én `h1`. Tallet i kontomenyen. Den avslåtte nasjonale knappen med forklaring. Smal skjerm (390 × 844, berøring) på fem flater. Mørk modus | Holder ikke helt: trykkflatene i funn 1 og 2 under er mindre enn 44 × 44 px på smal skjerm, og kontrollen står åpen til de er rettet og prøvd på nytt. Resten holder |
+| Tilgjengelighet og mobil (avsnitt 5) | Tastatur i «Redaktører», i køen, i behandlingen og i menyen «Mer for fagsiden». Fokus inn og ut av lagene. Én `h1`. Tallet i kontomenyen. Den avslåtte nasjonale knappen med forklaring. Smal skjerm (390 × 844, berøring) på fem flater. Mørk modus | Holder ikke helt: trykkflatene i funn 1 og 2 under var mindre enn 44 × 44 px på smal skjerm. Funn 1 er rettet i #429; funn 2 står åpent (se under). Resten holder |
 | Dataskillet (avsnitt 6) | Køen, tellingen og «Mine forslag» for redaktøren, for en bruker i et annet fagmiljø og for systemarkitekten | Holder. Redaktøren ser bare forslagene til sitt regelsett, og forslaget til fagsiden står bare hos systemarkitekten |
 | Regresjon (avsnitt 7) | REG-K1–K5 i `npm test` og REG-P1–P3 (D2). I nettleseren: en vanlig bruker har ikke «Rediger fortolkningen», og systemarkitekten har den fortsatt. Etter tilbakekallingen har redaktøren mistet både redigeringen og køen | Holder |
 
@@ -418,7 +418,7 @@ i `p5tvers.test.ts` (avsnitt 3.6), og BF-S3 prøves i `redaktoransvar.test.ts`. 
 vanlige publiseringen og kurateringen, som REG-K3 og REG-K4 prøver.
 
 **Funn i sluttkontrollen**, alle om utseende. Ingen stopper bruken, men funn 1
-og 2 betyr at kravet om trykkflater i avsnitt 5 ennå ikke er oppfylt. Alle er
+og 2 betydde at kravet om trykkflater i avsnitt 5 ikke var oppfylt. Alle er
 sendt til eierne gjennom P5-tråden:
 
 1. Utvalgsknappene «Nye», «Pågående» og «Ferdige» i køen er 35 px høye på
@@ -429,6 +429,18 @@ sendt til eierne gjennom P5-tråden:
    de runde hjørnene øverst (tråd B).
 4. Tittelen på et forslag til fortolkningen gjentar ordet: «Fortolkning ·
    Fortolkning av … · Reglene for HBUP» (tråd B).
+
+**Etter rettingene i #429.** Kontrollen (`d3.ts`) er kjørt på nytt på #429
+(`35e7b97`) med databasen bygd på nytt: 58 i orden og 2 avvik. Funn 1, 3 og 4
+er rettet. Utvalgene, fanene og bryteren i køen er 44 px på smal skjerm, listen
+har kanten og de runde hjørnene, og tittelen sier «Fortolkning av … · Reglene
+for HBUP». De to avvikene er funn 2, som eieren har latt stå med vilje: «Send
+forslaget» er appens vanlige kompakte knapp (42 px, som i redigeringen ellers),
+og «Gå til fortolkningen» er en lenke i teksten. Begge er over minstekravet i
+WCAG 2.2 (24 px, og lenker i tekst er unntatt), men under 44 px i avsnitt 5, så
+funn 2 står åpent som et bevisst avvik. Kjøringen fant én ny feil i #429: på
+smal skjerm står tallet inntil navnet («Nye0»), og den er sendt til eieren.
+Skjermbildene ligger i `p5/qa/d3/etter-429/`.
 
 De fem funnene fra den tidlige kontrollen av del B er prøvd på nytt på main,
 og alle er fortsatt i orden (`d3c.ts`).
