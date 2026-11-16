@@ -78,6 +78,14 @@ const varslerOm = async (forslag: string) =>
     )
   ).rows
 
+/**
+ * Mottakerne av et nytt forslag til ressursen: redaktørene med ansvar, ellers
+ * de med myndighet. Hvem som er redaktør, avgjøres av tråd A og persongalleriet,
+ * så testene her spør databasen i stedet for å anta at ingen er det.
+ */
+const forslagsbehandlere = async (ressurs: string) =>
+  new Set((await db.query<{ id: string }>('select intern.forslagsbehandlere($1) as id', [ressurs])).rows.map((r) => r.id))
+
 /** Alt i faginnholdet som kan endres, slik det står. */
 const innholdsfasit = () =>
   db
@@ -144,7 +152,8 @@ describe('arbeidskøen', () => {
     expect(f.ressurs).toMatchObject({ id: obj.fagside, type: 'infoside', navn: 'Behandlingsmiddel' })
     expect(f.stilt_av).toMatchObject({ er_meg: false, navn: expect.any(String) })
     expect(k.antall.nye).toBeGreaterThanOrEqual(3)
-    expect(k.antall.uten_redaktor).toBe(k.antall.nye + k.antall.pagaende)
+    // Tallet stemmer med merkene; hvem som har redaktør, avgjør tråd A.
+    expect(k.antall.uten_redaktor).toBe([...k.nye, ...k.pagaende].filter((x) => x.uten_redaktor).length)
   })
 
   it('en lokal administrator ser bare forslagene til det lokale innholdet i eget fagmiljø', async () => {
@@ -401,12 +410,19 @@ describe('varslene', () => {
     let mine = (await varslerOm(id)).filter((x) => x.mottaker_id === g.id.vanligA)
     expect(mine.map((x) => [x.kategori, x.arter])).toEqual([['mine_forslag', ['tatt', 'presisering_bedt']]])
     await svar(g.id.vanligA, id)
-    const behandler = (await varslerOm(id)).filter((x) => x.mottaker_id === g.id.adminA)
-    // Det nye forslaget og svaret, samlet i ett ulest varsel.
-    expect(behandler.map((x) => [x.kategori, x.arter])).toEqual([['forslag_til_behandling', ['opprettet', 'presisering']]])
-    // Svaret går bare til behandleren som har tatt forslaget.
-    const arkitekt = (await varslerOm(id)).filter((x) => x.mottaker_id === g.id.systemarkitekt)
-    expect(arkitekt.map((x) => x.arter)).toEqual([['opprettet']])
+    // Det nye forslaget gikk til mottakerne av nye forslag; svaret bare til
+    // behandleren som har tatt det, samlet med det nye i ett ulest varsel
+    // når behandleren også fikk det.
+    const mottakere = await forslagsbehandlere(obj.regelsettA)
+    const tilBehandling = (await varslerOm(id)).filter((x) => x.kategori === 'forslag_til_behandling')
+    expect(tilBehandling.length).toBeGreaterThan(0)
+    for (const v of tilBehandling) {
+      const nytt = mottakere.has(v.mottaker_id) ? ['opprettet'] : []
+      expect([v.mottaker_id, v.arter]).toEqual([v.mottaker_id, v.mottaker_id === g.id.adminA ? [...nytt, 'presisering'] : ['opprettet']])
+    }
+    expect(new Set(tilBehandling.map((v) => v.mottaker_id).filter((m) => m !== g.id.adminA))).toEqual(
+      new Set([...mottakere].filter((m) => m !== g.id.adminA && m !== g.id.vanligA)),
+    )
     await godkjenn(g.id.adminA, id)
     mine = (await varslerOm(id)).filter((x) => x.mottaker_id === g.id.vanligA)
     expect(mine.map((x) => x.arter)).toEqual([['tatt', 'presisering_bedt', 'godkjent']])
@@ -420,26 +436,29 @@ describe('varslene', () => {
 
   it('varselet vises med forslaget og ressursen, og forsvinner når mottakeren ikke lenger kan se forslaget', async () => {
     const person = await opprettBruker(db, { brukernavn: 'test.forslagsvarsel', fornavn: 'Test', etternavn: 'Varsel', rolle: 'user' })
+    // Fagmiljø B og regelsettet der, som ingen redaktør i persongalleriet har
+    // ansvaret for; da får de lokale administratorene nye forslag.
     const { rows: m } = await db.query(`select 1 from public.medlemskap where bruker_id = $1 and fagmiljo_id = $2 and status = 'aktiv'`, [
       person,
-      g.fagmiljo.A,
+      g.fagmiljo.B,
     ])
-    if (m.length === 0) await opprettMedlem(db, person, g.fagmiljo.A)
+    if (m.length === 0) await opprettMedlem(db, person, g.fagmiljo.B)
     const medGrunn = (sql: string) =>
       db.transaction(async (tx) => {
         await tx.query(`select set_config('ousfar.tilgangsgrunn', 'P5-test: lokal administrator (syntetisk)', true)`)
-        await tx.query(sql, [person, g.fagmiljo.A])
+        await tx.query(sql, [person, g.fagmiljo.B])
       })
     await medGrunn('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)')
-    const id = await foreslaa(g.id.vanligA, obj.regelsettA)
+    expect(await forslagsbehandlere(obj.regelsettB)).toContain(person)
+    const id = await foreslaa(g.id.vanligB, obj.regelsettB)
     const varsler = async () =>
       (await rpc<{ varsler: any[] }>(person, 'mine_varsler')).varsler.filter((v) => v.kategori === 'forslag_til_behandling')
     const [v] = await varsler()
     expect(v.hendelser).toEqual([
       expect.objectContaining({
         art: 'opprettet',
-        av: g.id.vanligA,
-        forslag: expect.objectContaining({ id, ressurs: expect.objectContaining({ id: obj.regelsettA }) }),
+        av: g.id.vanligB,
+        forslag: expect.objectContaining({ id, ressurs: expect.objectContaining({ id: obj.regelsettB }) }),
       }),
     ])
     expect((await rpc<Record<string, number>>(person, 'uleste_varsler')).forslag_til_behandling).toBe(1)
