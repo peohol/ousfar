@@ -263,8 +263,10 @@ Feiltilfellene:
 | `PUT` | 405 |
 
 Et tomt svar betyr altså enten «ingen anbefaling» eller «noe var feil i
-forespørselen». OUSFAR må kontrollere alle ID-ene mot sin egen kopi av katalogen
-og gentabellen før kallet, så et tomt svar bare kan bety det første.
+forespørselen», og CYPinfo kan ha endret en ID siden OUSFAR sist hentet
+katalogen. OUSFAR kontrollerer derfor alle ID-ene mot sin kopi før kallet, og
+behandler et tomt svar for en kombinasjon kopien sier har en anbefaling, som
+avvik i kilden, ikke som «ingen anbefaling» (se «Visningen»).
 
 ### `POST /api/gene` — anbefalingene for alle legemidler
 
@@ -454,16 +456,24 @@ ved hver synkronisering, med rapportkall mot alle legemidlene samtidig:
 
 Et legemiddel med gener i det andre, men ikke i det første, krever alle
 genene sammen (TCA-ene, warfarin); ett som har genene hver for seg i det første
-og sammen i det andre (sertralin), kan slås opp på ett eller flere. Det som
-lagres, er bare genene, fenotypene og anbefalingens ID og en sha256 av teksten
+og sammen i det andre (sertralin), kan slås opp på ett eller flere.
+
+- Til slutt ett kall per kombinasjon av fenotyper for hver gengruppe som hører
+  sammen, med legemidlene i gruppen: i dag 5 × 5 = 25 for CYP2C19 + CYP2D6
+  (TCA-ene), 3 × 3 = 9 for CYP2C9 + VKORC1 (warfarin) og 4 × 5 = 20 for
+  CYP2B6 + CYP2C19 (sertralin). Slik har hver anbefaling CYPinfo kan gi, sin
+  ID og teksthash i kopien, også de felles, og hver endring kan oppdages.
+
+Det som lagres, er bare genene, fenotypene og anbefalingens ID og en sha256 av teksten
 (for å se at noe er endret, se under); teksten kastes. Gir dette færre gener
 for et legemiddel enn sist, stanser synkroniseringen byttet og melder det, så
 et endret svarmønster hos CYPinfo ikke fjerner et gen i stillhet.
 (Kartleggingen gjorde det samme og fant det som står i tabellene over.)
 
 Synkroniseringen går hver uke fra GitHub Actions, som ClinPGx og
-Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 43
-`POST`, under ett minutt. Alt
+Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 97
+`POST` i dag (38 + 5 + 54), omtrent to minutter. Antallet følger av
+gentabellen og gengruppene og regnes ut, ikke skrives inn. Alt
 byttes inn i én transaksjon (katalogen og gentabellen er små), med vernet fra
 `docs/datakilder.md`: hver type minst 80 % av radene fra før, og en
 strukturkontroll som avviser svar der felt OUSFAR bygger på (`_id`, `name`,
@@ -480,11 +490,13 @@ både synkroniseringen og oppslaget; det er ti funksjoner i `api/` i dag, og
 Vercels Hobby-plan tillater høyst tolv per utrulling), som tar
 `{ handling: "rapport", legemiddel, resultater: [{ gen_slug, fenotype_id }] }` og:
 
-1. krever en innlogget, aktiv bruker: en ny sjekk `erInnlogget` i
-   `src/server/tilgang.ts` ved siden av `erSystemarkitekt`, som lar databasen
-   avgjøre om tokenet er gyldig. I dag har `tilgang.ts` bare sjekkene for cron,
-   GitHub Actions og systemarkitekter, fordi alle endepunktene er
-   synkroniseringer;
+1. krever en innlogget bruker med aktivt medlemskap: en ny sjekk
+   `harAktivtMedlemskap` i `src/server/tilgang.ts` ved siden av
+   `erSystemarkitekt`, som kaller databasens fasit
+   `public.har_aktivt_medlemskap()` med brukerens token. Et gyldig token alene
+   er ikke nok, så en bruker som nettopp har mistet medlemskapet, avvises med
+   en gang. I dag har `tilgang.ts` bare sjekkene for cron, GitHub Actions og
+   systemarkitekter, fordi alle endepunktene er synkroniseringer;
 2. kontrollerer at legemiddelet, genene og fenotypene finnes i OUSFARs kopi, at
    det er høyst én fenotype per gen, og at genene er blant dem legemiddelet slås
    opp på. Ellers 400 med en norsk melding, uten å kalle CYPinfo;
@@ -553,8 +565,14 @@ legemidler med gener):
 - «Nullstill» tar alle valgene.
 
 **Feil og tomme svar**: «CYPinfo svarer ikke nå. Prøv igjen om litt.» ved
-tidsavbrudd eller 5xx; «CYPinfo har ingen anbefaling for denne kombinasjonen.»
-ved et tomt svar (som etter kontrollen i endepunktet bare kan bety det);
+tidsavbrudd eller 5xx. «CYPinfo har ingen anbefaling for denne kombinasjonen»
+vises bare når OUSFARs kopi sier det, og da kalles ikke CYPinfo (valgene tilbyr
+uansett bare fenotyper med en anbefaling). Kommer det likevel et tomt svar for
+en kombinasjon kopien sier har en anbefaling, er det avvik i kilden, ikke et
+klinisk svar: «CYPinfo ga ikke anbefalingen OUSFAR ventet. Se cypinfo.no, eller
+prøv igjen etter neste oppdatering.», med lenken til CYPinfo, og endepunktet
+melder avviket i «Datakilder» (uten valgene) så synkroniseringen kan kjøres
+på nytt;
 «Katalogen fra CYPinfo er ikke hentet ennå» før første synkronisering; og
 meldingen om gamle data når katalogen ikke er kontrollert på over ti døgn, som
 for ClinPGx.
@@ -597,8 +615,9 @@ synkroniseringen lagrer en hash av hver anbefalingstekst den ser, logges det
 også når CYPinfo endrer en anbefaling, selv om teksten ikke lagres. CYPinfo har
 ingen versjon eller dato; sporet er derfor OUSFARs kjøring og tidspunkt.
 
-**Feilbehandling.** Alt sjekkes mot katalogen før kallet, så CYPinfos stille
-tomme svar ikke kan forveksles med «ingen anbefaling». Svar som ikke kan leses,
+**Feilbehandling.** Alt sjekkes mot katalogen før kallet, og et tomt svar der
+katalogen venter en anbefaling, er avvik i kilden, så CYPinfos stille tomme svar
+aldri vises som «ingen anbefaling». Svar som ikke kan leses,
 eller har en ny form, vises ikke; brukeren får feilmeldingen og
 systemarkitektene en føring i «Datakilder». Ved feil i synkroniseringen står
 katalogen fra forrige vellykkede henting. CYPinfo kan stanses som CPIC, med
@@ -655,7 +674,9 @@ er én PR, i denne rekkefølgen.
   store og små bokstaver, duplikasjon bare for CYP2D6), uten `/api/result`.
 - Testene: hver avvisning med melding uten at CYPinfo kalles; et tomt svar; 5xx
   og tidsavbrudd; et svar med ny form; at ingenting logges eller lagres (spion
-  på loggeren og databasen); at innlogging kreves. CYPinfo etterlignes i
+  på loggeren og databasen); at innlogging og aktivt medlemskap kreves (også en innlogget bruker uten
+  aktivt medlemskap avvises); at et tomt svar for en kombinasjon katalogen har,
+  gir avviksmeldingen og en føring, ikke «ingen anbefaling». CYPinfo etterlignes i
   testene; ingen test kaller CYPinfo.
 
 ### D — Visningen på fagsiden
@@ -701,11 +722,14 @@ er én PR, i denne rekkefølgen.
   de 13 usikre slik vurderingen sier (Kariprazin ja, Brekspiprazol nei for
   kariprazin, Hydroksyrisperidon nei); hver publiserte fagside har én status.
 - Utledningen gir CYP2C19 + CYP2D6 som påkrevd par for de fire TCA-ene, CYP2C9
-  + VKORC1 for warfarin, og CYP2C19 og CYP2B6 hver for seg for sertralin.
+  + VKORC1 for warfarin, og CYP2C19 og CYP2B6 hver for seg for sertralin, og
+  synkroniseringen kaller hele produktet av fenotyper for hver gengruppe (i
+  utdraget 25 + 9 + 20), så hver felles anbefaling har ID og teksthash.
 - Endepunktet sender aldri noe til CYPinfo som ikke finnes i katalogen, og
   avviser to fenotyper for samme gen.
 - Et tomt svar, 5xx, tidsavbrudd og ny form gir hver sin melding, og ingen
-  anbefaling vises.
+  anbefaling vises. Et tomt svar for en kombinasjon katalogen har, vises som
+  avvik i kilden, aldri som «ingen anbefaling».
 - Ingenting fra oppslaget lagres eller logges; valgene står ikke i adressen.
 
 **Klinisk aksepttest (E), i det lokale testmiljøet eller med systemarkitektenes
