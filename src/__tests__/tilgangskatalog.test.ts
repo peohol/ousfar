@@ -50,21 +50,26 @@ describe('katalogvaktene', () => {
       'gi_medlemskap(bruker uuid, fagmiljo uuid)',
       'har_aktivt_medlemskap()',
       'legg_til_medlem(brukernavn text, fagmiljo uuid)',
+      // P5: redaktøransvaret, som kontrollerer myndigheten i fagmiljøet selv (`redaktormyndighet`).
+      'les_redaktoransvar(fagmiljo uuid)',
       'medlemsoversikt(fagmiljo uuid)',
       'min_medlemskapsstatus()',
       'mine_administrerte_fagmiljoer()',
       'mine_lesbare_fagmiljoer()',
+      // P5: fagmiljøene den innloggede selv kan endre utkastene i.
+      'mine_redigerbare_fagmiljoer()',
       // P4b: fagmiljøet fortolkningen gjelder for den innloggede selv.
       'mitt_arbeidsfagmiljo()',
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
+      'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)',
       // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
       'velg_arbeidsfagmiljo(fagmiljo uuid)',
     ])
     expect(FUNKSJONSKONTROLLER['velg_arbeidsfagmiljo(fagmiljo uuid)']).toBe('eier')
     for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_|velg_)/.test(s))) {
-      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|systemarkitekt)$/)
+      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|redaktormyndighet|systemarkitekt)$/)
     }
   })
 

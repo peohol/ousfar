@@ -883,11 +883,15 @@ finnes i dag:
 | --- | --- | --- | --- | --- | --- |
 | Vanlig bruker | Ja | Ja | Nei | Nei | Nei |
 | Lokal administrator | Ja | Ja | Nei | Eget lokalt | Eget lokalt |
+| Redaktør (P5) | Ja | Ja | Nei | Området | Endre området, ikke publisere |
 | Systemarkitekt | Ja | Ja | Ja | Alt | Alt |
 | Uten aktivt medlemskap | Nei | Nei | Nei | Nei | Nei |
 
-Felles innhold endres bare av systemarkitektene til felles redaktører finnes
-(P5); lokale redaktører kommer også i P5 (`docs/redaktorer-og-forslag.md`). Den gamle adminrollen kreves ikke
+Redaktørene (P5, `docs/redaktorer-og-forslag.md`, «Redaktøransvar») har
+ansvar for ett regelsett eller én fagside, for fortolkningen i et fagmiljø,
+eller (nasjonalt, av til B2) for alle fagsidene. De leser og endrer utkastene
+i området, men publiserer ikke; det gjør de lokale administratorene og
+systemarkitektene som før. Den gamle adminrollen kreves ikke
 for faginnholdet og gir ingenting alene: en systemarkitekt eller lokal
 administrator uten den (som `maxhag`) har sine rettigheter, og en med bare
 rollen har ingen (`er_admin()` og `krev_admin()` står urørt for resten av
@@ -900,14 +904,16 @@ er flyttet.
 | Funksjon | Svarer |
 | --- | --- |
 | `intern.kan_lese_objekt(objekt, bruker)` | Rekkevidden kan leses (`intern.kan_lese_omfang`). Nei uten rekkevidde |
-| `intern.kan_endre_objekt(objekt, bruker)` | Lokalt: `intern.er_lokal_admin_i` i fagmiljøet. Felles (og grupper): systemarkitekt |
+| `intern.kan_endre_objekt(objekt, bruker)` | Lokalt: `intern.er_lokal_admin_i` i fagmiljøet. Felles (og grupper): systemarkitekt. Og et redaktøransvar som dekker objektet (`intern.redaktoransvar_dekker`, P5) |
 | `public.leser_alt_lokale_innhold()` | Om den innloggede kan lese hvert fagmiljø som har lokalt innhold (`intern.er_medlem_i`). Snarvei for radsikkerhetsreglene; svarer bare om den innloggede |
 | `public.kan_endre_lokalt_innhold()` | Om den innloggede har endringsrett til noe av det lokale innholdet, i fagmiljøet det hører til (`intern.kan_endre_omfang`, ett oppslag per rekkevidde). Appen viser redigeringen av fortolkningen etter den; svarer bare om den innloggede |
 | `intern.krev_endringsrett(objekt, ny)` | Stopper en innlogget uten endringsrett: PT404 «Fant ikke objektet.» når objektet ikke kan leses (samme svar som for et objekt som ikke finnes), ellers 42501. Serverprosessene uten innlogget bruker (migrasjonene, kurateringsagentene, jobbene) berøres ikke |
 
 **Skriveveien.** Porten er `intern.krev_redaktor()` i stedet for
 `intern.krev_admin()`: et aktivt medlemskap og endringsrett til noe
-(`intern.har_endringsrett_noe`: systemarkitekt eller lokal administrator).
+(`intern.har_endringsrett_noe`: systemarkitekt, lokal administrator eller redaktør, P5).
+Publiseringen og slettingen av referanser krever i tillegg myndigheten over
+ressursen (`intern.krev_myndighet`), så en redaktør stoppes der.
 Den gjelder `lagre_utkast`, `publiser_utkast`, `gjenopprett_revisjon`,
 `slett_referanse`, `opprett_utkast`, `valider_scenarioregelsett` og de tre
 `lagre_*regelsett`, og gir forfatteren som før. All lagring, publisering, gjenoppretting og sletting låser
@@ -1308,6 +1314,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `eier` | `security definer` som bare rører den innloggedes egne rader |
 | `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
 | `medlemskapsmyndighet` | `security definer` som endrer eller viser medlemskap etter den innloggedes myndighet i fagmiljøet (`intern.medlemskapsavslag`, P3) |
+| `redaktormyndighet` | `security definer` som gir, tar tilbake eller viser redaktøransvar etter den innloggedes myndighet i fagmiljøet eller som systemarkitekt (`intern.kan_administrere_redaktoransvar`, P5) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
 | `stoffregister` | Krever rett til å endre stoffregisteret (`intern.krev_registerbruker`) |
