@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
 import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
-import { redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
+import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
+import { redigerbareRegelsett } from './redaktorer/ansvar'
+import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
 import { nettleserlager } from './auth/mellomlager'
@@ -247,9 +249,19 @@ function Arbeidsflate({
   const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
   const regelvarsler = useMemo(() => lagRegelvarsellager(kallMot(klient())), [])
   // Hva den innloggede får redigere: fagsidene (felles) og fortolkningen
-  // (lokalt), etter rettighetene i databasen (P2a).
+  // (lokalt), etter rettighetene i databasen (P2a), og regelsettene
+  // den innloggede er redaktør for (P5).
   const lokalEndringsrett = useLokalEndringsrett(profil.id)
-  const redigering = useMemo(() => redigeringsrett(rettigheter, lokalEndringsrett), [rettigheter, lokalEndringsrett])
+  const mineRedaktoransvar = useMineRedaktoransvar(profil.id, rettigheter.redaktor)
+  const arbeidsfagmiljoId = rettigheter.arbeidsfagmiljo?.id ?? null
+  const redaktorensRegelsett = useMemo(
+    () => (mineRedaktoransvar === null ? null : redigerbareRegelsett(mineRedaktoransvar, arbeidsfagmiljoId)),
+    [mineRedaktoransvar, arbeidsfagmiljoId],
+  )
+  const redigering = useMemo(
+    () => redigeringsrett(rettigheter, lokalEndringsrett, redaktorensRegelsett),
+    [rettigheter, lokalEndringsrett, redaktorensRegelsett],
+  )
   const faginnholdsklienter = useMemo(
     () => ({
       leser: lagFaginnholdsleser(klient()),
@@ -598,16 +610,17 @@ function Arbeidsflate({
    */
   const fagsider = useMemo(() => (state.analyte ? stofferForFortolkning(state.analyte, register) : []), [state.analyte, register])
 
-  /**
-   * Fortolkningen har regler og kommentarer: en modul med scenarioregler,
-   * THC-syre, eller en kode med et publisert regelsett. EtG og EtS har ingen.
-   * Administratorene kan redigere dem, og alle kan foreslå endringer i dem.
-   */
-  // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene.
+  // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene og redigeringsretten.
   const fortolkningsanalytter = useMemo(
     () => (state.analyte ? analytterForFortolkning(state.analyte, katalog) : []),
     [state.analyte, katalog],
   )
+  /**
+   * Fortolkningen har regler og kommentarer: en modul med scenarioregler,
+   * THC-syre, eller en kode med et publisert regelsett. EtG og EtS har ingen.
+   * Alle kan foreslå endringer i dem. Administratorene kan redigere dem, og en
+   * redaktør for ett regelsett bare fortolkningen for kodene i det.
+   */
   const harRegler = useMemo(() => {
     const analytt = state.analyte
     if (!analytt) return false
@@ -615,7 +628,13 @@ function Arbeidsflate({
     const { tilstand } = regler
     return tilstand.status === 'klar' && fortolkningsanalytter.some((a) => tilstand.etterKode.has(a.kode))
   }, [state.analyte, regler, fortolkningsanalytter])
-  const kanRedigeres = redigering.lokalt && harRegler
+  const kanRedigeres = useMemo(
+    () =>
+      harRegler &&
+      !!state.analyte &&
+      kanRedigereKodene(redigering, [state.analyte.kode, ...fortolkningsanalytter.map((a) => a.kode)]),
+    [harRegler, redigering, state.analyte, fortolkningsanalytter],
+  )
 
   const settMetodefilter = useCallback((metode: string | null) => {
     dispatch({ type: 'sett-metodefilter', metode })
@@ -874,6 +893,8 @@ function Arbeidsflate({
                           fortolkning={state.analyte}
                           sted={rute.side === 'fortolkning' ? rute.sted : undefined}
                           katalog={katalog}
+                          kanPublisere={redigering.publisere}
+                          regelsett={redigering.regelsett}
                           onPublisert={reglerPublisert}
                           onAvslutt={lukkInfoside}
                         />

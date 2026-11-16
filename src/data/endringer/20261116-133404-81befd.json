@@ -1,0 +1,14 @@
+{
+  "id": "20261116-133404-81befd",
+  "semver": "minor",
+  "opprettet": "2026-11-16T13:34:04Z",
+  "sammendrag": "Administratorene kan gi kolleger redaktøransvar",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["fortolkning"],
+  "punkter": [
+    "Under «Redaktører» i administrasjonen kan administratorene i et fagmiljø gi en kollega ansvar for å redigere hele fortolkningen eller ett regelsett, og ta det tilbake.",
+    "En redaktør kan endre utkastene i fortolkningen, men publiserer ikke; det gjør administratorene som før. Redaktøren ser ansvaret sitt under «Mitt redaktøransvar» i kontomenyen.",
+    "Redigeringen viser hvem som er redaktør for regelsettene."
+  ]
+}

@@ -669,7 +669,7 @@ describe('kontomenyen', () => {
 })
 
 describe('adminmenyen', () => {
-  it('viser bare «Brukere» for en lokal administrator, også med den gamle adminrollen', async () => {
+  it('viser bare «Brukere» og «Redaktører» for en lokal administrator, også med den gamle adminrollen', async () => {
     for (const r of ['user', 'admin']) {
       rolle.verdi = r
       rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }], opprettBrukerI: ['a'] }
@@ -680,7 +680,7 @@ describe('adminmenyen', () => {
       )
       const knapp = await screen.findByRole('button', { name: 'Administrasjon' })
       await userEvent.click(knapp)
-      expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent), r).toEqual(['Brukere'])
+      expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent), r).toEqual(['Brukere', 'Redaktører'])
       await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Brukere' }))
       expect(screen.getByText('Brukerlista')).toBeTruthy()
       cleanup()
@@ -710,10 +710,10 @@ describe('adminmenyen', () => {
     )
     const knapp = screen.getByRole('button', { name: 'Administrasjon' })
     await userEvent.click(knapp)
-    expect(within(panel(knapp)).getAllByRole('button')).toHaveLength(6)
+    expect(within(panel(knapp)).getAllByRole('button')).toHaveLength(7)
   })
 
-  it('fører til brukerne, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
+  it('fører til brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
     render(
       <Ramme>
         <Adminmeny />
@@ -723,7 +723,7 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     const meny = panel(knapp)
     expect(meny.getAttribute('data-lag')).toBe('adminmeny')
-    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Redaktører', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
 
     await userEvent.click(within(meny).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()

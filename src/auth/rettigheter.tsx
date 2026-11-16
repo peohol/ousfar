@@ -54,6 +54,8 @@ export interface Rettigheter {
    * docs/redaktorer-og-forslag.md). Databasen avgjør hvilke forslag.
    */
   behandlerForslag: boolean
+  /** Har et redaktøransvar som gjelder nå (`redaktor`, docs/redaktorer-og-forslag.md). */
+  redaktor: boolean
 }
 
 export const INGEN_RETTIGHETER: Rettigheter = {
@@ -65,6 +67,7 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   stoffregister: false,
   opprettBrukerI: [],
   behandlerForslag: false,
+  redaktor: false,
 }
 
 /** Et fagmiljø i svaret, eller `null` når formen er feil. Det som mangler av standard og åpent, regnes som nei. */
@@ -97,6 +100,7 @@ export function lesRettigheter(svar: unknown): Rettigheter {
     // En database uten feltet kjenner ikke redaktørene; der behandler myndigheten forslagene.
     behandlerForslag:
       'behandler_forslag' in r ? r.behandler_forslag === true : systemarkitekt || administrerer.length > 0,
+    redaktor: r.redaktor === true,
   }
 }
 
@@ -138,6 +142,17 @@ export const UTEN_ARBEIDSFAGMILJO = 'uten-arbeidsfagmiljo'
  */
 export const arbeidskontekst = (r: Rettigheter, kjent: boolean): string | null =>
   kjent ? (r.arbeidsfagmiljo?.id ?? UTEN_ARBEIDSFAGMILJO) : null
+
+/** Om den innloggede kan gi redaktøransvar: lokale administratorer og systemarkitektene. */
+export const kanGiRedaktoransvar = (r: Rettigheter): boolean => r.systemarkitekt || r.administrerer.length > 0
+
+/**
+ * Om den innloggede kan publisere fortolkningen i fagmiljøet hen arbeider i:
+ * systemarkitektene og de lokale administratorene der. En redaktør endrer
+ * utkastet, men publiserer ikke.
+ */
+export const kanPublisereFortolkningen = (r: Rettigheter): boolean =>
+  r.systemarkitekt || (r.arbeidsfagmiljo !== null && r.administrerer.some((f) => f.id === r.arbeidsfagmiljo!.id))
 
 /** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
