@@ -286,11 +286,16 @@ describe('3.5 direkte i tabellene', () => {
         const slettet = await rader(p, `delete from public.${t}`)
         if (lest + endret + slettet > 0) avvik.push(`${p} ${t}: lest ${lest}, endret ${endret}, slettet ${slettet}`)
       }
-      // Selvheving: å gi seg selv ansvar eller legge inn et forslag direkte.
-      const ansvar = await feilkode(p, `insert into public.redaktoransvar (bruker_id, omrade, fagmiljo_id) values ('${g.id[p]}', 'fortolkning', '${g.fagmiljo.A}')`)
-      const forslag = await feilkode(p, `insert into public.endringsforslag (ressurs_id, stilt_av) values ('${d.RA1}', '${g.id[p]}')`)
-      if (ansvar !== '42501') avvik.push(`${p} legger inn ansvar: ${ansvar}`)
-      if (forslag !== '42501') avvik.push(`${p} legger inn forslag: ${forslag}`)
+      // Selvheving og forfalskning: gyldige rader lagt inn direkte i hver tabell.
+      const innsetting: Record<keyof typeof KOLONNE, string> = {
+        redaktoransvar: `(bruker_id, omrade, fagmiljo_id) values ('${g.id[p]}', 'fortolkning', '${g.fagmiljo.A}')`,
+        endringsforslag: `(ressurs_id, stilt_av) values ('${d.RA1}', '${g.id[p]}')`,
+        endringsforslag_hendelser: `(forslag_id, art, utfort_av) values ('${d.FA1}', 'godkjent', '${g.id[p]}')`,
+      }
+      for (const t of TABELLER) {
+        const kode = await feilkode(p, `insert into public.${t} ${innsetting[t]}`)
+        if (kode !== '42501') avvik.push(`${p} legger inn i ${t}: ${kode}`)
+      }
     }
     expect(avvik).toEqual([])
     expect(await fasit()).toEqual(for_)
