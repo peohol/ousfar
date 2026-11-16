@@ -425,6 +425,39 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
   `sted`, `sammendrag` (de første 280 tegnene), tidene og `venter_pa_meg`.
 - Varslene lager tråd C fra hendelsene; B1 lager ingen.
 
+**B2, appen** (`src/components/forslag/`, `src/forslag/`, prøvd i
+`src/__tests__/forslag.test.tsx`):
+
+- «Foreslå endring» står i menyen «Mer for fagsiden», som en diskret knapp
+  under hvert publisert kort og hver tekst på fagsiden (i lesemodus), og i
+  toppmenyen i fortolkningen når den har regler. Skjemaet åpnes med det
+  stedet valgt og teksten slik den står sitert, og en valgliste med resten av
+  det samme stedet: hele fagsiden og hvert publisert element
+  (`forslagsvalgForFagside`), eller hvert publisert regelsett og hver
+  publisert kommentar det bruker (`forslagsvalgForFortolkning`). Bare det
+  publiserte kan foreslås endret; en side, et kort eller en kommentar som
+  aldri er publisert, er ikke med.
+- Fortolkningen leser de publiserte reglene først når knappen trykkes
+  (`lesRegeldata`, den samme lesingen som redigeringen), så det kliniske
+  utfallet og det fortolkningen henter når den åpnes, er uendret.
+- Skjemaet (`Forslagsskjema`) er et `Modallag` (et ark i nesten hele høyden
+  på smal skjerm) med forslag, begrunnelse og høyst ti kilder (tekst, lenke
+  eller en av referansene på siden). Det som er skrevet, bevares med
+  `useBevart`, og vinduet spør før det lukkes med noe skrevet. Kvitteringen
+  lenker til forslaget, sier at forslagsstilleren får varsel (`mine_forslag`
+  fra C1, som ikke kan slås av) og viser til «Mine forslag».
+- Åpnes skjemaet fra en fagside, leser det fagsidens nyeste versjon med en gang
+  (`hentSideversjon`, `les_sideversjoner`) og sender den som `sideversjon`, så
+  konflikten måles fra siden slik den var da, ikke da forslaget ble sendt. Den
+  bevares med resten av skjemaet. Innsendingen venter på oppslaget; mislykkes
+  det, sendes ingenting, skjemaet sier fra, og neste innsending prøver igjen.
+  Bare en side uten noen versjon sendes uten.
+- `#/forslag` er «Mine forslag» (også i kontomenyen), `#/forslag/<ID>` ett
+  forslag med tidslinjen, svaret og «Trekk tilbake», og
+  `#/forslag/til-behandling` fanen tråd C fyller (`forslagsadresse`).
+  Plassene for C er `behandling/Tilbehandling.tsx` (`Tilbehandling`,
+  `TilbehandlingFane`) og `behandling/Behandlerhandlinger.tsx`.
+
 ## Behandling (tråd C)
 
 **C1, varslene** (`supabase/migrations/20261116132000_p5_forslagsvarsler.sql`,
@@ -551,6 +584,13 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
+| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
+| A Redaktøransvar | [#421](https://github.com/peohol/ousfar/pull/421) (databasen); skjermbildene i en egen PR | Databasen til kontroll |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
+| B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
+| C Redaktørens arbeidsflyt | — | — |
+| D Brukervennlighet og testing | D1 testplanen [p5-testplan.md](p5-testplan.md): #419 | Til kontroll |
+
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
 | A1 Redaktøransvar i databasen | [#421](https://github.com/peohol/ousfar/pull/421) | Slått sammen |
 | A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Slått sammen |

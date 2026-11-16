@@ -1183,6 +1183,17 @@ const REGISTER = {
       G([C(8.5, 10.3, 1, 'h', 'i-ink'), C(12, 10.3, 1, 'h', 'i-ink'), C(15.5, 10.3, 1, 'h', 'i-ink')], 'pop'),
     ],
   },
+  // «Foreslå endring»: blyanten med et pluss, så den ikke forveksles med diskusjonene eller «Rediger».
+  foresla: {
+    vb: 24,
+    ga: 'shake',
+    parts: [
+      P('M3.5 17.5l1-4L13 5a2.1 2.1 0 0 1 3 3l-8.5 8.5z', 'f1', 'warn'),
+      P('M11.6 6.9l2.6 2.6', 'l'),
+      C(17.5, 17.5, 4.5, 'f2', 'accent'),
+      P('M17.5 15.3v4.4M15.3 17.5h4.4', 'l', null, 'pop'),
+    ],
+  },
   reply: {
     vb: 24,
     parts: [
