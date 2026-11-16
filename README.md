@@ -138,7 +138,10 @@ src/data/analytter.json     Generert datasett (sjekket inn)
 src/data/antihypertensiver.json
                             Generert datasett (sjekket inn)
 src/data/aliaser.json       Håndholdte ekstra søkeord per analyttkode
-src/data/endringslogg.ts    Endringsloggen appen viser (håndholdt)
+src/data/endringer/         Én fil per endring, uten versjonsnummer (håndholdt)
+src/data/endringslogg.ts    Endringsloggen appen viser: de nye endringene over arkivet
+src/data/endringshistorikk.ts
+                            Det frosne arkivet med føringene til og med 1.135.0
 src/types.ts                Datamodellen
 src/state.ts                Tilstandsmaskinen for stegene
 src/domain/                 Bånd, klassifisering, søk, navn, fargespredning, kontrast,
@@ -336,10 +339,15 @@ merket med dato og versjon, med en kort beskrivelse og merker for hva slags
 endring det var og hvor stor den var. Skuffen foldes ut til en punktliste i
 vanlig språk. Bare én skuff står åpen av gangen.
 
-Føringene ligger i `src/data/endringslogg.ts`, nyest først, og versjonen appen
-viser er den øverste føringen der — de to kan derfor ikke komme i utakt.
-`package.json` holdes lik av en test. Formen på en føring er definert i
-`src/domain/versjon.ts`, og rutinen for å legge inn en ny står i
+Hver endring har sin egen fil i `src/data/endringer/`, med leddet den øker
+(major, minor eller patch) men uten versjonsnummer. Nummeret beregnes når appen
+bygges, i den rekkefølgen endringene ble slått sammen i `main`, fra den siste
+versjonen i det frosne arkivet over de eldre føringene
+(`src/data/endringshistorikk.ts`). Loggen appen viser, er begge deler, nyest
+først (`src/data/endringslogg.ts`), og versjonen appen viser, er den øverste
+føringen der. Versjonen i `package.json` er en fast, intern verdi. Formen på en
+føring er definert i `src/domain/versjon.ts` og `src/domain/versjonering.ts`,
+og rutinen for å legge inn en ny står i
 [`docs/endringslogg.md`](docs/endringslogg.md).
 
 Loggen er en `<dialog>` med `showModal()`, så fokusfelle, Escape og inert

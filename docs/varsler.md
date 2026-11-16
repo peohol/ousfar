@@ -114,11 +114,13 @@ siste endringen alltid lagres sist.
 
 ## Endringsloggen
 
-Føringene i `src/data/endringslogg.ts` er varsler i appen, ikke i databasen:
+Føringene i endringsloggen (`src/data/endringslogg.ts`) er varsler i appen, ikke i databasen:
 de kommer med appen selv. Hvor langt brukeren er kommet, lagres i
 `brukerinnstillinger` under `varsler.endringslogg`: `fra` (føringene til og
 med denne er historie), `lest` (de nyere som er lest) og `arkivert` (de av
-dem som er lagt i arkivet). Første gang
+dem som er lagt i arkivet). De er versjonsnumre; et publisert nummer endres
+aldri (`docs/endringslogg.md`), så statusen holder også når nye endringer
+kommer til. Første gang
 begynner brukeren rett før den nyeste føringen, så den er et varsel og resten
 ikke. `merkEndringerLest` flytter `fra` forbi de eldste leste som har passert
 fristen, så listene over leste og arkiverte ikke vokser.

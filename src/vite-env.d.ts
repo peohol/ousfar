@@ -13,3 +13,18 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+/*
+ * Bygget og endringene med egen fil, med versjonene byggingen beregnet fra
+ * Git (`versjonsfil()` i `vite.config.ts`). Les dem gjennom
+ * `src/oppdatering/versjon.ts` og `src/data/endringslogg.ts`.
+ */
+declare module 'virtual:ousfar-bygg' {
+  import type { Byggopplysninger } from 'src/oppdatering/byggopplysninger'
+  export const BYGG: Byggopplysninger
+}
+
+declare module 'virtual:ousfar-endringer' {
+  import type { Endring } from 'src/domain/versjon'
+  export const NYE_ENDRINGER: readonly Endring[]
+}

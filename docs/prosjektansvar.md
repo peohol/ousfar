@@ -115,8 +115,11 @@ informasjonsutveksling.
    før eierskapet er avklart.
 6. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
    [endringslogg.md](endringslogg.md), uansett prosjekt (unntatt en stille
-   designjustering). Kommer en annen PR først og tar versjonsnummeret, nummererer
-   tråden som eier PR-en om sin egen føring når den oppdaterer grenen.
+   designjustering). Føringen er en ny fil som sier om endringen er MAJOR,
+   MINOR eller PATCH, uten versjonsnummer; nummeret settes automatisk i den
+   rekkefølgen PR-ene slås sammen. Ingen PR reserverer et nummer eller endrer
+   `package.json` for å føre en versjon, så PR-er fra ulike prosjekter kan slås
+   sammen i hvilken som helst rekkefølge uten konflikt i endringsloggen.
 
 ## 6. Felles regler for alle tre prosjektene
 

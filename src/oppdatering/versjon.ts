@@ -12,34 +12,14 @@
  * oppdatere når siden hen er på, er berørt (`sider.ts`). Den ligger utenfor
  * innloggingsveggen og sier ikke noe annet enn dette.
  */
+import { BYGG } from 'virtual:ousfar-bygg'
+import { VERSJONSFIL, type Byggopplysninger } from './byggopplysninger'
 import type { Endringsomrade } from './sider'
 
-/** Det `versjon.json` inneholder. */
-export interface Byggopplysninger {
-  bygg: string
-  /** Versjonsnummeret til bygget, den øverste føringen i endringsloggen. */
-  versjon: string
-  /**
-   * Versjonen brukerne bes om å oppdatere til, den nyeste føringen som varsles
-   * (`oppdateringsversjon`). Mangler i bygg fra før feltet fantes.
-   */
-  oppdatering?: string
-  /**
-   * De nyeste føringene som varsles, nyest først, med sidene de gjelder
-   * (`endringsomrader`). Bare i `versjon.json`; mangler i bygg fra før feltet
-   * fantes, og da kan en ny versjon berøre alle sider.
-   */
-  endringer?: Endringsomrade[]
-}
+export { VERSJONSFIL, type Byggopplysninger } from './byggopplysninger'
 
-declare const __BYGG__: Byggopplysninger | undefined
-
-/** Bygget som kjører. */
-export const KJORER: Byggopplysninger =
-  typeof __BYGG__ === 'object' ? __BYGG__ : { bygg: 'ukjent', versjon: '0.0.0', oppdatering: '0.0.0' }
-
-/** Fila bygget legger ut, ved siden av `index.html`. */
-export const VERSJONSFIL = 'versjon.json'
+/** Bygget som kjører, beregnet da det ble bygget (`versjonsfil()` i `vite.config.ts`). */
+export const KJORER: Byggopplysninger = BYGG
 
 function erEndringsomrader(data: unknown): data is Endringsomrade[] {
   return (

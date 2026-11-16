@@ -22,4 +22,4 @@
 
 - [ ] `npm test`
 - [ ] `npm run build`
-- [ ] Endringsloggen er oppdatert — nøyaktig én føring for denne PR-en, etter `docs/endringslogg.md` (eller: stille designjustering, ingen føring)
+- [ ] Endringsloggen er oppdatert — nøyaktig én ny fil i `src/data/endringer/` med leddet (major/minor/patch) og uten versjonsnummer, etter `docs/endringslogg.md` (eller: stille designjustering, ingen føring)

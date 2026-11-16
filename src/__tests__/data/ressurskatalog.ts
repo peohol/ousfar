@@ -197,6 +197,8 @@ export const STATISKE_RESSURSER: Readonly<Record<string, StatiskKlassifisering>>
   'src/data/stoffregister.json': s('felles', 'Stoffene er felles (§3); koblingene står i analyttkatalogen (P4c)'),
   'src/data/forbindelser.ts': s('felles', 'Forbindelsesregisteret (§3)'),
   'src/data/endringslogg.ts': s('felles', 'Appens endringslogg (§3)'),
+  'src/data/endringshistorikk.ts': s('felles', 'Appens endringslogg: det frosne arkivet med de eldre føringene (§3)'),
+  'src/data/endringer': s('felles', 'Appens endringslogg: én fil per endring etter arkivet (§3)'),
   'src/data/verktoy': VERKTOY,
   'src/verktoy/regler': VERKTOY,
   'src/domain/analyttkatalog.ts': s('felles', 'Formen katalogen har; innholdet står per fagmiljø i databasen (P4c)'),

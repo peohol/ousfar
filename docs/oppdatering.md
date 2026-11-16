@@ -51,7 +51,7 @@ helst nytt bygg, uansett side.
 
 | Hvor | Hva |
 | --- | --- |
-| `vite.config.ts` (`versjonsfil`) | Gir bygget en identitet (commiten på Vercel) og legger den med versjonsnummeret og versjonen det skal oppdateres til (`oppdateringsversjon`), i `versjon.json` |
+| `vite.config.ts` (`versjonsfil`) | Beregner versjonene fra endringene og Git-historikken (`docs/endringslogg.md`), gir bygget en identitet (commiten på Vercel) og legger den med versjonsnummeret og versjonen det skal oppdateres til (`oppdateringsversjon`), i `versjon.json` og i appen |
 | `src/oppdatering/versjon.ts` | Leser `versjon.json` og avgjør om det er en ny versjon: når versjonen det skal oppdateres til, er en annen enn den som kjører |
 | `src/oppdatering/sider.ts` | Hvilke sider en ny versjon berører, siden brukeren er på (meldt av `App.tsx`), og de rolige øyeblikkene |
 | `src/components/Oppdateringsmelding.tsx` | Meldingen og oppdateringen i stillhet. Spør hvert minutt mens fanen er synlig, når fanen får fokus, og når en del av appen ikke lar seg laste |

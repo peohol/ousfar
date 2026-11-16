@@ -4,6 +4,8 @@
  * og reglene i migrasjonen `*_ideer_arkiv_og_oppgaver.sql`.
  */
 import { ENDRINGSLOGG } from '../data/endringslogg'
+import type { Endring } from '../domain/versjon'
+import { finnEndring } from '../domain/versjonering'
 import { erObjekt, tallEllerNull, tekst, tekstEllerNull } from './lesing'
 import { erKategori, erOppgavestatus, type Idekategori, type Oppgavestatus } from './modell'
 
@@ -18,7 +20,10 @@ export interface Oppgave {
   status: Oppgavestatus
   /** Gis når oppgaven overføres, og vises som «OPG-001». */
   nummer: number | null
-  /** Versjonen i endringsloggen der det står hva som ble gjort. */
+  /**
+   * Føringen i endringsloggen der det står hva som ble gjort: ID-en til
+   * endringen, eller versjonen for oppgaver utført før endringene fikk ID.
+   */
   endringslogg: string | null
   har_prompt: boolean
   overfort_kl: string
@@ -98,9 +103,11 @@ export function grupperOppgaver(oppgaver: readonly Oppgave[]): Oppgavegrupper {
 }
 
 /**
- * Om versjonen står i endringsloggen appen har. En oppgave kan være merket
- * utført før versjonen er publisert; da finnes ingen føring å vise ennå.
+ * Føringen oppgaven viser til, når den står i endringsloggen appen har. Nye
+ * oppgaver viser til ID-en til endringen, som er kjent før PR-en slås sammen;
+ * eldre til versjonen. En oppgave kan være merket utført før endringen er
+ * publisert; da finnes ingen føring å vise ennå.
  */
-export function iEndringsloggen(versjon: string | null): versjon is string {
-  return versjon !== null && ENDRINGSLOGG.some((e) => e.versjon === versjon)
+export function publisertEndring(referanse: string | null): Endring | undefined {
+  return finnEndring(ENDRINGSLOGG, referanse)
 }

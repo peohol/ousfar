@@ -33,7 +33,10 @@ function profil(id: string, fornavn: string, etternavn: string, ekstra: Partial<
 const tilstand = vi.hoisted(() => ({ meg: null as unknown as Profil }))
 const KARI = profil('kari', 'Kari', 'Nordmann')
 const ADMIN = profil('admin', 'Anne', 'Admin', { role: 'admin' })
-const PUBLISERT = ENDRINGSLOGG[0]!.versjon
+/** En føring fra arkivet: eldre oppgaver viser til versjonen. */
+const PUBLISERT = ENDRINGSLOGG.find((e) => !e.semver)!.versjon
+/** En endring med egen fil: nye oppgaver viser til ID-en, som er kjent før versjonen. */
+const NY = ENDRINGSLOGG.find((e) => e.semver)!
 
 const oppgave = (id: string, status: Oppgave['status'], ekstra: Partial<Oppgave> = {}): Oppgave => ({
   id,
@@ -65,6 +68,7 @@ const OPPGAVER: Oppgave[] = [
   }),
   oppgave('c', 'utfort', { har_prompt: true, nummer: 1, endringslogg: PUBLISERT, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-28T13:00:00Z' }),
   oppgave('d', 'utfort', { har_prompt: true, nummer: 2, endringslogg: '99.0.0', klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-28T14:00:00Z' }),
+  oppgave('f', 'utfort', { har_prompt: true, nummer: 6, endringslogg: NY.id, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-28T12:30:00Z' }),
 ]
 
 const detaljer = (o: Oppgave, prompt = ''): Oppgavedetaljer => ({ ...o, prompt })
@@ -150,7 +154,7 @@ describe('lista', () => {
     const agent = within(screen.getByRole('region', { name: /^Håndteres nå av en agent/ })).getByRole('button', { name: /^OPG-005 ?Oppgave e/ })
     expect(agent.textContent).toMatch(/tatt av en agent/)
 
-    const skuff = screen.getByRole('button', { name: /Utførte oppgaver 2/ })
+    const skuff = screen.getByRole('button', { name: /Utførte oppgaver 3/ })
     expect(skuff.getAttribute('aria-expanded')).toBe('false')
   })
 
@@ -160,12 +164,15 @@ describe('lista', () => {
     await bruker.click(await screen.findByRole('button', { name: /Utførte oppgaver/ }))
     const skuff = screen.getByRole('region', { name: 'Utførte oppgaver' })
     const kort = within(skuff).getAllByRole('button', { name: /^OPG-/ })
-    expect(kort.map((k) => k.textContent?.slice(0, 7))).toEqual(['OPG-002', 'OPG-001'])
+    expect(kort.map((k) => k.textContent?.slice(0, 7))).toEqual(['OPG-002', 'OPG-001', 'OPG-006'])
 
     // OPG-002 peker på en versjon som ikke er publisert ennå.
     expect(within(skuff).queryByRole('button', { name: /Se OPG-002/ })).toBeNull()
     await bruker.click(within(skuff).getByRole('button', { name: `Se OPG-001 i endringsloggen (versjon ${PUBLISERT})` }))
     expect(visEndringslogg).toHaveBeenCalledWith(PUBLISERT)
+    // OPG-006 viser til ID-en til endringen; knappen sier versjonen den fikk.
+    await bruker.click(within(skuff).getByRole('button', { name: `Se OPG-006 i endringsloggen (versjon ${NY.versjon})` }))
+    expect(visEndringslogg).toHaveBeenLastCalledWith(NY.versjon)
   })
 
   it('åpner en oppgave fra kortet, og tilbake går til lista', async () => {
@@ -379,12 +386,13 @@ describe('merke en oppgave utført i appen', () => {
     expect(screen.queryByRole('combobox', { name: 'Føringen i endringsloggen' })).toBeNull()
 
     await bruker.click(screen.getByRole('button', { name: 'Merk som utført' }))
-    await bruker.selectOptions(screen.getByRole('combobox', { name: 'Føringen i endringsloggen' }), PUBLISERT)
+    // Valget lagrer ID-en til endringen; for en føring fra arkivet er den versjonen.
+    await bruker.selectOptions(screen.getByRole('combobox', { name: 'Føringen i endringsloggen' }), NY.id)
     api.hentOppgave.mockResolvedValue(
-      detaljer({ ...OPPGAVER[1]!, status: 'utfort', endringslogg: PUBLISERT, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-29T10:00:00Z', merket_utfort: true }),
+      detaljer({ ...OPPGAVER[1]!, status: 'utfort', endringslogg: NY.id, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-29T10:00:00Z', merket_utfort: true }),
     )
     await bruker.click(screen.getByRole('button', { name: 'Merk utført' }))
-    expect(api.merkOppgaveUtfort).toHaveBeenCalledWith('b', PUBLISERT)
+    expect(api.merkOppgaveUtfort).toHaveBeenCalledWith('b', NY.id)
     const merknad = await screen.findByRole('note')
     expect(merknad.textContent).toMatch(/Utført som OPG-004\. Merket utført av en systemarkitekt\. Endringsloggen sier/)
     expect(screen.getByRole('button', { name: 'Se i endringsloggen' })).toBeTruthy()

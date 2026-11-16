@@ -1,11 +1,13 @@
 /**
  * Holder endringsloggen i form.
  *
- * Loggen skrives for hånd, én føring per endring, og feil i den er lette å
- * gjøre og vanskelige å se: en versjon som ikke stiger, en dato på feil form,
- * et merke som er stavet annerledes. Testen fanger dem her i stedet for hos
- * brukeren, så protokollen i `docs/endringslogg.md` ikke må leses på nytt for
- * å kontrollere arbeidet.
+ * Føringene skrives for hånd, én per endring, og feil i dem er lette å gjøre
+ * og vanskelige å se: en dato på feil form, et merke som er stavet
+ * annerledes, et område som ikke finnes. Testen fanger dem her i stedet for
+ * hos brukeren, så protokollen i `docs/endringslogg.md` ikke må leses på nytt
+ * for å kontrollere arbeidet. Versjonene til de nye endringene beregnes
+ * (`versjonering.test.ts`); her kontrolleres at hele loggen, gammel og ny,
+ * henger sammen.
  */
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -86,6 +88,7 @@ describe('nyesteVersjon', () => {
 
 describe('oppdateringsversjon', () => {
   const foring = (versjon: string, ekstra: Partial<Endring> = {}): Endring => ({
+    id: versjon,
     versjon,
     dato: '2026-09-30',
     sammendrag: 'x',
@@ -113,6 +116,7 @@ describe('oppdateringsversjon', () => {
 
 describe('varsler i bjella', () => {
   const endring = (ekstra: Partial<Endring> = {}): Endring => ({
+    id: '2.0.0',
     versjon: '2.0.0',
     dato: '2026-10-23',
     sammendrag: 'Endring',
@@ -143,6 +147,7 @@ describe('varsler i bjella', () => {
 
 describe('endringsomrader', () => {
   const foring = (versjon: string, ekstra: Partial<Endring> = {}): Endring => ({
+    id: versjon,
     versjon,
     dato: '2026-09-30',
     sammendrag: 'x',
@@ -244,6 +249,13 @@ describe('endringsloggen', () => {
     expect(new Set(versjoner).size).toBe(versjoner.length)
   })
 
+  it('har en ID per føring, og ingen ID er en annen føringens versjon', () => {
+    const ider = ENDRINGSLOGG.map((e) => e.id)
+    expect(new Set(ider).size).toBe(ider.length)
+    const versjoner = new Set(ENDRINGSLOGG.map((e) => e.versjon))
+    for (const e of ENDRINGSLOGG) if (e.id !== e.versjon) expect(versjoner.has(e.id), e.id).toBe(false)
+  })
+
   it('går ikke framover i tid nedover i lista', () => {
     for (let i = 1; i < ENDRINGSLOGG.length; i++) {
       const nyere = ENDRINGSLOGG[i - 1] as Endring
@@ -275,23 +287,28 @@ describe('endringsloggen', () => {
   })
 })
 
+/**
+ * Versjonen brukerne ser, beregnes fra endringsloggen når appen bygges. Den
+ * tekniske pakkeversjonen er en fast, intern verdi, så en PR aldri trenger å
+ * endre `package.json` eller låsefila bare for å føre en ny versjon, og to
+ * PR-er ikke møtes der.
+ */
+const PAKKEVERSJON = '0.0.0'
+
 describe('package.json', () => {
-  it('har samme versjon som den nyeste føringen', () => {
+  it('har den faste, interne pakkeversjonen, ikke appens versjon', () => {
     const sti = fileURLToPath(new URL('../../../package.json', import.meta.url))
     const pakke = JSON.parse(readFileSync(sti, 'utf8')) as { version?: string }
-    expect(pakke.version).toBe(nyesteVersjon(ENDRINGSLOGG))
+    expect(pakke.version, 'versjonen føres ikke her lenger (docs/endringslogg.md)').toBe(PAKKEVERSJON)
   })
 
-  // `package-lock.json` gjentar versjonen to steder. Blir de stående igjen på
-  // den forrige, endrer en helt vanlig `npm install` sporede filer, og verktøy
-  // som leser låsefila oppgir feil versjon.
-  it('har samme versjon i låsefila', () => {
+  it('har den samme i låsefila', () => {
     const sti = fileURLToPath(new URL('../../../package-lock.json', import.meta.url))
     const laas = JSON.parse(readFileSync(sti, 'utf8')) as {
       version?: string
       packages?: Record<string, { version?: string }>
     }
-    expect(laas.version).toBe(nyesteVersjon(ENDRINGSLOGG))
-    expect(laas.packages?.['']?.version).toBe(nyesteVersjon(ENDRINGSLOGG))
+    expect(laas.version).toBe(PAKKEVERSJON)
+    expect(laas.packages?.['']?.version).toBe(PAKKEVERSJON)
   })
 })

@@ -43,6 +43,7 @@
     "scripts/db-maling.ts",
     "scripts/sikkerhetskopi.ts",
     "scripts/sikkerhetskopi-prove.ts",
+    "scripts/ny-endring.ts",
     "supabase/functions/_delt",
     "api"
   ]

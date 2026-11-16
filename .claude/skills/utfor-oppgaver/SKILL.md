@@ -102,7 +102,7 @@ select public.ta_oppgaver(array[7, 8]) where exists (select 1 from public.oppgav
 - Legg fila i `supabase/migrations/` med versjonen prosjektet registrerte
   (`list_migrations`), uten linjeskift til slutt, så den er lik byte for byte.
   Den går med en gang i en egen liten PR, med en føring som har
-  `utenVarsel: true`: frem til den er på `main`, stopper den automatiske
+  `utenVarsel: true` (`docs/endringslogg.md`): frem til den er på `main`, stopper den automatiske
   utrullingen av alle andre migrasjoner.
 
 ## 4. Utfør oppgavene
@@ -113,8 +113,8 @@ Følg `AGENTS.md` som i alt annet arbeid: les koden først, test, og kjør
 - Som standard blir hver oppgave én PR med én føring i endringsloggen. Oppgaver
   som henger tett sammen, kan dele PR og føring. En planlagt oppgave får alltid
   en føring, også når den bare er en designjustering, fordi den merkes utført
-  med versjonen (steg 5); de stille designjusteringene i `docs/endringslogg.md`
-  gjelder annet arbeid.
+  med ID-en til føringen (steg 5); de stille designjusteringene i
+  `docs/endringslogg.md` gjelder annet arbeid.
 - Ha nummeret i grenen og i tittelen på PR-en, som `claude/opg-007-varsler` og
   «OPG-007: Varslingssystem», så en avbrutt oppgave kan finnes igjen.
 - Databaseendringer følger den risikobaserte migrasjonsregelen i `supabase/AGENTS.md`:
@@ -129,19 +129,21 @@ Følg `AGENTS.md` som i alt annet arbeid: les koden først, test, og kjør
 
 En oppgave er utført når endringen er slått sammen i `main`, slik at føringen i
 endringsloggen er publisert. Da merkes den med en migrering som bare kaller
-funksjonen `fullfor_oppgave` med nummeret. Appen kan ikke kalle den, så dette er
-den eneste veien til «Utført». Versjonen lagres, og knappen «Se i
-endringsloggen» leder dit.
+funksjonen `fullfor_oppgave` med nummeret og **ID-en til føringen** (filnavnet i
+`src/data/endringer/`, som `20261116-094849-3170df`), ikke versjonen: ID-en er
+kjent før PR-en slås sammen og endres aldri. Appen kan ikke kalle funksjonen, så
+dette er den eneste veien til «Utført». ID-en lagres, og knappen «Se i
+endringsloggen» leder til føringen med versjonen den fikk.
 
 ```sql
--- OPG-007 «<tittel>» er utført i versjon <x.y.z>. Oppgavene finnes bare i
+-- OPG-007 «<tittel>» er utført (føringen <id>). Oppgavene finnes bare i
 -- produksjon; i en ny database gjør migrasjonen ingenting.
-select public.fullfor_oppgave(7, '<x.y.z>') where exists (select 1 from public.oppgaver);
+select public.fullfor_oppgave(7, '<id>') where exists (select 1 from public.oppgaver);
 ```
 
 - Én migrering kan merke flere oppgaver.
-- Når sammenslåingen og versjonen er kontrollert, legges den i
-  `supabase/migrations/` (navn som `oppgaver_utfort_<x_y_z>`) i en egen liten
+- Når sammenslåingen er kontrollert, legges den i
+  `supabase/migrations/` (navn som `oppgaver_utfort_opg_007`) i en egen liten
   PR, med en føring som har `utenVarsel: true`. Den rulles ut automatisk når
   PR-en slås sammen (`docs/migrasjoner.md`); ikke be om et eget ja.
 - Funksjonen stopper hvis oppgaven verken håndteres av en agent eller er klar,

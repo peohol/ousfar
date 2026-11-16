@@ -1,11 +1,12 @@
 /**
  * Versjonsnummeret og formen på endringsloggen.
  *
- * Appen versjoneres etter SemVer (MAJOR.MINOR.PATCH). Selve føringene ligger i
- * `src/data/endringslogg.ts`, nyest først, og versjonen appen viser er den
- * øverste føringen der. Da kan ikke de to komme i utakt: det finnes bare ett
- * sted å skrive versjonen, og det er sammen med beskrivelsen av hva som ble
- * endret.
+ * Appen versjoneres etter SemVer (MAJOR.MINOR.PATCH). Hver endring har sin
+ * egen fil uten versjonsnummer, og nummeret beregnes når appen bygges, i den
+ * rekkefølgen endringene ble slått sammen i `main` (`versjonering.ts`). De
+ * eldre føringene står med versjonene sine i et frosset arkiv. Loggen appen
+ * viser, er begge deler, nyest først (`src/data/endringslogg.ts`), og
+ * versjonen appen viser, er den øverste føringen der.
  *
  * Rutinen for å legge inn en ny føring står i `docs/endringslogg.md`.
  */
@@ -30,11 +31,17 @@ export const OMFANG = [
 
 export type Omfang = (typeof OMFANG)[number]
 
-export interface Endring {
-  /** MAJOR.MINOR.PATCH. */
-  versjon: string
-  /** ISO-dato, `åååå-mm-dd`. Sorterbar som den står; vises som dd.mm.åååå. */
-  dato: string
+/**
+ * Leddet i versjonen en endring øker (`docs/endringslogg.md`): MAJOR øker
+ * første ledd og nullstiller de to andre, MINOR øker andre og nullstiller
+ * siste, PATCH øker siste.
+ */
+export const SEMVERNIVAER = ['major', 'minor', 'patch'] as const
+
+export type Semverniva = (typeof SEMVERNIVAER)[number]
+
+/** Det en føring sier om endringen, uten versjon, dato og ID. */
+export interface Endringsinnhold {
   /** Én ekstremt kort linje om hva som ble gjort. */
   sammendrag: string
   typer: Endringstype[]
@@ -71,13 +78,41 @@ export interface Endring {
   gjelder?: readonly Sideomrade[]
 }
 
+/** En føring i det frosne arkivet over endringene fra før hver fikk sin egen fil. */
+export interface HistoriskEndring extends Endringsinnhold {
+  /** MAJOR.MINOR.PATCH. */
+  versjon: string
+  /** ISO-dato, `åååå-mm-dd`. Sorterbar som den står; vises som dd.mm.åååå. */
+  dato: string
+}
+
+/** En føring slik appen viser den, med versjonen den fikk. */
+export interface Endring extends HistoriskEndring {
+  /**
+   * Den permanente ID-en: filnavnet til en ny endring
+   * (`ååååmmdd-ttmmss-xxxxxx`), og versjonen for en historisk. Oppgaver og
+   * lenker kan vise til den før versjonen er kjent.
+   */
+  id: string
+  /** Leddet endringen økte. Bare for endringene med egen fil. */
+  semver?: Semverniva
+  /** Når føringen ble skrevet, ISO 8601 i UTC. Bare for endringene med egen fil. */
+  opprettet?: string
+  /**
+   * Endringen er ikke slått sammen i `main` ennå, bare med i et lokalt eller
+   * forhåndsvist bygg, og versjonen er ikke endelig.
+   */
+  forelopig?: true
+}
+
 /**
  * Versjonen appen kjører: den øverste føringen i endringsloggen.
  *
  * Utledet og ikke skrevet ned et sted til, så versjonen aldri kan si noe annet
- * enn loggen gjør. `package.json` holdes lik av en test.
+ * enn loggen gjør. Versjonen i `package.json` er en fast, intern verdi og
+ * har ingenting med denne å gjøre.
  */
-export function nyesteVersjon(logg: Endring[]): string {
+export function nyesteVersjon(logg: readonly HistoriskEndring[]): string {
   const nyeste = logg[0]
   if (!nyeste) throw new Error('Endringsloggen er tom — appen har ingen versjon å vise')
   return nyeste.versjon
@@ -88,7 +123,7 @@ export function nyesteVersjon(logg: Endring[]): string {
  * oppdateringsmeldingen, ikke hva som vises i bjella.
  * Endret fortolkning og kritiske faglige meldinger går foran `utenVarsel`.
  */
-export function varsles(endring: Endring): boolean {
+export function varsles(endring: Endringsinnhold): boolean {
   return !endring.utenVarsel || endring.endrerFortolkning === true || endring.kritiskFagligVarsel === true
 }
 
@@ -98,7 +133,7 @@ export function varsles(endring: Endring): boolean {
  * Kritiske faglige meldinger og endret fortolkningsresultat kan ikke
  * undertrykkes av `utenVarsel`.
  */
-export function varslesIBjella(endring: Endring): boolean {
+export function varslesIBjella(endring: Endringsinnhold): boolean {
   return (
     endring.endrerFortolkning === true ||
     endring.kritiskFagligVarsel === true ||
@@ -112,7 +147,7 @@ export function varslesIBjella(endring: Endring): boolean {
  * designjustering har ingen føring i det hele tatt (`docs/endringslogg.md`),
  * så ingen av dem ber noen laste siden på nytt.
  */
-export function oppdateringsversjon(logg: readonly Endring[]): string {
+export function oppdateringsversjon(logg: readonly HistoriskEndring[]): string {
   const nyeste = logg.find(varsles)
   if (!nyeste) throw new Error('Endringsloggen har ingen føring som varsles')
   return nyeste.versjon
@@ -130,7 +165,7 @@ export const ENDRINGSOMRADER_I_FILA = 30
  * appen som kjører, trenger for å avgjøre om en ny versjon berører siden
  * brukeren er på (`src/oppdatering/sider.ts`).
  */
-export function endringsomrader(logg: readonly Endring[], antall = ENDRINGSOMRADER_I_FILA): Endringsomrade[] {
+export function endringsomrader(logg: readonly HistoriskEndring[], antall = ENDRINGSOMRADER_I_FILA): Endringsomrade[] {
   return logg
     .filter(varsles)
     .slice(0, antall)
