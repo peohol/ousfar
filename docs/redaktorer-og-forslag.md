@@ -345,5 +345,7 @@ Fylles ut av trådene.
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
 | A Redaktøransvar | — | — |
 | B Foreslå endring | — | — |
-| C Redaktørens arbeidsflyt | — | — |
+| C1 Varslene (kategoriene og visningen) | #420 | Til kontroll |
+| C2 Behandlingen i databasen | — | Venter på B1 |
+| C3 Brukerflaten for behandlerne | — | Venter på B2 |
 | D Brukervennlighet og testing | — | — |
