@@ -9,7 +9,8 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { KO_ARBEIDSFLYT, RYDDE_ARBEIDSFLYT } from '../kuratering/endepunkt'
 import type { Greninfo } from '../kurateringsko/modell'
-import { jobbgrenerIKoen, kjorRydding, KOFIL, KOGREN, lagRyddegithub, type Ryddegithub } from '../kuratorjobb/ryddekjoring'
+import { lagGrenleser } from '../kurateringsko/grener'
+import { jobbgrenerIKoen, kjorRydding, KOFIL, KOGREN, kontrollerGrener, lagRyddegithub, type Ryddegithub } from '../kuratorjobb/ryddekjoring'
 import { FORESPORSELSFIL, STATUSFIL } from '../kuratorjobb/modell'
 import { jobbgrenI, MISTENKELIG_ALDER, RYDDEFRISTER, ryddeMarkdown, vurderAlle, vurderJobbgren, type Jobbgren, type Ryddegrunnlag } from '../kuratorjobb/rydding'
 
@@ -157,9 +158,9 @@ describe('reglene', () => {
 })
 
 describe('oversikten', () => {
-  it('advarer om grener som er holdt lenge, og når OUSFAR ikke ga noen kurateringsgrener', () => {
-    const o = vurderAlle([jobb('gammel', { ferdig: MISTENKELIG_ALDER + 5 })], grunnlag({ apnePr: new Set(['kuratorjobb/gammel']) }))
-    expect(o.advarsler).toHaveLength(2)
+  it('advarer om grener som er holdt lenge', () => {
+    const o = vurderAlle([jobb('gammel', { ferdig: MISTENKELIG_ALDER + 5 })], grunnlag({ apnePr: new Set(['kuratorjobb/gammel']), grener: [gren('alfa', 'arbeid')] }))
+    expect(o.advarsler).toHaveLength(1)
     expect(o.advarsler[0]).toContain('kuratorjobb/gammel')
     expect(vurderAlle([jobb('ny', { ferdig: 2 })], grunnlag({ grener: [gren('alfa', 'arbeid')] })).advarsler).toEqual([])
   })
@@ -258,6 +259,56 @@ describe('kjøringen', () => {
       }),
     ).rejects.toThrow('401')
     expect(f.slettet).toEqual([])
+  })
+
+  describe('uten hele datasettet om kurateringsgrenene', () => {
+    // En gammel, ubrukt jobb som ellers ville passert 30-døgnsregelen.
+    const ubrukt = [medSha(jobb('ubrukt', { ferdig: RYDDEFRISTER.ubrukt + 10, stoffer: ['gamma'] }))]
+    const fullt = [gren('alfa', 'publisert', 5), gren('beta', 'arbeid')]
+    const utenKoblinger = (g: Greninfo): Greninfo => {
+      const { kuratorjobber: _, ...resten } = g
+      return resten
+    }
+    const kjor = (grener: () => Promise<readonly Greninfo[]>) => {
+      const f = falskGithub(ubrukt, KO)
+      return { f, kjoring: kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} }) }
+    }
+    const MILJO = { OUSFAR_KO_ADRESSE: 'https://ousfar.example/api/kuratering-ko', ACTIONS_ID_TOKEN_REQUEST_URL: 'https://token.example/?x=1', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 't' }
+    const svarMed = (grener: unknown[]) => async (adresse: string) => (adresse.startsWith('https://token') ? Response.json({ value: 'oidc' }) : Response.json({ grener }))
+
+    it('sletter den gamle, ubrukte jobben når datasettet er helt', async () => {
+      const { f, kjoring } = kjor(async () => fullt)
+      await kjoring
+      expect(f.slettet).toEqual(['kuratorjobb/ubrukt'])
+    })
+
+    it('stopper uten å slette ved et tomt svar, eller når en gren mangler koblingene til jobbgrenene', async () => {
+      for (const grener of [[], [fullt[0]!, utenKoblinger(fullt[1]!)]]) {
+        const { f, kjoring } = kjor(async () => grener)
+        await expect(kjoring).rejects.toThrow('Ingen grener slettes')
+        expect(f.slettet).toEqual([])
+      }
+      expect(() => kontrollerGrener(fullt)).not.toThrow()
+    })
+
+    it('leser bare et komplett svar fra OUSFAR: ingen tom liste, ingen ukjent oppføring og koblingene på hver gren', async () => {
+      const ugyldigAktiv = { ...gren('gamma', 'arbeid'), art: 'ukjent' }
+      const tilfeller: [unknown[], string][] = [
+        [[], 'ga ingen kurateringsgrener'],
+        [[...fullt, ugyldigAktiv], '1 av 3 kurateringsgrener fra https://ousfar.example/api/kuratering-ko har ukjent form'],
+        [[fullt[0], utenKoblinger(fullt[1]!)], '1 av 2 kurateringsgrener fra https://ousfar.example/api/kuratering-ko mangler gyldige koblinger'],
+        [[fullt[0], { ...fullt[1], kuratorjobber: ['kuratorjobb/x (preparatomtaler)'] }], 'mangler gyldige koblinger'],
+      ]
+      for (const [grener, feil] of tilfeller) {
+        const les = lagGrenleser(MILJO, svarMed(grener), { komplett: true })!
+        const { f, kjoring } = kjor(les)
+        await expect(kjoring).rejects.toThrow(feil)
+        expect(f.slettet).toEqual([])
+        // Køen leser som før: den ukjente oppføringen hoppes over.
+        await expect(lagGrenleser(MILJO, svarMed(grener))!()).resolves.toBeInstanceOf(Array)
+      }
+      await expect(lagGrenleser(MILJO, svarMed(fullt), { komplett: true })!()).resolves.toEqual(fullt)
+    })
   })
 
   it('kjenner jobbgrenene køen har koblet til noe', () => {

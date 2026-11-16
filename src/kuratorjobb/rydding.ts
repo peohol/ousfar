@@ -287,9 +287,6 @@ export function vurderAlle(jobber: readonly Jobbgren[], g: Ryddegrunnlag): Rydde
       `${gamle.length} ${gamle.length === 1 ? 'gren' : 'grener'} er beholdt mer enn ${MISTENKELIG_ALDER} døgn etter jobben: ${liste(gamle.map((v) => v.gren))}. Se om det som holder dem, fortsatt gjelder.`,
     )
   }
-  if (jobber.length > 0 && g.grener.length === 0) {
-    advarsler.push('Fikk ingen kurateringsgrener fra OUSFAR. Ingen jobb med preparatomtaler ble regnet som ferdig brukt.')
-  }
   return { vurderinger, slettes, beholdes, advarsler }
 }
 

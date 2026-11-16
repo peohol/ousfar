@@ -49,12 +49,27 @@ function lesGren(v: unknown): Greninfo | null {
   }
 }
 
+/** Koblingene til jobbgrenene, når de er en liste med gyldige grennavn og ingenting annet; ellers `null`. */
+function bareJobbgrener(v: unknown): string[] | null {
+  return Array.isArray(v) && v.every((n) => jobbgrenI(n) === n) ? (v as string[]) : null
+}
+
+export interface Grenlesing {
+  /**
+   * Krev hele datasettet, slik oppryddingen av jobbgrenene gjør før den
+   * sletter noe: ingen tom liste, ingen oppføring med ukjent form, og
+   * koblingene til jobbgrenene (`kuratorjobber`) på hver gren. Uten dette
+   * hoppes en ukjent oppføring over, som køen alltid har gjort.
+   */
+  komplett?: boolean
+}
+
 /**
- * Leseren køen får: `null` når adressen eller tokenet mangler (lokalt, eller
- * uten tilgangen i arbeidsflyten). Et svar som ikke er i orden, er en feil,
- * så køen ikke tror at grenene er borte.
+ * Leseren køen og oppryddingen får: `null` når adressen eller tokenet mangler
+ * (lokalt, eller uten tilgangen i arbeidsflyten). Et svar som ikke er i orden,
+ * er en feil, så ingen tror at grenene er borte.
  */
-export function lagGrenleser(miljo: Miljo, hent: Hent = fetch): (() => Promise<Greninfo[]>) | null {
+export function lagGrenleser(miljo: Miljo, hent: Hent = fetch, { komplett = false }: Grenlesing = {}): (() => Promise<Greninfo[]>) | null {
   const adresse = miljo.OUSFAR_KO_ADRESSE?.trim()
   if (!adresse || !miljo.ACTIONS_ID_TOKEN_REQUEST_URL) return null
   return async () => {
@@ -64,6 +79,16 @@ export function lagGrenleser(miljo: Miljo, hent: Hent = fetch): (() => Promise<G
     if (!svar.ok) throw new Error(`${adresse} svarte ${svar.status}.`)
     const data = (await svar.json()) as { grener?: unknown }
     if (!Array.isArray(data.grener)) throw new Error(`${adresse} ga ingen liste over grenene.`)
-    return data.grener.map(lesGren).filter((g): g is Greninfo => g !== null)
+    const grener = data.grener.map(lesGren)
+    if (komplett) {
+      if (grener.length === 0) throw new Error(`${adresse} ga ingen kurateringsgrener.`)
+      const ukjente = grener.filter((g) => g === null).length
+      if (ukjente > 0) throw new Error(`${ukjente} av ${grener.length} kurateringsgrener fra ${adresse} har ukjent form.`)
+      const utenKoblinger = data.grener.filter((g) => bareJobbgrener((g as { kuratorjobber?: unknown }).kuratorjobber) === null).length
+      if (utenKoblinger > 0) {
+        throw new Error(`${utenKoblinger} av ${grener.length} kurateringsgrener fra ${adresse} mangler gyldige koblinger til jobbgrenene (kuratorjobber); databasen har trolig ikke fått den nyeste migrasjonen.`)
+      }
+    }
+    return grener.filter((g): g is Greninfo => g !== null)
   }
 }

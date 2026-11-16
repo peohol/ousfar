@@ -77,17 +77,20 @@ Fristene står i `RYDDEFRISTER`. Preparatomtalene som slettes med en gren, er
 DMPs offentlige PDF-er; de hentes på nytt med en ny jobb om en senere
 kuratering trenger dem. Navnet på grenen står fortsatt i evidensjournalen.
 
-**Stopp ved usikkerhet:** Kan ikke kurateringsgrenene i OUSFAR leses (etter
-fem forsøk med et minutts mellomrom), eller mangler køens tilstand, har ukjent
-form eller er eldre enn ett døgn, stopper kjøringen uten å slette noe og
-feiler synlig. En gren som er endret mens kjøringen pågikk, slettes ikke. Bare
+**Stopp ved usikkerhet:** Oppryddingen krever hele datasettet om
+kurateringsgrenene i OUSFAR før den sletter noe: minst én gren, ingen
+oppføring med ukjent form, og koblingene til jobbgrenene (`kuratorjobber`,
+en liste, tom når evidensjournalen ikke viser til noen) på hver gren. Svarer
+OUSFAR uten dette, også om appen er rullet ut før databasen har fått
+migrasjonen, prøver kjøringen igjen (ti forsøk med et minutts mellomrom).
+Går det fortsatt ikke, eller mangler køens tilstand, har ukjent form eller er
+eldre enn ett døgn, stopper kjøringen uten å slette noe og feiler synlig. En gren som er endret mens kjøringen pågikk, slettes ikke. Bare
 grener under `kuratorjobb/` kan slettes.
 
 **Oversikten:** Hver kjøring skriver en tabell i oppsummeringen i GitHub
 Actions med hver jobbgren, om den er slettet eller beholdt, gruppen og
-hvorfor. Er en gren beholdt mer enn 30 døgn etter jobben, eller ga OUSFAR
-ingen kurateringsgrener, vises en advarsel på kjøringen, så en opprydding som
-«lykkes» uten å rydde blir synlig.
+hvorfor. Er en gren beholdt mer enn 30 døgn etter jobben, vises en advarsel
+på kjøringen, så en opprydding som «lykkes» uten å rydde blir synlig.
 
 Denne ordningen gjelder bare `kuratorjobb/`-grenene. Køens varige gren
 `kurateringsko/tilstand` må bevares; gamle `kurateringsko/okt/`-grener

@@ -78,12 +78,23 @@ function kontrollerKo(ko: unknown, na: number) {
   }
 }
 
+/**
+ * Kurateringsgrenene er fasiten for hva som pågår og hva som er ferdig brukt.
+ * Uten dem alle, og uten koblingene til jobbgrenene på hver, kan en jobb
+ * en pågående kuratering trenger, se ubrukt ut; da slettes ingenting.
+ */
+export function kontrollerGrener(grener: readonly Greninfo[]) {
+  if (grener.length === 0) throw new Error('Fikk ingen kurateringsgrener fra OUSFAR. Ingen grener slettes.')
+  const uten = grener.filter((g) => !Array.isArray(g.kuratorjobber)).length
+  if (uten > 0) throw new Error(`${uten} av ${grener.length} kurateringsgrener fra OUSFAR mangler koblingene til jobbgrenene. Ingen grener slettes.`)
+}
+
 export async function kjorRydding({ github, grener: lesGrener, kunVis, na, logg = console.log }: Ryddevalg): Promise<Ryddeutfall> {
   const naTid = Date.parse(na)
   const ko = json(await github.fil(KOFIL, KOGREN))
   kontrollerKo(ko, naTid)
-  // Kurateringsgrenene er fasiten for hva som pågår; uten dem slettes ingenting.
   const kurateringsgrener = await lesGrener()
+  kontrollerGrener(kurateringsgrener)
   const [alle, apnePr] = await Promise.all([github.grener(), github.apnePr()])
   const jobbgrener = alle.filter((g) => g.navn.startsWith(JOBBGRENPREFIKS))
 

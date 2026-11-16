@@ -10,31 +10,35 @@
  * - `OUSFAR_KO_ADRESSE` og OIDC-tokenet til arbeidsflyten: kurateringsgrenene i OUSFAR.
  * - `GITHUB_STEP_SUMMARY`: oversikten skrives dit.
  *
- * Avslutter med 1, uten å slette noe, når kurateringskøen eller
- * kurateringsgrenene ikke kan leses.
+ * Avslutter med 1, uten å slette noe, når kurateringskøen eller hele
+ * datasettet om kurateringsgrenene ikke kan leses.
  */
 import { appendFileSync } from 'node:fs'
 import { lagGrenleser } from '../src/kurateringsko/grener'
-import { kjorRydding, lagRyddegithub } from '../src/kuratorjobb/ryddekjoring'
+import { kjorRydding, kontrollerGrener, lagRyddegithub } from '../src/kuratorjobb/ryddekjoring'
 import { ryddeMarkdown } from '../src/kuratorjobb/rydding'
 
 const kunVis = process.argv.includes('--kun-vis')
 const repo = process.env.GITHUB_REPOSITORY?.trim()
 const token = process.env.GH_TOKEN?.trim()
-const leser = lagGrenleser(process.env)
+const leser = lagGrenleser(process.env, fetch, { komplett: true })
+const FORSOK = 10
 
 /**
- * Kurateringsgrenene, med nye forsøk: rett etter en sammenslåing kan appen
- * ennå ikke være rullet ut med det endepunktet trenger.
+ * Kurateringsgrenene, hele datasettet, med nye forsøk: rett etter en
+ * sammenslåing kan appen eller databasen ennå ikke ha fått det oppryddingen
+ * trenger. Går det ikke etter siste forsøk, slettes ingenting.
  */
 const lesGrener = leser
   ? async () => {
       for (let forsok = 1; ; forsok += 1) {
         try {
-          return await leser()
+          const grener = await leser()
+          kontrollerGrener(grener)
+          return grener
         } catch (e) {
-          if (forsok >= 5) throw e
-          console.log(`Kurateringsgrenene kunne ikke leses (${e instanceof Error ? e.message : e}); prøver igjen om ett minutt.`)
+          if (forsok >= FORSOK) throw e
+          console.log(`Kurateringsgrenene kunne ikke leses komplett (${e instanceof Error ? e.message : e}); prøver igjen om ett minutt (forsøk ${forsok} av ${FORSOK}).`)
           await new Promise((ok) => setTimeout(ok, 60_000))
         }
       }
