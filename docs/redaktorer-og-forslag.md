@@ -251,6 +251,10 @@ underveis `PT409`. Feilene skrives for å vises.
 - Hver statusendring låser forslagsraden og avviser en overgang som ikke
   passer statusen den finner (`PT409`), så to behandlere eller en behandler
   og forslagsstilleren ikke kan gjøre motstridende endringer samtidig.
+- Et kall fra en redaktør (eller en forslagsstiller) som kommer mens
+  tilbakekallingen av ansvaret eller avslutningen av medlemskapet ennå ikke er
+  lagret, venter ikke, men regnes som gjort før den. Når fjerningen er lagret,
+  avvises alt, også i en transaksjon som begynte før.
 
 ## Varsler (tråd C)
 
