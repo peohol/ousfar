@@ -53,6 +53,9 @@ beforeAll(() => {
 afterEach(cleanup)
 beforeEach(() => {
   vi.clearAllMocks()
+  // Svar som én test har satt opp og ikke brukt, skal ikke gå over i den neste.
+  api.hentSideversjon.mockReset()
+  api.hentSideversjon.mockImplementation(async () => 7)
   window.location.hash = ''
 })
 
@@ -254,6 +257,58 @@ describe('knappen og skjemaet', () => {
     await bruker.click(within(kvittering).getByRole('button', { name: 'Se forslaget' }))
     expect(window.location.hash).toBe(forslagsadresse(ID))
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  /** Åpner skjemaet for kortet og fyller ut det som må stå der. */
+  async function fyllUt(bruker: ReturnType<typeof userEvent.setup>) {
+    await bruker.click(screen.getByRole('button', { name: 'Foreslå endring: Dosering' }))
+    const vindu = await screen.findByRole('dialog', { name: /Foreslå endring/ })
+    await bruker.type(within(vindu).getByLabelText('Hva foreslår du?'), '10 mg.')
+    await bruker.type(within(vindu).getByLabelText('Hvorfor?'), 'Ny retningslinje.')
+    return vindu
+  }
+
+  it('venter på versjonen av fagsiden, og sender den som ble lest da skjemaet ble åpnet', async () => {
+    let svar: (nr: number) => void = () => undefined
+    api.hentSideversjon.mockImplementationOnce(() => new Promise<number>((ok) => (svar = ok)))
+    // Publiseres siden på nytt underveis, ville et nytt oppslag gitt 8.
+    api.hentSideversjon.mockResolvedValueOnce(8)
+    const bruker = userEvent.setup()
+    visFagside()
+    const vindu = await fyllUt(bruker)
+    await bruker.click(within(vindu).getByRole('button', { name: 'Send forslaget' }))
+    // Oppslaget svarer ikke ennå: forslaget venter.
+    expect(api.sendForslag).not.toHaveBeenCalled()
+    svar(7)
+    await waitFor(() => expect(api.sendForslag).toHaveBeenCalledTimes(1))
+    expect(api.sendForslag).toHaveBeenCalledWith(expect.objectContaining({ sideversjon: 7 }))
+    expect(api.hentSideversjon).toHaveBeenCalledTimes(1)
+  })
+
+  it('sender ikke når versjonen ikke kan leses, men sier fra og prøver igjen ved neste innsending', async () => {
+    api.hentSideversjon.mockRejectedValueOnce(new Error('Nettet er nede'))
+    api.hentSideversjon.mockRejectedValueOnce(new Error('Nettet er nede'))
+    api.hentSideversjon.mockResolvedValueOnce(9)
+    const bruker = userEvent.setup()
+    visFagside()
+    const vindu = await fyllUt(bruker)
+    await bruker.click(within(vindu).getByRole('button', { name: 'Send forslaget' }))
+    expect((await within(vindu).findByRole('alert')).textContent).toMatch(/Fant ikke hvilken versjon av fagsiden/)
+    expect(api.sendForslag).not.toHaveBeenCalled()
+    // Det som er skrevet, står igjen, og neste forsøk leser versjonen på nytt.
+    expect(within(vindu).getByLabelText<HTMLTextAreaElement>('Hva foreslår du?').value).toBe('10 mg.')
+    await bruker.click(within(vindu).getByRole('button', { name: 'Send forslaget' }))
+    await waitFor(() => expect(api.sendForslag).toHaveBeenCalledWith(expect.objectContaining({ sideversjon: 9 })))
+    expect(api.hentSideversjon).toHaveBeenCalledTimes(3)
+  })
+
+  it('sender uten versjon når fagsiden ikke har noen', async () => {
+    api.hentSideversjon.mockResolvedValueOnce(null)
+    const bruker = userEvent.setup()
+    visFagside()
+    const vindu = await fyllUt(bruker)
+    await bruker.click(within(vindu).getByRole('button', { name: 'Send forslaget' }))
+    await waitFor(() => expect(api.sendForslag).toHaveBeenCalledWith(expect.objectContaining({ sideversjon: null })))
   })
 
   it('spør før et skjema med tekst i lukkes', async () => {

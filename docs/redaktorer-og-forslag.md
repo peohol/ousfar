@@ -432,7 +432,9 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
 - Åpnes skjemaet fra en fagside, leser det fagsidens nyeste versjon med en gang
   (`hentSideversjon`, `les_sideversjoner`) og sender den som `sideversjon`, så
   konflikten måles fra siden slik den var da, ikke da forslaget ble sendt. Den
-  bevares med resten av skjemaet; uten den lagrer databasen den nyeste.
+  bevares med resten av skjemaet. Innsendingen venter på oppslaget; mislykkes
+  det, sendes ingenting, skjemaet sier fra, og neste innsending prøver igjen.
+  Bare en side uten noen versjon sendes uten.
 - `#/forslag` er «Mine forslag» (også i kontomenyen), `#/forslag/<ID>` ett
   forslag med tidslinjen, svaret og «Trekk tilbake», og
   `#/forslag/til-behandling` fanen tråd C fyller (`forslagsadresse`).
