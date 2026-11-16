@@ -595,10 +595,12 @@ aktør og en begrunnelse: medlemskapene, administratorene og sperrene
 **I appen.** «Brukere» i adminmenyen viser medlemmene i ett fagmiljø om
 gangen (`public.medlemsoversikt`, med handlingene databasen tillater på hver
 rad), og de tidligere medlemmene for seg med «Gi tilgang igjen». En
-systemarkitekt velger blant alle fagmiljøene og kan opprette nye. Hver rad
-har ett merke for rollen (systemarkitekt, administrator eller bruker), med
-statusene ved siden av, og handlingene i en meny på raden, hver med en
-setning om hva den gjør. Det som
+systemarkitekt velger blant alle fagmiljøene og kan opprette nye. Medlemmene
+står gruppert etter rolle, systemarkitektene først, så administratorene og
+brukerne, alfabetisk i hver gruppe (`src/components/konto/brukerroller.ts`);
+hver gruppe har rollens ikon, navn, antall og hva rollen betyr. Raden viser
+statusene (Verktøy, Invitert, Sperret, Må bytte passord) og handlingene i en
+meny, hver med en setning om hva den gjør. Det som
 fjerner tilgang, må bekreftes, og bekreftelsen sier at kontoen sperres og
 logges ut når det er det siste medlemskapet. Nye brukere opprettes i
 fagmiljøet som vises ([Opprettelse av brukere](#opprettelse-av-brukere)). I en

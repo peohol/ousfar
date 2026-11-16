@@ -26,6 +26,20 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
+    versjon: '1.134.4',
+    dato: '2026-11-16',
+    sammendrag: 'Brukerne i «Brukere» er gruppert etter rolle',
+    typer: ['Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'Medlemmene står nå i tre grupper: systemarkitektene øverst, så administratorene og til slutt de vanlige brukerne, alfabetisk i hver gruppe. De tidligere medlemmene står for seg nederst, også de alfabetisk.',
+      'Hver gruppe har sitt eget ikon og en kort linje om hva rollen betyr. Rollen står derfor ikke lenger som et merke på hver rad.',
+      'Vinduet har fått brukerikonet i stedet for administrasjonsskjoldet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.3',
     dato: '2026-11-15',
     sammendrag: 'Strengere regel for nye passord, og en påminnelse om pasientopplysninger der man skriver sammen',
