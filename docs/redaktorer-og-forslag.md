@@ -286,6 +286,55 @@ Vanlige brukere ser ingen administrative valg. En redaktør som ikke er
 administrator, ser ikke adminmenyen, men får redigeringen i området sitt og
 fanen «Til behandling».
 
+## Forslag (tråd B)
+
+**B1, databasen** (`supabase/migrations/20261116131500_p5_endringsforslag.sql`,
+prøvd i `src/__tests__/endringsforslag.test.ts` og
+`endringsforslag.samtidighet.test.ts`):
+
+- Tabellene `endringsforslag` og `endringsforslag_hendelser` etter
+  «Datamodellen», med radsikkerhet på og uten noen rettigheter for
+  nettleseren. Det forslagsstilleren skrev og tidslinjen kan ikke endres i
+  ettertid (`intern.tilgang_faste_felter`); bare personfeltene tømmes når en
+  konto slettes. Radene forsvinner bare med fagsiden, når den slettes for godt
+  fra papirkurven, som resten av historikken.
+- `foresla_endring` kontrollerer, i denne rekkefølgen: aktivt medlemskap;
+  at ressursen er en publisert fagside eller et publisert regelsett den
+  innloggede kan lese (ellers `PT404`); at elementet hører til ressursen, kan
+  leses og er publisert (ellers `PT404`; ressursen selv som element lagres
+  som ingen); at `grunnrevisjon` er en revisjon av elementet (eller ressursen)
+  som er eller har vært publisert, og at `sideversjon` finnes for fagsiden
+  (ellers `22023`; uten den gjelder et forslag til en fagside den nyeste
+  versjonen, den forslagsstilleren ser når siden nettopp er lastet); tekstene og kildene; og grensen på **25 åpne forslag** per
+  person (`intern.maks_apne_forslag()`), under en lås per person så to
+  samtidige innsendinger ikke begge kommer forbi den.
+- Kildene (`intern.forslagskilder`): høyst ti, hver med en tekst (høyst 500
+  tegn), en lenke (bare `https://`) eller en publisert referanse den
+  innloggede kan lese. Ukjente felt tas bort.
+- Hjelperne tråd C bygger på, i `intern`, ingen av dem kallbare fra
+  nettleseren:
+
+  | Funksjon | Svarer |
+  | --- | --- |
+  | `kan_se_forslag(forslag, bruker)` | «Hvem ser et forslag»: forslagsstilleren som kan lese ressursen, eller en som kan behandle forslag til den |
+  | `forslagsovergang(forslag, fra, til, art, tekst, data)` | Låser raden, `PT404` når den ikke finnes, `PT409` når statusen ikke er i `fra`, setter `til` (tom: bare hendelsen) og `oppdatert_kl`, og skriver hendelsen med den innloggede. Rettighetene kontrolleres av den som kaller |
+  | `forslagskonflikt(forslag, med_utkast)` | `konflikt` i `les_forslag`: `grunnrevisjon`, `publisert_revisjon`, `endret_siden`, `sideversjon`, `publisert_sideversjon`, `side_endret_siden` og, med `med_utkast`, `utkast_endret` |
+  | `apne_forslagsstatuser()` | `ny`, `under_behandling`, `venter_pa_forslagsstiller` |
+  | `eget_forslag(forslag)` | Forslaget når den innloggede kan se det og har sendt det; ellers `PT404` eller `42501` |
+
+- `trekk_forslag` og `svar_pa_forslag` går gjennom overgangen. Et svar når
+  forslaget venter på forslagsstilleren, er en `presisering` og sender det
+  tilbake til `under_behandling`; ellers, mens det er åpent, en `kommentar`
+  uten statusendring.
+- `les_forslag` gir forslaget med `ressurs` (`intern.ressursbeskrivelse`),
+  `element` (`id`, `type`), kildene (med `referansetittel`), personene som
+  `{er_meg, navn}` (navnet bare når profilen er synlig for den som leser,
+  etter P2c), `vedtak`, `innarbeidet`, `hendelser`, `er_mitt`,
+  `kan_behandle`, `kan_trekke`, `kan_svare` og `konflikt` (utkastet bare for
+  den som kan behandle). `les_mine_forslag` gir de egne med `ressurs`,
+  `sted`, `sammendrag` (de første 280 tegnene), tidene og `venter_pa_meg`.
+- Varslene lager tråd C fra hendelsene; B1 lager ingen.
+
 ## Nasjonale redaktører (B2)
 
 Tildeling av nasjonalt redaktøransvar bygges ferdig, men er avslått i
@@ -353,8 +402,9 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
 | A Redaktøransvar | — | — |
-| B Foreslå endring | — | — |
-| C1 Varslene (kategoriene og visningen) | #420 | Til kontroll |
-| C2 Behandlingen i databasen | — | Venter på B1 |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
+| B2 Foreslå endring i appen | — | Under arbeid |
+| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
+| C2 Behandlingen i databasen | — | Under arbeid |
 | C3 Brukerflaten for behandlerne | — | Venter på B2 |
 | D Brukervennlighet og testing | — | — |

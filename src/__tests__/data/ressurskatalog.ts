@@ -58,6 +58,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   // Objektene og historikken deres.
   'public.redigerbare_objekter': k('objekt', 'Registeret over objektene'),
   'public.objekttilstander': k('objekt', 'Utkast og publisert per objekt'),
+  // P5 B: forslagene følger rekkevidden til ressursen de gjelder, og ses bare av forslagsstilleren og behandlerne.
+  'public.endringsforslag': k('avledet', 'P5: følger ressursen forslaget gjelder (fagside eller regelsett); leses bare gjennom funksjonene'),
+  'public.endringsforslag_hendelser': k('avledet', 'P5: tidslinjen følger forslaget; leses bare gjennom funksjonene'),
   'public.objektrevisjoner': k('objekt', 'Revisjonene per objekt'),
   'public.objektpubliseringer': k('objekt', 'Publiseringene per objekt'),
   'public.objektstatus': k('objekt', 'Visning per objekt'),
