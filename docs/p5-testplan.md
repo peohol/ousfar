@@ -80,7 +80,7 @@ testmiljøet (D3). Kolonnen «Ventet» er det brukeren skal oppleve.
 | BF-V1 | Åpner en fagside, menyen på siden | «Foreslå endring» står i menyen; ingen redigering eller publisering |
 | BF-V2 | Åpner menyen på et kort | «Foreslå endring» med kortet valgt og et sitat av teksten |
 | BF-V3 | Åpner fortolkningen for en analytt, visningen av reglene | «Foreslå endring» ved regelsettet og ved hver kommentar |
-| BF-V4 | Fyller ut forslaget, begrunnelsen og to kilder (en lenke, en referanse) og sender | Kvittering med lenke til forslaget; status «Ny» |
+| BF-V4 | Fyller ut forslaget, begrunnelsen og to kilder (en lenke, en referanse) og sender | Kvittering med lenke til forslaget; status «Sendt» (behandlerne ser «Ny») |
 | BF-V5 | Sender med tomt forslag, tom begrunnelse, for lang tekst eller en `http://`-lenke | Sendes ikke; feilen står ved feltet, på norsk |
 | BF-V6 | Skriver halvveis, og appen oppdateres til en ny versjon | Utkastet til forslaget står der det stod (`useBevart`; en vanlig omlasting av siden bevarer ikke, etter `docs/oppdatering.md`) |
 | BF-V7 | Åpner «Mine forslag» fra kontomenyen | Egne forslag, nyeste først, med status i tekst |
@@ -310,7 +310,7 @@ og i D3 i nettleseren, bredt (1280 × 800) og smalt (390 × 844, berøring).
 | «Foreslå endring» i menyene | Nås med Tab og piltastene i `Nedtrekksmeny`; Enter åpner skjemaet; fokuset tilbake til menyknappen når skjemaet lukkes |
 | Skjemaet (`Modallag`) | Fokus i første felt; fokusfellen og Escape fra `<dialog>`; Escape med ulagret tekst lukker ikke uten å spørre (`vedLukking`); hvert felt har en synlig etikett; feilene er knyttet til feltet (`aria-describedby`) og leses opp; tegntelling for lange felt; kildene legges til og fjernes med tastatur; hele høyden på smal skjerm uten vannrett rulling |
 | Kvitteringen | Leses opp (`role="status"`); lenken til forslaget får fokus |
-| `#/forslag` | Én `h1`; fanene som faner med piltastene; valgt fane og filter overlever en oppdatering (`useBevart`); statusen står i tekst, ikke bare i farge |
+| `#/forslag` | Én `h1`; «Mine forslag» og «Til behandling» som lenker med `aria-current`, og utvalget i køen (nye, pågående, ferdige) som knapper med `aria-pressed`, nådd med Tab; valgt utvalg og filter overlever en ny versjon av appen (`useBevart`); statusen står i tekst, ikke bare i farge |
 | `#/forslag/<id>` | Tidslinjen som liste med tidspunkt; handlingene som knapper med entydig navn; avvisning med påkrevd begrunnelse; konflikten i tekst, ikke bare i farge |
 | Kontomenyen | Tallet på «Til behandling» har en tekst skjermleseren leser («3 forslag venter»), ikke bare et merke |
 | «Redaktører» | Velg person og område med tastatur; tilbakekallingen bekreftes (`Bekreftelseskort`); de avslåtte nasjonale valgene er `disabled` med forklaringen lest opp |
@@ -390,15 +390,61 @@ ført inn i kontrakten («Rettighetene»):
 
 ## 9. Rapport fra sluttkontrollen
 
-Fylles ut i D3, på integrert kode.
+Sluttkontrollen (D3) er kjørt 16.11.2026 på main `8cff430` (A1, A2, B1, B2,
+C1–C3 og D2 slått sammen), i det lokale testmiljøet med en database bygd på
+nytt, syntetiske personer og bare syntetiske data. Ingenting ble kjørt mot
+produksjonen. Det er tre kjøringer, med 78 kontroller i alt. Skjermbildene, funnene
+(`funn.json`) og loggen ligger i prosjektmappen `p5/qa/d3/`, og skriptene
+ligger i `p5/qa/skript/` (`d3.ts`, `d3b.ts`, `d3c.ts`).
 
 | Del | Prøvd | Resultat |
 | --- | --- | --- |
-| Brukerflytene (avsnitt 2) | — | — |
-| Den negative matrisen (avsnitt 3) | — | — |
-| Samtidighet (avsnitt 4) | — | — |
-| Tilgjengelighet og mobil (avsnitt 5) | — | — |
-| Regresjon (avsnitt 7) | — | — |
+| Brukerflytene (avsnitt 2) | BF-V1–V5, V7–V11; BF-R1–R8, R10, R11 (ved neste innlogging); BF-L1–L3, L5, L6; BF-S1, S2. Lokal administrator, forslagsstiller, redaktør og systemarkitekt i nettleseren, i ett sammenhengende forløp | Holder. Statusen forslagsstilleren ser for et nytt forslag, er «Sendt» (rettet i BF-V4) |
+| Den negative matrisen (avsnitt 3) | Hele matrisen i `p5tvers.test.ts` (D2). I nettleseren: en annen bruker i samme fagmiljø, en bruker i et annet fagmiljø og redaktøren åpner forslag de ikke kan se, med direkte adresse | Holder. Alle tre får «Fant ikke forslaget», med samme side som for en ID som ikke finnes |
+| Samtidighet (avsnitt 4) | `p5.samtidighet.test.ts` på ekte Postgres (D2) og trådenes egne | Holder, med fasiten over |
+| Tilgjengelighet og mobil (avsnitt 5) | Tastatur i «Redaktører», i køen, i behandlingen og i menyen «Mer for fagsiden». Fokus inn og ut av lagene. Én `h1`. Tallet i kontomenyen. Den avslåtte nasjonale knappen med forklaring. Smal skjerm (390 × 844, berøring) på fem flater. Mørk modus | Holder ikke helt: trykkflatene i funn 1 og 2 under var mindre enn 44 × 44 px på smal skjerm. Funn 1 er rettet i #429; funn 2 står åpent (se under). Resten holder |
+| Dataskillet (avsnitt 6) | Køen, tellingen og «Mine forslag» for redaktøren, for en bruker i et annet fagmiljø og for systemarkitekten | Holder. Redaktøren ser bare forslagene til sitt regelsett, og forslaget til fagsiden står bare hos systemarkitekten |
+| Regresjon (avsnitt 7) | REG-K1–K5 i `npm test` og REG-P1–P3 (D2). I nettleseren: en vanlig bruker har ikke «Rediger fortolkningen», og systemarkitekten har den fortsatt. Etter tilbakekallingen har redaktøren mistet både redigeringen og køen | Holder |
+
+Det som ikke er prøvd i nettleseren, er prøvd i testene. BF-V12 prøves i
+`endringsforslag.test.ts` (ingen forslag uten aktivt medlemskap). BF-V6, og
+utvalget og filteret i køen, prøves i `p5bevaring.test.tsx`: etter en
+oppdatering til en ny versjon (`oppdaterOgTaVare`, så monteres alt på nytt)
+står det halvskrevne forslaget og køen som før, og etter en vanlig omlasting
+gjør de ikke det. BF-R9
+(konflikten) prøves i `forslagsbehandling.test.ts`. BF-L4 (to redaktører får
+begge varsel) og BF-L7 (forslag uten redaktør går til administratorene) prøves
+i `p5tvers.test.ts` (avsnitt 3.6), og BF-S3 prøves i `redaktoransvar.test.ts`. BF-L8 og BF-S4 er den
+vanlige publiseringen og kurateringen, som REG-K3 og REG-K4 prøver.
+
+**Funn i sluttkontrollen**, alle om utseende. Ingen stopper bruken, men funn 1
+og 2 betydde at kravet om trykkflater i avsnitt 5 ikke var oppfylt. Alle er
+sendt til eierne gjennom P5-tråden:
+
+1. Utvalgsknappene «Nye», «Pågående» og «Ferdige» i køen er 35 px høye på
+   smal skjerm, mot 44 px i avsnitt 5 (tråd C).
+2. Knappene «Send forslaget» og «Avbryt» i skjemaet er 42 px høye på smal
+   skjerm. Lenken «Gå til fortolkningen» på forslaget er 23 px høy (tråd B).
+3. Listen på «Mine forslag» og «Til behandling» mangler den øverste kanten og
+   de runde hjørnene øverst (tråd B).
+4. Tittelen på et forslag til fortolkningen gjentar ordet: «Fortolkning ·
+   Fortolkning av … · Reglene for HBUP» (tråd B).
+
+**Etter rettingene i #429.** Kontrollen (`d3.ts`) er kjørt på nytt på #429
+(`e2ca194`) med databasen bygd på nytt: 58 i orden og 2 avvik. Funn 1, 3 og 4
+er rettet. Utvalgene, fanene og bryteren i køen er 44 px på smal skjerm, listen
+har kanten og de runde hjørnene, og tittelen sier «Fortolkning av … · Reglene
+for HBUP». De to avvikene er funn 2, som eieren har latt stå med vilje: «Send
+forslaget» er appens vanlige kompakte knapp (42 px, som i redigeringen ellers),
+og «Gå til fortolkningen» er en lenke i teksten. Begge er over minstekravet i
+WCAG 2.2 (24 px, og lenker i tekst er unntatt), men under 44 px i avsnitt 5, så
+funn 2 står åpent som et bevisst avvik. En første kjøring på #429 fant at
+tallet stod inntil navnet på smal skjerm («Nye0»). Eieren rettet det samme
+kveld, og kjøringen over viser «Nye 0».
+Skjermbildene ligger i `p5/qa/d3/etter-429/`.
+
+De fem funnene fra den tidlige kontrollen av del B er prøvd på nytt på main,
+og alle er fortsatt i orden (`d3c.ts`).
 
 **Tidlig kontroll av del B (16.11.2026).** Forslagsstillerens flyt (BF-V1–V5,
 V7, V9, V11, tastatur og en annen brukers direkte adresse) er prøvd i det

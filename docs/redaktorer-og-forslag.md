@@ -630,7 +630,7 @@ Fylles ut av trådene.
 | B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Slått sammen |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
 | C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
-| C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Til kontroll |
+| C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Slått sammen |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |
-| D2 Krysstestene på tvers av trådene | [#426](https://github.com/peohol/ousfar/pull/426) | Til kontroll |
-| D3 Sluttkontrollen i nettleseren | — | Venter på C3 |
+| D2 Krysstestene på tvers av trådene | [#426](https://github.com/peohol/ousfar/pull/426) | Slått sammen |
+| D3 Sluttkontrollen i nettleseren ([rapporten](p5-testplan.md#9-rapport-fra-sluttkontrollen)) | [#427](https://github.com/peohol/ousfar/pull/427) | Til kontroll |
