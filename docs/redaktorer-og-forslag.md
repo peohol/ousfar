@@ -632,3 +632,5 @@ Fylles ut av trådene.
 | C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |
 | C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Til kontroll |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |
+| D2 Krysstestene på tvers av trådene | [#426](https://github.com/peohol/ousfar/pull/426) | Til kontroll |
+| D3 Sluttkontrollen i nettleseren | — | Venter på C3 |
