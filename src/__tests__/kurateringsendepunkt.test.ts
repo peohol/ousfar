@@ -19,6 +19,7 @@ import {
   INSTRUKSFILER,
   INSTRUKSINNLEDNING,
   KO_ARBEIDSFLYT,
+  RYDDE_ARBEIDSFLYT,
   lesKontrollorinstruks,
   MCP_PROTOKOLL,
   PROTOKOLLFIL,
@@ -297,6 +298,15 @@ describe('/api/kuratering-ko', () => {
     expect((await behandleKurateringsko(post('https://x/api/kuratering-ko', {}, 'annet'), {}, { ...k, arkitektsjekk: ingenAdmin, githubsjekk })).status).toBe(401)
     expect((await behandleKurateringsko(post('https://x/api/kuratering-ko', {}, null), {}, { ...k, arkitektsjekk: ingenAdmin, githubsjekk })).status).toBe(401)
     expect((await behandleKurateringsko(new Request('https://x/api/kuratering-ko'), {}, { ...k, arkitektsjekk: ingenAdmin, githubsjekk })).status).toBe(405)
+    expect(k.rpc).toHaveBeenCalledTimes(1)
+  })
+
+  it('gir grenene også til oppryddingen av kuratorjobbgrenene, men ikke til andre arbeidsflyter', async () => {
+    const k = klient({ data: GRENER })
+    const fra = (flyt: string) => vi.fn(async (token: string, arbeidsflyt: string) => (token === 'oidc' && arbeidsflyt === flyt ? ('cron' as const) : null))
+    const kall = (flyt: string) => behandleKurateringsko(post('https://x/api/kuratering-ko', {}, 'oidc'), {}, { ...k, arkitektsjekk: ingenAdmin, githubsjekk: fra(flyt) })
+    expect((await kall(RYDDE_ARBEIDSFLYT)).status).toBe(200)
+    expect((await kall('.github/workflows/kuratorjobb.yml')).status).toBe(401)
     expect(k.rpc).toHaveBeenCalledTimes(1)
   })
 })

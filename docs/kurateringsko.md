@@ -162,11 +162,12 @@ Et stoff som venter etter en feil, står sist til `tidligst_kl`.
 ## Kurateringsgrenene
 
 Ved hver kjøring leser køen alle kurateringsgrenene i OUSFAR, uten fagtekst
-(ID, stoff, art, status, revisjon, runde, tidene og nøklene til de utsatte
-kontrollpunktene), gjennom
-`/api/kuratering-ko`. Arbeidsflyten logger inn med GitHubs OIDC-token, så det
-finnes ingen hemmelighet å lagre; serveren slipper bare inn «Kurateringskø» på
-`main`. Svarer OUSFAR ikke, går kjøringen videre uten grenene og prøver igjen
+(ID, stoff, art, status, revisjon, runde, tidene, nøklene til de utsatte
+kontrollpunktene og navnene på kuratorjobbgrenene evidensjournalen viser til),
+gjennom `/api/kuratering-ko`. Arbeidsflyten logger inn med GitHubs OIDC-token,
+så det finnes ingen hemmelighet å lagre; serveren slipper bare inn
+«Kurateringskø» og oppryddingen av kuratorjobbgrenene
+(`docs/kuratorjobber.md`) på `main`. Svarer OUSFAR ikke, går kjøringen videre uten grenene og prøver igjen
 neste time; imens gis bare kurateringer som fortsettes, ut.
 
 - **Riktig stoff og art.** En gren hører bare til et stoff når den gjelder

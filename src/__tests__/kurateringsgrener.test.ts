@@ -1395,15 +1395,28 @@ describe('statusen og agentene', () => {
 
   it('gir kurateringskøen grenene uten fagtekst, bare gjennom serveren', async () => {
     const k = await kuratertGren('Køstoff')
-    const ko = await db.transaction(async (tx) => {
-      await tx.query(`select set_config('role', 'service_role', true)`)
-      const { rows } = await tx.query<{ s: Json[] }>('select public.kuratering_kostatus() as s')
-      return rows[0]!.s
-    })
-    const rad = ko.find((g) => g.id === k.gren)!
-    expect(Object.keys(rad).sort()).toEqual(['art', 'id', 'oppdatert_kl', 'publisert_kl', 'revisjon', 'runde', 'status', 'stoff', 'utsatte'])
-    expect(rad).toMatchObject({ stoff: k.slug, art: 'kuratering', status: 'arbeid', revisjon: 1, utsatte: [] })
+    const kostatus = () =>
+      db.transaction(async (tx) => {
+        await tx.query(`select set_config('role', 'service_role', true)`)
+        const { rows } = await tx.query<{ s: Json[] }>('select public.kuratering_kostatus() as s')
+        return rows[0]!.s
+      })
+    const rad = (await kostatus()).find((g) => g.id === k.gren)!
+    expect(Object.keys(rad).sort()).toEqual(['art', 'id', 'kuratorjobber', 'oppdatert_kl', 'publisert_kl', 'revisjon', 'runde', 'status', 'stoff', 'utsatte'])
+    expect(rad).toMatchObject({ stoff: k.slug, art: 'kuratering', status: 'arbeid', revisjon: 1, utsatte: [], kuratorjobber: [] })
     expect((await feilFra(() => kall.les(admin, 'select public.kuratering_kostatus()')))?.code).toBe('42501')
+
+    // Kuratorjobbene i den siste evidensjournalen: bare grennavnene, aldri teksten rundt dem.
+    const evidensjournal = (await gyldigeDokumenter()).evidensjournal as Record<string, Json>
+    await agent(claude, 'dokument', { gren: k.gren, art: 'evidensjournal', innhold: { ...evidensjournal, kuratorjobber: ['kuratorjobb/eldre-1'] } })
+    await agent(claude, 'dokument', {
+      gren: k.gren,
+      art: 'evidensjournal',
+      innhold: { ...evidensjournal, kuratorjobber: ['kuratorjobb/spc-1 (preparatomtaler 0000-1, syntetisk fagtekst)', ' kuratorjobb/spc-1', 'kuratorjobb/test-2', 'main', 'ikke kuratorjobb/x', 7, { gren: 'kuratorjobb/objekt' }] },
+    })
+    const etter = (await kostatus()).find((g) => g.id === k.gren)!
+    expect(etter.kuratorjobber).toEqual(['kuratorjobb/spc-1', 'kuratorjobb/test-2'])
+    expect(JSON.stringify(etter)).not.toContain('syntetisk fagtekst')
   })
 
   it('gir alle innloggede kurateringene per fagside, uten fagtekst og uten de forkastede', async () => {

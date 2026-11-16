@@ -97,9 +97,9 @@ export const githubkjoring: Githubsjekk = async (token, arbeidsflyt) => {
   return githubkrav(payload, arbeidsflyt)
 }
 
-/** Arbeidsflyten i GitHub Actions som kan kalle endepunktet, og kontrollen av tokenet. */
+/** Arbeidsflyten (eller arbeidsflytene) i GitHub Actions som kan kalle endepunktet, og kontrollen av tokenet. */
 export interface Githubtilgang {
-  arbeidsflyt: string
+  arbeidsflyt: string | readonly string[]
   sjekk?: Githubsjekk
 }
 
@@ -119,8 +119,10 @@ export async function hvem(
     return miljo.CRON_SECRET && token === miljo.CRON_SECRET ? 'cron' : null
   }
   if (github) {
-    const kjoring = await (github.sjekk ?? githubkjoring)(token, github.arbeidsflyt).catch(() => null)
-    if (kjoring) return kjoring
+    for (const arbeidsflyt of typeof github.arbeidsflyt === 'string' ? [github.arbeidsflyt] : github.arbeidsflyt) {
+      const kjoring = await (github.sjekk ?? githubkjoring)(token, arbeidsflyt).catch(() => null)
+      if (kjoring) return kjoring
+    }
   }
   return (await arkitektsjekk(token, miljo).catch(() => false)) ? 'manuell' : null
 }
