@@ -122,6 +122,7 @@
   .forslagsside__fane {
     display: inline-flex;
     align-items: center;
+    gap: var(--rom-1);
     min-height: var(--hoyde-trykk);
   }
 }
