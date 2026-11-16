@@ -610,17 +610,17 @@ function Arbeidsflate({
    */
   const fagsider = useMemo(() => (state.analyte ? stofferForFortolkning(state.analyte, register) : []), [state.analyte, register])
 
-  /**
-   * Fortolkningen har regler og kommentarer: en modul med scenarioregler,
-   * THC-syre, eller en kode med et publisert regelsett. EtG og EtS har ingen.
-   * Administratorene kan redigere dem, og en redaktør for ett regelsett bare
-   * fortolkningen for kodene i det. Alle kan foreslå endringer i dem.
-   */
-  // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene.
+  // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene og redigeringsretten.
   const fortolkningsanalytter = useMemo(
     () => (state.analyte ? analytterForFortolkning(state.analyte, katalog) : []),
     [state.analyte, katalog],
   )
+  /**
+   * Fortolkningen har regler og kommentarer: en modul med scenarioregler,
+   * THC-syre, eller en kode med et publisert regelsett. EtG og EtS har ingen.
+   * Alle kan foreslå endringer i dem. Administratorene kan redigere dem, og en
+   * redaktør for ett regelsett bare fortolkningen for kodene i det.
+   */
   const harRegler = useMemo(() => {
     const analytt = state.analyte
     if (!analytt) return false
@@ -631,7 +631,7 @@ function Arbeidsflate({
   const kanRedigeres = useMemo(
     () =>
       harRegler &&
-      state.analyte !== null &&
+      !!state.analyte &&
       kanRedigereKodene(redigering, [state.analyte.kode, ...fortolkningsanalytter.map((a) => a.kode)]),
     [harRegler, redigering, state.analyte, fortolkningsanalytter],
   )
