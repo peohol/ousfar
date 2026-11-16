@@ -633,4 +633,4 @@ Fylles ut av trådene.
 | C3 Brukerflaten for behandlerne | [#425](https://github.com/peohol/ousfar/pull/425) | Slått sammen |
 | D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |
 | D2 Krysstestene på tvers av trådene | [#426](https://github.com/peohol/ousfar/pull/426) | Slått sammen |
-| D3 Sluttkontrollen i nettleseren ([rapporten](p5-testplan.md#9-rapport-fra-sluttkontrollen)) | Denne PR-en | Til kontroll |
+| D3 Sluttkontrollen i nettleseren ([rapporten](p5-testplan.md#9-rapport-fra-sluttkontrollen)) | [#427](https://github.com/peohol/ousfar/pull/427) | Til kontroll |
