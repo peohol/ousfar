@@ -32,6 +32,7 @@ const iFagmiljo = (f: Fagmiljoreferanse | null, mine = [KF, RT]): Rettigheter =>
   ...INGEN_RETTIGHETER,
   arbeidsfagmiljo: f,
   mineFagmiljoer: mine,
+  velgbareFagmiljoer: mine,
 })
 
 /** Et løfte testen selv avgjør. */

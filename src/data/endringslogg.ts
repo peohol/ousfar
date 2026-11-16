@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.135.0',
+    dato: '2026-11-16',
+    sammendrag: 'Systemarkitektene kan se fortolkningen i alle fagmiljøer',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Systemarkitektene kan nå velge et hvilket som helst fagmiljø under «Fagmiljø» i kontomenyen, også et de ikke er medlem av. Fortolkningen, analyttkatalogen og diskusjonene på fortolkningssidene viser da det fagmiljøets innhold.',
+      'Valget endrer ikke hvilke fagmiljøer man er medlem av. Fagmiljøer man ikke er medlem av, er merket «Ikke medlem» i menyen.',
+      'For alle andre er valget som før: man velger blant fagmiljøene man er medlem av.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.134.5',
     dato: '2026-11-16',
     sammendrag: 'Ferdige kuratorjobber ryddes nå bort automatisk',

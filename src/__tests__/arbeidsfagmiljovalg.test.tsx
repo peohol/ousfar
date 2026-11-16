@@ -28,20 +28,20 @@ function vis(rettigheter: Rettigheter, velg: (id: string) => Promise<Rettigheter
 
 describe('Arbeidsfagmiljovalg', () => {
   it('vises ikke for den som bare er med i ett fagmiljø', () => {
-    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF] }, vi.fn())
+    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF], velgbareFagmiljoer: [KF] }, vi.fn())
     expect(screen.queryByText(/Fagmiljø:/)).toBeNull()
   })
 
   it('vises når det eneste aktive fagmiljøet ikke er det hen arbeider i (som når det er arkivert)', () => {
-    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: null, mineFagmiljoer: [KF] }, vi.fn())
+    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: null, mineFagmiljoer: [KF], velgbareFagmiljoer: [KF] }, vi.fn())
     expect(screen.getByRole('button', { name: /Fagmiljø: ikke valgt/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'OUS Klinisk farmakologi' }).getAttribute('aria-current')).toBeNull()
   })
 
   it('viser fagmiljøet hen arbeider i, og bytter til et annet og henter rettighetene på nytt', async () => {
-    const etter = { ...INGEN_RETTIGHETER, arbeidsfagmiljo: RT, mineFagmiljoer: [KF, RT] }
+    const etter = { ...INGEN_RETTIGHETER, arbeidsfagmiljo: RT, mineFagmiljoer: [KF, RT], velgbareFagmiljoer: [KF, RT] }
     const velg = vi.fn().mockResolvedValue(etter)
-    const oppdater = vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF, RT] }, velg)
+    const oppdater = vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF, RT], velgbareFagmiljoer: [KF, RT] }, velg)
     expect(screen.getByRole('button', { name: /Fagmiljø: OUS Klinisk farmakologi/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'OUS Klinisk farmakologi' }).getAttribute('aria-current')).toBe('true')
     expect(screen.getByRole('button', { name: 'OUS Rettstoksikologi' }).getAttribute('aria-current')).toBeNull()
@@ -57,9 +57,22 @@ describe('Arbeidsfagmiljovalg', () => {
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
+  it('lar en systemarkitekt velge et fagmiljø hen ikke er medlem av, merket «Ikke medlem»', async () => {
+    const arkitekt = { ...INGEN_RETTIGHETER, systemarkitekt: true, arbeidsfagmiljo: KF, mineFagmiljoer: [KF], velgbareFagmiljoer: [KF, RT] }
+    const etter = { ...arkitekt, arbeidsfagmiljo: RT }
+    const velg = vi.fn().mockResolvedValue(etter)
+    const oppdater = vis(arkitekt, velg)
+    expect(screen.getByRole('button', { name: /Fagmiljø: OUS Klinisk farmakologi/ })).toBeTruthy()
+    // Bare det hen ikke er medlem av, er merket.
+    expect(screen.getByRole('button', { name: 'OUS Klinisk farmakologi' })).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: 'OUS Rettstoksikologi Ikke medlem' }))
+    expect(velg).toHaveBeenCalledWith('rt')
+    await waitFor(() => expect(oppdater).toHaveBeenCalledWith(etter))
+  })
+
   it('sier fra når byttet feiler, og henter ikke rettighetene på nytt', async () => {
     const velg = vi.fn().mockRejectedValue(new Error('nei'))
-    const oppdater = vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF, RT] }, velg)
+    const oppdater = vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF, RT], velgbareFagmiljoer: [KF, RT] }, velg)
     await userEvent.click(screen.getByRole('button', { name: 'OUS Rettstoksikologi' }))
     expect((await screen.findByRole('alert')).textContent).toMatch(/ble ikke byttet/)
     expect(oppdater).not.toHaveBeenCalled()

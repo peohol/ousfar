@@ -5,11 +5,13 @@
  *
  * Valget er primærmedlemskapet: det flytter fortolkningen, og ingenting annet.
  * Bare den innloggede selv, bare blant egne aktive medlemskap, og hvert bytte
- * står i tilgangsloggen med den innloggede som aktør.
+ * står i tilgangsloggen med den innloggede som aktør. En systemarkitekt kan i
+ * tillegg se fortolkningen i et hvilket som helst aktivt fagmiljø, uten å bli
+ * medlem (`20261116100000_arkitektens_visningsfagmiljo.sql`).
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { byggPersongalleri, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
+import { byggPersongalleri, gjorTilSystemarkitekt, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
 
 let db: PGlite
@@ -108,15 +110,95 @@ describe('velg_arbeidsfagmiljo', () => {
     expect(anonym?.code).toBe('42501')
   })
 
-  it('gir ikke en systemarkitekt et fagmiljø hen ikke er medlem av', async () => {
-    // Systemarkitekten ser alt, men fortolker bare der hen er medlem (P4b).
-    expect((await feilFra(() => velg('systemarkitekt', 'B')))?.message).toMatch(/aktivt medlem/)
-    expect(await arbeidsfagmiljo('systemarkitekt')).toBe(g.fagmiljo.A)
+  describe('en systemarkitekt', () => {
+    const medlemskapene = async (person: Person) =>
+      (
+        await db.query<{ fagmiljo_id: string; status: string; primaer: boolean }>(
+          'select fagmiljo_id, status, primaer from public.medlemskap where bruker_id = $1 order by fagmiljo_id',
+          [g.id[person]],
+        )
+      ).rows
+    const loggrader = async (person: Person) =>
+      (await db.query<{ n: number }>('select count(*)::int as n from public.tilgangslogg where bruker_id = $1', [g.id[person]])).rows[0]!.n
+    const rettigheter = (person: Person) =>
+      forste<{ arbeidsfagmiljo: { id: string } | null; mine_fagmiljoer: { id: string }[]; velgbare_fagmiljoer: { id: string }[] }>(
+        person,
+        'select public.mine_rettigheter()',
+      )
+
+    it('ser fortolkningen i et fagmiljø hen ikke er medlem av, uten å bli medlem', async () => {
+      // Som maxhag: medlem og lokal administrator bare i B.
+      const medlemskapFor = await medlemskapene('arkitektB')
+      const loggFor = await loggrader('arkitektB')
+      const lesbareFor = await lesbare('arkitektB')
+      expect(await arbeidsfagmiljo('arkitektB')).toBe(g.fagmiljo.B)
+
+      const svar = await velg('arkitektB', 'A')
+      expect(svar.arbeidsfagmiljo?.id).toBe(g.fagmiljo.A)
+      expect(await arbeidsfagmiljo('arkitektB')).toBe(g.fagmiljo.A)
+      // Medlemskapene, tilgangsloggen og lesingen er som før.
+      expect(await medlemskapene('arkitektB')).toEqual(medlemskapFor)
+      expect(await loggrader('arkitektB')).toBe(loggFor)
+      expect(await lesbare('arkitektB')).toEqual(lesbareFor)
+      expect(await rettigheter('arkitektB')).toMatchObject({
+        arbeidsfagmiljo: { id: g.fagmiljo.A },
+        mine_fagmiljoer: [{ id: g.fagmiljo.B }],
+      })
+
+      // Tilbake til sitt eget fagmiljø fjerner visningsvalget.
+      expect((await velg('arkitektB', 'B')).arbeidsfagmiljo?.id).toBe(g.fagmiljo.B)
+      expect(await medlemskapene('arkitektB')).toEqual(medlemskapFor)
+      const { rows } = await db.query('select 1 from public.visningsfagmiljoer where bruker_id = $1', [g.id.arkitektB])
+      expect(rows).toHaveLength(0)
+    })
+
+    it('får alle de aktive fagmiljøene å velge blant; de andre bare sine egne', async () => {
+      const aktive = (await db.query<{ id: string }>(`select id from public.fagmiljoer where status = 'aktiv' order by navn`)).rows
+      for (const person of ['systemarkitekt', 'arkitektB'] as const) {
+        expect((await rettigheter(person)).velgbare_fagmiljoer.map((f) => f.id), person).toEqual(aktive.map((f) => f.id))
+      }
+      for (const person of ['vanligA', 'adminB', 'dobbeltAB'] as const) {
+        const r = await rettigheter(person)
+        expect(r.velgbare_fagmiljoer, person).toEqual(r.mine_fagmiljoer)
+      }
+    })
+
+    it('mister visningsvalget når hen ikke lenger er systemarkitekt', async () => {
+      await velg('arkitektB', 'A')
+      expect(await arbeidsfagmiljo('arkitektB')).toBe(g.fagmiljo.A)
+      await db.exec(`
+        begin;
+        select set_config('ousfar.tilgangsgrunn', 'Test: systemrollen tilbakekalles', true);
+        update public.systemroller set tilbakekalt_kl = now() where bruker_id = '${g.id.arkitektB}' and tilbakekalt_kl is null;
+        commit;`)
+      try {
+        // Tilbake til primærmedlemskapet, og A kan ikke velges igjen.
+        expect(await arbeidsfagmiljo('arkitektB')).toBe(g.fagmiljo.B)
+        expect((await feilFra(() => velg('arkitektB', 'A')))?.code).toBe('42501')
+      } finally {
+        await gjorTilSystemarkitekt(db, g.id.arkitektB)
+        await velg('arkitektB', 'B')
+      }
+    })
+
+    it('kan ikke lese eller skrive visningsvalgene direkte', async () => {
+      for (const sql of [
+        'select * from public.visningsfagmiljoer',
+        `insert into public.visningsfagmiljoer (bruker_id, fagmiljo_id) values ('${g.id.vanligA}', '${g.fagmiljo.B}')`,
+      ]) {
+        for (const person of ['vanligA', 'systemarkitekt'] as const) {
+          expect((await feilFra(() => som(db, g.id[person], (tx) => tx.query(sql))))?.code, `${person}: ${sql}`).toBe('42501')
+        }
+      }
+    })
   })
 
   // Sist, fordi den arkiverer B for resten av fila.
   it('lar den som arbeidet i et fagmiljø som er arkivert, velge et av de andre', async () => {
     await velg('dobbeltAB', 'B')
+    // En systemarkitekt som så på B, er tilbake i sitt eget når B arkiveres.
+    await velg('systemarkitekt', 'B')
+    expect(await arbeidsfagmiljo('systemarkitekt')).toBe(g.fagmiljo.B)
     await db.exec(`
       begin;
       select set_config('ousfar.tilgangsgrunn', 'Test: B arkiveres', true);
@@ -133,5 +215,7 @@ describe('velg_arbeidsfagmiljo', () => {
     expect((await feilFra(() => velg('dobbeltAB', 'B')))?.code).toBe('42501')
     expect((await velg('dobbeltAB', 'A')).arbeidsfagmiljo?.id).toBe(g.fagmiljo.A)
     expect(await arbeidsfagmiljo('dobbeltAB')).toBe(g.fagmiljo.A)
+    expect(await arbeidsfagmiljo('systemarkitekt')).toBe(g.fagmiljo.A)
+    expect((await feilFra(() => velg('systemarkitekt', 'B')))?.code).toBe('42501')
   })
 })
