@@ -383,8 +383,8 @@ ført inn i kontrakten («Rettighetene»):
    ansvaret, kan ta det tilbake.
 3. En redaktør kan endre et element som hører til flere ressurser (en
    kommentar flere regelsett bruker), bare med ansvar for alle ressursene det
-   hører til (avsnitt 3.4). Funnet i kontrollen av denne planen; sendt til
-   P5-tråden og tråd A.
+   hører til (avsnitt 3.4). Funnet i kontrollen av denne planen; ført inn i
+   kontrakten («Delte elementer», 82aec2e).
 
 ## 9. Rapport fra sluttkontrollen
 
