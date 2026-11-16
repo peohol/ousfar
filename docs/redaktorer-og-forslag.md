@@ -88,6 +88,11 @@ rekkevidden»), etter P0 §5.2:
 | Gi lokalt redaktøransvar | Nei | Nei | Nei | Eget fagmiljø | Ja |
 | Gi nasjonalt redaktøransvar | Nei | Nei | Nei | Nei | Ja, når Fag har avklart #417 (B2 godkjent av Peder 16.11.2026) |
 
+To avklaringer (16.11.2026): en behandler kan behandle sitt eget forslag,
+siden vedkommende kan endre utkastet uansett, og tidslinjen viser hvem som
+gjorde hva. En redaktør kan ikke tilbakekalle sitt eget ansvar; bare den som
+kan gi det, kan ta det tilbake.
+
 Den gamle adminrollen (`profiles.role = 'admin'`) gir ingenting her. Alle
 kontroller krever aktivt medlemskap. Et redaktøransvar for lokalt innhold
 gjelder bare så lenge redaktøren er aktivt medlem av fagmiljøet. Ingen kan gi
@@ -302,7 +307,7 @@ fagprotokoll eller faginnhold.
 | Tråd | Leverer | Avhenger av | Filer bare den endrer |
 | --- | --- | --- | --- |
 | **P5.0** (denne) | Delplanen og grunnmuren | — | Kontrakten i dette dokumentet, grunnmursmigrasjonen |
-| **A** Redaktøransvar | `redaktoransvar`, tildelingene, endringsretten utvidet (lese/endre utkast, ikke publisere), B2-bryteren, `mine_rettigheter`, adminpanelet «Redaktører» og visningen av redaktørene | Grunnmuren | `src/auth/rettigheter.tsx`, `src/components/konto/Adminmeny.tsx`, de nye panelene, redaktørene i persongalleriet (`src/__tests__/hjelp/persongalleri.ts`), migrasjonene som endrer `intern.kan_endre_objekt`, `intern.har_endringsrett_noe`, `public.kan_se_utkast`, reglene for utkast og `public.publiser_utkast` |
+| **A** Redaktøransvar | `redaktoransvar`, tildelingene, redaktørene i persongalleriet (`redaktorRessursA`: ett regelsett i A, `redaktorFortolkningA`, `redaktorNasjonal`), endringsretten utvidet (lese/endre utkast, ikke publisere), B2-bryteren, `mine_rettigheter`, adminpanelet «Redaktører» og visningen av redaktørene | Grunnmuren | `src/auth/rettigheter.tsx`, `src/components/konto/Adminmeny.tsx`, de nye panelene, redaktørene i persongalleriet (`src/__tests__/hjelp/persongalleri.ts`), migrasjonene som endrer `intern.kan_endre_objekt`, `intern.har_endringsrett_noe`, `public.kan_se_utkast`, reglene for utkast og `public.publiser_utkast` |
 | **B** Foreslå endring | `endringsforslag` og tidslinjen, forslagsstillerens funksjoner, skjemaet, knappene på fagsiden og i fortolkningen, `#/forslag` med «Mine forslag» | Grunnmuren | `src/domain/rute.ts` (ruten), `src/components/forslag/` (oppretter), knappene i `src/components/stoffside/` og visningen av reglene |
 | **C** Redaktørens arbeidsflyt | Køen, behandlingen, konfliktvisningen, innarbeidingen, varslene | Grunnmuren og Bs tabeller; As redaktører gjennom `ressursens_redaktorer` | `src/varsler/modell.ts`, varselmigrasjonen, behandlerdelen i `src/components/forslag/` |
 | **D** Brukervennlighet og testing | Testplanen, persongalleriet med redaktørene, de negative testene på tvers, samtidighet, tastatur, mobil og at klinisk output er uendret | Testplanen alene; resten på integrert kode | `docs/p5-testplan.md` og egne testfiler; bruker redaktørene A legger i persongalleriet |

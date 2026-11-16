@@ -7,6 +7,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { regelimportSql } from '../regler/import'
+import type { Intervallregelsettinnhold } from '../regler/modell'
 import { DAGENS_IMPORT } from './hjelp/dagensregler'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { faginnholdskall, nyDatabase } from './hjelp/testdatabase'
@@ -113,7 +114,7 @@ describe('beskrivelsen av en ressurs', () => {
   it('bruker utkastet når regelsettet ikke er publisert', async () => {
     const kode = 'P5UTKAST'
     const kall = faginnholdskall(db, g.id.systemarkitekt)
-    const { rows: mal } = await db.query<{ innhold: Record<string, unknown> }>(
+    const { rows: mal } = await db.query<{ innhold: Intervallregelsettinnhold }>(
       `select r.innhold from public.objektrevisjoner r
        join public.objekttilstander t on t.objekt_id = r.objekt_id and t.revisjon = r.revisjon and t.tilstand = 'publisert'
        where r.objekt_id = $1`,
