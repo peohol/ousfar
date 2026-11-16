@@ -1,58 +1,19 @@
 {
-  "oppdatert_kl": "2026-11-16T17:27:37.718Z",
+  "oppdatert_kl": "2026-11-16T19:27:01.157Z",
   "malt_kl": "2026-11-16T17:27:37.718Z",
   "antall": {
-    "klar": 100,
+    "klar": 97,
     "reservert": 0,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
     "publisert": 16,
-    "blokkert": 2,
+    "blokkert": 5,
     "utenfor": 1
   },
   "aktive": [],
   "holdes_tilbake": null,
   "neste": [
-    {
-      "stoff": "sertralin",
-      "modus": "de_novo",
-      "poeng": 423.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "21 av 30 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "flupentiksol",
-      "modus": "de_novo",
-      "poeng": 423.1,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "18 av 26 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "mianserin",
-      "modus": "de_novo",
-      "poeng": 422.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "17 av 25 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
     {
       "stoff": "fluvoksamin",
       "modus": "de_novo",
@@ -143,10 +104,61 @@
         "17 av 26 elementer har ingen kilde."
       ],
       "tidligst_kl": null
+    },
+    {
+      "stoff": "amitriptylin",
+      "modus": "de_novo",
+      "poeng": 420.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "18 av 28 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "eplerenon",
+      "modus": "de_novo",
+      "poeng": 419.8,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "5 av 22 elementer har ingen kilde.",
+        "Bare 4 referanser."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "levomepromazin",
+      "modus": "de_novo",
+      "poeng": 419.7,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "15 av 24 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
   "blokkert": [
+    {
+      "stoff": "flupentiksol",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T19:27:01.157Z",
+          "kilde": "system"
+        }
+      ]
+    },
     {
       "stoff": "metamfetamin",
       "blokkeringer": [
@@ -159,6 +171,17 @@
       ]
     },
     {
+      "stoff": "mianserin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T19:27:01.157Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
       "stoff": "okskarbazepin",
       "blokkeringer": [
         {
@@ -166,6 +189,17 @@
           "grunn": "Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.",
           "kl": "2026-10-17T14:52:49.441Z",
           "kilde": "agent"
+        }
+      ]
+    },
+    {
+      "stoff": "sertralin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T19:27:01.157Z",
+          "kilde": "system"
         }
       ]
     }
