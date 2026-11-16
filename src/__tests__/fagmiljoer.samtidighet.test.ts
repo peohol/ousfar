@@ -15,7 +15,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { Okt, psql, SERVER } from './hjelp/ektepostgres'
+import { Okt, psql, SERVER, slettDatabaser } from './hjelp/ektepostgres'
 
 const migrasjon = (fil: string) => readFileSync(resolve(__dirname, '../../supabase/migrations', fil), 'utf8')
 const STRUKTUR = migrasjon('20261113140000_fagmiljoer.sql')
@@ -109,7 +109,7 @@ describe.skipIf(!SERVER)('samtidige endringer av fagmiljørettigheter (ekte Post
   }, 60_000)
 
   afterAll(() => {
-    for (const db of databaser.reverse()) psql('postgres', `drop database if exists ${db} with (force);`)
+    slettDatabaser(databaser)
   })
 
   it('kjører på Postgres 17 eller nyere, som produksjonen', () => {

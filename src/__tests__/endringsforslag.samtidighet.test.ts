@@ -11,7 +11,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
-import { Okt, psql, SERVER } from './hjelp/ektepostgres'
+import { Okt, psql, SERVER, slettDatabaser } from './hjelp/ektepostgres'
 import { strukturskript } from './hjelp/migrasjonskjoring'
 
 const KONTO = {
@@ -71,7 +71,7 @@ describe.skipIf(!SERVER)('samtidige endringer av et forslag (ekte Postgres)', ()
   }, 120_000)
 
   afterAll(() => {
-    for (const db of databaser.reverse()) psql('postgres', `drop database if exists ${db} with (force);`)
+    slettDatabaser(databaser)
   })
 
   const nyDatabase = () => {

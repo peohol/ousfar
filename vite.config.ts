@@ -122,6 +122,9 @@ const testoppsett = {
     // Vitest 2 lot slike gå forbi grensen på 5 s; Vitest 5 håndhever den.
     // Grensen gjelder også en test som henger, som da stoppes etter ett minutt.
     testTimeout: 60_000,
+    // Det samme gjelder før- og etterarbeid, som oppryddingen av testdatabasene
+    // på en travel CI-server (standardgrensen er 10 s).
+    hookTimeout: 60_000,
   },
 }
 
