@@ -9,7 +9,8 @@ Mønsteret er det samme som for FEST (`docs/legemiddeldata.md`) og ClinPGx
 > erstattes av norske farmakogenetiske data. Ingenting hentes, endepunktet svarer
 > 410, og appen leser og viser ingenting fra CPIC (`src/datakilder/stans.ts`,
 > `docs/datakilder.md` under «Stansede kilder»). Resten av dokumentet beskriver
-> laget slik det står klart til å tas i bruk igjen.
+> laget slik det står klart til å tas i bruk igjen. Erstatningen, CYPinfo, er
+> kartlagt i `docs/cypinfo-integrasjon.md`.
 
 ClinPGx gir den brede kunnskapsoversikten på fagsiden (retningslinjer,
 preparatomtaler, kliniske annotasjoner). CPIC-laget gir det strukturerte:
