@@ -137,7 +137,7 @@ vi.mock('../data/endringslogg', () => ({
 }))
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
-const { RettigheterKilde, INGEN_RETTIGHETER } = await import('../auth/rettigheter')
+const { RettigheterKilde, lesRettigheter } = await import('../auth/rettigheter')
 
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
@@ -425,10 +425,11 @@ describe('endringsforslagene', () => {
     expect(api.merkVarslerLest).toHaveBeenCalledWith(['v-mitt'], LISTE.lest_kl)
   })
 
-  it('viser «Forslag til behandling» i innstillingene for en som kan behandle forslag', async () => {
+  /** Innstillingene for den som har rettighetene i svaret fra `mine_rettigheter`, med bryterne i «Endringsforslag». */
+  async function forslagsinnstillinger(svar: Record<string, unknown>) {
     const bruker = userEvent.setup()
     render(
-      <RettigheterKilde verdi={{ ...INGEN_RETTIGHETER, systemarkitekt: true }}>
+      <RettigheterKilde verdi={lesRettigheter(svar)}>
         <Varselknapp />
       </RettigheterKilde>,
     )
@@ -439,11 +440,32 @@ describe('endringsforslagene', () => {
     const innstillinger = await screen.findByRole('dialog', { name: 'Varselinnstillinger' })
     const gruppe = within(innstillinger).getByRole('region', { name: 'Endringsforslag' })
     const brytere = within(gruppe).getAllByRole('switch') as HTMLInputElement[]
-    expect(brytere.map((b) => [b.closest('label')!.querySelector('.varselinnstilling__tittel')!.textContent, b.checked, b.disabled])).toEqual([
+    const tilstand = brytere.map((b) => [b.closest('label')!.querySelector('.varselinnstilling__tittel')!.textContent, b.checked, b.disabled])
+    return { bruker, brytere, tilstand }
+  }
+
+  const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
+
+  it.each([
+    ['en redaktør uten administratorrolle', { behandler_forslag: true }],
+    ['en lokal administrator', { administrerer: [KF], behandler_forslag: true }],
+    ['en systemarkitekt', { systemarkitekt: true, behandler_forslag: true }],
+    ['en lokal administrator når databasen ikke svarer med feltet', { administrerer: [KF] }],
+  ])('viser «Forslag til behandling» i innstillingene for %s, som kan slå den av', async (_hvem, svar) => {
+    const { bruker, brytere, tilstand } = await forslagsinnstillinger(svar)
+    expect(tilstand).toEqual([
       ['Mine endringsforslag', true, true],
       ['Forslag til behandling', true, false],
     ])
     await bruker.click(brytere[1]!)
     expect(api.lagreVarselvalg).toHaveBeenCalledWith({ forslag_til_behandling: false })
+  })
+
+  it.each([
+    ['en vanlig bruker', { mine_fagmiljoer: [KF], behandler_forslag: false }],
+    ['en vanlig bruker når databasen ikke svarer med feltet', { mine_fagmiljoer: [KF] }],
+  ])('viser ikke «Forslag til behandling» for %s', async (_hvem, svar) => {
+    const { tilstand } = await forslagsinnstillinger(svar)
+    expect(tilstand).toEqual([['Mine endringsforslag', true, true]])
   })
 })

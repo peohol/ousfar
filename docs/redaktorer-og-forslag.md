@@ -229,7 +229,7 @@ kan utvides av eieren med standardverdier.
 | `public.les_mine_forslag() → jsonb` | B | Forslagsstillerens egne, nyeste først, med status og ressursbeskrivelse |
 | `public.les_forslag(forslag) → jsonb` | B | Ett forslag med tidslinjen, for den som kan se det; `kan_behandle` og `konflikt` i svaret |
 | `public.les_forslagsko(filter default 'aktive') → jsonb` | C | Køen for den innloggede: `nye`, `pagaende`, `ferdige`, og `uten_redaktor` (ansvarskøen) |
-| `public.ta_forslag(forslag)`, `public.kommenter_forslag(forslag, tekst)`, `public.be_om_presisering(forslag, tekst)` | C | Behandlingen |
+| `public.ta_forslag(forslag)`, `public.kommenter_forslag(forslag, tekst)`, `public.be_om_presisering(forslag, tekst)` | C | Behandlingen. `ta_forslag` på et forslag en annen behandler har tatt, tar det over |
 | `public.godkjenn_forslag(forslag, begrunnelse default null)`, `public.avvis_forslag(forslag, begrunnelse)` | C | Vedtaket. Avvisning krever begrunnelse |
 | `public.marker_forslag_innarbeidet(forslag, objekt, revisjon)` | C | Kobler et godkjent forslag til en revisjon av utkastet som finnes og hører til ressursen (uten objekt og revisjon: elementet eller ressursen, på revisjonen utkastet står på) |
 
@@ -251,6 +251,9 @@ underveis `PT409`. Feilene skrives for å vises.
 - Hver statusendring låser forslagsraden og avviser en overgang som ikke
   passer statusen den finner (`PT409`), så to behandlere eller en behandler
   og forslagsstilleren ikke kan gjøre motstridende endringer samtidig.
+- `ta_forslag` på et forslag en annen behandler har tatt, tar det over
+  (hendelsen `tatt`); to samtidige: den andre venter på låsen og tar så
+  over. Vedtakene serialiseres fortsatt (`PT409`).
 - Et kall fra en redaktør (eller en forslagsstiller) som kommer mens
   tilbakekallingen av ansvaret eller avslutningen av medlemskapet ennå ikke er
   lagret, venter ikke, men regnes som gjort før den. Når fjerningen er lagret,
@@ -345,7 +348,10 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
 `src/varsler/modell.ts`, `src/components/varsler/Varsler.tsx`): kategoriene
 `mine_forslag` og `forslag_til_behandling` i gruppen «Endringsforslag».
 «Forslag til behandling» vises i innstillingene bare for dem som kan behandle
-forslag.
+forslag: `Rettigheter.behandlerForslag` fra `behandler_forslag` i
+`mine_rettigheter` (`src/auth/rettigheter.tsx`), så en redaktør uten
+administratorrolle får den, og en vanlig bruker ikke. En database uten feltet
+gir systemarkitektene og de lokale administratorene.
 
 **C2, databasen** (`supabase/migrations/20261116133500_p5_forslagsbehandling.sql`,
 prøvd i `src/__tests__/forslagsbehandling.test.ts`):

@@ -4,7 +4,7 @@ import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
-import { useRettigheter, type Rettigheter } from '../../auth/rettigheter'
+import { useRettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
 import { stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
@@ -403,19 +403,11 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
 }
 
 /**
- * Om den innloggede kan behandle endringsforslag: de lokale administratorene
- * og systemarkitektene, og redaktørene når rettighetene sier det.
- */
-function behandlerForslag(rettigheter: Rettigheter): boolean {
-  return rettigheter.systemarkitekt || rettigheter.administrerer.length > 0
-}
-
-/**
  * Hvilke kategorier brukeren får varsel om, gruppert etter hva de gjelder,
  * med ikon og overskrift. De obligatoriske står på og kan ikke slås av.
  */
 function Innstillinger({ status }: { status: Varselstatus }) {
-  const behandler = behandlerForslag(useRettigheter())
+  const behandler = useRettigheter().behandlerForslag
   return (
     <div className="varselinnstillinger">
       <p className="varselinnstillinger__ingress">Velg hva du vil få varsel om. Endringer i fortolkningen, kritiske faglige meldinger og svar til deg får alle.</p>
