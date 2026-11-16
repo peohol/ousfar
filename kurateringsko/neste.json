@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-16T21:26:22.783Z",
+  "oppdatert_kl": "2026-11-16T22:26:42.417Z",
   "malt_kl": "2026-11-16T17:27:37.718Z",
   "antall": {
     "klar": 91,
@@ -15,41 +15,28 @@
   "holdes_tilbake": null,
   "neste": [
     {
-      "stoff": "fluoksetin",
+      "stoff": "sertralin",
       "modus": "de_novo",
-      "poeng": 421.2,
+      "poeng": 423.5,
       "grunner": [
         "De novo-kuratering i runden som gjelder.",
         "Aldri kuratert.",
         "Ingen kuratering å regne alderen fra.",
         "5 av 13 redaksjonelle seksjoner er tomme.",
-        "19 av 29 elementer har ingen kilde."
+        "21 av 30 elementer har ingen kilde."
       ],
       "tidligst_kl": null
     },
     {
-      "stoff": "zuklopentiksol",
+      "stoff": "mianserin",
       "modus": "de_novo",
-      "poeng": 421.2,
+      "poeng": 422.5,
       "grunner": [
         "De novo-kuratering i runden som gjelder.",
         "Aldri kuratert.",
         "Ingen kuratering å regne alderen fra.",
         "5 av 13 redaksjonelle seksjoner er tomme.",
-        "17 av 26 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "amitriptylin",
-      "modus": "de_novo",
-      "poeng": 420.6,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "18 av 28 elementer har ingen kilde."
+        "17 av 25 elementer har ingen kilde."
       ],
       "tidligst_kl": null
     },
@@ -147,17 +134,52 @@
         "Bare 4 referanser."
       ],
       "tidligst_kl": null
+    },
+    {
+      "stoff": "perfenazin",
+      "modus": "de_novo",
+      "poeng": 418,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "13 av 22 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
   "blokkert": [
     {
+      "stoff": "amitriptylin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "fluoksetin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
       "stoff": "flupentiksol",
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -167,8 +189,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -178,8 +200,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -189,19 +211,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
-      "stoff": "maprotilin",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -218,23 +229,12 @@
       ]
     },
     {
-      "stoff": "mianserin",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
       "stoff": "mirtazapin",
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -244,8 +244,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
@@ -262,12 +262,12 @@
       ]
     },
     {
-      "stoff": "sertralin",
+      "stoff": "zuklopentiksol",
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-16T21:26:22.783Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-16T22:26:42.417Z",
           "kilde": "system"
         }
       ]
