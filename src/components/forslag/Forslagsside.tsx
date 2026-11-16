@@ -69,11 +69,10 @@ export function Forslagsside({ forslag, fane, onLukk }: { forslag?: string; fane
   const overskrift = useId()
   useLukkMedEscape(onLukk)
 
-  // En ny side begynner øverst, med fokus på overskriften.
+  // En ny side begynner øverst; overskriften får fokus når den vises (`Hode`).
   useEffect(() => {
     window.scrollTo({ top: 0 })
-    document.getElementById(overskrift)?.focus({ preventScroll: true })
-  }, [forslag, fane, overskrift])
+  }, [forslag, fane])
 
   return (
     <section className="gruppeside forslagsside" aria-labelledby={overskrift}>
@@ -91,7 +90,14 @@ export function Forslagsside({ forslag, fane, onLukk }: { forslag?: string; fane
   )
 }
 
+/**
+ * Sidens hode. Overskriften får fokus når den vises og når tittelen skifter
+ * (en annen fane), også når den først vises etter at forslaget er hentet.
+ */
 function Hode({ overskrift, overtittel, tittel, children }: { overskrift: string; overtittel: ReactNode; tittel: string; children?: ReactNode }) {
+  useEffect(() => {
+    document.getElementById(overskrift)?.focus({ preventScroll: true })
+  }, [overskrift, tittel])
   return (
     <header className="gruppeside__hode">
       <p className="gruppeside__overtittel">{overtittel}</p>

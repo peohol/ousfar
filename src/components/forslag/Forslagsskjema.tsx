@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { forslagsadresse } from '../../domain/rute'
-import { sendForslag } from '../../forslag/api'
+import { hentSideversjon, sendForslag } from '../../forslag/api'
 import { GRENSER, TOM_KILDE, finnKildefeil, kilderTilLagring, type Kildeutkast } from '../../forslag/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
@@ -37,6 +37,8 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
   const [begrunnelse, setBegrunnelse] = useBevart('begrunnelse', '')
   const [kilder, setKilder] = useBevart<Kildeutkast[]>('kilder', [])
   const [sendt, setSendt] = useBevart<string | null>('sendt', null)
+  // Fagsidens versjon da skjemaet ble åpnet; den bevares, så en oppdatering ikke henter en nyere.
+  const [sideversjon, setSideversjon] = useBevart<number | null>('sideversjon', null)
   const [feil, setFeil] = useState<{ melding: string; felt: Feilfelt } | null>(null)
   const [sender, setSender] = useState(false)
   const [forlater, setForlater] = useState(false)
@@ -47,6 +49,21 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
   const begrunnelseRef = useRef<HTMLTextAreaElement>(null)
 
   const mal = apning.valg[Math.min(valgt, apning.valg.length - 1)] ?? apning.valg[0]!
+
+  useEffect(() => {
+    if (!apning.fagside || sideversjon !== null) return
+    let aktiv = true
+    // Uten versjonen (feil, eller ingen versjon) lagrer databasen den nyeste.
+    hentSideversjon(apning.fagside).then(
+      (nr) => aktiv && setSideversjon(nr),
+      () => undefined,
+    )
+    return () => {
+      aktiv = false
+    }
+    // Bare når skjemaet åpnes for en fagside.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apning.fagside])
   const skrevet = forslag.trim() !== '' || begrunnelse.trim() !== '' || kilderTilLagring(kilder).length > 0
 
   const vedLukking = () => {
@@ -73,7 +90,7 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
     setSender(true)
     setFeil(null)
     try {
-      setSendt(await sendForslag({ mal, forslag: forslag.trim(), begrunnelse: begrunnelse.trim(), kilder }))
+      setSendt(await sendForslag({ mal, sideversjon, forslag: forslag.trim(), begrunnelse: begrunnelse.trim(), kilder }))
     } catch (e) {
       setFeil({ melding: (e as Error).message, felt: null })
     } finally {
@@ -353,8 +370,8 @@ function Kvittering({ id, onLukk }: { id: string; onLukk: () => void }) {
   return (
     <div className="forslagsskjema__kvittering" role="status">
       <p>
-        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Du får et varsel når det skjer noe med det, og du kan
-        følge det og trekke det tilbake under «Mine forslag».
+        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Under «Mine forslag» kan du følge det, svare når
+        noen spør, og trekke det tilbake.
       </p>
       <div className="skjema__knapper">
         <Button variant="subtle" onClick={onLukk}>

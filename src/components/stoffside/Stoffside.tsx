@@ -258,9 +258,14 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   const forslagsapning = useMemo<Forslagsapning | null>(
     () =>
       visesPublisert
-        ? { tittel: navn, valg: forslagsvalgForFagside(navn, side.data, modell, konsentrasjon), referanser: forslagsreferanser(modell) }
+        ? {
+            tittel: navn,
+            valg: forslagsvalgForFagside(navn, side.data, modell, konsentrasjon),
+            referanser: forslagsreferanser(modell),
+            fagside: slug,
+          }
         : null,
-    [visesPublisert, navn, side.data, modell, konsentrasjon],
+    [visesPublisert, navn, side.data, modell, konsentrasjon, slug],
   )
   // Treffene telles på nytt når innholdet endres, også når konsentrasjonene vises i en annen enhet.
   const sokeinnhold = useMemo(() => [side.data, konsentrasjon], [side.data, konsentrasjon])

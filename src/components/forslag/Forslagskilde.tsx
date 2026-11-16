@@ -17,6 +17,8 @@ export interface Forslagsapning {
   valgt?: number
   /** Referansene som kan velges som kilde, f.eks. dem fagsiden viser. */
   referanser?: readonly { id: string; tittel: string }[]
+  /** Fagsidens nøkkel (`#/stoff/<nøkkel>`), så skjemaet kan lagre versjonen av siden. */
+  fagside?: string
 }
 
 type Apne = (apning: Forslagsapning) => void

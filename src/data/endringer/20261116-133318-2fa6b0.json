@@ -7,9 +7,9 @@
     "Funksjonalitet"
   ],
   "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
   "punkter": [
     "«Foreslå endring» står i menyen på fagsiden, ved hvert kort og hver tekst, og i fortolkningen. Skjemaet viser teksten slik den står, og har plass til forslaget, begrunnelsen og kildene.",
     "Under «Mine forslag» i kontomenyen kan du følge forslagene dine, svare når noen spør, og trekke dem tilbake. Et forslag endrer ingenting før det er behandlet."
-  ],
-  "utenVarsel": true
+  ]
 }

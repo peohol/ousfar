@@ -16,18 +16,20 @@ export async function kall(navn: string, argumenter: Record<string, unknown> = {
 
 export interface Nyttforslag {
   mal: Forslagsmal
+  /** Fagsidens versjon da skjemaet ble åpnet, eller `null` (da lagres den nyeste). */
+  sideversjon?: number | null
   forslag: string
   begrunnelse: string
   kilder: readonly Kildeutkast[]
 }
 
 /** Sender forslaget. Gir ID-en. */
-export async function sendForslag({ mal, forslag, begrunnelse, kilder }: Nyttforslag): Promise<string> {
+export async function sendForslag({ mal, sideversjon = null, forslag, begrunnelse, kilder }: Nyttforslag): Promise<string> {
   const id = await kall('foresla_endring', {
     ressurs: mal.ressurs,
     element: mal.element,
     grunnrevisjon: mal.grunnrevisjon,
-    sideversjon: null,
+    sideversjon,
     sted: mal.sted.trim().slice(0, 200) || null,
     utdrag: utdragTilLagring(mal.utdrag),
     forslag,
@@ -36,6 +38,17 @@ export async function sendForslag({ mal, forslag, begrunnelse, kilder }: Nyttfor
   })
   if (typeof id !== 'string') throw new Error(UVENTET_FEIL)
   return id
+}
+
+/**
+ * Den nyeste versjonen av fagsiden (`les_sideversjoner`, nyeste først), eller
+ * `null` når den ikke finnes. Leses når skjemaet åpnes, så forslaget viser
+ * til siden slik den var da, ikke slik den er når det sendes.
+ */
+export async function hentSideversjon(stoff: string): Promise<number | null> {
+  const versjoner = await kall('les_sideversjoner', { stoff })
+  const nr = Array.isArray(versjoner) ? (versjoner[0] as { nr?: unknown } | undefined)?.nr : undefined
+  return typeof nr === 'number' && Number.isInteger(nr) && nr >= 1 ? nr : null
 }
 
 export async function hentMineForslag(): Promise<Forslagsrad[]> {

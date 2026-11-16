@@ -26,6 +26,7 @@ const api = vi.hoisted(() => ({
   hentForslag: vi.fn(async (): Promise<unknown> => null),
   trekkForslag: vi.fn(async () => undefined),
   svarPaForslag: vi.fn(async () => undefined),
+  hentSideversjon: vi.fn(async (): Promise<number | null> => 7),
 }))
 vi.mock('../forslag/api', () => api)
 
@@ -171,7 +172,7 @@ function Fagsideutsnitt() {
 function visFagside() {
   return render(
     <ForslagskildeProvider>
-      <ForslagsstedKilde apning={{ tittel: 'Citalopram', valg: VALG, referanser: [{ id: 'r', tittel: 'Studie' }] }}>
+      <ForslagsstedKilde apning={{ tittel: 'Citalopram', valg: VALG, referanser: [{ id: 'r', tittel: 'Studie' }], fagside: 'citalopram' }}>
         <Fagsideutsnitt />
       </ForslagsstedKilde>
     </ForslagskildeProvider>,
@@ -234,13 +235,20 @@ describe('knappen og skjemaet', () => {
     await bruker.selectOptions(within(vindu).getByLabelText('Eller en referanse fra siden for kilde 1'), 'r')
     await bruker.click(within(vindu).getByRole('button', { name: 'Send forslaget' }))
 
+    // Fagsidens versjon da skjemaet ble åpnet, ikke den nyeste når det sendes.
+    expect(api.hentSideversjon).toHaveBeenCalledTimes(1)
+    expect(api.hentSideversjon).toHaveBeenCalledWith('citalopram')
     expect(api.sendForslag).toHaveBeenCalledWith({
       mal: VALG[1],
+      sideversjon: 7,
       forslag: '10 mg om morgenen.',
       begrunnelse: 'Ny retningslinje.',
       kilder: [{ tekst: '', lenke: 'https://eksempel.no', referanse: 'r' }],
     })
     const kvittering = await screen.findByRole('dialog', { name: /Forslaget er sendt/ })
+    // Varslene om forslag kommer med behandlingen; til da viser kvitteringen bare til «Mine forslag».
+    expect(kvittering.textContent).toMatch(/«Mine forslag»/)
+    expect(kvittering.textContent).not.toMatch(/varsel/i)
     // Fokus står på veien videre, så tastaturet ikke mister plassen.
     await waitFor(() => expect(document.activeElement).toBe(within(kvittering).getByRole('button', { name: 'Se forslaget' })))
     await bruker.click(within(kvittering).getByRole('button', { name: 'Se forslaget' }))
@@ -329,7 +337,9 @@ describe('ett forslag', () => {
   it('viser teksten slik den sto, forslaget, kildene og tidslinjen', async () => {
     api.hentForslag.mockResolvedValueOnce(forslaget())
     render(<Forslagsside forslag={ID} onLukk={() => {}} />)
-    expect(await screen.findByRole('heading', { level: 1, name: 'Fagside · Citalopram · Dosering' })).toBeTruthy()
+    const overskrift = await screen.findByRole('heading', { level: 1, name: 'Fagside · Citalopram · Dosering' })
+    // Overskriften får fokus når den vises, også når forslaget først må hentes.
+    await waitFor(() => expect(document.activeElement).toBe(overskrift))
     expect(screen.getByText('20 mg om morgenen.')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'https://eksempel.no' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Gå til fagsiden' }).getAttribute('href')).toBe('#/stoff/citalopram')
