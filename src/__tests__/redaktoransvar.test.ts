@@ -316,7 +316,7 @@ describe('redaktøren for ett regelsett', () => {
       'redaktorRessursA',
       'mine_redaktoransvar',
     )
-    expect(mine).toMatchObject([{ omrade: 'ressurs', nasjonalt: false, gjelder: true, ressurs: { id: obj.regelsett1, analyttkode: 'P5TESTEN' } }])
+    expect(mine).toMatchObject([{ omrade: 'ressurs', nasjonalt: false, gjelder: true, ressurs: { id: obj.regelsett1, analyttkode: 'P5TESTEN', analyttkoder: ['P5TESTEN'] } }])
     expect(await rpc('vanligA', 'mine_redaktoransvar')).toEqual([])
     expect((await rpc<{ redaktor: boolean; behandler_forslag: boolean }>('redaktorRessursA', 'mine_rettigheter'))).toMatchObject({
       redaktor: true,
@@ -377,7 +377,7 @@ describe('oversikten for den som tildeler', () => {
     nasjonalt: { vises: boolean; aktivert: boolean }
     fagmiljoer: { id: string }[]
     ansvar: { bruker: { id: string }; omrade: string; fagmiljo: { id: string } | null; ressurs: { id: string } | null }[]
-    uten_redaktor: { id: string }[]
+    ressurser: { id: string; type: string; analyttkoder: string[]; har_redaktor: boolean }[]
     fagsider_uten_redaktor: number | null
   }
 
@@ -391,13 +391,14 @@ describe('oversikten for den som tildeler', () => {
         [g.id.redaktorFortolkningA, 'fortolkning'],
       ].sort(),
     )
-    // Fortolkningsredaktøren dekker alle regelsettene i A.
-    expect(a.uten_redaktor).toEqual([])
+    // Alle regelsettene i A, med kodene; fortolkningsredaktøren dekker dem alle.
+    expect(a.ressurser.find((r) => r.id === obj.regelsett1)).toMatchObject({ type: 'intervallregelsett', analyttkoder: ['P5TESTEN'], har_redaktor: true })
+    expect(a.ressurser.filter((r) => !r.har_redaktor)).toEqual([])
     expect(a.fagsider_uten_redaktor).toBeNull()
 
     const b = await rpc<Oversikt>('adminB', 'les_redaktoransvar')
     expect(b.ansvar).toEqual([])
-    expect(b.uten_redaktor.map((r) => r.id)).toEqual([obj.regelsettB])
+    expect(b.ressurser.map((r) => [r.id, r.har_redaktor])).toEqual([[obj.regelsettB, false]])
     // Ingenting fra A.
     const tekst = JSON.stringify(b)
     for (const id of [obj.regelsett1, obj.regelsett2, obj.kommentar1, g.id.redaktorRessursA, g.id.redaktorFortolkningA]) expect(tekst).not.toContain(id)
@@ -409,7 +410,7 @@ describe('oversikten for den som tildeler', () => {
     const s = await rpc<Oversikt>('systemarkitekt', 'les_redaktoransvar')
     expect(s.nasjonalt).toEqual({ vises: true, aktivert: false })
     expect(s.fagmiljoer.map((f) => f.id).sort()).toEqual([g.fagmiljo.A, g.fagmiljo.B].sort())
-    expect(s.uten_redaktor.map((r) => r.id)).toContain(obj.regelsettB)
+    expect(s.ressurser.filter((r) => !r.har_redaktor).map((r) => r.id)).toContain(obj.regelsettB)
     const infosider = await db.query<{ n: number }>(`select count(*)::int as n from public.redigerbare_objekter where type = 'infoside'`)
     expect(s.fagsider_uten_redaktor).toBe(infosider.rows[0]!.n)
     // Med ett fagmiljø: bare det, uten det nasjonale.

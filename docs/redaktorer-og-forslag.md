@@ -219,7 +219,7 @@ kan utvides av eieren med standardverdier.
 | --- | --- | --- |
 | `public.tildel_redaktoransvar(bruker, omrade, ressurs default null, fagmiljo default null, merknad default null) → uuid` | A | Gir ansvar etter myndigheten. Nasjonalt avvises (42501) til B2 er slått på |
 | `public.tilbakekall_redaktoransvar(ansvar) → void` | A | Avslutter ansvaret |
-| `public.les_redaktoransvar(fagmiljo default null) → jsonb` | A | Oversikten for den som tildeler: ansvarene og ressursene uten ansvarlig redaktør, innenfor egen myndighet |
+| `public.les_redaktoransvar(fagmiljo default null) → jsonb` | A | Oversikten for den som tildeler: ansvarene og de lokale ressursene (`ressurser`, med `har_redaktor` og analyttkodene), innenfor egen myndighet |
 | `public.mine_redaktoransvar() → jsonb` | A | Den innloggedes egne ansvar, med ressursbeskrivelsene |
 | `public.ressursens_redaktoransvar(ressurs) → jsonb` | A | Redaktørene for én ressurs, for dem som kan behandle forslag til den eller administrere den |
 | `public.mine_rettigheter()` | A | Får `redaktor` (har aktivt ansvar) og `behandler_forslag` (kan behandle forslag til noe) |
@@ -328,8 +328,8 @@ tilbakekalles ansvaret i fagmiljøet også i tabellen
 (`medlemskap_redaktoransvar`), så det ikke kommer tilbake med et nytt
 medlemskap.
 
-**Hvem ser hva.** `les_redaktoransvar` viser ansvarene og ressursene uten
-redaktør innenfor egen myndighet; et annet fagmiljø gir `42501`, som for en
+**Hvem ser hva.** `les_redaktoransvar` viser ansvarene og de lokale
+ressursene, med om de har en redaktør, innenfor egen myndighet; et annet fagmiljø gir `42501`, som for en
 som ikke administrerer noe. `ressursens_redaktoransvar` viser redaktørene for
 én ressurs til dem som kan behandle forslag til den; en ressurs den innloggede
 ikke kan lese, gir `PT404`. `mine_redaktoransvar` viser egne ansvar, og

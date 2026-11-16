@@ -924,6 +924,29 @@ revoke all on function intern.redaktorperson(uuid) from public, anon, authentica
 
 -- Ett ansvar slik oversiktene viser det, for `leser`: ressursen beskrives
 -- bare når leseren kan lese den.
+-- En ressurs slik oversiktene viser den: beskrivelsen fra grunnmuren og
+-- analyttkodene regelsettet gjelder (tom for en fagside), så appen kan vise
+-- redigeringen av fortolkningen for en redaktør med ansvar for ett regelsett.
+create function intern.redaktorressurs(ressurs uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select b || jsonb_build_object('analyttkoder', case b ->> 'type'
+      when 'scenarioregelsett' then coalesce((
+        select jsonb_agg(distinct a.kode) from public.scenarioanalytter a where a.objekt_id = redaktorressurs.ressurs
+      ), '[]'::jsonb)
+      when 'infoside' then '[]'::jsonb
+      else case when b ->> 'analyttkode' is null then '[]'::jsonb else jsonb_build_array(b -> 'analyttkode') end
+    end)
+  from (select intern.ressursbeskrivelse(redaktorressurs.ressurs) as b) x
+  where x.b is not null
+$$;
+
+revoke all on function intern.redaktorressurs(uuid) from public, anon, authenticated, service_role;
+
 create function intern.redaktoransvarsbeskrivelse(a public.redaktoransvar, leser uuid)
 returns jsonb
 language sql
@@ -938,7 +961,7 @@ as $$
     'gjelder', intern.redaktoransvar_gjelder(a),
     'bruker', intern.redaktorperson(a.bruker_id),
     'ressurs', case when a.ressurs_id is not null and intern.kan_lese_objekt(a.ressurs_id, redaktoransvarsbeskrivelse.leser)
-      then intern.ressursbeskrivelse(a.ressurs_id) end,
+      then intern.redaktorressurs(a.ressurs_id) end,
     'fagmiljo', (select intern.fagmiljoreferanse(f) from public.fagmiljoer f where f.id = x.fagmiljo),
     'tildelt_av', intern.redaktorperson(a.tildelt_av),
     'tildelt_kl', a.tildelt_kl,
@@ -1163,17 +1186,19 @@ begin
       where a.tilbakekalt_kl is null
         and (m.id = any (omrader) or (m.id is null and nasjonalt))
     ), '[]'::jsonb),
-    'uten_redaktor', coalesce((
-      select jsonb_agg(b.beskrivelse order by b.beskrivelse ->> 'fagmiljo_id', b.beskrivelse ->> 'type', b.beskrivelse ->> 'navn')
+    'ressurser', coalesce((
+      select jsonb_agg(b.beskrivelse || jsonb_build_object('har_redaktor', b.har_redaktor)
+        order by b.beskrivelse ->> 'fagmiljo_id', b.beskrivelse ->> 'type', b.beskrivelse ->> 'navn')
       from (
-        select intern.ressursbeskrivelse(o.id) as beskrivelse
+        select intern.redaktorressurs(o.id) as beskrivelse,
+          exists (select 1 from intern.ressursens_redaktorer(o.id)) as har_redaktor
         from public.redigerbare_objekter o
         join public.ressursomfang r on r.objekt_id = o.id
         where intern.er_ressurstype(o.type)
           and r.omfang = 'fagmiljo'
           and r.fagmiljo_id = any (omrader)
-          and not exists (select 1 from intern.ressursens_redaktorer(o.id))
       ) b
+      where b.beskrivelse is not null
     ), '[]'::jsonb),
     'fagsider_uten_redaktor', case when nasjonalt then (
       select count(*) from public.redigerbare_objekter o
