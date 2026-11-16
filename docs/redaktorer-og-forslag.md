@@ -410,7 +410,7 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
 
 ## Behandling (tråd C)
 
-**C1, varslene** (`supabase/migrations/20261116131000_p5_forslagsvarsler.sql`,
+**C1, varslene** (`supabase/migrations/20261116132000_p5_forslagsvarsler.sql`,
 `src/varsler/modell.ts`, `src/components/varsler/Varsler.tsx`): kategoriene
 `mine_forslag` og `forslag_til_behandling` i gruppen «Endringsforslag».
 «Forslag til behandling» vises i innstillingene bare for dem som kan behandle
