@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
 import { hentMedlemsoversikt, type Medlem } from '../../auth/api'
 import { useRettigheter } from '../../auth/rettigheter'
 import { tidspunkt } from '../../faginnhold/historikk'
@@ -65,6 +65,11 @@ export function Redaktorer({
   // Tildelingen som skrives, overlever en oppdatering av appen.
   const [utkast, setUtkast] = useBevart<Utkast>('redaktorer-utkast', TOMT)
   const id = useId()
+  // Svaret på en handling står øverst; det rulles fram, så det ses også på en smal skjerm.
+  const svar = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (feil || melding) svar.current?.scrollIntoView?.({ block: 'nearest' })
+  }, [feil, melding])
 
   const les = useCallback(async () => {
     try {
@@ -194,16 +199,18 @@ export function Redaktorer({
         administratorene som før.
       </p>
 
-      {feil && (
-        <p className="skjemafeil" role="alert">
-          {feil}
-        </p>
-      )}
-      {melding && (
-        <p className="felt__hjelp" role="status">
-          {melding}
-        </p>
-      )}
+      <div ref={svar}>
+        {feil && (
+          <p className="skjemafeil" role="alert">
+            {feil}
+          </p>
+        )}
+        {melding && (
+          <p className="felt__hjelp" role="status">
+            {melding}
+          </p>
+        )}
+      </div>
 
       {oversikt === null ? (
         !feil && <p className="autoerstatt__tomt">Henter redaktørene …</p>
@@ -298,7 +305,9 @@ export function Redaktorer({
 
           <section aria-labelledby={`${id}-uten`} className="verktoysperrer__del">
             <h3 id={`${id}-uten`}>Uten redaktør</h3>
-            {utenRedaktor.length === 0 ? (
+            {regelsett.length === 0 ? (
+              <p className="autoerstatt__tomt">{fagmiljo.navn} har ingen regelsett ennå.</p>
+            ) : utenRedaktor.length === 0 ? (
               <p className="autoerstatt__tomt">Alle regelsettene i {fagmiljo.navn} har en redaktør.</p>
             ) : (
               <>
