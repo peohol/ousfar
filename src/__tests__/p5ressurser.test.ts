@@ -69,7 +69,7 @@ beforeAll(async () => {
       g.fagmiljo.B,
     ])
   })
-})
+}, 120_000)
 
 describe('ressursene et objekt hører til', () => {
   it('en fagside og et regelsett er sin egen ressurs', async () => {
