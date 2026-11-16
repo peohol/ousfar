@@ -4,7 +4,7 @@ import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useOkt, useProfil } from '../../auth/okt'
 import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
-import { gruppeadresse } from '../../domain/rute'
+import { forslagsadresse, gruppeadresse } from '../../domain/rute'
 import { SYSTEM, type Bevegelse, type Tema, type Valg, type Valgstyring } from '../../domain/systemvalg'
 import { useGrupper } from '../../grupper/kilde'
 import { VISNINGSENHETER, type Visningsenhet } from '../../enheter/konsentrasjon'
@@ -118,6 +118,16 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   onClick={() => {
                     lukk()
                     window.location.hash = gruppeadresse()
+                  }}
+                />
+              </li>
+              <li>
+                <Menyvalg
+                  ikon="foresla"
+                  tekst="Mine forslag"
+                  onClick={() => {
+                    lukk()
+                    window.location.hash = forslagsadresse()
                   }}
                 />
               </li>

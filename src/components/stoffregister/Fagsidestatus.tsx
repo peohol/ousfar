@@ -8,6 +8,7 @@ import { useRegisterhandling } from './Registerhandling'
 import { slettesForGodt } from './papirkurv'
 import { Versjonsliste } from '../kuratering/Utgavelister'
 import { useValgfriFaginnholdskilde } from '../stoffside/Faginnholdskilde'
+import { useForslagFor } from '../forslag/Forslagskilde'
 
 /**
  * Fagsidens plass i stoffregisteret, på selve siden: menyen som arkiverer og
@@ -26,7 +27,8 @@ export function Fagsidemeny({ slug, navn }: { slug: string; navn?: string }) {
   const [versjoner, setVersjoner] = useBevart('versjoner', false)
   const stoff = kilde?.register.menystoff(slug)
   const register = kilde?.kanEndre && stoff && kilde.register.status(slug) === 'aktiv' ? { ...kilde, stoff } : null
-  if (!register && !kuratering) return null
+  const foresla = useForslagFor(null)
+  if (!register && !kuratering && !foresla) return null
   const slett = register ? kanSletteStoff(register.stoff, register.admin) : null
   return (
     <>
@@ -37,6 +39,18 @@ export function Fagsidemeny({ slug, navn }: { slug: string; navn?: string }) {
       >
         {(lukk) => (
           <ul className="nedtrekk__valg">
+            {foresla && (
+              <li>
+                <Menyvalg
+                  ikon="foresla"
+                  tekst="Foreslå endring"
+                  onClick={() => {
+                    lukk()
+                    foresla()
+                  }}
+                />
+              </li>
+            )}
             {kuratering && (
               <li>
                 <Menyvalg

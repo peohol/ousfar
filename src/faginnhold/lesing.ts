@@ -105,6 +105,32 @@ export interface Regeldata {
 
 export const INGEN_REGLER: Regeldata = { regelsett: {}, thcregelsett: null, scenarioregelsett: {} }
 
+/** Hva fortolkningsreglene for en fortolkningsmodul leses etter. */
+export interface Regelgrunnlag {
+  /** Analyttkodene, for intervallregelsettene. */
+  koder: readonly string[]
+  /** Modulene som fortolkes med scenarioregler. */
+  moduler: readonly string[]
+  /** Om en av analyttene er THC-syre. */
+  medThc: boolean
+}
+
+/**
+ * Reglene for analyttene i én fortolkningsmodul, i én tilstand: intervall-
+ * reglene for hver kode, scenarioreglene for hver modul og THC-syrereglene.
+ * Det som ikke finnes, er utelatt. Redigeringen og forslagene leser det samme.
+ */
+export async function lesRegeldata(leser: Faginnholdsleser, { koder, moduler, medThc }: Regelgrunnlag, t: Tilstand): Promise<Regeldata> {
+  const [intervall, thcregelsett, scenario] = await Promise.all([
+    Promise.all(koder.map(async (kode) => [kode, await leser.finnIntervallregelsett(kode, t)] as const)),
+    medThc ? leser.lesThcRegelsett(t) : null,
+    Promise.all(moduler.map(async (id) => [id, await leser.finnScenarioregelsett(id, t)] as const)),
+  ])
+  const utfylt = <T,>(par: readonly (readonly [string, T | null])[]) =>
+    Object.fromEntries(par.filter((p): p is readonly [string, T] => p[1] !== null))
+  return { regelsett: utfylt(intervall), thcregelsett, scenarioregelsett: utfylt(scenario) }
+}
+
 export interface Faginnholdsleser {
   /** Stoffsiden for stoffet med denne nøkkelen. {@link TOM_STOFFSIDE} når siden ikke finnes. */
   lesStoffside(slug: string, tilstand: Tilstand): Promise<Stoffsidedata>
