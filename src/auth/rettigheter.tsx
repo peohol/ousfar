@@ -48,10 +48,14 @@ export interface Rettigheter {
   stoffregister: boolean
   /** Fagmiljøene den innloggede kan opprette nye brukere i (id-ene); nye kontoer blir medlemmer der. */
   opprettBrukerI: readonly string[]
-  /** Har et redaktøransvar som gjelder nå (P5, docs/redaktorer-og-forslag.md). */
-  redaktor: boolean
-  /** Kan behandle endringsforslag til noe: redaktørene, administratorene og systemarkitektene. */
+  /**
+   * Kan behandle endringsforslag til noe: systemarkitekt, lokal administrator
+   * eller redaktør med et ansvar som gjelder (`behandler_forslag`,
+   * docs/redaktorer-og-forslag.md). Databasen avgjør hvilke forslag.
+   */
   behandlerForslag: boolean
+  /** Har et redaktøransvar som gjelder nå (`redaktor`, docs/redaktorer-og-forslag.md). */
+  redaktor: boolean
 }
 
 export const INGEN_RETTIGHETER: Rettigheter = {
@@ -62,8 +66,8 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   velgbareFagmiljoer: [],
   stoffregister: false,
   opprettBrukerI: [],
-  redaktor: false,
   behandlerForslag: false,
+  redaktor: false,
 }
 
 /** Et fagmiljø i svaret, eller `null` når formen er feil. Det som mangler av standard og åpent, regnes som nei. */
@@ -82,17 +86,21 @@ const lesFagmiljoer = (v: unknown): Fagmiljoreferanse[] =>
 export function lesRettigheter(svar: unknown): Rettigheter {
   const r = typeof svar === 'object' && svar !== null ? (svar as Record<string, unknown>) : {}
   const mineFagmiljoer = lesFagmiljoer(r.mine_fagmiljoer)
+  const systemarkitekt = r.systemarkitekt === true
+  const administrerer = lesFagmiljoer(r.administrerer)
   return {
-    systemarkitekt: r.systemarkitekt === true,
-    administrerer: lesFagmiljoer(r.administrerer),
+    systemarkitekt,
+    administrerer,
     arbeidsfagmiljo: lesFagmiljo(r.arbeidsfagmiljo),
     mineFagmiljoer,
     // En database uten feltet gir bare medlemskapene å velge blant, som før.
     velgbareFagmiljoer: 'velgbare_fagmiljoer' in r ? lesFagmiljoer(r.velgbare_fagmiljoer) : mineFagmiljoer,
     stoffregister: r.stoffregister === true,
     opprettBrukerI: lesFagmiljoer(r.opprett_bruker_i).map((f) => f.id),
+    // En database uten feltet kjenner ikke redaktørene; der behandler myndigheten forslagene.
+    behandlerForslag:
+      'behandler_forslag' in r ? r.behandler_forslag === true : systemarkitekt || administrerer.length > 0,
     redaktor: r.redaktor === true,
-    behandlerForslag: r.behandler_forslag === true,
   }
 }
 
@@ -135,7 +143,6 @@ export const UTEN_ARBEIDSFAGMILJO = 'uten-arbeidsfagmiljo'
 export const arbeidskontekst = (r: Rettigheter, kjent: boolean): string | null =>
   kjent ? (r.arbeidsfagmiljo?.id ?? UTEN_ARBEIDSFAGMILJO) : null
 
-/** Om den innloggede har noe å gjøre i adminmenyen. */
 /** Om den innloggede kan gi redaktøransvar: lokale administratorer og systemarkitektene. */
 export const kanGiRedaktoransvar = (r: Rettigheter): boolean => r.systemarkitekt || r.administrerer.length > 0
 
@@ -147,6 +154,7 @@ export const kanGiRedaktoransvar = (r: Rettigheter): boolean => r.systemarkitekt
 export const kanPublisereFortolkningen = (r: Rettigheter): boolean =>
   r.systemarkitekt || (r.arbeidsfagmiljo !== null && r.administrerer.some((f) => f.id === r.arbeidsfagmiljo!.id))
 
+/** Om den innloggede har noe å gjøre i adminmenyen. */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
   r.systemarkitekt || r.opprettBrukerI.length > 0 || r.administrerer.length > 0
 
