@@ -353,6 +353,23 @@ som ikke administrerer noe. `ressursens_redaktoransvar` viser redaktørene for
 ikke kan lese, gir `PT404`. `mine_redaktoransvar` viser egne ansvar, og
 `mine_rettigheter` har `redaktor` og `behandler_forslag`.
 
+**Skjermbildene.** «Redaktører» i administrasjonsmenyen
+(`src/components/konto/Redaktorer.tsx`), for de lokale administratorene og
+systemarkitektene: redaktørene i fagmiljøet, «Gi redaktøransvar» (et aktivt
+medlem, hele fortolkningen eller ett regelsett, valgfri merknad), «Ta tilbake»
+etter en bekreftelse, og regelsettene uten redaktør. Systemarkitektene ser i
+tillegg det nasjonale valget, avslått med forklaringen til B2 er slått på.
+«Mitt redaktøransvar» i kontomenyen viser en redaktør hva hen har ansvar for.
+Redigeringen av fortolkningen vises for en redaktør for fortolkningen og, for
+en redaktør for ett regelsett, bare for kodene i det
+(`src/faginnhold/redigeringsrett.ts`). Der vises bare regelsettene redaktøren
+har ansvar for, også når siden har flere (scenarioreglene, THC-syren og
+intervallreglene for hver kode er hvert sitt regelsett), med en linje om hvor
+mange andre som ikke vises; en redaktør har ingen «Publiser», bare
+beskjeden om at en administrator publiserer. Redigeringen viser hvem som er
+redaktør for regelsettene (`Redaktorlinje`). Fagsidene får det samme når
+nasjonale redaktører slås på.
+
 **Ytelsen.** Målt med
 `MAAL_REKKEVIDDE=1 MAAL_ENDRING=_redaktoransvar.sql npx vitest run src/__tests__/ytelse/rekkeviddeytelse.test.ts`
 (16.11.2026, median av 5 kall): ingen av kallene ble merkbart tregere
@@ -599,7 +616,7 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
 | A1 Redaktøransvar i databasen | [#421](https://github.com/peohol/ousfar/pull/421) | Slått sammen |
-| A2 Skjermbildene for redaktøransvar | — | — |
+| A2 Skjermbildene for redaktøransvar | [#423](https://github.com/peohol/ousfar/pull/423) | Slått sammen |
 | B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Slått sammen |
 | B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Slått sammen |

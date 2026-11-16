@@ -12,5 +12,5 @@
     "På hvert forslag kan de ta det, kommentere, be om en presisering, godkjenne eller avvise med begrunnelse, og åpne utkastet. Siden sier fra når innholdet er endret siden forslaget ble skrevet, og viser hva som er endret.",
     "Et godkjent forslag publiserer ingenting. Det arbeides inn i utkastet og markeres som innarbeidet når det er gjort."
   ],
-  "utenVarsel": true
+  "gjelder": ["hele appen"]
 }
