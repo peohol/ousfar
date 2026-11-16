@@ -431,15 +431,16 @@ sendt til eierne gjennom P5-tråden:
    Fortolkning av … · Reglene for HBUP» (tråd B).
 
 **Etter rettingene i #429.** Kontrollen (`d3.ts`) er kjørt på nytt på #429
-(`35e7b97`) med databasen bygd på nytt: 58 i orden og 2 avvik. Funn 1, 3 og 4
+(`e2ca194`) med databasen bygd på nytt: 58 i orden og 2 avvik. Funn 1, 3 og 4
 er rettet. Utvalgene, fanene og bryteren i køen er 44 px på smal skjerm, listen
 har kanten og de runde hjørnene, og tittelen sier «Fortolkning av … · Reglene
 for HBUP». De to avvikene er funn 2, som eieren har latt stå med vilje: «Send
 forslaget» er appens vanlige kompakte knapp (42 px, som i redigeringen ellers),
 og «Gå til fortolkningen» er en lenke i teksten. Begge er over minstekravet i
 WCAG 2.2 (24 px, og lenker i tekst er unntatt), men under 44 px i avsnitt 5, så
-funn 2 står åpent som et bevisst avvik. Kjøringen fant én ny feil i #429: på
-smal skjerm står tallet inntil navnet («Nye0»), og den er sendt til eieren.
+funn 2 står åpent som et bevisst avvik. En første kjøring på #429 fant at
+tallet stod inntil navnet på smal skjerm («Nye0»). Eieren rettet det samme
+kveld, og kjøringen over viser «Nye 0».
 Skjermbildene ligger i `p5/qa/d3/etter-429/`.
 
 De fem funnene fra den tidlige kontrollen av del B er prøvd på nytt på main,
