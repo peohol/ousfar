@@ -118,6 +118,8 @@ language plpgsql
 security definer
 set search_path = ''
 as $$
+declare
+  fagmiljo uuid;
 begin
   if tg_op = 'INSERT' then
     if new.tilbakekalt_kl is not null or new.tilbakekalt_av is not null then
@@ -131,6 +133,18 @@ begin
     then
       raise exception 'Nasjonalt redaktøransvar for fagsidene er ikke slått på ennå. Det slås på når OUSFAR Fag har avklart hvordan godkjente forslag går inn i kurateringen.'
         using errcode = '42501';
+    end if;
+    -- Også rett i tabellen: mottakeren må være aktivt medlem av fagmiljøet
+    -- (lokalt) eller av et fagmiljø (nasjonalt). Setningen har tatt den felles
+    -- låsen (`redaktoransvar_serialiser`), så et medlemskap som avsluttes
+    -- samtidig, er enten ferdig her eller venter; `for share` stopper en
+    -- `repeatable read` som ser et gammelt bilde, med en serialiseringsfeil.
+    fagmiljo := intern.redaktoransvarets_fagmiljo(new.omrade, new.ressurs_id, new.fagmiljo_id);
+    perform 1 from public.medlemskap m
+    where m.bruker_id = new.bruker_id and m.status = 'aktiv' and (fagmiljo is null or m.fagmiljo_id = fagmiljo)
+    for share;
+    if not found then
+      raise exception 'Redaktøren må være aktivt medlem av fagmiljøet.' using errcode = '55000';
     end if;
     return new;
   end if;
@@ -148,6 +162,13 @@ $$;
 
 revoke all on function intern.kontroller_redaktoransvar() from public, anon, authenticated, service_role;
 
+-- Endringene tar den felles låsen for tilgangene, som medlemskapene
+-- (`intern.serialiser_tilgang`, 20261113140000), så en tildeling og en
+-- avslutning av medlemskapet skjer én om gangen, også rett i tabellene.
+create trigger redaktoransvar_serialiser
+before insert or update or delete on public.redaktoransvar
+for each statement execute function intern.serialiser_tilgang();
+
 create trigger redaktoransvar_kontroll
 before insert or update on public.redaktoransvar
 for each row execute function intern.kontroller_redaktoransvar();
@@ -164,8 +185,13 @@ for each row execute function intern.loggfor_tilgang();
 -- --- Hvilke ansvar som gjelder ------------------------------------------------
 
 -- Om ansvaret gjelder nå: ikke tilbakekalt, redaktøren har et aktivt
--- medlemskap, og for lokalt ansvar et aktivt medlemskap i fagmiljøet det
--- gjelder (som er aktivt). Nasjonalt ansvar gjelder bare når bryteren er på.
+-- medlemskap, og nasjonalt ansvar bare når bryteren er på. Medlemskapet må
+-- være det samme som da ansvaret ble gitt (`fra` før tildelingen), i
+-- fagmiljøet ansvaret gjelder (lokalt, i et aktivt fagmiljø) eller i et
+-- fagmiljø (nasjonalt). Et medlemskap som gis på nytt, er en ny rad
+-- (`intern.gi_medlemskap`), så et gammelt ansvar kommer aldri tilbake med
+-- det, heller ikke om tilbakekallingen ved avslutningen ikke så ansvaret
+-- (en direkte endring i `repeatable read` samtidig med tildelingen).
 create function intern.redaktoransvar_gjelder(a public.redaktoransvar)
 returns boolean
 language sql
@@ -175,14 +201,16 @@ set search_path = ''
 as $$
   select a.tilbakekalt_kl is null
     and intern.har_aktivt_medlemskap(a.bruker_id)
-    and case
-      when x.fagmiljo is null then intern.nasjonale_redaktorer_aktivert()
-      else exists (
-        select 1 from public.medlemskap m
-        join public.fagmiljoer f on f.id = m.fagmiljo_id
-        where m.bruker_id = a.bruker_id and m.fagmiljo_id = x.fagmiljo and m.status = 'aktiv' and f.status = 'aktiv'
-      )
-    end
+    and (x.fagmiljo is not null or intern.nasjonale_redaktorer_aktivert())
+    and exists (
+      select 1 from public.medlemskap m
+      join public.fagmiljoer f on f.id = m.fagmiljo_id
+      where m.bruker_id = a.bruker_id
+        and m.status = 'aktiv'
+        and f.status = 'aktiv'
+        and m.fra <= a.tildelt_kl
+        and (x.fagmiljo is null or m.fagmiljo_id = x.fagmiljo)
+    )
   from (select intern.redaktoransvarets_fagmiljo(a.omrade, a.ressurs_id, a.fagmiljo_id) as fagmiljo) x
 $$;
 

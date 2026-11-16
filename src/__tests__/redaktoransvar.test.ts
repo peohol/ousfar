@@ -437,6 +437,32 @@ describe('ansvaret følger medlemskapet', () => {
     expect(await rpc(ny, 'mine_redaktoransvar')).toEqual([])
   })
 
+  it('kommer ikke tilbake med et nytt medlemskap, selv om tilbakekallingen ikke skjedde', async () => {
+    // Som når en direkte avslutning i repeatable read ikke så et ansvar gitt samtidig.
+    const ny = await opprettBruker(db, { brukernavn: 'test.p5gjenoppstaar', fornavn: 'Test', etternavn: 'Gjen', rolle: 'user' })
+    await giRedaktoransvar(db, ny, { omrade: 'fortolkning', fagmiljo: g.fagmiljo.A })
+    await db.query('alter table public.medlemskap disable trigger medlemskap_redaktoransvar')
+    try {
+      await db.transaction(async (tx) => {
+        await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Test (syntetisk)', true)`)
+        await tx.query(`update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1`, [ny])
+      })
+    } finally {
+      await db.query('alter table public.medlemskap enable trigger medlemskap_redaktoransvar')
+    }
+    const ansvar = async () =>
+      (
+        await db.query<{ rader: number; gjelder: number }>(
+          `select count(*)::int as rader, count(*) filter (where intern.redaktoransvar_gjelder(a))::int as gjelder
+           from public.redaktoransvar a where a.bruker_id = $1 and a.tilbakekalt_kl is null`,
+          [ny],
+        )
+      ).rows[0]
+    expect(await ansvar()).toEqual({ rader: 1, gjelder: 0 })
+    await rpc('adminA', 'gi_medlemskap', { bruker: ny, fagmiljo: g.fagmiljo.A })
+    expect(await ansvar()).toEqual({ rader: 1, gjelder: 0 })
+  })
+
   it('gjelder bare med aktivt medlemskap i fagmiljøet, også når raden står', async () => {
     // Medlem av både A og B; ansvaret i B gjelder bare så lenge medlemskapet der er aktivt.
     const ny = await opprettBruker(db, { brukernavn: 'test.p5dobbel', fornavn: 'Test', etternavn: 'Dobbel', rolle: 'user' })

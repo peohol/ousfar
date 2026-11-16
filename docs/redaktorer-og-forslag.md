@@ -327,8 +327,17 @@ Et tilbakekalt ansvar kan ikke gjenopplives; det gis på nytt som en ny rad.
 lokalt ansvar gjelder bare mens redaktøren er aktivt medlem av det aktive
 fagmiljøet, og et nasjonalt bare mens B2 er på. Avsluttes medlemskapet,
 tilbakekalles ansvaret i fagmiljøet også i tabellen
-(`medlemskap_redaktoransvar`), så det ikke kommer tilbake med et nytt
-medlemskap.
+(`medlemskap_redaktoransvar`). Ansvaret gjelder dessuten bare med medlemskapet
+det ble gitt under (`fra` før tildelingen): et medlemskap som gis på nytt, er en
+ny rad, så et gammelt ansvar kommer aldri tilbake med det, heller ikke om en
+avslutning rett i tabellen i `repeatable read` ikke så et ansvar som ble gitt
+samtidig. Endringer rett i `redaktoransvar` tar den felles låsen for
+tilgangene, som medlemskapene (`redaktoransvar_serialiser`), og en ny rad krever
+at mottakeren er aktivt medlem (`55000`), så tildelinger og avslutninger skjer
+én om gangen også utenfor operasjonene. `redaktoransvar.samtidighet.test.ts`
+prøver begge rekkefølgene gjennom operasjonene og rett i tabellene, i
+`read committed` og `repeatable read`, og at ansvaret ikke kommer tilbake med
+et nytt medlemskap.
 
 **Hvem ser hva.** `les_redaktoransvar` viser ansvarene og de lokale
 ressursene, med om de har en redaktør, innenfor egen myndighet; et annet fagmiljø gir `42501`, som for en
