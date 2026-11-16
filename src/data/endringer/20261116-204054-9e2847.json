@@ -1,0 +1,13 @@
+{
+  "id": "20261116-204054-9e2847",
+  "semver": "patch",
+  "opprettet": "2026-11-16T20:40:54Z",
+  "sammendrag": "Små rettinger på sidene for endringsforslag",
+  "typer": ["Design / layout"],
+  "omfang": "Minimalt omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Tittelen på et forslag til fortolkningen gjentar ikke lenger «Fortolkning».",
+    "Listene over forslag beholder den runde kanten når pekeren står over den øverste raden, og fanene og valgene på «Til behandling» er lettere å treffe på mobil."
+  ]
+}

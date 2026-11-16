@@ -37,7 +37,7 @@ const { forslagsvalgForFortolkning } = await import('../forslag/fortolkning')
 const { lesForslag, lesForslagsrader } = await import('../forslag/modell')
 const { ForslagskildeProvider, ForslagsstedKilde, useForslagFor } = await import('../components/forslag/Forslagskilde')
 const { Forslagsknapp } = await import('../components/forslag/Forslagsknapp')
-const { Forslagsside } = await import('../components/forslag/Forslagsside')
+const { Forslagsside, hvaGjelder } = await import('../components/forslag/Forslagsside')
 
 beforeAll(() => {
   window.scrollTo = () => undefined
@@ -115,6 +115,13 @@ describe('det et forslag kan gjelde', () => {
       expect.objectContaining({ ressurs: SIDE, element: DOSERING, grunnrevisjon: 3, utdrag: '20 mg om morgenen.' }),
     ])
     expect(VALG[1]!.sted).toMatch(/^Citalopram · /)
+  })
+
+  it('i ord: typen først, men ikke to ganger når stedet alt sier den', () => {
+    const regelsett = { id: REGELSETT, type: 'intervallregelsett', navn: 'HBUP', stoff: null, analyttkode: 'HBUP', omfang: 'fagmiljo' }
+    expect(hvaGjelder(regelsett, 'Fortolkning av Hydroksybupropion · Reglene for HBUP')).toBe('Fortolkning av Hydroksybupropion · Reglene for HBUP')
+    expect(hvaGjelder(regelsett, null)).toBe('Fortolkning · HBUP')
+    expect(hvaGjelder({ ...regelsett, id: SIDE, type: 'infoside', navn: 'Citalopram' }, 'Citalopram · Dosering')).toBe('Fagside · Citalopram · Dosering')
   })
 
   it('ingenting på en fagside som aldri er publisert', () => {

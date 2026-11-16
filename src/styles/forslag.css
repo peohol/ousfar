@@ -117,6 +117,16 @@
   text-decoration: none;
 }
 
+/* Fanene og utvalgene i køen er store nok å treffe med fingeren på smal skjerm. */
+@media (max-width: 47.5em) {
+  .forslagsside__fane {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rom-1);
+    min-height: var(--hoyde-trykk);
+  }
+}
+
 .forslagsside__fane[aria-current='page'] {
   background: var(--flate-bunn);
   color: var(--blekk);
@@ -135,6 +145,18 @@
 
 .forslagsliste > li + li {
   border-block-start: 1px solid var(--linje);
+}
+
+/* Raden fyller hjørnene i listen, så bakgrunnen ved peker og fokus ikke dekker
+   den runde kanten. */
+.forslagsliste > li:first-child > .forslagsrad {
+  border-start-start-radius: calc(var(--runding-kort) - 1px);
+  border-start-end-radius: calc(var(--runding-kort) - 1px);
+}
+
+.forslagsliste > li:last-child > .forslagsrad {
+  border-end-start-radius: calc(var(--runding-kort) - 1px);
+  border-end-end-radius: calc(var(--runding-kort) - 1px);
 }
 
 .forslagsrad {
