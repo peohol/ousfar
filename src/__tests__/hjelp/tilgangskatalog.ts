@@ -112,6 +112,9 @@ export const REKKEVIDDEHJELPERE = [
   'har_ressursmyndighet',
   // P5 tråd A: om redaktøransvaret dekker et objekt (supabase/migrations/*_redaktoransvar.sql).
   'redaktoransvar_dekker',
+  // P5 B: hvem som ser et forslag, og forslagsstillerens eget (supabase/migrations/*_p5_endringsforslag.sql).
+  'kan_se_forslag',
+  'eget_forslag',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

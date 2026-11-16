@@ -27,6 +27,15 @@ export function psql(database: string, sql: string): string {
 }
 
 /**
+ * Sletter testdatabasene i én psql-økt, den sist lagde først (kopier før malen).
+ * Én økt i stedet for én per database holder oppryddingen kort når CI er travel.
+ */
+export function slettDatabaser(databaser: readonly string[]): void {
+  if (databaser.length === 0) return
+  psql('postgres', [...databaser].reverse().map((db) => `drop database if exists ${db} with (force);`).join('\n'))
+}
+
+/**
  * Én forbindelse, styrt steg for steg. Hvert steg gir SQLSTATE for det siste
  * kallet (00000 når det gikk bra), lest av psql selv.
  */
