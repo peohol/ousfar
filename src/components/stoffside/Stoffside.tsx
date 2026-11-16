@@ -20,6 +20,8 @@ import { useFaginnholdskilde } from './Faginnholdskilde'
 import { useFavoritter } from '../../favoritter/Favorittkilde'
 import { useStoffregisterkilde } from '../../stoffregister/Stoffregisterkilde'
 import { Fagsidebanner, Fagsidemeny } from '../stoffregister/Fagsidestatus'
+import { ForslagsstedKilde, type Forslagsapning } from '../forslag/Forslagskilde'
+import { forslagsreferanser, forslagsvalgForFagside } from '../../forslag/fagside'
 import { Kurateringsbanner } from '../kuratering/Utgavelister'
 import { Registerhandlingskilde } from '../stoffregister/Registerhandling'
 import { Identitetspanel } from './Identitetspanel'
@@ -251,6 +253,20 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
       ),
     [slug, navn, kjent, analytter, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
   )
+  // Det et forslag kan gjelde: det publiserte på siden, slik leseren ser det.
+  const visesPublisert = modus === 'lese' && !utgave && side.status === 'klar' && side.tilstand === 'publisert'
+  const forslagsapning = useMemo<Forslagsapning | null>(
+    () =>
+      visesPublisert
+        ? {
+            tittel: navn,
+            valg: forslagsvalgForFagside(navn, side.data, modell, konsentrasjon),
+            referanser: forslagsreferanser(modell),
+            fagside: slug,
+          }
+        : null,
+    [visesPublisert, navn, side.data, modell, konsentrasjon, slug],
+  )
   // Treffene telles på nytt når innholdet endres, også når konsentrasjonene vises i en annen enhet.
   const sokeinnhold = useMemo(() => [side.data, konsentrasjon], [side.data, konsentrasjon])
   const ord = useMemo(() => sokeord(sporring), [sporring])
@@ -294,197 +310,199 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   }
 
   return (
-    <section ref={beholder} className="stoffside" aria-labelledby={overskrift} data-modus={modus}>
-      {/* Sidens handlinger står i toppmenyen (i dokken på smale flater). */}
-      {/* Mens siden redigeres, er det redigeringen som står i menyen; veien
-          ut er «Avslutt redigering», og Escape lukker siden som før. */}
-      {kanRedigere && modus === 'rediger' ? (
-        <Redigeringshandlinger
-          data={side.data}
-          plan={plan}
-          laster={!redigerer}
-          onPubliser={handlinger.publiser}
-          onAvslutt={() => setModus('lese')}
-        />
-      ) : (
-        <>
-          {fortolkning && (
-            <ToppmenyInnhold spor="hovedhandling">
-              <Toppmenyknapp ikon="interp" variant="primar" onClick={() => onApneFortolkning(fortolkning)}>
-                Åpne fortolkning
-              </Toppmenyknapp>
-            </ToppmenyInnhold>
-          )}
-          {favoritter && finnes && (
-            <ToppmenyInnhold spor="favoritt">
-              <Favorittknapp stoff={slug} favoritt={favoritter.erFavoritt(slug)} onSett={favoritter.sett} />
-            </ToppmenyInnhold>
-          )}
-          <ToppmenyInnhold spor="redigering">
-            {kanRedigere && (
-              <Ikonknapp ikon="edit" etikett="Rediger" aria-pressed="false" onClick={() => setModus('rediger')} />
+    <ForslagsstedKilde apning={forslagsapning}>
+      <section ref={beholder} className="stoffside" aria-labelledby={overskrift} data-modus={modus}>
+        {/* Sidens handlinger står i toppmenyen (i dokken på smale flater). */}
+        {/* Mens siden redigeres, er det redigeringen som står i menyen; veien
+            ut er «Avslutt redigering», og Escape lukker siden som før. */}
+        {kanRedigere && modus === 'rediger' ? (
+          <Redigeringshandlinger
+            data={side.data}
+            plan={plan}
+            laster={!redigerer}
+            onPubliser={handlinger.publiser}
+            onAvslutt={() => setModus('lese')}
+          />
+        ) : (
+          <>
+            {fortolkning && (
+              <ToppmenyInnhold spor="hovedhandling">
+                <Toppmenyknapp ikon="interp" variant="primar" onClick={() => onApneFortolkning(fortolkning)}>
+                  Åpne fortolkning
+                </Toppmenyknapp>
+              </ToppmenyInnhold>
             )}
-            {finnes && !utgave && <Fagsidemeny slug={slug} navn={navn} />}
-          </ToppmenyInnhold>
-          <ToppmenyInnhold spor="lukk">
-            <Lukkeknapp onLukk={onLukk} />
-          </ToppmenyInnhold>
-        </>
-      )}
+            {favoritter && finnes && (
+              <ToppmenyInnhold spor="favoritt">
+                <Favorittknapp stoff={slug} favoritt={favoritter.erFavoritt(slug)} onSett={favoritter.sett} />
+              </ToppmenyInnhold>
+            )}
+            <ToppmenyInnhold spor="redigering">
+              {kanRedigere && (
+                <Ikonknapp ikon="edit" etikett="Rediger" aria-pressed="false" onClick={() => setModus('rediger')} />
+              )}
+              {finnes && !utgave && <Fagsidemeny slug={slug} navn={navn} />}
+            </ToppmenyInnhold>
+            <ToppmenyInnhold spor="lukk">
+              <Lukkeknapp onLukk={onLukk} />
+            </ToppmenyInnhold>
+          </>
+        )}
 
-      {/* Søket på siden står også i toppmenyen, foran handlingene. */}
-      <ToppmenyInnhold spor="sidesok">
-        <Sidesok
-          sporring={sporring}
-          onEndre={setSporring}
-          beholder={beholder}
-          dokumenter={dokumenter}
-          innholdsnokkel={sokeinnhold}
-        />
-      </ToppmenyInnhold>
+        {/* Søket på siden står også i toppmenyen, foran handlingene. */}
+        <ToppmenyInnhold spor="sidesok">
+          <Sidesok
+            sporring={sporring}
+            onEndre={setSporring}
+            beholder={beholder}
+            dokumenter={dokumenter}
+            innholdsnokkel={sokeinnhold}
+          />
+        </ToppmenyInnhold>
 
-      {/* Seksjonene på siden, til venstre for innholdet der det er plass, ellers i toppmenyen. */}
-      <Innholdsfortegnelse />
+        {/* Seksjonene på siden, til venstre for innholdet der det er plass, ellers i toppmenyen. */}
+        <Innholdsfortegnelse />
 
-      {utgave ? (
-        utgave.banner
-      ) : (
-        <>
-          <Fagsidebanner slug={slug} />
-          <Kurateringsbanner stoff={slug} />
-        </>
-      )}
-      {modus === 'rediger' && redigerer && !side.data.infoside && (
-        <p className="redigeringsstripe">Siden opprettes i databasen første gang du lagrer noe på den.</p>
-      )}
-      {konflikt && (
-        <div className="sidevarsel" role="alert">
-          <p>Noen andre har endret siden mens du redigerte. Ingenting er skrevet over.</p>
-          <Button variant="subtle" onClick={handlinger.lastInn}>
-            Hent nyeste utgave
-          </Button>
-        </div>
-      )}
-      {side.status === 'feil' && (
-        <div className="sidevarsel" role="alert">
-          <p>Fikk ikke hentet innholdet på siden. {side.feil}</p>
-          <Button variant="subtle" onClick={handlinger.lastInn}>
-            Prøv igjen
-          </Button>
-        </div>
-      )}
+        {utgave ? (
+          utgave.banner
+        ) : (
+          <>
+            <Fagsidebanner slug={slug} />
+            <Kurateringsbanner stoff={slug} />
+          </>
+        )}
+        {modus === 'rediger' && redigerer && !side.data.infoside && (
+          <p className="redigeringsstripe">Siden opprettes i databasen første gang du lagrer noe på den.</p>
+        )}
+        {konflikt && (
+          <div className="sidevarsel" role="alert">
+            <p>Noen andre har endret siden mens du redigerte. Ingenting er skrevet over.</p>
+            <Button variant="subtle" onClick={handlinger.lastInn}>
+              Hent nyeste utgave
+            </Button>
+          </div>
+        )}
+        {side.status === 'feil' && (
+          <div className="sidevarsel" role="alert">
+            <p>Fikk ikke hentet innholdet på siden. {side.feil}</p>
+            <Button variant="subtle" onClick={handlinger.lastInn}>
+              Prøv igjen
+            </Button>
+          </div>
+        )}
 
-      <Uthevingskilde ord={ord}>
-        <Sidereferanser
-          nummerering={univers.nummerering}
-          referanser={univers.referanser}
-          panelreferanser={univers.panelreferanser}
-        >
-          <Redigeringskilde verdi={redigeringsverdi}>
-            <Konsentrasjonskilde molvekter={molvekter} sideforbindelser={sideforbindelser}>
-              <div className="stoffside__paneler" aria-busy={side.status === 'laster'}>
-                {PANELER.map((definisjon) => {
-                  switch (definisjon.form) {
-                    case 'identitet':
-                      return (
-                        <Identitetspanel
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          navn={navn}
-                          slug={slug}
-                          analytter={analytter}
-                          register={register}
-                          kategorier={kategorier}
-                          overskriftId={overskrift}
-                          onApneFortolkning={apneFortolkningFor}
-                          kontekst={kontekst}
-                        />
-                      )
-                    case 'legemidler':
-                      return (
-                        <Preparatpanel
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          kontekst={kontekst}
-                          sidenavn={navn}
-                          legemidler={legemidler}
-                        />
-                      )
-                    case 'interaksjoner':
-                      return (
-                        <Interaksjonspanel
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          kontekst={kontekst}
-                          koblet={koblet.length > 0}
-                          interaksjoner={interaksjoner}
-                        />
-                      )
-                    case 'datakort':
-                      return (
-                        <ViktigeData
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          kontekst={kontekst}
-                          stoff={slug}
-                          stoffnavn={navn || slug}
-                          analytter={primare}
-                        />
-                      )
-                    case 'tekst':
-                      return <Tekstpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
-                    case 'kort':
-                      return definisjon.nokkel === FARMAKOGENETIKKPANEL ? (
-                        <Farmakogenetikkpanel
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          kontekst={kontekst}
-                          tilstand={pgx}
-                          cpic={cpictilstand}
-                          grunnlag={grunnlag}
-                          sidenavn={navn}
-                          sted={sted}
-                          onHentet={farmakogenetikk.lesPaNytt}
-                          onCpicHentet={cpic.lesPaNytt}
-                        />
-                      ) : definisjon.nokkel === BIVIRKNINGSPANEL ? (
-                        <Bivirkningspanel
-                          key={definisjon.nokkel}
-                          definisjon={definisjon}
-                          kontekst={kontekst}
-                          tilstand={bivirkninger}
-                          visning={bivirkningsvisning}
-                          onVelgVisning={setBivirkningsvisning}
-                        />
-                      ) : (
-                        <Kortpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
-                      )
-                    case 'mekanismer':
-                      return <Mekanismepanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
-                    case 'tabell':
-                      return <Tabellpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
-                    case 'laboratorier':
-                      return (
-                        <Laboratoriepanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} visning={laboratorier} />
-                      )
-                    case 'kjemi':
-                      return <Kjemipanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} visning={kjemi} />
-                  }
-                })}
+        <Uthevingskilde ord={ord}>
+          <Sidereferanser
+            nummerering={univers.nummerering}
+            referanser={univers.referanser}
+            panelreferanser={univers.panelreferanser}
+          >
+            <Redigeringskilde verdi={redigeringsverdi}>
+              <Konsentrasjonskilde molvekter={molvekter} sideforbindelser={sideforbindelser}>
+                <div className="stoffside__paneler" aria-busy={side.status === 'laster'}>
+                  {PANELER.map((definisjon) => {
+                    switch (definisjon.form) {
+                      case 'identitet':
+                        return (
+                          <Identitetspanel
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            navn={navn}
+                            slug={slug}
+                            analytter={analytter}
+                            register={register}
+                            kategorier={kategorier}
+                            overskriftId={overskrift}
+                            onApneFortolkning={apneFortolkningFor}
+                            kontekst={kontekst}
+                          />
+                        )
+                      case 'legemidler':
+                        return (
+                          <Preparatpanel
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            kontekst={kontekst}
+                            sidenavn={navn}
+                            legemidler={legemidler}
+                          />
+                        )
+                      case 'interaksjoner':
+                        return (
+                          <Interaksjonspanel
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            kontekst={kontekst}
+                            koblet={koblet.length > 0}
+                            interaksjoner={interaksjoner}
+                          />
+                        )
+                      case 'datakort':
+                        return (
+                          <ViktigeData
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            kontekst={kontekst}
+                            stoff={slug}
+                            stoffnavn={navn || slug}
+                            analytter={primare}
+                          />
+                        )
+                      case 'tekst':
+                        return <Tekstpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
+                      case 'kort':
+                        return definisjon.nokkel === FARMAKOGENETIKKPANEL ? (
+                          <Farmakogenetikkpanel
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            kontekst={kontekst}
+                            tilstand={pgx}
+                            cpic={cpictilstand}
+                            grunnlag={grunnlag}
+                            sidenavn={navn}
+                            sted={sted}
+                            onHentet={farmakogenetikk.lesPaNytt}
+                            onCpicHentet={cpic.lesPaNytt}
+                          />
+                        ) : definisjon.nokkel === BIVIRKNINGSPANEL ? (
+                          <Bivirkningspanel
+                            key={definisjon.nokkel}
+                            definisjon={definisjon}
+                            kontekst={kontekst}
+                            tilstand={bivirkninger}
+                            visning={bivirkningsvisning}
+                            onVelgVisning={setBivirkningsvisning}
+                          />
+                        ) : (
+                          <Kortpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
+                        )
+                      case 'mekanismer':
+                        return <Mekanismepanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
+                      case 'tabell':
+                        return <Tabellpanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} />
+                      case 'laboratorier':
+                        return (
+                          <Laboratoriepanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} visning={laboratorier} />
+                        )
+                      case 'kjemi':
+                        return <Kjemipanel key={definisjon.nokkel} definisjon={definisjon} kontekst={kontekst} visning={kjemi} />
+                    }
+                  })}
 
-                {!redigerer && side.status === 'klar' && utenFaginnhold && (
-                  <p className="stoffside__tom">
-                    {harData
-                      ? 'Denne siden har ikke fått faginnhold ennå og er ikke faglig kuratert. Det som står her, er hentet automatisk fra offentlige datakilder.'
-                      : 'Denne siden har ikke fått faginnhold ennå.'}
-                  </p>
-                )}
-                <Referanseliste />
-              </div>
-            </Konsentrasjonskilde>
-          </Redigeringskilde>
-        </Sidereferanser>
-      </Uthevingskilde>
-    </section>
+                  {!redigerer && side.status === 'klar' && utenFaginnhold && (
+                    <p className="stoffside__tom">
+                      {harData
+                        ? 'Denne siden har ikke fått faginnhold ennå og er ikke faglig kuratert. Det som står her, er hentet automatisk fra offentlige datakilder.'
+                        : 'Denne siden har ikke fått faginnhold ennå.'}
+                    </p>
+                  )}
+                  <Referanseliste />
+                </div>
+              </Konsentrasjonskilde>
+            </Redigeringskilde>
+          </Sidereferanser>
+        </Uthevingskilde>
+      </section>
+    </ForslagsstedKilde>
   )
 }

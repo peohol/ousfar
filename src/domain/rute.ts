@@ -81,6 +81,13 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *
  *   #/grupper
  *   #/grupper/<gruppe-ID>
+ *
+ * Endringsforslagene (P5, docs/redaktorer-og-forslag.md) har «Mine forslag»,
+ * fanen med forslagene til behandling, og hvert forslag sin side etter ID-en:
+ *
+ *   #/forslag
+ *   #/forslag/til-behandling
+ *   #/forslag/<forslags-ID>
  */
 
 export type Rute =
@@ -128,6 +135,16 @@ export type Rute =
       /** ID-en til gruppen. Utelatt på oversikten. */
       gruppe?: string
     }
+  | {
+      side: 'forslag'
+      /** ID-en til ett forslag. Utelatt på oversikten. */
+      forslag?: string
+      /** Fanen på oversikten: «Til behandling». Utelatt for «Mine forslag». */
+      fane?: Forslagsfane
+    }
+
+/** Fanene på forslagsoversikten utenom «Mine forslag». */
+export type Forslagsfane = 'behandling'
 
 export const FORTOLKNING: Rute = { side: 'fortolkning' }
 
@@ -191,6 +208,11 @@ const KURATERING = new RegExp(`^#\\/kuratering\\/(${ID})\\/?$`, 'i')
 
 const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID}))?\\/?$`, 'i')
 
+/** Leddet i adressen til fanen «Til behandling». */
+const TIL_BEHANDLING = 'til-behandling'
+
+const FORSLAG = new RegExp(`^#\\/forslag(?:\\/(${ID}|${TIL_BEHANDLING}))?\\/?$`, 'i')
+
 /** Adressen til helsiden for stoffregisteret. */
 export const STOFFREGISTERADRESSE = '#/stoffregister'
 
@@ -221,6 +243,12 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
   if (gren?.[1]) return { side: 'kuratering', gren: gren[1].toLowerCase() }
   const gruppe = GRUPPER.exec(hash)
   if (gruppe) return gruppe[1] ? { side: 'grupper', gruppe: gruppe[1].toLowerCase() } : { side: 'grupper' }
+  const forslag = FORSLAG.exec(hash)
+  if (forslag) {
+    const ledd = forslag[1]?.toLowerCase()
+    if (!ledd) return { side: 'forslag' }
+    return ledd === TIL_BEHANDLING ? { side: 'forslag', fane: 'behandling' } : { side: 'forslag', forslag: ledd }
+  }
   const fortolkning = FORTOLKNINGSSIDE.exec(hash)
   if (fortolkning?.[1]) {
     const analytt = fortolkning[1].toLowerCase()
@@ -314,6 +342,8 @@ export function adresse(rute: Rute): string {
       return kurateringsadresse(rute.gren)
     case 'grupper':
       return gruppeadresse(rute.gruppe)
+    case 'forslag':
+      return forslagsadresse(rute.forslag, rute.fane)
     default:
       if (!rute.analytt) return '#/'
       if (!rute.rediger) return `#/fortolkning/${rute.analytt}`
@@ -329,6 +359,15 @@ export function versjonsadresse(slug: string, nr: number): string {
 /** Adressen til en kurateringsgren. */
 export function kurateringsadresse(gren: string): string {
   return `#/kuratering/${gren}`
+}
+
+/**
+ * Adressen til ett forslag etter ID-en, ellers til oversikten: «Mine forslag»,
+ * eller fanen «Til behandling». Med en ID vinner den over fanen.
+ */
+export function forslagsadresse(forslag?: string, fane?: Forslagsfane): string {
+  if (forslag) return `#/forslag/${forslag}`
+  return fane === 'behandling' ? `#/forslag/${TIL_BEHANDLING}` : '#/forslag'
 }
 
 /** Adressen til gruppeoversikten, eller til én gruppe etter ID-en. */
@@ -350,7 +389,7 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
  * Siden ruten står på, uten stedet på den og uten søket: `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
  * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3`, `kuratering/<gren-ID>`,
- * `grupper` og `grupper/<gruppe-ID>`. Det er formen områdene i endringsloggen skrives på
+ * `grupper`, `grupper/<gruppe-ID>`, `forslag`, `forslag/til-behandling` og `forslag/<forslags-ID>`. Det er formen områdene i endringsloggen skrives på
  * (`src/oppdatering/sider.ts`), og det som skifter når brukeren går til en
  * annen side — ikke når en seksjon åpnes eller søket skrives om.
  */
@@ -366,6 +405,8 @@ export function sidesti(rute: Rute): string {
       return rute.verktoy ? `verktoy/${rute.verktoy}` : 'verktoy'
     case 'grupper':
       return rute.gruppe ? `grupper/${rute.gruppe}` : 'grupper'
+    case 'forslag':
+      return adresse(rute).slice(2)
     case 'fortolkning':
       return ['fortolkning', rute.analytt, rute.rediger ? REDIGER : undefined].filter(Boolean).join('/')
     default:
