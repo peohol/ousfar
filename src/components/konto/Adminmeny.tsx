@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { klient } from '../../auth/klient'
-import { harAdministrasjon, useRettigheter } from '../../auth/rettigheter'
+import { harAdministrasjon, kanGiRedaktoransvar, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
@@ -8,6 +8,7 @@ import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Autoerstattregler } from './Autoerstattregler'
 import { Brukerliste } from './Brukerliste'
 import { Datakilder } from './Datakilder'
+import { Redaktorer } from './Redaktorer'
 import type { Kurateringsklient } from '../../kuratering/klient'
 import { redaktorvarsel, type Fagsaklager } from '../../verktoy/overvaking/fagsak'
 import type { Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
@@ -18,7 +19,7 @@ import { Verktoysperrer } from './Verktoysperrer'
 /** Teksten ved prikken når kildeovervåkingen ikke kunne leses. */
 const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
 
-const PANELENE = ['brukere', 'datakilder', 'autoerstatt', 'kurateringer', 'verktoysperrer', 'kildeovervaking'] as const
+const PANELENE = ['brukere', 'redaktorer', 'datakilder', 'autoerstatt', 'kurateringer', 'verktoysperrer', 'kildeovervaking'] as const
 type Panel = (typeof PANELENE)[number] | null
 
 /**
@@ -46,9 +47,10 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
  * rettighetene databasen gir den innloggede (`useRettigheter`), ikke den gamle
  * adminrollen. Systemarkitektene får brukerne, driftstatusen for datakildene,
  * kurateringene, kildeovervåkingen og nødstoppen for de kliniske verktøyene,
- * og autoerstatt-reglene i teksteditorene. En lokal administrator får bare
+ * og autoerstatt-reglene i teksteditorene. En lokal administrator får
  * «Brukere», der vedkommende kan gi nytt passord og opprette brukere etter
- * myndigheten sin. Andre ser den ikke. Den er et grensesnitt, ikke en
+ * myndigheten sin, og «Redaktører», der vedkommende gir og tar tilbake
+ * redaktøransvar i eget fagmiljø (P5). Andre ser den ikke. Den er et grensesnitt, ikke en
  * tilgangskontroll: databasen og Edge-funksjonene kontrollerer selv. Bør en datakilde ses over, eller
  * venter en faglig kildesak på beslutning (eller et mulig sikkerhetsproblem
  * vurderes), står det en prikk på knappen og på valget. Tekniske avvik i
@@ -67,6 +69,7 @@ export function Adminmeny({
 } = {}) {
   const rettigheter = useRettigheter()
   const admin = rettigheter.systemarkitekt
+  const redaktorer = kanGiRedaktoransvar(rettigheter)
   const [panel, setPanel] = useBevart<Panel>('adminmeny', null)
   // Bare én endring per datakilde hentes; vurderingen er den samme som i panelet.
   const datakilder = useTilsyn(
@@ -129,6 +132,11 @@ export function Adminmeny({
               <li>
                 <Menyvalg ikon="user" tekst="Brukere" onClick={apne('brukere')} />
               </li>
+              {redaktorer && (
+                <li>
+                  <Menyvalg ikon="edit" tekst="Redaktører" onClick={apne('redaktorer')} />
+                </li>
+              )}
               {admin && (
                 <>
                   <li>
@@ -153,6 +161,7 @@ export function Adminmeny({
         }}
       </Nedtrekksmeny>
       <Brukerliste apen={panel === 'brukere'} onLukk={lukk.brukere} />
+      {redaktorer && <Redaktorer apen={panel === 'redaktorer'} onLukk={lukk.redaktorer} />}
       {admin && (
         <>
           <Datakilder apen={panel === 'datakilder'} onLukk={lukk.datakilder} />
