@@ -11,7 +11,7 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `supabase/migrations/*_favorittvarsler*.sql` | Varslene om endringer på favorittsidene, og hvordan hendelsene leses |
 | `supabase/migrations/*_nye_ideer_varsler.sql` | Varslene om nye idéer |
 | `supabase/migrations/*_diskusjoner.sql` | Varslene om diskusjonene (se `docs/diskusjoner.md`) |
-| `supabase/migrations/*_p5_forslagsvarsler.sql` | Kategoriene for endringsforslagene (se `docs/redaktorer-og-forslag.md`) |
+| `supabase/migrations/*_p5_forslagsvarsler.sql`, `*_p5_forslagsbehandling.sql` | Kategoriene for endringsforslagene, og utløseren som lager varslene (se `docs/redaktorer-og-forslag.md`, «Behandling») |
 | `src/varsler/modell.ts` | Kategoriene, valgene, føringene i endringsloggen som varsler, sorteringen og tekstene (rene funksjoner) |
 | `src/varsler/api.ts` | Kallene mot Supabase og brukerinnstillingene |
 | `src/components/varsler/` | Bjella (`Varselknapp`), tilstanden (`useVarsler`) og vinduet (`Varsler`) |
@@ -72,7 +72,8 @@ gjorde det, varsles ikke.
   hver hendelse i et forslags tidslinje kan gi varsel, ett varsel per forslag
   og kategori. Forslagsstilleren får `mine_forslag` når en behandler gjør noe
   med forslaget, og behandlerne `forslag_til_behandling` når det kommer et nytt
-  forslag eller forslagsstilleren svarer. Hendelsen har `forslag` og `art`;
+  forslag eller forslagsstilleren svarer (`endringsforslag_hendelser_varsle`).
+  Hendelsen har `forslag` og `art`;
   varselet viser det siste som skjedde og lenker til forslaget. Bare den som
   kan se forslaget, får og ser varselet.
 - **Fortolkningen** (`objektpubliseringer_varsle`): hver publisering av en

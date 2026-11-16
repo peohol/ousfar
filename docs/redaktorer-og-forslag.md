@@ -231,7 +231,7 @@ kan utvides av eieren med standardverdier.
 | `public.les_forslagsko(filter default 'aktive') → jsonb` | C | Køen for den innloggede: `nye`, `pagaende`, `ferdige`, og `uten_redaktor` (ansvarskøen) |
 | `public.ta_forslag(forslag)`, `public.kommenter_forslag(forslag, tekst)`, `public.be_om_presisering(forslag, tekst)` | C | Behandlingen |
 | `public.godkjenn_forslag(forslag, begrunnelse default null)`, `public.avvis_forslag(forslag, begrunnelse)` | C | Vedtaket. Avvisning krever begrunnelse |
-| `public.marker_forslag_innarbeidet(forslag, objekt, revisjon)` | C | Kobler et godkjent forslag til en revisjon av utkastet som finnes og hører til ressursen |
+| `public.marker_forslag_innarbeidet(forslag, objekt, revisjon)` | C | Kobler et godkjent forslag til en revisjon av utkastet som finnes og hører til ressursen (uten objekt og revisjon: elementet eller ressursen, på revisjonen utkastet står på) |
 
 Alle krever aktivt medlemskap. En ressurs eller et forslag den innloggede
 ikke kan se, gir `PT404` «Fant ikke …» (samme svar som noe som ikke finnes),
@@ -335,6 +335,64 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
   `sted`, `sammendrag` (de første 280 tegnene), tidene og `venter_pa_meg`.
 - Varslene lager tråd C fra hendelsene; B1 lager ingen.
 
+## Behandling (tråd C)
+
+**C1, varslene** (`supabase/migrations/20261116131000_p5_forslagsvarsler.sql`,
+`src/varsler/modell.ts`, `src/components/varsler/Varsler.tsx`): kategoriene
+`mine_forslag` og `forslag_til_behandling` i gruppen «Endringsforslag».
+«Forslag til behandling» vises i innstillingene bare for dem som kan behandle
+forslag.
+
+**C2, databasen** (`supabase/migrations/20261116133500_p5_forslagsbehandling.sql`,
+prøvd i `src/__tests__/forslagsbehandling.test.ts`):
+
+- Hver handling begynner med porten `intern.krev_forslag_til_behandling(forslag)`: aktivt
+  medlemskap, raden låst, `PT404` når den innloggede ikke kan se forslaget
+  (`intern.kan_se_forslag`, samme svar som et som ikke finnes), og `42501` når
+  hen kan se det, men ikke behandle det (`intern.kan_behandle_forslag`, som
+  tråd As redaktører kommer inn gjennom). En behandler kan behandle sitt eget
+  forslag. Statusen flyttes bare med `intern.forslagsovergang` (B1), som
+  avviser en overgang fra en status som er endret underveis (`PT409`).
+- Et nytt forslag tas av den første behandleren som gjør noe med det
+  (hendelsen `tatt`, `behandler_id`), også når det skjer gjennom en kommentar,
+  et spørsmål eller et vedtak.
+
+  | Funksjon | Fra | Til | Merknad |
+  | --- | --- | --- | --- |
+  | `ta_forslag` | `ny`, `under_behandling`, `venter_pa_forslagsstiller` | `under_behandling` fra `ny`, ellers uendret | Den innloggede blir behandleren; en annen kan ta det over |
+  | `kommenter_forslag` | alle unntatt `trukket` | uendret | Tekst påkrevd, høyst 4000 tegn |
+  | `be_om_presisering` | `ny`, `under_behandling` | `venter_pa_forslagsstiller` | Spørsmålet påkrevd; svaret er `svar_pa_forslag` (B) |
+  | `godkjenn_forslag` | `ny`, `under_behandling` | `godkjent` | Begrunnelse valgfri. Er innholdet publisert på nytt siden (`endret_siden` eller `side_endret_siden`), skrives `konflikt_sett` med konflikten først |
+  | `avvis_forslag` | `ny`, `under_behandling`, `venter_pa_forslagsstiller` | `avvist` | Begrunnelse påkrevd (`22023`) |
+  | `marker_forslag_innarbeidet` | `godkjent` | `innarbeidet` | Objektet må høre til ressursen (`intern.tilhorer_ressurs`) og revisjonen finnes (ellers `22023`). Uten objekt gjelder det elementet forslaget gjelder, ellers ressursen; uten revisjon den utkastet står på nå |
+
+  Vedtaket setter `vedtak_av`, `vedtak_kl` og `vedtak_begrunnelse`. Ingen av
+  funksjonene skriver i faginnholdet: et godkjent forslag er ikke publisert,
+  og innarbeidingen skjer i de vanlige redigeringene før forslaget markeres.
+- `les_forslagsko(filter)`: `antall` (`nye`, `pagaende`, `uten_redaktor` og
+  `mine`, de den innloggede behandler og ikke er ferdig med) alltid, og listene `nye` (eldste først), `pagaende` (`under_behandling`,
+  `venter_pa_forslagsstiller`, `godkjent`) og `ferdige` (de 100 siste) etter
+  utvalget `aktive` (standard), `ferdige`, `alle` eller `antall`. Hvert
+  forslag har `ressurs`, `sted`, `sammendrag`, `stilt_av` som `{er_meg, navn}`
+  (P2c), tidene, `har_behandler`, `behandler_er_meg`, `uten_redaktor`
+  (ansvarskøen: ingen i `intern.ressursens_redaktorer`) og `endret_siden`.
+- Varslene lages av utløseren `endringsforslag_hendelser_varsle` fra hver
+  hendelse, ett varsel per forslag, kategori og mottaker
+  (`gruppe = <kategori>:<forslag>`), med fagmiljøet til en lokal ressurs
+  (`intern.varselomfang`):
+
+  | Hvem gjorde det | Art | Kategori | Til |
+  | --- | --- | --- | --- |
+  | Forslagsstilleren | `opprettet` | `forslag_til_behandling` | `intern.forslagsbehandlere` |
+  | Forslagsstilleren | `presisering`, `kommentar`, `trukket` | `forslag_til_behandling` | Behandleren som har tatt forslaget, ellers `intern.forslagsbehandlere` |
+  | En behandler | `tatt`, `kommentar`, `presisering_bedt`, `godkjent`, `avvist`, `innarbeidet` | `mine_forslag` | Forslagsstilleren |
+
+  Den som gjorde det, varsles ikke, og bare den som kan se forslaget i det
+  varselet lages. `konflikt_sett` varsler ingen. Når varslene leses
+  (`intern.varselhendelser`), vises en hendelse om et forslag bare så lenge
+  den innloggede kan se det (`intern.varselforslag`); et varsel uten
+  hendelser vises ikke og telles ikke.
+
 ## Nasjonale redaktører (B2)
 
 Tildeling av nasjonalt redaktøransvar bygges ferdig, men er avslått i
@@ -405,6 +463,6 @@ Fylles ut av trådene.
 | B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
 | B2 Foreslå endring i appen | — | Under arbeid |
 | C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
-| C2 Behandlingen i databasen | — | Under arbeid |
+| C2 Behandlingen i databasen | — | Til kontroll |
 | C3 Brukerflaten for behandlerne | — | Venter på B2 |
 | D Brukervennlighet og testing | — | — |

@@ -113,6 +113,8 @@ export const REKKEVIDDEHJELPERE = [
   // P5 B: hvem som ser et forslag, og forslagsstillerens eget (supabase/migrations/*_p5_endringsforslag.sql).
   'kan_se_forslag',
   'eget_forslag',
+  // P5 C: forslaget den innloggede behandler (supabase/migrations/*_p5_forslagsbehandling.sql).
+  'krev_forslag_til_behandling',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

@@ -2,14 +2,15 @@
   "id": "20261116-125940-6bf333",
   "semver": "minor",
   "opprettet": "2026-11-16T12:59:40Z",
-  "sammendrag": "Varsler om endringsforslag har fått sin egen gruppe",
+  "sammendrag": "Grunnlaget for at redaktører kan behandle endringsforslag er på plass",
   "typer": [
     "Funksjonalitet"
   ],
   "omfang": "Mindre omfang",
   "punkter": [
-    "Varselinnstillingene har fått gruppen «Endringsforslag»: varsel når et forslag du har sendt, får svar eller ny status, og for dem som behandler forslag, varsel om nye forslag.",
-    "Varslene kommer når det blir mulig å sende og behandle endringsforslag."
+    "Varselinnstillingene har fått gruppen «Endringsforslag»: varsel når et forslag du har sendt, får svar eller ny status, og for dem som behandler forslag, varsel om nye forslag og svar.",
+    "Databasen har arbeidskøen og behandlingen av forslagene: ta et forslag, kommentere, be om en presisering, godkjenne, avvise med begrunnelse og koble et godkjent forslag til utkastet det er arbeidet inn i. Et godkjent forslag publiseres ikke.",
+    "Brukerne merker dette når det blir mulig å sende og behandle forslag i appen."
   ],
   "utenVarsel": true
 }
