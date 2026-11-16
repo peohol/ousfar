@@ -315,7 +315,9 @@ administratorene i fagmiljøet og systemarkitektene, nasjonalt bare av
 systemarkitektene og bare når B2 er slått på
 (`intern.kan_administrere_redaktoransvar`). Ingen kan gi seg selv ansvar, og
 mottakeren må være aktivt medlem av fagmiljøet (lokalt) eller av et fagmiljø
-(nasjonalt). Å gi det samme ansvaret igjen gir det samme ansvaret tilbake.
+(nasjonalt). Begge kallene er idempotente: å gi det samme ansvaret igjen gir det samme
+ansvaret tilbake, og å ta tilbake et ansvar som alt er tatt tilbake, gir verken
+feil eller endring.
 Tildelingene og tilbakekallingene går gjennom den felles låsen for tilgangene
 (`intern.las_tilgang`) og loggføres i `tilgangslogg` med hvem og hvorfor.
 Et tilbakekalt ansvar kan ikke gjenopplives; det gis på nytt som en ny rad.
