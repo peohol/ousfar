@@ -229,9 +229,9 @@ kan utvides av eieren med standardverdier.
 | `public.les_mine_forslag() → jsonb` | B | Forslagsstillerens egne, nyeste først, med status og ressursbeskrivelse |
 | `public.les_forslag(forslag) → jsonb` | B | Ett forslag med tidslinjen, for den som kan se det; `kan_behandle` og `konflikt` i svaret |
 | `public.les_forslagsko(filter default 'aktive') → jsonb` | C | Køen for den innloggede: `nye`, `pagaende`, `ferdige`, og `uten_redaktor` (ansvarskøen) |
-| `public.ta_forslag(forslag)`, `public.kommenter_forslag(forslag, tekst)`, `public.be_om_presisering(forslag, tekst)` | C | Behandlingen |
+| `public.ta_forslag(forslag)`, `public.kommenter_forslag(forslag, tekst)`, `public.be_om_presisering(forslag, tekst)` | C | Behandlingen. `ta_forslag` på et forslag en annen behandler har tatt, tar det over |
 | `public.godkjenn_forslag(forslag, begrunnelse default null)`, `public.avvis_forslag(forslag, begrunnelse)` | C | Vedtaket. Avvisning krever begrunnelse |
-| `public.marker_forslag_innarbeidet(forslag, objekt, revisjon)` | C | Kobler et godkjent forslag til en revisjon av utkastet som finnes og hører til ressursen |
+| `public.marker_forslag_innarbeidet(forslag, objekt, revisjon)` | C | Kobler et godkjent forslag til en revisjon av utkastet som finnes og hører til ressursen (uten objekt og revisjon: elementet eller ressursen, på revisjonen utkastet står på) |
 
 Alle krever aktivt medlemskap. En ressurs eller et forslag den innloggede
 ikke kan se, gir `PT404` «Fant ikke …» (samme svar som noe som ikke finnes),
@@ -251,6 +251,9 @@ underveis `PT409`. Feilene skrives for å vises.
 - Hver statusendring låser forslagsraden og avviser en overgang som ikke
   passer statusen den finner (`PT409`), så to behandlere eller en behandler
   og forslagsstilleren ikke kan gjøre motstridende endringer samtidig.
+- `ta_forslag` på et forslag en annen behandler har tatt, tar det over
+  (hendelsen `tatt`); to samtidige: den andre venter på låsen og tar så
+  over. Vedtakene serialiseres fortsatt (`PT409`).
 - Et kall fra en redaktør (eller en forslagsstiller) som kommer mens
   tilbakekallingen av ansvaret eller avslutningen av medlemskapet ennå ikke er
   lagret, venter ikke, men regnes som gjort før den. Når fjerningen er lagret,
@@ -424,7 +427,8 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
   på smal skjerm) med forslag, begrunnelse og høyst ti kilder (tekst, lenke
   eller en av referansene på siden). Det som er skrevet, bevares med
   `useBevart`, og vinduet spør før det lukkes med noe skrevet. Kvitteringen
-  lenker til forslaget og viser til «Mine forslag» (varslene kommer med C).
+  lenker til forslaget, sier at forslagsstilleren får varsel (`mine_forslag`
+  fra C1, som ikke kan slås av) og viser til «Mine forslag».
 - Åpnes skjemaet fra en fagside, leser det fagsidens nyeste versjon med en gang
   (`hentSideversjon`, `les_sideversjoner`) og sender den som `sideversjon`, så
   konflikten måles fra siden slik den var da, ikke da forslaget ble sendt. Den
@@ -434,6 +438,67 @@ prøvd i `src/__tests__/endringsforslag.test.ts` og
   `#/forslag/til-behandling` fanen tråd C fyller (`forslagsadresse`).
   Plassene for C er `behandling/Tilbehandling.tsx` (`Tilbehandling`,
   `TilbehandlingFane`) og `behandling/Behandlerhandlinger.tsx`.
+
+## Behandling (tråd C)
+
+**C1, varslene** (`supabase/migrations/20261116132000_p5_forslagsvarsler.sql`,
+`src/varsler/modell.ts`, `src/components/varsler/Varsler.tsx`): kategoriene
+`mine_forslag` og `forslag_til_behandling` i gruppen «Endringsforslag».
+«Forslag til behandling» vises i innstillingene bare for dem som kan behandle
+forslag: `Rettigheter.behandlerForslag` fra `behandler_forslag` i
+`mine_rettigheter` (`src/auth/rettigheter.tsx`), så en redaktør uten
+administratorrolle får den, og en vanlig bruker ikke. En database uten feltet
+gir systemarkitektene og de lokale administratorene.
+
+**C2, databasen** (`supabase/migrations/20261116133500_p5_forslagsbehandling.sql`,
+prøvd i `src/__tests__/forslagsbehandling.test.ts`):
+
+- Hver handling begynner med porten `intern.krev_forslag_til_behandling(forslag)`: aktivt
+  medlemskap, raden låst, `PT404` når den innloggede ikke kan se forslaget
+  (`intern.kan_se_forslag`, samme svar som et som ikke finnes), og `42501` når
+  hen kan se det, men ikke behandle det (`intern.kan_behandle_forslag`, som
+  tråd As redaktører kommer inn gjennom). En behandler kan behandle sitt eget
+  forslag. Statusen flyttes bare med `intern.forslagsovergang` (B1), som
+  avviser en overgang fra en status som er endret underveis (`PT409`).
+- Et nytt forslag tas av den første behandleren som gjør noe med det
+  (hendelsen `tatt`, `behandler_id`), også når det skjer gjennom en kommentar,
+  et spørsmål eller et vedtak.
+
+  | Funksjon | Fra | Til | Merknad |
+  | --- | --- | --- | --- |
+  | `ta_forslag` | `ny`, `under_behandling`, `venter_pa_forslagsstiller` | `under_behandling` fra `ny`, ellers uendret | Den innloggede blir behandleren; en annen kan ta det over |
+  | `kommenter_forslag` | alle unntatt `trukket` | uendret | Tekst påkrevd, høyst 4000 tegn |
+  | `be_om_presisering` | `ny`, `under_behandling` | `venter_pa_forslagsstiller` | Spørsmålet påkrevd; svaret er `svar_pa_forslag` (B) |
+  | `godkjenn_forslag` | `ny`, `under_behandling` | `godkjent` | Begrunnelse valgfri. Er innholdet publisert på nytt siden (`endret_siden` eller `side_endret_siden`), skrives `konflikt_sett` med konflikten først |
+  | `avvis_forslag` | `ny`, `under_behandling`, `venter_pa_forslagsstiller` | `avvist` | Begrunnelse påkrevd (`22023`) |
+  | `marker_forslag_innarbeidet` | `godkjent` | `innarbeidet` | Objektet må høre til ressursen (`intern.tilhorer_ressurs`) og revisjonen finnes (ellers `22023`). Uten objekt gjelder det elementet forslaget gjelder, ellers ressursen; uten revisjon den utkastet står på nå |
+
+  Vedtaket setter `vedtak_av`, `vedtak_kl` og `vedtak_begrunnelse`. Ingen av
+  funksjonene skriver i faginnholdet: et godkjent forslag er ikke publisert,
+  og innarbeidingen skjer i de vanlige redigeringene før forslaget markeres.
+- `les_forslagsko(filter)`: `antall` (`nye`, `pagaende`, `uten_redaktor` og
+  `mine`, de den innloggede behandler og ikke er ferdig med) alltid, og listene `nye` (eldste først), `pagaende` (`under_behandling`,
+  `venter_pa_forslagsstiller`, `godkjent`) og `ferdige` (de 100 siste) etter
+  utvalget `aktive` (standard), `ferdige`, `alle` eller `antall`. Hvert
+  forslag har `ressurs`, `sted`, `sammendrag`, `stilt_av` som `{er_meg, navn}`
+  (P2c), tidene, `har_behandler`, `behandler_er_meg`, `uten_redaktor`
+  (ansvarskøen: ingen i `intern.ressursens_redaktorer`) og `endret_siden`.
+- Varslene lages av utløseren `endringsforslag_hendelser_varsle` fra hver
+  hendelse, ett varsel per forslag, kategori og mottaker
+  (`gruppe = <kategori>:<forslag>`), med fagmiljøet til en lokal ressurs
+  (`intern.varselomfang`):
+
+  | Hvem gjorde det | Art | Kategori | Til |
+  | --- | --- | --- | --- |
+  | Forslagsstilleren | `opprettet` | `forslag_til_behandling` | `intern.forslagsbehandlere` |
+  | Forslagsstilleren | `presisering`, `kommentar`, `trukket` | `forslag_til_behandling` | Behandleren som har tatt forslaget, ellers `intern.forslagsbehandlere` |
+  | En behandler | `tatt`, `kommentar`, `presisering_bedt`, `godkjent`, `avvist`, `innarbeidet` | `mine_forslag` | Forslagsstilleren |
+
+  Den som gjorde det, varsles ikke, og bare den som kan se forslaget i det
+  varselet lages. `konflikt_sett` varsler ingen. Når varslene leses
+  (`intern.varselhendelser`), vises en hendelse om et forslag bare så lenge
+  den innloggede kan se det (`intern.varselforslag`); et varsel uten
+  hendelser vises ikke og telles ikke.
 
 ## Nasjonale redaktører (B2)
 
@@ -506,3 +571,13 @@ Fylles ut av trådene.
 | B2 Foreslå endring i appen | [#424](https://github.com/peohol/ousfar/pull/424) | Til kontroll |
 | C Redaktørens arbeidsflyt | — | — |
 | D Brukervennlighet og testing | D1 testplanen [p5-testplan.md](p5-testplan.md): #419 | Til kontroll |
+
+| P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Slått sammen |
+| A1 Redaktøransvar i databasen | [#421](https://github.com/peohol/ousfar/pull/421) | Slått sammen |
+| A2 Skjermbildene for redaktøransvar | — | — |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
+| B2 Foreslå endring i appen | — | Under arbeid |
+| C1 Varslene (kategoriene og visningen) | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
+| C2 Behandlingen i databasen | [#420](https://github.com/peohol/ousfar/pull/420) | Til kontroll |
+| C3 Brukerflaten for behandlerne | — | Ferdig, venter på B2 |
+| D1 Testplanen ([p5-testplan.md](p5-testplan.md)) | [#419](https://github.com/peohol/ousfar/pull/419) | Slått sammen |

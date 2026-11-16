@@ -246,9 +246,9 @@ describe('knappen og skjemaet', () => {
       kilder: [{ tekst: '', lenke: 'https://eksempel.no', referanse: 'r' }],
     })
     const kvittering = await screen.findByRole('dialog', { name: /Forslaget er sendt/ })
-    // Varslene om forslag kommer med behandlingen; til da viser kvitteringen bare til «Mine forslag».
+    // Varslene til forslagsstilleren (`mine_forslag`) kan ikke slås av, så kvitteringen kan love dem.
+    expect(kvittering.textContent).toMatch(/varsel når det får ny status/)
     expect(kvittering.textContent).toMatch(/«Mine forslag»/)
-    expect(kvittering.textContent).not.toMatch(/varsel/i)
     // Fokus står på veien videre, så tastaturet ikke mister plassen.
     await waitFor(() => expect(document.activeElement).toBe(within(kvittering).getByRole('button', { name: 'Se forslaget' })))
     await bruker.click(within(kvittering).getByRole('button', { name: 'Se forslaget' }))

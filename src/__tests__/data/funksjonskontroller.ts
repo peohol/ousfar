@@ -83,6 +83,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'avslutt_gruppemedlemskap(gruppe uuid, bruker uuid)': 'gruppemyndighet',
   // P3: medlemskapene og de lokale administratorene, etter myndigheten i fagmiljøet.
   'avslutt_medlemskap(bruker uuid, fagmiljo uuid)': 'medlemskapsmyndighet',
+  'avvis_forslag(forslag uuid, begrunnelse text)': 'rekkevidde',
+  'be_om_presisering(forslag uuid, tekst text)': 'rekkevidde',
   'beslutt_fagsak(sak bigint, versjon integer, valg text, merknad text)': 'systemarkitekt',
   'brukernavn_er_gyldig(brukernavn text)': 'offentlig',
   'brukernavn_normalisert(raatekst text)': 'offentlig',
@@ -119,6 +121,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'rekkevidde',
   'gjenopprett_stoff(stoff text)': 'stoffregister',
   'gjenopprett_varsler(varsler uuid[])': 'eier',
+  'godkjenn_forslag(forslag uuid, begrunnelse text)': 'rekkevidde',
   'gruppeoversikt(gruppe uuid)': 'gruppemyndighet',
   // P2.0: den innloggedes eget svar om aktivt medlemskap, og det eneste en
   // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
@@ -137,6 +140,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'kan_endre_lokalt_innhold()': 'rekkevidde',
   // P2a: om de tillatende reglene skal slippe utkast gjennom; svarer bare om den innloggede.
   'kan_se_utkast()': 'rekkevidde',
+  'kommenter_forslag(forslag uuid, tekst text)': 'rekkevidde',
   'kuratering_admin(handling text, data jsonb)': 'systemarkitekt',
   'lagre_intervallregelsett(objekt uuid, forventet_revisjon integer, innhold jsonb, kommentarer jsonb)': 'rekkevidde',
   'lagre_oppgave(oppgave uuid, tittel text, prompt text)': 'systemarkitekt',
@@ -155,6 +159,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_farmakogenetikk(kjemikalie_ider text[])': 'felles-lesing',
   'les_farmakogenetikk_sok(kjemikalie_ider text[])': 'felles-lesing',
   'les_forslag(forslag uuid)': 'rekkevidde',
+  'les_forslagsko(filter text)': 'rekkevidde',
   'les_historikk(objekt uuid)': 'radsikkerhet',
   'les_interaksjoner(atc_koder text[], virkestoff_ider text[])': 'felles-lesing',
   'les_interaksjonssok(sider jsonb)': 'felles-lesing',
@@ -194,6 +199,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2a: stoffkoblingene til fortolkningens analytter, til P4b; svarer bare om den innloggede.
   'leser_analyttkoblingene()': 'rekkevidde',
   'los_opp_diskusjonskategori(kategori uuid)': 'rekkevidde',
+  'marker_forslag_innarbeidet(forslag uuid, objekt uuid, revisjon integer)': 'rekkevidde',
   'medlemsoversikt(fagmiljo uuid)': 'medlemskapsmyndighet',
   'merk_diskusjon_sett(diskusjon uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
@@ -218,6 +224,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'tilbakekall_redaktoransvar(ansvar uuid)': 'redaktormyndighet',
   'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)': 'redaktormyndighet',
   // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
+  'ta_forslag(forslag uuid)': 'rekkevidde',
   'velg_arbeidsfagmiljo(fagmiljo uuid)': 'eier',
   // P2c: kontoene den innloggede ser profilkortet til; regelen på profiles og bildene bygger på den.
   'mine_synlige_profiler()': 'rekkevidde',

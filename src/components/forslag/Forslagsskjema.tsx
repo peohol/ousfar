@@ -370,8 +370,8 @@ function Kvittering({ id, onLukk }: { id: string; onLukk: () => void }) {
   return (
     <div className="forslagsskjema__kvittering" role="status">
       <p>
-        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Under «Mine forslag» kan du følge det, svare når
-        noen spør, og trekke det tilbake.
+        Takk! Forslaget er sendt til dem som har ansvaret for innholdet. Du får et varsel når det får ny status, en
+        kommentar eller et spørsmål, og under «Mine forslag» kan du følge det, svare og trekke det tilbake.
       </p>
       <div className="skjema__knapper">
         <Button variant="subtle" onClick={onLukk}>

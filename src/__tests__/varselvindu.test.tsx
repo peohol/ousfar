@@ -137,6 +137,7 @@ vi.mock('../data/endringslogg', () => ({
 }))
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
+const { RettigheterKilde, lesRettigheter } = await import('../auth/rettigheter')
 
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
@@ -369,6 +370,8 @@ describe('vinduet', () => {
           ['Kommentarer i diskusjoner jeg har vært aktiv i', true, false],
         ],
       ],
+      // Forslag til behandling vises bare for dem som kan behandle forslag.
+      ['Endringsforslag', [['Mine endringsforslag', true, true]]],
       [
         'Favorittsider',
         [
@@ -386,5 +389,83 @@ describe('vinduet', () => {
     await bruker.click(within(innstillinger).getByRole('button', { name: 'Tilbake til varslene' }))
     const nye = within(await screen.findByRole('dialog', { name: 'Varsler' })).getByRole('region', { name: 'Nye' })
     expect(within(nye).queryByText(/kommenterte en idé du har kommentert/)).toBeNull()
+  })
+})
+
+describe('endringsforslagene', () => {
+  const forslagsvarsel = (id: string, kategori: 'mine_forslag' | 'forslag_til_behandling', art: string, ressurs: { type: string; navn: string }) => ({
+    kilde: 'database' as const,
+    id,
+    kategori,
+    ide: null,
+    hendelser: [{ kl: '2026-09-29T11:30:00Z', av: 'ola', art, forslag: { id: `f-${id}`, ressurs: { ...ressurs, analyttkode: null } } }],
+    oppdatert_kl: '2026-09-29T11:30:00Z',
+    lest: false,
+    arkivert: false,
+  })
+
+  it('sier hva som skjedde med forslaget, og lenker til det', async () => {
+    api.hentVarsler.mockResolvedValue({
+      lest_kl: LISTE.lest_kl,
+      varsler: [
+        forslagsvarsel('v-mitt', 'mine_forslag', 'godkjent', { type: 'infoside', navn: 'Litium' }),
+        forslagsvarsel('v-nytt', 'forslag_til_behandling', 'opprettet', { type: 'intervallregelsett', navn: 'AMIS' }),
+      ],
+    })
+    const bruker = userEvent.setup()
+    render(<Varselknapp />)
+    await bruker.click(bjella())
+    const vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    const mitt = await within(vindu).findByRole('link', { name: 'Ola Nordmann godkjente forslaget ditt' })
+    expect(mitt.getAttribute('href')).toBe('#/forslag/f-v-mitt')
+    expect(within(mitt.closest('li')!).getByText('Litium')).toBeTruthy()
+    const nytt = within(vindu).getByRole('link', { name: 'Ola Nordmann foreslo en endring' })
+    expect(within(nytt.closest('li')!).getByText('Reglene for AMIS')).toBeTruthy()
+    await bruker.click(mitt)
+    expect(api.merkVarslerLest).toHaveBeenCalledWith(['v-mitt'], LISTE.lest_kl)
+  })
+
+  /** Innstillingene for den som har rettighetene i svaret fra `mine_rettigheter`, med bryterne i «Endringsforslag». */
+  async function forslagsinnstillinger(svar: Record<string, unknown>) {
+    const bruker = userEvent.setup()
+    render(
+      <RettigheterKilde verdi={lesRettigheter(svar)}>
+        <Varselknapp />
+      </RettigheterKilde>,
+    )
+    await waitFor(() => expect(bjella().getAttribute('aria-label')).toBe('Varsler (3 uleste)'))
+    await bruker.click(bjella())
+    const vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(within(vindu).getByRole('button', { name: 'Varselinnstillinger' }))
+    const innstillinger = await screen.findByRole('dialog', { name: 'Varselinnstillinger' })
+    const gruppe = within(innstillinger).getByRole('region', { name: 'Endringsforslag' })
+    const brytere = within(gruppe).getAllByRole('switch') as HTMLInputElement[]
+    const tilstand = brytere.map((b) => [b.closest('label')!.querySelector('.varselinnstilling__tittel')!.textContent, b.checked, b.disabled])
+    return { bruker, brytere, tilstand }
+  }
+
+  const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi' }
+
+  it.each([
+    ['en redaktør uten administratorrolle', { behandler_forslag: true }],
+    ['en lokal administrator', { administrerer: [KF], behandler_forslag: true }],
+    ['en systemarkitekt', { systemarkitekt: true, behandler_forslag: true }],
+    ['en lokal administrator når databasen ikke svarer med feltet', { administrerer: [KF] }],
+  ])('viser «Forslag til behandling» i innstillingene for %s, som kan slå den av', async (_hvem, svar) => {
+    const { bruker, brytere, tilstand } = await forslagsinnstillinger(svar)
+    expect(tilstand).toEqual([
+      ['Mine endringsforslag', true, true],
+      ['Forslag til behandling', true, false],
+    ])
+    await bruker.click(brytere[1]!)
+    expect(api.lagreVarselvalg).toHaveBeenCalledWith({ forslag_til_behandling: false })
+  })
+
+  it.each([
+    ['en vanlig bruker', { mine_fagmiljoer: [KF], behandler_forslag: false }],
+    ['en vanlig bruker når databasen ikke svarer med feltet', { mine_fagmiljoer: [KF] }],
+  ])('viser ikke «Forslag til behandling» for %s', async (_hvem, svar) => {
+    const { tilstand } = await forslagsinnstillinger(svar)
+    expect(tilstand).toEqual([['Mine endringsforslag', true, true]])
   })
 })
