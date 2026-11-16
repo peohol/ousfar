@@ -402,7 +402,7 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P5.0 delplan og grunnmur | [#418](https://github.com/peohol/ousfar/pull/418) | Til kontroll |
 | A Redaktøransvar | — | — |
-| B1 Forslagene i databasen | (fylles inn) | Til kontroll |
+| B1 Forslagene i databasen | [#422](https://github.com/peohol/ousfar/pull/422) | Til kontroll |
 | B2 Foreslå endring i appen | — | Under arbeid |
 | C Redaktørens arbeidsflyt | — | — |
 | D Brukervennlighet og testing | — | — |
