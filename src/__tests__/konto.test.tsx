@@ -302,14 +302,72 @@ async function velg(rad: HTMLElement, navn: string, valg: string) {
 }
 
 describe('brukerlista', () => {
-  it('viser én rolle per rad, statusene, og handlingene i en meny per bruker', async () => {
+  it('grupperer medlemmene etter rolle, systemarkitektene først, og alfabetisk i hver gruppe', async () => {
+    const BJORN = profil('4', 'Bjørn', 'Arkitekt')
+    const AASE = profil('5', 'Åse', 'Berg')
+    const ARNE = profil('6', 'Arne', 'Arkitekt')
+    const { lag } = await brukerlista(
+      MEG,
+      {
+        // Databasen sorterer på fornavn; lista sorterer selv, også æ, ø og å.
+        kf: [
+          medlem(AASE),
+          medlem(OLA, { administrator: true }),
+          medlem(BJORN, { systemarkitekt: true, administrator: true }),
+          medlem(KARI),
+          medlem(ARNE, { systemarkitekt: true }),
+          medlem(MEG, { administrator: true }),
+          medlem(profil('7', 'Zeno', 'Ziff'), { status: 'avsluttet' }),
+          medlem(profil('8', 'Anja', 'Aas'), { status: 'avsluttet' }),
+        ],
+      },
+      SYSTEMARKITEKT,
+    )
+    const grupper = within(lag).getAllByRole('region')
+    expect(grupper.map((g) => g.getAttribute('data-rolle'))).toEqual(['systemarkitekt', 'administrator', 'bruker'])
+    expect(grupper.map((g) => within(g).getByRole('heading').textContent)).toEqual([
+      'Systemarkitekter2',
+      'Administratorer2',
+      'Brukere2',
+    ])
+    const navn = (liste: HTMLElement) =>
+      within(liste)
+        .getAllByRole('listitem')
+        .map((rad) => rad.querySelector('.brukerrad__fullt')?.textContent)
+    expect(navn(within(lag).getByRole('list', { name: 'Systemarkitekter i OUS Klinisk farmakologi' }))).toEqual([
+      'Arne Arkitekt',
+      'Bjørn Arkitekt',
+    ])
+    expect(navn(within(lag).getByRole('list', { name: 'Administratorer i OUS Klinisk farmakologi' }))).toEqual([
+      'Anne Admin (deg)',
+      'Ola Svendsen',
+    ])
+    expect(navn(within(lag).getByRole('list', { name: 'Brukere i OUS Klinisk farmakologi' }))).toEqual([
+      'Kari Nordmann',
+      'Åse Berg',
+    ])
+    expect(within(grupper[1]!).getByText('Administrerer medlemmene og det lokale innholdet i OUS Klinisk farmakologi.')).toBeTruthy()
+    // De tidligere medlemmene står for seg, alfabetisk, uten roller.
+    expect(navn(within(lag).getByRole('list', { name: 'Tidligere medlemmer i OUS Klinisk farmakologi' }))).toEqual([
+      'Anja Aas',
+      'Zeno Ziff',
+    ])
+  })
+
+  it('viser bare gruppene som har medlemmer', async () => {
+    const { lag } = await brukerlista(MEG, { kf: [medlem(KARI)] })
+    expect(within(lag).getAllByRole('region').map((g) => g.getAttribute('data-rolle'))).toEqual(['bruker'])
+  })
+
+  it('viser statusene på raden, og handlingene i en meny per bruker', async () => {
     const { lag, rader } = await brukerlista(MEG, {
       kf: [medlem(MEG, { administrator: true, ...ALT }), medlem(KARI, ALT), medlem(OLA, { nytt_passord: true })],
     })
+    // Rollen står i gruppen; merkene på raden er statusene.
     expect(rader.map((rad) => rad.querySelector('.brukerrad__merker')?.textContent)).toEqual([
-      'AdministratorVerktøy',
-      'Bruker',
-      'BrukerMå bytte passord',
+      'Verktøy',
+      '',
+      'Må bytte passord',
     ])
     // Egen rad har ingen handlinger, selv om svaret skulle si noe annet.
     expect(within(rader[0]!).queryAllByRole('button')).toEqual([])
@@ -357,7 +415,7 @@ describe('brukerlista', () => {
       { kf: [medlem({ ...KARI, role: 'admin' }, { endre_rolle: true, kan_fjerne_som_administrator: true, administrator: true })] },
       SYSTEMARKITEKT,
     )
-    expect(rader[0]!.querySelector('.brukerrad__merker')?.textContent).toBe('AdministratorVerktøy')
+    expect(rader[0]!.querySelector('.brukerrad__merker')?.textContent).toBe('Verktøy')
     const meny = await apneMeny(rader[0]!, 'Kari Nordmann')
     expect(within(meny).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual([
       'Fjern som administrator',
@@ -409,7 +467,7 @@ describe('brukerlista', () => {
     })
     const tidligere = within(lag).getByRole('list', { name: 'Tidligere medlemmer i OUS Klinisk farmakologi' })
     const [kari, ola] = within(tidligere).getAllByRole('listitem')
-    expect(kari!.querySelector('.brukerrad__merker')?.textContent).toBe('BrukerSperret')
+    expect(kari!.querySelector('.brukerrad__merker')?.textContent).toBe('Sperret')
     expect(within(ola!).queryAllByRole('button')).toEqual([])
     await velg(kari!, 'Kari Nordmann', 'Gi tilgang igjen')
     expect(api.giMedlemskap).toHaveBeenCalledWith('2', 'kf')
@@ -465,7 +523,7 @@ describe('brukerlista', () => {
       await slipp('rt', [kariRt])
       await slipp('kf', [kariKf, medlem(OLA)])
       // Det sene svaret fra KF vises ikke under RT.
-      const liste = within(lag).getByRole('list', { name: 'Medlemmer i OUS Rettstoksikologi' })
+      const liste = within(lag).getByRole('list', { name: 'Brukere i OUS Rettstoksikologi' })
       expect(within(liste).getAllByRole('listitem')).toHaveLength(1)
       expect(within(lag).queryByText('Ola Svendsen')).toBeNull()
       expect(within(lag).queryByRole('list', { name: /OUS Klinisk farmakologi/ })).toBeNull()
@@ -483,7 +541,7 @@ describe('brukerlista', () => {
       // Byttes det tilbake mens svaret fra RT er på vei, vises bare KF.
       await userEvent.selectOptions(within(lag).getByLabelText('Fagmiljø'), 'kf')
       await slipp('kf', [kariKf])
-      expect(within(lag).getByRole('list', { name: 'Medlemmer i OUS Klinisk farmakologi' })).toBeTruthy()
+      expect(within(lag).getByRole('list', { name: 'Brukere i OUS Klinisk farmakologi' })).toBeTruthy()
       expect(api.avsluttMedlemskap).toHaveBeenCalledTimes(1)
     } finally {
       vi.mocked(api.hentMedlemsoversikt).mockImplementation(async (fagmiljo: string) => (okt.medlemmer[fagmiljo] ?? []) as never)

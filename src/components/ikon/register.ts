@@ -1113,6 +1113,27 @@ const REGISTER = {
       P('M8.8 12.2l2.3 2.3 4.2-4.6', 'l', null, 'pop'),
     ],
   },
+  // Tegnet i OUSFAR for rollene i brukerlista (`src/components/konto/brukerroller.ts`).
+  // Systemarkitekten: en passer som slår en bue, som på en arbeidstegning.
+  rolleSystemarkitekt: {
+    vb: 24,
+    parts: [
+      C(12, 13.5, 8.5, 'f1', 'info'),
+      P('M4.9 18.2a8.5 8.5 0 0 0 14.2 0', 'd', 'info', 'draw'),
+      P('M12 6.2 7 19.5M12 6.2l5 13.3', 'l', 'i-ink'),
+      P('M12 2.2v1.6', 'l', 'i-ink'),
+      C(12, 5.4, 1.9, 'f2', 'info'),
+      C(17, 19.5, 1.2, 'h', 'info', 'pop'),
+    ],
+  },
+  // Administratoren: en person i skjoldet.
+  rolleAdministrator: {
+    vb: 24,
+    parts: [
+      P('M12 3l7.5 3v5.5c0 4.4-3.1 7.8-7.5 9.5-4.4-1.7-7.5-5.1-7.5-9.5V6z', 'f1', 'accent2'),
+      G([C(12, 9.8, 2.4, 'f2', 'accent2'), P('M7.9 16.6a4.1 4.1 0 0 1 8.2 0z', 'f2', 'accent2')], 'pop'),
+    ],
+  },
   history: { vb: 24, ga: 'spinback', parts: [C(12, 12, 8.5, 'f1', 'info'), P('M12 7.5V12l3 2', 'l')] },
   key: { vb: 24, parts: [C(8, 12, 4.5, 'f1', 'warn'), P('M12.5 12H21M17.5 12v3M20 12v2.5', 'l', 'i-ink', 'bumpR')] },
   publish: {
