@@ -539,9 +539,18 @@ prøvd i `src/__tests__/forslagsbehandling.ui.test.tsx`):
   oppdatering av appen (`useBevart`). Avslaget fra databasen (som `PT409` når
   en annen kom først) vises der.
 - Er innholdet endret siden forslaget ble skrevet (`konflikt`), sier siden
-  det med revisjonene og om utkastet har upubliserte endringer, og «Se hva som
-  er endret» åpner historikkvinduet med revisjonen forslaget ble skrevet mot
-  og den publiserte. Ingenting skrives over.
+  hva som er endret, og gir en vei til hver slags endring. Ingenting skrives
+  over.
+  - Er det publiserte i det forslaget gjelder, endret (`endret_siden`), åpner
+    «Se hva som er endret» historikkvinduet. Der sammenlignes revisjonen
+    forslaget ble skrevet mot, med den publiserte.
+  - Er fagsiden publisert i en ny versjon (`side_endret_siden`), lenker
+    merknaden til versjonen forslaget ble skrevet mot (`#/versjon/<stoff>/<nr>`).
+    Der kan den sammenlignes med den gjeldende.
+  - Har utkastet upubliserte endringer (`utkast_endret`), åpner «Se utkastet»
+    den vanlige redigeringen. Historikken viser ikke utkast for andre enn
+    administratorene.
+  - Knappen for historikken vises bare når de to revisjonene er forskjellige.
 - «Åpne utkastet» går til den vanlige redigeringen: redigeringssiden for
   fortolkningen (`#/fortolkning/<analytt>/rediger`), eller fagsiden, som da
   åpnes rett i redigeringsmodus for den som kan redigere

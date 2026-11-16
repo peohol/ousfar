@@ -1,10 +1,10 @@
 import { useId, useState } from 'react'
-import { adresse, redigeringsrute, stoffadresse } from '../../../domain/rute'
+import { adresse, redigeringsrute, stoffadresse, versjonsadresse } from '../../../domain/rute'
 import { onskRedigering } from '../../../faginnhold/redigeringsonske'
 import { innholdsfelter } from '../../../faginnhold/innholdsfelter'
 import { OBJEKTTYPER, type Objekttype } from '../../../faginnhold/modell'
 import { behandle, markerInnarbeidet, muligeBehandlinger, taForslag, type Behandling } from '../../../forslag/behandling'
-import { GRENSER, personnavn, type Forslag, type Forslagsressurs } from '../../../forslag/modell'
+import { GRENSER, personnavn, type Forslag, type Forslagskonflikt, type Forslagsressurs } from '../../../forslag/modell'
 import { useBevart } from '../../../oppdatering/Bevaring'
 import { IKKE_PASIENTOPPLYSNINGER } from '../../../traad/modell'
 import { Button } from '../../Button'
@@ -75,6 +75,32 @@ export function utkastlenke(ressurs: Forslagsressurs): { href: string; onClick?:
 const erObjekttype = (type: string): type is Objekttype => (OBJEKTTYPER as readonly string[]).includes(type)
 
 /**
+ * Hva som er endret siden forslaget ble skrevet, med ordene behandleren
+ * trenger: det forslaget gjelder (elementet eller ressursen), resten av
+ * fagsiden, og utkastet som ikke er publisert.
+ */
+export function konfliktmerknad(k: Forslagskonflikt): string {
+  const deler: string[] = []
+  if (k.endret_siden) {
+    deler.push(
+      `Innholdet er endret siden forslaget ble skrevet. Forslaget gjelder revisjon ${k.grunnrevisjon}${
+        k.publisert_revisjon ? `, og revisjon ${k.publisert_revisjon} er publisert nå` : ''
+      }.`,
+    )
+  }
+  if (k.side_endret_siden) {
+    deler.push(
+      `Fagsiden er publisert på nytt siden forslaget ble skrevet mot versjon ${k.sideversjon}${
+        k.publisert_sideversjon ? `; versjon ${k.publisert_sideversjon} er den gjeldende` : ''
+      }. Den tidligere versjonen kan sammenlignes med den gjeldende.`,
+    )
+  }
+  if (!k.endret_siden && !k.side_endret_siden) deler.push('Det publiserte er som da forslaget ble skrevet.')
+  if (k.utkast_endret) deler.push('Utkastet har endringer som ikke er publisert, og de vises i redigeringen.')
+  return deler.join(' ')
+}
+
+/**
  * Det den som behandler forslaget, kan gjøre (P5 tråd C): ta det, kommentere,
  * be om en presisering, godkjenne, avvise med begrunnelse, åpne utkastet og
  * markere et godkjent forslag som innarbeidet. Er innholdet endret siden
@@ -100,6 +126,17 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
   const endret = k.endret_siden || k.side_endret_siden
   const objekt = f.element ?? { id: f.ressurs.id, type: f.ressurs.type }
   const kanSammenligne = faginnhold !== null && erObjekttype(objekt.type)
+  // Historikken sammenligner det publiserte med revisjonen forslaget bygger
+  // på, og vises bare når de er forskjellige. Utkastet og resten av fagsiden
+  // har hver sin vei: redigeringen og den tidligere fagsideversjonen.
+  const visEndringer = kanSammenligne && k.endret_siden
+  const sideversjon =
+    k.side_endret_siden && k.sideversjon !== null && f.ressurs.stoff
+      ? {
+          href: versjonsadresse(f.ressurs.stoff, k.sideversjon),
+          tekst: `Se fagsiden slik den var (versjon ${k.sideversjon})`,
+        }
+      : null
 
   const apne = (skjema: Apent) => {
     setApent(skjema)
@@ -144,19 +181,25 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
 
       {(endret || k.utkast_endret) && UAVGJORT.has(f.status) && (
         <div className="behandling__konflikt" role="note" aria-label="Innholdet er endret">
-          <p>
-            {endret
-              ? `Innholdet er endret siden forslaget ble skrevet. Forslaget gjelder revisjon ${k.grunnrevisjon}${
-                  k.publisert_revisjon ? `, og revisjon ${k.publisert_revisjon} er publisert nå` : ''
-                }.`
-              : 'Det publiserte er som da forslaget ble skrevet.'}
-            {k.utkast_endret && ' Utkastet har endringer som ikke er publisert.'} Se over hva som er endret før du avgjør;
-            ingenting skrives over.
-          </p>
-          {kanSammenligne && (
-            <Button variant="kant" className="knapp--kompakt" onClick={() => setHistorikk(true)}>
-              Se hva som er endret
-            </Button>
+          <p>{konfliktmerknad(k)} Se over hva som er endret før du avgjør; ingenting skrives over.</p>
+          {(visEndringer || sideversjon || (k.utkast_endret && utkast)) && (
+            <div className="behandling__konfliktvalg">
+              {visEndringer && (
+                <Button variant="kant" className="knapp--kompakt" onClick={() => setHistorikk(true)}>
+                  Se hva som er endret
+                </Button>
+              )}
+              {sideversjon && (
+                <a className="knapp knapp--kant knapp--kompakt" href={sideversjon.href}>
+                  {sideversjon.tekst}
+                </a>
+              )}
+              {k.utkast_endret && utkast && (
+                <a className="knapp knapp--kant knapp--kompakt" href={utkast.href} onClick={utkast.onClick}>
+                  Se utkastet
+                </a>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -260,7 +303,7 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
         </div>
       )}
 
-      {historikk && kanSammenligne && (
+      {historikk && visEndringer && (
         <Historikkvindu
           apen
           navn={f.sted ?? f.ressurs.navn}

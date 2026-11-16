@@ -79,3 +79,9 @@
   color: var(--blekk);
   text-decoration: none;
 }
+
+.behandling__konfliktvalg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+}

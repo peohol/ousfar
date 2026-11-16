@@ -314,9 +314,60 @@ describe('behandlerens handlinger på ett forslag', () => {
     )
     const merknad = await screen.findByRole('note', { name: 'Innholdet er endret' })
     expect(merknad.textContent).toContain('Forslaget gjelder revisjon 3, og revisjon 4 er publisert nå.')
-    expect(merknad.textContent).toContain('Utkastet har endringer som ikke er publisert.')
+    expect(merknad.textContent).toContain('Utkastet har endringer som ikke er publisert')
+    expect(within(merknad).getByRole('link', { name: 'Se utkastet' })).toBeTruthy()
     await bruker.click(within(merknad).getByRole('button', { name: 'Se hva som er endret' }))
     await waitFor(() => expect(lesHistorikk).toHaveBeenCalledWith(DOSERING))
+  })
+
+  it('når bare utkastet er endret, viser merknaden utkastet og ikke en tom sammenligning', async () => {
+    const bruker = userEvent.setup()
+    const lesHistorikk = vi.fn(async () => ({ hendelser: [], revisjoner: [] }))
+    const kilde = { leser: { lesHistorikk }, lager: {}, kanRedigere: true } as never
+    const bareUtkast = { grunnrevisjon: 3, publisert_revisjon: 3, endret_siden: false, sideversjon: 7, publisert_sideversjon: 7, side_endret_siden: false, utkast_endret: true }
+    api.hentForslag.mockResolvedValueOnce(forslaget({ konflikt: bareUtkast }))
+    render(
+      <FaginnholdskildeProvider kilde={kilde}>
+        <Forslagsside forslag={ID} onLukk={() => {}} />
+      </FaginnholdskildeProvider>,
+    )
+    const merknad = await screen.findByRole('note', { name: 'Innholdet er endret' })
+    expect(merknad.textContent).toContain('Det publiserte er som da forslaget ble skrevet.')
+    expect(merknad.textContent).toContain('Utkastet har endringer som ikke er publisert, og de vises i redigeringen.')
+    // Revisjon 3 mot seg selv ville vist «ingen forskjeller»: ingen slik knapp.
+    expect(within(merknad).queryByRole('button', { name: 'Se hva som er endret' })).toBeNull()
+    const utkast = within(merknad).getByRole('link', { name: 'Se utkastet' })
+    expect(utkast.getAttribute('href')).toBe('#/stoff/citalopram')
+    await bruker.click(utkast)
+    expect(taRedigeringsonske('citalopram')).toBe(true)
+    expect(lesHistorikk).not.toHaveBeenCalled()
+    cleanup()
+    api.hentForslag.mockResolvedValueOnce(forslaget({ ressurs: REGLER, element: null, konflikt: bareUtkast }))
+    render(<Forslagsside forslag={ID} onLukk={() => {}} />)
+    const regler = await screen.findByRole('note', { name: 'Innholdet er endret' })
+    expect(within(regler).getByRole('link', { name: 'Se utkastet' }).getAttribute('href')).toBe('#/fortolkning/hbup/rediger')
+  })
+
+  it('når bare fagsideversjonen er endret, lenker merknaden til versjonen forslaget ble skrevet mot', async () => {
+    const lesHistorikk = vi.fn(async () => ({ hendelser: [], revisjoner: [] }))
+    const kilde = { leser: { lesHistorikk }, lager: {}, kanRedigere: true } as never
+    api.hentForslag.mockResolvedValueOnce(
+      forslaget({
+        konflikt: { grunnrevisjon: 3, publisert_revisjon: 3, endret_siden: false, sideversjon: 7, publisert_sideversjon: 8, side_endret_siden: true, utkast_endret: false },
+      }),
+    )
+    render(
+      <FaginnholdskildeProvider kilde={kilde}>
+        <Forslagsside forslag={ID} onLukk={() => {}} />
+      </FaginnholdskildeProvider>,
+    )
+    const merknad = await screen.findByRole('note', { name: 'Innholdet er endret' })
+    expect(merknad.textContent).toContain('Fagsiden er publisert på nytt siden forslaget ble skrevet mot versjon 7; versjon 8 er den gjeldende.')
+    expect(merknad.textContent).not.toContain('Forslaget gjelder revisjon')
+    expect(within(merknad).queryByRole('button', { name: 'Se hva som er endret' })).toBeNull()
+    expect(within(merknad).queryByRole('link', { name: 'Se utkastet' })).toBeNull()
+    // Versjonssiden har «Sammenlign med den gjeldende».
+    expect(within(merknad).getByRole('link', { name: 'Se fagsiden slik den var (versjon 7)' }).getAttribute('href')).toBe('#/versjon/citalopram/7')
   })
 
   it('uten historikken for hånden står merknaden uten knappen', async () => {
