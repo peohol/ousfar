@@ -44,10 +44,14 @@ export function Statusmerke({ status, behandler = false }: { status: Forslagssta
   return <Merke tone={MERKETONE[tone]}>{(behandler && BEHANDLERS_STATUSTEKST[status]) || tekst}</Merke>
 }
 
-/** Hva forslaget gjelder, i ord: «Fagside · Bupropion · Halveringstid». */
+/**
+ * Hva forslaget gjelder, i ord: «Fagside · Bupropion · Halveringstid». Typen
+ * gjentas ikke når stedet alt begynner med den («Fortolkning av Bupropion · …»).
+ */
 export function hvaGjelder(ressurs: Forslagsressurs, sted: string | null): string {
   const type = RESSURSTYPENAVN[ressurs.type] ?? 'Innhold'
-  return sted ? `${type} · ${sted}` : `${type} · ${ressurs.navn}`
+  const hva = sted ?? ressurs.navn
+  return hva.toLocaleLowerCase('nb').startsWith(type.toLocaleLowerCase('nb')) ? hva : `${type} · ${hva}`
 }
 
 /** Adressen til innholdet forslaget gjelder, når det har en. */

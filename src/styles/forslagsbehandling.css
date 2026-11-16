@@ -33,6 +33,12 @@
   font-weight: var(--vekt-halvfet);
 }
 
+@media (max-width: 47.5em) {
+  .forslagsko__valg .bryter {
+    min-height: var(--hoyde-trykk);
+  }
+}
+
 .forslagsko__tall {
   font-variant-numeric: tabular-nums;
   color: var(--blekk-dempet);
