@@ -19,6 +19,7 @@ export const VARSELGRUPPER = {
   fortolkning: { tittel: 'Faglige varsler' },
   ideer: { tittel: 'Idéer' },
   diskusjoner: { tittel: 'Diskusjoner' },
+  forslag: { tittel: 'Endringsforslag' },
   favoritter: { tittel: 'Favorittsider' },
   appen: { tittel: 'Appen' },
 } as const satisfies Record<string, { tittel: string }>
@@ -37,6 +38,8 @@ export interface Varselkategoridefinisjon {
   obligatorisk: boolean
   /** Om kategorien er på før brukeren har valgt noe. */
   standard: boolean
+  /** Bare for dem som kan behandle endringsforslag; de andre ser den ikke i innstillingene. */
+  bareForBehandlere?: boolean
 }
 
 /**
@@ -94,6 +97,21 @@ export const VARSELKATEGORIER = {
     obligatorisk: false,
     standard: true,
   },
+  mine_forslag: {
+    gruppe: 'forslag',
+    tittel: 'Mine endringsforslag',
+    forklaring: 'Når et forslag du har sendt, får ny status, en kommentar eller et spørsmål.',
+    obligatorisk: true,
+    standard: true,
+  },
+  forslag_til_behandling: {
+    gruppe: 'forslag',
+    tittel: 'Forslag til behandling',
+    forklaring: 'Når noen foreslår en endring i innhold du behandler forslag til, eller svarer på et forslag.',
+    obligatorisk: false,
+    standard: true,
+    bareForBehandlere: true,
+  },
   funksjonalitet: {
     gruppe: 'appen',
     tittel: 'Vesentlige kliniske funksjonsendringer',
@@ -121,11 +139,16 @@ export type Varselkategori = keyof typeof VARSELKATEGORIER
 
 export const KATEGORIREKKEFOLGE = Object.keys(VARSELKATEGORIER) as Varselkategori[]
 
-/** Gruppene med kategoriene sine, slik innstillingene viser dem. Grupper uten kategorier er utelatt. */
-export function kategorierIGrupper(): { gruppe: Varselgruppe; kategorier: Varselkategori[] }[] {
+/**
+ * Gruppene med kategoriene sine, slik innstillingene viser dem. Grupper uten
+ * kategorier er utelatt, og kategoriene bare for behandlerne av
+ * endringsforslag, for alle andre.
+ */
+export function kategorierIGrupper(behandler = true): { gruppe: Varselgruppe; kategorier: Varselkategori[] }[] {
+  const synlig = (k: Varselkategori) => behandler || !(VARSELKATEGORIER[k] as Varselkategoridefinisjon).bareForBehandlere
   return GRUPPEREKKEFOLGE.map((gruppe) => ({
     gruppe,
-    kategorier: KATEGORIREKKEFOLGE.filter((k) => VARSELKATEGORIER[k].gruppe === gruppe),
+    kategorier: KATEGORIREKKEFOLGE.filter((k) => VARSELKATEGORIER[k].gruppe === gruppe && synlig(k)),
   })).filter((g) => g.kategorier.length > 0)
 }
 
@@ -139,6 +162,8 @@ export const DATABASEKATEGORIER = [
   'mine_diskusjoner',
   'aktive_diskusjoner',
   'favorittdiskusjoner',
+  'mine_forslag',
+  'forslag_til_behandling',
 ] as const satisfies readonly Varselkategori[]
 export type Databasekategori = (typeof DATABASEKATEGORIER)[number]
 
@@ -314,6 +339,22 @@ export interface Hendelse {
   /** Favorittsiden som ble endret, og delene av den (`SIDENAVN` eller panelnøkler). */
   side?: Favorittside | null
   deler?: string[]
+  /** Endringsforslaget, og hva som skjedde med det (en art fra forslagets tidslinje). */
+  forslag?: Varselforslag | null
+  art?: string
+}
+
+/** Et endringsforslag slik et varsel viser det: forslaget og ressursen det gjelder. */
+export interface Varselforslag {
+  id: string
+  ressurs: Varselressurs
+}
+
+/** En fagside eller et regelsett, slik et forslagsvarsel navngir den. */
+export interface Varselressurs {
+  type: string
+  navn: string | null
+  analyttkode: string | null
 }
 
 /** En fagside slik et favorittvarsel viser den: navnet og stoffets nøkkel. */
@@ -371,6 +412,12 @@ function lesSide(verdi: unknown): Favorittside | null {
   return side.id && side.stoff ? side : null
 }
 
+function lesForslag(verdi: unknown): Varselforslag | null {
+  if (!erObjekt(verdi) || !tekst(verdi.id) || !erObjekt(verdi.ressurs)) return null
+  const r = verdi.ressurs
+  return { id: tekst(verdi.id), ressurs: { type: tekst(r.type), navn: tekstEllerNull(r.navn), analyttkode: tekstEllerNull(r.analyttkode) } }
+}
+
 function lesHendelse(verdi: unknown): Hendelse | null {
   if (!erObjekt(verdi)) return null
   const hendelse: Hendelse = { kl: tekst(verdi.kl), av: tekstEllerNull(verdi.av) }
@@ -384,6 +431,10 @@ function lesHendelse(verdi: unknown): Hendelse | null {
   if ('side' in verdi) {
     hendelse.side = lesSide(verdi.side)
     hendelse.deler = Array.isArray(verdi.deler) ? verdi.deler.filter((d): d is string => typeof d === 'string') : []
+  }
+  if ('forslag' in verdi) {
+    hendelse.forslag = lesForslag(verdi.forslag)
+    hendelse.art = tekst(verdi.art)
   }
   return hendelse
 }
@@ -574,4 +625,56 @@ export function deletekst(deler: readonly string[]): string {
 export function favorittsted(deler: readonly string[]): string[] {
   const del = deler.find((d) => d !== SIDENAVN && panelFor(d)?.form !== 'identitet')
   return del ? [del] : []
+}
+
+/* --- Endringsforslagene ---------------------------------------------------- */
+
+type Forslagskategori = 'mine_forslag' | 'forslag_til_behandling'
+
+/** Om varselet gjelder et endringsforslag. */
+export function erForslagsvarsel(varsel: Databasevarsel): varsel is Databasevarsel & { kategori: Forslagskategori } {
+  return varsel.kategori === 'mine_forslag' || varsel.kategori === 'forslag_til_behandling'
+}
+
+/** Forslaget varselet gjelder, slik det er nå. */
+export function varselforslag(varsel: Databasevarsel): Varselforslag | null {
+  return [...varsel.hendelser].reverse().find((h) => h.forslag)?.forslag ?? null
+}
+
+/**
+ * Hva som skjedde med forslaget, etter artene i tidslinjen
+ * (`endringsforslag_hendelser.art`): for forslagsstilleren det behandlerne
+ * gjør, og for behandlerne det forslagsstilleren gjør.
+ */
+const FORSLAGSHANDLINGER: Record<Forslagskategori, Partial<Record<string, string>>> = {
+  mine_forslag: {
+    tatt: 'tok forslaget ditt til behandling',
+    kommentar: 'kommenterte forslaget ditt',
+    presisering_bedt: 'ber om en presisering av forslaget ditt',
+    godkjent: 'godkjente forslaget ditt',
+    avvist: 'avviste forslaget ditt',
+    innarbeidet: 'arbeidet forslaget ditt inn i utkastet',
+  },
+  forslag_til_behandling: {
+    opprettet: 'foreslo en endring',
+    presisering: 'svarte på spørsmålet om forslaget',
+    kommentar: 'kommenterte et forslag',
+    trukket: 'trakk forslaget sitt',
+  },
+}
+
+/**
+ * Det siste som skjedde med forslaget, med dem som gjorde det foran: «Ada
+ * godkjente forslaget ditt», «Bo foreslo en endring».
+ */
+export function forslagstekst(varsel: Databasevarsel & { kategori: Forslagskategori }, navn: (id: string) => string): string {
+  const art = varsel.hendelser.at(-1)?.art ?? ''
+  const hvem = navneliste(aktorer(varsel.hendelser.filter((h) => h.art === art)).map(navn))
+  return `${hvem} ${FORSLAGSHANDLINGER[varsel.kategori][art] ?? 'oppdaterte et forslag'}`
+}
+
+/** «Citalopram» for en fagside, «Reglene for AMIS» for et regelsett. */
+export function ressurstekst(ressurs: Varselressurs): string {
+  if (ressurs.type === 'infoside') return ressurs.navn ?? 'En fagside'
+  return `Reglene for ${ressurs.navn ?? ressurs.analyttkode ?? 'uten navn'}`
 }
