@@ -51,8 +51,7 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 ## PR-beskrivelse, versjon og endringslogg
 
 - PR-beskrivelsen følger `.github/pull_request_template.md`. Øverst står et kort sammendrag for mennesker, i enkelt språk og uten sjargong: hva som er gjort, hvorfor, og om en menneskelig systemarkitekt må ta stilling til noe. Tekniske detaljer for den kontrollerende agenten står gjerne under.
-- Appen følger SemVer, og hver PR har nøyaktig én føring i endringsloggen, unntatt en stille designjustering (ingen føring, versjon, varsel eller oppdateringsmelding).
-- Føringen er en ny, egen fil (`npm run endring -- major|minor|patch`) som sier hvilket ledd endringen øker. Skriv aldri et versjonsnummer, og endre ikke `package.json` eller låsefila for å føre en versjon: nummeret settes når PR-en er slått sammen og appen bygges.
+- Appen følger SemVer, og hver PR har nøyaktig én føring i endringsloggen, unntatt en stille designjustering (ingen føring, versjon, varsel eller oppdateringsmelding). Føringen er en ny fil (`npm run endring -- major|minor|patch`) uten versjonsnummer; `package.json` endres ikke.
 - Som siste steg før en PR er klar: følg [docs/endringslogg.md](docs/endringslogg.md), som også avgjør hva som er stille. Den trengs ikke ellers.
 
 ## Vedlikehold av instruksene
