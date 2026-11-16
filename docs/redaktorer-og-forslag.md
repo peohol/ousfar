@@ -93,6 +93,15 @@ siden vedkommende kan endre utkastet uansett, og tidslinjen viser hvem som
 gjorde hva. En redaktør kan ikke tilbakekalle sitt eget ansvar; bare den som
 kan gi det, kan ta det tilbake.
 
+**Delte elementer.** En kommentar kan brukes av flere regelsett
+(`intern.ressurser_for` gir da flere ressurser). Et ressursansvar dekker et
+element bare når redaktøren har ansvar for **alle** ressursene elementet hører
+til, også når elementet lagres sammen med en av dem i `lagre_*regelsett`.
+Ellers kunne en redaktør for ett regelsett endre klinisk tekst i et annet.
+Å ta i bruk en delt kommentar uendret er fortsatt lov. Et ansvar for
+fortolkningen i et fagmiljø dekker alle lokale objekter der uansett, og
+lokale administratorer og systemarkitekter har myndigheten som før.
+
 Den gamle adminrollen (`profiles.role = 'admin'`) gir ingenting her. Alle
 kontroller krever aktivt medlemskap. Et redaktøransvar for lokalt innhold
 gjelder bare så lenge redaktøren er aktivt medlem av fagmiljøet. Ingen kan gi
