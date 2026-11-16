@@ -45,7 +45,7 @@ den):
 | Navn | Hva | Rekkevidde |
 | --- | --- | --- |
 | `F` | En publisert fagside med kortet `F.kort` | Felles |
-| `RA1`, `RA2` | To publiserte regelsett i A; `RA1.kommentar` er en kommentar bare `RA1` bruker | Lokal A |
+| `RA1`, `RA2` | To publiserte regelsett i A; `RA1.kommentar` er en kommentar bare `RA1` bruker, og `delt.kommentar` en kommentar både `RA1` og `RA2` bruker | Lokal A |
 | `RB` | Et publisert regelsett i B med `RB.kommentar` | Lokal B |
 | `Rutkast` | Et regelsett som bare finnes som utkast | Lokal A |
 | `FA1` | Forslag fra `vanligA` til `RA1.kommentar` | A |
@@ -232,12 +232,22 @@ Lesingen:
 | Lese utkastet til `RA1` (`kan_se_utkast`, `les_kommentarer('utkast')`) | V | V |
 | Lagre `RA1` med en ny kommentar regelsettet tar i bruk | V | V |
 | Lagre `RA2` | – | V |
+| Lagre `RA1.kommentar` | V | V |
+| Lagre `delt.kommentar`, som også `RA2` bruker | – (se under) | V |
+| Lagre `RA1` slik at det tar i bruk `delt.kommentar` uendret | V | V |
 | Lagre en lokal kommentar i A som ikke hører til `RA1` | – | V |
 | Lagre `RB` eller en kommentar i B | – (PT404) | – (PT404) |
 | Lagre utkastet til `F` eller `F.kort` | – | – |
 | `publiser_utkast` på noe | – | – |
 | `gjenopprett_revisjon` på `RA1` | Som lagring (V), aldri publisering | V |
 | Opprette en fagside eller en referanse; `slett_referanse` | – | – |
+
+Et element som hører til flere ressurser (en delt kommentar), kan en
+redaktør bare endre med ansvar for **alle** ressursene det hører til, ellers
+endrer et ansvar for `RA1` den kliniske teksten i `RA2`. Testen prøver også at
+det ikke er nok å ha ansvar for én av dem når `delt.kommentar` lagres sammen
+med `RA1` i `lagre_*regelsett`. Regelen står under
+[Avklaringer](#avklaringer).
 
 Etter tilbakekalling, og etter avsluttet medlemskap i A, er hver V over –, med
 gyldig token. `ressursens_redaktorer` og `forslagsbehandlere` tar dem ikke med.
@@ -371,6 +381,10 @@ ført inn i kontrakten («Rettighetene»):
    forslag; tidslinjen viser det.
 2. En redaktør kan ikke tilbakekalle sitt eget ansvar. Bare den som kan gi
    ansvaret, kan ta det tilbake.
+3. En redaktør kan endre et element som hører til flere ressurser (en
+   kommentar flere regelsett bruker), bare med ansvar for alle ressursene det
+   hører til (avsnitt 3.4). Funnet i kontrollen av denne planen; sendt til
+   P5-tråden og tråd A.
 
 ## 9. Rapport fra sluttkontrollen
 
