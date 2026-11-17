@@ -8,9 +8,11 @@ import { klient } from '../auth/klient'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
 import {
   SORTERINGSNOKKEL,
+  lesGruppeideer,
   lesIdeoversikt,
   lesIdetraad,
   lesSortering,
+  type Gruppeideer,
   type Ide,
   type Idekategori,
   type Idetraad,
@@ -28,6 +30,11 @@ function sjekk<T>({ data, error }: { data: T; error: unknown }): T {
 
 export async function hentIdeer(): Promise<Ide[]> {
   return lesIdeoversikt(sjekk(await klient().rpc('ideoversikt')))
+}
+
+/** Idéene i gruppen, og hva den innloggede kan gjøre der. Gir en feil når gruppen ikke kan leses. */
+export async function hentGruppeideer(gruppe: string): Promise<Gruppeideer> {
+  return lesGruppeideer(sjekk(await klient().rpc('gruppeideer', { gruppe })))
 }
 
 export async function hentIdetraad(id: string): Promise<Idetraad | null> {
@@ -115,14 +122,19 @@ export async function angreOppgaveUtfort(id: string): Promise<void> {
 }
 
 export interface Ideinnhold {
-  kategori: Idekategori
+  /** Kategorien til en felles idé; `null` for en idé i en gruppe. */
+  kategori: Idekategori | null
   tittel: string
   tekst: Riktekstdokument | null
 }
 
-/** Lagrer en ny idé og gir ID-en tilbake. */
-export async function opprettIde(innhold: Ideinnhold): Promise<string> {
-  const rad = sjekk(await klient().from('ideer').insert(innhold).select('id').single())
+/**
+ * Lagrer en ny idé og gir ID-en tilbake: blant de felles idéene, eller i
+ * gruppen `gruppe`. En gruppeidé har ingen kategori.
+ */
+export async function opprettIde(innhold: Ideinnhold, gruppe: string | null = null): Promise<string> {
+  const ny: Ideinnhold & { gruppe_id?: string } = gruppe ? { ...innhold, kategori: null, gruppe_id: gruppe } : innhold
+  const rad = sjekk(await klient().from('ideer').insert(ny).select('id').single())
   return (rad as { id: string }).id
 }
 

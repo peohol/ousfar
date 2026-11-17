@@ -19,6 +19,7 @@ export const VARSELGRUPPER = {
   fortolkning: { tittel: 'Faglige varsler' },
   ideer: { tittel: 'Idéer' },
   diskusjoner: { tittel: 'Diskusjoner' },
+  grupper: { tittel: 'Grupper' },
   forslag: { tittel: 'Endringsforslag' },
   favoritter: { tittel: 'Favorittsider' },
   appen: { tittel: 'Appen' },
@@ -97,6 +98,20 @@ export const VARSELKATEGORIER = {
     obligatorisk: false,
     standard: true,
   },
+  gruppeideer: {
+    gruppe: 'grupper',
+    tittel: 'Nye idéer i gruppene mine',
+    forklaring: 'Når noen har skrevet en ny idé i en gruppe du er med i.',
+    obligatorisk: false,
+    standard: true,
+  },
+  gruppeoppgaver: {
+    gruppe: 'grupper',
+    tittel: 'Oppgaver og idéene mine i gruppene',
+    forklaring: 'Når du får en oppgave i en gruppe, og når de ansvarlige behandler en idé du har skrevet i en gruppe.',
+    obligatorisk: false,
+    standard: true,
+  },
   mine_forslag: {
     gruppe: 'forslag',
     tittel: 'Mine endringsforslag',
@@ -164,6 +179,8 @@ export const DATABASEKATEGORIER = [
   'favorittdiskusjoner',
   'mine_forslag',
   'forslag_til_behandling',
+  'gruppeideer',
+  'gruppeoppgaver',
 ] as const satisfies readonly Varselkategori[]
 export type Databasekategori = (typeof DATABASEKATEGORIER)[number]
 
@@ -341,7 +358,23 @@ export interface Hendelse {
   deler?: string[]
   /** Endringsforslaget, og hva som skjedde med det (en art fra forslagets tidslinje). */
   forslag?: Varselforslag | null
+  /** Oppgaven i en gruppe hendelsen gjelder, når den gjelder en. */
+  gruppeoppgave?: Varselgruppeoppgave | null
+  /** Hva som skjedde: en art fra forslagets tidslinje, eller fra behandlingen i en gruppe (`GRUPPEHANDLINGER`). */
   art?: string
+}
+
+/** En gruppe slik et varsel navngir den. */
+export interface Varselgrupperef {
+  id: string
+  navn: string
+}
+
+/** En oppgave i en gruppe slik et varsel viser den. */
+export interface Varselgruppeoppgave {
+  id: string
+  tittel: string
+  gruppe: Varselgrupperef
 }
 
 /** Et endringsforslag slik et varsel viser det: forslaget og ressursen det gjelder. */
@@ -368,7 +401,8 @@ export interface Databasevarsel {
   kilde: 'database'
   id: string
   kategori: Databasekategori
-  ide: { id: string; tittel: string; forfatterId: string | null } | null
+  /** Idéen varselet gjelder, med gruppen den hører til når den er en gruppeidé. */
+  ide: { id: string; tittel: string; forfatterId: string | null; gruppe: Varselgrupperef | null } | null
   /** Tråden varselet gjelder, i kategoriene for diskusjonene. */
   diskusjon?: Varseldiskusjon | null
   /** Eldste først. */
@@ -418,6 +452,16 @@ function lesForslag(verdi: unknown): Varselforslag | null {
   return { id: tekst(verdi.id), ressurs: { type: tekst(r.type), navn: tekstEllerNull(r.navn), analyttkode: tekstEllerNull(r.analyttkode) } }
 }
 
+function lesGrupperef(verdi: unknown): Varselgrupperef | null {
+  return erObjekt(verdi) && tekst(verdi.id) ? { id: tekst(verdi.id), navn: tekst(verdi.navn) } : null
+}
+
+function lesGruppeoppgave(verdi: unknown): Varselgruppeoppgave | null {
+  if (!erObjekt(verdi) || !tekst(verdi.id)) return null
+  const gruppe = lesGrupperef(verdi.gruppe)
+  return gruppe ? { id: tekst(verdi.id), tittel: tekst(verdi.tittel), gruppe } : null
+}
+
 function lesHendelse(verdi: unknown): Hendelse | null {
   if (!erObjekt(verdi)) return null
   const hendelse: Hendelse = { kl: tekst(verdi.kl), av: tekstEllerNull(verdi.av) }
@@ -432,10 +476,9 @@ function lesHendelse(verdi: unknown): Hendelse | null {
     hendelse.side = lesSide(verdi.side)
     hendelse.deler = Array.isArray(verdi.deler) ? verdi.deler.filter((d): d is string => typeof d === 'string') : []
   }
-  if ('forslag' in verdi) {
-    hendelse.forslag = lesForslag(verdi.forslag)
-    hendelse.art = tekst(verdi.art)
-  }
+  if ('forslag' in verdi) hendelse.forslag = lesForslag(verdi.forslag)
+  if ('gruppeoppgave' in verdi) hendelse.gruppeoppgave = lesGruppeoppgave(verdi.gruppeoppgave)
+  if ('art' in verdi) hendelse.art = tekst(verdi.art)
   return hendelse
 }
 
@@ -446,7 +489,12 @@ function lesDatabasevarsel(verdi: unknown): Databasevarsel | null {
     .filter((h): h is Hendelse => h !== null)
   if (hendelser.length === 0) return null
   const ide = erObjekt(verdi.ide)
-    ? { id: tekst(verdi.ide.id), tittel: tekst(verdi.ide.tittel), forfatterId: tekstEllerNull(verdi.ide.forfatter_id) }
+    ? {
+        id: tekst(verdi.ide.id),
+        tittel: tekst(verdi.ide.tittel),
+        forfatterId: tekstEllerNull(verdi.ide.forfatter_id),
+        gruppe: lesGrupperef(verdi.ide.gruppe),
+      }
     : null
   const side = erObjekt(verdi.diskusjon) ? lesDiskusjonsside(verdi.diskusjon.side) : null
   const diskusjon =
@@ -561,6 +609,45 @@ export function idetekst(varsel: Databasevarsel, meg: string, navn: (id: string)
     egen: 'kommenterte idéen din',
     aktiv: 'kommenterte en idé du har kommentert',
   })
+}
+
+/* --- Gruppene ------------------------------------------------------------- */
+
+type Gruppekategori = 'gruppeideer' | 'gruppeoppgaver'
+
+/** Om varselet gjelder idéene eller oppgavene i en gruppe. */
+export function erGruppevarsel(varsel: Databasevarsel): varsel is Databasevarsel & { kategori: Gruppekategori } {
+  return varsel.kategori === 'gruppeideer' || varsel.kategori === 'gruppeoppgaver'
+}
+
+/**
+ * Hva som skjedde i gruppen, etter artene databasen skriver
+ * (`intern.varsle_gruppeidebehandling`, `intern.varsle_tildelt_gruppeoppgave`).
+ */
+export const GRUPPEHANDLINGER: Partial<Record<string, string>> = {
+  tildelt: 'ga deg en oppgave',
+  ikke_aktuell: 'merket idéen din «Ikke aktuelt»',
+  gjenapnet: 'åpnet idéen din igjen',
+  gjort_om: 'gjorde idéen din om til en oppgave',
+  fullfort: 'merket oppgaven fra idéen din fullført',
+}
+
+/** Oppgaven varselet gjelder, slik den er nå. */
+export function varselgruppeoppgave(varsel: Databasevarsel): Varselgruppeoppgave | null {
+  return [...varsel.hendelser].reverse().find((h) => h.gruppeoppgave)?.gruppeoppgave ?? null
+}
+
+/** Gruppen varselet gjelder: idéens gruppe, eller oppgavens. */
+export function varselgruppe(varsel: Databasevarsel): Varselgrupperef | null {
+  return varsel.ide?.gruppe ?? varselgruppeoppgave(varsel)?.gruppe ?? null
+}
+
+/** «Ada skrev en ny idé», «Bo gjorde idéen din om til en oppgave». */
+export function gruppetekst(varsel: Databasevarsel & { kategori: Gruppekategori }, navn: (id: string) => string): string {
+  if (varsel.kategori === 'gruppeideer') return `${navneliste(aktorer(varsel.hendelser).map(navn))} skrev en ny idé`
+  const art = varsel.hendelser.at(-1)?.art ?? ''
+  const hvem = navneliste(aktorer(varsel.hendelser.filter((h) => h.art === art)).map(navn))
+  return `${hvem} ${GRUPPEHANDLINGER[art] ?? 'oppdaterte en oppgave'}`
 }
 
 /** Hva som har skjedd i diskusjonen: «Ada kommenterte tråden din», «Bo startet en ny tråd på en favorittside». */

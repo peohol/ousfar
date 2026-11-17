@@ -34,9 +34,11 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `funksjonalitet` | En føring eksplisitt merket `varsleFunksjonsendring` | Ja, på som standard |
 | `favoritter` | Noen publiserer endringer på en fagside du har som favoritt | Ja, av som standard |
 | `favorittdiskusjoner` | Noen starter en ny tråd på en fagside du har som favoritt | Ja, av som standard |
+| `gruppeideer` | Noen skriver en ny idé i en gruppe du er med i | Ja, på som standard |
+| `gruppeoppgaver` | Du får en oppgave i en gruppe, eller de ansvarlige behandler en idé du skrev i en gruppe | Ja, på som standard |
 
 Kategoriene står i `VARSELKATEGORIER`. Hver har en `gruppe` fra
-`VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Endringsforslag, Favorittsider, Appen):
+`VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Grupper, Endringsforslag, Favorittsider, Appen):
 innstillingene viser gruppene i den rekkefølgen, hver med ikon og overskrift
 og kategoriene sine under. Ikonene for gruppene står i `Varsler.tsx`. En
 kategori med `bareForBehandlere` vises i innstillingene bare for dem som kan
@@ -63,6 +65,17 @@ gjorde det, varsles ikke.
 - **Nye idéer** (`ideer_varsle`): alle andre enn den som skrev idéen, får
   `nye_ideer`, ett varsel per idé. Det er lest når idéen åpnes, som varslene
   om kommentarene.
+- **Idéene og oppgavene i gruppene** (P6b, `docs/fagmiljoer.md`, «Idéer og
+  oppgaver i gruppene»): en ny gruppeidé gir `gruppeideer` til de andre
+  aktive medlemmene i gruppen, ikke `nye_ideer`. Kommentarene på en
+  gruppeidé gir `mine_ideer` og `aktive_ideer` som ellers. Behandlingen av en
+  gruppeidé («Ikke aktuelt», åpnet igjen, gjort om til en oppgave, oppgaven
+  fullført) gir forfatteren `gruppeoppgaver`, samlet i ett varsel per idé
+  (nøkkelen `gruppeoppgaver:ide:<ID>`), og den som får en oppgave, får
+  `gruppeoppgaver` med nøkkelen `gruppeoppgaver:<ID>`. Hendelsen sier hva som
+  skjedde (`art`) og hvilken oppgave det gjelder (`gruppeoppgave`). Varslene
+  har gruppens `gruppe_id`, så bare de som leser gruppen nå, ser dem, og en
+  hendelse om en oppgave som er fjernet, står ikke.
 - **Diskusjonskommentarer** (`diskusjonskommentarer_varsle`): som
   idékommentarene, med `mine_diskusjoner` og `aktive_diskusjoner`.
 - **Nye tråder** (`diskusjoner_varsle`): en ny tråd på en fagside gir

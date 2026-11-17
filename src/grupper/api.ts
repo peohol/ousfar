@@ -15,6 +15,8 @@ import {
   type Gruppesvar,
   type MineGrupper,
 } from './modell'
+import { lesGruppeoppgave, lesGruppeoppgaveliste, type Gruppeoppgave, type Gruppeoppgaveliste, type Gruppeoppgavestatus, type Prioritet } from './oppgaver'
+import type { Riktekstdokument } from '../faginnhold/riktekst'
 
 /**
  * Funksjonene sier avslagene sine på norsk, også regelen om minst én
@@ -70,4 +72,59 @@ export async function settGrupperolle(gruppe: string, bruker: string, rolle: Gru
 /** Avslutter medlemskapet eller invitasjonen; for den innloggede selv er det å forlate gruppen. */
 export async function avsluttGruppemedlemskap(gruppe: string, bruker: string): Promise<Gruppesvar> {
   return lesGruppesvar(await kall('avslutt_gruppemedlemskap', { gruppe, bruker }))
+}
+
+/* --- Oppgavene i gruppen -------------------------------------------------------- */
+
+export async function hentGruppeoppgaver(gruppe: string): Promise<Gruppeoppgaveliste> {
+  return lesGruppeoppgaveliste(await kall('gruppeoppgaveoversikt', { gruppe }))
+}
+
+/** Oppgaven, eller `null` når den ikke finnes eller ikke kan leses. */
+export async function hentGruppeoppgave(oppgave: string): Promise<Gruppeoppgave | null> {
+  return lesGruppeoppgave(await kall('gruppeoppgave', { oppgave }))
+}
+
+export interface Gruppeoppgaveinnhold {
+  tittel: string
+  beskrivelse: Riktekstdokument | null
+  prioritet: Prioritet
+}
+
+/** Oppretter en oppgave uten idé bak, med eller uten noen som har den. Gir ID-en. */
+export async function opprettGruppeoppgave(gruppe: string, innhold: Gruppeoppgaveinnhold, ansvarlig: string | null): Promise<string> {
+  return id(await kall('opprett_gruppeoppgave', { gruppe, ...innhold, ansvarlig }))
+}
+
+/** Gjør idéen om til en oppgave i gruppen, eller gir oppgaven den alt er gjort om til. */
+export async function gjorOmTilGruppeoppgave(ide: string): Promise<string> {
+  return id(await kall('gjor_om_til_gruppeoppgave', { ide }))
+}
+
+export async function endreGruppeoppgave(oppgave: string, innhold: Gruppeoppgaveinnhold): Promise<void> {
+  await kall('endre_gruppeoppgave', { oppgave, ...innhold })
+}
+
+/** Gir oppgaven til et aktivt medlem, eller tar den fra den som har den (`null`). */
+export async function tildelGruppeoppgave(oppgave: string, ansvarlig: string | null): Promise<void> {
+  await kall('tildel_gruppeoppgave', { oppgave, ansvarlig })
+}
+
+export async function settGruppeoppgavestatus(oppgave: string, status: Gruppeoppgavestatus): Promise<void> {
+  await kall('sett_gruppeoppgavestatus', { oppgave, status })
+}
+
+/** Fjerner oppgaven. Kom den fra en idé, står idéen åpen igjen, med kommentarene. */
+export async function fjernGruppeoppgave(oppgave: string): Promise<void> {
+  await kall('fjern_gruppeoppgave', { oppgave })
+}
+
+/** Varslene om oppgaven er lest når den åpnes. */
+export async function merkGruppeoppgaveSett(oppgave: string): Promise<void> {
+  await kall('merk_gruppeoppgave_sett', { oppgave })
+}
+
+function id(verdi: unknown): string {
+  if (typeof verdi !== 'string') throw new Error(UVENTET_FEIL)
+  return verdi
 }

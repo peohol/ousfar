@@ -6,7 +6,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
-import { forslagsadresse, stoffadresse } from '../../domain/rute'
+import { forslagsadresse, gruppeadresse, stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
@@ -19,17 +19,21 @@ import {
   endredeDeler,
   erDiskusjonsvarsel,
   erForslagsvarsel,
+  erGruppevarsel,
   erValgt,
   favorittside,
   favorittsted,
   forslagstekst,
   fortolkningsobjekter,
+  gruppetekst,
   idetekst,
   kategorierIGrupper,
   navneliste,
   objekttekst,
   ressurstekst,
   varselforslag,
+  varselgruppe,
+  varselgruppeoppgave,
   type Databasevarsel,
   type Endringsvarsel,
   type Fortolkningsobjekt,
@@ -208,6 +212,8 @@ const KATEGORIIKON: Record<Varsel['kategori'], Ikonnavn> = {
   favorittdiskusjoner: 'diskusjon',
   mine_forslag: 'foresla',
   forslag_til_behandling: 'foresla',
+  gruppeideer: 'idea',
+  gruppeoppgaver: 'oppgaver',
 }
 
 interface RadProps {
@@ -332,6 +338,27 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
     )
   }
 
+  if (erGruppevarsel(varsel)) {
+    const gruppe = varselgruppe(varsel)
+    const tekst = gruppetekst(varsel, navn)
+    const tittel = varselgruppeoppgave(varsel)?.tittel ?? varsel.ide?.tittel
+    return (
+      <>
+        {gruppe ? (
+          <a className="varsel__tittel" data-ih="" href={gruppeadresse(gruppe.id)} onClick={() => onGa(varsel)}>
+            {tekst}
+          </a>
+        ) : (
+          <p className="varsel__tittel">{tekst}</p>
+        )}
+        <p className="varsel__meta">
+          {tittel && <span className="varsel__ide">«{tittel}»</span>}
+          {gruppe && <> · {gruppe.navn}</>} · {tid}
+        </p>
+      </>
+    )
+  }
+
   if (erDiskusjonsvarsel(varsel)) {
     const diskusjon = varsel.diskusjon
     const tekst = diskusjonstekst(varsel, meg, navn)
@@ -394,6 +421,7 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
   fortolkning: 'interp',
   ideer: 'idea',
   diskusjoner: 'diskusjon',
+  grupper: 'ideoppgaver',
   forslag: 'foresla',
   favoritter: 'star',
   appen: 'history',

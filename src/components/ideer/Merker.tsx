@@ -10,7 +10,9 @@ const TONE: Record<Idekategori, string> = {
   annet: 'omfang',
 }
 
-export function Kategorimerke({ kategori }: { kategori: Idekategori }) {
+/** Ingenting for en idé uten kategori (en gruppeidé). */
+export function Kategorimerke({ kategori }: { kategori: Idekategori | null }) {
+  if (!kategori) return null
   return <span className={`loggmerke loggmerke--${TONE[kategori]}`}>{KATEGORINAVN[kategori]}</span>
 }
 

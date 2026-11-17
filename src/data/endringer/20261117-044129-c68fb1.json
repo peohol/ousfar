@@ -1,0 +1,14 @@
+{
+  "id": "20261117-044129-c68fb1",
+  "semver": "patch",
+  "opprettet": "2026-11-17T04:41:29Z",
+  "sammendrag": "Grunnlaget for idéer og oppgaver i gruppene",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Gruppene kan nå få egne idéer og egne oppgaver, som bare medlemmene ser. Visningen på gruppesiden kommer i neste versjon.",
+    "Varselinnstillingene har fått en egen del for gruppene: nye idéer i gruppene dine, oppgaver du får, og når de ansvarlige behandler en idé du har skrevet.",
+    "De felles idéene og Planlagte oppgaver virker som før."
+  ]
+}

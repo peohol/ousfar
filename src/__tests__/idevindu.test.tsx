@@ -36,10 +36,10 @@ const ADMIN = profil('admin', 'Anne', 'Admin', { role: 'admin' })
 const DOK = (tekst: string) => ({ type: 'doc' as const, content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
 
 const IDEER: Ide[] = [
-  { id: 'i1', forfatter_id: 'kari', kategori: 'fag', tittel: 'Flere TDM-kilder', opprettet_kl: '2026-09-26T10:00:00Z', endret_kl: null, hjerter: 2, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 3, nye_kommentarer: 1 },
-  { id: 'i2', forfatter_id: 'ola', kategori: 'funksjonalitet', tittel: 'Hurtigtast for kopiering', opprettet_kl: '2026-09-27T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 0, nye_kommentarer: 0 },
-  { id: 'i3', forfatter_id: 'ola', kategori: 'fag', tittel: 'Overført idé', opprettet_kl: '2026-09-20T10:00:00Z', endret_kl: null, hjerter: 1, mitt_hjerte: false, arkivert_kl: null, oppgave: { id: 'o1', status: 'under_arbeid', nummer: 7 }, kommentarer: 0, nye_kommentarer: 0 },
-  { id: 'i4', forfatter_id: 'kari', kategori: 'annet', tittel: 'Arkivert idé', opprettet_kl: '2026-09-21T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: new Date(Date.now() - 20 * 86_400_000).toISOString(), oppgave: null, kommentarer: 1, nye_kommentarer: 0 },
+  { id: 'i1', forfatter_id: 'kari', kategori: 'fag', tittel: 'Flere TDM-kilder', opprettet_kl: '2026-09-26T10:00:00Z', endret_kl: null, hjerter: 2, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 3, nye_kommentarer: 1, gruppe_id: null, gruppeoppgave: null, sett: true },
+  { id: 'i2', forfatter_id: 'ola', kategori: 'funksjonalitet', tittel: 'Hurtigtast for kopiering', opprettet_kl: '2026-09-27T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 0, nye_kommentarer: 0, gruppe_id: null, gruppeoppgave: null, sett: true },
+  { id: 'i3', forfatter_id: 'ola', kategori: 'fag', tittel: 'Overført idé', opprettet_kl: '2026-09-20T10:00:00Z', endret_kl: null, hjerter: 1, mitt_hjerte: false, arkivert_kl: null, oppgave: { id: 'o1', status: 'under_arbeid', nummer: 7 }, kommentarer: 0, nye_kommentarer: 0, gruppe_id: null, gruppeoppgave: null, sett: true },
+  { id: 'i4', forfatter_id: 'kari', kategori: 'annet', tittel: 'Arkivert idé', opprettet_kl: '2026-09-21T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: new Date(Date.now() - 20 * 86_400_000).toISOString(), oppgave: null, kommentarer: 1, nye_kommentarer: 0, gruppe_id: null, gruppeoppgave: null, sett: true },
 ]
 
 const TRAAD: Idetraad = {
@@ -54,6 +54,11 @@ const TRAAD: Idetraad = {
   mitt_hjerte: false,
   arkivert_kl: null,
   oppgave: null,
+  gruppe_id: null,
+  gruppeoppgave: null,
+  kan_behandle: false,
+  kan_moderere: false,
+  kan_kommentere: true,
   // Kari var sist inne før Olas siste svar.
   sist_sett: '2026-09-26T12:30:00Z',
   lest_kl: '2026-09-27T09:00:00Z',

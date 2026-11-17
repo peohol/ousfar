@@ -175,6 +175,7 @@ export function Lenkeforhandsvisning({ mal, tilstand, deler }: { mal: Lenkemal; 
   const { maal } = tilstand
   const merknader = [
     maal.slag === 'ide' && maal.overfort ? 'Overført til planlagte oppgaver' : null,
+    maal.slag === 'ide' && maal.gruppeoppgave ? 'Gjort om til en oppgave i gruppen' : null,
     maal.arkivert ? (maal.slag === 'ide' ? 'Ikke aktuelt' : 'Arkivert') : null,
   ].filter(Boolean)
   const kommentarer = `${maal.kommentarer} ${maal.kommentarer === 1 ? 'kommentar' : 'kommentarer'}`

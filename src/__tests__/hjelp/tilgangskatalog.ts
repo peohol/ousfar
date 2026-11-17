@@ -117,6 +117,14 @@ export const REKKEVIDDEHJELPERE = [
   'eget_forslag',
   // P5 C: forslaget den innloggede behandler (supabase/migrations/*_p5_forslagsbehandling.sql).
   'krev_forslag_til_behandling',
+  // P6b: idéene og oppgavene i gruppene (supabase/migrations/*_gruppeideer_og_gruppeoppgaver.sql).
+  'kan_lese_gruppe',
+  'kan_moderere_gruppe',
+  'kan_bidra_i_gruppe',
+  'kan_lese_ide',
+  'krev_idebehandling',
+  'las_gruppe_for_samhandling',
+  'las_gruppeoppgave',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,

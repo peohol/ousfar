@@ -36,7 +36,7 @@ const KARI: Profil = {
   updated_at: '2026-09-01T00:00:00Z',
 }
 const IDEER: Ide[] = [
-  { id: 'i1', forfatter_id: 'kari', kategori: 'fag', tittel: 'Flere TDM-kilder', opprettet_kl: '2026-09-26T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 0, nye_kommentarer: 0 },
+  { id: 'i1', forfatter_id: 'kari', kategori: 'fag', tittel: 'Flere TDM-kilder', opprettet_kl: '2026-09-26T10:00:00Z', endret_kl: null, hjerter: 0, mitt_hjerte: false, arkivert_kl: null, oppgave: null, kommentarer: 0, nye_kommentarer: 0, gruppe_id: null, gruppeoppgave: null, sett: true },
 ]
 
 const api = vi.hoisted(() => ({
