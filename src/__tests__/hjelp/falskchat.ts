@@ -8,11 +8,11 @@
  *
  * Bare syntetiske personer og tekster.
  */
-import { IngenTilgang } from '../../gruppechat/api'
+import { IngenTilgang } from '../../gruppechat/kall'
 import type { Chatavhengigheter } from '../../gruppechat/kontroller'
 import type { Chatendringer, Chatside, Gruppemelding } from '../../gruppechat/modell'
 import { GRUPPECHAT_GRENSER } from '../../gruppechat/modell'
-import type { Dorklokkevalg, Kanalstatus } from '../../gruppechat/sanntid'
+import type { Dorklokkevalg, Kanalstatus } from '../../gruppechat/dorklokke'
 import { TESTPERSONER } from './testchat'
 
 interface Rad {

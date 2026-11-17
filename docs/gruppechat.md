@@ -236,8 +236,10 @@ Publikasjonen: migrasjonen til tråd C legger `public.gruppechatter` i
 `supabase_realtime`. Ingen andre tabeller.
 
 **I appen (C1).** `src/gruppechat/tilstand.ts` fletter meldingene (rene
-funksjoner), `src/gruppechat/sanntid.ts` er abonnementet på dørklokken,
-`src/gruppechat/kontroller.ts` holder én åpen chat (henting, gjenoppkobling,
+funksjoner), `dorklokke.ts` er abonnementet på dørklokken og `kall.ts`
+kallene, begge for en gitt klient (appens står i `sanntid.ts` og `api.ts`, så
+kontrollene i det lokale testmiljøet kan bruke de samme med egne
+innlogginger), `kontroller.ts` holder én åpen chat (henting, gjenoppkobling,
 livstegn, sending og lest-merking), og `useGruppechat.ts` kobler den til React.
 Valgene som ikke står over:
 

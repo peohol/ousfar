@@ -16,10 +16,10 @@
  *
  * Meldingsteksten skrives aldri i logger.
  */
-import { IngenTilgang } from './api'
+import { IngenTilgang } from './kall'
 import type { Chatendringer, Chatlesere, Chatside, Chatstatus, Gruppechat, Gruppemelding, Tilkobling, Ventende } from './modell'
 import { GRUPPECHAT_GRENSER } from './modell'
-import type { Abonner, Kanalstatus } from './sanntid'
+import type { Abonner, Kanalstatus } from './dorklokke'
 import { eldsteNr, medEldre, medEndringer, medForsteSide, medMelding, TOM_MELDINGSTILSTAND, type Meldingstilstand } from './tilstand'
 
 /** Hvor ofte chatten henter endringene uten hendelser, mens den står åpen og synlig. */
