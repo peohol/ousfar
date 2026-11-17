@@ -125,6 +125,11 @@ const api = vi.hoisted(() => ({
 const visIde = vi.hoisted(() => vi.fn())
 const visEndringslogg = vi.hoisted(() => vi.fn())
 const visDiskusjon = vi.hoisted(() => vi.fn())
+const gruppevisning = vi.hoisted(() => ({
+  visGruppeide: vi.fn((_gruppe: string, _ide: string, _kommentar?: string | null, _valg?: { deretter?: () => void }) => {}),
+  visGruppeoppgave: vi.fn((_gruppe: string, _oppgave: string, _gjort?: () => void) => {}),
+  visGruppen: vi.fn((_gruppe: string, _gjort?: () => void) => {}),
+}))
 
 vi.mock('../varsler/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => KARI }))
@@ -132,6 +137,7 @@ vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, OLA]) }
 vi.mock('../components/ideer/idevisning', () => ({ visIde }))
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../components/diskusjoner/diskusjonsvisning', () => ({ visDiskusjon }))
+vi.mock('../components/grupper/gruppevisning', () => gruppevisning)
 vi.mock('../data/endringslogg', () => ({
   ENDRINGSLOGG: [endring('2.1.0', 'Varsler i toppmenyen'), endring('2.0.0', 'Noe eldre')],
 }))
@@ -396,6 +402,88 @@ describe('vinduet', () => {
     await bruker.click(within(innstillinger).getByRole('button', { name: 'Tilbake til varslene' }))
     const nye = within(await screen.findByRole('dialog', { name: 'Varsler' })).getByRole('region', { name: 'Nye' })
     expect(within(nye).queryByText(/kommenterte en idé du har kommentert/)).toBeNull()
+  })
+})
+
+describe('gruppene', () => {
+  const gruppe = { id: 'g1', navn: 'Lithiumgruppen' }
+  const oppgave = { id: 'o1', tittel: 'Skriv sjekklisten', gruppe }
+  const varsel = (id: string, kategori: 'gruppeideer' | 'gruppeoppgaver' | 'mine_ideer', ide: unknown, hendelse: Record<string, unknown>) => ({
+    kilde: 'database' as const,
+    id,
+    kategori,
+    ide,
+    hendelser: [{ kl: '2026-09-29T11:30:00Z', av: 'ola', ...hendelse }],
+    oppdatert_kl: '2026-09-29T11:30:00Z',
+    lest: false,
+    arkivert: false,
+  })
+
+  it('leder idéene og oppgavene i en gruppe til gruppesiden, med gruppens navn', async () => {
+    const gruppeide = { id: 'gi1', tittel: 'Felles rutine', forfatterId: 'kari', gruppe }
+    api.hentVarsler.mockResolvedValue({
+      lest_kl: LISTE.lest_kl,
+      varsler: [
+        varsel('v-tildelt', 'gruppeoppgaver', null, { art: 'tildelt', gruppeoppgave: oppgave }),
+        varsel('v-gjort', 'gruppeoppgaver', gruppeide, { art: 'gjort_om', gruppeoppgave: oppgave }),
+        varsel('v-kommentar', 'mine_ideer', gruppeide, { kommentar: 'k1', svarTil: null }),
+      ],
+    })
+    const bruker = userEvent.setup()
+    render(<Varselknapp />)
+    await bruker.click(bjella())
+    const vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    const tildelt = await within(vindu).findByRole('button', { name: 'Ola Nordmann ga deg en oppgave' })
+    expect(tildelt.closest('li')!.textContent).toContain('«Skriv sjekklisten» · Lithiumgruppen')
+    await bruker.click(tildelt)
+    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalledWith('g1', 'o1', expect.any(Function))
+
+    await bruker.click(bjella())
+    const igjen = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(igjen).findByRole('button', { name: 'Ola Nordmann gjorde idéen din om til en oppgave' }))
+    expect(gruppevisning.visGruppeide).toHaveBeenCalledWith('g1', 'gi1', null, { deretter: expect.any(Function) })
+
+    await bruker.click(bjella())
+    const tredje = await screen.findByRole('dialog', { name: 'Varsler' })
+    const kommentar = await within(tredje).findByRole('button', { name: 'Ola Nordmann kommenterte idéen din' })
+    expect(kommentar.closest('li')!.textContent).toContain('Lithiumgruppen')
+    await bruker.click(kommentar)
+    expect(gruppevisning.visGruppeide).toHaveBeenLastCalledWith('g1', 'gi1', null, { deretter: expect.any(Function) })
+    expect(visIde).not.toHaveBeenCalled()
+  })
+
+  it('merker et gruppevarsel lest først når brukeren går dit, ikke når et ulagret skjema blir stående', async () => {
+    const gruppeide = { id: 'gi1', tittel: 'Felles rutine', forfatterId: 'kari', gruppe }
+    api.hentVarsler.mockResolvedValue({
+      lest_kl: LISTE.lest_kl,
+      varsler: [
+        varsel('v-tildelt', 'gruppeoppgaver', null, { art: 'tildelt', gruppeoppgave: oppgave }),
+        varsel('v-kommentar', 'mine_ideer', gruppeide, { kommentar: 'k1', svarTil: null }),
+      ],
+    })
+    // Skjemavakten på gruppesiden: brukeren blir i skjemaet («Fortsett å redigere»), så veien blir ikke gått.
+    const bruker = userEvent.setup()
+    render(<Varselknapp />)
+    await bruker.click(bjella())
+    let vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(vindu).findByRole('button', { name: 'Ola Nordmann ga deg en oppgave' }))
+    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalled()
+    expect(screen.queryByRole('dialog', { name: 'Varsler' })).toBeNull()
+    await bruker.click(bjella())
+    vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(vindu).findByRole('button', { name: 'Ola Nordmann kommenterte idéen din' }))
+    expect(gruppevisning.visGruppeide).toHaveBeenCalled()
+    expect(api.merkVarslerLest).not.toHaveBeenCalled()
+
+    // Begge står fortsatt som nye. Brukeren forkaster endringene, og veien blir gått: først da er varselet lest.
+    gruppevisning.visGruppeoppgave.mockImplementationOnce((_gruppe, _oppgave, gjort) => gjort?.())
+    await bruker.click(bjella())
+    vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    const nye = within(vindu).getByRole('region', { name: 'Nye' })
+    expect(within(nye).getByRole('button', { name: 'Ola Nordmann kommenterte idéen din' })).toBeTruthy()
+    await bruker.click(within(nye).getByRole('button', { name: 'Ola Nordmann ga deg en oppgave' }))
+    await waitFor(() => expect(api.merkVarslerLest).toHaveBeenCalledWith(['v-tildelt'], LISTE.lest_kl))
+    expect(api.merkVarslerLest).toHaveBeenCalledTimes(1)
   })
 })
 

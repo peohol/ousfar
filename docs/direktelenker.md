@@ -26,9 +26,10 @@ Når appen åpnes med en slik adresse, eller den limes inn i en åpen app, leser
 `apneDirektelenke` åpner målet: en diskusjon går til siden tråden hører til og
 åpner den i diskusjonsmenyen (`visDiskusjon`), en idé åpnes i Idéer
 (`visIde`), og en idé i en gruppe på idéfanen på gruppesiden
-(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Har et skjema i Idéer eller Planlagte oppgaver endringer som
-ikke er lagret, spør det først, som tilbakeknappen (`forlatIdelagene`,
-`useMeldVakt`). Kommentaren lenken peker på, rulles frem, åpnes om den står under
+(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Har et skjema i Idéer, Planlagte oppgaver
+eller en fane på gruppesiden endringer som ikke er lagret, spør det først, som
+tilbakeknappen (`forlatSkjemaene`, som går gjennom `forlatIdelagene` og vakten
+gruppesiden melder med `meldGruppesiden`; `useMeldVakt`). Varslene går samme vei. Kommentaren lenken peker på, rulles frem, åpnes om den står under
 en lukket gren, og uthevet en liten stund (`fremhev` på `Kommentartraad`).
 Finnes ikke målet lenger, eller hører en tråd til et fagmiljø den innloggede
 ikke er medlem av, sier `Lenkemelding` det samme: `direktelenke()` skiller ikke

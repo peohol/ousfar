@@ -1,0 +1,13 @@
+{
+  "id": "20261117-054104-bb93c2",
+  "semver": "patch",
+  "opprettet": "2026-11-17T05:41:04Z",
+  "sammendrag": "Varsler om idéer og oppgaver i gruppene",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["grupper", "vinduer"],
+  "punkter": [
+    "Et varsel om en idé eller en oppgave i en gruppe åpner den på gruppesiden, og viser hvilken gruppe det gjelder.",
+    "Et varsel om en kommentar under en idé i en gruppe åpner idéen på gruppesiden."
+  ]
+}

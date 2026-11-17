@@ -6,7 +6,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
-import { forslagsadresse, gruppeadresse, stoffadresse } from '../../domain/rute'
+import { forslagsadresse, stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
@@ -25,6 +25,7 @@ import {
   favorittsted,
   forslagstekst,
   fortolkningsobjekter,
+  gruppemaal,
   gruppetekst,
   idetekst,
   kategorierIGrupper,
@@ -34,6 +35,7 @@ import {
   varselforslag,
   varselgruppe,
   varselgruppeoppgave,
+  type Gruppemaal,
   type Databasevarsel,
   type Endringsvarsel,
   type Fortolkningsobjekt,
@@ -44,6 +46,7 @@ import { Bryter } from '../Bryter'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { visIde } from '../ideer/idevisning'
+import { visGruppeide, visGruppen, visGruppeoppgave } from '../grupper/gruppevisning'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
 import { adresseForSide } from '../../diskusjoner/modell'
 import { Tidspunkt } from '../traad/Smadeler'
@@ -139,6 +142,16 @@ function Varselliste({ status, profiler, onLukk }: { status: Varselstatus; profi
     videre?.()
   }
 
+  /**
+   * Som `ga`, for en vei som kan spørre før et skjema forlates (`Vaktetvei`):
+   * vinduet lukkes, så spørsmålet synes, men varselet merkes lest først når
+   * brukeren faktisk går dit. Blir brukeren i skjemaet, står det ulest.
+   */
+  const gaVaktet = (varsel: Varsel, videre: Vaktetvei) => {
+    onLukk()
+    videre(() => status.merkLest(varsel))
+  }
+
   const rad = (varsel: Varsel) => (
     <Varselrad
       key={varsel.id}
@@ -146,6 +159,7 @@ function Varselliste({ status, profiler, onLukk }: { status: Varselstatus; profi
       meg={meg.id}
       navn={navn}
       onGa={ga}
+      onGaVaktet={gaVaktet}
       onLest={() => status.merkLest(varsel)}
       onArkiver={() => status.arkiver([varsel])}
       onGjenopprett={() => status.gjenopprett([varsel])}
@@ -216,11 +230,15 @@ const KATEGORIIKON: Record<Varsel['kategori'], Ikonnavn> = {
   gruppeoppgaver: 'oppgaver',
 }
 
+/** En vei som kan spørre først; `gjort` kalles når den faktisk er gått. */
+type Vaktetvei = (gjort: () => void) => void
+
 interface RadProps {
   varsel: Varsel
   meg: string
   navn: (id: string) => string
   onGa: (varsel: Varsel, videre?: () => void) => void
+  onGaVaktet: (varsel: Varsel, videre: Vaktetvei) => void
   onLest: () => void
   onArkiver: () => void
   onGjenopprett: () => void
@@ -273,7 +291,7 @@ function Endringsinnhold({ varsel, onGa }: RadProps & { varsel: Endringsvarsel }
   )
 }
 
-function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Databasevarsel }) {
+function Databaseinnhold({ varsel, meg, navn, onGa, onGaVaktet }: RadProps & { varsel: Databasevarsel }) {
   const hvem = navneliste(aktorer(varsel.hendelser).map(navn))
   const tid = <Tidspunkt iso={varsel.oppdatert_kl} />
 
@@ -340,14 +358,15 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 
   if (erGruppevarsel(varsel)) {
     const gruppe = varselgruppe(varsel)
+    const maal = gruppemaal(varsel)
     const tekst = gruppetekst(varsel, navn)
     const tittel = varselgruppeoppgave(varsel)?.tittel ?? varsel.ide?.tittel
     return (
       <>
-        {gruppe ? (
-          <a className="varsel__tittel" data-ih="" href={gruppeadresse(gruppe.id)} onClick={() => onGa(varsel)}>
+        {maal ? (
+          <button type="button" className="varsel__tittel" data-ih="" onClick={() => onGaVaktet(varsel, (gjort) => tilGruppen(maal, gjort))}>
             {tekst}
-          </a>
+          </button>
         ) : (
           <p className="varsel__tittel">{tekst}</p>
         )}
@@ -387,17 +406,33 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 
   const ide = varsel.ide
   const antall = varsel.hendelser.length
+  // En idé i en gruppe står på gruppesiden, bak skjemavakten der; de felles i idévinduet.
+  const tilIdeen = () => {
+    if (!ide) return
+    if (ide.gruppe) {
+      const gruppe = ide.gruppe.id
+      onGaVaktet(varsel, (gjort) => visGruppeide(gruppe, ide.id, null, { deretter: gjort }))
+    } else onGa(varsel, () => visIde({ id: ide.id }))
+  }
   return (
     <>
-      <button type="button" className="varsel__tittel" data-ih="" onClick={() => ide && onGa(varsel, () => visIde({ id: ide.id }))}>
+      <button type="button" className="varsel__tittel" data-ih="" onClick={tilIdeen}>
         {idetekst(varsel, meg, navn)}
       </button>
       <p className="varsel__meta">
         {ide && <span className="varsel__ide">«{ide.tittel}»</span>}
+        {ide?.gruppe && <> · {ide.gruppe.navn}</>}
         {antall > 1 && <> · {antall} kommentarer</>} · {tid}
       </p>
     </>
   )
+}
+
+/** Går dit et varsel om en gruppe leder, og gjør så `gjort`. */
+function tilGruppen(maal: Gruppemaal, gjort: () => void) {
+  if (maal.slag === 'oppgave') visGruppeoppgave(maal.gruppe, maal.id, gjort)
+  else if (maal.slag === 'ide') visGruppeide(maal.gruppe, maal.id, null, { deretter: gjort })
+  else visGruppen(maal.gruppe, gjort)
 }
 
 /** Adressen til fortolkningssiden reglene for en analyttkode hører til, når appen kjenner koden. */
