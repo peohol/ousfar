@@ -6,7 +6,7 @@
  * kommet; klienten henter selv det som er nytt. Ingen meldingstekst går
  * gjennom sanntidstjenesten, og innholdet i hendelsene logges ikke.
  */
-import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js'
 import { klient } from '../auth/klient'
 import { erObjekt, tall } from '../ideer/lesing'
 
@@ -29,11 +29,11 @@ export function ventetid(forsok: number): number {
 let lopenr = 0
 
 /**
- * Abonnerer på dørklokken for gruppen. Supabase kobler selv til igjen etter
- * nettbrudd og feil på kanalen; lukker tjenesten kanalen, åpnes en ny med
- * økende ventetid til abonnementet stoppes.
+ * Abonnementet på dørklokken gjennom klienten. Supabase kobler selv til igjen
+ * etter nettbrudd og feil på kanalen; lukker tjenesten kanalen, åpnes en ny
+ * med økende ventetid til abonnementet stoppes.
  */
-export const abonnerPaGruppechat: Abonner = (gruppe, { vedRinging, vedStatus }) => {
+export const lagAbonner = (klient: () => SupabaseClient): Abonner => (gruppe, { vedRinging, vedStatus }) => {
   let kanal: RealtimeChannel | null = null
   let stoppet = false
   let forsok = 0
@@ -79,3 +79,6 @@ export const abonnerPaGruppechat: Abonner = (gruppe, { vedRinging, vedStatus }) 
     lukk()
   }
 }
+
+/** Dørklokken gjennom appens klient. */
+export const abonnerPaGruppechat: Abonner = lagAbonner(klient)

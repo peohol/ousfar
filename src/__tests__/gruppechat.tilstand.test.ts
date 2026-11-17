@@ -2,9 +2,11 @@
  * Sammenflettingen av chatmeldingene (`src/gruppechat/tilstand.ts`,
  * docs/gruppechat.md, «Sanntiden»): feil rekkefølge, duplikater, samme melding
  * fra svaret og sanntiden, endringer etter sletting, eldre sider og ventende
- * meldinger. Bare syntetiske meldinger.
+ * meldinger; og hvordan feilene fra databasen leses (`api.ts`). Bare
+ * syntetiske meldinger.
  */
 import { describe, expect, it } from 'vitest'
+import { IngenTilgang, lagChatapi } from '../gruppechat/api'
 import type { Chatside, Gruppemelding, Ventende } from '../gruppechat/modell'
 import { GRUPPECHAT_GRENSER } from '../gruppechat/modell'
 import {
@@ -133,5 +135,19 @@ describe('tilstanden', () => {
     t = medEldre(t, side([m(10, 53, { tekst: 'Redigert' })], { flere_eldre: false }))
     t = medEndringer(t, { meldinger: [m(9, 54)], siste_endring: 54, flere: false })
     expect(nr(t)).toEqual([9, 10, 51, 52])
+  })
+})
+
+describe('feilene fra databasen (api.ts)', () => {
+  const api = (code: string, message: string) =>
+    lagChatapi(() => ({ rpc: (async () => ({ data: null, error: { code, message } })) as never }))
+
+  it('gir IngenTilgang ved 42501, og databasens norske tekst ellers', async () => {
+    await expect(api('42501', 'Gruppechatten er ikke slått på.').lesGruppechat('g')).rejects.toBeInstanceOf(IngenTilgang)
+    await expect(api('42501', 'permission denied').hentChatendringer('g', 0)).rejects.toThrow('Du har ikke tilgang til denne gruppen.')
+    for (const kode of ['22023', '54000', '55000']) {
+      await expect(api(kode, 'Gruppen er arkivert.').sendGruppemelding('g', 'k', 'x'), kode).rejects.toThrow('Gruppen er arkivert.')
+    }
+    await expect(api('XX000', 'intern feil').slettGruppemelding('m')).rejects.toThrow(/^Noe gikk galt/)
   })
 })
