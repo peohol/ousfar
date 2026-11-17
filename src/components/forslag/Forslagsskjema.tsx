@@ -3,7 +3,6 @@ import { forslagsadresse } from '../../domain/rute'
 import { hentSideversjon, sendForslag } from '../../forslag/api'
 import { GRENSER, TOM_KILDE, finnKildefeil, kilderTilLagring, type Kildeutkast } from '../../forslag/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Modallag } from '../Modallag'
@@ -219,7 +218,8 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
           ugyldig={feil?.felt === 'forslag'}
           feilId={feilId}
           feltRef={forslagRef}
-          hjelp={`Skriv endringen så konkret du kan, gjerne med den nye teksten. ${IKKE_PASIENTOPPLYSNINGER}`}
+          hjelp="Skriv endringen så konkret du kan, gjerne med den nye teksten."
+          pasientregel
         />
         <Tekstomrade
           merkelapp="Hvorfor?"

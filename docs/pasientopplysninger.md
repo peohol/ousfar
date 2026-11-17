@@ -46,9 +46,12 @@ korte regelen, dempet under feltet og knyttet til det med
 `aria-describedby`; `Pasientvarsel` sier fra med en gang (`role="alert"`) og
 viser ingenting uten treff. Nye flater bruker dem i stedet for egne tekster.
 
-Samhandlingsflatene fra før P7 har en eldre, kortere påminnelse
-(`IKKE_PASIENTOPPLYSNINGER` i `src/traad/modell.ts`). Den byttes ut med
-`PASIENTREGEL.kort` i P7 tråd D2 (se [Kartleggingen](#kartleggingen-av-inndataflatene)).
+Ved skrivefeltene som fantes før P7, setter `usePasientvakt`
+(`src/hooks/usePasientvakt.tsx`) de to sammen og knytter dem til feltet;
+`Rikteksteditor` og `Tekstomrade` (endringsforslagene) har den bak propen
+`pasientregel`. En test (`pasientpaaminnelse.test.tsx`) holder hvert
+skrivefelt i samhandlingen og endringsforslagene på den, og passer på at ingen
+komponent har en egen tekst om pasientopplysninger.
 
 ## De tekniske kontrollene
 
@@ -92,21 +95,21 @@ innhold ut av appen.
 
 Status 17.11.2026, fra koden på `main` og P7.0. «Påminnelse» er det brukeren
 ser ved feltet i dag. «Fjerne» er hvem som kan fjerne teksten helt i appen,
-uten hjelp fra en utvikler. Tiltakene i D2 er små og bygger ikke om skjemaene;
+uten hjelp fra en utvikler. Tiltakene i D2 (regelen og advarselen ved feltet) er gjort uten å bygge om skjemaene;
 resten foreslås som egne oppgaver.
 
 ### Samhandlingen (alle eller mange leser)
 
 | Flate | Lagres | Påminnelse i dag | Fjerne i appen | Tiltak |
 | --- | --- | --- | --- | --- |
-| Diskusjoner: overskrift og første innlegg | `diskusjoner` | Ja (gammel tekst) | Forfatteren endrer; moderator skjuler og «Fjern for godt»; moderator sletter tråden. Arkivert tråd må hentes tilbake først | D2: `PASIENTREGEL.kort` og `Pasientvarsel` |
-| Diskusjonskommentarer | `diskusjonskommentarer`; skjult tekst i `diskusjon_skjulte_tekster` til «Fjern for godt» | Ja (gammel tekst) | Forfatteren endrer eller sletter; moderator skjuler og fjerner for godt | D2 |
-| Idéer (felles) og idékommentarer | `ideer`, `idekommentarer` | Ja (gammel tekst) | Forfatteren eller en systemarkitekt sletter; kommentar med svar står som «Slettet» uten tekst. En idé **overført** til planlagte oppgaver kan ingen slette (K1) | D2 |
-| Planlagte oppgaver (fra idéer) | `oppgaver` (overskrift, prompt) | Nei | Systemarkitektene endrer prompten | D2: påminnelse ved prompten. Prompten leses av en språkmodell (se [Tjenester utenfor OUSFAR](#tjenester-utenfor-ousfar)) |
-| Gruppeidéer, -kommentarer og -oppgaver | `ideer` (med `gruppe_id`), `idekommentarer`, `gruppeoppgaver` | Ja (gammel tekst) | Forfatteren, gruppens moderatorer og ansvarlige, systemarkitektene. I en **arkivert** gruppe er alt frosset (K2) | D2 |
-| Gruppens navn og beskrivelse | `grupper`, og en kopi i `tilgangslogg` ved hver endring | Beskrivelsen: ja (gammel tekst) | De ansvarlige endrer; kopien i tilgangsloggen kan ikke fjernes i appen (K3) | D2 |
+| Diskusjoner: overskrift og første innlegg | `diskusjoner` | Regel og advarsel (D2) | Forfatteren endrer; moderator skjuler og «Fjern for godt»; moderator sletter tråden. Arkivert tråd må hentes tilbake først | Databasekontroll (forslag) |
+| Diskusjonskommentarer | `diskusjonskommentarer`; skjult tekst i `diskusjon_skjulte_tekster` til «Fjern for godt» | Regel og advarsel (D2) | Forfatteren endrer eller sletter; moderator skjuler og fjerner for godt | Databasekontroll (forslag) |
+| Idéer (felles) og idékommentarer | `ideer`, `idekommentarer` | Regel og advarsel (D2) | Forfatteren eller en systemarkitekt sletter; kommentar med svar står som «Slettet» uten tekst. En idé **overført** til planlagte oppgaver kan ingen slette (K1) | Databasekontroll (forslag) |
+| Planlagte oppgaver (fra idéer) | `oppgaver` (overskrift, prompt) | Prompten: regel og advarsel (D2) | Systemarkitektene endrer prompten | Prompten leses av en språkmodell (se [Tjenester utenfor OUSFAR](#tjenester-utenfor-ousfar)); se over den før den merkes klar |
+| Gruppeidéer, -kommentarer og -oppgaver | `ideer` (med `gruppe_id`), `idekommentarer`, `gruppeoppgaver` | Regel og advarsel (D2) | Forfatteren, gruppens moderatorer og ansvarlige, systemarkitektene. I en **arkivert** gruppe er alt frosset (K2) | Databasekontroll (forslag) |
+| Gruppens navn og beskrivelse | `grupper`, og en kopi i `tilgangslogg` ved hver endring | Beskrivelsen: regel og advarsel (D2) | De ansvarlige endrer; kopien i tilgangsloggen kan ikke fjernes i appen (K3) | Databasekontroll (forslag) |
 | Gruppechatten (P7, avslått) | `gruppemeldinger` | `Pasientregel` og `Pasientvarsel` (tråd B) | Forfatteren og moderatorene sletter, i en arkivert gruppe en systemarkitekt; teksten fjernes med en gang | Databasen avviser fødselsnumre (tråd A) |
-| Endringsforslag, svar og kommentarer i tidslinjen | `endringsforslag`, `endringsforslag_hendelser` | Ja (gammel tekst) | Ingen; forslag kan trekkes, men ikke slettes (K4) | D2 |
+| Endringsforslag, svar og kommentarer i tidslinjen | `endringsforslag`, `endringsforslag_hendelser` | Regel og advarsel (D2) | Ingen; forslag kan trekkes, men ikke slettes (K4) | Databasekontroll (forslag) |
 | Profil: navn og bilde | `profiles`, bøtta `avatarer` | Nei | Brukeren selv | Ingen; lav risiko |
 
 ### Fagstoff og administrasjon (redaktører, administratorer, systemarkitekter)
