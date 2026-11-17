@@ -103,7 +103,8 @@ describe('tallene til fanene', () => {
       nye_ideer: 2,
       venter: 1,
       mine_oppgaver: 3,
+      chat_uleste: null,
     })
-    expect(lesGruppeoversikt(grunn)?.samhandling).toEqual({ nye_ideer: 0, venter: 0, mine_oppgaver: 0 })
+    expect(lesGruppeoversikt(grunn)?.samhandling).toEqual({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: null })
   })
 })

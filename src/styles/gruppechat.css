@@ -1,0 +1,294 @@
+/* --- Chatten i en gruppe (docs/gruppechat.md, «Brukerflaten») -----------------
+   Lista med meldingene ruller for seg, så skrivefeltet alltid står under den,
+   og den er aldri høyere enn at feltet står i syne over dokken på smal skjerm.
+   Alle verdier er tokens. */
+
+.gruppechat {
+  --chatlogg-hoyde: clamp(16rem, calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset) - 17rem), 52rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
+}
+
+.gruppechat__om {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+}
+
+.gruppechat__lesere,
+.gruppechat__laast,
+.gruppechat__tilstand {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+  margin: 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+}
+
+.gruppechat__tilkobling {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  color: var(--blekk-dempet);
+}
+
+.gruppechat__ramme {
+  position: relative;
+}
+
+/* --- Lista ------------------------------------------------------------------ */
+
+.chatlogg {
+  position: relative;
+  block-size: var(--chatlogg-hoyde);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Plasseringen holdes i skript når eldre meldinger kommer over (`Gruppechat`). */
+  overflow-anchor: none;
+  padding: var(--rom-3) var(--rom-3) var(--rom-5);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+}
+
+.chatlogg__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chatlogg__eldre {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--rom-2) var(--rom-4);
+}
+
+.chatlogg__tom {
+  margin: 0;
+  padding: var(--rom-7) var(--rom-4);
+  font-size: var(--tekst-ui);
+  text-align: center;
+  color: var(--blekk-dempet);
+}
+
+.chatlogg__dag,
+.chatlogg__nye {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  padding-block: var(--rom-5) var(--rom-2);
+}
+
+.chatlogg__dag::before,
+.chatlogg__dag::after,
+.chatlogg__nye::before,
+.chatlogg__nye::after {
+  content: '';
+  flex: 1;
+  border-top: var(--kant) solid var(--linje);
+}
+
+.chatlogg__dagnavn,
+.chatlogg__nye > span {
+  margin: 0;
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-halvfet);
+  letter-spacing: var(--sperring-meta);
+  color: var(--blekk-dempet);
+}
+
+.chatlogg__nye::before,
+.chatlogg__nye::after {
+  border-top-color: var(--aksent);
+}
+
+.chatlogg__nye > span {
+  color: var(--aksent);
+}
+
+/* Knappen ned til de nye, over bunnen av lista mens man har rullet opp. */
+.chatlogg__tilnye {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--rom-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  width: max-content;
+  min-height: var(--hoyde-liten);
+  margin-inline: auto;
+  padding: var(--rom-2) var(--rom-5);
+  font: inherit;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+  color: var(--paa-aksent);
+  background: var(--aksent);
+  border: 0;
+  border-radius: var(--runding-pille);
+  box-shadow: var(--skygge-modal);
+  cursor: pointer;
+}
+
+/* --- Én melding ------------------------------------------------------------- */
+
+.chatmelding {
+  display: grid;
+  grid-template-columns: 1.9rem minmax(0, 1fr) auto;
+  column-gap: var(--rom-3);
+  align-items: start;
+  padding: var(--rom-2) var(--rom-2) var(--rom-1);
+  border-radius: var(--runding-underkort);
+  scroll-margin-block: var(--rom-6);
+}
+
+.chatmelding:not([data-sammen]) {
+  margin-top: var(--rom-3);
+}
+
+.chatmelding:hover,
+.chatmelding:focus-within {
+  background: var(--flate-bunn);
+}
+
+.chatmelding:focus-visible {
+  outline: var(--fokusring) solid var(--fokus);
+  outline-offset: -2px;
+}
+
+.chatmelding__bilde {
+  grid-column: 1;
+  padding-top: var(--rom-1);
+}
+
+.chatmelding__innhold {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  grid-column: 2;
+  min-width: 0;
+}
+
+.chatmelding__meny {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.chatmelding__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--rom-1) var(--rom-3);
+  margin: 0;
+}
+
+.chatmelding__navn {
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-sterk);
+}
+
+.chatmelding__deg,
+.chatmelding__tid,
+.chatmelding__redigert,
+.chatmelding__sender {
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-normal);
+  color: var(--blekk-dempet);
+}
+
+.chatmelding__tekst {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chatmelding__slettet {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+  margin: 0;
+  font-size: var(--tekst-ui);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+.chatmelding__sender {
+  margin: 0;
+}
+
+.chatmelding--ventende .chatmelding__tekst {
+  color: var(--blekk-dempet);
+}
+
+.chatmelding[data-status='feilet'] .chatmelding__tekst {
+  color: var(--blekk);
+}
+
+.chatmelding__feilet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+/* --- Skrivefeltet ----------------------------------------------------------- */
+
+.chatskriving,
+.chatendring {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.chatskriving__rad {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--rom-3);
+}
+
+.chatfelt {
+  min-height: var(--hoyde-felt);
+  resize: none;
+  field-sizing: content;
+  line-height: var(--linjehoyde-lesing);
+}
+
+.chatskriving__rad > .chatfelt {
+  flex: 1;
+}
+
+.chatskriving__teller {
+  min-height: 0;
+  margin: 0;
+  font-size: var(--tekst-meta);
+  color: var(--blekk-dempet);
+}
+
+.chatskriving__teller:empty {
+  display: none;
+}
+
+.chatskriving__teller[data-over] {
+  color: var(--alvorlig-blekk);
+  font-weight: var(--vekt-halvfet);
+}
+
+/* Smal skjerm: lista er lavere, og meldingene står tettere mot kanten. */
+@media (max-width: 47.5em) {
+  .gruppechat {
+    --chatlogg-hoyde: clamp(14rem, calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset) - 15rem), 40rem);
+  }
+
+  .chatlogg {
+    padding-inline: var(--rom-1);
+  }
+
+  .chatmelding {
+    column-gap: var(--rom-2);
+  }
+}
