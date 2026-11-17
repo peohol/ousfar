@@ -179,14 +179,17 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 
 ## 8. Rapport fra sluttkontrollen
 
-**Forkontroll** 17.11.2026, mot C2-grenen (`1d8b5c3`: A1 og C1 slått sammen,
-B1 og C2 til kontroll), i det lokale testmiljøet med sanntiden og bryteren
-på. Den endelige kontrollen kjøres på nytt når B1 og C2 er slått sammen, og
-denne rapporten oppdateres da.
+Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på, mot
+`main` (P7.0, A1, C1, D1, D2, E) med B1 (#444, `5ab3950`) og C2 (#447,
+`1d8b5c3`) flettet inn, slik `main` blir når de er slått sammen. Den samme
+kontrollen gikk også mot C2-grenen før B1s siste retting, med samme utfall
+(unntatt lesertekst-funnet under). Kjøres på nytt om B1 eller C2 endres før
+sammenslåing.
 
 ### Krysstestene (`gruppechat.krysstest.test.ts`)
 
-16 grønne. De dekker:
+16 grønne (og de andre testene for gruppechatten, 126 til sammen, på den
+samme sammenflettingen). De dekker:
 
 - Den negative matrisen samlet for alle inngangene (de seks funksjonene,
   `gruppeoversikt` og chatraden): medlem i A mot gruppe i B, lokale
@@ -231,9 +234,9 @@ denne rapporten oppdateres da.
 
 ### Funn
 
-- **Liten tekstfeil (B):** i en arkivert gruppe står det «Leses av de 0
-  medlemmene i gruppen og av systemarkitektene i OUSFAR». Bedre: bare
-  systemarkitektene når ingen medlemmer leser.
+- **Tekstfeil, rettet i B1 (#444, `5ab3950`):** i en arkivert gruppe sto det
+  «Leses av de 0 medlemmene i gruppen og av systemarkitektene i OUSFAR». Nå
+  «Leses av systemarkitektene i OUSFAR.»; N4 kontrollerer det.
 - Ellers ingen funn. Kontrakten sier at en arkivert gruppe bare leses av
   systemarkitektene; N4 er rettet til det (planen sa først at historikken står
   for alle).
