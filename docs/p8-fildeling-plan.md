@@ -230,10 +230,9 @@ brukerne bare har én modell å forholde seg til.
 Som ellers i gruppene: ingen nye filer og ingen endringer, og bare
 systemarkitektene leser. **Unntak foreslått:** en systemarkitekt kan slette en
 fil i en arkivert gruppe når den inneholder noe som ikke skal være der
-(pasientopplysninger). I dag fryser P6 og P7 arkiverte grupper helt, også for
-systemarkitektene, så en hendelse i en arkivert gruppe kan ikke ryddes uten å
-åpne gruppen igjen. Det gjelder chatten også, og er meldt til P7-tråden og tråd
-D (§9).
+(pasientopplysninger). P6 fryser arkiverte grupper helt, også for
+systemarkitektene; P7-kontrakten (`docs/gruppechat.md`) har tatt inn det
+samme unntaket for chatten (17.11.2026), og P8 følger den.
 
 ### 3.4 Nedlasting uten signerte lenker
 
@@ -544,11 +543,6 @@ som i chatten; at sikkerhetskopiene tar med filene.
   hele Supabase-organisasjonen. Om andre prosjekter ligger i samme
   organisasjon som `far`, sjekkes i P8 A før grensene i §4.2 settes; da kan
   totalgrensen måtte ned.
-- **Arkiverte grupper og hendelser.** P6 og P7 tillater ingen sletting i en
-  arkivert gruppe, heller ikke for systemarkitektene. En melding med
-  pasientopplysninger i en arkivert gruppe kan da ikke fjernes uten å åpne
-  gruppen igjen. Meldt til P7-hovedtråden og tråd D; P8 foreslår unntaket i
-  §3.3.
 - **Testdatabasen** har bare en forenklet `storage.objects` (`id`,
   `bucket_id`, `name`). Reglene i §3.1 trenger `metadata` og
   `storage.foldername`, og den ekte Storage prøves bare i det lokale
