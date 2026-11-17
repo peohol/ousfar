@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-17T03:28:48.563Z. Stoffene sist lest fra databasen 2026-11-16T17:27:37.718Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-17T04:27:50.662Z. Stoffene sist lest fra databasen 2026-11-16T17:27:37.718Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 94 · Publisert: 16 · Blokkert: 8 · Utenfor køen: 1
 
@@ -20,7 +20,7 @@ Ingen kurateringer venter.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 - **spironolakton**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
-- **venlafaksin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **venlafaksin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
 - **zuklopentiksol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 
 ## Køen
@@ -119,6 +119,6 @@ Ingen kurateringer venter.
 | 90 | bupropion | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 52 elementer har ingen kilde. |
 | 91 | gabapentin | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 49 elementer har ingen kilde. |
 | 92 | kvetiapin | de_novo | 72.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-05. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 51 elementer har ingen kilde. |
-| 93 | ketamin | de_novo | 62.8 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-04. 1 av 50 elementer har ingen kilde. |
+| 93 | ketamin | de_novo | 63.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-04. 1 av 50 elementer har ingen kilde. |
 | 94 | thc | de_novo | 60.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-10. |
 
