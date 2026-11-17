@@ -468,6 +468,6 @@ Fylles ut av trådene.
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Slått sammen |
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Slått sammen |
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
-| A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |
+| A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Slått sammen |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Til kontroll |
