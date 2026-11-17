@@ -180,13 +180,14 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 ## 8. Rapport fra sluttkontrollen
 
 Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på. Siste
-kjøring var mot `main` med B1 (#444) slått sammen og C2 (#447, `1d8b5c3`)
-flettet inn, slik `main` blir når C2 er slått sammen. Kjøres på nytt når
-funnet under er rettet, og når C2 endres før sammenslåing.
+kjøring var mot `main` med B1 (#444, `3a5210d`) slått sammen og C2 (#447,
+`844a8c2`, med livstegnet på 45 s) flettet inn, slik `main` blir når C2 er
+slått sammen: alle ti punktene OK. Kjøres på nytt hvis C2 endres før
+sammenslåing.
 
 ### Krysstestene (`gruppechat.krysstest.test.ts`)
 
-16 grønne (og de andre testene for gruppechatten, 126 til sammen, på den
+16 grønne (og de andre testene for gruppechatten, 127 til sammen, på den
 samme sammenflettingen). De dekker:
 
 - Den negative matrisen samlet for alle inngangene (de seks funksjonene,
@@ -221,8 +222,8 @@ samme sammenflettingen). De dekker:
 | --- | --- | --- |
 | N1 | OK | Fram hos den andre på 0,2–0,7 s, uten omlasting |
 | N2 | OK | Lista står stille øverst; «2 nye meldinger» tar ned igjen |
-| N3 | **FEIL** | Verste tilfelle (fjernet rett etter livstegnet): tømt først etter 60,3 s. Grensen er 60 s (kriterium 4). Se funnet under |
-| N4 | **FEIL** (tiden) | Verste tilfelle: medlemmets åpne chat tømt først etter 60,2 s, over grensen på 60 s. Ellers OK: systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert», og lesertekst uten «de 0 medlemmene» |
+| N3 | OK | Verste tilfelle (fjernet rett etter livstegnet): tømt etter 45 s, innenfor grensen på 60 s (kriterium 4) |
+| N4 | OK | Verste tilfelle: medlemmets åpne chat tømt etter 45 s. Systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert», og lesertekst uten «de 0 medlemmene» |
 | N5 | OK | Meldingene fra mens nettet var av kom 0,2 s etter, i rekkefølge og uten duplikater |
 | N6 | OK | Enter sender, Shift+Enter ny linje, fokus blir i feltet; menyen på egen melding nås med Shift+Tab, Escape gir fokus tilbake |
 | N7 | OK | 390 × 844 med berøring: ingen vannrett rulling; Enter gir ny linje, Send sender |
@@ -235,18 +236,21 @@ tilgangen er borte og ikke viser noen meldinger, og tar tilgangen rett etter
 at chatten har hentet endringene, så det verste tilfellet prøves hver gang.
 De feiler over 60 s (`TILGANG_TAPT_MS`). Gjenoppkoblingen i N5 har sin egen,
 lengre frist. (Første kjøring målte fra et tilfeldig tidspunkt og godtok 75 s;
-den ga 56 og 46 s.)
+den ga 56 og 46 s. Med livstegnet på 60 s ga det verste tilfellet 60,2–60,3 s,
+se funnet under.)
+
+Kontrollen sender ingenting før Realtime har sagt «Subscribed to PostgreSQL»
+til begge sidene. Rett etter en kald start tar det noen sekunder, og en melding
+sendt før det kom først med neste livstegn (N8 feilet én gang slik).
 
 ### Funn
 
-- **Tap av tilgang kan ta litt over ett minutt (C, `src/gruppechat/kontroller.ts`):**
-  livstegnet går hvert 60. sekund (`LIVSTEGN_MS = 60_000`). Tas tilgangen rett
-  etter et livstegn, oppdager den åpne chatten det først ved neste, og blir
-  tømt etter 60 s pluss svartiden (målt 60,2–60,3 s). Kontrakten krever at den
-  tømmes innen ett minutt. Forslag: et kortere livstegn med margin, for
-  eksempel 45 s; det er fortsatt «minst hvert 60. sekund» i kontrakten.
-  Databasen stenger alle kall med en gang (krysstestene), så det er bare den
-  åpne visningen som henger etter.
+- **Tap av tilgang tok litt over ett minutt, rettet i C2 (#447, `844a8c2`):**
+  livstegnet gikk hvert 60. sekund. Ble tilgangen tatt rett etter et livstegn,
+  ble den åpne chatten tømt først etter 60,2–60,3 s, over kravet på ett
+  minutt. Nå går livstegnet hvert 45. sekund (`LIVSTEGN_MS`), og N3/N4 måler
+  45 s i det verste tilfellet. Databasen stenger alle kall med en gang
+  (krysstestene), så det var bare den åpne visningen som hang etter.
 - **Tekstfeil, rettet i B1 (#444, `5ab3950`):** i en arkivert gruppe sto det
   «Leses av de 0 medlemmene i gruppen og av systemarkitektene i OUSFAR». Nå
   «Leses av systemarkitektene i OUSFAR.»; N4 kontrollerer det.

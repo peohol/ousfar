@@ -135,6 +135,26 @@ async function tilgangenTas(side: Side, hvem: string, endring: () => Promise<unk
   return tid
 }
 
+/**
+ * Venter til dørklokken på `side` faktisk lytter: Realtime sier «Subscribed to
+ * PostgreSQL» når lytteren på databaseendringene er klar. Etter en kald start
+ * tar det noen sekunder, og en melding sendt før det kommer først med neste
+ * livstegn. Lytteren må settes før siden åpnes.
+ */
+function sanntidKlar(side: Side): Promise<void> {
+  return new Promise((klar, feil) => {
+    const frist = setTimeout(() => feil(new Error('Ikke innen 60 s: Realtime lytter på chatten')), 60_000)
+    side.on('websocket', (ws: Side) =>
+      ws.on('framereceived', ({ payload }: { payload: string | Buffer }) => {
+        if (String(payload).includes('Subscribed to PostgreSQL')) {
+          clearTimeout(frist)
+          klar()
+        }
+      }),
+    )
+  })
+}
+
 // --- Kjøringen -------------------------------------------------------------------
 
 const s = await startLokalDatabase()
@@ -161,8 +181,10 @@ try {
   const bo = await miljo.brukerside('qa-chat-bo', passord.bo)
   const begge = { ada, bo }
   for (const side of [ada, bo]) {
+    const lytter = sanntidKlar(side)
     await side.goto(chatadresse)
     await skrivefelt(side, navn).waitFor({ timeout: 30_000 })
+    await lytter
   }
 
   await punkt('N8', 'navnene skjermleseren leser', begge, async () => {
