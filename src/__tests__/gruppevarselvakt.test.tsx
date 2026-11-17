@@ -149,7 +149,7 @@ it('lar et gruppevarsel stå ulest når brukeren blir i et ulagret skjema, og me
     </GruppekildeProvider>,
   )
   // Lista er tom, så «Ny idé» står både øverst og i den tomme lista.
-  await bruker.click((await screen.findAllByRole('button', { name: 'Ny idé' }))[0])
+  await bruker.click((await screen.findAllByRole('button', { name: 'Ny idé' }))[0]!)
   await bruker.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
 
   // Varselet åpnes, men brukeren blir i skjemaet.
