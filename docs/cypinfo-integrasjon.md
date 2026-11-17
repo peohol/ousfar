@@ -1,9 +1,9 @@
 # CYPinfo som norsk farmakogenetisk kilde: kartlegging og plan
 
 Leses før noe som har med CYPinfo å gjøre bygges: koblingen til fagsidene,
-synkroniseringen av katalogen, oppslaget etter et kjent resultat eller
-visningen i seksjonen «Farmakogenetikk». Dokumentet er etappe A: kartleggingen.
-Etappene B–E står til slutt, så de kan bygges uten mer teknisk kartlegging.
+synkroniseringen av katalogen eller visningen i seksjonen «Farmakogenetikk».
+Dokumentet begynte som etappe A, kartleggingen; etappene står til slutt, med
+det som er bygd.
 Mønstrene for datakildene står i `docs/legemiddeldata.md`, `docs/clinpgx.md`,
 `docs/cpic.md` og `docs/datakilder.md`, og det som står der om prinsippene,
 gjelder også her.
@@ -12,8 +12,17 @@ CYPinfo erstatter CPIC, som er stanset siden 6.11.2026 og skal erstattes av
 norske farmakogenetiske data (`src/datakilder/stans.ts`). Ingenting i denne
 kartleggingen tar CPIC i bruk igjen.
 
-**Status:** etappe A (kartleggingen) og B (katalogen i OUSFAR) er gjort.
-Etappe B er beskrevet slik den er bygd under «B — Katalogen i OUSFAR».
+**Status:** etappe A (kartleggingen), B (katalogen i OUSFAR) og D (visningen
+på fagsidene, bare for systemarkitektene) er bygd. Etappe C, oppslaget etter
+en pasients resultat, bygges ikke (se under). E gjenstår: den kliniske
+kontrollen og visningen for alle.
+
+**Avklart av Peder 17.11.2026:** OUSFAR skal vise hvordan de ulike genotypene
+(fenotypene) påvirker legemidlene, slik CYPinfo beskriver det, og ikke være et
+verktøy der noen legger inn en pasients genotype; det er CYPinfo selv. Det
+trengs derfor ingen personvernvurdering, og ingen skriftlig tillatelse, siden
+CYPinfo driftes av Peders egen avdeling. CYPinfo vises for systemarkitektene
+først.
 
 ## Kort oppsummert
 
@@ -28,16 +37,15 @@ Etappe B er beskrevet slik den er bygd under «B — Katalogen i OUSFAR».
 - Alle legemidler med en genavhengig anbefaling som har en fagside i OUSFAR,
   har FEST-ID i CYPinfo. De 15 uten FEST-ID er legemidler CYPinfo sier ikke har
   en relevant gen–legemiddel-interaksjon.
-- Anbefalt løsning: katalogen, gentabellen og hvilke gener hvert legemiddel slås
-  opp på lagres i OUSFAR og synkroniseres ukentlig; selve anbefalingen for et
-  resultat hentes fra CYPinfo når brukeren ber om den, gjennom OUSFARs server,
-  og lagres ikke.
+- Løsningen: katalogen, gentabellen og hver anbefaling CYPinfo kan gi, med
+  nivået og teksten, synkroniseres ukentlig til OUSFAR. Fagsidene viser for
+  hvert legemiddel CYPinfos anbefaling ved hver fenotype, med lenke til
+  CYPinfo for en pasients eget resultat. Tekstene redigeres aldri i OUSFAR.
 - Funn som må tas hensyn til: enkelte feil ignoreres i stillhet (ukjente ID-er
   gir et tomt svar), oversettelsesendepunktet feiler for 43 av 176 genotyper,
   ATC-kodene har formfeil og én feil kode, og API-et har ingen versjon, dato
   eller lisens.
-- Før noe vises til brukerne trengs en skriftlig avtale med CYPinfo om bruken,
-  og en klinisk kontroll av visningen (etappe E).
+- Før visningen slås på for alle, kontrolleres den klinisk (etappe E).
 
 ## Kilden
 
@@ -426,9 +434,12 @@ dem skal få fagside, er et faglig valg, ikke en del av denne integrasjonen.
 
 ## Lagring og henting
 
-Peders føring: katalogopplysninger kan lagres eller mellomlagres, mens
-genotypebaserte anbefalinger hentes fra CYPinfo ved behov. Ingen parallell
-database med egne anbefalinger.
+Peders føring var først at katalogopplysninger kan lagres, mens anbefalingene
+hentes fra CYPinfo ved behov, og at det ikke skal lages en parallell database
+med egne, selvstendig vedlikeholdte anbefalinger. Etter avklaringen 17.11.2026
+(over) viser fagsidene alle anbefalingene for et legemiddel, og da lagres
+tekstene i kopien: de er CYPinfos, uendret, byttes ut hver uke og redigeres
+aldri i OUSFAR, så kopien er ikke en egen samling anbefalinger.
 
 ### Det OUSFAR lagrer (katalogen)
 
@@ -440,11 +451,10 @@ skrivefunksjoner bare for `service_role` og lesefunksjoner for innloggede:
 | `synkroniseringer` | Kjøringene: status (`pagar`, `fullfort`, `feilet`), cron eller manuell, antallene, feilene, `parserversjon` |
 | `legemiddel` | `cypinfo_id`, navn, normaliserte ATC-koder, FEST-ID-er, varenavn, kategori og terapiområde, `uten_relevante_gener` med CYPinfos tekst og nivå, og genene og gensettene legemiddelet slås opp på (`gener`, `gensett`: hvilke gener som har anbefalinger hver for seg, og hvilke som må sendes sammen), `raa`, `hash`, `utgatt_kl` |
 | `genresultat` | Gentabellen: gen, `gen_slug`, allel 1 og 2, duplikasjon, `fenotype_id`, fenotypen, `raa`, `hash`, `utgatt_kl` |
-| `anbefaling` | Hver anbefaling CYPinfo kan gi: CYPinfos ID, legemiddelet, genene og fenotypene den gjelder, nivået og sha256 av teksten. Teksten lagres ikke. Utledet av synkroniseringen, se under |
+| `anbefaling` | Hver anbefaling CYPinfo kan gi: CYPinfos ID, legemiddelet, genene og fenotypene den gjelder, nivået og teksten, delt i avsnitt (`avsnitt`; fra parserversjon 2, før det bare en sha256 av den). Utledet av synkroniseringen, se under |
 
-Teksten for legemidlene uten relevante gener lagres, fordi den ikke avhenger av
-noe resultat; den er en del av katalogen («Standard dosering (ikke relevant
-gen-legemiddelinteraksjon)»). Ingen genavhengige anbefalingstekster lagres.
+Teksten for legemidlene uten relevante gener står på legemiddelet
+(«Standard dosering (ikke relevant gen-legemiddelinteraksjon)»).
 
 **Hvilke gener et legemiddel slås opp på**, står ikke i katalogen. Det utledes
 ved hver synkronisering, med rapportkall mot alle legemidlene samtidig:
@@ -472,10 +482,12 @@ og sammen i det andre (sertralin), kan slås opp på ett eller flere.
   sammen, med legemidlene i gruppen: i dag 5 × 5 = 25 for CYP2C19 + CYP2D6
   (TCA-ene), 3 × 3 = 9 for CYP2C9 + VKORC1 (warfarin) og 4 × 5 = 20 for
   CYP2B6 + CYP2C19 (sertralin). Slik har hver anbefaling CYPinfo kan gi, sin
-  ID og teksthash i kopien, også de felles, og hver endring kan oppdages.
+  ID, nivå og tekst i kopien, også de felles, og hver endring kan oppdages.
 
-Det som lagres, er bare genene, fenotypene og anbefalingens ID og en sha256 av teksten
-(for å se at noe er endret, se under); teksten kastes. Gir dette færre gener
+Rådataene (`raa`) for en anbefaling er uten teksten, så en ny tekst hos
+CYPinfo står bare i dataene og logges som en endring hos kilden, mens en ny
+lesing av det samme svaret (en ny parserversjon) logges som metadata. Gir
+synkroniseringen færre gener
 for et legemiddel enn sist, stanser den planlagte synkroniseringen byttet og
 melder det, så et endret svarmønster hos CYPinfo ikke fjerner et gen i
 stillhet. En systemarkitekts «Hent nå» godtar endringen, med en merknad.
@@ -492,162 +504,84 @@ strukturkontroll som avviser svar der felt OUSFAR bygger på (`_id`, `name`,
 `festCodes`, `geneId`, `phenotypeId`, `combinations`, `severity`) mangler eller
 har en annen form. Kilden kommer i `DATAKILDER`, `KILDEOPPSETT` og
 `datakilder_status`, med endringslogg på tabellene. Feltregler: navnene, ATC,
-FEST, genene, fenotypene og teksthashen er kliniske; varenavn og kategori
+FEST, genene, fenotypene, nivået og teksten er kliniske; varenavn og kategori
 metadata.
 
-### Det OUSFAR henter ved behov (anbefalingen)
+### Oppslaget etter en pasients resultat (bygges ikke)
 
-Ett serverendepunkt hos OUSFAR, `POST /api/cypinfo` (én Vercel-funksjon for
-både synkroniseringen og oppslaget; det er ti funksjoner i `api/` i dag, og
-Vercels Hobby-plan tillater høyst tolv per utrulling), som tar
-`{ handling: "rapport", legemiddel, resultater: [{ gen_slug, fenotype_id }] }` og:
-
-1. krever en innlogget bruker med aktivt medlemskap: en ny sjekk
-   `harAktivtMedlemskap` i `src/server/tilgang.ts` ved siden av
-   `erSystemarkitekt`, som kaller databasens fasit
-   `public.har_aktivt_medlemskap()` med brukerens token. Et gyldig token alene
-   er ikke nok, så en bruker som nettopp har mistet medlemskapet, avvises med
-   en gang. I dag har `tilgang.ts` bare sjekkene for cron, GitHub Actions og
-   systemarkitekter, fordi alle endepunktene er synkroniseringer;
-2. kontrollerer at legemiddelet, genene og fenotypene finnes i OUSFARs kopi, at
-   det er høyst én fenotype per gen, og at genene er blant dem legemiddelet slås
-   opp på. Ellers 400 med en norsk melding, uten å kalle CYPinfo;
-3. kaller `POST /api/legemiddel/rapport` med bare det ene legemiddelet og
-   gen:fenotype-parene, tidsgrense 8 s, ett nytt forsøk ved 5xx eller tidsavbrudd;
-4. leser svaret med den samme strukturkontrollen, og gir appen anbefalingen med
-   CYPinfos ID, genene og fenotypene den gjelder, nivået, teksten som ren tekst
-   delt i avsnitt (tomme avsnitt fjernet), og tidspunktet den ble hentet;
-5. lagrer ingenting og logger ikke forespørselen eller svaret (bare status og
-   svartid, uten innhold).
-
-Nettleseren kan ikke kalle CYPinfo selv (ingen CORS), og OUSFARs server gir
-kontrollen i punkt 2. Det samme mønsteret kan senere brukes av OUSFAR Verktøy.
+Kartleggingen foreslo et serverendepunkt som slo opp anbefalingen for en
+pasients resultat hos CYPinfo når brukeren ba om det. Det bygges ikke: OUSFAR
+viser alle anbefalingene for legemiddelet, og for en pasients resultat lenkes
+det til CYPinfo (Peder 17.11.2026). OUSFAR sender derfor ingenting om en
+pasient noe sted, og fagsidene kaller aldri CYPinfo; de leser bare kopien.
 
 ## Visningen i «Farmakogenetikk»
 
-CYPinfo får en egen gruppe, **«Norske anbefalinger fra CYPinfo»**, i seksjonen
-«Farmakogenetikk», der CPIC-gruppen sto: under de redaksjonelle kortene og over
-ClinPGx. De redaksjonelle kortene og panelteksten endres ikke, og CYPinfos tekst
-blandes aldri inn i dem. Gruppen har egen overskrift, ingress og kilde, som
-CPIC-gruppen hadde, så det er tydelig hva som er OUSFARs redaksjonelle tekst,
-hva som er CYPinfos norske anbefalinger, og hva som er ClinPGx' internasjonale
-oversikt.
+Bygd 17.11.2026, og foreløpig bare synlig for systemarkitektene
+(`CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`; `alle` slår den på for
+alle). For andre leses ingenting fra CYPinfo.
 
-**1. Hva CYPinfo har for legemiddelet** (ett lite kort, alltid synlig når siden
-er koblet):
+CYPinfo får en egen gruppe, **«Anbefalinger fra CYPinfo»**, i seksjonen
+«Farmakogenetikk», under de redaksjonelle kortene og over CPIC og ClinPGx. De
+redaksjonelle kortene og panelteksten endres ikke, og CYPinfos tekst blandes
+aldri inn i dem.
 
-- «CYPinfo har anbefalinger for aripiprazol ved CYP2D6-resultat.» Eller for
-  TCA-ene: «… ved CYP2C19- og CYP2D6-resultat sammen.» Eller: «CYPinfo: Standard
-  dosering (ikke relevant gen-legemiddelinteraksjon).»
-- Har siden flere legemidler (Amfetamin, Ketamin), ett avsnitt per legemiddel.
-- Den lukkede seksjonen oppsummerer: «CYPinfo: CYP2D6».
+- Et legemiddel kobles når CYPinfo har en av FEST-ID-ene i sidens
+  FEST-kobling, eller når det står i koblingslisten for siden
+  (`src/faginnhold/cypinfokoblinger.ts`). Siden trenger ingen kobling til
+  ClinPGx.
+- Ingressen: «Hva CYPinfo anbefaler ved de ulike fenotypene, med CYPinfos
+  tekst. For en pasients eget resultat: cypinfo.no.», med lenken.
+- Ett detaljkort per legemiddel (`cypinfo-<navn>`), med genene og antallet
+  anbefalinger i oppsummeringen. I kortet står gensettene hver for seg: ett
+  gen («CYP2D6»), eller flere CYPinfo slår opp sammen («CYP2C19 og CYP2D6
+  sammen»). Under hvert står anbefalingene, én per fenotype eller kombinasjon
+  av fenotyper, i rekkefølgen fenotypene har i gentabellen: fenotypene som
+  små merker, nivået som merke med CYPinfos tekst og en farge (rød, gul,
+  turkis, nøytral; betydningen står alltid i teksten), og CYPinfos tekst,
+  uendret, avsnitt for avsnitt.
+- Et legemiddel uten relevante gener viser CYPinfos faste tekst.
+- Nederst i kortet: «Kilde: CYPinfo, kontrollert <dato>. Gjelder ikke
+  legemiddelinteraksjoner.»
+- Den lukkede seksjonen oppsummerer: «CYPinfo: CYP2C19, CYP2D6».
+- En side CYPinfo ikke har noe for, viser ingenting fra CYPinfo.
 
-**2. «Slå opp anbefaling etter kjent resultat»** (detaljkort, bare for
-legemidler med gener):
-
-- Ingressen: «For et farmakogenetisk resultat som allerede er kjent. Velg
-  resultatet slik det står i svaret fra laboratoriet. Ingenting lagres.»
-- Ett valg per gen legemiddelet slås opp på, med CYPinfos fenotyper i deres
-  rekkefølge (Normal, Noe økt, Økt, Noe redusert, Redusert, Svært lav,
-  Manglende), bare de som gir en anbefaling for legemiddelet. Fenotypene vises
-  med CYPinfos ord.
-- «Oversett fra genotype» ved hvert gen: søk i OUSFARs kopi av CYPinfos
-  gentabell, i nettleseren (to alleler, rekkefølgen og stjernene spiller ingen
-  rolle; for CYP2D6 et valg for duplikasjon). Treffet viser genotypen →
-  fenotypen og velger fenotypen. En genotype som ikke står i tabellen, oversettes
-  ikke; da velges fenotypen fra svaret. Det er samme mønster som CPIC-oppslaget
-  (`docs/cpic.md`, «Oversettelsen fra diplotype»), som kan gjenbrukes.
-- Knappen «Hent anbefaling» kaller `/api/cypinfo` når hvert gen som *må* være
-  med, er valgt. For TCA-ene og warfarin står knappen inaktiv med teksten
-  «CYPinfo slår opp amitriptylin på CYP2C19 og CYP2D6 sammen. Velg begge.»
-  Et gen fylles aldri inn.
-- For sertralin kan ett gen være nok. Er bare det ene valgt, står det over
-  svaret: «Svaret bygger bare på CYP2C19. CYPinfo bruker også CYP2B6 for
-  sertralin.» (CYPinfos egen tekst viser til «nedtrekksmenyen» deres; den
-  gjengis uendret, med OUSFARs forklaring over.)
-- **Svaret**: nivået som merke med CYPinfos farge og tekst (rød «Endret
-  dosebehov eller bytte av legemiddel», gul «Kan ha bivirkninger/manglende
-  effekt», grønn «Standard dosering», nøytral «Lite/ingen informasjon om
-  metabolismevei»), med symbol i tillegg til fargen; så CYPinfos tekst, uendret,
-  avsnitt for avsnitt; så «Hvorfor»: det som ble valgt for hvert gen, genotypen
-  hvis den ble oversatt, og CYPinfos ID for anbefalingen.
-- Under: «Kilde: CYPinfo (cypinfo.no), hentet 16.11.2026 kl. 21.40. Gjelder
-  ikke legemiddelinteraksjoner. Bare veiledning; vurderes sammen med pasientens
-  kliniske situasjon.» Og lenken til CYPinfo.
-- «Nullstill» tar alle valgene.
-
-**Feil og tomme svar**: «CYPinfo svarer ikke nå. Prøv igjen om litt.» ved
-tidsavbrudd eller 5xx. «CYPinfo har ingen anbefaling for denne kombinasjonen»
-vises bare når OUSFARs kopi sier det, og da kalles ikke CYPinfo (valgene tilbyr
-uansett bare fenotyper med en anbefaling). Kommer det likevel et tomt svar for
-en kombinasjon kopien sier har en anbefaling, er det avvik i kilden, ikke et
-klinisk svar: «CYPinfo ga ikke anbefalingen OUSFAR ventet. Se cypinfo.no, eller
-prøv igjen etter neste oppdatering.», med lenken til CYPinfo, og endepunktet
-melder avviket i «Datakilder» (uten valgene) så synkroniseringen kan kjøres
-på nytt;
-«Katalogen fra CYPinfo er ikke hentet ennå» før første synkronisering; og
-meldingen om gamle data når katalogen ikke er kontrollert på over ti døgn, som
-for ClinPGx.
-
-**Personvern i visningen**: valgene står bare i komponentens tilstand, som i
-CPIC-oppslaget. De bevares ikke over oppdateringer (`useBevart` brukes bevisst
-ikke), står ikke i adressen, sendes ikke til søket, og lagres ikke. Det er
-avvik fra regelen i `AGENTS.md` om `useBevart`, begrunnet i at valgene er
-opplysninger om en pasient.
-
-**Søket** på siden og i kunnskapsbasen finner gruppen og oppslagskortet på
-legemiddelnavnet og genene, ikke anbefalingstekstene (de hentes bare ved
-oppslag).
-
-**Referansene**: CYPinfo står som automatisk, ikke-redigerbar referanse i
-seksjonens referansefelt (`cypinfo:kilde`), som ClinPGx, med teksten avtalen
-med CYPinfo krever.
-
-**Tastatur og tilgjengelighet**: valgene er vanlige `<select>`-er i
-rekkefølge, Enter i genotypesøket velger bare et nøyaktig treff, og svaret
-kunngjøres med `aria-live="polite"`. Nivået har tekst og symbol, ikke bare
-farge.
+Ikke med ennå, til visningen er for alle: CYPinfo i referansefeltet, i søket på
+siden og i kunnskapsbasen, og direktelenker til kortene.
 
 ## Personvern, sporbarhet, feil og klinisk kontroll
 
-**Personvern.** Det som sendes til CYPinfo, er legemiddelets ID og gen:fenotype,
-aldri navn, fødselsnummer, alder eller noe annet om en person. OUSFAR lagrer det
-ikke og logger det ikke. Forespørselen går likevel til CYPinfos servere hos
-Vercel i USA, og en fenotype som en kliniker slår opp, gjelder en pasient. Uten
-identifikatorer er det vanskelig å knytte den til en person, men det bør
-nevnes i avtalen med CYPinfo og vurderes av den som har ansvaret for
-personvernet ved OUS (se «Uavklart»). Brukerne får en påminnelse i ingressen
-om at de ikke skal skrive inn noe annet enn resultatet, og det er ingen
-fritekstfelt.
+**Personvern.** Ingen legger inn noe om en pasient i OUSFAR, og OUSFAR sender
+ingenting om noen til CYPinfo: synkroniseringen spør etter alle fenotypene,
+og fagsidene leser bare kopien. Peder avklarte 17.11.2026 at det da ikke
+trengs noen personvernvurdering.
 
-**Kildesporbarhet.** Hver viste anbefaling har CYPinfos ID, genene og
-fenotypene den gjelder, og når den ble hentet. Katalogen har sin kjøring,
-`raa` og `hash`, og endringene står i endringsloggen for datakildene. Fordi
-synkroniseringen lagrer en hash av hver anbefalingstekst den ser, logges det
-også når CYPinfo endrer en anbefaling, selv om teksten ikke lagres. CYPinfo har
-ingen versjon eller dato; sporet er derfor OUSFARs kjøring og tidspunkt.
+**Kildesporbarhet.** Hver anbefaling i kopien har CYPinfos ID, genene og
+fenotypene den gjelder, nivået og teksten, og kortet sier når kopien sist ble
+kontrollert mot CYPinfo. Katalogen har sin kjøring, `raa` og `hash`, og hver
+endring hos CYPinfo, også i en tekst, står i endringsloggen for datakildene.
+CYPinfo har ingen versjon eller dato; sporet er derfor OUSFARs kjøring og
+tidspunkt.
 
-**Feilbehandling.** Alt sjekkes mot katalogen før kallet, og et tomt svar der
-katalogen venter en anbefaling, er avvik i kilden, så CYPinfos stille tomme svar
-aldri vises som «ingen anbefaling». Svar som ikke kan leses,
-eller har en ny form, vises ikke; brukeren får feilmeldingen og
-systemarkitektene en føring i «Datakilder». Ved feil i synkroniseringen står
-katalogen fra forrige vellykkede henting. CYPinfo kan stanses som CPIC, med
+**Feilbehandling.** Synkroniseringen kontrollerer hvert svar fra CYPinfo, og et
+tomt svar eller en ny form avviser hele kjøringen, så CYPinfos stille tomme svar
+aldri blir «ingen anbefaling». Ved feil står katalogen fra forrige vellykkede
+henting, og systemarkitektene ser feilen i «Datakilder». Fagsiden utelater en
+rad som mangler noe, i stedet for å vise den halvt. CYPinfo kan stanses som CPIC, med
 `STANSEDE_KILDER`, uten kodeendring andre steder.
 
 **Klinisk kontroll.** CYPinfos tekster er CYPinfo-redaksjonens kliniske
 vurderinger; OUSFAR gjengir dem uendret og kontrollerer dem ikke faglig.
 Kontrollen gjelder at OUSFAR viser riktig anbefaling for riktig legemiddel og
-resultat, og ikke gir et inntrykk CYPinfo ikke gir. Den gjøres i etappe E av en
+fenotype, og ikke gir et inntrykk CYPinfo ikke gir. Den gjøres i etappe E av en
 klinisk farmakolog (Peder eller den han peker ut), med testtilfellene under,
-før gruppen slås på for brukerne. Funn i CYPinfos innhold (warfarin over,
+før gruppen slås på for alle. Funn i CYPinfos innhold (warfarin over,
 ATC-feilen) meldes til CYPinfo, ikke rettes i OUSFAR.
 
 ## Etappene B–E
 
 Alle etappene eies av OUSFAR Dev (`ansvar:dev`): datasynk, database, server,
-fagsidenes visning. Ingen endrer faginnholdet eller verktøymenyen. Hver etappe
-er én PR, i denne rekkefølgen.
+fagsidenes visning. Ingen endrer faginnholdet eller verktøymenyen.
 
 ### B — Katalogen i OUSFAR
 
@@ -659,8 +593,8 @@ Bygd 17.11.2026. Slik den er:
   `cypinfo_start_synk`, `cypinfo_fullfor_synk` (byttet: alt i én transaksjon,
   uten mellomlager, siden katalogen er liten) og `cypinfo_avbryt_synk` for
   `service_role`; `les_cypinfo(fest_ider, cypinfo_ider)` for innloggede med
-  aktivt medlemskap (legemidlene, hvilke kombinasjoner av gen og fenotype som
-  har en anbefaling, uten nivå og tekst, og gentabellen for genene de bruker).
+  aktivt medlemskap (legemidlene, anbefalingene og gentabellen for genene de
+  bruker; i B uten nivå og tekst, fra D med).
   Endringsloggen, feltreglene og etikettene i `datakilder`, og kilden i
   `datakilder_status`. Det trengtes ingen egen `cypinfo_status()`: «Datakilder»
   bruker `datakilder_status`, og `les_cypinfo` sier når katalogen sist ble
@@ -687,121 +621,92 @@ Bygd 17.11.2026. Slik den er:
   produksjonen 16.11.2026. Det falske CYPinfo i `hjelp/cypinfo.ts` velger
   anbefalingene slik CYPinfo gjør; det er kontrollert mot alle de 104
   rapportkallene i kartleggingen.
-- Ingenting vises på fagsidene. Første henting i produksjonen gjøres med «Hent
+- Ingenting vises på fagsidene i B. Første henting i produksjonen gjøres med «Hent
   nå» i «Datakilder», eller ved å starte arbeidsflyten «CYPinfo» i GitHub,
   etter sammenslåingen; ellers går den første onsdagen etter. Til da står
   CYPinfo som «Se over» i «Datakilder», fordi kilden ikke har noen kjøring.
 
-### C — Oppslaget gjennom OUSFARs server
+### C — Oppslaget gjennom OUSFARs server (bygges ikke)
 
-- `api/cypinfo.ts` får oppslaget (`POST` med `handling: "rapport"`) i samme
-  funksjon, så antallet funksjoner holdes nede.
-- `src/cypinfo/rapport.ts`: kontrollen mot katalogen (ukjent legemiddel, ukjent
-  gen eller fenotype, to fenotyper for ett gen, gen legemiddelet ikke slås opp
-  på, manglende gen for to-gens legemidler), kallet, lesingen.
-- `src/cypinfo/genotype.ts`: oversettelsen i gentabellen (rekkefølge, stjerner,
-  store og små bokstaver, duplikasjon bare for CYP2D6), uten `/api/result`.
-- Testene: hver avvisning med melding uten at CYPinfo kalles; et tomt svar; 5xx
-  og tidsavbrudd; et svar med ny form; at ingenting logges eller lagres (spion
-  på loggeren og databasen); at innlogging og aktivt medlemskap kreves (også en innlogget bruker uten
-  aktivt medlemskap avvises); at et tomt svar for en kombinasjon katalogen har,
-  gir avviksmeldingen og en føring, ikke «ingen anbefaling». CYPinfo etterlignes i
-  testene; ingen test kaller CYPinfo.
+Bortfalt etter Peders avklaring 17.11.2026; se «Oppslaget etter en pasients
+resultat».
 
 ### D — Visningen på fagsiden
 
-- `src/components/stoffside/Cypinfovisning.tsx` og `Cypinfooppslag.tsx`, i
-  `Farmakogenetikkpanel.tsx` der `Cpicvisning` står, og `useCypinfo` i
-  `useFarmakogenetikk.ts` (`useKilde`, lest med sidens FEST-ID-er og listen).
-- Gjenbruk det generelle fra CPIC-oppslaget og oversettelsen (velgerne,
-  genotypesøket, «Hvorfor»), flyttet til felles komponenter, ikke kopiert.
-- Referansen `cypinfo:kilde` i `src/cypinfo/referanser.ts`, oppsummeringen av
-  den lukkede seksjonen, søketekstene, direktelenkene (`cypinfo-oppslag`).
-- Gruppen er skjult bak et kildeoppsett («ikke aktivert») til etappe E er
-  godkjent, så den kan prøves i det lokale testmiljøet og av systemarkitektene
-  uten at brukerne ser den.
-- Testene: komponenttester med etterlignet API for aripiprazol (ett gen),
-  amitriptylin (to gener som kreves), sertralin (ett eller begge), warfarin,
-  Amfetamin (to legemidler, uten relevante gener), Ketamin (esketamin), en side
-  uten CYPinfo, en metabolittside; tastaturflyten; at valgene ikke står i
-  adressen eller i `useBevart`; Playwright i det lokale testmiljøet
-  (`apneTestmiljo()`), aldri mot produksjonen. Endringsloggen: MINOR,
-  `Funksjonalitet`, og varsel ved aktiveringen i E (ny klinisk funksjon på
-  fagsidene).
+Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den er:
 
-### E — Klinisk kontroll, avtale og aktivering
+- Synkroniseringen (parserversjon 2) lagrer teksten for hver anbefaling. Den
+  første hentingen etter sammenslåingen logger byttet fra hashen til teksten
+  som metadata, ikke som endring hos CYPinfo.
+- Migrasjonen `*_cypinfo_visning.sql`: `les_cypinfo` gir anbefalingene med
+  genene og fenotypene, nivået og teksten.
+- `src/cypinfo/lesing.ts` (leseren, som utelater rader som mangler noe) og
+  `src/cypinfo/stoffside.ts` (hvem som ser den, hva siden spør etter, og
+  ordningen), `useCypinfo` i `useFarmakogenetikk.ts`, og
+  `Cypinfovisning.tsx` i `Farmakogenetikkpanel.tsx`.
+- Testene: `cypinfovisning.test.ts` (ordningen med hele utdraget: ett gen,
+  TCA-ene med 25, sertralin med gen hver for seg og sammen, uten relevante
+  gener, en side uten CYPinfo, lesingen), `stoffside.test.tsx` (ingenting leses
+  eller vises for andre enn systemarkitekter; kortet for systemarkitektene) og
+  `cypinfo.test.ts` (tekstene lagres, ny lesing som metadata, `les_cypinfo`).
 
-- Avtalen med CYPinfo (se «Uavklart»), og teksten referansen skal ha.
+### E — Klinisk kontroll og visning for alle
+
 - Den kliniske aksepttesten (under), gjort av en klinisk farmakolog, med
   resultatet ført i PR-en.
+- CYPinfo i referansefeltet, søket og direktelenkene.
 - Funnene meldes til CYPinfo: warfarin VKORC1 alene, kariprazins ATC, ATC-
   formen, FEST-ID for de 15, at `/api/result` feiler for 43 genotyper, og
   ønsket om en versjon eller dato og genene per legemiddel i katalogen.
-- Aktiveringen: kildeoppsettet slås på, varsel i endringsloggen.
+- Visningen for alle: `CYPINFO_VISES_FOR = 'alle'`, med varsel i
+  endringsloggen.
 - Valget om CPIC-laget (skjemaet, koden og `Cpicoppslag.tsx`) skal fjernes når
   CYPinfo er i bruk. Det er en egen opprydding etter at E er godkjent.
 
 ## Test- og godkjenningskriterier
 
-**Automatiske (B–D, i CI):**
+**Automatiske (B og D, i CI):**
 
 - Hver av de 75 legemidlene i det lagrede utdraget leses; formfeilene i ATC
   normaliseres; feltnavnene i alle tre svarformene leses.
 - Dekningen: 34 sikre treff gir nøyaktig de 33 fagsidene i tabellen; listen gir
   de 13 usikre slik vurderingen sier (Kariprazin ja, Brekspiprazol nei for
   kariprazin, Hydroksyrisperidon nei); hver publiserte fagside har én status.
-- Utledningen gir CYP2C19 + CYP2D6 som påkrevd par for de fire TCA-ene, CYP2C9
-  + VKORC1 for warfarin, og CYP2C19 og CYP2B6 hver for seg for sertralin, og
-  synkroniseringen kaller hele produktet av fenotyper for hver gengruppe (i
-  utdraget 25 + 9 + 20), så hver felles anbefaling har ID og teksthash.
-- Endepunktet sender aldri noe til CYPinfo som ikke finnes i katalogen, og
-  avviser to fenotyper for samme gen.
-- Et tomt svar, 5xx, tidsavbrudd og ny form gir hver sin melding, og ingen
-  anbefaling vises. Et tomt svar for en kombinasjon katalogen har, vises som
-  avvik i kilden, aldri som «ingen anbefaling».
-- Ingenting fra oppslaget lagres eller logges; valgene står ikke i adressen.
+- Utledningen gir CYP2C19 + CYP2D6 som par for de fire TCA-ene, CYP2C9 +
+  VKORC1 for warfarin, og CYP2C19 og CYP2B6 hver for seg og sammen for
+  sertralin, og synkroniseringen kaller hele produktet av fenotyper for hver
+  gengruppe (i utdraget 25 + 9 + 20), så hver anbefaling har ID, nivå og tekst.
+- Et tomt svar, 5xx, tidsavbrudd og ny form stopper kjøringen, og katalogen fra
+  før står.
+- Fagsiden viser ingenting fra CYPinfo, og leser ingenting, for andre enn dem
+  `CYPINFO_VISES_FOR` gjelder.
 
-**Klinisk aksepttest (E), i det lokale testmiljøet eller med systemarkitektenes
-forhåndsvisning, med syntetiske resultater:**
+**Klinisk aksepttest (E), med systemarkitektenes visning i produksjonen eller i
+det lokale testmiljøet:**
 
-| Legemiddel | Resultat | Forventet |
-| --- | --- | --- |
-| Aripiprazol | CYP2D6 Normal | `standard`, «Normal metabolisme.» |
-| Aripiprazol | CYP2D6 Redusert | `medium`, teksten om dehydroaripiprazol |
-| Kodein | CYP2D6 Manglende og Økt | Det CYPinfo viser for de samme valgene på cypinfo.no |
-| Amitriptylin | bare CYP2D6 | Knappen inaktiv, melding om CYP2C19 |
-| Amitriptylin | CYP2C19 Normal + CYP2D6 Redusert | `high`, felles anbefaling |
-| Sertralin | CYP2C19 Normal alene | `standard` og OUSFARs merknad om CYP2B6 |
-| Sertralin | CYP2C19 Normal + CYP2B6 Redusert | `medium`, felles anbefaling |
-| Warfarin | CYP2C9 og VKORC1, alle ni | Samme som cypinfo.no |
-| Citalopram | genotype CYP2C19 *1/*17 | Oversatt til «Noe økt enzymaktivitet» |
-| CYP2D6 | genotype *1/*1 med duplikasjon | «Økt enzymaktivitet» |
-| Amfetamin | — | To avsnitt, «ikke relevant gen-legemiddelinteraksjon», ingen oppslag |
-| Karbamazepin | — | Ingen CYPinfo-gruppe; ClinPGx som før |
+| Fagside | Forventet |
+| --- | --- |
+| Aripiprazol | Ett kort, CYP2D6: Normal gir `standard` («Normal metabolisme.»), Redusert `medium` med teksten om dehydroaripiprazol |
+| Kodein | Hver CYP2D6-fenotype med det cypinfo.no viser for den |
+| Amitriptylin | «CYP2C19 og CYP2D6 sammen» med 25 anbefalinger, ingen for ett gen alene |
+| Sertralin | CYP2B6 og CYP2C19 hver for seg, og sammen |
+| Warfarin | «CYP2C9 og VKORC1 sammen», alle ni som på cypinfo.no |
+| Amfetamin | To legemidler, CYPinfos tekst om ikke relevant gen-legemiddelinteraksjon |
+| Ketamin | Esketamin |
+| Karbamazepin | Ingen CYPinfo-gruppe; ClinPGx som før |
 
-Godkjent når hver rad gir det samme som cypinfo.no for de samme valgene, den
-redaksjonelle teksten på sidene er uendret, kilden og tidspunktet står ved hvert
-svar, og ingenting om valgene finnes i adressen, i databasen eller i loggene.
+Godkjent når hver rad gir det samme som cypinfo.no for de samme fenotypene, den
+redaksjonelle teksten på sidene er uendret, og kilden og tidspunktet står i
+hvert kort.
 
 ## Uavklart
 
-Spørsmål kartleggingen ikke kan avgjøre. Det første må være avklart før noe
-vises for brukerne; de andre før eller i etappe E.
-
-1. **Tillatelse til å bruke CYPinfo i OUSFAR.** Nettstedet og API-et oppgir
-   ingen lisens eller vilkår. Tekstene er CYPinfo-redaksjonens. OUSFAR trenger
-   en skriftlig tillatelse fra CYPinfo (redaksjonen ved OUS Avdeling for
-   farmakologi), med hvordan kilden skal oppgis, om katalogen kan mellomlagres,
-   og om det er greit at OUSFAR kaller API-et fra sin server (ukentlig, og ved
-   hvert oppslag). Farmakologiportalen ble tatt i bruk på tilsvarende måte med
-   en skriftlig tillatelse.
-2. **Personvern.** Om det er greit at fenotyper klinikere slår opp, sendes uten
-   identifikatorer til CYPinfos servere i USA. Er det ikke det, kan oppslaget
-   ikke bygges som foreslått; da står katalogkortet alene.
-3. **Ett gen der CYPinfo bruker to** (sertralin, og warfarin med VKORC1 alene).
-   Forslaget er å vise svaret med OUSFARs merknad for sertralin, og kreve begge
-   for TCA-ene og warfarin. Den kliniske kontrollen bekrefter eller endrer det.
-4. **Nivåenes betydning.** Teksten for `standard`/`medium`/`high`/`info` står bare
+1. ~~Tillatelse til å bruke CYPinfo i OUSFAR~~ og ~~personvern~~: avklart av
+   Peder 17.11.2026 (se øverst). Det trengs ingen av delene.
+2. **Ett gen der CYPinfo bruker to** (warfarin med VKORC1 alene). Visningen
+   viser det CYPinfo har; den kliniske kontrollen vurderer om noe bør
+   forklares.
+3. **Nivåenes betydning.** Teksten for `standard`/`medium`/`high`/`info` står bare
    på CYPinfos nettside, ikke i API-et. CYPinfo bør bekrefte at OUSFAR kan bruke
    den.
 

@@ -3,6 +3,7 @@ import type { Faginnholdslager } from '../../faginnhold/lagring'
 import type { Faginnholdsleser } from '../../faginnhold/lesing'
 import type { Farmakogenetikkleser } from '../../clinpgx/lesing'
 import type { Cpicleser } from '../../cpic/lesing'
+import type { Cypinfoleser } from '../../cypinfo/lesing'
 import type { Legemiddelleser } from '../../legemiddeldata/lesing'
 import type { Bivirkningsleser } from '../../bivirkninger/lesing'
 import type { Kjemileser } from '../../kjemi/lesing'
@@ -38,6 +39,11 @@ export interface Faginnholdskilde {
    * legemidlene siden er koblet til i ClinPGx. Uten den vises de ikke.
    */
   cpic?: Cpicleser
+  /**
+   * OUSFARs kopi av CYPinfo, som «Farmakogenetikk» viser for legemidlene
+   * siden er koblet til i FEST og i koblingslisten. Uten den vises den ikke.
+   */
+  cypinfo?: Cypinfoleser
   /**
    * Bivirkningene importert fra preparatomtalene, som seksjonen
    * «Bivirkninger» viser ved siden av de redaksjonelle kortene. Uten den vises

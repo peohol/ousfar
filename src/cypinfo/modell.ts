@@ -4,10 +4,11 @@
  * CYPinfo (cypinfo.no) er OUS Avdeling for farmakologis oppslagsverk for
  * farmakogenetikk. OUSFAR holder en kopi av katalogen: legemidlene, gentabellen
  * (fra genotype til fenotype) og hvilke kombinasjoner av gen og fenotype som
- * har en anbefaling for hvert legemiddel. Anbefalingstekstene lagres ikke; bare
- * CYPinfos ID for anbefalingen, nivået og en sha256 av teksten, så en endring
- * kan oppdages. Unntaket er teksten for legemidlene uten relevante gener, som
- * ikke avhenger av noe resultat og er en del av katalogen.
+ * har en anbefaling for hvert legemiddel, med CYPinfos ID, nivået og teksten
+ * for hver. Fagsidene viser hva CYPinfo anbefaler ved hver fenotype; ingen
+ * legger inn en pasients resultat. Tekstene er CYPinfos, uendret, og byttes ut
+ * ved hver synkronisering; de redigeres aldri i OUSFAR, så kopien er ikke en
+ * egen samling anbefalinger ved siden av CYPinfo (Peder 17.11.2026).
  *
  * Lesingen normaliserer det CYPinfo skriver ulikt: ATC-koder med mellomrom og
  * harde mellomrom, FEST-ID-ene som `festCodes` (katalogen) eller `festCode`
@@ -17,11 +18,10 @@
  *
  * Alt her er rene funksjoner.
  */
-import { createHash } from 'node:crypto'
 import { erObjekt } from '../datakilder/struktur.js'
 
 /** Økes når lesingen endres, så en endring som bare kommer av ny lesing, kan skilles fra en endring hos kilden. */
-export const PARSERVERSJON = 1
+export const PARSERVERSJON = 2
 
 export const CYPINFO_API = 'https://cypinfo.no/api'
 export const CYPINFO_NETTSTED = 'https://cypinfo.no'
@@ -92,11 +92,6 @@ export function avsnitt(v: unknown): string[] {
     .split(/\r?\n/)
     .map(tekst)
     .filter((t): t is string => t !== null)
-}
-
-/** sha256 av avsnittene, så bare en endring i innholdet gir en ny hash, ikke mellomrom og tomme linjer. */
-export function teksthash(avsnittene: readonly string[]): string {
-  return createHash('sha256').update(avsnittene.join('\n'), 'utf8').digest('hex')
 }
 
 /** ID-ene CYPinfo bruker (Sanity-dokumenter), og gen-sluggene. */
@@ -198,7 +193,7 @@ export interface Genfenotype {
   fenotype: string
 }
 
-/** En anbefaling i rapporten, lest. Teksten er med her, men lagres aldri; bare hashen. */
+/** En anbefaling i rapporten, lest. */
 export interface Rapportanbefaling {
   id: string
   legemiddel_id: string
@@ -209,14 +204,15 @@ export interface Rapportanbefaling {
   avsnitt: string[]
 }
 
-/** Det som lagres om en anbefaling: hvem den gjelder, nivået og hashen av teksten. */
+/** Det som lagres om en anbefaling: hvem den gjelder, nivået og teksten. */
 export interface Anbefalingsdata {
   legemiddel_id: string
   /** Navnet legemiddelet har i katalogen, for endringsloggen. */
   legemiddel: string
   kombinasjoner: Genfenotype[]
   niva: Niva
-  tekst_sha256: string
+  /** CYPinfos tekst, uendret, delt i avsnitt (`avsnitt`). */
+  avsnitt: string[]
 }
 
 /** Nøkkelen CYPinfo bruker for et gen med en fenotype i rapporten: `cyp2d6:<fenotype-ID>`. */

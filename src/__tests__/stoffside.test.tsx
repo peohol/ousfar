@@ -17,6 +17,9 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { Stoffside } from '../components/stoffside/Stoffside'
+import { elementAnker } from '../components/stoffside/Paneler'
+import { INGEN_RETTIGHETER, RettigheterKilde, type Rettigheter } from '../auth/rettigheter'
+import type { Cypinfoleser, Cypinfoutvalg } from '../cypinfo/lesing'
 import { detaljanker } from '../components/seksjoner/Seksjon'
 import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskilde'
 import { TipsLag } from '../components/Tips'
@@ -536,24 +539,28 @@ interface Visningsvalg {
   register?: Stoffregister
   /** Analyttkatalogen til arbeidskonteksten; standard er den til OUS Klinisk farmakologi. */
   analyttkatalog?: Analyttkatalog
+  /** Rettighetene til den innloggede; standard er ingen. */
+  rettigheter?: Rettigheter
 }
 
 /** Stoffsiden for stoffet med nøkkelen, slik appen viser den på `#/stoff/<nøkkel>`. */
-function vis(stoff: string, k = kilde(), { sted, register = REGISTER, analyttkatalog = katalog }: Visningsvalg = {}) {
+function vis(stoff: string, k = kilde(), { sted, register = REGISTER, analyttkatalog = katalog, rettigheter = INGEN_RETTIGHETER }: Visningsvalg = {}) {
   const onApneFortolkning = vi.fn()
   const onLukk = vi.fn()
   render(
     <TipsLag>
-      <FaginnholdskildeProvider kilde={k}>
-        <Stoffside
-          stoff={stoff}
-          sted={sted}
-          register={register}
-          katalog={analyttkatalog}
-          onApneFortolkning={onApneFortolkning}
-          onLukk={onLukk}
-        />
-      </FaginnholdskildeProvider>
+      <RettigheterKilde verdi={rettigheter}>
+        <FaginnholdskildeProvider kilde={k}>
+          <Stoffside
+            stoff={stoff}
+            sted={sted}
+            register={register}
+            katalog={analyttkatalog}
+            onApneFortolkning={onApneFortolkning}
+            onLukk={onLukk}
+          />
+        </FaginnholdskildeProvider>
+      </RettigheterKilde>
     </TipsLag>,
   )
   return { onApneFortolkning, onLukk, ...k }
@@ -3958,5 +3965,79 @@ describe('analyse ved norske laboratorier', () => {
     await waitFor(() => expect(k.laboratorier.les).toHaveBeenCalled())
     expect(skuffen('Kjemiske grunndata')).toBeTruthy()
     expect(() => skuffen('Analyse ved norske laboratorier')).toThrow()
+  })
+})
+
+describe('CYPinfo i «Farmakogenetikk»', () => {
+  const gen = (g: string, slug: string, id: string, fenotype: string) => ({ gen: g, gen_slug: slug, fenotype_id: id, fenotype })
+  const NORMAL_19 = gen('CYP2C19', 'cyp2c19', 'n', 'Normal enzymaktivitet')
+  const REDUSERT_D6 = gen('CYP2D6', 'cyp2d6', 'r', 'Redusert enzymaktivitet')
+  const NORMAL_D6 = gen('CYP2D6', 'cyp2d6', 'n', 'Normal enzymaktivitet')
+  /** Syntetiske data i formen `les_cypinfo` gir; tekstene er ikke kliniske. */
+  const UTVALG_CYPINFO: Cypinfoutvalg = {
+    kilde: { navn: 'CYPinfo', endret_kl: '2026-11-18T03:47:00Z', kontrollert_kl: '2026-11-18T03:47:00Z' },
+    legemidler: [
+      {
+        id: 'cyp-ami',
+        data: {
+          navn: 'amitriptylin',
+          atc: ['N06AA09'],
+          fest: ['ID_AMI'],
+          varenavn: [],
+          kategori: null,
+          terapiomrade: null,
+          uten_relevante_gener: null,
+          gener: ['cyp2c19', 'cyp2d6'],
+          gensett: [['cyp2c19', 'cyp2d6']],
+        },
+      },
+    ],
+    anbefalinger: [
+      { id: 'a2', legemiddel_id: 'cyp-ami', kombinasjoner: [REDUSERT_D6, NORMAL_19], niva: 'high', avsnitt: ['Syntetisk: endret dose.', 'Andre avsnitt.'] },
+      { id: 'a1', legemiddel_id: 'cyp-ami', kombinasjoner: [NORMAL_19, NORMAL_D6], niva: 'standard', avsnitt: ['Syntetisk: vanlig dose.'] },
+    ],
+    genresultater: [
+      { id: 'cyp2c19 *1/*1', data: { gen: 'CYP2C19', gen_slug: 'cyp2c19', allel1: '*1', allel2: '*1', duplikasjon: null, fenotype_id: 'n', fenotype: 'Normal enzymaktivitet' } },
+      { id: 'cyp2d6 *1/*1', data: { gen: 'CYP2D6', gen_slug: 'cyp2d6', allel1: '*1', allel2: '*1', duplikasjon: false, fenotype_id: 'n', fenotype: 'Normal enzymaktivitet' } },
+      { id: 'cyp2d6 *1/*4', data: { gen: 'CYP2D6', gen_slug: 'cyp2d6', allel1: '*1', allel2: '*4', duplikasjon: false, fenotype_id: 'r', fenotype: 'Redusert enzymaktivitet' } },
+    ],
+  }
+  const cypinfokilde = () => {
+    const cypinfo: Cypinfoleser = { les: vi.fn(async () => UTVALG_CYPINFO) }
+    return { ...kilde({ data: bareKobling }), legemidler: legemiddelleser(), cypinfo }
+  }
+  const SYSTEMARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true }
+
+  it('leser og viser ingenting fra CYPinfo for den som ikke er systemarkitekt', async () => {
+    const k = cypinfokilde()
+    vis('amitriptylin', k)
+    await waitFor(() => expect(k.legemidler.les).toHaveBeenCalled())
+    expect(k.cypinfo.les).not.toHaveBeenCalled()
+    expect(screen.queryByText('Anbefalinger fra CYPinfo')).toBeNull()
+  })
+
+  it('viser systemarkitektene CYPinfos anbefaling ved hver fenotype, etter sidens FEST-kobling', async () => {
+    const user = userEvent.setup()
+    const k = cypinfokilde()
+    vis('amitriptylin', k, { rettigheter: SYSTEMARKITEKT })
+    await waitFor(() => expect(k.cypinfo.les).toHaveBeenCalledWith(['ID_AMI'], []))
+    // Den lukkede seksjonen sier hvilke gener CYPinfo har.
+    expect(await screen.findByText(/CYPinfo: CYP2C19, CYP2D6/)).toBeTruthy()
+    await apneSkuff(user, 'Farmakogenetikk')
+    expect(screen.getByRole('heading', { name: 'Anbefalinger fra CYPinfo' })).toBeTruthy()
+    expect(screen.getByText(/Vises foreløpig bare for systemarkitekter/)).toBeTruthy()
+    expect(screen.getByRole('link', { name: /cypinfo\.no/ }).getAttribute('href')).toBe('https://cypinfo.no')
+    await apneSkuff(user, 'amitriptylin')
+    const kort = document.getElementById(elementAnker('cypinfo-amitriptylin'))!
+    expect(within(kort).getByText('CYP2C19 og CYP2D6 sammen')).toBeTruthy()
+    // Fenotypene i gentabellens rekkefølge: Normal før Redusert for CYP2D6.
+    const anbefalinger = within(kort).getAllByRole('listitem')
+    expect(anbefalinger.map((a) => a.querySelector('.cypinfo__fenotyper')?.textContent)).toEqual([
+      'CYP2C19: Normal enzymaktivitetCYP2D6: Normal enzymaktivitet',
+      'CYP2C19: Normal enzymaktivitetCYP2D6: Redusert enzymaktivitet',
+    ])
+    expect(within(anbefalinger[1]!).getByText('Endret dosebehov eller bytte av legemiddel')).toBeTruthy()
+    expect(within(anbefalinger[1]!).getByText('Andre avsnitt.')).toBeTruthy()
+    expect(within(kort).getByText(/Kilde: CYPinfo, kontrollert/)).toBeTruthy()
   })
 })

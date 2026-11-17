@@ -43,7 +43,7 @@ navnet), feltene som er endret, verdiene før og etter i de feltene, og `spor`:
 - Farmakologiportalen: det samme, med parserversjonene. Etiketten for en
   analyse er navnet, laboratoriet og prøvematerialet.
 - CYPinfo: det samme, med parserversjonene. En endring som bare står i de
-  leste dataene (en ny teksthash for en anbefaling, en endret tekst for et
+  leste dataene (en endret tekst for en anbefaling eller for et
   legemiddel uten relevante gener, gener som er kommet til eller borte), er en
   endring hos CYPinfo når parserversjonen er den samme. Etiketten for en
   anbefaling er legemiddelet med genene og fenotypene, og for et genresultat

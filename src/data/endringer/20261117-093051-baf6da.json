@@ -1,0 +1,13 @@
+{
+  "id": "20261117-093051-baf6da",
+  "semver": "minor",
+  "opprettet": "2026-11-17T09:30:51Z",
+  "sammendrag": "CYPinfos anbefalinger på fagsidene, foreløpig for systemarkitektene",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Fagsidene for legemidler CYPinfo har, får gruppen «Anbefalinger fra CYPinfo» under «Farmakogenetikk»: hva CYPinfo anbefaler ved hver fenotype, med CYPinfos tekst og lenke til cypinfo.no for en pasients eget resultat.",
+    "Foreløpig ser bare systemarkitektene gruppen. Tekstene hentes fra CYPinfo hver uke og redigeres aldri i OUSFAR."
+  ],
+  "utenVarsel": true
+}

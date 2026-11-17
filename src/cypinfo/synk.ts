@@ -12,13 +12,14 @@
  *    dekning med alle genene samtidig (som viser hvilke gener som hører
  *    sammen, uansett hvilke fenotyper anbefalingen gjelder), og til slutt
  *    hele produktet av fenotyper for hver gengruppe. Slik har hver anbefaling
- *    CYPinfo kan gi, sin ID og teksthash i kopien;
+ *    CYPinfo kan gi, sin ID, sitt nivå og sin tekst i kopien;
  * 4. stanser hvis et legemiddel har fått færre gener enn sist (bare den
  *    planlagte kjøringen; en systemarkitekts «Hent nå» godtar endringen og
  *    melder den), og melder legemidler uten FEST-ID og uten kobling;
  * 5. ber databasen bytte inn alt i én transaksjon, med vernet mot for få rader.
  *
- * Anbefalingstekstene lagres aldri; bare hashen. Går noe galt, merkes
+ * Tekstene er CYPinfos, uendret, og byttes ut hver uke; de redigeres aldri i
+ * OUSFAR. Går noe galt, merkes
  * kjøringen som feilet, og det som lå i databasen fra før, står urørt.
  */
 import { erObjekt } from '../datakilder/struktur.js'
@@ -32,7 +33,6 @@ import {
   lesLegemiddel,
   lesRapport,
   PARSERVERSJON,
-  teksthash,
   type Anbefalingsdata,
   type Genresultatdata,
   type Katalogdata,
@@ -181,9 +181,9 @@ export function kontrollertRapport(kall: Rapportkall, svar: unknown): Rapportanb
   return anbefalinger
 }
 
-/** Det samme svaret, uten teksten: det som avgjør om to svar med samme ID er like. */
+/** Det som avgjør om to svar med samme ID er like. */
 const avtrykk = (a: Rapportanbefaling) =>
-  JSON.stringify([a.legemiddel_id, a.kombinasjoner.map(kombinasjonsnokkel), a.uten_relevante_gener, a.niva, teksthash(a.avsnitt)])
+  JSON.stringify([a.legemiddel_id, a.kombinasjoner.map(kombinasjonsnokkel), a.uten_relevante_gener, a.niva, a.avsnitt])
 
 /** Legger anbefalingene til i samlingen; samme ID med ulikt innhold er avvik i kilden. */
 function samle(samling: Map<string, Rapportanbefaling>, anbefalinger: readonly Rapportanbefaling[]): void {
@@ -243,9 +243,11 @@ export function byggKatalog(
       legemiddel: legemiddel.navn,
       kombinasjoner: a.kombinasjoner,
       niva: a.niva,
-      tekst_sha256: teksthash(a.avsnitt),
+      avsnitt: a.avsnitt,
     }
-    // Uten teksten: den lagres aldri, heller ikke i rådataene.
+    // Rådataene er uten teksten, som i parserversjon 1: en ny tekst hos CYPinfo
+    // står da bare i dataene og logges som endring hos kilden, og en ny lesing
+    // av det samme svaret som metadata (datakilder.cypinfo_etter_bytte).
     rader.push({ id: a.id, data, raa: { _id: a.id, combinations: a.kombinasjoner.map(kombinasjonsnokkel), severity: a.niva } })
     if (!gensett.has(a.legemiddel_id)) gensett.set(a.legemiddel_id, new Set())
     gensett.get(a.legemiddel_id)!.add(gensettnokkel(a.kombinasjoner.map((k) => k.gen_slug)))
