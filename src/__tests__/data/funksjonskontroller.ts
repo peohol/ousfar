@@ -283,4 +283,12 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'valider_scenarioregelsett(innhold jsonb)': 'rekkevidde',
   'verktoysperrehistorikk()': 'systemarkitekt',
   'vis_i_diskusjon(diskusjon uuid, kommentar uuid)': 'rekkevidde',
+  // P7 tråd A: gruppechatten (supabase/migrations/*_gruppechat.sql).
+  'endre_gruppemelding(melding uuid, tekst text)': 'rekkevidde',
+  'gruppechat_endringer(gruppe uuid, etter bigint, antall integer)': 'rekkevidde',
+  'les_gruppechat(gruppe uuid, for_nr bigint, antall integer)': 'rekkevidde',
+  'merk_gruppechat_lest(gruppe uuid, til_nr bigint)': 'rekkevidde',
+  'mine_lesbare_gruppechatter()': 'eier',
+  'send_gruppemelding(gruppe uuid, klient_id uuid, tekst text)': 'rekkevidde',
+  'slett_gruppemelding(melding uuid)': 'rekkevidde',
 }
