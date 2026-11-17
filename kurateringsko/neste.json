@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-17T05:25:59.732Z",
+  "oppdatert_kl": "2026-11-17T06:35:00.148Z",
   "malt_kl": "2026-11-16T17:27:37.718Z",
   "antall": {
     "klar": 94,
@@ -153,7 +153,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
@@ -164,7 +164,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
@@ -175,7 +175,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
@@ -208,7 +208,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
@@ -219,7 +219,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
@@ -230,7 +230,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-11-17T05:25:59.732Z",
+          "kl": "2026-11-17T06:35:00.148Z",
           "kilde": "system"
         }
       ]
