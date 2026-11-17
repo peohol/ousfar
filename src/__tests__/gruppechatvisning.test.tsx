@@ -146,10 +146,9 @@ describe('det rene', () => {
 })
 
 describe('chatten', () => {
-  it('viser hvem som leser, regelen om pasientopplysninger og meldingene med avsender, klokkeslett og dag', () => {
+  it('viser hvem som leser og meldingene med avsender, klokkeslett og dag', () => {
     render(<Prove />)
     expect(screen.getByText('Leses av de 3 medlemmene i gruppen og av systemarkitektene i OUSFAR.')).toBeTruthy()
-    expect(screen.getByText(PASIENTREGEL.kort)).toBeTruthy()
     const liste = logg()
     expect(liste.getAttribute('aria-live')).toBe('polite')
     expect(liste.getAttribute('aria-relevant')).toBe('additions')
@@ -157,9 +156,9 @@ describe('chatten', () => {
     expect(within(liste).getAllByText('Kari Testesen').length).toBeGreaterThan(0)
     expect(liste.querySelector('time')?.getAttribute('dateTime')).toBe('2026-11-16T08:00:00.000Z')
     expect(within(liste).getByRole('heading', { level: 3 })).toBeTruthy()
-    // Regelen beskriver skrivefeltet, så skjermlesere leser den med feltet.
-    const beskrevet = felt().getAttribute('aria-describedby')!.split(' ').map((id) => document.getElementById(id)?.textContent)
-    expect(beskrevet).toContain(PASIENTREGEL.kort)
+    // Ingen påminnelse om pasientopplysninger (Peder 17.11.2026); feltet beskrives bare av tastehjelpen og telleren.
+    const beskrevet = felt().getAttribute('aria-describedby')!.split(' ').map((id) => document.getElementById(id)?.textContent ?? '')
+    expect(beskrevet.join(' ')).not.toMatch(/pasientopplysninger|fødselsnummer/i)
   })
 
   it('sender med Enter, gir ny linje med Shift + Enter, og sender med knappen', async () => {
@@ -211,10 +210,10 @@ describe('chatten', () => {
     expect(meldingstekster()).not.toContain('Forkastes')
   })
 
-  it('advarer mens teksten ligner et fødselsnummer, og viser avslaget fra databasen', async () => {
+  it('advarer ikke mens det skrives, men viser avslaget fra databasen', async () => {
     render(<Prove />)
     await userEvent.type(felt(), `Se ${syntetiskPersonnummer(14, 3, 87)}`)
-    expect(screen.getByRole('alert').textContent).toBe(PASIENTREGEL.advarsel)
+    expect(screen.queryByRole('alert')).toBeNull()
     await userEvent.type(felt(), '{Enter}')
     expect(screen.getAllByRole('alert').map((a) => a.textContent)).toContain(`Ikke sendt: ${PASIENTREGEL.avvist}`)
   })

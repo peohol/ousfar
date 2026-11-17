@@ -1,5 +1,4 @@
 import { useId, type ReactNode, type Ref } from 'react'
-import { pasientvaktmodus, usePasientvakt } from '../../hooks/usePasientvakt'
 
 /**
  * Et tekstfelt over flere linjer med merkelapp, hjelpetekst og en teller når
@@ -17,8 +16,6 @@ export function Tekstomrade({
   ugyldig,
   feilId,
   feltRef,
-  pasientregel,
-  pasientvarsel,
 }: {
   merkelapp: string
   verdi: string
@@ -32,10 +29,6 @@ export function Tekstomrade({
   ugyldig?: boolean
   feilId?: string
   feltRef?: Ref<HTMLTextAreaElement>
-  /** Regelen om pasientopplysninger og advarselen ved et fødselsnummer (`usePasientvakt`). */
-  pasientregel?: boolean
-  /** Bare advarselen, for et felt i et skjema som alt viser regelen. */
-  pasientvarsel?: boolean
 }) {
   const id = useId()
   const hjelpId = `${id}-hjelp`
@@ -43,9 +36,8 @@ export function Tekstomrade({
   // Telleren står først når det er under en tidel igjen.
   const igjen = maks - verdi.length
   const visTeller = igjen < maks / 10
-  const vakt = usePasientvakt(verdi, pasientvaktmodus(pasientregel, pasientvarsel))
   const beskrevet =
-    [ugyldig && feilId, hjelp && hjelpId, vakt.beskrevetAv, visTeller && tellerId].filter(Boolean).join(' ') ||
+    [ugyldig && feilId, hjelp && hjelpId, visTeller && tellerId].filter(Boolean).join(' ') ||
     undefined
   return (
     <div className="felt">
@@ -71,8 +63,6 @@ export function Tekstomrade({
           {hjelp}
         </span>
       )}
-      {vakt.regel}
-      {vakt.varsel}
       {visTeller && (
         <span className="felt__hjelp" id={tellerId} aria-live="polite">
           {igjen === 1 ? 'Ett tegn igjen' : `${igjen} tegn igjen`}

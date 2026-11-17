@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, type MutableRefObject } from 'react'
+import { Felt } from '../konto/Felt'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
@@ -35,7 +36,6 @@ import { Ikon } from '../ikon/Ikon'
 import { Merke, type Merketone } from '../Merke'
 import { Skuff, veksleSkuff } from '../Skuff'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
-import { Fritekstfelt } from '../Fritekstfelt'
 import { Gruppeoppgavestatusmerke } from '../ideer/Merker'
 import { Ideside } from '../ideer/Ideside'
 import { useForlatvakt, useMeldVakt, type Forlat, type Skjemastatus } from '../ideer/useForlatvakt'
@@ -586,10 +586,10 @@ function Oppgaveskjema({
 
   return (
     <form className="ideskjema skriveflate" onSubmit={(e) => void lagre(e)} noValidate aria-label={oppgave ? 'Endre oppgaven' : 'Ny oppgave'}>
-      <Fritekstfelt merkelapp="Overskrift" value={tittel} maxLength={GRUPPEOPPGAVETITTEL_MEST} autoFocus onChange={(e) => setTittel(e.target.value)} />
+      <Felt merkelapp="Overskrift" value={tittel} maxLength={GRUPPEOPPGAVETITTEL_MEST} autoFocus onChange={(e) => setTittel(e.target.value)} />
       <div className="felt">
         <span className="felt__merkelapp">Beskrivelse</span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker pasientregel />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker />
       </div>
       <Valgrad navn="Prioritet" valg={PRIORITETER} valgt={prioritet} etiketter={PRIORITETSNAVN} onVelg={setPrioritet} />
       {!oppgave && (

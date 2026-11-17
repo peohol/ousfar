@@ -3,21 +3,19 @@
  * docs/pasientopplysninger.md): verken identifiserbare eller pseudonymiserte
  * opplysninger, og heller ikke kasuistikker som kan knyttes til enkeltpersoner.
  *
- * Her står tekstene grensesnittet bruker overalt, og gjenkjenningen av
- * fødselsnumre, så appen og databasen mener det samme. Databasen har de
- * samme reglene i `intern.ligner_personnummer` og avviser med
- * `PASIENTREGEL.avvist` (`intern.krev_uten_personnummer`); en test holder
- * dem like. Gjenkjenningen er et sikkerhetsnett for åpenbare feil, ikke en
- * garanti: den finner ikke navn, diagnoser eller kasuistikker, og ingen tekst
- * sendes til eksterne tjenester for kontroll.
+ * Appen viser ingen påminnelse eller advarsel om dette ved skrivefeltene
+ * (Peder 17.11.2026: brukerne er godt trent i personvern, og flere advarsler
+ * blir bare støy). Det som står igjen, er gjenkjenningen av fødselsnumre og
+ * avslaget fra databasen: databasen har de samme reglene i
+ * `intern.ligner_personnummer` og avviser med `PASIENTREGEL.avvist`
+ * (`intern.krev_uten_personnummer`); en test holder dem like. Gjenkjenningen
+ * er et sikkerhetsnett for åpenbare feil, ikke en garanti: den finner ikke
+ * navn, diagnoser eller kasuistikker, og ingen tekst sendes til eksterne
+ * tjenester for kontroll.
  */
 
-/** Tekstene om regelen, til gjenbruk i grensesnittet. */
+/** Teksten om regelen som appen viser, når databasen avviser en sending. */
 export const PASIENTREGEL = {
-  /** Den korte regelen ved skrivefelt og opplasting. */
-  kort: 'Ikke skriv pasientopplysninger, heller ikke uten navn eller som kasuistikk som kan knyttes til en person.',
-  /** Advarselen mens teksten ligner et fødselsnummer. */
-  advarsel: 'Dette ligner et fødselsnummer. Fjern det før du sender: pasientopplysninger er ikke tillatt i OUSFAR.',
   /** Avslaget fra databasen, ordrett som i `intern.krev_uten_personnummer`. */
   avvist: 'Teksten ser ut til å inneholde et fødselsnummer. Pasientopplysninger er ikke tillatt i OUSFAR.',
 } as const
