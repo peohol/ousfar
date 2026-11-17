@@ -27,7 +27,6 @@ import {
 } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
@@ -36,11 +35,13 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import type { Forlat } from '../ideer/useForlatvakt'
 import { Gruppeideer } from './Gruppeideer'
 import { Gruppeoppgaver } from './Gruppeoppgaver'
 import { meldGruppesiden } from './gruppevisning'
+import { usePasientvakt } from '../../hooks/usePasientvakt'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
@@ -181,9 +182,10 @@ function Gruppefelter({
   disabled: boolean
 }) {
   const beskrivelseId = useId()
+  const vakt = usePasientvakt(beskrivelse)
   return (
     <>
-      <Felt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
+      <Fritekstfelt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
       <div className="felt">
         <label className="felt__merkelapp" htmlFor={beskrivelseId}>
           Beskrivelse
@@ -195,12 +197,11 @@ function Gruppefelter({
           maxLength={1000}
           value={beskrivelse}
           disabled={disabled}
-          aria-describedby={`${beskrivelseId}-hjelp`}
+          aria-describedby={vakt.beskrevetAv}
           onChange={(e) => onBeskrivelse(e.target.value)}
         />
-        <span id={`${beskrivelseId}-hjelp`} className="felt__hjelp">
-          {IKKE_PASIENTOPPLYSNINGER}
-        </span>
+        {vakt.regel}
+        {vakt.varsel}
       </div>
     </>
   )
