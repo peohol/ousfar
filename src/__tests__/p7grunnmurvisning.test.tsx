@@ -1,14 +1,12 @@
 // @vitest-environment jsdom
 /**
- * P7.0: regelen om pasientopplysninger i grensesnittet (`Pasientregel`,
- * `Pasientvarsel`), lesingen av svarene fra chatfunksjonene
+ * P7.0: lesingen av svarene fra chatfunksjonene
  * (`src/gruppechat/modell.ts`) og testchatten tråd B bygger mot
  * (`src/__tests__/hjelp/testchat.ts`). Bare syntetiske data.
  */
-import { act, cleanup, render, renderHook, screen } from '@testing-library/react'
+import { act, cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { PASIENTREGEL } from '@delt/pasientopplysninger'
-import { Pasientregel, Pasientvarsel } from '../components/Pasientregel'
 import { avsendernavn, GRUPPECHAT_GRENSER, lesChatendringer, lesChatside, lesGruppemelding } from '../gruppechat/modell'
 import { syntetiskeMeldinger, TESTPERSONER, useTestchat } from './hjelp/testchat'
 
@@ -28,26 +26,6 @@ function syntetiskNummer(): string {
   }
   throw new Error('Fant ikke noe nummer')
 }
-
-describe('regelen i grensesnittet', () => {
-  it('Pasientregel viser den korte regelen og kan beskrive et felt', () => {
-    render(
-      <>
-        <textarea aria-describedby="regel" aria-label="Melding" />
-        <Pasientregel id="regel" />
-      </>,
-    )
-    const felt = screen.getByRole('textbox', { name: 'Melding' })
-    expect(document.getElementById(felt.getAttribute('aria-describedby')!)?.textContent).toBe(PASIENTREGEL.kort)
-  })
-
-  it('Pasientvarsel sier fra bare når teksten ligner et fødselsnummer', () => {
-    const { rerender } = render(<Pasientvarsel tekst="Vanlig tekst om 1250 nmol/L" />)
-    expect(screen.queryByRole('alert')).toBeNull()
-    rerender(<Pasientvarsel tekst={`Se ${syntetiskNummer()}`} />)
-    expect(screen.getByRole('alert').textContent).toBe(PASIENTREGEL.advarsel)
-  })
-})
 
 describe('lesingen av svarene', () => {
   const melding = {

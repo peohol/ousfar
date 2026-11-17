@@ -399,7 +399,7 @@ function Kommentarskriver({
         }
       }}
     >
-      <Rikteksteditor key={runde} dokument={tekst} onEndre={setTekst} etikett={etikett} referanser={false} direktelenker autofokus kompakt pasientregel />
+      <Rikteksteditor key={runde} dokument={tekst} onEndre={setTekst} etikett={etikett} referanser={false} direktelenker autofokus kompakt />
       {feil && (
         <p className="skjemafeil" role="alert">
           {feil}

@@ -6,7 +6,6 @@ import { useGruppechat } from '../../gruppechat/useGruppechat'
 import type { Gruppe } from '../../grupper/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
-import { Pasientregel } from '../Pasientregel'
 import { Gruppechatmelding, Ventendemelding } from './Gruppechatmelding'
 import { Gruppechatskriving, glemUtkastene } from './Gruppechatskriving'
 import { dagsnavn, dagsnokkel, henger, lesertekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
@@ -39,7 +38,6 @@ export function Gruppechatfane({ gruppe }: { gruppe: Chatgruppe }) {
  * avgjør hver handling.
  */
 export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatgruppe }) {
-  const regelId = useId()
   const overskrift = useId()
   const logg = useRef<HTMLDivElement>(null)
   const felt = useRef<HTMLTextAreaElement>(null)
@@ -209,7 +207,6 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
           <Ikon navn="user" storrelse="ui" />
           {lesertekst(chat.lesere)}
         </p>
-        <Pasientregel id={regelId} />
       </div>
 
       {chat.tilkobling !== 'tilkoblet' && (
@@ -295,7 +292,6 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
           gruppe={gruppe.id}
           gruppenavn={gruppe.navn}
           grenser={chat.grenser}
-          regelId={regelId}
           onSend={(tekst) => {
             tilBunns.current = true
             chat.send(tekst)

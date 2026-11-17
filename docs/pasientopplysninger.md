@@ -29,37 +29,28 @@ For repoet og GitHub gjelder den eldre regelen i `AGENTS.md` i tillegg: bare
 syntetiske testdata, og ingen gyldige fødselsnumre i filene (testene lager
 dem selv, se `src/__tests__/p7grunnmur.test.ts`).
 
-## Den brukerrettede teksten
+## Ingen påminnelse i appen
 
-Tekstene står ett sted, i `PASIENTREGEL` (`supabase/functions/_delt/pasientopplysninger.ts`,
-importert som `@delt/pasientopplysninger`), og brukes uendret i appen og
-databasen:
+**Peder valgte 17.11.2026 at appen ikke skal minne om regelen**, verken ved
+skrivefeltene, i chatten eller ved opplasting: brukerne av OUSFAR er godt
+trent i personvern, og påminnelser ved hvert felt blir bare støy. Regelen
+over gjelder fullt ut; den står her, i `AGENTS.md` og i
+`docs/prosjektansvar.md`, ikke i grensesnittet.
+
+Det eneste brukeren kan se, er avslaget når databasen avviser en tekst som
+ligner et fødselsnummer. Teksten står i `PASIENTREGEL`
+(`supabase/functions/_delt/pasientopplysninger.ts`, importert som
+`@delt/pasientopplysninger`) og er den samme i appen og databasen:
 
 | Nøkkel | Tekst | Brukes |
 | --- | --- | --- |
-| `kort` | «Ikke skriv pasientopplysninger, heller ikke uten navn eller som kasuistikk som kan knyttes til en person.» | Ved skrivefelt og opplasting (`Pasientregel`) |
-| `advarsel` | «Dette ligner et fødselsnummer. Fjern det før du sender: pasientopplysninger er ikke tillatt i OUSFAR.» | Mens teksten i et felt ligner et fødselsnummer (`Pasientvarsel`) |
-| `avvist` | «Teksten ser ut til å inneholde et fødselsnummer. Pasientopplysninger er ikke tillatt i OUSFAR.» | Avslaget fra databasen (`intern.krev_uten_personnummer`) |
+| `avvist` | «Teksten ser ut til å inneholde et fødselsnummer. Pasientopplysninger er ikke tillatt i OUSFAR.» | Avslaget fra databasen (`intern.krev_uten_personnummer`), vist som sendefeil |
 
-Komponentene står i `src/components/Pasientregel.tsx`: `Pasientregel` er den
-korte regelen, dempet under feltet og knyttet til det med
-`aria-describedby`; `Pasientvarsel` sier fra med en gang (`role="alert"`) og
-viser ingenting uten treff. Nye flater bruker dem i stedet for egne tekster.
-
-Ved skrivefeltene som fantes før P7, setter `usePasientvakt`
-(`src/hooks/usePasientvakt.tsx`) de to sammen og knytter dem til feltet;
-`Rikteksteditor` og `Tekstomrade` (endringsforslagene) har den bak propen
-`pasientregel`. Regelen står én gang per skjema, ved hovedteksten. De andre
-feltene som deles i det samme skjemaet (overskrifter, navn, kategorinavn,
-begrunnelsen og kildene i et endringsforslag), har bare advarselen:
-`Fritekstfelt` i stedet for `Felt`, `pasientvarsel` på `Tekstomrade`, eller
-`usePasientvakt(tekst, 'varsel')` ved et eget felt. `Felt` selv tar ikke inn
-vakten, så innloggingen, som lastes før innloggingsveggen, ikke trenger den. Testene (`pasientpaaminnelse.test.tsx`,
-`forslag.test.tsx`) holder hvert skrivefelt i samhandlingen og
-endringsforslagene på dette, også et fødselsnummer som bare står i
-begrunnelsen, og passer på at ingen komponent har en egen tekst om
-pasientopplysninger. Påminnelsen og advarselen stopper ingenting; sperren i
-databasen er et eget, senere tiltak (forslaget i tabellen under).
+Den korte regelen under feltene og advarselen mens det skrives (P7.0 og D2,
+#440 og #445) er tatt ut igjen. `src/__tests__/pasientpaaminnelse.test.tsx`
+passer på at ingen komponent legger dem inn igjen: ingen tekst om
+pasientopplysninger eller fødselsnumre ved feltene, ingen kontroll av teksten
+mens den skrives, og ingen andre tekster i `PASIENTREGEL` enn avslaget.
 
 ## De tekniske kontrollene
 
@@ -67,15 +58,16 @@ databasen er et eget, senere tiltak (forslaget i tabellen under).
 i databasen og `lignerPersonnummer` i appen, holdt like av
 `src/__tests__/p7grunnmur.test.ts`. Den kjenner igjen et norsk fødsels-, D-
 eller H-nummer med gyldige kontrollsifre, også med mellomrom, punktum eller
-bindestrek etter de seks første sifrene. Appen advarer mens brukeren skriver;
-databasen avviser teksten (`22023`) der kontrollen er slått på.
+bindestrek etter de seks første sifrene. Databasen avviser teksten (`22023`)
+der kontrollen er slått på. Appen sjekker ikke teksten mens den skrives;
+utgaven i appen brukes bare av testene.
 
 **Hva de ikke gjør.** Kontrollen er et **sikkerhetsnett for åpenbare feil,
 ikke en garanti**. Den finner ikke navn, fødselsdatoer, prøvenumre, sjeldne
 diagnoser eller kasuistikker, og den kan ikke vite om en tekst handler om en
 person. Den kan også, sjelden, slå til på et 11-sifret tall som ikke er et
 fødselsnummer; da må brukeren skrive tallet annerledes. Ansvaret ligger hos
-den som skriver, og påminnelsen ved feltet er hovedtiltaket.
+den som skriver, og brukerne er godt trent i personvern.
 
 **Hvor databasen avviser i dag.** Gruppechatten (P7 tråd A). For de eldre
 flatene er det foreslått i [Kartleggingen](#kartleggingen-av-inndataflatene).
@@ -101,34 +93,34 @@ innhold ut av appen.
 
 ## Kartleggingen av inndataflatene
 
-Status 17.11.2026, fra koden på `main` og P7.0. «Påminnelse» er det brukeren
-ser ved feltet i dag. «Fjerne» er hvem som kan fjerne teksten helt i appen,
-uten hjelp fra en utvikler. Tiltakene i D2 (regelen og advarselen ved feltet) er gjort uten å bygge om skjemaene;
-resten foreslås som egne oppgaver.
+Status 17.11.2026, fra koden på `main` og P7.0. Ingen flate minner om
+regelen ([Ingen påminnelse i appen](#ingen-påminnelse-i-appen)). «Fjerne» er
+hvem som kan fjerne teksten helt i appen, uten hjelp fra en utvikler.
+Tiltakene foreslås som egne oppgaver.
 
 ### Samhandlingen (alle eller mange leser)
 
-| Flate | Lagres | Påminnelse i dag | Fjerne i appen | Tiltak |
-| --- | --- | --- | --- | --- |
-| Diskusjoner: overskrift og første innlegg | `diskusjoner` | Regel og advarsel (D2) | Forfatteren endrer; moderator skjuler og «Fjern for godt»; moderator sletter tråden. Arkivert tråd må hentes tilbake først | Databasekontroll (forslag) |
-| Diskusjonskommentarer | `diskusjonskommentarer`; skjult tekst i `diskusjon_skjulte_tekster` til «Fjern for godt» | Regel og advarsel (D2) | Forfatteren endrer eller sletter; moderator skjuler og fjerner for godt | Databasekontroll (forslag) |
-| Idéer (felles) og idékommentarer | `ideer`, `idekommentarer` | Regel og advarsel (D2) | Forfatteren eller en systemarkitekt sletter; kommentar med svar står som «Slettet» uten tekst. En idé **overført** til planlagte oppgaver kan ingen slette (K1) | Databasekontroll (forslag) |
-| Planlagte oppgaver (fra idéer) | `oppgaver` (overskrift, prompt) | Prompten: regel og advarsel (D2) | Systemarkitektene endrer prompten | Prompten leses av en språkmodell (se [Tjenester utenfor OUSFAR](#tjenester-utenfor-ousfar)); se over den før den merkes klar |
-| Gruppeidéer, -kommentarer og -oppgaver | `ideer` (med `gruppe_id`), `idekommentarer`, `gruppeoppgaver` | Regel og advarsel (D2) | Forfatteren, gruppens moderatorer og ansvarlige, systemarkitektene. I en **arkivert** gruppe er alt frosset (K2) | Databasekontroll (forslag) |
-| Gruppens navn og beskrivelse | `grupper`, og en kopi i `tilgangslogg` ved hver endring | Beskrivelsen: regel og advarsel (D2) | De ansvarlige endrer; kopien i tilgangsloggen kan ikke fjernes i appen (K3) | Databasekontroll (forslag) |
-| Gruppechatten (P7, avslått) | `gruppemeldinger` | `Pasientregel` og `Pasientvarsel` (tråd B) | Forfatteren og moderatorene sletter, i en arkivert gruppe en systemarkitekt; teksten fjernes med en gang | Databasen avviser fødselsnumre (tråd A) |
-| Endringsforslag, svar og kommentarer i tidslinjen | `endringsforslag`, `endringsforslag_hendelser` | Regel og advarsel (D2) | Ingen; forslag kan trekkes, men ikke slettes (K4) | Databasekontroll (forslag) |
-| Profil: navn og bilde | `profiles`, bøtta `avatarer` | Nei | Brukeren selv | Ingen; lav risiko |
+| Flate | Lagres | Fjerne i appen | Tiltak |
+| --- | --- | --- | --- |
+| Diskusjoner: overskrift og første innlegg | `diskusjoner` | Forfatteren endrer; moderator skjuler og «Fjern for godt»; moderator sletter tråden. Arkivert tråd må hentes tilbake først | Databasekontroll (forslag) |
+| Diskusjonskommentarer | `diskusjonskommentarer`; skjult tekst i `diskusjon_skjulte_tekster` til «Fjern for godt» | Forfatteren endrer eller sletter; moderator skjuler og fjerner for godt | Databasekontroll (forslag) |
+| Idéer (felles) og idékommentarer | `ideer`, `idekommentarer` | Forfatteren eller en systemarkitekt sletter; kommentar med svar står som «Slettet» uten tekst. En idé **overført** til planlagte oppgaver kan ingen slette (K1) | Databasekontroll (forslag) |
+| Planlagte oppgaver (fra idéer) | `oppgaver` (overskrift, prompt) | Systemarkitektene endrer prompten | Prompten leses av en språkmodell (se [Tjenester utenfor OUSFAR](#tjenester-utenfor-ousfar)); se over den før den merkes klar |
+| Gruppeidéer, -kommentarer og -oppgaver | `ideer` (med `gruppe_id`), `idekommentarer`, `gruppeoppgaver` | Forfatteren, gruppens moderatorer og ansvarlige, systemarkitektene. I en **arkivert** gruppe er alt frosset (K2) | Databasekontroll (forslag) |
+| Gruppens navn og beskrivelse | `grupper`, og en kopi i `tilgangslogg` ved hver endring | De ansvarlige endrer; kopien i tilgangsloggen kan ikke fjernes i appen (K3) | Databasekontroll (forslag) |
+| Gruppechatten (P7, avslått) | `gruppemeldinger` | Forfatteren og moderatorene sletter, i en arkivert gruppe en systemarkitekt; teksten fjernes med en gang | Databasen avviser fødselsnumre (tråd A) |
+| Endringsforslag, svar og kommentarer i tidslinjen | `endringsforslag`, `endringsforslag_hendelser` | Ingen; forslag kan trekkes, men ikke slettes (K4) | Databasekontroll (forslag) |
+| Profil: navn og bilde | `profiles`, bøtta `avatarer` | Brukeren selv | Ingen; lav risiko |
 
 ### Fagstoff og administrasjon (redaktører, administratorer, systemarkitekter)
 
-| Flate | Lagres | Påminnelse i dag | Fjerne i appen | Tiltak |
-| --- | --- | --- | --- | --- |
-| Fagsidene (riktekst) og fortolkningens kommentartekster og regler | Gjeldende innhold og alle revisjoner (`objektrevisjoner`, `sideversjoner`) | Nei | En ny revisjon erstatter teksten, men historikken er låst mot endring og sletting (K5) | Ingen påminnelse: tekstene er faglige maler. Hendelser etter rutinen under |
-| Kurateringens kommentarer | `kuratering.kommentarer` (låst mot endring og sletting) | Nei | Ingen (K5) | Ingen; bare systemarkitektene og agentene |
-| Fagsaker: merknad til valget | `kildefunn` og hendelsene i `kildefunn_hendelser` | Nei | Systemarkitektene endrer valget; hendelsene står | Ingen; faglig, bare systemarkitektene |
-| Verktøysperrer: grunn | `verktoysperrer` (vises for alle brukere av verktøyet) | Nei | Systemarkitektene endrer | Ingen; kort administrativ tekst |
-| Kontosperring, medlemskap og roller: grunn | `tilgangslogg` (låst) | Nei | Ingen (K3) | Ingen; skal ikke inneholde noe om pasienter |
+| Flate | Lagres | Fjerne i appen | Tiltak |
+| --- | --- | --- | --- |
+| Fagsidene (riktekst) og fortolkningens kommentartekster og regler | Gjeldende innhold og alle revisjoner (`objektrevisjoner`, `sideversjoner`) | En ny revisjon erstatter teksten, men historikken er låst mot endring og sletting (K5) | Ingen: tekstene er faglige maler. Hendelser etter rutinen under |
+| Kurateringens kommentarer | `kuratering.kommentarer` (låst mot endring og sletting) | Ingen (K5) | Ingen; bare systemarkitektene og agentene |
+| Fagsaker: merknad til valget | `kildefunn` og hendelsene i `kildefunn_hendelser` | Systemarkitektene endrer valget; hendelsene står | Ingen; faglig, bare systemarkitektene |
+| Verktøysperrer: grunn | `verktoysperrer` (vises for alle brukere av verktøyet) | Systemarkitektene endrer | Ingen; kort administrativ tekst |
+| Kontosperring, medlemskap og roller: grunn | `tilgangslogg` (låst) | Ingen (K3) | Ingen; skal ikke inneholde noe om pasienter |
 
 ### Fortolkningen og verktøyene
 
