@@ -1,4 +1,5 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
+import { Felt } from '../konto/Felt'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { tomtDokument, type Riktekstdokument } from '../../faginnhold/riktekst'
 import { endreIde, opprettIde } from '../../ideer/api'
@@ -12,7 +13,6 @@ import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
-import { Fritekstfelt } from '../Fritekstfelt'
 import type { Skjemastatus } from './useForlatvakt'
 
 /**
@@ -112,7 +112,7 @@ export function Ideskjema({
         </fieldset>
       )}
 
-      <Fritekstfelt
+      <Felt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}
@@ -124,7 +124,7 @@ export function Ideskjema({
         <span className="felt__merkelapp" id={beskrivelseId}>
           Beskrivelse
         </span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker pasientregel />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker />
       </div>
 
       {feil && (

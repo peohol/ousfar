@@ -1,0 +1,14 @@
+{
+  "id": "20261117-195604-05197b",
+  "semver": "patch",
+  "opprettet": "2026-11-17T19:56:04Z",
+  "sammendrag": "Ingen påminnelse om pasientopplysninger ved skrivefeltene",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Regelen om pasientopplysninger står ikke lenger under skrivefeltene, og det kommer ingen advarsel mens du skriver. Regelen gjelder som før, og tekst som ligner et fødselsnummer blir fortsatt ikke lagret."
+  ],
+  "utenVarsel": true
+}

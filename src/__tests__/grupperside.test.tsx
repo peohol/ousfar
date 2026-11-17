@@ -9,7 +9,6 @@
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { PASIENTREGEL } from '@delt/pasientopplysninger'
 import type { Profil } from '@delt/profil'
 import type { MineGrupper } from '../grupper/modell'
 
@@ -191,14 +190,6 @@ describe('oversikten', () => {
     const ny = screen.getByRole('region', { name: 'Ny gruppe' })
     // Bare fagmiljøet hen administrerer; ikke «på tvers».
     expect(within(ny).getAllByRole('option').map((o) => o.textContent)).toEqual(['OUS Klinisk farmakologi'])
-    // Beskrivelsen er fritekst i samhandlingen, og minner om pasientopplysningene.
-    const beskrivelse = within(ny).getByLabelText('Beskrivelse')
-    const lest = beskrivelse
-      .getAttribute('aria-describedby')!
-      .split(' ')
-      .map((id) => document.getElementById(id)?.textContent ?? '')
-      .filter(Boolean)
-    expect(lest).toEqual([PASIENTREGEL.kort])
     await userEvent.type(within(ny).getByLabelText('Navn'), ' Ny gruppe ')
     await userEvent.click(within(ny).getByRole('button', { name: 'Opprett gruppen' }))
     expect(api.opprettGruppe).toHaveBeenCalledWith('Ny gruppe', '', 'a')

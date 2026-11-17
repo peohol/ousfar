@@ -18,7 +18,6 @@ import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Button } from '../Button'
 import { Felt } from '../konto/Felt'
-import { Fritekstfelt } from '../Fritekstfelt'
 import { Modallag } from '../Modallag'
 
 /**
@@ -73,7 +72,7 @@ function Kategorifelter({
           aria-invalid={Boolean(emojiFeilen) || undefined}
           onChange={(e) => onEndre({ ...verdier, emoji: e.target.value.trim() })}
         />
-        <Fritekstfelt
+        <Felt
           merkelapp="Kategori"
           value={verdier.navn}
           maxLength={KATEGORINAVN_MEST}
@@ -271,7 +270,7 @@ export function Traadskjema({
     <form className="diskusjonsskjema skriveflate" onSubmit={(e) => void lagre(e)} noValidate aria-label="Ny tråd">
       <h3 className="diskusjonsskjema__tittel">Ny tråd</h3>
       <Kategorivelger valgt={valgt} onVelg={setKategori} ny={ny} onNy={setNy} kategorier={kategorier} visFeil={provd} />
-      <Fritekstfelt
+      <Felt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}
@@ -282,7 +281,7 @@ export function Traadskjema({
         <span className="felt__merkelapp" id={tekstId}>
           Innlegg
         </span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegg" referanser={false} direktelenker kompakt pasientregel />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegg" referanser={false} direktelenker kompakt />
       </div>
       {feil && (
         <p className="skjemafeil" role="alert">

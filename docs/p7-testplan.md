@@ -161,8 +161,8 @@ Aldri mot produksjonen. Syntetiske brukere fra persongalleriet.
 | N5 | Nettverket av, den andre skriver, nettverket på | Meldingene fra mens man var borte kommer, i riktig rekkefølge og uten duplikater |
 | N6 | Hele flyten med tastatur | Enter sender, Shift+Enter gir ny linje, menyen på egne meldinger nås med tastatur, fokus forsvinner ikke |
 | N7 | Smal skjerm (390 × 844) med berøring | Ingen vannrett rulling; Enter gir ny linje, Send-knappen sender |
-| N8 | Navnene skjermleseren leser | Lista er `role="log"`; feltet har navn og regelen som beskrivelse; avsender og tid leses for hver melding |
-| N9 | Tekst med et syntetisk fødselsnummer | Advarselen vises mens man skriver; sendingen avvises med `PASIENTREGEL.avvist` |
+| N8 | Navnene skjermleseren leser | Lista er `role="log"`; feltet har navn og tastehjelpen som beskrivelse, uten noen påminnelse om pasientopplysninger; avsender og tid leses for hver melding |
+| N9 | Tekst med et syntetisk fødselsnummer | Ingen advarsel mens man skriver (Peder 17.11.2026); sendingen avvises med `PASIENTREGEL.avvist`, og avslaget vises |
 | N10 | Varselet om nye meldinger | «Nye meldinger i <gruppe>», uten tekst; et trykk åpner chatfanen |
 
 ## 7. Fordelingen

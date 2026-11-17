@@ -5,7 +5,6 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
-import { Pasientvarsel } from '../Pasientregel'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { erBeroring, heleTidspunktet, kanSendes, klokkeslett, tegnteller } from './gruppechatvisning'
 
@@ -280,7 +279,7 @@ function Endring({
       <textarea
         className="felt__inndata chatfelt"
         aria-label="Meldingen"
-        aria-describedby={`${id}-teller ${id}-varsel`}
+        aria-describedby={`${id}-teller`}
         aria-invalid={teller?.over || undefined}
         rows={2}
         value={tekst}
@@ -289,7 +288,6 @@ function Endring({
         onChange={(e) => setTekst(e.target.value)}
         onKeyDown={paaTast}
       />
-      <Pasientvarsel tekst={tekst} id={`${id}-varsel`} />
       <p id={`${id}-teller`} className="chatskriving__teller" data-over={teller?.over || undefined} aria-live="polite">
         {teller?.tekst}
       </p>

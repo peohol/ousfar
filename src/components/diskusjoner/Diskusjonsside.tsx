@@ -25,7 +25,6 @@ import {
   type Diskusjonstraad,
 } from '../../diskusjoner/modell'
 import { TITTEL_MEST, tekstTilLagring, type Kommentar } from '../../traad/modell'
-import { usePasientvakt } from '../../hooks/usePasientvakt'
 import { UnderOverskrift } from '../Overskriftsniva'
 import { Riktekst } from '../stoffside/Riktekst'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
@@ -375,7 +374,6 @@ function Tittelskjema({
 }) {
   const [tittel, setTittel] = useState(start)
   const id = useId()
-  const vakt = usePasientvakt(tittel, 'varsel')
   return (
     <form
       className="diskusjonsside__tittelskjema"
@@ -393,7 +391,6 @@ function Tittelskjema({
         value={tittel}
         maxLength={TITTEL_MEST}
         autoFocus
-        aria-describedby={vakt.beskrevetAv}
         onChange={(e) => setTittel(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
@@ -403,7 +400,6 @@ function Tittelskjema({
           }
         }}
       />
-      {vakt.varsel}
       <div className="skjema__knapper">
         <Button variant="subtle" onClick={onAvbryt}>
           Avbryt
@@ -431,7 +427,7 @@ function Tekstskjema({
   const [tekst, setTekst] = useBevart<Riktekstdokument>(`traad:${id}/tekst`, () => start ?? tomtDokument())
   return (
     <div className="kommentarskriver">
-      <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegget" referanser={false} direktelenker autofokus kompakt pasientregel />
+      <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Innlegget" referanser={false} direktelenker autofokus kompakt />
       <div className="skjema__knapper kommentarskriver__knapper">
         <Button variant="subtle" onClick={onAvbryt}>
           Avbryt

@@ -5,7 +5,6 @@ import type { Chatgrenser } from '../../gruppechat/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
-import { Pasientvarsel } from '../Pasientregel'
 import { erBeroring, kanSendes, tegnteller } from './gruppechatvisning'
 
 /**
@@ -33,8 +32,7 @@ export function glemUtkastene(gruppe: string): void {
 /**
  * Skrivefeltet i chatten. Enter sender og Shift + Enter gir ny linje; på en
  * berøringsskjerm gir Enter ny linje, og Send-knappen sender. Telleren står
- * når grensen nærmer seg, og `Pasientvarsel` sier fra mens teksten ligner et
- * fødselsnummer. Regelen om pasientopplysninger (`regelId`) beskriver feltet.
+ * når grensen nærmer seg.
  */
 export const Gruppechatskriving = forwardRef<
   HTMLTextAreaElement,
@@ -42,11 +40,9 @@ export const Gruppechatskriving = forwardRef<
     gruppe: string
     gruppenavn: string
     grenser: Chatgrenser
-    /** `id` til regelen om pasientopplysninger, som beskriver feltet. */
-    regelId: string
     onSend: (tekst: string) => void
   }
->(function Gruppechatskriving({ gruppe, gruppenavn, grenser, regelId, onSend }, felt) {
+>(function Gruppechatskriving({ gruppe, gruppenavn, grenser, onSend }, felt) {
   const nokkel = utkastnokkel(useProfil().id, gruppe)
   const [tekst, setTekst] = useBevart(`chat/utkast`, () => utkastene.get(nokkel) ?? '')
   const id = useId()
@@ -84,7 +80,7 @@ export const Gruppechatskriving = forwardRef<
           ref={felt}
           className="felt__inndata chatfelt"
           aria-label={`Melding til ${gruppenavn}`}
-          aria-describedby={`${regelId} ${id}-hjelp ${id}-teller ${id}-varsel`}
+          aria-describedby={`${id}-hjelp ${id}-teller`}
           aria-invalid={teller?.over || undefined}
           placeholder="Skriv en melding"
           rows={1}
@@ -100,7 +96,6 @@ export const Gruppechatskriving = forwardRef<
       <p id={`${id}-hjelp`} className="kun-skjermleser">
         {erBeroring() ? 'Send-knappen sender.' : 'Enter sender, Shift + Enter gir ny linje.'}
       </p>
-      <Pasientvarsel tekst={tekst} id={`${id}-varsel`} />
       <p id={`${id}-teller`} className="chatskriving__teller" data-over={teller?.over || undefined} aria-live="polite">
         {teller?.tekst}
       </p>
