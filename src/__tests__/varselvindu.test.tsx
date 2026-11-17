@@ -125,6 +125,7 @@ const api = vi.hoisted(() => ({
 const visIde = vi.hoisted(() => vi.fn())
 const visEndringslogg = vi.hoisted(() => vi.fn())
 const visDiskusjon = vi.hoisted(() => vi.fn())
+const gruppevisning = vi.hoisted(() => ({ visGruppeide: vi.fn(), visGruppeoppgave: vi.fn() }))
 
 vi.mock('../varsler/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => KARI }))
@@ -132,6 +133,7 @@ vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, OLA]) }
 vi.mock('../components/ideer/idevisning', () => ({ visIde }))
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../components/diskusjoner/diskusjonsvisning', () => ({ visDiskusjon }))
+vi.mock('../components/grupper/gruppevisning', () => gruppevisning)
 vi.mock('../data/endringslogg', () => ({
   ENDRINGSLOGG: [endring('2.1.0', 'Varsler i toppmenyen'), endring('2.0.0', 'Noe eldre')],
 }))
@@ -396,6 +398,54 @@ describe('vinduet', () => {
     await bruker.click(within(innstillinger).getByRole('button', { name: 'Tilbake til varslene' }))
     const nye = within(await screen.findByRole('dialog', { name: 'Varsler' })).getByRole('region', { name: 'Nye' })
     expect(within(nye).queryByText(/kommenterte en idé du har kommentert/)).toBeNull()
+  })
+})
+
+describe('gruppene', () => {
+  const gruppe = { id: 'g1', navn: 'Lithiumgruppen' }
+  const oppgave = { id: 'o1', tittel: 'Skriv sjekklisten', gruppe }
+  const varsel = (id: string, kategori: 'gruppeideer' | 'gruppeoppgaver' | 'mine_ideer', ide: unknown, hendelse: Record<string, unknown>) => ({
+    kilde: 'database' as const,
+    id,
+    kategori,
+    ide,
+    hendelser: [{ kl: '2026-09-29T11:30:00Z', av: 'ola', ...hendelse }],
+    oppdatert_kl: '2026-09-29T11:30:00Z',
+    lest: false,
+    arkivert: false,
+  })
+
+  it('leder idéene og oppgavene i en gruppe til gruppesiden, med gruppens navn', async () => {
+    const gruppeide = { id: 'gi1', tittel: 'Felles rutine', forfatterId: 'kari', gruppe }
+    api.hentVarsler.mockResolvedValue({
+      lest_kl: LISTE.lest_kl,
+      varsler: [
+        varsel('v-tildelt', 'gruppeoppgaver', null, { art: 'tildelt', gruppeoppgave: oppgave }),
+        varsel('v-gjort', 'gruppeoppgaver', gruppeide, { art: 'gjort_om', gruppeoppgave: oppgave }),
+        varsel('v-kommentar', 'mine_ideer', gruppeide, { kommentar: 'k1', svarTil: null }),
+      ],
+    })
+    const bruker = userEvent.setup()
+    render(<Varselknapp />)
+    await bruker.click(bjella())
+    const vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    const tildelt = await within(vindu).findByRole('button', { name: 'Ola Nordmann ga deg en oppgave' })
+    expect(tildelt.closest('li')!.textContent).toContain('«Skriv sjekklisten» · Lithiumgruppen')
+    await bruker.click(tildelt)
+    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalledWith('g1', 'o1')
+
+    await bruker.click(bjella())
+    const igjen = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(igjen).findByRole('button', { name: 'Ola Nordmann gjorde idéen din om til en oppgave' }))
+    expect(gruppevisning.visGruppeide).toHaveBeenCalledWith('g1', 'gi1')
+
+    await bruker.click(bjella())
+    const tredje = await screen.findByRole('dialog', { name: 'Varsler' })
+    const kommentar = await within(tredje).findByRole('button', { name: 'Ola Nordmann kommenterte idéen din' })
+    expect(kommentar.closest('li')!.textContent).toContain('Lithiumgruppen')
+    await bruker.click(kommentar)
+    expect(gruppevisning.visGruppeide).toHaveBeenLastCalledWith('g1', 'gi1')
+    expect(visIde).not.toHaveBeenCalled()
   })
 })
 

@@ -25,6 +25,7 @@ import {
   erForslagsvarsel,
   erGruppevarsel,
   forslagstekst,
+  gruppemaal,
   gruppetekst,
   varselgruppe,
   varselgruppeoppgave,
@@ -455,5 +456,20 @@ describe('gruppene (P6b)', () => {
     expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'fullfort', gruppeoppgave: oppgave }]), navn)).toBe('Per merket oppgaven fra idéen din fullført')
     expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'noe_nytt' }]), navn)).toBe('Per oppdaterte en oppgave')
     expect(erGruppevarsel(ideVarsel())).toBe(false)
+  })
+
+  it('leder til oppgaven man har fått eller som er fullført, ellers til idéen, og til gruppen uten noen av dem', () => {
+    const ide = { id: 'i1', tittel: 'Sjekkliste', forfatterId: 'kari', gruppe }
+    const med = (art: string, medIde: boolean) =>
+      gruppemaal(ideVarsel({ kategori: 'gruppeoppgaver', ide: medIde ? ide : null, hendelser: [{ kl: 'x', av: 'per', art, gruppeoppgave: oppgave }] }))
+    expect(med('tildelt', false)).toEqual({ slag: 'oppgave', gruppe: 'g1', id: 'o1' })
+    expect(med('fullfort', true)).toEqual({ slag: 'oppgave', gruppe: 'g1', id: 'o1' })
+    expect(med('gjort_om', true)).toEqual({ slag: 'ide', gruppe: 'g1', id: 'i1' })
+    expect(gruppemaal(ideVarsel({ kategori: 'gruppeoppgaver', ide, hendelser: [{ kl: 'x', av: 'per', art: 'ikke_aktuell' }] }))).toEqual({
+      slag: 'ide',
+      gruppe: 'g1',
+      id: 'i1',
+    })
+    expect(gruppemaal(ideVarsel({ kategori: 'mine_ideer', ide: { ...ide, gruppe: null } }))).toBeNull()
   })
 })
