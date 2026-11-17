@@ -320,8 +320,9 @@ prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
 - Lest: `merkLest(siste nr)` bare når lista står nederst og nettleserfanen er
   framme (`visibilityState`).
 - Menyen på en melding (`Nedtrekksmeny`, som i brukerlista) følger
-  `kan_endre` og `kan_slette` fra databasen, og står ikke i en arkivert
-  gruppe. «Fjern meldingen» for en moderator. Sletting bekreftes
+  `kan_endre` og `kan_slette` fra databasen. I en arkivert gruppe står aldri
+  «Endre», men slettingen følger `kan_slette`, så en systemarkitekt kan fjerne
+  en melding der. «Fjern meldingen» for en moderator. Sletting bekreftes
   (`Bekreftelseskort`, «Avbryt» har fokus); endringen skjer i et felt på
   stedet, Enter lagrer og Escape avbryter, og fokus går tilbake til menyen.
 - Utkastet står i minnet per gruppe mens appen er åpen (og over en
