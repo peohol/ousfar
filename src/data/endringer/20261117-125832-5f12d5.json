@@ -1,0 +1,13 @@
+{
+  "id": "20261117-125832-5f12d5",
+  "semver": "patch",
+  "opprettet": "2026-11-17T12:58:32Z",
+  "sammendrag": "Gruppechatten kan nå holde seg oppdatert uten omlasting",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Appen har nå det som skal holde gruppechatten oppdatert: nye meldinger kommer uten at siden lastes på nytt, det som skjedde under et nettbrudd hentes når forbindelsen er tilbake, og en melding sendes aldri dobbelt.",
+    "Chatten er ennå ikke slått på, så ingenting endres for brukerne nå."
+  ],
+  "utenVarsel": true
+}

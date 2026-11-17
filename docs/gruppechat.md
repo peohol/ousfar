@@ -235,6 +235,36 @@ gjennom sanntidstjenesten.
 Publikasjonen: migrasjonen til tråd C legger `public.gruppechatter` i
 `supabase_realtime`. Ingen andre tabeller.
 
+**I appen (C1).** `src/gruppechat/tilstand.ts` fletter meldingene (rene
+funksjoner), `dorklokke.ts` er abonnementet på dørklokken og `kall.ts`
+kallene, begge for en gitt klient (appens står i `sanntid.ts` og `api.ts`, så
+kontrollene i det lokale testmiljøet kan bruke de samme med egne
+innlogginger), `kontroller.ts` holder én åpen chat (henting, gjenoppkobling,
+livstegn, sending og lest-merking), og `useGruppechat.ts` kobler den til React.
+Valgene som ikke står over:
+
+- Livstegnet hopper over runder mens fanen er skjult, så en chat som står åpen
+  i bakgrunnen ikke belaster databasen; når fanen blir synlig, hentes det som
+  er nytt med en gang.
+- Ringer dørklokken med en endringsteller som ikke er nyere enn den klienten
+  har, hentes ingenting.
+- Endringer i meldinger eldre enn det som er hentet, tas ikke inn (de ville
+  stått over et hull); de kommer i riktig versjon når eldre meldinger hentes.
+- Etter et brudd (kanalen eller nettet tilbake) leses også rettighetene og
+  leserne på nytt (`les_gruppechat` med én melding), så en gruppe som er
+  arkivert imens, ikke viser skrivefeltet.
+- Egne meldinger sendes én om gangen, i den rekkefølgen de ble skrevet.
+  `merkLest` sender høyst ett kall om gangen og ber bjella hente varslene på
+  nytt (`oppfriskVarsler`).
+- `tilkobling` er `frakoblet` når kanalen er nede, nettleseren er uten nett
+  eller siste henting feilet, til en henting lykkes igjen.
+- Lukker tjenesten kanalen, åpnes en ny etter 1, 2, 4 … høyst 30 sekunder;
+  Supabase kobler ellers selv til igjen.
+
+Prøvd i `src/__tests__/gruppechat.tilstand.test.ts`,
+`gruppechat.sanntid.test.ts` (mot en falsk server og kanal,
+`src/__tests__/hjelp/falskchat.ts`) og `gruppechat.krok.test.tsx`.
+
 ## Varslene (tråd C)
 
 Ny kategori `gruppechat` (gruppen «Grupper», kan slås av, på som standard).
@@ -349,4 +379,5 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
+| C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Til kontroll |
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Til kontroll |
