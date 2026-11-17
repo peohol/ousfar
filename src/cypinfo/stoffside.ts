@@ -15,7 +15,10 @@ import { CYPINFOKOBLINGER, cypinfoIderForSide, type Cypinfokobling } from '../fa
 import type { Cypinfokilde, Cypinfoutvalg } from './lesing'
 import { NIVAER, type Niva } from './modell'
 
-/** Hvem som ser CYPinfo på fagsidene. Systemarkitektene først (Peder 17.11.2026); `alle` slår det på for alle. */
+/**
+ * Hvem som ser CYPinfo på fagsidene. Systemarkitektene først (Peder 17.11.2026); `alle` slår det på for alle.
+ * `les_cypinfo` håndhever det samme i databasen, så begge byttes i samme endring.
+ */
 export type Cypinfopublikum = 'systemarkitekter' | 'alle'
 export const CYPINFO_VISES_FOR: Cypinfopublikum = 'systemarkitekter'
 

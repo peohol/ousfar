@@ -519,7 +519,9 @@ pasient noe sted, og fagsidene kaller aldri CYPinfo; de leser bare kopien.
 
 Bygd 17.11.2026, og foreløpig bare synlig for systemarkitektene
 (`CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`; `alle` slår den på for
-alle). For andre leses ingenting fra CYPinfo.
+alle). For andre leses ingenting fra CYPinfo. Begrensningen håndheves også i
+databasen: `les_cypinfo` krever systemarkitekt (`intern.krev_systemarkitekt`)
+til visningen slås på for alle.
 
 CYPinfo får en egen gruppe, **«Anbefalinger fra CYPinfo»**, i seksjonen
 «Farmakogenetikk», under de redaksjonelle kortene og over CPIC og ClinPGx. De
@@ -594,7 +596,8 @@ Bygd 17.11.2026. Slik den er:
   uten mellomlager, siden katalogen er liten) og `cypinfo_avbryt_synk` for
   `service_role`; `les_cypinfo(fest_ider, cypinfo_ider)` for innloggede med
   aktivt medlemskap (legemidlene, anbefalingene og gentabellen for genene de
-  bruker; i B uten nivå og tekst, fra D med).
+  bruker; i B uten nivå og tekst, fra D med, og da bare for systemarkitektene
+  til E).
   Endringsloggen, feltreglene og etikettene i `datakilder`, og kilden i
   `datakilder_status`. Det trengtes ingen egen `cypinfo_status()`: «Datakilder»
   bruker `datakilder_status`, og `les_cypinfo` sier når katalogen sist ble
@@ -639,7 +642,7 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
   første hentingen etter sammenslåingen logger byttet fra hashen til teksten
   som metadata, ikke som endring hos CYPinfo.
 - Migrasjonen `*_cypinfo_visning.sql`: `les_cypinfo` gir anbefalingene med
-  genene og fenotypene, nivået og teksten.
+  genene og fenotypene, nivået og teksten, og bare til systemarkitektene.
 - `src/cypinfo/lesing.ts` (leseren, som utelater rader som mangler noe) og
   `src/cypinfo/stoffside.ts` (hvem som ser den, hva siden spør etter, og
   ordningen), `useCypinfo` i `useFarmakogenetikk.ts`, og
@@ -658,8 +661,9 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
 - Funnene meldes til CYPinfo: warfarin VKORC1 alene, kariprazins ATC, ATC-
   formen, FEST-ID for de 15, at `/api/result` feiler for 43 genotyper, og
   ønsket om en versjon eller dato og genene per legemiddel i katalogen.
-- Visningen for alle: `CYPINFO_VISES_FOR = 'alle'`, med varsel i
-  endringsloggen.
+- Visningen for alle: `CYPINFO_VISES_FOR = 'alle'`, og `les_cypinfo` tilbake
+  til `intern.krev_aktivt_medlemskap()` i en ny migrasjon, i samme endring,
+  med varsel i endringsloggen.
 - Valget om CPIC-laget (skjemaet, koden og `Cpicoppslag.tsx`) skal fjernes når
   CYPinfo er i bruk. Det er en egen opprydding etter at E er godkjent.
 

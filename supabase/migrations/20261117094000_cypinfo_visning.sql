@@ -6,10 +6,11 @@
 -- hver anbefaling, uendret og delt i avsnitt (`data.avsnitt`), i stedet for en
 -- hash av den. Tekstene byttes ut hver uke og redigeres aldri i OUSFAR.
 --
--- Lesingen gir nå anbefalingene med nivået og teksten. Den krever fortsatt et
--- aktivt medlemskap; at bare systemarkitektene ser visningen til å begynne
--- med, avgjør appen (src/cypinfo/stoffside.ts), siden innholdet er åpent hos
--- CYPinfo.
+-- Lesingen gir nå anbefalingene med nivået og teksten. Til visningen er
+-- klinisk kontrollert (etappe E), kan bare systemarkitektene lese den, her i
+-- databasen og ikke bare i appen (`CYPINFO_VISES_FOR` i
+-- src/cypinfo/stoffside.ts). Når den slås på for alle, byttes kontrollen
+-- tilbake til `intern.krev_aktivt_medlemskap()` i samme endring.
 
 create or replace function public.les_cypinfo(fest_ider text[], cypinfo_ider text[] default '{}')
 returns jsonb
@@ -19,7 +20,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  perform intern.krev_aktivt_medlemskap();
+  perform intern.krev_systemarkitekt('CYPinfo vises foreløpig bare for systemarkitektene.');
   if coalesce(cardinality(fest_ider), 0) + coalesce(cardinality(cypinfo_ider), 0) > 200 then
     raise exception 'For mange legemidler.' using errcode = '22023';
   end if;
@@ -63,6 +64,6 @@ end;
 $$;
 
 comment on function public.les_cypinfo(text[], text[]) is
-  'CYPinfo-katalogen for legemidlene med disse FEST- eller CYPinfo-ID-ene: legemidlene, anbefalingene med nivå og tekst, og gentabellen for genene deres. Krever aktivt medlemskap.';
+  'CYPinfo-katalogen for legemidlene med disse FEST- eller CYPinfo-ID-ene: legemidlene, anbefalingene med nivå og tekst, og gentabellen for genene deres. Foreløpig bare for systemarkitektene (etappe E åpner for alle).';
 
 notify pgrst, 'reload schema';

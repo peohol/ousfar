@@ -21,7 +21,7 @@ import {
   PARSERVERSJON,
   type Legemiddeldata,
 } from '../cypinfo/modell'
-import { byggCypinfovisning } from '../cypinfo/stoffside'
+import { byggCypinfovisning, CYPINFO_VISES_FOR } from '../cypinfo/stoffside'
 import { listeavvik } from '../cypinfo/struktur'
 import { genene, gruppekall, parvisDekning, planlagteKall, produktet, synkroniserCypinfo } from '../cypinfo/synk'
 import { KILDEOPPSETT, lesDatakildestatus, vurderKilder } from '../datakilder/status'
@@ -406,16 +406,18 @@ describe('synkroniseringen', () => {
     await expect(kallSom(db, 'anon')('les_cypinfo', { fest_ider: [] })).rejects.toThrow()
   })
 
-  it('gir fagsidene legemidlene, anbefalingene med nivå og tekst, og gentabellen', async () => {
+  it('gir systemarkitektene legemidlene, anbefalingene med nivå og tekst, og gentabellen, og avviser andre til E', async () => {
     await synk()
     const admin = await opprettBruker(db, { brukernavn: `admin${Date.now()}`, fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: `leser${Date.now()}`, fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
-    const klient = faginnholdskall(db, admin).klientFor(bruker)
     const kariprazin = CYPINFOKOBLINGER.find((k) => k.side === 'Kariprazin')!
-    const { data, error } = await klient.rpc('les_cypinfo', {
-      fest_ider: ['ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43'],
-      cypinfo_ider: [kariprazin.cypinfo_id],
-    })
+    const sporsmal = { fest_ider: ['ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43'], cypinfo_ider: [kariprazin.cypinfo_id] }
+    // Så lenge visningen bare er for systemarkitektene, håndheves det også i databasen.
+    expect(CYPINFO_VISES_FOR).toBe('systemarkitekter')
+    const avvist = await faginnholdskall(db, admin).klientFor(bruker).rpc('les_cypinfo', sporsmal)
+    expect(avvist.data).toBeNull()
+    expect(avvist.error?.message).toContain('bare for systemarkitektene')
+    const { data, error } = await faginnholdskall(db, admin).klientFor(admin).rpc('les_cypinfo', sporsmal)
     expect(error).toBeNull()
     const svar = data as {
       kilde: Rad
