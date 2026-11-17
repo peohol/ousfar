@@ -27,9 +27,9 @@ import {
   type Rpctrafikk,
   type Trafikk,
 } from '../src/drift/dbmaling'
+import { hent, management, PROSJEKT, sql } from '../src/drift/managementApi'
 
-const REF = process.env.SUPABASE_PROJECT_REF || 'jfzqowsmjtthpbipnxnf'
-const API = `https://api.supabase.com/v1/projects/${REF}`
+const REF = PROSJEKT
 const STANDARDVINDU_TIMER = 3
 const MAKS_VINDU_TIMER = 24
 const LOGGFORSINKELSE_MIN = 10
@@ -37,38 +37,6 @@ const LOGGFORSINKELSE_MIN = 10
 function stopp(melding: string): never {
   console.error(melding)
   process.exit(1)
-}
-
-async function hent(url: string, init: RequestInit = {}, forsok = 2): Promise<Response> {
-  for (let i = 1; ; i++) {
-    try {
-      const svar = await fetch(url, { ...init, signal: AbortSignal.timeout(60_000) })
-      if (svar.ok || i >= forsok || svar.status < 500) return svar
-    } catch (feil) {
-      if (i >= forsok) throw feil
-    }
-    await new Promise((r) => setTimeout(r, 3000))
-  }
-}
-
-function token(): string {
-  const t = process.env.SUPABASE_ACCESS_TOKEN
-  if (!t) stopp('SUPABASE_ACCESS_TOKEN må være satt.')
-  return t
-}
-
-async function management<T>(sti: string, init: RequestInit = {}): Promise<T> {
-  const svar = await hent(`${API}${sti}`, {
-    ...init,
-    headers: { Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json', ...(init.headers ?? {}) },
-  })
-  if (!svar.ok) throw new Error(`${sti.split('?')[0]} svarte ${svar.status}: ${(await svar.text()).slice(0, 300)}`)
-  return (await svar.json()) as T
-}
-
-/** Skrivebeskyttet spørring mot databasen. */
-async function sql<T>(sporring: string): Promise<T[]> {
-  return management<T[]>('/database/query', { method: 'POST', body: JSON.stringify({ query: sporring, read_only: true }) })
 }
 
 /** ClickHouse-spørring mot loggene i tidsrommet. */

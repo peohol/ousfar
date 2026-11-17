@@ -15,7 +15,9 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
 import { PASIENTREGEL } from '@delt/pasientopplysninger'
+import { KONTROLL_SQL, RYDD_SQL, vurderLagringstid, type Kontrollsvar, type Ryddesvar } from '../drift/gruppechatLagringstid'
 import { lesChatendringer, lesChatside, lesGruppemelding, type Gruppemelding } from '../gruppechat/modell'
 import { byggPersongalleri, fjernAlleMedlemskap, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { syntetiskPersonnummer } from './hjelp/syntetiskPersonnummer'
@@ -523,5 +525,38 @@ describe('lagringstiden', () => {
     expect(await rader('select intern.rydd_gruppechat() as n')).toEqual([{ n: 2 }])
     expect(await rader('select gruppe_id, nr from public.gruppemeldinger')).toEqual([{ gruppe_id: tverrgruppe, nr: 2 }])
     expect(await rader('select intern.rydd_gruppechat() as n')).toEqual([{ n: 0 }])
+  })
+
+  it('sletter i grupper ingen åpner, med spørringene den nattlige jobben kjører', async () => {
+    for (let i = 1; i <= 3; i++) await send('vanligA', tverrgruppe, `Melding ${i}`)
+    await eldes([1, 2])
+    // Ingen leser eller skriver i gruppen; bare jobben kjører.
+    const kontroll = async () => (await rader<Kontrollsvar>(KONTROLL_SQL))[0]!
+    const for_ = await kontroll()
+    expect(for_).toMatchObject({ gjenstar: 2, frist_dager: 365 })
+    expect(for_.eldste_dager).toBeGreaterThan(for_.frist_dager)
+    expect(vurderLagringstid({ slettet: 0 }, for_).ok).toBe(false)
+    const [rydd] = await rader<Ryddesvar>(RYDD_SQL)
+    expect(rydd).toEqual({ slettet: 2 })
+    const etter = await kontroll()
+    expect(etter).toEqual({ gjenstar: 0, eldste_dager: 0, frist_dager: 365 })
+    const vurdering = vurderLagringstid(rydd!, etter)
+    expect(vurdering.ok).toBe(true)
+    expect(vurdering.rapport).toContain('Slettet nå: 2 meldinger')
+    // Rapporten har verken tekst, avsendere eller grupper.
+    expect(vurdering.rapport).not.toMatch(/Melding \d|vanligA|Tverrgruppen|[0-9a-f]{8}-/)
+    expect(await rader('select nr from public.gruppemeldinger')).toEqual([{ nr: 3 }])
+  })
+
+  it('kjøres hver natt på main av en egen arbeidsflyt, med rød kjøring når ryddingen ikke går', () => {
+    const flyt = readFileSync(new URL('../../.github/workflows/gruppechat-lagringstid.yml', import.meta.url), 'utf8')
+    expect(flyt).toMatch(/schedule:\s*\n\s*#.*\n\s*- cron: '\d+ \d+ \* \* \*'/)
+    expect(flyt).toContain("if: github.ref == 'refs/heads/main'")
+    expect(flyt).toContain('environment: produksjon')
+    expect(flyt).toContain('npm run -s gruppechat:lagringstid')
+    expect(vurderLagringstid({ slettet: 0 }, { gjenstar: 0, eldste_dager: null, frist_dager: 365 })).toEqual({
+      ok: true,
+      rapport: expect.stringContaining('Eldste melding: ingen meldinger'),
+    })
   })
 })

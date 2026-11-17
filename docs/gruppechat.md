@@ -194,9 +194,15 @@ Det som ikke står i kontrakten over:
   `endre_gruppemelding` øker ikke endringstelleren.
 - `merk_gruppechat_lest` flytter aldri forbi `siste_nr` og gjør ingenting i en
   gruppe uten meldinger.
-- `intern.rydd_gruppechat()` er ikke satt opp som en planlagt jobb; ryddingen
-  ved sending og lesing er nok så lenge funksjonene aldri leser ut en utgått
-  melding.
+- `intern.rydd_gruppechat()` kjøres hver natt av arbeidsflyten
+  `.github/workflows/gruppechat-lagringstid.yml`
+  (`npm run gruppechat:lagringstid`, `src/drift/gruppechatLagringstid.ts`), så
+  de utgåtte meldingene slettes også i grupper ingen åpner. Jobben
+  kontrollerer etterpå at ingen utgått melding står igjen, og kjøringen blir
+  rød (GitHub varsler eieren av repoet) når ryddingen ikke gikk. Rapporten har
+  bare antall og alder, aldri tekst, avsendere eller grupper. Ryddingen ved
+  sending og lesing og sperren mot å lese ut en utgått melding står i
+  tillegg.
 
 ## Formen på svarene
 
@@ -380,5 +386,5 @@ Fylles ut av trådene.
 | Del | PR | Status |
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | [#440](https://github.com/peohol/ousfar/pull/440) | Slått sammen |
-| E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
+| E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Slått sammen |
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |

@@ -7,7 +7,7 @@
   "omfang": "Minimalt omfang",
   "punkter": [
     "Databasen kan nå lagre meldinger i chatten i gruppene. Bare de som leser gruppen, kan lese og skrive, og tilgangen forsvinner med en gang medlemskapet avsluttes.",
-    "Meldinger slettes automatisk etter 12 måneder, og tekst som ser ut som et fødselsnummer, avvises.",
+    "Meldinger slettes automatisk etter 12 måneder, hver natt og i alle grupper, og tekst som ser ut som et fødselsnummer, avvises.",
     "Chatten er ikke slått på ennå, så ingenting endres for brukerne."
   ],
   "utenVarsel": true
