@@ -451,11 +451,18 @@ ved hver synkronisering, med rapportkall mot alle legemidlene samtidig:
 
 - ett kall per par gen + fenotype i gentabellen (38 i dag): hvilke legemidler
   har en anbefaling for genet alene, og for hvilke fenotyper;
-- fem kall der fenotype nummer *k* for hvert av de ti genene sendes samtidig.
-  Da gir CYPinfo nøyaktig én anbefaling per legemiddel, den med flest gener
-  (prøvd 16.11.2026: 75 anbefalinger for 75 legemidler). Den viser hvilke gener
-  som hører sammen (TCA-ene, warfarin, sertralin). Etter fem kall er hver
-  fenotype for hvert gen sendt minst én gang.
+- en parvis dekning med alle de ti genene samtidig (30 kall i dag): hver
+  rad har én fenotype per gen, og hvert par av fenotyper for to ulike gener står
+  sammen i minst ett kall. CYPinfo gir for hvert legemiddel anbefalingen med
+  flest gener blant dem der alle parene er sendt (prøvd 16.11.2026), og en
+  anbefaling for to gener kommer bare når begge parene er sendt. Dekningen gjør
+  at en slik anbefaling kommer i minst ett kall uansett hvilken kombinasjon av
+  fenotyper den gjelder, også når CYPinfo bare har den for én. Den viser hvilke
+  gener som hører sammen (TCA-ene, warfarin, sertralin). Raden bygges grådig og
+  sortert (`parvisDekning` i `src/cypinfo/synk.ts`), så rekkefølgen CYPinfo gir
+  genene i, ikke endrer kallene. En anbefaling for tre eller flere gener finnes
+  ikke i dag; den ville også vise seg i dekningen når kombinasjonen tilfeldigvis
+  er med, men det er bare garantert for to gener.
 
 Et legemiddel med gener i det andre, men ikke i det første, krever alle
 genene sammen (TCA-ene, warfarin); ett som har genene hver for seg i det første
@@ -475,8 +482,9 @@ stillhet. En systemarkitekts «Hent nå» godtar endringen, med en merknad.
 (Kartleggingen gjorde det samme og fant det som står i tabellene over.)
 
 Synkroniseringen går hver uke fra GitHub Actions, som ClinPGx og
-Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 97
-`POST` i dag (38 + 5 + 54), omtrent to minutter. Antallet følger av
+Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 122
+`POST` i dag (38 + 30 + 54), omtrent to minutter. Et kall som ikke svarer innen
+30 sekunder, prøves på nytt, som ved 429 og serverfeil. Antallet følger av
 gentabellen og gengruppene og regnes ut, ikke skrives inn. Alt
 byttes inn i én transaksjon (katalogen og gentabellen er små), med vernet fra
 `docs/datakilder.md`: hver type minst 80 % av radene fra før, og en

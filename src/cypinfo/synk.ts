@@ -8,8 +8,9 @@
  * 1. registrerer at en synkronisering er startet;
  * 2. henter katalogen og gentabellen, og kontrollerer formen;
  * 3. utleder hvilke gener hvert legemiddel slås opp på, med rapportkall mot
- *    CYPinfo ({@link planlagteKall}): ett per gen og fenotype, noen med alle
- *    genene samtidig (som viser hvilke gener som hører sammen), og til slutt
+ *    CYPinfo ({@link planlagteKall}): ett per gen og fenotype, en parvis
+ *    dekning med alle genene samtidig (som viser hvilke gener som hører
+ *    sammen, uansett hvilke fenotyper anbefalingen gjelder), og til slutt
  *    hele produktet av fenotyper for hver gengruppe. Slik har hver anbefaling
  *    CYPinfo kan gi, sin ID og teksthash i kopien;
  * 4. stanser hvis et legemiddel har fått færre gener enn sist (bare den
@@ -83,25 +84,55 @@ export function produktet(gener: readonly Gen[]): string[][] {
 }
 
 /**
+ * Rader med én fenotype for hvert gen, slik at hvert par av fenotyper for to
+ * ulike gener står sammen i minst én rad (en parvis dekning). Bygges grådig, med
+ * genene med flest fenotyper først og alt sortert, så svaret ikke avhenger av
+ * rekkefølgen CYPinfo gir dem i: hver rad starter med det første paret som
+ * mangler, og hvert av de andre genene får fenotypen som dekker flest nye par.
+ */
+export function parvisDekning(gener: readonly Gen[]): string[][] {
+  const med = gener
+    .filter((g) => g.fenotyper.length > 0)
+    .map((g) => ({ slug: g.slug, fenotyper: [...g.fenotyper].sort() }))
+    .sort((a, b) => b.fenotyper.length - a.fenotyper.length || (a.slug < b.slug ? -1 : 1))
+  const par = (i: number, p: number, j: number, q: number) => `${i}.${p} ${j}.${q}`
+  const mangler = new Set<string>()
+  med.forEach((a, i) =>
+    med.forEach((b, j) => {
+      if (j > i) a.fenotyper.forEach((_, p) => b.fenotyper.forEach((_, q) => mangler.add(par(i, p, j, q))))
+    }),
+  )
+  const rader: number[][] = []
+  while (mangler.size > 0) {
+    const [i, p, j, q] = mangler.values().next().value!.split(/[. ]/).map(Number) as [number, number, number, number]
+    const rad = med.map(() => -1)
+    rad[i] = p
+    rad[j] = q
+    med.forEach((g, k) => {
+      if (rad[k]! >= 0) return
+      const nye = (f: number) => rad.reduce((n, v, h) => n + (v >= 0 && mangler.has(h < k ? par(h, v, k, f) : par(k, f, h, v)) ? 1 : 0), 0)
+      rad[k] = g.fenotyper.reduce((beste, _, f) => (nye(f) > nye(beste) ? f : beste), 0)
+    })
+    rad.forEach((v, a) => rad.forEach((w, b) => b > a && mangler.delete(par(a, v, b, w))))
+    rader.push(rad)
+  }
+  return rader.map((rad) => rad.map((f, k) => kombinasjonsnokkel({ gen_slug: med[k]!.slug, fenotype_id: med[k]!.fenotyper[f]! })))
+}
+
+/**
  * Kallene som utleder genene, før gengruppene er kjent: ett per gen og
- * fenotype, og så mange med alle genene samtidig som genet med flest
- * fenotyper har (fenotype nummer k for hvert gen, eller den siste for et gen
- * med færre), så hver fenotype for hvert gen er sendt minst én gang sammen
- * med de andre genene.
+ * fenotype, og en parvis dekning med alle genene samtidig
+ * ({@link parvisDekning}). En anbefaling for to gener kommer bare når begge
+ * parene er sendt, så dekningen sørger for at hver slik anbefaling, for hvilken
+ * som helst kombinasjon av fenotyper, kommer i minst ett kall og viser at
+ * genene hører sammen. Gengruppene hentes så i sin helhet ({@link gruppekall}).
  */
 export function planlagteKall(gener: readonly Gen[], legemidler: readonly string[]): Rapportkall[] {
   const alle = [...legemidler]
   const enkelt = gener.flatMap((g) =>
     g.fenotyper.map((f) => ({ kombinasjoner: [kombinasjonsnokkel({ gen_slug: g.slug, fenotype_id: f })], legemidler: alle, alle: true })),
   )
-  const runder = Math.max(0, ...gener.map((g) => g.fenotyper.length))
-  const samtidig = Array.from({ length: runder }, (_, k) => ({
-    kombinasjoner: gener
-      .filter((g) => g.fenotyper.length > 0)
-      .map((g) => kombinasjonsnokkel({ gen_slug: g.slug, fenotype_id: g.fenotyper[Math.min(k, g.fenotyper.length - 1)]! })),
-    legemidler: alle,
-    alle: true,
-  }))
+  const samtidig = parvisDekning(gener).map((kombinasjoner) => ({ kombinasjoner, legemidler: alle, alle: true }))
   return [...enkelt, ...samtidig]
 }
 

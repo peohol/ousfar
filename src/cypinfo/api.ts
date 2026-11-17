@@ -2,8 +2,8 @@
  * Kallene mot CYPinfo (`docs/cypinfo-integrasjon.md`). API-et er åpent, uten
  * nøkkel, men uten CORS, så nettleseren kan ikke kalle det: alt går fra
  * OUSFARs server. Kallene går ett om gangen, med minst ett sekund mellom
- * starten på hvert, og nye forsøk når CYPinfo svarer 429 eller har en
- * serverfeil.
+ * starten på hvert, og nye forsøk når CYPinfo svarer 429, har en serverfeil
+ * eller ikke svarer innen tidsgrensen.
  */
 import { lagHofligHenting, type Hoflighetsvalg } from '../server/hofligHenting.js'
 import { erObjekt } from '../datakilder/struktur.js'

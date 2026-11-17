@@ -20,7 +20,7 @@ import {
   type Legemiddeldata,
 } from '../cypinfo/modell'
 import { listeavvik } from '../cypinfo/struktur'
-import { genene, gruppekall, planlagteKall, produktet, synkroniserCypinfo } from '../cypinfo/synk'
+import { genene, gruppekall, parvisDekning, planlagteKall, produktet, synkroniserCypinfo } from '../cypinfo/synk'
 import { KILDEOPPSETT, lesDatakildestatus, vurderKilder } from '../datakilder/status'
 import { CYPINFOKOBLINGER } from '../faginnhold/cypinfokoblinger'
 import type { Githubsjekk } from '../server/tilgang'
@@ -35,6 +35,8 @@ const GENER = genene(GENRESULTATER)
 const ALLE = CYPINFO.legemidler.map((l) => String(l._id))
 /** Anbefalingene som avhenger av et resultat; de andre er tekstene uten relevante gener. */
 const MED_GENER = CYPINFO.anbefalinger.filter((a) => a.combinations)
+/** Kallene med alle genene samtidig, før gengruppene er kjent. */
+const DEKNING = parvisDekning(GENER).length
 
 /* --- Lesingen ------------------------------------------------------------- */
 
@@ -120,16 +122,28 @@ describe('strukturkontrollen', () => {
 /* --- Utledningen av genene ---------------------------------------------------- */
 
 describe('utledningen av genene', () => {
-  it('kaller ett per gen og fenotype, og så mange med alle genene som genet med flest fenotyper har', () => {
+  it('kaller ett per gen og fenotype, og en parvis dekning med alle genene samtidig', () => {
     expect(GENER.map((g) => g.slug).sort()).toEqual(['VKORC1', 'cyp2b6', 'cyp2c19', 'cyp2c9', 'cyp2d6', 'cyp3a5', 'dpyd', 'slco1b1', 'tpmt', 'ugt1a1'])
     const kall = planlagteKall(GENER, ALLE)
     const par = GENER.reduce((n, g) => n + g.fenotyper.length, 0)
     expect(par).toBe(38)
-    expect(kall).toHaveLength(par + 5)
+    expect(kall).toHaveLength(par + DEKNING)
     expect(kall.every((k) => k.alle && k.legemidler.length === ALLE.length)).toBe(true)
-    // Hver fenotype for hvert gen er sendt minst én gang sammen med alle de andre genene.
-    const samtidig = kall.filter((k) => k.kombinasjoner.length === GENER.length)
-    for (const g of GENER) for (const f of g.fenotyper) expect(samtidig.some((k) => k.kombinasjoner.includes(`${g.slug}:${f}`))).toBe(true)
+    // Hvert par av fenotyper for to ulike gener er sendt sammen i minst ett kall,
+    // så en anbefaling for to gener kommer uansett hvilke fenotyper den gjelder.
+    const samtidig = kall.filter((k) => k.kombinasjoner.length === GENER.length).map((k) => new Set(k.kombinasjoner))
+    expect(samtidig).toHaveLength(DEKNING)
+    for (const [i, a] of GENER.entries())
+      for (const b of GENER.slice(i + 1))
+        for (const f of a.fenotyper)
+          for (const g of b.fenotyper) expect(samtidig.some((k) => k.has(`${a.slug}:${f}`) && k.has(`${b.slug}:${g}`)), `${a.slug}:${f} ${b.slug}:${g}`).toBe(true)
+    // Det største produktet for to gener (5 × 5) er nedre grense; dekningen holder seg nær den.
+    expect(DEKNING).toBeGreaterThanOrEqual(25)
+    expect(DEKNING).toBeLessThanOrEqual(35)
+    expect(parvisDekning([{ slug: 'a', fenotyper: ['1', '2'] }])).toEqual([])
+    // Rekkefølgen CYPinfo gir genene og fenotypene i, endrer ikke kallene.
+    const snudd = [...GENER].reverse().map((g) => ({ ...g, fenotyper: [...g.fenotyper].reverse() }))
+    expect(parvisDekning(snudd)).toEqual(parvisDekning(GENER))
   })
 
   it('kaller hele produktet av fenotyper for hver gengruppe, med legemidlene i gruppen', () => {
@@ -180,7 +194,7 @@ describe('synkroniseringen', () => {
     const api = falskCypinfoApi()
     const resultat = await synk(api)
     expect(resultat).toMatchObject({ status: 'fullfort' })
-    expect(api.kall).toEqual({ lister: ['/legemiddel', '/gene'], rapport: 38 + 5 + 25 + 9 + 20 })
+    expect(api.kall).toEqual({ lister: ['/legemiddel', '/gene'], rapport: 38 + DEKNING + 25 + 9 + 20 })
     expect(await antallAktive('legemiddel')).toBe(CYPINFO.legemidler.length)
     expect(await antallAktive('genresultat')).toBe(CYPINFO.gentabell.length)
     expect(await antallAktive('anbefaling')).toBe(MED_GENER.length)
@@ -189,7 +203,30 @@ describe('synkroniseringen', () => {
       ['genresultat', 'grunnlag'],
       ['legemiddel', 'grunnlag'],
     ])
-    expect('antall' in resultat && resultat.antall).toMatchObject({ kall: 97, uavklarte: [], merknader: [] })
+    expect('antall' in resultat && resultat.antall).toMatchObject({ kall: 38 + DEKNING + 54, uavklarte: [], merknader: [] })
+  })
+
+  it('finner en gengruppe der CYPinfo bare har anbefaling for én kombinasjon av fenotyper', async () => {
+    // To gener som ellers ikke hører sammen, med en anbefaling bare for den første
+    // fenotypen for CYP3A5 og den tredje for TPMT.
+    const gen = (slug: string, k: number) => {
+      const rad = CYPINFO.gentabell.find((r) => r.geneId === slug && r.phenotypeId === GENER.find((g) => g.slug === slug)!.fenotyper[k])!
+      return { gene: { name: String(rad.gene), slug }, result: { _id: String(rad.phenotypeId), title: { _type: 'slug', current: 'x' } } }
+    }
+    const ny = {
+      _id: 'syntetisk-gruppe',
+      combinations: [gen('cyp3a5', 0), gen('tpmt', 2)],
+      drug: { _id: legemiddelId('aripiprazol') },
+      noRelavantGenes: false,
+      severity: 'medium',
+      text: 'Syntetisk anbefaling for en ny gengruppe.',
+    }
+    const api = falskCypinfoApi({ anbefalinger: (a) => [...a, ny] })
+    expect(await synk(api)).toMatchObject({ status: 'fullfort' })
+    expect((await legemiddel('aripiprazol')).gensett).toContainEqual(['cyp3a5', 'tpmt'])
+    expect((await db.query(`select 1 from cypinfo.anbefaling where cypinfo_id = 'syntetisk-gruppe' and utgatt_kl is null`)).rows).toHaveLength(1)
+    // Hele produktet for den nye gruppen (3 × 4) hentes også.
+    expect(api.kall.rapport).toBe(38 + DEKNING + 54 + 12)
   })
 
   it('finner genene hvert legemiddel slås opp på, også dem som må sendes sammen', async () => {
