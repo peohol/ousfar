@@ -502,7 +502,10 @@ at hen ikke lenger er med.
 
 **Lesingen.** `gruppeideer(gruppe)` (idéene og om den innloggede kan skrive og
 behandle), `idetraad(ide)`, `gruppeoppgaveoversikt(gruppe)` (de uferdige
-først, etter prioritet), `gruppeoppgave(oppgave)` og tallene på fanene i
+først, etter prioritet), `gruppeoppgave(oppgave)` (med `lest_kl`; varslene
+om oppgaven fram til da merkes lest med `merk_gruppeoppgave_sett(oppgave,
+til)`, så et varsel som kommer i mellomtiden, står ulest, som for idéene) og
+tallene på fanene i
 `gruppeoversikt(gruppe).samhandling` (nye idéer, idéer som venter på
 behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
