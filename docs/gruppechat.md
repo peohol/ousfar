@@ -180,6 +180,7 @@ interface Gruppemelding {
   redigert_kl: string | null
   slettet: null | { av: 'forfatter' | 'moderator'; kl: string }
   egen: boolean
+  klient_id: string | null     // bare på egne meldinger, ellers null
   kan_endre: boolean
   kan_slette: boolean
 }
@@ -222,7 +223,9 @@ gjennom sanntidstjenesten.
 - **Rekkefølge og duplikater:** meldingene holdes i et kart etter `id`; en
   versjon med høyere `endring` erstatter en med lavere, og visningen sorteres
   etter `nr`. En sendt melding står som ventende (med `klient_id`) til svaret
-  eller endringene har den, og flettes da sammen etter `klient_id`.
+  eller endringene har den, og flettes da sammen etter `klient_id`. Derfor har
+  funksjonene `klient_id` på den innloggedes egne meldinger (og `null` på
+  andres, så ingen andre ser den).
 - **Feil ved sending:** den ventende meldingen står med «Ikke sendt», feilen
   fra databasen og «Prøv igjen» (samme `klient_id`) og «Forkast».
 
@@ -292,7 +295,7 @@ til eksterne tjenester for kontroll.
 | --- | --- | --- | --- |
 | **P7.0** (denne) | Kontrakten og grunnmuren; koordinering, #369 og samlet rapport | — | Dette dokumentet utenom trådenes avsnitt, grunnmuren |
 | **A** Database og tilgang | Tabellene, funksjonene, radsikkerheten på `gruppechatter`, `chat_uleste` i `gruppeoversikt`, negative tilgangstester, samtidighet mot ekte Postgres, lagringstiden (12 måneder) | Grunnmuren | Migrasjonene for chatten utenom varsler og publikasjon, `src/__tests__/gruppechat*.test.ts` utenom C og D sine, oppføringene i `funksjonskontroller.ts` |
-| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts` |
+| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
 | **C** Sanntid og varsler | `useGruppechat`, sammenfletting og rekkefølge, sanntidsabonnementet, gjenoppkobling, livstegn, varselkategorien og -visningen, publikasjonen, sanntid i det lokale testmiljøet | Grunnmuren; As funksjoner for integrasjonstestene | `src/gruppechat/` utenom `modell.ts`, varselmigrasjonene og publikasjonen, `src/varsler/modell.ts`, `Varsler.tsx` (rutingen), `src/__tests__/qa/lokalmiljo.ts` (sanntiden) |
 | **D** Personvern og kvalitet | `docs/pasientopplysninger.md` (den globale regelen og håndteringen av hendelser), `docs/gruppechat-personvern.md` (D6), regelen i `AGENTS.md` og `docs/prosjektansvar.md`, kartleggingen av fritekst- og filflatene (også fortolkningen), `Pasientregel` der brukerne skriver fritekst i dag, testmatrisen og sluttkontrollen i nettleseren | Grunnmuren; krysstestene og nettleserkontrollen etter A–C | Dokumentene over, `docs/p7-testplan.md`, egne testfiler (`src/__tests__/gruppechat.krysstest.test.ts`, QA-skriptene) |
 | **E** Forberedelse av P8 | `docs/p8-fildeling-plan.md`: kartlegging og plan for fildeling i gruppene. Ingen kode | — | Bare plandokumentet |

@@ -72,6 +72,8 @@ describe('lesingen av svarene', () => {
     })
     expect(lesGruppemelding({ ...melding, nr: 0 })).toBeNull()
     expect(lesGruppemelding('tull')).toBeNull()
+    expect(lesGruppemelding({ ...melding, klient_id: 'k' })!.klient_id).toBeNull()
+    expect(lesGruppemelding({ ...melding, egen: true, klient_id: 'k' })!.klient_id).toBe('k')
   })
 
   it('sorterer siden etter nr og endringene etter endring, og fyller grensene', () => {

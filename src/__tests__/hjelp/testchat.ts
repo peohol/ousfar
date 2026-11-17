@@ -50,6 +50,7 @@ export function syntetiskeMeldinger(antall: number, fraNr = 1): Gruppemelding[] 
       redigert_kl: null,
       slettet: null,
       egen,
+      klient_id: egen ? `30000000-0000-4000-8000-${String(nr).padStart(12, '0')}` : null,
       kan_endre: egen,
       kan_slette: egen,
     }
@@ -125,6 +126,7 @@ export function useTestchat(valg: Testchatvalg = {}): Gruppechat & Testchatstyri
       redigert_kl: null,
       slettet: null,
       egen,
+      klient_id: egen ? crypto.randomUUID() : null,
       kan_endre: egen,
       kan_slette: egen || valg.kanModerere === true,
     }

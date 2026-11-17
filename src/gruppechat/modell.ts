@@ -37,6 +37,12 @@ export interface Gruppemelding {
   slettet: null | { av: 'forfatter' | 'moderator'; kl: string }
   /** Den innloggede skrev meldingen. */
   egen: boolean
+  /**
+   * ID-en nettleseren sendte meldingen med; bare på egne meldinger (`null`
+   * ellers), så en ventende melding kan flettes sammen med den lagrede også
+   * når endringene kommer før svaret, eller svaret går tapt.
+   */
+  klient_id: string | null
   kan_endre: boolean
   kan_slette: boolean
 }
@@ -151,6 +157,7 @@ export function lesGruppemelding(verdi: unknown): Gruppemelding | null {
     redigert_kl: tekstEllerNull(verdi.redigert_kl),
     slettet,
     egen: verdi.egen === true,
+    klient_id: verdi.egen === true ? tekstEllerNull(verdi.klient_id) : null,
     kan_endre: verdi.kan_endre === true,
     kan_slette: verdi.kan_slette === true,
   }
