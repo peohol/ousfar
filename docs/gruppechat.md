@@ -409,4 +409,4 @@ Fylles ut av trådene.
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Til kontroll |
-| B1 chatvisningen | (PR kommer) | Klar til kontroll |
+| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
