@@ -12,6 +12,9 @@ CYPinfo erstatter CPIC, som er stanset siden 6.11.2026 og skal erstattes av
 norske farmakogenetiske data (`src/datakilder/stans.ts`). Ingenting i denne
 kartleggingen tar CPIC i bruk igjen.
 
+**Status:** etappe A (kartleggingen) og B (katalogen i OUSFAR) er gjort.
+Etappe B er beskrevet slik den er bygd under «B — Katalogen i OUSFAR».
+
 ## Kort oppsummert
 
 - CYPinfo (cypinfo.no) har et åpent JSON-API uten nøkkel: legemiddelkatalogen
@@ -435,9 +438,9 @@ skrivefunksjoner bare for `service_role` og lesefunksjoner for innloggede:
 | Tabell | Innhold |
 | --- | --- |
 | `synkroniseringer` | Kjøringene: status (`pagar`, `fullfort`, `feilet`), cron eller manuell, antallene, feilene, `parserversjon` |
-| `legemidler` | `cypinfo_id`, navn, normaliserte ATC-koder, FEST-ID-er, varenavn, kategori og terapiområde, `uten_relevante_gener` med CYPinfos tekst og nivå, `raa`, `hash`, `utgatt_kl` |
-| `genresultater` | Gentabellen: gen, `gen_slug`, allel 1 og 2, duplikasjon, `fenotype_id`, fenotypen, `raa`, `hash`, `utgatt_kl` |
-| `legemiddelgener` | Per legemiddel: genene CYPinfo slår det opp på, hvilke som må sendes sammen (TCA-ene, warfarin), og hvilke fenotyper som har en anbefaling. Utledet av synkroniseringen, se under |
+| `legemiddel` | `cypinfo_id`, navn, normaliserte ATC-koder, FEST-ID-er, varenavn, kategori og terapiområde, `uten_relevante_gener` med CYPinfos tekst og nivå, og genene og gensettene legemiddelet slås opp på (`gener`, `gensett`: hvilke gener som har anbefalinger hver for seg, og hvilke som må sendes sammen), `raa`, `hash`, `utgatt_kl` |
+| `genresultat` | Gentabellen: gen, `gen_slug`, allel 1 og 2, duplikasjon, `fenotype_id`, fenotypen, `raa`, `hash`, `utgatt_kl` |
+| `anbefaling` | Hver anbefaling CYPinfo kan gi: CYPinfos ID, legemiddelet, genene og fenotypene den gjelder, nivået og sha256 av teksten. Teksten lagres ikke. Utledet av synkroniseringen, se under |
 
 Teksten for legemidlene uten relevante gener lagres, fordi den ikke avhenger av
 noe resultat; den er en del av katalogen («Standard dosering (ikke relevant
@@ -448,11 +451,18 @@ ved hver synkronisering, med rapportkall mot alle legemidlene samtidig:
 
 - ett kall per par gen + fenotype i gentabellen (38 i dag): hvilke legemidler
   har en anbefaling for genet alene, og for hvilke fenotyper;
-- fem kall der fenotype nummer *k* for hvert av de ti genene sendes samtidig.
-  Da gir CYPinfo nøyaktig én anbefaling per legemiddel, den med flest gener
-  (prøvd 16.11.2026: 75 anbefalinger for 75 legemidler). Den viser hvilke gener
-  som hører sammen (TCA-ene, warfarin, sertralin). Etter fem kall er hver
-  fenotype for hvert gen sendt minst én gang.
+- en parvis dekning med alle de ti genene samtidig (30 kall i dag): hver
+  rad har én fenotype per gen, og hvert par av fenotyper for to ulike gener står
+  sammen i minst ett kall. CYPinfo gir for hvert legemiddel anbefalingen med
+  flest gener blant dem der alle parene er sendt (prøvd 16.11.2026), og en
+  anbefaling for to gener kommer bare når begge parene er sendt. Dekningen gjør
+  at en slik anbefaling kommer i minst ett kall uansett hvilken kombinasjon av
+  fenotyper den gjelder, også når CYPinfo bare har den for én. Den viser hvilke
+  gener som hører sammen (TCA-ene, warfarin, sertralin). Raden bygges grådig og
+  sortert (`parvisDekning` i `src/cypinfo/synk.ts`), så rekkefølgen CYPinfo gir
+  genene i, ikke endrer kallene. En anbefaling for tre eller flere gener finnes
+  ikke i dag; den ville også vise seg i dekningen når kombinasjonen tilfeldigvis
+  er med, men det er bare garantert for to gener.
 
 Et legemiddel med gener i det andre, men ikke i det første, krever alle
 genene sammen (TCA-ene, warfarin); ett som har genene hver for seg i det første
@@ -466,13 +476,15 @@ og sammen i det andre (sertralin), kan slås opp på ett eller flere.
 
 Det som lagres, er bare genene, fenotypene og anbefalingens ID og en sha256 av teksten
 (for å se at noe er endret, se under); teksten kastes. Gir dette færre gener
-for et legemiddel enn sist, stanser synkroniseringen byttet og melder det, så
-et endret svarmønster hos CYPinfo ikke fjerner et gen i stillhet.
+for et legemiddel enn sist, stanser den planlagte synkroniseringen byttet og
+melder det, så et endret svarmønster hos CYPinfo ikke fjerner et gen i
+stillhet. En systemarkitekts «Hent nå» godtar endringen, med en merknad.
 (Kartleggingen gjorde det samme og fant det som står i tabellene over.)
 
 Synkroniseringen går hver uke fra GitHub Actions, som ClinPGx og
-Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 97
-`POST` i dag (38 + 5 + 54), omtrent to minutter. Antallet følger av
+Farmakologiportalen, med høyst ett kall i sekundet: to `GET` og rundt 122
+`POST` i dag (38 + 30 + 54), omtrent to minutter. Et kall som ikke svarer innen
+30 sekunder, prøves på nytt, som ved 429 og serverfeil. Antallet følger av
 gentabellen og gengruppene og regnes ut, ikke skrives inn. Alt
 byttes inn i én transaksjon (katalogen og gentabellen er små), med vernet fra
 `docs/datakilder.md`: hver type minst 80 % av radene fra før, og en
@@ -639,29 +651,46 @@ er én PR, i denne rekkefølgen.
 
 ### B — Katalogen i OUSFAR
 
-- Migrasjon `*_cypinfo.sql`: skjemaet og tabellene over,
-  `cypinfo_start_synk`, `cypinfo_lagre_katalog` (alt i én transaksjon, med
-  vernet), `cypinfo_fullfor_synk`, `cypinfo_avbryt_synk` for `service_role`;
-  `les_cypinfo(fest_ider text[])` og `cypinfo_status()` for innloggede;
-  endringsloggen og feltreglene i `datakilder`, og kilden i `datakilder_status`.
-- `src/cypinfo/api.ts` med `src/server/hofligHenting.ts` (ett kall i sekundet,
-  nye forsøk ved 429, 5xx og tidsavbrudd, egen `User-Agent`), `modell.ts` (lesingen og normaliseringen: ATC uten mellomrom og
-  harde mellomrom, `festCodes`/`festCode`, tekstavsnittene), `struktur.ts`
-  (strukturkontrollen), `synk.ts` og `lager.ts` (synkroniseringen og
-  utledningen av genene per legemiddel), `endepunkt.ts`.
-- `api/cypinfo.ts` med synkroniseringen (`hvem` i `tilgang.ts`: GitHub Actions
-  med OIDC-token, eller en systemarkitekts «Hent nå») og
-  `.github/workflows/cypinfo-synk.yml` (ukentlig, f.eks. onsdag 03:45 UTC).
-- `src/datakilder/status.ts`: `cypinfo` i `DATAKILDER` og `KILDEOPPSETT`
-  («Hent nå» i «Datakilder»).
-- `src/faginnhold/cypinfokoblinger.ts` (listen for de 13 uten FEST-ID) og
-  `cypinfodekning.ts` med test.
-- Testene: modellen mot lagrede, syntetiske svar (`data/cypinfo-utdrag.json`,
-  laget fra kallene i denne kartleggingen), formfeilene, strukturkontrollen,
-  synkroniseringen mot en ekte database (PGlite), utledningen av to-gens
-  legemidlene og sertralin, vernet mot for få rader, dekningen for alle sider.
+Bygd 17.11.2026. Slik den er:
+
+- Migrasjonen `*_cypinfo.sql`: skjemaet `cypinfo` med tabellene `legemiddel`,
+  `genresultat` og `anbefaling` (se tabellen over), `synkroniseringer` og
+  `entiteter` (vernet, 80 % per type). `cypinfo_forrige_synk`,
+  `cypinfo_start_synk`, `cypinfo_fullfor_synk` (byttet: alt i én transaksjon,
+  uten mellomlager, siden katalogen er liten) og `cypinfo_avbryt_synk` for
+  `service_role`; `les_cypinfo(fest_ider, cypinfo_ider)` for innloggede med
+  aktivt medlemskap (legemidlene, hvilke kombinasjoner av gen og fenotype som
+  har en anbefaling, uten nivå og tekst, og gentabellen for genene de bruker).
+  Endringsloggen, feltreglene og etikettene i `datakilder`, og kilden i
+  `datakilder_status`. Det trengtes ingen egen `cypinfo_status()`: «Datakilder»
+  bruker `datakilder_status`, og `les_cypinfo` sier når katalogen sist ble
+  kontrollert og endret.
+- `cypinfo_fullfor_synk` melder også FEST-ID-er i CYPinfo som ikke er et aktivt
+  virkestoff i OUSFARs FEST-kopi.
+- `src/cypinfo/`: `api.ts` (ett kall i sekundet, nye forsøk ved 429, 5xx og
+  tidsavbrudd), `modell.ts` (lesingen og normaliseringen), `struktur.ts`
+  (strukturkontrollen, med den felles kontrollen i
+  `src/datakilder/struktur.ts`, som ClinPGx også bruker), `synk.ts`
+  (utledningen, kontrollen av hvert rapportsvar og rapporten til
+  «Datakilder»), `lager.ts` og `endepunkt.ts`.
+- `api/cypinfo.ts` (én funksjon; svarer 410 hvis CYPinfo settes i
+  `STANSEDE_KILDER`) og `.github/workflows/cypinfo-synk.yml`, onsdag 03:45 UTC.
+- `cypinfo` i `DATAKILDER` og `KILDEOPPSETT`, med «Hent nå».
+- `src/faginnhold/cypinfokoblinger.ts`: de 13 legemidlene uten FEST-ID med
+  fagside, og proklorperazin og reboksetin, som er vurdert og ikke har noen
+  side (`side: null`). `src/faginnhold/cypinfodekning.ts` regner ut statusen
+  for hver fagside av katalogen, FEST-koblingene og listen.
+- Testene (`src/__tests__/cypinfo.test.ts`, `cypinfodekning.test.ts`) bruker
+  utdraget i `src/__tests__/data/cypinfo/`: katalogen og gentabellen slik
+  CYPinfo ga dem, alle 383 anbefalingene fra kartleggingen med syntetisk tekst
+  der teksten avhenger av et resultat, og fagsidene med FEST-koblingene i
+  produksjonen 16.11.2026. Det falske CYPinfo i `hjelp/cypinfo.ts` velger
+  anbefalingene slik CYPinfo gjør; det er kontrollert mot alle de 104
+  rapportkallene i kartleggingen.
 - Ingenting vises på fagsidene. Første henting i produksjonen gjøres med «Hent
-  nå» etter sammenslåingen.
+  nå» i «Datakilder», eller ved å starte arbeidsflyten «CYPinfo» i GitHub,
+  etter sammenslåingen; ellers går den første onsdagen etter. Til da står
+  CYPinfo som «Se over» i «Datakilder», fordi kilden ikke har noen kjøring.
 
 ### C — Oppslaget gjennom OUSFARs server
 

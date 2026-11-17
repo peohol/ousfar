@@ -178,6 +178,28 @@ describe('kallene', () => {
     expect(startet).toEqual([0, 3000, 3250])
   })
 
+  it('prøver på nytt etter et tidsavbrudd, men gir opp etter de nye forsøkene', async () => {
+    const tidsavbrudd = () => Promise.reject(new DOMException('Tidsgrensen gikk ut', 'TimeoutError'))
+    let kall = 0
+    const henting = lagHofligHenting({
+      avstand: 0,
+      vent: async () => {},
+      hent: async () => (++kall < 3 ? tidsavbrudd() : new Response('ok')),
+    })
+    expect((await henting('https://x/a')).status).toBe(200)
+    expect(kall).toBe(3)
+
+    let alltid = 0
+    const girOpp = lagHofligHenting({ avstand: 0, nyeForsok: 1, vent: async () => {}, hent: async () => (++alltid, tidsavbrudd()) })
+    await expect(girOpp('https://x/b')).rejects.toThrow('Tidsgrensen gikk ut')
+    expect(alltid).toBe(2)
+
+    let annen = 0
+    const nettfeil = lagHofligHenting({ avstand: 0, vent: async () => {}, hent: async () => (++annen, Promise.reject(new TypeError('fetch failed'))) })
+    await expect(nettfeil('https://x/c')).rejects.toThrow('fetch failed')
+    expect(annen).toBe(1)
+  })
+
   it('henter egenskapene med POST, høyst hundre CID-er i hvert kall, og tåler et ukjent navn', async () => {
     const kall: { url: string; body: string }[] = []
     const api = lagPubchemApi({

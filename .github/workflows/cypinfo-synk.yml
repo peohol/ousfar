@@ -1,0 +1,43 @@
+# Synkroniserer legemiddelkatalogen fra CYPinfo hver uke, og når noen starter
+# den for hånd (docs/cypinfo-integrasjon.md). Selve hentingen gjør OUSFARs
+# server; jobben her ber den om det, med et OIDC-token GitHub utsteder for
+# denne arbeidsflyten på main. Ingen hemmeligheter, ingen commits og ingen
+# migrasjoner: dataene går rett i databasen.
+name: CYPinfo
+
+on:
+  schedule:
+    # Onsdag 03:45 UTC: en annen dag enn ClinPGx (mandag), utenom de nattlige jobbene.
+    - cron: '45 3 * * 3'
+  workflow_dispatch:
+
+permissions:
+  # Bare for å få OIDC-tokenet; arbeidsflyten leser og skriver ingenting i repoet.
+  id-token: write
+
+concurrency:
+  group: cypinfo-synk
+  cancel-in-progress: false
+
+jobs:
+  synkroniser:
+    name: Synkroniser CYPinfo
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ADRESSE: https://ousfar.vercel.app/api/cypinfo
+    steps:
+      - name: Be OUSFAR hente fra CYPinfo
+        run: |
+          set -euo pipefail
+          token=$(curl -sSf -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=ousfar" | jq -r .value)
+          echo "::add-mask::$token"
+          kode=$(curl -sS -o svar.json -w '%{http_code}' --max-time 330 -X POST \
+            -H "Authorization: Bearer $token" "$ADRESSE")
+          jq '{status, synk, feil, antall: (.antall // {} | with_entries(select(.key != "merknader" and .key != "uavklarte")))}' svar.json || cat svar.json
+          if [ "$kode" != "200" ]; then
+            echo "::error::Synkroniseringen svarte $kode; katalogen fra siste vellykkede henting står. Se «Datakilder» i OUSFAR."
+            exit 1
+          fi

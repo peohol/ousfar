@@ -98,7 +98,7 @@ export function Datakilder({ apen, onLukk, leser: egenLeser }: { apen: boolean; 
   return (
     <Modallag apen={apen} tittel="Datakilder" ikon="reset" bred onLukk={onLukk}>
       <p className="datakilder__ingress">
-        Legemiddeldata fra FEST, farmakogenetiske data fra ClinPGx og CPIC, kjemiske grunndata fra PubChem og
+        Legemiddeldata fra FEST, farmakogenetiske data fra ClinPGx, CPIC og CYPinfo, kjemiske grunndata fra PubChem og
         laboratorieanalyser fra Farmakologiportalen: hvordan
         siste henting gikk, og hva som er endret siden forrige. Ingenting her vises for andre enn administratorer.
       </p>

@@ -1,10 +1,10 @@
 /**
  * Driftstatusen for datakildene — legemiddeldataene fra FEST, de
- * farmakogenetiske fra ClinPGx og CPIC, de kjemiske fra PubChem og
+ * farmakogenetiske fra ClinPGx, CPIC og CYPinfo, de kjemiske fra PubChem og
  * laboratorieanalysene fra Farmakologiportalen — slik administratorene ser den: de
  * siste kjøringene, om noe er galt, og hva som er endret siden forrige henting.
  *
- * Endringene i ClinPGx, CPIC, PubChem og Farmakologiportalen oppdages i databasen
+ * Endringene i ClinPGx, CPIC, PubChem, Farmakologiportalen og CYPinfo oppdages i databasen
  * (`*_datakilder_endringer.sql`, `docs/datakilder.md`); FEST har ingen
  * endringslogg, men hver kjøring teller nye, endrede og utgåtte rader. Alt
  * leses med `datakilder_status()`. Alt her er rene funksjoner, bortsett fra
@@ -14,7 +14,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import vercel from '../../vercel.json'
 import { STANSEDE_KILDER, stansmelding, type Stans } from './stans'
 
-export const DATAKILDER = ['fest', 'clinpgx', 'cpic', 'pubchem', 'farmakologiportalen'] as const
+export const DATAKILDER = ['fest', 'clinpgx', 'cpic', 'pubchem', 'farmakologiportalen', 'cypinfo'] as const
 export type Datakilde = (typeof DATAKILDER)[number]
 
 export interface Kildeoppsett {
@@ -84,6 +84,17 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     etterFeil: null,
     endringslogg: true,
     intervall: 1,
+  },
+  // Katalogen byttes inn i én transaksjon, hver uke fra GitHub Actions
+  // (docs/cypinfo-integrasjon.md). Anbefalingstekstene lagres ikke.
+  cypinfo: {
+    navn: 'CYPinfo',
+    synk: '/api/cypinfo',
+    versjonsnavn: 'Parserversjon',
+    etterFeil: null,
+    beholdt: 'OUSFAR bruker fortsatt katalogen fra siste vellykkede henting; ingenting fra den feilede hentingen er tatt i bruk.',
+    endringslogg: true,
+    intervall: 7,
   },
 }
 

@@ -224,9 +224,9 @@ describe('vurderingen', () => {
     expect(intervallDogn('15 4 * * *')).toBe(1)
     expect(intervallDogn('0 3 1 * *')).toBeNull()
     // CPIC er stanset, og har ingen planlagt jobb (cpicstans.test.ts).
-    expect(kildeintervaller()).toEqual({ fest: 1, clinpgx: 7, pubchem: 7, farmakologiportalen: 1 })
-    // ClinPGx og Farmakologiportalen hentes fra GitHub Actions, ikke Vercel: intervallet står i oppsettet.
-    expect(kildeintervaller([])).toEqual({ clinpgx: 7, farmakologiportalen: 1 })
+    expect(kildeintervaller()).toEqual({ fest: 1, clinpgx: 7, pubchem: 7, farmakologiportalen: 1, cypinfo: 7 })
+    // ClinPGx, Farmakologiportalen og CYPinfo hentes fra GitHub Actions, ikke Vercel: intervallet står i oppsettet.
+    expect(kildeintervaller([])).toEqual({ clinpgx: 7, farmakologiportalen: 1, cypinfo: 7 })
     expect([jobbnavn(1), jobbnavn(7), jobbnavn(null)]).toEqual(['Nattlig jobb', 'Ukentlig jobb', 'Planlagt jobb'])
   })
 
@@ -351,7 +351,7 @@ describe('vurderingen', () => {
 
 describe('prikken på adminmenyen', () => {
   it('nevner kildene som ikke er i orden, med samme vurdering som panelet', () => {
-    const iOrden = (['fest', 'clinpgx', 'cpic', 'pubchem'] as const).map((k, i) => kjoring(k, i + 1, 'uendret', '2026-09-26T04:00:00Z'))
+    const iOrden = (['fest', 'clinpgx', 'cpic', 'pubchem', 'cypinfo'] as const).map((k, i) => kjoring(k, i + 1, 'uendret', '2026-09-26T04:00:00Z'))
     const status = (...kjoringer: Kjoring[]): Datakildestatus => ({ kjoringer: [...iOrden, ...kjoringer], endringer: [] })
     expect(kilderSomBorSesOver(status(kjoring('farmakologiportalen', 2, 'fullfort', '2026-09-26T04:40:00Z')), NA)).toEqual([])
     expect(

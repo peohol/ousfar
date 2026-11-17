@@ -117,7 +117,7 @@ Koden:
 | Hvor | Hva |
 | --- | --- |
 | `src/clinpgx/modell.ts` | Formen OUSFAR lagrer, lesingen av svarene og av det lagrede, evidensnivåene, adressene hos ClinPGx |
-| `src/clinpgx/api.ts` | Kallene: én kø, avstand mellom kallene, nye forsøk ved 429 og serverfeil |
+| `src/clinpgx/api.ts` | Kallene: én kø, avstand mellom kallene, nye forsøk ved 429, serverfeil og tidsavbrudd |
 | `src/clinpgx/synk.ts`, `lager.ts` | Synkroniseringen og databasekallene den gjør |
 | `src/clinpgx/endepunkt.ts`, `api/clinpgx-synk.ts`, `api/clinpgx-sok.ts` | Serverendepunktene |
 | `.github/workflows/clinpgx-synk.yml` | Den ukentlige jobben, i så mange omganger som trengs |

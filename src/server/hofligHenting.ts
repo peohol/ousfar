@@ -1,8 +1,8 @@
 /**
  * Henting fra en ekstern kilde på kildens premisser: ett kall om gangen, med
  * minst `avstand` millisekunder mellom starten på hvert, og en pause og et nytt
- * forsøk når kilden svarer 429 (for mange kall) eller har en serverfeil.
- * Pausen gjelder hele køen, ikke bare kallet som fikk svaret: ber kilden oss
+ * forsøk når kilden svarer 429 (for mange kall), har en serverfeil eller ikke
+ * svarer innen tidsgrensen. Pausen gjelder hele køen, ikke bare kallet som fikk svaret: ber kilden oss
  * vente, venter alle.
  *
  * Brukes av synkroniseringene som henter fra åpne kilder uten nøkkel
@@ -13,7 +13,7 @@
 export interface Hoflighetsvalg {
   /** Minste tid mellom starten på to kall, i millisekunder. */
   avstand: number
-  /** Nye forsøk etter 429 eller serverfeil. */
+  /** Nye forsøk etter 429, serverfeil eller tidsavbrudd. */
   nyeForsok?: number
   /** Hvor lenge ett kall kan ta. */
   tidsgrense?: number
@@ -31,9 +31,12 @@ export type HofligHenting = (url: URL | string, init?: RequestInit) => Promise<R
 
 export const standardVent = (ms: number) => new Promise<void>((ferdig) => setTimeout(ferdig, ms))
 
+/** Kallet ble avbrutt fordi tidsgrensen gikk ut (`AbortSignal.timeout`). */
+const erTidsavbrudd = (feil: unknown) => feil instanceof DOMException && feil.name === 'TimeoutError'
+
 /** Hvor lenge kilden ber oss vente (`Retry-After` i sekunder), ellers stadig lenger. */
-function pause(res: Response, forsok: number): number {
-  const sekunder = Number(res.headers.get('retry-after'))
+function pause(res: Response | null, forsok: number): number {
+  const sekunder = Number(res?.headers.get('retry-after'))
   return Number.isFinite(sekunder) && sekunder > 0 ? Math.min(sekunder, 30) * 1000 : 5000 * (forsok + 1)
 }
 
@@ -65,7 +68,14 @@ export function lagHofligHenting({
   return async (url, init = {}) => {
     const headers = { ...hoder, ...(init.headers as Record<string, string> | undefined) }
     for (let forsok = 0; ; forsok += 1) {
-      const res = await iKo(() => hent(url, { ...init, headers, signal: AbortSignal.timeout(tidsgrense) }))
+      let res: Response
+      try {
+        res = await iKo(() => hent(url, { ...init, headers, signal: AbortSignal.timeout(tidsgrense) }))
+      } catch (feil) {
+        if (!erTidsavbrudd(feil) || forsok >= nyeForsok) throw feil
+        pauseTil = Math.max(pauseTil, na() + pause(null, forsok))
+        continue
+      }
       if ((res.status === 429 || res.status >= 500) && forsok < nyeForsok) {
         pauseTil = Math.max(pauseTil, na() + pause(res, forsok))
         await res.body?.cancel().catch(() => undefined)

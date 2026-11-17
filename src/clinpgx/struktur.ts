@@ -22,23 +22,10 @@
  *
  * Alt her er rene funksjoner.
  */
-import { erObjekt, type Annotasjonstype } from './modell.js'
+import { formavvik, type Krav } from '../datakilder/struktur.js'
+import type { Annotasjonstype } from './modell.js'
 
 export type Strukturtype = 'kjemikalie' | Annotasjonstype
-
-type Form = 'tekst' | 'liste' | 'objekt' | 'sannhet' | 'tall'
-
-interface Krav {
-  /** Feltet, med punktum for et felt i et objekt: `location.genes`. Et objekt som mangler, gjør feltene i det valgfrie. */
-  sti: string
-  form: Form | readonly Form[]
-  /** Feltet kan mangle eller være `null`. Har det en verdi, må den ha formen. */
-  valgfri?: boolean
-  /** For en liste: feltene hvert element må ha (som tekst), eller `'tekst'` når elementene er tekster. */
-  hver?: readonly string[] | 'tekst'
-  /** For et objekt: minst ett av disse feltene må være tekst. */
-  ettAv?: readonly string[]
-}
 
 const ANNOTASJONSGRUNNLAG: readonly Krav[] = [
   { sti: 'name', form: 'tekst' },
@@ -84,67 +71,12 @@ export const STRUKTURKRAV: Record<Strukturtype, readonly Krav[]> = {
   ],
 }
 
-const FORMNAVN: Record<Form, string> = {
-  tekst: 'tekst',
-  liste: 'liste',
-  objekt: 'objekt',
-  sannhet: 'sann/usann',
-  tall: 'tall',
-}
-
-function formen(verdi: unknown): Form | null {
-  if (typeof verdi === 'string') return 'tekst'
-  if (Array.isArray(verdi)) return 'liste'
-  if (erObjekt(verdi)) return 'objekt'
-  if (typeof verdi === 'boolean') return 'sannhet'
-  if (typeof verdi === 'number') return 'tall'
-  return null
-}
-
-function beskriv(verdi: unknown): string {
-  if (verdi === undefined) return 'mangler'
-  if (verdi === null) return 'er tomt (null)'
-  const form = formen(verdi)
-  return form ? `er ${FORMNAVN[form]}` : `er ${typeof verdi}`
-}
-
-/** Om et element i en liste har feltene som tekst (tomme godtas). */
-function elementOk(element: unknown, hver: Krav['hver']): boolean {
-  if (hver === undefined) return true
-  if (hver === 'tekst') return typeof element === 'string'
-  return erObjekt(element) && hver.every((f) => typeof element[f] === 'string')
-}
-
 /**
  * Avvikene i formen på ett objekt fra ClinPGx, som korte tekster:
  * «relatedGenes er tekst, ventet liste». Tom liste når formen er som ventet.
  */
 export function strukturavvik(type: Strukturtype, objekt: unknown): string[] {
-  if (!erObjekt(objekt)) return [`${beskriv(objekt)}, ventet objekt`]
-  const avvik: string[] = []
-  for (const krav of STRUKTURKRAV[type]) {
-    const deler = krav.sti.split('.')
-    const forelder = deler.slice(0, -1).reduce<unknown>((o, d) => (erObjekt(o) ? o[d] : undefined), objekt)
-    // Et objekt som mangler eller har feil form, er et avvik for seg; feltene i det kontrolleres ikke.
-    if (!erObjekt(forelder)) continue
-    const verdi = forelder[deler.at(-1)!]
-    const former: readonly Form[] = typeof krav.form === 'string' ? [krav.form] : krav.form
-    const ventet = former.map((f) => FORMNAVN[f]).join(' eller ')
-    if (krav.valgfri && (verdi === undefined || verdi === null)) continue
-    const form = formen(verdi)
-    if (!form || !former.includes(form)) {
-      avvik.push(`${krav.sti} ${beskriv(verdi)}, ventet ${ventet}`)
-      continue
-    }
-    if (form === 'liste' && krav.hver && !(verdi as unknown[]).every((e) => elementOk(e, krav.hver))) {
-      const felt = krav.hver === 'tekst' ? 'tekster' : `objekter med ${krav.hver.join(' og ')}`
-      avvik.push(`${krav.sti} har elementer som ikke er ${felt}`)
-    }
-    if (form === 'objekt' && krav.ettAv && !krav.ettAv.some((f) => typeof (verdi as Record<string, unknown>)[f] === 'string')) {
-      avvik.push(`${krav.sti} mangler ${krav.ettAv.join(' eller ')}`)
-    }
-  }
-  return avvik
+  return formavvik(STRUKTURKRAV[type], objekt)
 }
 
 /** Én linje for loggen om objektene som har feil form; de tre første står med navn. */
