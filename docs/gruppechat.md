@@ -377,4 +377,4 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
-| C1 sanntid og tilstand i appen (`useGruppechat`) | se PR-lista på GitHub, gren `claude/project-thread-nyns40` | Til kontroll |
+| C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Til kontroll |
