@@ -80,7 +80,9 @@ gjorde det, varsles ikke.
   oppgave (tildelt, fullført), ellers til idéen på idéfanen, også for
   kommentarene på en gruppeidé. Har et skjema på gruppesiden eller i idélagene
   endringer som ikke er lagret, spør det først (`forlatSkjemaene`,
-  `docs/direktelenker.md`).
+  `docs/direktelenker.md`). Varselet merkes da lest først når brukeren
+  faktisk går dit (`gaVaktet` i `Varsler.tsx`); blir brukeren i skjemaet,
+  står det ulest.
 - **Diskusjonskommentarer** (`diskusjonskommentarer_varsle`): som
   idékommentarene, med `mine_diskusjoner` og `aktive_diskusjoner`.
 - **Nye tråder** (`diskusjoner_varsle`): en ny tråd på en fagside gir

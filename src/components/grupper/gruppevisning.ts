@@ -54,23 +54,30 @@ function gaTil(adresse: string, erstatt: boolean, deretter?: () => void) {
 /**
  * Går til idéen i gruppen, og eventuelt til kommentaren under den. Med
  * `erstatt` legges ingenting nytt i historikken (en lenke limt inn i
- * adressefeltet).
+ * adressefeltet). `deretter` skjer når den faktisk er gått dit, ikke om
+ * brukeren blir i et skjema.
  */
-export function visGruppeide(gruppe: string, ide: string, kommentar: string | null = null, { erstatt = false } = {}): void {
+export function visGruppeide(
+  gruppe: string,
+  ide: string,
+  kommentar: string | null = null,
+  { erstatt = false, deretter }: { erstatt?: boolean; deretter?: () => void } = {},
+): void {
   gaTil(gruppeadresse(gruppe, 'ideer', ide), erstatt, () => {
     venter = kommentar ? { ide, kommentar } : null
     signal.send()
+    deretter?.()
   })
 }
 
-/** Går til oppgaven i gruppen. */
-export function visGruppeoppgave(gruppe: string, oppgave: string): void {
-  gaTil(gruppeadresse(gruppe, 'oppgaver', oppgave), false)
+/** Går til oppgaven i gruppen, og gjør så `deretter`. */
+export function visGruppeoppgave(gruppe: string, oppgave: string, deretter?: () => void): void {
+  gaTil(gruppeadresse(gruppe, 'oppgaver', oppgave), false, deretter)
 }
 
-/** Går til oversikten over gruppen. */
-export function visGruppen(gruppe: string): void {
-  gaTil(gruppeadresse(gruppe), false)
+/** Går til oversikten over gruppen, og gjør så `deretter`. */
+export function visGruppen(gruppe: string, deretter?: () => void): void {
+  gaTil(gruppeadresse(gruppe), false, deretter)
 }
 
 /** Kommentaren som venter på å vises under idéen, om noen. Den venter ikke lenger etterpå. */

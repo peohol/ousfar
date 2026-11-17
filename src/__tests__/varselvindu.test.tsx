@@ -125,7 +125,11 @@ const api = vi.hoisted(() => ({
 const visIde = vi.hoisted(() => vi.fn())
 const visEndringslogg = vi.hoisted(() => vi.fn())
 const visDiskusjon = vi.hoisted(() => vi.fn())
-const gruppevisning = vi.hoisted(() => ({ visGruppeide: vi.fn(), visGruppeoppgave: vi.fn(), visGruppen: vi.fn() }))
+const gruppevisning = vi.hoisted(() => ({
+  visGruppeide: vi.fn((_gruppe: string, _ide: string, _kommentar?: string | null, _valg?: { deretter?: () => void }) => {}),
+  visGruppeoppgave: vi.fn((_gruppe: string, _oppgave: string, _gjort?: () => void) => {}),
+  visGruppen: vi.fn((_gruppe: string, _gjort?: () => void) => {}),
+}))
 
 vi.mock('../varsler/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => KARI }))
@@ -432,20 +436,54 @@ describe('gruppene', () => {
     const tildelt = await within(vindu).findByRole('button', { name: 'Ola Nordmann ga deg en oppgave' })
     expect(tildelt.closest('li')!.textContent).toContain('«Skriv sjekklisten» · Lithiumgruppen')
     await bruker.click(tildelt)
-    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalledWith('g1', 'o1')
+    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalledWith('g1', 'o1', expect.any(Function))
 
     await bruker.click(bjella())
     const igjen = await screen.findByRole('dialog', { name: 'Varsler' })
     await bruker.click(await within(igjen).findByRole('button', { name: 'Ola Nordmann gjorde idéen din om til en oppgave' }))
-    expect(gruppevisning.visGruppeide).toHaveBeenCalledWith('g1', 'gi1')
+    expect(gruppevisning.visGruppeide).toHaveBeenCalledWith('g1', 'gi1', null, { deretter: expect.any(Function) })
 
     await bruker.click(bjella())
     const tredje = await screen.findByRole('dialog', { name: 'Varsler' })
     const kommentar = await within(tredje).findByRole('button', { name: 'Ola Nordmann kommenterte idéen din' })
     expect(kommentar.closest('li')!.textContent).toContain('Lithiumgruppen')
     await bruker.click(kommentar)
-    expect(gruppevisning.visGruppeide).toHaveBeenLastCalledWith('g1', 'gi1')
+    expect(gruppevisning.visGruppeide).toHaveBeenLastCalledWith('g1', 'gi1', null, { deretter: expect.any(Function) })
     expect(visIde).not.toHaveBeenCalled()
+  })
+
+  it('merker et gruppevarsel lest først når brukeren går dit, ikke når et ulagret skjema blir stående', async () => {
+    const gruppeide = { id: 'gi1', tittel: 'Felles rutine', forfatterId: 'kari', gruppe }
+    api.hentVarsler.mockResolvedValue({
+      lest_kl: LISTE.lest_kl,
+      varsler: [
+        varsel('v-tildelt', 'gruppeoppgaver', null, { art: 'tildelt', gruppeoppgave: oppgave }),
+        varsel('v-kommentar', 'mine_ideer', gruppeide, { kommentar: 'k1', svarTil: null }),
+      ],
+    })
+    // Skjemavakten på gruppesiden: brukeren blir i skjemaet («Fortsett å redigere»), så veien blir ikke gått.
+    const bruker = userEvent.setup()
+    render(<Varselknapp />)
+    await bruker.click(bjella())
+    let vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(vindu).findByRole('button', { name: 'Ola Nordmann ga deg en oppgave' }))
+    expect(gruppevisning.visGruppeoppgave).toHaveBeenCalled()
+    expect(screen.queryByRole('dialog', { name: 'Varsler' })).toBeNull()
+    await bruker.click(bjella())
+    vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    await bruker.click(await within(vindu).findByRole('button', { name: 'Ola Nordmann kommenterte idéen din' }))
+    expect(gruppevisning.visGruppeide).toHaveBeenCalled()
+    expect(api.merkVarslerLest).not.toHaveBeenCalled()
+
+    // Begge står fortsatt som nye. Brukeren forkaster endringene, og veien blir gått: først da er varselet lest.
+    gruppevisning.visGruppeoppgave.mockImplementationOnce((_gruppe, _oppgave, gjort) => gjort?.())
+    await bruker.click(bjella())
+    vindu = await screen.findByRole('dialog', { name: 'Varsler' })
+    const nye = within(vindu).getByRole('region', { name: 'Nye' })
+    expect(within(nye).getByRole('button', { name: 'Ola Nordmann kommenterte idéen din' })).toBeTruthy()
+    await bruker.click(within(nye).getByRole('button', { name: 'Ola Nordmann ga deg en oppgave' }))
+    await waitFor(() => expect(api.merkVarslerLest).toHaveBeenCalledWith(['v-tildelt'], LISTE.lest_kl))
+    expect(api.merkVarslerLest).toHaveBeenCalledTimes(1)
   })
 })
 

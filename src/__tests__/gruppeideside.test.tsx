@@ -310,18 +310,22 @@ describe('skjemaet', () => {
     expect(lukket).toHaveBeenCalled()
   })
 
-  it('spør før et varsel eller en lenke utenfra fører bort fra en ny idé med endringer', async () => {
+  it('spør før et varsel eller en lenke utenfra fører bort fra en ny idé med endringer, og sier fra først når den er gått', async () => {
     vis('ideer')
     await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
     await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
-    act(() => visGruppeoppgave(GRUPPE, OPPGAVE))
+    const gjort = vi.fn()
+    act(() => visGruppeoppgave(GRUPPE, OPPGAVE, gjort))
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
     expect(window.location.hash).toBe('')
     await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
     expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
-    act(() => visGruppeoppgave(GRUPPE, OPPGAVE))
+    // Varselet som førte hit, blir da stående ulest (`gjort` merker det lest i varselvinduet).
+    expect(gjort).not.toHaveBeenCalled()
+    act(() => visGruppeoppgave(GRUPPE, OPPGAVE, gjort))
     await userEvent.click(await screen.findByRole('button', { name: 'Forkast endringene' }))
     expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/oppgaver/${OPPGAVE}`)
+    expect(gjort).toHaveBeenCalledTimes(1)
   })
 
   it('går rett videre fra gruppesiden når ingen skjemaer har endringer', async () => {
