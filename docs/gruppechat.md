@@ -349,3 +349,4 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
+| D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Til kontroll |

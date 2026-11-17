@@ -46,7 +46,7 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 - Kan en endring påvirke klinisk output, finn kildegrunnlaget og bevar sporbarheten. Eksplisitte klinikerinstruksjoner og utpekte kildeartefakter er premisser som kode og tester implementerer og kontrollerer.
 - Finn ikke på, normaliser, «forbedre» eller hent eksterne medisinske verdier for å fylle hull. Motstrid som kan endre klinisk betydning, gjøres tydelig i stedet for å avgjøres lydløst.
 - Test kliniske regler ved grenseverdiene og der små endringer kan endre fortolkningen.
-- Repoet og GitHub er offentlige: ingen reelle pasientopplysninger (bruk syntetiske), nøkler eller faglige vurderinger fra kurateringen.
+- Ingen pasientopplysninger i OUSFAR, heller ikke pseudonymiserte eller kasuistikker (`docs/pasientopplysninger.md`). Repoet og GitHub er offentlige: bare syntetiske data, ingen nøkler eller kurateringsvurderinger.
 
 ## PR-beskrivelse, versjon og endringslogg
 
@@ -56,6 +56,6 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 
 ## Vedlikehold av instruksene
 
-- `AGENTS.md` er den eneste agentinstruksen. Lag ingen `CLAUDE.md` (der den finnes, leser Claude Code ikke `AGENTS.md`) eller andre modellspesifikke filer. Der `AGENTS.md` ikke lastes automatisk, som i Claude Code-prosjekttrådene, pålegger prosjektinstruksene å lese den.
+- `AGENTS.md` er den eneste agentinstruksen. Lag ingen `CLAUDE.md` (den skygger for `AGENTS.md`) eller andre modellspesifikke filer. Prosjektinstruksene pålegger å lese den der den ikke lastes automatisk.
 - Her hører bare korte, varige regler som ellers sannsynligvis ville gitt gjentatte feil i urelaterte oppgaver. Annet legges i `docs/*.md` eller som tillegg i en `AGENTS.md` i nærmeste relevante mappe. Ingen spesifikasjoner, planer, historikk, lange begrunnelser eller automatisk import av store dokumenter.
 - Konsolider og beskjær fremfor å legge til, og fjern foreldede og dupliserte instrukser. Oppdater dokumentasjonen i samme endring når den ellers blir misvisende.
