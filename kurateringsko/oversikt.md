@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-17T02:28:33.479Z. Stoffene sist lest fra databasen 2026-11-16T17:27:37.718Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-17T03:28:48.563Z. Stoffene sist lest fra databasen 2026-11-16T17:27:37.718Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 94 · Publisert: 16 · Blokkert: 8 · Utenfor køen: 1
 
@@ -14,14 +14,14 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **amitriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.
+- **amitriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **eplerenon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
-- **levomepromazin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **levomepromazin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
-- **spironolakton**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **spironolakton**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
 - **venlafaksin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
-- **zuklopentiksol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
+- **zuklopentiksol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 
 ## Køen
 
