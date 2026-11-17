@@ -76,7 +76,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'angre_oppgave_utfort(oppgave uuid)': 'systemarkitekt',
   'arkiver_diskusjon(diskusjon uuid, arkivert boolean)': 'rekkevidde',
   'arkiver_gruppe(gruppe uuid, arkivert boolean)': 'gruppemyndighet',
-  'arkiver_ide(ide uuid)': 'systemarkitekt',
+  'arkiver_ide(ide uuid)': 'rekkevidde',
   'arkiver_stoff(stoff text, arkivert boolean)': 'stoffregister',
   'arkiver_stoffkategori(kategori uuid, arkivert boolean)': 'stoffregister',
   'arkiver_varsler(varsler uuid[], til timestamp with time zone)': 'eier',
@@ -100,6 +100,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'diskusjonstraad(diskusjon uuid)': 'radsikkerhet',
   'endre_diskusjonskategori(kategori uuid, navn text, emoji text)': 'rekkevidde',
   'endre_gruppe(gruppe uuid, navn text, beskrivelse text)': 'gruppemyndighet',
+  'endre_gruppeoppgave(oppgave uuid, tittel text, beskrivelse jsonb, prioritet text)': 'rekkevidde',
   'endre_stoffkategori(kategori uuid, navn text)': 'stoffregister',
   // P2c: brukerlista i administrasjonen, bare kontoene den innloggede administrerer.
   'brukeroversikt()': 'rekkevidde',
@@ -107,6 +108,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'er_systemarkitekt()': 'eier',
   'finn_infosider(navn text[], sidetilstand objekttilstand)': 'radsikkerhet',
   'finn_intervallregelsett(analyttkode text, sidetilstand objekttilstand)': 'radsikkerhet',
+  'fjern_gruppeoppgave(oppgave uuid)': 'rekkevidde',
   'fjern_skjult_i_diskusjon(diskusjon uuid, kommentar uuid)': 'rekkevidde',
   'flytt_diskusjon(diskusjon uuid, kategori uuid, indeks integer)': 'rekkevidde',
   'flytt_diskusjon_til_side(diskusjon uuid, side text, kategori uuid, ny_kategori text, ny_emoji text)': 'rekkevidde',
@@ -117,16 +119,21 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'foresla_endring(ressurs uuid, element uuid, grunnrevisjon integer, sideversjon integer, sted text, utdrag text, forslag text, begrunnelse text, kilder jsonb)': 'rekkevidde',
   'frigi_oppgave(oppgave uuid)': 'systemarkitekt',
   'gi_medlemskap(bruker uuid, fagmiljo uuid)': 'medlemskapsmyndighet',
-  'gjenopprett_ide(ide uuid)': 'systemarkitekt',
+  'gjenopprett_ide(ide uuid)': 'rekkevidde',
   'gjenopprett_revisjon(objekt uuid, forventet_revisjon integer, fra_revisjon integer)': 'rekkevidde',
   'gjenopprett_stoff(stoff text)': 'stoffregister',
   'gjenopprett_varsler(varsler uuid[])': 'eier',
+  'gjor_om_til_gruppeoppgave(ide uuid)': 'rekkevidde',
   'godkjenn_forslag(forslag uuid, begrunnelse text)': 'rekkevidde',
+  'gruppeideer(gruppe uuid)': 'rekkevidde',
+  'gruppeoppgave(oppgave uuid)': 'rekkevidde',
+  'gruppeoppgaveoversikt(gruppe uuid)': 'rekkevidde',
   'gruppeoversikt(gruppe uuid)': 'gruppemyndighet',
   // P2.0: den innloggedes eget svar om aktivt medlemskap, og det eneste en
   // bruker uten aktivt medlemskap får (docs/fagmiljoer.md, «Aktivt medlemskap»).
   'har_aktivt_medlemskap()': 'eier',
   'inviter_til_gruppe(gruppe uuid, brukernavn text)': 'gruppemyndighet',
+  'kan_behandle_ide(ide uuid)': 'rekkevidde',
   // #395: om den innloggede kan moderere tråden, i rommet den står i.
   'kan_moderere_diskusjon(diskusjon uuid)': 'eier',
   // P2b: om den innloggede kan moderere diskusjonene på en side, til knappene i appen.
@@ -138,6 +145,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'intern_auth_domene()': 'offentlig',
   // P2a: om appen skal vise redigeringen av fortolkningen; svarer bare om den innloggede.
   'kan_endre_lokalt_innhold()': 'rekkevidde',
+  'kan_moderere_ide(ide uuid)': 'rekkevidde',
   // P2a: om de tillatende reglene skal slippe utkast gjennom; svarer bare om den innloggede.
   'kan_se_utkast()': 'rekkevidde',
   'kommenter_forslag(forslag uuid, tekst text)': 'rekkevidde',
@@ -202,6 +210,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'marker_forslag_innarbeidet(forslag uuid, objekt uuid, revisjon integer)': 'rekkevidde',
   'medlemsoversikt(fagmiljo uuid)': 'medlemskapsmyndighet',
   'merk_diskusjon_sett(diskusjon uuid, lest_kl timestamp with time zone)': 'eier',
+  'merk_gruppeoppgave_sett(oppgave uuid, til timestamp with time zone)': 'eier',
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_oppgave_utfort(oppgave uuid, endringslogg text)': 'systemarkitekt',
   'merk_varsler_lest(varsler uuid[], til timestamp with time zone)': 'eier',
@@ -220,8 +229,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2d: den innloggedes egne rettigheter, som appen viser menyer og knapper etter.
   'mine_rettigheter()': 'eier',
   'mitt_arbeidsfagmiljo()': 'eier',
+  'opprett_gruppeoppgave(gruppe uuid, tittel text, beskrivelse jsonb, ansvarlig uuid, prioritet text)': 'rekkevidde',
   'ressursens_redaktoransvar(ressurs uuid)': 'rekkevidde',
+  'sett_gruppeoppgavestatus(oppgave uuid, status text)': 'rekkevidde',
   'tilbakekall_redaktoransvar(ansvar uuid)': 'redaktormyndighet',
+  'tildel_gruppeoppgave(oppgave uuid, ansvarlig uuid)': 'rekkevidde',
   'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)': 'redaktormyndighet',
   // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
   'ta_forslag(forslag uuid)': 'rekkevidde',

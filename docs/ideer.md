@@ -16,6 +16,12 @@ OUSFAR, med hjerter og kommentartråder; de berører ikke den kliniske delen.
 | `src/styles/ideer.css`, `src/styles/traad.css` | Utseendet |
 | `.claude/skills/utfor-oppgaver/` | Hvordan Claude utfører oppgavene og merker dem utført |
 
+**Gruppene** har egne idéer i den samme tabellen (`gruppe_id`), uten
+kategori, og egne oppgaver (`gruppeoppgaver`), helt atskilt fra Planlagte
+oppgaver. Gruppeidéene står aldri i idévinduet; de vises på gruppesiden.
+Reglene står i `docs/fagmiljoer.md`, «Idéer og oppgaver i gruppene», og
+modellen for oppgavene i `src/grupper/oppgaver.ts`.
+
 Lenkene til en tråd, en idé eller en kommentar («Lenke» og brikkene i
 teksten) står i `docs/direktelenker.md`.
 

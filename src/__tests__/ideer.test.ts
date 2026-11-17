@@ -69,7 +69,8 @@ describe('idéene i databasen', () => {
   })
 
   it('krever kategori og en trimmet overskrift', async () => {
-    expect(await feilFra(() => sql(ada, `insert into public.ideer (tittel) values ('Uten kategori')`))).toMatchObject({ code: '23502' })
+    // En felles idé må ha en kategori; bare en gruppeidé er uten (P6b).
+    expect(await feilFra(() => sql(ada, `insert into public.ideer (tittel) values ('Uten kategori')`))).toMatchObject({ code: '23514' })
     expect(await feilFra(() => sql(ada, `insert into public.ideer (kategori, tittel) values ('fag', '')`))).toMatchObject({ code: '23514' })
     expect(await feilFra(() => sql(ada, `insert into public.ideer (kategori, tittel) values ('fag', ' mellomrom ')`))).toMatchObject({ code: '23514' })
     expect(await feilFra(() => sql(ada, `insert into public.ideer (kategori, tittel) values ('ukjent', 'x')`))).toMatchObject({ code: '22P02' })

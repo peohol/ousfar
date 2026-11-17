@@ -23,7 +23,11 @@ import {
   favorittsted,
   idetekst,
   erForslagsvarsel,
+  erGruppevarsel,
   forslagstekst,
+  gruppetekst,
+  varselgruppe,
+  varselgruppeoppgave,
   ressurstekst,
   varselforslag,
   lesEndringsloggstatus,
@@ -75,11 +79,12 @@ describe('kategoriene og valgene', () => {
 
   it('grupperer kategoriene etter hva de gjelder, hver kategori i én gruppe', () => {
     const grupper = kategorierIGrupper()
-    expect(grupper.map((g) => g.gruppe)).toEqual(['fortolkning', 'ideer', 'diskusjoner', 'forslag', 'favoritter', 'appen'])
+    expect(grupper.map((g) => g.gruppe)).toEqual(['fortolkning', 'ideer', 'diskusjoner', 'grupper', 'forslag', 'favoritter', 'appen'])
     expect(grupper.flatMap((g) => g.kategorier).sort()).toEqual([...KATEGORIREKKEFOLGE].sort())
     expect(grupper.find((g) => g.gruppe === 'ideer')!.kategorier).toEqual(['mine_ideer', 'aktive_ideer', 'nye_ideer'])
     expect(grupper.find((g) => g.gruppe === 'favoritter')!.kategorier).toEqual(['favoritter', 'favorittdiskusjoner'])
     expect(grupper.find((g) => g.gruppe === 'forslag')!.kategorier).toEqual(['mine_forslag', 'forslag_til_behandling'])
+    expect(grupper.find((g) => g.gruppe === 'grupper')!.kategorier).toEqual(['gruppeideer', 'gruppeoppgaver'])
   })
 
   it('viser kategorien for forslag til behandling bare for behandlerne', () => {
@@ -191,7 +196,7 @@ const ideVarsel = (ekstra: Partial<Databasevarsel> = {}): Databasevarsel => ({
   kilde: 'database',
   id: 'v1',
   kategori: 'mine_ideer',
-  ide: { id: 'i1', tittel: 'Mørk modus', forfatterId: 'kari' },
+  ide: { id: 'i1', tittel: 'Mørk modus', forfatterId: 'kari', gruppe: null },
   hendelser: [
     { kl: '2026-09-29T10:00:00Z', av: 'ola', kommentar: 'k1', svarTil: null },
     { kl: '2026-09-29T11:00:00Z', av: 'per', kommentar: 'k2', svarTil: 'kari' },
@@ -216,13 +221,13 @@ describe('tekstene', () => {
   })
 
   it('sier svar når det bare er svar til deg, og aktive når du bare har kommentert', () => {
-    const svar = ideVarsel({ ide: { id: 'i1', tittel: 'x', forfatterId: 'ola' }, hendelser: [{ kl: '', av: 'per', kommentar: 'k', svarTil: 'kari' }] })
+    const svar = ideVarsel({ ide: { id: 'i1', tittel: 'x', forfatterId: 'ola', gruppe: null }, hendelser: [{ kl: '', av: 'per', kommentar: 'k', svarTil: 'kari' }] })
     expect(idetekst(svar, 'kari', navn)).toBe('Per svarte på kommentaren din')
     expect(idetekst({ ...svar, kategori: 'aktive_ideer' }, 'kari', navn)).toBe('Per kommenterte en idé du har kommentert')
   })
 
   it('sier hvem som skrev en ny idé', () => {
-    const ny = ideVarsel({ kategori: 'nye_ideer', ide: { id: 'i2', tittel: 'Utskrift', forfatterId: 'ola' }, hendelser: [{ kl: '', av: 'ola' }] })
+    const ny = ideVarsel({ kategori: 'nye_ideer', ide: { id: 'i2', tittel: 'Utskrift', forfatterId: 'ola', gruppe: null }, hendelser: [{ kl: '', av: 'ola' }] })
     expect(idetekst(ny, 'kari', navn)).toBe('Ola skrev en ny idé')
   })
 
@@ -408,5 +413,47 @@ describe('endringsforslagene', () => {
     expect(ressurstekst(citalopram.ressurs)).toBe('Citalopram')
     expect(ressurstekst({ type: 'intervallregelsett', navn: 'AMIS', analyttkode: 'AMIS' })).toBe('Reglene for AMIS')
     expect(ressurstekst({ type: 'thc_regelsett', navn: null, analyttkode: 'THC' })).toBe('Reglene for THC')
+  })
+})
+
+describe('gruppene (P6b)', () => {
+  const gruppe = { id: 'g1', navn: 'Hepatologi' }
+  const oppgave = { id: 'o1', tittel: 'Lag en sjekkliste', gruppe }
+  const les = (varsel: Record<string, unknown>) => lesVarselliste({ lest_kl: 'x', varsler: [{ id: 'v', oppdatert_kl: 'x', ...varsel }] }).varsler[0]
+
+  it('leser gruppen idéen hører til, og oppgaven hendelsen gjelder', () => {
+    const ny = les({ kategori: 'gruppeideer', ide: { id: 'i1', tittel: 'Ny rutine', forfatter_id: 'ola', gruppe }, hendelser: [{ kl: 'x', av: 'ola' }] })!
+    expect(ny.ide).toEqual({ id: 'i1', tittel: 'Ny rutine', forfatterId: 'ola', gruppe })
+    expect(varselgruppe(ny)).toEqual(gruppe)
+    const tildelt = les({ kategori: 'gruppeoppgaver', ide: null, hendelser: [{ kl: 'x', av: 'per', art: 'tildelt', gruppeoppgave: oppgave }] })!
+    expect(varselgruppeoppgave(tildelt)).toEqual(oppgave)
+    expect(varselgruppe(tildelt)).toEqual(gruppe)
+    // En oppgave uten gruppe har ikke formen, og står ikke.
+    const uten = les({ kategori: 'gruppeoppgaver', ide: null, hendelser: [{ kl: 'x', av: 'per', art: 'tildelt', gruppeoppgave: { id: 'o2', tittel: 'x' } }] })!
+    expect(varselgruppeoppgave(uten)).toBeNull()
+  })
+
+  it('sier hva som skjedde i gruppen, med dem som gjorde det', () => {
+    const varsel = (kategori: 'gruppeideer' | 'gruppeoppgaver', hendelser: Databasevarsel['hendelser']) => {
+      const v = ideVarsel({ kategori, hendelser })
+      if (!erGruppevarsel(v)) throw new Error('ikke et gruppevarsel')
+      return v
+    }
+    expect(gruppetekst(varsel('gruppeideer', [{ kl: 'x', av: 'ola' }, { kl: 'x', av: 'per' }]), navn)).toBe('Per og Ola skrev en ny idé')
+    expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'tildelt', gruppeoppgave: oppgave }]), navn)).toBe('Per ga deg en oppgave')
+    expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'ikke_aktuell' }]), navn)).toBe('Per merket idéen din «Ikke aktuelt»')
+    expect(
+      gruppetekst(
+        varsel('gruppeoppgaver', [
+          { kl: 'x', av: 'per', art: 'ikke_aktuell' },
+          { kl: 'x', av: 'ola', art: 'gjenapnet' },
+          { kl: 'x', av: 'ola', art: 'gjort_om', gruppeoppgave: oppgave },
+        ]),
+        navn,
+      ),
+    ).toBe('Ola gjorde idéen din om til en oppgave')
+    expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'fullfort', gruppeoppgave: oppgave }]), navn)).toBe('Per merket oppgaven fra idéen din fullført')
+    expect(gruppetekst(varsel('gruppeoppgaver', [{ kl: 'x', av: 'per', art: 'noe_nytt' }]), navn)).toBe('Per oppdaterte en oppgave')
+    expect(erGruppevarsel(ideVarsel())).toBe(false)
   })
 })

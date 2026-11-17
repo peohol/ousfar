@@ -108,6 +108,18 @@ describe('det lenken peker på', () => {
     expect(lesLenkemaal({ ...mal, slag: 'diskusjon' }, { ...diskusjon, slag: 'ide' })).toBeNull()
   })
 
+  it('gir en idé i en gruppe gruppens navn, og avviser en idé med både kategori og gruppe', () => {
+    const mal = { slag: 'ide' as const, id: TRAAD, kommentar: null }
+    const gruppe = { id: 'g1', navn: 'Hepatologi' }
+    const ide = { ...diskusjon, slag: 'ide', side: undefined, idekategori: null, gruppe, gruppeoppgave: true }
+    const maal = lesLenkemaal(mal, ide)!
+    expect(maal).toMatchObject({ slag: 'ide', idekategori: null, gruppe, gruppeoppgave: true, overfort: false })
+    expect(lenkedeler(maal, '')).toMatchObject({ sted: 'Hepatologi', kategori: 'Gruppe: Hepatologi' })
+    expect(lenkeetikett(lenkedeler(maal, ''))).toBe('Hepatologi · Maksdose ved nyresvikt')
+    expect(lesLenkemaal(mal, { ...ide, idekategori: 'fag' })).toBeNull()
+    expect(lesLenkemaal(mal, { ...ide, gruppe: null })).toBeNull()
+  })
+
   it('korter ned utdraget', () => {
     expect(utdrag(dok('a '.repeat(300)), 20)).toBe('a a a a a a a a a a…')
     expect(utdrag(null)).toBe('')

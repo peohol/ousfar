@@ -438,13 +438,95 @@ invitasjonene og hvor nye grupper kan opprettes), `gruppeoversikt(gruppe)`
 (medlemmene og handlingene) og `mine_lesbare_grupper()` (for
 radsikkerheten).
 
-**Idéene** er uendret (D8): felles for alle med aktivt medlemskap. Gruppene
-har ingen egne idéer.
+**Idéene og oppgavene** i gruppene står i neste avsnitt. De felles idéene
+og de planlagte oppgavene er uendret (D8).
 
 **Tilbakeføring.** Tabellene, kolonnene og funksjonene kan stå. En ny
 migrasjon kan ta grenen for grupper ut av `rekkevidde`-reglene og funksjonene
 (som da ser alt med `omfang = 'gruppe'` som ulesbart), eller arkivere alle
 gruppene.
+
+## Idéer og oppgaver i gruppene
+
+P6b (#430, `supabase/migrations/20261117040100_gruppeideer_og_gruppeoppgaver.sql`)
+gir hver gruppe egne idéer og egne oppgaver, både i grupper i et fagmiljø og
+på tvers. Det er ingen chat, ingen fildeling og ingen ny innlogging her.
+
+**Idéene.** En gruppeidé er en vanlig rad i `ideer` med `gruppe_id`, og har
+de samme kommentarene, svarene, hjertene, det nye (`idebesok`), varslene og
+direktelenkene som de felles idéene (`docs/ideer.md`). En gruppeidé har
+ingen kategori; en felles idé har alltid en (regelen
+`ideer_kategori_eller_gruppe`). Gruppen velges når idéen skrives og kan
+aldri endres. Forfatteren kan endre og slette idéen så lenge den er åpen.
+
+| Hvem | Lese | Skrive idéer og kommentarer | Slette andres | Behandle | Opprette og tildele oppgaver | Sette status |
+| --- | --- | --- | --- | --- | --- | --- |
+| Medlem | ja | ja | nei | nei | nei | på egne oppgaver |
+| Moderator | ja | ja | ja | nei | nei | på egne oppgaver |
+| Ansvarlig | ja | ja | ja | ja | ja | ja |
+| Systemarkitekt | ja, alle grupper | ja | ja | ja | ja | ja |
+| Ikke med i gruppen | nei | nei | nei | nei | nei | nei |
+
+Alt krever en aktiv gruppe; i en arkivert gruppe er alt frosset, også for
+systemarkitektene som leser den. *Lese* er `intern.kan_lese_gruppe`, og
+*skrive* `intern.kan_bidra_i_gruppe` (lese en aktiv gruppe).
+`public.kan_behandle_ide(ide)` og `public.kan_moderere_ide(ide)` gir svaret
+for én idé, både de felles (systemarkitektene, D8) og gruppeidéene.
+
+**Behandlingen.** De ansvarlige kan merke en idé «Ikke aktuelt»
+(`arkiver_ide`), åpne den igjen (`gjenopprett_ide`, uten frist for en
+gruppeidé) og gjøre den om til en oppgave (`gjor_om_til_gruppeoppgave`). En
+gruppeidé som ikke er aktuell, slettes aldri av seg selv; de ansvarlige kan
+slette den. Forfatteren varsles om hver behandling (`gruppeoppgaver`).
+Gruppeidéene kan ikke overføres til de planlagte oppgavene (`overfor_ide`
+avviser dem), og ryddingen av idéarkivet gjelder bare de felles idéene.
+
+**Fra idé til oppgave.** Oppgaven får overskriften og beskrivelsen fra idéen,
+og husker idéen (`ide_id`) og hvem som foreslo den (`foreslatt_av`). Idéen kan
+da ikke endres, men tråden er åpen: gruppen kan fortsette å kommentere og gi
+hjerter der. Å gjøre om en idé som alt er gjort om, gir den samme oppgaven.
+Fjernes oppgaven (`fjern_gruppeoppgave`), står idéen åpen igjen med
+kommentarene; det er også angringen.
+
+**Oppgavene** står i en egen tabell, `gruppeoppgaver`, helt atskilt fra de
+planlagte oppgavene: ingen OPG-nummer, ingen agentkø, ingen saker eller
+endringer i GitHub, og ingen virkning på appens prioriteringer. En oppgave har
+overskrift, beskrivelse, prioritet (Høy, Normal, Lav), status (Ikke påbegynt,
+Pågår, Fullført), når og hvordan den ble til, og kan ha én som har den. De
+ansvarlige oppretter, endrer, tildeler og fjerner (`opprett_gruppeoppgave`,
+`endre_gruppeoppgave`, `tildel_gruppeoppgave`); oppgaven kan bare gis til et
+aktivt medlem med tilgang, eller til ingen. Status settes av de ansvarlige og
+av den som har oppgaven (`sett_gruppeoppgavestatus`). Den som får en oppgave,
+varsles. Mister den som har oppgaven tilgangen, står oppgaven, og lista viser
+at hen ikke lenger er med.
+
+**Lesingen.** `gruppeideer(gruppe)` (idéene og om den innloggede kan skrive og
+behandle), `idetraad(ide)`, `gruppeoppgaveoversikt(gruppe)` (de uferdige
+først, etter prioritet), `gruppeoppgave(oppgave)` (med `lest_kl`; varslene
+om oppgaven fram til da merkes lest med `merk_gruppeoppgave_sett(oppgave,
+til)`, så et varsel som kommer i mellomtiden, står ulest, som for idéene) og
+tallene på fanene i
+`gruppeoversikt(gruppe).samhandling` (nye idéer, idéer som venter på
+behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
+`ideoversikt()`, i tallet på nye idéer eller i det globale søket.
+
+**Ingen lekkasje.** Radsikkerheten `rekkevidde` på `ideer` slipper bare
+gruppeidéer fra gruppene den innloggede leser (`mine_lesbare_grupper()`), og
+kommentarene, hjertene og besøkene følger idéen. Fjernes et medlem, eller
+mister hen medlemskapet i gruppens fagmiljø, mister hen med en gang idéene,
+kommentarene, oppgavene, varslene og direktelenkene i gruppen; det hen har
+skrevet, blir stående. En bruker fra B i en gruppe på tvers får fortsatt
+ingenting lokalt i A.
+
+**Samtidighet.** Operasjonene på oppgavene låser gruppens rad (delt, så de
+venter på medlemsendringer og arkivering) og så oppgavens eller idéens rad.
+To ansvarlige som gjør om den samme idéen samtidig, får den samme oppgaven;
+gjør den ene den om mens den andre merker den «Ikke aktuelt», lykkes bare den
+ene (`gruppesamhandling.samtidighet.test.ts`).
+
+**Tilbakeføring.** En ny migrasjon setter funksjonene og reglene tilbake og
+tar bort `rekkevidde`-reglene på idétabellene. Tabellen `gruppeoppgaver` og
+kolonnen `ideer.gruppe_id` kan stå; uten funksjonene leses ingenting i dem.
 
 ## Aktivt medlemskap
 

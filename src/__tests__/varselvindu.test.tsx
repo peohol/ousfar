@@ -52,7 +52,7 @@ const LISTE: Varselliste = {
       kilde: 'database',
       id: 'v-ide',
       kategori: 'mine_ideer',
-      ide: { id: 'i1', tittel: 'Mørk modus', forfatterId: 'kari' },
+      ide: { id: 'i1', tittel: 'Mørk modus', forfatterId: 'kari', gruppe: null },
       hendelser: [{ kl: '2026-09-29T11:00:00Z', av: 'ola', kommentar: 'k1', svarTil: null }],
       oppdatert_kl: '2026-09-29T11:00:00Z',
       lest: false,
@@ -62,7 +62,7 @@ const LISTE: Varselliste = {
       kilde: 'database',
       id: 'v-aktiv',
       kategori: 'aktive_ideer',
-      ide: { id: 'i2', tittel: 'Flere kilder', forfatterId: 'ola' },
+      ide: { id: 'i2', tittel: 'Flere kilder', forfatterId: 'ola', gruppe: null },
       hendelser: [{ kl: '2026-09-29T10:00:00Z', av: 'ola', kommentar: 'k2', svarTil: null }],
       oppdatert_kl: '2026-09-29T10:00:00Z',
       lest: false,
@@ -88,7 +88,7 @@ const LISTE: Varselliste = {
       kilde: 'database',
       id: 'v-ny-ide',
       kategori: 'nye_ideer',
-      ide: { id: 'i3', tittel: 'Utskrift av svaret', forfatterId: 'ola' },
+      ide: { id: 'i3', tittel: 'Utskrift av svaret', forfatterId: 'ola', gruppe: null },
       hendelser: [{ kl: '2026-09-29T08:00:00Z', av: 'ola' }],
       oppdatert_kl: '2026-09-29T08:00:00Z',
       lest: false,
@@ -368,6 +368,13 @@ describe('vinduet', () => {
         [
           ['Kommentarer i mine diskusjoner', true, true],
           ['Kommentarer i diskusjoner jeg har vært aktiv i', true, false],
+        ],
+      ],
+      [
+        'Grupper',
+        [
+          ['Nye idéer i gruppene mine', true, false],
+          ['Oppgaver og idéene mine i gruppene', true, false],
         ],
       ],
       // Forslag til behandling vises bare for dem som kan behandle forslag.

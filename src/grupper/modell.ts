@@ -23,9 +23,9 @@ export const ROLLENAVN: Readonly<Record<Grupperolle, string>> = {
 
 /** Hva rollen gir, kort, til valgene. */
 export const ROLLEFORKLARING: Readonly<Record<Grupperolle, string>> = {
-  medlem: 'Leser og skriver i diskusjonene.',
-  moderator: 'Kan også skjule, arkivere og ordne diskusjonene.',
-  ansvarlig: 'Kan også invitere, endre roller og fjerne medlemmer.',
+  medlem: 'Leser og skriver i diskusjonene og idéene, og kan få oppgaver.',
+  moderator: 'Kan også skjule, arkivere og ordne diskusjonene, og slette idéer og kommentarer.',
+  ansvarlig: 'Kan også invitere, endre roller, fjerne medlemmer og behandle idéene og oppgavene.',
 }
 
 export type Gruppeart = 'fagmiljo' | 'tverrfaglig'
@@ -84,6 +84,18 @@ export interface Gruppemedlem extends Profilkort {
   siste_ansvarlige: boolean
 }
 
+/** Tallene til fanene i gruppen (`intern.gruppesamhandling`). */
+export interface Gruppesamhandling {
+  /** Idéer som er nye, eller har nye kommentarer, for den innloggede. */
+  nye_ideer: number
+  /** Idéer som venter på behandling: verken «Ikke aktuelt» eller gjort om til en oppgave. */
+  venter: number
+  /** Oppgaver den innloggede har, og som ikke er fullført. */
+  mine_oppgaver: number
+}
+
+export const INGEN_SAMHANDLING: Gruppesamhandling = { nye_ideer: 0, venter: 0, mine_oppgaver: 0 }
+
 /** Svaret fra `gruppeoversikt`. */
 export interface Gruppeoversikt extends Gruppe {
   opprettet_kl: string
@@ -93,6 +105,7 @@ export interface Gruppeoversikt extends Gruppe {
   kan_forlate: boolean
   kan_gjenapne: boolean
   medlemmer: Gruppemedlem[]
+  samhandling: Gruppesamhandling
 }
 
 /** Svaret fra operasjonene på et medlemskap. */
@@ -105,10 +118,10 @@ export interface Gruppesvar {
 
 /* --- Lesingen ---------------------------------------------------------------- */
 
-const enAv = <T extends string>(verdier: readonly T[], verdi: unknown): T | null =>
+export const enAv = <T extends string>(verdier: readonly T[], verdi: unknown): T | null =>
   typeof verdi === 'string' && (verdier as readonly string[]).includes(verdi) ? (verdi as T) : null
 
-const liste = <T>(verdi: unknown, les: (v: unknown) => T | null): T[] =>
+export const liste = <T>(verdi: unknown, les: (v: unknown) => T | null): T[] =>
   Array.isArray(verdi) ? verdi.map(les).filter((v): v is T => v !== null) : []
 
 const lesRolle = (verdi: unknown) => enAv(GRUPPEROLLER, verdi)
@@ -172,6 +185,11 @@ function lesMedlem(verdi: unknown): Gruppemedlem | null {
   }
 }
 
+function lesSamhandling(verdi: unknown): Gruppesamhandling {
+  if (!erObjekt(verdi)) return INGEN_SAMHANDLING
+  return { nye_ideer: tall(verdi.nye_ideer), venter: tall(verdi.venter), mine_oppgaver: tall(verdi.mine_oppgaver) }
+}
+
 export function lesGruppeoversikt(verdi: unknown): Gruppeoversikt | null {
   const gruppe = lesGruppe(verdi)
   if (!gruppe || !erObjekt(verdi)) return null
@@ -184,6 +202,7 @@ export function lesGruppeoversikt(verdi: unknown): Gruppeoversikt | null {
     kan_forlate: verdi.kan_forlate === true,
     kan_gjenapne: verdi.kan_gjenapne === true,
     medlemmer: liste(verdi.medlemmer, lesMedlem),
+    samhandling: lesSamhandling(verdi.samhandling),
   }
 }
 

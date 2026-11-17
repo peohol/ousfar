@@ -42,6 +42,9 @@ function ide(id: string, forfatter: string, kategori: Ide['kategori'], opprettet
     oppgave: null,
     kommentarer: 0,
     nye_kommentarer: 0,
+    gruppe_id: null,
+    gruppeoppgave: null,
+    sett: true,
   }
 }
 

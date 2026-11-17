@@ -44,7 +44,16 @@ export type Lenkemaal =
       /** Kategorien i tråden; «Ukategoriserte» når den ikke har noen. */
       kategori: { navn: string; emoji: string }
     })
-  | (Felles & { slag: 'ide'; idekategori: Idekategori; overfort: boolean })
+  | (Felles & {
+      slag: 'ide'
+      /** Kategorien til en felles idé; `null` for en idé i en gruppe. */
+      idekategori: Idekategori | null
+      /** Gruppen idéen hører til, når den hører til en. */
+      gruppe: { id: string; navn: string } | null
+      overfort: boolean
+      /** Idéen er gjort om til en oppgave i gruppen. */
+      gruppeoppgave: boolean
+    })
 
 /** Lengste utdrag forhåndsvisningen viser. */
 export const UTDRAG_MEST = 280
@@ -100,13 +109,23 @@ export function lesLenkemaal(mal: Lenkemal, verdi: unknown): Lenkemaal | null {
     const kategori = erObjekt(verdi.kategori) ? { navn: tekst(verdi.kategori.navn), emoji: tekst(verdi.kategori.emoji) } : null
     return { ...felles, slag: 'diskusjon', side, kategori: kategori?.navn && kategori.emoji ? kategori : UKATEGORISERTE }
   }
-  if (!erKategori(verdi.idekategori)) return null
-  return { ...felles, slag: 'ide', idekategori: verdi.idekategori, overfort: verdi.overfort === true }
+  const gruppe = erObjekt(verdi.gruppe) && tekst(verdi.gruppe.id) ? { id: tekst(verdi.gruppe.id), navn: tekst(verdi.gruppe.navn) } : null
+  const idekategori = erKategori(verdi.idekategori) ? verdi.idekategori : null
+  // En idé har enten en kategori (de felles) eller en gruppe, aldri begge eller ingen.
+  if ((idekategori === null) === (gruppe === null)) return null
+  return {
+    ...felles,
+    slag: 'ide',
+    idekategori,
+    gruppe,
+    overfort: verdi.overfort === true,
+    gruppeoppgave: verdi.gruppeoppgave === true,
+  }
 }
 
 /** Det lenkebrikken viser, i biter: hvor, kategorien, overskriften og kommentaren. */
 export interface Lenkedeler {
-  /** Siden tråden står på, eller «Idéer». */
+  /** Siden tråden står på, gruppen idéen hører til, eller «Idéer». */
   sted: string
   /** Emojien til kategorien i en diskusjon. */
   emoji: string | null
@@ -125,7 +144,13 @@ export function lenkedeler(maal: Lenkemaal, sidenavn: string): Lenkedeler {
     : null
   return maal.slag === 'diskusjon'
     ? { sted: sidenavn, emoji: maal.kategori.emoji, kategori: maal.kategori.navn, tittel: maal.tittel, kommentar }
-    : { sted: 'Idéer', emoji: null, kategori: KATEGORINAVN[maal.idekategori], tittel: maal.tittel, kommentar }
+    : {
+        sted: maal.gruppe?.navn ?? 'Idéer',
+        emoji: null,
+        kategori: maal.idekategori ? KATEGORINAVN[maal.idekategori] : `Gruppe: ${maal.gruppe?.navn ?? ''}`,
+        tittel: maal.tittel,
+        kommentar,
+      }
 }
 
 /**
