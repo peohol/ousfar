@@ -511,17 +511,25 @@ behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
 
 **I appen.** Gruppesiden har faner (`#/grupper/<ID>`, `…/ideer`,
-`…/ideer/<idé-ID>`; `src/components/grupper/`): Oversikt (medlemmene og
-handlingene for gruppen), Idéer og en knapp til Diskusjoner, som åpner
-diskusjonsmenyen på siden. Fanene er samme side (`sidesti`), så diskusjonene
+`…/ideer/<idé-ID>`, `…/oppgaver`, `…/oppgaver/<oppgave-ID>`;
+`src/components/grupper/`): Oversikt (medlemmene og handlingene for gruppen),
+Idéer, Oppgaver og en knapp til Diskusjoner, som åpner diskusjonsmenyen på
+siden. Fanene er samme side (`sidesti`), så diskusjonene
 står og ingenting lastes på nytt. Idéfanen viser de åpne idéene med de nye
 først (merket «Ny»), søk i overskriftene, og skuffene «Gjort om til
 oppgaver» og «Ikke aktuelt». Tallet på fanen er det som venter på behandling
 for de ansvarlige, og idéene med noe nytt for de andre. Én idé bruker den
 samme visningen som idévinduet (`Ideside`), og knappene følger det databasen
 svarer i tråden (`kan_behandle`, `kan_moderere`, `kan_kommentere`). En
-adresse med en idé fra en annen gruppe viser den som borte, og et skjema med
-endringer spør før det forlates, også gjennom fanene og lenkene på siden.
+adresse med en idé eller oppgave fra en annen gruppe viser den som borte, og et
+skjema med endringer spør før det forlates, også gjennom fanene og lenkene på
+siden.
+Oppgavefanen har oppgavene den innloggede har øverst (tallet på fanen), så de
+andre etter prioritet, og de fullførte i en skuff. Én oppgave viser hvem som
+har den, status, prioritet, opphavet (idéen og hvem som foreslo den) og idéen
+med tråden under; statusvalget står for dem som kan sette den
+(`kan_sette_status`), og tildeling, endring og fjerning for de ansvarlige
+(`kan_endre`). Oppgaven kan bare gis til aktive medlemmer med tilgang.
 
 **Ingen lekkasje.** Radsikkerheten `rekkevidde` på `ideer` slipper bare
 gruppeidéer fra gruppene den innloggede leser (`mine_lesbare_grupper()`), og
