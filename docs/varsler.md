@@ -75,7 +75,10 @@ gjorde det, varsles ikke.
   `gruppeoppgaver` med nøkkelen `gruppeoppgaver:<ID>`. Hendelsen sier hva som
   skjedde (`art`) og hvilken oppgave det gjelder (`gruppeoppgave`). Varslene
   har gruppens `gruppe_id`, så bare de som leser gruppen nå, ser dem, og en
-  hendelse om en oppgave som er fjernet, står ikke.
+  hendelse om en oppgave som er fjernet, står ikke. Et trykk på varselet går
+  til gruppesiden (`gruppemaal`): til oppgaven når varselet gjelder en
+  oppgave (tildelt, fullført), ellers til idéen på idéfanen, også for
+  kommentarene på en gruppeidé.
 - **Diskusjonskommentarer** (`diskusjonskommentarer_varsle`): som
   idékommentarene, med `mine_diskusjoner` og `aktive_diskusjoner`.
 - **Nye tråder** (`diskusjoner_varsle`): en ny tråd på en fagside gir

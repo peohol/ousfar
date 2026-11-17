@@ -642,6 +642,27 @@ export function varselgruppe(varsel: Databasevarsel): Varselgrupperef | null {
   return varsel.ide?.gruppe ?? varselgruppeoppgave(varsel)?.gruppe ?? null
 }
 
+/** Hvor et varsel om en gruppe leder: til oppgaven, til idéen, eller til gruppen. */
+export type Gruppemaal =
+  | { slag: 'oppgave'; gruppe: string; id: string }
+  | { slag: 'ide'; gruppe: string; id: string }
+  | { slag: 'gruppe'; gruppe: string }
+
+/**
+ * Hvor varselet leder: en oppgave man har fått, eller som er fullført, til
+ * oppgaven; resten til idéen. Uten noen av dem til gruppen, og `null` når
+ * varselet ikke gjelder en gruppe.
+ */
+export function gruppemaal(varsel: Databasevarsel): Gruppemaal | null {
+  const gruppe = varselgruppe(varsel)
+  if (!gruppe) return null
+  const oppgave = varselgruppeoppgave(varsel)
+  const art = varsel.hendelser.at(-1)?.art
+  if (oppgave && (!varsel.ide || art === 'tildelt' || art === 'fullfort')) return { slag: 'oppgave', gruppe: gruppe.id, id: oppgave.id }
+  if (varsel.ide) return { slag: 'ide', gruppe: gruppe.id, id: varsel.ide.id }
+  return { slag: 'gruppe', gruppe: gruppe.id }
+}
+
 /** «Ada skrev en ny idé», «Bo gjorde idéen din om til en oppgave». */
 export function gruppetekst(varsel: Databasevarsel & { kategori: Gruppekategori }, navn: (id: string) => string): string {
   if (varsel.kategori === 'gruppeideer') return `${navneliste(aktorer(varsel.hendelser).map(navn))} skrev en ny idé`

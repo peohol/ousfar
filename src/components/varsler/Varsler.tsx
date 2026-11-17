@@ -25,6 +25,7 @@ import {
   favorittsted,
   forslagstekst,
   fortolkningsobjekter,
+  gruppemaal,
   gruppetekst,
   idetekst,
   kategorierIGrupper,
@@ -34,6 +35,7 @@ import {
   varselforslag,
   varselgruppe,
   varselgruppeoppgave,
+  type Gruppemaal,
   type Databasevarsel,
   type Endringsvarsel,
   type Fortolkningsobjekt,
@@ -44,6 +46,7 @@ import { Bryter } from '../Bryter'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { visIde } from '../ideer/idevisning'
+import { visGruppeide, visGruppeoppgave } from '../grupper/gruppevisning'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
 import { adresseForSide } from '../../diskusjoner/modell'
 import { Tidspunkt } from '../traad/Smadeler'
@@ -340,14 +343,15 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 
   if (erGruppevarsel(varsel)) {
     const gruppe = varselgruppe(varsel)
+    const maal = gruppemaal(varsel)
     const tekst = gruppetekst(varsel, navn)
     const tittel = varselgruppeoppgave(varsel)?.tittel ?? varsel.ide?.tittel
     return (
       <>
-        {gruppe ? (
-          <a className="varsel__tittel" data-ih="" href={gruppeadresse(gruppe.id)} onClick={() => onGa(varsel)}>
+        {maal ? (
+          <button type="button" className="varsel__tittel" data-ih="" onClick={() => onGa(varsel, () => tilGruppen(maal))}>
             {tekst}
-          </a>
+          </button>
         ) : (
           <p className="varsel__tittel">{tekst}</p>
         )}
@@ -387,17 +391,27 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 
   const ide = varsel.ide
   const antall = varsel.hendelser.length
+  // En idé i en gruppe står på gruppesiden; de felles i idévinduet.
+  const tilIdeen = () => ide && (ide.gruppe ? visGruppeide(ide.gruppe.id, ide.id) : visIde({ id: ide.id }))
   return (
     <>
-      <button type="button" className="varsel__tittel" data-ih="" onClick={() => ide && onGa(varsel, () => visIde({ id: ide.id }))}>
+      <button type="button" className="varsel__tittel" data-ih="" onClick={() => ide && onGa(varsel, tilIdeen)}>
         {idetekst(varsel, meg, navn)}
       </button>
       <p className="varsel__meta">
         {ide && <span className="varsel__ide">«{ide.tittel}»</span>}
+        {ide?.gruppe && <> · {ide.gruppe.navn}</>}
         {antall > 1 && <> · {antall} kommentarer</>} · {tid}
       </p>
     </>
   )
+}
+
+/** Går dit et varsel om en gruppe leder. */
+function tilGruppen(maal: Gruppemaal) {
+  if (maal.slag === 'oppgave') visGruppeoppgave(maal.gruppe, maal.id)
+  else if (maal.slag === 'ide') visGruppeide(maal.gruppe, maal.id)
+  else window.location.hash = gruppeadresse(maal.gruppe)
 }
 
 /** Adressen til fortolkningssiden reglene for en analyttkode hører til, når appen kjenner koden. */

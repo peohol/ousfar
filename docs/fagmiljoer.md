@@ -530,6 +530,8 @@ har den, status, prioritet, opphavet (idéen og hvem som foreslo den) og idéen
 med tråden under; statusvalget står for dem som kan sette den
 (`kan_sette_status`), og tildeling, endring og fjerning for de ansvarlige
 (`kan_endre`). Oppgaven kan bare gis til aktive medlemmer med tilgang.
+Varslene og direktelenkene til en gruppeidé eller en oppgave åpner den på
+gruppesiden (`gruppevisning.ts`), med kommentaren lenken peker på uthevet.
 
 **Ingen lekkasje.** Radsikkerheten `rekkevidde` på `ideer` slipper bare
 gruppeidéer fra gruppene den innloggede leser (`mine_lesbare_grupper()`), og
