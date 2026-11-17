@@ -130,6 +130,21 @@
   overflow-wrap: anywhere;
 }
 
+/* En gruppeidé den innloggede ikke har åpnet. */
+.idekort__ny {
+  display: inline-block;
+  margin-right: var(--rom-2);
+  padding: var(--rom-1) var(--rom-2);
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-merke);
+  font-weight: var(--vekt-halvfet);
+  line-height: 1;
+  vertical-align: middle;
+  color: var(--paa-aksent);
+  background: var(--aksent);
+  border-radius: var(--runding-pille);
+}
+
 .idekort__meta {
   grid-column: 1;
   display: flex;
@@ -371,7 +386,7 @@
   --status: var(--alvorlig);
 }
 
-:is(.statusmerke, .statusprikk)[data-status='under_arbeid'] {
+:is(.statusmerke, .statusprikk):is([data-status='under_arbeid'], [data-status='paagaar']) {
   --status: var(--toksisk);
 }
 
@@ -383,7 +398,7 @@
   --status: var(--info);
 }
 
-:is(.statusmerke, .statusprikk)[data-status='utfort'] {
+:is(.statusmerke, .statusprikk):is([data-status='utfort'], [data-status='fullfort']) {
   --status: var(--aksent);
 }
 

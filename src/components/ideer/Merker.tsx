@@ -1,4 +1,12 @@
-import { KATEGORINAVN, OPPGAVESTATUSNAVN, oppgavekode, type Idekategori, type Oppgavestatus } from '../../ideer/modell'
+import { GRUPPEOPPGAVESTATUSNAVN } from '../../grupper/oppgaver'
+import {
+  KATEGORINAVN,
+  OPPGAVESTATUSNAVN,
+  oppgavekode,
+  type Gruppeoppgavestatus,
+  type Idekategori,
+  type Oppgavestatus,
+} from '../../ideer/modell'
 
 /**
  * Kategorien som merke, i samme toner som typemerkene i endringsloggen: fag
@@ -26,6 +34,15 @@ export function Oppgavestatusmerke({ status }: { status: Oppgavestatus }) {
   return (
     <span className="statusmerke" data-status={status}>
       {OPPGAVESTATUSNAVN[status]}
+    </span>
+  )
+}
+
+/** Statusen til en oppgave i en gruppe, i samme form: rød, gul og grønn prikk. */
+export function Gruppeoppgavestatusmerke({ status }: { status: Gruppeoppgavestatus }) {
+  return (
+    <span className="statusmerke" data-status={status}>
+      {GRUPPEOPPGAVESTATUSNAVN[status]}
     </span>
   )
 }

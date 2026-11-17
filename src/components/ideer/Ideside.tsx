@@ -11,6 +11,7 @@ import {
   slettIde,
   slettKommentar,
 } from '../../ideer/api'
+import { gjorOmTilGruppeoppgave } from '../../grupper/api'
 import { idetilstand, slettesKl, type Idetraad } from '../../ideer/modell'
 import type { Kommentar } from '../../traad/modell'
 import { UnderOverskrift } from '../Overskriftsniva'
@@ -18,7 +19,7 @@ import { Riktekst } from '../stoffside/Riktekst'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
-import { Kategorimerke } from './Merker'
+import { Gruppeoppgavestatusmerke, Kategorimerke } from './Merker'
 import { Kommentartraad, type Fremheving, type Kommentarkanal } from '../traad/Kommentartraad'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
 import { Hjerteknapp, Idehandling, Slettknapp, Tidspunkt } from '../traad/Smadeler'
@@ -27,19 +28,23 @@ const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', y
 
 /**
  * Én idé: overskriften, hvem som skrev den og når, beskrivelsen, hjertene og
- * kommentartråden. Forfatteren kan endre og slette idéen; en systemarkitekt
- * kan slette den, legge den i arkivet («Ikke aktuelt») eller overføre den til
- * Planlagte oppgaver.
+ * kommentartråden. Forfatteren kan endre og slette idéen. Den som behandler
+ * idéene (`kan_behandle`: en systemarkitekt for de felles idéene, de
+ * ansvarlige i gruppen for en gruppeidé) kan legge den i «Ikke aktuelt» og
+ * overføre den til Planlagte oppgaver, eller gjøre en gruppeidé om til en
+ * oppgave i gruppen. Den som modererer (`kan_moderere`), kan slette den og
+ * andres kommentarer. Hva den innloggede kan, sier databasen i tråden.
  *
  * En arkivert eller overført idé er frosset: den kan leses, men ikke endres,
- * kommenteres eller gis hjerter. En systemarkitekt kan gjenopprette en
- * arkivert idé eller slette den for godt.
+ * kommenteres eller gis hjerter. En gruppeidé som er gjort om til en oppgave,
+ * kan ikke endres, men gruppen kan fortsette å kommentere den. Den som
+ * behandler idéene, kan gjenopprette en arkivert idé eller slette den for godt.
  *
  * Å åpne idéen merker den som sett. Kommentarene som var nye da den ble
  * åpnet, står merket som nye til man går ut av den.
  *
- * `innebygd`: idéen står inni en planlagt oppgave, som bakgrunn for den. Da
- * tar den ikke fokus og har ingen av handlingene for systemarkitektene.
+ * `innebygd`: idéen står inni en oppgave, som bakgrunn for den. Da tar den
+ * ikke fokus og har ingen av handlingene for behandlingen.
  */
 export function Ideside({
   id,
@@ -49,9 +54,17 @@ export function Ideside({
   onArkivert,
   onOverfort,
   onOppgave,
+  onGjortOm,
+  onGruppeoppgave,
+  onGjenapnet,
+  onSett,
+  gruppe,
+  overskriftsniva = 3,
   fremhev = null,
 }: {
   id: string
+  /** Gruppen idéen må høre til (på gruppesiden). En annen idé vises som borte. */
+  gruppe?: string
   innebygd?: boolean
   onEndre?: (ide: Idetraad) => void
   onSlettet?: () => void
@@ -61,10 +74,20 @@ export function Ideside({
   onOverfort?: (ide: Idetraad, oppgave: string) => void
   /** Til oppgaven en overført idé ble til. */
   onOppgave?: (oppgave: string) => void
+  /** En ansvarlig har gjort gruppeidéen om til en oppgave i gruppen. */
+  onGjortOm?: (ide: Idetraad, oppgave: string) => void
+  /** Til oppgaven i gruppen en gruppeidé er gjort om til. */
+  onGruppeoppgave?: (oppgave: string) => void
+  /** Idéen er åpnet igjen, eller gjenopprettet fra arkivet. */
+  onGjenapnet?: (ide: Idetraad) => void
+  /** Idéen og kommentarene er merket sett. */
+  onSett?: () => void
+  /** Nivået på overskriften når idéen ikke er innebygd: 3 i idévinduet, 2 på gruppesiden. */
+  overskriftsniva?: 2 | 3
   /** Kommentaren en direktelenke førte til. */
   fremhev?: Fremheving | null
 }) {
-  const { meg, systemarkitekt } = useForfatterkontekst()
+  const { meg } = useForfatterkontekst()
   const [traad, setTraad] = useState<Idetraad | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
@@ -74,7 +97,9 @@ export function Ideside({
 
   const hent = useCallback(async () => {
     try {
-      const hentet = await hentIdetraad(id)
+      const funnet = await hentIdetraad(id)
+      // På gruppesiden står bare gruppens egne idéer, så adressen ikke viser en annen idé under gruppens navn.
+      const hentet = funnet && (gruppe === undefined || funnet.gruppe_id === gruppe) ? funnet : null
       if (!hentet) setFeil('Idéen finnes ikke lenger.')
       setTraad(hentet)
       return hentet
@@ -82,14 +107,16 @@ export function Ideside({
       setFeil('Fikk ikke hentet idéen.')
       return null
     }
-  }, [id])
+  }, [id, gruppe])
 
   useEffect(() => {
     void hent().then((hentet) => {
       if (!hentet) return
       setSistSett((forrige) => (forrige === undefined ? hentet.sist_sett : forrige))
-      void merkIdeSett(hentet).catch(() => undefined)
+      void merkIdeSett(hentet).then(() => onSett?.(), () => undefined)
     })
+    // `onSett` følger ikke med: idéen merkes sett én gang per henting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hent])
 
   // Fokus på overskriften når idéen er hentet, så skjermlesere leser hvor man er.
@@ -100,7 +127,8 @@ export function Ideside({
 
   const forfatter = useForfatternavn(traad?.forfatter_id ?? null)
 
-  /** Kommentarene under idéen. En systemarkitekt kan slette alle (D8). */
+  /** Kommentarene under idéen. Den som modererer idéen, kan slette alle (D8, og moderatorene i gruppen). */
+  const moderererer = traad?.kan_moderere ?? false
   const kanal = useMemo<Kommentarkanal>(
     () => ({
       slag: 'ide',
@@ -108,9 +136,9 @@ export function Ideside({
       opprett: (forelder, tekst) => opprettKommentar(id, forelder, tekst),
       endre: (kommentar, tekst) => endreKommentar(kommentar, tekst),
       slett: (kommentar) => slettKommentar(kommentar),
-      sletterAndres: systemarkitekt,
+      sletterAndres: moderererer,
     }),
-    [id, systemarkitekt],
+    [id, moderererer],
   )
 
   /**
@@ -164,10 +192,13 @@ export function Ideside({
 
   const tilstand = idetilstand(traad)
   const laast = tilstand !== 'apen'
+  /** Tråden tar imot kommentarer og hjerter: når idéen er åpen, og under en gruppeoppgave. */
+  const traadLaast = !traad.kan_kommentere
   const eier = traad.forfatter_id === meg.id
-  const administrerer = systemarkitekt && !innebygd
-  const niva = innebygd ? 4 : 3
-  const Overskrift = niva === 4 ? 'h4' : 'h3'
+  const administrerer = traad.kan_behandle && !innebygd
+  const gruppeide = traad.gruppe_id !== null
+  const niva = innebygd ? 4 : overskriftsniva
+  const Overskrift = `h${niva}` as 'h2' | 'h3' | 'h4'
 
   return (
     <article className="ideside" data-innebygd={innebygd || undefined} aria-labelledby={`ide-${traad.id}`}>
@@ -190,7 +221,10 @@ export function Ideside({
         <div className="idemerknad" role="note">
           <Ikon navn="arkiv" storrelse="ui" />
           <p>
-            <strong>Ikke aktuelt.</strong> Idéen slettes automatisk {DATO.format(slettesKl(traad.arkivert_kl))}.
+            <strong>Ikke aktuelt.</strong>{' '}
+            {gruppeide
+              ? 'Idéen står her til en ansvarlig i gruppen åpner den igjen eller sletter den.'
+              : `Idéen slettes automatisk ${DATO.format(slettesKl(traad.arkivert_kl))}.`}
           </p>
           {administrerer && (
             <div className="idemerknad__handlinger">
@@ -202,10 +236,11 @@ export function Ideside({
                   void utfor(async () => {
                     await gjenopprettIde(traad.id)
                     await hent()
+                    onGjenapnet?.(traad)
                   })
                 }
               >
-                Gjenopprett
+                {gruppeide ? 'Åpne igjen' : 'Gjenopprett'}
               </Button>
               <Slettknapp hva="idéen for godt" onSlett={slett} />
             </div>
@@ -229,6 +264,23 @@ export function Ideside({
         </div>
       )}
 
+      {tilstand === 'gruppeoppgave' && traad.gruppeoppgave && !innebygd && (
+        <div className="idemerknad" role="note">
+          <Ikon navn="oppgaver" storrelse="ui" />
+          <p>
+            <strong>Gjort om til en oppgave i gruppen.</strong> <Gruppeoppgavestatusmerke status={traad.gruppeoppgave.status} /> Idéen kan
+            ikke endres lenger, men tråden er åpen for kommentarer.
+          </p>
+          {onGruppeoppgave && (
+            <div className="idemerknad__handlinger">
+              <Button variant="kant" icon={<Ikon navn="chev" storrelse="ui" />} onClick={() => onGruppeoppgave(traad.gruppeoppgave!.id)}>
+                Gå til oppgaven
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {traad.tekst && (
         <UnderOverskrift niva={niva}>
           <Riktekst dokument={traad.tekst} />
@@ -242,13 +294,13 @@ export function Ideside({
       )}
 
       <div className="idehandlinger">
-        <Hjerteknapp antall={traad.hjerter} gitt={traad.mitt_hjerte} onVeksle={() => veksleHjerte(null)} hva="idéen" laast={laast} />
+        <Hjerteknapp antall={traad.hjerter} gitt={traad.mitt_hjerte} onVeksle={() => veksleHjerte(null)} hva="idéen" laast={traadLaast} />
         {eier && !laast && onEndre && (
           <Idehandling ikon="edit" onClick={() => onEndre(traad)}>
             Rediger
           </Idehandling>
         )}
-        {!laast && (eier || systemarkitekt) && !innebygd && <Slettknapp hva="idéen" onSlett={slett} />}
+        {!laast && (eier || traad.kan_moderere) && !innebygd && <Slettknapp hva="idéen" onSlett={slett} />}
         <Kopilenkeknapp mal={{ slag: 'ide', id: traad.id, kommentar: null }} hva="idéen" />
       </div>
 
@@ -267,18 +319,35 @@ export function Ideside({
           >
             Ikke aktuelt
           </Button>
-          <Button
-            variant="kant"
-            icon={<Ikon navn="yes" storrelse="ui" />}
-            disabled={arbeider}
-            onClick={() =>
-              void utfor(async () => {
-                onOverfort?.(traad, await overforIde(traad.id))
-              })
-            }
-          >
-            Overfør til planlagte oppgaver
-          </Button>
+          {gruppeide ? (
+            <Button
+              variant="kant"
+              icon={<Ikon navn="oppgaver" storrelse="ui" />}
+              disabled={arbeider}
+              onClick={() =>
+                void utfor(async () => {
+                  const oppgave = await gjorOmTilGruppeoppgave(traad.id)
+                  await hent()
+                  onGjortOm?.(traad, oppgave)
+                })
+              }
+            >
+              Gjør om til oppgave
+            </Button>
+          ) : (
+            <Button
+              variant="kant"
+              icon={<Ikon navn="yes" storrelse="ui" />}
+              disabled={arbeider}
+              onClick={() =>
+                void utfor(async () => {
+                  onOverfort?.(traad, await overforIde(traad.id))
+                })
+              }
+            >
+              Overfør til planlagte oppgaver
+            </Button>
+          )}
         </div>
       )}
 
@@ -288,7 +357,7 @@ export function Ideside({
         sistSett={sistSett ?? null}
         onEndret={hent}
         onHjerte={veksleHjerte}
-        laast={laast}
+        laast={traadLaast}
         fremhev={fremhev}
       />
     </article>

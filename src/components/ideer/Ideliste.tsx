@@ -17,7 +17,7 @@ import {
 import { Ikon } from '../ikon/Ikon'
 import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Skuff } from '../Skuff'
-import { Kategorimerke, Oppgavekode, Oppgavestatusmerke } from './Merker'
+import { Gruppeoppgavestatusmerke, Kategorimerke, Oppgavekode, Oppgavestatusmerke } from './Merker'
 import { Tidspunkt, Valgrad } from '../traad/Smadeler'
 
 /** Skuffene nederst i lista, etter navnet laget husker dem under. */
@@ -177,8 +177,12 @@ function Gruppe({
   )
 }
 
-/** Et kort i lista. Hele kortet er knappen som åpner idéen. */
-function Idekort({
+/**
+ * Et kort i lista. Hele kortet er knappen som åpner idéen. En gruppeidé den
+ * innloggede ikke har åpnet, er merket «Ny», og en som er gjort om, har
+ * statusen til oppgaven.
+ */
+export function Idekort({
   ide,
   visKategori,
   visForfatter,
@@ -193,7 +197,10 @@ function Idekort({
   const nye = ide.nye_kommentarer
   return (
     <button type="button" className="idekort" data-ide={ide.id} data-ih="" onClick={onApne}>
-      <span className="idekort__tittel">{ide.tittel}</span>
+      <span className="idekort__tittel">
+        {ide.gruppe_id && !ide.sett && <span className="idekort__ny">Ny</span>}
+        {ide.tittel}
+      </span>
       <span className="idekort__meta">
         {visForfatter && (
           <>
@@ -206,7 +213,8 @@ function Idekort({
         {visKategori && <Kategorimerke kategori={ide.kategori} />}
         {ide.oppgave && <Oppgavestatusmerke status={ide.oppgave.status} />}
         {ide.oppgave?.nummer != null && <Oppgavekode nummer={ide.oppgave.nummer} />}
-        {!ide.oppgave && ide.arkivert_kl && <Slettes arkivertKl={ide.arkivert_kl} />}
+        {ide.gruppeoppgave && <Gruppeoppgavestatusmerke status={ide.gruppeoppgave.status} />}
+        {!ide.oppgave && !ide.gruppe_id && ide.arkivert_kl && <Slettes arkivertKl={ide.arkivert_kl} />}
       </span>
       <span className="idekort__tall">
         <span className="idekort__tal" data-gitt={ide.mitt_hjerte || undefined}>
@@ -236,7 +244,7 @@ function Slettes({ arkivertKl }: { arkivertKl: string }) {
   return <span className="idekort__slettes">{dager <= 1 ? 'Slettes i morgen' : `Slettes om ${dager} dager`}</span>
 }
 
-function Nyknapp({ onNy, navn = 'Ny idé' }: { onNy: () => void; navn?: string }) {
+export function Nyknapp({ onNy, navn = 'Ny idé' }: { onNy: () => void; navn?: string }) {
   return (
     <button type="button" className="idekort idekort--ny" data-ih="" onClick={onNy} aria-label={navn}>
       <Ikon navn="plus" storrelse="ui" />

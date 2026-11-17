@@ -22,7 +22,7 @@ export function TilbehandlingFane({ aktiv }: { aktiv: boolean }) {
   if (!useRettigheter().behandlerForslag) return null
   return (
     <li>
-      <a className="forslagsside__fane" href={forslagsadresse(undefined, 'behandling')} aria-current={aktiv ? 'page' : undefined}>
+      <a className="gruppeside__fane" href={forslagsadresse(undefined, 'behandling')} aria-current={aktiv ? 'page' : undefined}>
         Til behandling
       </a>
     </li>
@@ -56,12 +56,12 @@ export function Tilbehandling() {
   return (
     <div className="forslagsko">
       <div className="forslagsko__valg">
-        <div className="forslagsside__faner" role="group" aria-label="Vis forslagene">
+        <div className="gruppeside__faner" role="group" aria-label="Vis forslagene">
           {UTVALG.map((u) => (
             <button
               key={u.verdi}
               type="button"
-              className="forslagsside__fane forslagsko__utvalg"
+              className="gruppeside__fane forslagsko__utvalg"
               aria-pressed={u.verdi === valgt.verdi}
               onClick={() => setUtvalg(u.verdi)}
             >

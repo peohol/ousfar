@@ -961,7 +961,7 @@ function Arbeidsflate({
 
                   {rute.side === 'grupper' && (
                     <main className="scene scene--infoside">
-                      <Grupperside gruppe={rute.gruppe} onLukk={lukkInfoside} />
+                      <Grupperside gruppe={rute.gruppe} fane={rute.fane} element={rute.element} onLukk={lukkInfoside} />
                     </main>
                   )}
 
