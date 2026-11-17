@@ -47,7 +47,7 @@ const SIDENOKKEL = k(
   'avledet',
   'Fra sidenøkkelen: stoff:/register: felles, fortolkning: lokal (§3), gruppe: gruppen (P6); per rad siden P2b (omfang, fagmiljo_id, gruppe_id)',
 )
-const IDE = k('felles', 'Idéer og planlagte oppgaver er felles (§3)')
+const IDE = k('avledet', 'De felles idéene og de planlagte oppgavene er felles (§3); en gruppeidé hører til gruppen (gruppe_id, P6b)')
 const OFFENTLIG_KILDE = k('felles', 'Offentlig kilde (§3)')
 
 /**
@@ -128,6 +128,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.idekommentarer': IDE,
   'public.idehjerter': IDE,
   'public.oppgaver': k('forvaltning', 'Planlagte oppgaver styres av systemarkitektene (§2.8, D8)'),
+  'public.gruppeoppgaver': k('avledet', 'P6b: gruppenes egne oppgaver, per gruppe (gruppe_id); leses bare gjennom funksjonene'),
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),

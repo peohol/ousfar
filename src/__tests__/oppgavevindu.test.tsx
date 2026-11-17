@@ -85,6 +85,11 @@ const IDEEN: Idetraad = {
   mitt_hjerte: false,
   arkivert_kl: null,
   oppgave: { id: 'a', status: 'ikke_paabegynt', nummer: null },
+  gruppe_id: null,
+  gruppeoppgave: null,
+  kan_behandle: false,
+  kan_moderere: false,
+  kan_kommentere: true,
   sist_sett: null,
   lest_kl: '2026-09-28T09:00:00Z',
   kommentarer: [
