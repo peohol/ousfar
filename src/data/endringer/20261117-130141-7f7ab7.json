@@ -1,0 +1,14 @@
+{
+  "id": "20261117-130141-7f7ab7",
+  "semver": "patch",
+  "opprettet": "2026-11-17T13:01:41Z",
+  "sammendrag": "Databasen for gruppechatten er klar",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Databasen kan nå lagre meldinger i chatten i gruppene. Bare de som leser gruppen, kan lese og skrive, og tilgangen forsvinner med en gang medlemskapet avsluttes.",
+    "Meldinger slettes automatisk etter 12 måneder, og tekst som ser ut som et fødselsnummer, avvises.",
+    "Chatten er ikke slått på ennå, så ingenting endres for brukerne."
+  ],
+  "utenVarsel": true
+}

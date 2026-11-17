@@ -166,6 +166,38 @@ som er borte.
 **Logging.** Meldingsteksten skrives aldri i tilgangsloggen, i `raise`-tekster
 eller i varsler. Slettingen lagrer hvem og når på meldingen selv.
 
+**Levert i A1** (`supabase/migrations/20261117130000_gruppechat.sql`, prøvd i
+`src/__tests__/gruppechat.test.ts` og `gruppechat.samtidighet.test.ts`).
+Det som ikke står i kontrakten over:
+
+- `gruppemeldinger.gruppe_id` og `gruppechat_lest.gruppe_id` peker på
+  `gruppechatter`, så chatraden alltid finnes for en melding. Raden lages ved
+  første lesing (`les_gruppechat`) eller første skriving. Sanntiden (C) får
+  derfor bare `UPDATE` på raden etter at chatten er åpnet; et abonnement på
+  `INSERT` i tillegg skader ikke.
+- `gruppemeldinger.slettet_som` (`forfatter` eller `moderator`) lagres ved
+  slettingen, så `slettet.av` står riktig også når en konto senere slettes.
+- Radsikkerheten på `gruppechatter` bruker `public.mine_lesbare_gruppechatter()`
+  (tom mens chatten er avslått), i tillegg til den felles regelen
+  `aktivt_medlemskap`.
+- Svarkodene: `42501` for bryteren, en gruppe eller melding som ikke finnes
+  eller ikke kan leses («Gruppen finnes ikke, eller du har ikke tilgang til
+  den.» / «Meldingen finnes ikke, …»), og for å endre eller slette uten rett;
+  `55000` for skriving i en arkivert gruppe og endring av en slettet melding;
+  `22023` for vaktene og manglende `klient_id`; `54000` for takten. En utgått
+  melding svarer som en som ikke finnes.
+- Systemarkitektenes sletting i en arkivert gruppe går gjennom
+  `intern.kan_moderere_gruppechat`, som også gir `kan_moderere` og
+  `kan_slette` i svarene.
+- `antall` er 1–100 i `les_gruppechat` og 1–500 i `gruppechat_endringer`.
+  Takten gjelder nye meldinger; endringer telles ikke. Uendret tekst i
+  `endre_gruppemelding` øker ikke endringstelleren.
+- `merk_gruppechat_lest` flytter aldri forbi `siste_nr` og gjør ingenting i en
+  gruppe uten meldinger.
+- `intern.rydd_gruppechat()` er ikke satt opp som en planlagt jobb; ryddingen
+  ved sending og lesing er nok så lenge funksjonene aldri leser ut en utgått
+  melding.
+
 ## Formen på svarene
 
 Typene står i `src/gruppechat/modell.ts` (grunnmuren) og leses med
@@ -349,3 +381,4 @@ Fylles ut av trådene.
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
+| A1 Database og tilgang | (PR kommer) | Til kontroll |

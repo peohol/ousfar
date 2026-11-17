@@ -225,9 +225,10 @@ describe('idéene i en gruppe', () => {
 
   it('viser det nye: idéer som ikke er åpnet og nye kommentarer', async () => {
     const ide = await nyGruppeide('vanligA', agruppe)
-    const tall = async (p: Person) => (await verdi<{ samhandling: Record<string, number> }>(p, 'select public.gruppeoversikt($1)', [agruppe])).samhandling
-    expect(await tall('dobbeltAB')).toEqual({ nye_ideer: 1, venter: 1, mine_oppgaver: 0 })
-    expect(await tall('vanligA')).toEqual({ nye_ideer: 0, venter: 1, mine_oppgaver: 0 })
+    const tall = async (p: Person) => (await verdi<{ samhandling: Record<string, number | null> }>(p, 'select public.gruppeoversikt($1)', [agruppe])).samhandling
+    // P7: `chat_uleste` er null så lenge gruppechatten er avslått (docs/gruppechat.md).
+    expect(await tall('dobbeltAB')).toEqual({ nye_ideer: 1, venter: 1, mine_oppgaver: 0, chat_uleste: null })
+    expect(await tall('vanligA')).toEqual({ nye_ideer: 0, venter: 1, mine_oppgaver: 0, chat_uleste: null })
     const lest = await verdi<{ lest_kl: string }>('dobbeltAB', 'select public.idetraad($1)', [ide])
     await somPerson('dobbeltAB', 'select public.merk_ide_sett($1, $2)', [ide, lest.lest_kl])
     expect((await tall('dobbeltAB')).nye_ideer).toBe(0)
