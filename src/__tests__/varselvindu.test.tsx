@@ -125,7 +125,7 @@ const api = vi.hoisted(() => ({
 const visIde = vi.hoisted(() => vi.fn())
 const visEndringslogg = vi.hoisted(() => vi.fn())
 const visDiskusjon = vi.hoisted(() => vi.fn())
-const gruppevisning = vi.hoisted(() => ({ visGruppeide: vi.fn(), visGruppeoppgave: vi.fn() }))
+const gruppevisning = vi.hoisted(() => ({ visGruppeide: vi.fn(), visGruppeoppgave: vi.fn(), visGruppen: vi.fn() }))
 
 vi.mock('../varsler/api', () => api)
 vi.mock('../auth/okt', () => ({ useProfil: () => KARI }))

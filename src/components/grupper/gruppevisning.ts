@@ -1,6 +1,7 @@
 import { gruppeadresse } from '../../domain/rute'
 import { lagSignal } from '../../domain/signal'
 import { forlatIdelagene } from '../ideer/idevisning'
+import type { Forlat } from '../ideer/useForlatvakt'
 
 /**
  * Veien inn til en idé eller en oppgave i en gruppe fra andre steder i appen,
@@ -17,11 +18,37 @@ interface Ventende {
 
 let venter: Ventende | null = null
 const signal = lagSignal()
+/** Vakten `Grupperside` melder for skjemaet som står åpent i en fane. */
+let forlatSiden: Forlat | null = null
 
-function gaTil(adresse: string, erstatt: boolean) {
-  if (window.location.hash === adresse) return
-  if (erstatt) window.location.replace(adresse)
-  else window.location.hash = adresse
+/**
+ * Gjør `deretter` når skjemaene kan forlates: idélagene og et skjema på
+ * gruppesiden spør først når de har endringer som ikke er lagret, og
+ * forkastes de ikke, skjer ingenting.
+ */
+export function forlatSkjemaene(deretter: () => void): void {
+  forlatIdelagene(() => (forlatSiden ? forlatSiden(deretter) : deretter()))
+}
+
+/** For `Grupperside`. Gir tilbake funksjonen som melder vakten av. */
+export function meldGruppesiden(forlat: Forlat): () => void {
+  forlatSiden = forlat
+  return () => {
+    if (forlatSiden === forlat) forlatSiden = null
+  }
+}
+
+/** Går til adressen, gjennom skjemavaktene når den er en annen enn den som står. */
+function gaTil(adresse: string, erstatt: boolean, deretter?: () => void) {
+  const ga = () => {
+    if (window.location.hash !== adresse) {
+      if (erstatt) window.location.replace(adresse)
+      else window.location.hash = adresse
+    }
+    deretter?.()
+  }
+  if (window.location.hash === adresse) forlatIdelagene(ga)
+  else forlatSkjemaene(ga)
 }
 
 /**
@@ -30,16 +57,20 @@ function gaTil(adresse: string, erstatt: boolean) {
  * adressefeltet).
  */
 export function visGruppeide(gruppe: string, ide: string, kommentar: string | null = null, { erstatt = false } = {}): void {
-  forlatIdelagene(() => {
+  gaTil(gruppeadresse(gruppe, 'ideer', ide), erstatt, () => {
     venter = kommentar ? { ide, kommentar } : null
-    gaTil(gruppeadresse(gruppe, 'ideer', ide), erstatt)
     signal.send()
   })
 }
 
 /** Går til oppgaven i gruppen. */
 export function visGruppeoppgave(gruppe: string, oppgave: string): void {
-  forlatIdelagene(() => gaTil(gruppeadresse(gruppe, 'oppgaver', oppgave), false))
+  gaTil(gruppeadresse(gruppe, 'oppgaver', oppgave), false)
+}
+
+/** Går til oversikten over gruppen. */
+export function visGruppen(gruppe: string): void {
+  gaTil(gruppeadresse(gruppe), false)
 }
 
 /** Kommentaren som venter på å vises under idéen, om noen. Den venter ikke lenger etterpå. */

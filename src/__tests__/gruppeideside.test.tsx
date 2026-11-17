@@ -5,7 +5,7 @@
  * behandlingen bare vises for dem databasen sier kan behandle. Kallene er
  * erstattet; reglene selv prøves mot databasen i `gruppesamhandling.test.ts`.
  */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
@@ -123,6 +123,7 @@ const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
 const { lesGruppeideer } = await import('../ideer/modell')
 const { sokIGruppeideer } = await import('../components/grupper/Gruppeideer')
+const { visGruppeoppgave } = await import('../components/grupper/gruppevisning')
 
 beforeAll(() => {
   Element.prototype.scrollIntoView ??= function () {}
@@ -307,5 +308,27 @@ describe('skjemaet', () => {
     expect(lukket).not.toHaveBeenCalled()
     await userEvent.click(screen.getByRole('button', { name: 'Forkast endringene' }))
     expect(lukket).toHaveBeenCalled()
+  })
+
+  it('spør før et varsel eller en lenke utenfra fører bort fra en ny idé med endringer', async () => {
+    vis('ideer')
+    await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
+    await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
+    act(() => visGruppeoppgave(GRUPPE, OPPGAVE))
+    expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
+    expect(window.location.hash).toBe('')
+    await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
+    expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
+    act(() => visGruppeoppgave(GRUPPE, OPPGAVE))
+    await userEvent.click(await screen.findByRole('button', { name: 'Forkast endringene' }))
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/oppgaver/${OPPGAVE}`)
+  })
+
+  it('går rett videre fra gruppesiden når ingen skjemaer har endringer', async () => {
+    vis('ideer')
+    await screen.findByRole('button', { name: 'Ny idé' })
+    act(() => visGruppeoppgave(GRUPPE, OPPGAVE))
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/oppgaver/${OPPGAVE}`)
+    expect(screen.queryByText('Du har endringer som ikke er lagret.')).toBeNull()
   })
 })

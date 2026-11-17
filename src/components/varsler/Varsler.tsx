@@ -6,7 +6,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { fortolkningsadresseForAnalytt } from '../../domain/koblinger'
-import { forslagsadresse, gruppeadresse, stoffadresse } from '../../domain/rute'
+import { forslagsadresse, stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
@@ -46,7 +46,7 @@ import { Bryter } from '../Bryter'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { visIde } from '../ideer/idevisning'
-import { visGruppeide, visGruppeoppgave } from '../grupper/gruppevisning'
+import { visGruppeide, visGruppen, visGruppeoppgave } from '../grupper/gruppevisning'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
 import { adresseForSide } from '../../diskusjoner/modell'
 import { Tidspunkt } from '../traad/Smadeler'
@@ -411,7 +411,7 @@ function Databaseinnhold({ varsel, meg, navn, onGa }: RadProps & { varsel: Datab
 function tilGruppen(maal: Gruppemaal) {
   if (maal.slag === 'oppgave') visGruppeoppgave(maal.gruppe, maal.id)
   else if (maal.slag === 'ide') visGruppeide(maal.gruppe, maal.id)
-  else window.location.hash = gruppeadresse(maal.gruppe)
+  else visGruppen(maal.gruppe)
 }
 
 /** Adressen til fortolkningssiden reglene for en analyttkode hører til, når appen kjenner koden. */

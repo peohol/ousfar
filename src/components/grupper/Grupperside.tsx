@@ -40,6 +40,7 @@ import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import type { Forlat } from '../ideer/useForlatvakt'
 import { Gruppeideer } from './Gruppeideer'
 import { Gruppeoppgaver } from './Gruppeoppgaver'
+import { meldGruppesiden } from './gruppevisning'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
@@ -75,6 +76,8 @@ export function Grupperside({
   const skjemavakt = useRef<Forlat | null>(null)
   const lukk = () => (skjemavakt.current ? skjemavakt.current(onLukk) : onLukk())
   useLukkMedEscape(lukk)
+  // Det som kommer utenfra, som et varsel eller en direktelenke, går gjennom den samme vakten.
+  useEffect(() => meldGruppesiden((handling) => (skjemavakt.current ? skjemavakt.current(handling) : handling())), [])
 
   // En ny side begynner øverst, med fokus på overskriften.
   useEffect(() => {
