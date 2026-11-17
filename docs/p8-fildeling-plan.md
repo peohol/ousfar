@@ -82,7 +82,6 @@ bilder grundig.
 | --- | --- | --- |
 | Bryteren `intern.gruppechat_aktivert()` | P7.0 | Samme mønster: `intern.gruppefiler_aktivert()`, `false` til Peder har sagt ja |
 | `intern.ligner_personnummer`, `intern.krev_uten_personnummer`, `@delt/pasientopplysninger` (`lignerPersonnummer`, `PASIENTREGEL`) | P7.0 | Filnavn, beskrivelser og tekstfiler |
-| `Pasientregel` og `Pasientvarsel` (`src/components/Pasientregel.tsx`) | P7.0 | I opplastingsvinduet |
 | «Leses av de N medlemmene i gruppen og av systemarkitektene» | P7 tråd B | Øverst i filfanen |
 | Gruppesidens faner (`GRUPPEFANER` i `src/domain/rute.ts`, `Grupperside.tsx`, `gruppevisning.ts`) | P6b, P7 | Ny fane `filer` |
 | Varslene: ett ulest varsel per gruppe og nøkkel, med `gruppe_id`, uten innhold | P7 tråd C | Kategori `gruppefiler`, nøkkel `gruppefiler:<gruppe-ID>` |
@@ -369,9 +368,9 @@ lenger enn nødvendig, fordi en slettet fil lever videre der.
 
 | Kontroll | Hvor | Hva den fanger |
 | --- | --- | --- |
-| Filnavn og beskrivelse mot fødselsnummer | Nettleseren (advarsel) og databasen (`intern.krev_uten_personnummer`, avvisning) | «Prøvesvar 01017012345.pdf» |
-| Tekst i `.txt` og `.csv` mot fødselsnummer | Nettleseren (advarsel) og Edge-funksjonen (avvisning) | Lister med fødselsnumre |
-| Tekst i `.docx`, `.xlsx`, `.pptx` mot fødselsnummer | Nettleseren, som advarsel før opplasting (filene er zip med XML og kan leses lokalt) | Tabeller og dokumenter med fødselsnumre. Ikke på serveren: å pakke ut store filer går ikke innenfor Edge-grensene |
+| Filnavn og beskrivelse mot fødselsnummer | Databasen (`intern.krev_uten_personnummer`, avvisning) | «Prøvesvar 01017012345.pdf» |
+| Tekst i `.txt` og `.csv` mot fødselsnummer | Edge-funksjonen (avvisning) | Lister med fødselsnumre |
+| Tekst i `.docx`, `.xlsx`, `.pptx` mot fødselsnummer | Nettleseren, som stopper opplastingen med samme feil som avvisningen (filene er zip med XML og kan leses lokalt) | Tabeller og dokumenter med fødselsnumre. Ikke på serveren: å pakke ut store filer går ikke innenfor Edge-grensene |
 | EXIF og posisjon i bilder | Nettleseren lagrer bildet på nytt | Når og hvor bildet ble tatt, kameraet |
 | Bilder, skjermbilder og skannede dokumenter | **Ingen** | Et bilde av en journal, et prøvesvar eller en rekvisisjon kan ikke gjenkjennes uten bildegjenkjenning |
 | Navn, diagnoser, kasuistikker i fritekst | **Ingen** | Bare brukerens eget skjønn |
@@ -379,19 +378,18 @@ lenger enn nødvendig, fordi en slettet fil lever videre der.
 | Metadata i Office og PDF (forfatter, firma) | **Ingen** | Ansattes navn, ikke pasienters; å skrive filene om krever et eget bibliotek |
 
 Kontrollene er et sikkerhetsnett for åpenbare feil, ikke en garanti, og det
-skal stå slik i appen og i dokumentasjonen. Ingen fil eller tekst sendes til
+skal stå slik i dokumentasjonen. Ingen fil eller tekst sendes til
 ekstern AI eller noen annen tjeneste for kontroll.
 
 ### 5.2 Det brukeren ser
 
-- **Øverst i filfanen:** hvem som leser filene, og `Pasientregel`.
-- **I opplastingsvinduet:** regelen, med et tillegg for filer: «Ikke last opp
-  bilder eller skjermbilder av journal, prøvesvar eller rekvisisjoner. En fil
-  som er lastet ned, kan ikke hentes tilbake.» Opplastingen krever at brukeren
-  krysser av for «Filen inneholder ingen pasientopplysninger.» hver gang.
-- **Advarsel** (`Pasientvarsel`) når navnet, beskrivelsen eller teksten i
-  filen ligner et fødselsnummer; avvisningen fra databasen eller
-  Edge-funksjonen bruker `PASIENTREGEL.avvist`.
+- **Øverst i filfanen:** hvem som leser filene.
+- **Ingen påminnelser eller avkrysninger om pasientopplysninger** (Peder
+  17.11.2026: brukerne er godt trent i personvern, og påminnelser blir støy).
+  Regelen står i dokumentasjonen (`docs/pasientopplysninger.md`).
+- **Avvisning:** når navnet, beskrivelsen eller teksten i filen ligner et
+  fødselsnummer, avviser databasen eller Edge-funksjonen opplastingen med
+  `PASIENTREGEL.avvist`, og appen viser det som en feil ved opplastingen.
 - **Mobil:** filvelgeren åpner ikke kameraet direkte (ingen `capture`), så et
   bilde må velges bevisst.
 

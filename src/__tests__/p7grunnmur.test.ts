@@ -142,8 +142,8 @@ describe('avslaget', () => {
 })
 
 describe('bryteren og varslene', () => {
-  it('gruppechatten er avslått', async () => {
-    expect((await db.query<{ ja: boolean }>('select intern.gruppechat_aktivert() as ja')).rows[0]!.ja).toBe(false)
+  it('gruppechatten er slått på etter Peders ja (migrasjonen *_gruppechat_aktivering.sql)', async () => {
+    expect((await db.query<{ ja: boolean }>('select intern.gruppechat_aktivert() as ja')).rows[0]!.ja).toBe(true)
   })
 
   it('merkingen av varslene er tom i grunnmuren', async () => {

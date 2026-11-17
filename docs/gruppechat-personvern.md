@@ -52,9 +52,9 @@ eller noe annet om bruken.
 
 ## Det som krever Peders ja
 
-- **Å slå på chatten (S5).** Chatten er avslått (`intern.gruppechat_aktivert()`
-  gir `false`). Aktiveringen er en egen, liten migrasjon som viser til
-  godkjenningen.
+- **Å slå på chatten (S5). Gitt** av Peder 17.11.2026 («Ja, skru på
+  chatten.», P7-tråden). Aktiveringen er migrasjonen
+  `*_gruppechat_aktivering.sql`, slått sammen etter punktene under.
 - Å avvike fra standardvalgene på en måte som tar vare på mer, lenger eller
   hos flere: lengre lagringstid, en lagret kopi av slettet eller endret tekst,
   logg over hvem som leste hva, e-post eller push med innhold, eksport, eller
@@ -86,7 +86,9 @@ og kan gjøres uten eget ja, men skal skrives her.
 
 ## Det som gjenstår for S5
 
-S5 er Peders ja til å slå på chatten. Før det spørres om:
+S5 er Peders ja til å slå på chatten. Han ga det 17.11.2026, før
+sluttkontrollen var ferdig; aktiveringsmigrasjonen slås derfor ikke sammen før
+dette er oppfylt:
 
 1. Trådene A, B og C er slått sammen, og migrasjonene er rullet ut med
    chatten avslått.
@@ -95,5 +97,4 @@ S5 er Peders ja til å slå på chatten. Før det spørres om:
 3. Denne vurderingen er kontrollert, og standardvalgene står i appen slik de
    står her.
 
-P7-hovedtråden ber Peder om ja når 1–3 er oppfylt. Spørsmålet til ham er bare
-om chatten skal slås på med disse valgene.
+Med 1–3 oppfylt kan aktiveringen slås sammen uten nytt spørsmål til Peder.
