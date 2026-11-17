@@ -58,14 +58,17 @@ reaksjoner, omtaler (@navn), filvedlegg (P8), søk i chatten og eksport.
 | Medlem | ja | ja | ja | nei | ja |
 | Moderator | ja | ja | ja | ja | ja |
 | Ansvarlig | ja | ja | ja | ja | ja |
-| Systemarkitekt | ja, alle grupper | ja, i aktive grupper | ja | ja | ja |
+| Systemarkitekt | ja, alle grupper | ja, i aktive grupper | ja | ja, også i arkiverte | ja |
 | Invitert, fjernet, utenfor gruppen | nei | nei | nei | nei | nei |
 
 - *Lese* er `intern.kan_lese_gruppe`, *skrive* `intern.kan_bidra_i_gruppe`,
   *slette andres* `intern.kan_moderere_gruppe`. Alt krever aktivt medlemskap i
   OUSFAR og, for en gruppe i et fagmiljø, i fagmiljøet.
-- **Arkivert gruppe:** ingen nye meldinger, endringer eller slettinger, heller
-  ikke for systemarkitektene; de kan lese den som før.
+- **Arkivert gruppe:** ingen nye meldinger og ingen endringer, heller ikke for
+  systemarkitektene; de kan lese den som før. **Unntak:** en systemarkitekt
+  kan slette en melding også i en arkivert gruppe, så noe som ikke hører
+  hjemme der (som pasientopplysninger), kan fjernes uten å åpne gruppen igjen
+  (`docs/pasientopplysninger.md`, hendelser).
 - **Endre:** forfatteren, så lenge gruppen er aktiv. Endringen erstatter
   teksten, merkes «redigert», og den gamle teksten lagres ikke.
 - **Slette:** forfatteren og moderatorene. Teksten fjernes i databasen med en
@@ -345,3 +348,4 @@ Fylles ut av trådene.
 | Del | PR | Status |
 | --- | --- | --- |
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
+| E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
