@@ -77,10 +77,15 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *   #/kuratering/<gren-ID>
  *
  * Gruppene har en oversikt, og hver gruppe sin side etter ID-en, med
- * medlemmene og diskusjonene i gruppen:
+ * medlemmene og diskusjonene i gruppen, og fanene med idéene og oppgavene i
+ * gruppen, hver med én idé eller oppgave etter ID-en:
  *
  *   #/grupper
  *   #/grupper/<gruppe-ID>
+ *   #/grupper/<gruppe-ID>/ideer
+ *   #/grupper/<gruppe-ID>/ideer/<idé-ID>
+ *   #/grupper/<gruppe-ID>/oppgaver
+ *   #/grupper/<gruppe-ID>/oppgaver/<oppgave-ID>
  *
  * Endringsforslagene (P5, docs/redaktorer-og-forslag.md) har «Mine forslag»,
  * fanen med forslagene til behandling, og hvert forslag sin side etter ID-en:
@@ -134,6 +139,10 @@ export type Rute =
       side: 'grupper'
       /** ID-en til gruppen. Utelatt på oversikten. */
       gruppe?: string
+      /** Fanen i gruppen: idéene eller oppgavene. Utelatt for oversikten over gruppen. */
+      fane?: Gruppefane
+      /** ID-en til én idé eller oppgave i fanen. */
+      element?: string
     }
   | {
       side: 'forslag'
@@ -206,7 +215,11 @@ export const erId = (verdi: string): boolean => new RegExp(`^${ID}$`, 'i').test(
 
 const KURATERING = new RegExp(`^#\\/kuratering\\/(${ID})\\/?$`, 'i')
 
-const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID}))?\\/?$`, 'i')
+/** Fanene i en gruppe, slik de står i adressen. */
+export const GRUPPEFANER = ['ideer', 'oppgaver'] as const
+export type Gruppefane = (typeof GRUPPEFANER)[number]
+
+const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID})(?:\\/(${GRUPPEFANER.join('|')})(?:\\/(${ID}))?)?)?\\/?$`, 'i')
 
 /** Leddet i adressen til fanen «Til behandling». */
 const TIL_BEHANDLING = 'til-behandling'
@@ -242,7 +255,16 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
   const gren = KURATERING.exec(hash)
   if (gren?.[1]) return { side: 'kuratering', gren: gren[1].toLowerCase() }
   const gruppe = GRUPPER.exec(hash)
-  if (gruppe) return gruppe[1] ? { side: 'grupper', gruppe: gruppe[1].toLowerCase() } : { side: 'grupper' }
+  if (gruppe) {
+    const [, id, fane, element] = gruppe
+    if (!id) return { side: 'grupper' }
+    return {
+      side: 'grupper',
+      gruppe: id.toLowerCase(),
+      ...(fane ? { fane: fane.toLowerCase() as Gruppefane } : {}),
+      ...(fane && element ? { element: element.toLowerCase() } : {}),
+    }
+  }
   const forslag = FORSLAG.exec(hash)
   if (forslag) {
     const ledd = forslag[1]?.toLowerCase()
@@ -341,7 +363,7 @@ export function adresse(rute: Rute): string {
     case 'kuratering':
       return kurateringsadresse(rute.gren)
     case 'grupper':
-      return gruppeadresse(rute.gruppe)
+      return gruppeadresse(rute.gruppe, rute.fane, rute.element)
     case 'forslag':
       return forslagsadresse(rute.forslag, rute.fane)
     default:
@@ -370,9 +392,13 @@ export function forslagsadresse(forslag?: string, fane?: Forslagsfane): string {
   return fane === 'behandling' ? `#/forslag/${TIL_BEHANDLING}` : '#/forslag'
 }
 
-/** Adressen til gruppeoversikten, eller til én gruppe etter ID-en. */
-export function gruppeadresse(gruppe?: string): string {
-  return gruppe ? `#/grupper/${gruppe}` : '#/grupper'
+/**
+ * Adressen til gruppeoversikten, til én gruppe etter ID-en, til en fane i
+ * gruppen, eller til én idé eller oppgave i fanen.
+ */
+export function gruppeadresse(gruppe?: string, fane?: Gruppefane, element?: string): string {
+  if (!gruppe) return '#/grupper'
+  return ['#/grupper', gruppe, fane, fane && element].filter(Boolean).join('/')
 }
 
 /** Adressen til søkesiden for et søk. */

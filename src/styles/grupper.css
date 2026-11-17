@@ -137,3 +137,89 @@
 .grupperad__lenke:focus-visible .brukerrad__fullt {
   text-decoration: underline;
 }
+
+/* --- Fanene ----------------------------------------------------------------- */
+
+/* Fanene på en side som lenker: i gruppen og på endringsforslagene. */
+.gruppeside__faner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gruppeside__fane {
+  padding: var(--rom-2) var(--rom-4);
+  border-radius: var(--runding-pille);
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+  text-decoration: none;
+}
+
+/* Fanene (gruppene, forslagene) og utvalgene i køen er store nok å treffe med fingeren på smal skjerm. */
+@media (max-width: 47.5em) {
+  .gruppeside__fane {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rom-1);
+    min-height: var(--hoyde-trykk);
+  }
+}
+
+.gruppeside__fane[aria-current='page'] {
+  background: var(--flate-bunn);
+  color: var(--blekk);
+  font-weight: var(--vekt-halvfet);
+}
+
+button.gruppeside__fane {
+  font: inherit;
+  font-size: var(--tekst-ui);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.gruppeside__fane {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.gruppeside__fane:hover {
+  color: var(--blekk);
+}
+
+/* Tallet på det som venter eller er nytt i fanen. */
+.gruppeside__fanetall {
+  min-width: 1.25rem;
+  padding: var(--rom-1) var(--rom-2);
+  font-size: var(--tekst-merke);
+  font-weight: var(--vekt-halvfet);
+  line-height: 1;
+  text-align: center;
+  color: var(--paa-aksent);
+  background: var(--aksent);
+  border-radius: var(--runding-pille);
+}
+
+/* --- Idéene i gruppen ------------------------------------------------------ */
+
+.gruppeideer__verktoy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rom-3);
+}
+
+.gruppeideer__sok {
+  flex: 1 1 16rem;
+  max-width: 28rem;
+}
+
+.gruppeideer__tilbake {
+  margin: 0;
+}

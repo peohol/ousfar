@@ -90,7 +90,17 @@ const api = vi.hoisted(() => ({
   hentIdeerMedNytt: vi.fn(async () => 0),
 }))
 
-vi.mock('../ideer/api', () => api)
+// Hva den innloggede kan med idéen, slik databasen svarer i tråden: en
+// systemarkitekt behandler og modererer de felles idéene (D8), og en arkivert
+// eller overført idé er frosset.
+const somDatabasen = (traad: Idetraad | null): Idetraad | null =>
+  traad && {
+    ...traad,
+    kan_behandle: tilstand.meg.id === ADMIN.id,
+    kan_moderere: tilstand.meg.id === ADMIN.id,
+    kan_kommentere: !traad.arkivert_kl && !traad.oppgave,
+  }
+vi.mock('../ideer/api', () => ({ ...api, hentIdetraad: async (id: string) => somDatabasen(await api.hentIdetraad(id)) }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 // Systemarkitekten (D8) er Anne; databasen avgjør det i appen.
@@ -404,7 +414,8 @@ describe('en ny idé', () => {
     await bruker.type(screen.getByLabelText('Overskrift'), '  Mørkt tema i utskriften ')
     await bruker.click(screen.getByRole('button', { name: 'Publiser' }))
     await waitFor(() =>
-      expect(api.opprettIde).toHaveBeenCalledWith({ kategori: 'funksjonalitet', tittel: 'Mørkt tema i utskriften', tekst: null }),
+      // En felles idé: ingen gruppe.
+      expect(api.opprettIde).toHaveBeenCalledWith({ kategori: 'funksjonalitet', tittel: 'Mørkt tema i utskriften', tekst: null }, null),
     )
     expect(api.hentIdetraad).toHaveBeenCalledWith('ny')
   })

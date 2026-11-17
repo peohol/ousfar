@@ -18,7 +18,11 @@ OUSFAR, med hjerter og kommentartråder; de berører ikke den kliniske delen.
 
 **Gruppene** har egne idéer i den samme tabellen (`gruppe_id`), uten
 kategori, og egne oppgaver (`gruppeoppgaver`), helt atskilt fra Planlagte
-oppgaver. Gruppeidéene står aldri i idévinduet; de vises på gruppesiden.
+oppgaver. Gruppeidéene står aldri i idévinduet; de vises på gruppesiden,
+med de samme kortene (`Idekort`), skjemaet uten kategori (`Ideskjema` med
+`gruppe`) og den samme visningen av én idé (`Ideside`). Hvilke handlinger
+`Ideside` viser, følger det `idetraad()` svarer (`kan_behandle`,
+`kan_moderere`, `kan_kommentere`), både for de felles idéene og i gruppene.
 Reglene står i `docs/fagmiljoer.md`, «Idéer og oppgaver i gruppene», og
 modellen for oppgavene i `src/grupper/oppgaver.ts`.
 

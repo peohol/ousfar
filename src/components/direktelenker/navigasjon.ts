@@ -4,6 +4,7 @@ import type { Lenkemal } from '../../direktelenker/mal'
 import { lesRute } from '../../domain/rute'
 import { lagSignal } from '../../domain/signal'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
+import { visGruppeide } from '../grupper/gruppevisning'
 import { forlatIdelagene, visIde } from '../ideer/idevisning'
 
 const feil = lagSignal<string>()
@@ -13,10 +14,10 @@ export const lyttEtterLenkefeil = feil.lytt
 
 /**
  * Går dit en direktelenke peker: til siden tråden står på, med tråden åpen i
- * diskusjonsmenyen, eller til idéen i Idéer — og til kommentaren, når lenken
- * peker på en. Hvor tråden står, slås opp på nytt, så lenken følger den når
- * den er flyttet. Gir `false`, og sier fra, når det lenken peker på, ikke
- * finnes eller ikke kunne slås opp.
+ * diskusjonsmenyen, til idéen i Idéer, eller til en gruppeidé på gruppesiden —
+ * og til kommentaren, når lenken peker på en. Hvor tråden står, slås opp på
+ * nytt, så lenken følger den når den er flyttet. Gir `false`, og sier fra,
+ * når det lenken peker på, ikke finnes eller ikke kunne slås opp.
  *
  * Med `erstatt` skrives adressefeltet om uten å legge noe nytt i historikken:
  * lenken ble limt inn der, og tilbakeknappen skal gå dit man var før den.
@@ -34,7 +35,8 @@ export async function apneDirektelenke(mal: Lenkemal, { erstatt = false }: { ers
     return false
   }
   if (maal.slag === 'ide') {
-    visIde({ id: mal.id, kommentar: mal.kommentar })
+    if (maal.gruppe) visGruppeide(maal.gruppe.id, mal.id, mal.kommentar, { erstatt })
+    else visIde({ id: mal.id, kommentar: mal.kommentar })
     return true
   }
   // Tråden står bak idélagene, som lukkes først.

@@ -100,39 +100,6 @@
   color: var(--aksent);
 }
 
-.forslagsside__faner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--rom-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.forslagsside__fane {
-  padding: var(--rom-2) var(--rom-4);
-  border-radius: var(--runding-pille);
-  font-size: var(--tekst-ui);
-  color: var(--blekk-dempet);
-  text-decoration: none;
-}
-
-/* Fanene og utvalgene i køen er store nok å treffe med fingeren på smal skjerm. */
-@media (max-width: 47.5em) {
-  .forslagsside__fane {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--rom-1);
-    min-height: var(--hoyde-trykk);
-  }
-}
-
-.forslagsside__fane[aria-current='page'] {
-  background: var(--flate-bunn);
-  color: var(--blekk);
-  font-weight: var(--vekt-halvfet);
-}
-
 .forslagsliste {
   display: flex;
   flex-direction: column;

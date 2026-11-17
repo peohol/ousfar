@@ -112,7 +112,17 @@ const api = vi.hoisted(() => ({
 }))
 const visEndringslogg = vi.hoisted(() => vi.fn())
 
-vi.mock('../ideer/api', () => api)
+// Hva den innloggede kan med idéen, slik databasen svarer i tråden: en
+// systemarkitekt behandler og modererer de felles idéene (D8), og en arkivert
+// eller overført idé er frosset.
+const somDatabasen = (traad: Idetraad | null): Idetraad | null =>
+  traad && {
+    ...traad,
+    kan_behandle: tilstand.meg.id === ADMIN.id,
+    kan_moderere: tilstand.meg.id === ADMIN.id,
+    kan_kommentere: !traad.arkivert_kl && !traad.oppgave,
+  }
+vi.mock('../ideer/api', () => ({ ...api, hentIdetraad: async (id: string) => somDatabasen(await api.hentIdetraad(id)) }))
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))

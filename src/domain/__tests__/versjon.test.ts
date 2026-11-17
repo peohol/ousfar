@@ -185,6 +185,11 @@ const ALLE_SIDER = [
   // forhånd; ett eksempel på hver er nok til å kjenne igjen områdene.
   { side: 'versjon', stoff: OUS_REGISTER.stoffer[0]!.slug, nr: 1 } satisfies Rute,
   { side: 'kuratering', gren: '00000000-0000-4000-8000-000000000000' } satisfies Rute,
+  // Det samme for gruppene og endringsforslagene.
+  { side: 'grupper' } satisfies Rute,
+  { side: 'grupper', gruppe: '00000000-0000-4000-8000-000000000000' } satisfies Rute,
+  { side: 'forslag' } satisfies Rute,
+  { side: 'forslag', forslag: '00000000-0000-4000-8000-000000000000' } satisfies Rute,
   lesRute(sokeside('')),
   lesRute(STOFFREGISTERADRESSE),
   { side: 'verktoy' } satisfies Rute,
@@ -202,7 +207,7 @@ function kjentOmrade(omrade: string): boolean {
 
 describe('områdene en føring gjelder', () => {
   it('kjennes igjen når de er sider, og ikke ellers', () => {
-    const kjente = ['hele appen', 'vinduer', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering']
+    const kjente = ['hele appen', 'vinduer', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering', 'grupper', 'forslag']
     for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister', 'verktoy', 'verktoy/bytte-antidepressiv']) {
       expect(kjentOmrade(omrade), omrade).toBe(true)
     }

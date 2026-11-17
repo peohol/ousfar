@@ -25,7 +25,8 @@ Når appen åpnes med en slik adresse, eller den limes inn i en åpen app, leser
 `useRute` lenken, setter adressen tilbake til siden man står på, og
 `apneDirektelenke` åpner målet: en diskusjon går til siden tråden hører til og
 åpner den i diskusjonsmenyen (`visDiskusjon`), en idé åpnes i Idéer
-(`visIde`). Har et skjema i Idéer eller Planlagte oppgaver endringer som
+(`visIde`), og en idé i en gruppe på idéfanen på gruppesiden
+(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Har et skjema i Idéer eller Planlagte oppgaver endringer som
 ikke er lagret, spør det først, som tilbakeknappen (`forlatIdelagene`,
 `useMeldVakt`). Kommentaren lenken peker på, rulles frem, åpnes om den står under
 en lukket gren, og uthevet en liten stund (`fremhev` på `Kommentartraad`).

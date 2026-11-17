@@ -10,7 +10,8 @@ import type { Diskusjonsside } from '../../diskusjoner/modell'
  * en annen side, og menyen der byttes ut først når adressen er fulgt.
  */
 export interface Ventende {
-  diskusjon: string
+  /** Tråden som skal åpnes, eller `null` for lista over trådene på siden. */
+  diskusjon: string | null
   /** Kommentaren i tråden som skal vises, om noen. */
   kommentar: string | null
 }
@@ -30,6 +31,12 @@ export function taDiskusjon(side: Diskusjonsside): Ventende | null {
   const { diskusjon, kommentar } = venter
   venter = null
   return { diskusjon, kommentar }
+}
+
+/** Åpner diskusjonsmenyen på siden, med lista over trådene. Siden må man selv gå til. */
+export function visDiskusjonene(side: Diskusjonsside): void {
+  venter = { side, diskusjon: null, kommentar: null }
+  signal.send()
 }
 
 /** Hører etter `visDiskusjon`. Gir tilbake funksjonen som slutter å høre etter. */
