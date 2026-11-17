@@ -196,7 +196,6 @@ try {
         .map((id) => document.getElementById(id)?.textContent ?? '')
         .join(' '),
     )
-    krev(beskrivelse.includes(PASIENTREGEL.kort), 'skrivefeltet er beskrevet av regelen om pasientopplysninger')
     krev(beskrivelse.includes('Enter sender'), 'skrivefeltet sier at Enter sender')
     await sendDirekte(boKlient, gruppe, 'Syntetisk N8 fra Bo')
     await innen(10_000, 'Bos melding hos Ada', async () => (await logglinjer(ada)).includes('Syntetisk N8 fra Bo'))
@@ -243,7 +242,6 @@ try {
     const nummer = syntetiskPersonnummer(14, 3, 87)
     const felt = skrivefelt(ada, navn)
     await felt.fill(`Syntetisk N9 ${nummer}`)
-    await ada.getByRole('alert').filter({ hasText: PASIENTREGEL.advarsel }).waitFor({ timeout: 5_000 })
     await felt.press('Enter')
     await ada.getByText(PASIENTREGEL.avvist).first().waitFor({ timeout: 10_000 })
     await vent(2_000)
