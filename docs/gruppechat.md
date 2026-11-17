@@ -474,3 +474,4 @@ Fylles ut av trådene.
 | D2 Regelen og advarselen ved de eksisterende skrivefeltene | [#445](https://github.com/peohol/ousfar/pull/445) | Slått sammen |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Slått sammen |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Til kontroll |
+| D3 krysstestene og sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Til kontroll |
