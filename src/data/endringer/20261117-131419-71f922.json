@@ -1,0 +1,13 @@
+{
+  "id": "20261117-131419-71f922",
+  "semver": "patch",
+  "opprettet": "2026-11-17T13:14:19Z",
+  "sammendrag": "Chatten i gruppene er bygget, men ikke slått på",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Gruppesiden har fått en fane for chat, med meldingene etter dag, hvem som kan lese chatten og regelen om at pasientopplysninger ikke er tillatt. Den vises først når chatten slås på.",
+    "Ingenting endres for brukerne ennå."
+  ],
+  "utenVarsel": true
+}

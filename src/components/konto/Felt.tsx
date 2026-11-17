@@ -1,18 +1,25 @@
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
+import type { Pasientvakt } from '../../hooks/usePasientvakt'
 
 export interface FeltProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
   merkelapp: string
   /** Kort forklaring under feltet, f.eks. hva slags passord som godtas. */
   hjelp?: ReactNode
+  /**
+   * Advarselen om pasientopplysninger, knyttet til feltet. Settes av
+   * `Fritekstfelt`, så innloggingen ikke trenger vakten (`src/auth/vegg.ts`).
+   */
+  vakt?: Pick<Pasientvakt, 'beskrevetAv' | 'varsel'>
 }
 
 /**
  * Ett skjemafelt med merkelapp. Merkelappen står alltid — den skal ikke
  * forsvinne når det skrives i feltet, slik en plassholder gjør.
  */
-export function Felt({ merkelapp, hjelp, className, ...rest }: FeltProps) {
+export function Felt({ merkelapp, hjelp, vakt, className, ...rest }: FeltProps) {
   const id = useId()
   const hjelpId = `${id}-hjelp`
+  const beskrevetAv = [hjelp && hjelpId, vakt?.beskrevetAv].filter(Boolean).join(' ') || undefined
 
   return (
     <div className="felt">
@@ -22,7 +29,7 @@ export function Felt({ merkelapp, hjelp, className, ...rest }: FeltProps) {
       <input
         id={id}
         className={['felt__inndata', className].filter(Boolean).join(' ')}
-        aria-describedby={hjelp ? hjelpId : undefined}
+        aria-describedby={beskrevetAv}
         {...rest}
       />
       {hjelp && (
@@ -30,6 +37,7 @@ export function Felt({ merkelapp, hjelp, className, ...rest }: FeltProps) {
           {hjelp}
         </span>
       )}
+      {vakt?.varsel}
     </div>
   )
 }

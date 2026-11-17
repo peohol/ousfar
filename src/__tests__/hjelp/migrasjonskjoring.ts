@@ -81,6 +81,14 @@ const SUPABASE_GRUNNLAG = /* sql */ `
 
   create schema supabase_migrations;
   create table supabase_migrations.schema_migrations (version text primary key, name text);
+
+  -- Publikasjonen Realtime lytter på (postgres_changes). Supabase lager den tom;
+  -- migrasjonene legger til tabellene som skal gi hendelser.
+  do $$ begin
+    if not exists (select from pg_publication where pubname = 'supabase_realtime') then
+      create publication supabase_realtime;
+    end if;
+  end $$;
 `
 
 /**

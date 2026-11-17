@@ -63,9 +63,16 @@ export interface MineGrupper {
   invitasjoner: Gruppeinvitasjon[]
   /** Hvor den innloggede kan opprette en gruppe. */
   kan_opprette: { tverrfaglig: boolean; fagmiljoer: { id: string; navn: string }[] }
+  /** Gruppechatten er slått på (`intern.gruppechat_aktivert()`, docs/gruppechat.md). */
+  chat_aktivert: boolean
 }
 
-export const INGEN_GRUPPER: MineGrupper = { grupper: [], invitasjoner: [], kan_opprette: { tverrfaglig: false, fagmiljoer: [] } }
+export const INGEN_GRUPPER: MineGrupper = {
+  grupper: [],
+  invitasjoner: [],
+  kan_opprette: { tverrfaglig: false, fagmiljoer: [] },
+  chat_aktivert: false,
+}
 
 /** Ett medlem eller én invitert i gruppen, med handlingene den innloggede kan gjøre. */
 export interface Gruppemedlem extends Profilkort {
@@ -92,9 +99,15 @@ export interface Gruppesamhandling {
   venter: number
   /** Oppgaver den innloggede har, og som ikke er fullført. */
   mine_oppgaver: number
+  /**
+   * Meldinger fra andre i chatten som den innloggede ikke har lest
+   * (docs/gruppechat.md). `null` når chatten er avslått eller databasen ikke
+   * gir tallet: da står ingen chatfane.
+   */
+  chat_uleste: number | null
 }
 
-export const INGEN_SAMHANDLING: Gruppesamhandling = { nye_ideer: 0, venter: 0, mine_oppgaver: 0 }
+export const INGEN_SAMHANDLING: Gruppesamhandling = { nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: null }
 
 /** Svaret fra `gruppeoversikt`. */
 export interface Gruppeoversikt extends Gruppe {
@@ -161,6 +174,7 @@ export function lesMineGrupper(verdi: unknown): MineGrupper {
       return { gruppe, invitert_kl: tekst(v.invitert_kl), invitert_av: erObjekt(v.invitert_av) ? lesProfilkort(v.invitert_av) : null }
     }),
     kan_opprette: { tverrfaglig: kan.tverrfaglig === true, fagmiljoer: liste(kan.fagmiljoer, lesReferanse) },
+    chat_aktivert: verdi.chat_aktivert === true,
   }
 }
 
@@ -187,7 +201,12 @@ function lesMedlem(verdi: unknown): Gruppemedlem | null {
 
 function lesSamhandling(verdi: unknown): Gruppesamhandling {
   if (!erObjekt(verdi)) return INGEN_SAMHANDLING
-  return { nye_ideer: tall(verdi.nye_ideer), venter: tall(verdi.venter), mine_oppgaver: tall(verdi.mine_oppgaver) }
+  return {
+    nye_ideer: tall(verdi.nye_ideer),
+    venter: tall(verdi.venter),
+    mine_oppgaver: tall(verdi.mine_oppgaver),
+    chat_uleste: typeof verdi.chat_uleste === 'number' && Number.isFinite(verdi.chat_uleste) ? Math.max(0, verdi.chat_uleste) : null,
+  }
 }
 
 export function lesGruppeoversikt(verdi: unknown): Gruppeoversikt | null {

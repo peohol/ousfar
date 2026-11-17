@@ -84,6 +84,7 @@ const varselApi = vi.hoisted(() => ({
   hentEndringsloggstatus: vi.fn(async () => null),
   lagreEndringsloggstatus: vi.fn(async () => {}),
   lyttEtterOppfrisking: vi.fn(() => () => {}),
+  oppfriskVarsler: vi.fn(),
 }))
 
 const grupperApi = vi.hoisted(() => ({ hentGruppeoversikt: vi.fn() }))

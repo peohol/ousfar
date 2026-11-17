@@ -3,7 +3,7 @@ import { forslagsadresse } from '../../domain/rute'
 import { hentSideversjon, sendForslag } from '../../forslag/api'
 import { GRENSER, TOM_KILDE, finnKildefeil, kilderTilLagring, type Kildeutkast } from '../../forslag/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
+import { usePasientvakt } from '../../hooks/usePasientvakt'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Modallag } from '../Modallag'
@@ -219,7 +219,8 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
           ugyldig={feil?.felt === 'forslag'}
           feilId={feilId}
           feltRef={forslagRef}
-          hjelp={`Skriv endringen så konkret du kan, gjerne med den nye teksten. ${IKKE_PASIENTOPPLYSNINGER}`}
+          hjelp="Skriv endringen så konkret du kan, gjerne med den nye teksten."
+          pasientregel
         />
         <Tekstomrade
           merkelapp="Hvorfor?"
@@ -231,6 +232,7 @@ export function Forslagsskjema({ apning, onLukk }: { apning: Forslagsapning; onL
           feilId={feilId}
           feltRef={begrunnelseRef}
           hjelp="Hva er feil eller mangler, og hva bygger forslaget på?"
+          pasientvarsel
         />
         <Kildeliste
           kilder={kilder}
@@ -350,6 +352,7 @@ function Kildefelt({
   feilId?: string
 }) {
   const id = useId()
+  const vakt = usePasientvakt(verdi, 'varsel')
   return (
     <div className="felt">
       <label className="felt__merkelapp" htmlFor={id}>
@@ -365,9 +368,10 @@ function Kildefelt({
         maxLength={maks}
         placeholder={plass}
         aria-invalid={feilId ? true : undefined}
-        aria-describedby={feilId}
+        aria-describedby={[feilId, vakt.beskrevetAv].filter(Boolean).join(' ') || undefined}
         onChange={(e) => onEndre(e.target.value)}
       />
+      {vakt.varsel}
     </div>
   )
 }

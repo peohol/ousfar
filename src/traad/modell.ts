@@ -36,13 +36,6 @@ export interface Kommentar extends Innlegg {
  */
 export type Skjulehandling = 'skjul' | 'vis' | 'fjern'
 
-/**
- * Påminnelsen i alle skrivefelt for samhandling (diskusjoner, idéer og
- * grupper): pasientopplysninger hører ikke hjemme der
- * (`docs/s4-pilotplan.md`, «Pasientdata»).
- */
-export const IKKE_PASIENTOPPLYSNINGER = 'Skriv ikke pasientopplysninger, heller ikke noe som kan peke ut en pasient.'
-
 /** Lengste overskrift på en idé eller en diskusjon. Samme grense som databasen setter. */
 export const TITTEL_MEST = 140
 

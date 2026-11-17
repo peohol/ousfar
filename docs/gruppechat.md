@@ -260,7 +260,8 @@ gjennom sanntidstjenesten.
   nettleseren er på nett igjen, henter klienten endringene siden
   `siste_endring`. Er det mer enn `antall`, henter den til `flere` er usann.
 - **Livstegn:** mens chatten står åpen, henter klienten endringene minst hvert
-  60. sekund, også uten hendelser. Svarer databasen `42501`, viser chatten
+  45. sekund, også uten hendelser (så en åpen chat tømmes innen ett minutt
+  også når tilgangen tas rett etter et livstegn, med tid til et tregt svar). Svarer databasen `42501`, viser chatten
   «Du har ikke lenger tilgang til denne gruppen.», tømmer meldingene og
   stopper abonnementet.
 - **Rekkefølge og duplikater:** meldingene holdes i et kart etter `id`; en
@@ -317,15 +318,32 @@ varselet er «Nye meldinger i <gruppe>», og et trykk åpner chatfanen.
 `intern.merk_gruppechat_varsler_lest`, som grunnmuren lager tom og tråd C
 fyller). Endringer og slettinger varsler ingen.
 
+**Levert i C2.** Varselet har én hendelse med `kl`, `gruppechat`, `antall`
+og `til_nr`, og merkes lest når chatten er lest til og med `til_nr`; en
+nyere melding imens holder det ulest. Det gis bare til aktive medlemmer i
+gruppen (ikke systemarkitekter som ikke er med), og vises bare mens chatten
+er slått på. Teksten er «Ny melding i <gruppe>» eller «N nye meldinger i
+<gruppe>», og et trykk går til `#/grupper/<ID>/chat` gjennom skjemavaktene
+(`visGruppechat`) og merker varselet lest først da. Innstillingen «Nye
+meldinger i gruppechattene» står under «Grupper», men bare når chatten er
+slått på: `mine_grupper()` svarer med `chat_aktivert` fra funksjonsbryteren
+(`MineGrupper.chat_aktivert`), og kategorien har `funksjon: 'gruppechat'`. Detaljene står i `docs/varsler.md`. Prøvd i
+`src/__tests__/gruppechat.varsler.test.ts` (databasen og publikasjonen),
+`gruppechat.varselvisning.test.tsx` og `varselmodell.test.ts`, og med ekte
+Realtime i det lokale testmiljøet (`src/__tests__/qa/gruppechatsanntid.ts`,
+kriterium 1 og 4; `docs/qa-testmiljo.md`).
+
 ## Brukerflaten (tråd B)
 
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
   vises bare når `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»). Ingen påminnelse om pasientopplysninger
-  (Peder 17.11.2026: brukerne er godt trent i personvern, og påminnelser
-  blir støy); databasen avviser fortsatt tekst som ligner et fødselsnummer,
-  og avvisningen vises som en sendefeil (`PASIENTREGEL.avvist`).
+  av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
+  medlemmer bare «Leses av systemarkitektene i OUSFAR.»). Ingen påminnelse
+  om pasientopplysninger (Peder 17.11.2026: brukerne er godt trent i
+  personvern, og påminnelser blir støy); databasen avviser fortsatt tekst som
+  ligner et fødselsnummer, og avvisningen vises som en sendefeil
+  (`PASIENTREGEL.avvist`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
@@ -340,6 +358,40 @@ fyller). Endringer og slettinger varsler ingen.
 `useGruppechat(gruppe)` (tråd C) gir det visningen trenger, med typen
 `Gruppechat` i `src/gruppechat/modell.ts`. Tråd B bygger mot den og mot
 testchatten i `src/__tests__/hjelp/testchat.ts`, uavhengig av A og C.
+
+**Levert i B1** (`Gruppechat.tsx`, `Gruppechatmelding.tsx`,
+`Gruppechatskriving.tsx` og de rene utregningene i `gruppechatvisning.ts`
+under `src/components/grupper/`, stilen i `src/styles/gruppechat.css`,
+prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
+
+- `Gruppechat` tar `chat: Gruppechat` og gruppen (`id`, `navn`, `status`).
+  `Gruppechatfane` er koblingen: én linje som kaller `useGruppechat(gruppe.id)`
+  fra C1 (B1 bygger derfor på C1). B2 er bare rettelsene fra tråd Ds
+  sluttkontroll i nettleseren.
+- Fanen står etter Oppgaver. Tallet på fanen er `chat_uleste`, og står ikke
+  mens chatten er åpen; når man går ut av chatten, hentes gruppen på nytt, så
+  tallet stemmer. Peker adressen på chatten uten at databasen gir tallet,
+  står «Gruppechatten er ikke slått på.».
+- Lista ruller for seg (`role="log"`, `aria-live="polite"`,
+  `aria-relevant="additions"`, `aria-busy` mens eldre hentes), med dagene som
+  overskrifter og «Nye meldinger» foran den første uleste fra andre da
+  chatten ble åpnet. Er det mange uleste, åpner lista der; ellers nederst.
+  Meldinger fra samme avsender innen fem minutter står under ett navn
+  (navnet og tidspunktet står likevel for skjermlesere).
+- Lest: `merkLest(siste nr)` bare når lista står nederst og nettleserfanen er
+  framme (`visibilityState`).
+- Menyen på en melding (`Nedtrekksmeny`, som i brukerlista) følger
+  `kan_endre` og `kan_slette` fra databasen. I en arkivert gruppe står aldri
+  «Endre», men slettingen følger `kan_slette`, så en systemarkitekt kan fjerne
+  en melding der. «Fjern meldingen» for en moderator. Sletting bekreftes
+  (`Bekreftelseskort`, «Avbryt» har fokus); endringen skjer i et felt på
+  stedet, Enter lagrer og Escape avbryter, og fokus går tilbake til menyen.
+- Utkastet står i minnet per innlogget bruker og gruppe mens appen er åpen
+  (og over en oppdatering med `useBevart`, skilt etter kontoen), aldri i
+  nettleserens lagring. Alle utkast glemmes ved hvert øktskifte
+  (`vedOktskifte`), og en gruppes utkast når tilgangen til den er tapt.
+- Uten tilgang tømmes skjermen for meldinger og skrivefelt. Den som kan
+  lese, men ikke skrive (`kanSkrive` usann), får lista uten skrivefelt.
 
 ## Grunnmuren (P7.0)
 
@@ -369,7 +421,7 @@ til eksterne tjenester for kontroll.
 | --- | --- | --- | --- |
 | **P7.0** (denne) | Kontrakten og grunnmuren; koordinering, #369 og samlet rapport | — | Dette dokumentet utenom trådenes avsnitt, grunnmuren |
 | **A** Database og tilgang | Tabellene, funksjonene, radsikkerheten på `gruppechatter`, `chat_uleste` i `gruppeoversikt`, negative tilgangstester, samtidighet mot ekte Postgres, lagringstiden (12 måneder) | Grunnmuren | Migrasjonene for chatten utenom varsler og publikasjon, `src/__tests__/gruppechat*.test.ts` utenom C og D sine, oppføringene i `funksjonskontroller.ts` |
-| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
+| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/components/grupper/gruppechatvisning.ts`, `src/__tests__/gruppechatvisning.test.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
 | **C** Sanntid og varsler | `useGruppechat`, sammenfletting og rekkefølge, sanntidsabonnementet, gjenoppkobling, livstegn, varselkategorien og -visningen, publikasjonen, sanntid i det lokale testmiljøet | Grunnmuren; As funksjoner for integrasjonstestene | `src/gruppechat/` utenom `modell.ts`, varselmigrasjonene og publikasjonen, `src/varsler/modell.ts`, `Varsler.tsx` (rutingen), `src/__tests__/qa/lokalmiljo.ts` (sanntiden) |
 | **D** Personvern og kvalitet | `docs/pasientopplysninger.md` (den globale regelen og håndteringen av hendelser), `docs/gruppechat-personvern.md` (D6), regelen i `AGENTS.md` og `docs/prosjektansvar.md`, kartleggingen av fritekst- og filflatene (også fortolkningen), påminnelsen der brukerne skriver fritekst (D2, fjernet igjen i D4 etter Peders beskjed 17.11.2026), testmatrisen og sluttkontrollen i nettleseren | Grunnmuren; krysstestene og nettleserkontrollen etter A–C | Dokumentene over, `docs/p7-testplan.md`, egne testfiler (`src/__tests__/gruppechat.krysstest.test.ts`, QA-skriptene) |
 | **E** Forberedelse av P8 | `docs/p8-fildeling-plan.md`: kartlegging og plan for fildeling i gruppene. Ingen kode | — | Bare plandokumentet |
@@ -422,4 +474,10 @@ Fylles ut av trådene.
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Slått sammen |
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Slått sammen |
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
-| A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |
+| A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Slått sammen |
+| D2 Regelen og advarselen ved de eksisterende skrivefeltene (fjernet igjen i D4) | [#445](https://github.com/peohol/ousfar/pull/445) | Slått sammen |
+| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Slått sammen |
+| C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Slått sammen |
+| D3 Sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Til kontroll |
+| D4 Påminnelsene om pasientopplysninger fjernes (Peder 17.11.2026) | [#450](https://github.com/peohol/ousfar/pull/450) | Til kontroll |
+| Aktiveringen (slås sammen sist) | [#448](https://github.com/peohol/ousfar/pull/448) | Til kontroll |

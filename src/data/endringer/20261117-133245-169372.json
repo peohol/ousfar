@@ -1,0 +1,14 @@
+{
+  "id": "20261117-133245-169372",
+  "semver": "patch",
+  "opprettet": "2026-11-17T13:32:45Z",
+  "sammendrag": "Varsler om nye meldinger i gruppechatten er klare",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Når gruppechatten slås på, får medlemmene ett varsel per gruppe om nye meldinger, med gruppen og antallet, aldri selve teksten eller hvem som skrev. Et trykk åpner chatten, og varselet er lest når meldingene er lest.",
+    "Under «Grupper» i varselinnstillingene kan varslene om gruppechatten slås av.",
+    "Chatten er ennå ikke slått på."
+  ],
+  "utenVarsel": true
+}

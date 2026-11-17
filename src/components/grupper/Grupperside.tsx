@@ -27,7 +27,6 @@ import {
 } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER } from '../../traad/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
@@ -36,11 +35,14 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import type { Forlat } from '../ideer/useForlatvakt'
+import { Gruppechatfane } from './Gruppechat'
 import { Gruppeideer } from './Gruppeideer'
 import { Gruppeoppgaver } from './Gruppeoppgaver'
 import { meldGruppesiden } from './gruppevisning'
+import { usePasientvakt } from '../../hooks/usePasientvakt'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
@@ -52,8 +54,8 @@ const PAA_TVERS = ''
  * Gruppene (`#/grupper`): invitasjonene, gruppene den innloggede er med i og
  * skjemaet for en ny gruppe, eller én gruppe (`#/grupper/<ID>`) med
  * medlemmene og det de ansvarlige kan gjøre. Gruppen har faner for oversikten,
- * idéene (`…/ideer`, `…/ideer/<idé-ID>`) og oppgavene (`…/oppgaver`,
- * `…/oppgaver/<oppgave-ID>`), og en til diskusjonene, som står
+ * idéene (`…/ideer`, `…/ideer/<idé-ID>`), oppgavene (`…/oppgaver`,
+ * `…/oppgaver/<oppgave-ID>`) og chatten (`…/chat`, når den er slått på), og en til diskusjonene, som står
  * i diskusjonsmenyen, som på de andre sidene. Knappene er et grensesnitt, ikke
  * en tilgangskontroll: databasen kontrollerer hver handling på nytt
  * (docs/fagmiljoer.md, «Gruppene» og «Idéer og oppgaver i gruppene»).
@@ -181,9 +183,10 @@ function Gruppefelter({
   disabled: boolean
 }) {
   const beskrivelseId = useId()
+  const vakt = usePasientvakt(beskrivelse)
   return (
     <>
-      <Felt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
+      <Fritekstfelt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
       <div className="felt">
         <label className="felt__merkelapp" htmlFor={beskrivelseId}>
           Beskrivelse
@@ -195,12 +198,11 @@ function Gruppefelter({
           maxLength={1000}
           value={beskrivelse}
           disabled={disabled}
-          aria-describedby={`${beskrivelseId}-hjelp`}
+          aria-describedby={vakt.beskrevetAv}
           onChange={(e) => onBeskrivelse(e.target.value)}
         />
-        <span id={`${beskrivelseId}-hjelp`} className="felt__hjelp">
-          {IKKE_PASIENTOPPLYSNINGER}
-        </span>
+        {vakt.regel}
+        {vakt.varsel}
       </div>
     </>
   )
@@ -375,6 +377,8 @@ function Gruppevisning({
   const forrigeFane = useRef(fane)
   useEffect(() => {
     if (element || forrigeFane.current !== fane) window.scrollTo({ top: 0 })
+    // Ut av chatten: tallet på uleste på fanen hentes på nytt.
+    if (forrigeFane.current === 'chat' && fane !== 'chat') void hentRef.current()
     forrigeFane.current = fane
   }, [fane, element])
   useFanetittel(oversikt ? (fane ? `${FANENAVN[fane]} – ${oversikt.navn}` : oversikt.navn) : 'Gruppe')
@@ -402,6 +406,8 @@ function Gruppevisning({
   useEffect(() => {
     void hent()
   }, [hent])
+  const hentRef = useRef(hent)
+  hentRef.current = hent
 
   /** Utfører handlingen, og henter gruppen og oversikten over gruppene på nytt. Sant når den lyktes. */
   const gjor = (arbeid: () => Promise<string | null | void>) =>
@@ -505,6 +511,12 @@ function Gruppevisning({
         />
       ) : fane === 'oppgaver' ? (
         <Gruppeoppgaver gruppe={g} oppgave={element} onEndret={() => void hent()} skjemavakt={skjemavakt} />
+      ) : fane === 'chat' ? (
+        g.samhandling.chat_uleste === null ? (
+          <p className="gruppeside__ingress">Gruppechatten er ikke slått på.</p>
+        ) : (
+          <Gruppechatfane gruppe={g} />
+        )
       ) : (
         <Gruppeoversiktsfane
           gruppe={g}
@@ -523,12 +535,14 @@ function Gruppevisning({
 }
 
 /** Navnet på fanen, i fanen og i tittelen på siden. */
-const FANENAVN: Readonly<Record<Gruppefane, string>> = { ideer: 'Idéer', oppgaver: 'Oppgaver' }
+const FANENAVN: Readonly<Record<Gruppefane, string>> = { ideer: 'Idéer', oppgaver: 'Oppgaver', chat: 'Chat' }
 
 /**
- * Fanene i gruppen: oversikten, idéene og oppgavene, med tallet på det som er nytt, og
+ * Fanene i gruppen: oversikten, idéene, oppgavene og chatten, med tallet på det som er nytt, og
  * diskusjonene, som åpner diskusjonsmenyen på siden. Diskusjonene står bare
- * mens gruppen er aktiv, som menyen.
+ * mens gruppen er aktiv, som menyen. Chatten står bare når databasen gir
+ * tallet på uleste (`chat_uleste`), altså når den er slått på og den
+ * innloggede kan lese gruppen; tallet står ikke mens chatten er åpen.
  */
 function Gruppefaner({
   gruppe,
@@ -540,7 +554,7 @@ function Gruppefaner({
   /** Før en fane åpnes: spør når et skjema i fanen har endringer. */
   onLenke: (e: MouseEvent<HTMLAnchorElement>) => void
 }) {
-  const { nye_ideer, venter, mine_oppgaver } = gruppe.samhandling
+  const { nye_ideer, venter, mine_oppgaver, chat_uleste } = gruppe.samhandling
   const behandler = gruppe.kan_styre
   // De ansvarlige ser hvor mange som venter på behandling, de andre hva som er nytt.
   const idetall = behandler ? venter : nye_ideer
@@ -580,6 +594,23 @@ function Gruppefaner({
             )}
           </a>
         </li>
+        {chat_uleste !== null && (
+          <li>
+            <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'chat')} onClick={onLenke} aria-current={fane === 'chat' ? 'page' : undefined}>
+              <Ikon navn="comment" storrelse="ui" />
+              {FANENAVN.chat}
+              {chat_uleste > 0 && fane !== 'chat' && (
+                <span
+                  className="gruppeside__fanetall"
+                  aria-label={chat_uleste === 1 ? '1 ulest melding' : `${chat_uleste} uleste meldinger`}
+                  title={chat_uleste === 1 ? '1 ulest melding' : `${chat_uleste} uleste meldinger`}
+                >
+                  {chat_uleste}
+                </span>
+              )}
+            </a>
+          </li>
+        )}
         {gruppe.status === 'aktiv' && (
           <li>
             <button type="button" className="gruppeside__fane" onClick={() => visDiskusjonene(gruppeside(gruppe.id))}>

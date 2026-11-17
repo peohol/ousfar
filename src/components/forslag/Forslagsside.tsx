@@ -15,7 +15,7 @@ import {
 } from '../../forslag/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER, fullTid, kortTid } from '../../traad/modell'
+import { fullTid, kortTid } from '../../traad/modell'
 import { Button } from '../Button'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { Merke, type Merketone } from '../Merke'
@@ -382,7 +382,7 @@ function Forslagsstillerhandlinger({ forslag, oppfrisk }: { forslag: Forslag; op
             verdi={svar}
             onEndre={setSvar}
             maks={GRENSER.svar}
-            hjelp={IKKE_PASIENTOPPLYSNINGER}
+            pasientregel
           />
           <div className="gruppeside__handlinger">
             <Button type="submit" className="knapp--kompakt" disabled={opptatt}>
@@ -404,7 +404,14 @@ function Forslagsstillerhandlinger({ forslag, oppfrisk }: { forslag: Forslag; op
               }, 'Forslaget er trukket tilbake.')
             }}
           >
-            <Tekstomrade merkelapp="Hvorfor trekker du forslaget? (valgfritt)" verdi={grunn} onEndre={setGrunn} maks={GRENSER.svar} rader={2} />
+            <Tekstomrade
+              merkelapp="Hvorfor trekker du forslaget? (valgfritt)"
+              verdi={grunn}
+              onEndre={setGrunn}
+              maks={GRENSER.svar}
+              rader={2}
+              pasientregel
+            />
             <div className="gruppeside__handlinger">
               <Button variant="subtle" onClick={() => setTrekker(false)}>
                 Avbryt
