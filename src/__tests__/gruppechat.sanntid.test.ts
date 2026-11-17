@@ -159,7 +159,7 @@ describe('frakobling og gjenoppkobling (kriterium 7)', () => {
     expect(tekster(k)).toEqual(['Mens fanen var skjult', 'Mens nettet var borte'])
   })
 
-  it('livstegnet henter endringene hvert 60. sekund uten hendelser, men ikke når fanen er skjult', async () => {
+  it('livstegnet henter endringene hvert 45. sekund uten hendelser, men ikke når fanen er skjult', async () => {
     const server = new Falskchatserver()
     const k = aapne_(server)
     await vent()
@@ -312,6 +312,28 @@ describe('sending', () => {
 })
 
 describe('tap av tilgang mens chatten er åpen (kriterium 4 i klienten)', () => {
+  it('i verste fall, når tilgangen tas rett etter et livstegn, er chatten tømt før det har gått ett minutt', async () => {
+    // Kontrakten: innen ett minutt. Livstegnet må la det være tid igjen til et tregt svar.
+    expect(LIVSTEGN_MS).toBeLessThanOrEqual(45_000)
+    const server = new Falskchatserver()
+    server.skriv(KARI, 'Hemmelig for de fjernede')
+    const k = aapne_(server)
+    await vent()
+    server.kanal(MEG)!.tilkoblet = false
+    vi.advanceTimersByTime(LIVSTEGN_MS)
+    await vent()
+    expect(k.hent().status).toBe('klar')
+
+    server.tilgang.delete(MEG)
+    vi.advanceTimersByTime(LIVSTEGN_MS - 1)
+    await vent()
+    expect(k.hent().meldinger).toHaveLength(1)
+    vi.advanceTimersByTime(1)
+    await vent()
+    expect(k.hent().status).toBe('ingen_tilgang')
+    expect(k.hent().meldinger).toEqual([])
+  })
+
   it('livstegnet oppdager det: meldingene tømmes og abonnementet stopper', async () => {
     const server = new Falskchatserver()
     server.skriv(KARI, 'Hemmelig for de fjernede')

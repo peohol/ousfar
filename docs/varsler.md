@@ -16,6 +16,7 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `src/varsler/api.ts` | Kallene mot Supabase og brukerinnstillingene |
 | `src/components/varsler/` | Bjella (`Varselknapp`), tilstanden (`useVarsler`) og vinduet (`Varsler`) |
 | `src/styles/varsler.css` | Vinduet. Tallet på bjella står i `toppmeny.css`, og skuffen arkivet står i, i `skuff.css` |
+| `supabase/migrations/*_gruppechat_varsler.sql` | Varslene om gruppechatten (se `docs/gruppechat.md`, «Varslene») |
 | `supabase/migrations/*_varselarkiv.sql` | Arkivet: når et varsel ble arkivert, og funksjonene som arkiverer og henter fram |
 
 ## Kategoriene
@@ -36,13 +37,17 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `favorittdiskusjoner` | Noen starter en ny tråd på en fagside du har som favoritt | Ja, av som standard |
 | `gruppeideer` | Noen skriver en ny idé i en gruppe du er med i | Ja, på som standard |
 | `gruppeoppgaver` | Du får en oppgave i en gruppe, eller de ansvarlige behandler en idé du skrev i en gruppe | Ja, på som standard |
+| `gruppechat` | Noen skriver i chatten i en gruppe du er med i (P7) | Ja, på som standard |
 
 Kategoriene står i `VARSELKATEGORIER`. Hver har en `gruppe` fra
 `VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Grupper, Endringsforslag, Favorittsider, Appen):
 innstillingene viser gruppene i den rekkefølgen, hver med ikon og overskrift
 og kategoriene sine under. Ikonene for gruppene står i `Varsler.tsx`. En
 kategori med `bareForBehandlere` vises i innstillingene bare for dem som kan
-behandle endringsforslag. En ny
+behandle endringsforslag. En kategori med `funksjon` hører til en funksjon
+bak en funksjonsbryter (`VARSELFUNKSJONER`), og vises i innstillingene bare
+når den er slått på; for gruppechatten sier `mine_grupper()` det
+(`chat_aktivert`). En ny
 kategori får en gruppe; den trenger ingen ny gruppe med mindre den gjelder
 noe helt annet. De som lages av databasen, er de
 samme som `public.varselkategori`; en test passer på at de stemmer.
@@ -83,6 +88,19 @@ gjorde det, varsles ikke.
   `docs/direktelenker.md`). Varselet merkes da lest først når brukeren
   faktisk går dit (`gaVaktet` i `Varsler.tsx`); blir brukeren i skjemaet,
   står det ulest.
+- **Gruppechatten** (P7, `gruppemeldinger_varsle`, `docs/gruppechat.md`,
+  «Varslene»): en ny melding gir de andre aktive medlemmene i gruppen
+  `gruppechat`, ikke systemarkitekter som ikke er med. Det er ett ulest varsel
+  per gruppe (`gruppechat:<gruppe-ID>`, `gruppe_id` satt) med én hendelse:
+  `kl`, `gruppechat` (gruppen), `antall` (meldinger siden varselet ble ulest)
+  og `til_nr` (løpenummeret til den siste). Aldri meldingstekst eller avsender.
+  Endringer og slettinger varsler ingen. Varselet merkes lest når brukeren har
+  lest chatten til og med `til_nr` (`intern.merk_gruppechat_varsler_lest`,
+  kalt av `merk_gruppechat_lest`), og står ulest om en nyere melding er kommet
+  imens. `mine_varsler` viser gruppen ved navn, og bare mens chatten er slått
+  på og brukeren leser gruppen. Vinduet viser «3 nye meldinger i <gruppe>», og
+  et trykk åpner chatfanen gjennom skjemavaktene (`visGruppechat`), som for
+  idéene og oppgavene i gruppene.
 - **Diskusjonskommentarer** (`diskusjonskommentarer_varsle`): som
   idékommentarene, med `mine_diskusjoner` og `aktive_diskusjoner`.
 - **Nye tråder** (`diskusjoner_varsle`): en ny tråd på en fagside gir

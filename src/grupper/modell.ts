@@ -63,9 +63,16 @@ export interface MineGrupper {
   invitasjoner: Gruppeinvitasjon[]
   /** Hvor den innloggede kan opprette en gruppe. */
   kan_opprette: { tverrfaglig: boolean; fagmiljoer: { id: string; navn: string }[] }
+  /** Gruppechatten er slått på (`intern.gruppechat_aktivert()`, docs/gruppechat.md). */
+  chat_aktivert: boolean
 }
 
-export const INGEN_GRUPPER: MineGrupper = { grupper: [], invitasjoner: [], kan_opprette: { tverrfaglig: false, fagmiljoer: [] } }
+export const INGEN_GRUPPER: MineGrupper = {
+  grupper: [],
+  invitasjoner: [],
+  kan_opprette: { tverrfaglig: false, fagmiljoer: [] },
+  chat_aktivert: false,
+}
 
 /** Ett medlem eller én invitert i gruppen, med handlingene den innloggede kan gjøre. */
 export interface Gruppemedlem extends Profilkort {
@@ -167,6 +174,7 @@ export function lesMineGrupper(verdi: unknown): MineGrupper {
       return { gruppe, invitert_kl: tekst(v.invitert_kl), invitert_av: erObjekt(v.invitert_av) ? lesProfilkort(v.invitert_av) : null }
     }),
     kan_opprette: { tverrfaglig: kan.tverrfaglig === true, fagmiljoer: liste(kan.fagmiljoer, lesReferanse) },
+    chat_aktivert: verdi.chat_aktivert === true,
   }
 }
 
