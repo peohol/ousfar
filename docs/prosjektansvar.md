@@ -127,7 +127,12 @@ informasjonsutveksling.
 - Automatiserte nettleserkontroller kjøres i det lokale testmiljøet, aldri som
   omfattende kjøringer mot den publiserte appen ([qa-testmiljo.md](qa-testmiljo.md)).
 - Produksjonsmigrasjoner rulles ut etter [migrasjoner.md](migrasjoner.md).
-- Repoet er offentlig: ingen pasientopplysninger, nøkler eller faglige
+- Pasientopplysninger er ikke tillatt noe sted i OUSFAR, heller ikke
+  pseudonymiserte eller som kasuistikk som kan knyttes til en person (Peder
+  17.11.2026, [pasientopplysninger.md](pasientopplysninger.md)). Det gjelder
+  alle tre prosjektene og alt de lager: innhold, fritekst, filer, logger,
+  varsler, eksport og tjenester utenfor.
+- Repoet er offentlig: bare syntetiske testdata, ingen nøkler eller faglige
   vurderinger av stoffer fra kurateringen.
 - Ingen nye koordinatorer, godkjenningsledd eller automatiske kontrollrunder uten
   at Peder ber om det.
