@@ -298,6 +298,37 @@ fyller). Endringer og slettinger varsler ingen.
 `Gruppechat` i `src/gruppechat/modell.ts`. Tråd B bygger mot den og mot
 testchatten i `src/__tests__/hjelp/testchat.ts`, uavhengig av A og C.
 
+**Levert i B1** (`Gruppechat.tsx`, `Gruppechatmelding.tsx`,
+`Gruppechatskriving.tsx` og de rene utregningene i `gruppechatvisning.ts`
+under `src/components/grupper/`, stilen i `src/styles/gruppechat.css`,
+prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
+
+- `Gruppechat` tar `chat: Gruppechat` og gruppen (`id`, `navn`, `status`).
+  `Gruppechatfane` er koblingen: én linje som kaller `useGruppechat(gruppe.id)`
+  fra C1 (B1 bygger derfor på C1). B2 er bare rettelsene fra tråd Ds
+  sluttkontroll i nettleseren.
+- Fanen står etter Oppgaver. Tallet på fanen er `chat_uleste`, og står ikke
+  mens chatten er åpen; når man går ut av chatten, hentes gruppen på nytt, så
+  tallet stemmer. Peker adressen på chatten uten at databasen gir tallet,
+  står «Gruppechatten er ikke slått på.».
+- Lista ruller for seg (`role="log"`, `aria-live="polite"`,
+  `aria-relevant="additions"`, `aria-busy` mens eldre hentes), med dagene som
+  overskrifter og «Nye meldinger» foran den første uleste fra andre da
+  chatten ble åpnet. Er det mange uleste, åpner lista der; ellers nederst.
+  Meldinger fra samme avsender innen fem minutter står under ett navn
+  (navnet og tidspunktet står likevel for skjermlesere).
+- Lest: `merkLest(siste nr)` bare når lista står nederst og nettleserfanen er
+  framme (`visibilityState`).
+- Menyen på en melding (`Nedtrekksmeny`, som i brukerlista) følger
+  `kan_endre` og `kan_slette` fra databasen, og står ikke i en arkivert
+  gruppe. «Fjern meldingen» for en moderator. Sletting bekreftes
+  (`Bekreftelseskort`, «Avbryt» har fokus); endringen skjer i et felt på
+  stedet, Enter lagrer og Escape avbryter, og fokus går tilbake til menyen.
+- Utkastet står i minnet per gruppe mens appen er åpen (og over en
+  oppdatering med `useBevart`), aldri i nettleserens lagring.
+- Uten tilgang tømmes skjermen for meldinger og skrivefelt. Den som kan
+  lese, men ikke skrive (`kanSkrive` usann), får lista uten skrivefelt.
+
 ## Grunnmuren (P7.0)
 
 `supabase/migrations/20261117125500_p7_grunnmur.sql`, prøvd i
@@ -326,7 +357,7 @@ til eksterne tjenester for kontroll.
 | --- | --- | --- | --- |
 | **P7.0** (denne) | Kontrakten og grunnmuren; koordinering, #369 og samlet rapport | — | Dette dokumentet utenom trådenes avsnitt, grunnmuren |
 | **A** Database og tilgang | Tabellene, funksjonene, radsikkerheten på `gruppechatter`, `chat_uleste` i `gruppeoversikt`, negative tilgangstester, samtidighet mot ekte Postgres, lagringstiden (12 måneder) | Grunnmuren | Migrasjonene for chatten utenom varsler og publikasjon, `src/__tests__/gruppechat*.test.ts` utenom C og D sine, oppføringene i `funksjonskontroller.ts` |
-| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
+| **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/components/grupper/gruppechatvisning.ts`, `src/__tests__/gruppechatvisning.test.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
 | **C** Sanntid og varsler | `useGruppechat`, sammenfletting og rekkefølge, sanntidsabonnementet, gjenoppkobling, livstegn, varselkategorien og -visningen, publikasjonen, sanntid i det lokale testmiljøet | Grunnmuren; As funksjoner for integrasjonstestene | `src/gruppechat/` utenom `modell.ts`, varselmigrasjonene og publikasjonen, `src/varsler/modell.ts`, `Varsler.tsx` (rutingen), `src/__tests__/qa/lokalmiljo.ts` (sanntiden) |
 | **D** Personvern og kvalitet | `docs/pasientopplysninger.md` (den globale regelen og håndteringen av hendelser), `docs/gruppechat-personvern.md` (D6), regelen i `AGENTS.md` og `docs/prosjektansvar.md`, kartleggingen av fritekst- og filflatene (også fortolkningen), `Pasientregel` der brukerne skriver fritekst i dag, testmatrisen og sluttkontrollen i nettleseren | Grunnmuren; krysstestene og nettleserkontrollen etter A–C | Dokumentene over, `docs/p7-testplan.md`, egne testfiler (`src/__tests__/gruppechat.krysstest.test.ts`, QA-skriptene) |
 | **E** Forberedelse av P8 | `docs/p8-fildeling-plan.md`: kartlegging og plan for fildeling i gruppene. Ingen kode | — | Bare plandokumentet |
@@ -378,3 +409,4 @@ Fylles ut av trådene.
 | P7.0 kontrakt og grunnmur | — | Under arbeid |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Til kontroll |
+| B1 chatvisningen | (PR kommer) | Klar til kontroll |

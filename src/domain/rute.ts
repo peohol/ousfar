@@ -77,8 +77,8 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *   #/kuratering/<gren-ID>
  *
  * Gruppene har en oversikt, og hver gruppe sin side etter ID-en, med
- * medlemmene og diskusjonene i gruppen, og fanene med idéene og oppgavene i
- * gruppen, hver med én idé eller oppgave etter ID-en:
+ * medlemmene og diskusjonene i gruppen, fanene med idéene og oppgavene i
+ * gruppen, hver med én idé eller oppgave etter ID-en, og chatten:
  *
  *   #/grupper
  *   #/grupper/<gruppe-ID>
@@ -86,6 +86,7 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *   #/grupper/<gruppe-ID>/ideer/<idé-ID>
  *   #/grupper/<gruppe-ID>/oppgaver
  *   #/grupper/<gruppe-ID>/oppgaver/<oppgave-ID>
+ *   #/grupper/<gruppe-ID>/chat
  *
  * Endringsforslagene (P5, docs/redaktorer-og-forslag.md) har «Mine forslag»,
  * fanen med forslagene til behandling, og hvert forslag sin side etter ID-en:
@@ -216,7 +217,7 @@ export const erId = (verdi: string): boolean => new RegExp(`^${ID}$`, 'i').test(
 const KURATERING = new RegExp(`^#\\/kuratering\\/(${ID})\\/?$`, 'i')
 
 /** Fanene i en gruppe, slik de står i adressen. */
-export const GRUPPEFANER = ['ideer', 'oppgaver'] as const
+export const GRUPPEFANER = ['ideer', 'oppgaver', 'chat'] as const
 export type Gruppefane = (typeof GRUPPEFANER)[number]
 
 const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID})(?:\\/(${GRUPPEFANER.join('|')})(?:\\/(${ID}))?)?)?\\/?$`, 'i')
