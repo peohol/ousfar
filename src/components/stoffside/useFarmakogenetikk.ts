@@ -3,6 +3,8 @@ import type { Farmakogenetikkutvalg } from '../../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, type Farmakogenetikkvisning } from '../../clinpgx/stoffside'
 import { lagDiplotypeindeks, type Diplotypeindeks } from '../../cpic/diplotype'
 import type { Cpicutvalg } from '../../cpic/lesing'
+import type { Cypinfoutvalg } from '../../cypinfo/lesing'
+import { byggCypinfovisning, cypinfoForesporsel, type Cypinfovisning } from '../../cypinfo/stoffside'
 import { byggCpicvisning, type Cpicvisning } from '../../cpic/stoffside'
 import { useFaginnholdskilde } from './Faginnholdskilde'
 import type { Bivirkningsdata } from '../../bivirkninger/modell'
@@ -22,6 +24,7 @@ export type Kildetilstand<U, V> =
 
 export type Farmakogenetikktilstand = Kildetilstand<Farmakogenetikkutvalg, Farmakogenetikkvisning>
 export type Cpictilstand = Kildetilstand<Cpicutvalg, Cpicvisning>
+export type Cypinfotilstand = Kildetilstand<Cypinfoutvalg, Cypinfovisning>
 export type Bivirkningstilstand = Kildetilstand<Bivirkningsdata, Bivirkningsvisning>
 
 /**
@@ -73,6 +76,35 @@ export function useFarmakogenetikk(koblet: readonly string[]) {
 /** CPIC-dataene for de samme kjemikaliene, etter ClinPGx-ID-en CPIC oppgir for legemidlene. */
 export function useCpic(koblet: readonly string[]) {
   return useKilde(useFaginnholdskilde().cpic, koblet, byggCpicvisning)
+}
+
+/** Merket foran CYPinfo-ID-ene i listen `useKilde` får, så de skilles fra FEST-ID-ene. */
+const CYPINFO_ID = 'cypinfo:'
+
+/**
+ * CYPinfo for legemidlene siden er koblet til: dem med en av FEST-ID-ene i
+ * sidens FEST-kobling, og dem koblingslisten har for siden. `vis` er usann for
+ * den som ikke skal se CYPinfo ennå; da leses ingenting.
+ */
+export function useCypinfo(festIder: readonly string[], side: string, vis: boolean) {
+  const leser = useFaginnholdskilde().cypinfo
+  const delt = useMemo(
+    () =>
+      leser && {
+        les: (ider: readonly string[]) =>
+          leser.les(
+            ider.filter((i) => !i.startsWith(CYPINFO_ID)),
+            ider.filter((i) => i.startsWith(CYPINFO_ID)).map((i) => i.slice(CYPINFO_ID.length)),
+          ),
+      },
+    [leser],
+  )
+  const ider = useMemo(() => {
+    if (!vis) return []
+    const { fest_ider, cypinfo_ider } = cypinfoForesporsel(festIder, side)
+    return [...fest_ider, ...cypinfo_ider.map((i) => CYPINFO_ID + i)]
+  }, [festIder, side, vis])
+  return useKilde(delt, ider, byggCypinfovisning)
 }
 
 const somDet = <T,>(utvalg: T) => utvalg

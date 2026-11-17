@@ -9,16 +9,19 @@ import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { behandleCypinfo, CYPINFO_ARBEIDSFLYT } from '../cypinfo/endepunkt'
 import { lagCypinfolager } from '../cypinfo/lager'
+import { lesCypinfoutvalg } from '../cypinfo/lesing'
 import {
   avsnitt,
   ENTITETNAVN,
+  erNiva,
   lesAtc,
   lesGenresultat,
   lesLegemiddel,
   lesRapport,
-  teksthash,
+  PARSERVERSJON,
   type Legemiddeldata,
 } from '../cypinfo/modell'
+import { byggCypinfovisning, CYPINFO_VISES_FOR } from '../cypinfo/stoffside'
 import { listeavvik } from '../cypinfo/struktur'
 import { genene, gruppekall, parvisDekning, planlagteKall, produktet, synkroniserCypinfo } from '../cypinfo/synk'
 import { KILDEOPPSETT, lesDatakildestatus, vurderKilder } from '../datakilder/status'
@@ -76,10 +79,10 @@ describe('lesingen', () => {
     expect(lesLegemiddel({ ...rad, name: ' ' })).toBeNull()
   })
 
-  it('deler teksten i avsnitt, og hasher innholdet, ikke mellomrommene', () => {
+  it('deler teksten i avsnitt, uten tomme avsnitt og mellomrom i kantene', () => {
     expect(avsnitt('Første.\n\n  Andre avsnitt. \r\n')).toEqual(['Første.', 'Andre avsnitt.'])
-    expect(teksthash(avsnitt('A.\n\nB.'))).toBe(teksthash(avsnitt(' A. \nB.')))
-    expect(teksthash(avsnitt('A.\nB.'))).not.toBe(teksthash(avsnitt('A.\nC.')))
+    expect(avsnitt(' A. \nB.')).toEqual(avsnitt('A.\n\nB.'))
+    expect(avsnitt(null)).toEqual([])
   })
 
   it('leser rapporten strengt: en anbefaling som ikke kan leses helt, er en ny form', () => {
@@ -250,16 +253,29 @@ describe('synkroniseringen', () => {
     expect(rows[0]!.n).toBe(25)
   })
 
-  it('lagrer aldri anbefalingstekstene, bare hashen', async () => {
+  it('lagrer CYPinfos tekst for hver anbefaling, uendret og delt i avsnitt, men ikke i rådataene', async () => {
     await synk()
-    const { rows } = await db.query<{ n: number }>(
-      `select count(*)::int as n from cypinfo.anbefaling where data::text like '%Syntetisk%' or raa::text like '%Syntetisk%'`,
+    const forste = MED_GENER[0]!
+    const { rows } = await db.query<{ data: { avsnitt: string[]; niva: string }; raa: Rad }>(
+      `select data, raa from cypinfo.anbefaling where cypinfo_id = $1`,
+      [forste._id],
     )
-    expect(rows[0]!.n).toBe(0)
-    const { rows: hasher } = await db.query<{ h: string }>(`select data ->> 'tekst_sha256' as h from cypinfo.anbefaling`)
-    expect(hasher.every((r) => /^[0-9a-f]{64}$/.test(r.h))).toBe(true)
-    const { rows: endret } = await db.query<{ n: number }>(`select count(*)::int as n from datakilder.endringer where etter::text like '%Syntetisk%'`)
-    expect(endret[0]!.n).toBe(0)
+    expect(rows[0]!.data.avsnitt).toEqual(avsnitt(forste.text))
+    expect(rows[0]!.data.niva).toBe(forste.severity)
+    expect(Object.keys(rows[0]!.raa).sort()).toEqual(['_id', 'combinations', 'severity'])
+    const { rows: alle } = await db.query<{ n: number }>(`select count(*)::int as n from cypinfo.anbefaling where jsonb_array_length(data -> 'avsnitt') > 0`)
+    expect(alle[0]!.n).toBe(MED_GENER.length)
+  })
+
+  it('logger en ny lesing av det samme svaret som metadata, ikke som endring hos CYPinfo', async () => {
+    await synk()
+    // Slik parserversjon 1 lagret anbefalingene: med en hash av teksten i stedet for teksten.
+    await db.exec(`update cypinfo.anbefaling set data = (data - 'avsnitt') || '{"tekst_sha256": "x"}', parserversjon = 1, hash = 'gammel'`)
+    await db.exec(`truncate datakilder.endringer`)
+    expect(await synk()).toMatchObject({ status: 'fullfort' })
+    const nye = await endringer()
+    expect(nye).toHaveLength(MED_GENER.length)
+    expect(new Set(nye.map((e) => `${e.art} ${e.niva} ${e.felt.join(',')}`))).toEqual(new Set(['endret metadata avsnitt,tekst_sha256']))
   })
 
   it('er idempotent: en ny kjøring med de samme svarene endrer og logger ingenting', async () => {
@@ -286,7 +302,7 @@ describe('synkroniseringen', () => {
     const nye = (await endringer()).filter((e) => e.art !== 'grunnlag')
     expect(nye.map((e) => [e.objekt_id, e.art, e.niva, e.felt])).toEqual(
       expect.arrayContaining([
-        [forste!._id, 'endret', 'klinisk', ['tekst_sha256']],
+        [forste!._id, 'endret', 'klinisk', ['avsnitt']],
         [andre!._id, 'endret', 'klinisk', ['niva']],
       ]),
     )
@@ -390,33 +406,39 @@ describe('synkroniseringen', () => {
     await expect(kallSom(db, 'anon')('les_cypinfo', { fest_ider: [] })).rejects.toThrow()
   })
 
-  it('gir fagsidene legemidlene, kombinasjonene som har en anbefaling og gentabellen, uten tekst og nivå', async () => {
+  it('gir systemarkitektene legemidlene, anbefalingene med nivå og tekst, og gentabellen, og avviser andre til E', async () => {
     await synk()
     const admin = await opprettBruker(db, { brukernavn: `admin${Date.now()}`, fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: `leser${Date.now()}`, fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
-    const klient = faginnholdskall(db, admin).klientFor(bruker)
     const kariprazin = CYPINFOKOBLINGER.find((k) => k.side === 'Kariprazin')!
-    const { data, error } = await klient.rpc('les_cypinfo', {
-      fest_ider: ['ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43'],
-      cypinfo_ider: [kariprazin.cypinfo_id],
-    })
+    const sporsmal = { fest_ider: ['ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43'], cypinfo_ider: [kariprazin.cypinfo_id] }
+    // Så lenge visningen bare er for systemarkitektene, håndheves det også i databasen.
+    expect(CYPINFO_VISES_FOR).toBe('systemarkitekter')
+    const avvist = await faginnholdskall(db, admin).klientFor(bruker).rpc('les_cypinfo', sporsmal)
+    expect(avvist.data).toBeNull()
+    expect(avvist.error?.message).toContain('bare for systemarkitektene')
+    const { data, error } = await faginnholdskall(db, admin).klientFor(admin).rpc('les_cypinfo', sporsmal)
     expect(error).toBeNull()
     const svar = data as {
       kilde: Rad
       legemidler: { id: string; data: Legemiddeldata }[]
-      oppslag: { legemiddel_id: string; kombinasjoner: Rad[] }[]
+      anbefalinger: { legemiddel_id: string; kombinasjoner: Rad[]; niva: string; avsnitt: string[] }[]
       genresultater: { data: { gen_slug: string } }[]
     }
     expect(svar.legemidler.map((l) => l.data.navn).sort()).toEqual(['aripiprazol', 'kariprazin'])
-    expect(svar.oppslag.length).toBe(MED_GENER.filter((a) => a.drug._id === legemiddelId('aripiprazol')).length)
-    expect(Object.keys(svar.oppslag[0]!.kombinasjoner[0]!).sort()).toEqual(['fenotype_id', 'gen_slug'])
-    expect(JSON.stringify(svar.oppslag)).not.toMatch(/tekst_sha256|niva|Syntetisk/)
+    expect(svar.anbefalinger.length).toBe(MED_GENER.filter((a) => a.drug._id === legemiddelId('aripiprazol')).length)
+    expect(Object.keys(svar.anbefalinger[0]!.kombinasjoner[0]!).sort()).toEqual(['fenotype', 'fenotype_id', 'gen', 'gen_slug'])
+    expect(svar.anbefalinger.every((a) => erNiva(a.niva) && a.avsnitt.length > 0)).toBe(true)
+    // Leses slik appen gjør det, gir det et kort for hvert legemiddel.
+    const visning = byggCypinfovisning(lesCypinfoutvalg(data))
+    expect(visning.legemidler.map((l) => l.navn)).toEqual(['aripiprazol', 'kariprazin'])
+    expect(visning.legemidler[0]!.gensett.map((s) => s.gener)).toEqual([['CYP2D6']])
     expect(new Set(svar.genresultater.map((g) => g.data.gen_slug))).toEqual(new Set(['cyp2d6']))
     expect(svar.kilde).toMatchObject({ navn: 'CYPinfo', endret_kl: expect.any(String) })
 
     const status = lesDatakildestatus((await faginnholdskall(db, admin).klientFor(admin).rpc('datakilder_status', {})).data)
     const vurdering = vurderKilder(status).find((v) => v.kilde === 'cypinfo')!
-    expect(vurdering).toMatchObject({ tilstand: 'ok', intervall: 7, versjon: '1' })
+    expect(vurdering).toMatchObject({ tilstand: 'ok', intervall: 7, versjon: String(PARSERVERSJON) })
     expect(status.endringer.filter((e) => e.kilde === 'cypinfo').map((e) => e.art)).toEqual(['grunnlag', 'grunnlag', 'grunnlag'])
   })
 })

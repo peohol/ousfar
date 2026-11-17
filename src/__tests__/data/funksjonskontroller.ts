@@ -162,7 +162,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_bivirkninger(stoff text)': 'felles-lesing',
   'les_cpic(clinpgx_ider text[])': 'felles-lesing',
   'les_cpic_diplotyper(gensymbol text)': 'felles-lesing',
-  'les_cypinfo(fest_ider text[], cypinfo_ider text[])': 'felles-lesing',
+  'les_cypinfo(fest_ider text[], cypinfo_ider text[])': 'systemarkitekt',
   'les_endringslogg(side jsonb, med_utkast boolean, med_rutiner boolean, etter jsonb, antall integer)': 'rekkevidde',
   'les_fagsaker()': 'systemarkitekt',
   'les_farmakogenetikk(kjemikalie_ider text[])': 'felles-lesing',

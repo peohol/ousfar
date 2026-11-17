@@ -42,7 +42,7 @@ import { clinpgxlitteratur, clinpgxreferanser } from '../../clinpgx/referanser'
 import { cpicreferanser } from '../../cpic/referanser'
 import { FARMAKOGENETIKKPANEL, kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
 import { Farmakogenetikkpanel, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
-import { useBivirkninger, useCpic, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
+import { useBivirkninger, useCpic, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
 import { Konsentrasjonskilde, konsentrasjonIEnhet } from './Konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { finnNoder, NODER } from '../../faginnhold/riktekst'
@@ -57,6 +57,8 @@ import { BIVIRKNINGSPANEL, bivirkningsreferanser } from '../../bivirkninger/refe
 import { visningForKort } from '../../bivirkninger/stoffside'
 import type { Visning } from '../../bivirkninger/modell'
 import { useStoffside, type Sidemodus } from './useStoffside'
+import { cypinfoSynlig } from '../../cypinfo/stoffside'
+import { useRettigheter } from '../../auth/rettigheter'
 import type { Stoff, Stoffregister } from '../../domain/stoffregister'
 import { analytterForStoff, fortolkningForStoff } from '../../domain/koblinger'
 
@@ -192,6 +194,7 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   const pgx = farmakogenetikk.tilstand
   const cpic = useCpic(kjemikalier)
   const cpictilstand = cpic.tilstand
+  const cypinfo = useCypinfo(koblet, navn, cypinfoSynlig(useRettigheter())).tilstand
   const bivirkninger = useBivirkninger(slug).tilstand
   const kjemi = useKjemi(slug)
   const laboratorier = useLaboratorieanalyser(slug, kjemi)
@@ -463,6 +466,7 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
                             kontekst={kontekst}
                             tilstand={pgx}
                             cpic={cpictilstand}
+                            cypinfo={cypinfo}
                             grunnlag={grunnlag}
                             sidenavn={navn}
                             sted={sted}

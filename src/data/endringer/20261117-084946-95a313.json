@@ -6,7 +6,7 @@
   "typer": ["Funksjonalitet"],
   "omfang": "Mindre omfang",
   "punkter": [
-    "OUSFAR henter nå hver uke hvilke legemidler, gener og resultater CYPinfo har farmakogenetiske anbefalinger for. Anbefalingstekstene lagres ikke; de skal hentes fra CYPinfo når noen slår opp et resultat.",
+    "OUSFAR henter nå hver uke hvilke legemidler, gener og resultater CYPinfo har farmakogenetiske anbefalinger for.",
     "Systemarkitektene ser hentingen under «Datakilder», med «Hent nå» og endringene siden forrige gang. Ingenting vises på fagsidene ennå."
   ],
   "utenVarsel": true

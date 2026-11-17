@@ -85,6 +85,7 @@ import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
 import { lagCpicleserOmIBruk } from './cpic/lesing'
+import { lagCypinfoleserOmIBruk } from './cypinfo/lesing'
 import { lagBivirkningsleser } from './bivirkninger/lesing'
 import { lagKjemileser } from './kjemi/lesing'
 import { lagLableser, lagLabsokleser } from './farmakologiportalen/lesing'
@@ -269,6 +270,7 @@ function Arbeidsflate({
       legemidler: lagLegemiddelleser(klient()),
       farmakogenetikk: lagFarmakogenetikkleser(klient()),
       cpic: lagCpicleserOmIBruk(klient()),
+      cypinfo: lagCypinfoleserOmIBruk(klient()),
       bivirkninger: lagBivirkningsleser(klient()),
       kjemi: lagKjemileser(klient()),
       laboratorier: lagLableser(klient()),

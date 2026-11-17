@@ -177,6 +177,61 @@
   padding-left: var(--rom-4);
 }
 
+/* --- Farmakogenetikk: anbefalingene fra CYPinfo ---------------------------
+   Ett detaljkort per legemiddel: genene som overskrift, og under dem hver
+   fenotype med nivået som merke og CYPinfos tekst. */
+.cypinfo__overskrift {
+  margin: var(--rom-3) 0 0;
+  font: var(--vekt-halvfet) var(--tekst-merke) / var(--linjehoyde-tett) var(--skrift-ui);
+  letter-spacing: var(--sperring-meta);
+  text-transform: uppercase;
+  color: var(--blekk-dempet);
+}
+
+.cypinfo__anbefalinger {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cypinfo__anbefaling {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  padding: var(--rom-3) 0;
+  border-top: var(--kant) solid var(--linje);
+}
+
+.cypinfo__fenotyper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-1) var(--rom-2);
+  margin: 0;
+}
+
+.cypinfo__fenotype {
+  padding: 0 var(--rom-2);
+  font: var(--vekt-halvfet) var(--tekst-etikett) / 1.6 var(--skrift-ui);
+  color: var(--blekk);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-pille);
+}
+
+.cypinfo__niva {
+  margin: 0;
+}
+
+.cypinfo__tekst {
+  margin: 0;
+  font: var(--vekt-normal) var(--tekst-ui) / 1.5 var(--skrift-ui);
+}
+
+.cypinfo__tekst--mangler {
+  color: var(--blekk-dempet);
+}
+
 /* Ved utskrift står alt åpent, også delene og «Mer om anbefalingen». */
 @media print {
   .cpic__mer > summary {
