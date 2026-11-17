@@ -66,8 +66,11 @@ export function henger(forrige: Gruppemelding | undefined, melding: Gruppemeldin
 
 /** Hvem som kan lese chatten, øverst i den. */
 export function lesertekst({ medlemmer, systemarkitekter }: Chatlesere): string {
-  const hvem = medlemmer === 1 ? 'det ene medlemmet i gruppen' : `de ${medlemmer} medlemmene i gruppen`
-  return systemarkitekter ? `Leses av ${hvem} og av systemarkitektene i OUSFAR.` : `Leses av ${hvem}.`
+  const hvem = [
+    medlemmer === 1 ? 'det ene medlemmet i gruppen' : medlemmer > 1 ? `de ${medlemmer} medlemmene i gruppen` : null,
+    systemarkitekter ? 'systemarkitektene i OUSFAR' : null,
+  ].filter(Boolean)
+  return hvem.length ? `Leses av ${hvem.join(' og av ')}.` : 'Ingen kan lese chatten nå.'
 }
 
 /**

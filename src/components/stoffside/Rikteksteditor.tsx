@@ -32,6 +32,7 @@ import {
   OVERSKRIFTSATTRIBUTT,
   OVERSKRIFTSNIVAER,
   erTrygLenke,
+  klartekst,
   konsentrasjonstekst,
   overskriftselement,
   overskriftsniva,
@@ -46,6 +47,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { lesKonsentrasjonsattrs, useKonsentrasjonskilde } from './Konsentrasjon'
 import { useOverskriftsniva } from '../Overskriftsniva'
+import { pasientvaktmodus, usePasientvakt } from '../../hooks/usePasientvakt'
 import { Referansevelger } from './Referansevelger'
 import { Tegnmeny } from './Tegnmeny'
 import { useRedigering } from './Redigeringskontekst'
@@ -294,11 +296,14 @@ export interface RikteksteditorProps {
    * redigering. Høyden følger brukeren til neste felt og neste maskin.
    */
   justerbar?: boolean
-  /**
-   * En kort tekst under feltet, som skjermlesere leser med feltet, f.eks.
-   * påminnelsen om pasientopplysninger i samhandlingen.
-   */
+  /** En kort tekst under feltet, som skjermlesere leser med feltet. */
   hjelp?: string
+  /**
+   * Regelen om pasientopplysninger under feltet, og advarselen mens teksten
+   * ligner et fødselsnummer (`usePasientvakt`). Alle skrivefelt der brukerne
+   * deler noe med andre, har den.
+   */
+  pasientregel?: boolean
 }
 
 /** Høyden brukeren har dratt et justerbart felt til (`justerbar`). */
@@ -319,8 +324,11 @@ export function Rikteksteditor({
   kompakt = false,
   justerbar = false,
   hjelp,
+  pasientregel = false,
 }: RikteksteditorProps) {
   const hjelpId = useId()
+  const vakt = usePasientvakt(pasientregel ? klartekst(dokument) : '', pasientvaktmodus(pasientregel))
+  const beskrevetAv = [hjelp && hjelpId, vakt.beskrevetAv].filter(Boolean).join(' ')
   const [panel, setPanel] = useState<Verktoypanel>(null)
   const valgt = useDrattLengde('teksthoyde', justerbar ? TEKSTHOYDE : null)
   // Høyden mens kanten dras; den lagres når draget er ferdig.
@@ -360,7 +368,7 @@ export function Rikteksteditor({
         'aria-label': etikett,
         'aria-multiline': 'true',
         role: 'textbox',
-        ...(hjelp ? { 'aria-describedby': hjelpId } : {}),
+        ...(beskrevetAv ? { 'aria-describedby': beskrevetAv } : {}),
       },
     },
     onUpdate: ({ editor: e }) => onEndre(rensDokument(e.getJSON())),
@@ -456,6 +464,8 @@ export function Rikteksteditor({
           {hjelp}
         </p>
       )}
+      {vakt.regel}
+      {vakt.varsel}
     </>
   )
 }

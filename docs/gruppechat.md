@@ -258,7 +258,8 @@ gjennom sanntidstjenesten.
   nettleseren er på nett igjen, henter klienten endringene siden
   `siste_endring`. Er det mer enn `antall`, henter den til `flere` er usann.
 - **Livstegn:** mens chatten står åpen, henter klienten endringene minst hvert
-  60. sekund, også uten hendelser. Svarer databasen `42501`, viser chatten
+  45. sekund, også uten hendelser (så en åpen chat tømmes innen ett minutt
+  også når tilgangen tas rett etter et livstegn, med tid til et tregt svar). Svarer databasen `42501`, viser chatten
   «Du har ikke lenger tilgang til denne gruppen.», tømmer meldingene og
   stopper abonnementet.
 - **Rekkefølge og duplikater:** meldingene holdes i et kart etter `id`; en
@@ -335,8 +336,9 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
   vises bare når `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»), og regelen om pasientopplysninger
-  (`Pasientregel`).
+  av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
+  medlemmer bare «Leses av systemarkitektene i OUSFAR.»), og regelen om
+  pasientopplysninger (`Pasientregel`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
@@ -469,6 +471,7 @@ Fylles ut av trådene.
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Slått sammen |
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Slått sammen |
-| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
+| D2 Regelen og advarselen ved de eksisterende skrivefeltene | [#445](https://github.com/peohol/ousfar/pull/445) | Slått sammen |
+| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Slått sammen |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Til kontroll |
 | D3 krysstestene og sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Til kontroll |

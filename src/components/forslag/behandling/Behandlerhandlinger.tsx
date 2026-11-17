@@ -6,7 +6,6 @@ import { OBJEKTTYPER, type Objekttype } from '../../../faginnhold/modell'
 import { behandle, markerInnarbeidet, muligeBehandlinger, taForslag, type Behandling } from '../../../forslag/behandling'
 import { GRENSER, personnavn, type Forslag, type Forslagskonflikt, type Forslagsressurs } from '../../../forslag/modell'
 import { useBevart } from '../../../oppdatering/Bevaring'
-import { IKKE_PASIENTOPPLYSNINGER } from '../../../traad/modell'
 import { Button } from '../../Button'
 import { Historikkvindu } from '../../historikk/Historikkvindu'
 import { useValgfriFaginnholdskilde } from '../../stoffside/Faginnholdskilde'
@@ -241,7 +240,7 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
             onEndre={setTekst}
             maks={GRENSER.svar}
             pakrevd={Boolean(skjema.mangler)}
-            hjelp={IKKE_PASIENTOPPLYSNINGER}
+            pasientregel
             autoFocus
           />
           <div className="gruppeside__handlinger">
