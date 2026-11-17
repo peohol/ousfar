@@ -379,6 +379,6 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
-| P7.0 kontrakt og grunnmur | — | Under arbeid |
+| P7.0 kontrakt og grunnmur | [#440](https://github.com/peohol/ousfar/pull/440) | Slått sammen |
 | E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |
