@@ -7,7 +7,7 @@
  * Reglene:
  * - Den første siden er de nyeste meldingene. Eldre hentes på forespørsel.
  * - Dørklokken, ny tilkobling, synlig fane, nettet tilbake og livstegnet hvert
- *   60. sekund fører alle til samme henting: endringene siden
+ *   45. sekund fører alle til samme henting: endringene siden
  *   endringstelleren, én henting om gangen, og til det ikke er mer å hente.
  * - Svarer databasen at den innloggede ikke har tilgang (`IngenTilgang`), er
  *   chatten stengt: meldingene tømmes, og abonnementet og livstegnet stopper.
@@ -22,8 +22,13 @@ import { GRUPPECHAT_GRENSER } from './modell'
 import type { Abonner, Kanalstatus } from './dorklokke'
 import { eldsteNr, medEldre, medEndringer, medForsteSide, medMelding, TOM_MELDINGSTILSTAND, type Meldingstilstand } from './tilstand'
 
-/** Hvor ofte chatten henter endringene uten hendelser, mens den står åpen og synlig. */
-export const LIVSTEGN_MS = 60_000
+/**
+ * Hvor ofte chatten henter endringene uten hendelser, mens den står åpen og
+ * synlig. Kontrakten krever at en åpen chat tømmes innen ett minutt etter at
+ * tilgangen er tatt (docs/gruppechat.md); 45 s gir rom for et tregt svar også
+ * når tilgangen tas rett etter et livstegn.
+ */
+export const LIVSTEGN_MS = 45_000
 /** Meldinger per side. */
 export const SIDESTORRELSE = 50
 

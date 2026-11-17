@@ -258,7 +258,8 @@ gjennom sanntidstjenesten.
   nettleseren er på nett igjen, henter klienten endringene siden
   `siste_endring`. Er det mer enn `antall`, henter den til `flere` er usann.
 - **Livstegn:** mens chatten står åpen, henter klienten endringene minst hvert
-  60. sekund, også uten hendelser. Svarer databasen `42501`, viser chatten
+  45. sekund, også uten hendelser (så en åpen chat tømmes innen ett minutt
+  også når tilgangen tas rett etter et livstegn, med tid til et tregt svar). Svarer databasen `42501`, viser chatten
   «Du har ikke lenger tilgang til denne gruppen.», tømmer meldingene og
   stopper abonnementet.
 - **Rekkefølge og duplikater:** meldingene holdes i et kart etter `id`; en
