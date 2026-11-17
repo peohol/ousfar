@@ -335,8 +335,9 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
   vises bare når `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»), og regelen om pasientopplysninger
-  (`Pasientregel`).
+  av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
+  medlemmer bare «Leses av systemarkitektene i OUSFAR.»), og regelen om
+  pasientopplysninger (`Pasientregel`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
@@ -469,5 +470,6 @@ Fylles ut av trådene.
 | C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Slått sammen |
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Slått sammen |
-| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
+| D2 Regelen og advarselen ved de eksisterende skrivefeltene | [#445](https://github.com/peohol/ousfar/pull/445) | Slått sammen |
+| B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Slått sammen |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Til kontroll |

@@ -8,11 +8,11 @@ import {
   type Idekategori,
   type Idetraad,
 } from '../../ideer/modell'
-import { IKKE_PASIENTOPPLYSNINGER, TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
+import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
-import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import type { Skjemastatus } from './useForlatvakt'
 
 /**
@@ -112,7 +112,7 @@ export function Ideskjema({
         </fieldset>
       )}
 
-      <Felt
+      <Fritekstfelt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}
@@ -124,7 +124,7 @@ export function Ideskjema({
         <span className="felt__merkelapp" id={beskrivelseId}>
           Beskrivelse
         </span>
-        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker hjelp={IKKE_PASIENTOPPLYSNINGER} />
+        <Rikteksteditor dokument={tekst} onEndre={setTekst} etikett="Beskrivelse" referanser={false} direktelenker pasientregel />
       </div>
 
       {feil && (

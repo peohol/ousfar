@@ -233,6 +233,12 @@
   color: var(--blekk-dempet);
 }
 
+/* Plassen for advarselen om fødselsnummer (`usePasientvakt`) står alltid, så
+   feltet kan vise til den; uten advarsel tar den ingen plass. */
+.pasientvakt__varsel:empty {
+  display: none;
+}
+
 .skjemafeil {
   margin: 0;
   padding: var(--rom-3) var(--rom-5);
