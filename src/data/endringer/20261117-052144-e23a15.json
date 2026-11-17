@@ -1,0 +1,15 @@
+{
+  "id": "20261117-052144-e23a15",
+  "semver": "minor",
+  "opprettet": "2026-11-17T05:21:44Z",
+  "sammendrag": "Oppgaver i gruppene",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["grupper"],
+  "punkter": [
+    "Gruppesiden har fått en fane for oppgaver. Oppgavene du har, står øverst, og tallet på fanen viser hvor mange du har igjen.",
+    "De ansvarlige i gruppen kan opprette oppgaver, gi dem prioritet (høy, normal eller lav), gi dem til et medlem eller la dem stå uten, endre og fjerne dem.",
+    "Den som har en oppgave, setter statusen: ikke påbegynt, pågår eller fullført.",
+    "En idé som gjøres om til en oppgave, beholder kommentarene, og oppgaven viser idéen og hvem som foreslo den. Oppgavene i gruppene har ingenting med Planlagte oppgaver å gjøre."
+  ]
+}

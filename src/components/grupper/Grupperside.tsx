@@ -39,6 +39,7 @@ import { Felt } from '../konto/Felt'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import type { Forlat } from '../ideer/useForlatvakt'
 import { Gruppeideer } from './Gruppeideer'
+import { Gruppeoppgaver } from './Gruppeoppgaver'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
@@ -49,8 +50,9 @@ const PAA_TVERS = ''
 /**
  * Gruppene (`#/grupper`): invitasjonene, gruppene den innloggede er med i og
  * skjemaet for en ny gruppe, eller én gruppe (`#/grupper/<ID>`) med
- * medlemmene og det de ansvarlige kan gjøre. Gruppen har faner for oversikten
- * og idéene (`…/ideer`, `…/ideer/<idé-ID>`), og en til diskusjonene, som står
+ * medlemmene og det de ansvarlige kan gjøre. Gruppen har faner for oversikten,
+ * idéene (`…/ideer`, `…/ideer/<idé-ID>`) og oppgavene (`…/oppgaver`,
+ * `…/oppgaver/<oppgave-ID>`), og en til diskusjonene, som står
  * i diskusjonsmenyen, som på de andre sidene. Knappene er et grensesnitt, ikke
  * en tilgangskontroll: databasen kontrollerer hver handling på nytt
  * (docs/fagmiljoer.md, «Gruppene» og «Idéer og oppgaver i gruppene»).
@@ -372,7 +374,7 @@ function Gruppevisning({
     if (element || forrigeFane.current !== fane) window.scrollTo({ top: 0 })
     forrigeFane.current = fane
   }, [fane, element])
-  useFanetittel(oversikt ? (fane === 'ideer' ? `Idéer – ${oversikt.navn}` : oversikt.navn) : 'Gruppe')
+  useFanetittel(oversikt ? (fane ? `${FANENAVN[fane]} – ${oversikt.navn}` : oversikt.navn) : 'Gruppe')
   /** En lenke på siden går gjennom skjemavakten. */
   const vaktet = (e: MouseEvent<HTMLAnchorElement>) => {
     const forlat = skjemavakt.current
@@ -489,7 +491,17 @@ function Gruppevisning({
       </Hode>
 
       {fane === 'ideer' ? (
-        <Gruppeideer gruppe={g} ide={element} onEndret={() => void hent()} skjemavakt={skjemavakt} />
+        <Gruppeideer
+          gruppe={g}
+          ide={element}
+          onEndret={() => void hent()}
+          skjemavakt={skjemavakt}
+          onGruppeoppgave={(oppgave) => {
+            window.location.hash = gruppeadresse(g.id, 'oppgaver', oppgave)
+          }}
+        />
+      ) : fane === 'oppgaver' ? (
+        <Gruppeoppgaver gruppe={g} oppgave={element} onEndret={() => void hent()} skjemavakt={skjemavakt} />
       ) : (
         <Gruppeoversiktsfane
           gruppe={g}
@@ -507,8 +519,11 @@ function Gruppevisning({
   )
 }
 
+/** Navnet på fanen, i fanen og i tittelen på siden. */
+const FANENAVN: Readonly<Record<Gruppefane, string>> = { ideer: 'Idéer', oppgaver: 'Oppgaver' }
+
 /**
- * Fanene i gruppen: oversikten og idéene, med tallet på det som er nytt, og
+ * Fanene i gruppen: oversikten, idéene og oppgavene, med tallet på det som er nytt, og
  * diskusjonene, som åpner diskusjonsmenyen på siden. Diskusjonene står bare
  * mens gruppen er aktiv, som menyen.
  */
@@ -522,7 +537,7 @@ function Gruppefaner({
   /** Før en fane åpnes: spør når et skjema i fanen har endringer. */
   onLenke: (e: MouseEvent<HTMLAnchorElement>) => void
 }) {
-  const { nye_ideer, venter } = gruppe.samhandling
+  const { nye_ideer, venter, mine_oppgaver } = gruppe.samhandling
   const behandler = gruppe.kan_styre
   // De ansvarlige ser hvor mange som venter på behandling, de andre hva som er nytt.
   const idetall = behandler ? venter : nye_ideer
@@ -538,10 +553,26 @@ function Gruppefaner({
         <li>
           <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'ideer')} onClick={onLenke} aria-current={fane === 'ideer' ? 'page' : undefined}>
             <Ikon navn="idea" storrelse="ui" />
-            Idéer
+            {FANENAVN.ideer}
             {idetall > 0 && (
               <span className="gruppeside__fanetall" aria-label={idetallnavn} title={idetallnavn}>
                 {idetall}
+              </span>
+            )}
+          </a>
+        </li>
+        <li>
+          <a
+            className="gruppeside__fane"
+            href={gruppeadresse(gruppe.id, 'oppgaver')}
+            onClick={onLenke}
+            aria-current={fane === 'oppgaver' ? 'page' : undefined}
+          >
+            <Ikon navn="oppgaver" storrelse="ui" />
+            {FANENAVN.oppgaver}
+            {mine_oppgaver > 0 && (
+              <span className="gruppeside__fanetall" aria-label={`${mine_oppgaver} til deg`} title={`${mine_oppgaver} til deg`}>
+                {mine_oppgaver}
               </span>
             )}
           </a>
