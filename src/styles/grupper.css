@@ -223,3 +223,32 @@ button.gruppeside__fane {
 .gruppeideer__tilbake {
   margin: 0;
 }
+
+/* --- Oppgavene i gruppen --------------------------------------------------- */
+
+.idekort__fra {
+  font-size: var(--tekst-merke);
+  color: var(--blekk-dempet);
+}
+
+.gruppeoppgave__opphav {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+}
+
+.gruppeoppgave__opphav a {
+  color: var(--aksent);
+}
+
+.gruppeoppgave__styring {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--rom-4);
+}
+
+.gruppeoppgave__styring .felt {
+  flex: 1 1 14rem;
+  max-width: 22rem;
+}
