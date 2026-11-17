@@ -157,7 +157,7 @@ Aldri mot produksjonen. Syntetiske brukere fra persongalleriet.
 | N1 | To brukere i hver sin nettleser skriver til hverandre | Meldingen kommer fram hos den andre uten omlasting |
 | N2 | En bruker leser eldre meldinger mens den andre skriver | Lista står stille; «N nye meldinger» vises |
 | N3 | Brukeren fjernes fra gruppen mens chatten står åpen | «Du har ikke lenger tilgang til denne gruppen.», meldingene borte, innen ett minutt |
-| N4 | Gruppen arkiveres | Historikken står, skrivefeltet er borte, «Gruppen er arkivert» |
+| N4 | Gruppen arkiveres | Medlemmene mister tilgangen (en arkivert gruppe leses bare av systemarkitektene); systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert» |
 | N5 | Nettverket av, den andre skriver, nettverket på | Meldingene fra mens man var borte kommer, i riktig rekkefølge og uten duplikater |
 | N6 | Hele flyten med tastatur | Enter sender, Shift+Enter gir ny linje, menyen på egne meldinger nås med tastatur, fokus forsvinner ikke |
 | N7 | Smal skjerm (390 × 844) med berøring | Ingen vannrett rulling; Enter gir ny linje, Send-knappen sender |
@@ -179,4 +179,61 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 
 ## 8. Rapport fra sluttkontrollen
 
-Fylles ut av tråd D når A, B og C er slått sammen.
+**Forkontroll** 17.11.2026, mot C2-grenen (`1d8b5c3`: A1 og C1 slått sammen,
+B1 og C2 til kontroll), i det lokale testmiljøet med sanntiden og bryteren
+på. Den endelige kontrollen kjøres på nytt når B1 og C2 er slått sammen, og
+denne rapporten oppdateres da.
+
+### Krysstestene (`gruppechat.krysstest.test.ts`)
+
+16 grønne. De dekker:
+
+- Den negative matrisen samlet for alle inngangene (de seks funksjonene,
+  `gruppeoversikt` og chatraden): medlem i A mot gruppe i B, lokale
+  administratorer utenfor gruppen (også i den tverrfaglige), invitert,
+  avsluttet i A, dobbeltmedlem utenfor gruppen i B. Alle får nøyaktig det samme
+  svaret som for en gruppe og en melding som ikke finnes. En melding fra en
+  annen gruppe kan verken endres eller slettes, heller ikke av en moderator.
+  Den uten aktivt medlemskap stoppes i alle gruppene før gruppen slås opp.
+  Systemarkitekten leser og skriver i gruppene i begge fagmiljøene og den
+  tverrfaglige.
+- Tabellene direkte: `select`, `insert`, `update` og `delete` på
+  `gruppemeldinger` og `gruppechat_lest`, og skriving i `gruppechatter`, avvises
+  for medlem, ansvarlig, moderator, systemarkitekt og et medlem fra B, og
+  tabellene er uendret etterpå. Ingen funksjon i `intern` kan kjøres fra
+  nettleseren. Uten innlogging: ingen tilgang.
+- Teksten bare ett sted: et søk i hver tekst- og JSON-kolonne i hele databasen
+  finner meldingsteksten bare i `gruppemeldinger.tekst` etter sending (også når
+  varslene er laget), og ingen steder etter endring (den gamle teksten) eller
+  sletting (av forfatter og moderator). En avvist melding (fødselsnummer, for
+  lang) står ingen steder, og feilen gjentar ikke teksten.
+- Tilgangen følger medlemskapet med den samme innloggingen: borte når
+  medlemskapet i fagmiljøet avsluttes, tilbake når det blir aktivt igjen. Et
+  medlem fra B i den tverrfaglige gruppen ser verken gruppene, oversikten eller
+  varslene fra gruppene i A.
+- Samtidighet (avsnitt 5) er dekket av A i `gruppechat.samtidighet.test.ts`,
+  også sletting samtidig med endring.
+
+### Nettleserkontrollen (`src/__tests__/qa/gruppechatnettleser.ts`)
+
+| # | Utfall | Merknad |
+| --- | --- | --- |
+| N1 | OK | Fram hos den andre på 0,2–0,7 s, uten omlasting |
+| N2 | OK | Lista står stille øverst; «2 nye meldinger» tar ned igjen |
+| N3 | OK | Stengt hos den fjernede etter 56 s (livstegnet), meldingene borte |
+| N4 | OK | Medlemmets åpne chat stengt etter 46 s; systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert» |
+| N5 | OK | Meldingene fra mens nettet var av kom 0,2 s etter, i rekkefølge og uten duplikater |
+| N6 | OK | Enter sender, Shift+Enter ny linje, fokus blir i feltet; menyen på egen melding nås med Shift+Tab, Escape gir fokus tilbake |
+| N7 | OK | 390 × 844 med berøring: ingen vannrett rulling; Enter gir ny linje, Send sender |
+| N8 | OK | `role="log"` med navn; feltet beskrives av regelen og tastehjelpen; avsender og tid ved hver melding |
+| N9 | OK | Advarselen mens man skriver; sendingen avvises med `PASIENTREGEL.avvist` og når aldri den andre |
+| N10 | OK | Varselet nevner bare gruppen, uten tekst og avsender; et trykk åpner chatfanen |
+
+### Funn
+
+- **Liten tekstfeil (B):** i en arkivert gruppe står det «Leses av de 0
+  medlemmene i gruppen og av systemarkitektene i OUSFAR». Bedre: bare
+  systemarkitektene når ingen medlemmer leser.
+- Ellers ingen funn. Kontrakten sier at en arkivert gruppe bare leses av
+  systemarkitektene; N4 er rettet til det (planen sa først at historikken står
+  for alle).

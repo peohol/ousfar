@@ -69,6 +69,12 @@ kjøringen uten at passordet skrives inn.
   dørklokken, og den som fjernes fra gruppen, får ingen flere hendelser og
   stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
   går, og av igjen etterpå.
+- `npx vite-node src/__tests__/qa/gruppechatnettleser.ts` er
+  nettleserkontrollen av gruppechatten (`docs/p7-testplan.md`, N1–N10): Ada og
+  Bo i hver sin nettleserkontekst, med de samme syntetiske kontoene og
+  bryteren på mens den går. `QA_SKJERMBILDER=<mappe>` lagrer skjermbildene.
+  Flere brukere samtidig går gjennom `brukerside()` i `testmiljo.ts`, som bare
+  finnes lokalt.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 
