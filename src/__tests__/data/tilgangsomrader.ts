@@ -32,7 +32,7 @@ export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
   ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin|rettigheter/],
   [
     'a',
-    /ressursomfang|utkast|revisjon|objekt|regelsett|regler|kommentar|referans|infosider|innhold|scenari|thc_|laborator|analytt|stoff|sideversjon|bivirkning|kjemi|cpic|farmakogenetikk|legemid|interaksjon|preparat|virkestoff|sokedata|endringslogg|maleenhet|historikk|forslag|presisering/,
+    /ressursomfang|utkast|revisjon|objekt|regelsett|regler|kommentar|referans|infosider|innhold|scenari|thc_|laborator|analytt|stoff|sideversjon|bivirkning|kjemi|cpic|cypinfo|farmakogenetikk|legemid|interaksjon|preparat|virkestoff|sokedata|endringslogg|maleenhet|historikk|forslag|presisering/,
   ],
 ]
 
