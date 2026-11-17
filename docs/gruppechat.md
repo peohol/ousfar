@@ -325,8 +325,10 @@ prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
   en melding der. «Fjern meldingen» for en moderator. Sletting bekreftes
   (`Bekreftelseskort`, «Avbryt» har fokus); endringen skjer i et felt på
   stedet, Enter lagrer og Escape avbryter, og fokus går tilbake til menyen.
-- Utkastet står i minnet per gruppe mens appen er åpen (og over en
-  oppdatering med `useBevart`), aldri i nettleserens lagring.
+- Utkastet står i minnet per innlogget bruker og gruppe mens appen er åpen
+  (og over en oppdatering med `useBevart`, skilt etter kontoen), aldri i
+  nettleserens lagring. Alle utkast glemmes ved hvert øktskifte
+  (`vedOktskifte`), og en gruppes utkast når tilgangen til den er tapt.
 - Uten tilgang tømmes skjermen for meldinger og skrivefelt. Den som kan
   lese, men ikke skrive (`kanSkrive` usann), får lista uten skrivefelt.
 

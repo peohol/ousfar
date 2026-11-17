@@ -1,4 +1,6 @@
 import { forwardRef, useEffect, useId, type KeyboardEvent } from 'react'
+import { useProfil } from '../../auth/okt'
+import { vedOktskifte } from '../../auth/oktskifte'
 import type { Chatgrenser } from '../../gruppechat/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
@@ -10,9 +12,23 @@ import { erBeroring, kanSendes, tegnteller } from './gruppechatvisning'
  * Utkastene i chattene mens appen står åpen, så det som er skrevet, står der
  * når man kommer tilbake fra en annen fane i gruppen. Bare i minnet: det
  * lagres ingen steder og er borte når fanen lukkes (`useBevart` tar det med
- * over en oppdatering av appen).
+ * over en oppdatering av appen, skilt etter kontoen).
+ *
+ * Et utkast hører til den innloggede og gruppen. Alle glemmes når kontoen i
+ * fanen skifter (utlogging, eller en annen som logger inn), og en gruppes
+ * utkast når tilgangen til den er tapt (`glemUtkastene`), så ingen andre
+ * får se det.
  */
 const utkastene = new Map<string, string>()
+const SKILLE = '\u0000'
+const utkastnokkel = (bruker: string, gruppe: string) => `${bruker}${SKILLE}${gruppe}`
+
+vedOktskifte(() => utkastene.clear())
+
+/** Glemmer utkastene i gruppen, for alle kontoer: tilgangen til den er tapt. */
+export function glemUtkastene(gruppe: string): void {
+  for (const nokkel of [...utkastene.keys()]) if (nokkel.endsWith(`${SKILLE}${gruppe}`)) utkastene.delete(nokkel)
+}
 
 /**
  * Skrivefeltet i chatten. Enter sender og Shift + Enter gir ny linje; på en
@@ -31,15 +47,16 @@ export const Gruppechatskriving = forwardRef<
     onSend: (tekst: string) => void
   }
 >(function Gruppechatskriving({ gruppe, gruppenavn, grenser, regelId, onSend }, felt) {
-  const [tekst, setTekst] = useBevart(`chat/utkast`, () => utkastene.get(gruppe) ?? '')
+  const nokkel = utkastnokkel(useProfil().id, gruppe)
+  const [tekst, setTekst] = useBevart(`chat/utkast`, () => utkastene.get(nokkel) ?? '')
   const id = useId()
   const teller = tegnteller(tekst, grenser.maks_tegn)
   const klar = kanSendes(tekst, grenser.maks_tegn)
 
   useEffect(() => {
-    if (tekst) utkastene.set(gruppe, tekst)
-    else utkastene.delete(gruppe)
-  }, [gruppe, tekst])
+    if (tekst) utkastene.set(nokkel, tekst)
+    else utkastene.delete(nokkel)
+  }, [nokkel, tekst])
 
   const send = () => {
     if (!klar) return

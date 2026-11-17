@@ -8,7 +8,7 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Pasientregel } from '../Pasientregel'
 import { Gruppechatmelding, Ventendemelding } from './Gruppechatmelding'
-import { Gruppechatskriving } from './Gruppechatskriving'
+import { Gruppechatskriving, glemUtkastene } from './Gruppechatskriving'
 import { dagsnavn, dagsnokkel, henger, lesertekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
 import '../../styles/gruppechat.css'
 
@@ -136,6 +136,11 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
     document.addEventListener('visibilitychange', merk)
     return () => document.removeEventListener('visibilitychange', merk)
   }, [status, nederst, sisteNr, chat.lestTilNr])
+
+  // Uten tilgang glemmes utkastet i gruppen, så det ikke står igjen i minnet.
+  useEffect(() => {
+    if (status === 'ingen_tilgang') glemUtkastene(gruppe.id)
+  }, [status, gruppe.id])
 
   const hentEldre = () => {
     const el = logg.current

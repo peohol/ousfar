@@ -42,7 +42,9 @@ const api = vi.hoisted(() => ({
   endreGruppe: vi.fn(),
 }))
 
-vi.mock('../auth/okt', () => ({ useProfil: () => MEG }))
+/** Den innloggede; testene for utkastene bytter konto i samme appinstans. */
+let innlogget: Profil = MEG
+vi.mock('../auth/okt', () => ({ useProfil: () => innlogget }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../grupper/api', () => api)
 // Tilstanden fra sanntiden (tråd C) er prøvd for seg; her gir den testchatten.
@@ -50,6 +52,8 @@ const krok = vi.hoisted(() => ({ useGruppechat: vi.fn() }))
 vi.mock('../gruppechat/useGruppechat', () => krok)
 
 const { Gruppechat } = await import('../components/grupper/Gruppechat')
+const { meldOktskifte } = await import('../auth/oktskifte')
+const { Bevaringseier } = await import('../oppdatering/Bevaring')
 const { Grupperside } = await import('../components/grupper/Grupperside')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
@@ -102,6 +106,7 @@ function rullOpp(el: HTMLElement) {
 let pekeren: 'fin' | 'grov' = 'fin'
 
 beforeEach(() => {
+  innlogget = MEG
   gruppen = { ...GRUPPE, id: crypto.randomUUID() }
   pekeren = 'fin'
   window.matchMedia = ((sporring: string) => ({
@@ -402,6 +407,57 @@ describe('tilstandene', () => {
     render(<Prove />)
     expect((felt() as HTMLTextAreaElement).value).toBe('Halvskrevet')
     await userEvent.clear(felt())
+  })
+})
+
+describe('utkastene hører til den innloggede', () => {
+  const B: Profil = { ...MEG, id: '00000000-0000-4000-8000-0000000000b2', username: 'test.b', first_name: 'Test', last_name: 'B' }
+  /** Som i appen: utkastet bevares under kontoen (`Bevaringseier`). */
+  const SomInnlogget = () => (
+    <Bevaringseier id={innlogget.id}>
+      <Prove />
+    </Bevaringseier>
+  )
+
+  it('B får aldri As utkast etter at A logger ut og B logger inn i samme fane', async () => {
+    const a = render(<SomInnlogget />)
+    await userEvent.type(felt(), 'Utkast fra A')
+    // A går til en annen fane i gruppen og tilbake: utkastet står.
+    a.unmount()
+    const igjen = render(<SomInnlogget />)
+    expect((felt() as HTMLTextAreaElement).value).toBe('Utkast fra A')
+    igjen.unmount()
+
+    // A logger ut, B logger inn i samme appinstans og åpner den samme gruppen.
+    act(() => meldOktskifte())
+    innlogget = B
+    render(<SomInnlogget />)
+    expect((felt() as HTMLTextAreaElement).value).toBe('')
+  })
+
+  it('skiller utkastene etter kontoen også uten et meldt øktskifte', async () => {
+    const a = render(<SomInnlogget />)
+    await userEvent.type(felt(), 'Bare for A')
+    a.unmount()
+    innlogget = B
+    const b = render(<SomInnlogget />)
+    expect((felt() as HTMLTextAreaElement).value).toBe('')
+    b.unmount()
+    // A er tilbake (uten skifte imellom): As eget utkast står fortsatt.
+    innlogget = MEG
+    render(<SomInnlogget />)
+    expect((felt() as HTMLTextAreaElement).value).toBe('Bare for A')
+    await userEvent.clear(felt())
+  })
+
+  it('glemmer utkastet når tilgangen til gruppen er tapt', async () => {
+    const a = render(<SomInnlogget />)
+    await userEvent.type(felt(), 'Skrevet før tilgangen gikk')
+    a.unmount()
+    const uten = render(<Gruppechat chat={lagTestchat({ status: 'ingen_tilgang' })} gruppe={gruppen} />)
+    uten.unmount()
+    render(<SomInnlogget />)
+    expect((felt() as HTMLTextAreaElement).value).toBe('')
   })
 })
 
