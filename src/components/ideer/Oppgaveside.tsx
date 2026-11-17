@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { Felt } from '../konto/Felt'
 import { useAutoerstattFelt } from '../../autoerstatt/felt'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
@@ -19,13 +20,11 @@ import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { Ikon } from '../ikon/Ikon'
-import { Fritekstfelt } from '../Fritekstfelt'
 import { useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Ideside } from './Ideside'
 import { Kategorimerke, Oppgavekode, Oppgavestatusmerke } from './Merker'
 import { Bekreftknapp, Tidspunkt } from '../traad/Smadeler'
 import type { Skjemastatus } from './useForlatvakt'
-import { usePasientvakt } from '../../hooks/usePasientvakt'
 
 /**
  * Én planlagt oppgave: statusen, prompten og idéen den kom fra, med den
@@ -421,7 +420,6 @@ function Oppgaveskjema({
   const [feil, setFeil] = useState<string | null>(null)
   const [lagrer, setLagrer] = useState(false)
   const id = useId()
-  const vakt = usePasientvakt(prompt)
   const endret = tittel.trim() !== lagret.tittel || prompt !== lagret.prompt
   const status: Skjemastatus = lagrer ? 'lagrer' : endret ? 'ulagret' : 'uendret'
   useEffect(() => onStatus(status), [status, onStatus])
@@ -459,7 +457,7 @@ function Oppgaveskjema({
         }
       }}
     >
-      <Fritekstfelt
+      <Felt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}
@@ -476,15 +474,13 @@ function Oppgaveskjema({
           rows={Math.max(8, prompt.split('\n').length + 1)}
           maxLength={PROMPT_MEST}
           value={prompt}
-          aria-describedby={`${id}-hjelp ${vakt.beskrevetAv}`}
+          aria-describedby={`${id}-hjelp`}
           {...autoerstatt}
         />
         <span id={`${id}-hjelp`} className="felt__hjelp">
           Skriv oppgaven slik at en språkmodell kan utføre den uten å spørre: hva som skal endres, hvor i appen, og hvordan
           resultatet skal se ut og oppføre seg. Den første lagringen gjør oppgaven påbegynt.
         </span>
-        {vakt.regel}
-        {vakt.varsel}
       </div>
       {feil && (
         <p className="skjemafeil" role="alert">

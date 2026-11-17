@@ -240,7 +240,6 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
             onEndre={setTekst}
             maks={GRENSER.svar}
             pakrevd={Boolean(skjema.mangler)}
-            pasientregel
             autoFocus
           />
           <div className="gruppeside__handlinger">

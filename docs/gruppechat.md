@@ -478,6 +478,6 @@ Fylles ut av trådene.
 | D2 Regelen og advarselen ved de eksisterende skrivefeltene (fjernet igjen i D4) | [#445](https://github.com/peohol/ousfar/pull/445) | Slått sammen |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Slått sammen |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Slått sammen |
-| D3 Sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Til kontroll |
-| D4 Påminnelsene om pasientopplysninger fjernes (Peder 17.11.2026) | [#450](https://github.com/peohol/ousfar/pull/450) | Til kontroll |
+| D3 krysstestene og sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Slått sammen |
+| D4 Påminnelsene om pasientopplysninger fjernes (Peder 17.11.2026) | [#450](https://github.com/peohol/ousfar/pull/450) | Slått sammen |
 | Aktiveringen (slås sammen sist) | [#448](https://github.com/peohol/ousfar/pull/448) | Til kontroll |

@@ -382,7 +382,6 @@ function Forslagsstillerhandlinger({ forslag, oppfrisk }: { forslag: Forslag; op
             verdi={svar}
             onEndre={setSvar}
             maks={GRENSER.svar}
-            pasientregel
           />
           <div className="gruppeside__handlinger">
             <Button type="submit" className="knapp--kompakt" disabled={opptatt}>
@@ -410,7 +409,6 @@ function Forslagsstillerhandlinger({ forslag, oppfrisk }: { forslag: Forslag; op
               onEndre={setGrunn}
               maks={GRENSER.svar}
               rader={2}
-              pasientregel
             />
             <div className="gruppeside__handlinger">
               <Button variant="subtle" onClick={() => setTrekker(false)}>

@@ -56,6 +56,12 @@ export interface Testmiljo {
   forlop(): Promise<void>
   /** En side i en ny nettleserkontekst, logget inn. Forrige kontekst lukkes, så bare én er åpen om gangen. */
   side(valg?: Record<string, unknown>): Promise<Pw>
+  /**
+   * Bare lokalt: en side i en egen kontekst, logget inn som en annen
+   * syntetisk bruker, og åpen ved siden av de andre, så flere brukere kan
+   * bruke appen samtidig (gruppechatten). Lukkes av {@link avslutt}.
+   */
+  brukerside(brukernavn: string, passord: string, valg?: Record<string, unknown>): Promise<Pw>
   /** Lukker nettleseren (og appen lokalt) og gir trafikken i kjøringen. */
   avslutt(): Promise<Trafikkrapport>
 }
@@ -134,8 +140,10 @@ export async function apneTestmiljo(): Promise<Testmiljo> {
     }
   }, 500)
 
-  async function nyKontekst(valg: Record<string, unknown>) {
-    const k = await nettleser.newContext({ viewport: { width: 1300, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'], ...valg, ...(innlogging ? { storageState: innlogging } : {}) })
+  const brukerkontekster: Pw[] = []
+
+  async function nyKontekst(valg: Record<string, unknown>, lagret: unknown = innlogging) {
+    const k = await nettleser.newContext({ viewport: { width: 1300, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'], ...valg, ...(lagret ? { storageState: lagret } : {}) })
     k.on('request', (r: Pw) => {
       const adresse = r.url()
       if (!tilDatabasen(adresse) || vakt.stoppet || (modus === 'produksjon' && blokkeresIProduksjon(adresse))) return
@@ -182,8 +190,18 @@ export async function apneTestmiljo(): Promise<Testmiljo> {
       }
       return side
     },
+    async brukerside(navn, passordet, valg = {}) {
+      if (modus !== 'lokal') throw new Teststopp('Flere brukere samtidig bare i det lokale testmiljøet.')
+      if (vakt.stoppet) throw new Teststopp(`Kjøringen er stoppet: ${vakt.stoppet}.`)
+      const k = await nyKontekst(valg, null)
+      brukerkontekster.push(k)
+      const side = await k.newPage()
+      await loggInn(side, url, navn, passordet)
+      return side
+    },
     async avslutt() {
       clearInterval(vaktur)
+      for (const k of brukerkontekster) await k.close().catch(() => undefined)
       await nettleser.close().catch(() => undefined)
       await lokalt?.avslutt()
       slippLaas()

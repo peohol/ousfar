@@ -157,12 +157,12 @@ Aldri mot produksjonen. Syntetiske brukere fra persongalleriet.
 | N1 | To brukere i hver sin nettleser skriver til hverandre | Meldingen kommer fram hos den andre uten omlasting |
 | N2 | En bruker leser eldre meldinger mens den andre skriver | Lista står stille; «N nye meldinger» vises |
 | N3 | Brukeren fjernes fra gruppen mens chatten står åpen | «Du har ikke lenger tilgang til denne gruppen.», meldingene borte, innen ett minutt |
-| N4 | Gruppen arkiveres | Historikken står, skrivefeltet er borte, «Gruppen er arkivert» |
+| N4 | Gruppen arkiveres | Medlemmene mister tilgangen (en arkivert gruppe leses bare av systemarkitektene); systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert» |
 | N5 | Nettverket av, den andre skriver, nettverket på | Meldingene fra mens man var borte kommer, i riktig rekkefølge og uten duplikater |
 | N6 | Hele flyten med tastatur | Enter sender, Shift+Enter gir ny linje, menyen på egne meldinger nås med tastatur, fokus forsvinner ikke |
 | N7 | Smal skjerm (390 × 844) med berøring | Ingen vannrett rulling; Enter gir ny linje, Send-knappen sender |
-| N8 | Navnene skjermleseren leser | Lista er `role="log"`; feltet har navn og regelen som beskrivelse; avsender og tid leses for hver melding |
-| N9 | Tekst med et syntetisk fødselsnummer | Advarselen vises mens man skriver; sendingen avvises med `PASIENTREGEL.avvist` |
+| N8 | Navnene skjermleseren leser | Lista er `role="log"`; feltet har navn og tastehjelpen som beskrivelse, uten noen påminnelse om pasientopplysninger; avsender og tid leses for hver melding |
+| N9 | Tekst med et syntetisk fødselsnummer | Ingen advarsel mens man skriver (Peder 17.11.2026); sendingen avvises med `PASIENTREGEL.avvist`, og avslaget vises |
 | N10 | Varselet om nye meldinger | «Nye meldinger i <gruppe>», uten tekst; et trykk åpner chatfanen |
 
 ## 7. Fordelingen
@@ -179,4 +179,85 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 
 ## 8. Rapport fra sluttkontrollen
 
-Fylles ut av tråd D når A, B og C er slått sammen.
+Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på. Siste
+kjøring var mot `main` med B1 og C2 slått sammen (`42724ce`, livstegnet på
+45 s) og D4 (#450, ingen påminnelse om pasientopplysninger, `cbf5025`)
+flettet inn, slik appen blir før aktiveringen: alle ti punktene OK.
+
+### Krysstestene (`gruppechat.krysstest.test.ts`)
+
+16 grønne (og de andre testene for gruppechatten, 127 til sammen, på den
+samme sammenflettingen). De dekker:
+
+- Den negative matrisen samlet for alle inngangene (de seks funksjonene,
+  `gruppeoversikt` og chatraden): medlem i A mot gruppe i B, lokale
+  administratorer utenfor gruppen (også i den tverrfaglige), invitert,
+  avsluttet i A, dobbeltmedlem utenfor gruppen i B. Alle får nøyaktig det samme
+  svaret som for en gruppe og en melding som ikke finnes. En melding fra en
+  annen gruppe kan verken endres eller slettes, heller ikke av en moderator.
+  Den uten aktivt medlemskap stoppes i alle gruppene før gruppen slås opp.
+  Systemarkitekten leser og skriver i gruppene i begge fagmiljøene og den
+  tverrfaglige.
+- Tabellene direkte: `select`, `insert`, `update` og `delete` på
+  `gruppemeldinger` og `gruppechat_lest`, og skriving i `gruppechatter`, avvises
+  for medlem, ansvarlig, moderator, systemarkitekt og et medlem fra B, og
+  tabellene er uendret etterpå. Ingen funksjon i `intern` kan kjøres fra
+  nettleseren. Uten innlogging: ingen tilgang.
+- Teksten bare ett sted: et søk i hver tekst- og JSON-kolonne i hele databasen
+  finner meldingsteksten bare i `gruppemeldinger.tekst` etter sending (også når
+  varslene er laget), og ingen steder etter endring (den gamle teksten) eller
+  sletting (av forfatter og moderator). En avvist melding (fødselsnummer, for
+  lang) står ingen steder, og feilen gjentar ikke teksten.
+- Tilgangen følger medlemskapet med den samme innloggingen: borte når
+  medlemskapet i fagmiljøet avsluttes, tilbake når det blir aktivt igjen. Et
+  medlem fra B i den tverrfaglige gruppen ser verken gruppene, oversikten eller
+  varslene fra gruppene i A.
+- Samtidighet (avsnitt 5) er dekket av A i `gruppechat.samtidighet.test.ts`,
+  også sletting samtidig med endring.
+
+### Nettleserkontrollen (`src/__tests__/qa/gruppechatnettleser.ts`)
+
+| # | Utfall | Merknad |
+| --- | --- | --- |
+| N1 | OK | Fram hos den andre på 0,2–0,7 s, uten omlasting |
+| N2 | OK | Lista står stille øverst; «2 nye meldinger» tar ned igjen |
+| N3 | OK | Verste tilfelle (fjernet rett etter livstegnet): tømt etter 45 s, innenfor grensen på 60 s (kriterium 4) |
+| N4 | OK | Verste tilfelle: medlemmets åpne chat tømt etter 45 s. Systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert», og lesertekst uten «de 0 medlemmene» |
+| N5 | OK | Meldingene fra mens nettet var av kom 0,2 s etter, i rekkefølge og uten duplikater |
+| N6 | OK | Enter sender, Shift+Enter ny linje, fokus blir i feltet; menyen på egen melding nås med Shift+Tab, Escape gir fokus tilbake |
+| N7 | OK | 390 × 844 med berøring: ingen vannrett rulling; Enter gir ny linje, Send sender |
+| N8 | OK | `role="log"` med navn; feltet beskrives av tastehjelpen; avsender og tid ved hver melding |
+| N9 | OK | Sendingen avvises med `PASIENTREGEL.avvist`, avslaget vises, og meldingen når aldri den andre |
+| N10 | OK | Varselet nevner bare gruppen, uten tekst og avsender; et trykk åpner chatfanen |
+
+N3 og N4 måler fra før tilgangen tas til den åpne chatten både sier at
+tilgangen er borte og ikke viser noen meldinger, og tar tilgangen rett etter
+at chatten har hentet endringene, så det verste tilfellet prøves hver gang.
+De feiler over 60 s (`TILGANG_TAPT_MS`). Gjenoppkoblingen i N5 har sin egen,
+lengre frist. (Første kjøring målte fra et tilfeldig tidspunkt og godtok 75 s;
+den ga 56 og 46 s. Med livstegnet på 60 s ga det verste tilfellet 60,2–60,3 s,
+se funnet under.)
+
+Kontrollen sender ingenting før Realtime har sagt «Subscribed to PostgreSQL»
+til begge sidene. Rett etter en kald start tar det noen sekunder, og en melding
+sendt før det kom først med neste livstegn (N8 feilet én gang slik).
+
+### Funn
+
+- **Påminnelsen om pasientopplysninger er tatt ut (D4, #450):** Peder valgte
+  17.11.2026 at appen ikke skal minne om regelen, fordi brukerne er godt
+  trent i personvern. N8 og N9 sjekker derfor ikke lenger regelen ved feltet
+  eller advarselen mens man skriver, bare avvisningen i databasen.
+
+- **Tap av tilgang tok litt over ett minutt, rettet i C2 (#447, `844a8c2`):**
+  livstegnet gikk hvert 60. sekund. Ble tilgangen tatt rett etter et livstegn,
+  ble den åpne chatten tømt først etter 60,2–60,3 s, over kravet på ett
+  minutt. Nå går livstegnet hvert 45. sekund (`LIVSTEGN_MS`), og N3/N4 måler
+  45 s i det verste tilfellet. Databasen stenger alle kall med en gang
+  (krysstestene), så det var bare den åpne visningen som hang etter.
+- **Tekstfeil, rettet i B1 (#444, `5ab3950`):** i en arkivert gruppe sto det
+  «Leses av de 0 medlemmene i gruppen og av systemarkitektene i OUSFAR». Nå
+  «Leses av systemarkitektene i OUSFAR.»; N4 kontrollerer det.
+- Ellers ingen funn. Kontrakten sier at en arkivert gruppe bare leses av
+  systemarkitektene; N4 er rettet til det (planen sa først at historikken står
+  for alle).

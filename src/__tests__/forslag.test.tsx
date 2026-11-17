@@ -6,14 +6,12 @@
  * skjermbildene og reglene i appen som prøves. Tilgangen selv prøves mot
  * databasen i `endringsforslag.test.ts`.
  */
-import { PASIENTREGEL } from '@delt/pasientopplysninger'
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Stoffsidedata, Utgave } from '../faginnhold/lesing'
 import type { Innholdselementinnhold } from '../faginnhold/modell'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
-import { syntetiskPersonnummer } from './hjelp/syntetiskPersonnummer'
 
 const ID = '0f1e2d3c-4b5a-4968-8776-655443322110'
 const SIDE = '11111111-0000-4000-8000-000000000001'
@@ -192,31 +190,6 @@ function visFagside() {
 }
 
 describe('knappen og skjemaet', () => {
-  it('advarer ved feltet der et fødselsnummer står, også når det bare står i begrunnelsen eller en kilde', async () => {
-    const bruker = userEvent.setup()
-    visFagside()
-    await bruker.click(screen.getByRole('button', { name: 'Foreslå endring: Dosering' }))
-    const vindu = await screen.findByRole('dialog')
-    const forslagsfelt = within(vindu).getByLabelText('Hva foreslår du?')
-    const begrunnelse = within(vindu).getByLabelText('Hvorfor?')
-    // Regelen står én gang i skjemaet, ved hovedforslaget.
-    expect(within(vindu).getAllByText(PASIENTREGEL.kort)).toHaveLength(1)
-
-    await bruker.type(forslagsfelt, '10 mg om morgenen.')
-    await bruker.type(begrunnelse, `Sett hos ${syntetiskPersonnummer(14, 3, 87)}`)
-    const advarsel = within(vindu).getByText(PASIENTREGEL.advarsel)
-    expect(within(vindu).getAllByText(PASIENTREGEL.advarsel)).toHaveLength(1)
-    expect(begrunnelse.getAttribute('aria-describedby')).toContain(advarsel.parentElement!.id)
-    expect(forslagsfelt.getAttribute('aria-describedby')).not.toContain(advarsel.parentElement!.id)
-
-    await bruker.clear(begrunnelse)
-    expect(within(vindu).queryByText(PASIENTREGEL.advarsel)).toBeNull()
-    await bruker.click(within(vindu).getByRole('button', { name: 'Legg til kilde' }))
-    const kilde = within(vindu).getByLabelText('Kilde 1')
-    await bruker.type(kilde, `Journal ${syntetiskPersonnummer(2, 11, 54)}`)
-    expect(kilde.getAttribute('aria-describedby')).toContain(within(vindu).getByText(PASIENTREGEL.advarsel).parentElement!.id)
-  })
-
   it('står ikke der forslag ikke kan sendes', () => {
     render(
       <ForslagsstedKilde apning={{ tittel: 'Citalopram', valg: VALG }}>
