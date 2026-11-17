@@ -32,9 +32,11 @@ reaksjoner, omtaler (@navn), filvedlegg (P8), søk i chatten og eksport.
   pseudonymiserte og kasuistikker som kan knyttes til enkeltpersoner
   (`docs/pasientopplysninger.md`).
 - **D6/S5.** Personvernvurderingen for chatten står i
-  `docs/gruppechat-personvern.md` (tråd D). Chatten er **avslått**
-  (`intern.gruppechat_aktivert()` gir `false`) til Peder har godkjent at den
-  slås på. Aktiveringen er en egen, liten migrasjon som viser til godkjenningen.
+  `docs/gruppechat-personvern.md` (tråd D). **Peder sa ja til å slå på
+  chatten 17.11.2026** («Ja, skru på chatten.», P7-tråden). Aktiveringen er
+  migrasjonen `*_gruppechat_aktivering.sql`, som setter
+  `intern.gruppechat_aktivert()` til `true`; den slås sammen sist, etter de
+  andre P7-delene og sluttkontrollen (D3). Før det er chatten avslått.
 - **Lagringstid: 12 måneder** (Peder 17.11.2026, beslutningskort). En melding
   eldre enn 12 måneder slettes helt (raden fjernes) og kan ikke hentes
   tilbake. Det er Peders uttrykkelige ja til denne automatiske slettingen;

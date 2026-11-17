@@ -1,0 +1,13 @@
+{
+  "id": "20261117-142542-159960",
+  "semver": "minor",
+  "opprettet": "2026-11-17T14:25:42Z",
+  "sammendrag": "Gruppene har fått chat",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "punkter": [
+    "Hver gruppe har nå en chat i fanen «Chat» på gruppesiden. Nye meldinger kommer uten at siden må lastes på nytt, og bare medlemmene i gruppen og systemarkitektene kan lese dem.",
+    "Pasientopplysninger er ikke tillatt i chatten, heller ikke uten navn. Meldinger eldre enn 12 måneder slettes automatisk."
+  ],
+  "utenVarsel": true
+}
