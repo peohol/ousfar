@@ -25,6 +25,7 @@ import {
   type Diskusjonstraad,
 } from '../../diskusjoner/modell'
 import { TITTEL_MEST, tekstTilLagring, type Kommentar } from '../../traad/modell'
+import { usePasientvakt } from '../../hooks/usePasientvakt'
 import { UnderOverskrift } from '../Overskriftsniva'
 import { Riktekst } from '../stoffside/Riktekst'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
@@ -374,6 +375,7 @@ function Tittelskjema({
 }) {
   const [tittel, setTittel] = useState(start)
   const id = useId()
+  const vakt = usePasientvakt(tittel, 'varsel')
   return (
     <form
       className="diskusjonsside__tittelskjema"
@@ -391,6 +393,7 @@ function Tittelskjema({
         value={tittel}
         maxLength={TITTEL_MEST}
         autoFocus
+        aria-describedby={vakt.beskrevetAv}
         onChange={(e) => setTittel(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
@@ -400,6 +403,7 @@ function Tittelskjema({
           }
         }}
       />
+      {vakt.varsel}
       <div className="skjema__knapper">
         <Button variant="subtle" onClick={onAvbryt}>
           Avbryt

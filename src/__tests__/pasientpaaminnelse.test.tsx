@@ -3,9 +3,12 @@
  * Regelen om pasientopplysninger ved skrivefeltene som fantes før P7
  * (`docs/pasientopplysninger.md`, tiltak D2): feltet viser `PASIENTREGEL.kort`,
  * advarer mens teksten ligner et fødselsnummer, og skjermlesere leser begge
- * med feltet. Skjemaene for en ny tråd og en idé prøves direkte; at hver
- * tekstredigerer i samhandlingen har regelen, holdes av kildene, så et nytt
- * skrivefelt ikke kan glemme den. Gruppenes beskrivelse prøves i
+ * med feltet. Overskrifter, navn, begrunnelser og kilder i de samme skjemaene
+ * advarer uten å gjenta regelen (`Fritekstfelt`, `pasientvarsel`). Skjemaene for en ny tråd og
+ * en idé prøves direkte; at hver tekstredigerer i samhandlingen har regelen og
+ * hvert felt ved siden av advarselen, holdes av kildene, så et nytt skrivefelt
+ * ikke kan glemme den. Endringsforslaget med et fødselsnummer bare i
+ * begrunnelsen prøves i `forslag.test.tsx`. Gruppenes beskrivelse prøves i
  * `grupperside.test.tsx`. Bare syntetiske numre.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
@@ -23,6 +26,8 @@ vi.mock('../ideer/api', () => ({}))
 
 const { Rikteksteditor } = await import('../components/stoffside/Rikteksteditor')
 const { Tekstomrade } = await import('../components/forslag/Tekstomrade')
+const { Felt } = await import('../components/konto/Felt')
+const { Fritekstfelt } = await import('../components/Fritekstfelt')
 const { Traadskjema } = await import('../components/diskusjoner/Skjemaer')
 const { Ideskjema } = await import('../components/ideer/Ideskjema')
 
@@ -76,13 +81,13 @@ describe('tekstredigereren', () => {
 })
 
 describe('tekstfeltet i endringsforslagene', () => {
-  function Felt() {
+  function Forslagsfelt() {
     const [verdi, setVerdi] = useState('')
     return <Tekstomrade merkelapp="Forslag" verdi={verdi} onEndre={setVerdi} maks={4000} hjelp="Vær konkret." pasientregel />
   }
 
   it('viser regelen, og advarer når et fødselsnummer skrives inn', async () => {
-    render(<Felt />)
+    render(<Forslagsfelt />)
     const felt = screen.getByLabelText('Forslag')
     expect(beskrivelse(felt)).toBe(`Vær konkret. ${PASIENTREGEL.kort}`)
     await userEvent.type(felt, `Pasient ${syntetiskPersonnummer(14, 3, 87)}`)
@@ -91,10 +96,33 @@ describe('tekstfeltet i endringsforslagene', () => {
   })
 
   it('advarer ikke ved et tall med feil kontrollsiffer', async () => {
-    render(<Felt />)
+    render(<Forslagsfelt />)
     const nr = syntetiskPersonnummer(14, 3, 87)
     await userEvent.type(screen.getByLabelText('Forslag'), nr.slice(0, 10) + String((Number(nr[10]) + 1) % 10))
     expect(screen.queryByRole('alert')).toBeNull()
+  })
+})
+
+describe('overskrifter, navn og begrunnelser', () => {
+  function Overskrift() {
+    const [verdi, setVerdi] = useState('')
+    return <Fritekstfelt merkelapp="Overskrift" value={verdi} onChange={(e) => setVerdi(e.target.value)} />
+  }
+
+  it('advarer ved et fødselsnummer uten å gjenta regelen', async () => {
+    render(<Overskrift />)
+    const felt = screen.getByLabelText('Overskrift')
+    expect(screen.queryByText(PASIENTREGEL.kort)).toBeNull()
+    expect(beskrivelse(felt)).toBe('')
+    await userEvent.type(felt, syntetiskPersonnummer(14, 3, 87))
+    expect(screen.getByRole('alert').textContent).toBe(PASIENTREGEL.advarsel)
+    expect(beskrivelse(felt)).toBe(PASIENTREGEL.advarsel)
+  })
+
+  it('et vanlig felt, som passordet, er som før', () => {
+    render(<Felt merkelapp="Passord" value={syntetiskPersonnummer(14, 3, 87)} onChange={() => {}} />)
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.getByLabelText('Passord').hasAttribute('aria-describedby')).toBe(false)
   })
 })
 
@@ -137,6 +165,23 @@ describe('kildene', () => {
     for (const fil of ['forslag/Forslagsskjema.tsx', 'forslag/Forslagsside.tsx', 'forslag/behandling/Behandlerhandlinger.tsx']) {
       expect(alle.find((a) => a.fil.endsWith(fil))!.kilde, fil).toMatch(/^\s*pasientregel$/m)
     }
+  })
+
+  // Et `Felt` i et skjema med regelen må være et `Fritekstfelt`, og et `Tekstomrade`
+  // ha regelen eller advarselen, unntatt det som ikke deles som fritekst:
+  // emojien og brukernavnet som inviteres.
+  const UTEN_VARSEL = ['Emoji', 'Brukernavn']
+
+  it('hvert felt i et skjema med regelen advarer ved et fødselsnummer', () => {
+    const skjemaer = alle.filter(
+      ({ fil, kilde }) => /\bpasientregel\b|usePasientvakt/.test(kilde) && !/\/(Tekstomrade|Rikteksteditor|Fritekstfelt|konto\/Felt)\.tsx$/.test(fil),
+    )
+    const uten = skjemaer.flatMap(({ fil, kilde }) =>
+      (kilde.match(/<(Felt|Tekstomrade)\b[\s\S]*?\/>/g) ?? [])
+        .filter((tagg) => !/\bpasient(regel|varsel)\b/.test(tagg))
+        .map((tagg) => `${fil.split('/components/')[1]}: ${/merkelapp="([^"]*)"/.exec(tagg)?.[1] ?? tagg}`),
+    )
+    expect(uten.filter((f) => !UTEN_VARSEL.some((navn) => f.endsWith(`: ${navn}`)))).toEqual([])
   })
 
   it('bruker den felles regelen, ikke egne tekster om pasientopplysninger', () => {

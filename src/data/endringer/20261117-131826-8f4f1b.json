@@ -9,7 +9,7 @@
   "omfang": "Mindre omfang",
   "punkter": [
     "Under skrivefeltene i diskusjonene, idéene, kommentarene, gruppenes beskrivelse og oppgaver, og i endringsforslagene, står nå den samme korte regelen om pasientopplysninger.",
-    "Skriver du noe som ligner et fødselsnummer, får du en advarsel med en gang, så du kan fjerne det før du lagrer."
+    "Skriver du noe som ligner et fødselsnummer, får du en advarsel med en gang ved feltet, også i overskrifter, navn, begrunnelser og kilder, så du kan fjerne det før du lagrer."
   ],
   "utenVarsel": true
 }

@@ -18,6 +18,7 @@ import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Button } from '../Button'
 import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import { Modallag } from '../Modallag'
 
 /**
@@ -72,7 +73,7 @@ function Kategorifelter({
           aria-invalid={Boolean(emojiFeilen) || undefined}
           onChange={(e) => onEndre({ ...verdier, emoji: e.target.value.trim() })}
         />
-        <Felt
+        <Fritekstfelt
           merkelapp="Kategori"
           value={verdier.navn}
           maxLength={KATEGORINAVN_MEST}
@@ -270,7 +271,7 @@ export function Traadskjema({
     <form className="diskusjonsskjema skriveflate" onSubmit={(e) => void lagre(e)} noValidate aria-label="Ny tråd">
       <h3 className="diskusjonsskjema__tittel">Ny tråd</h3>
       <Kategorivelger valgt={valgt} onVelg={setKategori} ny={ny} onNy={setNy} kategorier={kategorier} visFeil={provd} />
-      <Felt
+      <Fritekstfelt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}

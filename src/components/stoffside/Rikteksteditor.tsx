@@ -47,7 +47,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { lesKonsentrasjonsattrs, useKonsentrasjonskilde } from './Konsentrasjon'
 import { useOverskriftsniva } from '../Overskriftsniva'
-import { usePasientvakt } from '../../hooks/usePasientvakt'
+import { pasientvaktmodus, usePasientvakt } from '../../hooks/usePasientvakt'
 import { Referansevelger } from './Referansevelger'
 import { Tegnmeny } from './Tegnmeny'
 import { useRedigering } from './Redigeringskontekst'
@@ -327,8 +327,8 @@ export function Rikteksteditor({
   pasientregel = false,
 }: RikteksteditorProps) {
   const hjelpId = useId()
-  const vakt = usePasientvakt(pasientregel ? klartekst(dokument) : '')
-  const beskrevetAv = [hjelp && hjelpId, pasientregel && vakt.beskrevetAv].filter(Boolean).join(' ')
+  const vakt = usePasientvakt(pasientregel ? klartekst(dokument) : '', pasientvaktmodus(pasientregel))
+  const beskrevetAv = [hjelp && hjelpId, vakt.beskrevetAv].filter(Boolean).join(' ')
   const [panel, setPanel] = useState<Verktoypanel>(null)
   const valgt = useDrattLengde('teksthoyde', justerbar ? TEKSTHOYDE : null)
   // Høyden mens kanten dras; den lagres når draget er ferdig.
@@ -464,8 +464,8 @@ export function Rikteksteditor({
           {hjelp}
         </p>
       )}
-      {pasientregel && vakt.regel}
-      {pasientregel && vakt.varsel}
+      {vakt.regel}
+      {vakt.varsel}
     </>
   )
 }

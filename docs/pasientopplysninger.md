@@ -49,9 +49,17 @@ viser ingenting uten treff. Nye flater bruker dem i stedet for egne tekster.
 Ved skrivefeltene som fantes før P7, setter `usePasientvakt`
 (`src/hooks/usePasientvakt.tsx`) de to sammen og knytter dem til feltet;
 `Rikteksteditor` og `Tekstomrade` (endringsforslagene) har den bak propen
-`pasientregel`. En test (`pasientpaaminnelse.test.tsx`) holder hvert
-skrivefelt i samhandlingen og endringsforslagene på den, og passer på at ingen
-komponent har en egen tekst om pasientopplysninger.
+`pasientregel`. Regelen står én gang per skjema, ved hovedteksten. De andre
+feltene som deles i det samme skjemaet (overskrifter, navn, kategorinavn,
+begrunnelsen og kildene i et endringsforslag), har bare advarselen:
+`Fritekstfelt` i stedet for `Felt`, `pasientvarsel` på `Tekstomrade`, eller
+`usePasientvakt(tekst, 'varsel')` ved et eget felt. `Felt` selv tar ikke inn
+vakten, så innloggingen, som lastes før innloggingsveggen, ikke trenger den. Testene (`pasientpaaminnelse.test.tsx`,
+`forslag.test.tsx`) holder hvert skrivefelt i samhandlingen og
+endringsforslagene på dette, også et fødselsnummer som bare står i
+begrunnelsen, og passer på at ingen komponent har en egen tekst om
+pasientopplysninger. Påminnelsen og advarselen stopper ingenting; sperren i
+databasen er et eget, senere tiltak (forslaget i tabellen under).
 
 ## De tekniske kontrollene
 

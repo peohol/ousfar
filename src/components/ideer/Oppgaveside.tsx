@@ -19,7 +19,7 @@ import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { Ikon } from '../ikon/Ikon'
-import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import { useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Ideside } from './Ideside'
 import { Kategorimerke, Oppgavekode, Oppgavestatusmerke } from './Merker'
@@ -459,7 +459,7 @@ function Oppgaveskjema({
         }
       }}
     >
-      <Felt
+      <Fritekstfelt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}

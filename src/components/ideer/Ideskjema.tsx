@@ -12,7 +12,7 @@ import { TITTEL_MEST, tekstTilLagring } from '../../traad/modell'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
-import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import type { Skjemastatus } from './useForlatvakt'
 
 /**
@@ -112,7 +112,7 @@ export function Ideskjema({
         </fieldset>
       )}
 
-      <Felt
+      <Fritekstfelt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}

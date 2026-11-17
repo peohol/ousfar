@@ -35,6 +35,7 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Felt } from '../konto/Felt'
+import { Fritekstfelt } from '../Fritekstfelt'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import type { Forlat } from '../ideer/useForlatvakt'
 import { Gruppeideer } from './Gruppeideer'
@@ -184,7 +185,7 @@ function Gruppefelter({
   const vakt = usePasientvakt(beskrivelse)
   return (
     <>
-      <Felt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
+      <Fritekstfelt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
       <div className="felt">
         <label className="felt__merkelapp" htmlFor={beskrivelseId}>
           Beskrivelse
