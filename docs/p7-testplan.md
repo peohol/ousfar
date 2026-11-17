@@ -180,10 +180,9 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 ## 8. Rapport fra sluttkontrollen
 
 Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på. Siste
-kjøring var mot `main` med B1 (#444, `3a5210d`) slått sammen og C2 (#447,
-`844a8c2`, med livstegnet på 45 s) flettet inn, slik `main` blir når C2 er
-slått sammen: alle ti punktene OK. Kjøres på nytt hvis C2 endres før
-sammenslåing.
+kjøring var mot `main` med B1 og C2 slått sammen (`42724ce`, livstegnet på
+45 s) og D4 (#450, ingen påminnelse om pasientopplysninger, `cbf5025`)
+flettet inn, slik appen blir før aktiveringen: alle ti punktene OK.
 
 ### Krysstestene (`gruppechat.krysstest.test.ts`)
 
@@ -227,8 +226,8 @@ samme sammenflettingen). De dekker:
 | N5 | OK | Meldingene fra mens nettet var av kom 0,2 s etter, i rekkefølge og uten duplikater |
 | N6 | OK | Enter sender, Shift+Enter ny linje, fokus blir i feltet; menyen på egen melding nås med Shift+Tab, Escape gir fokus tilbake |
 | N7 | OK | 390 × 844 med berøring: ingen vannrett rulling; Enter gir ny linje, Send sender |
-| N8 | OK | `role="log"` med navn; feltet beskrives av regelen og tastehjelpen; avsender og tid ved hver melding |
-| N9 | OK | Advarselen mens man skriver; sendingen avvises med `PASIENTREGEL.avvist` og når aldri den andre |
+| N8 | OK | `role="log"` med navn; feltet beskrives av tastehjelpen; avsender og tid ved hver melding |
+| N9 | OK | Sendingen avvises med `PASIENTREGEL.avvist`, avslaget vises, og meldingen når aldri den andre |
 | N10 | OK | Varselet nevner bare gruppen, uten tekst og avsender; et trykk åpner chatfanen |
 
 N3 og N4 måler fra før tilgangen tas til den åpne chatten både sier at
@@ -244,6 +243,11 @@ til begge sidene. Rett etter en kald start tar det noen sekunder, og en melding
 sendt før det kom først med neste livstegn (N8 feilet én gang slik).
 
 ### Funn
+
+- **Påminnelsen om pasientopplysninger er tatt ut (D4, #450):** Peder valgte
+  17.11.2026 at appen ikke skal minne om regelen, fordi brukerne er godt
+  trent i personvern. N8 og N9 sjekker derfor ikke lenger regelen ved feltet
+  eller advarselen mens man skriver, bare avvisningen i databasen.
 
 - **Tap av tilgang tok litt over ett minutt, rettet i C2 (#447, `844a8c2`):**
   livstegnet gikk hvert 60. sekund. Ble tilgangen tatt rett etter et livstegn,
