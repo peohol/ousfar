@@ -471,3 +471,4 @@ Fylles ut av trådene.
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Slått sammen |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
 | C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | [#447](https://github.com/peohol/ousfar/pull/447) | Til kontroll |
+| D3 krysstestene og sluttkontrollen | [#449](https://github.com/peohol/ousfar/pull/449) | Til kontroll |
