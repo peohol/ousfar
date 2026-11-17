@@ -322,8 +322,10 @@ fyller). Endringer og slettinger varsler ingen.
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
   vises bare når `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»), og regelen om pasientopplysninger
-  (`Pasientregel`).
+  av systemarkitektene i OUSFAR.»). Ingen påminnelse om pasientopplysninger
+  (Peder 17.11.2026: brukerne er godt trent i personvern, og påminnelser
+  blir støy); databasen avviser fortsatt tekst som ligner et fødselsnummer,
+  og avvisningen vises som en sendefeil (`PASIENTREGEL.avvist`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
@@ -332,7 +334,6 @@ fyller). Endringer og slettinger varsler ingen.
   plasseringen i lista beholdes.
 - Skrivefeltet: Enter sender, Shift+Enter gir ny linje; på berøringsskjerm
   gir Enter ny linje og Send-knappen sender. Utkastet bevares (`useBevart`).
-  `Pasientvarsel` viser en advarsel mens teksten ligner et fødselsnummer.
 - En arkivert gruppe viser historikken uten skrivefelt, med «Gruppen er
   arkivert».
 
@@ -353,7 +354,7 @@ nettleseren kan kalle.
 | `intern.krev_uten_personnummer(tekst)` | Kaster `22023` med `PASIENTREGEL.avvist` | A |
 | `intern.merk_gruppechat_varsler_lest(gruppe, bruker, til_nr)` | Tom; tråd C fyller den med samme signatur | A kaller, C fyller |
 | `@delt/pasientopplysninger` | `PASIENTREGEL` (tekstene) og `lignerPersonnummer`, de samme reglene som SQL-en; en test holder dem like | B, D |
-| `src/components/Pasientregel.tsx` | `Pasientregel` (den korte regelen) og `Pasientvarsel` (advarsel når teksten ligner et fødselsnummer) | B, D |
+| ~~`src/components/Pasientregel.tsx`~~ | Påminnelsen og advarselen ved skrivefeltene; fjernet igjen i D4 etter Peders beskjed 17.11.2026 (ingen påminnelser i appen) | – |
 | `src/gruppechat/modell.ts` | Typene over, lesefunksjonene, `GRUPPECHAT_GRENSER`, `Gruppechat` | A, B, C |
 | `src/gruppechat/api.ts` | Kallene til funksjonene over | C |
 | `src/__tests__/hjelp/testchat.ts` | En `Gruppechat` i minnet med syntetiske meldinger | B |
@@ -370,7 +371,7 @@ til eksterne tjenester for kontroll.
 | **A** Database og tilgang | Tabellene, funksjonene, radsikkerheten på `gruppechatter`, `chat_uleste` i `gruppeoversikt`, negative tilgangstester, samtidighet mot ekte Postgres, lagringstiden (12 måneder) | Grunnmuren | Migrasjonene for chatten utenom varsler og publikasjon, `src/__tests__/gruppechat*.test.ts` utenom C og D sine, oppføringene i `funksjonskontroller.ts` |
 | **B** Brukergrensesnittet | Chatfanen, meldingslista, skrivefeltet, historikken, tilgjengelighet, mobil, navigasjon | Grunnmuren (testchatten); kobles til `useGruppechat` når C er levert | `src/components/grupper/Gruppechat*.tsx`, `src/styles/gruppechat.css`, fanen i `Grupperside.tsx`, `GRUPPEFANER` i `src/domain/rute.ts`, lesingen av `chat_uleste` i `src/grupper/modell.ts` |
 | **C** Sanntid og varsler | `useGruppechat`, sammenfletting og rekkefølge, sanntidsabonnementet, gjenoppkobling, livstegn, varselkategorien og -visningen, publikasjonen, sanntid i det lokale testmiljøet | Grunnmuren; As funksjoner for integrasjonstestene | `src/gruppechat/` utenom `modell.ts`, varselmigrasjonene og publikasjonen, `src/varsler/modell.ts`, `Varsler.tsx` (rutingen), `src/__tests__/qa/lokalmiljo.ts` (sanntiden) |
-| **D** Personvern og kvalitet | `docs/pasientopplysninger.md` (den globale regelen og håndteringen av hendelser), `docs/gruppechat-personvern.md` (D6), regelen i `AGENTS.md` og `docs/prosjektansvar.md`, kartleggingen av fritekst- og filflatene (også fortolkningen), `Pasientregel` der brukerne skriver fritekst i dag, testmatrisen og sluttkontrollen i nettleseren | Grunnmuren; krysstestene og nettleserkontrollen etter A–C | Dokumentene over, `docs/p7-testplan.md`, egne testfiler (`src/__tests__/gruppechat.krysstest.test.ts`, QA-skriptene) |
+| **D** Personvern og kvalitet | `docs/pasientopplysninger.md` (den globale regelen og håndteringen av hendelser), `docs/gruppechat-personvern.md` (D6), regelen i `AGENTS.md` og `docs/prosjektansvar.md`, kartleggingen av fritekst- og filflatene (også fortolkningen), påminnelsen der brukerne skriver fritekst (D2, fjernet igjen i D4 etter Peders beskjed 17.11.2026), testmatrisen og sluttkontrollen i nettleseren | Grunnmuren; krysstestene og nettleserkontrollen etter A–C | Dokumentene over, `docs/p7-testplan.md`, egne testfiler (`src/__tests__/gruppechat.krysstest.test.ts`, QA-skriptene) |
 | **E** Forberedelse av P8 | `docs/p8-fildeling-plan.md`: kartlegging og plan for fildeling i gruppene. Ingen kode | — | Bare plandokumentet |
 
 **Regler for trådene:**
