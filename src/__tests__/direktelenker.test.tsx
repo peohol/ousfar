@@ -16,6 +16,8 @@ const TRAAD = '0b8f6d7e-1c2a-4b3d-9e8f-123456789abc'
 const IDE = '1c9f6d7e-1c2a-4b3d-9e8f-123456789abc'
 const KOMMENTAR = '9a8b7c6d-5e4f-4a3b-8c2d-0123456789ab'
 const BORTE = '2d9f6d7e-1c2a-4b3d-9e8f-123456789abc'
+const GRUPPEIDE = '3e9f6d7e-1c2a-4b3d-9e8f-123456789abc'
+const GRUPPE = '4f9f6d7e-1c2a-4b3d-9e8f-123456789abc'
 
 const dok = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })
 const forfatter = { first_name: 'Kari', last_name: 'Nordmann', username: 'kari' }
@@ -52,6 +54,24 @@ function svarFor(mal: Lenkemal): Lenkemaal | null {
       kommentarer: 0,
       kommentar: null,
     })
+  if (mal.id === GRUPPEIDE)
+    return lesLenkemaal(mal, {
+      slag: 'ide',
+      id: GRUPPEIDE,
+      tittel: 'Felles rutine',
+      idekategori: null,
+      gruppe: { id: GRUPPE, navn: 'Lithiumgruppen' },
+      gruppeoppgave: false,
+      forfatter,
+      opprettet_kl: '2026-11-17T10:00:00Z',
+      tekst: null,
+      arkivert_kl: null,
+      overfort: false,
+      kommentarer: 1,
+      kommentar: mal.kommentar
+        ? { id: KOMMENTAR, forfatter: { first_name: 'Ola', last_name: 'Hansen', username: 'ola' }, tekst: dok('Enig.'), slettet: false, skjult: false }
+        : null,
+    })
   return null
 }
 
@@ -64,6 +84,7 @@ const { Direktelenkekilde } = await import('../components/direktelenker/Direktel
 const { Kopilenkeknapp } = await import('../components/direktelenker/Kopilenkeknapp')
 const { lyttEtterDiskusjon, taDiskusjon } = await import('../components/diskusjoner/diskusjonsvisning')
 const { lyttEtterIde, meldIdelagene } = await import('../components/ideer/idevisning')
+const { lyttEtterGruppeide, taGruppekommentar } = await import('../components/grupper/gruppevisning')
 const { useRute } = await import('../hooks/useRute')
 
 const SIDER = { fagsider: [{ side: 'stoff:bupropion' as const, navn: 'Bupropion' }], fortolkninger: [], grupper: [] }
@@ -138,6 +159,22 @@ describe('brikken i teksten', () => {
     await waitFor(() => expect(apnet).toHaveBeenCalledWith({ id: IDE, kommentar: null }))
     expect(window.location.hash).toBe('#/')
     slutt()
+  })
+
+  it('åpner en gruppeidé på gruppesiden, med kommentaren, og ikke i Idéer', async () => {
+    const bruker = userEvent.setup()
+    const apnet = vi.fn()
+    const gruppeide = vi.fn()
+    const slutt = [lyttEtterIde(apnet), lyttEtterGruppeide(gruppeide)]
+    render(<Riktekst dokument={tekstMed({ slag: 'ide', id: GRUPPEIDE, kommentar: KOMMENTAR, etikett: 'Idé' })} />)
+    const lenke = await screen.findByRole('link', { name: /Lithiumgruppen.*Felles rutine/ })
+    await bruker.click(lenke)
+    await waitFor(() => expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer/${GRUPPEIDE}`))
+    expect(gruppeide).toHaveBeenCalled()
+    expect(apnet).not.toHaveBeenCalled()
+    expect(taGruppekommentar(GRUPPEIDE)).toBe(KOMMENTAR)
+    expect(taGruppekommentar(GRUPPEIDE)).toBeNull()
+    for (const s of slutt) s()
   })
 
   it('er overstreket og fører ingen steder når det den peker på, er borte', async () => {

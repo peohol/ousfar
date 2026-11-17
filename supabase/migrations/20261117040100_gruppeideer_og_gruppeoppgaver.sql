@@ -952,8 +952,11 @@ begin
 end;
 $$;
 
--- Merker varslene om oppgaven lest, når den innloggede åpner den.
-create function public.merk_gruppeoppgave_sett(oppgave uuid)
+-- Merker varslene om oppgaven lest, når den innloggede åpner den: bare dem
+-- som var der da oppgaven ble lest (`lest_kl` fra `gruppeoppgave()`), så et
+-- varsel som kommer i mellomtiden, står ulest. Bare så lenge den innloggede
+-- leser gruppen.
+create function public.merk_gruppeoppgave_sett(oppgave uuid, til timestamptz)
 returns void
 language sql
 security definer
@@ -964,6 +967,11 @@ as $$
   where v.mottaker_id = (select auth.uid())
     and v.gruppe = 'gruppeoppgaver:' || merk_gruppeoppgave_sett.oppgave
     and v.lest_kl is null
+    and v.oppdatert_kl <= least(merk_gruppeoppgave_sett.til, now())
+    and exists (
+      select 1 from public.gruppeoppgaver o
+      where o.id = merk_gruppeoppgave_sett.oppgave and intern.kan_lese_gruppe(o.gruppe_id)
+    )
 $$;
 
 -- --- Gruppeoppgavene: lesingen ---------------------------------------------------
@@ -1007,7 +1015,8 @@ security definer
 set search_path = ''
 as $$
   select intern.krev_aktivt_medlemskap();
-  select intern.gruppeoppgave_json(o)
+  -- `lest_kl`: når oppgaven ble lest, for `merk_gruppeoppgave_sett`.
+  select intern.gruppeoppgave_json(o) || jsonb_build_object('lest_kl', now())
   from public.gruppeoppgaver o
   where o.id = gruppeoppgave.oppgave and intern.kan_lese_gruppe(o.gruppe_id)
 $$;
@@ -1105,7 +1114,7 @@ revoke all on function public.endre_gruppeoppgave(uuid, text, jsonb, text) from 
 revoke all on function public.tildel_gruppeoppgave(uuid, uuid) from public, anon;
 revoke all on function public.sett_gruppeoppgavestatus(uuid, text) from public, anon;
 revoke all on function public.fjern_gruppeoppgave(uuid) from public, anon;
-revoke all on function public.merk_gruppeoppgave_sett(uuid) from public, anon;
+revoke all on function public.merk_gruppeoppgave_sett(uuid, timestamptz) from public, anon;
 revoke all on function public.gruppeoppgaveoversikt(uuid) from public, anon;
 revoke all on function public.gruppeoppgave(uuid) from public, anon;
 
@@ -1116,7 +1125,7 @@ grant execute on function public.endre_gruppeoppgave(uuid, text, jsonb, text) to
 grant execute on function public.tildel_gruppeoppgave(uuid, uuid) to authenticated;
 grant execute on function public.sett_gruppeoppgavestatus(uuid, text) to authenticated;
 grant execute on function public.fjern_gruppeoppgave(uuid) to authenticated;
-grant execute on function public.merk_gruppeoppgave_sett(uuid) to authenticated;
+grant execute on function public.merk_gruppeoppgave_sett(uuid, timestamptz) to authenticated;
 grant execute on function public.gruppeoppgaveoversikt(uuid) to authenticated;
 grant execute on function public.gruppeoppgave(uuid) to authenticated;
 

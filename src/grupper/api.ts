@@ -119,9 +119,9 @@ export async function fjernGruppeoppgave(oppgave: string): Promise<void> {
   await kall('fjern_gruppeoppgave', { oppgave })
 }
 
-/** Varslene om oppgaven er lest når den åpnes. */
-export async function merkGruppeoppgaveSett(oppgave: string): Promise<void> {
-  await kall('merk_gruppeoppgave_sett', { oppgave })
+/** Varslene om oppgaven er lest når den åpnes: de som var der da den ble lest (`lest_kl`). */
+export async function merkGruppeoppgaveSett(oppgave: string, til: string): Promise<void> {
+  await kall('merk_gruppeoppgave_sett', { oppgave, til })
 }
 
 function id(verdi: unknown): string {

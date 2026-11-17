@@ -63,6 +63,8 @@ export interface Gruppeoppgave {
   kan_endre: boolean
   /** Sette status: de ansvarlige, og den som har oppgaven. */
   kan_sette_status: boolean
+  /** Når oppgaven ble lest (bare fra `gruppeoppgave()`): varslene fram til da merkes lest. */
+  lest_kl: string | null
 }
 
 /** Svaret fra `gruppeoppgaveoversikt`: oppgavene, de uferdige først og etter prioritet. */
@@ -98,6 +100,7 @@ export function lesGruppeoppgave(verdi: unknown): Gruppeoppgave | null {
     ide,
     kan_endre: verdi.kan_endre === true,
     kan_sette_status: verdi.kan_sette_status === true,
+    lest_kl: tekstEllerNull(verdi.lest_kl),
   }
 }
 
