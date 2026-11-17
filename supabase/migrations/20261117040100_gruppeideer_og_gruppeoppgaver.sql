@@ -65,7 +65,8 @@ create table public.gruppeoppgaver (
   foreslatt_av uuid references public.profiles (id) on delete set null,
   opprettet_av uuid references public.profiles (id) on delete set null,
   opprettet_kl timestamptz not null default now(),
-  endret_kl timestamptz not null default now(),
+  -- Når overskriften, beskrivelsen eller prioriteten sist ble endret; null til da.
+  endret_kl timestamptz,
   status_kl timestamptz not null default now(),
   fullfort_kl timestamptz,
   constraint gruppeoppgaver_tittel check (char_length(tittel) between 1 and 140 and tittel = btrim(tittel)),
@@ -886,7 +887,7 @@ begin
   if tildel_gruppeoppgave.ansvarlig is not null and not intern.kan_ha_gruppeoppgave(o.gruppe_id, tildel_gruppeoppgave.ansvarlig) then
     raise exception 'Oppgaven kan bare gis til et aktivt medlem av gruppen.' using errcode = '22023';
   end if;
-  update public.gruppeoppgaver x set ansvarlig_id = tildel_gruppeoppgave.ansvarlig, endret_kl = now()
+  update public.gruppeoppgaver x set ansvarlig_id = tildel_gruppeoppgave.ansvarlig
   where x.id = o.id
   returning * into o;
   perform intern.varsle_tildelt_gruppeoppgave(o);
@@ -920,7 +921,6 @@ begin
   update public.gruppeoppgaver x
   set status = sett_gruppeoppgavestatus.status,
       status_kl = now(),
-      endret_kl = now(),
       fullfort_kl = case when sett_gruppeoppgavestatus.status = 'fullfort' then now() end
   where x.id = o.id;
   if sett_gruppeoppgavestatus.status = 'fullfort' and o.ide_id is not null then

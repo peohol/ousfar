@@ -64,6 +64,7 @@ interface Oppgave {
   status: string
   foreslatt_av: string | null
   opprettet_av: string | null
+  endret_kl: string | null
   fullfort_kl: string | null
   ide: { id: string; tittel: string; kommentarer: number } | null
   kan_endre: boolean
@@ -386,7 +387,7 @@ describe('gruppeoppgavene', () => {
     expect(await kode(() => opprettOppgave('adminA', agruppe, 'Utenfor', 'vanligB'))).toBe('22023')
 
     const opg = await opprettOppgave('adminA', agruppe, 'Rydde', 'vanligA', 'hoy')
-    expect(await oppgave('vanligA', opg)).toMatchObject({ ansvarlig_id: id('vanligA'), ansvarlig_har_tilgang: true, prioritet: 'hoy', ide: null, foreslatt_av: null })
+    expect(await oppgave('vanligA', opg)).toMatchObject({ ansvarlig_id: id('vanligA'), ansvarlig_har_tilgang: true, prioritet: 'hoy', ide: null, foreslatt_av: null, endret_kl: null })
     expect((await varsler('vanligA')).find((v) => v.kategori === 'gruppeoppgaver')?.hendelser.at(-1)).toMatchObject({
       art: 'tildelt',
       gruppeoppgave: { id: opg },
@@ -396,7 +397,7 @@ describe('gruppeoppgavene', () => {
 
     expect(await kode(() => verdi('vanligA', 'select public.endre_gruppeoppgave($1, $2, null, $3)', [opg, 'Kapret', 'lav']))).toBe('42501')
     await verdi('adminA', 'select public.endre_gruppeoppgave($1, $2, $3, $4)', [opg, 'Rydde lageret', DOK('Hele'), 'lav'])
-    expect(await oppgave('dobbeltAB', opg)).toMatchObject({ tittel: 'Rydde lageret', prioritet: 'lav' })
+    expect(await oppgave('dobbeltAB', opg)).toMatchObject({ tittel: 'Rydde lageret', prioritet: 'lav', endret_kl: expect.any(String) })
 
     expect(await kode(() => tildel('vanligA', opg, 'dobbeltAB'))).toBe('42501')
     expect(await kode(() => tildel('adminA', opg, 'vanligB'))).toBe('22023')
@@ -423,7 +424,8 @@ describe('gruppeoppgavene', () => {
     // Den som skrev idéen, får vite at den er fullført.
     expect((await varsler('dobbeltAB')).find((v) => v.kategori === 'gruppeoppgaver')?.hendelser.at(-1)).toMatchObject({ art: 'fullfort' })
     await settStatus('adminA', opg, 'paagaar')
-    expect(await oppgave('adminA', opg)).toMatchObject({ status: 'paagaar', fullfort_kl: null })
+    // Status og tildeling er ikke endringer i innholdet («endret» under overskriften).
+    expect(await oppgave('adminA', opg)).toMatchObject({ status: 'paagaar', fullfort_kl: null, endret_kl: null })
   })
 
   it('står i oversikten etter status og prioritet', async () => {
