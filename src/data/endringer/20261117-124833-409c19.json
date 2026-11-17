@@ -1,0 +1,13 @@
+{
+  "id": "20261117-124833-409c19",
+  "semver": "patch",
+  "opprettet": "2026-11-17T12:48:33Z",
+  "sammendrag": "Grunnlaget for gruppechat er lagt",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Databasen kan nå kjenne igjen tekst som ser ut som et fødselsnummer, som et sikkerhetsnett for regelen om at pasientopplysninger ikke er tillatt i OUSFAR. Det er grunnlaget for chatten i gruppene, som kommer senere.",
+    "Ingenting endres for brukerne ennå."
+  ],
+  "utenVarsel": true
+}

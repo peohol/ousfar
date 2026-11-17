@@ -374,3 +374,14 @@ details[open] > .detalj__kropp {
   border: var(--kant) solid var(--linje-kontroll);
   border-radius: var(--runding-felt);
 }
+
+/* Regelen om pasientopplysninger ved skrivefeltene (`Pasientregel`):
+   dempet og kort, så den står uten å rope. Advarselen (`Pasientvarsel`)
+   bruker `.notis`. */
+.pasientregel {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  line-height: 1.45;
+  color: var(--blekk-dempet);
+  text-wrap: pretty;
+}
