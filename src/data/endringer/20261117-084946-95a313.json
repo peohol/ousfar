@@ -1,0 +1,13 @@
+{
+  "id": "20261117-084946-95a313",
+  "semver": "minor",
+  "opprettet": "2026-11-17T08:49:46Z",
+  "sammendrag": "OUSFAR henter legemiddelkatalogen fra CYPinfo",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "OUSFAR henter nå hver uke hvilke legemidler, gener og resultater CYPinfo har farmakogenetiske anbefalinger for. Anbefalingstekstene lagres ikke; de skal hentes fra CYPinfo når noen slår opp et resultat.",
+    "Systemarkitektene ser hentingen under «Datakilder», med «Hent nå» og endringene siden forrige gang. Ingenting vises på fagsidene ennå."
+  ],
+  "utenVarsel": true
+}
