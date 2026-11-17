@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
 import { PASIENTREGEL } from '@delt/pasientopplysninger'
 import type { Gruppechat as Chattilstand } from '../gruppechat/modell'
+import { syntetiskPersonnummer } from './hjelp/syntetiskPersonnummer'
 import { lagTestchat, syntetiskeMeldinger, TESTPERSONER, useTestchat, type Testchatstyring, type Testchatvalg } from './hjelp/testchat'
 
 const GRUPPE_ID = '0f1e2d3c-4b5a-4968-8776-655443322110'
@@ -64,21 +65,6 @@ const GRUPPE = { id: GRUPPE_ID, navn: 'Litiumgruppen', status: 'aktiv' as const 
 /** Gruppen i hver test, med sin egen ID, så utkastet fra én test ikke står i neste. */
 let gruppen = GRUPPE
 
-/** Et nummer med gyldige kontrollsifre, laget her (ingen gyldige numre står i repoet). */
-function syntetiskNummer(): string {
-  const v1 = [3, 7, 6, 1, 8, 9, 4, 5, 2]
-  const v2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
-  for (let individ = 500; individ < 1000; individ++) {
-    const d = [...`140387${individ}`].map(Number)
-    const k1 = (11 - (v1.reduce((s, v, i) => s + v * d[i]!, 0) % 11)) % 11
-    if (k1 === 10) continue
-    const k2 = (11 - (v2.reduce((s, v, i) => s + v * [...d, k1][i]!, 0) % 11)) % 11
-    if (k2 === 10) continue
-    return `140387${individ}${k1}${k2}`
-  }
-  throw new Error('Fant ikke noe nummer')
-}
-
 type Styring = Chattilstand & Testchatstyring
 
 /** Chatten med testchatten bak; `styring` gir testen tilgang til den, som «noen andre skriver». */
@@ -126,6 +112,10 @@ describe('det rene', () => {
   it('sier hvem som leser, med og uten systemarkitektene', () => {
     expect(visning.lesertekst({ medlemmer: 4, systemarkitekter: true })).toBe('Leses av de 4 medlemmene i gruppen og av systemarkitektene i OUSFAR.')
     expect(visning.lesertekst({ medlemmer: 1, systemarkitekter: false })).toBe('Leses av det ene medlemmet i gruppen.')
+    // En arkivert gruppe har ingen aktive medlemmer og leses bare av systemarkitektene.
+    expect(visning.lesertekst({ medlemmer: 0, systemarkitekter: true })).toBe('Leses av systemarkitektene i OUSFAR.')
+    expect(visning.lesertekst({ medlemmer: 1, systemarkitekter: true })).toBe('Leses av det ene medlemmet i gruppen og av systemarkitektene i OUSFAR.')
+    expect(visning.lesertekst({ medlemmer: 0, systemarkitekter: false })).toBe('Ingen kan lese chatten nå.')
   })
 
   it('teller bare nær grensen, og sier fra når det er for mye', () => {
@@ -223,7 +213,7 @@ describe('chatten', () => {
 
   it('advarer mens teksten ligner et fødselsnummer, og viser avslaget fra databasen', async () => {
     render(<Prove />)
-    await userEvent.type(felt(), `Se ${syntetiskNummer()}`)
+    await userEvent.type(felt(), `Se ${syntetiskPersonnummer(14, 3, 87)}`)
     expect(screen.getByRole('alert').textContent).toBe(PASIENTREGEL.advarsel)
     await userEvent.type(felt(), '{Enter}')
     expect(screen.getAllByRole('alert').map((a) => a.textContent)).toContain(`Ikke sendt: ${PASIENTREGEL.avvist}`)

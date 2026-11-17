@@ -166,6 +166,44 @@ som er borte.
 **Logging.** Meldingsteksten skrives aldri i tilgangsloggen, i `raise`-tekster
 eller i varsler. Slettingen lagrer hvem og når på meldingen selv.
 
+**Levert i A1** (`supabase/migrations/20261117130000_gruppechat.sql`, prøvd i
+`src/__tests__/gruppechat.test.ts` og `gruppechat.samtidighet.test.ts`).
+Det som ikke står i kontrakten over:
+
+- `gruppemeldinger.gruppe_id` og `gruppechat_lest.gruppe_id` peker på
+  `gruppechatter`, så chatraden alltid finnes for en melding. Raden lages ved
+  første lesing (`les_gruppechat`) eller første skriving. Sanntiden (C) får
+  derfor bare `UPDATE` på raden etter at chatten er åpnet; et abonnement på
+  `INSERT` i tillegg skader ikke.
+- `gruppemeldinger.slettet_som` (`forfatter` eller `moderator`) lagres ved
+  slettingen, så `slettet.av` står riktig også når en konto senere slettes.
+- Radsikkerheten på `gruppechatter` bruker `public.mine_lesbare_gruppechatter()`
+  (tom mens chatten er avslått), i tillegg til den felles regelen
+  `aktivt_medlemskap`.
+- Svarkodene: `42501` for bryteren, en gruppe eller melding som ikke finnes
+  eller ikke kan leses («Gruppen finnes ikke, eller du har ikke tilgang til
+  den.» / «Meldingen finnes ikke, …»), og for å endre eller slette uten rett;
+  `55000` for skriving i en arkivert gruppe og endring av en slettet melding;
+  `22023` for vaktene og manglende `klient_id`; `54000` for takten. En utgått
+  melding svarer som en som ikke finnes.
+- Systemarkitektenes sletting i en arkivert gruppe går gjennom
+  `intern.kan_moderere_gruppechat`, som også gir `kan_moderere` og
+  `kan_slette` i svarene.
+- `antall` er 1–100 i `les_gruppechat` og 1–500 i `gruppechat_endringer`.
+  Takten gjelder nye meldinger; endringer telles ikke. Uendret tekst i
+  `endre_gruppemelding` øker ikke endringstelleren.
+- `merk_gruppechat_lest` flytter aldri forbi `siste_nr` og gjør ingenting i en
+  gruppe uten meldinger.
+- `intern.rydd_gruppechat()` kjøres hver natt av arbeidsflyten
+  `.github/workflows/gruppechat-lagringstid.yml`
+  (`npm run gruppechat:lagringstid`, `src/drift/gruppechatLagringstid.ts`), så
+  de utgåtte meldingene slettes også i grupper ingen åpner. Jobben
+  kontrollerer etterpå at ingen utgått melding står igjen, og kjøringen blir
+  rød (GitHub varsler eieren av repoet) når ryddingen ikke gikk. Rapporten har
+  bare antall og alder, aldri tekst, avsendere eller grupper. Ryddingen ved
+  sending og lesing og sperren mot å lese ut en utgått melding står i
+  tillegg.
+
 ## Formen på svarene
 
 Typene står i `src/gruppechat/modell.ts` (grunnmuren) og leses med
@@ -236,8 +274,10 @@ Publikasjonen: migrasjonen til tråd C legger `public.gruppechatter` i
 `supabase_realtime`. Ingen andre tabeller.
 
 **I appen (C1).** `src/gruppechat/tilstand.ts` fletter meldingene (rene
-funksjoner), `src/gruppechat/sanntid.ts` er abonnementet på dørklokken,
-`src/gruppechat/kontroller.ts` holder én åpen chat (henting, gjenoppkobling,
+funksjoner), `dorklokke.ts` er abonnementet på dørklokken og `kall.ts`
+kallene, begge for en gitt klient (appens står i `sanntid.ts` og `api.ts`, så
+kontrollene i det lokale testmiljøet kan bruke de samme med egne
+innlogginger), `kontroller.ts` holder én åpen chat (henting, gjenoppkobling,
 livstegn, sending og lest-merking), og `useGruppechat.ts` kobler den til React.
 Valgene som ikke står over:
 
@@ -280,8 +320,9 @@ fyller). Endringer og slettinger varsler ingen.
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
   vises bare når `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»), og regelen om pasientopplysninger
-  (`Pasientregel`).
+  av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
+  medlemmer bare «Leses av systemarkitektene i OUSFAR.»), og regelen om
+  pasientopplysninger (`Pasientregel`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
@@ -409,7 +450,9 @@ Fylles ut av trådene.
 
 | Del | PR | Status |
 | --- | --- | --- |
-| P7.0 kontrakt og grunnmur | — | Under arbeid |
-| E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Til kontroll |
-| C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Til kontroll |
+| P7.0 kontrakt og grunnmur | [#440](https://github.com/peohol/ousfar/pull/440) | Slått sammen |
+| E1 Plan for fildeling i gruppene (P8) | [#439](https://github.com/peohol/ousfar/pull/439) | Slått sammen |
+| C1 sanntid og tilstand i appen (`useGruppechat`) | [#441](https://github.com/peohol/ousfar/pull/441) | Slått sammen |
+| D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
+| A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |

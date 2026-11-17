@@ -16,10 +16,10 @@
  *
  * Meldingsteksten skrives aldri i logger.
  */
-import { IngenTilgang } from './api'
+import { IngenTilgang } from './kall'
 import type { Chatendringer, Chatlesere, Chatside, Chatstatus, Gruppechat, Gruppemelding, Tilkobling, Ventende } from './modell'
 import { GRUPPECHAT_GRENSER } from './modell'
-import type { Abonner, Kanalstatus } from './sanntid'
+import type { Abonner, Kanalstatus } from './dorklokke'
 import { eldsteNr, medEldre, medEndringer, medForsteSide, medMelding, TOM_MELDINGSTILSTAND, type Meldingstilstand } from './tilstand'
 
 /** Hvor ofte chatten henter endringene uten hendelser, mens den står åpen og synlig. */
@@ -381,14 +381,17 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
     })
     const avNett = iRunden(() => sett({}))
     const livstegn = setInterval(naarSynlig, LIVSTEGN_MS)
-    document.addEventListener('visibilitychange', naarSynlig)
-    window.addEventListener('online', paNett)
-    window.addEventListener('offline', avNett)
+    // Uten nettleser (kontrollene i det lokale testmiljøet) er det bare livstegnet og dørklokken.
+    const dok = typeof document === 'undefined' ? null : document
+    const vindu = typeof window === 'undefined' ? null : window
+    dok?.addEventListener('visibilitychange', naarSynlig)
+    vindu?.addEventListener('online', paNett)
+    vindu?.addEventListener('offline', avNett)
     rydd.push(() => {
       clearInterval(livstegn)
-      document.removeEventListener('visibilitychange', naarSynlig)
-      window.removeEventListener('online', paNett)
-      window.removeEventListener('offline', avNett)
+      dok?.removeEventListener('visibilitychange', naarSynlig)
+      vindu?.removeEventListener('online', paNett)
+      vindu?.removeEventListener('offline', avNett)
     })
 
     sett({})

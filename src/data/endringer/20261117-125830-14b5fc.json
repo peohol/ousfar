@@ -1,0 +1,13 @@
+{
+  "id": "20261117-125830-14b5fc",
+  "semver": "patch",
+  "opprettet": "2026-11-17T12:58:30Z",
+  "sammendrag": "Regelen om pasientopplysninger er skrevet ned",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Regelen om at pasientopplysninger ikke er tillatt noe sted i OUSFAR, og hva som gjøres hvis noe likevel blir lagt inn, er nå beskrevet samlet.",
+    "Ingenting endres i appen ennå."
+  ],
+  "utenVarsel": true
+}

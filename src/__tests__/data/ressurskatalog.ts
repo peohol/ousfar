@@ -129,6 +129,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.idehjerter': IDE,
   'public.oppgaver': k('forvaltning', 'Planlagte oppgaver styres av systemarkitektene (§2.8, D8)'),
   'public.gruppeoppgaver': k('avledet', 'P6b: gruppenes egne oppgaver, per gruppe (gruppe_id); leses bare gjennom funksjonene'),
+  'public.gruppechatter': k('avledet', 'P7: én rad per gruppechat (gruppe_id), uten tekst; leses av dem som leser gruppen når chatten er på'),
+  'public.gruppemeldinger': k('avledet', 'P7: meldingene i gruppechatten, per gruppe (gruppe_id); leses bare gjennom funksjonene'),
+  'public.gruppechat_lest': k('personlig', 'P7: hvor langt brukeren har lest i chatten; bare gjennom funksjonene'),
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),

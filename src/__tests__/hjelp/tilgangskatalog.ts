@@ -125,6 +125,10 @@ export const REKKEVIDDEHJELPERE = [
   'krev_idebehandling',
   'las_gruppe_for_samhandling',
   'las_gruppeoppgave',
+  // P7 tråd A: gruppechatten (supabase/migrations/*_gruppechat.sql).
+  'krev_gruppechat',
+  'krev_gruppemelding',
+  'las_gruppechat',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
   `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
