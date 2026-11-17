@@ -210,7 +210,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'marker_forslag_innarbeidet(forslag uuid, objekt uuid, revisjon integer)': 'rekkevidde',
   'medlemsoversikt(fagmiljo uuid)': 'medlemskapsmyndighet',
   'merk_diskusjon_sett(diskusjon uuid, lest_kl timestamp with time zone)': 'eier',
-  'merk_gruppeoppgave_sett(oppgave uuid)': 'eier',
+  'merk_gruppeoppgave_sett(oppgave uuid, til timestamp with time zone)': 'eier',
   'merk_ide_sett(ide uuid, lest_kl timestamp with time zone)': 'eier',
   'merk_oppgave_utfort(oppgave uuid, endringslogg text)': 'systemarkitekt',
   'merk_varsler_lest(varsler uuid[], til timestamp with time zone)': 'eier',

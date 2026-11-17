@@ -56,10 +56,15 @@ export function Ideside({
   onOppgave,
   onGjortOm,
   onGruppeoppgave,
+  onGjenapnet,
+  onSett,
+  gruppe,
   overskriftsniva = 3,
   fremhev = null,
 }: {
   id: string
+  /** Gruppen idéen må høre til (på gruppesiden). En annen idé vises som borte. */
+  gruppe?: string
   innebygd?: boolean
   onEndre?: (ide: Idetraad) => void
   onSlettet?: () => void
@@ -73,6 +78,10 @@ export function Ideside({
   onGjortOm?: (ide: Idetraad, oppgave: string) => void
   /** Til oppgaven i gruppen en gruppeidé er gjort om til. */
   onGruppeoppgave?: (oppgave: string) => void
+  /** Idéen er åpnet igjen, eller gjenopprettet fra arkivet. */
+  onGjenapnet?: (ide: Idetraad) => void
+  /** Idéen og kommentarene er merket sett. */
+  onSett?: () => void
   /** Nivået på overskriften når idéen ikke er innebygd: 3 i idévinduet, 2 på gruppesiden. */
   overskriftsniva?: 2 | 3
   /** Kommentaren en direktelenke førte til. */
@@ -88,7 +97,9 @@ export function Ideside({
 
   const hent = useCallback(async () => {
     try {
-      const hentet = await hentIdetraad(id)
+      const funnet = await hentIdetraad(id)
+      // På gruppesiden står bare gruppens egne idéer, så adressen ikke viser en annen idé under gruppens navn.
+      const hentet = funnet && (gruppe === undefined || funnet.gruppe_id === gruppe) ? funnet : null
       if (!hentet) setFeil('Idéen finnes ikke lenger.')
       setTraad(hentet)
       return hentet
@@ -96,14 +107,16 @@ export function Ideside({
       setFeil('Fikk ikke hentet idéen.')
       return null
     }
-  }, [id])
+  }, [id, gruppe])
 
   useEffect(() => {
     void hent().then((hentet) => {
       if (!hentet) return
       setSistSett((forrige) => (forrige === undefined ? hentet.sist_sett : forrige))
-      void merkIdeSett(hentet).catch(() => undefined)
+      void merkIdeSett(hentet).then(() => onSett?.(), () => undefined)
     })
+    // `onSett` følger ikke med: idéen merkes sett én gang per henting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hent])
 
   // Fokus på overskriften når idéen er hentet, så skjermlesere leser hvor man er.
@@ -223,6 +236,7 @@ export function Ideside({
                   void utfor(async () => {
                     await gjenopprettIde(traad.id)
                     await hent()
+                    onGjenapnet?.(traad)
                   })
                 }
               >

@@ -131,10 +131,12 @@ beforeAll(() => {
   Range.prototype.getBoundingClientRect ??= () => new DOMRect()
 })
 
+const lukket = vi.hoisted(() => vi.fn())
+
 function vis(fane?: 'ideer', element?: string) {
   return render(
     <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
-      <Grupperside gruppe={GRUPPE} fane={fane} element={element} onLukk={() => undefined} />
+      <Grupperside gruppe={GRUPPE} fane={fane} element={element} onLukk={lukket} />
     </GruppekildeProvider>,
   )
 }
@@ -244,6 +246,9 @@ describe('én idé', () => {
     ideApi.hentIdetraad.mockImplementation(async () =>
       traad({ kan_behandle: true, gruppeoppgave: { id: OPPGAVE, status: 'ikke_paabegynt', tittel: 'Ny sjekkliste' } }),
     )
+    await waitFor(() => expect(ideApi.merkIdeSett).toHaveBeenCalled())
+    await waitFor(() => expect(grupperApi.hentGruppeoversikt).toHaveBeenCalledTimes(2))
+    const for_ = grupperApi.hentGruppeoversikt.mock.calls.length
     await userEvent.click(within(valg).getByRole('button', { name: 'Gjør om til oppgave' }))
     expect(grupperApi.gjorOmTilGruppeoppgave).toHaveBeenCalledWith(IDE)
     const merknad = await screen.findByRole('note')
@@ -251,7 +256,7 @@ describe('én idé', () => {
     expect(merknad.textContent).toMatch(/Ikke påbegynt/)
     // Tråden er fortsatt åpen, og tallene på fanene hentes på nytt.
     expect(screen.queryByRole('group', { name: 'Hva skjer med idéen' })).toBeNull()
-    expect(grupperApi.hentGruppeoversikt).toHaveBeenCalledTimes(2)
+    expect(grupperApi.hentGruppeoversikt.mock.calls.length).toBeGreaterThan(for_)
   })
 
   it('viser en idé som ikke er aktuell uten frist, og lar de ansvarlige åpne den igjen', async () => {
@@ -260,7 +265,47 @@ describe('én idé', () => {
     vis('ideer', IDE)
     const merknad = await screen.findByRole('note')
     expect(merknad.textContent).toMatch(/står her til en ansvarlig i gruppen åpner den igjen/)
+    // Tallene på fanene hentes på nytt når idéen er sett, og når den er åpnet igjen.
+    await waitFor(() => expect(grupperApi.hentGruppeoversikt).toHaveBeenCalledTimes(2))
     await userEvent.click(within(merknad).getByRole('button', { name: 'Åpne igjen' }))
     expect(ideApi.gjenopprettIde).toHaveBeenCalledWith(IDE)
+    await waitFor(() => expect(grupperApi.hentGruppeoversikt.mock.calls.length).toBeGreaterThan(2))
+  })
+
+  it('viser ikke en idé fra en annen gruppe under gruppens navn', async () => {
+    ideApi.hentIdetraad.mockImplementation(async () => traad({ gruppe_id: 'en-annen-gruppe' }))
+    vis('ideer', IDE)
+    expect(await screen.findByText('Idéen finnes ikke lenger.')).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Ny sjekkliste' })).toBeNull()
+    expect(ideApi.merkIdeSett).not.toHaveBeenCalled()
+  })
+})
+
+describe('skjemaet', () => {
+  it('spør før en ny idé med endringer forlates gjennom fanene', async () => {
+    vis('ideer')
+    await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
+    await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
+    const faner = screen.getByRole('navigation', { name: 'I gruppen' })
+    await userEvent.click(within(faner).getByRole('link', { name: 'Oversikt' }))
+    expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
+    expect(window.location.hash).toBe('')
+    await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
+    expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
+    await userEvent.click(within(faner).getByRole('link', { name: 'Oversikt' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Forkast endringene' }))
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}`)
+  })
+
+  it('spør før siden lukkes med Escape mens en ny idé har endringer', async () => {
+    vis('ideer')
+    await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
+    await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
+    ;(document.activeElement as HTMLElement | null)?.blur()
+    await userEvent.keyboard('{Escape}')
+    expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
+    expect(lukket).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Forkast endringene' }))
+    expect(lukket).toHaveBeenCalled()
   })
 })

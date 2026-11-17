@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type MouseEvent, type MutableRefObject, type ReactNode } from 'react'
 import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
@@ -37,6 +37,7 @@ import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Felt } from '../konto/Felt'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
+import type { Forlat } from '../ideer/useForlatvakt'
 import { Gruppeideer } from './Gruppeideer'
 import { Gruppeoppgaver } from './Gruppeoppgaver'
 
@@ -70,7 +71,10 @@ export function Grupperside({
   onLukk: () => void
 }) {
   const overskrift = useId()
-  useLukkMedEscape(onLukk)
+  /** Vakten til skjemaet som står åpent i en fane, så siden og fanene spør før endringer forlates. */
+  const skjemavakt = useRef<Forlat | null>(null)
+  const lukk = () => (skjemavakt.current ? skjemavakt.current(onLukk) : onLukk())
+  useLukkMedEscape(lukk)
 
   // En ny side begynner øverst, med fokus på overskriften.
   useEffect(() => {
@@ -81,11 +85,11 @@ export function Grupperside({
   return (
     <section className="gruppeside" aria-labelledby={overskrift}>
       <ToppmenyInnhold spor="lukk">
-        <Lukkeknapp onLukk={onLukk} />
+        <Lukkeknapp onLukk={lukk} />
       </ToppmenyInnhold>
       <Bevaringsomrade navn={gruppe ? `gruppe:${gruppe}` : 'grupper'}>
         {gruppe ? (
-          <Gruppevisning key={gruppe} id={gruppe} fane={fane} element={element} overskrift={overskrift} />
+          <Gruppevisning key={gruppe} id={gruppe} fane={fane} element={element} overskrift={overskrift} skjemavakt={skjemavakt} />
         ) : (
           <Oversikt overskrift={overskrift} />
         )}
@@ -342,7 +346,19 @@ function NyGruppe() {
 /** En handling som fjerner tilgang, og som derfor må bekreftes. */
 type Bekreftelse = { handling: 'fjern'; medlem: Gruppemedlem } | { handling: 'forlat' } | { handling: 'arkiver' }
 
-function Gruppevisning({ id, fane, element, overskrift }: { id: string; fane?: Gruppefane; element?: string; overskrift: string }) {
+function Gruppevisning({
+  id,
+  fane,
+  element,
+  overskrift,
+  skjemavakt,
+}: {
+  id: string
+  fane?: Gruppefane
+  element?: string
+  overskrift: string
+  skjemavakt: MutableRefObject<Forlat | null>
+}) {
   const meg = useProfil()
   const { oppdater } = useGrupper()
   const [oversikt, setOversikt] = useState<Gruppeoversikt | null>(null)
@@ -359,6 +375,16 @@ function Gruppevisning({ id, fane, element, overskrift }: { id: string; fane?: G
     forrigeFane.current = fane
   }, [fane, element])
   useFanetittel(oversikt ? (fane ? `${FANENAVN[fane]} – ${oversikt.navn}` : oversikt.navn) : 'Gruppe')
+  /** En lenke på siden går gjennom skjemavakten. */
+  const vaktet = (e: MouseEvent<HTMLAnchorElement>) => {
+    const forlat = skjemavakt.current
+    if (!forlat || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    e.preventDefault()
+    const adresse = e.currentTarget.getAttribute('href')!
+    forlat(() => {
+      window.location.hash = adresse
+    })
+  }
 
   const hent = useCallback(async () => {
     try {
@@ -454,14 +480,14 @@ function Gruppevisning({ id, fane, element, overskrift }: { id: string; fane?: G
 
   return (
     <>
-      <Hode overskrift={overskrift} overtittel={<a href={gruppeadresse()}>Grupper</a>} tittel={g.navn}>
+      <Hode overskrift={overskrift} overtittel={<a href={gruppeadresse()} onClick={vaktet}>Grupper</a>} tittel={g.navn}>
         <p className="gruppeside__meta">
           <span>{gruppetilhorighet(g)}</span>
           {g.rolle && <Merke tone={g.rolle === 'medlem' ? 'noytral' : 'aksent'}>{ROLLENAVN[g.rolle]}</Merke>}
           {!aktiv && <Merke tone="flate">Arkivert</Merke>}
         </p>
         {g.beskrivelse && !fane && <p className="gruppeside__ingress">{g.beskrivelse}</p>}
-        <Gruppefaner gruppe={g} fane={fane} />
+        <Gruppefaner gruppe={g} fane={fane} onLenke={vaktet} />
       </Hode>
 
       {fane === 'ideer' ? (
@@ -469,12 +495,13 @@ function Gruppevisning({ id, fane, element, overskrift }: { id: string; fane?: G
           gruppe={g}
           ide={element}
           onEndret={() => void hent()}
+          skjemavakt={skjemavakt}
           onGruppeoppgave={(oppgave) => {
             window.location.hash = gruppeadresse(g.id, 'oppgaver', oppgave)
           }}
         />
       ) : fane === 'oppgaver' ? (
-        <Gruppeoppgaver gruppe={g} oppgave={element} onEndret={() => void hent()} />
+        <Gruppeoppgaver gruppe={g} oppgave={element} onEndret={() => void hent()} skjemavakt={skjemavakt} />
       ) : (
         <Gruppeoversiktsfane
           gruppe={g}
@@ -500,7 +527,16 @@ const FANENAVN: Readonly<Record<Gruppefane, string>> = { ideer: 'Idéer', oppgav
  * diskusjonene, som åpner diskusjonsmenyen på siden. Diskusjonene står bare
  * mens gruppen er aktiv, som menyen.
  */
-function Gruppefaner({ gruppe, fane }: { gruppe: Gruppeoversikt; fane?: Gruppefane }) {
+function Gruppefaner({
+  gruppe,
+  fane,
+  onLenke,
+}: {
+  gruppe: Gruppeoversikt
+  fane?: Gruppefane
+  /** Før en fane åpnes: spør når et skjema i fanen har endringer. */
+  onLenke: (e: MouseEvent<HTMLAnchorElement>) => void
+}) {
   const { nye_ideer, venter, mine_oppgaver } = gruppe.samhandling
   const behandler = gruppe.kan_styre
   // De ansvarlige ser hvor mange som venter på behandling, de andre hva som er nytt.
@@ -510,12 +546,12 @@ function Gruppefaner({ gruppe, fane }: { gruppe: Gruppeoversikt; fane?: Gruppefa
     <nav aria-label="I gruppen">
       <ul className="gruppeside__faner">
         <li>
-          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id)} aria-current={fane ? undefined : 'page'}>
+          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id)} onClick={onLenke} aria-current={fane ? undefined : 'page'}>
             Oversikt
           </a>
         </li>
         <li>
-          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'ideer')} aria-current={fane === 'ideer' ? 'page' : undefined}>
+          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'ideer')} onClick={onLenke} aria-current={fane === 'ideer' ? 'page' : undefined}>
             <Ikon navn="idea" storrelse="ui" />
             {FANENAVN.ideer}
             {idetall > 0 && (
@@ -529,6 +565,7 @@ function Gruppefaner({ gruppe, fane }: { gruppe: Gruppeoversikt; fane?: Gruppefa
           <a
             className="gruppeside__fane"
             href={gruppeadresse(gruppe.id, 'oppgaver')}
+            onClick={onLenke}
             aria-current={fane === 'oppgaver' ? 'page' : undefined}
           >
             <Ikon navn="oppgaver" storrelse="ui" />

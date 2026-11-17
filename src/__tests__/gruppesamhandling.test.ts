@@ -69,6 +69,7 @@ interface Oppgave {
   ide: { id: string; tittel: string; kommentarer: number } | null
   kan_endre: boolean
   kan_sette_status: boolean
+  lest_kl: string | null
 }
 const oppgaveoversikt = (person: Person, gruppe: string) =>
   verdi<{ kan_opprette: boolean; oppgaver: Oppgave[] }>(person, 'select public.gruppeoppgaveoversikt($1)', [gruppe])
@@ -392,8 +393,16 @@ describe('gruppeoppgavene', () => {
       art: 'tildelt',
       gruppeoppgave: { id: opg },
     })
-    await somPerson('vanligA', 'select public.merk_gruppeoppgave_sett($1)', [opg])
-    expect((await varsler('vanligA')).filter((v) => v.kategori === 'gruppeoppgaver' && !('lest_kl' in v && v.lest_kl))).toHaveLength(0)
+    const uleste = async () => (await varsler('vanligA')).filter((v) => v.kategori === 'gruppeoppgaver' && !('lest_kl' in v && v.lest_kl))
+    // Et varsel som kommer etter at oppgaven ble lest, står ulest når den merkes sett.
+    const lest = (await oppgave('vanligA', opg))!
+    await tildel('adminA', opg, null)
+    await tildel('adminA', opg, 'vanligA')
+    await somPerson('vanligA', 'select public.merk_gruppeoppgave_sett($1, $2)', [opg, lest.lest_kl])
+    expect(await uleste()).toHaveLength(1)
+    const igjen = (await oppgave('vanligA', opg))!
+    await somPerson('vanligA', 'select public.merk_gruppeoppgave_sett($1, $2)', [opg, igjen.lest_kl])
+    expect(await uleste()).toHaveLength(0)
 
     expect(await kode(() => verdi('vanligA', 'select public.endre_gruppeoppgave($1, $2, null, $3)', [opg, 'Kapret', 'lav']))).toBe('42501')
     await verdi('adminA', 'select public.endre_gruppeoppgave($1, $2, $3, $4)', [opg, 'Rydde lageret', DOK('Hele'), 'lav'])

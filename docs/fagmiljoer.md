@@ -502,7 +502,10 @@ at hen ikke lenger er med.
 
 **Lesingen.** `gruppeideer(gruppe)` (idéene og om den innloggede kan skrive og
 behandle), `idetraad(ide)`, `gruppeoppgaveoversikt(gruppe)` (de uferdige
-først, etter prioritet), `gruppeoppgave(oppgave)` og tallene på fanene i
+først, etter prioritet), `gruppeoppgave(oppgave)` (med `lest_kl`; varslene
+om oppgaven fram til da merkes lest med `merk_gruppeoppgave_sett(oppgave,
+til)`, så et varsel som kommer i mellomtiden, står ulest, som for idéene) og
+tallene på fanene i
 `gruppeoversikt(gruppe).samhandling` (nye idéer, idéer som venter på
 behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
@@ -517,7 +520,10 @@ først (merket «Ny»), søk i overskriftene, og skuffene «Gjort om til
 oppgaver» og «Ikke aktuelt». Tallet på fanen er det som venter på behandling
 for de ansvarlige, og idéene med noe nytt for de andre. Én idé bruker den
 samme visningen som idévinduet (`Ideside`), og knappene følger det databasen
-svarer i tråden (`kan_behandle`, `kan_moderere`, `kan_kommentere`).
+svarer i tråden (`kan_behandle`, `kan_moderere`, `kan_kommentere`). En
+adresse med en idé eller oppgave fra en annen gruppe viser den som borte, og et
+skjema med endringer spør før det forlates, også gjennom fanene og lenkene på
+siden.
 Oppgavefanen har oppgavene den innloggede har øverst (tallet på fanen), så de
 andre etter prioritet, og de fullførte i en skuff. Én oppgave viser hvem som
 har den, status, prioritet, opphavet (idéen og hvem som foreslo den) og idéen

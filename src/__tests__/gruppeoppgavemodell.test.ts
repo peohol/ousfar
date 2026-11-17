@@ -33,6 +33,7 @@ const OPPGAVE = {
   ide: { id: 'i1', tittel: 'Sjekkliste', kommentarer: 2 },
   kan_endre: false,
   kan_sette_status: true,
+  lest_kl: '2026-11-17T12:00:00Z',
 }
 
 const IDE = {
@@ -53,7 +54,7 @@ const IDE = {
 describe('oppgavene i en gruppe', () => {
   it('leser en oppgave, med idéen den kom fra og hva den innloggede kan gjøre', () => {
     const oppgave = lesGruppeoppgave(OPPGAVE)!
-    expect(oppgave).toMatchObject({ id: 'o1', prioritet: 'hoy', status: 'paagaar', ansvarlig_id: 'kari', kan_endre: false, kan_sette_status: true })
+    expect(oppgave).toMatchObject({ id: 'o1', prioritet: 'hoy', status: 'paagaar', ansvarlig_id: 'kari', kan_endre: false, kan_sette_status: true, lest_kl: '2026-11-17T12:00:00Z' })
     expect(oppgave.ide).toEqual({ id: 'i1', tittel: 'Sjekkliste', kommentarer: 2 })
     expect(oppgave.beskrivelse?.type).toBe('doc')
     expect(GRUPPEOPPGAVESTATUSNAVN[oppgave.status]).toBe('Pågår')

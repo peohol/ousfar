@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, type MutableRefObject } from 'react'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
@@ -38,6 +38,8 @@ import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Felt } from '../konto/Felt'
 import { Gruppeoppgavestatusmerke } from '../ideer/Merker'
 import { Ideside } from '../ideer/Ideside'
+import { useForlatvakt, useMeldVakt, type Forlat, type Skjemastatus } from '../ideer/useForlatvakt'
+import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Riktekst } from '../stoffside/Riktekst'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Forfatterbilde, Forfatterkilde, useForfatternavn } from '../traad/Forfatterkontekst'
@@ -66,7 +68,18 @@ type Skjema = { oppgave?: Gruppeoppgave } | null
  * med Planlagte oppgaver å gjøre (docs/fagmiljoer.md, «Idéer og oppgaver i
  * gruppene»).
  */
-export function Gruppeoppgaver({ gruppe, oppgave, onEndret }: { gruppe: Gruppeoversikt; oppgave?: string; onEndret: () => void }) {
+export function Gruppeoppgaver({
+  gruppe,
+  oppgave,
+  onEndret,
+  skjemavakt,
+}: {
+  gruppe: Gruppeoversikt
+  oppgave?: string
+  onEndret: () => void
+  /** Gruppesidens vakt: fanene og lenkene på siden spør før et skjema med endringer forlates. */
+  skjemavakt?: MutableRefObject<Forlat | null>
+}) {
   const meg = useProfil()
   const [liste, setListe] = useState<Gruppeoppgaveliste>(INGEN_GRUPPEOPPGAVER)
   const [lastet, setLastet] = useState(false)
@@ -74,6 +87,19 @@ export function Gruppeoppgaver({ gruppe, oppgave, onEndret }: { gruppe: Gruppeov
   const [profiler, setProfiler] = useState<Profilkort[]>([])
   const [skjema, setSkjema] = useBevart<Skjema>('oppgaver/skjema', null)
   const [apneSkuffer, setApneSkuffer] = useState<ReadonlySet<string>>(new Set())
+  const vakt = useForlatvakt()
+  useMeldVakt(skjema !== null, vakt.forlat, skjemavakt)
+  /** Om fanen står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
+  const montert = useRef(true)
+  useEffect(() => {
+    montert.current = true
+    return () => {
+      montert.current = false
+    }
+  }, [])
+  const rot = useRef<HTMLDivElement>(null)
+  /** Kortet man gikk inn på, så tilbake til lista lander der. */
+  const fra = useRef<string | null>(null)
 
   const hent = useCallback(async () => {
     try {
@@ -95,11 +121,27 @@ export function Gruppeoppgaver({ gruppe, oppgave, onEndret }: { gruppe: Gruppeov
     if (paaLista) void hent()
   }, [paaLista, hent])
 
-  const tilListe = () => {
-    setSkjema(null)
-    window.location.hash = gruppeadresse(gruppe.id, 'oppgaver')
-  }
+  // Tilbake på lista står fokus på kortet man kom fra.
+  useLayoutEffect(() => {
+    if (!paaLista || !lastet || !fra.current) return
+    const kort = [...(rot.current?.querySelectorAll<HTMLElement>('[data-oppgave]') ?? [])].find((el) => el.dataset.oppgave === fra.current)
+    kort?.focus()
+    fra.current = null
+  }, [paaLista, lastet, liste])
+
+  /** Lukker skjemaet, og spør først når det har endringer. */
+  const lukkSkjema = (deretter: () => void = () => undefined) =>
+    vakt.forlat(() => {
+      vakt.nullstill()
+      setSkjema(null)
+      deretter()
+    })
+  const tilListe = () =>
+    lukkSkjema(() => {
+      window.location.hash = gruppeadresse(gruppe.id, 'oppgaver')
+    })
   const apne = (id: string) => {
+    fra.current = id
     window.location.hash = gruppeadresse(gruppe.id, 'oppgaver', id)
   }
 
@@ -119,11 +161,16 @@ export function Gruppeoppgaver({ gruppe, oppgave, onEndret }: { gruppe: Gruppeov
         <Oppgaveskjema
           gruppe={gruppe}
           oppgave={skjema.oppgave}
-          onAvbryt={() => (skjema.oppgave ? setSkjema(null) : tilListe())}
+          onStatus={vakt.setStatus}
+          forlater={vakt.forlater}
+          onForkast={vakt.forkast}
+          onFortsett={vakt.fortsett}
+          onAvbryt={() => (skjema.oppgave ? lukkSkjema() : tilListe())}
           onLagret={(id) => {
+            vakt.nullstill()
             setSkjema(null)
             onEndret()
-            apne(id)
+            if (montert.current) window.location.hash = gruppeadresse(gruppe.id, 'oppgaver', id)
           }}
         />
       </>
@@ -189,7 +236,9 @@ export function Gruppeoppgaver({ gruppe, oppgave, onEndret }: { gruppe: Gruppeov
 
   return (
     <Forfatterkilde profiler={profiler}>
-      <div className="gruppeideer idevindu">{innhold}</div>
+      <div ref={rot} className="gruppeideer idevindu">
+        {innhold}
+      </div>
     </Forfatterkilde>
   )
 }
@@ -287,23 +336,36 @@ function Oppgavevisning({
   const [arbeider, setArbeider] = useState(false)
   const [fjerner, setFjerner] = useState(false)
   const tildelId = useId()
+  const overskrift = useRef<HTMLHeadingElement>(null)
   const opphav = useForfatternavn(oppgave?.opprettet_av ?? null)
   const forslag = useForfatternavn(oppgave?.foreslatt_av ?? null)
 
   const hent = useCallback(async () => {
     try {
-      const hentet = await hentGruppeoppgave(id)
+      const funnet = await hentGruppeoppgave(id)
+      // Bare gruppens egne oppgaver, så adressen ikke viser en annen oppgave under gruppens navn.
+      const hentet = funnet?.gruppe_id === gruppe.id ? funnet : null
       setOppgave(hentet)
       setLesefeil(hentet ? null : 'Oppgaven finnes ikke lenger, eller du har ikke tilgang til den.')
+      return hentet
     } catch {
       setLesefeil('Fikk ikke hentet oppgaven.')
+      return null
     }
-  }, [id])
+  }, [id, gruppe.id])
 
+  // Varslene om oppgaven fram til den ble lest, merkes lest.
   useEffect(() => {
-    void hent()
-    void merkGruppeoppgaveSett(id).catch(() => undefined)
-  }, [hent, id])
+    void hent().then((hentet) => {
+      if (hentet?.lest_kl) void merkGruppeoppgaveSett(hentet.id, hentet.lest_kl).catch(() => undefined)
+    })
+  }, [hent])
+
+  // Fokus på overskriften når oppgaven er hentet, så skjermlesere leser hvor man er.
+  const lastet = oppgave !== null
+  useEffect(() => {
+    if (lastet) overskrift.current?.focus({ preventScroll: true })
+  }, [lastet])
 
   const utfor = async (handling: () => Promise<void>) => {
     if (arbeider) return
@@ -338,7 +400,7 @@ function Oppgavevisning({
           <Gruppeoppgavestatusmerke status={oppgave.status} />
           <Merke tone={PRIORITETSTONE[oppgave.prioritet]}>{PRIORITETSNAVN[oppgave.prioritet]} prioritet</Merke>
         </p>
-        <h2 id={tittelId} className="ideside__tittel">
+        <h2 id={tittelId} ref={overskrift} tabIndex={-1} className="ideside__tittel">
           {oppgave.tittel}
         </h2>
         <p className="forfatterlinje">
@@ -467,11 +529,21 @@ function Oppgavevisning({
 function Oppgaveskjema({
   gruppe,
   oppgave,
+  onStatus,
+  forlater,
+  onForkast,
+  onFortsett,
   onAvbryt,
   onLagret,
 }: {
   gruppe: Gruppeoversikt
   oppgave?: Gruppeoppgave
+  /** Om skjemaet har endringer som ikke er lagret, eller lagrer, for vakten. */
+  onStatus: (status: Skjemastatus) => void
+  /** Brukeren er på vei ut med endringer, og skal velge. */
+  forlater: boolean
+  onForkast: () => void
+  onFortsett: () => void
   onAvbryt: () => void
   onLagret: (id: string) => void
 }) {
@@ -484,6 +556,13 @@ function Oppgaveskjema({
   const [lagrer, setLagrer] = useState(false)
   const ansvarligId = useId()
   const tildelbare = gruppe.medlemmer.filter((m) => m.status === 'aktiv' && m.har_tilgang)
+
+  // Det skjemaet ville lagret, slik det var da det åpnet, og nå. Utgangspunktet
+  // tas vare på sammen med det som er skrevet, som i idéskjemaet.
+  const signatur = JSON.stringify([tittel.trim(), tekstTilLagring(tekst), prioritet, ansvarlig])
+  const [start] = useBevart(`${skjema}/utgangspunkt`, signatur)
+  const status: Skjemastatus = lagrer ? 'lagrer' : signatur !== start ? 'ulagret' : 'uendret'
+  useEffect(() => onStatus(status), [status, onStatus])
 
   const lagre = async (event: FormEvent) => {
     event.preventDefault()
@@ -533,14 +612,18 @@ function Oppgaveskjema({
           {feil}
         </p>
       )}
-      <div className="skjema__knapper ideskjema__knapper">
-        <Button variant="subtle" onClick={onAvbryt} disabled={lagrer}>
-          Avbryt
-        </Button>
-        <Button type="submit" className="knapp--kompakt" disabled={lagrer}>
-          {lagrer ? 'Lagrer …' : oppgave ? 'Lagre' : 'Opprett oppgaven'}
-        </Button>
-      </div>
+      {forlater ? (
+        <Forlatvarsel onForkast={onForkast} onFortsett={onFortsett} />
+      ) : (
+        <div className="skjema__knapper ideskjema__knapper">
+          <Button variant="subtle" onClick={onAvbryt} disabled={lagrer}>
+            Avbryt
+          </Button>
+          <Button type="submit" className="knapp--kompakt" disabled={lagrer}>
+            {lagrer ? 'Lagrer …' : oppgave ? 'Lagre' : 'Opprett oppgaven'}
+          </Button>
+        </div>
+      )}
     </form>
   )
 }

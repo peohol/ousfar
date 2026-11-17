@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import type { Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { gruppeadresse } from '../../domain/rute'
@@ -11,9 +11,11 @@ import { Ikon } from '../ikon/Ikon'
 import { Idekort, Nyknapp } from '../ideer/Ideliste'
 import { Ideside } from '../ideer/Ideside'
 import { Ideskjema } from '../ideer/Ideskjema'
-import { useForlatvakt } from '../ideer/useForlatvakt'
+import { useForlatvakt, useMeldVakt, type Forlat } from '../ideer/useForlatvakt'
 import { Skuff, veksleSkuff } from '../Skuff'
 import { Forfatterkilde } from '../traad/Forfatterkontekst'
+import type { Fremheving } from '../traad/Kommentartraad'
+import { lyttEtterGruppeide, taGruppekommentar } from './gruppevisning'
 import '../../styles/ideer.css'
 
 /** Skuffene under de åpne idéene, etter navnet siden husker dem under. */
@@ -51,6 +53,7 @@ export function Gruppeideer({
   ide,
   onEndret,
   onGruppeoppgave,
+  skjemavakt,
 }: {
   gruppe: Gruppeoversikt
   /** Idéen som står åpen. */
@@ -59,6 +62,8 @@ export function Gruppeideer({
   onEndret: () => void
   /** Til oppgaven en idé er gjort om til. */
   onGruppeoppgave?: (oppgave: string) => void
+  /** Gruppesidens vakt: fanene og lenkene på siden spør før et skjema med endringer forlates. */
+  skjemavakt?: MutableRefObject<Forlat | null>
 }) {
   const [liste, setListe] = useState<Gruppeideliste>(INGEN_GRUPPEIDEER)
   const [lastet, setLastet] = useState(false)
@@ -69,7 +74,18 @@ export function Gruppeideer({
   const [apneSkuffer, setApneSkuffer] = useState<ReadonlySet<string>>(new Set())
   /** Ny for hver behandling, så idéen hentes på nytt. */
   const [utgave, setUtgave] = useState(0)
+  /** Kommentaren en direktelenke førte til. */
+  const [fremhev, setFremhev] = useState<Fremheving | null>(null)
   const vakt = useForlatvakt()
+  useMeldVakt(skjema !== null, vakt.forlat, skjemavakt)
+  /** Om fanen står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
+  const montert = useRef(true)
+  useEffect(() => {
+    montert.current = true
+    return () => {
+      montert.current = false
+    }
+  }, [])
   const rot = useRef<HTMLDivElement>(null)
   /** Kortet man gikk inn på, så tilbake til lista lander der. */
   const fra = useRef<string | null>(null)
@@ -89,6 +105,18 @@ export function Gruppeideer({
   useEffect(() => {
     void hentProfilkort().then(setProfiler, () => undefined)
   }, [])
+
+  // En lenke til en kommentar under idéen: den vises når idéen står, også når
+  // idéen alt stod åpen.
+  useEffect(() => {
+    if (!ide) return
+    const vis = () => {
+      const kommentar = taGruppekommentar(ide)
+      if (kommentar) setFremhev({ kommentar, nr: Date.now() })
+    }
+    vis()
+    return lyttEtterGruppeide(vis)
+  }, [ide])
 
   // Lista hentes på nytt hver gang den vises, så det nye og behandlingene stemmer.
   const paaLista = !ide && !skjema
@@ -156,7 +184,7 @@ export function Gruppeideer({
             setSkjema(null)
             onEndret()
             setUtgave((n) => n + 1)
-            window.location.hash = gruppeadresse(gruppe.id, 'ideer', id)
+            if (montert.current) window.location.hash = gruppeadresse(gruppe.id, 'ideer', id)
           }}
         />
       </>
@@ -168,14 +196,18 @@ export function Gruppeideer({
         <Ideside
           key={`${ide}:${utgave}`}
           id={ide}
+          gruppe={gruppe.id}
           overskriftsniva={2}
+          fremhev={fremhev}
           onEndre={(traad) => setSkjema({ ide: traad })}
           onSlettet={() => {
             onEndret()
             window.location.hash = gruppeadresse(gruppe.id, 'ideer')
           }}
           onArkivert={endret}
+          onGjenapnet={endret}
           onGjortOm={endret}
+          onSett={onEndret}
           onGruppeoppgave={onGruppeoppgave}
         />
       </>

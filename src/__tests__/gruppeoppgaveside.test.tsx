@@ -61,6 +61,7 @@ const oppgave = (id: string, tittel: string, ekstra: Record<string, unknown> = {
   ide: null,
   kan_endre: false,
   kan_sette_status: false,
+  lest_kl: '2026-11-17T12:00:00Z',
   ...ekstra,
 })
 
@@ -190,8 +191,10 @@ describe('lista', () => {
 describe('én oppgave', () => {
   it('lar den som har oppgaven sette statusen, men ikke tildele, endre eller fjerne den', async () => {
     vis(O1)
-    expect(await screen.findByRole('heading', { level: 2, name: 'Skriv sjekklisten' })).toBeTruthy()
-    expect(grupperApi.merkGruppeoppgaveSett).toHaveBeenCalledWith(O1)
+    const overskrift = await screen.findByRole('heading', { level: 2, name: 'Skriv sjekklisten' })
+    // Fokus står på overskriften, og varslene fram til lesingen merkes lest.
+    await waitFor(() => expect(document.activeElement).toBe(overskrift))
+    await waitFor(() => expect(grupperApi.merkGruppeoppgaveSett).toHaveBeenCalledWith(O1, '2026-11-17T12:00:00Z'))
     const status = screen.getByRole('group', { name: 'Status' })
     expect(within(status).getByRole('button', { name: 'Pågår' }).getAttribute('aria-pressed')).toBe('true')
     await userEvent.click(within(status).getByRole('button', { name: 'Fullført' }))
@@ -230,5 +233,46 @@ describe('én oppgave', () => {
     )
     vis(O1)
     expect((await screen.findByRole('note')).textContent).toMatch(/ikke lenger med i gruppen/)
+  })
+
+  it('viser ikke en oppgave fra en annen gruppe under gruppens navn', async () => {
+    grupperApi.hentGruppeoppgave.mockImplementation(async () => lesGruppeoppgave(oppgave(O1, 'Fra en annen gruppe', { gruppe_id: 'en-annen-gruppe' })))
+    vis(O1)
+    expect(await screen.findByText(/Oppgaven finnes ikke lenger/)).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Fra en annen gruppe' })).toBeNull()
+    expect(grupperApi.merkGruppeoppgaveSett).not.toHaveBeenCalled()
+  })
+
+  it('setter fokus tilbake på kortet man kom fra', async () => {
+    const { rerender } = vis()
+    const kort = await screen.findByRole('button', { name: /Les gjennom rutinen/ })
+    await userEvent.click(kort)
+    const side = (element?: string) => (
+      <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
+        <Grupperside gruppe={GRUPPE} fane="oppgaver" element={element} onLukk={() => undefined} />
+      </GruppekildeProvider>
+    )
+    rerender(side(O2))
+    await screen.findByRole('heading', { level: 2, name: 'Les gjennom rutinen' })
+    rerender(side())
+    await waitFor(() => expect(document.activeElement?.textContent).toMatch(/Les gjennom rutinen/))
+  })
+})
+
+describe('skjemaet', () => {
+  it('spør før en ny oppgave med endringer forlates, også gjennom fanene', async () => {
+    tilstand.ansvarlig = true
+    vis()
+    await userEvent.click(await screen.findByRole('button', { name: 'Ny oppgave' }))
+    await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
+    await userEvent.click(screen.getByRole('button', { name: 'Tilbake til oppgavene' }))
+    expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
+    const faner = screen.getByRole('navigation', { name: 'I gruppen' })
+    await userEvent.click(within(faner).getByRole('link', { name: /Idéer/ }))
+    expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
+    expect(window.location.hash).toBe('')
+    await userEvent.click(screen.getByRole('button', { name: 'Forkast endringene' }))
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer`)
   })
 })
