@@ -28,7 +28,10 @@ type Side = any
 
 const logg = (tekst: string) => console.log(`[gruppechat i nettleseren] ${tekst}`)
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
-const LIVSTEGN_OG_LITT = 75_000
+/** Kontrakten: en åpen chat skal tømmes innen ett minutt etter at tilgangen er tatt (kriterium 4). */
+const TILGANG_TAPT_MS = 60_000
+/** Gjenoppkoblingen etter et brudd har ingen slik grense; livstegnet og litt til. */
+const GJENOPPKOBLING_MS = 75_000
 
 function settBryter(s: Status, pa: boolean) {
   if (!s.DB_URL) throw new Error('Det lokale testmiljøet gir ingen databaseadresse.')
@@ -110,6 +113,26 @@ async function innen(ms: number, hva: string, sjekk: () => Promise<boolean>): Pr
     await vent(200)
   }
   throw new Error(`Ikke innen ${ms / 1000} s: ${hva}`)
+}
+
+/**
+ * Tar tilgangen (`endring`) og venter til den åpne chatten på `side` sier at
+ * tilgangen er borte og ikke viser noen meldinger, høyst {@link TILGANG_TAPT_MS}
+ * regnet fra før endringen. Det verste tilfellet prøves: endringen gjøres rett
+ * etter at chatten har hentet endringene (livstegnet), så det går lengst mulig
+ * til neste henting. Gir tiden det tok.
+ */
+async function tilgangenTas(side: Side, hvem: string, endring: () => Promise<unknown>): Promise<number> {
+  await side.waitForResponse((r: Side) => r.url().includes('/rpc/gruppechat_endringer'), { timeout: GJENOPPKOBLING_MS })
+  const start = Date.now()
+  await endring()
+  const stengt = async () =>
+    (await side.getByText('Du har ikke lenger tilgang til denne gruppen.').count()) > 0 && (await side.locator('.chatmelding').count()) === 0
+  // Det ventes litt over grensen, så rapporten kan si hvor lenge det faktisk tok.
+  await innen(TILGANG_TAPT_MS + 30_000, `${hvem}s åpne chat er tømt og sier at tilgangen er borte`, stengt)
+  const tid = Date.now() - start
+  krev(tid <= TILGANG_TAPT_MS, `${hvem}s åpne chat ble tømt først etter ${(tid / 1000).toFixed(1)} s; grensen er ${TILGANG_TAPT_MS / 1000} s`)
+  return tid
 }
 
 // --- Kjøringen -------------------------------------------------------------------
@@ -235,7 +258,7 @@ try {
     } finally {
       await bo.context().setOffline(false)
     }
-    const tid = await innen(LIVSTEGN_OG_LITT, 'meldingene fra mens Bo var borte', async () => (await logglinjer(bo)).includes('Syntetisk frakoblet 3'))
+    const tid = await innen(GJENOPPKOBLING_MS, 'meldingene fra mens Bo var borte', async () => (await logglinjer(bo)).includes('Syntetisk frakoblet 3'))
     const linjer = await logglinjer(bo)
     const mine = linjer.filter((t) => t.startsWith('Syntetisk frakoblet'))
     krev(JSON.stringify(mine) === JSON.stringify(['Syntetisk frakoblet 1', 'Syntetisk frakoblet 2', 'Syntetisk frakoblet 3']), `i rekkefølge og uten duplikater (${mine.join(', ')})`)
@@ -278,23 +301,15 @@ try {
   await punkt('N3', 'Bo fjernes mens chatten står åpen', begge, async () => {
     await bo.goto(chatadresse)
     await skrivefelt(bo, navn).waitFor({ timeout: 30_000 })
-    await rpc(admin, 'avslutt_gruppemedlemskap', { gruppe, bruker: boId })
-    const tid = await innen(LIVSTEGN_OG_LITT, 'Bo får beskjed om at tilgangen er borte', async () =>
-      (await bo.getByText('Du har ikke lenger tilgang til denne gruppen.').count()) > 0,
-    )
-    krev((await bo.locator('.chatmelding').count()) === 0, 'meldingene er borte hos Bo')
-    return `etter ${Math.round(tid / 1000)} s`
+    const tid = await tilgangenTas(bo, 'Bo', () => rpc(admin, 'avslutt_gruppemedlemskap', { gruppe, bruker: boId }))
+    return `tømt etter ${Math.round(tid / 1000)} s (grense ${TILGANG_TAPT_MS / 1000} s)`
   })
 
   await punkt('N4', 'gruppen arkiveres', { ada }, async () => {
     const for_ = (await logglinjer(ada)).length
-    await rpc(admin, 'arkiver_gruppe', { gruppe, arkivert: true })
     // Kontrakten: en arkivert gruppe leses bare av systemarkitektene. Ada mister
     // tilgangen; det åpne vinduet får vite det ved livstegnet eller neste henting.
-    const levende = await innen(LIVSTEGN_OG_LITT, 'Adas åpne chat stenges', async () =>
-      (await ada.getByText('Du har ikke lenger tilgang til denne gruppen.').count()) > 0,
-    )
-    krev((await ada.locator('.chatmelding').count()) === 0, 'meldingene er borte hos Ada')
+    const levende = await tilgangenTas(ada, 'Ada', () => rpc(admin, 'arkiver_gruppe', { gruppe, arkivert: true }))
     // Systemarkitekten ser historikken, uten skrivefelt.
     const sa = await miljo.side()
     await sa.goto(chatadresse)
@@ -304,7 +319,7 @@ try {
     krev((await sa.getByText(/de 0 medlemmene/).count()) === 0, 'lesertekst uten «de 0 medlemmene» når ingen medlemmer leser')
     krev(historikk >= for_ - 1, `historikken står for systemarkitekten (${historikk} av ${for_})`)
     if (skjermbilder) await sa.screenshot({ path: join(skjermbilder, 'N4-systemarkitekt.png') })
-    return `Adas åpne chat stengt etter ${Math.round(levende / 1000)} s; systemarkitekten leser ${historikk} meldinger`
+    return `Adas åpne chat tømt etter ${Math.round(levende / 1000)} s (grense ${TILGANG_TAPT_MS / 1000} s); systemarkitekten leser ${historikk} meldinger`
   })
 } catch (feil) {
   utfall.push({ punkt: '–', hva: 'oppsettet', ok: false, merknad: feil instanceof Error ? feil.message : String(feil) })

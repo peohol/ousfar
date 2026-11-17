@@ -179,12 +179,10 @@ eller resultater endret), `npm test`, `npm run typecheck`, `npm run build`.
 
 ## 8. Rapport fra sluttkontrollen
 
-Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på, mot
-`main` (P7.0, A1, C1, D1, D2, E) med B1 (#444, `5ab3950`) og C2 (#447,
-`1d8b5c3`) flettet inn, slik `main` blir når de er slått sammen. Den samme
-kontrollen gikk også mot C2-grenen før B1s siste retting, med samme utfall
-(unntatt lesertekst-funnet under). Kjøres på nytt om B1 eller C2 endres før
-sammenslåing.
+Kjørt 17.11.2026 i det lokale testmiljøet med sanntiden og bryteren på. Siste
+kjøring var mot `main` med B1 (#444) slått sammen og C2 (#447, `1d8b5c3`)
+flettet inn, slik `main` blir når C2 er slått sammen. Kjøres på nytt når
+funnet under er rettet, og når C2 endres før sammenslåing.
 
 ### Krysstestene (`gruppechat.krysstest.test.ts`)
 
@@ -223,8 +221,8 @@ samme sammenflettingen). De dekker:
 | --- | --- | --- |
 | N1 | OK | Fram hos den andre på 0,2–0,7 s, uten omlasting |
 | N2 | OK | Lista står stille øverst; «2 nye meldinger» tar ned igjen |
-| N3 | OK | Stengt hos den fjernede etter 56 s (livstegnet), meldingene borte |
-| N4 | OK | Medlemmets åpne chat stengt etter 46 s; systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert» |
+| N3 | **FEIL** | Verste tilfelle (fjernet rett etter livstegnet): tømt først etter 60,3 s. Grensen er 60 s (kriterium 4). Se funnet under |
+| N4 | **FEIL** (tiden) | Verste tilfelle: medlemmets åpne chat tømt først etter 60,2 s, over grensen på 60 s. Ellers OK: systemarkitekten ser historikken uten skrivefelt, med «Gruppen er arkivert», og lesertekst uten «de 0 medlemmene» |
 | N5 | OK | Meldingene fra mens nettet var av kom 0,2 s etter, i rekkefølge og uten duplikater |
 | N6 | OK | Enter sender, Shift+Enter ny linje, fokus blir i feltet; menyen på egen melding nås med Shift+Tab, Escape gir fokus tilbake |
 | N7 | OK | 390 × 844 med berøring: ingen vannrett rulling; Enter gir ny linje, Send sender |
@@ -232,8 +230,23 @@ samme sammenflettingen). De dekker:
 | N9 | OK | Advarselen mens man skriver; sendingen avvises med `PASIENTREGEL.avvist` og når aldri den andre |
 | N10 | OK | Varselet nevner bare gruppen, uten tekst og avsender; et trykk åpner chatfanen |
 
+N3 og N4 måler fra før tilgangen tas til den åpne chatten både sier at
+tilgangen er borte og ikke viser noen meldinger, og tar tilgangen rett etter
+at chatten har hentet endringene, så det verste tilfellet prøves hver gang.
+De feiler over 60 s (`TILGANG_TAPT_MS`). Gjenoppkoblingen i N5 har sin egen,
+lengre frist. (Første kjøring målte fra et tilfeldig tidspunkt og godtok 75 s;
+den ga 56 og 46 s.)
+
 ### Funn
 
+- **Tap av tilgang kan ta litt over ett minutt (C, `src/gruppechat/kontroller.ts`):**
+  livstegnet går hvert 60. sekund (`LIVSTEGN_MS = 60_000`). Tas tilgangen rett
+  etter et livstegn, oppdager den åpne chatten det først ved neste, og blir
+  tømt etter 60 s pluss svartiden (målt 60,2–60,3 s). Kontrakten krever at den
+  tømmes innen ett minutt. Forslag: et kortere livstegn med margin, for
+  eksempel 45 s; det er fortsatt «minst hvert 60. sekund» i kontrakten.
+  Databasen stenger alle kall med en gang (krysstestene), så det er bare den
+  åpne visningen som henger etter.
 - **Tekstfeil, rettet i B1 (#444, `5ab3950`):** i en arkivert gruppe sto det
   «Leses av de 0 medlemmene i gruppen og av systemarkitektene i OUSFAR». Nå
   «Leses av systemarkitektene i OUSFAR.»; N4 kontrollerer det.
