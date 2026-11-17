@@ -383,7 +383,8 @@ describe('vinduet', () => {
           ['Oppgaver og idéene mine i gruppene', true, false],
         ],
       ],
-      // Forslag til behandling vises bare for dem som kan behandle forslag.
+      // Gruppechatten er avslått: innstillingen for den vises ikke (se
+      // gruppechat.varselvisning.test.tsx). Forslag til behandling vises bare for dem som kan behandle forslag.
       ['Endringsforslag', [['Mine endringsforslag', true, true]]],
       [
         'Favorittsider',

@@ -60,6 +60,15 @@ kjøringen uten at passordet skrives inn.
   fra de lagrede FEST-uttrekkene (`src/data/verktoy/fest-*.json`), de samme som
   den lokale kjøringen av forløpene bruker, med kontrolltidspunktet satt til nå.
   Alt annet går til den lokale databasen.
+- **Sanntiden (Realtime) står på** (gruppechatten, `docs/gruppechat.md`).
+  Mellomtjeneren sender WebSocket-oppgraderingene rett videre, så appen når
+  den gjennom samme adresse som resten.
+- `npx vite-node src/__tests__/qa/gruppechatsanntid.ts` kontrollerer sanntiden
+  i gruppechatten uten nettleser: to syntetiske medlemmer (`qa-chat-ada`,
+  `qa-chat-bo`, nye tilfeldige passord hver gang) utveksler meldinger gjennom
+  dørklokken, og den som fjernes fra gruppen, får ingen flere hendelser og
+  stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
+  går, og av igjen etterpå.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 

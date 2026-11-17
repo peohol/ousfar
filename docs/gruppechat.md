@@ -315,6 +315,21 @@ varselet er «Nye meldinger i <gruppe>», og et trykk åpner chatfanen.
 `intern.merk_gruppechat_varsler_lest`, som grunnmuren lager tom og tråd C
 fyller). Endringer og slettinger varsler ingen.
 
+**Levert i C2.** Varselet har én hendelse med `kl`, `gruppechat`, `antall`
+og `til_nr`, og merkes lest når chatten er lest til og med `til_nr`; en
+nyere melding imens holder det ulest. Det gis bare til aktive medlemmer i
+gruppen (ikke systemarkitekter som ikke er med), og vises bare mens chatten
+er slått på. Teksten er «Ny melding i <gruppe>» eller «N nye meldinger i
+<gruppe>», og et trykk går til `#/grupper/<ID>/chat` gjennom skjemavaktene
+(`visGruppechat`) og merker varselet lest først da. Innstillingen «Nye
+meldinger i gruppechattene» står under «Grupper», men bare når chatten er
+slått på: `mine_grupper()` svarer med `chat_aktivert` fra funksjonsbryteren
+(`MineGrupper.chat_aktivert`), og kategorien har `funksjon: 'gruppechat'`. Detaljene står i `docs/varsler.md`. Prøvd i
+`src/__tests__/gruppechat.varsler.test.ts` (databasen og publikasjonen),
+`gruppechat.varselvisning.test.tsx` og `varselmodell.test.ts`, og med ekte
+Realtime i det lokale testmiljøet (`src/__tests__/qa/gruppechatsanntid.ts`,
+kriterium 1 og 4; `docs/qa-testmiljo.md`).
+
 ## Brukerflaten (tråd B)
 
 - Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
@@ -455,3 +470,4 @@ Fylles ut av trådene.
 | D1 Regelen om pasientopplysninger, D6 og testplanen | [#442](https://github.com/peohol/ousfar/pull/442) | Slått sammen |
 | A1 Database og tilgang | [#443](https://github.com/peohol/ousfar/pull/443) | Til kontroll |
 | B1 chatvisningen | [#444](https://github.com/peohol/ousfar/pull/444) | Til kontroll |
+| C2 varsler, publikasjonen og sanntid i det lokale testmiljøet | (PR kommer) | Til kontroll |

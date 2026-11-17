@@ -20,6 +20,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { execFileSync, spawn, spawnSync, type ChildProcess } from 'node:child_process'
 import { createServer, request, type Server } from 'node:http'
+import { connect } from 'node:net'
 import { createHash, randomBytes } from 'node:crypto'
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -32,8 +33,11 @@ import { lesUttrekkene } from './brukerforlop'
 import { SUPABASE_CLI } from '../../drift/supabaseCli'
 
 
-/** Tjenestene kontrollene ikke bruker, og som derfor ikke startes. */
-export const UTELATT = 'studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit'
+/**
+ * Tjenestene kontrollene ikke bruker, og som derfor ikke startes. Realtime står
+ * på: gruppechatten bruker den (docs/gruppechat.md, «Sanntiden»).
+ */
+export const UTELATT = 'studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit'
 
 const DENNE = fileURLToPath(import.meta.url)
 const REPO = resolve(dirname(DENNE), '../../..')
@@ -109,10 +113,12 @@ export function lokaltOppsett(toml: string): string {
     .join('\n')
 }
 
-interface Status {
+export interface Status {
   API_URL: string
   PUBLISHABLE_KEY: string
   SECRET_KEY: string
+  /** Postgres-adressen, for det kontrollene gjør som superbruker. */
+  DB_URL?: string
 }
 
 function status(): Status | null {
@@ -150,30 +156,40 @@ async function sikreDatabase(): Promise<Status> {
   return ny
 }
 
-/** Den syntetiske administratoren, med navn, adminrolle (og systemarkitekt i den tomme databasen) og ferdig oppsett. Passordet gjenbrukes. */
-async function sikreAdministrator(s: Status): Promise<string> {
-  const passordfil = join(MAPPE, 'passord.txt')
-  const passord = existsSync(passordfil) ? readFileSync(passordfil, 'utf8') : randomBytes(18).toString('base64url')
-  writeFileSync(passordfil, passord, { mode: 0o600 })
+/**
+ * En syntetisk konto med navn, ferdig oppsett og passordet. Den får
+ * medlemskapet databasen gir nye kontoer. Gir tilbake ID-en.
+ */
+export async function sikreTestkonto(s: Status, brukernavn: string, passord: string, navn: [string, string]): Promise<string> {
   const admin = createClient(s.API_URL, s.SECRET_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
-  const { data: fraFor, error: oppslag } = await admin.from('profiles').select('id').eq('username', BRUKERNAVN).maybeSingle()
+  const { data: fraFor, error: oppslag } = await admin.from('profiles').select('id').eq('username', brukernavn).maybeSingle()
   if (oppslag) throw oppslag
   let id = fraFor?.id as string | undefined
   if (id) {
     const { error } = await admin.auth.admin.updateUserById(id, { password: passord })
     if (error) throw error
   } else {
-    const { error: reservasjon } = await admin.from('kontoreservasjoner').upsert({ username: BRUKERNAVN, reservert_kl: new Date().toISOString() })
+    const { error: reservasjon } = await admin.from('kontoreservasjoner').upsert({ username: brukernavn, reservert_kl: new Date().toISOString() })
     if (reservasjon) throw reservasjon
-    const { data, error } = await admin.auth.admin.createUser({ email: internAuthAdresse(BRUKERNAVN), password: passord, email_confirm: true })
+    const { data, error } = await admin.auth.admin.createUser({ email: internAuthAdresse(brukernavn), password: passord, email_confirm: true })
     if (error) throw error
     id = data.user.id
   }
   const { error } = await admin
     .from('profiles')
-    .update({ first_name: 'QA', last_name: 'Testadministrator', must_change_password: false, onboarding_completed: true })
+    .update({ first_name: navn[0], last_name: navn[1], must_change_password: false, onboarding_completed: true })
     .eq('id', id)
   if (error) throw error
+  return id!
+}
+
+/** Den syntetiske administratoren, med navn, adminrolle (og systemarkitekt i den tomme databasen) og ferdig oppsett. Passordet gjenbrukes. */
+export async function sikreAdministrator(s: Status): Promise<string> {
+  const passordfil = join(MAPPE, 'passord.txt')
+  const passord = existsSync(passordfil) ? readFileSync(passordfil, 'utf8') : randomBytes(18).toString('base64url')
+  writeFileSync(passordfil, passord, { mode: 0o600 })
+  const id = await sikreTestkonto(s, BRUKERNAVN, passord, ['QA', 'Testadministrator'])
+  const admin = createClient(s.API_URL, s.SECRET_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
   // Adminrollen med tildelingene som følger med den, som `npm run bootstrap:admin`.
   const { error: rollefeil } = await admin.rpc('kontooperasjon_forste_administrator', { bruker: id })
   if (rollefeil) throw rollefeil
@@ -218,6 +234,25 @@ async function startMellomtjener(s: Status): Promise<{ url: string; tjener: Serv
       videre.end(kropp)
     })
   })
+  // Sanntiden (Realtime) går over WebSocket: oppgraderingene sendes rett videre.
+  tjener.on('upgrade', (inn, sokkel, hode) => {
+    const videre = connect(Number(mal.port), mal.hostname, () => {
+      const linjer = [`${inn.method} ${inn.url} HTTP/${inn.httpVersion}`]
+      for (let i = 0; i < inn.rawHeaders.length; i += 2) {
+        const navn = inn.rawHeaders[i]!
+        linjer.push(`${navn}: ${navn.toLowerCase() === 'host' ? mal.host : inn.rawHeaders[i + 1]}`)
+      }
+      videre.write(`${linjer.join('\r\n')}\r\n\r\n`)
+      if (hode.length > 0) videre.write(hode)
+      sokkel.pipe(videre).pipe(sokkel)
+    })
+    const lukk = () => {
+      sokkel.destroy()
+      videre.destroy()
+    }
+    videre.on('error', lukk)
+    sokkel.on('error', lukk)
+  })
   await new Promise<void>((ok, feil) => tjener.once('error', feil).listen(MELLOMPORT, '127.0.0.1', ok))
   return { url: `http://127.0.0.1:${MELLOMPORT}`, tjener }
 }
@@ -239,10 +274,15 @@ async function serverApp(s: Status, supabaseUrl: string): Promise<{ url: string;
   throw new Error('Appen svarte ikke innen 30 sekunder.')
 }
 
-export async function startLokaltMiljo(): Promise<LokaltMiljo> {
+/** Bare den lokale databasen (med Realtime), for kontroller uten nettleser. */
+export async function startLokalDatabase(): Promise<Status> {
   mkdirSync(MAPPE, { recursive: true })
   await sikreDocker()
-  const s = await sikreDatabase()
+  return sikreDatabase()
+}
+
+export async function startLokaltMiljo(): Promise<LokaltMiljo> {
+  const s = await startLokalDatabase()
   const passord = await sikreAdministrator(s)
   const mellom = await startMellomtjener(s)
   const { url, prosess } = await serverApp(s, mellom.url)
