@@ -18,11 +18,12 @@ import type { Skjemastatus } from './useForlatvakt'
 /**
  * Skjemaet for en ny idé, eller for å endre en: kategori og overskrift må
  * fylles ut, beskrivelsen er valgfri og har den samme verktøyraden som
- * stoffsidene, uten referansene.
+ * stoffsidene, uten referansene. En idé i en gruppe har ingen kategori.
  */
 export function Ideskjema({
   ide,
   kategori: startkategori,
+  gruppe,
   onStatus,
   forlater,
   onForkast,
@@ -34,6 +35,8 @@ export function Ideskjema({
   ide?: Idetraad
   /** Kategorien en ny idé begynner med, når den ble startet fra en tom kategori. */
   kategori?: Idekategori
+  /** Gruppen en ny idé skrives i. En idé som endres, blir i gruppen den står i. */
+  gruppe?: string
   /** Om skjemaet har endringer som ikke er lagret, eller lagrer nå. */
   onStatus: (status: Skjemastatus) => void
   /** Brukeren vil forlate skjemaet med endringer som ikke er lagret. */
@@ -50,6 +53,7 @@ export function Ideskjema({
   const [tekst, setTekst] = useBevart<Riktekstdokument>(`${skjema}/tekst`, () => ide?.tekst ?? tomtDokument())
   const [feil, setFeil] = useState<string | null>(null)
   const [lagrer, setLagrer] = useState(false)
+  const iGruppe = Boolean(gruppe ?? ide?.gruppe_id)
   const kategoriId = useId()
   const beskrivelseId = useId()
 
@@ -64,19 +68,19 @@ export function Ideskjema({
   const lagre = async (event: FormEvent) => {
     event.preventDefault()
     const renTittel = tittel.trim()
-    if (!kategori) return setFeil('Velg en kategori.')
+    if (!kategori && !iGruppe) return setFeil('Velg en kategori.')
     if (renTittel === '') return setFeil('Skriv en overskrift.')
     setFeil(null)
     // En lagring svarer også på spørsmålet om å forkaste.
     onFortsett()
     setLagrer(true)
     try {
-      const innhold = { kategori, tittel: renTittel, tekst: tekstTilLagring(tekst) }
+      const innhold = { kategori: iGruppe ? null : kategori, tittel: renTittel, tekst: tekstTilLagring(tekst) }
       if (ide) {
         await endreIde(ide.id, innhold)
         onLagret(ide.id)
       } else {
-        onLagret(await opprettIde(innhold))
+        onLagret(await opprettIde(innhold, gruppe ?? null))
       }
     } catch (e) {
       setFeil((e as Error).message)
@@ -86,31 +90,33 @@ export function Ideskjema({
 
   return (
     <form className="ideskjema skriveflate" onSubmit={(e) => void lagre(e)} noValidate aria-label={ide ? 'Endre idéen' : 'Ny idé'}>
-      <fieldset className="ideskjema__kategorier" aria-describedby={feil ? `${kategoriId}-feil` : undefined}>
-        <legend className="felt__merkelapp" id={kategoriId}>
-          Kategori
-        </legend>
-        <div className="ideskjema__valg">
-          {KATEGORIER.map((k) => (
-            <label key={k} className="kategorivalg" data-kategori={k}>
-              <input
-                type="radio"
-                name={kategoriId}
-                value={k}
-                checked={kategori === k}
-                onChange={() => setKategori(k)}
-              />
-              <span>{KATEGORINAVN[k]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {!iGruppe && (
+        <fieldset className="ideskjema__kategorier" aria-describedby={feil ? `${kategoriId}-feil` : undefined}>
+          <legend className="felt__merkelapp" id={kategoriId}>
+            Kategori
+          </legend>
+          <div className="ideskjema__valg">
+            {KATEGORIER.map((k) => (
+              <label key={k} className="kategorivalg" data-kategori={k}>
+                <input
+                  type="radio"
+                  name={kategoriId}
+                  value={k}
+                  checked={kategori === k}
+                  onChange={() => setKategori(k)}
+                />
+                <span>{KATEGORINAVN[k]}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       <Felt
         merkelapp="Overskrift"
         value={tittel}
         maxLength={TITTEL_MEST}
-        autoFocus={Boolean(ide) || Boolean(startkategori)}
+        autoFocus={Boolean(ide) || Boolean(startkategori) || iGruppe}
         onChange={(e) => setTittel(e.target.value)}
       />
 

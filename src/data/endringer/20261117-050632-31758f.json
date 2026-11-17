@@ -1,0 +1,15 @@
+{
+  "id": "20261117-050632-31758f",
+  "semver": "minor",
+  "opprettet": "2026-11-17T05:06:32Z",
+  "sammendrag": "Idéer i gruppene",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["grupper", "forslag", "vinduer"],
+  "punkter": [
+    "Gruppesiden har fått faner: Oversikt, Idéer og en knapp til diskusjonene i gruppen.",
+    "Alle i gruppen kan skrive idéer, kommentere og gi hjerter. Nye idéer er merket «Ny», og det går an å søke i dem.",
+    "De ansvarlige i gruppen ser hvor mange idéer som venter på behandling, og kan merke en idé «Ikke aktuelt», åpne den igjen eller gjøre den om til en oppgave i gruppen.",
+    "Idéene i en gruppe ser bare de som er med i gruppen. De felles idéene er som før."
+  ]
+}

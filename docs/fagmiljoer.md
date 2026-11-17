@@ -507,6 +507,17 @@ først, etter prioritet), `gruppeoppgave(oppgave)` og tallene på fanene i
 behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
 
+**I appen.** Gruppesiden har faner (`#/grupper/<ID>`, `…/ideer`,
+`…/ideer/<idé-ID>`; `src/components/grupper/`): Oversikt (medlemmene og
+handlingene for gruppen), Idéer og en knapp til Diskusjoner, som åpner
+diskusjonsmenyen på siden. Fanene er samme side (`sidesti`), så diskusjonene
+står og ingenting lastes på nytt. Idéfanen viser de åpne idéene med de nye
+først (merket «Ny»), søk i overskriftene, og skuffene «Gjort om til
+oppgaver» og «Ikke aktuelt». Tallet på fanen er det som venter på behandling
+for de ansvarlige, og idéene med noe nytt for de andre. Én idé bruker den
+samme visningen som idévinduet (`Ideside`), og knappene følger det databasen
+svarer i tråden (`kan_behandle`, `kan_moderere`, `kan_kommentere`).
+
 **Ingen lekkasje.** Radsikkerheten `rekkevidde` på `ideer` slipper bare
 gruppeidéer fra gruppene den innloggede leser (`mine_lesbare_grupper()`), og
 kommentarene, hjertene og besøkene følger idéen. Fjernes et medlem, eller

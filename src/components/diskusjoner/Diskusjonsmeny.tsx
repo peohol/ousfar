@@ -371,7 +371,7 @@ function Diskusjonsflate({
     const apneVenter = () => {
       const venter = taDiskusjon(side)
       if (!venter) return
-      setVisning({ side: 'traad', id: venter.diskusjon })
+      setVisning(venter.diskusjon ? { side: 'traad', id: venter.diskusjon } : LISTE)
       setFremhev(venter.kommentar ? { kommentar: venter.kommentar, nr: Date.now() } : null)
       if (!venter.kommentar) kropp.current?.scrollTo({ top: 0 })
       onVarslet()

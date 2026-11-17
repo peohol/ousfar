@@ -117,9 +117,9 @@ function Hode({ overskrift, overtittel, tittel, children }: { overskrift: string
 function Faner({ fane }: { fane?: Forslagsfane }) {
   return (
     <nav aria-label="Forslag">
-      <ul className="forslagsside__faner">
+      <ul className="gruppeside__faner">
         <li>
-          <a className="forslagsside__fane" href={forslagsadresse()} aria-current={fane ? undefined : 'page'}>
+          <a className="gruppeside__fane" href={forslagsadresse()} aria-current={fane ? undefined : 'page'}>
             Mine forslag
           </a>
         </li>

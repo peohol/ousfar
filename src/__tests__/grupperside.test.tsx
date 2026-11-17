@@ -131,6 +131,19 @@ describe('adressene', () => {
     expect(sidesti({ side: 'grupper', gruppe: ID })).toBe(`grupper/${ID}`)
   })
 
+  it('leser og skriver fanene i gruppen, med én idé eller oppgave, uten å bytte side', () => {
+    expect(lesRute(`#/grupper/${ID}/ideer`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'ideer' })
+    expect(lesRute(`#/grupper/${ID}/IDEER/${ANNEN.toUpperCase()}`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'ideer', element: ANNEN })
+    expect(lesRute(`#/grupper/${ID}/oppgaver/${ANNEN}/`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'oppgaver', element: ANNEN })
+    expect(lesRute(`#/grupper/${ID}/noe-annet`)).toEqual({ side: 'fortolkning' })
+    expect(lesRute(`#/grupper/${ID}/ideer/ikke-en-id`)).toEqual({ side: 'fortolkning' })
+    expect(adresse({ side: 'grupper', gruppe: ID, fane: 'ideer', element: ANNEN })).toBe(`#/grupper/${ID}/ideer/${ANNEN}`)
+    expect(adresse({ side: 'grupper', gruppe: ID, fane: 'oppgaver' })).toBe(`#/grupper/${ID}/oppgaver`)
+    // Fanene er samme side: diskusjonene i gruppen står, og siden lastes ikke på nytt.
+    expect(sidesti({ side: 'grupper', gruppe: ID, fane: 'ideer', element: ANNEN })).toBe(`grupper/${ID}`)
+    expect(diskusjonssideFor({ side: 'grupper', gruppe: ID, fane: 'ideer' })).toBe(`gruppe:${ID}`)
+  })
+
   it('gir gruppen sin egen diskusjonsside, som leder tilbake og ikke deler rekkevidde med andre', () => {
     const side = diskusjonssideFor({ side: 'grupper', gruppe: ID })
     expect(side).toBe(`gruppe:${ID}`)
