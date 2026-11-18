@@ -5,7 +5,7 @@
  * regnes som ingenting.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Fagmiljoreferanse } from '../auth/rettigheter'
+import { lesFagmiljo, type Fagmiljoreferanse } from '../auth/rettigheter'
 import { klient } from '../auth/klient'
 
 export type Redaktoromrade = 'ressurs' | 'fortolkning' | 'fagsider'
@@ -74,12 +74,6 @@ export function lesRessurs(v: unknown): Redaktorressurs | null {
     fagmiljoId: typeof r.fagmiljo_id === 'string' ? r.fagmiljo_id : null,
     ...(typeof r.har_redaktor === 'boolean' && { harRedaktor: r.har_redaktor }),
   }
-}
-
-function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
-  const f = rad(v)
-  if (!f || !['id', 'nokkel', 'navn'].every((felt) => typeof f[felt] === 'string')) return null
-  return { id: f.id as string, nokkel: f.nokkel as string, navn: f.navn as string, standard: f.standard === true, apent: f.apent === true }
 }
 
 const OMRADER: readonly Redaktoromrade[] = ['ressurs', 'fortolkning', 'fagsider']

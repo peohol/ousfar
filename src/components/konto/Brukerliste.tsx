@@ -16,7 +16,7 @@ import {
 } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
-import { useRettigheter, type Fagmiljoreferanse } from '../../auth/rettigheter'
+import { lesFagmiljo, useRettigheter, type Fagmiljoreferanse } from '../../auth/rettigheter'
 import { useClipboard } from '../../hooks/useClipboard'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
@@ -195,7 +195,9 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     if (skjema === 'nytt_fagmiljo') {
       void utfor('skjema', null, async () => {
         const ny = await opprettFagmiljo(tekst)
-        setNye((forrige) => [...forrige, { ...ny, standard: false, apent: false }])
+        // Et nytt fagmiljø er lukket og ikke standard, og har prøverørene.
+        const referanse = lesFagmiljo(ny)
+        if (referanse) setNye((forrige) => [...forrige, referanse])
         setValgtId(ny.id)
         apneSkjema(null)
         return `${ny.navn} er opprettet. Det er lukket for andre enn systemarkitektene til det er godkjent åpnet.`

@@ -10,7 +10,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
-import type { Rettigheter } from '../auth/rettigheter'
+import type { Fagmiljoreferanse, Rettigheter } from '../auth/rettigheter'
 import type { Tilgang } from '../domain/tilgang'
 
 const okt = vi.hoisted(() => ({
@@ -250,8 +250,8 @@ describe('porten', () => {
   })
 })
 
-const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
-const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: false }
+const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
+const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: false, ikon: 'laboratorium' }
 // RT er lukket her, så nye brukere kan bare opprettes i KF (`opprett_bruker_i`).
 const SYSTEMARKITEKT = { ...INGEN_RETTIGHETER, systemarkitekt: true, administrerer: [KF, RT], arbeidsfagmiljo: KF, stoffregister: true, opprettBrukerI: ['kf'] }
 const LOKAL_I_KF = { ...INGEN_RETTIGHETER, administrerer: [KF], opprettBrukerI: ['kf'] }

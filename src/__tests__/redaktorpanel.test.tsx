@@ -11,6 +11,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Medlem } from '../auth/api'
+import type { Fagmiljoreferanse } from '../auth/rettigheter'
 import { MittRedaktoransvar } from '../components/konto/MittRedaktoransvar'
 import { NASJONALT_AV, Redaktorer } from '../components/konto/Redaktorer'
 import { Redigeringshandlinger, PUBLISERES_AV_ADMINISTRATOR } from '../components/stoffside/Redigeringslinje'
@@ -29,7 +30,7 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
-const KF = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
+const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
 const ADA = { id: 'ada', fornavn: 'Ada', etternavn: 'Admin' }
 
 const medlem = (id: string, fornavn: string, etternavn: string, status: Medlem['status'] = 'aktiv') =>
@@ -161,7 +162,7 @@ describe('«Redaktører» i administrasjonen', () => {
   it('tar ikke med valgene fra ett fagmiljø til et annet', async () => {
     const user = userEvent.setup()
     const { lager } = minnelager()
-    const RT = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
+    const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true, ikon: 'laboratorium' }
     const oversikt = lager.oversikt
     lager.oversikt = async () => ({ ...(await oversikt()), fagmiljoer: [KF, RT] })
     const hent = async (f: string) => (f === KF.id ? MEDLEMMER : [medlem('tor', 'Tor', 'Toks')])

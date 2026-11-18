@@ -1,0 +1,16 @@
+{
+  "id": "20261118-071759-fc99e9",
+  "semver": "minor",
+  "opprettet": "2026-11-18T07:17:59Z",
+  "sammendrag": "Fagmiljøet Sandkasse for utprøving, og eget ikon per fagmiljø",
+  "typer": [
+    "Funksjonalitet",
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Systemarkitektene har fått fagmiljøet Sandkasse, der nye funksjoner kan prøves ut uten at det synes i de andre fagmiljøene.",
+    "Hvert fagmiljø kan ha sitt eget ikon i valget av fagmiljø i kontomenyen. Sandkasse har en sandkasse med spade; de andre har prøverørene som før."
+  ],
+  "utenVarsel": true
+}

@@ -45,6 +45,7 @@ medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
 | --- | --- | --- | --- |
 | `ous-klinisk-farmakologi` | OUS Klinisk farmakologi | Ja | Ja |
 | `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Ja, fra startporten S2 (`20261115040000_s2_apne_rettstoksikologi.sql`, etter Peders godkjenning) |
+| `sandkasse` | Sandkasse | Nei | Nei: bare systemarkitektene ([Sandkassen](#sandkassen)) |
 
 Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 (beslutning D1). OUS Rettstoksikologi har ingen fortolkningsregler.
@@ -65,12 +66,43 @@ Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
   `startportSql`), og en migrasjon som gir slippet eller endrer vernet, stoppes
   i CI og før utrullingen til den har Peders godkjenningsmerke
   (`docs/migrasjoner.md`).
+- **Ikonet** (`ikon`) er navnet på et ikon i appens ikonregister
+  (`src/components/ikon/register.ts`), og vises ved fagmiljøet i appen, som i
+  valget av fagmiljø i kontomenyen. Standarden er prøverørene
+  (`laboratorium`), som appen også viser for et navn den ikke kjenner
+  (`20261118073000_fagmiljoikon.sql`; `intern.fagmiljoreferanse` gir det videre).
+
+### Sandkassen
+
+Sandkasse (`20261118073100_sandkasse.sql`, 18.11.2026, etter Peders ønske) er
+et fagmiljø der systemarkitektene prøver ut funksjoner uten at det synes i de
+virkelige fagmiljøene. `peohol` og `maxhag` er medlemmer og lokale
+administratorer der; primærmedlemskapene deres er uendret. Det er ikke åpnet
+for medlemmer, så bare systemarkitektene kan være med; skal det prøves med
+testbrukere, må det åpnes i en egen, godkjent migrasjon som de andre.
+Ikonet er en sandkasse med spade (`sandkasse`).
+
+Sandkassen er et vanlig fagmiljø, så skillet er det samme som mellom alle
+fagmiljøer (`src/__tests__/s2tilgang.test.ts`, `src/__tests__/sandkasse.test.ts`):
+
+- **Bare i sandkassen:** fortolkningen og analyttkatalogen (den har ingen
+  regler ennå, så fortolkningen gir den tydelige stoppen), diskusjonsrommet
+  på fortolkningssidene, gruppene i Sandkasse med diskusjonene, idéene,
+  oppgavene og chatten deres, varslene om alt dette, og medlemslista.
+  Fagmiljøets navn og ikon ser bare medlemmene.
+- **Felles for alle, også fra sandkassen:** fagsidene og stoffregisteret med
+  diskusjonene sine, de felles idéene (D8) og grupper på tvers. Det som
+  skrives der, ser alle, uansett hvilket fagmiljø man arbeider i.
+
+Migrasjonen kjøres bare i produksjonen (kontoene finnes bare der) og tåler at
+fagmiljøet alt er opprettet i appen. Den arkiveres, ikke slettes, med en ny
+migrasjon.
 
 ## Tabellene
 
 | Tabell | Hva |
 | --- | --- |
-| `fagmiljoer` | Fagmiljøene. Arkiveres (`status`), slettes aldri. `nokkel` står fast |
+| `fagmiljoer` | Fagmiljøene, med ikonet (`ikon`). Arkiveres (`status`), slettes aldri. `nokkel` står fast |
 | `medlemskap` | Hvem som tilhører hvor: `status` (`aktiv`, `invitert`, `deaktivert`), `primaer`, `fra`/`til`. Høyst ett aktivt primærmedlemskap per konto og ett gjeldende per fagmiljø |
 | `systemroller` | Systemarkitektene, knyttet til konto-ID-en. Tilbakekalles med `tilbakekalt_kl` |
 | `fagmiljoadministratorer` | Lokale administratorer. Aktiv så lenge `til` står tom |
