@@ -23,9 +23,7 @@ import type { Cypinfoleser, Cypinfoutvalg } from '../cypinfo/lesing'
 import { detaljanker } from '../components/seksjoner/Seksjon'
 import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskilde'
 import { TipsLag } from '../components/Tips'
-import { ANALYTTKATALOG, OUS_REGISTERDATA, THC_KODE } from '../domain/ouskatalog'
-import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
-import { byggStoffregister, type Stoffregister } from '../domain/stoffregister'
+import { STOFFREGISTERDATA, byggStoffregister, type Stoffregister } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
 import { onskRedigering } from '../faginnhold/redigeringsonske'
@@ -91,7 +89,6 @@ afterEach(() => {
 })
 
 /** Laboratorieanalyttene koblingene i registeret peker på. */
-const katalog = ANALYTTKATALOG
 
 /** Redigeringsvinduet med tittelen: skjemaet, knappene i foten og meldingene. */
 function redigeringsvindu(tittel: string): HTMLElement {
@@ -479,7 +476,6 @@ function kilde({ data = side, regler = amtnorsumregler, thc = () => null, kanRed
     }),
     lesThcRegelsett: vi.fn(async (tilstand: Tilstand) => thc(tilstand)),
     lesKommentarer: vi.fn(async (tilstand: Tilstand) => regler('AMTNORSUM', tilstand)?.kommentarer ?? []),
-    lesReferanseomrader: vi.fn(async () => new Map()),
     lesHistorikk: vi.fn(async (id: string) =>
       id === HOY ? KOMMENTARHISTORIKK : REGELHISTORIKK,
     ) as Faginnholdsleser['lesHistorikk'],
@@ -531,39 +527,42 @@ const finnVerdi = (tekst: string) => screen.findByText(erVerdi(tekst))
 const hentVerdi = (tekst: string) => screen.getByText(erVerdi(tekst))
 
 /** Registeret med inndelingen databasen får første gang. */
-const REGISTER = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
+const REGISTER = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
 
 interface Visningsvalg {
   sted?: string[]
   /** Stoffregisteret siden slår opp i; standard er registeret med inndelingen fra databasen. */
   register?: Stoffregister
-  /** Analyttkatalogen til arbeidskonteksten; standard er den til OUS Klinisk farmakologi. */
-  analyttkatalog?: Analyttkatalog
   /** Rettighetene til den innloggede; standard er ingen. */
   rettigheter?: Rettigheter
 }
 
 /** Stoffsiden for stoffet med nøkkelen, slik appen viser den på `#/stoff/<nøkkel>`. */
-function vis(stoff: string, k = kilde(), { sted, register = REGISTER, analyttkatalog = katalog, rettigheter = INGEN_RETTIGHETER }: Visningsvalg = {}) {
-  const onApneFortolkning = vi.fn()
+function vis(stoff: string, k = kilde(), { sted, register = REGISTER, rettigheter = INGEN_RETTIGHETER }: Visningsvalg = {}) {
   const onLukk = vi.fn()
   render(
     <TipsLag>
       <RettigheterKilde verdi={rettigheter}>
         <FaginnholdskildeProvider kilde={k}>
-          <Stoffside
-            stoff={stoff}
-            sted={sted}
-            register={register}
-            katalog={analyttkatalog}
-            onApneFortolkning={onApneFortolkning}
-            onLukk={onLukk}
-          />
+          <Stoffside stoff={stoff} sted={sted} register={register} onLukk={onLukk} />
         </FaginnholdskildeProvider>
       </RettigheterKilde>
     </TipsLag>,
   )
-  return { onApneFortolkning, onLukk, ...k }
+  return { onLukk, ...k }
+}
+
+/**
+ * Fagsiden viser ingenting fra fortolkningen (docs/domener.md): ingen
+ * analysekoder, analysemetoder eller setninger om hva en analyse måler, og
+ * ingen vei til fortolkningssidene.
+ */
+function utenFortolkningen(...koder: string[]) {
+  const tekst = identiteten().textContent!
+  for (const kode of koder) expect(document.body.textContent, kode).not.toContain(kode)
+  expect(tekst).not.toMatch(/Inngår i|måler|sumanalyse|Se også/)
+  expect(screen.queryByRole('button', { name: /fortolkning/i })).toBeNull()
+  expect(document.querySelector('.regler')).toBeNull()
 }
 
 /** Identitetspanelet: overskriften og det som står rundt den. */
@@ -590,7 +589,7 @@ describe('stoffet er sidens identitet', () => {
 
   it('viser et stoff i databasen som registeret ikke kjenner, uten kode og uten veien til fortolkningen', async () => {
     const teststoff = { id: 'stoff', slug: 'teststoff', navn: 'Teststoff' }
-    const register = byggStoffregister([teststoff], OUS_REGISTERDATA, GRUNNSTRUKTUR)
+    const register = byggStoffregister([teststoff], STOFFREGISTERDATA, GRUNNSTRUKTUR)
     const { leser } = vis('teststoff', kilde({ data: enkelSide(teststoff, { nedre: 30, ovre: 60, enhet: 'µmol/L' }) }), {
       register,
     })
@@ -659,37 +658,19 @@ describe('Bupropion: metabolitten er sekundær informasjon', () => {
   const BUPROPION = { id: 'bup', slug: 'bupropion', navn: 'Bupropion' }
   const hbupregler = (kode: string, t: Tilstand) => (kode === 'HBUP' ? regelsettutgave(t, 2, 'HBUP') : null)
 
-  it('har tittelen Bupropion, aldri Hydroksybupropion, og viser HBUP med merknaden', async () => {
-    const user = userEvent.setup()
-    const { leser, onApneFortolkning } = vis(
+  it('har tittelen Bupropion, aldri Hydroksybupropion, og ingenting fra fortolkningen', async () => {
+    const { leser } = vis(
       'bupropion',
       kilde({ data: enkelSide(BUPROPION, { nedre: 1000, ovre: 2000, enhet: 'nmol/L' }), regler: hbupregler }),
     )
     expect(await finnVerdi(`${formaterTall(1000)}–${formaterTall(2000)} nmol/L`)).toBeTruthy()
     expect(leser.lesStoffside).toHaveBeenCalledWith('bupropion', 'publisert')
-    const overskrift = screen.getByRole('heading', { level: 1 })
-    expect(overskrift.textContent).toBe('Bupropion')
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Bupropion')
     expect(screen.queryByRole('heading', { name: /Hydroksybupropion/i })).toBeNull()
     expect(document.title).toBe('Bupropion – OUSFAR')
     expect(identiteten().querySelector('.metalinje')!.textContent).toBe('Antidepressiver › NDRI')
-
-    // HBUP står under navnet som koden, med metoden den inngår i.
-    const analyse = identiteten().querySelector('.identitet__analyse') as HTMLElement
-    expect(overskrift.compareDocumentPosition(analyse)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
-    expect(analyse.textContent).toBe(`HBUP·Inngår i${katalog.finn('HBUP')!.analysemetode}`)
-    // Hva analytten er for stoffet, og merknaden koblingen har.
-    const setning = identiteten().querySelector('.identitet__komponenter')!
-    expect(setning.textContent).toBe(
-      'HBUP måler hydroksybupropion (kun aktiv metabolitt), en metabolitt av bupropion. ' +
-        'Analytten er hydroksybupropion. Referanseområdet gjelder behandling med bupropion.',
-    )
-    // Ingen andre stoffer er koblet til HBUP, så det er ingen «Se også».
-    expect(within(setning as HTMLElement).queryByRole('link')).toBeNull()
-
-    // Koden og «Åpne fortolkning» åpner begge fortolkningen for HBUP.
-    await user.click(within(analyse).getByRole('button', { name: 'HBUP – åpne fortolkningen' }))
-    await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
-    expect(onApneFortolkning.mock.calls).toEqual([[katalog.finn('HBUP')!.fortolkning], [katalog.finn('HBUP')!.fortolkning]])
+    utenFortolkningen('HBUP')
+    expect(leser.finnIntervallregelsett).not.toHaveBeenCalled()
   })
 
   it('har tittelen Bupropion også uten side i databasen', async () => {
@@ -701,44 +682,25 @@ describe('Bupropion: metabolitten er sekundær informasjon', () => {
 
   it('gir ikke en gammel side for metabolitten en egen stoffside', () => {
     // En side som fortsatt heter etter metabolitten, er et alias og ikke et stoff.
-    const register = byggStoffregister([BUPROPION, { id: 'gammel', slug: 'hydroksybupropion', navn: 'Hydroksybupropion' }], OUS_REGISTERDATA)
+    const register = byggStoffregister([BUPROPION, { id: 'gammel', slug: 'hydroksybupropion', navn: 'Hydroksybupropion' }], STOFFREGISTERDATA)
     expect(register.finn('hydroksybupropion')).toBeUndefined()
     expect(register.kanonisk('Hydroksybupropion')?.slug).toBe('bupropion')
-    expect(register.primartStoffFor('HBUP')?.navn).toBe('Bupropion')
   })
 })
 
-describe('Nortriptylin: sumanalysen er bare en sekundær kobling', () => {
+describe('Nortriptylin: ingen analysekoder på fagsiden', () => {
   const norregler = (kode: string, t: Tilstand) =>
     kode === 'NOR' ? regelsettutgave(t, 2, 'NOR') : kode === 'AMTNORSUM' ? regelsettutgave(t) : null
 
-  it('viser NOR, og AMTNORSUM bare som kode med «Se også» Amitriptylin', async () => {
-    const user = userEvent.setup()
-    const { onApneFortolkning } = vis('nortriptylin', kilde({ data: () => TOM_STOFFSIDE, regler: norregler }))
+  it('viser verken NOR eller sumanalysen AMTNORSUM, og lenker ikke til Amitriptylin', async () => {
+    vis('nortriptylin', kilde({ data: () => TOM_STOFFSIDE, regler: norregler }))
     expect(await screen.findByText('Denne siden har ikke fått faginnhold ennå.')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Nortriptylin')
-
-    // Begge kodene står under navnet, NOR først.
-    const analyse = identiteten().querySelector('.identitet__analyse') as HTMLElement
-    expect(analyse.textContent).toBe(`NOR·AMTNORSUM·Inngår i${katalog.finn('NOR')!.analysemetode}`)
-    // Sumanalysen forklares, og lenker til stoffet den primært hører til.
-    const setninger = [...identiteten().querySelectorAll('.identitet__komponenter')]
-    expect(setninger.map((p) => p.textContent)).toEqual([
-      'AMTNORSUM er en sumanalyse og omfatter amitriptylin og nortriptylin. Se også Amitriptylin.',
-    ])
-    const lenke = within(setninger[0] as HTMLElement).getByRole('link', {
-      name: 'Amitriptylin: åpne fagsiden, som også er koblet til AMTNORSUM',
-    })
-    expect(lenke.getAttribute('href')).toBe('#/stoff/amitriptylin')
-
-    // «Åpne fortolkning» åpner NOR; AMTNORSUM åpnes bare fra koden sin.
-    await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
-    expect(onApneFortolkning).toHaveBeenLastCalledWith(katalog.finn('NOR')!.fortolkning)
-    await user.click(within(analyse).getByRole('button', { name: 'AMTNORSUM – åpne fortolkningen' }))
-    expect(onApneFortolkning).toHaveBeenLastCalledWith(katalog.finn('AMTNORSUM')!.fortolkning)
+    utenFortolkningen('NOR·', 'AMTNORSUM')
+    expect(within(identiteten()).queryByRole('link', { name: /Amitriptylin/ })).toBeNull()
   })
 
-  it('viser datakortene uten merking, siden NOR er den eneste primære analytten', async () => {
+  it('viser sitt eget datakort uten merking', async () => {
     const NORTRIPTYLIN = { id: 'nor', slug: 'nortriptylin', navn: 'Nortriptylin' }
     vis('nortriptylin', kilde({ data: enkelSide(NORTRIPTYLIN, { nedre: 200, ovre: 600, enhet: 'nmol/L' }), regler: norregler }))
     await finnVerdi('200–600 nmol/L')
@@ -752,44 +714,25 @@ describe('Nortriptylin: sumanalysen er bare en sekundær kobling', () => {
   })
 })
 
-describe('THC: to fortolkningsmoduler på samme side', () => {
-  it('viser begge kodene, uten regler, og ingen felles «Åpne fortolkning»', async () => {
-    const user = userEvent.setup()
-    const { leser, onApneFortolkning } = vis(
-      'thc',
-      kilde({ data: () => TOM_STOFFSIDE, regler: () => null, thc: () => thcRegelsettutgave() }),
-    )
+describe('THC: fagsiden viser ingenting om analysene fortolkningen har', () => {
+  it('viser verken kodene THC og IRCAK, analysemetodene eller hva IRCAK måler', async () => {
+    const { leser } = vis('thc', kilde({ data: () => TOM_STOFFSIDE, regler: () => null, thc: () => thcRegelsettutgave() }))
     expect(await screen.findByText('Denne siden har ikke fått faginnhold ennå.')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('THC')
     expect(document.title).toBe('THC – OUSFAR')
     expect(identiteten().querySelector('.metalinje')!.textContent).toBe('Cannabinoider')
-    // Reglene for begge modulene står på fortolkningssidene deres.
-    expect(document.querySelector('.regler')).toBeNull()
+    utenFortolkningen('IRCAK', 'SRUS', 'UCAK')
+    expect(identiteten().textContent).not.toContain('THC-syre')
+    expect(identiteten().querySelectorAll('.pille')).toHaveLength(0)
     expect(leser.lesThcRegelsett).not.toHaveBeenCalled()
-
-    // Modulene er to, så hver åpnes fra koden sin.
-    expect(screen.queryByRole('button', { name: 'Åpne fortolkning' })).toBeNull()
-    const analyser = [...identiteten().querySelectorAll('.identitet__analyse')].map((p) => p.textContent)
-    expect(analyser).toEqual([
-      `THC·Inngår i${katalog.finn('THC')!.analysemetode}`,
-      `IRCAK·Inngår i${katalog.finn(THC_KODE)!.analysemetode}`,
-    ])
-    await user.click(screen.getByRole('button', { name: 'IRCAK – åpne fortolkningen' }))
-    expect(onApneFortolkning).toHaveBeenLastCalledWith(katalog.finn(THC_KODE)!.fortolkning)
-    await user.click(screen.getByRole('button', { name: 'THC – åpne fortolkningen' }))
-    expect(onApneFortolkning).toHaveBeenLastCalledWith(katalog.finn('THC')!.fortolkning)
-    // THC-syre er en metabolitt av stoffet, og det sies.
-    expect(identiteten().querySelector('.identitet__komponenter')!.textContent).toBe(
-      'IRCAK måler THC-syre, en metabolitt av THC.',
-    )
   })
 })
 
-describe('Diazepam: datakort for hver primære analytt', () => {
+describe('Diazepam: datakort for stoffet og metabolitten', () => {
   const DIAZEPAM = { id: 'diaz', slug: 'diazepam', navn: 'Diazepam' }
   const kort = (id: string, data: Record<string, unknown>) =>
     utgave(id, { infoside: 'diaz', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
-  /** Referanseområdet for diazepam (uten `gjelder`) og for N-desmetyldiazepam (`gjelder: 'nordiazepam'`). */
+  /** Referanseområdet for diazepam (uten `gjelder`) og for nordiazepam (`gjelder: 'nordiazepam'`). */
   const diazepamside = (): Stoffsidedata => ({
     stoff: DIAZEPAM,
     infoside: utgave('diaz', { navn: 'Diazepam', slug: 'diazepam' }),
@@ -800,7 +743,7 @@ describe('Diazepam: datakort for hver primære analytt', () => {
     referanser: [],
   })
 
-  it('viser referanseområdet for DIAZ og for DMI, merket med analyttens navn', async () => {
+  it('viser referanseområdet for diazepam og for nordiazepam, merket med navnet i forbindelsesregisteret', async () => {
     vis('diazepam', kilde({ data: diazepamside, regler: () => null }))
     await finnVerdi('100–200 nmol/L')
     const konsentrasjoner = within(screen.getByRole('region', { name: 'Viktige data' })).getByRole('group', {
@@ -809,35 +752,22 @@ describe('Diazepam: datakort for hver primære analytt', () => {
     const kortene = within(konsentrasjoner).getAllByRole('listitem')
     expect(kortene.map((li) => li.querySelector('h3')!.textContent)).toEqual([
       'Referanseområde, Diazepam',
-      'Referanseområde, N-desmetyldiazepam',
+      'Referanseområde, Nordiazepam (desmetyldiazepam)',
     ])
     expect(kortene.map((li) => li.querySelector('.datakort__verdi')!.textContent)).toEqual([
       '100–200 nmol/L',
       '300–400 nmol/L',
     ])
-    const analyse = identiteten().querySelector('.identitet__analyse')!
-    expect(analyse.textContent).toBe(`DIAZ·DMI·Inngår i${katalog.finn('DIAZ')!.analysemetode}`)
-    expect(identiteten().querySelector('.identitet__komponenter')!.textContent).toBe(
-      'DMI måler N-desmetyldiazepam, en metabolitt av diazepam.',
-    )
+    utenFortolkningen('DIAZ', 'DMI')
   })
 
-  it('åpner den felles modulen, uten å vise reglene for den', async () => {
-    const user = userEvent.setup()
-    const { onApneFortolkning } = vis('diazepam', kilde({ data: diazepamside, regler: () => null }))
-    await finnVerdi('100–200 nmol/L')
-    await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
-    expect(onApneFortolkning.mock.calls[0]![0].kode).toBe('DIAZ · DMI · OXA')
-    expect(document.querySelector('.regler')).toBeNull()
-  })
-
-  it('lagrer kortet for DMI med forbindelsen det gjelder, ikke koden', async () => {
+  it('lagrer kortet for metabolitten med forbindelsen det gjelder, ikke en analysekode', async () => {
     const user = userEvent.setup()
     const { lager } = vis('diazepam', kilde({ kanRedigere: true, data: diazepamside, regler: () => null }))
     await finnVerdi('100–200 nmol/L')
     await user.click(screen.getByRole('button', { name: 'Rediger' }))
-    await user.click(await screen.findByRole('button', { name: 'Rediger: Referanseområde, N-desmetyldiazepam' }))
-    const skjema = redigeringsvindu('Referanseområde, N-desmetyldiazepam')
+    await user.click(await screen.findByRole('button', { name: 'Rediger: Referanseområde, Nordiazepam (desmetyldiazepam)' }))
+    const skjema = redigeringsvindu('Referanseområde, Nordiazepam (desmetyldiazepam)')
     const ovre = within(skjema).getByLabelText('Øvre grense')
     await user.clear(ovre)
     await user.type(ovre, '450')
@@ -854,7 +784,7 @@ describe('Diazepam: datakort for hver primære analytt', () => {
   })
 })
 
-describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer', () => {
+describe('Tramadol: datakortene for metabolitten', () => {
   const TRAMADOL = { id: 'tram', slug: 'tramadol', navn: 'Tramadol' }
   const kort = (id: string, data: Record<string, unknown>) =>
     utgave(id, { infoside: 'tram', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
@@ -879,18 +809,10 @@ describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer'
     ['Referanseområde, O-desmetyltramadol', '20–40 nmol/L'],
   ]
 
-  it('viser begge kortene for OUS Klinisk farmakologi, merket med navnene', async () => {
+  it('viser begge kortene, merket med navnene', async () => {
     vis('tramadol', kilde({ data: tramadolside, regler: () => null }))
     await finnVerdi('20–40 nmol/L')
     expect(overskrifter()).toEqual(FORVENTET)
-  })
-
-  it('viser de samme kortene i et fagmiljø uten OUS sine analyttkoder', async () => {
-    const register = byggStoffregister([], { ...OUS_REGISTERDATA, analyttkoblinger: [] }, GRUNNSTRUKTUR)
-    vis('tramadol', kilde({ data: tramadolside, regler: () => null }), { register, analyttkatalog: TOM_KATALOG })
-    await finnVerdi('20–40 nmol/L')
-    expect(overskrifter()).toEqual(FORVENTET)
-    expect(document.body.textContent).not.toContain('OTRAM')
   })
 
   it('beholder koden i gjelder når kortet redigeres, så appen fra før fortsatt finner det', async () => {
@@ -934,20 +856,12 @@ describe('Tramadol: datakortene for metabolitten er felles for alle fagmiljøer'
     expect(vi.mocked(lager.opprettUtkast).mock.calls[0]![1]).toMatchObject({ data: { ovre: 45, gjelder: 'o-desmetyltramadol' } })
   })
 
-  it('merker et kort som fortsatt har koden i gjelder, med metabolitten også uten OUS sine analyttkoder', async () => {
-    // Slik produksjonen står til kortet er skrevet om (#405).
-    const register = byggStoffregister([], { ...OUS_REGISTERDATA, analyttkoblinger: [] }, GRUNNSTRUKTUR)
-    vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }), { register, analyttkatalog: TOM_KATALOG })
-    await finnVerdi('20–40 nmol/L')
-    expect(overskrifter()).toEqual(FORVENTET)
-    expect(document.body.textContent).not.toContain('OTRAM')
-  })
-
   it('viser et kort som fortsatt har koden i gjelder, på plassen til forbindelsen koden måler', async () => {
-    // Overgangen til kortene er skrevet om: ett kort for metabolitten, ikke to.
+    // Slik produksjonen står til kortet er skrevet om (#405): ett kort for metabolitten, ikke to.
     vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }))
     await finnVerdi('20–40 nmol/L')
     expect(overskrifter()).toEqual(FORVENTET)
+    expect(document.body.textContent).not.toContain('OTRAM')
   })
 })
 
@@ -963,13 +877,7 @@ describe('lesemodus', () => {
     expect(screen.queryByText('Syntetisk forbehold')).toBeNull()
     expect(screen.getByText('gjenopptaket').tagName).toBe('STRONG')
 
-    // Sumanalysen forklares, og det andre stoffet den er koblet til, lenkes til
-    // etter nøkkelen — ikke etter en analyttkode.
-    const setning = screen.getByText(/er en sumanalyse og omfatter/).closest('p')!
-    expect(setning.textContent).toBe(
-      'AMTNORSUM er en sumanalyse og omfatter amitriptylin og nortriptylin. Se også Nortriptylin.',
-    )
-    expect(within(setning).getByRole('link', { name: /Nortriptylin/ }).getAttribute('href')).toBe('#/stoff/nortriptylin')
+    utenFortolkningen('AMTNORSUM')
 
     // Datakortet (panel 2) siterer A, teksten i panel 3 A og B, panelet B:
     // A blir 1 og B blir 2, og listen nederst følger numrene.
@@ -987,24 +895,14 @@ describe('lesemodus', () => {
     ])
   })
 
-  it('viser kategoriene fra stoffregisteret over navnet, og koden og metoden under', async () => {
-    const user = userEvent.setup()
-    const { onApneFortolkning } = vis('amitriptylin')
+  it('viser kategoriene fra stoffregisteret over navnet', async () => {
+    vis('amitriptylin')
     await finnVerdi('10–20 nmol/L')
     const overskrift = screen.getByRole('heading', { level: 1 })
-    const identitet = overskrift.closest('section')!
-    const oppforing = katalog.finn('AMTNORSUM')!
     // Over navnet: de samme kategoriene som i sidemenyen.
-    const metalinje = identitet.querySelector('.metalinje')!
+    const metalinje = identiteten().querySelector('.metalinje')!
     expect(metalinje.textContent).toBe('Antidepressiver › TCA')
     expect(metalinje.compareDocumentPosition(overskrift)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
-    // Under navnet: koden og analysemetoden den inngår i.
-    const analyse = identitet.querySelector('.identitet__analyse')!
-    expect(overskrift.compareDocumentPosition(analyse)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
-    expect(analyse.textContent).toBe(`AMTNORSUM·Inngår i${oppforing.analysemetode}`)
-    // Koden åpner fortolkningen, som «Åpne fortolkning» i toppmenyen.
-    await user.click(within(analyse as HTMLElement).getByRole('button', { name: 'AMTNORSUM – åpne fortolkningen' }))
-    expect(onApneFortolkning).toHaveBeenCalledWith(oppforing.fortolkning)
   })
 
   it('viser hver kategori et stoff står i', async () => {
@@ -1155,19 +1053,10 @@ describe('lesemodus', () => {
 })
 
 describe('veiene ut av siden', () => {
-  it('åpner fortolkningen stoffets analytt hører til', async () => {
-    const user = userEvent.setup()
-    const { onApneFortolkning } = vis('nortriptylin')
-    await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
-    expect(onApneFortolkning).toHaveBeenCalledWith(katalog.finn('NOR')!.fortolkning)
-  })
-
-  it('åpner modulen for et stoff som deler fortolkning med andre', async () => {
-    const user = userEvent.setup()
-    const { onApneFortolkning } = vis('oksazepam', kilde({ data: () => TOM_STOFFSIDE }))
-    await user.click(screen.getByRole('button', { name: 'Åpne fortolkning' }))
-    // Oksazepam fortolkes i diazepamgruppen.
-    expect(onApneFortolkning.mock.calls[0]![0].kode).toBe('DIAZ · DMI · OXA')
+  it('har ingen vei til fortolkningen, heller ikke for et stoff fortolkningen har en analyse for', async () => {
+    vis('oksazepam', kilde({ data: () => TOM_STOFFSIDE }))
+    expect(await screen.findByText('Denne siden har ikke fått faginnhold ennå.')).toBeTruthy()
+    utenFortolkningen('OXA')
   })
 
   it('lukkes med Esc, men ikke mens det skrives i søket', async () => {

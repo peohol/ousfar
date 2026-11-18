@@ -51,7 +51,6 @@ import { formaterReferanse } from './referanser'
 import { klartekst, konsentrasjonstekst, type Konsentrasjonsskriver } from './riktekst'
 import { stoffadresse } from '../domain/rute'
 import { navnenokkel } from '../domain/sokenavn'
-import type { KobletAnalytt } from '../domain/koblinger'
 
 /* --- Sammenligningen ------------------------------------------------------ */
 
@@ -116,9 +115,7 @@ export function treffIntervaller(tekst: string, ord: readonly string[]): [number
 /** Hva slags tekst et dokument er. Avgjør hvor sterkt et treff teller. */
 export type Sokefelt =
   | 'navn'
-  | 'kode'
   | 'alias'
-  | 'komponent'
   | 'preparat'
   | 'overskrift'
   | 'verdi'
@@ -128,15 +125,13 @@ export type Sokefelt =
 
 /**
  * Hvor sterkt et treff i feltet teller; lavere er bedre. Rekkefølgen er
- * planens (`docs/ux-reimagination.md`, 6.2): stoffnavn og kode, alias og
- * komponent, preparatnavn, overskrifter, strukturerte verdier og tabeller,
- * fritekst og til sist referanser.
+ * planens (`docs/ux-reimagination.md`, 6.2): stoffnavn, alias, preparatnavn,
+ * overskrifter, strukturerte verdier og tabeller, fritekst og til sist
+ * referanser. Analyttkodene er ikke med: de hører til fortolkningen.
  */
 const VEKT: Record<Sokefelt, number> = {
-  kode: 0,
   navn: 0,
   alias: 1,
-  komponent: 1,
   preparat: 2,
   overskrift: 3,
   verdi: 4,
@@ -146,7 +141,7 @@ const VEKT: Record<Sokefelt, number> = {
 }
 
 /** Feltene som sier hva siden er, og ikke hva som står på den. */
-const IDENTITETSFELT: ReadonlySet<Sokefelt> = new Set(['navn', 'kode', 'alias', 'komponent'])
+const IDENTITETSFELT: ReadonlySet<Sokefelt> = new Set(['navn', 'alias'])
 
 /**
  * Gruppene treffene i fagsøket vises i: stoffet selv, preparatene, teksten på
@@ -157,9 +152,7 @@ export type Treffgruppe = 'stoff' | 'preparat' | 'tekst' | 'referanse'
 
 const GRUPPE: Record<Sokefelt, Treffgruppe> = {
   navn: 'stoff',
-  kode: 'stoff',
   alias: 'stoff',
-  komponent: 'stoff',
   preparat: 'preparat',
   overskrift: 'tekst',
   verdi: 'tekst',
@@ -228,22 +221,13 @@ export function stedsnokkel(sted: Sokested): string {
 
 /**
  * Det siden er, uavhengig av innholdet i panelene: stoffet, og navnene det
- * også kan finnes under. Kodene og navnene til laboratorieanalyttene stoffet
- * er koblet til, er bare andre veier til det samme stoffet — treffet er
- * alltid stoffsiden.
+ * også kan finnes under. Laboratorienes analyttkoder hører til fortolkningen
+ * og er ingen vei hit (`docs/domener.md`).
  */
 export interface Sideidentitet {
   /** Stoffets nøkkel i stoffregisteret. */
   stoff: string
   navn: string
-  /** Kodene til analyttene stoffet er primært stoff for. Rangeres med navnet. */
-  koder?: readonly string[]
-  /**
-   * Analyttenes navn og stoffene de omfatter (`Laboratorieanalytt.komponenter`),
-   * for alle analyttene stoffet er koblet til, og kodene til analyttene det er
-   * koblet til uten å være deres primære stoff.
-   */
-  komponenter?: readonly string[]
   /**
    * Andre navn stoffet er kjent under: aliasene i stoffregisteret. Et eksakt
    * alias rangeres som et eksakt navn.
@@ -251,23 +235,9 @@ export interface Sideidentitet {
   aliaser?: readonly string[]
 }
 
-/** Identiteten til et stoff i søket, av registeret og koblingene i det. */
-export function stoffidentitet(
-  stoff: { slug: string; navn: string; aliaser?: readonly string[] },
-  analytter: readonly KobletAnalytt[],
-): Sideidentitet {
-  const primare = analytter.filter((a) => a.kobling.primar)
-  const sekundare = analytter.filter((a) => !a.kobling.primar)
-  return {
-    stoff: stoff.slug,
-    navn: stoff.navn,
-    koder: primare.map((a) => a.analytt.kode),
-    komponenter: [
-      ...analytter.flatMap(({ analytt }) => [analytt.navn, ...analytt.komponenter]),
-      ...sekundare.map((a) => a.analytt.kode),
-    ],
-    aliaser: stoff.aliaser ?? [],
-  }
+/** Identiteten til et stoff i søket, av registeret. */
+export function stoffidentitet(stoff: { slug: string; navn: string; aliaser?: readonly string[] }): Sideidentitet {
+  return { stoff: stoff.slug, navn: stoff.navn, aliaser: stoff.aliaser ?? [] }
 }
 
 /**
@@ -382,9 +352,7 @@ export function indekserSide(
     })
   const dokumenter: Sokedokument[] = [
     ...identitetsdokumenter('navn', [identitet.navn]),
-    ...identitetsdokumenter('kode', identitet.koder),
     ...identitetsdokumenter('alias', identitet.aliaser),
-    ...identitetsdokumenter('komponent', identitet.komponenter),
   ]
 
   const perPanel = new Map<string, Sokedokument[]>()
@@ -528,7 +496,7 @@ const KVALITETSTRINN = 4
  * Feltene der et eksakt treff er det beste treffet som finnes, uansett felt:
  * et eksakt alias er like godt som et eksakt navn eller en eksakt kode.
  */
-const EKSAKTE_FELT: ReadonlySet<Sokefelt> = new Set(['navn', 'kode', 'alias'])
+const EKSAKTE_FELT: ReadonlySet<Sokefelt> = new Set(['navn', 'alias'])
 
 /**
  * Poengene for et navn, en kode eller et alias sammenlignet på navnenøkkelen:

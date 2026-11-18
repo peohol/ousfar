@@ -22,9 +22,9 @@
  * fortsatt, brukes det som er lagret fra før, og ellers står den i
  * {@link Kunnskapsbase.mangler}. De andre kildene er med uansett.
  *
- * Hvert treff er et stoff i stoffregisteret. Aliasene i registeret, og kodene
- * og navnene til laboratorieanalyttene stoffet er koblet til, er andre veier
- * til det samme stoffet (se `stoffidentitet` i `sok.ts`).
+ * Hvert treff er et stoff i stoffregisteret. Aliasene i registeret er andre
+ * veier til det samme stoffet (se `stoffidentitet` i `sok.ts`). Laboratorienes
+ * analyttkoder er ikke med: de hører til fortolkningen (`docs/domener.md`).
  *
  * Rangeringen skjer bare i `sok.ts`; databasen gir bare innholdet.
  */
@@ -36,8 +36,6 @@ import { tilFeil } from './lagring'
 import { TOM_STOFFSIDE, type Stoffsidedata, type Utgave } from './lesing'
 import type { Referanseinnhold, Tilstand } from './modell'
 import { indekserSide, lagSokeindeks, stoffidentitet, type Sokedokument, type Sokeindeks, type Tilleggstekst } from './sok'
-import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
-import { analytterForStoff } from '../domain/koblinger'
 import { byggStoffregister, STOFFREGISTERDATA, type Registerdata } from '../domain/stoffregister'
 import type { Interaksjonssokerad, Legemiddelsok, Preparatsokerad } from '../legemiddeldata/lesing'
 import {
@@ -420,16 +418,8 @@ function labtekster(base: Kunnskapsbase, stoff: string): Tilleggstekst[] {
 }
 
 export interface Indekseringsvalg {
-  /**
-   * Stoffregisteret sidene hører til. Når det ikke er gitt: stoffene i
-   * datafilen med koblingene i katalogen.
-   */
+  /** Stoffregisteret sidene hører til. Når det ikke er gitt: stoffene i datafilen. */
   registerdata?: Registerdata
-  /**
-   * Fagmiljøets analyttkatalog: laboratorieanalyttene og koblingene fra dem
-   * til stoffene. En tom når den ikke er gitt — da indekseres ingen analytter.
-   */
-  katalog?: Analyttkatalog
 }
 
 const TOM_MODELL = byggSidemodell(TOM_STOFFSIDE)
@@ -440,15 +430,14 @@ const TOM_MODELL = byggSidemodell(TOM_STOFFSIDE)
  * `indekserSide`, som på siden selv. Stoffene står alfabetisk, så like gode
  * treff kommer i en fast rekkefølge.
  *
- * Et stoff uten side i databasen indekseres med navnet, aliasene,
- * analyttene det er koblet til og laboratorieanalysene, så søket finner det
- * som menyen og siden gjør. En side
+ * Et stoff uten side i databasen indekseres med navnet, aliasene og
+ * laboratorieanalysene, så søket finner det som menyen og siden gjør. En side
  * i databasen hvis nøkkel er et alias for et stoff i registeret, er ikke en
  * egen side og indekseres ikke.
  */
 export function indekserKunnskapsbase(
   base: Kunnskapsbase,
-  { katalog = TOM_KATALOG, registerdata = { ...STOFFREGISTERDATA, analyttkoblinger: [...katalog.koblinger] } }: Indekseringsvalg = {},
+  { registerdata = STOFFREGISTERDATA }: Indekseringsvalg = {},
 ): Sokedokument[] {
   const register = byggStoffregister(
     base.sider.flatMap((s) => s.stoff ?? []),
@@ -458,7 +447,7 @@ export function indekserKunnskapsbase(
   return register.stoffer.flatMap((stoff) => {
     const data = perSlug.get(stoff.slug)
     const modell = data ? modellFor(data) : TOM_MODELL
-    const identitet = stoffidentitet(stoff, analytterForStoff(stoff.slug, register, katalog))
+    const identitet = stoffidentitet(stoff)
     return indekserSide(identitet, modell, data ? tilleggstekster(base, modell, stoff.slug) : labtekster(base, stoff.slug))
   })
 }
@@ -470,7 +459,7 @@ export type Kunnskapsindeks = Sokeindeks & { mangler?: Manglende }
  * Leser og indekserer hele kunnskapsbasen, klar til `sokGlobalt`.
  *
  * Søket venter ikke på noe: `delvis` får først en indeks over stoffene i
- * registeret — navnene, aliasene og analyttene — så en over det som var
+ * registeret — navnene og aliasene — så en over det som var
  * lagret fra forrige gang, og så en ny hver gang mer er lest. Det som er
  * lest, er det samme som i den endelige indeksen, så treffene på stoffene
  * står fast, og treffene fra de andre kildene kommer til under dem.

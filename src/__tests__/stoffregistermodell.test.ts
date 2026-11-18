@@ -5,10 +5,9 @@
  * (`stoffregisterdb.test.ts`); her prøves det appen sier før noen trykker.
  */
 import { describe, expect, it } from 'vitest'
-import { ANDRE_STOFFER_ID, byggStoffregister, type Registerstruktur } from '../domain/stoffregister'
+import { STOFFREGISTERDATA, ANDRE_STOFFER_ID, byggStoffregister, type Registerstruktur } from '../domain/stoffregister'
 import { endreStruktur, erEkteKategori, kanSletteKategori, kanSletteStoff, lesRegisterdatabase } from '../stoffregister/modell'
 import { GRUNNSTRUKTUR, kategoriid } from './hjelp/registerstruktur'
-import { OUS_REGISTERDATA } from '../domain/ouskatalog'
 
 const NAA = '2026-10-02T08:00:00.000Z'
 
@@ -137,7 +136,7 @@ describe('hva som kan slettes', () => {
       { id: '2', slug: 'full', navn: 'Full', innhold: true },
       { id: '3', slug: 'bupropion', navn: 'Bupropion', innhold: false },
     ],
-    OUS_REGISTERDATA,
+    STOFFREGISTERDATA,
     GRUNNSTRUKTUR,
   )
   const stoff = (slug: string) => register.menystoff(slug)!
@@ -151,8 +150,9 @@ describe('hva som kan slettes', () => {
     expect(kanSletteStoff(stoff('full'), true)).toEqual({ lov: true })
   })
 
-  it('lar ingen slette et stoff fortolkningen lenker til, eller et uten fagside i databasen', () => {
-    expect(kanSletteStoff(stoff('bupropion'), true).lov).toBe(false)
+  it('lar en fagside slettes selv om fortolkningen har en analyse for stoffet, men ikke et stoff uten fagside', () => {
+    // Fortolkningen lenker ikke til fagsidene (docs/domener.md).
+    expect(kanSletteStoff(stoff('bupropion'), false)).toEqual({ lov: true })
     expect(kanSletteStoff(stoff('amitriptylin'), true)).toMatchObject({ lov: false })
   })
 

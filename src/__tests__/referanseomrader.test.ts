@@ -1,79 +1,76 @@
 /**
- * Referanseområdene steg 2 viser under analyttnavnet, lest fra stoffsidene i
- * en ekte database slik appen leser dem: kortene per stoff
- * (`les_stoffreferanseomrader`), knyttet til analyttkodene gjennom koblingene
- * i stoffregisteret (`referanseomraderPerAnalytt`).
+ * Referanseområdene fortolkningen viser over knappene i steg 2, fra
+ * fagmiljøets egen analyttkatalog (`analyttkatalog_koder.referanseomrade`),
+ * og migrasjonen som kopierte dem dit fra fagsidene én gang
+ * (`20261118090000_fortolkning_skilt_fra_fagsidene.sql`, `docs/domener.md`).
  *
- * Det som prøves: at hver kode får kortet «Referanseområde» på siden til sitt
- * primære stoff — hovedanalytten kortet uten `gjelder`, de andre kodene bare
- * kortet merket med forbindelsen koden måler, i det fagmiljøets egen katalog,
- * hva koden enn heter — at en analyttkode ikke kan stå i `gjelder`, at
- * radsikkerheten gjelder (vanlige brukere ser
- * bare det publiserte), at et kort som er tatt bort, et annet kort i «Viktige
- * data», et kort uten tall eller et kort på siden til et stoff koden bare er
- * sekundært koblet til, ikke teller, og at en endring på siden slår ut i steg
- * 2 når den publiseres.
+ * Det som prøves, i en ekte database før og etter migrasjonen:
  *
- * Stoffene er de i stoffregisteret (Tramadol med TRAM og OTRAM, Bupropion med
- * HBUP, Nortriptylin med NOR, og som sekundært stoff for AMTNORSUM), men
+ * 1. Hver kode får det samme området som appen fra før fant: det publiserte
+ *    kortet «Referanseområde» på siden til kodens primære stoff, sidens eget
+ *    for en kode som bruker sidens kort, og kortet for forbindelsen koden
+ *    måler ellers, også når kortet fra før har koden i `gjelder` (OTRAM).
+ * 2. Et utkast, et kort som er tatt bort, et kort uten tall, et annet slags
+ *    kort og et kort på siden til et stoff koden bare er sekundært koblet til,
+ *    gir ingenting; heller ikke en urinanalyse.
+ * 3. Faginnholdet endres ikke, og etter migrasjonen følger fortolkningen ikke
+ *    fagsidene: en publisert endring på siden endrer ikke katalogen.
+ * 4. Overgangen: appen viser de samme områdene mot databasen før migrasjonen
+ *    (fra fagsidene, `lesReferanseomrader`) som etter (fra katalogen).
+ *
+ * Stoffene og kodene er de i katalogen til OUS Klinisk farmakologi, men
  * tallene er syntetiske.
  */
+import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { grensepiller } from '../domain/piller'
-import { byggKatalog, type Datakortbruk, type Katalogdata } from '../domain/analyttkatalog'
-import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
-import { OUS_KATALOG, OUS_KATALOGDATA, OUS_REGISTER } from '../domain/ouskatalog'
+import { byggKatalog, lesKatalogdata } from '../domain/analyttkatalog'
+import { lesReferanseomrader } from '../katalog/referanseomrader'
 import { lagFaginnholdslager, type Faginnholdslager } from '../faginnhold/lagring'
-import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing'
 import type { Objektstatus } from '../faginnhold/modell'
 import { FJERNET } from '../faginnhold/paneler'
-import type { Analyte } from '../types'
-import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { faginnholdskall, feilFra, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 
+const MIGRASJON = migrasjonsfiler().find((f) => f.endsWith('_fortolkning_skilt_fra_fagsidene.sql'))!
+
+let db: PGlite
 let kall: Faginnholdskall
-let bruker: string
-let adminleser: Faginnholdsleser
-let brukerleser: Faginnholdsleser
 let lager: Faginnholdslager
-const ider = { tramadol: '', bupropion: '', kort: '', fjernet: '' }
+let bruker: string
+let for_: { innhold: unknown; revisjoner: number; iAppen: Visning }
+const ider = { tramadol: '', tram: '', revisjon: 0 }
 
-const SYNTETISK = { nedre: 10, ovre: 20, enhet: 'nmol/L', forbehold: 'Syntetisk.' }
-const OTRAM = { nedre: null, ovre: 5, enhet: 'nmol/L', forbehold: '', gjelder: 'o-desmetyltramadol' }
+const omrade = (nedre: number | null, ovre: number | null, enhet = 'nmol/L') => ({ nedre, ovre, enhet })
 
-/**
- * Katalogen til et annet fagmiljø, med egne koder for de samme analysene og
- * metabolitten først: `ODMT` måler O-desmetyltramadol og bruker kortene for
- * den, `TRML` måler tramadol og bruker sidens egne, og `TRMU` måler tramadol
- * i urin og bruker ingen.
- */
-function annenKatalog(): ReturnType<typeof byggKatalog> {
-  const mal = OUS_KATALOGDATA.oppforinger.find((o) => o.nokkel === 'CITAL')!
-  const oppforing = (kode: string, navn: string, forbindelse: string | null, datakort: Datakortbruk | null) => ({
-    ...mal,
-    nokkel: kode,
-    navn,
-    visningsnavn: navn,
-    komponenter: [navn],
-    koder: [{ kode, navn, forbindelse, datakort }],
-  })
-  const data: Katalogdata = {
-    fagmiljo: { id: 'b', navn: 'Et annet fagmiljø' },
-    metoder: OUS_KATALOGDATA.metoder,
-    oppforinger: [
-      oppforing('ODMT', 'O-desmetyltramadol', 'o-desmetyltramadol', 'forbindelse'),
-      oppforing('TRML', 'Tramadol', 'tramadol', 'egne'),
-      oppforing('TRMU', 'Tramadol i urin', 'tramadol', null),
-    ],
-    koblinger: [
-      { kode: 'ODMT', stoff: 'tramadol', relasjon: 'metabolitt', primar: true, merknad: null },
-      { kode: 'TRML', stoff: 'tramadol', relasjon: 'selve_stoffet', primar: true, merknad: null },
-      { kode: 'TRMU', stoff: 'tramadol', relasjon: 'selve_stoffet', primar: true, merknad: null },
-    ],
-  }
-  return byggKatalog(data)
+interface Visning {
+  omrader: [string, unknown][]
+  /** Om appen måtte lese dem på fagsidene (overgangen). */
+  fraFagsidene: boolean
 }
 
-function kort(infoside: string, elementtype: string, data: Record<string, unknown>, panel = 'viktige_data') {
+/** Referanseområdene steg 2 viser et medlem av OUS Klinisk farmakologi, lest som appen leser dem. */
+async function iAppen(): Promise<Visning> {
+  const { katalog, kort } = await som(db, bruker, async (tx) => ({
+    katalog: (await tx.query<{ k: unknown }>('select public.les_analyttkatalog() as k')).rows[0]!.k,
+    kort: (await tx.query<{ k: unknown }>(`select public.les_stoffreferanseomrader('publisert') as k`)).rows[0]!.k,
+  }))
+  let fraFagsidene = false
+  const omrader = await lesReferanseomrader(byggKatalog(lesKatalogdata(katalog)), async () => {
+    fraFagsidene = true
+    return kort
+  })
+  return { omrader: [...omrader].sort(([a], [b]) => a.localeCompare(b)), fraFagsidene }
+}
+
+async function iKatalogen(): Promise<[string, unknown][]> {
+  const { omrader, fraFagsidene } = await iAppen()
+  expect(fraFagsidene).toBe(false)
+  return omrader
+}
+
+const innhold = () => kall.fasit('select objekt_id, tilstand::text, data from public.innholdselementer order by 1, 2')
+const revisjoner = async () => (await kall.fasit<{ n: number }>('select count(*)::int as n from public.objektrevisjoner'))[0]!.n
+
+function kort(infoside: string, data: Record<string, unknown>, { elementtype = 'referanseomrade', panel = 'viktige_data' } = {}) {
   return lager.opprettUtkast('innholdselement', { infoside, panel, posisjon: 0, elementtype, data, referanser: [] })
 }
 
@@ -82,156 +79,116 @@ async function publiser(...objekter: Objektstatus[]) {
 }
 
 beforeAll(async () => {
-  const db = await nyDatabase()
+  db = await nyDatabase({ til: MIGRASJON })
   const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)
-  adminleser = lagFaginnholdsleser(kall.klientFor(admin))
-  brukerleser = lagFaginnholdsleser(kall.klientFor(bruker))
   lager = lagFaginnholdslager(kall.klientFor(admin))
 
-  const tramadol = await lager.opprettUtkast('infoside', { navn: 'Tramadol' })
-  const bupropion = await lager.opprettUtkast('infoside', { navn: 'Bupropion' })
-  const nortriptylin = await lager.opprettUtkast('infoside', { navn: 'Nortriptylin' })
-  const utenKobling = await lager.opprettUtkast('infoside', { navn: 'Testmiddel' })
+  const side = (navn: string) => lager.opprettUtkast('infoside', { navn })
+  const tramadol = await side('Tramadol')
+  const diazepam = await side('Diazepam')
+  const nortriptylin = await side('Nortriptylin')
+  const bupropion = await side('Bupropion')
+  const sertralin = await side('Sertralin')
+  const thc = await side('THC')
+  const testmiddel = await side('Testmiddel')
   ider.tramadol = tramadol.id
-  ider.bupropion = bupropion.id
 
-  // Tramadolsiden: kortet for hovedanalytten TRAM, og et eget for metabolitten OTRAM.
-  const referanseomrade = await kort(tramadol.id, 'referanseomrade', SYNTETISK)
-  ider.kort = referanseomrade.id
-  const otram = await kort(tramadol.id, 'referanseomrade', OTRAM)
-  const toksisk = await kort(tramadol.id, 'toksisk_omrade', { nedre: 90, ovre: null, enhet: 'nmol/L', forbehold: '' })
-  // Et referanseområde som er tatt bort fra bupropionsiden, teller ikke.
-  const fjernet = await kort(bupropion.id, 'referanseomrade', { nedre: 1, ovre: 2, enhet: 'nmol/L', forbehold: '' }, FJERNET)
-  ider.fjernet = fjernet.id
-  // Nortriptylinsiden: NOR sitt kort. AMTNORSUM er bare sekundært koblet til nortriptylin.
-  const nor = await kort(nortriptylin.id, 'referanseomrade', { nedre: 30, ovre: 60, enhet: 'nmol/L', forbehold: '' })
-  // Et stoff registeret ikke kobler til noen analytt, gir ingen kode noe.
-  const ukoblet = await kort(utenKobling.id, 'referanseomrade', { nedre: 7, ovre: 8, enhet: 'nmol/L', forbehold: '' })
-  await publiser(tramadol, bupropion, nortriptylin, utenKobling, referanseomrade, otram, toksisk, fjernet, nor, ukoblet)
-}, 60_000)
+  // Tramadol: sidens kort for TRAM, og kortet for metabolitten med OUS sin kode i `gjelder`, som i produksjonen.
+  const tram = await kort(tramadol.id, { ...omrade(10, 20), forbehold: 'Syntetisk.' })
+  ider.tram = tram.id
+  const otram = await kort(tramadol.id, { ...omrade(null, 5), gjelder: 'OTRAM' })
+  const toksisk = await kort(tramadol.id, omrade(90, null), { elementtype: 'toksisk_omrade' })
+  // Diazepam: sidens kort for DIAZ, og kortet for N-desmetyldiazepam med forbindelsen i `gjelder`.
+  const diaz = await kort(diazepam.id, omrade(100, 200))
+  const dmi = await kort(diazepam.id, { ...omrade(300, 400), gjelder: 'nordiazepam' })
+  // Nortriptylin: NOR sitt kort. AMTNORSUM er bare sekundært koblet til nortriptylin.
+  const nor = await kort(nortriptylin.id, omrade(30, 60))
+  // Bupropion: et kort som er tatt bort, og et uten tall.
+  const fjernet = await kort(bupropion.id, omrade(1, 2), { panel: FJERNET })
+  const tomt = await kort(bupropion.id, omrade(null, null, ''))
+  // Sertralin: bare et utkast.
+  await kort(sertralin.id, omrade(3, 4))
+  // THC: sidens kort gjelder THC i serum; urinanalysen IRCAK bruker ingen kort.
+  const thckort = await kort(thc.id, omrade(5, 6))
+  // Et stoff ingen kode er koblet til.
+  const ukoblet = await kort(testmiddel.id, omrade(7, 8))
+  await publiser(tramadol, diazepam, nortriptylin, bupropion, sertralin, thc, testmiddel, tram, otram, toksisk, diaz, dmi, nor, fjernet, tomt, thckort, ukoblet)
+  // Et upublisert utkast av TRAM-kortet gjelder ikke.
+  const utkast = await lager.lagreUtkast(tram.id, tram.revisjon!, {
+    infoside: tramadol.id,
+    panel: 'viktige_data',
+    posisjon: 0,
+    elementtype: 'referanseomrade',
+    data: omrade(11, 22),
+    referanser: [],
+  })
+  ider.revisjon = utkast.revisjon!
 
-describe('lesReferanseomrader', () => {
-  it('bygger på koblingene i stoffregisteret', () => {
-    expect(OUS_REGISTER.analytterFor('tramadol').map((k) => [k.kode, k.primar])).toEqual([
-      ['TRAM', true],
-      ['OTRAM', true],
-    ])
-    expect(OUS_REGISTER.primartStoffFor('AMTNORSUM')?.slug).toBe('amitriptylin')
-    expect(OUS_REGISTER.primartStoffFor('NOR')?.slug).toBe('nortriptylin')
-    expect(OUS_REGISTER.primartStoffFor('HBUP')?.slug).toBe('bupropion')
+  for_ = { innhold: await innhold(), revisjoner: await revisjoner(), iAppen: await iAppen() }
+  await kjorMigrasjoner(db, { fra: MIGRASJON })
+}, 120_000)
+
+const FORVENTET = [
+  ['DIAZ', omrade(100, 200)],
+  ['DMI', omrade(300, 400)],
+  ['NOR', omrade(30, 60)],
+  ['OTRAM', omrade(null, 5)],
+  ['THC', omrade(5, 6)],
+  ['TRAM', omrade(10, 20)],
+]
+
+describe('referanseområdene i analyttkatalogen', () => {
+  it('gir hver kode det publiserte kortet på siden til sitt primære stoff, som appen fra før fant det', async () => {
+    expect(await iKatalogen()).toEqual(FORVENTET)
   })
 
-  it('gir hver kode kortet på siden til sitt primære stoff: hovedanalytten det uten koden, de andre sitt eget', async () => {
-    const omrader = await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)
-    expect([...omrader].sort(([a], [b]) => a.localeCompare(b))).toEqual([
-      ['NOR', { nedre: 30, ovre: 60, enhet: 'nmol/L', forbehold: '' }],
-      ['OTRAM', { nedre: null, ovre: 5, enhet: 'nmol/L', forbehold: '' }],
-      ['TRAM', SYNTETISK],
-    ])
+  it('er de samme i appen mot databasen før migrasjonen, da fra fagsidene', () => {
+    expect(for_.iAppen).toEqual({ omrader: FORVENTET, fraFagsidene: true })
   })
 
-  it('får kortene fra databasen per stoff, og knytter dem til kodene i appen', async () => {
-    const { les_stoffreferanseomrader: kortene } = await kall.rpc<{ les_stoffreferanseomrader: Stoffreferanseomrade[] }>(
-      bruker,
-      'les_stoffreferanseomrader',
-      { sidetilstand: 'publisert' },
+  it('gir ingenting for et utkast, et kort som er tatt bort eller er tomt, en sekundær kobling eller en urinanalyse', async () => {
+    const koder = new Map(await iKatalogen())
+    for (const kode of ['SERT', 'HBUP', 'AMTNORSUM', 'IRCAK']) expect(koder.has(kode), kode).toBe(false)
+    const rader = await kall.fasit<{ kode: string }>(
+      'select kode from public.analyttkatalog_koder where referanseomrade is not null and fagmiljo_id <> intern.opprinnelig_fagmiljo()',
     )
-    expect(kortene.map((k) => [k.stoff, k.gjelder])).toEqual([
-      ['nortriptylin', null],
-      ['testmiddel', null],
-      ['tramadol', null],
-      ['tramadol', 'o-desmetyltramadol'],
-    ])
-    expect([...referanseomraderPerAnalytt(kortene, OUS_KATALOG).keys()].sort()).toEqual(['NOR', 'OTRAM', 'TRAM'])
+    expect(rader).toEqual([])
   })
 
-  it('gir et annet fagmiljø med egne koder de samme kortene, gjennom forbindelsen kodene måler', async () => {
-    const omrader = await brukerleser.lesReferanseomrader('publisert', annenKatalog())
-    // Metabolitten står først i katalogen, men får sitt eget kort, og
-    // tramadolkoden sidens egne. Urinanalysen får ingenting.
-    expect([...omrader].sort(([a], [b]) => a.localeCompare(b))).toEqual([
-      ['ODMT', { nedre: null, ovre: 5, enhet: 'nmol/L', forbehold: '' }],
-      ['TRML', SYNTETISK],
-    ])
-    // Uten forbindelsen og datakortene i katalogen får ingen kode noe — heller
-    // ikke den som står først — så en ny katalog aldri får et kort ved et uhell.
-    const uten = annenKatalog()
-    const tom = { koblinger: uten.koblinger, finn: (kode: string) => uten.finn(kode) && { kode, forbindelse: null, datakort: null } }
-    expect([...(await brukerleser.lesReferanseomrader('publisert', tom))]).toEqual([])
+  it('endrer ikke faginnholdet', async () => {
+    expect(await innhold()).toEqual(for_.innhold)
+    expect(await revisjoner()).toBe(for_.revisjoner)
   })
 
-  it('leser et kort som fra før har analyttkoden i gjelder, som kortet for forbindelsen koden måler', () => {
-    // Overgangen til kortene er skrevet om: appen fra før finner kortet med
-    // koden, den nye gjennom katalogen eller `ELDRE_DATAKORTKODER`, så også et
-    // annet fagmiljø med en egen kode for metabolitten får kortet.
-    const kortene = [
-      { stoff: 'tramadol', gjelder: null, verdi: 'tramadol' },
-      { stoff: 'tramadol', gjelder: 'OTRAM', verdi: 'o-desmetyltramadol' },
-    ]
-    expect([...referanseomraderPerAnalytt(kortene, OUS_KATALOG)].sort()).toEqual([
-      ['OTRAM', 'o-desmetyltramadol'],
-      ['TRAM', 'tramadol'],
-    ])
-    expect([...referanseomraderPerAnalytt(kortene, annenKatalog())].sort()).toEqual([
-      ['ODMT', 'o-desmetyltramadol'],
-      ['TRML', 'tramadol'],
-    ])
-  })
-
-  it('gir en sumanalyse ikke kortet på siden til et stoff den bare er sekundært koblet til', async () => {
-    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)).has('AMTNORSUM')).toBe(false)
-  })
-
-  it('gir en vanlig bruker ingenting av utkastet', async () => {
-    expect([...(await brukerleser.lesReferanseomrader('utkast', OUS_KATALOG))]).toEqual([])
-    expect([...(await adminleser.lesReferanseomrader('utkast', OUS_KATALOG))].map(([kode]) => kode).sort()).toEqual([
-      'NOR',
-      'OTRAM',
-      'TRAM',
-    ])
-  })
-
-  it('følger siden: en endring gjelder i steg 2 først når den er publisert', async () => {
-    const analyte = { kode: 'TRAM', enhet: 'nmol/L' } as Analyte
-    const pille = async (tilstand: 'utkast' | 'publisert') =>
-      grensepiller(analyte, null, (await adminleser.lesReferanseomrader(tilstand, OUS_KATALOG)).get('TRAM') ?? null)[0]?.verdi
-
-    const endret = await lager.lagreUtkast(ider.kort, 1, {
+  it('følger ikke fagsiden etter migrasjonen: en publisert endring på siden endrer ikke fortolkningen', async () => {
+    const endret = await lager.lagreUtkast(ider.tram, ider.revisjon, {
       infoside: ider.tramadol,
       panel: 'viktige_data',
       posisjon: 0,
       elementtype: 'referanseomrade',
-      data: { nedre: 12, ovre: 25, enhet: 'nmol/L', forbehold: '' },
+      data: omrade(50, 70),
       referanser: [],
     })
-    expect(await pille('utkast')).toBe('12 – 25 nmol/L')
-    expect(await pille('publisert')).toBe('10 – 20 nmol/L')
-
     await publiser(endret)
-    expect(await pille('publisert')).toBe('12 – 25 nmol/L')
-    // Metabolitten beholder sitt eget.
-    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)).get('OTRAM')).toMatchObject({ ovre: 5 })
+    expect(new Map(await iKatalogen()).get('TRAM')).toEqual(omrade(10, 20))
   })
 
-  it('tar ikke med et kort uten tall', async () => {
-    const tomt = await lager.lagreUtkast(ider.fjernet, 1, {
-      infoside: ider.bupropion,
-      panel: 'viktige_data',
-      posisjon: 0,
-      elementtype: 'referanseomrade',
-      data: { nedre: null, ovre: null, enhet: '', forbehold: '' },
-      referanser: [],
-    })
-    await publiser(tomt)
-    const { les_stoffreferanseomrader: kortene } = await kall.rpc<{ les_stoffreferanseomrader: Stoffreferanseomrade[] }>(
-      bruker,
-      'les_stoffreferanseomrader',
-      { sidetilstand: 'publisert' },
-    )
-    // Kortet står nå på siden, men har ingen tall å vise.
-    expect(kortene.some((k) => k.stoff === 'bupropion')).toBe(true)
-    expect((await brukerleser.lesReferanseomrader('publisert', OUS_KATALOG)).has('HBUP')).toBe(false)
+  it('godtar bare et område med minst én grense, tall eller ingenting som grenser, og en enhet', async () => {
+    const sett = (verdi: unknown) =>
+      feilFra(() =>
+        kall.fasit(`update public.analyttkatalog_koder set referanseomrade = $1::text::jsonb where kode = 'TRAM'`, [JSON.stringify(verdi)]),
+      )
+    for (const ugyldig of [
+      { nedre: null, ovre: null, enhet: 'nmol/L' },
+      { nedre: 1, ovre: 2 },
+      { ovre: 2, enhet: 'nmol/L' },
+      { nedre: '1', ovre: 2, enhet: 'nmol/L' },
+      [1, 2],
+    ]) {
+      expect((await sett(ugyldig))?.message, JSON.stringify(ugyldig)).toMatch(/analyttkatalog_koder_referanseomrade/)
+    }
+    expect(await sett({ nedre: null, ovre: 2, enhet: 'nmol/L' })).toBeNull()
   })
 })

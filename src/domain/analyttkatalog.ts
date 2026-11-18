@@ -1,12 +1,16 @@
 import { displayName } from './names'
-import { FORBINDELSESNOKKEL } from '../enheter/konsentrasjon'
+import type { Referanseomrade } from './piller'
+import { adresse, fortolkningsrute } from './rute'
 import type { Analyte, Analyttmodul, Antihypertensivgrenser, Interval, MeasuringRange } from '../types'
 
 /**
  * Analyttkatalogen til fagmiljøet fortolkningen gjelder (arbeidskonteksten):
- * analysemetodene, oppføringene søket i fortolkningen viser, analyttkodene
- * hver av dem dekker, og koblingene fra kodene til stoffene i
- * stoffregisteret.
+ * analysemetodene, oppføringene søket i fortolkningen viser, og analyttkodene
+ * hver av dem dekker, med referanseområdet fortolkningen viser for koden.
+ *
+ * Fortolkningen er et eget domene, helt skilt fra fagsidene: katalogen
+ * kjenner ingen stoffer, fagsider eller datakort, og ingenting her lenker
+ * dit eller leser derfra (`docs/domener.md`).
  *
  * Katalogen er laboratoriets egen og står i databasen per fagmiljø
  * (`public.les_analyttkatalog()`, docs/fagmiljoer.md, «Analyttkatalogen per
@@ -27,25 +31,13 @@ export interface Katalogkode {
 }
 
 /**
- * Hvilke av de felles datakortene på siden til kodens primære stoff analysen
- * bruker (referanseområdet fortolkningen viser): sidens egne (`egne`), eller
- * dem for forbindelsen analysen måler (`forbindelse`). Kortene gjelder serum;
- * en analyse de ikke gjelder for, bruker ingen (`null`).
- */
-export type Datakortbruk = 'egne' | 'forbindelse'
-
-export const DATAKORTBRUK: readonly Datakortbruk[] = ['egne', 'forbindelse']
-
-/**
- * En analyttkode slik katalogen har den, med forbindelsen analysen måler —
- * nøkkelen i forbindelsesregisteret (`src/data/forbindelser.ts`), eller
- * `null` når den ikke er én forbindelse (sumanalysene) — og hvilke datakort
- * den bruker. Koblingen til de felles datakortene på fagsidene går gjennom
- * dette, aldri gjennom koden (`datakortnokkel` i `src/domain/koblinger.ts`).
+ * En analyttkode slik katalogen har den, med referanseområdet fortolkningen
+ * viser for den (pillen over knappene i steg 2), eller `null` når den ikke
+ * har noe. Området er fagmiljøets eget og står i katalogen, ikke på
+ * fagsidene.
  */
 export interface Katalogkodedata extends Katalogkode {
-  forbindelse: string | null
-  datakort: Datakortbruk | null
+  referanseomrade: Referanseomrade | null
 }
 
 export interface Analysemetode {
@@ -82,13 +74,19 @@ export interface Katalogoppforing {
   koder: Katalogkodedata[]
 }
 
-/** En kobling fra en analyttkode til et stoff i stoffregisteret. */
-export interface Analyttkoblingsdata {
-  kode: string
-  stoff: string
-  relasjon: string
-  primar: boolean
-  merknad: string | null
+/**
+ * Det fortolkningen trenger for å finne referanseområdene på fagsidene, slik
+ * appen gjorde før de kom i katalogen: hvilket kort på siden til hvilket
+ * stoff hver kode brukte. Bare i et svar fra en database der migrasjonen
+ * `20261118090000_fortolkning_skilt_fra_fagsidene.sql` ikke er kjørt ennå
+ * (`docs/domener.md`, «Overgangen»; `src/katalog/referanseomrader.ts`).
+ * Fjernes med overgangen (#405).
+ */
+export interface Eldrekatalog {
+  /** Kortet hver kode brukte: sidens egne (`gjelder: null`) eller forbindelsens, på siden til det primære stoffet. */
+  bruk: { kode: string; stoff: string; gjelder: string | null }[]
+  /** Forbindelsen hver kode måler, for et kort med en analyttkode i `gjelder` fra før (#405). */
+  forbindelser: ReadonlyMap<string, string>
 }
 
 /** Katalogen slik databasen gir den. */
@@ -96,18 +94,17 @@ export interface Katalogdata {
   fagmiljo: Katalogfagmiljo | null
   metoder: Analysemetode[]
   oppforinger: Katalogoppforing[]
-  koblinger: Analyttkoblingsdata[]
+  /** Bare fra en database uten referanseområdene i katalogen (`Eldrekatalog`). */
+  eldre?: Eldrekatalog
 }
 
-export const TOM_KATALOGDATA: Katalogdata = { fagmiljo: null, metoder: [], oppforinger: [], koblinger: [] }
+export const TOM_KATALOGDATA: Katalogdata = { fagmiljo: null, metoder: [], oppforinger: [] }
 
 /**
  * En laboratorieanalytt i fortolkningssystemet: koden laboratoriet
  * rapporterer, og det fortolkningen trenger å vite om den.
  *
- * Analytten er ikke en fagside. Hvilke stoffer i stoffregisteret den gjelder,
- * står i koblingene i katalogen, og veien mellom de to domenene i
- * `src/domain/koblinger.ts`.
+ * Analytten er ikke en fagside og peker ikke på noen.
  */
 export interface Laboratorieanalytt {
   /** Analyttkoden, f.eks. «AMTNORSUM». */
@@ -124,10 +121,8 @@ export interface Laboratorieanalytt {
   komponenter: string[]
   /** Oppføringen som åpner fortolkningen — den samme som søket gir. */
   fortolkning: Analyte
-  /** Forbindelsen analysen måler (`Katalogkodedata.forbindelse`), eller `null`. */
-  forbindelse: string | null
-  /** Datakortene analysen bruker (`Katalogkodedata.datakort`), eller `null`. */
-  datakort: Datakortbruk | null
+  /** Referanseområdet fortolkningen viser (`Katalogkodedata.referanseomrade`), eller `null`. */
+  referanseomrade: Referanseomrade | null
 }
 
 export interface Analyttkatalog {
@@ -139,10 +134,11 @@ export interface Analyttkatalog {
   fortolkninger: readonly Analyte[]
   /** Alle analyttene, én per kode, i katalogens rekkefølge. */
   oppforinger: Laboratorieanalytt[]
-  koblinger: readonly Analyttkoblingsdata[]
   finn: (kode: string) => Laboratorieanalytt | undefined
   /** Søkeoppføringen for en modul (`Analyttmodul.id`). */
   modulMedId: (id: string) => Analyte | undefined
+  /** Bare fra en database uten referanseområdene i katalogen (`Eldrekatalog`). */
+  eldre?: Eldrekatalog
 }
 
 /** Kodene i en oppføring satt sammen, slik `Analyte.kode` har dem: «DIAZ · DMI · OXA». */
@@ -189,8 +185,7 @@ function laboratorieanalytter(analyte: Analyte, koder: ReadonlyMap<string, Katal
       kategori: analyte.kategori,
       komponenter: hele && analyte.komponenter.length > 0 ? [...analyte.komponenter] : [navn],
       fortolkning: analyte,
-      forbindelse: koder.get(kode)?.forbindelse ?? null,
-      datakort: koder.get(kode)?.datakort ?? null,
+      referanseomrade: koder.get(kode)?.referanseomrade ?? null,
     }
   })
 }
@@ -207,13 +202,39 @@ export function byggKatalog(data: Katalogdata): Analyttkatalog {
     metoder: data.metoder,
     fortolkninger,
     oppforinger,
-    koblinger: data.koblinger,
     finn: (kode) => perKode.get(kode.trim().toUpperCase()),
     modulMedId: (id) => perModul.get(id),
+    ...(data.eldre && { eldre: data.eldre }),
   }
 }
 
 export const TOM_KATALOG = byggKatalog(TOM_KATALOGDATA)
+
+/**
+ * Analyttene en fortolkningsmodul fortolker, i katalogens rekkefølge: én for
+ * de fleste, og hver kode for modulene som dekker flere (DIAZ · DMI · OXA).
+ * Det er reglene for dem fortolkningssiden redigerer.
+ */
+export function analytterForFortolkning(fortolkning: Analyte, katalog: Analyttkatalog): Laboratorieanalytt[] {
+  return katalog.oppforinger.filter((a) => a.fortolkning.kode === fortolkning.kode)
+}
+
+/**
+ * Adressen til fortolkningssiden der reglene for en analyttkode fortolkes og
+ * redigeres: modulen koden hører til. `undefined` når appen ikke kjenner koden.
+ */
+export function fortolkningsadresseForAnalytt(kode: string, katalog: Analyttkatalog): string | undefined {
+  const analytt = katalog.finn(kode)
+  return analytt && adresse(fortolkningsrute(analytt.fortolkning.kode))
+}
+
+/**
+ * Referanseområdet for hver analyttkode som har et, slik steg 2 viser det.
+ * For en katalog fra en database uten dem, se `lesReferanseomrader`.
+ */
+export function referanseomraderI(katalog: Analyttkatalog): ReadonlyMap<string, Referanseomrade> {
+  return new Map(katalog.oppforinger.flatMap((a) => (a.referanseomrade ? [[a.kode, a.referanseomrade] as const] : [])))
+}
 
 /* --- Svaret fra databasen ----------------------------------------------- */
 
@@ -270,6 +291,21 @@ function maleomrade(verdi: unknown, hva: string): MeasuringRange {
   }
 }
 
+/**
+ * Referanseområdet til en kode. Et område uten noen grense gir `null`. Et
+ * svar fra før katalogen hadde det (`referanseomrade` mangler) gir også
+ * `null` her; da finnes områdene med `Eldrekatalog`.
+ */
+function referanseomrade(verdi: unknown, hva: string): Referanseomrade | null {
+  if (verdi === null || verdi === undefined) return null
+  const f = objekt(verdi, `${hva}: referanseområdet`)
+  const nedre = tallEllerNull(f, 'nedre', hva)
+  const ovre = tallEllerNull(f, 'ovre', hva)
+  const enhet = f.enhet ?? ''
+  if (typeof enhet !== 'string') throw new UgyldigKatalog(`${hva}: enheten i referanseområdet er ikke tekst.`)
+  return nedre === null && ovre === null ? null : { nedre, ovre, enhet }
+}
+
 function antihypertensiv(verdi: unknown, hva: string): Antihypertensivgrenser | null {
   if (verdi === null || verdi === undefined) return null
   const f = objekt(verdi, hva)
@@ -286,21 +322,10 @@ function oppforing(verdi: unknown): Katalogoppforing {
   if (!FORTOLKNINGSTYPER.includes(type)) throw new UgyldigKatalog(`${hva} har en ukjent type.`)
   const koder = liste(f.koder, `${hva}: kodene`).map((k) => {
     const kode = objekt(k, hva)
-    // Forbindelsen og datakortene kom til etter katalogen; et svar uten dem
-    // får den gamle koblingen (`medEldreDatakort`).
-    const forbindelse = kode.forbindelse ?? null
-    if (forbindelse !== null && (typeof forbindelse !== 'string' || !FORBINDELSESNOKKEL.test(forbindelse))) {
-      throw new UgyldigKatalog(`${hva}: forbindelsen er ugyldig.`)
-    }
-    const datakort = kode.datakort ?? null
-    if (datakort !== null && !DATAKORTBRUK.includes(datakort as Datakortbruk)) {
-      throw new UgyldigKatalog(`${hva}: datakortene er ugyldige.`)
-    }
     return {
       kode: tekst(kode, 'kode', hva),
       navn: tekst(kode, 'navn', hva),
-      forbindelse,
-      datakort: datakort as Datakortbruk | null,
+      referanseomrade: referanseomrade(kode.referanseomrade, `${hva}, ${tekst(kode, 'kode', hva)}`),
     }
   })
   if (koder.length === 0) throw new UgyldigKatalog(`${hva} har ingen analyttkoder.`)
@@ -325,32 +350,31 @@ function oppforing(verdi: unknown): Katalogoppforing {
 }
 
 /**
- * Datakortene slik koblingen var før katalogen sa hvilke kort hver kode bruker:
- * den første primære koden for et stoff fikk sidens egne kort, og de andre
- * primære kortene med koden i `gjelder`. Bare for et svar fra en database der
- * `*_analyttforbindelser_ous.sql` ikke er kjørt ennå. Der står koden fortsatt i
- * `gjelder`, så `forbindelse` er her koden, ikke en nøkkel i
- * forbindelsesregisteret. Appen og databasen rulles ut hver for seg, og
- * referanseområdene skal ikke forsvinne i mellomtiden.
+ * `Eldrekatalog` i et svar der kodene ikke har `referanseomrade`: koblingene
+ * og datakortbruken databasen ga fram til `20261118090000`, lest slik appen
+ * leste dem før (`datakort` er `egne` eller `forbindelse`).
  */
-function medEldreDatakort(oppforinger: Katalogoppforing[], koblinger: readonly Analyttkoblingsdata[]): Katalogoppforing[] {
-  const bruk = new Map<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>>()
-  const medEgne = new Set<string>()
-  for (const { kode, stoff, primar } of koblinger) {
-    if (!primar || bruk.has(kode)) continue
-    const egne = !medEgne.has(stoff)
-    medEgne.add(stoff)
-    bruk.set(kode, egne ? { forbindelse: null, datakort: 'egne' } : { forbindelse: kode, datakort: 'forbindelse' })
-  }
-  return oppforinger.map((o) => ({
-    ...o,
-    koder: o.koder.map((k) => ({ ...k, ...(bruk.get(k.kode) ?? { forbindelse: null, datakort: null }) })),
-  }))
-}
-
-/** Om svaret er fra før katalogen sa hvilke datakort kodene bruker. Oppføringene er alt lest (`oppforing`). */
-function utenDatakort(oppforinger: unknown[]): boolean {
-  return (oppforinger as Felt[]).every((o) => (o.koder as Felt[]).every((k) => !('datakort' in k)))
+function eldrekatalog(f: Felt, oppforinger: readonly unknown[]): Eldrekatalog | undefined {
+  const koder = oppforinger.flatMap((o) => liste(objekt(o, 'En oppføring i katalogen').koder, 'Kodene').map((k) => objekt(k, 'En kode')))
+  if (koder.every((k) => 'referanseomrade' in k)) return undefined
+  const valgfri = (k: Felt, navn: string) => (typeof k[navn] === 'string' ? (k[navn] as string) : null)
+  const kortet = new Map<string, string | null>(
+    koder.flatMap((k): [string, string | null][] => {
+      const kode = tekst(k, 'kode', 'En kode')
+      const datakort = valgfri(k, 'datakort')
+      const forbindelse = valgfri(k, 'forbindelse')
+      if (datakort === 'egne') return [[kode, null]]
+      return datakort === 'forbindelse' && forbindelse ? [[kode, forbindelse]] : []
+    }),
+  )
+  const bruk = liste(f.koblinger ?? [], 'Koblingene').flatMap((verdi) => {
+    const kobling = objekt(verdi, 'En kobling')
+    const kode = tekst(kobling, 'kode', 'En kobling')
+    if (kobling.primar !== true || !kortet.has(kode)) return []
+    return [{ kode, stoff: tekst(kobling, 'stoff', 'En kobling'), gjelder: kortet.get(kode)! }]
+  })
+  const forbindelser = new Map([...kortet].flatMap(([kode, gjelder]): [string, string][] => (gjelder === null ? [] : [[kode, gjelder]])))
+  return { bruk, forbindelser }
 }
 
 /**
@@ -365,25 +389,12 @@ export function lesKatalogdata(svar: unknown): Katalogdata {
     const metode = objekt(m, 'En analysemetode')
     return { kode: tekst(metode, 'kode', 'En analysemetode'), beskrivelse: tekst(metode, 'beskrivelse', 'En analysemetode') }
   })
-  const koblinger = liste(f.koblinger, 'Koblingene til stoffene').map((k) => {
-    const kobling = objekt(k, 'En kobling')
-    const merknad = kobling.merknad ?? null
-    if (merknad !== null && typeof merknad !== 'string') throw new UgyldigKatalog('En kobling har en ugyldig merknad.')
-    if (typeof kobling.primar !== 'boolean') throw new UgyldigKatalog('En kobling mangler om stoffet er primært.')
-    return {
-      kode: tekst(kobling, 'kode', 'En kobling'),
-      stoff: tekst(kobling, 'stoff', 'En kobling'),
-      relasjon: tekst(kobling, 'relasjon', 'En kobling'),
-      primar: kobling.primar,
-      merknad,
-    }
-  })
-  const svarene = liste(f.oppforinger, 'Oppføringene')
-  const oppforinger = svarene.map(oppforing)
+  const oppforinger = liste(f.oppforinger, 'Oppføringene')
+  const eldre = eldrekatalog(f, oppforinger)
   return {
     fagmiljo: fagmiljo && { id: tekst(fagmiljo, 'id', 'Fagmiljøet'), navn: tekst(fagmiljo, 'navn', 'Fagmiljøet') },
     metoder,
-    oppforinger: utenDatakort(svarene) ? medEldreDatakort(oppforinger, koblinger) : oppforinger,
-    koblinger,
+    oppforinger: oppforinger.map(oppforing),
+    ...(eldre && { eldre }),
   }
 }

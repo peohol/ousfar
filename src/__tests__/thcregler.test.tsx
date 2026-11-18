@@ -6,6 +6,7 @@
  * THC. Simulatoren fortolker med den samme motoren og de samme komponentene
  * som fortolkningsmodulen (`thcsteg.test.tsx`), med reglene som vises.
  */
+import { STOFFREGISTER } from '../domain/stoffregister'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -14,7 +15,7 @@ import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskil
 import { Thcregler } from '../components/regler/Thcregler'
 import { Fortolkningsredigering } from '../components/regler/Fortolkningsredigering'
 import { TipsLag } from '../components/Tips'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { THC_ANALYTT } from '../domain/ouskatalog'
 import { fortolkThc, tomThcInndata } from '../domain/thcMotor'
 import {
@@ -51,7 +52,7 @@ function visSide(): Faginnholdsleser {
   render(
     <TipsLag>
       <FaginnholdskildeProvider kilde={{ leser, lager: {} as Faginnholdslager, kanRedigere: false }}>
-        <Stoffside stoff="thc" register={OUS_REGISTER} katalog={katalog} onApneFortolkning={vi.fn()} onLukk={vi.fn()} />
+        <Stoffside stoff="thc" register={STOFFREGISTER} onLukk={vi.fn()} />
       </FaginnholdskildeProvider>
     </TipsLag>,
   )

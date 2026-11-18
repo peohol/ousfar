@@ -16,10 +16,8 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { tilFeil } from './lagring'
 import type { Historikk } from './historikk'
 import type { Infosideinnhold, Innholdselementinnhold, Referanseinnhold, Tilstand } from './modell'
-import { referanseomraderPerAnalytt, type Datakortkatalog, type Stoffreferanseomrade } from '../domain/koblinger'
 import type { Stoffoppforing } from '../domain/stoffregister'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
-import { harVerdi, lesIntervallverdi, type Intervallverdi } from './paneler'
 import { kommentarIder } from '../regler/kommentarer'
 import type { Intervallregelsettinnhold } from '../regler/modell'
 import type { ThcRegelsettinnhold } from '../domain/thcTekster'
@@ -149,16 +147,6 @@ export interface Faginnholdsleser {
   /** Kommentarene i én tilstand: alle, eller bare dem med disse ID-ene. */
   lesKommentarer(tilstand: Tilstand, ider?: string[]): Promise<Utgave<Kommentarinnhold>[]>
   /**
-   * Referanseområdet for hver analyttkode som har et, i én tilstand: kortet
-   * på det primære stoffets side (se `referanseomraderPerAnalytt`), etter
-   * koblingene og forbindelsene i fagmiljøets analyttkatalog. Fortolkningen
-   * viser det samme tallet under analyttnavnet.
-   */
-  lesReferanseomrader(
-    tilstand: Tilstand,
-    katalog: Datakortkatalog,
-  ): Promise<ReadonlyMap<string, Intervallverdi>>
-  /**
    * Historikken til ett objekt: hendelsene og øyeblikksbildene. Leseren ser
    * de revisjonene radsikkerheten gir: administratorer alle, andre de som
    * har vært publisert.
@@ -215,15 +203,6 @@ export function lagFaginnholdsleser(klient: SupabaseClient): Faginnholdsleser {
       (await kall<Utgave<Intervallregelsettinnhold>[]>('les_intervallregelsett', { sidetilstand: tilstand })) ?? [],
     lesThcRegelsett,
     lesKommentarer,
-    lesReferanseomrader: async (tilstand, katalog) => {
-      const kort = (await kall<Stoffreferanseomrade[]>('les_stoffreferanseomrader', { sidetilstand: tilstand })) ?? []
-      return new Map(
-        [...referanseomraderPerAnalytt(kort, katalog)].flatMap(([kode, verdi]) => {
-          const omrade = lesIntervallverdi(verdi)
-          return harVerdi(omrade) ? [[kode, omrade] as const] : []
-        }),
-      )
-    },
     lesHistorikk: async <T,>(objekt: string) =>
       (await kall<Historikk<T>>('les_historikk', { objekt })) ?? { hendelser: [], revisjoner: [] },
   }

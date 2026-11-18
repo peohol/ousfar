@@ -113,25 +113,16 @@ Hovedsidens søk er inngangen til fortolkningsarbeidsflyten, og filteret på ana
 
 Stjernen blant sidens handlinger i toppmenyen gjør stoffet til favoritt for den innloggede, eller fjerner det igjen. Favorittene står i skuffen «Favoritter» i sidemenyen, fast mellom «Vis underkategorier» og kategoriene og lukket til den åpnes, alfabetisk og med et kryss som fjerner hver. De lagres i `public.stoffavoritter` etter stoffets nøkkel (så også stoffer uten side i databasen kan merkes), følger siden når den publiseres med ny nøkkel, og hver bruker ser bare sine egne (`les_stoffavoritter`, `sett_stoffavoritt`). En favoritt under et gammelt navn for stoffet (et alias) vises som stoffet. Stjernen og skuffen deler `FavorittkildeProvider` (`src/favoritter/`). Varslene om endringer på favorittsidene hører til varslingssystemet, som finner mottakerne i tabellen etter nøkkelen (se `docs/varsler.md`).
 
-### Fra fortolkningsmodulen
+### Fra fortolkningen og til den
 
-Analyttkodepillene er klikkbare og fører til fagsiden til analyttens primære stoff, når koden har et.
+Fortolkningen og fagsidene er adskilte domener (`docs/domener.md`): ingen
+lenker, knapper eller koder går mellom dem. Fortolkningsreglene og
+-kommentarene står ikke på fagsiden. Administratorer redigerer dem fra
+fortolkningen, med «Rediger fortolkningen» (`docs/fortolkningsregler.md`,
+«Redigeringssiden»).
 
-Eksempel:
-
-`AMTNORSUM` → `#/stoff/amitriptylin`.
-
-Flere koder kan ha samme mål. En kode uten koblet stoff er ikke en lenke.
-
-### Fra fagsiden
-
-Siden har en sekundær handling «Åpne fortolkning» når et av stoffets analytter har en fortolkningsmodul.
-
-Fortolkningsreglene og -kommentarene står ikke på fagsiden. Administratorer redigerer dem fra fortolkningen, med «Rediger fortolkningen» (`docs/fortolkningsregler.md`, «Redigeringssiden»).
-
-Hver fagside har én kanonisk adresse som kan bokmerkes og åpnes direkte. Gamle adresser (`#/analytt/<KODE>`) sendes videre til stoffet når koden har ett primært stoff; ellers vises ingen fagside.
-
----
+Hver fagside har én kanonisk adresse som kan bokmerkes og åpnes direkte. En
+gammel adresse `#/analytt/<KODE>` fører til fortolkningen av koden.
 
 ## 4. Oppbygning av fagsiden
 

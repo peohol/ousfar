@@ -146,7 +146,7 @@ export function BandStep({ analyte, regler, valg: alle, onPick, onBack, onProvIg
       <StepBar onEsc={onBack}>Bytt analytt</StepBar>
 
       <Card align="start" className="analyttkort">
-        <Metalinje koder={[analyte.kode]} metode={analyte.analysemetode} kategori={analyte.kategori} lenker />
+        <Metalinje koder={[analyte.kode]} metode={analyte.analysemetode} kategori={analyte.kategori} />
         <h1 className="analytt__navn">{displayName(analyte)}</h1>
         <div className="analytt__grenser">
           {grensepiller(analyte, regelsett, referanseomradet(regler)).map((pille) => (

@@ -1,0 +1,20 @@
+{
+  "id": "20261118-081927-7b6417",
+  "semver": "patch",
+  "opprettet": "2026-11-18T08:19:27Z",
+  "sammendrag": "Fortolkningen og fagsidene er nå helt adskilt",
+  "typer": [
+    "Funksjonalitet",
+    "Design / layout"
+  ],
+  "omfang": "Moderat omfang",
+  "gjelder": [
+    "hele appen"
+  ],
+  "punkter": [
+    "Fagsidene viser ikke lenger analysekodene, analysemetodene eller hva analysene måler, og har ingen knapp til fortolkningen.",
+    "Sidemenyen, stoffregisteret og fagsøket viser og søker ikke lenger på analysekodene.",
+    "Fortolkningen lenker ikke lenger til fagsidene. Referanseområdet over knappene er det samme som før, men hører nå til fortolkningen og endres ikke når en fagside endres.",
+    "En gammel lenke til en analyse åpner fortolkningen av den."
+  ]
+}

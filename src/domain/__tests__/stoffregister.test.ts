@@ -4,10 +4,8 @@ import { filnokkel } from '../../faginnhold/import'
 import { CBD_STOFFSIDER, NYE_STOFFSIDER } from '../../faginnhold/indikasjoner'
 import { STOFFSIDE_DATASETT } from '../../faginnhold/stoffsider'
 import { FAGSIDEIMPORTER } from '../../faginnhold/nyefagsider'
-import { ANALYTTKATALOG, OUS_REGISTER, OUS_REGISTERDATA } from '../ouskatalog'
-import { navnenokkel } from '../sokenavn'
 import { GRUNNINNDELING, GRUNNSTRUKTUR, kategoriid } from '../../__tests__/hjelp/registerstruktur'
-import { ANDRE_STOFFER, ANDRE_STOFFER_ID, byggStoffregister, kontrollerStoffregister, stoffslug, type Registerdata, type Registerkategori, type Registerstruktur } from '../stoffregister'
+import { STOFFREGISTERDATA, STOFFREGISTER, ANDRE_STOFFER, ANDRE_STOFFER_ID, byggStoffregister, kontrollerStoffregister, stoffslug, type Registerdata, type Registerkategori, type Registerstruktur } from '../stoffregister'
 
 /**
  * Stoffregisteret: stoffene med nøkkel og navn og de eksplisitte koblingene til
@@ -17,7 +15,7 @@ import { ANDRE_STOFFER, ANDRE_STOFFER_ID, byggStoffregister, kontrollerStoffregi
  */
 
 /** Registeret med inndelingen databasen får første gang. */
-const REGISTER = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
+const REGISTER = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
 
 /** Stoffsidene importene lager. */
 const IMPORTERTE = [
@@ -42,7 +40,7 @@ const navnI = (k: Registerkategori, under?: string) =>
 const alfabetisk = (navn: string[]) => [...navn].sort((a, b) => a.localeCompare(b, 'nb'))
 
 describe('datafilen', () => {
-  it('består kontrollen: gyldige nøkler, unike aliaser, koblinger til kjente stoffer og ett primært stoff per kode', () => {
+  it('består kontrollen: gyldige nøkler og unike aliaser', () => {
     expect(kontrollerStoffregister()).toEqual([])
   })
 
@@ -53,36 +51,14 @@ describe('datafilen', () => {
         { slug: 'b', navn: 'B' },
         { slug: 'Ugyldig', navn: 'Ugyldig' },
       ],
-      analyttkoblinger: [
-        { kode: 'X', stoff: 'a', relasjon: 'selve_stoffet' },
-        { kode: 'X', stoff: 'b', relasjon: 'metabolitt' },
-        { kode: 'Y', stoff: 'finnes-ikke', relasjon: 'navnelikhet' },
-      ],
     }
     const meldinger = kontrollerStoffregister(feil).join('\n')
     expect(meldinger).toContain('ugyldig nøkkel')
     expect(meldinger).toContain('er nøkkelen til et annet stoff')
-    expect(meldinger).toContain('X har 2 primære stoffer')
-    expect(meldinger).toContain('peker på et stoff som ikke finnes')
-    expect(meldinger).toContain('ukjent relasjon')
-  })
-
-  it('kobler hver kode fortolkningen kjenner, til ett primært stoff, og ingen koder den ikke kjenner', () => {
-    for (const { kode } of ANALYTTKATALOG.oppforinger) {
-      expect(OUS_REGISTER.primartStoffFor(kode), kode).toBeDefined()
-    }
-    for (const { kode } of OUS_REGISTER.koblinger) expect(ANALYTTKATALOG.finn(kode), kode).toBeDefined()
-  })
-
-  it('navngir aldri et stoff etter metabolitten analytten måler', () => {
-    for (const k of OUS_REGISTER.koblinger.filter((k) => k.relasjon === 'metabolitt')) {
-      const stoff = navnenokkel(OUS_REGISTER.finn(k.stoff)!.navn)
-      for (const komponent of ANALYTTKATALOG.finn(k.kode)!.komponenter) expect(navnenokkel(komponent), k.kode).not.toBe(stoff)
-    }
   })
 
   it('har et stoff for hver stoffside importene lager', () => {
-    for (const navn of IMPORTERTE) expect(OUS_REGISTER.kanonisk(navn)?.navn, navn).toBe(OMDOPTE[navn] ?? navn)
+    for (const navn of IMPORTERTE) expect(STOFFREGISTER.kanonisk(navn)?.navn, navn).toBe(OMDOPTE[navn] ?? navn)
   })
 
 })
@@ -96,7 +72,7 @@ describe('inndelingen databasen får første gang', () => {
   })
 
   it('nevner bare stoffer som finnes', () => {
-    for (const p of GRUNNSTRUKTUR.plasseringer) expect(OUS_REGISTER.finn(p.stoff), `${p.kategori}: ${p.stoff}`).toBeDefined()
+    for (const p of GRUNNSTRUKTUR.plasseringer) expect(STOFFREGISTER.finn(p.stoff), `${p.kategori}: ${p.stoff}`).toBeDefined()
   })
 
   it('har hver kategori og underkategori én gang, og hvert stoff én gang i hver', () => {
@@ -121,14 +97,14 @@ describe('nøklene', () => {
   })
 
   it('finner stoffet etter nøkkelen, navnet eller et alias', () => {
-    expect(OUS_REGISTER.kanonisk('bupropion')?.slug).toBe('bupropion')
-    expect(OUS_REGISTER.kanonisk('Hydroksybupropion')?.slug).toBe('bupropion')
-    expect(OUS_REGISTER.kanonisk('N-desmetyldiazepam')?.slug).toBe('diazepam')
-    expect(OUS_REGISTER.kanonisk('THC-syre')?.slug).toBe('thc')
-    expect(OUS_REGISTER.kanonisk('EtS')?.slug).toBe('etanol')
-    expect(OUS_REGISTER.kanonisk('Nortriptylin')?.slug).toBe('nortriptylin')
-    expect(OUS_REGISTER.kanonisk('HBUP')).toBeUndefined()
-    expect(OUS_REGISTER.finn('hydroksybupropion')).toBeUndefined()
+    expect(STOFFREGISTER.kanonisk('bupropion')?.slug).toBe('bupropion')
+    expect(STOFFREGISTER.kanonisk('Hydroksybupropion')?.slug).toBe('bupropion')
+    expect(STOFFREGISTER.kanonisk('N-desmetyldiazepam')?.slug).toBe('diazepam')
+    expect(STOFFREGISTER.kanonisk('THC-syre')?.slug).toBe('thc')
+    expect(STOFFREGISTER.kanonisk('EtS')?.slug).toBe('etanol')
+    expect(STOFFREGISTER.kanonisk('Nortriptylin')?.slug).toBe('nortriptylin')
+    expect(STOFFREGISTER.kanonisk('HBUP')).toBeUndefined()
+    expect(STOFFREGISTER.finn('hydroksybupropion')).toBeUndefined()
   })
 
   it('fører de gamle adressene til sidene som fikk moderstoffets navn, dit', () => {
@@ -141,8 +117,8 @@ describe('nøklene', () => {
       ['kanrenon', 'spironolakton'],
       ['o-desmetylvenlafaksin', 'venlafaksin'],
     ]) {
-      expect(OUS_REGISTER.finn(gammel!), gammel).toBeUndefined()
-      expect(OUS_REGISTER.kanonisk(gammel!)?.slug, gammel).toBe(ny)
+      expect(STOFFREGISTER.finn(gammel!), gammel).toBeUndefined()
+      expect(STOFFREGISTER.kanonisk(gammel!)?.slug, gammel).toBe(ny)
     }
   })
 })
@@ -154,7 +130,7 @@ describe('registeret med sidene i databasen', () => {
         { id: '1', slug: 'bupropion', navn: 'Bupropion (Wellbutrin)', innhold: true },
         { id: '2', slug: 'teststoff', navn: 'Teststoff', innhold: false },
       ],
-      OUS_REGISTERDATA,
+      STOFFREGISTERDATA,
       GRUNNSTRUKTUR,
     )
     expect(r.finn('bupropion')?.navn).toBe('Bupropion (Wellbutrin)')
@@ -162,7 +138,7 @@ describe('registeret med sidene i databasen', () => {
       id: ANDRE_STOFFER_ID,
       navn: ANDRE_STOFFER,
       underkategorier: [],
-      stoffer: [{ slug: 'teststoff', navn: 'Teststoff', koder: [], side: true, innhold: false, analytter: false }],
+      stoffer: [{ slug: 'teststoff', navn: 'Teststoff', side: true, innhold: false }],
     })
     expect(r.kategorierFor('teststoff')).toEqual([{ kategori: ANDRE_STOFFER }])
   })
@@ -170,7 +146,7 @@ describe('registeret med sidene i databasen', () => {
   it('lar en side hvis nøkkel er et alias, være: den er ikke et eget stoff', () => {
     const r = byggStoffregister([{ id: '1', slug: 'hydroksybupropion', navn: 'Hydroksybupropion' }])
     expect(r.finn('hydroksybupropion')).toBeUndefined()
-    expect(r.stoffer.map((s) => s.slug)).toEqual(OUS_REGISTER.stoffer.map((s) => s.slug))
+    expect(r.stoffer.map((s) => s.slug)).toEqual(STOFFREGISTER.stoffer.map((s) => s.slug))
   })
 })
 
@@ -191,21 +167,17 @@ describe('sidemenyen', () => {
     ])
   })
 
-  it('har én linje per stoff, med kodene stoffet primært er koblet til som sekundær informasjon', () => {
+  it('har én linje per stoff, uten analysekodene fortolkningen har (docs/domener.md)', () => {
     const benzo = kategori('Benzodiazepiner og Z-hypnotika').stoffer
-    expect(benzo.find((s) => s.slug === 'diazepam')).toMatchObject({ slug: 'diazepam', navn: 'Diazepam', koder: ['DIAZ', 'DMI'] })
-    expect(benzo.find((s) => s.slug === 'oksazepam')?.koder).toEqual(['OXA'])
+    expect(benzo.find((s) => s.slug === 'diazepam')).toMatchObject({ slug: 'diazepam', navn: 'Diazepam' })
+    expect(benzo.find((s) => s.slug === 'diazepam')).not.toHaveProperty('koder')
+    expect(navnI(kategori('Opioider'))).toContain('Tramadol')
     expect(navnI(kategori('Opioider'))).not.toContain('O-desmetyltramadol')
-    expect(kategori('Opioider').stoffer.find((s) => s.slug === 'tramadol')?.koder).toEqual(['TRAM', 'OTRAM'])
-    expect(kategori('Cannabinoider').stoffer.find((s) => s.slug === 'thc')).toMatchObject({ slug: 'thc', navn: 'THC', koder: ['THC', 'IRCAK'] })
-    expect(kategori('Alkohol og GHB').stoffer.find((s) => s.slug === 'etanol')?.koder).toEqual(['UETGS', 'UETS'])
+    expect(navnI(kategori('Cannabinoider'))).toContain('THC')
     const ad = kategori('Antidepressiver').stoffer
-    expect(ad.find((s) => s.slug === 'bupropion')).toMatchObject({ slug: 'bupropion', navn: 'Bupropion', koder: ['HBUP'] })
-    expect(ad.find((s) => s.slug === 'amitriptylin')?.koder).toEqual(['AMTNORSUM'])
-    // Nortriptylin er sitt eget stoff; AMTNORSUM er ikke nortriptylins primære analytt.
-    expect(ad.find((s) => s.slug === 'nortriptylin')?.koder).toEqual(['NOR'])
+    expect(ad.map((s) => s.navn)).toEqual(expect.arrayContaining(['Bupropion', 'Amitriptylin', 'Nortriptylin']))
     expect(ad.map((s) => s.navn)).not.toContain('Hydroksybupropion')
-    expect(kategori('Antipsykotika').stoffer.find((s) => s.slug === 'paliperidon')?.koder).toEqual(['PALI'])
+    expect(navnI(kategori('Antipsykotika'))).toContain('Paliperidon')
     for (const k of REGISTER.kategorier) {
       const slugs = k.stoffer.map((s) => s.slug)
       expect(new Set(slugs).size, k.navn).toBe(slugs.length)
@@ -243,7 +215,7 @@ describe('sidemenyen', () => {
     }
   })
 
-  it('deler antihypertensivene i underkategorier, med hver analytt i metoden', () => {
+  it('deler antihypertensivene i underkategorier', () => {
     const k = kategori('Antihypertensiver')
     expect(k.underkategorier.map((u) => u.navn)).toEqual([
       'ACE-hemmere',
@@ -255,14 +227,12 @@ describe('sidemenyen', () => {
       'Diuretika',
       'Kalsiumantagonister',
     ])
-    const iMetoden = ANALYTTKATALOG.oppforinger.filter((o) => o.analysemetode === 'AHT').map((o) => o.kode)
-    expect(k.stoffer.flatMap((s) => s.koder).sort()).toEqual(iMetoden.sort())
+    for (const u of k.underkategorier) expect(u.stoffer.length, u.navn).toBeGreaterThan(0)
   })
 
-  it('setter stoffer med og uten analyttkode sammen', () => {
+  it('setter stoffene i kategoriene sine', () => {
     const k = kategori('Antiepileptika')
-    expect(k.stoffer.find((s) => s.slug === 'lamotrigin')?.koder).toEqual(['LAM'])
-    expect(k.stoffer.find((s) => s.slug === 'karbamazepin')?.koder).toEqual([])
+    expect(k.stoffer.map((s) => s.slug)).toEqual(expect.arrayContaining(['lamotrigin', 'karbamazepin']))
     expect(navnI(kategori('Alkohol og GHB'))).toEqual(['Etanol', 'GHB'])
     expect(navnI(kategori('Hallusinogene stoffer'))).toEqual(['Ketamin'])
     expect(navnI(kategori('Cannabinoider'))).toEqual(['CBD', 'THC'])
@@ -325,12 +295,12 @@ describe('kategoriene til ett stoff', () => {
 })
 
 describe('inndelingen i databasen', () => {
-  const med = (endring: Partial<Registerstruktur>) => byggStoffregister([], OUS_REGISTERDATA, { ...GRUNNSTRUKTUR, ...endring })
+  const med = (endring: Partial<Registerstruktur>) => byggStoffregister([], STOFFREGISTERDATA, { ...GRUNNSTRUKTUR, ...endring })
 
   it('har ingen kategorier før inndelingen er hentet', () => {
-    expect(OUS_REGISTER.lastet).toBe(false)
-    expect(OUS_REGISTER.kategorier).toEqual([])
-    expect(OUS_REGISTER.kategorierFor('sertralin')).toEqual([])
+    expect(STOFFREGISTER.lastet).toBe(false)
+    expect(STOFFREGISTER.kategorier).toEqual([])
+    expect(STOFFREGISTER.kategorierFor('sertralin')).toEqual([])
     expect(REGISTER.lastet).toBe(true)
   })
 
@@ -392,19 +362,20 @@ describe('inndelingen i databasen', () => {
     expect(r.kategorier.map((k) => k.navn)).not.toContain(ANDRE_STOFFER)
   })
 
-  it('sier om hvert stoff har analytter, en fagside og innhold på den', () => {
+  it('sier om hvert stoff har en fagside og innhold på den', () => {
     const r = byggStoffregister(
       [
         { id: '1', slug: 'karbamazepin', navn: 'Karbamazepin', innhold: false },
         { id: '2', slug: 'bupropion', navn: 'Bupropion' },
       ],
-      OUS_REGISTERDATA,
+      STOFFREGISTERDATA,
       GRUNNSTRUKTUR,
     )
-    expect(r.menystoff('karbamazepin')).toMatchObject({ side: true, innhold: false, analytter: false })
+    expect(r.menystoff('karbamazepin')).toMatchObject({ side: true, innhold: false })
     // Uten svar om innholdet regnes siden som å ha det, så den ikke slettes ved en feil.
-    expect(r.menystoff('bupropion')).toMatchObject({ side: true, innhold: true, analytter: true })
-    expect(r.menystoff('etanol')).toMatchObject({ side: false, innhold: false, analytter: true })
+    expect(r.menystoff('bupropion')).toMatchObject({ side: true, innhold: true })
+    expect(r.menystoff('etanol')).toMatchObject({ side: false, innhold: false })
+    expect(r.menystoff('etanol')).not.toHaveProperty('analytter')
   })
 })
 
@@ -421,7 +392,7 @@ describe('kategoriikonene', () => {
   })
 
   it('gir plassholderen til en kategori uten ikon eller med et ukjent navn', () => {
-    const register = byggStoffregister([], OUS_REGISTERDATA, {
+    const register = byggStoffregister([], STOFFREGISTERDATA, {
       kategorier: [{ id: 'ny', forelder: null, navn: 'Ny kategori', posisjon: 0, ikon: null, arkivert_kl: null }],
       plasseringer: [{ stoff: 'diazepam', kategori: 'ny' }],
       status: [],

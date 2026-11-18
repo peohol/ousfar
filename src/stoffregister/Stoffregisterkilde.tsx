@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { byggStoffregister, STOFFREGISTERDATA, stoffslug, type Registerdata, type Registerstruktur, type Stoffregister } from '../domain/stoffregister'
+import { byggStoffregister, STOFFREGISTERDATA, stoffslug, type Registerstruktur, type Stoffregister } from '../domain/stoffregister'
 import { erTomt, type Riktekstdokument } from '../faginnhold/riktekst'
 import { nyEndring, type Endringskontekst } from '../endringslogg/operasjon'
 import { useHenting } from '../hooks/useHenting'
@@ -61,8 +61,6 @@ export interface Stoffregisterkilde {
 
 interface Valg {
   lager: Registerlager
-  /** Koblingene fra analyttkodene til stoffene, fra fagmiljøets analyttkatalog. */
-  koblinger: Registerdata['analyttkoblinger']
   admin: boolean
   kanEndre: boolean
   /** Lager utkastet til en ny fagside, som en del av handlingen. Bare for administratorer. */
@@ -75,7 +73,7 @@ interface Lokal {
   struktur: Registerstruktur
 }
 
-export function useLagStoffregisterkilde({ lager, koblinger, admin, kanEndre, opprettSide }: Valg): Stoffregisterkilde {
+export function useLagStoffregisterkilde({ lager, admin, kanEndre, opprettSide }: Valg): Stoffregisterkilde {
   const henting = useHenting(useCallback(() => lager.les(admin ? 'utkast' : 'publisert'), [lager, admin]))
   const { hentPaNytt } = henting
   const data = henting.tilstand.status === 'klar' ? henting.tilstand.data : null
@@ -180,8 +178,8 @@ export function useLagStoffregisterkilde({ lager, koblinger, admin, kanEndre, op
 
   const sider = data?.sider
   const register = useMemo(
-    () => byggStoffregister(sider, { ...STOFFREGISTERDATA, analyttkoblinger: koblinger }, struktur),
-    [sider, koblinger, struktur],
+    () => byggStoffregister(sider, STOFFREGISTERDATA, struktur),
+    [sider, struktur],
   )
   const oppsummering = useMemo(() => {
     const perSlug = new Map((sider ?? []).map((s) => [s.slug, s.oppsummering]))

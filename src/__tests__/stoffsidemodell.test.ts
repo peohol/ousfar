@@ -2,6 +2,7 @@
  * De rene delene av stoffsidene: rikteksten, panelenes data, søket og
  * sidemodellen. Innholdet er syntetisk.
  */
+import { STOFFREGISTER } from '../domain/stoffregister'
 import { describe, expect, it } from 'vitest'
 import { byggSidemodell, publiseringsplan, regelplan } from '../faginnhold/stoffside'
 import { INGEN_REGLER, TOM_STOFFSIDE, type Regeldata, type Stoffsidedata, type Utgave } from '../faginnhold/lesing'
@@ -31,10 +32,8 @@ import { SITERING, kortnavn } from '../faginnhold/referanser'
 import { kortnavn as sideKortnavn } from '../faginnhold/sidesammenligning'
 import { erTomt, klartekst, rensDokument, tomtDokument } from '../faginnhold/riktekst'
 import { fold, indekserSide, sok, sokeord, sti, stoffidentitet, treffIntervaller, utdrag } from '../faginnhold/sok'
-import { analytterForStoff } from '../domain/koblinger'
 import type { ThcRegelsettinnhold } from '../domain/thcTekster'
 import type { Kommentarinnhold } from '../domain/kommentarobjekt'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
 
 describe('rikteksten', () => {
   it('beholder den tillatte formateringen og siteringene', () => {
@@ -562,15 +561,14 @@ describe('sidemodellen', () => {
 
   it('indekserer siden for søket, med stien til hvert treff', () => {
     const modell = byggSidemodell(side())
-    const dokumenter = indekserSide({ stoff: 'testmiddel', navn: 'Testmiddel', koder: ['TEST'], komponenter: ['Testmiddel', 'Komponent'] }, modell)
+    const dokumenter = indekserSide({ stoff: 'testmiddel', navn: 'Testmiddel', aliaser: ['Testalias'] }, modell)
     const treff = sok(dokumenter, 'metabol')
     expect(treff.map((t) => sti(t.dokument.sted))).toEqual([['Testmiddel', 'Farmakokinetikk', 'Metabolisme']])
-    // Koden og navnet rangeres foran fritekst: den eksakte koden først, så
-    // navnet som begynner med søket.
+    // Navnet og aliaset rangeres foran fritekst.
     const alle = sok(dokumenter, 'test')
-    expect(alle.slice(0, 2).map((t) => t.dokument.felt)).toEqual(['kode', 'navn'])
-    // Alle treffene er på stoffet, også koden og komponenten.
-    expect(new Set(sok(dokumenter, 'komponent').map((t) => t.dokument.sted.side.stoff))).toEqual(new Set(['testmiddel']))
+    expect(alle.slice(0, 2).map((t) => t.dokument.felt)).toEqual(['navn', 'alias'])
+    // Alle treffene er på stoffet, også aliaset.
+    expect(new Set(sok(dokumenter, 'testalias').map((t) => t.dokument.sted.side.stoff))).toEqual(new Set(['testmiddel']))
     // Det fjernede kortet søkes ikke i.
     expect(sok(dokumenter, 'fjernetkilde')).toEqual([])
     expect(sok(dokumenter, '')).toEqual([])
@@ -589,27 +587,17 @@ describe('sidemodellen', () => {
     expect(paneler[0]).toBe('preparater')
   })
 
-  it('gir stoffet identiteten sin fra registeret og koblingene: aliasene, primære koder, og analyttenes navn og sekundære koder som komponent', () => {
-    const nortriptylin = OUS_REGISTER.finn('nortriptylin')!
-    const identitet = stoffidentitet(nortriptylin, analytterForStoff('nortriptylin', OUS_REGISTER, OUS_KATALOG))
-    expect(identitet).toEqual({
-      stoff: 'nortriptylin',
-      navn: 'Nortriptylin',
-      koder: ['NOR'],
-      // AMTNORSUM hører primært til Amitriptylin; her er koden bare en annen vei inn.
-      komponenter: ['Nortriptylin', 'Nortriptylin', 'Amitriptylin + nortriptylin', 'Amitriptylin', 'Nortriptylin', 'AMTNORSUM'],
-      aliaser: ['nortriptyline'],
-    })
-    const bupropion = stoffidentitet(OUS_REGISTER.finn('bupropion')!, analytterForStoff('bupropion', OUS_REGISTER, OUS_KATALOG))
-    expect(bupropion).toMatchObject({ stoff: 'bupropion', navn: 'Bupropion', koder: ['HBUP'], aliaser: ['Hydroksybupropion', 'hydroxybupropion'] })
-    // Indeksert står metabolittens navn bare én gang, og alt peker på Bupropion.
+  it('gir stoffet identiteten sin fra registeret: navnet og aliasene, uten fortolkningens analysekoder', () => {
+    const nortriptylin = stoffidentitet(STOFFREGISTER.finn('nortriptylin')!)
+    expect(nortriptylin).toEqual({ stoff: 'nortriptylin', navn: 'Nortriptylin', aliaser: ['nortriptyline'] })
+    const bupropion = stoffidentitet(STOFFREGISTER.finn('bupropion')!)
+    expect(bupropion).toEqual({ stoff: 'bupropion', navn: 'Bupropion', aliaser: ['Hydroksybupropion', 'hydroxybupropion'] })
+    // Indeksert står navnet og aliasene, og alt peker på Bupropion.
     const dokumenter = indekserSide(bupropion, byggSidemodell(TOM_STOFFSIDE))
     expect(dokumenter.map((d) => [d.felt, d.tekst])).toEqual([
       ['navn', 'Bupropion'],
-      ['kode', 'HBUP'],
       ['alias', 'Hydroksybupropion'],
       ['alias', 'hydroxybupropion'],
-      ['komponent', 'Hydroksybupropion (kun aktiv metabolitt)'],
     ])
     expect(new Set(dokumenter.map((d) => d.sted.side.stoff))).toEqual(new Set(['bupropion']))
   })

@@ -15,7 +15,7 @@
  */
 import { createHash } from 'node:crypto'
 import type { Katalogdata } from '../src/domain/analyttkatalog'
-import { OUS_KATALOGDATA } from '../src/domain/ouskatalog'
+import { OUS_ANALYTTKOBLINGER, OUS_KATALOGDATA, type Analyttkoblingsdata } from '../src/domain/ouskatalog'
 
 /**
  * Grunnlaget slik det legges inn: alt utenom fagmiljøet, som databasen
@@ -23,8 +23,11 @@ import { OUS_KATALOGDATA } from '../src/domain/ouskatalog'
  * migrasjon (`scripts/analyttforbindelser.ts`). Migrasjonen med importen er
  * kjørt og endres ikke.
  */
-export function analyttkatalogGrunnlag(data: Katalogdata = OUS_KATALOGDATA) {
-  const { metoder, oppforinger, koblinger } = data
+export function analyttkatalogGrunnlag(
+  data: Katalogdata = OUS_KATALOGDATA,
+  koblinger: readonly Analyttkoblingsdata[] = OUS_ANALYTTKOBLINGER,
+) {
+  const { metoder, oppforinger } = data
   return {
     metoder,
     oppforinger: oppforinger.map((o) => ({ ...o, koder: o.koder.map(({ kode, navn }) => ({ kode, navn })) })),

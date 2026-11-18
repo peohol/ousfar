@@ -10,14 +10,12 @@ import { navnenokkel } from './sokenavn'
  * `#/stoff/bupropion`. Nøkkelen endres ikke når navnet som vises endres, og den
  * har ingenting med laboratoriets analyttkoder å gjøre.
  *
- * Fortolkningssystemet er et eget domene: laboratorieanalyttene med kodene
- * laboratoriet rapporterer (`src/domain/analyttkatalog.ts`). De to kobles bare
- * gjennom eksplisitte {@link StoffAnalyttKobling}-er, som står her fordi de
- * hører til registeret, ikke til noen av analyttene. Ett stoff kan ha flere
- * analytter (Diazepam: DIAZ og DMI), én analytt kan gjelde flere stoffer
- * (AMTNORSUM: Amitriptylin og Nortriptylin), og begge kan mangle den andre.
+ * Fortolkningen er et helt eget domene, med laboratoriets egen analyttkatalog
+ * (`src/domain/analyttkatalog.ts`). Registeret kjenner ingen analyttkoder, og
+ * ingenting her lenker til fortolkningen eller leser fra den
+ * (`docs/domener.md`).
  *
- * Alt dette er data, ikke kode, og står i `src/data/stoffregister.json`:
+ * Stoffene er data, ikke kode, og står i `src/data/stoffregister.json`:
  *
  * - `stoffer`: nøkkelen, navnet og eventuelle andre navn stoffet er kjent
  *   under (`aliaser`, som metabolittene uten egen fagside: «Norfluoksetin»
@@ -26,13 +24,6 @@ import { navnenokkel } from './sokenavn'
  *   det fører til stoffet, og i søket teller et eksakt alias som et eksakt
  *   navn. Det er den eneste lista over søkenavn for stoffsidene i fagsøket.
  *   Søket etter analytter i fortolkningen bruker den ikke.
- * - `analyttkoblinger` (fra fagmiljøets analyttkatalog i databasen):
- *   analyttkoden, stoffet, hva analytten er for stoffet
- *   ({@link Analyttrelasjon}) og om stoffet er analyttens primære stoff
- *   (`primar`, standard sann). Hver kode har høyst ett primært stoff: det er
- *   dit koden lenker, og der fortolkningsreglene og datakortene for koden står.
- *   Rekkefølgen per stoff er rekkefølgen analysene vises i, og den første
- *   primære er stoffets hovedanalytt, som eier datakortene uten `gjelder`.
  *
  * Databasen har resten (`les_stoffregister`, se `docs/stoffregister.md`):
  *
@@ -47,15 +38,6 @@ import { navnenokkel } from './sokenavn'
  *   stoff uten plassering står i {@link ANDRE_STOFFER}.
  */
 
-/** Hva en laboratorieanalytt er for stoffet den er koblet til. */
-export type Analyttrelasjon = 'selve_stoffet' | 'metabolitt' | 'sumanalyse'
-
-export const ANALYTTRELASJONER: Readonly<Record<Analyttrelasjon, string>> = {
-  selve_stoffet: 'selve stoffet',
-  metabolitt: 'metabolitt',
-  sumanalyse: 'sumanalyse',
-}
-
 /** Et stoff i registeret. */
 export interface Stoff {
   /** Den stabile nøkkelen i adressen, f.eks. «bupropion». */
@@ -66,31 +48,12 @@ export interface Stoff {
   aliaser: readonly string[]
 }
 
-/** Koblingen mellom et stoff og en laboratorieanalytt i fortolkningssystemet. */
-export interface StoffAnalyttKobling {
-  /** Analyttkoden, f.eks. «HBUP». */
-  kode: string
-  /** Stoffets nøkkel, f.eks. «bupropion». */
-  stoff: string
-  relasjon: Analyttrelasjon
-  /** Sant når stoffet er analyttens primære stoff: koden lenker hit. */
-  primar: boolean
-  /** Kort forklaring på forholdet, vist på stoffsiden. */
-  merknad?: string
-}
-
 export interface Registerdata {
   stoffer: { slug: string; navn: string; aliaser?: string[] }[]
-  analyttkoblinger: readonly { kode: string; stoff: string; relasjon: string; primar?: boolean; merknad?: string | null }[]
 }
 
-/**
- * Stoffene i datafilen. Koblingene til analyttkodene er laboratoriets egne og
- * står i fagmiljøets analyttkatalog i databasen (`src/domain/analyttkatalog.ts`);
- * appen gir dem til {@link byggStoffregister} når katalogen er hentet. Uten
- * den har registeret ingen koblinger.
- */
-export const STOFFREGISTERDATA: Registerdata = { stoffer: (registerdata as Pick<Registerdata, 'stoffer'>).stoffer, analyttkoblinger: [] }
+/** Stoffene i datafilen. */
+export const STOFFREGISTERDATA: Registerdata = { stoffer: (registerdata as Registerdata).stoffer }
 
 /** En fagside slik databasen har den (`les_stoffregister`). */
 export interface Stoffoppforing {
@@ -151,10 +114,6 @@ export const ANDRE_STOFFER_ID = 'andre-stoffer'
 export interface Registerstoff {
   slug: string
   navn: string
-  /** Analyttkodene stoffet er primært stoff for, i registerets rekkefølge. Tom uten. */
-  koder: string[]
-  /** Om stoffet er koblet til noen laboratorieanalytt, primært eller ikke. */
-  analytter: boolean
   /** Om stoffet har en fagside i databasen. Uten den finnes stoffet bare i datafilen. */
   side: boolean
   /** Om fagsiden har noe mer enn navnet. */
@@ -262,15 +221,7 @@ export interface Stoffregister {
   kanonisk: (nokkelEllerNavn: string) => Stoff | undefined
   /** Om stoffet er aktivt, arkivert eller i papirkurven. `fjernet` for et stoff registeret ikke kjenner lenger. */
   status: (slug: string) => Stofftilstand
-  /** Alle koblingene, i registerets rekkefølge. */
-  koblinger: readonly StoffAnalyttKobling[]
-  /** Analyttene koblet til stoffet: de stoffet er primært stoff for først, så de andre, hver i registerets rekkefølge. */
-  analytterFor: (slug: string) => StoffAnalyttKobling[]
-  /** Stoffene koblet til analytten. */
-  stofferFor: (kode: string) => StoffAnalyttKobling[]
-  /** Analyttens primære stoff: dit koden lenker. `undefined` når analytten ikke har noe. */
-  primartStoffFor: (kode: string) => Stoff | undefined
-  /** Stoffet slik menyen viser det, med kodene. `undefined` når registeret ikke kjenner nøkkelen. */
+  /** Stoffet slik menyen viser det. `undefined` når registeret ikke kjenner nøkkelen. */
   menystoff: (slug: string) => Registerstoff | undefined
   /** Om inndelingen er hentet fra databasen. Før det er {@link kategorier} og {@link inndeling} tomme. */
   lastet: boolean
@@ -298,17 +249,11 @@ export function paaNavn(a: { navn: string }, b: { navn: string }): number {
   return a.navn.localeCompare(b.navn, 'nb')
 }
 
-function relasjon(verdi: string): Analyttrelasjon {
-  if (verdi in ANALYTTRELASJONER) return verdi as Analyttrelasjon
-  throw new Error(`Ukjent relasjon mellom stoff og analytt: «${verdi}».`)
-}
-
 const etterPosisjon = (a: Kategorirad, b: Kategorirad) => a.posisjon - b.posisjon
 
 /**
  * Registeret av datafilen, fagsidene i databasen og inndelingen der. Uten
- * databasen er det registeret alene — det adressene og lenkene fra
- * fortolkningen trenger — uten kategorier.
+ * databasen er det registeret alene — det adressene trenger — uten kategorier.
  */
 export function byggStoffregister(
   databasestoffer: readonly Stoffoppforing[] = [],
@@ -341,22 +286,6 @@ export function byggStoffregister(
   for (const s of data.stoffer) if (perSlug.has(s.slug)) for (const n of [s.navn, ...(s.aliaser ?? [])]) perNokkel.set(navnenokkel(n), s.slug)
   for (const s of perSlug.values()) for (const n of [s.navn, ...s.aliaser]) perNokkel.set(navnenokkel(n), s.slug)
 
-  const koblinger: StoffAnalyttKobling[] = data.analyttkoblinger.map((k) => ({
-    kode: k.kode,
-    stoff: k.stoff,
-    relasjon: relasjon(k.relasjon),
-    primar: k.primar ?? true,
-    ...(k.merknad && { merknad: k.merknad }),
-  }))
-  const perStoff = new Map<string, StoffAnalyttKobling[]>()
-  const perKode = new Map<string, StoffAnalyttKobling[]>()
-  for (const k of koblinger) {
-    perStoff.set(k.stoff, [...(perStoff.get(k.stoff) ?? []), k])
-    perKode.set(k.kode, [...(perKode.get(k.kode) ?? []), k])
-  }
-  // Stoffets egne analytter først, i datafilens rekkefølge, så de andre.
-  for (const [slug, liste] of perStoff) perStoff.set(slug, [...liste].sort((a, b) => Number(b.primar) - Number(a.primar)))
-
   const status = (slug: string): Stofftilstand =>
     perSlug.has(slug) ? (statusFor.get(slug)?.status ?? 'aktiv') : 'fjernet'
   const alle = [...perSlug.values()].sort(paaNavn)
@@ -366,22 +295,11 @@ export function byggStoffregister(
     const s = stoffslug(nokkel)
     return perSlug.get(s) ?? perSlug.get(aliasTil.get(s) ?? perNokkel.get(navnenokkel(nokkel)) ?? '')
   }
-  const analytterFor = (slug: string) => perStoff.get(slug) ?? []
-  const stofferFor = (kode: string) => perKode.get(kode.trim().toUpperCase()) ?? []
-  const primartStoffFor = (kode: string) => {
-    const primar = stofferFor(kode).find((k) => k.primar)
-    return primar && perSlug.get(primar.stoff)
-  }
-
   const menystoff = (s: Stoff): Registerstoff => {
     const side = sider.get(s.slug)
     return {
       slug: s.slug,
       navn: s.navn,
-      koder: analytterFor(s.slug)
-        .filter((k) => k.primar)
-        .map((k) => k.kode),
-      analytter: analytterFor(s.slug).length > 0,
       side: Boolean(side),
       innhold: side ? (side.innhold ?? true) : false,
     }
@@ -471,10 +389,6 @@ export function byggStoffregister(
     finn,
     kanonisk,
     status,
-    koblinger,
-    analytterFor,
-    stofferFor,
-    primartStoffFor,
     menystoff: (slug) => {
       const s = perSlug.get(slug)
       return s && menystoff(s)
@@ -490,14 +404,23 @@ export function byggStoffregister(
   }
 }
 
+/**
+ * Linja under et stoff i søketreffene: kategorien det står i, som sekundær
+ * informasjon — f.eks. «Antidepressiver › NDRI». `undefined` når det ikke er
+ * noe å si.
+ */
+export function stoffbeskrivelse(slug: string, register: Stoffregister): string | undefined {
+  const kategori = register.kategorierFor(slug).find((k) => k.kategori !== ANDRE_STOFFER)
+  return kategori && [kategori.kategori, kategori.underkategori].filter(Boolean).join(' › ')
+}
+
 /** Registeret alene, uten fagsidene og inndelingen i databasen. */
 export const STOFFREGISTER = byggStoffregister()
 
 /**
  * Feilene i datafilen: nøkler som ikke har riktig form eller står flere ganger,
  * navn og alias som kolliderer — også når de bare er skrevet ulikt, som
- * «Quetiapine» og «kvetiapin» ({@link navnenokkel}) — koblinger til stoffer
- * som ikke finnes og koder med mer enn ett primært stoff. Tom når alt er i orden. Testene holder den tom.
+ * «Quetiapine» og «kvetiapin» ({@link navnenokkel}). Tom når alt er i orden. Testene holder den tom.
  */
 export function kontrollerStoffregister(data: Registerdata = STOFFREGISTERDATA): string[] {
   const feil: string[] = []
@@ -528,16 +451,5 @@ export function kontrollerStoffregister(data: Registerdata = STOFFREGISTERDATA):
       else eier.set(n, s.slug)
     }
   }
-  const primare = new Map<string, number>()
-  const par = new Set<string>()
-  for (const k of data.analyttkoblinger) {
-    if (!slugs.has(k.stoff)) feil.push(`Koblingen ${k.kode} → «${k.stoff}» peker på et stoff som ikke finnes.`)
-    if (!(k.relasjon in ANALYTTRELASJONER)) feil.push(`Koblingen ${k.kode} → ${k.stoff} har ukjent relasjon «${k.relasjon}».`)
-    if (k.kode !== k.kode.trim().toUpperCase()) feil.push(`Koden «${k.kode}» skal stå med store bokstaver.`)
-    if (par.has(`${k.kode}/${k.stoff}`)) feil.push(`Koblingen ${k.kode} → ${k.stoff} står flere ganger.`)
-    par.add(`${k.kode}/${k.stoff}`)
-    if (k.primar ?? true) primare.set(k.kode, (primare.get(k.kode) ?? 0) + 1)
-  }
-  for (const [kode, antall] of primare) if (antall > 1) feil.push(`Koden ${kode} har ${antall} primære stoffer.`)
   return feil
 }

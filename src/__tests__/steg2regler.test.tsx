@@ -5,10 +5,9 @@
  * - Knappene, pillene og kommentarene kommer fra regelsettet databasen gir,
  *   ikke fra noe som ligger i appen: et publisert regelsett med en annen
  *   grense og kommentar gir andre knapper og kopierer den nye teksten.
- * - Referanseområdet under analyttnavnet er kortet på stoffsiden koden
- *   primært er koblet til i stoffregisteret, lest fra databasen sammen med
- *   regelsettene (`les_stoffreferanseomrader`, knyttet til koden gjennom
- *   koblingene): HBUP får kortet på Bupropion-siden.
+ * - Referanseområdet under analyttnavnet er fagmiljøets eget, fra
+ *   analyttkatalogen (`les_analyttkatalog`). Fortolkningen leser ingenting fra
+ *   fagsidene og lenker ikke dit (`docs/domener.md`).
  * - Mens regelsettene hentes, og når hentingen feiler eller koden ikke har
  *   noe regelsett, er det ingen knapper og ingenting å kopiere.
  * - «Prøv igjen» henter regelsettene på nytt.
@@ -29,22 +28,24 @@ type Svar = { data: Record<string, unknown> | null; error: unknown }
 const svar = vi.hoisted(() => ({
   neste: [] as (() => Promise<Svar>)[],
   aktivt: null as Promise<Svar> | null,
+  /** Referanseområdene katalogen gir, etter koden; `null` gir fasiten. */
+  referanseomrader: null as Record<string, { nedre: number | null; ovre: number | null; enhet: string }> | null,
 }))
 
 vi.mock('../auth/okt', () => ({
   useProfil: () => ({ role: 'user', first_name: 'Lars', last_name: 'Leser', username: 'leser' }),
 }))
 vi.mock('../auth/klient', async () => {
-  const { OUS_KATALOGSVAR } = await import('./hjelp/ouskatalogkilde')
+  const { OUS_KATALOGSVAR, medReferanseomrader } = await import('./hjelp/ouskatalogkilde')
   return {
     klient: () => ({
       rpc: async (funksjon: string) => {
-        if (funksjon === 'les_analyttkatalog') return { data: OUS_KATALOGSVAR, error: null }
+        if (funksjon === 'les_analyttkatalog') {
+          const data = svar.referanseomrader ? medReferanseomrader(OUS_KATALOGSVAR, svar.referanseomrader) : OUS_KATALOGSVAR
+          return { data, error: null }
+        }
         if (funksjon === 'les_intervallregelsett' && svar.neste.length > 0) svar.aktivt = svar.neste.shift()!()
-        if (
-          !['les_intervallregelsett', 'les_kommentarer', 'les_stoffreferanseomrader'].includes(funksjon) ||
-          !svar.aktivt
-        ) {
+        if (!['les_intervallregelsett', 'les_kommentarer'].includes(funksjon) || !svar.aktivt) {
           return { data: null, error: null }
         }
         const { data, error } = await svar.aktivt
@@ -59,7 +60,8 @@ const { default: App } = await import('../App')
 const { TipsLag } = await import('../components/Tips')
 const { ShortcutVisibilityProvider } = await import('../hooks/useShortcutVisibility')
 const { DAGENS_REGELSETT, dagensKommentar, dagensRegelsett } = await import('./hjelp/dagensregler')
-const { publiserteStoffrader } = await import('./hjelp/stoffreferanseomrader')
+const { publiserteRader } = await import('./hjelp/dagensregler')
+const { REFERANSEOMRADER } = await import('./hjelp/referanseomrader')
 const { regelsettvalg } = await import('../domain/valg')
 
 /** Teksten på knappene regelsettet fra før byttet gir for NOR. */
@@ -79,16 +81,13 @@ afterEach(() => {
   cleanup()
   svar.neste = []
   svar.aktivt = null
+  svar.referanseomrader = null
   window.location.hash = ''
 })
 
-/**
- * Databasen svarer med disse regelsettene, kommentarene og referanseområdene
- * som de publiserte. Referanseområdene er kortene på stoffsidene, gitt som
- * kortene selv eller etter koden (på siden til kodens primære stoff).
- */
-function publisert(regelsett: Intervallregelsett[], referanseomrader?: Parameters<typeof publiserteStoffrader>[1]) {
-  return () => Promise.resolve({ data: publiserteStoffrader(regelsett, referanseomrader), error: null })
+/** Databasen svarer med disse regelsettene og kommentarene som de publiserte. */
+function publisert(regelsett: Intervallregelsett[]) {
+  return () => Promise.resolve({ data: publiserteRader(regelsett), error: null })
 }
 
 /** Databasen svarer når testen sier fra. */
@@ -148,46 +147,30 @@ describe('steg 2 på regelsettene i databasen', () => {
     await waitFor(async () => expect(await navigator.clipboard.readText()).toBe(ny.tekst))
   })
 
-  it('viser referanseområdet stoffsiden har, også når det er endret der', async () => {
-    svar.neste.push(publisert(DAGENS_REGELSETT, { NOR: { nedre: 210, ovre: 590, enhet: 'nmol/L' } }))
+  it('viser referanseområdet fagmiljøets katalog har for koden', async () => {
+    svar.referanseomrader = { ...REFERANSEOMRADER, NOR: { nedre: 210, ovre: 590, enhet: 'nmol/L' } }
+    svar.neste.push(publisert(DAGENS_REGELSETT))
     const { steg } = await tilSteg2('NOR')
     await waitFor(() => expect(within(steg).getByText('210 – 590 nmol/L')).toBeTruthy())
   })
 
-  it('gir HBUP referanseområdet fra kortet på Bupropion-siden, gjennom koblingen i stoffregisteret', async () => {
-    // Kortene slik databasen har dem: etter stoffets nøkkel, ikke etter koden.
-    // Kortet på Bupropion-siden gjelder stoffets hovedanalytt, HBUP.
-    const kort = (nedre: number, ovre: number) => ({ nedre, ovre, enhet: 'nmol/L', forbehold: '' })
-    svar.neste.push(
-      publisert(DAGENS_REGELSETT, [
-        { stoff: 'bupropion', gjelder: null, verdi: kort(510, 3900) },
-        // En side med et navn som ligner analytten, er ikke koblet til HBUP.
-        { stoff: 'hydroksybupropion', gjelder: null, verdi: kort(1, 2) },
-        { stoff: 'nortriptylin', gjelder: null, verdi: kort(200, 600) },
-      ]),
-    )
+  it('gir HBUP sitt eget referanseområde, og koden er tekst, ikke en lenke til en fagside', async () => {
+    svar.referanseomrader = { HBUP: { nedre: 510, ovre: 3900, enhet: 'nmol/L' } }
+    svar.neste.push(publisert(DAGENS_REGELSETT))
     const { steg } = await tilSteg2('HBUP')
     await waitFor(() => expect(knappene(steg).length).toBeGreaterThan(0))
-    // Fortolkningen står på analytten, og koden lenker til stoffet kortet står på.
     expect(within(steg).getByRole('heading', { level: 1 }).textContent).toMatch(/^Hydroksybupropion/)
-    expect(within(steg).getByRole('link', { name: 'HBUP – åpne fagsiden for Bupropion' }).getAttribute('href')).toBe(
-      '#/stoff/bupropion',
-    )
     expect(within(steg).getByText('510 – 3900 nmol/L')).toBeTruthy()
-    expect(within(steg).queryByText('1 – 2 nmol/L')).toBeNull()
-    expect(within(steg).queryByText('200 – 600 nmol/L')).toBeNull()
+    // Fortolkningen og fagsidene er adskilte: ingen lenke dit, verken fra koden eller toppmenyen.
+    expect(within(steg).queryAllByRole('link')).toEqual([])
+    expect(screen.queryByRole('button', { name: /Åpne fagside/ })).toBeNull()
     // Hele appen tegnes i denne integrasjonstesten. CI kan bruke mer enn
     // fem sekunder på oppsett og tastaturhendelser; alle faglige krav beholdes.
   }, 15_000)
 
-  it('gir en analytt uten kort på stoffsiden sin ikke noe referanseområde', async () => {
-    // Bare Amitriptylin-siden har et kort. Nortriptylin er koblet til
-    // sumanalysen AMTNORSUM som sekundært stoff, men NOR får ikke kortet derfra.
-    svar.neste.push(
-      publisert(DAGENS_REGELSETT, [
-        { stoff: 'amitriptylin', gjelder: null, verdi: { nedre: 300, ovre: 900, enhet: 'nmol/L', forbehold: '' } },
-      ]),
-    )
+  it('gir en kode uten referanseområde i katalogen ikke noe referanseområde', async () => {
+    svar.referanseomrader = { AMTNORSUM: { nedre: 300, ovre: 900, enhet: 'nmol/L' } }
+    svar.neste.push(publisert(DAGENS_REGELSETT))
     const { steg } = await tilSteg2('NOR')
     await waitFor(() => expect(knappene(steg)).toEqual(NOR_KNAPPER))
     expect(within(steg).queryByText('Referanseområde')).toBeNull()
@@ -232,7 +215,7 @@ describe('steg 2 på regelsettene i databasen', () => {
       'Det finnes ingen publiserte fortolkningsregler for NOR.',
     )
     expect(knappene(steg)).toEqual([])
-    // Referanseområdet er stoffsidens, og står likevel.
+    // Referanseområdet er katalogens, og står likevel.
     expect(within(steg).getByText('200 – 600 nmol/L')).toBeTruthy()
   })
 })

@@ -27,9 +27,9 @@ import { useVerktoyeneVises } from '../verktoy/synlighet'
  *
  * Stoffregisterfanen er veien inn til stoffsiden for hvert stoff, ordnet etter
  * farmakologisk klasse (`src/domain/stoffregister.ts`). Hvert stoff lenker
- * alltid til `#/stoff/<nøkkel>`; kodene til laboratorieanalyttene stoffet er
- * primært koblet til, står ved siden av som sekundær informasjon. Søket i
- * fortolkningen filtreres ikke herfra, men fra hovedsiden (`Filterbytte`).
+ * alltid til `#/stoff/<nøkkel>`, uten laboratoriets analyttkoder: de hører
+ * til fortolkningen (`docs/domener.md`). Søket i fortolkningen filtreres ikke
+ * herfra, men fra hovedsiden (`Filterbytte`).
  *
  * Innholdet er stoffregisteret, med stoffsidene i databasen som registeret
  * ikke kjenner, så lista ikke kan komme i utakt med det appen har sider for.
@@ -485,8 +485,6 @@ function Favorittskuff({
 const ukjentStoff = (slug: string): Registerstoff => ({
   slug,
   navn: slug,
-  koder: [],
-  analytter: false,
   side: false,
   innhold: false,
 })
@@ -572,7 +570,6 @@ function Stoffer({
         <li key={stoff.slug} className={handling && 'menyanalytter__rad'}>
           <a className="menyanalytt" href={stoffadresse(stoff.slug)} onClick={onVelg}>
             <span className="menyanalytt__navn">{stoff.navn}</span>
-            {stoff.koder.length > 0 && <span className="menyanalytt__kode">{stoff.koder.join(' · ')}</span>}
           </a>
           {handling?.(stoff)}
         </li>

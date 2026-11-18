@@ -40,7 +40,7 @@ export function EtgStep({ analyte, tilfeller, onPick, onBack, failed }: EtgStepP
       <StepBar onEsc={onBack}>Bytt analytt</StepBar>
 
       <Card align="start" className="analyttkort">
-        <Metalinje koder={koder} metode={analyte.analysemetode} lenker />
+        <Metalinje koder={koder} metode={analyte.analysemetode} />
         <h1 className="analytt__navn">{analyte.navn}</h1>
         {analyte.modul?.undertittel && <p className="modul-undertittel">{analyte.modul.undertittel}</p>}
       </Card>

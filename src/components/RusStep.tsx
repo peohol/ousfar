@@ -124,7 +124,7 @@ export function RusStep({ analyte, modul, regler, onBack, onFinish, copy, flashA
 
       <div className="modul">
         <Card align="start" className="analyttkort">
-          <Metalinje koder={koder} metode={analyte.analysemetode} kategori={modul.kategori} lenker />
+          <Metalinje koder={koder} metode={analyte.analysemetode} kategori={modul.kategori} />
           <h1 className="analytt__navn">{modul.navn}</h1>
 
           <Rusvalg

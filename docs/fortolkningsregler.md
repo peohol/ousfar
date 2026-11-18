@@ -251,7 +251,7 @@ toppmenyen) når modulen har regler. Den åpner en egen side over
 fortolkningen, `#/fortolkning/<nøkkel>/rediger`, med alle delene av reglene
 modulen gir: scenarioreglene (`docs/scenarioregler.md`), THC-syrereglene
 (`docs/thc-syre.md`) og konsentrasjonsreglene for hver kode i modulen
-(`analytterForFortolkning` i `src/domain/koblinger.ts`). Hver del er en seksjon
+(`analytterForFortolkning` i `src/domain/analyttkatalog.ts`). Hver del er en seksjon
 i den felles seksjonsmodellen (`docs/seksjoner.md`). Er det bare én, står den
 åpen med en gang; ellers står bare én åpen om gangen, og hver har sin tittel og adresse,
 `#/fortolkning/diaz-dmi-oxa/rediger/fortolkning-dmi` osv. (og et detaljkort i den, `…/fortolkning-dmi/simulator`). Siden viser alltid

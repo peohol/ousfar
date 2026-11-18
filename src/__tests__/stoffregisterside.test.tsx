@@ -17,7 +17,6 @@ import { Stoffregisterside } from '../components/stoffregister/Stoffregisterside
 import { Toppmeny } from '../components/toppmeny/Toppmeny'
 import { ToppmenyKilde } from '../components/toppmeny/Toppmenykilde'
 import { TipsLag } from '../components/Tips'
-import { ANALYTTKATALOG } from '../domain/ouskatalog'
 import type { Endringskontekst } from '../endringslogg/operasjon'
 import type { Kurateringsklient } from '../kuratering/klient'
 import type { Kurateringsrad } from '../kuratering/sidestatus'
@@ -117,20 +116,19 @@ function Side({
   kuratering?: Kurateringsklient
   children?: ReactNode
 }) {
-  const kilde = useLagStoffregisterkilde({ lager, koblinger: ANALYTTKATALOG.koblinger, admin, kanEndre, ...(opprettSide && { opprettSide }) })
+  const kilde = useLagStoffregisterkilde({ lager, admin, kanEndre, ...(opprettSide && { opprettSide }) })
   return (
     <ToppmenyKilde>
       <Toppmeny meny={null} konto={null} />
       <StoffregisterkildeProvider kilde={kilde}>
         {children ?? (
-          <Stoffregisterside katalog={ANALYTTKATALOG} onApneFortolkning={onApneFortolkning} onLukk={onLukk} kuratering={kuratering} />
+          <Stoffregisterside onLukk={onLukk} kuratering={kuratering} />
         )}
       </StoffregisterkildeProvider>
     </ToppmenyKilde>
   )
 }
 
-const onApneFortolkning = vi.fn()
 const onLukk = vi.fn()
 
 async function vis({
@@ -139,7 +137,6 @@ async function vis({
   lager = lagLager(),
   kuratering,
 }: { admin?: boolean; kanEndre?: boolean; lager?: ReturnType<typeof lagLager>; kuratering?: Kurateringsklient } = {}) {
-  onApneFortolkning.mockClear()
   onLukk.mockClear()
   render(
     <TipsLag>
@@ -210,24 +207,23 @@ describe('lesevisningen', () => {
     expect(within(antidepressiver).getByRole('heading', { level: 3, name: 'NDRI' })).toBeTruthy()
   })
 
-  it('åpner et stoff som kort med oppsummeringen og veiene til fagsiden og fortolkningen', async () => {
+  it('åpner et stoff som kort med oppsummeringen og veien til fagsiden, uten fortolkningen', async () => {
     await vis()
     const kort = await apne('Bupropion', await apne('Antidepressiver'))
     expect(within(kort).getByText('Et syntetisk sammendrag.')).toBeTruthy()
     expect(within(kort).getByRole('link', { name: 'Åpne fagside' }).getAttribute('href')).toBe('#/stoff/bupropion')
-    await userEvent.click(within(kort).getByRole('button', { name: 'Åpne fortolkning' }))
-    expect(onApneFortolkning).toHaveBeenCalledWith(ANALYTTKATALOG.finn('HBUP')!.fortolkning)
-    expect(within(kort).getByText('Analyser: HBUP')).toBeTruthy()
+    // Fortolkningen er et eget domene (docs/domener.md): ingen analysekoder og ingen vei dit.
+    expect(within(kort).queryByRole('button', { name: 'Åpne fortolkning' })).toBeNull()
+    expect(within(kort).queryByText(/HBUP|^Analyser/)).toBeNull()
     // Kortet er bare for å lese: det som endrer stoffet, står i redigeringen.
     expect(within(kort).queryByRole('button', { name: /Arkiver|Slett/ })).toBeNull()
     expect(within(kort).queryByRole('combobox')).toBeNull()
 
     const teststoff = await apne('Teststoff', await apne('Andre stoffer'))
     expect(within(teststoff).getByText('Ingen oppsummering ennå. Den skrives på fagsiden.')).toBeTruthy()
-    expect(within(teststoff).queryByRole('button', { name: 'Åpne fortolkning' })).toBeNull()
   })
 
-  it('viser ikke analysekodene på et lukket kort', async () => {
+  it('viser navnet og begynnelsen på oppsummeringen på et lukket kort', async () => {
     await vis()
     const antidepressiver = await apne('Antidepressiver')
     const lukket = within(antidepressiver).getByRole('button', { name: /^Bupropion/ })
@@ -235,9 +231,8 @@ describe('lesevisningen', () => {
     // Det som vises på et lukket kort, er overskriften med navnet og begynnelsen på oppsummeringen.
     const hode = (knapp: HTMLElement) => knapp.closest('.stoffkort')!.querySelector('.skuff__hode')!.textContent
     expect(hode(lukket)).toBe('BupropionEt syntetisk sammendrag.')
-    // Et stoff uten oppsummering viser bare navnet, ikke analysene det er koblet til.
+    // Et stoff uten oppsummering viser bare navnet.
     expect(hode(within(antidepressiver).getByRole('button', { name: /^Sertralin/ }))).toBe('Sertralin')
-    expect(within(await apne('Sertralin', antidepressiver)).getByText(/^Analyser: /)).toBeTruthy()
   })
 
   it('lukker siden med Escape', async () => {
@@ -361,7 +356,7 @@ describe('arkivet og papirkurven', () => {
     const lager = await vis()
     expect(screen.queryByRole('heading', { name: 'Papirkurv' })).toBeNull()
     await rediger()
-    // Bupropion har innhold og er koblet til fortolkningen: den kan bare arkiveres.
+    // Bupropion har innhold: andre enn systemarkitektene kan bare arkivere den.
     const bupropion = await meny('Bupropion')
     expect(within(bupropion).getByRole('button', { name: 'Arkiver' })).toBeTruthy()
     expect(within(bupropion).queryByRole('button', { name: /^Slett/ })).toBeNull()
@@ -586,11 +581,11 @@ describe('på fagsiden', () => {
     expect(screen.queryByRole('button', { name: 'Mer for fagsiden' })).toBeNull()
   })
 
-  it('lar ikke en fagside fortolkningen lenker til, slettes', async () => {
+  it('lar systemarkitektene slette en fagside med innhold, også når fortolkningen har en analyse for stoffet', async () => {
     await visFagside('bupropion', { admin: true })
     await userEvent.click(await screen.findByRole('button', { name: 'Mer for fagsiden' }))
     expect(screen.getByRole('button', { name: /Arkiver fagsiden/ })).toBeTruthy()
-    expect(screen.queryByRole('button', { name: /Slett fagsiden/ })).toBeNull()
+    expect(screen.getByRole('button', { name: /Slett fagsiden/ })).toBeTruthy()
   })
 
   it('sier når en fagside i papirkurven slettes for godt, og gjenoppretter den', async () => {

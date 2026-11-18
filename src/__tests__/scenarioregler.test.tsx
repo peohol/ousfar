@@ -6,6 +6,7 @@
  * importert fra); at de gir det samme som den opprinnelige fortolkningen,
  * prøves i `rusparitet.test.ts`.
  */
+import { STOFFREGISTER } from '../domain/stoffregister'
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import { renderMedOusKatalog } from './hjelp/ouskatalogkilde'
 import userEvent from '@testing-library/user-event'
@@ -15,7 +16,7 @@ import { FaginnholdskildeProvider } from '../components/stoffside/Faginnholdskil
 import { Scenarioregler } from '../components/regler/Scenarioregler'
 import { Fortolkningsredigering } from '../components/regler/Fortolkningsredigering'
 import { TipsLag } from '../components/Tips'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { Samtidighetskonflikt, type Faginnholdslager } from '../faginnhold/lagring'
 import { rusModulFor } from '../domain/rus'
 import type { Faginnholdsleser, Regelsettutgave, Scenarioregelsettutgave, Utgave } from '../faginnhold/lesing'
@@ -63,9 +64,7 @@ function visSide(stoff: string) {
       <FaginnholdskildeProvider kilde={{ leser, lager, kanRedigere: false }}>
         <Stoffside
           stoff={stoff}
-          register={OUS_REGISTER}
-          katalog={katalog}
-          onApneFortolkning={vi.fn()}
+          register={STOFFREGISTER}
           onLukk={vi.fn()}
         />
       </FaginnholdskildeProvider>

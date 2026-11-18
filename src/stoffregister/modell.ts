@@ -168,13 +168,9 @@ const nei = (grunn: string): Lov => ({ lov: false, grunn })
 /**
  * Om fagsiden kan legges i papirkurven. Alle kan slette en side som bare har
  * et navn; en side med innhold bare en systemarkitekt. Et stoff uten side i
- * databasen, eller som fortolkningen lenker til, kan bare arkiveres: siden
- * lenkene dit skal virke, kan den ikke forsvinne.
+ * databasen kan bare arkiveres.
  */
 export function kanSletteStoff(stoff: Registerstoff, admin: boolean): Lov {
-  if (stoff.analytter) {
-    return nei('Fagsiden er koblet til laboratorieanalyser i fortolkningen og kan ikke slettes. Arkiver den i stedet.')
-  }
   if (!stoff.side) return nei('Stoffet har ingen fagside å slette. Arkiver det i stedet.')
   if (stoff.innhold && !admin) return nei('Bare systemarkitektene kan slette en fagside med innhold. Arkiver den i stedet.')
   return JA

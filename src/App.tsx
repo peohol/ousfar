@@ -30,7 +30,6 @@ import { Fagsok } from './components/sok/Fagsok'
 import { Sokeside } from './components/sok/Sokeside'
 import { Toppmeny } from './components/toppmeny/Toppmeny'
 import { ToppmenyInnhold, ToppmenyKilde } from './components/toppmeny/Toppmenykilde'
-import { Toppmenyknapp } from './components/toppmeny/Toppmenyknapp'
 import { Ikonknapp } from './components/Ikonknapp'
 import { Versjonspille } from './components/Versjonspille'
 import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
@@ -48,7 +47,6 @@ import { filtrertPool } from './domain/analysemetoder'
 import { erEtgAnalytt, etgTilfeller, type EtgAlternativ, type Etgtilfeller } from './domain/etg'
 import type { Rute } from './domain/flytting'
 import { erRedigering, fortolkningsnokkel, fortolkningsrute, lesRute, redigeringsrute, sidesti } from './domain/rute'
-import { analytterForFortolkning, stoffbeskrivelse, stofferForFortolkning } from './domain/koblinger'
 import { rusModulFor } from './domain/rus'
 import { erThcAnalytt } from './domain/thc'
 import { search } from './domain/search'
@@ -68,6 +66,9 @@ import { Versjonsside } from './components/kuratering/Versjonsside'
 import { lagEndringsloggleser } from './endringslogg/api'
 import type { Endringskontekst } from './endringslogg/operasjon'
 import { endringssideFor } from './endringslogg/sider'
+import { analytterForFortolkning } from './domain/analyttkatalog'
+import { fagsidekortFra, lesReferanseomrader } from './katalog/referanseomrader'
+import { stoffbeskrivelse } from './domain/stoffregister'
 import { Innholdslogg } from './components/endringslogg/Innholdslogg'
 import { lesScenarioregler, reglerForModul } from './faginnhold/scenarioregler'
 import { thcReglerFra } from './faginnhold/thcregler'
@@ -200,8 +201,9 @@ function Arbeidsflate({
   grupper: Gruppekilde
 }) {
   // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
-  // egen katalog. Fagsidene er stoffenes, i stoffregisteret; koblingene i
-  // katalogen er veien mellom de to.
+  // egen katalog. Fagsidene er stoffenes, i stoffregisteret. De to er helt
+  // adskilte domener (docs/domener.md): ingen av dem lenker til eller leser
+  // fra den andre.
   const katalog = useAnalyttkatalog()
   // Fortolkningen overlever en oppdatering av appen, med analytten lest tilbake etter koden.
   const fortolkningsformen = useMemo(() => fortolkningsform(katalog.fortolkninger), [katalog])
@@ -302,12 +304,13 @@ function Arbeidsflate({
   const etgAlternativer = etgtilfeller?.status === 'klar' ? etgtilfeller.alternativer : INGEN_ALTERNATIVER
 
   // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
-  // når appen åpnes, sammen med referanseområdet stoffsidene har for
-  // hver analytt. Steg 2 og tastene bruker det som gjelder analytten.
+  // når appen åpnes. Referanseområdet for hver analytt står i fagmiljøets
+  // egen katalog (eller, i overgangen, der det stod før: `lesReferanseomrader`).
+  // Steg 2 og tastene bruker det som gjelder analytten.
   const hentRegler = useCallback(async () => {
     const [regelsett, referanseomrader] = await Promise.all([
       lesPubliserteRegelsett(faginnhold.leser),
-      faginnhold.leser.lesReferanseomrader('publisert', katalog),
+      lesReferanseomrader(katalog, fagsidekortFra(klient())),
     ])
     return { regelsett, referanseomrader }
   }, [faginnhold.leser, katalog])
@@ -340,13 +343,12 @@ function Arbeidsflate({
   // retten til å redigere faginnholdet.
   const stoffregister = useLagStoffregisterkilde({
     lager: registerlager,
-    koblinger: katalog.koblinger,
     admin: rettigheter.systemarkitekt,
     kanEndre: rettigheter.stoffregister,
     ...(faginnhold.kanRedigere && rettigheter.systemarkitekt && rettigheter.stoffregister && { opprettSide }),
   })
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
-  // En gammel adresse til en analytt tolkes med koblingene og katalogen.
+  // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
   const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
   const [rute, gaaTil] = useRute(apneFraAdressen, adressegrunnlag)
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
@@ -370,9 +372,8 @@ function Arbeidsflate({
 
   // Fagsøket: indeksen over alt publisert fagstoff, hentet når appen har tid
   // til overs etter at den er åpnet, eller første gang noen søker før det. De
-  // andre navnene et stoff er kjent under, står i stoffregisteret, som både
-  // fagsøket og analyttsøket bruker. Søket viser selv at det henter, så
-  // hentingen står ikke i lasteindikatoren.
+  // andre navnene et stoff er kjent under, står i stoffregisteret. Søket viser
+  // selv at det henter, så hentingen står ikke i lasteindikatoren.
   const hentSokeindeks = useCallback<Sokeindekshenter>(
     (delvis) => {
       const stille = iBakgrunnen(klient())
@@ -386,11 +387,11 @@ function Arbeidsflate({
           versjoner: lagVersjonsleser(stille),
           mellomlager: nettleserlager,
         },
-        { katalog },
+        {},
         delvis,
       )
     },
-    [katalog],
+    [],
   )
   const sokeindeks = useSokeindeks(hentSokeindeks)
   useNaarLedig(sokeindeks.krev)
@@ -401,7 +402,7 @@ function Arbeidsflate({
     const skjult = (stoff: string) => ['arkivert', 'papirkurv'].includes(register.status(stoff))
     return { ...sokbar, indeks: utenSider(sokbar.indeks, skjult) }
   }, [sokbar, register])
-  const beskrivSide = useCallback((stoff: string) => stoffbeskrivelse(stoff, register, katalog), [register, katalog])
+  const beskrivSide = useCallback((stoff: string) => stoffbeskrivelse(stoff, register), [register])
   const gaaTilAdresse = useCallback(
     (adresse: string) => gaaTil(lesRute(adresse, register, katalog)),
     [gaaTil, register, katalog],
@@ -413,18 +414,16 @@ function Arbeidsflate({
   const regelsett = regeloppslag?.status === 'klar' ? regeloppslag.regelsett : null
   const valgene = useMemo(() => (regelsett ? regelsettvalg(regelsett) : []), [regelsett])
 
-  // En administrator kan ha publisert et nytt referanseområde på en
-  // stoffside. Det hentes når hen går tilbake til fortolkningen.
+  // En administrator kan ha publisert endringer på en fagside. Stoffsidene
+  // hentes på nytt når hen går fra den, og fagsøket henter indeksen på nytt
+  // neste gang det brukes, eller med én gang når hen går rett til søkesiden:
+  // den har alt bedt om indeksen før denne effekten kjører, og ber ikke igjen.
   const varPaInfoside = useRef(paaInfoside)
-  // Det samme gjelder fagsøket, som henter indeksen på nytt neste gang det
-  // brukes, eller med én gang når hen går rett til søkesiden: den har alt bedt
-  // om indeksen før denne effekten kjører, og ber ikke igjen.
   const { hentPaNytt } = regler
   const { foreld: foreldSokeindeks } = sokeindeks
   const paaSokeside = rute.side === 'sok'
   useEffect(() => {
     if (varPaInfoside.current && !paaInfoside && faginnhold.kanRedigere) {
-      hentPaNytt()
       hentStoffsiderPaNytt()
       foreldSokeindeks(paaSokeside)
     }
@@ -433,7 +432,6 @@ function Arbeidsflate({
     paaInfoside,
     paaSokeside,
     faginnhold.kanRedigere,
-    hentPaNytt,
     hentStoffsiderPaNytt,
     foreldSokeindeks,
   ])
@@ -556,18 +554,6 @@ function Arbeidsflate({
     [slippBildet],
   )
 
-  /**
-   * «Åpne fortolkning» på en stoffside: modulen koden hører til, som
-   * om den var valgt i søket. Var den alt åpen, står den som den sto.
-   */
-  const apneFortolkning = useCallback(
-    (analyte: Analyte) => {
-      if (state.analyte?.kode !== analyte.kode) velgAnalytt(analyte)
-      gaaTil(fortolkningsrute(analyte.kode))
-    },
-    [state.analyte, velgAnalytt, gaaTil],
-  )
-
   /** Tilbake til fortolkningen slik den sto. */
   const lukkInfoside = useCallback(() => gaaTil(fortolkningsrute(state.analyte?.kode)), [gaaTil, state.analyte])
 
@@ -604,13 +590,6 @@ function Arbeidsflate({
     }
     gaaTil(fortolkningsrute(state.analyte?.kode), { erstatt: oppstart })
   }, [rute, analyttnokkel, state.analyte, velgAnalytt, gaaTil, slippBildet, dispatch, analyttEtterNokkel])
-
-  /**
-   * Stoffsidene til modulen som fortolkes: toppmenyens «Åpne stoffside», eller
-   * én knapp per stoff når kodene hører til flere (DIAZ · DMI · OXA). EtG og
-   * EtS fører begge til etanol.
-   */
-  const fagsider = useMemo(() => (state.analyte ? stofferForFortolkning(state.analyte, register) : []), [state.analyte, register])
 
   // Analyttene fortolkningen gjelder, for «Foreslå endring» i reglene og redigeringsretten.
   const fortolkningsanalytter = useMemo(
@@ -849,24 +828,6 @@ function Arbeidsflate({
                     konto={<Kontomeny tema={tema} bevegelse={bevegelse} />}
                   />
 
-                  {/* Fortolkningens handlinger i toppmenyen (i dokken på smale
-                      flater). Stoffsiden, søkesiden og redigeringen har sine
-                      egne mens de vises. */}
-                  {!fortolkningSkjult && fagsider.length > 0 && (
-                    <ToppmenyInnhold spor="hovedhandling">
-                      {fagsider.map((stoff) => (
-                        <Toppmenyknapp
-                          key={stoff.slug}
-                          ikon="indik"
-                          variant="primar"
-                          {...(fagsider.length > 1 && { 'aria-label': `Åpne fagsiden for ${stoff.navn}` })}
-                          onClick={() => gaaTil({ side: 'stoff', stoff: stoff.slug })}
-                        >
-                          {fagsider.length > 1 ? stoff.navn : 'Åpne fagside'}
-                        </Toppmenyknapp>
-                      ))}
-                    </ToppmenyInnhold>
-                  )}
                   {!fortolkningSkjult && state.analyte && (
                     <ToppmenyInnhold spor="redigering">
                       {kanRedigeres && (
@@ -911,8 +872,6 @@ function Arbeidsflate({
                           stoff={rute.stoff}
                           sted={rute.sted}
                           register={register}
-                          katalog={katalog}
-                          onApneFortolkning={apneFortolkning}
                           onLukk={lukkInfoside}
                         />
                       </FaginnholdskildeProvider>
@@ -927,16 +886,12 @@ function Arbeidsflate({
                             stoff={rute.stoff}
                             nr={rute.nr}
                             register={register}
-                            katalog={katalog}
-                            onApneFortolkning={apneFortolkning}
                             onGaaTil={gaaTil}
                           />
                         ) : (
                           <Kurateringsside
                             gren={rute.gren}
                             register={register}
-                            katalog={katalog}
-                            onApneFortolkning={apneFortolkning}
                             onGaaTil={gaaTil}
                           />
                         )}
@@ -947,8 +902,6 @@ function Arbeidsflate({
                   {rute.side === 'stoffregister' && (
                     <main className="scene scene--stoffregister">
                       <Stoffregisterside
-                        katalog={katalog}
-                        onApneFortolkning={apneFortolkning}
                         onLukk={lukkInfoside}
                         kuratering={faginnhold.kuratering}
                       />

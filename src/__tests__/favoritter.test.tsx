@@ -30,11 +30,11 @@ vi.mock('../auth/okt', () => ({
 }))
 vi.mock('../auth/klient', async () => {
   const { DAGENS_REGELSETT } = await import('./hjelp/dagensregler')
-  const { publiserteStoffrader } = await import('./hjelp/stoffreferanseomrader')
+  const { publiserteRader } = await import('./hjelp/dagensregler')
   const { scenarioregeldata } = await import('./hjelp/etggrunnlag')
   const { OUS_KATALOGSVAR } = await import('./hjelp/ouskatalogkilde')
   const { thcRegelsettutgave } = await import('./hjelp/thcgrunnlag')
-  const vanlige = publiserteStoffrader(DAGENS_REGELSETT)
+  const vanlige = publiserteRader(DAGENS_REGELSETT)
   const thc = thcRegelsettutgave()
   const rader: Record<string, unknown> = {
     ...vanlige,

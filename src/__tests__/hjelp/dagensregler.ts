@@ -114,9 +114,9 @@ export function dagensKommentar(kode: string, niva: Level): string {
 /**
  * Det databasen gir for disse regelsettene som de publiserte: regelsettene
  * uten tekstene (`les_intervallregelsett`) og kommentarobjektene de peker på
- * (`les_kommentarer`). Referanseområdene står på stoffsidene; se
- * `publiserteStoffrader` i `stoffreferanseomrader.ts`. For testene som
- * erstatter databasen.
+ * (`les_kommentarer`). Referanseområdene står i analyttkatalogen
+ * (`OUS_KATALOGSVAR` i `ouskatalogkilde.tsx`). For testene som erstatter
+ * databasen.
  */
 export function publiserteRader(regelsett: Intervallregelsett[]) {
   const utgave = <T,>(id: string, innhold: T) => ({

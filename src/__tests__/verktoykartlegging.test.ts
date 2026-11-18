@@ -24,8 +24,7 @@ import {
 import { lesSwitchtabell } from '../verktoy/kildetabeller'
 import { lagRapport, RAPPORTFIL } from '../verktoy/rapport'
 import { VERKTOY_FAGSIDER, VERKTOY_FESTKOBLINGER, VERKTOY_KATEGORIER } from '../verktoy/fagsider'
-import { stoffslug } from '../domain/stoffregister'
-import { OUS_REGISTER } from '../domain/ouskatalog'
+import { STOFFREGISTER, stoffslug } from '../domain/stoffregister'
 
 const DATA = lesKartdata()
 const kopi = (): Kartdata => structuredClone(DATA)
@@ -255,9 +254,9 @@ describe('Fagsidene og FEST-koblingene (P2)', () => {
 
   it('har hvert virkestoff i stoffregisterfilen, med nøkkelen og alle kartleggingens søkealiaser', () => {
     for (const v of DATA.kartlegging.virkestoffer) {
-      const stoff = OUS_REGISTER.finn(v.nokkel)
+      const stoff = STOFFREGISTER.finn(v.nokkel)
       expect(stoff?.navn, v.nokkel).toBe(v.navn)
-      for (const alias of v.aliaser) expect(OUS_REGISTER.kanonisk(alias)?.slug, `${v.nokkel}: ${alias}`).toBe(v.nokkel)
+      for (const alias of v.aliaser) expect(STOFFREGISTER.kanonisk(alias)?.slug, `${v.nokkel}: ${alias}`).toBe(v.nokkel)
     }
   })
 

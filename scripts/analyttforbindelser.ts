@@ -14,14 +14,17 @@
  * Faginnholdet endres ikke: kortet med en analyttkode i `gjelder` står som før,
  * så appen fra før denne endringen finner det fortsatt, og den nye appen leser
  * det som kortet for forbindelsen koden måler (`kortetsForbindelse` i
- * `src/domain/koblinger.ts`). Omskrivingen av kortet kommer i et eget, senere
- * trinn.
+ * `src/faginnhold/datakortplasser.ts`). Omskrivingen av kortet kommer i et
+ * eget, senere trinn (#405).
+ *
+ * Migrasjonen er kjørt. Appen bruker ikke lenger forbindelsene og datakortene
+ * i katalogen: fortolkningen og fagsidene er adskilte domener
+ * (`docs/domener.md`).
  */
 import { createHash } from 'node:crypto'
-import type { Katalogkodedata } from '../src/domain/analyttkatalog'
-import { OUS_ANALYTTFORBINDELSER } from '../src/domain/ouskatalog'
+import { OUS_ANALYTTFORBINDELSER, type Analyttforbindelse } from '../src/domain/ouskatalog'
 
-type Grunnlag = ReadonlyMap<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>>
+type Grunnlag = ReadonlyMap<string, Analyttforbindelse>
 
 /** Kodene med forbindelsen og datakortene, i kodenes rekkefølge, slik migrasjonen legger dem inn. */
 export function analyttforbindelserGrunnlag(forbindelser: Grunnlag = OUS_ANALYTTFORBINDELSER) {

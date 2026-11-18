@@ -1,18 +1,9 @@
-import registerdata from '../data/stoffregister.json'
 import koblingsdata from '../data/analyttkoblinger.json'
 import forbindelsesdata from '../data/analyttforbindelser.json'
 import { antihypertensivdatasett, dataset } from './analytes'
-import {
-  byggKatalog,
-  type Analysemetode,
-  type Analyttkoblingsdata,
-  type Katalogdata,
-  type Katalogkodedata,
-  type Katalogoppforing,
-} from './analyttkatalog'
+import { byggKatalog, type Analysemetode, type Katalogdata, type Katalogoppforing } from './analyttkatalog'
 import { displayName } from './names'
 import type { RusModul } from './rus'
-import { byggStoffregister, type Registerdata } from './stoffregister'
 import type { Analyte } from '../types'
 
 /**
@@ -36,12 +27,16 @@ import type { Analyte } from '../types'
  * - koblingene fra kodene til stoffene, som sto i `src/data/stoffregister.json`
  *   og nå står i `src/data/analyttkoblinger.json`;
  * - forbindelsen hver kode måler, i forbindelsesregisteret, og hvilke
- *   datakort på fagsidene den bruker, fra `src/data/analyttforbindelser.json`
+ *   datakort på fagsidene den brukte, fra `src/data/analyttforbindelser.json`
  *   (kom til etter flyttingen, med sin egen migrasjon:
- *   `scripts/analyttforbindelser.ts`). Datakortene er de appen brukte før:
- *   sidens egne for den første primære koden for hvert stoff, og dem for
- *   forbindelsen for de andre — unntatt urinanalysene (THC-syre, EtG og EtS),
- *   som ikke bruker kortene, siden de gjelder serum.
+ *   `scripts/analyttforbindelser.ts`).
+ *
+ * Koblingene, forbindelsene og datakortene er bare grunnlaget for de kjørte
+ * migrasjonene. Appen bruker dem ikke lenger: fortolkningen og fagsidene er
+ * adskilte domener (`docs/domener.md`), og fortolkningen har sitt eget
+ * referanseområde per kode i katalogen. Det er ikke med her: det ble kopiert
+ * i databasen fra fagsidene slik de var publisert
+ * (`*_fortolkning_skilt_fra_fagsidene.sql`), og står ikke i repoet.
  */
 
 /* --- Analysemetodene ----------------------------------------------------- */
@@ -183,10 +178,17 @@ const ETG_OPPFORING: Analyte = {
 
 /* --- Katalogen ----------------------------------------------------------- */
 
-/** Forbindelsen hver analyttkode måler og datakortene den bruker, etter koden. */
-export const OUS_ANALYTTFORBINDELSER: ReadonlyMap<string, Pick<Katalogkodedata, 'forbindelse' | 'datakort'>> = new Map(
-  (forbindelsesdata as { analyttforbindelser: ({ kode: string } & Pick<Katalogkodedata, 'forbindelse' | 'datakort'>)[] })
-    .analyttforbindelser.map(({ kode, forbindelse, datakort }) => [kode, { forbindelse, datakort }] as const),
+/** Forbindelsen en analyttkode måler, og hvilke datakort på fagsidene den brukte. Bare for de kjørte migrasjonene. */
+export interface Analyttforbindelse {
+  forbindelse: string | null
+  datakort: 'egne' | 'forbindelse' | null
+}
+
+/** Forbindelsen hver analyttkode måler og datakortene den brukte, etter koden. */
+export const OUS_ANALYTTFORBINDELSER: ReadonlyMap<string, Analyttforbindelse> = new Map(
+  (forbindelsesdata as { analyttforbindelser: ({ kode: string } & Analyttforbindelse)[] }).analyttforbindelser.map(
+    ({ kode, forbindelse, datakort }) => [kode, { forbindelse, datakort }] as const,
+  ),
 )
 
 function oppforing(
@@ -210,12 +212,7 @@ function oppforing(
     maleomrade: a.maleomrade,
     antihypertensiv: a.antihypertensiv ?? null,
     aliaser: [...a.aliaser],
-    koder: koder.map(({ kode, navn }) => ({
-      kode,
-      navn,
-      forbindelse: OUS_ANALYTTFORBINDELSER.get(kode)?.forbindelse ?? null,
-      datakort: OUS_ANALYTTFORBINDELSER.get(kode)?.datakort ?? null,
-    })),
+    koder: koder.map(({ kode, navn }) => ({ kode, navn, referanseomrade: null })),
   }
 }
 
@@ -236,9 +233,18 @@ function rusoppforing(m: RusModul): Katalogoppforing {
   return oppforing(a, 'scenario', m.id, m.analytter)
 }
 
-/** Koblingene fra analyttkodene til stoffene, i datafilens rekkefølge. */
+/** En kobling fra en analyttkode til et stoff, slik den ble importert. Bare for de kjørte migrasjonene. */
+export interface Analyttkoblingsdata {
+  kode: string
+  stoff: string
+  relasjon: string
+  primar: boolean
+  merknad: string | null
+}
+
+/** Koblingene fra analyttkodene til stoffene, i datafilens rekkefølge, slik de ble importert. */
 export const OUS_ANALYTTKOBLINGER: Analyttkoblingsdata[] = (
-  koblingsdata as { analyttkoblinger: Registerdata['analyttkoblinger'] }
+  koblingsdata as { analyttkoblinger: { kode: string; stoff: string; relasjon: string; primar?: boolean; merknad?: string | null }[] }
 ).analyttkoblinger.map((k) => ({
   kode: k.kode,
   stoff: k.stoff,
@@ -246,15 +252,6 @@ export const OUS_ANALYTTKOBLINGER: Analyttkoblingsdata[] = (
   primar: k.primar ?? true,
   merknad: k.merknad ?? null,
 }))
-
-/** Stoffregisterets datafil med koblingene, slik registeret hadde den før flyttingen. */
-export const OUS_REGISTERDATA: Registerdata = {
-  stoffer: (registerdata as Registerdata).stoffer,
-  analyttkoblinger: (koblingsdata as { analyttkoblinger: Registerdata['analyttkoblinger'] }).analyttkoblinger,
-}
-
-/** Stoffregisteret med koblingene, slik appen bygger det når katalogen er hentet. */
-export const OUS_REGISTER = byggStoffregister(undefined, OUS_REGISTERDATA)
 
 /**
  * Katalogen til OUS Klinisk farmakologi i formen databasen gir den, med
@@ -273,7 +270,6 @@ export const OUS_KATALOGDATA: Katalogdata = {
     ...RUS_MODULER.map(rusoppforing),
     oppforing(ETG_OPPFORING, 'etg', ETG_MODUL, ETG_ANALYTTER, 'Etylglukuronid og etylsulfat i urin'),
   ],
-  koblinger: OUS_ANALYTTKOBLINGER,
 }
 
 /** Katalogen bygd av kildedataene, som appen ville bygd den av databasens svar. */

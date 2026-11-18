@@ -9,12 +9,13 @@
  * (`versjonering.test.ts`); her kontrolleres at hele loggen, gammel og ny,
  * henger sammen.
  */
+import { STOFFREGISTER } from '../stoffregister'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
 import { berorer, HELE_APPEN, VINDUER } from '../../oppdatering/sider'
-import { FORTOLKNINGSOPPFORINGER, OUS_REGISTER } from '../ouskatalog'
+import { FORTOLKNINGSOPPFORINGER } from '../ouskatalog'
 import {
   FORTOLKNING,
   fortolkningsrute,
@@ -180,10 +181,10 @@ const FORSTE_MED_OMRADER = '1.91.0'
 const ALLE_SIDER = [
   FORTOLKNING,
   ...FORTOLKNINGSOPPFORINGER.flatMap((a) => [fortolkningsrute(a.kode), redigeringsrute(a.kode)]),
-  ...OUS_REGISTER.stoffer.map((s): Rute => ({ side: 'stoff', stoff: s.slug })),
+  ...STOFFREGISTER.stoffer.map((s): Rute => ({ side: 'stoff', stoff: s.slug })),
   // Versjonene og kurateringsgrenene har adresser som ikke kan listes opp på
   // forhånd; ett eksempel på hver er nok til å kjenne igjen områdene.
-  { side: 'versjon', stoff: OUS_REGISTER.stoffer[0]!.slug, nr: 1 } satisfies Rute,
+  { side: 'versjon', stoff: STOFFREGISTER.stoffer[0]!.slug, nr: 1 } satisfies Rute,
   { side: 'kuratering', gren: '00000000-0000-4000-8000-000000000000' } satisfies Rute,
   // Det samme for gruppene og endringsforslagene.
   { side: 'grupper' } satisfies Rute,
