@@ -4,7 +4,8 @@ import { Lastesirkel } from '../Lasteindikator'
 import { Panelhode } from '../Panelhode'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
-import type { Hendelse } from './hendelse'
+import type { Hendelse, Maal } from './hendelse'
+import { Maallenke } from './Maallenke'
 import { Hendelsesliste } from './Hendelsesliste'
 
 /** Hvor langt innholdet i et panel er kommet. Hvert panel henter for seg. */
@@ -20,8 +21,11 @@ export interface OppsummeringskortProps {
   innhold: Panelinnhold
   /** Linjen når det ikke er noe å vise. */
   tomtekst?: string
-  /** Tekstlenken nederst til hele lista («Vis alle»). Vises bare når det er noe i panelet. */
-  visAlle?: { tekst: string; til: string }
+  /**
+   * Tekstlenken nederst til hele lista («Vis alle»). Vises bare når det er noe
+   * i panelet. Fører dit som en hendelse ({@link Maal}).
+   */
+  visAlle?: { tekst: string } & Maal
   /** Annet innhold under hendelsene, som én sekundærknapp i et gruppepanel. */
   children?: ReactNode
 }
@@ -57,10 +61,10 @@ export function Oppsummeringskort({ tittel, ikon, innhold, tomtekst, visAlle, ch
       {innhold.status === 'klar' && <Hendelsesliste hendelser={innhold.hendelser} tomtekst={tomtekst} />}
       {children}
       {visAlle && innhold.status === 'klar' && innhold.hendelser.length > 0 && (
-        <a className="oppsummering__alle" href={visAlle.til}>
+        <Maallenke maal={visAlle} className="oppsummering__alle">
           {visAlle.tekst}
           <Ikon navn="chev" />
-        </a>
+        </Maallenke>
       )}
     </section>
   )

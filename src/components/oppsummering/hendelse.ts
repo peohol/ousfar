@@ -7,7 +7,24 @@ import type { Ikonnavn } from '../ikon/register'
  * Hele raden er lenken til selve hendelsen, aldri bare til en liste: riktig
  * idé, oppgave, kommentar, samtale eller seksjon på en fagside.
  */
-export interface Hendelse {
+export type Hendelse = Hendelsesinnhold & Maal
+
+/**
+ * Hvor en rad eller en «Vis alle»-lenke fører. Med en adresse er den en
+ * vanlig lenke, så midtklikk, ny fane og langt trykk virker; `ved` kalles i
+ * tillegg (merke et varsel lest). Uten adresse er den en knapp som bare kaller
+ * `ved`, for noe som ikke har egen adresse, som en føring i endringsloggen.
+ */
+export type Maal =
+  | {
+      /** Adressen i appen den fører til (`#/…`), også en direktelenke. */
+      til: string
+      /** Kalles i tillegg til lenken, ikke i stedet for den. */
+      ved?: () => void
+    }
+  | { til?: undefined; ved: () => void }
+
+interface Hendelsesinnhold {
   /** Stabil nøkkel for hendelsen, så samme hendelse ikke tegnes to ganger. */
   id: string
   ikon: Ikonnavn
@@ -19,8 +36,6 @@ export interface Hendelse {
   tid?: string
   /** Kort tekst i stedet for tiden, som «Pågår» eller «3 nye». Går foran `tid`. */
   merknad?: string
-  /** Adressen i appen raden fører til (`#/…`), også en direktelenke. */
-  til: string
   /** Brukeren har ikke sett hendelsen. Vises med prikk og skjult tekst. */
   ulest?: boolean
 }
