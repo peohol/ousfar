@@ -51,20 +51,26 @@ forbindelsesregisteret i en PR.
 
 ## Overgangen
 
-Appen og databasen rulles ut hver for seg. Databasen gir fortsatt koblingene,
-forbindelsene og datakortbruken i `les_analyttkatalog()`, og
-`les_stoffreferanseomrader` står, så faner med appen fra før virker til de
-lastes på nytt.
+Da skillet kom, sto koblingene fra kodene til stoffene fortsatt i databasen for
+faner med appen fra før, og appen kunne finne referanseområdene på fagsidene
+mens databasen ikke var oppdatert. Begge deler er fjernet, etter Peders ja
+(`20261118120000_koblingene_fjernet.sql`, #405): tabellene
+`analyttkatalog_koblinger` og `analyttkoblede_stoffer`, kolonnene `forbindelse`
+og `datakort` i `analyttkatalog_koder` og funksjonen
+`les_stoffreferanseomrader`. Det ene datakortet med en analyttkode i `gjelder`
+(OTRAM på tramadolsiden) gjelder nå forbindelsen, og databasen tar bare imot
+en forbindelsesnøkkel der.
 
-Møter den nye appen en database der migrasjonen ikke er kjørt ennå (eller der
-den stoppet), har katalogen ikke referanseområdene. Da finner fortolkningen
-dem som før, på fagsidene, etter samme regel som migrasjonen kopierer dem med,
-og steg 2 viser de samme tallene før og etter (`lesReferanseomrader` i
-`src/katalog/referanseomrader.ts`). Kan de ikke leses, sier fortolkningen fra i
-stedet for å vise steg 2 uten grensene. Det er det eneste stedet fortolkningen
-leser fra fagsidene.
+Peder bestemte 18.11.2026 at slettingen skulle komme med en gang. Å vente gir
+ingen sikkerhet, siden en fane kan stå åpen hvor lenge som helst. Slik går det
+med en fane som fortsatt har appen fra før skillet (#457):
 
-Når overgangen er over, fjernes dette sammen med feltene fra før i
-`les_analyttkatalog()`, `les_stoffreferanseomrader`, `analyttkatalog_koblinger`
-og `analyttkoblede_stoffer` (#405); det er en sletting og venter på Peders ja.
-
+- Den har alt hentet katalogen og referanseområdene, og beholder dem når en ny
+  henting feiler (`useHenting`). Tallene er de samme som nå. Den viser aldri
+  et steg 2 uten grensene eller med andre tall.
+- Det den henter på nytt etterpå, feiler med en melding. Det gjelder
+  katalogen ved et bytte av fagmiljø. Den lastes på nytt, og da er det den
+  nye appen (det finnes ingen service worker som holder på den gamle).
+- Omskrivingen av kortet og slettingen av `les_stoffreferanseomrader` skjer i
+  samme transaksjon. Derfor finnes det ikke et øyeblikk der appen fra før
+  15.11 (som finner kortet bare med koden) kunne lese kortet uten koden.

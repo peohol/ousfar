@@ -95,32 +95,6 @@ describe('referanseområdet i katalogen', () => {
     })),
   })
 
-  /**
-   * Svaret fra en database der migrasjonen ikke er kjørt: kodene uten
-   * `referanseomrade`, med forbindelsen og datakortene, og koblingene.
-   */
-  const fraFor = {
-    ...OUS_KATALOGDATA,
-    oppforinger: OUS_KATALOGDATA.oppforinger.map((o) => ({
-      ...o,
-      koder: o.koder.map(({ kode, navn }) => ({
-        kode,
-        navn,
-        forbindelse: { DMI: 'nordiazepam', OTRAM: 'o-desmetyltramadol' }[kode] ?? null,
-        datakort: { DMI: 'forbindelse', OTRAM: 'forbindelse', NOR: 'egne', TRAM: 'egne', DIAZ: 'egne' }[kode] ?? null,
-      })),
-    })),
-    koblinger: [
-      { kode: 'NOR', stoff: 'nortriptylin', relasjon: 'moderstoff', primar: true, merknad: null },
-      { kode: 'AMTNORSUM', stoff: 'nortriptylin', relasjon: 'sum', primar: false, merknad: null },
-      { kode: 'TRAM', stoff: 'tramadol', relasjon: 'moderstoff', primar: true, merknad: null },
-      { kode: 'OTRAM', stoff: 'tramadol', relasjon: 'metabolitt', primar: true, merknad: null },
-      { kode: 'DIAZ', stoff: 'diazepam', relasjon: 'moderstoff', primar: true, merknad: null },
-      { kode: 'DMI', stoff: 'diazepam', relasjon: 'metabolitt', primar: true, merknad: null },
-      { kode: 'HBUP', stoff: 'bupropion', relasjon: 'metabolitt', primar: true, merknad: null },
-    ],
-  }
-
   it('er fagmiljøets eget, per kode, og står for koden alene', () => {
     const k = byggKatalog(lesKatalogdata(svar({ NOR: { nedre: 200, ovre: 600, enhet: 'nmol/L' }, DMI: { nedre: null, ovre: 1500, enhet: '' } })))
     expect(k.finn('NOR')!.referanseomrade).toEqual({ nedre: 200, ovre: 600, enhet: 'nmol/L' })
@@ -131,7 +105,6 @@ describe('referanseområdet i katalogen', () => {
       ['NOR', { nedre: 200, ovre: 600, enhet: 'nmol/L' }],
       ['DMI', { nedre: null, ovre: 1500, enhet: '' }],
     ])
-    expect(k.eldre).toBeUndefined()
   })
 
   it('er tomt for et område uten grenser', () => {
@@ -146,28 +119,9 @@ describe('referanseområdet i katalogen', () => {
     expect(() => lesKatalogdata(svar({ NOR: [200, 600] }))).toThrow(UgyldigKatalog)
   })
 
-  it('godtar og overser koblingene, forbindelsene og datakortene databasen gir appen fra før', () => {
-    const k = byggKatalog(lesKatalogdata({ ...svar({}), koblinger: fraFor.koblinger }))
+  it('overser felt katalogen ikke har', () => {
+    const k = byggKatalog(lesKatalogdata({ ...svar({}), koblinger: [{ kode: 'HBUP', stoff: 'bupropion' }] }))
     expect(Object.keys(k)).not.toContain('koblinger')
-    expect(k.eldre).toBeUndefined()
     expect(k.finn('HBUP')!.fortolkning.kode).toBe('HBUP')
-  })
-
-  it('gir i et svar uten områdene kortet hver kode brukte på fagsidene, for overgangen', () => {
-    const k = byggKatalog(lesKatalogdata(fraFor))
-    expect(referanseomraderI(k).size).toBe(0)
-    expect(k.eldre!.bruk).toEqual([
-      { kode: 'NOR', stoff: 'nortriptylin', gjelder: null },
-      { kode: 'TRAM', stoff: 'tramadol', gjelder: null },
-      { kode: 'OTRAM', stoff: 'tramadol', gjelder: 'o-desmetyltramadol' },
-      { kode: 'DIAZ', stoff: 'diazepam', gjelder: null },
-      { kode: 'DMI', stoff: 'diazepam', gjelder: 'nordiazepam' },
-    ])
-    expect([...k.eldre!.forbindelser]).toEqual(
-      expect.arrayContaining([
-        ['OTRAM', 'o-desmetyltramadol'],
-        ['DMI', 'nordiazepam'],
-      ]),
-    )
   })
 })

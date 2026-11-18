@@ -602,10 +602,10 @@ egne kort i viktige data, merket med navnet. Sidens egne kort står uten
 `gjelder`; kortene for metabolitten har nøkkelen til forbindelsen i
 forbindelsesregisteret i `data.gjelder` (`'o-desmetyltramadol'`,
 `datakortGjelder`), aldri et laboratoriums analyttkode. Databasen lar hvert
-datakort stå én gang per forbindelse. Et kort som fra før har en analyttkode
-i `gjelder` (`'OTRAM'`), står på plassen til forbindelsen koden måler
-(`ELDRE_DATAKORTKODER`, `kortetsForbindelse`), og beholder koden når det
-redigeres, til det er skrevet om (#405). Plassene på siden står i
+datakort stå én gang per forbindelse, og bare med en forbindelsesnøkkel i
+`gjelder` (`innholdselementer_gjelder_forbindelse`; det ene kortet med en
+analyttkode fra før, `'OTRAM'`, ble skrevet om i
+`20261118120000_koblingene_fjernet.sql`). Plassene på siden står i
 `datakorteiere` (`src/faginnhold/datakortplasser.ts`): sidens egne, hver
 forbindelse med `datakort: true` for stoffet i forbindelsesregisteret, og
 hver annen forbindelse siden har kort for. Fortolkningen leser ikke kortene;

@@ -1,7 +1,7 @@
 import { useId, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import type { Sideelement } from '../../faginnhold/stoffside'
-import { datakorteiere, kortetsForbindelse } from '../../faginnhold/datakortplasser'
+import { datakorteiere } from '../../faginnhold/datakortplasser'
 import {
   DATAKORT,
   DATAKORTGRUPPER,
@@ -62,8 +62,7 @@ const UTSEENDE: Record<Datakorttype, { ikon: Ikonnavn; tone?: 'referanse' | 'tok
  * tramadolsiden viser både referanseområdet for tramadol og for
  * O-desmetyltramadol. Sidens egne kort lagres uten `gjelder`, de andre med
  * nøkkelen til forbindelsen i forbindelsesregisteret (`datakortGjelder`),
- * aldri med et laboratoriums analyttkode; et kort med en kode fra før står på
- * plassen til forbindelsen koden måler (`kortetsForbindelse`). Plassene står
+ * aldri med et laboratoriums analyttkode (databasen håndhever det). Plassene står
  * i `datakorteiere`. Navnene står når siden viser kort for flere. Kortene
  * hører bare til fagsiden; fortolkningen leser dem ikke (`docs/domener.md`).
  */
@@ -93,8 +92,7 @@ export function ViktigeData({
         gjelder,
         etikett: navn,
         element:
-          elementer.find((e) => e.elementtype === def.type && kortetsForbindelse(datakortGjelder(e.data)) === gjelder) ??
-          null,
+          elementer.find((e) => e.elementtype === def.type && datakortGjelder(e.data) === gjelder) ?? null,
       }),
     ),
   )
@@ -218,10 +216,6 @@ function Datakort({
   kontekst,
 }: Kortplass & { definisjon: Paneldefinisjon; kontekst: Panelkontekst }) {
   const { ikon, tone } = UTSEENDE[type]
-  // Et kort som står fra før, beholder nøkkelen det er lagret med, også en
-  // analyttkode fra før kortene ble koblet til forbindelsen: appen før 1.133.4
-  // finner det bare med den, til kortene skrives om (#405).
-  const lagret = element ? datakortGjelder(element.data) : gjelder
   const lagre =
     (lukk: () => void) =>
     async ({ data, referanser, oppsummering }: Skjemaresultat<object>) => {
@@ -229,7 +223,7 @@ function Datakort({
         panel: definisjon.nokkel,
         elementtype: type,
         posisjon: plass,
-        data: { ...(data as Record<string, unknown>), ...(lagret && { gjelder: lagret }) },
+        data: { ...(data as Record<string, unknown>), ...(gjelder && { gjelder }) },
         referanser,
       }, oppsummering)
       lukk()
