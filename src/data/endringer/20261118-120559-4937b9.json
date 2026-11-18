@@ -1,0 +1,17 @@
+{
+  "id": "20261118-120559-4937b9",
+  "semver": "patch",
+  "opprettet": "2026-11-18T12:05:59Z",
+  "sammendrag": "Gruppechatten har fått snakkebobler",
+  "typer": [
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "grupper"
+  ],
+  "punkter": [
+    "Egne meldinger står til høyre og andres til venstre, så «(deg)» etter eget navn er borte.",
+    "Hver melding står i en snakkeboble under navnet, med en spiss mot profilbildet."
+  ]
+}
