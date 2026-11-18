@@ -372,6 +372,28 @@ describe('delte referanser og kort som flyttes', () => {
     expect(forste!.deler![0]!.delt).toBeUndefined()
   })
 
+  it('finner det som nevner en referanse, gjennom indeksen og ikke ved å lese all historikken', async () => {
+    const ref = await nyReferanse('Indeksert kilde')
+    const innhold = { data: { tekst: `Se ${ref}.` }, referanser: [ref, ref], annet: 'ikke-en-id' }
+    const [{ ider }] = (await db.query<{ ider: string[] }>('select intern.nevnte_ider($1::jsonb) as ider', [innhold])).rows as [
+      { ider: string[] },
+    ]
+    expect(ider).toEqual([ref])
+
+    // Uttrykket i `intern.sidens_utgaver` må være det samme som i indeksen;
+    // ellers leser oppslaget alle revisjonene (57014 for fagsider med mange kilder).
+    const plan = await db.transaction(async (tx) => {
+      await tx.exec('set local enable_seqscan = off')
+      const { rows } = await tx.query<{ 'QUERY PLAN': unknown }>(
+        `explain (format json) select 1 from public.objektrevisjoner r
+         where intern.nevnte_ider(r.innhold) && array[$1::uuid]`,
+        [ref],
+      )
+      return JSON.stringify(rows[0]!['QUERY PLAN'])
+    })
+    expect(plan).toContain('objektrevisjoner_nevnte_idx')
+  })
+
   it('tar med et kort fra det flyttes til siden, og det som skjedde før, bare på siden det sto på', async () => {
     const a = await nyFagside('Flytt fra')
     const b = await nyFagside('Flytt til')
