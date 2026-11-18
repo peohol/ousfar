@@ -240,6 +240,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2c: kontoene den innloggede ser profilkortet til; regelen på profiles og bildene bygger på den.
   'mine_synlige_profiler()': 'rekkevidde',
   'mine_varsler()': 'eier',
+  // D2: forsidens paneler, etter arbeidsfagmiljøet og tilgangen til samhandlingen (docs/forside.md).
+  'forsideoppsummering(modul text)': 'rekkevidde',
   'oppgave(oppgave uuid)': 'systemarkitekt',
   'oppgaveoversikt()': 'systemarkitekt',
   'opphev_verktoysperre(sperre uuid, grunn text)': 'systemarkitekt',

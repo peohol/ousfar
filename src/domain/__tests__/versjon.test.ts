@@ -17,6 +17,7 @@ import { ENDRINGSLOGG } from '../../data/endringslogg'
 import { berorer, HELE_APPEN, VINDUER } from '../../oppdatering/sider'
 import { FORTOLKNINGSOPPFORINGER } from '../ouskatalog'
 import {
+  FORSIDE,
   FORTOLKNING,
   fortolkningsrute,
   lesRute,
@@ -179,6 +180,7 @@ const FORSTE_MED_OMRADER = '1.91.0'
 
 /** Alle sidene i appen, slik områdene skrives (`sidesti`). */
 const ALLE_SIDER = [
+  FORSIDE,
   FORTOLKNING,
   ...FORTOLKNINGSOPPFORINGER.flatMap((a) => [fortolkningsrute(a.kode), redigeringsrute(a.kode)]),
   ...STOFFREGISTER.stoffer.map((s): Rute => ({ side: 'stoff', stoff: s.slug })),
@@ -208,7 +210,7 @@ function kjentOmrade(omrade: string): boolean {
 
 describe('områdene en føring gjelder', () => {
   it('kjennes igjen når de er sider, og ikke ellers', () => {
-    const kjente = ['hele appen', 'vinduer', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering', 'grupper', 'forslag']
+    const kjente = ['hele appen', 'vinduer', 'forside', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering', 'grupper', 'forslag']
     for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister', 'verktoy', 'verktoy/bytte-antidepressiv']) {
       expect(kjentOmrade(omrade), omrade).toBe(true)
     }
