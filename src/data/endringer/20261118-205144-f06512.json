@@ -1,0 +1,15 @@
+{
+  "id": "20261118-205144-f06512",
+  "semver": "minor",
+  "opprettet": "2026-11-18T20:51:44Z",
+  "sammendrag": "Ny personlig forside med det som er nytt for deg",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["forside"],
+  "punkter": [
+    "Forsiden har fagmiljøet ditt som overskrift. Er du med i flere fagmiljøer, bytter du med pila ved navnet.",
+    "«Åpne fortolkning» står fortsatt øverst og har fokus, så Enter tar deg rett inn i fortolkningen.",
+    "Under står fire paneler med inntil tre ting hver: «Viktig nytt», «Aktuelt for deg», «Mine grupper» og «Oppdaterte fagsider». Trykk på en rad for å gå rett til det den gjelder.",
+    "Med «Tilpass forsiden» velger du hvilke paneler som vises og i hvilken rekkefølge. Du kan også slå på «Nytt i idébanken», «Mine oppgaver», «Diskusjoner jeg følger» og «Favorittfagsider». Valgene følger deg på alle maskiner."
+  ]
+}

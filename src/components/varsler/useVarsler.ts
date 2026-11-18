@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
+import { lyttEtterLesteEndringer } from '../../varsler/bjella'
 import {
   arkiverVarsler,
   gjenopprettVarsler,
@@ -115,6 +116,12 @@ export function useVarsler(): Varselstatus {
     setLogg(ny)
     lagringen.current = lagringen.current.then(() => lagreEndringsloggstatus(ny)).catch(() => undefined)
   }, [])
+
+  // Føringer som er åpnet andre steder, som fra «Viktig nytt» på forsiden.
+  useEffect(
+    () => lyttEtterLesteEndringer((versjoner) => endreLoggen([...versjoner], (status) => merkEndringerLest(ENDRINGSLOGG, status, versjoner))),
+    [endreLoggen],
+  )
 
   /**
    * Endrer varslene i lista med én gang, og i databasen etterpå. Svarer

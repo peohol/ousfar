@@ -160,6 +160,13 @@ const lesProfilkort = (verdi: Record<string, unknown>) => ({
   last_name: tekst(verdi.last_name),
 })
 
+/** En invitasjon slik `mine_grupper` gir den. */
+export function lesInvitasjon(v: unknown): Gruppeinvitasjon | null {
+  const gruppe = erObjekt(v) ? lesGruppe(v.gruppe) : null
+  if (!gruppe || !erObjekt(v)) return null
+  return { gruppe, invitert_kl: tekst(v.invitert_kl), invitert_av: erObjekt(v.invitert_av) ? lesProfilkort(v.invitert_av) : null }
+}
+
 export function lesMineGrupper(verdi: unknown): MineGrupper {
   if (!erObjekt(verdi)) return INGEN_GRUPPER
   const kan = erObjekt(verdi.kan_opprette) ? verdi.kan_opprette : {}
@@ -168,11 +175,7 @@ export function lesMineGrupper(verdi: unknown): MineGrupper {
       const gruppe = lesGruppe(v)
       return gruppe && erObjekt(v) ? { ...gruppe, rolle: lesRolle(v.rolle), medlemmer: tall(v.medlemmer) } : null
     }),
-    invitasjoner: liste(verdi.invitasjoner, (v) => {
-      const gruppe = erObjekt(v) ? lesGruppe(v.gruppe) : null
-      if (!gruppe || !erObjekt(v)) return null
-      return { gruppe, invitert_kl: tekst(v.invitert_kl), invitert_av: erObjekt(v.invitert_av) ? lesProfilkort(v.invitert_av) : null }
-    }),
+    invitasjoner: liste(verdi.invitasjoner, lesInvitasjon),
     kan_opprette: { tverrfaglig: kan.tverrfaglig === true, fagmiljoer: liste(kan.fagmiljoer, lesReferanse) },
     chat_aktivert: verdi.chat_aktivert === true,
   }
@@ -199,7 +202,7 @@ function lesMedlem(verdi: unknown): Gruppemedlem | null {
   }
 }
 
-function lesSamhandling(verdi: unknown): Gruppesamhandling {
+export function lesSamhandling(verdi: unknown): Gruppesamhandling {
   if (!erObjekt(verdi)) return INGEN_SAMHANDLING
   return {
     nye_ideer: tall(verdi.nye_ideer),

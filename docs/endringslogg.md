@@ -165,6 +165,7 @@ adressen, uten `#/` og uten seksjonen på siden, og gjelder også sidene under:
 
 | Område | Gjelder |
 | --- | --- |
+| `forside` | Forsiden, med panelene og «Tilpass forsiden» |
 | `fortolkning` | Hele fortolkningen: søket, hver analytt og redigeringen av reglene |
 | `fortolkning/thc` | Fortolkningen av én analytt og redigeringen av den (nøkkelen fra adressen) |
 | `fortolkning/*/rediger` | Redigeringen av reglene, for alle analytter |
