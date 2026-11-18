@@ -45,7 +45,7 @@ medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
 | --- | --- | --- | --- |
 | `ous-klinisk-farmakologi` | OUS Klinisk farmakologi | Ja | Ja |
 | `ous-rettstoksikologi` | OUS Rettstoksikologi | Nei | Ja, fra startporten S2 (`20261115040000_s2_apne_rettstoksikologi.sql`, etter Peders godkjenning) |
-| `sandkasse` | Sandkasse | Nei | Nei: bare systemarkitektene ([Sandkassen](#sandkassen)) |
+| `sandkasse` | Sandkasse | Nei | Ja, for testbrukere (`20261118073100_sandkasse.sql`, etter Peders godkjenning; [Sandkassen](#sandkassen)) |
 
 Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 (beslutning D1). OUS Rettstoksikologi har ingen fortolkningsregler.
@@ -77,10 +77,10 @@ Alle nåværende fortolkningssystemer hører til OUS Klinisk farmakologi
 Sandkasse (`20261118073100_sandkasse.sql`, 18.11.2026, etter Peders ønske) er
 et fagmiljø der systemarkitektene prøver ut funksjoner uten at det synes i de
 virkelige fagmiljøene. `peohol` og `maxhag` er medlemmer og lokale
-administratorer der; primærmedlemskapene deres er uendret. Det er ikke åpnet
-for medlemmer, så bare systemarkitektene kan være med; skal det prøves med
-testbrukere, må det åpnes i en egen, godkjent migrasjon som de andre.
-Ikonet er en sandkasse med spade (`sandkasse`).
+administratorer der; primærmedlemskapene deres er uendret. Det er åpnet for
+medlemmer gjennom startporten, etter Peders valg 18.11.2026, slik at
+administratorene kan opprette testbrukere der og prøve appen slik vanlige
+brukere ser den. Ikonet er en sandkasse med spade (`sandkasse`).
 
 Sandkassen er et vanlig fagmiljø, så skillet er det samme som mellom alle
 fagmiljøer (`src/__tests__/s2tilgang.test.ts`, `src/__tests__/sandkasse.test.ts`):
@@ -90,6 +90,8 @@ fagmiljøer (`src/__tests__/s2tilgang.test.ts`, `src/__tests__/sandkasse.test.ts
   på fortolkningssidene, gruppene i Sandkasse med diskusjonene, idéene,
   oppgavene og chatten deres, varslene om alt dette, og medlemslista.
   Fagmiljøets navn og ikon ser bare medlemmene.
+- **Testbrukere** opprettet i Sandkasse er vanlige kontoer: de leser det
+  felles innholdet som alle andre, og det de skriver i det felles, ser alle.
 - **Felles for alle, også fra sandkassen:** fagsidene og stoffregisteret med
   diskusjonene sine, de felles idéene (D8) og grupper på tvers. Det som
   skrives der, ser alle, uansett hvilket fagmiljø man arbeider i.

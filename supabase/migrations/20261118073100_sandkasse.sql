@@ -4,9 +4,12 @@
 -- ønske 18.11.2026: «Opprett et nytt fagmiljø som heter Sandkasse … der Max
 -- (maxhag) og jeg (peohol) er administratorer.»
 --
--- - Sandkasse er ikke standard og ikke åpent for medlemmer: bare
---   systemarkitektene kan være med der (regel 6, startporten S2). Migrasjonen
---   åpner det ikke.
+-- destruktiv-godkjent: Peder 2026-11-18, åpner Sandkasse for medlemmer (testbrukere) gjennom startporten, valgt på beslutningskortet i tråden: «Ja, åpne for testbrukere»
+--
+-- - Sandkasse er ikke standard, men åpent for medlemmer, slik at
+--   administratorene kan opprette og legge til testbrukere der. Kontrollen i
+--   CI og utrullingen stopper fila (åpning av et fagmiljø, docs/migrasjoner.md)
+--   uten linja over, som ble skrevet etter at Peder valgte det uttrykkelig.
 -- - `peohol` og `maxhag` blir aktive medlemmer og lokale administratorer der.
 --   Primærmedlemskapet og arbeidsfagmiljøet deres endres ikke.
 -- - Ikonet er sandkassen med spaden (`sandkasse` i ikonregisteret).
@@ -21,7 +24,8 @@
 -- administratorer, legges til. Til slutt kontrollerer den selv sluttilstanden.
 -- Alt føres i tilgangsloggen med grunnen under.
 --
--- Tilbakeføring: en ny migrasjon som arkiverer fagmiljøet (`status =
+-- Tilbakeføring: en ny migrasjon som setter apent_for_medlemmer = false
+-- (stopper nye medlemskap) eller arkiverer fagmiljøet (`status =
 -- 'arkivert'`). Det slettes aldri.
 
 do $$
@@ -59,8 +63,8 @@ begin
     insert into public.fagmiljoer (nokkel, navn, ikon, standard, apent_for_medlemmer, opprettet_av)
     values ('sandkasse', 'Sandkasse', 'sandkasse', false, false, peohol)
     returning * into sandkasse;
-  elsif sandkasse.status <> 'aktiv' or sandkasse.standard or sandkasse.apent_for_medlemmer then
-    raise exception 'Sandkasse: fagmiljøet finnes alt, men er arkivert, standard eller åpent for medlemmer.';
+  elsif sandkasse.status <> 'aktiv' or sandkasse.standard then
+    raise exception 'Sandkasse: fagmiljøet finnes alt, men er arkivert eller standard.';
   else
     update public.fagmiljoer set ikon = 'sandkasse' where id = sandkasse.id and ikon <> 'sandkasse';
   end if;
@@ -85,6 +89,12 @@ begin
     select 1 from public.fagmiljoadministratorer a
     where a.bruker_id = b and a.fagmiljo_id = sandkasse.id and a.til is null
   );
+
+  -- Åpningen for testbrukere, gjennom slippet databasen krever for nettopp
+  -- dette fagmiljøet (20261115003000_startportvern.sql); det gjelder bare
+  -- denne transaksjonen.
+  perform set_config('ousfar.startport', 'sandkasse', true);
+  update public.fagmiljoer set apent_for_medlemmer = true where id = sandkasse.id and not apent_for_medlemmer;
 
   -- Sluttilstanden, kontrollert med en gang i stedet for ved commit.
   set constraints all immediate;

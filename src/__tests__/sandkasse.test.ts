@@ -93,11 +93,11 @@ it('tegner sandkassen i ikonregisteret, som fagmiljøet bruker', () => {
 })
 
 describe('migrasjonen', () => {
-  it('oppretter Sandkasse lukket, ikke standard, med peohol og maxhag som medlemmer og administratorer', async () => {
+  it('oppretter Sandkasse åpent for testbrukere, ikke standard, med peohol og maxhag som medlemmer og administratorer', async () => {
     await db.exec(migrasjonen)
     expect(await tilstand()).toEqual({
       fagmiljo: [
-        { nokkel: 'sandkasse', navn: 'Sandkasse', ikon: 'sandkasse', standard: false, apent_for_medlemmer: false, status: 'aktiv' },
+        { nokkel: 'sandkasse', navn: 'Sandkasse', ikon: 'sandkasse', standard: false, apent_for_medlemmer: true, status: 'aktiv' },
       ],
       medlemmer: [
         { username: 'maxhag', primaer: false },
@@ -149,7 +149,9 @@ describe('etter migrasjonen', () => {
   it('gir systemarkitektene Sandkasse med ikonet, men ikke som arbeidsfagmiljø', async () => {
     const r = await rettigheterFor('peohol')
     const sandkasse = r.mineFagmiljoer.find((f) => f.nokkel === 'sandkasse')
-    expect(sandkasse).toMatchObject({ navn: 'Sandkasse', ikon: 'sandkasse', standard: false, apent: false })
+    expect(sandkasse).toMatchObject({ navn: 'Sandkasse', ikon: 'sandkasse', standard: false, apent: true })
+    // Nye testbrukere kan opprettes rett i Sandkasse.
+    expect(r.opprettBrukerI).toContain(sandkasse!.id)
     expect(r.administrerer.map((f) => f.nokkel)).toContain('sandkasse')
     expect(r.velgbareFagmiljoer.map((f) => f.nokkel)).toContain('sandkasse')
     expect(r.arbeidsfagmiljo).toMatchObject({ nokkel: 'ous-klinisk-farmakologi', ikon: 'laboratorium' })
@@ -174,12 +176,23 @@ describe('etter migrasjonen', () => {
     expect(sett.grupper).not.toContain('Prøvegruppe')
   })
 
-  it('tar ikke imot vanlige brukere, siden Sandkasse ikke er åpnet for medlemmer', async () => {
-    const feil = await feilFra(() =>
-      som(db, id.peohol, (tx) =>
-        tx.query(`select public.legg_til_medlem('vanlig.bruker', (select id from public.fagmiljoer where nokkel = 'sandkasse'))`),
-      ),
+  it('lar administratorene legge til en testbruker, som da ser Sandkasse uten at det blir primærfagmiljøet', async () => {
+    await som(db, id.peohol, (tx) =>
+      tx.query(`select public.legg_til_medlem('vanlig.bruker', (select id from public.fagmiljoer where nokkel = 'sandkasse'))`),
     )
-    expect(feil).not.toBeNull()
+    const r = await rettigheterFor('vanlig')
+    expect(r.mineFagmiljoer.map((f) => f.nokkel)).toContain('sandkasse')
+    expect(r.arbeidsfagmiljo?.nokkel).toBe('ous-klinisk-farmakologi')
+    expect(r.administrerer).toEqual([])
+  })
+
+  it('åpner bare Sandkasse, ingen andre fagmiljøer', async () => {
+    const { rows } = await db.query<{ nokkel: string; apent_for_medlemmer: boolean }>(
+      'select nokkel, apent_for_medlemmer from public.fagmiljoer order by nokkel',
+    )
+    const for_ = await basis.query<{ nokkel: string; apent_for_medlemmer: boolean }>(
+      'select nokkel, apent_for_medlemmer from public.fagmiljoer order by nokkel',
+    )
+    expect(rows.filter((r) => r.nokkel !== 'sandkasse')).toEqual(for_.rows)
   })
 })
