@@ -599,6 +599,24 @@ const REGISTER = {
       P('M5 42h38', 'd', 'i-ink'),
     ],
   },
+  /* Fagmiljøet for utprøving (`fagmiljoer.ikon`): en sandkasse med en
+     sandhaug og en spade stukket ned i den. Spaden faller ned i sanden. */
+  sandkasse: {
+    vb: 48,
+    parts: [
+      G(
+        [
+          P('M28.2 22.5l4.6-12.2', 'l', 'i-ink'),
+          P('M30.2 3.2l9.6 3.7-1.8 4.7a5 5 0 0 1-6.5 2.9l-.2-.1a5 5 0 0 1-2.9-6.5z', 'f2', 'accent2'),
+        ],
+        'drop',
+      ),
+      P('M7 28c5-1.5 9.5-9.5 17-9.5S36 26.5 41 28z', 'f2', 'warn'),
+      R(3.5, 27, 41, 6.5, 1.5, 'f2', 'accent'),
+      R(7, 33.5, 34, 9.5, 1.5, 'f1', 'accent'),
+      P('M13 38.5h6', 'l'),
+    ],
+  },
   // Kjemiske grunndata: en ring med to atomer på hver sin binding.
   molekyl: {
     vb: 48,

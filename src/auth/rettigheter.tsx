@@ -12,6 +12,7 @@
  * endrer ingenting; før det første svaret vises ingen rettigheter.
  */
 import { createContext, useCallback, useContext, type ReactNode } from 'react'
+import { IKONER, type Ikonnavn } from '../components/ikon/register'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
 import { klient } from './klient'
 
@@ -23,7 +24,16 @@ export interface Fagmiljoreferanse {
   standard: boolean
   /** Tar imot ordinære medlemmer (startporten S2 er passert for det). */
   apent: boolean
+  /** Ikonet fagmiljøet vises med (`fagmiljoer.ikon`). */
+  ikon: Ikonnavn
 }
+
+/** Ikonet et fagmiljø vises med når databasen ikke oppgir et appen kjenner: prøverørene. */
+export const STANDARD_FAGMILJOIKON: Ikonnavn = 'laboratorium'
+
+/** Ikonet i svaret, når appen har det; ellers {@link STANDARD_FAGMILJOIKON}. */
+const fagmiljoikon = (v: unknown): Ikonnavn =>
+  typeof v === 'string' && Object.hasOwn(IKONER, v) ? (v as Ikonnavn) : STANDARD_FAGMILJOIKON
 
 export interface Rettigheter {
   /** Kan alt som gjelder hele OUSFAR: datakildene, kildesakene, nødstoppen, kurateringene, autoerstatt og papirkurven. */
@@ -70,12 +80,23 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   redaktor: false,
 }
 
-/** Et fagmiljø i svaret, eller `null` når formen er feil. Det som mangler av standard og åpent, regnes som nei. */
-function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
-  if (typeof v !== 'object' || v === null) return null
+/**
+ * Et fagmiljø i et svar fra databasen, eller `null` når formen er feil. Det
+ * som mangler av standard og åpent, regnes som nei, og et ikon appen ikke
+ * kjenner, som prøverørene.
+ */
+export function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
+  if (typeof v !== 'object' || v === null || Array.isArray(v)) return null
   const f = v as Record<string, unknown>
   if (!['id', 'nokkel', 'navn'].every((felt) => typeof f[felt] === 'string')) return null
-  return { id: f.id as string, nokkel: f.nokkel as string, navn: f.navn as string, standard: f.standard === true, apent: f.apent === true }
+  return {
+    id: f.id as string,
+    nokkel: f.nokkel as string,
+    navn: f.navn as string,
+    standard: f.standard === true,
+    apent: f.apent === true,
+    ikon: fagmiljoikon(f.ikon),
+  }
 }
 
 /** En liste fagmiljøer i svaret, uten dem som har feil form. */

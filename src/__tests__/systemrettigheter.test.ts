@@ -203,8 +203,8 @@ describe('mine_rettigheter()', () => {
   it('svarer for hver person det funksjonene gjør', async () => {
     // Med om fagmiljøet er standard (der nye brukere opprettes) og åpent for medlemmer (P3).
     // B er åpnet i testdatabasen (S2 simulert); i produksjonen er det lukket.
-    const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
-    const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
+    const A = { id: galleri.fagmiljo.A, nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
+    const B = { id: galleri.fagmiljo.B, nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true, ikon: 'laboratorium' }
     // P5: `redaktor` (har et redaktøransvar som gjelder) og `behandler_forslag` (kan behandle forslag til noe).
     const ingen = {
       systemarkitekt: false,
@@ -217,8 +217,8 @@ describe('mine_rettigheter()', () => {
     }
     // En systemarkitekt administrerer alle fagmiljøene (`public.mine_administrerte_fagmiljoer`).
     const alle = (
-      await db.query<{ id: string; nokkel: string; navn: string; standard: boolean; apent: boolean }>(
-        'select id, nokkel, navn, standard, apent_for_medlemmer as apent from public.fagmiljoer order by navn',
+      await db.query<{ id: string; nokkel: string; navn: string; standard: boolean; apent: boolean; ikon: string }>(
+        'select id, nokkel, navn, standard, apent_for_medlemmer as apent, ikon from public.fagmiljoer order by navn',
       )
     ).rows
     // En systemarkitekt kan velge å se fortolkningen i alle de aktive, uten å være medlem.

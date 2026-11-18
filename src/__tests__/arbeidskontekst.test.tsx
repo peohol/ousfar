@@ -25,8 +25,8 @@ import {
 import { TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
 import { katalogstopp, useHentAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 
-const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
-const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
+const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
+const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true, ikon: 'laboratorium' }
 
 const iFagmiljo = (f: Fagmiljoreferanse | null, mine = [KF, RT]): Rettigheter => ({
   ...INGEN_RETTIGHETER,

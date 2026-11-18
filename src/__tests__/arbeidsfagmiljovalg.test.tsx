@@ -7,11 +7,11 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { INGEN_RETTIGHETER, RettigheterKilde, type Fagmiljoreferanse, type Rettigheter } from '../auth/rettigheter'
+import { INGEN_RETTIGHETER, lesFagmiljo, RettigheterKilde, type Fagmiljoreferanse, type Rettigheter } from '../auth/rettigheter'
 import { Arbeidsfagmiljovalg } from '../components/konto/Arbeidsfagmiljovalg'
 
-const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true }
-const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true }
+const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
+const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true, ikon: 'laboratorium' }
 
 afterEach(cleanup)
 
@@ -68,6 +68,23 @@ describe('Arbeidsfagmiljovalg', () => {
     await userEvent.click(screen.getByRole('button', { name: 'OUS Rettstoksikologi Ikke medlem' }))
     expect(velg).toHaveBeenCalledWith('rt')
     await waitFor(() => expect(oppdater).toHaveBeenCalledWith(etter))
+  })
+
+  it('viser hvert fagmiljø med sitt eget ikon, og det gjeldende med haken', () => {
+    const SK: Fagmiljoreferanse = { id: 'sk', nokkel: 'sandkasse', navn: 'Sandkasse', standard: false, apent: false, ikon: 'sandkasse' }
+    vis({ ...INGEN_RETTIGHETER, arbeidsfagmiljo: SK, mineFagmiljoer: [KF, SK], velgbareFagmiljoer: [KF, SK] }, vi.fn())
+    const ikon = (navn: RegExp | string) => screen.getByRole('button', { name: navn }).querySelector('[data-ikon]')?.getAttribute('data-ikon')
+    expect(ikon(/Fagmiljø: Sandkasse/)).toBe('sandkasse')
+    expect(ikon('Sandkasse')).toBe('done')
+    expect(ikon('OUS Klinisk farmakologi')).toBe('laboratorium')
+  })
+
+  it('viser prøverørene for et ikon appen ikke kjenner, eller ikke får oppgitt', () => {
+    const rad = { id: 'x', nokkel: 'x', navn: 'X' }
+    expect(lesFagmiljo({ ...rad, ikon: 'sandkasse' })?.ikon).toBe('sandkasse')
+    expect(lesFagmiljo({ ...rad, ikon: 'finnesIkke' })?.ikon).toBe('laboratorium')
+    expect(lesFagmiljo({ ...rad, ikon: 'toString' })?.ikon).toBe('laboratorium')
+    expect(lesFagmiljo(rad)?.ikon).toBe('laboratorium')
   })
 
   it('sier fra når byttet feiler, og henter ikke rettighetene på nytt', async () => {

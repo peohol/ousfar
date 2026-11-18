@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   kanVelgeArbeidsfagmiljo,
+  STANDARD_FAGMILJOIKON,
   useOppdaterRettigheter,
   useRettigheter,
   velgArbeidsfagmiljo,
@@ -50,12 +51,12 @@ export function Arbeidsfagmiljovalg({ apen, onVeksle, velg = velgArbeidsfagmiljo
   }
 
   return (
-    <Menyskuff ikon="laboratorium" tekst={`Fagmiljø: ${gjeldende?.navn ?? 'ikke valgt'}`} apen={apen} onVeksle={onVeksle}>
+    <Menyskuff ikon={gjeldende?.ikon ?? STANDARD_FAGMILJOIKON} tekst={`Fagmiljø: ${gjeldende?.navn ?? 'ikke valgt'}`} apen={apen} onVeksle={onVeksle}>
       <ul className="nedtrekk__valg" aria-label="Fagmiljøet du arbeider i">
         {rettigheter.velgbareFagmiljoer.map((f) => (
           <li key={f.id}>
             <Menyvalg
-              ikon={f.id === gjeldende?.id ? 'done' : 'laboratorium'}
+              ikon={f.id === gjeldende?.id ? 'done' : f.ikon}
               tekst={f.navn}
               aktiv={f.id === gjeldende?.id}
               hint={bytter === f.id ? 'Bytter …' : erMedlem(f) ? undefined : 'Ikke medlem'}

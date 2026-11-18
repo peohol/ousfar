@@ -99,9 +99,10 @@ const SUPABASE_GRUNNLAG = /* sql */ `
  * FEST-virkestoffene ble kjørt direkte i produksjonen og lagt inn her etterpå,
  * slik den ble kjørt; den stopper uten administratoren `peohol`. Det gjør også
  * tilbakefyllingen av fagmiljøene, som i tillegg krever `maxhag`; testene
- * kjører den selv (`fagmiljoer.test.ts`).
+ * kjører den selv (`fagmiljoer.test.ts`). Det samme gjelder fagmiljøet
+ * Sandkasse, med de to som administratorer (`sandkasse.test.ts`).
  */
-const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_virkestoff|fagmiljoer_tilbakefylling)\.sql$/
+const BARE_I_PRODUKSJON = /_(oppgaver_utfort_1_56_0|koble_infosider_til_fest_virkestoff|fagmiljoer_tilbakefylling|sandkasse)\.sql$/
 
 /**
  * Det testdatabasen får i stedet for en migrasjon som bare kjøres i
