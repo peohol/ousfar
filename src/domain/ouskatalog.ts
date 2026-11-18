@@ -1,5 +1,4 @@
 import koblingsdata from '../data/analyttkoblinger.json'
-import forbindelsesdata from '../data/analyttforbindelser.json'
 import { antihypertensivdatasett, dataset } from './analytes'
 import { byggKatalog, type Analysemetode, type Katalogdata, type Katalogoppforing } from './analyttkatalog'
 import { displayName } from './names'
@@ -25,15 +24,11 @@ import type { Analyte } from '../types'
  *   `rus.ts` og `etg.ts`, nedenfor uendret;
  * - analysemetodene, som sto i `src/domain/analysemetoder.ts`;
  * - koblingene fra kodene til stoffene, som sto i `src/data/stoffregister.json`
- *   og nå står i `src/data/analyttkoblinger.json`;
- * - forbindelsen hver kode måler, i forbindelsesregisteret, og hvilke
- *   datakort på fagsidene den brukte, fra `src/data/analyttforbindelser.json`
- *   (kom til etter flyttingen, med sin egen migrasjon:
- *   `scripts/analyttforbindelser.ts`).
+ *   og nå står i `src/data/analyttkoblinger.json`.
  *
- * Koblingene, forbindelsene og datakortene er bare grunnlaget for de kjørte
- * migrasjonene. Appen bruker dem ikke lenger: fortolkningen og fagsidene er
- * adskilte domener (`docs/domener.md`), og fortolkningen har sitt eget
+ * Koblingene er bare grunnlaget for de kjørte migrasjonene; tabellen de ble
+ * lagt i, er slettet (`20261118120000_koblingene_fjernet.sql`). Appen bruker
+ * dem ikke: fortolkningen og fagsidene er adskilte domener (`docs/domener.md`), og fortolkningen har sitt eget
  * referanseområde per kode i katalogen. Det er ikke med her: det ble kopiert
  * i databasen fra fagsidene slik de var publisert
  * (`*_fortolkning_skilt_fra_fagsidene.sql`), og står ikke i repoet.
@@ -177,19 +172,6 @@ const ETG_OPPFORING: Analyte = {
 }
 
 /* --- Katalogen ----------------------------------------------------------- */
-
-/** Forbindelsen en analyttkode måler, og hvilke datakort på fagsidene den brukte. Bare for de kjørte migrasjonene. */
-export interface Analyttforbindelse {
-  forbindelse: string | null
-  datakort: 'egne' | 'forbindelse' | null
-}
-
-/** Forbindelsen hver analyttkode måler og datakortene den brukte, etter koden. */
-export const OUS_ANALYTTFORBINDELSER: ReadonlyMap<string, Analyttforbindelse> = new Map(
-  (forbindelsesdata as { analyttforbindelser: ({ kode: string } & Analyttforbindelse)[] }).analyttforbindelser.map(
-    ({ kode, forbindelse, datakort }) => [kode, { forbindelse, datakort }] as const,
-  ),
-)
 
 function oppforing(
   a: Analyte,

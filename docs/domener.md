@@ -51,20 +51,12 @@ forbindelsesregisteret i en PR.
 
 ## Overgangen
 
-Appen og databasen rulles ut hver for seg. Databasen gir fortsatt koblingene,
-forbindelsene og datakortbruken i `les_analyttkatalog()`, og
-`les_stoffreferanseomrader` står, så faner med appen fra før virker til de
-lastes på nytt.
-
-Møter den nye appen en database der migrasjonen ikke er kjørt ennå (eller der
-den stoppet), har katalogen ikke referanseområdene. Da finner fortolkningen
-dem som før, på fagsidene, etter samme regel som migrasjonen kopierer dem med,
-og steg 2 viser de samme tallene før og etter (`lesReferanseomrader` i
-`src/katalog/referanseomrader.ts`). Kan de ikke leses, sier fortolkningen fra i
-stedet for å vise steg 2 uten grensene. Det er det eneste stedet fortolkningen
-leser fra fagsidene.
-
-Når overgangen er over, fjernes dette sammen med feltene fra før i
-`les_analyttkatalog()`, `les_stoffreferanseomrader`, `analyttkatalog_koblinger`
-og `analyttkoblede_stoffer` (#405); det er en sletting og venter på Peders ja.
-
+Da skillet kom, sto koblingene fra kodene til stoffene fortsatt i databasen for
+faner med appen fra før, og appen kunne finne referanseområdene på fagsidene
+mens databasen ikke var oppdatert. Begge deler er fjernet, etter Peders ja
+(`20261118120000_koblingene_fjernet.sql`, #405): tabellene
+`analyttkatalog_koblinger` og `analyttkoblede_stoffer`, kolonnene `forbindelse`
+og `datakort` i `analyttkatalog_koder` og funksjonen
+`les_stoffreferanseomrader`. Det ene datakortet med en analyttkode i `gjelder`
+(OTRAM på tramadolsiden) gjelder nå forbindelsen, og databasen tar bare imot
+en forbindelsesnøkkel der.

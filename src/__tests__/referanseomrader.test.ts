@@ -15,56 +15,37 @@
  *    gir ingenting; heller ikke en urinanalyse.
  * 3. Faginnholdet endres ikke, og etter migrasjonen følger fortolkningen ikke
  *    fagsidene: en publisert endring på siden endrer ikke katalogen.
- * 4. Overgangen: appen viser de samme områdene mot databasen før migrasjonen
- *    (fra fagsidene, `lesReferanseomrader`) som etter (fra katalogen).
+ *
+ * Bare denne migrasjonen kjøres; den neste fjerner det den kopierte fra
+ * (`koblingeneFjernet.test.ts`).
  *
  * Stoffene og kodene er de i katalogen til OUS Klinisk farmakologi, men
  * tallene er syntetiske.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { byggKatalog, lesKatalogdata } from '../domain/analyttkatalog'
-import { lesReferanseomrader } from '../katalog/referanseomrader'
+import { byggKatalog, lesKatalogdata, referanseomraderI } from '../domain/analyttkatalog'
 import { lagFaginnholdslager, type Faginnholdslager } from '../faginnhold/lagring'
 import type { Objektstatus } from '../faginnhold/modell'
 import { FJERNET } from '../faginnhold/paneler'
 import { faginnholdskall, feilFra, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 
 const MIGRASJON = migrasjonsfiler().find((f) => f.endsWith('_fortolkning_skilt_fra_fagsidene.sql'))!
+const NESTE = migrasjonsfiler()[migrasjonsfiler().indexOf(MIGRASJON) + 1]
 
 let db: PGlite
 let kall: Faginnholdskall
 let lager: Faginnholdslager
 let bruker: string
-let for_: { innhold: unknown; revisjoner: number; iAppen: Visning }
+let for_: { innhold: unknown; revisjoner: number }
 const ider = { tramadol: '', tram: '', revisjon: 0 }
 
 const omrade = (nedre: number | null, ovre: number | null, enhet = 'nmol/L') => ({ nedre, ovre, enhet })
 
-interface Visning {
-  omrader: [string, unknown][]
-  /** Om appen måtte lese dem på fagsidene (overgangen). */
-  fraFagsidene: boolean
-}
-
-/** Referanseområdene steg 2 viser et medlem av OUS Klinisk farmakologi, lest som appen leser dem. */
-async function iAppen(): Promise<Visning> {
-  const { katalog, kort } = await som(db, bruker, async (tx) => ({
-    katalog: (await tx.query<{ k: unknown }>('select public.les_analyttkatalog() as k')).rows[0]!.k,
-    kort: (await tx.query<{ k: unknown }>(`select public.les_stoffreferanseomrader('publisert') as k`)).rows[0]!.k,
-  }))
-  let fraFagsidene = false
-  const omrader = await lesReferanseomrader(byggKatalog(lesKatalogdata(katalog)), async () => {
-    fraFagsidene = true
-    return kort
-  })
-  return { omrader: [...omrader].sort(([a], [b]) => a.localeCompare(b)), fraFagsidene }
-}
-
+/** Referanseområdene katalogen gir et medlem av OUS Klinisk farmakologi, slik appen leser dem. */
 async function iKatalogen(): Promise<[string, unknown][]> {
-  const { omrader, fraFagsidene } = await iAppen()
-  expect(fraFagsidene).toBe(false)
-  return omrader
+  const svar = await som(db, bruker, async (tx) => (await tx.query<{ k: unknown }>('select public.les_analyttkatalog() as k')).rows[0]!.k)
+  return [...referanseomraderI(byggKatalog(lesKatalogdata(svar)))].sort(([a], [b]) => a.localeCompare(b))
 }
 
 const innhold = () => kall.fasit('select objekt_id, tilstand::text, data from public.innholdselementer order by 1, 2')
@@ -126,8 +107,8 @@ beforeAll(async () => {
   })
   ider.revisjon = utkast.revisjon!
 
-  for_ = { innhold: await innhold(), revisjoner: await revisjoner(), iAppen: await iAppen() }
-  await kjorMigrasjoner(db, { fra: MIGRASJON })
+  for_ = { innhold: await innhold(), revisjoner: await revisjoner() }
+  await kjorMigrasjoner(db, { fra: MIGRASJON, til: NESTE })
 }, 120_000)
 
 const FORVENTET = [
@@ -142,10 +123,6 @@ const FORVENTET = [
 describe('referanseområdene i analyttkatalogen', () => {
   it('gir hver kode det publiserte kortet på siden til sitt primære stoff, som appen fra før fant det', async () => {
     expect(await iKatalogen()).toEqual(FORVENTET)
-  })
-
-  it('er de samme i appen mot databasen før migrasjonen, da fra fagsidene', () => {
-    expect(for_.iAppen).toEqual({ omrader: FORVENTET, fraFagsidene: true })
   })
 
   it('gir ingenting for et utkast, et kort som er tatt bort eller er tomt, en sekundær kobling eller en urinanalyse', async () => {

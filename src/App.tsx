@@ -66,8 +66,7 @@ import { Versjonsside } from './components/kuratering/Versjonsside'
 import { lagEndringsloggleser } from './endringslogg/api'
 import type { Endringskontekst } from './endringslogg/operasjon'
 import { endringssideFor } from './endringslogg/sider'
-import { analytterForFortolkning } from './domain/analyttkatalog'
-import { fagsidekortFra, lesReferanseomrader } from './katalog/referanseomrader'
+import { analytterForFortolkning, referanseomraderI } from './domain/analyttkatalog'
 import { stoffbeskrivelse } from './domain/stoffregister'
 import { Innholdslogg } from './components/endringslogg/Innholdslogg'
 import { lesScenarioregler, reglerForModul } from './faginnhold/scenarioregler'
@@ -305,15 +304,11 @@ function Arbeidsflate({
 
   // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
   // når appen åpnes. Referanseområdet for hver analytt står i fagmiljøets
-  // egen katalog (eller, i overgangen, der det stod før: `lesReferanseomrader`).
-  // Steg 2 og tastene bruker det som gjelder analytten.
-  const hentRegler = useCallback(async () => {
-    const [regelsett, referanseomrader] = await Promise.all([
-      lesPubliserteRegelsett(faginnhold.leser),
-      lesReferanseomrader(katalog, fagsidekortFra(klient())),
-    ])
-    return { regelsett, referanseomrader }
-  }, [faginnhold.leser, katalog])
+  // egen katalog. Steg 2 og tastene bruker det som gjelder analytten.
+  const hentRegler = useCallback(
+    async () => ({ regelsett: await lesPubliserteRegelsett(faginnhold.leser), referanseomrader: referanseomraderI(katalog) }),
+    [faginnhold.leser, katalog],
+  )
   const regler = usePubliserteRegler(hentRegler, regelkontekst)
 
   // THC-syremodulen fortolker med regelsettet og tekstene som er publisert.

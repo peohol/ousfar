@@ -102,7 +102,6 @@ describe('importene', () => {
         await db.query<{ n: number }>(`
           select (select count(*) from public.analyttkatalog_oppforinger)
                + (select count(*) from public.analyttkatalog_koder)
-               + (select count(*) from public.analyttkatalog_koblinger)
                + (select count(*) from public.analyttkatalog_metoder)
                + (select count(*) from public.redigerbare_objekter) as n`)
       ).rows[0]!.n
@@ -195,7 +194,7 @@ describe('et fagmiljø uten egen katalog', () => {
 })
 
 describe('tabellene', () => {
-  it.each(['analyttkatalog_metoder', 'analyttkatalog_oppforinger', 'analyttkatalog_koder', 'analyttkatalog_koblinger'])(
+  it.each(['analyttkatalog_metoder', 'analyttkatalog_oppforinger', 'analyttkatalog_koder'])(
     'kan ikke leses direkte av noen innlogget: %s',
     async (tabell) => {
       for (const p of ['systemarkitekt', 'vanligA', 'vanligB'] as const) {
