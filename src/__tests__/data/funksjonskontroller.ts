@@ -125,6 +125,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'gjenopprett_varsler(varsler uuid[])': 'eier',
   'gjor_om_til_gruppeoppgave(ide uuid)': 'rekkevidde',
   'godkjenn_forslag(forslag uuid, begrunnelse text)': 'rekkevidde',
+  // D3: «Siste aktivitet» på gruppesiden, lest som gruppen (samme avslag som gruppeoversikt).
+  'gruppeaktivitet(gruppe uuid)': 'rekkevidde',
   'gruppeideer(gruppe uuid)': 'rekkevidde',
   'gruppeoppgave(oppgave uuid)': 'rekkevidde',
   'gruppeoppgaveoversikt(gruppe uuid)': 'rekkevidde',
