@@ -7,7 +7,7 @@ mellom to brukere, på tvers av fagmiljøene, i den felles chatmenyen
 følger. **Det slår ingenting på**: direktemeldingene bygges med en bryter som
 står av, og den slås på først når punktene under [Det som krever Peders
 ja](#det-som-krever-peders-ja) er avgjort og testene er grønne. Peder ga sitt
-ja til beslutningene 1–4 18.11.2026; beslutning 5 venter på svar.
+ja til alle fem beslutningene 18.11.2026.
 
 Utgangspunktet er gruppechatten ([gruppechat.md](gruppechat.md),
 [gruppechat-personvern.md](gruppechat-personvern.md)). Regelen om
@@ -33,9 +33,8 @@ Som i gruppechatten er hvert valg merket med hvem som eier det:
 - Den som slår det av, blokkerer noen eller mister tilgangen til OUSFAR, kan
   ikke få nye meldinger. Det som alt er skrevet, blir stående til
   lagringstiden går ut, og kan fortsatt leses av de to.
-- En slettet melding er borte fra databasen med en gang. Det finnes ingen
-  kopi. Om mottakeren også skal kunne slette den andres meldinger, er
-  beslutning 5.
+- Hver av de to kan slette alle meldingene i samtalen sin, og teksten er da
+  borte fra databasen med en gang. Det finnes ingen kopi.
 - Ingen varsler med tekst eller navn, ingen e-post, ingen push og ingen
   «sist sett».
 
@@ -45,8 +44,8 @@ Som i gruppechatten er hvert valg merket med hvem som eier det:
 | --- | --- | --- |
 | Hvem leser | Gruppens aktive medlemmer og systemarkitektene | Bare de to deltakerne |
 | Hvem kan være med | Medlemmene i gruppen | Alle aktive OUSFAR-brukere som selv har slått det på, på tvers av fagmiljøene |
-| Moderering | Moderatorene og de ansvarlige i gruppen | Ingen moderatorer. Hver deltaker kan slette meldinger (se beslutning 5) og blokkere den andre |
-| Hvem kan slette en melding | Forfatteren og moderatorene | Forfatteren; begge deltakerne om beslutning 5 blir et ja |
+| Moderering | Moderatorene og de ansvarlige i gruppen | Ingen moderatorer. Hver deltaker kan slette alle meldinger i samtalen og blokkere den andre |
+| Hvem kan slette en melding | Forfatteren og moderatorene | Begge deltakerne (beslutning 5) |
 | Varsler | I bjella («Nye meldinger i <gruppe>») til D4b flytter dem til chatknappen | Aldri i bjella; bare tallet på chatknappen og markøren i samtalelista |
 | Bryter for den enkelte | Ingen (varselinnstillingen) | `Tillat direktemeldinger` og `Vis når jeg er aktiv`, begge av som standard |
 
@@ -86,7 +85,7 @@ bruken.
 | **Demping** | En dempet samtale teller ikke med på chatknappen. Den står i samtalelista med en dempet markør. Den andre får ikke vite det | Teknisk |
 | **Skjule en samtale** | Hver kan skjule en samtale fra sin egen liste. Den kommer tilbake når det kommer en ny melding. Det sletter ingenting for noen | Teknisk |
 | **Redigering** | Bare forfatteren, og bare så lenge det kan sendes i samtalen (ellers kunne en blokkert endre tekst den andre allerede har lest). Den nye teksten erstatter den gamle, som ikke lagres; meldingen merkes «redigert» med tidspunktet | Teknisk (som gruppechatten) |
-| **Sletting** | Forfatteren kan slette egne meldinger, også når det ikke kan sendes lenger. Teksten settes til tom i databasen med en gang, og plassen står som «Meldingen er slettet» med tidspunktet. Anbefalt i tillegg: mottakeren kan slette den andres meldinger («Fjernet av <navn>»), fordi det ikke finnes moderatorer og det er den eneste måten mottakeren kan få fjernet noe som ikke hører hjemme der. Det fjerner den andres innhold for godt og er en form for moderering, så det bygges ikke inn før Peder har sagt ja | Egne meldinger: teknisk. Den andres: **Peders ja** (beslutning 5) |
+| **Sletting** | Begge deltakerne kan slette enhver melding i samtalen, også når det ikke kan sendes lenger. Teksten settes til tom i databasen med en gang. Plassen står som «Meldingen er slettet» (forfatteren) eller «Fjernet av <navn>» (den andre), med tidspunktet. Det finnes ingen moderatorer, så dette er måten mottakeren selv får fjernet noe som ikke hører hjemme der | **Gitt** (Peder, beslutning 5, 18.11.2026) |
 | **Lagringstid** | 12 måneder, som gruppechatten. En melding eldre enn det slettes helt og kan ikke hentes tilbake, også de som står som slettet. Den er borte for brukerne fra fristen, også før raden er ryddet. En samtale uten meldinger igjen og uten aktivitet de siste 12 månedene fjernes med statusen sin | **Gitt** (Peder, beslutning 2, 18.11.2026) |
 | **Sikkerhetskopier** | Kopiene er ikke i drift ennå (`drift-gjenoppretting.md`, tiltak 3). Anbefalt: meldingstekstene tas ikke med i kopiene; valgene og blokkeringene tas med, så en gjenoppretting ikke opphever en blokkering | **Gitt** (Peder, beslutning 3, 18.11.2026) |
 | **Innsyn ved misbruk eller hendelser** | Ingen i appen. Misbruk håndteres med blokkering og sletting av deltakerne selv. Pasientopplysninger fjernes av deltakerne (se [Utilsiktet delt innhold](#utilsiktet-delt-innhold)) | **Gitt** (Peder, beslutning 1, 18.11.2026) |
@@ -108,9 +107,8 @@ Brukerne er godt trent, så appen minner ikke om regelen. Databasen avviser teks
 som ligner et fødselsnummer (`intern.krev_uten_personnummer`) og appen viser
 avslaget. Kommer pasientopplysninger likevel inn:
 
-1. Forfatteren sletter meldingen med en gang; mottakeren ber om det. Blir
-   beslutning 5 et ja, kan mottakeren slette den selv. Ingen andre trenger å
-   lese teksten for å fjerne den.
+1. Den som ser det, forfatteren eller mottakeren, sletter meldingen selv med
+   en gang (beslutning 5). Ingen andre trenger å lese teksten for å fjerne den.
 2. Teksten er borte fra databasen med en gang, og fra den andres åpne vindu
    innen ett minutt (livstegnet). Sanntiden og varslene har aldri hatt den.
 3. Hendelsen meldes uten å gjenta opplysningene, etter
@@ -123,8 +121,7 @@ avslaget. Kommer pasientopplysninger likevel inn:
 
 Fem beslutninger, hver med én anbefaling i vanlig språk. Peder ga sitt ja
 til anbefalingene i 1–4 18.11.2026 («Jeg støtter dine anbefalinger.», i
-D5-tråden). Beslutning 5 kom fram i kontrollen etterpå og venter på svar; til
-det foreligger, kan bare forfatteren slette.
+D5-tråden), og til anbefalingen i 5 samme kveld («Ja, begge kan slette alt»).
 
 | # | Spørsmål | Anbefaling | Hvorfor |
 | --- | --- | --- | --- |
@@ -132,7 +129,7 @@ det foreligger, kan bare forfatteren slette.
 | 2 ✓ | **Hvor lenge skal direktemeldinger lagres?** | **12 måneder**, som gruppechatten, og så slettes de automatisk for godt | Samme frist overalt er enklest å forstå og forklare, og ryddejobben finnes allerede. Peders ja fra 17.11.2026 gjaldt bare gruppechatten |
 | 3 ✓ | **Skal direktemeldinger være med i sikkerhetskopiene, når de kommer?** | **Nei**, ikke selve meldingene. Innstillingene og blokkeringene tas med | En kopi holder på det som er slettet, og den som har nøkkelen kunne lest private samtaler. Går databasen tapt, mister man meldingene, men samtalene og blokkeringene står. For en chat er det et rimelig bytte |
 | 4 ✓ | **Skal direktemeldingene slås på når de er ferdige og kontrollert?** | **Ja**, på samme vilkår som gruppechatten: når testene under er grønne, kontrollen i nettleseren er gjort og ChatGPT har godkjent | Da slipper Peder å bli spurt igjen etter at alt er klart. Uten dette ja-et står de av |
-| 5 | **Skal mottakeren også kunne slette meldinger den andre har skrevet?** | **Ja**, begge kan slette alle meldinger i samtalen sin. Det står «Fjernet av <navn>» der meldingen var | Det finnes ingen moderator i private samtaler. Uten dette kan ingen fjerne for eksempel pasientopplysninger når avsenderen ikke gjør det selv. Prisen er at en av dem kan fjerne noe den andre skrev, for godt |
+| 5 ✓ | **Skal mottakeren også kunne slette meldinger den andre har skrevet?** | **Ja**, begge kan slette alle meldinger i samtalen sin. Det står «Fjernet av <navn>» der meldingen var | Det finnes ingen moderator i private samtaler. Uten dette kan ingen fjerne for eksempel pasientopplysninger når avsenderen ikke gjør det selv. Prisen er at en av dem kan fjerne noe den andre skrev, for godt |
 
 Alt som tar vare på **mer**, **lenger** eller hos **flere** enn dette dokumentet
 sier, krever et nytt ja: innsyn for andre, lengre lagringstid, en kopi av
@@ -153,7 +150,7 @@ tekniske, men skal skrives her.
 | Kappløp mellom sending og avslått bryter, blokkering eller avsluttet medlemskap | Låsene i sendingen: enten er meldingen sendt før endringen, eller så avvises den |
 | Innhold på avveie gjennom varsler, sanntid, logger eller feilmeldinger | Ingen tekst i noen av dem; testene leter etter teksten i hele databasen |
 | Systemarkitekt eller administrator leser privat samtale | Ingen funksjon gir dem tilgang; `er_systemarkitekt` brukes ikke i tilgangskontrollen her. Teknisk tilgang til databasen styres av regelen over |
-| Pasientopplysninger i en melding | Fødselsnummerkontrollen; sletting med en gang (av begge deltakerne om beslutning 5 blir et ja); ingen kopier; ikke i sikkerhetskopiene |
+| Pasientopplysninger i en melding | Fødselsnummerkontrollen; sletting med en gang av begge deltakerne; ingen kopier; ikke i sikkerhetskopiene |
 | Aktivitetsprikken brukes til å følge med på noen | Av som standard, bare for samtalepartnere, bare ja/nei, ingen historikk |
 
 ## Datamodellen (skisse)
@@ -179,7 +176,7 @@ når den innloggede er en av de to; ingen andre rettigheter.
 **`direktemeldinger`** — som `gruppemeldinger`: `id`, `samtale_id`, `nr`,
 `forfatter_id` (`on delete set null`), `klient_id` (unik per samtale og
 forfatter), `tekst` (null når slettet), `skrevet_kl`, `redigert_kl`,
-`slettet_kl`, `slettet_som` (`forfatter`, og `motpart` om beslutning 5 blir et ja), `endring`. Ingen
+`slettet_kl`, `slettet_som` (`forfatter` eller `motpart`), `endring`. Ingen
 direkte tilgang.
 
 **`direktesamtale_status`** — (`samtale_id`, `bruker_id`) → `lest_til_nr`,
@@ -213,7 +210,7 @@ systemarkitektene eller administratorene noe ekstra.
 | `direktesamtale_endringer(samtale, etter, antall)` | Som `gruppechat_endringer` |
 | `send_direktemelding(samtale, klient_id, tekst)` | Vaktene: tekst og lengde (`22023`), fødselsnummer (`22023`), takten (`54000`), så låsene og sendevilkårene (`55000` «Kan ikke motta nye direktemeldinger.» eller egen grunn) |
 | `endre_direktemelding(melding, tekst)` | Bare forfatteren, bare når det kan sendes |
-| `slett_direktemelding(melding)` | Forfatteren (begge deltakerne om beslutning 5 blir et ja); idempotent |
+| `slett_direktemelding(melding)` | Begge deltakerne; idempotent |
 | `merk_direktesamtale_lest(samtale, til_nr)` | Flytter bare framover |
 | `demp_direktesamtale(samtale, dempet)` / `skjul_direktesamtale(samtale)` | Egen status |
 | `blokker_bruker(bruker)` / `opphev_blokkering(bruker)` / `mine_blokkeringer()` | Som beskrevet over; blokkeringslista gir profilkortene |
@@ -308,7 +305,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T14 | Slettet konto for `vanligB` | `K` står med «tidligere bruker»; `vanligA` kan lese og slette, ikke sende |
 | T15 | Sending til seg selv, til en som ikke finnes, til en usøkbar | Avvist; de to siste med samme svar |
 | T16 | Søket | Ikke seg selv, ikke av-brytere, ikke blokkerte (begge veier), ikke uten medlemskap; høyst 20; under to tegn avvist; svaret har bare profilkortets fire felt |
-| T17 | Sletting | Forfatteren kan slette egne, den andre ikke (begge alle om beslutning 5 blir et ja); `tekst` er `null`; teksten finnes ingen steder i databasen etterpå (`hvorStaar` fra krysstesten) |
+| T17 | Sletting | Begge kan slette alle meldinger, en utenforstående ingen; `tekst` er `null`; teksten finnes ingen steder i databasen etterpå (`hvorStaar` fra krysstesten) |
 | T18 | Teksten i varsler, tilgangslogg, feilmeldinger og sanntidshendelser | Finnes ikke; ingen rad i `varsler` for direktemeldinger |
 | T19 | Lagringstiden | Melding eldre enn 12 måneder borte fra lesingen og ryddet; tom, gammel samtale fjernet |
 | T20 | Aktivitet: `vis_aktiv` av; på uten samtale; på men blokkert; på med samtale | Usynlig, usynlig, usynlig, synlig; aldri et tidspunkt; raden borte etter fristen og når bryteren slås av |
@@ -336,14 +333,12 @@ tilgangen tas; tastatur, skjermleser, mobil, lyst og mørkt tema.
 
 ## Rekkefølgen for D5
 
-1. Dette dokumentet slås sammen. Peder har svart på beslutningene 1–4;
-   beslutning 5 avgjør bare om mottakeren kan slette.
+1. Dette dokumentet slås sammen. Peder har svart på alle fem beslutningene.
 2. D4a er slått sammen (chatmenyen og samtalelista D5 bygger på).
 3. Databasen og funksjonene, med bryteren av, og testene T1–T24 og S1–S6.
 4. Visningen i chatmenyen og i Innstillinger → Chat.
 5. Kontroll i nettleseren og ChatGPTs kontroll.
-6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt). Uten
-   svar på beslutning 5 aktiveres de med sletting bare av egne meldinger.
+6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt).
 
 ## Kjente begrensninger
 
