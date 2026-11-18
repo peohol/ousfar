@@ -20,6 +20,7 @@ import { Merke } from '../Merke'
 import { Oppsummeringskort } from '../oppsummering/Oppsummeringskort'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
+import { Gruppeaktivitet } from './Gruppeaktivitet'
 import { Gruppechatfane } from './Gruppechat'
 import { Innstillingsmodal, Medlemsmodal, OpprettGruppe, harInnstillinger } from './Gruppemodaler'
 import { Tilbakelenke, Tilbakemelding, useFanetittel, useGruppeoversikt, useHandling } from './gruppedeler'
@@ -372,6 +373,7 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
         </p>
       )}
 
+      <Gruppeaktivitet gruppe={g} />
       <Paneler gruppe={g} />
 
       {modal === 'medlemmer' && (
@@ -460,7 +462,8 @@ function Medlemslinje({ gruppe, onVis }: { gruppe: Gruppeoversikt; onVis: () => 
 
 /**
  * Et kort panel på gruppesiden: det felles oppsummeringskortet med ett kort
- * signal og én sekundærknapp. Hendelsene selv står under «Siste aktivitet».
+ * signal og én sekundærknapp. Hendelsene selv står under «Siste aktivitet»
+ * (`Gruppeaktivitet`).
  */
 function Gruppepanel({ ikon, tittel, signal, children }: { ikon: Ikonnavn; tittel: string; signal: string; children?: ReactNode }) {
   return (

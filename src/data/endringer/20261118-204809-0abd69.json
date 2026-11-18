@@ -3,13 +3,19 @@
   "semver": "minor",
   "opprettet": "2026-11-18T20:48:09Z",
   "sammendrag": "Nye gruppesider med paneler, og store arbeidsflater for idéene og oppgavene",
-  "typer": ["Design / layout", "Funksjonalitet"],
+  "typer": [
+    "Design / layout",
+    "Funksjonalitet"
+  ],
   "omfang": "Større omfang",
-  "gjelder": ["grupper"],
+  "gjelder": [
+    "grupper"
+  ],
   "punkter": [
     "Gruppeoversikten viser invitasjonene øverst, så en kort liste over gruppene dine med søk. Arkiverte grupper står for seg.",
     "«Opprett gruppe» åpnes i et eget vindu.",
     "Gruppesiden har ikke lenger faner. Den viser beskrivelsen, medlemmene og korte paneler for idéer, oppgaver, diskusjoner og chat.",
+    "Øverst på gruppesiden står de tre siste tingene de andre i gruppen har gjort. Trykker du på en rad, kommer du rett til idéen, kommentaren, oppgaven, tråden eller chatten.",
     "Medlemmene og gruppeinnstillingene åpnes i hvert sitt vindu fra gruppesiden.",
     "Idéene og oppgavene åpnes i en stor arbeidsflate med lista til venstre og det valgte til høyre. Lukker du den, kommer du tilbake dit du åpnet den fra.",
     "Har du skrevet noe som ikke er lagret, spør appen før du går ut, også når du bruker nettleserens tilbakeknapp."

@@ -544,11 +544,21 @@ tallene på gruppesidens paneler i
 behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
 
+«Siste aktivitet» på gruppesiden er `gruppeaktivitet(gruppe)`: inntil tre av
+de nyeste hendelsene fra andre (ny idé, kommentar til en idé, en oppgave som
+er opprettet, endret eller fullført, ny tråd eller kommentar på gruppens
+diskusjonsside, og nye meldinger i chatten som én rad), med om den
+innloggede har sett dem. Bare overskrifter, aldri tekst fra idéer,
+kommentarer eller meldinger. Tilgangen og avslaget er de samme som for
+`gruppeoversikt`, så en gruppe som ikke kan leses, gir verken navn eller
+hendelser; i en arkivert gruppe står diskusjonene ikke med.
+
 **I appen.** Gruppeoversikten (`#/grupper`) har invitasjonene øverst, så søk
 og en kompakt liste over gruppene den innloggede leser, og de arkiverte for
 seg; «Opprett gruppe» åpner en modal. Gruppesiden (`#/grupper/<ID>`;
 `src/components/grupper/`, D0 skisse 08–13) har ingen faner: overskriften,
-beskrivelsen, medlemslinjen («8 medlemmer · Vis medlemmer») og fire korte
+beskrivelsen, medlemslinjen («8 medlemmer · Vis medlemmer»), «Siste aktivitet»
+(hver rad fører til selve idéen, kommentaren, oppgaven, tråden eller chatten) og fire korte
 paneler for idéene, oppgavene, diskusjonene (diskusjonsmenyen) og chatten
 (egen side `…/chat` til chatmenyen tar over), med tallene fra
 `gruppeoversikt(gruppe).samhandling`. Medlemmene (invitere, rolle, fjerne) og

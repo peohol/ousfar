@@ -32,6 +32,7 @@ const MEG: Profil = {
 const api = vi.hoisted(() => ({
   oversikt: null as unknown,
   hentGruppeoversikt: vi.fn(),
+  hentGruppeaktivitet: vi.fn(),
   svarPaaInvitasjon: vi.fn(async () => ({ gruppe: '', bruker: '', status: 'aktiv', rolle: 'medlem' })),
   avsluttGruppemedlemskap: vi.fn(async () => ({ gruppe: '', bruker: '', status: 'avsluttet', rolle: null })),
   settGrupperolle: vi.fn(async () => ({ gruppe: '', bruker: '', status: 'aktiv', rolle: 'moderator' })),
@@ -49,6 +50,7 @@ const { Grupperside, sokIGrupper } = await import('../components/grupper/Grupper
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt, lesMineGrupper } = await import('../grupper/modell')
 const { adresse, lesRute, sidesti } = await import('../domain/rute')
+const { lesGruppeaktivitet, tilHendelse } = await import('../grupper/aktivitet')
 const { adresseForSide, diskusjonssideFor, diskusjonssider, lesDiskusjonsside, navnPaaSide, ruteForSide, siderekkevidde } =
   await import('../diskusjoner/modell')
 
@@ -128,6 +130,7 @@ beforeEach(() => {
   window.scrollTo = () => undefined
   window.history.replaceState(null, '', '#/')
   api.hentGruppeoversikt.mockImplementation(async () => lesGruppeoversikt(api.oversikt))
+  api.hentGruppeaktivitet.mockImplementation(async () => [])
   api.oversikt = OVERSIKT
 })
 
@@ -380,5 +383,69 @@ describe('én gruppe', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Gruppe')
     expect(document.body.textContent).not.toMatch(/Lithiumgruppen/)
     expect(screen.queryByRole('region', { name: 'Idéer' })).toBeNull()
+    // Aktiviteten hentes aldri for en gruppe som ikke kan leses.
+    expect(api.hentGruppeaktivitet).not.toHaveBeenCalled()
+    expect(screen.queryByRole('region', { name: 'Siste aktivitet' })).toBeNull()
+  })
+})
+
+const IDE = '33333333-4444-4555-8666-777777777777'
+const KOMMENTAR = '44444444-5555-4666-8777-888888888888'
+const OPPGAVE = '55555555-6666-4777-8888-999999999999'
+const TRAAD = '66666666-7777-4888-8999-aaaaaaaaaaaa'
+const OLA = { username: 'ola.x', first_name: 'Ola', last_name: 'Nordmann' }
+
+describe('siste aktivitet', () => {
+  it('leser radene og hopper over dem uten formen', () => {
+    expect(lesGruppeaktivitet(null)).toEqual([])
+    expect(
+      lesGruppeaktivitet([
+        { slag: 'ide', ide: IDE, tittel: 'Felles mal', aktor: OLA, tid: '2026-11-18T10:00:00Z', ulest: true },
+        { slag: 'ide', tittel: 'Uten ID', tid: '2026-11-18T10:00:00Z' },
+        { slag: 'ukjent', tid: '2026-11-18T10:00:00Z' },
+        { slag: 'chat', uleste: 2 },
+      ]),
+    ).toEqual([{ slag: 'ide', ide: IDE, tittel: 'Felles mal', aktor: OLA, tid: '2026-11-18T10:00:00Z', ulest: true }])
+  })
+
+  it('fører hver rad til selve hendelsen', () => {
+    const tid = '2026-11-18T10:00:00Z'
+    const rader = lesGruppeaktivitet([
+      { slag: 'idekommentar', ide: IDE, kommentar: KOMMENTAR, tittel: 'Felles mal', aktor: OLA, tid, ulest: true },
+      { slag: 'oppgave', oppgave: OPPGAVE, tittel: 'Rutinen', hva: 'fullfort', tildelt_meg: true, tid, ulest: false },
+      { slag: 'diskusjonskommentar', diskusjon: TRAAD, kommentar: KOMMENTAR, tittel: 'Sandkassen', aktor: null, tid, ulest: false },
+      { slag: 'diskusjon', diskusjon: TRAAD, tittel: 'Sandkassen', aktor: OLA, tid, ulest: false },
+      { slag: 'ide', ide: IDE, tittel: 'Felles mal', aktor: OLA, tid, ulest: false },
+      { slag: 'chat', uleste: 1, tid, ulest: true },
+      { slag: 'chat', uleste: 0, tid, ulest: false },
+    ]).map((r) => tilHendelse(ID, r))
+    expect(rader.map(({ tittel, hvor, til, ulest }) => ({ tittel, hvor, til, ulest }))).toEqual([
+      { tittel: 'Ola Nordmann kommenterte idéen «Felles mal»', hvor: 'Idé', til: `#/ide/${IDE}/${KOMMENTAR}`, ulest: true },
+      { tittel: 'Oppgaven «Rutinen» er fullført', hvor: 'Oppgave · Tildelt deg', til: `#/grupper/${ID}/oppgaver/${OPPGAVE}`, ulest: undefined },
+      { tittel: 'En tidligere bruker kommenterte tråden «Sandkassen»', hvor: 'Diskusjon', til: `#/diskusjon/${TRAAD}/${KOMMENTAR}`, ulest: undefined },
+      { tittel: 'Ola Nordmann startet tråden «Sandkassen»', hvor: 'Diskusjon', til: `#/diskusjon/${TRAAD}`, ulest: undefined },
+      { tittel: 'Ola Nordmann la inn idéen «Felles mal»', hvor: 'Idé', til: `#/grupper/${ID}/ideer/${IDE}`, ulest: undefined },
+      { tittel: '1 ny melding i gruppechatten', hvor: 'Gruppechat', til: `#/grupper/${ID}/chat`, ulest: true },
+      { tittel: 'Siste melding i gruppechatten', hvor: 'Gruppechat', til: `#/grupper/${ID}/chat`, ulest: undefined },
+    ])
+  })
+
+  it('står øverst på gruppesiden, med hele raden som lenke, og henter på nytt etter en feil', async () => {
+    api.hentGruppeaktivitet.mockRejectedValueOnce(new Error('nett')).mockImplementation(async () =>
+      lesGruppeaktivitet([{ slag: 'ide', ide: IDE, tittel: 'Felles mal', aktor: OLA, tid: '2026-11-18T10:00:00Z', ulest: true }]),
+    )
+    vis(ID)
+    const panel = await screen.findByRole('region', { name: 'Siste aktivitet' })
+    await userEvent.click(await within(panel).findByRole('button', { name: 'Prøv igjen' }))
+    const rad = await within(panel).findByRole('link', { name: /Ola Nordmann la inn idéen «Felles mal»/ })
+    expect(rad.getAttribute('href')).toBe(`#/grupper/${ID}/ideer/${IDE}`)
+    expect(rad.textContent).toMatch(/Ulest/)
+    expect(api.hentGruppeaktivitet).toHaveBeenCalledWith(ID)
+  })
+
+  it('sier det rolig når det ikke er noe nytt', async () => {
+    vis(ID)
+    const panel = await screen.findByRole('region', { name: 'Siste aktivitet' })
+    expect((await within(panel).findByText('Ingen ny aktivitet fra de andre i gruppen.')).tagName).toBe('P')
   })
 })

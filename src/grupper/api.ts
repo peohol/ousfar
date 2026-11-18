@@ -17,6 +17,7 @@ import {
 } from './modell'
 import { lesGruppeoppgave, lesGruppeoppgaveliste, type Gruppeoppgave, type Gruppeoppgaveliste, type Gruppeoppgavestatus, type Prioritet } from './oppgaver'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
+import { lesGruppeaktivitet, type Gruppehendelse } from './aktivitet'
 
 /**
  * Funksjonene sier avslagene sine på norsk, også regelen om minst én
@@ -40,6 +41,11 @@ export async function hentGruppeoversikt(gruppe: string): Promise<Gruppeoversikt
   const oversikt = lesGruppeoversikt(await kall('gruppeoversikt', { gruppe }))
   if (!oversikt) throw new Error(UVENTET_FEIL)
   return oversikt
+}
+
+/** Inntil tre av de nyeste hendelsene i gruppen fra andre, til «Siste aktivitet». */
+export async function hentGruppeaktivitet(gruppe: string): Promise<Gruppehendelse[]> {
+  return lesGruppeaktivitet(await kall('gruppeaktivitet', { gruppe }))
 }
 
 /** Oppretter gruppen i fagmiljøet, eller på tvers av fagmiljøene uten. Gir ID-en. */

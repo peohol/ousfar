@@ -91,6 +91,7 @@ const tilstand = vi.hoisted(() => ({ oversikt: null as unknown, kanSkrive: true,
 
 const grupperApi = vi.hoisted(() => ({
   hentGruppeoversikt: vi.fn(),
+  hentGruppeaktivitet: vi.fn(async () => []),
   gjorOmTilGruppeoppgave: vi.fn(async () => OPPGAVE),
 }))
 

@@ -34,6 +34,7 @@ const MEG: Profil = {
 const api = vi.hoisted(() => ({
   oversikt: null as unknown,
   hentGruppeoversikt: vi.fn(),
+  hentGruppeaktivitet: vi.fn(async () => []),
   svarPaaInvitasjon: vi.fn(),
   avsluttGruppemedlemskap: vi.fn(),
   settGrupperolle: vi.fn(),
