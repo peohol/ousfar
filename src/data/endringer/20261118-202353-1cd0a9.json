@@ -1,0 +1,12 @@
+{
+  "id": "20261118-202353-1cd0a9",
+  "semver": "patch",
+  "opprettet": "2026-11-18T20:23:53Z",
+  "sammendrag": "Felles byggeklosser for den nye forsiden og gruppesidene",
+  "typer": ["Design / layout"],
+  "omfang": "Minimalt omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "Panelene som skal vise det som er nytt på forsiden og på gruppesidene, og et eget ikon for chatten, er lagt klare. Ingenting endres for brukerne ennå."
+  ]
+}

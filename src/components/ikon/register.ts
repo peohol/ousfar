@@ -1345,6 +1345,19 @@ const REGISTER = {
       P('M3 12l9-8 9 8', 'l'),
     ],
   },
+  // Chatten: én rund snakkeboble med tekstlinjer, så den ikke forveksles med
+  // `diskusjon` (to bobler), som står speilvendt i motsatt kant (D0).
+  samtale: {
+    vb: 24,
+    parts: [
+      P(
+        'M12 3.8c-4.7 0-8.5 3.2-8.5 7.2 0 1.7.7 3.3 1.9 4.5L4.3 20l4.6-1.6c1 .3 2 .4 3.1.4 4.7 0 8.5-3.2 8.5-7.2S16.7 3.8 12 3.8z',
+        'f1',
+        'accent',
+      ),
+      G([P('M8.5 9.8h7M8.5 12.8h4.5', 'l', 'i-ink')], 'pop'),
+    ],
+  },
   // --- Stoffregisteret og kategoriene (se over REGISTER) ---
   // Et register med faner i kanten.
   stoffregister: {
