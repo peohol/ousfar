@@ -26,7 +26,7 @@ export function Hendelsesliste({
         const naar = h.merknad ?? (h.tid ? hendelsestid(h.tid) : '')
         return (
           <li key={h.id}>
-            <a className="hendelse" href={h.til}>
+            <a className="hendelse" href={h.til} onClick={h.ved}>
               <Ikon navn={h.ikon} className="hendelse__ikon" />
               <span className="hendelse__tittel">
                 {h.ulest && (

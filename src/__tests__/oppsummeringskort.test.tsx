@@ -109,6 +109,28 @@ describe('Oppsummeringskort', () => {
   })
 })
 
+describe('ved', () => {
+  it('kalles når raden eller «Vis alle» åpnes, og lenken følges likevel', async () => {
+    const lest = vi.fn()
+    const alle = vi.fn()
+    render(
+      <Oppsummeringskort
+        tittel="Viktig nytt"
+        ikon="bell"
+        innhold={{ status: 'klar', hendelser: [hendelse(1, { til: '#/', ved: lest })] }}
+        visAlle={{ tekst: 'Alle varsler', til: '#/', ved: alle }}
+      />,
+    )
+    const rad = screen.getByRole('link', { name: /Hendelse 1/ })
+    const klikk = new MouseEvent('click', { bubbles: true, cancelable: true })
+    rad.dispatchEvent(klikk)
+    expect(lest).toHaveBeenCalledTimes(1)
+    expect(klikk.defaultPrevented).toBe(false)
+    await userEvent.click(screen.getByRole('link', { name: /Alle varsler/ }))
+    expect(alle).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('hendelsestid', () => {
   const naa = new Date(2026, 10, 18, 15, 0)
   it('gir klokkeslett i dag, «I går», dato i år og dato med år ellers', () => {

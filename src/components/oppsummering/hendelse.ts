@@ -21,6 +21,12 @@ export interface Hendelse {
   merknad?: string
   /** Adressen i appen raden fører til (`#/…`), også en direktelenke. */
   til: string
+  /**
+   * Kalles når raden åpnes, i tillegg til lenken (ikke i stedet for den):
+   * merke et varsel lest, eller åpne noe uten egen adresse, som en føring i
+   * endringsloggen (da peker `til` på siden brukeren står på).
+   */
+  ved?: () => void
   /** Brukeren har ikke sett hendelsen. Vises med prikk og skjult tekst. */
   ulest?: boolean
 }

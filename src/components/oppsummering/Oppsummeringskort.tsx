@@ -20,8 +20,11 @@ export interface OppsummeringskortProps {
   innhold: Panelinnhold
   /** Linjen når det ikke er noe å vise. */
   tomtekst?: string
-  /** Tekstlenken nederst til hele lista («Vis alle»). Vises bare når det er noe i panelet. */
-  visAlle?: { tekst: string; til: string }
+  /**
+   * Tekstlenken nederst til hele lista («Vis alle»). Vises bare når det er noe
+   * i panelet. `ved` kalles i tillegg til lenken, som for en hendelse.
+   */
+  visAlle?: { tekst: string; til: string; ved?: () => void }
   /** Annet innhold under hendelsene, som én sekundærknapp i et gruppepanel. */
   children?: ReactNode
 }
@@ -57,7 +60,7 @@ export function Oppsummeringskort({ tittel, ikon, innhold, tomtekst, visAlle, ch
       {innhold.status === 'klar' && <Hendelsesliste hendelser={innhold.hendelser} tomtekst={tomtekst} />}
       {children}
       {visAlle && innhold.status === 'klar' && innhold.hendelser.length > 0 && (
-        <a className="oppsummering__alle" href={visAlle.til}>
+        <a className="oppsummering__alle" href={visAlle.til} onClick={visAlle.ved}>
           {visAlle.tekst}
           <Ikon navn="chev" />
         </a>
