@@ -1,0 +1,14 @@
+{
+  "id": "20261118-074953-2008f1",
+  "semver": "patch",
+  "opprettet": "2026-11-18T07:49:53Z",
+  "sammendrag": "Endringsloggen på fagsider med mange kilder åpner igjen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Endringsloggen for fagsider med mange kilder, som THC, ga feilmeldingen «statement timeout». Den hentes nå langt raskere, og innholdet i loggen er det samme som før."
+  ],
+  "utenVarsel": true
+}

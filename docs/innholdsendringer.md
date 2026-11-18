@@ -22,6 +22,7 @@ tjenestene — er skjult til man slår på «Vis rutineendringer».
 | --- | --- |
 | `supabase/migrations/*_innholdsendringer.sql` | Tabellene, føringen av endringene, rapportkontrollen, hendelsene i stoffregisteret og bivirkningene, og lesingen (`les_endringslogg`) |
 | `supabase/migrations/*_endringslogg_tilknytning.sql` | Hva som hører til en side (`intern.sidens_utgaver`) |
+| `supabase/migrations/*_endringslogg_ytelse.sql` | `intern.sidens_utgaver` slik den er nå: hva en utgave nevner (`intern.nevnte_ider`) og indeksen som finner det |
 | `supabase/migrations/*_endringslogg_profiler.sql` | Profilene agentene vises med (`agentprofiler`), og lesingen slik den er nå |
 | `src/endringslogg/` | Modellen og lesingen (`modell.ts`, `api.ts`), handlingen appen sender med kallene (`operasjon.ts`), sammendragene (`oppsummering.ts`) og siden loggen gjelder (`sider.ts`) |
 | `src/components/endringslogg/` | Knappen og loggvinduet (`Innholdslogg.tsx`) og det valgfrie oppsummeringsfeltet ved lagring (`Oppsummeringsfelt.tsx`) |
@@ -82,6 +83,12 @@ Hva som hører til en side, avgjøres når loggen leses, ut fra objektene selv
   den, merket «Delt» (ikke i ettertid, når en annen side tar den i bruk), og en
   endring som bare gjaldt delte objekter, vises uten sammendraget og rapporten
   fra det den ellers gjaldt (som kurateringen av en annen fagside).
+
+Hvilke referanser og kommentarer en utgave nevner, er ID-ene i innholdet
+(`intern.nevnte_ider`). Indeksen `objektrevisjoner_nevnte_idx` på dem finner
+med ett oppslag alt annet som har brukt sidens referanser; uten den måtte hele
+historikken leses for hver referanse, og loggen for fagsider med mange kilder
+nådde tidsgrensen (57014).
 
 Uten utkastene — alltid for andre enn administratorer — avgjøres alt dette av
 de publiserte utgavene, så et kort som bare i et utkast er flyttet til siden,
