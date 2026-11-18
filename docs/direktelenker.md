@@ -26,8 +26,10 @@ Når appen åpnes med en slik adresse, eller den limes inn i en åpen app, leser
 `apneDirektelenke` åpner målet: en diskusjon går til siden tråden hører til og
 åpner den i diskusjonsmenyen (`visDiskusjon`), en idé åpnes i Idéer
 (`visIde`), og en idé i en gruppe i gruppens arbeidsflate for idéene
-(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Limes lenken inn,
-står gruppen bak flaten og er der den lukkes til. Har et skjema i Idéer, Planlagte oppgaver
+(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Følges lenken inne i
+appen (limt inn i adressefeltet eller fra en rad på gruppesiden), står siden
+man var på, bak flaten, og flaten lukkes dit, som for andre innganger
+([navigasjon.md](navigasjon.md)); åpnes appen med lenken, står gruppen bak. Har et skjema i Idéer, Planlagte oppgaver
 eller en arbeidsflate i en gruppe endringer som ikke er lagret, spør det først, som
 tilbakeknappen (`forlatSkjemaene`, som går gjennom `forlatIdelagene` og vakten
 flaten melder med `meldGruppesiden`; `useMeldVakt`). Varslene går samme vei. Kommentaren lenken peker på, rulles frem, åpnes om den står under
