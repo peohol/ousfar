@@ -15,6 +15,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Fragment, useId, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type Ref } from 'react'
 import { useAutoerstattregler } from '../../autoerstatt/Autoerstattkilde'
 import { Autoerstatt } from '../../autoerstatt/editor'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import {
   finnKonsentrasjoner,
   KONSENTRASJONSENHETER,
@@ -781,6 +782,7 @@ function Konsentrasjonspanel({ editor, onLukk }: { editor: Editor; onLukk: () =>
             className="felt__inndata"
             value={verdi}
             autoFocus
+            {...UTEN_AUTOERSTATT}
             placeholder="50–200"
             aria-invalid={tallFeil || undefined}
             onChange={(e) => setVerdi(e.target.value)}
@@ -799,6 +801,7 @@ function Konsentrasjonspanel({ editor, onLukk }: { editor: Editor; onLukk: () =>
             className="felt__inndata"
             value={enhet}
             list={`${id}-enheter`}
+            {...UTEN_AUTOERSTATT}
             placeholder="nmol/L"
             aria-invalid={enhetFeil || undefined}
             onChange={(e) => setEnhet(e.target.value)}

@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
   DOSEKOLONNER,
@@ -236,17 +237,23 @@ export function Forlatvarsel({ onForkast, onFortsett }: { onForkast: () => void;
   )
 }
 
-/** Et vanlig tekstfelt, med appens felles feltkomponent. */
+/**
+ * Et vanlig tekstfelt, med appens felles feltkomponent. Verdiene i
+ * dataskjemaene (doser, enheter, stoffer, grenser) står nøyaktig som i kilden,
+ * så autoerstatt gjelder bare felt med vanlig skrift (`skrift`), som overskriften.
+ */
 function Tekstfelt({
   merke,
   verdi,
   onEndre,
   inputMode,
+  skrift = false,
 }: {
   merke: string
   verdi: string
   onEndre: (v: string) => void
   inputMode?: 'decimal'
+  skrift?: boolean
 }) {
   return (
     <Felt
@@ -254,6 +261,7 @@ function Tekstfelt({
       type="text"
       value={verdi}
       {...(inputMode && { inputMode })}
+      {...(!skrift && UTEN_AUTOERSTATT)}
       onChange={(e) => onEndre(e.target.value)}
     />
   )
@@ -604,6 +612,7 @@ export function FormverdiSkjema(props: SkjemaProps<Formverdier>) {
             <Felt
               merkelapp="Legemiddelform"
               type="text"
+              {...UTEN_AUTOERSTATT}
               value={rad.form}
               list={forslagId}
               onChange={(e) => endre(i, 'form', e.target.value)}
@@ -661,7 +670,7 @@ export function KinetikkSkjema(props: SkjemaProps<{ tittel: string; dokument: Ri
   }
   return (
     <Skjemaramme {...props} kontroller={kontroller}>
-      {!props.fastTittel && <Tekstfelt merke="Overskrift" verdi={tittel} onEndre={setTittel} />}
+      {!props.fastTittel && <Tekstfelt merke="Overskrift" verdi={tittel} onEndre={setTittel} skrift />}
       <Rikteksteditor dokument={dokument} onEndre={setDokument} etikett={tittel || props.tittel} justerbar />
     </Skjemaramme>
   )

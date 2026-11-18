@@ -1,15 +1,40 @@
 /**
- * Autoerstatt i vanlige tekstfelt (`textarea` og `input`), med de samme
- * reglene og den samme angringen som i rikteksteditoren (`editor.ts`).
+ * Autoerstatt i alle vanlige tekstfelt i appen (`textarea` og tekst-`input`),
+ * med de samme reglene og den samme angringen som i rikteksteditoren
+ * (`editor.ts`).
+ *
+ * Feltene trenger ingen egen kode: {@link lyttEtterTekstfelt} lytter på hele
+ * dokumentet, før React ser hendelsen, så et felt som legges til senere, får
+ * autoerstatt av seg selv. Felt der teksten ikke er vanlig skrift — søk,
+ * lenker, e-post, passord, tall, brukernavn, kildeverdier som skal stå «som i
+ * kilden» og reglene selv — står utenfor: søk, lenker og lignende har sin egen
+ * `type` eller `inputmode`, og de andre er merket med {@link UTEN_AUTOERSTATT}
+ * (`autocorrect="off"` eller `spellcheck="false"`).
  */
-import { useCallback, type ChangeEvent, type KeyboardEvent } from 'react'
-import { useAutoerstattregler } from './Autoerstattkilde'
 import { finnRegel, MAKS_LENGDE, type Autoerstattregel, type Erstatning } from './regler'
 
 type Tekstfelt = HTMLTextAreaElement | HTMLInputElement
 
 /** Den siste erstatningen i hvert felt, med verdien rett etter, så den kan angres. */
 const siste = new WeakMap<Tekstfelt, Erstatning & { verdi: string }>()
+
+/**
+ * Spres på et felt der teksten skal stå nøyaktig slik den skrives — tall,
+ * enheter, koder, brukernavn og verdier «som i kilden» — så autoerstatt (og
+ * nettleserens egen autokorrektur) lar det være.
+ */
+export const UTEN_AUTOERSTATT = { autoCorrect: 'off', spellCheck: false } as const
+
+/** Tastaturene (`inputmode`) for felt der teksten ikke er vanlig skrift. */
+const IKKE_SKRIFT = new Set(['numeric', 'decimal', 'tel', 'email', 'url', 'search'])
+
+/** Om `mal` er et felt for vanlig skrift, der autoerstatt skal gjelde. */
+export function kanAutoerstattes(mal: EventTarget | null): mal is Tekstfelt {
+  const felt =
+    mal instanceof HTMLTextAreaElement ? mal : mal instanceof HTMLInputElement && mal.type === 'text' ? mal : null
+  if (!felt || felt.readOnly || IKKE_SKRIFT.has(felt.inputMode)) return false
+  return felt.getAttribute('autocorrect')?.toLowerCase() !== 'off' && felt.getAttribute('spellcheck') !== 'false'
+}
 
 /**
  * Bytter ut det som står foran markøren når det nettopp skrevne tegnet
@@ -38,26 +63,29 @@ export function angreIFelt(felt: Tekstfelt): boolean {
 }
 
 /**
- * `onChange` og `onKeyDown` for et tekstfelt med autoerstatt. `onEndre` får
- * verdien etter en eventuell erstatning.
+ * Slår på autoerstatt i alle tekstfelt under `rot` (som standard hele
+ * dokumentet) og gir funksjonen som slår den av igjen. `regler` leses ved
+ * hvert tegn, så regler som kommer eller endres senere, brukes straks.
+ *
+ * Lytterne står i fangstfasen på roten, og kjører derfor før feltets egne:
+ * React og feltets `onChange` får verdien etter erstatningen.
  */
-export function useAutoerstattFelt<T extends Tekstfelt>(onEndre: (verdi: string) => void) {
-  const regler = useAutoerstattregler()
-  const onChange = useCallback(
-    (e: ChangeEvent<T>) => {
-      erstattIFelt(e.target, (e.nativeEvent as InputEvent).inputType, regler())
-      onEndre(e.target.value)
-    },
-    [onEndre, regler],
-  )
-  const onKeyDown = useCallback(
-    (e: KeyboardEvent<T>) => {
-      if (e.key !== 'Backspace' || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
-      if (!angreIFelt(e.currentTarget)) return
-      e.preventDefault()
-      onEndre(e.currentTarget.value)
-    },
-    [onEndre],
-  )
-  return { onChange, onKeyDown }
+export function lyttEtterTekstfelt(regler: () => readonly Autoerstattregel[], rot: Document = document): () => void {
+  const vedInndata = (e: Event) => {
+    if (kanAutoerstattes(e.target)) erstattIFelt(e.target, (e as InputEvent).inputType, regler())
+  }
+  const vedTast = (e: KeyboardEvent) => {
+    if (e.key !== 'Backspace' || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.defaultPrevented) return
+    if (!kanAutoerstattes(e.target) || !angreIFelt(e.target)) return
+    e.preventDefault()
+    // Endringen er gjort i feltet selv. En inndatahendelse sier fra til React
+    // og feltets `onChange`, som ellers ikke ville sett den.
+    e.target.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+  rot.addEventListener('input', vedInndata, true)
+  rot.addEventListener('keydown', vedTast, true)
+  return () => {
+    rot.removeEventListener('input', vedInndata, true)
+    rot.removeEventListener('keydown', vedTast, true)
+  }
 }

@@ -230,7 +230,7 @@ Ikke gi fri kontroll over fontstørrelse, farger eller justering. Vanlig friteks
 
 ### Autoerstatt
 
-Mens det skrives, bytter rikteksteditoren og tekstfeltene (kommentartekstene i regelredigeringen og prompten i planlagte oppgaver) ut tekst etter reglene i `public.autoerstatt_regler`, som « - » med « – ». Reglene er nøyaktige, også på mellomrom, og gjelder ikke i kode. Tilbaketasten rett etter en erstatning setter tilbake det som ble skrevet. Administratorene endrer reglene fra «Autoerstatt» i adminmenyen. Logikken ligger i `src/autoerstatt/`; et nytt tekstfelt får den med `useAutoerstattFelt`.
+Mens det skrives, bytter rikteksteditoren og alle vanlige tekstfelt i appen ut tekst etter reglene i `public.autoerstatt_regler`, som « - » med « – ». Reglene er nøyaktige, også på mellomrom, og gjelder ikke i kode. Tilbaketasten rett etter en erstatning setter tilbake det som ble skrevet. Administratorene endrer reglene fra «Autoerstatt» i adminmenyen. Logikken ligger i `src/autoerstatt/`. Tekstfeltene trenger ingen egen kode: `AutoerstattProvider` lytter på hele dokumentet, så et nytt `textarea` eller tekst-`input` får autoerstatt av seg selv. Felt der teksten ikke er vanlig skrift, står utenfor: søk, lenker, e-post, passord og tallfelt har sin egen `type` eller `inputmode`, og tall, brukernavn, oppslag, kildeverdier som skal stå «som i kilden» (konsentrasjoner, referanser, kilder i endringsforslag, verdiene i dataskjemaene) og reglene selv er merket med `UTEN_AUTOERSTATT` (`autocorrect="off"`, `spellcheck="false"`, i `src/autoerstatt/felt.ts`).
 
 ### Fortolkningskommentarer
 

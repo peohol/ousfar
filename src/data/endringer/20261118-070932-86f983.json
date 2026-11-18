@@ -1,0 +1,16 @@
+{
+  "id": "20261118-070932-86f983",
+  "semver": "minor",
+  "opprettet": "2026-11-18T07:09:32Z",
+  "sammendrag": "Autoerstatt i alle skrivefelt",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Moderat omfang",
+  "punkter": [
+    "Autoerstatt-reglene (som at « - » blir « – ») gjelder nå overalt der du skriver tekst: fagsidene, idéene, de planlagte oppgavene, diskusjonene, gruppechatten, overskrifter, kommentarer og merknader.",
+    "Søkefelt, lenker, tall, brukernavn, passord, selve autoerstatt-reglene og verdier som skal stå som i kilden (konsentrasjoner, enheter, doser, referanser og kilder) blir stående nøyaktig slik du skriver dem.",
+    "Tilbaketasten rett etter en erstatning setter tilbake det du skrev, som før."
+  ],
+  "utenVarsel": true
+}

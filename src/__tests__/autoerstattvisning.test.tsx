@@ -15,8 +15,10 @@ import type { Autoerstattlager } from '../autoerstatt/lagring'
 import type { Autoerstattregel } from '../autoerstatt/regler'
 import { Autoerstattregler } from '../components/konto/Autoerstattregler'
 import { Tekstomrade } from '../components/regler/Regelfelter'
+import { Konsentrasjonskilde } from '../components/stoffside/Konsentrasjon'
 import { Rikteksteditor } from '../components/stoffside/Rikteksteditor'
-import { tomtDokument, type Riktekstdokument } from '../faginnhold/riktekst'
+import { finnNoder, NODER, rensDokument, tomtDokument, type Riktekstdokument } from '../faginnhold/riktekst'
+import { FORBINDELSER } from '../kjemi/forbindelser'
 
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
@@ -147,25 +149,114 @@ describe('autoerstatt i rikteksteditoren', () => {
 })
 
 describe('autoerstatt i tekstfeltene', () => {
-  function Felt() {
+  /** Et felt uten egen autoerstatt-kode, som chatten, titlene og kommentarene. */
+  function Felt({ flerlinje = false, ...egenskaper }: { flerlinje?: boolean } & Record<string, unknown>) {
     const [verdi, setVerdi] = useState('')
-    return <Tekstomrade merke="Kommentar" verdi={verdi} onEndre={setVerdi} />
+    const felles = { 'aria-label': 'Felt', value: verdi, ...egenskaper }
+    return (
+      <>
+        {flerlinje ? (
+          <textarea {...felles} onChange={(e) => setVerdi(e.target.value)} />
+        ) : (
+          <input {...felles} onChange={(e) => setVerdi(e.target.value)} />
+        )}
+        <output>{verdi}</output>
+      </>
+    )
+  }
+
+  async function vis(felt: ReactNode, lager: Autoerstattlager | null = minnelager()) {
+    render(lager ? <Kilde lager={lager}>{felt}</Kilde> : felt)
+    await act(async () => {})
+    return {
+      felt: (screen.queryByRole('searchbox') ?? screen.getByRole('textbox')) as HTMLInputElement,
+      verdi: () => screen.getByRole('status').textContent,
+    }
   }
 
   it('bytter ut mens det skrives, og angrer med tilbaketasten', async () => {
-    render(
-      <Kilde lager={minnelager()}>
-        <Felt />
-      </Kilde>,
-    )
-    await act(async () => {})
-    const felt = screen.getByRole('textbox', { name: 'Kommentar' }) as HTMLTextAreaElement
+    function Kommentar() {
+      const [verdi, setVerdi] = useState('')
+      return <Tekstomrade merke="Kommentar" verdi={verdi} onEndre={setVerdi} />
+    }
+    const { felt } = await vis(<Kommentar />)
     await userEvent.type(felt, 'a - b a-b 1--2')
     expect(felt.value).toBe('a – b a-b 1–2')
     await userEvent.type(felt, ' * ')
     expect(felt.value).toBe('a – b a-b 1–2 · ')
     await userEvent.type(felt, '{Backspace}')
     expect(felt.value).toBe('a – b a-b 1–2 * ')
+  })
+
+  it('gjelder i alle tekstfelt, også dem uten egen kode, og React får verdien', async () => {
+    for (const flerlinje of [true, false]) {
+      const { felt, verdi } = await vis(<Felt flerlinje={flerlinje} />)
+      await userEvent.type(felt, 'a - b')
+      expect(felt.value).toBe('a – b')
+      expect(verdi()).toBe('a – b')
+      await userEvent.type(felt, ' --')
+      expect(verdi()).toBe('a – b –')
+      // Angringen når også React, så det som lagres er det brukeren ser.
+      await userEvent.type(felt, '{Backspace}')
+      expect(felt.value).toBe('a – b --')
+      expect(verdi()).toBe('a – b --')
+      // Neste tilbaketast sletter som vanlig.
+      await userEvent.type(felt, '{Backspace}')
+      expect(verdi()).toBe('a – b -')
+      cleanup()
+    }
+  })
+
+  it('lar felt som ikke er vanlig skrift, stå slik de skrives', async () => {
+    for (const egenskaper of [{ type: 'search' }, { inputMode: 'decimal' }, { autoCorrect: 'off' }, { spellCheck: false }]) {
+      const { felt, verdi } = await vis(<Felt {...egenskaper} />)
+      await userEvent.type(felt, 'a - b--')
+      expect(verdi()).toBe('a - b--')
+      cleanup()
+    }
+  })
+
+  it('bytter ingenting uten reglene', async () => {
+    const { felt, verdi } = await vis(<Felt flerlinje />, null)
+    await userEvent.type(felt, 'a - b--')
+    expect(verdi()).toBe('a - b--')
+  })
+
+  it('lar kildeverdiene for en konsentrasjon stå nøyaktig som i kilden', async () => {
+    globalThis.ResizeObserver ??= class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver
+    let siste = tomtDokument()
+    render(
+      <Kilde lager={minnelager()}>
+        <Konsentrasjonskilde molvekter={new Map([['citalopram', '300']])} sideforbindelser={[FORBINDELSER.finn('citalopram')!]}>
+          <Rikteksteditor dokument={rensDokument(tomtDokument())} onEndre={(d) => (siste = d)} etikett="TDM" />
+        </Konsentrasjonskilde>
+      </Kilde>,
+    )
+    await act(async () => {})
+    await userEvent.click(screen.getByRole('button', { name: /Merk en konsentrasjon/ }))
+    const panel = screen.getByRole('group', { name: 'Konsentrasjon' })
+    const verdi = within(panel).getByLabelText('Tall eller område, som i kilden') as HTMLInputElement
+    const enhet = within(panel).getByLabelText('Enhet, som i kilden') as HTMLInputElement
+    await userEvent.type(verdi, '50 - 200')
+    await userEvent.type(enhet, 'nmol/L')
+    expect(verdi.value).toBe('50 - 200')
+    await userEvent.click(within(panel).getByRole('button', { name: 'Merk i teksten' }))
+    expect(finnNoder(siste, NODER.konsentrasjon).map((n) => n.attrs?.verdi)).toEqual(['50 - 200'])
+  })
+
+  it('bruker regler som kommer til senere', async () => {
+    const lager = minnelager()
+    const { felt, verdi } = await vis(<Felt flerlinje />, lager)
+    lager.regler.push({ id: 'd', finn: '->', erstatt: '→' })
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    await userEvent.type(felt, 'a->b')
+    expect(verdi()).toBe('a→b')
   })
 })
 
