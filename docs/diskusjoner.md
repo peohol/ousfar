@@ -139,6 +139,7 @@ tilstander:
    Overskriften sier hvilken side diskusjonene gjelder, som «Diskusjoner om fagsiden til THC», «Diskusjoner om
    fortolkningen til amitriptylin», «Diskusjoner om stoffregisteret» eller «Diskusjoner i gruppen …»
    (`diskusjonsoverskrift` i `src/diskusjoner/modell.ts`), og er den samme over den åpne menyen.
+   I boblen brytes den aldri, så boblen vokser jevnt i én høyde; en for lang overskrift avkortes med «…».
 3. **Åpen**: et trykk på boblen åpner menyen, og fokus går til lukkeknappen.
    Den står åpen til lukkeknappen (✕ øverst til høyre) trykkes, også fra side
    til side; det lagres på brukeren. Resten av appen gir plass til den.
