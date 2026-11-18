@@ -6,7 +6,7 @@
  *
  * Feilene leses som i gruppechatten (`tilChatfeil`): `42501` er
  * `IngenTilgang` (bryteren av, ikke med i samtalen, eller ikke aktivt
- * medlemskap), `55000` er `Sperret`.
+ * medlemskap), `PT409` er `Sperret`.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Profilkort } from '@delt/profil'

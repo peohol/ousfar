@@ -21,7 +21,8 @@ export class IngenTilgang extends Error {
 }
 
 /**
- * Kastes når samtalen finnes, men det ikke kan skrives i den nå (`55000`):
+ * Kastes når samtalen finnes, men det ikke kan skrives i den nå (`55000`, i
+ * direktemeldingene `PT409`):
  * gruppen er arkivert, eller den andre i en direktesamtale kan ikke motta.
  * Chatten henter da rettighetene på nytt.
  */
@@ -35,12 +36,12 @@ export class Sperret extends Error {
 /**
  * Funksjonene sier avslagene sine på norsk (tom tekst, for lang, for fort,
  * fødselsnummer, arkivert gruppe), og de vises som de er (`lesbarFeil`);
- * `42501` blir `IngenTilgang` og `55000` `Sperret`.
+ * `42501` blir `IngenTilgang`, og `55000` og `PT409` `Sperret`.
  */
 export function tilChatfeil(feil: Databasefeil, utenTilgang = 'Du har ikke tilgang til denne gruppen.'): Error {
   const melding = feil.message ?? ''
   if (feil.code === '42501') return new IngenTilgang(/^\p{Lu}/u.test(melding) ? melding : utenTilgang)
-  if (feil.code === '55000' && /^\p{Lu}/u.test(melding)) return new Sperret(melding)
+  if ((feil.code === '55000' || feil.code === 'PT409') && /^\p{Lu}/u.test(melding)) return new Sperret(melding)
   return lesbarFeil(feil)
 }
 

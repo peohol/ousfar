@@ -404,11 +404,11 @@ as $$
 begin
   case intern.direktesperre(bruker, motpart)
     when 'selv_av' then
-      raise exception 'Du har slått av direktemeldinger. Slå dem på for å skrive.' using errcode = '55000';
+      raise exception 'Du har slått av direktemeldinger. Slå dem på for å skrive.' using errcode = 'PT409';
     when 'selv_blokkert' then
-      raise exception 'Du har blokkert denne personen. Opphev blokkeringen for å skrive.' using errcode = '55000';
+      raise exception 'Du har blokkert denne personen. Opphev blokkeringen for å skrive.' using errcode = 'PT409';
     when 'mottaker' then
-      raise exception 'Kan ikke motta nye direktemeldinger.' using errcode = '55000';
+      raise exception 'Kan ikke motta nye direktemeldinger.' using errcode = 'PT409';
     else
       return;
   end case;
@@ -698,7 +698,7 @@ declare
   monster text;
 begin
   if not intern.tillater_direktemeldinger(aktor) then
-    raise exception 'Slå på «Tillat direktemeldinger» for å finne andre.' using errcode = '55000';
+    raise exception 'Slå på «Tillat direktemeldinger» for å finne andre.' using errcode = 'PT409';
   end if;
   if char_length(ord) < 2 then
     raise exception 'Skriv minst to tegn.' using errcode = '22023';
@@ -756,13 +756,13 @@ begin
   end if;
   perform intern.las_direkteavsender(aktor);
   if not intern.tillater_direktemeldinger(aktor) then
-    raise exception 'Slå på «Tillat direktemeldinger» for å starte en samtale.' using errcode = '55000';
+    raise exception 'Slå på «Tillat direktemeldinger» for å starte en samtale.' using errcode = 'PT409';
   end if;
   if (
     select count(*) from public.direktesamtaler s
     where s.opprettet_av = aktor and s.opprettet_kl > now() - interval '1 hour'
   ) >= (intern.direktemelding_grenser() ->> 'maks_nye_samtaler_per_time')::int then
-    raise exception 'Du har startet mange nye samtaler. Vent litt og prøv igjen.' using errcode = '54000';
+    raise exception 'Du har startet mange nye samtaler. Vent litt og prøv igjen.' using errcode = 'PT429';
   end if;
   perform intern.las_direktevilkar(lav, hoy);
   if intern.direktesperre(aktor, aapne_direktesamtale.mottaker) is not null then
@@ -960,7 +960,7 @@ begin
     select count(*) from public.direktemeldinger m
     where m.forfatter_id = aktor and m.skrevet_kl > now() - interval '60 seconds'
   ) >= (grenser ->> 'maks_per_minutt_totalt')::int then
-    raise exception 'Du sender meldinger for fort. Vent litt og prøv igjen.' using errcode = '54000';
+    raise exception 'Du sender meldinger for fort. Vent litt og prøv igjen.' using errcode = 'PT429';
   end if;
   -- 1 og 2: medlemskapene og begge deltakernes valg; 3: samtalen.
   perform intern.las_direktevilkar(s.bruker_lav, s.bruker_hoy);
@@ -1000,7 +1000,7 @@ begin
   select * into s from public.direktesamtaler x where x.id = s.id for update;
   m := intern.krev_direktemelding(endre_direktemelding.melding, aktor);
   if m.slettet_kl is not null then
-    raise exception 'Meldingen er slettet og kan ikke endres.' using errcode = '55000';
+    raise exception 'Meldingen er slettet og kan ikke endres.' using errcode = 'PT409';
   end if;
   perform intern.krev_aktivt_medlemskap();
   perform intern.krev_uten_direktesperre(aktor, intern.direkte_motpart(s, aktor));

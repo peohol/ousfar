@@ -221,14 +221,13 @@ export function Direktevisning({
     if (utestengt) oppdater()
   }, [utestengt, oppdater])
 
-  /** Gjør handlingen, og henter lista og samtalen på nytt etterpå. */
+  /** Gjør handlingen, og henter lista og de åpne samtalene på nytt etterpå. */
   const gjor = async (handling: () => Promise<void>, etter?: () => void) => {
     setOpptatt(true)
     setFeil(null)
     try {
       await handling()
       oppdater()
-      chat.oppfrisk()
       etter?.()
     } catch (aarsak) {
       setFeil(feiltekst(aarsak))

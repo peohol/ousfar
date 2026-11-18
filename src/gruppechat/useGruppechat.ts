@@ -35,7 +35,13 @@ interface Delt {
  * Kroken for én slags samtale: kontrollerne som er i bruk står etter
  * samtalens ID, den samme for alle visningene som står samtidig.
  */
-export function lagChatkrok(avhengigheter: Chatavhengigheter): (id: string) => Gruppechat {
+export interface Chatkrok {
+  (id: string): Gruppechat
+  /** Henter det nye og rettighetene på nytt i alle samtalene som står åpne, etter noe brukeren selv har endret. */
+  oppfriskAlle: () => void
+}
+
+export function lagChatkrok(avhengigheter: Chatavhengigheter): Chatkrok {
   const delte = new Map<string, Delt>()
 
   const kontrollerFor = (id: string): Delt => {
@@ -47,7 +53,7 @@ export function lagChatkrok(avhengigheter: Chatavhengigheter): (id: string) => G
     return delt
   }
 
-  return function useChat(id: string): Gruppechat {
+  function useChat(id: string): Gruppechat {
     const { kontroller } = kontrollerFor(id)
     useEffect(() => {
       const delt = kontrollerFor(id)
@@ -67,6 +73,12 @@ export function lagChatkrok(avhengigheter: Chatavhengigheter): (id: string) => G
     }, [id])
     return useSyncExternalStore(kontroller.lytt, kontroller.hent)
   }
+
+  return Object.assign(useChat, {
+    oppfriskAlle: () => {
+      for (const { kontroller, brukere } of delte.values()) if (brukere > 0) kontroller.hent().oppfrisk()
+    },
+  })
 }
 
 export const useGruppechat = lagChatkrok({

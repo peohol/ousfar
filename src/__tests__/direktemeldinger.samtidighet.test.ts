@@ -133,10 +133,10 @@ describe.skipIf(!SERVER)('samtidige skrivinger i direktemeldingene (ekte Postgre
   const antall = (db: string) => psql(db, 'select count(*) from public.direktemeldinger')
 
   it.each([
-    ['mottakeren slår av (S1)', SLA_AV('to'), '55000'],
-    ['mottakeren blokkerer avsenderen (S2)', BLOKKER('to', 'en'), '55000'],
-    ['avsenderen blokkerer mottakeren (S2)', BLOKKER('en', 'to'), '55000'],
-    ['mottakeren mister medlemskapet (S3)', AVSLUTT('to'), '55000'],
+    ['mottakeren slår av (S1)', SLA_AV('to'), 'PT409'],
+    ['mottakeren blokkerer avsenderen (S2)', BLOKKER('to', 'en'), 'PT409'],
+    ['avsenderen blokkerer mottakeren (S2)', BLOKKER('en', 'to'), 'PT409'],
+    ['mottakeren mister medlemskapet (S3)', AVSLUTT('to'), 'PT409'],
     ['avsenderen mister medlemskapet (S3)', AVSLUTT('en'), '42501'],
   ] as const)('skriver ingen melding etter at %s', async (_hva, stengning, avslag) => {
     // Stengningen først: sendingen venter på den og får avslaget.
@@ -187,7 +187,7 @@ describe.skipIf(!SERVER)('samtidige skrivinger i direktemeldingene (ekte Postgre
     const en = nyDatabase()
     const svar = await alleSamtidig(en, Array.from({ length: 25 }, (_, i) => SENDING('en', i + 1)))
     expect(svar.filter((s) => s === '00000')).toHaveLength(20)
-    expect(svar.filter((s) => s !== '00000')).toEqual(Array(5).fill('54000'))
+    expect(svar.filter((s) => s !== '00000')).toEqual(Array(5).fill('PT429'))
     expect(antall(en)).toBe('20')
 
     // I flere samtaler: høyst 60 til sammen.

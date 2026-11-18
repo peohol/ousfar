@@ -79,4 +79,18 @@ describe('useGruppechat', () => {
     act(() => andre.unmount())
     expect(abonnement.aktive.size).toBe(0)
   })
+
+  it('oppfriskAlle henter rettighetene på nytt i samtalene som står åpne, og bare dem', async () => {
+    const api = await import('../gruppechat/api')
+    const lesninger = vi.mocked(api.lesGruppechat)
+    const a = renderHook(() => useGruppechat('gruppe-a'))
+    const b = renderHook(() => useGruppechat('gruppe-b'))
+    await waitFor(() => expect(a.result.current.status).toBe('klar'))
+    await waitFor(() => expect(b.result.current.status).toBe('klar'))
+    b.unmount()
+    lesninger.mockClear()
+    await act(async () => useGruppechat.oppfriskAlle())
+    await waitFor(() => expect(lesninger).toHaveBeenCalledTimes(1))
+    expect(lesninger.mock.calls[0]![0]).toBe('gruppe-a')
+  })
 })

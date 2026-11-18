@@ -455,9 +455,8 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
   })
 
-  it('blokkering bekreftes først, og samtalen hentes på nytt etterpå', async () => {
-    const oppfrisk = vi.fn()
-    tilstand.chat.set(DM, lagTestchat({ kanSkrive: true, oppfrisk, direkte: { motpart: kari, sperre: null, dempet: false } }))
+  it('blokkering bekreftes først, og lista og samtalene hentes på nytt etterpå', async () => {
+    tilstand.chat.set(DM, lagTestchat({ kanSkrive: true, direkte: { motpart: kari, sperre: null, dempet: false } }))
     tilstand.api.blokkerBruker = vi.fn(async () => undefined)
     vis()
     await apneMenyen()
@@ -467,7 +466,6 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(tilstand.api.blokkerBruker).not.toHaveBeenCalled()
     await userEvent.click(within(within(meny()).getByRole('group', { name: 'Blokkere Kari Testesen?' })).getByRole('button', { name: 'Blokker' }))
     expect(tilstand.api.blokkerBruker).toHaveBeenCalledWith(kari.id)
-    expect(oppfrisk).toHaveBeenCalled()
     expect(oppdater).toHaveBeenCalled()
   })
 })

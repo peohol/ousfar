@@ -72,8 +72,8 @@ describe('kallene', () => {
     expect((feil as Error).message).toBe('Samtalen finnes ikke, eller du har ikke tilgang til den.')
   })
 
-  it('leser 55000 som en sperre, med teksten databasen ga', async () => {
-    const { api } = falskKlient(() => ({ error: { code: '55000', message: 'Kan ikke motta nye direktemeldinger.' } }))
+  it('leser PT409 som en sperre, med teksten databasen ga', async () => {
+    const { api } = falskKlient(() => ({ error: { code: 'PT409', message: 'Kan ikke motta nye direktemeldinger.' } }))
     const feil = await api.sendDirektemelding('s', 'k', 'Hei').catch((e: unknown) => e)
     expect(feil).toBeInstanceOf(Sperret)
     expect((feil as Error).message).toBe('Kan ikke motta nye direktemeldinger.')

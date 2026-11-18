@@ -167,7 +167,7 @@ try {
     krev((await meny(ada).getByText('Syntetisk svar fra Bo').count()) > 0, 'historikken står')
     krev((await meny(ada).getByLabel('Melding til Bo Prøvesen').count()) === 0, 'skrivefeltet er borte')
     await bilde(ada, '05-laast-mottaker-pc')
-    await helside(bo).getByRole('button', { name: /Ada Testesen/ }).click()
+    await helside(bo).locator('.chatrad__knapp', { hasText: 'Ada Testesen' }).click()
     await helside(bo).getByText('Du har slått av direktemeldinger. Slå dem på for å skrive.').waitFor({ timeout: 10_000 })
     await bilde(bo, '06-laast-selv-av-pc')
     await rpc(boK, 'sett_chatvalg', { tillat: true, vis_aktiv: null })
@@ -198,7 +198,7 @@ try {
   })
 
   await punkt('D6 aktivitetsprikken bare når den andre har slått den på', async () => {
-    const prikk = meny(ada).locator(`.chatrad[data-samtale="${samtale}"]`).getByRole('img', { name: 'Aktiv nå' })
+    const prikk = meny(ada).locator('.chatperson__aktiv[aria-label="Aktiv nå"]')
     krev((await prikk.count()) === 0, 'prikk før Bo slo på')
     const vis = helside(bo).getByRole('switch', { name: /Vis når jeg er aktiv/ })
     await helside(bo).getByRole('button', { name: 'Til alle samtaler' }).click().catch(() => undefined)
@@ -218,7 +218,7 @@ try {
     const m = meny(mobil)
     await m.getByRole('region', { name: 'Samtaler' }).waitFor()
     await bilde(mobil, '10-meny-mobil')
-    await m.getByRole('button', { name: /Ada Testesen/ }).click()
+    await m.locator('.chatrad__knapp', { hasText: 'Ada Testesen' }).click()
     await m.getByRole('log').waitFor()
     await bilde(mobil, '11-samtale-mobil')
     await mobil.emulateMedia({ colorScheme: 'dark' })
@@ -237,7 +237,7 @@ try {
     await bo.goto(`${miljo.url}/#/chat/direkte/${samtale}`)
     await helside(bo).getByRole('log').waitFor({ timeout: 20_000 })
     const start = Date.now()
-    deaktivert = psql(s, `with d as (update public.medlemskap set status = 'deaktivert' where bruker_id = '${boId}' and status = 'aktiv' returning fagmiljo_id) select string_agg(fagmiljo_id::text, ',') from d`)
+    deaktivert = psql(s, `with d as (update public.medlemskap set status = 'deaktivert', til = fra where bruker_id = '${boId}' and status = 'aktiv' returning fagmiljo_id) select string_agg(fagmiljo_id::text, ',') from d`)
     krev(deaktivert, 'Bo hadde ikke aktivt medlemskap')
     // Meldingene er borte fra skjermen: samtalen er stengt, eller appen står bak porten for kontoer uten tilgang.
     await innen(65_000, 'meldingene er borte', async () => (await bo.getByText('Syntetisk hei Bo').count()) === 0)
@@ -248,7 +248,7 @@ try {
     return `${(brukt / 1000).toFixed(1)} s, ${stengt ? 'samtalen stengt' : 'appen stengt'}`
   })
 } finally {
-  if (deaktivert) psql(s, `update public.medlemskap set status = 'aktiv' where bruker_id = '${boId}' and fagmiljo_id = any(string_to_array('${deaktivert}', ',')::uuid[])`)
+  if (deaktivert) psql(s, `update public.medlemskap set status = 'aktiv', til = null where bruker_id = '${boId}' and fagmiljo_id = any(string_to_array('${deaktivert}', ',')::uuid[])`)
   settBrytere(s, false)
   await miljo.avslutt()
   console.log('\nRESULTAT')

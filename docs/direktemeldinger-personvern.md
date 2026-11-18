@@ -214,7 +214,7 @@ systemarkitektene eller administratorene noe ekstra.
 | `mine_direktesamtaler()` | Samtalene: ID, den andres profilkort (null for slettet konto), `siste_melding_kl`, antall uleste, `dempet`, `kan_skrive`. Ingen tekst, ikke de skjulte |
 | `les_direktesamtale(samtale, for_nr, antall)` | Som `les_gruppechat`, med `motpart`, `kan_skrive`, `sperre` (`null`, `selv_av`, `selv_blokkert` eller `mottaker` — den siste uten grunn) og `lesere: 2` |
 | `direktesamtale_endringer(samtale, etter, antall)` | Som `gruppechat_endringer` |
-| `send_direktemelding(samtale, klient_id, tekst)` | Vaktene: tekst og lengde (`22023`), fødselsnummer (`22023`), takten (`54000`), så låsene og sendevilkårene (`55000` «Kan ikke motta nye direktemeldinger.» eller egen grunn) |
+| `send_direktemelding(samtale, klient_id, tekst)` | Vaktene: tekst og lengde (`22023`), fødselsnummer (`22023`), takten (`PT429`), så låsene og sendevilkårene (`PT409` «Kan ikke motta nye direktemeldinger.» eller egen grunn) |
 | `endre_direktemelding(melding, tekst)` | Bare forfatteren, bare når det kan sendes |
 | `slett_direktemelding(melding)` | Begge deltakerne; idempotent |
 | `merk_direktesamtale_lest(samtale, til_nr)` | Flytter bare framover |
@@ -224,8 +224,8 @@ systemarkitektene eller administratorene noe ekstra.
 | `aktive_motparter()` | ID-ene til samtalepartnerne som er aktive nå etter reglene for aktivitetsstatus; aldri tidspunkter |
 
 Svarkodene følger gruppechatten: `42501` for bryteren og for alt man ikke har
-tilgang til eller som ikke finnes (samme tekst), `55000` når samtalen finnes,
-men det ikke kan sendes, `22023` for innholdet og `54000` for takten.
+tilgang til eller som ikke finnes (samme tekst), `PT409` når samtalen finnes,
+men det ikke kan sendes, `22023` for innholdet og `PT429` for takten.
 Meldingsteksten står aldri i en `raise`-tekst, i tilgangsloggen eller i et
 varsel.
 
@@ -299,7 +299,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T2 | Tilfeldig UUID og ID-en til en melding i `K`, som en utenforstående | Samme svar som T1 |
 | T3 | Direkte `select`, `insert`, `update`, `delete` som `authenticated` på alle tabellene | Ingen rader, avvist; `direktesamtaler` bare egne rader |
 | T4 | Utenforstående abonnerer på `direktesamtaler` | Ingen hendelser; publikasjonen har bare `direktesamtaler` av disse tabellene |
-| T5 | `vanligB` slår av | Usøkbar for alle; `vanligA` får `55000` i `K` med den felles teksten; historikken uendret for begge (antall og tekst); ingenting slettet |
+| T5 | `vanligB` slår av | Usøkbar for alle; `vanligA` får `PT409` i `K` med den felles teksten; historikken uendret for begge (antall og tekst); ingenting slettet |
 | T6 | `vanligB` slår på igjen | Samme `K`, ingen ny samtale |
 | T7 | `vanligA` har selv slått av | Kan verken søke, starte eller sende; kan lese og slette i `K` |
 | T8 | `vanligB` blokkerer `vanligA` | `vanligA` får samme svar og tekst som i T5; ingen av dem finner den andre i søket eller ser prikken; `vanligB` kan heller ikke sende; opphevet blokkering gir alt tilbake |
@@ -318,7 +318,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T21 | Demping og skjuling | Dempet teller ikke på chatknappen; skjult kommer tilbake ved ny melding; den andre merker ingenting |
 | T22 | Bryteren for hele funksjonen av | Alle funksjonene `42501` «Direktemeldingene er ikke slått på.» |
 | T23 | Gruppechat | Upåvirket av brytere og blokkeringer |
-| T24 | Takten og grensene | `54000` over 20 i minuttet per samtale, 60 til sammen og 10 nye samtaler i timen |
+| T24 | Takten og grensene | `PT429` over 20 i minuttet per samtale, 60 til sammen og 10 nye samtaler i timen |
 
 **Samtidighet** (ekte Postgres):
 
@@ -330,7 +330,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | S4 | Begge åpner samtale samtidig | Én samtale |
 | S5 | Samme `klient_id` samtidig | Én melding |
 | S6 | Mange samtidige sendinger fra begge | `nr` og `endring` uten hull eller duplikater |
-| S7 | Samme bruker sender samtidig over grensene, i én og i flere samtaler, og åpner mange samtaler samtidig | Aldri mer enn 20 per samtale, 60 til sammen og 10 nye samtaler; resten `54000` |
+| S7 | Samme bruker sender samtidig over grensene, i én og i flere samtaler, og åpner mange samtaler samtidig | Aldri mer enn 20 per samtale, 60 til sammen og 10 nye samtaler; resten `PT429` |
 
 **I nettleseren** (det lokale testmiljøet, aldri produksjonen): to brukere
 utveksler meldinger i sanntid; avslått og blokkert mottaker gir låst linje
@@ -363,10 +363,16 @@ Det D5 bygde, og valgene som ble tatt underveis (alle **Teknisk**):
   `src/drift/gruppechatLagringstid.ts`) kjører ryddingen og kontrollen for
   gruppechatten og direktemeldingene etter hverandre, og feiler hvis én av
   dem feiler.
+- **Feilkodene:** avslagene bruker `PT409` (det kan ikke sendes nå) og
+  `PT429` (takten) i stedet for `55000` og `54000`, fordi API-et
+  (PostgREST) gjør de to siste om til HTTP 500, som ser ut som en feil på
+  serveren og stopper trafikkvakten i nettleserkontrollene. Med `PTxyz` blir
+  svaret HTTP xyz, med samme tekst. Tilgangen er uendret: `42501` gir samme
+  svar for det som ikke finnes og det man ikke har tilgang til.
 - **Klienten:** kallene i `src/direktemeldinger/kall.ts`, lista, valgene og
   aktivitetsprikken i `useDirekte.ts`, og samtalen med den samme
   kontrolleren og visningen som gruppechatten (`useDirektesamtale.ts`,
-  `lagChatkrok`). En sperre (`55000`) ved sending henter sperren med en gang,
+  `lagChatkrok`). En sperre (`PT409`) ved sending henter sperren med en gang,
   og endringene (`direktesamtale_endringer`) har med `kan_skrive` og sperren,
   så en åpen samtale låses senest ved neste livstegn.
 - **Chatmenyen:** direktesamtalene står i samme liste som gruppechattene,

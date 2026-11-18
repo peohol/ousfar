@@ -18,6 +18,7 @@ import { useOppfriskVedRinging } from '../gruppechat/samtaler'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
 import { abonnerPaDirektesamtale, direkteapi } from './api'
 import type { Direkteapi } from './kall'
+import { useDirektesamtale } from './useDirektesamtale'
 import { AVSLAATTE_CHATVALG, type Chatvalg, type Direktesamtale } from './modell'
 
 /** Det menyen vet om direktemeldingene. */
@@ -69,13 +70,20 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
     async (endring: Partial<Chatvalg>) => {
       const valg = await direkteapi.settChatvalg(endring)
       sett({ ...verdi, valg })
-      // Om det kan skrives i samtalene, følger bryteren.
+      // Om det kan skrives i samtalene, følger bryteren: lista og de åpne samtalene med en gang.
       sjekk()
+      useDirektesamtale.oppfriskAlle()
     },
     [verdi, sett, sjekk],
   )
 
-  return { ...verdi, kjent, aktive, settValg, oppdater: sjekk }
+  /** Noe den innloggede har endret (som en blokkering): lista og de åpne samtalene hentes på nytt. */
+  const oppdater = useCallback(() => {
+    sjekk()
+    useDirektesamtale.oppfriskAlle()
+  }, [sjekk])
+
+  return { ...verdi, kjent, aktive, settValg, oppdater }
 }
 
 const INGEN_AKTIVE: ReadonlySet<string> = new Set()

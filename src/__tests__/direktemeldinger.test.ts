@@ -31,7 +31,7 @@ const INGEN = '00000000-0000-4000-8000-00000000dead'
 const SAMTALEAVSLAG = { kode: '42501', melding: 'Samtalen finnes ikke, eller du har ikke tilgang til den.' }
 const MELDINGSAVSLAG = { kode: '42501', melding: 'Meldingen finnes ikke, eller du har ikke tilgang til den.' }
 const PERSONAVSLAG = { kode: '42501', melding: 'Personen finnes ikke, eller kan ikke motta direktemeldinger.' }
-const KAN_IKKE_MOTTA = { kode: '55000', melding: 'Kan ikke motta nye direktemeldinger.' }
+const KAN_IKKE_MOTTA = { kode: 'PT409', melding: 'Kan ikke motta nye direktemeldinger.' }
 
 const SLA_PA = `create or replace function intern.direktemeldinger_aktivert() returns boolean language sql stable set search_path = '' as 'select true'`
 const SLA_AV = SLA_PA.replace("'select true'", "'select false'")
@@ -309,12 +309,12 @@ describe('bryteren for den enkelte (T5–T7, T11, T15, T16)', () => {
     const egen = await send('vanligA', K, 'Egen')
     const annen = await send('vanligB', K, 'Annen')
     await settValg('vanligA', false)
-    expect(await feil(() => sok('vanligA', 'test'))).toEqual({ kode: '55000', melding: 'Slå på «Tillat direktemeldinger» for å finne andre.' })
+    expect(await feil(() => sok('vanligA', 'test'))).toEqual({ kode: 'PT409', melding: 'Slå på «Tillat direktemeldinger» for å finne andre.' })
     expect(await feil(() => aapne('vanligA', 'dobbeltAB'))).toEqual({
-      kode: '55000',
+      kode: 'PT409',
       melding: 'Slå på «Tillat direktemeldinger» for å starte en samtale.',
     })
-    expect(await feil(() => send('vanligA'))).toEqual({ kode: '55000', melding: 'Du har slått av direktemeldinger. Slå dem på for å skrive.' })
+    expect(await feil(() => send('vanligA'))).toEqual({ kode: 'PT409', melding: 'Du har slått av direktemeldinger. Slå dem på for å skrive.' })
     expect((await les('vanligA')).direkte?.sperre).toBe('selv_av')
     // Den andre ser den felles teksten, ikke grunnen.
     expect(await feil(() => send('vanligB'))).toEqual(KAN_IKKE_MOTTA)
@@ -374,7 +374,7 @@ describe('blokkeringen (T8, T9)', () => {
     // Den blokkerte får den felles teksten, ikke grunnen.
     expect(await feil(() => send('vanligA'))).toEqual(KAN_IKKE_MOTTA)
     expect((await les('vanligA')).direkte?.sperre).toBe('mottaker')
-    expect(await feil(() => send('vanligB'))).toEqual({ kode: '55000', melding: 'Du har blokkert denne personen. Opphev blokkeringen for å skrive.' })
+    expect(await feil(() => send('vanligB'))).toEqual({ kode: 'PT409', melding: 'Du har blokkert denne personen. Opphev blokkeringen for å skrive.' })
     expect((await les('vanligB')).direkte?.sperre).toBe('selv_blokkert')
     expect(await sok('vanligA', 'vanligb')).toEqual([])
     expect(await sok('vanligB', 'vanliga')).toEqual([])
@@ -589,7 +589,7 @@ describe('gruppechatten (T23)', () => {
 describe('takten og grensene (T24)', () => {
   it('avviser mer enn 20 i minuttet per samtale og 60 til sammen', async () => {
     for (let i = 0; i < 20; i++) await send('vanligA', K, `M${i}`)
-    const for_fort = { kode: '54000', melding: 'Du sender meldinger for fort. Vent litt og prøv igjen.' }
+    const for_fort = { kode: 'PT429', melding: 'Du sender meldinger for fort. Vent litt og prøv igjen.' }
     expect(await feil(() => send('vanligA'))).toEqual(for_fort)
     // Den andre i samtalen har sin egen takt.
     expect((await send('vanligB')).nr).toBe(21)
@@ -616,7 +616,7 @@ describe('takten og grensene (T24)', () => {
     for (const mal of andre.slice(0, 9)) aapnede.push(await aapne('vanligA', mal))
     expect(new Set([K, ...aapnede]).size).toBe(10)
     expect(await feil(() => aapne('vanligA', andre[9]!))).toEqual({
-      kode: '54000',
+      kode: 'PT429',
       melding: 'Du har startet mange nye samtaler. Vent litt og prøv igjen.',
     })
     // Etter en time går det igjen.
