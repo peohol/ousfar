@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * P6b: et varsel om en gruppeoppgave mens et skjema på gruppesiden har
+ * P6b: et varsel om en gruppeoppgave mens et skjema i en arbeidsflate har
  * endringer som ikke er lagret. Varselvinduet og gruppesiden står sammen, med
  * den virkelige skjemavakten (`gruppevisning.ts`) mellom dem: blir brukeren i
  * skjemaet, står varselet ulest; forkastes endringene, åpnes oppgaven og
@@ -105,7 +105,7 @@ vi.mock('../ideer/api', async (original) => ({ ...(await original<object>()), ..
 vi.mock('../data/endringslogg', () => ({ ENDRINGSLOGG: [] }))
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
-const { Grupperside } = await import('../components/grupper/Grupperside')
+const { Gruppeflate } = await import('../components/grupper/Gruppeflate')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
 const { lesGruppeideer } = await import('../ideer/modell')
@@ -126,7 +126,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   window.scrollTo = () => undefined
-  window.location.hash = ''
+  window.history.replaceState(null, '', IDEADRESSE)
   varselApi.hentVarsler.mockResolvedValue(VARSLER)
   varselApi.hentUleste.mockResolvedValue({ gruppeoppgaver: 1 })
   grupperApi.hentGruppeoversikt.mockImplementation(async () => lesGruppeoversikt(OVERSIKT))
@@ -138,6 +138,7 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
+const IDEADRESSE = `#/grupper/${GRUPPE}/ideer`
 const bjella = () => screen.getByRole('button', { name: /^Varsler/ })
 const VARSELTEKST = 'Ola Nordmann ga deg en oppgave'
 
@@ -146,7 +147,7 @@ it('lar et gruppevarsel stå ulest når brukeren blir i et ulagret skjema, og me
   render(
     <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
       <Varselknapp />
-      <Grupperside gruppe={GRUPPE} fane="ideer" onLukk={() => undefined} />
+      <Gruppeflate gruppe={GRUPPE} fane="ideer" />
     </GruppekildeProvider>,
   )
   // Lista er tom, så «Ny idé» står både øverst og i den tomme lista.
@@ -160,7 +161,7 @@ it('lar et gruppevarsel stå ulest når brukeren blir i et ulagret skjema, og me
   expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
   await bruker.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
   expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
-  expect(window.location.hash).toBe('')
+  expect(window.location.hash).toBe(IDEADRESSE)
   expect(varselApi.merkVarslerLest).not.toHaveBeenCalled()
 
   // Varselet står fortsatt blant de nye.

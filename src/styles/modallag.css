@@ -56,6 +56,24 @@
   width: min(100%, 68rem);
 }
 
+/* Arbeidsflaten: liste og detalj side om side i et stort panel i full høyde
+   (idéene og oppgavene i en gruppe). Kroppen ruller ikke selv; det gjør
+   lista og detaljen hver for seg. */
+.modallag--arbeidsflate {
+  padding-block: var(--rom-5);
+}
+
+.modallag__panel--arbeidsflate {
+  width: min(100%, 82rem);
+  height: 100%;
+}
+
+.modallag__panel--arbeidsflate .modallag__kropp {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+}
+
 .modallag__topp {
   display: flex;
   align-items: center;
@@ -277,5 +295,19 @@
 
   .modallag--ark .modallag__kropp {
     padding: var(--rom-5);
+  }
+}
+
+/* Arbeidsflaten fyller hele skjermen på smale flater. */
+@media (max-width: 47.5em) {
+  .modallag--arbeidsflate[open] {
+    place-items: stretch;
+    padding: 0;
+  }
+
+  .modallag__panel--arbeidsflate {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
   }
 }

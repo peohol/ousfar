@@ -89,6 +89,8 @@ import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffreg
 import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
 import { Verktoyside } from './components/verktoy/Verktoyside'
 import { Grupperside } from './components/grupper/Grupperside'
+import { Gruppeflate } from './components/grupper/Gruppeflate'
+import { arbeidsflate, flatebakgrunn } from './components/grupper/arbeidsflate'
 import { ForslagskildeProvider } from './components/forslag/Forslagskilde'
 import { Forslagsside } from './components/forslag/Forslagsside'
 import { Fortolkningsforslag } from './components/forslag/Fortolkningsforslag'
@@ -112,7 +114,7 @@ import {
   VIST_FORTOLKNING,
   useKeyboard,
 } from './hooks/useKeyboard'
-import { useRute } from './hooks/useRute'
+import { inngangsvei, useRute } from './hooks/useRute'
 import {
   AnalyttkatalogKilde,
   katalogkildeFor,
@@ -356,7 +358,11 @@ function Arbeidsflate({
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
   // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
   const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
-  const [rute, gaaTil, tilbake] = useRute(apneFraAdressen, adressegrunnlag)
+  const [adresserute, gaaTil, tilbake] = useRute(apneFraAdressen, adressegrunnlag)
+  // En arbeidsflate i en gruppe (idéene, oppgavene) legger seg over siden den
+  // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
+  const flate = arbeidsflate(adresserute)
+  const rute = flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
   const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
   // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
@@ -957,9 +963,10 @@ function Arbeidsflate({
 
                   {rute.side === 'grupper' && (
                     <main className="scene scene--infoside">
-                      <Grupperside gruppe={rute.gruppe} fane={rute.fane} element={rute.element} onLukk={lukkInfoside} />
+                      <Grupperside gruppe={rute.gruppe} fane={rute.fane} onLukk={lukkInfoside} />
                     </main>
                   )}
+                  {flate && <Gruppeflate key={flate.gruppe} {...flate} />}
 
                   {rute.side === 'forslag' && (
                     <main className="scene scene--infoside">

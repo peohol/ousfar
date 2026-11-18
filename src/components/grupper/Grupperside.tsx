@@ -1,90 +1,65 @@
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type MouseEvent, type MutableRefObject, type ReactNode } from 'react'
-import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
+import { useEffect, useId, useMemo, type ReactNode } from 'react'
 import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
 import { gruppeside } from '../../diskusjoner/modell'
 import { gruppeadresse, type Gruppefane } from '../../domain/rute'
-import {
-  arkiverGruppe,
-  avsluttGruppemedlemskap,
-  endreGruppe,
-  hentGruppeoversikt,
-  inviterTilGruppe,
-  opprettGruppe,
-  settGrupperolle,
-  svarPaaInvitasjon,
-} from '../../grupper/api'
+import { arkiverGruppe, avsluttGruppemedlemskap, endreGruppe, inviterTilGruppe, settGrupperolle, svarPaaInvitasjon } from '../../grupper/api'
 import { useGrupper } from '../../grupper/kilde'
-import {
-  GRUPPEROLLER,
-  ROLLEFORKLARING,
-  ROLLENAVN,
-  delMedlemmer,
-  gruppetilhorighet,
-  type Gruppemedlem,
-  type Gruppeoversikt,
-  type Grupperolle,
-} from '../../grupper/modell'
+import { ROLLENAVN, delMedlemmer, gruppetilhorighet, type Gruppemedlem, type Gruppeoversikt, type MinGruppe } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
+import { tilbakeTil } from '../../hooks/useRute'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
-import { Lukkeknapp } from '../Lukkeknapp'
-import { Merke } from '../Merke'
-import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
+import type { Ikonnavn } from '../ikon/register'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
-import { Felt } from '../konto/Felt'
+import { Lukkeknapp } from '../Lukkeknapp'
+import { Merke } from '../Merke'
+import { Oppsummeringskort } from '../oppsummering/Oppsummeringskort'
+import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
-import type { Forlat } from '../ideer/useForlatvakt'
+import { Gruppeaktivitet } from './Gruppeaktivitet'
 import { Gruppechatfane } from './Gruppechat'
-import { Gruppeideer } from './Gruppeideer'
-import { Gruppeoppgaver } from './Gruppeoppgaver'
-import { meldGruppesiden } from './gruppevisning'
+import { Innstillingsmodal, Medlemsmodal, OpprettGruppe, harInnstillinger } from './Gruppemodaler'
+import { Tilbakelenke, Tilbakemelding, useFanetittel, useGruppeoversikt, useHandling } from './gruppedeler'
 
-const UVENTET = 'Noe gikk galt. Prøv igjen.'
-const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message : UVENTET)
-
-/** Valget for en gruppe på tvers av fagmiljøene i skjemaet for en ny gruppe. */
-const PAA_TVERS = ''
+/** Gruppeoversikten, reserven når en gruppe lukkes og ble åpnet utenfra. */
+const GRUPPER = gruppeadresse()
 
 /**
- * Gruppene (`#/grupper`): invitasjonene, gruppene den innloggede er med i og
- * skjemaet for en ny gruppe, eller én gruppe (`#/grupper/<ID>`) med
- * medlemmene og det de ansvarlige kan gjøre. Gruppen har faner for oversikten,
- * idéene (`…/ideer`, `…/ideer/<idé-ID>`), oppgavene (`…/oppgaver`,
- * `…/oppgaver/<oppgave-ID>`) og chatten (`…/chat`, når den er slått på), og en til diskusjonene, som står
- * i diskusjonsmenyen, som på de andre sidene. Knappene er et grensesnitt, ikke
- * en tilgangskontroll: databasen kontrollerer hver handling på nytt
- * (docs/fagmiljoer.md, «Gruppene» og «Idéer og oppgaver i gruppene»).
+ * Gruppene (`#/grupper`): invitasjonene, søket og gruppene den innloggede
+ * leser; eller én gruppe (`#/grupper/<ID>`) som et oversiktsbilde uten faner:
+ * medlemslinjen og fire korte paneler for idéene, oppgavene, diskusjonene og
+ * chatten. Medlemmene, innstillingene og en ny gruppe er modaler; idéene og
+ * oppgavene er arbeidsflater over siden (`Gruppeflate`). Chatten står på sin
+ * egen side (`…/chat`) til chatmenyen tar over.
+ *
+ * Knappene er et grensesnitt, ikke en tilgangskontroll: databasen
+ * kontrollerer hver handling på nytt (docs/fagmiljoer.md, «Gruppene» og
+ * «Idéer og oppgaver i gruppene»).
  */
 export function Grupperside({
   gruppe,
   fane,
-  element,
   onLukk,
 }: {
   gruppe?: string
-  /** Fanen i gruppen; uten står oversikten. */
+  /** Bare chatten er en egen side i gruppen; idéene og oppgavene er arbeidsflater. */
   fane?: Gruppefane
-  /** Idéen eller oppgaven som står åpen i fanen. */
-  element?: string
   onLukk: () => void
 }) {
   const overskrift = useId()
-  /** Vakten til skjemaet som står åpent i en fane, så siden og fanene spør før endringer forlates. */
-  const skjemavakt = useRef<Forlat | null>(null)
-  const lukk = () => (skjemavakt.current ? skjemavakt.current(onLukk) : onLukk())
+  // En gruppe lukkes dit brukeren kom fra, eller til gruppeoversikten; chatten til gruppen.
+  const lukk = gruppe ? () => tilbakeTil(fane === 'chat' ? gruppeadresse(gruppe) : GRUPPER) : onLukk
   useLukkMedEscape(lukk)
-  // Det som kommer utenfra, som et varsel eller en direktelenke, går gjennom den samme vakten.
-  useEffect(() => meldGruppesiden((handling) => (skjemavakt.current ? skjemavakt.current(handling) : handling())), [])
 
   // En ny side begynner øverst, med fokus på overskriften.
   useEffect(() => {
     window.scrollTo({ top: 0 })
     document.getElementById(overskrift)?.focus({ preventScroll: true })
-  }, [gruppe, overskrift])
+  }, [gruppe, fane, overskrift])
 
   return (
     <section className="gruppeside" aria-labelledby={overskrift}>
@@ -93,123 +68,53 @@ export function Grupperside({
       </ToppmenyInnhold>
       <Bevaringsomrade navn={gruppe ? `gruppe:${gruppe}` : 'grupper'}>
         {gruppe ? (
-          <Gruppevisning key={gruppe} id={gruppe} fane={fane} element={element} overskrift={overskrift} skjemavakt={skjemavakt} />
+          fane === 'chat' ? (
+            <Chatside key={gruppe} id={gruppe} overskrift={overskrift} onLukk={lukk} />
+          ) : (
+            <Gruppedashboard key={gruppe} id={gruppe} overskrift={overskrift} onLukk={lukk} />
+          )
         ) : (
-          <Oversikt overskrift={overskrift} />
+          <Oversikt overskrift={overskrift} onLukk={lukk} />
         )}
       </Bevaringsomrade>
     </section>
   )
 }
 
-/** Sidens tittel i fanen mens siden står åpen. */
-function useFanetittel(tittel: string) {
-  useEffect(() => {
-    const forrige = document.title
-    document.title = `${tittel} – OUSFAR`
-    return () => {
-      document.title = forrige
-    }
-  }, [tittel])
-}
-
-/**
- * Én handling om gangen, med kvitteringen eller feilen etter. `utfor` gir
- * kvitteringen fra handlingen, eller ingen.
- */
-function useHandling() {
-  const [opptatt, setOpptatt] = useState(false)
-  const [feil, setFeil] = useState<string | null>(null)
-  const [kvittering, setKvittering] = useState<string | null>(null)
-  const utfor = useCallback(async (handling: () => Promise<string | null | void>): Promise<boolean> => {
-    setOpptatt(true)
-    setFeil(null)
-    setKvittering(null)
-    try {
-      setKvittering((await handling()) || null)
-      return true
-    } catch (aarsak) {
-      setFeil(melding(aarsak))
-      return false
-    } finally {
-      setOpptatt(false)
-    }
-  }, [])
-  return { opptatt, feil, kvittering, utfor }
-}
-
-function Tilbakemelding({ feil, kvittering }: { feil: string | null; kvittering: string | null }) {
+function Tittel({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <>
-      {kvittering && (
-        <p className="gruppeside__kvittering" role="status">
-          {kvittering}
-        </p>
-      )}
-      {feil && (
-        <p className="skjemafeil" role="alert">
-          {feil}
-        </p>
-      )}
-    </>
-  )
-}
-
-function Hode({ overskrift, overtittel, tittel, children }: { overskrift: string; overtittel: ReactNode; tittel: string; children?: ReactNode }) {
-  return (
-    <header className="gruppeside__hode">
-      <p className="gruppeside__overtittel">{overtittel}</p>
-      <h1 id={overskrift} className="gruppeside__tittel" tabIndex={-1}>
-        {tittel}
-      </h1>
+    <h1 id={id} className="gruppeside__tittel" tabIndex={-1}>
       {children}
-    </header>
-  )
-}
-
-/** Navnet og beskrivelsen, felles for skjemaet for en ny gruppe og endringen av en. */
-function Gruppefelter({
-  navn,
-  beskrivelse,
-  onNavn,
-  onBeskrivelse,
-  disabled,
-}: {
-  navn: string
-  beskrivelse: string
-  onNavn: (navn: string) => void
-  onBeskrivelse: (beskrivelse: string) => void
-  disabled: boolean
-}) {
-  const beskrivelseId = useId()
-  return (
-    <>
-      <Felt merkelapp="Navn" value={navn} maxLength={80} required disabled={disabled} onChange={(e) => onNavn(e.target.value)} />
-      <div className="felt">
-        <label className="felt__merkelapp" htmlFor={beskrivelseId}>
-          Beskrivelse
-        </label>
-        <textarea
-          id={beskrivelseId}
-          className="felt__inndata"
-          rows={3}
-          maxLength={1000}
-          value={beskrivelse}
-          disabled={disabled}
-          onChange={(e) => onBeskrivelse(e.target.value)}
-        />
-      </div>
-    </>
+    </h1>
   )
 }
 
 /* --- Oversikten -------------------------------------------------------------- */
 
-function Oversikt({ overskrift }: { overskrift: string }) {
+/** Gruppene som passer med søket: navnet og tilhørigheten, etter hvert ord. */
+export function sokIGrupper<T extends MinGruppe>(grupper: readonly T[], sok: string): T[] {
+  const ord = sok.toLocaleLowerCase('nb').split(/\s+/).filter(Boolean)
+  if (ord.length === 0) return [...grupper]
+  return grupper.filter((g) => {
+    const tekst = `${g.navn} ${gruppetilhorighet(g)}`.toLocaleLowerCase('nb')
+    return ord.every((o) => tekst.includes(o))
+  })
+}
+
+const antallMedlemmer = (n: number) => (n === 1 ? '1 medlem' : `${n} medlemmer`)
+
+function Oversikt({ overskrift, onLukk }: { overskrift: string; onLukk: () => void }) {
   useFanetittel('Grupper')
   const { grupper, invitasjoner, kan_opprette, oppdater } = useGrupper()
   const { opptatt, feil, kvittering, utfor } = useHandling()
+  const [ny, setNy] = useBevart('ny/apen', false)
+  const [sok, setSok] = useBevart('sok', '')
+  const sokId = useId()
   const kanOpprette = kan_opprette.tverrfaglig || kan_opprette.fagmiljoer.length > 0
+  const { aktive, arkiverte } = useMemo(() => {
+    const treff = sokIGrupper(grupper, sok)
+    return { aktive: treff.filter((g) => g.status === 'aktiv'), arkiverte: treff.filter((g) => g.status !== 'aktiv') }
+  }, [grupper, sok])
 
   const svar = (gruppe: string, navn: string, godta: boolean) =>
     void utfor(async () => {
@@ -220,32 +125,41 @@ function Oversikt({ overskrift }: { overskrift: string }) {
 
   return (
     <>
-      <Hode overskrift={overskrift} overtittel="Samhandling" tittel="Grupper">
-        <p className="gruppeside__ingress">
-          En gruppe har sine egne diskusjoner, som bare medlemmene ser. Den kan høre til ett fagmiljø eller gå på tvers av
-          fagmiljøene. Å være med i en gruppe gir aldri tilgang til et annet fagmiljøs lokale innhold.
-        </p>
-      </Hode>
+      <Tilbakelenke reserve="forsiden" onTilbake={onLukk} />
+      <header className="gruppeside__tittelrad">
+        <Tittel id={overskrift}>Grupper</Tittel>
+        {kanOpprette && (
+          <Button icon={<Ikon navn="plus" />} onClick={() => setNy(true)}>
+            Opprett gruppe
+          </Button>
+        )}
+      </header>
       <Tilbakemelding feil={feil} kvittering={kvittering} />
 
       {invitasjoner.length > 0 && (
         <section className="gruppeside__del" aria-label="Invitasjoner">
-          <h2 className="gruppeside__deltittel">Invitasjoner</h2>
-          <ul className="brukerliste">
+          <ul className="gruppeinvitasjoner">
             {invitasjoner.map(({ gruppe, invitert_av }) => (
-              <li key={gruppe.id} className="grupperad">
-                <span className="grupperad__navn">
-                  <span className="brukerrad__fullt">{gruppe.navn}</span>
-                  <span className="brukerrad__brukernavn">
-                    {gruppetilhorighet(gruppe)}
-                    {invitert_av && ` · invitert av ${visningsnavn(invitert_av)}`}
+              <li key={gruppe.id} className="gruppeinvitasjon">
+                <span className="gruppeinvitasjon__tekst">
+                  <span>
+                    {invitert_av ? (
+                      <>
+                        <strong>{visningsnavn(invitert_av)}</strong> har invitert deg til <strong>{gruppe.navn}</strong>.
+                      </>
+                    ) : (
+                      <>
+                        Du er invitert til <strong>{gruppe.navn}</strong>.
+                      </>
+                    )}
                   </span>
+                  <span className="gruppeinvitasjon__meta">{gruppetilhorighet(gruppe)}</span>
                 </span>
-                <span className="brukerrad__knapper">
-                  <Button variant="kant" icon={<Ikon navn="yes" />} disabled={opptatt} onClick={() => svar(gruppe.id, gruppe.navn, true)}>
+                <span className="gruppeinvitasjon__knapper">
+                  <Button disabled={opptatt} aria-label={`Godta invitasjonen til ${gruppe.navn}`} onClick={() => svar(gruppe.id, gruppe.navn, true)}>
                     Godta
                   </Button>
-                  <Button variant="kant" icon={<Ikon navn="close" />} disabled={opptatt} onClick={() => svar(gruppe.id, gruppe.navn, false)}>
+                  <Button variant="kant" disabled={opptatt} aria-label={`Avslå invitasjonen til ${gruppe.navn}`} onClick={() => svar(gruppe.id, gruppe.navn, false)}>
                     Avslå
                   </Button>
                 </span>
@@ -255,88 +169,61 @@ function Oversikt({ overskrift }: { overskrift: string }) {
         </section>
       )}
 
-      <section className="gruppeside__del" aria-label="Gruppene dine">
-        <h2 className="gruppeside__deltittel">Gruppene dine</h2>
-        {grupper.length === 0 ? (
-          <p className="brukerliste__tomt">Du er ikke med i noen grupper ennå. En ansvarlig i en gruppe kan invitere deg.</p>
-        ) : (
-          <ul className="brukerliste">
-            {grupper.map((g) => (
-              <li key={g.id} className="grupperad">
-                <a className="grupperad__navn grupperad__lenke" href={gruppeadresse(g.id)}>
-                  <span className="brukerrad__fullt">{g.navn}</span>
-                  <span className="brukerrad__brukernavn">
-                    {gruppetilhorighet(g)} · {g.medlemmer === 1 ? '1 medlem' : `${g.medlemmer} medlemmer`}
-                  </span>
-                </a>
-                <span className="brukerrad__merker">
-                  {g.rolle ? <Merke tone={g.rolle === 'medlem' ? 'noytral' : 'aksent'}>{ROLLENAVN[g.rolle]}</Merke> : <Merke>Ikke med</Merke>}
-                  {g.status === 'arkivert' && <Merke tone="flate">Arkivert</Merke>}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {grupper.length === 0 ? (
+        <p className="gruppeside__tomt">Du er ikke med i noen grupper ennå.</p>
+      ) : (
+        <>
+          <div className="felt gruppeside__sok">
+            <label className="kun-skjermleser" htmlFor={sokId}>
+              Søk i gruppene
+            </label>
+            <input
+              id={sokId}
+              className="felt__inndata"
+              type="search"
+              placeholder="Søk i gruppene"
+              value={sok}
+              autoComplete="off"
+              onChange={(e) => setSok(e.target.value)}
+            />
+          </div>
+          <Gruppeliste navn="Gruppene dine" grupper={aktive} tom={sok.trim() ? 'Ingen grupper passer med søket.' : 'Ingen aktive grupper.'} />
+          {arkiverte.length > 0 && <Gruppeliste navn="Arkiverte" grupper={arkiverte} synligTittel />}
+        </>
+      )}
 
-      {kanOpprette && <NyGruppe />}
+      {ny && <OpprettGruppe apen onLukk={() => setNy(false)} />}
     </>
   )
 }
 
-function NyGruppe() {
-  const { kan_opprette, oppdater } = useGrupper()
-  const [navn, setNavn] = useBevart('ny/navn', '')
-  const [beskrivelse, setBeskrivelse] = useBevart('ny/beskrivelse', '')
-  const [hvor, setHvor] = useBevart<string>('ny/fagmiljo', kan_opprette.fagmiljoer[0]?.id ?? PAA_TVERS)
-  const { opptatt, feil, utfor } = useHandling()
-  const hvorId = useId()
-  const valg = [
-    ...kan_opprette.fagmiljoer.map((f) => ({ verdi: f.id, navn: f.navn })),
-    ...(kan_opprette.tverrfaglig ? [{ verdi: PAA_TVERS, navn: 'På tvers av fagmiljøene' }] : []),
-  ]
-  const valgt = valg.some((v) => v.verdi === hvor) ? hvor : (valg[0]?.verdi ?? PAA_TVERS)
-
-  const opprett = (event: FormEvent) => {
-    event.preventDefault()
-    void utfor(async () => {
-      const id = await opprettGruppe(navn.trim(), beskrivelse.trim(), valgt || null)
-      setNavn('')
-      setBeskrivelse('')
-      oppdater()
-      window.location.hash = gruppeadresse(id)
-    })
-  }
-
+function Gruppeliste({ navn, grupper, tom, synligTittel }: { navn: string; grupper: MinGruppe[]; tom?: string; synligTittel?: boolean }) {
+  const id = useId()
   return (
-    <section className="gruppeside__del" aria-label="Ny gruppe">
-      <h2 className="gruppeside__deltittel">Ny gruppe</h2>
-      <form className="skjema gruppeside__skjema" onSubmit={opprett}>
-        <Gruppefelter navn={navn} beskrivelse={beskrivelse} onNavn={setNavn} onBeskrivelse={setBeskrivelse} disabled={opptatt} />
-        <div className="felt">
-          <label className="felt__merkelapp" htmlFor={hvorId}>
-            Hører til
-          </label>
-          <select id={hvorId} className="felt__inndata" value={valgt} disabled={opptatt} onChange={(e) => setHvor(e.target.value)}>
-            {valg.map((v) => (
-              <option key={v.verdi} value={v.verdi}>
-                {v.navn}
-              </option>
-            ))}
-          </select>
-          <span className="felt__hjelp">Du blir ansvarlig for gruppen og kan invitere andre etterpå.</span>
-        </div>
-        {feil && (
-          <p className="skjemafeil" role="alert">
-            {feil}
-          </p>
-        )}
-        <div className="skjema__knapper">
-          <Button type="submit" icon={<Ikon navn="plus" />} disabled={opptatt || !navn.trim()}>
-            Opprett gruppen
-          </Button>
-        </div>
-      </form>
+    <section className="gruppeside__del" aria-labelledby={id}>
+      <h2 id={id} className={synligTittel ? 'gruppeside__deltittel' : 'kun-skjermleser'}>
+        {navn}
+      </h2>
+      {grupper.length === 0 ? (
+        tom && <p className="gruppeside__tomt">{tom}</p>
+      ) : (
+        <ul className="gruppeliste">
+          {grupper.map((g) => (
+            <li key={g.id}>
+              <a className="gruppeliste__rad" href={gruppeadresse(g.id)}>
+                <span className="gruppeliste__navn">
+                  <span className="gruppeliste__tittel">{g.navn}</span>
+                  <span className="gruppeliste__meta">
+                    {gruppetilhorighet(g)} · {antallMedlemmer(g.medlemmer)} · {g.rolle ? ROLLENAVN[g.rolle] : 'Ikke medlem'}
+                  </span>
+                </span>
+                {g.status === 'arkivert' && <Merke tone="flate">Arkivert</Merke>}
+                <Ikon navn="chev" storrelse="ui" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }
@@ -346,63 +233,41 @@ function NyGruppe() {
 /** En handling som fjerner tilgang, og som derfor må bekreftes. */
 type Bekreftelse = { handling: 'fjern'; medlem: Gruppemedlem } | { handling: 'forlat' } | { handling: 'arkiver' }
 
-function Gruppevisning({
-  id,
-  fane,
-  element,
-  overskrift,
-  skjemavakt,
-}: {
-  id: string
-  fane?: Gruppefane
-  element?: string
-  overskrift: string
-  skjemavakt: MutableRefObject<Forlat | null>
-}) {
+type Gruppemodal = 'medlemmer' | 'innstillinger'
+
+function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: string; onLukk: () => void }) {
   const meg = useProfil()
   const { oppdater } = useGrupper()
-  const [oversikt, setOversikt] = useState<Gruppeoversikt | null>(null)
-  const [lesefeil, setLesefeil] = useState<string | null>(null)
-  const [bekreft, setBekreft] = useState<Bekreftelse | null>(null)
-  const [endrer, setEndrer] = useBevart('endre', false)
+  const { oversikt, lesefeil, hent } = useGruppeoversikt(id)
+  const [modal, setModal] = useBevart<Gruppemodal | null>('modal', null)
+  const [bekreft, setBekreft] = useBevart<Bekreftelse | null>('bekreft', null)
   const handling = useHandling()
   const { opptatt, utfor } = handling
-  // En ny fane, eller en idé eller oppgave i den, begynner øverst. Tilbake på
-  // lista i fanen står fokus på kortet man kom fra (`Gruppeideer`).
-  const forrigeFane = useRef(fane)
-  useEffect(() => {
-    if (element || forrigeFane.current !== fane) window.scrollTo({ top: 0 })
-    // Ut av chatten: tallet på uleste på fanen hentes på nytt.
-    if (forrigeFane.current === 'chat' && fane !== 'chat') void hentRef.current()
-    forrigeFane.current = fane
-  }, [fane, element])
-  useFanetittel(oversikt ? (fane ? `${FANENAVN[fane]} – ${oversikt.navn}` : oversikt.navn) : 'Gruppe')
-  /** En lenke på siden går gjennom skjemavakten. */
-  const vaktet = (e: MouseEvent<HTMLAnchorElement>) => {
-    const forlat = skjemavakt.current
-    if (!forlat || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-    e.preventDefault()
-    const adresse = e.currentTarget.getAttribute('href')!
-    forlat(() => {
-      window.location.hash = adresse
-    })
+  useFanetittel(oversikt?.navn ?? 'Gruppe')
+
+  if (!oversikt) {
+    return (
+      <>
+        <Tilbakelenke reserve="Grupper" onTilbake={onLukk} />
+        <Tittel id={overskrift}>Gruppe</Tittel>
+        <p className={lesefeil ? 'skjemafeil' : 'gruppeside__ingress'} role={lesefeil ? 'alert' : undefined}>
+          {lesefeil ?? 'Henter gruppen …'}
+        </p>
+      </>
+    )
   }
 
-  const hent = useCallback(async () => {
-    try {
-      setOversikt(await hentGruppeoversikt(id))
-      setLesefeil(null)
-    } catch (aarsak) {
-      setOversikt(null)
-      setLesefeil(melding(aarsak))
-    }
-  }, [id])
-
-  useEffect(() => {
-    void hent()
-  }, [hent])
-  const hentRef = useRef(hent)
-  hentRef.current = hent
+  const g = oversikt
+  const aktiv = g.status === 'aktiv'
+  const apne = (m: Gruppemodal) => {
+    handling.nullstill()
+    setBekreft(null)
+    setModal(m)
+  }
+  const lukkModal = () => {
+    setBekreft(null)
+    setModal(null)
+  }
 
   /** Utfører handlingen, og henter gruppen og oversikten over gruppene på nytt. Sant når den lyktes. */
   const gjor = (arbeid: () => Promise<string | null | void>) =>
@@ -414,27 +279,8 @@ function Gruppevisning({
       return kvittering
     })
 
-  if (!oversikt) {
-    return (
-      <Hode overskrift={overskrift} overtittel={<a href={gruppeadresse()}>Grupper</a>} tittel="Gruppe">
-        <p className={lesefeil ? 'skjemafeil' : 'gruppeside__ingress'} role={lesefeil ? 'alert' : undefined}>
-          {lesefeil ?? 'Henter gruppen …'}
-        </p>
-      </Hode>
-    )
-  }
-
-  const g = oversikt
-  const aktiv = g.status === 'aktiv'
-
-  const forlat = () =>
-    void utfor(async () => {
-      await avsluttGruppemedlemskap(g.id, meg.id)
-      oppdater()
-      window.location.hash = gruppeadresse()
-    })
-
-  const bekreftelse = (b: Bekreftelse) => {
+  const bekreftelse = (b: Bekreftelse | null) => {
+    if (!b) return null
     switch (b.handling) {
       case 'fjern': {
         const navn = visningsnavn(b.medlem)
@@ -457,7 +303,20 @@ function Gruppevisning({
       }
       case 'forlat':
         return (
-          <Bekreftelseskort tittel={`Forlate ${g.navn}?`} bekreft="Forlat gruppen" opptatt={opptatt} onBekreft={forlat} onAvbryt={() => setBekreft(null)}>
+          <Bekreftelseskort
+            tittel={`Forlate ${g.navn}?`}
+            bekreft="Forlat gruppen"
+            opptatt={opptatt}
+            onBekreft={() =>
+              void utfor(async () => {
+                await avsluttGruppemedlemskap(g.id, meg.id)
+                oppdater()
+                lukkModal()
+                window.location.hash = GRUPPER
+              })
+            }
+            onAvbryt={() => setBekreft(null)}
+          >
             Du mister med en gang tilgangen til diskusjonene og varslene i gruppen. En ansvarlig kan invitere deg igjen.
           </Bekreftelseskort>
         )
@@ -484,248 +343,61 @@ function Gruppevisning({
 
   return (
     <>
-      <Hode overskrift={overskrift} overtittel={<a href={gruppeadresse()} onClick={vaktet}>Grupper</a>} tittel={g.navn}>
-        <p className="gruppeside__meta">
+      <Tilbakelenke reserve="Grupper" onTilbake={onLukk} />
+      <header className="gruppeside__hode">
+        <div className="gruppeside__tittelrad">
+          <Tittel id={overskrift}>{g.navn}</Tittel>
+          {harInnstillinger(g) && (
+            <Button variant="subtle" icon={<Ikon navn="gears" />} onClick={() => apne('innstillinger')}>
+              Gruppeinnstillinger
+            </Button>
+          )}
+        </div>
+        {g.beskrivelse && <p className="gruppeside__ingress">{g.beskrivelse}</p>}
+        <div className="gruppeside__meta">
+          <Medlemslinje gruppe={g} onVis={() => apne('medlemmer')} />
           <span>{gruppetilhorighet(g)}</span>
-          {g.rolle && <Merke tone={g.rolle === 'medlem' ? 'noytral' : 'aksent'}>{ROLLENAVN[g.rolle]}</Merke>}
+          {g.rolle ? (
+            <Merke tone={g.rolle === 'medlem' ? 'noytral' : 'aksent'}>{ROLLENAVN[g.rolle]}</Merke>
+          ) : (
+            <Merke>Ikke medlem</Merke>
+          )}
           {!aktiv && <Merke tone="flate">Arkivert</Merke>}
-        </p>
-        {g.beskrivelse && !fane && <p className="gruppeside__ingress">{g.beskrivelse}</p>}
-        <Gruppefaner gruppe={g} fane={fane} onLenke={vaktet} />
-      </Hode>
+        </div>
+      </header>
 
-      {fane === 'ideer' ? (
-        <Gruppeideer
-          gruppe={g}
-          ide={element}
-          onEndret={() => void hent()}
-          skjemavakt={skjemavakt}
-          onGruppeoppgave={(oppgave) => {
-            window.location.hash = gruppeadresse(g.id, 'oppgaver', oppgave)
-          }}
-        />
-      ) : fane === 'oppgaver' ? (
-        <Gruppeoppgaver gruppe={g} oppgave={element} onEndret={() => void hent()} skjemavakt={skjemavakt} />
-      ) : fane === 'chat' ? (
-        g.samhandling.chat_uleste === null ? (
-          <p className="gruppeside__ingress">Gruppechatten er ikke slått på.</p>
-        ) : (
-          <Gruppechatfane gruppe={g} />
-        )
-      ) : (
-        <Gruppeoversiktsfane
+      {!aktiv && (
+        <p className="gruppeside__lesemodus" role="note">
+          <Ikon navn="arkiv" storrelse="ui" />
+          Gruppen er arkivert. Du ser den i lesemodus, og ingenting i den kan endres.
+        </p>
+      )}
+
+      <Gruppeaktivitet gruppe={g} />
+      <Paneler gruppe={g} />
+
+      {modal === 'medlemmer' && (
+        <Medlemsmodal
           gruppe={g}
           meg={meg.id}
+          apen
+          onLukk={lukkModal}
           handling={handling}
-          endrer={endrer}
-          setEndrer={setEndrer}
-          bekreft={bekreft}
-          setBekreft={setBekreft}
-          bekreftelse={bekreftelse}
-          gjor={gjor}
-        />
-      )}
-    </>
-  )
-}
-
-/** Navnet på fanen, i fanen og i tittelen på siden. */
-const FANENAVN: Readonly<Record<Gruppefane, string>> = { ideer: 'Idéer', oppgaver: 'Oppgaver', chat: 'Chat' }
-
-/**
- * Fanene i gruppen: oversikten, idéene, oppgavene og chatten, med tallet på det som er nytt, og
- * diskusjonene, som åpner diskusjonsmenyen på siden. Diskusjonene står bare
- * mens gruppen er aktiv, som menyen. Chatten står bare når databasen gir
- * tallet på uleste (`chat_uleste`), altså når den er slått på og den
- * innloggede kan lese gruppen; tallet står ikke mens chatten er åpen.
- */
-function Gruppefaner({
-  gruppe,
-  fane,
-  onLenke,
-}: {
-  gruppe: Gruppeoversikt
-  fane?: Gruppefane
-  /** Før en fane åpnes: spør når et skjema i fanen har endringer. */
-  onLenke: (e: MouseEvent<HTMLAnchorElement>) => void
-}) {
-  const { nye_ideer, venter, mine_oppgaver, chat_uleste } = gruppe.samhandling
-  const behandler = gruppe.kan_styre
-  // De ansvarlige ser hvor mange som venter på behandling, de andre hva som er nytt.
-  const idetall = behandler ? venter : nye_ideer
-  const idetallnavn = behandler ? `${venter} venter på behandling` : `${nye_ideer} med noe nytt`
-  return (
-    <nav aria-label="I gruppen">
-      <ul className="gruppeside__faner">
-        <li>
-          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id)} onClick={onLenke} aria-current={fane ? undefined : 'page'}>
-            Oversikt
-          </a>
-        </li>
-        <li>
-          <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'ideer')} onClick={onLenke} aria-current={fane === 'ideer' ? 'page' : undefined}>
-            <Ikon navn="idea" storrelse="ui" />
-            {FANENAVN.ideer}
-            {idetall > 0 && (
-              <span className="gruppeside__fanetall" aria-label={idetallnavn} title={idetallnavn}>
-                {idetall}
-              </span>
-            )}
-          </a>
-        </li>
-        <li>
-          <a
-            className="gruppeside__fane"
-            href={gruppeadresse(gruppe.id, 'oppgaver')}
-            onClick={onLenke}
-            aria-current={fane === 'oppgaver' ? 'page' : undefined}
-          >
-            <Ikon navn="oppgaver" storrelse="ui" />
-            {FANENAVN.oppgaver}
-            {mine_oppgaver > 0 && (
-              <span className="gruppeside__fanetall" aria-label={`${mine_oppgaver} til deg`} title={`${mine_oppgaver} til deg`}>
-                {mine_oppgaver}
-              </span>
-            )}
-          </a>
-        </li>
-        {chat_uleste !== null && (
-          <li>
-            <a className="gruppeside__fane" href={gruppeadresse(gruppe.id, 'chat')} onClick={onLenke} aria-current={fane === 'chat' ? 'page' : undefined}>
-              <Ikon navn="comment" storrelse="ui" />
-              {FANENAVN.chat}
-              {chat_uleste > 0 && fane !== 'chat' && (
-                <span
-                  className="gruppeside__fanetall"
-                  aria-label={chat_uleste === 1 ? '1 ulest melding' : `${chat_uleste} uleste meldinger`}
-                  title={chat_uleste === 1 ? '1 ulest melding' : `${chat_uleste} uleste meldinger`}
-                >
-                  {chat_uleste}
-                </span>
-              )}
-            </a>
-          </li>
-        )}
-        {gruppe.status === 'aktiv' && (
-          <li>
-            <button type="button" className="gruppeside__fane" onClick={() => visDiskusjonene(gruppeside(gruppe.id))}>
-              <Ikon navn="diskusjon" storrelse="ui" />
-              Diskusjoner
-            </button>
-          </li>
-        )}
-      </ul>
-    </nav>
-  )
-}
-
-/** Oversikten over gruppen: handlingene for gruppen, medlemmene og invitasjonen. */
-function Gruppeoversiktsfane({
-  gruppe: g,
-  meg,
-  handling,
-  endrer,
-  setEndrer,
-  bekreft,
-  setBekreft,
-  bekreftelse,
-  gjor,
-}: {
-  gruppe: Gruppeoversikt
-  meg: string
-  handling: ReturnType<typeof useHandling>
-  endrer: boolean
-  setEndrer: (endrer: boolean) => void
-  bekreft: Bekreftelse | null
-  setBekreft: (bekreft: Bekreftelse | null) => void
-  bekreftelse: (bekreft: Bekreftelse) => ReactNode
-  gjor: (arbeid: () => Promise<string | null | void>) => Promise<boolean>
-}) {
-  const { opptatt } = handling
-  const aktiv = g.status === 'aktiv'
-  return (
-    <>
-
-      <div className="gruppeside__handlinger">
-        {g.kan_styre && aktiv && !endrer && (
-          <Button variant="kant" icon={<Ikon navn="edit" />} disabled={opptatt} onClick={() => setEndrer(true)}>
-            Endre navn og beskrivelse
-          </Button>
-        )}
-        {g.kan_styre && aktiv && (
-          <Button variant="kant" icon={<Ikon navn="arkiv" />} disabled={opptatt} onClick={() => setBekreft({ handling: 'arkiver' })}>
-            Arkiver gruppen
-          </Button>
-        )}
-        {g.kan_gjenapne && (
-          <Button
-            variant="kant"
-            icon={<Ikon navn="reset" />}
-            disabled={opptatt}
-            onClick={() =>
-              gjor(async () => {
-                await arkiverGruppe(g.id, false)
-                return 'Gruppen er åpnet igjen.'
-              })
-            }
-          >
-            Åpne gruppen igjen
-          </Button>
-        )}
-        {g.rolle && aktiv && (
-          <Button
-            variant="kant"
-            icon={<Ikon navn="logout" />}
-            disabled={opptatt || !g.kan_forlate}
-            title={g.kan_forlate ? undefined : 'Du er den siste ansvarlige. Gjør en annen til ansvarlig først.'}
-            onClick={() => setBekreft({ handling: 'forlat' })}
-          >
-            Forlat gruppen
-          </Button>
-        )}
-      </div>
-
-      {endrer && g.kan_styre && aktiv && (
-        <Endring
-          gruppe={g}
-          opptatt={opptatt}
-          onLagre={(navn, beskrivelse) =>
+          bekreftelse={bekreft?.handling === 'fjern' ? bekreftelse(bekreft) : null}
+          onRolle={(medlem, rolle) =>
             gjor(async () => {
-              await endreGruppe(g.id, navn, beskrivelse)
-              setEndrer(false)
-              return 'Gruppen er endret.'
+              await settGrupperolle(g.id, medlem.id, rolle)
+              return `${visningsnavn(medlem)} er ${ROLLENAVN[rolle].toLowerCase()} i gruppen.`
             })
           }
-          onAvbryt={() => setEndrer(false)}
-        />
-      )}
-
-      {bekreft && bekreftelse(bekreft)}
-      <Tilbakemelding feil={handling.feil} kvittering={handling.kvittering} />
-
-      <Medlemmer
-        gruppe={g}
-        meg={meg}
-        opptatt={opptatt}
-        onRolle={(medlem, rolle) =>
-          gjor(async () => {
-            await settGrupperolle(g.id, medlem.id, rolle)
-            return `${visningsnavn(medlem)} er ${ROLLENAVN[rolle].toLowerCase()} i gruppen.`
-          })
-        }
-        onFjern={(medlem) =>
-          medlem.status === 'invitert'
-            ? gjor(async () => {
-                await avsluttGruppemedlemskap(g.id, medlem.id)
-                return `Invitasjonen til ${visningsnavn(medlem)} er trukket tilbake.`
-              })
-            : setBekreft({ handling: 'fjern', medlem })
-        }
-      />
-
-      {g.kan_styre && aktiv && (
-        <Invitasjon
-          opptatt={opptatt}
+          onFjern={(medlem) =>
+            medlem.status === 'invitert'
+              ? gjor(async () => {
+                  await avsluttGruppemedlemskap(g.id, medlem.id)
+                  return `Invitasjonen til ${visningsnavn(medlem)} er trukket tilbake.`
+                })
+              : setBekreft({ handling: 'fjern', medlem })
+          }
           onInviter={(brukernavn) =>
             gjor(async () => {
               const svar = await inviterTilGruppe(g.id, brukernavn)
@@ -734,164 +406,160 @@ function Gruppeoversiktsfane({
           }
         />
       )}
+      {modal === 'innstillinger' && (
+        <Innstillingsmodal
+          gruppe={g}
+          apen
+          onLukk={lukkModal}
+          handling={handling}
+          bekreftelse={bekreft && bekreft.handling !== 'fjern' ? bekreftelse(bekreft) : null}
+          onLagre={(navn, beskrivelse) =>
+            gjor(async () => {
+              await endreGruppe(g.id, navn, beskrivelse)
+              return 'Gruppen er endret.'
+            })
+          }
+          onArkiver={() => setBekreft({ handling: 'arkiver' })}
+          onGjenapne={() =>
+            gjor(async () => {
+              await arkiverGruppe(g.id, false)
+              return 'Gruppen er åpnet igjen.'
+            })
+          }
+          onForlat={() => setBekreft({ handling: 'forlat' })}
+        />
+      )}
     </>
   )
 }
 
-function Endring({
-  gruppe,
-  opptatt,
-  onLagre,
-  onAvbryt,
-}: {
-  gruppe: Gruppeoversikt
-  opptatt: boolean
-  onLagre: (navn: string, beskrivelse: string) => void
-  onAvbryt: () => void
-}) {
-  const [navn, setNavn] = useBevart('endre/navn', gruppe.navn)
-  const [beskrivelse, setBeskrivelse] = useBevart('endre/beskrivelse', gruppe.beskrivelse)
-  return (
-    <form
-      className="skjema gruppeside__skjema"
-      aria-label="Endre gruppen"
-      onSubmit={(e) => {
-        e.preventDefault()
-        onLagre(navn.trim(), beskrivelse.trim())
-      }}
-    >
-      <Gruppefelter navn={navn} beskrivelse={beskrivelse} onNavn={setNavn} onBeskrivelse={setBeskrivelse} disabled={opptatt} />
-      <div className="skjema__knapper">
-        <Button type="submit" disabled={opptatt || !navn.trim()}>
-          Lagre
-        </Button>
-        <Button variant="subtle" onClick={onAvbryt}>
-          Avbryt
-        </Button>
-      </div>
-    </form>
-  )
-}
+/** Høyst så mange profilbilder i medlemslinjen. */
+const AVATARER = 4
 
-function Medlemmer({
-  gruppe,
-  meg,
-  opptatt,
-  onRolle,
-  onFjern,
-}: {
-  gruppe: Gruppeoversikt
-  meg: string
-  opptatt: boolean
-  onRolle: (medlem: Gruppemedlem, rolle: Grupperolle) => void
-  onFjern: (medlem: Gruppemedlem) => void
-}) {
-  const lenker = useAvatarlenker(gruppe.medlemmer)
+/** «PH KN ON AB  8 medlemmer · Vis medlemmer»: de første medlemmene og knappen til hele lista. */
+function Medlemslinje({ gruppe, onVis }: { gruppe: Gruppeoversikt; onVis: () => void }) {
   const { aktive, inviterte } = delMedlemmer(gruppe.medlemmer)
-
-  const rad = (medlem: Gruppemedlem) => {
-    const navn = visningsnavn(medlem)
-    const egen = medlem.id === meg
-    return (
-      <li key={medlem.id} className="brukerrad">
-        <Avatar profil={medlem} lenke={medlem.avatar_path ? (lenker.get(medlem.avatar_path) ?? null) : null} />
-        <span className="brukerrad__navn">
-          <span className="brukerrad__fullt">
-            {navn}
-            {egen && <span className="brukerrad__deg"> (deg)</span>}
-          </span>
-          <span className="brukerrad__brukernavn">{medlem.username}</span>
-        </span>
-        <span className="brukerrad__merker">
-          {medlem.kan_endre_rolle && !egen ? (
-            <select
-              className="felt__inndata gruppeside__rolle"
-              aria-label={`Rollen til ${navn}`}
-              value={medlem.rolle}
-              disabled={opptatt}
-              onChange={(e) => onRolle(medlem, e.target.value as Grupperolle)}
-            >
-              {GRUPPEROLLER.map((r) => (
-                <option key={r} value={r} title={ROLLEFORKLARING[r]}>
-                  {ROLLENAVN[r]}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <Merke tone={medlem.rolle === 'medlem' ? 'noytral' : 'aksent'}>{ROLLENAVN[medlem.rolle]}</Merke>
-          )}
-          {medlem.status === 'invitert' && <Merke>Invitert</Merke>}
-          {medlem.status === 'aktiv' && !medlem.har_tilgang && <Merke tone="toksisk">Uten tilgang nå</Merke>}
-        </span>
-        {medlem.kan_fjerne && (
-          <span className="brukerrad__knapper">
-            <Button
-              variant="kant"
-              icon={<Ikon navn="close" />}
-              aria-label={medlem.status === 'invitert' ? `Trekk tilbake invitasjonen til ${navn}` : `Fjern ${navn} fra gruppen`}
-              disabled={opptatt}
-              onClick={() => onFjern(medlem)}
-            >
-              {medlem.status === 'invitert' ? 'Trekk tilbake' : 'Fjern'}
-            </Button>
-          </span>
-        )}
-      </li>
-    )
-  }
-
+  const forste = aktive.slice(0, AVATARER)
+  const lenker = useAvatarlenker(forste)
   return (
-    <section className="gruppeside__del" aria-label="Medlemmene">
-      <h2 className="gruppeside__deltittel">Medlemmene</h2>
-      <ul className="brukerliste" aria-label={`Medlemmer i ${gruppe.navn}`}>
-        {aktive.map(rad)}
-      </ul>
-      {aktive.some((m) => !m.har_tilgang) && (
-        <p className="brukerliste__merknad">
-          «Uten tilgang nå»: medlemmet er ikke lenger med i {gruppe.fagmiljo?.navn ?? 'fagmiljøet'}, og ser ikke gruppen før det
-          igjen er medlem der.
-        </p>
+    <span className="medlemslinje">
+      {forste.length > 0 && (
+        <span className="medlemslinje__bilder" aria-hidden="true">
+          {forste.map((m) => (
+            <Avatar key={m.id} profil={m} storrelse="mini" lenke={m.avatar_path ? (lenker.get(m.avatar_path) ?? null) : null} />
+          ))}
+        </span>
       )}
-      {inviterte.length > 0 && (
-        <>
-          <h3 className="brukerliste__overskrift">Inviterte</h3>
-          <ul className="brukerliste" aria-label={`Inviterte til ${gruppe.navn}`}>
-            {inviterte.map(rad)}
-          </ul>
-        </>
-      )}
-    </section>
+      <button type="button" className="medlemslinje__knapp" onClick={onVis}>
+        {antallMedlemmer(aktive.length)} · Vis medlemmer
+        {inviterte.length > 0 && gruppe.kan_styre && <span className="kun-skjermleser">, {inviterte.length} venter på svar</span>}
+      </button>
+    </span>
   )
 }
 
-function Invitasjon({ opptatt, onInviter }: { opptatt: boolean; onInviter: (brukernavn: string) => Promise<boolean> }) {
-  const [brukernavn, setBrukernavn] = useBevart('inviter', '')
+/* --- Panelene ------------------------------------------------------------------ */
+
+/**
+ * Et kort panel på gruppesiden: det felles oppsummeringskortet med ett kort
+ * signal og én sekundærknapp. Hendelsene selv står under «Siste aktivitet»
+ * (`Gruppeaktivitet`).
+ */
+function Gruppepanel({ ikon, tittel, signal, children }: { ikon: Ikonnavn; tittel: string; signal: string; children?: ReactNode }) {
   return (
-    <section className="gruppeside__del" aria-label="Inviter">
-      <h2 className="gruppeside__deltittel">Inviter</h2>
-      <form
-        className="skjema gruppeside__skjema"
-        onSubmit={(e) => {
-          e.preventDefault()
-          void onInviter(brukernavn.trim()).then((lyktes) => lyktes && setBrukernavn(''))
-        }}
+    <Oppsummeringskort tittel={tittel} ikon={ikon} innhold={KLAR} tomtekst={signal}>
+      {children && <div className="gruppepanel__handling">{children}</div>}
+    </Oppsummeringskort>
+  )
+}
+
+/** Panelene på gruppesiden har tallene sine med gruppen, og laster ikke for seg. */
+const KLAR = { status: 'klar', hendelser: [] } as const
+
+/** En lenke som ser ut som en sekundærknapp, så den kan åpnes i en ny fane. */
+function Panellenke({ href, children }: { href: string; children: string }) {
+  return (
+    <a className="knapp knapp--kant" href={href}>
+      <span className="knapp__tekst">{children}</span>
+    </a>
+  )
+}
+
+const flertall = (n: number, en: string, flere: string) => `${n} ${n === 1 ? en : flere}`
+
+/**
+ * De fire korte panelene: hvert med et kort signal og én knapp. Tallene er
+ * gruppens samhandling (`gruppeoversikt`), de samme som fanene hadde.
+ * Diskusjonene står i diskusjonsmenyen bare mens gruppen er aktiv, og chatten
+ * bare når den er slått på (`chat_uleste`).
+ */
+function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
+  const { nye_ideer, venter, mine_oppgaver, chat_uleste } = g.samhandling
+  const aktiv = g.status === 'aktiv'
+  return (
+    <div className="gruppepaneler">
+      <Gruppepanel
+        ikon="idea"
+        tittel="Idéer"
+        signal={`${flertall(venter, 'åpen', 'åpne')} · ${flertall(nye_ideer, 'ny', 'nye')}${g.kan_styre && aktiv && venter > 0 ? ' · venter på behandling' : ''}`}
       >
-        <Felt
-          merkelapp="Brukernavn"
-          value={brukernavn}
-          autoComplete="off"
-          autoCapitalize="none"
-          {...UTEN_AUTOERSTATT}
-          disabled={opptatt}
-          onChange={(e) => setBrukernavn(e.target.value)}
-          hjelp="Den inviterte ser invitasjonen under «Grupper» i kontomenyen, og er med når den er godtatt."
-        />
-        <div className="skjema__knapper">
-          <Button type="submit" icon={<Ikon navn="plus" />} disabled={opptatt || !brukernavn.trim()}>
-            Inviter
+        <Panellenke href={gruppeadresse(g.id, 'ideer')}>Åpne idéer</Panellenke>
+      </Gruppepanel>
+      <Gruppepanel
+        ikon="oppgaver"
+        tittel="Oppgaver"
+        signal={mine_oppgaver > 0 ? `${mine_oppgaver} tildelt deg` : 'Ingen tildelt deg'}
+      >
+        <Panellenke href={gruppeadresse(g.id, 'oppgaver')}>Åpne oppgaver</Panellenke>
+      </Gruppepanel>
+      <Gruppepanel
+        ikon="diskusjon"
+        tittel="Diskusjoner"
+        signal={aktiv ? 'Åpnes i diskusjonsmenyen; siden blir stående.' : 'Lukket mens gruppen er arkivert.'}
+      >
+        {aktiv && (
+          <Button variant="kant" onClick={() => visDiskusjonene(gruppeside(g.id))}>
+            Åpne diskusjoner
           </Button>
-        </div>
-      </form>
-    </section>
+        )}
+      </Gruppepanel>
+      {chat_uleste !== null && (
+        <Gruppepanel
+          ikon="samtale"
+          tittel="Gruppechat"
+          signal={chat_uleste > 0 ? flertall(chat_uleste, 'ulest melding', 'uleste meldinger') : 'Ingen uleste meldinger'}
+        >
+          <Panellenke href={gruppeadresse(g.id, 'chat')}>Åpne chat</Panellenke>
+        </Gruppepanel>
+      )}
+    </div>
+  )
+}
+
+/* --- Chatten ------------------------------------------------------------------- */
+
+/**
+ * Chatten i gruppen på sin egen side, som før, til chatmenyen tar over den
+ * (D4). Lukkes til gruppen, eller dit brukeren kom fra.
+ */
+function Chatside({ id, overskrift, onLukk }: { id: string; overskrift: string; onLukk: () => void }) {
+  const { oversikt, lesefeil, hent } = useGruppeoversikt(id)
+  useFanetittel(oversikt ? `Chat – ${oversikt.navn}` : 'Chat')
+  // Ut av chatten: tallene på gruppesiden hentes på nytt.
+  useEffect(() => () => void hent(), [hent])
+  return (
+    <>
+      <Tilbakelenke reserve={oversikt?.navn ?? 'gruppen'} onTilbake={onLukk} />
+      <Tittel id={overskrift}>{oversikt ? `Chat i ${oversikt.navn}` : 'Chat'}</Tittel>
+      {!oversikt ? (
+        <p className={lesefeil ? 'skjemafeil' : 'gruppeside__ingress'} role={lesefeil ? 'alert' : undefined}>
+          {lesefeil ?? 'Henter gruppen …'}
+        </p>
+      ) : oversikt.samhandling.chat_uleste === null ? (
+        <p className="gruppeside__ingress">Gruppechatten er ikke slått på.</p>
+      ) : (
+        <Gruppechatfane gruppe={oversikt} />
+      )}
+    </>
   )
 }

@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 /**
- * P6b: idéene på gruppesiden (`#/grupper/<ID>/ideer`): fanene med tallene,
- * lista med de nye først og skuffene, søket, en ny idé uten kategori, og at
- * behandlingen bare vises for dem databasen sier kan behandle. Kallene er
- * erstattet; reglene selv prøves mot databasen i `gruppesamhandling.test.ts`.
+ * Idéene i en gruppe: panelet på gruppesiden med tallene, og arbeidsflaten
+ * (`#/grupper/<ID>/ideer`) med lista med de nye først og skuffene, søket, en
+ * ny idé uten kategori, og at behandlingen bare vises for dem databasen sier
+ * kan behandle. Kallene er erstattet; reglene selv prøves mot databasen i
+ * `gruppesamhandling.test.ts`.
  */
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -90,6 +91,7 @@ const tilstand = vi.hoisted(() => ({ oversikt: null as unknown, kanSkrive: true,
 
 const grupperApi = vi.hoisted(() => ({
   hentGruppeoversikt: vi.fn(),
+  hentGruppeaktivitet: vi.fn(async () => []),
   gjorOmTilGruppeoppgave: vi.fn(async () => OPPGAVE),
 }))
 
@@ -119,6 +121,7 @@ vi.mock('../ideer/api', () => ideApi)
 vi.mock('../components/diskusjoner/diskusjonsvisning', async (original) => ({ ...(await original<object>()), visDiskusjonene }))
 
 const { Grupperside } = await import('../components/grupper/Grupperside')
+const { Gruppeflate } = await import('../components/grupper/Gruppeflate')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
 const { lesGruppeideer } = await import('../ideer/modell')
@@ -127,24 +130,45 @@ const { visGruppeoppgave } = await import('../components/grupper/gruppevisning')
 
 beforeAll(() => {
   Element.prototype.scrollIntoView ??= function () {}
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
   document.elementFromPoint ??= () => null
   Range.prototype.getClientRects ??= () => ({ length: 0, item: () => null, [Symbol.iterator]: [][Symbol.iterator] }) as unknown as DOMRectList
   Range.prototype.getBoundingClientRect ??= () => new DOMRect()
 })
 
-const lukket = vi.hoisted(() => vi.fn())
+const kilde = { ...INGEN_GRUPPER, oppdater: () => undefined }
 
-function vis(fane?: 'ideer', element?: string) {
+/** Gruppesiden med panelene. */
+function visGruppen() {
   return render(
-    <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
-      <Grupperside gruppe={GRUPPE} fane={fane} element={element} onLukk={lukket} />
+    <GruppekildeProvider verdi={kilde}>
+      <Grupperside gruppe={GRUPPE} onLukk={() => undefined} />
     </GruppekildeProvider>,
   )
 }
 
+/** Arbeidsflaten med idéene, med adressen dens i adressefeltet. */
+function vis(_fane?: 'ideer', element?: string) {
+  window.history.replaceState(null, '', `#/grupper/${GRUPPE}/ideer${element ? `/${element}` : ''}`)
+  return render(
+    <GruppekildeProvider verdi={kilde}>
+      <Gruppeflate gruppe={GRUPPE} fane="ideer" element={element} />
+    </GruppekildeProvider>,
+  )
+}
+
+/** Adressen til idéene i gruppen, eller én idé. */
+const ideadresse = (element?: string) => `#/grupper/${GRUPPE}/ideer${element ? `/${element}` : ''}`
+
 beforeEach(() => {
   window.scrollTo = () => undefined
-  window.location.hash = ''
+  window.history.replaceState(null, '', '#/')
   tilstand.oversikt = OVERSIKT
   tilstand.kanSkrive = true
   tilstand.kanBehandle = false
@@ -160,26 +184,29 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-describe('fanene', () => {
-  it('har oversikten, idéene med det som er nytt, og diskusjonene', async () => {
-    vis()
-    const faner = await screen.findByRole('navigation', { name: 'I gruppen' })
-    expect(within(faner).getByRole('link', { name: 'Oversikt' }).getAttribute('aria-current')).toBe('page')
-    const ideer = within(faner).getByRole('link', { name: /Idéer/ })
-    expect(ideer.getAttribute('href')).toBe(`#/grupper/${GRUPPE}/ideer`)
-    // Et vanlig medlem ser hvor mange idéer som har noe nytt.
-    expect(within(ideer).getByLabelText('1 med noe nytt').textContent).toBe('1')
-    await userEvent.click(within(faner).getByRole('button', { name: 'Diskusjoner' }))
+describe('panelet på gruppesiden', () => {
+  it('har tallene, lenken til arbeidsflaten og diskusjonene, og ingen faner', async () => {
+    visGruppen()
+    const panel = await screen.findByRole('region', { name: 'Idéer' })
+    // Et vanlig medlem ser hvor mange idéer som er åpne og har noe nytt.
+    expect(panel.textContent).toMatch(/2 åpne · 1 ny/)
+    expect(within(panel).getByRole('link', { name: 'Åpne idéer' }).getAttribute('href')).toBe(ideadresse())
+    expect(screen.queryByRole('navigation', { name: 'I gruppen' })).toBeNull()
+    await userEvent.click(within(screen.getByRole('region', { name: 'Diskusjoner' })).getByRole('button', { name: 'Åpne diskusjoner' }))
     expect(visDiskusjonene).toHaveBeenCalledWith(`gruppe:${GRUPPE}`)
   })
 
-  it('viser de ansvarlige hvor mange som venter på behandling, og skjuler diskusjonene i en arkivert gruppe', async () => {
+  it('viser de ansvarlige at idéer venter, og en arkivert gruppe i lesemodus uten diskusjoner', async () => {
+    tilstand.oversikt = { ...OVERSIKT, rolle: 'ansvarlig', kan_styre: true }
+    visGruppen()
+    expect((await screen.findByRole('region', { name: 'Idéer' })).textContent).toMatch(/venter på behandling/)
+    cleanup()
     tilstand.oversikt = { ...OVERSIKT, rolle: 'ansvarlig', kan_styre: true, status: 'arkivert' }
-    vis('ideer')
-    const faner = await screen.findByRole('navigation', { name: 'I gruppen' })
-    expect(within(faner).getByRole('link', { name: /Idéer/ }).getAttribute('aria-current')).toBe('page')
-    expect(within(faner).getByLabelText('2 venter på behandling')).toBeTruthy()
-    expect(within(faner).queryByRole('button', { name: 'Diskusjoner' })).toBeNull()
+    visGruppen()
+    expect((await screen.findByRole('note')).textContent).toMatch(/lesemodus/)
+    const diskusjoner = screen.getByRole('region', { name: 'Diskusjoner' })
+    expect(within(diskusjoner).queryByRole('button')).toBeNull()
+    expect(screen.getByRole('region', { name: 'Idéer' }).textContent).not.toMatch(/venter på behandling/)
   })
 })
 
@@ -194,8 +221,16 @@ describe('lista', () => {
     // Ingen kategorier og ingen frist for sletting i en gruppe.
     expect(screen.queryByText(/Slettes/)).toBeNull()
 
+    // Å velge en idé bytter adressen uten en ny oppføring i historikken.
+    const lengde = window.history.length
     await userEvent.click(within(apne).getByRole('button', { name: /Gammel idé/ }))
-    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer/a`)
+    expect(window.location.hash).toBe(ideadresse('a'))
+    expect(window.history.length).toBe(lengde)
+  })
+
+  it('har gruppens navn i tittelen på flaten', async () => {
+    vis('ideer')
+    expect(await screen.findByRole('heading', { level: 2, name: 'Idéer for Lithiumgruppen' })).toBeTruthy()
   })
 
   it('søker i overskriftene', async () => {
@@ -217,7 +252,7 @@ describe('lista', () => {
     await userEvent.type(within(skjema).getByLabelText('Overskrift'), 'Felles rutine')
     await userEvent.click(within(skjema).getByRole('button', { name: 'Publiser' }))
     expect(ideApi.opprettIde).toHaveBeenCalledWith({ kategori: null, tittel: 'Felles rutine', tekst: null }, GRUPPE)
-    await waitFor(() => expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer/ny-ide`))
+    await waitFor(() => expect(window.location.hash).toBe(ideadresse('ny-ide')))
   })
 
   it('har ingen knapp for en ny idé for den som bare leser', async () => {
@@ -235,8 +270,11 @@ describe('én idé', () => {
     expect(await screen.findByRole('heading', { level: 2, name: 'Ny sjekkliste' })).toBeTruthy()
     expect(screen.queryByRole('group', { name: 'Hva skjer med idéen' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Gjør om til oppgave' })).toBeNull()
+    // Idéen som står åpen, er merket i lista ved siden av.
+    const apne = await screen.findByRole('region', { name: /Åpne idéer/ })
+    await waitFor(() => expect(within(apne).getByRole('button', { name: /Ny sjekkliste/ }).getAttribute('aria-current')).toBe('true'))
     await userEvent.click(screen.getByRole('button', { name: 'Tilbake til idéene' }))
-    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer`)
+    expect(window.location.hash).toBe(ideadresse())
   })
 
   it('lar de ansvarlige gjøre idéen om til en oppgave, og viser at den er gjort om', async () => {
@@ -283,31 +321,30 @@ describe('én idé', () => {
 })
 
 describe('skjemaet', () => {
-  it('spør før en ny idé med endringer forlates gjennom fanene', async () => {
+  it('spør før flaten lukkes med × mens en ny idé har endringer, og lukker den til gruppen', async () => {
     vis('ideer')
     await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
     await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
-    const faner = screen.getByRole('navigation', { name: 'I gruppen' })
-    await userEvent.click(within(faner).getByRole('link', { name: 'Oversikt' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Lukk idéer' }))
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
-    expect(window.location.hash).toBe('')
+    expect(window.location.hash).toBe(ideadresse())
     await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
     expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
-    await userEvent.click(within(faner).getByRole('link', { name: 'Oversikt' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Lukk idéer' }))
     await userEvent.click(await screen.findByRole('button', { name: 'Forkast endringene' }))
+    // Åpnet utenfra: gruppen er reserven, og adressen skrives om.
     expect(window.location.hash).toBe(`#/grupper/${GRUPPE}`)
   })
 
-  it('spør før siden lukkes med Escape mens en ny idé har endringer', async () => {
+  it('spør før flaten lukkes med Escape mens en ny idé har endringer', async () => {
     vis('ideer')
     await userEvent.click(await screen.findByRole('button', { name: 'Ny idé' }))
     await userEvent.type(screen.getByLabelText('Overskrift'), 'Halvferdig')
-    ;(document.activeElement as HTMLElement | null)?.blur()
     await userEvent.keyboard('{Escape}')
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
-    expect(lukket).not.toHaveBeenCalled()
+    expect(window.location.hash).toBe(ideadresse())
     await userEvent.click(screen.getByRole('button', { name: 'Forkast endringene' }))
-    expect(lukket).toHaveBeenCalled()
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}`)
   })
 
   it('spør før et varsel eller en lenke utenfra fører bort fra en ny idé med endringer, og sier fra først når den er gått', async () => {
@@ -317,7 +354,7 @@ describe('skjemaet', () => {
     const gjort = vi.fn()
     act(() => visGruppeoppgave(GRUPPE, OPPGAVE, gjort))
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
-    expect(window.location.hash).toBe('')
+    expect(window.location.hash).toBe(ideadresse())
     await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
     expect((screen.getByLabelText('Overskrift') as HTMLInputElement).value).toBe('Halvferdig')
     // Varselet som førte hit, blir da stående ulest (`gjort` merker det lest i varselvinduet).
@@ -328,7 +365,7 @@ describe('skjemaet', () => {
     expect(gjort).toHaveBeenCalledTimes(1)
   })
 
-  it('går rett videre fra gruppesiden når ingen skjemaer har endringer', async () => {
+  it('går rett videre fra flaten når ingen skjemaer har endringer', async () => {
     vis('ideer')
     await screen.findByRole('button', { name: 'Ny idé' })
     act(() => visGruppeoppgave(GRUPPE, OPPGAVE))

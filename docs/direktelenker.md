@@ -25,11 +25,14 @@ Når appen åpnes med en slik adresse, eller den limes inn i en åpen app, leser
 `useRute` lenken, setter adressen tilbake til siden man står på, og
 `apneDirektelenke` åpner målet: en diskusjon går til siden tråden hører til og
 åpner den i diskusjonsmenyen (`visDiskusjon`), en idé åpnes i Idéer
-(`visIde`), og en idé i en gruppe på idéfanen på gruppesiden
-(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Har et skjema i Idéer, Planlagte oppgaver
-eller en fane på gruppesiden endringer som ikke er lagret, spør det først, som
+(`visIde`), og en idé i en gruppe i gruppens arbeidsflate for idéene
+(`visGruppeide`, `src/components/grupper/gruppevisning.ts`). Følges lenken inne i
+appen (limt inn i adressefeltet eller fra en rad på gruppesiden), står siden
+man var på, bak flaten, og flaten lukkes dit, som for andre innganger
+([navigasjon.md](navigasjon.md)); åpnes appen med lenken, står gruppen bak. Har et skjema i Idéer, Planlagte oppgaver
+eller en arbeidsflate i en gruppe endringer som ikke er lagret, spør det først, som
 tilbakeknappen (`forlatSkjemaene`, som går gjennom `forlatIdelagene` og vakten
-gruppesiden melder med `meldGruppesiden`; `useMeldVakt`). Varslene går samme vei. Kommentaren lenken peker på, rulles frem, åpnes om den står under
+flaten melder med `meldGruppesiden`; `useMeldVakt`). Varslene går samme vei. Kommentaren lenken peker på, rulles frem, åpnes om den står under
 en lukket gren, og uthevet en liten stund (`fremhev` på `Kommentartraad`).
 Finnes ikke målet lenger, eller hører en tråd til et fagmiljø den innloggede
 ikke er medlem av, sier `Lenkemelding` det samme: `direktelenke()` skiller ikke

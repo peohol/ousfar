@@ -34,6 +34,7 @@ const MEG: Profil = {
 const api = vi.hoisted(() => ({
   oversikt: null as unknown,
   hentGruppeoversikt: vi.fn(),
+  hentGruppeaktivitet: vi.fn(async () => []),
   svarPaaInvitasjon: vi.fn(),
   avsluttGruppemedlemskap: vi.fn(),
   settGrupperolle: vi.fn(),
@@ -463,7 +464,7 @@ describe('utkastene hører til den innloggede', () => {
   })
 })
 
-describe('fanen på gruppesiden', () => {
+describe('chatpanelet på gruppesiden og chatsiden', () => {
   const OVERSIKT = {
     ...GRUPPE,
     beskrivelse: '',
@@ -503,24 +504,23 @@ describe('fanen på gruppesiden', () => {
 
   it('står ikke uten tallet fra databasen (chatten er avslått)', async () => {
     visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0 })
-    await screen.findByRole('link', { name: 'Idéer' })
-    expect(screen.queryByRole('link', { name: /Chat/ })).toBeNull()
+    await screen.findByRole('region', { name: 'Idéer' })
+    expect(screen.queryByRole('region', { name: 'Gruppechat' })).toBeNull()
+    expect(screen.queryByRole('link', { name: /chat/i })).toBeNull()
   })
 
-  it('står med tallet på uleste når chatten er slått på', async () => {
+  it('står med tallet på uleste og lenken til chatten når den er slått på', async () => {
     visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: 4 })
-    const fane = await screen.findByRole('link', { name: /Chat/ })
-    expect(fane.getAttribute('href')).toBe(`#/grupper/${GRUPPE_ID}/chat`)
-    expect(within(fane).getByLabelText('4 uleste meldinger')).toBeTruthy()
+    const panel = await screen.findByRole('region', { name: 'Gruppechat' })
+    expect(panel.textContent).toMatch(/4 uleste meldinger/)
+    expect(within(panel).getByRole('link', { name: 'Åpne chat' }).getAttribute('href')).toBe(`#/grupper/${GRUPPE_ID}/chat`)
   })
 
-  it('viser chatfanen, uten tallet mens den står åpen', async () => {
+  it('viser chatten på sin egen side, som før', async () => {
     visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: 2 }, 'chat')
-    const fane = await screen.findByRole('link', { name: /Chat/ })
-    expect(fane.getAttribute('aria-current')).toBe('page')
-    expect(within(fane).queryByLabelText(/uleste/)).toBeNull()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Chat i Litiumgruppen' })).toBeTruthy()
     expect(document.title).toBe('Chat – Litiumgruppen – OUSFAR')
-    // Fanen henter chatten for gruppen og viser den.
+    // Siden henter chatten for gruppen og viser den.
     expect(krok.useGruppechat).toHaveBeenCalledWith(GRUPPE_ID)
     expect(meldingstekster()).toHaveLength(5)
   })

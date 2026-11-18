@@ -81,9 +81,10 @@ gjorde det, varsles ikke.
   skjedde (`art`) og hvilken oppgave det gjelder (`gruppeoppgave`). Varslene
   har gruppens `gruppe_id`, så bare de som leser gruppen nå, ser dem, og en
   hendelse om en oppgave som er fjernet, står ikke. Et trykk på varselet går
-  til gruppesiden (`gruppemaal`): til oppgaven når varselet gjelder en
-  oppgave (tildelt, fullført), ellers til idéen på idéfanen, også for
-  kommentarene på en gruppeidé. Har et skjema på gruppesiden eller i idélagene
+  til gruppens arbeidsflater (`gruppemaal`): til oppgaven når varselet gjelder
+  en oppgave (tildelt, fullført), ellers til idéen, også for kommentarene på
+  en gruppeidé. Flaten legger seg over siden brukeren var på, og lukkes dit.
+  Har et skjema i en arbeidsflate eller i idélagene
   endringer som ikke er lagret, spør det først (`forlatSkjemaene`,
   `docs/direktelenker.md`). Varselet merkes da lest først når brukeren
   faktisk går dit (`gaVaktet` i `Varsler.tsx`); blir brukeren i skjemaet,
