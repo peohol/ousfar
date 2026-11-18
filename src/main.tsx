@@ -29,6 +29,7 @@ import './styles/endringslogg.css'
 import './styles/konto.css'
 import './styles/grupper.css'
 import './styles/forside.css'
+import './styles/oppsummering.css'
 import './styles/regler.css'
 
 const root = document.getElementById('root')
