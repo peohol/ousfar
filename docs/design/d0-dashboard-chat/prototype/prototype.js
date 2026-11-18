@@ -218,7 +218,7 @@ const STANDARD = () => ({
   chatbredde: null, // rem, satt med kanthåndtaket
   gruppeskuff: true,
   chatParkert: false,
-  dm: true,
+  dm: false, // Tillat direktemeldinger: av som standard (planen §6.2)
   aktivstatus: false,
   hovedmeny: false,
   popover: null, // fagmiljo | konto
@@ -311,7 +311,12 @@ function etterNavigering({ beholdLag = false } = {}) {
     else history.replaceState(history.state, '', `#/grupper/${r.gruppe}`)
   }
   if (r.side === 'chat' && r.samtale) S.chatVisning = r.samtale
-  if (!beholdLag) S.popover = null
+  if (!beholdLag) {
+    S.popover = null
+    // Et valg i hovedmenyen lukker den; chatmenyen kommer tilbake.
+    S.hovedmeny = false
+    S.chatParkert = false
+  }
   render()
   // Etter «Gjenopprett» står fokus i chatmenyen igjen; ellers i sidens overskrift.
   const fokus = S.fokusChat ? '.chatmeny [data-autofokus], .chatmeny button' : 'main h1, main [data-autofokus]'
@@ -333,7 +338,7 @@ function escapeHandling() {
   if (S.modal || (r.side === 'gruppe' && r.flate)) {
     return { tekst: 'Lukker vinduet (bare det øverste laget)', utfor: lukkModal }
   }
-  if (S.popover) return { tekst: 'Lukker nedtrekket', utfor: () => ((S.popover = null), render()) }
+  if (S.popover) return { tekst: 'Lukker nedtrekket, fokus til knappen', utfor: lukkPopover }
   if (S.hovedmeny) return { tekst: 'Lukker hovedmenyen og henter chatmenyen tilbake', utfor: lukkHovedmeny }
   if (r.side === 'chat' && !smal())
     return { tekst: `Gjenoppretter chatmenyen på ${sidetittel(tilbakeMaal())}`, utfor: gjenopprettChat }
@@ -343,7 +348,12 @@ function escapeHandling() {
   }
   if (fokusIDiskusjoner)
     return { tekst: 'Slipper diskusjonsmenyen (som i dag)', utfor: () => document.querySelector('main h1')?.focus() }
-  if (r.side === 'analytt') return { tekst: 'Ett trinn tilbake i fortolkningen', utfor: () => gaa('#/fortolkning') }
+  if (r.side === 'analytt')
+    return {
+      tekst: 'Ett trinn tilbake i fortolkningen',
+      // Et steg tilbake, ikke en ny oppføring i nettleserhistorikken.
+      utfor: () => (tilbakeMaal() === '#/fortolkning' ? tilbake() : gaa('#/fortolkning', { erstatt: true })),
+    }
   if (r.side === 'fortolkning') return { tekst: 'Ingenting: fortolkningssøket er siste stopp', utfor: () => {} }
   if (r.side === 'forside') return { tekst: 'Ingenting på forsiden', utfor: () => {} }
   return { tekst: `Lukker siden og går tilbake til ${sidetittel(tilbakeMaal())}`, utfor: tilbake }
@@ -430,6 +440,13 @@ function lukkModal() {
   document.querySelector(`[data-modalfra="${fra}"]`)?.focus()
 }
 
+function lukkPopover() {
+  const fra = S.popover
+  S.popover = null
+  render()
+  document.querySelector(`[data-handling="popover"][data-arg="${fra}"]`)?.focus()
+}
+
 const HANDLINGER = {
   hovedmeny: () => (S.hovedmeny ? lukkHovedmeny() : apneHovedmeny()),
   'lukk-hovedmeny': lukkHovedmeny,
@@ -450,8 +467,16 @@ const HANDLINGER = {
   dm: () => ((S.dm = !S.dm), render()),
   aktivstatus: () => ((S.aktivstatus = !S.aktivstatus), render()),
   diskusjoner: () => (S.diskusjoner === 'apen' ? ((S.diskusjoner = 'boble'), render()) : apneDiskusjoner()),
-  popover: (arg) => ((S.popover = S.popover === arg ? null : arg), render()),
-  fagmiljo: (arg) => ((S.fagmiljo = arg), (S.popover = null), render()),
+  popover: (arg) => {
+    if (S.popover === arg) return lukkPopover()
+    S.popover = arg
+    render()
+    document.querySelector('.popover button.valg:not([style]), .popover button')?.focus()
+  },
+  fagmiljo: (arg) => {
+    S.fagmiljo = arg
+    lukkPopover()
+  },
   modal: (arg, el) => {
     S.modal = arg
     S.modalFra = el?.dataset.modalfra
@@ -1182,7 +1207,7 @@ const SKJERMER = {
   oppgaver: { navn: 'Oppgaver for gruppen', hash: '#/grupper/sandkasse/oppgaver/o1', fra: ['#/', '#/grupper/sandkasse'] },
   'chat-apen': { navn: 'Chatmeny åpen', hash: '#/', s: { chat: 'apen' } },
   'chat-samtale': { navn: 'Chatmeny med samtale, bred', hash: '#/grupper/sandkasse', fra: ['#/', '#/grupper'], s: { chat: 'apen', chatVisning: 'sandkasse', chatbredde: 32 } },
-  'chat-ny': { navn: 'Ny direktemelding', hash: '#/', s: { chat: 'apen', chatVisning: 'ny' } },
+  'chat-ny': { navn: 'Ny direktemelding', hash: '#/', s: { chat: 'apen', chatVisning: 'ny', dm: true } },
   'chat-sperret': { navn: 'Mottaker tar ikke imot', hash: '#/', s: { chat: 'apen', chatVisning: 'kari' } },
   'chat-helside': { navn: 'Fullsidechat', hash: '#/chat/gruppe/sandkasse', fra: ['#/', '#/grupper/sandkasse'], s: { chatVisning: 'sandkasse' } },
   hovedmeny: { navn: 'Hovedmeny (chat parkert)', hash: '#/', s: { chat: 'apen', hovedmeny: true, chatParkert: true } },
