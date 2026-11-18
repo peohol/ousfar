@@ -1,0 +1,146 @@
+/**
+ * Oppsummeringspanelene på forsiden og gruppesiden
+ * (`src/components/oppsummering/`, `docs/design/d0-dashboard-chat/`, skisse
+ * 01 og 10): Atlas-panelet med inntil tre hendelsesrader, der hele raden er
+ * lenken. Alle verdier er tokens.
+ */
+
+.oppsummering {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+  min-width: 0;
+  padding: var(--rom-7) var(--rom-8);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+}
+
+.oppsummering__tom {
+  margin: 0;
+  padding: var(--rom-3) var(--rom-2);
+  color: var(--blekk-dempet);
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-style: italic;
+  line-height: var(--linjehoyde-ui);
+}
+
+.oppsummering__laster {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+.oppsummering__feil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3) var(--rom-5);
+}
+
+.oppsummering__alle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  align-self: flex-start;
+  margin-top: auto;
+  color: var(--blekk);
+  font-weight: var(--vekt-medium);
+  text-underline-offset: 0.2em;
+}
+
+.oppsummering__alle .ikon {
+  width: var(--ikon-ui);
+  height: var(--ikon-ui);
+}
+
+/* --- Hendelsesrader --------------------------------------------------------
+   Ikon, hva og når på første linje, hvor under. Rader skilles med hårlinje. */
+.hendelser {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hendelser > li + li {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.hendelse {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--rom-1) var(--rom-4);
+  margin-block: var(--rom-1);
+  padding: var(--rom-3);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--runding-felt);
+}
+
+/* En rad eller «Vis alle» uten egen adresse er en knapp som ser ut som lenken. */
+button.hendelse,
+button.oppsummering__alle {
+  width: 100%;
+  font: inherit;
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+button.oppsummering__alle {
+  width: auto;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.hendelse:hover {
+  background: var(--flate-hevet);
+}
+
+.hendelse__ikon {
+  width: var(--ikon-ui);
+  height: var(--ikon-ui);
+  margin-top: 0.1rem;
+}
+
+.hendelse__tittel {
+  font-weight: var(--vekt-medium);
+  overflow-wrap: anywhere;
+}
+
+.hendelse__hvor {
+  grid-column: 2;
+  color: var(--blekk-dempet);
+  font-size: var(--tekst-liten);
+  overflow-wrap: anywhere;
+}
+
+.hendelse__tid {
+  grid-row: 1;
+  grid-column: 3;
+  color: var(--blekk-dempet);
+  font-size: var(--tekst-liten);
+  white-space: nowrap;
+}
+
+.hendelse__ulest {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: var(--rom-2);
+  border-radius: 50%;
+  background: var(--aksent);
+  vertical-align: 0.1em;
+}
+
+@media (max-width: 47.5em) {
+  .oppsummering {
+    padding: var(--rom-6) var(--rom-5) var(--rom-7);
+    border-radius: var(--runding-kort);
+  }
+}

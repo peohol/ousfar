@@ -163,6 +163,12 @@ bare fargene gjennom `--tast-flate`, `--tast-blekk` og `--tast-kant`
   venstrestiller innholdet.
 - **`Panelhode`** (`src/components/Panelhode.tsx`) er overskriften i et panel:
   ikon og kursiv serif. `tone="toksisk"` er for det som mangler.
+- **`Oppsummeringskort`** (`src/components/oppsummering/`) er det korte
+  panelet på forsiden og gruppesidene: `Panelhode`, inntil tre hendelsesrader
+  (`Hendelsesliste`) der hele raden er lenken til selve hendelsen, og en
+  tekstlenke til resten. Hvert panel har egen laste-, tom- og feiltilstand med
+  «Prøv igjen», så én feil ikke stopper resten av siden. Bruk det, ikke en egen
+  kopi, for nye oppsummeringer.
 - **`Metalinje`** (`src/components/Metalinje.tsx`) er linja over et stoffnavn
   i fortolkningen, som «KVE · SPFA › Antipsykotika». Kodene er tekst, ikke
   lenker. På fagsiden har linja over navnet i stedet kategoriene fra
