@@ -132,25 +132,38 @@
   cursor: pointer;
 }
 
-/* --- Én melding ------------------------------------------------------------- */
+/* --- Én melding -------------------------------------------------------------
+   Andres meldinger står til venstre, egne til høyre. Teksten står i en boble
+   rett ved siden av profilbildet og under navnet; hjørnet som vender opp mot
+   bildet er spissere enn de andre, så boblen ser ut til å komme fra det. Bare
+   den første i en rekke fra samme avsender har spissen. */
 
 .chatmelding {
+  --chat-bilde: 1.9rem;
+  --boble-runding: var(--runding-knapp);
+  /* Tydelig spissere enn resten av boblen, men ikke et skarpt hjørne. */
+  --boble-spiss: calc(var(--runding-merke) / 2);
+  --boble-flate: var(--flate-hevet);
+  --boble-kant: var(--linje);
   display: grid;
-  grid-template-columns: 1.9rem minmax(0, 1fr) auto;
+  grid-template-columns: var(--chat-bilde) minmax(0, 1fr);
+  grid-template-areas: 'bilde innhold';
   column-gap: var(--rom-3);
   align-items: start;
-  padding: var(--rom-2) var(--rom-2) var(--rom-1);
+  padding: var(--rom-1) var(--rom-2);
   border-radius: var(--runding-underkort);
   scroll-margin-block: var(--rom-6);
 }
 
-.chatmelding:not([data-sammen]) {
-  margin-top: var(--rom-3);
+.chatmelding[data-egen] {
+  --boble-flate: var(--aksent-flate);
+  --boble-kant: color-mix(in oklab, var(--aksent) 30%, var(--aksent-flate));
+  grid-template-columns: minmax(0, 1fr) var(--chat-bilde);
+  grid-template-areas: 'innhold bilde';
 }
 
-.chatmelding:hover,
-.chatmelding:focus-within {
-  background: var(--flate-bunn);
+.chatmelding:not([data-sammen]) {
+  margin-top: var(--rom-3);
 }
 
 .chatmelding:focus-visible {
@@ -159,29 +172,41 @@
 }
 
 .chatmelding__bilde {
-  grid-column: 1;
-  padding-top: var(--rom-1);
+  grid-area: bilde;
 }
 
 .chatmelding__innhold {
   display: flex;
   flex-direction: column;
-  gap: var(--rom-2);
-  grid-column: 2;
+  align-items: flex-start;
+  gap: var(--rom-1);
+  grid-area: innhold;
   min-width: 0;
 }
 
-.chatmelding__meny {
-  grid-column: 3;
-  grid-row: 1;
+.chatmelding[data-egen] .chatmelding__innhold {
+  align-items: flex-end;
 }
 
+/* Endringsfeltet, bekreftelsen og feilene bruker hele bredden. */
+.chatmelding__innhold > :not(.chatmelding__hode, .chatmelding__rad, .chatmelding__sender) {
+  align-self: stretch;
+}
+
+/* Navnet og klokkeslettet, speilvendt over egne meldinger. */
 .chatmelding__hode {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--rom-1) var(--rom-3);
+  min-height: var(--chat-bilde);
+  align-content: center;
   margin: 0;
+  padding-inline: var(--rom-1);
+}
+
+.chatmelding[data-egen] .chatmelding__hode {
+  flex-direction: row-reverse;
 }
 
 .chatmelding__navn {
@@ -190,7 +215,6 @@
   color: var(--blekk-sterk);
 }
 
-.chatmelding__deg,
 .chatmelding__tid,
 .chatmelding__redigert,
 .chatmelding__sender {
@@ -199,8 +223,43 @@
   color: var(--blekk-dempet);
 }
 
-.chatmelding__tekst {
+/* Boblen og menyen ved siden av den, på innsiden mot midten av lista. */
+.chatmelding__rad {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rom-1);
+  max-width: min(40rem, 88%);
+  min-width: 0;
+}
+
+.chatmelding[data-egen] .chatmelding__rad {
+  flex-direction: row-reverse;
+}
+
+.chatmelding__boble {
+  min-width: 0;
   margin: 0;
+  padding: var(--rom-2) var(--rom-4);
+  background: var(--boble-flate);
+  border: var(--kant) solid var(--boble-kant);
+  border-radius: var(--boble-runding);
+}
+
+/* Spissen: det øvre hjørnet mot bildet, bare på den første i en rekke. */
+.chatmelding:not([data-sammen]) .chatmelding__boble {
+  border-start-start-radius: var(--boble-spiss);
+}
+
+.chatmelding[data-egen]:not([data-sammen]) .chatmelding__boble {
+  border-start-start-radius: var(--boble-runding);
+  border-start-end-radius: var(--boble-spiss);
+}
+
+.chatmelding__meny {
+  flex: none;
+}
+
+.chatmelding__tekst {
   font-size: var(--tekst-ui);
   line-height: var(--linjehoyde-lesing);
   color: var(--blekk);
@@ -212,14 +271,17 @@
   display: flex;
   align-items: center;
   gap: var(--rom-2);
-  margin: 0;
   font-size: var(--tekst-ui);
   font-style: italic;
   color: var(--blekk-dempet);
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--linje-sterk);
 }
 
 .chatmelding__sender {
   margin: 0;
+  padding-inline: var(--rom-1);
 }
 
 .chatmelding--ventende .chatmelding__tekst {
@@ -228,6 +290,7 @@
 
 .chatmelding[data-status='feilet'] .chatmelding__tekst {
   color: var(--blekk);
+  border-color: var(--alvorlig-kant);
 }
 
 .chatmelding__feilet {
@@ -290,5 +353,10 @@
 
   .chatmelding {
     column-gap: var(--rom-2);
+    padding-inline: var(--rom-1);
+  }
+
+  .chatmelding__rad {
+    max-width: 92%;
   }
 }
