@@ -335,9 +335,9 @@ function escapeHandling() {
   const r = lesRute()
   const fokusIChat = document.activeElement?.closest('.chatmeny')
   const fokusIDiskusjoner = document.activeElement?.closest('.diskusjonsmeny')
-  if (S.modal || (r.side === 'gruppe' && r.flate)) {
-    return { tekst: 'Lukker vinduet (bare det øverste laget)', utfor: lukkModal }
-  }
+  if (S.modal) return { tekst: 'Lukker vinduet (bare det øverste laget)', utfor: lukkModal }
+  if (erArbeidsflate(r))
+    return { tekst: `Lukker arbeidsflaten og går tilbake til ${sidetittel(arbeidsflateMaal(r))}`, utfor: lukkModal }
   if (S.popover) return { tekst: 'Lukker nedtrekket, fokus til knappen', utfor: lukkPopover }
   if (S.hovedmeny) return { tekst: 'Lukker hovedmenyen og henter chatmenyen tilbake', utfor: lukkHovedmeny }
   if (r.side === 'chat' && !smal())
@@ -425,13 +425,33 @@ function gjenopprettChat() {
   if (S.fra.length) tilbake()
   else gaa('#/', { erstatt: true })
 }
+/*
+ * Arbeidsflaten (idéer eller oppgaver i en gruppe) har egen adresse og lukkes
+ * etter inngangsveien som en side: tilbake dit den ble åpnet fra (forsiden,
+ * varselet, gruppesiden, chatten). Valg i lista inne i flaten erstatter adressen,
+ * så lukking og nettleserens Tilbake går ut av flaten i ett steg. Åpnet fra en
+ * lenke utenfra er gruppesiden reserven, ikke forsiden.
+ */
+function erArbeidsflate(r) {
+  return r.side === 'gruppe' && (r.flate === 'ideer' || r.flate === 'oppgaver')
+}
+function iSammeArbeidsflate(hash) {
+  const fra = lesRute()
+  const til = lesRute(hash)
+  return erArbeidsflate(fra) && erArbeidsflate(til) && fra.gruppe === til.gruppe && fra.flate === til.flate
+}
+function arbeidsflateMaal(r) {
+  return S.fra.length ? tilbakeMaal() : `#/grupper/${r.gruppe}`
+}
+function bakgrunnForArbeidsflate(r) {
+  const under = lesRute(arbeidsflateMaal(r))
+  return erArbeidsflate(under) ? lesRute(`#/grupper/${r.gruppe}`) : under
+}
 function lukkModal() {
   const r = lesRute()
-  if (r.side === 'gruppe' && r.flate) {
-    // Arbeidsflaten har egen adresse; lukking går til gruppen den hører til.
-    const gruppeadresse = `#/grupper/${r.gruppe}`
-    if (tilbakeMaal() === gruppeadresse) tilbake()
-    else gaa(gruppeadresse, { erstatt: true })
+  if (!S.modal && erArbeidsflate(r)) {
+    if (S.fra.length) tilbake()
+    else gaa(arbeidsflateMaal(r), { erstatt: true })
     return
   }
   const fra = S.modalFra
@@ -518,7 +538,8 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#/"]')
   if (a) {
     e.preventDefault()
-    gaa(a.getAttribute('href'))
+    const hash = a.getAttribute('href')
+    gaa(hash, { erstatt: iSammeArbeidsflate(hash) })
   }
   if (e.target.classList.contains('slor')) lukkModal()
   if (e.target.classList.contains('hovedmeny-slor')) lukkHovedmeny()
@@ -1009,11 +1030,11 @@ function hovedmeny(r) {
 /* ---------------------------------------------------------------------------
  * Modalene
  * ------------------------------------------------------------------------- */
-function modalramme({ meta, tittel, innhold, fot, storrelse, etikett }) {
+function modalramme({ meta, tittel, innhold, fot, storrelse, etikett, lukk = 'Lukk' }) {
   return `<div class="slor"><div class="modal" role="dialog" aria-modal="true" aria-label="${etikett || tittel}"${
     storrelse ? ` data-storrelse="${storrelse}"` : ''
   }>
-    <div class="modal__hode"><div class="modal__topp"><span class="metalinje">${meta || ''}</span>${ikonknapp('close', 'Lukk', 'lukk-modal', {
+    <div class="modal__hode"><div class="modal__topp"><span class="metalinje">${meta || ''}</span>${ikonknapp('close', lukk, 'lukk-modal', {
       ekstra: 'data-autofokus',
     }).replace('class="ikonknapp"', 'class="ikonknapp lukk"')}</div>
     <h2 class="modal__tittel">${tittel}</h2></div>
@@ -1023,7 +1044,7 @@ function modalramme({ meta, tittel, innhold, fot, storrelse, etikett }) {
 }
 
 function modal(r) {
-  if (r.side === 'gruppe' && r.flate) return arbeidsflate(r)
+  if (erArbeidsflate(r)) return arbeidsflate(r)
   const g = gruppe(r.gruppe)
   switch (S.modal) {
     case 'tilpass':
@@ -1119,6 +1140,7 @@ function arbeidsflate(r) {
     meta: g.navn,
     tittel: ideer ? `Idéer for ${g.navn}` : `Oppgaver for ${g.navn}`,
     storrelse: 'arbeidsflate',
+    lukk: `Lukk og gå tilbake til ${sidetittel(arbeidsflateMaal(r))}`,
     innhold: `<div style="display:flex;gap:var(--rom-4);flex-wrap:wrap;align-items:center;padding:var(--rom-4) var(--rom-8);border-bottom:var(--kant) solid var(--linje)">
         <div class="faner" role="tablist" style="background:var(--flate-hevet)">${(ideer ? ['Åpne', 'Utført', 'Alle'] : ['Mine', 'Pågår', 'Alle'])
           .map((f, i) => `<button role="tab" aria-selected="${i === 0}">${f}</button>`)
@@ -1162,9 +1184,11 @@ function arbeidsflate(r) {
  * ------------------------------------------------------------------------- */
 function render() {
   const r = lesRute()
+  // Arbeidsflaten ligger over siden den lukkes til, så lukking viser det som lå under.
+  const under = erArbeidsflate(r) ? bakgrunnForArbeidsflate(r) : r
   const html = document.documentElement
-  html.dataset.chat = S.chat === 'apen' && !S.chatParkert && r.side !== 'chat' ? 'apen' : 'boble'
-  html.dataset.diskusjoner = r.side === 'fagside' || r.side === 'gruppe' ? S.diskusjoner : ''
+  html.dataset.chat = S.chat === 'apen' && !S.chatParkert && under.side !== 'chat' ? 'apen' : 'boble'
+  html.dataset.diskusjoner = under.side === 'fagside' || under.side === 'gruppe' ? S.diskusjoner : ''
   if (S.chatbredde) html.style.setProperty('--chatbredde', `${S.chatbredde}rem`)
   const side = {
     forside,
@@ -1176,13 +1200,13 @@ function render() {
     chat: chatside,
     forslag: ukjent,
     ukjent,
-  }[r.side](r)
+  }[under.side](under)
   document.getElementById('rot').innerHTML = `
-    ${toppmeny(r)}
+    ${toppmeny(under)}
     <main class="app">${side}</main>
     ${r.side === 'chat' ? '' : chatboble()}
     ${chatmeny()}
-    ${diskusjonslag(r)}
+    ${diskusjonslag(under)}
     ${hovedmeny(r)}
     ${modal(r)}
     ${prototypelinje()}`
@@ -1203,8 +1227,8 @@ const SKJERMER = {
   nygruppe: { navn: 'Opprett gruppe', hash: '#/grupper', fra: ['#/'], s: { modal: 'nygruppe' } },
   gruppe: { navn: 'Gruppedashboard', hash: '#/grupper/sandkasse', fra: ['#/', '#/grupper'] },
   medlemmer: { navn: 'Medlemmer', hash: '#/grupper/sandkasse', fra: ['#/', '#/grupper'], s: { modal: 'medlemmer' } },
-  ideer: { navn: 'Idéer for gruppen (fra aktivitet)', hash: '#/grupper/sandkasse/ideer/i2', fra: ['#/', '#/grupper/sandkasse'] },
-  oppgaver: { navn: 'Oppgaver for gruppen', hash: '#/grupper/sandkasse/oppgaver/o1', fra: ['#/', '#/grupper/sandkasse'] },
+  ideer: { navn: 'Idéer for gruppen (åpnet fra forsiden)', hash: '#/grupper/sandkasse/ideer/i2', fra: ['#/'] },
+  oppgaver: { navn: 'Oppgaver for gruppen (åpnet fra gruppen)', hash: '#/grupper/sandkasse/oppgaver/o1', fra: ['#/', '#/grupper/sandkasse'] },
   'chat-apen': { navn: 'Chatmeny åpen', hash: '#/', s: { chat: 'apen' } },
   'chat-samtale': { navn: 'Chatmeny med samtale, bred', hash: '#/grupper/sandkasse', fra: ['#/', '#/grupper'], s: { chat: 'apen', chatVisning: 'sandkasse', chatbredde: 32 } },
   'chat-ny': { navn: 'Ny direktemelding', hash: '#/', s: { chat: 'apen', chatVisning: 'ny', dm: true } },

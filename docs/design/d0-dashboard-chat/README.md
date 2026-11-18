@@ -52,7 +52,10 @@ overskrift, beskrivelse, medlemslinje (`8 medlemmer · Vis medlemmer`), `Siste
 aktivitet` (3 rader som lenker) og fire korte paneler med én sekundærknapp hver.
 Medlemmer og gruppeinnstillinger er modaler. Idéer og oppgaver åpnes som en stor
 arbeidsflate med liste og detalj, egen adresse, og kommentaren lenken pekte på
-er markert (12).
+er markert (12). Flaten ligger over siden den ble åpnet fra og lukkes dit: til
+forsiden når den kom fra forsiden eller et varsel, til gruppen når den kom fra
+gruppen, og til gruppen når den ble åpnet fra en lenke utenfra ([flyt.md
+§2](flyt.md#2-inngangsvei-hvor-tilbake-og-lukk-går)).
 
 **Chatmenyen (14–18, 25–26).** Boble i venstre kant, speilet av
 diskusjonsboblen i høyre, med antall uleste. Åpen er den et panel i venstre kant

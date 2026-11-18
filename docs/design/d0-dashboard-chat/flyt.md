@@ -83,11 +83,22 @@ flowchart LR
   fortolkning, fagside, grupper og chat.
 - `Til forsiden` (fortolkningssøket) og `Åpne fortolkning` (forsiden og
   hovedmenyen) er egne, faste handlinger, uavhengig av inngangsveien.
-- En arbeidsflate (idéer, oppgaver) lukkes til gruppen den hører til, også når
-  den ble åpnet fra forsiden.
 - Et varsel i bjella eller en hendelse på forsiden åpner selve hendelsen
   (riktig idé, oppgave, kommentar eller samtale). Lukking går tilbake dit varselet
-  ble åpnet fra.
+  ble åpnet fra (planen §12).
+- En arbeidsflate (idéer, oppgaver i en gruppe) følger den samme regelen. Den
+  legger seg over siden den ble åpnet fra, og lukking viser den siden igjen:
+
+  | Åpnet fra | Tilbake, ×, Escape og nettleserens tilbake går til |
+  | --- | --- |
+  | Forsiden, et varsel i bjella, chatten eller en annen side i appen | Den siden (skisse 12: idéen er åpnet fra forsiden) |
+  | Gruppesiden | Gruppesiden (skisse 13) |
+  | Lenke utenfra, bokmerke, ny fane | Gruppesiden flaten hører til, som erstatter adressen. Gruppen er reserven her, ikke forsiden, fordi det er der idéen eller oppgaven hører hjemme. |
+
+  Å velge en annen idé eller oppgave i lista inne i flaten bytter adressen uten å
+  lage en ny oppføring i historikken. Derfor går både lukking og nettleserens
+  tilbakeknapp ut av flaten i ett steg, uansett hvor mange elementer brukeren
+  har sett på.
 - **Avbrutt skjema:** alle lukkeveier (Tilbake, ×, Escape, nettleserens tilbake,
   `Gjenopprett`) går gjennom dagens skjemavakt (`useForlatvakt` / `Modallag`
   `vedLukking`). Ulagret tekst gir dagens bekreftelse, og et chatutkast blir
@@ -119,7 +130,8 @@ hovedmenyen lukkes (skisse 19). Ingen dobbel mørklegging.
 
 | Øverste lag eller side | Escape gjør | Neste Escape |
 | --- | --- | --- |
-| Modal eller arbeidsflate | Lukker bare den (med skjemavakt) | Neste lag under |
+| Modal | Lukker bare den (med skjemavakt) | Neste lag under |
+| Arbeidsflate (idéer, oppgaver) | Lukker den etter inngangsveien (§2), med skjemavakt | Siden den ble åpnet fra |
 | Nedtrekk / popover | Lukker den, fokus til knappen | Neste lag under |
 | Hovedmeny | Lukker den, henter chatmenyen tilbake | Siden |
 | Fullsidechat (PC) | `Gjenopprett`: forrige side med chatmenyen åpen på samme samtale, fokus i menyen | Slipper chatmenyen |

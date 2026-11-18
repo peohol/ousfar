@@ -18,7 +18,7 @@ Kartet bygger på en gjennomgang av koden på `main` 18.11.2026. Se
 | Ny gruppe | Innlinjeskjema nederst i gruppeoversikten | Modal fra `Opprett gruppe` | D3 |
 | Gruppefaner | `Oversikt / Idéer / Oppgaver / Chat / Diskusjoner` | Ingen faner; gruppedashboard med fire korte paneler | D3 |
 | Gruppeadministrasjon | Knapper og medlemsliste i Oversikt-fanen | `Gruppeinnstillinger` (navn, arkiver, forlat) og `Medlemmer` (inviter, rolle, fjern) som modaler | D3 |
-| Gruppeidéer og -oppgaver | Innebygd i fanen | Stor arbeidsflate med samme adresse og direkte lenke | D3 |
+| Gruppeidéer og -oppgaver | Innebygd i fanen | Stor arbeidsflate med samme adresse og direkte lenke; lukkes dit den ble åpnet fra ([flyt.md §2](flyt.md#2-inngangsvei-hvor-tilbake-og-lukk-går)) | D3 |
 | Gruppechat | Fane på gruppesiden | Chatmenyen i venstre kant og `#/chat` | D4 |
 | Uleste chatmeldinger | Varselbjella (kategorien `gruppechat`) | Chatboblen og samtalelisten; bjella teller dem ikke lenger | D4 |
 | Diskusjonsmenyen | Høyre kant, alene | Høyre kant, deler bredden med chatmenyen etter regelen i [flyt.md §3](flyt.md#3-lagstakken) | D4 |
