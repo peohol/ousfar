@@ -1,7 +1,6 @@
 import { useEffect, useId, useMemo } from 'react'
 import { kanRedigereRegelsettet } from '../../faginnhold/redigeringsrett'
-import { analytterForFortolkning } from '../../domain/koblinger'
-import type { Analyttkatalog, Laboratorieanalytt } from '../../domain/analyttkatalog'
+import { analytterForFortolkning, type Analyttkatalog, type Laboratorieanalytt } from '../../domain/analyttkatalog'
 import { rusModulFor } from '../../domain/rus'
 import { fortolkningssidenavn } from '../../diskusjoner/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'

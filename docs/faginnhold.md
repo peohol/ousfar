@@ -23,7 +23,7 @@ kjernen og stegene ikke henter noe fra faginnholdet selv.
 | `supabase/migrations/*_enkeltelementer.sql` | At kortene som står én gang i panelet sitt, ikke kan opprettes to ganger |
 | `supabase/migrations/*_datakort_per_analytt.sql` | Datakortene én gang per kode på en side flere koder deler, og referanseområdet til hver kode (`les_referanseomrader`) |
 | `src/faginnhold/sammenslatte.ts`, `scripts/lag-sammenslaing.ts`, `supabase/migrations/*_sammenslatte_stoffsider.sql` | Den historiske datamigrasjonen for sammenslåinger som måtte flytte innhold |
-| `supabase/migrations/*_stoffidentitet.sql` | Stoffets nøkkel (`slug`) på sidene, og lesingen etter stoffet: `les_stoff`, `les_stoffer`, `les_stoffliste`, `les_stoffreferanseomrader` |
+| `supabase/migrations/*_stoffidentitet.sql` | Stoffets nøkkel (`slug`) på sidene, og lesingen etter stoffet: `les_stoff`, `les_stoffer`, `les_stoffliste`, `les_stoffreferanseomrader` (bare for appen fra før, `docs/domener.md`) |
 | `supabase/migrations/*_stoffsider_som_json_nodvendige.sql` | Samme lesing, uten å bygge JSON for andre utgaver enn dem svaret inneholder, og uten midlertidige filer (`docs/stoffsidelesing-ytelse.md`) |
 | `supabase/migrations/*_kanoniske_stoffsider.sql` | Datamigrasjonen som ga sidene «Hydroksybupropion» og «Paliperidon (hydroksyrisperidon)» stoffets navn og nøkkel, og HBUP en egen komponent for hydroksybupropion |
 | `src/faginnhold/historiskesider.ts` | Hvordan sidene var lagt opp per analyttkode før, for importene som lager historiske migrasjoner |
@@ -56,7 +56,7 @@ kjernen og stegene ikke henter noe fra faginnholdet selv.
 | `src/components/historikk/` | Historikkvinduet og «Sist redigert», som åpner det |
 | `src/data/stoffregister.json`, `src/domain/stoffregister.ts` | Stoffregisteret: stoffene med nøkkel, navn og aliaser og koblingene til laboratorieanalyttene. Kategoriene står i databasen (`docs/stoffregister.md`) |
 | `src/domain/analyttkatalog.ts` | Laboratorieanalyttene fortolkningen kjenner |
-| `src/domain/koblinger.ts` | Veiene mellom stoffene og analyttene, bare gjennom koblingene |
+| `src/faginnhold/datakortplasser.ts` | Plassene for datakortene i «Viktige data», og kortene som fra før har en analyttkode i `gjelder` |
 | `src/domain/rute.ts` | Adressene, `#/stoff/<nøkkel>`, og videresendingen av de gamle |
 | `src/components/stoffside/` | Siden, panelene, skjemaene, editoren, referansevelgeren og søket |
 | `src/faginnhold/referanser.ts` | Siteringer, nummerering, piller og referanseliste, for redaksjonelle og automatiske referanser — rene funksjoner |
@@ -592,36 +592,24 @@ så to som oppretter det samme kortet samtidig, ikke begge får det lagret —
 den andre får en konflikt.
 
 **Identiteten** (`Identitetspanel.tsx`) har stoffet som overskrift, med
-kategoriene over. Under står analyttene stoffet er koblet til, som sekundær
-informasjon: kodene gruppert etter analysemetode, hver som knapp som åpner
-fortolkningsmodulen koden hører til, og en setning for relasjonen («HBUP måler
-hydroksybupropion (kun aktiv metabolitt), en metabolitt av bupropion.»,
-«AMTNORSUM er en sumanalyse og omfatter amitriptylin og nortriptylin.»), med
-merknaden koblingen har. Er koden koblet til andre stoffer også, lenker «Se
-også» til sidene deres. «Åpne fortolkning» i toppmenyen står bare når stoffets
-primære analytter hører til én modul.
+kategoriene over og oppsummeringen under. Fagsiden viser ingenting fra
+fortolkningen: ingen analysekoder, analysemetoder eller lenker dit
+(`docs/domener.md`).
 
-**Datakortene per forbindelse.** Har stoffet egne tall for en metabolitt
-som måles — O-desmetyltramadol på tramadolsiden, N-desmetyldiazepam på
-diazepamsiden — står de i egne kort i viktige data, merket med navnet.
-Sidens egne kort står uten `gjelder`; kortene for metabolitten har nøkkelen
-til forbindelsen i forbindelsesregisteret i `data.gjelder`
-(`'o-desmetyltramadol'`, `datakortGjelder`), aldri et laboratoriums
-analyttkode: kortene er felles for alle fagmiljøer. Databasen lar hvert
+**Datakortene per forbindelse.** Har stoffet egne tall for en metabolitt —
+O-desmetyltramadol på tramadolsiden, nordiazepam på diazepamsiden — står de i
+egne kort i viktige data, merket med navnet. Sidens egne kort står uten
+`gjelder`; kortene for metabolitten har nøkkelen til forbindelsen i
+forbindelsesregisteret i `data.gjelder` (`'o-desmetyltramadol'`,
+`datakortGjelder`), aldri et laboratoriums analyttkode. Databasen lar hvert
 datakort stå én gang per forbindelse. Et kort som fra før har en analyttkode
-i `gjelder` (`'OTRAM'`), står på plassen til forbindelsen koden måler, etter
-katalogen eller `ELDRE_DATAKORTKODER` (`kortetsForbindelse`), og beholder
-koden når det redigeres, til det er skrevet om (#405).
-Plassene på siden står i `datakorteiere` (`src/domain/koblinger.ts`): sidens
-egne, hver forbindelse siden har kort for, og hver forbindelse
-arbeidskontekstens katalog bruker kort for. Referanseområdet fortolkningen
-viser for en kode (`les_stoffreferanseomrader` og
-`referanseomraderPerAnalytt`), er kortet på det primære stoffets side som
-fagmiljøets katalog sier at koden bruker (`docs/fagmiljoer.md`, «De felles
-datakortene»). HBUP får altså sidens egne kort på bupropionsiden, og en
-metabolitt får aldri moderstoffets referanseområde. Før #395 sto koden i
-`gjelder` (`'OTRAM'`), og den første primære koden for et stoff fikk sidens
-egne kort.
+i `gjelder` (`'OTRAM'`), står på plassen til forbindelsen koden måler
+(`ELDRE_DATAKORTKODER`, `kortetsForbindelse`), og beholder koden når det
+redigeres, til det er skrevet om (#405). Plassene på siden står i
+`datakorteiere` (`src/faginnhold/datakortplasser.ts`): sidens egne, hver
+forbindelse med `datakort: true` for stoffet i forbindelsesregisteret, og
+hver annen forbindelse siden har kort for. Fortolkningen leser ikke kortene;
+den har egne referanseområder i analyttkatalogen (`docs/domener.md`).
 
 **Historikken.** Før stoffet ble identiteten, hørte hver side til en
 analyttkode, og noen metabolitter var slått sammen med moderstoffets side.

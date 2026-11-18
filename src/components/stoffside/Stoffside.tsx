@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import type { Analyttkatalog, Laboratorieanalytt } from '../../domain/analyttkatalog'
 import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
 import { PANELER } from '../../faginnhold/paneler'
 import { taRedigeringsonske } from '../../faginnhold/redigeringsonske'
 import { indekserSide, sokeord, stoffidentitet } from '../../faginnhold/sok'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
-import type { Analyte } from '../../types'
 import { Button } from '../Button'
 import { Favorittknapp } from '../Favorittknapp'
 import { Ikonknapp } from '../Ikonknapp'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
-import { Toppmenyknapp } from '../toppmeny/Toppmenyknapp'
 import { Referanseliste } from '../referanser/Referanseliste'
 import { SeksjonsstyringKilde, skuffnokkel, useAdressested } from '../seksjoner/Seksjonsstyring'
 import { Innholdsfortegnelse } from '../seksjoner/Innholdsfortegnelse'
@@ -60,7 +57,6 @@ import { useStoffside, type Sidemodus } from './useStoffside'
 import { cypinfoSynlig } from '../../cypinfo/stoffside'
 import { useRettigheter } from '../../auth/rettigheter'
 import type { Stoff, Stoffregister } from '../../domain/stoffregister'
-import { analytterForStoff, fortolkningForStoff } from '../../domain/koblinger'
 
 export interface StoffsideProps {
   /** Stoffets nøkkel fra adressen (`#/stoff/<nøkkel>`). */
@@ -69,10 +65,6 @@ export interface StoffsideProps {
   sted?: readonly string[]
   /** Stoffregisteret, med stoffsidene i databasen. */
   register: Stoffregister
-  /** Laboratorieanalyttene koblingene i registeret peker på. */
-  katalog: Analyttkatalog
-  /** Åpner fortolkningsmodulen analytten hører til. */
-  onApneFortolkning: (analyte: Analyte) => void
   /** Tilbake til fortolkningen slik den sto. */
   onLukk: () => void
   /**
@@ -97,11 +89,9 @@ export interface StoffsideProps {
  * oppsummering når de er lukket (`src/components/seksjoner/`). En adresse med
  * et sted etter nøkkelen åpner seksjonen eller detaljkortet den peker på.
  *
- * Laboratorieanalyttene stoffet er koblet til i registeret, står som sekundær
- * informasjon i identitetspanelet (`src/domain/koblinger.ts`). Fortolkningsreglene
- * hører til fortolkningssystemet og står på fortolkningssidene, ikke her. Har
- * stoffet analytter i én fortolkningsmodul, har siden «Åpne fortolkning» i
- * toppmenyen; ellers åpnes hver fra koden sin.
+ * Fagsidene og fortolkningen er helt adskilte domener (`docs/domener.md`):
+ * siden viser ingen laboratorieanalyser eller analyttkoder, lenker ikke til
+ * fortolkningen og leser ingenting derfra.
  *
  * Normalt står siden i lesemodus og viser det publiserte. Administratorer kan
  * slå på redigeringsmodus, som viser utkastet med diskrete knapper for å endre
@@ -143,7 +133,7 @@ function Ikkefunnet({ onLukk, children }: { onLukk: () => void; children: ReactN
   )
 }
 
-function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLukk, utgave }: StoffsideProps) {
+function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps) {
   const kanRedigere = useFaginnholdskilde().kanRedigere && !utgave
   const favorittene = useFavoritter()
   const favoritter = utgave ? null : favorittene
@@ -158,19 +148,12 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   const overskrift = useId()
 
   const kjent = register.finn(slug)
-  const analytter = useMemo(() => analytterForStoff(slug, register, katalog), [slug, register, katalog])
-  const primare = useMemo(() => analytter.filter((a) => a.kobling.primar).map((a) => a.analytt), [analytter])
-  const fortolkning = useMemo(() => fortolkningForStoff(slug, register, katalog), [slug, register, katalog])
   const stoffet = useMemo<Pick<Stoff, 'slug' | 'navn'>>(() => ({ slug, navn: kjent?.navn ?? slug }), [slug, kjent])
   const handlinger = useStoffside(stoffet, modus)
   const { side, referansebase, konflikt, plan } = handlinger
   const modell = useMemo(() => byggSidemodell(side.data), [side.data])
   const navn = side.data.stoff?.navn ?? kjent?.navn ?? ''
   const kategorier = useMemo(() => register.kategorierFor(slug), [register, slug])
-  const apneFortolkningFor = useCallback(
-    (analytt: Laboratorieanalytt) => onApneFortolkning(analytt.fortolkning),
-    [onApneFortolkning],
-  )
   // Et stoff finnes når registeret har det, eller databasen har en side med nøkkelen.
   const finnes = Boolean(kjent || side.data.stoff)
   // Knappene for å endre vises først når utkastet er hentet, så ingenting
@@ -247,7 +230,7 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
   const dokumenter = useMemo(
     () =>
       indekserSide(
-        stoffidentitet({ slug, navn, aliaser: kjent?.aliaser ?? [] }, analytter),
+        stoffidentitet({ slug, navn, aliaser: kjent?.aliaser ?? [] }),
         modell,
         [
           ...preparatsoketekster(legemidler),
@@ -259,7 +242,7 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
         ],
         konsentrasjon,
       ),
-    [slug, navn, kjent, analytter, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
+    [slug, navn, kjent, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
   )
   // Det et forslag kan gjelde: det publiserte på siden, slik leseren ser det.
   const visesPublisert = modus === 'lese' && !utgave && side.status === 'klar' && side.tilstand === 'publisert'
@@ -333,13 +316,6 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
           />
         ) : (
           <>
-            {fortolkning && (
-              <ToppmenyInnhold spor="hovedhandling">
-                <Toppmenyknapp ikon="interp" variant="primar" onClick={() => onApneFortolkning(fortolkning)}>
-                  Åpne fortolkning
-                </Toppmenyknapp>
-              </ToppmenyInnhold>
-            )}
             {favoritter && finnes && (
               <ToppmenyInnhold spor="favoritt">
                 <Favorittknapp stoff={slug} favoritt={favoritter.erFavoritt(slug)} onSett={favoritter.sett} />
@@ -416,12 +392,8 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
                             key={definisjon.nokkel}
                             definisjon={definisjon}
                             navn={navn}
-                            slug={slug}
-                            analytter={analytter}
-                            register={register}
                             kategorier={kategorier}
                             overskriftId={overskrift}
-                            onApneFortolkning={apneFortolkningFor}
                             kontekst={kontekst}
                           />
                         )
@@ -453,7 +425,6 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
                             kontekst={kontekst}
                             stoff={slug}
                             stoffnavn={navn || slug}
-                            analytter={primare}
                           />
                         )
                       case 'tekst':

@@ -17,7 +17,6 @@ export function falskLeser(overstyr: Partial<Faginnholdsleser> = {}): Faginnhold
     lesIntervallregelsett: vi.fn(async () => []),
     lesThcRegelsett: vi.fn(async () => null),
     lesKommentarer: vi.fn(async () => []),
-    lesReferanseomrader: vi.fn(async () => new Map()),
     lesHistorikk: vi.fn(async () => {
       throw new Error('ikke i bruk')
     }),

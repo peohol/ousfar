@@ -75,7 +75,7 @@ function Korthode({ analyte, children }: { analyte: Analyte; children?: ReactNod
         <Ikon navn="cup" />
       </span>
       <div className="thc-korthode__tittel">
-        <Metalinje koder={(analyte.modul?.analytter ?? []).map((a) => a.kode)} metode={analyte.analysemetode} lenker />
+        <Metalinje koder={(analyte.modul?.analytter ?? []).map((a) => a.kode)} metode={analyte.analysemetode} />
         <h1 className="analytt__navn">{analyte.visningsnavn}</h1>
       </div>
       {children}

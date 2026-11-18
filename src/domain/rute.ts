@@ -47,11 +47,10 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  * kanoniske ({@link kanoniskAdresse}):
  *
  * - `#/stoff/Valproat`, etter navnet eller et alias, går til stoffets nøkkel.
- * - `#/analytt/HBUP` går til stoffsiden analytten primært er koblet til,
- *   `#/stoff/bupropion`. En analytt uten et slikt stoff har ingen fagside, og
- *   adressen åpner fortolkningen.
- * - `#/analytt/HBUP/fortolkning` pekte på reglene, som nå står på
- *   fortolkningssiden, og går dit: `#/fortolkning/hbup`.
+ * - `#/analytt/HBUP`, også med et sted etter koden, går til fortolkningen av
+ *   koden: `#/fortolkning/hbup`. Fortolkningen og fagsidene er adskilte
+ *   domener (`docs/domener.md`), så en analyttkode fører aldri til en fagside.
+ *   En kode katalogen ikke kjenner, åpner fortolkningen.
  *
  * Søket i fagstoffet har sin egen side, med søket i adressen, så et søk kan
  * bokmerkes og deles:
@@ -194,10 +193,7 @@ export function erRedigering(rute: Rute): boolean {
 
 const STOFF = /^#\/stoff\/([^/?#]+)((?:\/[^/?#]+)*)\/?$/i
 
-/** Seksjonen med reglene på de gamle sidene for en analyttkode. */
-const GAMMEL_REGELSEKSJON = 'fortolkning'
-
-/** Adressene fra før fagsidene fikk stoffets nøkkel. Leses bare for å sende videre. */
+/** Adressene fra før fagsidene fikk stoffets nøkkel. Leses bare for å sende videre til fortolkningen. */
 const GAMMEL_ANALYTT = /^#\/analytt\/([^/?#]+)((?:\/[^/?#]+)*)\/?$/i
 
 const SOK = /^#\/sok\/?(?:\?(.*))?$/i
@@ -241,9 +237,9 @@ const MAKS_STEDSLEDD = 2
 /**
  * Ruten adressen peker på. Alt som ikke er en fagside, søket,
  * stoffregisteret eller et verktøy, er
- * fortolkningen. Et navn, et alias eller en gammel analyttadresse gir ruten til
- * stoffet de fører til; {@link kanoniskAdresse} sier om adressefeltet bør
- * skrives om.
+ * fortolkningen. Et navn eller et alias gir ruten til stoffet det fører til, og
+ * en gammel analyttadresse ruten til fortolkningen av koden;
+ * {@link kanoniskAdresse} sier om adressefeltet bør skrives om.
  */
 export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, katalog?: Analyttkatalog): Rute {
   const sok = SOK.exec(hash)
@@ -287,15 +283,7 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
     return slug ? stoffrute(slug, stoff.sted) : FORTOLKNING
   }
   const analytt = lesSide(GAMMEL_ANALYTT, hash)
-  if (analytt) {
-    // Seksjonen «fortolkning» på den gamle siden for koden var reglene, som
-    // nå står på fortolkningssiden til modulen koden fortolkes i.
-    if (analytt.sted?.[0] === GAMMEL_REGELSEKSJON) {
-      return fortolkningsrute(katalog?.finn(analytt.nokkel)?.fortolkning.kode)
-    }
-    const tilStoff = register.primartStoffFor(analytt.nokkel)
-    return tilStoff ? stoffrute(tilStoff.slug, analytt.sted) : FORTOLKNING
-  }
+  if (analytt) return fortolkningsrute(katalog?.finn(analytt.nokkel)?.fortolkning.kode)
   return FORTOLKNING
 }
 
@@ -305,15 +293,16 @@ function stoffrute(stoff: string, sted?: readonly string[]): Rute {
 
 /**
  * Den kanoniske adressen når `hash` er en adresse til en fagside skrevet på en
- * annen måte — et navn, et alias eller en gammel analyttadresse — ellers
+ * annen måte — et navn eller et alias — eller en gammel analyttadresse, ellers
  * `null`. Appen skriver adressefeltet om til den uten å legge noe nytt i
- * historikken, så den gamle adressen ikke blir stående. En gammel adresse til
- * reglene for en kode går til fortolkningssiden.
+ * historikken, så den gamle adressen ikke blir stående. En gammel
+ * analyttadresse går til fortolkningen av koden, eller til fortolkningen når
+ * koden er ukjent.
  */
 export function kanoniskAdresse(hash: string, register: Stoffregister = STOFFREGISTER, katalog?: Analyttkatalog): string | null {
-  if (!STOFF.test(hash) && !GAMMEL_ANALYTT.test(hash)) return null
+  if (GAMMEL_ANALYTT.test(hash)) return adresse(lesRute(hash, register, katalog))
+  if (!STOFF.test(hash)) return null
   const rute = lesRute(hash, register, katalog)
-  if (rute.side === 'fortolkning' && rute.analytt) return adresse(rute)
   if (rute.side !== 'stoff') return null
   const kanonisk = adresse(rute)
   return kanonisk === hash || kanonisk === hash.replace(/\/$/, '') ? null : kanonisk

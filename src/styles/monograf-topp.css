@@ -49,27 +49,6 @@
   outline: none;
 }
 
-/* Under navnet, når stoffet har en analyttkode: «[KODE] · Inngår i [SPFA]». */
-.identitet__analyse {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--rom-3);
-  font-size: var(--tekst-liten);
-  color: var(--blekk-dempet);
-}
-
-.identitet__komponenter {
-  font-size: var(--tekst-liten);
-  color: var(--blekk-dempet);
-}
-
-.komponentlenke {
-  font-family: var(--skrift-mono);
-  font-size: var(--tekst-meta);
-  color: var(--aksent);
-}
-
 /* Viktige data: konsentrasjonene ved siden av kinetikken. Gruppene og kortene
    er aldri bredere enn innholdet trenger, og et kort blir heller bredere enn
    at et stort tall renner ut: det som ikke får plass, brytes ned på neste rad.

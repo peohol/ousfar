@@ -5,10 +5,12 @@
  * importen, før sidene fikk stoffets nøkkel, så sidene leses etter navnet med
  * funksjonene appen brukte da (`hjelp/historisklesing.ts`).
  */
+import { OUS_ANALYTTKOBLINGER } from '../domain/ouskatalog'
+import { STOFFREGISTER } from '../domain/stoffregister'
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggImportplan, importmigrasjoner, type Importfil } from '../faginnhold/import'
 import { lesKinetikk } from '../faginnhold/paneler'
 import { klartekst } from '../faginnhold/riktekst'
@@ -66,8 +68,8 @@ describe('datasettet', () => {
         k.hovedside.navn,
       ).toEqual([])
       // … og i stoffregisteret er stoffet et stoff uten laboratorieanalytt.
-      expect(OUS_REGISTER.kanonisk(k.hovedside.navn)?.navn, k.hovedside.navn).toBe(k.hovedside.navn)
-      expect(OUS_REGISTER.analytterFor(OUS_REGISTER.kanonisk(k.hovedside.navn)!.slug), k.hovedside.navn).toEqual([])
+      expect(STOFFREGISTER.kanonisk(k.hovedside.navn)?.navn, k.hovedside.navn).toBe(k.hovedside.navn)
+      expect(OUS_ANALYTTKOBLINGER.filter((a) => a.stoff === STOFFREGISTER.kanonisk(k.hovedside.navn)!.slug), k.hovedside.navn).toEqual([])
     }
   })
 

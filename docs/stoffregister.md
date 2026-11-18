@@ -48,8 +48,8 @@ andre fanen er Verktøy, inntil videre bare for administratorene, se `docs/verkt
 seksjon per kategori, underkategoriene som mellomtitler og et detaljkort per
 stoff, i et rutenett med like brede kort (`.skuffrutenett`, som
 farmakodynamikk-kortene). Lukket viser kortet navnet og begynnelsen på
-oppsummeringen, aldri analysekodene. Åpnet viser det hele oppsummeringen,
-analysene og veien til fagsiden og fortolkningen. Visningen er bare for å
+oppsummeringen. Åpnet viser det hele oppsummeringen og veien til fagsiden.
+Registeret viser ingenting fra fortolkningen (`docs/domener.md`). Visningen er bare for å
 lese: alt som endrer et stoff, gjøres i redigeringen. Siden har sine egne
 diskusjoner (`register:stoffregister`, se `docs/diskusjoner.md`). `Escape`
 lukker den.
@@ -115,11 +115,9 @@ papirkurven står ikke i registeret eller i søket.
 - Alle kan slette en fagside som bare har et navn. Bare administratorer kan
   slette en med innhold. Det gjøres fra siden («Mer for fagsiden»), fra
   registeret og fra arkivet.
-- En fagside fortolkningen lenker til (stoffet er koblet til en analyse), og et
-  stoff uten side i databasen, kan bare arkiveres. Databasen kjenner de
-  koblede stoffene fra `public.analyttkoblede_stoffer`, som må følge
-  `analyttkoblinger` i datafilen: en ny kobling føres inn med en migrasjon, og
-  `stoffregisterdb.test.ts` feiler til det er gjort.
+- Et stoff uten side i databasen kan bare arkiveres. Fortolkningen lenker
+  ikke til fagsidene, så en analysekode hindrer ikke at en side slettes
+  (`docs/domener.md`).
 - Alle kan slette en tom kategori; bare administratorer en med stoffer.
   Stoffene havner i «Andre stoffer», eller blir stående der de ellers står.
 - En slettet fagside havner i papirkurven, som bare administratorene ser.

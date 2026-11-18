@@ -22,23 +22,12 @@ import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing
 import type { Objektstatus } from '../faginnhold/modell'
 import { ELEMENTTYPER, FJERNET } from '../faginnhold/paneler'
 import { MIGRERTE_SAMMENSLATTE, SAMMENSLAINGSKILDE, sammenslaingSql } from '../faginnhold/sammenslatte'
-import { referanseomraderPerAnalytt, type Stoffreferanseomrade } from '../domain/koblinger'
-import { byggStoffregister } from '../domain/stoffregister'
+import { STOFFREGISTER } from '../domain/stoffregister'
 import { lesSideEtterKode } from './hjelp/historisklesing'
 import { faginnholdskall, feilFra, migrasjonsfiler, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
-import { OUS_REGISTER } from '../domain/ouskatalog'
 
 const SAMMENSLATTE = { Testmetabolitt: 'Testmoderstoff', Utkastmetabolitt: 'Testmoderstoff' }
 const MIGRASJONSFIL = migrasjonsfiler().find((f) => f.endsWith('_sammenslatte_stoffsider.sql'))!
-
-/** Stoffregisteret etter sammenslåingen: metabolitten er et annet navn på moderstoffet, og begge kodene er koblet dit. */
-const REGISTER = byggStoffregister([], {
-  stoffer: [{ slug: 'testmoderstoff', navn: 'Testmoderstoff', aliaser: ['Testmetabolitt'] }],
-  analyttkoblinger: [
-    { kode: 'TMOD', stoff: 'testmoderstoff', relasjon: 'selve_stoffet' },
-    { kode: 'TMET', stoff: 'testmoderstoff', relasjon: 'metabolitt' },
-  ],
-})
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -114,7 +103,7 @@ describe('migrasjonen', () => {
 
   it('slo sammen metabolittene som i dag er et annet navn på moderstoffet i stoffregisteret', () => {
     for (const [metabolitt, moderstoff] of Object.entries(MIGRERTE_SAMMENSLATTE)) {
-      const stoff = OUS_REGISTER.kanonisk(metabolitt)
+      const stoff = STOFFREGISTER.kanonisk(metabolitt)
       expect(stoff?.navn, metabolitt).toBe(moderstoff)
       expect(stoff?.aliaser, metabolitt).toContain(metabolitt)
     }
@@ -136,28 +125,6 @@ describe('sammenslåingen i databasen', () => {
       .filter((e) => e.innhold.elementtype === 'referanseomrade')
       .map((e) => [e.innhold.data.gjelder ?? null, e.innhold.data.ovre])
     expect(omrader.sort()).toEqual([['TMET', 400], [null, 3000]].sort())
-
-    // Slik appen gir dem: kortene per stoff, knyttet til kodene gjennom koblingene.
-    const { les_stoffreferanseomrader: kort } = await kall.rpc<{ les_stoffreferanseomrader: Stoffreferanseomrade[] }>(
-      bruker,
-      'les_stoffreferanseomrader',
-      { sidetilstand: 'publisert' },
-    )
-    // Koden i `gjelder` er fra før datakortene ble koblet til forbindelsen
-    // analysen måler; appen leser kortet som kortet for forbindelsen koden
-    // måler, etter katalogen (`kortetsForbindelse`), til det er skrevet om (#405).
-    const analytter = new Map([
-      ['TMOD', { kode: 'TMOD', forbindelse: null, datakort: 'egne' as const }],
-      ['TMET', { kode: 'TMET', forbindelse: 'testmetabolitt', datakort: 'forbindelse' as const }],
-    ])
-    const perKode = referanseomraderPerAnalytt(kort, { koblinger: REGISTER.koblinger, finn: (kode) => analytter.get(kode) }) as Map<
-      string,
-      { ovre: number }
-    >
-    expect([...perKode].map(([kode, o]) => [kode, o.ovre]).sort()).toEqual([
-      ['TMET', 400],
-      ['TMOD', 3000],
-    ])
 
     // Og slik den utgåtte funksjonen ga dem, etter analyttenes hovedside.
     const { les_referanseomrader: utgatt } = await kall.rpc<{

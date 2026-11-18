@@ -32,6 +32,11 @@ export type Forbindelsesform = 'fri' | 'ion' | 'salt'
 export interface Stoffkobling {
   stoff: string
   relasjon: Forbindelsesrelasjon
+  /**
+   * Fagsiden til stoffet har egne datakort for forbindelsen: en egen plass i
+   * «Viktige data» (`src/faginnhold/datakortplasser.ts`).
+   */
+  datakort?: true
 }
 
 /** En kontrollert kobling til PubChem. */

@@ -11,7 +11,7 @@ import { useFaginnholdskilde } from '../stoffside/Faginnholdskilde'
 import type { StoffsideProps } from '../stoffside/Stoffside'
 import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
 
-export type Utgavesideprops = Pick<StoffsideProps, 'register' | 'katalog' | 'onApneFortolkning'> & {
+export type Utgavesideprops = Pick<StoffsideProps, 'register'> & {
   /** Går til en annen side i appen. */
   onGaaTil: (rute: Rute) => void
 }

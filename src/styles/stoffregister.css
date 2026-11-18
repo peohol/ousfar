@@ -115,8 +115,7 @@
   color: var(--blekk);
 }
 
-.stoffkort__tom,
-.stoffkort__koder {
+.stoffkort__tom {
   margin: 0;
   font-size: var(--tekst-liten);
   color: var(--blekk-dempet);

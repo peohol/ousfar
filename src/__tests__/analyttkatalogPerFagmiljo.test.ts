@@ -26,7 +26,6 @@ import { etgImportSql } from '../../scripts/etg-import'
 import type { Analyttkatalog } from '../domain/analyttkatalog'
 import { etgTilfeller, type Etgtilfeller } from '../domain/etg'
 import { OUS_KATALOGDATA } from '../domain/ouskatalog'
-import { byggStoffregister, STOFFREGISTERDATA } from '../domain/stoffregister'
 import { lesScenarioregler, reglerForModul, tilScenarioregler } from '../faginnhold/scenarioregler'
 import { lesAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
@@ -42,7 +41,6 @@ const MIGRASJONER = new URL('../../supabase/migrations/', import.meta.url)
 const FOR_FLYTTINGEN = {
   fortolkninger: '890e76189c8e22d30e67a38187049a525a5a742d1502b545f7f86a0f1fca06cb',
   metoder: 'fa9c192ac17fd76cad46f675aca79a401d81e5e09f272e5521428a03ca04a707',
-  koblinger: '48ca967ef48e5004fd1504de1a06c8b7bda953eef13d72523c927f5bc37b5147',
   etg: '6b228894db7f017e6d27199dc4b85faf768bdabdc5132f0e33193cc082959276',
 }
 
@@ -133,8 +131,6 @@ describe('OUS Klinisk farmakologi', () => {
     expect(katalog.fagmiljo).toEqual({ id: g.fagmiljo.A, navn: 'OUS Klinisk farmakologi' })
     expect(kontrollsum(katalog.fortolkninger.map(({ modul: _, ...a }) => a))).toBe(FOR_FLYTTINGEN.fortolkninger)
     expect(kontrollsum(katalog.metoder)).toBe(FOR_FLYTTINGEN.metoder)
-    const register = byggStoffregister(undefined, { ...STOFFREGISTERDATA, analyttkoblinger: katalog.koblinger })
-    expect(kontrollsum(register.koblinger)).toBe(FOR_FLYTTINGEN.koblinger)
     expect({ ...katalog, fagmiljo: null, finn: null, modulMedId: null }).toEqual({
       ...(await import('../domain/ouskatalog')).OUS_KATALOG,
       finn: null,
@@ -182,7 +178,7 @@ describe('et fagmiljø uten egen katalog', () => {
   it.each(['vanligB', 'adminB', 'arkitektB', 'avsluttetA'] as const)('gir %s en tom katalog i B, ikke A sin', async (p) => {
     const katalog = await katalogFor(p)
     expect(katalog.fagmiljo).toEqual({ id: g.fagmiljo.B, navn: expect.any(String) })
-    expect([katalog.metoder, katalog.fortolkninger, katalog.oppforinger, katalog.koblinger]).toEqual([[], [], [], []])
+    expect([katalog.metoder, katalog.fortolkninger, katalog.oppforinger]).toEqual([[], [], []])
     expect(katalog.finn('AMTNORSUM')).toBeUndefined()
   })
 

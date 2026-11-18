@@ -5,7 +5,7 @@
  * THC-syre, og scenarioregelsettet når modulen fortolkes med dem.
  */
 import { ANALYTTKATALOG, OUS_KATALOG } from '../../domain/ouskatalog'
-import { analytterForFortolkning } from '../../domain/koblinger'
+import { analytterForFortolkning } from '../../domain/analyttkatalog'
 import { rusModulFor } from '../../domain/rus'
 import { THC_KODE } from '../../domain/ouskatalog'
 import type { Faginnholdsleser, Regeldata } from '../../faginnhold/lesing'

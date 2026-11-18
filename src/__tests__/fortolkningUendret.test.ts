@@ -123,14 +123,19 @@ const FORTOLKNINGSSTEGENE = [
   'src/components/EtgStep.tsx',
   'src/components/EtgPasteStep.tsx',
   'src/components/Kommentarliste.tsx',
-  'src/components/Kodepille.tsx',
   'src/hooks/useKommentarflyt.ts',
 ]
 
-/** Det fortolkningen ikke skal hente noe fra: regelsettene kommer som argumenter. */
+/**
+ * Det fortolkningen ikke skal hente noe fra: regelsettene kommer som
+ * argumenter, og fagsidene og stoffregisteret er et eget domene
+ * (`docs/domener.md`).
+ */
 const REDIGERBART = [
   resolve(ROT, 'src/faginnhold'),
   resolve(ROT, 'src/components/stoffside'),
+  resolve(ROT, 'src/components/stoffregister'),
+  resolve(ROT, 'src/stoffregister'),
   resolve(ROT, 'src/components/referanser'),
   resolve(ROT, 'src/auth'),
 ]

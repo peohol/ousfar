@@ -20,11 +20,9 @@ import { lagRegisterlager } from '../stoffregister/api'
 import { TOM_STOFFSIDE, lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing'
 import { SITERING } from '../faginnhold/referanser'
 import { indekserSide, lagSokeindeks, sokGlobalt, sokeadresse, stoffidentitet } from '../faginnhold/sok'
-import { ANDRE_STOFFER, byggStoffregister } from '../domain/stoffregister'
-import { OUS_REGISTERDATA } from '../domain/ouskatalog'
+import { STOFFREGISTERDATA, ANDRE_STOFFER, byggStoffregister } from '../domain/stoffregister'
 import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
 import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
-import { OUS_VALG } from './hjelp/ousvalg'
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -127,14 +125,13 @@ describe('les_stoffliste', () => {
   it('gir stoffregisteret et nytt stoff, og ingen egen side for et alias', async () => {
     const { sider, struktur } = await lagRegisterlager(kall.klientFor(admin)).les('utkast')
     expect(sider.map((s) => s.slug)).toEqual((await adminleser.lesStoffliste('utkast')).map((s) => s.slug))
-    const register = byggStoffregister(sider, OUS_REGISTERDATA, struktur)
+    const register = byggStoffregister(sider, STOFFREGISTERDATA, struktur)
     expect(register.finn('teststoff')).toEqual({ slug: 'teststoff', navn: 'Teststoff', aliaser: [] })
     expect(register.kategorierFor('teststoff')).toEqual([{ kategori: ANDRE_STOFFER }])
     const andre = register.kategorier.find((k) => k.navn === ANDRE_STOFFER)?.stoffer.map((s) => s.slug)
     expect(andre?.filter((s) => !PLASSERT_MED_SIDEN.has(s))).toEqual(['teststoff'])
-    // Bupropion er stoffet i registeret, med analytten koblet til der.
+    // Bupropion er stoffet i registeret.
     expect(register.finn('bupropion')?.navn).toBe('Bupropion')
-    expect(register.analytterFor('bupropion').map((k) => k.kode)).toContain('HBUP')
     // Den gamle komponentsiden er ikke et eget stoff: navnet fører til Bupropion.
     expect(register.finn('hydroksybupropion')).toBeUndefined()
     expect(register.kanonisk('Hydroksybupropion')?.slug).toBe('bupropion')
@@ -184,28 +181,24 @@ describe('når sidene er publisert', () => {
 
   it('finnes i søket i hele kunnskapsbasen, med adresse etter stoffets nøkkel', async () => {
     const base = await lesKunnskapsbase({ sider: lagSideleser(kall.klientFor(bruker)) })
-    const dokumenter = indekserKunnskapsbase(base, OUS_VALG)
+    const dokumenter = indekserKunnskapsbase(base)
     const paStoffet = dokumenter.filter((d) => d.sted.side.stoff === 'teststoff')
 
     // De samme dokumentene som søket på siden selv, og ingen kode.
     const side = await brukerleser.lesStoffside('teststoff', 'publisert')
     expect(paStoffet).toEqual(
-      indekserSide(stoffidentitet({ slug: 'teststoff', navn: 'Teststoff' }, []), byggSidemodell(side)),
+      indekserSide(stoffidentitet({ slug: 'teststoff', navn: 'Teststoff' }), byggSidemodell(side)),
     )
-    expect(paStoffet.some((d) => d.felt === 'kode')).toBe(false)
 
     const [treff] = sokGlobalt(lagSokeindeks(dokumenter), 'teststoff neste dose')
     expect(sokeadresse(treff!.dokument.sted)).toBe(`#/stoff/teststoff/tdm/${ider.kort}`)
   })
 
-  it('fører analyttkoden og aliaset til stoffet, og indekserer ikke aliasets gamle side for seg', async () => {
+  it('fører aliaset til stoffet, ikke fortolkningens analysekode, og indekserer ikke aliasets gamle side for seg', async () => {
     const base = await lesKunnskapsbase({ sider: lagSideleser(kall.klientFor(bruker)) })
-    const indeks = lagSokeindeks(indekserKunnskapsbase(base, OUS_VALG))
+    const indeks = lagSokeindeks(indekserKunnskapsbase(base))
     expect(indeks.dokumenter.some((d) => d.sted.side.stoff === 'hydroksybupropion')).toBe(false)
-
-    const [kode] = sokGlobalt(indeks, 'HBUP')
-    expect(kode!.dokument.sted.side).toEqual({ stoff: 'bupropion', navn: 'Bupropion' })
-    expect(sokeadresse(kode!.dokument.sted)).toBe('#/stoff/bupropion')
+    expect(indeks.dokumenter.some((d) => d.tekst === 'HBUP')).toBe(false)
     const [alias] = sokGlobalt(indeks, 'hydroksybupropion')
     expect(alias!.dokument.sted.side.stoff).toBe('bupropion')
 

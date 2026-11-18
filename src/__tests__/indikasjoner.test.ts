@@ -6,6 +6,7 @@
  * indikasjonene, før sidene fikk stoffets nøkkel, så sidene leses etter navnet
  * med funksjonene appen brukte da (`hjelp/historisklesing.ts`).
  */
+import { STOFFREGISTER } from '../domain/stoffregister'
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -33,7 +34,6 @@ import {
   opprettBruker,
   type Faginnholdskall,
 } from './hjelp/testdatabase'
-import { OUS_REGISTER } from '../domain/ouskatalog'
 
 /** Kilden revisjonene får, med datoen omgangen ble hentet. */
 const fkkilde = (hentet: string) => `Hentet fra Felleskatalogen ${hentet.split('-').reverse().join('.')}`
@@ -190,7 +190,7 @@ describe('datasettet', () => {
     for (const [metabolitt, moderstoff] of Object.entries(MIGRERTE_SAMMENSLATTE)) {
       expect(rus.koder.map((k) => k.hovedside.navn)).not.toContain(metabolitt)
       // I stoffregisteret er metabolitten et annet navn på moderstoffet.
-      expect(OUS_REGISTER.kanonisk(metabolitt)?.navn, metabolitt).toBe(moderstoff)
+      expect(STOFFREGISTER.kanonisk(metabolitt)?.navn, metabolitt).toBe(moderstoff)
     }
     expect(tekst('Buprenorfin', rus)).toContain('opioidavhengighet')
     expect(tekst('Metadon', rus)).toContain('Levopidon')

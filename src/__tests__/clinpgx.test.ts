@@ -48,7 +48,6 @@ import { sokeadresse, sokGlobalt } from '../faginnhold/sok'
 import { TOMT_UTVALG } from '../legemiddeldata/lesing'
 import { kallSom } from './hjelp/fest'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
-import { OUS_VALG } from './hjelp/ousvalg'
 
 function fil(navn: string): { status: string; data: unknown[] } {
   return JSON.parse(readFileSync(new URL(`./data/clinpgx/${navn}`, import.meta.url), 'utf8')) as { status: string; data: unknown[] }
@@ -1006,7 +1005,7 @@ describe('søket', () => {
     const les = vi.fn(async () => SERTRALINUTVALG)
     const farmakogenetikk: Farmakogenetikkleser = { les, sok: async () => [], hent: async () => ({ status: 'fullfort' }) }
     const sideleser = { lesStoffsider: async () => [sertralinside()] }
-    const indeks = await lesSokeindeks({ sider: sideleser, farmakogenetikk }, OUS_VALG)
+    const indeks = await lesSokeindeks({ sider: sideleser, farmakogenetikk })
     expect(les).toHaveBeenCalledWith([SERTRALIN])
 
     const [treff] = sokGlobalt(indeks, 'CPIC CYP2B6')
@@ -1028,7 +1027,7 @@ describe('søket', () => {
     const sideleser = { lesStoffsider: async () => [sertralinside()] }
     const base = await lesKunnskapsbase({ sider: sideleser, farmakogenetikk: nede, ventetider: [] })
     expect(base.mangler).toEqual({ farmakogenetikk: 'ClinPGx-kopien svarer ikke' })
-    const dokumenter = indekserKunnskapsbase(base, OUS_VALG)
+    const dokumenter = indekserKunnskapsbase(base)
     expect(dokumenter.some((d) => d.tekst.includes('redaksjonell'))).toBe(true)
     expect(dokumenter.some((d) => d.tekst.includes('CYP2B6'))).toBe(false)
     // En side uten kobling spør ikke ClinPGx.

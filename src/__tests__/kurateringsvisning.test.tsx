@@ -18,9 +18,9 @@ import { Kurateringsoversikt } from '../components/kuratering/Utgavelister'
 import { FaginnholdskildeProvider, type Faginnholdskilde } from '../components/stoffside/Faginnholdskilde'
 import { Stoffside } from '../components/stoffside/Stoffside'
 import { TipsLag } from '../components/Tips'
-import { ANALYTTKATALOG, OUS_REGISTERDATA } from '../domain/ouskatalog'
+import { ANALYTTKATALOG } from '../domain/ouskatalog'
 import { adresse, lesRute, sidesti } from '../domain/rute'
-import { byggStoffregister } from '../domain/stoffregister'
+import { STOFFREGISTERDATA, byggStoffregister } from '../domain/stoffregister'
 import { INGEN_BIVIRKNINGER, type Bivirkning, type Bivirkningsdata } from '../bivirkninger/modell'
 import type { Faginnholdslager } from '../faginnhold/lagring'
 import { TOM_STOFFSIDE, type Faginnholdsleser, type Stoffsidedata, type Utgave } from '../faginnhold/lesing'
@@ -63,7 +63,7 @@ const SIDE = '11111111-0000-4000-8000-000000000001'
 const DOSERING = '22222222-0000-4000-8000-000000000002'
 const INDIKASJON = '33333333-0000-4000-8000-000000000003'
 const GREN = '44444444-0000-4000-8000-000000000004'
-const REGISTER = byggStoffregister([], OUS_REGISTERDATA, GRUNNSTRUKTUR)
+const REGISTER = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
 const STOFF = 'citalopram'
 
 const DOK = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: tekst }] }] })

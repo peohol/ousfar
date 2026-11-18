@@ -392,13 +392,6 @@
   color: var(--blekk);
 }
 
-.menyanalytt__kode {
-  flex: none;
-  font-size: var(--tekst-merke);
-  font-weight: var(--vekt-halvfet);
-  color: var(--blekk-dempet);
-}
-
 /* Bakgrunnen skal ikke rulle mens menyen står over den — samme regel som for
    endringsloggen, og av samme grunn. */
 :root:has([data-lag='meny']) {

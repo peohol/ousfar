@@ -164,11 +164,10 @@ bare fargene gjennom `--tast-flate`, `--tast-blekk` og `--tast-kant`
 - **`Panelhode`** (`src/components/Panelhode.tsx`) er overskriften i et panel:
   ikon og kursiv serif. `tone="toksisk"` er for det som mangler.
 - **`Metalinje`** (`src/components/Metalinje.tsx`) er linja over et stoffnavn
-  i fortolkningen, som «KVE · SPFA › Antipsykotika». Med `lenker` er kodene
-  lenker til fagsiden (`Kodepille`). På fagsiden har linja
-  over navnet i stedet kategoriene fra stoffregisteret («Antidepressiver ›
-  SSRI»), og under navnet står analyttkoden som pille (`pille--kode`, en knapp
-  til fortolkningen) og «Inngår i» med `Metodepille`.
+  i fortolkningen, som «KVE · SPFA › Antipsykotika». Kodene er tekst, ikke
+  lenker. På fagsiden har linja over navnet i stedet kategoriene fra
+  stoffregisteret («Antidepressiver › SSRI»), og ingen koder
+  (`docs/domener.md`).
 - **`StepBar`** er raden øverst i hvert fortolkningssteg. Esc-handlingen står
   alltid der, med ikon og tastemerke.
 - **`Kommentarliste`** er kommentarblokkene i modulene: hvor kommentaren skal
@@ -235,7 +234,7 @@ Resten av grensesnitteksten:
 
 | Hvor | Tekst |
 | --- | --- |
-| Toppmenyen | «Søk i fagstoff» med «Ctrl + K», «På siden» med «Ctrl + B», «Åpne fortolkning» (fagsiden), «Åpne fagside» (fortolkningen), «Rediger», «Lukk» |
+| Toppmenyen | «Søk i fagstoff» med «Ctrl + K», «På siden» med «Ctrl + B», «Rediger», «Lukk» |
 | Redigering | statusen «Redigerer · …» som tooltip («ingen upubliserte endringer», «utkast med N endringer», «alt er publisert»), «Publiser» (avslått: «Det er ikke noe nytt å publisere»), «Avslutt redigering», «Publiser endringene», «Publiser nå» |
 | Panelene i redigering | «Rediger», «Legg til», «Legg til kort», «Koble til legemiddeldataene», «Kilder for panelet», «Rediger reglene», «Lagre utkast», «Avbryt» |
 | Viktige data | «Konsentrasjoner i serum», «Kinetikk», «Ikke oppgitt» |
@@ -306,7 +305,7 @@ Appen står i `ToppmenyKilde`. En side legger innhold i menyen med
 
 ```tsx
 <ToppmenyInnhold spor="hovedhandling">
-  <Toppmenyknapp ikon="interp" variant="primar" …>Åpne fortolkning</Toppmenyknapp>
+  <Toppmenyknapp variant="primar" …>Publiser</Toppmenyknapp>
 </ToppmenyInnhold>
 <ToppmenyInnhold spor="lukk">
   <Lukkeknapp onLukk={lukk} />
@@ -325,7 +324,7 @@ rad i dokken og på to:
 | --- | --- | --- |
 | `hoved` | `sidesok` | søket i den åpne siden |
 | | `innhold` | innholdsfortegnelsen på fagsiden, der den ikke får plass ved siden av innholdet (`docs/seksjoner.md`) |
-| | `hovedhandling` | sidens hovedhandling: «Åpne fortolkning», «Åpne fagside», «Publiser», «Ferdig» |
+| | `hovedhandling` | sidens hovedhandling: «Publiser», «Ferdig» |
 | `handlinger` | `favoritt` | stjernen på fagsiden |
 | | `diskusjoner` | «Diskusjoner» (bare i dokken) |
 | | `endringslogg` | sidens endringslogg |
@@ -339,8 +338,7 @@ rad i dokken og på to:
   ingenting er nytt. Publiseringen viser hva
   som blir synlig for alle i et modalt lag før noe publiseres. Stilene for
   redigeringen står i `src/styles/redigering.css`.
-- Fortolkningen bruker `hovedhandling` til «Åpne fagside» mens en modul med
-  egen fagside er valgt (`App.tsx`); søkesiden bare `lukk`.
+- Søkesiden bruker bare `lukk`.
 - `sidesok`: plassen til søket i den åpne siden. Fagsiden legger sitt
   kompakte søk her (`Sidesok.tsx`, snarveien Ctrl + B eller Cmd + B). Det vokser
   mens det brukes, og antallet treff og stedene de står, vises under feltet.
@@ -420,9 +418,7 @@ trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
   rett over dokken.
 - Står dokken nederst på en bredere flate, blir diskusjonene stående som
   boblen øverst til høyre, og panelet deres slutter over dokken.
-- Fortolkningen har dokken når en analytt er valgt: «Åpne fagside» (én
-  knapp per stoff når modulen har koder for flere, som Diazepam og
-  Oksazepam) og «Diskusjoner».
+- Fortolkningen har dokken når en analytt er valgt: «Diskusjoner».
 
 ### Idéene, adminmenyen og kontoen
 

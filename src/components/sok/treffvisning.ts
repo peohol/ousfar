@@ -77,9 +77,7 @@ export const GRUPPENAVN: Record<Visningsgruppe, { fane: string; overskrift: stri
 
 const TYPE: Record<Sokefelt, string> = {
   navn: 'Stoff',
-  kode: 'Stoff',
   alias: 'Stoff',
-  komponent: 'Stoff',
   preparat: 'Preparat',
   overskrift: 'Tekst',
   fritekst: 'Tekst',
@@ -104,7 +102,7 @@ export function markert(tekst: string, ord: readonly string[]): Utdrag {
 
 /**
  * Visningen av et treff. `beskrivSide` gir linja under et stoff, etter
- * nøkkelen — kategorien og analyttene det er koblet til (`stoffbeskrivelse`).
+ * nøkkelen — kategorien det står i (`stoffbeskrivelse`).
  */
 export function visTreff(
   { dokument, utdrag }: Soketreff,
@@ -122,9 +120,8 @@ export function visTreff(
   }
 
   if (erIdentitetsfelt(felt)) {
-    // Et annet navn eller en komponent vises under navnet, så det går fram
-    // hvorfor siden kom med.
-    const annetNavn = felt !== 'navn' && felt !== 'kode' && fold(tekst) !== fold(sted.side.navn)
+    // Et annet navn vises under navnet, så det går fram hvorfor siden kom med.
+    const annetNavn = felt !== 'navn' && fold(tekst) !== fold(sted.side.navn)
     return {
       ...felles,
       ikon: STOFFIKON,

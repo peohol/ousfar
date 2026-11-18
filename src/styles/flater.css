@@ -84,19 +84,6 @@
   color: var(--aksent);
 }
 
-/* Koden som lenke til informasjonssiden: understrekingen kommer ved peker og
-   fokus, så linjen er rolig når den bare skal leses. */
-.metalinje__lenke {
-  text-decoration: none;
-  text-underline-offset: 0.3em;
-  border-radius: var(--runding-merke);
-}
-
-.metalinje__lenke:hover,
-.metalinje__lenke:focus-visible {
-  text-decoration: underline;
-}
-
 /* Stoffnavnet under metalinjen i et analyttkort. */
 .analytt__navn {
   font-family: var(--skrift-display);
@@ -187,23 +174,6 @@
 
 .metodepille__kategori {
   font-weight: var(--vekt-medium);
-}
-
-/* Analyttkoden som knapp til fortolkningen, øverst på stoffsiden: i
-   aksentfargen, som kodene i metalinjen. */
-.pille--kode {
-  padding: var(--rom-2) var(--rom-3);
-  font-family: var(--skrift-mono);
-  font-size: var(--tekst-meta);
-  color: var(--aksent);
-  background: var(--aksent-flate);
-  border: 0;
-  cursor: pointer;
-}
-
-.pille--kode:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
 }
 
 /* --- Kommentaren skrevet ut -------------------------------------------------

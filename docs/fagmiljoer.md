@@ -1091,9 +1091,8 @@ den innloggede kan lese (systemarkitektene ser disse to og
 `slettede_referanser` også uten den gamle adminrollen), og
 `analyttkoblede_stoffer` bare av medlemmene i fagmiljøet dagens fortolkning
 hører til (`public.leser_analyttkoblingene()`: OUS Klinisk farmakologi, D1)
-og systemarkitektene. Tabellen har bare stoffet; koblingene får fagmiljøet
-sitt i analyttkatalogen (P4c); tabellen står som vernet for stoffregisteret,
-og et annet fagmiljø ser den ikke, heller ikke med egne analytter. `public.les_endringslogg` (`security definer`)
+og systemarkitektene. Tabellen er ikke i bruk siden 18.11.2026
+(`docs/domener.md`) og fjernes etter overgangen (#405). `public.les_endringslogg` (`security definer`)
 viser bare objektene den innloggede kan lese, og utkastene bare med
 endringsrett til alle sidens objekter. De andre lesefunksjonene for
 faginnholdet (`les_stoff`, `les_kommentarer`, `les_intervallregelsett` og de
@@ -1318,8 +1317,9 @@ navn, gruppe, metode, kategori, enhet, måleområde, grensene for
 antihypertensivene, søkeord og hvordan oppføringen fortolkes — med
 konsentrasjonsbånd, som scenariomodul, THC-syre eller EtG/EtS),
 `analyttkatalog_koder` (analyttkodene hver oppføring dekker, hver kode høyst
-én gang per fagmiljø) og `analyttkatalog_koblinger` (koblingene fra kodene
-til stoffene i stoffregisteret, høyst ett primært stoff per kode). Tabellene
+én gang per fagmiljø, med referanseområdet fortolkningen viser) og
+`analyttkatalog_koblinger` (koblingene fra kodene til stoffene i
+stoffregisteret; ikke i bruk i appen siden 18.11.2026, `docs/domener.md`). Tabellene
 har radsikkerhet uten regler og ingen rettigheter for nettleseren. Den eneste
 veien inn er `public.les_analyttkatalog()`, som gir katalogen til
 arbeidskonteksten ([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø))
@@ -1331,9 +1331,9 @@ skriver ikke til den.
 (`src/katalog/Analyttkatalogkilde.tsx`, `App.tsx`), og settes opp på nytt når
 arbeidskonteksten byttes, så ingenting fra det forrige fagmiljøet blir
 stående. Den lagres ikke i nettleseren. Søket i fortolkningen, filteret med
-metodene, fortolkningsmodulene, kodepillene, lenkene mellom koder og
-fagsider, stoffregisteret, fagsøket og endringsloggen bruker den hentede
-katalogen. Klientpakken har ingen katalog: `src/domain/analyttkatalog.ts`
+metodene, fortolkningsmodulene, referanseområdene i steg 2 og endringsloggen
+bruker den hentede katalogen. Fagsidene, stoffregisteret og fagsøket bruker
+den ikke (`docs/domener.md`). Klientpakken har ingen katalog: `src/domain/analyttkatalog.ts`
 har bare formen, og `lesKatalogdata` avviser et svar som ikke har den.
 
 **Tydelig stopp.** Et fagmiljø uten egen katalog får en tom en, og
@@ -1353,55 +1353,22 @@ manuell vurdering kan den ikke vise, og da sier den fra. Redigeringen av
 reglene i appen er ikke laget for modulen ennå; til da endres de med en
 migrasjon.
 
-**De felles datakortene.** Datakortene i «Viktige data» på fagsidene er
-felles for alle fagmiljøer, og vet ingenting om laboratorienes koder. Et kort
-for en metabolitt sier hvilken forbindelse det gjelder, med nøkkelen i
-forbindelsesregisteret (`data.gjelder = 'o-desmetyltramadol'`, etter
-overgangen under; se
-`docs/faginnhold.md`, «Datakortene per forbindelse»), og vises for alle,
-også i et fagmiljø uten egen katalog. Katalogen sier for hver kode hvilken
-forbindelse analysen måler (`analyttkatalog_koder.forbindelse`, `null` for
-sumanalysene) og uttrykkelig hvilke kort på siden til kodens primære stoff den
-bruker (`analyttkatalog_koder.datakort`): sidens egne (`egne`), dem for
-forbindelsen (`forbindelse`), eller ingen (`null`). Det er dette
-referanseområdet fortolkningen viser under analyttnavnet
-(`datakortnokkel`/`referanseomraderPerAnalytt` i `src/domain/koblinger.ts`).
-Ingen kode får et kort av rekkefølgen i katalogen, og en ny katalog får ingen
-før det er sagt (#395 punkt 3:
+**Referanseområdene.** Hver kode har sitt eget referanseområde
+(`analyttkatalog_koder.referanseomrade`), som fortolkningen viser over
+knappene i steg 2. Fortolkningen leser ikke datakortene på fagsidene
+(`docs/domener.md`, 18.11.2026); verdiene ble kopiert én gang fra kortene den
+viste fram til da, og endres med en migrasjon. Et fagmiljø uten egne verdier
+viser ingen.
+
+**Forbindelsen og datakortene (overgang).** Før 18.11 leste fortolkningen
+referanseområdet fra kortet på siden til kodens primære stoff, etter
+`analyttkatalog_koder.forbindelse` og `.datakort` (#395 punkt 3:
 `20261115112000_datakort_per_forbindelse.sql` og
 `…112100_analyttforbindelser_ous.sql`, laget med
-`scripts/analyttforbindelser.ts` av `src/data/analyttforbindelser.json`).
-For OUS Klinisk farmakologi er verdiene de appen brukte før: sidens egne for
-den første primære koden for hvert stoff, og dem for forbindelsen for de
-andre (OTRAM, DMI). Urinanalysene (THC-syre, EtG og EtS) bruker ingen, siden
-kortene gjelder serum; ingen av dem fikk noe referanseområde i produksjonen.
-Sidens egne kort sier ikke selv hvilken forbindelse de gjelder: på noen sider
-er det metabolitten eller summen laboratoriet måler (bupropion, enalapril,
-spironolakton, sumanalysene). Derfor må et nytt fagmiljøs katalog si
-uttrykkelig for hver kode at den bruker dem. Hvilket prøvemateriale en
-analyse gjelder, er ikke en del av katalogen ennå.
-
-**Overgangen.** Appen og databasen rulles ut hver for seg, og en fane som
-står åpen, kjører appen den ble lastet med. Derfor i to trinn, så ingen
-rekkefølge gjør at et referanseområde forsvinner:
-
-1. *Trinn 1 (1.133.4)* endrer ikke faginnholdet: kortet for
-   O-desmetyltramadol har fortsatt `OTRAM` i `gjelder`, så appen fra før
-   finner det. Migrasjonen setter verdiene og lar `les_analyttkatalog()` gi
-   dem, i én transaksjon. Den nye appen leser et kort med en kode i `gjelder`
-   som kortet for forbindelsen koden måler, etter katalogen eller ellers en
-   uttrykkelig, midlertidig liste over kodene som står i kortene
-   (`kortetsForbindelse` og `ELDRE_DATAKORTKODER` i `src/domain/koblinger.ts`;
-   i produksjonen bare `OTRAM`). Kortet merkes derfor med O-desmetyltramadol
-   og kobles til et annet fagmiljøs kode for den i alle fagmiljøer, også uten
-   katalog. Et svar uten feltene
-   (før migrasjonen, eller om den stopper) med den gamle koblingen
-   (`medEldreDatakort` i `src/domain/analyttkatalog.ts`). Redigeres kortet i
-   den nye appen, beholder det nøkkelen det er lagret med (`ViktigeData`), så
-   den gamle finner det også etterpå; et nytt kort får forbindelsen.
-2. *Trinn 2 (#405)*, tidligst sju dager etter at trinn 1 er ute: kortet skrives
-   om til `o-desmetyltramadol`, databasen stenger for analyttkoder i `gjelder`,
-   og overgangen fjernes fra appen.
+`scripts/analyttforbindelser.ts` av `src/data/analyttforbindelser.json`). Feltene
+og `analyttkatalog_koblinger` står i databasen og i `les_analyttkatalog()` for
+faner med appen fra før, men den nye appen leser dem ikke. De fjernes når
+overgangen er over (#405), etter Peders ja.
 
 **Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
 filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser
@@ -1413,8 +1380,8 @@ pakke, også bak innloggingsveggen, som drar dem inn. THC-kurvene
 (D4, #374).
 
 **Tester.** `src/__tests__/analyttkatalogPerFagmiljo.test.ts` prøver at
-importene er de grunnlaget gir; at A får nøyaktig katalogen, metodene,
-koblingene og EtG/EtS-tilfellene som sto i klientpakken før (kontrollsummer
+importene er de grunnlaget gir; at A får nøyaktig katalogen, metodene
+og EtG/EtS-tilfellene som sto i klientpakken før (kontrollsummer
 regnet av `main` før flyttingen), og EtG/EtS-tekstene ordrett; at B, også
 systemarkitekten med B som arbeidskontekst, og en uten aktivt medlemskap får
 en tom katalog og ingen EtG-regler; at tabellene ikke kan leses direkte; og

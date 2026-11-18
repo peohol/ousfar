@@ -1,8 +1,7 @@
 import { useId, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import type { Laboratorieanalytt } from '../../domain/analyttkatalog'
 import type { Sideelement } from '../../faginnhold/stoffside'
-import { analyttFinner, datakorteiere, kortetsForbindelse } from '../../domain/koblinger'
+import { datakorteiere, kortetsForbindelse } from '../../faginnhold/datakortplasser'
 import {
   DATAKORT,
   DATAKORTGRUPPER,
@@ -65,29 +64,24 @@ const UTSEENDE: Record<Datakorttype, { ikon: Ikonnavn; tone?: 'referanse' | 'tok
  * nøkkelen til forbindelsen i forbindelsesregisteret (`datakortGjelder`),
  * aldri med et laboratoriums analyttkode; et kort med en kode fra før står på
  * plassen til forbindelsen koden måler (`kortetsForbindelse`). Plassene står
- * i `datakorteiere`; analyttene i arbeidskontekstens katalog gir bare plass
- * til kort som ennå ikke finnes. Navnene står når siden viser kort for flere.
+ * i `datakorteiere`. Navnene står når siden viser kort for flere. Kortene
+ * hører bare til fagsiden; fortolkningen leser dem ikke (`docs/domener.md`).
  */
 export function ViktigeData({
   definisjon,
   kontekst,
   stoff,
   stoffnavn,
-  analytter = [],
 }: {
   definisjon: Paneldefinisjon
   kontekst: Panelkontekst
   stoff: string
   stoffnavn: string
-  /** Analyttene stoffet er primært stoff for, hovedanalytten først (`primareAnalytter`). */
-  analytter?: readonly Laboratorieanalytt[]
 }) {
   const elementer = kontekst.modell.paneler.get(definisjon.nokkel) ?? []
-  const finn = analyttFinner(analytter)
   const eiere = datakorteiere({
     stoff,
     stoffnavn,
-    analytter,
     kortnokler: elementer.filter((e) => datakortFor(e.elementtype)).map((e) => datakortGjelder(e.data)),
   })
   const kort = DATAKORT.flatMap((def, plass) =>
@@ -99,7 +93,7 @@ export function ViktigeData({
         gjelder,
         etikett: navn,
         element:
-          elementer.find((e) => e.elementtype === def.type && kortetsForbindelse(datakortGjelder(e.data), finn) === gjelder) ??
+          elementer.find((e) => e.elementtype === def.type && kortetsForbindelse(datakortGjelder(e.data)) === gjelder) ??
           null,
       }),
     ),

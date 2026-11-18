@@ -3,9 +3,8 @@
  * stoffregisteret eller fortolkningen av én analytt (med reglene for kodene
  * den dekker, scenariomodulene og THC-syrereglene).
  */
-import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { analytterForFortolkning, type Analyttkatalog } from '../domain/analyttkatalog'
 import type { Analyte } from '../types'
-import { analytterForFortolkning } from '../domain/koblinger'
 import { scenariomoduler } from '../domain/rus'
 import type { Rute } from '../domain/rute'
 import { erThcAnalytt } from '../domain/thc'

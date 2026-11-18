@@ -3,12 +3,12 @@
  * nivåer, plasseringene, arkivet, papirkurven og slettingen for godt — mot en
  * ekte database bygd av migrasjonene.
  */
+import { STOFFREGISTERDATA } from '../domain/stoffregister'
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
-import { OUS_REGISTERDATA } from '../domain/ouskatalog'
 
 interface Kategorirad {
   id: string
@@ -111,7 +111,7 @@ describe('stoffregisteret i databasen', () => {
     expect(data.kategorier.find((k) => k.id === ssri.forelder)?.navn).toBe('Antidepressiver')
     expect(data.plasseringer.filter((p) => p.kategori === ssri.id).map((p) => p.stoff)).toContain('sertralin')
     const plassert = new Set(data.plasseringer.map((p) => p.stoff))
-    for (const s of OUS_REGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(!PLASSERT_MED_SIDEN.has(s.slug))
+    for (const s of STOFFREGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(!PLASSERT_MED_SIDEN.has(s.slug))
     // Ketamin står to steder, som i datafilen.
     expect(data.plasseringer.filter((p) => p.stoff === 'ketamin')).toHaveLength(2)
   })
@@ -196,24 +196,16 @@ describe('stoffregisteret i databasen', () => {
     expect(await status('tomside')).toBeNull()
   })
 
-  it('lar ingen slette en fagside fortolkningen lenker til, men alle arkivere den', async () => {
+  it('sletter en fagside som andre, også når en analysekode i fortolkningen var koblet til den', async () => {
+    // Fortolkningen lenker ikke til fagsidene (docs/domener.md).
     await nySide('Bupropion')
-    for (const hvem of [bruker, admin]) {
-      const feil = await feilFra(() => sql(hvem, 'select public.slett_stoff($1)', ['bupropion']))
-      expect(feil?.code).toBe('22023')
-      expect(feil?.message).toContain('koblet til laboratorieanalyser')
-    }
+    await sql(bruker, 'select public.slett_stoff($1)', ['bupropion'])
+    expect(await status('bupropion')).toBe('papirkurv')
+    await sql(bruker, 'select public.gjenopprett_stoff($1)', ['bupropion'])
     expect(await status('bupropion')).toBeNull()
     await sql(bruker, 'select public.arkiver_stoff($1, true)', ['bupropion'])
     expect(await status('bupropion')).toBe('arkivert')
     await sql(bruker, 'select public.arkiver_stoff($1, false)', ['bupropion'])
-  })
-
-  it('kjenner de samme analyttkoblede stoffene som datafilen', async () => {
-    const iDatabasen = await sql<{ stoff: string }>(bruker, 'select stoff from public.analyttkoblede_stoffer order by stoff')
-    const iDatafilen = [...new Set(OUS_REGISTERDATA.analyttkoblinger.map((k) => k.stoff))].sort()
-    // Går de fra hverandre, føres endringen inn i databasen med en migrasjon.
-    expect(iDatabasen.map((r) => r.stoff)).toEqual(iDatafilen)
   })
 
   it('sletter en side for godt med kortene, historikken, diskusjonene og favorittene', async () => {

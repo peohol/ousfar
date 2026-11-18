@@ -22,10 +22,10 @@ import { PAPIRKURVDAGER, slettesForGodt } from './papirkurv'
 import { Redigeringsbrett } from './Redigeringsbrett'
 import { Kurateringsfane } from './Kurateringsfane'
 import { Registerhandlingskilde, useRegisterhandling } from './Registerhandling'
-import { Stoffkort, type Stoffkortvalg } from './Stoffkort'
+import { Stoffkort } from './Stoffkort'
 import '../../styles/monograf-topp.css'
 
-export interface StoffregistersideProps extends Stoffkortvalg {
+export interface StoffregistersideProps {
   /** Tilbake til fortolkningen slik den sto. */
   onLukk: () => void
   /** Kurateringene av fagsidene, til fanen «Kurateringer». Uten den har siden bare registeret. */
@@ -68,7 +68,7 @@ export function Stoffregisterside(props: StoffregistersideProps) {
   )
 }
 
-function Innhold({ katalog, onApneFortolkning, onLukk, kuratering }: StoffregistersideProps) {
+function Innhold({ onLukk, kuratering }: StoffregistersideProps) {
   const kilde = useStoffregisterkilde()
   const [modus, setModus] = useBevart<'lese' | 'rediger'>('modus', 'lese')
   const [fane, setFane] = useBevart<Fane>('fane', 'register')
@@ -156,7 +156,7 @@ function Innhold({ katalog, onApneFortolkning, onLukk, kuratering }: Stoffregist
           ) : (
             <div className="stoffregisterside__kategorier">
               {register.kategorier.map((k) => (
-                <Kategoriseksjon key={k.id} kategori={k} katalog={katalog} onApneFortolkning={onApneFortolkning} />
+                <Kategoriseksjon key={k.id} kategori={k} />
               ))}
             </div>
           )}
@@ -169,7 +169,7 @@ function Innhold({ katalog, onApneFortolkning, onLukk, kuratering }: Stoffregist
 }
 
 /** Én kategori: stoffene direkte i den, og underkategoriene med mellomtittel. */
-function Kategoriseksjon({ kategori, ...valg }: Stoffkortvalg & { kategori: Registerkategori }) {
+function Kategoriseksjon({ kategori }: { kategori: Registerkategori }) {
   const oppsummering = ramsOpp([
     antall(kategori.stoffer.length, 'stoff', 'stoffer'),
     forhandsvisning(ramsOpp(kategori.underkategorier.map((u) => u.navn))),
@@ -177,11 +177,11 @@ function Kategoriseksjon({ kategori, ...valg }: Stoffkortvalg & { kategori: Regi
   return (
     <Seksjon id={kategori.id} tittel={kategori.navn} ikon={kategoriikon(kategori.ikon)} oppsummering={oppsummering}>
       {kategori.direkte.length > 0 && (
-        <Stoffrutenett gruppe={kategori.id} stoffer={kategori.direkte} {...valg} />
+        <Stoffrutenett gruppe={kategori.id} stoffer={kategori.direkte} />
       )}
       {kategori.underkategorier.map((u) => (
         <Underkategori key={u.id} navn={u.navn}>
-          <Stoffrutenett gruppe={u.id} stoffer={u.stoffer} {...valg} />
+          <Stoffrutenett gruppe={u.id} stoffer={u.stoffer} />
         </Underkategori>
       ))}
     </Seksjon>
@@ -200,12 +200,12 @@ function Underkategori({ navn, children }: { navn: string; children: ReactNode }
   )
 }
 
-function Stoffrutenett({ gruppe, stoffer, ...valg }: Stoffkortvalg & { gruppe: string; stoffer: readonly Registerstoff[] }) {
+function Stoffrutenett({ gruppe, stoffer }: { gruppe: string; stoffer: readonly Registerstoff[] }) {
   return (
     <Skuffrutenett className="stoffkortene">
       {stoffer.map((s) => (
         <li key={s.slug}>
-          <Stoffkort id={`${gruppe}.${s.slug}`} stoff={s} {...valg} />
+          <Stoffkort id={`${gruppe}.${s.slug}`} stoff={s} />
         </li>
       ))}
     </Skuffrutenett>

@@ -2677,7 +2677,8 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     "stoffer": [
       {
         "stoff": "diazepam",
-        "relasjon": "metabolitt"
+        "relasjon": "metabolitt",
+        "datakort": true
       }
     ],
     "form": "fri",
@@ -2898,7 +2899,8 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     "stoffer": [
       {
         "stoff": "tramadol",
-        "relasjon": "metabolitt"
+        "relasjon": "metabolitt",
+        "datakort": true
       }
     ],
     "form": "fri",

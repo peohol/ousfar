@@ -5,10 +5,11 @@
  * administratoren som bestilte dem. Sidene leses etter stoffets nøkkel, som
  * appen gjør.
  */
+import { STOFFREGISTER } from '../domain/stoffregister'
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { ANTIHYPERTENSIV_DATASETT, ANTIHYPERTENSIV_KILDE, antihypertensivplan } from '../faginnhold/antihypertensiver'
 import { byggImportplan, importmigrasjoner, type Importfil } from '../faginnhold/import'
 import { lagFaginnholdsleser, type Faginnholdsleser } from '../faginnhold/lesing'
@@ -53,7 +54,7 @@ describe('datasettet', () => {
   it('har én side for hvert av de 25 stoffene, med navnet og nøkkelen fra stoffregisteret', () => {
     expect(plan.koder).toHaveLength(25)
     for (const k of plan.koder) {
-      const stoff = OUS_REGISTER.finn(k.hovedside.slug!)
+      const stoff = STOFFREGISTER.finn(k.hovedside.slug!)
       expect(stoff, k.hovedside.navn).toBeDefined()
       expect(k.hovedside.navn).toBe(stoff!.navn)
       expect(k.kode, k.hovedside.navn).toBeNull()

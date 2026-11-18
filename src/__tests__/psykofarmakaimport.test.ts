@@ -9,11 +9,13 @@
  * det: publisert, ført på administratoren som bestilte den, og med kilden i
  * hver revisjon.
  */
+import { OUS_ANALYTTKOBLINGER } from '../domain/ouskatalog'
+import { STOFFREGISTER } from '../domain/stoffregister'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { OUS_KATALOG, OUS_REGISTER } from '../domain/ouskatalog'
+import { OUS_KATALOG } from '../domain/ouskatalog'
 import { byggSidemodell } from '../faginnhold/stoffside'
 import {
   byggImportplan,
@@ -109,7 +111,7 @@ describe('datasettet', () => {
     // Sidene med analyttens navn er i dag et annet navn på stoffet koden er koblet til.
     for (const [kode, navn] of Object.entries(HISTORISKE_HOVEDSIDE_NAVN)) {
       expect(plan.koder.find((k) => k.kode === kode)?.hovedside.navn, kode).toBe(navn)
-      expect(OUS_REGISTER.kanonisk(navn)?.slug, kode).toBe(OUS_REGISTER.primartStoffFor(kode)?.slug)
+      expect(STOFFREGISTER.kanonisk(navn)?.slug, kode).toBe(OUS_ANALYTTKOBLINGER.find((k) => k.kode === kode && k.primar)?.stoff)
     }
   })
 

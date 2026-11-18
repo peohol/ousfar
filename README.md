@@ -146,8 +146,7 @@ src/types.ts                Datamodellen
 src/state.ts                Tilstandsmaskinen for stegene
 src/domain/                 Bånd, klassifisering, søk, navn, fargespredning, kontrast,
                             analysemetodene (analysemetoder.ts), stoffregisteret
-                            og koblingene til analyttene (stoffregister.ts,
-                            koblinger.ts), adressene (rute.ts),
+                            (stoffregister.ts), adressene (rute.ts),
                             referansetallene analyttkortet viser (piller.ts),
                             tooltipplassering (tipsplassering.ts), flukten til
                             kopibeviset (flytting.ts), THC-fortolkning (thc.ts) med
@@ -236,7 +235,7 @@ Sidemenyen er **stoffregisteret**: stoffene ordnet etter farmakologisk
 klasse, ikke etter analysemetode, med og uten analyttkode om hverandre.
 Registeret er data, ikke kode, og det er autoritativt:
 `src/data/stoffregister.json` har stoffene (nøkkel, navn og eventuelle andre
-navn), koblingene til laboratorieanalyttene og kategoriene i rekkefølge,
+navn) og kategoriene i rekkefølge,
 eventuelt delt i underkategorier (antidepressivene etter farmakodynamisk
 klasse, antipsykotika i første- og andregenerasjonsmidler). Et stoff kan stå i
 flere kategorier, som lamotrigin under både antiepileptika og
@@ -249,40 +248,24 @@ gangen åpen, med antallet stoffer. Stoffene står alfabetisk, og bryteren «Vis
 underkategorier» slår underkategoriene av og lister hver kategori i én bolk.
 Bryteren står fast øverst og «Ny fagside» (for redaktørene) fast nederst.
 
-Én linje per **stoff**, navngitt etter stoffet, med analyttkodene som er
-koblet til det som sekundær informasjon. **Stoffet er sidens eneste
-identitet**; en laboratorieanalytt er noe fortolkningen bruker, og kobles til
-ett eller flere stoffer bare med en eksplisitt kobling i registeret: koden,
-stoffet, hva analytten er for stoffet (selve stoffet, en metabolitt eller en
-sumanalyse) og om stoffet er analyttens primære. Eksempler:
-
-- HBUP (hydroksybupropion) → Bupropion, som metabolitt.
-- AMTNORSUM → Amitriptylin, som sumanalyse. Nortriptylin er et eget stoff med
-  NOR.
-- VENSUM → Venlafaksin, RISPSUM → Risperidon, PALI → Paliperidon.
-- DIAZ og DMI → Diazepam, TRAM og OTRAM → Tramadol, UETGS og UETS → Etanol,
-  THC og IRCAK → THC.
-
-Metabolitter som ikke er egne legemidler, er andre navn på stoffet
-(hydroksybupropion, norfluoksetin, N-desmetyldiazepam), ikke egne sider.
-Koblingene utledes aldri av navnelikhet, og både et stoff uten analytt og en
-analytt uten stoff er gyldig. Hver analytt beholder sine egne
-fortolkningsregler (HBUP-reglene hører til HBUP); fagsiden viser dem der
-koblingen sier at stoffet er analyttens primære.
+Én linje per **stoff**, navngitt etter stoffet. **Stoffet er sidens eneste
+identitet.** Fortolkningen og fagsidene er adskilte domener
+(`docs/domener.md`): fagsidene, sidemenyen, stoffregisteret og fagsøket viser
+ingen analysekoder og lenker ikke til fortolkningen, og fortolkningen lenker
+ikke til fagsidene eller leser datakortene deres. Metabolitter som ikke er egne
+legemidler, er andre navn på stoffet (hydroksybupropion, norfluoksetin,
+N-desmetyldiazepam), ikke egne sider.
 
 ### Fagsidene
 
 Hver fagside har én kanonisk adresse etter stoffets nøkkel, for eksempel
 `#/stoff/bupropion` eller `#/stoff/bupropion/farmakokinetikk`, som kan
 bokmerkes og åpnes direkte. Sidene nås fra sidemenyen, fra fagsøket og fra
-analyttkodepillene i fortolkningsmodulene, som fører til fagsiden til
-analyttens primære stoff. Gamle adresser som `#/analytt/HBUP` sendes videre
-til stoffet når koden har ett primært stoff; ellers vises ingen fagside.
+stoffregisteret. En gammel adresse som `#/analytt/HBUP` fører til
+fortolkningen av koden.
 
-På siden forklarer identiteten hva hver analytt måler, med lenker til andre
-stoffer koblingene nevner. «Åpne fortolkning» fører til fortolkningen for
-analyttene stoffet har. Fortolkningen blir stående som den var bak en åpen
-side, og tastene dens ligger i ro så lenge siden vises; `Esc` lukker siden.
+Fortolkningen blir stående som den var bak en åpen side, og tastene dens
+ligger i ro så lenge siden vises; `Esc` lukker siden.
 
 Siden har sju paneler — identitet, viktige data, farmakodynamikk, dosering,
 indikasjon, farmakokinetikk og serumkonsentrasjoner — med referansene
@@ -291,8 +274,9 @@ Mac) går til søket på siden i toppmenyen, som fremhever og teller treffene
 (`Enter` og `Shift + Enter` blar).
 
 Fagsøket i toppmenyen (`Ctrl + K`, `Cmd + K` på Mac) søker i alle stoffene
-og de publiserte fagsidene — på stoffnavnet, andre navn, analyttkodene og
-analyttnavnene, så «HBUP» og «hydroksybupropion» begge finner Bupropion — og er noe annet enn analyttsøket som driver
+og de publiserte fagsidene — på stoffnavnet og andre navn, så
+«hydroksybupropion» finner Bupropion, men ikke på fortolkningens analysekoder
+(`docs/domener.md`) — og er noe annet enn analyttsøket som driver
 fortolkningen. Rullegardinen viser de beste treffene med stien på siden
 (piltastene velger, `Enter` åpner, `Esc` lukker), og «Vis alle treff» åpner
 søkesiden `#/sok?q=…`, som kan bokmerkes og deles. Hvert treff går rett til
