@@ -111,7 +111,8 @@ export function Gruppechatmelding({
           <p className="chatmelding__hode">
             <span className="chatmelding__navn">
               {navn}
-              {melding.egen && <span className="chatmelding__deg"> (deg)</span>}
+              {/* Egne meldinger står til høyre; skjermlesere får det sagt. */}
+              {melding.egen && <span className="kun-skjermleser"> (deg)</span>}
             </span>
             <Klokke iso={melding.skrevet_kl} />
           </p>
@@ -131,21 +132,75 @@ export function Gruppechatmelding({
               tilbake()
             }}
           />
-        ) : slettet ? (
-          <p className="chatmelding__slettet">
-            <Ikon navn="trash" storrelse="ui" />
-            {melding.slettet?.av === 'moderator' ? 'Fjernet av en moderator' : 'Meldingen er slettet'}
-          </p>
         ) : (
-          <p className="chatmelding__tekst">
-            {melding.tekst}
-            {melding.redigert_kl && (
-              <span className="chatmelding__redigert" title={`Redigert ${heleTidspunktet(melding.redigert_kl)}`}>
-                {' '}
-                (redigert)
+          // Boblen, med menyen ved siden av: til høyre for andres, til venstre for egne.
+          <div className="chatmelding__rad">
+            {slettet ? (
+              <p className="chatmelding__boble chatmelding__slettet">
+                <Ikon navn="trash" storrelse="ui" />
+                {melding.slettet?.av === 'moderator' ? 'Fjernet av en moderator' : 'Meldingen er slettet'}
+              </p>
+            ) : (
+              <p className="chatmelding__boble chatmelding__tekst">
+                {melding.tekst}
+                {melding.redigert_kl && (
+                  <span className="chatmelding__redigert" title={`Redigert ${heleTidspunktet(melding.redigert_kl)}`}>
+                    {' '}
+                    (redigert)
+                  </span>
+                )}
+              </p>
+            )}
+            {(kanEndre || kanSlette) && !endrer && !sletter && (
+              <span ref={menyRot} className="chatmelding__meny">
+                <Nedtrekksmeny
+                  className="brukermeny"
+                  knapp={{
+                    ikon: 'more',
+                    etikett: `Handlinger for meldingen fra ${navn}, ${tidspunkt}`,
+                    variant: 'stille',
+                    storrelse: 'liten',
+                    utenTips: true,
+                  }}
+                  etikett={`Handlinger for meldingen fra ${navn}`}
+                  lag="chatmeny"
+                  lat
+                >
+                  {(lukk) => (
+                    <ul className="nedtrekk__valg">
+                      {kanEndre && (
+                        <li>
+                          <Menyvalg
+                            ikon="edit"
+                            tekst="Endre"
+                            onClick={() => {
+                              lukk()
+                              setFeil(null)
+                              setEndrer(true)
+                            }}
+                          />
+                        </li>
+                      )}
+                      {kanSlette && (
+                        <li>
+                          <Menyvalg
+                            ikon="trash"
+                            tekst={moderering ? 'Fjern meldingen' : 'Slett'}
+                            forklaring={moderering ? 'Som moderator. Det står i chatten at den er fjernet.' : undefined}
+                            onClick={() => {
+                              lukk()
+                              setFeil(null)
+                              setSletter(true)
+                            }}
+                          />
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                </Nedtrekksmeny>
               </span>
             )}
-          </p>
+          </div>
         )}
 
         {sletter && kanSlette && (
@@ -171,55 +226,6 @@ export function Gruppechatmelding({
         )}
       </div>
 
-      {(kanEndre || kanSlette) && !endrer && !sletter && (
-        <span ref={menyRot} className="chatmelding__meny">
-          <Nedtrekksmeny
-            className="brukermeny"
-            knapp={{
-              ikon: 'more',
-              etikett: `Handlinger for meldingen fra ${navn}, ${tidspunkt}`,
-              variant: 'stille',
-              storrelse: 'liten',
-              utenTips: true,
-            }}
-            etikett={`Handlinger for meldingen fra ${navn}`}
-            lag="chatmeny"
-            lat
-          >
-            {(lukk) => (
-              <ul className="nedtrekk__valg">
-                {kanEndre && (
-                  <li>
-                    <Menyvalg
-                      ikon="edit"
-                      tekst="Endre"
-                      onClick={() => {
-                        lukk()
-                        setFeil(null)
-                        setEndrer(true)
-                      }}
-                    />
-                  </li>
-                )}
-                {kanSlette && (
-                  <li>
-                    <Menyvalg
-                      ikon="trash"
-                      tekst={moderering ? 'Fjern meldingen' : 'Slett'}
-                      forklaring={moderering ? 'Som moderator. Det står i chatten at den er fjernet.' : undefined}
-                      onClick={() => {
-                        lukk()
-                        setFeil(null)
-                        setSletter(true)
-                      }}
-                    />
-                  </li>
-                )}
-              </ul>
-            )}
-          </Nedtrekksmeny>
-        </span>
-      )}
     </li>
   )
 }
@@ -335,7 +341,9 @@ export function Ventendemelding({
             <span className="chatmelding__navn">Du</span>
           </p>
         )}
-        <p className="chatmelding__tekst">{ventende.tekst}</p>
+        <div className="chatmelding__rad">
+          <p className="chatmelding__boble chatmelding__tekst">{ventende.tekst}</p>
+        </div>
         {feilet ? (
           <div className="chatmelding__feilet">
             <p className="skjemafeil" role="alert">

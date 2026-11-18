@@ -346,6 +346,11 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
   (`PASIENTREGEL.avvist`).
 - Meldingene i en liste (`role="log"`), gruppert etter dag, med avsender og
   klokkeslett; egne meldinger kan endres og slettes fra en liten meny.
+- Egne meldinger står til høyre og andres til venstre, uten «(deg)» etter
+  eget navn (det leses bare av skjermlesere). Teksten står i en snakkeboble
+  under navnet, ved siden av profilbildet; det øvre hjørnet mot bildet er
+  spissere enn de andre, bare på den første i en rekke fra samme avsender
+  (Peder 18.11.2026).
 - Står brukeren nederst, følger lista nye meldinger. Har hen rullet opp,
   står lista stille, og en knapp «N nye meldinger» tar hen ned. Eldre
   meldinger hentes når man ruller til toppen eller trykker «Vis eldre», og

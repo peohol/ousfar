@@ -161,6 +161,19 @@ describe('chatten', () => {
     expect(beskrevet.join(' ')).not.toMatch(/pasientopplysninger|fødselsnummer/i)
   })
 
+  it('setter egne meldinger i bobler til høyre uten synlig «(deg)», men sier det til skjermlesere', () => {
+    render(<Prove />)
+    const egen = logg().querySelector<HTMLElement>('[data-nr="2"]')!
+    const annen = logg().querySelector<HTMLElement>('[data-nr="1"]')!
+    // Siden (`data-egen`) styrer plasseringen i stilen; teksten står i en boble i begge.
+    expect(egen.hasAttribute('data-egen')).toBe(true)
+    expect(annen.hasAttribute('data-egen')).toBe(false)
+    for (const rad of [egen, annen]) expect(rad.querySelector('.chatmelding__boble')?.textContent).toMatch(/^Syntetisk melding/)
+    const deg = within(egen).getByText('(deg)', { exact: false })
+    expect(deg.classList.contains('kun-skjermleser')).toBe(true)
+    expect(within(annen).queryByText('(deg)', { exact: false })).toBeNull()
+  })
+
   it('sender med Enter, gir ny linje med Shift + Enter, og sender med knappen', async () => {
     render(<Prove />)
     await userEvent.type(felt(), 'Første linje{Shift>}{Enter}{/Shift}andre linje')
