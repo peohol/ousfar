@@ -102,9 +102,10 @@
     display: inline-flex;
   }
 
-  .chatboble,
+  /* Med `.chatmeny` foran, så de vanlige reglene lenger ned ikke vinner. */
+  .chatmeny .chatboble,
   .chatmeny > .kanthandtak,
-  .chatpanel__utvid {
+  .chatmeny .chatpanel__utvid {
     display: none;
   }
 
