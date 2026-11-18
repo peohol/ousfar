@@ -907,6 +907,41 @@ function chatoversikt({ helside = false } = {}) {
     ).join('')}</div>`
 }
 
+/*
+ * Meldingene tegnes med appens egen markering og stil (Gruppechatmelding og
+ * src/styles/gruppechat.css): profilbilde, navn og klokkeslett over boblen, egne
+ * meldinger til høyre, og spissen mot bildet bare på den første i en rekke fra
+ * samme avsender.
+ */
+function meldingsliste(meldinger) {
+  const dager = []
+  for (const m of meldinger) {
+    if (m.dato) dager.push({ dato: m.dato, meldinger: [] })
+    else dager[dager.length - 1].meldinger.push(m)
+  }
+  return dager
+    .map(
+      ({ dato, meldinger: dagens }) => `<div class="dato">${dato}</div>
+      <ol class="traad__liste">${dagens
+        .map((m, i) => {
+          const sammen = i > 0 && dagens[i - 1].fra === m.fra
+          return `<li class="chatmelding"${m.egen ? ' data-egen' : ''}${sammen ? ' data-sammen' : ''}>
+            ${sammen ? '' : `<span class="chatmelding__bilde"><span class="avatar avatar--liten" aria-hidden="true">${initialer(m.fra)}</span></span>`}
+            <div class="chatmelding__innhold">
+              ${
+                sammen
+                  ? `<span class="skjult">${m.fra}, ${m.tid}</span>`
+                  : `<p class="chatmelding__hode"><span class="chatmelding__navn">${m.fra}${m.egen ? '<span class="skjult"> (deg)</span>' : ''}</span><time class="chatmelding__tid">${m.tid}</time></p>`
+              }
+              <div class="chatmelding__rad"><p class="chatmelding__boble chatmelding__tekst">${m.tekst}</p></div>
+            </div>
+          </li>`
+        })
+        .join('')}</ol>`,
+    )
+    .join('')
+}
+
 function samtalevisning(s, { helside = false } = {}) {
   const g = s.type === 'gruppe' ? gruppe(s.id) : null
   const meldinger = MELDINGER[s.id] || []
@@ -920,13 +955,7 @@ function samtalevisning(s, { helside = false } = {}) {
     </div>
     <div class="traad" role="log" aria-label="Meldinger">
       <button type="button" class="lenke" style="align-self:center">Vis eldre meldinger</button>
-      ${meldinger
-        .map((m) =>
-          m.dato
-            ? `<div class="dato">${m.dato}</div>`
-            : `<div class="melding"${m.egen ? ' data-egen' : ''}><small>${m.egen ? 'Du' : m.fra} · ${m.tid}</small><p>${m.tekst}</p></div>`,
-        )
-        .join('')}
+      ${meldingsliste(meldinger)}
     </div>
     ${
       s.sperret
@@ -950,7 +979,7 @@ function nyChat() {
         }</span></button>`
       })
       .join('')}
-    <p class="tom">Kari Nordmann vises ikke, fordi hun ikke tillater direktemeldinger.</p>`
+    <p class="tom">Kari Nordmann vises ikke, fordi direktemeldinger er slått av for denne brukeren.</p>`
 }
 
 function chatmeny() {

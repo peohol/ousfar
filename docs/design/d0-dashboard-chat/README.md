@@ -64,7 +64,10 @@ trekkspillet `Mine grupper` (lenker til gruppesidene), så `Samtaler`: én liste
 sortert etter siste aktivitet, med søk og `Ny chat`. Nederst bryterne
 `Tillat direktemeldinger` og `Vis når jeg er aktiv`. `Utvid` gir `#/chat` med
 liste og samtale side om side (16), og `Gjenopprett` går tilbake til siden
-brukeren var på med menyen åpen. På mobil fyller chatten skjermen. En mottaker
+brukeren var på med menyen åpen. Meldingene ser ut som i dagens gruppechat
+(PR #455): profilbilde, navn og klokkeslett, og en snakkeboble som kommer ut
+fra bildet, med egne meldinger til høyre. Prototypen bruker appens egen stil for
+dette. På mobil fyller chatten skjermen. En mottaker
 som har slått av direktemeldinger, gir en låst linje i stedet for skrivefeltet,
 og historikken står (18, 26).
 

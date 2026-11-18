@@ -37,7 +37,8 @@ Kartet bygger på en gjennomgang av koden på `main` 18.11.2026. Se
   kompakt til dokk.
 - Diskusjonsmenyens innhold, helside, bredde, fokus og direkte lenker (åpen PR
   #459 om boblen er uavhengig av dette).
-- Gruppechattens funksjoner: grupperte meldinger, datooverskrifter,
+- Gruppechattens funksjoner og utseende: snakkebobler med profilbilde og navn,
+  egne meldinger til høyre (PR #455), grupperte meldinger, datooverskrifter,
   Enter/Shift+Enter, eldre meldinger, rulleposisjon, utkast, redigering, sletting,
   moderering, lesere og 12 måneders lagringstid.
 - Tilgangene: grupper, fagmiljøer, roller, systemarkitektens «Ikke medlem».

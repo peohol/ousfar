@@ -1321,32 +1321,21 @@ a.liste__rad:hover {
   font: italic var(--vekt-normal) var(--tekst-liten) / 1 var(--skrift-display);
 }
 
-.melding {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  max-width: 85%;
-}
-
-.melding small {
-  color: var(--blekk-dempet);
-  font-size: var(--tekst-meta);
-}
-
-.melding p {
+.traad__liste {
   margin: 0;
-  padding: var(--rom-3) var(--rom-5);
-  border-radius: var(--runding-knapp);
-  background: var(--flate-hevet);
+  padding: 0;
+  list-style: none;
 }
 
-.melding[data-egen] {
-  align-self: flex-end;
-  align-items: flex-end;
-}
-
-.melding[data-egen] p {
-  background: var(--aksent-flate);
+/* Profilbildet i chatten er appens (src/styles/konto.css, .avatar--liten). */
+.chatmelding .avatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  margin: 0;
+  border: 0;
+  background: var(--aksent);
+  color: var(--paa-aksent);
+  font-weight: var(--vekt-fet);
 }
 
 .skrivefelt {
