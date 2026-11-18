@@ -20,7 +20,7 @@ describe('adressene til chatten', () => {
   })
 
   it('leser adressen tilbake som den samme', () => {
-    for (const hash of ['#/chat', `#/chat/gruppe/${ID}`]) expect(adresse(lesRute(hash))).toBe(hash)
+    for (const hash of ['#/chat', `#/chat/gruppe/${ID}`, `#/chat/direkte/${ID}`]) expect(adresse(lesRute(hash))).toBe(hash)
   })
 
   it('er samme side uansett samtale, så det å bytte samtale ikke er å bytte side', () => {
@@ -28,7 +28,7 @@ describe('adressene til chatten', () => {
     expect(sidesti(lesRute(`#/chat/gruppe/${ID}`))).toBe('chat')
   })
 
-  it.each(['#/chat/gruppe', '#/chat/gruppe/ikke-en-id', `#/chat/direkte/${ID}`, `#/chat/gruppe/${ID}/mer`, '#/chatten'])(
+  it.each(['#/chat/gruppe', '#/chat/gruppe/ikke-en-id', '#/chat/direkte', `#/chat/privat/${ID}`, `#/chat/gruppe/${ID}/mer`, '#/chatten'])(
     '%s er en adresse appen ikke kjenner',
     (hash) => {
       expect(lesRute(hash)).toEqual({ side: 'ukjent', adresse: hash })

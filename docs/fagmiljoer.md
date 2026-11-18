@@ -1435,6 +1435,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `systemarkitekt` | Krever systemarkitekt for alt (`intern.krev_systemarkitekt` eller `kuratering.admin_aktor`); den gamle adminrollen gir ingenting |
 | `rekkevidde` | `security definer` som kontrollerer rekkevidden per fagmiljø og rettigheten per objekt, og kaller selv minst én av hjelperne for tilgang per fagmiljø (`REKKEVIDDEHJELPERE` i `src/__tests__/hjelp/tilgangskatalog.ts`, eller `mine_lesbare_fagmiljoer()`) |
 | `systemarkitekt` | `security definer` som krever en systemarkitekt med aktivt medlemskap (`public.er_systemarkitekt()`, eller porten `intern.krev_idevalg_admin()` for idéene og oppgavene) |
+| `direktemelding` | `security definer` for direktemeldingene (D5): går gjennom `intern.krev_direktemeldinger(` (aktivt medlemskap og bryteren), og har ingen vei for systemarkitekter eller administratorer. Bare de to i en samtale når den (`docs/direktemeldinger-personvern.md`) |
 
 En ny funksjon nettleseren kan kalle, må føres opp med kontrollen den faktisk
 har. Alle kategoriene unntatt `offentlig` og `utloser` krever i tillegg aktivt

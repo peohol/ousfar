@@ -17,7 +17,7 @@ egen adresse, og en adresse som leses og skrives igjen, er den samme.
 | `#/fortolkning/<nøkkel>` | Fortolkningen av en analytt eller modul |
 | `#/fortolkning/<nøkkel>/rediger…` | Redigeringen av reglene |
 | `#/stoff/<nøkkel>`, `#/sok?q=…`, `#/stoffregister`, `#/verktoy…`, `#/grupper…` | Fagsider, søk, register, verktøy og grupper som før |
-| `#/chat`, `#/chat/gruppe/<ID>` | Chatten som helside, med samtalen som er valgt (`docs/gruppechat.md`, «Chatmenyen») |
+| `#/chat`, `#/chat/gruppe/<ID>`, `#/chat/direkte/<ID>` | Chatten som helside, med samtalen som er valgt: en gruppechat eller en direktesamtale (`docs/gruppechat.md`, «Chatmenyen»; `docs/direktemeldinger-personvern.md`) |
 | Alt annet | «Siden finnes ikke», med adressen urørt og en knapp til forsiden |
 
 Gamle adresser skrives om uten ny oppføring i historikken: `#/analytt/HBUP`

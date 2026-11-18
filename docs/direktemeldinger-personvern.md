@@ -153,9 +153,10 @@ tekniske, men skal skrives her.
 | Pasientopplysninger i en melding | Fødselsnummerkontrollen; sletting med en gang av begge deltakerne; ingen kopier; ikke i sikkerhetskopiene |
 | Aktivitetsprikken brukes til å følge med på noen | Av som standard, bare for samtalepartnere, bare ja/nei, ingen historikk |
 
-## Datamodellen (skisse)
+## Datamodellen
 
-Navnene er forslag; D5 kan endre dem, men ikke det de sikrer. Alle tabellene
+Slik den er bygd i `supabase/migrations/20261118234500_direktemeldinger.sql`
+(se også [Gjennomføringen](#gjennomføringen)). Alle tabellene
 har radsikkerhet, den begrensende regelen `aktivt_medlemskap` der nettleseren
 har en rettighet, og står i kartleggingen av tilgangsinngangene
 (`tilgangsinnganger.test.ts`).
@@ -169,9 +170,14 @@ fritt i `brukerinnstillinger`.
 
 **`direktesamtaler`** — `id`, `bruker_lav`, `bruker_hoy` (`profiles`, `on delete
 set null`; `check (bruker_lav < bruker_hoy)`; unik på paret når begge finnes),
-`siste_nr`, `siste_endring`, `siste_melding_kl`, `opprettet_kl`, `endret_kl`.
-Raden er låsen for skrivingen og dørklokken. `select` for `authenticated` bare
-når den innloggede er en av de to; ingen andre rettigheter.
+`opprettet_av` (`on delete set null`), `siste_nr`, `siste_endring`,
+`siste_melding_kl`, `opprettet_kl`, `endret_kl`. Raden er låsen for skrivingen
+og dørklokken. `select` for `authenticated` bare på kolonnene dørklokken
+trenger (`id`, `bruker_lav`, `bruker_hoy`, `siste_nr`, `siste_endring`,
+`endret_kl`), og bare når den innloggede er en av de to; ingen andre
+rettigheter. `opprettet_av` brukes bare av funksjonene: en samtale uten
+meldinger står bare i lista til den som åpnet den, og grensen for nye
+samtaler i timen teller etter den.
 
 **`direktemeldinger`** — som `gruppemeldinger`: `id`, `samtale_id`, `nr`,
 `forfatter_id` (`on delete set null`), `klient_id` (unik per samtale og
@@ -267,7 +273,7 @@ Livstegnet (45 sekunder) og gjenoppkoblingen gjenbrukes fra
 `src/gruppechat/kontroller.ts`. Ingen andre direktemeldingstabeller legges i
 publikasjonen. Aktivitetsprikken bruker ikke Realtime Presence, fordi
 rettighetene der leses når kanalen åpnes og ikke trekkes tilbake med en gang;
-`aktive_motparter()` hentes sammen med livstegnet.
+`aktive_motparter()` hentes hvert minutt mens chatmenyen vises.
 
 ## Lagringstiden og ryddingen
 
@@ -336,9 +342,43 @@ tilgangen tas; tastatur, skjermleser, mobil, lyst og mørkt tema.
 1. Dette dokumentet slås sammen. Peder har svart på alle fem beslutningene.
 2. D4a er slått sammen (chatmenyen og samtalelista D5 bygger på).
 3. Databasen og funksjonene, med bryteren av, og testene T1–T24 og S1–S6.
-4. Visningen i chatmenyen og i Innstillinger → Chat.
+4. Visningen i chatmenyen. Konto → Innstillinger → Chat finnes ikke ennå;
+   D6 setter inn de samme bryterne der (`Chatvalg` i
+   `src/components/chat/Chatvalg.tsx`).
 5. Kontroll i nettleseren og ChatGPTs kontroll.
 6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt).
+
+## Gjennomføringen
+
+Det D5 bygde, og valgene som ble tatt underveis (alle **Teknisk**):
+
+- **Databasen:** `supabase/migrations/20261118234500_direktemeldinger.sql`.
+  Funksjonene står i katalogen som en egen kategori, `direktemelding`
+  (`src/__tests__/data/funksjonskontroller.ts`): katalogvakten krever
+  `security definer`, et kall til `intern.krev_direktemeldinger(` og ingen
+  vei for systemarkitekter eller administratorer. Tabellene står som
+  `personlig` i ressurskatalogen.
+- **Ryddingen:** `intern.rydd_direktemeldinger()` sletter også samtaler der
+  begge kontoene er slettet. Nattjobben (`gruppechat-lagringstid.yml`,
+  `src/drift/gruppechatLagringstid.ts`) kjører ryddingen og kontrollen for
+  gruppechatten og direktemeldingene etter hverandre, og feiler hvis én av
+  dem feiler.
+- **Klienten:** kallene i `src/direktemeldinger/kall.ts`, lista, valgene og
+  aktivitetsprikken i `useDirekte.ts`, og samtalen med den samme
+  kontrolleren og visningen som gruppechatten (`useDirektesamtale.ts`,
+  `lagChatkrok`). En sperre (`55000`) ved sending henter sperren med en gang,
+  og endringene (`direktesamtale_endringer`) har med `kan_skrive` og sperren,
+  så en åpen samtale låses senest ved neste livstegn.
+- **Chatmenyen:** direktesamtalene står i samme liste som gruppechattene,
+  nyeste først; «Ny chat» åpner søket (skisse 17); samtalen har den andre
+  øverst med en meny for demping, skjuling og blokkering (skisse 18); bryterne
+  og «Blokkerte» står nederst i oversikten (skisse 14). Adressen er
+  `#/chat/direkte/<samtale-ID>`. Dempede samtaler teller ikke på chatknappen.
+  Direktemeldingene gir ingen varsler i bjella.
+- **Aktivitetsprikken** hentes hvert minutt mens chatmenyen eller helsiden
+  vises og det finnes samtaler. Egen aktivitet merkes bare med «Vis når jeg er
+  aktiv» på, ved tastetrykk, trykk eller rulling i en synlig fane, høyst én
+  gang i minuttet; prikken slukner to minutter etter siste merking.
 
 ## Kjente begrensninger
 

@@ -4,7 +4,8 @@
  * «Mine grupper» og samtalelista, en samtale i menyen og den samme samtalen
  * på helsiden `#/chat`, «Gjenopprett», Escape gjennom lagstakken, at det å
  * åpne menyen ikke merker noe lest, og en samtale brukeren har mistet
- * tilgangen til.
+ * tilgangen til. Direktemeldingene (D5) i samme meny: radene i samme liste,
+ * «Ny chat» og søket, samtalen med den låste linjen, og bryterne.
  *
  * Økten, innstillingene, samtalelista og chattilstanden er erstattet;
  * chattilstanden er testchatten (`hjelp/testchat.ts`), og reglene for den
@@ -14,6 +15,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Direktemeldinger } from '../direktemeldinger/useDirekte'
 import type { Gruppechat as Chattilstand } from '../gruppechat/modell'
 import type { Gruppesamtale } from '../gruppechat/samtaler'
 import type { MineGrupper } from '../grupper/modell'
@@ -23,6 +25,8 @@ const tilstand = vi.hoisted(() => ({
   samtaler: [] as Gruppesamtale[],
   chat: new Map<string, Chattilstand>(),
   innstillinger: new Map<string, unknown>(),
+  direkte: null as Direktemeldinger | null,
+  api: {} as Record<string, ReturnType<typeof vi.fn>>,
 }))
 
 vi.mock('../auth/okt', () => ({ useProfil: () => ({ ...TESTPERSONER.meg, role: 'user' }) }))
@@ -38,6 +42,17 @@ vi.mock('../gruppechat/samtaler', async (importer) => ({
 }))
 vi.mock('../gruppechat/useGruppechat', () => ({
   useGruppechat: (gruppe: string) => tilstand.chat.get(gruppe) ?? lagTestchat({ status: 'ingen_tilgang', meldinger: [] }),
+}))
+vi.mock('../direktemeldinger/useDirektesamtale', () => ({
+  useDirektesamtale: (samtale: string) => tilstand.chat.get(samtale) ?? lagTestchat({ status: 'ingen_tilgang', meldinger: [] }),
+}))
+vi.mock('../direktemeldinger/useDirekte', async (importer) => {
+  const ekte = await importer<typeof import('../direktemeldinger/useDirekte')>()
+  const av: Direktemeldinger = { ...ekte.UTEN_DIREKTE, kjent: true, aktive: new Set(), settValg: async () => undefined, oppdater: () => undefined }
+  return { ...ekte, useDirekte: () => tilstand.direkte ?? av }
+})
+vi.mock('../direktemeldinger/api', () => ({
+  direkteapi: new Proxy({}, { get: (_, navn: string) => (tilstand.api[navn] ??= vi.fn(async () => undefined)) }),
 }))
 
 const { Chatmeny } = await import('../components/chat/Chatmeny')
@@ -298,5 +313,161 @@ describe('chatmenyen', () => {
     expect(screen.queryByRole('button', { name: /Vis chat/ })).toBeNull()
     expect(screen.queryByRole('button', { name: /^Chat/ })).toBeNull()
     expect(document.documentElement.dataset.chatmeny).toBeUndefined()
+  })
+})
+
+describe('direktemeldingene i chatmenyen', () => {
+  const DM = '44444444-4444-4444-8444-444444444444'
+  const kari = { ...TESTPERSONER.kari }
+  let settValg: ReturnType<typeof vi.fn<Direktemeldinger['settValg']>>
+  let oppdater: ReturnType<typeof vi.fn<() => void>>
+
+  beforeEach(() => {
+    settValg = vi.fn<Direktemeldinger['settValg']>(async () => undefined)
+    oppdater = vi.fn<() => void>()
+    tilstand.api = {}
+    tilstand.direkte = {
+      pa: true,
+      kjent: true,
+      samtaler: [{ id: DM, motpart: kari, siste_kl: '2026-11-18T14:00:00Z', uleste: 3, dempet: false, kan_skrive: false }],
+      valg: { tillat_direktemeldinger: true, vis_aktiv: false },
+      aktive: new Set([kari.id]),
+      settValg,
+      oppdater,
+    }
+    tilstand.chat.set(
+      DM,
+      lagTestchat({
+        lesere: { medlemmer: 2, systemarkitekter: false },
+        kanSkrive: false,
+        direkte: { motpart: kari, sperre: 'mottaker', dempet: false },
+      }),
+    )
+  })
+
+  afterEach(() => {
+    tilstand.direkte = null
+  })
+
+  const apneMenyen = async () => userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+  const samtalelista = () => within(meny()).getByRole('region', { name: 'Samtaler' })
+
+  it('står i samme liste som gruppechattene, nyeste først, og teller med på boblen', async () => {
+    vis()
+    expect(screen.getByRole('button', { name: 'Vis chat (5 uleste meldinger)' })).toBeTruthy()
+    await apneMenyen()
+    const rader = within(samtalelista()).getAllByRole('listitem')
+    expect(rader[0]!.textContent).toContain('Kari Testesen')
+    expect(rader[0]!.textContent).toContain('Direktemelding')
+    expect(within(rader[0]!).getByRole('img', { name: 'Aktiv nå' })).toBeTruthy()
+    expect(rader[1]!.textContent).toContain('Sandkassegruppen')
+  })
+
+  it('en dempet samtale teller ikke på boblen', () => {
+    tilstand.direkte = { ...tilstand.direkte!, samtaler: [{ ...tilstand.direkte!.samtaler[0]!, dempet: true }] }
+    vis()
+    expect(screen.getByRole('button', { name: 'Vis chat (2 uleste meldinger)' })).toBeTruthy()
+  })
+
+  it('viser samtalen med den andre øverst, hvem som leser og den låste linjen i stedet for skrivefeltet', async () => {
+    vis()
+    await apneMenyen()
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
+    expect(within(meny()).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+    expect(within(meny()).getByText('Direktemelding · @test.kari')).toBeTruthy()
+    expect(within(meny()).getByText('Bare dere to kan lese samtalen.')).toBeTruthy()
+    expect(within(meny()).getByText('Kari Testesen kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.')).toBeTruthy()
+    expect(within(meny()).queryByRole('textbox', { name: /Melding til/ })).toBeNull()
+  })
+
+  it('åpner samtalen fra adressen #/chat/direkte/<id>, og utvider til den', async () => {
+    const { gaaTil } = vis()
+    await apneMenyen()
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Utvid' }))
+    expect(gaaTil).toHaveBeenLastCalledWith({ side: 'chat', samtale: { type: 'direkte', id: DM } }, undefined)
+    expect(within(screen.getByRole('main', { name: 'Grupper og samtaler' })).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+  })
+
+  it('«Ny chat» søker etter personer og åpner samtalen med den som velges; Escape går tilbake', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    try {
+      const ola = { id: TESTPERSONER.ola.id, username: 'test.ola', first_name: 'Ola', last_name: 'Prøvesen' }
+      tilstand.api.sokDirektemottakere = vi.fn(async () => [ola, { id: kari.id, username: 'test.kari', first_name: 'Kari', last_name: 'Testesen' }])
+      tilstand.api.aapneDirektesamtale = vi.fn(async () => DM)
+      vis()
+      await apneMenyen()
+      await userEvent.click(within(meny()).getByRole('button', { name: 'Ny chat' }))
+      expect(within(meny()).getByRole('heading', { name: 'Ny direktemelding' })).toBeTruthy()
+      await userEvent.type(within(meny()).getByRole('searchbox', { name: 'Søk etter navn eller brukernavn' }), 'te')
+      await act(async () => vi.advanceTimersByTimeAsync(300))
+      expect(tilstand.api.sokDirektemottakere).toHaveBeenCalledWith('te')
+      const treff = within(meny()).getByRole('list', { name: 'Treff' })
+      expect(within(treff).getByText('@test.kari · Finnes alt en samtale')).toBeTruthy()
+      expect(within(treff).getByText('@test.ola')).toBeTruthy()
+
+      await userEvent.keyboard('{Escape}')
+      await userEvent.keyboard('{Escape}')
+      expect(within(meny()).queryByRole('heading', { name: 'Ny direktemelding' })).toBeNull()
+      expect(within(meny()).getByRole('region', { name: 'Samtaler' })).toBeTruthy()
+
+      await userEvent.click(within(meny()).getByRole('button', { name: 'Ny chat' }))
+      await userEvent.type(within(meny()).getByRole('searchbox', { name: 'Søk etter navn eller brukernavn' }), 'kari')
+      await act(async () => vi.advanceTimersByTimeAsync(300))
+      await userEvent.click(within(meny()).getByRole('button', { name: /Kari Testesen/ }))
+      expect(tilstand.api.aapneDirektesamtale).toHaveBeenCalledWith(kari.id)
+      expect(oppdater).toHaveBeenCalled()
+      expect(within(meny()).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('«Ny chat» med direktemeldingene av ber om å slå dem på, og søker ikke', async () => {
+    tilstand.direkte = { ...tilstand.direkte!, valg: { tillat_direktemeldinger: false, vis_aktiv: false } }
+    vis()
+    await apneMenyen()
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Ny chat' }))
+    expect(within(meny()).queryByRole('searchbox')).toBeNull()
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Slå på' }))
+    expect(settValg).toHaveBeenCalledWith({ tillat_direktemeldinger: true })
+    expect(tilstand.api.sokDirektemottakere).toBeUndefined()
+  })
+
+  it('bryterne står nederst og lagrer valget', async () => {
+    vis()
+    await apneMenyen()
+    const tillat = within(meny()).getByRole('switch', { name: /Tillat direktemeldinger/ }) as HTMLInputElement
+    const aktiv = within(meny()).getByRole('switch', { name: /Vis når jeg er aktiv/ }) as HTMLInputElement
+    expect(tillat.checked).toBe(true)
+    expect(aktiv.checked).toBe(false)
+    await userEvent.click(aktiv)
+    expect(settValg).toHaveBeenCalledWith({ vis_aktiv: true })
+  })
+
+  it('uten direktemeldinger slått på står verken «Ny chat», bryterne eller direktesamtalene der', async () => {
+    tilstand.direkte = null
+    vis({ side: 'chat', samtale: { type: 'direkte', id: DM } })
+    const helside = screen.getByRole('main', { name: 'Grupper og samtaler' })
+    expect(within(helside).queryByRole('button', { name: 'Ny chat' })).toBeNull()
+    expect(within(helside).queryByRole('switch')).toBeNull()
+    expect(within(helside).queryByRole('heading', { name: 'Kari Testesen' })).toBeNull()
+    expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
+  })
+
+  it('blokkering bekreftes først, og samtalen hentes på nytt etterpå', async () => {
+    const oppfrisk = vi.fn()
+    tilstand.chat.set(DM, lagTestchat({ kanSkrive: true, oppfrisk, direkte: { motpart: kari, sperre: null, dempet: false } }))
+    tilstand.api.blokkerBruker = vi.fn(async () => undefined)
+    vis()
+    await apneMenyen()
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Valg for samtalen med Kari Testesen' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Blokker Kari Testesen' }))
+    expect(tilstand.api.blokkerBruker).not.toHaveBeenCalled()
+    await userEvent.click(within(within(meny()).getByRole('group', { name: 'Blokkere Kari Testesen?' })).getByRole('button', { name: 'Blokker' }))
+    expect(tilstand.api.blokkerBruker).toHaveBeenCalledWith(kari.id)
+    expect(oppfrisk).toHaveBeenCalled()
+    expect(oppdater).toHaveBeenCalled()
   })
 })

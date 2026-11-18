@@ -36,6 +36,7 @@ const side = (meldinger: Gruppemelding[], ekstra: Partial<Chatside> = {}): Chats
   kan_moderere: false,
   lesere: { medlemmer: 3, systemarkitekter: true },
   grenser: { ...GRUPPECHAT_GRENSER },
+  direkte: null,
   ...ekstra,
 })
 

@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type FocusEvent } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FocusEvent, type ReactNode } from 'react'
+import { useAvatarlenker } from '../../auth/avatarer'
 import { hentInnstilling, lagreSisteValg, lengdeinnstilling } from '../../auth/innstillinger'
 import { useProfil } from '../../auth/okt'
+import { personnavn, sokIDirektesamtaler, ulesteDirekte } from '../../direktemeldinger/modell'
+import { useDirekte, type Direktemeldinger } from '../../direktemeldinger/useDirekte'
 import { FORSIDE, gruppeadresse, type Rute, type Samtalenokkel } from '../../domain/rute'
 import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from '../../gruppechat/samtaler'
 import { useGruppechat } from '../../gruppechat/useGruppechat'
@@ -16,6 +19,8 @@ import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { CHATIKON, chatknappnavn, samtaletid, ulesteTekst } from './chatvisning'
+import { Chatvalg } from './Chatvalg'
+import { Direktevisning, NyDirektemelding, Personbilde } from './Direktemeldinger'
 import { lyttEtterChatbeskjed, meldChatstatus } from './chatstyring'
 import '../../styles/chat.css'
 
@@ -50,7 +55,10 @@ const TITTEL = 'Grupper og samtaler'
  *    chatknappen i toppmenyen (`Chatknapp`), og menyen fyller skjermen.
  * 2. Åpen er den et panel langs venstre kant, som resten av appen gir plass
  *    til (`--chatplass`). Øverst «Mine grupper», som lenker til gruppesidene,
- *    så «Samtaler»: én liste, nyeste aktivitet først, med søk. En valgt
+ *    så «Samtaler»: én liste med gruppechattene og direktesamtalene, nyeste
+ *    aktivitet først, med søk. Når direktemeldingene er slått på (D5,
+ *    docs/direktemeldinger-personvern.md), står «Ny chat» ved overskriften og
+ *    bryterne for direktemeldinger nederst (skisse 14 og 17). En valgt
  *    samtale vises i panelet, med «Til alle samtaler» tilbake. Panelet kan
  *    dras bredere i høyre kant, og står åpent til det lukkes, også fra side
  *    til side og maskin til maskin (`chat.apen`, `chat.bredde`).
@@ -84,7 +92,8 @@ export function Chatmeny({
   const helside = rute.side === 'chat'
   const [apen, setApen] = useBevart('chat/apen', false)
   const [mobilApen, setMobilApen] = useBevart('chat/mobil', false)
-  const [valgt, setValgt] = useBevart<string | null>('chat/valgt', null)
+  const [valgt, setValgt] = useBevart<Samtalenokkel | null>('chat/samtale', null)
+  const [ny, setNy] = useBevart('chat/ny', false)
   const { lengde: bredde, endrer: endrerBredde, sett: lagreNyBredde } = useDrattLengde('chat/bredde', BREDDE)
   const [fokus, setFokus] = useState(false)
   const meny = useRef<HTMLElement>(null)
@@ -109,14 +118,21 @@ export function Chatmeny({
   )
 
   // På helsiden er adressen fasit for samtalen som er valgt.
-  const adressensSamtale = rute.side === 'chat' ? (rute.samtale?.id ?? null) : undefined
+  // Samme samtale er samme nøkkel, også når ruten er lest på nytt.
+  const adressetype = rute.side === 'chat' ? rute.samtale?.type : undefined
+  const adresseid = rute.side === 'chat' ? rute.samtale?.id : undefined
+  const adressensSamtale = useMemo<Samtalenokkel | null | undefined>(
+    () => (!helside ? undefined : adressetype && adresseid ? { type: adressetype, id: adresseid } : null),
+    [helside, adressetype, adresseid],
+  )
   useEffect(() => {
     if (adressensSamtale !== undefined) setValgt(adressensSamtale)
   }, [adressensSamtale, setValgt])
   const vistSamtale = adressensSamtale !== undefined ? adressensSamtale : valgt
 
   const vist = helside || apen || mobilApen
-  const uleste = alleUleste(samtaler)
+  const direkte = useDirekte(meg.id, aktivert, vist)
+  const uleste = alleUleste(samtaler) + ulesteDirekte(direkte.samtaler)
 
   useEffect(() => {
     settBredde(bredde)
@@ -184,8 +200,7 @@ export function Chatmeny({
 
   /** Utvid: helsiden, med samtalen som står åpen. */
   const utvid = () => {
-    const samtale: Samtalenokkel | undefined = vistSamtale ? { type: 'gruppe', id: vistSamtale } : undefined
-    gaaTil({ side: 'chat', ...(samtale && { samtale }) })
+    gaaTil({ side: 'chat', ...(vistSamtale && { samtale: vistSamtale }) })
     flyttFokus('.chatpanel__gjenopprett')
   }
 
@@ -198,6 +213,14 @@ export function Chatmeny({
 
   useEscapelag(helside, gjenopprett, meny)
   useEscapelag(!helside && (fokus || mobilApen), slipp, meny)
+
+  /** «Ny direktemelding» lukkes, tilbake til lista med fokus på «Ny chat». */
+  const lukkNy = () => {
+    setNy(false)
+    flyttFokus('.chatsamtaler__ny')
+  }
+  const visNy = ny && direkte.pa
+  useEscapelag(vist && visNy, lukkNy, meny)
 
   // Et trykk utenfor lukker menyen over siden på smale flater.
   useEffect(() => {
@@ -213,9 +236,9 @@ export function Chatmeny({
 
   /** Velger en samtale: i menyen vises den der, på helsiden følger adressen med. */
   const velg = useCallback(
-    (gruppe: string | null) => {
-      if (helside) gaaTil(gruppe ? { side: 'chat', samtale: { type: 'gruppe', id: gruppe } } : { side: 'chat' }, { erstatt: true })
-      else setValgt(gruppe)
+    (samtale: Samtalenokkel | null) => {
+      if (helside) gaaTil(samtale ? { side: 'chat', samtale } : { side: 'chat' }, { erstatt: true })
+      else setValgt(samtale)
     },
     [helside, gaaTil, setValgt],
   )
@@ -232,7 +255,7 @@ export function Chatmeny({
           else apneNa()
           return
         }
-        velgNa(beskjed.gruppe)
+        velgNa(beskjed.gruppe ? { type: 'gruppe', id: beskjed.gruppe } : null)
         if (!paHelside) apneNa()
       }),
     [setMobilApen],
@@ -260,10 +283,17 @@ export function Chatmeny({
 
   // Navnet og statusen fra lista, eller fra gruppene (en systemarkitekt leser alle). En gruppe appen
   // ikke kjenner, vises uten navn; databasen svarer da at den ikke finnes eller ikke kan leses.
-  const kjentGruppe = vistSamtale
-    ? (samtaler.find((s) => s.gruppe.id === vistSamtale)?.gruppe ?? grupper.grupper.find((g) => g.id === vistSamtale))
+  const gruppeId = vistSamtale?.type === 'gruppe' ? vistSamtale.id : null
+  const kjentGruppe = gruppeId
+    ? (samtaler.find((s) => s.gruppe.id === gruppeId)?.gruppe ?? grupper.grupper.find((g) => g.id === gruppeId))
     : undefined
-  const gruppe: Chatgruppe | null = vistSamtale ? (kjentGruppe ?? { id: vistSamtale, navn: '', status: 'aktiv' }) : null
+  const gruppe: Chatgruppe | null = gruppeId ? (kjentGruppe ?? { id: gruppeId, navn: '', status: 'aktiv' }) : null
+  const direkteId = vistSamtale?.type === 'direkte' && direkte.pa ? vistSamtale.id : null
+  /** Tilbake til lista fra en samtale, med fokus på raden den sto på. */
+  const tilLista = (id: string) => {
+    velg(null)
+    flyttFokus(`.chatrad[data-samtale="${id}"] .chatrad__knapp, .chatsamtaler__sokefelt`)
+  }
   const Overskrift = helside ? 'h1' : 'h2'
 
   return (
@@ -275,7 +305,7 @@ export function Chatmeny({
       data-apen={vist || undefined}
       data-mobil={(mobilApen && !helside) || undefined}
       data-helside={helside || undefined}
-      data-samtale={vistSamtale ? '' : undefined}
+      data-samtale={gruppe || direkteId ? '' : undefined}
       onFocus={inn}
       onBlur={ut}
     >
@@ -340,12 +370,37 @@ export function Chatmeny({
             )}
           </div>
           <div className="chatpanel__innhold">
-            <div className="chatpanel__oversikt" hidden={!helside && !!vistSamtale}>
-              <Minegrupper grupper={grupper.grupper} onLenke={() => setMobilApen(false)} />
-              <Samtaleliste samtaler={samtaler} kjent={kjent} valgt={vistSamtale} onVelg={(id) => {
-                velg(id)
-                flyttFokus('.chatsamtale .chatfelt, .chatsamtale .chatlogg')
-              }} />
+            <div className="chatpanel__oversikt" hidden={!helside && !!(gruppe || direkteId)}>
+              {visNy ? (
+                <NyDirektemelding
+                  direkte={direkte}
+                  onTilbake={lukkNy}
+                  onApnet={(id) => {
+                    setNy(false)
+                    velg({ type: 'direkte', id })
+                    flyttFokus('.chatsamtale .chatfelt, .chatsamtale .chatlogg')
+                  }}
+                />
+              ) : (
+                <>
+                  <Minegrupper grupper={grupper.grupper} onLenke={() => setMobilApen(false)} />
+                  <Samtaleliste
+                    samtaler={samtaler}
+                    direkte={direkte}
+                    kjent={kjent}
+                    valgt={vistSamtale}
+                    onNy={() => {
+                      setNy(true)
+                      flyttFokus('.chatny__sokefelt, .chatny__av button')
+                    }}
+                    onVelg={(samtale) => {
+                      velg(samtale)
+                      flyttFokus('.chatsamtale .chatfelt, .chatsamtale .chatlogg')
+                    }}
+                  />
+                  {direkte.pa && <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />}
+                </>
+              )}
             </div>
             {gruppe ? (
               <Samtalevisning
@@ -353,12 +408,11 @@ export function Chatmeny({
                 gruppe={gruppe}
                 kjent={!!kjentGruppe}
                 medlemmer={grupper.grupper.find((g) => g.id === gruppe.id)?.medlemmer}
-                onTilbake={() => {
-                  velg(null)
-                  flyttFokus(`.chatrad[data-gruppe="${gruppe.id}"] .chatrad__knapp, .chatsamtaler__sokefelt`)
-                }}
+                onTilbake={() => tilLista(gruppe.id)}
                 onTilGruppen={() => setMobilApen(false)}
               />
+            ) : direkteId ? (
+              <Direktevisning key={direkteId} samtale={direkteId} direkte={direkte} onTilbake={() => tilLista(direkteId)} />
             ) : (
               helside && <p className="chatpanel__velg">Velg en samtale.</p>
             )}
@@ -407,28 +461,95 @@ function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLe
   )
 }
 
-/** «Samtaler»: alle samtalene, nyeste aktivitet først, med søk. */
+/** Én rad i samtalelista: en gruppechat eller en direktesamtale. */
+interface Samtalerad {
+  nokkel: Samtalenokkel
+  navn: string
+  art: string
+  siste_kl: string | null
+  uleste: number
+  dempet: boolean
+  bilde: ReactNode
+}
+
+/** Nyeste aktivitet først, samtaler uten meldinger sist; ellers i den rekkefølgen databasen ga. */
+const nyesteForst = (a: Samtalerad, b: Samtalerad) =>
+  a.siste_kl === b.siste_kl ? 0 : a.siste_kl === null ? 1 : b.siste_kl === null ? -1 : Date.parse(b.siste_kl) - Date.parse(a.siste_kl)
+
+/** «Samtaler»: gruppechattene og direktesamtalene i én liste, nyeste aktivitet først, med søk. */
 function Samtaleliste({
   samtaler,
+  direkte,
   kjent,
   valgt,
+  onNy,
   onVelg,
 }: {
   samtaler: readonly Gruppesamtale[]
+  direkte: Direktemeldinger
   kjent: boolean
-  valgt: string | null
-  onVelg: (gruppe: string) => void
+  valgt: Samtalenokkel | null
+  onNy: () => void
+  onVelg: (samtale: Samtalenokkel) => void
 }) {
   const [sok, setSok] = useBevart('chat/sok', '')
   const id = useId()
-  const treff = sokISamtaler(samtaler, sok)
+  const motparter = useMemo(() => direkte.samtaler.flatMap((s) => (s.motpart ? [s.motpart] : [])), [direkte.samtaler])
+  const lenker = useAvatarlenker(motparter)
+
+  const rader = (liste: { grupper: readonly Gruppesamtale[]; direkte: typeof direkte.samtaler }): Samtalerad[] =>
+    [
+      ...liste.grupper.map(
+        (s): Samtalerad => ({
+          nokkel: { type: 'gruppe', id: s.gruppe.id },
+          navn: s.gruppe.navn,
+          art: `Gruppechat · ${gruppetilhorighet(s.gruppe)}`,
+          siste_kl: s.siste_kl,
+          uleste: s.uleste,
+          dempet: false,
+          bilde: (
+            <span className="chatrad__bilde" aria-hidden="true">
+              <Ikon navn={CHATIKON} storrelse="ui" />
+            </span>
+          ),
+        }),
+      ),
+      ...liste.direkte.map(
+        (s): Samtalerad => ({
+          nokkel: { type: 'direkte', id: s.id },
+          navn: personnavn(s.motpart),
+          art: s.dempet ? 'Direktemelding · Dempet' : 'Direktemelding',
+          siste_kl: s.siste_kl,
+          uleste: s.uleste,
+          dempet: s.dempet,
+          bilde: (
+            <Personbilde
+              person={s.motpart}
+              aktiv={!!s.motpart && direkte.aktive.has(s.motpart.id)}
+              lenke={s.motpart?.avatar_path ? (lenker.get(s.motpart.avatar_path) ?? null) : null}
+            />
+          ),
+        }),
+      ),
+    ].sort(nyesteForst)
+
+  const alle = samtaler.length + direkte.samtaler.length
+  const treff = rader({ grupper: sokISamtaler(samtaler, sok), direkte: sokIDirektesamtaler(direkte.samtaler, sok) })
   const naa = new Date()
   return (
     <section className="chatsamtaler" aria-labelledby={`${id}-tittel`}>
-      <h3 id={`${id}-tittel`} className="chatsamtaler__tittel">
-        Samtaler
-      </h3>
-      {samtaler.length > 0 && (
+      <div className="chatsamtaler__hode">
+        <h3 id={`${id}-tittel`} className="chatsamtaler__tittel">
+          Samtaler
+        </h3>
+        {direkte.pa && (
+          <button type="button" className="chatsamtaler__ny" onClick={onNy}>
+            <Ikon navn="plus" storrelse="ui" />
+            <span>Ny chat</span>
+          </button>
+        )}
+      </div>
+      {alle > 0 && (
         <div className="chatsamtaler__sok">
           <label htmlFor={`${id}-sok`} className="kun-skjermleser">
             Søk i samtalene
@@ -454,26 +575,31 @@ function Samtaleliste({
         <p className="chatsamtaler__tom" role="status">
           Henter samtalene …
         </p>
-      ) : samtaler.length === 0 ? (
-        <p className="chatsamtaler__tom">Du er ikke med i noen grupper med chat ennå.</p>
+      ) : alle === 0 ? (
+        <p className="chatsamtaler__tom">{direkte.pa ? 'Ingen samtaler ennå.' : 'Du er ikke med i noen grupper med chat ennå.'}</p>
       ) : treff.length === 0 ? (
         <p className="chatsamtaler__tom">Ingen samtaler passer med søket.</p>
       ) : (
         <ul className="chatsamtaler__liste">
           {treff.map((s) => (
-            <li key={s.gruppe.id} className="chatrad" data-gruppe={s.gruppe.id} data-ulest={s.uleste > 0 || undefined}>
+            <li
+              key={`${s.nokkel.type}:${s.nokkel.id}`}
+              className="chatrad"
+              data-samtale={s.nokkel.id}
+              data-gruppe={s.nokkel.type === 'gruppe' ? s.nokkel.id : undefined}
+              data-ulest={s.uleste > 0 || undefined}
+              data-dempet={s.dempet || undefined}
+            >
               <button
                 type="button"
                 className="chatrad__knapp"
-                aria-current={s.gruppe.id === valgt || undefined}
-                onClick={() => onVelg(s.gruppe.id)}
+                aria-current={(valgt?.type === s.nokkel.type && valgt.id === s.nokkel.id) || undefined}
+                onClick={() => onVelg(s.nokkel)}
               >
-                <span className="chatrad__bilde" aria-hidden="true">
-                  <Ikon navn={CHATIKON} storrelse="ui" />
-                </span>
+                {s.bilde}
                 <span className="chatrad__tekst">
-                  <span className="chatrad__navn">{s.gruppe.navn}</span>
-                  <span className="chatrad__art">Gruppechat · {gruppetilhorighet(s.gruppe)}</span>
+                  <span className="chatrad__navn">{s.navn}</span>
+                  <span className="chatrad__art">{s.art}</span>
                 </span>
                 <span className="chatrad__meta">
                   {s.siste_kl && <time dateTime={s.siste_kl}>{samtaletid(s.siste_kl, naa)}</time>}

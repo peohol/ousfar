@@ -1,11 +1,13 @@
-# Lagringstiden for gruppechatten (12 måneder, Peder 17.11.2026;
-# docs/gruppechat.md, «Lagringstiden»): sletter hver natt meldingene eldre enn
-# lagringstiden i alle grupper, også i grupper ingen åpner, og kontrollerer at
-# ingen står igjen. Funksjonene leser aldri ut en utgått melding uansett; jobben
-# sørger for at raden faktisk blir borte.
+# Lagringstiden for chatten (12 måneder: gruppechatten, Peder 17.11.2026,
+# docs/gruppechat.md, «Lagringstiden»; direktemeldingene, beslutning 2
+# 18.11.2026, docs/direktemeldinger-personvern.md): sletter hver natt
+# meldingene eldre enn lagringstiden i alle grupper og direktesamtaler, også
+# dem ingen åpner, og kontrollerer at ingen står igjen. Funksjonene leser aldri
+# ut en utgått melding uansett; jobben sørger for at raden faktisk blir borte.
 #
-# Én skrivende spørring (`intern.rydd_gruppechat()`) og én skrivebeskyttet
-# kontroll. Ingen tekst, avsendere eller grupper leses ut, ingen push og ingen
+# Per chat én skrivende spørring (`intern.rydd_gruppechat()`,
+# `intern.rydd_direktemeldinger()`) og én skrivebeskyttet kontroll. Ingen
+# tekst, avsendere, grupper eller samtaler leses ut, ingen push og ingen
 # artefakter. En rød kjøring betyr at ryddingen ikke gikk; GitHub varsler da
 # eieren av repoet, og neste natt prøver den igjen.
 name: Gruppechat – lagringstid
@@ -24,7 +26,7 @@ concurrency:
 
 jobs:
   rydd:
-    name: Slett utgåtte gruppemeldinger
+    name: Slett utgåtte chatmeldinger
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10

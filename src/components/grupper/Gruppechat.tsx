@@ -1,6 +1,8 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
+import { personnavn } from '../../direktemeldinger/modell'
+import type { Samtaletype } from '../../domain/rute'
 import type { Gruppechat as Chattilstand } from '../../gruppechat/modell'
 import { useGruppechat } from '../../gruppechat/useGruppechat'
 import type { Gruppe } from '../../grupper/modell'
@@ -8,7 +10,7 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Gruppechatmelding, Ventendemelding } from './Gruppechatmelding'
 import { Gruppechatskriving, glemUtkastene } from './Gruppechatskriving'
-import { dagsnavn, dagsnokkel, henger, lesertekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
+import { DIREKTE_LESERE, dagsnavn, dagsnokkel, henger, laastTekst, lesertekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
 import '../../styles/gruppechat.css'
 
 /** Det chatten trenger å vite om gruppen. */
@@ -36,14 +38,20 @@ export function Gruppechatfane({ gruppe }: { gruppe: Chatgruppe }) {
  * Meldingene merkes lest når de nyeste er synlige og fanen i nettleseren er
  * framme. Knappene er et grensesnitt, ikke en tilgangskontroll: databasen
  * avgjør hver handling.
+ *
+ * En direktesamtale (`art="direkte"`, D5) vises med den samme komponenten:
+ * `gruppe` er da samtalen med navnet på den andre, og bare lesertekstene, den
+ * låste linjen og slettetekstene er andre.
  */
-export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatgruppe }) {
+export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstand; gruppe: Chatgruppe; art?: Samtaletype }) {
   const overskrift = useId()
   const logg = useRef<HTMLDivElement>(null)
   const felt = useRef<HTMLTextAreaElement>(null)
   const { meldinger, ventende, status } = chat
   const aktiv = gruppe.status === 'aktiv'
   const sisteNr = meldinger.at(-1)?.nr ?? 0
+  const direkte = art === 'direkte'
+  const motpart = direkte ? personnavn(chat.direkte?.motpart ?? null) : undefined
 
   // Den nyeste tilstanden for effektene, uten at de kjøres på nytt for hver ny funksjon.
   const naa = useRef(chat)
@@ -171,7 +179,7 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
       <section className="gruppechat" aria-label="Chat">
         <p className="notis gruppechat__tilstand" role="alert">
           <Ikon navn="lock" storrelse="ui" />
-          Du har ikke lenger tilgang til denne gruppen.
+          {direkte ? 'Samtalen finnes ikke, eller du har ikke tilgang til den.' : 'Du har ikke lenger tilgang til denne gruppen.'}
         </p>
       </section>
     )
@@ -207,7 +215,7 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
       <div className="gruppechat__om">
         <p className="gruppechat__lesere">
           <Ikon navn="user" storrelse="ui" />
-          {lesertekst(chat.lesere)}
+          {direkte ? DIREKTE_LESERE : lesertekst(chat.lesere)}
         </p>
       </div>
 
@@ -264,6 +272,7 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
                       grenser={chat.grenser}
                       onEndre={chat.endre}
                       onSlett={chat.slett}
+                      motpart={motpart}
                     />
                   </Fragment>
                 )
@@ -303,7 +312,7 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
       ) : (
         <p className="gruppechat__laast">
           <Ikon navn="lock" storrelse="ui" />
-          {aktiv ? 'Du kan lese chatten, men ikke skrive i den.' : 'Gruppen er arkivert. Chatten kan leses, men ingen kan skrive i den.'}
+          {laastTekst(aktiv, chat.direkte)}
         </p>
       )}
     </section>

@@ -1,0 +1,13 @@
+{
+  "id": "20261118-230842-122f39",
+  "semver": "patch",
+  "opprettet": "2026-11-18T23:08:42Z",
+  "sammendrag": "Direktemeldinger er bygget, men ikke slått på",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Chatmenyen har fått direktemeldinger mellom to personer: «Ny chat», samtalene i samme liste som gruppechattene, og bryterne «Tillat direktemeldinger» og «Vis når jeg er aktiv», som begge står av til du selv slår dem på. De vises først når direktemeldingene slås på.",
+    "Ingenting endres for brukerne ennå."
+  ],
+  "utenVarsel": true
+}

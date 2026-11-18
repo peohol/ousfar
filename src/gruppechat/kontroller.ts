@@ -16,8 +16,8 @@
  *
  * Meldingsteksten skrives aldri i logger.
  */
-import { IngenTilgang } from './kall'
-import type { Chatendringer, Chatlesere, Chatside, Chatstatus, Gruppechat, Gruppemelding, Tilkobling, Ventende } from './modell'
+import { IngenTilgang, Sperret } from './kall'
+import type { Chatendringer, Chatlesere, Chatside, Chatstatus, Direktemeta, Gruppechat, Gruppemelding, Tilkobling, Ventende } from './modell'
 import { GRUPPECHAT_GRENSER } from './modell'
 import type { Abonner, Kanalstatus } from './dorklokke'
 import { eldsteNr, medEldre, medEndringer, medForsteSide, medMelding, TOM_MELDINGSTILSTAND, type Meldingstilstand } from './tilstand'
@@ -69,6 +69,7 @@ interface Indre extends Meldingstilstand {
   kanModerere: boolean
   lesere: Chatlesere
   grenser: Gruppechat['grenser']
+  direkte: Direktemeta | null
 }
 
 const STARTTILSTAND: Indre = {
@@ -83,6 +84,7 @@ const STARTTILSTAND: Indre = {
   kanModerere: false,
   lesere: { medlemmer: 0, systemarkitekter: true },
   grenser: { ...GRUPPECHAT_GRENSER },
+  direkte: null,
 }
 
 const feiltekst = (feil: unknown): string => (feil instanceof Error && feil.message ? feil.message : 'Noe gikk galt. Prøv igjen.')
@@ -141,8 +143,17 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
       kanModerere: side.kan_moderere,
       lesere: side.lesere,
       grenser: side.grenser,
+      direkte: side.direkte,
       lestTilNr: Math.max(t.lestTilNr, side.lest_til_nr),
     })
+
+  /** Rettighetene som følger med endringene (bare i en direktesamtale). */
+  const brukEndringsmeta = (e: Chatendringer) => {
+    const endring: Partial<Indre> = {}
+    if (e.kan_skrive !== undefined && e.kan_skrive !== t.kanSkrive) endring.kanSkrive = e.kan_skrive
+    if (e.direkte !== undefined && JSON.stringify(e.direkte) !== JSON.stringify(t.direkte)) endring.direkte = e.direkte
+    if (Object.keys(endring).length) sett(endring)
+  }
 
   const lastForste = async () => {
     const ok = iRunden((side: Chatside) => {
@@ -182,6 +193,7 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
         const e = await avh.hentChatendringer(gruppe, fra)
         if (!aktiv || runde !== min) return
         settMeldinger(medEndringer(t, e))
+        brukEndringsmeta(e)
         if (t.nettfeil) sett({ nettfeil: false })
         // Mer å hente bare når telleren faktisk flyttet seg, så en feil i svaret ikke gir en evig løkke.
         if (e.flere && t.sisteEndring > fra) synkIgjen = true
@@ -248,6 +260,8 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
       oppdaterVentende(klientId, null)
     } catch (feil) {
       if (!aktiv || runde !== min || hvisUtestengt(feil)) return
+      // Kan det ikke skrives lenger, vises det med en gang, ikke først ved neste livstegn.
+      if (feil instanceof Sperret) void oppfriskMeta()
       // Kan den alt ha kommet med endringene, er den ikke lenger ventende.
       if (t.ventende.some((x) => x.klient_id === klientId)) oppdaterVentende(klientId, { status: 'feilet', feil: feiltekst(feil) })
     }
@@ -283,7 +297,7 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
       const melding = await kall()
       if (aktiv && runde === min) settMeldinger(medMelding(t, melding))
     } catch (feil) {
-      if (aktiv && runde === min) hvisUtestengt(feil)
+      if (aktiv && runde === min && !hvisUtestengt(feil) && feil instanceof Sperret) void oppfriskMeta()
       throw feil instanceof Error ? feil : new Error(feiltekst(feil))
     }
   }
@@ -343,6 +357,10 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
     endre: (melding: string, tekst: string) => endreMed(() => avh.endreGruppemelding(melding, tekst)),
     slett: (melding: string) => endreMed(() => avh.slettGruppemelding(melding)),
     merkLest,
+    oppfrisk: () => {
+      void synk()
+      void oppfriskMeta()
+    },
   }
 
   const tilkobling = (): Tilkobling => {
@@ -365,6 +383,7 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
       kanModerere: t.kanModerere,
       lesere: t.lesere,
       grenser: t.grenser,
+      direkte: t.direkte,
       ...handlinger,
     }
     return utsnitt

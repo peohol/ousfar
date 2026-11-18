@@ -75,11 +75,13 @@ export function lagTestchat(overstyr: Partial<Gruppechat> = {}): Gruppechat {
     endre: async () => undefined,
     slett: async () => undefined,
     merkLest: () => undefined,
+    oppfrisk: () => undefined,
     lestTilNr: meldinger.at(-1)?.nr ?? 0,
     kanSkrive: true,
     kanModerere: false,
     lesere: { medlemmer: 3, systemarkitekter: true },
     grenser: { ...GRUPPECHAT_GRENSER },
+    direkte: null,
     ...overstyr,
   }
 }
@@ -187,6 +189,7 @@ export function useTestchat(valg: Testchatvalg = {}): Gruppechat & Testchatstyri
       setLestTilNr((n) => Math.max(n, nr))
     },
     lestTilNr,
+    oppfrisk: () => undefined,
     utenfra: (tekst, fra = TESTPERSONER.kari) => setMeldinger((liste) => [...liste, neste(fra, tekst, liste)]),
     lest: lest.current,
   }

@@ -156,6 +156,7 @@ export class Falskchatserver {
           kan_moderere: false,
           lesere: { medlemmer: this.tilgang.size, systemarkitekter: true },
           grenser: { ...GRUPPECHAT_GRENSER },
+          direkte: null,
         }
       },
       hentChatendringer: async (_gruppe, etter): Promise<Chatendringer> => {

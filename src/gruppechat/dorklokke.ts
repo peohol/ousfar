@@ -24,8 +24,20 @@ export interface Dorklokkevalg {
  * Starter abonnementet og gir tilbake funksjonen som stopper det. Med
  * `gruppe` lik `null` ringer den for alle gruppene den innloggede leser
  * chatten i (samtalelista i chatmenyen); radsikkerheten avgjør hvilke.
+ * For direktemeldingene er `gruppe` samtalens ID.
  */
 export type Abonner = (gruppe: string | null, valg: Dorklokkevalg) => () => void
+
+/** Tabellen dørklokken lytter på, og kolonnen med samtalens ID. */
+export interface Dorklokkekilde {
+  tabell: string
+  nokkel: string
+}
+
+/** Gruppechattene: én rad per gruppe i `public.gruppechatter`. */
+export const GRUPPECHATKILDE: Dorklokkekilde = { tabell: 'gruppechatter', nokkel: 'gruppe_id' }
+/** Direktemeldingene: én rad per samtale i `public.direktesamtaler` (bare de to deltakerne får hendelsene). */
+export const DIREKTEKILDE: Dorklokkekilde = { tabell: 'direktesamtaler', nokkel: 'id' }
 
 /** Ventetiden før en kanal som er lukket av tjenesten, åpnes på nytt: 1, 2, 4 … høyst 30 sekunder. */
 export function ventetid(forsok: number): number {
@@ -39,7 +51,7 @@ let lopenr = 0
  * etter nettbrudd og feil på kanalen; lukker tjenesten kanalen, åpnes en ny
  * med økende ventetid til abonnementet stoppes.
  */
-export const lagAbonner = (klient: () => SupabaseClient): Abonner => (gruppe, { vedRinging, vedStatus }) => {
+export const lagAbonner = (klient: () => SupabaseClient, kilde: Dorklokkekilde = GRUPPECHATKILDE): Abonner => (gruppe, { vedRinging, vedStatus }) => {
   let kanal: RealtimeChannel | null = null
   let stoppet = false
   let forsok = 0
@@ -56,8 +68,8 @@ export const lagAbonner = (klient: () => SupabaseClient): Abonner => (gruppe, { 
     if (stoppet) return
     lopenr += 1
     const denne: RealtimeChannel = klient()
-      .channel(`gruppechat:${gruppe ?? 'alle'}:${lopenr}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'gruppechatter', ...(gruppe ? { event: 'UPDATE', filter: `gruppe_id=eq.${gruppe}` } : {}) }, (hendelse) => {
+      .channel(`${kilde.tabell}:${gruppe ?? 'alle'}:${lopenr}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: kilde.tabell, ...(gruppe ? { event: 'UPDATE', filter: `${kilde.nokkel}=eq.${gruppe}` } : {}) }, (hendelse) => {
         if (stoppet || kanal !== denne) return
         const ny = (hendelse as { new?: unknown }).new
         vedRinging(erObjekt(ny) && ny.siste_endring != null ? tall(ny.siste_endring) : null)

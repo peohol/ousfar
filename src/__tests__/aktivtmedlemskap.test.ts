@@ -47,6 +47,8 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'mine_lesbare_grupper()': [],
   // P7: gruppene den innloggede kan lese chatten i.
   'mine_lesbare_gruppechatter()': [],
+  // D5: om den innloggede kan bruke direktemeldinger.
+  'kan_bruke_direktemeldinger()': false,
   'mine_synlige_profiler()': [],
   'leser_alt_lokale_innhold()': false,
   'kan_endre_lokalt_innhold()': false,
