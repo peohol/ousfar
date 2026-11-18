@@ -3,9 +3,11 @@
  * (`20261118120000_koblingene_fjernet.sql`, `docs/domener.md`, #405), i en
  * ekte database før og etter migrasjonen:
  *
- * 1. Et datakort med en analyttkode i `gjelder` får forbindelsen koden måler,
- *    med tallene uendret, i det publiserte og i utkastet, som én ny revisjon
- *    og publisering ført som en endring av Claude Code. Andre kort endres ikke.
+ * 1. Et datakort med en analyttkode i `gjelder` får forbindelsen koden måler
+ *    i OUS Klinisk farmakologi, også når et annet fagmiljø har samme kode for
+ *    en annen forbindelse, med tallene uendret og ført som en endring av
+ *    Claude Code. Den publiserte versjonen og et upublisert utkast skrives om
+ *    hver for seg, og utkastet forblir upublisert. Andre kort endres ikke.
  * 2. Etter migrasjonen kan et datakort bare ha en forbindelsesnøkkel i `gjelder`.
  * 3. Katalogen gir bare kodene, navnene og referanseområdene, og tabellene,
  *    kolonnene og funksjonen bare appen fra før brukte, finnes ikke lenger.
@@ -16,6 +18,8 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { lagFaginnholdslager, type Faginnholdslager } from '../faginnhold/lagring'
+import type { Innholdselementinnhold } from '../faginnhold/modell'
+import { opprettFagmiljo } from './hjelp/persongalleri'
 import { faginnholdskall, feilFra, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 
 const MIGRASJON = migrasjonsfiler().find((f) => f.endsWith('_koblingene_fjernet.sql'))!
@@ -24,8 +28,8 @@ let db: PGlite
 let kall: Faginnholdskall
 let lager: Faginnholdslager
 let bruker: string
-const ider = { tramadol: '', otram: '', nordiazepam: '' }
-const for_ = { otram: 0, nordiazepam: [] as unknown[] }
+const ider = { tramadol: '', otram: '', nordiazepam: '', avvikende: '', upublisert: '' }
+const for_ = { otram: 0, nordiazepam: [] as unknown[], avvikende: 0 }
 
 const omrade = (nedre: number | null, ovre: number | null) => ({ nedre, ovre, enhet: 'nmol/L', forbehold: '' })
 
@@ -38,6 +42,33 @@ const kortet = (id: string) =>
   kall.fasit<Kortet>('select tilstand::text, data from public.innholdselementer where objekt_id = $1 order by 1', [id])
 const revisjoner = async (id: string) =>
   (await kall.fasit<{ n: number }>('select count(*)::int as n from public.objektrevisjoner where objekt_id = $1', [id]))[0]!.n
+const tilstandene = async (id: string) =>
+  Object.fromEntries(
+    (await kall.fasit<{ tilstand: string; revisjon: number }>('select tilstand::text, revisjon from public.objekttilstander where objekt_id = $1', [id])).map(
+      (t) => [t.tilstand, t.revisjon],
+    ),
+  )
+
+/**
+ * Et annet fagmiljø med de samme kodene for en annen forbindelse, som sorterer
+ * først: kodene er bare unike innenfor et fagmiljø.
+ */
+async function annetFagmiljoMedSammeKoder(administrator: string, koder: string[]) {
+  await opprettFagmiljo(db, { nokkel: 'annet-laboratorium', navn: 'Et annet laboratorium', administrator })
+  await db.exec(`
+    create temp table kopi_metoder as select * from public.analyttkatalog_metoder where fagmiljo_id = intern.opprinnelig_fagmiljo();
+    create temp table kopi_oppforinger as select * from public.analyttkatalog_oppforinger where fagmiljo_id = intern.opprinnelig_fagmiljo();
+    create temp table kopi_koder as select * from public.analyttkatalog_koder where fagmiljo_id = intern.opprinnelig_fagmiljo();
+  `)
+  await db.exec(`
+    update kopi_metoder set fagmiljo_id = (select id from public.fagmiljoer where nokkel = 'annet-laboratorium');
+    update kopi_oppforinger set fagmiljo_id = (select id from public.fagmiljoer where nokkel = 'annet-laboratorium');
+    update kopi_koder set fagmiljo_id = (select id from public.fagmiljoer where nokkel = 'annet-laboratorium'), forbindelse = 'a-annen-forbindelse', datakort = 'forbindelse';
+    insert into public.analyttkatalog_metoder select * from kopi_metoder;
+    insert into public.analyttkatalog_oppforinger select * from kopi_oppforinger;
+  `)
+  await db.query('insert into public.analyttkatalog_koder select * from kopi_koder where kode = any($1)', [koder])
+}
 
 beforeAll(async () => {
   db = await nyDatabase({ til: MIGRASJON })
@@ -46,20 +77,38 @@ beforeAll(async () => {
   kall = faginnholdskall(db, admin)
   lager = lagFaginnholdslager(kall.klientFor(admin))
 
+  await annetFagmiljoMedSammeKoder(admin, ['OTRAM', 'DMI'])
+
   const tramadol = await lager.opprettUtkast('infoside', { navn: 'Tramadol' })
   const diazepam = await lager.opprettUtkast('infoside', { navn: 'Diazepam' })
+  const klordiazepoksid = await lager.opprettUtkast('infoside', { navn: 'Klordiazepoksid' })
+  const klorazepat = await lager.opprettUtkast('infoside', { navn: 'Klorazepat' })
   ider.tramadol = tramadol.id
-  const kort = (infoside: string, data: Record<string, unknown>) =>
-    lager.opprettUtkast('innholdselement', { infoside, panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
+  const innhold = (infoside: string, data: Record<string, unknown>): Innholdselementinnhold => ({
+    infoside,
+    panel: 'viktige_data',
+    posisjon: 0,
+    elementtype: 'referanseomrade',
+    data,
+    referanser: [],
+  })
+  const kort = (infoside: string, data: Record<string, unknown>) => lager.opprettUtkast('innholdselement', innhold(infoside, data))
   // Som i produksjonen: kortet for metabolitten med OUS sin kode i `gjelder`.
   const otram = await kort(tramadol.id, { ...omrade(null, 5), gjelder: 'OTRAM' })
   const nordiazepam = await kort(diazepam.id, { ...omrade(300, 400), gjelder: 'nordiazepam' })
+  const avvikende = await kort(klordiazepoksid.id, { ...omrade(100, 200), gjelder: 'DMI' })
+  const upublisert = await kort(klorazepat.id, { ...omrade(500, 600), gjelder: 'DMI' })
   ider.otram = otram.id
   ider.nordiazepam = nordiazepam.id
-  for (const { id, revisjon } of [tramadol, diazepam, otram, nordiazepam]) await lager.publiserUtkast(id, revisjon!)
+  ider.avvikende = avvikende.id
+  ider.upublisert = upublisert.id
+  for (const { id, revisjon } of [tramadol, diazepam, klordiazepoksid, klorazepat, otram, nordiazepam, avvikende]) await lager.publiserUtkast(id, revisjon!)
+  // Et utkast med andre tall som ikke er publisert.
+  await lager.lagreUtkast(avvikende.id, avvikende.revisjon!, innhold(klordiazepoksid.id, { ...omrade(150, 250), gjelder: 'DMI' }))
 
   for_.otram = await revisjoner(otram.id)
   for_.nordiazepam = await kortet(nordiazepam.id)
+  for_.avvikende = (await tilstandene(avvikende.id)).utkast!
   await kjorMigrasjoner(db, { fra: MIGRASJON })
 }, 120_000)
 
@@ -70,6 +119,20 @@ describe('datakortene', () => {
       { tilstand: 'utkast', data: { ...omrade(null, 5), gjelder: 'o-desmetyltramadol' } },
     ])
     expect(await revisjoner(ider.otram)).toBe(for_.otram + 1)
+  })
+
+  it('skriver om den publiserte versjonen og et upublisert utkast hver for seg, uten å publisere utkastet', async () => {
+    expect(await kortet(ider.avvikende)).toEqual([
+      { tilstand: 'publisert', data: { ...omrade(100, 200), gjelder: 'nordiazepam' } },
+      { tilstand: 'utkast', data: { ...omrade(150, 250), gjelder: 'nordiazepam' } },
+    ])
+    const { publisert, utkast } = await tilstandene(ider.avvikende)
+    expect(utkast).toBe(for_.avvikende + 2)
+    expect(publisert).toBe(for_.avvikende + 1)
+  })
+
+  it('skriver om et kort som aldri er publisert, uten å publisere det', async () => {
+    expect(await kortet(ider.upublisert)).toEqual([{ tilstand: 'utkast', data: { ...omrade(500, 600), gjelder: 'nordiazepam' } }])
   })
 
   it('fører endringen som Claude Codes, med migrasjonen', async () => {

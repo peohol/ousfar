@@ -4,9 +4,11 @@
 -- slutten på overgangen fra da analyttkodene var koblet til fagsidene:
 --
 -- 1. Et datakort med en analyttkode i `gjelder` (i produksjonen bare OTRAM på
---    tramadolsiden) skrives om til forbindelsen koden måler, med tallene
---    uendret. Det publiserte kortet og utkastet får en ny revisjon hver, ført
---    som en endring av Claude Code.
+--    tramadolsiden) skrives om til forbindelsen koden måler i OUS Klinisk
+--    farmakologi, som kodene ble koblet for, med tallene uendret. Den
+--    publiserte versjonen og utkastet skrives om hver for seg, og et
+--    upublisert utkast forblir upublisert. Det føres som én endring av Claude
+--    Code.
 -- 2. `gjelder` på et datakort i «Viktige data» kan bare være en
 --    forbindelsesnøkkel (små bokstaver, tall og bindestrek), aldri en
 --    analyttkode.
@@ -22,27 +24,31 @@ select intern.endring_start(
 
 do $omskriving$
 declare
+  -- Kodene i fagmiljøet kodene ble koblet for (analyttkodene er bare unike
+  -- innenfor et fagmiljø), og OTRAM, som katalogen ikke ga en forbindelse.
+  forbindelser jsonb;
   forfatter public.profiles;
-  kortet record;
-  innhold jsonb;
+  kortet uuid;
   utkast integer;
   publisert integer;
+  gammelt_publisert jsonb;
+  omskrevet jsonb;
 begin
   perform set_config('far.revisjonskilde', 'Datakortet gjelder forbindelsen, ikke analysekoden', true);
+  select jsonb_build_object('OTRAM', 'o-desmetyltramadol') || coalesce(jsonb_object_agg(k.kode, k.forbindelse), '{}'::jsonb)
+  into forbindelser
+  from public.analyttkatalog_koder k
+  where k.fagmiljo_id = intern.opprinnelig_fagmiljo()
+    and k.datakort = 'forbindelse'
+    and k.forbindelse is not null;
+
   for kortet in
-    select distinct e.objekt_id, coalesce(
-      (select min(k.forbindelse) from public.analyttkatalog_koder k
-       where k.kode = e.data ->> 'gjelder' and k.datakort = 'forbindelse' and k.forbindelse is not null),
-      case e.data ->> 'gjelder' when 'OTRAM' then 'o-desmetyltramadol' end
-    ) as forbindelse
+    select distinct e.objekt_id
     from public.innholdselementer e
     where e.panel = 'viktige_data'
       and e.data ->> 'gjelder' is not null
       and e.data ->> 'gjelder' !~ '^[a-z0-9]+(-[a-z0-9]+)*$'
   loop
-    if kortet.forbindelse is null then
-      raise exception 'Datakortet % har en kode i gjelder som ingen forbindelse svarer til.', kortet.objekt_id;
-    end if;
     if forfatter.id is null then
       select p.* into forfatter from public.profiles p where p.username = 'peohol';
       if forfatter.id is null then
@@ -53,18 +59,31 @@ begin
     select max(t.revisjon) filter (where t.tilstand = 'utkast'), max(t.revisjon) filter (where t.tilstand = 'publisert')
     into utkast, publisert
     from public.objekttilstander t
-    where t.objekt_id = kortet.objekt_id;
-    -- Et utkast med endringer som ikke er publisert, publiseres ikke herfra.
-    if publisert is not null and publisert <> utkast then
-      raise exception 'Datakortet % har et upublisert utkast. Ingenting er endret.', kortet.objekt_id;
+    where t.objekt_id = kortet;
+
+    -- Hver versjon får forbindelsen til sin egen kode; resten er uendret.
+    gammelt_publisert := case when publisert is not null then intern.les('innholdselement', kortet, 'publisert') end;
+    select jsonb_object_agg(v.tilstand, case
+        when v.innhold #>> '{data,gjelder}' is null
+          or v.innhold #>> '{data,gjelder}' ~ '^[a-z0-9]+(-[a-z0-9]+)*$' then v.innhold
+        when forbindelser ? (v.innhold #>> '{data,gjelder}')
+          then jsonb_set(v.innhold, '{data,gjelder}', forbindelser -> (v.innhold #>> '{data,gjelder}'))
+      end)
+    into omskrevet
+    from (values ('publisert', gammelt_publisert), ('utkast', intern.les('innholdselement', kortet, 'utkast'))) v (tilstand, innhold)
+    where v.innhold is not null;
+    if exists (select from jsonb_each(omskrevet) o where o.value = 'null'::jsonb) then
+      raise exception 'Datakortet % har en kode i gjelder som ingen forbindelse svarer til. Ingenting er endret.', kortet;
     end if;
 
-    innhold := intern.les('innholdselement', kortet.objekt_id, 'utkast');
-    innhold := jsonb_set(innhold, '{data,gjelder}', to_jsonb(kortet.forbindelse));
-    perform intern.lagre_objekt(kortet.objekt_id, utkast, innhold, forfatter);
-    if publisert is not null then
-      perform intern.publiser_objekt(kortet.objekt_id, (intern.status(kortet.objekt_id)).revisjon, forfatter);
+    -- Den publiserte versjonen publiseres på nytt med forbindelsen. Er det et
+    -- upublisert utkast, lagres det etterpå som før, med forbindelsen, og
+    -- forblir upublisert.
+    if publisert is not null and omskrevet -> 'publisert' is distinct from gammelt_publisert then
+      perform intern.lagre_objekt(kortet, utkast, omskrevet -> 'publisert', forfatter);
+      perform intern.publiser_objekt(kortet, (intern.status(kortet)).revisjon, forfatter);
     end if;
+    perform intern.lagre_objekt(kortet, (intern.status(kortet)).revisjon, omskrevet -> 'utkast', forfatter);
   end loop;
 end;
 $omskriving$;
