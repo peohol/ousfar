@@ -1,5 +1,6 @@
 import { Ikon } from '../ikon/Ikon'
 import { type Hendelse, MAKS_HENDELSER, hendelsestid } from './hendelse'
+import { Maallenke } from './Maallenke'
 
 export interface HendelseslisteProps {
   hendelser: readonly Hendelse[]
@@ -11,7 +12,7 @@ export interface HendelseslisteProps {
 
 /**
  * Inntil tre hendelser, én rad hver: ikon, hva, hvor og når. Hele raden er
- * lenken til selve hendelsen, så det er ingen egne knapper på radene (D0,
+ * lenken til selve hendelsen (eller én knapp, når den ikke har egen adresse), så det er ingen egne knapper på radene (D0,
  * valg 2). En tom liste er én kursiv linje, ikke en stor tom flate.
  */
 export function Hendelsesliste({
@@ -26,7 +27,7 @@ export function Hendelsesliste({
         const naar = h.merknad ?? (h.tid ? hendelsestid(h.tid) : '')
         return (
           <li key={h.id}>
-            <a className="hendelse" href={h.til} onClick={h.ved}>
+            <Maallenke maal={h} className="hendelse">
               <Ikon navn={h.ikon} className="hendelse__ikon" />
               <span className="hendelse__tittel">
                 {h.ulest && (
@@ -43,7 +44,7 @@ export function Hendelsesliste({
                   {h.tid && !h.merknad ? <time dateTime={h.tid}>{naar}</time> : naar}
                 </span>
               )}
-            </a>
+            </Maallenke>
           </li>
         )
       })}
