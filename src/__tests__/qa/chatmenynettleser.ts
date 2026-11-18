@@ -177,7 +177,10 @@ try {
   await punkt('P7 mørkt tema, helside', async () => {
     await ada.emulateMedia({ colorScheme: 'dark' })
     await ada.goto(`${miljo.url}/#/chat/gruppe/${faglig}`)
-    await ada.getByRole('main', { name: 'Grupper og samtaler' }).getByRole('log').waitFor({ timeout: 20_000 })
+    const hel = ada.getByRole('main', { name: 'Grupper og samtaler' })
+    await hel.getByRole('log').waitFor({ timeout: 20_000 })
+    // Lista står ved siden av; «Til alle samtaler» trengs ikke på brede flater.
+    krev(!(await hel.getByRole('button', { name: 'Til alle samtaler' }).isVisible()), 'ingen tilbakeknapp på PC')
     await bilde(ada, '08-helside-pc-moerkt')
     await ada.emulateMedia({ colorScheme: 'light' })
   })
@@ -204,6 +207,15 @@ try {
     await mobil.emulateMedia({ colorScheme: 'dark' })
     await knapp.click()
     await bilde(mobil, '12-samtale-mobil-moerkt')
+    await mobil.emulateMedia({ colorScheme: 'light' })
+    // Helsiden i én kolonne: «Til alle samtaler» er veien tilbake til lista.
+    await mobil.goto(`${miljo.url}/#/chat/gruppe/${faglig}`)
+    const hel = mobil.getByRole('main', { name: 'Grupper og samtaler' })
+    await hel.getByRole('log').waitFor({ timeout: 20_000 })
+    await hel.getByRole('button', { name: 'Til alle samtaler' }).click()
+    await hel.getByRole('region', { name: 'Samtaler' }).waitFor({ timeout: 5_000 })
+    krev(mobil.url().endsWith('#/chat'), `adressen ${mobil.url()}`)
+    await bilde(mobil, '12b-helside-liste-mobil')
   })
 
   await punkt('P9 fjernet medlem mister samtalen innen ett minutt', async () => {

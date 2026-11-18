@@ -353,7 +353,6 @@ export function Chatmeny({
                 gruppe={gruppe}
                 kjent={!!kjentGruppe}
                 medlemmer={grupper.grupper.find((g) => g.id === gruppe.id)?.medlemmer}
-                visTilbake={!helside}
                 onTilbake={() => {
                   velg(null)
                   flyttFokus(`.chatrad[data-gruppe="${gruppe.id}"] .chatrad__knapp, .chatsamtaler__sokefelt`)
@@ -499,7 +498,6 @@ function Samtalevisning({
   gruppe,
   kjent,
   medlemmer,
-  visTilbake,
   onTilbake,
   onTilGruppen,
 }: {
@@ -507,7 +505,6 @@ function Samtalevisning({
   /** Gruppen står i lista eller blant gruppene; ellers vises ingen overskrift. */
   kjent: boolean
   medlemmer?: number
-  visTilbake: boolean
   onTilbake: () => void
   onTilGruppen: () => void
 }) {
@@ -522,12 +519,11 @@ function Samtalevisning({
   }, [utestengt, oppdaterGruppene])
   return (
     <div className="chatsamtale">
-      {visTilbake && (
-        <button type="button" className="chatsamtale__tilbake" onClick={onTilbake}>
-          <Ikon navn="chev" storrelse="ui" />
-          <span>Til alle samtaler</span>
-        </button>
-      )}
+      {/* På helsiden på brede flater står lista ved siden av, og knappen skjules (chat.css). */}
+      <button type="button" className="chatsamtale__tilbake" onClick={onTilbake}>
+        <Ikon navn="chev" storrelse="ui" />
+        <span>Til alle samtaler</span>
+      </button>
       {tilgang && (
         <div className="chatsamtale__hode">
           <span className="chatrad__bilde" aria-hidden="true">

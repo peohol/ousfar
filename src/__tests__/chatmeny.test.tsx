@@ -196,6 +196,10 @@ describe('chatmenyen', () => {
     // En annen samtale på helsiden bytter adressen uten ny oppføring i historikken.
     await userEvent.click(within(helside).getByRole('button', { name: /Faglig utvikling/ }))
     expect(gaaTil).toHaveBeenLastCalledWith({ side: 'chat', samtale: { type: 'gruppe', id: FAGLIG } }, { erstatt: true })
+    // «Til alle samtaler» går til lista (i én kolonne på smale flater er den eneste veien dit).
+    await userEvent.click(within(helside).getByRole('button', { name: 'Til alle samtaler' }))
+    expect(gaaTil).toHaveBeenLastCalledWith({ side: 'chat' }, { erstatt: true })
+    expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
     await userEvent.click(within(helside).getByRole('button', { name: /Sandkassegruppen/ }))
 
     await userEvent.click(within(helside).getByRole('button', { name: 'Gjenopprett' }))

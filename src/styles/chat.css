@@ -588,6 +588,13 @@
   transform: rotate(180deg);
 }
 
+/* Helsiden har lista ved siden av samtalen; i én kolonne (smalt) trengs knappen. */
+@media not all and (max-width: 47.5em) {
+  .chatmeny[data-helside] .chatsamtale__tilbake {
+    display: none;
+  }
+}
+
 .chatsamtale__hode {
   display: flex;
   flex: none;
