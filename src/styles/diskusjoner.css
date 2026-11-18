@@ -27,6 +27,9 @@
      (pillens luft og knappens). */
   --diskusjonsboble: var(--hoyde-toppmeny);
   --diskusjonsboble-luft: calc((var(--diskusjonsboble) - var(--ikon-ui)) / 2 - var(--kant));
+  /* Det bredeste boblen vokser til med pekeren over; en lengre overskrift
+     brytes over flere linjer, så den aldri går ut av vinduet. */
+  --diskusjonsboble-mest: min(26rem, 100vw - 2 * var(--diskusjonskant));
   --diskusjonspanel-minst: 28rem;
   /* Så bred at siden bak fortsatt får plass. */
   --diskusjonspanel-mest: max(var(--diskusjonspanel-minst), 100vw - 32rem);
@@ -227,6 +230,8 @@
 
 .diskusjonsboble:is(:hover, :focus-visible) {
   min-height: calc(var(--diskusjonsboble) + var(--rom-3));
+  max-width: var(--diskusjonsboble-mest);
+  padding-block: var(--rom-2);
   background: var(--flate-hevet);
 }
 
@@ -282,6 +287,13 @@
 
 .diskusjonsboble:is(:hover, :focus-visible) :is(.diskusjonsboble__tittel, .diskusjonsboble__hint) {
   opacity: 1;
+}
+
+/* Overskriften sier hvilken side diskusjonene gjelder og kan være lang;
+   synlig brytes den heller enn å gå ut av vinduet (`--diskusjonsboble-mest`). */
+.diskusjonsboble:is(:hover, :focus-visible) .diskusjonsboble__tittel {
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .diskusjonspanel__helside,
