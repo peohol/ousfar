@@ -38,6 +38,7 @@ const api = await import('../forside/api')
 const { Forside } = await import('../components/forside/Forside')
 const { INGEN_RETTIGHETER, RettigheterKilde } = await import('../auth/rettigheter')
 const { STANDARDOPPSETT, settSynlig } = await import('../forside/moduler')
+const { lyttEtterLesteEndringer } = await import('../varsler/bjella')
 
 const KF: Fagmiljoreferanse = { id: 'kf', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }
 const RT: Fagmiljoreferanse = { id: 'rt', nokkel: 'ous-rettstoksikologi', navn: 'OUS Rettstoksikologi', standard: false, apent: true, ikon: 'laboratorium' }
@@ -200,5 +201,30 @@ describe('Forsiden', () => {
     await userEvent.click(gjenopprett)
     expect(api.lagreOppsett).toHaveBeenLastCalledWith(STANDARDOPPSETT)
     expect(screen.queryByRole('region', { name: 'Mine oppgaver' })).toBeNull()
+  })
+
+  it('merker en føring i endringsloggen lest i bjella når den åpnes fra «Viktig nytt»', async () => {
+    const leste: (readonly string[])[] = []
+    const slutt = lyttEtterLesteEndringer((versjoner) => leste.push(versjoner))
+    try {
+      vis()
+      const viktig = panel('Viktig nytt')
+      const uleste = () => within(viktig).queryAllByRole('button', { name: /^Ulest: / })
+      const forHand = await waitFor(() => {
+        expect(uleste().length).toBeGreaterThan(0)
+        return uleste().length
+      })
+      // Raden er den samme knappen etterpå, bare uten «Ulest».
+      const rad = uleste()[0]!
+      await userEvent.click(rad)
+      expect(leste).toEqual([[expect.any(String)]])
+      expect(rad.textContent).not.toMatch(/^Ulest/)
+      expect(uleste()).toHaveLength(forHand - 1)
+      // Allerede lest: ingen ny lagring.
+      await userEvent.click(rad)
+      expect(leste).toHaveLength(1)
+    } finally {
+      slutt()
+    }
   })
 })

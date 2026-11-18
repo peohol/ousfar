@@ -12,7 +12,7 @@ import { RADER_PER_PANEL, type Oppsummering } from '../../forside/oppsummering'
 import { useAnalyttkatalog } from '../../katalog/Analyttkatalogkilde'
 import { useStoffregisterkilde } from '../../stoffregister/Stoffregisterkilde'
 import { hentEndringsloggstatus, merkVarslerLest, oppfriskVarsler } from '../../varsler/api'
-import { apneVarsler } from '../../varsler/apning'
+import { apneVarsler, merkEndringerLestIBjella } from '../../varsler/bjella'
 import { endringsvarsler, startstatus, type Endringsvarsel } from '../../varsler/modell'
 import { visEndringslogg } from '../endringsloggvisning'
 import type { Hendelse } from '../oppsummering/hendelse'
@@ -65,13 +65,27 @@ function hentPanel(modul: Databasemodul): Promise<Panelsvar> {
   }))
 }
 
+/** Det en rad gjør når den trykkes, ut over å føre brukeren dit: merke det lest. */
+interface Lesing {
+  varsel: (id: string, lest_kl: string) => void
+  endring: (varsel: Endringsvarsel) => void
+}
+
 /** Radene i et panel, i rekkefølgen panelet viser dem, høyst tre. */
-function rader(modul: Databasemodul, svar: Panelsvar, kontekst: Radkontekst, lest: (varsel: string, lest_kl: string) => void): Hendelse[] {
+function rader(modul: Databasemodul, svar: Panelsvar, kontekst: Radkontekst, lest: Lesing): Hendelse[] {
   const { oppsummering: o } = svar
-  const varsler = () => o.varsler.map((v) => varselrad(v, kontekst, () => !v.lest && lest(v.id, o.lest_kl)))
+  const varsler = () => o.varsler.map((v) => varselrad(v, kontekst, () => !v.lest && lest.varsel(v.id, o.lest_kl)))
   switch (modul) {
     case 'viktig_nytt':
-      return [...svar.endringer.map((v) => endringsrad(v, () => visEndringslogg(v.endring.versjon))), ...varsler()]
+      return [
+        ...svar.endringer.map((v) =>
+          endringsrad(v, () => {
+            visEndringslogg(v.endring.versjon)
+            if (!v.lest) lest.endring(v)
+          }),
+        ),
+        ...varsler(),
+      ]
         .sort(etterUlestOgTid)
         .slice(0, RADER_PER_PANEL)
     case 'aktuelt':
@@ -139,6 +153,7 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
   }))
   /** Varslene som er merket lest herfra, så prikken går bort med en gang. */
   const [leste, setLeste] = useState<ReadonlySet<string>>(new Set())
+  const lesteNa = useRef(leste)
   const siste = useRef(0)
 
   const hent = useCallback(() => {
@@ -159,9 +174,23 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
   // Hentes når panelet kommer fram, og på nytt når fagmiljøet byttes.
   useEffect(hent, [hent])
 
-  const lest = useCallback((varsel: string, lest_kl: string) => {
-    setLeste((s) => new Set(s).add(varsel))
-    merkVarslerLest([varsel], lest_kl).then(oppfriskVarsler, () => undefined)
+  const lest: Lesing = useMemo(() => {
+    /** Gir `true` første gang, så det samme ikke lagres to ganger. */
+    const merk = (id: string) => {
+      if (lesteNa.current.has(id)) return false
+      lesteNa.current = new Set(lesteNa.current).add(id)
+      setLeste(lesteNa.current)
+      return true
+    }
+    return {
+      varsel: (id, lest_kl) => {
+        if (merk(id)) merkVarslerLest([id], lest_kl).then(oppfriskVarsler, () => undefined)
+      },
+      // Bjella eier hvor langt brukeren er kommet i endringsloggen, og lagrer det.
+      endring: (varsel) => {
+        if (merk(varsel.id)) merkEndringerLestIBjella([varsel.endring.versjon])
+      },
+    }
   }, [])
 
   // Det som er hentet for et annet fagmiljø, vises aldri, heller ikke mens det nye hentes.

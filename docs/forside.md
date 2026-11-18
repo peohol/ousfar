@@ -41,7 +41,8 @@ egen hendelseslogg.
 
 En rad fra varslene merkes lest når den trykkes, som i varselvinduet. En
 føring i endringsloggen har ingen egen adresse; raden åpner endringsloggen med
-føringen. «Alle varsler» åpner varselvinduet (`apneVarsler`). Kritiske
+føringen og merker den lest i bjella (`merkEndringerLestIBjella`), som
+varselvinduet gjør. «Alle varsler» åpner varselvinduet (`apneVarsler`). Kritiske
 meldinger står i bjella uansett om «Viktig nytt» er skrudd av.
 
 ## Databasen: `forsideoppsummering(modul)`

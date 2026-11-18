@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { useBevart } from '../../oppdatering/Bevaring'
-import { lyttEtterApning } from '../../varsler/apning'
+import { lyttEtterApning } from '../../varsler/bjella'
 import { merketall } from '../../varsler/modell'
 import { Ikonknapp } from '../Ikonknapp'
 import { useVarsler } from './useVarsler'

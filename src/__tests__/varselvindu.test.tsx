@@ -6,7 +6,7 @@
  * Økten, endringsloggen og kallene mot databasen er erstattet; det er
  * skjermbildene som prøves.
  */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
@@ -143,6 +143,7 @@ vi.mock('../data/endringslogg', () => ({
 }))
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
+const { merkEndringerLestIBjella } = await import('../varsler/bjella')
 const { RettigheterKilde, lesRettigheter } = await import('../auth/rettigheter')
 
 beforeAll(() => {
@@ -185,6 +186,14 @@ describe('bjella', () => {
     await waitFor(() => expect(bjella().getAttribute('aria-label')).toBe('Varsler (3 uleste)'))
     expect(screen.getByText('3')).toBeTruthy()
     expect(api.lagreEndringsloggstatus).toHaveBeenCalledWith({ fra: '2.0.0', lest: [], arkivert: [] })
+  })
+
+  it('merker en føring lest når den er åpnet et annet sted, som på forsiden', async () => {
+    render(<Varselknapp />)
+    await waitFor(() => expect(bjella().getAttribute('aria-label')).toBe('Varsler (3 uleste)'))
+    act(() => merkEndringerLestIBjella(['2.1.0']))
+    await waitFor(() => expect(bjella().getAttribute('aria-label')).toBe('Varsler (2 uleste)'))
+    await waitFor(() => expect(api.lagreEndringsloggstatus).toHaveBeenLastCalledWith(expect.not.objectContaining({ fra: '2.0.0', lest: [] })))
   })
 
   it('teller ikke det brukeren har slått av', async () => {
