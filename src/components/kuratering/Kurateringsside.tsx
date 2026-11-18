@@ -18,15 +18,13 @@ import {
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Bryter } from '../Bryter'
-import { Lukkeknapp } from '../Lukkeknapp'
 import { Merke, type Merketone } from '../Merke'
-import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Bekreftknapp } from '../traad/Smadeler'
 import { useFaginnholdskilde } from '../stoffside/Faginnholdskilde'
 import { Agentfolging, Agentindikator, FOLG_HVER, STATUS_HVER, useEndringene, useGrenstatus, useSlaAvVedRulling } from './Folgagenten'
 import { Kommentartrader, apneTraader } from './Kommentartrader'
 import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
-import type { Utgavesideprops } from './Versjonsside'
+import { Utgavelukk, type Utgavesideprops } from './Versjonsside'
 
 const STATUSTONE: Partial<Record<Grendetaljer['status'], Merketone>> = {
   godkjent: 'referanse',
@@ -65,20 +63,18 @@ export function Kurateringsside({ gren, ...props }: Utgavesideprops & { gren: st
   )
 }
 
-function Kurateringsinnhold({ gren: id, onGaaTil, ...props }: Utgavesideprops & { gren: string }) {
+function Kurateringsinnhold({ gren: id, ...props }: Utgavesideprops & { gren: string }) {
   const { kuratering } = useFaginnholdskilde()
   if (!kuratering) {
-    return <Grenmelding tekst="Kurateringsgrenene er ikke tilgjengelige her." onLukk={() => onGaaTil({ side: 'stoffregister' })} />
+    return <Grenmelding tekst="Kurateringsgrenene er ikke tilgjengelige her." onLukk={props.onLukk} />
   }
-  return <Grenvisning gren={id} klient={kuratering} onGaaTil={onGaaTil} {...props} />
+  return <Grenvisning gren={id} klient={kuratering} {...props} />
 }
 
 function Grenmelding({ tekst, onLukk }: { tekst: string; onLukk: () => void }) {
   return (
     <section className="stoffside" aria-label="Kurateringsgren">
-      <ToppmenyInnhold spor="lukk">
-        <Lukkeknapp onLukk={onLukk} />
-      </ToppmenyInnhold>
+      <Utgavelukk onLukk={onLukk} />
       <div className="utgavebanner" role="status">
         <p className="utgavebanner__tittel">{tekst}</p>
       </div>
@@ -86,7 +82,7 @@ function Grenmelding({ tekst, onLukk }: { tekst: string; onLukk: () => void }) {
   )
 }
 
-function Grenvisning({ gren: id, klient: kuratering, onGaaTil, ...props }: Utgavesideprops & { gren: string; klient: Kurateringsklient }) {
+function Grenvisning({ gren: id, klient: kuratering, onGaaTil, onLukk, ...props }: Utgavesideprops & { gren: string; klient: Kurateringsklient }) {
   const [revisjon, setRevisjon] = useBevart<number | null>('revisjon', null)
   const hent = useCallback(async () => {
     const gren = await kuratering.les(id, revisjon ?? undefined)
@@ -122,7 +118,7 @@ function Grenvisning({ gren: id, klient: kuratering, onGaaTil, ...props }: Utgav
     return (
       <Grenmelding
         tekst={tilstand.status === 'feil' ? `Fikk ikke hentet kurateringsgrenen. ${tilstand.melding}` : 'Henter kurateringsgrenen …'}
-        onLukk={() => onGaaTil({ side: 'stoffregister' })}
+        onLukk={onLukk}
       />
     )
   }
@@ -164,12 +160,10 @@ function Grenvisning({ gren: id, klient: kuratering, onGaaTil, ...props }: Utgav
     <>
       {visning ? (
         // Siden står mens revisjonene skifter, med de samme skuffene åpne, så den som følger agenten ser endringene der de skjer.
-        <Utgavevisning stoff={gren.stoff} utgave={visning} navn={`kuratering:${gren.id}`} banner={banner} onLukk={tilSiden} {...props} />
+        <Utgavevisning stoff={gren.stoff} utgave={visning} navn={`kuratering:${gren.id}`} banner={banner} onLukk={onLukk} {...props} />
       ) : (
         <section className="stoffside" aria-label="Kurateringsgren">
-          <ToppmenyInnhold spor="lukk">
-            <Lukkeknapp onLukk={tilSiden} />
-          </ToppmenyInnhold>
+          <Utgavelukk onLukk={onLukk} />
           {banner}
         </section>
       )}

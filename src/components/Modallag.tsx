@@ -3,6 +3,7 @@ import { Ikon } from './ikon/Ikon'
 import type { Ikonnavn } from './ikon/register'
 import { Ikonknapp } from './Ikonknapp'
 import { useTrykkUtenfor } from '../hooks/useTrykkUtenfor'
+import { overstLagInni } from '../hooks/lagstakk'
 import '../styles/modallag.css'
 
 /**
@@ -144,9 +145,11 @@ export function Modallag({
   // Men nettleseren lar ikke `cancel` stanses to ganger på rad uten et klikk
   // imellom, og lukker da laget uansett. Når laget kan ville bli stående, tar
   // det derfor Escape selv, før nettleseren gjør det. Et felt inni som alt har
-  // brukt tasten, går foran.
+  // brukt tasten, går foran, og det gjør også et lag inni, som et nedtrekk:
+  // det lukkes alene gjennom lagstakken, og neste trykk går hit.
   const paaTast = (hendelse: React.KeyboardEvent<HTMLDialogElement>) => {
     if (!vedLukking || hendelse.key !== 'Escape' || hendelse.defaultPrevented) return
+    if (overstLagInni(dialog.current)) return
     hendelse.preventDefault()
     lukk()
   }

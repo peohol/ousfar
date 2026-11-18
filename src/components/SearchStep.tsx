@@ -21,6 +21,11 @@ export interface SearchStepProps {
   onQueryChange: (value: string) => void
   onSelect: (analyte: Analyte) => void
   onReset: () => void
+  /**
+   * Om fortolkningen vises. Feltet får fokus hver gang den kommer fram, også
+   * når den åpnes fra forsiden eller en side lukkes over den.
+   */
+  synlig?: boolean
 }
 
 /** Et vanlig tegn brukeren mente å skrive inn i søkefeltet. */
@@ -58,14 +63,15 @@ export function SearchStep({
   onSelect,
   onReset,
   onFilter,
+  synlig = true,
 }: SearchStepProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const tomt = query === ''
   const stopp = katalogstopp(useKatalogkilde())
 
   useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
+    if (synlig) inputRef.current?.focus()
+  }, [synlig])
 
   // Et klikk utenfor feltet tar fokus med seg, og da ville skriving forsvunnet
   // i ingenting. Første tegn henter fokus tilbake før tegnet settes inn.

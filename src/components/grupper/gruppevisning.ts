@@ -1,5 +1,6 @@
 import { gruppeadresse } from '../../domain/rute'
 import { lagSignal } from '../../domain/signal'
+import { erstattAdressen } from '../../hooks/useRute'
 import { forlatIdelagene } from '../ideer/idevisning'
 import type { Forlat } from '../ideer/useForlatvakt'
 
@@ -42,7 +43,7 @@ export function meldGruppesiden(forlat: Forlat): () => void {
 function gaTil(adresse: string, erstatt: boolean, deretter?: () => void) {
   const ga = () => {
     if (window.location.hash !== adresse) {
-      if (erstatt) window.location.replace(adresse)
+      if (erstatt) erstattAdressen(adresse)
       else window.location.hash = adresse
     }
     deretter?.()

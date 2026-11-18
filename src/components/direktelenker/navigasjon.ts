@@ -2,6 +2,7 @@ import { adresseForSide, diskusjonssideFor } from '../../diskusjoner/modell'
 import { hentLenkemaal } from '../../direktelenker/api'
 import type { Lenkemal } from '../../direktelenker/mal'
 import { lesRute } from '../../domain/rute'
+import { erstattAdressen } from '../../hooks/useRute'
 import { lagSignal } from '../../domain/signal'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
 import { forlatSkjemaene, visGruppeide } from '../grupper/gruppevisning'
@@ -45,7 +46,7 @@ export async function apneDirektelenke(mal: Lenkemal, { erstatt = false }: { ers
     visDiskusjon(side, mal.id, mal.kommentar)
     if (diskusjonssideFor(lesRute(window.location.hash)) !== side) {
       const adresse = adresseForSide(side)
-      if (erstatt) window.location.replace(adresse)
+      if (erstatt) erstattAdressen(adresse)
       else window.location.hash = adresse
     }
   })

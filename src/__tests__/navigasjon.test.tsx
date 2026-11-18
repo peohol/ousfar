@@ -123,7 +123,8 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
-  window.location.hash = ''
+  // Testene begynner i fortolkningssøket; appen åpner på forsiden.
+  window.location.hash = '#/fortolkning'
   databasen.kall = []
   okt.rolle = 'user'
   okt.lokalAdmin = false
@@ -308,6 +309,126 @@ describe('stoffene uten analyttkode', { timeout: 20_000 }, () => {
   })
 })
 
+describe('forsiden og veien tilbake', { timeout: 20_000 }, () => {
+  /** Forsiden står når knappen inn til fortolkningen er der. */
+  const forsiden = () => screen.findByRole('button', { name: 'Åpne fortolkning' })
+  const soket = () => within(fortolkningen()).getByRole('textbox', { name: 'Søk etter analytt eller kode' })
+
+  it.each(['#/', ''])('åpner forsiden på «%s», med fortolkningen skjult bak', async (hash) => {
+    window.location.hash = hash
+    await visApp()
+    expect(await forsiden()).toBeTruthy()
+    expect(fortolkningen().hidden).toBe(true)
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Åpne fortolkning' }))
+  })
+
+  it('går fra forsiden til søket og tilbake med knappene', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/'
+    await visApp()
+    await user.click(await forsiden())
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning'))
+    expect(fortolkningen().hidden).toBe(false)
+    expect(soket()).toBeTruthy()
+
+    await user.click(within(fortolkningen()).getByRole('button', { name: 'Til forsiden' }))
+    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    expect(await forsiden()).toBeTruthy()
+    expect(fortolkningen().hidden).toBe(true)
+  })
+
+  it('åpner alltid søket fra forsiden, også når en analytt står åpen bak', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await velgNortriptylin(user)
+    window.location.hash = '#/'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    await user.click(await forsiden())
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning'))
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Velg konsentrasjon' })).toBeNull())
+    expect(soket()).toBeTruthy()
+  })
+
+  it('stopper Escape i søket: feltet tømmes, men søket står', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.keyboard('zz')
+    expect(soket()).toHaveProperty('value', 'zz')
+    await user.keyboard('{Escape}')
+    expect(soket()).toHaveProperty('value', '')
+    await user.keyboard('{Escape}{Escape}')
+    expect(window.location.hash).toBe('#/fortolkning')
+    expect(fortolkningen().hidden).toBe(false)
+    expect(screen.queryByRole('button', { name: 'Åpne fortolkning' })).toBeNull()
+  })
+
+  it('lukker en stoffside tilbake til forsiden når den ble åpnet derfra', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/'
+    await visApp()
+    await forsiden()
+    window.location.hash = '#/stoff/nortriptylin'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    await stoffsideFor('Nortriptylin')
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    expect(await forsiden()).toBeTruthy()
+    expect(stoffsiden()).toBeNull()
+  })
+
+  it('lukker en stoffside åpnet fra en lenke utenfra til forsiden, uten å gå ut av appen', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/stoff/nortriptylin'
+    await visApp()
+    await stoffsideFor('Nortriptylin')
+    const oppforinger = window.history.length
+    const tilbake = vi.spyOn(window.history, 'back')
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    expect(tilbake).not.toHaveBeenCalled()
+    // Forsiden tar plassen til lenken, så nettleserens tilbake går ut i ett steg.
+    expect(window.history.length).toBe(oppforinger)
+    expect(await forsiden()).toBeTruthy()
+  })
+
+  it('følger nettleserens tilbake fra en stoffside til søket den ble åpnet fra', async () => {
+    window.location.hash = '#/fortolkning'
+    await visApp()
+    window.location.hash = '#/stoff/nortriptylin'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    await stoffsideFor('Nortriptylin')
+    window.history.back()
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning'))
+    await waitFor(() => expect(fortolkningen().hidden).toBe(false))
+    expect(stoffsiden()).toBeNull()
+  })
+
+  it('viser «Siden finnes ikke» for en ukjent adresse, lar adressen stå, og har vei til forsiden', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/finnes-ikke'
+    await visApp()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Siden finnes ikke' })).toBeTruthy()
+    expect(window.location.hash).toBe('#/finnes-ikke')
+    expect(document.title).toBe('Siden finnes ikke – OUSFAR')
+    expect(fortolkningen().hidden).toBe(true)
+    await user.click(screen.getByRole('button', { name: 'Til forsiden' }))
+    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    expect(await forsiden()).toBeTruthy()
+  })
+
+  it('har snarveier til forsiden og fortolkningen øverst i menyen', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    const meny = screen.getByRole('navigation', { name: 'Meny' })
+    expect(within(meny).getByRole('link', { name: 'Forsiden' }).getAttribute('href')).toBe('#/')
+    expect(within(meny).getByRole('link', { name: 'Fortolkning' }).getAttribute('href')).toBe('#/fortolkning')
+    // Fortolkningen er siden brukeren står på.
+    expect(within(meny).getByRole('link', { name: 'Fortolkning' }).getAttribute('aria-current')).toBe('page')
+    expect(within(meny).getByRole('link', { name: 'Forsiden' }).getAttribute('aria-current')).toBeNull()
+  })
+})
+
 describe('fortolkningssidene', () => {
   it('gir analytten som fortolkes, sin egen adresse, og tilbakeknappen går til søket med søket i behold', async () => {
     const user = userEvent.setup()
@@ -315,7 +436,7 @@ describe('fortolkningssidene', () => {
     await velgNortriptylin(user)
     expect(window.location.hash).toBe('#/fortolkning/nor')
 
-    window.location.hash = '#/'
+    window.location.hash = '#/fortolkning'
     window.dispatchEvent(new HashChangeEvent('hashchange'))
     await waitFor(() => expect(screen.queryByRole('region', { name: 'Velg konsentrasjon' })).toBeNull())
     expect(within(fortolkningen()).getByRole('textbox', { name: 'Søk etter analytt eller kode' })).toHaveProperty('value', 'nor')
@@ -337,7 +458,7 @@ describe('fortolkningssidene', () => {
   it('går til søket for en analytt som ikke finnes, uten å legge noe i historikken', async () => {
     window.location.hash = '#/fortolkning/finnesikke'
     await visApp()
-    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning'))
     expect(within(fortolkningen()).getByRole('textbox', { name: 'Søk etter analytt eller kode' })).toBeTruthy()
   })
 })
@@ -354,7 +475,7 @@ describe('adressene', () => {
     window.location.hash = '#/stoff/nortriptylin'
     await visApp()
     await stoffsideFor('Nortriptylin')
-    window.location.hash = '#/'
+    window.location.hash = '#/fortolkning'
     window.dispatchEvent(new HashChangeEvent('hashchange'))
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
     expect(screen.queryByRole('heading', { level: 1, name: 'Nortriptylin' })).toBeNull()
@@ -389,7 +510,8 @@ describe('gamle adresser etter analyttkoden', () => {
     const legg = vi.spyOn(window.history, 'pushState')
     await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/fortolkning/hbup'))
-    expect(erstatt.mock.calls.map(([, , adresse]) => adresse)).toEqual(['#/fortolkning/hbup'])
+    // Kall uten adresse merker bare oppføringen med inngangsveien.
+    expect(erstatt.mock.calls.map(([, , adresse]) => adresse).filter(Boolean)).toEqual(['#/fortolkning/hbup'])
     expect(legg).not.toHaveBeenCalled()
     expect(window.history.length).toBe(oppforinger)
     expect(fortolkningen().hidden).toBe(false)
@@ -610,12 +732,13 @@ describe('fagsøket i hele appen', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
   }, 20_000)
 
-  it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir fortolkningen', async () => {
+  it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir forsiden', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/verktoy/bytte-antidepressiv'
     await visApp()
     await waitFor(() => expect(window.location.hash).toBe('#/'))
-    expect(fortolkningen().hidden).toBe(false)
+    expect(await screen.findByRole('button', { name: 'Åpne fortolkning' })).toBeTruthy()
+    expect(fortolkningen().hidden).toBe(true)
     expect(screen.queryByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeNull()
 
     await user.keyboard('{Control>}m{/Control}')

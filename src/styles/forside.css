@@ -1,0 +1,103 @@
+/**
+ * Forsiden (`#/`, `src/components/forside/`) og siden for en ukjent adresse:
+ * fagmiljøets navn som sidetittel og hovedhandlingen, fortolkningen, i et
+ * bredt panel (`docs/design/d0-dashboard-chat/`, skisse 01 og 23). Alle
+ * verdier er tokens.
+ */
+
+.app[data-side='forside'],
+.app[data-side='ukjent'] {
+  grid-template-columns: minmax(0, 1fr);
+  place-items: start center;
+}
+
+.scene--forside {
+  width: min(100%, var(--bredde-oversikt));
+}
+
+.forside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--panelluft);
+  padding-block: var(--rom-9);
+}
+
+.forside--ukjent {
+  gap: var(--rom-5);
+}
+
+.forside__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-sidetittel);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.forside__tittel:focus {
+  outline: none;
+}
+
+.forside__hovedhandling {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rom-6) var(--rom-8);
+  padding: var(--rom-8) var(--rom-9);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+}
+
+.forside__ikon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--ikon-plot) + 2 * var(--rom-4));
+  aspect-ratio: 1;
+  border-radius: var(--runding-pille);
+  background: var(--flate-hevet);
+}
+
+.forside__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.forside__handlingstittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+}
+
+.forside__beskrivelse {
+  margin: 0;
+  color: var(--blekk-dempet);
+  text-wrap: pretty;
+}
+
+@media (max-width: 47.5em) {
+  .forside {
+    padding-block: var(--rom-7);
+  }
+
+  .forside__hovedhandling {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--rom-6) var(--rom-5) var(--rom-7);
+    border-radius: var(--runding-kort);
+  }
+
+  .forside__ikon {
+    display: none;
+  }
+}
+
+/* Veien tilbake fra fortolkningssøket, over søket. */
+.fortolkning__forsiden {
+  align-self: flex-start;
+}

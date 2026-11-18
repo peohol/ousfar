@@ -265,7 +265,10 @@ stoffregisteret. En gammel adresse som `#/analytt/HBUP` fører til
 fortolkningen av koden.
 
 Fortolkningen blir stående som den var bak en åpen side, og tastene dens
-ligger i ro så lenge siden vises; `Esc` lukker siden.
+ligger i ro så lenge siden vises; `Esc` lukker siden og går tilbake dit
+brukeren kom fra, eller til forsiden når siden ble åpnet fra en lenke. Appen
+åpner på forsiden (`#/`), og fortolkningssøket har adressen `#/fortolkning`.
+Adressene, tilbake og Escape er beskrevet i `docs/navigasjon.md`.
 
 Siden har sju paneler — identitet, viktige data, farmakodynamikk, dosering,
 indikasjon, farmakokinetikk og serumkonsentrasjoner — med referansene

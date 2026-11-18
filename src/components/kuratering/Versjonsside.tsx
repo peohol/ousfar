@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { Rute } from '../../domain/rute'
 import { useHenting } from '../../hooks/useHenting'
+import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { versjonslinje } from '../../kuratering/modell'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
@@ -14,6 +15,25 @@ import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
 export type Utgavesideprops = Pick<StoffsideProps, 'register'> & {
   /** Går til en annen side i appen. */
   onGaaTil: (rute: Rute) => void
+  /**
+   * Lukker siden: tilbake dit brukeren kom fra i appen, ellers til forsiden
+   * (`docs/navigasjon.md`). «Til fagsiden» er en egen handling.
+   */
+  onLukk: () => void
+}
+
+/**
+ * Lukk i toppmenyen, og `Escape`, for en utgaveside som ikke viser selve
+ * fagsiden (mens den hentes, eller når den ikke finnes). Fagsiden lukker
+ * seg selv på samme måte.
+ */
+export function Utgavelukk({ onLukk }: { onLukk: () => void }) {
+  useLukkMedEscape(onLukk)
+  return (
+    <ToppmenyInnhold spor="lukk">
+      <Lukkeknapp onLukk={onLukk} />
+    </ToppmenyInnhold>
+  )
 }
 
 /**
@@ -30,7 +50,7 @@ export function Versjonsside({ stoff, nr, ...props }: Utgavesideprops & { stoff:
   )
 }
 
-function Versjonsinnhold({ stoff, nr, onGaaTil, ...props }: Utgavesideprops & { stoff: string; nr: number }) {
+function Versjonsinnhold({ stoff, nr, onGaaTil, onLukk, ...props }: Utgavesideprops & { stoff: string; nr: number }) {
   const { kuratering, kanRedigere } = useFaginnholdskilde()
   const hent = useCallback(async () => {
     if (!kuratering) throw new Error('Versjonene er ikke tilgjengelige her.')
@@ -65,9 +85,7 @@ function Versjonsinnhold({ stoff, nr, onGaaTil, ...props }: Utgavesideprops & { 
   if (!data?.versjon) {
     return (
       <section className="stoffside" aria-label="Versjon av fagsiden">
-        <ToppmenyInnhold spor="lukk">
-          <Lukkeknapp onLukk={tilSiden} />
-        </ToppmenyInnhold>
+        <Utgavelukk onLukk={onLukk} />
         <div className="utgavebanner" role="status">
           <p className="utgavebanner__tittel">
             {tilstand.status === 'laster'
@@ -146,7 +164,7 @@ function Versjonsinnhold({ stoff, nr, onGaaTil, ...props }: Utgavesideprops & { 
         utgave={versjon.utgave}
         navn={`versjon:${stoff}:${nr}`}
         banner={banner}
-        onLukk={tilSiden}
+        onLukk={onLukk}
         {...props}
       />
       <Sidesammenligning

@@ -74,6 +74,10 @@
   --rom-scene: clamp(1rem, 4vw, 3.5rem);
   /* Scenen for oppslagssidene: fagsidene og stoffregisteret. */
   --bredde-infoside: 64rem;
+  /* Forsiden og andre oversikter med paneler side om side (D0-designfasiten). */
+  --bredde-oversikt: 70rem;
+  /* Luften mellom panelene på en oversikt. */
+  --panelluft: var(--rom-8);
   /* Kolonnen fortolkningsstegene står i (Atlas: 820–900 px). */
   --bredde-fortolkning: 56.25rem;
   /* Søkene i toppmenyen i bruk: rullegardinen og treffpanelet under dem, og

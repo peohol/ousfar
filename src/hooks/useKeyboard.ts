@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { lagErApne } from './lagstakk'
 import { enterErLedig, feltetTarTegnene, mellomromErLedig, tastenHorerTilFokus, type Fokusert } from '../domain/tastatur'
 
 export type KeyHandler = (event: KeyboardEvent) => void
@@ -27,7 +28,7 @@ export function modaltLagLiggerOver(): boolean {
  * `data-lag` i stedet.
  */
 export function lagLiggerOver(): boolean {
-  return modaltLagLiggerOver() || document.querySelector('[data-lag]') !== null
+  return modaltLagLiggerOver() || lagErApne() || document.querySelector('[data-lag]') !== null
 }
 
 /**
@@ -113,6 +114,8 @@ export function useKeyboard(handlers: Record<string, KeyHandler | undefined>, en
   useEffect(() => {
     if (!enabled) return
     function onKeyDown(event: KeyboardEvent) {
+      // Et lag eller et felt som alt har brukt tasten, går foran (`lagstakk.ts`).
+      if (event.defaultPrevented) return
       if (event.ctrlKey || event.metaKey || event.altKey) return
       if (lagLiggerOver() || !tastenGjelderFortolkningen(event)) return
       ref.current[event.key]?.(event)

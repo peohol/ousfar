@@ -4,7 +4,8 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
 /**
  * Adressene i appen.
  *
- * Fortolkningen er arbeidsflyten appen åpner i, på `#/`. Når en analytt er
+ * Appen åpner på forsiden, `#/`. Fortolkningen har sin egen adresse,
+ * `#/fortolkning`, med søket. Når en analytt er
  * valgt, er fortolkningen av den en side med sin egen adresse, etter
  * analyttens nøkkel ({@link fortolkningsnokkel}), så den kan ha sine egne
  * diskusjoner og et varsel kan lede dit:
@@ -93,9 +94,20 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *   #/forslag
  *   #/forslag/til-behandling
  *   #/forslag/<forslags-ID>
+ *
+ * En adresse appen ikke kjenner, er siden «Siden finnes ikke», med adressen
+ * slik den sto. Den tolkes aldri som fortolkningen eller forsiden, så en feil
+ * i en lenke ikke sender brukeren et sted hen ikke ba om.
  */
 
 export type Rute =
+  | { side: 'forside' }
+  | {
+      /** En adresse appen ikke kjenner. */
+      side: 'ukjent'
+      /** Adressen slik den sto, så adressefeltet ikke skrives om. */
+      adresse: string
+    }
   | {
       side: 'fortolkning'
       /** Nøkkelen til analytten som fortolkes ({@link fortolkningsnokkel}). Utelatt uten analytt. */
@@ -155,7 +167,22 @@ export type Rute =
 /** Fanene på forslagsoversikten utenom «Mine forslag». */
 export type Forslagsfane = 'behandling'
 
+/** Forsiden, der appen åpner. */
+export const FORSIDE: Rute = { side: 'forside' }
+
+/** Fortolkningssøket, uten noen analytt valgt. */
 export const FORTOLKNING: Rute = { side: 'fortolkning' }
+
+/** Adressen til forsiden. */
+export const FORSIDEADRESSE = '#/'
+
+/** Adressen til fortolkningssøket. */
+export const FORTOLKNINGSADRESSE = '#/fortolkning'
+
+/** Forsiden: ingen adresse, eller en som ikke er en side i appen (et anker, `#innhold`). */
+const FORSIDEN = /^(?:#(?!\/.)(?:\/)?.*)?$/
+
+const FORTOLKNINGSSOK = /^#\/fortolkning\/?$/i
 
 const FORTOLKNINGSSIDE = /^#\/fortolkning\/([a-z0-9]+(?:-[a-z0-9]+)*)(?:\/(rediger)((?:\/[^/?#]+)*))?\/?$/i
 
@@ -235,13 +262,14 @@ export function verktoyadresse(id?: string): string {
 const MAKS_STEDSLEDD = 2
 
 /**
- * Ruten adressen peker på. Alt som ikke er en fagside, søket,
- * stoffregisteret eller et verktøy, er
- * fortolkningen. Et navn eller et alias gir ruten til stoffet det fører til, og
- * en gammel analyttadresse ruten til fortolkningen av koden;
- * {@link kanoniskAdresse} sier om adressefeltet bør skrives om.
+ * Ruten adressen peker på. Et navn eller et alias gir ruten til stoffet det
+ * fører til, og en gammel analyttadresse ruten til fortolkningen av koden;
+ * {@link kanoniskAdresse} sier om adressefeltet bør skrives om. En adresse
+ * appen ikke kjenner, gir siden «Siden finnes ikke» ({@link ukjent}).
  */
 export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, katalog?: Analyttkatalog): Rute {
+  if (FORSIDEN.test(hash)) return FORSIDE
+  if (FORTOLKNINGSSOK.test(hash)) return FORTOLKNING
   const sok = SOK.exec(hash)
   if (sok) return { side: 'sok', q: new URLSearchParams(sok[1] ?? '').get('q') ?? '' }
   if (STOFFREGISTERSIDE.test(hash)) return { side: 'stoffregister' }
@@ -280,11 +308,16 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
     // Et kjent navn eller alias fører til stoffets nøkkel; en nøkkel
     // registeret ikke har (en ny side i databasen), står som den er.
     const slug = register.kanonisk(stoff.nokkel)?.slug ?? stoffslug(stoff.nokkel)
-    return slug ? stoffrute(slug, stoff.sted) : FORTOLKNING
+    return slug ? stoffrute(slug, stoff.sted) : ukjent(hash)
   }
   const analytt = lesSide(GAMMEL_ANALYTT, hash)
   if (analytt) return fortolkningsrute(katalog?.finn(analytt.nokkel)?.fortolkning.kode)
-  return FORTOLKNING
+  return ukjent(hash)
+}
+
+/** Siden for en adresse appen ikke kjenner. */
+export function ukjent(hash: string): Rute {
+  return { side: 'ukjent', adresse: hash }
 }
 
 function stoffrute(stoff: string, sted?: readonly string[]): Rute {
@@ -340,6 +373,10 @@ function lesSted(hale: string): string[] | undefined {
 /** Adressen til en rute, slik den står i adressefeltet. */
 export function adresse(rute: Rute): string {
   switch (rute.side) {
+    case 'forside':
+      return FORSIDEADRESSE
+    case 'ukjent':
+      return rute.adresse
     case 'stoff':
       return stoffadresse(rute.stoff, rute.sted)
     case 'sok':
@@ -357,7 +394,7 @@ export function adresse(rute: Rute): string {
     case 'forslag':
       return forslagsadresse(rute.forslag, rute.fane)
     default:
-      if (!rute.analytt) return '#/'
+      if (!rute.analytt) return FORTOLKNINGSADRESSE
       if (!rute.rediger) return `#/fortolkning/${rute.analytt}`
       return ['#/fortolkning', rute.analytt, REDIGER, ...(rute.sted ?? []).map(encodeURIComponent)].join('/')
   }
@@ -402,7 +439,7 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
 }
 
 /**
- * Siden ruten står på, uten stedet på den og uten søket: `fortolkning`,
+ * Siden ruten står på, uten stedet på den og uten søket: `forside`, `ukjent`, `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
  * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3`, `kuratering/<gren-ID>`,
  * `grupper`, `grupper/<gruppe-ID>`, `forslag`, `forslag/til-behandling` og `forslag/<forslags-ID>`. Det er formen områdene i endringsloggen skrives på
