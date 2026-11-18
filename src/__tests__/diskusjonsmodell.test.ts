@@ -8,13 +8,16 @@ import {
   STOFFREGISTERSIDE,
   UKATEGORISERTE,
   adresseForSide,
+  diskusjonsoverskrift,
   diskusjonssideFor,
   diskusjonssider,
+  fortolkningsemne,
   emojiFeil,
   erEnEmoji,
   flyttDiskusjon,
   flyttKategori,
   grupper,
+  gruppeside,
   kanSletteDiskusjon,
   kanStyreDiskusjon,
   kategorinavnFeil,
@@ -110,6 +113,23 @@ describe('sidene', () => {
       { side: 'fortolkning:diaz-dmi', navn: 'Fortolkning av DIAZ+DMI' },
       { side: 'fortolkning:li', navn: 'Fortolkning av Litium' },
     ])
+  })
+
+  it('gir overskriften over diskusjonene med typen side og det den handler om', () => {
+    expect(diskusjonsoverskrift('stoff:thc', 'THC')).toBe('Diskusjoner om fagsiden til THC')
+    expect(diskusjonsoverskrift('stoff:litium', 'Litium')).toBe('Diskusjoner om fagsiden til litium')
+    expect(diskusjonsoverskrift('stoff:venlafaksin', 'O-desmetylvenlafaksin')).toBe('Diskusjoner om fagsiden til O-desmetylvenlafaksin')
+    expect(diskusjonsoverskrift('fortolkning:amtnorsum', fortolkningsemne({ kode: 'AMTNORSUM', visningsnavn: 'Sum: Amitriptylin + nortriptylin' }))).toBe(
+      'Diskusjoner om fortolkningen til amitriptylin + nortriptylin',
+    )
+    expect(diskusjonsoverskrift('fortolkning:diaz-dmi', fortolkningsemne({ kode: 'DIAZ+DMI', visningsnavn: '' }))).toBe(
+      'Diskusjoner om fortolkningen til DIAZ+DMI',
+    )
+    expect(diskusjonsoverskrift(STOFFREGISTERSIDE, 'Stoffregisteret')).toBe('Diskusjoner om stoffregisteret')
+    // Gruppens navn står som gruppen har skrevet det.
+    expect(diskusjonsoverskrift(gruppeside('3f1e2d4c-0000-4000-8000-000000000001'), 'Akuttgruppa')).toBe('Diskusjoner i gruppen Akuttgruppa')
+    // Uten emne, før analytten er lest.
+    expect(diskusjonsoverskrift('fortolkning:li', '')).toBe('Diskusjoner')
   })
 })
 

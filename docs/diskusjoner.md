@@ -135,7 +135,10 @@ tilstander:
    toppmenyen, like høy som den og med samme luft rundt ikonet, og et blått
    tall for tråder med noe nytt. Resten av appen gir plass til den.
 2. **Pekeren over** (eller fokus fra tastaturet): boblen vokser litt mot
-   venstre, med «Diskusjoner» ved siden av ikonet og «Trykk for å vise» under. Bare CSS; den går tilbake når pekeren går ut.
+   venstre, med overskriften ved siden av ikonet og «Trykk for å vise» under. Bare CSS; den går tilbake når pekeren går ut.
+   Overskriften sier hvilken side diskusjonene gjelder, som «Diskusjoner om fagsiden til THC», «Diskusjoner om
+   fortolkningen til amitriptylin», «Diskusjoner om stoffregisteret» eller «Diskusjoner i gruppen …»
+   (`diskusjonsoverskrift` i `src/diskusjoner/modell.ts`), og er den samme over den åpne menyen.
 3. **Åpen**: et trykk på boblen åpner menyen, og fokus går til lukkeknappen.
    Den står åpen til lukkeknappen (✕ øverst til høyre) trykkes, også fra side
    til side; det lagres på brukeren. Resten av appen gir plass til den.

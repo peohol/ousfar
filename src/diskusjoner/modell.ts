@@ -6,6 +6,7 @@
  * `docs/diskusjoner.md`.
  */
 import { klartekst, type Riktekstdokument } from '../faginnhold/riktekst'
+import { iSetning, utenSum } from '../domain/names'
 import { erObjekt, tall, tekst, tekstEllerNull } from '../ideer/lesing'
 import { adresse, erId, fortolkningsnokkel, fortolkningsrute, gruppeadresse, stoffadresse, type Rute } from '../domain/rute'
 import { lesInnlegg, lesKommentarer, rensInnleggstekst, type Innlegg, type Kommentar } from '../traad/modell'
@@ -19,6 +20,9 @@ import { lesInnlegg, lesKommentarer, rensInnleggstekst, type Innlegg, type Komme
  * for siden til en gruppe. Samme form som `intern.er_diskusjonsside()`.
  */
 export type Diskusjonsside = `stoff:${string}` | `fortolkning:${string}` | `register:${string}` | `gruppe:${string}`
+
+/** Typen side, først i `Diskusjonsside`. */
+type Sidetype = Diskusjonsside extends `${infer T}:${string}` ? T : never
 
 const NOKKEL = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const SIDE = /^(stoff|fortolkning|register|gruppe):([a-z0-9]+(?:-[a-z0-9]+)*)$/
@@ -104,8 +108,36 @@ export function fortolkningssidenavn(analytt: { kode: string; visningsnavn?: str
   return `Fortolkning av ${analytt.visningsnavn || analytt.kode}`
 }
 
-/** Navnet på siden til en gruppe, slik den står over diskusjonene og i varslene. */
+/** Navnet på siden til en gruppe, slik den står i varslene og blant sidene en tråd kan flyttes til. */
 export const gruppesidenavn = (gruppe: { navn: string }): string => `Gruppen ${gruppe.navn}`
+
+/** Analytten fortolkningen gjelder, til overskriften over diskusjonene: visningsnavnet uten «Sum: ». */
+export const fortolkningsemne = (analytt: { kode: string; visningsnavn?: string | null }): string =>
+  utenSum(analytt.visningsnavn || analytt.kode)
+
+/**
+ * Hva diskusjonene på hver type side handler om, med emnet: stoffet,
+ * analytten, gruppen eller registeret. Stoff- og analyttnavn står med liten
+ * forbokstav der det er et vanlig ord (`iSetning`); navnet på en gruppe står
+ * som gruppen har skrevet det.
+ */
+const OM_SIDEN: Record<Sidetype, (emne: string) => string> = {
+  stoff: (emne) => `om fagsiden til ${iSetning(emne)}`,
+  fortolkning: (emne) => `om fortolkningen til ${iSetning(emne)}`,
+  register: (emne) => `om ${iSetning(emne)}`,
+  gruppe: (emne) => `i gruppen ${emne}`,
+}
+
+/**
+ * Overskriften over diskusjonene på en side, som «Diskusjoner om fagsiden til
+ * THC» eller «Diskusjoner om fortolkningen til amitriptylin», så det er tydelig
+ * at trådene gjelder siden som står åpen og ikke hele appen. Uten emne (en
+ * analytt som ikke er lest ennå) står bare «Diskusjoner».
+ */
+export function diskusjonsoverskrift(side: Diskusjonsside, emne: string): string {
+  const [, type] = SIDE.exec(side) ?? []
+  return type && emne ? `Diskusjoner ${OM_SIDEN[type as Sidetype](emne)}` : 'Diskusjoner'
+}
 
 /**
  * Sidene en tråd kan stå på: fagsiden til hvert stoff, fortolkningen av hver
