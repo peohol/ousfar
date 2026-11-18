@@ -51,8 +51,20 @@ forbindelsesregisteret i en PR.
 
 ## Overgangen
 
-Databasen gir fortsatt koblingene, forbindelsene og datakortbruken i
-`les_analyttkatalog()`, og `les_stoffreferanseomrader` står, så faner med
-appen fra før virker til de lastes på nytt. Når overgangen er over, fjernes
-de sammen med `analyttkatalog_koblinger` og `analyttkoblede_stoffer` (#405);
-det er en sletting og venter på Peders ja.
+Appen og databasen rulles ut hver for seg. Databasen gir fortsatt koblingene,
+forbindelsene og datakortbruken i `les_analyttkatalog()`, og
+`les_stoffreferanseomrader` står, så faner med appen fra før virker til de
+lastes på nytt.
+
+Møter den nye appen en database der migrasjonen ikke er kjørt ennå (eller der
+den stoppet), har katalogen ikke referanseområdene. Da finner fortolkningen
+dem som før, på fagsidene, etter samme regel som migrasjonen kopierer dem med,
+og steg 2 viser de samme tallene før og etter (`lesReferanseomrader` i
+`src/katalog/referanseomrader.ts`). Kan de ikke leses, sier fortolkningen fra i
+stedet for å vise steg 2 uten grensene. Det er det eneste stedet fortolkningen
+leser fra fagsidene.
+
+Når overgangen er over, fjernes dette sammen med feltene fra før i
+`les_analyttkatalog()`, `les_stoffreferanseomrader`, `analyttkatalog_koblinger`
+og `analyttkoblede_stoffer` (#405); det er en sletting og venter på Peders ja.
+

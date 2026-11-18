@@ -74,11 +74,28 @@ export interface Katalogoppforing {
   koder: Katalogkodedata[]
 }
 
+/**
+ * Det fortolkningen trenger for å finne referanseområdene på fagsidene, slik
+ * appen gjorde før de kom i katalogen: hvilket kort på siden til hvilket
+ * stoff hver kode brukte. Bare i et svar fra en database der migrasjonen
+ * `20261118090000_fortolkning_skilt_fra_fagsidene.sql` ikke er kjørt ennå
+ * (`docs/domener.md`, «Overgangen»; `src/katalog/referanseomrader.ts`).
+ * Fjernes med overgangen (#405).
+ */
+export interface Eldrekatalog {
+  /** Kortet hver kode brukte: sidens egne (`gjelder: null`) eller forbindelsens, på siden til det primære stoffet. */
+  bruk: { kode: string; stoff: string; gjelder: string | null }[]
+  /** Forbindelsen hver kode måler, for et kort med en analyttkode i `gjelder` fra før (#405). */
+  forbindelser: ReadonlyMap<string, string>
+}
+
 /** Katalogen slik databasen gir den. */
 export interface Katalogdata {
   fagmiljo: Katalogfagmiljo | null
   metoder: Analysemetode[]
   oppforinger: Katalogoppforing[]
+  /** Bare fra en database uten referanseområdene i katalogen (`Eldrekatalog`). */
+  eldre?: Eldrekatalog
 }
 
 export const TOM_KATALOGDATA: Katalogdata = { fagmiljo: null, metoder: [], oppforinger: [] }
@@ -120,6 +137,8 @@ export interface Analyttkatalog {
   finn: (kode: string) => Laboratorieanalytt | undefined
   /** Søkeoppføringen for en modul (`Analyttmodul.id`). */
   modulMedId: (id: string) => Analyte | undefined
+  /** Bare fra en database uten referanseområdene i katalogen (`Eldrekatalog`). */
+  eldre?: Eldrekatalog
 }
 
 /** Kodene i en oppføring satt sammen, slik `Analyte.kode` har dem: «DIAZ · DMI · OXA». */
@@ -185,6 +204,7 @@ export function byggKatalog(data: Katalogdata): Analyttkatalog {
     oppforinger,
     finn: (kode) => perKode.get(kode.trim().toUpperCase()),
     modulMedId: (id) => perModul.get(id),
+    ...(data.eldre && { eldre: data.eldre }),
   }
 }
 
@@ -208,7 +228,10 @@ export function fortolkningsadresseForAnalytt(kode: string, katalog: Analyttkata
   return analytt && adresse(fortolkningsrute(analytt.fortolkning.kode))
 }
 
-/** Referanseområdet for hver analyttkode som har et, slik steg 2 viser det. */
+/**
+ * Referanseområdet for hver analyttkode som har et, slik steg 2 viser det.
+ * For en katalog fra en database uten dem, se `lesReferanseomrader`.
+ */
 export function referanseomraderI(katalog: Analyttkatalog): ReadonlyMap<string, Referanseomrade> {
   return new Map(katalog.oppforinger.flatMap((a) => (a.referanseomrade ? [[a.kode, a.referanseomrade] as const] : [])))
 }
@@ -269,8 +292,9 @@ function maleomrade(verdi: unknown, hva: string): MeasuringRange {
 }
 
 /**
- * Referanseområdet til en kode. Et svar fra før katalogen hadde det
- * (`referanseomrade` mangler), og et område uten noen grense, gir `null`.
+ * Referanseområdet til en kode. Et område uten noen grense gir `null`. Et
+ * svar fra før katalogen hadde det (`referanseomrade` mangler) gir også
+ * `null` her; da finnes områdene med `Eldrekatalog`.
  */
 function referanseomrade(verdi: unknown, hva: string): Referanseomrade | null {
   if (verdi === null || verdi === undefined) return null
@@ -326,6 +350,34 @@ function oppforing(verdi: unknown): Katalogoppforing {
 }
 
 /**
+ * `Eldrekatalog` i et svar der kodene ikke har `referanseomrade`: koblingene
+ * og datakortbruken databasen ga fram til `20261118090000`, lest slik appen
+ * leste dem før (`datakort` er `egne` eller `forbindelse`).
+ */
+function eldrekatalog(f: Felt, oppforinger: readonly unknown[]): Eldrekatalog | undefined {
+  const koder = oppforinger.flatMap((o) => liste(objekt(o, 'En oppføring i katalogen').koder, 'Kodene').map((k) => objekt(k, 'En kode')))
+  if (koder.every((k) => 'referanseomrade' in k)) return undefined
+  const valgfri = (k: Felt, navn: string) => (typeof k[navn] === 'string' ? (k[navn] as string) : null)
+  const kortet = new Map<string, string | null>(
+    koder.flatMap((k): [string, string | null][] => {
+      const kode = tekst(k, 'kode', 'En kode')
+      const datakort = valgfri(k, 'datakort')
+      const forbindelse = valgfri(k, 'forbindelse')
+      if (datakort === 'egne') return [[kode, null]]
+      return datakort === 'forbindelse' && forbindelse ? [[kode, forbindelse]] : []
+    }),
+  )
+  const bruk = liste(f.koblinger ?? [], 'Koblingene').flatMap((verdi) => {
+    const kobling = objekt(verdi, 'En kobling')
+    const kode = tekst(kobling, 'kode', 'En kobling')
+    if (kobling.primar !== true || !kortet.has(kode)) return []
+    return [{ kode, stoff: tekst(kobling, 'stoff', 'En kobling'), gjelder: kortet.get(kode)! }]
+  })
+  const forbindelser = new Map([...kortet].flatMap(([kode, gjelder]): [string, string][] => (gjelder === null ? [] : [[kode, gjelder]])))
+  return { bruk, forbindelser }
+}
+
+/**
  * Katalogen i svaret fra `les_analyttkatalog()`. Et svar som ikke har
  * formen, avvises i sin helhet: fortolkningen skal heller stoppe enn bruke
  * en katalog som kan være feil.
@@ -337,9 +389,12 @@ export function lesKatalogdata(svar: unknown): Katalogdata {
     const metode = objekt(m, 'En analysemetode')
     return { kode: tekst(metode, 'kode', 'En analysemetode'), beskrivelse: tekst(metode, 'beskrivelse', 'En analysemetode') }
   })
+  const oppforinger = liste(f.oppforinger, 'Oppføringene')
+  const eldre = eldrekatalog(f, oppforinger)
   return {
     fagmiljo: fagmiljo && { id: tekst(fagmiljo, 'id', 'Fagmiljøet'), navn: tekst(fagmiljo, 'navn', 'Fagmiljøet') },
     metoder,
-    oppforinger: liste(f.oppforinger, 'Oppføringene').map(oppforing),
+    oppforinger: oppforinger.map(oppforing),
+    ...(eldre && { eldre }),
   }
 }
