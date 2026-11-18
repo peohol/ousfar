@@ -81,6 +81,23 @@
   border-radius: var(--runding-felt);
 }
 
+/* En rad eller «Vis alle» uten egen adresse er en knapp som ser ut som lenken. */
+button.hendelse,
+button.oppsummering__alle {
+  width: 100%;
+  font: inherit;
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+button.oppsummering__alle {
+  width: auto;
+  padding: 0;
+  text-decoration: underline;
+}
+
 .hendelse:hover {
   background: var(--flate-hevet);
 }

@@ -131,6 +131,29 @@ describe('ved', () => {
   })
 })
 
+describe('mål uten egen adresse', () => {
+  it('er en knapp som kaller ved, ikke en lenke til siden brukeren står på', async () => {
+    const apne = vi.fn()
+    const alle = vi.fn()
+    render(
+      <Oppsummeringskort
+        tittel="Viktig nytt"
+        ikon="bell"
+        innhold={{
+          status: 'klar',
+          hendelser: [{ id: 'e1', ikon: 'publish', tittel: 'Ny forside', hvor: 'Appen · Endringslogg', ved: apne }],
+        }}
+        visAlle={{ tekst: 'Hele endringsloggen', ved: alle }}
+      />,
+    )
+    expect(screen.queryAllByRole('link')).toHaveLength(0)
+    await userEvent.click(screen.getByRole('button', { name: /Ny forside/ }))
+    expect(apne).toHaveBeenCalledTimes(1)
+    await userEvent.click(screen.getByRole('button', { name: /Hele endringsloggen/ }))
+    expect(alle).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('hendelsestid', () => {
   const naa = new Date(2026, 10, 18, 15, 0)
   it('gir klokkeslett i dag, «I går», dato i år og dato med år ellers', () => {
