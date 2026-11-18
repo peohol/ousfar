@@ -11,6 +11,8 @@
  *   åpne samtidig når siden fortsatt har lesebredde.
  *
  * Adressen kan styres for skjermbilder: ?skjerm=<id>&tema=moerkt&ren
+ * Med `window.D0_MINNE` holdes adressen i minnet i stedet for i nettleseren
+ * (for visning der adresselinjen ikke kan brukes).
  */
 'use strict'
 
@@ -232,7 +234,11 @@ let S = STANDARD()
 /* ---------------------------------------------------------------------------
  * Ruter (samme adresser som planen §2)
  * ------------------------------------------------------------------------- */
-function lesRute(hash = location.hash) {
+const MINNE = Boolean(window.D0_MINNE)
+let minneadresse = '#/'
+const adressen = () => (MINNE ? minneadresse : location.hash)
+
+function lesRute(hash = adressen()) {
   const h = hash.replace(/^#/, '') || '/'
   let m
   if (h === '/' || h === '') return { side: 'forside' }
@@ -266,9 +272,10 @@ function sidetittel(hash) {
 
 /** Går til en adresse og husker hvor brukeren kom fra (inngangsveien). */
 function gaa(hash, { erstatt = false } = {}) {
-  if (hash === location.hash) return render()
-  if (!erstatt) S.fra.push(location.hash || '#/')
-  history[erstatt ? 'replaceState' : 'pushState']({ dybde: S.fra.length }, '', hash)
+  if (hash === adressen()) return render()
+  if (!erstatt) S.fra.push(adressen() || '#/')
+  if (MINNE) minneadresse = hash
+  else history[erstatt ? 'replaceState' : 'pushState']({ dybde: S.fra.length }, '', hash)
   etterNavigering()
 }
 
@@ -277,11 +284,12 @@ function tilbakeMaal() {
   return S.fra.length ? S.fra[S.fra.length - 1] : '#/'
 }
 function tilbake() {
-  if (S.fra.length > (S.virtuell || 0)) return history.back()
+  if (!MINNE && S.fra.length > (S.virtuell || 0)) return history.back()
   if (S.fra.length) {
     const maal = S.fra.pop()
-    S.virtuell -= 1
-    history.replaceState({ dybde: S.fra.length }, '', maal)
+    S.virtuell = Math.min(S.virtuell || 0, S.fra.length)
+    if (MINNE) minneadresse = maal
+    else history.replaceState({ dybde: S.fra.length }, '', maal)
     return etterNavigering()
   }
   gaa('#/', { erstatt: true })
@@ -299,7 +307,8 @@ function etterNavigering({ beholdLag = false } = {}) {
   if (r.side === 'gruppe' && r.flate === 'chat') {
     S.chat = 'apen'
     S.chatVisning = r.gruppe
-    history.replaceState(history.state, '', `#/grupper/${r.gruppe}`)
+    if (MINNE) minneadresse = `#/grupper/${r.gruppe}`
+    else history.replaceState(history.state, '', `#/grupper/${r.gruppe}`)
   }
   if (r.side === 'chat' && r.samtale) S.chatVisning = r.samtale
   if (!beholdLag) S.popover = null
@@ -1192,7 +1201,8 @@ function velgSkjerm(id) {
   S.fra = [...(sk.fra || [])]
   S.virtuell = S.fra.length
   S.skjerm = id
-  history.replaceState({ dybde: S.fra.length }, '', location.pathname + location.search + sk.hash)
+  if (MINNE) minneadresse = sk.hash
+  else history.replaceState({ dybde: S.fra.length }, '', location.pathname + location.search + sk.hash)
   etterNavigering({ beholdLag: true })
 }
 
@@ -1203,6 +1213,7 @@ function prototypelinje() {
       .map(([id, s]) => `<option value="${id}"${S.skjerm === id ? ' selected' : ''}>${s.navn}</option>`)
       .join('')}</select></label>
     <button type="button" data-handling="tema">${document.documentElement.dataset.tema === 'moerkt' ? 'Lyst tema' : 'Mørkt tema'}</button>
+    <span>Adresse: <code>${adressen()}</code></span>
     <span>Eksempeldata</span>
     <span class="proto__escape">Escape nå: <span id="escape-nå"></span></span>
   </div>`
@@ -1214,6 +1225,7 @@ function prototypelinje() {
   if (p.get('tema')) document.documentElement.dataset.tema = p.get('tema')
   if (p.has('ren')) document.documentElement.dataset.ren = ''
   if (p.get('skjerm')) velgSkjerm(p.get('skjerm'))
+  else if (MINNE) velgSkjerm('forside')
   else {
     history.replaceState({ dybde: 0 }, '', location.hash || '#/')
     etterNavigering()
