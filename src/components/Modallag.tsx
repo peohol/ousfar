@@ -40,6 +40,11 @@ export interface ModallagProps {
   handling?: ReactNode
   /** Bredere panel, for innhold som står side om side. */
   bred?: boolean
+  /**
+   * Stor arbeidsflate med liste og detalj, som idéene og oppgavene i en
+   * gruppe: inntil 82rem bred og full høyde, hele skjermen på mobil.
+   */
+  arbeidsflate?: boolean
   /** Den lille linjen i versaler over tittelen, f.eks. «Kvetiapin · Depottablett». */
   meta?: ReactNode
   /** Linjen under tittelen, f.eks. produsenten. */
@@ -75,6 +80,7 @@ export function Modallag({
   tilbake,
   handling,
   bred,
+  arbeidsflate,
   meta,
   undertittel,
   merker,
@@ -185,13 +191,15 @@ export function Modallag({
   return (
     <dialog
       ref={dialog}
-      className={['modallag', ark && 'modallag--ark'].filter(Boolean).join(' ')}
+      className={['modallag', ark && 'modallag--ark', arbeidsflate && 'modallag--arbeidsflate'].filter(Boolean).join(' ')}
       aria-labelledby={tittelId}
       {...trykkUtenfor}
       onCancel={paaAvbryt}
       onKeyDown={paaTast}
     >
-      <div className={['modallag__panel', bred && 'modallag__panel--bred'].filter(Boolean).join(' ')}>
+      <div
+        className={['modallag__panel', bred && 'modallag__panel--bred', arbeidsflate && 'modallag__panel--arbeidsflate'].filter(Boolean).join(' ')}
+      >
         {rik ? (
           <div className="modallag__hode">
             <div className="modallag__metarad">

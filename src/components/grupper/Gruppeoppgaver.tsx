@@ -4,6 +4,8 @@ import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { gruppeadresse } from '../../domain/rute'
+import { useNavigasjonsvakt } from '../../hooks/navigasjonsvakt'
+import { erstattAdressen } from '../../hooks/useRute'
 import { tomtDokument, type Riktekstdokument } from '../../faginnhold/riktekst'
 import {
   endreGruppeoppgave,
@@ -60,12 +62,16 @@ const SKUFF_FULLFORT = 'fullfort'
 type Skjema = { oppgave?: Gruppeoppgave } | null
 
 /**
- * Fanen med oppgavene i gruppen (`#/grupper/<ID>/oppgaver`), eller én oppgave
- * (`…/oppgaver/<oppgave-ID>`). Oppgavene den innloggede har, står øverst; så
- * de som pågår og de som ikke er påbegynt, etter prioriteten, og de fullførte
- * i en skuff. De ansvarlige oppretter, endrer, tildeler og fjerner oppgavene;
- * den som har en oppgave, setter statusen på den. Oppgavene her har ingenting
- * med Planlagte oppgaver å gjøre (docs/fagmiljoer.md, «Idéer og oppgaver i
+ * Oppgavene i gruppen, i arbeidsflaten (`#/grupper/<ID>/oppgaver`): lista
+ * til venstre og oppgaven som står åpen (`…/oppgaver/<oppgave-ID>`), eller
+ * skjemaet, til høyre; på en smal skjerm det ene om gangen. Oppgavene den
+ * innloggede har, står øverst; så de som pågår og de som ikke er påbegynt,
+ * etter prioriteten, og de fullførte i en skuff. Å velge en oppgave bytter
+ * adressen uten en ny oppføring i historikken.
+ *
+ * De ansvarlige oppretter, endrer, tildeler og fjerner oppgavene; den som har
+ * en oppgave, setter statusen på den. Oppgavene her har ingenting med
+ * Planlagte oppgaver å gjøre (docs/fagmiljoer.md, «Idéer og oppgaver i
  * gruppene»).
  */
 export function Gruppeoppgaver({
@@ -77,7 +83,7 @@ export function Gruppeoppgaver({
   gruppe: Gruppeoversikt
   oppgave?: string
   onEndret: () => void
-  /** Gruppesidens vakt: fanene og lenkene på siden spør før et skjema med endringer forlates. */
+  /** Flatens vakt: lukkingen og det som kommer utenfra spør før et skjema med endringer forlates. */
   skjemavakt?: MutableRefObject<Forlat | null>
 }) {
   const meg = useProfil()
@@ -87,9 +93,12 @@ export function Gruppeoppgaver({
   const [profiler, setProfiler] = useState<Profilkort[]>([])
   const [skjema, setSkjema] = useBevart<Skjema>('oppgaver/skjema', null)
   const [apneSkuffer, setApneSkuffer] = useState<ReadonlySet<string>>(new Set())
+  /** Ny for hver endring, så lista hentes på nytt. */
+  const [utgave, setUtgave] = useState(0)
   const vakt = useForlatvakt()
   useMeldVakt(skjema !== null, vakt.forlat, skjemavakt)
-  /** Om fanen står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
+  useNavigasjonsvakt(vakt.status, vakt.forlat)
+  /** Om flaten står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
   const montert = useRef(true)
   useEffect(() => {
     montert.current = true
@@ -118,8 +127,12 @@ export function Gruppeoppgaver({
 
   const paaLista = !oppgave && !skjema
   useEffect(() => {
-    if (paaLista) void hent()
-  }, [paaLista, hent])
+    if (!skjema) void hent()
+  }, [oppgave, skjema, utgave, hent])
+  const endret = () => {
+    onEndret()
+    setUtgave((n) => n + 1)
+  }
 
   // Tilbake på lista står fokus på kortet man kom fra.
   useLayoutEffect(() => {
@@ -136,108 +149,112 @@ export function Gruppeoppgaver({
       setSkjema(null)
       deretter()
     })
-  const tilListe = () =>
+  /** Til en annen oppgave eller lista, i samme oppføring i historikken. */
+  const tilAdressen = (id?: string) => erstattAdressen(gruppeadresse(gruppe.id, 'oppgaver', id))
+  const tilListe = () => lukkSkjema(() => tilAdressen())
+  const apne = (id: string) =>
     lukkSkjema(() => {
-      window.location.hash = gruppeadresse(gruppe.id, 'oppgaver')
+      fra.current = id
+      tilAdressen(id)
     })
-  const apne = (id: string) => {
-    fra.current = id
-    window.location.hash = gruppeadresse(gruppe.id, 'oppgaver', id)
-  }
+  const nyOppgave = () =>
+    lukkSkjema(() => {
+      if (oppgave) tilAdressen()
+      setSkjema({})
+    })
 
-  const tilbake = (
-    <p className="gruppeideer__tilbake">
-      <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="back" />} onClick={tilListe}>
-        Tilbake til oppgavene
-      </Button>
-    </p>
-  )
-
-  let innhold
+  let detalj
   if (skjema) {
-    innhold = (
-      <>
-        {tilbake}
-        <Oppgaveskjema
-          gruppe={gruppe}
-          oppgave={skjema.oppgave}
-          onStatus={vakt.setStatus}
-          forlater={vakt.forlater}
-          onForkast={vakt.forkast}
-          onFortsett={vakt.fortsett}
-          onAvbryt={() => (skjema.oppgave ? lukkSkjema() : tilListe())}
-          onLagret={(id) => {
-            vakt.nullstill()
-            setSkjema(null)
-            onEndret()
-            if (montert.current) window.location.hash = gruppeadresse(gruppe.id, 'oppgaver', id)
-          }}
-        />
-      </>
+    detalj = (
+      <Oppgaveskjema
+        gruppe={gruppe}
+        oppgave={skjema.oppgave}
+        onStatus={vakt.setStatus}
+        forlater={vakt.forlater}
+        onForkast={vakt.forkast}
+        onFortsett={vakt.fortsett}
+        onAvbryt={() => (skjema.oppgave ? lukkSkjema() : tilListe())}
+        onLagret={(id) => {
+          vakt.nullstill()
+          setSkjema(null)
+          endret()
+          if (montert.current) tilAdressen(id)
+        }}
+      />
     )
   } else if (oppgave) {
-    innhold = (
-      <>
-        {tilbake}
-        <Oppgavevisning
-          key={oppgave}
-          id={oppgave}
-          gruppe={gruppe}
-          onEndre={(o) => setSkjema({ oppgave: o })}
-          onEndret={onEndret}
-          onFjernet={() => {
-            onEndret()
-            tilListe()
-          }}
-        />
-      </>
+    detalj = (
+      <Oppgavevisning
+        key={oppgave}
+        id={oppgave}
+        gruppe={gruppe}
+        onEndre={(o) => setSkjema({ oppgave: o })}
+        onEndret={endret}
+        onFjernet={() => {
+          endret()
+          tilListe()
+        }}
+      />
     )
   } else {
-    const mine = mineGruppeoppgaver(liste.oppgaver, meg.id)
-    const andre = liste.oppgaver.filter((o) => !mine.includes(o) && o.status !== 'fullfort')
-    const fullforte = liste.oppgaver.filter((o) => o.status === 'fullfort')
-    innhold = (
-      <>
-        {liste.kan_opprette && (
-          <div className="gruppeideer__verktoy">
-            <span />
-            <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={() => setSkjema({})}>
-              Ny oppgave
-            </Button>
-          </div>
-        )}
-        {feil && (
-          <p className="skjemafeil" role="alert">
-            {feil}
-          </p>
-        )}
-        {mine.length > 0 && <Oppgaveseksjon tittel="Mine oppgaver" oppgaver={mine} onApne={apne} />}
-        <Oppgaveseksjon
-          tittel={mine.length > 0 ? 'De andre oppgavene' : 'Oppgavene'}
-          oppgaver={andre}
-          tom={!lastet ? 'Henter oppgavene …' : 'Ingen oppgaver som ikke er fullført.'}
-          onApne={apne}
-        />
-        {fullforte.length > 0 && (
-          <Skuff
-            tittel="Fullført"
-            ikon="done"
-            antall={fullforte.length}
-            forklaring="Oppgavene som er fullført, de sist fullførte først."
-            apen={apneSkuffer.has(SKUFF_FULLFORT)}
-            onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_FULLFORT))}
-          >
-            <Oppgavekortliste oppgaver={fullforte} onApne={apne} />
-          </Skuff>
-        )}
-      </>
-    )
+    detalj = liste.oppgaver.length > 0 && <p className="arbeidsflate__tomt">Velg en oppgave i lista.</p>
   }
+
+  const mine = mineGruppeoppgaver(liste.oppgaver, meg.id)
+  const andre = liste.oppgaver.filter((o) => !mine.includes(o) && o.status !== 'fullfort')
+  const fullforte = liste.oppgaver.filter((o) => o.status === 'fullfort')
+  const listedel = (
+    <>
+      {liste.kan_opprette && (
+        <div className="gruppeideer__verktoy">
+          <span />
+          <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={nyOppgave}>
+            Ny oppgave
+          </Button>
+        </div>
+      )}
+      {feil && (
+        <p className="skjemafeil" role="alert">
+          {feil}
+        </p>
+      )}
+      {mine.length > 0 && <Oppgaveseksjon tittel="Mine oppgaver" oppgaver={mine} valgt={oppgave} onApne={apne} />}
+      <Oppgaveseksjon
+        tittel={mine.length > 0 ? 'De andre oppgavene' : 'Oppgavene'}
+        oppgaver={andre}
+        valgt={oppgave}
+        tom={!lastet ? 'Henter oppgavene …' : 'Ingen oppgaver som ikke er fullført.'}
+        onApne={apne}
+      />
+      {fullforte.length > 0 && (
+        <Skuff
+          tittel="Fullført"
+          ikon="done"
+          antall={fullforte.length}
+          forklaring="Oppgavene som er fullført, de sist fullførte først."
+          apen={apneSkuffer.has(SKUFF_FULLFORT)}
+          onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_FULLFORT))}
+        >
+          <Oppgavekortliste oppgaver={fullforte} valgt={oppgave} onApne={apne} />
+        </Skuff>
+      )}
+    </>
+  )
 
   return (
     <Forfatterkilde profiler={profiler}>
-      <div ref={rot} className="gruppeideer idevindu">
-        {innhold}
+      <div ref={rot} className="arbeidsflate gruppeideer idevindu" data-detalj={paaLista ? undefined : 'ja'}>
+        <div className="arbeidsflate__liste">{listedel}</div>
+        <div className="arbeidsflate__detalj">
+          {!paaLista && (
+            <p className="arbeidsflate__tilbake">
+              <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="back" />} onClick={tilListe}>
+                Tilbake til oppgavene
+              </Button>
+            </p>
+          )}
+          {detalj}
+        </div>
       </div>
     </Forfatterkilde>
   )
@@ -247,11 +264,13 @@ function Oppgaveseksjon({
   tittel,
   oppgaver,
   tom,
+  valgt,
   onApne,
 }: {
   tittel: string
   oppgaver: Gruppeoppgave[]
   tom?: string
+  valgt?: string
   onApne: (id: string) => void
 }) {
   const id = useId()
@@ -261,17 +280,17 @@ function Oppgaveseksjon({
         <span>{tittel}</span>
         <span className="idegruppe__antall">{oppgaver.length}</span>
       </h2>
-      {oppgaver.length > 0 ? <Oppgavekortliste oppgaver={oppgaver} onApne={onApne} /> : tom && <p className="brukerliste__tomt">{tom}</p>}
+      {oppgaver.length > 0 ? <Oppgavekortliste oppgaver={oppgaver} valgt={valgt} onApne={onApne} /> : tom && <p className="brukerliste__tomt">{tom}</p>}
     </section>
   )
 }
 
-function Oppgavekortliste({ oppgaver, onApne }: { oppgaver: Gruppeoppgave[]; onApne: (id: string) => void }) {
+function Oppgavekortliste({ oppgaver, valgt, onApne }: { oppgaver: Gruppeoppgave[]; valgt?: string; onApne: (id: string) => void }) {
   return (
     <ul className="idekortliste">
       {oppgaver.map((o) => (
         <li key={o.id}>
-          <Oppgavekort oppgave={o} onApne={() => onApne(o.id)} />
+          <Oppgavekort oppgave={o} valgt={o.id === valgt} onApne={() => onApne(o.id)} />
         </li>
       ))}
     </ul>
@@ -294,9 +313,9 @@ function Ansvarlig({ oppgave }: { oppgave: Gruppeoppgave }) {
 }
 
 /** Et kort i lista. Hele kortet er knappen som åpner oppgaven. */
-function Oppgavekort({ oppgave, onApne }: { oppgave: Gruppeoppgave; onApne: () => void }) {
+function Oppgavekort({ oppgave, valgt, onApne }: { oppgave: Gruppeoppgave; valgt: boolean; onApne: () => void }) {
   return (
-    <button type="button" className="idekort" data-oppgave={oppgave.id} data-ih="" onClick={onApne}>
+    <button type="button" className="idekort" data-oppgave={oppgave.id} data-ih="" aria-current={valgt || undefined} onClick={onApne}>
       <span className="idekort__tittel">{oppgave.tittel}</span>
       <span className="idekort__meta">
         <Ansvarlig oppgave={oppgave} />

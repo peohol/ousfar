@@ -2,6 +2,8 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 import type { Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { gruppeadresse } from '../../domain/rute'
+import { useNavigasjonsvakt } from '../../hooks/navigasjonsvakt'
+import { erstattAdressen } from '../../hooks/useRute'
 import type { Gruppeoversikt } from '../../grupper/modell'
 import { hentGruppeideer } from '../../ideer/api'
 import { idetilstand, INGEN_GRUPPEIDEER, type Gruppeideer as Gruppeideliste, type Ide, type Idetraad } from '../../ideer/modell'
@@ -41,9 +43,13 @@ function etterNytt(a: Ide, b: Ide): number {
 }
 
 /**
- * Fanen med idéene i gruppen (`#/grupper/<ID>/ideer`), eller én idé
- * (`…/ideer/<idé-ID>`). De åpne idéene står øverst, de nye først; de som er
- * gjort om til oppgaver og de som ikke er aktuelle, står i hver sin skuff.
+ * Idéene i gruppen, i arbeidsflaten (`#/grupper/<ID>/ideer`): lista til
+ * venstre og idéen som står åpen (`…/ideer/<idé-ID>`), eller skjemaet, til
+ * høyre; på en smal skjerm det ene om gangen. De åpne idéene står øverst, de
+ * nye først; de som er gjort om til oppgaver og de som ikke er aktuelle,
+ * står i hver sin skuff. Å velge en idé bytter adressen uten en ny oppføring
+ * i historikken, så flaten lukkes i ett steg.
+ *
  * Alle som er med, kan skrive idéer og kommentere; de ansvarlige behandler
  * dem. Knappene følger det databasen svarer, og databasen kontrollerer hver
  * handling på nytt (docs/fagmiljoer.md, «Idéer og oppgaver i gruppene»).
@@ -62,7 +68,7 @@ export function Gruppeideer({
   onEndret: () => void
   /** Til oppgaven en idé er gjort om til. */
   onGruppeoppgave?: (oppgave: string) => void
-  /** Gruppesidens vakt: fanene og lenkene på siden spør før et skjema med endringer forlates. */
+  /** Flatens vakt: lukkingen og det som kommer utenfra spør før et skjema med endringer forlates. */
   skjemavakt?: MutableRefObject<Forlat | null>
 }) {
   const [liste, setListe] = useState<Gruppeideliste>(INGEN_GRUPPEIDEER)
@@ -78,7 +84,8 @@ export function Gruppeideer({
   const [fremhev, setFremhev] = useState<Fremheving | null>(null)
   const vakt = useForlatvakt()
   useMeldVakt(skjema !== null, vakt.forlat, skjemavakt)
-  /** Om fanen står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
+  useNavigasjonsvakt(vakt.status, vakt.forlat)
+  /** Om flaten står, så en lagring som blir ferdig etter at man har gått, ikke drar en tilbake. */
   const montert = useRef(true)
   useEffect(() => {
     montert.current = true
@@ -118,11 +125,12 @@ export function Gruppeideer({
     return lyttEtterGruppeide(vis)
   }, [ide])
 
-  // Lista hentes på nytt hver gang den vises, så det nye og behandlingene stemmer.
+  // Lista hentes på nytt når en annen idé åpnes, eller den står alene igjen,
+  // så det nye og behandlingene stemmer.
   const paaLista = !ide && !skjema
   useEffect(() => {
-    if (paaLista) void hent()
-  }, [paaLista, hent])
+    if (!skjema) void hent()
+  }, [ide, skjema, utgave, hent])
 
   // Tilbake på lista står fokus på kortet man kom fra.
   useLayoutEffect(() => {
@@ -132,16 +140,21 @@ export function Gruppeideer({
     fra.current = null
   }, [paaLista, lastet, liste])
 
-  const tilListe = () => vakt.forlat(() => {
-    vakt.nullstill()
-    setSkjema(null)
-    window.location.hash = gruppeadresse(gruppe.id, 'ideer')
-  })
+  /** Til en annen idé eller lista, i samme oppføring i historikken. */
+  const tilAdressen = (id?: string) => erstattAdressen(gruppeadresse(gruppe.id, 'ideer', id))
+  const lukkSkjemaet = (deretter: () => void) =>
+    vakt.forlat(() => {
+      vakt.nullstill()
+      setSkjema(null)
+      deretter()
+    })
+  const tilListe = () => lukkSkjemaet(() => tilAdressen())
 
-  const apne = (id: string) => {
-    fra.current = id
-    window.location.hash = gruppeadresse(gruppe.id, 'ideer', id)
-  }
+  const apne = (id: string) =>
+    lukkSkjemaet(() => {
+      fra.current = id
+      tilAdressen(id)
+    })
 
   const endret = () => {
     onEndret()
@@ -158,141 +171,157 @@ export function Gruppeideer({
     }
   }, [liste.ideer, sok])
 
-  const tilbake = (
-    <p className="gruppeideer__tilbake">
-      <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="back" />} onClick={tilListe}>
-        Tilbake til idéene
-      </Button>
-    </p>
-  )
-
-  let innhold
+  let detalj
   if (skjema) {
-    innhold = (
-      <>
-        {tilbake}
-        <Ideskjema
-          ide={skjema.ide}
-          gruppe={skjema.ide ? undefined : gruppe.id}
-          onStatus={vakt.setStatus}
-          forlater={vakt.forlater}
-          onForkast={vakt.forkast}
-          onFortsett={vakt.fortsett}
-          onAvbryt={tilListe}
-          onLagret={(id) => {
-            vakt.nullstill()
-            setSkjema(null)
-            onEndret()
-            setUtgave((n) => n + 1)
-            if (montert.current) window.location.hash = gruppeadresse(gruppe.id, 'ideer', id)
-          }}
-        />
-      </>
+    detalj = (
+      <Ideskjema
+        ide={skjema.ide}
+        gruppe={skjema.ide ? undefined : gruppe.id}
+        onStatus={vakt.setStatus}
+        forlater={vakt.forlater}
+        onForkast={vakt.forkast}
+        onFortsett={vakt.fortsett}
+        onAvbryt={() => (skjema.ide ? lukkSkjemaet(() => undefined) : tilListe())}
+        onLagret={(id) => {
+          vakt.nullstill()
+          setSkjema(null)
+          onEndret()
+          setUtgave((n) => n + 1)
+          if (montert.current) tilAdressen(id)
+        }}
+      />
     )
   } else if (ide) {
-    innhold = (
-      <>
-        {tilbake}
-        <Ideside
-          key={`${ide}:${utgave}`}
-          id={ide}
-          gruppe={gruppe.id}
-          overskriftsniva={2}
-          fremhev={fremhev}
-          onEndre={(traad) => setSkjema({ ide: traad })}
-          onSlettet={() => {
-            onEndret()
-            window.location.hash = gruppeadresse(gruppe.id, 'ideer')
-          }}
-          onArkivert={endret}
-          onGjenapnet={endret}
-          onGjortOm={endret}
-          onSett={onEndret}
-          onGruppeoppgave={onGruppeoppgave}
-        />
-      </>
+    detalj = (
+      <Ideside
+        key={`${ide}:${utgave}`}
+        id={ide}
+        gruppe={gruppe.id}
+        overskriftsniva={2}
+        fremhev={fremhev}
+        onEndre={(traad) => setSkjema({ ide: traad })}
+        onSlettet={() => {
+          onEndret()
+          tilAdressen()
+        }}
+        onArkivert={endret}
+        onGjenapnet={endret}
+        onGjortOm={endret}
+        onSett={onEndret}
+        onGruppeoppgave={onGruppeoppgave}
+      />
     )
   } else {
-    innhold = (
-      <>
-        <div className="gruppeideer__verktoy">
-          <div className="felt gruppeideer__sok">
-            <label className="felt__merkelapp" htmlFor={sokId}>
-              Søk i idéene
-            </label>
-            <input
-              id={sokId}
-              className="felt__inndata"
-              type="search"
-              value={sok}
-              autoComplete="off"
-              onChange={(e) => setSok(e.target.value)}
-            />
-          </div>
-          {liste.kan_skrive && (
-            <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={() => setSkjema({})}>
-              Ny idé
-            </Button>
-          )}
-        </div>
-        {feil && (
-          <p className="skjemafeil" role="alert">
-            {feil}
-          </p>
-        )}
-        <Ideseksjon
-          tittel={liste.kan_behandle ? 'Venter på behandling' : 'Åpne idéer'}
-          ideer={apneIdeer}
-          tom={
-            !lastet
-              ? 'Henter idéene …'
-              : sok.trim()
-                ? 'Ingen åpne idéer passer med søket.'
-                : liste.kan_skrive
-                  ? 'Ingen åpne idéer ennå. Skriv den første!'
-                  : 'Ingen åpne idéer.'
-          }
-          onApne={apne}
-        />
-        {liste.kan_skrive && apneIdeer.length === 0 && lastet && !sok.trim() && <Nyknapp onNy={() => setSkjema({})} />}
-        {gjortOm.length > 0 && (
-          <Skuff
-            tittel="Gjort om til oppgaver"
-            ikon="oppgaver"
-            antall={gjortOm.length}
-            forklaring="Idéene de ansvarlige har gjort om til oppgaver i gruppen. Tråden under dem er fortsatt åpen."
-            apen={apneSkuffer.has(SKUFF_GJORT_OM)}
-            onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_GJORT_OM))}
-          >
-            <Kortliste ideer={gjortOm} onApne={apne} />
-          </Skuff>
-        )}
-        {ikkeAktuelle.length > 0 && (
-          <Skuff
-            tittel="Ikke aktuelt"
-            ikon="arkiv"
-            antall={ikkeAktuelle.length}
-            forklaring="Idéene de ansvarlige har merket «Ikke aktuelt». De står her til de åpnes igjen eller slettes."
-            apen={apneSkuffer.has(SKUFF_IKKE_AKTUELT)}
-            onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_IKKE_AKTUELT))}
-          >
-            <Kortliste ideer={ikkeAktuelle} onApne={apne} />
-          </Skuff>
-        )}
-      </>
-    )
+    detalj = liste.ideer.length > 0 && <p className="arbeidsflate__tomt">Velg en idé i lista.</p>
   }
+
+  const nyIde = () => lukkSkjemaet(() => {
+    if (ide) tilAdressen()
+    setSkjema({})
+  })
+
+  const listedel = (
+    <>
+      <div className="gruppeideer__verktoy">
+        <div className="felt gruppeideer__sok">
+          <label className="felt__merkelapp" htmlFor={sokId}>
+            Søk i idéene
+          </label>
+          <input
+            id={sokId}
+            className="felt__inndata"
+            type="search"
+            value={sok}
+            autoComplete="off"
+            onChange={(e) => setSok(e.target.value)}
+          />
+        </div>
+        {liste.kan_skrive && (
+          <Button className="knapp--kompakt" icon={<Ikon navn="plus" />} onClick={nyIde}>
+            Ny idé
+          </Button>
+        )}
+      </div>
+      {feil && (
+        <p className="skjemafeil" role="alert">
+          {feil}
+        </p>
+      )}
+      <Ideseksjon
+        tittel={liste.kan_behandle ? 'Venter på behandling' : 'Åpne idéer'}
+        ideer={apneIdeer}
+        valgt={ide}
+        tom={
+          !lastet
+            ? 'Henter idéene …'
+            : sok.trim()
+              ? 'Ingen åpne idéer passer med søket.'
+              : liste.kan_skrive
+                ? 'Ingen åpne idéer ennå. Skriv den første!'
+                : 'Ingen åpne idéer.'
+        }
+        onApne={apne}
+      />
+      {liste.kan_skrive && apneIdeer.length === 0 && lastet && !sok.trim() && !skjema && <Nyknapp onNy={nyIde} />}
+      {gjortOm.length > 0 && (
+        <Skuff
+          tittel="Gjort om til oppgaver"
+          ikon="oppgaver"
+          antall={gjortOm.length}
+          forklaring="Idéene de ansvarlige har gjort om til oppgaver i gruppen. Tråden under dem er fortsatt åpen."
+          apen={apneSkuffer.has(SKUFF_GJORT_OM)}
+          onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_GJORT_OM))}
+        >
+          <Kortliste ideer={gjortOm} valgt={ide} onApne={apne} />
+        </Skuff>
+      )}
+      {ikkeAktuelle.length > 0 && (
+        <Skuff
+          tittel="Ikke aktuelt"
+          ikon="arkiv"
+          antall={ikkeAktuelle.length}
+          forklaring="Idéene de ansvarlige har merket «Ikke aktuelt». De står her til de åpnes igjen eller slettes."
+          apen={apneSkuffer.has(SKUFF_IKKE_AKTUELT)}
+          onVeksle={() => setApneSkuffer((s) => veksleSkuff(s, SKUFF_IKKE_AKTUELT))}
+        >
+          <Kortliste ideer={ikkeAktuelle} valgt={ide} onApne={apne} />
+        </Skuff>
+      )}
+    </>
+  )
 
   return (
     <Forfatterkilde profiler={profiler}>
-      <div ref={rot} className="gruppeideer idevindu">
-        {innhold}
+      <div ref={rot} className="arbeidsflate gruppeideer idevindu" data-detalj={paaLista ? undefined : 'ja'}>
+        <div className="arbeidsflate__liste">{listedel}</div>
+        <div className="arbeidsflate__detalj">
+          {!paaLista && (
+            <p className="arbeidsflate__tilbake">
+              <Button variant="subtle" className="knapp--kompakt" icon={<Ikon navn="back" />} onClick={tilListe}>
+                Tilbake til idéene
+              </Button>
+            </p>
+          )}
+          {detalj}
+        </div>
       </div>
     </Forfatterkilde>
   )
 }
 
-function Ideseksjon({ tittel, ideer, tom, onApne }: { tittel: string; ideer: Ide[]; tom: string; onApne: (id: string) => void }) {
+function Ideseksjon({
+  tittel,
+  ideer,
+  tom,
+  valgt,
+  onApne,
+}: {
+  tittel: string
+  ideer: Ide[]
+  tom: string
+  valgt?: string
+  onApne: (id: string) => void
+}) {
   const id = useId()
   return (
     <section className="idegruppe" aria-labelledby={id}>
@@ -300,17 +329,17 @@ function Ideseksjon({ tittel, ideer, tom, onApne }: { tittel: string; ideer: Ide
         <span>{tittel}</span>
         <span className="idegruppe__antall">{ideer.length}</span>
       </h2>
-      {ideer.length > 0 ? <Kortliste ideer={ideer} onApne={onApne} /> : <p className="brukerliste__tomt">{tom}</p>}
+      {ideer.length > 0 ? <Kortliste ideer={ideer} valgt={valgt} onApne={onApne} /> : <p className="brukerliste__tomt">{tom}</p>}
     </section>
   )
 }
 
-function Kortliste({ ideer, onApne }: { ideer: Ide[]; onApne: (id: string) => void }) {
+function Kortliste({ ideer, valgt, onApne }: { ideer: Ide[]; valgt?: string; onApne: (id: string) => void }) {
   return (
     <ul className="idekortliste">
       {ideer.map((ide) => (
         <li key={ide.id}>
-          <Idekort ide={ide} visKategori={false} visForfatter onApne={() => onApne(ide.id)} />
+          <Idekort ide={ide} visKategori={false} visForfatter valgt={ide.id === valgt} onApne={() => onApne(ide.id)} />
         </li>
       ))}
     </ul>

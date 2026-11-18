@@ -1,7 +1,9 @@
 /**
- * Gruppene (`#/grupper`, `src/components/grupper/`): oversikten, skjemaet for
- * en ny gruppe og siden til én gruppe. Radene og bekreftelsene er de samme
- * som i brukerlista (`konto.css`); her står bare sidens egen oppbygning.
+ * Gruppene (`#/grupper`, `src/components/grupper/`): oversikten, modalene og
+ * gruppesiden med panelene (D0, skisse 08–13 og 27–28), og arbeidsflatene for
+ * idéene og oppgavene. Radene og bekreftelsene er de samme som i brukerlista
+ * (`konto.css`), panelene det felles oppsummeringskortet (`oppsummering.css`);
+ * her står bare sidenes egen oppbygning.
  */
 
 .gruppeside {
@@ -220,9 +222,6 @@ button.gruppeside__fane {
   max-width: 28rem;
 }
 
-.gruppeideer__tilbake {
-  margin: 0;
-}
 
 /* --- Oppgavene i gruppen --------------------------------------------------- */
 
@@ -251,4 +250,338 @@ button.gruppeside__fane {
 .gruppeoppgave__styring .felt {
   flex: 1 1 14rem;
   max-width: 22rem;
+}
+
+/* --- Lenken tilbake og tittelraden ------------------------------------------ */
+
+.tilbakelenke {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  align-self: flex-start;
+  margin-bottom: calc(-1 * var(--rom-4));
+  padding: var(--rom-1) 0;
+  font: inherit;
+  font-size: var(--tekst-ui);
+  color: var(--aksent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.tilbakelenke:hover,
+.tilbakelenke:focus-visible {
+  text-decoration: underline;
+}
+
+.gruppeside__tittelrad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-3) var(--rom-5);
+}
+
+.gruppeside__tomt {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+/* --- Oversikten -------------------------------------------------------------- */
+
+.gruppeinvitasjoner,
+.gruppeliste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gruppeinvitasjoner {
+  gap: var(--rom-3);
+}
+
+.gruppeinvitasjon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4);
+  padding: var(--rom-5) var(--rom-6);
+  background: var(--aksent-flate);
+  border-radius: var(--runding-panel);
+}
+
+.gruppeinvitasjon__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  min-width: 0;
+}
+
+.gruppeinvitasjon__meta,
+.gruppeliste__meta {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.gruppeinvitasjon__knapper {
+  display: flex;
+  gap: var(--rom-2);
+}
+
+.gruppeside__sok {
+  max-width: none;
+}
+
+.gruppeliste {
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+  overflow: hidden;
+}
+
+.gruppeliste li + li {
+  border-top: var(--kant) solid var(--linje);
+}
+
+/* Hele raden er lenken til gruppen. */
+.gruppeliste__rad {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  min-height: var(--hoyde-trykk);
+  padding: var(--rom-4) var(--rom-6);
+  color: inherit;
+  text-decoration: none;
+}
+
+.gruppeliste__rad:hover,
+.gruppeliste__rad:focus-visible {
+  background: var(--flate-hevet);
+}
+
+.gruppeliste__rad:focus-visible {
+  outline: var(--fokusring) solid var(--fokus);
+  outline-offset: calc(-1 * var(--fokusring));
+}
+
+.gruppeliste__navn {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--rom-1);
+  min-width: 0;
+}
+
+.gruppeliste__tittel {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  overflow-wrap: anywhere;
+}
+
+/* --- Gruppesiden --------------------------------------------------------------- */
+
+.medlemslinje {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+.medlemslinje__bilder {
+  display: inline-flex;
+}
+
+.medlemslinje__bilder .avatar + .avatar {
+  margin-left: calc(-1 * var(--rom-1));
+}
+
+.medlemslinje__knapp {
+  padding: var(--rom-1) 0;
+  font: inherit;
+  color: var(--aksent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.medlemslinje__knapp:hover,
+.medlemslinje__knapp:focus-visible {
+  text-decoration: underline;
+}
+
+.gruppeside__lesemodus {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+  margin: 0;
+  padding: var(--rom-4) var(--rom-5);
+  font-size: var(--tekst-ui);
+  background: var(--flate-hevet);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+}
+
+/* De fire panelene, to og to på bred skjerm, med luft mellom (D0: --rom-8). */
+.gruppepaneler {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--rom-6);
+}
+
+.gruppepanel__handling {
+  display: flex;
+}
+
+/* --- Modalene ---------------------------------------------------------------- */
+
+.gruppemodal__skjema {
+  max-width: none;
+}
+
+.gruppemodal__fot {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.gruppemodal__valg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.gruppemodal__valgtittel {
+  margin-bottom: var(--rom-2);
+  padding: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-style: italic;
+  color: var(--blekk);
+}
+
+.gruppemodal__alternativ {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  padding: var(--rom-4) var(--rom-5);
+  border-radius: var(--runding-kort);
+  cursor: pointer;
+}
+
+.gruppemodal__alternativ:has(input:checked) {
+  background: var(--flate-hevet);
+}
+
+.gruppemodal__alternativ > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.gruppemodal__alternativhjelp {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.gruppemodal__inviter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.gruppemodal__inviterrad {
+  display: flex;
+  gap: var(--rom-3);
+}
+
+.gruppemodal__inviterrad .felt__inndata {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Arbeidsflatene ------------------------------------------------------------ */
+
+/* Lista til venstre og det som står åpent til høyre; hver ruller for seg. */
+.arbeidsflate {
+  display: grid;
+  grid-template-columns: minmax(18rem, 26rem) minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+
+.arbeidsflate__liste,
+.arbeidsflate__detalj {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--rom-6) var(--rom-7);
+}
+
+.arbeidsflate__liste {
+  border-right: var(--kant) solid var(--linje);
+}
+
+.arbeidsflate__liste > *,
+.arbeidsflate__detalj > * {
+  flex-shrink: 0;
+}
+
+/* Kortet som står åpent ved siden av lista. */
+.arbeidsflate .idekort[aria-current] {
+  border-color: var(--aksent);
+  box-shadow: inset 0 0 0 1px var(--aksent);
+}
+
+.arbeidsflate__tomt,
+.arbeidsflate__melding {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+.arbeidsflate__melding {
+  padding: var(--rom-7);
+}
+
+/* «Tilbake til idéene» trengs bare når lista ikke står ved siden av. */
+.arbeidsflate__tilbake {
+  display: none;
+  margin: 0;
+}
+
+@media (max-width: 47.5em) {
+  .arbeidsflate {
+    display: block;
+    overflow-y: auto;
+  }
+
+  .arbeidsflate__liste,
+  .arbeidsflate__detalj {
+    overflow: visible;
+    padding: var(--rom-5);
+    border: 0;
+  }
+
+  .arbeidsflate[data-detalj] .arbeidsflate__liste,
+  .arbeidsflate:not([data-detalj]) .arbeidsflate__detalj {
+    display: none;
+  }
+
+  .arbeidsflate__tilbake {
+    display: block;
+  }
+
+  .gruppeinvitasjon__knapper,
+  .gruppemodal__inviterrad {
+    width: 100%;
+  }
 }

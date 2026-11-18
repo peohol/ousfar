@@ -3,6 +3,7 @@ import { malFraAdresse, type Lenkemal } from '../direktelenker/mal'
 import type { Analyttkatalog } from '../domain/analyttkatalog'
 import { adresse, FORSIDE, kanoniskAdresse, lesRute, sammeRute, type Rute } from '../domain/rute'
 import { STOFFREGISTER, type Stoffregister } from '../domain/stoffregister'
+import { stoppNavigasjon } from './navigasjonsvakt'
 
 /** Det adressene tolkes med: stoffregisteret med koblingene, og analyttkatalogen. */
 export interface Adressegrunnlag {
@@ -37,15 +38,50 @@ export function inngangsvei(): string | null | undefined {
   return typeof fra === 'string' ? fra : null
 }
 
-/** Tilstanden i historikken med inngangsveien `fra`, og det andre som sto der. */
-function medInngangsvei(fra: string | null): Record<string, unknown> {
+/**
+ * Nøkkelen for plassen oppføringen har i historikken, talt fra den appen ble
+ * åpnet på. Med den vet appen hvor langt tilbake- eller framknappen gikk, og
+ * kan gå tilbake dit brukeren sto når et skjema stopper byttet
+ * (`navigasjonsvakt.ts`).
+ */
+const PLASS = 'ousfarNr'
+
+/** Plassen til oppføringen som står nå, eller `undefined` når appen ikke har sett den før. */
+function plass(): number | undefined {
   const tilstand: unknown = window.history.state
-  return { ...(tilstand && typeof tilstand === 'object' ? tilstand : {}), [INNGANGSVEI]: fra }
+  const nr = tilstand && typeof tilstand === 'object' ? (tilstand as Record<string, unknown>)[PLASS] : undefined
+  return typeof nr === 'number' && Number.isInteger(nr) ? nr : undefined
 }
 
-/** Merker oppføringen som står nå med inngangsveien, om den ikke alt har en. */
-function merk(fra: string | null): void {
-  if (inngangsvei() === undefined) window.history.replaceState(medInngangsvei(fra), '')
+/** Plassen til oppføringen appen sist viste. */
+let gjeldendePlass = 0
+
+/** Tilstanden i historikken med inngangsveien `fra` og plassen `nr`, og det andre som sto der. */
+function medInngangsvei(fra: string | null, nr: number): Record<string, unknown> {
+  const tilstand: unknown = window.history.state
+  return { ...(tilstand && typeof tilstand === 'object' ? tilstand : {}), [INNGANGSVEI]: fra, [PLASS]: nr }
+}
+
+/**
+ * Merker oppføringen som står nå med inngangsveien og plassen, om den ikke
+ * alt har dem. En ny oppføring står rett etter den appen sist viste.
+ */
+function merk(fra: string | null, nr: number): void {
+  const vei = inngangsvei()
+  const naa = plass()
+  if (vei === undefined || naa === undefined) window.history.replaceState(medInngangsvei(vei === undefined ? fra : vei, naa ?? nr), '')
+  gjeldendePlass = plass() ?? nr
+}
+
+/**
+ * Går tilbake dit brukeren kom fra i appen, som `tilbake` fra {@link useRute},
+ * eller til `reserve` (en adresse) når siden ble åpnet direkte. For det som
+ * lukkes utenfor `App`, som en arbeidsflate i en gruppe, der reserven er
+ * gruppen og ikke forsiden.
+ */
+export function tilbakeTil(reserve: string): void {
+  if (inngangsvei()) window.history.back()
+  else erstattAdressen(reserve)
 }
 
 /**
@@ -121,12 +157,34 @@ export function useRute(
     }
     if (!folgLenke()) rettAdressen(tolkning.current)
     // Oppføringen appen ble åpnet på, har ingen side i appen foran seg.
-    merk(null)
+    merk(null, 0)
+    /** Plassen appen går tilbake til etter et byttet en vakt stoppet, så den ikke spør igjen. */
+    let vender: number | null = null
+    /** Byttet brukeren har sagt ja til etter at vakten spurte. */
+    let slipp = false
     const oppdater = () => {
+      const nr = plass()
+      if (vender !== null && nr === vender) {
+        vender = null
+        return
+      }
+      // Et skjema med endringer som ikke er lagret, stopper tilbake- og
+      // framknappen og en lenke: appen går tilbake dit den sto, og spør.
+      // En adresse som bare skrives om (samme plass), stoppes ikke.
+      const steg = nr === undefined ? 1 : nr - gjeldendePlass
+      if (slipp) slipp = false
+      else if (steg !== 0 && stoppNavigasjon(() => {
+          slipp = true
+          window.history.go(steg)
+        })) {
+        vender = gjeldendePlass
+        window.history.go(-steg)
+        return
+      }
       // En ny oppføring fra en lenke i appen eller adressefeltet: brukeren kom
       // fra siden som sto. En oppføring tilbake- eller framknappen går til, er
       // alt merket og beholder sin.
-      merk(adresse(gjeldende.current))
+      merk(adresse(gjeldende.current), gjeldendePlass + 1)
       if (folgLenke()) return
       rettAdressen(tolkning.current)
       setRute((forrige) => {
@@ -141,7 +199,10 @@ export function useRute(
   const gaaTil = useCallback((ny: Rute, { erstatt = false }: { erstatt?: boolean } = {}) => {
     if (window.location.hash !== adresse(ny)) {
       if (erstatt) window.history.replaceState(window.history.state, '', adresse(ny))
-      else window.history.pushState(medInngangsvei(adresse(gjeldende.current)), '', adresse(ny))
+      else {
+        gjeldendePlass += 1
+        window.history.pushState(medInngangsvei(adresse(gjeldende.current), gjeldendePlass), '', adresse(ny))
+      }
     }
     gjeldende.current = ny
     setRute((forrige) => (sammeRute(forrige, ny) ? forrige : ny))

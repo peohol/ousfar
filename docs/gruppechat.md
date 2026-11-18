@@ -335,8 +335,9 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
 
 ## Brukerflaten (tråd B)
 
-- Fanen **Chat** på gruppesiden (`#/grupper/<ID>/chat`), med tallet på uleste,
-  vises bare når `samhandling.chat_uleste` ikke er `null`.
+- Panelet **Gruppechat** på gruppesiden viser tallet på uleste og lenken
+  «Åpne chat» til chatsiden (`#/grupper/<ID>/chat`). Panelet vises bare når
+  `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
   av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
   medlemmer bare «Leses av systemarkitektene i OUSFAR.»). Ingen påminnelse
@@ -373,10 +374,11 @@ prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
   `Gruppechatfane` er koblingen: én linje som kaller `useGruppechat(gruppe.id)`
   fra C1 (B1 bygger derfor på C1). B2 er bare rettelsene fra tråd Ds
   sluttkontroll i nettleseren.
-- Fanen står etter Oppgaver. Tallet på fanen er `chat_uleste`, og står ikke
-  mens chatten er åpen; når man går ut av chatten, hentes gruppen på nytt, så
-  tallet stemmer. Peker adressen på chatten uten at databasen gir tallet,
-  står «Gruppechatten er ikke slått på.».
+- Chatsiden har tittelen «Chat i <gruppe>», og Tilbake går til gruppesiden.
+  Tallet i panelet er `chat_uleste`; når man går ut av chatten, hentes gruppen
+  på nytt, så tallet stemmer. Peker adressen på chatten uten at databasen gir
+  tallet, står «Gruppechatten er ikke slått på.». (Gruppesiden fikk paneler i
+  stedet for faner i D3; chatsiden står til D4 flytter chatten.)
 - Lista ruller for seg (`role="log"`, `aria-live="polite"`,
   `aria-relevant="additions"`, `aria-busy` mens eldre hentes), med dagene som
   overskrifter og «Nye meldinger» foran den første uleste fra andre da

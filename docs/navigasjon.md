@@ -53,6 +53,37 @@ Skriv aldri `window.location.replace` for å bytte side: den nullstiller
 merket. Bruk `gaaTil(rute, { erstatt: true })` i komponentene eller
 `erstattAdressen(adresse)` utenfor React.
 
+## Gruppene og arbeidsflatene (D3)
+
+`#/grupper` er gruppeoversikten, og Tilbake går til forsiden. Gruppesiden
+`#/grupper/<id>` har reserven `#/grupper`, og chatsiden `#/grupper/<id>/chat`
+har gruppesiden som reserve.
+
+Idéene og oppgavene i en gruppe er arbeidsflater:
+`#/grupper/<id>/ideer[/<idé>]` og `#/grupper/<id>/oppgaver[/<oppgave>]`.
+En arbeidsflate er et stort lag (`Modallag` med `arbeidsflate`) over siden den
+ble åpnet fra (`flatebakgrunn` i `src/components/grupper/arbeidsflate.ts`):
+
+- fra en side i appen, som forsiden, et varsel eller gruppesiden: den siden
+  står bak, og Tilbake, ×, Escape og nettleserens tilbake går dit;
+- fra en lenke utenfra, eller fra en annen arbeidsflate: gruppen står bak, og
+  lukkingen erstatter adressen med gruppen (`tilbakeTil`), så brukeren
+  ikke går ut av appen.
+
+Et valg i lista på flaten erstatter adressen (`erstattAdressen`) og legger
+ingenting i historikken; lukkingen går derfor til samme sted uansett hvor
+mange idéer brukeren har sett på.
+
+## Ulagret arbeid og nettleserens tilbake
+
+Hver oppføring merkes også med sin plass i historikken
+(`history.state.ousfarNr`). Et skjema med ulagrede endringer melder seg som
+navigasjonsvakt (`useNavigasjonsvakt`, `src/hooks/navigasjonsvakt.ts`). Går
+brukeren tilbake eller fram i nettleseren mens en vakt har endringer, setter
+`useRute` adressen tilbake der den sto og lar vakten spørre; forkaster
+brukeren endringene, tas det samme steget igjen. Tilbake, × og Escape går
+gjennom den samme vakten.
+
 ## Escape: lagstakken
 
 Lag som legger seg over siden, som hovedmenyen og et nedtrekk, melder seg på

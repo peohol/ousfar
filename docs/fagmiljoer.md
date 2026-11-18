@@ -539,33 +539,42 @@ behandle), `idetraad(ide)`, `gruppeoppgaveoversikt(gruppe)` (de uferdige
 først, etter prioritet), `gruppeoppgave(oppgave)` (med `lest_kl`; varslene
 om oppgaven fram til da merkes lest med `merk_gruppeoppgave_sett(oppgave,
 til)`, så et varsel som kommer i mellomtiden, står ulest, som for idéene) og
-tallene på fanene i
+tallene på gruppesidens paneler i
 `gruppeoversikt(gruppe).samhandling` (nye idéer, idéer som venter på
 behandling, og egne uferdige oppgaver). Gruppeidéene står aldri i
 `ideoversikt()`, i tallet på nye idéer eller i det globale søket.
 
-**I appen.** Gruppesiden har faner (`#/grupper/<ID>`, `…/ideer`,
-`…/ideer/<idé-ID>`, `…/oppgaver`, `…/oppgaver/<oppgave-ID>`;
-`src/components/grupper/`): Oversikt (medlemmene og handlingene for gruppen),
-Idéer, Oppgaver og en knapp til Diskusjoner, som åpner diskusjonsmenyen på
-siden. Fanene er samme side (`sidesti`), så diskusjonene
-står og ingenting lastes på nytt. Idéfanen viser de åpne idéene med de nye
-først (merket «Ny»), søk i overskriftene, og skuffene «Gjort om til
-oppgaver» og «Ikke aktuelt». Tallet på fanen er det som venter på behandling
-for de ansvarlige, og idéene med noe nytt for de andre. Én idé bruker den
-samme visningen som idévinduet (`Ideside`), og knappene følger det databasen
-svarer i tråden (`kan_behandle`, `kan_moderere`, `kan_kommentere`). En
-adresse med en idé eller oppgave fra en annen gruppe viser den som borte, og et
-skjema med endringer spør før det forlates, også gjennom fanene og lenkene på
-siden.
-Oppgavefanen har oppgavene den innloggede har øverst (tallet på fanen), så de
-andre etter prioritet, og de fullførte i en skuff. Én oppgave viser hvem som
-har den, status, prioritet, opphavet (idéen og hvem som foreslo den) og idéen
-med tråden under; statusvalget står for dem som kan sette den
+**I appen.** Gruppeoversikten (`#/grupper`) har invitasjonene øverst, så søk
+og en kompakt liste over gruppene den innloggede leser, og de arkiverte for
+seg; «Opprett gruppe» åpner en modal. Gruppesiden (`#/grupper/<ID>`;
+`src/components/grupper/`, D0 skisse 08–13) har ingen faner: overskriften,
+beskrivelsen, medlemslinjen («8 medlemmer · Vis medlemmer») og fire korte
+paneler for idéene, oppgavene, diskusjonene (diskusjonsmenyen) og chatten
+(egen side `…/chat` til chatmenyen tar over), med tallene fra
+`gruppeoversikt(gruppe).samhandling`. Medlemmene (invitere, rolle, fjerne) og
+gruppeinnstillingene (navn, arkivere, åpne igjen, forlate) er modaler med de
+samme bekreftelsene og reglene som før; en arkivert gruppe står i lesemodus.
+
+Idéene (`…/ideer`, `…/ideer/<idé-ID>`) og oppgavene (`…/oppgaver`,
+`…/oppgaver/<oppgave-ID>`) er arbeidsflater: et stort lag med lista til
+venstre og det som står åpent til høyre (`Gruppeflate`), over siden de ble
+åpnet fra og lukket dit, eller til gruppen når de ble åpnet utenfra
+([navigasjon.md](navigasjon.md)). Å velge i lista bytter adressen uten en ny
+oppføring i historikken. Idélista har de åpne idéene med de nye først (merket
+«Ny»), søk i overskriftene, og skuffene «Gjort om til oppgaver» og «Ikke
+aktuelt». Én idé bruker den samme visningen som idévinduet (`Ideside`), og
+knappene følger det databasen svarer i tråden (`kan_behandle`,
+`kan_moderere`, `kan_kommentere`). En adresse med en idé eller oppgave fra en
+annen gruppe viser den som borte, og et skjema med endringer spør før det
+forlates, både med Tilbake, ×, Escape og nettleserens tilbakeknapp.
+Oppgavelista har oppgavene den innloggede har øverst, så de andre etter
+prioritet, og de fullførte i en skuff. Én oppgave viser hvem som har den,
+status, prioritet, opphavet (idéen og hvem som foreslo den) og idéen med
+tråden under; statusvalget står for dem som kan sette den
 (`kan_sette_status`), og tildeling, endring og fjerning for de ansvarlige
 (`kan_endre`). Oppgaven kan bare gis til aktive medlemmer med tilgang.
-Varslene og direktelenkene til en gruppeidé eller en oppgave åpner den på
-gruppesiden (`gruppevisning.ts`), med kommentaren lenken peker på uthevet.
+Varslene og direktelenkene til en gruppeidé eller en oppgave åpner den i
+arbeidsflaten (`gruppevisning.ts`), med kommentaren lenken peker på uthevet.
 
 **Ingen lekkasje.** Radsikkerheten `rekkevidde` på `ideer` slipper bare
 gruppeidéer fra gruppene den innloggede leser (`mine_lesbare_grupper()`), og

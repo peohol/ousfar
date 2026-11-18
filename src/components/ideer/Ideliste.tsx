@@ -187,16 +187,19 @@ export function Idekort({
   visKategori,
   visForfatter,
   onApne,
+  valgt = false,
 }: {
   ide: Ide
   visKategori: boolean
   visForfatter: boolean
   onApne: () => void
+  /** Idéen står åpen ved siden av lista (i en arbeidsflate). */
+  valgt?: boolean
 }) {
   const navn = useForfatternavn(ide.forfatter_id)
   const nye = ide.nye_kommentarer
   return (
-    <button type="button" className="idekort" data-ide={ide.id} data-ih="" onClick={onApne}>
+    <button type="button" className="idekort" data-ide={ide.id} data-ih="" aria-current={valgt || undefined} onClick={onApne}>
       <span className="idekort__tittel">
         {ide.gruppe_id && !ide.sett && <span className="idekort__ny">Ny</span>}
         {ide.tittel}

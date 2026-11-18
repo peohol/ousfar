@@ -113,13 +113,20 @@ vi.mock('../ideer/api', () => ({
   hentGruppeideer: vi.fn(async () => ({ kan_skrive: false, kan_behandle: false, ideer: [] })),
 }))
 
-const { Grupperside } = await import('../components/grupper/Grupperside')
+const { Gruppeflate } = await import('../components/grupper/Gruppeflate')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
 const { lesGruppeoppgave, lesGruppeoppgaveliste } = await import('../grupper/oppgaver')
 
 beforeAll(() => {
   Element.prototype.scrollIntoView ??= function () {}
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
   document.elementFromPoint ??= () => null
   Range.prototype.getClientRects ??= () => ({ length: 0, item: () => null, [Symbol.iterator]: [][Symbol.iterator] }) as unknown as DOMRectList
   Range.prototype.getBoundingClientRect ??= () => new DOMRect()
@@ -129,17 +136,21 @@ beforeAll(() => {
 const somDatabasen = <T extends { kan_endre: boolean; kan_sette_status: boolean }>(o: T): T =>
   tilstand.ansvarlig ? { ...o, kan_endre: true, kan_sette_status: true } : o
 
+/** Arbeidsflaten med oppgavene i gruppen. */
+const flate = (element?: string) => (
+  <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
+    <Gruppeflate gruppe={GRUPPE} fane="oppgaver" element={element} />
+  </GruppekildeProvider>
+)
+
 function vis(element?: string) {
-  return render(
-    <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
-      <Grupperside gruppe={GRUPPE} fane="oppgaver" element={element} onLukk={() => undefined} />
-    </GruppekildeProvider>,
-  )
+  window.history.replaceState(null, '', `#/grupper/${GRUPPE}/oppgaver${element ? `/${element}` : ''}`)
+  return render(flate(element))
 }
 
 beforeEach(() => {
   window.scrollTo = () => undefined
-  window.location.hash = ''
+  window.history.replaceState(null, '', '#/')
   tilstand.ansvarlig = false
   grupperApi.hentGruppeoversikt.mockImplementation(async () =>
     lesGruppeoversikt(tilstand.ansvarlig ? { ...OVERSIKT, rolle: 'ansvarlig', kan_styre: true } : OVERSIKT),
@@ -158,9 +169,7 @@ afterEach(() => {
 describe('lista', () => {
   it('har mine oppgaver øverst, de andre under og de fullførte i en skuff', async () => {
     vis()
-    const faner = await screen.findByRole('navigation', { name: 'I gruppen' })
-    expect(within(faner).getByRole('link', { name: /Oppgaver/ }).getAttribute('aria-current')).toBe('page')
-    expect(within(faner).getByLabelText('1 til deg')).toBeTruthy()
+    expect(await screen.findByRole('heading', { level: 2, name: 'Oppgaver for Lithiumgruppen' })).toBeTruthy()
     const mine = await screen.findByRole('region', { name: /Mine oppgaver/ })
     expect(within(mine).getByRole('button', { name: /Skriv sjekklisten/ }).textContent).toMatch(/Pågår.*Høy prioritet/)
     const andre = screen.getByRole('region', { name: /De andre oppgavene/ })
@@ -247,20 +256,15 @@ describe('én oppgave', () => {
     const { rerender } = vis()
     const kort = await screen.findByRole('button', { name: /Les gjennom rutinen/ })
     await userEvent.click(kort)
-    const side = (element?: string) => (
-      <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
-        <Grupperside gruppe={GRUPPE} fane="oppgaver" element={element} onLukk={() => undefined} />
-      </GruppekildeProvider>
-    )
-    rerender(side(O2))
+    rerender(flate(O2))
     await screen.findByRole('heading', { level: 2, name: 'Les gjennom rutinen' })
-    rerender(side())
+    rerender(flate())
     await waitFor(() => expect(document.activeElement?.textContent).toMatch(/Les gjennom rutinen/))
   })
 })
 
 describe('skjemaet', () => {
-  it('spør før en ny oppgave med endringer forlates, også gjennom fanene', async () => {
+  it('spør før en ny oppgave med endringer forlates, også når en annen oppgave velges', async () => {
     tilstand.ansvarlig = true
     vis()
     await userEvent.click(await screen.findByRole('button', { name: 'Ny oppgave' }))
@@ -268,11 +272,10 @@ describe('skjemaet', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Tilbake til oppgavene' }))
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
     await userEvent.click(screen.getByRole('button', { name: 'Fortsett å redigere' }))
-    const faner = screen.getByRole('navigation', { name: 'I gruppen' })
-    await userEvent.click(within(faner).getByRole('link', { name: /Idéer/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Les gjennom rutinen/ }))
     expect(await screen.findByText('Du har endringer som ikke er lagret.')).toBeTruthy()
-    expect(window.location.hash).toBe('')
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/oppgaver`)
     await userEvent.click(screen.getByRole('button', { name: 'Forkast endringene' }))
-    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/ideer`)
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/oppgaver/${O2}`)
   })
 })

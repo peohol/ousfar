@@ -1,14 +1,15 @@
 // @vitest-environment jsdom
 /**
  * Gruppene i appen: adressene, gruppesidene i diskusjonene, lesingen av det
- * databasen svarer, oversikten med invitasjonene og siden til én gruppe med
- * handlingene databasen tillater. Kallene er erstattet; det er skjermbildene
- * og reglene i appen som prøves. Tilgangen selv prøves mot databasen i
- * `grupper.test.ts`.
+ * databasen svarer, oversikten med invitasjonene, søket og modalen for en ny
+ * gruppe, og gruppesiden uten faner med medlemmene og innstillingene i
+ * modaler og bare handlingene databasen tillater. Kallene er erstattet; det
+ * er skjermbildene og reglene i appen som prøves. Tilgangen selv prøves mot
+ * databasen i `grupper.test.ts`.
  */
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Profil } from '@delt/profil'
 import type { MineGrupper } from '../grupper/modell'
 
@@ -44,7 +45,7 @@ vi.mock('../auth/okt', () => ({ useProfil: () => MEG }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../grupper/api', () => api)
 
-const { Grupperside } = await import('../components/grupper/Grupperside')
+const { Grupperside, sokIGrupper } = await import('../components/grupper/Grupperside')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt, lesMineGrupper } = await import('../grupper/modell')
 const { adresse, lesRute, sidesti } = await import('../domain/rute')
@@ -53,8 +54,13 @@ const { adresseForSide, diskusjonssideFor, diskusjonssider, lesDiskusjonsside, n
 
 const GRUPPE = { id: ID, navn: 'Lithiumgruppen', beskrivelse: 'Om litium.', art: 'tverrfaglig', status: 'aktiv', fagmiljo: null }
 
+const ARKIVERT = '22222222-3333-4444-8555-666666666666'
+
 const MINE: MineGrupper = lesMineGrupper({
-  grupper: [{ ...GRUPPE, rolle: 'ansvarlig', medlemmer: 2 }],
+  grupper: [
+    { ...GRUPPE, rolle: 'ansvarlig', medlemmer: 2 },
+    { ...GRUPPE, id: ARKIVERT, navn: 'Gammel gruppe', status: 'arkivert', rolle: null, medlemmer: 1 },
+  ],
   invitasjoner: [
     {
       gruppe: { ...GRUPPE, id: ANNEN, navn: 'TDM-gruppen', art: 'fagmiljo', fagmiljo: { id: 'a', navn: 'OUS Klinisk farmakologi' } },
@@ -108,9 +114,19 @@ function vis(gruppe: string | undefined, kilde: MineGrupper = MINE) {
   return { oppdater }
 }
 
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
+})
+
 beforeEach(() => {
   window.scrollTo = () => undefined
-  window.location.hash = ''
+  window.history.replaceState(null, '', '#/')
   api.hentGruppeoversikt.mockImplementation(async () => lesGruppeoversikt(api.oversikt))
   api.oversikt = OVERSIKT
 })
@@ -170,59 +186,106 @@ describe('lesingen', () => {
 })
 
 describe('oversikten', () => {
-  it('viser invitasjonene med hvem som inviterte, og godtar dem', async () => {
+  it('viser invitasjonene øverst med hvem som inviterte, og godtar dem', async () => {
     const { oppdater } = vis(undefined)
     const invitasjoner = screen.getByRole('region', { name: 'Invitasjoner' })
-    expect(within(invitasjoner).getByText('TDM-gruppen')).toBeTruthy()
-    expect(within(invitasjoner).getByText(/OUS Klinisk farmakologi · invitert av Kari Kollega/)).toBeTruthy()
+    expect(invitasjoner.textContent).toMatch(/Kari Kollega har invitert deg til TDM-gruppen\./)
+    expect(within(invitasjoner).getByText('OUS Klinisk farmakologi')).toBeTruthy()
 
-    await userEvent.click(within(invitasjoner).getByRole('button', { name: 'Godta' }))
+    await userEvent.click(within(invitasjoner).getByRole('button', { name: 'Godta invitasjonen til TDM-gruppen' }))
     expect(api.svarPaaInvitasjon).toHaveBeenCalledWith(ANNEN, true)
     expect(oppdater).toHaveBeenCalled()
     expect(await screen.findByRole('status')).toHaveProperty('textContent', 'Du er med i TDM-gruppen.')
   })
 
-  it('lenker til gruppene, og oppretter en ny der den innloggede kan', async () => {
+  it('har en kompakt liste med lenker, rollen, de arkiverte for seg, og søk', async () => {
     vis(undefined)
-    const lenke = within(screen.getByRole('region', { name: 'Gruppene dine' })).getByRole('link', { name: /Lithiumgruppen/ })
+    const aktive = screen.getByRole('region', { name: 'Gruppene dine' })
+    const lenke = within(aktive).getByRole('link', { name: /Lithiumgruppen/ })
     expect(lenke.getAttribute('href')).toBe(`#/grupper/${ID}`)
+    expect(lenke.textContent).toMatch(/På tvers av fagmiljøene · 2 medlemmer · Ansvarlig/)
+    const arkiverte = screen.getByRole('region', { name: 'Arkiverte' })
+    // Systemarkitekten som leser en gruppe uten å være med i den.
+    expect(within(arkiverte).getByRole('link', { name: /Gammel gruppe/ }).textContent).toMatch(/Ikke medlem.*Arkivert/)
 
-    const ny = screen.getByRole('region', { name: 'Ny gruppe' })
-    // Bare fagmiljøet hen administrerer; ikke «på tvers».
-    expect(within(ny).getAllByRole('option').map((o) => o.textContent)).toEqual(['OUS Klinisk farmakologi'])
-    await userEvent.type(within(ny).getByLabelText('Navn'), ' Ny gruppe ')
-    await userEvent.click(within(ny).getByRole('button', { name: 'Opprett gruppen' }))
-    expect(api.opprettGruppe).toHaveBeenCalledWith('Ny gruppe', '', 'a')
-    await waitFor(() => expect(window.location.hash).toBe(`#/grupper/${ANNEN}`))
+    await userEvent.type(screen.getByLabelText('Søk i gruppene'), 'lith')
+    expect(within(aktive).getAllByRole('link')).toHaveLength(1)
+    expect(screen.queryByRole('region', { name: 'Arkiverte' })).toBeNull()
+    expect(sokIGrupper(MINE.grupper, 'farmakologi tvers').map((g) => g.navn)).toEqual([])
+    expect(sokIGrupper(MINE.grupper, 'tvers gammel').map((g) => g.navn)).toEqual(['Gammel gruppe'])
   })
 
-  it('viser ingen skjema for den som ikke kan opprette grupper', () => {
+  it('oppretter en ny gruppe i en modal, ikke et skjema nederst på siden', async () => {
+    vis(undefined)
+    expect(screen.queryByLabelText('Navn')).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Opprett gruppe' }))
+    const modal = screen.getByRole('dialog', { name: 'Opprett gruppe' })
+    // Bare fagmiljøet hen administrerer; ikke «på tvers».
+    expect(within(modal).getAllByRole('radio').map((r) => r.closest('label')?.textContent)).toEqual(['Bare OUS Klinisk farmakologiLokal gruppe'])
+    await userEvent.type(within(modal).getByLabelText('Navn'), ' Ny gruppe ')
+    await userEvent.click(within(modal).getByRole('button', { name: 'Opprett gruppe' }))
+    expect(api.opprettGruppe).toHaveBeenCalledWith('Ny gruppe', '', 'a')
+    await waitFor(() => expect(window.location.hash).toBe(`#/grupper/${ANNEN}`))
+    expect(screen.queryByRole('dialog', { name: 'Opprett gruppe' })).toBeNull()
+  })
+
+  it('har ingen knapp for en ny gruppe for den som ikke kan opprette, og en rolig tomtilstand', () => {
     vis(undefined, INGEN_GRUPPER)
-    expect(screen.queryByRole('region', { name: 'Ny gruppe' })).toBeNull()
-    expect(screen.getByText(/Du er ikke med i noen grupper ennå/)).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Opprett gruppe' })).toBeNull()
+    expect(screen.getByText('Du er ikke med i noen grupper ennå.')).toBeTruthy()
+    expect(screen.queryByLabelText('Søk i gruppene')).toBeNull()
   })
 })
 
+/** Åpner modalen med medlemmene og gir den. */
+async function medlemmene() {
+  await userEvent.click(await screen.findByRole('button', { name: /2 medlemmer · Vis medlemmer/ }))
+  return screen.getByRole('dialog', { name: 'Medlemmer' })
+}
+
+/** Åpner gruppeinnstillingene og gir dem. */
+async function innstillingene() {
+  await userEvent.click(await screen.findByRole('button', { name: 'Gruppeinnstillinger' }))
+  return screen.getByRole('dialog', { name: 'Gruppeinnstillinger' })
+}
+
 describe('én gruppe', () => {
-  it('viser medlemmene, de inviterte og hvem som er uten tilgang nå', async () => {
+  it('har ingen faner, men overskriften, beskrivelsen, medlemslinjen og panelene', async () => {
+    api.oversikt = { ...OVERSIKT, samhandling: { nye_ideer: 1, venter: 3, mine_oppgaver: 2, chat_uleste: null } }
     vis(ID)
-    const liste = await screen.findByRole('list', { name: 'Medlemmer i Lithiumgruppen' })
+    expect(await screen.findByRole('heading', { level: 1, name: 'Lithiumgruppen' })).toBeTruthy()
+    expect(screen.getByText('Om litium.')).toBeTruthy()
+    expect(screen.queryByRole('navigation', { name: 'I gruppen' })).toBeNull()
+    expect(screen.getByRole('button', { name: /2 medlemmer · Vis medlemmer/ })).toBeTruthy()
+    expect(screen.getByRole('region', { name: 'Idéer' }).textContent).toMatch(/3 åpne · 1 ny/)
+    const oppgaver = screen.getByRole('region', { name: 'Oppgaver' })
+    expect(oppgaver.textContent).toMatch(/2 tildelt deg/)
+    expect(within(oppgaver).getByRole('link', { name: 'Åpne oppgaver' }).getAttribute('href')).toBe(`#/grupper/${ID}/oppgaver`)
+    // Medlemslista og administrasjonen står ikke på siden, men i modalene.
+    expect(screen.queryByRole('list', { name: 'Medlemmer i Lithiumgruppen' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Arkiver gruppen' })).toBeNull()
+  })
+
+  it('viser medlemmene, de inviterte og hvem som er uten tilgang nå, i modalen', async () => {
+    vis(ID)
+    const modal = await medlemmene()
+    const liste = within(modal).getByRole('list', { name: 'Medlemmer i Lithiumgruppen' })
     expect(within(liste).getAllByRole('listitem')).toHaveLength(2)
     expect(within(liste).getByText('Uten tilgang nå')).toBeTruthy()
-    expect(within(screen.getByRole('list', { name: 'Inviterte til Lithiumgruppen' })).getByText('Per X')).toBeTruthy()
-    // Den siste ansvarlige kan ikke gå, og kan ikke endre sin egen rolle.
-    expect(screen.getByRole('button', { name: 'Forlat gruppen' })).toHaveProperty('disabled', true)
-    expect(screen.queryByLabelText('Rollen til Anne Ansvarlig')).toBeNull()
+    expect(within(within(modal).getByRole('list', { name: 'Inviterte til Lithiumgruppen' })).getByText('Per X')).toBeTruthy()
+    // Den siste ansvarlige kan ikke endre sin egen rolle.
+    expect(within(modal).queryByLabelText('Rollen til Anne Ansvarlig')).toBeNull()
   })
 
   it('endrer rollen, og fjerner et medlem først etter bekreftelsen', async () => {
     vis(ID)
-    await userEvent.selectOptions(await screen.findByLabelText('Rollen til Ola X'), 'moderator')
+    const modal = await medlemmene()
+    await userEvent.selectOptions(within(modal).getByLabelText('Rollen til Ola X'), 'moderator')
     expect(api.settGrupperolle).toHaveBeenCalledWith(ID, 'ola', 'moderator')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Fjern Ola X fra gruppen' }))
+    await userEvent.click(within(modal).getByRole('button', { name: 'Fjern Ola X fra gruppen' }))
     expect(api.avsluttGruppemedlemskap).not.toHaveBeenCalled()
-    const bekreft = screen.getByRole('group', { name: 'Fjerne Ola X fra Lithiumgruppen?' })
+    const bekreft = within(modal).getByRole('group', { name: 'Fjerne Ola X fra Lithiumgruppen?' })
     expect(bekreft.textContent).toMatch(/mister med en gang tilgangen/)
     await userEvent.click(within(bekreft).getByRole('button', { name: 'Fjern fra gruppen' }))
     expect(api.avsluttGruppemedlemskap).toHaveBeenCalledWith(ID, 'ola')
@@ -230,14 +293,32 @@ describe('én gruppe', () => {
 
   it('trekker tilbake en invitasjon og inviterer med brukernavnet', async () => {
     vis(ID)
-    await userEvent.click(await screen.findByRole('button', { name: 'Trekk tilbake invitasjonen til Per X' }))
+    const modal = await medlemmene()
+    await userEvent.click(within(modal).getByRole('button', { name: 'Trekk tilbake invitasjonen til Per X' }))
     expect(api.avsluttGruppemedlemskap).toHaveBeenCalledWith(ID, 'per')
 
-    const inviter = screen.getByRole('region', { name: 'Inviter' })
-    await userEvent.type(within(inviter).getByLabelText('Brukernavn'), 'kari.k')
+    const inviter = within(modal).getByRole('form', { name: 'Inviter' })
+    await userEvent.type(within(inviter).getByLabelText('Inviter med brukernavn'), 'kari.k')
     await userEvent.click(within(inviter).getByRole('button', { name: 'Inviter' }))
     expect(api.inviterTilGruppe).toHaveBeenCalledWith(ID, 'kari.k')
-    await waitFor(() => expect(within(inviter).getByLabelText('Brukernavn')).toHaveProperty('value', ''))
+    await waitFor(() => expect(within(inviter).getByLabelText('Inviter med brukernavn')).toHaveProperty('value', ''))
+  })
+
+  it('lar den siste ansvarlige endre og arkivere, men ikke forlate gruppen', async () => {
+    vis(ID)
+    const modal = await innstillingene()
+    expect(within(modal).getByRole('button', { name: 'Forlat gruppen' })).toHaveProperty('disabled', true)
+    expect(modal.textContent).toMatch(/Du er den siste ansvarlige/)
+    const navn = within(modal).getByLabelText('Navn')
+    await userEvent.clear(navn)
+    await userEvent.type(navn, 'Litiumgruppen')
+    await userEvent.click(within(modal).getByRole('button', { name: 'Lagre' }))
+    expect(api.endreGruppe).toHaveBeenCalledWith(ID, 'Litiumgruppen', 'Om litium.')
+
+    await userEvent.click(within(modal).getByRole('button', { name: 'Arkiver gruppen' }))
+    expect(api.arkiverGruppe).not.toHaveBeenCalled()
+    await userEvent.click(within(within(modal).getByRole('group', { name: 'Arkivere Lithiumgruppen?' })).getByRole('button', { name: 'Arkiver gruppen' }))
+    expect(api.arkiverGruppe).toHaveBeenCalledWith(ID, true)
   })
 
   it('viser bare det vanlige medlemmer kan gjøre', async () => {
@@ -250,20 +331,54 @@ describe('én gruppe', () => {
       medlemmer: OVERSIKT.medlemmer.map((m) => ({ ...m, kan_fjerne: false, kan_endre_rolle: false })),
     }
     vis(ID)
-    await screen.findByRole('list', { name: 'Medlemmer i Lithiumgruppen' })
-    expect(screen.queryByRole('region', { name: 'Inviter' })).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Arkiver gruppen' })).toBeNull()
-    expect(screen.queryByRole('combobox')).toBeNull()
+    const modal = await medlemmene()
+    expect(within(modal).queryByRole('form', { name: 'Inviter' })).toBeNull()
+    expect(within(modal).queryByRole('combobox')).toBeNull()
+    expect(within(modal).queryByRole('button', { name: /Fjern/ })).toBeNull()
+    await userEvent.click(within(modal).getByRole('button', { name: 'Lukk medlemmene' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Forlat gruppen' }))
-    await userEvent.click(within(screen.getByRole('group', { name: 'Forlate Lithiumgruppen?' })).getByRole('button', { name: 'Forlat gruppen' }))
+    const innstillinger = await innstillingene()
+    expect(within(innstillinger).queryByLabelText('Navn')).toBeNull()
+    expect(within(innstillinger).queryByRole('button', { name: 'Arkiver gruppen' })).toBeNull()
+    await userEvent.click(within(innstillinger).getByRole('button', { name: 'Forlat gruppen' }))
+    await userEvent.click(within(within(innstillinger).getByRole('group', { name: 'Forlate Lithiumgruppen?' })).getByRole('button', { name: 'Forlat gruppen' }))
     expect(api.avsluttGruppemedlemskap).toHaveBeenCalledWith(ID, 'meg')
     await waitFor(() => expect(window.location.hash).toBe('#/grupper'))
   })
 
-  it('sier fra når gruppen ikke finnes eller ikke kan leses', async () => {
+  it('viser en arkivert gruppe i lesemodus for systemarkitekten, som kan åpne den igjen', async () => {
+    api.oversikt = {
+      ...OVERSIKT,
+      status: 'arkivert',
+      rolle: null,
+      kan_styre: false,
+      kan_moderere: false,
+      kan_forlate: false,
+      kan_gjenapne: true,
+      medlemmer: OVERSIKT.medlemmer.map((m) => ({ ...m, kan_fjerne: false, kan_endre_rolle: false })),
+    }
+    vis(ID)
+    expect((await screen.findByRole('note')).textContent).toMatch(/arkivert.*lesemodus/)
+    expect(screen.getByText('Ikke medlem')).toBeTruthy()
+    const modal = await innstillingene()
+    expect(within(modal).queryByRole('button', { name: 'Forlat gruppen' })).toBeNull()
+    await userEvent.click(within(modal).getByRole('button', { name: 'Åpne gruppen igjen' }))
+    expect(api.arkiverGruppe).toHaveBeenCalledWith(ID, false)
+  })
+
+  it('har ingen gruppeinnstillinger for den som verken er med eller kan styre', async () => {
+    api.oversikt = { ...OVERSIKT, rolle: null, kan_styre: false, kan_moderere: false, kan_forlate: false, kan_gjenapne: false }
+    vis(ID)
+    await screen.findByRole('heading', { level: 1, name: 'Lithiumgruppen' })
+    expect(screen.queryByRole('button', { name: 'Gruppeinnstillinger' })).toBeNull()
+  })
+
+  it('sier det samme for en gruppe som ikke finnes og en som ikke kan leses, uten gruppens navn', async () => {
     api.hentGruppeoversikt.mockRejectedValueOnce(new Error('Gruppen finnes ikke, eller du har ikke tilgang til den.'))
     vis(ID)
     expect((await screen.findByRole('alert')).textContent).toBe('Gruppen finnes ikke, eller du har ikke tilgang til den.')
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Gruppe')
+    expect(document.body.textContent).not.toMatch(/Lithiumgruppen/)
+    expect(screen.queryByRole('region', { name: 'Idéer' })).toBeNull()
   })
 })
