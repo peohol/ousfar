@@ -19,9 +19,9 @@ import { OUS_ANALYTTKOBLINGER, OUS_KATALOGDATA, type Analyttkoblingsdata } from 
 
 /**
  * Grunnlaget slik det legges inn: alt utenom fagmiljøet, som databasen
- * setter, og forbindelsene og datakortene til kodene, som kom til etterpå med sin egen
- * migrasjon (`scripts/analyttforbindelser.ts`). Migrasjonen med importen er
- * kjørt og endres ikke.
+ * setter, og forbindelsene og datakortene til kodene, som kom til etterpå. Migrasjonen
+ * med importen er kjørt og endres ikke; koblingene den la inn, er slettet
+ * (`20261118120000_koblingene_fjernet.sql`).
  */
 export function analyttkatalogGrunnlag(
   data: Katalogdata = OUS_KATALOGDATA,

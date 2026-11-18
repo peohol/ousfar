@@ -50,7 +50,6 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'mine_synlige_profiler()': [],
   'leser_alt_lokale_innhold()': false,
   'kan_endre_lokalt_innhold()': false,
-  'leser_analyttkoblingene()': false,
   'kan_se_utkast()': false,
   // P4b: fagmiljøet fortolkningen gjelder; ingen uten aktivt medlemskap.
   'mitt_arbeidsfagmiljo()': null,

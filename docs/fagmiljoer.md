@@ -1088,11 +1088,7 @@ Visningene (`objektstatus`, `objekthistorikk`, `objektutgaver`,
 `referansebruk`) er `security_invoker` og arver dem. `innholdsendringer`
 leses direkte bare av systemarkitektene, `innholdshendelser` bare for objekter
 den innloggede kan lese (systemarkitektene ser disse to og
-`slettede_referanser` også uten den gamle adminrollen), og
-`analyttkoblede_stoffer` bare av medlemmene i fagmiljøet dagens fortolkning
-hører til (`public.leser_analyttkoblingene()`: OUS Klinisk farmakologi, D1)
-og systemarkitektene. Tabellen er ikke i bruk siden 18.11.2026
-(`docs/domener.md`) og fjernes etter overgangen (#405). `public.les_endringslogg` (`security definer`)
+`slettede_referanser` også uten den gamle adminrollen). `public.les_endringslogg` (`security definer`)
 viser bare objektene den innloggede kan lese, og utkastene bare med
 endringsrett til alle sidens objekter. De andre lesefunksjonene for
 faginnholdet (`les_stoff`, `les_kommentarer`, `les_intervallregelsett` og de
@@ -1317,9 +1313,8 @@ navn, gruppe, metode, kategori, enhet, måleområde, grensene for
 antihypertensivene, søkeord og hvordan oppføringen fortolkes — med
 konsentrasjonsbånd, som scenariomodul, THC-syre eller EtG/EtS),
 `analyttkatalog_koder` (analyttkodene hver oppføring dekker, hver kode høyst
-én gang per fagmiljø, med referanseområdet fortolkningen viser) og
-`analyttkatalog_koblinger` (koblingene fra kodene til stoffene i
-stoffregisteret; ikke i bruk i appen siden 18.11.2026, `docs/domener.md`). Tabellene
+én gang per fagmiljø, med referanseområdet fortolkningen viser). Katalogen
+kjenner ingen stoffer eller fagsider (`docs/domener.md`). Tabellene
 har radsikkerhet uten regler og ingen rettigheter for nettleseren. Den eneste
 veien inn er `public.les_analyttkatalog()`, som gir katalogen til
 arbeidskonteksten ([Fortolkningen per fagmiljø](#fortolkningen-per-fagmiljø))
@@ -1360,20 +1355,17 @@ knappene i steg 2. Fortolkningen leser ikke datakortene på fagsidene
 viste fram til da, og endres med en migrasjon. Et fagmiljø uten egne verdier
 viser ingen.
 
-**Forbindelsen og datakortene (overgang).** Før 18.11 leste fortolkningen
+**Koblingene fra før.** Før 18.11.2026 var kodene koblet til stoffene
+(`analyttkatalog_koblinger`, `analyttkoblede_stoffer`), og fortolkningen leste
 referanseområdet fra kortet på siden til kodens primære stoff, etter
-`analyttkatalog_koder.forbindelse` og `.datakort` (#395 punkt 3:
-`20261115112000_datakort_per_forbindelse.sql` og
-`…112100_analyttforbindelser_ous.sql`, laget med
-`scripts/analyttforbindelser.ts` av `src/data/analyttforbindelser.json`). Feltene
-og `analyttkatalog_koblinger` står i databasen og i `les_analyttkatalog()` for
-faner med appen fra før, men den nye appen leser dem ikke. De fjernes når
-overgangen er over (#405), etter Peders ja.
+`analyttkatalog_koder.forbindelse` og `.datakort` (#395 punkt 3). Alt dette er
+slettet, etter Peders ja (`20261118120000_koblingene_fjernet.sql`, #405).
 
 **Importgrunnlaget.** Katalogen til OUS Klinisk farmakologi ble importert fra
 filene som sto i klientpakken (`src/domain/ouskatalog.ts`, som leser
 `src/data/analytter.json`, `antihypertensiver.json`, `aliaser.json` og
-`analyttkoblinger.json`). De står igjen for skriptene og testene;
+`analyttkoblinger.json`). De står igjen for importskriptet og testene av de
+kjørte migrasjonene;
 byggekontrollen (`scripts/kontroller-vegg.mjs`, `LABORATORIEDATA`) stopper en
 pakke, også bak innloggingsveggen, som drar dem inn. THC-kurvene
 (`src/domain/thcKurver.ts`) er ikke en del av katalogen og står der de sto
@@ -1386,13 +1378,10 @@ regnet av `main` før flyttingen), og EtG/EtS-tekstene ordrett; at B, også
 systemarkitekten med B som arbeidskontekst, og en uten aktivt medlemskap får
 en tom katalog og ingen EtG-regler; at tabellene ikke kan leses direkte; og
 at en ny kjøring av importene ikke endrer noe. De kliniske fasitene kjøres
-uendret med katalogen til OUS Klinisk farmakologi. `src/__tests__/analyttforbindelser.test.ts` prøver
-forbindelsene og datakortene: at grunnlaget stemmer med forbindelsesregisteret
-og koblingene, at OUS Klinisk farmakologi får de samme referanseområdene som
-med regelen fra før for alle sider og koder, og at migrasjonen skriver om
-kortet med OUS-koden i det publiserte og i et upublisert utkast hver for seg,
-uten å endre noe annet. `referanseomrader.test.ts` og `stoffside.test.tsx`
-prøver et annet fagmiljø med egne koder og et uten katalog.
+uendret med katalogen til OUS Klinisk farmakologi. `referanseomrader.test.ts`
+prøver kopieringen av referanseområdene, og `koblingeneFjernet.test.ts` at
+kortet med OUS-koden fikk forbindelsen og at koblingene er borte.
+`stoffside.test.tsx` prøver et annet fagmiljø med egne koder og et uten katalog.
 
 **Tilbakeføring.** En ny migrasjon som fjerner funksjonen og tabellene, og
 regelsettet og kommentarene for `etg`; appen før P4c bruker dem ikke.
