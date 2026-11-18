@@ -849,6 +849,19 @@ describe('hovedmenyen', () => {
     }
   })
 
+  it('glemmer tallet på nye idékommentarer når laget forsvinner, som ved utlogging', async () => {
+    const { idestatus } = await import('../components/ideer/idevisning')
+    ideerMedNytt.antall = 2
+    try {
+      const { unmount } = render(<Hovedmeny />)
+      await waitFor(() => expect(idestatus.les()).toBe(2))
+      unmount()
+      expect(idestatus.les()).toBe(0)
+    } finally {
+      ideerMedNytt.antall = 0
+    }
+  })
+
   it('lukkes med Escape og Ctrl + M, med fokus tilbake til knappen, og holder fokus i menyen med tabulator', async () => {
     render(<Hovedmeny />)
     const meny = await apneMenyen()

@@ -207,6 +207,20 @@ describe('det som venter på deg (D6)', () => {
     expect(rader[1]!.textContent).toContain('en annen behandler det')
   })
 
+  it('velger lista tallet gjelder, uten filteret, også over en liste valgt før', async () => {
+    const bruker = userEvent.setup()
+    api.kall.mockResolvedValue(KO)
+    somBehandler(<Forslagsside fane="behandling" onLukk={() => {}} />)
+    const oversikt = await screen.findByRole('region', { name: 'Det som venter på deg' })
+    await bruker.click(await screen.findByRole('button', { name: /Ferdige/ }))
+    await bruker.click(screen.getByRole('switch', { name: 'Bare uten redaktør' }))
+    await bruker.click(within(oversikt).getByRole('link', { name: /Nye, uten behandler/ }))
+    await waitFor(() => expect(screen.getByRole('button', { name: /^Nye/ }).getAttribute('aria-pressed')).toBe('true'))
+    expect((screen.getByRole('switch', { name: 'Bare uten redaktør' }) as HTMLInputElement).checked).toBe(false)
+    await bruker.click(within(oversikt).getByRole('link', { name: /Du behandler/ }))
+    await waitFor(() => expect(screen.getByRole('button', { name: /Pågående/ }).getAttribute('aria-pressed')).toBe('true'))
+  })
+
   it('viser ikke arbeidskøens tall til den som ikke behandler forslag', async () => {
     api.kall.mockResolvedValue(KO)
     render(<Forslagsside onLukk={() => {}} />)

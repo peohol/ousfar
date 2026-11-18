@@ -37,6 +37,8 @@ export function Idelag() {
     hentIdeerMedNytt().then(idestatus.sett, () => undefined)
   }, [])
   useJevnligSjekk(sjekkNytt)
+  // Tallet gjelder den som er logget inn: det forsvinner med laget (ved utlogging), så neste bruker ikke ser det.
+  useEffect(() => () => idestatus.sett(0), [])
   /** Vakten for skjemaet i laget som står åpent (`useMeldVakt`). */
   const vakt = useRef<Forlat | null>(null)
   const forlat = useCallback<Forlat>((handling) => (vakt.current ? vakt.current(handling) : handling()), [])

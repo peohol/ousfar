@@ -3,6 +3,7 @@ import { useRettigheter } from '../../auth/rettigheter'
 import { forslagsadresse } from '../../domain/rute'
 import { hentForslagsantall } from '../../forslag/behandling'
 import type { Forslagsrad } from '../../forslag/modell'
+import { onsketUtvalg, type Utvalg } from './behandling/Tilbehandling'
 import { useHentet, type Hentet } from './Forslagsside'
 
 interface Punkt {
@@ -10,6 +11,8 @@ interface Punkt {
   tekst: string
   antall: number
   adresse: string
+  /** Lista i arbeidskøen lenken viser. */
+  liste?: Utvalg
   /** Noe den innloggede skal gjøre, ikke bare noe å vite. */
   venter: boolean
 }
@@ -20,7 +23,7 @@ interface Punkt {
  * venter på svar; den som behandler forslag, får også de nye ingen har tatt,
  * dem hen behandler selv og hvor mange som er under behandling i alt
  * (`les_forslagsko`, bare tallene). Hvert tall er en lenke til lista det
- * hører til. Et tall som ikke kunne hentes, står ikke; lista under sier fra
+ * hører til, med den lista valgt i køen. Et tall som ikke kunne hentes, står ikke; lista under sier fra
  * om feilen.
  */
 export function Venterpadeg({ mine }: { mine: Hentet<readonly Forslagsrad[]> }) {
@@ -34,11 +37,12 @@ export function Venterpadeg({ mine }: { mine: Hentet<readonly Forslagsrad[]> }) 
     ...(mine.status === 'klar'
       ? [{ id: 'svar', tekst: 'Venter på svar fra deg', antall: mine.data.filter((f) => f.venter_pa_meg).length, adresse: forslagsadresse(), venter: true }]
       : []),
+    // «Du behandler» viser de pågående, med dem den innloggede behandler øverst (`Tilbehandling`).
     ...(antall
       ? [
-          { id: 'nye', tekst: 'Nye, uten behandler', antall: antall.nye, adresse: behandling, venter: true },
-          { id: 'mine', tekst: 'Du behandler', antall: antall.mine, adresse: behandling, venter: true },
-          { id: 'pagaende', tekst: 'Under behandling i alt', antall: antall.pagaende, adresse: behandling, venter: false },
+          { id: 'nye', tekst: 'Nye, uten behandler', antall: antall.nye, adresse: behandling, liste: 'nye' as const, venter: true },
+          { id: 'mine', tekst: 'Du behandler', antall: antall.mine, adresse: behandling, liste: 'pagaende' as const, venter: true },
+          { id: 'pagaende', tekst: 'Under behandling i alt', antall: antall.pagaende, adresse: behandling, liste: 'pagaende' as const, venter: false },
         ]
       : []),
   ]
@@ -50,7 +54,11 @@ export function Venterpadeg({ mine }: { mine: Hentet<readonly Forslagsrad[]> }) 
       <ul className="forslagsoversikt__liste">
         {punkter.map((p) => (
           <li key={p.id}>
-            <a className="forslagsoversikt__punkt" href={p.adresse} data-tomt={p.antall === 0 || undefined} data-venter={(p.venter && p.antall > 0) || undefined}>
+            <a
+              className="forslagsoversikt__punkt"
+              href={p.adresse}
+              onClick={() => p.liste && onsketUtvalg.sett(p.liste)}
+              data-tomt={p.antall === 0 || undefined} data-venter={(p.venter && p.antall > 0) || undefined}>
               <span className="forslagsoversikt__tall">{p.antall}</span>
               <span className="forslagsoversikt__tekst">{p.tekst}</span>
             </a>

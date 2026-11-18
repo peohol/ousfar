@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { lagDeltTilstand } from '../../../hooks/deltTilstand'
 import { useRettigheter } from '../../../auth/rettigheter'
 import { forslagsadresse } from '../../../domain/rute'
 import { hentForslagsantall, hentForslagsko, ventende, type Korad } from '../../../forslag/behandling'
@@ -16,7 +17,15 @@ const UTVALG = [
   { verdi: 'pagaende', tekst: 'Pågående', tom: 'Ingen forslag er under behandling.' },
   { verdi: 'ferdige', tekst: 'Ferdige', tom: 'Ingen forslag er ferdigbehandlet ennå.' },
 ] as const
-type Utvalg = (typeof UTVALG)[number]['verdi']
+export type Utvalg = (typeof UTVALG)[number]['verdi']
+
+/**
+ * Lista en lenke i oversikten øverst (`Venterpadeg`) ber køen vise. Lenken
+ * setter den før adressen skiftes; køen tar den i bruk, uten filteret for dem
+ * uten redaktør, og nullstiller den. Slik virker lenken også når køen alt
+ * står, og også over en bevart liste fra før.
+ */
+export const onsketUtvalg = lagDeltTilstand<Utvalg | null>(null)
 
 /** Fanen «Til behandling» på `#/forslag`, bare for dem som behandler forslag. */
 export function TilbehandlingFane({ aktiv }: { aktiv: boolean }) {
@@ -40,6 +49,13 @@ export function Tilbehandling() {
   const { tilstand } = useHentet(hentForslagsko)
   const [utvalg, setUtvalg] = useBevart<Utvalg>('utvalg', 'nye')
   const [utenRedaktor, setUtenRedaktor] = useBevart('uten-redaktor', false)
+  const onsket = onsketUtvalg.bruk()
+  useEffect(() => {
+    if (!onsket) return
+    setUtvalg(onsket)
+    setUtenRedaktor(false)
+    onsketUtvalg.sett(null)
+  }, [onsket, setUtvalg, setUtenRedaktor])
 
   if (tilstand.status === 'laster') return <p className="gruppeside__hint">Henter forslagene …</p>
   if (tilstand.status === 'feil') {
