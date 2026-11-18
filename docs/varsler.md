@@ -204,6 +204,8 @@ designjustering har ingen føring i det hele tatt.
 de valgte kategoriene, med «9+» over ni, og hentes når appen og fanen åpnes og
 hvert femte minutt (`useJevnligSjekk`, som idémenyen også bruker), og når
 noe annet i appen ber om det (`oppfriskVarsler`, når Idéer lukkes).
+Forsiden åpner vinduet med «Alle varsler» (`apneVarsler`, som `Varselknapp`
+hører etter), og viser de samme varslene i panelene sine (`docs/forside.md`).
 
 Vinduet viser de uleste under «Nye» og resten under «Tidligere». Et varsel
 leder dit det gjelder, og er lest når man går dit: idéen (`visIde`, som
