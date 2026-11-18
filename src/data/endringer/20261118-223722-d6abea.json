@@ -1,0 +1,15 @@
+{
+  "id": "20261118-223722-d6abea",
+  "semver": "patch",
+  "opprettet": "2026-11-18T22:37:22Z",
+  "sammendrag": "Gruppechatten står bare i chatmenyen, og uleste meldinger telles på chatknappen",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["grupper", "vinduer", "hele appen"],
+  "punkter": [
+    "Chatten er borte fra gruppesiden. «Åpne chat» åpner samtalen i chatmenyen til venstre, og gruppesiden blir stående.",
+    "Gamle lenker til chatten i en gruppe virker fortsatt: de åpner gruppen med samtalen i chatmenyen.",
+    "Uleste chatmeldinger vises bare på chatboblen, chatknappen og i samtalelista, ikke lenger i varselbjella. Meldingene er lest når du har sett dem i chatten, akkurat som før.",
+    "Valget for chatvarsler er borte fra varselinnstillingene. Ingen meldinger er slettet."
+  ]
+}

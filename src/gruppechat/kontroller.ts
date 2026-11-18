@@ -42,10 +42,10 @@ export interface Chatavhengigheter {
   abonner: Abonner
   nyKlientId: () => string
   /**
-   * Varslene og samtalelista kan ha endret seg (meldinger merket lest, eller
-   * tilgangen er borte); bjella og chatmenyen henter dem på nytt.
+   * Tallet på uleste i gruppen kan ha endret seg (meldinger merket lest, eller
+   * tilgangen er borte); samtalelista og gruppesiden henter det på nytt.
    */
-  varslerEndret: () => void
+  ulesteEndret: (gruppe: string) => void
 }
 
 export interface Chatkontroller {
@@ -126,7 +126,7 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
     const forste = t.status !== 'ingen_tilgang'
     sett({ ...TOM_MELDINGSTILSTAND, status: 'ingen_tilgang', feil: feiltekst(feil), henterEldre: false, kanSkrive: false, kanModerere: false })
     frigjor()
-    if (forste) avh.varslerEndret()
+    if (forste) avh.ulesteEndret(gruppe)
   }
   /** `true` når feilen stengte chatten. */
   const hvisUtestengt = (feil: unknown): boolean => {
@@ -299,7 +299,7 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
         const til = t.lestTilNr
         await avh.merkGruppechatLest(gruppe, til)
         lestSkrevet = Math.max(lestSkrevet, til)
-        avh.varslerEndret()
+        avh.ulesteEndret(gruppe)
       }
     } catch (feil) {
       // Neste merking prøver igjen; tallet her står.

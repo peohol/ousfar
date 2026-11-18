@@ -5,9 +5,11 @@
  * `*_gruppeaktivitet.sql`.
  *
  * Hver rad fører til selve hendelsen: idéen eller oppgaven i gruppens
- * arbeidsflate, kommentaren eller tråden gjennom direktelenken, og chatten.
+ * arbeidsflate, kommentaren eller tråden gjennom direktelenken, og samtalen
+ * i chatmenyen (den har ingen egen adresse ved siden av siden).
  */
 import { visningsnavn } from '@delt/profil'
+import { visGruppesamtale } from '../components/chat/chatstyring'
 import type { Hendelse } from '../components/oppsummering/hendelse'
 import { lenkeadresse } from '../direktelenker/mal'
 import { gruppeadresse } from '../domain/rute'
@@ -131,7 +133,7 @@ export function tilHendelse(gruppe: string, h: Gruppehendelse): Hendelse {
             ? 'Siste melding i gruppechatten'
             : `${h.uleste} ${h.uleste === 1 ? 'ny melding' : 'nye meldinger'} i gruppechatten`,
         hvor: 'Gruppechat',
-        til: gruppeadresse(gruppe, 'chat'),
+        ved: () => visGruppesamtale(gruppe),
       }
   }
 }

@@ -2,7 +2,6 @@ import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useR
 import type { Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import type { Gruppechat as Chattilstand } from '../../gruppechat/modell'
-import { useGruppechat } from '../../gruppechat/useGruppechat'
 import type { Gruppe } from '../../grupper/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -20,11 +19,6 @@ const NEDERST_INNEN = 48
 const ELDRE_INNEN = 64
 
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-
-/** Chatfanen på gruppesiden: koblingen mellom tilstanden (`useGruppechat`) og visningen. */
-export function Gruppechatfane({ gruppe }: { gruppe: Chatgruppe }) {
-  return <Gruppechat chat={useGruppechat(gruppe.id)} gruppe={gruppe} />
-}
 
 /**
  * Chatten i en gruppe (docs/gruppechat.md, «Brukerflaten»): hvem som leser,

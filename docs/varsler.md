@@ -37,17 +37,17 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `favorittdiskusjoner` | Noen starter en ny tråd på en fagside du har som favoritt | Ja, av som standard |
 | `gruppeideer` | Noen skriver en ny idé i en gruppe du er med i | Ja, på som standard |
 | `gruppeoppgaver` | Du får en oppgave i en gruppe, eller de ansvarlige behandler en idé du skrev i en gruppe | Ja, på som standard |
-| `gruppechat` | Noen skriver i chatten i en gruppe du er med i (P7) | Ja, på som standard |
+| ~~`gruppechat`~~ | Ikke i bjella fra D4b: uleste chatmeldinger står på chatknappen (`docs/gruppechat.md`, «Uleste») | Vises ikke |
 
 Kategoriene står i `VARSELKATEGORIER`. Hver har en `gruppe` fra
 `VARSELGRUPPER` (Fortolkning, Idéer, Diskusjoner, Grupper, Endringsforslag, Favorittsider, Appen):
 innstillingene viser gruppene i den rekkefølgen, hver med ikon og overskrift
 og kategoriene sine under. Ikonene for gruppene står i `Varsler.tsx`. En
 kategori med `bareForBehandlere` vises i innstillingene bare for dem som kan
-behandle endringsforslag. En kategori med `funksjon` hører til en funksjon
-bak en funksjonsbryter (`VARSELFUNKSJONER`), og vises i innstillingene bare
-når den er slått på; for gruppechatten sier `mine_grupper()` det
-(`chat_aktivert`). En ny
+behandle endringsforslag. En kategori med `utenforBjella` har et annet
+naturlig sted (planen §8): den vises ikke i innstillingene, og varsler i den
+verken vises eller telles i bjella, uansett et eldre valg (i dag bare
+`gruppechat`). En ny
 kategori får en gruppe; den trenger ingen ny gruppe med mindre den gjelder
 noe helt annet. De som lages av databasen, er de
 samme som `public.varselkategori`; en test passer på at de stemmer.
@@ -89,8 +89,9 @@ gjorde det, varsles ikke.
   `docs/direktelenker.md`). Varselet merkes da lest først når brukeren
   faktisk går dit (`gaVaktet` i `Varsler.tsx`); blir brukeren i skjemaet,
   står det ulest.
-- **Gruppechatten** (P7, `gruppemeldinger_varsle`, `docs/gruppechat.md`,
-  «Varslene»): en ny melding gir de andre aktive medlemmene i gruppen
+- ~~**Gruppechatten**~~ (P7; fjernet i D4b, se `docs/gruppechat.md`,
+  «Uleste»: utløseren er borte, og de uleste ble merket lest uten at noe ble
+  slettet). Slik var det: en ny melding ga de andre aktive medlemmene i gruppen
   `gruppechat`, ikke systemarkitekter som ikke er med. Det er ett ulest varsel
   per gruppe (`gruppechat:<gruppe-ID>`, `gruppe_id` satt) med én hendelse:
   `kl`, `gruppechat` (gruppen), `antall` (meldinger siden varselet ble ulest)

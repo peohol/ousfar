@@ -6,10 +6,11 @@
  * dørklokken som appen, hver med sin innlogging.
  *
  * 1. Ada og Bo utveksler meldinger i sanntid, uten livstegnet (kriterium 1),
- *    og Bo får ett varsel om chatten, uten tekst, som merkes lest i chatten.
+ *    og Bos samtaleliste teller den uleste meldingen til den er lest i
+ *    chatten. Bjella får ikke noe chatvarsel (D4b, docs/gruppechat.md «Uleste»).
  * 2. Bo fjernes fra gruppen mens chatten står åpen: ingen flere hendelser fra
- *    dørklokken, direkte kall avvises, og livstegnet stenger chatten hos Bo
- *    (kriterium 4).
+ *    dørklokken, direkte kall avvises, gruppen er borte fra Bos samtaleliste,
+ *    og livstegnet stenger chatten hos Bo (kriterium 4).
  *
  * Bryteren slås på i den lokale databasen mens kontrollen går, og av igjen
  * etterpå. Bare syntetiske kontoer og tekster. Kjøres med
@@ -81,16 +82,20 @@ function aapneChat(klient: SupabaseClient, gruppe: string) {
     ...api,
     abonner,
     nyKlientId: () => crypto.randomUUID(),
-    varslerEndret: () => undefined,
+    ulesteEndret: () => undefined,
   })
   kontroller.start()
   return { kontroller, ringinger, api }
 }
 
-interface Chatvarsel {
+interface Varsel {
   kategori: string
-  lest_kl: string | null
-  hendelser: { gruppechat?: { id: string } | null }[]
+}
+
+/** En rad fra `mine_gruppesamtaler()`, slik samtalelista leser den (src/gruppechat/samtaler.ts drar inn nettleseren). */
+interface Samtalerad {
+  gruppe: { id: string }
+  uleste: number
 }
 
 /** Antall abonnementer Realtime har registrert på gruppens chatrad. */
@@ -142,19 +147,17 @@ try {
     'Ada og Bo ser de samme meldingene i samme rekkefølge',
   )
 
+  // Uleste vises bare på chatknappen, fra samtalelista; bjella har ingen chatvarsler (D4b).
+  const bosSamtale = async () =>
+    (await rpc<Samtalerad[]>(bo, 'mine_gruppesamtaler', {})).find((x) => x.gruppe.id === gruppe)
   const chatvarsler = async () =>
-    (await rpc<{ varsler: Chatvarsel[] }>(bo, 'mine_varsler', {})).varsler.filter(
-      (v) => v.kategori === 'gruppechat' && v.hendelser.some((h) => h.gruppechat?.id === gruppe),
-    )
-  const [chatvarsel, ...flere] = await chatvarsler()
-  krev(
-    chatvarsel && flere.length === 0 && chatvarsel.lest_kl === null && !JSON.stringify(chatvarsel).includes('Syntetisk hei'),
-    'Bo har ett ulest varsel om chatten, uten meldingstekst',
-  )
+    (await rpc<{ varsler: Varsel[] }>(bo, 'mine_varsler', {})).varsler.filter((v) => v.kategori === 'gruppechat')
+  krev((await bosSamtale())?.uleste === 1, 'Bos samtaleliste teller Adas melding som ulest (ikke Bos egen)')
+  krev((await chatvarsler()).length === 0, 'Bo har ikke noe chatvarsel i bjella')
   const adasMelding = b.kontroller.hent().meldinger.find((m) => m.tekst === 'Syntetisk hei fra Ada')!
   b.kontroller.hent().merkLest(adasMelding.nr)
-  await innen(5_000, 'varselet er lest når chatten er lest', async () => (await chatvarsler()).every((v) => v.lest_kl !== null))
-  logg('ok: varselet er lest når Bo har lest meldingen')
+  await innen(5_000, 'samtalelista teller null uleste når chatten er lest', async () => (await bosSamtale())?.uleste === 0)
+  logg('ok: samtalelista teller null uleste når Bo har lest meldingen')
 
   // --- 2. Bo fjernes mens chatten står åpen ----------------------------------
   await rpc(admin, 'avslutt_gruppemedlemskap', { gruppe, bruker: boId })
@@ -169,6 +172,8 @@ try {
     (f: unknown) => f,
   )
   krev(direkte instanceof IngenTilgang, 'Bos direkte kall avvises med «ingen tilgang»')
+  krev((await bosSamtale()) === undefined, 'gruppen er borte fra Bos samtaleliste, uten uleste')
+  krev((await chatvarsler()).length === 0, 'Bo har fortsatt ikke noe chatvarsel i bjella')
   logg('venter på livstegnet hos Bo (inntil ett minutt)')
   await innen(LIVSTEGN_MS + 10_000, 'chatten stenges hos Bo', () => b.kontroller.hent().status === 'ingen_tilgang')
   krev(b.kontroller.hent().meldinger.length === 0, 'meldingene er tømt hos Bo, og abonnementet er stoppet')

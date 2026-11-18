@@ -14,7 +14,8 @@ avsnitt eller kontrakten uten å avklare det med P7-tråden.
 
 ## Mål
 
-- Hver gruppe har ett chatrom, som en fane på gruppesiden.
+- Hver gruppe har ett chatrom, i chatmenyen (D4a/D4b; først en fane på
+  gruppesiden).
 - Meldingene står i rekkefølge med avsender og tidspunkt, nye kommer uten at
   siden lastes på nytt, og historikken står når man kommer tilbake.
 - Bare de som leser gruppen i dag, leser chatten. Tilgangen håndheves av
@@ -308,6 +309,9 @@ Prøvd i `src/__tests__/gruppechat.tilstand.test.ts`,
 
 ## Varslene (tråd C)
 
+> **Fra D4b står chatten ikke lenger i bjella** (se «Uleste» under). Avsnittet
+> beskriver det P7 leverte; utløseren er fjernet, og kategorien vises ikke.
+
 Ny kategori `gruppechat` (gruppen «Grupper», kan slås av, på som standard).
 Én ny melding gir de andre som leser gruppen ett varsel med nøkkelen
 `gruppechat:<gruppe-ID>`, med `gruppe_id` satt, så den som mister tilgangen,
@@ -335,8 +339,9 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
 
 ## Brukerflaten (tråd B)
 
-- Panelet **Gruppechat** på gruppesiden viser tallet på uleste og lenken
-  «Åpne chat» til chatsiden (`#/grupper/<ID>/chat`). Panelet vises bare når
+- Panelet **Gruppechat** på gruppesiden viser tallet på uleste og knappen
+  «Åpne chat», som åpner samtalen i chatmenyen (`visGruppesamtale`) og lar
+  gruppesiden stå (D4b; før det en egen chatside). Panelet vises bare når
   `samhandling.chat_uleste` ikke er `null`.
 - Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
   av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
@@ -371,14 +376,13 @@ under `src/components/grupper/`, stilen i `src/styles/gruppechat.css`,
 prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
 
 - `Gruppechat` tar `chat: Gruppechat` og gruppen (`id`, `navn`, `status`).
-  `Gruppechatfane` er koblingen: én linje som kaller `useGruppechat(gruppe.id)`
-  fra C1 (B1 bygger derfor på C1). B2 er bare rettelsene fra tråd Ds
+  Koblingen til `useGruppechat(gruppe.id)` fra C1 står i chatmenyen
+  (`Samtalevisning`; før D4b i `Gruppechatfane`). B2 er bare rettelsene fra tråd Ds
   sluttkontroll i nettleseren.
-- Chatsiden har tittelen «Chat i <gruppe>», og Tilbake går til gruppesiden.
-  Tallet i panelet er `chat_uleste`; når man går ut av chatten, hentes gruppen
-  på nytt, så tallet stemmer. Peker adressen på chatten uten at databasen gir
-  tallet, står «Gruppechatten er ikke slått på.». (Gruppesiden fikk paneler i
-  stedet for faner i D3; chatsiden står til D4 flytter chatten.)
+- ~~Chatsiden `#/grupper/<ID>/chat`~~ er fjernet i D4b; chatten står i
+  chatmenyen og på `#/chat` (se «Chatmenyen»). Tallet i panelet er
+  `chat_uleste`, og gruppesiden henter det på nytt hver gang meldinger i
+  gruppen merkes lest (`meldGruppeendring`).
 - Lista ruller for seg (`role="log"`, `aria-live="polite"`,
   `aria-relevant="additions"`, `aria-busy` mens eldre hentes), med dagene som
   overskrifter og «Nye meldinger» foran den første uleste fra andre da
@@ -404,7 +408,8 @@ prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
 
 Chatten har fått en fast inngang i hele appen, etter D0-designet
 (`docs/design/d0-dashboard-chat/`, skisse 14–16 og 25) og planen §6.1 og §6.3.
-Fanen på gruppesiden og chatvarslene i bjella står til D4b.
+Fra D4b er chatmenyen og `#/chat` de eneste stedene chatten står; se «Den
+gamle chatsiden» og «Uleste» under.
 
 - **Inngangen.** På brede flater en rund boble i venstre kant under
   toppmenyen, speilet av diskusjonsboblen i høyre, med tallet på uleste. På
@@ -423,7 +428,7 @@ Fanen på gruppesiden og chatvarslene i bjella står til D4b.
   selv er aktivt medlem av, med tidspunktet for den nyeste meldingen og tallet
   på uleste (det samme som `chat_uleste`), uten tekst og avsendere. En
   systemarkitekt som ikke er med i en gruppe, får den ikke i lista; chatten
-  der nås fra gruppesiden som før. En arkivert gruppe står ikke i lista. Lista
+  der nås med «Åpne chat» på gruppesiden, som åpner den i menyen. En arkivert gruppe står ikke i lista. Lista
   hentes jevnlig, når fanen blir synlig, når dørklokken ringer i en av gruppene
   (én kanal på `gruppechatter` uten filter; radsikkerheten avgjør hvilke),
   når meldinger er merket lest, og med en gang en åpen samtale mister
@@ -434,8 +439,8 @@ Fanen på gruppesiden og chatvarslene i bjella står til D4b.
   (`tilbake`, ellers forsiden), med menyen åpen på samme samtale. Å velge en
   annen samtale der bytter adressen uten ny oppføring i historikken.
 - **Samme samtale overalt.** Alle visningene av en gruppe deler én kontroller
-  (`useGruppechat`): menyen, helsiden og fanen på gruppesiden viser de samme
-  meldingene og ventende meldingene, med ett abonnement. Utkastene følger
+  (`useGruppechat`): menyen og helsiden viser de samme meldingene og ventende
+  meldingene, med ett abonnement. Utkastene følger
   brukeren og gruppen (`Gruppechatskriving`), så det som er skrevet i menyen,
   står på helsiden og omvendt.
 - **Lest.** Å åpne menyen merker ingenting lest. En samtale merkes lest av
@@ -448,9 +453,39 @@ Fanen på gruppesiden og chatvarslene i bjella står til D4b.
   får minst `--lesebredde-minst` (45rem); ellers vinner den som ble åpnet sist
   (`useKantmeny`).
 - **Fra andre steder.** `visGruppesamtale(gruppe)` (`chatstyring.ts`) åpner
-  menyen på en gruppechat, til «Åpne chat» på gruppesiden.
+  menyen på en gruppechat: «Åpne chat» i panelet og chatraden under «Siste
+  aktivitet» på gruppesiden, og den gamle adressen. Står menyen ikke klar ennå
+  (chatten er ikke hentet), venter samtalen til den gjør det.
 - **Ikke ennå.** «Ny chat» og bryterne for direktemeldinger og aktiv status
   kommer med direktemeldingene (D5) og vises ikke før det.
+
+### Den gamle chatsiden (D4b)
+
+Fanen og chatsiden på gruppesiden er fjernet; alt den hadde (snakkeboblene,
+grupperingen, dagene, Enter/Shift+Enter, eldre meldinger, rulleposisjonen,
+utkastet, endring, sletting, moderering, lesere) står i chatmenyen, som viser
+den samme `Gruppechat`. Den gamle adressen `#/grupper/<ID>/chat` virker
+fortsatt: den åpner gruppesiden med samtalen i chatmenyen og skrives om til
+`#/grupper/<ID>` uten en ny oppføring i historikken (D0 flyt.md §1).
+
+### Uleste (D4b)
+
+Uleste chatmeldinger har ett sted: tallet på chatboblen og chatknappen, og
+per samtale i samtalelista (planen §8). Bjella viser og teller dem ikke.
+
+- **Ett opphav.** Tallet er `gruppechat_lest` (`mine_gruppesamtaler`,
+  `chat_uleste`), og lest merkes bare av `merk_gruppechat_lest`, som før: når
+  samtalen vises, vinduet er synlig og bunnen er nådd. Å åpne menyen merker
+  ingenting lest.
+- **Ingen varsler.** Migrasjonen `20261118224500_chatvarsler_ut_av_bjella.sql`
+  fjerner utløseren som lagde varsler i kategorien `gruppechat`, og merker
+  de som sto uleste, lest, uten å slette noe. Meldingene, lesemerkene og
+  lagringstiden er uendret. Kategorien står i databasens enum og i
+  `VARSELKATEGORIER` med `utenforBjella`, så et eldre varsel eller et eldre
+  valg aldri vises, telles eller kan velges i bjella.
+- **Tilgang.** Den som ikke er aktivt medlem (invitert, fjernet, utenfor
+  gruppen, systemarkitekt som ikke er med), har ingen samtale i lista og
+  ingen uleste (`gruppesamtaler.test.ts`, `gruppechat.varsler.test.ts`).
 
 ## Grunnmuren (P7.0)
 

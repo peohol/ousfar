@@ -4,14 +4,14 @@
  * (docs/gruppechat.md, «Sanntiden»). Logikken står i `kontroller.ts`; her
  * kobles den til React.
  *
- * Alle visninger av samme gruppe deler én kontroller: chatmenyen, `#/chat`
- * og chatfanen på gruppesiden viser den samme samtalen, med de samme
+ * Alle visninger av samme gruppe deler én kontroller: chatmenyen og `#/chat`
+ * viser den samme samtalen, med de samme
  * meldingene, ventende meldingene og lest-merkingen, ikke hver sin kopi.
  * Kontrolleren startes av den første visningen og stoppes (abonnement og
  * livstegn) når den siste forsvinner.
  */
 import { useEffect, useSyncExternalStore } from 'react'
-import { oppfriskVarsler } from '../varsler/api'
+import { meldGruppeendring } from '../components/grupper/gruppevisning'
 import {
   endreGruppemelding,
   hentChatendringer,
@@ -34,9 +34,10 @@ const AVHENGIGHETER: Chatavhengigheter = {
   merkGruppechatLest,
   abonner: abonnerPaGruppechat,
   nyKlientId: () => crypto.randomUUID(),
-  varslerEndret: () => {
-    oppfriskVarsler()
+  // Chatten har ingen varsler i bjella; tallet står i chatmenyen og på gruppesiden.
+  ulesteEndret: (gruppe) => {
     oppfriskSamtaler()
+    meldGruppeendring(gruppe)
   },
 }
 

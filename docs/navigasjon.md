@@ -57,8 +57,10 @@ merket. Bruk `gaaTil(rute, { erstatt: true })` i komponentene eller
 ## Gruppene og arbeidsflatene (D3)
 
 `#/grupper` er gruppeoversikten, og Tilbake går til forsiden. Gruppesiden
-`#/grupper/<id>` har reserven `#/grupper`, og chatsiden `#/grupper/<id>/chat`
-har gruppesiden som reserve.
+`#/grupper/<id>` har reserven `#/grupper`. Den gamle chatsiden
+`#/grupper/<id>/chat` (D4b) åpner gruppesiden med samtalen i chatmenyen og
+skrives om til `#/grupper/<id>` med `erstattAdressen`, uten en ny oppføring i
+historikken.
 
 Idéene og oppgavene i en gruppe er arbeidsflater:
 `#/grupper/<id>/ideer[/<idé>]` og `#/grupper/<id>/oppgaver[/<oppgave>]`.

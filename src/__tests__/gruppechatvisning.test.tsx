@@ -61,6 +61,7 @@ const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt } = await import('../grupper/modell')
 const { adresse, lesRute, sidesti } = await import('../domain/rute')
 const visning = await import('../components/grupper/gruppechatvisning')
+const { lyttEtterChatbeskjed } = await import('../components/chat/chatstyring')
 
 const GRUPPE = { id: GRUPPE_ID, navn: 'Litiumgruppen', status: 'aktiv' as const }
 /** Gruppen i hver test, med sin egen ID, så utkastet fra én test ikke står i neste. */
@@ -464,7 +465,7 @@ describe('utkastene hører til den innloggede', () => {
   })
 })
 
-describe('chatpanelet på gruppesiden og chatsiden', () => {
+describe('chatpanelet på gruppesiden og den gamle adressen til chatten (D4b)', () => {
   const OVERSIKT = {
     ...GRUPPE,
     beskrivelse: '',
@@ -502,33 +503,56 @@ describe('chatpanelet på gruppesiden og chatsiden', () => {
     expect(sidesti({ side: 'grupper', gruppe: GRUPPE_ID, fane: 'chat' })).toBe(`grupper/${GRUPPE_ID}`)
   })
 
+  /** Beskjedene til chatmenyen, som den får dem. */
+  const beskjeder = () => {
+    const mottatt: unknown[] = []
+    const slutt = lyttEtterChatbeskjed((b) => mottatt.push(b))
+    return { mottatt, slutt }
+  }
+
   it('står ikke uten tallet fra databasen (chatten er avslått)', async () => {
     visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0 })
     await screen.findByRole('region', { name: 'Idéer' })
     expect(screen.queryByRole('region', { name: 'Gruppechat' })).toBeNull()
-    expect(screen.queryByRole('link', { name: /chat/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /chat/i })).toBeNull()
   })
 
-  it('står med tallet på uleste og lenken til chatten når den er slått på', async () => {
+  it('står med tallet på uleste, og «Åpne chat» åpner samtalen i chatmenyen uten å bytte side', async () => {
+    const { mottatt, slutt } = beskjeder()
+    window.location.hash = `#/grupper/${GRUPPE_ID}`
+    const lengde = window.history.length
     visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: 4 })
     const panel = await screen.findByRole('region', { name: 'Gruppechat' })
     expect(panel.textContent).toMatch(/4 uleste meldinger/)
-    expect(within(panel).getByRole('link', { name: 'Åpne chat' }).getAttribute('href')).toBe(`#/grupper/${GRUPPE_ID}/chat`)
-  })
-
-  it('viser chatten på sin egen side, som før', async () => {
-    visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: 2 }, 'chat')
-    expect(await screen.findByRole('heading', { level: 1, name: 'Chat i Litiumgruppen' })).toBeTruthy()
-    expect(document.title).toBe('Chat – Litiumgruppen – OUSFAR')
-    // Siden henter chatten for gruppen og viser den.
-    expect(krok.useGruppechat).toHaveBeenCalledWith(GRUPPE_ID)
-    expect(meldingstekster()).toHaveLength(5)
-  })
-
-  it('sier fra når adressen peker på en chat som ikke er slått på', async () => {
-    visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0 }, 'chat')
-    expect(await screen.findByText('Gruppechatten er ikke slått på.')).toBeTruthy()
+    expect(within(panel).queryByRole('link')).toBeNull()
+    await userEvent.click(within(panel).getByRole('button', { name: 'Åpne chat' }))
+    expect(mottatt).toEqual([{ gruppe: GRUPPE_ID }])
+    expect(window.location.hash).toBe(`#/grupper/${GRUPPE_ID}`)
+    expect(window.history.length).toBe(lengde)
+    // Chatten står ikke lenger på gruppesiden.
     expect(screen.queryByRole('log')).toBeNull()
     expect(krok.useGruppechat).not.toHaveBeenCalled()
+    slutt()
+  })
+
+  it('den gamle adressen viser gruppen, åpner samtalen i chatmenyen og skrives om uten ny historikk', async () => {
+    window.location.hash = `#/grupper/${GRUPPE_ID}/chat`
+    const lengde = window.history.length
+    const hashendringer: string[] = []
+    const lytter = () => hashendringer.push(window.location.hash)
+    window.addEventListener('hashchange', lytter)
+    visMed({ nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: 2 }, 'chat')
+    await waitFor(() => expect(window.location.hash).toBe(`#/grupper/${GRUPPE_ID}`))
+    expect(window.history.length).toBe(lengde)
+    expect(hashendringer).toContain(`#/grupper/${GRUPPE_ID}`)
+    // Gruppesiden, ikke en chatside.
+    expect(await screen.findByRole('heading', { level: 1, name: 'Litiumgruppen' })).toBeTruthy()
+    expect(screen.queryByRole('log')).toBeNull()
+    expect(krok.useGruppechat).not.toHaveBeenCalled()
+    // Menyen var ikke montert ennå: samtalen venter på den, og kommer når den begynner å høre etter.
+    const { mottatt, slutt } = beskjeder()
+    await waitFor(() => expect(mottatt).toEqual([{ gruppe: GRUPPE_ID }]))
+    slutt()
+    window.removeEventListener('hashchange', lytter)
   })
 })

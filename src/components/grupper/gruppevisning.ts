@@ -84,11 +84,6 @@ export function visGruppeoppgave(gruppe: string, oppgave: string, deretter?: () 
   gaTil(gruppeadresse(gruppe, 'oppgaver', oppgave), false, deretter)
 }
 
-/** Går til chatten i gruppen, og gjør så `deretter` (docs/gruppechat.md, «Varslene»). Chatten er en egen side til chatmenyen tar over den. */
-export function visGruppechat(gruppe: string, deretter?: () => void): void {
-  gaTil(gruppeadresse(gruppe, 'chat'), false, deretter)
-}
-
 /** Går til oversikten over gruppen, og gjør så `deretter`. */
 export function visGruppen(gruppe: string, deretter?: () => void): void {
   gaTil(gruppeadresse(gruppe), false, deretter)

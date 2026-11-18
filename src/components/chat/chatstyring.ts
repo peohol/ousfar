@@ -42,10 +42,42 @@ export type Chatbeskjed = { veksle: true } | { gruppe: string | null }
 
 const beskjed = lagSignal<Chatbeskjed>()
 
+/**
+ * En samtale som er bedt om før menyen hører etter, som når appen åpnes på
+ * den gamle adressen til chatten i en gruppe og chatten ennå ikke er hentet.
+ * Menyen tar den når den begynner å høre etter.
+ */
+let venter: Chatbeskjed | null = null
+
 /** Åpner eller lukker chatmenyen, som chatknappen. */
 export const veksleChatten = () => beskjed.send({ veksle: true })
 
 /** Åpner chatmenyen på gruppechatten, eller på oversikten med `null`. */
-export const visGruppesamtale = (gruppe: string | null) => beskjed.send({ gruppe })
+export function visGruppesamtale(gruppe: string | null): void {
+  venter = { gruppe }
+  beskjed.send({ gruppe })
+}
 
-export const lyttEtterChatbeskjed = beskjed.lytt
+/**
+ * Hører etter beskjedene til menyen, og får den som venter, om noen, i neste
+ * bilde: da står også chatknappen, så menyen vet om flaten er smal. Gir
+ * tilbake funksjonen som slutter å høre etter; en beskjed som ikke er tatt
+ * ennå, venter da videre.
+ */
+export function lyttEtterChatbeskjed(lytter: (beskjed: Chatbeskjed) => void): () => void {
+  const slutt = beskjed.lytt((b) => {
+    venter = null
+    lytter(b)
+  })
+  const ventende = venter
+  if (!ventende) return slutt
+  const ramme = requestAnimationFrame(() => {
+    if (venter !== ventende) return
+    venter = null
+    lytter(ventende)
+  })
+  return () => {
+    cancelAnimationFrame(ramme)
+    slutt()
+  }
+}
