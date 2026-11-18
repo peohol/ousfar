@@ -10,7 +10,7 @@
  * chattilstanden er testchatten (`hjelp/testchat.ts`), og reglene for den
  * prøves i `gruppechat*.test.ts`.
  */
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -179,6 +179,24 @@ describe('chatmenyen', () => {
     expect(within(meny()).queryByRole('log')).toBeNull()
   })
 
+  it('har alt chatfanen på gruppesiden hadde (D0 kart §2)', async () => {
+    tilstand.chat.set(SANDKASSE, lagTestchat({ merkLest, flereEldre: true, kanModerere: true }))
+    vis()
+    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
+    const chat = meny()
+    // Hvem som leser, meldingene etter dag med avsender, og eldre meldinger.
+    expect(within(chat).getByText('Leses av de 3 medlemmene i gruppen og av systemarkitektene i OUSFAR.')).toBeTruthy()
+    const logg = within(chat).getByRole('log', { name: 'Meldinger i Sandkassegruppen' })
+    expect(within(logg).getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(0)
+    expect(logg.querySelectorAll('.chatmelding').length).toBe(5)
+    expect(within(logg).getByRole('button', { name: 'Vis eldre meldinger' })).toBeTruthy()
+    // Egne meldinger kan endres og slettes fra menyen på meldingen.
+    expect(within(logg).getAllByRole('button', { name: /^Handlinger for meldingen fra/ }).length).toBeGreaterThan(0)
+    // Skrivefeltet, med utkastet som følger gruppen.
+    expect(within(chat).getByRole('textbox', { name: 'Melding til Sandkassegruppen' })).toBeTruthy()
+  })
+
   it('utvider til #/chat med samme samtale og utkast, og gjenoppretter med menyen åpen på den', async () => {
     const { gaaTil, tilbake } = vis()
     await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
@@ -244,6 +262,18 @@ describe('chatmenyen', () => {
     vis()
     act(() => visGruppesamtale(FAGLIG))
     expect(document.documentElement.dataset.chatmeny).toBe('apen')
+    expect(within(meny()).getByRole('heading', { name: 'Faglig utvikling' })).toBeTruthy()
+  })
+
+  it('en samtale som er bedt om før chatten er hentet (den gamle adressen), åpnes når menyen er klar', async () => {
+    // Appen åpnes på `#/grupper/<id>/chat`: gruppesiden ber om samtalen før menyen vet at chatten er på.
+    act(() => visGruppesamtale(FAGLIG))
+    const egenskaper = { start: { side: 'grupper', gruppe: FAGLIG } as Rute, gaaTilSpion: vi.fn(), tilbakeSpion: vi.fn() }
+    const { rerender } = render(<App {...egenskaper} grupper={{ ...GRUPPER, chat_aktivert: false }} />)
+    await act(() => new Promise((ferdig) => requestAnimationFrame(() => ferdig(undefined))))
+    expect(document.documentElement.dataset.chatmeny).toBeUndefined()
+    rerender(<App {...egenskaper} grupper={GRUPPER} />)
+    await waitFor(() => expect(document.documentElement.dataset.chatmeny).toBe('apen'))
     expect(within(meny()).getByRole('heading', { name: 'Faglig utvikling' })).toBeTruthy()
   })
 

@@ -1,11 +1,10 @@
 // @vitest-environment jsdom
 /**
- * P7 tråd C: et varsel om gruppechatten i bjella (docs/gruppechat.md,
- * «Varslene»). Det viser bare gruppen og antallet, åpner chatfanen gjennom
- * skjemavaktene (`visGruppechat`) og merkes lest først når brukeren er gått
- * dit. Innstillingen for chatvarslene vises bare når chatten er slått på
- * (`chat_aktivert` fra `mine_grupper`). Kallene mot databasen er erstattet;
- * skjemavakten selv prøves for gruppene i `gruppevarselvakt.test.tsx`.
+ * D4b: gruppechatten er ute av bjella (docs/gruppechat.md, «Uleste»). Et
+ * eldre varsel om chatten fra databasen, lest eller ulest, verken vises eller
+ * telles i bjella, og innstillingen for chatvarslene er borte, også med
+ * chatten slått på. Uleste chatmeldinger står på chatknappen (`chatmeny.test`).
+ * Kallene mot databasen er erstattet.
  */
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -41,8 +40,18 @@ const VARSLER: Varselliste = {
       id: 'v-chat',
       kategori: 'gruppechat',
       ide: null,
-      hendelser: [{ kl: '2026-11-17T09:30:00Z', av: null, gruppechat: { id: GRUPPE, navn: 'Lithiumgruppen' }, antall: 3 }],
+      hendelser: [{ kl: '2026-11-17T09:30:00Z', av: null }],
       oppdatert_kl: '2026-11-17T09:30:00Z',
+      lest: false,
+      arkivert: false,
+    },
+    {
+      kilde: 'database',
+      id: 'v-ide',
+      kategori: 'gruppeideer',
+      ide: { id: 'ide-1', tittel: 'Syntetisk idé', forfatterId: 'ola', gruppe: { id: GRUPPE, navn: 'Lithiumgruppen' } },
+      hendelser: [{ kl: '2026-11-17T09:00:00Z', av: 'ola' }],
+      oppdatert_kl: '2026-11-17T09:00:00Z',
       lest: false,
       arkivert: false,
     },
@@ -87,7 +96,7 @@ beforeAll(() => {
 beforeEach(() => {
   window.location.hash = ''
   varselApi.hentVarsler.mockResolvedValue(VARSLER)
-  varselApi.hentUleste.mockResolvedValue({ gruppechat: 1 })
+  varselApi.hentUleste.mockResolvedValue({ gruppechat: 4, gruppeideer: 1 })
 })
 
 afterEach(() => {
@@ -95,23 +104,19 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-it('viser gruppen og antallet, åpner chatfanen og merker varselet lest', async () => {
+it('teller og viser ikke chatten i bjella, bare resten', async () => {
   const bruker = userEvent.setup()
   render(<Varselknapp />)
-  await bruker.click(await screen.findByRole('button', { name: /^Varsler/ }))
+  const knapp = await screen.findByRole('button', { name: /^Varsler/ })
+  await waitFor(() => expect(knapp.getAttribute('aria-label')).toBe('Varsler (1 uleste)'))
+  await bruker.click(knapp)
   const vindu = await screen.findByRole('dialog', { name: 'Varsler' })
-  const varsel = await within(vindu).findByRole('button', { name: '3 nye meldinger i Lithiumgruppen' })
-  expect(varsel.closest('li')!.textContent).toContain('Gruppechat')
-  expect(varselApi.merkVarslerLest).not.toHaveBeenCalled()
-  await bruker.click(varsel)
-  expect(window.location.hash).toBe(`#/grupper/${GRUPPE}/chat`)
-  await waitFor(() => expect(varselApi.merkVarslerLest).toHaveBeenCalledWith(['v-chat'], VARSLER.lest_kl))
+  await within(vindu).findByText(/Syntetisk idé/)
+  expect(within(vindu).getAllByRole('listitem')).toHaveLength(1)
+  expect(vindu.textContent).not.toMatch(/Gruppechat|meldinger? i Lithiumgruppen/)
 })
 
-it.each([
-  [true, ['Nye idéer i gruppene mine', 'Oppgaver og idéene mine i gruppene', 'Nye meldinger i gruppechattene']],
-  [false, ['Nye idéer i gruppene mine', 'Oppgaver og idéene mine i gruppene']],
-])('viser innstillingen for chatvarslene bare når chatten er slått på (%s)', async (chat_aktivert, titler) => {
+it.each([true, false])('har ingen innstilling for chatvarslene, heller ikke når chatten er slått på (%s)', async (chat_aktivert) => {
   const bruker = userEvent.setup()
   render(
     <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, chat_aktivert, oppdater: () => undefined }}>
@@ -123,5 +128,8 @@ it.each([
   await bruker.click(within(vindu).getByRole('button', { name: 'Varselinnstillinger' }))
   const innstillinger = await screen.findByRole('dialog', { name: 'Varselinnstillinger' })
   const grupper = within(innstillinger).getByRole('region', { name: 'Grupper' })
-  expect([...grupper.querySelectorAll('.varselinnstilling__tittel')].map((t) => t.textContent)).toEqual(titler)
+  expect([...grupper.querySelectorAll('.varselinnstilling__tittel')].map((t) => t.textContent)).toEqual([
+    'Nye idéer i gruppene mine',
+    'Oppgaver og idéene mine i gruppene',
+  ])
 })

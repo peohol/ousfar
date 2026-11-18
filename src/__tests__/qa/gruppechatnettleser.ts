@@ -286,19 +286,26 @@ try {
     return `meldingene kom ${tid} ms etter at nettet var tilbake`
   })
 
-  await punkt('N10', 'varselet om nye meldinger', begge, async () => {
+  // D4b: chatten er ute av bjella; uleste står på chatboblen og i samtalelista.
+  await punkt('N10', 'nye meldinger på chatboblen, ikke i bjella', begge, async () => {
     await sendDirekte(adaKlient, gruppe, 'Syntetisk varseltekst N10')
     await bo.goto(`${miljo.url}/#/grupper`)
+    const boble = bo.locator('.chatboble')
+    const meny = bo.getByRole('complementary', { name: 'Grupper og samtaler' })
+    await boble.or(meny).first().waitFor({ timeout: 15_000 })
+    if (await meny.isVisible()) await meny.getByRole('button', { name: 'Lukk chatten' }).click()
+    await innen(15_000, 'uleste på chatboblen', async () => /\d+ ulest/.test((await boble.getAttribute('aria-label')) ?? ''))
     await bo.getByRole('button', { name: /^Varsler/ }).first().click()
-    const varsel = bo.locator('.varsel__tittel', { hasText: navn }).first()
-    await varsel.waitFor({ timeout: 15_000 })
-    const tekst: string = await varsel.innerText()
-    krev(/nye? meldinge?r? i /i.test(tekst) && tekst.includes(navn), `varselet nevner gruppen («${tekst}»)`)
-    const alle: string = await bo.locator('.varsel', { hasText: navn }).first().innerText()
-    krev(!alle.includes('Syntetisk varseltekst') && !alle.includes('Ada'), 'varselet har verken tekst eller avsender')
-    await varsel.click()
+    const vindu = bo.getByRole('dialog', { name: 'Varsler' })
+    await vindu.waitFor({ timeout: 10_000 })
+    krev((await vindu.getByText(navn).count()) === 0, 'bjella nevner ikke chatten')
+    await bo.keyboard.press('Escape')
+    await boble.click()
+    const rad = meny.locator('.chatrad', { hasText: navn })
+    krev((await rad.getAttribute('data-ulest')) !== null, 'raden er merket ulest')
+    krev(!(await rad.innerText()).includes('Syntetisk varseltekst'), 'raden har ingen meldingstekst')
+    await rad.getByRole('button').click()
     await skrivefelt(bo, navn).waitFor({ timeout: 10_000 })
-    krev(bo.url().includes(`/grupper/${gruppe}/chat`), 'et trykk åpner chatfanen')
   })
 
   await punkt('N7', 'smal skjerm med berøring', {}, async () => {

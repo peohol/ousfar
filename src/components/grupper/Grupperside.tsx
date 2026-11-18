@@ -8,7 +8,7 @@ import { arkiverGruppe, avsluttGruppemedlemskap, endreGruppe, inviterTilGruppe, 
 import { useGrupper } from '../../grupper/kilde'
 import { ROLLENAVN, delMedlemmer, gruppetilhorighet, type Gruppemedlem, type Gruppeoversikt, type MinGruppe } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
-import { tilbakeTil } from '../../hooks/useRute'
+import { erstattAdressen, tilbakeTil } from '../../hooks/useRute'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -20,8 +20,8 @@ import { Merke } from '../Merke'
 import { Oppsummeringskort } from '../oppsummering/Oppsummeringskort'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
+import { visGruppesamtale } from '../chat/chatstyring'
 import { Gruppeaktivitet } from './Gruppeaktivitet'
-import { Gruppechatfane } from './Gruppechat'
 import { Innstillingsmodal, Medlemsmodal, OpprettGruppe, harInnstillinger } from './Gruppemodaler'
 import { Tilbakelenke, Tilbakemelding, useFanetittel, useGruppeoversikt, useHandling } from './gruppedeler'
 
@@ -33,8 +33,9 @@ const GRUPPER = gruppeadresse()
  * leser; eller én gruppe (`#/grupper/<ID>`) som et oversiktsbilde uten faner:
  * medlemslinjen og fire korte paneler for idéene, oppgavene, diskusjonene og
  * chatten. Medlemmene, innstillingene og en ny gruppe er modaler; idéene og
- * oppgavene er arbeidsflater over siden (`Gruppeflate`). Chatten står på sin
- * egen side (`…/chat`) til chatmenyen tar over.
+ * oppgavene er arbeidsflater over siden (`Gruppeflate`), og chatten står i
+ * chatmenyen. Den gamle adressen til chatten (`…/chat`) åpner gruppen med
+ * samtalen i chatmenyen, og skrives om til gruppen.
  *
  * Knappene er et grensesnitt, ikke en tilgangskontroll: databasen
  * kontrollerer hver handling på nytt (docs/fagmiljoer.md, «Gruppene» og
@@ -46,20 +47,29 @@ export function Grupperside({
   onLukk,
 }: {
   gruppe?: string
-  /** Bare chatten er en egen side i gruppen; idéene og oppgavene er arbeidsflater. */
+  /** Bare den gamle adressen til chatten (`chat`) kommer hit; idéene og oppgavene er arbeidsflater. */
   fane?: Gruppefane
   onLukk: () => void
 }) {
   const overskrift = useId()
-  // En gruppe lukkes dit brukeren kom fra, eller til gruppeoversikten; chatten til gruppen.
-  const lukk = gruppe ? () => tilbakeTil(fane === 'chat' ? gruppeadresse(gruppe) : GRUPPER) : onLukk
+  // En gruppe lukkes dit brukeren kom fra, eller til gruppeoversikten.
+  const lukk = gruppe ? () => tilbakeTil(GRUPPER) : onLukk
   useLukkMedEscape(lukk)
+
+  // Den gamle adressen til chatten: samtalen i chatmenyen, og adressen til gruppen
+  // uten en ny oppføring i historikken (flyt.md §1, «Gamle adresser»).
+  const gammelChat = gruppe && fane === 'chat'
+  useEffect(() => {
+    if (!gammelChat) return
+    visGruppesamtale(gruppe)
+    erstattAdressen(gruppeadresse(gruppe))
+  }, [gammelChat, gruppe])
 
   // En ny side begynner øverst, med fokus på overskriften.
   useEffect(() => {
     window.scrollTo({ top: 0 })
     document.getElementById(overskrift)?.focus({ preventScroll: true })
-  }, [gruppe, fane, overskrift])
+  }, [gruppe, overskrift])
 
   return (
     <section className="gruppeside" aria-labelledby={overskrift}>
@@ -68,11 +78,7 @@ export function Grupperside({
       </ToppmenyInnhold>
       <Bevaringsomrade navn={gruppe ? `gruppe:${gruppe}` : 'grupper'}>
         {gruppe ? (
-          fane === 'chat' ? (
-            <Chatside key={gruppe} id={gruppe} overskrift={overskrift} onLukk={lukk} />
-          ) : (
-            <Gruppedashboard key={gruppe} id={gruppe} overskrift={overskrift} onLukk={lukk} />
-          )
+          <Gruppedashboard key={gruppe} id={gruppe} overskrift={overskrift} onLukk={lukk} />
         ) : (
           <Oversikt overskrift={overskrift} onLukk={lukk} />
         )}
@@ -491,7 +497,7 @@ const flertall = (n: number, en: string, flere: string) => `${n} ${n === 1 ? en 
  * De fire korte panelene: hvert med et kort signal og én knapp. Tallene er
  * gruppens samhandling (`gruppeoversikt`), de samme som fanene hadde.
  * Diskusjonene står i diskusjonsmenyen bare mens gruppen er aktiv, og chatten
- * bare når den er slått på (`chat_uleste`).
+ * i chatmenyen bare når den er slått på (`chat_uleste`).
  */
 function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
   const { nye_ideer, venter, mine_oppgaver, chat_uleste } = g.samhandling
@@ -529,37 +535,11 @@ function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
           tittel="Gruppechat"
           signal={chat_uleste > 0 ? flertall(chat_uleste, 'ulest melding', 'uleste meldinger') : 'Ingen uleste meldinger'}
         >
-          <Panellenke href={gruppeadresse(g.id, 'chat')}>Åpne chat</Panellenke>
+          <Button variant="kant" onClick={() => visGruppesamtale(g.id)}>
+            Åpne chat
+          </Button>
         </Gruppepanel>
       )}
     </div>
-  )
-}
-
-/* --- Chatten ------------------------------------------------------------------- */
-
-/**
- * Chatten i gruppen på sin egen side, som før, til chatmenyen tar over den
- * (D4). Lukkes til gruppen, eller dit brukeren kom fra.
- */
-function Chatside({ id, overskrift, onLukk }: { id: string; overskrift: string; onLukk: () => void }) {
-  const { oversikt, lesefeil, hent } = useGruppeoversikt(id)
-  useFanetittel(oversikt ? `Chat – ${oversikt.navn}` : 'Chat')
-  // Ut av chatten: tallene på gruppesiden hentes på nytt.
-  useEffect(() => () => void hent(), [hent])
-  return (
-    <>
-      <Tilbakelenke reserve={oversikt?.navn ?? 'gruppen'} onTilbake={onLukk} />
-      <Tittel id={overskrift}>{oversikt ? `Chat i ${oversikt.navn}` : 'Chat'}</Tittel>
-      {!oversikt ? (
-        <p className={lesefeil ? 'skjemafeil' : 'gruppeside__ingress'} role={lesefeil ? 'alert' : undefined}>
-          {lesefeil ?? 'Henter gruppen …'}
-        </p>
-      ) : oversikt.samhandling.chat_uleste === null ? (
-        <p className="gruppeside__ingress">Gruppechatten er ikke slått på.</p>
-      ) : (
-        <Gruppechatfane gruppe={oversikt} />
-      )}
-    </>
   )
 }

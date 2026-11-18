@@ -163,7 +163,7 @@ Aldri mot produksjonen. Syntetiske brukere fra persongalleriet.
 | N7 | Smal skjerm (390 × 844) med berøring | Ingen vannrett rulling; Enter gir ny linje, Send-knappen sender |
 | N8 | Navnene skjermleseren leser | Lista er `role="log"`; feltet har navn og tastehjelpen som beskrivelse, uten noen påminnelse om pasientopplysninger; avsender og tid leses for hver melding |
 | N9 | Tekst med et syntetisk fødselsnummer | Ingen advarsel mens man skriver (Peder 17.11.2026); sendingen avvises med `PASIENTREGEL.avvist`, og avslaget vises |
-| N10 | Varselet om nye meldinger | «Nye meldinger i <gruppe>», uten tekst; et trykk åpner chatfanen |
+| N10 | Nye meldinger (fra D4b: chatboblen, ikke bjella) | Tallet på chatboblen og raden merket ulest, uten tekst; bjella nevner ikke chatten (`gruppechatnettleser.ts`, `chatulestnettleser.ts`) |
 
 ## 7. Fordelingen
 

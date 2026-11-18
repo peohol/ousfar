@@ -7,16 +7,12 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import type { Endring } from '../domain/versjon'
 import {
-  chatantall,
-  chattekst,
-  varselgruppechat,
   DATABASEKATEGORIER,
   arkiverEndringer,
   etterKilde,
   gjenopprettEndringer,
   KATEGORIREKKEFOLGE,
   kategorierIGrupper,
-  type Varselfunksjon,
   antallUleste,
   endringsvarsler,
   erValgt,
@@ -82,14 +78,15 @@ describe('kategoriene og valgene', () => {
     expect(KATEGORIREKKEFOLGE).toEqual(expect.arrayContaining([...DATABASEKATEGORIER, 'funksjonalitet']))
   })
 
-  it('grupperer kategoriene etter hva de gjelder, hver kategori i én gruppe', () => {
+  it('grupperer kategoriene etter hva de gjelder, hver kategori i bjella i én gruppe', () => {
     const grupper = kategorierIGrupper()
     expect(grupper.map((g) => g.gruppe)).toEqual(['fortolkning', 'ideer', 'diskusjoner', 'grupper', 'forslag', 'favoritter', 'appen'])
-    expect(grupper.flatMap((g) => g.kategorier).sort()).toEqual([...KATEGORIREKKEFOLGE].sort())
+    // Alle utenom chatten, som står på chatknappen (D4b).
+    expect(grupper.flatMap((g) => g.kategorier).sort()).toEqual(KATEGORIREKKEFOLGE.filter((k) => k !== 'gruppechat').sort())
     expect(grupper.find((g) => g.gruppe === 'ideer')!.kategorier).toEqual(['mine_ideer', 'aktive_ideer', 'nye_ideer'])
     expect(grupper.find((g) => g.gruppe === 'favoritter')!.kategorier).toEqual(['favoritter', 'favorittdiskusjoner'])
     expect(grupper.find((g) => g.gruppe === 'forslag')!.kategorier).toEqual(['mine_forslag', 'forslag_til_behandling'])
-    expect(grupper.find((g) => g.gruppe === 'grupper')!.kategorier).toEqual(['gruppeideer', 'gruppeoppgaver', 'gruppechat'])
+    expect(grupper.find((g) => g.gruppe === 'grupper')!.kategorier).toEqual(['gruppeideer', 'gruppeoppgaver'])
   })
 
   it('viser kategorien for forslag til behandling bare for behandlerne', () => {
@@ -478,31 +475,32 @@ describe('gruppene (P6b)', () => {
   })
 })
 
-describe('gruppechatten', () => {
-  const lest = (hendelse: Record<string, unknown>) =>
+describe('gruppechatten er ute av bjella (D4b)', () => {
+  const chatvarsel = (lest: boolean) =>
     lesVarselliste({
       lest_kl: '2026-11-17T10:00:00Z',
-      varsler: [{ id: 'v', kategori: 'gruppechat', hendelser: [hendelse], oppdatert_kl: '2026-11-17T09:00:00Z', lest_kl: null }],
+      varsler: [
+        {
+          id: `chat-${lest}`,
+          kategori: 'gruppechat',
+          hendelser: [{ kl: '2026-11-17T09:00:00Z', gruppechat: { id: 'g', navn: 'Syntetisk gruppe' }, antall: 4, til_nr: 12 }],
+          oppdatert_kl: '2026-11-17T09:00:00Z',
+          lest_kl: lest ? '2026-11-17T09:30:00Z' : null,
+        },
+      ],
     }).varsler[0]!
 
-  it('leser gruppen og antallet, og ingenting annet', () => {
-    const varsel = lest({ kl: '2026-11-17T09:00:00Z', gruppechat: { id: 'g', navn: 'Syntetisk gruppe' }, antall: 4, til_nr: 12 })
-    expect(varselgruppechat(varsel)).toEqual({ id: 'g', navn: 'Syntetisk gruppe' })
-    expect(chatantall(varsel)).toBe(4)
-    expect(chattekst(varselgruppechat(varsel)!, chatantall(varsel))).toBe('4 nye meldinger i Syntetisk gruppe')
-    expect(chattekst({ id: 'g', navn: 'Syntetisk gruppe' }, 1)).toBe('Ny melding i Syntetisk gruppe')
+  it('står ikke i innstillingene, og er aldri valgt, heller ikke med et eldre valg', () => {
+    for (const behandler of [true, false]) {
+      expect(kategorierIGrupper(behandler).flatMap((g) => g.kategorier)).not.toContain('gruppechat')
+    }
+    expect(erValgt('gruppechat', {})).toBe(false)
+    expect(erValgt('gruppechat', { gruppechat: true })).toBe(false)
   })
 
-  it('tåler et antall uten formen, og en gruppe som ikke kan vises', () => {
-    expect(chatantall(lest({ kl: '', gruppechat: { id: 'g', navn: 'X' }, antall: 'mange' }))).toBe(1)
-    expect(varselgruppechat(lest({ kl: '', gruppechat: null, antall: 2 }))).toBeNull()
-  })
-
-  it('står i innstillingene bare når chatten er slått på', () => {
-    const grupper = (funksjoner?: ReadonlySet<Varselfunksjon>) =>
-      kategorierIGrupper(true, funksjoner).find((g) => g.gruppe === 'grupper')!.kategorier
-    expect(grupper()).toEqual(['gruppeideer', 'gruppeoppgaver', 'gruppechat'])
-    expect(grupper(new Set(['gruppechat']))).toEqual(['gruppeideer', 'gruppeoppgaver', 'gruppechat'])
-    expect(grupper(new Set())).toEqual(['gruppeideer', 'gruppeoppgaver'])
+  it('telles ikke på bjella og vises ikke i vinduet, lest eller ulest', () => {
+    expect(antallUleste({ gruppechat: 3, mine_ideer: 1 }, [], { gruppechat: true })).toBe(1)
+    const ide = ideVarsel({ id: 'ide' })
+    expect(samleVarsler([chatvarsel(false), chatvarsel(true), ide], { gruppechat: true }).map((v) => v.id)).toEqual(['ide'])
   })
 })

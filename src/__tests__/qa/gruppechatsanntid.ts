@@ -81,7 +81,7 @@ function aapneChat(klient: SupabaseClient, gruppe: string) {
     ...api,
     abonner,
     nyKlientId: () => crypto.randomUUID(),
-    varslerEndret: () => undefined,
+    ulesteEndret: () => undefined,
   })
   kontroller.start()
   return { kontroller, ringinger, api }
