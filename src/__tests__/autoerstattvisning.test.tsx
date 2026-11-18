@@ -147,25 +147,88 @@ describe('autoerstatt i rikteksteditoren', () => {
 })
 
 describe('autoerstatt i tekstfeltene', () => {
-  function Felt() {
+  /** Et felt uten egen autoerstatt-kode, som chatten, titlene og kommentarene. */
+  function Felt({ flerlinje = false, ...egenskaper }: { flerlinje?: boolean } & Record<string, unknown>) {
     const [verdi, setVerdi] = useState('')
-    return <Tekstomrade merke="Kommentar" verdi={verdi} onEndre={setVerdi} />
+    const felles = { 'aria-label': 'Felt', value: verdi, ...egenskaper }
+    return (
+      <>
+        {flerlinje ? (
+          <textarea {...felles} onChange={(e) => setVerdi(e.target.value)} />
+        ) : (
+          <input {...felles} onChange={(e) => setVerdi(e.target.value)} />
+        )}
+        <output>{verdi}</output>
+      </>
+    )
+  }
+
+  async function vis(felt: ReactNode, lager: Autoerstattlager | null = minnelager()) {
+    render(lager ? <Kilde lager={lager}>{felt}</Kilde> : felt)
+    await act(async () => {})
+    return {
+      felt: (screen.queryByRole('searchbox') ?? screen.getByRole('textbox')) as HTMLInputElement,
+      verdi: () => screen.getByRole('status').textContent,
+    }
   }
 
   it('bytter ut mens det skrives, og angrer med tilbaketasten', async () => {
-    render(
-      <Kilde lager={minnelager()}>
-        <Felt />
-      </Kilde>,
-    )
-    await act(async () => {})
-    const felt = screen.getByRole('textbox', { name: 'Kommentar' }) as HTMLTextAreaElement
+    function Kommentar() {
+      const [verdi, setVerdi] = useState('')
+      return <Tekstomrade merke="Kommentar" verdi={verdi} onEndre={setVerdi} />
+    }
+    const { felt } = await vis(<Kommentar />)
     await userEvent.type(felt, 'a - b a-b 1--2')
     expect(felt.value).toBe('a – b a-b 1–2')
     await userEvent.type(felt, ' * ')
     expect(felt.value).toBe('a – b a-b 1–2 · ')
     await userEvent.type(felt, '{Backspace}')
     expect(felt.value).toBe('a – b a-b 1–2 * ')
+  })
+
+  it('gjelder i alle tekstfelt, også dem uten egen kode, og React får verdien', async () => {
+    for (const flerlinje of [true, false]) {
+      const { felt, verdi } = await vis(<Felt flerlinje={flerlinje} />)
+      await userEvent.type(felt, 'a - b')
+      expect(felt.value).toBe('a – b')
+      expect(verdi()).toBe('a – b')
+      await userEvent.type(felt, ' --')
+      expect(verdi()).toBe('a – b –')
+      // Angringen når også React, så det som lagres er det brukeren ser.
+      await userEvent.type(felt, '{Backspace}')
+      expect(felt.value).toBe('a – b --')
+      expect(verdi()).toBe('a – b --')
+      // Neste tilbaketast sletter som vanlig.
+      await userEvent.type(felt, '{Backspace}')
+      expect(verdi()).toBe('a – b -')
+      cleanup()
+    }
+  })
+
+  it('lar felt som ikke er vanlig skrift, stå slik de skrives', async () => {
+    for (const egenskaper of [{ type: 'search' }, { inputMode: 'decimal' }, { autoCorrect: 'off' }, { spellCheck: false }]) {
+      const { felt, verdi } = await vis(<Felt {...egenskaper} />)
+      await userEvent.type(felt, 'a - b--')
+      expect(verdi()).toBe('a - b--')
+      cleanup()
+    }
+  })
+
+  it('bytter ingenting uten reglene', async () => {
+    const { felt, verdi } = await vis(<Felt flerlinje />, null)
+    await userEvent.type(felt, 'a - b--')
+    expect(verdi()).toBe('a - b--')
+  })
+
+  it('bruker regler som kommer til senere', async () => {
+    const lager = minnelager()
+    const { felt, verdi } = await vis(<Felt flerlinje />, lager)
+    lager.regler.push({ id: 'd', finn: '->', erstatt: '→' })
+    await act(async () => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    await userEvent.type(felt, 'a->b')
+    expect(verdi()).toBe('a→b')
   })
 })
 

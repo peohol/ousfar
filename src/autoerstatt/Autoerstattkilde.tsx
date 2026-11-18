@@ -1,12 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { lyttEtterTekstfelt } from './felt'
 import type { Autoerstattlager } from './lagring'
 import type { Autoerstattregel } from './regler'
 
 /**
  * Autoerstatt-reglene for hele appen, hentet én gang når brukeren logger inn
  * og på nytt når fanen blir synlig igjen, så endringer en administrator har
- * gjort, kommer med. Editorene og tekstfeltene leser reglene herfra; uten
- * kilden (som i testene) byttes ingenting ut.
+ * gjort, kommer med. Editorene leser reglene herfra, og kilden slår selv på
+ * autoerstatt i alle vanlige tekstfelt i appen (`felt.ts`). Uten kilden (som
+ * i testene) byttes ingenting ut.
  */
 export interface Autoerstatt {
   regler: readonly Autoerstattregel[]
@@ -32,6 +34,11 @@ export function AutoerstattProvider({
   const [regler, setRegler] = useState<readonly Autoerstattregel[]>(INGEN)
   /** Økes for hver henting; bare svaret på den siste brukes. */
   const hentinger = useRef(0)
+  const sisteRegler = useRef(regler)
+  sisteRegler.current = regler
+
+  // Alle tekstfelt i appen, også de som lages senere, bruker de siste reglene.
+  useEffect(() => lyttEtterTekstfelt(() => sisteRegler.current), [])
 
   const hent = useCallback(async () => {
     const bestilt = ++hentinger.current

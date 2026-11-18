@@ -879,6 +879,9 @@ function Invitasjon({ opptatt, onInviter }: { opptatt: boolean; onInviter: (bruk
           merkelapp="Brukernavn"
           value={brukernavn}
           autoComplete="off"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           disabled={opptatt}
           onChange={(e) => setBrukernavn(e.target.value)}
           hjelp="Den inviterte ser invitasjonen under «Grupper» i kontomenyen, og er med når den er godtatt."

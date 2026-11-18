@@ -17,7 +17,7 @@ interface Utkast {
 
 /**
  * Autoerstatt-reglene, for administratorer: hva som byttes ut mens det
- * skrives i teksteditorene, og med hva. Reglene opprettes, endres og slettes
+ * skrives i appen, og med hva. Reglene opprettes, endres og slettes
  * her; tilgangen avgjøres av radsikkerheten i databasen.
  */
 export function Autoerstattregler({ apen, onLukk }: { apen: boolean; onLukk: () => void }) {
@@ -98,7 +98,7 @@ export function Autoerstattregler({ apen, onLukk }: { apen: boolean; onLukk: () 
       }
     >
       <p className="autoerstatt__ingress">
-        Mens det skrives i teksteditorene, byttes teksten til venstre ut med teksten til høyre. Mellomrom teller med
+        Mens det skrives i appen, byttes teksten til venstre ut med teksten til høyre. Mellomrom teller med
         og vises som <Mellomrom />. Tilbaketasten rett etter en erstatning setter tilbake det som ble skrevet.
       </p>
 
