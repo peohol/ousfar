@@ -4,7 +4,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
-import { FORSIDEADRESSE, gruppeadresse } from '../../domain/rute'
+import { gruppeadresse } from '../../domain/rute'
 import { useFavoritter } from '../../favoritter/Favorittkilde'
 import { hentOppsummering, type Databasemodul } from '../../forside/api'
 import { FORSIDEMODULER, type Forsidemodul } from '../../forside/moduler'
@@ -15,7 +15,7 @@ import { apneVarsler, hentEndringsloggstatus, merkVarslerLest, oppfriskVarsler }
 import { endringsvarsler, startstatus, type Endringsvarsel } from '../../varsler/modell'
 import { visEndringslogg } from '../endringsloggvisning'
 import type { Hendelse } from '../oppsummering/hendelse'
-import { Oppsummeringskort, type Panelinnhold } from '../oppsummering/Oppsummeringskort'
+import { Oppsummeringskort, type OppsummeringskortProps, type Panelinnhold } from '../oppsummering/Oppsummeringskort'
 import {
   endringsrad,
   fagsiderad,
@@ -35,9 +35,9 @@ interface Panelsvar {
 
 /** Teksten når panelet er tomt, og tekstlenken til resten. */
 const TOMTEKST = 'Ingen nye hendelser.'
-const ALLE_VARSLER = { tekst: 'Alle varsler', til: FORSIDEADRESSE, ved: apneVarsler }
+const ALLE_VARSLER = { tekst: 'Alle varsler', ved: apneVarsler }
 
-const PANELTEKST: Record<Forsidemodul, { tomtekst: string; visAlle?: { tekst: string; til: string; ved?: () => void } }> = {
+const PANELTEKST: Record<Forsidemodul, { tomtekst: string; visAlle?: OppsummeringskortProps['visAlle'] }> = {
   viktig_nytt: { tomtekst: TOMTEKST, visAlle: ALLE_VARSLER },
   aktuelt: { tomtekst: TOMTEKST, visAlle: ALLE_VARSLER },
   grupper: { tomtekst: 'Du er ikke med i noen grupper ennå.', visAlle: { tekst: 'Alle grupper', til: gruppeadresse() } },

@@ -138,8 +138,8 @@ const ENDRINGSART: Record<Endringsvarsel['kategori'], string> = {
 }
 
 /**
- * En føring i endringsloggen som er et varsel. Den har ingen egen adresse:
- * `ved` åpner endringsloggen med føringen, og raden blir stående på forsiden.
+ * En føring i endringsloggen som er et varsel. Den har ingen egen adresse, så
+ * raden er en knapp: `ved` åpner endringsloggen med føringen.
  */
 export function endringsrad(varsel: Endringsvarsel, ved: () => void): Hendelse {
   return {
@@ -149,7 +149,6 @@ export function endringsrad(varsel: Endringsvarsel, ved: () => void): Hendelse {
     hvor: hvor('Appen', ENDRINGSART[varsel.kategori]),
     tid: varsel.oppdatert_kl,
     ulest: !varsel.lest,
-    til: FORSIDEADRESSE,
     ved,
   }
 }

@@ -17,7 +17,7 @@ export function useForsideoppsett(
   lagre: (oppsett: Forsideoppsett) => Promise<void> = lagreOppsett,
 ): [Forsideoppsett, (oppsett: Forsideoppsett) => void] {
   const bruker = useProfil().id
-  const [oppsett, setOppsett] = useState<Forsideoppsett>(() => (sistKjent?.bruker === bruker ? sistKjent.oppsett : STANDARDOPPSETT))
+  const [oppsett, setOppsett] = useState<Forsideoppsett>(() => (sistKjent && sistKjent.bruker === bruker ? sistKjent.oppsett : STANDARDOPPSETT))
   const endret = useRef(false)
 
   useEffect(() => {
