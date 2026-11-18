@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
 /**
  * Appskallet fra designsystemet: ikonene, den faste toppmenyen med plassene
- * sidene fyller, fagsøkfeltets snarvei, idéknappen, adminmenyen og kontomenyen.
+ * sidene fyller, fagsøkfeltets snarvei, hovedmenyen med «For hele appen»
+ * (idéene, de planlagte oppgavene og administrasjonen), kontomenyen og
+ * Innstillinger (D6).
  */
 import { readFileSync } from 'node:fs'
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
@@ -32,9 +34,13 @@ const ideerMedNytt = vi.hoisted(() => ({ antall: 0 }))
 vi.mock('../ideer/api', () => ({ hentIdeerMedNytt: async () => ideerMedNytt.antall }))
 // Tallet på endringsforslag som venter på den som behandler dem (P5 tråd C).
 const forslagsantall = vi.hoisted(() => ({ nye: 2, pagaende: 4, uten_redaktor: 0, mine: 1 }))
+// Egne forslag som venter på svar fra den innloggede.
+const mineVenter = vi.hoisted(() => ({ antall: 1 }))
 vi.mock('../forslag/behandling', async (original) => ({
   ...(await original<typeof import('../forslag/behandling')>()),
   hentForslagsantall: async () => ({ ...forslagsantall }),
+  hentForslagTilMeg: async (behandler: boolean) =>
+    mineVenter.antall + (behandler ? forslagsantall.nye + forslagsantall.mine : 0),
 }))
 // Dialogene bak valgene har egne tester; her holder det at riktig åpnes.
 vi.mock('../components/konto/Kontopanel', () => ({
@@ -107,13 +113,23 @@ const { Fagsokfelt, erFagsokSnarvei } = await import('../components/toppmeny/Fag
 const { Kontomeny } = await import('../components/konto/Kontomeny')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER } = await import('../grupper/modell')
-const { Adminmeny } = await import('../components/konto/Adminmeny')
+const { Administrasjon } = await import('../components/konto/Administrasjon')
 const { DATAKILDER } = await import('../datakilder/status')
-const { Ideknapp } = await import('../components/ideer/Ideknapp')
+const { Idelag } = await import('../components/ideer/Idelag')
+const { Sidemeny } = await import('../components/Sidemeny')
+const { STOFFREGISTER } = await import('../domain/stoffregister')
+const { meldChatstatus } = await import('../components/chat/chatstyring')
 const { TipsLag } = await import('../components/Tips')
 const { ShortcutVisibilityProvider, useShortcutVisibility } = await import('../hooks/useShortcutVisibility')
 
 beforeAll(() => {
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
   globalThis.ResizeObserver ??= class {
     observe() {}
     unobserve() {}
@@ -128,6 +144,7 @@ afterEach(() => {
   rolle.verdi = 'admin'
   systemarkitekt.verdi = true
   rett.verdi = null
+  meldChatstatus({ finnes: false, mobilApen: false, uleste: 0 })
 })
 
 function Ramme({ children }: { children: React.ReactNode }) {
@@ -238,16 +255,6 @@ describe('ikonene', () => {
     expect(css).toMatch(/\.ikon \*\s*\{[^}]*pointer-events:\s*none/)
   })
 })
-
-/** Knappene foran kontoen, slik appen legger dem i toppmenyen. */
-function Verktoy() {
-  return (
-    <>
-      <Ideknapp />
-      <Adminmeny />
-    </>
-  )
-}
 
 describe('plassene i toppmenyen', () => {
   function Side() {
@@ -433,30 +440,23 @@ describe('plassene i toppmenyen', () => {
     expect(screen.getByRole('button', { name: 'Trykket 0' })).toBeTruthy()
   })
 
-  it('har ikon og navn på hver knapp', () => {
+  it('har bare hovedmenyen, fagsøket, sidens handlinger, varslene og kontoen: idéene og administrasjonen står i hovedmenyen', () => {
     render(
       <Ramme>
-        <ToppmenyKilde>
-          <Toppmeny meny={null} verktoy={<Verktoy />} konto={null} />
-        </ToppmenyKilde>
+        <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined }}>
+          <ToppmenyKilde>
+            <Toppmeny
+              meny={<Sidemeny register={STOFFREGISTER} />}
+              konto={<Kontomeny tema={{ valg: 'system', velg: () => undefined }} bevegelse={{ valg: 'system', velg: () => undefined }} />}
+            />
+          </ToppmenyKilde>
+        </GruppekildeProvider>
       </Ramme>,
     )
-    const knapper = within(screen.getByRole('navigation', { name: 'Toppmeny' })).getAllByRole('button')
-    expect(knapper.map((k) => k.getAttribute('aria-label'))).toEqual(['Idéer og planlagte oppgaver', 'Administrasjon'])
-    for (const knapp of knapper) expect(knapp.querySelector('svg.ikon')).not.toBeNull()
-  })
-
-  it('viser ikke adminmenyen for dem uten rettigheter i administrasjonen', () => {
-    rett.verdi = INGEN_RETTIGHETER
-    render(
-      <Ramme>
-        <ToppmenyKilde>
-          <Toppmeny meny={null} verktoy={<Verktoy />} konto={null} />
-        </ToppmenyKilde>
-      </Ramme>,
-    )
-    const knapper = within(screen.getByRole('navigation', { name: 'Toppmeny' })).getAllByRole('button')
-    expect(knapper.map((k) => k.getAttribute('aria-label'))).toEqual(['Idéer og planlagte oppgaver'])
+    const toppmeny = screen.getByRole('navigation', { name: 'Toppmeny' })
+    const knapper = within(toppmeny).getAllByRole('button').filter((k) => !k.closest('.sidemeny, .nedtrekk__panel'))
+    expect(knapper.map((k) => k.getAttribute('aria-label'))).toEqual(['Vis menyen', 'Kontoen din – Anne Admin'])
+    for (const knapp of knapper) expect(knapp.querySelector('svg.ikon, .avatar')).not.toBeNull()
   })
 })
 
@@ -555,7 +555,7 @@ describe('kontomenyen', () => {
     expect(document.activeElement).toBe(knapp)
   })
 
-  it('har bare profilen, gruppene, forslagene, preferansene og utloggingen', async () => {
+  it('har profilen, forslagene, Innstillinger og utloggingen, men ikke lenger gruppene', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
     // En behandler har også forslagene til behandling, med tallet som venter.
@@ -563,16 +563,14 @@ describe('kontomenyen', () => {
     const valg = within(panel(knapp)).getAllByRole('button')
     expect(valg.map((v) => v.textContent)).toEqual([
       'Endre navn og profilbilde',
-      'Grupper',
       'Mine forslag',
       'Til behandling3 forslag venter',
-      'Preferanser',
+      'InnstillingerVisning',
       'Logg ut',
     ])
+    expect(within(panel(knapp)).queryByRole('button', { name: 'Grupper' })).toBeNull()
+    expect(within(panel(knapp)).queryByRole('button', { name: 'Preferanser' })).toBeNull()
     expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
-
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
-    expect(window.location.hash).toBe('#/grupper')
   })
 
   it('henter tallet som venter, på nytt hver gang menyen åpnes', async () => {
@@ -594,8 +592,12 @@ describe('kontomenyen', () => {
     const knapp = vis()
     await userEvent.click(knapp)
     expect(within(panel(knapp)).queryByRole('button', { name: 'Til behandling' })).toBeNull()
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Grupper' }))
-    expect(window.location.hash).toBe('#/grupper')
+    expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual([
+      'Endre navn og profilbilde',
+      'Mine forslag',
+      'InnstillingerVisning',
+      'Logg ut',
+    ])
   })
 
   it('går til «Mine forslag»', async () => {
@@ -605,31 +607,27 @@ describe('kontomenyen', () => {
     expect(window.location.hash).toBe('#/forslag')
   })
 
-  it('viser en prikk når en invitasjon til en gruppe venter', async () => {
+  it('har ingen prikk for invitasjoner lenger: de står i hovedmenyen', async () => {
     const gruppe = { id: 'g', navn: 'G', beskrivelse: '', art: 'tverrfaglig' as const, status: 'aktiv' as const, fagmiljo: null }
     const knapp = vis({ invitasjoner: [{ gruppe, invitert_kl: '2026-11-14T00:00:00Z', invitert_av: null }] })
-    expect(knapp.getAttribute('aria-label')).toBe('Kontoen din – Anne Admin (én ny invitasjon)')
-    expect(document.querySelector('.kontomeny .toppmeny__prikk')).not.toBeNull()
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getByRole('img', { name: 'én ny invitasjon' })).toBeTruthy()
+    expect(knapp.getAttribute('aria-label')).toBe('Kontoen din – Anne Admin')
+    expect(document.querySelector('.kontomeny .toppmeny__prikk')).toBeNull()
   })
 
-  it('folder ut preferansene med hurtigtastene, temaet og måleenheten, og de virker derfra', async () => {
+  it('åpner Innstillinger med fanen Visning: hurtigtastene, temaet, bevegelsen og måleenheten, som virker derfra', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
     const meny = panel(knapp)
-    const preferanser = within(meny).getByRole('button', { name: 'Preferanser' })
-    const skuff = document.getElementById(preferanser.getAttribute('aria-controls')!)!
-    expect(preferanser.getAttribute('aria-expanded')).toBe('false')
-    expect(skuff.hasAttribute('hidden')).toBe(true)
+    await userEvent.click(within(meny).getByRole('button', { name: 'Innstillinger' }))
+    // Menyen lukkes først, så vinduet gir fokus tilbake til avataren.
+    expect(meny.hidden).toBe(true)
+    const vindu = screen.getByRole('dialog', { name: 'Innstillinger' })
+    // Én fane så langt (Chat kommer med direktemeldingene): ingen fanerad.
+    expect(within(vindu).queryByRole('tablist')).toBeNull()
 
-    await userEvent.click(preferanser)
-    expect(preferanser.getAttribute('aria-expanded')).toBe('true')
-    expect(skuff.hasAttribute('hidden')).toBe(false)
-
-    const hurtigtaster = within(skuff).getByRole('switch', { name: 'Vis hurtigtaster' }) as HTMLInputElement
-    const tema = within(skuff).getByRole('slider', { name: 'Tema' })
-    const bevegelse = within(skuff).getByRole('slider', { name: 'Reduser bevegelse' })
+    const hurtigtaster = within(vindu).getByRole('switch', { name: 'Vis hurtigtaster' }) as HTMLInputElement
+    const tema = within(vindu).getByRole('slider', { name: 'Tema' })
+    const bevegelse = within(vindu).getByRole('slider', { name: 'Reduser bevegelse' })
     // Begge følger systemet til brukeren velger noe annet.
     expect(hurtigtaster.checked).toBe(false)
     expect(tema.getAttribute('aria-valuetext')).toBe('Følg system')
@@ -647,24 +645,26 @@ describe('kontomenyen', () => {
     expect(tema.getAttribute('aria-valuetext')).toBe('Mørkt')
     expect(bevegelse.getAttribute('aria-valuetext')).toBe('Ja')
     expect(screen.getByRole('status').textContent).toBe('moerkt redusert med hurtigtaster')
-    fireEvent.change(tema, { target: { value: '0' } })
-    fireEvent.change(bevegelse, { target: { value: '1' } })
-    expect(screen.getByRole('status').textContent).toBe('lyst full med hurtigtaster')
 
     // Måleenheten konsentrasjonene vises i: de samme tre som laboratorietabellene, µg/L til noe annet er valgt.
-    const maleenhet = within(skuff).getByRole('slider', { name: 'Måleenhet' })
+    const maleenhet = within(vindu).getByRole('slider', { name: 'Måleenhet' })
     expect(merker(maleenhet)).toEqual(['µg/L', 'nmol/L', 'µmol/L'])
     expect(maleenhet.getAttribute('aria-valuetext')).toBe('µg/L')
     fireEvent.change(maleenhet, { target: { value: '1' } })
     expect(maleenhet.getAttribute('aria-valuetext')).toBe('nmol/L')
     expect(localStorage.getItem('far:maleenhet')).toBe('nmol/L')
-    // Bryterne er inni menyen: den står åpen.
-    expect(meny.hidden).toBe(false)
+  })
 
-    // Neste gang menyen åpnes, står skuffen lukket igjen.
-    await userEvent.keyboard('{Escape}')
+  it('lukker Innstillinger med nettleserens egen lukking (Escape), og kontomenyen står lukket', async () => {
+    const knapp = vis()
     await userEvent.click(knapp)
-    expect(preferanser.getAttribute('aria-expanded')).toBe('false')
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Innstillinger' }))
+    const vindu = screen.getByRole('dialog', { name: 'Innstillinger' }) as HTMLDialogElement
+    expect(vindu.open).toBe(true)
+    // jsdom lukker ikke `<dialog>` på Escape selv; nettleseren gjør det og sender `close`.
+    act(() => vindu.close())
+    expect(screen.queryByRole('dialog', { name: 'Innstillinger' })).toBeNull()
+    expect(panel(knapp).hidden).toBe(true)
   })
 
   it('lukkes når fokus tabuleres ut av den, også bakover forbi avataren', async () => {
@@ -706,89 +706,208 @@ describe('kontomenyen', () => {
   })
 })
 
-describe('adminmenyen', () => {
-  it('viser bare «Brukere» og «Redaktører» for en lokal administrator, også med den gamle adminrollen', async () => {
-    for (const r of ['user', 'admin']) {
-      rolle.verdi = r
-      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }], opprettBrukerI: ['a'] }
-      render(
-        <Ramme>
-          <Adminmeny />
-        </Ramme>,
-      )
-      const knapp = await screen.findByRole('button', { name: 'Administrasjon' })
-      await userEvent.click(knapp)
-      expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent), r).toEqual(['Brukere', 'Redaktører'])
-      await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Brukere' }))
-      expect(screen.getByText('Brukerlista')).toBeTruthy()
-      cleanup()
+/** Hovedmenyen slik appen setter den sammen: menyen, og vinduene den åpner under «For hele appen». */
+function Hovedmeny({ admin, grupper = {} }: { admin?: Parameters<typeof Administrasjon>[0]; grupper?: Partial<Gruppekilde> }) {
+  return (
+    <Ramme>
+      <GruppekildeProvider verdi={{ ...INGEN_GRUPPER, oppdater: () => undefined, ...grupper }}>
+        <Sidemeny register={STOFFREGISTER} />
+        <Idelag />
+        <Administrasjon {...admin} />
+      </GruppekildeProvider>
+    </Ramme>
+  )
+}
+
+const menyknapp = () => screen.getByRole('button', { name: /^Vis menyen/ })
+const hovedmenyen = () => screen.getByRole('navigation', { name: 'Meny' })
+
+/** Navnene på valgene i navigasjonsblokken, uten tallene og merknadene. */
+const navnene = (liste: HTMLElement) =>
+  [...liste.querySelectorAll(':scope > li > .menysnarveier__lenke .menysnarveier__navn')].map((n) => n.textContent)
+
+async function apneMenyen() {
+  await userEvent.click(menyknapp())
+  const meny = hovedmenyen()
+  expect(meny.getAttribute('data-apen')).toBe('ja')
+  return meny
+}
+
+/** Folder ut «Administrasjon» i hovedmenyen og gir valgene der. */
+async function administrasjonen(meny: HTMLElement) {
+  const knapp = within(meny).getByRole('button', { name: /^Administrasjon/ })
+  if (knapp.getAttribute('aria-expanded') !== 'true') await userEvent.click(knapp)
+  return document.getElementById(knapp.getAttribute('aria-controls')!)!
+}
+
+async function velgAdmin(valg: string) {
+  const liste = await administrasjonen(await apneMenyen())
+  await userEvent.click(within(liste).getByRole('button', { name: new RegExp(`^${valg}`) }))
+}
+
+describe('hovedmenyen', () => {
+  it('har navigasjonen og «For hele appen» over fanene, for en systemarkitekt med alt', async () => {
+    const meny = (render(<Hovedmeny />), await apneMenyen())
+    const [navigasjon, helApp] = [...meny.querySelectorAll<HTMLElement>('.menynavigasjon > .menysnarveier')]
+    expect(navnene(navigasjon!)).toEqual(['Forsiden', 'Fortolkning', 'Grupper', 'Endringsforslag'])
+    expect(within(navigasjon!).getByRole('link', { name: /^Grupper/ }).getAttribute('href')).toBe('#/grupper')
+    expect(within(navigasjon!).getByRole('link', { name: /^Endringsforslag/ }).getAttribute('href')).toBe('#/forslag')
+    expect(navnene(helApp!)).toEqual(['Idéer for appen', 'Planlagte oppgaver', 'Administrasjon'])
+    expect(within(helApp!).getByText('Systemarkitekt')).toBeTruthy()
+    // Fanene står uendret under.
+    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister'])
+  })
+
+  it('har chatten med uleste når den er slått på, og «Chat» åpner chatmenyen', async () => {
+    act(() => meldChatstatus({ finnes: true, mobilApen: false, uleste: 3 }))
+    render(<Hovedmeny />)
+    const meny = await apneMenyen()
+    const chat = within(meny).getByRole('button', { name: /^Chat/ })
+    expect(chat.textContent).toBe('Chat3 uleste')
+    const { lyttEtterChatbeskjed } = await import('../components/chat/chatstyring')
+    const beskjeder: unknown[] = []
+    const slutt = lyttEtterChatbeskjed((b) => beskjeder.push(b))
+    try {
+      await userEvent.click(chat)
+      expect(beskjeder).toEqual([{ gruppe: null }])
+      // Hovedmenyen lukkes, med fokus tilbake til knappen.
+      expect(meny.getAttribute('data-apen')).toBe('nei')
+      expect(document.activeElement).toBe(menyknapp())
+    } finally {
+      slutt()
     }
   })
 
-  it('vises ikke uten rettigheter i administrasjonen, heller ikke med den gamle adminrollen', () => {
+  it('viser hvor mange forslag som venter på deg, og invitasjonene til grupper, med en prikk på knappen for invitasjonen', async () => {
+    const gruppe = { id: 'g', navn: 'G', beskrivelse: '', art: 'tverrfaglig' as const, status: 'aktiv' as const, fagmiljo: null }
+    render(<Hovedmeny grupper={{ invitasjoner: [{ gruppe, invitert_kl: '2026-11-14T00:00:00Z', invitert_av: null }] }} />)
+    expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (én ny invitasjon)')
+    expect(menyknapp().querySelector('.toppmeny__prikk')).not.toBeNull()
+    const meny = await apneMenyen()
+    expect(within(meny).getByRole('link', { name: /^Grupper/ }).textContent).toBe('Grupper1 invitasjon')
+    // Ett eget forslag venter på svar, og tre i arbeidskøen (to nye, ett hos meg).
+    await waitFor(() => expect(within(meny).getByRole('link', { name: /^Endringsforslag/ }).textContent).toBe('Endringsforslag4 til deg'))
+  })
+
+  it('har ikke Planlagte oppgaver eller Administrasjon for en vanlig bruker, heller ikke med den gamle adminrollen', async () => {
     for (const r of ['user', 'admin']) {
       rolle.verdi = r
       rett.verdi = INGEN_RETTIGHETER
-      render(
-        <Ramme>
-          <Adminmeny />
-        </Ramme>,
-      )
-      expect(screen.queryByRole('button', { name: 'Administrasjon' }), r).toBeNull()
+      systemarkitekt.verdi = false
+      render(<Hovedmeny />)
+      const meny = await apneMenyen()
+      const helApp = meny.querySelectorAll<HTMLElement>('.menynavigasjon > .menysnarveier')[1]!
+      expect(navnene(helApp), r).toEqual(['Idéer for appen'])
+      expect(within(meny).queryByRole('button', { name: /Planlagte oppgaver/ }), r).toBeNull()
+      expect(within(meny).queryByRole('button', { name: /^Administrasjon/ }), r).toBeNull()
+      // Den som ikke behandler forslag, får bare egne forslag i tallet.
+      await waitFor(() => expect(within(meny).getByRole('link', { name: /^Endringsforslag/ }).textContent).toBe('Endringsforslag1 til deg'))
       cleanup()
     }
   })
 
-  it('viser alt for en systemarkitekt uten den gamle adminrollen', async () => {
-    rolle.verdi = 'user'
-    render(
-      <Ramme>
-        <Adminmeny />
-      </Ramme>,
-    )
-    const knapp = screen.getByRole('button', { name: 'Administrasjon' })
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getAllByRole('button')).toHaveLength(7)
+  it('åpner ikke de planlagte oppgavene for andre enn systemarkitektene, selv når de bes om', async () => {
+    systemarkitekt.verdi = false
+    render(<Hovedmeny />)
+    const { apneIdelag } = await import('../components/ideer/idevisning')
+    act(() => apneIdelag('oppgaver'))
+    expect(screen.queryByText(/^Oppgavene/)).toBeNull()
   })
 
-  it('fører til brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
-    render(
-      <Ramme>
-        <Adminmeny />
-      </Ramme>,
-    )
-    const knapp = screen.getByRole('button', { name: 'Administrasjon' })
-    await userEvent.click(knapp)
-    const meny = panel(knapp)
-    expect(meny.getAttribute('data-lag')).toBe('adminmeny')
-    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Redaktører', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+  it('åpner idéene og de planlagte oppgavene, går mellom lagene med bare ett åpent, og gir fokus tilbake til menyknappen', async () => {
+    render(<Hovedmeny />)
+    const meny = await apneMenyen()
+    await userEvent.click(within(meny).getByRole('button', { name: /^Idéer for appen/ }))
+    expect(screen.getByText('Idéene')).toBeTruthy()
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+    expect(document.activeElement).toBe(menyknapp())
+    await userEvent.click(screen.getByRole('button', { name: 'Til oppgaven' }))
+    expect(screen.getByText('Oppgavene o1')).toBeTruthy()
+    expect(screen.queryByText('Idéene')).toBeNull()
 
-    await userEvent.click(within(meny).getByRole('button', { name: 'Brukere' }))
+    await userEvent.click(within(await apneMenyen()).getByRole('button', { name: /^Planlagte oppgaver/ }))
+    expect(screen.getByText('Oppgavene')).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: 'Til idéene' }))
+    expect(screen.getByText('Idéene')).toBeTruthy()
+  })
+
+  it('har en prikk på knappen og på «Idéer for appen» når noen har kommentert noe nytt, og ser etter igjen når fanen får fokus', async () => {
+    ideerMedNytt.antall = 2
+    try {
+      render(<Hovedmeny />)
+      await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (nye kommentarer på 2 idéer)'))
+      expect(menyknapp().querySelector('.toppmeny__prikk')).not.toBeNull()
+      const meny = await apneMenyen()
+      expect(within(meny).getByRole('img', { name: 'nye kommentarer på 2 idéer' })).toBeTruthy()
+      ideerMedNytt.antall = 1
+      await act(async () => {
+        window.dispatchEvent(new Event('focus'))
+      })
+      expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (nye kommentarer på én idé)')
+    } finally {
+      ideerMedNytt.antall = 0
+    }
+  })
+
+  it('lukkes med Escape og Ctrl + M, med fokus tilbake til knappen, og holder fokus i menyen med tabulator', async () => {
+    render(<Hovedmeny />)
+    const meny = await apneMenyen()
+    expect(document.activeElement).toBe(meny)
+    await userEvent.keyboard('{Escape}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+    expect(document.activeElement).toBe(menyknapp())
+
+    await userEvent.keyboard('{Control>}m{/Control}')
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+    // Tabulator bakover fra panelet går til det siste i menyen, ikke ut av den.
+    await userEvent.tab({ shift: true })
+    expect(meny.contains(document.activeElement)).toBe(true)
+    await userEvent.keyboard('{Control>}m{/Control}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+    expect(document.activeElement).toBe(menyknapp())
+  })
+
+  it('folder ut administrasjonen med bare «Brukere» og «Redaktører» for en lokal administrator, også med den gamle adminrollen', async () => {
+    for (const r of ['user', 'admin']) {
+      rolle.verdi = r
+      systemarkitekt.verdi = false
+      rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }], opprettBrukerI: ['a'] }
+      render(<Hovedmeny />)
+      const liste = await administrasjonen(await apneMenyen())
+      expect(navnene(liste), r).toEqual(['Brukere', 'Redaktører'])
+      await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
+      expect(screen.getByText('Brukerlista')).toBeTruthy()
+      // Et vindu den lokale administratoren ikke har, åpnes ikke selv om det bes om.
+      const { apneAdminpanel } = await import('../components/konto/adminvisning')
+      act(() => apneAdminpanel('datakilder'))
+      expect(screen.queryByText('Datakildene')).toBeNull()
+      cleanup()
+    }
+  })
+
+  it('fører til brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene', async () => {
+    rolle.verdi = 'user'
+    render(<Hovedmeny />)
+    const liste = await administrasjonen(await apneMenyen())
+    expect(navnene(liste)).toEqual(['Brukere', 'Redaktører', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+    await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
-    expect(meny.hidden).toBe(true)
+    expect(hovedmenyen().getAttribute('data-apen')).toBe('nei')
+    expect(document.activeElement).toBe(menyknapp())
 
-    await userEvent.click(knapp)
-    await userEvent.click(within(meny).getByRole('button', { name: 'Datakilder' }))
+    await velgAdmin('Datakilder')
     expect(screen.getByText('Datakildene')).toBeTruthy()
-
-    await userEvent.click(knapp)
-    await userEvent.click(within(meny).getByRole('button', { name: 'Kurateringer' }))
+    await velgAdmin('Kurateringer')
     expect(screen.getByText('Kurateringsoversikten')).toBeTruthy()
-
-    await userEvent.click(knapp)
-    await userEvent.click(within(meny).getByRole('button', { name: 'Kildeovervåking' }))
+    await velgAdmin('Kildeovervåking')
     expect(screen.getByText('Kildeovervåkingen')).toBeTruthy()
     // En sikkerhetssak peker til nødstoppen, som åpnes i stedet for kildeovervåkingen.
     await userEvent.click(screen.getByRole('button', { name: 'Åpne nødstoppen' }))
     expect(screen.getByText('Nødstoppen')).toBeTruthy()
     expect(screen.queryByText('Kildeovervåkingen')).toBeNull()
-
-    await userEvent.click(knapp)
-    await userEvent.click(within(meny).getByRole('button', { name: 'Kliniske verktøy' }))
+    await velgAdmin('Kliniske verktøy')
     expect(screen.getByText('Nødstoppen')).toBeTruthy()
-
-    await userEvent.click(knapp)
-    await userEvent.click(within(meny).getByRole('button', { name: 'Autoerstatt' }))
+    await velgAdmin('Autoerstatt')
     expect(screen.getByText('Autoerstatt-reglene')).toBeTruthy()
   })
 
@@ -803,46 +922,38 @@ describe('adminmenyen', () => {
       kjoringer: iOrden.map((k) => (k.kilde === 'farmakologiportalen' ? kjoring(k.kilde, 'feilet') : k)),
       endringer: [],
     }))
-    const leser = { status, hentNa: vi.fn() }
-    render(
-      <Ramme>
-        <Adminmeny leser={leser} />
-      </Ramme>,
-    )
-    const knapp = await screen.findByRole('button', { name: 'Administrasjon (Farmakologiportalen bør ses over)' })
+    render(<Hovedmeny admin={{ leser: { status, hentNa: vi.fn() } }} />)
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Farmakologiportalen bør ses over)'))
     expect(status).toHaveBeenCalledWith(1)
-    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getByRole('img', { name: 'Farmakologiportalen bør ses over' })).toBeTruthy()
+    expect(menyknapp().querySelector('.toppmeny__prikk')).toBeTruthy()
+    const meny = await apneMenyen()
+    expect(within(meny).getByRole('button', { name: /^Administrasjon/ }).querySelector('.nyprikk')).toBeTruthy()
+    const liste = await administrasjonen(meny)
+    expect(within(liste).getByRole('img', { name: 'Farmakologiportalen bør ses over' })).toBeTruthy()
 
     // Hentet på nytt og i orden: prikken forsvinner når panelet lukkes.
     status.mockResolvedValue({ kjoringer: iOrden, endringer: [] })
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
+    await userEvent.click(within(liste).getByRole('button', { name: /^Datakilder/ }))
     expect(screen.getByText('Datakildene')).toBeTruthy()
     act(() => datakildepanel.lukk?.())
-    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
-    expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen'))
+    expect(menyknapp().querySelector('.toppmeny__prikk')).toBeNull()
   })
 
   it('viser en prikk når kildesakene ikke kan leses, så det aldri ser ut som at ingenting venter, og prøver igjen', async () => {
     const les = vi.fn(async (): Promise<Redaktoroversikt> => {
       throw new Error('Nettverket svarte ikke.')
     })
-    render(
-      <Ramme>
-        <Adminmeny fagsaker={{ les, beslutt: vi.fn() }} />
-      </Ramme>,
-    )
-    const knapp = await screen.findByRole('button', { name: 'Administrasjon (kildeovervåkingen kunne ikke leses)' })
-    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getByRole('img', { name: 'kildeovervåkingen kunne ikke leses' })).toBeTruthy()
+    render(<Hovedmeny admin={{ fagsaker: { les, beslutt: vi.fn() } }} />)
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (kildeovervåkingen kunne ikke leses)'))
+    const liste = await administrasjonen(await apneMenyen())
+    expect(within(liste).getByRole('img', { name: 'kildeovervåkingen kunne ikke leses' })).toBeTruthy()
 
     // Neste sjekk lykkes: prikken forsvinner.
     les.mockResolvedValue({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null })
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
+    await userEvent.click(within(liste).getByRole('button', { name: /^Datakilder/ }))
     act(() => datakildepanel.lukk?.())
-    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen'))
   })
 
   it('har en prikk bare når en faglig sak venter på beslutning, ikke for tekniske avvik, og ser etter på nytt når et panel lukkes', async () => {
@@ -857,120 +968,22 @@ describe('adminmenyen', () => {
     // Tekniske avvik alene (teknisk: oppfolging) gir ingen prikk.
     const les = vi.fn(async (): Promise<Redaktoroversikt> => ({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: naa }))
     const fagsaker = { les, beslutt: vi.fn() }
-    const { unmount } = render(
-      <Ramme>
-        <Adminmeny fagsaker={fagsaker} />
-      </Ramme>,
-    )
-    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+    const { unmount } = render(<Hovedmeny admin={{ fagsaker }} />)
     await waitFor(() => expect(les).toHaveBeenCalled())
-    expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
+    expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen')
+    expect(menyknapp().querySelector('.toppmeny__prikk')).toBeNull()
     unmount()
 
     les.mockResolvedValue({ saker: [sak], teknisk: 'normal', sist_kontrollert_kl: naa })
-    render(
-      <Ramme>
-        <Adminmeny fagsaker={fagsaker} />
-      </Ramme>,
-    )
-    const knapp = await screen.findByRole('button', { name: 'Administrasjon (Én faglig sak venter på beslutning)' })
-    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getByRole('img', { name: 'Én faglig sak venter på beslutning' })).toBeTruthy()
+    render(<Hovedmeny admin={{ fagsaker }} />)
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Én faglig sak venter på beslutning)'))
+    const liste = await administrasjonen(await apneMenyen())
+    expect(within(liste).getByRole('img', { name: 'Én faglig sak venter på beslutning' })).toBeTruthy()
 
     // Besluttet: prikken forsvinner når et panel lukkes og det sjekkes på nytt.
     les.mockResolvedValue({ saker: [{ ...sak, fase: 'oppfolging' }], teknisk: 'normal', sist_kontrollert_kl: naa })
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
+    await userEvent.click(within(liste).getByRole('button', { name: /^Datakilder/ }))
     act(() => datakildepanel.lukk?.())
-    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
-    expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
-  })
-})
-
-describe('idémenyen', () => {
-  const MENY = 'Idéer og planlagte oppgaver'
-  const velg = async (valg: string, knapp = screen.getByRole('button', { name: new RegExp(`^${MENY}`) })) => {
-    await userEvent.click(knapp)
-    await userEvent.click(within(panel(knapp)).getByRole('button', { name: new RegExp(`^${valg}`) }))
-  }
-
-  it('har ett valg for idéene og ett for de planlagte oppgavene', async () => {
-    render(
-      <Ramme>
-        <Ideknapp />
-      </Ramme>,
-    )
-    const knapp = screen.getByRole('button', { name: MENY })
-    await userEvent.click(knapp)
-    const meny = panel(knapp)
-    expect(meny.getAttribute('data-lag')).toBe('idemeny')
-    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Idéer', 'Planlagte oppgaver'])
-
-    await userEvent.click(within(meny).getByRole('button', { name: 'Idéer' }))
-    expect(screen.getByText('Idéene')).toBeTruthy()
-    expect(meny.hidden).toBe(true)
-  })
-
-  it('har bare idéene for andre enn systemarkitektene, også for den gamle adminrollen', async () => {
-    systemarkitekt.verdi = false
-    render(
-      <Ramme>
-        <Ideknapp />
-      </Ramme>,
-    )
-    const knapp = screen.getByRole('button', { name: 'Idéer' })
-    await userEvent.click(knapp)
-    expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual(['Idéer'])
-  })
-
-  it('åpner de planlagte oppgavene rett fra menyen, og går mellom lagene med bare ett åpent', async () => {
-    render(
-      <Ramme>
-        <Ideknapp />
-      </Ramme>,
-    )
-    await velg('Planlagte oppgaver')
-    expect(screen.getByText('Oppgavene')).toBeTruthy()
-    expect(screen.queryByText('Idéene')).toBeNull()
-    await userEvent.click(screen.getByRole('button', { name: 'Til idéene' }))
-    expect(screen.getByText('Idéene')).toBeTruthy()
-    await userEvent.click(screen.getByRole('button', { name: 'Til oppgaven' }))
-    expect(screen.getByText('Oppgavene o1')).toBeTruthy()
-    expect(screen.queryByText('Idéene')).toBeNull()
-  })
-
-  it('har en prikk og antallet i navnet, på knappen og valget, når noen har kommentert noe nytt', async () => {
-    ideerMedNytt.antall = 2
-    try {
-      const { container } = render(
-        <Ramme>
-          <Ideknapp />
-        </Ramme>,
-      )
-      const knapp = await screen.findByRole('button', { name: `${MENY} (nye kommentarer på 2 idéer)` })
-      expect(container.querySelector('.toppmeny__prikk')).not.toBeNull()
-      await userEvent.click(knapp)
-      expect(within(panel(knapp)).getByRole('img', { name: 'nye kommentarer på 2 idéer' })).toBeTruthy()
-    } finally {
-      ideerMedNytt.antall = 0
-    }
-  })
-
-  it('ser etter nye kommentarer igjen når fanen får fokus', async () => {
-    render(
-      <Ramme>
-        <Ideknapp />
-      </Ramme>,
-    )
-    const knapp = screen.getByRole('button', { name: MENY })
-    ideerMedNytt.antall = 1
-    try {
-      await act(async () => {
-        window.dispatchEvent(new Event('focus'))
-      })
-      expect(knapp.getAttribute('aria-label')).toBe(`${MENY} (nye kommentarer på én idé)`)
-    } finally {
-      ideerMedNytt.antall = 0
-    }
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen'))
   })
 })

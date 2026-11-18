@@ -82,6 +82,13 @@ kjøringen uten at passordet skrives inn.
   `#/chat`, Escape, parkering under hovedmenyen, plassen sammen med
   diskusjonsmenyen, mobil og mørk modus, og at den som fjernes, stenges ute.
   Samme kontoer og bryter som over, og `QA_SKJERMBILDER=<mappe>`.
+- `npx vite-node src/__tests__/qa/menynettleser.ts` er nettleserkontrollen av
+  menyene (D6): toppmenyen uten idéer og administrasjon, hovedmenyen med
+  navigasjonen og «For hele appen» for en systemarkitekt og for en vanlig
+  bruker (`qa-meny-vanlig`), administrasjonens vinduer, Escape og fokus,
+  kontomenyen og Innstillinger, oversikten over endringsforslag, dokken og
+  hovedmenyen på mobil, og mørkt tema. `QA_SKJERMBILDER=<mappe>` lagrer
+  skjermbildene.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 

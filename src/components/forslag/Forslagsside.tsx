@@ -7,6 +7,7 @@ import {
   HENDELSESTEKST,
   RESSURSTYPENAVN,
   STATUSVISNING,
+  forst,
   personnavn,
   type Forslag,
   type Forslagsrad,
@@ -23,6 +24,7 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Behandlerhandlinger } from './behandling/Behandlerhandlinger'
 import { Tilbehandling, TilbehandlingFane } from './behandling/Tilbehandling'
 import { Tekstomrade } from './Tekstomrade'
+import { Venterpadeg } from './Venterpadeg'
 import '../../styles/grupper.css'
 import '../../styles/forslag.css'
 
@@ -129,22 +131,29 @@ function Faner({ fane }: { fane?: Forslagsfane }) {
   )
 }
 
+/**
+ * Oversikten: først det som venter på den innloggede (`Venterpadeg`), så
+ * fanene med arbeidslistene, med det som venter på deg øverst (D6).
+ */
 function Oversikt({ fane, overskrift }: { fane?: Forslagsfane; overskrift: string }) {
+  const mine = useHentet(hentMineForslag)
   return (
     <>
       <Hode overskrift={overskrift} overtittel="Endringsforslag" tittel={fane === 'behandling' ? 'Til behandling' : 'Mine forslag'}>
+        <Venterpadeg mine={mine.tilstand} />
         <Faner fane={fane} />
       </Hode>
-      {fane === 'behandling' ? <Tilbehandling /> : <MineForslag />}
+      {fane === 'behandling' ? <Tilbehandling /> : <MineForslag tilstand={mine.tilstand} />}
     </>
   )
 }
 
+/** Hvor langt en henting er kommet. */
+export type Hentet<T> = { status: 'laster' } | { status: 'feil'; melding: string } | { status: 'klar'; data: T }
+
 /** Henting med lasting og feil, og en funksjon som henter på nytt. */
 export function useHentet<T>(hent: () => Promise<T>) {
-  const [tilstand, setTilstand] = useState<{ status: 'laster' } | { status: 'feil'; melding: string } | { status: 'klar'; data: T }>({
-    status: 'laster',
-  })
+  const [tilstand, setTilstand] = useState<Hentet<T>>({ status: 'laster' })
   const oppfrisk = useCallback(async () => {
     try {
       setTilstand({ status: 'klar', data: await hent() })
@@ -158,8 +167,7 @@ export function useHentet<T>(hent: () => Promise<T>) {
   return { tilstand, oppfrisk }
 }
 
-function MineForslag() {
-  const { tilstand } = useHentet(hentMineForslag)
+function MineForslag({ tilstand }: { tilstand: Hentet<Forslagsrad[]> }) {
   if (tilstand.status === 'laster') return <p className="gruppeside__hint">Henter forslagene …</p>
   if (tilstand.status === 'feil') return <p className="skjemafeil" role="alert">{tilstand.melding}</p>
   if (tilstand.data.length === 0) {
@@ -170,16 +178,11 @@ function MineForslag() {
       </p>
     )
   }
-  const venter = tilstand.data.filter((f) => f.venter_pa_meg).length
+  // Det som venter på svar fra deg, står først; ellers som før, sist endret først.
   return (
     <>
-      {venter > 0 && (
-        <p className="gruppeside__kvittering" role="status">
-          {venter === 1 ? 'Ett forslag venter på svar fra deg.' : `${venter} forslag venter på svar fra deg.`}
-        </p>
-      )}
       <ul className="forslagsliste">
-        {tilstand.data.map((f) => (
+        {forst(tilstand.data, (f) => f.venter_pa_meg).map((f) => (
           <li key={f.id}>
             <Forslagslenke rad={f} />
           </li>

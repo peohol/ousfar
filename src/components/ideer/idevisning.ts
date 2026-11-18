@@ -1,9 +1,10 @@
 import { lagSignal } from '../../domain/signal'
+import { lagDeltTilstand } from '../../hooks/deltTilstand'
 
 /**
- * Veien inn til en idé fra andre steder i appen enn idémenyen, som et varsel
- * om en ny kommentar eller en direktelenke. `Ideknapp` eier idévinduet og
- * hører etter her.
+ * Veien inn til idéene og de planlagte oppgavene fra resten av appen:
+ * hovedmenyen, et varsel om en ny kommentar eller en direktelenke.
+ * `Idelag` eier vinduene og hører etter her.
  */
 export interface Idevisning {
   id: string
@@ -12,7 +13,24 @@ export interface Idevisning {
 }
 
 const ide = lagSignal<Idevisning>()
-/** Vakten `Ideknapp` melder: lukker lagene og gjør så det som ble bedt om. */
+/** Lagene som kan åpnes: Idéer for hele appen, og Planlagte oppgaver (bare systemarkitektene). */
+export type Idelagnavn = 'ideer' | 'oppgaver'
+
+const lag = lagSignal<Idelagnavn>()
+
+/** Åpner Idéer eller Planlagte oppgaver på oversikten, som fra hovedmenyen. */
+export const apneIdelag = lag.send
+
+/** Hører etter `apneIdelag`. */
+export const lyttEtterIdelag = lag.lytt
+
+/**
+ * Hvor mange idéer som har kommentarer brukeren ikke har sett. `Idelag`
+ * henter tallet; hovedmenyen viser det.
+ */
+export const idestatus = lagDeltTilstand(0)
+
+/** Vakten `Idelag` melder: lukker lagene og gjør så det som ble bedt om. */
 let forlatLagene: ((deretter: () => void) => void) | null = null
 
 /** Åpner Idéer på idéen, og eventuelt kommentaren, med denne ID-en. */
@@ -32,7 +50,7 @@ export function forlatIdelagene(deretter: () => void): void {
   else deretter()
 }
 
-/** For `Ideknapp`, som eier lagene. Gir tilbake funksjonen som melder vakten av. */
+/** For `Idelag`, som eier lagene. Gir tilbake funksjonen som melder vakten av. */
 export function meldIdelagene(forlat: (deretter: () => void) => void): () => void {
   forlatLagene = forlat
   return () => {

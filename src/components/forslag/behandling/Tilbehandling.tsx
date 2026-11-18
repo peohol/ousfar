@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRettigheter } from '../../../auth/rettigheter'
 import { forslagsadresse } from '../../../domain/rute'
 import { hentForslagsantall, hentForslagsko, ventende, type Korad } from '../../../forslag/behandling'
+import { forst } from '../../../forslag/modell'
 import { useBevart } from '../../../oppdatering/Bevaring'
 import { Bryter } from '../../Bryter'
 import { Merke } from '../../Merke'
@@ -51,7 +52,8 @@ export function Tilbehandling() {
   const ko = tilstand.data
   const filtrert = (rader: readonly Korad[]) => (utenRedaktor ? rader.filter((r) => r.uten_redaktor) : rader)
   const valgt = UTVALG.find((u) => u.verdi === utvalg) ?? UTVALG[0]
-  const rader = filtrert(ko[valgt.verdi])
+  // De den innloggede behandler selv, står øverst (D6).
+  const rader = forst(filtrert(ko[valgt.verdi]), (r) => r.behandler_er_meg)
 
   return (
     <div className="forslagsko">

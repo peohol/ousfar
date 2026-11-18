@@ -56,7 +56,7 @@ export function useForlatvakt() {
 }
 
 /**
- * Gir vakten til laget som står åpent, til den som eier lagene (`Ideknapp`),
+ * Gir vakten til laget som står åpent, til den som eier lagene (`Idelag`),
  * så det som kommer utenfra — et varsel eller en direktelenke — også spør før
  * skjemaet forlates.
  */

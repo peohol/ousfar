@@ -1,0 +1,113 @@
+/*
+ * Innstillinger (`src/components/konto/Innstillinger.tsx`, D6; skisse 21):
+ * vinduet fra kontomenyen, med en faneliste når det er flere faner, og
+ * valgene som rader: navnet med ikonet til venstre, bryteren til høyre.
+ */
+
+.innstillinger__faner {
+  display: flex;
+  gap: var(--rom-1);
+  margin-bottom: var(--rom-5);
+}
+
+.innstillinger__fane {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-4);
+  font: inherit;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk-dempet);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+}
+
+.innstillinger__fane:hover {
+  color: var(--blekk);
+}
+
+.innstillinger__fane[aria-selected='true'] {
+  color: var(--aksent);
+  background: var(--aksent-flate);
+}
+
+.innstillinger__liste {
+  display: flex;
+  flex-direction: column;
+}
+
+.innstillinger__liste > * + * {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.innstillinger__bryter .ikon,
+.innstillinger__navn .ikon {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+/* Av og på: navnet til venstre, bryteren helt til høyre. */
+.innstillinger__bryter {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: var(--rom-4);
+  min-height: var(--hoyde-felt);
+  padding: var(--rom-3) var(--rom-2);
+  font-size: var(--tekst-ui);
+}
+
+.innstillinger__bryter .bryter__tekst {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--rom-4);
+}
+
+.innstillinger__bryter:has(input:focus-visible) {
+  outline: var(--fokusring) solid var(--fokus);
+  outline-offset: calc(-1 * var(--fokusring));
+}
+
+/* Flere enn to muligheter, som temaet: navnet til venstre, trinnbryteren til
+   høyre. På smale flater står trinnbryteren under, like bred som raden. */
+.innstillinger__trinn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-2) var(--rom-4);
+  padding: var(--rom-3) var(--rom-2);
+}
+
+.innstillinger__navn {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-medium);
+}
+
+.innstillinger__trinn .trinnbryter {
+  display: flex;
+  flex: 0 1 18rem;
+}
+
+.innstillinger__trinn .trinnbryter__spor {
+  flex: 1;
+  min-height: var(--hoyde-liten);
+}
+
+.innstillinger__trinn .trinnbryter__valg {
+  padding-inline: var(--rom-2);
+}
+
+@media (max-width: 47.5em) {
+  .innstillinger__trinn .trinnbryter {
+    flex-basis: 100%;
+  }
+}

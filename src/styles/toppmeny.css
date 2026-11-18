@@ -121,6 +121,7 @@
 /* --- Sidemenyknappen ----------------------------------------------------------
    Rund som de andre knappene; åpner stoffregisteret. */
 .menyknapp {
+  position: relative;
   display: flex;
   flex: none;
   align-items: center;
@@ -323,7 +324,7 @@
 }
 
 /* --- Nedtrekksmenyene ------------------------------------------------------------
-   Idéene, kontoen og adminmenyen (`Nedtrekksmeny`) henger et panel under knappen. */
+   Kontoen (`Nedtrekksmeny`) henger et panel under knappen. */
 .nedtrekk {
   position: relative;
   flex: none;
@@ -340,7 +341,7 @@
   overflow: hidden;
 }
 
-/* Nye kommentarer på idéene: prikken fra `ideer.css`, i hjørnet av knappen. */
+/* Noe nytt bak knappen (som i hovedmenyen): prikken fra `ideer.css`, i hjørnet av knappen. */
 .toppmeny__prikk {
   position: absolute;
   top: 0;
@@ -397,12 +398,6 @@
 
 .nedtrekk__panel:focus {
   outline: none;
-}
-
-/* Adminmenyen og idémenyen har bare korte valg. */
-.adminmeny .nedtrekk__panel,
-.idemeny .nedtrekk__panel {
-  width: min(15rem, calc(100vw - 2 * var(--rom-side)));
 }
 
 .kontomeny__hode {
@@ -489,9 +484,7 @@
   background: var(--flate-hevet);
 }
 
-.nedtrekk__valgknapp .ikon,
-.nedtrekk__bryter .ikon,
-.nedtrekk__trinnnavn .ikon {
+.nedtrekk__valgknapp .ikon {
   width: 1.375rem;
   height: 1.375rem;
 }
@@ -571,65 +564,6 @@
 
 .nedtrekk__skuffinner::after {
   height: var(--rom-3);
-}
-
-/* Bryterne i skuffen står i flukt med valgene over: ikon og tekst til
-   venstre, bryteren helt til høyre. */
-.nedtrekk__bryter {
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  gap: var(--rom-4);
-  min-height: var(--hoyde-felt);
-  /* Ikonet står under teksten til valget over. */
-  padding: 0 var(--rom-4) 0 calc(2 * var(--rom-4) + 1.375rem);
-  font-size: var(--tekst-ui);
-  border-radius: var(--runding-felt);
-}
-
-.nedtrekk__bryter:hover {
-  background: var(--flate-hevet);
-}
-
-.nedtrekk__bryter .bryter__tekst {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: var(--rom-4);
-}
-
-.nedtrekk__bryter:has(input:focus-visible) {
-  outline: var(--fokusring) solid var(--fokus);
-  outline-offset: calc(-1 * var(--fokusring));
-}
-
-/* Et valg med flere enn to muligheter, som temaet: navnet i flukt med
-   bryterne over, og trinnbryteren under, like bred som raden. */
-.nedtrekk__trinn {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-2);
-  padding: var(--rom-2) var(--rom-4) var(--rom-2) calc(2 * var(--rom-4) + 1.375rem);
-}
-
-.nedtrekk__trinnnavn {
-  display: flex;
-  align-items: center;
-  gap: var(--rom-4);
-  font-size: var(--tekst-ui);
-  font-weight: var(--vekt-medium);
-}
-
-.nedtrekk__trinn .trinnbryter {
-  display: flex;
-}
-
-.nedtrekk__trinn .trinnbryter__spor {
-  flex: 1;
-  min-height: var(--hoyde-liten);
-}
-
-.nedtrekk__trinn .trinnbryter__valg {
-  padding-inline: var(--rom-2);
 }
 
 /* --- Dokken ------------------------------------------------------------------------

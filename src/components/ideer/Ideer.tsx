@@ -19,7 +19,7 @@ import { useForlatvakt, useMeldVakt, type Forlat } from './useForlatvakt'
 import '../../styles/ideer.css'
 
 /**
- * Idéene, fra idéknappen i toppmenyen: et lag over appen der alle brukerne kan legge inn
+ * Idéene, fra «Idéer for appen» i hovedmenyen: et lag over appen der alle brukerne kan legge inn
  * idéer, gi hjerter og kommentere.
  *
  * Laget har tre sider: lista med idéene som kort, én idé med beskrivelsen og

@@ -6,7 +6,7 @@
  * nytt (`intern.kan_behandle_forslag`).
  */
 import { erObjekt, tall } from '../ideer/lesing'
-import { kall } from './api'
+import { hentMineForslag, kall } from './api'
 import { lesForslagsrader, lesPerson, type Forslag, type Forslagsperson, type Forslagsrad } from './modell'
 
 /** Ett forslag i arbeidskøen. */
@@ -123,4 +123,14 @@ export function muligeBehandlinger(f: Pick<Forslag, 'status' | 'behandler' | 'ka
     default:
       return { ta: false, behandlinger: ['kommenter'], innarbeid: false }
   }
+}
+
+/**
+ * Hvor mange endringsforslag som venter på den innloggede: egne forslag som
+ * venter på svar, og, for den som behandler forslag, dem som venter i
+ * arbeidskøen (`ventende`). Til hovedmenyen.
+ */
+export async function hentForslagTilMeg(behandler: boolean): Promise<number> {
+  const [mine, antall] = await Promise.all([hentMineForslag(), behandler ? hentForslagsantall() : null])
+  return mine.filter((f) => f.venter_pa_meg).length + (antall ? ventende(antall) : 0)
 }

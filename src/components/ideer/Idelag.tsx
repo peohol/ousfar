@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useSystemarkitekt } from '../../auth/systemrolle'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { hentIdeerMedNytt } from '../../ideer/api'
 import { oppfriskVarsler } from '../../varsler/api'
-import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Ideer } from './Ideer'
-import { lyttEtterIde, meldIdelagene } from './idevisning'
+import { idestatus, lyttEtterIde, lyttEtterIdelag, meldIdelagene, type Idelagnavn } from './idevisning'
 import { Oppgaver } from './Oppgaver'
 import type { Forlat } from './useForlatvakt'
 
@@ -18,10 +17,11 @@ import type { Forlat } from './useForlatvakt'
 type Vindu = { lag: 'ideer'; ide?: string; kommentar?: string; nr?: number } | { lag: 'oppgaver'; oppgave?: string } | null
 
 /**
- * Idéer og Planlagte oppgaver, fra en egen meny i toppmenyen med ett valg for
- * hver. Planlagte oppgaver er bare for systemarkitektene (D8); andre ser bare
- * Idéer. Har idéene kommentarer brukeren ikke har sett, står det en prikk på
- * knappen og på valget, og antallet i navnet.
+ * Idéer for hele appen og Planlagte oppgaver: vinduene, og tallet på idéer
+ * med kommentarer brukeren ikke har sett (`idestatus`). Veien inn er
+ * hovedmenyen, under «For hele appen» (`apneIdelag`); Planlagte oppgaver er
+ * bare for systemarkitektene (D8). Tallet sjekkes når appen og fanen åpnes,
+ * etter vinduet og jevnlig.
  *
  * Bare ett av de to lagene står åpent om gangen; man går også mellom dem fra
  * lagene selv. Et varsel eller en direktelenke kan åpne Idéer rett på en idé
@@ -29,14 +29,12 @@ type Vindu = { lag: 'ideer'; ide?: string; kommentar?: string; nr?: number } | {
  * (`forlatIdelagene`). Begge spør først, som tilbakeknappen, når et skjema i
  * laget som står åpent, har endringer som ikke er lagret.
  */
-export function Ideknapp() {
+export function Idelag() {
+  // Nøkkelen er den gamle fra idéknappen i toppmenyen, så et åpent vindu overlever oppdateringen.
   const [vindu, setVindu] = useBevart<Vindu>('ideknapp', null)
   const systemarkitekt = useSystemarkitekt()
-  const menynavn = systemarkitekt ? 'Idéer og planlagte oppgaver' : 'Idéer'
-  /** Antall idéer med kommentarer brukeren ikke har sett. Sjekkes når appen og fanen åpnes, etter vinduet og jevnlig. */
-  const [medNytt, setMedNytt] = useState(0)
   const sjekkNytt = useCallback(() => {
-    hentIdeerMedNytt().then(setMedNytt, () => undefined)
+    hentIdeerMedNytt().then(idestatus.sett, () => undefined)
   }, [])
   useJevnligSjekk(sjekkNytt)
   /** Vakten for skjemaet i laget som står åpent (`useMeldVakt`). */
@@ -49,6 +47,8 @@ export function Ideknapp() {
       ),
     [forlat, setVindu],
   )
+  // Planlagte oppgaver vises bare for systemarkitektene, uansett hvem som ber om dem (`apen` under).
+  useEffect(() => lyttEtterIdelag((lag) => forlat(() => setVindu({ lag }))), [forlat, setVindu])
   useEffect(
     () =>
       meldIdelagene((deretter) =>
@@ -59,64 +59,33 @@ export function Ideknapp() {
       ),
     [forlat, setVindu],
   )
-  const nytt = medNytt > 0 ? `nye kommentarer på ${medNytt === 1 ? 'én idé' : `${medNytt} idéer`}` : undefined
 
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   // Lukkingen gjelder bare laget som står åpent: når man går fra det ene til
   // det andre, lukkes det første etter at det andre er valgt.
   const lukk = useCallback(
-    (lag: NonNullable<Vindu>['lag']) => {
+    (lag: Idelagnavn) => {
       setVindu((naa) => (naa?.lag === lag ? null : naa))
       sjekkNytt()
       // Å lese en idé merker varslene om den lest.
       oppfriskVarsler()
     },
-    [sjekkNytt],
+    [sjekkNytt, setVindu],
   )
   const lukkIdeer = useCallback(() => lukk('ideer'), [lukk])
   const lukkOppgaver = useCallback(() => lukk('oppgaver'), [lukk])
 
   return (
     <>
-      <Nedtrekksmeny
-        className="idemeny"
-        knapp={{
-          ikon: 'ideoppgaver',
-          etikett: `${menynavn}${nytt ? ` (${nytt})` : ''}`,
-          variant: 'stille',
-          storrelse: 'liten',
-        }}
-        etikett={menynavn}
-        lag="idemeny"
-        ved={nytt && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
-      >
-        {(lukk) => {
-          /** Et valg lukker menyen først, så laget det åpner gir fokus tilbake til knappen. */
-          const apne = (neste: NonNullable<Vindu>) => () => {
-            lukk()
-            setVindu(neste)
-          }
-          return (
-            <ul className="nedtrekk__valg">
-              <li>
-                <Menyvalg ikon="idea" tekst="Idéer" nytt={nytt} onClick={apne({ lag: 'ideer' })} />
-              </li>
-              {systemarkitekt && (
-                <li>
-                  <Menyvalg ikon="oppgaver" tekst="Planlagte oppgaver" onClick={apne({ lag: 'oppgaver' })} />
-                </li>
-              )}
-            </ul>
-          )
-        }}
-      </Nedtrekksmeny>
       <Ideer
         apen={vindu?.lag === 'ideer'}
         ide={vindu?.lag === 'ideer' ? vindu.ide : undefined}
         kommentar={vindu?.lag === 'ideer' ? vindu.kommentar : undefined}
         nr={vindu?.lag === 'ideer' ? vindu.nr : undefined}
         vakt={vakt}
-        onLukk={lukkIdeer} onOppgaver={(oppgave) => setVindu({ lag: 'oppgaver', oppgave })} />
+        onLukk={lukkIdeer}
+        onOppgaver={(oppgave) => setVindu({ lag: 'oppgaver', oppgave })}
+      />
       <Oppgaver
         apen={systemarkitekt && vindu?.lag === 'oppgaver'}
         oppgave={vindu?.lag === 'oppgaver' ? vindu.oppgave : undefined}
@@ -126,4 +95,10 @@ export function Ideknapp() {
       />
     </>
   )
+}
+
+/** Teksten om idéer med nye kommentarer, til prikkene, eller ingenting når det ikke er noen. */
+export function nyeIdekommentarer(antall: number): string | undefined {
+  if (antall <= 0) return undefined
+  return `nye kommentarer på ${antall === 1 ? 'én idé' : `${antall} idéer`}`
 }

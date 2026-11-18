@@ -347,3 +347,11 @@ export function utdragTilLagring(utdrag: string | null | undefined): string | nu
   if (!ren) return null
   return ren.length > GRENSER.utdrag ? `${ren.slice(0, GRENSER.utdrag - 1).trimEnd()}…` : ren
 }
+
+/**
+ * Det som oppfyller `forst`, øverst, ellers i samme rekkefølge som før: som
+ * forslagene som venter på den innloggede, foran resten (D6).
+ */
+export function forst<T>(rader: readonly T[], viktig: (rad: T) => boolean): T[] {
+  return [...rader.filter(viktig), ...rader.filter((rad) => !viktig(rad))]
+}

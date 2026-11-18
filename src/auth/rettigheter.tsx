@@ -2,7 +2,7 @@
  * Den innloggedes egne rettigheter, slik databasen svarer på dem
  * (`public.mine_rettigheter()`, docs/fagmiljoer.md, «Systemrettigheter»).
  *
- * Appen viser menyer og knapper etter dem: adminmenyen, «Opprett bruker» per
+ * Appen viser menyer og knapper etter dem: «Administrasjon» i hovedmenyen, «Opprett bruker» per
  * fagmiljø og redigeringen av stoffregisteret. Det er et grensesnitt, ikke en kontroll;
  * databasen og Edge-funksjonene kontrollerer hver handling på nytt. Den
  * gamle adminrollen (`profiles.role`) spiller ingen rolle her.
@@ -175,7 +175,7 @@ export const kanGiRedaktoransvar = (r: Rettigheter): boolean => r.systemarkitekt
 export const kanPublisereFortolkningen = (r: Rettigheter): boolean =>
   r.systemarkitekt || (r.arbeidsfagmiljo !== null && r.administrerer.some((f) => f.id === r.arbeidsfagmiljo!.id))
 
-/** Om den innloggede har noe å gjøre i adminmenyen. */
+/** Om den innloggede har noe å gjøre i administrasjonen (hovedmenyen). */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
   r.systemarkitekt || r.opprettBrukerI.length > 0 || r.administrerer.length > 0
 
