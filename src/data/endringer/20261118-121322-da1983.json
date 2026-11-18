@@ -1,0 +1,17 @@
+{
+  "id": "20261118-121322-da1983",
+  "semver": "patch",
+  "opprettet": "2026-11-18T12:13:22Z",
+  "sammendrag": "Diskusjonene sier hvilken side de gjelder",
+  "typer": [
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "hele appen"
+  ],
+  "punkter": [
+    "Diskusjonsboblen og overskriften i diskusjonsmenyen sier nå hvilken side diskusjonene gjelder, for eksempel «Diskusjoner om fagsiden til THC» eller «Diskusjoner om fortolkningen til amitriptylin».",
+    "Navnet på siden står ikke lenger på en egen linje under overskriften."
+  ]
+}

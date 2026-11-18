@@ -19,6 +19,7 @@ import {
   TOM_OVERSIKT,
   adresseForSide,
   antallNye,
+  diskusjonsoverskrift,
   flyttDiskusjon,
   flyttKategori,
   grupper,
@@ -30,6 +31,7 @@ import {
   type Diskusjonssider,
   type Diskusjonstekster,
 } from '../../diskusjoner/modell'
+import { iSetning } from '../../domain/names'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { useRestenInert } from '../../hooks/useRestenInert'
 import { merketall } from '../../varsler/modell'
@@ -83,7 +85,9 @@ const SIST = Number.MAX_SAFE_INTEGER
  *    høy som toppmenyen, der toppen av menyen står åpen, og et blått merke når
  *    noe er nytt.
  * 2. Med pekeren over (eller fokus fra tastaturet) vokser boblen litt og sier
- *    «Diskusjoner — Trykk for å vise». Det er bare utseende (`diskusjoner.css`).
+ *    hvilken side diskusjonene gjelder, som «Diskusjoner om fagsiden til THC —
+ *    Trykk for å vise» (`diskusjonsoverskrift`). Det er bare utseende
+ *    (`diskusjoner.css`). Samme tekst er overskriften i den åpne menyen.
  * 3. Et trykk på boblen åpner menyen. Den står åpen, også fra side til side og
  *    fra maskin til maskin (brukerinnstillingen `diskusjoner.laast`), til
  *    lukkeknappen trykkes, og resten av appen gir plass til den.
@@ -104,14 +108,16 @@ const SIST = Number.MAX_SAFE_INTEGER
  */
 export function Diskusjonsmeny({
   side,
-  sidenavn,
+  emne,
   sider,
 }: {
   side: Diskusjonsside
-  sidenavn: string
+  /** Det siden handler om: stoffet, analytten, gruppen eller registeret (se `diskusjonsoverskrift`). */
+  emne: string
   /** Sidene en tråd kan flyttes til. */
   sider: Diskusjonssider
 }) {
+  const tittel = diskusjonsoverskrift(side, emne)
   const [apen, setApen] = useBevart('diskusjoner/apen', false)
   // Bredden følger brukeren som om menyen står åpen (`diskusjoner.bredde`).
   const { lengde: bredde, endrer: endrerBredde, sett: lagreNyBredde } = useDrattLengde('diskusjoner/bredde', BREDDE)
@@ -253,7 +259,7 @@ export function Diskusjonsmeny({
       <aside
         ref={meny}
         className="diskusjonsmeny"
-        aria-label={`Diskusjoner om ${sidenavn}`}
+        aria-label={tittel}
         data-apen={vist || undefined}
         data-mobil={mobilApen || undefined}
         data-helside={helside || undefined}
@@ -288,7 +294,7 @@ export function Diskusjonsmeny({
           <Diskusjonsflate
             key={side}
             side={side}
-            sidenavn={sidenavn}
+            tittel={tittel}
             sider={sider}
             apen={vist}
             helside={helside}
@@ -306,7 +312,7 @@ export function Diskusjonsmeny({
 /** Innholdet i menyen for én side. Byttes ut når siden byttes, så ingenting henger igjen fra forrige. */
 function Diskusjonsflate({
   side,
-  sidenavn,
+  tittel,
   sider,
   apen,
   helside,
@@ -316,7 +322,8 @@ function Diskusjonsflate({
   onVarslet,
 }: {
   side: Diskusjonsside
-  sidenavn: string
+  /** Overskriften, som sier hvilken side diskusjonene gjelder. */
+  tittel: string
   sider: Diskusjonssider
   apen: boolean
   /** Menyen står som helside over hele vinduet. */
@@ -533,12 +540,12 @@ function Diskusjonsflate({
         type="button"
         className="diskusjonsboble"
         hidden={apen}
-        aria-label={nye > 0 ? `Vis diskusjonene, ${nye} med nytt` : 'Vis diskusjonene'}
+        aria-label={`Vis ${iSetning(tittel)}${nye > 0 ? `, ${nye} med nytt` : ''}`}
         onClick={onApne}
       >
         <span className="diskusjonsboble__innhold" aria-hidden="true">
           <Ikon navn="diskusjon" storrelse="ui" className="diskusjonsboble__ikon" />
-          <span className="diskusjonsboble__tittel">Diskusjoner</span>
+          <span className="diskusjonsboble__tittel">{tittel}</span>
           <span className="diskusjonsboble__hint">Trykk for å vise</span>
         </span>
         {nye > 0 && (
@@ -552,7 +559,7 @@ function Diskusjonsflate({
         <div className="diskusjonspanel__topp">
           <h2 className="diskusjonspanel__tittel">
             <Ikon navn="diskusjon" storrelse="ui" />
-            <span>Diskusjoner</span>
+            <span>{tittel}</span>
           </h2>
           <button
             type="button"
@@ -574,7 +581,6 @@ function Diskusjonsflate({
             <Ikon navn="close" storrelse="ui" />
           </button>
         </div>
-        <p className="diskusjonspanel__side">{sidenavn}</p>
         {/* Tilbake, overskriften på tråden og søket står fast over det som rulles. */}
         {visning.side === 'traad' && (
           <>

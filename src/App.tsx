@@ -36,7 +36,14 @@ import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
 import { Direktelenkekilde } from './components/direktelenker/Direktelenkekilde'
 import { Lenkemelding } from './components/direktelenker/Lenkemelding'
 import { apneFraAdressen } from './components/direktelenker/navigasjon'
-import { diskusjonssideFor, diskusjonssider, fortolkningssidenavn, gruppeForSide, gruppesidenavn } from './diskusjoner/modell'
+import {
+  diskusjonssideFor,
+  diskusjonssider,
+  fortolkningsemne,
+  fortolkningssidenavn,
+  gruppeForSide,
+  gruppesidenavn,
+} from './diskusjoner/modell'
 import { GruppekildeProvider, useMineGrupper, type Gruppekilde } from './grupper/kilde'
 import { FavorittkildeProvider } from './favoritter/Favorittkilde'
 import { AutoerstattProvider } from './autoerstatt/Autoerstattkilde'
@@ -780,6 +787,15 @@ function Arbeidsflate({
           : state.analyte
             ? fortolkningssidenavn(state.analyte)
             : 'Fortolkningen'
+  // Det diskusjonene handler om, til overskriften deres (`diskusjonsoverskrift`).
+  // Til analytten er lest, står overskriften uten den.
+  const diskusjonsemne = sidensGruppe
+    ? sidensGruppe.navn
+    : rute.side === 'fortolkning'
+      ? state.analyte
+        ? fortolkningsemne(state.analyte)
+        : ''
+      : sidenavn
   // Endringsloggen for innholdet på siden som står åpen.
   const endringsside = useMemo(
     () => endringssideFor(rute, { fortolkning: state.analyte, katalog, kanonisk: kanoniskStoff }),
@@ -1035,7 +1051,7 @@ function Arbeidsflate({
                     )}
                   </main>
 
-                  {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} sidenavn={sidenavn} sider={sider} />}
+                  {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />}
 
                   {endringsside && (
                     <FaginnholdskildeProvider kilde={faginnhold}>

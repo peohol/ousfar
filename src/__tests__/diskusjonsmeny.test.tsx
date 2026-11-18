@@ -183,15 +183,15 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-const meny = () => screen.getByRole('complementary', { name: 'Diskusjoner om Litium' })
+const meny = () => screen.getByRole('complementary', { name: 'Diskusjoner om fagsiden til litium' })
 const panel = () => meny().querySelector<HTMLElement>('.diskusjonspanel')!
 const flyttelag = () => within(within(panel()).getByRole('dialog', { name: 'Flytt tråden' })).getByRole('form', { name: 'Flytt tråden' })
 const boble = () => meny().querySelector<HTMLElement>('.diskusjonsboble')!
 
 async function vis() {
   const bruker = userEvent.setup()
-  render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
-  await within(meny()).findByRole('button', { name: 'Vis diskusjonene, 2 med nytt' })
+  render(<Diskusjonsmeny side="stoff:litium" emne="Litium" sider={SIDER} />)
+  await within(meny()).findByRole('button', { name: 'Vis diskusjoner om fagsiden til litium, 2 med nytt' })
   return bruker
 }
 
@@ -207,10 +207,10 @@ describe('boblen', () => {
     await vis()
     expect(panel().hidden).toBe(true)
     expect(boble().hidden).toBe(false)
-    expect(within(meny()).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Vis diskusjonene, 2 med nytt'])
+    expect(within(meny()).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Vis diskusjoner om fagsiden til litium, 2 med nytt'])
     expect(boble().querySelector('.nyttmerke')!.textContent).toBe('2')
-    // Teksten den viser med pekeren over, står i den, men navnet er knappens.
-    expect(boble().textContent).toContain('Diskusjoner')
+    // Teksten den viser med pekeren over, sier hvilken side diskusjonene gjelder; navnet er knappens.
+    expect(boble().querySelector('.diskusjonsboble__tittel')!.textContent).toBe('Diskusjoner om fagsiden til litium')
     expect(boble().textContent).toContain('Trykk for å vise')
     expect(document.documentElement.dataset.diskusjonsmeny).toBe('lukket')
   })
@@ -227,6 +227,9 @@ describe('boblen', () => {
     expect(boble().hidden).toBe(true)
     expect(api.lagreApen).toHaveBeenCalledWith(true)
     expect(document.documentElement.dataset.diskusjonsmeny).toBe('apen')
+    // Overskriften sier hvilken side diskusjonene gjelder, på én linje uten sidenavnet under.
+    expect(within(panel()).getByRole('heading', { level: 2 }).textContent).toBe('Diskusjoner om fagsiden til litium')
+    expect(panel().querySelector('.diskusjonspanel__side')).toBeNull()
     // Står åpen til lukkeknappen trykkes, også når pekeren går ut.
     fireEvent.mouseLeave(meny())
     expect(panel().hidden).toBe(false)
@@ -270,7 +273,7 @@ describe('boblen', () => {
 
   it('står åpen fra start når brukeren hadde den åpen', async () => {
     api.hentApen.mockResolvedValue(true)
-    render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
+    render(<Diskusjonsmeny side="stoff:litium" emne="Litium" sider={SIDER} />)
     await waitFor(() => expect(panel().hidden).toBe(false))
     expect(boble().hidden).toBe(true)
   })
@@ -286,7 +289,7 @@ describe('boblen', () => {
   it('har en kant som kan dras når den er åpen, og står i bredden brukeren har dratt den til', async () => {
     api.hentBredde.mockResolvedValue(600)
     const bruker = userEvent.setup()
-    const { unmount } = render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
+    const { unmount } = render(<Diskusjonsmeny side="stoff:litium" emne="Litium" sider={SIDER} />)
     const rot = document.documentElement.style
     await waitFor(() => expect(rot.getPropertyValue('--diskusjonsbredde')).toBe('600px'))
     expect(within(meny()).queryByRole('separator', { name: 'Bredden på diskusjonene' })).toBeNull()
@@ -313,10 +316,10 @@ describe('maksimert', () => {
     const { container } = render(
       <div className="app">
         <main>Siden bak</main>
-        <Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />
+        <Diskusjonsmeny side="stoff:litium" emne="Litium" sider={SIDER} />
       </div>,
     )
-    await bruker.click(await within(meny()).findByRole('button', { name: 'Vis diskusjonene, 2 med nytt' }))
+    await bruker.click(await within(meny()).findByRole('button', { name: 'Vis diskusjoner om fagsiden til litium, 2 med nytt' }))
     const knapp = within(panel()).getByRole('button', { name: 'Maksimer' })
     expect(knapp.getAttribute('aria-pressed')).toBe('false')
     expect(knapp.getAttribute('title')).toBe('Maksimer')

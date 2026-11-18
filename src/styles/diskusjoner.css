@@ -373,27 +373,24 @@
   padding: var(--rom-4) var(--rom-4) 0 var(--rom-6);
 }
 
+/* Overskriften sier hvilken side diskusjonene gjelder, og kan gå over to
+   linjer; ikonet står da ved den første. */
 .diskusjonspanel__tittel {
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--rom-3);
   margin: 0;
   font-family: var(--skrift-display);
   font-size: var(--tekst-lesing);
   font-weight: var(--vekt-medium);
   color: var(--blekk);
+  text-wrap: balance;
 }
 
-.diskusjonspanel__side {
+.diskusjonspanel__tittel > .ikon {
   flex: none;
-  margin: 0;
-  padding: 0 var(--rom-6);
-  font-size: var(--tekst-liten);
-  color: var(--blekk-dempet);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-block-start: calc((1lh - var(--ikon-ui)) / 2);
 }
 
 .diskusjonspanel__sok {

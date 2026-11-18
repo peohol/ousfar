@@ -4,13 +4,16 @@ import type { Analyte } from '../types'
 const SUM_PREFIKS = /^sum:\s*/i
 
 /**
- * Visningsnavnet uten «Sum: ».
+ * Et navn uten «Sum: ».
  *
  * At noe er en sum går allerede fram av navnet — moderstoff pluss
  * metabolitter — så prefikset står bare foran det ordet brukeren leter etter.
  */
+export const utenSum = (navn: string): string => navn.replace(SUM_PREFIKS, '')
+
+/** Visningsnavnet uten «Sum: » (`utenSum`). */
 export function displayName(analyte: Analyte): string {
-  return analyte.visningsnavn.replace(SUM_PREFIKS, '')
+  return utenSum(analyte.visningsnavn)
 }
 
 export interface SplitName {
