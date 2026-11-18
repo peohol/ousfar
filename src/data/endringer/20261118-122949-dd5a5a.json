@@ -2,12 +2,11 @@
   "id": "20261118-122949-dd5a5a",
   "semver": "patch",
   "opprettet": "2026-11-18T12:29:49Z",
-  "sammendrag": "Siste opprydding etter skillet mellom fortolkningen og fagsidene",
+  "sammendrag": "Opprydding etter skillet mellom fortolkningen og fagsidene",
   "typer": ["Funksjonalitet"],
   "omfang": "Minimalt omfang",
   "utenVarsel": true,
   "punkter": [
-    "De gamle koblingene mellom analysekodene og fagsidene er slettet. Ingenting endres for brukerne.",
-    "Referanseområdet for O-desmetyltramadol på tramadolsiden er knyttet til stoffet i stedet for analysekoden, med de samme tallene."
+    "Fortolkningen henter referanseområdene bare fra sin egen katalog. Overgangsløsningen som kunne hente dem fra fagsidene, er fjernet. Ingenting endres for brukerne."
   ]
 }

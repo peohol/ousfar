@@ -196,6 +196,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_stoffavoritter()': 'radsikkerhet',
   'les_stoffer(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_stoffliste(sidetilstand objekttilstand)': 'radsikkerhet',
+  'les_stoffreferanseomrader(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_stoffregister(sidetilstand objekttilstand)': 'admin-utvidet',
   'les_stoffside(sidenavn text, sidetilstand objekttilstand)': 'radsikkerhet',
   'les_stoffsidenavn(sidetilstand objekttilstand)': 'radsikkerhet',
@@ -205,6 +206,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2a: snarveien for radsikkerhetsreglene i faginnholdet; svarer bare om den innloggede.
   'leser_alt_lokale_innhold()': 'eier',
   // P2a: stoffkoblingene til fortolkningens analytter, til P4b; svarer bare om den innloggede.
+  'leser_analyttkoblingene()': 'rekkevidde',
   'los_opp_diskusjonskategori(kategori uuid)': 'rekkevidde',
   'marker_forslag_innarbeidet(forslag uuid, objekt uuid, revisjon integer)': 'rekkevidde',
   'medlemsoversikt(fagmiljo uuid)': 'medlemskapsmyndighet',

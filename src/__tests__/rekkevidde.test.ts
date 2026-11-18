@@ -299,6 +299,25 @@ describe('svaret appen viser redigeringen av fortolkningen etter', () => {
   })
 })
 
+describe('stoffkoblingene til fortolkningens analytter', () => {
+  it('leses bare i fagmiljøet fortolkningen hører til, også når et annet fagmiljø har egne analytter', async () => {
+    const antall = (p: Person) =>
+      som(db, g.id[p], async (tx) => (await tx.query('select 1 from public.analyttkoblede_stoffer')).rows.length)
+    const alle = (await db.query('select 1 from public.analyttkoblede_stoffer')).rows.length
+    expect(alle).toBeGreaterThan(0)
+    expect(await antall('vanligA')).toBe(alle)
+    expect(await antall('systemarkitekt')).toBe(alle)
+    expect(await antall('vanligB')).toBe(0)
+    // B har en egen laboratorieanalytt, men får ikke As koblinger.
+    const analytter = await som(db, g.id.vanligB, async (tx) =>
+      (await tx.query<{ objekt_id: string }>('select objekt_id from public.laboratorieanalytter')).rows.map((r) => r.objekt_id),
+    )
+    expect(analytter).toContain(obj.analyttB)
+    expect(await antall('vanligB')).toBe(0)
+    expect(await antall('adminB')).toBe(0)
+  })
+})
+
 /* --- 2. Hva hver person ser ---------------------------------------------- */
 
 type Rader = Record<Person, Record<string, string[]>>

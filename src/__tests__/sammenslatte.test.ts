@@ -28,7 +28,6 @@ import { faginnholdskall, feilFra, migrasjonsfiler, nyDatabase, opprettBruker, t
 
 const SAMMENSLATTE = { Testmetabolitt: 'Testmoderstoff', Utkastmetabolitt: 'Testmoderstoff' }
 const MIGRASJONSFIL = migrasjonsfiler().find((f) => f.endsWith('_sammenslatte_stoffsider.sql'))!
-const FOR_KOBLINGENE_FJERNET = migrasjonsfiler().find((f) => f.endsWith('_koblingene_fjernet.sql'))!
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -53,8 +52,7 @@ const dokument = (tekst: string) => ({ type: 'doc', content: [{ type: 'paragraph
 const kinetikk = (tittel: string, tekst: string) => ({ tittel, dokument: dokument(tekst) })
 
 beforeAll(async () => {
-  // Historisk: kortene fikk koden i `gjelder` før koblingene ble fjernet.
-  db = await nyDatabase({ til: FOR_KOBLINGENE_FJERNET })
+  db = await nyDatabase()
   const admin = await opprettBruker(db, { brukernavn: 'redaktor', fornavn: 'Rita', etternavn: 'Redaktør', rolle: 'admin', systemarkitekt: true })
   bruker = await opprettBruker(db, { brukernavn: 'leser', fornavn: 'Lars', etternavn: 'Leser', rolle: 'user' })
   kall = faginnholdskall(db, admin)

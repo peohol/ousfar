@@ -16,9 +16,6 @@
  * 3. Faginnholdet endres ikke, og etter migrasjonen følger fortolkningen ikke
  *    fagsidene: en publisert endring på siden endrer ikke katalogen.
  *
- * Bare denne migrasjonen kjøres; den neste fjerner det den kopierte fra
- * (`koblingeneFjernet.test.ts`).
- *
  * Stoffene og kodene er de i katalogen til OUS Klinisk farmakologi, men
  * tallene er syntetiske.
  */
@@ -31,7 +28,6 @@ import { FJERNET } from '../faginnhold/paneler'
 import { faginnholdskall, feilFra, kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
 
 const MIGRASJON = migrasjonsfiler().find((f) => f.endsWith('_fortolkning_skilt_fra_fagsidene.sql'))!
-const NESTE = migrasjonsfiler()[migrasjonsfiler().indexOf(MIGRASJON) + 1]
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -108,7 +104,7 @@ beforeAll(async () => {
   ider.revisjon = utkast.revisjon!
 
   for_ = { innhold: await innhold(), revisjoner: await revisjoner() }
-  await kjorMigrasjoner(db, { fra: MIGRASJON, til: NESTE })
+  await kjorMigrasjoner(db, { fra: MIGRASJON })
 }, 120_000)
 
 const FORVENTET = [

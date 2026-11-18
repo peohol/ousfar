@@ -12,6 +12,23 @@ import { FORBINDELSER, type Forbindelsesregister } from '../kjemi/forbindelser'
  * siden har.
  */
 
+/**
+ * Analyttkodene som står i `gjelder` på datakort fra før kortene ble koblet til
+ * forbindelsen, med forbindelsen koden måler. I produksjonen er det bare `OTRAM`
+ * (lest 15.11.2026). Fjernes når kortene er skrevet om (#405); fram til da
+ * finner appen fra før 1.133.4 kortet med koden.
+ */
+export const ELDRE_DATAKORTKODER: ReadonlyMap<string, string> = new Map([['OTRAM', 'o-desmetyltramadol']])
+
+/**
+ * Forbindelsen et datakort gjelder (`gjelder` på kortet), også for et kort som
+ * fra før har en analyttkode der (`ELDRE_DATAKORTKODER`). `null` for sidens
+ * egne kort.
+ */
+export function kortetsForbindelse(gjelder: string | null): string | null {
+  return gjelder === null ? null : (ELDRE_DATAKORTKODER.get(gjelder) ?? gjelder)
+}
+
 /** En plass for datakortene i «Viktige data»: sidens egne, eller dem for en forbindelse. */
 export interface Datakorteier {
   /** Forbindelsen kortene gjelder (`data.gjelder`), eller `null` for sidens egne. */
@@ -42,7 +59,7 @@ export function datakorteiere({
     .forStoff(stoff)
     .filter((f) => f.stoffer.some((s) => s.stoff === stoff && s.datakort))
     .map((f) => f.nokkel)
-  const ellers = [...new Set(kortnokler.flatMap((k) => k ?? []))]
+  const ellers = [...new Set(kortnokler.flatMap((k) => kortetsForbindelse(k) ?? []))]
     .filter((k) => !egne.includes(k))
     .sort((a, b) => a.localeCompare(b, 'nb'))
   const andre = [...egne, ...ellers]

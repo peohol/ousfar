@@ -11,7 +11,9 @@
  * lages og står når navnet endres, at to sider ikke kan ha samme nøkkel, at
  * sidene som fantes før nøkkelen, fikk den av navnet og fortsatt står likt
  * revisjonen sin, at `les_stoffer`, `les_stoffliste` og
- * `les_stoffliste` gir alle sidene. Publiseringsplanen for en side går gjennom i den rekkefølgen databasen
+ * `les_stoffreferanseomrader` gir alle sidene, og at referanseområdet en
+ * analyttkode får, er kortet på stoffsiden koblingene i stoffregisteret peker
+ * på. Publiseringsplanen for en side går gjennom i den rekkefølgen databasen
  * krever, og referansene nummereres slik siden viser dem.
  *
  * Navnene, tekstene og tallene er syntetiske, også på sidene for stoffene i
@@ -420,16 +422,21 @@ describe('referanseområdene', () => {
     await publiser(bupropion, tramadol, bupropionkort, tramadolkort)
   })
 
-  it('står som andre kort på sidene, uten noen kobling til en analyttkode', async () => {
-    const kort = await kall.fasit<{ side: string; ovre: number }>(
-      `select infoside_id::text as side, (data ->> 'ovre')::int as ovre from public.innholdselementer
-       where tilstand = 'publisert' and elementtype = 'referanseomrade' and infoside_id = any($1::uuid[]) order by 2`,
-      [[ref.bupropion, ref.tramadol]],
-    )
-    expect(kort).toEqual([
-      { side: ref.bupropion, ovre: 200 },
-      { side: ref.tramadol, ovre: 300 },
+  it('gir kortene per stoff, med koden kortet gjelder', async () => {
+    const { les_stoffreferanseomrader: kort } = await kall.rpc<{
+      les_stoffreferanseomrader: { stoff: string; gjelder: string | null; verdi: { ovre: number } }[]
+    }>(bruker, 'les_stoffreferanseomrader', { sidetilstand: 'publisert' })
+    expect(kort.map((k) => [k.stoff, k.gjelder, k.verdi.ovre])).toEqual([
+      ['bupropion', null, 200],
+      ['testmiddel', null, 20],
+      ['tramadol', null, 300],
     ])
+    const { les_stoffreferanseomrader: utkast } = await kall.rpc<{ les_stoffreferanseomrader: unknown[] }>(
+      bruker,
+      'les_stoffreferanseomrader',
+      { sidetilstand: 'utkast' },
+    )
+    expect(utkast).toEqual([])
   })
 })
 
@@ -574,6 +581,7 @@ describe('rettighetene', () => {
       'public.les_stoff(text, public.objekttilstand)',
       'public.les_stoffer(public.objekttilstand)',
       'public.les_stoffliste(public.objekttilstand)',
+      'public.les_stoffreferanseomrader(public.objekttilstand)',
       'public.stoffsider_som_json(uuid[], public.objekttilstand)',
       'public.les_referanser(public.objekttilstand)',
     ]
@@ -593,7 +601,7 @@ describe('rettighetene', () => {
     // radsikkerheten gjelder også gjennom dem.
     const [rad] = await kall.fasit<{ definer: boolean }>(
       `select bool_or(prosecdef) as definer from pg_proc
-       where proname in ('les_stoff', 'les_stoffer', 'les_stoffliste',
+       where proname in ('les_stoff', 'les_stoffer', 'les_stoffliste', 'les_stoffreferanseomrader',
                          'stoffsider_som_json', 'les_referanser', 'utgave_som_json')`,
     )
     expect(rad!.definer).toBe(false)

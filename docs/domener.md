@@ -51,12 +51,22 @@ forbindelsesregisteret i en PR.
 
 ## Overgangen
 
-Da skillet kom, sto koblingene fra kodene til stoffene fortsatt i databasen for
-faner med appen fra før, og appen kunne finne referanseområdene på fagsidene
-mens databasen ikke var oppdatert. Begge deler er fjernet, etter Peders ja
-(`20261118120000_koblingene_fjernet.sql`, #405): tabellene
-`analyttkatalog_koblinger` og `analyttkoblede_stoffer`, kolonnene `forbindelse`
-og `datakort` i `analyttkatalog_koder` og funksjonen
-`les_stoffreferanseomrader`. Det ene datakortet med en analyttkode i `gjelder`
-(OTRAM på tramadolsiden) gjelder nå forbindelsen, og databasen tar bare imot
-en forbindelsesnøkkel der.
+Appen leser referanseområdene bare fra katalogen. Overgangen i appen, som fant
+dem på fagsidene mens databasen ikke var oppdatert, er fjernet (#457); alle
+databaser har områdene i katalogen (`20261118090000`).
+
+Databasen gir fortsatt koblingene, forbindelsene og datakortbruken i
+`les_analyttkatalog()`, og `les_stoffreferanseomrader` står, så faner med
+appen fra før skillet virker til de lastes på nytt. Det samme gjelder
+datakortet med analysekoden OTRAM på tramadolsiden: appen fra før 15.11.2026
+finner det bare med koden, og den nåværende appen leser det som kortet for
+forbindelsen.
+
+Det fjernes i én migrasjon når ingen slike faner er i bruk (#405): kortet
+skrives om til forbindelsen, `gjelder` får bare ta imot en forbindelsesnøkkel,
+og feltene fra før, `les_stoffreferanseomrader`, `analyttkatalog_koblinger` og
+`analyttkoblede_stoffer` slettes. Peder har sagt ja til slettingen. Den kommer
+tidligst 25.11.2026, og bare når databasen viser at ingen har kalt
+`les_stoffreferanseomrader` de siste 72 timene. Bare appen fra før skillet
+kaller den (`pg_stat_statements`).
+

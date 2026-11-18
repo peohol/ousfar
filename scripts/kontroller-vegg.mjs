@@ -112,6 +112,7 @@ export const LABORATORIEDATA = new Map(
       'src/data/antihypertensiver.json',
       'src/data/aliaser.json',
       'src/data/analyttkoblinger.json',
+      'src/data/analyttforbindelser.json',
     ],
   }).flatMap(([grunn, stier]) => stier.map((sti) => [sti, grunn])),
 )

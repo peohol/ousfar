@@ -788,15 +788,16 @@ describe('Tramadol: datakortene for metabolitten', () => {
   const TRAMADOL = { id: 'tram', slug: 'tramadol', navn: 'Tramadol' }
   const kort = (id: string, data: Record<string, unknown>) =>
     utgave(id, { infoside: 'tram', panel: 'viktige_data', posisjon: 0, elementtype: 'referanseomrade', data, referanser: [] })
-  const tramadolside = (): Stoffsidedata => ({
+  const side = (gjelder: string) => (): Stoffsidedata => ({
     stoff: TRAMADOL,
     infoside: utgave('tram', { navn: 'Tramadol', slug: 'tramadol' }),
     elementer: [
       kort('tram-kort', { nedre: 100, ovre: 300, enhet: 'nmol/L' }),
-      kort('otram-kort', { nedre: 20, ovre: 40, enhet: 'nmol/L', gjelder: 'o-desmetyltramadol' }),
+      kort('otram-kort', { nedre: 20, ovre: 40, enhet: 'nmol/L', gjelder }),
     ],
     referanser: [],
   })
+  const tramadolside = side('o-desmetyltramadol')
   const overskrifter = () =>
     within(
       within(screen.getByRole('region', { name: 'Viktige data' })).getByRole('group', { name: 'Konsentrasjoner i serum' }),
@@ -814,9 +815,9 @@ describe('Tramadol: datakortene for metabolitten', () => {
     expect(overskrifter()).toEqual(FORVENTET)
   })
 
-  it('lagrer kortet med forbindelsen når det redigeres', async () => {
+  it('beholder koden i gjelder når kortet redigeres, så appen fra før fortsatt finner det', async () => {
     const user = userEvent.setup()
-    const { lager } = vis('tramadol', kilde({ kanRedigere: true, data: tramadolside, regler: () => null }))
+    const { lager } = vis('tramadol', kilde({ kanRedigere: true, data: side('OTRAM'), regler: () => null }))
     await finnVerdi('20–40 nmol/L')
     await user.click(screen.getByRole('button', { name: 'Rediger' }))
     await user.click(await screen.findByRole('button', { name: 'Rediger: Referanseområde, O-desmetyltramadol' }))
@@ -834,7 +835,7 @@ describe('Tramadol: datakortene for metabolitten', () => {
         panel: 'viktige_data',
         elementtype: 'referanseomrade',
         posisjon: 0,
-        data: { nedre: 20, ovre: 45, enhet: 'nmol/L', gjelder: 'o-desmetyltramadol' },
+        data: { nedre: 20, ovre: 45, enhet: 'nmol/L', gjelder: 'OTRAM' },
         referanser: [],
       },
     ])
@@ -842,7 +843,7 @@ describe('Tramadol: datakortene for metabolitten', () => {
 
   it('lagrer et nytt kort for metabolitten med forbindelsen', async () => {
     const user = userEvent.setup()
-    const utenKort = (): Stoffsidedata => ({ ...tramadolside(), elementer: [kort('tram-kort', { nedre: 100, ovre: 300, enhet: 'nmol/L' })] })
+    const utenKort = (): Stoffsidedata => ({ ...side('OTRAM')(), elementer: [kort('tram-kort', { nedre: 100, ovre: 300, enhet: 'nmol/L' })] })
     const { lager } = vis('tramadol', kilde({ kanRedigere: true, data: utenKort, regler: () => null }))
     await finnVerdi('100–300 nmol/L')
     await user.click(screen.getByRole('button', { name: 'Rediger' }))
@@ -853,6 +854,14 @@ describe('Tramadol: datakortene for metabolitten', () => {
     await user.click(within(skjema).getByRole('button', { name: 'Lagre utkast' }))
     await waitFor(() => expect(lager.opprettUtkast).toHaveBeenCalledTimes(1))
     expect(vi.mocked(lager.opprettUtkast).mock.calls[0]![1]).toMatchObject({ data: { ovre: 45, gjelder: 'o-desmetyltramadol' } })
+  })
+
+  it('viser et kort som fortsatt har koden i gjelder, på plassen til forbindelsen koden måler', async () => {
+    // Slik produksjonen står til kortet er skrevet om (#405): ett kort for metabolitten, ikke to.
+    vis('tramadol', kilde({ data: side('OTRAM'), regler: () => null }))
+    await finnVerdi('20–40 nmol/L')
+    expect(overskrifter()).toEqual(FORVENTET)
+    expect(document.body.textContent).not.toContain('OTRAM')
   })
 })
 

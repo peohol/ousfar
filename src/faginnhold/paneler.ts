@@ -396,9 +396,9 @@ export function datakortFor(type: string): Datakortdefinisjon | undefined {
  * (`src/data/forbindelser.ts`), aldri som en analyttkode, siden kortene er
  * felles for alle fagmiljøer. `null` for sidens egne kort. Hvert datakort kan
  * stå én gang per forbindelse; databasen håndhever det
- * (`innholdselementer_enkeltelement_idx`), og at `gjelder` er en
- * forbindelsesnøkkel (`innholdselementer_gjelder_forbindelse`). Plassene for
- * kortene står i `datakortplasser.ts`.
+ * (`innholdselementer_enkeltelement_idx`). Plassene for kortene står i
+ * `datakortplasser.ts`; et kort med en analyttkode fra før leses gjennom
+ * `kortetsForbindelse` der.
  */
 export function datakortGjelder(data: unknown): string | null {
   return erObjekt(data) && typeof data.gjelder === 'string' && data.gjelder.trim() !== '' ? data.gjelder.trim() : null
