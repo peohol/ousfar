@@ -6,9 +6,10 @@
  * Feltene trenger ingen egen kode: {@link lyttEtterTekstfelt} lytter på hele
  * dokumentet, før React ser hendelsen, så et felt som legges til senere, får
  * autoerstatt av seg selv. Felt der teksten ikke er vanlig skrift — søk,
- * lenker, e-post, passord, tall, brukernavn og reglene selv — står utenfor:
- * søk, lenker og lignende har sin egen `type` eller `inputmode`, og de andre
- * er merket `autocorrect="off"` eller `spellcheck="false"`.
+ * lenker, e-post, passord, tall, brukernavn, kildeverdier som skal stå «som i
+ * kilden» og reglene selv — står utenfor: søk, lenker og lignende har sin egen
+ * `type` eller `inputmode`, og de andre er merket med {@link UTEN_AUTOERSTATT}
+ * (`autocorrect="off"` eller `spellcheck="false"`).
  */
 import { finnRegel, MAKS_LENGDE, type Autoerstattregel, type Erstatning } from './regler'
 
@@ -16,6 +17,13 @@ type Tekstfelt = HTMLTextAreaElement | HTMLInputElement
 
 /** Den siste erstatningen i hvert felt, med verdien rett etter, så den kan angres. */
 const siste = new WeakMap<Tekstfelt, Erstatning & { verdi: string }>()
+
+/**
+ * Spres på et felt der teksten skal stå nøyaktig slik den skrives — tall,
+ * enheter, koder, brukernavn og verdier «som i kilden» — så autoerstatt (og
+ * nettleserens egen autokorrektur) lar det være.
+ */
+export const UTEN_AUTOERSTATT = { autoCorrect: 'off', spellCheck: false } as const
 
 /** Tastaturene (`inputmode`) for felt der teksten ikke er vanlig skrift. */
 const IKKE_SKRIFT = new Set(['numeric', 'decimal', 'tel', 'email', 'url', 'search'])

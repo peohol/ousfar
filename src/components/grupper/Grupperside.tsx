@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type MouseEvent, type MutableRefObject, type ReactNode } from 'react'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
@@ -880,8 +881,7 @@ function Invitasjon({ opptatt, onInviter }: { opptatt: boolean; onInviter: (bruk
           value={brukernavn}
           autoComplete="off"
           autoCapitalize="none"
-          autoCorrect="off"
-          spellCheck={false}
+          {...UTEN_AUTOERSTATT}
           disabled={opptatt}
           onChange={(e) => setBrukernavn(e.target.value)}
           hjelp="Den inviterte ser invitasjonen under «Grupper» i kontomenyen, og er med når den er godtatt."

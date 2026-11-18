@@ -1,4 +1,5 @@
 import { useId, useMemo, useState } from 'react'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import type { Referanseinnhold } from '../../faginnhold/modell'
 import { erAutomatisk, formaterReferanse, type Referanse } from '../../faginnhold/referanser'
 import { erTrygLenke } from '../../faginnhold/riktekst'
@@ -242,6 +243,7 @@ function NyReferanse({ onLagret, onAvbryt }: { onLagret: (r: Referanse) => void;
             id={`${id}-${felt.navn}`}
             className="felt__inndata"
             type={felt.type ?? 'text'}
+            {...UTEN_AUTOERSTATT}
             value={innhold[felt.navn] as string}
             onChange={(e) => setInnhold({ ...innhold, [felt.navn]: e.target.value })}
             onKeyDown={(e) => {

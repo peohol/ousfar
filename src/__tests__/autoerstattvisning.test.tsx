@@ -15,8 +15,10 @@ import type { Autoerstattlager } from '../autoerstatt/lagring'
 import type { Autoerstattregel } from '../autoerstatt/regler'
 import { Autoerstattregler } from '../components/konto/Autoerstattregler'
 import { Tekstomrade } from '../components/regler/Regelfelter'
+import { Konsentrasjonskilde } from '../components/stoffside/Konsentrasjon'
 import { Rikteksteditor } from '../components/stoffside/Rikteksteditor'
-import { tomtDokument, type Riktekstdokument } from '../faginnhold/riktekst'
+import { finnNoder, NODER, rensDokument, tomtDokument, type Riktekstdokument } from '../faginnhold/riktekst'
+import { FORBINDELSER } from '../kjemi/forbindelser'
 
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
@@ -218,6 +220,32 @@ describe('autoerstatt i tekstfeltene', () => {
     const { felt, verdi } = await vis(<Felt flerlinje />, null)
     await userEvent.type(felt, 'a - b--')
     expect(verdi()).toBe('a - b--')
+  })
+
+  it('lar kildeverdiene for en konsentrasjon stå nøyaktig som i kilden', async () => {
+    globalThis.ResizeObserver ??= class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver
+    let siste = tomtDokument()
+    render(
+      <Kilde lager={minnelager()}>
+        <Konsentrasjonskilde molvekter={new Map([['citalopram', '300']])} sideforbindelser={[FORBINDELSER.finn('citalopram')!]}>
+          <Rikteksteditor dokument={rensDokument(tomtDokument())} onEndre={(d) => (siste = d)} etikett="TDM" />
+        </Konsentrasjonskilde>
+      </Kilde>,
+    )
+    await act(async () => {})
+    await userEvent.click(screen.getByRole('button', { name: /Merk en konsentrasjon/ }))
+    const panel = screen.getByRole('group', { name: 'Konsentrasjon' })
+    const verdi = within(panel).getByLabelText('Tall eller område, som i kilden') as HTMLInputElement
+    const enhet = within(panel).getByLabelText('Enhet, som i kilden') as HTMLInputElement
+    await userEvent.type(verdi, '50 - 200')
+    await userEvent.type(enhet, 'nmol/L')
+    expect(verdi.value).toBe('50 - 200')
+    await userEvent.click(within(panel).getByRole('button', { name: 'Merk i teksten' }))
+    expect(finnNoder(siste, NODER.konsentrasjon).map((n) => n.attrs?.verdi)).toEqual(['50 - 200'])
   })
 
   it('bruker regler som kommer til senere', async () => {

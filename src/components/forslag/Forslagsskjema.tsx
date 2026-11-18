@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { forslagsadresse } from '../../domain/rute'
 import { hentSideversjon, sendForslag } from '../../forslag/api'
 import { GRENSER, TOM_KILDE, finnKildefeil, kilderTilLagring, type Kildeutkast } from '../../forslag/modell'
@@ -360,6 +361,7 @@ function Kildefelt({
         className="felt__inndata"
         type={type}
         inputMode={type === 'url' ? 'url' : undefined}
+        {...UTEN_AUTOERSTATT}
         value={verdi}
         maxLength={maks}
         placeholder={plass}

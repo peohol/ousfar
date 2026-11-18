@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAutoerstatt } from '../../autoerstatt/Autoerstattkilde'
+import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { regelfeil, type Autoerstattregel } from '../../autoerstatt/regler'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
@@ -181,7 +182,7 @@ function Regelskjema({
   onAvbryt: () => void
 }) {
   // Feltene skal vise nøyaktig det som er skrevet: ingen retting, ingen trimming.
-  const rene = { autoComplete: 'off', autoCapitalize: 'none', autoCorrect: 'off', spellCheck: false } as const
+  const rene = { autoComplete: 'off', autoCapitalize: 'none', ...UTEN_AUTOERSTATT } as const
   return (
     <form className="skjema autoerstatt__skjema" onSubmit={onLagre}>
       <div className="autoerstatt__felter">
