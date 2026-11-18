@@ -248,11 +248,11 @@ describe('tabellene og intern direkte', () => {
 })
 
 describe('teksten bare ett sted (testplanen, avsnitt 4)', () => {
-  it('står bare i meldingen etter sending, også når de andre har fått varsel', async () => {
+  it('står bare i meldingen etter sending', async () => {
     await send('vanligA', grupper.GA, 'Syntetisk merketekst alfa')
     expect(await hvorStaar('merketekst alfa')).toEqual(['public.gruppemeldinger.tekst'])
-    // Varselet de andre fikk, står der, men uten teksten.
-    expect((await db.query(`select 1 from public.varsler where mottaker_id = $1`, [id('adminA')])).rows.length).toBeGreaterThan(0)
+    // Fra D4b lager chatten ingen varsler (docs/gruppechat.md, «Uleste»); de andre har bare tallet på uleste.
+    expect((await db.query(`select 1 from public.varsler where mottaker_id = $1 and kategori = 'gruppechat'`, [id('adminA')])).rows).toEqual([])
   })
 
   it('finnes ikke lenger noe sted etter endring, og den nye teksten bare i meldingen', async () => {

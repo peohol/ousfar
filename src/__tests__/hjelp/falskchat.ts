@@ -224,7 +224,7 @@ export class Falskchatserver {
         }
       },
       nyKlientId: () => `${bruker.slice(-4)}-klient-${++id}`,
-      varslerEndret: () => this.tell('varslerEndret'),
+      ulesteEndret: () => this.tell('ulesteEndret'),
       ...ekstra,
     }
   }

@@ -42,16 +42,11 @@ export interface Varselkategoridefinisjon {
   /** Bare for dem som kan behandle endringsforslag; de andre ser den ikke i innstillingene. */
   bareForBehandlere?: boolean
   /**
-   * Funksjonen kategorien hører til. Innstillingen vises bare når funksjonen
-   * er slått på (databasens funksjonsbryter), siden det ellers ikke kan komme
-   * varsler i den.
+   * Kategorien har et annet, naturlig sted enn bjella (planen §8), og verken
+   * vises, telles eller kan velges der. Databasen kan ha eldre varsler i den.
    */
-  funksjon?: Varselfunksjon
+  utenforBjella?: true
 }
-
-/** Funksjoner bak en funksjonsbryter som har egne varselkategorier. */
-export const VARSELFUNKSJONER = ['gruppechat'] as const
-export type Varselfunksjon = (typeof VARSELFUNKSJONER)[number]
 
 /**
  * Kategoriene, i den rekkefølgen innstillingene viser dem innenfor gruppen.
@@ -122,13 +117,15 @@ export const VARSELKATEGORIER = {
     obligatorisk: false,
     standard: true,
   },
+  // Uleste chatmeldinger står på chatknappen og i samtalelista (docs/gruppechat.md,
+  // «Uleste»). Databasen lager ikke lenger varsler i kategorien; de eldre står leste.
   gruppechat: {
     gruppe: 'grupper',
     tittel: 'Nye meldinger i gruppechattene',
-    forklaring: 'Når noen har skrevet i chatten i en gruppe du er med i. Ett varsel per gruppe til du har lest meldingene.',
+    forklaring: 'Vises på chatknappen, ikke i bjella.',
     obligatorisk: false,
-    standard: true,
-    funksjon: 'gruppechat',
+    standard: false,
+    utenforBjella: true,
   },
   mine_forslag: {
     gruppe: 'forslag',
@@ -172,19 +169,16 @@ export type Varselkategori = keyof typeof VARSELKATEGORIER
 
 export const KATEGORIREKKEFOLGE = Object.keys(VARSELKATEGORIER) as Varselkategori[]
 
+/** Om kategorien hører til bjella. */
+const iBjella = (kategori: Varselkategori): boolean => !(VARSELKATEGORIER[kategori] as Varselkategoridefinisjon).utenforBjella
+
 /**
  * Gruppene med kategoriene sine, slik innstillingene viser dem. Grupper uten
  * kategorier er utelatt, kategoriene bare for behandlerne av endringsforslag
- * for alle andre, og kategoriene til en funksjon som ikke er slått på.
+ * for alle andre, og kategoriene utenfor bjella for alle.
  */
-export function kategorierIGrupper(
-  behandler = true,
-  funksjoner: ReadonlySet<Varselfunksjon> = new Set(VARSELFUNKSJONER),
-): { gruppe: Varselgruppe; kategorier: Varselkategori[] }[] {
-  const synlig = (k: Varselkategori) => {
-    const { bareForBehandlere, funksjon } = VARSELKATEGORIER[k] as Varselkategoridefinisjon
-    return (behandler || !bareForBehandlere) && (!funksjon || funksjoner.has(funksjon))
-  }
+export function kategorierIGrupper(behandler = true): { gruppe: Varselgruppe; kategorier: Varselkategori[] }[] {
+  const synlig = (k: Varselkategori) => iBjella(k) && (behandler || !(VARSELKATEGORIER[k] as Varselkategoridefinisjon).bareForBehandlere)
   return GRUPPEREKKEFOLGE.map((gruppe) => ({
     gruppe,
     kategorier: KATEGORIREKKEFOLGE.filter((k) => VARSELKATEGORIER[k].gruppe === gruppe && synlig(k)),
@@ -231,9 +225,13 @@ export function lesVarselvalg(verdi: unknown): Varselvalg {
   return valg
 }
 
-/** Om brukeren skal se varsler i kategorien. De obligatoriske er alltid på. */
+/**
+ * Om brukeren skal se varsler i kategorien i bjella. De obligatoriske er
+ * alltid på, og kategoriene utenfor bjella alltid av, uansett et eldre valg.
+ */
 export function erValgt(kategori: Varselkategori, valg: Varselvalg): boolean {
   const definisjon: Varselkategoridefinisjon = VARSELKATEGORIER[kategori]
+  if (!iBjella(kategori)) return false
   return definisjon.obligatorisk || (valg[kategori] ?? definisjon.standard)
 }
 
@@ -387,9 +385,6 @@ export interface Hendelse {
   gruppeoppgave?: Varselgruppeoppgave | null
   /** Hva som skjedde: en art fra forslagets tidslinje, eller fra behandlingen i en gruppe (`GRUPPEHANDLINGER`). */
   art?: string
-  /** Gruppen det er skrevet i chatten i, og hvor mange meldinger det er siden varselet ble ulest. */
-  gruppechat?: Varselgrupperef | null
-  antall?: number
 }
 
 /** En gruppe slik et varsel navngir den. */
@@ -507,10 +502,6 @@ function lesHendelse(verdi: unknown): Hendelse | null {
   if ('forslag' in verdi) hendelse.forslag = lesForslag(verdi.forslag)
   if ('gruppeoppgave' in verdi) hendelse.gruppeoppgave = lesGruppeoppgave(verdi.gruppeoppgave)
   if ('art' in verdi) hendelse.art = tekst(verdi.art)
-  if ('gruppechat' in verdi) {
-    hendelse.gruppechat = lesGrupperef(verdi.gruppechat)
-    hendelse.antall = typeof verdi.antall === 'number' && verdi.antall > 0 ? Math.floor(verdi.antall) : 1
-  }
   return hendelse
 }
 
@@ -701,28 +692,6 @@ export function gruppetekst(varsel: Databasevarsel & { kategori: Gruppekategori 
   const art = varsel.hendelser.at(-1)?.art ?? ''
   const hvem = navneliste(aktorer(varsel.hendelser.filter((h) => h.art === art)).map(navn))
   return `${hvem} ${GRUPPEHANDLINGER[art] ?? 'oppdaterte en oppgave'}`
-}
-
-/* --- Gruppechatten ---------------------------------------------------------- */
-
-/**
- * Gruppen et varsel om chatten gjelder, eller `null` når varselet ikke gjelder
- * chatten. Varselet har aldri meldingstekst eller avsendere
- * (docs/gruppechat.md, «Varslene»).
- */
-export function varselgruppechat(varsel: Databasevarsel): Varselgrupperef | null {
-  if (varsel.kategori !== 'gruppechat') return null
-  return varsel.hendelser.at(-1)?.gruppechat ?? null
-}
-
-/** Hvor mange nye meldinger varselet gjelder. */
-export function chatantall(varsel: Databasevarsel): number {
-  return varsel.hendelser.reduce((sum, h) => sum + (h.antall ?? 0), 0)
-}
-
-/** «Ny melding i Gruppe» eller «5 nye meldinger i Gruppe». */
-export function chattekst(gruppe: Varselgrupperef, antall: number): string {
-  return antall > 1 ? `${antall} nye meldinger i ${gruppe.navn}` : `Ny melding i ${gruppe.navn}`
 }
 
 /** Hva som har skjedd i diskusjonen: «Ada kommenterte tråden din», «Bo startet en ny tråd på en favorittside». */

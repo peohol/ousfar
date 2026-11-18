@@ -5,14 +5,13 @@
  * kobles den til React. Direktesamtalene bruker det samme laget med sine
  * egne kall (`useDirektesamtale`).
  *
- * Alle visninger av samme samtale deler én kontroller: chatmenyen, `#/chat`
- * og chatfanen på gruppesiden viser den samme samtalen, med de samme
- * meldingene, ventende meldingene og lest-merkingen, ikke hver sin kopi.
- * Kontrolleren startes av den første visningen og stoppes (abonnement og
- * livstegn) når den siste forsvinner.
+ * Alle visninger av samme samtale deler én kontroller: chatmenyen og `#/chat`
+ * viser den samme samtalen, med de samme meldingene, ventende meldingene og
+ * lest-merkingen, ikke hver sin kopi. Kontrolleren startes av den første
+ * visningen og stoppes (abonnement og livstegn) når den siste forsvinner.
  */
 import { useEffect, useSyncExternalStore } from 'react'
-import { oppfriskVarsler } from '../varsler/api'
+import { meldGruppeendring } from '../components/grupper/gruppevisning'
 import {
   endreGruppemelding,
   hentChatendringer,
@@ -31,16 +30,16 @@ interface Delt {
   brukere: number
 }
 
-/**
- * Kroken for én slags samtale: kontrollerne som er i bruk står etter
- * samtalens ID, den samme for alle visningene som står samtidig.
- */
 export interface Chatkrok {
   (id: string): Gruppechat
   /** Henter det nye og rettighetene på nytt i alle samtalene som står åpne, etter noe brukeren selv har endret. */
   oppfriskAlle: () => void
 }
 
+/**
+ * Kroken for én slags samtale: kontrollerne som er i bruk står etter
+ * samtalens ID, den samme for alle visningene som står samtidig.
+ */
 export function lagChatkrok(avhengigheter: Chatavhengigheter): Chatkrok {
   const delte = new Map<string, Delt>()
 
@@ -90,8 +89,9 @@ export const useGruppechat = lagChatkrok({
   merkGruppechatLest,
   abonner: abonnerPaGruppechat,
   nyKlientId: () => crypto.randomUUID(),
-  varslerEndret: () => {
-    oppfriskVarsler()
+  // Chatten har ingen varsler i bjella; tallet står i chatmenyen og på gruppesiden.
+  ulesteEndret: (gruppe) => {
     oppfriskSamtaler()
+    meldGruppeendring(gruppe)
   },
 })

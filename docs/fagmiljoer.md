@@ -560,7 +560,7 @@ seg; «Opprett gruppe» åpner en modal. Gruppesiden (`#/grupper/<ID>`;
 beskrivelsen, medlemslinjen («8 medlemmer · Vis medlemmer»), «Siste aktivitet»
 (hver rad fører til selve idéen, kommentaren, oppgaven, tråden eller chatten) og fire korte
 paneler for idéene, oppgavene, diskusjonene (diskusjonsmenyen) og chatten
-(egen side `…/chat` til chatmenyen tar over), med tallene fra
+(chatmenyen; den gamle adressen `…/chat` åpner den der), med tallene fra
 `gruppeoversikt(gruppe).samhandling`. Medlemmene (invitere, rolle, fjerne) og
 gruppeinnstillingene (navn, arkivere, åpne igjen, forlate) er modaler med de
 samme bekreftelsene og reglene som før; en arkivert gruppe står i lesemodus.

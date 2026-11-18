@@ -66,8 +66,9 @@ kjøringen uten at passordet skrives inn.
 - `npx vite-node src/__tests__/qa/gruppechatsanntid.ts` kontrollerer sanntiden
   i gruppechatten uten nettleser: to syntetiske medlemmer (`qa-chat-ada`,
   `qa-chat-bo`, nye tilfeldige passord hver gang) utveksler meldinger gjennom
-  dørklokken, og den som fjernes fra gruppen, får ingen flere hendelser og
-  stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
+  dørklokken, samtalelista teller de uleste til de er lest (bjella får ingen
+  chatvarsler, D4b), og den som fjernes fra gruppen, får ingen flere
+  hendelser, mister samtalen fra lista og stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
   går, og av igjen etterpå.
 - `npx vite-node src/__tests__/qa/gruppechatnettleser.ts` er
   nettleserkontrollen av gruppechatten (`docs/p7-testplan.md`, N1–N10): Ada og

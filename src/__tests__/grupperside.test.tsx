@@ -51,6 +51,7 @@ const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER, lesGruppeoversikt, lesMineGrupper } = await import('../grupper/modell')
 const { adresse, lesRute, sidesti } = await import('../domain/rute')
 const { lesGruppeaktivitet, tilHendelse } = await import('../grupper/aktivitet')
+const { lyttEtterChatbeskjed } = await import('../components/chat/chatstyring')
 const { adresseForSide, diskusjonssideFor, diskusjonssider, lesDiskusjonsside, navnPaaSide, ruteForSide, siderekkevidde } =
   await import('../diskusjoner/modell')
 
@@ -425,9 +426,15 @@ describe('siste aktivitet', () => {
       { tittel: 'En tidligere bruker kommenterte tråden «Sandkassen»', hvor: 'Diskusjon', til: `#/diskusjon/${TRAAD}/${KOMMENTAR}`, ulest: undefined },
       { tittel: 'Ola Nordmann startet tråden «Sandkassen»', hvor: 'Diskusjon', til: `#/diskusjon/${TRAAD}`, ulest: undefined },
       { tittel: 'Ola Nordmann la inn idéen «Felles mal»', hvor: 'Idé', til: `#/grupper/${ID}/ideer/${IDE}`, ulest: undefined },
-      { tittel: '1 ny melding i gruppechatten', hvor: 'Gruppechat', til: `#/grupper/${ID}/chat`, ulest: true },
-      { tittel: 'Siste melding i gruppechatten', hvor: 'Gruppechat', til: `#/grupper/${ID}/chat`, ulest: undefined },
+      { tittel: '1 ny melding i gruppechatten', hvor: 'Gruppechat', til: undefined, ulest: true },
+      { tittel: 'Siste melding i gruppechatten', hvor: 'Gruppechat', til: undefined, ulest: undefined },
     ])
+    // Chatten har ingen egen side ved siden av gruppen lenger (D4b): raden åpner samtalen i chatmenyen.
+    const mottatt: unknown[] = []
+    const slutt = lyttEtterChatbeskjed((b) => mottatt.push(b))
+    rader.at(-1)!.ved!()
+    slutt()
+    expect(mottatt).toEqual([{ gruppe: ID }])
   })
 
   it('står øverst på gruppesiden, med hele raden som lenke, og henter på nytt etter en feil', async () => {

@@ -1,6 +1,12 @@
 /**
- * P7 tråd C: varslene om gruppechatten og dørklokken i publikasjonen
- * (docs/gruppechat.md, «Varslene» og «Sanntiden»; docs/varsler.md).
+ * Varslene om gruppechatten og dørklokken i publikasjonen (docs/gruppechat.md,
+ * «Uleste» og «Sanntiden»; docs/varsler.md).
+ *
+ * P7 ga ett varsel per gruppe i bjella. Fra D4b står uleste chatmeldinger bare
+ * på chatknappen og i samtalelista (`gruppechat_lest`): en ny melding lager
+ * ingen varsler, og de som sto uleste da D4b ble rullet ut, er merket lest uten
+ * at noe er slettet. Testen bygger databasen fram til D4b-migrasjonen, lager
+ * et ulest chatvarsel slik P7 gjorde, og kjører så resten.
  *
  * Persongalleriet (syntetiske kontoer), med chatten slått på i testdatabasen.
  * «A-gruppen» i A har `adminA` som ansvarlig, `vanligA` og `dobbeltAB` som
@@ -9,9 +15,13 @@
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { lesVarselliste, varselgruppechat, chatantall } from '../varsler/modell'
+import { lesGruppesamtaler } from '../gruppechat/samtaler'
+import { lesVarselliste } from '../varsler/modell'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
-import { nyDatabase, som } from './hjelp/testdatabase'
+import { kjorMigrasjoner, nyDatabase, som } from './hjelp/testdatabase'
+
+/** Migrasjonen som tok chatten ut av bjella (D4b). */
+const UT_AV_BJELLA = '20261118224500_chatvarsler_ut_av_bjella.sql'
 
 let basis: PGlite
 let db: PGlite
@@ -30,6 +40,8 @@ const nyKlientId = () => `00000000-0000-4000-9100-${String(++teller).padStart(12
 const send = async (person: Person, tekst = 'Syntetisk melding') =>
   verdi<{ id: string; nr: number }>(person, 'select public.send_gruppemelding($1, $2, $3)', [agruppe, nyKlientId(), tekst])
 const merkLest = (person: Person, tilNr: number) => verdi(person, 'select public.merk_gruppechat_lest($1, $2)', [agruppe, tilNr])
+const uleste = async (person: Person) =>
+  lesGruppesamtaler(await verdi(person, 'select public.mine_gruppesamtaler()')).find((s) => s.gruppe.id === agruppe)?.uleste ?? null
 
 /** Varslene om chatten slik appen leser dem. */
 const chatvarsler = async (person: Person) =>
@@ -43,8 +55,11 @@ const rader = async (person: Person) =>
     )
   ).rows
 
+/** Det varselet P7 lagde for meldingen: før D4b-migrasjonen står det ulest. */
+let ulestFor: { lest_kl: string | null }[]
+
 beforeAll(async () => {
-  basis = await nyDatabase()
+  basis = await nyDatabase({ til: UT_AV_BJELLA })
   galleri = await byggPersongalleri(basis)
   await basis.exec(SLA_PA)
   agruppe = await verdi<string>('adminA', 'select public.opprett_gruppe($1, $2, $3)', ['A-gruppen', 'Syntetisk', galleri.fagmiljo.A], basis)
@@ -53,7 +68,14 @@ beforeAll(async () => {
     await verdi(p, 'select public.svar_paa_gruppeinvitasjon($1, true)', [agruppe], basis)
   }
   await verdi('adminA', 'select public.inviter_til_gruppe($1, $2)', [agruppe, 'test.redaktorressursa'], basis)
-}, 180_000)
+  // Som før D4b: meldingen gir adminA og dobbeltAB et ulest varsel i bjella.
+  await verdi('vanligA', 'select public.send_gruppemelding($1, $2, $3)', [agruppe, nyKlientId(), 'Fra før D4b'], basis)
+  ulestFor = (await basis.query<{ lest_kl: string | null }>(
+    `select lest_kl from public.varsler where kategori = 'gruppechat' and mottaker_id = $1`, [galleri.id.adminA],
+  )).rows
+  await kjorMigrasjoner(basis, { fra: UT_AV_BJELLA })
+  await basis.exec(SLA_PA)
+}, 300_000)
 
 afterAll(async () => {
   await basis.close()
@@ -67,78 +89,60 @@ afterEach(async () => {
   await db.close()
 })
 
-describe('varslene om nye meldinger', () => {
-  it('gir de andre aktive medlemmene ett varsel, uten tekst og avsender', async () => {
-    await send('vanligA', 'Syntetisk tekst som ikke skal i varselet')
+describe('chatten er ute av bjella (D4b)', () => {
+  it('varselet som sto ulest før D4b, er merket lest og står, men telles ikke', async () => {
+    expect(ulestFor).toEqual([{ lest_kl: null }])
     for (const p of ['adminA', 'dobbeltAB'] as const) {
       const [rad, ...flere] = await rader(p)
       expect(flere, p).toEqual([])
-      expect(rad, p).toMatchObject({ lest_kl: null, gruppe_id: agruppe })
-      expect(Object.keys(rad!.hendelser[0]!).sort(), p).toEqual(['antall', 'gruppechat', 'kl', 'til_nr'])
-      expect(JSON.stringify(rad), p).not.toContain('Syntetisk tekst')
-      expect(JSON.stringify(rad), p).not.toContain(id('vanligA'))
+      expect(rad?.lest_kl, p).not.toBeNull()
+      expect(await verdi(p, 'select public.uleste_varsler()'), p).not.toHaveProperty('gruppechat')
     }
-    // Ikke den som skrev, ikke den inviterte, og ikke systemarkitekten som ikke er med.
-    for (const p of ['vanligA', 'redaktorRessursA', 'systemarkitekt'] as const) expect(await rader(p), p).toEqual([])
+    // Meldingen og tallet på uleste i chatten er de samme som før.
+    expect(await uleste('adminA')).toBe(1)
+    expect(await uleste('dobbeltAB')).toBe(1)
+    expect(await uleste('vanligA')).toBe(0)
   })
 
-  it('samler de uleste i ett varsel med antallet, og viser gruppen ved navn', async () => {
-    for (let i = 0; i < 3; i++) await send('vanligA')
-    const siste = await send('dobbeltAB')
-    const [varsel, ...flere] = await chatvarsler('adminA')
-    expect(flere).toEqual([])
-    expect(varselgruppechat(varsel!)).toEqual({ id: agruppe, navn: 'A-gruppen' })
-    expect(chatantall(varsel!)).toBe(4)
-    expect((await rader('adminA'))[0]!.hendelser[0]!.til_nr).toBe(siste.nr)
-    expect(await verdi('adminA', 'select public.uleste_varsler()')).toMatchObject({ gruppechat: 1 })
-    // Den som skrev de tre første, har bare den fra dobbeltAB.
-    expect(chatantall((await chatvarsler('vanligA'))[0]!)).toBe(1)
+  it('en ny melding gir ingen varsler, bare tallet i chatten', async () => {
+    await send('vanligA', 'Syntetisk tekst')
+    await send('dobbeltAB')
+    for (const p of ['adminA', 'dobbeltAB', 'vanligA', 'redaktorRessursA', 'systemarkitekt'] as const) {
+      expect((await rader(p)).filter((r) => r.lest_kl === null), p).toEqual([])
+      expect(await verdi(p, 'select public.uleste_varsler()'), p).not.toHaveProperty('gruppechat')
+    }
+    expect(await uleste('adminA')).toBe(3)
+    expect(await uleste('dobbeltAB')).toBe(2)
+    expect(await uleste('vanligA')).toBe(1)
+    // Den inviterte og systemarkitekten som ikke er med, har ingen samtale og ingen uleste.
+    expect(await uleste('redaktorRessursA')).toBeNull()
+    expect(await uleste('systemarkitekt')).toBeNull()
   })
 
-  it('merkes lest av chatten bare når meldingen det gjelder er lest, og neste melding gir et nytt', async () => {
-    await send('vanligA')
-    const andre = await send('vanligA')
-    await merkLest('adminA', andre.nr - 1)
-    expect((await rader('adminA'))[0]!.lest_kl).toBeNull()
-    await merkLest('adminA', andre.nr)
-    expect((await rader('adminA'))[0]!.lest_kl).not.toBeNull()
-    expect((await chatvarsler('adminA')).every((v) => v.lest)).toBe(true)
-
-    await send('vanligA')
-    const alle = await rader('adminA')
-    expect(alle).toHaveLength(2)
-    expect(alle[1]).toMatchObject({ lest_kl: null })
-    expect(alle[1]!.hendelser[0]!.antall).toBe(1)
-    // De andres varsler røres ikke.
-    expect((await rader('dobbeltAB')).map((r) => r.lest_kl)).toEqual([null])
-  })
-
-  it('endringer og slettinger varsler ingen', async () => {
+  it('lest i chatten er lest, uten noen kvittering i bjella', async () => {
     const m = await send('vanligA')
     await merkLest('adminA', m.nr)
-    await verdi('vanligA', 'select public.endre_gruppemelding($1, $2)', [m.id, 'Endret'])
-    await verdi('vanligA', 'select public.slett_gruppemelding($1)', [m.id])
-    expect((await rader('adminA')).map((r) => r.lest_kl === null)).toEqual([false])
+    expect(await uleste('adminA')).toBe(0)
+    expect((await rader('adminA')).every((r) => r.lest_kl !== null)).toBe(true)
   })
 
-  it('den som fjernes, ser ikke varslene og får ingen nye', async () => {
-    await send('vanligA')
+  it('den som fjernes, har verken uleste eller varsler fra chatten', async () => {
     await verdi('adminA', 'select public.avslutt_gruppemedlemskap($1, $2)', [agruppe, id('dobbeltAB')])
+    await send('vanligA')
+    expect(await uleste('dobbeltAB')).toBeNull()
     expect(await chatvarsler('dobbeltAB')).toEqual([])
-    await send('vanligA')
-    const [rad, ...flere] = await rader('dobbeltAB')
-    expect(flere).toEqual([])
-    expect(rad!.hendelser[0]!.antall).toBe(1)
+    expect((await rader('dobbeltAB')).filter((r) => r.lest_kl === null)).toEqual([])
   })
 
-  it('vises ikke mens chatten er avslått', async () => {
-    await send('vanligA')
-    await db.exec(SLA_AV)
-    expect(await chatvarsler('adminA')).toEqual([])
-    expect(await verdi('adminA', 'select public.uleste_varsler()')).not.toHaveProperty('gruppechat')
+  it('utløseren som lagde varslene, er borte', async () => {
+    const utlosere = (await db.query<{ tgname: string }>(
+      `select tgname from pg_trigger where tgrelid = 'public.gruppemeldinger'::regclass and not tgisinternal`,
+    )).rows.map((r) => r.tgname)
+    expect(utlosere).not.toContain('gruppemeldinger_varsle')
+    expect((await db.query(`select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'intern' and p.proname = 'varsle_gruppechat'`)).rows).toEqual([])
   })
 
-  it('mine_grupper sier om chatten er slått på, så innstillingen kan skjules til da', async () => {
+  it('mine_grupper sier fortsatt om chatten er slått på, til chatknappen', async () => {
     const chatAktivert = async () => (await verdi<{ chat_aktivert: boolean }>('vanligA', 'select public.mine_grupper()')).chat_aktivert
     expect(await chatAktivert()).toBe(true)
     await db.exec(SLA_AV)

@@ -5,7 +5,6 @@ import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
-import { useGrupper } from '../../grupper/kilde'
 import { forslagsadresse, stoffadresse } from '../../domain/rute'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
@@ -14,8 +13,6 @@ import {
   VARSELGRUPPER,
   VARSELKATEGORIER,
   aktorer,
-  chatantall,
-  chattekst,
   deletekst,
   diskusjonstekst,
   endredeDeler,
@@ -31,13 +28,11 @@ import {
   gruppetekst,
   idetekst,
   kategorierIGrupper,
-  type Varselfunksjon,
   navneliste,
   objekttekst,
   ressurstekst,
   varselforslag,
   varselgruppe,
-  varselgruppechat,
   varselgruppeoppgave,
   type Gruppemaal,
   type Databasevarsel,
@@ -50,7 +45,7 @@ import { Bryter } from '../Bryter'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
 import { visIde } from '../ideer/idevisning'
-import { visGruppechat, visGruppeide, visGruppen, visGruppeoppgave } from '../grupper/gruppevisning'
+import { visGruppeide, visGruppen, visGruppeoppgave } from '../grupper/gruppevisning'
 import { visDiskusjon } from '../diskusjoner/diskusjonsvisning'
 import { adresseForSide } from '../../diskusjoner/modell'
 import { Tidspunkt } from '../traad/Smadeler'
@@ -361,19 +356,6 @@ function Databaseinnhold({ varsel, meg, navn, onGa, onGaVaktet }: RadProps & { v
     )
   }
 
-  const chatgruppe = varselgruppechat(varsel)
-  if (chatgruppe) {
-    // Varselet har bare gruppen og antallet, aldri tekst eller avsendere.
-    return (
-      <>
-        <button type="button" className="varsel__tittel" data-ih="" onClick={() => onGaVaktet(varsel, (gjort) => visGruppechat(chatgruppe.id, gjort))}>
-          {chattekst(chatgruppe, chatantall(varsel))}
-        </button>
-        <p className="varsel__meta">Gruppechat · {tid}</p>
-      </>
-    )
-  }
-
   if (erGruppevarsel(varsel)) {
     const gruppe = varselgruppe(varsel)
     const maal = gruppemaal(varsel)
@@ -486,12 +468,10 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
  */
 function Innstillinger({ status }: { status: Varselstatus }) {
   const behandler = useRettigheter().behandlerForslag
-  const { chat_aktivert } = useGrupper()
-  const funksjoner = useMemo(() => new Set<Varselfunksjon>(chat_aktivert ? ['gruppechat'] : []), [chat_aktivert])
   return (
     <div className="varselinnstillinger">
       <p className="varselinnstillinger__ingress">Velg hva du vil få varsel om. Endringer i fortolkningen, kritiske faglige meldinger og svar til deg får alle.</p>
-      {kategorierIGrupper(behandler, funksjoner).map(({ gruppe, kategorier }) => (
+      {kategorierIGrupper(behandler).map(({ gruppe, kategorier }) => (
         <Innstillingsgruppe key={gruppe} gruppe={gruppe}>
           {kategorier.map((kategori) => {
             const { tittel, forklaring, obligatorisk } = VARSELKATEGORIER[kategori]

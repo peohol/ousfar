@@ -18,5 +18,5 @@ export const useDirektesamtale = lagChatkrok({
   abonner: abonnerPaDirektesamtale,
   nyKlientId: () => crypto.randomUUID(),
   // Direktemeldingene gir ingen varsler i bjella; bare samtalelistene hentes på nytt.
-  varslerEndret: oppfriskSamtaler,
+  ulesteEndret: () => oppfriskSamtaler(),
 })
