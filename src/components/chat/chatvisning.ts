@@ -6,11 +6,10 @@ import type { Ikonnavn } from '../ikon/register'
 import { dagsnokkel, klokkeslett } from '../grupper/gruppechatvisning'
 
 /**
- * Ikonet for chatten. Det egne ikonet `samtale` (en rund snakkeboble, så
- * chatten ikke forveksles med diskusjonene) kommer i en egen leveranse; til
- * det står `comment` her, og bare her.
+ * Ikonet for chatten overalt i chatmenyen: den runde snakkeboblen `samtale`,
+ * så chatten ikke forveksles med diskusjonene.
  */
-export const CHATIKON: Ikonnavn = 'comment'
+export const CHATIKON: Ikonnavn = 'samtale'
 
 const UKEDAG = new Intl.DateTimeFormat('nb-NO', { weekday: 'short' })
 const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'numeric' })
