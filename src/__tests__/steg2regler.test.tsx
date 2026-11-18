@@ -16,7 +16,7 @@
  */
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Intervallregelsett } from '../regler/modell'
 
 type Svar = { data: Record<string, unknown> | null; error: unknown }
@@ -82,7 +82,11 @@ afterEach(() => {
   svar.neste = []
   svar.aktivt = null
   svar.referanseomrader = null
-  window.location.hash = ''
+})
+
+beforeEach(() => {
+  // Testene begynner i fortolkningssøket; appen åpner på forsiden.
+  window.location.hash = '#/fortolkning'
 })
 
 /** Databasen svarer med disse regelsettene og kommentarene som de publiserte. */

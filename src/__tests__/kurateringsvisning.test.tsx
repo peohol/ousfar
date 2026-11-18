@@ -227,8 +227,8 @@ describe('adressene', () => {
     expect(lesRute(`#/kuratering/${GREN}`)).toEqual({ side: 'kuratering', gren: GREN })
     expect(adresse({ side: 'kuratering', gren: GREN })).toBe(`#/kuratering/${GREN}`)
     // Et nummer som ikke er en versjon, eller en ID som ikke er en gren, er ingen side.
-    expect(lesRute('#/versjon/citalopram/0').side).toBe('fortolkning')
-    expect(lesRute('#/kuratering/ikke-en-id').side).toBe('fortolkning')
+    expect(lesRute('#/versjon/citalopram/0').side).toBe('ukjent')
+    expect(lesRute('#/kuratering/ikke-en-id').side).toBe('ukjent')
   })
 })
 

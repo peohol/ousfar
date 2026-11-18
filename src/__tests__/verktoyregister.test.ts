@@ -88,9 +88,9 @@ describe('Adressene', () => {
     expect(adresse({ side: 'verktoy', verktoy: 'bytte-antidepressiv' })).toBe('#/verktoy/bytte-antidepressiv')
     expect(sidesti({ side: 'verktoy' })).toBe('verktoy')
     expect(sidesti({ side: 'verktoy', verktoy: 'bytte-antidepressiv' })).toBe('verktoy/bytte-antidepressiv')
-    // En adresse som ikke kan være et verktøy, er fortolkningen, som andre ukjente adresser.
-    expect(lesRute('#/verktoy/a/b')).toEqual({ side: 'fortolkning' })
-    expect(lesRute('#/verktoyx')).toEqual({ side: 'fortolkning' })
+    // En adresse som ikke kan være et verktøy, er en ukjent adresse, som andre.
+    expect(lesRute('#/verktoy/a/b').side).toBe('ukjent')
+    expect(lesRute('#/verktoyx').side).toBe('ukjent')
   })
 })
 

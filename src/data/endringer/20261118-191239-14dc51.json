@@ -1,0 +1,17 @@
+{
+  "id": "20261118-191239-14dc51",
+  "semver": "minor",
+  "opprettet": "2026-11-18T19:12:39Z",
+  "sammendrag": "Ny forside, og tilbake og Escape som går dit du kom fra",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Appen åpner på en enkel forside med en knapp til fortolkningen. Fortolkningen har fått sin egen adresse, og søket har en knapp tilbake til forsiden.",
+    "Hovedmenyen har snarveier til forsiden og fortolkningen øverst.",
+    "Lukk og Escape på en side går tilbake dit du kom fra. Åpnet du siden fra en lenke, går de til forsiden, aldri ut av appen.",
+    "Escape lukker bare det som ligger øverst, som et nedtrekk eller et vindu, og aldri noe bak det samtidig. I fortolkningssøket tømmer Escape søket, men går ikke videre.",
+    "En adresse appen ikke kjenner, gir siden «Siden finnes ikke» med en knapp til forsiden.",
+    "Lenker og bokmerker til analytter, fagsider og grupper virker som før."
+  ]
+}

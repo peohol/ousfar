@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  FORSIDE,
   FORTOLKNING,
   STOFFREGISTERADRESSE,
   adresse,
@@ -55,8 +56,8 @@ describe('adressene til stoffsidene', () => {
     expect(lesRute('#/stoff/EtG', STOFFREGISTER, OUS_KATALOG)).toEqual({ side: 'stoff', stoff: 'etanol' })
     // En side registeret ikke kjenner (laget i databasen), står med nøkkelen sin.
     expect(lesRute('#/stoff/nytt-stoff', STOFFREGISTER, OUS_KATALOG)).toEqual({ side: 'stoff', stoff: 'nytt-stoff' })
-    expect(lesRute('#/stoff/', STOFFREGISTER, OUS_KATALOG)).toEqual(FORTOLKNING)
-    expect(lesRute('#/stoff/!!!', STOFFREGISTER, OUS_KATALOG)).toEqual(FORTOLKNING)
+    expect(lesRute('#/stoff/', STOFFREGISTER, OUS_KATALOG)).toEqual({ side: 'ukjent', adresse: '#/stoff/' })
+    expect(lesRute('#/stoff/!!!', STOFFREGISTER, OUS_KATALOG)).toEqual({ side: 'ukjent', adresse: '#/stoff/!!!' })
   })
 
   it('leser og skriver redigeringen av en fortolkning, under fortolkningssiden', () => {
@@ -77,12 +78,31 @@ describe('adressene til stoffsidene', () => {
     // Flere ledd enn siden har nivåer gir redigeringen uten sted.
     expect(lesRute('#/fortolkning/diaz-dmi-oxa/rediger/a/b/c', STOFFREGISTER, OUS_KATALOG)).toEqual(rute)
     // Noe annet etter nøkkelen er ingen side.
-    expect(lesRute('#/fortolkning/hbup/annet', STOFFREGISTER, OUS_KATALOG)).toEqual(FORTOLKNING)
+    expect(lesRute('#/fortolkning/hbup/annet', STOFFREGISTER, OUS_KATALOG)).toEqual({ side: 'ukjent', adresse: '#/fortolkning/hbup/annet' })
   })
 
-  it('leser alt annet som fortolkningen', () => {
-    for (const hash of ['', '#', '#/', '#/analytt/', '#/noe/annet', '#element-123', '#/analytt/%E0%A4%A']) {
-      expect(lesRute(hash, STOFFREGISTER, OUS_KATALOG), hash).toEqual(FORTOLKNING)
+  it('åpner på forsiden, også fra et anker som ikke er en side', () => {
+    for (const hash of ['', '#', '#/', '#element-123']) {
+      expect(lesRute(hash, STOFFREGISTER, OUS_KATALOG), hash).toEqual(FORSIDE)
+    }
+    expect(adresse(FORSIDE)).toBe('#/')
+    expect(sidesti(FORSIDE)).toBe('forside')
+  })
+
+  it('har fortolkningssøket på sin egen adresse', () => {
+    expect(lesRute('#/fortolkning', STOFFREGISTER, OUS_KATALOG)).toEqual(FORTOLKNING)
+    expect(lesRute('#/fortolkning/', STOFFREGISTER, OUS_KATALOG)).toEqual(FORTOLKNING)
+    expect(adresse(FORTOLKNING)).toBe('#/fortolkning')
+    expect(fortolkningsrute()).toEqual(FORTOLKNING)
+    expect(sammeRute(FORSIDE, FORTOLKNING)).toBe(false)
+  })
+
+  it('tolker aldri en ukjent adresse som fortolkningen eller forsiden, og lar adressen stå', () => {
+    for (const hash of ['#/analytt/', '#/noe/annet', '#/analytt/%E0%A4%A', '#/grupper/ikke-en-id', '#/fortolkningx']) {
+      const rute = lesRute(hash, STOFFREGISTER, OUS_KATALOG)
+      expect(rute, hash).toEqual({ side: 'ukjent', adresse: hash })
+      expect(adresse(rute), hash).toBe(hash)
+      expect(sidesti(rute), hash).toBe('ukjent')
     }
   })
 })
@@ -128,7 +148,6 @@ describe('søkesiden', () => {
     expect(lesRute(adresse(rute))).toEqual(rute)
     expect(sammeRute(rute, { side: 'sok', q: 'noe annet' })).toBe(false)
     expect(adresse({ side: 'sok', q: '' })).toBe('#/sok')
-    expect(adresse(FORTOLKNING)).toBe('#/')
   })
 })
 

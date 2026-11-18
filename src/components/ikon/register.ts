@@ -1336,6 +1336,15 @@ const REGISTER = {
       G([P('M3.5 8.5h5v-5M15.5 3.5v5h5M20.5 15.5h-5v5M8.5 20.5v-5h-5', 'l', 'i-ink')], 'pop'),
     ],
   },
+  // Forsiden: et hus med dør.
+  hjem: {
+    vb: 24,
+    parts: [
+      P('M5 10.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-8.5L12 4.5z', 'f1', 'accent'),
+      G([R(10, 13.5, 4, 7, 1, 'f2', 'accent2')], 'pop'),
+      P('M3 12l9-8 9 8', 'l'),
+    ],
+  },
   // --- Stoffregisteret og kategoriene (se over REGISTER) ---
   // Et register med faner i kanten.
   stoffregister: {

@@ -31,6 +31,8 @@ import { Sokeside } from './components/sok/Sokeside'
 import { Toppmeny } from './components/toppmeny/Toppmeny'
 import { ToppmenyInnhold, ToppmenyKilde } from './components/toppmeny/Toppmenykilde'
 import { Ikonknapp } from './components/Ikonknapp'
+import { Button } from './components/Button'
+import { Ikon } from './components/ikon/Ikon'
 import { Versjonspille } from './components/Versjonspille'
 import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
 import { Direktelenkekilde } from './components/direktelenker/Direktelenkekilde'
@@ -53,7 +55,9 @@ import { lagFavorittlager } from './favoritter/lagring'
 import { filtrertPool } from './domain/analysemetoder'
 import { erEtgAnalytt, etgTilfeller, type EtgAlternativ, type Etgtilfeller } from './domain/etg'
 import type { Rute } from './domain/flytting'
-import { erRedigering, fortolkningsnokkel, fortolkningsrute, lesRute, redigeringsrute, sidesti } from './domain/rute'
+import { erRedigering, FORSIDE, fortolkningsnokkel, fortolkningsrute, lesRute, redigeringsrute, sidesti } from './domain/rute'
+import { Forside } from './components/forside/Forside'
+import { Ukjentside } from './components/forside/Ukjentside'
 import { rusModulFor } from './domain/rus'
 import { erThcAnalytt } from './domain/thc'
 import { search } from './domain/search'
@@ -352,7 +356,7 @@ function Arbeidsflate({
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
   // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
   const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
-  const [rute, gaaTil] = useRute(apneFraAdressen, adressegrunnlag)
+  const [rute, gaaTil, tilbake] = useRute(apneFraAdressen, adressegrunnlag)
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
   const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
   // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
@@ -454,10 +458,10 @@ function Arbeidsflate({
   }, [rute, redigering.kjent, redigering.lokalt, gaaTil])
 
   // Verktøyene vises bare for dem som skal se dem (`src/verktoy/synlighet.ts`);
-  // for andre er adressen fortolkningen.
+  // for andre er adressen forsiden.
   const visVerktoy = verktoyeneVisesFor(profil.role)
   useEffect(() => {
-    if (rute.side === 'verktoy' && !visVerktoy) gaaTil(fortolkningsrute(), { erstatt: true })
+    if (rute.side === 'verktoy' && !visVerktoy) gaaTil(FORSIDE, { erstatt: true })
   }, [rute, visVerktoy, gaaTil])
 
   // Tilstandsmaskinen trenger alternativene det nye søket gir for å se om det
@@ -556,8 +560,16 @@ function Arbeidsflate({
     [slippBildet],
   )
 
-  /** Tilbake til fortolkningen slik den sto. */
-  const lukkInfoside = useCallback(() => gaaTil(fortolkningsrute(state.analyte?.kode)), [gaaTil, state.analyte])
+  /**
+   * Lukker siden som står: tilbake dit brukeren kom fra i appen, eller til
+   * forsiden når siden ble åpnet direkte (`useRute`, «inngangsveien»).
+   */
+  const lukkInfoside = useCallback(() => tilbake(), [tilbake])
+  /** Fortolkningen slik den sto: analytten som er åpen, ellers søket. */
+  const apneFortolkning = useCallback(() => gaaTil(fortolkningsrute(state.analyte?.kode)), [gaaTil, state.analyte])
+  const tilForsiden = useCallback(() => gaaTil(FORSIDE), [gaaTil])
+  /** Redigeringen av en fortolkning går tilbake dit, eller til fortolkningen når den ble åpnet direkte. */
+  const avsluttRedigering = useCallback(() => tilbake(fortolkningsrute(state.analyte?.kode)), [tilbake, state.analyte])
 
   /**
    * Fortolkningen av en analytt har sin egen adresse (`#/fortolkning/<nøkkel>`),
@@ -870,9 +882,21 @@ function Arbeidsflate({
                           kanPublisere={redigering.publisere}
                           regelsett={redigering.regelsett}
                           onPublisert={reglerPublisert}
-                          onAvslutt={lukkInfoside}
+                          onAvslutt={avsluttRedigering}
                         />
                       </FaginnholdskildeProvider>
+                    </main>
+                  )}
+
+                  {rute.side === 'forside' && (
+                    <main className="scene scene--forside">
+                      <Forside onApneFortolkning={apneFortolkning} />
+                    </main>
+                  )}
+
+                  {rute.side === 'ukjent' && (
+                    <main className="scene scene--forside">
+                      <Ukjentside onTilForsiden={tilForsiden} />
                     </main>
                   )}
 
@@ -961,6 +985,12 @@ function Arbeidsflate({
                     hidden={fortolkningSkjult}
                     data-fortolkning={fortolkningSkjult ? SKJULT_FORTOLKNING : VIST_FORTOLKNING}
                   >
+                    {/* Forsiden er ett klikk unna, men aldri ett Escape unna: søket er siste stopp. */}
+                    {vist === 'search' && (
+                      <Button variant="subtle" className="fortolkning__forsiden" icon={<Ikon navn="back" />} onClick={tilForsiden}>
+                        Til forsiden
+                      </Button>
+                    )}
                     {vist === 'search' && (
                       <SearchStep
                         query={state.query}
@@ -970,6 +1000,7 @@ function Arbeidsflate({
                         onQueryChange={setQuery}
                         onSelect={velgAnalytt}
                         onReset={reset}
+                        synlig={!fortolkningSkjult}
                       />
                     )}
 

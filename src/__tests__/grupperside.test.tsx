@@ -124,7 +124,7 @@ describe('adressene', () => {
   it('leser og skriver oversikten og én gruppe, og bare med en gyldig ID', () => {
     expect(lesRute('#/grupper')).toEqual({ side: 'grupper' })
     expect(lesRute(`#/grupper/${ID.toUpperCase()}/`)).toEqual({ side: 'grupper', gruppe: ID })
-    expect(lesRute('#/grupper/ikke-en-id')).toEqual({ side: 'fortolkning' })
+    expect(lesRute('#/grupper/ikke-en-id').side).toBe('ukjent')
     expect(adresse({ side: 'grupper', gruppe: ID })).toBe(`#/grupper/${ID}`)
     expect(sidesti({ side: 'grupper' })).toBe('grupper')
     expect(sidesti({ side: 'grupper', gruppe: ID })).toBe(`grupper/${ID}`)
@@ -134,8 +134,8 @@ describe('adressene', () => {
     expect(lesRute(`#/grupper/${ID}/ideer`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'ideer' })
     expect(lesRute(`#/grupper/${ID}/IDEER/${ANNEN.toUpperCase()}`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'ideer', element: ANNEN })
     expect(lesRute(`#/grupper/${ID}/oppgaver/${ANNEN}/`)).toEqual({ side: 'grupper', gruppe: ID, fane: 'oppgaver', element: ANNEN })
-    expect(lesRute(`#/grupper/${ID}/noe-annet`)).toEqual({ side: 'fortolkning' })
-    expect(lesRute(`#/grupper/${ID}/ideer/ikke-en-id`)).toEqual({ side: 'fortolkning' })
+    expect(lesRute(`#/grupper/${ID}/noe-annet`).side).toBe('ukjent')
+    expect(lesRute(`#/grupper/${ID}/ideer/ikke-en-id`).side).toBe('ukjent')
     expect(adresse({ side: 'grupper', gruppe: ID, fane: 'ideer', element: ANNEN })).toBe(`#/grupper/${ID}/ideer/${ANNEN}`)
     expect(adresse({ side: 'grupper', gruppe: ID, fane: 'oppgaver' })).toBe(`#/grupper/${ID}/oppgaver`)
     // Fanene er samme side: diskusjonene i gruppen står, og siden lastes ikke på nytt.

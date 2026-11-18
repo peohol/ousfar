@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useEscapelag } from '../../hooks/lagstakk'
 import { useSkjuling } from '../../hooks/useSkjuling'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
@@ -49,25 +50,19 @@ export function Nedtrekksmeny({ knapp: knappProps, etikett, lag, className, onAp
     if (apen) meny.current?.querySelector<HTMLElement>('button')?.focus()
   }, [apen])
 
+  // Escape lukker menyen og gir fokus til knappen, gjennom lagstakken.
+  useEscapelag(apen, lukkMedFokus, rot)
+
   useEffect(() => {
     if (!apen) return
-    const paaTast = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      event.preventDefault()
-      lukk()
-    }
     // Et trykk utenfor lukker uten å flytte fokus: det går dit brukeren trykket.
     const paaTrykk = (event: PointerEvent) => {
       const mal = event.target as Node
       if (meny.current?.contains(mal) || knapp.current?.contains(mal)) return
       lukk(false)
     }
-    window.addEventListener('keydown', paaTast)
     window.addEventListener('pointerdown', paaTrykk)
-    return () => {
-      window.removeEventListener('keydown', paaTast)
-      window.removeEventListener('pointerdown', paaTrykk)
-    }
+    return () => window.removeEventListener('pointerdown', paaTrykk)
   }, [apen, lukk])
 
   return (

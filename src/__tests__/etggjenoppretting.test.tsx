@@ -55,7 +55,8 @@ beforeAll(() => {
 
 beforeEach(() => {
   regler.svar = 'klar'
-  window.location.hash = ''
+  // Testene begynner i fortolkningssøket; appen åpner på forsiden.
+  window.location.hash = '#/fortolkning'
 })
 
 afterEach(() => {

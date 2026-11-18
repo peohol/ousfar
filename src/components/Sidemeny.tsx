@@ -5,10 +5,11 @@ import { Shortcut } from './Shortcut'
 import { Ikon } from './ikon/Ikon'
 import { kategoriikon } from './ikon/register'
 import { useTips } from './Tips'
-import { STOFFREGISTERADRESSE, stoffadresse, verktoyadresse } from '../domain/rute'
+import { FORSIDEADRESSE, FORTOLKNINGSADRESSE, STOFFREGISTERADRESSE, lesRute, stoffadresse, verktoyadresse } from '../domain/rute'
 import { useFavoritter, type Favoritter } from '../favoritter/Favorittkilde'
 import type { Registerkategori, Registerstoff, Stoffregister } from '../domain/stoffregister'
 import { fokusIFagsok, lagLiggerOver } from '../hooks/useKeyboard'
+import { useEscapelag } from '../hooks/lagstakk'
 import { rullefart } from '../hooks/useKortHopp'
 import { useTrykkUtenfor } from '../hooks/useTrykkUtenfor'
 import { VERKTOY } from '../verktoy/register'
@@ -53,6 +54,12 @@ const MENY_SNARVEI = 'Ctrl + M'
 
 /** Navnet på menyen for skjermlesere. */
 const TITTEL = 'Meny'
+
+/** Snarveiene øverst i menyen, over fanene. */
+const SNARVEIER = [
+  { adresse: FORSIDEADRESSE, side: 'forside', navn: 'Forsiden', ikon: 'hjem' },
+  { adresse: FORTOLKNINGSADRESSE, side: 'fortolkning', navn: 'Fortolkning', ikon: 'interp' },
+] as const
 
 /** Fanene i menyen, i rekkefølgen de står. */
 const FANER = [
@@ -150,10 +157,11 @@ export function Sidemeny({ register }: SidemenyProps) {
     return () => window.removeEventListener('keydown', paaTast)
   }, [apen, apne, lukk])
 
+  // Escape lukker menyen, gjennom lagstakken: et dialogvindu åpnet fra menyen
+  // lukkes først, og siden bak får aldri det samme trykket.
+  useEscapelag(apen, lukk, panel)
+
   /**
-   * Escape lukker menyen. Appens egen Esc ligger stille så lenge laget står
-   * over den, så de to kan ikke utløses av det samme tastetrykket.
-   *
    * Tabulator går rundt i panelet så lenge menyen står åpen. Menyknappen
    * ligger skjult bak panelet, og appen bak er mørklagt: fokus skal ikke kunne
    * havne på noe man ikke ser.
@@ -161,11 +169,6 @@ export function Sidemeny({ register }: SidemenyProps) {
   useEffect(() => {
     if (!apen) return
     function paaTast(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        lukk()
-        return
-      }
       if (event.key !== 'Tab') return
 
       const felter = naabare(panel.current)
@@ -235,6 +238,23 @@ export function Sidemeny({ register }: SidemenyProps) {
         data-apen={apen ? 'ja' : 'nei'}
         tabIndex={-1}
       >
+        {/* Forsiden og fortolkningen er én handling unna fra hvor som helst. */}
+        <ul className="menysnarveier">
+          {SNARVEIER.map((s) => (
+            <li key={s.adresse}>
+              <a
+                className="menysnarveier__lenke"
+                href={s.adresse}
+                aria-current={apen && lesRute(window.location.hash).side === s.side ? 'page' : undefined}
+                onClick={velg}
+              >
+                <Ikon navn={s.ikon} storrelse="ui" />
+                {s.navn}
+              </a>
+            </li>
+          ))}
+        </ul>
+
         <div className="sidemeny__topp">
           <Fanevalg faner={faner} fane={fane} panelId={panelId} onVelg={setFane} />
           <button

@@ -475,3 +475,38 @@
   line-height: var(--linjehoyde-lesing);
   color: var(--blekk-dempet);
 }
+
+/* --- Snarveiene ----------------------------------------------------------------
+   Forsiden og fortolkningen, øverst over fanene, så de alltid er én handling
+   unna. */
+.menysnarveier {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  margin: 0;
+  padding: var(--rom-4) var(--rom-4) var(--rom-3);
+  list-style: none;
+}
+
+.menysnarveier__lenke {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+  padding: var(--rom-3) var(--rom-4);
+  border-radius: var(--runding-knapp);
+  color: var(--blekk);
+  font-weight: var(--vekt-halvfet);
+  text-decoration: none;
+}
+
+.menysnarveier__lenke:hover,
+.menysnarveier__lenke:focus-visible {
+  background: var(--flate-hevet);
+  color: var(--aksent);
+}
+
+/* Siden brukeren står på. */
+.menysnarveier__lenke[aria-current='page'] {
+  color: var(--aksent);
+}

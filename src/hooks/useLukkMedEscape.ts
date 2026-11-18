@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react'
 import { lagLiggerOver, skrivesIFelt } from './useKeyboard'
 
 /**
- * `Escape` lukker siden som står over fortolkningen — stoffsiden eller
- * søkesiden — men ikke fra et felt, et åpent redigeringsskjema eller et lag
- * over den. En annen lytter som alt har brukt tasten, går foran.
+ * `Escape` lukker siden — en fagside, søkesiden, en gruppe — og går dit
+ * brukeren kom fra (`useRute`, «inngangsveien»), men ikke fra et felt, et åpent
+ * redigeringsskjema eller et lag over siden (`lagstakk.ts`). En annen lytter
+ * som alt har brukt tasten, går foran.
  */
 export function useLukkMedEscape(onLukk: () => void) {
   const lukk = useRef(onLukk)
