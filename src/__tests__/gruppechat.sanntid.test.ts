@@ -332,6 +332,11 @@ describe('tap av tilgang mens chatten er åpen (kriterium 4 i klienten)', () => 
     await vent()
     expect(k.hent().status).toBe('ingen_tilgang')
     expect(k.hent().meldinger).toEqual([])
+    // Bjella og samtalelista i chatmenyen henter på nytt, én gang.
+    expect(server.kall.varslerEndret).toBe(1)
+    vi.advanceTimersByTime(LIVSTEGN_MS * 3)
+    await vent()
+    expect(server.kall.varslerEndret).toBe(1)
   })
 
   it('livstegnet oppdager det: meldingene tømmes og abonnementet stopper', async () => {

@@ -2,10 +2,15 @@
  * `useGruppechat(gruppe)`: det chatvisningen trenger (`Gruppechat` i
  * `modell.ts`), med sanntid, gjenoppkobling og livstegn
  * (docs/gruppechat.md, «Sanntiden»). Logikken står i `kontroller.ts`; her
- * kobles den til React. Byttes gruppen eller forsvinner visningen, stoppes
- * abonnementet og livstegnet.
+ * kobles den til React.
+ *
+ * Alle visninger av samme gruppe deler én kontroller: chatmenyen, `#/chat`
+ * og chatfanen på gruppesiden viser den samme samtalen, med de samme
+ * meldingene, ventende meldingene og lest-merkingen, ikke hver sin kopi.
+ * Kontrolleren startes av den første visningen og stoppes (abonnement og
+ * livstegn) når den siste forsvinner.
  */
-import { useEffect, useMemo, useSyncExternalStore } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { oppfriskVarsler } from '../varsler/api'
 import {
   endreGruppemelding,
@@ -15,9 +20,10 @@ import {
   sendGruppemelding,
   slettGruppemelding,
 } from './api'
-import { lagChatkontroller, type Chatavhengigheter } from './kontroller'
+import { lagChatkontroller, type Chatavhengigheter, type Chatkontroller } from './kontroller'
 import type { Gruppechat } from './modell'
 import { abonnerPaGruppechat } from './sanntid'
+import { oppfriskSamtaler } from './samtaler'
 
 const AVHENGIGHETER: Chatavhengigheter = {
   lesGruppechat,
@@ -28,14 +34,47 @@ const AVHENGIGHETER: Chatavhengigheter = {
   merkGruppechatLest,
   abonner: abonnerPaGruppechat,
   nyKlientId: () => crypto.randomUUID(),
-  varslerEndret: oppfriskVarsler,
+  varslerEndret: () => {
+    oppfriskVarsler()
+    oppfriskSamtaler()
+  },
+}
+
+interface Delt {
+  kontroller: Chatkontroller
+  brukere: number
+}
+
+/** Kontrollerne som er i bruk, etter gruppen. */
+const delte = new Map<string, Delt>()
+
+/** Kontrolleren for gruppen, den samme for alle visningene som står samtidig. */
+function kontrollerFor(gruppe: string): Delt {
+  let delt = delte.get(gruppe)
+  if (!delt) {
+    delt = { kontroller: lagChatkontroller(gruppe, AVHENGIGHETER), brukere: 0 }
+    delte.set(gruppe, delt)
+  }
+  return delt
 }
 
 export function useGruppechat(gruppe: string): Gruppechat {
-  const kontroller = useMemo(() => lagChatkontroller(gruppe, AVHENGIGHETER), [gruppe])
+  const { kontroller } = kontrollerFor(gruppe)
   useEffect(() => {
-    kontroller.start()
-    return kontroller.stopp
-  }, [kontroller])
+    const delt = kontrollerFor(gruppe)
+    delt.brukere += 1
+    if (delt.brukere === 1) delt.kontroller.start()
+    return () => {
+      delt.brukere -= 1
+      if (delt.brukere > 0) return
+      delt.kontroller.stopp()
+      // Glemmes når ingen har tatt den i bruk igjen innen samme runde (React tar
+      // effektene ned og opp igjen i utviklingsmodus), så meldingene ikke blir
+      // liggende i minnet.
+      queueMicrotask(() => {
+        if (delt.brukere === 0 && delte.get(gruppe) === delt) delte.delete(gruppe)
+      })
+    }
+  }, [gruppe])
   return useSyncExternalStore(kontroller.lytt, kontroller.hent)
 }

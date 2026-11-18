@@ -20,8 +20,12 @@ export interface Dorklokkevalg {
   vedStatus: (status: Kanalstatus) => void
 }
 
-/** Starter abonnementet og gir tilbake funksjonen som stopper det. */
-export type Abonner = (gruppe: string, valg: Dorklokkevalg) => () => void
+/**
+ * Starter abonnementet og gir tilbake funksjonen som stopper det. Med
+ * `gruppe` lik `null` ringer den for alle gruppene den innloggede leser
+ * chatten i (samtalelista i chatmenyen); radsikkerheten avgjør hvilke.
+ */
+export type Abonner = (gruppe: string | null, valg: Dorklokkevalg) => () => void
 
 /** Ventetiden før en kanal som er lukket av tjenesten, åpnes på nytt: 1, 2, 4 … høyst 30 sekunder. */
 export function ventetid(forsok: number): number {
@@ -52,8 +56,8 @@ export const lagAbonner = (klient: () => SupabaseClient): Abonner => (gruppe, { 
     if (stoppet) return
     lopenr += 1
     const denne: RealtimeChannel = klient()
-      .channel(`gruppechat:${gruppe}:${lopenr}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gruppechatter', filter: `gruppe_id=eq.${gruppe}` }, (hendelse) => {
+      .channel(`gruppechat:${gruppe ?? 'alle'}:${lopenr}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gruppechatter', ...(gruppe ? { event: 'UPDATE', filter: `gruppe_id=eq.${gruppe}` } : {}) }, (hendelse) => {
         if (stoppet || kanal !== denne) return
         const ny = (hendelse as { new?: unknown }).new
         vedRinging(erObjekt(ny) && ny.siste_endring != null ? tall(ny.siste_endring) : null)

@@ -1,0 +1,652 @@
+/**
+ * Chatmenyen (`src/components/chat/`): gruppene og samtalene langs venstre
+ * kant, og den samme chatten som helside på `#/chat` (D0-designet, skisse
+ * 14–16 og 25). Selve samtalen er gruppechatten (`gruppechat.css`).
+ *
+ * Menyen speiler diskusjonsmenyen i høyre kant (`diskusjoner.css`): lukket en
+ * rund boble under toppmenyen, åpen et panel som resten av appen gir plass
+ * til (`data-chatmeny` på rotelementet, `--chatplass`). Panelet kan dras
+ * bredere i høyre kant; bredden brukeren har valgt, står i `--chatbredde`, og
+ * holdes her mellom `--chatpanel-minst` og en bredde som lar siden beholde
+ * `--lesebredde-minst`. På smale flater fyller menyen skjermen, og inngangen
+ * er chatknappen i toppmenyen.
+ *
+ * Mens hovedmenyen står åpen, er menyen parkert: skjult, men med alt bevart.
+ *
+ * Grensen for smal flate (47,5em ≈ 760 px) står i hver media query; CSS kan
+ * ikke lese den fra et token.
+ */
+
+:root {
+  --chatboble: var(--hoyde-toppmeny);
+  --chatkant: var(--rom-5);
+  --chatpanel-minst: 20rem;
+  --chatpanel-standard: 24rem;
+  --chatpanel-mest: max(var(--chatpanel-minst), min(40rem, 100vw - var(--lesebredde-minst)));
+  --chatpanel: min(
+    clamp(var(--chatpanel-minst), var(--chatbredde, var(--chatpanel-standard)), var(--chatpanel-mest)),
+    100vw - 2 * var(--rom-side)
+  );
+  /* Lista og samtalen side om side på helsiden. */
+  --chathelside: 76rem;
+  --chathelside-liste: 22rem;
+  /* Bredden menyen tar langs venstre kant; alt som plasseres etter innholdet, regner med den. */
+  --chatplass: 0px;
+}
+
+@media (width > 47.5em) {
+  :root[data-chatmeny='lukket'] {
+    --chatplass: calc(var(--chatboble) + var(--chatkant));
+  }
+
+  :root[data-chatmeny='apen'] {
+    --chatplass: calc(var(--chatpanel) + var(--chatkant));
+  }
+
+  .app {
+    padding-left: var(--chatplass);
+  }
+}
+
+/* --- Menyen ------------------------------------------------------------------ */
+
+.chatmeny {
+  position: fixed;
+  top: var(--toppmeny-offset);
+  left: var(--chatkant);
+  z-index: var(--lag-innhold);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.chatmeny[data-apen] {
+  bottom: var(--diskusjonsbunn, var(--rom-5));
+  width: var(--chatpanel);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+  transform-origin: top left;
+  animation: chatmeny-inn var(--fart-glid) var(--kurve);
+}
+
+@keyframes chatmeny-inn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* Hovedmenyen har forrang: chatmenyen parkeres mens den står åpen. */
+:root:has([data-lag='meny']) .chatmeny:not([data-helside]) {
+  visibility: hidden;
+}
+
+.chatknapp {
+  position: relative;
+  display: none;
+  flex: none;
+}
+
+/* Merket på chatknappen, som bjellas, men blått: noe nytt, ikke en advarsel. */
+.nyttmerke--knapp {
+  position: absolute;
+  top: calc(-1 * var(--rom-1));
+  right: calc(-1 * var(--rom-1));
+  pointer-events: none;
+  box-shadow: 0 0 0 2px var(--flate);
+}
+
+@media (max-width: 47.5em) {
+  .chatknapp {
+    display: inline-flex;
+  }
+
+  /* Med `.chatmeny` foran, så de vanlige reglene lenger ned ikke vinner. */
+  .chatmeny .chatboble,
+  .chatmeny > .kanthandtak,
+  .chatmeny .chatpanel__utvid {
+    display: none;
+  }
+
+  /* Smalt: hele skjermen, og bare når den er bedt om (eller er helsiden). */
+  .chatmeny,
+  .chatmeny[data-apen] {
+    inset: 0;
+    z-index: var(--lag-popover);
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    visibility: hidden;
+    animation: none;
+  }
+
+  .chatmeny[data-mobil],
+  .chatmeny[data-helside] {
+    visibility: visible;
+  }
+
+  .chatmeny[data-helside] {
+    inset: var(--toppmeny-offset) 0 0;
+  }
+}
+
+/* Helsiden: under toppmenyen, over hele bredden, med lista og samtalen side om side. */
+.chatmeny[data-helside] {
+  inset: var(--toppmeny-offset) 0 0;
+  z-index: var(--lag-innhold);
+  width: auto;
+  padding: 0 var(--rom-side) var(--rom-5);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  animation: none;
+}
+
+:root:has(.chatmeny[data-helside]) {
+  overflow: hidden;
+}
+
+/* --- Boblen -------------------------------------------------------------------- */
+
+.chatboble {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--chatboble);
+  height: var(--chatboble);
+  padding: 0;
+  color: var(--blekk);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-pille);
+  box-shadow: var(--skygge-toppmeny);
+  cursor: pointer;
+  transition: background-color var(--fart-rask) var(--kurve);
+}
+
+.chatboble:is(:hover, :focus-visible) {
+  background: var(--flate-hevet);
+}
+
+.chatboble[hidden] {
+  display: none;
+}
+
+/* På kanten av boblen, øverst til høyre, som diskusjonsboblens. */
+.chatboble .nyttmerke--boble {
+  top: calc(-1 * var(--rom-1));
+  right: calc(-1 * var(--rom-1));
+}
+
+/* --- Panelet -------------------------------------------------------------------- */
+
+.chatpanel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chatpanel__topp {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--rom-2);
+  padding: var(--rom-4) var(--rom-4) var(--rom-2) var(--rom-6);
+}
+
+.chatpanel__tittel {
+  flex: 1;
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+.chatmeny[data-helside] .chatpanel__topp {
+  width: min(100%, var(--chathelside));
+  margin-inline: auto;
+  padding: var(--rom-4) 0 var(--rom-6);
+}
+
+.chatmeny[data-helside] .chatpanel__tittel {
+  font-size: var(--tekst-tittel, 1.75rem);
+}
+
+.chatpanel__knapp {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--hoyde-liten);
+  height: var(--hoyde-liten);
+  padding: 0;
+  color: var(--blekk);
+  background: transparent;
+  border: var(--kant) solid transparent;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+  transition: background-color var(--fart-rask) var(--kurve);
+}
+
+.chatpanel__knapp:hover,
+.chatpanel__gjenopprett:hover {
+  background: var(--flate-hevet);
+}
+
+.chatpanel__gjenopprett {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-4);
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+}
+
+.chatpanel__tom,
+.chatpanel__velg {
+  margin: 0;
+  padding: var(--rom-8) var(--rom-4);
+  font-size: var(--tekst-ui);
+  font-style: italic;
+  text-align: center;
+  color: var(--blekk-dempet);
+}
+
+/* Innholdet: oversikten eller samtalen i menyen; begge side om side på helsiden. */
+.chatpanel__innhold {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chatpanel__oversikt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--rom-4);
+  min-height: 0;
+  padding: 0 var(--rom-4) var(--rom-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chatpanel__oversikt[hidden] {
+  display: none;
+}
+
+.chatmeny[data-helside] .chatpanel__innhold {
+  display: grid;
+  grid-template-columns: minmax(16rem, var(--chathelside-liste)) minmax(0, 1fr);
+  gap: var(--rom-6);
+  width: min(100%, var(--chathelside));
+  margin-inline: auto;
+}
+
+.chatmeny[data-helside] :is(.chatpanel__oversikt, .chatsamtale, .chatpanel__velg) {
+  min-height: 0;
+  padding: var(--rom-4);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+}
+
+@media (max-width: 47.5em) {
+  /* Helsiden smalt: én kolonne, lista eller samtalen. */
+  .chatmeny[data-helside] .chatpanel__innhold {
+    display: flex;
+  }
+
+  .chatmeny[data-helside][data-samtale] .chatpanel__oversikt,
+  .chatmeny[data-helside]:not([data-samtale]) .chatpanel__velg {
+    display: none;
+  }
+}
+
+/* --- Mine grupper --------------------------------------------------------------- */
+
+.chatgrupper {
+  padding-bottom: var(--rom-4);
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.chatgrupper__hode {
+  margin: 0;
+  font: inherit;
+}
+
+.chatgrupper__veksle {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+  width: 100%;
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-2);
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-style: italic;
+  color: var(--blekk-dempet);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-kort);
+  cursor: pointer;
+}
+
+.chatgrupper__veksle:hover {
+  background: var(--flate-hevet);
+}
+
+.chatgrupper__pil {
+  transform: rotate(90deg);
+  transition: transform var(--fart-rask) var(--kurve);
+}
+
+.chatgrupper__veksle[aria-expanded='false'] .chatgrupper__pil {
+  transform: none;
+}
+
+.chatgrupper__tittel {
+  flex: 1;
+  text-align: left;
+}
+
+.chatgrupper__antall {
+  font-variant-numeric: tabular-nums;
+}
+
+.chatgrupper__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chatgrupper__lenke,
+.chatgrupper__alle {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-3);
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  text-decoration: none;
+  border-radius: var(--runding-kort);
+}
+
+.chatgrupper__lenke:hover,
+.chatgrupper__alle:hover {
+  background: var(--flate-hevet);
+}
+
+.chatgrupper__navn {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chatgrupper__hvor {
+  flex: none;
+  max-width: 45%;
+  overflow: hidden;
+  font-size: var(--tekst-liten);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--blekk-dempet);
+}
+
+.chatgrupper__alle {
+  justify-content: space-between;
+  color: var(--aksent);
+}
+
+/* --- Samtalene ------------------------------------------------------------------ */
+
+.chatsamtaler {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.chatsamtaler__tittel {
+  margin: 0;
+  padding: 0 var(--rom-2);
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-style: italic;
+  font-weight: var(--vekt-normal, 400);
+  color: var(--blekk-dempet);
+}
+
+.chatsamtaler__sok {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+  padding: 0 var(--rom-4);
+  color: var(--blekk-dempet);
+  background: var(--flate-hevet);
+  border: var(--kant) solid transparent;
+  border-radius: var(--runding-pille);
+}
+
+.chatsamtaler__sok:focus-within {
+  border-color: var(--aksent);
+}
+
+.chatsamtaler__sokefelt {
+  flex: 1;
+  min-width: 0;
+  height: var(--hoyde-liten);
+  padding: 0;
+  font: inherit;
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.chatsamtaler__tom {
+  margin: 0;
+  padding: var(--rom-4) var(--rom-2);
+  font-size: var(--tekst-ui);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+.chatsamtaler__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chatrad__knapp {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rom-3);
+  width: 100%;
+  padding: var(--rom-2) var(--rom-3);
+  font: inherit;
+  text-align: left;
+  color: var(--blekk);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-kort);
+  cursor: pointer;
+}
+
+.chatrad__knapp:hover,
+.chatrad__knapp[aria-current='true'] {
+  background: var(--flate-hevet);
+}
+
+.chatrad__bilde {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--blekk-dempet);
+  background: var(--flate-hevet);
+  border-radius: 50%;
+}
+
+.chatrad__tekst {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chatrad__navn {
+  overflow: hidden;
+  font-size: var(--tekst-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chatrad[data-ulest] .chatrad__navn {
+  font-weight: var(--vekt-halvfet);
+}
+
+.chatrad__art {
+  overflow: hidden;
+  font-size: var(--tekst-liten);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--blekk-dempet);
+}
+
+.chatrad__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--rom-1);
+  font-size: var(--tekst-liten);
+  font-variant-numeric: tabular-nums;
+  color: var(--blekk-dempet);
+}
+
+.chatrad__uleste {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 var(--rom-1);
+  font-size: var(--tekst-merke);
+  font-weight: var(--vekt-fet);
+  line-height: 1;
+  color: var(--flate);
+  background: var(--aksent);
+  border-radius: var(--runding-pille);
+}
+
+/* --- Samtalen ------------------------------------------------------------------- */
+
+.chatsamtale {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--rom-3);
+  min-height: 0;
+  padding: 0 var(--rom-4) var(--rom-4);
+}
+
+.chatsamtale__tilbake {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--rom-1);
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-3) 0 var(--rom-1);
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+}
+
+.chatsamtale__tilbake:hover {
+  color: var(--blekk);
+  background: var(--flate-hevet);
+}
+
+.chatsamtale__tilbake .ikon {
+  transform: rotate(180deg);
+}
+
+/* Helsiden har lista ved siden av samtalen; i én kolonne (smalt) trengs knappen. */
+@media not all and (max-width: 47.5em) {
+  .chatmeny[data-helside] .chatsamtale__tilbake {
+    display: none;
+  }
+}
+
+.chatsamtale__hode {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--rom-3);
+  padding-bottom: var(--rom-3);
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.chatsamtale__navn {
+  flex: 1;
+  min-width: 0;
+}
+
+.chatsamtale__tittel {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chatsamtale__art {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.chatsamtale__gruppen {
+  flex: none;
+  font-size: var(--tekst-ui);
+  color: var(--aksent);
+}
+
+/* Gruppechatten fyller samtalen: lista ruller, skrivefeltet står under. */
+.chatsamtale .gruppechat {
+  flex: 1;
+  min-height: 0;
+  gap: var(--rom-3);
+}
+
+.chatsamtale .gruppechat__ramme {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chatsamtale .chatlogg {
+  flex: 1;
+  block-size: auto;
+  min-height: 8rem;
+}

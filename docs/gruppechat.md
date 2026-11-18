@@ -400,6 +400,58 @@ prøvd i `src/__tests__/gruppechatvisning.test.tsx`):
 - Uten tilgang tømmes skjermen for meldinger og skrivefelt. Den som kan
   lese, men ikke skrive (`kanSkrive` usann), får lista uten skrivefelt.
 
+## Chatmenyen (D4a)
+
+Chatten har fått en fast inngang i hele appen, etter D0-designet
+(`docs/design/d0-dashboard-chat/`, skisse 14–16 og 25) og planen §6.1 og §6.3.
+Fanen på gruppesiden og chatvarslene i bjella står til D4b.
+
+- **Inngangen.** På brede flater en rund boble i venstre kant under
+  toppmenyen, speilet av diskusjonsboblen i høyre, med tallet på uleste. På
+  smale flater chatknappen i toppmenyen, foran bjella. Begge står bare når
+  chatten er slått på (`mine_grupper().chat_aktivert`), og tallet er summen av
+  uleste i samtalelista, uten tekstutdrag.
+- **Menyen** (`src/components/chat/Chatmeny.tsx`) er et panel langs venstre
+  kant, 24rem bredt, som kan dras mellom 20rem og `min(40rem, 100vw − 45rem)`,
+  også med piltastene (`Kanthandtak`, `useDrattLengde`). Om den står åpen og
+  hvor bred den er, følger brukeren (`chat.apen`, `chat.bredde` i
+  brukerinnstillingene), som diskusjonsmenyen. Øverst trekkspillet «Mine
+  grupper» med lenker til gruppesidene og «Alle grupper», så «Samtaler»: én
+  liste, nyeste aktivitet først, med søk. En valgt samtale vises i panelet med
+  «Til alle samtaler» tilbake. På smale flater fyller menyen skjermen.
+- **Samtalelista** kommer fra `mine_gruppesamtaler()`: gruppene den innloggede
+  selv er aktivt medlem av, med tidspunktet for den nyeste meldingen og tallet
+  på uleste (det samme som `chat_uleste`), uten tekst og avsendere. En
+  systemarkitekt som ikke er med i en gruppe, får den ikke i lista; chatten
+  der nås fra gruppesiden som før. En arkivert gruppe står ikke i lista. Lista
+  hentes jevnlig, når fanen blir synlig, når dørklokken ringer i en av gruppene
+  (én kanal på `gruppechatter` uten filter; radsikkerheten avgjør hvilke),
+  når meldinger er merket lest, og med en gang en åpen samtale mister
+  tilgangen (livstegnet). Da hentes også «Mine grupper» på nytt.
+- **Helsiden** `#/chat` og `#/chat/gruppe/<ID>` er den samme komponenten
+  utvidet, med lista og samtalen side om side (én kolonne på smale flater).
+  «Utvid» går dit; «Gjenopprett» og Escape går tilbake dit brukeren kom fra
+  (`tilbake`, ellers forsiden), med menyen åpen på samme samtale. Å velge en
+  annen samtale der bytter adressen uten ny oppføring i historikken.
+- **Samme samtale overalt.** Alle visningene av en gruppe deler én kontroller
+  (`useGruppechat`): menyen, helsiden og fanen på gruppesiden viser de samme
+  meldingene og ventende meldingene, med ett abonnement. Utkastene følger
+  brukeren og gruppen (`Gruppechatskriving`), så det som er skrevet i menyen,
+  står på helsiden og omvendt.
+- **Lest.** Å åpne menyen merker ingenting lest. En samtale merkes lest av
+  `Gruppechat` når den vises, vinduet er synlig, bunnen er nådd og chatten
+  ikke står skjult (parkert bak hovedmenyen).
+- **Lag og Escape** (flyt.md §3–4, `useEscapelag`): på helsiden gjenoppretter
+  Escape. I menyen på brede flater slipper Escape fokus og lar menyen stå; på
+  smale lukker den. Hovedmenyen parkerer menyen (den skjules med alt bevart).
+  Chatmenyen og diskusjonsmenyen står åpne samtidig bare når siden mellom dem
+  får minst `--lesebredde-minst` (45rem); ellers vinner den som ble åpnet sist
+  (`useKantmeny`).
+- **Fra andre steder.** `visGruppesamtale(gruppe)` (`chatstyring.ts`) åpner
+  menyen på en gruppechat, til «Åpne chat» på gruppesiden.
+- **Ikke ennå.** «Ny chat» og bryterne for direktemeldinger og aktiv status
+  kommer med direktemeldingene (D5) og vises ikke før det.
+
 ## Grunnmuren (P7.0)
 
 `supabase/migrations/20261117125500_p7_grunnmur.sql`, prøvd i

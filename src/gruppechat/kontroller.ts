@@ -41,7 +41,10 @@ export interface Chatavhengigheter {
   merkGruppechatLest: (gruppe: string, tilNr: number) => Promise<void>
   abonner: Abonner
   nyKlientId: () => string
-  /** Lest-merkingen har endret varslene; bjella henter dem på nytt. */
+  /**
+   * Varslene og samtalelista kan ha endret seg (meldinger merket lest, eller
+   * tilgangen er borte); bjella og chatmenyen henter dem på nytt.
+   */
   varslerEndret: () => void
 }
 
@@ -120,8 +123,10 @@ export function lagChatkontroller(gruppe: string, avh: Chatavhengigheter): Chatk
   }
 
   const stengUte = (feil: unknown) => {
+    const forste = t.status !== 'ingen_tilgang'
     sett({ ...TOM_MELDINGSTILSTAND, status: 'ingen_tilgang', feil: feiltekst(feil), henterEldre: false, kanSkrive: false, kanModerere: false })
     frigjor()
+    if (forste) avh.varslerEndret()
   }
   /** `true` når feilen stengte chatten. */
   const hvisUtestengt = (feil: unknown): boolean => {

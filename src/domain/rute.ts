@@ -88,6 +88,13 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *   #/grupper/<gruppe-ID>/oppgaver/<oppgave-ID>
  *   #/grupper/<gruppe-ID>/chat
  *
+ * Chatten har en helside med samtalene og den valgte samtalen side om side
+ * (D4a, docs/gruppechat.md, «Chatmenyen»). Den er den samme chatten som i
+ * chatmenyen, bare utvidet:
+ *
+ *   #/chat
+ *   #/chat/gruppe/<gruppe-ID>
+ *
  * Endringsforslagene (P5, docs/redaktorer-og-forslag.md) har «Mine forslag»,
  * fanen med forslagene til behandling, og hvert forslag sin side etter ID-en:
  *
@@ -157,12 +164,27 @@ export type Rute =
       element?: string
     }
   | {
+      side: 'chat'
+      /** Samtalen som er valgt. Utelatt på oversikten. */
+      samtale?: Samtalenokkel
+    }
+  | {
       side: 'forslag'
       /** ID-en til ett forslag. Utelatt på oversikten. */
       forslag?: string
       /** Fanen på oversikten: «Til behandling». Utelatt for «Mine forslag». */
       fane?: Forslagsfane
     }
+
+/** Slagene samtaler i chatten, slik de står i adressen. Direktemeldinger kommer i D5. */
+export const SAMTALETYPER = ['gruppe'] as const
+export type Samtaletype = (typeof SAMTALETYPER)[number]
+
+/** Én samtale i chatten: slaget og ID-en (for en gruppechat gruppens). */
+export interface Samtalenokkel {
+  type: Samtaletype
+  id: string
+}
 
 /** Fanene på forslagsoversikten utenom «Mine forslag». */
 export type Forslagsfane = 'behandling'
@@ -245,6 +267,16 @@ export type Gruppefane = (typeof GRUPPEFANER)[number]
 
 const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID})(?:\\/(${GRUPPEFANER.join('|')})(?:\\/(${ID}))?)?)?\\/?$`, 'i')
 
+const CHAT = new RegExp(`^#\\/chat(?:\\/(${SAMTALETYPER.join('|')})\\/(${ID}))?\\/?$`, 'i')
+
+/** Adressen til helsiden for chatten. */
+export const CHATADRESSE = '#/chat'
+
+/** Adressen til helsiden for chatten, med samtalen som er valgt. */
+export function chatadresse(samtale?: Samtalenokkel | null): string {
+  return samtale ? `${CHATADRESSE}/${samtale.type}/${samtale.id}` : CHATADRESSE
+}
+
 /** Leddet i adressen til fanen «Til behandling». */
 const TIL_BEHANDLING = 'til-behandling'
 
@@ -289,6 +321,11 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
       ...(fane ? { fane: fane.toLowerCase() as Gruppefane } : {}),
       ...(fane && element ? { element: element.toLowerCase() } : {}),
     }
+  }
+  const chat = CHAT.exec(hash)
+  if (chat) {
+    const [, type, id] = chat
+    return type && id ? { side: 'chat', samtale: { type: type.toLowerCase() as Samtaletype, id: id.toLowerCase() } } : { side: 'chat' }
   }
   const forslag = FORSLAG.exec(hash)
   if (forslag) {
@@ -393,6 +430,8 @@ export function adresse(rute: Rute): string {
       return gruppeadresse(rute.gruppe, rute.fane, rute.element)
     case 'forslag':
       return forslagsadresse(rute.forslag, rute.fane)
+    case 'chat':
+      return chatadresse(rute.samtale)
     default:
       if (!rute.analytt) return FORTOLKNINGSADRESSE
       if (!rute.rediger) return `#/fortolkning/${rute.analytt}`
@@ -442,7 +481,7 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
  * Siden ruten står på, uten stedet på den og uten søket: `forside`, `ukjent`, `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
  * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3`, `kuratering/<gren-ID>`,
- * `grupper`, `grupper/<gruppe-ID>`, `forslag`, `forslag/til-behandling` og `forslag/<forslags-ID>`. Det er formen områdene i endringsloggen skrives på
+ * `grupper`, `grupper/<gruppe-ID>`, `chat`, `forslag`, `forslag/til-behandling` og `forslag/<forslags-ID>`. Det er formen områdene i endringsloggen skrives på
  * (`src/oppdatering/sider.ts`), og det som skifter når brukeren går til en
  * annen side — ikke når en seksjon åpnes eller søket skrives om.
  */

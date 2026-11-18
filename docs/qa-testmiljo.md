@@ -75,6 +75,12 @@ kjøringen uten at passordet skrives inn.
   bryteren på mens den går. `QA_SKJERMBILDER=<mappe>` lagrer skjermbildene.
   Flere brukere samtidig går gjennom `brukerside()` i `testmiljo.ts`, som bare
   finnes lokalt.
+- `npx vite-node src/__tests__/qa/chatmenynettleser.ts` er nettleserkontrollen
+  av chatmenyen (`docs/gruppechat.md`, «Chatmenyen»): boblen og de uleste,
+  at det å åpne menyen ikke merker noe som lest, utkast som følger med til
+  `#/chat`, Escape, parkering under hovedmenyen, plassen sammen med
+  diskusjonsmenyen, mobil og mørk modus, og at den som fjernes, stenges ute.
+  Samme kontoer og bryter som over, og `QA_SKJERMBILDER=<mappe>`.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 

@@ -33,6 +33,7 @@ import {
 } from '../../diskusjoner/modell'
 import { iSetning } from '../../domain/names'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
+import { useKantmeny } from '../../hooks/useKantmeny'
 import { useRestenInert } from '../../hooks/useRestenInert'
 import { merketall } from '../../varsler/modell'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
@@ -154,6 +155,9 @@ export function Diskusjonsmeny({
 
   const vist = apen || mobilApen || helside
   useRestenInert(meny, helside)
+
+  // Diskusjoner og chat samtidig bare når siden mellom dem får plass; ellers vinner den sist åpnede.
+  useKantmeny('diskusjoner', apen && !helside, () => settApen(false))
 
   // Resten av appen gir plass til boblen, og til hele menyen når den står åpen.
   useEffect(() => {
