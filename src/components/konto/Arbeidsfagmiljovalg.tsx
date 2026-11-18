@@ -1,14 +1,6 @@
-import { useState } from 'react'
-import {
-  kanVelgeArbeidsfagmiljo,
-  STANDARD_FAGMILJOIKON,
-  useOppdaterRettigheter,
-  useRettigheter,
-  velgArbeidsfagmiljo,
-  type Fagmiljoreferanse,
-  type Rettigheter,
-} from '../../auth/rettigheter'
+import { STANDARD_FAGMILJOIKON, velgArbeidsfagmiljo, type Rettigheter } from '../../auth/rettigheter'
 import { Menyskuff, Menyvalg } from '../toppmeny/Nedtrekksmeny'
+import { useFagmiljobytte } from './useFagmiljobytte'
 
 export interface ArbeidsfagmiljovalgProps {
   apen: boolean
@@ -27,33 +19,13 @@ export interface ArbeidsfagmiljovalgProps {
  * hen arbeider i (`kanVelgeArbeidsfagmiljo`).
  */
 export function Arbeidsfagmiljovalg({ apen, onVeksle, velg = velgArbeidsfagmiljo }: ArbeidsfagmiljovalgProps) {
-  const rettigheter = useRettigheter()
-  const oppdater = useOppdaterRettigheter()
-  const [bytter, setBytter] = useState<string | null>(null)
-  const [feil, setFeil] = useState(false)
-  if (!kanVelgeArbeidsfagmiljo(rettigheter)) return null
-  const gjeldende = rettigheter.arbeidsfagmiljo
-  const erMedlem = (f: Fagmiljoreferanse) => rettigheter.mineFagmiljoer.some((m) => m.id === f.id)
-
-  const bytt = async (f: Fagmiljoreferanse) => {
-    if (bytter !== null || f.id === gjeldende?.id) return
-    setBytter(f.id)
-    setFeil(false)
-    try {
-      // Rettighetene byttet ga, tas i bruk med en gang, så appen aldri
-      // fortolker med det forrige fagmiljøet etter at serveren har byttet.
-      oppdater(await velg(f.id))
-    } catch {
-      setFeil(true)
-    } finally {
-      setBytter(null)
-    }
-  }
+  const { gjeldende, velgbare, kanVelge, erMedlem, bytter, feil, bytt } = useFagmiljobytte(velg)
+  if (!kanVelge) return null
 
   return (
     <Menyskuff ikon={gjeldende?.ikon ?? STANDARD_FAGMILJOIKON} tekst={`Fagmiljø: ${gjeldende?.navn ?? 'ikke valgt'}`} apen={apen} onVeksle={onVeksle}>
       <ul className="nedtrekk__valg" aria-label="Fagmiljøet du arbeider i">
-        {rettigheter.velgbareFagmiljoer.map((f) => (
+        {velgbare.map((f) => (
           <li key={f.id}>
             <Menyvalg
               ikon={f.id === gjeldende?.id ? 'done' : f.ikon}

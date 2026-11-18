@@ -78,3 +78,9 @@ const oppfrisk = lagSignal()
  */
 export const oppfriskVarsler = () => oppfrisk.send()
 export const lyttEtterOppfrisking = oppfrisk.lytt
+
+const apne = lagSignal()
+
+/** Åpner varselvinduet fra andre steder i appen, som «Alle varsler» på forsiden. */
+export const apneVarsler = () => apne.send()
+export const lyttEtterApning = apne.lytt

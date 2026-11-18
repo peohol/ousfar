@@ -1,5 +1,6 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useBevart } from '../../oppdatering/Bevaring'
+import { lyttEtterApning } from '../../varsler/api'
 import { merketall } from '../../varsler/modell'
 import { Ikonknapp } from '../Ikonknapp'
 import { useVarsler } from './useVarsler'
@@ -8,13 +9,15 @@ import { Varsler } from './Varsler'
 /**
  * Bjella i toppmenyen, rett til venstre for profilbildet. Et rødt merke viser
  * hvor mange uleste varsler brukeren har i kategoriene vedkommende har valgt,
- * og knappen åpner varselvinduet.
+ * og knappen åpner varselvinduet, det samme gjør `apneVarsler`.
  */
 export function Varselknapp() {
   const status = useVarsler()
   const [apen, setApen] = useBevart('varsler', false)
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukk = useCallback(() => setApen(false), [])
+  // «Alle varsler» andre steder i appen, som på forsiden (`apneVarsler`).
+  useEffect(() => lyttEtterApning(() => setApen(true)), [setApen])
   const { antall } = status
 
   return (

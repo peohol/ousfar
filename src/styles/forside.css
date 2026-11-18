@@ -95,6 +95,112 @@
   .forside__ikon {
     display: none;
   }
+
+  .forside__hode {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Tittelen med fagmiljøvalget, og «Tilpass forsiden» til høyre (skisse 01 og 04). */
+.forside__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4) var(--rom-6);
+}
+
+.forside__overskrift {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  min-width: 0;
+}
+
+/* Pilen ved navnet peker ned, og panelet åpner under den, fra venstre. */
+.forside__fagmiljopil .ikon {
+  transform: rotate(90deg);
+}
+
+.forside__fagmiljovalg .nedtrekk__panel {
+  right: auto;
+  left: 0;
+  z-index: 2;
+}
+
+.forside__fagmiljomerknad {
+  margin: 0;
+  padding: var(--rom-3) var(--rom-6) var(--rom-5);
+  color: var(--blekk-dempet);
+  font-family: var(--skrift-display);
+  font-style: italic;
+  text-wrap: pretty;
+}
+
+.forside__fagmiljofeil {
+  padding: 0 var(--rom-6);
+}
+
+.forside__tilpass {
+  flex: none;
+}
+
+/* Panelene: to kolonner på PC, én på nettbrett og mobil. Høyden følger innholdet. */
+.forside__paneler {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--panelluft);
+}
+
+@media (max-width: 56em) {
+  .forside__paneler {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* «Tilpass forsiden» (skisse 05). */
+.tilpass {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--kant) solid var(--linje);
+}
+
+.tilpass__rad {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: var(--rom-3);
+  min-height: var(--hoyde-felt);
+  padding-block: var(--rom-3);
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.tilpass__rad--fast {
+  grid-template-columns: minmax(0, 1fr) auto;
+  color: var(--blekk-dempet);
+}
+
+.tilpass__status {
+  min-width: 2.5ch;
+  color: var(--blekk-dempet);
+  font-size: var(--tekst-etikett);
+}
+
+.tilpass__merknad {
+  margin: var(--rom-6) 0 0;
+  color: var(--blekk-dempet);
+  font-family: var(--skrift-display);
+  font-style: italic;
+}
+
+.tilpass__fot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--rom-4);
 }
 
 /* Veien tilbake fra fortolkningssøket, over søket. */
