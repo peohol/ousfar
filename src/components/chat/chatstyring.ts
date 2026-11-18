@@ -1,0 +1,51 @@
+/**
+ * Forbindelsen mellom chatmenyen og det som åpner den andre steder i appen:
+ * chatknappen i toppmenyen på smale flater, og lenker som skal vise en
+ * bestemt samtale (som «Åpne chat» på gruppesiden). Menyen eier tilstanden;
+ * resten sender et signal og leser det knappen trenger å vise.
+ */
+import { useSyncExternalStore } from 'react'
+import { lagSignal } from '../../domain/signal'
+
+/** Det chatknappen viser. */
+export interface Chatstatus {
+  /** Chatten er slått på, og menyen står i appen. */
+  finnes: boolean
+  /** Menyen står åpen over siden på en smal flate. */
+  mobilApen: boolean
+  uleste: number
+}
+
+const INGEN: Chatstatus = { finnes: false, mobilApen: false, uleste: 0 }
+let status = INGEN
+const lyttere = new Set<() => void>()
+
+/** Menyen melder hvordan den står. */
+export function meldChatstatus(ny: Chatstatus): void {
+  if (ny.finnes === status.finnes && ny.mobilApen === status.mobilApen && ny.uleste === status.uleste) return
+  status = ny
+  for (const lytter of [...lyttere]) lytter()
+}
+
+export function useChatstatus(): Chatstatus {
+  return useSyncExternalStore(
+    (lytter) => {
+      lyttere.add(lytter)
+      return () => lyttere.delete(lytter)
+    },
+    () => status,
+  )
+}
+
+/** Hva som skal skje med menyen: vekslet av knappen, eller åpnet på en samtale. */
+export type Chatbeskjed = { veksle: true } | { gruppe: string | null }
+
+const beskjed = lagSignal<Chatbeskjed>()
+
+/** Åpner eller lukker chatmenyen, som chatknappen. */
+export const veksleChatten = () => beskjed.send({ veksle: true })
+
+/** Åpner chatmenyen på gruppechatten, eller på oversikten med `null`. */
+export const visGruppesamtale = (gruppe: string | null) => beskjed.send({ gruppe })
+
+export const lyttEtterChatbeskjed = beskjed.lytt

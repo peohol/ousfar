@@ -78,6 +78,9 @@
   --bredde-oversikt: 70rem;
   /* Luften mellom panelene på en oversikt. */
   --panelluft: var(--rom-8);
+  /* Det minste siden skal ha igjen mellom chatmenyen og diskusjonsmenyen når
+     begge står åpne (D0, flyt.md §3; `useKantmeny`). */
+  --lesebredde-minst: 45rem;
   /* Kolonnen fortolkningsstegene står i (Atlas: 820–900 px). */
   --bredde-fortolkning: 56.25rem;
   /* Søkene i toppmenyen i bruk: rullegardinen og treffpanelet under dem, og

@@ -17,6 +17,7 @@ egen adresse, og en adresse som leses og skrives igjen, er den samme.
 | `#/fortolkning/<nøkkel>` | Fortolkningen av en analytt eller modul |
 | `#/fortolkning/<nøkkel>/rediger…` | Redigeringen av reglene |
 | `#/stoff/<nøkkel>`, `#/sok?q=…`, `#/stoffregister`, `#/verktoy…`, `#/grupper…` | Fagsider, søk, register, verktøy og grupper som før |
+| `#/chat`, `#/chat/gruppe/<ID>` | Chatten som helside, med samtalen som er valgt (`docs/gruppechat.md`, «Chatmenyen») |
 | Alt annet | «Siden finnes ikke», med adressen urørt og en knapp til forsiden |
 
 Gamle adresser skrives om uten ny oppføring i historikken: `#/analytt/HBUP`
@@ -75,6 +76,11 @@ I fortolkningen går Escape bakover gjennom fortolkningens egne trinn og
 stopper i søket: der tømmer det søkefeltet, og et nytt trykk gjør ingenting.
 Til forsiden går brukeren med knappen «Til forsiden» eller snarveien i
 hovedmenyen.
+
+Chatten (D4a) har to lag i stakken: helsiden `#/chat`, der Escape er
+«Gjenopprett» (tilbake etter inngangsveien, med chatmenyen åpen på samme
+samtale), og chatmenyen mens fokus står i den, der Escape slipper fokus på
+brede flater og lukker på smale. Menyen blir stående til den lukkes med ×.
 
 Et nytt lag som skal lukkes med Escape, bruker `useEscapelag` og lytter ikke
 etter tasten selv. Testene står i `src/__tests__/lagstakk.test.tsx` og under

@@ -289,4 +289,6 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'mine_lesbare_gruppechatter()': 'eier',
   'send_gruppemelding(gruppe uuid, klient_id uuid, tekst text)': 'rekkevidde',
   'slett_gruppemelding(melding uuid)': 'rekkevidde',
+  // D4a: samtalelista i chatmenyen (supabase/migrations/*_chatmeny.sql).
+  'mine_gruppesamtaler()': 'rekkevidde',
 }

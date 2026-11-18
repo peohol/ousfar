@@ -35,6 +35,8 @@ import { Button } from './components/Button'
 import { Ikon } from './components/ikon/Ikon'
 import { Versjonspille } from './components/Versjonspille'
 import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
+import { Chatmeny } from './components/chat/Chatmeny'
+import { Chatknapp } from './components/chat/Chatknapp'
 import { Direktelenkekilde } from './components/direktelenker/Direktelenkekilde'
 import { Lenkemelding } from './components/direktelenker/Lenkemelding'
 import { apneFraAdressen } from './components/direktelenker/navigasjon'
@@ -849,6 +851,7 @@ function Arbeidsflate({
                       <>
                         <Ideknapp />
                         <Adminmeny />
+                        <Chatknapp />
                         <Varselknapp />
                       </>
                     }
@@ -1084,6 +1087,7 @@ function Arbeidsflate({
                   </main>
 
                   {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />}
+                  <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
 
                   {endringsside && (
                     <FaginnholdskildeProvider kilde={faginnhold}>

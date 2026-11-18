@@ -124,11 +124,13 @@ export function Gruppechat({ chat, gruppe }: { chat: Chattilstand; gruppe: Chatg
     if (nederst && apnet.current) setSistSett((forrige) => Math.max(forrige ?? 0, sisteNr))
   }, [nederst, sisteNr])
 
-  // Merkes lest når de nyeste er synlige og nettleserfanen er framme.
+  // Merkes lest når de nyeste er synlige og nettleserfanen er framme. Står chatten skjult
+  // (chatmenyen parkert bak hovedmenyen), merkes ingenting.
   useEffect(() => {
     if (status !== 'klar' || !nederst || sisteNr <= chat.lestTilNr) return
     const merk = () => {
-      if (document.visibilityState !== 'hidden') naa.current.merkLest(sisteNr)
+      const synlig = logg.current?.checkVisibility?.({ visibilityProperty: true }) !== false
+      if (document.visibilityState !== 'hidden' && synlig) naa.current.merkLest(sisteNr)
     }
     merk()
     document.addEventListener('visibilitychange', merk)

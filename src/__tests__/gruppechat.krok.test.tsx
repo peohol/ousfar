@@ -63,4 +63,20 @@ describe('useGruppechat', () => {
     act(() => unmount())
     expect(abonnement.aktive.size).toBe(0)
   })
+
+  it('deler én kontroller mellom visningene av samme gruppe, som chatmenyen og gruppesiden', async () => {
+    const forste = renderHook(() => useGruppechat('gruppe-a'))
+    const andre = renderHook(() => useGruppechat('gruppe-a'))
+    await waitFor(() => expect(andre.result.current.status).toBe('klar'))
+    // Ett abonnement, og det samme utsnittet i begge.
+    expect(abonnement.alle).toEqual(['gruppe-a'])
+    expect(andre.result.current).toBe(forste.result.current)
+    act(() => forste.result.current.send('Fra menyen'))
+    expect(andre.result.current.ventende.map((v) => v.tekst)).toEqual(['Fra menyen'])
+    // Står den ene igjen, står abonnementet; når begge er borte, stoppes det.
+    act(() => forste.unmount())
+    expect([...abonnement.aktive]).toEqual(['gruppe-a'])
+    act(() => andre.unmount())
+    expect(abonnement.aktive.size).toBe(0)
+  })
 })

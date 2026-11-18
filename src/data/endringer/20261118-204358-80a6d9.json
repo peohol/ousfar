@@ -1,0 +1,18 @@
+{
+  "id": "20261118-204358-80a6d9",
+  "semver": "minor",
+  "opprettet": "2026-11-18T20:43:58Z",
+  "sammendrag": "Chatmeny i venstre kant, og chatten som egen side",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "En rund chatboble i venstre kant viser hvor mange uleste meldinger du har. Den åpner en meny med gruppene dine og alle gruppechattene dine, med den nyeste først og et søk.",
+    "Velg en samtale for å lese og skrive i den rett i menyen. Den kan gjøres bredere ved å dra i kanten, og blir stående åpen til du lukker den.",
+    "«Utvid» viser chatten som en egen side med samtalene og den valgte samtalen side om side. «Gjenopprett» eller Escape tar deg tilbake dit du var, med menyen åpen på samme samtale.",
+    "Det du har begynt å skrive, følger med mellom menyen, den egne siden og chatten på gruppesiden.",
+    "Å åpne menyen merker ingenting som lest; en samtale regnes som lest først når du har sett de nyeste meldingene.",
+    "På mobil står chatknappen i toppmenyen, og chatten fyller skjermen.",
+    "Chatten på gruppesiden og chatvarslene i bjella er uendret foreløpig."
+  ]
+}

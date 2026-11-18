@@ -203,7 +203,7 @@ export class Falskchatserver {
       abonner: (gruppe, valg) => {
         const kanal: Falskkanal = {
           bruker,
-          gruppe,
+          gruppe: gruppe ?? 'alle',
           valg,
           tilkoblet: false,
           stoppet: false,
