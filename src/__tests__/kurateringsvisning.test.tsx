@@ -209,7 +209,7 @@ function kilde(kuratering: Kurateringsklient, kanRedigere = true): Faginnholdski
   }
 }
 
-const felles = { register: REGISTER, katalog: ANALYTTKATALOG, onApneFortolkning: vi.fn() }
+const felles = { register: REGISTER, katalog: ANALYTTKATALOG, onApneFortolkning: vi.fn(), onLukk: vi.fn() }
 
 function vis(innhold: React.ReactNode, k: Faginnholdskilde) {
   render(
@@ -330,6 +330,18 @@ describe('versjonssiden', () => {
     expect(onGaaTil).toHaveBeenCalledWith({ side: 'kuratering', gren: GREN })
   })
 
+  it('lukkes med Escape som andre sider, også før versjonen er hentet', async () => {
+    const onLukk = vi.fn()
+    const onGaaTil = vi.fn()
+    vis(<Versjonsside stoff={STOFF} nr={1} onGaaTil={onGaaTil} {...felles} onLukk={onLukk} />, kilde(klient()))
+    await userEvent.keyboard('{Escape}')
+    expect(onLukk).toHaveBeenCalledTimes(1)
+    expect(await screen.findByText('Versjon 1 av fagsiden')).toBeTruthy()
+    await userEvent.keyboard('{Escape}')
+    expect(onLukk).toHaveBeenCalledTimes(2)
+    expect(onGaaTil).not.toHaveBeenCalled()
+  })
+
   it('lar bare administratorene ta en versjon tilbake', async () => {
     vis(<Versjonsside stoff={STOFF} nr={1} onGaaTil={vi.fn()} {...felles} />, kilde(klient(), false))
     expect(await screen.findByText('Versjon 1 av fagsiden')).toBeTruthy()
@@ -338,6 +350,27 @@ describe('versjonssiden', () => {
 })
 
 describe('kurateringssiden', () => {
+  it('lukkes med Escape som andre sider, både før og etter at grenen er hentet', async () => {
+    const onLukk = vi.fn()
+    const k = klient()
+    let svar!: () => void
+    const henter = new Promise<void>((ferdig) => (svar = ferdig))
+    const les = k.les
+    k.les = vi.fn(async (...a: Parameters<typeof les>) => {
+      await henter
+      return les(...a)
+    })
+    const onGaaTil = vi.fn()
+    vis(<Kurateringsside gren={GREN} onGaaTil={onGaaTil} {...felles} onLukk={onLukk} />, kilde(k))
+    await userEvent.keyboard('{Escape}')
+    expect(onLukk).toHaveBeenCalledTimes(1)
+    act(() => svar())
+    expect(await screen.findByText('Kuratering: Syntetisk kuratering')).toBeTruthy()
+    await userEvent.keyboard('{Escape}')
+    expect(onLukk).toHaveBeenCalledTimes(2)
+    expect(onGaaTil).not.toHaveBeenCalled()
+  })
+
   it('viser forhåndsvisningen og hindringene, og lar en administrator vurdere revisjonen', async () => {
     const k = klient()
     vis(<Kurateringsside gren={GREN} onGaaTil={vi.fn()} {...felles} />, kilde(k))
@@ -610,7 +643,7 @@ describe('agentene', () => {
 describe('på fagsiden', () => {
   it('viser versjonene i menyen, og en aktiv kurateringsgren for administratorene', async () => {
     const k = klient()
-    vis(<Stoffside stoff={STOFF} onLukk={vi.fn()} {...felles} />, kilde(k))
+    vis(<Stoffside stoff={STOFF} {...felles} onLukk={vi.fn()} />, kilde(k))
     expect(await screen.findByText(/Kuratering pågår i en egen arbeidsversjon/)).toBeTruthy()
     await userEvent.click(await screen.findByRole('button', { name: 'Mer for fagsiden' }))
     await userEvent.click(screen.getByRole('button', { name: /Versjoner/ }))

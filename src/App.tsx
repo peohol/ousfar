@@ -565,8 +565,8 @@ function Arbeidsflate({
    * forsiden når siden ble åpnet direkte (`useRute`, «inngangsveien»).
    */
   const lukkInfoside = useCallback(() => tilbake(), [tilbake])
-  /** Fortolkningen slik den sto: analytten som er åpen, ellers søket. */
-  const apneFortolkning = useCallback(() => gaaTil(fortolkningsrute(state.analyte?.kode)), [gaaTil, state.analyte])
+  /** Forsidens hovedhandling: alltid søket, som snarveien i menyen. */
+  const apneFortolkning = useCallback(() => gaaTil(fortolkningsrute()), [gaaTil])
   const tilForsiden = useCallback(() => gaaTil(FORSIDE), [gaaTil])
   /** Redigeringen av en fortolkning går tilbake dit, eller til fortolkningen når den ble åpnet direkte. */
   const avsluttRedigering = useCallback(() => tilbake(fortolkningsrute(state.analyte?.kode)), [tilbake, state.analyte])
@@ -577,15 +577,19 @@ function Arbeidsflate({
    * adressen dit, så tilbakeknappen i nettleseren går til der man var. Endres
    * adressen utenfra — tilbake- og framknappen, et bokmerke, en lenke fra et
    * varsel — åpnes analytten den peker på, eller søket når den ikke peker på
-   * noen. Ved oppstart vinner adressen når den har en analytt; ellers skrives
-   * den om til analytten som alt er åpen (fortolkningen overlevde en
-   * oppdatering av appen).
+   * noen. Det gjelder også når brukeren kommer til søket (`#/fortolkning`) fra
+   * en annen side, som forsiden eller menyen: da åpnes søket, og analytten som
+   * sto, ligger igjen i historikken. Ved oppstart vinner adressen når den har
+   * en analytt; ellers skrives den om til analytten som alt er åpen
+   * (fortolkningen overlevde en oppdatering av appen).
    */
   const analyttnokkel = state.analyte ? fortolkningsnokkel(state.analyte.kode) : undefined
+  const startet = useRef(false)
   const forrigeAdresse = useRef<string | null>(null)
   const forrigeAnalytt = useRef(analyttnokkel)
   useEffect(() => {
-    const oppstart = forrigeAdresse.current === null
+    const oppstart = !startet.current
+    startet.current = true
     const adresseEndret = !oppstart && forrigeAdresse.current !== (rute.side === 'fortolkning' ? (rute.analytt ?? '') : null)
     const analyttEndret = analyttnokkel !== forrigeAnalytt.current
     forrigeAdresse.current = rute.side === 'fortolkning' ? (rute.analytt ?? '') : null
@@ -922,12 +926,14 @@ function Arbeidsflate({
                             nr={rute.nr}
                             register={register}
                             onGaaTil={gaaTil}
+                            onLukk={lukkInfoside}
                           />
                         ) : (
                           <Kurateringsside
                             gren={rute.gren}
                             register={register}
                             onGaaTil={gaaTil}
+                            onLukk={lukkInfoside}
                           />
                         )}
                       </FaginnholdskildeProvider>

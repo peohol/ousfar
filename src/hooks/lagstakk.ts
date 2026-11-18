@@ -10,7 +10,8 @@ import { useEffect, useRef, type RefObject } from 'react'
  *
  * Et dialogvindu (`Modallag`) ligger alltid øverst og lukkes av nettleseren
  * selv. Står det et dialogvindu åpent, lar stakken derfor tasten være, med
- * mindre det øverste laget står inni vinduet, som et nedtrekk i et skjema.
+ * mindre det øverste laget står inni vinduet, som et nedtrekk i et skjema. Da
+ * lar vinduet tasten gå hit ({@link overstLagInni}), og bare laget lukkes.
  *
  * Et felt eller et element som alt har brukt tasten (`preventDefault`), går
  * foran alle lagene: søkefeltet i diskusjonsmenyen tømmes før noe lukkes.
@@ -30,6 +31,16 @@ let lytter = false
 /** Sant når et lag i stakken står åpent. */
 export function lagErApne(): boolean {
   return stakk.length > 0
+}
+
+/**
+ * Sant når det øverste laget i stakken står inni `beholder`, som et nedtrekk i
+ * et dialogvindu. Da hører neste `Escape` til laget, og vinduet skal la tasten
+ * gå videre til stakken i stedet for å bruke den selv (`Modallag`).
+ */
+export function overstLagInni(beholder: Element | null): boolean {
+  const rot = stakk[stakk.length - 1]?.rot?.current
+  return !!beholder && !!rot && beholder.contains(rot)
 }
 
 /** Det øverste dialogvinduet som står åpent. */

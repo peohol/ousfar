@@ -337,6 +337,18 @@ describe('forsiden og veien tilbake', { timeout: 20_000 }, () => {
     expect(fortolkningen().hidden).toBe(true)
   })
 
+  it('åpner alltid søket fra forsiden, også når en analytt står åpen bak', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await velgNortriptylin(user)
+    window.location.hash = '#/'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    await user.click(await forsiden())
+    await waitFor(() => expect(window.location.hash).toBe('#/fortolkning'))
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Velg konsentrasjon' })).toBeNull())
+    expect(soket()).toBeTruthy()
+  })
+
   it('stopper Escape i søket: feltet tømmes, men søket står', async () => {
     const user = userEvent.setup()
     await visApp()

@@ -25,8 +25,10 @@ adressen til siden de åpnes over. En adresse som peker på noe brukeren ikke
 har tilgang til (et verktøy uten administratorrolle), går til forsiden.
 
 Fortolkningen står montert hele tiden, skjult bak de andre sidene, så en
-påbegynt fortolkning står der den sto når brukeren kommer tilbake. Søkefeltet
-får fokus hver gang fortolkningen kommer fram.
+påbegynt fortolkning står der den sto når brukeren går tilbake til den.
+«Åpne fortolkning» på forsiden og snarveien i hovedmenyen åpner derimot alltid
+søket; analytten som sto, ligger igjen i historikken. Søkefeltet får fokus
+hver gang fortolkningen kommer fram.
 
 ## Tilbake og Lukk: inngangsveien
 
@@ -42,6 +44,11 @@ reserven, som er forsiden med mindre siden sier noe annet. Brukeren sendes
 dermed aldri ut av appen av Lukk eller Escape, og nettleserens egne tilbake-
 og framknapper virker som før.
 
+Hver side som kan lukkes, lukkes med `tilbake`, både med Lukk og med Escape
+(`useLukkMedEscape`), også mens den hentes eller viser en feil. Det gjelder
+også en tidligere versjon av en fagside og en kurateringsgren; «Til fagsiden»
+der er en egen, uttrykkelig handling.
+
 Skriv aldri `window.location.replace` for å bytte side: den nullstiller
 merket. Bruk `gaaTil(rute, { erstatt: true })` i komponentene eller
 `erstattAdressen(adresse)` utenfor React.
@@ -56,7 +63,9 @@ lytter i vinduet gir trykket til laget som ble åpnet sist, og bare det:
    søkefeltet tømmes, lukkes ingenting.
 2. Står et dialogvindu åpent, lukker nettleseren det, og lagene utenfor
    vinduet får ikke trykket. Et lag inni vinduet, som et nedtrekk i et skjema,
-   får det.
+   får det, og bare det lukkes: `Modallag` lar tasten gå forbi seg mens det
+   øverste laget står inni vinduet (`overstLagInni`), også når skjemaet har en
+   vakt mot ulagrede endringer. Neste trykk går til vinduet.
 3. Ellers lukkes det øverste laget, og trykket tas fra resten av appen.
 
 Sidene (`useLukkMedEscape`) og fortolkningens taster (`useKeyboard`) ligger i

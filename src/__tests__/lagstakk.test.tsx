@@ -4,10 +4,29 @@
  * et åpent dialogvindu går foran lagene utenfor det, og et trykk som alt er
  * brukt, lukker ingenting (`docs/design/d0-dashboard-chat/flyt.md` §4).
  */
-import { cleanup, fireEvent, render } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRef, type ReactNode } from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { Modallag } from '../components/Modallag'
+import { TipsLag } from '../components/Tips'
+import { Nedtrekksmeny } from '../components/toppmeny/Nedtrekksmeny'
 import { lagErApne, useEscapelag } from '../hooks/lagstakk'
+
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute('open', '')
+  }
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
+  }
+})
 
 afterEach(cleanup)
 
@@ -121,5 +140,42 @@ describe('lagstakken', () => {
     trykkEscape()
     expect(andre).toHaveBeenCalledTimes(1)
     expect(forste).not.toHaveBeenCalled()
+  })
+})
+
+describe('et nedtrekk i et dialogvindu med skjemavakt', () => {
+  it('lukker bare nedtrekket med første Escape, og lar neste gå til vinduet', async () => {
+    const user = userEvent.setup()
+    // Skjemaet har ulagrede endringer: vakten holder vinduet åpent.
+    const vedLukking = vi.fn(() => false)
+    const onLukk = vi.fn()
+    render(
+      <TipsLag>
+        <Modallag apen tittel="Skjema" onLukk={onLukk} vedLukking={vedLukking}>
+          <Nedtrekksmeny knapp={{ ikon: 'more', etikett: 'Flere valg' }} etikett="Valg" lag="valg">
+            {(lukk) => (
+              <button type="button" onClick={lukk}>
+                Et valg
+              </button>
+            )}
+          </Nedtrekksmeny>
+        </Modallag>
+      </TipsLag>,
+    )
+    const panel = () => document.querySelector<HTMLElement>('.nedtrekk__panel')!
+    await user.click(screen.getByRole('button', { name: 'Flere valg' }))
+    expect(panel().hidden).toBe(false)
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Et valg' }))
+
+    await user.keyboard('{Escape}')
+    expect(panel().hidden).toBe(true)
+    expect(vedLukking).not.toHaveBeenCalled()
+    expect(document.querySelector('dialog')!.open).toBe(true)
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Flere valg' }))
+
+    await user.keyboard('{Escape}')
+    expect(vedLukking).toHaveBeenCalledTimes(1)
+    expect(document.querySelector('dialog')!.open).toBe(true)
+    expect(onLukk).not.toHaveBeenCalled()
   })
 })
