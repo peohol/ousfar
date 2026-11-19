@@ -78,6 +78,9 @@
   --bredde-oversikt: 70rem;
   /* Luften mellom panelene på en oversikt. */
   --panelluft: var(--rom-8);
+  /* Luften øverst på sidene i scenen (forsiden, gruppene, søket, verktøyene),
+     over det første de viser: overskriften eller lenken tilbake. */
+  --sidetopp: var(--rom-9);
   /* Det minste siden skal ha igjen mellom chatmenyen og diskusjonsmenyen når
      begge står åpne (D0, flyt.md §3; `useKantmeny`). */
   --lesebredde-minst: 45rem;
@@ -385,6 +388,15 @@
 :root[data-tema='moerkt'],
 :root[data-tema='moerkt'] ::backdrop {
   --slor: hsl(216 45% 5% / 0.55);
+}
+
+/* --- Smale flater ----------------------------------------------------------
+   På mobilen er høyden for verdifull til luft: sidene begynner rett under
+   toppmenyen, med bare scenens egen luft over (`.scene` i `base.css`). */
+@media (max-width: 47.5em) {
+  :root {
+    --sidetopp: 0px;
+  }
 }
 
 /* --- Redusert bevegelse ----------------------------------------------------

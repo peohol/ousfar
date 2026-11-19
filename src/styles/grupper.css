@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--rom-7);
-  padding-block: var(--rom-9);
+  padding-block: var(--sidetopp) var(--rom-9);
 }
 
 .gruppeside__hode,
@@ -254,12 +254,21 @@ button.gruppeside__fane {
 
 /* --- Lenken tilbake og tittelraden ------------------------------------------ */
 
+/* Lenken i det ene hjørnet og sidens egne handlinger i det andre, så
+   overskriften under får hele bredden. Raden står tett over overskriften. */
+.tilbakerad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-2) var(--rom-5);
+  margin-bottom: calc(-1 * var(--rom-4));
+}
+
 .tilbakelenke {
   display: inline-flex;
   align-items: center;
   gap: var(--rom-2);
-  align-self: flex-start;
-  margin-bottom: calc(-1 * var(--rom-4));
   padding: var(--rom-1) 0;
   font: inherit;
   font-size: var(--tekst-ui);

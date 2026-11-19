@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useCallback, useEffect, useId, useState, type ReactNode } from 'react'
 import { inngangsvei } from '../../hooks/useRute'
 import { hentGruppeoversikt } from '../../grupper/api'
 import { useGrupper } from '../../grupper/kilde'
@@ -173,15 +173,20 @@ export function useInngangsnavn(reserve: string): string {
 }
 
 /**
- * Lenken over overskriften: tilbake dit brukeren kom fra i appen, eller til
- * reserven (docs/navigasjon.md), med navnet på siden den går til.
+ * Raden over overskriften: lenken tilbake dit brukeren kom fra i appen, eller
+ * til reserven (docs/navigasjon.md), med navnet på siden den går til. Sidens
+ * egne handlinger (`children`) står i motsatt hjørne, så overskriften får
+ * hele bredden for seg selv.
  */
-export function Tilbakelenke({ reserve, onTilbake }: { reserve: string; onTilbake: () => void }) {
+export function Tilbakelenke({ reserve, onTilbake, children }: { reserve: string; onTilbake: () => void; children?: ReactNode }) {
   const navn = useInngangsnavn(reserve)
   return (
-    <button type="button" className="tilbakelenke" onClick={onTilbake}>
-      <Ikon navn="back" storrelse="ui" />
-      Tilbake til {navn}
-    </button>
+    <div className="tilbakerad">
+      <button type="button" className="tilbakelenke" onClick={onTilbake}>
+        <Ikon navn="back" storrelse="ui" />
+        Tilbake til {navn}
+      </button>
+      {children}
+    </div>
   )
 }

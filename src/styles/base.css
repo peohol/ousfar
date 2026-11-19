@@ -129,6 +129,13 @@ ul {
   }
 }
 
+/* Smale flater: innholdet begynner tett under toppmenyen (se `--sidetopp`). */
+@media (max-width: 47.5em) {
+  .scene {
+    padding-top: var(--rom-4);
+  }
+}
+
 /* --- Fellesklasser ------------------------------------------------------ */
 
 .ikon {

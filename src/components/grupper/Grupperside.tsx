@@ -354,16 +354,17 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
 
   return (
     <>
-      <Tilbakelenke reserve="Grupper" onTilbake={onLukk} />
+      <Tilbakelenke reserve="Grupper" onTilbake={onLukk}>
+        {harInnstillinger(g) && (
+          <Button variant="subtle" icon={<Ikon navn="gears" />} onClick={() => apne('innstillinger')}>
+            Gruppeinnstillinger
+          </Button>
+        )}
+      </Tilbakelenke>
       <header className="gruppeside__hode">
         <div className="gruppeside__tittelrad">
           <Gruppesymbol gruppe={g} lenke={symbollenke(g, symbollenker)} />
           <Tittel id={overskrift}>{g.navn}</Tittel>
-          {harInnstillinger(g) && (
-            <Button variant="subtle" icon={<Ikon navn="gears" />} onClick={() => apne('innstillinger')}>
-              Gruppeinnstillinger
-            </Button>
-          )}
         </div>
         {g.beskrivelse && <p className="gruppeside__ingress">{g.beskrivelse}</p>}
         <div className="gruppeside__meta">

@@ -199,7 +199,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--rom-7);
-  padding-block: var(--rom-9);
+  padding-block: var(--sidetopp) var(--rom-9);
 }
 
 .sokeside__hode {
@@ -640,7 +640,7 @@
   }
 
   .sokeside {
-    padding-block: var(--rom-7);
+    padding-block: var(--sidetopp) var(--rom-7);
   }
 
   .sokeresultat {
