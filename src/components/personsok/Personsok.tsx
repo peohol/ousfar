@@ -136,7 +136,7 @@ export function Personsok({
     }
     if (v.art === 'brukernavn') {
       return (
-        <li key={nokkel} {...felles}>
+        <li key={nokkel} {...felles} data-art="brukernavn">
           <span className="avatar avatar--liten personsok__ikon" aria-hidden="true">
             <Ikon navn="user" storrelse="ui" />
           </span>
