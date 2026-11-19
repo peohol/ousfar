@@ -299,17 +299,29 @@ async function arbeidsflyter(github, repo, filer, sha) {
   return ut
 }
 
-/** Vurderer en PR (rådata fra GitHub) med ny tilstand fra GitHub. */
-export async function kontrollerPr(github, repo, rå, gren) {
+/** Overgangsflyten, som bare kan finnes i overgangskontrollen selv (`betrodd: false`). */
+const OVERGANGSFLYT = '.github/workflows/prosjektansvar-overgang.yml'
+
+/**
+ * Vurderer en PR (rådata fra GitHub) med ny tilstand fra GitHub.
+ * `betrodd: false` er overgangskontrollen, som kjører PR-ens egen kode: den
+ * godtar overgangsflyten selv, ellers kunne PR-en som innfører den betrodde
+ * kontrollen aldri bli grønn. Den betrodde kontrollen godtar den aldri.
+ */
+export async function kontrollerPr(github, repo, rå, gren, { betrodd = true } = {}) {
   const pr = somPr(rå)
   const saker = new Map()
   for (const n of arbeidsoppgaver(pr.tekst, repo)) saker.set(n, somSak(await github(`repos/${repo}/issues/${n}`, { finnes: true }), repo))
   const filer = await alle(github, `repos/${repo}/pulls/${pr.nummer}/files`)
-  const etterligning = finnEtterligning(await arbeidsflyter(github, repo, filer, rå.head.sha))
+  const flyter = (await arbeidsflyter(github, repo, filer, rå.head.sha)).filter((f) => betrodd || f.sti !== OVERGANGSFLYT)
+  const etterligning = finnEtterligning(flyter)
   const vurdering = vurderPr({ pr, saker, aktivertKl: await hentAktivering(github, repo, gren), repo, etterligning })
   const endrerKontrollen = filer.map((f) => f.filename).filter((f) => KONTROLLFILER.includes(f))
   if (endrerKontrollen.length) {
-    vurdering.advarsler.push(`PR-en endrer kontrollen selv (${endrerKontrollen.join(', ')}). Den er vurdert med versjonen på main; endringen virker først når den er slått sammen og skal kontrolleres særskilt.`)
+    const hvordan = betrodd
+      ? 'Den er vurdert med versjonen på main; endringen virker først når den er slått sammen'
+      : 'Overgangskontrollen kjører PR-ens egen versjon og er ikke betrodd'
+    vurdering.advarsler.push(`PR-en endrer kontrollen selv (${endrerKontrollen.join(', ')}). ${hvordan}, så den skal kontrolleres særskilt.`)
   }
   return vurdering
 }
@@ -371,7 +383,7 @@ async function kjor() {
 
   if (navn === 'pull_request') {
     // Overgangskontrollen (prosjektansvar-overgang.yml): bare utfallet, ingen check run.
-    const v = await kontrollerPr(github, repo, await github(`repos/${repo}/pulls/${hendelse.pull_request.number}`), gren)
+    const v = await kontrollerPr(github, repo, await github(`repos/${repo}/pulls/${hendelse.pull_request.number}`), gren, { betrodd: false })
     for (const a of v.advarsler) console.log(`::warning title=Prosjektansvar::${enLinje(a)}`)
     for (const f of v.feil) console.log(`::error title=Prosjektansvar mangler eller er feil::${enLinje(f)}`)
     if (v.ok) console.log(v.melding)

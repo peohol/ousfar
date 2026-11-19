@@ -371,6 +371,20 @@ describe('kontrollen mot GitHub', () => {
     expect(kall.filter((k) => k.includes('/contents/'))).toEqual(['GET repos/peohol/ousfar/contents/.github/workflows/falsk.yml?ref=abc1234def'])
   })
 
+  it('godtar overgangsflyten bare i overgangskontrollen selv, aldri i den betrodde', async () => {
+    const overgang = les('.github/workflows/prosjektansvar-overgang.yml')
+    const svar = vanlig({
+      'GET repos/peohol/ousfar/pulls/500/files': [{ filename: '.github/workflows/prosjektansvar-overgang.yml', status: 'added' }],
+      'GET repos/peohol/ousfar/contents/': base64(overgang),
+    })
+    const betrodd = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main')) as Vurdering
+    expect(betrodd.ok).toBe(false)
+    expect(betrodd.feil).toEqual([expect.stringContaining('prosjektansvar-overgang.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»')])
+    const selv = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main', { betrodd: false })) as Vurdering
+    expect(selv.ok).toBe(true)
+    expect(selv.advarsler).toEqual([expect.stringContaining('Overgangskontrollen kjører PR-ens egen versjon og er ikke betrodd')])
+  })
+
   it('stopper etterligning også for PR-er fra før overgangen', async () => {
     const falsk = 'on: [push, pull_request]\njobs:\n  a:\n    runs-on: ubuntu-latest\n'
     const { github } = falskGithub(vanlig({
