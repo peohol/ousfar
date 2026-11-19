@@ -18,12 +18,14 @@ import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
 import { lesFagmiljo, useRettigheter, type Fagmiljoreferanse } from '../../auth/rettigheter'
 import { useClipboard } from '../../hooks/useClipboard'
+import { settStilling, stillingsnavn, useStillinger, type Stillingskatalog } from '../../stillinger/katalog'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
+import { Stillingsvelger } from '../stillinger/Stillingsvelger'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Avatar } from './Avatar'
 import { Bekreftelseskort } from './Bekreftelseskort'
@@ -39,6 +41,13 @@ interface Bekreftelse {
   /** Fagmiljøet raden ble hentet fra; handlingen gjelder alltid det. */
   fagmiljo: Fagmiljoreferanse
   handling: 'avslutt' | 'fjern_admin'
+}
+
+/** Stillingen som settes for et medlem (docs/stillinger.md). */
+interface Stillingsendring {
+  medlem: Medlem
+  fagmiljo: Fagmiljoreferanse
+  stilling: string | null
 }
 
 /** En handling i menyen på en rad. */
@@ -69,8 +78,9 @@ const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message :
  * (`useRettigheter().administrerer`; en systemarkitekt har alle) og ser
  * medlemmene der, gruppert etter rolle (systemarkitekter, administratorer og
  * brukere, se `brukerroller.ts`) og alfabetisk i hver gruppe, og de tidligere
- * medlemmene for seg. Hver rad viser hvem det er, med statusene ved siden av. Handlingene står i en meny på raden, og bare de
- * databasen tillater (`hentMedlemsoversikt`): nytt midlertidig passord, gjøre
+ * medlemmene for seg. Hver rad viser hvem det er og stillingen, med statusene
+ * ved siden av. Handlingene står i en meny på raden, og bare de databasen
+ * tillater (`hentMedlemsoversikt`): endre stillingen, nytt midlertidig passord, gjøre
  * til eller fjerne som administrator i fagmiljøet, for systemarkitektene
  * tilgangen til verktøyene (den gamle adminrollen, som er uavhengig av
  * administrasjonen), avslutte medlemskapet og gi et tidligere medlem tilgang
@@ -122,6 +132,8 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const [arbeider, setArbeider] = useState<string | null>(null)
   const [midlertidig, setMidlertidig] = useState<Midlertidig | null>(null)
   const [bekreft, setBekreft] = useState<Bekreftelse | null>(null)
+  const [stillingsendring, setStillingsendring] = useState<Stillingsendring | null>(null)
+  const stillinger = useStillinger()
   const lenker = useAvatarlenker(medlemmer)
   const velgerId = useId()
   const gruppeId = useId()
@@ -160,6 +172,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     }
     setMidlertidig(null)
     setBekreft(null)
+    setStillingsendring(null)
     setKvittering(null)
     void hent(valgt?.id)
   }, [apen, valgt?.id, hent])
@@ -240,6 +253,16 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     })
   }
 
+  const lagreStilling = ({ medlem, fagmiljo: f, stilling }: Stillingsendring) => {
+    const navn = visningsnavn(medlem)
+    void utfor(medlem.id, f.id, async () => {
+      await settStilling(medlem.id, stilling)
+      setStillingsendring(null)
+      const ny = stillingsnavn(stillinger, { stilling_id: stilling })
+      return ny ? `${navn} har nå stillingen ${ny}.` : `${navn} står nå uten stilling.`
+    })
+  }
+
   const gjeldende = medlemmer.filter((m) => m.status !== 'avsluttet')
   const tidligere = medlemmer.filter((m) => m.status === 'avsluttet')
   const kanOpprette = valgt !== null && rettigheter.opprettBrukerI.includes(valgt.id)
@@ -271,6 +294,13 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         : []
     }
     const vanlige: Radhandling[] = []
+    if (medlem.endre_stilling) {
+      vanlige.push({
+        ikon: 'stilling',
+        tekst: medlem.stilling_id ? 'Endre stilling' : 'Velg stilling',
+        gjor: () => setStillingsendring({ medlem, fagmiljo: f, stilling: medlem.stilling_id ?? null }),
+      })
+    }
     if (medlem.nytt_passord) {
       vanlige.push({
         ikon: 'key',
@@ -341,6 +371,7 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     const navn = visningsnavn(medlem)
     const egen = medlem.id === meg.id
     const grupper = handlinger(f, medlem)
+    const stilling = stillingsnavn(stillinger, medlem)
 
     return (
       <li key={medlem.id} className="brukerrad brukerrad--meny">
@@ -350,7 +381,10 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
             {navn}
             {egen && <span className="brukerrad__deg"> (deg)</span>}
           </span>
-          <span className="brukerrad__brukernavn">{medlem.username}</span>
+          <span className="brukerrad__brukernavn">
+            {medlem.username}
+            {stilling && ` · ${stilling}`}
+          </span>
         </span>
 
         <span className="brukerrad__merker">
@@ -514,6 +548,17 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         />
       )}
 
+      {stillingsendring && stillingsendring.fagmiljo.id === valgt?.id && (
+        <Stillingsskjema
+          endring={stillingsendring}
+          katalog={stillinger}
+          opptatt={arbeider !== null}
+          onEndre={(stilling) => setStillingsendring({ ...stillingsendring, stilling })}
+          onLagre={() => lagreStilling(stillingsendring)}
+          onAvbryt={() => setStillingsendring(null)}
+        />
+      )}
+
       {midlertidig && <Passordkvittering midlertidig={midlertidig} onLukk={() => setMidlertidig(null)} />}
 
       {kvittering && (
@@ -617,6 +662,46 @@ function Tilgangsbekreftelse({
         `${navn} er fortsatt medlem, men kan ikke lenger administrere medlemmene her.`
       )}
     </Bekreftelseskort>
+  )
+}
+
+/** Stillingen til et medlem, valgt fra lista og lagret med «Lagre». */
+function Stillingsskjema({
+  endring: { medlem, stilling },
+  katalog,
+  opptatt,
+  onEndre,
+  onLagre,
+  onAvbryt,
+}: {
+  endring: Stillingsendring
+  katalog: Stillingskatalog
+  opptatt: boolean
+  onEndre: (stilling: string | null) => void
+  onLagre: () => void
+  onAvbryt: () => void
+}) {
+  const navn = visningsnavn(medlem)
+  return (
+    <form
+      className="tilgangsbekreftelse stillingsskjema"
+      aria-label={`Stillingen til ${navn}`}
+      onSubmit={(hendelse) => {
+        hendelse.preventDefault()
+        onLagre()
+      }}
+    >
+      <p className="tilgangsbekreftelse__tittel stillingsskjema__tittel">Stillingen til {navn}</p>
+      <Stillingsvelger merkelapp="Stilling" katalog={katalog} verdi={stilling} ingen="Ingen stilling" onEndre={onEndre} />
+      <div className="skjema__knapper">
+        <Button type="submit" disabled={opptatt || stilling === (medlem.stilling_id ?? null)}>
+          Lagre
+        </Button>
+        <Button variant="subtle" onClick={onAvbryt}>
+          Avbryt
+        </Button>
+      </div>
+    </form>
   )
 }
 

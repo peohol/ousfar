@@ -393,6 +393,17 @@ const REGISTER = {
     parts: [P('M3 8.5h6M2 12h7M3 15.5h6', 'l', 'i-ink', 'draw'), C(15.5, 12, 4.5, 'f1', 'accent', 'glidR')],
   },
   user: { vb: 24, parts: [C(12, 8.5, 4, 'f1', 'accent'), P('M4.5 20.5a7.5 7.5 0 0 1 15 0z', 'f2', 'accent')] },
+  /** Stillingen: et navneskilt med et lite portrett og to linjer. */
+  stilling: {
+    vb: 24,
+    parts: [
+      R(3, 6, 18, 13, 2.5, 'f1', 'accent'),
+      P('M9.5 6V4.5h5V6', 'l', 'accent'),
+      C(8.5, 11.5, 2, 'f2', 'accent', 'pop'),
+      P('M5.8 16.2a2.7 2.7 0 0 1 5.4 0z', 'f2', 'accent'),
+      P('M13.5 11h4.5M13.5 14.5h3', 'l', 'i-ink'),
+    ],
+  },
   more: {
     vb: 24,
     parts: [C(6, 12, 1.8, 'h', 'i-ink'), C(12, 12, 1.8, 'h', 'i-ink', 'pop'), C(18, 12, 1.8, 'h', 'i-ink')],

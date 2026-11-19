@@ -232,7 +232,7 @@ export async function fullforOppsett(oppsett: {
 const AVSLAG_MED_MELDING = new Set(['42501', 'P0002', '22023', '23505', '23514', '55000'])
 
 /** Kaller en databasefunksjon og gjør et avslag om til en lesbar feil. */
-async function rpc<T>(navn: string, argumenter: Record<string, unknown>): Promise<T> {
+export async function rpc<T>(navn: string, argumenter: Record<string, unknown>): Promise<T> {
   const { data, error } = await klient().rpc(navn, argumenter)
   if (error) throw new Error(AVSLAG_MED_MELDING.has(error.code) && error.message ? error.message : UVENTET_FEIL)
   return data as T
@@ -259,6 +259,8 @@ export interface Medlem extends Profilkort {
   kan_fjerne_som_administrator: boolean
   nytt_passord: boolean
   endre_rolle: boolean
+  /** Kan sette stillingen (`intern.stillingsavslag`, docs/stillinger.md). */
+  endre_stilling: boolean
 }
 
 /** Svaret etter en endring av et medlemskap. */

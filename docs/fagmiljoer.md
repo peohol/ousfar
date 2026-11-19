@@ -925,11 +925,13 @@ dataminimering i brukeropplysningene (P0 §2.8, §4): man ser navnet og bildet
 til dem man samhandler med, ikke en nasjonal katalog med roller.
 
 **Hva andre får lese.** Andres profil er et *profilkort*: ID, brukernavn,
-fornavn, etternavn, bildesti og når profilen sist ble endret (`PROFILKORT` i
+fornavn, etternavn, bildesti, når profilen sist ble endret og stillingen
+(`stilling_id`, fra 19.11.2026; se [stillinger.md](stillinger.md)) (`PROFILKORT` i
 `supabase/functions/_delt/profil.ts`, samme liste som kolonnerettighetene).
 Rollen (`role`), `must_change_password`, `onboarding_completed` og
 `created_at` kan ikke leses fra tabellen av noen i nettleseren, heller ikke
 for egen rad. Skriveretten er uendret: navn og bildesti på egen rad.
+Stillingen settes bare med `sett_stilling`.
 
 **Hvem man ser.** Den tillatende leseregelen på `profiles` gir profilkortet
 til:
@@ -1429,6 +1431,7 @@ Kategoriene beskriver kontrollen funksjonen har i dag:
 | `kontomyndighet` | `security definer` som svarer etter den innloggedes myndighet over kontoer (`intern.kontoavslag`) |
 | `medlemskapsmyndighet` | `security definer` som endrer eller viser medlemskap etter den innloggedes myndighet i fagmiljøet (`intern.medlemskapsavslag`, P3) |
 | `redaktormyndighet` | `security definer` som gir, tar tilbake eller viser redaktøransvar etter den innloggedes myndighet i fagmiljøet eller som systemarkitekt (`intern.kan_administrere_redaktoransvar`, P5) |
+| `stillingsmyndighet` | `security definer` som setter eller viser stillingen til en bruker etter den innloggedes myndighet (`intern.stillingsavslag`, `docs/stillinger.md`) |
 | `admin-utvidet` | Innlogget, men en administrator får gjøre eller se mer |
 | `admin` | Krever administrator for alt |
 | `stoffregister` | Krever rett til å endre stoffregisteret (`intern.krev_registerbruker`) |

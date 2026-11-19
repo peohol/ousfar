@@ -1,0 +1,14 @@
+{
+  "id": "20261119-125439-f92466",
+  "semver": "minor",
+  "opprettet": "2026-11-19T12:54:39Z",
+  "sammendrag": "Brukerne kan oppgi stillingen sin",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["vinduer"],
+  "punkter": [
+    "I «Kontoen din» kan du velge stillingen din fra en fast liste, eller stå uten stilling.",
+    "Administratorer og systemarkitekter kan endre stillingen til andre i «Brukere», og stillingen vises ved brukernavnet der.",
+    "Systemarkitektene har fått «Stillinger» i administrasjonen, der lista endres. En stilling noen har, kan fjernes når de har fått en annen, alle på én gang eller én og én."
+  ]
+}
