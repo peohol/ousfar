@@ -127,13 +127,8 @@
   border-left-color: var(--aksent);
 }
 
-/* Nedtrekksmenyen: alle seksjonene, og den rulles når de ikke får plass. */
-.innholdsmeny .nedtrekk__panel {
-  max-height: calc(100dvh - var(--toppmeny-offset) - var(--rom-6));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
+/* Nedtrekksmenyen: alle seksjonene. Den rulles når de ikke får plass
+   (`useMenyplassering`). */
 .innholdsmeny .nedtrekk__valgknapp {
   min-height: var(--hoyde-trykk);
 }
@@ -141,13 +136,6 @@
 .innholdsmeny .nedtrekk__valgknapp[aria-current='true'] {
   color: var(--aksent);
   background: var(--aksent-flate);
-}
-
-@media (max-width: 47.5em) {
-  /* Fra dokken åpner menyen seg oppover, mellom toppmenyen og dokken. */
-  .toppmeny__kontekst .innholdsmeny .nedtrekk__panel {
-    max-height: calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset));
-  }
 }
 
 @media print {

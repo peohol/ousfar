@@ -1,0 +1,14 @@
+{
+  "id": "20261119-121120-b92e00",
+  "semver": "patch",
+  "opprettet": "2026-11-19T12:11:20Z",
+  "sammendrag": "Menyene vises alltid i sin helhet",
+  "typer": ["Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Menyene som åpnes fra «…» ved meldingene i chatten, blir ikke lenger kuttet av chatfeltet.",
+    "Det samme gjelder alle andre menyer i appen, som i brukerlista og stoffregisteret: de legger seg over alt annet, og åpner seg oppover når det ikke er plass under.",
+    "Forklaringene som dukker opp over knapper, vises nå også inne i vinduer."
+  ]
+}

@@ -89,7 +89,10 @@ Det brukerne skriver, ligger hos disse, og ingen andre:
 | GitHub (offentlig) | Koden og dokumentasjonen. Ingen brukertekst; arbeidet med en planlagt oppgave kan sitere den i en PR, og da gjelder regelen fullt ut |
 
 Ingen e-post, push-varsler, analyseverktøy eller feilrapportering sender
-innhold ut av appen.
+innhold ut av appen. Varslene om nye chatmeldinger (`chatvarsler.md`) går
+gjennom nettleserens push-tjeneste (Google, Mozilla, Apple eller Microsoft),
+kryptert for enheten, og har bare gruppens navn eller «Direktemelding» og
+antallet uleste: aldri tekst eller avsender.
 
 ## Kartleggingen av inndataflatene
 

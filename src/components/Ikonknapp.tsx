@@ -21,8 +21,8 @@ export interface IkonknappProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
   /** Noe som skal stå i knappen i stedet for ikonet, som et profilbilde. */
   innhold?: ReactNode
   /**
-   * Uten tooltip, der boblen ikke kan vises: i et modalt lag ligger siden,
-   * og dermed boblen, under laget. Navnet står fortsatt for skjermlesere.
+   * Uten tooltip, der den bare ville stått i veien, som på «…»-knappene ved
+   * meldingene. Navnet står fortsatt for skjermlesere.
    */
   utenTips?: boolean
 }

@@ -17,6 +17,7 @@ import {
 } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import type { Profil } from '@delt/profil'
+import { avsluttVarslerVedUtlogging } from '../chatvarsler/api'
 import { tilgangFor, type Tilgang } from '../domain/tilgang'
 import * as api from './api'
 import { erKonfigurert, klient } from './klient'
@@ -183,6 +184,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
   }, [brukerId])
 
   const loggUt = useCallback(async () => {
+    await avsluttVarslerVedUtlogging()
     await api.loggUt()
   }, [])
 

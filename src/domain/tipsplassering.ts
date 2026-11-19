@@ -69,7 +69,7 @@ export function maksTipsstorrelse(vindu: Storrelse): Storrelse {
  * grense, så boblen legger seg mot øvre venstre kant i stedet for å krype ut
  * på motsatt side.
  */
-function klem(verdi: number, minst: number, mest: number): number {
+export function klem(verdi: number, minst: number, mest: number): number {
   return Math.min(Math.max(verdi, minst), Math.max(minst, mest))
 }
 

@@ -36,6 +36,7 @@ import { Ikon } from './components/ikon/Ikon'
 import { Versjonspille } from './components/Versjonspille'
 import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
 import { Chatmeny } from './components/chat/Chatmeny'
+import { Chatvarselvakt } from './components/chat/Chatvarselvakt'
 import { Chatknapp } from './components/chat/Chatknapp'
 import { Direktelenkekilde } from './components/direktelenker/Direktelenkekilde'
 import { Lenkemelding } from './components/direktelenker/Lenkemelding'
@@ -1093,6 +1094,7 @@ function Arbeidsflate({
 
                   {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />}
                   <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
+                  <Chatvarselvakt brukerId={profil.id} />
                   {/* Vinduene hovedmenyen åpner under «For hele appen». */}
                   <Idelag />
                   <Administrasjon />

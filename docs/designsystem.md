@@ -136,7 +136,7 @@ Alle ikoner i appen er `Ikon`. Det finnes ingen andre ikonsett.
   ikon. `etikett` er påkrevd og blir både knappens navn og tooltip.
   Variantene er `myk`, `stille`, `aksent` og `kant`, og størrelsene er
   `kontroll` og `liten`. På smale flater er den minst 44 px. `utenTips`
-  tar bort tooltipen der den ville havnet under et modalt lag.
+  tar bort tooltipen der den ikke trengs.
 - **`Toppmenyknapp`** (`src/components/toppmeny/Toppmenyknapp.tsx`) er en
   pille med ikon og tekst, `primar` eller `sekundar`. På smalere skjermer
   krymper en sekundær knapp til bare ikon. En handling som ikke kan brukes
@@ -292,6 +292,33 @@ Ryddet bort i omleggingen:
   Stilen står i `modallag.css`. Endringsloggen og versjonspillen har sin
   egen i `endringslogg.css`.
 
+## Menyer og bobler over innholdet
+
+Alt som flyter over innholdet fra en knapp eller et ord, vises alltid i sin
+helhet: det klippes aldri av beholderen det står i (en rullende chat, et
+smalt panel, et dialogvindu), og det står aldri delvis utenfor vinduet.
+
+- **Menyer** fra en knapp, også «…»-menyene ved meldinger og rader, bygger
+  alltid på `Nedtrekksmeny` (`src/components/toppmeny/Nedtrekksmeny.tsx`),
+  med valgene som `Menyvalg` og `Menyskuff`. Lag aldri et eget
+  nedtrekkspanel med `position: absolute`.
+- **Bobler** ved et ord eller en knapp (tooltipene, referansene,
+  konsentrasjonene, lenkebrikkene, tegnmenyen) bygger på
+  `useBobleplassering` (`src/components/Tips.tsx`).
+- Begge løftes til nettleserens **øverste lag** mens de står åpne
+  (`useOverlag`, Popover API med `popover="manual"`). Det er appens portal:
+  elementet blir stående der det står i dokumentet, så tastaturrekkefølgen,
+  fokusfellen i et dialogvindu og stilarkenes regler virker, men det tegnes
+  over alt, uten `z-index`.
+- Plasseringen regnes ut i vinduet, i rene tall som er testet:
+  `plasserMeny` (`src/domain/menyplassering.ts`) henger menyen under
+  knappen i flukt med høyre kant (`justering="start"`: venstre), åpner den
+  over når det er mer plass der, skyver den inn fra vinduskantene og gir den
+  en makshøyde så den rulles heller enn å stikke ut. `useMenyplassering`
+  følger knappen når noe rulles. Boblene har `plasserTips`.
+- Stilarket gir bare utseendet og bredden (`.brukermeny .nedtrekk__panel`
+  osv.), aldri `top`, `right` eller `z-index` for panelet.
+
 ## Toppmenyen
 
 `src/components/toppmeny/Toppmeny.tsx` er den ene faste menyen øverst. Den er
@@ -406,9 +433,8 @@ menyen, bruker den:
 
 ### Dokken og smale flater
 
-Under 760 px bredde får søket all plassen i pillen, skillet viker,
-nedtrekksmenyene henger ved vinduets høyre kant, og knappene i dokken har
-trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
+Under 760 px bredde får søket all plassen i pillen, skillet viker, og
+knappene i dokken har trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
 
 - Sidens plasser flytter til en **dokk** nederst i vinduet, og siden får
   `--dokk-offset` luft nederst. Dokken står midt i vinduet og er ikke
@@ -425,7 +451,7 @@ trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
   den øverste raden for seg selv (også der alt ellers står på én), og
   hovedhandlingen flytter ned først på raden under, som bare ikonet.
 - Nedtrekksmenyer fra dokken (som «Mer for fagsiden») åpner seg oppover,
-  rett over dokken.
+  rett over knappen, fordi det er der plassen er (`plasserMeny`).
 - Står dokken nederst på en bredere flate, blir diskusjonene stående som
   boblen øverst til høyre, og panelet deres slutter over dokken.
 - Fortolkningen har dokken når en analytt er valgt: «Diskusjoner».
