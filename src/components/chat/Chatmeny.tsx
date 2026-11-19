@@ -9,11 +9,13 @@ import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from 
 import { useGruppechat } from '../../gruppechat/useGruppechat'
 import { useGrupper } from '../../grupper/kilde'
 import type { MinGruppe } from '../../grupper/modell'
+import type { Gruppesymbol as Gruppesymbolet } from '../../grupper/symbol'
 import { useEscapelag } from '../../hooks/lagstakk'
 import { useKantmeny } from '../../hooks/useKantmeny'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { merketall } from '../../varsler/modell'
 import { Gruppechat, type Chatgruppe } from '../grupper/Gruppechat'
+import { Gruppesymbol, symbollenke, useGruppesymbollenker } from '../grupper/Gruppesymbol'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
@@ -443,6 +445,7 @@ export function Chatmeny({
               <Samtalevisning
                 key={gruppe.id}
                 gruppe={gruppe}
+                symbol={kjentGruppe?.symbol}
                 kjent={!!kjentGruppe}
                 medlemmer={grupper.grupper.find((g) => g.id === gruppe.id)?.medlemmer}
                 onTilbake={() => tilLista(gruppe.id)}
@@ -465,6 +468,7 @@ function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLe
   const [apen, setApen] = useBevart('chat/minegrupper', true)
   const id = useId()
   const mine = useMemo(() => grupper.filter((g) => g.rolle !== null), [grupper])
+  const lenker = useGruppesymbollenker(mine)
   return (
     <section className="chatgrupper" aria-labelledby={`${id}-tittel`}>
       <h3 id={`${id}-tittel`} className="chatgrupper__hode">
@@ -480,6 +484,7 @@ function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLe
             {mine.map((g) => (
               <li key={g.id}>
                 <a className="chatgrupper__lenke" href={gruppeadresse(g.id)} onClick={onLenke}>
+                  <Gruppesymbol gruppe={g} lenke={symbollenke(g, lenker)} storrelse="mini" />
                   <span className="chatgrupper__navn">{g.navn}</span>
                 </a>
               </li>
@@ -530,6 +535,7 @@ function Samtaleliste({
   const id = useId()
   const motparter = useMemo(() => direkte.samtaler.flatMap((s) => (s.motpart ? [s.motpart] : [])), [direkte.samtaler])
   const lenker = useAvatarlenker(motparter)
+  const symbollenker = useGruppesymbollenker(samtaler.map((s) => s.gruppe))
 
   const rader = (liste: { grupper: readonly Gruppesamtale[]; direkte: typeof direkte.samtaler }): Samtalerad[] =>
     [
@@ -541,11 +547,7 @@ function Samtaleliste({
           siste_kl: s.siste_kl,
           uleste: s.uleste,
           dempet: false,
-          bilde: (
-            <span className="chatrad__bilde" aria-hidden="true">
-              <Ikon navn={CHATIKON} storrelse="ui" />
-            </span>
-          ),
+          bilde: <Gruppesymbol gruppe={s.gruppe} lenke={symbollenke(s.gruppe, symbollenker)} />,
         }),
       ),
       ...liste.direkte.map(
@@ -657,12 +659,15 @@ function Samtaleliste({
 /** Én samtale: overskriften, og gruppechatten slik den er på gruppesiden. */
 function Samtalevisning({
   gruppe,
+  symbol,
   kjent,
   medlemmer,
   onTilbake,
   onTilGruppen,
 }: {
   gruppe: Chatgruppe
+  /** Gruppens symbol, som gruppechatten arver. */
+  symbol?: Gruppesymbolet | null
   /** Gruppen står i lista eller blant gruppene; ellers vises ingen overskrift. */
   kjent: boolean
   medlemmer?: number
@@ -670,6 +675,8 @@ function Samtalevisning({
   onTilGruppen: () => void
 }) {
   const chat = useGruppechat(gruppe.id)
+  const symbolet = { symbol: symbol ?? null }
+  const lenker = useGruppesymbollenker([symbolet])
   const utestengt = chat.status === 'ingen_tilgang'
   const tilgang = kjent && !utestengt
   // Tilgangen er borte (fjernet fra gruppen eller fagmiljøet): «Mine grupper»
@@ -684,9 +691,7 @@ function Samtalevisning({
       <TilSamtalene onTilbake={onTilbake} />
       {tilgang && (
         <div className="chatsamtale__hode">
-          <span className="chatrad__bilde" aria-hidden="true">
-            <Ikon navn={CHATIKON} storrelse="ui" />
-          </span>
+          <Gruppesymbol gruppe={symbolet} lenke={symbollenke(symbolet, lenker)} />
           <div className="chatsamtale__navn">
             <h3 className="chatsamtale__tittel">{gruppe.navn}</h3>
             <p className="chatsamtale__art">

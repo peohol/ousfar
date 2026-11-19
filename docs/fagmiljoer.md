@@ -480,6 +480,53 @@ migrasjon kan ta grenen for grupper ut av `rekkevidde`-reglene og funksjonene
 (som da ser alt med `omfang = 'gruppe'` som ulesbart), eller arkivere alle
 gruppene.
 
+### Gruppesymbolet
+
+Peder 19.11.2026 (`supabase/migrations/20261119090000_gruppesymboler.sql`):
+en gruppe kan ha et symbol, en emoji eller et eget bilde, som står i sirkelen
+ved gruppenavnet i «Mine grupper» og samtalelista i chatmenyen, i hodet på
+gruppechatten, på gruppesiden og i gruppeoversikten. Gruppechatten arver
+symbolet fra gruppen. Uten symbol står gruppeikonet. Direktemeldingene viser
+profilbildet eller initialene til den andre (`docs/direktemeldinger-personvern.md`).
+
+- **Hvem.** De som styrer gruppen (de ansvarlige og systemarkitektene), velger
+  symbolet i gruppens innstillinger, så lenge gruppen er aktiv. Samme myndighet
+  som navnet (`intern.gruppeavslag`, «endre»). De som leser gruppen, ser det.
+- **Emojien.** Nøyaktig én emoji (med variantvelger, hudfarge, høyst fire
+  satt sammen med ZWJ, eller et flagg), av tegn fra emojiblokkene uten tall,
+  bokstaver, punktskrift og bokstavlignende tegn, så symbolet ikke kan bære
+  tekst. Databasen håndhever det i tabellregelen og i funksjonen med én
+  definisjon (`intern.er_gruppesymbolemoji`), med samme mønster som
+  `EMOJIMONSTER` i `src/grupper/symbol.ts` (`gruppesymbol.test.ts` holder dem
+  like). Appen sjekker i tillegg at det er ett tegn slik det vises (`erEmoji`).
+- **Bildet.** Samme beskjæring og komprimering i nettleseren som profilbildene
+  (`Bildevelger`): kvadratisk WebP, vist i en sirkel, i den private bøtta
+  `gruppesymboler` (1 MB, bare WebP). Hvert bilde får sin egen sti,
+  `<gruppe-ID>/<UUID>.webp` (`er_gruppesymbolsti`), og det finnes ingen regel
+  for å endre en fil, så et bilde kan aldri overskrives. Reglene på
+  `storage.objects`:
+  - *Lese:* de som leser gruppen, ser bare det gjeldende bildet
+    (`mine_gruppesymbolbilder()`); de som styrer den, ser hele mappen.
+  - *Laste opp:* de som styrer gruppen (`mine_styrte_grupper()`), på en ny
+    sti i gruppens mappe.
+  - *Slette:* de som styrer gruppen, men bare et bilde som ikke er gruppens
+    symbol, og som er over en time gammelt.
+
+  Lenkene er signerte og fornyes som profilbildenes (`useBildelenker`).
+- **Lagringen.** Appen laster opp bildet på en ny sti og kaller så
+  `sett_gruppesymbol(gruppe, emoji, bilde)` med stien. Funksjonen låser
+  gruppen, godtar bare et bilde i gruppens mappe som er lastet opp den siste
+  halvtimen, og fører endringen i tilgangsloggen («Gruppesymbolet endret»).
+  Deretter rydder appen bort de andre bildene i mappen, innenfor reglene over.
+  Slik kan verken en lagring som feiler, eller to som bytter symbol samtidig,
+  ødelegge det bekreftede symbolet: et bilde som nettopp er lastet opp, kan
+  ikke slettes før det er en time gammelt, og funksjonen godtar det bare den
+  første halvtimen. Det som ikke kan ryddes ennå, står til neste endring og
+  er bare synlig for dem som styrer gruppen. `gruppereferanse` (og dermed
+  `mine_grupper()`, `gruppeoversikt` og samtalelista) har feltet `symbol`.
+- **Tilbakeføring.** Kolonnene, bøtta og funksjonene kan stå; en ny migrasjon
+  kan sette symbolene til null og fjerne `symbol` fra `gruppereferanse`.
+
 ## Idéer og oppgaver i gruppene
 
 P6b (#430, `supabase/migrations/20261117040100_gruppeideer_og_gruppeoppgaver.sql`)

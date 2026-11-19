@@ -491,17 +491,6 @@
   background: var(--flate-hevet);
 }
 
-.chatrad__bilde {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--blekk-dempet);
-  background: var(--flate-hevet);
-  border-radius: 50%;
-}
-
 .chatrad__tekst {
   display: flex;
   flex-direction: column;
@@ -679,6 +668,13 @@
 
 .chatsamtaler__ny:hover {
   background: var(--flate-hevet);
+}
+
+/* Symbolet til gruppen i samtalelista og over samtalen, like stort som bildet til en person. */
+.chatrad .gruppesymbol,
+.chatsamtale__hode .gruppesymbol {
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 /* Bildet til den andre, med prikken når hen er aktiv nå. */
