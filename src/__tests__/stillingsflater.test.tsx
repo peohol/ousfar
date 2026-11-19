@@ -132,6 +132,17 @@ describe('kontoen', () => {
     await waitFor(() => expect(settProfil).toHaveBeenCalled())
     expect(katalog.settStilling).not.toHaveBeenCalled()
   })
+
+  it('holder den nye stillingen i profilen selv om lagringen av navnet etterpå feiler', async () => {
+    db.profil = profil('1', 'Kari', 'Nordmann')
+    const { lagreEgenProfil } = await import('../auth/api')
+    vi.mocked(lagreEgenProfil).mockRejectedValueOnce(new Error('Navnet ble ikke lagret.'))
+    render(<Kontopanel apen onLukk={() => {}} />)
+    await userEvent.selectOptions(screen.getByLabelText('Stilling'), 'Overlege')
+    await userEvent.click(screen.getByRole('button', { name: 'Lagre' }))
+    expect(await screen.findByText('Navnet ble ikke lagret.')).toBeTruthy()
+    expect(settProfil).toHaveBeenCalledWith(expect.objectContaining({ id: '1', stilling_id: 'overlege' }))
+  })
 })
 
 describe('brukerlista', () => {

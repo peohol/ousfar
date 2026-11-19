@@ -53,19 +53,38 @@ export async function lesStillingskatalog(): Promise<Stillingskatalog> {
 
 /** `null` til lista er hentet. */
 const katalog = lagDeltTilstand<Stillingskatalog | null>(null)
+
+/**
+ * Hver lesing har et løpenummer, og bare svaret på den siste legges inn. Slik
+ * kan ikke en lesing som startet før en endring, legge den gamle lista tilbake
+ * etter den nye, og ikke en lesing fra forrige innlogging komme inn i den neste.
+ */
+let lopenummer = 0
 let underveis: Promise<void> | null = null
 
-/** Henter lista på nytt (samtidige kall deles). En feil lar den forrige stå. */
-export function oppfriskStillinger(): Promise<void> {
-  underveis ??= lesStillingskatalog()
-    .then(katalog.sett, () => undefined)
+/**
+ * Henter lista på nytt. Samtidige kall deles, unntatt med `etterEndring`, som
+ * alltid starter en ny lesing. En feil lar den forrige stå.
+ */
+export function oppfriskStillinger(etterEndring = false): Promise<void> {
+  if (underveis && !etterEndring) return underveis
+  const denne = ++lopenummer
+  const lesing = lesStillingskatalog()
+    .then(
+      (liste) => {
+        if (denne === lopenummer) katalog.sett(liste)
+      },
+      () => undefined,
+    )
     .finally(() => {
-      underveis = null
+      if (underveis === lesing) underveis = null
     })
-  return underveis
+  underveis = lesing
+  return lesing
 }
 
 vedOktskifte(() => {
+  lopenummer++
   underveis = null
   katalog.sett(null)
 })
@@ -119,7 +138,7 @@ async function endreLista<T>(navn: string, argumenter: Record<string, unknown>):
   try {
     return await rpc<T>(navn, argumenter)
   } finally {
-    await oppfriskStillinger()
+    await oppfriskStillinger(true)
   }
 }
 

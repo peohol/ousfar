@@ -84,11 +84,15 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
     setProfilkvittering(null)
     try {
       const sti = bilde ? await lastOppAvatar(profil.id, bilde) : undefined
-      // Stillingen settes for seg (`sett_stilling`), og før navnet, så det
-      // lagrede profilkortet under kommer med den nye.
-      if (stilling !== (profil.stilling_id ?? null)) await settStilling(profil.id, stilling)
+      // Stillingen settes for seg (`sett_stilling`). Profilen her får den med
+      // en gang, så den stemmer også om lagringen av navnet etterpå feiler.
+      let gjeldende = profil
+      if (stilling !== (profil.stilling_id ?? null)) {
+        gjeldende = { ...profil, stilling_id: await settStilling(profil.id, stilling) }
+        settProfil(gjeldende)
+      }
       settProfil(
-        await lagreEgenProfil(profil, {
+        await lagreEgenProfil(gjeldende, {
           first_name: rentFornavn,
           last_name: rentEtternavn,
           ...(sti ? { avatar_path: sti } : {}),

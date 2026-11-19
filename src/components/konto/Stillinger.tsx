@@ -555,8 +555,9 @@ function Stillingsfjerning({
   onAvbryt: () => void
 }) {
   const [brukere, setBrukere] = useState<Stillingsinnehaver[] | null>(null)
-  const [alle, setAlle] = useState<string | null>(null)
-  const [hver, setHver] = useState<Record<string, string | null>>({})
+  // Valgene tas vare på når appen oppdateres, så en lang fordeling ikke må gjøres på nytt.
+  const [alle, setAlle] = useBevart<string | null>(`stillinger.fjernes.${stilling.id}.alle`, null)
+  const [hver, setHver] = useBevart<Record<string, string | null>>(`stillinger.fjernes.${stilling.id}.hver`, {})
   const [feil, setFeil] = useState<string | null>(null)
   const [kvittering, setKvittering] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
