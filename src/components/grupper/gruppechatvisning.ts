@@ -4,7 +4,8 @@
  * skrivefeltet (docs/gruppechat.md, «Brukerflaten»). Rene funksjoner, så de
  * kan prøves for seg.
  */
-import type { Chatlesere, Gruppemelding } from '../../gruppechat/modell'
+import type { Chatlesere, Direktemeta, Gruppemelding } from '../../gruppechat/modell'
+import { personnavn } from '../../direktemeldinger/modell'
 
 const KLOKKE = new Intl.DateTimeFormat('nb-NO', { hour: '2-digit', minute: '2-digit' })
 const UKEDAG_OG_DATO = new Intl.DateTimeFormat('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -64,6 +65,9 @@ export function henger(forrige: Gruppemelding | undefined, melding: Gruppemeldin
   return mellom >= 0 && mellom <= SAMMENHENGENDE_MS
 }
 
+/** Hvem som kan lese en direktesamtale: bare de to (docs/direktemeldinger-personvern.md). */
+export const DIREKTE_LESERE = 'Bare dere to kan lese samtalen.'
+
 /** Hvem som kan lese chatten, øverst i den. */
 export function lesertekst({ medlemmer, systemarkitekter }: Chatlesere): string {
   const hvem = [
@@ -107,4 +111,73 @@ export function nyeMeldingerTekst(antall: number): string {
  */
 export function erBeroring(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches
+}
+
+/**
+ * Linjen i stedet for skrivefeltet når det ikke kan skrives. I en
+ * direktesamtale etter sperren: den andre kan ikke motta (samme tekst uansett
+ * grunn), eller den innloggedes egen grunn.
+ */
+export function laastTekst(aktiv: boolean, direkte: Direktemeta | null): string {
+  if (direkte) {
+    const navn = personnavn(direkte.motpart)
+    switch (direkte.sperre) {
+      case 'selv_av':
+        return 'Du har slått av direktemeldinger. Slå dem på for å skrive.'
+      case 'selv_blokkert':
+        return `Du har blokkert ${navn}. Opphev blokkeringen for å skrive.`
+      default:
+        return `${navn} kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.`
+    }
+  }
+  return aktiv ? 'Du kan lese chatten, men ikke skrive i den.' : 'Gruppen er arkivert. Chatten kan leses, men ingen kan skrive i den.'
+}
+
+/**
+ * Det som står der en slettet melding var. I en direktesamtale (`motpart` er
+ * navnet på den andre) kan begge slette alt, og den som fjernet den andres
+ * melding står der.
+ */
+export function slettettekst(melding: Pick<Gruppemelding, 'slettet' | 'egen'>, motpart?: string): string {
+  switch (melding.slettet?.av) {
+    case 'moderator':
+      return 'Fjernet av en moderator'
+    case 'motpart':
+      return melding.egen ? `Fjernet av ${motpart ?? 'den andre'}` : 'Fjernet av deg'
+    default:
+      return 'Meldingen er slettet'
+  }
+}
+
+/** Tekstene i menyen og bekreftelsen når den innloggede sletter en melding. */
+export interface Slettetekster {
+  meny: string
+  forklaring?: string
+  tittel: string
+  bekreft: string
+  tekst: string
+}
+
+/**
+ * Tekstene for å slette en melding: sin egen, eller en andre skrev, som
+ * moderator i en gruppe eller som deltaker i en direktesamtale (`direkte`).
+ */
+export function slettetekster(navn: string, egen: boolean, direkte: boolean): Slettetekster {
+  const hvem = direkte ? 'dere begge' : 'alle'
+  const hvor = direkte ? 'samtalen' : 'chatten'
+  if (egen) {
+    return {
+      meny: 'Slett',
+      tittel: 'Slette meldingen?',
+      bekreft: 'Slett meldingen',
+      tekst: `Teksten fjernes for ${hvem} med en gang og kan ikke hentes tilbake. I ${hvor} står det at meldingen er slettet.`,
+    }
+  }
+  return {
+    meny: 'Fjern meldingen',
+    forklaring: direkte ? 'Den fjernes for dere begge. Det står i samtalen at du fjernet den.' : 'Som moderator. Det står i chatten at den er fjernet.',
+    tittel: `Fjerne meldingen fra ${navn}?`,
+    bekreft: 'Fjern meldingen',
+    tekst: `Teksten fjernes for ${hvem} med en gang og kan ikke hentes tilbake. I ${hvor} står det at ${direkte ? 'du' : 'en moderator'} fjernet den.`,
+  }
 }

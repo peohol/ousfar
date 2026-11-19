@@ -67,6 +67,14 @@ export const KONTROLLER = [
    * adminrollen gir ingenting (P2b, P2d).
    */
   'systemarkitekt',
+  /**
+   * `security definer` for direktemeldingene (D5): krever en innlogget med
+   * aktivt medlemskap og bryteren på (`intern.krev_direktemeldinger`), og gir
+   * bare det den innloggede selv eier eller er en av de to deltakerne i
+   * (`intern.krev_direktesamtale`, `intern.krev_direktemelding`). Ingen gir
+   * systemarkitektene eller administratorene noe ekstra.
+   */
+  'direktemelding',
 ] as const
 
 export type Kontroll = (typeof KONTROLLER)[number]
@@ -295,4 +303,24 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'slett_gruppemelding(melding uuid)': 'rekkevidde',
   // D4a: samtalelista i chatmenyen (supabase/migrations/*_chatmeny.sql).
   'mine_gruppesamtaler()': 'rekkevidde',
+  // D5: direktemeldingene (supabase/migrations/*_direktemeldinger.sql).
+  'aapne_direktesamtale(mottaker uuid)': 'direktemelding',
+  'aktive_motparter()': 'direktemelding',
+  'blokker_bruker(bruker uuid)': 'direktemelding',
+  'demp_direktesamtale(samtale uuid, dempet boolean)': 'direktemelding',
+  'direktesamtale_endringer(samtale uuid, etter bigint, antall integer)': 'direktemelding',
+  'endre_direktemelding(melding uuid, tekst text)': 'direktemelding',
+  'kan_bruke_direktemeldinger()': 'eier',
+  'les_direktesamtale(samtale uuid, for_nr bigint, antall integer)': 'direktemelding',
+  'marker_chataktivitet()': 'direktemelding',
+  'merk_direktesamtale_lest(samtale uuid, til_nr bigint)': 'direktemelding',
+  'mine_blokkeringer()': 'direktemelding',
+  'mine_chatvalg()': 'direktemelding',
+  'mine_direktesamtaler()': 'direktemelding',
+  'opphev_blokkering(bruker uuid)': 'direktemelding',
+  'send_direktemelding(samtale uuid, klient_id uuid, tekst text)': 'direktemelding',
+  'sett_chatvalg(tillat boolean, vis_aktiv boolean)': 'direktemelding',
+  'skjul_direktesamtale(samtale uuid)': 'direktemelding',
+  'slett_direktemelding(melding uuid)': 'direktemelding',
+  'sok_direktemottakere(sok text)': 'direktemelding',
 }

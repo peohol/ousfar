@@ -6,7 +6,7 @@
 import { klient } from '../auth/klient'
 import { lagChatapi } from './kall'
 
-export { IngenTilgang, lagChatapi, type Chatapi } from './kall'
+export { IngenTilgang, Sperret, lagChatapi, type Chatapi } from './kall'
 
 export const {
   lesGruppechat,

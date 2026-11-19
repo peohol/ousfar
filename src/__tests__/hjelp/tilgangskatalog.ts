@@ -180,6 +180,10 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
     case 'rekkevidde':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'
+    case 'direktemelding':
+      if (!f.definer) return 'er ikke security definer'
+      if (KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) || KALLER_ADMINKONTROLL.test(f.kilde)) return 'gir systemarkitekter eller administratorer noe ekstra'
+      return /\bintern\s*\.\s*krev_direktemeldinger\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.krev_direktemeldinger'
     case 'systemarkitekt':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) ? null : 'krever ingen systemarkitekt'

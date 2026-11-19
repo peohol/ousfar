@@ -34,7 +34,11 @@ export interface Gruppemelding {
   tekst: string | null
   skrevet_kl: string
   redigert_kl: string | null
-  slettet: null | { av: 'forfatter' | 'moderator'; kl: string }
+  /**
+   * Hvem som slettet: forfatteren, en moderator i gruppen, eller i en
+   * direktesamtale den andre deltakeren (`motpart`).
+   */
+  slettet: null | { av: Slettetav; kl: string }
   /** Den innloggede skrev meldingen. */
   egen: boolean
   /**
@@ -45,6 +49,23 @@ export interface Gruppemelding {
   klient_id: string | null
   kan_endre: boolean
   kan_slette: boolean
+}
+
+export type Slettetav = 'forfatter' | 'moderator' | 'motpart'
+
+/**
+ * Hvorfor den innloggede ikke kan skrive i en direktesamtale: hen har selv
+ * slått av direktemeldinger (`selv_av`), har blokkert den andre
+ * (`selv_blokkert`), eller den andre kan ikke motta (`mottaker`, uten grunn).
+ */
+export type Direktesperre = 'selv_av' | 'selv_blokkert' | 'mottaker'
+
+/** Det en direktesamtale har i tillegg til en gruppechat (docs/direktemeldinger-personvern.md). */
+export interface Direktemeta {
+  /** Den andre i samtalen; `null` når kontoen er slettet. */
+  motpart: Profilkort | null
+  sperre: Direktesperre | null
+  dempet: boolean
 }
 
 /** Hvem som kan lese chatten, til forklaringen øverst. */
@@ -66,15 +87,28 @@ export interface Chatside {
   kan_moderere: boolean
   lesere: Chatlesere
   grenser: Chatgrenser
+  /** Bare i en direktesamtale. */
+  direkte: Direktemeta | null
 }
 
-/** Svaret fra `gruppechat_endringer`. */
+/** Svaret fra `gruppechat_endringer` og `direktesamtale_endringer`. */
 export interface Chatendringer {
   /** Stigende etter `endring`. */
   meldinger: Gruppemelding[]
   siste_endring: number
   /** Det er mer å hente etter `siste_endring`. */
   flere: boolean
+  /**
+   * Meldinger skrevet før dette tidspunktet har passert lagringstiden og er
+   * slettet; de fjernes også fra en samtale som står åpen. Bare der svaret gir den.
+   */
+  frist?: string
+  /**
+   * Bare i en direktesamtale: om det kan skrives nå, og den andre, sperren og
+   * dempingen, så en åpen samtale ser endringene ved hvert livstegn.
+   */
+  kan_skrive?: boolean
+  direkte?: Direktemeta | null
 }
 
 /** En melding som er sendt fra denne nettleseren, men ikke bekreftet ennå. */
@@ -120,11 +154,16 @@ export interface Gruppechat {
   kanModerere: boolean
   lesere: Chatlesere
   grenser: Chatgrenser
+  /** Bare i en direktesamtale: den andre, sperren og dempingen. */
+  direkte: Direktemeta | null
+  /** Henter det nye og rettighetene på nytt med en gang, etter noe brukeren selv har endret (som en blokkering). */
+  oppfrisk: () => void
 }
 
 const INGEN_LESERE: Chatlesere = { medlemmer: 0, systemarkitekter: true }
 
-function lesForfatter(verdi: unknown): Profilkort | null {
+/** Et profilkort fra databasen, eller `null` uten ID. */
+export function lesProfilkort(verdi: unknown): Profilkort | null {
   if (!erObjekt(verdi) || typeof verdi.id !== 'string') return null
   return {
     id: verdi.id,
@@ -138,7 +177,8 @@ function lesForfatter(verdi: unknown): Profilkort | null {
 
 function lesSlettet(verdi: unknown): Gruppemelding['slettet'] {
   if (!erObjekt(verdi)) return null
-  return { av: verdi.av === 'moderator' ? 'moderator' : 'forfatter', kl: tekst(verdi.kl) }
+  const av: Slettetav = verdi.av === 'moderator' || verdi.av === 'motpart' ? verdi.av : 'forfatter'
+  return { av, kl: tekst(verdi.kl) }
 }
 
 /** Én melding, eller `null` når den mangler ID eller nummer. */
@@ -151,7 +191,7 @@ export function lesGruppemelding(verdi: unknown): Gruppemelding | null {
     id: verdi.id,
     nr,
     endring: tall(verdi.endring),
-    forfatter: lesForfatter(verdi.forfatter),
+    forfatter: lesProfilkort(verdi.forfatter),
     tekst: slettet ? null : tekstEllerNull(verdi.tekst),
     skrevet_kl: tekst(verdi.skrevet_kl),
     redigert_kl: tekstEllerNull(verdi.redigert_kl),
@@ -180,7 +220,19 @@ function lesLesere(verdi: unknown): Chatlesere {
   return { medlemmer: tall(verdi.medlemmer), systemarkitekter: verdi.systemarkitekter !== false }
 }
 
-/** Svaret fra `les_gruppechat`, eller `null` uten formen. */
+const SPERRER: readonly Direktesperre[] = ['selv_av', 'selv_blokkert', 'mottaker']
+
+/** Det en direktesamtale har i tillegg, eller `null` (en gruppechat). */
+export function lesDirektemeta(verdi: unknown): Direktemeta | null {
+  if (!erObjekt(verdi)) return null
+  return {
+    motpart: lesProfilkort(verdi.motpart),
+    sperre: SPERRER.find((s) => s === verdi.sperre) ?? null,
+    dempet: verdi.dempet === true,
+  }
+}
+
+/** Svaret fra `les_gruppechat` og `les_direktesamtale`, eller `null` uten formen. */
 export function lesChatside(verdi: unknown): Chatside | null {
   if (!erObjekt(verdi)) return null
   return {
@@ -192,6 +244,7 @@ export function lesChatside(verdi: unknown): Chatside | null {
     kan_moderere: verdi.kan_moderere === true,
     lesere: lesLesere(verdi.lesere),
     grenser: lesGrenser(verdi.grenser),
+    direkte: lesDirektemeta(verdi.direkte),
   }
 }
 
@@ -202,6 +255,9 @@ export function lesChatendringer(verdi: unknown): Chatendringer | null {
     meldinger: lesMeldinger(verdi.meldinger).sort((a, b) => a.endring - b.endring),
     siste_endring: tall(verdi.siste_endring),
     flere: verdi.flere === true,
+    ...(typeof verdi.frist === 'string' && !Number.isNaN(Date.parse(verdi.frist)) && { frist: verdi.frist }),
+    ...(typeof verdi.kan_skrive === 'boolean' && { kan_skrive: verdi.kan_skrive }),
+    ...('direkte' in verdi && { direkte: lesDirektemeta(verdi.direkte) }),
   }
 }
 

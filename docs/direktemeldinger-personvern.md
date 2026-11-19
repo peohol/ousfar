@@ -153,9 +153,10 @@ tekniske, men skal skrives her.
 | Pasientopplysninger i en melding | Fødselsnummerkontrollen; sletting med en gang av begge deltakerne; ingen kopier; ikke i sikkerhetskopiene |
 | Aktivitetsprikken brukes til å følge med på noen | Av som standard, bare for samtalepartnere, bare ja/nei, ingen historikk |
 
-## Datamodellen (skisse)
+## Datamodellen
 
-Navnene er forslag; D5 kan endre dem, men ikke det de sikrer. Alle tabellene
+Slik den er bygd i `supabase/migrations/20261118234500_direktemeldinger.sql`
+(se også [Gjennomføringen](#gjennomføringen)). Alle tabellene
 har radsikkerhet, den begrensende regelen `aktivt_medlemskap` der nettleseren
 har en rettighet, og står i kartleggingen av tilgangsinngangene
 (`tilgangsinnganger.test.ts`).
@@ -169,9 +170,14 @@ fritt i `brukerinnstillinger`.
 
 **`direktesamtaler`** — `id`, `bruker_lav`, `bruker_hoy` (`profiles`, `on delete
 set null`; `check (bruker_lav < bruker_hoy)`; unik på paret når begge finnes),
-`siste_nr`, `siste_endring`, `siste_melding_kl`, `opprettet_kl`, `endret_kl`.
-Raden er låsen for skrivingen og dørklokken. `select` for `authenticated` bare
-når den innloggede er en av de to; ingen andre rettigheter.
+`opprettet_av` (`on delete set null`), `siste_nr`, `siste_endring`,
+`siste_melding_kl`, `opprettet_kl`, `endret_kl`. Raden er låsen for skrivingen
+og dørklokken. `select` for `authenticated` bare på kolonnene dørklokken
+trenger (`id`, `bruker_lav`, `bruker_hoy`, `siste_nr`, `siste_endring`,
+`endret_kl`), og bare når den innloggede er en av de to; ingen andre
+rettigheter. `opprettet_av` brukes bare av funksjonene: en samtale uten
+meldinger står bare i lista til den som åpnet den, og grensen for nye
+samtaler i timen teller etter den.
 
 **`direktemeldinger`** — som `gruppemeldinger`: `id`, `samtale_id`, `nr`,
 `forfatter_id` (`on delete set null`), `klient_id` (unik per samtale og
@@ -208,7 +214,7 @@ systemarkitektene eller administratorene noe ekstra.
 | `mine_direktesamtaler()` | Samtalene: ID, den andres profilkort (null for slettet konto), `siste_melding_kl`, antall uleste, `dempet`, `kan_skrive`. Ingen tekst, ikke de skjulte |
 | `les_direktesamtale(samtale, for_nr, antall)` | Som `les_gruppechat`, med `motpart`, `kan_skrive`, `sperre` (`null`, `selv_av`, `selv_blokkert` eller `mottaker` — den siste uten grunn) og `lesere: 2` |
 | `direktesamtale_endringer(samtale, etter, antall)` | Som `gruppechat_endringer` |
-| `send_direktemelding(samtale, klient_id, tekst)` | Vaktene: tekst og lengde (`22023`), fødselsnummer (`22023`), takten (`54000`), så låsene og sendevilkårene (`55000` «Kan ikke motta nye direktemeldinger.» eller egen grunn) |
+| `send_direktemelding(samtale, klient_id, tekst)` | Vaktene: tekst og lengde (`22023`), fødselsnummer (`22023`), takten (`PT429`), så låsene og sendevilkårene (`PT409` «Kan ikke motta nye direktemeldinger.» eller egen grunn) |
 | `endre_direktemelding(melding, tekst)` | Bare forfatteren, bare når det kan sendes |
 | `slett_direktemelding(melding)` | Begge deltakerne; idempotent |
 | `merk_direktesamtale_lest(samtale, til_nr)` | Flytter bare framover |
@@ -218,8 +224,8 @@ systemarkitektene eller administratorene noe ekstra.
 | `aktive_motparter()` | ID-ene til samtalepartnerne som er aktive nå etter reglene for aktivitetsstatus; aldri tidspunkter |
 
 Svarkodene følger gruppechatten: `42501` for bryteren og for alt man ikke har
-tilgang til eller som ikke finnes (samme tekst), `55000` når samtalen finnes,
-men det ikke kan sendes, `22023` for innholdet og `54000` for takten.
+tilgang til eller som ikke finnes (samme tekst), `PT409` når samtalen finnes,
+men det ikke kan sendes, `22023` for innholdet og `PT429` for takten.
 Meldingsteksten står aldri i en `raise`-tekst, i tilgangsloggen eller i et
 varsel.
 
@@ -267,13 +273,16 @@ Livstegnet (45 sekunder) og gjenoppkoblingen gjenbrukes fra
 `src/gruppechat/kontroller.ts`. Ingen andre direktemeldingstabeller legges i
 publikasjonen. Aktivitetsprikken bruker ikke Realtime Presence, fordi
 rettighetene der leses når kanalen åpnes og ikke trekkes tilbake med en gang;
-`aktive_motparter()` hentes sammen med livstegnet.
+`aktive_motparter()` hentes hvert minutt mens chatmenyen vises.
 
 ## Lagringstiden og ryddingen
 
 `intern.direktemelding_lagringstid()` = `interval '12 months'` (etter
 beslutning 2). Som i gruppechatten: sending og lesing rydder i samtalen de
-gjelder, funksjonene leser aldri ut en utgått melding, og nattjobben
+gjelder, funksjonene leser aldri ut en utgått melding (heller ikke når den
+samme `klient_id` sendes på nytt før nattjobben har ryddet), endringene sier
+hvor fristen går (`frist`), så en samtale som står åpen, fjerner det som har
+utgått mens den var åpen, og nattjobben
 (`gruppechat-lagringstid.yml`) utvides til å kjøre `intern.rydd_direktemeldinger()`
 og kontrollere at ingen utgått melding står igjen. Rapporten har bare antall
 og alder. Samtaler uten meldinger og uten aktivitet på 12 måneder slettes med
@@ -293,7 +302,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T2 | Tilfeldig UUID og ID-en til en melding i `K`, som en utenforstående | Samme svar som T1 |
 | T3 | Direkte `select`, `insert`, `update`, `delete` som `authenticated` på alle tabellene | Ingen rader, avvist; `direktesamtaler` bare egne rader |
 | T4 | Utenforstående abonnerer på `direktesamtaler` | Ingen hendelser; publikasjonen har bare `direktesamtaler` av disse tabellene |
-| T5 | `vanligB` slår av | Usøkbar for alle; `vanligA` får `55000` i `K` med den felles teksten; historikken uendret for begge (antall og tekst); ingenting slettet |
+| T5 | `vanligB` slår av | Usøkbar for alle; `vanligA` får `PT409` i `K` med den felles teksten; historikken uendret for begge (antall og tekst); ingenting slettet |
 | T6 | `vanligB` slår på igjen | Samme `K`, ingen ny samtale |
 | T7 | `vanligA` har selv slått av | Kan verken søke, starte eller sende; kan lese og slette i `K` |
 | T8 | `vanligB` blokkerer `vanligA` | `vanligA` får samme svar og tekst som i T5; ingen av dem finner den andre i søket eller ser prikken; `vanligB` kan heller ikke sende; opphevet blokkering gir alt tilbake |
@@ -307,12 +316,12 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T16 | Søket | Ikke seg selv, ikke av-brytere, ikke blokkerte (begge veier), ikke uten medlemskap; høyst 20; under to tegn avvist; svaret har bare profilkortets fire felt |
 | T17 | Sletting | Begge kan slette alle meldinger, en utenforstående ingen; `tekst` er `null`; teksten finnes ingen steder i databasen etterpå (`hvorStaar` fra krysstesten) |
 | T18 | Teksten i varsler, tilgangslogg, feilmeldinger og sanntidshendelser | Finnes ikke; ingen rad i `varsler` for direktemeldinger |
-| T19 | Lagringstiden | Melding eldre enn 12 måneder borte fra lesingen og ryddet; tom, gammel samtale fjernet |
+| T19 | Lagringstiden | Melding eldre enn 12 måneder borte fra lesingen og ryddet, også ved ny sending med samme klient-ID; endringene gir fristen; tom, gammel samtale fjernet |
 | T20 | Aktivitet: `vis_aktiv` av; på uten samtale; på men blokkert; på med samtale | Usynlig, usynlig, usynlig, synlig; aldri et tidspunkt; raden borte etter fristen og når bryteren slås av |
 | T21 | Demping og skjuling | Dempet teller ikke på chatknappen; skjult kommer tilbake ved ny melding; den andre merker ingenting |
 | T22 | Bryteren for hele funksjonen av | Alle funksjonene `42501` «Direktemeldingene er ikke slått på.» |
 | T23 | Gruppechat | Upåvirket av brytere og blokkeringer |
-| T24 | Takten og grensene | `54000` over 20 i minuttet per samtale, 60 til sammen og 10 nye samtaler i timen |
+| T24 | Takten og grensene | `PT429` over 20 i minuttet per samtale, 60 til sammen og 10 nye samtaler i timen |
 
 **Samtidighet** (ekte Postgres):
 
@@ -324,7 +333,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | S4 | Begge åpner samtale samtidig | Én samtale |
 | S5 | Samme `klient_id` samtidig | Én melding |
 | S6 | Mange samtidige sendinger fra begge | `nr` og `endring` uten hull eller duplikater |
-| S7 | Samme bruker sender samtidig over grensene, i én og i flere samtaler, og åpner mange samtaler samtidig | Aldri mer enn 20 per samtale, 60 til sammen og 10 nye samtaler; resten `54000` |
+| S7 | Samme bruker sender samtidig over grensene, i én og i flere samtaler, og åpner mange samtaler samtidig | Aldri mer enn 20 per samtale, 60 til sammen og 10 nye samtaler; resten `PT429` |
 
 **I nettleseren** (det lokale testmiljøet, aldri produksjonen): to brukere
 utveksler meldinger i sanntid; avslått og blokkert mottaker gir låst linje
@@ -336,9 +345,51 @@ tilgangen tas; tastatur, skjermleser, mobil, lyst og mørkt tema.
 1. Dette dokumentet slås sammen. Peder har svart på alle fem beslutningene.
 2. D4a er slått sammen (chatmenyen og samtalelista D5 bygger på).
 3. Databasen og funksjonene, med bryteren av, og testene T1–T24 og S1–S6.
-4. Visningen i chatmenyen og i Innstillinger → Chat.
+4. Visningen i chatmenyen, og fanen Chat under Konto → Innstillinger med de
+   samme bryterne og blokkeringene (`Chatvalg` i
+   `src/components/chat/Chatvalg.tsx`). Fanen står bare når
+   direktemeldingene er slått på; den bruker direktemeldingene chatmenyen
+   har (`direktemeldingene` i `useDirekte.ts`), uten egne kall.
 5. Kontroll i nettleseren og ChatGPTs kontroll.
 6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt).
+
+## Gjennomføringen
+
+Det D5 bygde, og valgene som ble tatt underveis (alle **Teknisk**):
+
+- **Databasen:** `supabase/migrations/20261118234500_direktemeldinger.sql`.
+  Funksjonene står i katalogen som en egen kategori, `direktemelding`
+  (`src/__tests__/data/funksjonskontroller.ts`): katalogvakten krever
+  `security definer`, et kall til `intern.krev_direktemeldinger(` og ingen
+  vei for systemarkitekter eller administratorer. Tabellene står som
+  `personlig` i ressurskatalogen.
+- **Ryddingen:** `intern.rydd_direktemeldinger()` sletter også samtaler der
+  begge kontoene er slettet. Nattjobben (`gruppechat-lagringstid.yml`,
+  `src/drift/gruppechatLagringstid.ts`) kjører ryddingen og kontrollen for
+  gruppechatten og direktemeldingene etter hverandre, og feiler hvis én av
+  dem feiler.
+- **Feilkodene:** avslagene bruker `PT409` (det kan ikke sendes nå) og
+  `PT429` (takten) i stedet for `55000` og `54000`, fordi API-et
+  (PostgREST) gjør de to siste om til HTTP 500, som ser ut som en feil på
+  serveren og stopper trafikkvakten i nettleserkontrollene. Med `PTxyz` blir
+  svaret HTTP xyz, med samme tekst. Tilgangen er uendret: `42501` gir samme
+  svar for det som ikke finnes og det man ikke har tilgang til.
+- **Klienten:** kallene i `src/direktemeldinger/kall.ts`, lista, valgene og
+  aktivitetsprikken i `useDirekte.ts`, og samtalen med den samme
+  kontrolleren og visningen som gruppechatten (`useDirektesamtale.ts`,
+  `lagChatkrok`). En sperre (`PT409`) ved sending henter sperren med en gang,
+  og endringene (`direktesamtale_endringer`) har med `kan_skrive` og sperren,
+  så en åpen samtale låses senest ved neste livstegn.
+- **Chatmenyen:** direktesamtalene står i samme liste som gruppechattene,
+  nyeste først; «Ny chat» åpner søket (skisse 17); samtalen har den andre
+  øverst med en meny for demping, skjuling og blokkering (skisse 18); bryterne
+  og «Blokkerte» står nederst i oversikten (skisse 14). Adressen er
+  `#/chat/direkte/<samtale-ID>`. Dempede samtaler teller ikke på chatknappen.
+  Direktemeldingene gir ingen varsler i bjella.
+- **Aktivitetsprikken** hentes hvert minutt mens chatmenyen eller helsiden
+  vises og det finnes samtaler. Egen aktivitet merkes bare med «Vis når jeg er
+  aktiv» på, ved tastetrykk, trykk eller rulling i en synlig fane, høyst én
+  gang i minuttet; prikken slukner to minutter etter siste merking.
 
 ## Kjente begrensninger
 

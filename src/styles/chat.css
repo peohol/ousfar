@@ -650,3 +650,168 @@
   block-size: auto;
   min-height: 8rem;
 }
+
+/* --- Direktemeldingene (D5, skisse 14, 17 og 18) ---------------------------------- */
+
+.chatsamtaler__hode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-2);
+}
+
+.chatsamtaler__ny {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-1);
+  min-height: var(--hoyde-liten);
+  padding: 0 var(--rom-3) 0 var(--rom-2);
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--aksent);
+  background: transparent;
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+}
+
+.chatsamtaler__ny:hover {
+  background: var(--flate-hevet);
+}
+
+/* Bildet til den andre, med prikken når hen er aktiv nå. */
+.chatperson {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.chatperson .avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.chatperson__aktiv {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--referanse);
+  border: 2px solid var(--flate);
+  border-radius: 50%;
+}
+
+.chatrad[data-dempet] .chatrad__uleste {
+  background: var(--blekk-dempet);
+}
+
+/* Bryterne nederst i oversikten. */
+.chatvalg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin-top: auto;
+  padding-top: var(--rom-3);
+  border-top: var(--kant) solid var(--linje);
+}
+
+.chatvalg__liste,
+.chatvalg__personer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chatvalg__rad {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rom-2);
+  padding: var(--rom-1) var(--rom-2);
+}
+
+.chatvalg__bryter {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.chatvalg__bryter .bryter__tekst {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chatvalg__navn {
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+}
+
+.chatvalg__forklaring {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-normal, 400);
+  color: var(--blekk-dempet);
+}
+
+.chatvalg__status {
+  min-width: 2.5ch;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.chatvalg__person {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rom-3);
+  padding: var(--rom-1) var(--rom-2);
+}
+
+/* «Ny direktemelding». */
+.chatny {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.chatmeny .chatny__topp .chatny__tilbake {
+  display: inline-flex;
+}
+
+.chatny__tittel {
+  margin: 0;
+  padding: 0 var(--rom-2);
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+}
+
+.chatny__om {
+  margin: 0;
+  padding: 0 var(--rom-2);
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.chatny__av {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--rom-2);
+  padding: var(--rom-3);
+  font-size: var(--tekst-ui);
+  background: var(--flate-hevet);
+  border-radius: var(--runding-kort);
+}
+
+.chatny__av p {
+  margin: 0;
+}

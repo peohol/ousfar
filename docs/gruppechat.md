@@ -456,8 +456,13 @@ gamle chatsiden» og «Uleste» under.
   menyen på en gruppechat: «Åpne chat» i panelet og chatraden under «Siste
   aktivitet» på gruppesiden, og den gamle adressen. Står menyen ikke klar ennå
   (chatten er ikke hentet), venter samtalen til den gjør det.
-- **Ikke ennå.** «Ny chat» og bryterne for direktemeldinger og aktiv status
-  kommer med direktemeldingene (D5) og vises ikke før det.
+- **Direktemeldingene (D5).** Når de er slått på, står direktesamtalene i
+  den samme lista, «Ny chat» ved overskriften, og bryterne «Tillat
+  direktemeldinger» og «Vis når jeg er aktiv» nederst. En direktesamtale vises
+  med den samme kontrolleren og `Gruppechat` (`art="direkte"`), på
+  `#/chat/direkte/<ID>`. Uleste i dempede samtaler teller ikke på boblen.
+  Tilgangen, tekstene og valgene står i
+  [direktemeldinger-personvern.md](direktemeldinger-personvern.md).
 
 ### Den gamle chatsiden (D4b)
 

@@ -6,7 +6,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
-import { erBeroring, heleTidspunktet, kanSendes, klokkeslett, tegnteller } from './gruppechatvisning'
+import { erBeroring, heleTidspunktet, kanSendes, klokkeslett, slettetekster, slettettekst, tegnteller } from './gruppechatvisning'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const feiltekst = (aarsak: unknown) => (aarsak instanceof Error && aarsak.message ? aarsak.message : UVENTET)
@@ -35,6 +35,7 @@ export function Gruppechatmelding({
   grenser,
   onEndre,
   onSlett,
+  motpart,
 }: {
   melding: Gruppemelding
   /** Står rett under den forrige fra samme avsender. */
@@ -49,6 +50,8 @@ export function Gruppechatmelding({
   grenser: Chatgrenser
   onEndre: (melding: string, tekst: string) => Promise<void>
   onSlett: (melding: string) => Promise<void>
+  /** I en direktesamtale: navnet på den andre. Begge kan slette alt, og det står hvem som fjernet hva. */
+  motpart?: string
 }) {
   const navn = avsendernavn(melding)
   const [endrer, setEndrer] = useBevart(`chat/${melding.id}/endrer`, false)
@@ -60,7 +63,7 @@ export function Gruppechatmelding({
   const slettet = melding.slettet !== null
   const kanEndre = melding.kan_endre && !slettet && !laast
   const kanSlette = melding.kan_slette && !slettet
-  const moderering = kanSlette && !melding.egen
+  const sletting = slettetekster(navn, melding.egen, motpart !== undefined)
   const tidspunkt = heleTidspunktet(melding.skrevet_kl)
 
   /** Fokus tilbake på menyknappen, eller på meldingen når menyen er borte. */
@@ -138,7 +141,7 @@ export function Gruppechatmelding({
             {slettet ? (
               <p className="chatmelding__boble chatmelding__slettet">
                 <Ikon navn="trash" storrelse="ui" />
-                {melding.slettet?.av === 'moderator' ? 'Fjernet av en moderator' : 'Meldingen er slettet'}
+                {slettettekst(melding, motpart)}
               </p>
             ) : (
               <p className="chatmelding__boble chatmelding__tekst">
@@ -185,8 +188,8 @@ export function Gruppechatmelding({
                         <li>
                           <Menyvalg
                             ikon="trash"
-                            tekst={moderering ? 'Fjern meldingen' : 'Slett'}
-                            forklaring={moderering ? 'Som moderator. Det står i chatten at den er fjernet.' : undefined}
+                            tekst={sletting.meny}
+                            forklaring={sletting.forklaring}
                             onClick={() => {
                               lukk()
                               setFeil(null)
@@ -205,8 +208,8 @@ export function Gruppechatmelding({
 
         {sletter && kanSlette && (
           <Bekreftelseskort
-            tittel={moderering ? `Fjerne meldingen fra ${navn}?` : 'Slette meldingen?'}
-            bekreft={moderering ? 'Fjern meldingen' : 'Slett meldingen'}
+            tittel={sletting.tittel}
+            bekreft={sletting.bekreft}
             opptatt={opptatt}
             onBekreft={() => void slett()}
             onAvbryt={() => {
@@ -214,9 +217,7 @@ export function Gruppechatmelding({
               tilbake()
             }}
           >
-            {moderering
-              ? 'Teksten fjernes for alle med en gang og kan ikke hentes tilbake. I chatten står det at en moderator fjernet den.'
-              : 'Teksten fjernes for alle med en gang og kan ikke hentes tilbake. I chatten står det at meldingen er slettet.'}
+            {sletting.tekst}
           </Bekreftelseskort>
         )}
         {feil && (

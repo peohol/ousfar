@@ -94,6 +94,7 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *
  *   #/chat
  *   #/chat/gruppe/<gruppe-ID>
+ *   #/chat/direkte/<samtale-ID>
  *
  * Endringsforslagene (P5, docs/redaktorer-og-forslag.md) har «Mine forslag»,
  * fanen med forslagene til behandling, og hvert forslag sin side etter ID-en:
@@ -176,11 +177,11 @@ export type Rute =
       fane?: Forslagsfane
     }
 
-/** Slagene samtaler i chatten, slik de står i adressen. Direktemeldinger kommer i D5. */
-export const SAMTALETYPER = ['gruppe'] as const
+/** Slagene samtaler i chatten, slik de står i adressen: gruppechatter og direktesamtaler (D5). */
+export const SAMTALETYPER = ['gruppe', 'direkte'] as const
 export type Samtaletype = (typeof SAMTALETYPER)[number]
 
-/** Én samtale i chatten: slaget og ID-en (for en gruppechat gruppens). */
+/** Én samtale i chatten: slaget og ID-en (for en gruppechat gruppens, for en direktesamtale samtalens). */
 export interface Samtalenokkel {
   type: Samtaletype
   id: string

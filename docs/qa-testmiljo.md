@@ -82,6 +82,14 @@ kjøringen uten at passordet skrives inn.
   `#/chat`, Escape, parkering under hovedmenyen, plassen sammen med
   diskusjonsmenyen, mobil og mørk modus, og at den som fjernes, stenges ute.
   Samme kontoer og bryter som over, og `QA_SKJERMBILDER=<mappe>`.
+- `npx vite-node src/__tests__/qa/direktemeldingnettleser.ts` er
+  nettleserkontrollen av direktemeldingene
+  (`docs/direktemeldinger-personvern.md`): bryterne av fra starten, «Ny chat»
+  og søket, sanntid begge veier, låst linje når mottakeren slår av,
+  blokkering i en åpen fane, aktivitetsprikken, tap av tilgangen til OUSFAR,
+  mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
+  direktemeldingene står på i den lokale databasen mens den går, og valgene,
+  blokkeringene og samtalen mellom de to fra før slettes først.
 - `npx vite-node src/__tests__/qa/menynettleser.ts` er nettleserkontrollen av
   menyene (D6): toppmenyen uten idéer og administrasjon, hovedmenyen med
   navigasjonen og «For hele appen» for en systemarkitekt og for en vanlig

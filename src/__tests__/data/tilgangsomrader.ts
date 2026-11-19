@@ -3,7 +3,8 @@
  * docs/ousfar-nasjonal-p0-kartlegging.md §6.1):
  *
  * - `a` faginnhold og kliniske regler, med de felles kildedataene fagsidene viser;
- * - `b` samhandling og varsler: diskusjoner, idéer, oppgaver, varsler, direktelenker og grupper (P6);
+ * - `b` samhandling og varsler: diskusjoner, idéer, oppgaver, varsler, direktelenker, grupper (P6) og
+ *   direktemeldinger (D5);
  * - `c` profiler og bilder (alt i Supabase sitt `storage`), og det andre som bare er brukerens eget
  *   (innstillinger, favoritter);
  * - `d` stoffregisteret og administrasjon: synker, kildesaker, verktøysperrer,
@@ -26,7 +27,7 @@ export type Omrade = keyof typeof OMRADER
 
 export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
   ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|^(min_profil|mine_synlige_profiler|brukeroversikt)\(|stoffavoritt/],
-  ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke|grupp|^forsideoppsummering\(/],
+  ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke|grupp|^forsideoppsummering\(|direkte|chatvalg|chataktivitet|blokker|aktive_motparter/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
   ['d', /fagmiljo|medlemskap|systemrolle|systemarkitekt|tilgang|administrator|passord|konto|(sett|endre)_rolle|redaktoransvar/],
   ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin|rettigheter/],

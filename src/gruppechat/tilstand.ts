@@ -12,7 +12,9 @@
  *   i lista;
  * - endringstelleren flytter bare framover, og bare med svarene som faktisk
  *   dekker alt fram til den (den første siden og endringene, ikke eldre
- *   sider eller enkeltsvar).
+ *   sider eller enkeltsvar);
+ * - meldinger som har passert lagringstiden, fjernes når endringene sier
+ *   hvor fristen går (`frist`, i direktesamtalene).
  *
  * Alt her er rene funksjoner; `kontroller.ts` bruker dem.
  */
@@ -91,10 +93,18 @@ export function medEldre(t: Meldingstilstand, side: Chatside): Meldingstilstand 
   return { ...medMeldinger(t, flettMeldinger(t.meldinger, side.meldinger)), flereEldre: side.flere_eldre }
 }
 
-/** Endringene siden `sisteEndring`. */
+/** Meldingene skrevet fra og med `frist`; uten frist alle. */
+function innenFristen(meldinger: Gruppemelding[], frist?: string): Gruppemelding[] {
+  if (frist === undefined) return meldinger
+  const grense = Date.parse(frist)
+  const igjen = meldinger.filter((m) => !(Date.parse(m.skrevet_kl) < grense))
+  return igjen.length === meldinger.length ? meldinger : igjen
+}
+
+/** Endringene siden `sisteEndring`, uten meldingene som har passert lagringstiden (`frist`). */
 export function medEndringer(t: Meldingstilstand, e: Chatendringer): Meldingstilstand {
   const fraNr = t.flereEldre ? eldsteNr(t) : null
-  return medMeldinger(t, flettMeldinger(t.meldinger, e.meldinger, fraNr), Math.max(t.sisteEndring, e.siste_endring))
+  return medMeldinger(t, innenFristen(flettMeldinger(t.meldinger, e.meldinger, fraNr), e.frist), Math.max(t.sisteEndring, e.siste_endring))
 }
 
 /** Én melding fra et svar (sendt, endret, slettet). Endringstelleren flyttes ikke. */

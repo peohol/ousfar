@@ -65,6 +65,33 @@ export const SAMTALEPAUSE_MS = 800
 const INGEN: Gruppesamtale[] = []
 
 /**
+ * Henter en samtaleliste på nytt (`sjekk`) når dørklokken ringer i en av
+ * samtalene, og når noe i appen ber om det ({@link oppfriskSamtaler}). Ringer
+ * den i flere på rad, hentes lista én gang etter {@link SAMTALEPAUSE_MS}.
+ * Brukes av gruppechattene og direktesamtalene.
+ */
+export function useOppfriskVedRinging(aktivert: boolean, abonner: Abonner, sjekk: () => void): void {
+  useEffect(() => {
+    let tidtaker: ReturnType<typeof setTimeout> | null = null
+    const snart = () => {
+      if (tidtaker) clearTimeout(tidtaker)
+      tidtaker = setTimeout(() => {
+        tidtaker = null
+        sjekk()
+      }, SAMTALEPAUSE_MS)
+    }
+    const slutt = oppfrisk.lytt(snart)
+    // Én kanal for alle samtalene den innloggede er med i; radsikkerheten avgjør hvilke.
+    const stopp = aktivert ? abonner(null, { vedRinging: snart, vedStatus: () => undefined }) : () => undefined
+    return () => {
+      if (tidtaker) clearTimeout(tidtaker)
+      slutt()
+      stopp()
+    }
+  }, [aktivert, abonner, sjekk])
+}
+
+/**
  * Samtalene til kontoen, mens chatten er slått på (`aktivert`). Avslått gir
  * en tom liste og ingen henting utover den jevnlige.
  */
@@ -76,25 +103,6 @@ export function useGruppesamtaler(
 ): { samtaler: Gruppesamtale[]; kjent: boolean; oppdater: () => void } {
   const hentHvisPa = useMemo(() => (aktivert ? hent : () => Promise.resolve(INGEN)), [aktivert, hent])
   const { verdi, kjent, sjekk } = useKontoensSvarMedSjekk(bruker, hentHvisPa, INGEN)
-
-  useEffect(() => {
-    let tidtaker: ReturnType<typeof setTimeout> | null = null
-    const snart = () => {
-      if (tidtaker) clearTimeout(tidtaker)
-      tidtaker = setTimeout(() => {
-        tidtaker = null
-        sjekk()
-      }, SAMTALEPAUSE_MS)
-    }
-    const slutt = oppfrisk.lytt(snart)
-    // Én kanal for alle gruppene den innloggede leser chatten i; radsikkerheten avgjør hvilke.
-    const stopp = aktivert ? abonner(null, { vedRinging: snart, vedStatus: () => undefined }) : () => undefined
-    return () => {
-      if (tidtaker) clearTimeout(tidtaker)
-      slutt()
-      stopp()
-    }
-  }, [aktivert, abonner, sjekk])
-
+  useOppfriskVedRinging(aktivert, abonner, sjekk)
   return { samtaler: aktivert ? verdi : INGEN, kjent, oppdater: sjekk }
 }

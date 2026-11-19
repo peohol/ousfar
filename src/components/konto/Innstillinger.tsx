@@ -1,10 +1,12 @@
-import { useId, type ComponentType } from 'react'
+import { useId, useMemo, type ComponentType } from 'react'
+import { direktemeldingene } from '../../direktemeldinger/useDirekte'
 import { SYSTEM, type Bevegelse, type Tema, type Valg, type Valgstyring } from '../../domain/systemvalg'
 import { VISNINGSENHETER, type Visningsenhet } from '../../enheter/konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Bryter } from '../Bryter'
+import { Chatvalg } from '../chat/Chatvalg'
 import { Fanevalg, fanepanelId, faneId, type Fanedefinisjon } from '../Fanevalg'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
@@ -21,8 +23,8 @@ export interface Visningsvalg {
 /**
  * En fane i Innstillinger. Innholdet får de samme valgene som vinduet.
  * Chatvalgene fra direktemeldingene (D5: «Tillat direktemeldinger» og «Vis
- * når jeg er aktiv», samme kontoinnstilling som nederst i chatmenyen) legges
- * til her som fanen `chat` når de finnes.
+ * når jeg er aktiv», samme kontoinnstilling som nederst i chatmenyen) står
+ * som fanen `chat` når direktemeldingene er slått på ({@link useInnstillingsfaner}).
  */
 export interface Innstillingsfane extends Fanedefinisjon {
   Innhold: ComponentType<Visningsvalg>
@@ -65,8 +67,23 @@ function Visning({ tema, bevegelse }: Visningsvalg) {
   )
 }
 
-/** Fanene, i rekkefølgen de står. */
+/** Chat: de samme bryterne og blokkeringene som nederst i chatmenyen, fra direktemeldingene den har. */
+function Chat() {
+  const direkte = direktemeldingene.bruk()
+  if (!direkte) return null
+  return <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />
+}
+
+/** Fanene som alltid står, i rekkefølgen de står. */
 export const INNSTILLINGSFANER: readonly Innstillingsfane[] = [{ id: 'visning', navn: 'Visning', Innhold: Visning }]
+
+const CHATFANE: Innstillingsfane = { id: 'chat', navn: 'Chat', Innhold: Chat }
+
+/** Fanene for den innloggede: Chat bare når direktemeldingene er slått på og kan brukes. */
+export function useInnstillingsfaner(): readonly Innstillingsfane[] {
+  const chat = direktemeldingene.bruk() !== null
+  return useMemo(() => (chat ? [...INNSTILLINGSFANER, CHATFANE] : INNSTILLINGSFANER), [chat])
+}
 
 /** Det som står under «Innstillinger» i kontomenyen: fanene, som «Visning og chat». */
 export function innstillingsforklaring(faner: readonly Fanedefinisjon[] = INNSTILLINGSFANER): string {

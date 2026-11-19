@@ -130,6 +130,12 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.gruppechatter': k('avledet', 'P7: én rad per gruppechat (gruppe_id), uten tekst; leses av dem som leser gruppen når chatten er på'),
   'public.gruppemeldinger': k('avledet', 'P7: meldingene i gruppechatten, per gruppe (gruppe_id); leses bare gjennom funksjonene'),
   'public.gruppechat_lest': k('personlig', 'P7: hvor langt brukeren har lest i chatten; bare gjennom funksjonene'),
+  'public.direktesamtaler': k('personlig', 'D5: én samtale per brukerpar, uten tekst; leses bare av de to deltakerne'),
+  'public.direktemeldinger': k('personlig', 'D5: meldingene mellom to brukere; bare gjennom funksjonene, og bare for de to'),
+  'public.direktesamtale_status': k('personlig', 'D5: egen lesestatus, demping og skjuling per direktesamtale; bare gjennom funksjonene'),
+  'public.direktemelding_blokkeringer': k('personlig', 'D5: hvem brukeren har blokkert fra direktemeldinger; bare gjennom funksjonene'),
+  'public.chatvalg': k('personlig', 'D5: «Tillat direktemeldinger» og «Vis når jeg er aktiv»; bare gjennom funksjonene'),
+  'public.chataktivitet': k('personlig', 'D5: om brukeren har vært aktiv de siste to minuttene; ingen historikk'),
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),

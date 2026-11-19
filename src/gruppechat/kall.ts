@@ -21,17 +21,31 @@ export class IngenTilgang extends Error {
 }
 
 /**
+ * Kastes når samtalen finnes, men det ikke kan skrives i den nå (`55000`, i
+ * direktemeldingene `PT409`):
+ * gruppen er arkivert, eller den andre i en direktesamtale kan ikke motta.
+ * Chatten henter da rettighetene på nytt.
+ */
+export class Sperret extends Error {
+  constructor(melding: string) {
+    super(melding)
+    this.name = 'Sperret'
+  }
+}
+
+/**
  * Funksjonene sier avslagene sine på norsk (tom tekst, for lang, for fort,
  * fødselsnummer, arkivert gruppe), og de vises som de er (`lesbarFeil`);
- * `42501` blir `IngenTilgang`.
+ * `42501` blir `IngenTilgang`, og `55000` og `PT409` `Sperret`.
  */
-function tilFeil(feil: Databasefeil): Error {
+export function tilChatfeil(feil: Databasefeil, utenTilgang = 'Du har ikke tilgang til denne gruppen.'): Error {
   const melding = feil.message ?? ''
-  if (feil.code === '42501') return new IngenTilgang(/^\p{Lu}/u.test(melding) ? melding : 'Du har ikke tilgang til denne gruppen.')
+  if (feil.code === '42501') return new IngenTilgang(/^\p{Lu}/u.test(melding) ? melding : utenTilgang)
+  if ((feil.code === '55000' || feil.code === 'PT409') && /^\p{Lu}/u.test(melding)) return new Sperret(melding)
   return lesbarFeil(feil)
 }
 
-function svar<T>(verdi: T | null): T {
+export function svar<T>(verdi: T | null): T {
   if (verdi === null) throw new Error(UVENTET_FEIL)
   return verdi
 }
@@ -43,7 +57,7 @@ function svar<T>(verdi: T | null): T {
 export function lagChatapi(supabase: () => Pick<SupabaseClient, 'rpc'>) {
   async function kall(navn: string, argumenter: Record<string, unknown>): Promise<unknown> {
     const { data, error } = await supabase().rpc(navn, argumenter)
-    if (error) throw tilFeil(error)
+    if (error) throw tilChatfeil(error)
     return data
   }
 

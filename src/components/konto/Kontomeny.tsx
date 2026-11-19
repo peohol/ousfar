@@ -10,7 +10,7 @@ import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { TilbehandlingMenyvalg } from '../forslag/behandling/Tilbehandling'
 import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
-import { Innstillinger, innstillingsforklaring, type Visningsvalg } from './Innstillinger'
+import { Innstillinger, innstillingsforklaring, useInnstillingsfaner, type Visningsvalg } from './Innstillinger'
 import { Kontopanel } from './Kontopanel'
 import { MittRedaktoransvar } from './MittRedaktoransvar'
 
@@ -37,6 +37,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const [apninger, setApninger] = useState(0)
   const [innstillinger, setInnstillinger] = useBevart('innstillinger', false)
   const lukkInnstillinger = useCallback(() => setInnstillinger(false), [setInnstillinger])
+  const innstillingsfaner = useInnstillingsfaner()
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukkKontopanel = useCallback(() => setKontopanel(false), [])
   const { redaktor } = useRettigheter()
@@ -117,7 +118,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                 <Menyvalg
                   ikon="gears"
                   tekst="Innstillinger"
-                  forklaring={innstillingsforklaring()}
+                  forklaring={innstillingsforklaring(innstillingsfaner)}
                   onClick={() => {
                     lukk()
                     setInnstillinger(true)
@@ -132,7 +133,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         )}
       </Nedtrekksmeny>
       <Kontopanel apen={kontopanel} onLukk={lukkKontopanel} />
-      <Innstillinger apen={innstillinger} onLukk={lukkInnstillinger} tema={tema} bevegelse={bevegelse} />
+      <Innstillinger apen={innstillinger} onLukk={lukkInnstillinger} faner={innstillingsfaner} tema={tema} bevegelse={bevegelse} />
       {redaktor && <MittRedaktoransvar apen={redaktoransvar} onLukk={lukkRedaktoransvar} />}
     </>
   )

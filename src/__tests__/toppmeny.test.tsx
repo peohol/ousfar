@@ -111,6 +111,7 @@ const { Toppmeny, faarPlass, trengerToRader, velgTrinn } = await import('../comp
 const { ToppmenyKilde, ToppmenyInnhold } = await import('../components/toppmeny/Toppmenykilde')
 const { Fagsokfelt, erFagsokSnarvei } = await import('../components/toppmeny/Fagsokfelt')
 const { Kontomeny } = await import('../components/konto/Kontomeny')
+const { direktemeldingene } = await import('../direktemeldinger/useDirekte')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER } = await import('../grupper/modell')
 const { Administrasjon } = await import('../components/konto/Administrasjon')
@@ -622,7 +623,7 @@ describe('kontomenyen', () => {
     // Menyen lukkes først, så vinduet gir fokus tilbake til avataren.
     expect(meny.hidden).toBe(true)
     const vindu = screen.getByRole('dialog', { name: 'Innstillinger' })
-    // Én fane så langt (Chat kommer med direktemeldingene): ingen fanerad.
+    // Én fane uten direktemeldingene (Chat står bare når de er på): ingen fanerad.
     expect(within(vindu).queryByRole('tablist')).toBeNull()
 
     const hurtigtaster = within(vindu).getByRole('switch', { name: 'Vis hurtigtaster' }) as HTMLInputElement
@@ -653,6 +654,40 @@ describe('kontomenyen', () => {
     fireEvent.change(maleenhet, { target: { value: '1' } })
     expect(maleenhet.getAttribute('aria-valuetext')).toBe('nmol/L')
     expect(localStorage.getItem('far:maleenhet')).toBe('nmol/L')
+  })
+
+  it('har fanen Chat med bryterne fra chatmenyen bare mens direktemeldingene er slått på', async () => {
+    const settValg = vi.fn(async () => undefined)
+    act(() =>
+      direktemeldingene.sett({
+        pa: true,
+        kjent: true,
+        samtaler: [],
+        valg: { tillat_direktemeldinger: true, vis_aktiv: false },
+        aktive: new Set(),
+        settValg,
+        oppdater: () => undefined,
+      }),
+    )
+    try {
+      const knapp = vis()
+      await userEvent.click(knapp)
+      expect(within(panel(knapp)).getByRole('button', { name: 'Innstillinger' }).textContent).toContain('Visning og chat')
+      await userEvent.click(within(panel(knapp)).getByRole('button', { name: 'Innstillinger' }))
+      const vindu = screen.getByRole('dialog', { name: 'Innstillinger' })
+      expect(within(vindu).getAllByRole('tab').map((f) => f.textContent)).toEqual(['Visning', 'Chat'])
+      await userEvent.click(within(vindu).getByRole('tab', { name: 'Chat' }))
+      const tillat = within(vindu).getByRole('switch', { name: /Tillat direktemeldinger/ }) as HTMLInputElement
+      expect(tillat.checked).toBe(true)
+      await userEvent.click(within(vindu).getByRole('switch', { name: /Vis når jeg er aktiv/ }))
+      expect(settValg).toHaveBeenCalledWith({ vis_aktiv: true })
+      // Slås de av, forsvinner fanen, og vinduet viser Visning.
+      act(() => direktemeldingene.sett(null))
+      expect(within(vindu).queryByRole('tablist')).toBeNull()
+      expect(within(vindu).getByRole('switch', { name: 'Vis hurtigtaster' })).toBeTruthy()
+    } finally {
+      act(() => direktemeldingene.sett(null))
+    }
   })
 
   it('lukker Innstillinger med nettleserens egen lukking (Escape), og kontomenyen står lukket', async () => {
