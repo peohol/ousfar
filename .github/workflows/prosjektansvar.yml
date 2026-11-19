@@ -1,27 +1,38 @@
-# Hver PR skal ha ett prosjekt og én ansvarlig systemarkitekt, og de samme skal
-# stå på Issue-et med arbeidsoppgaven (docs/prosjektansvar.md). Kontrollen
-# henter PR-en og Issue-et fra GitHub med lesetilgang, har ingen hemmeligheter
-# og kan ikke skrive noe. Den er påkrevd før sammenslåing gjennom regelsettet
-# «Prosjektansvar» på main. Endres Issue-et, starter prosjektansvar-sak.yml den
-# på nytt.
+# Den påkrevde kontrollen «Prosjektansvar» (docs/prosjektansvar.md §6): hver PR
+# har ett prosjekt og én ansvarlig systemarkitekt, og de samme står på Issue-et
+# med arbeidsoppgaven.
+#
+# Betrodd: hendelsene workflow_run og issues kjører alltid denne fila og
+# skriptet slik de er på main, og jobben sjekker bare ut main. PR-en og
+# Issue-ene leses som data fra GitHub; ingen kode fra PR-en kjøres. Resultatet
+# skrives som check run-en «Prosjektansvar» på PR-ens siste commit, og det er
+# den regelsettet «Prosjektansvar» på main krever før sammenslåing.
+#
+# - workflow_run: «Prosjektansvar – utløser» er ferdig etter en endring av en PR.
+# - issues: et Issue har fått ny ansvarlig eller etikett, eller er slettet eller
+#   flyttet; alle åpne PR-er som viser til det, vurderes på nytt.
 name: Prosjektansvar
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled, assigned, unassigned]
+  workflow_run:
+    workflows: ['Prosjektansvar – utløser']
+    types: [completed]
+  issues:
+    types: [assigned, unassigned, labeled, unlabeled, deleted, transferred, reopened]
 
 permissions:
+  checks: write
   contents: read
   issues: read
   pull-requests: read
 
 concurrency:
-  group: prosjektansvar-${{ github.event.pull_request.number }}
+  group: prosjektansvar-${{ github.event.workflow_run.head_sha || github.event.issue.number }}
   cancel-in-progress: true
 
 jobs:
-  etikett:
-    name: Prosjektansvar
+  vurder:
+    name: Vurder prosjektansvar
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -33,7 +44,7 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - name: Ett prosjekt og én ansvarlig, som på Issue-et
+      - name: Vurder PR-ene og skriv «Prosjektansvar» på dem
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/prosjektansvar.mjs

@@ -162,7 +162,7 @@ En felles GitHub Projects-tavle kan legges oppå senere, men er ikke nødvendig.
 `main`. Før en PR er klar: oppdatert base, grønne tester og avhengighetene
 kontrollert. Vurder særlig migrasjoner, delte API-er og felles komponenter når
 to løp er åpne samtidig; at Git ikke melder konflikt, beviser ikke at endringene
-virker sammen. Versjon og endringslogg følger §6 punkt 8 uendret.
+virker sammen. Versjon og endringslogg følger §6 punkt 9 uendret.
 
 Det er fortsatt fritt å diskutere sammenhenger og avhengigheter mellom
 prosjektene. Reglene gjelder eierskap og kontroll, ikke nødvendig
@@ -183,29 +183,50 @@ informasjonsutveksling.
    tekniske detaljer for kontrollen. Under «Arbeidsoppgave» står `Refs #N` for
    en delleveranse og `Closes #N` bare når PR-en fullfører Issue-et. Flere PR-er
    kan vise til samme Issue.
-4. **Den automatiske kontrollen** «Prosjektansvar»
-   (`.github/workflows/prosjektansvar.yml`, `scripts/prosjektansvar.mjs`) består
-   bare når PR-en har nøyaktig én gyldig prosjektetikett og nøyaktig én
+4. **Den automatiske kontrollen** «Prosjektansvar» (`scripts/prosjektansvar.mjs`)
+   består bare når PR-en har nøyaktig én gyldig prosjektetikett og nøyaktig én
    assignee blant systemarkitektene, og viser til minst ett Issue som har den
    samme etiketten og den samme ene assignee-en. Ellers feiler den med en kort
-   forklaring av hva som må rettes. Den henter alltid PR-en og Issue-ene på nytt
-   fra GitHub, med bare lesetilgang, og kjøres på nytt når PR-en får nye
-   commits, etiketter, assignees eller beskrivelse. Får et Issue ny assignee
-   eller etikett, eller slettes eller flyttes det, starter
-   `.github/workflows/prosjektansvar-sak.yml` kontrollen på nytt for alle åpne
-   PR-er som viser til det, så en grønn kontroll ikke blir stående på et
-   foreldet grunnlag. Regelsettet «Prosjektansvar» på `main` gjør kontrollen
-   påkrevd før sammenslåing. Den kontrollerer bare merkingen, ikke om den er
+   forklaring av hva som må rettes. Regelsettet «Prosjektansvar» på `main` gjør
+   den påkrevd før sammenslåing. Den kontrollerer bare merkingen, ikke om den er
    riktig, og ikke hvem som faktisk ba om arbeidet; det vurderer ChatGPT.
-   Kontrollens egne filer (de to arbeidsflytene, skriptet og
-   `.github/prosjektansvar.json`) kjøres fra PR-en, så en PR som endrer dem,
-   kontrolleres særskilt.
-5. **Overgang:** kravet om assignee og arbeidsoppgave gjelder PR-er som er
-   opprettet etter at `.github/prosjektansvar.json` kom på `main`. Eldre PR-er
-   får bare en advarsel og kan fullføres slik de ble startet; kravet om
-   prosjektetikett gjelder dem som før. Unntaket følger opprettelsestidspunktet
-   og gjelder ingen nye PR-er.
-6. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
+5. **Betrodd kjøring.** En PR kan ikke endre det som vurderer den selv:
+   - Selve kontrollen (`.github/workflows/prosjektansvar.yml`) kjøres bare av
+     hendelsene `workflow_run` og `issues`, som alltid bruker arbeidsflyten og
+     skriptet slik de er på `main`. Den sjekker bare ut `main`, leser PR-en og
+     Issue-ene som data fra GitHub og kjører ingen kode fra PR-en. Resultatet
+     skrives som check run-en «Prosjektansvar» på PR-ens siste commit; den
+     settes til «pågår» før hver ny vurdering, så en gammel grønn ikke gjelder
+     imens.
+   - `.github/workflows/prosjektansvar-utloser.yml` kjører ved hver endring av
+     en PR (nye commits, etiketter, assignees eller beskrivelse), uten tilganger
+     og uten å kjøre noe; når den er ferdig, kjører kontrollen fra `main`.
+     Fjerner eller ødelegger en PR utløseren, får den ingen «Prosjektansvar» og
+     kan ikke slås sammen.
+   - Får et Issue ny assignee eller etikett, eller slettes eller flyttes det,
+     vurderes alle åpne PR-er som viser til det, på nytt med en ny check run,
+     så en grønn kontroll ikke blir stående på et foreldet grunnlag.
+   - Fordi navnet på en check run kan etterlignes av enhver arbeidsflyt som
+     kjører på PR-er, feiler kontrollen når en PR legger til eller endrer en
+     slik arbeidsflyt som har en jobb som heter «Prosjektansvar», som kan
+     skrive check runs eller statuser, eller som mangler en permissions-blokk.
+     Det oppdager, men kan ikke teknisk hindre, at noen med skrivetilgang
+     bevisst omgår kontrollen; det krever særskilt kontroll av alle endringer
+     i `.github/workflows/`.
+   - En PR som endrer kontrollens egne filer, vurderes med versjonen på `main`
+     og får en advarsel om det; endringen virker først når den er slått sammen.
+6. **Overgang:**
+   - Kravet om assignee og arbeidsoppgave gjelder PR-er som er opprettet etter
+     at `.github/prosjektansvar.json` kom på `main`. Eldre PR-er får bare en
+     advarsel og kan fullføres slik de ble startet; kravet om prosjektetikett
+     gjelder dem som før. Unntaket følger opprettelsestidspunktet og gjelder
+     ingen nye PR-er.
+   - Den betrodde kontrollen kan ikke vurdere PR-en som innfører den. Derfor
+     finnes `.github/workflows/prosjektansvar-overgang.yml` midlertidig: den
+     gir «Prosjektansvar» på gammel måte (fra PR-en selv) til den betrodde
+     kontrollen er på `main`, og fjernes i en egen liten PR rett etter. Den
+     PR-en får «Prosjektansvar» bare fra den betrodde kontrollen.
+7. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
    PR-ens assignee («GitHub-ansvarlig» i prosjektinstruksen), kontrollerer og
    slår sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).
    Ved «sjekk igjen» eller «alle åpne PR-er» hentes hele køen, men bare egen
@@ -213,10 +234,10 @@ informasjonsutveksling.
    eget område (som felles CSS), kontrollerer det samme prosjektet også dem. Et
    annet prosjekt kan bli orientert, men gjør ingen parallell kontroll. Dette er
    en avgrensning i instruksene, ikke en teknisk lesesperre.
-7. **Uten gyldig merking** (ingen, flere, ukjent eller motstridende etikett
+8. **Uten gyldig merking** (ingen, flere, ukjent eller motstridende etikett
    eller assignee) får PR-en ingen ordinær kontroll og slås ikke sammen før den
    er rettet.
-8. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
+9. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
    [endringslogg.md](endringslogg.md), uansett prosjekt (unntatt en stille
    designjustering). Føringen er en ny fil som sier om endringen er MAJOR,
    MINOR eller PATCH, uten versjonsnummer; nummeret settes automatisk i den

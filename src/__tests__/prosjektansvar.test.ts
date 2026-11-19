@@ -4,21 +4,25 @@
  * arbeidsoppgave), arbeidsflytene som kjører den, og at styringsdokumentet,
  * malene og prosjektinstruksene sier det samme.
  */
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
+  KONTROLLNAVN,
   PROSJEKTETIKETTER,
   REGLER_STI,
   SYSTEMARKITEKTER,
   arbeidsoppgaver,
+  finnEtterligning,
   hentAktivering,
   kontrollerPr,
-  kontrollerSakensPrer,
   lagGithub,
   lesRegler,
+  prerForSak,
+  prerForSha,
   somSak,
   vurderAnsvarlige,
   vurderEtiketter,
+  vurderOgMeld,
   vurderPr,
   // @ts-expect-error - skriptet er vanlig JavaScript uten typer.
 } from '../../scripts/prosjektansvar.mjs'
@@ -307,17 +311,22 @@ const ghSak = (felt: Record<string, unknown> = {}) => ({
 })
 const commit = (dato: string) => ({ commit: { committer: { date: dato } } })
 
+/** GitHub-svarene for en vanlig PR #500 som bare endrer docs/. */
+const vanlig = (felt: Record<string, unknown> = {}) => ({
+  'GET repos/peohol/ousfar/pulls/500/files': [{ filename: 'docs/x.md', status: 'modified' }],
+  'GET repos/peohol/ousfar/issues/477': ghSak(),
+  'GET repos/peohol/ousfar/commits': [commit(AKTIVERT)],
+  ...felt,
+})
+const base64 = (s: string) => ({ content: Buffer.from(s, 'utf8').toString('base64') })
+
 describe('kontrollen mot GitHub', () => {
-  it('henter PR-en, Issue-et og aktiveringen på nytt hver gang, så en ny kjøring ser endringer', async () => {
+  it('henter Issue-et og aktiveringen på nytt hver gang, så en ny kjøring ser endringer', async () => {
     let ansvarlig = 'peohol'
-    const { github, kall } = falskGithub({
-      'GET repos/peohol/ousfar/pulls/500': () => ghPr(),
-      'GET repos/peohol/ousfar/issues/477': () => ghSak({ assignees: [{ login: ansvarlig }] }),
-      'GET repos/peohol/ousfar/commits?sha=main&path=.github%2Fprosjektansvar.json': [commit(AKTIVERT)],
-    })
-    expect(((await kontrollerPr(github, REPO, 500, 'main')) as Vurdering).ok).toBe(true)
+    const { github, kall } = falskGithub(vanlig({ 'GET repos/peohol/ousfar/issues/477': () => ghSak({ assignees: [{ login: ansvarlig }] }) }))
+    expect(((await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering).ok).toBe(true)
     ansvarlig = 'maxhag'
-    const v = (await kontrollerPr(github, REPO, 500, 'main')) as Vurdering
+    const v = (await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering
     expect(v.ok).toBe(false)
     expect(v.feil[0]).toContain('Issue #477 er tildelt maxhag, men PR-en peohol')
     expect(kall.filter((k) => k.startsWith('GET repos/peohol/ousfar/issues/477'))).toHaveLength(2)
@@ -336,115 +345,147 @@ describe('kontrollen mot GitHub', () => {
   })
 
   it('regner et slettet eller flyttet Issue som manglende', async () => {
-    const { github } = falskGithub({
-      'GET repos/peohol/ousfar/pulls/500': ghPr({ body: '## Arbeidsoppgave\nRefs #477, Refs #479' }),
-      'GET repos/peohol/ousfar/issues/477': ghSak({ repository_url: 'https://api.github.com/repos/peohol/annet' }),
-      'GET repos/peohol/ousfar/commits': [commit(AKTIVERT)],
-    })
-    const v = (await kontrollerPr(github, REPO, 500, 'main')) as Vurdering
+    const { github } = falskGithub(vanlig({ 'GET repos/peohol/ousfar/issues/477': ghSak({ repository_url: 'https://api.github.com/repos/peohol/annet' }) }))
+    const v = (await kontrollerPr(github, REPO, ghPr({ body: '## Arbeidsoppgave\nRefs #477, Refs #479' }), 'main')) as Vurdering
     expect(v.feil).toEqual([expect.stringContaining('#477 under «Arbeidsoppgave» er ikke et Issue'), expect.stringContaining('#479 under «Arbeidsoppgave» er ikke et Issue')])
     expect(somSak(null, REPO)).toBeNull()
     expect(somSak(ghSak({ pull_request: {} }), REPO)).toMatchObject({ erPr: true })
   })
 
-  it('melder andre feil fra GitHub som feil i kontrollen, ikke i PR-en', async () => {
-    const { github } = falskGithub({})
-    await expect(kontrollerPr(github, REPO, 500, 'main')).rejects.toThrow(/GitHub svarte 404 på GET repos\/peohol\/ousfar\/pulls\/500/)
+  it('sier fra når PR-en endrer kontrollen selv, men vurderer den som vanlig', async () => {
+    const { github } = falskGithub(vanlig({ 'GET repos/peohol/ousfar/pulls/500/files': [{ filename: 'scripts/prosjektansvar.mjs', status: 'modified' }, { filename: REGLER_STI, status: 'modified' }] }))
+    const v = (await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering
+    expect(v.ok).toBe(true)
+    expect(v.advarsler).toEqual([expect.stringContaining('PR-en endrer kontrollen selv (scripts/prosjektansvar.mjs, .github/prosjektansvar.json). Den er vurdert med versjonen på main')])
+  })
+
+  it('leser endrede arbeidsflyter på PR-ens commit som data og stopper en som kunne etterligne kontrollen', async () => {
+    const falsk = 'name: X\non:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  a:\n    name: Prosjektansvar\n    runs-on: ubuntu-latest\n    steps:\n      - run: exit 0\n'
+    const { github, kall } = falskGithub(vanlig({
+      'GET repos/peohol/ousfar/pulls/500/files': [{ filename: '.github/workflows/falsk.yml', status: 'added' }, { filename: '.github/workflows/gammel.yml', status: 'removed' }],
+      'GET repos/peohol/ousfar/contents/.github/workflows/falsk.yml?ref=abc1234def': base64(falsk),
+    }))
+    const v = (await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering
+    expect(v.ok).toBe(false)
+    expect(v.feil).toEqual([expect.stringContaining('.github/workflows/falsk.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»')])
+    expect(kall.filter((k) => k.includes('/contents/'))).toEqual(['GET repos/peohol/ousfar/contents/.github/workflows/falsk.yml?ref=abc1234def'])
+  })
+
+  it('stopper etterligning også for PR-er fra før overgangen', async () => {
+    const falsk = 'on: [push, pull_request]\njobs:\n  a:\n    runs-on: ubuntu-latest\n'
+    const { github } = falskGithub(vanlig({
+      'GET repos/peohol/ousfar/pulls/500/files': [{ filename: '.github/workflows/falsk.yml', status: 'modified' }],
+      'GET repos/peohol/ousfar/contents/': base64(falsk),
+    }))
+    const v = (await kontrollerPr(github, REPO, ghPr({ created_at: FOR, body: '' }), 'main')) as Vurdering
+    expect(v).toMatchObject({ ok: false, overgang: true })
+    expect(v.feil).toEqual([expect.stringContaining('ingen permissions-blokk')])
   })
 })
 
-describe('ny kontroll når et Issue endres', () => {
-  const kjoring = (felt: Record<string, unknown> = {}) => ({ id: 9001, status: 'completed', html_url: 'https://github.com/peohol/ousfar/actions/runs/9001', ...felt })
+describe('etterligning av kontrollen', () => {
+  const fil = (innhold: string, sti = '.github/workflows/x.yml') => finnEtterligning([{ sti, innhold }]) as string[]
 
-  it('starter kontrollen på nytt for hver åpne PR som viser til Issue-et, og bare dem', async () => {
-    const { github, kall } = falskGithub({
+  it('stopper en PR-arbeidsflyt med en jobb eller jobb-ID som heter Prosjektansvar', () => {
+    expect(fil('on:\n  pull_request:\npermissions: {}\njobs:\n  a:\n    name: "Prosjektansvar"\n')).toHaveLength(1)
+    expect(fil('on: pull_request_target\npermissions: {}\njobs:\n  Prosjektansvar:\n    runs-on: x\n')).toHaveLength(1)
+    expect(fil('on:\n  - pull_request\npermissions: {}\njobs:\n  a:\n    name: prosjektansvar\n')).toHaveLength(1)
+  })
+
+  it('stopper en PR-arbeidsflyt som kan skrive check runs eller statuser, eller mangler permissions', () => {
+    expect(fil('on: pull_request\npermissions:\n  checks: write\n')[0]).toContain('checks/statuses: write')
+    expect(fil('on: pull_request\npermissions:\n  statuses: write\n')[0]).toContain('checks/statuses: write')
+    expect(fil('on: pull_request\npermissions: write-all\n')[0]).toContain('checks/statuses: write')
+    expect(fil('on: pull_request\njobs: {}\n')[0]).toContain('ingen permissions-blokk')
+  })
+
+  it('godtar arbeidsflyter som ikke kjører på PR-er, og PR-arbeidsflyter med lesetilgang', () => {
+    expect(fil('on:\n  push:\npermissions:\n  checks: write\njobs:\n  a:\n    name: Prosjektansvar\n')).toEqual([])
+    expect(fil('on:\n  workflow_run:\n    workflows: [x]\npermissions:\n  checks: write\n')).toEqual([])
+    expect(fil('on:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  a:\n    name: Bygg\n# name: Prosjektansvar\n')).toEqual([])
+  })
+
+  it('godtar repoets egne arbeidsflyter, unntatt den midlertidige overgangsflyten', () => {
+    const flyter = readdirSync(new URL('../../.github/workflows/', import.meta.url)).filter((f) => /\.ya?ml$/.test(f)).map((f) => ({ sti: `.github/workflows/${f}`, innhold: les(`.github/workflows/${f}`) }))
+    const funn = finnEtterligning(flyter) as string[]
+    expect(funn).toEqual([expect.stringMatching(/^\.github\/workflows\/prosjektansvar-overgang\.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»/)])
+  })
+})
+
+describe('den betrodde kjøringen', () => {
+  it('starter check run-en som «pågår» på PR-ens commit og fullfører den med resultatet', async () => {
+    const { github, kall } = falskGithub(vanlig({ 'POST repos/peohol/ousfar/check-runs': { id: 77 }, 'PATCH repos/peohol/ousfar/check-runs/77': {} }))
+    const v = await vurderOgMeld(github, REPO, ghPr(), 'main', 'https://github.com/peohol/ousfar/actions/runs/1')
+    expect(v).toMatchObject({ nummer: 500, ok: true })
+    expect(kall.filter((k) => !k.startsWith('GET'))).toEqual(['POST repos/peohol/ousfar/check-runs', 'PATCH repos/peohol/ousfar/check-runs/77'])
+  })
+
+  it('skriver navnet regelsettet krever, med riktig commit, og rød når vurderingen ikke kan fullføres', async () => {
+    const sendt: { sti: string; data: unknown }[] = []
+    const fetch = async (url: string, init: { method: string; body?: string }) => {
+      const sti = url.replace('https://api.github.com/', '')
+      if (init.method !== 'GET') sendt.push({ sti, data: JSON.parse(init.body!) })
+      if (sti === 'repos/peohol/ousfar/check-runs') return { ok: true, status: 201, text: async () => '{"id":5}' }
+      if (sti.startsWith('repos/peohol/ousfar/check-runs/5')) return { ok: true, status: 200, text: async () => '{}' }
+      return { ok: false, status: 502, text: async () => 'Bad Gateway' }
+    }
+    const v = await vurderOgMeld(lagGithub({ token: 'x', fetch }), REPO, ghPr(), 'main')
+    expect(v.ok).toBe(false)
+    expect(sendt[0]).toEqual({ sti: 'repos/peohol/ousfar/check-runs', data: { name: KONTROLLNAVN, head_sha: 'abc1234def', status: 'in_progress' } })
+    expect(KONTROLLNAVN).toBe('Prosjektansvar')
+    expect(sendt[1]).toMatchObject({ sti: 'repos/peohol/ousfar/check-runs/5', data: { status: 'completed', conclusion: 'failure', output: { title: '1 feil må rettes', summary: expect.stringContaining('Kontrollen kunne ikke fullføres: GitHub svarte 502') } } })
+  })
+
+  it('finner PR-ene for en commit og for et Issue, og ingen for et ufordelt backlog-Issue', async () => {
+    const { github } = falskGithub({
       'GET repos/peohol/ousfar/pulls?state=open': [
-        ghPr({ number: 500, head: { sha: 'aaa1111' } }),
-        ghPr({ number: 501, head: { sha: 'bbb2222' }, body: '## Arbeidsoppgave\nCloses #477' }),
-        ghPr({ number: 502, head: { sha: 'ccc3333' }, body: '## Sammendrag\nBygger på #477.\n\n## Arbeidsoppgave\nRefs #478' }),
+        ghPr({ number: 500, head: { sha: 'aaa' } }),
+        ghPr({ number: 501, head: { sha: 'bbb' }, body: '## Arbeidsoppgave\nCloses #477' }),
+        ghPr({ number: 502, head: { sha: 'aaa' }, body: '## Sammendrag\nBygger på #477.\n\n## Arbeidsoppgave\nRefs #478' }),
       ],
-      'GET repos/peohol/ousfar/actions/workflows/prosjektansvar.yml/runs?event=pull_request&head_sha=aaa1111': { workflow_runs: [kjoring({ id: 1 })] },
-      'GET repos/peohol/ousfar/actions/workflows/prosjektansvar.yml/runs?event=pull_request&head_sha=bbb2222': { workflow_runs: [kjoring({ id: 2 })] },
-      'POST repos/peohol/ousfar/actions/runs/': undefined,
     })
-    const logg = await kontrollerSakensPrer(github, REPO, 477, { pause: 0 })
-    expect(kall.filter((k) => k.startsWith('POST'))).toEqual(['POST repos/peohol/ousfar/actions/runs/1/rerun', 'POST repos/peohol/ousfar/actions/runs/2/rerun'])
-    expect(logg).toEqual([expect.stringMatching(/^#500: kontrollen kjøres på nytt/), expect.stringMatching(/^#501: kontrollen kjøres på nytt/)])
-  })
-
-  it('venter på en kjøring som pågår, så den nye ser endringen', async () => {
-    const { github, kall } = falskGithub({
-      'GET repos/peohol/ousfar/pulls?state=open': [ghPr()],
-      'GET repos/peohol/ousfar/actions/workflows/': (n: number) => ({ workflow_runs: [kjoring({ status: n < 3 ? 'in_progress' : 'completed' })] }),
-      'POST repos/peohol/ousfar/actions/runs/9001/rerun': undefined,
-    })
-    await kontrollerSakensPrer(github, REPO, 477, { pause: 0 })
-    expect(kall.filter((k) => k.includes('/runs?'))).toHaveLength(3)
-    expect(kall.at(-1)).toBe('POST repos/peohol/ousfar/actions/runs/9001/rerun')
-  })
-
-  it('feiler synlig for en PR som ikke kan kontrolleres på nytt, men tar de andre først', async () => {
-    const { github, kall } = falskGithub({
-      'GET repos/peohol/ousfar/pulls?state=open': [ghPr({ number: 500, head: { sha: 'aaa1111' } }), ghPr({ number: 501, head: { sha: 'bbb2222' } })],
-      'GET repos/peohol/ousfar/actions/workflows/prosjektansvar.yml/runs?event=pull_request&head_sha=aaa1111': { workflow_runs: [kjoring({ id: 1, status: 'queued' })] },
-      'GET repos/peohol/ousfar/actions/workflows/prosjektansvar.yml/runs?event=pull_request&head_sha=bbb2222': { workflow_runs: [kjoring({ id: 2 })] },
-      'POST repos/peohol/ousfar/actions/runs/2/rerun': undefined,
-    })
-    const feil = await kontrollerSakensPrer(github, REPO, 477, { pause: 0, forsok: 2 }).catch((e: Error & { logg: string[] }) => e)
-    expect(feil).toBeInstanceOf(Error)
-    expect(feil.message).toMatch(/^#500: kontrollen .* ble ikke ferdig.*Den gamle kontrollen gjelder ikke lenger/)
-    expect(feil.logg).toEqual([expect.stringMatching(/^#501: kontrollen kjøres på nytt/)])
-    expect(kall).toContain('POST repos/peohol/ousfar/actions/runs/2/rerun')
-  })
-
-  it('gjør ingenting for et ufordelt backlog-Issue uten PR, og sier det', async () => {
-    const { github, kall } = falskGithub({ 'GET repos/peohol/ousfar/pulls?state=open': [ghPr({ body: '## Arbeidsoppgave\nRefs #1' })] })
-    expect(await kontrollerSakensPrer(github, REPO, 477, { pause: 0 })).toEqual(['Ingen åpne PR-er viser til #477.'])
-    expect(kall.every((k) => k.startsWith('GET'))).toBe(true)
-  })
-
-  it('hopper over en PR der kontrollen ikke har kjørt ennå', async () => {
-    const { github, kall } = falskGithub({
-      'GET repos/peohol/ousfar/pulls?state=open': [ghPr()],
-      'GET repos/peohol/ousfar/actions/workflows/': { workflow_runs: [] },
-    })
-    expect(await kontrollerSakensPrer(github, REPO, 477, { pause: 0 })).toEqual([expect.stringContaining('har ikke kjørt på abc1234 ennå')])
-    expect(kall.some((k) => k.startsWith('POST'))).toBe(false)
+    expect((await prerForSak(github, REPO, 477)).map((p: { number: number }) => p.number)).toEqual([500, 501])
+    expect((await prerForSak(github, REPO, 999)).map((p: { number: number }) => p.number)).toEqual([])
+    expect((await prerForSha(github, REPO, 'aaa')).map((p: { number: number }) => p.number)).toEqual([500, 502])
   })
 })
 
 describe('arbeidsflytene', () => {
   const flyt = les('.github/workflows/prosjektansvar.yml')
-  const sakflyt = les('.github/workflows/prosjektansvar-sak.yml')
-  const typer = (tekst: string) => tekst.match(/types: \[([^\]]+)\]/)?.[1]?.split(',').map((t) => t.trim())
+  const utloser = les('.github/workflows/prosjektansvar-utloser.yml')
+  const overgang = les('.github/workflows/prosjektansvar-overgang.yml')
+  const typer = (tekst: string, hendelse: string) => tekst.match(new RegExp(`${hendelse}:\\n(?:\\s+\\S.*\\n)*?\\s+types: \\[([^\\]]+)\\]`))?.[1]?.split(',').map((t) => t.trim())
+  const PR_TYPER = ['opened', 'reopened', 'synchronize', 'edited', 'labeled', 'unlabeled', 'assigned', 'unassigned']
 
-  it('kjører kontrollen på nytt ved alt på PR-en den vurderer', () => {
-    expect(typer(flyt)).toEqual(expect.arrayContaining(['opened', 'reopened', 'synchronize', 'edited', 'labeled', 'unlabeled', 'assigned', 'unassigned']))
+  it('den påkrevde kontrollen kjøres bare fra main: workflow_run og issues, aldri pull_request', () => {
+    expect(flyt).toMatch(/^on:\n {2}workflow_run:\n {4}workflows: \['Prosjektansvar – utløser'\]\n {4}types: \[completed\]\n {2}issues:\n/m)
+    expect(flyt).not.toMatch(/^\s*pull_request(_target)?\s*:/m)
+    expect(typer(flyt, 'issues')).toEqual(expect.arrayContaining(['assigned', 'unassigned', 'labeled', 'unlabeled', 'deleted', 'transferred']))
   })
 
-  it('heter det regelsettet krever, har bare lesetilgang og ingen hemmeligheter', () => {
-    expect(flyt).toMatch(/^ {4}name: Prosjektansvar$/m)
+  it('sjekker bare ut main (ingen ref til PR-en), med minst mulig tilgang og ingen hemmeligheter', () => {
+    expect(flyt).not.toMatch(/^\s*ref:/m)
+    expect(flyt).toContain(`sparse-checkout: |\n            scripts/prosjektansvar.mjs\n            ${REGLER_STI}\n`)
+    expect(flyt).toContain('persist-credentials: false')
+    expect(flyt).toMatch(/^permissions:\n {2}checks: write\n {2}contents: read\n {2}issues: read\n {2}pull-requests: read\n\n/m)
+    expect(flyt).not.toMatch(/secrets\.|pull_request_target|actions: write/)
     expect(flyt).toContain('run: node scripts/prosjektansvar.mjs\n')
-    expect(flyt).toMatch(/permissions:\n {2}contents: read\n {2}issues: read\n {2}pull-requests: read\n/)
-    expect(flyt).not.toMatch(/: write|secrets\.|pull_request_target/)
-    // Bare tokenet og concurrency-gruppen; alt annet leses fra hendelsen og GitHub, ikke settes inn i skriptet.
-    expect(flyt.match(/\$\{\{[^}]*\}\}/g)).toEqual(['${{ github.event.pull_request.number }}', '${{ github.token }}'])
+    // Jobben selv heter ikke Prosjektansvar: navnet er check run-en skriptet skriver på PR-en.
+    expect(flyt).not.toMatch(/^ {4}name: Prosjektansvar$/m)
   })
 
-  it('henter skriptet og regelfila, og ikke mer', () => {
-    for (const tekst of [flyt, sakflyt]) {
-      expect(tekst).toContain(`sparse-checkout: |\n            scripts/prosjektansvar.mjs\n            ${REGLER_STI}\n`)
-      expect(tekst).toContain('persist-credentials: false')
-    }
+  it('utløseren kjører ved alt på PR-en, men har ingen tilganger, sjekker ikke ut og heter noe annet', () => {
+    expect(utloser).toMatch(/^name: Prosjektansvar – utløser$/m)
+    expect(typer(utloser, 'pull_request')).toEqual(expect.arrayContaining(PR_TYPER))
+    expect(utloser).toMatch(/^permissions: \{\}$/m)
+    expect(utloser).not.toMatch(/checkout|\$\{\{|secrets\.|^ {4}name: Prosjektansvar$/m)
   })
 
-  it('starter kontrollen på nytt når et Issue endres, med minst mulig tilgang og et annet jobbnavn', () => {
-    expect(sakflyt).toMatch(/^ {2}issues:$/m)
-    expect(typer(sakflyt)).toEqual(expect.arrayContaining(['assigned', 'unassigned', 'labeled', 'unlabeled', 'deleted', 'transferred']))
-    expect(sakflyt).toContain('run: node scripts/prosjektansvar.mjs sak')
-    expect(sakflyt).toMatch(/permissions:\n {2}actions: write\n {2}contents: read\n {2}pull-requests: read\n/)
-    expect(sakflyt).not.toMatch(/contents: write|pull-requests: write|issues: write|secrets\.|pull_request_target/)
-    expect(sakflyt).not.toMatch(/^ {4}name: Prosjektansvar$/m)
+  it('overgangsflyten er merket midlertidig og gir samme navn som regelsettet krever', () => {
+    expect(overgang).toMatch(/^# MIDLERTIDIG\./)
+    expect(overgang).toMatch(/^ {4}name: Prosjektansvar$/m)
+    expect(typer(overgang, 'pull_request')).toEqual(expect.arrayContaining(PR_TYPER))
+    expect(overgang).not.toMatch(/: write|secrets\./)
   })
 })
 
@@ -487,7 +528,7 @@ describe('dokumentene sier det samme', () => {
 
   it('styringsdokumentet beskriver begge aksene, overgangen, overføringen og Peders særskilte myndighet', () => {
     expect(ansvar).toContain(REGLER_STI)
-    for (const del of ['Ansvarlig systemarkitekt', 'assignee', 'Overgang', 'Overføring', 'Ufordelt backlog er lov', 'prosjektansvar-sak.yml', 'GitHub-ansvarlig']) expect(ansvar).toContain(del)
+    for (const del of ['Ansvarlig systemarkitekt', 'assignee', 'Overgang', 'Overføring', 'Ufordelt backlog er lov', 'Betrodd kjøring', 'prosjektansvar-utloser.yml', 'prosjektansvar-overgang.yml', 'GitHub-ansvarlig']) expect(ansvar).toContain(del)
     expect(ansvar).toMatch(/tar bare han, uansett hvem som har oppgaven/)
     expect(ansvar).toMatch(/uavhengige fagkontrollen i OUSFAR Fag/)
     for (const login of ARKITEKTER.keys()) expect(ansvar).toContain(`\`${login}\``)

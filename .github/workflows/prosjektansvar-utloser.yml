@@ -1,0 +1,20 @@
+# Utløser for den påkrevde kontrollen «Prosjektansvar» (docs/prosjektansvar.md §6).
+# Kjører ved hver endring av en PR, men har ingen tilganger, sjekker ikke ut noe
+# og vurderer ingenting. Når den er ferdig, kjører prosjektansvar.yml kontrollen
+# fra main og skriver resultatet på PR-en. Endres eller fjernes denne fila i en
+# PR, får PR-en ingen «Prosjektansvar» og kan ikke slås sammen.
+name: Prosjektansvar – utløser
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled, assigned, unassigned]
+
+permissions: {}
+
+jobs:
+  utloser:
+    name: Utløser for prosjektansvar
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: echo "Kontrollen kjøres fra main av prosjektansvar.yml."
