@@ -4,7 +4,7 @@ import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
 import { gruppeside } from '../../diskusjoner/modell'
 import { gruppeadresse, type Gruppefane } from '../../domain/rute'
-import { arkiverGruppe, avsluttGruppemedlemskap, endreGruppe, inviterTilGruppe, settGrupperolle, svarPaaInvitasjon } from '../../grupper/api'
+import { arkiverGruppe, avsluttGruppemedlemskap, endreGruppe, inviterTilGruppe, settGruppesymbol, settGrupperolle, svarPaaInvitasjon } from '../../grupper/api'
 import { useGrupper } from '../../grupper/kilde'
 import { ROLLENAVN, delMedlemmer, gruppetilhorighet, type Gruppemedlem, type Gruppeoversikt, type MinGruppe } from '../../grupper/modell'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
@@ -24,6 +24,7 @@ import { visDiskusjonene } from '../diskusjoner/diskusjonsvisning'
 import { visGruppesamtale } from '../chat/chatstyring'
 import { Gruppeaktivitet } from './Gruppeaktivitet'
 import { Innstillingsmodal, Medlemsmodal, OpprettGruppe, harInnstillinger } from './Gruppemodaler'
+import { Gruppesymbol, symbollenke, useGruppesymbollenker } from './Gruppesymbol'
 import { Tilbakelenke, Tilbakemelding, useFanetittel, useGruppeoversikt, useHandling } from './gruppedeler'
 
 /** Gruppeoversikten, reserven når en gruppe lukkes og ble åpnet utenfra. */
@@ -206,6 +207,7 @@ function Oversikt({ overskrift, onLukk }: { overskrift: string; onLukk: () => vo
 
 function Gruppeliste({ navn, grupper, tom, synligTittel }: { navn: string; grupper: MinGruppe[]; tom?: string; synligTittel?: boolean }) {
   const id = useId()
+  const lenker = useGruppesymbollenker(grupper)
   return (
     <section className="gruppeside__del" aria-labelledby={id}>
       <h2 id={id} className={synligTittel ? 'gruppeside__deltittel' : 'kun-skjermleser'}>
@@ -218,6 +220,7 @@ function Gruppeliste({ navn, grupper, tom, synligTittel }: { navn: string; grupp
           {grupper.map((g) => (
             <li key={g.id}>
               <a className="gruppeliste__rad" href={gruppeadresse(g.id)}>
+                <Gruppesymbol gruppe={g} lenke={symbollenke(g, lenker)} />
                 <span className="gruppeliste__navn">
                   <span className="gruppeliste__tittel">{g.navn}</span>
                   <span className="gruppeliste__meta">
@@ -251,6 +254,7 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
   const handling = useHandling()
   const { opptatt, utfor } = handling
   useFanetittel(oversikt?.navn ?? 'Gruppe')
+  const symbollenker = useGruppesymbollenker(oversikt ? [oversikt] : [])
 
   if (!oversikt) {
     return (
@@ -353,6 +357,7 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
       <Tilbakelenke reserve="Grupper" onTilbake={onLukk} />
       <header className="gruppeside__hode">
         <div className="gruppeside__tittelrad">
+          <Gruppesymbol gruppe={g} lenke={symbollenke(g, symbollenker)} />
           <Tittel id={overskrift}>{g.navn}</Tittel>
           {harInnstillinger(g) && (
             <Button variant="subtle" icon={<Ikon navn="gears" />} onClick={() => apne('innstillinger')}>
@@ -424,6 +429,12 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
             gjor(async () => {
               await endreGruppe(g.id, navn, beskrivelse)
               return 'Gruppen er endret.'
+            })
+          }
+          onSymbol={(valg) =>
+            gjor(async () => {
+              await settGruppesymbol(g.id, valg)
+              return valg ? 'Symbolet er lagret.' : 'Symbolet er fjernet.'
             })
           }
           onArkiver={() => setBekreft({ handling: 'arkiver' })}

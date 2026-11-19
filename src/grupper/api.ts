@@ -18,6 +18,7 @@ import {
 import { lesGruppeoppgave, lesGruppeoppgaveliste, type Gruppeoppgave, type Gruppeoppgaveliste, type Gruppeoppgavestatus, type Prioritet } from './oppgaver'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
 import { lesGruppeaktivitet, type Gruppehendelse } from './aktivitet'
+import { GRUPPESYMBOL_BOTTE, lesGruppesymbol, nyGruppesymbolsti, symbolbilde, type Gruppesymbol } from './symbol'
 
 /**
  * Funksjonene sier avslagene sine på norsk, også regelen om minst én
@@ -57,6 +58,43 @@ export async function opprettGruppe(navn: string, beskrivelse: string, fagmiljo:
 
 export async function endreGruppe(gruppe: string, navn: string, beskrivelse: string): Promise<void> {
   await kall('endre_gruppe', { gruppe, navn, beskrivelse })
+}
+
+/**
+ * Setter symbolet: en emoji, et bilde (beskåret og komprimert i nettleseren,
+ * som profilbildet), eller ingen (`null`). Et bilde lastes opp på en ny sti,
+ * aldri over et annet, og blir gruppens symbol først når databasen har
+ * bekreftet det. Gir symbolet slik det står etterpå.
+ */
+export async function settGruppesymbol(gruppe: string, valg: { emoji: string } | { bilde: Blob } | null): Promise<Gruppesymbol | null> {
+  const lagring = klient().storage.from(GRUPPESYMBOL_BOTTE)
+  let bilde: string | null = null
+  if (valg && 'bilde' in valg) {
+    bilde = nyGruppesymbolsti(gruppe)
+    const { error } = await lagring.upload(bilde, valg.bilde, { upsert: false, contentType: 'image/webp' })
+    if (error) throw new Error('Bildet ble ikke lastet opp. Prøv igjen.')
+  }
+  const symbol = lesGruppesymbol(await kall('sett_gruppesymbol', { gruppe, emoji: valg && 'emoji' in valg ? valg.emoji : null, bilde }))
+  await ryddGruppesymboler(gruppe, symbolbilde(symbol)?.sti ?? null)
+  return symbol
+}
+
+/**
+ * Fjerner de gamle bildene i gruppens mappe. Reglene på bøtta lar bare bilder
+ * som ikke er gruppens symbol, og som er over en time gamle, slettes, så et
+ * bilde en annen nettopp har lastet opp, eller som er blitt symbolet i
+ * mellomtiden, blir stående. Det som står igjen, ryddes neste gang. Feil
+ * stopper ikke lagringen.
+ */
+async function ryddGruppesymboler(gruppe: string, gjeldende: string | null): Promise<void> {
+  try {
+    const lagring = klient().storage.from(GRUPPESYMBOL_BOTTE)
+    const { data } = await lagring.list(gruppe)
+    const gamle = (data ?? []).map((f) => `${gruppe}/${f.name}`).filter((sti) => sti !== gjeldende)
+    if (gamle.length > 0) await lagring.remove(gamle)
+  } catch {
+    // Ryddingen er bare en opprydding; symbolet er alt lagret.
+  }
 }
 
 export async function arkiverGruppe(gruppe: string, arkivert: boolean): Promise<void> {

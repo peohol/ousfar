@@ -9,6 +9,7 @@
  */
 import type { Profilkort } from '@delt/profil'
 import { erObjekt, tall, tekst, tekstEllerNull } from '../ideer/lesing'
+import { lesGruppesymbol, type Gruppesymbol } from './symbol'
 
 /** Rollene i en gruppe, fra den med minst myndighet. */
 export const GRUPPEROLLER = ['medlem', 'moderator', 'ansvarlig'] as const
@@ -41,6 +42,8 @@ export interface Gruppe {
   status: Gruppestatus
   /** Fagmiljøet gruppen hører til; `null` for en gruppe på tvers. */
   fagmiljo: { id: string; navn: string } | null
+  /** Emojien eller bildet gruppen har valgt (`symbol.ts`); uten står gruppeikonet. */
+  symbol?: Gruppesymbol | null
 }
 
 /** En gruppe i oversikten, med rollen den innloggede har der. */
@@ -151,6 +154,7 @@ export function lesGruppe(verdi: unknown): Gruppe | null {
     art: enAv(['fagmiljo', 'tverrfaglig'] as const, verdi.art) ?? 'tverrfaglig',
     status: enAv(['aktiv', 'arkivert'] as const, verdi.status) ?? 'aktiv',
     fagmiljo: lesReferanse(verdi.fagmiljo),
+    symbol: lesGruppesymbol(verdi.symbol),
   }
 }
 

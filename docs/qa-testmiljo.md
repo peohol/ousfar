@@ -93,6 +93,12 @@ kjøringen uten at passordet skrives inn.
   mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
   direktemeldingene står på i den lokale databasen mens den går, og valgene,
   blokkeringene og samtalen mellom de to fra før slettes først.
+- `npx vite-node src/__tests__/qa/gruppesymbolnettleser.ts` er
+  nettleserkontrollen av gruppesymbolene (`docs/fagmiljoer.md`,
+  «Gruppesymbolet»): Ada som ansvarlig velger en emoji og laster opp et bilde
+  i gruppeinnstillingene, tekst avvises, Bo ser symbolene i chatmenyen, i
+  hodet på gruppechatten og i gruppeoversikten (også mobil og mørk modus), og
+  å fjerne bildet gjør at medlemmet ikke når det lenger. Samme kontoer og bryter som chatmenyen.
 - `npx vite-node src/__tests__/qa/menynettleser.ts` er nettleserkontrollen av
   menyene (D6): toppmenyen uten idéer og administrasjon, hovedmenyen med
   navigasjonen og «For hele appen» for en systemarkitekt og for en vanlig

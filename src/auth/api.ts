@@ -147,25 +147,24 @@ export async function lastOppAvatar(brukerId: string, bilde: Blob): Promise<stri
 
 /**
  * Hvor lenge en signert bildelenke er gyldig, i sekunder. Lenkene fornyes før
- * det — se `useAvatarlenker`.
+ * det — se `useBildelenker`.
  */
-export const AVATARLENKE_LEVETID = 60 * 60
+export const BILDELENKE_LEVETID = 60 * 60
 
 /**
- * Midlertidige lenker til profilbildene.
+ * Midlertidige lenker til bildene i en privat bøtte: profilbildene
+ * (`AVATAR_BOTTE`) og gruppesymbolene.
  *
- * Bøtta er privat, så bildene hentes med signerte lenker. Lenkene er ferske
- * hver gang, og et nytt bilde vises derfor med én gang — det gamle kan ikke
- * bli hengende igjen i nettleserens mellomlager.
+ * Bøttene er private, så bildene hentes med signerte lenker. Lenkene er
+ * ferske hver gang, og et nytt bilde vises derfor med én gang — det gamle kan
+ * ikke bli hengende igjen i nettleserens mellomlager.
  */
-export async function signerteAvatarer(stier: string[]): Promise<Map<string, string>> {
+export async function signerteBildelenker(botte: string, stier: string[]): Promise<Map<string, string>> {
   const unike = [...new Set(stier)].filter((sti) => sti !== '')
   const lenker = new Map<string, string>()
   if (unike.length === 0) return lenker
 
-  const { data, error } = await klient()
-    .storage.from(AVATAR_BOTTE)
-    .createSignedUrls(unike, AVATARLENKE_LEVETID)
+  const { data, error } = await klient().storage.from(botte).createSignedUrls(unike, BILDELENKE_LEVETID)
   if (error) return lenker
 
   for (const oppf of data ?? []) {

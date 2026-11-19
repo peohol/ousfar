@@ -1,4 +1,4 @@
-import { useId, type FormEvent, type ReactNode } from 'react'
+import { useId, useState, type FormEvent, type ReactNode } from 'react'
 import { visningsnavn } from '@delt/profil'
 import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { useAvatarlenker } from '../../auth/avatarer'
@@ -14,15 +14,18 @@ import {
   type Gruppeoversikt,
   type Grupperolle,
 } from '../../grupper/modell'
+import { erEmoji, FORESLATTE_EMOJIER } from '../../grupper/symbol'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Ikonknapp } from '../Ikonknapp'
 import { Avatar } from '../konto/Avatar'
+import { Bildevelgerlast } from '../konto/Bildevelgerlast'
 import { Profilutlos } from '../profilkort/Profilkort'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
 import { Gruppefelter, Tilbakemelding, useHandling, type Handling } from './gruppedeler'
+import { Gruppesymbol, symbollenke, useGruppesymbollenker } from './Gruppesymbol'
 
 /** Valget for en gruppe på tvers av fagmiljøene i skjemaet for en ny gruppe. */
 const PAA_TVERS = ''
@@ -292,8 +295,11 @@ export function harInnstillinger(g: Gruppeoversikt): boolean {
   return (g.kan_styre && aktiv) || g.kan_gjenapne || (g.rolle !== null && aktiv)
 }
 
+/** Det symbolet settes til: en emoji, et beskåret bilde, eller ingen. */
+export type Symbolvalg = { emoji: string } | { bilde: Blob } | null
+
 /**
- * «Gruppeinnstillinger» fra gruppesiden: navnet og beskrivelsen, å arkivere
+ * «Gruppeinnstillinger» fra gruppesiden: navnet og beskrivelsen, symbolet, å arkivere
  * og å åpne gruppen igjen for de som kan det, og å forlate den. Å arkivere og
  * å forlate må bekreftes, som før; den siste ansvarlige kan ikke gå.
  */
@@ -304,6 +310,7 @@ export function Innstillingsmodal({
   handling,
   bekreftelse,
   onLagre,
+  onSymbol,
   onArkiver,
   onGjenapne,
   onForlat,
@@ -314,6 +321,7 @@ export function Innstillingsmodal({
   handling: Handling
   bekreftelse: ReactNode
   onLagre: (navn: string, beskrivelse: string) => void
+  onSymbol: (valg: Symbolvalg) => void
   onArkiver: () => void
   onGjenapne: () => void
   onForlat: () => void
@@ -323,6 +331,7 @@ export function Innstillingsmodal({
   return (
     <Modallag apen={apen} tittel="Gruppeinnstillinger" meta={g.navn} onLukk={onLukk}>
       {g.kan_styre && aktiv && <Endring gruppe={g} opptatt={opptatt} onLagre={onLagre} />}
+      {g.kan_styre && aktiv && <Symbolvelger gruppe={g} opptatt={opptatt} onSett={onSymbol} />}
       {bekreftelse}
       <Tilbakemelding feil={handling.feil} kvittering={handling.kvittering} />
       <div className="gruppeside__handlinger">
@@ -346,6 +355,93 @@ export function Innstillingsmodal({
         <p className="gruppeside__hint">Du er den siste ansvarlige. Gjør en annen til ansvarlig før du forlater gruppen.</p>
       )}
     </Modallag>
+  )
+}
+
+/**
+ * Symbolet til gruppen (docs/fagmiljoer.md, «Gruppesymbolet»): et bilde,
+ * beskåret til en sirkel som profilbildet, eller en emoji, fra forslagene
+ * eller skrevet inn. Lagres med en gang det er valgt.
+ */
+function Symbolvelger({ gruppe, opptatt, onSett }: { gruppe: Gruppeoversikt; opptatt: boolean; onSett: (valg: Symbolvalg) => void }) {
+  const id = useId()
+  const lenker = useGruppesymbollenker([gruppe])
+  const [egen, setEgen] = useBevart('symbol/emoji', '')
+  const [feil, setFeil] = useState<string | null>(null)
+  const valgt = gruppe.symbol && 'emoji' in gruppe.symbol ? gruppe.symbol.emoji : null
+  // Hvert valg tar bort en feil fra «Annen emoji», så den ikke står ved et lagret symbol.
+  const velg = (valg: Symbolvalg) => {
+    setFeil(null)
+    onSett(valg)
+  }
+  const brukEgen = (e: FormEvent) => {
+    e.preventDefault()
+    if (!erEmoji(egen)) {
+      setFeil('Skriv inn én emoji.')
+      return
+    }
+    setEgen('')
+    velg({ emoji: egen.trim() })
+  }
+  return (
+    <section className="skjema__bolk symbolvelger" aria-labelledby={`${id}-tittel`}>
+      <h3 id={`${id}-tittel`} className="skjema__bolktittel">
+        Symbol
+      </h3>
+      <p className="gruppeside__hint">Står ved gruppenavnet og i chatten. Velg et bilde eller en emoji.</p>
+      <Bildevelgerlast
+        visning={<Gruppesymbol gruppe={gruppe} lenke={symbollenke(gruppe, lenker)} storrelse="stor" />}
+        knapp="Velg bilde"
+        laast={opptatt}
+        onValgt={(bilde) => velg({ bilde })}
+      />
+      <div className="symbolvelger__emojier" role="group" aria-label="Emojier">
+        {FORESLATTE_EMOJIER.map((emoji) => (
+          <button
+            key={emoji}
+            type="button"
+            className="symbolvelger__emoji"
+            aria-pressed={valgt === emoji}
+            disabled={opptatt}
+            onClick={() => velg({ emoji })}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+      <form className="symbolvelger__egen" onSubmit={brukEgen}>
+        <label className="felt__merkelapp" htmlFor={`${id}-egen`}>
+          Annen emoji
+        </label>
+        <div className="gruppemodal__inviterrad">
+          <input
+            id={`${id}-egen`}
+            className="felt__inndata"
+            value={egen}
+            maxLength={16}
+            autoComplete="off"
+            {...UTEN_AUTOERSTATT}
+            disabled={opptatt}
+            onChange={(e) => setEgen(e.target.value)}
+          />
+          <Button type="submit" variant="kant" disabled={opptatt || !egen.trim()}>
+            Bruk
+          </Button>
+        </div>
+      </form>
+      {feil && (
+        <p className="skjemafeil" role="alert">
+          {feil}
+        </p>
+      )}
+      {gruppe.symbol && (
+        <div className="skjema__knapper">
+          <Button variant="subtle" icon={<Ikon navn="trash" />} disabled={opptatt} onClick={() => velg(null)}>
+            Fjern symbolet
+          </Button>
+        </div>
+      )}
+    </section>
   )
 }
 
