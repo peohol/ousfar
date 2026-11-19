@@ -456,7 +456,7 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
   fortolkning: 'interp',
   ideer: 'idea',
   diskusjoner: 'diskusjon',
-  grupper: 'ideoppgaver',
+  grupper: 'grupper',
   forslag: 'foresla',
   favoritter: 'star',
   appen: 'history',

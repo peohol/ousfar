@@ -192,6 +192,7 @@
   display: flex;
   flex: none;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--rom-2);
   padding: var(--rom-4) var(--rom-4) var(--rom-2) var(--rom-6);
 }
@@ -248,6 +249,17 @@
   border: 0;
   border-radius: var(--runding-pille);
   cursor: pointer;
+}
+
+/* ⚙ nederst til høyre i oversikten, også når lista er lang. */
+.chatpanel__fot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: var(--rom-2);
+  background: var(--flate);
 }
 
 .chatpanel__tom,
@@ -358,10 +370,6 @@
   text-align: left;
 }
 
-.chatgrupper__antall {
-  font-variant-numeric: tabular-nums;
-}
-
 .chatgrupper__liste {
   margin: 0;
   padding: 0;
@@ -394,16 +402,6 @@
   white-space: nowrap;
 }
 
-.chatgrupper__hvor {
-  flex: none;
-  max-width: 45%;
-  overflow: hidden;
-  font-size: var(--tekst-liten);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--blekk-dempet);
-}
-
 .chatgrupper__alle {
   justify-content: space-between;
   color: var(--aksent);
@@ -418,6 +416,9 @@
 }
 
 .chatsamtaler__tittel {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
   margin: 0;
   padding: 0 var(--rom-2);
   font-family: var(--skrift-display);
@@ -710,14 +711,11 @@
   background: var(--blekk-dempet);
 }
 
-/* Bryterne nederst i oversikten. */
+/* Bryterne og «Blokkerte», bak ⚙ og i fanen Chat under Innstillinger. */
 .chatvalg {
   display: flex;
   flex-direction: column;
   gap: var(--rom-2);
-  margin-top: auto;
-  padding-top: var(--rom-3);
-  border-top: var(--kant) solid var(--linje);
 }
 
 .chatvalg__liste,

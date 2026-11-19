@@ -95,15 +95,32 @@ try {
     if (await tilbake.isVisible()) await tilbake.click()
     await meny(side).getByRole('region', { name: 'Samtaler' }).waitFor({ timeout: 15_000 })
   }
+  type Rot = ReturnType<typeof meny>
+  /** Innstillingene bak ⚙ i menyen eller på helsiden (oversikten må stå). */
+  async function innstillinger(rot: Rot): Promise<Rot> {
+    const vist = rot.locator('.chatinnstillinger')
+    if (!(await vist.isVisible())) await rot.getByRole('button', { name: 'Innstillinger for chatten' }).click()
+    await vist.waitFor({ timeout: 10_000 })
+    return vist
+  }
+  /** Fra innstillingene tilbake til lista. */
+  async function utAvInnstillinger(rot: Rot) {
+    const vist = rot.locator('.chatinnstillinger')
+    if (await vist.isVisible()) await vist.getByRole('button', { name: 'Til alle samtaler' }).click()
+    await rot.getByRole('region', { name: 'Samtaler' }).waitFor({ timeout: 10_000 })
+  }
   let samtale = ''
 
   await punkt('D1 bryterne står av fra starten', async () => {
     await aapneMenyen(ada)
-    const tillat = meny(ada).getByRole('switch', { name: /Tillat direktemeldinger/ })
-    const aktiv = meny(ada).getByRole('switch', { name: /Vis når jeg er aktiv/ })
+    krev((await meny(ada).getByRole('switch').count()) === 0, 'bryterne står i lista, ikke bak ⚙')
+    const valg = await innstillinger(meny(ada))
+    const tillat = valg.getByRole('switch', { name: /Tillat direktemeldinger/ })
+    const aktiv = valg.getByRole('switch', { name: /Vis når jeg er aktiv/ })
     await tillat.waitFor({ timeout: 15_000 })
     krev(!(await tillat.isChecked()) && !(await aktiv.isChecked()), 'en bryter står på')
     await bilde(ada, '01-brytere-av-pc')
+    await utAvInnstillinger(meny(ada))
   })
 
   await punkt('D2 «Ny chat» ber om å slå på; søket finner bare den som tillater', async () => {
@@ -145,10 +162,14 @@ try {
   })
 
   await punkt('D4 mottakeren slår av: låst linje, historikken står', async () => {
-    await helside(bo).getByRole('button', { name: 'Til alle samtaler' }).click().catch(() => undefined)
-    const tillat = helside(bo).getByRole('switch', { name: /Tillat direktemeldinger/ })
+    // Bo slo på i D2 utenfor siden, som ble lastet før det: en ny lasting viser det, så bryteren slås av og ikke på.
+    await bo.reload()
+    await helside(bo).getByRole('log').waitFor({ timeout: 20_000 })
+    const tillat = (await innstillinger(helside(bo))).getByRole('switch', { name: /Tillat direktemeldinger/ })
+    await innen(10_000, 'på hos Bo før', () => tillat.isChecked())
     await tillat.click({ force: true })
     await innen(5_000, 'av hos Bo', async () => !(await tillat.isChecked()))
+    await utAvInnstillinger(helside(bo))
     await meny(ada).getByLabel('Melding til Bo Prøvesen').fill('Syntetisk etter av')
     await ada.keyboard.press('Enter')
     const laast = 'Bo Prøvesen kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.'
@@ -180,17 +201,19 @@ try {
     await bilde(bo, '08-blokkert-mottaker-pc')
     // Oppheves under «Blokkerte».
     await meny(ada).getByRole('button', { name: 'Til alle samtaler' }).click()
-    await meny(ada).getByRole('button', { name: 'Blokkerte' }).click()
-    await meny(ada).getByRole('button', { name: 'Opphev' }).click()
-    await innen(10_000, 'opphevet', async () => (await meny(ada).getByText('Du har ikke blokkert noen.').count()) > 0)
-    await meny(ada).getByRole('button', { name: 'Blokkerte' }).click()
+    const valg = await innstillinger(meny(ada))
+    await valg.getByRole('button', { name: 'Blokkerte' }).click()
+    await valg.getByRole('button', { name: 'Opphev' }).click()
+    await innen(10_000, 'opphevet', async () => (await valg.getByText('Du har ikke blokkert noen.').count()) > 0)
+    await valg.getByRole('button', { name: 'Blokkerte' }).click()
+    await bilde(ada, '07b-innstillinger-meny-pc')
+    await utAvInnstillinger(meny(ada))
   })
 
   await punkt('D6 aktivitetsprikken bare når den andre har slått den på', async () => {
     const prikk = meny(ada).locator('.chatperson__aktiv[aria-label="Aktiv nå"]')
     krev((await prikk.count()) === 0, 'prikk før Bo slo på')
-    const vis = helside(bo).getByRole('switch', { name: /Vis når jeg er aktiv/ })
-    await helside(bo).getByRole('button', { name: 'Til alle samtaler' }).click().catch(() => undefined)
+    const vis = (await innstillinger(helside(bo))).getByRole('switch', { name: /Vis når jeg er aktiv/ })
     await vis.click({ force: true })
     await bo.mouse.wheel(0, 50)
     await innen(75_000, 'prikk hos Ada', async () => (await prikk.count()) > 0)
@@ -225,7 +248,7 @@ try {
   await punkt('D9 fanen Chat i Innstillinger har de samme bryterne som chatmenyen', async () => {
     await aapneMenyen(ada)
     await ada.getByRole('button', { name: /^Kontoen din/ }).click()
-    await ada.getByRole('button', { name: 'Innstillinger' }).click()
+    await ada.getByRole('button', { name: 'Innstillinger', exact: true }).click()
     const vindu = ada.getByRole('dialog', { name: 'Innstillinger' })
     await vindu.getByRole('tab', { name: 'Chat' }).click()
     const aktiv = vindu.getByRole('switch', { name: /Vis når jeg er aktiv/ })
@@ -235,7 +258,7 @@ try {
     await aktiv.click({ force: true })
     await innen(10_000, 'på i fanen', () => aktiv.isChecked())
     await ada.keyboard.press('Escape')
-    const iMenyen = meny(ada).getByRole('switch', { name: /Vis når jeg er aktiv/ })
+    const iMenyen = (await innstillinger(meny(ada))).getByRole('switch', { name: /Vis når jeg er aktiv/ })
     await innen(10_000, 'på i chatmenyen', () => iMenyen.isChecked())
     await iMenyen.click({ force: true })
     await innen(10_000, 'av igjen', async () => !(await iMenyen.isChecked()))

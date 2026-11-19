@@ -158,7 +158,7 @@ export function invitasjonsrad(invitasjon: Gruppeinvitasjon): Hendelse {
   const av = invitasjon.invitert_av
   return {
     id: `invitasjon:${invitasjon.gruppe.id}`,
-    ikon: 'ideoppgaver',
+    ikon: 'grupper',
     tittel: `Invitasjon til ${invitasjon.gruppe.navn}`,
     hvor: hvor(av && `fra ${visningsnavn(av)}`, gruppetilhorighet(invitasjon.gruppe)),
     tid: invitasjon.invitert_kl,
@@ -176,7 +176,7 @@ export function grupperad(gruppe: Forsidegruppe): Hendelse {
   const nye = nyttIGruppen(gruppe)
   return {
     id: gruppe.id,
-    ikon: 'ideoppgaver',
+    ikon: 'grupper',
     tittel: gruppe.navn,
     hvor: hvor(gruppetilhorighet(gruppe), `${gruppe.medlemmer} ${gruppe.medlemmer === 1 ? 'medlem' : 'medlemmer'}`),
     merknad: nye > 0 ? `${nye} ${nye === 1 ? 'ny' : 'nye'}` : undefined,

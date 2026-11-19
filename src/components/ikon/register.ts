@@ -1345,6 +1345,19 @@ const REGISTER = {
       P('M3 12l9-8 9 8', 'l'),
     ],
   },
+  // Gruppene: tre personer i en sirkel, den midterste foran (Peder 19.11.2026).
+  // Idéer og planlagte oppgaver beholder `ideoppgaver`.
+  grupper: {
+    vb: 24,
+    parts: [
+      C(12, 12, 10.5, 'f1', 'accent'),
+      C(6.6, 9.3, 2.3, 'o1', 'accent2'),
+      C(17.4, 9.3, 2.3, 'o1', 'accent2'),
+      P('M2.6 16.4a4 4 0 0 1 8 0z', 'o1', 'accent2'),
+      P('M13.4 16.4a4 4 0 0 1 8 0z', 'o1', 'accent2'),
+      G([C(12, 8.2, 3, 'o2', 'accent'), P('M6.6 18a5.4 5.4 0 0 1 10.8 0z', 'o2', 'accent')], 'pop'),
+    ],
+  },
   // Chatten: én rund snakkeboble med tekstlinjer, så den ikke forveksles med
   // `diskusjon` (to bobler), som står speilvendt i motsatt kant (D0).
   samtale: {
