@@ -363,15 +363,19 @@ function Symbolvelger({ gruppe, opptatt, onSett }: { gruppe: Gruppeoversikt; opp
   const [egen, setEgen] = useBevart('symbol/emoji', '')
   const [feil, setFeil] = useState<string | null>(null)
   const valgt = gruppe.symbol && 'emoji' in gruppe.symbol ? gruppe.symbol.emoji : null
+  // Hvert valg tar bort en feil fra «Annen emoji», så den ikke står ved et lagret symbol.
+  const velg = (valg: Symbolvalg) => {
+    setFeil(null)
+    onSett(valg)
+  }
   const brukEgen = (e: FormEvent) => {
     e.preventDefault()
     if (!erEmoji(egen)) {
       setFeil('Skriv inn én emoji.')
       return
     }
-    setFeil(null)
     setEgen('')
-    onSett({ emoji: egen.trim() })
+    velg({ emoji: egen.trim() })
   }
   return (
     <section className="skjema__bolk symbolvelger" aria-labelledby={`${id}-tittel`}>
@@ -383,7 +387,7 @@ function Symbolvelger({ gruppe, opptatt, onSett }: { gruppe: Gruppeoversikt; opp
         visning={<Gruppesymbol gruppe={gruppe} lenke={symbollenke(gruppe, lenker)} storrelse="stor" />}
         knapp="Velg bilde"
         laast={opptatt}
-        onValgt={(bilde) => onSett({ bilde })}
+        onValgt={(bilde) => velg({ bilde })}
       />
       <div className="symbolvelger__emojier" role="group" aria-label="Emojier">
         {FORESLATTE_EMOJIER.map((emoji) => (
@@ -393,7 +397,7 @@ function Symbolvelger({ gruppe, opptatt, onSett }: { gruppe: Gruppeoversikt; opp
             className="symbolvelger__emoji"
             aria-pressed={valgt === emoji}
             disabled={opptatt}
-            onClick={() => onSett({ emoji })}
+            onClick={() => velg({ emoji })}
           >
             {emoji}
           </button>
@@ -426,7 +430,7 @@ function Symbolvelger({ gruppe, opptatt, onSett }: { gruppe: Gruppeoversikt; opp
       )}
       {gruppe.symbol && (
         <div className="skjema__knapper">
-          <Button variant="subtle" icon={<Ikon navn="trash" />} disabled={opptatt} onClick={() => onSett(null)}>
+          <Button variant="subtle" icon={<Ikon navn="trash" />} disabled={opptatt} onClick={() => velg(null)}>
             Fjern symbolet
           </Button>
         </div>

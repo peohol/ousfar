@@ -14,16 +14,19 @@ export const GRUPPESYMBOL_BOTTE = 'gruppesymboler'
 export const gruppesymbolsti = (gruppe: string) => `${gruppe}/symbol.webp`
 
 /**
- * Tegnene en emoji kan bestå av: bare emojiblokkene, så symbolet aldri bærer
- * tall eller bokstaver (docs/pasientopplysninger.md). Det samme mønsteret
- * står i databasen (`grupper_symbol_emoji`, `sett_gruppesymbol`); en test
- * kontrollerer at de stemmer overens.
+ * Én emoji, slik databasen godtar den (`intern.er_gruppesymbolemoji`): et
+ * emojitegn med variantvelger og hudfarge, høyst fire slike satt sammen med
+ * ZWJ, eventuelt med merkelapper (regionflagg), eller et flagg av to
+ * regionsindikatorer. Bare emojiblokkene, uten tall, bokstaver, punktskrift
+ * og bokstavlignende tegn, så symbolet aldri bærer tekst
+ * (docs/pasientopplysninger.md). En test kontrollerer at mønsteret står likt
+ * i migrasjonen.
  */
-export const EMOJITEGN =
-  '\\u00A9\\u00AE\\u200D\\u203C\\u2049\\u20E3\\u2100-\\u2BFF\\u3030\\u303D\\u3297\\u3299\\uFE0E\\uFE0F\\U0001F000-\\U0001FAFF\\U000E0020-\\U000E007F'
+export const EMOJIMONSTER =
+  '^(?:[\\u00A9\\u00AE\\u203C\\u2049\\u2122\\u2139\\u2190-\\u21FF\\u2300-\\u23FF\\u24C2\\u25A0-\\u2775\\u2794-\\u27BF\\u2934\\u2935\\u2B00-\\u2BFF\\u3030\\u303D\\u3297\\u3299\\U0001F000-\\U0001F0FF\\U0001F200-\\U0001FAFF][\\uFE0E\\uFE0F\\U0001F3FB-\\U0001F3FF]{0,2}(?:\\u200D[\\u00A9\\u00AE\\u203C\\u2049\\u2122\\u2139\\u2190-\\u21FF\\u2300-\\u23FF\\u24C2\\u25A0-\\u2775\\u2794-\\u27BF\\u2934\\u2935\\u2B00-\\u2BFF\\u3030\\u303D\\u3297\\u3299\\U0001F000-\\U0001F0FF\\U0001F200-\\U0001FAFF][\\uFE0E\\uFE0F\\U0001F3FB-\\U0001F3FF]{0,2}){0,3}(?:[\\U000E0020-\\U000E007E]{1,8}\\U000E007F)?|[\\U0001F1E6-\\U0001F1FF]{2})$'
 
-/** `EMOJITEGN` som JavaScript-uttrykk (`\U0001F000` blir `\u{1F000}`). */
-const EMOJI = new RegExp(`^[${EMOJITEGN.replace(/\\U000([0-9A-F]{5})/g, '\\u{$1}')}]{1,16}$`, 'u')
+/** `EMOJIMONSTER` som JavaScript-uttrykk (`\U0001F000` blir `\u{1F000}`). */
+const EMOJI = new RegExp(EMOJIMONSTER.replace(/\\U000([0-9A-F]{5})/g, '\\u{$1}'), 'u')
 
 const TEGN = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter('nb', { granularity: 'grapheme' }) : null
 

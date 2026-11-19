@@ -492,11 +492,13 @@ profilbildet eller initialene til den andre (`docs/direktemeldinger-personvern.m
 - **Hvem.** De som styrer gruppen (de ansvarlige og systemarkitektene), velger
   symbolet i gruppens innstillinger, så lenge gruppen er aktiv. Samme myndighet
   som navnet (`intern.gruppeavslag`, «endre»). De som leser gruppen, ser det.
-- **Emojien.** Bare tegn fra emojiblokkene, høyst 16 kodepunkter (én emoji med
-  hudfarge, ZWJ og flagg): verken tall, bokstaver eller annen tekst kan lagres,
-  så symbolet kan ikke bære opplysninger (`grupper_symbol_emoji`, samme mønster
-  som `EMOJITEGN` i `src/grupper/symbol.ts`; `gruppesymbol.test.ts` holder dem
-  like). Appen krever i tillegg nøyaktig ett tegn som vises (`erEmoji`).
+- **Emojien.** Nøyaktig én emoji (med variantvelger, hudfarge, høyst fire
+  satt sammen med ZWJ, eller et flagg), av tegn fra emojiblokkene uten tall,
+  bokstaver, punktskrift og bokstavlignende tegn, så symbolet ikke kan bære
+  tekst. Databasen håndhever det i tabellregelen og i funksjonen med én
+  definisjon (`intern.er_gruppesymbolemoji`), med samme mønster som
+  `EMOJIMONSTER` i `src/grupper/symbol.ts` (`gruppesymbol.test.ts` holder dem
+  like). Appen sjekker i tillegg at det er ett tegn slik det vises (`erEmoji`).
 - **Bildet.** Samme beskjæring og komprimering i nettleseren som profilbildene
   (`Bildevelger`): kvadratisk WebP, vist i en sirkel. Det lagres på en fast sti
   per gruppe, `<gruppe-ID>/symbol.webp`, i den private bøtta `gruppesymboler`

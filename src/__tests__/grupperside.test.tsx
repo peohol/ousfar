@@ -40,6 +40,7 @@ const api = vi.hoisted(() => ({
   opprettGruppe: vi.fn(async () => ANNEN),
   arkiverGruppe: vi.fn(async () => undefined),
   endreGruppe: vi.fn(async () => undefined),
+  settGruppesymbol: vi.fn(async () => ({ emoji: '🧪' })),
 }))
 
 vi.mock('../auth/okt', () => ({ useProfil: () => MEG }))
@@ -323,6 +324,19 @@ describe('én gruppe', () => {
     expect(api.arkiverGruppe).not.toHaveBeenCalled()
     await userEvent.click(within(within(modal).getByRole('group', { name: 'Arkivere Lithiumgruppen?' })).getByRole('button', { name: 'Arkiver gruppen' }))
     expect(api.arkiverGruppe).toHaveBeenCalledWith(ID, true)
+  })
+
+  it('velger symbolet: tekst avvises, og feilen forsvinner når en emoji velges', async () => {
+    vis(ID)
+    const modal = await innstillingene()
+    const symbol = within(modal).getByRole('region', { name: 'Symbol' })
+    await userEvent.type(within(symbol).getByLabelText('Annen emoji'), 'abc')
+    await userEvent.click(within(symbol).getByRole('button', { name: 'Bruk' }))
+    expect(within(symbol).getByRole('alert').textContent).toBe('Skriv inn én emoji.')
+    expect(api.settGruppesymbol).not.toHaveBeenCalled()
+    await userEvent.click(within(symbol).getByRole('button', { name: '🧪' }))
+    expect(api.settGruppesymbol).toHaveBeenCalledWith(ID, { emoji: '🧪' }, null)
+    expect(within(symbol).queryByRole('alert')).toBeNull()
   })
 
   it('viser bare det vanlige medlemmer kan gjøre', async () => {

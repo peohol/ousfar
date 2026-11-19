@@ -10,10 +10,10 @@
 -- som leser gruppen, kan se det. Grensene i bøtta er en siste skanse dersom
 -- noen laster opp utenom appen.
 --
--- En emoji kan ikke bære tekst: bare tegn fra emojiblokkene (`intern.
--- gruppesymbolemoji`, samme mønster som `GRUPPESYMBOL_EMOJI` i
--- src/grupper/symbol.ts), så heller ikke tall eller bokstaver
--- (docs/pasientopplysninger.md).
+-- En emoji kan ikke bære tekst: nøyaktig én emoji, av tegn fra emojiblokkene
+-- uten tall, bokstaver, punktskrift og bokstavlignende tegn
+-- (`intern.er_gruppesymbolemoji`, samme mønster som `EMOJIMONSTER` i
+-- src/grupper/symbol.ts; docs/pasientopplysninger.md).
 
 -- --- Kolonnene --------------------------------------------------------------
 
@@ -22,12 +22,32 @@ alter table public.grupper
   add column symbol_bilde text,
   add column symbol_endret_kl timestamptz;
 
+-- Én emoji: et emojitegn med variantvelger og hudfarge, høyst fire slike
+-- satt sammen med ZWJ (en familie), eventuelt med merkelapper (et
+-- regionflagg), eller to regionsindikatorer (et flagg). Ett mønster for
+-- tabellen og funksjonen, det samme som `EMOJIMONSTER` i appen.
+create function intern.er_gruppesymbolemoji(verdi text)
+returns boolean
+language sql
+immutable
+strict
+parallel safe
+set search_path = ''
+as $$
+  select verdi ~ '^(?:[\u00A9\u00AE\u203C\u2049\u2122\u2139\u2190-\u21FF\u2300-\u23FF\u24C2\u25A0-\u2775\u2794-\u27BF\u2934\u2935\u2B00-\u2BFF\u3030\u303D\u3297\u3299\U0001F000-\U0001F0FF\U0001F200-\U0001FAFF][\uFE0E\uFE0F\U0001F3FB-\U0001F3FF]{0,2}(?:\u200D[\u00A9\u00AE\u203C\u2049\u2122\u2139\u2190-\u21FF\u2300-\u23FF\u24C2\u25A0-\u2775\u2794-\u27BF\u2934\u2935\u2B00-\u2BFF\u3030\u303D\u3297\u3299\U0001F000-\U0001F0FF\U0001F200-\U0001FAFF][\uFE0E\uFE0F\U0001F3FB-\U0001F3FF]{0,2}){0,3}(?:[\U000E0020-\U000E007E]{1,8}\U000E007F)?|[\U0001F1E6-\U0001F1FF]{2})$'
+$$;
+
+-- Tabellregelen kjører med rettighetene til den som skriver; funksjonen
+-- leser ingenting, så den kan kalles av alle som kan skrive i tabellen.
+revoke all on function intern.er_gruppesymbolemoji(text) from public, anon;
+grant execute on function intern.er_gruppesymbolemoji(text) to authenticated, service_role;
+
 alter table public.grupper
   add constraint grupper_symbol_ett check (symbol_emoji is null or symbol_bilde is null),
   add constraint grupper_symbol_bilde check (symbol_bilde is null or symbol_bilde = id::text || '/symbol.webp'),
   add constraint grupper_symbol_emoji check (
     symbol_emoji is null
-    or symbol_emoji ~ '^[\u00A9\u00AE\u200D\u203C\u2049\u20E3\u2100-\u2BFF\u3030\u303D\u3297\u3299\uFE0E\uFE0F\U0001F000-\U0001FAFF\U000E0020-\U000E007F]{1,16}$'
+    or intern.er_gruppesymbolemoji(symbol_emoji)
   );
 
 comment on column public.grupper.symbol_emoji is
@@ -177,9 +197,7 @@ begin
     if not exists (select 1 from storage.objects o where o.bucket_id = 'gruppesymboler' and o.name = sti) then
       raise exception 'Bildet er ikke lastet opp. Prøv igjen.' using errcode = '22023';
     end if;
-  elsif ren is not null
-    and ren !~ '^[\u00A9\u00AE\u200D\u203C\u2049\u20E3\u2100-\u2BFF\u3030\u303D\u3297\u3299\uFE0E\uFE0F\U0001F000-\U0001FAFF\U000E0020-\U000E007F]{1,16}$'
-  then
+  elsif ren is not null and not intern.er_gruppesymbolemoji(ren) then
     raise exception 'Symbolet må være én emoji.' using errcode = '22023';
   end if;
 

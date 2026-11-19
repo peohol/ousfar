@@ -619,19 +619,25 @@ describe('symbolet', () => {
     // En familie og et hjerte med variantvelger er også én emoji.
     expect(await sett('systemarkitekt', tverrgruppe, '❤️')).toEqual({ emoji: '❤️' })
     expect(await sett('systemarkitekt', tverrgruppe, '👨‍👩‍👧')).toEqual({ emoji: '👨‍👩‍👧' })
+    // Et flagg, hudfarge og et regionflagg med merkelapper.
+    for (const emoji of ['🇳🇴', '👍🏽', '🏴󠁧󠁢󠁳󠁣󠁴󠁿']) expect(await sett('systemarkitekt', tverrgruppe, emoji), emoji).toEqual({ emoji })
     // Ingen: gruppeikonet.
     expect(await sett('adminA', agruppe, null)).toBeNull()
     expect(await symbolHos('vanligA', agruppe)).toBeNull()
   })
 
   it('avviser alt som ikke er en emoji, så symbolet aldri bærer tekst eller tall', async () => {
-    for (const ugyldig of ['abc', '12345678901', 'Å', '🧪 a', '1️⃣', '<b>']) {
+    // Også flere emojier, punktskrift, bokstavlignende tegn og innrammede bokstaver.
+    for (const ugyldig of ['abc', '12345678901', 'Å', '🧪 a', '1️⃣', '<b>', '🧪🧪', '⠁⠃⠉⠙', 'ℍ', '🅰', '🇳🇴🇸🇪']) {
       expect((await feilFra(() => sett('adminA', agruppe, ugyldig)))?.message, ugyldig).toBe('Symbolet må være én emoji.')
     }
     expect((await feilFra(() => sett('adminA', agruppe, '🧪', true)))?.message).toBe('Velg enten en emoji eller et bilde.')
     // Heller ikke rett i tabellen.
     await expect(
       db.query(`update public.grupper set symbol_emoji = 'abc' where id = $1`, [agruppe]),
+    ).rejects.toMatchObject({ code: '23514' })
+    await expect(
+      db.query(`update public.grupper set symbol_emoji = '🧪🧪' where id = $1`, [agruppe]),
     ).rejects.toMatchObject({ code: '23514' })
   })
 
