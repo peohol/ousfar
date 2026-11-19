@@ -308,6 +308,23 @@ describe('varslene som hentes', () => {
     expect(await utsendinger()).toEqual([])
   })
 
+  // De samme reglene som da varselet ble til (`chatvarselmottakere`), ved hvert nytt forsøk.
+  it.each([
+    ['blokkerer avsenderen', () => verdi('vanligB', 'select public.blokker_bruker($1)', [id('vanligA')])],
+    ['slår av direktemeldinger', () => verdi('vanligB', 'select public.sett_chatvalg(false, null)')],
+    ['mister medlemskapet i OUSFAR', () => fjernAlleMedlemskap(db, id('vanligB'))],
+  ])('sender ikke en direktemelding som venter på et nytt forsøk, når mottakeren %s', async (_, endring) => {
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    const [v] = await hent()
+    await kvitter([{ ...v, svar: 'feil' }])
+    expect(await utsendinger()).toEqual([{ endepunkt: enheter.vanligB.abonnement.endepunkt, forsok: 1 }])
+    await endring()
+    await tidenGaar()
+    expect(await hent()).toEqual([])
+    expect(await utsendinger()).toEqual([])
+  })
+
   it('gir ingenting når meldingen er slettet før varselet ble sendt', async () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     const melding = await verdi<{ id: string }>('adminA', 'select public.send_gruppemelding($1, $2, $3)', [agruppe, nyKlientId(), 'Hei'])

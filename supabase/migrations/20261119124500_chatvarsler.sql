@@ -373,10 +373,12 @@ for each row execute function intern.ko_chatvarsel();
 
 -- --- Utsendingen, fra Edge-funksjonen --------------------------------------------------
 
--- Om `bruker` fortsatt kan få varsel om samtalen: chatten er på, og brukeren
--- er aktivt medlem og leser gruppen, eller er med i direktesamtalen uten å ha
--- dempet den. Prøves ved hvert forsøk, så et varsel som venter, ikke går til
--- en som har mistet tilgangen.
+-- Om `bruker` fortsatt kan få varsel om samtalen: om den ville vært mottaker
+-- av en ny melding der nå, etter de samme reglene som da varselet ble til
+-- (`chatvarselmottakere`). I en direktesamtale er avsenderen den andre i
+-- samtalen, så medlemskapet, `Tillat direktemeldinger`, blokkeringen og
+-- dempingen prøves på nytt. Prøves ved hvert forsøk, så et varsel som venter,
+-- ikke går til en som har mistet tilgangen.
 create function intern.chatvarsel_har_tilgang(slag text, samtale uuid, bruker uuid)
 returns boolean
 language sql
@@ -384,28 +386,19 @@ stable
 security definer
 set search_path = ''
 as $$
-  select case chatvarsel_har_tilgang.slag
-    when 'gruppe' then
-      intern.gruppechat_aktivert()
-      and exists (
-        select 1 from public.gruppemedlemskap m
-        where m.gruppe_id = chatvarsel_har_tilgang.samtale
-          and m.bruker_id = chatvarsel_har_tilgang.bruker
-          and m.status = 'aktiv'
-      )
-      and intern.kan_lese_gruppe(chatvarsel_har_tilgang.samtale, chatvarsel_har_tilgang.bruker)
-    else
-      intern.direktemeldinger_aktivert()
-      and exists (
-        select 1 from public.direktesamtaler s
+  select coalesce(chatvarsel_har_tilgang.bruker in (
+    select m.bruker_id
+    from intern.chatvarselmottakere(
+      chatvarsel_har_tilgang.slag,
+      chatvarsel_har_tilgang.samtale,
+      case when chatvarsel_har_tilgang.slag = 'direkte' then (
+        select intern.direkte_motpart(s, chatvarsel_har_tilgang.bruker)
+        from public.direktesamtaler s
         where s.id = chatvarsel_har_tilgang.samtale
           and chatvarsel_har_tilgang.bruker in (s.bruker_lav, s.bruker_hoy)
-      )
-      and not coalesce((
-        select st.dempet from public.direktesamtale_status st
-        where st.samtale_id = chatvarsel_har_tilgang.samtale and st.bruker_id = chatvarsel_har_tilgang.bruker
-      ), false)
-  end
+      ) end
+    ) m(bruker_id)
+  ), false)
 $$;
 
 revoke all on function intern.chatvarsel_har_tilgang(text, uuid, uuid) from public, anon, authenticated, service_role;

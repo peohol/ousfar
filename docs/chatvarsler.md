@@ -78,8 +78,11 @@ eller avsendernavn krever et nytt ja fra Peder.
      lese (`intern.chatvarsel_ventetid()`, halvannet sekund).
    - `chatvarsel_hent` gjør meldingene om til ett varsel per mottakers enhet
      og samtale (`intern.chatvarselutsendinger`), og gir de som kan sendes,
-     med antallet uleste. En mottaker som alt har lest, eller som har mistet
-     tilgangen, får ikke noe, og varselet slettes.
+     med antallet uleste. En mottaker som alt har lest, eller som ikke lenger
+     ville fått varsel om en ny melding der (de samme reglene som i
+     `intern.chatvarselmottakere`: medlemskapet, gruppen, «Tillat
+     direktemeldinger», blokkering og demping), får ikke noe, og varselet
+     slettes. Det prøves ved hvert forsøk.
    - Den krypterer og sender hvert varsel (`_edge/webpush.ts`,
      `_edge/chatvarsler.ts`), bare til kjente push-tjenester (`PUSHTJENESTER`
      i `_delt/chatvarsel.ts`), og fører svaret (`chatvarsel_kvitter`).
