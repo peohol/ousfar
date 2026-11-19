@@ -1303,6 +1303,8 @@
   .stillingsfjerning__rad > button {
     grid-column: 2;
   }
+}
+
 /* --- Gruppesymbolet ------------------------------------------------------ */
 
 /* Samme sirkel og størrelser som profilbildet; emojien og ikonet skaleres med den. */
