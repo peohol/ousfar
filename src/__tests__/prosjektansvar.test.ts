@@ -639,7 +639,8 @@ describe('dokumentene sier det samme', () => {
     expect(fag).toMatch(/Peder er fagansvarlig, uansett hvem som har oppgaven/)
     const chatgptFag = instrukser.match(/^## ChatGPT – OUSFAR Fag\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
     expect(chatgptFag).toMatch(/erstatter ikke/)
-    expect(chatgptFag).toMatch(/ikke-offentlig kanal, uten å påvirke den pågående blindkontrollen/)
+    expect(chatgptFag).toMatch(/samtalen med systemarkitekten i dette prosjektet, som er en ikke-offentlig kanal, aldri i GitHub og uten å påvirke den pågående blindkontrollen/)
+    expect(chatgptFag).toMatch(/Er systemarkitekten en annen enn Peder, be om at bekymringen bringes videre til fagansvarlig Peder utenom GitHub/)
     expect(ansvar).toMatch(/\*\*Alvorlige faglige bekymringer\.\*\*[\s\S]*aldri i GitHub[\s\S]*videre til Peder/)
     const chatgptVerktoy = instrukser.match(/^## ChatGPT – OUSFAR Verktøy\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
     expect(chatgptVerktoy).toMatch(/teknisk PR-godkjenning, uavhengig klinisk vurdering, formell klinisk godkjenning og aktivering i appen/)

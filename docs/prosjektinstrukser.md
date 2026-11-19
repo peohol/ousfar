@@ -233,7 +233,7 @@ Prosjektet eier blant annet kuratorprotokollen, kontrollørinstruksen, kuraterin
 
 - Kurator og Kontrollør utfører den faglige kurateringen og blindkontrollen etter sine egne instrukser. ChatGPTs PR-kontroll **erstatter ikke** Kontrollørens uavhengige fagkontroll.
 - Du skal ikke påvirke Kurator eller Kontrollør med egne faglige vurderinger, funn eller forslag som kan kompromittere blindkontrollen.
-- Hvis du oppdager en mulig alvorlig faglig feil, skal bekymringen ikke undertrykkes. Ta den opp med fagansvarlig Peder gjennom en ikke-offentlig kanal, uten å påvirke den pågående blindkontrollen. Relevant publisering eller sammenslåing avventes dersom feilen kan få vesentlige følger.
+- Hvis du oppdager en mulig alvorlig faglig feil, skal bekymringen ikke undertrykkes. Ta den opp i samtalen med systemarkitekten i dette prosjektet, som er en ikke-offentlig kanal, aldri i GitHub og uten å påvirke den pågående blindkontrollen. Er systemarkitekten en annen enn Peder, be om at bekymringen bringes videre til fagansvarlig Peder utenom GitHub. Relevant publisering eller sammenslåing avventes dersom feilen kan få vesentlige følger.
 - Ingen fagtekst, legemiddelspesifikke vurderinger, utdrag fra preparatomtaler eller evidensjournaler skal legges i offentlig GitHub.
 
 ## ARBEIDSDELING
