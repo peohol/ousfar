@@ -176,8 +176,11 @@ try {
     krev(beskrivelse.includes('Enter sender'), 'skrivefeltet sier at Enter sender')
     await sendDirekte(boKlient, gruppe, 'Syntetisk N8 fra Bo')
     await innen(10_000, 'Bos melding hos Ada', async () => (await logglinjer(ada)).includes('Syntetisk N8 fra Bo'))
-    const hode: string = await ada.locator('.chatmelding', { hasText: 'Syntetisk N8 fra Bo' }).innerText()
-    krev(/Bo Prøvesen/.test(hode) && /\d{2}[:.]\d{2}/.test(hode), `avsender og tid står ved meldingen («${hode.replace(/\s+/g, ' ')}»)`)
+    const melding = ada.locator('.chatmelding', { hasText: 'Syntetisk N8 fra Bo' })
+    const hode: string = await melding.innerText()
+    // Fornavnet alene, når ingen andre i chatten heter Bo (Peder 19.11.2026).
+    const avsender: string = await melding.locator('.chatmelding__navn').innerText()
+    krev(avsender === 'Bo' && /\d{2}[:.]\d{2}/.test(hode), `avsender og tid står ved meldingen («${hode.replace(/\s+/g, ' ')}»)`)
   })
 
   await punkt('N1', 'to brukere skriver til hverandre i sanntid', begge, async () => {
@@ -203,16 +206,16 @@ try {
     krev((await felt.inputValue()) === '', 'skrivefeltet er tømt')
     // Menyen på en egen melding nås med tastaturet: Shift+Tab fra feltet går bakover gjennom lista.
     let navnet = ''
-    for (let i = 0; i < 40 && !navnet.startsWith('Handlinger for meldingen fra Ada'); i++) {
+    for (let i = 0; i < 40 && !navnet.startsWith('Handlinger for meldingen din'); i++) {
       await ada.keyboard.press('Shift+Tab')
       navnet = await ada.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? '')
     }
-    krev(navnet.startsWith('Handlinger for meldingen fra Ada'), 'menyknappen på en egen melding nås med Shift+Tab')
+    krev(navnet.startsWith('Handlinger for meldingen din'), 'menyknappen på en egen melding nås med Shift+Tab')
     await ada.keyboard.press('Enter')
     await ada.getByRole('menuitem', { name: /Endre/ }).or(ada.getByRole('button', { name: /^Endre/ })).first().waitFor({ timeout: 5_000 })
     await ada.keyboard.press('Escape')
     const fokus: string = await ada.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.tagName ?? '')
-    krev(fokus.startsWith('Handlinger for meldingen fra Ada'), `fokus tilbake på menyknappen etter Escape (står på «${fokus}»)`)
+    krev(fokus.startsWith('Handlinger for meldingen din'), `fokus tilbake på menyknappen etter Escape (står på «${fokus}»)`)
   })
 
   await punkt('N9', 'tekst med et syntetisk fødselsnummer', begge, async () => {

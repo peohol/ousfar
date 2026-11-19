@@ -7,7 +7,7 @@
  *
  * Verdier som ikke har formen, blir tomme i stedet for å velte visningen.
  */
-import type { Profilkort } from '@delt/profil'
+import { kortnavn, visningsnavn, type Profilkort } from '@delt/profil'
 import { erObjekt, tall, tekst, tekstEllerNull } from '../ideer/lesing'
 import { lesProfilkort } from '../gruppechat/modell'
 
@@ -77,8 +77,17 @@ export function lesProfilkortene(verdi: unknown): Profilkort[] {
 
 /** Navnet på en person: fornavn og etternavn, ellers brukernavnet, eller «Tidligere bruker». */
 export function personnavn(p: Pick<Profilkort, 'first_name' | 'last_name' | 'username'> | null): string {
-  if (!p) return 'Tidligere bruker'
-  return `${p.first_name} ${p.last_name}`.trim() || p.username
+  return p ? visningsnavn(p) : 'Tidligere bruker'
+}
+
+/**
+ * Navnene på de andre i direktesamtalene, kort blant alle i lista
+ * (`kortnavn`), så raden og samtalen har det samme navnet. `ny` er en som
+ * ikke står i lista ennå.
+ */
+export function motpartnavn(samtaler: readonly Direktesamtale[], ny?: Profilkort | null): (person: Profilkort | null) => string {
+  const navn = kortnavn([...samtaler.flatMap((s) => (s.motpart ? [s.motpart] : [])), ...(ny ? [ny] : [])])
+  return (person) => (person && navn.get(person.id)) || personnavn(person)
 }
 
 /** Uleste i direktesamtalene som ikke er dempet, til chatknappen. */

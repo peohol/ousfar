@@ -1,0 +1,13 @@
+{
+  "id": "20261119-124002-32c444",
+  "semver": "patch",
+  "opprettet": "2026-11-19T12:40:02Z",
+  "sammendrag": "Kortere navn i chattene",
+  "typer": ["Design / layout"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Ditt eget navn står ikke lenger ved meldingene dine i chattene, bare klokkeslettet.",
+    "De andre står med fornavnet. Har flere samme fornavn, kommer forbokstaven i etternavnet med («Ola N» og «Ola A»), og har de også den samme forbokstaven, står hele navnet."
+  ]
+}

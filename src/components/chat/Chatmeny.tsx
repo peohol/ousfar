@@ -2,7 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState, type FocusEve
 import { useAvatarlenker } from '../../auth/avatarer'
 import { hentInnstilling, lagreSisteValg, lengdeinnstilling } from '../../auth/innstillinger'
 import { useProfil } from '../../auth/okt'
-import { personnavn, sokIDirektesamtaler, ulesteDirekte } from '../../direktemeldinger/modell'
+import { motpartnavn, sokIDirektesamtaler, ulesteDirekte } from '../../direktemeldinger/modell'
 import { direktemeldingene, useDirekte, type Direktemeldinger } from '../../direktemeldinger/useDirekte'
 import { FORSIDE, gruppeadresse, type Rute, type Samtalenokkel } from '../../domain/rute'
 import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from '../../gruppechat/samtaler'
@@ -530,6 +530,7 @@ function Samtaleliste({
   const id = useId()
   const motparter = useMemo(() => direkte.samtaler.flatMap((s) => (s.motpart ? [s.motpart] : [])), [direkte.samtaler])
   const lenker = useAvatarlenker(motparter)
+  const navn = useMemo(() => motpartnavn(direkte.samtaler), [direkte.samtaler])
 
   const rader = (liste: { grupper: readonly Gruppesamtale[]; direkte: typeof direkte.samtaler }): Samtalerad[] =>
     [
@@ -551,7 +552,7 @@ function Samtaleliste({
       ...liste.direkte.map(
         (s): Samtalerad => ({
           nokkel: { type: 'direkte', id: s.id },
-          navn: personnavn(s.motpart),
+          navn: navn(s.motpart),
           art: s.dempet ? 'Direktemelding · Dempet' : 'Direktemelding',
           siste_kl: s.siste_kl,
           uleste: s.uleste,
