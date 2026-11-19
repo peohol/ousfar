@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-19T07:27:44.361Z",
+  "oppdatert_kl": "2026-11-19T08:29:17.344Z",
   "malt_kl": "2026-11-19T07:27:44.361Z",
   "teller": 82,
   "stoffer": {
@@ -4718,17 +4718,11 @@
     "metadon": {
       "stoff": "metadon",
       "navn": "Metadon",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 358.8,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "1 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 44 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-19T07:27:45.062Z",
@@ -4744,7 +4738,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
+          "kl": "2026-11-19T08:29:17.344Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -6057,7 +6058,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 60.7,
+        "poeng": 61,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-10."
@@ -6364,8 +6365,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-19T07:27:44.361Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
+          "kl": "2026-11-19T08:29:17.344Z",
           "kilde": "system"
         }
       ],
