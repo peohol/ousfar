@@ -100,3 +100,47 @@ export function initialer(profil: Pick<Profil, 'first_name' | 'last_name' | 'use
   const bokstaver = `${fra(profil.first_name)}${fra(profil.last_name)}`
   return bokstaver === '' ? fra(profil.username) : bokstaver
 }
+
+/** Det som trengs for å vise navnet til en bestemt bruker. */
+export type Navnekort = Pick<Profil, 'id' | 'first_name' | 'last_name' | 'username'>
+
+/** Sammenligningsnøkkelen for et navn: uten store bokstaver og ekstra mellomrom. */
+const navnenokkel = (navn: string) => normaliserNavn(navn).toLocaleLowerCase('nb')
+
+/** Lista delt i grupper med samme nøkkel, i rekkefølgen de først står. */
+function grupper<T>(liste: readonly T[], nokkel: (verdi: T) => string): T[][] {
+  const grupper = new Map<string, T[]>()
+  for (const verdi of liste) {
+    const n = nokkel(verdi)
+    grupper.set(n, [...(grupper.get(n) ?? []), verdi])
+  }
+  return [...grupper.values()]
+}
+
+/**
+ * De korte navnene på de som vises sammen, for eksempel de andre i en chat
+ * (Peder 19.11.2026): bare fornavnet. Har flere samme fornavn, får de
+ * forbokstaven i etternavnet («Ola N» og «Ola A»); har flere også den samme
+ * forbokstaven, står hele navnet. Uten fornavn står {@link visningsnavn}.
+ * Samme bruker telles én gang, og navnet hentes med bruker-ID-en.
+ */
+export function kortnavn(personer: Iterable<Navnekort>): Map<string, string> {
+  const unike = [...new Map([...personer].map((p) => [p.id, p])).values()]
+  const navn = new Map<string, string>()
+  for (const p of unike) if (normaliserNavn(p.first_name) === '') navn.set(p.id, visningsnavn(p))
+  const forbokstav = (p: Navnekort) => normaliserNavn(p.last_name).charAt(0).toLocaleUpperCase('nb')
+  for (const sammeFornavn of grupper(
+    unike.filter((p) => !navn.has(p.id)),
+    (p) => navnenokkel(p.first_name),
+  )) {
+    for (const sammeBokstav of grupper(sammeFornavn, forbokstav)) {
+      for (const p of sammeBokstav) {
+        const fornavn = normaliserNavn(p.first_name)
+        if (sammeFornavn.length === 1 || forbokstav(p) === '') navn.set(p.id, fornavn)
+        else if (sammeBokstav.length === 1) navn.set(p.id, `${fornavn} ${forbokstav(p)}`)
+        else navn.set(p.id, visningsnavn(p))
+      }
+    }
+  }
+  return navn
+}
