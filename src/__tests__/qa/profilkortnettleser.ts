@@ -58,8 +58,10 @@ try {
 
   const chat = `${miljo.url}/#/grupper/${gruppe}/chat`
   const ada: Side = paa(await miljo.brukerside('qa-chat-ada', pw.ada, { viewport: { width: 1440, height: 900 } }))
+  /** En ny side, så svarene appen husker et minutt, hentes på nytt. Bare adressen etter # ville ikke lastet siden. */
   async function tilChatten(side: Side) {
     await side.goto(chat)
+    await side.reload()
     await side.getByText('Syntetisk melding fra Bo').first().waitFor({ timeout: 30_000 })
   }
 
@@ -88,7 +90,6 @@ try {
 
   await punkt('K3 chatknappen når Bo tillater direktemeldinger, og en ny samtale fra kortet', async () => {
     await rpc(boK, 'sett_chatvalg', { tillat: true, vis_aktiv: null })
-    // Svaret huskes et minutt; en ny side spør på nytt.
     await tilChatten(ada)
     await hvil(ada, bosBilde(ada))
     const knapp = kortet(ada).getByRole('button', { name: 'Chat med Bo' })
@@ -111,6 +112,7 @@ try {
   await punkt('K4 kortet over dialogvinduet med medlemmene', async () => {
     await lukkChatmenyen(ada, { tilLista: true })
     await ada.goto(`${miljo.url}/#/grupper/${gruppe}`)
+    await ada.reload()
     await ada.getByRole('button', { name: /Vis medlemmer/ }).click()
     const dialog = ada.getByRole('dialog').filter({ hasText: 'Bo Prøvesen' }).first()
     await dialog.waitFor({ timeout: 10_000 })

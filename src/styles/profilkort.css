@@ -21,6 +21,8 @@
   border: 0;
   border-radius: var(--runding-pille);
   cursor: pointer;
+  /* Et trykk på mobil skal ikke farge navnet; kortet sier selv at det er åpnet. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Et navn som åpner noe, får streken under når pekeren er over det. */
