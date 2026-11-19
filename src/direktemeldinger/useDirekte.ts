@@ -14,7 +14,6 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { IngenTilgang } from '../gruppechat/kall'
-import { lagDeltTilstand } from '../hooks/deltTilstand'
 import { useOppfriskVedRinging } from '../gruppechat/samtaler'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
 import { glemProfilkortene } from '../profilkort/api'
@@ -90,12 +89,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
   return useMemo(() => ({ ...verdi, kjent, aktive, settValg, oppdater }), [verdi, kjent, aktive, settValg, oppdater])
 }
 
-/**
- * Direktemeldingene slik chatmenyen har dem, for resten av appen (som fanen
- * Chat i Innstillinger): `null` når de ikke er slått på eller menyen ikke står.
- * Chatmenyen eier dem, så valgene og lista er de samme overalt, uten egne kall.
- */
-export const direktemeldingene = lagDeltTilstand<Direktemeldinger | null>(null)
+export { direktemeldingene } from './direktemeldingene'
 
 const INGEN_AKTIVE: ReadonlySet<string> = new Set()
 

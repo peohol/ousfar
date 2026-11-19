@@ -263,8 +263,8 @@ describe('endre og slette', () => {
   it('lar forfatteren endre en melding på stedet, med Enter, og avbryte med Escape', async () => {
     render(<Prove />)
     // Melding 2 er den innloggedes egen; 1 og 3 er andres og har ingen meny for et vanlig medlem.
-    expect(logg().querySelector('[data-nr="1"] button')).toBeNull()
-    expect(logg().querySelector('[data-nr="3"] button')).toBeNull()
+    expect(logg().querySelector('[data-nr="1"] button:not(.profilutlos__knapp)')).toBeNull()
+    expect(logg().querySelector('[data-nr="3"] button:not(.profilutlos__knapp)')).toBeNull()
     await userEvent.click(menyknapp(2))
     await userEvent.click(screen.getByRole('button', { name: 'Endre' }))
     const endring = screen.getByRole('textbox', { name: 'Meldingen' })
@@ -290,7 +290,7 @@ describe('endre og slette', () => {
     await userEvent.click(within(bekreft).getByRole('button', { name: 'Slett meldingen' }))
     await waitFor(() => expect(meldingstekster()[1]).toBe('Meldingen er slettet'))
     // En slettet melding har ingen handlinger.
-    expect(logg().querySelector('[data-nr="2"] button')).toBeNull()
+    expect(logg().querySelector('[data-nr="2"] button:not(.profilutlos__knapp)')).toBeNull()
   })
 
   it('lar en moderator fjerne andres meldinger, men ikke endre dem', async () => {
@@ -381,7 +381,7 @@ describe('tilstandene', () => {
     expect(screen.queryByRole('textbox')).toBeNull()
     expect(screen.getByText('Gruppen er arkivert. Chatten kan leses, men ingen kan skrive i den.')).toBeTruthy()
     // Egne meldinger (2 og 5) kan ikke endres i en arkivert gruppe, selv om de ellers kunne.
-    expect(logg().querySelector('[data-nr="2"] button')).toBeNull()
+    expect(logg().querySelector('[data-nr="2"] button:not(.profilutlos__knapp)')).toBeNull()
     await userEvent.click(within(logg().querySelector<HTMLElement>('[data-nr="1"]')!).getByRole('button', { name: /^Handlinger/ }))
     expect(screen.queryByRole('button', { name: 'Endre' })).toBeNull()
     expect(screen.getByRole('button', { name: /^Fjern meldingen/ })).toBeTruthy()
