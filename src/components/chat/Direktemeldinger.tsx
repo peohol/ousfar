@@ -12,6 +12,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { TilSamtalene } from './TilSamtalene'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const feiltekst = (aarsak: unknown) => (aarsak instanceof Error && aarsak.message ? aarsak.message : UVENTET)
@@ -105,12 +106,7 @@ export function NyDirektemelding({
 
   return (
     <section className="chatny" aria-labelledby={`${id}-tittel`}>
-      <div className="chatny__topp">
-        <button type="button" className="chatsamtale__tilbake chatny__tilbake" onClick={onTilbake}>
-          <Ikon navn="chev" storrelse="ui" />
-          <span>Til alle samtaler</span>
-        </button>
-      </div>
+      <TilSamtalene onTilbake={onTilbake} undervisning />
       <h3 id={`${id}-tittel`} className="chatny__tittel">
         Ny direktemelding
       </h3>
@@ -239,10 +235,7 @@ export function Direktevisning({
 
   return (
     <div className="chatsamtale" data-direkte="">
-      <button type="button" className="chatsamtale__tilbake" onClick={onTilbake}>
-        <Ikon navn="chev" storrelse="ui" />
-        <span>Til alle samtaler</span>
-      </button>
+      <TilSamtalene onTilbake={onTilbake} />
       {!utestengt && (
         <div className="chatsamtale__hode" ref={menyRot}>
           <Personbilde

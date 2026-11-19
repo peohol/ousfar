@@ -465,7 +465,7 @@ fane per slags innstilling (`INNSTILLINGSFANER`); med én fane står det uten
 fanerad. Fanen «Visning» har bryteren for hurtigtastene (`Bryter`) og
 trinnbryterne for «Tema», «Reduser bevegelse» og «Måleenhet»
 (`Trinnbryter`). Fanen «Chat» legges til med direktemeldingene (D5), med de
-samme bryterne som nederst i chatmenyen. Tema og bevegelse kan stå fast
+samme innstillingene som bak ⚙ i chatmenyen (`chat/Chatinnstillinger.tsx`). Tema og bevegelse kan stå fast
 eller følge systemet; de er beskrevet i `src/domain/systemvalg.ts`, settes
 før første bilde av et skript `vite.config.ts` legger i `<head>`, og lagres i
 nettleseren og på kontoen (`useKontovalg`). Nye slike valg legges inn der.

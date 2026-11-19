@@ -86,7 +86,7 @@ export function useHovedmenyen(apen: boolean, lukk: () => void) {
   const navigasjon: Menypunkt[] = [
     { id: 'forside', navn: 'Forsiden', ikon: 'hjem', adresse: FORSIDEADRESSE, side: 'forside' },
     { id: 'fortolkning', navn: 'Fortolkning', ikon: 'interp', adresse: FORTOLKNINGSADRESSE, side: 'fortolkning' },
-    { id: 'grupper', navn: 'Grupper', ikon: 'ideoppgaver', adresse: gruppeadresse(), side: 'grupper', merke: invitert },
+    { id: 'grupper', navn: 'Grupper', ikon: 'grupper', adresse: gruppeadresse(), side: 'grupper', merke: invitert },
     ...(chat.finnes
       ? [
           {

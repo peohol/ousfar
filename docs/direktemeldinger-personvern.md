@@ -386,7 +386,8 @@ Det D5 bygde, og valgene som ble tatt underveis (alle **Teknisk**):
 - **Chatmenyen:** direktesamtalene står i samme liste som gruppechattene,
   nyeste først; «Ny chat» åpner søket (skisse 17); samtalen har den andre
   øverst med en meny for demping, skjuling og blokkering (skisse 18); bryterne
-  og «Blokkerte» står nederst i oversikten (skisse 14). Adressen er
+  og «Blokkerte» står bak ⚙ nederst til høyre i oversikten (fra 19.11.2026;
+  skisse 14 hadde dem nederst i lista). Adressen er
   `#/chat/direkte/<samtale-ID>`. Dempede samtaler teller ikke på chatknappen.
   Direktemeldingene gir ingen varsler i bjella.
 - **Aktivitetsprikken** hentes hvert minutt mens chatmenyen eller helsiden

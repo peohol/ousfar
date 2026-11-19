@@ -420,10 +420,16 @@ gamle chatsiden» og «Uleste» under.
   kant, 24rem bredt, som kan dras mellom 20rem og `min(40rem, 100vw − 45rem)`,
   også med piltastene (`Kanthandtak`, `useDrattLengde`). Om den står åpen og
   hvor bred den er, følger brukeren (`chat.apen`, `chat.bredde` i
-  brukerinnstillingene), som diskusjonsmenyen. Øverst trekkspillet «Mine
-  grupper» med lenker til gruppesidene og «Alle grupper», så «Samtaler»: én
-  liste, nyeste aktivitet først, med søk. En valgt samtale vises i panelet med
-  «Til alle samtaler» tilbake. På smale flater fyller menyen skjermen.
+  brukerinnstillingene), som diskusjonsmenyen. Overskriften «Grupper og
+  samtaler» står bare for skjermlesere (Peder 19.11.2026: gruppene og
+  samtalene sier selv hva menyen er). Øverst trekkspillet «Mine grupper»
+  (gruppeikonet foran) med lenker til gruppesidene og «Alle grupper», så
+  «Samtaler» (chatikonet foran): én liste, nyeste aktivitet først, med søk.
+  Verken antall grupper eller hvor gruppene hører til står i menyen. En valgt
+  samtale vises i panelet med «Til alle samtaler» tilbake. ⚙ nederst til
+  høyre viser innstillingene for chatten (`Chatinnstillinger`, de samme som
+  i fanen Chat under Innstillinger) med «Til alle samtaler» tilbake; Escape
+  går også tilbake. På smale flater fyller menyen skjermen.
 - **Samtalelista** kommer fra `mine_gruppesamtaler()`: gruppene den innloggede
   selv er aktivt medlem av, med tidspunktet for den nyeste meldingen og tallet
   på uleste (det samme som `chat_uleste`), uten tekst og avsendere. En

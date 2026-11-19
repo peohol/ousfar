@@ -8,7 +8,7 @@ import { FORSIDE, gruppeadresse, type Rute, type Samtalenokkel } from '../../dom
 import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from '../../gruppechat/samtaler'
 import { useGruppechat } from '../../gruppechat/useGruppechat'
 import { useGrupper } from '../../grupper/kilde'
-import { gruppetilhorighet, type MinGruppe } from '../../grupper/modell'
+import type { MinGruppe } from '../../grupper/modell'
 import { useEscapelag } from '../../hooks/lagstakk'
 import { useKantmeny } from '../../hooks/useKantmeny'
 import { useBevart } from '../../oppdatering/Bevaring'
@@ -19,9 +19,10 @@ import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { CHATIKON, chatknappnavn, samtaletid, ulesteTekst } from './chatvisning'
-import { Chatvalg } from './Chatvalg'
+import { Chatinnstillinger, useHarChatinnstillinger } from './Chatinnstillinger'
 import { Direktevisning, NyDirektemelding, Personbilde } from './Direktemeldinger'
 import { lyttEtterChatbeskjed, meldChatstatus } from './chatstyring'
+import { TilSamtalene } from './TilSamtalene'
 import '../../styles/chat.css'
 
 /** Hvordan menyen står, på rotelementet, så resten av appen kan gi plass: `lukket` for boblen, `apen` for panelet. */
@@ -42,8 +43,15 @@ const settBredde = (bredde: number | null) => {
   else stil.setProperty(BREDDEVARIABEL, `${bredde}px`)
 }
 
-/** Overskriften på menyen og helsiden. */
+/**
+ * Navnet på menyen og helsiden. Står ikke synlig: gruppene og samtalene sier
+ * selv hva menyen er (Peder 19.11.2026), men skjermlesere får det som navn
+ * og overskrift.
+ */
 const TITTEL = 'Grupper og samtaler'
+
+/** Det oversikten i menyen viser: lista, «Ny chat» eller innstillingene bak ⚙. */
+type Oversiktsvisning = 'liste' | 'ny' | 'innstillinger'
 
 /**
  * Chatmenyen (docs/gruppechat.md, «Chatmenyen»; D0-designet, skisse 14–16
@@ -57,8 +65,9 @@ const TITTEL = 'Grupper og samtaler'
  *    til (`--chatplass`). Øverst «Mine grupper», som lenker til gruppesidene,
  *    så «Samtaler»: én liste med gruppechattene og direktesamtalene, nyeste
  *    aktivitet først, med søk. Når direktemeldingene er slått på (D5,
- *    docs/direktemeldinger-personvern.md), står «Ny chat» ved overskriften og
- *    bryterne for direktemeldinger nederst (skisse 14 og 17). En valgt
+ *    docs/direktemeldinger-personvern.md), står «Ny chat» ved overskriften.
+ *    Innstillingene for chatten (`Chatinnstillinger`) ligger bak ⚙ nederst
+ *    til høyre, de samme som i fanen Chat under Innstillinger. En valgt
  *    samtale vises i panelet, med «Til alle samtaler» tilbake. Panelet kan
  *    dras bredere i høyre kant, og står åpent til det lukkes, også fra side
  *    til side og maskin til maskin (`chat.apen`, `chat.bredde`).
@@ -93,7 +102,7 @@ export function Chatmeny({
   const [apen, setApen] = useBevart('chat/apen', false)
   const [mobilApen, setMobilApen] = useBevart('chat/mobil', false)
   const [valgt, setValgt] = useBevart<Samtalenokkel | null>('chat/samtale', null)
-  const [ny, setNy] = useBevart('chat/ny', false)
+  const [visning, setVisning] = useBevart<Oversiktsvisning>('chat/visning', 'liste')
   const { lengde: bredde, endrer: endrerBredde, sett: lagreNyBredde } = useDrattLengde('chat/bredde', BREDDE)
   const [fokus, setFokus] = useState(false)
   const meny = useRef<HTMLElement>(null)
@@ -222,13 +231,16 @@ export function Chatmeny({
   useEscapelag(helside, gjenopprett, meny)
   useEscapelag(!helside && (fokus || mobilApen), slipp, meny)
 
-  /** «Ny direktemelding» lukkes, tilbake til lista med fokus på «Ny chat». */
-  const lukkNy = () => {
-    setNy(false)
-    flyttFokus('.chatsamtaler__ny')
+  // «Ny chat» og ⚙ bare så lenge det de viser, finnes.
+  const harInnstillinger = useHarChatinnstillinger()
+  const vises: Oversiktsvisning =
+    (visning === 'ny' && direkte.pa) || (visning === 'innstillinger' && harInnstillinger) ? visning : 'liste'
+  /** Fra «Ny chat» eller ⚙ tilbake til lista, med fokus på knappen brukeren kom fra. */
+  const tilOversikten = () => {
+    setVisning('liste')
+    flyttFokus(vises === 'ny' ? '.chatsamtaler__ny' : '.chatpanel__innstillinger')
   }
-  const visNy = ny && direkte.pa
-  useEscapelag(vist && visNy, lukkNy, meny)
+  useEscapelag(vist && vises !== 'liste', tilOversikten, meny)
 
   // Et trykk utenfor lukker menyen over siden på smale flater.
   useEffect(() => {
@@ -360,7 +372,7 @@ export function Chatmeny({
       {vist && (
         <div className="chatpanel">
           <div className="chatpanel__topp">
-            <Overskrift className="chatpanel__tittel">{TITTEL}</Overskrift>
+            <Overskrift className="chatpanel__tittel kun-skjermleser">{TITTEL}</Overskrift>
             {helside ? (
               <button type="button" className="chatpanel__gjenopprett" aria-keyshortcuts="Escape" onClick={gjenopprett}>
                 <Ikon navn="helsideAv" storrelse="ui" />
@@ -379,16 +391,18 @@ export function Chatmeny({
           </div>
           <div className="chatpanel__innhold">
             <div className="chatpanel__oversikt" hidden={!helside && !!(gruppe || direkteId)}>
-              {visNy ? (
+              {vises === 'ny' ? (
                 <NyDirektemelding
                   direkte={direkte}
-                  onTilbake={lukkNy}
+                  onTilbake={tilOversikten}
                   onApnet={(id) => {
-                    setNy(false)
+                    setVisning('liste')
                     velg({ type: 'direkte', id })
                     flyttFokus('.chatsamtale .chatfelt, .chatsamtale .chatlogg')
                   }}
                 />
+              ) : vises === 'innstillinger' ? (
+                <Innstillingsvisning onTilbake={tilOversikten} />
               ) : (
                 <>
                   <Minegrupper grupper={grupper.grupper} onLenke={() => setMobilApen(false)} />
@@ -398,7 +412,7 @@ export function Chatmeny({
                     kjent={kjent}
                     valgt={vistSamtale}
                     onNy={() => {
-                      setNy(true)
+                      setVisning('ny')
                       flyttFokus('.chatny__sokefelt, .chatny__av button')
                     }}
                     onVelg={(samtale) => {
@@ -406,7 +420,22 @@ export function Chatmeny({
                       flyttFokus('.chatsamtale .chatfelt, .chatsamtale .chatlogg')
                     }}
                   />
-                  {direkte.pa && <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />}
+                  {harInnstillinger && (
+                    <div className="chatpanel__fot">
+                      <button
+                        type="button"
+                        className="chatpanel__knapp chatpanel__innstillinger"
+                        aria-label="Innstillinger for chatten"
+                        title="Innstillinger"
+                        onClick={() => {
+                          setVisning('innstillinger')
+                          flyttFokus('.chatinnstillinger .chatny__tilbake')
+                        }}
+                      >
+                        <Ikon navn="gears" storrelse="ui" />
+                      </button>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -440,11 +469,9 @@ function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLe
     <section className="chatgrupper" aria-labelledby={`${id}-tittel`}>
       <h3 id={`${id}-tittel`} className="chatgrupper__hode">
         <button type="button" className="chatgrupper__veksle" aria-expanded={apen} aria-controls={`${id}-liste`} onClick={() => setApen(!apen)}>
-          <Ikon navn="chev" storrelse="ui" className="chatgrupper__pil" />
+          <Ikon navn="grupper" storrelse="ui" />
           <span className="chatgrupper__tittel">Mine grupper</span>
-          <span className="chatgrupper__antall" aria-label={mine.length === 1 ? '1 gruppe' : `${mine.length} grupper`}>
-            {mine.length}
-          </span>
+          <Ikon navn="chev" storrelse="ui" className="chatgrupper__pil" />
         </button>
       </h3>
       <div id={`${id}-liste`} hidden={!apen}>
@@ -454,7 +481,6 @@ function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLe
               <li key={g.id}>
                 <a className="chatgrupper__lenke" href={gruppeadresse(g.id)} onClick={onLenke}>
                   <span className="chatgrupper__navn">{g.navn}</span>
-                  <span className="chatgrupper__hvor">{g.fagmiljo ? g.fagmiljo.navn : 'På tvers'}</span>
                 </a>
               </li>
             ))}
@@ -511,7 +537,7 @@ function Samtaleliste({
         (s): Samtalerad => ({
           nokkel: { type: 'gruppe', id: s.gruppe.id },
           navn: s.gruppe.navn,
-          art: `Gruppechat · ${gruppetilhorighet(s.gruppe)}`,
+          art: 'Gruppechat',
           siste_kl: s.siste_kl,
           uleste: s.uleste,
           dempet: false,
@@ -548,6 +574,7 @@ function Samtaleliste({
     <section className="chatsamtaler" aria-labelledby={`${id}-tittel`}>
       <div className="chatsamtaler__hode">
         <h3 id={`${id}-tittel`} className="chatsamtaler__tittel">
+          <Ikon navn={CHATIKON} storrelse="ui" />
           Samtaler
         </h3>
         {direkte.pa && (
@@ -654,10 +681,7 @@ function Samtalevisning({
   return (
     <div className="chatsamtale">
       {/* På helsiden på brede flater står lista ved siden av, og knappen skjules (chat.css). */}
-      <button type="button" className="chatsamtale__tilbake" onClick={onTilbake}>
-        <Ikon navn="chev" storrelse="ui" />
-        <span>Til alle samtaler</span>
-      </button>
+      <TilSamtalene onTilbake={onTilbake} />
       {tilgang && (
         <div className="chatsamtale__hode">
           <span className="chatrad__bilde" aria-hidden="true">
@@ -676,6 +700,20 @@ function Samtalevisning({
       )}
       <Gruppechat chat={chat} gruppe={gruppe} />
     </div>
+  )
+}
+
+/** Innstillingene bak ⚙: de samme som i fanen Chat under Innstillinger, med «Til alle samtaler» tilbake. */
+function Innstillingsvisning({ onTilbake }: { onTilbake: () => void }) {
+  const id = useId()
+  return (
+    <section className="chatny chatinnstillinger" aria-labelledby={`${id}-tittel`}>
+      <TilSamtalene onTilbake={onTilbake} undervisning />
+      <h3 id={`${id}-tittel`} className="chatny__tittel">
+        Innstillinger for chatten
+      </h3>
+      <Chatinnstillinger />
+    </section>
   )
 }
 
