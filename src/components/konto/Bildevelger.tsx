@@ -17,16 +17,20 @@ export interface BildevelgerProps {
   visning: ReactNode
   /** Kalles med det ferdige bildet: kvadratisk WebP, klart til opplasting. */
   onValgt: (bilde: Blob) => void
+  /** Teksten på knappen som velger fila. */
+  knapp?: string
+  /** Knappen er låst, som mens et bilde lagres. */
+  laast?: boolean
 }
 
 /**
- * Velger og tilpasser profilbildet.
+ * Velger og tilpasser profilbildet, og symbolbildet til en gruppe.
  *
  * Bildet flyttes, zoomes og roteres i en sirkel som viser nøyaktig det som
  * blir lagret. Beskjæring og komprimering skjer i nettleseren, så det er bare
  * det ferdige bildet som sendes videre.
  */
-export function Bildevelger({ visning, onValgt }: BildevelgerProps) {
+export function Bildevelger({ visning, onValgt, knapp = 'Velg profilbilde', laast = false }: BildevelgerProps) {
   const filvelger = useRef<HTMLInputElement>(null)
   const [kilde, setKilde] = useState<string | null>(null)
   const [midtpunkt, setMidtpunkt] = useState<Point>({ x: 0, y: 0 })
@@ -88,8 +92,8 @@ export function Bildevelger({ visning, onValgt }: BildevelgerProps) {
           <span className="bildevelger__hint">
             Beskjæres til {AVATAR_STORRELSE} × {AVATAR_STORRELSE} piksler
           </span>
-          <Button variant="kant" icon={<Ikon navn="image" />} onClick={() => filvelger.current?.click()}>
-            Velg profilbilde
+          <Button variant="kant" icon={<Ikon navn="image" />} disabled={laast} onClick={() => filvelger.current?.click()}>
+            {knapp}
           </Button>
         </div>
         <input

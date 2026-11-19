@@ -232,6 +232,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'min_profil()': 'eier',
   'mine_kontohandlinger()': 'kontomyndighet',
   'mine_lesbare_grupper()': 'eier',
+  // Gruppesymbolene: gruppene den innloggede styrer, til radsikkerheten på bøtta (som mine_lesbare_grupper).
+  'mine_styrte_grupper()': 'eier',
   'mine_redaktoransvar()': 'eier',
   'mine_redigerbare_fagmiljoer()': 'eier',
   'mine_redigerbare_objekter()': 'eier',
@@ -272,6 +274,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'sett_diskusjonstittel(diskusjon uuid, tittel text)': 'rekkevidde',
   'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)': 'medlemskapsmyndighet',
   'sett_grupperolle(gruppe uuid, bruker uuid, rolle text)': 'gruppemyndighet',
+  'sett_gruppesymbol(gruppe uuid, emoji text, bilde boolean)': 'gruppemyndighet',
   'sett_oppgave_klar(oppgave uuid, klar boolean)': 'systemarkitekt',
   'sett_stoffavoritt(stoff text, favoritt boolean)': 'radsikkerhet',
   'sett_verktoysperre(omfang text, mal text, grunn text)': 'systemarkitekt',

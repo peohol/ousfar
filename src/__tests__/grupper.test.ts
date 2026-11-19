@@ -600,3 +600,80 @@ describe('profilene og idéene', () => {
     expect(await verdi<number>('adminB', 'select count(*)::int from public.ideer where id = $1', [data.ide])).toBe(1)
   })
 })
+
+describe('symbolet', () => {
+  const sett = (person: Person, gruppe: string, emoji: string | null, bilde = false) =>
+    verdi<{ emoji?: string; bilde?: string; endret?: string } | null>(person, 'select public.sett_gruppesymbol($1, $2, $3)', [gruppe, emoji, bilde])
+  const symbolHos = async (person: Person, gruppe: string) =>
+    ((await mine(person)).grupper.find((g) => g.id === gruppe) as { symbol?: unknown } | undefined)?.symbol
+  const sti = (gruppe: string) => `${gruppe}/symbol.webp`
+  const lastOpp = (person: Person, navn: string) =>
+    somPerson(person, `insert into storage.objects (bucket_id, name) values ('gruppesymboler', $1) returning id`, [navn])
+  const serBildet = async (person: Person, gruppe: string) =>
+    (await somPerson(person, `select 1 from storage.objects where bucket_id = 'gruppesymboler' and name = $1`, [sti(gruppe)])).length > 0
+
+  it('lar de ansvarlige og systemarkitektene velge en emoji, som alle i gruppen ser overalt', async () => {
+    expect(await sett('adminA', agruppe, '🧪')).toEqual({ emoji: '🧪' })
+    expect(await symbolHos('vanligA', agruppe)).toEqual({ emoji: '🧪' })
+    expect(await oversikt('vanligA', agruppe)).toMatchObject({ symbol: { emoji: '🧪' } })
+    // En familie og et hjerte med variantvelger er også én emoji.
+    expect(await sett('systemarkitekt', tverrgruppe, '❤️')).toEqual({ emoji: '❤️' })
+    expect(await sett('systemarkitekt', tverrgruppe, '👨‍👩‍👧')).toEqual({ emoji: '👨‍👩‍👧' })
+    // Ingen: gruppeikonet.
+    expect(await sett('adminA', agruppe, null)).toBeNull()
+    expect(await symbolHos('vanligA', agruppe)).toBeNull()
+  })
+
+  it('avviser alt som ikke er en emoji, så symbolet aldri bærer tekst eller tall', async () => {
+    for (const ugyldig of ['abc', '12345678901', 'Å', '🧪 a', '1️⃣', '<b>']) {
+      expect((await feilFra(() => sett('adminA', agruppe, ugyldig)))?.message, ugyldig).toBe('Symbolet må være én emoji.')
+    }
+    expect((await feilFra(() => sett('adminA', agruppe, '🧪', true)))?.message).toBe('Velg enten en emoji eller et bilde.')
+    // Heller ikke rett i tabellen.
+    await expect(
+      db.query(`update public.grupper set symbol_emoji = 'abc' where id = $1`, [agruppe]),
+    ).rejects.toMatchObject({ code: '23514' })
+  })
+
+  it('lar bare de som styrer gruppen endre symbolet', async () => {
+    expect((await feilFra(() => sett('vanligA', agruppe, '🧪')))?.message).toBe('Bare de ansvarlige i gruppen kan gjøre dette.')
+    expect((await feilFra(() => sett('vanligB', agruppe, '🧪')))?.code).toBe('P0002')
+    await somPerson('adminA', 'select public.arkiver_gruppe($1, true)', [agruppe])
+    expect((await feilFra(() => sett('systemarkitekt', agruppe, '🧪')))?.message).toBe('Gruppen er arkivert.')
+  })
+
+  it('tar et bilde på gruppens faste sti, som bare de som styrer kan laste opp og bare de som leser kan se', async () => {
+    expect((await feilFra(() => sett('adminA', agruppe, null, true)))?.message).toBe('Bildet er ikke lastet opp. Prøv igjen.')
+    // Andre stier, og andre enn de ansvarlige, slipper ikke inn.
+    for (const [person, navn] of [
+      ['vanligA', sti(agruppe)],
+      ['adminA', `${agruppe}/annet.webp`],
+      ['adminA', `${agruppe}/x/symbol.webp`],
+      ['adminA', sti(tverrgruppe)],
+    ] as const) {
+      expect((await feilFra(() => lastOpp(person, navn)))?.code, `${person} ${navn}`).toBe('42501')
+    }
+    await lastOpp('adminA', sti(agruppe))
+    const symbol = await sett('adminA', agruppe, null, true)
+    expect(symbol).toMatchObject({ bilde: sti(agruppe) })
+    expect(typeof symbol?.endret).toBe('string')
+    expect(await symbolHos('vanligA', agruppe)).toMatchObject({ bilde: sti(agruppe) })
+    expect(await serBildet('vanligA', agruppe)).toBe(true)
+    expect(await serBildet('systemarkitekt', agruppe)).toBe(true)
+    expect(await serBildet('vanligB', agruppe)).toBe(false)
+    // Fjernes fra gruppen: ser ikke bildet lenger.
+    await avslutt('adminA', agruppe, 'vanligA')
+    expect(await serBildet('vanligA', agruppe)).toBe(false)
+    // En emoji erstatter bildet.
+    expect(await sett('adminA', agruppe, '💊')).toEqual({ emoji: '💊' })
+    expect(await symbolHos('dobbeltAB', agruppe)).toEqual({ emoji: '💊' })
+  })
+
+  it('fører endringen i tilgangsloggen', async () => {
+    await sett('adminA', agruppe, '🧪')
+    const { rows } = await db.query<{ n: number }>(
+      `select count(*)::int as n from public.tilgangslogg where grunn = 'Gruppesymbolet endret' and handling = 'grupper.update'`,
+    )
+    expect(rows[0]!.n).toBe(1)
+  })
+})

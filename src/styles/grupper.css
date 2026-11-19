@@ -282,6 +282,12 @@ button.gruppeside__fane {
   gap: var(--rom-3) var(--rom-5);
 }
 
+/* Symbolet foran navnet på gruppesiden: navnet tar plassen mellom det og knappen. */
+.gruppeside__tittelrad > .gruppesymbol + .gruppeside__tittel {
+  flex: 1;
+  min-width: 0;
+}
+
 .gruppeside__tomt {
   margin: 0;
   font-family: var(--skrift-display);
@@ -503,6 +509,53 @@ button.gruppeside__fane {
 .gruppemodal__inviterrad .felt__inndata {
   flex: 1;
   min-width: 0;
+}
+
+/* Symbolet i gruppeinnstillingene: bildet, emojiene og «Annen emoji». */
+.symbolvelger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.symbolvelger__emojier {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--hoyde-trykk), 1fr));
+  gap: var(--rom-1);
+}
+
+.symbolvelger__emoji {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-height: var(--hoyde-trykk);
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+  background: transparent;
+  border: var(--kant) solid transparent;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+}
+
+.symbolvelger__emoji:hover {
+  background: var(--flate-hevet);
+}
+
+.symbolvelger__emoji[aria-pressed='true'] {
+  background: var(--flate-hevet);
+  border-color: var(--aksent);
+}
+
+.symbolvelger__emoji:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.symbolvelger__egen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
 }
 
 /* --- Arbeidsflatene ------------------------------------------------------------ */

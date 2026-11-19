@@ -18,6 +18,7 @@ import {
 import { lesGruppeoppgave, lesGruppeoppgaveliste, type Gruppeoppgave, type Gruppeoppgaveliste, type Gruppeoppgavestatus, type Prioritet } from './oppgaver'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
 import { lesGruppeaktivitet, type Gruppehendelse } from './aktivitet'
+import { GRUPPESYMBOL_BOTTE, gruppesymbolsti, lesGruppesymbol, symbolbilde, type Gruppesymbol } from './symbol'
 
 /**
  * Funksjonene sier avslagene sine på norsk, også regelen om minst én
@@ -57,6 +58,31 @@ export async function opprettGruppe(navn: string, beskrivelse: string, fagmiljo:
 
 export async function endreGruppe(gruppe: string, navn: string, beskrivelse: string): Promise<void> {
   await kall('endre_gruppe', { gruppe, navn, beskrivelse })
+}
+
+/**
+ * Setter symbolet: en emoji, et bilde (beskåret og komprimert i nettleseren,
+ * som profilbildet), eller ingen (`null`). Bildet lastes opp på gruppens faste
+ * sti før databasen peker på det. Var `forrige` et bilde som ikke lenger
+ * brukes, fjernes det fra lagringen etterpå; går det ikke, står fila ubrukt
+ * til neste bilde erstatter den. Gir symbolet slik det står etterpå.
+ */
+export async function settGruppesymbol(
+  gruppe: string,
+  valg: { emoji: string } | { bilde: Blob } | null,
+  forrige: Gruppesymbol | null = null,
+): Promise<Gruppesymbol | null> {
+  const sti = gruppesymbolsti(gruppe)
+  const lagring = klient().storage.from(GRUPPESYMBOL_BOTTE)
+  if (valg && 'bilde' in valg) {
+    const { error } = await lagring.upload(sti, valg.bilde, { upsert: true, contentType: 'image/webp' })
+    if (error) throw new Error('Bildet ble ikke lastet opp. Prøv igjen.')
+  }
+  const symbol = lesGruppesymbol(
+    await kall('sett_gruppesymbol', { gruppe, emoji: valg && 'emoji' in valg ? valg.emoji : null, bilde: !!valg && 'bilde' in valg }),
+  )
+  if (symbolbilde(forrige) && !symbolbilde(symbol)) await lagring.remove([sti]).catch(() => undefined)
+  return symbol
 }
 
 export async function arkiverGruppe(gruppe: string, arkivert: boolean): Promise<void> {
