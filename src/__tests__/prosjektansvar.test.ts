@@ -371,18 +371,19 @@ describe('kontrollen mot GitHub', () => {
     expect(kall.filter((k) => k.includes('/contents/'))).toEqual(['GET repos/peohol/ousfar/contents/.github/workflows/falsk.yml?ref=abc1234def'])
   })
 
-  it('godtar overgangsflyten bare i overgangskontrollen selv, aldri i den betrodde', async () => {
-    const overgang = les('.github/workflows/prosjektansvar-overgang.yml')
-    const svar = vanlig({
-      'GET repos/peohol/ousfar/pulls/500/files': [{ filename: '.github/workflows/prosjektansvar-overgang.yml', status: 'added' }],
-      'GET repos/peohol/ousfar/contents/': base64(overgang),
-    })
-    const betrodd = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main')) as Vurdering
-    expect(betrodd.ok).toBe(false)
-    expect(betrodd.feil).toEqual([expect.stringContaining('prosjektansvar-overgang.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»')])
-    const selv = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main', { betrodd: false })) as Vurdering
-    expect(selv.ok).toBe(true)
-    expect(selv.advarsler).toEqual([expect.stringContaining('Overgangskontrollen kjører PR-ens egen versjon og er ikke betrodd')])
+  it('avviser en PR som legger tilbake en kontroll som kjører fra PR-en selv, og varsler om endringer i kontrollen', async () => {
+    const gammel = 'name: Prosjektansvar – overgang\non:\n  pull_request:\npermissions:\n  contents: read\n  pull-requests: read\njobs:\n  etikett:\n    name: Prosjektansvar\n    runs-on: ubuntu-latest\n    steps:\n      - run: node scripts/prosjektansvar.mjs\n'
+    const { github } = falskGithub(vanlig({
+      'GET repos/peohol/ousfar/pulls/500/files': [
+        { filename: '.github/workflows/prosjektansvar-overgang.yml', status: 'added' },
+        { filename: 'scripts/prosjektansvar.mjs', status: 'modified' },
+      ],
+      'GET repos/peohol/ousfar/contents/': base64(gammel),
+    }))
+    const v = (await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering
+    expect(v.ok).toBe(false)
+    expect(v.feil).toEqual([expect.stringContaining('prosjektansvar-overgang.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»')])
+    expect(v.advarsler).toEqual([expect.stringContaining('PR-en endrer kontrollen selv (scripts/prosjektansvar.mjs). Den er vurdert med versjonen på main')])
   })
 
   it('stopper etterligning også for PR-er fra før overgangen', async () => {
@@ -428,10 +429,10 @@ describe('etterligning av kontrollen', () => {
     expect(fil('on:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  a:\n    name: Bygg\n# name: Prosjektansvar\n')).toEqual([])
   })
 
-  it('godtar repoets egne arbeidsflyter, unntatt den midlertidige overgangsflyten', () => {
+  it('godtar alle repoets egne arbeidsflyter, så bare den betrodde kontrollen gir «Prosjektansvar»', () => {
     const flyter = readdirSync(new URL('../../.github/workflows/', import.meta.url)).filter((f) => /\.ya?ml$/.test(f)).map((f) => ({ sti: `.github/workflows/${f}`, innhold: les(`.github/workflows/${f}`) }))
-    const funn = finnEtterligning(flyter) as string[]
-    expect(funn).toEqual([expect.stringMatching(/^\.github\/workflows\/prosjektansvar-overgang\.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»/)])
+    expect(flyter.map((f) => f.sti)).toContain('.github/workflows/prosjektansvar.yml')
+    expect(finnEtterligning(flyter)).toEqual([])
   })
 })
 
@@ -486,7 +487,6 @@ describe('den betrodde kjøringen', () => {
 describe('arbeidsflytene', () => {
   const flyt = les('.github/workflows/prosjektansvar.yml')
   const utloser = les('.github/workflows/prosjektansvar-utloser.yml')
-  const overgang = les('.github/workflows/prosjektansvar-overgang.yml')
   const typer = (tekst: string, hendelse: string) => tekst.match(new RegExp(`${hendelse}:\\n(?:\\s+\\S.*\\n)*?\\s+types: \\[([^\\]]+)\\]`))?.[1]?.split(',').map((t) => t.trim())
   const PR_TYPER = ['opened', 'reopened', 'synchronize', 'edited', 'labeled', 'unlabeled', 'assigned', 'unassigned']
 
@@ -512,13 +512,6 @@ describe('arbeidsflytene', () => {
     expect(typer(utloser, 'pull_request')).toEqual(expect.arrayContaining(PR_TYPER))
     expect(utloser).toMatch(/^permissions: \{\}$/m)
     expect(utloser).not.toMatch(/checkout|\$\{\{|secrets\.|^ {4}name: Prosjektansvar$/m)
-  })
-
-  it('overgangsflyten er merket midlertidig og gir samme navn som regelsettet krever', () => {
-    expect(overgang).toMatch(/^# MIDLERTIDIG\./)
-    expect(overgang).toMatch(/^ {4}name: Prosjektansvar$/m)
-    expect(typer(overgang, 'pull_request')).toEqual(expect.arrayContaining(PR_TYPER))
-    expect(overgang).not.toMatch(/: write|secrets\./)
   })
 })
 
@@ -561,7 +554,7 @@ describe('dokumentene sier det samme', () => {
 
   it('styringsdokumentet beskriver begge aksene, overgangen, overføringen og Peders særskilte myndighet', () => {
     expect(ansvar).toContain(REGLER_STI)
-    for (const del of ['Ansvarlig systemarkitekt', 'assignee', 'Overgang', 'Overføring', 'Ufordelt backlog er lov', 'Betrodd kjøring', 'prosjektansvar-utloser.yml', 'prosjektansvar-overgang.yml', 'GitHub-ansvarlig']) expect(ansvar).toContain(del)
+    for (const del of ['Ansvarlig systemarkitekt', 'assignee', 'Overgang', 'Overføring', 'Ufordelt backlog er lov', 'Betrodd kjøring', 'prosjektansvar-utloser.yml', 'GitHub-ansvarlig']) expect(ansvar).toContain(del)
     expect(ansvar).toMatch(/tar bare han, uansett hvem som har oppgaven/)
     expect(ansvar).toMatch(/uavhengige fagkontrollen i OUSFAR Fag/)
     for (const login of ARKITEKTER.keys()) expect(ansvar).toContain(`\`${login}\``)

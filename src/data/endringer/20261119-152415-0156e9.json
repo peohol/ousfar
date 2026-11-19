@@ -1,0 +1,14 @@
+{
+  "id": "20261119-152415-0156e9",
+  "semver": "patch",
+  "opprettet": "2026-11-19T15:24:15Z",
+  "sammendrag": "Kontrollen av ansvar for hver endring er nå fullt beskyttet",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. En midlertidig del av kontrollen som sjekker prosjekt og ansvarlig systemarkitekt for hver endring, er fjernet. Kontrollen kjøres nå bare i en versjon som en endring ikke selv kan påvirke."
+  ],
+  "utenVarsel": true
+}

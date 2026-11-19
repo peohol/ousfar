@@ -227,12 +227,6 @@ informasjonsutveksling.
      advarsel og kan fullføres slik de ble startet; kravet om prosjektetikett
      gjelder dem som før. Unntaket følger opprettelsestidspunktet og gjelder
      ingen nye PR-er.
-   - Den betrodde kontrollen kan ikke vurdere PR-en som innfører eller retter
-     den. Derfor finnes `.github/workflows/prosjektansvar-overgang.yml`
-     midlertidig: den gir «Prosjektansvar» på gammel måte (fra PR-en selv) til
-     den betrodde kontrollen er bekreftet med ekte hendelser på `main`, og
-     fjernes i en egen liten PR etterpå. Den PR-en får «Prosjektansvar» bare
-     fra den betrodde kontrollen.
 7. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
    PR-ens assignee («GitHub-ansvarlig» i prosjektinstruksen), kontrollerer og
    slår sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).

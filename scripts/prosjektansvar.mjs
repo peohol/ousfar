@@ -36,8 +36,6 @@
  * - `issues`: et Issue har fått ny ansvarlig eller etikett, eller er slettet
  *   eller flyttet. Vurderer på nytt alle åpne PR-er som viser til det, så en
  *   grønn kontroll aldri blir stående på et foreldet grunnlag.
- * - `pull_request`: bare overgangskontrollen i `prosjektansvar-overgang.yml`,
- *   som fjernes når den betrodde kontrollen er på `main`.
  *
  * Vanlig JavaScript uten avhengigheter: arbeidsflytene trenger verken `npm ci`
  * eller hemmeligheter.
@@ -196,7 +194,6 @@ export function vurderPr({ pr, saker, aktivertKl, repo, etterligning = [], regle
 export const KONTROLLFILER = [
   '.github/workflows/prosjektansvar.yml',
   '.github/workflows/prosjektansvar-utloser.yml',
-  '.github/workflows/prosjektansvar-overgang.yml',
   'scripts/prosjektansvar.mjs',
   REGLER_STI,
 ]
@@ -306,29 +303,17 @@ async function arbeidsflyter(github, repo, filer, sha) {
   return ut
 }
 
-/** Overgangsflyten, som bare kan finnes i overgangskontrollen selv (`betrodd: false`). */
-const OVERGANGSFLYT = '.github/workflows/prosjektansvar-overgang.yml'
-
-/**
- * Vurderer en PR (rådata fra GitHub) med ny tilstand fra GitHub.
- * `betrodd: false` er overgangskontrollen, som kjører PR-ens egen kode: den
- * godtar overgangsflyten selv, ellers kunne PR-en som innfører den betrodde
- * kontrollen aldri bli grønn. Den betrodde kontrollen godtar den aldri.
- */
-export async function kontrollerPr(github, repo, rå, gren, { betrodd = true } = {}) {
+/** Vurderer en PR (rådata fra GitHub) med ny tilstand fra GitHub. */
+export async function kontrollerPr(github, repo, rå, gren) {
   const pr = somPr(rå)
   const saker = new Map()
   for (const n of arbeidsoppgaver(pr.tekst, repo)) saker.set(n, somSak(await github(`repos/${repo}/issues/${n}`, { finnes: true }), repo))
   const filer = await alle(github, `repos/${repo}/pulls/${pr.nummer}/files`)
-  const flyter = (await arbeidsflyter(github, repo, filer, rå.head.sha)).filter((f) => betrodd || f.sti !== OVERGANGSFLYT)
-  const etterligning = finnEtterligning(flyter)
+  const etterligning = finnEtterligning(await arbeidsflyter(github, repo, filer, rå.head.sha))
   const vurdering = vurderPr({ pr, saker, aktivertKl: await hentAktivering(github, repo, gren), repo, etterligning })
   const endrerKontrollen = filer.map((f) => f.filename).filter((f) => KONTROLLFILER.includes(f))
   if (endrerKontrollen.length) {
-    const hvordan = betrodd
-      ? 'Den er vurdert med versjonen på main; endringen virker først når den er slått sammen'
-      : 'Overgangskontrollen kjører PR-ens egen versjon og er ikke betrodd'
-    vurdering.advarsler.push(`PR-en endrer kontrollen selv (${endrerKontrollen.join(', ')}). ${hvordan}, så den skal kontrolleres særskilt.`)
+    vurdering.advarsler.push(`PR-en endrer kontrollen selv (${endrerKontrollen.join(', ')}). Den er vurdert med versjonen på main; endringen virker først når den er slått sammen, så den skal kontrolleres særskilt.`)
   }
   return vurdering
 }
@@ -397,25 +382,12 @@ function oppsummer(tittel, linjer) {
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## ${tittel}\n\n${linjer.map((l) => `- ${l}`).join('\n')}\n`)
 }
 
-const enLinje = (s) => s.replace(/\r?\n/g, ' ')
-
 async function kjor() {
   const hendelse = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
   const repo = process.env.GITHUB_REPOSITORY
   const gren = hendelse.repository.default_branch
   const github = lagGithub({ token: process.env.GH_TOKEN })
   const navn = process.env.GITHUB_EVENT_NAME
-
-  if (navn === 'pull_request') {
-    // Overgangskontrollen (prosjektansvar-overgang.yml): bare utfallet, ingen check run.
-    const v = await kontrollerPr(github, repo, await github(`repos/${repo}/pulls/${hendelse.pull_request.number}`), gren, { betrodd: false })
-    for (const a of v.advarsler) console.log(`::warning title=Prosjektansvar::${enLinje(a)}`)
-    for (const f of v.feil) console.log(`::error title=Prosjektansvar mangler eller er feil::${enLinje(f)}`)
-    if (v.ok) console.log(v.melding)
-    oppsummer('Prosjektansvar', [...(v.ok ? [v.melding] : v.feil), ...v.advarsler])
-    if (!v.ok) process.exitCode = 1
-    return
-  }
 
   let prer
   if (navn === 'workflow_run') prer = await prerForSha(github, repo, hendelse.workflow_run.head_sha)
