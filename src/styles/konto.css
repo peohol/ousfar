@@ -1191,6 +1191,123 @@
   color: var(--blekk);
 }
 
+/* --- Stillingene (docs/stillinger.md) -------------------------------------- */
+
+.stillingsskjema__tittel.tilgangsbekreftelse__tittel {
+  color: var(--blekk);
+}
+
+.stillinger__ingress,
+.stillinger__tomt,
+.stillingsfjerning__tekst {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
+.stillinger__kategori {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
+}
+
+.stillinger__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4);
+}
+
+.stillinger__kategorinavn,
+.stillingsfjerning__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+.stillingsfjerning__undertittel {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+/* Samme kort og rader som brukerlista: stillingen til venstre, knappene til høyre. */
+.stillinger__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+  overflow: hidden;
+}
+
+.stillinger__rad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4);
+  padding: var(--rom-3) var(--rom-5);
+}
+
+.stillinger__rad + .stillinger__rad {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.stillinger__rad > .stillinger__skjema {
+  flex: 1;
+}
+
+.stillinger__navn {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+  font-size: var(--tekst-lesing);
+  color: var(--blekk);
+}
+
+.stillinger__knapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.stillinger__felter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--rom-5);
+}
+
+.stillingsfjerning,
+.stillingsfjerning__alle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+}
+
+/* Avatar, navn, stillingsvalget og «Lagre». Der det er trangt, legger valget
+   og knappen seg under navnet. */
+.stillingsfjerning__rad .felt {
+  min-width: 12rem;
+}
+
+@media (max-width: 47.5em) {
+  .stillingsfjerning__rad > .felt,
+  .stillingsfjerning__rad > button {
+    grid-column: 2;
+  }
+}
+
 /* --- Gruppesymbolet ------------------------------------------------------ */
 
 /* Samme sirkel og størrelser som profilbildet; emojien og ikonet skaleres med den. */

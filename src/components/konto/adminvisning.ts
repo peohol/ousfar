@@ -21,6 +21,7 @@ const LOKAL_ADMINISTRATOR = harAdministrasjon
 export const ADMINVALG = [
   { panel: 'brukere', ikon: 'user', tekst: 'Brukere', for: LOKAL_ADMINISTRATOR },
   { panel: 'redaktorer', ikon: 'edit', tekst: 'Redaktører', for: kanGiRedaktoransvar },
+  { panel: 'stillinger', ikon: 'stilling', tekst: 'Stillinger', for: SYSTEMARKITEKT },
   { panel: 'datakilder', ikon: 'reset', tekst: 'Datakilder', for: SYSTEMARKITEKT },
   { panel: 'kurateringer', ikon: 'oppgaver', tekst: 'Kurateringer', for: SYSTEMARKITEKT },
   { panel: 'kildeovervaking', ikon: 'refs', tekst: 'Kildeovervåking', for: SYSTEMARKITEKT },
