@@ -1,8 +1,10 @@
 -- Profilkortet ved hovering (docs/fagmiljoer.md, «Profilkortet»).
 --
 -- Når pekeren hviler på profilbildet eller navnet til en annen bruker, viser
--- appen et kort med bildet, hele navnet, fagmiljøene personen er aktivt
--- medlem av, og en chatknapp når det kan sendes direktemeldinger til hen.
+-- appen et kort med bildet, hele navnet, stillingen (navnet fra
+-- `public.stillinger`, eller `null`; docs/stillinger.md), fagmiljøene
+-- personen er aktivt medlem av, og en chatknapp når det kan sendes
+-- direktemeldinger til hen.
 -- Navnet og bildet har appen fra før (profilkortet i `profiles`, eller
 -- profilkortet funksjonene gir sammen med innholdet); det denne funksjonen
 -- gir, er resten.
@@ -42,6 +44,12 @@ begin
   end if;
   return jsonb_build_object(
     'id', profilkortdetaljer.bruker,
+    'stilling', (
+      select s.navn
+      from public.profiles p
+      join public.stillinger s on s.id = p.stilling_id
+      where p.id = profilkortdetaljer.bruker
+    ),
     -- Primærfagmiljøet først, så de andre etter navnet.
     'fagmiljoer', coalesce((
       select jsonb_agg(f.navn order by m.primaer desc, f.navn)
@@ -63,4 +71,4 @@ revoke all on function public.profilkortdetaljer(uuid) from public, anon, authen
 grant execute on function public.profilkortdetaljer(uuid) to authenticated;
 
 comment on function public.profilkortdetaljer(uuid) is
-  'Profilkortet ved hovering: fagmiljøene og om det kan sendes direktemeldinger, for en profil den innloggede ser gjennom fagmiljøene, gruppene eller direktesamtalene (alle for en systemarkitekt); ellers null. Se docs/fagmiljoer.md.';
+  'Profilkortet ved hovering: stillingen, fagmiljøene og om det kan sendes direktemeldinger, for en profil den innloggede ser gjennom fagmiljøene, gruppene eller direktesamtalene (alle for en systemarkitekt); ellers null. Se docs/fagmiljoer.md.';

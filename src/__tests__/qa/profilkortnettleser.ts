@@ -4,10 +4,11 @@
  * syntetiske kontoene `qa-chat-ada` og `qa-chat-bo` i en gruppe med chat:
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/profilkortnettleser.ts
  *
- * Punktene: kortet ved Bos bilde og navn i gruppechatten, uten chatknapp når
- * Bo ikke tillater direktemeldinger; chatknappen når Bo gjør det, og en ny
- * samtale fra kortet når Ada først må slå på sine; kortet over dialogvinduet
- * med medlemmene; ingen kort for en selv; tastaturet; mobil og mørkt tema.
+ * Punktene: kortet ved Bos bilde og navn i gruppechatten, med stillingen Bo
+ * har valgt, uten chatknapp når Bo ikke tillater direktemeldinger;
+ * chatknappen når Bo gjør det, og en ny samtale fra kortet når Ada først må
+ * slå på sine; kortet over dialogvinduet med medlemmene; ingen kort for en
+ * selv; tastaturet; mobil og mørkt tema.
  */
 import { randomBytes } from 'node:crypto'
 import { arkiverTidligereGrupper, innen, klient, krev, lagKontroll, lukkChatmenyen, rpc, type Side } from './kontroll'
@@ -24,7 +25,8 @@ const boId = await sikreTestkonto(s, 'qa-chat-bo', pw.bo, ['Bo', 'Prøvesen'])
 // Et rent utgangspunkt: valgene, blokkeringene og samtalen mellom dem fra tidligere kjøringer.
 const begge = `('${adaId}', '${boId}')`
 lokalSql(s, `delete from public.chatvalg where bruker_id in ${begge}; delete from public.direktemelding_blokkeringer where blokkerer in ${begge};
-  delete from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge};`)
+  delete from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge};
+  update public.profiles set stilling_id = null where id in ${begge};`)
 const tilbakestill = slaPaFunksjoner(s, 'gruppechat_aktivert', 'direktemeldinger_aktivert')
 const miljo = await apneTestmiljo()
 
@@ -65,11 +67,17 @@ try {
     await side.getByText('Syntetisk melding fra Bo').first().waitFor({ timeout: 30_000 })
   }
 
-  await punkt('K1 kortet ved Bos bilde i gruppechatten, uten chatknapp', async () => {
+  await punkt('K1 kortet ved Bos bilde i gruppechatten, med stillingen og uten chatknapp', async () => {
+    // Bo velger en stilling fra lista slik databasen har den.
+    const { data: stillinger, error } = await boK.from('stillinger').select('id, navn').order('navn').limit(1)
+    krev(!error && stillinger?.length, 'stillingslista kan leses')
+    const stilling = stillinger![0] as { id: string; navn: string }
+    await rpc(boK, 'sett_stilling', { bruker: boId, stilling: stilling.id })
     await tilChatten(ada)
     await hvil(ada, bosBilde(ada))
     const tekst = await korttekst(ada)
     krev(tekst.includes('Bo Prøvesen'), `hele navnet står på kortet («${tekst}»)`)
+    krev((await kortet(ada).locator('.profilkort__stilling').innerText()) === stilling.navn, `stillingen «${stilling.navn}» står på kortet («${tekst}»)`)
     krev(/OUS|Sandkasse|fagmiljø/i.test(tekst), `fagmiljøet står på kortet («${tekst}»)`)
     krev((await kortet(ada).getByRole('button', { name: /^Chat med/ }).count()) === 0, 'ingen chatknapp når Bo ikke tillater direktemeldinger')
     const boks = await kortet(ada).boundingBox()

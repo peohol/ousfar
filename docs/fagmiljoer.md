@@ -1051,6 +1051,9 @@ Profilkortet ved hovering (`docs/designsystem.md`, «Profilkortet»;
 `supabase/migrations/20261119131000_profilkort.sql`) har navnet og bildet fra
 stedet det står. Resten gir `public.profilkortdetaljer(bruker)`:
 
+- **Stillingen**: navnet på stillingen personen har oppgitt
+  (`profiles.stilling_id` slått opp i `public.stillinger`), eller `null`
+  ([stillinger.md](stillinger.md)).
 - **Fagmiljøene** personen er aktivt medlem av i aktive fagmiljøer,
   primærfagmiljøet først.
 - **`kan_chatte`**: om det kan sendes direktemeldinger til personen nå, med

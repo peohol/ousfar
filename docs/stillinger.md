@@ -47,6 +47,9 @@ lås.
   deler den (`useStillinger`). Navnet til en brukers stilling slås opp med
   `stillingsnavn(katalog, profilkort)`; en flate som viser profilkort, trenger
   altså ikke noe eget oppslag i databasen.
+- Profilkortet ved hovering får navnet på stillingen fra databasen, i svaret
+  fra `profilkortdetaljer` (`docs/fagmiljoer.md`, «Profilkortet»), med de
+  samme synlighetsreglene som resten av kortet.
 - Valget vises med `Stillingsvelger` (`src/components/stillinger/`), med
   kategoriene som grupper.
 

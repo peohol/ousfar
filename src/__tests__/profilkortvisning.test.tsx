@@ -234,7 +234,7 @@ describe('svarene', () => {
   it('leser bare det som er gyldig', () => {
     expect(lesProfilkortdetaljer(null)).toBeNull()
     expect(lesProfilkortdetaljer({ fagmiljoer: [] })).toBeNull()
-    expect(lesProfilkortdetaljer({ id: 'x', fagmiljoer: ['A', 3], kan_chatte: 'ja' })).toEqual({ id: 'x', fagmiljoer: ['A'], kan_chatte: false })
+    expect(lesProfilkortdetaljer({ id: 'x', fagmiljoer: ['A', 3], kan_chatte: 'ja' })).toEqual({ id: 'x', fagmiljoer: ['A'], stilling: null, kan_chatte: false })
     expect(lesProfilkortdetaljer({ id: 'x', fagmiljoer: [], stilling: ' ', kan_chatte: true })).toEqual({
       id: 'x',
       fagmiljoer: [],

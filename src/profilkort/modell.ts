@@ -7,8 +7,8 @@ export interface Profilkortdetaljer {
   id: string
   /** Fagmiljøene personen er aktivt medlem av, primærfagmiljøet først. */
   fagmiljoer: string[]
-  /** Stillingen, når personen har oppgitt en og databasen gir den. */
-  stilling?: string | null
+  /** Navnet på stillingen, eller `null` når personen står uten (docs/stillinger.md). */
+  stilling: string | null
   /** Det kan sendes direktemeldinger til personen nå. Én grunn for alt. */
   kan_chatte: boolean
 }
@@ -23,7 +23,7 @@ export function lesProfilkortdetaljer(verdi: unknown): Profilkortdetaljer | null
   return {
     id: v.id,
     fagmiljoer: Array.isArray(v.fagmiljoer) ? v.fagmiljoer.filter(erTekst) : [],
-    ...('stilling' in v && { stilling: erTekst(v.stilling) && v.stilling.trim() !== '' ? v.stilling : null }),
+    stilling: erTekst(v.stilling) && v.stilling.trim() !== '' ? v.stilling : null,
     kan_chatte: v.kan_chatte === true,
   }
 }
