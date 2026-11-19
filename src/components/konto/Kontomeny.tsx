@@ -82,7 +82,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
               <li>
                 <Menyvalg
                   ikon="user"
-                  tekst="Endre navn og profilbilde"
+                  tekst="Endre navn, stilling og profilbilde"
                   onClick={() => {
                     // Menyen lukkes først, så vinduet gir fokus tilbake til avataren.
                     lukk()

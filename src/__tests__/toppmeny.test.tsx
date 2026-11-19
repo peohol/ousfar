@@ -83,6 +83,9 @@ vi.mock('../components/konto/Kildeovervaking', async () => {
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
 }))
+vi.mock('../components/konto/Stillinger', () => ({
+  Stillinger: ({ apen }: { apen: boolean }) => (apen ? <p>Stillingslista</p> : null),
+}))
 vi.mock('../components/konto/Autoerstattregler', () => ({
   Autoerstattregler: ({ apen }: { apen: boolean }) => (apen ? <p>Autoerstatt-reglene</p> : null),
 }))
@@ -547,7 +550,7 @@ describe('kontomenyen', () => {
     expect(meny.hidden).toBe(false)
     expect(screen.getByRole('group', { name: 'Konto' })).toBe(meny)
     expect(meny.getAttribute('data-lag')).toBe('kontomeny')
-    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /Endre navn og profilbilde/ }))
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /Endre navn, stilling og profilbilde/ }))
     expect(within(meny).getByText('Admin', { selector: '.kontomeny__merke' })).toBeTruthy()
 
     await userEvent.keyboard('{Escape}')
@@ -563,7 +566,7 @@ describe('kontomenyen', () => {
     await within(panel(knapp)).findByText('3 forslag venter')
     const valg = within(panel(knapp)).getAllByRole('button')
     expect(valg.map((v) => v.textContent)).toEqual([
-      'Endre navn og profilbilde',
+      'Endre navn, stilling og profilbilde',
       'Mine forslag',
       'Til behandling3 forslag venter',
       'InnstillingerVisning',
@@ -594,7 +597,7 @@ describe('kontomenyen', () => {
     await userEvent.click(knapp)
     expect(within(panel(knapp)).queryByRole('button', { name: 'Til behandling' })).toBeNull()
     expect(within(panel(knapp)).getAllByRole('button').map((v) => v.textContent)).toEqual([
-      'Endre navn og profilbilde',
+      'Endre navn, stilling og profilbilde',
       'Mine forslag',
       'InnstillingerVisning',
       'Logg ut',
@@ -731,7 +734,7 @@ describe('kontomenyen', () => {
   it('fører til profilen og utloggingen', async () => {
     const knapp = vis()
     await userEvent.click(knapp)
-    await userEvent.click(screen.getByRole('button', { name: /Endre navn og profilbilde/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Endre navn, stilling og profilbilde/ }))
     expect(screen.getByText('Kontopanelet')).toBeTruthy()
     expect(panel(knapp).hidden).toBe(true)
 
@@ -933,16 +936,18 @@ describe('hovedmenyen', () => {
     }
   })
 
-  it('fører til brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene', async () => {
+  it('fører til brukerne, redaktørene, stillingene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene', async () => {
     rolle.verdi = 'user'
     render(<Hovedmeny />)
     const liste = await administrasjonen(await apneMenyen())
-    expect(navnene(liste)).toEqual(['Brukere', 'Redaktører', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+    expect(navnene(liste)).toEqual(['Brukere', 'Redaktører', 'Stillinger', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
     await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
     expect(hovedmenyen().getAttribute('data-apen')).toBe('nei')
     expect(document.activeElement).toBe(menyknapp())
 
+    await velgAdmin('Stillinger')
+    expect(screen.getByText('Stillingslista')).toBeTruthy()
     await velgAdmin('Datakilder')
     expect(screen.getByText('Datakildene')).toBeTruthy()
     await velgAdmin('Kurateringer')

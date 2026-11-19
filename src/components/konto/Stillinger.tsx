@@ -400,15 +400,18 @@ function Stillingsrad({
           Endre
         </Button>
         {brukere > 0 ? (
-          <Button
-            variant="kant"
-            icon={<Ikon navn="trash" />}
+          // Åpner siden for fjerningen; ser ut som fjerningen i to trykk ved siden av.
+          <button
+            type="button"
+            className="idehandling idehandling--slett"
+            data-ih=""
             aria-label={`Fjern stillingen ${stilling.navn}`}
             disabled={arbeider}
             onClick={onFjern}
           >
-            Fjern
-          </Button>
+            <Ikon navn="trash" storrelse="ui" />
+            <span>Fjern</span>
+          </button>
         ) : (
           <Bekreftknapp
             ikon="trash"
