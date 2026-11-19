@@ -10,6 +10,7 @@ import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
+import { arkiverTidligereGrupper, lukkChatmenyen } from './kontroll'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,6 +70,8 @@ const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const miljo = await apneTestmiljo()
 try {
   const admin = await klient(s, 'qa-admin', adminpassord)
+  // Grupper fra tidligere kjøringer teller ellers med blant de uleste.
+  await arkiverTidligereGrupper(admin, 'Syntetisk ')
   const adaK = await klient(s, 'qa-chat-ada', pw.ada)
   const boK = await klient(s, 'qa-chat-bo', pw.bo)
   const tid = new Date().toISOString().slice(11, 19)
@@ -96,9 +99,7 @@ try {
 
   await punkt('P1 boblen viser uleste', async () => {
     // Menyen husker at den sto åpen fra en tidligere kjøring; da lukkes den først.
-    await boble.or(menyen).first().waitFor({ timeout: 30_000 })
-    if (await menyen.isVisible()) await menyen.getByRole('button', { name: 'Lukk chatten' }).click()
-    await boble.waitFor({ timeout: 10_000 })
+    await lukkChatmenyen(ada)
     await innen(15_000, 'merket 3', async () => (await boble.getAttribute('aria-label'))?.includes('3 uleste') ?? false)
     await bilde(ada, '01-boble-pc')
   })

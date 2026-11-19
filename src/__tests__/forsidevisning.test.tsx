@@ -171,6 +171,25 @@ describe('Forsiden', () => {
     expect(within(panel('Mine grupper')).getByText('Ny gruppe')).toBeTruthy()
   })
 
+  it('henter ingenting før rettighetene er kjent, og så hvert panel én gang (D7)', async () => {
+    const verdi: Rettigheter = { ...INGEN_RETTIGHETER, arbeidsfagmiljo: KF, mineFagmiljoer: [KF], velgbareFagmiljoer: [KF] }
+    const tegn = (r: Rettigheter, kontekst: string | null) => (
+      <RettigheterKilde verdi={r} oppdater={vi.fn()} arbeidskontekst={kontekst}>
+        <Forside onApneFortolkning={vi.fn()} />
+      </RettigheterKilde>
+    )
+    const { rerender } = render(tegn(INGEN_RETTIGHETER, null))
+    expect(screen.getByRole('button', { name: 'Åpne fortolkning' })).toBeTruthy()
+    expect(within(panel('Mine grupper')).getByText(/Henter/)).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 1 }).textContent).not.toBe('OUSFAR')
+    expect(api.hentOppsummering).not.toHaveBeenCalled()
+
+    rerender(tegn(verdi, KF.id))
+    expect(screen.getByRole('heading', { level: 1, name: 'OUS Klinisk farmakologi' })).toBeTruthy()
+    await waitFor(() => expect(within(panel('Oppdaterte fagsider')).getByText('Ingen nye hendelser.')).toBeTruthy())
+    expect(vi.mocked(api.hentOppsummering).mock.calls.map(([m]) => m).sort()).toEqual(['aktuelt', 'fagsider', 'grupper', 'viktig_nytt'])
+  })
+
   it('bytter til det lagrede oppsettet når det er hentet, uten å flytte fokus', async () => {
     const lagret = utsatt<Forsideoppsett>()
     vi.mocked(api.hentOppsett).mockReturnValue(lagret.lovnad)

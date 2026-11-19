@@ -18,12 +18,12 @@
  *   npx vite-node src/__tests__/qa/gruppechatsanntid.ts
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { IngenTilgang, lagChatapi } from '../../gruppechat/kall'
 import { lagChatkontroller, LIVSTEGN_MS, type Chatkontroller } from '../../gruppechat/kontroller'
 import { lagAbonner, type Abonner } from '../../gruppechat/dorklokke'
+import { arkiverTidligereGrupper, chatabonnementer } from './kontroll'
 import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 
 const logg = (tekst: string) => console.log(`[gruppechat i sanntid] ${tekst}`)
@@ -91,12 +91,6 @@ interface Samtalerad {
   uleste: number
 }
 
-/** Antall abonnementer Realtime har registrert på gruppens chatrad. */
-function abonnementer(s: Status, gruppe: string): number {
-  const sql = `select count(*) from realtime.subscription where entity = 'public.gruppechatter'::regclass and filters::text like '%${gruppe}%'`
-  return Number(spawnSync('psql', [s.DB_URL!, '-Atc', sql], { encoding: 'utf8' }).stdout.trim())
-}
-
 const tekster = (k: Chatkontroller) => k.hent().meldinger.map((m) => m.tekst)
 
 const s = await startLokalDatabase()
@@ -110,6 +104,8 @@ const aapne: { navn: string; kontroller: Chatkontroller; ringinger: { antall: nu
 let feilet = false
 try {
   const admin = await loggInn(s, 'qa-admin', adminpassord)
+  // Grupper fra tidligere kjøringer teller ellers med blant de uleste.
+  await arkiverTidligereGrupper(admin, 'Syntetisk ')
   const ada = await loggInn(s, 'qa-chat-ada', passord.ada)
   const bo = await loggInn(s, 'qa-chat-bo', passord.bo)
 
@@ -127,7 +123,7 @@ try {
     [a, b].every((x) => x.kontroller.hent().status === 'klar' && x.kontroller.hent().tilkobling === 'tilkoblet'),
   )
   // Første gang Realtime brukes, starter den lyttingen på databasen litt etter at kanalen er tilkoblet.
-  await innen(20_000, 'Realtime har registrert begge abonnementene', () => abonnementer(s, gruppe) >= 2)
+  await innen(20_000, 'Realtime har registrert begge abonnementene', () => chatabonnementer(s, gruppe) >= 2)
 
   // --- 1. Meldinger i sanntid -------------------------------------------------
   a.kontroller.hent().send('Syntetisk hei fra Ada')

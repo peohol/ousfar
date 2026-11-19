@@ -1,3 +1,4 @@
+import { useArbeidskontekst } from '../../auth/rettigheter'
 import { useFagmiljobytte } from '../konto/useFagmiljobytte'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 
@@ -9,10 +10,14 @@ import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
  */
 export function Fagmiljooverskrift() {
   const { gjeldende, velgbare, kanVelge, erMedlem, bytter, feil, bytt } = useFagmiljobytte()
+  // Til rettighetene er hentet, er fagmiljøet ukjent: da står plassen tom, ikke «OUSFAR» et øyeblikk.
+  const kjent = useArbeidskontekst() !== null
 
   return (
     <div className="forside__overskrift">
-      <h1 className="forside__tittel">{gjeldende?.navn ?? 'OUSFAR'}</h1>
+      <h1 className="forside__tittel" aria-busy={!kjent}>
+        {gjeldende?.navn ?? (kjent ? 'OUSFAR' : '\u00a0')}
+      </h1>
       {kanVelge && (
         <Nedtrekksmeny
           className="forside__fagmiljovalg"

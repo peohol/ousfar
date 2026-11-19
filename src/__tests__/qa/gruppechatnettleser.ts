@@ -20,6 +20,7 @@ import { internAuthAdresse } from '@delt/brukernavn'
 import { PASIENTREGEL } from '@delt/pasientopplysninger'
 import { syntetiskPersonnummer } from '../hjelp/syntetiskPersonnummer'
 import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
+import { arkiverTidligereGrupper, chatabonnementer, lagAvslagsvakt, lukkChatmenyen } from './kontroll'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -127,26 +128,6 @@ async function tilgangenTas(side: Side, hvem: string, endring: () => Promise<unk
   return tid
 }
 
-/**
- * Venter til dørklokken på `side` faktisk lytter: Realtime sier «Subscribed to
- * PostgreSQL» når lytteren på databaseendringene er klar. Etter en kald start
- * tar det noen sekunder, og en melding sendt før det kommer først med neste
- * livstegn. Lytteren må settes før siden åpnes.
- */
-function sanntidKlar(side: Side): Promise<void> {
-  return new Promise((klar, feil) => {
-    const frist = setTimeout(() => feil(new Error('Ikke innen 60 s: Realtime lytter på chatten')), 60_000)
-    side.on('websocket', (ws: Side) =>
-      ws.on('framereceived', ({ payload }: { payload: string | Buffer }) => {
-        if (String(payload).includes('Subscribed to PostgreSQL')) {
-          clearTimeout(frist)
-          klar()
-        }
-      }),
-    )
-  })
-}
-
 // --- Kjøringen -------------------------------------------------------------------
 
 const s = await startLokalDatabase()
@@ -156,9 +137,13 @@ await sikreTestkonto(s, 'qa-chat-ada', passord.ada, ['Ada', 'Testesen'])
 const boId = await sikreTestkonto(s, 'qa-chat-bo', passord.bo, ['Bo', 'Prøvesen'])
 
 const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
+// Avslag som kommer som HTTP 500 (issue #470), som når Bo er fjernet og gruppen hentes.
+const avslag = lagAvslagsvakt()
 const miljo = await apneTestmiljo()
 try {
   const admin = await klient(s, 'qa-admin', adminpassord)
+  // Grupper fra tidligere kjøringer teller ellers med blant de uleste.
+  await arkiverTidligereGrupper(admin, 'Syntetisk ')
   const adaKlient = await klient(s, 'qa-chat-ada', passord.ada)
   const boKlient = await klient(s, 'qa-chat-bo', passord.bo)
   const navn = `Syntetisk chat ${new Date().toISOString().slice(11, 19)}`
@@ -169,15 +154,15 @@ try {
   logg(`gruppen «${navn}» med Ada og Bo`)
 
   const chatadresse = `${miljo.url}/#/grupper/${gruppe}/chat`
-  const ada = await miljo.brukerside('qa-chat-ada', passord.ada)
-  const bo = await miljo.brukerside('qa-chat-bo', passord.bo)
+  const ada = await avslag.lytt(await miljo.brukerside('qa-chat-ada', passord.ada))
+  const bo = await avslag.lytt(await miljo.brukerside('qa-chat-bo', passord.bo))
   const begge = { ada, bo }
   for (const side of [ada, bo]) {
-    const lytter = sanntidKlar(side)
     await side.goto(chatadresse)
     await skrivefelt(side, navn).waitFor({ timeout: 30_000 })
-    await lytter
   }
+  // Dørklokken lytter når Realtime har registrert begge; en melding sendt før det kommer først med neste livstegn.
+  await innen(60_000, 'Realtime lytter på chatten hos begge', async () => chatabonnementer(s, gruppe) >= 2)
 
   await punkt('N8', 'navnene skjermleseren leser', begge, async () => {
     const logg_ = ada.getByRole('log', { name: `Meldinger i ${navn}` })
@@ -280,12 +265,12 @@ try {
 
   // D4b: chatten er ute av bjella; uleste står på chatboblen og i samtalelista.
   await punkt('N10', 'nye meldinger på chatboblen, ikke i bjella', begge, async () => {
-    await sendDirekte(adaKlient, gruppe, 'Syntetisk varseltekst N10')
     await bo.goto(`${miljo.url}/#/grupper`)
     const boble = bo.locator('.chatboble')
     const meny = bo.getByRole('complementary', { name: 'Grupper og samtaler' })
-    await boble.or(meny).first().waitFor({ timeout: 15_000 })
-    if (await meny.isVisible()) await meny.getByRole('button', { name: 'Lukk chatten' }).click()
+    // Menyen lukkes på lista før meldingen sendes: står samtalen åpen i den, er meldingen lest med en gang.
+    await lukkChatmenyen(bo, { tilLista: true })
+    await sendDirekte(adaKlient, gruppe, 'Syntetisk varseltekst N10')
     await innen(15_000, 'uleste på chatboblen', async () => /\d+ ulest/.test((await boble.getAttribute('aria-label')) ?? ''))
     await bo.getByRole('button', { name: /^Varsler/ }).first().click()
     const vindu = bo.getByRole('dialog', { name: 'Varsler' })
@@ -301,7 +286,7 @@ try {
   })
 
   await punkt('N7', 'smal skjerm med berøring', {}, async () => {
-    const mobil = await miljo.brukerside('qa-chat-bo', passord.bo, { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 })
+    const mobil = await avslag.lytt(await miljo.brukerside('qa-chat-bo', passord.bo, { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 }))
     await mobil.goto(chatadresse)
     const felt = skrivefelt(mobil, navn)
     await felt.waitFor({ timeout: 30_000 })
@@ -330,7 +315,7 @@ try {
     // tilgangen; det åpne vinduet får vite det ved livstegnet eller neste henting.
     const levende = await tilgangenTas(ada, 'Ada', () => rpc(admin, 'arkiver_gruppe', { gruppe, arkivert: true }))
     // Systemarkitekten ser historikken, uten skrivefelt.
-    const sa = await miljo.side()
+    const sa = await avslag.lytt(await miljo.side())
     await sa.goto(chatadresse)
     await sa.getByText(/Gruppen er arkivert/).first().waitFor({ timeout: 30_000 })
     krev((await skrivefelt(sa, navn).count()) === 0, 'skrivefeltet er borte for systemarkitekten')
@@ -340,6 +325,7 @@ try {
     if (skjermbilder) await sa.screenshot({ path: join(skjermbilder, 'N4-systemarkitekt.png') })
     return `Adas åpne chat tømt etter ${Math.round(levende / 1000)} s (grense ${TILGANG_TAPT_MS / 1000} s); systemarkitekten leser ${historikk} meldinger`
   })
+  await punkt('X', 'ingen svar med 5xx fra databasen underveis', {}, async () => avslag.rapport())
 } catch (feil) {
   utfall.push({ punkt: '–', hva: 'oppsettet', ok: false, merknad: feil instanceof Error ? feil.message : String(feil) })
 } finally {

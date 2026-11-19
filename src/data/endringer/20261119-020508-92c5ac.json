@@ -1,0 +1,13 @@
+{
+  "id": "20261119-020508-92c5ac",
+  "semver": "patch",
+  "opprettet": "2026-11-19T02:05:08Z",
+  "sammendrag": "Forsiden og chatmenyen er rettet etter en helhetlig kontroll",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["forside", "hele appen"],
+  "punkter": [
+    "Forsiden henter panelene én gang når appen starter, og viser ikke «OUSFAR» et øyeblikk før navnet på fagmiljøet ditt.",
+    "Når du åpner chatten med musen og trykker Escape, slipper chatmenyen fokuset uten at fortolkningen bak går et steg tilbake."
+  ]
+}

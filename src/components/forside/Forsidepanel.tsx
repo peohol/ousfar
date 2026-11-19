@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
-import { useRettigheter } from '../../auth/rettigheter'
+import { useArbeidskontekst } from '../../auth/rettigheter'
 import { ENDRINGSLOGG } from '../../data/endringslogg'
 import { gruppeadresse } from '../../domain/rute'
 import { useFavoritter } from '../../favoritter/Favorittkilde'
@@ -142,7 +142,9 @@ export function Forsidepanel({ modul }: { modul: Forsidemodul }) {
 
 function Databasepanel({ modul }: { modul: Databasemodul }) {
   const meg = useProfil()
-  const fagmiljo = useRettigheter().arbeidsfagmiljo?.id ?? null
+  // Fagmiljøet er kjent når rettighetene er hentet; før det hentes ingenting,
+  // så panelet ikke hentes først uten og så med fagmiljøet.
+  const fagmiljo = useArbeidskontekst()
   const katalog = useAnalyttkatalog()
   const navn = useNavn()
   const nokkel = `${meg.id}:${fagmiljo}:${modul}`
@@ -157,6 +159,7 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
   const siste = useRef(0)
 
   const hent = useCallback(() => {
+    if (fagmiljo === null) return
     const denne = (siste.current += 1)
     setTilstand((t) => (t.nokkel === nokkel ? { ...t, feil: false } : { nokkel, svar: hentet.get(nokkel) ?? null, feil: false }))
     hentPanel(modul).then(
@@ -169,7 +172,7 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
         if (denne === siste.current) setTilstand((t) => ({ ...t, feil: true }))
       },
     )
-  }, [modul, nokkel])
+  }, [modul, nokkel, fagmiljo])
 
   // Hentes når panelet kommer fram, og på nytt når fagmiljøet byttes.
   useEffect(hent, [hent])

@@ -112,6 +112,13 @@ describe('trafikkvakten', () => {
     expect(() => v.nyttForlop()).toThrow(Teststopp)
   })
 
+  it('sier hva som ble kalt når det stopper ved 5xx', () => {
+    const { v } = vakt()
+    v.kall('a')
+    v.svar('a', 500, '/rest/v1/rpc/gruppeoversikt')
+    expect(v.stoppet).toBe('databasen svarte 500 på /rest/v1/rpc/gruppeoversikt etter 0 ms')
+  })
+
   it('stopper når et svar kommer etter grensen, men ikke på grensen', () => {
     const { v, still } = vakt()
     v.kall('a')

@@ -167,6 +167,9 @@ export function Chatmeny({
   /**
    * Fokus til `velger` i menyen når den er tegnet på nytt. Med `bareTapt`
    * bare når fokus ikke lenger står synlig i menyen.
+   *
+   * Fokus appen selv setter i panelet, gjør menyen til et lag også når den ble
+   * åpnet med pekeren: Escape slipper da fokus og rører ikke siden bak (D7).
    */
   const flyttFokus = useCallback((velger: string, bareTapt = false) => {
     requestAnimationFrame(() => {
@@ -174,8 +177,10 @@ export function Chatmeny({
       const iMenyen = !!meny.current?.contains(aktiv) && aktiv?.checkVisibility?.() !== false
       if (bareTapt && iMenyen) return
       const maal = meny.current?.querySelector<HTMLElement>(velger)
-      if (maal && maal.checkVisibility?.() !== false) maal.focus()
-      else if (meny.current?.contains(aktiv)) aktiv?.blur()
+      if (maal && maal.checkVisibility?.() !== false) {
+        maal.focus()
+        if (maal.closest('.chatpanel') && document.activeElement === maal) setFokus(true)
+      } else if (meny.current?.contains(aktiv)) aktiv?.blur()
     })
   }, [])
 

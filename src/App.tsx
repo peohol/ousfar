@@ -1131,7 +1131,7 @@ function Arbeidsflate({
   // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
   // og det samme gjør rettighetene og gruppene.
   return (
-    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter}>
+    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter} arbeidskontekst={arbeidskontekst}>
       <GruppekildeProvider verdi={grupper}>
         <MaleenhetKilde brukerId={profil.id}>
           <ForslagskildeProvider>{app}</ForslagskildeProvider>

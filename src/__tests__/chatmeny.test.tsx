@@ -271,6 +271,31 @@ describe('chatmenyen', () => {
     expect(document.documentElement.dataset.chatmeny).toBe('apen')
   })
 
+  it('åpnet med pekeren: fokuset appen setter i menyen, er et lag, så Escape ikke når siden bak (D7)', async () => {
+    const { lagErApne } = await import('../hooks/lagstakk')
+    // Pekeren gir ikke synlig fokus (`:focus-visible`), bare tastaturet gjør det.
+    const ekte = Element.prototype.matches
+    const peker = vi.spyOn(Element.prototype, 'matches').mockImplementation(function (this: Element, velger: string) {
+      return velger === ':focus-visible' ? false : ekte.call(this, velger)
+    })
+    const siden = vi.fn()
+    const lytt = (e: KeyboardEvent) => void (!e.defaultPrevented && !lagErApne() && siden())
+    window.addEventListener('keydown', lytt)
+    try {
+      vis()
+      await apneMenyen()
+      expect(document.activeElement).toBe(within(meny()).getByRole('button', { name: 'Lukk chatten' }))
+      expect(lagErApne()).toBe(true)
+      fireEvent.keyDown(window, { key: 'Escape' })
+      expect(siden).not.toHaveBeenCalled()
+      expect(meny().contains(document.activeElement)).toBe(false)
+      expect(document.documentElement.dataset.chatmeny).toBe('apen')
+    } finally {
+      window.removeEventListener('keydown', lytt)
+      peker.mockRestore()
+    }
+  })
+
   it('lukkeknappen lukker til boblen, og utkastet står der neste gang samtalen åpnes', async () => {
     vis()
     await apneMenyen()

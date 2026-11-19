@@ -183,22 +183,40 @@ const Kontekst = createContext<Rettigheter>(INGEN_RETTIGHETER)
 /** Tar i bruk `nye` rettigheter en endring alt ga tilbake, eller henter dem på nytt uten. */
 export type OppdaterRettigheter = (nye?: Rettigheter) => void
 const Oppdatering = createContext<OppdaterRettigheter>(() => undefined)
+const Arbeidskontekst = createContext<string | null>(null)
 
-/** Gir rettighetene videre, og `oppdater` for å ta i bruk eller hente nye etter en endring den innloggede selv gjorde. */
+/**
+ * Gir rettighetene videre, og `oppdater` for å ta i bruk eller hente nye etter
+ * en endring den innloggede selv gjorde. `arbeidskontekst` er `null` mens
+ * rettighetene hentes; uten den regnes `verdi` som kjent.
+ */
 export function RettigheterKilde({
   verdi,
   oppdater = () => undefined,
+  arbeidskontekst: kontekst = arbeidskontekst(verdi, true),
   children,
 }: {
   verdi: Rettigheter
   oppdater?: OppdaterRettigheter
+  arbeidskontekst?: string | null
   children: ReactNode
 }) {
   return (
     <Kontekst.Provider value={verdi}>
-      <Oppdatering.Provider value={oppdater}>{children}</Oppdatering.Provider>
+      <Oppdatering.Provider value={oppdater}>
+        <Arbeidskontekst.Provider value={kontekst}>{children}</Arbeidskontekst.Provider>
+      </Oppdatering.Provider>
     </Kontekst.Provider>
   )
+}
+
+/**
+ * Fagmiljøet den innloggede arbeider i, som det hentede følger
+ * ({@link arbeidskontekst}): `null` til rettighetene er hentet, så ingenting
+ * hentes to ganger, først uten og så med fagmiljøet.
+ */
+export function useArbeidskontekst(): string | null {
+  return useContext(Arbeidskontekst)
 }
 
 /** Tar i bruk eller henter nye rettigheter med en gang (`RettigheterKilde`). */
