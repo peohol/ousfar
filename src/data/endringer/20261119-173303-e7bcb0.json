@@ -1,0 +1,14 @@
+{
+  "id": "20261119-173303-e7bcb0",
+  "semver": "patch",
+  "opprettet": "2026-11-19T17:33:03Z",
+  "sammendrag": "Reviderte instrukser for ChatGPT-kontrollen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Instruksene for ChatGPT-prosjektene er revidert, og styringsdokumentene sier nå tydeligere hvordan en feilmerket endring meldes, hvordan en alvorlig faglig bekymring kan tas opp uten å påvirke den uavhengige fagkontrollen, og at teknisk godkjenning, klinisk vurdering, formell godkjenning og aktivering er separate beslutninger."
+  ],
+  "utenVarsel": true
+}

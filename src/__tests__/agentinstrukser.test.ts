@@ -50,7 +50,7 @@ describe('agentinstruksene', () => {
     const blokker = [...les('docs/prosjektinstrukser.md').matchAll(/^(## .*)\n[\s\S]*?```text\n([\s\S]*?)```/gm)].map((b) => [b[1], b[2]])
     expect(blokker).toHaveLength(6)
     for (const [overskrift, tekst] of blokker) {
-      expect(tekst).toMatch(/^LES\n[^\n]*AGENTS\.md/m)
+      expect(tekst).toMatch(/^(?:## )?LES\n+[^\n]*AGENTS\.md/m)
       expect(tekst).not.toContain('CLAUDE.md')
       // Claude laster ikke AGENTS.md selv i prosjekttrådene, så instruksen må kreve at den leses først.
       if (overskrift!.startsWith('## Claude')) expect(tekst).toMatch(/^LES\nFørste handling i hver repooppgave[^\n]*les AGENTS\.md/m)

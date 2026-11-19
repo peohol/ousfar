@@ -236,8 +236,19 @@ informasjonsutveksling.
    annet prosjekt kan bli orientert, men gjør ingen parallell kontroll. Dette er
    en avgrensning i instruksene, ikke en teknisk lesesperre.
 8. **Uten gyldig merking** (ingen, flere, ukjent eller motstridende etikett
-   eller assignee) får PR-en ingen ordinær kontroll og slås ikke sammen før den
-   er rettet.
+   eller assignee, eller rød «Prosjektansvar») får PR-en ingen ordinær kontroll
+   og slås ikke sammen før den er rettet.
+   - **Administrativ kommentar:** viser Issue-et under «Arbeidsoppgave»
+     entydig at oppgaven hører til ChatGPT-prosjektets egen etikett og egen
+     «GitHub-ansvarlig», kan det prosjektet skrive en kort kommentar på PR-en
+     om hva som må rettes i merkingen. Kommentaren begynner med «Tilbakemelding
+     fra ChatGPT», sier at den bare gjelder administrativ avklaring, og
+     inneholder ingen vurdering av kode, faginnhold eller klinikk. Den er ingen
+     ordinær kontroll, og PR-en må kontrolleres fullt etter at den er rettet.
+   - Er tilhørigheten ikke entydig, eller hører PR-en til et annet prosjekt
+     eller en annen systemarkitekt, sier ChatGPT bare kort fra om uklarheten
+     eller hvem som eier den, uten å gjette eller overta arbeidet. Forbudet mot
+     å kontrollere andre eieres PR-er gjelder uendret.
 9. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
    [endringslogg.md](endringslogg.md), uansett prosjekt (unntatt en stille
    designjustering). Føringen er en ny fil som sier om endringen er MAJOR,
@@ -261,6 +272,22 @@ informasjonsutveksling.
   vurderinger av stoffer fra kurateringen.
 - Ingen nye koordinatorer, godkjenningsledd eller automatiske kontrollrunder uten
   at Peder ber om det.
+- **Fire separate beslutninger.** Teknisk PR-godkjenning (ChatGPTs kontroll og
+  sammenslåing), uavhengig klinisk eller faglig vurdering (Kontrolløren i OUSFAR
+  Fag, den kliniske kontrollen i OUSFAR Verktøy), formell klinisk godkjenning
+  (der styringsdokumentene krever Peders ja, for eksakt versjon og avgrensning)
+  og aktivering i appen er hver sin beslutning. Den ene gir ikke den andre: en
+  teknisk sammenslåing aktiverer aldri en klinisk regel som ikke er formelt
+  godkjent, og grønn CI er ingen klinisk vurdering.
+- **Alvorlige faglige bekymringer.** Oppdager ChatGPT eller en annen agent
+  utenfor kurateringen en mulig alvorlig faglig feil i et stoff som er under
+  kuratering eller blindkontroll, skal den ikke undertrykkes, men heller ikke
+  nå Kurator eller Kontrollør. Den tas opp i den ikke-offentlige samtalen med
+  systemarkitekten i eget prosjekt, aldri i GitHub (som er offentlig) og aldri
+  i kurateringstrådene. Er systemarkitekten ikke Peder, bringer
+  systemarkitekten bekymringen videre til Peder som fagansvarlig, utenom
+  GitHub. Kan feilen få vesentlige følger, venter publisering og
+  sammenslåing av det berørte innholdet til Peder har tatt stilling.
 
 ## 8. En ny systemarkitekt
 

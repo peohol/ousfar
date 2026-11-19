@@ -575,10 +575,20 @@ describe('dokumentene sier det samme', () => {
     for (const [, agent, prosjekt, tekst] of blokker) {
       const egen = ETIKETTER.find((e) => PROSJEKTER.get(e) === prosjekt)!
       expect(tekst, `${agent} ${prosjekt}`).toContain('docs/prosjektansvar.md')
-      expect(tekst, `${agent} ${prosjekt}`).toContain(`Etiketten dette prosjektet eier: ${egen}`)
-      for (const annen of ETIKETTER.filter((e) => e !== egen)) expect(tekst, `${agent} ${prosjekt}`).not.toContain(`eier: ${annen}`)
-      for (const del of ['ANSVAR', 'IKKE DITT ANSVAR', 'ARBEIDSDELING', 'LES', 'OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER']) {
-        expect(tekst, `${agent} ${prosjekt}: ${del}`).toMatch(new RegExp(`^${del}$`, 'm'))
+      if (agent === 'Claude') {
+        expect(tekst, `${agent} ${prosjekt}`).toContain(`Etiketten dette prosjektet eier: ${egen}`)
+        for (const annen of ETIKETTER.filter((e) => e !== egen)) expect(tekst, `${agent} ${prosjekt}`).not.toContain(`eier: ${annen}`)
+        for (const del of ['ANSVAR', 'IKKE DITT ANSVAR', 'ARBEIDSDELING', 'LES', 'OPPGAVER OG PR-ER FRA ANDRE PROSJEKTER']) {
+          expect(tekst, `${agent} ${prosjekt}: ${del}`).toMatch(new RegExp(`^${del}$`, 'm'))
+        }
+      } else {
+        // ChatGPT-instruksene (Peder 19.11.2026) bruker Markdown-overskrifter og navngir egen etikett under ANSVAR.
+        const ansvar = tekst!.match(/^## ANSVAR\n([\s\S]*?)^## /m)?.[1] ?? ''
+        expect(ansvar, `${agent} ${prosjekt}`).toContain(`prosjektetiketten \`${egen}\``)
+        for (const annen of ETIKETTER.filter((e) => e !== egen)) expect(tekst, `${agent} ${prosjekt}`).not.toContain(`prosjektetiketten \`${annen}\``)
+        for (const del of ['ANSVAR', 'ARBEIDSDELING', 'LES', 'PR-KONTROLL', 'GRENSER']) {
+          expect(tekst, `${agent} ${prosjekt}: ${del}`).toMatch(new RegExp(`^## ${del}$`, 'm'))
+        }
       }
       // Ingen GitHub-bruker som identitet i selve instruksen (repoet peohol/ousfar er greit).
       for (const login of ARKITEKTER.keys()) expect(tekst, `${agent} ${prosjekt}`).not.toMatch(new RegExp(`${login}(?!/)`))
@@ -600,11 +610,21 @@ describe('dokumentene sier det samme', () => {
     const chatgpt = blokker.filter((b) => b[1] === 'ChatGPT').map((b) => b[3]!)
     expect(chatgpt).toHaveLength(3)
     for (const tekst of chatgpt) {
-      expect(tekst).toMatch(/bare PR-er med etiketten ansvar:\S+ og din GitHub-ansvarlig som eneste assignee/)
-      expect(tekst).toMatch(/uten gyldig prosjektetikett eller ansvarlig/)
-      expect(tekst).toMatch(/Mangler linjen «GitHub-ansvarlig», kontroller og slå ikke sammen noe/)
-      expect(tekst).toMatch(/ikke en parallell kontroll/)
+      expect(tekst).toMatch(/Gjennomfør ordinær kontroll bare for `ansvar:\S+` med angitt GitHub-ansvarlig som eneste assignee/)
+      expect(tekst).toMatch(/ugyldig merking, feil assignee, motstridende Issue eller rød «Prosjektansvar»/)
+      expect(tekst).toMatch(/Mangler linjen «GitHub-ansvarlig», ikke kontroller eller slå sammen PR-er/)
+      expect(tekst).toMatch(/kontrolleres ikke parallelt/)
+      expect(tekst).toMatch(/overført fra en annen systemarkitekt skal kontrolleres fullstendig på gjeldende HEAD/)
+      // Den administrative kommentaren: bare når Issue-et entydig tilhører eget prosjekt og egen systemarkitekt, uten vurdering.
+      expect(tekst).toMatch(/Issue-et entydig tilhører/)
+      expect(tekst).toMatch(/administrativ/)
+      expect(tekst).toMatch(/«Tilbakemelding fra ChatGPT»/)
+      expect(tekst).toMatch(/«Prosjektansvar» er grønne/)
     }
+    // Det samme står i styringsdokumentet og kontrollstandarden.
+    expect(ansvar).toMatch(/\*\*Administrativ kommentar:\*\*/)
+    expect(ansvar).toMatch(/Forbudet mot\s+å kontrollere andre eieres PR-er gjelder uendret/)
+    expect(standard).toMatch(/kort administrativ kommentar/)
   })
 
   it('gir hver systemarkitekt en ferdig personlinje til ChatGPT-prosjektene', () => {
@@ -619,6 +639,12 @@ describe('dokumentene sier det samme', () => {
     expect(fag).toMatch(/Peder er fagansvarlig, uansett hvem som har oppgaven/)
     const chatgptFag = instrukser.match(/^## ChatGPT – OUSFAR Fag\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
     expect(chatgptFag).toMatch(/erstatter ikke/)
+    expect(chatgptFag).toMatch(/ikke-offentlig kanal, uten å påvirke den pågående blindkontrollen/)
+    expect(ansvar).toMatch(/\*\*Alvorlige faglige bekymringer\.\*\*[\s\S]*aldri i GitHub[\s\S]*videre til Peder/)
+    const chatgptVerktoy = instrukser.match(/^## ChatGPT – OUSFAR Verktøy\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
+    expect(chatgptVerktoy).toMatch(/teknisk PR-godkjenning, uavhengig klinisk vurdering, formell klinisk godkjenning og aktivering i appen/)
+    expect(ansvar).toMatch(/\*\*Fire separate beslutninger\.\*\*/)
+    expect(standard).toMatch(/formell klinisk godkjenning, aktivering i appen/)
     const verktoy = instrukser.match(/^## Claude – OUSFAR Verktøy\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
     expect(verktoy).toMatch(/Nye kliniske regler krever eksakt godkjenning/)
   })
