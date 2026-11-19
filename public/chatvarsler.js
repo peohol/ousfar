@@ -7,8 +7,9 @@
  *
  * Varselet er kryptert for denne nettleseren og har bare tittel, tekst,
  * adressen til samtalen og et merke (`supabase/functions/_delt/chatvarsel.ts`).
- * Er appen åpen og i bruk i et vindu, vises det ikke: chatknappen viser da de
- * uleste. Safari krever at hvert varsel vises, så der vises det alltid.
+ * Hver push viser et varsel: abonnementet er laget med `userVisibleOnly`, og
+ * nettlesere som ikke får se et varsel, viser sitt eget eller slutter å levere.
+ * Har mottakeren alt lest meldingen, sendes det ikke noe.
  */
 
 /** Adressene et varsel kan åpne: chatten, med eller uten en samtale. */
@@ -34,16 +35,8 @@ function lesVarsel(data) {
   return { tittel: 'OUSFAR', tekst: 'Ny melding i chatten', sti: '#/chat', merke: 'chat' }
 }
 
-const erSafari = () => /Safari\//.test(navigator.userAgent) && !/Chrom(e|ium)\/|Android/.test(navigator.userAgent)
-
-async function appenErIBruk() {
-  const vinduer = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
-  return vinduer.some((v) => v.focused && v.visibilityState === 'visible')
-}
-
 async function vis(hendelse) {
   const varsel = lesVarsel(hendelse.data)
-  if (!erSafari() && (await appenErIBruk())) return
   await self.registration.showNotification(varsel.tittel, {
     body: varsel.tekst,
     tag: varsel.merke,

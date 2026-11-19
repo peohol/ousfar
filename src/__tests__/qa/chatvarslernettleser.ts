@@ -12,9 +12,9 @@
  * `chatvarsler.test.ts` og `chatvarsler.webpush.test.ts`.
  *
  * Punktene: bryteren står av i Innstillinger → Chat; å slå på lagrer
- * abonnementet; en ny direktemelding legges i køen og gir varsel til Ada; et
- * varsel vises ikke mens appen er i bruk, og vises med tittel og tekst uten
- * meldingen ellers; trykk åpner samtalen i vinduet som er åpent; mobil og
+ * abonnementet; en ny direktemelding legges i køen og gir varsel til Ada; hver
+ * push viser et varsel, også mens appen er i bruk, med tittel og tekst uten
+ * meldingen; trykk åpner samtalen i vinduet som er åpent; mobil og
  * mørkt tema; utlogging sletter abonnementet.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
@@ -199,15 +199,14 @@ try {
       return (await r.getNotifications()).map((n) => ({ tittel: n.title, tekst: n.body, merke: n.tag, sti: (n.data as { sti?: string })?.sti }))
     })) as { tittel: string; tekst: string; merke: string; sti: string }[]
 
-  await punkt('V4 varselet vises ikke mens appen er i bruk', async () => {
+  await punkt('V4 hver push viser et varsel, også mens appen er i bruk (userVisibleOnly)', async () => {
     await ada.bringToFront()
-    await ada.evaluate(() => window.focus())
-    const iBruk = await ada.evaluate(() => document.visibilityState === 'visible' && document.hasFocus())
     await lever()
-    await vent(1500)
-    const vist = await synlige()
-    if (!iBruk) return `nettleseren melder ikke fokus i hodeløs modus; ${vist.length} vist`
-    krev(vist.length === 0, `vist: ${JSON.stringify(vist)}`)
+    await innen(5_000, 'varselet', async () => (await synlige()).length > 0)
+    await arbeider().evaluate(async () => {
+      const r = (globalThis as unknown as { registration: ServiceWorkerRegistration }).registration
+      for (const n of await r.getNotifications()) n.close()
+    })
   })
 
   await punkt('V5 med appen i bakgrunnen vises varselet, med tittel og tekst uten meldingen', async () => {

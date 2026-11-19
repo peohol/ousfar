@@ -120,11 +120,16 @@ export function lagChatvarsler(avh: Enhetsavhengigheter) {
   /** Avslutter abonnementet på enheten, og sletter det på serveren når det er den innloggedes. */
   async function avslutt(slettPaServeren: boolean): Promise<void> {
     const abonnement = await abonnementet()
-    if (abonnement) {
-      if (slettPaServeren) await server.slett(abonnement.endpoint)
-      await abonnement.unsubscribe()
+    try {
+      if (abonnement && slettPaServeren) await server.slett(abonnement.endpoint)
+    } finally {
+      // Også når serveren ikke svarer: enheten skal ikke få flere varsler.
+      try {
+        await abonnement?.unsubscribe()
+      } finally {
+        settEier(null)
+      }
     }
-    settEier(null)
   }
 
   return {

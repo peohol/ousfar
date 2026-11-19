@@ -134,6 +134,16 @@ describe('å slå på og av', () => {
     expect(o.lager.has(EIERNOKKEL)).toBe(false)
   })
 
+  it('avslutter på enheten og glemmer eieren også når serveren ikke svarer', async () => {
+    const a = falskAbonnement('https://fcm.googleapis.com/fcm/send/a')
+    const o = oppsett({ tillatelse: 'granted', abonnement: a, eier: 'bruker-1' })
+    vi.mocked(o.server.slett).mockRejectedValueOnce(new Error('nettverk'))
+    await expect(o.varsler.vedUtlogging()).rejects.toThrow('nettverk')
+    expect(a.unsubscribe).toHaveBeenCalled()
+    expect(o.lager.has(EIERNOKKEL)).toBe(false)
+    expect(await o.varsler.tilstand()).toBe('av')
+  })
+
   it('logger ut på samme måte', async () => {
     const a = falskAbonnement('https://fcm.googleapis.com/fcm/send/a')
     const o = oppsett({ tillatelse: 'granted', abonnement: a, eier: 'bruker-1' })

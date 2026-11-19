@@ -19,12 +19,13 @@ man komme direkte til den aktuelle chatten.»
   Trykk på varselet åpner samtalen (`#/chat/gruppe/<id>` eller
   `#/chat/direkte/<id>`), i et vindu med appen som alt er åpent, ellers i et nytt.
 - Har mottakeren alt lest meldingen (samtalen er åpen), kommer det ikke noe
-  varsel. Er appen åpen og i bruk i et vindu, viser enheten det ikke heller
-  (unntatt Safari, som krever at hvert varsel vises).
+  varsel. Ellers vises det, også når appen er åpen: nettleserne krever at
+  hvert varsel som leveres, vises (`userVisibleOnly`).
 - Et nytt varsel om den samme samtalen erstatter det forrige, så det blir
   ett per samtale.
-- Varslene slutter når man slår av, logger ut, mister tilgangen til gruppen
-  eller OUSFAR, eller en annen konto logger inn i den samme nettleseren.
+- Varslene slutter når man slår av, logger ut (på enheten også når serveren
+  ikke svarer), mister tilgangen til gruppen eller OUSFAR, eller en annen
+  konto logger inn i den samme nettleseren.
 
 ### Nettlesere og enheter
 
@@ -75,7 +76,7 @@ eller avsendernavn krever et nytt ja fra Peder.
    `_edge/chatvarsler.ts`), og sletter abonnementene push-tjenesten svarer
    404 eller 410 på (`chatvarsel_fjern_abonnementer`). Den sender bare til
    kjente push-tjenester (`PUSHTJENESTER` i `_delt/chatvarsel.ts`).
-4. **Visningen.** Tjenestearbeideren viser varselet, og åpner samtalen ved
+4. **Visningen.** Tjenestearbeideren viser hvert varsel, og åpner samtalen ved
    trykk. Mens appen er åpen, sender den adressen til vinduet, som bytter side
    uten å laste på nytt (`Chatvarselvakt`).
 
