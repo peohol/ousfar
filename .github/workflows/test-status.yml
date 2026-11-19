@@ -1,0 +1,15 @@
+# MIDLERTIDIG TEST (lukkes straks, slås aldri sammen): teller en commit-status
+# fra GITHUB_TOKEN som påkrevd «Prosjektansvar» i regelsettet?
+name: Test status
+on:
+  push:
+    branches: [claude/test-prosjektansvar-status]
+permissions:
+  statuses: write
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state=success -f context=Prosjektansvar -f description=Test
