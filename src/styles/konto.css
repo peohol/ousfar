@@ -436,10 +436,6 @@
 }
 
 .brukermeny .nedtrekk__panel {
-  position: absolute;
-  top: calc(100% + var(--rom-1));
-  right: 0;
-  z-index: var(--lag-popover);
   width: min(19rem, calc(100vw - 2 * var(--rom-side)));
 }
 

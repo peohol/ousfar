@@ -324,7 +324,10 @@
 }
 
 /* --- Nedtrekksmenyene ------------------------------------------------------------
-   Kontoen (`Nedtrekksmeny`) henger et panel under knappen. */
+   Alle menyene fra en knapp (`Nedtrekksmeny`): panelet løftes til det øverste
+   laget og plasseres ved knappen i vinduet (`useMenyplassering`), så det
+   aldri klippes. Her står bare utseendet og bredden; hvor det står, og hvor
+   høyt det får bli, regnes ut. */
 .nedtrekk {
   position: relative;
   flex: none;
@@ -380,11 +383,13 @@
 }
 
 .nedtrekk__panel {
-  position: absolute;
-  top: calc(100% + var(--rom-5));
-  right: 0;
+  position: fixed;
+  /* Over toppmenyen og kantmenyene der nettleseren ikke har det øverste laget. */
+  z-index: var(--lag-popover);
   width: min(21.25rem, calc(100vw - 2 * var(--rom-side)));
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   text-align: left;
   background: var(--flate);
   border: var(--kant) solid var(--linje);
@@ -665,16 +670,6 @@
   text-overflow: ellipsis;
 }
 
-/* Nedtrekksmenyer fra dokken åpner seg oppover, rett over knappen, og
-   rulles når de ikke får plass mellom toppmenyen og dokken. */
-:root[data-dokk] .toppmeny__kontekst .nedtrekk__panel {
-  top: auto;
-  bottom: calc(100% + var(--rom-5));
-  max-height: calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
 /* Dokken skal ikke dekke det nederste av innholdet, og versjonen i hjørnet
    legger seg over den. */
 :root[data-dokk] .app:has(.toppmeny__spor > *) {
@@ -695,20 +690,6 @@
 
   .toppmeny__skille {
     display: none;
-  }
-
-  /* Panelene henger under pillen, ved vinduets høyre kant, så en meny fra en
-     knapp lenger inn ikke går ut over venstre kant. Fra dokken åpner de seg
-     oppover, rett over den. */
-  .nedtrekk__panel {
-    position: fixed;
-    top: calc(var(--rom-3) + var(--hoyde-toppmeny) + var(--rom-3));
-    right: var(--rom-3);
-    width: min(21.25rem, calc(100vw - 2 * var(--rom-3)));
-  }
-
-  :root[data-dokk] .toppmeny__kontekst .nedtrekk__panel {
-    bottom: calc(var(--rom-4) + var(--dokkhoyde) + var(--rom-3));
   }
 
   .menyknapp {

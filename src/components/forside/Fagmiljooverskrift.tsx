@@ -23,6 +23,7 @@ export function Fagmiljooverskrift() {
           className="forside__fagmiljovalg"
           etikett="Bytt fagmiljø"
           lag="fagmiljovalg"
+          justering="start"
           knapp={{ ikon: 'chev', etikett: 'Bytt fagmiljø', variant: 'kant', storrelse: 'liten', className: 'forside__fagmiljopil' }}
         >
           {(lukk) => (

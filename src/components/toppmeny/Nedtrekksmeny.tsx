@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import type { Menyjustering } from '../../domain/menyplassering'
 import { useEscapelag } from '../../hooks/lagstakk'
+import { useMenyplassering } from '../../hooks/useMenyplassering'
+import { useOverlag } from '../../hooks/useOverlag'
 import { useSkjuling } from '../../hooks/useSkjuling'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
@@ -21,18 +24,40 @@ export interface NedtrekksmenyProps {
    * steder på en side, som ved hvert stoff i redigeringen av stoffregisteret.
    */
   lat?: boolean
+  /**
+   * Hvilken kant av knappen menyen flukter med: høyre (`slutt`, standard)
+   * eller venstre (`start`), som menyen ved fagmiljønavnet på forsiden.
+   */
+  justering?: Menyjustering
   /** Innholdet. `lukk` lukker menyen og gir fokus tilbake til knappen. */
   children: (lukk: () => void) => ReactNode
 }
 
 /**
- * En nedtrekksmeny fra en rund knapp: kontoen i toppmenyen, og menyer som den ved fagmiljønavnet på forsiden.
+ * En nedtrekksmeny fra en rund knapp: kontoen i toppmenyen, «…»-menyene ved
+ * meldingene i chatten og radene i lister, og menyer som den ved
+ * fagmiljønavnet på forsiden. Alle menyer som åpnes fra en knapp, bygger på
+ * denne (`docs/designsystem.md`, «Menyer og bobler over innholdet»).
+ *
+ * Panelet løftes til det øverste laget mens det står åpent (`useOverlag`) og
+ * plasseres ved knappen i vinduet (`useMenyplassering`), så det alltid vises
+ * helt, uansett hvilken beholder knappen står i.
  *
  * Menyen er et lag over appen, som sidemenyen: `data-lag` holder appens egne
  * taster i ro mens den står åpen. Escape, et klikk utenfor eller fokus som
  * går ut av den lukker den, og fokus går tilbake til knappen.
  */
-export function Nedtrekksmeny({ knapp: knappProps, etikett, lag, className, onApne, ved, lat = false, children }: NedtrekksmenyProps) {
+export function Nedtrekksmeny({
+  knapp: knappProps,
+  etikett,
+  lag,
+  className,
+  onApne,
+  ved,
+  lat = false,
+  justering = 'slutt',
+  children,
+}: NedtrekksmenyProps) {
   const [apen, setApen] = useState(false)
   const rot = useRef<HTMLDivElement>(null)
   const knapp = useRef<HTMLButtonElement>(null)
@@ -44,6 +69,9 @@ export function Nedtrekksmeny({ knapp: knappProps, etikett, lag, className, onAp
     if (tilbake) knapp.current?.focus()
   }, [])
   const lukkMedFokus = useCallback(() => lukk(), [lukk])
+
+  useOverlag(meny, apen)
+  useMenyplassering(knapp, meny, apen, justering)
 
   // Fokus inn i menyen når den åpnes, på det første valget.
   useEffect(() => {

@@ -15,6 +15,7 @@ import {
   type RefObject,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { useOverlag } from '../hooks/useOverlag'
 import {
   maksTipsstorrelse,
   plasserTips,
@@ -189,6 +190,10 @@ export interface Bobleplassering<T extends HTMLElement> {
  * hjørne før den fant plassen sin. Følger ankeret når det rulles eller
  * vinduet endres.
  *
+ * Boblen løftes til det øverste laget (`useOverlag`), så den står over alt
+ * og aldri klippes, også når den står inni en rullende beholder eller et
+ * dialogvindu.
+ *
  * Innholdet ligger i et eget element inni, fordi pilen stikker utenfor
  * boblen: rullingen må skje et sted som ikke klipper den.
  *
@@ -203,6 +208,10 @@ export function useBobleplassering<T extends HTMLElement = HTMLDivElement>(
   const boble = useRef<T>(null)
   const innhold = useRef<T>(null)
   const [maal, setMaal] = useState<Maal | null>(null)
+
+  // I det øverste laget, så boblen står over alt, også et dialogvindu, og
+  // aldri klippes av beholderen ankeret står i. Før målingen under.
+  useOverlag(boble, true)
 
   useLayoutEffect(() => {
     const element = boble.current
