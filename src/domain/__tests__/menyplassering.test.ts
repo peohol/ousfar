@@ -55,4 +55,16 @@ describe('plasserMeny', () => {
     const p = plasserMeny(knapp(100, 100), { bredde: 400, hoyde: 100 }, { bredde: 320, hoyde: 600 })
     expect(p.venstre).toBe(MENYKANT)
   })
+
+  it('blir stående i vinduet når knappen er rullet ut over toppen', () => {
+    const p = plasserMeny(knapp(600, -300), MENY, VINDU)
+    expect(p.topp).toBe(MENYKANT)
+    expect(p.maksHoyde).toBeLessThanOrEqual(VINDU.hoyde - 2 * MENYKANT)
+  })
+
+  it('blir stående i vinduet når knappen er rullet ut under bunnen', () => {
+    const p = plasserMeny(knapp(600, 1000), MENY, VINDU)
+    expect(p.topp + Math.min(MENY.hoyde, p.maksHoyde)).toBe(VINDU.hoyde - MENYKANT)
+    expect(p.topp).toBeGreaterThanOrEqual(MENYKANT)
+  })
 })
