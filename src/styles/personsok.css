@@ -1,0 +1,116 @@
+/* Personsøket (`components/personsok/Personsok.tsx`): feltet, og treffene rett under det. */
+
+.personsok {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.personsok__felt {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-2);
+  padding: 0 var(--rom-4);
+  color: var(--blekk-dempet);
+  background: var(--flate-hevet);
+  border: var(--kant) solid transparent;
+  border-radius: var(--runding-pille);
+}
+
+.personsok__felt:focus-within {
+  border-color: var(--aksent);
+}
+
+.personsok__inndata {
+  flex: 1;
+  min-width: 0;
+  height: var(--hoyde-liten);
+  padding: 0;
+  font: inherit;
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.personsok__treff {
+  display: flex;
+  flex-direction: column;
+  max-height: 18rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.personsok__treff[hidden] {
+  display: none;
+}
+
+.personsok__rad {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+  padding: var(--rom-2) var(--rom-3);
+  cursor: pointer;
+  border-radius: var(--runding-felt);
+}
+
+.personsok__rad[aria-selected='true'] {
+  background: var(--aksent-flate);
+  box-shadow: inset 0 0 0 var(--kant) var(--aksent);
+}
+
+.personsok__rad[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.personsok__ikon {
+  color: var(--blekk-dempet);
+  background: var(--flate-hevet);
+}
+
+.personsok__tekst {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.personsok__navn,
+.personsok__linje {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personsok__navn {
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+}
+
+.personsok__linje {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+/* Det nøyaktige brukernavnet er en reserve, og står dempet under treffene. */
+.personsok__rad[data-art='brukernavn'] .personsok__navn {
+  font-weight: var(--vekt-normal);
+  color: var(--blekk-dempet);
+}
+
+.personsok__melding {
+  margin: 0;
+  padding: 0 var(--rom-2);
+  font-size: var(--tekst-ui);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+.personsok__melding:empty {
+  display: none;
+}

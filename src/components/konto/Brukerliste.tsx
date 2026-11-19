@@ -16,6 +16,7 @@ import {
 } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
+import { medlemskandidater } from '../../personsok/api'
 import { lesFagmiljo, useRettigheter, type Fagmiljoreferanse } from '../../auth/rettigheter'
 import { useClipboard } from '../../hooks/useClipboard'
 import { settStilling, stillingsnavn, useStillinger, type Stillingskatalog } from '../../stillinger/katalog'
@@ -25,6 +26,7 @@ import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
+import { Personsok } from '../personsok/Personsok'
 import { Stillingsvelger } from '../stillinger/Stillingsvelger'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { Avatar } from './Avatar'
@@ -87,7 +89,8 @@ const melding = (aarsak: unknown) => (aarsak instanceof Error ? aarsak.message :
  * igjen. Det som fjerner tilgang, må bekreftes, og bekreftelsen sier hva som
  * skjer, også at kontoen sperres når det er det siste medlemskapet.
  *
- * Eksisterende kontoer legges til med brukernavnet. Nye brukere opprettes
+ * Eksisterende kontoer legges til med personsøket (`Personsok`), eller med
+ * det nøyaktige brukernavnet for en den innloggede ikke ser. Nye brukere opprettes
  * direkte i fagmiljøet som vises, der den innloggede har lov
  * (`useRettigheter().opprettBrukerI`); brukernavnet er det eneste som må
  * oppgis. Systemarkitektene
@@ -134,6 +137,9 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
   const [bekreft, setBekreft] = useState<Bekreftelse | null>(null)
   const [stillingsendring, setStillingsendring] = useState<Stillingsendring | null>(null)
   const stillinger = useStillinger()
+  // Hvem som kan legges til i fagmiljøet som vises (personsøket).
+  const vistId = valgt?.id ?? null
+  const kandidater = useMemo(() => (vistId ? medlemskandidater(vistId) : null), [vistId])
   const lenker = useAvatarlenker(medlemmer)
   const velgerId = useId()
   const gruppeId = useId()
@@ -227,14 +233,23 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
     const her = valgt
     if (!her) return
     void utfor('skjema', her.id, async () => {
-      if (skjema === 'opprett') {
-        setMidlertidig(await opprettBruker(brukernavn, her.id))
-        apneSkjema(null)
-        return null
-      }
+      setMidlertidig(await opprettBruker(brukernavn, her.id))
+      apneSkjema(null)
+      return null
+    })
+  }
+
+  /**
+   * Legger til en eksisterende konto, valgt i personsøket eller oppgitt med
+   * det nøyaktige brukernavnet, i fagmiljøet som vises.
+   */
+  const leggTil = (brukernavn: string, navn = brukernavn) => {
+    const her = valgt
+    if (!her) return
+    void utfor('skjema', her.id, async () => {
       await leggTilMedlem(brukernavn, her.id)
       apneSkjema(null)
-      return `${brukernavn} er medlem av ${her.navn}.`
+      return `${navn} er medlem av ${her.navn}.`
     })
   }
 
@@ -502,7 +517,28 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
         </div>
       )}
 
-      {skjema && (
+      {skjema === 'legg_til' && valgt && (
+        <div className="skjema">
+          <Personsok
+            kilde={kandidater}
+            etikett="Legg til medlem"
+            synligEtikett
+            bevar="brukerliste.legg_til"
+            opptatt={arbeider !== null}
+            autoFocus
+            hjelp={`Søk etter navn eller brukernavn. Brukeren må ha en konto fra før, og blir medlem av ${valgt.navn}.`}
+            onVelg={(person) => leggTil(person.username, visningsnavn(person))}
+            onBrukernavn={(brukernavn) => leggTil(brukernavn)}
+          />
+          <div className="skjema__knapper">
+            <Button variant="subtle" onClick={() => apneSkjema(null)}>
+              Avbryt
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {skjema && skjema !== 'legg_til' && (
         <form className="skjema" onSubmit={sendSkjema}>
           <Felt
             merkelapp={skjema === 'nytt_fagmiljo' ? 'Navn på fagmiljøet' : 'Brukernavn'}
@@ -516,21 +552,13 @@ export function Brukerliste({ apen, onLukk }: { apen: boolean; onLukk: () => voi
             hjelp={
               skjema === 'opprett'
                 ? `Brukeren blir medlem av ${valgt?.navn} og får et midlertidig passord som vises én gang.`
-                : skjema === 'legg_til'
-                  ? `Brukeren må ha en konto fra før, og blir medlem av ${valgt?.navn}.`
-                  : 'Fagmiljøet opprettes lukket, med deg som administrator. Andre enn systemarkitektene kan bli medlemmer først når det er godkjent åpnet.'
+                : 'Fagmiljøet opprettes lukket, med deg som administrator. Andre enn systemarkitektene kan bli medlemmer først når det er godkjent åpnet.'
             }
             onChange={(hendelse) => setTekst(hendelse.target.value)}
           />
           <div className="skjema__knapper">
             <Button type="submit" disabled={arbeider !== null}>
-              {arbeider === 'skjema'
-                ? 'Lagrer …'
-                : skjema === 'opprett'
-                  ? 'Opprett'
-                  : skjema === 'legg_til'
-                    ? 'Legg til'
-                    : 'Opprett fagmiljø'}
+              {arbeider === 'skjema' ? 'Lagrer …' : skjema === 'opprett' ? 'Opprett' : 'Opprett fagmiljø'}
             </Button>
             <Button variant="subtle" onClick={() => apneSkjema(null)}>
               Avbryt

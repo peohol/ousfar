@@ -63,6 +63,8 @@ describe('katalogvaktene', () => {
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
+      // Personsøket: hvem administratoren kan legge til (`medlemskapsmyndighet`).
+      'sok_medlemskandidater(fagmiljo uuid, sok text)',
       'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)',
       // Den innloggede velger selv arbeidsfagmiljøet blant egne aktive medlemskap.
       'velg_arbeidsfagmiljo(fagmiljo uuid)',

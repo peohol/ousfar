@@ -1,10 +1,11 @@
-import { useId, useState, type FormEvent, type ReactNode } from 'react'
+import { useId, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { visningsnavn } from '@delt/profil'
 import { UTEN_AUTOERSTATT } from '../../autoerstatt/felt'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { gruppeadresse } from '../../domain/rute'
 import { opprettGruppe } from '../../grupper/api'
 import { useGrupper } from '../../grupper/kilde'
+import { gruppekandidater } from '../../personsok/api'
 import {
   GRUPPEROLLER,
   ROLLEFORKLARING,
@@ -24,6 +25,7 @@ import { Bildevelgerlast } from '../konto/Bildevelgerlast'
 import { Profilutlos } from '../profilkort/Profilkort'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
+import { Personsok } from '../personsok/Personsok'
 import { Gruppefelter, Tilbakemelding, useHandling, type Handling } from './gruppedeler'
 import { Gruppesymbol, symbollenke, useGruppesymbollenker } from './Gruppesymbol'
 
@@ -143,12 +145,12 @@ export function Medlemsmodal({
   bekreftelse: ReactNode
   onRolle: (medlem: Gruppemedlem, rolle: Grupperolle) => void
   onFjern: (medlem: Gruppemedlem) => void
-  onInviter: (brukernavn: string) => Promise<boolean>
+  onInviter: (brukernavn: string, navn?: string) => Promise<boolean>
 }) {
   const { opptatt } = handling
   return (
     <Modallag apen={apen} tittel="Medlemmer" meta={gruppe.navn} bred onLukk={onLukk} lukketekst="Lukk medlemmene">
-      {gruppe.kan_styre && gruppe.status === 'aktiv' && <Invitasjon opptatt={opptatt} onInviter={onInviter} />}
+      {gruppe.kan_styre && gruppe.status === 'aktiv' && <Invitasjon gruppe={gruppe.id} opptatt={opptatt} onInviter={onInviter} />}
       {bekreftelse}
       <Tilbakemelding feil={handling.feil} kvittering={handling.kvittering} />
       <Medlemsliste gruppe={gruppe} meg={meg} opptatt={opptatt} onRolle={onRolle} onFjern={onFjern} />
@@ -248,42 +250,34 @@ function Medlemsliste({
   )
 }
 
-function Invitasjon({ opptatt, onInviter }: { opptatt: boolean; onInviter: (brukernavn: string) => Promise<boolean> }) {
-  const [brukernavn, setBrukernavn] = useBevart('inviter', '')
-  const feltId = useId()
-  const hjelpId = useId()
+/**
+ * Invitasjonen: personsøket blant dem den som styrer kan invitere
+ * (`sok_gruppekandidater`), eller det nøyaktige brukernavnet for en hen ikke
+ * ser.
+ */
+function Invitasjon({
+  gruppe,
+  opptatt,
+  onInviter,
+}: {
+  gruppe: string
+  opptatt: boolean
+  onInviter: (brukernavn: string, navn?: string) => Promise<boolean>
+}) {
+  const kilde = useMemo(() => gruppekandidater(gruppe), [gruppe])
   return (
-    <form
-      className="gruppemodal__inviter"
-      aria-label="Inviter"
-      onSubmit={(e) => {
-        e.preventDefault()
-        void onInviter(brukernavn.trim()).then((lyktes) => lyktes && setBrukernavn(''))
-      }}
-    >
-      <label className="felt__merkelapp" htmlFor={feltId}>
-        Inviter med brukernavn
-      </label>
-      <div className="gruppemodal__inviterrad">
-        <input
-          id={feltId}
-          className="felt__inndata"
-          value={brukernavn}
-          autoComplete="off"
-          autoCapitalize="none"
-          {...UTEN_AUTOERSTATT}
-          disabled={opptatt}
-          aria-describedby={hjelpId}
-          onChange={(e) => setBrukernavn(e.target.value)}
-        />
-        <Button type="submit" variant="kant" icon={<Ikon navn="plus" />} disabled={opptatt || !brukernavn.trim()}>
-          Inviter
-        </Button>
-      </div>
-      <span id={hjelpId} className="felt__hjelp">
-        Den inviterte ser invitasjonen øverst under Grupper, og er med når den er godtatt.
-      </span>
-    </form>
+    <section className="gruppemodal__inviter" aria-label="Inviter">
+      <Personsok
+        kilde={kilde}
+        etikett="Inviter"
+        synligEtikett
+        bevar="inviter"
+        opptatt={opptatt}
+        hjelp="Søk etter navn eller brukernavn. Den inviterte ser invitasjonen øverst under Grupper, og er med når den er godtatt."
+        onVelg={(person) => onInviter(person.username, visningsnavn(person))}
+        onBrukernavn={(brukernavn) => onInviter(brukernavn)}
+      />
+    </section>
   )
 }
 

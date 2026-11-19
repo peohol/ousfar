@@ -1,0 +1,15 @@
+{
+  "id": "20261119-190148-905903",
+  "semver": "minor",
+  "opprettet": "2026-11-19T19:01:48Z",
+  "sammendrag": "Finn personer med navnet i stedet for brukernavnet",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["grupper", "vinduer", "hele appen"],
+  "punkter": [
+    "Når du inviterer noen til en gruppe, legger til et medlem under «Brukere» eller starter en ny direktemelding, søker du nå etter fornavn, etternavn eller brukernavn, og velger personen fra lista.",
+    "Søket tåler en liten skrivefeil, og ser bort fra store bokstaver og aksenter. Treffene viser bildet, brukernavnet og, der du alt ser dem, stillingen og fagmiljøet.",
+    "Bruk piltastene og Enter for å velge med tastaturet, og Escape for å tømme feltet.",
+    "Den du ikke finner i søket, kan fortsatt legges til eller inviteres med det nøyaktige brukernavnet."
+  ]
+}

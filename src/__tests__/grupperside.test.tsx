@@ -46,6 +46,13 @@ const api = vi.hoisted(() => ({
 vi.mock('../auth/okt', () => ({ useProfil: () => MEG }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../grupper/api', () => api)
+// Personsøket: hvem som kan inviteres, per gruppe.
+const kandidater = vi.hoisted(() => ({
+  sok: vi.fn(async (_sok: string) => [
+    { id: 'kari', username: 'kari.k', first_name: 'Kari', last_name: 'Kandidat', avatar_path: null, stilling: 'Lege', fagmiljo: 'OUS Klinisk farmakologi' },
+  ]),
+}))
+vi.mock('../personsok/api', () => ({ gruppekandidater: () => kandidater.sok }))
 
 const { Grupperside, sokIGrupper } = await import('../components/grupper/Grupperside')
 const { GruppekildeProvider } = await import('../grupper/kilde')
@@ -296,17 +303,30 @@ describe('én gruppe', () => {
     expect(api.avsluttGruppemedlemskap).toHaveBeenCalledWith(ID, 'ola')
   })
 
-  it('trekker tilbake en invitasjon og inviterer med brukernavnet', async () => {
+  it('trekker tilbake en invitasjon, og inviterer med personsøket eller det nøyaktige brukernavnet', async () => {
     vis(ID)
     const modal = await medlemmene()
     await userEvent.click(within(modal).getByRole('button', { name: 'Trekk tilbake invitasjonen til Per X' }))
     expect(api.avsluttGruppemedlemskap).toHaveBeenCalledWith(ID, 'per')
 
-    const inviter = within(modal).getByRole('form', { name: 'Inviter' })
-    await userEvent.type(within(inviter).getByLabelText('Inviter med brukernavn'), 'kari.k')
-    await userEvent.click(within(inviter).getByRole('button', { name: 'Inviter' }))
-    expect(api.inviterTilGruppe).toHaveBeenCalledWith(ID, 'kari.k')
-    await waitFor(() => expect(within(inviter).getByLabelText('Inviter med brukernavn')).toHaveProperty('value', ''))
+    const inviter = within(modal).getByRole('region', { name: 'Inviter' })
+    const felt = within(inviter).getByRole('combobox', { name: 'Inviter' })
+    // Navnet, ikke brukernavnet; treffet viser brukernavnet, stillingen og fagmiljøet.
+    await userEvent.type(felt, 'kari')
+    const treff = await within(inviter).findByRole('option', { name: /Kari Kandidat/ })
+    expect(kandidater.sok).toHaveBeenLastCalledWith('kari')
+    expect(treff.textContent).toMatch('@kari.k · Lege · OUS Klinisk farmakologi')
+    await userEvent.keyboard('{Enter}')
+    expect(api.inviterTilGruppe).toHaveBeenLastCalledWith(ID, 'kari.k')
+    expect(await within(modal).findByText('Kari Kandidat er invitert.')).toBeTruthy()
+    await waitFor(() => expect(felt).toHaveProperty('value', ''))
+
+    // En hen ikke ser, inviteres med det nøyaktige brukernavnet, som før.
+    kandidater.sok.mockResolvedValueOnce([])
+    await userEvent.type(felt, 'Ola.U')
+    await userEvent.click(await within(inviter).findByRole('option', { name: /Bruk brukernavnet «ola\.u»/ }))
+    expect(api.inviterTilGruppe).toHaveBeenLastCalledWith(ID, 'ola.u')
+    expect(await within(modal).findByText('ola.u er invitert.')).toBeTruthy()
   })
 
   it('lar den siste ansvarlige endre og arkivere, men ikke forlate gruppen', async () => {

@@ -420,7 +420,7 @@ export function Chatmeny({
                     valgt={vistSamtale}
                     onNy={() => {
                       setVisning('ny')
-                      flyttFokus('.chatny__sokefelt, .chatny__av button')
+                      flyttFokus('.chatny .personsok__inndata, .chatny__av button')
                     }}
                     onVelg={(samtale) => {
                       velg(samtale)

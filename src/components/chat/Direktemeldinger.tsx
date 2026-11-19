@@ -2,25 +2,21 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { direkteapi } from '../../direktemeldinger/api'
-import { motpartnavn, personnavn, type Direktemottaker, type Direktesamtale } from '../../direktemeldinger/modell'
+import { motpartnavn, type Direktesamtale } from '../../direktemeldinger/modell'
 import type { Direktemeldinger } from '../../direktemeldinger/useDirekte'
 import { useDirektesamtale } from '../../direktemeldinger/useDirektesamtale'
-import { useBevart } from '../../oppdatering/Bevaring'
+import type { Persontreff } from '../../personsok/modell'
 import { Button } from '../Button'
 import { Gruppechat } from '../grupper/Gruppechat'
-import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { Personsok } from '../personsok/Personsok'
 import { Profilutlos } from '../profilkort/Profilkort'
 import { TilSamtalene } from './TilSamtalene'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const feiltekst = (aarsak: unknown) => (aarsak instanceof Error && aarsak.message ? aarsak.message : UVENTET)
-
-/** Søket venter så lenge etter siste tastetrykk, og trenger så mange tegn. */
-export const SOKEPAUSE_MS = 250
-export const SOK_MINST = 2
 
 /** «Direktemelding · @brukernavn» under navnet. */
 const artstekst = (person: Pick<Profilkort, 'username'> | null) => (person?.username ? `Direktemelding · @${person.username}` : 'Direktemelding')
@@ -48,10 +44,10 @@ export function Personbilde({
 }
 
 /**
- * «Ny direktemelding» (skisse 17): søket etter personer i alle fagmiljøer som
- * tillater direktemeldinger. Treffene viser bare navnet og brukernavnet, og
- * om det alt finnes en samtale. Et treff åpner samtalen med personen, den
- * som finnes eller en ny.
+ * «Ny direktemelding» (skisse 17): personsøket (`Personsok`) blant personer i
+ * alle fagmiljøer som tillater direktemeldinger. Treffene viser bare navnet og
+ * brukernavnet, og om det alt finnes en samtale. Et treff åpner samtalen med
+ * personen, den som finnes eller en ny.
  */
 export function NyDirektemelding({
   direkte,
@@ -62,46 +58,26 @@ export function NyDirektemelding({
   onApnet: (samtale: string) => void
   onTilbake: () => void
 }) {
-  const [sok, setSok] = useBevart('chat/nysok', '')
-  // Treffene hører til søkeordet de ble hentet for: et endret søk viser aldri de gamle.
-  const [svar, setSvar] = useState<{ ord: string; treff: Direktemottaker[] } | null>(null)
-  const [apner, setApner] = useState<string | null>(null)
+  const [apner, setApner] = useState(false)
   const [feil, setFeil] = useState<string | null>(null)
   const id = useId()
   const tillatt = direkte.valg.tillat_direktemeldinger
-  const ord = sok.trim()
-  const treff = svar?.ord === ord ? svar.treff : null
-
-  useEffect(() => {
-    setFeil(null)
-    if (!tillatt || ord.length < SOK_MINST) return
-    let gjeldende = true
-    const tidtaker = setTimeout(() => {
-      direkteapi.sokDirektemottakere(ord).then(
-        (treff) => gjeldende && setSvar({ ord, treff }),
-        (aarsak) => gjeldende && setFeil(feiltekst(aarsak)),
-      )
-    }, SOKEPAUSE_MS)
-    return () => {
-      gjeldende = false
-      clearTimeout(tidtaker)
-    }
-  }, [ord, tillatt])
 
   const finnes = new Set(direkte.samtaler.flatMap((s) => (s.motpart ? [s.motpart.id] : [])))
 
-  const apne = async (person: Direktemottaker) => {
-    setApner(person.id)
+  const apne = async (person: Persontreff) => {
+    setApner(true)
     setFeil(null)
     try {
       const samtale = await direkteapi.aapneDirektesamtale(person.id)
-      setSok('')
       direkte.oppdater()
       onApnet(samtale)
+      return true
     } catch (aarsak) {
       setFeil(feiltekst(aarsak))
+      return false
     } finally {
-      setApner(null)
+      setApner(false)
     }
   }
 
@@ -120,60 +96,14 @@ export function NyDirektemelding({
           </Button>
         </div>
       ) : (
-        <>
-          <div className="chatsamtaler__sok">
-            <label htmlFor={`${id}-sok`} className="kun-skjermleser">
-              Søk etter navn eller brukernavn
-            </label>
-            <Ikon navn="search" storrelse="ui" />
-            <input
-              id={`${id}-sok`}
-              type="search"
-              className="chatsamtaler__sokefelt chatny__sokefelt"
-              placeholder="Søk etter navn eller brukernavn"
-              autoComplete="off"
-              value={sok}
-              onChange={(e) => setSok(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape' && sok) {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setSok('')
-                }
-              }}
-            />
-          </div>
-          {ord.length < SOK_MINST ? (
-            <p className="chatsamtaler__tom">Skriv minst to tegn.</p>
-          ) : treff === null ? (
-            !feil && (
-              <p className="chatsamtaler__tom" role="status">
-                Søker …
-              </p>
-            )
-          ) : treff.length === 0 ? (
-            <p className="chatsamtaler__tom" role="status">
-              Ingen treff.
-            </p>
-          ) : (
-            <ul className="chatsamtaler__liste" aria-label="Treff">
-              {treff.map((t) => (
-                <li key={t.id} className="chatrad">
-                  <button type="button" className="chatrad__knapp" disabled={apner !== null} onClick={() => void apne(t)}>
-                    <Personbilde person={{ ...t, avatar_path: null }} aktiv={false} lenke={null} />
-                    <span className="chatrad__tekst">
-                      <span className="chatrad__navn">{personnavn(t)}</span>
-                      <span className="chatrad__art">
-                        @{t.username}
-                        {finnes.has(t.id) && ' · Finnes alt en samtale'}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
+        <Personsok
+          kilde={direkteapi.sokDirektemottakere}
+          etikett="Søk etter navn eller brukernavn"
+          bevar="chat/nysok"
+          opptatt={apner}
+          tillegg={(person) => (finnes.has(person.id) ? 'Finnes alt en samtale' : null)}
+          onVelg={apne}
+        />
       )}
       {feil && (
         <p className="skjemafeil" role="alert">

@@ -1071,6 +1071,49 @@ utenfor den mengden (som den som har forlatt gruppen) får altså ikke mer enn
 før. Funksjonen krever aktivt medlemskap. Testene står i
 `src/__tests__/profilkort.test.ts`.
 
+### Personsøket
+
+Der noen skal velge en annen person – invitere til en gruppe, legge til et
+medlem under «Brukere», starte en direktemelding – søkes det etter fornavnet,
+etternavnet eller brukernavnet i det felles personsøket
+(`src/components/personsok/Personsok.tsx`), i stedet for at brukernavnet må
+skrives nøyaktig (`supabase/migrations/20261119190000_personsok.sql`).
+
+- **Sammenligningen** (`intern.personsoktreff`) ser bort fra store og små
+  bokstaver og aksenter, og leser æ, ø og å som a, o og a, som fagsøket. Hvert
+  ord i søket må stå i navnet eller brukernavnet: som hele delen (4 poeng),
+  først i den (3), inne i den (2), eller nesten likt (1: minst fire tegn, og
+  minst halvparten av bokstavtriplene i ordet står i delen), så en
+  skrivefeil som «Hansen» for «Hanssen» går. Treffene rangeres etter
+  poengene, så etter navnet; høyst 20. Søket krever minst to tegn, leser høyst
+  100 tegn og fem ord, og lagres ikke.
+- **Hvem som kan finnes** avgjøres per formål, med de samme reglene og
+  avslagene som handlingen treffet brukes til:
+  - `sok_gruppekandidater(gruppe, sok)`: den som styrer en aktiv gruppe
+    (`intern.krev_gruppemyndighet`), finner dem som kan være med
+    (`intern.kan_vaere_med_i_gruppe`) og ikke alt er med eller invitert.
+  - `sok_medlemskandidater(fagmiljo, sok)`: den som administrerer
+    fagmiljøet (`intern.medlemskapsavslag`), finner dem som ikke er aktive
+    medlemmer der og som medlemskapet kan gis til etter den samme avgjørelsen
+    (et fagmiljø som ikke er åpnet, bare systemarkitekter; en lokal
+    administrator ingen administratorer eller systemarkitekter).
+  - `sok_direktemottakere(sok)`: som før
+    ([direktemeldinger-personvern.md](direktemeldinger-personvern.md),
+    «Søkbarhet»), med den nye sammenligningen.
+- **Synligheten**: de to første finner bare kontoer den innloggede alt ser
+  profilkortet til (`intern.synlige_profiler`, alle for en systemarkitekt),
+  og gir da også bildet, stillingen og primærfagmiljøet, som profilkortet alt
+  viser. Søket gjør altså ingen ny profil synlig. Den som skal inviteres
+  eller legges til uten å være synlig (for eksempel fra et annet fagmiljø til
+  en gruppe på tvers), oppgis med det nøyaktige brukernavnet: lista tilbyr
+  «Bruk brukernavnet …» når søket er et gyldig brukernavn som ingen av
+  treffene har, med det samme avslaget som før for en som ikke finnes.
+- **Belastningen**: appen spør først når skrivingen har stoppet i et kvart
+  sekund (250 ms) og søket har minst to tegn, og husker svarene til et treff
+  er valgt. Tabellene er små, så søket trenger ingen egen indeks.
+
+Testene står i `src/__tests__/personsok.test.ts`.
+
 ## Systemrettighetene
 
 `supabase/migrations/20261114131500_systemrettigheter.sql` (P2d) gir det som

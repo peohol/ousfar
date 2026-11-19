@@ -32,6 +32,19 @@ vi.mock('../auth/okt', () => ({
   useProfil: () => okt.profil,
 }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+// Personsøket: hvem som kan legges til, per fagmiljø.
+const kandidater = vi.hoisted(() => ({
+  fagmiljo: [] as string[],
+  sok: vi.fn(async (_sok: string) => [
+    { id: '9', username: 'kari.n', first_name: 'Kari', last_name: 'Nordmann', avatar_path: null, stilling: null, fagmiljo: 'OUS Rettstoksikologi' },
+  ]),
+}))
+vi.mock('../personsok/api', () => ({
+  medlemskandidater: (fagmiljo: string) => {
+    kandidater.fagmiljo.push(fagmiljo)
+    return kandidater.sok
+  },
+}))
 vi.mock('../auth/api', () => ({
   hentMedlemsoversikt: vi.fn(async (fagmiljo: string) => okt.medlemmer[fagmiljo] ?? []),
   avsluttMedlemskap: vi.fn(async () => ({ sperret: true })),
@@ -487,14 +500,34 @@ describe('brukerlista', () => {
     expect(api.giMedlemskap).toHaveBeenCalledWith('2', 'kf')
   })
 
-  it('legger til en eksisterende bruker med brukernavnet', async () => {
+  it('legger til en eksisterende bruker med personsøket', async () => {
     const api = await import('../auth/api')
+    vi.mocked(api.leggTilMedlem).mockClear()
     const { lag } = await brukerlista(MEG, { kf: [medlem(MEG)] })
     await userEvent.click(within(lag).getByRole('button', { name: 'Legg til medlem' }))
-    await userEvent.type(within(lag).getByLabelText('Brukernavn'), 'Kari.N')
-    await userEvent.click(within(lag).getByRole('button', { name: 'Legg til' }))
+    // Søket gjelder fagmiljøet som vises, og feltet har fokus.
+    const felt = within(lag).getByRole('combobox', { name: 'Legg til medlem' })
+    expect(document.activeElement).toBe(felt)
+    await userEvent.type(felt, 'nordman')
+    // Navnet står med treffet merket; raden finnes på brukernavnet.
+    await userEvent.click(await within(lag).findByRole('option', { name: /@kari\.n/ }))
+    expect(kandidater.fagmiljo.at(-1)).toBe('kf')
+    expect(kandidater.sok).toHaveBeenLastCalledWith('nordman')
     expect(api.leggTilMedlem).toHaveBeenCalledWith('kari.n', 'kf')
-    expect((await within(lag).findByRole('status')).textContent).toBe('kari.n er medlem av OUS Klinisk farmakologi.')
+    expect(await within(lag).findByText('Kari Nordmann er medlem av OUS Klinisk farmakologi.')).toBeTruthy()
+    expect(within(lag).queryByRole('combobox', { name: 'Legg til medlem' })).toBeNull()
+  })
+
+  it('legger til en bruker den innloggede ikke ser, med det nøyaktige brukernavnet', async () => {
+    const api = await import('../auth/api')
+    vi.mocked(api.leggTilMedlem).mockClear()
+    kandidater.sok.mockResolvedValueOnce([])
+    const { lag } = await brukerlista(MEG, { kf: [medlem(MEG)] })
+    await userEvent.click(within(lag).getByRole('button', { name: 'Legg til medlem' }))
+    await userEvent.type(within(lag).getByRole('combobox', { name: 'Legg til medlem' }), 'Ola.U')
+    await userEvent.click(await within(lag).findByRole('option', { name: /Bruk brukernavnet «ola\.u»/ }))
+    expect(api.leggTilMedlem).toHaveBeenCalledWith('ola.u', 'kf')
+    expect(await within(lag).findByText('ola.u er medlem av OUS Klinisk farmakologi.')).toBeTruthy()
   })
 
   it('lar en systemarkitekt velge fagmiljø, og sier fra når det ikke er åpnet for medlemmer', async () => {
