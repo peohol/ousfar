@@ -266,22 +266,27 @@ export function Chatmeny({
   )
 
   // Chatknappen veksler; en lenke eller «Åpne chat» på gruppesiden kan be om en bestemt samtale.
-  const naa = useRef({ vist, mobilApen, apne, velg, helside })
-  naa.current = { vist, mobilApen, apne, velg, helside }
+  const naa = useRef({ vist, mobilApen, apne, velg, helside, direkte })
+  naa.current = { vist, mobilApen, apne, velg, helside, direkte }
   // Først når chatten er slått på: en samtale som er bedt om før det, venter.
   useEffect(() => {
     if (!aktivert) return
     return lyttEtterChatbeskjed((beskjed) => {
-      const { mobilApen: mobil, apne: apneNa, velg: velgNa, helside: paHelside } = naa.current
+      const { mobilApen: mobil, apne: apneNa, velg: velgNa, helside: paHelside, direkte: direkteNa } = naa.current
       if ('veksle' in beskjed) {
         if (mobil) setMobilApen(false)
         else apneNa()
         return
       }
-      velgNa(beskjed.gruppe ? { type: 'gruppe', id: beskjed.gruppe } : null)
+      if ('direkte' in beskjed) {
+        // En ny samtale står ikke i lista ennå.
+        direkteNa.oppdater()
+        setVisning('liste')
+        velgNa({ type: 'direkte', id: beskjed.direkte })
+      } else velgNa(beskjed.gruppe ? { type: 'gruppe', id: beskjed.gruppe } : null)
       if (!paHelside) apneNa()
     })
-  }, [aktivert, setMobilApen])
+  }, [aktivert, setMobilApen, setVisning])
 
   // Fokus gjør menyen til et lag når det står i et felt eller kom dit med tastaturet.
   const inn = (event: FocusEvent<HTMLElement>) => setFokus(holderApen(event.target))

@@ -4,6 +4,7 @@ import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
+import { Profilutlos } from '../profilkort/Profilkort'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { erBeroring, heleTidspunktet, kanSendes, klokkeslett, slettetekster, slettettekst, tegnteller } from './gruppechatvisning'
@@ -102,7 +103,9 @@ export function Gruppechatmelding({
       {!sammen && (
         <span className="chatmelding__bilde">
           {melding.forfatter ? (
-            <Avatar profil={melding.forfatter} lenke={bildelenke} storrelse="liten" />
+            <Profilutlos person={melding.forfatter} lenke={bildelenke} variant="peker">
+              <Avatar profil={melding.forfatter} lenke={bildelenke} storrelse="liten" />
+            </Profilutlos>
           ) : (
             <span className="avatar avatar--liten" aria-hidden="true" />
           )}
@@ -117,7 +120,11 @@ export function Gruppechatmelding({
         ) : (
           <p className="chatmelding__hode">
             {/* Egne meldinger står til høyre uten navnet (Peder 19.11.2026); skjermlesere får «Du». */}
-            <span className={melding.egen ? 'kun-skjermleser' : 'chatmelding__navn'}>{hvem}</span>
+            <span className={melding.egen ? 'kun-skjermleser' : 'chatmelding__navn'}>
+              <Profilutlos person={melding.forfatter} lenke={bildelenke}>
+                {hvem}
+              </Profilutlos>
+            </span>
             <Klokke iso={melding.skrevet_kl} />
           </p>
         )}

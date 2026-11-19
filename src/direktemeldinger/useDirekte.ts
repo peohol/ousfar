@@ -14,9 +14,9 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { IngenTilgang } from '../gruppechat/kall'
-import { lagDeltTilstand } from '../hooks/deltTilstand'
 import { useOppfriskVedRinging } from '../gruppechat/samtaler'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
+import { glemProfilkortene } from '../profilkort/api'
 import { abonnerPaDirektesamtale, direkteapi } from './api'
 import type { Direkteapi } from './kall'
 import { useDirektesamtale } from './useDirektesamtale'
@@ -72,6 +72,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
       const valg = await direkteapi.settChatvalg(endring)
       sett({ ...verdi, valg })
       // Om det kan skrives i samtalene, følger bryteren: lista og de åpne samtalene med en gang.
+      glemProfilkortene()
       sjekk()
       useDirektesamtale.oppfriskAlle()
     },
@@ -80,6 +81,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
 
   /** Noe den innloggede har endret (som en blokkering): lista og de åpne samtalene hentes på nytt. */
   const oppdater = useCallback(() => {
+    glemProfilkortene()
     sjekk()
     useDirektesamtale.oppfriskAlle()
   }, [sjekk])
@@ -87,12 +89,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
   return useMemo(() => ({ ...verdi, kjent, aktive, settValg, oppdater }), [verdi, kjent, aktive, settValg, oppdater])
 }
 
-/**
- * Direktemeldingene slik chatmenyen har dem, for resten av appen (som fanen
- * Chat i Innstillinger): `null` når de ikke er slått på eller menyen ikke står.
- * Chatmenyen eier dem, så valgene og lista er de samme overalt, uten egne kall.
- */
-export const direktemeldingene = lagDeltTilstand<Direktemeldinger | null>(null)
+export { direktemeldingene } from './direktemeldingene'
 
 const INGEN_AKTIVE: ReadonlySet<string> = new Set()
 

@@ -21,6 +21,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Ikonknapp } from '../Ikonknapp'
 import { Avatar } from '../konto/Avatar'
 import { Bildevelgerlast } from '../konto/Bildevelgerlast'
+import { Profilutlos } from '../profilkort/Profilkort'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
 import { Gruppefelter, Tilbakemelding, useHandling, type Handling } from './gruppedeler'
@@ -174,12 +175,17 @@ function Medlemsliste({
   const rad = (medlem: Gruppemedlem) => {
     const navn = visningsnavn(medlem)
     const egen = medlem.id === meg
+    const lenke = medlem.avatar_path ? (lenker.get(medlem.avatar_path) ?? null) : null
     return (
       <li key={medlem.id} className="brukerrad">
-        <Avatar profil={medlem} lenke={medlem.avatar_path ? (lenker.get(medlem.avatar_path) ?? null) : null} />
+        <Profilutlos person={medlem} lenke={lenke} variant="peker">
+          <Avatar profil={medlem} lenke={lenke} />
+        </Profilutlos>
         <span className="brukerrad__navn">
           <span className="brukerrad__fullt">
-            {navn}
+            <Profilutlos person={medlem} lenke={lenke}>
+              {navn}
+            </Profilutlos>
             {egen && <span className="brukerrad__deg"> (deg)</span>}
           </span>
           <span className="brukerrad__brukernavn">{medlem.username}</span>

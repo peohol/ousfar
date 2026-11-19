@@ -3,6 +3,7 @@ import { visningsnavn, type Profil, type Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useProfil } from '../../auth/okt'
 import { Avatar, type Avatarstorrelse } from '../konto/Avatar'
+import { Profilutlos } from '../profilkort/Profilkort'
 
 /**
  * Det trådene trenger — i idévinduet og i diskusjonene: hvem som er logget
@@ -50,13 +51,41 @@ export function useForfatter(id: string | null): Profilkort | null {
   return profiler.get(id) ?? (id === meg.id ? meg : null)
 }
 
-/** Profilbildet til en forfatter, eller en tom sirkel for en slettet kommentar. */
-export function Forfatterbilde({ id, storrelse }: { id: string | null; storrelse: Avatarstorrelse }) {
+/** Lenken til profilbildet til en forfatter, når hen har et. */
+function useForfatterlenke(profil: Profilkort | null): string | null {
   const { lenker } = useForfatterkontekst()
+  return profil?.avatar_path ? (lenker.get(profil.avatar_path) ?? null) : null
+}
+
+/**
+ * Profilbildet til en forfatter, eller en tom sirkel for en slettet kommentar.
+ * Med `kort` står profilkortet bak bildet (`Profilutlos`); det brukes der
+ * bildet ikke står inni en annen knapp, og navnet står ved siden av med
+ * {@link Forfatternavn}.
+ */
+export function Forfatterbilde({ id, storrelse, kort = false }: { id: string | null; storrelse: Avatarstorrelse; kort?: boolean }) {
   const profil = useForfatter(id)
+  const lenke = useForfatterlenke(profil)
   if (!profil) return <span className={`avatar avatar--${storrelse} avatar--tom`} aria-hidden="true" />
-  const lenke = profil.avatar_path ? (lenker.get(profil.avatar_path) ?? null) : null
-  return <Avatar profil={profil} lenke={lenke} storrelse={storrelse} />
+  const bilde = <Avatar profil={profil} lenke={lenke} storrelse={storrelse} />
+  return kort ? (
+    <Profilutlos person={profil} lenke={lenke} variant="peker">
+      {bilde}
+    </Profilutlos>
+  ) : (
+    bilde
+  )
+}
+
+/** Navnet til en forfatter, med profilkortet bak; uten profil «Ukjent bruker». */
+export function Forfatternavn({ id, className }: { id: string | null; className?: string }) {
+  const profil = useForfatter(id)
+  const lenke = useForfatterlenke(profil)
+  return (
+    <Profilutlos person={profil} lenke={lenke} className={className}>
+      {profil ? visningsnavn(profil) : 'Ukjent bruker'}
+    </Profilutlos>
+  )
 }
 
 export function useForfatternavn(id: string | null): string {

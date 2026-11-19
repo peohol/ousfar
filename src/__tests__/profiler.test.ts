@@ -15,8 +15,12 @@ import {
   avsluttMedlemskap,
   byggPersongalleri,
   opprettMedlem,
+  aktiveI,
+  definisjon as def,
+  felles,
+  harTilgang,
   PERSONER,
-  type Fagmiljo,
+  serProfilkortet as skalSe,
   type Person,
   type Persongalleri,
 } from './hjelp/persongalleri'
@@ -35,29 +39,6 @@ afterAll(async () => {
 })
 
 const PERSONLISTE = Object.keys(PERSONER) as Person[]
-
-type Definisjon = (typeof PERSONER)[Person] & {
-  systemarkitekt?: boolean
-  ogsaAktivI?: readonly Fagmiljo[]
-  lokalAdminI?: readonly Fagmiljo[]
-}
-const def = (p: Person) => PERSONER[p] as Definisjon
-
-/** De aktive medlemskapene etter definisjonen i galleriet. */
-const aktiveI = (p: Person): Fagmiljo[] => [...(def(p).primaer ? [def(p).primaer!] : []), ...(def(p).ogsaAktivI ?? [])]
-const harTilgang = (p: Person) => aktiveI(p).length > 0 || def(p).systemarkitekt === true
-const felles = (a: readonly Fagmiljo[], b: readonly Fagmiljo[]) => a.some((f) => b.includes(f))
-
-/** Regelen i docs/fagmiljoer.md, uten samhandlingsdata: hvem `seer` ser profilkortet til. */
-function skalSe(seer: Person, bruker: Person): boolean {
-  if (!harTilgang(seer)) return false
-  return (
-    seer === bruker ||
-    def(seer).systemarkitekt === true ||
-    felles(aktiveI(seer), aktiveI(bruker)) ||
-    felles(def(seer).lokalAdminI ?? [], aktiveI(bruker))
-  )
-}
 
 /** Kjører spørringen som personen i en transaksjon som alltid rulles tilbake. */
 async function somPerson<T>(person: Person | { id: string }, arbeid: (tx: Transaction) => Promise<T>): Promise<T> {

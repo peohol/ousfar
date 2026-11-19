@@ -31,7 +31,7 @@ import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Button } from '../Button'
 import { Ikonknapp } from '../Ikonknapp'
 import { Ikon } from '../ikon/Ikon'
-import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
+import { Forfatterbilde, Forfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Kommentartraad, type Fremheving, type Kommentarkanal } from '../traad/Kommentartraad'
 import { Langtekst } from '../traad/Langtekst'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
@@ -133,7 +133,6 @@ export function Diskusjonsside({
     if (lastet) overskrift.current?.focus({ preventScroll: true })
   }, [lastet])
 
-  const forfatter = useForfatternavn(traad?.forfatter_id ?? null)
   const moderator = traad?.kan_moderere === true
 
   const kanal = useMemo<Kommentarkanal>(
@@ -241,8 +240,8 @@ export function Diskusjonsside({
     <>
       {tittel}
       <p className="forfatterlinje">
-        <Forfatterbilde id={traad.forfatter_id} storrelse="liten" />
-        <span className="forfatterlinje__navn">{forfatter}</span>
+        <Forfatterbilde id={traad.forfatter_id} storrelse="liten" kort />
+        <Forfatternavn id={traad.forfatter_id} className="forfatterlinje__navn" />
         <span aria-hidden="true">·</span>
         <Tidspunkt iso={traad.opprettet_kl} endret={traad.endret_kl} />
       </p>

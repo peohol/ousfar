@@ -1,0 +1,98 @@
+/* --- Profilkortet ---------------------------------------------------------
+   Se `src/components/profilkort/Profilkort.tsx`. Bildet eller navnet til en
+   annen bruker er en knapp som ser ut som før; kortet er en lys boble som
+   lenkeforhåndsvisningen, i det øverste laget. */
+
+.profilutlos {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.profilutlos__knapp {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+  /* Et trykk på mobil skal ikke farge navnet; kortet sier selv at det er åpnet. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Et navn som åpner noe, får streken under når pekeren er over det. */
+.profilutlos__knapp:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.profilboble {
+  --tips-flate: var(--flate);
+  --tips-blekk: var(--blekk);
+  line-height: normal;
+  white-space: normal;
+  text-align: start;
+}
+
+.profilboble .tipsboble__innhold {
+  display: block;
+  max-width: min(22rem, var(--tips-maks-bredde, calc(100vw - 2.5rem)));
+  padding: var(--rom-4) var(--rom-5);
+  border: 1px solid var(--linje);
+}
+
+/* Bare spenn, som blokker: kortet kan stå inne i et avsnitt. */
+.profilkort {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--rom-2) var(--rom-4);
+  min-width: 14rem;
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-liten);
+  color: var(--blekk);
+}
+
+.profilkort__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  min-width: 0;
+}
+
+.profilkort__navn {
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-fet);
+  overflow-wrap: anywhere;
+}
+
+.profilkort__stilling {
+  color: var(--blekk);
+}
+
+.profilkort__fagmiljo,
+.profilkort__venter {
+  color: var(--blekk-dempet);
+}
+
+.profilkort__chat {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--rom-2);
+  padding-top: var(--rom-2);
+  border-top: 1px solid var(--linje);
+}
+
+.profilkort__sporsmal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--rom-2);
+}

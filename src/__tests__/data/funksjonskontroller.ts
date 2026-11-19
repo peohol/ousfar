@@ -249,6 +249,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'mine_rettigheter()': 'eier',
   'mitt_arbeidsfagmiljo()': 'eier',
   'opprett_gruppeoppgave(gruppe uuid, tittel text, beskrivelse jsonb, ansvarlig uuid, prioritet text)': 'rekkevidde',
+  // Profilkortet ved hovering: bare for profiler den innloggede ser (intern.synlige_profiler), ellers null.
+  'profilkortdetaljer(bruker uuid)': 'rekkevidde',
   'ressursens_redaktoransvar(ressurs uuid)': 'rekkevidde',
   'sett_gruppeoppgavestatus(oppgave uuid, status text)': 'rekkevidde',
   'tilbakekall_redaktoransvar(ansvar uuid)': 'redaktormyndighet',

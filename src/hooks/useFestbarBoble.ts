@@ -15,12 +15,16 @@ export const LUKKETID = 150
  * rekkefølge.
  *
  * `feste` spres på elementet rundt knappen og boblen, `knapp` på knappen.
+ * `visesEtter` er hvor lenge pekeren må hvile før boblen kommer, der den
+ * ellers ville blinket forbi når pekeren bare passerer (som profilkortene i
+ * en chat).
  */
-export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>() {
+export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>({ visesEtter = 0 }: { visesEtter?: number } = {}) {
   const feste = useRef<F>(null)
   const knapp = useRef<HTMLButtonElement>(null)
   const [peker, setPeker] = useState(false)
   const [festet, setFestet] = useState(false)
+  /** Tidtakeren for å lukke etter at pekeren har gått, eller åpne etter at den har hvilt. */
   const lukking = useRef<ReturnType<typeof setTimeout>>()
   const apen = peker || festet
 
@@ -46,6 +50,7 @@ export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>() {
 
   return {
     apen,
+    lukk,
     feste: {
       ref: feste,
       // Berøring åpner med trykket, ikke med «pekeren kom»: ellers ville
@@ -53,7 +58,8 @@ export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>() {
       onPointerEnter: (event: PointerEvent) => {
         if (event.pointerType === 'touch') return
         avbrytLukking()
-        setPeker(true)
+        if (visesEtter > 0 && !apen) lukking.current = setTimeout(() => setPeker(true), visesEtter)
+        else setPeker(true)
       },
       onPointerLeave: (event: PointerEvent) => {
         if (event.pointerType === 'touch') return
@@ -67,6 +73,8 @@ export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>() {
       },
       onKeyDown: (event: KeyboardEvent) => {
         if (event.key !== 'Escape' || !apen) return
+        // Bare boblen lukkes, ikke dialogvinduet den står i (lagstakken ser bort fra en håndtert Escape).
+        event.preventDefault()
         event.stopPropagation()
         lukk()
         knapp.current?.focus()

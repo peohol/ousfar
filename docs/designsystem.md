@@ -319,6 +319,34 @@ smalt panel, et dialogvindu), og det står aldri delvis utenfor vinduet.
 - Stilarket gir bare utseendet og bredden (`.brukermeny .nedtrekk__panel`
   osv.), aldri `top`, `right` eller `z-index` for panelet.
 
+### Profilkortet
+
+Profilbildet og navnet til en annen bruker har et profilkort bak seg overalt
+der de står utenfor en annen knapp: i chattene, diskusjonene og idéene,
+medlemslista og medlemslinjen i gruppene og blokkeringslista. Unntakene er
+brukerlista i administrasjonen, kontomenyen (en selv) og rader som selv er en
+knapp (samtalelista i chatten, idé- og oppgavekortene, endringsloggen); der
+åpner raden noe annet.
+
+- Kortet viser bildet litt større (`avatar--kort`), hele navnet, stillingen
+  når personen har en, fagmiljøene (primærfagmiljøet først) og en chatknapp
+  bare når det kan sendes direktemeldinger til personen. Chatknappen åpner
+  samtalen som finnes, eller en ny; har man selv slått av direktemeldingene,
+  spør kortet før det slår dem på.
+- Bygg alltid på `Profilutlos` (`src/components/profilkort/Profilkort.tsx`).
+  Navnet er en knapp i tabulatorrekkefølgen; bildet ved siden av er den
+  samme knappen utenfor den (`variant="peker"`), så hver person står én gang
+  for tastaturet. For en selv og en slettet konto står bildet og navnet som
+  før. I trådene gir `Forfatterbilde kort` og `Forfatternavn` det samme.
+- Kortet kommer når pekeren har hvilt i 0,4 sekund, og ved klikk, trykk,
+  Enter og mellomrom, som fester det (`useFestbarBoble`). Det er en boble
+  (`useBobleplassering`) i det øverste laget, med samme lyse flate som
+  lenkeforhåndsvisningen.
+- Fagmiljøene, stillingen og chatknappen hentes med
+  `public.profilkortdetaljer` og huskes et minutt
+  (`src/profilkort/api.ts`); tilgangen står i `docs/fagmiljoer.md`,
+  «Profilkortet».
+
 ## Toppmenyen
 
 `src/components/toppmeny/Toppmeny.tsx` er den ene faste menyen øverst. Den er

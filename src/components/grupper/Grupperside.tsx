@@ -14,6 +14,7 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Avatar } from '../konto/Avatar'
+import { Profilutlos } from '../profilkort/Profilkort'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { Merke } from '../Merke'
@@ -462,9 +463,14 @@ function Medlemslinje({ gruppe, onVis }: { gruppe: Gruppeoversikt; onVis: () => 
     <span className="medlemslinje">
       {forste.length > 0 && (
         <span className="medlemslinje__bilder" aria-hidden="true">
-          {forste.map((m) => (
-            <Avatar key={m.id} profil={m} storrelse="mini" lenke={m.avatar_path ? (lenker.get(m.avatar_path) ?? null) : null} />
-          ))}
+          {forste.map((m) => {
+            const lenke = m.avatar_path ? (lenker.get(m.avatar_path) ?? null) : null
+            return (
+              <Profilutlos key={m.id} person={m} lenke={lenke} variant="peker">
+                <Avatar profil={m} storrelse="mini" lenke={lenke} />
+              </Profilutlos>
+            )
+          })}
         </span>
       )}
       <button type="button" className="medlemslinje__knapp" onClick={onVis}>

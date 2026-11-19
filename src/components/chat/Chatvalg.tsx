@@ -7,6 +7,7 @@ import { Bryter } from '../Bryter'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
+import { Profilutlos } from '../profilkort/Profilkort'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
 const feiltekst = (aarsak: unknown) => (aarsak instanceof Error && aarsak.message ? aarsak.message : UVENTET)
@@ -145,9 +146,13 @@ function Blokkerte({ onEndret }: { onEndret?: () => void }) {
           <ul className="chatvalg__personer">
             {blokkerte.map((p) => (
               <li key={p.id} className="chatvalg__person">
-                <Avatar profil={p} lenke={p.avatar_path ? (lenker.get(p.avatar_path) ?? null) : null} storrelse="liten" />
+                <Profilutlos person={p} lenke={p.avatar_path ? (lenker.get(p.avatar_path) ?? null) : null} variant="peker">
+                  <Avatar profil={p} lenke={p.avatar_path ? (lenker.get(p.avatar_path) ?? null) : null} storrelse="liten" />
+                </Profilutlos>
                 <span className="chatrad__tekst">
-                  <span className="chatrad__navn">{personnavn(p)}</span>
+                  <Profilutlos person={p} lenke={p.avatar_path ? (lenker.get(p.avatar_path) ?? null) : null} className="chatrad__navn">
+                    {personnavn(p)}
+                  </Profilutlos>
                   <span className="chatrad__art">@{p.username}</span>
                 </span>
                 <Button variant="kant" disabled={opphever !== null} onClick={() => void opphev(p)}>

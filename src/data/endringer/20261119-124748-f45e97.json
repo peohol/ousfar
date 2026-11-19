@@ -1,0 +1,14 @@
+{
+  "id": "20261119-124748-f45e97",
+  "semver": "minor",
+  "opprettet": "2026-11-19T12:47:48Z",
+  "sammendrag": "Profilkort når du holder pekeren over en annen bruker",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Hold pekeren over profilbildet eller navnet til en annen bruker i chattene, diskusjonene, idéene og gruppene, så kommer et kort med bildet, hele navnet, stillingen og fagmiljøet.",
+    "Har personen slått på direktemeldinger, står det en chatknapp på kortet som åpner samtalen dere har, eller starter en ny.",
+    "På mobil og med tastaturet åpnes kortet med et trykk på navnet."
+  ]
+}

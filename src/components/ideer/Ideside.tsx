@@ -18,7 +18,7 @@ import { UnderOverskrift } from '../Overskriftsniva'
 import { Riktekst } from '../stoffside/Riktekst'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
-import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
+import { Forfatterbilde, Forfatternavn, useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Gruppeoppgavestatusmerke, Kategorimerke } from './Merker'
 import { Kommentartraad, type Fremheving, type Kommentarkanal } from '../traad/Kommentartraad'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
@@ -125,7 +125,6 @@ export function Ideside({
     if (lastet && !innebygd) tittel.current?.focus({ preventScroll: true })
   }, [lastet, innebygd])
 
-  const forfatter = useForfatternavn(traad?.forfatter_id ?? null)
 
   /** Kommentarene under idéen. Den som modererer idéen, kan slette alle (D8, og moderatorene i gruppen). */
   const moderererer = traad?.kan_moderere ?? false
@@ -210,8 +209,8 @@ export function Ideside({
           {traad.tittel}
         </Overskrift>
         <p className="forfatterlinje">
-          <Forfatterbilde id={traad.forfatter_id} storrelse="liten" />
-          <span className="forfatterlinje__navn">{forfatter}</span>
+          <Forfatterbilde id={traad.forfatter_id} storrelse="liten" kort />
+          <Forfatternavn id={traad.forfatter_id} className="forfatterlinje__navn" />
           <span aria-hidden="true">·</span>
           <Tidspunkt iso={traad.opprettet_kl} endret={traad.endret_kl} />
         </p>

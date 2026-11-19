@@ -26,7 +26,7 @@ export const OMRADER = {
 export type Omrade = keyof typeof OMRADER
 
 export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
-  ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|^(min_profil|mine_synlige_profiler|brukeroversikt)\(|stoffavoritt|stilling/],
+  ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|^(min_profil|mine_synlige_profiler|brukeroversikt|profilkortdetaljer)\(|stoffavoritt|stilling/],
   ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke|grupp|^forsideoppsummering\(|direkte|chatvalg|chataktivitet|blokker|aktive_motparter|pushabonnement/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
   ['d', /fagmiljo|medlemskap|systemrolle|systemarkitekt|tilgang|administrator|passord|konto|(sett|endre)_rolle|redaktoransvar/],

@@ -296,6 +296,13 @@
   font-size: var(--tekst-ui);
 }
 
+/* I profilkortet: litt større enn ved meldingene, mindre enn på kontosiden. */
+.avatar--kort {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--tekst-ui);
+}
+
 .avatar--stor {
   width: 5.5rem;
   height: 5.5rem;
