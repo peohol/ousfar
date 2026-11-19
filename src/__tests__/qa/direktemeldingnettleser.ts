@@ -13,12 +13,11 @@
  * Innstillinger med de samme bryterne.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { internAuthAdresse } from '@delt/brukernavn'
-import { sikreTestkonto, startLokalDatabase, type Status } from './lokalmiljo'
+import { lokalSql, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,17 +25,6 @@ type Side = any
 const logg = (t: string) => console.log(`[direktemeldinger] ${t}`)
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 
-function psql(s: Status, sql: string): string {
-  const r = spawnSync('psql', [s.DB_URL!, '-v', 'ON_ERROR_STOP=1', '-qAtc', sql], { encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(r.stderr)
-  return r.stdout.trim()
-}
-/** Bryterne for chatten og direktemeldingene i den lokale databasen. */
-function settBrytere(s: Status, pa: boolean) {
-  for (const navn of ['gruppechat_aktivert', 'direktemeldinger_aktivert']) {
-    psql(s, `create or replace function intern.${navn}() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`)
-  }
-}
 async function klient(s: Status, brukernavn: string, passord: string): Promise<SupabaseClient> {
   const k = createClient(s.API_URL, s.PUBLISHABLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
   const { error } = await k.auth.signInWithPassword({ email: internAuthAdresse(brukernavn), password: passord })
@@ -85,10 +73,10 @@ const adaId = await sikreTestkonto(s, 'qa-chat-ada', pw.ada, ['Ada', 'Testesen']
 const boId = await sikreTestkonto(s, 'qa-chat-bo', pw.bo, ['Bo', 'Prøvesen'])
 // Et rent utgangspunkt i den lokale databasen: valgene, blokkeringene og samtalen mellom dem fra tidligere kjøringer.
 const begge = `('${adaId}', '${boId}')`
-psql(s, `delete from public.chatvalg where bruker_id in ${begge}; delete from public.direktemelding_blokkeringer where blokkerer in ${begge};
+lokalSql(s, `delete from public.chatvalg where bruker_id in ${begge}; delete from public.direktemelding_blokkeringer where blokkerer in ${begge};
   delete from public.chataktivitet where bruker_id in ${begge};
   delete from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge};`)
-settBrytere(s, true)
+const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert', 'direktemeldinger_aktivert')
 let deaktivert = ''
 const miljo = await apneTestmiljo()
 try {
@@ -133,7 +121,7 @@ try {
     await bilde(ada, '02-ny-direktemelding-pc')
     await meny(ada).getByRole('button', { name: /Bo Prøvesen/ }).click()
     await meny(ada).getByRole('heading', { name: 'Bo Prøvesen' }).waitFor({ timeout: 10_000 })
-    samtale = psql(s, `select id from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge}`)
+    samtale = lokalSql(s, `select id from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge}`)
     krev(samtale, 'samtalen finnes')
     krev(await meny(ada).getByText('Bare dere to kan lese samtalen.').isVisible(), 'lesertekst')
   })
@@ -257,7 +245,7 @@ try {
     await bo.goto(`${miljo.url}/#/chat/direkte/${samtale}`)
     await helside(bo).getByRole('log').waitFor({ timeout: 20_000 })
     const start = Date.now()
-    deaktivert = psql(s, `with d as (update public.medlemskap set status = 'deaktivert', til = fra where bruker_id = '${boId}' and status = 'aktiv' returning fagmiljo_id) select string_agg(fagmiljo_id::text, ',') from d`)
+    deaktivert = lokalSql(s, `with d as (update public.medlemskap set status = 'deaktivert', til = fra where bruker_id = '${boId}' and status = 'aktiv' returning fagmiljo_id) select string_agg(fagmiljo_id::text, ',') from d`)
     krev(deaktivert, 'Bo hadde ikke aktivt medlemskap')
     // Meldingene er borte fra skjermen: samtalen er stengt, eller appen står bak porten for kontoer uten tilgang.
     await innen(65_000, 'meldingene er borte', async () => (await bo.getByText('Syntetisk hei Bo').count()) === 0)
@@ -268,8 +256,8 @@ try {
     return `${(brukt / 1000).toFixed(1)} s, ${stengt ? 'samtalen stengt' : 'appen stengt'}`
   })
 } finally {
-  if (deaktivert) psql(s, `update public.medlemskap set status = 'aktiv', til = null where bruker_id = '${boId}' and fagmiljo_id = any(string_to_array('${deaktivert}', ',')::uuid[])`)
-  settBrytere(s, false)
+  if (deaktivert) lokalSql(s, `update public.medlemskap set status = 'aktiv', til = null where bruker_id = '${boId}' and fagmiljo_id = any(string_to_array('${deaktivert}', ',')::uuid[])`)
+  tilbakestillBrytere()
   await miljo.avslutt()
   console.log('\nRESULTAT')
   for (const u of utfall) console.log(`${u.ok ? 'OK  ' : 'FEIL'} ${u.punkt} ${u.merknad}`)

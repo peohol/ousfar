@@ -148,10 +148,10 @@ describe('bryteren for hele funksjonen (T22)', () => {
     expect(await somPerson('vanligA', 'select id from public.profiles where id = $1', [id('vanligB')])).toEqual([])
   })
 
-  it('står av i migrasjonene', async () => {
+  it('er slått på etter Peders beslutning 4 (migrasjonen *_direktemeldinger_aktivering.sql)', async () => {
     const ny = await nyDatabase()
     try {
-      expect((await ny.query<{ pa: boolean }>('select intern.direktemeldinger_aktivert() as pa')).rows[0]?.pa).toBe(false)
+      expect((await ny.query<{ pa: boolean }>('select intern.direktemeldinger_aktivert() as pa')).rows[0]?.pa).toBe(true)
     } finally {
       await ny.close()
     }

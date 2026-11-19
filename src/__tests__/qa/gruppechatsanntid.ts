@@ -24,7 +24,7 @@ import { internAuthAdresse } from '@delt/brukernavn'
 import { IngenTilgang, lagChatapi } from '../../gruppechat/kall'
 import { lagChatkontroller, LIVSTEGN_MS, type Chatkontroller } from '../../gruppechat/kontroller'
 import { lagAbonner, type Abonner } from '../../gruppechat/dorklokke'
-import { sikreAdministrator, sikreTestkonto, startLokalDatabase, type Status } from './lokalmiljo'
+import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 
 const logg = (tekst: string) => console.log(`[gruppechat i sanntid] ${tekst}`)
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
@@ -42,13 +42,6 @@ async function innen(ms: number, hva: string, sjekk: () => boolean | Promise<boo
 function krev(betingelse: unknown, hva: string): asserts betingelse {
   if (!betingelse) throw new Error(`Feilet: ${hva}`)
   logg(`ok: ${hva}`)
-}
-
-function settBryter(s: Status, pa: boolean) {
-  if (!s.DB_URL) throw new Error('Det lokale testmiljøet gir ingen databaseadresse.')
-  const sql = `create or replace function intern.gruppechat_aktivert() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`
-  const r = spawnSync('psql', [s.DB_URL, '-v', 'ON_ERROR_STOP=1', '-qc', sql], { encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(`Kunne ikke slå chatten ${pa ? 'på' : 'av'}: ${r.stderr}`)
 }
 
 async function loggInn(s: Status, brukernavn: string, passord: string): Promise<SupabaseClient> {
@@ -112,7 +105,7 @@ const passord = { ada: randomBytes(18).toString('base64url'), bo: randomBytes(18
 await sikreTestkonto(s, 'qa-chat-ada', passord.ada, ['Ada', 'Testesen'])
 const boId = await sikreTestkonto(s, 'qa-chat-bo', passord.bo, ['Bo', 'Prøvesen'])
 
-settBryter(s, true)
+const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const aapne: { navn: string; kontroller: Chatkontroller; ringinger: { antall: number } }[] = []
 let feilet = false
 try {
@@ -187,7 +180,7 @@ try {
   }
 } finally {
   for (const { kontroller } of aapne) kontroller.stopp()
-  settBryter(s, false)
+  tilbakestillBrytere()
 }
 logg(feilet ? 'kontrollen feilet' : 'alle kontrollene gikk')
 process.exit(feilet ? 1 : 0)

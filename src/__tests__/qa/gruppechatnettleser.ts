@@ -13,14 +13,13 @@
  *   npx vite-node src/__tests__/qa/gruppechatnettleser.ts
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { PASIENTREGEL } from '@delt/pasientopplysninger'
 import { syntetiskPersonnummer } from '../hjelp/syntetiskPersonnummer'
-import { sikreAdministrator, sikreTestkonto, startLokalDatabase, type Status } from './lokalmiljo'
+import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,13 +31,6 @@ const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 const TILGANG_TAPT_MS = 60_000
 /** Gjenoppkoblingen etter et brudd har ingen slik grense; livstegnet og litt til. */
 const GJENOPPKOBLING_MS = 75_000
-
-function settBryter(s: Status, pa: boolean) {
-  if (!s.DB_URL) throw new Error('Det lokale testmiljøet gir ingen databaseadresse.')
-  const sql = `create or replace function intern.gruppechat_aktivert() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`
-  const r = spawnSync('psql', [s.DB_URL, '-v', 'ON_ERROR_STOP=1', '-qc', sql], { encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(`Kunne ikke slå chatten ${pa ? 'på' : 'av'}: ${r.stderr}`)
-}
 
 async function klient(s: Status, brukernavn: string, passord: string): Promise<SupabaseClient> {
   const k = createClient(s.API_URL, s.PUBLISHABLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
@@ -163,7 +155,7 @@ const passord = { ada: randomBytes(18).toString('base64url'), bo: randomBytes(18
 await sikreTestkonto(s, 'qa-chat-ada', passord.ada, ['Ada', 'Testesen'])
 const boId = await sikreTestkonto(s, 'qa-chat-bo', passord.bo, ['Bo', 'Prøvesen'])
 
-settBryter(s, true)
+const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const miljo = await apneTestmiljo()
 try {
   const admin = await klient(s, 'qa-admin', adminpassord)
@@ -352,7 +344,7 @@ try {
   utfall.push({ punkt: '–', hva: 'oppsettet', ok: false, merknad: feil instanceof Error ? feil.message : String(feil) })
 } finally {
   await miljo.avslutt()
-  settBryter(s, false)
+  tilbakestillBrytere()
 }
 
 console.log('\n| Punkt | Hva | Utfall | Merknad |\n| --- | --- | --- | --- |')

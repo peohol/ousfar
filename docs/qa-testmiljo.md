@@ -69,7 +69,8 @@ kjøringen uten at passordet skrives inn.
   dørklokken, samtalelista teller de uleste til de er lest (bjella får ingen
   chatvarsler, D4b), og den som fjernes fra gruppen, får ingen flere
   hendelser, mister samtalen fra lista og stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
-  går, og av igjen etterpå.
+  går, og settes etterpå tilbake slik migrasjonene satte den
+  (`slaPaFunksjoner()` i `lokalmiljo.ts`, som alle chatkontrollene bruker).
 - `npx vite-node src/__tests__/qa/gruppechatnettleser.ts` er
   nettleserkontrollen av gruppechatten (`docs/p7-testplan.md`, N1–N10): Ada og
   Bo i hver sin nettleserkontekst, med de samme syntetiske kontoene og

@@ -183,6 +183,32 @@ export async function sikreTestkonto(s: Status, brukernavn: string, passord: str
   return id!
 }
 
+/** Bryterne for hele funksjoner i databasen, som `intern.gruppechat_aktivert()`. */
+export type Funksjonsbryter = 'gruppechat_aktivert' | 'direktemeldinger_aktivert'
+
+/** Kjører SQL i den lokale databasen, som eier, og gir tilbake svaret som tekst. */
+export function lokalSql(s: Status, sql: string): string {
+  if (!s.DB_URL) throw new Error('Det lokale testmiljøet gir ingen databaseadresse.')
+  const r = spawnSync('psql', [s.DB_URL, '-v', 'ON_ERROR_STOP=1', '-qAtc', sql], { encoding: 'utf8' })
+  if (r.status !== 0) throw new Error(r.stderr)
+  return r.stdout.trim()
+}
+
+const settFunksjonsbryter = (s: Status, navn: Funksjonsbryter, pa: boolean) =>
+  lokalSql(s, `create or replace function intern.${navn}() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`)
+
+/**
+ * Slår bryterne på i den lokale databasen mens en kontroll går, og gir
+ * tilbake funksjonen som setter dem som de stod, slik migrasjonene satte dem.
+ */
+export function slaPaFunksjoner(s: Status, ...navn: Funksjonsbryter[]): () => void {
+  const fraFor = navn.map((n) => [n, lokalSql(s, `select intern.${n}()`) === 't'] as const)
+  for (const n of navn) settFunksjonsbryter(s, n, true)
+  return () => {
+    for (const [n, pa] of fraFor) settFunksjonsbryter(s, n, pa)
+  }
+}
+
 /** Den syntetiske administratoren, med navn, adminrolle (og systemarkitekt i den tomme databasen) og ferdig oppsett. Passordet gjenbrukes. */
 export async function sikreAdministrator(s: Status): Promise<string> {
   const passordfil = join(MAPPE, 'passord.txt')
@@ -299,9 +325,13 @@ export async function startLokaltMiljo(): Promise<LokaltMiljo> {
   }
 }
 
-/** `npm run qa:lokal` starter miljøet og lar appen stå til Ctrl+C; `-- stopp` stopper databasen. */
-if (process.argv[1] && resolve(process.argv[1]) === DENNE) {
-  if (process.argv[2] === 'stopp') {
+/**
+ * `npm run qa:lokal` starter miljøet og lar appen stå til Ctrl+C; `-- stopp`
+ * stopper databasen. Kjent på npm-skriptet: vite-node gir ikke filen i
+ * `process.argv`, bare argumentene etter den.
+ */
+if (process.env.npm_lifecycle_event === 'qa:lokal') {
+  if (process.argv.slice(2).includes('stopp')) {
     supabase('stop', '--no-backup')
     logg('stoppet')
   } else {

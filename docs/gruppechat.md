@@ -456,7 +456,9 @@ gamle chatsiden» og «Uleste» under.
   menyen på en gruppechat: «Åpne chat» i panelet og chatraden under «Siste
   aktivitet» på gruppesiden, og den gamle adressen. Står menyen ikke klar ennå
   (chatten er ikke hentet), venter samtalen til den gjør det.
-- **Direktemeldingene (D5).** Når de er slått på, står direktesamtalene i
+- **Direktemeldingene (D5).** De er slått på med
+  `*_direktemeldinger_aktivering.sql`, og hver bruker velger selv om de vil
+  motta dem. Da står direktesamtalene i
   den samme lista, «Ny chat» ved overskriften, og bryterne «Tillat
   direktemeldinger» og «Vis når jeg er aktiv» nederst. En direktesamtale vises
   med den samme kontrolleren og `Gruppechat` (`art="direkte"`), på
