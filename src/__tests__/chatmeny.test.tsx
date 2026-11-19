@@ -192,6 +192,23 @@ describe('chatmenyen', () => {
     expect(within(samtaler).queryByText(/Gruppechat ·/)).toBeNull()
   })
 
+  it('viser symbolet gruppen har valgt, også i gruppechatten, og ellers gruppeikonet', async () => {
+    tilstand.samtaler = tilstand.samtaler.map((s) =>
+      s.gruppe.id === SANDKASSE ? { ...s, gruppe: { ...s.gruppe, symbol: { emoji: '🧪' } } } : s,
+    )
+    const grupper = { ...GRUPPER, grupper: GRUPPER.grupper.map((g) => (g.id === SANDKASSE ? { ...g, symbol: { emoji: '🧪' } } : g)) }
+    render(<App start={{ side: 'forside' }} gaaTilSpion={vi.fn()} tilbakeSpion={vi.fn()} grupper={grupper} />)
+    await apneMenyen()
+    const lenke = within(within(meny()).getByRole('region', { name: /Mine grupper/ })).getByRole('link', { name: 'Sandkassegruppen' })
+    expect(lenke.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
+    const rad = within(within(meny()).getByRole('region', { name: 'Samtaler' })).getByRole('button', { name: /Sandkassegruppen/ })
+    expect(rad.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
+    const uten = within(within(meny()).getByRole('region', { name: 'Samtaler' })).getByRole('button', { name: /Faglig utvikling/ })
+    expect(uten.querySelector('.gruppesymbol [data-ikon="grupper"]')).toBeTruthy()
+    await userEvent.click(rad)
+    expect(meny().querySelector('.chatsamtale__hode .gruppesymbol')?.textContent).toBe('🧪')
+  })
+
   it('søker i samtalene', async () => {
     vis()
     await apneMenyen()

@@ -1,0 +1,14 @@
+{
+  "id": "20261119-081612-dd61d0",
+  "semver": "minor",
+  "opprettet": "2026-11-19T08:16:12Z",
+  "sammendrag": "Gruppene kan få sitt eget symbol: en emoji eller et bilde",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "De ansvarlige for en gruppe kan velge en emoji eller laste opp et bilde som gruppens symbol, under gruppens innstillinger. Bildet beskjæres til en sirkel, som profilbildene.",
+    "Symbolet står ved gruppen i chatmenyen, i gruppechatten, på gruppesiden og i gruppeoversikten, så det er lettere å finne fram. Grupper uten symbol har gruppeikonet.",
+    "Direktemeldingene viser profilbildet eller initialene til den du skriver med."
+  ]
+}

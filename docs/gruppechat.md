@@ -432,6 +432,9 @@ gamle chatsiden» og «Uleste» under.
   samtalene sier selv hva menyen er). Øverst trekkspillet «Mine grupper»
   (gruppeikonet foran) med lenker til gruppesidene og «Alle grupper», så
   «Samtaler» (chatikonet foran): én liste, nyeste aktivitet først, med søk.
+  Hver gruppe og gruppesamtale har gruppens symbol i en sirkel (emoji, bilde
+  eller gruppeikonet; se «Gruppesymbolet» i `docs/fagmiljoer.md`), og en
+  direktemelding profilbildet eller initialene til den andre.
   Verken antall grupper eller hvor gruppene hører til står i menyen. En valgt
   samtale vises i panelet med «Til alle samtaler» tilbake. ⚙ nederst til
   høyre viser innstillingene for chatten (`Chatinnstillinger`, de samme som
