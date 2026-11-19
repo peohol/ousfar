@@ -117,6 +117,14 @@ describe('å slå på og av', () => {
     expect(o.lagret).toEqual([])
   })
 
+  it('avslutter abonnementet igjen når serveren ikke lagrer det, så bryteren ikke står på', async () => {
+    const o = oppsett()
+    vi.mocked(o.server.lagre).mockRejectedValueOnce(new Error('nettverk'))
+    await expect(o.varsler.slaPa('bruker-1')).rejects.toThrow('nettverk')
+    expect(await o.varsler.tilstand()).toBe('av')
+    expect(o.lager.has(EIERNOKKEL)).toBe(false)
+  })
+
   it('lager et nytt abonnement når serveren har byttet nøkkel', async () => {
     const gammelt = falskAbonnement('https://fcm.googleapis.com/fcm/send/gammelt', 'AAAA')
     const o = oppsett({ tillatelse: 'granted', abonnement: gammelt })

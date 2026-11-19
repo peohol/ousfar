@@ -152,7 +152,13 @@ export function lagChatvarsler(avh: Enhetsavhengigheter) {
         abonnement = null
       }
       abonnement ??= await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: fraBase64url(nokkel) })
-      await server.lagre(tilLagret(abonnement))
+      try {
+        await server.lagre(tilLagret(abonnement))
+      } catch (feil) {
+        // Uten rad på serveren kommer det ingen varsler; da skal bryteren ikke stå på.
+        await avslutt(false).catch(() => undefined)
+        throw feil
+      }
       settEier(bruker)
       return tilstand()
     },

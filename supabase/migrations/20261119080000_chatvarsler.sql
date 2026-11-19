@@ -19,7 +19,9 @@
 -- Varselet har aldri meldingsteksten eller avsenderens navn: bare gruppens
 -- navn eller «Direktemelding», antallet uleste og adressen til samtalen
 -- (docs/gruppechat-personvern.md og docs/direktemeldinger-personvern.md).
--- Køen har bare ID-er og blir tømt etter høyst ti minutter.
+-- Køen har bare ID-er. En rad brukes aldri etter ti minutter, og det som er
+-- eldre, slettes ved neste henting eller melding i køen og senest av
+-- nattjobben (`intern.rydd_chatvarselko()`).
 --
 -- Tilbakeføring: en ny migrasjon som fjerner utløserne og funksjonene herfra
 -- og tabellene `public.pushabonnementer` og `intern.chatvarselko`.
@@ -192,6 +194,27 @@ $$;
 
 revoke all on function intern.chatvarselmottakere(text, uuid, uuid) from public, anon, authenticated, service_role;
 
+-- Sletter det i køen som er eldre enn fristen, og gir hvor mange. Kalles ved
+-- hver henting og hver ny rad i køen, og av nattjobben
+-- (`.github/workflows/gruppechat-lagringstid.yml`), så ingenting blir liggende
+-- når ingen sender mer.
+create function intern.rydd_chatvarselko()
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  antall integer;
+begin
+  delete from intern.chatvarselko k where k.kl < now() - intern.chatvarsel_frist();
+  get diagnostics antall = row_count;
+  return antall;
+end;
+$$;
+
+revoke all on function intern.rydd_chatvarselko() from public, anon, authenticated, service_role;
+
 -- Legger en ny melding i køen når minst én mottaker har en enhet med varsler på.
 create function intern.ko_chatvarsel()
 returns trigger
@@ -218,6 +241,7 @@ begin
     select 1 from intern.chatvarselmottakere(slag, samtale, new.forfatter_id) m(bruker_id)
     join public.pushabonnementer p on p.bruker_id = m.bruker_id
   ) then
+    perform intern.rydd_chatvarselko();
     insert into intern.chatvarselko (melding, slag, samtale, avsender)
     values (new.id, slag, samtale, new.forfatter_id)
     on conflict (melding) do nothing;
@@ -253,7 +277,7 @@ declare
   samtaler jsonb;
   varsler jsonb;
 begin
-  delete from intern.chatvarselko k where k.kl < now() - intern.chatvarsel_frist();
+  perform intern.rydd_chatvarselko();
   with tatt as (
     delete from intern.chatvarselko k where k.avsender = chatvarsel_hent.avsender
     returning k.slag, k.samtale

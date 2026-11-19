@@ -46,7 +46,7 @@ det må tillates i nettleserens innstillinger.
 | Hvem ser det | Den som har enheten. Det kan stå på låseskjermen; derfor står det verken tekst eller avsender |
 | Push-tjenestene | Nettleserens egen tjeneste bringer varselet fram: Google (Chrome, Edge og Android), Mozilla (Firefox), Apple (Safari) eller Microsoft (eldre Edge). Varselet er kryptert for den ene nettleseren (RFC 8291), så tjenesten kan ikke lese det. Den ser at enheten får et varsel, når, og hvor stort det er |
 | Hva databasen lagrer | Per enhet: push-tjenestens adresse for nettleseren og nøklene varselet krypteres med (`public.pushabonnementer`), og hvem det hører til. Ingenting om hvilke varsler som er sendt |
-| Køen | En ny melding legger bare ID-ene sine i `intern.chatvarselko`, og bare når noen som kan få varsel om den, har varsler på. Raden slettes når varslene hentes, og er aldri eldre enn ti minutter |
+| Køen | En ny melding legger bare ID-ene sine i `intern.chatvarselko`, og bare når noen som kan få varsel om den, har varsler på. Raden slettes når varslene hentes, og brukes aldri etter ti minutter. Det som er eldre, slettes ved neste henting eller melding i køen, og senest av nattjobben for lagringstiden (`intern.rydd_chatvarselko()`) |
 | Når abonnementet slettes | Når brukeren slår av eller logger ut, når kontoen slettes, når push-tjenesten sier at det ikke finnes lenger, og når en annen konto logger inn på enheten (da avsluttes det i nettleseren og forsvinner ved neste forsøk). Høyst ti enheter per bruker; den eldste faller ut |
 | Gruppechatten og direktemeldingene | Uendret: ingen kan lese mer enn før, og ingen tekst går ut av Supabase. Direktemeldinger varsles bare til den andre i samtalen |
 

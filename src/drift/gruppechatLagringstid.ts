@@ -32,10 +32,23 @@ export const DIREKTE_RYDD_SQL = 'select intern.rydd_direktemeldinger() as slette
 /** Som {@link KONTROLL_SQL}, for direktemeldingene. */
 export const DIREKTE_KONTROLL_SQL = kontrollSql('public.direktemeldinger', 'intern.direktemelding_lagringstid')
 
-/** Det jobben rydder, i rekkefølge: navnet i rapporten og de to spørringene. */
+/** Sletter det i køen for chatvarslene som er eldre enn fristen (docs/chatvarsler.md). */
+export const CHATVARSELKO_RYDD_SQL = 'select intern.rydd_chatvarselko() as slettet'
+
+/** Rader i køen eldre enn fristen, og fristen i minutter. Bare antall og alder. */
+export const CHATVARSELKO_KONTROLL_SQL = `
+  select
+    (select count(*) from intern.chatvarselko k where k.kl < now() - intern.chatvarsel_frist())::int as gjenstar,
+    (select floor(extract(epoch from now() - min(k.kl)) / 86400)::int from intern.chatvarselko k) as eldste_dager,
+    0 as frist_dager,
+    (select floor(extract(epoch from intern.chatvarsel_frist()) / 60)::int) || ' minutter' as frist
+`
+
+/** Det jobben rydder, i rekkefølge: navnet i rapporten, de to spørringene og hva radene er. */
 export const LAGRINGSJOBBER = [
-  { navn: 'Gruppechat', rydd: RYDD_SQL, kontroll: KONTROLL_SQL },
-  { navn: 'Direktemeldinger', rydd: DIREKTE_RYDD_SQL, kontroll: DIREKTE_KONTROLL_SQL },
+  { navn: 'Gruppechat', rydd: RYDD_SQL, kontroll: KONTROLL_SQL, hva: 'meldinger' },
+  { navn: 'Direktemeldinger', rydd: DIREKTE_RYDD_SQL, kontroll: DIREKTE_KONTROLL_SQL, hva: 'meldinger' },
+  { navn: 'Køen for chatvarsler', rydd: CHATVARSELKO_RYDD_SQL, kontroll: CHATVARSELKO_KONTROLL_SQL, hva: 'meldinger i køen' },
 ] as const
 
 export interface Ryddesvar {
@@ -47,6 +60,8 @@ export interface Kontrollsvar {
   /** `null` når det ikke finnes noen meldinger. */
   eldste_dager: number | null
   frist_dager: number
+  /** Fristen i ord, når den ikke er hele dager (køen for chatvarsler). */
+  frist?: string
 }
 
 export interface Vurdering {
@@ -56,15 +71,16 @@ export interface Vurdering {
 }
 
 /** Vurderer kjøringen: feilet er den når utgåtte meldinger står igjen etter ryddingen. */
-export function vurderLagringstid(rydd: Ryddesvar, kontroll: Kontrollsvar, navn = 'Gruppechat'): Vurdering {
+export function vurderLagringstid(rydd: Ryddesvar, kontroll: Kontrollsvar, navn = 'Gruppechat', hva = 'meldinger'): Vurdering {
   const ok = kontroll.gjenstar === 0
+  const frist = kontroll.frist ?? `${kontroll.frist_dager} dager`
   const linjer = [
     `## ${navn}: lagringstid`,
     '',
-    `- Slettet nå: ${rydd.slettet} meldinger eldre enn ${kontroll.frist_dager} dager.`,
-    `- Utgåtte meldinger igjen: ${kontroll.gjenstar}.`,
-    `- Eldste melding: ${kontroll.eldste_dager === null ? 'ingen meldinger' : `${kontroll.eldste_dager} dager`}.`,
+    `- Slettet nå: ${rydd.slettet} ${hva} eldre enn ${frist}.`,
+    `- Utgåtte ${hva} igjen: ${kontroll.gjenstar}.`,
+    `- Eldste melding: ${kontroll.eldste_dager === null ? `ingen ${hva}` : `${kontroll.eldste_dager} dager`}.`,
   ]
-  if (!ok) linjer.push('', `**Feil:** ${kontroll.gjenstar} meldinger eldre enn lagringstiden står fortsatt i databasen.`)
+  if (!ok) linjer.push('', `**Feil:** ${kontroll.gjenstar} ${hva} eldre enn lagringstiden står fortsatt i databasen.`)
   return { ok, rapport: linjer.join('\n') }
 }

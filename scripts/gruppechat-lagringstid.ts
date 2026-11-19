@@ -5,8 +5,8 @@
  *
  *   npm run gruppechat:lagringstid
  *
- * Sletter meldingene eldre enn lagringstiden i alle grupper og samtaler
- * (`LAGRINGSJOBBER`), kontrollerer at ingen står igjen, og skriver en kort
+ * Sletter meldingene eldre enn lagringstiden i alle grupper og samtaler, og
+ * det som er for gammelt i køen for chatvarsler (`LAGRINGSJOBBER`), kontrollerer at ingen står igjen, og skriver en kort
  * rapport. Stopper med en feil når en rydding ikke gikk, så kjøringen i
  * GitHub Actions blir rød. Leser aldri ut tekst, avsendere, grupper eller
  * samtaler.
@@ -23,7 +23,7 @@ for (const jobb of LAGRINGSJOBBER) {
     const [rydd] = await sql<Ryddesvar>(jobb.rydd, { skriver: true })
     const [kontroll] = await sql<Kontrollsvar>(jobb.kontroll)
     if (!rydd || !kontroll) throw new Error('Databasen svarte uten rader.')
-    const { ok, rapport } = vurderLagringstid(rydd, kontroll, jobb.navn)
+    const { ok, rapport } = vurderLagringstid(rydd, kontroll, jobb.navn, jobb.hva)
     console.log(rapport)
     if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${rapport}\n\n`)
     if (!ok) feilet = true

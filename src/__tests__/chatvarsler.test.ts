@@ -16,6 +16,7 @@ import type { Bytes, Pushabonnement } from '../../supabase/functions/_edge/webpu
 import { byggPersongalleri, fjernAlleMedlemskap, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
 import { dekrypter, nyeVapidnokler, nyttAbonnement, type Testabonnement } from './hjelp/webpush'
+import { CHATVARSELKO_KONTROLL_SQL, CHATVARSELKO_RYDD_SQL, vurderLagringstid, type Kontrollsvar, type Ryddesvar } from '../drift/gruppechatLagringstid'
 
 let basis: PGlite
 let db: PGlite
@@ -284,6 +285,29 @@ describe('varslene som hentes', () => {
     expect(await hent('vanligA')).toHaveLength(1)
     expect(await ko()).toEqual([])
     expect(await hent('adminA')).toEqual([])
+  })
+
+  it('nattjobben tømmer det som er for gammelt, også når ingen sender eller henter mer', async () => {
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await sendGruppe('adminA')
+    await sendGruppe('adminA')
+    expect(await ko()).toHaveLength(2)
+    const for_ = (await db.query<Kontrollsvar>(CHATVARSELKO_KONTROLL_SQL)).rows[0]!
+    expect(for_).toMatchObject({ gjenstar: 0, frist: '10 minutter' })
+    await db.exec(`update intern.chatvarselko set kl = now() - interval '11 minutes'`)
+    const [rydd] = (await db.query<Ryddesvar>(CHATVARSELKO_RYDD_SQL)).rows
+    expect(rydd).toEqual({ slettet: 2 })
+    const etter = (await db.query<Kontrollsvar>(CHATVARSELKO_KONTROLL_SQL)).rows[0]!
+    expect(etter).toMatchObject({ gjenstar: 0, eldste_dager: null })
+    expect(vurderLagringstid(rydd!, etter, 'Køen for chatvarsler', 'meldinger i køen').rapport).toContain('Slettet nå: 2 meldinger i køen eldre enn 10 minutter.')
+  })
+
+  it('en ny rad i køen tar med seg det som er for gammelt', async () => {
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await sendGruppe('adminA')
+    await db.exec(`update intern.chatvarselko set kl = now() - interval '11 minutes'`)
+    await sendDirekte('vanligB')
+    expect(await ko()).toEqual([{ slag: 'direkte', avsender: expect.any(String) }])
   })
 
   it('gir ingenting mens chatten er slått av', async () => {
