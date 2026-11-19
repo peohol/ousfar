@@ -246,7 +246,9 @@ Resten av grensesnitteksten:
 | Viktige data | «Konsentrasjoner i serum», «Kinetikk», «Ikke oppgitt» |
 | Fagsøket | «↑ ↓ velg · Enter åpne · Esc lukk», «Vis alle treff (N)», «Ingen treff i fagstoffet.» |
 | Søkesiden | «Søk i fagstoff», fanene «Alle», «Stoff», «Preparater», «Tekst», «Referanser», og gruppen «I teksten» |
-| Toppmenyen, høyre side | «Idéer», «Administrasjon» med «Brukere» og «Datakilder», og kontomenyen med «Endre navn og profilbilde», «Preferanser» («Vis hurtigtaster», «Tema» med Lyst, Mørkt og Følg system, «Reduser bevegelse» med Ja, Nei og Følg system, vist som «System») og «Logg ut» |
+| Toppmenyen, høyre side | chatknappen (bare på smale flater), bjella og kontomenyen med «Endre navn og profilbilde», «Fagmiljø», «Mine forslag», «Til behandling», «Mitt redaktøransvar», «Innstillinger» og «Logg ut» |
+| Hovedmenyen | «Forsiden», «Fortolkning», «Grupper», «Chat», «Endringsforslag»; «For hele appen»: «Idéer for appen», «Planlagte oppgaver», «Administrasjon»; fanene «Stoffregister» og «Verktøy» |
+| Innstillinger | fanen «Visning»: «Vis hurtigtaster», «Tema» med Lyst, Mørkt og Følg system, «Reduser bevegelse» med Ja, Nei og Følg system, vist som «System», og «Måleenhet» |
 | Versjonspillen | klokka og versjonen, «Vis endringslogg» |
 
 Hurtigtastmerkene vises ikke i søkefeltene på smale flater: der er det
@@ -297,12 +299,14 @@ en svevende pille med delvis gjennomsiktig flate og uskarp bakgrunn. Der
 nettleseren ikke kan gjøre bakgrunnen uskarp, er flaten helt dekkende. Fra
 venstre inneholder den:
 
-1. sidemenyen
+1. hovedmenyen (sidemenyen)
 2. globalt fagsøk (`sok`)
 3. sidens egne plasser (`TOPPMENYSPOR` i `Toppmenykilde.tsx`)
 4. et skille
-5. idéene og, bare for administratorer, adminmenyen (`verktoy`)
+5. chatknappen (bare på smale flater) og bjella (`verktoy`)
 6. kontoen
+
+Idéene og administrasjonen står i hovedmenyen (D6), så fagsøket får plassen.
 
 ### Plassene sidene fyller
 
@@ -426,31 +430,52 @@ trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
   boblen øverst til høyre, og panelet deres slutter over dokken.
 - Fortolkningen har dokken når en analytt er valgt: «Diskusjoner».
 
-### Idéene, adminmenyen og kontoen
+### Hovedmenyen
 
-Helt til høyre står tre knapper:
+`src/components/Sidemeny.tsx` (Ctrl + M) har øverst navigasjonsblokken
+(`src/components/Menynavigasjon.tsx`, D6; skisse 19 og 29): Forsiden,
+Fortolkning, Grupper (med invitasjonene), Chat (med uleste, når chatten er
+slått på), Endringsforslag (med det som venter på deg), og «For hele appen»:
 
-- **Idéer** (`src/components/ideer/Ideknapp.tsx`) åpner idéene. Har noen
-  kommentert noe brukeren ikke har sett, står det en prikk på knappen.
-- **Administrasjon** (`src/components/konto/Adminmeny.tsx`), bare for
-  administratorer: brukerne, datakildene, kurateringene, nødstoppen for de
-  kliniske verktøyene («Kliniske verktøy», `docs/verktøy-p11-publisering.md`)
-  og autoerstatt.
-- **Kontoen** (`src/components/konto/Kontomeny.tsx`), avataren: hvem som er
-  logget inn, «Endre navn og profilbilde», «Preferanser» og «Logg ut».
-  «Preferanser» er en skuff i menyen med bryteren for hurtigtastene
-  (`Bryter`) og trinnbryterne for «Tema» og «Reduser bevegelse»
-  (`Trinnbryter`), og glir opp som skuffene ellers (`useSkjuling`). Tema og
-  bevegelse kan stå fast eller følge systemet; de er beskrevet i
-  `src/domain/systemvalg.ts`, settes før første bilde av et skript
-  `vite.config.ts` legger i `<head>`, og lagres i nettleseren og på kontoen
-  (`useKontovalg`). Nye slike valg legges inn der. Nye brukere følger systemet.
+- **Idéer for appen** og, bare for systemarkitektene, **Planlagte oppgaver**.
+  Vinduene eies av `src/components/ideer/Idelag.tsx`, som også henter
+  tallet på idéer med nye kommentarer (`idestatus`). Menyen åpner dem med
+  `apneIdelag` (`idevisning.ts`).
+- **Administrasjon**, bare for dem som har noe der (`harAdministrasjon`), en
+  skuff med valgene etter rollen (`ADMINVALG` i `konto/adminvisning.ts`):
+  brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen,
+  nødstoppen for de kliniske verktøyene («Kliniske verktøy»,
+  `docs/verktøy-p11-publisering.md`) og autoerstatt. Vinduene og det som bør
+  ses over, eies av `konto/Administrasjon.tsx` (`adminstatus`); menyen åpner
+  dem med `apneAdminpanel`.
 
-Adminmenyen og kontoen bygger på `Nedtrekksmeny`
-(`src/components/toppmeny/Nedtrekksmeny.tsx`), med valgene som `Menyvalg`.
-Nye valg legges inn der. Menyen er et lag (`data-lag`), så appens egne taster
-ligger i ro mens den står åpen. Escape, et trykk utenfor eller fokus som går
-ut av menyen, lukker den.
+Det som før hadde en prikk i toppmenyen (en invitasjon, nye kommentarer på
+idéene, det som bør ses over i administrasjonen), gir en prikk på
+menyknappen, med teksten i navnet. Valgene lukker menyen og gir fokus
+tilbake til menyknappen før vinduet åpnes. Under blokken står fanene
+Stoffregister og Verktøy som før. Blokken ruller for seg når vinduet er lavt.
+
+### Kontoen
+
+**Kontoen** (`src/components/konto/Kontomeny.tsx`), avataren: hvem som er
+logget inn, «Endre navn og profilbilde», «Fagmiljø», «Mine forslag», «Til
+behandling», «Mitt redaktøransvar», «Innstillinger» og «Logg ut».
+«Innstillinger» (`konto/Innstillinger.tsx`) er et vindu (`Modallag`) med en
+fane per slags innstilling (`INNSTILLINGSFANER`); med én fane står det uten
+fanerad. Fanen «Visning» har bryteren for hurtigtastene (`Bryter`) og
+trinnbryterne for «Tema», «Reduser bevegelse» og «Måleenhet»
+(`Trinnbryter`). Fanen «Chat» legges til med direktemeldingene (D5), med de
+samme bryterne som nederst i chatmenyen. Tema og bevegelse kan stå fast
+eller følge systemet; de er beskrevet i `src/domain/systemvalg.ts`, settes
+før første bilde av et skript `vite.config.ts` legger i `<head>`, og lagres i
+nettleseren og på kontoen (`useKontovalg`). Nye slike valg legges inn der.
+Nye brukere følger systemet.
+
+Kontoen bygger på `Nedtrekksmeny` (`src/components/toppmeny/Nedtrekksmeny.tsx`),
+med valgene som `Menyvalg`. Menyen er et lag (`data-lag`), så appens egne
+taster ligger i ro mens den står åpen. Escape, et trykk utenfor eller fokus
+som går ut av menyen, lukker den. Fanelistene i hovedmenyen og Innstillinger
+er den samme `Fanevalg` (`src/components/Fanevalg.tsx`).
 
 Endringsloggen åpnes bare fra versjonspillen nederst til høyre. På smale
 flater med dokk legger pillen seg over dokken.

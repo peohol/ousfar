@@ -476,28 +476,54 @@
   color: var(--blekk-dempet);
 }
 
-/* --- Snarveiene ----------------------------------------------------------------
-   Forsiden og fortolkningen, øverst over fanene, så de alltid er én handling
-   unna. */
-.menysnarveier {
+/* --- Navigasjonen ---------------------------------------------------------------
+   Forsiden, fortolkningen, gruppene, chatten og forslagene, og «For hele appen»
+   (idéene, de planlagte oppgavene og administrasjonen), øverst over fanene,
+   så de alltid er én handling unna (D6, skisse 19). Blokken ruller for seg
+   når vinduet er lavt, så fanene under alltid får plass. */
+.menynavigasjon {
   flex: none;
+  max-height: 55%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--rom-4) var(--rom-4) var(--rom-2);
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.menysnarveier {
   display: flex;
   flex-direction: column;
   gap: var(--rom-1);
   margin: 0;
-  padding: var(--rom-4) var(--rom-4) var(--rom-3);
+  padding: 0;
   list-style: none;
+}
+
+.menysnarveier__overskrift {
+  margin: var(--rom-4) 0 var(--rom-1);
+  padding: 0 var(--rom-4);
+  font-family: var(--skrift-display);
+  font-style: italic;
+  font-size: var(--tekst-etikett);
+  color: var(--blekk-dempet);
 }
 
 .menysnarveier__lenke {
   display: flex;
   align-items: center;
   gap: var(--rom-3);
-  padding: var(--rom-3) var(--rom-4);
+  width: 100%;
+  min-height: var(--hoyde-kontroll);
+  padding: var(--rom-2) var(--rom-4);
+  font: inherit;
+  text-align: left;
+  border: 0;
   border-radius: var(--runding-knapp);
   color: var(--blekk);
+  background: transparent;
   font-weight: var(--vekt-halvfet);
   text-decoration: none;
+  cursor: pointer;
 }
 
 .menysnarveier__lenke:hover,
@@ -509,4 +535,36 @@
 /* Siden brukeren står på. */
 .menysnarveier__lenke[aria-current='page'] {
   color: var(--aksent);
+  background: var(--flate-hevet);
+}
+
+.menysnarveier__navn {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Tallene og merknadene til høyre: «2 invitasjoner», «3 uleste», «Systemarkitekt». */
+.menysnarveier__merke {
+  flex: none;
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-normal);
+  color: var(--blekk-dempet);
+}
+
+.menysnarveier__pil {
+  flex: none;
+  transition: transform var(--fart-rask) var(--kurve);
+}
+
+.menysnarveier__skuff[data-apen] .menysnarveier__pil {
+  transform: rotate(90deg);
+}
+
+/* Valgene i administrasjonen står innrykket under den. */
+.menysnarveier--under {
+  padding-left: var(--rom-6);
+}
+
+.menysnarveier--under[hidden] {
+  display: none;
 }

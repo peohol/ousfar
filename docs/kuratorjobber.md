@@ -292,7 +292,7 @@ at det ble ett bilde per side (`sidebilder`). Sidebildene er PNG i gråtoner,
 
 Testbrukeren og hemmelighetene settes opp av en systemarkitekt:
 
-1. Lag en vanlig bruker i OUSFAR (Adminmeny → Brukere → Opprett bruker), f.eks. `kuratortest`,
+1. Lag en vanlig bruker i OUSFAR (hovedmenyen → Administrasjon → Brukere → Opprett bruker), f.eks. `kuratortest`,
    og fullfør førstegangsoppsettet med den: logg inn med det midlertidige
    passordet, velg et nytt passord og navnet «Kurator Test». Gi den aldri
    adminrollen.

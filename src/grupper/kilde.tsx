@@ -1,6 +1,6 @@
 /**
  * Gruppene den innloggede er med i, og invitasjonene hen har, for hele appen:
- * navnene på gruppesidene i diskusjonene og varslene, prikken i kontomenyen
+ * navnene på gruppesidene i diskusjonene og varslene, invitasjonene i hovedmenyen
  * og oversikten. Hentes som rettighetene (`useKontoensSvar`), og på nytt med
  * en gang etter en endring i appen (`oppdater`).
  */

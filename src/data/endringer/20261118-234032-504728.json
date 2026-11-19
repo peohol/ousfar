@@ -1,0 +1,16 @@
+{
+  "id": "20261118-234032-504728",
+  "semver": "minor",
+  "opprettet": "2026-11-18T23:40:32Z",
+  "sammendrag": "Ryddigere toppmeny: idéene og administrasjonen står i hovedmenyen, og preferansene heter Innstillinger",
+  "typer": ["Funksjonalitet", "Design / layout"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen", "vinduer"],
+  "punkter": [
+    "Hovedmenyen (Ctrl + M) har øverst Forsiden, Fortolkning, Grupper, Chat og Endringsforslag, med antall invitasjoner, uleste meldinger og forslag som venter på deg.",
+    "Under «For hele appen» i hovedmenyen finner du Idéer for appen, og for dem som har tilgang, Planlagte oppgaver og Administrasjon. Knappene for dem er borte fra toppmenyen, så søket får mer plass.",
+    "En prikk på menyknappen viser at noe nytt venter i hovedmenyen, som en invitasjon til en gruppe eller en ny kommentar på en idé.",
+    "Grupper er flyttet fra kontomenyen til hovedmenyen. «Preferanser» i kontomenyen heter nå «Innstillinger» og åpner et eget vindu med de samme valgene.",
+    "Endringsforslagene viser øverst hva som venter på deg, og det som venter på deg står først i listene."
+  ]
+}

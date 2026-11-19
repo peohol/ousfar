@@ -142,16 +142,17 @@ også når den siste ikke fikk dem oppgitt), og de siste endringene per kilde
 (200 som standard, høyst 1000), så en stor release i den ene kilden ikke
 skyver den andre ut.
 
-I appen: adminmenyen → «Datakilder» (bare for administratorer,
-`src/components/konto/Datakilder.tsx`). Er en kilde ikke i orden (Feilet eller
-Se over), står det en prikk på adminmenyen og på «Datakilder», og knappen
+I appen: hovedmenyen → «Administrasjon» → «Datakilder» (bare for
+systemarkitektene, `src/components/konto/Datakilder.tsx`). Er en kilde ikke i
+orden (Feilet eller Se over), står det en prikk på menyknappen, på
+«Administrasjon» og på «Datakilder», og menyknappen
 sier hvilke kilder som bør ses over (`kilderSomBorSesOver`, med én endring per
 kilde fra `datakilder_status`). Den sjekkes når appen og fanen åpnes, hvert
 femte minutt og når panelet lukkes. Per kilde:
 
 - tilstanden (`src/datakilder/status.ts`, `vurderKilder`): **Stanset** når
   kilden er tatt ut av bruk (`src/datakilder/stans.ts`, under), uten «Hent nå»
-  og uten prikk på adminmenyen; **Feilet** når
+  og uten prikk i hovedmenyen; **Feilet** når
   siste kjøring feilet, med feilteksten fra kjøringen; **Se over** når den var
   delvis (med feilene per kjemikalie), har stått uferdig i over en halvtime,
   eller når siste vellykkede henting er eldre enn intervallet og ett døgn til.

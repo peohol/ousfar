@@ -22,8 +22,8 @@ import { Sidemeny, sidemenyenErApen } from './components/Sidemeny'
 import { ThcStep } from './components/ThcStep'
 import { CopyFlash } from './components/CopyFlash'
 import { ruteAv } from './components/Kopibevis'
-import { Ideknapp } from './components/ideer/Ideknapp'
-import { Adminmeny } from './components/konto/Adminmeny'
+import { Idelag } from './components/ideer/Idelag'
+import { Administrasjon } from './components/konto/Administrasjon'
 import { Kontomeny } from './components/konto/Kontomeny'
 import { Varselknapp } from './components/varsler/Varselknapp'
 import { Fagsok } from './components/sok/Fagsok'
@@ -855,8 +855,6 @@ function Arbeidsflate({
                     }
                     verktoy={
                       <>
-                        <Ideknapp />
-                        <Adminmeny />
                         <Chatknapp />
                         <Varselknapp />
                       </>
@@ -1095,6 +1093,9 @@ function Arbeidsflate({
 
                   {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />}
                   <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
+                  {/* Vinduene hovedmenyen åpner under «For hele appen». */}
+                  <Idelag />
+                  <Administrasjon />
 
                   {endringsside && (
                     <FaginnholdskildeProvider kilde={faginnhold}>

@@ -26,7 +26,7 @@ export interface NedtrekksmenyProps {
 }
 
 /**
- * En nedtrekksmeny fra en rund knapp i toppmenyen: kontoen og adminmenyen.
+ * En nedtrekksmeny fra en rund knapp: kontoen i toppmenyen, og menyer som den ved fagmiljønavnet på forsiden.
  *
  * Menyen er et lag over appen, som sidemenyen: `data-lag` holder appens egne
  * taster i ro mens den står åpen. Escape, et klikk utenfor eller fokus som
@@ -173,7 +173,7 @@ export interface MenyskuffProps {
 
 /**
  * Et valg i en nedtrekksmeny som folder ut en skuff med flere valg under seg,
- * som «Preferanser» i kontomenyen. Skuffen glir opp og igjen som skuffene
+ * som «Fagmiljø» i kontomenyen. Skuffen glir opp og igjen som skuffene
  * ellers i appen (`useSkjuling`), og lukket innhold nås ikke med tabulator.
  */
 export function Menyskuff({ ikon, tekst, apen, onVeksle, children }: MenyskuffProps) {
