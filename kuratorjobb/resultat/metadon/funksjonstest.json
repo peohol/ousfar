@@ -1,0 +1,157 @@
+{
+  "stoff": "metadon",
+  "status": "feil",
+  "kontroller": [
+    {
+      "id": "les_stoff",
+      "rpc": "les_stoff",
+      "ms": 1232,
+      "status": "ok",
+      "melding": "Den publiserte siden ble lest.",
+      "antall": {
+        "elementer": 44,
+        "referanser": 68
+      }
+    },
+    {
+      "id": "sidemodell",
+      "status": "ok",
+      "melding": "Siden kan settes sammen slik appen viser den."
+    },
+    {
+      "id": "referanser",
+      "status": "ok",
+      "melding": "Alle referansene siden siterer, ble lest med den.",
+      "antall": {
+        "sitert": 68
+      }
+    },
+    {
+      "id": "utkast_skjult",
+      "rpc": "les_stoff",
+      "ms": 394,
+      "status": "ok",
+      "melding": "Utkastet er skjult for en vanlig bruker, som det skal."
+    },
+    {
+      "id": "stoffliste",
+      "rpc": "les_stoffliste",
+      "ms": 387,
+      "status": "ok",
+      "melding": "Siden står i lista over fagsider.",
+      "antall": {
+        "sider": 128
+      }
+    },
+    {
+      "id": "fest",
+      "rpc": "les_legemidler",
+      "ms": 1203,
+      "status": "ok",
+      "melding": "Legemiddeldataene ble lest (FEST kontrollert 2026-11-19T04:15:06.839104+00:00).",
+      "antall": {
+        "virkestoff": 2,
+        "merkevarer": 115,
+        "pakninger": 141
+      }
+    },
+    {
+      "id": "preparatvisning",
+      "status": "ok",
+      "melding": "Preparatseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "interaksjoner",
+      "rpc": "les_interaksjoner",
+      "ms": 9208,
+      "status": "feil",
+      "melding": "les_interaksjoner feilet (uten kode; teksten publiseres ikke)."
+    },
+    {
+      "id": "bivirkninger",
+      "rpc": "les_bivirkninger",
+      "ms": 916,
+      "status": "ok",
+      "melding": "Bivirkningene ble lest, og appen viser alle radene.",
+      "antall": {
+        "kilder": 4,
+        "rader": 200,
+        "rader_appen_viser": 200
+      }
+    },
+    {
+      "id": "bivirkningsvisning",
+      "status": "ok",
+      "melding": "Bivirkningsseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "clinpgx",
+      "rpc": "les_farmakogenetikk",
+      "ms": 1328,
+      "status": "ok",
+      "melding": "ClinPGx-dataene ble lest (synkronisert 2026-11-17T09:24:28.774741+00:00).",
+      "antall": {
+        "kjemikalier": 1,
+        "retningslinjer": 2,
+        "preparatomtaler": 0,
+        "kliniske": 100
+      }
+    },
+    {
+      "id": "farmakogenetikkvisning",
+      "status": "ok",
+      "melding": "Farmakogenetikkseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "cpic",
+      "status": "ikke_aktuelt",
+      "melding": "Stanset 06.11.2026. CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske farmakogenetiske data. Ingenting hentes eller vises fra CPIC."
+    },
+    {
+      "id": "kjemi",
+      "rpc": "les_kjemi",
+      "ms": 454,
+      "status": "ok",
+      "melding": "De kjemiske grunndataene ble lest, og koblingene stemmer (kontrollert 2026-11-18T03:15:15.107464+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "hentet": 2,
+        "ikke_hentet": 0,
+        "uavklarte": 0,
+        "rader": 2,
+        "rader_appen_viser": 2
+      }
+    },
+    {
+      "id": "kjemivisning",
+      "status": "ok",
+      "melding": "Seksjonen «Kjemiske grunndata» kan bygges av svaret."
+    },
+    {
+      "id": "laboratorieanalyser",
+      "rpc": "les_laboratorieanalyser",
+      "ms": 932,
+      "status": "ok",
+      "melding": "Laboratorieanalysene ble lest, og koblingene stemmer (kontrollert 2026-11-19T04:44:43.360207+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "koblet": 2,
+        "usikre": 0,
+        "komponenter": 4,
+        "analyser": 47,
+        "laboratorier": 17
+      }
+    },
+    {
+      "id": "laboratorievisning",
+      "status": "ok",
+      "melding": "Seksjonen «Analyse ved norske laboratorier» kan bygges av svaret, i alle enhetene.",
+      "antall": {
+        "tabeller": 10,
+        "rader": 44,
+        "ikke_omregnet": 5,
+        "usikre": 0
+      }
+    }
+  ]
+}
