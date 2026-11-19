@@ -27,7 +27,7 @@
  * stoffsidene og siden for ett stoff som ikke står i registeret. Hvert kall
  * til databasen noteres, så testene kan se hva som ble lest etter hva.
  */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -145,6 +145,17 @@ async function visApp() {
   )
   // Appen tegnes opp når analyttkatalogen er hentet.
   await waitFor(() => expect(document.querySelector('.port[aria-busy]')).toBeNull())
+}
+
+/** Hvor lenge en test venter på at en verktøyside står (CI-serveren kan være travel). */
+const VERKTOYSIDE_TID = 5000
+
+/** Går til adressen, slik nettleseren gjør når brukeren skriver den eller går tilbake og fram. */
+function gaTil(adresse: string) {
+  act(() => {
+    window.location.hash = adresse
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+  })
 }
 
 /** Fortolkningen, synlig eller skjult. */
@@ -718,18 +729,20 @@ describe('fagsøket i hele appen', () => {
     okt.rolle = 'admin'
     window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
     await visApp()
-    expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
+    // Verktøysidene er store; på en travel CI-server tar et sideskifte mer enn
+    // standardgrensen på ett sekund (`VERKTOYSIDE_TID`).
+    const overskrift = (navn: string) =>
+      screen.findByRole('heading', { level: 1, name: navn }, { timeout: VERKTOYSIDE_TID })
+    expect(await overskrift('Trappe ned antidepressiv')).toBeTruthy()
     expect(fortolkningen().hidden).toBe(true)
     expect(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' })).toBeTruthy()
 
-    window.location.hash = '#/verktoy'
-    window.dispatchEvent(new HashChangeEvent('hashchange'))
-    expect(await screen.findByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
+    gaTil('#/verktoy')
+    expect(await overskrift('Verktøy')).toBeTruthy()
     expect(screen.getAllByRole('link', { name: /^(Trappe ned antidepressiv|Bytte antidepressiv|Bytte antipsykotikum)/ })).toHaveLength(3)
 
-    window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
-    window.dispatchEvent(new HashChangeEvent('hashchange'))
-    expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
+    gaTil('#/verktoy/trappe-ned-antidepressiv')
+    expect(await overskrift('Trappe ned antidepressiv')).toBeTruthy()
   }, 20_000)
 
   it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir forsiden', async () => {
