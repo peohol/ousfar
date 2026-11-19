@@ -1,5 +1,5 @@
 /**
- * Profilkortet ved hovering (`supabase/migrations/20261119124500_profilkort.sql`,
+ * Profilkortet ved hovering (`supabase/migrations/20261119131000_profilkort.sql`,
  * docs/fagmiljoer.md «Profilkortet»): `public.profilkortdetaljer` gir
  * fagmiljøene og chatknappen bare for profiler den innloggede ser, og
  * chatknappen bare når det kan sendes direktemeldinger til personen, med

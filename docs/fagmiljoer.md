@@ -1046,7 +1046,7 @@ P2c.
 ### Profilkortet
 
 Profilkortet ved hovering (`docs/designsystem.md`, «Profilkortet»;
-`supabase/migrations/20261119124500_profilkort.sql`) har navnet og bildet fra
+`supabase/migrations/20261119131000_profilkort.sql`) har navnet og bildet fra
 stedet det står. Resten gir `public.profilkortdetaljer(bruker)`:
 
 - **Fagmiljøene** personen er aktivt medlem av i aktive fagmiljøer,
