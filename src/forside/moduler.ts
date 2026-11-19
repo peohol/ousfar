@@ -24,7 +24,7 @@ export interface Moduldefinisjon {
 export const FORSIDEMODULER = {
   viktig_nytt: { tittel: 'Viktig nytt', ikon: 'bell', standard: true },
   aktuelt: { tittel: 'Aktuelt for deg', ikon: 'done', standard: true },
-  grupper: { tittel: 'Mine grupper', ikon: 'ideoppgaver', standard: true },
+  grupper: { tittel: 'Mine grupper', ikon: 'grupper', standard: true },
   fagsider: { tittel: 'Oppdaterte fagsider', ikon: 'stoffregister', standard: true },
   ideer: { tittel: 'Nytt i idébanken', ikon: 'idea', standard: false },
   oppgaver: { tittel: 'Mine oppgaver', ikon: 'oppgaver', standard: false },

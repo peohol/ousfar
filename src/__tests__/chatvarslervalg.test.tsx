@@ -1,13 +1,16 @@
 // @vitest-environment jsdom
 /**
- * «Varsler på denne enheten» i Innstillinger → Chat (docs/chatvarsler.md):
- * bryteren, forklaringen for hver tilstand og feilen når det ikke går.
+ * «Varsler på denne enheten» øverst i chatinnstillingene (bak ⚙ i chatmenyen
+ * og i Innstillinger → Chat; docs/chatvarsler.md): bryteren, forklaringen for
+ * hver tilstand og feilen når det ikke går.
  */
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Chatvarsler, Varseltilstand } from '../chatvarsler/enhet'
+import { Chatinnstillinger } from '../components/chat/Chatinnstillinger'
 import { Chatvarslervalg, VARSELTEKST } from '../components/chat/Chatvarslervalg'
+import { direktemeldingene } from '../direktemeldinger/useDirekte'
 
 vi.mock('../auth/okt', () => ({ useProfil: () => ({ id: 'meg' }) }))
 vi.mock('../auth/klient', () => ({ klient: () => ({}) }))
@@ -62,5 +65,30 @@ describe('Chatvarslervalg', () => {
     render(<Chatvarslervalg varsler={null} />)
     expect((await bryter()).disabled).toBe(true)
     expect(screen.getByText(VARSELTEKST.ustottet)).toBeTruthy()
+  })
+})
+
+describe('Chatinnstillinger', () => {
+  it('har varslene øverst, over valgene for direktemeldingene', async () => {
+    act(() =>
+      direktemeldingene.sett({
+        pa: true,
+        kjent: true,
+        samtaler: [],
+        valg: { tillat_direktemeldinger: true, vis_aktiv: false },
+        aktive: new Set(),
+        settValg: async () => undefined,
+        oppdater: () => undefined,
+      }),
+    )
+    try {
+      render(<Chatinnstillinger />)
+      await bryter()
+      expect(screen.getAllByRole('switch').map((b) => b.getAttribute('aria-label') ?? b.closest('label')?.textContent ?? '')[0]).toMatch(
+        /Varsler på denne enheten/,
+      )
+    } finally {
+      act(() => direktemeldingene.sett(null))
+    }
   })
 })

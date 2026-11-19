@@ -178,6 +178,20 @@ describe('chatmenyen', () => {
     expect(merkLest).not.toHaveBeenCalled()
   })
 
+  it('er ryddig: overskriften bare for skjermlesere, uten antall og uten hvor gruppene hører til', async () => {
+    vis()
+    await apneMenyen()
+    expect(within(meny()).getByRole('heading', { name: 'Grupper og samtaler' }).classList.contains('kun-skjermleser')).toBe(true)
+    const grupper = within(meny()).getByRole('region', { name: /Mine grupper/ })
+    expect(within(grupper).getByRole('button', { name: 'Mine grupper' }).querySelector('[data-ikon="grupper"]')).toBeTruthy()
+    expect(within(grupper).getByRole('link', { name: 'Sandkassegruppen' })).toBeTruthy()
+    expect(within(grupper).queryByText(/Sandkasse$|På tvers/)).toBeNull()
+    const samtaler = within(meny()).getByRole('region', { name: 'Samtaler' })
+    expect(within(samtaler).getByRole('heading', { name: 'Samtaler' }).querySelector('[data-ikon="samtale"]')).toBeTruthy()
+    expect(within(samtaler).getAllByText('Gruppechat')).toHaveLength(2)
+    expect(within(samtaler).queryByText(/Gruppechat ·/)).toBeNull()
+  })
+
   it('søker i samtalene', async () => {
     vis()
     await apneMenyen()
@@ -506,15 +520,33 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(tilstand.api.sokDirektemottakere).toBeUndefined()
   })
 
-  it('bryterne står nederst og lagrer valget', async () => {
+  it('bryterne står bak ⚙, lagrer valget, og Escape går tilbake til lista', async () => {
     vis()
     await apneMenyen()
-    const tillat = within(meny()).getByRole('switch', { name: /Tillat direktemeldinger/ }) as HTMLInputElement
-    const aktiv = within(meny()).getByRole('switch', { name: /Vis når jeg er aktiv/ }) as HTMLInputElement
+    // Ikke i lista: bare bak ⚙.
+    expect(within(meny()).queryByRole('switch')).toBeNull()
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Innstillinger for chatten' }))
+    const innstillinger = within(meny()).getByRole('region', { name: 'Innstillinger for chatten' })
+    const tillat = within(innstillinger).getByRole('switch', { name: /Tillat direktemeldinger/ }) as HTMLInputElement
+    const aktiv = within(innstillinger).getByRole('switch', { name: /Vis når jeg er aktiv/ }) as HTMLInputElement
+    expect(within(innstillinger).getByRole('button', { name: 'Blokkerte' })).toBeTruthy()
+    expect(within(meny()).queryByRole('region', { name: 'Samtaler' })).toBeNull()
     expect(tillat.checked).toBe(true)
     expect(aktiv.checked).toBe(false)
     await userEvent.click(aktiv)
     expect(settValg).toHaveBeenCalledWith({ vis_aktiv: true })
+    await userEvent.keyboard('{Escape}')
+    expect(within(meny()).getByRole('region', { name: 'Samtaler' })).toBeTruthy()
+    expect(within(meny()).queryByRole('switch')).toBeNull()
+    await waitFor(() => expect(document.activeElement).toBe(within(meny()).getByRole('button', { name: 'Innstillinger for chatten' })))
+  })
+
+  it('«Til alle samtaler» fra ⚙ går tilbake til lista', async () => {
+    vis()
+    await apneMenyen()
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Innstillinger for chatten' }))
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Til alle samtaler' }))
+    expect(within(meny()).getByRole('region', { name: 'Samtaler' })).toBeTruthy()
   })
 
   it('uten direktemeldinger slått på står verken «Ny chat», bryterne eller direktesamtalene der', async () => {
@@ -523,6 +555,7 @@ describe('direktemeldingene i chatmenyen', () => {
     const helside = screen.getByRole('main', { name: 'Grupper og samtaler' })
     expect(within(helside).queryByRole('button', { name: 'Ny chat' })).toBeNull()
     expect(within(helside).queryByRole('switch')).toBeNull()
+    expect(within(helside).queryByRole('button', { name: 'Innstillinger for chatten' })).toBeNull()
     expect(within(helside).queryByRole('heading', { name: 'Kari Testesen' })).toBeNull()
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
     // Fanen Chat i Innstillinger får heller ingenting å vise.

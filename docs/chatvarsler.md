@@ -9,7 +9,8 @@ man komme direkte til den aktuelle chatten.»
 ## Kort fortalt
 
 - Hver bruker slår dem på selv, **per enhet**: bryteren «Varsler på denne
-  enheten» under Konto → Innstillinger → Chat. Den står av til man slår den
+  enheten» øverst i chatinnstillingene (`Chatinnstillinger`: bak ⚙ nederst i
+  chatmenyen og i Konto → Innstillinger → Chat). Den står av til man slår den
   på, og gjelder bare nettleseren den slås på i.
 - Et varsel kommer når noen andre skriver i en gruppechat man er aktivt
   medlem av, eller sender en direktemelding man kan motta (bryteren på, ikke
