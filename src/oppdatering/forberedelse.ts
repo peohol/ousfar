@@ -20,8 +20,15 @@
 import { erKonfigurert, klient } from '../auth/klient'
 import type { Byggopplysninger } from './byggopplysninger'
 
-/** Pausene før hvert forsøk, i millisekunder: fire forsøk over sju sekunder. */
+/** Pausene før hvert forsøk, i millisekunder: fire forsøk, med sju sekunders pauser til sammen. */
 export const PAUSER = [0, 1_000, 2_000, 4_000]
+
+/**
+ * Hvor lenge ett forsøk, med svaret og hele fila, kan ta før det avbrytes og
+ * neste begynner. Romslig: fila er stor, og en kald kant kan bruke noen
+ * sekunder på nøklene sine (`src/auth/veggnokler.ts`).
+ */
+export const FORSOKSFRIST = 20_000
 
 /** Hvor lenge en vellykket sjekk gjelder, før den gjøres på nytt. */
 export const KLAR_I = 60_000
@@ -33,6 +40,7 @@ export interface Klargjoringsavhengigheter {
   /** Fornyer økten, så informasjonskapselen veggen leser, er fersk. */
   fornyOkt?: () => Promise<void>
   vent?: (ms: number) => Promise<void>
+  frist?: number
 }
 
 async function harInnloggetOkt(): Promise<boolean> {
@@ -56,6 +64,7 @@ export async function forbered(
     harOkt = harInnloggetOkt,
     fornyOkt = fornyInnloggetOkt,
     vent = (ms) => new Promise((ferdig) => setTimeout(ferdig, ms)),
+    frist = FORSOKSFRIST,
   }: Klargjoringsavhengigheter = {},
 ): Promise<boolean> {
   if (!bygg.klinisk) return true
@@ -65,8 +74,11 @@ export async function forbered(
   const adresse = new URL(bygg.klinisk, document.baseURI)
   for (const pause of PAUSER) {
     if (pause > 0) await vent(pause)
+    // Fristen gjelder både svaret og hele fila: et forsøk som henger, skal ikke stoppe de neste.
+    const avbrudd = new AbortController()
+    const tidsfrist = setTimeout(() => avbrudd.abort(), frist)
     try {
-      const svar = await hent(adresse, { credentials: 'same-origin', cache: 'no-cache' })
+      const svar = await hent(adresse, { credentials: 'same-origin', cache: 'no-cache', signal: avbrudd.signal })
       if (svar.ok) {
         // Hele fila, så den ligger i mellomlageret når siden lastes på nytt.
         await svar.arrayBuffer()
@@ -76,7 +88,9 @@ export async function forbered(
       if (svar.status === 404) return true
       if (svar.status === 401) await fornyOkt().catch(() => undefined)
     } catch {
-      // Uten nett, eller avbrutt underveis: prøver igjen.
+      // Uten nett, over fristen eller avbrutt underveis: prøver igjen.
+    } finally {
+      clearTimeout(tidsfrist)
     }
   }
   return false

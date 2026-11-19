@@ -18,7 +18,7 @@ Før siden lastes på nytt, henter appen den nye versjonens kliniske del, mens
 brukeren blir stående på siden (knappen viser «Oppdaterer …»). Det begynner
 alt når den nye versjonen er funnet, så det er som regel ferdig før brukeren
 trykker. Avviser innloggingsveggen økten, fornyes den, og det prøves igjen;
-faller nettet ut, prøves det fire ganger over sju sekunder. Lar den nye
+faller nettet ut eller henger et forsøk, prøves det fire ganger, med en frist på 20 sekunder for hvert. Lar den nye
 versjonen seg ikke hente, blir den gamle stående, meldingen sier fra, og
 knappen blir «Prøv igjen». Brukeren havner altså ikke på «Fikk ikke hentet
 appen» fordi den nye versjonen ikke var å få tak i.

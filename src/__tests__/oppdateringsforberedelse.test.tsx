@@ -68,6 +68,31 @@ describe('å gjøre den nye versjonen klar', () => {
     expect(hent).toHaveBeenCalledTimes(PAUSER.length)
   })
 
+  it('avbryter et forsøk som henger, så de neste kommer', async () => {
+    const hent = vi.fn(
+      (_adresse: URL | RequestInfo, valg?: RequestInit) =>
+        new Promise<Response>((_ok, feil) => valg?.signal?.addEventListener('abort', () => feil(new DOMException('', 'AbortError')))),
+    )
+    expect(await forbered(BYGG, { hent, harOkt: async () => true, frist: 5, ...utenVenting })).toBe(false)
+    expect(hent).toHaveBeenCalledTimes(PAUSER.length)
+  })
+
+  it('avbryter også når svaret kom, men fila aldri blir ferdig', async () => {
+    let lest = 0
+    const hent = vi.fn(async (_adresse: URL | RequestInfo, valg?: RequestInit) => {
+      const kropp = new ReadableStream({
+        start(styring) {
+          styring.enqueue(new TextEncoder().encode('export'))
+          valg?.signal?.addEventListener('abort', () => styring.error(new DOMException('', 'AbortError')))
+        },
+      })
+      lest += 1
+      return new Response(kropp, { status: 200 })
+    })
+    expect(await forbered(BYGG, { hent, harOkt: async () => true, frist: 5, ...utenVenting })).toBe(false)
+    expect(lest).toBe(PAUSER.length)
+  })
+
   it('tar i bruk et enda nyere bygg når fila alt er byttet ut', async () => {
     expect(await forbered(BYGG, { hent: kant([404]), harOkt: async () => true, ...utenVenting })).toBe(true)
   })
