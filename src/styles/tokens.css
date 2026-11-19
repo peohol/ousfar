@@ -134,7 +134,7 @@
   --toppmeny-offset: calc(var(--hoyde-toppmeny) + 1.75rem);
   --dokkhoyde: var(--hoyde-dokk);
   --dokk-offset: calc(var(--dokkhoyde) + 1.75rem);
-  --blur-toppmeny: 10px;
+  --blur-toppmeny: 4px;
   /* Så smalt fagsøket i toppmenyen kan bli og fortsatt vise «Søk i
      fagstoff». Trengs mer for sidens handlinger, blir de kompakte og så
      flytter de ned i dokken (`Toppmeny`). */
@@ -184,7 +184,7 @@
   --flate-bunn: #f5f1e8; /* sidebakgrunn */
   --flate: #fffdf8; /* kort, paneler, felt */
   --flate-hevet: #efe8da; /* ikonsirkler, sekundærknapper, søkefelt */
-  --flate-toppmeny: rgb(255 253 248 / 0.72); /* over backdrop-blur */
+  --flate-toppmeny: rgb(255 253 248 / 0.6); /* over backdrop-blur */
   --linje: #e2d9c7; /* hårlinjer, kortkanter */
   --linje-sterk: #d3c8b2; /* innrykkslinjer */
   /* Kanten som alene viser hvor et felt eller en knapp er (WCAG 1.4.11). */
@@ -291,7 +291,7 @@
   --flate-bunn: #0e1217;
   --flate: #151a21;
   --flate-hevet: #1c232c;
-  --flate-toppmeny: rgb(21 26 33 / 0.7);
+  --flate-toppmeny: rgb(21 26 33 / 0.6);
   --linje: #29313c;
   --linje-sterk: #3a4452;
   --linje-kontroll: #6e7987;
