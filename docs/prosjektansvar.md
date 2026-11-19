@@ -1,13 +1,14 @@
 # Prosjektansvar i OUSFAR
 
-**Felles fasit for hvem som eier hvilke oppgaver og PR-er** i de seks
-prosjektene som arbeider mot `peohol/ousfar`: OUSFAR Dev, OUSFAR Fag og OUSFAR
-Verktøy, hvert av dem både i Claude Code Projects og i ChatGPT. Prosjektinstruksene
-som limes inn i prosjektinnstillingene, står i
+**Felles fasit for hvem som eier hvilke oppgaver og PR-er** i prosjektene som
+arbeider mot `peohol/ousfar`: de tre prosjektområdene OUSFAR Dev, OUSFAR Fag og
+OUSFAR Verktøy, hvert av dem i Claude Code Projects og i ChatGPT, for hver
+systemarkitekt som utvikler (i dag Peder, `peohol`, og Max, `maxhag`).
+Prosjektinstruksene som limes inn i prosjektinnstillingene, står i
 [prosjektinstrukser.md](prosjektinstrukser.md) og peker hit; detaljreglene står
 bare her.
 
-Dokumentet avgjør eierskap, overlevering og PR-kontroll. Det endrer ingen faglige
+Dokumentet avgjør eierskap, ansvarlig person, overlevering og PR-kontroll. Det endrer ingen faglige
 prosedyrer: kurateringen og den uavhengige kontrollen av fagsidene
 ([kuratering-prosjekt.md](kuratering-prosjekt.md),
 [kontrollorinstruks.md](kontrollorinstruks.md)), ChatGPTs
@@ -27,7 +28,7 @@ Dev (`ansvar:dev`); de andre prosjektene foreslår endringer som en oppgave til 
 Er det uklart hvilket prosjekt en oppgave hører til, avgjør Peder det; Claude
 eller ChatGPT gir én anbefaling med begrunnelse.
 
-## 2. Formålet avgjør, ikke filene
+## 2. Formålet avgjør prosjektet, ikke filene
 
 Prosjektet som eier en oppgave, er prosjektet som eier **formålet** med den,
 uansett hvilke filer endringen berører. En endring i planvisningen til
@@ -36,15 +37,70 @@ filer som endringsloggen, `package.json` og stilarkene gir ikke eierskap.
 
 Krever løsningen også en **selvstendig** endring av noe felles, som
 designsystemet, en felles komponent eller databasen, skilles den delen normalt ut
-som en egen oppgave til prosjektet som eier den (§4).
+som en egen oppgave til prosjektet som eier den (§5).
 
-## 3. Arbeidsdelingen
+## 3. Ansvarlig systemarkitekt
+
+Hver oppgave har to uavhengige merkinger:
+
+| Akse | Avgjøres av | Merkes med | Avgjør |
+| --- | --- | --- | --- |
+| **Prosjekt** | Formålet (§1–2) | Nøyaktig én prosjektetikett | Hvilket prosjektområde som eier oppgaven, og hvilket ChatGPT-prosjekt som kontrollerer |
+| **Ansvarlig systemarkitekt** | Hvem som har oppgaven | Nøyaktig én **assignee** på Issue-et og PR-en | Hvem sitt prosjekt det er: Peders ChatGPT-prosjekter kontrollerer bare PR-er med assignee `peohol`, Max' bare med `maxhag` |
+
+Systemarkitektene som kan være ansvarlige, står i
+[`.github/prosjektansvar.json`](../.github/prosjektansvar.json) sammen med
+prosjektetikettene. Det finnes ingen personetiketter, og PR-forfatteren,
+grennavnet, Claude- eller ChatGPT-kontoen og navn i fritekst sier ikke hvem som
+er ansvarlig; det gjør bare assignee-feltet.
+
+**Hvem som blir ansvarlig.** En agent setter assignee bare ut fra en identitet
+GitHub eller agentplattformen har bekreftet ved innlogging:
+
+1. Systemarkitekten tildeler oppgaven selv i GitHub, eller oppretter Issue-et
+   selv direkte i GitHub (ikke gjennom en app som Claude eller ChatGPT). Da kan
+   den som opprettet det, tildeles som standard.
+2. Systemarkitekten ber selv en agent om oppgaven, og plattformen oppgir den
+   innloggede brukerens GitHub-konto (i Claude Code Projects: «GitHub login» i
+   øktens kontekst; en planlagt kjøring regnes som bestilt av den som opprettet
+   den). Bestillingen er da den klare beslutningen om tildeling.
+3. En systemarkitekt sier uttrykkelig at en oppgave skal tildeles eller
+   overføres til en navngitt systemarkitekt. Agenten gjør den tekniske delen.
+
+Agenten slutter aldri personen ut fra kontoen en app eller bot skriver under
+(Issues fra Claude og ChatGPT står ofte med en persons konto som forfatter),
+PR-forfatteren, grennavnet, prosjektets navn, en lenke, en signatur eller et
+navn i teksten. Holder ingen av punktene, står Issue-et ufordelt, og agenten
+spør i én setning hvem som skal ha det; implementeringen venter.
+
+**Ufordelt backlog er lov, ufordelt utvikling ikke.** Et Issue kan ligge uten
+assignee så lenge ingen arbeider med det. Ingen implementering starter før det
+har nøyaktig én assignee. En større oppgave kan ha flere PR-er, men én
+ansvarlig; selvstendige deler med ulike ansvarlige deles i egne Issues.
+
+**Overføring** mellom systemarkitektene er uttrykkelig (punkt 3): agenten endrer
+assignee på Issue-et og på de åpne PR-ene, og skriver en kort kommentar i
+Issue-et om hvem som overtok og hvorfor. En overført PR kontrolleres i sin
+helhet på nytt av den nye ansvarliges ChatGPT-prosjekt på gjeldende HEAD;
+vurderinger fra et annet ChatGPT-prosjekt gjelder ikke. Å endre bare én av dem
+gjør kontrollen «Prosjektansvar» rød (§6).
+
+**Myndighet.** Å være ansvarlig for et Issue er en arbeidsrolle i
+utviklingen, ikke appens systemarkitektrolle og ingen overføring av
+beslutningsmyndighet. Avgjørelser styringsdokumentene reserverer for Peder
+(blant annet kliniske regler og godkjenninger, beskyttede data og nøkkeltall,
+nye fagmiljøer, sikkerhetsporter, destruktive migrasjoner og overordnede
+prioriteringer) tar bare han, uansett hvem som har oppgaven, til noe annet er
+vedtatt. Den uavhengige fagkontrollen i OUSFAR Fag og den kliniske kontrollen i
+OUSFAR Verktøy gjelder uendret.
+
+## 4. Arbeidsdelingen
 
 | Hvem | Gjør | Gjør ikke |
 | --- | --- | --- |
-| **Claude Code** | Implementering og det meste av det tekniske arbeidet: kode, tester, dokumentasjon, migrasjoner, etiketter og GitHub-operasjoner. Merker PR-en «Til ChatGPT-kontroll – ikke merge», oppgir HEAD-SHA og kjørte kontroller, og retter konkrete funn fra ChatGPT uten å vente | Slår aldri sammen PR-er. Kontrollerer ikke PR-er fra andre prosjekter |
-| **ChatGPT** | Drøfting, vurdering, planlegging og uavhengig kontroll av PR-er fra Claude etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md). Slår sammen (squash) PR-er med sitt eget prosjekts etikett når de er godkjent | Implementerer ikke i repoet og committer ikke direkte til `main`. Kontrollerer eller slår ikke sammen PR-er fra andre prosjekter |
-| **Peder** | Bestemmer mål og prioritering, tar de kliniske og faglige avgjørelsene bare et menneske kan ta, gir eksplisitt ja der et styrende dokument krever det, og gjør korte aksepttester | Gjør ikke tekniske operasjoner, videreformidler ikke tekniske meldinger mellom prosjekter og koordinerer ikke tråder |
+| **Claude Code** | Implementering og det meste av det tekniske arbeidet: kode, tester, dokumentasjon, migrasjoner, Issues, etiketter, assignees og GitHub-operasjoner. Merker PR-en «Til ChatGPT-kontroll – ikke merge», oppgir HEAD-SHA og kjørte kontroller, og retter konkrete funn fra ChatGPT uten å vente | Slår aldri sammen PR-er. Kontrollerer ikke PR-er fra andre prosjekter |
+| **ChatGPT** | Drøfting, vurdering, planlegging og uavhengig kontroll av PR-er fra Claude etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md). Slår sammen (squash) PR-er med sitt eget prosjekts etikett og sin egen systemarkitekt som assignee når de er godkjent | Implementerer ikke i repoet og committer ikke direkte til `main`. Kontrollerer eller slår ikke sammen andre prosjekters eller den andre systemarkitektens PR-er |
+| **Systemarkitektene** | Bestemmer mål og prioritering for sine oppgaver og gjør korte aksepttester. Peder tar i tillegg de kliniske og faglige avgjørelsene styringsdokumentene reserverer for ham, og gir eksplisitt ja der et styrende dokument krever det (§3) | Gjør ikke tekniske operasjoner, videreformidler ikke tekniske meldinger mellom prosjekter og koordinerer ikke tråder |
 
 Krever et styrende dokument Peders ja før sammenslåing (for eksempel en
 destruktiv migrasjon etter `supabase/AGENTS.md`, nøklene i OUSFAR Fag eller en ny klinisk
@@ -55,65 +111,133 @@ I OUSFAR Fag er ChatGPTs PR-kontroll en kontroll av selve PR-en. Den
 gjør etter [kuratering-prosjekt.md](kuratering-prosjekt.md). Faglige vurderinger
 av et stoff hører ikke hjemme i GitHub, som er offentlig.
 
-## 4. Nye oppgaver og overlevering
+## 5. Nye oppgaver og overlevering
 
-**Én eier per oppgave.** Før Claude begynner på en oppgave:
+**Én eier og én ansvarlig per oppgave.** Før Claude begynner på en oppgave:
 
 1. Avgjør eieren etter formålet (§1–2). Hører oppgaven til et annet prosjekt, sier
    Claude det i én setning med navnet på riktig prosjekt, overleverer den (under)
    og begynner ikke selv.
-2. Før større utviklingsoppgaver: les åpne Issues og PR-er som kan gjelde det samme
-   problemet. Arbeider en annen tråd eller et annet prosjekt alt med det, lages
-   ingen konkurrerende implementering; arbeidet fortsetter der, eller deles etter
-   punkt 3.
-3. Berører oppgaven flere prosjekter, deles den som hovedregel i avgrensede
+2. Les åpne Issues og PR-er som kan gjelde det samme problemet, uansett prosjekt
+   og person. Arbeider en annen tråd, et annet prosjekt eller den andre
+   systemarkitekten alt med det, lages ingen konkurrerende gren; arbeidet
+   fortsetter der, eller deles i deloppgaver med avhengighetene skrevet ned.
+3. Finn eller lag Issue-et for oppgaven, med prosjektetiketten og nøyaktig én
+   assignee etter §3. Også en liten feilretting får et kort Issue. Står det
+   ufordelt og ansvarlig ikke kan avgjøres etter §3, venter implementeringen.
+4. Berører oppgaven flere prosjekter, deles den som hovedregel i avgrensede
    oppgaver, én per eier, med avhengighetene skrevet ned i hver av dem (i issuet
    eller i PR-beskrivelsen under «Avhengigheter»). Er en oppdeling ikke
    hensiktsmessig, avklares én hovedansvarlig før implementeringen starter, og
    PR-en får den hovedansvarliges etikett.
 
-**Overlevering.** Prosjektene kan ikke sende meldinger til hverandre, og Peder
-skal ikke formidle tekniske meldinger. Derfor overleveres en oppgave som et GitHub
-Issue med mottakerens etikett (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`):
-hva som trengs og hvorfor, avhengigheter og lenker. Den som overleverer, gir Peder
-én setning: «Dette hører til OUSFAR X; jeg har laget issue #N.» Peder åpner da
-bare det prosjektet og ber det ta issuet. Nye Issues får prosjektetikett fra
-starten.
+**Overlevering.** Prosjektene kan ikke sende meldinger til hverandre, og
+systemarkitektene skal ikke formidle tekniske meldinger. Derfor overleveres en
+oppgave som et GitHub Issue med mottakerens etikett (`ansvar:dev`, `ansvar:fag`
+eller `ansvar:verktoy`): hva som trengs og hvorfor, avhengigheter og lenker.
+Issue-et får samme assignee som oppgaven det kom fra, når den som bestilte,
+skal ha det videre; ellers står det ufordelt (§3). Den som overleverer, gir
+systemarkitekten én setning: «Dette hører til OUSFAR X; jeg har laget issue
+#N.» Systemarkitekten åpner da bare det prosjektet og ber det ta issuet. Nye
+Issues får prosjektetikett fra starten, gjerne med malen «Oppgave».
 
 **Feil eier oppdaget underveis.** Viser det seg at en åpen PR hører til et annet
-prosjekt, flyttes etiketten til riktig prosjekt, og det prosjektet overtar både
-videre arbeid og kontroll; det første prosjektet stopper sitt. Kontroll og
-sammenslåing venter til flyttingen er gjort.
+prosjekt, flyttes etiketten på både Issue-et og PR-en til riktig prosjekt, og det
+prosjektet overtar både videre arbeid og kontroll; det første prosjektet stopper
+sitt. Kontroll og sammenslåing venter til flyttingen er gjort.
+
+**Status uten nye verktøy.** Hvor en oppgave står, leses av GitHub-feltene som
+alt finnes; det trengs verken statusetiketter eller en egen tavle:
+
+| Status | Betyr | Søk |
+| --- | --- | --- |
+| Ledig | Åpent Issue uten assignee | [`is:issue is:open no:assignee`](https://github.com/peohol/ousfar/issues?q=is%3Aissue+is%3Aopen+no%3Aassignee) |
+| Tildelt / Pågår | Åpent Issue med assignee, med eller uten en åpen PR | [`is:issue is:open assignee:peohol`](https://github.com/peohol/ousfar/issues?q=is%3Aissue+is%3Aopen+assignee%3Apeohol) (bytt bruker) |
+| Til kontroll | Åpen PR med etiketten «Til ChatGPT-kontroll – ikke merge» | [`is:pr is:open assignee:peohol`](https://github.com/peohol/ousfar/pulls?q=is%3Apr+is%3Aopen+assignee%3Apeohol) (bytt bruker) |
+| Ferdig | Issue-et er lukket, normalt av «Closes #N» når siste PR slås sammen | |
+
+En felles GitHub Projects-tavle kan legges oppå senere, men er ikke nødvendig.
+
+**Konflikter mellom parallelle løp.** Én gren per arbeidsløp, aldri direkte til
+`main`. Før en PR er klar: oppdatert base, grønne tester og avhengighetene
+kontrollert. Vurder særlig migrasjoner, delte API-er og felles komponenter når
+to løp er åpne samtidig; at Git ikke melder konflikt, beviser ikke at endringene
+virker sammen. Versjon og endringslogg følger §6 punkt 9 uendret.
 
 Det er fortsatt fritt å diskutere sammenhenger og avhengigheter mellom
 prosjektene. Reglene gjelder eierskap og kontroll, ikke nødvendig
 informasjonsutveksling.
 
-## 5. PR-er: merking, kontroll og sammenslåing
+## 6. PR-er: merking, kontroll og sammenslåing
 
 1. **Nøyaktig én prosjektetikett** på hver PR, også dokumentasjonsendringer og
-   små feilrettinger: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`. Claude
-   setter den når PR-en opprettes, etter formålet.
-2. **PR-beskrivelsen** følger malen (`.github/pull_request_template.md`): øverst
+   små feilrettinger: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`, den
+   samme som på Issue-et. Claude setter den når PR-en opprettes.
+2. **Nøyaktig én assignee**, den samme som på Issue-et (§3). Claude setter den
+   når PR-en opprettes.
+3. **PR-beskrivelsen** følger malen (`.github/pull_request_template.md`): øverst
    et kort sammendrag i enkelt språk for mennesker (hva som er gjort, hvorfor, og
-   om en menneskelig systemarkitekt må ta stilling til noe), deretter ansvarlig
-   prosjekt, avhengigheter til andre oppgaver eller PR-er, mulige virkninger
-   utenfor prosjektets ansvarsområde og eventuelle tekniske detaljer for
-   kontrollen.
-3. **Den automatiske kontrollen** «Prosjektansvar»
-   (`.github/workflows/prosjektansvar.yml`) består bare med nøyaktig én gyldig
-   etikett, feiler med en kort forklaring ellers, og kjøres på nytt når etiketter
-   legges til eller fjernes. Regelsettet «Prosjektansvar» på `main` gjør den
-   påkrevd før sammenslåing. Den kontrollerer bare merkingen, ikke om PR-en hører
-   til riktig prosjekt; det vurderer ChatGPT.
-4. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, kontrollerer og slår
-   sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).
-   Har PR-en virkninger utenfor eget område (som felles CSS), kontrollerer det
-   samme prosjektet også dem. Et annet prosjekt kan bli orientert, men gjør ingen
-   parallell kontroll.
-5. **Uten gyldig etikett** får PR-en ingen ordinær kontroll og slås ikke sammen
-   før eierskapet er avklart.
-6. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
+   om en menneskelig systemarkitekt må ta stilling til noe), deretter
+   arbeidsoppgaven, ansvarlig prosjekt, avhengigheter til andre oppgaver eller
+   PR-er, mulige virkninger utenfor prosjektets ansvarsområde og eventuelle
+   tekniske detaljer for kontrollen. Under «Arbeidsoppgave» står `Refs #N` for
+   en delleveranse og `Closes #N` bare når PR-en fullfører Issue-et. Flere PR-er
+   kan vise til samme Issue.
+4. **Den automatiske kontrollen** «Prosjektansvar» (`scripts/prosjektansvar.mjs`)
+   består bare når PR-en har nøyaktig én gyldig prosjektetikett og nøyaktig én
+   assignee blant systemarkitektene, og viser til minst ett Issue som har den
+   samme etiketten og den samme ene assignee-en. Ellers feiler den med en kort
+   forklaring av hva som må rettes. Regelsettet «Prosjektansvar» på `main` gjør
+   den påkrevd før sammenslåing. Den kontrollerer bare merkingen, ikke om den er
+   riktig, og ikke hvem som faktisk ba om arbeidet; det vurderer ChatGPT.
+5. **Betrodd kjøring.** En PR kan ikke endre det som vurderer den selv:
+   - Selve kontrollen (`.github/workflows/prosjektansvar.yml`) kjøres bare av
+     hendelsene `workflow_run` og `issues`, som alltid bruker arbeidsflyten og
+     skriptet slik de er på `main`. Den sjekker bare ut `main`, leser PR-en og
+     Issue-ene som data fra GitHub og kjører ingen kode fra PR-en. Resultatet
+     skrives som check run-en «Prosjektansvar» på PR-ens siste commit; den
+     settes til «pågår» før hver ny vurdering, så en gammel grønn ikke gjelder
+     imens.
+   - `.github/workflows/prosjektansvar-utloser.yml` kjører ved hver endring av
+     en PR (nye commits, etiketter, assignees eller beskrivelse), uten tilganger
+     og uten å kjøre noe; når den er ferdig, kjører kontrollen fra `main`.
+     Fjerner eller ødelegger en PR utløseren, får den ingen «Prosjektansvar» og
+     kan ikke slås sammen.
+   - Får et Issue ny assignee eller etikett, eller slettes eller flyttes det,
+     vurderes alle åpne PR-er som viser til det, på nytt med en ny check run,
+     så en grønn kontroll ikke blir stående på et foreldet grunnlag.
+   - Fordi navnet på en check run kan etterlignes av enhver arbeidsflyt som
+     kjører på PR-er, feiler kontrollen når en PR legger til eller endrer en
+     slik arbeidsflyt som har en jobb som heter «Prosjektansvar», som kan
+     skrive check runs eller statuser, eller som mangler en permissions-blokk.
+     Det oppdager, men kan ikke teknisk hindre, at noen med skrivetilgang
+     bevisst omgår kontrollen; det krever særskilt kontroll av alle endringer
+     i `.github/workflows/`.
+   - En PR som endrer kontrollens egne filer, vurderes med versjonen på `main`
+     og får en advarsel om det; endringen virker først når den er slått sammen.
+6. **Overgang:**
+   - Kravet om assignee og arbeidsoppgave gjelder PR-er som er opprettet etter
+     at `.github/prosjektansvar.json` kom på `main`. Eldre PR-er får bare en
+     advarsel og kan fullføres slik de ble startet; kravet om prosjektetikett
+     gjelder dem som før. Unntaket følger opprettelsestidspunktet og gjelder
+     ingen nye PR-er.
+   - Den betrodde kontrollen kan ikke vurdere PR-en som innfører den. Derfor
+     finnes `.github/workflows/prosjektansvar-overgang.yml` midlertidig: den
+     gir «Prosjektansvar» på gammel måte (fra PR-en selv) til den betrodde
+     kontrollen er på `main`, og fjernes i en egen liten PR rett etter. Den
+     PR-en får «Prosjektansvar» bare fra den betrodde kontrollen.
+7. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
+   PR-ens assignee («GitHub-ansvarlig» i prosjektinstruksen), kontrollerer og
+   slår sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).
+   Ved «sjekk igjen» eller «alle åpne PR-er» hentes hele køen, men bare egen
+   kombinasjon av etikett og assignee kontrolleres. Har PR-en virkninger utenfor
+   eget område (som felles CSS), kontrollerer det samme prosjektet også dem. Et
+   annet prosjekt kan bli orientert, men gjør ingen parallell kontroll. Dette er
+   en avgrensning i instruksene, ikke en teknisk lesesperre.
+8. **Uten gyldig merking** (ingen, flere, ukjent eller motstridende etikett
+   eller assignee) får PR-en ingen ordinær kontroll og slås ikke sammen før den
+   er rettet.
+9. **Versjon og endringslogg:** hver PR har nøyaktig én føring etter
    [endringslogg.md](endringslogg.md), uansett prosjekt (unntatt en stille
    designjustering). Føringen er en ny fil som sier om endringen er MAJOR,
    MINOR eller PATCH, uten versjonsnummer; nummeret settes automatisk i den
@@ -121,7 +245,7 @@ informasjonsutveksling.
    `package.json` for å føre en versjon, så PR-er fra ulike prosjekter kan slås
    sammen i hvilken som helst rekkefølge uten konflikt i endringsloggen.
 
-## 6. Felles regler for alle tre prosjektene
+## 7. Felles regler for alle prosjektene
 
 - `AGENTS.md`, med tilleggene i undermappenes `AGENTS.md`, gjelder for alle agenter i alle prosjektene.
 - Automatiserte nettleserkontroller kjøres i det lokale testmiljøet, aldri som
@@ -137,11 +261,27 @@ informasjonsutveksling.
 - Ingen nye koordinatorer, godkjenningsledd eller automatiske kontrollrunder uten
   at Peder ber om det.
 
-## 7. Kort sagt
+## 8. En ny systemarkitekt
 
-- Ett prosjekt eier hver oppgave og hver PR, etter formålet.
-- Etiketten sier hvilket prosjekt; bare det prosjektets ChatGPT kontrollerer og
-  slår sammen.
-- «Se over alle åpne PR-er» betyr de med eget prosjekts etikett.
+Det trengs ingen nye etiketter, repoer eller personlige Claude-instrukser:
+
+1. Peder gir vedkommende skrivetilgang til repoet på GitHub (Settings →
+   Collaborators). Uten den kan GitHub ikke sette personen som assignee.
+2. GitHub-brukeren føres inn under `systemarkitekter` i
+   [`.github/prosjektansvar.json`](../.github/prosjektansvar.json) i en PR fra
+   OUSFAR Dev.
+3. Vedkommende lager sine egne prosjekter med de felles instruksene i
+   [prosjektinstrukser.md](prosjektinstrukser.md): Claude-instruksene er like
+   for alle, og ChatGPT-instruksene får bare sin egen linje
+   `GitHub-ansvarlig: <GitHub-bruker>` øverst.
+
+## 9. Kort sagt
+
+- Ett prosjekt eier hver oppgave og hver PR, etter formålet; én systemarkitekt
+  er ansvarlig, etter assignee.
+- Ingen implementering uten et Issue med etikett og én assignee; PR-en har de
+  samme og viser til Issue-et.
+- Etiketten og assignee-en sier hvilket ChatGPT-prosjekt som kontrollerer og
+  slår sammen; «sjekk igjen» betyr bare egen kombinasjon.
 - Hører noe til et annet prosjekt: si hvilket, overlever med et issue, og la det
   være.

@@ -1,0 +1,37 @@
+# MIDLERTIDIG. Den eneste veien en PR får «Prosjektansvar» før den betrodde
+# kontrollen (prosjektansvar.yml) er på main: den kan ikke vurdere PR-en som
+# selv innfører den. Kjører kontrollen fra PR-en, som før, og er derfor ikke
+# betrodd. Fjernes i PR-en rett etter (docs/prosjektansvar.md §6, overgang).
+name: Prosjektansvar – overgang
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled, assigned, unassigned]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: prosjektansvar-overgang-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  etikett:
+    name: Prosjektansvar
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            scripts/prosjektansvar.mjs
+            .github/prosjektansvar.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Ett prosjekt og én ansvarlig, som på Issue-et
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/prosjektansvar.mjs
