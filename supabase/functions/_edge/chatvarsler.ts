@@ -3,8 +3,8 @@
  * noe som bare finnes i Deno, så testene kan kjøre den mot testdatabasen.
  *
  * Databasen avgjør hvem som får varsel og hva det står (`chatvarsel_hent`);
- * her krypteres og sendes det, og abonnementer push-tjenesten ikke kjenner
- * lenger, slettes.
+ * her krypteres og sendes det, og svaret fra push-tjenesten føres tilbake
+ * (`chatvarsel_kvitter`).
  */
 import { chatvarselemne, chatvarselinnhold, erPushtjeneste, SAMTALETYPER, type Chatvarselgrunnlag } from '../_delt/chatvarsel.ts'
 import { sendPush, vapidnokkel, type Pushabonnement, type Pushutfall, type Vapidnokler } from './webpush.ts'
@@ -15,7 +15,7 @@ export const LEVETID_SEKUNDER = 24 * 60 * 60
 /** Navnene på hemmelighetene i miljøet til Edge-funksjonen. */
 export const VAPID_MILJO = { offentlig: 'CHATVARSEL_VAPID_OFFENTLIG', privat: 'CHATVARSEL_VAPID_PRIVAT' } as const
 
-/** Det som trengs av databaseklienten: to funksjonskall. */
+/** Det som trengs av databaseklienten: funksjonskall. */
 export interface Varseldatabase {
   rpc(navn: string, argumenter: Record<string, unknown>): PromiseLike<{ data: unknown; error: unknown }>
 }
@@ -27,8 +27,26 @@ export function vapidFraMiljo(les: (navn: string) => string | undefined): Vapidn
   return offentlig && privat ? { offentlig, privat } : null
 }
 
-/** Ett varsel fra databasen: abonnementet og grunnlaget. */
-type Varsel = Pushabonnement & Chatvarselgrunnlag
+/**
+ * Navnet på hemmeligheten databasen sender med når den ber om utsendingen
+ * (`intern.chatvarsel_vekk`, Vault-navnet `chatvarsel_utloser`), og hodet den
+ * står i.
+ */
+export const UTLOSER_MILJO = 'CHATVARSEL_UTLOSER'
+export const UTLOSER_HODE = 'x-chatvarsel-utloser'
+
+/** Om hodet har den hemmelige nøkkelen, sammenlignet på konstant tid. */
+export function erUtloser(gitt: string | null, forventet: string | undefined): boolean {
+  if (!gitt || !forventet) return false
+  const a = new TextEncoder().encode(gitt)
+  const b = new TextEncoder().encode(forventet)
+  let ulik = a.length ^ b.length
+  for (let i = 0; i < b.length; i++) ulik |= (a[i] ?? 0) ^ b[i]!
+  return ulik === 0
+}
+
+/** Ett varsel fra databasen: abonnementet, grunnlaget og meldingstidspunktet det gjelder. */
+type Varsel = Pushabonnement & Chatvarselgrunnlag & { kl: string }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -37,7 +55,7 @@ export function lesVarsler(data: unknown): Varsel[] {
   if (!Array.isArray(data)) return []
   return data.flatMap((r): Varsel[] => {
     if (r === null || typeof r !== 'object') return []
-    const { endepunkt, p256dh, auth, slag, samtale, gruppenavn, uleste } = r as Record<string, unknown>
+    const { endepunkt, p256dh, auth, slag, samtale, gruppenavn, uleste, kl } = r as Record<string, unknown>
     if (
       typeof endepunkt !== 'string' ||
       typeof p256dh !== 'string' ||
@@ -45,7 +63,8 @@ export function lesVarsler(data: unknown): Varsel[] {
       !SAMTALETYPER.includes(slag as never) ||
       typeof samtale !== 'string' ||
       !UUID.test(samtale) ||
-      typeof uleste !== 'number'
+      typeof uleste !== 'number' ||
+      typeof kl !== 'string'
     ) {
       return []
     }
@@ -58,61 +77,72 @@ export function lesVarsler(data: unknown): Varsel[] {
         samtale,
         gruppenavn: typeof gruppenavn === 'string' ? gruppenavn : null,
         uleste,
+        kl,
       },
     ]
   })
 }
 
-export interface Utsending {
-  sendt: number
-  borte: number
-  feil: number
-}
+/** Hva som skjedde med varslene: `hoppet` er endepunkter utenfor de kjente push-tjenestene. */
+export type Utsending = Record<Pushutfall | 'hoppet', number>
+
+/** Hvor mange runder én utsending går: nye meldinger underveis og nye forsøk etter feil. */
+export const MAKS_RUNDER = 4
+
+const sov = (ms: number) => new Promise<void>((ferdig) => setTimeout(ferdig, ms))
 
 /**
- * Sender varslene om avsenderens nye meldinger. Hver enhet får ett varsel per
- * samtale; et endepunkt som ikke hører til en kjent push-tjeneste, hoppes over.
+ * Sender varslene som venter (`chatvarsel_hent`), og fører svaret fra
+ * push-tjenesten (`chatvarsel_kvitter`): sendte slettes, borte abonnementer
+ * slettes, og en midlertidig feil prøves igjen i neste runde, etter 1, 4, 9
+ * sekunder (som `neste_kl` i databasen). Hver enhet får ett varsel per
+ * samtale; to utsendinger samtidig sender aldri det samme, fordi databasen
+ * holder et varsel mens det sendes.
  */
 export async function sendChatvarsler({
   db,
-  avsender,
   nokler,
   kontakt,
   hent = fetch,
+  vent = sov,
 }: {
   db: Varseldatabase
-  avsender: string
   nokler: Vapidnokler
   kontakt: string
   hent?: typeof fetch
+  vent?: (ms: number) => Promise<void>
 }): Promise<Utsending> {
-  const { data, error } = await db.rpc('chatvarsel_hent', { avsender })
-  if (error) throw error
-  const varsler = lesVarsler(data).filter((v) => erPushtjeneste(v.endepunkt))
-  const utfall: Record<Pushutfall, number> = { sendt: 0, borte: 0, feil: 0 }
-  if (varsler.length === 0) return utfall
+  const totalt: Utsending = { sendt: 0, borte: 0, feil: 0, hoppet: 0 }
+  let signering: CryptoKey | null = null
 
-  const signering = await vapidnokkel(nokler)
-  const resultater = await Promise.all(
-    varsler.map(async (v) => {
-      const innhold = chatvarselinnhold(v)
-      const svar = await sendPush(
-        v,
-        innhold,
-        nokler,
-        signering,
-        { levetid: LEVETID_SEKUNDER, emne: chatvarselemne(v.samtale), kontakt, haster: true },
-        hent,
-      )
-      return { endepunkt: v.endepunkt, svar }
-    }),
-  )
-  for (const r of resultater) utfall[r.svar] += 1
+  for (let runde = 1; runde <= MAKS_RUNDER; runde++) {
+    const { data, error } = await db.rpc('chatvarsel_hent', {})
+    if (error) throw error
+    const varsler = lesVarsler(data)
+    if (varsler.length === 0) break
 
-  const borte = [...new Set(resultater.filter((r) => r.svar === 'borte').map((r) => r.endepunkt))]
-  if (borte.length > 0) {
-    const { error: slettefeil } = await db.rpc('chatvarsel_fjern_abonnementer', { endepunkter: borte })
-    if (slettefeil) throw slettefeil
+    signering ??= await vapidnokkel(nokler)
+    const nokkel = signering
+    const svar = await Promise.all(
+      varsler.map(async (v) => {
+        const utfall: Pushutfall | 'hoppet' = !erPushtjeneste(v.endepunkt)
+          ? 'hoppet'
+          : await sendPush(
+              v,
+              chatvarselinnhold(v),
+              nokler,
+              nokkel,
+              { levetid: LEVETID_SEKUNDER, emne: chatvarselemne(v.samtale), kontakt, haster: true },
+              hent,
+            )
+        return { endepunkt: v.endepunkt, slag: v.slag, samtale: v.samtale, kl: v.kl, svar: utfall }
+      }),
+    )
+    for (const r of svar) totalt[r.svar] += 1
+
+    const { error: kvitteringsfeil } = await db.rpc('chatvarsel_kvitter', { utfall: svar })
+    if (kvitteringsfeil) throw kvitteringsfeil
+    if (svar.some((r) => r.svar === 'feil') && runde < MAKS_RUNDER) await vent(runde * runde * 1000)
   }
-  return utfall
+  return totalt
 }

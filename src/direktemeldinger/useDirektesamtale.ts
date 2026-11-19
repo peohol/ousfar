@@ -4,7 +4,6 @@
  * `src/gruppechat/useGruppechat.ts`), bare med direktemeldingenes kall og
  * dørklokke. Visningene av samme samtale deler én kontroller.
  */
-import { medVarsler } from '../chatvarsler/api'
 import { oppfriskSamtaler } from '../gruppechat/samtaler'
 import { lagChatkrok } from '../gruppechat/useGruppechat'
 import { abonnerPaDirektesamtale, direkteapi } from './api'
@@ -12,8 +11,7 @@ import { abonnerPaDirektesamtale, direkteapi } from './api'
 export const useDirektesamtale = lagChatkrok({
   lesGruppechat: (samtale, forNr, antall) => direkteapi.lesDirektesamtale(samtale, forNr, antall),
   hentChatendringer: (samtale, etter) => direkteapi.hentDirekteendringer(samtale, etter),
-  // Varselet på den andres enheter (docs/chatvarsler.md).
-  sendGruppemelding: medVarsler((samtale: string, klientId: string, tekst: string) => direkteapi.sendDirektemelding(samtale, klientId, tekst)),
+  sendGruppemelding: (samtale, klientId, tekst) => direkteapi.sendDirektemelding(samtale, klientId, tekst),
   endreGruppemelding: (melding, tekst) => direkteapi.endreDirektemelding(melding, tekst),
   slettGruppemelding: (melding) => direkteapi.slettDirektemelding(melding),
   merkGruppechatLest: (samtale, tilNr) => direkteapi.merkDirektesamtaleLest(samtale, tilNr),

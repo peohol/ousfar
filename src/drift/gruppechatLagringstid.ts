@@ -32,14 +32,19 @@ export const DIREKTE_RYDD_SQL = 'select intern.rydd_direktemeldinger() as slette
 /** Som {@link KONTROLL_SQL}, for direktemeldingene. */
 export const DIREKTE_KONTROLL_SQL = kontrollSql('public.direktemeldinger', 'intern.direktemelding_lagringstid')
 
-/** Sletter det i køen for chatvarslene som er eldre enn fristen (docs/chatvarsler.md). */
+/** Sletter det i køen og utsendingene for chatvarslene som er eldre enn fristen (docs/chatvarsler.md). */
 export const CHATVARSELKO_RYDD_SQL = 'select intern.rydd_chatvarselko() as slettet'
 
-/** Rader i køen eldre enn fristen, og fristen i minutter. Bare antall og alder. */
+/** Rader i køen og utsendingene eldre enn fristen, og fristen i minutter. Bare antall og alder. */
 export const CHATVARSELKO_KONTROLL_SQL = `
+  with k as (
+    select kl from intern.chatvarselko
+    union all
+    select kl from intern.chatvarselutsendinger
+  )
   select
-    (select count(*) from intern.chatvarselko k where k.kl < now() - intern.chatvarsel_frist())::int as gjenstar,
-    (select floor(extract(epoch from now() - min(k.kl)) / 86400)::int from intern.chatvarselko k) as eldste_dager,
+    (select count(*) from k where k.kl < now() - intern.chatvarsel_frist())::int as gjenstar,
+    (select floor(extract(epoch from now() - min(k.kl)) / 86400)::int from k) as eldste_dager,
     0 as frist_dager,
     (select floor(extract(epoch from intern.chatvarsel_frist()) / 60)::int) || ' minutter' as frist
 `

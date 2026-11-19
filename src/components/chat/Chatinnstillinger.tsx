@@ -1,4 +1,5 @@
 import { direktemeldingene } from '../../direktemeldinger/useDirekte'
+import { useChatstatus } from './chatstyring'
 import { Chatvalg } from './Chatvalg'
 import { Chatvarslervalg } from './Chatvarslervalg'
 
@@ -12,20 +13,26 @@ import { Chatvarslervalg } from './Chatvarslervalg'
  * dem.
  *
  * Henter det den viser selv: direktemeldingene publiseres av chatmenyen
- * (`direktemeldingene`).
+ * (`direktemeldingene`). Varslene gjelder både gruppechatten og
+ * direktemeldingene, og står derfor også når bare gruppechatten er slått på.
  */
 export function Chatinnstillinger() {
   const direkte = direktemeldingene.bruk()
-  if (!direkte) return null
+  if (!useHarChatinnstillinger()) return null
   return (
     <>
       <Chatvarslervalg />
-      <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />
+      {direkte && <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />}
     </>
   )
 }
 
-/** Om det finnes chatinnstillinger for den innloggede: ⚙ i chatmenyen og fanen Chat vises bare da. */
+/**
+ * Om det finnes chatinnstillinger for den innloggede: ⚙ i chatmenyen og fanen
+ * Chat vises bare da. Det gjør det når gruppechatten (chatmenyen står) eller
+ * direktemeldingene er slått på.
+ */
 export function useHarChatinnstillinger(): boolean {
-  return direktemeldingene.bruk() !== null
+  const gruppechat = useChatstatus().finnes
+  return direktemeldingene.bruk() !== null || gruppechat
 }

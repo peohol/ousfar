@@ -1,7 +1,8 @@
 /**
  * Varslene om nye chatmeldinger gjennom appens klient (docs/chatvarsler.md):
- * abonnementet i databasen, nøkkelen og utsendingen fra Edge-funksjonen
- * `chatvarsel`, og enheten (`enhet.ts`) koblet til nettleseren.
+ * abonnementet i databasen, nøkkelen fra Edge-funksjonen `chatvarsel`, og
+ * enheten (`enhet.ts`) koblet til nettleseren. Utsendingen ber databasen om
+ * selv når en melding er lagret; appen sender ingenting.
  */
 import { klient } from '../auth/klient'
 import { lagChatvarsler, type Varselserver } from './enhet'
@@ -40,35 +41,6 @@ export const chatvarsler =
         server: varselserver,
         grunnadresse: document.baseURI,
       })
-
-/**
- * Hvor lenge appen venter etter en sending før den ber om varslene: en
- * mottaker som har samtalen åpen, rekker å lese meldingen først og får da
- * ikke noe varsel. Flere sendinger i den tiden gir ett kall.
- */
-export const VENTETID_MS = 1500
-
-let planlagt: ReturnType<typeof setTimeout> | null = null
-
-/** Ber Edge-funksjonen sende varslene om den innloggedes nye meldinger. Feil gir bare ingen varsler. */
-export function varsleOmNyeMeldinger(): void {
-  if (planlagt !== null) return
-  planlagt = setTimeout(() => {
-    planlagt = null
-    klient()
-      .functions.invoke(FUNKSJON, { body: { handling: 'send' } })
-      .catch(() => undefined)
-  }, VENTETID_MS)
-}
-
-/** `send` som også ber om varslene etter at meldingen er lagret. */
-export function medVarsler<A extends unknown[], T>(send: (...a: A) => Promise<T>): (...a: A) => Promise<T> {
-  return async (...a) => {
-    const melding = await send(...a)
-    varsleOmNyeMeldinger()
-    return melding
-  }
-}
 
 /**
  * Før utlogging: abonnementet på enheten avsluttes og slettes, så den som har

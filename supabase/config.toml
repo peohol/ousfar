@@ -86,3 +86,9 @@ verify_jwt = true
 
 [functions.chatvarsel]
 verify_jwt = true
+
+# Kalles bare av databasen (pg_net), med den hemmelige nøkkelen i hodet
+# x-chatvarsel-utloser i stedet for en innlogget bruker; uten den svarer den
+# 401 (docs/chatvarsler.md).
+[functions.chatvarsel-utsending]
+verify_jwt = false

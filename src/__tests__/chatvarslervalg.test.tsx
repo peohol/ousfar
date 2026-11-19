@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Chatvarsler, Varseltilstand } from '../chatvarsler/enhet'
 import { Chatinnstillinger } from '../components/chat/Chatinnstillinger'
+import { meldChatstatus } from '../components/chat/chatstyring'
 import { Chatvarslervalg, VARSELTEKST } from '../components/chat/Chatvarslervalg'
 import { direktemeldingene } from '../direktemeldinger/useDirekte'
 
@@ -90,5 +91,20 @@ describe('Chatinnstillinger', () => {
     } finally {
       act(() => direktemeldingene.sett(null))
     }
+  })
+
+  it('har varslene også når bare gruppechatten er slått på, og ingenting når ingen chat er det', async () => {
+    act(() => meldChatstatus({ finnes: true, mobilApen: false, uleste: 0 }))
+    try {
+      const { unmount } = render(<Chatinnstillinger />)
+      await bryter()
+      expect(screen.getAllByRole('switch')).toHaveLength(1)
+      expect(screen.queryByRole('switch', { name: /Tillat direktemeldinger/ })).toBeNull()
+      unmount()
+    } finally {
+      act(() => meldChatstatus({ finnes: false, mobilApen: false, uleste: 0 }))
+    }
+    const { container } = render(<Chatinnstillinger />)
+    expect(container.textContent).toBe('')
   })
 })

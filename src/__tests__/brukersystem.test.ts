@@ -39,6 +39,8 @@ const profilmigrasjon = lesMigrasjon('profiler_og_roller')
 const bildemigrasjon = lesMigrasjon('profilbilder')
 const avatarstimigrasjon = lesMigrasjon('avatarsti_laast_til_eieren')
 const oppsett = les('supabase/config.toml')
+/** Funksjonene uten innlogget bruker: databasen kaller dem med en hemmelig nøkkel (docs/chatvarsler.md). */
+const UTEN_INNLOGGING = ['chatvarsel-utsending']
 const kontekst = les('supabase/functions/_edge/kontekst.ts')
 const endepunkter = {
   'opprett-bruker': les('supabase/functions/opprett-bruker/index.ts'),
@@ -191,14 +193,20 @@ describe('Auth-oppsettet', () => {
     expect(oppsett).not.toMatch(/^\[auth\.email\.smtp\]/m)
   })
 
-  it('krever gyldig innlogging på alle Edge-funksjonene', () => {
+  it('krever gyldig innlogging på alle Edge-funksjonene, unntatt den databasen kaller med en hemmelig nøkkel', () => {
     const funksjoner = [...oppsett.matchAll(/^\[functions\.([a-z-]+)\]\nverify_jwt = (\w+)$/gm)]
     const mapper = readdirSync(fileURLToPath(new URL('../../supabase/functions', import.meta.url)), { withFileTypes: true })
       .filter((m) => m.isDirectory() && !m.name.startsWith('_'))
       .map((m) => m.name)
     expect(funksjoner.map(([, navn]) => navn).sort()).toEqual(mapper.sort())
     for (const [, navn, verdi] of funksjoner) {
-      expect(verdi, navn).toBe('true')
+      expect(verdi, navn).toBe(UTEN_INNLOGGING.includes(navn!) ? 'false' : 'true')
+    }
+    // Den første kontrollen er nøkkelen: uten den svarer funksjonen 401 før noe annet.
+    for (const navn of UTEN_INNLOGGING) {
+      const kode = utenKommentarer(les(`supabase/functions/${navn}/index.ts`))
+      const handler = kode.slice(kode.indexOf('Deno.serve('))
+      expect(handler, navn).toMatch(/^Deno\.serve\(async \(request\) => \{\s*if \(!erUtloser\(request\.headers\.get\(UTLOSER_HODE\), Deno\.env\.get\(UTLOSER_MILJO\)\)\) \{\s*return Response\.json\(\{ feil: '[^']+' \}, \{ status: 401 \}\)/)
     }
   })
 })

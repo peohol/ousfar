@@ -11,7 +11,6 @@
  * visningen og stoppes (abonnement og livstegn) når den siste forsvinner.
  */
 import { useEffect, useSyncExternalStore } from 'react'
-import { medVarsler } from '../chatvarsler/api'
 import { meldGruppeendring } from '../components/grupper/gruppevisning'
 import {
   endreGruppemelding,
@@ -84,8 +83,7 @@ export function lagChatkrok(avhengigheter: Chatavhengigheter): Chatkrok {
 export const useGruppechat = lagChatkrok({
   lesGruppechat,
   hentChatendringer: (gruppe, etter) => hentChatendringer(gruppe, etter),
-  // Varslene på enhetene til de andre (docs/chatvarsler.md).
-  sendGruppemelding: medVarsler(sendGruppemelding),
+  sendGruppemelding,
   endreGruppemelding,
   slettGruppemelding,
   merkGruppechatLest,

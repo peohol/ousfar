@@ -170,14 +170,24 @@ try {
     return lokalSql(s, `select split_part(endepunkt, '/', 3) from public.pushabonnementer where bruker_id = '${adaId}'`)
   })
 
-  await punkt('V3 en ny direktemelding legges i køen, og varselet til Ada har verken tekst eller avsender', async () => {
+  await punkt('V3 en ny direktemelding legges i køen, databasen ber selv om utsendingen, og varselet til Ada har verken tekst eller avsender', async () => {
+    // Adressen og nøkkelen i Vault, slik produksjonen har dem; kallet går til en port ingen lytter på.
+    lokalSql(s, `select vault.create_secret('http://127.0.0.1:9/chatvarsel-utsending', 'chatvarsel_adresse'), vault.create_secret('qa-nokkel', 'chatvarsel_utloser')`)
+    const kallFor = Number(lokalSql(s, `select count(*) from net.http_request_queue`)) + Number(lokalSql(s, `select count(*) from net._http_response`))
     await rpc(boK, 'send_direktemelding', { samtale, klient_id: crypto.randomUUID(), tekst: 'Syntetisk hemmelig tekst' })
     krev(lokalSql(s, `select count(*) from intern.chatvarselko where avsender = '${boId}'`) === '1', 'ikke i køen')
-    const varsler = lokalSql(s, `select public.chatvarsel_hent('${boId}')::text`)
+    const kallEtter = Number(lokalSql(s, `select count(*) from net.http_request_queue`)) + Number(lokalSql(s, `select count(*) from net._http_response`))
+    krev(kallEtter === kallFor + 1, `pg_net-kall: ${kallFor} → ${kallEtter}`)
+    lokalSql(s, `delete from vault.secrets where name in ('chatvarsel_adresse', 'chatvarsel_utloser')`)
+    // Som Edge-funksjonen, etter ventetiden.
+    await vent(2000)
+    const varsler = lokalSql(s, `select public.chatvarsel_hent()::text`)
     const lest = JSON.parse(varsler) as { slag: string; samtale: string; uleste: number; gruppenavn: string | null }[]
     krev(lest.length === 1 && lest[0]!.slag === 'direkte' && lest[0]!.samtale === samtale && lest[0]!.uleste === 1, varsler)
     krev(!varsler.includes('Syntetisk') && !varsler.includes('Bo'), 'tekst eller navn i varselet')
     krev(lokalSql(s, `select count(*) from intern.chatvarselko where avsender = '${boId}'`) === '0', 'køen ble ikke tømt')
+    lokalSql(s, `select public.chatvarsel_kvitter('${JSON.stringify(lest.map((v) => ({ ...v, svar: 'sendt' })))}'::jsonb)`)
+    krev(lokalSql(s, `select count(*) from intern.chatvarselutsendinger`) === '0', 'varselet står igjen etter at det er sendt')
   })
 
   // Varselet slik tjenestearbeideren får det fra push-tjenesten (dekryptert).

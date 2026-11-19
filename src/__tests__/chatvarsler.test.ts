@@ -9,9 +9,9 @@
  * `Tillat direktemeldinger` på. Chatten og direktemeldingene slås på her.
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { chatvarselemne, chatvarselinnhold, erPushtjeneste } from '@delt/chatvarsel'
-import { sendChatvarsler, vapidFraMiljo, VAPID_MILJO, type Varseldatabase } from '../../supabase/functions/_edge/chatvarsler'
+import { erUtloser, MAKS_RUNDER, sendChatvarsler, vapidFraMiljo, VAPID_MILJO, type Varseldatabase } from '../../supabase/functions/_edge/chatvarsler'
 import type { Bytes, Pushabonnement } from '../../supabase/functions/_edge/webpush'
 import { byggPersongalleri, fjernAlleMedlemskap, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
@@ -50,8 +50,17 @@ const sendDirekte = (p: Person, tekst = 'Hei', samtale = K) =>
 const lagre = (p: Person, a: Pushabonnement, i: PGlite = db) =>
   verdi(p, 'select public.lagre_pushabonnement($1, $2, $3)', [a.endepunkt, a.p256dh, a.auth], i)
 const slett = (p: Person, endepunkt: string) => verdi(p, 'select public.slett_pushabonnement($1)', [endepunkt])
-const hent = async (avsender: Person) =>
-  (await somTjeneste((tx) => tx.query<{ v: Record<string, unknown>[] }>('select public.chatvarsel_hent($1) as v', [id(avsender)]))).rows[0]!.v
+/** Som om ventetiden har gått: meldingene i køen er modne, og varsler som venter på et nytt forsøk, kan prøves. */
+const tidenGaar = () =>
+  db.exec(`update intern.chatvarselko set kl = kl - interval '2 seconds'; update intern.chatvarselutsendinger set neste_kl = now() where neste_kl > now()`)
+/** `chatvarsel_hent` som tjenesten, etter ventetiden. */
+const hent = async () => {
+  await db.exec(`update intern.chatvarselko set kl = kl - interval '2 seconds'`)
+  return (await somTjeneste((tx) => tx.query<{ v: Record<string, unknown>[] }>('select public.chatvarsel_hent() as v'))).rows[0]!.v
+}
+const kvitter = (utfall: unknown[]) => somTjeneste((tx) => tx.query('select public.chatvarsel_kvitter($1)', [JSON.stringify(utfall)]))
+const utsendinger = async () =>
+  (await db.query<{ endepunkt: string; forsok: number }>('select endepunkt, forsok from intern.chatvarselutsendinger order by endepunkt')).rows
 const ko = async () => (await db.query<{ slag: string; avsender: string }>('select slag, avsender from intern.chatvarselko')).rows
 const abonnementer = async () =>
   (await db.query<{ endepunkt: string; bruker_id: string }>('select endepunkt, bruker_id from public.pushabonnementer order by endepunkt')).rows
@@ -101,6 +110,11 @@ afterAll(async () => {
 
 beforeEach(async () => {
   db = (await basis.clone()) as PGlite
+})
+
+// Hver test har sin egen kopi; den lukkes, så minnet ikke vokser med antallet tester.
+afterEach(async () => {
+  await db.close()
 })
 
 describe('abonnementene', () => {
@@ -163,13 +177,14 @@ describe('abonnementene', () => {
     expect(anon?.code).toBe('42501')
   })
 
-  it('kan ikke leses av nettleseren, og bare tjenesten henter varsler og sletter døde abonnementer', async () => {
+  it('kan ikke leses av nettleseren, og bare tjenesten henter varsler og fører svarene', async () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     for (const sql of [
       'select * from public.pushabonnementer',
       'select * from intern.chatvarselko',
-      `select public.chatvarsel_hent('${id('vanligA')}')`,
-      `select public.chatvarsel_fjern_abonnementer(array['x'])`,
+      'select * from intern.chatvarselutsendinger',
+      'select public.chatvarsel_hent()',
+      `select public.chatvarsel_kvitter('[]')`,
     ]) {
       expect((await feilFra(() => som(db, id('vanligA'), (tx) => tx.query(sql))))?.code, sql).toBe('42501')
     }
@@ -216,11 +231,11 @@ describe('køen', () => {
 })
 
 describe('varslene som hentes', () => {
-  it('gir hver mottaker ett varsel per samtale med antallet uleste, og tømmer avsenderens kø', async () => {
+  it('gir hver mottaker ett varsel per samtale med antallet uleste, tømmer køen og holder varslene mens de sendes', async () => {
     for (const p of ['vanligA', 'dobbeltAB', 'adminA'] as const) await lagre(p, enheter[p].abonnement)
     await sendGruppe('adminA', 'Første')
     await sendGruppe('adminA', 'Andre')
-    const varsler = await hent('adminA')
+    const varsler = await hent()
     expect(varsler).toEqual(
       [enheter.vanligA, enheter.dobbeltAB]
         .map((e) => ({
@@ -231,19 +246,31 @@ describe('varslene som hentes', () => {
           samtale: agruppe,
           gruppenavn: 'A-gruppen',
           uleste: 2,
+          kl: expect.any(String),
         }))
         .sort((a, b) => a.endepunkt.localeCompare(b.endepunkt)),
     )
-    expect(await hent('adminA')).toEqual([])
     expect(await ko()).toEqual([])
+    // Holdt mens de sendes: en annen utsending får dem ikke.
+    expect(await hent()).toEqual([])
+    expect(await utsendinger()).toHaveLength(2)
+  })
+
+  it('venter litt på en ny melding, så en mottaker som har samtalen åpen, rekker å lese', async () => {
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await sendGruppe('adminA')
+    expect((await somTjeneste((tx) => tx.query<{ v: unknown[] }>('select public.chatvarsel_hent() as v'))).rows[0]!.v).toEqual([])
+    expect(await ko()).toHaveLength(1)
+    expect(await hent()).toHaveLength(1)
   })
 
   it('har aldri meldingsteksten eller avsenderen', async () => {
     await lagre('vanligB', enheter.vanligB.abonnement)
     await sendDirekte('vanligA', 'Hemmelig innhold')
-    const varsler = await hent('vanligA')
+    const varsler = await hent()
     expect(varsler).toHaveLength(1)
     expect(varsler[0]).toMatchObject({ slag: 'direkte', samtale: K, gruppenavn: null, uleste: 1 })
+    expect(Object.keys(varsler[0]!).sort()).toEqual(['auth', 'endepunkt', 'gruppenavn', 'kl', 'p256dh', 'samtale', 'slag', 'uleste'])
     const tekst = JSON.stringify(varsler)
     expect(tekst).not.toContain('Hemmelig')
     expect(tekst).not.toContain(id('vanligA'))
@@ -254,52 +281,73 @@ describe('varslene som hentes', () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     const melding = await verdi<{ nr: number }>('adminA', 'select public.send_gruppemelding($1, $2, $3)', [agruppe, nyKlientId(), 'Hei'])
     await verdi('vanligA', 'select public.merk_gruppechat_lest($1, $2)', [agruppe, melding.nr])
-    expect(await hent('adminA')).toEqual([])
+    expect(await hent()).toEqual([])
+    expect(await utsendinger()).toEqual([])
   })
 
   it('hopper over en mottaker som har slått av direktemeldinger eller mistet tilgangen etter sendingen', async () => {
     await lagre('vanligB', enheter.vanligB.abonnement)
     await sendDirekte('vanligA')
     await verdi('vanligB', 'select public.sett_chatvalg(false, null)')
-    expect(await hent('vanligA')).toEqual([])
+    expect(await hent()).toEqual([])
 
     await lagre('vanligA', enheter.vanligA.abonnement)
     await sendGruppe('adminA')
     await fjernAlleMedlemskap(db, id('vanligA'))
-    expect(await hent('adminA')).toEqual([])
+    expect(await hent()).toEqual([])
+  })
+
+  it('sender ikke et varsel som venter på et nytt forsøk, til en som har mistet tilgangen eller dempet samtalen', async () => {
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    const [v] = await hent()
+    await kvitter([{ ...v, svar: 'feil' }])
+    await verdi('vanligB', 'select public.demp_direktesamtale($1, true)', [K])
+    await tidenGaar()
+    expect(await hent()).toEqual([])
+    expect(await utsendinger()).toEqual([])
   })
 
   it('gir ingenting når meldingen er slettet før varselet ble sendt', async () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     const melding = await verdi<{ id: string }>('adminA', 'select public.send_gruppemelding($1, $2, $3)', [agruppe, nyKlientId(), 'Hei'])
     await verdi('adminA', 'select public.slett_gruppemelding($1)', [melding.id])
-    expect(await hent('adminA')).toEqual([])
+    expect(await hent()).toEqual([])
   })
 
-  it('kaster det som er eldre enn ti minutter, også for andre avsendere', async () => {
+  it('kaster det som er eldre enn ti minutter, i køen og blant varslene som venter', async () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     await lagre('vanligB', enheter.vanligB.abonnement)
     await sendGruppe('adminA')
     await sendDirekte('vanligA')
     await db.exec(`update intern.chatvarselko set kl = now() - interval '11 minutes' where slag = 'gruppe'`)
-    expect(await hent('vanligA')).toHaveLength(1)
+    const [v] = await hent()
+    expect(v).toMatchObject({ slag: 'direkte' })
     expect(await ko()).toEqual([])
-    expect(await hent('adminA')).toEqual([])
+    await kvitter([{ ...v, svar: 'feil' }])
+    await db.exec(`update intern.chatvarselutsendinger set kl = now() - interval '11 minutes', neste_kl = now()`)
+    expect(await hent()).toEqual([])
+    expect(await utsendinger()).toEqual([])
   })
 
   it('nattjobben tømmer det som er for gammelt, også når ingen sender eller henter mer', async () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    await hent()
     await sendGruppe('adminA')
     await sendGruppe('adminA')
     expect(await ko()).toHaveLength(2)
+    expect(await utsendinger()).toHaveLength(1)
     const for_ = (await db.query<Kontrollsvar>(CHATVARSELKO_KONTROLL_SQL)).rows[0]!
     expect(for_).toMatchObject({ gjenstar: 0, frist: '10 minutter' })
-    await db.exec(`update intern.chatvarselko set kl = now() - interval '11 minutes'`)
+    await db.exec(`update intern.chatvarselko set kl = now() - interval '11 minutes'; update intern.chatvarselutsendinger set kl = now() - interval '11 minutes'`)
+    expect((await db.query<Kontrollsvar>(CHATVARSELKO_KONTROLL_SQL)).rows[0]).toMatchObject({ gjenstar: 3 })
     const [rydd] = (await db.query<Ryddesvar>(CHATVARSELKO_RYDD_SQL)).rows
-    expect(rydd).toEqual({ slettet: 2 })
+    expect(rydd).toEqual({ slettet: 3 })
     const etter = (await db.query<Kontrollsvar>(CHATVARSELKO_KONTROLL_SQL)).rows[0]!
     expect(etter).toMatchObject({ gjenstar: 0, eldste_dager: null })
-    expect(vurderLagringstid(rydd!, etter, 'Køen for chatvarsler', 'meldinger i køen').rapport).toContain('Slettet nå: 2 meldinger i køen eldre enn 10 minutter.')
+    expect(vurderLagringstid(rydd!, etter, 'Køen for chatvarsler', 'meldinger i køen').rapport).toContain('Slettet nå: 3 meldinger i køen eldre enn 10 minutter.')
   })
 
   it('en ny rad i køen tar med seg det som er for gammelt', async () => {
@@ -314,28 +362,38 @@ describe('varslene som hentes', () => {
     await lagre('vanligA', enheter.vanligA.abonnement)
     await sendGruppe('adminA')
     await db.exec(SLA_PA[0]!.replace("'select true'", "'select false'"))
-    expect(await hent('adminA')).toEqual([])
+    expect(await hent()).toEqual([])
   })
 })
 
 describe('utsendingen fra Edge-funksjonen', () => {
+  /** En falsk push-tjeneste: svarer med `status(url, n)` på det n-te kallet til adressen, og fører alt den får. */
+  const pushtjeneste = (status: (url: string, n: number) => number = () => 201) => {
+    const mottatt: { url: string; hoder: Record<string, string>; kropp: Bytes; status: number }[] = []
+    const hent = (async (url: string, init: RequestInit) => {
+      const n = mottatt.filter((m) => m.url === url).length + 1
+      const svar = status(url, n)
+      mottatt.push({ url, hoder: init.headers as Record<string, string>, kropp: init.body as Bytes, status: svar })
+      return new Response(null, { status: svar })
+    }) as unknown as typeof fetch
+    return { mottatt, hent }
+  }
+  /** Ventingen mellom rundene: som om tiden har gått, uten å vente. */
+  const vent = async () => void (await tidenGaar())
+
   it('krypterer ett varsel per enhet til push-tjenesten, uten tekst og avsender, og sletter abonnementer som er borte', async () => {
     const nokler = await nyeVapidnokler()
     await lagre('vanligA', enheter.vanligA.abonnement)
     await lagre('dobbeltAB', enheter.dobbeltAB.abonnement)
     await sendGruppe('adminA', 'Dette skal ikke ut')
+    await tidenGaar()
 
-    const mottatt: { url: string; hoder: Record<string, string>; kropp: Bytes }[] = []
-    const falskPush = (async (url: string, init: RequestInit) => {
-      mottatt.push({ url, hoder: init.headers as Record<string, string>, kropp: init.body as Bytes })
-      return new Response(null, { status: url === enheter.dobbeltAB.abonnement.endepunkt ? 410 : 201 })
-    }) as unknown as typeof fetch
+    const push = pushtjeneste((url) => (url === enheter.dobbeltAB.abonnement.endepunkt ? 410 : 201))
+    const utfall = await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent: push.hent, vent })
+    expect(utfall).toEqual({ sendt: 1, borte: 1, feil: 0, hoppet: 0 })
+    expect(push.mottatt).toHaveLength(2)
 
-    const utfall = await sendChatvarsler({ db: tjenesteklient(), avsender: id('adminA'), nokler, kontakt: 'https://ousfar.example', hent: falskPush })
-    expect(utfall).toEqual({ sendt: 1, borte: 1, feil: 0 })
-    expect(mottatt).toHaveLength(2)
-
-    const tilA = mottatt.find((m) => m.url === enheter.vanligA.abonnement.endepunkt)!
+    const tilA = push.mottatt.find((m) => m.url === enheter.vanligA.abonnement.endepunkt)!
     expect(tilA.hoder.Topic).toBe(chatvarselemne(agruppe))
     expect(tilA.hoder.Authorization).toMatch(new RegExp(`^vapid t=.+, k=${nokler.offentlig}$`))
     const innhold = JSON.parse(await dekrypter(tilA.kropp, enheter.vanligA))
@@ -346,28 +404,163 @@ describe('utsendingen fra Edge-funksjonen', () => {
       merke: `chat:gruppe:${agruppe}`,
     })
     expect(await abonnementer()).toEqual([{ endepunkt: enheter.vanligA.abonnement.endepunkt, bruker_id: id('vanligA') }])
+    expect(await utsendinger()).toEqual([])
   })
 
-  it('sender ikke til et endepunkt utenfor push-tjenestene', async () => {
+  it('prøver igjen etter en midlertidig feil, og sender hvert varsel bare én gang', async () => {
+    const nokler = await nyeVapidnokler()
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await lagre('dobbeltAB', enheter.dobbeltAB.abonnement)
+    await sendGruppe('adminA')
+    await tidenGaar()
+    // vanligA: 503 to ganger, så 201. dobbeltAB: 201 med en gang.
+    const push = pushtjeneste((url, n) => (url === enheter.vanligA.abonnement.endepunkt && n <= 2 ? 503 : 201))
+    const ventet: number[] = []
+    const utfall = await sendChatvarsler({
+      db: tjenesteklient(),
+      nokler,
+      kontakt: 'https://ousfar.example',
+      hent: push.hent,
+      vent: async (ms) => void (ventet.push(ms), await tidenGaar()),
+    })
+    expect(utfall).toEqual({ sendt: 2, borte: 0, feil: 2, hoppet: 0 })
+    expect(ventet).toEqual([1000, 4000])
+    expect(push.mottatt.filter((m) => m.status === 201).map((m) => m.url).sort()).toEqual(
+      [enheter.vanligA.abonnement.endepunkt, enheter.dobbeltAB.abonnement.endepunkt].sort(),
+    )
+    expect(push.mottatt.filter((m) => m.url === enheter.dobbeltAB.abonnement.endepunkt)).toHaveLength(1)
+    expect(await utsendinger()).toEqual([])
+  })
+
+  it('lar et varsel som fortsatt feiler, stå til neste utsending, og gir opp etter fem forsøk', async () => {
+    const nokler = await nyeVapidnokler()
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await sendGruppe('adminA')
+    await tidenGaar()
+    const push = pushtjeneste(() => 500)
+    const forste = await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent: push.hent, vent })
+    expect(forste).toEqual({ sendt: 0, borte: 0, feil: MAKS_RUNDER, hoppet: 0 })
+    expect(await utsendinger()).toEqual([{ endepunkt: enheter.vanligA.abonnement.endepunkt, forsok: MAKS_RUNDER }])
+    // Neste utsending (en ny melding et annet sted) tar det femte og siste forsøket.
+    await tidenGaar()
+    const andre = await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent: push.hent, vent })
+    expect(andre.feil).toBe(1)
+    await tidenGaar()
+    expect(await hent()).toEqual([])
+    expect(push.mottatt).toHaveLength(5)
+  })
+
+  it('sender det nye antallet når en ny melding kommer mens varselet sendes, uten å miste den', async () => {
+    await lagre('vanligA', enheter.vanligA.abonnement)
+    await sendGruppe('adminA', 'Første')
+    const [forste] = await hent()
+    expect(forste).toMatchObject({ uleste: 1 })
+    await sendGruppe('adminA', 'Andre')
+    // Den andre slås sammen med varselet som sendes nå, og venter på det.
+    expect(await hent()).toEqual([])
+    await kvitter([{ ...forste, svar: 'sendt' }])
+    const [andre] = await hent()
+    expect(andre).toMatchObject({ endepunkt: enheter.vanligA.abonnement.endepunkt, uleste: 2 })
+    await kvitter([{ ...andre, svar: 'sendt' }])
+    expect(await utsendinger()).toEqual([])
+  })
+
+  it('sletter abonnementet og varslene til det når push-tjenesten sier at det er borte', async () => {
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    const [v] = await hent()
+    await kvitter([{ ...v, svar: 'borte' }, { ...v, svar: 'ukjent' }])
+    expect(await abonnementer()).toEqual([])
+    expect(await utsendinger()).toEqual([])
+  })
+
+  it('sender ikke til et endepunkt utenfor push-tjenestene, og prøver det ikke igjen', async () => {
     const nokler = await nyeVapidnokler()
     await lagre('vanligB', { ...enheter.vanligB.abonnement, endepunkt: 'https://internt.example/samle' })
     await sendDirekte('vanligA')
-    const kalt: string[] = []
-    const falskPush = (async (url: string) => {
-      kalt.push(url)
-      return new Response(null, { status: 201 })
-    }) as unknown as typeof fetch
-    expect(await sendChatvarsler({ db: tjenesteklient(), avsender: id('vanligA'), nokler, kontakt: 'mailto:x@example.org', hent: falskPush })).toEqual({
+    await tidenGaar()
+    const push = pushtjeneste()
+    expect(await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'mailto:x@example.org', hent: push.hent, vent })).toEqual({
       sendt: 0,
       borte: 0,
       feil: 0,
+      hoppet: 1,
     })
-    expect(kalt).toEqual([])
+    expect(push.mottatt).toEqual([])
+    expect(await utsendinger()).toEqual([])
   })
 
   it('leser nøklene fra miljøet, og ingenting når de mangler', () => {
     expect(vapidFraMiljo(() => undefined)).toBeNull()
     expect(vapidFraMiljo((n) => ({ [VAPID_MILJO.offentlig]: ' off ', [VAPID_MILJO.privat]: 'priv' })[n])).toEqual({ offentlig: 'off', privat: 'priv' })
+  })
+
+  it('godtar bare den hemmelige nøkkelen databasen sender med', () => {
+    expect(erUtloser('hemmelig-nokkel', 'hemmelig-nokkel')).toBe(true)
+    for (const gitt of [null, '', 'hemmelig-nokke', 'hemmelig-nokkel!', 'Hemmelig-nokkel']) expect(erUtloser(gitt, 'hemmelig-nokkel'), String(gitt)).toBe(false)
+    expect(erUtloser('x', undefined)).toBe(false)
+    expect(erUtloser('', '')).toBe(false)
+  })
+})
+
+describe('databasen ber om utsendingen selv', () => {
+  /** pg_net og Vault slik Supabase har dem, så langt utløseren bruker dem; kallene føres i `net.kall`. */
+  const medPgNet = async ({ adresse = 'https://ref.supabase.co/functions/v1/chatvarsel-utsending', nokkel = 'hemmelig' as string | null, feiler = false } = {}) => {
+    await db.exec(`
+      create schema net;
+      create table net.kall (url text, body jsonb, headers jsonb, timeout_milliseconds integer);
+      create function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds integer default 5000)
+      returns bigint language plpgsql as $$
+      begin
+        ${feiler ? "raise exception 'nede';" : ''}
+        insert into net.kall values (url, body, headers, timeout_milliseconds);
+        return 1;
+      end $$;
+      create schema vault;
+      create table vault.decrypted_secrets (name text, decrypted_secret text);
+    `)
+    await db.query(`insert into vault.decrypted_secrets values ('chatvarsel_adresse', $1)`, [adresse])
+    if (nokkel) await db.query(`insert into vault.decrypted_secrets values ('chatvarsel_utloser', $1)`, [nokkel])
+  }
+  const kall = async () => (await db.query<{ url: string; headers: Record<string, string> }>('select url, headers from net.kall')).rows
+
+  it('når en ny melding har en mottaker med varsler på, med den hemmelige nøkkelen og uten noe innhold', async () => {
+    await medPgNet()
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA', 'Hemmelig innhold')
+    const [k, ...flere] = await kall()
+    expect(flere).toEqual([])
+    expect(k).toEqual({
+      url: 'https://ref.supabase.co/functions/v1/chatvarsel-utsending',
+      headers: { 'Content-Type': 'application/json', 'x-chatvarsel-utloser': 'hemmelig' },
+    })
+    expect(JSON.stringify(await db.query('select body from net.kall'))).not.toContain('Hemmelig')
+  })
+
+  it('ikke når ingen mottaker har varsler på', async () => {
+    await medPgNet()
+    await sendDirekte('vanligA')
+    await sendGruppe('adminA')
+    expect(await kall()).toEqual([])
+  })
+
+  it('ikke uten nøkkelen i Vault, og en feil i pg_net stopper aldri meldingen', async () => {
+    await medPgNet({ nokkel: null })
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    expect(await kall()).toEqual([])
+    expect(await ko()).toHaveLength(1)
+    await db.exec(`insert into vault.decrypted_secrets values ('chatvarsel_utloser', 'x');
+      create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds integer default 5000)
+      returns bigint language plpgsql as $$ begin raise exception 'nede'; end $$;`)
+    await sendDirekte('vanligA', 'Kommer fram likevel')
+    expect(await ko()).toHaveLength(2)
+  })
+
+  it('uten pg_net (som her i testdatabasen) blir meldingen bare lagt i køen', async () => {
+    await lagre('vanligB', enheter.vanligB.abonnement)
+    await sendDirekte('vanligA')
+    expect(await ko()).toHaveLength(1)
   })
 })
 
