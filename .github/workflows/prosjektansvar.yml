@@ -1,15 +1,19 @@
-# Hver PR skal ha nøyaktig én prosjektetikett: ansvar:dev, ansvar:fag eller
-# ansvar:verktoy (docs/prosjektansvar.md). Kontrollen leser bare etikettene i
-# hendelsen, har ingen hemmeligheter og kan ikke skrive noe. Den er påkrevd før
-# sammenslåing gjennom regelsettet «Prosjektansvar» på main.
+# Hver PR skal ha ett prosjekt og én ansvarlig systemarkitekt, og de samme skal
+# stå på Issue-et med arbeidsoppgaven (docs/prosjektansvar.md). Kontrollen
+# henter PR-en og Issue-et fra GitHub med lesetilgang, har ingen hemmeligheter
+# og kan ikke skrive noe. Den er påkrevd før sammenslåing gjennom regelsettet
+# «Prosjektansvar» på main. Endres Issue-et, starter prosjektansvar-sak.yml den
+# på nytt.
 name: Prosjektansvar
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
+    types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled, assigned, unassigned]
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 concurrency:
   group: prosjektansvar-${{ github.event.pull_request.number }}
@@ -23,12 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          sparse-checkout: scripts/prosjektansvar.mjs
+          sparse-checkout: |
+            scripts/prosjektansvar.mjs
+            .github/prosjektansvar.json
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - name: Nøyaktig én prosjektetikett
+      - name: Ett prosjekt og én ansvarlig, som på Issue-et
         env:
-          # Som miljøvariabel, aldri rett inn i skriptet: etikettnavn er fritekst.
-          ETIKETTER: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/prosjektansvar.mjs

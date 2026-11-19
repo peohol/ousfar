@@ -1,0 +1,11 @@
+{
+  "prosjekter": {
+    "ansvar:dev": "OUSFAR Dev",
+    "ansvar:fag": "OUSFAR Fag",
+    "ansvar:verktoy": "OUSFAR Verktøy"
+  },
+  "systemarkitekter": {
+    "peohol": "Peder",
+    "maxhag": "Max"
+  }
+}

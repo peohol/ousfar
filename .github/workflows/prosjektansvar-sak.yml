@@ -1,0 +1,39 @@
+# Når et Issue får ny ansvarlig eller prosjektetikett, eller slettes eller
+# flyttes, kjøres kontrollen «Prosjektansvar» på nytt for de åpne PR-ene som
+# viser til det under «Arbeidsoppgave» (docs/prosjektansvar.md). Slik blir en
+# grønn kontroll aldri stående etter at grunnlaget for den er endret.
+# Kjøres alltid fra main, har ingen hemmeligheter og kan bare lese og starte
+# kontrollen på nytt.
+name: Prosjektansvar – Issue endret
+
+on:
+  issues:
+    types: [assigned, unassigned, labeled, unlabeled, deleted, transferred, reopened]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: prosjektansvar-sak-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  pa-nytt:
+    name: Kontroller PR-ene på nytt
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            scripts/prosjektansvar.mjs
+            .github/prosjektansvar.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Start kontrollen på nytt for PR-ene som viser til Issue-et
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/prosjektansvar.mjs sak

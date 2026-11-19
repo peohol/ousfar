@@ -1,0 +1,12 @@
+{
+  "id": "20261119-122856-5bb1cf",
+  "semver": "patch",
+  "opprettet": "2026-11-19T12:28:56Z",
+  "sammendrag": "Flere systemarkitekter kan utvikle appen side om side",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "Ingen endring i appen. Hver utviklingsoppgave har nå ett prosjekt og én ansvarlig systemarkitekt, og en automatisk kontroll sørger for at hver endring er merket med begge før den kan tas i bruk. Slik kan flere arbeide parallelt uten dobbeltarbeid, og hver persons kontroll ser bare sine egne endringer. Kravene til kliniske godkjenninger og uavhengig kontroll er uendret."
+  ]
+}

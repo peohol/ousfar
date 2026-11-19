@@ -1,18 +1,18 @@
 # ChatGPT – fast standard for PR-kontroll i peohol/ousfar
 
 **Gjelder:** Hver gang ChatGPT vurderer kode, design, kliniske regler, planer eller pull requests fra Claude Code i dette repoet. Skal også brukes når samtalen er ny og ingen tidligere chatthistorikk er tilgjengelig.  
-**Eier:** ChatGPT som uavhengig kontrollør på oppdrag fra Peder.  
-**Oppdatert:** 10.11.2026 (felles AGENTS.md).  
-**Hvilke PR-er:** bare PR-ene med etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`), etter [prosjektansvar.md](prosjektansvar.md).  
+**Eier:** ChatGPT som uavhengig kontrollør på oppdrag fra systemarkitekten prosjektet tilhører.  
+**Oppdatert:** 19.11.2026 (ansvarlig systemarkitekt per oppgave).  
+**Hvilke PR-er:** bare PR-ene som har **både** etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`) **og** prosjektets egen systemarkitekt som eneste assignee, etter [prosjektansvar.md](prosjektansvar.md) §3 og §6. Hvem det er, står i prosjektinstruksens linje «GitHub-ansvarlig: <GitHub-bruker>». Mangler linjen, gjør prosjektet ingen ordinær kontroll eller sammenslåing før den er lagt inn, og sier det i én linje.  
 **Viktig:** Dette er en arbeidsstandard i repoet, ikke en klinisk godkjenning, erstatning for de installerte PR-review-skill-instruksene eller et mandat til å begynne nye oppgaver.
 
 ## 1. Start alltid her – også i helt nye samtaler
 
-Når Peder ber om «se over PR», «sjekk igjen» eller lignende:
+Når systemarkitekten ber om «se over PR», «sjekk igjen» eller lignende:
 
 1. Les repoets AGENTS.md (og AGENTS.md i undermapper PR-en endrer), [prosjektansvar.md](prosjektansvar.md) og dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
-2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen med etiketter før kontroll og på nytt etterpå, og kontroller bare PR-ene med eget prosjekts etikett. En PR uten gyldig prosjektetikett får ikke ordinær kontroll og slås ikke sammen før eierskapet er avklart; en PR med et annet prosjekts etikett får ingen parallell kontroll herfra.
-3. Sammenlign med sist vurderte eksakte SHA. Ikke kopier gamle kommentarer eller anmeld samme endring uten grunn. Hvis HEAD er uendret: kontroller oppdatert base, CI og faktiske avhengigheter, men ikke lag en duplikatkodegjennomgang.
+2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen med etiketter og assignees før kontroll og på nytt etterpå, og kontroller bare PR-ene med eget prosjekts etikett og egen «GitHub-ansvarlig» som assignee. En PR uten gyldig merking (ingen, flere, ukjent eller motstridende etikett eller assignee, eller rød kontroll «Prosjektansvar») får ikke ordinær kontroll og slås ikke sammen før den er rettet; en PR med et annet prosjekts etikett eller en annen systemarkitekt som assignee får ingen parallell kontroll herfra, bare en kort henvisning til riktig eier. Kontroller at Issue-et under «Arbeidsoppgave» faktisk beskriver oppgaven PR-en løser.
+3. Sammenlign med sist vurderte eksakte SHA. Er PR-en overført fra en annen systemarkitekt, eller har den byttet etikett, gjelder ingen tidligere vurdering fra et annet ChatGPT-prosjekt: kontroller den i sin helhet på gjeldende HEAD. Ikke kopier gamle kommentarer eller anmeld samme endring uten grunn. Hvis HEAD er uendret: kontroller oppdatert base, CI og faktiske avhengigheter, men ikke lag en duplikatkodegjennomgang.
 4. Les relevant full diff **og omkringliggende kode, kliniske regler, kvalitetstester, kilder og faktisk brukerflyt**. PR-beskrivelsen er en påstand som skal kontrolleres, ikke et bevis. En velformulert dokumentasjon eller grønn CI er heller ikke bevis på produktnytte.
 5. Skill klinisk signoff, teknisk kodegodkjenning, produktaksept og kontroll i publisert app. Disse er forskjellige beslutninger.
 
@@ -75,13 +75,13 @@ Før merge skriv kort i egen vurdering:
 
 **Kommenter på GitHub bare ved reelle utestående merge-blokkerende funn.** En vanlig toppnivåkommentar må begynne med nøyaktig «Tilbakemelding fra ChatGPT». Ta med eksakt HEAD-SHA, hva som ble kontrollert, hvilke tidligere funn som er rettet, og gjenstående konkrete problemer og akseptkriterier. Ikke dupliser samme funn på uendret HEAD eller skriv om gamle rettede feil.
 
-**Merge** selvstendige, kontrollert klare PR-er med eget prosjekts etikett med squash (og expected_head_sha når verktøyet støtter det), etter bekreftet CI, grønn kontroll «Prosjektansvar» og avhengigheter. Bekreft faktisk merge-resultat fra GitHub; hent komplett PR-liste igjen. Hvis bare CI/integrasjon mangler, ikke oppfinn kodefeil. Respekter eksplisitt arbeidsdeling og brukerens siste prioritering.
+**Merge** selvstendige, kontrollert klare PR-er med eget prosjekts etikett og egen «GitHub-ansvarlig» som assignee med squash (og expected_head_sha når verktøyet støtter det), etter bekreftet CI, grønn kontroll «Prosjektansvar» (kjørt etter siste endring av PR-en og Issue-et) og avhengigheter, og med Peders ja der et styrende dokument krever det, uansett hvem som er ansvarlig. Bekreft faktisk merge-resultat fra GitHub; hent komplett PR-liste igjen. Hvis bare CI/integrasjon mangler, ikke oppfinn kodefeil. Respekter eksplisitt arbeidsdeling og brukerens siste prioritering.
 
 ## 5. Etterkontroll og kontinuitet
 
 - Når en PR avdekker ny viktig feil i opprinnelig behov, klinikk eller UX, før den inn i **relevant styrende plan**, ikke bare i en kort chat eller en gammel PR-kommentar.
 - Ved ny samtale: hent alltid ny repo- og PR-tilstand. Ikke trekk konklusjon fra tidligere SHA, status eller intern hukommelse uten kontroll.
 - Ingen ny planlagt kontroll/automatisering uten at Peder ber om det; respekter en tidligere avsluttet oppfølging. En tom PR-kø er ikke i seg selv oppfordring til å starte mer implementering.
-- Ved rapportering til Peder: si hva som faktisk ble kontrollert/merget/kommentert og hvilke **menneskelige** problemer som gjenstår. Hold språket kort, presist og uten teknisk støy.
+- Ved rapportering til systemarkitekten: si hva som faktisk ble kontrollert/merget/kommentert og hvilke **menneskelige** problemer som gjenstår. Hold språket kort, presist og uten teknisk støy.
 
 **Kort kontrollspørsmål før enhver godkjenning:** «Er dette det vi skulle lage, er det faglig riktig, og kan en kliniker faktisk bruke det uten unødig arbeid eller tekst?»

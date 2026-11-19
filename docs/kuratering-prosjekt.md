@@ -147,6 +147,6 @@ Du er Vaktmester i «OUSFAR Fag». Bruk skillen vaktmester, og les docs/kuratorp
   Dev», og endringer i verktøyene i verktøymenyen i «OUSFAR Verktøy». Trenger
   arbeidet en, lager tråden et GitHub Issue med mottakerens etikett (hva og
   hvorfor, uten faglige vurderinger av stoffer) og sier det til fagansvarlig med
-  én setning (`docs/prosjektansvar.md` §4).
+  én setning (`docs/prosjektansvar.md` §5).
 - Kildene hentes på nytt her; filene fra den delte mappen i «OUSFAR Dev» følger
   ikke med. Kontrolløren henter sine egne kilder.
