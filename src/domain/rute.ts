@@ -1,5 +1,10 @@
 import type { Analyttkatalog } from './analyttkatalog'
+import { CHATADRESSE, chatadresse, SAMTALETYPER, type Samtalenokkel, type Samtaletype } from '@delt/chatvarsel'
 import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
+
+// Adressene til chatten står ved varslene på enheten, som lager dem på
+// serveren (`supabase/functions/_delt/chatvarsel.ts`), og brukes herfra.
+export { CHATADRESSE, chatadresse, SAMTALETYPER, type Samtalenokkel, type Samtaletype }
 
 /**
  * Adressene i appen.
@@ -177,16 +182,6 @@ export type Rute =
       fane?: Forslagsfane
     }
 
-/** Slagene samtaler i chatten, slik de står i adressen: gruppechatter og direktesamtaler (D5). */
-export const SAMTALETYPER = ['gruppe', 'direkte'] as const
-export type Samtaletype = (typeof SAMTALETYPER)[number]
-
-/** Én samtale i chatten: slaget og ID-en (for en gruppechat gruppens, for en direktesamtale samtalens). */
-export interface Samtalenokkel {
-  type: Samtaletype
-  id: string
-}
-
 /** Fanene på forslagsoversikten utenom «Mine forslag». */
 export type Forslagsfane = 'behandling'
 
@@ -269,14 +264,6 @@ export type Gruppefane = (typeof GRUPPEFANER)[number]
 const GRUPPER = new RegExp(`^#\\/grupper(?:\\/(${ID})(?:\\/(${GRUPPEFANER.join('|')})(?:\\/(${ID}))?)?)?\\/?$`, 'i')
 
 const CHAT = new RegExp(`^#\\/chat(?:\\/(${SAMTALETYPER.join('|')})\\/(${ID}))?\\/?$`, 'i')
-
-/** Adressen til helsiden for chatten. */
-export const CHATADRESSE = '#/chat'
-
-/** Adressen til helsiden for chatten, med samtalen som er valgt. */
-export function chatadresse(samtale?: Samtalenokkel | null): string {
-  return samtale ? `${CHATADRESSE}/${samtale.type}/${samtale.id}` : CHATADRESSE
-}
 
 /** Leddet i adressen til fanen «Til behandling». */
 const TIL_BEHANDLING = 'til-behandling'

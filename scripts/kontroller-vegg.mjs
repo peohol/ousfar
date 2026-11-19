@@ -53,6 +53,10 @@ export const APNE_MODULER = new Map(
       'src/domain/tilgang.ts',
       'src/components/konto/Port.tsx',
     ],
+    'varslene om nye chatmeldinger på enheten, som avsluttes ved utlogging (docs/chatvarsler.md); ingen faglig innhold': [
+      'src/chatvarsler/api.ts',
+      'src/chatvarsler/enhet.ts',
+    ],
     'skjermbildene en bruker møter før innlogging er fullført': [
       'src/components/konto/Innlogging.tsx',
       'src/components/konto/Forstegangsoppsett.tsx',

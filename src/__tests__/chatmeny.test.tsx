@@ -566,17 +566,21 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(within(meny()).getByRole('region', { name: 'Samtaler' })).toBeTruthy()
   })
 
-  it('uten direktemeldinger slått på står verken «Ny chat», bryterne eller direktesamtalene der', async () => {
+  it('uten direktemeldinger slått på står verken «Ny chat», bryterne for dem eller direktesamtalene der', async () => {
     tilstand.direkte = null
     vis({ side: 'chat', samtale: { type: 'direkte', id: DM } })
     const helside = screen.getByRole('main', { name: 'Grupper og samtaler' })
     expect(within(helside).queryByRole('button', { name: 'Ny chat' })).toBeNull()
     expect(within(helside).queryByRole('switch')).toBeNull()
-    expect(within(helside).queryByRole('button', { name: 'Innstillinger for chatten' })).toBeNull()
     expect(within(helside).queryByRole('heading', { name: 'Kari Testesen' })).toBeNull()
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
-    // Fanen Chat i Innstillinger får heller ingenting å vise.
     expect(direktemeldingene.les()).toBeNull()
+    // Gruppechatten står, så ⚙ har varslene på enheten, og bare dem.
+    await userEvent.click(within(helside).getByRole('button', { name: 'Innstillinger for chatten' }))
+    const innstillinger = within(helside).getByRole('region', { name: 'Innstillinger for chatten' })
+    const brytere = await within(innstillinger).findAllByRole('switch')
+    expect(brytere.map((b) => b.closest('label')?.textContent ?? '')).toEqual([expect.stringMatching(/^Varsler på denne enheten/)])
+    expect(within(innstillinger).queryByRole('button', { name: 'Blokkerte' })).toBeNull()
   })
 
   it('deler de samme direktemeldingene med fanen Chat i Innstillinger mens menyen står', () => {

@@ -35,8 +35,9 @@ Som i gruppechatten er hvert valg merket med hvem som eier det:
   lagringstiden går ut, og kan fortsatt leses av de to.
 - Hver av de to kan slette alle meldingene i samtalen sin, og teksten er da
   borte fra databasen med en gang. Det finnes ingen kopi.
-- Ingen varsler med tekst eller navn, ingen e-post, ingen push og ingen
-  «sist sett».
+- Ingen varsler med tekst eller navn, ingen e-post og ingen «sist sett».
+  Varsler på enheten (push) uten tekst og navn kan den enkelte slå på selv
+  (Peder 19.11.2026, `chatvarsler.md`).
 
 ## Det som er annerledes enn i gruppechatten
 
@@ -95,7 +96,7 @@ bruken.
 | **Tap av tilgang til OUSFAR** | Med aktivt medlemskap borte stenger alle funksjonene med en gang, med samme token (P2.0), og sanntiden sender ingenting. Den andre ser «Kan ikke motta nye direktemeldinger.», og personen er borte fra søket. Får personen tilgang igjen, er samtalene og valgene som før. Bytte av arbeidsfagmiljø påvirker ikke direktemeldingene | Avgjort (planen §6.4) |
 | **Slettet konto** | Meldingene står med avsenderen tom («tidligere bruker») til lagringstiden går ut, som ellers i appen. Den andre kan lese og slette, ikke sende. Valgene, blokkeringene og statusen til den slettede kontoen slettes med den | Teknisk |
 | **Gruppechatten** | Påvirkes aldri av bryterne eller blokkeringene her. En blokkering gjelder bare direktemeldinger | Avgjort (planen) |
-| **Varslingsinnhold** | Ingen varsler i bjella. Chatknappen viser antallet uleste i samtaler som ikke er dempet, og samtalelista en markør per samtale; ingen tekst, ingen utdrag, og i knappen heller ingen navn. Ingen e-post og ingen push | Avgjort (planen §6.3) |
+| **Varslingsinnhold** | Ingen varsler i bjella. Chatknappen viser antallet uleste i samtaler som ikke er dempet, og samtalelista en markør per samtale; ingen tekst, ingen utdrag, og i knappen heller ingen navn. Ingen e-post. Varsel på enheten (push) når mottakeren selv har slått det på: «Direktemelding» og antallet uleste, uten tekst og navn, kryptert for enheten (`chatvarsler.md`) | Avgjort (planen §6.3); push: Peder 19.11.2026 |
 | **Sanntid** | Dørklokke på `direktesamtaler` uten tekst og avsender, med radsikkerhet for hver hendelse, som i gruppechatten | Teknisk |
 | **Eksterne tjenester** | Supabase (EU) lagrer meldingene. Ingen AI eller annen tjeneste får innholdet, heller ikke for kontroll | Avgjort (planen §6.3) |
 | **Grenser** | Høyst 4000 tegn per melding, 20 nye meldinger i minuttet per bruker og samtale og 60 i minuttet per bruker til sammen, høyst 10 nye samtaler i timen per bruker | Teknisk |
@@ -135,7 +136,7 @@ D5-tråden), og til anbefalingen i 5 samme kveld («Ja, begge kan slette alt»).
 Alt som tar vare på **mer**, **lenger** eller hos **flere** enn dette dokumentet
 sier, krever et nytt ja: innsyn for andre, lengre lagringstid, en kopi av
 slettet eller endret tekst, en logg over hvem som leste hva, «sist sett»,
-varsler med tekst eller navn, e-post eller push, eksport, vedlegg, eller en
+varsler med tekst eller navn (også push), e-post, eksport, vedlegg, eller en
 tjeneste utenfor OUSFAR som får innholdet. Endringer som tar vare på mindre er
 tekniske, men skal skrives her.
 
