@@ -109,7 +109,9 @@ try {
     await slaPa.waitFor({ timeout: 5_000 })
     await bilde(ada, '03-kort-sla-pa-pc')
     await slaPa.click()
-    await ada.locator('.chatsamtale[data-direkte] .chatsamtale__tittel', { hasText: 'Bo Prøvesen' }).first().waitFor({ timeout: 15_000 })
+    // Tittelen viser det korte navnet; knappen i den har hele navnet.
+    const tittel = ada.locator('.chatsamtale[data-direkte] .chatsamtale__tittel')
+    await tittel.getByRole('button', { name: 'Bo Prøvesen, vis profilkortet' }).first().waitFor({ timeout: 15_000 })
     await bilde(ada, '04-direktesamtale-fra-kortet-pc')
     const samtaler = await rpc<{ motpart: { id: string } | null }[]>(adaK, 'mine_direktesamtaler')
     krev(samtaler.some((x) => x.motpart?.id === boId), 'samtalen med Bo finnes')
