@@ -99,6 +99,11 @@ export interface Chatendringer {
   /** Det er mer å hente etter `siste_endring`. */
   flere: boolean
   /**
+   * Meldinger skrevet før dette tidspunktet har passert lagringstiden og er
+   * slettet; de fjernes også fra en samtale som står åpen. Bare der svaret gir den.
+   */
+  frist?: string
+  /**
    * Bare i en direktesamtale: om det kan skrives nå, og den andre, sperren og
    * dempingen, så en åpen samtale ser endringene ved hvert livstegn.
    */
@@ -250,6 +255,7 @@ export function lesChatendringer(verdi: unknown): Chatendringer | null {
     meldinger: lesMeldinger(verdi.meldinger).sort((a, b) => a.endring - b.endring),
     siste_endring: tall(verdi.siste_endring),
     flere: verdi.flere === true,
+    ...(typeof verdi.frist === 'string' && !Number.isNaN(Date.parse(verdi.frist)) && { frist: verdi.frist }),
     ...(typeof verdi.kan_skrive === 'boolean' && { kan_skrive: verdi.kan_skrive }),
     ...('direkte' in verdi && { direkte: lesDirektemeta(verdi.direkte) }),
   }

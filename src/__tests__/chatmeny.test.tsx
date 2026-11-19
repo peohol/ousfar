@@ -435,6 +435,13 @@ describe('direktemeldingene i chatmenyen', () => {
       const treff = within(meny()).getByRole('list', { name: 'Treff' })
       expect(within(treff).getByText('@test.kari · Finnes alt en samtale')).toBeTruthy()
       expect(within(treff).getByText('@test.ola')).toBeTruthy()
+      // Et endret søk viser aldri treffene fra det forrige, heller ikke før svaret er kommet.
+      await userEvent.type(within(meny()).getByRole('searchbox', { name: 'Søk etter navn eller brukernavn' }), 's')
+      expect(within(meny()).queryByRole('list', { name: 'Treff' })).toBeNull()
+      expect(within(meny()).getByText('Søker …')).toBeTruthy()
+      await act(async () => vi.advanceTimersByTimeAsync(300))
+      expect(tilstand.api.sokDirektemottakere).toHaveBeenLastCalledWith('tes')
+      expect(within(meny()).getByRole('list', { name: 'Treff' })).toBeTruthy()
 
       await userEvent.keyboard('{Escape}')
       await userEvent.keyboard('{Escape}')

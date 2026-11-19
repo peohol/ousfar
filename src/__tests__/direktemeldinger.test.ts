@@ -519,6 +519,30 @@ describe('lagringstiden (T19)', () => {
   })
 })
 
+describe('lagringstiden under bruk (T19)', () => {
+  it('gir aldri ut en utgått melding på nytt, heller ikke for den samme klient-ID-en', async () => {
+    const klient = nyKlientId()
+    const gammel = await send('vanligA', K, 'Syntetisk utgått', klient)
+    await db.query(`update public.direktemeldinger set skrevet_kl = now() - interval '12 months 1 day' where id = $1`, [gammel.id])
+    // Nattjobben har ikke kjørt: den samme klient-ID-en gir en ny melding, og den gamle er borte.
+    const ny = await send('vanligA', K, 'Syntetisk ny', klient)
+    expect(ny.id).not.toBe(gammel.id)
+    expect(ny.tekst).toBe('Syntetisk ny')
+    expect(await rader('select tekst from public.direktemeldinger where samtale_id = $1', [K])).toEqual([{ tekst: 'Syntetisk ny' }])
+  })
+
+  it('sier i endringene hvor fristen går, så en åpen samtale kan fjerne det som har utgått', async () => {
+    const e = await endringer('vanligB')
+    // Spørringen etterpå er noen millisekunder senere enn svaret.
+    const [rad] = await rader<{ forventet: string }>(
+      `select to_jsonb(now() - intern.direktemelding_lagringstid()) #>> '{}' as forventet`,
+    )
+    const avstand = Date.parse(rad!.forventet) - Date.parse(e.frist!)
+    expect(avstand).toBeGreaterThanOrEqual(0)
+    expect(avstand).toBeLessThan(60_000)
+  })
+})
+
 describe('aktivitetsstatusen (T20)', () => {
   it('er usynlig når den er av, uten samtale og ved blokkering, og gir aldri et tidspunkt', async () => {
     await marker('vanligA')

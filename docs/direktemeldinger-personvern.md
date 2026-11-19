@@ -279,7 +279,10 @@ rettighetene der leses når kanalen åpnes og ikke trekkes tilbake med en gang;
 
 `intern.direktemelding_lagringstid()` = `interval '12 months'` (etter
 beslutning 2). Som i gruppechatten: sending og lesing rydder i samtalen de
-gjelder, funksjonene leser aldri ut en utgått melding, og nattjobben
+gjelder, funksjonene leser aldri ut en utgått melding (heller ikke når den
+samme `klient_id` sendes på nytt før nattjobben har ryddet), endringene sier
+hvor fristen går (`frist`), så en samtale som står åpen, fjerner det som har
+utgått mens den var åpen, og nattjobben
 (`gruppechat-lagringstid.yml`) utvides til å kjøre `intern.rydd_direktemeldinger()`
 og kontrollere at ingen utgått melding står igjen. Rapporten har bare antall
 og alder. Samtaler uten meldinger og uten aktivitet på 12 måneder slettes med
@@ -313,7 +316,7 @@ og ingen rader, tall, tidspunkter eller deltakere.
 | T16 | Søket | Ikke seg selv, ikke av-brytere, ikke blokkerte (begge veier), ikke uten medlemskap; høyst 20; under to tegn avvist; svaret har bare profilkortets fire felt |
 | T17 | Sletting | Begge kan slette alle meldinger, en utenforstående ingen; `tekst` er `null`; teksten finnes ingen steder i databasen etterpå (`hvorStaar` fra krysstesten) |
 | T18 | Teksten i varsler, tilgangslogg, feilmeldinger og sanntidshendelser | Finnes ikke; ingen rad i `varsler` for direktemeldinger |
-| T19 | Lagringstiden | Melding eldre enn 12 måneder borte fra lesingen og ryddet; tom, gammel samtale fjernet |
+| T19 | Lagringstiden | Melding eldre enn 12 måneder borte fra lesingen og ryddet, også ved ny sending med samme klient-ID; endringene gir fristen; tom, gammel samtale fjernet |
 | T20 | Aktivitet: `vis_aktiv` av; på uten samtale; på men blokkert; på med samtale | Usynlig, usynlig, usynlig, synlig; aldri et tidspunkt; raden borte etter fristen og når bryteren slås av |
 | T21 | Demping og skjuling | Dempet teller ikke på chatknappen; skjult kommer tilbake ved ny melding; den andre merker ingenting |
 | T22 | Bryteren for hele funksjonen av | Alle funksjonene `42501` «Direktemeldingene er ikke slått på.» |

@@ -61,23 +61,22 @@ export function NyDirektemelding({
   onTilbake: () => void
 }) {
   const [sok, setSok] = useBevart('chat/nysok', '')
-  const [treff, setTreff] = useState<Direktemottaker[] | null>(null)
+  // Treffene hører til søkeordet de ble hentet for: et endret søk viser aldri de gamle.
+  const [svar, setSvar] = useState<{ ord: string; treff: Direktemottaker[] } | null>(null)
   const [apner, setApner] = useState<string | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const id = useId()
   const tillatt = direkte.valg.tillat_direktemeldinger
   const ord = sok.trim()
+  const treff = svar?.ord === ord ? svar.treff : null
 
   useEffect(() => {
     setFeil(null)
-    if (!tillatt || ord.length < SOK_MINST) {
-      setTreff(null)
-      return
-    }
+    if (!tillatt || ord.length < SOK_MINST) return
     let gjeldende = true
     const tidtaker = setTimeout(() => {
       direkteapi.sokDirektemottakere(ord).then(
-        (svar) => gjeldende && setTreff(svar),
+        (treff) => gjeldende && setSvar({ ord, treff }),
         (aarsak) => gjeldende && setFeil(feiltekst(aarsak)),
       )
     }, SOKEPAUSE_MS)

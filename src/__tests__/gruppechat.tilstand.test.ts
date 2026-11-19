@@ -127,6 +127,16 @@ describe('tilstanden', () => {
     expect(nr(t)).toEqual([1, 5])
   })
 
+  it('meldinger eldre enn fristen i endringene forsvinner fra en åpen samtale; uten frist står alt', () => {
+    const kl = (dag: number) => `2025-11-${String(dag).padStart(2, '0')}T08:00:00.123456+00:00`
+    let t = start([m(1, 1, { skrevet_kl: kl(1) }), m(2, 2, { skrevet_kl: kl(2) }), m(3, 3, { skrevet_kl: kl(3) })])
+    const uendret = medEndringer(t, { meldinger: [], siste_endring: 3, flere: false })
+    expect(uendret).toBe(t)
+    t = medEndringer(t, { meldinger: [], siste_endring: 3, flere: false, frist: kl(2) })
+    expect(nr(t)).toEqual([2, 3])
+    expect(medEndringer(t, { meldinger: [], siste_endring: 3, flere: false, frist: kl(2) })).toBe(t)
+  })
+
   it('endringer i meldinger eldre enn den første siden venter til de eldre hentes', () => {
     let t = start([m(51, 51), m(52, 52)], true)
     t = medEndringer(t, { meldinger: [m(10, 53, { tekst: 'Redigert' })], siste_endring: 53, flere: false })

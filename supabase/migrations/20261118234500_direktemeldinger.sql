@@ -916,6 +916,8 @@ begin
         else greatest(s.siste_endring, coalesce(direktesamtale_endringer.etter, 0))
       end,
       'flere', (select count(*) from endret) > n,
+      -- Meldinger skrevet før dette er utgått; en åpen samtale fjerner dem.
+      'frist', now() - intern.direktemelding_lagringstid(),
       'kan_skrive', kan_skrive,
       'direkte', intern.direktesamtale_meta(s, aktor)
     )
@@ -946,8 +948,10 @@ begin
   end if;
   -- 0: én om gangen per avsender, før takten telles.
   perform intern.las_direkteavsender(aktor);
+  -- En utgått melding gis aldri tilbake: den slettes under før den nye settes inn.
   select m.id into ny from public.direktemeldinger m
-  where m.samtale_id = s.id and m.forfatter_id = aktor and m.klient_id = send_direktemelding.klient_id;
+  where m.samtale_id = s.id and m.forfatter_id = aktor and m.klient_id = send_direktemelding.klient_id
+    and m.skrevet_kl >= now() - intern.direktemelding_lagringstid();
   if ny is not null then
     return intern.direktemelding_svar(ny, aktor);
   end if;
