@@ -195,24 +195,30 @@ informasjonsutveksling.
      hendelsene `workflow_run` og `issues`, som alltid bruker arbeidsflyten og
      skriptet slik de er på `main`. Den sjekker bare ut `main`, leser PR-en og
      Issue-ene som data fra GitHub og kjører ingen kode fra PR-en. Resultatet
-     skrives som check run-en «Prosjektansvar» på PR-ens siste commit; den
-     settes til «pågår» før hver ny vurdering, så en gammel grønn ikke gjelder
-     imens.
+     skrives på PR-ens siste commit som commit-statusen «Prosjektansvar», som
+     er den regelsettet krever, og som en check run med samme navn og hele
+     forklaringen. (GitHub teller ikke check runs som en arbeidsflyt lager
+     gjennom Checks-API-et, som påkrevde sjekker, men commit-statuser fra den
+     samme arbeidsflyten.) Begge settes til «pågår» før hver ny vurdering, så
+     en gammel grønn ikke gjelder imens.
    - `.github/workflows/prosjektansvar-utloser.yml` kjører ved hver endring av
      en PR (nye commits, etiketter, assignees eller beskrivelse), uten tilganger
      og uten å kjøre noe; når den er ferdig, kjører kontrollen fra `main`.
      Fjerner eller ødelegger en PR utløseren, får den ingen «Prosjektansvar» og
      kan ikke slås sammen.
    - Får et Issue ny assignee eller etikett, eller slettes eller flyttes det,
-     vurderes alle åpne PR-er som viser til det, på nytt med en ny check run,
-     så en grønn kontroll ikke blir stående på et foreldet grunnlag.
-   - Fordi navnet på en check run kan etterlignes av enhver arbeidsflyt som
-     kjører på PR-er, feiler kontrollen når en PR legger til eller endrer en
-     slik arbeidsflyt som har en jobb som heter «Prosjektansvar», som kan
-     skrive check runs eller statuser, eller som mangler en permissions-blokk.
-     Det oppdager, men kan ikke teknisk hindre, at noen med skrivetilgang
-     bevisst omgår kontrollen; det krever særskilt kontroll av alle endringer
-     i `.github/workflows/`.
+     vurderes alle åpne PR-er som viser til det, på nytt med en ny status og
+     check run, så en grønn kontroll ikke blir stående på et foreldet
+     grunnlag.
+   - Fordi «Prosjektansvar» kan etterlignes av enhver arbeidsflyt som kjører
+     kode fra en gren eller PR (`pull_request`, `pull_request_target`, `push`,
+     `workflow_dispatch`, `merge_group`), feiler kontrollen når en PR legger
+     til eller endrer en slik arbeidsflyt som har en jobb som heter
+     «Prosjektansvar», som kan skrive check runs eller statuser, eller som
+     mangler en permissions-blokk. Det oppdager, men kan ikke teknisk hindre,
+     at noen med skrivetilgang bevisst omgår kontrollen, for eksempel fra en
+     annen gren; det krever særskilt kontroll av alle endringer i
+     `.github/workflows/`.
    - En PR som endrer kontrollens egne filer, vurderes med versjonen på `main`
      og får en advarsel om det; endringen virker først når den er slått sammen.
 6. **Overgang:**
@@ -221,11 +227,12 @@ informasjonsutveksling.
      advarsel og kan fullføres slik de ble startet; kravet om prosjektetikett
      gjelder dem som før. Unntaket følger opprettelsestidspunktet og gjelder
      ingen nye PR-er.
-   - Den betrodde kontrollen kan ikke vurdere PR-en som innfører den. Derfor
-     finnes `.github/workflows/prosjektansvar-overgang.yml` midlertidig: den
-     gir «Prosjektansvar» på gammel måte (fra PR-en selv) til den betrodde
-     kontrollen er på `main`, og fjernes i en egen liten PR rett etter. Den
-     PR-en får «Prosjektansvar» bare fra den betrodde kontrollen.
+   - Den betrodde kontrollen kan ikke vurdere PR-en som innfører eller retter
+     den. Derfor finnes `.github/workflows/prosjektansvar-overgang.yml`
+     midlertidig: den gir «Prosjektansvar» på gammel måte (fra PR-en selv) til
+     den betrodde kontrollen er bekreftet med ekte hendelser på `main`, og
+     fjernes i en egen liten PR etterpå. Den PR-en får «Prosjektansvar» bare
+     fra den betrodde kontrollen.
 7. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
    PR-ens assignee («GitHub-ansvarlig» i prosjektinstruksen), kontrollerer og
    slår sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).

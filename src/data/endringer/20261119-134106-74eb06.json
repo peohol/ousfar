@@ -1,0 +1,12 @@
+{
+  "id": "20261119-134106-74eb06",
+  "semver": "patch",
+  "opprettet": "2026-11-19T13:41:06Z",
+  "sammendrag": "Kontrollen av ansvar for hver endring godtas nå av GitHub",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "Ingen endring i appen. Den beskyttede kontrollen som sjekker prosjekt og ansvarlig systemarkitekt for hver endring, melder nå resultatet på en måte GitHub godtar som påkrevd sjekk før sammenslåing."
+  ]
+}

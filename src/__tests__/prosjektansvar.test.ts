@@ -367,7 +367,7 @@ describe('kontrollen mot GitHub', () => {
     }))
     const v = (await kontrollerPr(github, REPO, ghPr(), 'main')) as Vurdering
     expect(v.ok).toBe(false)
-    expect(v.feil).toEqual([expect.stringContaining('.github/workflows/falsk.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»')])
+    expect(v.feil).toEqual([expect.stringContaining('.github/workflows/falsk.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»')])
     expect(kall.filter((k) => k.includes('/contents/'))).toEqual(['GET repos/peohol/ousfar/contents/.github/workflows/falsk.yml?ref=abc1234def'])
   })
 
@@ -379,7 +379,7 @@ describe('kontrollen mot GitHub', () => {
     })
     const betrodd = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main')) as Vurdering
     expect(betrodd.ok).toBe(false)
-    expect(betrodd.feil).toEqual([expect.stringContaining('prosjektansvar-overgang.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»')])
+    expect(betrodd.feil).toEqual([expect.stringContaining('prosjektansvar-overgang.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»')])
     const selv = (await kontrollerPr(falskGithub(svar).github, REPO, ghPr(), 'main', { betrodd: false })) as Vurdering
     expect(selv.ok).toBe(true)
     expect(selv.advarsler).toEqual([expect.stringContaining('Overgangskontrollen kjører PR-ens egen versjon og er ikke betrodd')])
@@ -413,8 +413,17 @@ describe('etterligning av kontrollen', () => {
     expect(fil('on: pull_request\njobs: {}\n')[0]).toContain('ingen permissions-blokk')
   })
 
-  it('godtar arbeidsflyter som ikke kjører på PR-er, og PR-arbeidsflyter med lesetilgang', () => {
-    expect(fil('on:\n  push:\npermissions:\n  checks: write\njobs:\n  a:\n    name: Prosjektansvar\n')).toEqual([])
+  it('stopper også arbeidsflyter som kjører kode fra en gren uten PR (push, workflow_dispatch, merge_group)', () => {
+    // En slik arbeidsflyt kan skrive «Prosjektansvar» på PR-ens commit med GITHUB_TOKEN; prøvd på ekte (#487).
+    expect(fil('on:\n  push:\npermissions:\n  statuses: write\n')[0]).toContain('kan kjøre kode fra en gren eller PR og kan skrive')
+    expect(fil('on: [push]\npermissions: {}\njobs:\n  a:\n    name: Prosjektansvar\n')).toHaveLength(1)
+    expect(fil('on:\n  workflow_dispatch:\njobs: {}\n')[0]).toContain('ingen permissions-blokk')
+    expect(fil('on:\n  - merge_group\npermissions: write-all\n')).toHaveLength(1)
+  })
+
+  it('godtar arbeidsflyter som bare kjøres fra main, og gren-arbeidsflyter med lesetilgang', () => {
+    expect(fil('on:\n  schedule:\n    - cron: x\npermissions:\n  checks: write\njobs:\n  a:\n    name: Prosjektansvar\n')).toEqual([])
+    expect(fil('on:\n  push:\npermissions:\n  contents: write\njobs:\n  a:\n    name: Bygg\n')).toEqual([])
     expect(fil('on:\n  workflow_run:\n    workflows: [x]\npermissions:\n  checks: write\n')).toEqual([])
     expect(fil('on:\n  pull_request:\npermissions:\n  contents: read\njobs:\n  a:\n    name: Bygg\n# name: Prosjektansvar\n')).toEqual([])
   })
@@ -422,16 +431,21 @@ describe('etterligning av kontrollen', () => {
   it('godtar repoets egne arbeidsflyter, unntatt den midlertidige overgangsflyten', () => {
     const flyter = readdirSync(new URL('../../.github/workflows/', import.meta.url)).filter((f) => /\.ya?ml$/.test(f)).map((f) => ({ sti: `.github/workflows/${f}`, innhold: les(`.github/workflows/${f}`) }))
     const funn = finnEtterligning(flyter) as string[]
-    expect(funn).toEqual([expect.stringMatching(/^\.github\/workflows\/prosjektansvar-overgang\.yml kjører på PR-er og har en jobb som heter «Prosjektansvar»/)])
+    expect(funn).toEqual([expect.stringMatching(/^\.github\/workflows\/prosjektansvar-overgang\.yml kan kjøre kode fra en gren eller PR og har en jobb som heter «Prosjektansvar»/)])
   })
 })
 
 describe('den betrodde kjøringen', () => {
-  it('starter check run-en som «pågår» på PR-ens commit og fullfører den med resultatet', async () => {
-    const { github, kall } = falskGithub(vanlig({ 'POST repos/peohol/ousfar/check-runs': { id: 77 }, 'PATCH repos/peohol/ousfar/check-runs/77': {} }))
+  it('starter commit-statusen og check run-en som «pågår» på PR-ens commit og fullfører begge med resultatet', async () => {
+    const { github, kall } = falskGithub(vanlig({ 'POST repos/peohol/ousfar/check-runs': { id: 77 }, 'PATCH repos/peohol/ousfar/check-runs/77': {}, 'POST repos/peohol/ousfar/statuses/abc1234def': {} }))
     const v = await vurderOgMeld(github, REPO, ghPr(), 'main', 'https://github.com/peohol/ousfar/actions/runs/1')
     expect(v).toMatchObject({ nummer: 500, ok: true })
-    expect(kall.filter((k) => !k.startsWith('GET'))).toEqual(['POST repos/peohol/ousfar/check-runs', 'PATCH repos/peohol/ousfar/check-runs/77'])
+    expect(kall.filter((k) => !k.startsWith('GET'))).toEqual([
+      'POST repos/peohol/ousfar/check-runs',
+      'POST repos/peohol/ousfar/statuses/abc1234def',
+      'PATCH repos/peohol/ousfar/check-runs/77',
+      'POST repos/peohol/ousfar/statuses/abc1234def',
+    ])
   })
 
   it('skriver navnet regelsettet krever, med riktig commit, og rød når vurderingen ikke kan fullføres', async () => {
@@ -439,15 +453,20 @@ describe('den betrodde kjøringen', () => {
     const fetch = async (url: string, init: { method: string; body?: string }) => {
       const sti = url.replace('https://api.github.com/', '')
       if (init.method !== 'GET') sendt.push({ sti, data: JSON.parse(init.body!) })
-      if (sti === 'repos/peohol/ousfar/check-runs') return { ok: true, status: 201, text: async () => '{"id":5}' }
-      if (sti.startsWith('repos/peohol/ousfar/check-runs/5')) return { ok: true, status: 200, text: async () => '{}' }
+      if (sti === 'repos/peohol/ousfar/check-runs') return { ok: true, status: 201, text: async () => '{"id":5,"html_url":"https://github.com/peohol/ousfar/runs/5"}' }
+      if (sti.startsWith('repos/peohol/ousfar/check-runs/5') || sti.startsWith('repos/peohol/ousfar/statuses/')) return { ok: true, status: 200, text: async () => '{}' }
       return { ok: false, status: 502, text: async () => 'Bad Gateway' }
     }
     const v = await vurderOgMeld(lagGithub({ token: 'x', fetch }), REPO, ghPr(), 'main')
     expect(v.ok).toBe(false)
     expect(sendt[0]).toEqual({ sti: 'repos/peohol/ousfar/check-runs', data: { name: KONTROLLNAVN, head_sha: 'abc1234def', status: 'in_progress' } })
     expect(KONTROLLNAVN).toBe('Prosjektansvar')
-    expect(sendt[1]).toMatchObject({ sti: 'repos/peohol/ousfar/check-runs/5', data: { status: 'completed', conclusion: 'failure', output: { title: '1 feil må rettes', summary: expect.stringContaining('Kontrollen kunne ikke fullføres: GitHub svarte 502') } } })
+    // Statusen er den regelsettet krever: samme navn, PR-ens commit, og lenke til forklaringen i check run-en.
+    const status = { context: KONTROLLNAVN, target_url: 'https://github.com/peohol/ousfar/runs/5' }
+    expect(sendt[1]).toEqual({ sti: 'repos/peohol/ousfar/statuses/abc1234def', data: { ...status, state: 'pending', description: 'Vurderes' } })
+    expect(sendt[2]).toMatchObject({ sti: 'repos/peohol/ousfar/check-runs/5', data: { status: 'completed', conclusion: 'failure', output: { title: '1 feil må rettes', summary: expect.stringContaining('Kontrollen kunne ikke fullføres: GitHub svarte 502') } } })
+    expect(sendt[3]).toEqual({ sti: 'repos/peohol/ousfar/statuses/abc1234def', data: { ...status, state: 'failure', description: '1 feil må rettes: se detaljer' } })
+    expect(sendt).toHaveLength(4)
   })
 
   it('finner PR-ene for en commit og for et Issue, og ingen for et ufordelt backlog-Issue', async () => {
@@ -481,7 +500,7 @@ describe('arbeidsflytene', () => {
     expect(flyt).not.toMatch(/^\s*ref:/m)
     expect(flyt).toContain(`sparse-checkout: |\n            scripts/prosjektansvar.mjs\n            ${REGLER_STI}\n`)
     expect(flyt).toContain('persist-credentials: false')
-    expect(flyt).toMatch(/^permissions:\n {2}checks: write\n {2}contents: read\n {2}issues: read\n {2}pull-requests: read\n\n/m)
+    expect(flyt).toMatch(/^permissions:\n {2}checks: write\n {2}contents: read\n {2}issues: read\n {2}pull-requests: read\n {2}statuses: write\n\n/m)
     expect(flyt).not.toMatch(/secrets\.|pull_request_target|actions: write/)
     expect(flyt).toContain('run: node scripts/prosjektansvar.mjs\n')
     // Jobben selv heter ikke Prosjektansvar: navnet er check run-en skriptet skriver på PR-en.

@@ -60,7 +60,7 @@ Disse fire spørsmålene må inngå i **alle relevante PR-beslutninger**, også 
 - Skille test med simulert godkjenning/mock fra **usimulert** app-regel, og komponenttest fra nettlesertest mot faktisk publisert versjon. «Alle tester grønne» sier ikke hva som ikke er testet.
 - Test skjerm, tidslinje, kopiert plan og utskrift mot en **uavhengig klinisk fasit**, ikke bare mot hverandre. Kontroller at resultatet som vises for en administrator faktisk oppstår under realistiske valg.
 - Klinisk tilgang for ordinære brukere endres ikke uten særskilt beslutning og produkt-/klinisk test.
-- Endrer PR-en `.github/workflows/` eller kontrollens egne filer, kontroller særskilt at ingen arbeidsflyt som kjører på PR-er kan etterligne eller omgå den påkrevde kontrollen «Prosjektansvar», som alltid kjøres fra `main` ([prosjektansvar.md](prosjektansvar.md) §6, punkt 5). Grønn «Prosjektansvar» er ikke bevis for at en slik endring er trygg.
+- Endrer PR-en `.github/workflows/` eller kontrollens egne filer, kontroller særskilt at ingen arbeidsflyt som kjører kode fra en gren eller PR kan etterligne eller omgå den påkrevde kontrollen «Prosjektansvar», som alltid kjøres fra `main` ([prosjektansvar.md](prosjektansvar.md) §6, punkt 5). Grønn «Prosjektansvar» er ikke bevis for at en slik endring er trygg.
 
 ## 4. PR-beslutningen
 
