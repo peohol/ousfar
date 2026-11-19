@@ -138,9 +138,13 @@ async function sikreDatabase(): Promise<Status> {
   const naa = status()
   if (naa && existsSync(avtrykksfil) && readFileSync(avtrykksfil, 'utf8') === avtrykk) return naa
 
-  if (naa) {
-    logg('migrasjonene er endret; databasen bygges på nytt')
+  // Også når Supabase ikke kjører: databasen i Docker-volumet kan ha en
+  // eldre utgave av en migrasjon, som `start` ellers ville gjenbrukt.
+  logg(naa ? 'migrasjonene er endret; databasen bygges på nytt' : 'databasen bygges fra migrasjonene')
+  try {
     supabase('stop', '--no-backup')
+  } catch {
+    // Ingenting å stoppe.
   }
   logg('velger migrasjonene')
   const valgte = await valgteMigrasjoner()

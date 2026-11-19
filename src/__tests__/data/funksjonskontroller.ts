@@ -328,4 +328,7 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'skjul_direktesamtale(samtale uuid)': 'direktemelding',
   'slett_direktemelding(melding uuid)': 'direktemelding',
   'sok_direktemottakere(sok text)': 'direktemelding',
+  // Varslene om nye chatmeldinger på enheten (supabase/migrations/*_chatvarsler.sql).
+  'lagre_pushabonnement(endepunkt text, p256dh text, auth text)': 'eier',
+  'slett_pushabonnement(endepunkt text)': 'eier',
 }

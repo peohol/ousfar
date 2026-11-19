@@ -110,7 +110,15 @@ const miljovariabel = (navn: string) => {
   return x
 }
 
-export async function apneTestmiljo(): Promise<Testmiljo> {
+export interface Testmiljovalg {
+  /**
+   * Hele Chromium i stedet for det lettere hodeløse skallet: trengs for det
+   * skallet ikke har, som varsler (skallet svarer alltid «denied»).
+   */
+  helChromium?: boolean
+}
+
+export async function apneTestmiljo(valg: Testmiljovalg = {}): Promise<Testmiljo> {
   // Avgjøres før noe startes: produksjonen bare med QA_PRODUKSJON=ja, og da med taket i grensene.
   const mal = malFor(process.env)
   const modus = mal.modus
@@ -126,7 +134,7 @@ export async function apneTestmiljo(): Promise<Testmiljo> {
   const tilDatabasen = (adresse: string) => erSupabaseISkyen(adresse) || new URL(adresse).host === lokalDatabase
 
   const { chromium } = createRequire(import.meta.url)('playwright') as { chromium: Pw }
-  const nettleser = await chromium.launch()
+  const nettleser = await chromium.launch(valg.helChromium ? { channel: 'chromium' } : {})
   let kontekst: Pw = null
   let innlogging: unknown = null
 
