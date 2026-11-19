@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { direkteapi } from '../../direktemeldinger/api'
-import { personnavn, type Direktemottaker, type Direktesamtale } from '../../direktemeldinger/modell'
+import { motpartnavn, personnavn, type Direktemottaker, type Direktesamtale } from '../../direktemeldinger/modell'
 import type { Direktemeldinger } from '../../direktemeldinger/useDirekte'
 import { useDirektesamtale } from '../../direktemeldinger/useDirektesamtale'
 import { useBevart } from '../../oppdatering/Bevaring'
@@ -201,7 +201,8 @@ export function Direktevisning({
   const chat = useDirektesamtale(samtale)
   const rad: Direktesamtale | undefined = direkte.samtaler.find((s) => s.id === samtale)
   const person = chat.direkte?.motpart ?? rad?.motpart ?? null
-  const navn = personnavn(person)
+  // Det samme korte navnet som i lista over samtalene.
+  const navn = motpartnavn(direkte.samtaler, person)(person)
   const lenker = useAvatarlenker(person ? [person] : [])
   const bildelenke = person?.avatar_path ? (lenker.get(person.avatar_path) ?? null) : null
   const utestengt = chat.status === 'ingen_tilgang'

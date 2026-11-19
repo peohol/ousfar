@@ -155,7 +155,9 @@ describe('chatten', () => {
     expect(liste.getAttribute('aria-live')).toBe('polite')
     expect(liste.getAttribute('aria-relevant')).toBe('additions')
     expect(meldingstekster()).toEqual([1, 2, 3, 4, 5].map((nr) => `Syntetisk melding ${nr}`))
-    expect(within(liste).getAllByText('Kari Testesen').length).toBeGreaterThan(0)
+    // De andre står med fornavnet (Peder 19.11.2026); ingen andre heter det samme her.
+    expect(within(liste).getAllByText('Kari').length).toBeGreaterThan(0)
+    expect(within(liste).queryByText('Kari Testesen')).toBeNull()
     expect(liste.querySelector('time')?.getAttribute('dateTime')).toBe('2026-11-16T08:00:00.000Z')
     expect(within(liste).getByRole('heading', { level: 3 })).toBeTruthy()
     // Ingen påminnelse om pasientopplysninger (Peder 17.11.2026); feltet beskrives bare av tastehjelpen og telleren.
@@ -163,7 +165,7 @@ describe('chatten', () => {
     expect(beskrevet.join(' ')).not.toMatch(/pasientopplysninger|fødselsnummer/i)
   })
 
-  it('setter egne meldinger i bobler til høyre uten synlig «(deg)», men sier det til skjermlesere', () => {
+  it('setter egne meldinger i bobler til høyre uten navnet, men sier «Du» til skjermlesere', () => {
     render(<Prove />)
     const egen = logg().querySelector<HTMLElement>('[data-nr="2"]')!
     const annen = logg().querySelector<HTMLElement>('[data-nr="1"]')!
@@ -171,9 +173,13 @@ describe('chatten', () => {
     expect(egen.hasAttribute('data-egen')).toBe(true)
     expect(annen.hasAttribute('data-egen')).toBe(false)
     for (const rad of [egen, annen]) expect(rad.querySelector('.chatmelding__boble')?.textContent).toMatch(/^Syntetisk melding/)
-    const deg = within(egen).getByText('(deg)', { exact: false })
-    expect(deg.classList.contains('kun-skjermleser')).toBe(true)
-    expect(within(annen).queryByText('(deg)', { exact: false })).toBeNull()
+    // Eget navn står ikke (Peder 19.11.2026); klokkeslettet står, og skjermlesere får «Du».
+    expect(within(egen).queryByText('Test Meg')).toBeNull()
+    expect(egen.querySelector('.chatmelding__navn')).toBeNull()
+    expect(egen.querySelector('.chatmelding__hode time')).toBeTruthy()
+    expect(within(egen).getByText('Du').classList.contains('kun-skjermleser')).toBe(true)
+    // Navnet til de andre åpner profilkortet (docs/designsystem.md, «Profilkortet»).
+    expect(within(annen).getByText('Ola').closest('.chatmelding__navn .profilutlos__knapp')).toBeTruthy()
   })
 
   it('sender med Enter, gir ny linje med Shift + Enter, og sender med knappen', async () => {
@@ -257,7 +263,7 @@ describe('chatten', () => {
 describe('endre og slette', () => {
   const menyknapp = (nr: number) => {
     const rad = logg().querySelector<HTMLElement>(`[data-nr="${nr}"]`)!
-    return within(rad).getByRole('button', { name: /^Handlinger for meldingen fra/ })
+    return within(rad).getByRole('button', { name: /^Handlinger for meldingen/ })
   }
 
   it('lar forfatteren endre en melding på stedet, med Enter, og avbryte med Escape', async () => {
@@ -298,7 +304,7 @@ describe('endre og slette', () => {
     await userEvent.click(menyknapp(1))
     expect(screen.queryByRole('button', { name: 'Endre' })).toBeNull()
     await userEvent.click(screen.getByRole('button', { name: /^Fjern meldingen/ }))
-    await userEvent.click(within(screen.getByRole('group', { name: 'Fjerne meldingen fra Ola Prøvesen?' })).getByRole('button', { name: 'Fjern meldingen' }))
+    await userEvent.click(within(screen.getByRole('group', { name: 'Fjerne meldingen fra Ola?' })).getByRole('button', { name: 'Fjern meldingen' }))
     await waitFor(() => expect(meldingstekster()[0]).toBe('Fjernet av en moderator'))
   })
 

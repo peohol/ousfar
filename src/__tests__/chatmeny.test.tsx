@@ -249,7 +249,7 @@ describe('chatmenyen', () => {
     expect(logg.querySelectorAll('.chatmelding').length).toBe(5)
     expect(within(logg).getByRole('button', { name: 'Vis eldre meldinger' })).toBeTruthy()
     // Egne meldinger kan endres og slettes fra menyen på meldingen.
-    expect(within(logg).getAllByRole('button', { name: /^Handlinger for meldingen fra/ }).length).toBeGreaterThan(0)
+    expect(within(logg).getAllByRole('button', { name: /^Handlinger for meldingen/ }).length).toBeGreaterThan(0)
     // Skrivefeltet, med utkastet som følger gruppen.
     expect(within(chat).getByRole('textbox', { name: 'Melding til Sandkassegruppen' })).toBeTruthy()
   })
@@ -453,7 +453,9 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(screen.getByRole('button', { name: 'Vis chat (5 uleste meldinger)' })).toBeTruthy()
     await apneMenyen()
     const rader = within(samtalelista()).getAllByRole('listitem')
-    expect(rader[0]!.textContent).toContain('Kari Testesen')
+    expect(rader[0]!.textContent).toContain('Kari')
+    // Fornavnet alene: ingen andre i lista heter Kari (Peder 19.11.2026).
+    expect(rader[0]!.textContent).not.toContain('Testesen')
     expect(rader[0]!.textContent).toContain('Direktemelding')
     expect(within(rader[0]!).getByRole('img', { name: 'Aktiv nå' })).toBeTruthy()
     expect(rader[1]!.textContent).toContain('Sandkassegruppen')
@@ -468,21 +470,21 @@ describe('direktemeldingene i chatmenyen', () => {
   it('viser samtalen med den andre øverst, hvem som leser og den låste linjen i stedet for skrivefeltet', async () => {
     vis()
     await apneMenyen()
-    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
-    expect(within(meny()).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari/ }))
+    expect(within(meny()).getByRole('heading', { name: 'Kari' })).toBeTruthy()
     expect(within(meny()).getByText('Direktemelding · @test.kari')).toBeTruthy()
     expect(within(meny()).getByText('Bare dere to kan lese samtalen.')).toBeTruthy()
-    expect(within(meny()).getByText('Kari Testesen kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.')).toBeTruthy()
+    expect(within(meny()).getByText('Kari kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.')).toBeTruthy()
     expect(within(meny()).queryByRole('textbox', { name: /Melding til/ })).toBeNull()
   })
 
   it('åpner samtalen fra adressen #/chat/direkte/<id>, og utvider til den', async () => {
     const { gaaTil } = vis()
     await apneMenyen()
-    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari/ }))
     await userEvent.click(screen.getByRole('button', { name: 'Utvid' }))
     expect(gaaTil).toHaveBeenLastCalledWith({ side: 'chat', samtale: { type: 'direkte', id: DM } }, undefined)
-    expect(within(screen.getByRole('main', { name: 'Grupper og samtaler' })).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+    expect(within(screen.getByRole('main', { name: 'Grupper og samtaler' })).getByRole('heading', { name: 'Kari' })).toBeTruthy()
   })
 
   it('«Ny chat» søker etter personer og åpner samtalen med den som velges; Escape går tilbake', async () => {
@@ -520,7 +522,7 @@ describe('direktemeldingene i chatmenyen', () => {
       await userEvent.click(within(meny()).getByRole('button', { name: /Kari Testesen/ }))
       expect(tilstand.api.aapneDirektesamtale).toHaveBeenCalledWith(kari.id)
       expect(oppdater).toHaveBeenCalled()
-      expect(within(meny()).getByRole('heading', { name: 'Kari Testesen' })).toBeTruthy()
+      expect(within(meny()).getByRole('heading', { name: 'Kari' })).toBeTruthy()
     } finally {
       vi.useRealTimers()
     }
@@ -572,7 +574,7 @@ describe('direktemeldingene i chatmenyen', () => {
     const helside = screen.getByRole('main', { name: 'Grupper og samtaler' })
     expect(within(helside).queryByRole('button', { name: 'Ny chat' })).toBeNull()
     expect(within(helside).queryByRole('switch')).toBeNull()
-    expect(within(helside).queryByRole('heading', { name: 'Kari Testesen' })).toBeNull()
+    expect(within(helside).queryByRole('heading', { name: 'Kari' })).toBeNull()
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
     expect(direktemeldingene.les()).toBeNull()
     // Gruppechatten står, så ⚙ har varslene på enheten, og bare dem.
@@ -595,11 +597,11 @@ describe('direktemeldingene i chatmenyen', () => {
     tilstand.api.blokkerBruker = vi.fn(async () => undefined)
     vis()
     await apneMenyen()
-    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari Testesen/ }))
-    await userEvent.click(within(meny()).getByRole('button', { name: 'Valg for samtalen med Kari Testesen' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Blokker Kari Testesen' }))
+    await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari/ }))
+    await userEvent.click(within(meny()).getByRole('button', { name: 'Valg for samtalen med Kari' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Blokker Kari' }))
     expect(tilstand.api.blokkerBruker).not.toHaveBeenCalled()
-    await userEvent.click(within(within(meny()).getByRole('group', { name: 'Blokkere Kari Testesen?' })).getByRole('button', { name: 'Blokker' }))
+    await userEvent.click(within(within(meny()).getByRole('group', { name: 'Blokkere Kari?' })).getByRole('button', { name: 'Blokker' }))
     expect(tilstand.api.blokkerBruker).toHaveBeenCalledWith(kari.id)
     expect(oppdater).toHaveBeenCalled()
   })

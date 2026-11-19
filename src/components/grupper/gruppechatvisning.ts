@@ -116,11 +116,11 @@ export function erBeroring(): boolean {
 /**
  * Linjen i stedet for skrivefeltet når det ikke kan skrives. I en
  * direktesamtale etter sperren: den andre kan ikke motta (samme tekst uansett
- * grunn), eller den innloggedes egen grunn.
+ * grunn), eller den innloggedes egen grunn. `navn` er navnet den andre står
+ * med over samtalen.
  */
-export function laastTekst(aktiv: boolean, direkte: Direktemeta | null): string {
+export function laastTekst(aktiv: boolean, direkte: Direktemeta | null, navn = personnavn(direkte?.motpart ?? null)): string {
   if (direkte) {
-    const navn = personnavn(direkte.motpart)
     switch (direkte.sperre) {
       case 'selv_av':
         return 'Du har slått av direktemeldinger. Slå dem på for å skrive.'

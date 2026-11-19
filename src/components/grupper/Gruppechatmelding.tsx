@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react'
-import { avsendernavn, type Chatgrenser, type Gruppemelding, type Ventende } from '../../gruppechat/modell'
+import { type Chatgrenser, type Gruppemelding, type Ventende } from '../../gruppechat/modell'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -30,6 +30,7 @@ function Klokke({ iso }: { iso: string }) {
  */
 export function Gruppechatmelding({
   melding,
+  navn,
   sammen,
   laast,
   bildelenke,
@@ -39,6 +40,8 @@ export function Gruppechatmelding({
   motpart,
 }: {
   melding: Gruppemelding
+  /** Navnet avsenderen står med (kort, se `kortnavn`). Eget navn vises ikke. */
+  navn: string
   /** Står rett under den forrige fra samme avsender. */
   sammen: boolean
   /**
@@ -54,7 +57,8 @@ export function Gruppechatmelding({
   /** I en direktesamtale: navnet på den andre. Begge kan slette alt, og det står hvem som fjernet hva. */
   motpart?: string
 }) {
-  const navn = avsendernavn(melding)
+  /** Hvem som skrev, for skjermlesere og menyen: «Du» for egne. */
+  const hvem = melding.egen ? 'Du' : navn
   const [endrer, setEndrer] = useBevart(`chat/${melding.id}/endrer`, false)
   const [sletter, setSletter] = useState(false)
   const [opptatt, setOpptatt] = useState(false)
@@ -111,16 +115,15 @@ export function Gruppechatmelding({
         {sammen ? (
           // Navnet står over den første i rekken; skjermlesere får det likevel her.
           <span className="kun-skjermleser">
-            {navn}, {tidspunkt}
+            {hvem}, {tidspunkt}
           </span>
         ) : (
           <p className="chatmelding__hode">
-            <span className="chatmelding__navn">
+            {/* Egne meldinger står til høyre uten navnet (Peder 19.11.2026); skjermlesere får «Du». */}
+            <span className={melding.egen ? 'kun-skjermleser' : 'chatmelding__navn'}>
               <Profilutlos person={melding.forfatter} lenke={bildelenke}>
-                {navn}
+                {hvem}
               </Profilutlos>
-              {/* Egne meldinger står til høyre; skjermlesere får det sagt. */}
-              {melding.egen && <span className="kun-skjermleser"> (deg)</span>}
             </span>
             <Klokke iso={melding.skrevet_kl} />
           </p>
@@ -165,12 +168,12 @@ export function Gruppechatmelding({
                   className="brukermeny"
                   knapp={{
                     ikon: 'more',
-                    etikett: `Handlinger for meldingen fra ${navn}, ${tidspunkt}`,
+                    etikett: `Handlinger for ${melding.egen ? 'meldingen din' : `meldingen fra ${navn}`}, ${tidspunkt}`,
                     variant: 'stille',
                     storrelse: 'liten',
                     utenTips: true,
                   }}
-                  etikett={`Handlinger for meldingen fra ${navn}`}
+                  etikett={`Handlinger for ${melding.egen ? 'meldingen din' : `meldingen fra ${navn}`}`}
                   lag="chatmeny"
                   lat
                 >
@@ -331,7 +334,7 @@ export function Ventendemelding({
   onForkast,
 }: {
   ventende: Ventende
-  /** Står rett under en annen egen melding, og trenger ikke «Du» over seg. */
+  /** Står rett under en annen egen melding. */
   sammen: boolean
   onProvIgjen: (klientId: string) => void
   onForkast: (klientId: string) => void
@@ -344,7 +347,7 @@ export function Ventendemelding({
           <span className="kun-skjermleser">Du</span>
         ) : (
           <p className="chatmelding__hode">
-            <span className="chatmelding__navn">Du</span>
+            <span className="kun-skjermleser">Du</span>
           </p>
         )}
         <div className="chatmelding__rad">

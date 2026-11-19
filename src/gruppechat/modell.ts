@@ -7,7 +7,7 @@
  * Verdier som ikke har formen, blir tomme i stedet for å velte visningen, som
  * ellers i appen (`src/ideer/lesing.ts`).
  */
-import type { Profilkort } from '@delt/profil'
+import { visningsnavn, type Profilkort } from '@delt/profil'
 import { erObjekt, tall, tekst, tekstEllerNull } from '../ideer/lesing'
 
 /**
@@ -261,10 +261,7 @@ export function lesChatendringer(verdi: unknown): Chatendringer | null {
   }
 }
 
-/** Navnet på avsenderen, slik det står over meldingen. */
+/** Hele navnet på avsenderen. Over meldingen står det korte (`kortnavn`). */
 export function avsendernavn(melding: Pick<Gruppemelding, 'forfatter'>): string {
-  const f = melding.forfatter
-  if (!f) return 'Slettet bruker'
-  const navn = `${f.first_name} ${f.last_name}`.trim()
-  return navn || f.username
+  return melding.forfatter ? visningsnavn(melding.forfatter) : 'Slettet bruker'
 }
