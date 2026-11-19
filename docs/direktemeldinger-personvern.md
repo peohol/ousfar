@@ -4,10 +4,10 @@ Vurderingen og tilgangsmodellen for direktemeldinger i OUSFAR: samtaler
 mellom to brukere, på tvers av fagmiljøene, i den felles chatmenyen
 ([ux-dashboard-chat-navigasjon-plan.md](ux-dashboard-chat-navigasjon-plan.md)
 §6.2–6.4 og §12 «Chat»). Dokumentet er grunnlaget D5-implementeringen
-følger. **Det slår ingenting på**: direktemeldingene bygges med en bryter som
-står av, og den slås på først når punktene under [Det som krever Peders
-ja](#det-som-krever-peders-ja) er avgjort og testene er grønne. Peder ga sitt
-ja til alle fem beslutningene 18.11.2026.
+følger. Direktemeldingene ble bygget med en bryter som stod av (#469), og
+slås på med migrasjonen `*_direktemeldinger_aktivering.sql` etter Peders ja
+til alle fem beslutningene 18.11.2026 (beslutning 4) og godkjent kontroll.
+Hver bruker må fortsatt selv slå på «Tillat direktemeldinger».
 
 Utgangspunktet er gruppechatten ([gruppechat.md](gruppechat.md),
 [gruppechat-personvern.md](gruppechat-personvern.md)). Regelen om
@@ -351,7 +351,10 @@ tilgangen tas; tastatur, skjermleser, mobil, lyst og mørkt tema.
    direktemeldingene er slått på; den bruker direktemeldingene chatmenyen
    har (`direktemeldingene` i `useDirekte.ts`), uten egne kall.
 5. Kontroll i nettleseren og ChatGPTs kontroll.
-6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt).
+6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt):
+   `*_direktemeldinger_aktivering.sql`. Tilbakeføring er en ny migrasjon som
+   setter `intern.direktemeldinger_aktivert()` tilbake til `select false`;
+   ingenting slettes.
 
 ## Gjennomføringen
 

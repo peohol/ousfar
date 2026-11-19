@@ -1,0 +1,15 @@
+{
+  "id": "20261119-012309-496fec",
+  "semver": "minor",
+  "opprettet": "2026-11-19T01:23:09Z",
+  "sammendrag": "Chatten har fått direktemeldinger",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Du kan nå skrive direkte til én person i OUSFAR, fra «Ny chat» i chatmenyen. Bare dere to kan lese samtalen.",
+    "Direktemeldinger er av til du selv slår på «Tillat direktemeldinger», nederst i chatmenyen eller under Konto → Innstillinger → Chat. «Vis når jeg er aktiv» er et eget valg, også av fra starten.",
+    "Du kan dempe, skjule og blokkere en samtale. Pasientopplysninger er ikke tillatt, og meldinger eldre enn 12 måneder slettes automatisk."
+  ],
+  "utenVarsel": true
+}

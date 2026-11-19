@@ -5,12 +5,11 @@
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/chatmenynettleser.ts
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { internAuthAdresse } from '@delt/brukernavn'
-import { sikreAdministrator, sikreTestkonto, startLokalDatabase, type Status } from './lokalmiljo'
+import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,11 +17,6 @@ type Side = any
 const logg = (t: string) => console.log(`[chatmeny] ${t}`)
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 
-function settBryter(s: Status, pa: boolean) {
-  const sql = `create or replace function intern.gruppechat_aktivert() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`
-  const r = spawnSync('psql', [s.DB_URL!, '-v', 'ON_ERROR_STOP=1', '-qc', sql], { encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(r.stderr)
-}
 async function klient(s: Status, brukernavn: string, passord: string): Promise<SupabaseClient> {
   const k = createClient(s.API_URL, s.PUBLISHABLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
   const { error } = await k.auth.signInWithPassword({ email: internAuthAdresse(brukernavn), password: passord })
@@ -71,7 +65,7 @@ const pw = { ada: randomBytes(18).toString('base64url'), bo: randomBytes(18).toS
 await sikreTestkonto(s, 'qa-chat-ada', pw.ada, ['Ada', 'Testesen'])
 const adaId = await sikreTestkonto(s, 'qa-chat-ada', pw.ada, ['Ada', 'Testesen'])
 await sikreTestkonto(s, 'qa-chat-bo', pw.bo, ['Bo', 'Prøvesen'])
-settBryter(s, true)
+const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const miljo = await apneTestmiljo()
 try {
   const admin = await klient(s, 'qa-admin', adminpassord)
@@ -233,7 +227,7 @@ try {
     return `${(brukt / 1000).toFixed(1)} s`
   })
 } finally {
-  settBryter(s, false)
+  tilbakestillBrytere()
   await miljo.avslutt()
   console.log('\nRESULTAT')
   for (const u of utfall) console.log(`${u.ok ? 'OK  ' : 'FEIL'} ${u.punkt} ${u.merknad}`)
