@@ -76,6 +76,7 @@ export const APNE_MODULER = new Map(
       'src/domain/systemvalg.ts',
       'src/hooks/useSystemvalg.ts',
       'src/hooks/useShortcutVisibility.tsx',
+      'src/hooks/useOverlag.ts',
     ],
     'meldingen om en ny versjon, som også skal nå den som står på innloggingssiden': [
       'src/components/Oppdateringsmelding.tsx',
