@@ -73,6 +73,8 @@ export function useFestbarBoble<F extends HTMLElement = HTMLSpanElement>({ vises
       },
       onKeyDown: (event: KeyboardEvent) => {
         if (event.key !== 'Escape' || !apen) return
+        // Bare boblen lukkes, ikke dialogvinduet den står i (lagstakken ser bort fra en håndtert Escape).
+        event.preventDefault()
         event.stopPropagation()
         lukk()
         knapp.current?.focus()
