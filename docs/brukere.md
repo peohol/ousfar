@@ -163,7 +163,11 @@ Tre ting henger sammen og må holdes i takt:
    hva som følger med: det innloggingssiden også bruker, blir liggende utenfor.
 3. **Kanten kontrollerer økten** mot prosjektets offentlige nøkler. Supabase
    signerer asymmetrisk, så ingen hemmelighet er involvert, og det går ingen
-   forespørsel ut per fil.
+   forespørsel ut per fil. Nøklene hentes med flere forsøk når en ny instans
+   på kanten trenger dem (rett etter en utrulling er alle nye), og svarer
+   ikke Supabase et øyeblikk, brukes de sist hentede i høyst et døgn
+   (`src/auth/veggnokler.ts`). Ellers kunne en gyldig økt bli avvist, og
+   brukeren få «Fikk ikke hentet appen» rett etter en oppdatering.
 
 `npm run build` avslutter med `scripts/kontroller-vegg.mjs`. Den leser av
 byggingens kildekart hvilke moduler som faktisk havnet utenfor veggen, og

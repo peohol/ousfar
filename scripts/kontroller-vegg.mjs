@@ -52,6 +52,8 @@ export const APNE_MODULER = new Map(
       'src/auth/tilgangsstans.ts',
       'src/domain/tilgang.ts',
       'src/components/konto/Port.tsx',
+      // Et nytt forsøk når den kliniske delen ikke lot seg hente ved oppstarten.
+      'src/oppdatering/nylasting.ts',
     ],
     'varslene om nye chatmeldinger på enheten, som avsluttes ved utlogging (docs/chatvarsler.md); ingen faglig innhold': [
       'src/chatvarsler/api.ts',
@@ -91,6 +93,7 @@ export const APNE_MODULER = new Map(
       'src/oppdatering/sider.ts',
       'src/oppdatering/bevaring.ts',
       'src/oppdatering/Bevaring.tsx',
+      'src/oppdatering/forberedelse.ts',
       'src/hooks/useJevnligSjekk.ts',
     ],
     'reglene for brukernavn og passord, delt med Edge-funksjonene': [

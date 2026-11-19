@@ -246,7 +246,7 @@ describe('meldingen om en ny versjon', () => {
     expect(within(melding).getAllByRole('button').map((b) => b.textContent)).toEqual(['Oppdater nå'])
 
     await userEvent.click(within(melding).getByRole('button', { name: 'Oppdater nå' }))
-    expect(oppdater).toHaveBeenCalledOnce()
+    await waitFor(() => expect(oppdater).toHaveBeenCalledOnce())
     expect(within(melding).getByRole('button', { name: 'Oppdaterer …' })).toHaveProperty('disabled', true)
   })
 

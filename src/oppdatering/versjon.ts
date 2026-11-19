@@ -41,6 +41,9 @@ function erByggopplysninger(data: unknown): data is Byggopplysninger {
   )
 }
 
+/** En bygd fil ved siden av `index.html`, og ingenting annet: appen henter den. */
+const BYGD_FIL = /^assets\/[\w.-]+\.js$/
+
 /**
  * Bygget som er lagt ut nå, eller `null` når det ikke lar seg finne ut — uten
  * nett, eller i utviklingsserveren, som ikke har fila. Svaret skal aldri komme
@@ -54,11 +57,13 @@ export async function hentUtlagtBygg(hent: typeof fetch = fetch): Promise<Byggop
     if (!erByggopplysninger(data)) return null
     // Sidene føringene gjelder, er et tillegg: kan de ikke leses, kan en ny
     // versjon berøre alle sider, som før de fantes.
-    if (data.endringer !== undefined && !erEndringsomrader(data.endringer)) {
-      const { endringer: _uleselig, ...resten } = data
-      return resten
+    const { endringer, klinisk, ...resten } = data
+    return {
+      ...resten,
+      ...(endringer !== undefined && erEndringsomrader(endringer) && { endringer }),
+      // Stien til den kliniske delen likeså: uten den lastes siden på nytt uten å sjekke først.
+      ...(typeof klinisk === 'string' && BYGD_FIL.test(klinisk) && { klinisk }),
     }
-    return data
   } catch {
     return null
   }

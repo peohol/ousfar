@@ -5,6 +5,7 @@ import type { Tilgang } from '../../domain/tilgang'
 import { BEVEGELSE, TEMA } from '../../domain/systemvalg'
 import { useSystemvalg } from '../../hooks/useSystemvalg'
 import { Bevaringseier } from '../../oppdatering/Bevaring'
+import { kanLastePaNytt, Lastefeil, lastPaNytt } from '../../oppdatering/nylasting'
 import { Button } from '../Button'
 import { Temaknapp } from '../toppmeny/Temaknapp'
 import { Forstegangsoppsett } from './Forstegangsoppsett'
@@ -17,8 +18,15 @@ import { Logomerke } from './Logomerke'
  * Det er denne delen av pakken innloggingsveggen står foran: uten en gyldig
  * økt svarer kanten 401, og ingenting av analysedataene, kommentartekstene
  * eller fortolkningsreglene utleveres. Se `src/auth/vegg.ts`.
+ *
+ * Lar den seg ikke hente, merkes feilen, så `Hentefeil` kan skille den fra en
+ * feil mens appen tegnes opp.
  */
-const App = lazy(() => import('../../App'))
+const App = lazy(() =>
+  import('../../App').catch((feil: unknown) => {
+    throw new Lastefeil(feil)
+  }),
+)
 
 /**
  * Portvakten foran appen.
@@ -173,21 +181,36 @@ function AvsluttetMedlemskap() {
 }
 
 /**
- * Fanger opp at den kliniske delen ikke lot seg hente.
+ * Fanger opp at den kliniske delen ikke lot seg hente, eller feilet.
  *
- * Som regel fordi appen er lagt ut på nytt mens fanen sto åpen, og filen
- * fanen ber om ikke finnes lenger — da hjelper det å laste siden på nytt. Uten
- * dette ville brukeren fått en blank skjerm.
+ * Som regel noe som går over av seg selv rett etter en oppdatering: et nett
+ * som ikke er helt oppe igjen, eller en økt som må fornyes. Første gang lastes
+ * siden derfor på nytt av seg selv, med det brukeren holdt på med i behold
+ * (`src/oppdatering/nylasting.ts`); brukeren ser bare at appen laster. Skjer
+ * det igjen like etter, får brukeren kortet, i stedet for en blank skjerm.
  */
-class Hentefeil extends Component<{ children: ReactNode }, { feilet: boolean }> {
-  override state = { feilet: false }
+type Hentetilstand = { feilet: false } | { feilet: true; provPaNytt: boolean }
 
-  static getDerivedStateFromError() {
-    return { feilet: true }
+export class Hentefeil extends Component<
+  { children: ReactNode; kanProve?: () => boolean; provPaNytt?: (feil: unknown) => Promise<void> },
+  Hentetilstand
+> {
+  override state: Hentetilstand = { feilet: false }
+
+  static getDerivedStateFromError(): Hentetilstand {
+    return { feilet: true, provPaNytt: false }
+  }
+
+  override componentDidCatch(feil: unknown) {
+    const { kanProve = kanLastePaNytt, provPaNytt = lastPaNytt } = this.props
+    if (!kanProve()) return
+    this.setState({ feilet: true, provPaNytt: true })
+    void provPaNytt(feil)
   }
 
   override render() {
     if (!this.state.feilet) return this.props.children
+    if (this.state.provPaNytt) return <div className="port" aria-busy="true" />
 
     return (
       <Portramme tittel="Fikk ikke hentet appen">

@@ -14,8 +14,9 @@
  * modulen navngir pakken under byggingen, så de to kan ikke komme i utakt.
  */
 import { next } from '@vercel/functions'
-import { createRemoteJWKSet, jwtVerify } from 'jose'
+import { jwtVerify } from 'jose'
 import { beskyttetSti, oktKakenavn, tilgangstokenFra } from './src/auth/vegg'
+import { veggnokler } from './src/auth/veggnokler'
 
 export const config = {
   /**
@@ -31,11 +32,10 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL
 /**
  * Nøklene Supabase signerer øktene med. Hentes ved første behov og blir
  * stående. Supabase signerer asymmetrisk (ES256), så kanten trenger bare den
- * offentlige halvdelen.
+ * offentlige halvdelen. Et øyeblikk uten svar fra Supabase skal ikke stenge
+ * gyldige økter ute (`src/auth/veggnokler.ts`).
  */
-const noekler = supabaseUrl
-  ? createRemoteJWKSet(new URL(`${supabaseUrl}/auth/v1/.well-known/jwks.json`))
-  : null
+const noekler = supabaseUrl ? veggnokler(new URL(`${supabaseUrl}/auth/v1/.well-known/jwks.json`)) : null
 
 async function erGyldigOkt(token: string): Promise<boolean> {
   if (!noekler || !supabaseUrl) return false
@@ -46,7 +46,8 @@ async function erGyldigOkt(token: string): Promise<boolean> {
     })
     return true
   } catch {
-    // Utløpt, endret på eller signert av noen andre.
+    // Utløpt, endret på, signert av noen andre, eller nøklene lot seg ikke
+    // hente, heller ikke etter flere forsøk.
     return false
   }
 }

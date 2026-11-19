@@ -1,0 +1,14 @@
+{
+  "id": "20261119-202343-458cd6",
+  "semver": "patch",
+  "opprettet": "2026-11-19T20:23:43Z",
+  "sammendrag": "«Oppdater nå» fører tilbake til siden du var på",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Når du trykker «Oppdater nå», henter appen først den nye versjonen mens du blir stående på siden. Så lastes siden på nytt, og du kommer tilbake dit du var, med det du holdt på med.",
+    "Lar den nye versjonen seg ikke hente med en gang, prøver appen igjen av seg selv i stedet for å vise «Fikk ikke hentet appen».",
+    "Får appen ikke kontakt i det hele tatt, blir den gamle versjonen stående, og du kan prøve igjen."
+  ],
+  "utenVarsel": true
+}
