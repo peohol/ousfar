@@ -263,10 +263,10 @@ async function etterkontroll() {
     if (forsok < 4) await new Promise((r) => setTimeout(r, 10_000))
   }
   if (ulike.length) stopp(`Etterkontrollen fant funksjoner som ikke kjører det repoet har:\n${planTabell(ulike)}`)
-  // Funksjonene skal svare, og med verify_jwt avvise et kall uten innlogging.
+  // Funksjonene skal svare, og avvise et kall uten innlogging: med verify_jwt,
+  // eller selv, når databasen kaller dem med en hemmelig nøkkel.
   const feil: string[] = []
-  for (const [slug, r] of Object.entries(repo)) {
-    if (!r.verifyJwt) continue
+  for (const slug of Object.keys(repo)) {
     const svar = await fetch(`https://${REF}.supabase.co/functions/v1/${slug}`, { method: 'POST', body: '{}' })
     if (svar.status !== 401) feil.push(`${slug}: svarte ${svar.status} på et kall uten innlogging (ventet 401)`)
   }

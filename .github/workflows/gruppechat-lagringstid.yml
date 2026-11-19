@@ -2,7 +2,8 @@
 # docs/gruppechat.md, «Lagringstiden»; direktemeldingene, beslutning 2
 # 18.11.2026, docs/direktemeldinger-personvern.md): sletter hver natt
 # meldingene eldre enn lagringstiden i alle grupper og direktesamtaler, også
-# dem ingen åpner, og kontrollerer at ingen står igjen. Funksjonene leser aldri
+# dem ingen åpner, og kontrollerer at ingen står igjen. Tømmer også det som er
+# eldre enn ti minutter i køen for chatvarsler (docs/chatvarsler.md). Funksjonene leser aldri
 # ut en utgått melding uansett; jobben sørger for at raden faktisk blir borte.
 #
 # Per chat én skrivende spørring (`intern.rydd_gruppechat()`,

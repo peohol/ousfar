@@ -6,6 +6,12 @@
 - **Hvorfor:**
 - **Må en menneskelig systemarkitekt ta stilling til noe?** <!-- «Nei», eller hva som må avgjøres, med valgene i vanlig språk. -->
 
+## Arbeidsoppgave
+
+<!-- Issue-et med oppgaven: «Refs #N» for en delleveranse, «Closes #N» bare når PR-en fullfører det. Issue-et og PR-en har den samme prosjektetiketten og den samme ene assignee-en: systemarkitekten som har oppgaven. Bare assignee-feltet teller, ikke navn i teksten (docs/prosjektansvar.md §3). Kontrollen «Prosjektansvar» sjekker det. -->
+
+- Refs #
+
 ## Ansvarlig prosjekt
 
 <!-- Nøyaktig ett, etter oppgavens formål (docs/prosjektansvar.md), og den samme etiketten på PR-en: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`. -->

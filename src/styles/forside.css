@@ -113,15 +113,10 @@
   min-width: 0;
 }
 
-/* Pilen ved navnet peker ned, og panelet åpner under den, fra venstre. */
+/* Pilen ved navnet peker ned, og panelet åpner under den, fra venstre
+   (`justering="start"`). */
 .forside__fagmiljopil .ikon {
   transform: rotate(90deg);
-}
-
-.forside__fagmiljovalg .nedtrekk__panel {
-  right: auto;
-  left: 0;
-  z-index: 2;
 }
 
 .forside__fagmiljomerknad {

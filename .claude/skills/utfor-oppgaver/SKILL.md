@@ -81,6 +81,15 @@ for seg. Er en prompt uklar eller motsier noe i appen, spør systemarkitekten f�
 du gjør den oppgaven. Gjett ikke, og særlig ikke når det gjelder klinisk
 innhold (se `AGENTS.md`).
 
+Hver oppgave får et GitHub Issue før arbeidet begynner (`docs/prosjektansvar.md`
+§3 og §5): finn et som alt finnes, eller lag et med nummeret og overskriften
+som tittel («OPG-007: Varslingssystem»), prosjektetiketten etter formålet og
+systemarkitekten som følger økten som eneste assignee, slik plattformen oppgir
+den innloggede brukeren. Kan det ikke avgjøres hvem det er, spør. Alle PR-ene
+for oppgaven, også de små migrasjons-PR-ene under og i steg 5, får samme
+etikett og assignee og viser til Issue-et under «Arbeidsoppgave»: `Refs #N`,
+og `Closes #N` i PR-en som fullfører oppgaven.
+
 Før arbeidet begynner, tas oppgavene, så ingen annen økt kan ta de samme. Det
 er en migrering som bare kaller `ta_oppgaver` med numrene:
 

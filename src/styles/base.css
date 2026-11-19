@@ -146,3 +146,17 @@ ul {
   white-space: nowrap;
   border: 0;
 }
+
+/* Det som løftes til det øverste laget (`useOverlag`): nettleserens egne
+   regler for `[popover]` (midt i vinduet, kant, luft, egne farger) tas bort,
+   så elementet ser ut som før og står der plasseringen setter det. Uten
+   spesifisitet, så elementets egne regler vinner. */
+:where([popover]) {
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: inherit;
+  background: none;
+  border: 0;
+}

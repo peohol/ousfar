@@ -822,7 +822,7 @@ S3), fordi en sperret bruker ellers kunne fortsette med et gyldig token.
 
 Ingen Issues er opprettet; behovene er ikke modne som selvstendige oppgaver
 før Peder har tatt stilling til §7. Når de blir det, overleveres de etter
-`docs/prosjektansvar.md` §4.
+`docs/prosjektansvar.md` §5.
 
 **OUSFAR Fag (`ansvar:fag`):**
 
