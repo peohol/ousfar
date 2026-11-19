@@ -410,10 +410,10 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
                 })
               : setBekreft({ handling: 'fjern', medlem })
           }
-          onInviter={(brukernavn) =>
+          onInviter={(brukernavn, navn = brukernavn) =>
             gjor(async () => {
               const svar = await inviterTilGruppe(g.id, brukernavn)
-              return svar.status === 'aktiv' ? `${brukernavn} er alt med i gruppen.` : `${brukernavn} er invitert.`
+              return svar.status === 'aktiv' ? `${navn} er alt med i gruppen.` : `${navn} er invitert.`
             })
           }
         />

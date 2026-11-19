@@ -346,6 +346,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'skjul_direktesamtale(samtale uuid)': 'direktemelding',
   'slett_direktemelding(melding uuid)': 'direktemelding',
   'sok_direktemottakere(sok text)': 'direktemelding',
+  // Personsøket (supabase/migrations/*_personsok.sql): hvem den innloggede kan
+  // invitere til en gruppe eller legge til i et fagmiljø, etter de samme
+  // avslagene som handlingen.
+  'sok_gruppekandidater(gruppe uuid, sok text)': 'gruppemyndighet',
+  'sok_medlemskandidater(fagmiljo uuid, sok text)': 'medlemskapsmyndighet',
   // Varslene om nye chatmeldinger på enheten (supabase/migrations/*_chatvarsler.sql).
   'lagre_pushabonnement(endepunkt text, p256dh text, auth text)': 'eier',
   'slett_pushabonnement(endepunkt text)': 'eier',
