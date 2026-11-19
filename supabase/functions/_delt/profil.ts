@@ -33,6 +33,12 @@ export interface Profil {
   last_name: string
   role: Rolle
   avatar_path: string | null
+  /**
+   * Stillingen brukeren har oppgitt (`public.stillinger`), eller `null`.
+   * Mangler der profilkortet er bygd av noe annet enn profilen selv (for
+   * eksempel forfatteren av en melding).
+   */
+  stilling_id?: string | null
   must_change_password: boolean
   onboarding_completed: boolean
   created_at: string
@@ -41,11 +47,11 @@ export interface Profil {
 
 /**
  * Feltene i en annen brukers profil som nettleseren får lese: profilkortet
- * (P2c, dataminimering). Rollen og kontostatusen leses bare av kontoen selv
+ * (P2c, dataminimering), med stillingen (docs/stillinger.md). Rollen og kontostatusen leses bare av kontoen selv
  * (`min_profil()`) og av administrasjonen (`brukeroversikt()`). Samme liste
  * som kolonnerettighetene i databasen; en test holder dem like.
  */
-export const PROFILKORT = ['id', 'username', 'first_name', 'last_name', 'avatar_path', 'updated_at'] as const
+export const PROFILKORT = ['id', 'username', 'first_name', 'last_name', 'avatar_path', 'updated_at', 'stilling_id'] as const
 
 /** Det en innlogget ser om en annen bruker. */
 export type Profilkort = Pick<Profil, (typeof PROFILKORT)[number]>

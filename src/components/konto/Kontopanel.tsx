@@ -4,15 +4,17 @@ import { navnFeil, normaliserNavn } from '@delt/profil'
 import { byttPassord, lagreEgenProfil, lastOppAvatar } from '../../auth/api'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useOkt, useProfil } from '../../auth/okt'
+import { settStilling, useStillinger } from '../../stillinger/katalog'
 import { Button } from '../Button'
 import { Modallag } from '../Modallag'
 import { Ikon } from '../ikon/Ikon'
 import { Avatar } from './Avatar'
+import { Stillingsvelger } from '../stillinger/Stillingsvelger'
 import { Bildevelgerlast } from './Bildevelgerlast'
 import { Felt, Lastfelt } from './Felt'
 
 /**
- * Kontoen din: navn, profilbilde, passord og veien ut.
+ * Kontoen din: navn, stilling, profilbilde, passord og veien ut.
  *
  * Brukernavnet vises, men kan ikke endres — verken her eller noe annet sted.
  * Passordbyttet går på den økten som allerede er autentisert, og trenger
@@ -25,6 +27,8 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
 
   const [fornavn, setFornavn] = useState(profil.first_name)
   const [etternavn, setEtternavn] = useState(profil.last_name)
+  const stillinger = useStillinger()
+  const [stilling, setStilling] = useState(profil.stilling_id ?? null)
   const [bilde, setBilde] = useState<Blob | null>(null)
   const [profilfeil, setProfilfeil] = useState<string | null>(null)
   const [profilkvittering, setProfilkvittering] = useState<string | null>(null)
@@ -46,6 +50,7 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
     if (!apen) return
     setFornavn(profil.first_name)
     setEtternavn(profil.last_name)
+    setStilling(profil.stilling_id ?? null)
     setBilde(null)
     setProfilfeil(null)
     setProfilkvittering(null)
@@ -79,8 +84,15 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
     setProfilkvittering(null)
     try {
       const sti = bilde ? await lastOppAvatar(profil.id, bilde) : undefined
+      // Stillingen settes for seg (`sett_stilling`). Profilen her får den med
+      // en gang, så den stemmer også om lagringen av navnet etterpå feiler.
+      let gjeldende = profil
+      if (stilling !== (profil.stilling_id ?? null)) {
+        gjeldende = { ...profil, stilling_id: await settStilling(profil.id, stilling) }
+        settProfil(gjeldende)
+      }
       settProfil(
-        await lagreEgenProfil(profil, {
+        await lagreEgenProfil(gjeldende, {
           first_name: rentFornavn,
           last_name: rentEtternavn,
           ...(sti ? { avatar_path: sti } : {}),
@@ -150,6 +162,14 @@ export function Kontopanel({ apen, onLukk }: { apen: boolean; onLukk: () => void
             onChange={(hendelse) => setEtternavn(hendelse.target.value)}
           />
         </div>
+
+        <Stillingsvelger
+          merkelapp="Stilling"
+          katalog={stillinger}
+          verdi={stilling}
+          ingen="Ingen stilling"
+          onEndre={setStilling}
+        />
 
         <div className="skjema__bolk">
           <span className="skjema__bolktittel">Profilbilde</span>

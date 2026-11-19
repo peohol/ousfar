@@ -9,6 +9,7 @@ import { adminstatus, adminvalg, lyttEtterAdminpanel, ADMINVALG, type Adminpanel
 import { Brukerliste } from './Brukerliste'
 import { Datakilder } from './Datakilder'
 import { Redaktorer } from './Redaktorer'
+import { Stillinger } from './Stillinger'
 import type { Kurateringsklient } from '../../kuratering/klient'
 import { redaktorvarsel, type Fagsaklager } from '../../verktoy/overvaking/fagsak'
 import type { Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
@@ -44,8 +45,8 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
  * (`useRettigheter`), ikke den gamle adminrollen. Veien inn er «Administrasjon»
  * i hovedmenyen (`adminvisning.ts`, D6). Systemarkitektene får brukerne,
  * driftstatusen for datakildene, kurateringene, kildeovervåkingen og
- * nødstoppen for de kliniske verktøyene, og autoerstatt-reglene i
- * teksteditorene. En lokal administrator får «Brukere», der vedkommende kan
+ * nødstoppen for de kliniske verktøyene, autoerstatt-reglene i
+ * teksteditorene og stillingslista (docs/stillinger.md). En lokal administrator får «Brukere», der vedkommende kan
  * gi nytt passord og opprette brukere etter myndigheten sin, og «Redaktører»,
  * der vedkommende gir og tar tilbake redaktøransvar i eget fagmiljø (P5).
  * Andre får ingenting. Det er et grensesnitt, ikke en tilgangskontroll:
@@ -126,6 +127,7 @@ export function Administrasjon({
       {redaktorer && <Redaktorer apen={apen('redaktorer')} onLukk={lukk.redaktorer} />}
       {admin && (
         <>
+          <Stillinger apen={apen('stillinger')} onLukk={lukk.stillinger} />
           <Datakilder apen={apen('datakilder')} onLukk={lukk.datakilder} />
           <Autoerstattregler apen={apen('autoerstatt')} onLukk={lukk.autoerstatt} />
           <Kurateringsoversikt apen={apen('kurateringer')} klient={kuratering} onLukk={lukk.kurateringer} />
