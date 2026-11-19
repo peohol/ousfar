@@ -31,8 +31,8 @@ const BRYTERE: readonly { nokkel: keyof Valgene; navn: string; pa: string; av: s
  * Egne valg for direktemeldingene (docs/direktemeldinger-personvern.md):
  * «Tillat direktemeldinger» og «Vis når jeg er aktiv», begge av til den
  * enkelte slår dem på, og personene den innloggede har blokkert, med
- * «Opphev». Står nederst i chatmenyen, og kan settes inn under Konto →
- * Innstillinger → Chat (samme innstillinger).
+ * «Opphev». Står nederst i chatmenyen og i fanen Chat under Konto →
+ * Innstillinger (samme innstillinger).
  *
  * En bryter er låst mens endringen lagres; det databasen lagret, står
  * etterpå, også når en annen fane endret den samtidig.

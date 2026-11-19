@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent as Tastetrykk, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
 import { Bryter } from './Bryter'
+import { Fanevalg, fanepanelId, faneId, type Fanedefinisjon } from './Fanevalg'
+import { Menynavigasjon, useHovedmenyen } from './Menynavigasjon'
 import { Shortcut } from './Shortcut'
 import { Ikon } from './ikon/Ikon'
 import { kategoriikon } from './ikon/register'
 import { useTips } from './Tips'
-import { FORSIDEADRESSE, FORTOLKNINGSADRESSE, STOFFREGISTERADRESSE, lesRute, stoffadresse, verktoyadresse } from '../domain/rute'
+import { STOFFREGISTERADRESSE, stoffadresse, verktoyadresse } from '../domain/rute'
 import { useFavoritter, type Favoritter } from '../favoritter/Favorittkilde'
 import type { Registerkategori, Registerstoff, Stoffregister } from '../domain/stoffregister'
 import { fokusIFagsok, lagLiggerOver } from '../hooks/useKeyboard'
@@ -16,7 +18,8 @@ import { VERKTOY } from '../verktoy/register'
 import { useVerktoyeneVises } from '../verktoy/synlighet'
 
 /**
- * Sidemenyen: to faner, Stoffregister og Verktøy (P6.2 i
+ * Hovedmenyen (sidemenyen): øverst navigasjonen og «For hele appen»
+ * (`Menynavigasjon`, D6), under den to faner, Stoffregister og Verktøy (P6.2 i
  * `docs/verktøy-utviklingsplan.md`). Fanen som sist var valgt, står valgt
  * når menyen åpnes igjen, også etter en oppdatering av appen. Piltastene
  * bytter fane, som i andre fanelister.
@@ -55,20 +58,13 @@ const MENY_SNARVEI = 'Ctrl + M'
 /** Navnet på menyen for skjermlesere. */
 const TITTEL = 'Meny'
 
-/** Snarveiene øverst i menyen, over fanene. */
-const SNARVEIER = [
-  { adresse: FORSIDEADRESSE, side: 'forside', navn: 'Forsiden', ikon: 'hjem' },
-  { adresse: FORTOLKNINGSADRESSE, side: 'fortolkning', navn: 'Fortolkning', ikon: 'interp' },
-] as const
-
 /** Fanene i menyen, i rekkefølgen de står. */
 const FANER = [
   { id: 'stoffregister', navn: 'Stoffregister', ikon: 'stoffregister' },
   { id: 'verktoy', navn: 'Verktøy', ikon: 'verktoy' },
-] as const
+] as const satisfies readonly Fanedefinisjon[]
 
-type Fanedefinisjon = (typeof FANER)[number]
-type Fane = Fanedefinisjon['id']
+type Fane = (typeof FANER)[number]['id']
 
 /** Merket menyen bærer som `data-lag` mens den står åpen. */
 const MENY_LAG = 'meny'
@@ -116,6 +112,16 @@ export function Sidemeny({ register }: SidemenyProps) {
   const panel = useRef<HTMLElement>(null)
   const knapp = useRef<HTMLButtonElement | null>(null)
 
+  const apne = useCallback(() => setApen(true), [])
+
+  /** Lukking gir fokus tilbake til knappen, som er synlig igjen. */
+  const lukk = useCallback(() => {
+    setApen(false)
+    knapp.current?.focus()
+  }, [])
+  const trykkUtenfor = useTrykkUtenfor<HTMLDivElement>(lukk)
+
+  const meny = useHovedmenyen(apen, lukk)
   const knappenavn = 'Vis menyen'
   const knappetips = useTips(knappenavn, { skjermleser: false })
   // Tipset og fokuset skal på det samme elementet, så de to ref-ene slås sammen.
@@ -127,15 +133,6 @@ export function Sidemeny({ register }: SidemenyProps) {
     },
     [tipsRef],
   )
-
-  const apne = useCallback(() => setApen(true), [])
-
-  /** Lukking gir fokus tilbake til knappen, som er synlig igjen. */
-  const lukk = useCallback(() => {
-    setApen(false)
-    knapp.current?.focus()
-  }, [])
-  const trykkUtenfor = useTrykkUtenfor<HTMLDivElement>(lukk)
 
   /**
    * Ctrl + M åpner og lukker menyen. Den ligger utenom `useKeyboard`, som med
@@ -209,7 +206,7 @@ export function Sidemeny({ register }: SidemenyProps) {
         ref={settKnapp}
         type="button"
         className="menyknapp"
-        aria-label={knappenavn}
+        aria-label={meny.varsel ? `${knappenavn} (${meny.varsel})` : knappenavn}
         aria-expanded={apen}
         aria-controls={panelId}
         aria-keyshortcuts="Control+M"
@@ -218,6 +215,7 @@ export function Sidemeny({ register }: SidemenyProps) {
       >
         <Ikon navn="menu" storrelse="ui" />
         <Shortcut>{MENY_SNARVEI}</Shortcut>
+        {meny.varsel && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
       </button>
 
       {/* Mørklegger og slører hovedinnholdet, og lukker menyen ved trykk. Den
@@ -238,25 +236,19 @@ export function Sidemeny({ register }: SidemenyProps) {
         data-apen={apen ? 'ja' : 'nei'}
         tabIndex={-1}
       >
-        {/* Forsiden og fortolkningen er én handling unna fra hvor som helst. */}
-        <ul className="menysnarveier">
-          {SNARVEIER.map((s) => (
-            <li key={s.adresse}>
-              <a
-                className="menysnarveier__lenke"
-                href={s.adresse}
-                aria-current={apen && lesRute(window.location.hash).side === s.side ? 'page' : undefined}
-                onClick={velg}
-              >
-                <Ikon navn={s.ikon} storrelse="ui" />
-                {s.navn}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {/* Forsiden, fortolkningen og resten av appen er én handling unna fra hvor som helst. */}
+        <Menynavigasjon meny={meny} apen={apen} onGaa={velg} />
 
         <div className="sidemeny__topp">
-          <Fanevalg faner={faner} fane={fane} panelId={panelId} onVelg={setFane} />
+          <Fanevalg
+            faner={faner}
+            fane={fane}
+            felles={panelId}
+            etikett="Menyvalg"
+            className="sidemeny__faner"
+            faneklasse="sidemeny__fanevalg"
+            onVelg={setFane}
+          />
           <button
             type="button"
             className="sidemeny__lukk"
@@ -268,9 +260,9 @@ export function Sidemeny({ register }: SidemenyProps) {
         </div>
 
         <div
-          id={`${panelId}-stoffregister`}
+          id={fanepanelId(panelId, 'stoffregister')}
           role="tabpanel"
-          aria-labelledby={`${panelId}-fane-stoffregister`}
+          aria-labelledby={faneId(panelId, 'stoffregister')}
           className="sidemeny__fane"
           hidden={fane !== 'stoffregister'}
         >
@@ -315,9 +307,9 @@ export function Sidemeny({ register }: SidemenyProps) {
 
         {visVerktoy && (
           <div
-            id={`${panelId}-verktoy`}
+            id={fanepanelId(panelId, 'verktoy')}
             role="tabpanel"
-            aria-labelledby={`${panelId}-fane-verktoy`}
+            aria-labelledby={faneId(panelId, 'verktoy')}
             className="sidemeny__fane"
             hidden={fane !== 'verktoy'}
           >
@@ -342,56 +334,6 @@ export function Sidemeny({ register }: SidemenyProps) {
         )}
       </nav>
     </>
-  )
-}
-
-/**
- * Fanene øverst i menyen. Bare den valgte fanen nås med tabulator; piltastene,
- * Home og End flytter mellom fanene og velger dem.
- */
-function Fanevalg({
-  faner,
-  fane,
-  panelId,
-  onVelg,
-}: {
-  faner: readonly Fanedefinisjon[]
-  fane: Fane
-  panelId: string
-  onVelg: (fane: Fane) => void
-}) {
-  const paaTast = (event: Tastetrykk<HTMLDivElement>) => {
-    const i = faner.findIndex((f) => f.id === fane)
-    const ny =
-      event.key === 'ArrowRight' ? (i + 1) % faner.length
-      : event.key === 'ArrowLeft' ? (i - 1 + faner.length) % faner.length
-      : event.key === 'Home' ? 0
-      : event.key === 'End' ? faner.length - 1
-      : -1
-    if (ny < 0) return
-    event.preventDefault()
-    onVelg(faner[ny]!.id)
-    document.getElementById(`${panelId}-fane-${faner[ny]!.id}`)?.focus()
-  }
-  return (
-    <div role="tablist" aria-label="Menyvalg" className="sidemeny__faner" onKeyDown={paaTast}>
-      {faner.map((f) => (
-        <button
-          key={f.id}
-          id={`${panelId}-fane-${f.id}`}
-          type="button"
-          role="tab"
-          className="sidemeny__fanevalg"
-          aria-selected={fane === f.id}
-          aria-controls={`${panelId}-${f.id}`}
-          tabIndex={fane === f.id ? 0 : -1}
-          onClick={() => onVelg(f.id)}
-        >
-          <Ikon navn={f.ikon} storrelse="ui" />
-          {f.navn}
-        </button>
-      ))}
-    </div>
   )
 }
 

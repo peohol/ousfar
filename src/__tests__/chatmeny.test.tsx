@@ -61,6 +61,7 @@ const { visGruppesamtale } = await import('../components/chat/chatstyring')
 const { GruppekildeProvider } = await import('../grupper/kilde')
 const { INGEN_GRUPPER } = await import('../grupper/modell')
 const { Bevaringseier } = await import('../oppdatering/Bevaring')
+const { direktemeldingene } = await import('../direktemeldinger/useDirekte')
 
 const SANDKASSE = '11111111-1111-4111-8111-111111111111'
 const FAGLIG = '22222222-2222-4222-8222-222222222222'
@@ -141,6 +142,16 @@ function vis(start: Rute = { side: 'forside' }, grupper?: MineGrupper) {
 
 const meny = () => screen.getByRole('complementary', { name: 'Grupper og samtaler' })
 
+/**
+ * Åpner menyen fra boblen, og venter til fokus er flyttet inn i den (neste
+ * bilde). Ellers kan fokusflyttingen komme midt i det testen skriver etterpå,
+ * så teksten havner på lukkeknappen; det skjedde av og til under last.
+ */
+async function apneMenyen() {
+  await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+  await act(() => new Promise<void>((ferdig) => requestAnimationFrame(() => ferdig())))
+}
+
 describe('chatmenyen', () => {
   it('står som en boble med alle uleste, og gir appen plass til den', () => {
     vis()
@@ -152,7 +163,7 @@ describe('chatmenyen', () => {
 
   it('åpner med «Mine grupper» og samtalene, nyeste først, uten å merke noe lest', async () => {
     vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     expect(document.documentElement.dataset.chatmeny).toBe('apen')
     expect(tilstand.innstillinger.get('chat.apen')).toBe(true)
     const grupper = within(meny()).getByRole('region', { name: /Mine grupper/ })
@@ -169,7 +180,7 @@ describe('chatmenyen', () => {
 
   it('søker i samtalene', async () => {
     vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.type(screen.getByRole('searchbox', { name: 'Søk i samtalene' }), 'faglig')
     const samtaler = within(meny()).getByRole('region', { name: 'Samtaler' })
     expect(within(samtaler).getAllByRole('button').map((r) => r.textContent)).toEqual([expect.stringContaining('Faglig utvikling')])
@@ -180,7 +191,7 @@ describe('chatmenyen', () => {
 
   it('viser en samtale i menyen, og merker den lest når den vises', async () => {
     vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
     expect(within(meny()).getByRole('heading', { name: 'Sandkassegruppen' })).toBeTruthy()
     expect(within(meny()).getByText('Gruppechat · 8 medlemmer')).toBeTruthy()
@@ -197,7 +208,7 @@ describe('chatmenyen', () => {
   it('har alt chatfanen på gruppesiden hadde (D0 kart §2)', async () => {
     tilstand.chat.set(SANDKASSE, lagTestchat({ merkLest, flereEldre: true, kanModerere: true }))
     vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
     const chat = meny()
     // Hvem som leser, meldingene etter dag med avsender, og eldre meldinger.
@@ -214,7 +225,7 @@ describe('chatmenyen', () => {
 
   it('utvider til #/chat med samme samtale og utkast, og gjenoppretter med menyen åpen på den', async () => {
     const { gaaTil, tilbake } = vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
     await userEvent.type(screen.getByRole('textbox', { name: 'Melding til Sandkassegruppen' }), 'Halvferdig')
 
@@ -262,14 +273,14 @@ describe('chatmenyen', () => {
 
   it('lukkeknappen lukker til boblen, og utkastet står der neste gang samtalen åpnes', async () => {
     vis()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Faglig utvikling/ }))
     await userEvent.type(screen.getByRole('textbox', { name: 'Melding til Faglig utvikling' }), 'Husk meg')
     await userEvent.click(screen.getByRole('button', { name: 'Lukk chatten' }))
     expect(document.documentElement.dataset.chatmeny).toBe('lukket')
     expect(tilstand.innstillinger.get('chat.apen')).toBe(false)
     expect(screen.queryByRole('log')).toBeNull()
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     expect((screen.getByRole('textbox', { name: 'Melding til Faglig utvikling' }) as HTMLTextAreaElement).value).toBe('Husk meg')
   })
 
@@ -307,7 +318,7 @@ describe('chatmenyen', () => {
       <App start={{ side: 'forside' }} gaaTilSpion={vi.fn()} tilbakeSpion={vi.fn()} grupper={grupper} oppdaterGruppene={oppdaterGruppene} />
     )
     const { rerender } = render(app())
-    await userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
+    await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
     expect(within(meny()).getByRole('log')).toBeTruthy()
     expect(oppdaterGruppene).not.toHaveBeenCalled()
@@ -379,7 +390,6 @@ describe('direktemeldingene i chatmenyen', () => {
     tilstand.direkte = null
   })
 
-  const apneMenyen = async () => userEvent.click(screen.getByRole('button', { name: /Vis chat/ }))
   const samtalelista = () => within(meny()).getByRole('region', { name: 'Samtaler' })
 
   it('står i samme liste som gruppechattene, nyeste først, og teller med på boblen', async () => {
@@ -490,6 +500,15 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(within(helside).queryByRole('switch')).toBeNull()
     expect(within(helside).queryByRole('heading', { name: 'Kari Testesen' })).toBeNull()
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
+    // Fanen Chat i Innstillinger får heller ingenting å vise.
+    expect(direktemeldingene.les()).toBeNull()
+  })
+
+  it('deler de samme direktemeldingene med fanen Chat i Innstillinger mens menyen står', () => {
+    const { unmount } = render(<App start={{ side: 'forside' }} gaaTilSpion={vi.fn()} tilbakeSpion={vi.fn()} />)
+    expect(direktemeldingene.les()).toBe(tilstand.direkte)
+    unmount()
+    expect(direktemeldingene.les()).toBeNull()
   })
 
   it('blokkering bekreftes først, og lista og samtalene hentes på nytt etterpå', async () => {

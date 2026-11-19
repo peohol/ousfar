@@ -438,7 +438,7 @@ export function vurderKilder(
 
 /**
  * Navnene på kildene som bør ses over (siste henting feilet, var delvis, står
- * uferdig eller er for gammel), til prikken på adminmenyen. En stanset kilde
+ * uferdig eller er for gammel), til prikken i hovedmenyen (administrasjonen). En stanset kilde
  * skal ikke hentes, og bør ikke ses over.
  */
 export function kilderSomBorSesOver(status: Datakildestatus, na: number = Date.now()): string[] {

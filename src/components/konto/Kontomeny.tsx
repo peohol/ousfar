@@ -4,53 +4,24 @@ import { visningsnavn } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
 import { useOkt, useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
-import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
-import { forslagsadresse, gruppeadresse } from '../../domain/rute'
-import { SYSTEM, type Bevegelse, type Tema, type Valg, type Valgstyring } from '../../domain/systemvalg'
-import { useGrupper } from '../../grupper/kilde'
-import { VISNINGSENHETER, type Visningsenhet } from '../../enheter/konsentrasjon'
-import { useMaleenhet } from '../../enheter/Maleenhet'
-import { Bryter } from '../Bryter'
+import { forslagsadresse } from '../../domain/rute'
 import { Ikon } from '../ikon/Ikon'
-import type { Ikonnavn } from '../ikon/register'
-import { Trinnbryter, type Trinnvalg } from '../Trinnbryter'
-import { Menyskuff, Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { TilbehandlingMenyvalg } from '../forslag/behandling/Tilbehandling'
 import { Arbeidsfagmiljovalg } from './Arbeidsfagmiljovalg'
 import { Avatar } from './Avatar'
+import { Innstillinger, innstillingsforklaring, useInnstillingsfaner, type Visningsvalg } from './Innstillinger'
 import { Kontopanel } from './Kontopanel'
 import { MittRedaktoransvar } from './MittRedaktoransvar'
 
-export interface KontomenyProps {
-  tema: Valgstyring<Tema>
-  bevegelse: Valgstyring<Bevegelse>
-}
+export type KontomenyProps = Visningsvalg
 
 /**
- * Det tredje valget på begge bryterne: å la nettleseren og maskinen avgjøre.
- * «Følg system» får ikke plass ved siden av de to andre, og står som «System».
- */
-const FOLG_SYSTEM = { verdi: SYSTEM, merke: 'System', navn: 'Følg system' } as const
-
-const TEMAVALG: readonly Trinnvalg<Valg<Tema>>[] = [
-  { verdi: 'lyst', merke: 'Lyst', ikon: 'sun' },
-  { verdi: 'moerkt', merke: 'Mørkt', ikon: 'moon' },
-  { ...FOLG_SYSTEM, ikon: 'skjerm' },
-]
-
-const BEVEGELSESVALG: readonly Trinnvalg<Valg<Bevegelse>>[] = [
-  { verdi: 'redusert', merke: 'Ja' },
-  { verdi: 'full', merke: 'Nei' },
-  FOLG_SYSTEM,
-]
-
-const ENHETSVALG: readonly Trinnvalg<Visningsenhet>[] = VISNINGSENHETER.map((e) => ({ verdi: e, merke: e }))
-
-/**
- * Kontoen, fra avataren helt til høyre i toppmenyen: hvem appen er logget inn
- * som, veien til egen profil, gruppene, redaktøransvaret for en redaktør, fagmiljøet en med flere medlemskap
- * arbeider i, preferansene og utlogging. Venter en
- * invitasjon til en gruppe, står det en prikk på avataren og på «Grupper».
+ * Kontoen, fra avataren helt til høyre i toppmenyen (D6; skisse 20): hvem
+ * appen er logget inn som, veien til egen profil, fagmiljøet en med flere
+ * medlemskap arbeider i, egne forslag og forslagene til behandling,
+ * redaktøransvaret for en redaktør, Innstillinger (et vindu med fanene) og
+ * utlogging. Gruppene og invitasjonene står i hovedmenyen.
  */
 export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const profil = useProfil()
@@ -58,16 +29,15 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
   const lenker = useAvatarlenker([profil])
   const lenke = profil.avatar_path ? (lenker.get(profil.avatar_path) ?? null) : null
   const navn = visningsnavn(profil)
-  const { invitasjoner } = useGrupper()
-  const invitert =
-    invitasjoner.length === 0 ? undefined : invitasjoner.length === 1 ? 'én ny invitasjon' : `${invitasjoner.length} nye invitasjoner`
 
   const [kontopanel, setKontopanel] = useBevart('kontopanel', false)
-  // Skuffen som står åpen i menyen; høyst én om gangen.
-  const [skuff, setSkuff] = useState<'fagmiljo' | 'preferanser' | null>(null)
+  // Fagmiljøskuffen i menyen.
+  const [fagmiljoApen, setFagmiljoApen] = useState(false)
   // Teller åpningene, så det som skal være ferskt når menyen åpnes, kan hentes på nytt.
   const [apninger, setApninger] = useState(0)
-  const veksle = (s: 'fagmiljo' | 'preferanser') => () => setSkuff((apen) => (apen === s ? null : s))
+  const [innstillinger, setInnstillinger] = useBevart('innstillinger', false)
+  const lukkInnstillinger = useCallback(() => setInnstillinger(false), [setInnstillinger])
+  const innstillingsfaner = useInnstillingsfaner()
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukkKontopanel = useCallback(() => setKontopanel(false), [])
   const { redaktor } = useRettigheter()
@@ -80,17 +50,16 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         className="kontomeny"
         knapp={{
           ikon: 'user',
-          etikett: `Kontoen din – ${navn}${invitert ? ` (${invitert})` : ''}`,
+          etikett: `Kontoen din – ${navn}`,
           variant: 'aksent',
           className: 'kontomeny__knapp',
           innhold: <Avatar profil={profil} lenke={lenke} storrelse="liten" />,
         }}
         etikett="Konto"
         lag="kontomeny"
-        ved={invitert && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
-        // Neste gang menyen åpnes, står skuffene lukket igjen.
+        // Neste gang menyen åpnes, står skuffen lukket igjen.
         onApne={() => {
-          setSkuff(null)
+          setFagmiljoApen(false)
           setApninger((n) => n + 1)
         }}
       >
@@ -121,17 +90,7 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   }}
                 />
               </li>
-              <li>
-                <Menyvalg
-                  ikon="diskusjon"
-                  tekst="Grupper"
-                  nytt={invitert}
-                  onClick={() => {
-                    lukk()
-                    window.location.hash = gruppeadresse()
-                  }}
-                />
-              </li>
+              <Arbeidsfagmiljovalg apen={fagmiljoApen} onVeksle={() => setFagmiljoApen((a) => !a)} />
               <li>
                 <Menyvalg
                   ikon="foresla"
@@ -155,13 +114,17 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
                   />
                 </li>
               )}
-              <Arbeidsfagmiljovalg apen={skuff === 'fagmiljo'} onVeksle={veksle('fagmiljo')} />
-              <Preferanser
-                apen={skuff === 'preferanser'}
-                onVeksle={veksle('preferanser')}
-                tema={tema}
-                bevegelse={bevegelse}
-              />
+              <li>
+                <Menyvalg
+                  ikon="gears"
+                  tekst="Innstillinger"
+                  forklaring={innstillingsforklaring(innstillingsfaner)}
+                  onClick={() => {
+                    lukk()
+                    setInnstillinger(true)
+                  }}
+                />
+              </li>
               <li>
                 <Menyvalg ikon="logout" tekst="Logg ut" onClick={() => void loggUt()} />
               </li>
@@ -170,60 +133,8 @@ export function Kontomeny({ tema, bevegelse }: KontomenyProps) {
         )}
       </Nedtrekksmeny>
       <Kontopanel apen={kontopanel} onLukk={lukkKontopanel} />
+      <Innstillinger apen={innstillinger} onLukk={lukkInnstillinger} faner={innstillingsfaner} tema={tema} bevegelse={bevegelse} />
       {redaktor && <MittRedaktoransvar apen={redaktoransvar} onLukk={lukkRedaktoransvar} />}
     </>
-  )
-}
-
-/**
- * «Preferanser»: en skuff i menyen med hurtigtastene, temaet, bevegelsen og
- * måleenheten konsentrasjonene vises i (`Menyskuff`).
- */
-function Preferanser({
-  apen,
-  onVeksle,
-  tema,
-  bevegelse,
-}: {
-  apen: boolean
-  onVeksle: () => void
-} & KontomenyProps) {
-  const hurtigtaster = useShortcutVisibility()
-  const maleenhet = useMaleenhet()
-  return (
-    <Menyskuff ikon="gears" tekst="Preferanser" apen={apen} onVeksle={onVeksle}>
-      <Bryter className="nedtrekk__bryter" pa={hurtigtaster.visible} onEndre={hurtigtaster.toggle}>
-        <Ikon navn="keys" storrelse="ui" />
-        Vis hurtigtaster
-      </Bryter>
-      <Trevalg ikon="tema" tekst="Tema" valg={TEMAVALG} verdi={tema.valg} onVelg={tema.velg} />
-      <Trevalg ikon="bevegelse" tekst="Reduser bevegelse" valg={BEVEGELSESVALG} verdi={bevegelse.valg} onVelg={bevegelse.velg} />
-      <Trevalg ikon="serum" tekst="Måleenhet" valg={ENHETSVALG} verdi={maleenhet.enhet} onVelg={maleenhet.velg} />
-    </Menyskuff>
-  )
-}
-
-/** Et valg i skuffen med flere enn to muligheter: navnet over, bryteren under. */
-function Trevalg<T>({
-  ikon,
-  tekst,
-  valg,
-  verdi,
-  onVelg,
-}: {
-  ikon: Ikonnavn
-  tekst: string
-  valg: readonly Trinnvalg<T>[]
-  verdi: T
-  onVelg: (verdi: T) => void
-}) {
-  return (
-    <div className="nedtrekk__trinn" data-ih="">
-      <span className="nedtrekk__trinnnavn" aria-hidden="true">
-        <Ikon navn={ikon} storrelse="ui" />
-        {tekst}
-      </span>
-      <Trinnbryter etikett={tekst} valg={valg} verdi={verdi} onVelg={onVelg} />
-    </div>
   )
 }

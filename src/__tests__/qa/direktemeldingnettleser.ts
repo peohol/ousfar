@@ -9,7 +9,8 @@
  * veier gjennom dørklokken på `direktesamtaler` (med kolonnerettighetene);
  * en mottaker som slår av, gir den låste linjen med historikken intakt;
  * blokkering i en åpen fane; aktivitetsprikken; tap av tilgangen til OUSFAR
- * stenger samtalen innen ett minutt; mobil og mørkt tema.
+ * stenger samtalen innen ett minutt; mobil og mørkt tema; fanen Chat i
+ * Innstillinger med de samme bryterne.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { spawnSync } from 'node:child_process'
@@ -231,6 +232,25 @@ try {
     await helside(ada).getByRole('log').waitFor({ timeout: 20_000 })
     await bilde(ada, '14-helside-pc-moerkt')
     await ada.emulateMedia({ colorScheme: 'light' })
+  })
+
+  await punkt('D9 fanen Chat i Innstillinger har de samme bryterne som chatmenyen', async () => {
+    await aapneMenyen(ada)
+    await ada.getByRole('button', { name: /^Kontoen din/ }).click()
+    await ada.getByRole('button', { name: 'Innstillinger' }).click()
+    const vindu = ada.getByRole('dialog', { name: 'Innstillinger' })
+    await vindu.getByRole('tab', { name: 'Chat' }).click()
+    const aktiv = vindu.getByRole('switch', { name: /Vis når jeg er aktiv/ })
+    krev(await vindu.getByRole('switch', { name: /Tillat direktemeldinger/ }).isChecked(), '«Tillat» av i fanen')
+    krev(!(await aktiv.isChecked()), '«Vis når jeg er aktiv» på i fanen')
+    await bilde(ada, '15-innstillinger-chat-pc')
+    await aktiv.click({ force: true })
+    await innen(10_000, 'på i fanen', () => aktiv.isChecked())
+    await ada.keyboard.press('Escape')
+    const iMenyen = meny(ada).getByRole('switch', { name: /Vis når jeg er aktiv/ })
+    await innen(10_000, 'på i chatmenyen', () => iMenyen.isChecked())
+    await iMenyen.click({ force: true })
+    await innen(10_000, 'av igjen', async () => !(await iMenyen.isChecked()))
   })
 
   await punkt('D8 tap av tilgangen til OUSFAR stenger samtalen innen ett minutt', async () => {

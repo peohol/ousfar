@@ -1,7 +1,7 @@
 import type { Tema } from '../../domain/systemvalg'
 import { Ikonknapp, type IkonknappProps, type Ikonknappvariant } from '../Ikonknapp'
 
-/** Lyst eller mørkt tema på innloggingssiden, utenfor appen. Inne i appen står valget under «Preferanser» i kontomenyen. */
+/** Lyst eller mørkt tema på innloggingssiden, utenfor appen. Inne i appen står valget under Konto → Innstillinger → Visning. */
 export function Temaknapp({
   tema,
   onVelg,

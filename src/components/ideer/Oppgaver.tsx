@@ -21,7 +21,7 @@ import '../../styles/ideer.css'
  * «Håndteres nå av en agent», og de utførte i en skuff nederst.
  *
  * Laget er bare for systemarkitektene (D8): bare de leser oppgavene, og bare
- * de arbeider med dem (`Ideknapp` viser det ikke for andre). De skriver
+ * de arbeider med dem (`Idelag` viser det ikke for andre). De skriver
  * prompten en språkmodell skal utføre oppgaven etter, merker den klar, eller
  * flytter den tilbake til idéene. Claude tar oppgaven når arbeidet begynner,
  * og merker den utført når det er gjort (se `.claude/skills/utfor-oppgaver`).

@@ -87,9 +87,16 @@ kjøringen uten at passordet skrives inn.
   (`docs/direktemeldinger-personvern.md`): bryterne av fra starten, «Ny chat»
   og søket, sanntid begge veier, låst linje når mottakeren slår av,
   blokkering i en åpen fane, aktivitetsprikken, tap av tilgangen til OUSFAR,
-  mobil og mørk modus. Samme kontoer; bryterne for chatten og
+  mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
   direktemeldingene står på i den lokale databasen mens den går, og valgene,
   blokkeringene og samtalen mellom de to fra før slettes først.
+- `npx vite-node src/__tests__/qa/menynettleser.ts` er nettleserkontrollen av
+  menyene (D6): toppmenyen uten idéer og administrasjon, hovedmenyen med
+  navigasjonen og «For hele appen» for en systemarkitekt og for en vanlig
+  bruker (`qa-meny-vanlig`), administrasjonens vinduer, Escape og fokus,
+  kontomenyen og Innstillinger, oversikten over endringsforslag, dokken og
+  hovedmenyen på mobil, og mørkt tema. `QA_SKJERMBILDER=<mappe>` lagrer
+  skjermbildene.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 

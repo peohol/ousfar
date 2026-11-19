@@ -60,7 +60,20 @@ vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/systemrolle', () => ({ useSystemarkitekt: () => true }))
 vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI]) }))
 
-const { Ideknapp } = await import('../components/ideer/Ideknapp')
+const { Idelag } = await import('../components/ideer/Idelag')
+const { apneIdelag } = await import('../components/ideer/idevisning')
+
+/** Idéene slik hovedmenyen åpner dem (D6). */
+function Ideknapp() {
+  return (
+    <>
+      <button type="button" onClick={() => apneIdelag('ideer')}>
+        Idéer for appen
+      </button>
+      <Idelag />
+    </>
+  )
+}
 const { Redigerbar } = await import('../components/stoffside/Paneler')
 
 beforeAll(() => {
@@ -620,8 +633,7 @@ describe('et vindu med et skjema som er halvveis skrevet', () => {
   it('står åpent med det som er skrevet etter oppdateringen, og regnes fortsatt som ulagret', async () => {
     const bruker = userEvent.setup()
     render(<Ideknapp />)
-    await bruker.click(screen.getByRole('button', { name: 'Idéer og planlagte oppgaver' }))
-    await bruker.click(screen.getByRole('button', { name: 'Idéer' }))
+    await bruker.click(screen.getByRole('button', { name: 'Idéer for appen' }))
     await bruker.click(await screen.findByRole('button', { name: 'Ny idé' }))
     await bruker.type(screen.getByLabelText('Overskrift'), 'Varsel om ny versjon')
 
@@ -640,16 +652,14 @@ describe('et vindu med et skjema som er halvveis skrevet', () => {
   it('åpner vinduet på lista som før, neste gang det åpnes', async () => {
     const bruker = userEvent.setup()
     render(<Ideknapp />)
-    await bruker.click(screen.getByRole('button', { name: 'Idéer og planlagte oppgaver' }))
-    await bruker.click(screen.getByRole('button', { name: 'Idéer' }))
+    await bruker.click(screen.getByRole('button', { name: 'Idéer for appen' }))
     await bruker.click(await screen.findByRole('button', { name: 'Ny idé' }))
 
     lastInnPaNytt()
     render(<Ideknapp />)
     const vindu = await screen.findByRole('dialog', { name: 'Idéer' })
     await bruker.click(within(vindu).getByRole('button', { name: 'Lukk idéer' }))
-    await bruker.click(screen.getByRole('button', { name: 'Idéer og planlagte oppgaver' }))
-    await bruker.click(screen.getByRole('button', { name: 'Idéer' }))
+    await bruker.click(screen.getByRole('button', { name: 'Idéer for appen' }))
     expect(await screen.findByText('Flere TDM-kilder')).toBeTruthy()
     expect(screen.queryByRole('form', { name: 'Ny idé' })).toBeNull()
   })

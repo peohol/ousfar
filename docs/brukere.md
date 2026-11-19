@@ -14,8 +14,8 @@ passord**, velger sitt eget passord med én gang, og er inne.
 Hver konto tilhører et fagmiljø, og noen få er systemarkitekter. Det avgjør
 hvem som kan opprette brukere, gi nytt passord og endre adminrollen til hvem,
 og bare systemarkitektene kan endre stoffregisteret, se datakildene og styre
-appen (`docs/fagmiljoer.md`, «Systemrettighetene»). Adminmenyen viser det
-`mine_rettigheter()` svarer. Resten avgjøres foreløpig av rollen
+appen (`docs/fagmiljoer.md`, «Systemrettighetene»). «Administrasjon» i hovedmenyen
+viser det `mine_rettigheter()` svarer. Resten avgjøres foreløpig av rollen
 `user`/`admin`, til P2a–c bytter den ut. Se «Fagmiljø og systemroller» under
 og `docs/fagmiljoer.md`.
 

@@ -3,7 +3,7 @@ import { useAvatarlenker } from '../../auth/avatarer'
 import { hentInnstilling, lagreSisteValg, lengdeinnstilling } from '../../auth/innstillinger'
 import { useProfil } from '../../auth/okt'
 import { personnavn, sokIDirektesamtaler, ulesteDirekte } from '../../direktemeldinger/modell'
-import { useDirekte, type Direktemeldinger } from '../../direktemeldinger/useDirekte'
+import { direktemeldingene, useDirekte, type Direktemeldinger } from '../../direktemeldinger/useDirekte'
 import { FORSIDE, gruppeadresse, type Rute, type Samtalenokkel } from '../../domain/rute'
 import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from '../../gruppechat/samtaler'
 import { useGruppechat } from '../../gruppechat/useGruppechat'
@@ -154,6 +154,9 @@ export function Chatmeny({
     meldChatstatus({ finnes: aktivert, mobilApen, uleste })
   }, [aktivert, mobilApen, uleste])
   useEffect(() => () => meldChatstatus({ finnes: false, mobilApen: false, uleste: 0 }), [])
+  // Direktemeldingene for resten av appen (fanen Chat i Innstillinger).
+  useEffect(() => direktemeldingene.sett(direkte.pa ? direkte : null), [direkte])
+  useEffect(() => () => direktemeldingene.sett(null), [])
 
   // Chat og diskusjoner samtidig bare når siden mellom dem får plass.
   useKantmeny('chat', aktivert && apen && !helside, () => settApen(false))

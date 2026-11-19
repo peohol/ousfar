@@ -382,16 +382,27 @@ describe('«Mine forslag»', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Mine forslag' })).toBeTruthy()
   })
 
-  it('lister forslagene med statusen, og sier fra om dem som venter på svar', async () => {
+  it('lister forslagene med statusen, med dem som venter på svar fra deg først, og sier fra om dem øverst', async () => {
     api.hentMineForslag.mockResolvedValueOnce(
       lesForslagsrader([rad(), rad({ id: 'b', status: 'venter_pa_forslagsstiller', venter_pa_meg: true })]),
     )
     render(<Forslagsside onLukk={() => {}} />)
     const lenker = await screen.findAllByRole('link', { name: /Fagside · Citalopram · Dosering/ })
     expect(lenker).toHaveLength(2)
-    expect(lenker[0]!.getAttribute('href')).toBe(forslagsadresse(ID))
-    expect(within(lenker[1]!).getByText('Venter på svar fra deg')).toBeTruthy()
-    expect(screen.getByRole('status').textContent).toBe('Ett forslag venter på svar fra deg.')
+    expect(within(lenker[0]!).getByText('Venter på svar fra deg')).toBeTruthy()
+    expect(lenker[1]!.getAttribute('href')).toBe(forslagsadresse(ID))
+    // Oppsummeringen øverst: bare egne forslag for den som ikke behandler forslag.
+    const oversikt = screen.getByRole('region', { name: 'Det som venter på deg' })
+    expect(within(oversikt).getAllByRole('link').map((l) => l.textContent)).toEqual(['1Venter på svar fra deg'])
+    expect(within(oversikt).getByRole('link').getAttribute('href')).toBe('#/forslag')
+    expect(within(oversikt).queryByText('Ingenting venter på deg nå.')).toBeNull()
+  })
+
+  it('sier rolig fra når ingenting venter på deg', async () => {
+    api.hentMineForslag.mockResolvedValueOnce(lesForslagsrader([rad()]))
+    render(<Forslagsside onLukk={() => {}} />)
+    const oversikt = await screen.findByRole('region', { name: 'Det som venter på deg' })
+    expect(within(oversikt).getByText('Ingenting venter på deg nå.')).toBeTruthy()
   })
 })
 

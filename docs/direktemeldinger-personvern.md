@@ -345,9 +345,11 @@ tilgangen tas; tastatur, skjermleser, mobil, lyst og mørkt tema.
 1. Dette dokumentet slås sammen. Peder har svart på alle fem beslutningene.
 2. D4a er slått sammen (chatmenyen og samtalelista D5 bygger på).
 3. Databasen og funksjonene, med bryteren av, og testene T1–T24 og S1–S6.
-4. Visningen i chatmenyen. Konto → Innstillinger → Chat finnes ikke ennå;
-   D6 setter inn de samme bryterne der (`Chatvalg` i
-   `src/components/chat/Chatvalg.tsx`).
+4. Visningen i chatmenyen, og fanen Chat under Konto → Innstillinger med de
+   samme bryterne og blokkeringene (`Chatvalg` i
+   `src/components/chat/Chatvalg.tsx`). Fanen står bare når
+   direktemeldingene er slått på; den bruker direktemeldingene chatmenyen
+   har (`direktemeldingene` i `useDirekte.ts`), uten egne kall.
 5. Kontroll i nettleseren og ChatGPTs kontroll.
 6. Aktiveringsmigrasjonen, når 3–5 er grønne (beslutning 4 er gitt).
 
