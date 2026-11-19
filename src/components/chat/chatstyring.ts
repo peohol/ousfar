@@ -38,7 +38,7 @@ export function useChatstatus(): Chatstatus {
 }
 
 /** Hva som skal skje med menyen: vekslet av knappen, eller åpnet på en samtale. */
-export type Chatbeskjed = { veksle: true } | { gruppe: string | null }
+export type Chatbeskjed = { veksle: true } | { gruppe: string | null } | { direkte: string }
 
 const beskjed = lagSignal<Chatbeskjed>()
 
@@ -56,6 +56,12 @@ export const veksleChatten = () => beskjed.send({ veksle: true })
 export function visGruppesamtale(gruppe: string | null): void {
   venter = { gruppe }
   beskjed.send({ gruppe })
+}
+
+/** Åpner chatmenyen på direktesamtalen, som profilkortet gjør. */
+export function visDirektesamtale(samtale: string): void {
+  venter = { direkte: samtale }
+  beskjed.send({ direkte: samtale })
 }
 
 /**

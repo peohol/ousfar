@@ -17,6 +17,7 @@ import { IngenTilgang } from '../gruppechat/kall'
 import { lagDeltTilstand } from '../hooks/deltTilstand'
 import { useOppfriskVedRinging } from '../gruppechat/samtaler'
 import { useKontoensSvarMedSjekk } from '../hooks/useKontoensSvar'
+import { glemProfilkortene } from '../profilkort/api'
 import { abonnerPaDirektesamtale, direkteapi } from './api'
 import type { Direkteapi } from './kall'
 import { useDirektesamtale } from './useDirektesamtale'
@@ -72,6 +73,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
       const valg = await direkteapi.settChatvalg(endring)
       sett({ ...verdi, valg })
       // Om det kan skrives i samtalene, følger bryteren: lista og de åpne samtalene med en gang.
+      glemProfilkortene()
       sjekk()
       useDirektesamtale.oppfriskAlle()
     },
@@ -80,6 +82,7 @@ export function useDirekte(bruker: string, aktivert: boolean, vist: boolean): Di
 
   /** Noe den innloggede har endret (som en blokkering): lista og de åpne samtalene hentes på nytt. */
   const oppdater = useCallback(() => {
+    glemProfilkortene()
     sjekk()
     useDirektesamtale.oppfriskAlle()
   }, [sjekk])

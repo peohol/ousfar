@@ -153,7 +153,7 @@ function Gruppe({
   return (
     <section className="idegruppe" aria-labelledby={id}>
       <h3 id={id} className="idegruppe__navn">
-        {gruppe.kriterium === 'bruker' && <Forfatterbilde id={gruppe.nokkel} storrelse="mini" />}
+        {gruppe.kriterium === 'bruker' && <Forfatterbilde id={gruppe.nokkel} storrelse="mini" kort />}
         <span>{gruppe.navn}</span>
         <span className="idegruppe__antall">{gruppe.ideer.length}</span>
       </h3>

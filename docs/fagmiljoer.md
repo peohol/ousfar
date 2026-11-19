@@ -996,6 +996,29 @@ persongalleriet, forfatterne og varslene, at rollen ikke kan leses, egen
 profil, brukerlista og bildene; `tilgangsmatrise.test.ts` har scenarioene for
 P2c.
 
+### Profilkortet
+
+Profilkortet ved hovering (`docs/designsystem.md`, «Profilkortet»;
+`supabase/migrations/20261119124500_profilkort.sql`) har navnet og bildet fra
+stedet det står. Resten gir `public.profilkortdetaljer(bruker)`:
+
+- **Fagmiljøene** personen er aktivt medlem av i aktive fagmiljøer,
+  primærfagmiljøet først.
+- **`kan_chatte`**: om det kan sendes direktemeldinger til personen nå, med
+  den samme grunnen som sendingen (`intern.kan_motta_fra`: aktivt
+  medlemskap, «Tillat direktemeldinger» på og ikke blokkert av personen), og
+  nei når man selv har blokkert personen eller direktemeldingene ikke er
+  slått på. Den som er blokkert, får altså samme svar som for en som har
+  slått av. Egen bryter teller ikke; kortet spør om å slå den på.
+
+Svaret gis bare for profiler den innloggede ser gjennom fagmiljøene,
+gruppene og direktesamtalene (`intern.synlige_profiler`), og for alle til en
+systemarkitekt; ellers, og for en konto som ikke finnes, er det `null` uten
+grunn, og kortet viser bare navnet og bildet. Forfattere og varselaktører
+utenfor den mengden (som den som har forlatt gruppen) får altså ikke mer enn
+før. Funksjonen krever aktivt medlemskap. Testene står i
+`src/__tests__/profilkort.test.ts`.
+
 ## Systemrettighetene
 
 `supabase/migrations/20261114131500_systemrettigheter.sql` (P2d) gir det som

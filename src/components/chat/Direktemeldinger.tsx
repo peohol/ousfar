@@ -12,6 +12,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Avatar } from '../konto/Avatar'
 import { Bekreftelseskort } from '../konto/Bekreftelseskort'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
+import { Profilutlos } from '../profilkort/Profilkort'
 import { TilSamtalene } from './TilSamtalene'
 
 const UVENTET = 'Noe gikk galt. Prøv igjen.'
@@ -202,6 +203,7 @@ export function Direktevisning({
   const person = chat.direkte?.motpart ?? rad?.motpart ?? null
   const navn = personnavn(person)
   const lenker = useAvatarlenker(person ? [person] : [])
+  const bildelenke = person?.avatar_path ? (lenker.get(person.avatar_path) ?? null) : null
   const utestengt = chat.status === 'ingen_tilgang'
   const dempet = rad?.dempet ?? chat.direkte?.dempet ?? false
   const blokkert = chat.direkte?.sperre === 'selv_blokkert'
@@ -238,13 +240,15 @@ export function Direktevisning({
       <TilSamtalene onTilbake={onTilbake} />
       {!utestengt && (
         <div className="chatsamtale__hode" ref={menyRot}>
-          <Personbilde
-            person={person}
-            aktiv={!!person && direkte.aktive.has(person.id)}
-            lenke={person?.avatar_path ? (lenker.get(person.avatar_path) ?? null) : null}
-          />
+          <Profilutlos person={person} lenke={bildelenke} variant="peker">
+            <Personbilde person={person} aktiv={!!person && direkte.aktive.has(person.id)} lenke={bildelenke} />
+          </Profilutlos>
           <div className="chatsamtale__navn">
-            <h3 className="chatsamtale__tittel">{navn}</h3>
+            <h3 className="chatsamtale__tittel">
+              <Profilutlos person={person} lenke={bildelenke}>
+                {navn}
+              </Profilutlos>
+            </h3>
             <p className="chatsamtale__art">
               {artstekst(person)}
               {dempet && ' · Dempet'}

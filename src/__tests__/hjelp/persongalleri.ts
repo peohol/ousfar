@@ -120,6 +120,32 @@ export const PERSONER = {
 
 export type Person = keyof typeof PERSONER
 
+/** Definisjonen av en person, med de valgfrie feltene. */
+export const definisjon = (p: Person): Persondefinisjon => PERSONER[p]
+
+/** De aktive medlemskapene etter definisjonen i galleriet. */
+export const aktiveI = (p: Person): Fagmiljo[] => [...(definisjon(p).primaer ? [definisjon(p).primaer!] : []), ...(definisjon(p).ogsaAktivI ?? [])]
+
+/** Aktivt medlemskap, eller systemarkitekt (P2.0). */
+export const harTilgang = (p: Person): boolean => aktiveI(p).length > 0 || definisjon(p).systemarkitekt === true
+
+export const felles = (a: readonly Fagmiljo[], b: readonly Fagmiljo[]): boolean => a.some((f) => b.includes(f))
+
+/**
+ * Regelen i docs/fagmiljoer.md («Profiler og profilbilder»), uten
+ * samhandlingsdata: om `seer` ser profilkortet til `bruker` gjennom
+ * fagmiljøene.
+ */
+export function serProfilkortet(seer: Person, bruker: Person): boolean {
+  if (!harTilgang(seer)) return false
+  return (
+    seer === bruker ||
+    definisjon(seer).systemarkitekt === true ||
+    felles(aktiveI(seer), aktiveI(bruker)) ||
+    felles(definisjon(seer).lokalAdminI ?? [], aktiveI(bruker))
+  )
+}
+
 export interface Persongalleri {
   /** Konto-ID-en til hver person. */
   id: Record<Person, string>

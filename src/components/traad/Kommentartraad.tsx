@@ -10,7 +10,7 @@ import { Riktekst } from '../stoffside/Riktekst'
 import { Rikteksteditor } from '../stoffside/Rikteksteditor'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
-import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from './Forfatterkontekst'
+import { Forfatterbilde, Forfatternavn, useForfatterkontekst } from './Forfatterkontekst'
 import { Langtekst } from './Langtekst'
 import { Hjerteknapp, Idehandling, Skjulehandlinger, Slettknapp, Tidspunkt } from './Smadeler'
 import '../../styles/traad.css'
@@ -170,7 +170,6 @@ function Kommentarvisning({
 }) {
   const { kommentar, svar, antallSvar } = node
   const { meg } = useForfatterkontekst()
-  const navn = useForfatternavn(kommentar.forfatter_id)
   const [apen, setApen] = useState(true)
   // Et svar eller en endring som skrives, overlever en oppdatering av appen.
   const [svarer, setSvarer] = useBevart(`kommentar:${kommentar.id}/svarer`, false)
@@ -210,8 +209,12 @@ function Kommentarvisning({
       data-slettet={kommentar.slettet || undefined}
     >
       <div className="kommentar__hode">
-        <Forfatterbilde id={kommentar.forfatter_id} storrelse="mini" />
-        <span className="kommentar__navn">{kommentar.slettet ? 'Slettet' : navn}</span>
+        <Forfatterbilde id={kommentar.forfatter_id} storrelse="mini" kort={!kommentar.slettet} />
+        {kommentar.slettet ? (
+          <span className="kommentar__navn">Slettet</span>
+        ) : (
+          <Forfatternavn id={kommentar.forfatter_id} className="kommentar__navn" />
+        )}
         {!kommentar.slettet && (
           <span className="kommentar__tid">
             <Tidspunkt iso={kommentar.opprettet_kl} endret={kommentar.endret_kl} />
