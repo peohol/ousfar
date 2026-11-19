@@ -7,7 +7,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { EMOJIMONSTER, erEmoji, FORESLATTE_EMOJIER, gruppesymbolsti, lesGruppesymbol, symbolbilde } from '../grupper/symbol'
+import { EMOJIMONSTER, erEmoji, FORESLATTE_EMOJIER, lesGruppesymbol, nyGruppesymbolsti, symbolbilde } from '../grupper/symbol'
 
 const MIGRASJONER = join(__dirname, '../../supabase/migrations')
 
@@ -21,7 +21,8 @@ describe('gruppesymbolet', () => {
     for (const tomt of [null, undefined, {}, 'x', { emoji: '' }, []]) expect(lesGruppesymbol(tomt)).toBeNull()
     expect(symbolbilde({ emoji: '🧪' })).toBeNull()
     expect(symbolbilde({ bilde: 'a/symbol.webp', endret: 't' })).toEqual({ sti: 'a/symbol.webp', endret: 't' })
-    expect(gruppesymbolsti('a')).toBe('a/symbol.webp')
+    expect(nyGruppesymbolsti('a')).toMatch(/^a\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.webp$/)
+    expect(nyGruppesymbolsti('a')).not.toBe(nyGruppesymbolsti('a'))
   })
 
   it('kjenner igjen én emoji, også med variantvelger, hudfarge eller som familie, men ikke tekst', () => {

@@ -10,8 +10,12 @@ export type Gruppesymbol = { emoji: string } | { bilde: string; endret: string }
 /** Den private bøtta bildene ligger i (migrasjonen `*_gruppesymboler.sql`). */
 export const GRUPPESYMBOL_BOTTE = 'gruppesymboler'
 
-/** Den faste stien til bildet: ett per gruppe, så et nytt erstatter det gamle. */
-export const gruppesymbolsti = (gruppe: string) => `${gruppe}/symbol.webp`
+/**
+ * En ny sti for et nytt bilde i gruppens mappe, `<gruppe-ID>/<UUID>.webp`
+ * (`public.er_gruppesymbolsti`): hvert bilde får sin egen, så en opplasting
+ * aldri overskriver et bilde som er gruppens symbol.
+ */
+export const nyGruppesymbolsti = (gruppe: string) => `${gruppe}/${crypto.randomUUID()}.webp`
 
 /**
  * Én emoji, slik databasen godtar den (`intern.er_gruppesymbolemoji`): et

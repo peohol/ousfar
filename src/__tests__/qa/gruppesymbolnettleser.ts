@@ -8,8 +8,8 @@
  * Punktene: den ansvarlige velger en emoji og laster opp et bilde i
  * gruppeinnstillingene; tekst avvises som emoji; medlemmet ser symbolene i
  * «Mine grupper», samtalelista, hodet på gruppechatten og gruppeoversikten,
- * også på mobil og i mørkt tema; å fjerne bildet sletter fila og gir
- * gruppeikonet tilbake.
+ * også på mobil og i mørkt tema; å fjerne bildet gir gruppeikonet tilbake,
+ * og medlemmet når ikke det gamle bildet lenger.
  */
 import { randomBytes } from 'node:crypto'
 import { lokalSql, sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase } from './lokalmiljo'
@@ -27,8 +27,9 @@ await sikreTestkonto(s, 'qa-chat-bo', pw.bo, ['Bo', 'Prøvesen'])
 const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const miljo = await apneTestmiljo()
 
-/** Antall filer i bøtta for gruppens symbol. */
-const symbolfiler = (gruppe: string) => Number(lokalSql(s, `select count(*) from storage.objects where bucket_id = 'gruppesymboler' and name = '${gruppe}/symbol.webp'`))
+/** Det gjeldende symbolbildet til gruppen, og om fila finnes i bøtta. */
+const symbolbildet = (gruppe: string) => lokalSql(s, `select coalesce(symbol_bilde, '') from public.grupper where id = '${gruppe}'`).trim()
+const finnes = (sti: string) => Number(lokalSql(s, `select count(*) from storage.objects where bucket_id = 'gruppesymboler' and name = '${sti}'`)) === 1
 
 /** Et syntetisk bilde (en fargeovergang med en sirkel), laget i nettleseren som PNG. */
 async function lagBilde(side: Side): Promise<Buffer> {
@@ -119,7 +120,8 @@ try {
     await bilde(ada, '03-beskjaering-pc')
     await vindu.getByRole('button', { name: 'Bruk bildet' }).click()
     await vindu.getByText('Symbolet er lagret.').waitFor({ timeout: 15_000 })
-    krev(symbolfiler(bildegruppe) === 1, 'fila ligger i bøtta')
+    const sti = symbolbildet(bildegruppe)
+    krev(sti.startsWith(`${bildegruppe}/`) && finnes(sti), `fila ligger i bøtta (${sti})`)
     await innen(10_000, 'bildet i forhåndsvisningen', () => bildetVises(vindu))
     await bilde(ada, '04-bilde-valgt-pc')
     await lukk(ada, vindu)
@@ -182,12 +184,16 @@ try {
     await bilde(mobil, '09-chatmeny-mobil')
   })
 
-  await punkt('S6 å fjerne bildet sletter fila og gir gruppeikonet tilbake', async () => {
+  await punkt('S6 å fjerne bildet gir gruppeikonet tilbake, og medlemmet når ikke bildet lenger', async () => {
     paa(ada)
+    const gammelt = symbolbildet(bildegruppe)
+    const kanLese = async () => !(await boK.storage.from('gruppesymboler').createSignedUrl(gammelt, 60)).error
+    krev(await kanLese(), 'medlemmet når bildet mens det er symbolet')
     const vindu = await innstillinger(ada, bildegruppe)
     await vindu.getByRole('button', { name: 'Fjern symbolet' }).click()
     await vindu.getByText('Symbolet er fjernet.').waitFor({ timeout: 10_000 })
-    await innen(10_000, 'fila er slettet', () => symbolfiler(bildegruppe) === 0)
+    krev(symbolbildet(bildegruppe) === '', 'gruppen har ikke noe bilde')
+    await innen(10_000, 'medlemmet når ikke bildet', async () => !(await kanLese()))
     krev((await vindu.locator('.gruppesymbol__ikon').count()) > 0, 'gruppeikonet i forhåndsvisningen')
     await lukk(ada, vindu)
     await bo.goto(`${miljo.url}/#/grupper`)

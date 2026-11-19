@@ -432,7 +432,7 @@ function Gruppedashboard({ id, overskrift, onLukk }: { id: string; overskrift: s
           }
           onSymbol={(valg) =>
             gjor(async () => {
-              await settGruppesymbol(g.id, valg, g.symbol ?? null)
+              await settGruppesymbol(g.id, valg)
               return valg ? 'Symbolet er lagret.' : 'Symbolet er fjernet.'
             })
           }

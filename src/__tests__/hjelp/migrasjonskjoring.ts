@@ -68,7 +68,12 @@ const SUPABASE_GRUNNLAG = /* sql */ `
     file_size_limit bigint,
     allowed_mime_types text[]
   );
-  create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text, name text);
+  create table storage.objects (
+    id uuid primary key default gen_random_uuid(),
+    bucket_id text,
+    name text,
+    created_at timestamptz default now()
+  );
   -- Som i Supabase: nettleseren når bøttene og filene gjennom Storage-API-et,
   -- og radsikkerheten avgjør hva den får.
   alter table storage.buckets enable row level security;

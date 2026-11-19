@@ -335,7 +335,7 @@ describe('én gruppe', () => {
     expect(within(symbol).getByRole('alert').textContent).toBe('Skriv inn én emoji.')
     expect(api.settGruppesymbol).not.toHaveBeenCalled()
     await userEvent.click(within(symbol).getByRole('button', { name: '🧪' }))
-    expect(api.settGruppesymbol).toHaveBeenCalledWith(ID, { emoji: '🧪' }, null)
+    expect(api.settGruppesymbol).toHaveBeenCalledWith(ID, { emoji: '🧪' })
     expect(within(symbol).queryByRole('alert')).toBeNull()
   })
 

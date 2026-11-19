@@ -3,12 +3,15 @@
 -- gruppeoversikten. Gruppechattene arver det. Uten symbol står gruppeikonet.
 --
 -- Bildet beskjæres og komprimeres i nettleseren, som profilbildene
--- (20260922101921_profilbilder.sql), og lagres kvadratisk som WebP på en fast
--- sti per gruppe — `<gruppe-ID>/symbol.webp` — i en egen privat bøtte, så et
--- nytt bilde erstatter det gamle. Bare de som styrer gruppen (de ansvarlige
--- og systemarkitektene), kan legge inn, bytte eller fjerne det, og bare de
--- som leser gruppen, kan se det. Grensene i bøtta er en siste skanse dersom
--- noen laster opp utenom appen.
+-- (20260922101921_profilbilder.sql), og lagres kvadratisk som WebP i en egen
+-- privat bøtte. Hvert bilde får sin egen sti, `<gruppe-ID>/<UUID>.webp`, og
+-- kan aldri overskrives: et nytt bilde blir gruppens symbol først når
+-- `sett_gruppesymbol` har bekreftet det, og et bilde kan bare slettes når det
+-- ikke er gruppens symbol og er over en time gammelt. Slik kan verken en
+-- mislykket lagring eller to ansvarlige som bytter samtidig, ødelegge det
+-- bekreftede symbolet (kontrollen av #476). Bare de som styrer gruppen (de
+-- ansvarlige og systemarkitektene), kan laste opp og rydde; de som leser
+-- gruppen, ser bare det gjeldende bildet.
 --
 -- En emoji kan ikke bære tekst: nøyaktig én emoji, av tegn fra emojiblokkene
 -- uten tall, bokstaver, punktskrift og bokstavlignende tegn
@@ -41,9 +44,30 @@ $$;
 -- aldri rett i `grupper`, bare gjennom funksjonene, som kjører som eieren.
 revoke all on function intern.er_gruppesymbolemoji(text) from public, anon, authenticated, service_role;
 
+-- Stien til et symbolbilde: `<gruppe-ID>/<UUID>.webp`, én ny for hvert bilde.
+-- Ren hjelper uten data, til tabellregelen, radsikkerheten i bøtta og
+-- `sett_gruppesymbol`.
+create function public.er_gruppesymbolsti(gruppe text, sti text)
+returns boolean
+language sql
+immutable
+strict
+parallel safe
+set search_path = ''
+as $$
+  select split_part(sti, '/', 1) = gruppe
+    and sti ~ '^[^/]+/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.]webp$'
+$$;
+
+revoke all on function public.er_gruppesymbolsti(text, text) from public, anon, authenticated, service_role;
+grant execute on function public.er_gruppesymbolsti(text, text) to authenticated;
+
+comment on function public.er_gruppesymbolsti(text, text) is
+  'Gruppesymbolene: om stien er et symbolbilde i gruppens mappe, <gruppe-ID>/<UUID>.webp. Ren hjelper.';
+
 alter table public.grupper
   add constraint grupper_symbol_ett check (symbol_emoji is null or symbol_bilde is null),
-  add constraint grupper_symbol_bilde check (symbol_bilde is null or symbol_bilde = id::text || '/symbol.webp'),
+  add constraint grupper_symbol_bilde check (symbol_bilde is null or public.er_gruppesymbolsti(id::text, symbol_bilde)),
   add constraint grupper_symbol_emoji check (
     symbol_emoji is null
     or intern.er_gruppesymbolemoji(symbol_emoji)
@@ -52,7 +76,7 @@ alter table public.grupper
 comment on column public.grupper.symbol_emoji is
   'Symbolet som emoji (bare tegn fra emojiblokkene), eller null. Se docs/fagmiljoer.md, «Gruppesymbolet».';
 comment on column public.grupper.symbol_bilde is
-  'Symbolet som bilde: stien i bøtta gruppesymboler, alltid <gruppe-ID>/symbol.webp, eller null.';
+  'Symbolet som bilde: stien i bøtta gruppesymboler, <gruppe-ID>/<UUID>.webp, eller null.';
 comment on column public.grupper.symbol_endret_kl is
   'Da symbolet sist ble endret: appen henter en ny lenke til bildet når den endres.';
 
@@ -93,43 +117,65 @@ grant execute on function public.mine_styrte_grupper() to authenticated;
 comment on function public.mine_styrte_grupper() is
   'Gruppesymbolene: de aktive gruppene den innloggede styrer (ansvarlig eller systemarkitekt). Brukes av radsikkerheten på bøtta gruppesymboler.';
 
--- Lesingen følger gruppen: den som leser gruppen, ser symbolet.
+-- De gjeldende symbolbildene i gruppene den innloggede leser: det eneste
+-- et vanlig medlem ser i bøtta, og det ingen kan slette.
+create function public.mine_gruppesymbolbilder()
+returns text[]
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case
+    when not intern.har_aktivt_medlemskap((select auth.uid())) then '{}'::text[]
+    else coalesce((
+      select array_agg(g.symbol_bilde order by g.symbol_bilde)
+      from public.grupper g
+      where g.id = any (public.mine_lesbare_grupper())
+        and g.symbol_bilde is not null
+    ), '{}'::text[])
+  end
+$$;
+
+revoke all on function public.mine_gruppesymbolbilder() from public, anon, authenticated, service_role;
+grant execute on function public.mine_gruppesymbolbilder() to authenticated;
+
+comment on function public.mine_gruppesymbolbilder() is
+  'Gruppesymbolene: de gjeldende symbolbildene i gruppene den innloggede leser. Brukes av radsikkerheten på bøtta gruppesymboler.';
+
+-- Lesingen: den som leser gruppen, ser det gjeldende bildet; de som styrer
+-- den, ser også de andre i mappen, så de kan rydde.
 create policy "Innloggede ser symbolene til gruppene de leser"
 on storage.objects for select to authenticated
 using (
   bucket_id = 'gruppesymboler'
-  and objects.name = (storage.foldername(objects.name))[1] || '/symbol.webp'
-  and (storage.foldername(objects.name))[1] = any ((select public.mine_lesbare_grupper())::text[])
+  and (
+    objects.name = any ((select public.mine_gruppesymbolbilder())::text[])
+    or (storage.foldername(objects.name))[1] = any ((select public.mine_styrte_grupper())::text[])
+  )
 );
 
--- Skrivingen: én fast fil per gruppe, bare for dem som styrer den.
-create policy "De som styrer gruppen, kan legge inn symbolet"
+-- Opplastingen: et nytt bilde på en ny sti i gruppens mappe. Det finnes ingen
+-- regel for å endre en fil, så et bilde kan aldri overskrives.
+create policy "De som styrer gruppen, kan laste opp et symbol"
 on storage.objects for insert to authenticated
 with check (
   bucket_id = 'gruppesymboler'
-  and objects.name = (storage.foldername(objects.name))[1] || '/symbol.webp'
+  and public.er_gruppesymbolsti((storage.foldername(objects.name))[1], objects.name)
   and (storage.foldername(objects.name))[1] = any ((select public.mine_styrte_grupper())::text[])
 );
 
-create policy "De som styrer gruppen, kan bytte symbolet"
-on storage.objects for update to authenticated
-using (
-  bucket_id = 'gruppesymboler'
-  and objects.name = (storage.foldername(objects.name))[1] || '/symbol.webp'
-  and (storage.foldername(objects.name))[1] = any ((select public.mine_styrte_grupper())::text[])
-)
-with check (
-  bucket_id = 'gruppesymboler'
-  and objects.name = (storage.foldername(objects.name))[1] || '/symbol.webp'
-  and (storage.foldername(objects.name))[1] = any ((select public.mine_styrte_grupper())::text[])
-);
-
-create policy "De som styrer gruppen, kan fjerne symbolet"
+-- Ryddingen: bare bilder som ikke er gruppens symbol, og som er over en time
+-- gamle. Et bilde som nettopp er lastet opp, og som venter på
+-- `sett_gruppesymbol` (som bare godtar bilder under en halvtime gamle), kan
+-- derfor ikke slettes av en annen som rydder samtidig.
+create policy "De som styrer gruppen, kan rydde bort gamle symboler"
 on storage.objects for delete to authenticated
 using (
   bucket_id = 'gruppesymboler'
-  and objects.name = (storage.foldername(objects.name))[1] || '/symbol.webp'
   and (storage.foldername(objects.name))[1] = any ((select public.mine_styrte_grupper())::text[])
+  and objects.name <> all ((select public.mine_gruppesymbolbilder())::text[])
+  and objects.created_at < now() - interval '1 hour'
 );
 
 -- --- Symbolet overalt der gruppen står ----------------------------------------
@@ -172,12 +218,13 @@ revoke all on function intern.gruppereferanse(public.grupper) from public, anon,
 
 -- --- Å sette symbolet -----------------------------------------------------------
 
--- Setter symbolet: en emoji, bildet som er lastet opp på gruppens faste sti
--- (`bilde`), eller ingen (begge tomme). Samme myndighet som navnet
--- (`intern.gruppeavslag`, «endre»). Gir symbolet slik det står etterpå.
--- Et bilde som byttes ut med en emoji eller fjernes, slettes av appen fra
--- bøtta etterpå; databasen kan ikke slette filer i lagringen.
-create function public.sett_gruppesymbol(gruppe uuid, emoji text, bilde boolean)
+-- Setter symbolet: en emoji, et bilde som er lastet opp i gruppens mappe
+-- (`bilde`, stien), eller ingen (begge tomme). Samme myndighet som navnet
+-- (`intern.gruppeavslag`, «endre»), og gruppens rad er låst, så to som endrer
+-- samtidig, kommer etter hverandre. Et nytt bilde må være lastet opp den
+-- siste halvtimen; det gamle ryddes bort av appen etterpå, innenfor reglene
+-- på bøtta. Gir symbolet slik det står etterpå.
+create function public.sett_gruppesymbol(gruppe uuid, emoji text, bilde text)
 returns jsonb
 language plpgsql
 security definer
@@ -186,14 +233,20 @@ as $$
 declare
   g public.grupper := intern.las_gruppe(sett_gruppesymbol.gruppe, 'Gruppesymbolet endret');
   ren text := nullif(btrim(coalesce(sett_gruppesymbol.emoji, '')), '');
-  sti text := g.id::text || '/symbol.webp';
+  sti text := nullif(btrim(coalesce(sett_gruppesymbol.bilde, '')), '');
 begin
   perform intern.krev_gruppemyndighet((select auth.uid()), g, null, 'endre');
-  if coalesce(sett_gruppesymbol.bilde, false) then
+  if sti is not null then
     if ren is not null then
       raise exception 'Velg enten en emoji eller et bilde.' using errcode = '22023';
     end if;
-    if not exists (select 1 from storage.objects o where o.bucket_id = 'gruppesymboler' and o.name = sti) then
+    if not public.er_gruppesymbolsti(g.id::text, sti) then
+      raise exception 'Bildet hører ikke til denne gruppen.' using errcode = '22023';
+    end if;
+    if sti is distinct from g.symbol_bilde and not exists (
+      select 1 from storage.objects o
+      where o.bucket_id = 'gruppesymboler' and o.name = sti and o.created_at > now() - interval '30 minutes'
+    ) then
       raise exception 'Bildet er ikke lastet opp. Prøv igjen.' using errcode = '22023';
     end if;
   elsif ren is not null and not intern.er_gruppesymbolemoji(ren) then
@@ -201,8 +254,8 @@ begin
   end if;
 
   update public.grupper x
-  set symbol_emoji = case when coalesce(sett_gruppesymbol.bilde, false) then null else ren end,
-      symbol_bilde = case when coalesce(sett_gruppesymbol.bilde, false) then sti end,
+  set symbol_emoji = case when sti is null then ren end,
+      symbol_bilde = sti,
       symbol_endret_kl = now(),
       endret_kl = now()
   where x.id = g.id
@@ -211,8 +264,8 @@ begin
 end;
 $$;
 
-revoke all on function public.sett_gruppesymbol(uuid, text, boolean) from public, anon;
-grant execute on function public.sett_gruppesymbol(uuid, text, boolean) to authenticated;
+revoke all on function public.sett_gruppesymbol(uuid, text, text) from public, anon;
+grant execute on function public.sett_gruppesymbol(uuid, text, text) to authenticated;
 
-comment on function public.sett_gruppesymbol(uuid, text, boolean) is
-  'Gruppesymbolet: en emoji, det opplastede bildet, eller ingen. De som styrer gruppen. Se docs/fagmiljoer.md, «Gruppesymbolet».';
+comment on function public.sett_gruppesymbol(uuid, text, text) is
+  'Gruppesymbolet: en emoji, et opplastet bilde (stien), eller ingen. De som styrer gruppen. Se docs/fagmiljoer.md, «Gruppesymbolet».';

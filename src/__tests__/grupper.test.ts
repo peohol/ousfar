@@ -602,15 +602,22 @@ describe('profilene og idéene', () => {
 })
 
 describe('symbolet', () => {
-  const sett = (person: Person, gruppe: string, emoji: string | null, bilde = false) =>
+  const sett = (person: Person, gruppe: string, emoji: string | null, bilde: string | null = null) =>
     verdi<{ emoji?: string; bilde?: string; endret?: string } | null>(person, 'select public.sett_gruppesymbol($1, $2, $3)', [gruppe, emoji, bilde])
   const symbolHos = async (person: Person, gruppe: string) =>
     ((await mine(person)).grupper.find((g) => g.id === gruppe) as { symbol?: unknown } | undefined)?.symbol
-  const sti = (gruppe: string) => `${gruppe}/symbol.webp`
+  const nySti = (gruppe: string) => `${gruppe}/${crypto.randomUUID()}.webp`
   const lastOpp = (person: Person, navn: string) =>
     somPerson(person, `insert into storage.objects (bucket_id, name) values ('gruppesymboler', $1) returning id`, [navn])
-  const serBildet = async (person: Person, gruppe: string) =>
-    (await somPerson(person, `select 1 from storage.objects where bucket_id = 'gruppesymboler' and name = $1`, [sti(gruppe)])).length > 0
+  const serBildet = async (person: Person, navn: string) =>
+    (await somPerson(person, `select 1 from storage.objects where bucket_id = 'gruppesymboler' and name = $1`, [navn])).length > 0
+  const slett = async (person: Person, navn: string) =>
+    (await somPerson(person, `delete from storage.objects where bucket_id = 'gruppesymboler' and name = $1 returning id`, [navn])).length
+  const finnes = async (navn: string) =>
+    (await db.query(`select 1 from storage.objects where bucket_id = 'gruppesymboler' and name = $1`, [navn])).rows.length > 0
+  /** Gjør en opplastet fil så mange minutter gammel. */
+  const eldes = (navn: string, minutter: number) =>
+    db.query(`update storage.objects set created_at = now() - make_interval(mins => $2) where name = $1`, [navn, minutter])
 
   it('lar de ansvarlige og systemarkitektene velge en emoji, som alle i gruppen ser overalt', async () => {
     expect(await sett('adminA', agruppe, '🧪')).toEqual({ emoji: '🧪' })
@@ -631,7 +638,7 @@ describe('symbolet', () => {
     for (const ugyldig of ['abc', '12345678901', 'Å', '🧪 a', '1️⃣', '<b>', '🧪🧪', '⠁⠃⠉⠙', 'ℍ', '🅰', '🇳🇴🇸🇪']) {
       expect((await feilFra(() => sett('adminA', agruppe, ugyldig)))?.message, ugyldig).toBe('Symbolet må være én emoji.')
     }
-    expect((await feilFra(() => sett('adminA', agruppe, '🧪', true)))?.message).toBe('Velg enten en emoji eller et bilde.')
+    expect((await feilFra(() => sett('adminA', agruppe, '🧪', nySti(agruppe))))?.message).toBe('Velg enten en emoji eller et bilde.')
     // Heller ikke rett i tabellen.
     await expect(
       db.query(`update public.grupper set symbol_emoji = 'abc' where id = $1`, [agruppe]),
@@ -648,31 +655,81 @@ describe('symbolet', () => {
     expect((await feilFra(() => sett('systemarkitekt', agruppe, '🧪')))?.message).toBe('Gruppen er arkivert.')
   })
 
-  it('tar et bilde på gruppens faste sti, som bare de som styrer kan laste opp og bare de som leser kan se', async () => {
-    expect((await feilFra(() => sett('adminA', agruppe, null, true)))?.message).toBe('Bildet er ikke lastet opp. Prøv igjen.')
-    // Andre stier, og andre enn de ansvarlige, slipper ikke inn.
+  it('tar et bilde på en ny sti i gruppens mappe, som bare de som styrer kan laste opp og bare de som leser kan se', async () => {
+    const bilde = nySti(agruppe)
+    expect((await feilFra(() => sett('adminA', agruppe, null, bilde)))?.message).toBe('Bildet er ikke lastet opp. Prøv igjen.')
+    // Andre stier, og andre enn de som styrer, slipper ikke inn.
     for (const [person, navn] of [
-      ['vanligA', sti(agruppe)],
-      ['adminA', `${agruppe}/annet.webp`],
-      ['adminA', `${agruppe}/x/symbol.webp`],
-      ['adminA', sti(tverrgruppe)],
+      ['vanligA', nySti(agruppe)],
+      ['adminA', `${agruppe}/symbol.webp`],
+      ['adminA', `${agruppe}/x/${crypto.randomUUID()}.webp`],
+      ['adminA', nySti(tverrgruppe)],
     ] as const) {
       expect((await feilFra(() => lastOpp(person, navn)))?.code, `${person} ${navn}`).toBe('42501')
     }
-    await lastOpp('adminA', sti(agruppe))
-    const symbol = await sett('adminA', agruppe, null, true)
-    expect(symbol).toMatchObject({ bilde: sti(agruppe) })
+    await lastOpp('adminA', bilde)
+    // Bare et bilde i gruppens egen mappe.
+    const annen = nySti(tverrgruppe)
+    await lastOpp('systemarkitekt', annen)
+    expect((await feilFra(() => sett('adminA', agruppe, null, annen)))?.message).toBe('Bildet hører ikke til denne gruppen.')
+    // Et bilde som ikke er symbolet ennå, ser bare de som styrer.
+    expect(await serBildet('vanligA', bilde)).toBe(false)
+    expect(await serBildet('systemarkitekt', bilde)).toBe(true)
+
+    const symbol = await sett('adminA', agruppe, null, bilde)
+    expect(symbol).toMatchObject({ bilde })
     expect(typeof symbol?.endret).toBe('string')
-    expect(await symbolHos('vanligA', agruppe)).toMatchObject({ bilde: sti(agruppe) })
-    expect(await serBildet('vanligA', agruppe)).toBe(true)
-    expect(await serBildet('systemarkitekt', agruppe)).toBe(true)
-    expect(await serBildet('vanligB', agruppe)).toBe(false)
+    expect(await symbolHos('vanligA', agruppe)).toMatchObject({ bilde })
+    expect(await serBildet('vanligA', bilde)).toBe(true)
+    expect(await serBildet('vanligB', bilde)).toBe(false)
     // Fjernes fra gruppen: ser ikke bildet lenger.
     await avslutt('adminA', agruppe, 'vanligA')
-    expect(await serBildet('vanligA', agruppe)).toBe(false)
-    // En emoji erstatter bildet.
+    expect(await serBildet('vanligA', bilde)).toBe(false)
+    // En emoji erstatter bildet, og da ser medlemmene ikke bildet lenger.
     expect(await sett('adminA', agruppe, '💊')).toEqual({ emoji: '💊' })
     expect(await symbolHos('dobbeltAB', agruppe)).toEqual({ emoji: '💊' })
+    expect(await serBildet('dobbeltAB', bilde)).toBe(false)
+  })
+
+  it('lar verken en mislykket lagring eller to som bytter samtidig, ødelegge det bekreftede bildet', async () => {
+    const forste = nySti(agruppe)
+    await lastOpp('adminA', forste)
+    await sett('adminA', agruppe, null, forste)
+    await eldes(forste, 120)
+    // Bildet kan ikke overskrives eller slettes mens det er symbolet.
+    expect(await somPerson('adminA', `update storage.objects set name = name where name = $1 returning id`, [forste])).toHaveLength(0)
+    expect(await slett('adminA', forste)).toBe(0)
+    expect(await slett('systemarkitekt', forste)).toBe(0)
+
+    // En lagring som feiler etter opplastingen, rører ikke symbolet.
+    const mislykket = nySti(agruppe)
+    await lastOpp('adminA', mislykket)
+    expect((await feilFra(() => sett('adminA', agruppe, '🧪', mislykket)))?.code).toBe('22023')
+    expect(await symbolHos('dobbeltAB', agruppe)).toMatchObject({ bilde: forste })
+    expect(await finnes(forste)).toBe(true)
+
+    // To samtidig: Ada (adminA) bytter til en emoji og rydder, mens en
+    // systemarkitekt har lastet opp et nytt bilde som ikke er lagret ennå.
+    const nytt = nySti(agruppe)
+    await lastOpp('systemarkitekt', nytt)
+    await sett('adminA', agruppe, '🧪')
+    expect(await slett('adminA', nytt)).toBe(0)
+    // Systemarkitektens lagring går derfor igjennom, og bildet står.
+    expect(await sett('systemarkitekt', agruppe, null, nytt)).toMatchObject({ bilde: nytt })
+    expect(await finnes(nytt)).toBe(true)
+    expect(await slett('adminA', nytt)).toBe(0)
+    // Det gamle, som ikke lenger er symbolet og er over en time gammelt, kan ryddes.
+    expect(await slett('adminA', forste)).toBe(1)
+    // Et vanlig medlem rydder ingenting.
+    await eldes(mislykket, 120)
+    expect(await slett('dobbeltAB', mislykket)).toBe(0)
+
+    // Et bilde som ble lastet opp for lenge siden, godtas ikke som nytt symbol.
+    const gammelt = nySti(agruppe)
+    await lastOpp('adminA', gammelt)
+    await eldes(gammelt, 31)
+    expect((await feilFra(() => sett('adminA', agruppe, null, gammelt)))?.message).toBe('Bildet er ikke lastet opp. Prøv igjen.')
+    expect(await symbolHos('dobbeltAB', agruppe)).toMatchObject({ bilde: nytt })
   })
 
   it('fører endringen i tilgangsloggen', async () => {
