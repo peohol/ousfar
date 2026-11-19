@@ -75,6 +75,12 @@ export const KONTROLLER = [
    * systemarkitektene eller administratorene noe ekstra.
    */
   'direktemelding',
+  /**
+   * `security definer` som setter eller viser stillingen til en bruker etter
+   * den innloggedes myndighet (`intern.stillingsavslag`): egen, eller andres
+   * for systemarkitekter og lokale administratorer (docs/stillinger.md).
+   */
+  'stillingsmyndighet',
 ] as const
 
 export type Kontroll = (typeof KONTROLLER)[number]
@@ -279,6 +285,16 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'sett_gruppesymbol(gruppe uuid, emoji text, bilde text)': 'gruppemyndighet',
   'sett_oppgave_klar(oppgave uuid, klar boolean)': 'systemarkitekt',
   'sett_stoffavoritt(stoff text, favoritt boolean)': 'radsikkerhet',
+  // Stillingene (docs/stillinger.md): egen eller andres etter myndigheten, og lista for systemarkitektene.
+  'sett_stilling(bruker uuid, stilling uuid)': 'stillingsmyndighet',
+  'lagre_stillingskategori(kategori uuid, navn text)': 'systemarkitekt',
+  'flytt_stillingskategori(kategori uuid, indeks integer)': 'systemarkitekt',
+  'fjern_stillingskategori(kategori uuid)': 'systemarkitekt',
+  'lagre_stilling(stilling uuid, kategori uuid, navn text)': 'systemarkitekt',
+  'flytt_stilling(stilling uuid, indeks integer)': 'systemarkitekt',
+  'fjern_stilling(stilling uuid, erstatning uuid)': 'systemarkitekt',
+  'stillingsbruk()': 'systemarkitekt',
+  'brukere_med_stilling(stilling uuid)': 'systemarkitekt',
   'sett_verktoysperre(omfang text, mal text, grunn text)': 'systemarkitekt',
   'skjul_i_diskusjon(diskusjon uuid, kommentar uuid)': 'rekkevidde',
   'slett_diskusjon(diskusjon uuid)': 'rekkevidde',

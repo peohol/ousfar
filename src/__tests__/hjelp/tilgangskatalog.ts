@@ -177,6 +177,10 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       return /\bintern\s*\.\s*(gruppeavslag|krev_gruppemyndighet|gruppeopprettelsesavslag|las_gruppe)\s*\(/.test(f.kilde)
         ? null
         : 'bruker ikke intern.gruppeavslag'
+    case 'stillingsmyndighet':
+      if (!f.definer) return 'er ikke security definer'
+      if (!BRUKER_INNLOGGET.test(f.kilde)) return 'ser ikke på den innloggede'
+      return /\bintern\s*\.\s*stillingsavslag\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.stillingsavslag'
     case 'rekkevidde':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_REKKEVIDDEKONTROLL.test(f.kilde) ? null : 'kaller ingen av hjelperne for rekkevidde'

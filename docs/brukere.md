@@ -60,7 +60,7 @@ Det er grunnen til at reservasjonen finnes.
 
 ## Hva den innloggede kan gjøre selv
 
-Andre profiler leses bare som profilkort (navn, brukernavn og bilde), og bare
+Andre profiler leses bare som profilkort (navn, brukernavn, bilde og stilling), og bare
 for dem man samhandler med; egen hele profil gis av `min_profil()`
 (`docs/fagmiljoer.md`, «Profiler og profilbilder»). Skriving går bare i egen
 rad, og kolonnerettighetene smalner det ytterligere inn: nettleseren har
@@ -68,6 +68,8 @@ skriverett på `first_name`, `last_name` og `avatar_path`, og ingenting annet.
 En trigger avviser i tillegg endringer i `username`, `role`,
 `must_change_password` og `onboarding_completed` når det er `authenticated`
 som skriver. Rollen kan altså ikke settes fra nettleseren i det hele tatt.
+Stillingen velges fra en fast liste og settes med databasefunksjonen
+`sett_stilling`, ikke ved å skrive i tabellen (`docs/stillinger.md`).
 
 ## Adminoperasjonene
 

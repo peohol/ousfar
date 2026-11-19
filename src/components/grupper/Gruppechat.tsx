@@ -1,9 +1,8 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import type { Profilkort } from '@delt/profil'
+import { kortnavn, type Profilkort } from '@delt/profil'
 import { useAvatarlenker } from '../../auth/avatarer'
-import { personnavn } from '../../direktemeldinger/modell'
 import type { Samtaletype } from '../../domain/rute'
-import type { Gruppechat as Chattilstand } from '../../gruppechat/modell'
+import { avsendernavn, type Gruppechat as Chattilstand, type Gruppemelding } from '../../gruppechat/modell'
 import type { Gruppe } from '../../grupper/modell'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -45,7 +44,8 @@ export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstan
   const aktiv = gruppe.status === 'aktiv'
   const sisteNr = meldinger.at(-1)?.nr ?? 0
   const direkte = art === 'direkte'
-  const motpart = direkte ? personnavn(chat.direkte?.motpart ?? null) : undefined
+  /** I en direktesamtale er navnet på den andre samtalens navn, det samme som over samtalen. */
+  const motpart = direkte ? gruppe.navn : undefined
 
   // Den nyeste tilstanden for effektene, uten at de kjøres på nytt for hver ny funksjon.
   const naa = useRef(chat)
@@ -79,6 +79,12 @@ export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstan
     return [...unike.values()]
   }, [meldinger])
   const lenker = useAvatarlenker(forfattere)
+  // De andre står med fornavnet, eller mer når det trengs for å skille dem (`kortnavn`); eget navn vises ikke.
+  const navnene = useMemo(() => {
+    const egne = new Set(meldinger.flatMap((m) => (m.egen && m.forfatter ? [m.forfatter.id] : [])))
+    return kortnavn(forfattere.filter((f) => !egne.has(f.id)))
+  }, [meldinger, forfattere])
+  const navn = (m: Gruppemelding) => (motpart && !m.egen ? motpart : (m.forfatter && navnene.get(m.forfatter.id)) || avsendernavn(m))
 
   const rullTilBunns = useCallback((jevnt = false) => {
     const el = logg.current
@@ -260,6 +266,7 @@ export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstan
                     )}
                     <Gruppechatmelding
                       melding={melding}
+                      navn={navn(melding)}
                       sammen={!nyDag && !nyeHer && henger(forrige, melding)}
                       laast={!aktiv}
                       bildelenke={melding.forfatter?.avatar_path ? (lenker.get(melding.forfatter.avatar_path) ?? null) : null}
@@ -306,7 +313,7 @@ export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstan
       ) : (
         <p className="gruppechat__laast">
           <Ikon navn="lock" storrelse="ui" />
-          {laastTekst(aktiv, chat.direkte)}
+          {laastTekst(aktiv, chat.direkte, motpart)}
         </p>
       )}
     </section>

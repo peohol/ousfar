@@ -160,6 +160,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
 
   // Tilgangsmodellen.
   'public.profiles': k('tilgang', 'Kontoene'),
+  // Stillingslista: felles for alle fagmiljøer, endres bare av systemarkitektene (docs/stillinger.md).
+  'public.stillingskategorier': k('forvaltning', 'Stillingslista; endres av systemarkitektene'),
+  'public.stillinger': k('forvaltning', 'Stillingslista; endres av systemarkitektene'),
   'public.kontoreservasjoner': k('tilgang', 'Kontoene'),
   'public.fagmiljoer': k('tilgang', 'P1.1'),
   'public.medlemskap': k('tilgang', 'P1.1'),
