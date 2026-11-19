@@ -1,0 +1,13 @@
+{
+  "id": "20261119-184616-d5f499",
+  "semver": "patch",
+  "opprettet": "2026-11-19T18:46:16Z",
+  "sammendrag": "Bedre plass øverst på sidene på mobil",
+  "typer": ["Design / layout"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "«Gruppeinnstillinger» står nå på samme linje som «Tilbake til …», i hvert sitt hjørne, så gruppenavnet får en hel linje for seg selv og ikke brytes midt i ordet.",
+    "På mobil begynner sidene rett under toppmenyen, uten den store luften over «Tilbake til …» og overskriftene."
+  ]
+}

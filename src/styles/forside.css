@@ -19,7 +19,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--panelluft);
-  padding-block: var(--rom-9);
+  padding-block: var(--sidetopp) var(--rom-9);
 }
 
 .forside--ukjent {
@@ -83,7 +83,7 @@
 
 @media (max-width: 47.5em) {
   .forside {
-    padding-block: var(--rom-7);
+    padding-block: var(--sidetopp) var(--rom-7);
   }
 
   .forside__hovedhandling {
