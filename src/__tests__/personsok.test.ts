@@ -145,6 +145,21 @@ describe('kandidatene til et fagmiljø', () => {
     expect(treff).not.toContain('test.systemarkitekt')
   })
 
+  it('tilbyr bare dem medlemskapet kan gis til: ingen administratorer eller systemarkitekter for en lokal administrator', async () => {
+    // adminA ser adminB, vanligB og arkitektB gjennom en gruppe på tvers.
+    const tvers = await verdi<string>('systemarkitekt', 'select public.opprett_gruppe($1, $2, $3)', ['Tvers', 'Syntetisk', null])
+    for (const p of ['adminA', 'adminB', 'vanligB', 'arkitektB'] as const) {
+      await verdi('systemarkitekt', 'select public.inviter_til_gruppe($1, $2)', [tvers, `test.${p.toLowerCase()}`])
+      await verdi(p, 'select public.svar_paa_gruppeinvitasjon($1, true)', [tvers])
+    }
+    const treff = navn(await medlemskandidater('adminA', 'test'))
+    expect(treff).toContain('test.vanligb')
+    expect(treff).not.toContain('test.adminb')
+    expect(treff).not.toContain('test.arkitektb')
+    // Det samme som handlingen selv sier.
+    expect(await feil(() => verdi('adminA', 'select public.legg_til_medlem($1, $2)', ['test.adminb', fm('A')]))).toMatchObject({ kode: '42501' })
+  })
+
   it('gir de samme avslagene som når et medlem legges til', async () => {
     expect(await feil(() => medlemskandidater('vanligA', 'kari'))).toEqual({
       kode: '42501',

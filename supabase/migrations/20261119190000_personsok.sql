@@ -12,8 +12,8 @@
 --   systemarkitekt) som kan være med i gruppen og ikke alt er med eller
 --   invitert.
 -- - `sok_medlemskandidater`: en lokal administrator finner dem hen alt ser
---   profilkortet til som ikke er aktive medlemmer i fagmiljøet. Et lukket
---   fagmiljø tar bare imot systemarkitekter (startporten S2).
+--   profilkortet til som ikke er aktive medlemmer i fagmiljøet, og som
+--   medlemskapet kan gis til (`intern.medlemskapsavslag`, også startporten S2).
 -- - `sok_direktemottakere`: som før (D5): bare dem som selv har slått på
 --   direktemeldinger, uten bilde, stilling eller fagmiljø.
 --
@@ -280,9 +280,11 @@ end;
 $$;
 
 -- Hvem som kan legges til i fagmiljøet: dem den innloggede ser profilkortet
--- til, som ikke er aktive medlemmer der. Et fagmiljø som ikke er åpnet for
--- medlemmer, tar bare imot systemarkitekter. Bare for den som administrerer
--- fagmiljøet, med de samme avslagene som `legg_til_medlem`.
+-- til, som ikke er aktive medlemmer der og som `intern.medlemskapsavslag`
+-- godtar (et fagmiljø som ikke er åpnet, tar bare imot systemarkitekter; en
+-- lokal administrator kan ikke legge til administratorer, systemarkitekter
+-- eller sperrede kontoer uten tidligere medlemskap der). Bare for den som
+-- administrerer fagmiljøet, med de samme avslagene som `legg_til_medlem`.
 create function public.sok_medlemskandidater(fagmiljo uuid, sok text)
 returns jsonb
 language plpgsql
@@ -312,7 +314,9 @@ begin
         select 1 from public.medlemskap m
         where m.bruker_id = k and m.fagmiljo_id = f.id and m.status = 'aktiv'
       )
-      and (f.apent_for_medlemmer or intern.er_systemarkitekt(k))
+      -- Hele `gi`-avgjørelsen, så søket bare tilbyr dem handlingen godtar
+      -- (startporten, administratorer og systemarkitekter, sperrede kontoer).
+      and intern.medlemskapsavslag(aktor, k, f.id, 'gi') is null
   ), true);
 end;
 $$;

@@ -1094,7 +1094,9 @@ skrives nøyaktig (`supabase/migrations/20261119190000_personsok.sql`).
     (`intern.kan_vaere_med_i_gruppe`) og ikke alt er med eller invitert.
   - `sok_medlemskandidater(fagmiljo, sok)`: den som administrerer
     fagmiljøet (`intern.medlemskapsavslag`), finner dem som ikke er aktive
-    medlemmer der; et fagmiljø som ikke er åpnet, bare systemarkitekter.
+    medlemmer der og som medlemskapet kan gis til etter den samme avgjørelsen
+    (et fagmiljø som ikke er åpnet, bare systemarkitekter; en lokal
+    administrator ingen administratorer eller systemarkitekter).
   - `sok_direktemottakere(sok)`: som før
     ([direktemeldinger-personvern.md](direktemeldinger-personvern.md),
     «Søkbarhet»), med den nye sammenligningen.
