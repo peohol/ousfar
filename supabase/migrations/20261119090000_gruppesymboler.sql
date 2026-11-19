@@ -37,10 +37,9 @@ as $$
   select verdi ~ '^(?:[\u00A9\u00AE\u203C\u2049\u2122\u2139\u2190-\u21FF\u2300-\u23FF\u24C2\u25A0-\u2775\u2794-\u27BF\u2934\u2935\u2B00-\u2BFF\u3030\u303D\u3297\u3299\U0001F000-\U0001F0FF\U0001F200-\U0001FAFF][\uFE0E\uFE0F\U0001F3FB-\U0001F3FF]{0,2}(?:\u200D[\u00A9\u00AE\u203C\u2049\u2122\u2139\u2190-\u21FF\u2300-\u23FF\u24C2\u25A0-\u2775\u2794-\u27BF\u2934\u2935\u2B00-\u2BFF\u3030\u303D\u3297\u3299\U0001F000-\U0001F0FF\U0001F200-\U0001FAFF][\uFE0E\uFE0F\U0001F3FB-\U0001F3FF]{0,2}){0,3}(?:[\U000E0020-\U000E007E]{1,8}\U000E007F)?|[\U0001F1E6-\U0001F1FF]{2})$'
 $$;
 
--- Tabellregelen kjører med rettighetene til den som skriver; funksjonen
--- leser ingenting, så den kan kalles av alle som kan skrive i tabellen.
-revoke all on function intern.er_gruppesymbolemoji(text) from public, anon;
-grant execute on function intern.er_gruppesymbolemoji(text) to authenticated, service_role;
+-- Som de andre i `intern` kan den ikke kalles av API-rollene; de skriver
+-- aldri rett i `grupper`, bare gjennom funksjonene, som kjører som eieren.
+revoke all on function intern.er_gruppesymbolemoji(text) from public, anon, authenticated, service_role;
 
 alter table public.grupper
   add constraint grupper_symbol_ett check (symbol_emoji is null or symbol_bilde is null),
