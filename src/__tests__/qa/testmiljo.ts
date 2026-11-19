@@ -149,7 +149,7 @@ export async function apneTestmiljo(): Promise<Testmiljo> {
       if (!tilDatabasen(adresse) || vakt.stoppet || (modus === 'produksjon' && blokkeresIProduksjon(adresse))) return
       vakt.kall(r)
     })
-    k.on('response', (r: Pw) => vakt.svar(r.request(), r.status()))
+    k.on('response', (r: Pw) => vakt.svar(r.request(), r.status(), new URL(r.url()).pathname))
     k.on('requestfailed', (r: Pw) => vakt.avbrutt(r))
     await k.route(
       (adresse: URL) => tilDatabasen(adresse.href),

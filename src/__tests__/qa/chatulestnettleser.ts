@@ -7,12 +7,12 @@
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/chatulestnettleser.ts
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { internAuthAdresse } from '@delt/brukernavn'
-import { sikreAdministrator, sikreTestkonto, startLokalDatabase, type Status } from './lokalmiljo'
+import { arkiverTidligereGrupper, lukkChatmenyen } from './kontroll'
+import { sikreAdministrator, sikreTestkonto, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 import { apneTestmiljo } from './testmiljo'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,11 +20,6 @@ type Side = any
 const logg = (t: string) => console.log(`[chat ut av bjella] ${t}`)
 const vent = (ms: number) => new Promise((ok) => setTimeout(ok, ms))
 
-function settBryter(s: Status, pa: boolean) {
-  const sql = `create or replace function intern.gruppechat_aktivert() returns boolean language sql stable set search_path = '' as $$ select ${pa} $$;`
-  const r = spawnSync('psql', [s.DB_URL!, '-v', 'ON_ERROR_STOP=1', '-qc', sql], { encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(r.stderr)
-}
 async function klient(s: Status, brukernavn: string, passord: string): Promise<SupabaseClient> {
   const k = createClient(s.API_URL, s.PUBLISHABLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
   const { error } = await k.auth.signInWithPassword({ email: internAuthAdresse(brukernavn), password: passord })
@@ -75,10 +70,12 @@ const adminpassord = await sikreAdministrator(s)
 const pw = { ada: randomBytes(18).toString('base64url'), bo: randomBytes(18).toString('base64url') }
 await sikreTestkonto(s, 'qa-chat-ada', pw.ada, ['Ada', 'Testesen'])
 const boId = await sikreTestkonto(s, 'qa-chat-bo', pw.bo, ['Bo', 'Prøvesen'])
-settBryter(s, true)
+const tilbakestillBrytere = slaPaFunksjoner(s, 'gruppechat_aktivert')
 const miljo = await apneTestmiljo()
 try {
   const admin = await klient(s, 'qa-admin', adminpassord)
+  // Grupper fra tidligere kjøringer teller ellers med blant de uleste.
+  await arkiverTidligereGrupper(admin, 'Syntetisk ')
   const adaK = await klient(s, 'qa-chat-ada', pw.ada)
   const boK = await klient(s, 'qa-chat-bo', pw.bo)
   const navn = `Syntetisk D4b ${new Date().toISOString().slice(11, 19)}`
@@ -95,17 +92,7 @@ try {
   const boble = ada.locator('.chatboble')
   const menyen = ada.getByRole('complementary', { name: 'Grupper og samtaler' })
   const bjella = ada.getByRole('button', { name: /^Varsler/ }).first()
-  /**
-   * Lukker menyen om den står åpen (den huskes per konto og hentes etter at
-   * siden står, så det ventes litt først). Boblen står inne i menyen.
-   */
-  const lukkMenyen = async () => {
-    const panel = ada.locator('.chatpanel')
-    await boble.or(panel).first().waitFor({ timeout: 30_000 })
-    await vent(2000)
-    if (await panel.isVisible()) await menyen.getByRole('button', { name: 'Lukk chatten' }).click()
-    await boble.waitFor({ timeout: 10_000 })
-  }
+  const lukkMenyen = () => lukkChatmenyen(ada)
 
   sist = ada
   let bjelleFor = ''
@@ -215,7 +202,7 @@ try {
   // Feiler oppsettet før punktene, skal kjøringen ikke se grønn ut.
   utfall.push({ punkt: 'oppsettet', ok: false, merknad: e instanceof Error ? e.message.split('\n')[0]! : String(e) })
 } finally {
-  settBryter(s, false)
+  tilbakestillBrytere()
   await miljo.avslutt()
   console.log('\nRESULTAT')
   for (const u of utfall) console.log(`${u.ok ? 'OK  ' : 'FEIL'} ${u.punkt} ${u.merknad}`)

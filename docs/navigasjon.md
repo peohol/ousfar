@@ -114,6 +114,9 @@ Chatten (D4a) har to lag i stakken: helsiden `#/chat`, der Escape er
 «Gjenopprett» (tilbake etter inngangsveien, med chatmenyen åpen på samme
 samtale), og chatmenyen mens fokus står i den, der Escape slipper fokus på
 brede flater og lukker på smale. Menyen blir stående til den lukkes med ×.
+Fokus står i menyen når det kom dit med tastaturet, i et felt, eller når appen
+selv flyttet det dit, som når menyen åpnes med pekeren (D7); da når Escape
+aldri fortolkningen bak.
 
 Et nytt lag som skal lukkes med Escape, bruker `useEscapelag` og lytter ikke
 etter tasten selv. Testene står i `src/__tests__/lagstakk.test.tsx` og under

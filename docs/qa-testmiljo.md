@@ -54,7 +54,9 @@ kjøringen uten at passordet skrives inn.
   administrator og, i den tomme databasen, systemarkitekt
   (`docs/fagmiljoer.md`, «Myndighet over kontoer»).
 - Appen bygges hver gang mot den lokale databasen og serveres på
-  `127.0.0.1:4173`. Innloggingsveggen på Vercels kant finnes ikke lokalt.
+  `127.0.0.1:4173`, som produksjonsbygg (`NODE_ENV=production`, ellers arver
+  den `development` fra `vite-node`). Innloggingsveggen på Vercels kant finnes
+  ikke lokalt.
 - Den lokale databasen har ingen FEST-kopi og ikke fagsidene fra produksjonen.
   En mellomtjener foran Supabase (`127.0.0.1:4174`) svarer på `les_legemidler`
   fra de lagrede FEST-uttrekkene (`src/data/verktoy/fest-*.json`), de samme som
@@ -98,6 +100,23 @@ kjøringen uten at passordet skrives inn.
   kontomenyen og Innstillinger, oversikten over endringsforslag, dokken og
   hovedmenyen på mobil, og mørkt tema. `QA_SKJERMBILDER=<mappe>` lagrer
   skjermbildene.
+- `npx vite-node src/__tests__/qa/helhetnettleser.ts` er den helhetlige
+  kontrollen fra D7 (`docs/d7-kontroll.md`): forsiden (panelene, «Tilpass
+  forsiden» på to maskiner, feil i ett panel, fagmiljøbytte uten gamle data,
+  bjella), at «Åpne fortolkning» virker før panelene har svart,
+  navigasjonen (Escape i fortolkningen og over den, nettleserens tilbake og
+  fram, inngangsveien, de gamle adressene), gruppene (invitasjoner, siste
+  aktivitet, arbeidsflaten med ulagret tekst, arkivert gruppe), at en som
+  ikke er med, ikke ser noe, og nettbrett og mobil i lyst og mørkt tema uten
+  siderulling. Syntetiske kontoer `qa-d7-ada`, `qa-d7-bo` og `qa-d7-cy`;
+  bryterne for chatten og direktemeldingene står på mens den går
+  (`slaPaFunksjoner()`).
+- Det nettleserkontrollene kan dele (punktene og rapporten, skjermbildene,
+  ventingen, de innloggede klientene, å lukke chatmenyen, å telle
+  abonnementene i Realtime og å arkivere gamle syntetiske grupper), står i
+  `src/__tests__/qa/kontroll.ts`; SQL og bryterne står i `lokalmiljo.ts`.
+  `QA_PUNKTER=N2,N4` kjører bare de punktene i en kontroll som bruker
+  `lagKontroll()`.
 - `[auth.email] enable_signup = false` i `supabase/config.toml` slår av
   innlogging med e-post i CLI-en; linjen tas bort i miljøets kopi.
 

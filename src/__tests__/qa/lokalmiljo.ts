@@ -286,7 +286,9 @@ async function startMellomtjener(s: Status): Promise<{ url: string; tjener: Serv
 /** Appen bygd mot mellomtjeneren foran den lokale databasen, servert på {@link PORT}. */
 async function serverApp(s: Status, supabaseUrl: string): Promise<{ url: string; prosess: ChildProcess }> {
   const ut = join(MAPPE, 'app')
-  const miljo = { ...process.env, VITE_SUPABASE_URL: supabaseUrl, VITE_SUPABASE_PUBLISHABLE_KEY: s.PUBLISHABLE_KEY }
+  // Som i produksjonen: vite-node setter NODE_ENV=development, og da ville appen
+  // blitt bygget med Reacts utviklingsutgave (StrictMode monterer alt to ganger).
+  const miljo = { ...process.env, NODE_ENV: 'production', VITE_SUPABASE_URL: supabaseUrl, VITE_SUPABASE_PUBLISHABLE_KEY: s.PUBLISHABLE_KEY }
   logg('bygger appen mot den lokale databasen')
   execFileSync('npx', ['vite', 'build', '--outDir', ut, '--emptyOutDir', '--logLevel', 'warn'], { cwd: REPO, env: miljo, stdio: ['ignore', 'ignore', 'inherit'] })
   const url = `http://127.0.0.1:${PORT}`

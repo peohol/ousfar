@@ -48,7 +48,10 @@ meldinger står i bjella uansett om «Viktig nytt» er skrudd av.
 ## Databasen: `forsideoppsummering(modul)`
 
 Én smal funksjon, kalt én gang per panel, så hvert panel laster og feiler for
-seg. Den gir aldri mer enn tre rader, og filtrerer på tilgang i databasen:
+seg. Panelene venter med å hente til rettighetene, og dermed fagmiljøet, er
+kjent (`useArbeidskontekst`), så hvert hentes én gang og ikke først uten og så
+med fagmiljøet; overskriften står tom så lenge, ikke «OUSFAR» et øyeblikk (D7).
+Den gir aldri mer enn tre rader, og filtrerer på tilgang i databasen:
 
 - Brukeren må ha aktivt medlemskap (`intern.krev_aktivt_medlemskap`).
 - Fagmiljøet er det serveren har som arbeidsfagmiljø (`intern.arbeidsfagmiljo`),

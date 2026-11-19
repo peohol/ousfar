@@ -225,12 +225,12 @@ export class Trafikkvakt {
     this.blokkerte += 1
   }
 
-  /** Svaret på et kall, med statuskoden. */
-  svar(nokkel: unknown, status: number): void {
+  /** Svaret på et kall, med statuskoden og `hva` som ble kalt (til grunnen når det stopper). */
+  svar(nokkel: unknown, status: number, hva?: string): void {
     const ms = this.ferdig(nokkel)
     if (status >= 500) {
       this.feil5xx += 1
-      this.stopp(`databasen svarte ${status}${ms === undefined ? '' : ` etter ${Math.round(ms)} ms`}`)
+      this.stopp(`databasen svarte ${status}${hva ? ` på ${hva}` : ''}${ms === undefined ? '' : ` etter ${Math.round(ms)} ms`}`)
     }
   }
 
