@@ -1,0 +1,12 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "fentanyl",
+    "dosulepin",
+    "penfluridol",
+    "pimozid"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
