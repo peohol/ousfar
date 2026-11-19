@@ -5,8 +5,10 @@
 # Betrodd: hendelsene workflow_run og issues kjører alltid denne fila og
 # skriptet slik de er på main, og jobben sjekker bare ut main. PR-en og
 # Issue-ene leses som data fra GitHub; ingen kode fra PR-en kjøres. Resultatet
-# skrives som check run-en «Prosjektansvar» på PR-ens siste commit, og det er
-# den regelsettet «Prosjektansvar» på main krever før sammenslåing.
+# skrives på PR-ens siste commit som commit-statusen «Prosjektansvar», som
+# regelsettet «Prosjektansvar» på main krever før sammenslåing, og som en check
+# run med samme navn og hele forklaringen. GitHub teller ikke check runs fra
+# Checks-API-et som påkrevde sjekker, men commit-statuser fra arbeidsflyten.
 #
 # - workflow_run: «Prosjektansvar – utløser» er ferdig etter en endring av en PR.
 # - issues: et Issue har fått ny ansvarlig eller etikett, eller er slettet eller
@@ -25,6 +27,7 @@ permissions:
   contents: read
   issues: read
   pull-requests: read
+  statuses: write
 
 concurrency:
   group: prosjektansvar-${{ github.event.workflow_run.head_sha || github.event.issue.number }}
