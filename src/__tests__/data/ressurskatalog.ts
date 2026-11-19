@@ -136,6 +136,8 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.direktemelding_blokkeringer': k('personlig', 'D5: hvem brukeren har blokkert fra direktemeldinger; bare gjennom funksjonene'),
   'public.chatvalg': k('personlig', 'D5: «Tillat direktemeldinger» og «Vis når jeg er aktiv»; bare gjennom funksjonene'),
   'public.chataktivitet': k('personlig', 'D5: om brukeren har vært aktiv de siste to minuttene; ingen historikk'),
+  'public.pushabonnementer': k('personlig', 'Varslene om nye chatmeldinger: brukerens egne enheter; bare gjennom funksjonene'),
+  'intern.chatvarselko': k('personlig', 'Varslene om nye chatmeldinger: ID-ene til nye meldinger som skal varsles, høyst ti minutter; bare for Edge-funksjonen'),
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),

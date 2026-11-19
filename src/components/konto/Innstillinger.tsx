@@ -7,6 +7,7 @@ import { useShortcutVisibility } from '../../hooks/useShortcutVisibility'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Bryter } from '../Bryter'
 import { Chatvalg } from '../chat/Chatvalg'
+import { Chatvarslervalg } from '../chat/Chatvarslervalg'
 import { Fanevalg, fanepanelId, faneId, type Fanedefinisjon } from '../Fanevalg'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
@@ -67,11 +68,19 @@ function Visning({ tema, bevegelse }: Visningsvalg) {
   )
 }
 
-/** Chat: de samme bryterne og blokkeringene som nederst i chatmenyen, fra direktemeldingene den har. */
+/**
+ * Chat: varslene på denne enheten (docs/chatvarsler.md), og de samme bryterne
+ * og blokkeringene som nederst i chatmenyen, fra direktemeldingene den har.
+ */
 function Chat() {
   const direkte = direktemeldingene.bruk()
   if (!direkte) return null
-  return <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />
+  return (
+    <>
+      <Chatvarslervalg />
+      <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />
+    </>
+  )
 }
 
 /** Fanene som alltid står, i rekkefølgen de står. */

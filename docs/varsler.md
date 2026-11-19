@@ -17,6 +17,7 @@ Varslene berører ikke fortolkningen; de forteller bare at noe er endret.
 | `src/components/varsler/` | Bjella (`Varselknapp`), tilstanden (`useVarsler`) og vinduet (`Varsler`) |
 | `src/styles/varsler.css` | Vinduet. Tallet på bjella står i `toppmeny.css`, og skuffen arkivet står i, i `skuff.css` |
 | `supabase/migrations/*_gruppechat_varsler.sql` | Varslene om gruppechatten (se `docs/gruppechat.md`, «Varslene») |
+| `supabase/migrations/*_chatvarsler.sql`, `src/chatvarsler/` | Varslene på enheten (push) om nye chatmeldinger, utenfor bjella (se `docs/chatvarsler.md`) |
 | `supabase/migrations/*_varselarkiv.sql` | Arkivet: når et varsel ble arkivert, og funksjonene som arkiverer og henter fram |
 
 ## Kategoriene

@@ -193,7 +193,10 @@ describe('Auth-oppsettet', () => {
 
   it('krever gyldig innlogging på alle Edge-funksjonene', () => {
     const funksjoner = [...oppsett.matchAll(/^\[functions\.([a-z-]+)\]\nverify_jwt = (\w+)$/gm)]
-    expect(funksjoner.length).toBe(4)
+    const mapper = readdirSync(fileURLToPath(new URL('../../supabase/functions', import.meta.url)), { withFileTypes: true })
+      .filter((m) => m.isDirectory() && !m.name.startsWith('_'))
+      .map((m) => m.name)
+    expect(funksjoner.map(([, navn]) => navn).sort()).toEqual(mapper.sort())
     for (const [, navn, verdi] of funksjoner) {
       expect(verdi, navn).toBe('true')
     }

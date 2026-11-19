@@ -83,3 +83,6 @@ verify_jwt = true
 
 [functions.fullfor-oppsett]
 verify_jwt = true
+
+[functions.chatvarsel]
+verify_jwt = true
