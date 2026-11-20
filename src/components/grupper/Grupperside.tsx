@@ -10,7 +10,7 @@ import { ROLLENAVN, delMedlemmer, gruppetilhorighet, type Gruppemedlem, type Gru
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import { erstattAdressen, tilbakeTil } from '../../hooks/useRute'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { Button } from '../Button'
+import { Button, Knappelenke } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import { Avatar } from '../konto/Avatar'
@@ -478,10 +478,10 @@ function Medlemslinje({ gruppe, onVis }: { gruppe: Gruppeoversikt; onVis: () => 
           })}
         </span>
       )}
-      <button type="button" className="medlemslinje__knapp" onClick={onVis}>
+      <Button variant="subtle" icon={<Ikon navn="user" />} onClick={onVis}>
         {antallMedlemmer(aktive.length)} · Vis medlemmer
         {inviterte.length > 0 && gruppe.kan_styre && <span className="kun-skjermleser">, {inviterte.length} venter på svar</span>}
-      </button>
+      </Button>
     </span>
   )
 }
@@ -504,14 +504,8 @@ function Gruppepanel({ ikon, tittel, signal, children }: { ikon: Ikonnavn; titte
 /** Panelene på gruppesiden har tallene sine med gruppen, og laster ikke for seg. */
 const KLAR = { status: 'klar', hendelser: [] } as const
 
-/** En lenke som ser ut som en sekundærknapp, så den kan åpnes i en ny fane. */
-function Panellenke({ href, children }: { href: string; children: string }) {
-  return (
-    <a className="knapp knapp--kant" href={href}>
-      <span className="knapp__tekst">{children}</span>
-    </a>
-  )
-}
+/** Pilen i sekundærknappene som fører videre fra panelene, som «Åpne fortolkning». */
+const VIDERE = <Ikon navn="chev" />
 
 const flertall = (n: number, en: string, flere: string) => `${n} ${n === 1 ? en : flere}`
 
@@ -531,14 +525,18 @@ function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
         tittel="Idéer"
         signal={`${flertall(venter, 'åpen', 'åpne')} · ${flertall(nye_ideer, 'ny', 'nye')}${g.kan_styre && aktiv && venter > 0 ? ' · venter på behandling' : ''}`}
       >
-        <Panellenke href={gruppeadresse(g.id, 'ideer')}>Åpne idéer</Panellenke>
+        <Knappelenke href={gruppeadresse(g.id, 'ideer')} icon={VIDERE}>
+          Åpne idéer
+        </Knappelenke>
       </Gruppepanel>
       <Gruppepanel
         ikon="oppgaver"
         tittel="Oppgaver"
         signal={mine_oppgaver > 0 ? `${mine_oppgaver} tildelt deg` : 'Ingen tildelt deg'}
       >
-        <Panellenke href={gruppeadresse(g.id, 'oppgaver')}>Åpne oppgaver</Panellenke>
+        <Knappelenke href={gruppeadresse(g.id, 'oppgaver')} icon={VIDERE}>
+          Åpne oppgaver
+        </Knappelenke>
       </Gruppepanel>
       <Gruppepanel
         ikon="diskusjon"
@@ -546,7 +544,7 @@ function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
         signal={aktiv ? 'Åpnes i diskusjonsmenyen; siden blir stående.' : 'Lukket mens gruppen er arkivert.'}
       >
         {aktiv && (
-          <Button variant="kant" onClick={() => visDiskusjonene(gruppeside(g.id))}>
+          <Button variant="sekundar" icon={VIDERE} onClick={() => visDiskusjonene(gruppeside(g.id))}>
             Åpne diskusjoner
           </Button>
         )}
@@ -557,7 +555,7 @@ function Paneler({ gruppe: g }: { gruppe: Gruppeoversikt }) {
           tittel="Gruppechat"
           signal={chat_uleste > 0 ? flertall(chat_uleste, 'ulest melding', 'uleste meldinger') : 'Ingen uleste meldinger'}
         >
-          <Button variant="kant" onClick={() => visGruppesamtale(g.id)}>
+          <Button variant="sekundar" icon={VIDERE} onClick={() => visGruppesamtale(g.id)}>
             Åpne chat
           </Button>
         </Gruppepanel>

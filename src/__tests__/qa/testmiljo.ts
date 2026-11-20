@@ -62,6 +62,17 @@ export interface Testmiljo {
    * bruke appen samtidig (gruppechatten). Lukkes av {@link avslutt}.
    */
   brukerside(brukernavn: string, passord: string, valg?: Record<string, unknown>): Promise<Pw>
+  /**
+   * Bare lokalt, for ytelsesmålingen (`ytelse.ts`): en side i en egen kontekst
+   * med nettleserens hurtigbuffer (HTTP-cache) slik en vanlig nettleser har den.
+   * Avskjæringen av kallene (`route`) slår av hurtigbufferen i Chromium, så her
+   * stoppes produksjonsdatabasen i stedet av nettleseren selv
+   * (`Network.setBlockedURLs`); et forsøk stopper kjøringen som ellers. Siden
+   * er ikke logget inn og har ingenting lagret. CDP-økten står i `side.__cdp`
+   * (til nettverks- og CPU-strupingen). Kalleren lukker konteksten
+   * (`side.context().close()`).
+   */
+  maleside(valg?: Record<string, unknown>): Promise<Pw>
   /** Lukker nettleseren (og appen lokalt) og gir trafikken i kjøringen. */
   avslutt(): Promise<Trafikkrapport>
 }
@@ -205,6 +216,26 @@ export async function apneTestmiljo(valg: Testmiljovalg = {}): Promise<Testmiljo
       brukerkontekster.push(k)
       const side = await k.newPage()
       await loggInn(side, url, navn, passordet)
+      return side
+    },
+    async maleside(valg = {}) {
+      if (modus !== 'lokal') throw new Teststopp('Ytelsesmålingen bare i det lokale testmiljøet.')
+      if (vakt.stoppet) throw new Teststopp(`Kjøringen er stoppet: ${vakt.stoppet}.`)
+      const k = await nettleser.newContext({ viewport: { width: 1300, height: 1000 }, ...valg })
+      brukerkontekster.push(k)
+      k.on('request', (r: Pw) => {
+        if (tilDatabasen(r.url()) && !vakt.stoppet) vakt.kall(r)
+      })
+      k.on('response', (r: Pw) => vakt.svar(r.request(), r.status(), new URL(r.url()).pathname))
+      k.on('requestfailed', (r: Pw) => {
+        if (erSupabaseISkyen(r.url())) vakt.stopp(`den lokale målingen prøvde å nå produksjonsdatabasen (${new URL(r.url()).host})`)
+        vakt.avbrutt(r)
+      })
+      const side = await k.newPage()
+      const cdp = await k.newCDPSession(side)
+      await cdp.send('Network.enable')
+      await cdp.send('Network.setBlockedURLs', { urls: ['*://*.supabase.co/*', '*://*.supabase.co:*/*'] })
+      side.__cdp = cdp
       return side
     },
     async avslutt() {

@@ -130,6 +130,25 @@ describe('Forsiden', () => {
     expect(within(panel('Oppdaterte fagsider')).getByText('Ingen nye hendelser.')).toBeTruthy()
   })
 
+  it('har «Gå til gruppeoversikten» som en knapp under gruppene (issue #510)', async () => {
+    const gruppe = {
+      id: 'g1',
+      navn: 'Sandkassegruppen',
+      beskrivelse: '',
+      art: 'tverrfaglig' as const,
+      status: 'aktiv' as const,
+      fagmiljo: null,
+      medlemmer: 2,
+      samhandling: { nye_ideer: 0, venter: 0, mine_oppgaver: 0, chat_uleste: null },
+    }
+    vi.mocked(api.hentOppsummering).mockImplementation((modul) => Promise.resolve(modul === 'grupper' ? { ...TOM, grupper: [gruppe] } : TOM))
+    vis()
+    const knapp = await within(panel('Mine grupper')).findByRole('link', { name: 'Gå til gruppeoversikten' })
+    expect(knapp.getAttribute('href')).toBe('#/grupper')
+    expect(knapp.classList).toContain('knapp--sekundar')
+    expect(screen.queryByText('Alle grupper')).toBeNull()
+  })
+
   it('lar en systemarkitekt bytte til et fagmiljø hen ikke er medlem av, merket «Ikke medlem»', async () => {
     vis({ systemarkitekt: true, velgbareFagmiljoer: [KF, RT] })
     await userEvent.click(screen.getByRole('button', { name: 'Bytt fagmiljø' }))

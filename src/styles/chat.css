@@ -275,24 +275,8 @@
   transition: background-color var(--fart-rask) var(--kurve);
 }
 
-.chatpanel__knapp:hover,
-.chatpanel__gjenopprett:hover {
+.chatpanel__knapp:hover {
   background: var(--flate-hevet);
-}
-
-.chatpanel__gjenopprett {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--rom-2);
-  min-height: var(--hoyde-liten);
-  padding: 0 var(--rom-4);
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-ui);
-  color: var(--blekk);
-  background: transparent;
-  border: 0;
-  border-radius: var(--runding-pille);
-  cursor: pointer;
 }
 
 /* ⚙ nederst til høyre i oversikten, også når lista er lang. */
@@ -549,30 +533,8 @@
 }
 
 .chatsamtale__tilbake {
-  display: inline-flex;
   flex: none;
   align-self: flex-start;
-  align-items: center;
-  gap: var(--rom-1);
-  min-height: var(--hoyde-liten);
-  padding: 0 var(--rom-3) 0 var(--rom-1);
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-liten);
-  font-weight: var(--vekt-halvfet);
-  color: var(--blekk-dempet);
-  background: transparent;
-  border: 0;
-  border-radius: var(--runding-pille);
-  cursor: pointer;
-}
-
-.chatsamtale__tilbake:hover {
-  color: var(--blekk);
-  background: var(--flate-hevet);
-}
-
-.chatsamtale__tilbake .ikon {
-  transform: rotate(180deg);
 }
 
 /* Helsiden har lista ved siden av samtalen; i én kolonne (smalt) trengs knappen. */
@@ -645,26 +607,6 @@
   min-height: var(--hoyde-liten);
   justify-content: space-between;
   gap: var(--rom-2);
-}
-
-.chatsamtaler__ny {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--rom-1);
-  min-height: var(--hoyde-liten);
-  padding: 0 var(--rom-3) 0 var(--rom-2);
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-liten);
-  font-weight: var(--vekt-halvfet);
-  color: var(--aksent);
-  background: transparent;
-  border: var(--kant) solid var(--linje);
-  border-radius: var(--runding-pille);
-  cursor: pointer;
-}
-
-.chatsamtaler__ny:hover {
-  background: var(--flate-hevet);
 }
 
 /* Symbolet til gruppen i samtalelista og over samtalen, like stort som bildet til en person. */

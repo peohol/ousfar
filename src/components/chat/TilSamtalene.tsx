@@ -1,3 +1,4 @@
+import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 
 /**
@@ -7,10 +8,9 @@ import { Ikon } from '../ikon/Ikon'
  */
 export function TilSamtalene({ onTilbake, undervisning = false }: { onTilbake: () => void; undervisning?: boolean }) {
   const knapp = (
-    <button type="button" className={undervisning ? 'chatsamtale__tilbake chatny__tilbake' : 'chatsamtale__tilbake'} onClick={onTilbake}>
-      <Ikon navn="chev" storrelse="ui" />
-      <span>Til alle samtaler</span>
-    </button>
+    <Button variant="subtle" className={undervisning ? 'chatsamtale__tilbake chatny__tilbake' : 'chatsamtale__tilbake'} icon={<Ikon navn="back" />} onClick={onTilbake}>
+      Til alle samtaler
+    </Button>
   )
   return undervisning ? <div className="chatny__topp">{knapp}</div> : knapp
 }

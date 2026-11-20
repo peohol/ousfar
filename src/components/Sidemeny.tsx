@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
 import { Bryter } from './Bryter'
+import { Knappelenke } from './Button'
 import { Fanevalg, fanepanelId, faneId, type Fanedefinisjon } from './Fanevalg'
 import { Menynavigasjon, useHovedmenyen } from './Menynavigasjon'
 import { Shortcut } from './Shortcut'
@@ -299,10 +300,9 @@ export function Sidemeny({ register }: SidemenyProps) {
           </ul>
 
           {/* Helsiden har hele registeret, med arkivet og redigeringen. Menyen holdes ryddig. */}
-          <a className="menyhelside" href={STOFFREGISTERADRESSE} onClick={velg}>
-            <Ikon navn="ext" storrelse="ui" />
+          <Menyhelside href={STOFFREGISTERADRESSE} onVelg={velg}>
             Åpne hele stoffregisteret
-          </a>
+          </Menyhelside>
         </div>
 
         {visVerktoy && (
@@ -326,14 +326,28 @@ export function Sidemeny({ register }: SidemenyProps) {
                 </li>
               ))}
             </ul>
-            <a className="menyhelside" href={verktoyadresse()} onClick={velg}>
-              <Ikon navn="ext" storrelse="ui" />
+            <Menyhelside href={verktoyadresse()} onVelg={velg}>
               Åpne verktøyoversikten
-            </a>
+            </Menyhelside>
           </div>
         )}
       </nav>
     </>
+  )
+}
+
+/**
+ * Knappen nederst i en fane til helsiden med alt, som «Åpne hele
+ * stoffregisteret»: en sekundærknapp, ikke et menyvalg, så den skiller seg fra
+ * lista over.
+ */
+function Menyhelside({ href, onVelg, children }: { href: string; onVelg: () => void; children: ReactNode }) {
+  return (
+    <div className="menyhelside">
+      <Knappelenke href={href} onClick={onVelg} icon={<Ikon navn="chev" />}>
+        {children}
+      </Knappelenke>
+    </div>
   )
 }
 

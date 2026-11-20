@@ -44,7 +44,7 @@ async function luftUnderMenyen(side: Side, velger: string): Promise<number> {
 async function iHvertSittHjorne(side: Side): Promise<string> {
   const rad = await boks(side, '.tilbakerad')
   const lenke = await boks(side, '.tilbakerad .tilbakelenke')
-  const knapp = await boks(side, '.tilbakerad .knapp')
+  const knapp = await boks(side, '.tilbakerad > .knapp:last-child')
   krev(Math.abs(midt(lenke) - midt(knapp)) < 4, `samme rad (midt ${midt(lenke)} / ${midt(knapp)})`)
   krev(Math.abs(lenke.x - rad.x) < 2, 'lenken i venstre hjørne')
   krev(Math.abs(knapp.x + knapp.width - (rad.x + rad.width)) < 2, 'knappen i høyre hjørne')

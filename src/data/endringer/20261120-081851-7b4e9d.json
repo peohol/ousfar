@@ -1,0 +1,14 @@
+{
+  "id": "20261120-081851-7b4e9d",
+  "semver": "patch",
+  "opprettet": "2026-11-20T08:18:51Z",
+  "sammendrag": "Knapper ser ut som knapper",
+  "typer": ["Design / layout"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Knapper som før så ut som lenker eller vanlig tekst, er nå tydelige knapper med ikonet i en sirkel, slik som «Åpne fortolkning».",
+    "Det gjelder blant annet knappene nederst i panelene på forsiden og gruppesidene, «Til gruppen» over en gruppesamtale, «Åpne hele stoffregisteret» i sidemenyen, «Tilbake til …» og «Tilpass forsiden».",
+    "«Alle grupper» på forsiden heter nå «Gå til gruppeoversikten»."
+  ]
+}

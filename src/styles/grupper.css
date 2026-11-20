@@ -252,9 +252,9 @@ button.gruppeside__fane {
   max-width: 22rem;
 }
 
-/* --- Lenken tilbake og tittelraden ------------------------------------------ */
+/* --- Knappen tilbake og tittelraden ----------------------------------------- */
 
-/* Lenken i det ene hjørnet og sidens egne handlinger i det andre, så
+/* «Tilbake til …» (`Tilbakelenke`) i det ene hjørnet og sidens egne handlinger i det andre, så
    overskriften under får hele bredden. Raden står tett over overskriften. */
 .tilbakerad {
   display: flex;
@@ -263,24 +263,6 @@ button.gruppeside__fane {
   justify-content: space-between;
   gap: var(--rom-2) var(--rom-5);
   margin-bottom: calc(-1 * var(--rom-4));
-}
-
-.tilbakelenke {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--rom-2);
-  padding: var(--rom-1) 0;
-  font: inherit;
-  font-size: var(--tekst-ui);
-  color: var(--aksent);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.tilbakelenke:hover,
-.tilbakelenke:focus-visible {
-  text-decoration: underline;
 }
 
 .gruppeside__tittelrad {
@@ -421,20 +403,6 @@ button.gruppeside__fane {
 
 .medlemslinje__bilder .avatar + .avatar {
   margin-left: calc(-1 * var(--rom-1));
-}
-
-.medlemslinje__knapp {
-  padding: var(--rom-1) 0;
-  font: inherit;
-  color: var(--aksent);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.medlemslinje__knapp:hover,
-.medlemslinje__knapp:focus-visible {
-  text-decoration: underline;
 }
 
 .gruppeside__lesemodus {

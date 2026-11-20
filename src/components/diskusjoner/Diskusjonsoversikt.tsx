@@ -7,6 +7,7 @@ import {
   type Gruppering,
 } from '../../diskusjoner/modell'
 import { kortTid } from '../../traad/modell'
+import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Bekreftknapp, Idehandling } from '../traad/Smadeler'
 import { HANDTAK, useSortering, type Flytting } from '../../hooks/useSortering'
@@ -117,14 +118,12 @@ export function Diskusjonsoversikt({
       </div>
 
       <div className="diskusjonsoversikt__nye">
-        <button type="button" className="nytraadknapp" onClick={() => onNyTraad()}>
-          <Ikon navn="plus" storrelse="ui" />
-          <span>Ny tråd</span>
-        </button>
-        <button type="button" className="nytraadknapp" onClick={onNyKategori}>
-          <Ikon navn="plus" storrelse="ui" />
-          <span>Ny kategori</span>
-        </button>
+        <Button variant="kant" icon={<Ikon navn="plus" />} onClick={() => onNyTraad()}>
+          Ny tråd
+        </Button>
+        <Button variant="kant" icon={<Ikon navn="plus" />} onClick={onNyKategori}>
+          Ny kategori
+        </Button>
       </div>
 
       {arkiv.length > 0 && (
@@ -242,10 +241,9 @@ function Kategori({
         )}
       </div>
       <Traadliste liste={kategori.id} tar="traad" diskusjoner={diskusjoner} onApne={onApne} kanStyre={kanStyre} />
-      <button type="button" className="nytraadknapp nytraadknapp--kategori" onClick={onNyTraad}>
-        <Ikon navn="plus" storrelse="ui" />
-        <span>Ny tråd</span>
-      </button>
+      <Button variant="kant" className="kategoriliste__nytraad" icon={<Ikon navn="plus" />} onClick={onNyTraad}>
+        Ny tråd
+      </Button>
     </li>
   )
 }
