@@ -1118,6 +1118,14 @@ skrives nøyaktig (`supabase/migrations/20261119190000_personsok.sql`).
 - **Belastningen**: appen spør først når skrivingen har stoppet i et kvart
   sekund (250 ms) og søket har minst to tegn, og husker svarene til et treff
   er valgt. Tabellene er små, så søket trenger ingen egen indeks.
+- **Rekkefølgen i databasen** (`20261120090000_personsok_ytelse.sql`,
+  Issue #502): de billige utvalgene (ikke alt med eller invitert, ikke alt
+  medlem, bryteren på) gjøres for alle synlige, så sammenlignes og rangeres
+  alle, og først da avgjøres det for treffene i rangert rekkefølge om de kan
+  velges (`intern.personsokgodtar`, med de samme reglene som over), til 20
+  er godtatt. Treffene er altså de 20 beste av hele den lovlige mengden, men
+  den dyre avgjørelsen tas bare for de få som passer. Ved 5 000 personer gikk
+  et søk fra 1–5 s til under 0,5 s i databasen (`docs/ytelse-maling.md`).
 
 Testene står i `src/__tests__/personsok.test.ts`.
 

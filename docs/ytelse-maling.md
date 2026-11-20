@@ -247,3 +247,51 @@ dokumentert. Konkret, med de samme dataene og innstillingene:
 
 Overgangene som alt er raske (fortolkning, fagside fra forsiden og
 fagmiljøbytte på rask profil), skal ikke bli tregere.
+
+## Etter leveransene
+
+Hver leveranse måles før og etter på samme maskin, med de samme dataene og
+innstillingene som over. Rådataene ligger i prosjektmappa, ikke i repoet.
+
+### B (#502) personsøk og Brukere
+
+`20261120090000_personsok_ytelse.sql`, målt 20.11.2026 (før: kode lik `main`,
+etter: med migrasjonen; `YTELSE_SCENARIER=personsok,brukere,sql`). Median
+(p95), fra siste tastetrykk til svaret står:
+
+| Søket, 5 000 personer | Rask: før → etter | Treg: før → etter |
+| --- | --- | --- |
+| Gruppeinvitasjon, første søk | 4,07 s (4,30) → 693 ms (747) | 3,83 s (4,03) → 730 ms (923) |
+| Gruppeinvitasjon, skrivefeil | 4,83 s (6,52) → 757 ms (776) | 4,71 s (4,98) → 809 ms (838) |
+| Gruppeinvitasjon, tomt treff | 4,26 s (6,50) → 735 ms (808) | 4,52 s (4,68) → 715 ms (986) |
+| «Legg til medlem», første søk | 2,44 s (2,60) → 358 ms (600) | 2,51 s (2,92) → 425 ms (455) |
+| «Legg til medlem», skrivefeil | 2,65 s (2,92) → 387 ms (431) | 2,99 s (3,37) → 552 ms (569) |
+| «Legg til medlem», tomt treff | 2,62 s (2,87) → 378 ms (407) | 2,81 s (3,27) → 526 ms (542) |
+| Ny direktemelding, første søk | 1,72 s (2,04) → 423 ms (450) | 1,89 s (2,06) → 472 ms (557) |
+| Ny direktemelding, skrivefeil | 2,24 s (2,58) → 462 ms (529) | 2,34 s (3,32) → 523 ms (553) |
+| Ny direktemelding, tomt treff | 1,93 s (2,01) → 437 ms (506) | 2,11 s (2,25) → 496 ms (513) |
+
+- **75–86 % kortere median og p95** ved 5 000 personer; ved 500 personer
+  34–55 % (rask) og 11–51 % (treg). Av det som er igjen, er 250 ms pausen
+  etter siste tastetrykk.
+- **«Brukere»** (systemarkitekt): 5 000 personer 4,92 s → 2,54 s (rask) og
+  6,63 s → 4,45 s (treg); 500 personer 707 → 502 ms (rask). Ved 50 personer
+  er forskjellen innenfor støyen (229–746 ms).
+- **I databasen**, ved 5 000 personer: `sok_gruppekandidater` 1,6–5,4 s →
+  0,39–0,54 s, `sok_medlemskandidater` 2,1–2,8 s → 0,1 s (systemarkitekt) og
+  1,4–1,7 s → 21–25 ms (lokal administrator), `sok_direktemottakere`
+  0,86–2,5 s → 0,16–0,22 s; blokkene som leses, fra 47 000–237 000 til
+  under 3 400. Medlemslista: 4,8 s → 2,4 s (systemarkitekt) og 7,2 s → 3,3 s
+  (lokal administrator).
+- **De samme svarene:** alle søkene er riktige i alle radene før og etter, og
+  140 søk (tre søk, fire roller, 20 søketekster, også æ, ø, å, aksenter og
+  skrivefeil) og medlemslista for systemarkitekt og lokal administrator ga
+  byte-identiske svar før og etter.
+
+Hva som kostet: sammenligningen regnet ut bokstavtriplene i hver del av hvert
+navn; søkene avgjorde for hver synlig person om hen kunne velges før de
+sammenlignet; og `intern.administrerte_fagmiljoer`, som de fleste
+tilgangsavgjørelsene bruker, ble planlagt på nytt ved hvert kall (en
+SQL-funksjon som gir en mengde, kalt fra en annen funksjon, i Postgres 17).
+Detaljene står i migrasjonen og i [fagmiljoer.md](fagmiljoer.md),
+«Personsøket».
