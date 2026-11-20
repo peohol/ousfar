@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-20T15:26:23.275Z",
+  "oppdatert_kl": "2026-11-20T16:26:18.457Z",
   "malt_kl": "2026-11-20T03:29:26.848Z",
   "teller": 82,
   "stoffer": {
@@ -2375,16 +2375,11 @@
     "flupentiksol": {
       "stoff": "flupentiksol",
       "navn": "Flupentiksol",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 352.8,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 53 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -2400,7 +2395,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
+          "kl": "2026-11-20T16:26:18.457Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -2416,16 +2418,11 @@
     "fluvoksamin": {
       "stoff": "fluvoksamin",
       "navn": "Fluvoksamin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 352.9,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 51 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -2441,7 +2438,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-20T16:26:18.457Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3550,16 +3554,11 @@
     "klorprotiksen": {
       "stoff": "klorprotiksen",
       "navn": "Klorprotiksen",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 352.9,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 52 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -3575,7 +3574,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-20T16:26:18.457Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3591,11 +3597,16 @@
     "klozapin": {
       "stoff": "klozapin",
       "navn": "Klozapin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 352.6,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 58 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -3611,14 +3622,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, retting); den må avsluttes først.",
-          "kl": "2026-11-20T15:26:23.275Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -4324,16 +4328,11 @@
     "levomepromazin": {
       "stoff": "levomepromazin",
       "navn": "Levomepromazin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 353.2,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 47 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -4349,7 +4348,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
+          "kl": "2026-11-20T16:26:18.457Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -5098,11 +5104,16 @@
     "nortriptylin": {
       "stoff": "nortriptylin",
       "navn": "Nortriptylin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 353.1,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 49 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -5118,14 +5129,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, retting); den må avsluttes først.",
-          "kl": "2026-11-20T15:26:23.275Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -6512,11 +6516,17 @@
     "venlafaksin": {
       "stoff": "venlafaksin",
       "navn": "Venlafaksin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 361,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "1 av 13 redaksjonelle seksjoner er tomme.",
+          "3 av 46 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-20T03:29:27.452Z",
@@ -6532,14 +6542,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, retting); den må avsluttes først.",
-          "kl": "2026-11-20T15:26:23.275Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
