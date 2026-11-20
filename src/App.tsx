@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from './auth/okt'
 import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
@@ -7,7 +7,6 @@ import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
 import { iBakgrunnen } from './auth/aktivitet'
 import { klient } from './auth/klient'
 import { nettleserlager } from './auth/mellomlager'
-import { Stoffside } from './components/stoffside/Stoffside'
 import { FaginnholdskildeProvider, type Faginnholdskilde } from './components/stoffside/Faginnholdskilde'
 import { SearchStep } from './components/SearchStep'
 import { BandStep } from './components/BandStep'
@@ -17,10 +16,10 @@ import { KontrollStep } from './components/KontrollStep'
 import { PasteStep } from './components/PasteStep'
 import { RusStep } from './components/RusStep'
 import { useHentScenarioregler } from './components/regler/Scenarioreglerkilde'
-import { Fortolkningsredigering } from './components/regler/Fortolkningsredigering'
 import { Sidemeny, sidemenyenErApen } from './components/Sidemeny'
 import { ThcStep } from './components/ThcStep'
 import { CopyFlash } from './components/CopyFlash'
+import { Senere } from './components/Senere'
 import { ruteAv } from './components/Kopibevis'
 import { Idelag } from './components/ideer/Idelag'
 import { Administrasjon } from './components/konto/Administrasjon'
@@ -34,7 +33,6 @@ import { Ikonknapp } from './components/Ikonknapp'
 import { Button } from './components/Button'
 import { Ikon } from './components/ikon/Ikon'
 import { Versjonspille } from './components/Versjonspille'
-import { Diskusjonsmeny } from './components/diskusjoner/Diskusjonsmeny'
 import { Chatmeny } from './components/chat/Chatmeny'
 import { Chatvarselvakt } from './components/chat/Chatvarselvakt'
 import { Chatknapp } from './components/chat/Chatknapp'
@@ -75,8 +73,6 @@ import {
 import { lagFaginnholdslager, lagerFor } from './faginnhold/lagring'
 import { lagFaginnholdsleser } from './faginnhold/lesing'
 import { lagKurateringsklient } from './kuratering/klient'
-import { Kurateringsside } from './components/kuratering/Kurateringsside'
-import { Versjonsside } from './components/kuratering/Versjonsside'
 import { lagEndringsloggleser } from './endringslogg/api'
 import type { Endringskontekst } from './endringslogg/operasjon'
 import { endringssideFor } from './endringslogg/sider'
@@ -89,13 +85,8 @@ import { lagSideleser, lagVersjonsleser, lesSokeindeks } from './faginnhold/glob
 import { utenSider } from './faginnhold/sok'
 import { lagRegisterlager } from './stoffregister/api'
 import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffregister/Stoffregisterkilde'
-import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
-import { Verktoyside } from './components/verktoy/Verktoyside'
-import { Grupperside } from './components/grupper/Grupperside'
-import { Gruppeflate } from './components/grupper/Gruppeflate'
 import { arbeidsflate, flatebakgrunn } from './components/grupper/arbeidsflate'
 import { ForslagskildeProvider } from './components/forslag/Forslagskilde'
-import { Forslagsside } from './components/forslag/Forslagsside'
 import { Fortolkningsforslag } from './components/forslag/Fortolkningsforslag'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
@@ -132,6 +123,19 @@ import { useHusketValg } from './hooks/useSystemvalg'
 import { lesThcVisning, THC_VISNING } from './domain/thcPlot'
 import { lesPubliserteRegelsett } from './regler/kommentarer'
 import { slaOpp } from './regler/publiserte'
+import {
+  Diskusjonsmeny,
+  Forslagsside,
+  Fortolkningsredigering,
+  Gruppeflate,
+  Grupperside,
+  Kurateringsside,
+  sidekodeFor,
+  Stoffregisterside,
+  Stoffside,
+  Verktoyside,
+  Versjonsside,
+} from './sidekode'
 import { useBevart } from './oppdatering/Bevaring'
 import { meldSide, roligOyeblikk } from './oppdatering/sider'
 import { fortolkningsform, initialState, isIdle, reducer, stageOf, type Action, type Stage } from './state'
@@ -139,6 +143,10 @@ import type { Analyte } from './types'
 import { lagVerktoysperrelager } from './verktoy/sperrer'
 import { lagRegelvarsellager } from './verktoy/overvaking/regelvarsler'
 import { VerktoytilgangProvider, verktoyeneVisesFor } from './verktoy/synlighet'
+
+// Åpnes appen på en slik side (en direkte lenke, eller siden som sto før en
+// oppdatering), hentes koden til den sammen med appen, ikke etter den.
+if (typeof window !== 'undefined') for (const kode of sidekodeFor(lesRute(window.location.hash))) kode.forhandslast()
 
 const KOPIFEIL = 'Fikk ikke tilgang til utklippstavlen. Kopier teksten manuelt.'
 
@@ -387,14 +395,17 @@ function Arbeidsflate({
 
   // Fagsøket: indeksen over alt publisert fagstoff, hentet når appen har tid
   // til overs etter at den er åpnet, eller første gang noen søker før det. De
-  // andre navnene et stoff er kjent under, står i stoffregisteret. Søket viser
-  // selv at det henter, så hentingen står ikke i lasteindikatoren.
+  // andre navnene et stoff er kjent under, står i stoffregisteret, og navnene
+  // på de publiserte sidene leses derfra først, så et stoffnavn finnes før
+  // innholdet er hentet. Søket viser selv at det henter, så hentingen står
+  // ikke i lasteindikatoren.
   const hentSokeindeks = useCallback<Sokeindekshenter>(
     (delvis) => {
       const stille = iBakgrunnen(klient())
       return lesSokeindeks(
         {
           sider: lagSideleser(stille),
+          stoffer: async () => (await lagRegisterlager(stille).les('publisert')).sider,
           legemidler: lagLegemiddelsok(stille),
           farmakogenetikk: lagFarmakogenetikksok(stille),
           cpic: lagCpicleserOmIBruk(stille),
@@ -410,6 +421,9 @@ function Arbeidsflate({
   )
   const sokeindeks = useSokeindeks(hentSokeindeks)
   useNaarLedig(sokeindeks.krev)
+  // Fagsidene er den vanligste veien videre fra forsiden og søket: koden
+  // deres hentes når appen har tid til overs, så den første ikke venter på den.
+  useNaarLedig(Stoffside.forhandslast)
   // De arkiverte fagsidene og dem i papirkurven står ikke i søket.
   const sokbar = sokeindeks.tilstand
   const synligIndeks = useMemo(() => {
@@ -886,16 +900,18 @@ function Arbeidsflate({
                   {redigererFortolkning && state.analyte && (
                     <main className="scene scene--infoside">
                       <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Fortolkningsredigering
-                          key={state.analyte.kode}
-                          fortolkning={state.analyte}
-                          sted={rute.side === 'fortolkning' ? rute.sted : undefined}
-                          katalog={katalog}
-                          kanPublisere={redigering.publisere}
-                          regelsett={redigering.regelsett}
-                          onPublisert={reglerPublisert}
-                          onAvslutt={avsluttRedigering}
-                        />
+                        <Senere>
+                          <Fortolkningsredigering
+                            key={state.analyte.kode}
+                            fortolkning={state.analyte}
+                            sted={rute.side === 'fortolkning' ? rute.sted : undefined}
+                            katalog={katalog}
+                            kanPublisere={redigering.publisere}
+                            regelsett={redigering.regelsett}
+                            onPublisert={reglerPublisert}
+                            onAvslutt={avsluttRedigering}
+                          />
+                        </Senere>
                       </FaginnholdskildeProvider>
                     </main>
                   )}
@@ -915,12 +931,14 @@ function Arbeidsflate({
                   {rute.side === 'stoff' && (
                     <main className="scene scene--infoside">
                       <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Stoffside
-                          stoff={rute.stoff}
-                          sted={rute.sted}
-                          register={register}
-                          onLukk={lukkInfoside}
-                        />
+                        <Senere>
+                          <Stoffside
+                            stoff={rute.stoff}
+                            sted={rute.sted}
+                            register={register}
+                            onLukk={lukkInfoside}
+                          />
+                        </Senere>
                       </FaginnholdskildeProvider>
                     </main>
                   )}
@@ -928,52 +946,52 @@ function Arbeidsflate({
                   {(rute.side === 'versjon' || rute.side === 'kuratering') && (
                     <main className="scene scene--infoside">
                       <FaginnholdskildeProvider kilde={faginnhold}>
-                        {rute.side === 'versjon' ? (
-                          <Versjonsside
-                            stoff={rute.stoff}
-                            nr={rute.nr}
-                            register={register}
-                            onGaaTil={gaaTil}
-                            onLukk={lukkInfoside}
-                          />
-                        ) : (
-                          <Kurateringsside
-                            gren={rute.gren}
-                            register={register}
-                            onGaaTil={gaaTil}
-                            onLukk={lukkInfoside}
-                          />
-                        )}
+                        <Senere>
+                          {rute.side === 'versjon' ? (
+                            <Versjonsside stoff={rute.stoff} nr={rute.nr} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
+                          ) : (
+                            <Kurateringsside gren={rute.gren} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
+                          )}
+                        </Senere>
                       </FaginnholdskildeProvider>
                     </main>
                   )}
 
                   {rute.side === 'stoffregister' && (
                     <main className="scene scene--stoffregister">
-                      <Stoffregisterside
-                        onLukk={lukkInfoside}
-                        kuratering={faginnhold.kuratering}
-                      />
+                      <Senere>
+                        <Stoffregisterside onLukk={lukkInfoside} kuratering={faginnhold.kuratering} />
+                      </Senere>
                     </main>
                   )}
 
                   {rute.side === 'verktoy' && visVerktoy && (
                     <main className="scene scene--verktoy">
-                      <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
+                      <Senere>
+                        <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
+                      </Senere>
                     </main>
                   )}
 
                   {rute.side === 'grupper' && (
                     <main className="scene scene--infoside">
-                      <Grupperside gruppe={rute.gruppe} fane={rute.fane} onLukk={lukkInfoside} />
+                      <Senere>
+                        <Grupperside gruppe={rute.gruppe} fane={rute.fane} onLukk={lukkInfoside} />
+                      </Senere>
                     </main>
                   )}
-                  {flate && <Gruppeflate key={flate.gruppe} {...flate} />}
+                  {flate && (
+                    <Suspense fallback={null}>
+                      <Gruppeflate key={flate.gruppe} {...flate} />
+                    </Suspense>
+                  )}
 
                   {rute.side === 'forslag' && (
                     <main className="scene scene--infoside">
                       <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
+                        <Senere>
+                          <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
+                        </Senere>
                       </FaginnholdskildeProvider>
                     </main>
                   )}
@@ -1092,7 +1110,11 @@ function Arbeidsflate({
                     )}
                   </main>
 
-                  {diskusjonsside && <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />}
+                  {diskusjonsside && (
+                    <Suspense fallback={null}>
+                      <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />
+                    </Suspense>
+                  )}
                   <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
                   <Chatvarselvakt brukerId={profil.id} />
                   {/* Vinduene hovedmenyen åpner under «For hele appen». */}

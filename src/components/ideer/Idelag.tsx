@@ -4,10 +4,14 @@ import { useBevart } from '../../oppdatering/Bevaring'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { hentIdeerMedNytt } from '../../ideer/api'
 import { oppfriskVarsler } from '../../varsler/api'
-import { Ideer } from './Ideer'
+import { senere } from '../../oppdatering/senere'
+import { NarApnet } from '../Senere'
 import { idestatus, lyttEtterIde, lyttEtterIdelag, meldIdelagene, type Idelagnavn } from './idevisning'
-import { Oppgaver } from './Oppgaver'
 import type { Forlat } from './useForlatvakt'
+
+// Vinduene hentes første gang de åpnes; tallet på nye kommentarer sjekkes her uansett.
+const Ideer = senere(() => import('./Ideer'), 'Ideer')
+const Oppgaver = senere(() => import('./Oppgaver'), 'Oppgaver')
 
 /**
  * Laget som står åpent: Idéer, kanskje på én idé (og en kommentar under den,
@@ -77,24 +81,30 @@ export function Idelag() {
   const lukkIdeer = useCallback(() => lukk('ideer'), [lukk])
   const lukkOppgaver = useCallback(() => lukk('oppgaver'), [lukk])
 
+  const ideerApen = vindu?.lag === 'ideer'
+  const oppgaverApen = systemarkitekt && vindu?.lag === 'oppgaver'
   return (
     <>
-      <Ideer
-        apen={vindu?.lag === 'ideer'}
-        ide={vindu?.lag === 'ideer' ? vindu.ide : undefined}
-        kommentar={vindu?.lag === 'ideer' ? vindu.kommentar : undefined}
-        nr={vindu?.lag === 'ideer' ? vindu.nr : undefined}
-        vakt={vakt}
-        onLukk={lukkIdeer}
-        onOppgaver={(oppgave) => setVindu({ lag: 'oppgaver', oppgave })}
-      />
-      <Oppgaver
-        apen={systemarkitekt && vindu?.lag === 'oppgaver'}
-        oppgave={vindu?.lag === 'oppgaver' ? vindu.oppgave : undefined}
-        vakt={vakt}
-        onLukk={lukkOppgaver}
-        onIdeer={() => setVindu({ lag: 'ideer' })}
-      />
+      <NarApnet apen={ideerApen}>
+        <Ideer
+          apen={ideerApen}
+          ide={vindu?.lag === 'ideer' ? vindu.ide : undefined}
+          kommentar={vindu?.lag === 'ideer' ? vindu.kommentar : undefined}
+          nr={vindu?.lag === 'ideer' ? vindu.nr : undefined}
+          vakt={vakt}
+          onLukk={lukkIdeer}
+          onOppgaver={(oppgave) => setVindu({ lag: 'oppgaver', oppgave })}
+        />
+      </NarApnet>
+      <NarApnet apen={oppgaverApen}>
+        <Oppgaver
+          apen={oppgaverApen}
+          oppgave={vindu?.lag === 'oppgaver' ? vindu.oppgave : undefined}
+          vakt={vakt}
+          onLukk={lukkOppgaver}
+          onIdeer={() => setVindu({ lag: 'ideer' })}
+        />
+      </NarApnet>
     </>
   )
 }

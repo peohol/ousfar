@@ -16,6 +16,15 @@
  *   analysene fra Farmakologiportalen for alle forbindelsene i registeret, og
  *   hver side får de samme analysene som seksjonen på siden viser.
  *
+ * Før sidene selv er lest, finner søket dem med navnet: navnene på de
+ * publiserte fagsidene står i stoffregisteret (`les_stoffregister`), som er
+ * lite og svarer raskt, mens `les_stoffer` er stort. Uten dette ventet et søk
+ * på et stoffnavn på hele innholdet første gang.
+ *
+ * Indeksen bygges i korte strekk når nettleseren er ledig
+ * ({@link indekserStykkevis}), så et klikk eller et tastetrykk, og det appen
+ * gjør for det, ikke venter på den.
+ *
  * Det som er lest, lagres i nettleseren, og neste gang vises det med én gang.
  * `sokedata_versjoner` sier hvilke kilder som er endret siden, og bare de
  * leses på nytt. Feiler en kilde, prøves den igjen et par ganger; feiler den
@@ -36,7 +45,7 @@ import { tilFeil } from './lagring'
 import { TOM_STOFFSIDE, type Stoffsidedata, type Utgave } from './lesing'
 import type { Referanseinnhold, Tilstand } from './modell'
 import { indekserSide, lagSokeindeks, stoffidentitet, type Sokedokument, type Sokeindeks, type Tilleggstekst } from './sok'
-import { byggStoffregister, STOFFREGISTERDATA, type Registerdata } from '../domain/stoffregister'
+import { byggStoffregister, STOFFREGISTERDATA, type Registerdata, type Stoffoppforing } from '../domain/stoffregister'
 import type { Interaksjonssokerad, Legemiddelsok, Preparatsokerad } from '../legemiddeldata/lesing'
 import {
   interaksjonerFraSok,
@@ -64,6 +73,11 @@ export type Perkobling<T> = ReadonlyMap<string, readonly T[]>
 /** Alt søket i kunnskapsbasen indekserer. Det som mangler, er ikke lest (ennå). */
 export interface Kunnskapsbase {
   sider: Stoffsidedata[]
+  /**
+   * De publiserte fagsidene i databasen, bare med navnet, til sidene selv er
+   * lest. Søket finner dem da med navnet og aliasene, som et stoff uten side.
+   */
+  stoffer?: readonly Stoffoppforing[]
   /** Preparatnavnene på hver side. */
   preparater?: Perkobling<Preparatsokerad> | null
   /** Interaksjonene på hver side. */
@@ -97,6 +111,8 @@ export interface Sideleser {
 /** Det søket leser fra. Uten en kilde er dataene fra den ikke med. */
 export interface Sokekilder {
   sider: Sideleser
+  /** Navnene på de publiserte fagsidene, lest før sidene selv (stoffregisteret). */
+  stoffer?: (() => Promise<readonly Stoffoppforing[]>) | null
   legemidler?: Legemiddelsok | null
   farmakogenetikk?: Pick<Farmakogenetikkleser, 'les'> | null
   cpic?: Pick<Cpicleser, 'les'> | null
@@ -289,9 +305,17 @@ async function lesSokedata(
   }
 
   let base: Kunnskapsbase = { sider: [] }
+  // Når lesingen er avsluttet, endres ingenting mer: et svar som kommer
+  // etterpå (navnene), ville ellers gitt en delvis indeks etter den endelige.
+  let avsluttet = false
   const sett = (endring: Partial<Kunnskapsbase>) => {
+    if (avsluttet) return
     base = { ...base, ...endring }
     endret?.(base)
+  }
+  const avslutt = () => {
+    avsluttet = true
+    return base
   }
 
   /** Tilleggsdataene som er lagret for sidene slik de er nå. */
@@ -313,6 +337,17 @@ async function lesSokedata(
     sett(await lagredeTillegg())
   }
 
+  // Uten noe lagret: navnene først, så søket finner sidene før innholdet er
+  // lest. Det kan komme før eller etter versjonene; sidene går foran det.
+  if (!lagredeSider && kilder.stoffer) {
+    kilder.stoffer().then(
+      (stoffer) => {
+        if (base.sider.length === 0 && !base.stoffer) sett({ stoffer })
+      },
+      () => undefined,
+    )
+  }
+
   const versjoner = (await kilder.versjoner?.().catch(() => null)) ?? {}
 
   const sider = await lesKilde('sider', tilstand, lagredeSider, versjoner.sider, () =>
@@ -320,7 +355,7 @@ async function lesSokedata(
   )
   if ('feil' in sider) {
     sett({ mangler: { sider: sider.feil } })
-    return base
+    return avslutt()
   }
   if (sider.data !== base.sider) {
     base = { sider: sider.data }
@@ -346,7 +381,7 @@ async function lesSokedata(
       }
     }),
   )
-  return base
+  return avslutt()
 }
 
 /**
@@ -435,21 +470,79 @@ const TOM_MODELL = byggSidemodell(TOM_STOFFSIDE)
  * i databasen hvis nøkkel er et alias for et stoff i registeret, er ikke en
  * egen side og indekseres ikke.
  */
-export function indekserKunnskapsbase(
-  base: Kunnskapsbase,
-  { registerdata = STOFFREGISTERDATA }: Indekseringsvalg = {},
-): Sokedokument[] {
+export function indekserKunnskapsbase(base: Kunnskapsbase, valg: Indekseringsvalg = {}): Sokedokument[] {
+  const { stoffer, dokumenterFor } = stoffdokumenter(base, valg)
+  return stoffer.flatMap(dokumenterFor)
+}
+
+/** Stoffene som indekseres, i fast rekkefølge, og dokumentene for hvert av dem. */
+function stoffdokumenter(base: Kunnskapsbase, { registerdata = STOFFREGISTERDATA }: Indekseringsvalg) {
+  // Navnene fra registeret til sidene er lest; deretter sidene selv.
   const register = byggStoffregister(
-    base.sider.flatMap((s) => s.stoff ?? []),
+    base.sider.length > 0 ? base.sider.flatMap((s) => s.stoff ?? []) : (base.stoffer ?? []),
     registerdata,
   )
   const perSlug = new Map(base.sider.flatMap((s) => (s.stoff && s.infoside ? [[s.stoff.slug, s] as const] : [])))
-  return register.stoffer.flatMap((stoff) => {
-    const data = perSlug.get(stoff.slug)
-    const modell = data ? modellFor(data) : TOM_MODELL
-    const identitet = stoffidentitet(stoff)
-    return indekserSide(identitet, modell, data ? tilleggstekster(base, modell, stoff.slug) : labtekster(base, stoff.slug))
+  return {
+    stoffer: register.stoffer,
+    dokumenterFor: (stoff: (typeof register.stoffer)[number]): Sokedokument[] => {
+      const data = perSlug.get(stoff.slug)
+      const modell = data ? modellFor(data) : TOM_MODELL
+      const identitet = stoffidentitet(stoff)
+      return indekserSide(identitet, modell, data ? tilleggstekster(base, modell, stoff.slug) : labtekster(base, stoff.slug))
+    },
+  }
+}
+
+/**
+ * Hvor lenge indekseringen arbeider i ett strekk før nettleseren slipper til.
+ * En hel indeks tar flere hundre millisekunder på en treg maskin; i ett strekk
+ * ville et klikk eller et tastetrykk da vente til den er ferdig.
+ */
+export const INDEKSERINGSSTREKK_MS = 12
+
+/**
+ * Hvor lenge indekseringen venter på at nettleseren blir ledig, før den
+ * fortsetter likevel.
+ */
+const LENGSTE_PAUSE_MS = 500
+
+/**
+ * Venter til nettleseren er ledig: det brukeren gjør, og det appen henter og
+ * viser for det, går foran indekseringen.
+ */
+const slippTil = (): Promise<void> =>
+  new Promise((ok) => {
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(() => ok(), { timeout: LENGSTE_PAUSE_MS })
+    else setTimeout(ok, 0)
   })
+
+/**
+ * Den samme indeksen som `lagSokeindeks(indekserKunnskapsbase(base))`, bygd i
+ * strekk på høyst omtrent `strekk` millisekunder, hvert når nettleseren er
+ * ledig. Hvert stoff indekseres for seg, så alt om en side står i samme del.
+ */
+export async function indekserStykkevis(
+  base: Kunnskapsbase,
+  valg: Indekseringsvalg = {},
+  strekk = INDEKSERINGSSTREKK_MS,
+): Promise<Sokeindeks> {
+  const { stoffer, dokumenterFor } = stoffdokumenter(base, valg)
+  const deler: Sokeindeks[] = []
+  let start = performance.now()
+  for (const stoff of stoffer) {
+    deler.push(lagSokeindeks(dokumenterFor(stoff)))
+    if (performance.now() - start >= strekk) {
+      await slippTil()
+      start = performance.now()
+    }
+  }
+  return {
+    dokumenter: deler.flatMap((d) => d.dokumenter),
+    foldet: deler.flatMap((d) => d.foldet),
+    nokler: deler.flatMap((d) => d.nokler),
+    identitet: new Map(deler.flatMap((d) => [...d.identitet])),
+  }
 }
 
 /** En søkeindeks med kildene som ikke kunne leses. */
@@ -469,10 +562,35 @@ export async function lesSokeindeks(
   valg: Indekseringsvalg & { tilstand?: Tilstand } = {},
   delvis?: (indeks: Kunnskapsindeks) => void,
 ): Promise<Kunnskapsindeks> {
-  const indekser = (base: Kunnskapsbase): Kunnskapsindeks => ({
-    ...lagSokeindeks(indekserKunnskapsbase(base, valg)),
+  const medMangler = (indeks: Sokeindeks, base: Kunnskapsbase): Kunnskapsindeks => ({
+    ...indeks,
     ...(base.mangler && Object.keys(base.mangler).length > 0 && { mangler: base.mangler }),
   })
-  delvis?.(indekser({ sider: [] }))
-  return indekser(await lesSokedata(kilder, valg.tilstand ?? 'publisert', delvis && ((base) => delvis(indekser(base)))))
+  delvis?.(medMangler(lagSokeindeks(indekserKunnskapsbase({ sider: [] }, valg)), { sider: [] }))
+  // Én indeks om gangen, i den rekkefølgen dataene kom; den samme kunnskapsbasen
+  // indekseres bare én gang, så den siste delvise er også den endelige.
+  let ko: Promise<unknown> = Promise.resolve()
+  const indekser = husketSiste((base: Kunnskapsbase) => {
+    const indeks = ko.then(async () => medMangler(await indekserStykkevis(base, valg), base))
+    ko = indeks.catch(() => undefined)
+    return indeks
+  })
+  const base = await lesSokedata(
+    kilder,
+    valg.tilstand ?? 'publisert',
+    delvis &&
+      ((base) => {
+        void indekser(base).then(delvis, () => undefined)
+      }),
+  )
+  return indekser(base)
+}
+
+/** `lag` som gir det samme svaret igjen når det kalles med det samme som sist. */
+function husketSiste<A, R>(lag: (a: A) => R): (a: A) => R {
+  let sist: { a: A; r: R } | null = null
+  return (a) => {
+    if (sist?.a !== a) sist = { a, r: lag(a) }
+    return sist.r
+  }
 }

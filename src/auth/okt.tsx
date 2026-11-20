@@ -28,6 +28,8 @@ import { vedAvsluttetTilgang } from './tilgangsstans'
 interface Oktverdi {
   /** Hva som skal vises nå. Se `domain/tilgang.ts`. */
   tilgang: Tilgang
+  /** Sant når det finnes en økt, også før profilen er hentet. */
+  harOkt: boolean
   profil: Profil | null
   /** Sant når appen ikke er koblet mot brukerdatabasen i det hele tatt. */
   mangler: boolean
@@ -192,6 +194,7 @@ export function OktProvider({ children }: { children: ReactNode }) {
     const klar = oktAvklart && (brukerId === null || profilFor === brukerId)
     return {
       tilgang: tilgangFor({ klar, harOkt: brukerId !== null, profil, profilfeil, avsluttet }),
+      harOkt: oktAvklart && brukerId !== null,
       profil,
       mangler,
       forsokPaaNytt,

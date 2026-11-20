@@ -1,11 +1,12 @@
-import { Component, Suspense, lazy, useId, type ReactNode } from 'react'
+import { Component, Suspense, useEffect, useId, type ReactNode } from 'react'
 import { AVSLUTTET_MEDLEMSKAP } from '@delt/profil'
 import { useOkt } from '../../auth/okt'
 import type { Tilgang } from '../../domain/tilgang'
 import { BEVEGELSE, TEMA } from '../../domain/systemvalg'
 import { useSystemvalg } from '../../hooks/useSystemvalg'
 import { Bevaringseier } from '../../oppdatering/Bevaring'
-import { Lastefeil, lastPaNytt, reserverNylasting } from '../../oppdatering/nylasting'
+import { lastPaNytt, reserverNylasting } from '../../oppdatering/nylasting'
+import { senere } from '../../oppdatering/senere'
 import { Button } from '../Button'
 import { Temaknapp } from '../toppmeny/Temaknapp'
 import { Forstegangsoppsett } from './Forstegangsoppsett'
@@ -19,14 +20,10 @@ import { Logomerke } from './Logomerke'
  * økt svarer kanten 401, og ingenting av analysedataene, kommentartekstene
  * eller fortolkningsreglene utleveres. Se `src/auth/vegg.ts`.
  *
- * Lar den seg ikke hente, merkes feilen, så `Hentefeil` kan skille den fra en
- * feil mens appen tegnes opp.
+ * Lar den seg ikke hente, er feilen en `Lastefeil`, så `Hentefeil` kan skille
+ * den fra en feil mens appen tegnes opp.
  */
-const App = lazy(() =>
-  import('../../App').catch((feil: unknown) => {
-    throw new Lastefeil(feil)
-  }),
-)
+const App = senere(() => import('../../App'), 'default')
 
 /**
  * Portvakten foran appen.
@@ -35,9 +32,18 @@ const App = lazy(() =>
  * skal ikke rekke å blinke fram for en som ikke er logget inn, eller for en
  * som skal til førstegangsoppsettet. Hva som gjelder når, står i
  * `domain/tilgang.ts`.
+ *
+ * Koden til appen hentes likevel så snart det finnes en økt, mens profilen
+ * slås opp: da er den som regel klar når profilen er det, i stedet for at de
+ * to hentes etter hverandre. Den vises ikke før tilgangen er avklart, og
+ * veggen slipper den bare ut til en gyldig økt, som før.
  */
 export function Port() {
-  const { tilgang, profil } = useOkt()
+  const { tilgang, profil, harOkt } = useOkt()
+  const forhandslast = harOkt && (tilgang === 'venter' || tilgang === 'app')
+  useEffect(() => {
+    if (forhandslast) App.forhandslast()
+  }, [forhandslast])
 
   if (tilgang === 'app') {
     // Det som ble tatt vare på gjennom en oppdatering, hører til brukeren.
@@ -161,7 +167,7 @@ function Kontaktfeil() {
 /**
  * Innlogget, men uten et aktivt medlemskap i noe fagmiljø.
  *
- * Databasen gir da ingen data (P2.0), og den kliniske appen hentes ikke.
+ * Databasen gir da ingen data (P2.0), og den kliniske appen vises ikke.
  * Beskjeden sier hva som har skjedd og hvem som kan hjelpe, uten å vise noe
  * annet om kontoen.
  */

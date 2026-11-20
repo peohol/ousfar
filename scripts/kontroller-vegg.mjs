@@ -54,6 +54,8 @@ export const APNE_MODULER = new Map(
       'src/components/konto/Port.tsx',
       // Et nytt forsøk når den kliniske delen ikke lot seg hente ved oppstarten.
       'src/oppdatering/nylasting.ts',
+      // Hentingen av den kliniske delen, og av sidene i den, først når de trengs.
+      'src/oppdatering/senere.ts',
     ],
     'varslene om nye chatmeldinger på enheten, som avsluttes ved utlogging (docs/chatvarsler.md); ingen faglig innhold': [
       'src/chatvarsler/api.ts',
@@ -135,6 +137,16 @@ export function ryddSti(kilde) {
   return kilde.replace(/^(\.\.\/)+/, '')
 }
 
+/**
+ * De kliniske pakkene en pakke importerer direkte (`import … from`,
+ * `import "…"`, `export … from`), ikke dem den henter når de trengs
+ * (`import("…")`).
+ */
+export function statiskeKliniskeImporter(innhold) {
+  const monster = new RegExp(String.raw`\b(?:import|export)\s*(?:[^'"();]*?\bfrom\s*)?["']\./(${KLINISK_PAKKE}-[^'"]+)["']`, 'g')
+  return [...new Set([...innhold.matchAll(monster)].map((treff) => treff[1]))]
+}
+
 /** Alt som ikke er hentet inn utenfra, er vårt eget og skal bak veggen. */
 function erEgenKode(sti) {
   return !sti.includes('node_modules/')
@@ -153,10 +165,10 @@ export function kontroller({ beskyttede, apne, beskyttedeKilder = [] }) {
   const feil = []
   const brukteUnntak = new Set()
 
-  if (beskyttede.length !== 1) {
-    feil.push(
-      `Fant ${beskyttede.length} kliniske pakker (ventet nøyaktig én som begynner med «${KLINISK_PAKKE}-»).`,
-    )
+  // Hoveddelen, og én pakke for hver side appen henter når den vises
+  // (`src/oppdatering/senere.ts`). Alle begynner med det samme navnet.
+  if (beskyttede.length === 0) {
+    feil.push(`Fant 0 kliniske pakker (ventet minst én som begynner med «${KLINISK_PAKKE}-»).`)
   }
 
   for (const { navn, kilder } of [...beskyttedeKilder, ...apne]) {
@@ -188,6 +200,13 @@ export function kontroller({ beskyttede, apne, beskyttedeKilder = [] }) {
       if (innhold?.includes(spor)) {
         feil.push(`«${spor}» står i ${navn}, som utleveres uten innlogging.`)
       }
+    }
+
+    // En åpen pakke kan hente en klinisk når appen skal vises (`import(…)`),
+    // men ikke kreve den for å kjøre: da ville innloggingssiden trengt noe
+    // veggen stenger, og kode den trenger, ha havnet bak veggen.
+    for (const klinisk of statiskeKliniskeImporter(innhold ?? '')) {
+      feil.push(`${navn} krever ${klinisk} for å kjøre, men den ligger bak veggen.`)
     }
   }
 
@@ -239,7 +258,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   }
 
   console.log(
-    `Innloggingsveggen står: ${bygget.beskyttede[0]} er beskyttet, og de ${bygget.apne.length}` +
+    `Innloggingsveggen står: de ${bygget.beskyttede.length} kliniske pakkene er beskyttet, og de ${bygget.apne.length}` +
       ` åpne pakkene inneholder bare de ${brukteUnntak.size} modulene som er ført opp som åpne.`,
   )
 }

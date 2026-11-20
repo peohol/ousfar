@@ -75,8 +75,9 @@ helst nytt bygg, uansett side.
 | `src/oppdatering/versjon.ts` | Leser `versjon.json` og avgjør om det er en ny versjon: når versjonen det skal oppdateres til, er en annen enn den som kjører |
 | `src/oppdatering/sider.ts` | Hvilke sider en ny versjon berører, siden brukeren er på (meldt av `App.tsx`), og de rolige øyeblikkene |
 | `src/components/Oppdateringsmelding.tsx` | Meldingen og oppdateringen i stillhet. Spør hvert minutt mens fanen er synlig, når fanen får fokus, og når en del av appen ikke lar seg laste |
-| `src/oppdatering/forberedelse.ts` | Henter den nye kliniske delen (stien står i `versjon.json` som `klinisk`) og fornyer økten før siden lastes på nytt. I stillhet oppdateres det bare når det alt har lyktes |
+| `src/oppdatering/forberedelse.ts` | Henter hoveddelen av den nye kliniske delen (stien står i `versjon.json` som `klinisk`) og fornyer økten før siden lastes på nytt. I stillhet oppdateres det bare når det alt har lyktes |
 | `src/oppdatering/nylasting.ts` | Det nye forsøket av seg selv når appen ikke lot seg hente ved oppstarten (`Hentefeil` i `Port.tsx`), høyst én gang i minuttet |
+| `src/oppdatering/senere.ts` | Appen og sidene og vinduene i den (sidene står i `src/sidekode.ts`), hentet når de trengs. Kode som alt er hentet, vises med en gang, uten ventefelt. Står en gammel versjon åpen når en ny er lagt ut, kan koden til en side den ikke har vist ennå, være byttet ut; da lastes siden på nytt med det brukeren holdt på med i behold, på samme vei som over. Fagsidenes kode hentes når appen er ledig, så de første sjelden venter |
 | `src/auth/veggnokler.ts` | Nøklene innloggingsveggen kontrollerer øktene med: flere forsøk når en ny instans på kanten henter dem, fornyelse etter fem minutter, og de sist hentede når Supabase ikke svarer, høyst ti minutter gamle som før |
 | `src/oppdatering/bevaring.ts` | Bildet av det som tas vare på, i fanens `sessionStorage`, og rullingen tilbake |
 | `src/oppdatering/Bevaring.tsx` | `useBevart`, `Bevaringsomrade` og `Bevaringseier` (brukeren det hører til, satt i `Port.tsx`) |

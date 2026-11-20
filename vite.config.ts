@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { KLINISK_PAKKE } from './src/auth/vegg'
+// @ts-expect-error - byggeskriptet er vanlig JavaScript uten typer.
+import { APNE_MODULER } from './scripts/kontroller-vegg.mjs'
 import { systemvalgskript } from './src/domain/systemvalg'
 import { medInnholdsregler } from './src/drift/sikkerhetshoder'
 import { HISTORISKE_ENDRINGER } from './src/data/endringshistorikk'
@@ -74,8 +76,9 @@ function versjonsfil(): Plugin {
     },
     generateBundle(_valg, pakker) {
       const { logg, bygg } = beregn()
+      // Hoveddelen, den med `App`; sidene den henter senere, hentes når de vises.
       const klinisk = Object.values(pakker).find(
-        (p) => p.type === 'chunk' && p.fileName.startsWith(`assets/${KLINISK_PAKKE}-`),
+        (p) => p.type === 'chunk' && medApp(p.moduleIds),
       )?.fileName
       const fil: Byggopplysninger = { ...bygg, endringer: endringsomrader(logg), ...(klinisk && { klinisk }) }
       this.emitFile({ type: 'asset', fileName: VERSJONSFIL, source: JSON.stringify(fil) })
@@ -113,6 +116,26 @@ function sikkerhetsregler(): Plugin {
   }
 }
 
+/** Sant for pakken med `App`, hoveddelen av den kliniske appen. */
+const medApp = (moduler: readonly string[]) => moduler.some((id) => id.endsWith('/src/App.tsx'))
+
+/** Rotmappen, så modulene kan sammenlignes med stiene i `APNE_MODULER`. */
+const ROT = fileURLToPath(new URL('.', import.meta.url))
+
+/**
+ * Sant når pakken har egen kode som ikke er ført opp som åpen: den skal bak
+ * innloggingsveggen. Kode fra `node_modules` og Vites egne hjelpere er ikke
+ * vår, og avgjør ingenting.
+ */
+function bakVeggen(moduler: readonly string[]): boolean {
+  const apne = APNE_MODULER as Map<string, string>
+  return moduler.some((id) => {
+    if (id.startsWith('\0') || id.includes('/node_modules/')) return false
+    const sti = (id.startsWith(ROT) ? id.slice(ROT.length) : id).split('?')[0]!
+    return !apne.has(sti)
+  })
+}
+
 /**
  * Oppsettet for Vitest. Testene ser samme miljø som i CI, uten
  * produksjonsadressen og -nøklene (`src/__tests__/hjelp/utenProduksjon.ts`).
@@ -141,15 +164,20 @@ export default defineConfig({
       output: {
         /**
          * Den kliniske delen av appen får et fast navn, slik at
-         * innloggingsveggen på kanten kjenner den igjen. Hvilke moduler som
-         * havner der, avgjør Rollup selv: alt som bare `App` trenger, følger
-         * med den, mens det innloggingssiden også bruker, blir liggende igjen
-         * utenfor veggen. `npm run build` kontrollerer at delingen ble riktig.
+         * innloggingsveggen på kanten kjenner den igjen. Det gjelder `App`
+         * og hver pakke den henter når en side først vises
+         * (`src/oppdatering/senere.ts`): alt med egen kode som ikke er ført
+         * opp som åpen i `scripts/kontroller-vegg.mjs`, havner bak veggen.
+         * Hvilke moduler som havner i hvilken pakke, avgjør Rollup selv.
+         * `npm run build` kontrollerer at delingen ble riktig, også at
+         * innloggingssiden ikke trenger noe bak veggen.
          */
         chunkFileNames: (pakke) =>
-          pakke.facadeModuleId?.endsWith('/src/App.tsx')
+          medApp(pakke.moduleIds)
             ? `assets/${KLINISK_PAKKE}-[hash].js`
-            : 'assets/[name]-[hash].js',
+            : bakVeggen(pakke.moduleIds)
+              ? `assets/${KLINISK_PAKKE}-[name]-[hash].js`
+              : 'assets/[name]-[hash].js',
         /**
          * Rikteksteditoren (TipTap og ProseMirror) er et stort bibliotek uten
          * noe faglig innhold, og får sin egen pakke i stedet for å gjøre den
