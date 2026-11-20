@@ -1458,6 +1458,24 @@ describe('referansene mens kildene hentes', () => {
     expect(screen.queryByRole('img', { name: 'Referanse, nummeret hentes', hidden: true })).toBeNull()
   })
 
+  it('sier at referansene hentes også når ingen har fått nummer ennå', async () => {
+    // Bare «Dosering» siterer, etter preparatene: ingen referanse har nummer før FEST er hentet.
+    const k = kilde({
+      data: (t) => {
+        const data = medDosering(t)
+        return {
+          ...data,
+          infoside: utgave('hs', { navn: 'Amitriptylin', slug: 'amitriptylin' }),
+          elementer: data.elementer.filter((e) => !['farmakodynamikk', 'viktige_data'].includes(e.innhold.panel)),
+        }
+      },
+    })
+    k.legemidler.les = vi.fn(() => new Promise<Legemiddelutvalg>(() => {}))
+    vis('amitriptylin', k)
+    expect(await screen.findByText('Henter referansene fra datakildene …')).toBeTruthy()
+    expect(within(screen.getByRole('region', { name: 'Referanser', hidden: true })).queryAllByRole('listitem', { hidden: true })).toHaveLength(0)
+  })
+
   it('nummererer resten når kilden feiler, og sier ikke lenger at noe hentes', async () => {
     const k = kilde({ data: medDosering })
     k.legemidler.les = vi.fn(async () => {
