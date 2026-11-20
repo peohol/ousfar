@@ -36,6 +36,7 @@ import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { useKantmeny } from '../../hooks/useKantmeny'
 import { useRestenInert } from '../../hooks/useRestenInert'
 import { merketall } from '../../varsler/modell'
+import { Button } from '../Button'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
@@ -588,10 +589,9 @@ function Diskusjonsflate({
         {/* Tilbake, overskriften på tråden og søket står fast over det som rulles. */}
         {visning.side === 'traad' && (
           <>
-            <button type="button" className="diskusjonspanel__tilbake" onClick={tilListe}>
-              <Ikon navn="chev" storrelse="ui" />
-              <span>Alle tråder</span>
-            </button>
+            <Button variant="subtle" className="diskusjonspanel__tilbake" icon={<Ikon navn="back" />} onClick={tilListe}>
+              Alle tråder
+            </Button>
             <div ref={setTraadhode} className="diskusjonspanel__traadhode" />
           </>
         )}

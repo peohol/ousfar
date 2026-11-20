@@ -4,6 +4,7 @@ import { hentGruppeoversikt } from '../../grupper/api'
 import { useGrupper } from '../../grupper/kilde'
 import type { Gruppeoversikt } from '../../grupper/modell'
 import { lesRute } from '../../domain/rute'
+import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Felt } from '../konto/Felt'
 import { lyttEtterGruppeendring } from './gruppevisning'
@@ -173,7 +174,7 @@ export function useInngangsnavn(reserve: string): string {
 }
 
 /**
- * Raden over overskriften: lenken tilbake dit brukeren kom fra i appen, eller
+ * Raden over overskriften: knappen tilbake dit brukeren kom fra i appen, eller
  * til reserven (docs/navigasjon.md), med navnet på siden den går til. Sidens
  * egne handlinger (`children`) står i motsatt hjørne, så overskriften får
  * hele bredden for seg selv.
@@ -182,10 +183,9 @@ export function Tilbakelenke({ reserve, onTilbake, children }: { reserve: string
   const navn = useInngangsnavn(reserve)
   return (
     <div className="tilbakerad">
-      <button type="button" className="tilbakelenke" onClick={onTilbake}>
-        <Ikon navn="back" storrelse="ui" />
+      <Button variant="subtle" className="tilbakelenke" icon={<Ikon navn="back" />} onClick={onTilbake}>
         Tilbake til {navn}
-      </button>
+      </Button>
       {children}
     </div>
   )

@@ -40,9 +40,15 @@
 }
 
 /* --- Knapp ------------------------------------------------------------------
-   Pilleformet. Hovedknappen har ikonet i en egen sirkel; de andre har det
-   rett foran teksten. Alle handlinger har ikon. */
+   Pilleformet, og alltid tegnet som en knapp: en handling skal aldri se ut
+   som en lenke i teksten (docs/designsystem.md, «Knapper»). Hovedknappen,
+   sekundærknappen og den stille knappen har ikonet i en lys sirkel, som
+   «Åpne fortolkning»; variantene skiller seg på flaten. Knappen med kant har
+   ikonet rett foran teksten. Alle handlinger har ikon. */
 .knapp {
+  /* Sirkelen rundt ikonet: litt lavere enn knappen, så pillen rammer den inn. */
+  --knapp-sirkel: var(--ikon-underpunkt);
+
   display: inline-flex;
   align-items: center;
   gap: var(--rom-3);
@@ -63,7 +69,7 @@
     filter var(--fart-rask) var(--kurve);
 }
 
-/* En lenke som ser ut som en knapp, så den kan åpnes i en ny fane. */
+/* En lenke som ser ut som en knapp (`Knappelenke`), så den kan åpnes i en ny fane. */
 a.knapp {
   text-decoration: none;
 }
@@ -77,6 +83,15 @@ a.knapp {
 
 .knapp:has(.knapp__ikon) {
   padding-left: var(--rom-3);
+}
+
+/* Ikonet i en lys sirkel, med pillen tett rundt på venstre side. */
+:is(.knapp--primary, .knapp--sekundar, .knapp--subtle) .knapp__ikon {
+  width: var(--knapp-sirkel);
+  height: var(--knapp-sirkel);
+  color: var(--blekk);
+  background: var(--flate);
+  border-radius: var(--runding-pille);
 }
 
 /* Hovedknappen: aksentflate, ikonet i en lys sirkel og tastemerket blandet
@@ -98,12 +113,7 @@ a.knapp {
 }
 
 .knapp--primary .knapp__ikon {
-  width: var(--ikon-underpunkt);
-  height: var(--ikon-underpunkt);
   font-size: var(--tekst-lesing);
-  color: var(--blekk);
-  background: var(--flate);
-  border-radius: var(--runding-pille);
 }
 
 .knapp--primary .hurtigtast {
@@ -118,21 +128,39 @@ a.knapp {
   font-size: var(--tekst-etikett);
 }
 
-/* Den stille knappen står på sidens egen flate: gjennomsiktig til pekeren
-   kommer, og tastemerket på den hevede flaten så det skiller seg ut. */
-.knapp--subtle {
-  min-height: var(--hoyde-liten);
+/* Sekundærknappen er hovedknappens lysere slektning: samme pille og ikon i en
+   lys sirkel, men på aksentens lyse flate, så den er tydelig en knapp uten å
+   konkurrere med sidens hovedhandling. Til det som fører videre, som
+   «Gå til gruppeoversikten» og «Til gruppen». */
+.knapp--sekundar {
+  background: var(--aksent-flate);
 }
 
-.knapp--subtle:hover {
+.knapp--sekundar:has(.knapp__ikon) {
+  padding: 0 var(--rom-5) 0 var(--rom-2);
+}
+
+.knapp--sekundar:hover {
+  background: color-mix(in oklab, var(--aksent-flate) 80%, var(--aksent));
+}
+
+/* Den stille knappen står ved siden av det viktigere, som «Avbryt» ved
+   «Lagre» og «Tilbake til …»: en rolig, hevet flate, men fortsatt en knapp. */
+.knapp--subtle {
+  --knapp-sirkel: calc(var(--hoyde-liten) - 2 * var(--rom-1));
+  min-height: var(--hoyde-liten);
   background: var(--flate-hevet);
 }
 
-.knapp--subtle .hurtigtast {
-  --tast-flate: var(--flate-hevet);
+.knapp--subtle:has(.knapp__ikon) {
+  padding: 0 var(--rom-4) 0 var(--rom-1);
 }
 
-.knapp--subtle:hover .hurtigtast {
+.knapp--subtle:hover {
+  background: color-mix(in oklab, var(--flate-hevet) 88%, var(--blekk));
+}
+
+:is(.knapp--sekundar, .knapp--subtle) .hurtigtast {
   --tast-flate: var(--flate);
 }
 
@@ -243,6 +271,7 @@ a.knapp {
 }
 
 @media (max-width: 47.5em) {
+  .knapp--sekundar,
   .knapp--subtle,
   .knapp--kant {
     min-height: var(--hoyde-trykk);

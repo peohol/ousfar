@@ -3,7 +3,7 @@ import type { Maal } from './hendelse'
 
 /**
  * En lenke til `til`, eller en knapp som kaller `ved` når målet ikke har egen
- * adresse ({@link Maal}). Knappen ser ut som lenken den står i stedet for.
+ * adresse ({@link Maal}). De ser like ut: utseendet kommer fra `className`.
  */
 export function Maallenke({ maal, className, children }: { maal: Maal; className: string; children: ReactNode }) {
   if (maal.til === undefined)

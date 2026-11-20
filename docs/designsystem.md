@@ -142,9 +142,26 @@ Alle ikoner i appen er `Ikon`. Det finnes ingen andre ikonsett.
   krymper en sekundær knapp til bare ikon. En handling som ikke kan brukes
   nå, får `avslatt` med grunnen i stedet for `disabled`: knappen dempes, men
   grunnen står som tooltip og for skjermlesere.
-- **`Button`** (`src/components/Button.tsx`) er knappen i skjemaer og lag:
-  `primary`, `subtle` og `kant` (pille med tynn kant, for handlinger på en
-  rad, som «Nytt passord» i brukerlista).
+- **`Button`** (`src/components/Button.tsx`) er knappen i skjemaer og lag.
+  `Knappelenke` i samme fil tegner en lenke likt, for en handling som fører
+  til en annen side i appen, så den også kan åpnes i en ny fane. Variantene:
+  - `primary`: sidens hovedhandling, som «Åpne fortolkning»: aksentflate og
+    ikonet i en lys sirkel.
+  - `sekundar`: det som fører videre uten å være hovedhandlingen, som «Gå til
+    gruppeoversikten», «Til gruppen», «Åpne idéer» og «Åpne hele
+    stoffregisteret»: samme form, på aksentens lyse flate. Standard for
+    `Knappelenke`, med pilen (`chev`) når ikke noe annet ikon sier mer.
+  - `subtle`: det som står ved siden av, som «Avbryt», «Tilbake til …» og
+    «Tilpass forsiden»: samme form på en rolig, hevet flate.
+  - `kant`: liten pille med tynn kant og ikonet rett foran teksten, for
+    handlinger på en rad, som «Nytt passord» i brukerlista og «Ny tråd».
+
+**En handling ser alltid ut som en knapp** (Peder 20.11.2026, issue #510):
+aldri som en lenke eller vanlig tekst, og alltid med en av variantene over,
+ikke en egen stil. Unntakene er lenker i løpende tekst (en referanse, en
+analyttkode i et varsel), hele rader i en liste (en hendelse, et søketreff),
+navn som åpner profilkortet, og menyvalg: valgene i nedtrekks- og
+flervalgsmenyer, hovedmenyen og faner er ikke knapper.
 
 Alle handlinger i toppmenyen har ikon.
 
@@ -166,7 +183,7 @@ bare fargene gjennom `--tast-flate`, `--tast-blekk` og `--tast-kant`
 - **`Oppsummeringskort`** (`src/components/oppsummering/`) er det korte
   panelet på forsiden og gruppesidene: `Panelhode`, inntil tre hendelsesrader
   (`Hendelsesliste`) der hele raden er lenken til selve hendelsen, og en
-  tekstlenke til resten. Hvert panel har egen laste-, tom- og feiltilstand med
+  sekundærknapp til resten. Hvert panel har egen laste-, tom- og feiltilstand med
   «Prøv igjen», så én feil ikke stopper resten av siden. Bruk det, ikke en egen
   kopi, for nye oppsummeringer.
 - **`Metalinje`** (`src/components/Metalinje.tsx`) er linja over et stoffnavn

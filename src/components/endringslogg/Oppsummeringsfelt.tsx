@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { OPPSUMMERING_MAKS } from '../../endringslogg/operasjon'
+import { Button } from '../Button'
+import { Ikon } from '../ikon/Ikon'
 import { Felt } from '../konto/Felt'
 import '../../styles/innholdslogg.css'
 
@@ -27,9 +29,11 @@ export function Oppsummeringsfelt({
   const [apen, setApen] = useState(verdi !== '')
   if (!apen) {
     return (
-      <button type="button" className="oppsummeringsfelt__apne" onClick={() => setApen(true)}>
-        Legg til en kort oppsummering (valgfri)
-      </button>
+      <div className="oppsummeringsfelt__apne">
+        <Button variant="kant" icon={<Ikon navn="plus" />} onClick={() => setApen(true)}>
+          Legg til en kort oppsummering (valgfri)
+        </Button>
+      </div>
     )
   }
   return (
