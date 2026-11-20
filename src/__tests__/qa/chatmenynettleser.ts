@@ -126,6 +126,15 @@ try {
     krev(rader[0] === sandnavn, `første rad er ${rader[0]}`)
     await sammeLinje(menyen, '.chatgrupper__veksle')
     await bilde(ada, '02-meny-apen-pc')
+    // ⚙ (når det finnes innstillinger): «Til alle samtaler» står også der på linje med knappene.
+    const innstillinger = menyen.getByRole('button', { name: 'Innstillinger for chatten' })
+    if ((await innstillinger.count()) > 0) {
+      await innstillinger.click()
+      await sammeLinje(menyen, '.chatny__topp')
+      await bilde(ada, '02b-innstillinger-pc')
+      await menyen.getByRole('button', { name: 'Til alle samtaler' }).click()
+      await menyen.getByRole('region', { name: 'Samtaler' }).waitFor()
+    }
   })
 
   await punkt('P3 samtalen i menyen merkes lest når den vises; sanntid inn', async () => {
