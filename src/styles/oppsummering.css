@@ -108,6 +108,21 @@ button.oppsummering__alle {
   margin-top: 0.1rem;
 }
 
+/* Gruppens symbol står ved begge linjene, like stort som et lite profilbilde. */
+.hendelse > .gruppesymbol {
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+/* Med et symbol i lista er første kolonne like bred på alle radene, så titlene står på linje. */
+.hendelser--symboler .hendelse {
+  grid-template-columns: var(--avatar-liten) minmax(0, 1fr) auto;
+}
+
+.hendelser--symboler .hendelse__ikon {
+  justify-self: center;
+}
+
 .hendelse__tittel {
   font-weight: var(--vekt-medium);
   overflow-wrap: anywhere;

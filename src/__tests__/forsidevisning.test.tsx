@@ -153,6 +153,24 @@ describe('Forsiden', () => {
     expect(within(grupper).getByText('1 ny')).toBeTruthy()
   })
 
+  it('viser symbolet gruppen har valgt i «Mine grupper», og invitasjonens gruppesymbol i «Aktuelt for deg»', async () => {
+    const symbolgruppe = { ...gruppe('Emojigruppa'), symbol: { emoji: '🧪' } }
+    vi.mocked(api.hentOppsummering).mockImplementation((modul: Databasemodul) =>
+      Promise.resolve(
+        modul === 'grupper'
+          ? { ...TOM, grupper: [symbolgruppe] }
+          : modul === 'aktuelt'
+            ? { ...TOM, invitasjoner: [{ gruppe: { ...gruppe('Invitert gruppe'), symbol: { emoji: '💊' } }, invitert_kl: '2026-11-19T10:00:00Z', invitert_av: null }] }
+            : TOM,
+      ),
+    )
+    vis()
+    const rad = await waitFor(() => within(panel('Mine grupper')).getByRole('link', { name: /Emojigruppa/ }))
+    expect(rad.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
+    const invitasjon = await waitFor(() => within(panel('Aktuelt for deg')).getByRole('link', { name: /Invitasjon til Invitert gruppe/ }))
+    expect(invitasjon.querySelector('.gruppesymbol')?.textContent).toBe('💊')
+  })
+
   it('viser aldri det forrige fagmiljøets innhold etter et bytte', async () => {
     vi.mocked(api.hentOppsummering).mockImplementation((modul: Databasemodul) =>
       Promise.resolve(modul === 'grupper' ? { ...TOM, grupper: [gruppe('Gammel gruppe')] } : TOM),

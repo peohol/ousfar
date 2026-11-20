@@ -1,0 +1,13 @@
+{
+  "id": "20261120-040904-39526d",
+  "semver": "patch",
+  "opprettet": "2026-11-20T04:09:04Z",
+  "sammendrag": "Gruppens symbol også på forsiden og ved invitasjonene",
+  "typer": ["Design / layout"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["forside", "grupper"],
+  "punkter": [
+    "«Mine grupper» på forsiden viser nå emojien eller bildet gruppen har valgt, som i gruppelista og chatten.",
+    "En invitasjon til en gruppe viser også gruppens symbol, både i «Aktuelt for deg» på forsiden og øverst på Grupper-siden."
+  ]
+}

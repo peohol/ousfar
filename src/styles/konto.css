@@ -285,8 +285,8 @@
 }
 
 .avatar--liten {
-  width: 1.9rem;
-  height: 1.9rem;
+  width: var(--avatar-liten);
+  height: var(--avatar-liten);
   font-size: var(--tekst-merke);
 }
 

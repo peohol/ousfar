@@ -118,6 +118,7 @@ function Oversikt({ overskrift, onLukk }: { overskrift: string; onLukk: () => vo
   const [ny, setNy] = useBevart('ny/apen', false)
   const [sok, setSok] = useBevart('sok', '')
   const sokId = useId()
+  const invitasjonslenker = useGruppesymbollenker(invitasjoner.map((i) => i.gruppe))
   const kanOpprette = kan_opprette.tverrfaglig || kan_opprette.fagmiljoer.length > 0
   const { aktive, arkiverte } = useMemo(() => {
     const treff = sokIGrupper(grupper, sok)
@@ -149,19 +150,22 @@ function Oversikt({ overskrift, onLukk }: { overskrift: string; onLukk: () => vo
           <ul className="gruppeinvitasjoner">
             {invitasjoner.map(({ gruppe, invitert_av }) => (
               <li key={gruppe.id} className="gruppeinvitasjon">
-                <span className="gruppeinvitasjon__tekst">
-                  <span>
-                    {invitert_av ? (
-                      <>
-                        <strong>{visningsnavn(invitert_av)}</strong> har invitert deg til <strong>{gruppe.navn}</strong>.
-                      </>
-                    ) : (
-                      <>
-                        Du er invitert til <strong>{gruppe.navn}</strong>.
-                      </>
-                    )}
+                <span className="gruppeinvitasjon__gruppe">
+                  <Gruppesymbol gruppe={gruppe} lenke={symbollenke(gruppe, invitasjonslenker)} />
+                  <span className="gruppeinvitasjon__tekst">
+                    <span>
+                      {invitert_av ? (
+                        <>
+                          <strong>{visningsnavn(invitert_av)}</strong> har invitert deg til <strong>{gruppe.navn}</strong>.
+                        </>
+                      ) : (
+                        <>
+                          Du er invitert til <strong>{gruppe.navn}</strong>.
+                        </>
+                      )}
+                    </span>
+                    <span className="gruppeinvitasjon__meta">{gruppetilhorighet(gruppe)}</span>
                   </span>
-                  <span className="gruppeinvitasjon__meta">{gruppetilhorighet(gruppe)}</span>
                 </span>
                 <span className="gruppeinvitasjon__knapper">
                   <Button disabled={opptatt} aria-label={`Godta invitasjonen til ${gruppe.navn}`} onClick={() => svar(gruppe.id, gruppe.navn, true)}>

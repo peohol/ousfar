@@ -330,6 +330,14 @@ button.gruppeside__fane {
   border-radius: var(--runding-panel);
 }
 
+/* Gruppens symbol ved teksten, som i gruppelista under. */
+.gruppeinvitasjon__gruppe {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  min-width: 0;
+}
+
 .gruppeinvitasjon__tekst {
   display: flex;
   flex-direction: column;
