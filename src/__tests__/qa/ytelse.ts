@@ -16,11 +16,13 @@
  * - `YTELSE_PERSONER=50,500,5000`: personmengdene personsøket, «Brukere» og
  *   SQL-målingene kjøres for. De andre scenariene kjøres med den midterste.
  * - `YTELSE_SQL_GJENTAKELSER=5`: gjentakelser per SQL-kall.
+ * - `YTELSE_FORTSETT=1`: fortsetter en avbrutt kjøring i den samme `YTELSE_UT`
+ *   (rådataene lagres etter hver del).
  *
  * Merkene og hva de betyr står i `ytelsesmaler.js`.
  */
 import { execFileSync, spawnSync } from 'node:child_process'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { cpus, tmpdir, totalmem } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -79,6 +81,11 @@ interface Kjoring {
 const kjoringer: Kjoring[] = []
 const sqlMalinger: { rpc: string; hvem: string; personer: number; sok: string; ms: ReturnType<typeof fordeling>; treff: number; blokker: number }[] = []
 const serverkall: { scenario: string; profil: Profil; personer: number; kall: string; antall: number; snitt: number; maks: number }[] = []
+/** Delene av kjøringen som er ferdige, så en avbrutt kjøring kan fortsette (`YTELSE_FORTSETT=1`). */
+const ferdige = new Set<string>()
+const MALINGSFIL = () => join(UT, 'ytelse-malinger.json')
+/** Delen av kjøringen en måling hører til: scenariet (personsøkene samlet), profilen og personmengden. */
+const delFor = (x: { scenario: string; profil: Profil; personer: number }) => `${x.scenario.startsWith('personsøk') ? 'personsøk' : x.scenario}:${x.profil}:${x.personer}`
 const logg = (t: string) => console.log(`[ytelse] ${t}`)
 mkdirSync(UT, { recursive: true })
 
@@ -731,14 +738,34 @@ try {
   const appkode = spawnSync('git', ['diff', '--quiet', 'origin/main', '--', 'src', ':!src/__tests__']).status === 0 ? 'lik origin/main' : 'endret mot origin/main'
   const miljoinfo = { kode, appkode, cpu: cpus()[0]?.model, kjerner: cpus().length, minneGB: Math.round(totalmem() / 2 ** 30), node: process.version, postgres: lokalSql(s, 'show server_version'), work_mem: lokalSql(s, 'show work_mem'), gjentakelser: GJENTAKELSER, profiler: PROFILVALG }
 
-  // Scenariene for appen, med hovedmengden personer. Den kalde innloggingen først: den gir innloggingen de varme bruker.
+  // Rådataene lagres etter hver del. Med YTELSE_FORTSETT=1 fortsetter en avbrutt kjøring der den slapp, i den samme mappen.
+  if (process.env.YTELSE_FORTSETT && existsSync(MALINGSFIL())) {
+    const fra = JSON.parse(readFileSync(MALINGSFIL(), 'utf8')) as { ferdige?: string[]; kjoringer: Kjoring[]; sqlMalinger: typeof sqlMalinger; serverkall: typeof serverkall; mengder: typeof mengder }
+    for (const f of fra.ferdige ?? []) ferdige.add(f)
+    kjoringer.push(...fra.kjoringer.filter((x) => ferdige.has(delFor(x))))
+    sqlMalinger.push(...fra.sqlMalinger.filter((x) => ferdige.has(`sql:${x.personer}`)))
+    serverkall.push(...fra.serverkall.filter((x) => ferdige.has(delFor(x))))
+    Object.assign(mengder, fra.mengder)
+    logg(`fortsetter etter ${ferdige.size} ferdige deler`)
+  }
+  const lagre = () => writeFileSync(MALINGSFIL(), JSON.stringify({ miljoinfo, mengder, ferdige: [...ferdige], kjoringer, sqlMalinger, serverkall }, null, 1))
+  async function del(navn: string, arbeid: () => Promise<void>) {
+    if (ferdige.has(navn)) return
+    await arbeid()
+    ferdige.add(navn)
+    lagre()
+  }
+
+  // Scenariene for appen, med hovedmengden personer.
   for (const profil of PROFILVALG) {
     for (const [navn, scenario] of Object.entries(SCENARIER)) {
       if (!skal(navn)) continue
       if (navn === 'brukere') continue // med hver personmengde, under
-      nullstillServer(s)
-      for (let nr = 1; nr <= GJENTAKELSER; nr++) await scenario(k, profil, nr)
-      lesServer(s, navn, profil, HOVEDMENGDE)
+      await del(`${navn}:${profil}:${HOVEDMENGDE}`, async () => {
+        nullstillServer(s)
+        for (let nr = 1; nr <= GJENTAKELSER; nr++) await scenario(k, profil, nr)
+        lesServer(s, navn, profil, HOVEDMENGDE)
+      })
       // Byttet lagres i databasen: de neste scenariene skal arbeide i standardfagmiljøet.
       if (navn === 'fagmiljobytte') await rpc(adminklient, 'velg_arbeidsfagmiljo', { fagmiljo: data.fagmiljo.standard })
     }
@@ -751,23 +778,25 @@ try {
     mengder[personer] = datamengde(s)
     const passord = { 'qa-admin': adminpassord, [MALEBOERE.lokal]: data.passord.lokal, [MALEBOERE.medlem]: data.passord.medlem }
     const klienter = { lokal: await klient(s, MALEBOERE.lokal, data.passord.lokal), medlem: await klient(s, MALEBOERE.medlem, data.passord.medlem) }
-    if (skal('sql')) sqlPersonsok(k, { admin: adminId, lokal: data.ider.lokal, medlem: data.ider.medlem })
+    if (skal('sql')) await del(`sql:${personer}`, async () => sqlPersonsok(k, { admin: adminId, lokal: data.ider.lokal, medlem: data.ider.medlem }))
     for (const profil of PROFILVALG) {
-      if (skal('brukere')) {
-        nullstillServer(s)
-        for (let nr = 1; nr <= GJENTAKELSER; nr++) await SCENARIER.brukere!(k, profil, nr)
-        lesServer(s, 'brukere', profil, personer)
-      }
-      if (skal('personsok')) {
-        nullstillServer(s)
-        await personsok(k, profil, klienter, passord)
-        lesServer(s, 'personsøk', profil, personer)
-      }
+      if (skal('brukere'))
+        await del(`brukere:${profil}:${personer}`, async () => {
+          nullstillServer(s)
+          for (let nr = 1; nr <= GJENTAKELSER; nr++) await SCENARIER.brukere!(k, profil, nr)
+          lesServer(s, 'brukere', profil, personer)
+        })
+      if (skal('personsok'))
+        await del(`personsøk:${profil}:${personer}`, async () => {
+          nullstillServer(s)
+          await personsok(k, profil, klienter, passord)
+          lesServer(s, 'personsøk', profil, personer)
+        })
     }
   }
   const tekst = rapport(miljoinfo, mengder)
   writeFileSync(join(UT, 'ytelse-rapport.md'), tekst)
-  writeFileSync(join(UT, 'ytelse-malinger.json'), JSON.stringify({ miljoinfo, mengder, kjoringer, sqlMalinger, serverkall }, null, 1))
+  lagre()
   logg(`rapporten: ${join(UT, 'ytelse-rapport.md')}`)
 } finally {
   // Tilbake til hovedmengden, så andre kontroller ser det samme som før.
