@@ -303,8 +303,8 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
   const autoerstattlager = useMemo(() => lagAutoerstattlager(klient()), [])
   const kanoniskStoff = useCallback((nokkel: string) => register.kanonisk(nokkel)?.slug ?? nokkel, [register])
 
-  // Fagsøket: indeksen over alt publisert fagstoff, hentet når appen har tid
-  // til overs etter at den er åpnet, eller første gang noen søker før det. De
+  // Fagsøket: indeksen over alt publisert fagstoff, hentet når arbeidsflaten er
+  // vist og appen har tid til overs, eller første gang noen søker før det. De
   // andre navnene et stoff er kjent under, står i stoffregisteret, og navnene
   // på de publiserte sidene leses derfra først, så et stoffnavn finnes før
   // innholdet er hentet. Søket viser selv at det henter, så hentingen står
@@ -330,10 +330,6 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
     [],
   )
   const sokeindeks = useSokeindeks(hentSokeindeks)
-  useNaarLedig(sokeindeks.krev)
-  // Fagsidene er den vanligste veien videre fra forsiden og søket: koden
-  // deres hentes når appen har tid til overs, så den første ikke venter på den.
-  useNaarLedig(Stoffside.forhandslast)
 
   return {
     tema,
@@ -418,6 +414,13 @@ function Arbeidsflate({
   const [failedCopy, setFailedCopy] = useState<string | null>(null)
   const profil = useProfil()
   const { tema, bevegelse, thcVisualisering, faginnholdsklienter, stoffregister, sokeindeks, kanoniskStoff } = konto
+  // Fagsøkets indeks hentes når appen har tid til overs etter at arbeidsflaten
+  // er vist, også etter et fagmiljøbytte: et bytte rett etter oppstart skal ikke
+  // vente på den. Den hentes ikke på nytt når den alt er hentet (`krev`).
+  useNaarLedig(sokeindeks.krev)
+  // Fagsidene er den vanligste veien videre fra forsiden og søket: koden
+  // deres hentes når appen har tid til overs, så den første ikke venter på den.
+  useNaarLedig(Stoffside.forhandslast)
   const copy = useClipboard()
   const { flash, show } = useCopyFlash(BLINK)
   /**

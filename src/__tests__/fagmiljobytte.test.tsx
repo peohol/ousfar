@@ -65,10 +65,12 @@ vi.mock('../auth/klient', async () => {
     )
   return {
     klient: () => ({
-      rpc: async (funksjon: string) => {
+      rpc: async (funksjon: string, args?: { fagmiljo?: 'kf' | 'rt' }) => {
         databasen.kall.push(funksjon)
+        // Valget i appen lagres, og svaret er rettighetene det gir.
+        if (funksjon === 'velg_arbeidsfagmiljo') databasen.fagmiljo = args?.fagmiljo ?? null
         const fagmiljo = databasen.fagmiljo ? fagmiljoer[databasen.fagmiljo] : null
-        if (funksjon === 'mine_rettigheter') {
+        if (funksjon === 'mine_rettigheter' || funksjon === 'velg_arbeidsfagmiljo') {
           const mine = Object.values(fagmiljoer)
           return { data: { arbeidsfagmiljo: fagmiljo, mine_fagmiljoer: mine }, error: null }
         }
@@ -89,16 +91,25 @@ vi.mock('../auth/klient', async () => {
   }
 })
 vi.mock('../components/konto/Kontomeny', () => ({ Kontomeny: () => null }))
-// Overskriften på forsiden noterer hva den tegnes med.
+// Overskriften på forsiden noterer hva den tegnes med, og bytter fagmiljøet
+// slik valget i appen gjør.
 vi.mock('../components/forside/Fagmiljooverskrift', async () => {
-  const { useArbeidskontekst } = await import('../auth/rettigheter')
+  const { useArbeidskontekst, useRettigheter } = await import('../auth/rettigheter')
   const { useKatalogkilde } = await import('../katalog/Analyttkatalogkilde')
+  const { useFagmiljobytte } = await import('../components/konto/useFagmiljobytte')
   return {
     Fagmiljooverskrift: () => {
       const kontekst = useArbeidskontekst()
       const { katalog, feil } = useKatalogkilde()
+      const { bytt } = useFagmiljobytte()
+      const rt = useRettigheter().velgbareFagmiljoer.find((f) => f.id === 'rt')
       databasen.visninger.push({ kontekst, katalog: katalog.fagmiljo?.id ?? null, feil: feil !== null })
-      return <h1 className="forside__tittel">{kontekst}</h1>
+      return (
+        <h1 className="forside__tittel">
+          {kontekst}
+          <button className="bytt-til-rt" onClick={() => void (rt && bytt(rt))} />
+        </h1>
+      )
     },
   }
 })
@@ -221,5 +232,27 @@ describe('hentingen ved oppstart og fagmiljøbytte', { timeout: 20_000 }, () => 
 
     expect(blandet()).toEqual([])
     expect(KONTOENS.map(antall)).toEqual(konto)
+  })
+
+  it('henter panelene på forsiden for det nye fagmiljøet mens katalogen hentes, og bare én gang', async () => {
+    await visApp()
+    const PANEL = 'forsideoppsummering'
+    await waitFor(() => expect(antall(PANEL)).toBeGreaterThan(0))
+    await act(() => new Promise((ferdig) => setTimeout(ferdig, 1200)))
+    const paneler = antall(PANEL)
+
+    const katalog = utsatt()
+    databasen.katalogVenter = katalog.lofte
+    await act(async () => (document.querySelector('.bytt-til-rt') as HTMLButtonElement).click())
+    // Porten står, og panelene for det nye fagmiljøet er alt på vei.
+    await waitFor(() => expect(antall(PANEL)).toBe(2 * paneler))
+    expect(document.querySelector('.port[aria-busy]')).not.toBeNull()
+
+    await act(async () => katalog.innfri())
+    await waitFor(() => expect(databasen.visninger.at(-1)).toEqual({ kontekst: 'rt', katalog: 'rt', feil: false }))
+    await act(() => new Promise((ferdig) => setTimeout(ferdig, 1200)))
+    // Forsiden tar de samme hentingene i stedet for å be om dem igjen.
+    expect(antall(PANEL)).toBe(2 * paneler)
+    expect(blandet()).toEqual([])
   })
 })

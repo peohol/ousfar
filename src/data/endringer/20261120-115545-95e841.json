@@ -10,6 +10,7 @@
   "punkter": [
     "Når du bytter fagmiljø, hentes ikke stoffregisteret, favorittene, fagsøket og innstillingene dine på nytt.",
     "Når du bytter fagmiljø, hentes fortolkningsreglene for det nye fagmiljøet én gang i stedet for to.",
+    "Når du bytter fagmiljø, begynner panelene på forsiden å hentes med en gang, og forsiden vises aldri med det forrige fagmiljøets analytter mens det nye hentes.",
     "Ryddingen i papirkurven for fagsider venter til appen har tid til overs."
   ],
   "utenVarsel": true
