@@ -20,13 +20,12 @@ vi.mock('../auth/klient', () => ({
   klient: () => ({
     from: () => ({
       select: () => ({
-        eq: (_: string, nokkel: string) => ({
-          maybeSingle: () =>
-            innstillinger.hentInnstilling(nokkel).then(
-              (verdi) => ({ data: verdi === null ? null : { verdi }, error: null }),
-              (error: unknown) => ({ data: null, error }),
-            ),
-        }),
+        // Nøklene appen spør om samtidig, kommer i ett kall (`hentInnstilling`).
+        in: (_: string, nokler: string[]) =>
+          Promise.all(nokler.map(async (nokkel) => ({ nokkel, verdi: await innstillinger.hentInnstilling(nokkel) }))).then(
+            (rader) => ({ data: rader.filter((r) => r.verdi !== null), error: null }),
+            (error: unknown) => ({ data: null, error }),
+          ),
       }),
       upsert: ({ nokkel, verdi }: { nokkel: string; verdi: unknown }) =>
         innstillinger.lagreInnstilling(nokkel, verdi).then(
