@@ -3,6 +3,7 @@ import type { Registerstoff } from '../../domain/stoffregister'
 import { klartekst } from '../../faginnhold/riktekst'
 import { forhandsvisning } from '../../faginnhold/oppsummering'
 import { useStoffregisterkilde } from '../../stoffregister/Stoffregisterkilde'
+import { Knappelenke } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Detaljkort } from '../seksjoner/Seksjon'
 import { Riktekst } from '../stoffside/Riktekst'
@@ -45,12 +46,9 @@ export function Stoffkort({
       )}
 
       <div className="stoffkort__handlinger">
-        <a className="knapp knapp--kant" href={stoffadresse(stoff.slug)}>
-          <span className="knapp__ikon">
-            <Ikon navn="indik" />
-          </span>
-          <span className="knapp__tekst">Åpne fagside</span>
-        </a>
+        <Knappelenke variant="kant" href={stoffadresse(stoff.slug)} icon={<Ikon navn="indik" />}>
+          Åpne fagside
+        </Knappelenke>
       </div>
     </Detaljkort>
   )

@@ -93,6 +93,12 @@ kjøringen uten at passordet skrives inn.
   mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
   direktemeldingene står på i den lokale databasen mens den går, og valgene,
   blokkeringene og samtalen mellom de to fra før slettes først.
+- `npx vite-node src/__tests__/qa/knappenettleser.ts` er nettleserkontrollen
+  av knappene (`docs/designsystem.md`, «Knapper»): «Gå til
+  gruppeoversikten», «Til gruppen», «Åpne hele stoffregisteret», «Tilbake til
+  …» og de andre handlingene som før så ut som lenker eller tekst, har flate
+  eller kant og ingen strek under, på PC, mobil og i mørk modus, mens
+  menyvalgene i sidemenyen er som før.
 - `npx vite-node src/__tests__/qa/gruppesymbolnettleser.ts` er
   nettleserkontrollen av gruppesymbolene (`docs/fagmiljoer.md`,
   «Gruppesymbolet»): Ada som ansvarlig velger en emoji og laster opp et bilde

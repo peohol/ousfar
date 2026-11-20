@@ -41,7 +41,11 @@ describe('Oppsummeringskort', () => {
     expect(lenke.textContent).toContain('Sandkassegruppen · Idé')
     // Ingen egne knapper på radene (D0, valg 2).
     expect(within(panel).queryAllByRole('button')).toHaveLength(0)
-    expect(within(panel).getByRole('link', { name: /Vis alle/ }).getAttribute('href')).toBe('#/grupper')
+    const visAlle = within(panel).getByRole('link', { name: /Vis alle/ })
+    expect(visAlle.getAttribute('href')).toBe('#/grupper')
+    // Ser ut som en knapp, ikke som en lenke i teksten (issue #510).
+    expect(visAlle.classList).toContain('knapp')
+    expect(visAlle.classList).toContain('knapp--sekundar')
   })
 
   it('viser gruppens symbol i stedet for ikonet på en rad som er en gruppe, og retter inn titlene', () => {
@@ -94,7 +98,7 @@ describe('Oppsummeringskort', () => {
         ikon="sandkasse"
         innhold={{ status: 'klar', hendelser: [] }}
         tomtekst="Du er ikke med i noen grupper ennå."
-        visAlle={{ tekst: 'Alle grupper', til: '#/grupper' }}
+        visAlle={{ tekst: 'Gå til gruppeoversikten', til: '#/grupper' }}
       />,
     )
     expect(screen.getByText('Du er ikke med i noen grupper ennå.')).toBeTruthy()
@@ -179,7 +183,9 @@ describe('mål uten egen adresse', () => {
     expect(screen.queryAllByRole('link')).toHaveLength(0)
     await userEvent.click(screen.getByRole('button', { name: /Ny forside/ }))
     expect(apne).toHaveBeenCalledTimes(1)
-    await userEvent.click(screen.getByRole('button', { name: /Hele endringsloggen/ }))
+    const hele = screen.getByRole('button', { name: /Hele endringsloggen/ })
+    expect(hele.classList).toContain('knapp--sekundar')
+    await userEvent.click(hele)
     expect(alle).toHaveBeenCalledTimes(1)
   })
 })

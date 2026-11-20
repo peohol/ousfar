@@ -1,5 +1,5 @@
 import { type ReactNode, useId } from 'react'
-import { Button } from '../Button'
+import { Button, Knappeinnhold, knappeklasse } from '../Button'
 import { Lastesirkel } from '../Lasteindikator'
 import { Panelhode } from '../Panelhode'
 import { Ikon } from '../ikon/Ikon'
@@ -22,8 +22,8 @@ export interface OppsummeringskortProps {
   /** Linjen når det ikke er noe å vise. */
   tomtekst?: string
   /**
-   * Tekstlenken nederst til hele lista («Vis alle»). Vises bare når det er noe
-   * i panelet. Fører dit som en hendelse ({@link Maal}).
+   * Knappen nederst til hele lista, som «Gå til gruppeoversikten». Vises bare
+   * når det er noe i panelet. Fører dit som en hendelse ({@link Maal}).
    */
   visAlle?: { tekst: string } & Maal
   /** Annet innhold under hendelsene, som én sekundærknapp i et gruppepanel. */
@@ -33,7 +33,7 @@ export interface OppsummeringskortProps {
 /**
  * Et kort oppsummeringspanel, på forsiden og på gruppesiden (D0 README,
  * skisse 01 og 10): Atlas-panelet med kursiv serif-tittel og ikon, inntil tre
- * hendelser og en tekstlenke til resten.
+ * hendelser og en sekundærknapp til resten.
  *
  * Panelet laster, feiler og er tomt for seg selv: en feil her lar resten av
  * siden virke, og «Prøv igjen» henter bare dette panelet på nytt.
@@ -61,9 +61,8 @@ export function Oppsummeringskort({ tittel, ikon, innhold, tomtekst, visAlle, ch
       {innhold.status === 'klar' && <Hendelsesliste hendelser={innhold.hendelser} tomtekst={tomtekst} />}
       {children}
       {visAlle && innhold.status === 'klar' && innhold.hendelser.length > 0 && (
-        <Maallenke maal={visAlle} className="oppsummering__alle">
-          {visAlle.tekst}
-          <Ikon navn="chev" />
+        <Maallenke maal={visAlle} className={knappeklasse('sekundar', 'oppsummering__alle')}>
+          <Knappeinnhold icon={<Ikon navn="chev" />}>{visAlle.tekst}</Knappeinnhold>
         </Maallenke>
       )}
     </section>

@@ -408,23 +408,13 @@
   }
 }
 
-/* --- Lenken til helsiden ------------------------------------------------------
-   Står fast nederst i panelet, under lista. */
+/* --- Knappen til helsiden -----------------------------------------------------
+   Står fast nederst i panelet, under lista (`Menyhelside`). */
 .menyhelside {
   flex: none;
   display: flex;
-  align-items: center;
-  gap: var(--rom-2);
   padding: var(--rom-4) var(--rom-6) var(--rom-6);
   border-top: var(--kant) solid var(--linje);
-  color: var(--blekk);
-  font-weight: var(--vekt-halvfet);
-  text-decoration: none;
-}
-
-.menyhelside:hover,
-.menyhelside:focus-visible {
-  color: var(--aksent);
 }
 
 /* --- Verktøyene ----------------------------------------------------------------

@@ -398,7 +398,7 @@ try {
     await fraForsiden(ada)
     await ada.goto(`${miljo.url}/#/`)
     await paForsiden(ada).waitFor({ timeout: 30_000 })
-    await panel(ada, 'Mine grupper').getByRole('link', { name: 'Alle grupper' }).click()
+    await panel(ada, 'Mine grupper').getByRole('link', { name: 'Gå til gruppeoversikten' }).click()
     await innen(5_000, 'gruppene', async () => hash(ada) === '#/grupper')
     // Escape hører siden til når den står der (den lastes første gang den åpnes).
     await ada.getByRole('heading', { name: 'Grupper', level: 1 }).waitFor({ timeout: 10_000 })

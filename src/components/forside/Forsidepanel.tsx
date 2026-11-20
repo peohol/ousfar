@@ -34,14 +34,14 @@ interface Panelsvar {
   endringer: Endringsvarsel[]
 }
 
-/** Teksten når panelet er tomt, og tekstlenken til resten. */
+/** Teksten når panelet er tomt, og knappen til resten. */
 const TOMTEKST = 'Ingen nye hendelser.'
 const ALLE_VARSLER = { tekst: 'Alle varsler', ved: apneVarsler }
 
 const PANELTEKST: Record<Forsidemodul, { tomtekst: string; visAlle?: OppsummeringskortProps['visAlle'] }> = {
   viktig_nytt: { tomtekst: TOMTEKST, visAlle: ALLE_VARSLER },
   aktuelt: { tomtekst: TOMTEKST, visAlle: ALLE_VARSLER },
-  grupper: { tomtekst: 'Du er ikke med i noen grupper ennå.', visAlle: { tekst: 'Alle grupper', til: gruppeadresse() } },
+  grupper: { tomtekst: 'Du er ikke med i noen grupper ennå.', visAlle: { tekst: 'Gå til gruppeoversikten', til: gruppeadresse() } },
   fagsider: { tomtekst: TOMTEKST },
   ideer: { tomtekst: 'Ingen nye idéer.' },
   oppgaver: { tomtekst: 'Ingen åpne oppgaver.' },

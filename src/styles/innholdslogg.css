@@ -5,26 +5,10 @@
  */
 
 /* --- Oppsummeringsfeltet ----------------------------------------------------
-   Lukket er det en liten tekstlenke over knappene, så lagringen ikke blir
+   Lukket er det en liten knapp med kant over knappene, så lagringen ikke blir
    tyngre for den som ikke vil skrive noe. */
 .oppsummeringsfelt__apne {
-  align-self: flex-start;
-  padding: var(--rom-1) 0;
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-meta);
-  color: var(--blekk-dempet);
-  text-decoration: underline;
-  text-decoration-color: var(--linje-sterk);
-  text-underline-offset: 0.2em;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.oppsummeringsfelt__apne:hover,
-.oppsummeringsfelt__apne:focus-visible {
-  color: var(--blekk);
-  text-decoration-color: currentColor;
+  display: flex;
 }
 
 .oppsummeringsfelt {

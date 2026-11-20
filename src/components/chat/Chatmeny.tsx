@@ -15,6 +15,7 @@ import { useBevart } from '../../oppdatering/Bevaring'
 import { merketall } from '../../varsler/modell'
 import { Gruppechat, type Chatgruppe } from '../grupper/Gruppechat'
 import { Gruppesymbol, symbollenke, useGruppesymbollenker } from '../grupper/Gruppesymbol'
+import { Button, Knappelenke } from '../Button'
 import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 import { Lukkeknapp } from '../Lukkeknapp'
@@ -380,10 +381,9 @@ export function Chatmeny({
           <div className="chatpanel__topp">
             <Overskrift className="chatpanel__tittel kun-skjermleser">{TITTEL}</Overskrift>
             {helside ? (
-              <button type="button" className="chatpanel__gjenopprett" aria-keyshortcuts="Escape" onClick={gjenopprett}>
-                <Ikon navn="helsideAv" storrelse="ui" />
-                <span>Gjenopprett</span>
-              </button>
+              <Button variant="subtle" className="chatpanel__gjenopprett" icon={<Ikon navn="helsideAv" />} aria-keyshortcuts="Escape" onClick={gjenopprett}>
+                Gjenopprett
+              </Button>
             ) : (
               <>
                 <button type="button" className="chatpanel__knapp chatpanel__utvid" aria-label="Utvid" title="Utvid" onClick={utvid}>
@@ -547,10 +547,9 @@ function Samtaleliste({
           Samtaler
         </h3>
         {direkte.pa && (
-          <button type="button" className="chatsamtaler__ny" onClick={onNy}>
-            <Ikon navn="plus" storrelse="ui" />
-            <span>Ny chat</span>
-          </button>
+          <Button variant="kant" className="chatsamtaler__ny" icon={<Ikon navn="plus" />} onClick={onNy}>
+            Ny chat
+          </Button>
         )}
       </div>
       {alle > 0 && (
@@ -665,12 +664,9 @@ function Samtalevisning({
               Gruppechat{medlemmer !== undefined && ` · ${medlemmer === 1 ? '1 medlem' : `${medlemmer} medlemmer`}`}
             </p>
           </div>
-          <a className="knapp knapp--kant chatsamtale__gruppen" href={gruppeadresse(gruppe.id)} onClick={onTilGruppen}>
-            <span className="knapp__ikon">
-              <Ikon navn="grupper" />
-            </span>
-            <span className="knapp__tekst">Til gruppen</span>
-          </a>
+          <Knappelenke className="chatsamtale__gruppen" href={gruppeadresse(gruppe.id)} onClick={onTilGruppen} icon={<Ikon navn="grupper" />}>
+            Til gruppen
+          </Knappelenke>
         </div>
       )}
       <Gruppechat chat={chat} gruppe={gruppe} />

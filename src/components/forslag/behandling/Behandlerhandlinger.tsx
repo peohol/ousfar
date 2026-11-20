@@ -6,7 +6,7 @@ import { OBJEKTTYPER, type Objekttype } from '../../../faginnhold/modell'
 import { behandle, markerInnarbeidet, muligeBehandlinger, taForslag, type Behandling } from '../../../forslag/behandling'
 import { GRENSER, personnavn, type Forslag, type Forslagskonflikt, type Forslagsressurs } from '../../../forslag/modell'
 import { useBevart } from '../../../oppdatering/Bevaring'
-import { Button } from '../../Button'
+import { Button, Knappelenke } from '../../Button'
 import { Historikkvindu } from '../../historikk/Historikkvindu'
 import { useValgfriFaginnholdskilde } from '../../stoffside/Faginnholdskilde'
 import { Tekstomrade } from '../Tekstomrade'
@@ -189,14 +189,14 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
                 </Button>
               )}
               {sideversjon && (
-                <a className="knapp knapp--kant knapp--kompakt" href={sideversjon.href}>
+                <Knappelenke variant="kant" className="knapp--kompakt" href={sideversjon.href}>
                   {sideversjon.tekst}
-                </a>
+                </Knappelenke>
               )}
               {k.utkast_endret && utkast && (
-                <a className="knapp knapp--kant knapp--kompakt" href={utkast.href} onClick={utkast.onClick}>
+                <Knappelenke variant="kant" className="knapp--kompakt" href={utkast.href} onClick={utkast.onClick}>
                   Se utkastet
-                </a>
+                </Knappelenke>
               )}
             </div>
           )}
@@ -294,9 +294,9 @@ export function Behandlerhandlinger({ forslag: f, oppfrisk }: { forslag: Forslag
             </Button>
           )}
           {utkast && (
-            <a className="knapp knapp--kant knapp--kompakt" href={utkast.href} onClick={utkast.onClick}>
+            <Knappelenke variant="kant" className="knapp--kompakt" href={utkast.href} onClick={utkast.onClick}>
               Åpne utkastet
-            </a>
+            </Knappelenke>
           )}
         </div>
       )}
