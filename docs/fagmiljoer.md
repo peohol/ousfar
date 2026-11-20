@@ -485,7 +485,9 @@ gruppene.
 Peder 19.11.2026 (`supabase/migrations/20261119090000_gruppesymboler.sql`):
 en gruppe kan ha et symbol, en emoji eller et eget bilde, som står i sirkelen
 ved gruppenavnet i «Mine grupper» og samtalelista i chatmenyen, i hodet på
-gruppechatten, på gruppesiden og i gruppeoversikten. Gruppechatten arver
+gruppechatten, på gruppesiden, i gruppeoversikten og ved invitasjonene der, og
+på forsiden i «Mine grupper» og ved invitasjonene i «Aktuelt for deg»
+(`Hendelse.gruppe`). Gruppechatten arver
 symbolet fra gruppen. Uten symbol står gruppeikonet. Direktemeldingene viser
 profilbildet eller initialene til den andre (`docs/direktemeldinger-personvern.md`).
 

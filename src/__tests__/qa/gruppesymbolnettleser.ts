@@ -8,7 +8,8 @@
  * Punktene: den ansvarlige velger en emoji og laster opp et bilde i
  * gruppeinnstillingene; tekst avvises som emoji; medlemmet ser symbolene i
  * «Mine grupper», samtalelista, hodet på gruppechatten og gruppeoversikten,
- * også på mobil og i mørkt tema; å fjerne bildet gir gruppeikonet tilbake,
+ * og på forsiden («Mine grupper» og invitasjonene), også på mobil og i mørkt
+ * tema; å fjerne bildet gir gruppeikonet tilbake,
  * og medlemmet når ikke det gamle bildet lenger.
  */
 import { randomBytes } from 'node:crypto'
@@ -166,6 +167,35 @@ try {
       krev((await vindu.getByRole('region', { name: 'Symbol' }).count()) === 0, 'et medlem ser ikke symbolvelgeren')
       await lukk(bo, vindu)
     }
+  })
+
+  await punkt('S4b forsiden viser symbolene i «Mine grupper» og ved invitasjonene', async () => {
+    paa(bo)
+    // Uleste meldinger setter gruppene øverst i panelet, som har plass til tre.
+    for (const g of grupper) await rpc(adaK, 'send_gruppemelding', { gruppe: g, klient_id: crypto.randomUUID(), tekst: 'Syntetisk melding' })
+    const invitert = await rpc<string>(admin, 'opprett_gruppe', { navn: `${PREFIKS}invitasjon ${tid}`, beskrivelse: 'Nettleserkontroll (syntetisk).', fagmiljo: null })
+    await rpc(admin, 'sett_gruppesymbol', { gruppe: invitert, emoji: '💊', bilde: null })
+    await rpc(admin, 'inviter_til_gruppe', { gruppe: invitert, brukernavn: 'qa-chat-bo' })
+    await bo.goto(`${miljo.url}/#/`)
+    const panel = (navn: string) => bo.getByRole('region', { name: navn, exact: true })
+    const mine = panel('Mine grupper').locator('.hendelse')
+    await innen(20_000, 'emojien i Mine grupper', async () => (await mine.filter({ hasText: emojinavn }).locator('.gruppesymbol__emoji').innerText()) === '🧪')
+    await innen(15_000, 'bildet i Mine grupper', () => bildetVises(mine.filter({ hasText: bildenavn })))
+    const invitasjon = panel('Aktuelt for deg').locator('.hendelse', { hasText: 'Invitasjon til' })
+    await innen(15_000, 'emojien ved invitasjonen', async () => (await invitasjon.locator('.gruppesymbol__emoji').innerText()) === '💊')
+    // Titlene står på linje: symbolet og ikonene har like bred kolonne.
+    const venstre = await panel('Aktuelt for deg').locator('.hendelse__tittel').evaluateAll((t: Element[]) => [...new Set(t.map((e) => Math.round(e.getBoundingClientRect().left)))])
+    krev(venstre.length === 1, `titlene i «Aktuelt for deg» står på linje (${venstre.join(', ')})`)
+    await bilde(bo, '07b-forside-pc')
+    // Gruppelista ble hentet før invitasjonen kom; en ny innlasting henter den med.
+    await bo.goto(`${miljo.url}/#/grupper`)
+    await bo.reload()
+    const inv = bo.getByRole('region', { name: 'Invitasjoner' })
+    await innen(15_000, 'emojien ved invitasjonen på Grupper', async () => (await inv.locator('.gruppesymbol__emoji').first().innerText()) === '💊')
+    await bilde(bo, '07c-invitasjon-pc')
+    await rpc(boK, 'svar_paa_gruppeinvitasjon', { gruppe: invitert, godta: false })
+    // Tilbake der S4 sluttet, så S6 starter likt.
+    await bo.goto(`${miljo.url}/#/grupper/${emojigruppe}`)
   })
 
   const mobil: Side = await miljo.brukerside('qa-chat-bo', pw.bo, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })

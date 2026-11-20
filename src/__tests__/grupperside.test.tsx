@@ -74,7 +74,7 @@ const MINE: MineGrupper = lesMineGrupper({
   ],
   invitasjoner: [
     {
-      gruppe: { ...GRUPPE, id: ANNEN, navn: 'TDM-gruppen', art: 'fagmiljo', fagmiljo: { id: 'a', navn: 'OUS Klinisk farmakologi' } },
+      gruppe: { ...GRUPPE, id: ANNEN, navn: 'TDM-gruppen', art: 'fagmiljo', fagmiljo: { id: 'a', navn: 'OUS Klinisk farmakologi' }, symbol: { emoji: '💊' } },
       invitert_kl: '2026-11-14T10:00:00Z',
       invitert_av: { username: 'kari.k', first_name: 'Kari', last_name: 'Kollega' },
     },
@@ -203,6 +203,8 @@ describe('oversikten', () => {
     const invitasjoner = screen.getByRole('region', { name: 'Invitasjoner' })
     expect(invitasjoner.textContent).toMatch(/Kari Kollega har invitert deg til TDM-gruppen\./)
     expect(within(invitasjoner).getByText('OUS Klinisk farmakologi')).toBeTruthy()
+    // Gruppens symbol står ved invitasjonen, som i gruppelista.
+    expect(invitasjoner.querySelector('.gruppesymbol')?.textContent).toBe('💊')
 
     await userEvent.click(within(invitasjoner).getByRole('button', { name: 'Godta invitasjonen til TDM-gruppen' }))
     expect(api.svarPaaInvitasjon).toHaveBeenCalledWith(ANNEN, true)

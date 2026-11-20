@@ -159,6 +159,7 @@ export function invitasjonsrad(invitasjon: Gruppeinvitasjon): Hendelse {
   return {
     id: `invitasjon:${invitasjon.gruppe.id}`,
     ikon: 'grupper',
+    gruppe: invitasjon.gruppe,
     tittel: `Invitasjon til ${invitasjon.gruppe.navn}`,
     hvor: hvor(av && `fra ${visningsnavn(av)}`, gruppetilhorighet(invitasjon.gruppe)),
     tid: invitasjon.invitert_kl,
@@ -177,6 +178,7 @@ export function grupperad(gruppe: Forsidegruppe): Hendelse {
   return {
     id: gruppe.id,
     ikon: 'grupper',
+    gruppe,
     tittel: gruppe.navn,
     hvor: hvor(gruppetilhorighet(gruppe), `${gruppe.medlemmer} ${gruppe.medlemmer === 1 ? 'medlem' : 'medlemmer'}`),
     merknad: nye > 0 ? `${nye} ${nye === 1 ? 'ny' : 'nye'}` : undefined,

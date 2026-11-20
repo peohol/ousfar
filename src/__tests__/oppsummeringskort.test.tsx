@@ -44,6 +44,36 @@ describe('Oppsummeringskort', () => {
     expect(within(panel).getByRole('link', { name: /Vis alle/ }).getAttribute('href')).toBe('#/grupper')
   })
 
+  it('viser gruppens symbol i stedet for ikonet på en rad som er en gruppe, og retter inn titlene', () => {
+    render(
+      <Oppsummeringskort
+        tittel="Mine grupper"
+        ikon="grupper"
+        innhold={{
+          status: 'klar',
+          hendelser: [
+            hendelse(1, { ikon: 'grupper', gruppe: { symbol: { emoji: '🧪' } } }),
+            hendelse(2, { ikon: 'grupper', gruppe: { symbol: null } }),
+            hendelse(3),
+          ],
+        }}
+      />,
+    )
+    const [emoji, uten, vanlig] = screen.getAllByRole('link')
+    expect(emoji?.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
+    expect(emoji?.querySelector('.hendelse__ikon')).toBeNull()
+    // Uten valgt symbol står gruppeikonet i sirkelen, som overalt ellers.
+    expect(uten?.querySelector('.gruppesymbol [data-ikon="grupper"]')).toBeTruthy()
+    expect(vanlig?.querySelector('.gruppesymbol')).toBeNull()
+    expect(vanlig?.querySelector('.hendelse__ikon')).toBeTruthy()
+    expect(screen.getByRole('list').classList.contains('hendelser--symboler')).toBe(true)
+  })
+
+  it('har vanlig ikonkolonne når ingen rad er en gruppe', () => {
+    render(<Oppsummeringskort tittel="Aktuelt" ikon="done" innhold={{ status: 'klar', hendelser: [hendelse(1)] }} />)
+    expect(screen.getByRole('list').classList.contains('hendelser--symboler')).toBe(false)
+  })
+
   it('sier ulest i tekst, ikke bare med prikken', () => {
     render(
       <Oppsummeringskort
