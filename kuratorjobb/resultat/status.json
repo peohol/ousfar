@@ -1,18 +1,79 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-44757136854",
     "foresporsel_commit": "d0a2c63f9d9be8fe7901687e893c45cd04f4413c",
     "foresporsel_sha256": "207b06342c1f1522d8ba73abd8609988aa7d7761cecae1202a8767013fccfec7",
     "kode_commit": "9d9a5448f466307885f2b34eea2dde0c3aae0c11",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/44757136854",
-    "startet_kl": "2026-11-20T14:49:43.281Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-20T14:49:45.209Z",
+    "ferdig_kl": "2026-11-20T14:50:01.872Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "levomepromazin",
+      "eplerenon",
+      "amitriptylin",
+      "klorprotiksen"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 531
+    }
+  ],
+  "stoffer": {
+    "levomepromazin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/levomepromazin/funksjonstest.json"
+        }
+      }
+    },
+    "eplerenon": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/eplerenon/funksjonstest.json"
+        }
+      }
+    },
+    "amitriptylin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/amitriptylin/funksjonstest.json"
+        }
+      }
+    },
+    "klorprotiksen": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/klorprotiksen/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
