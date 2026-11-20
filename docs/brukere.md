@@ -164,10 +164,13 @@ Tre ting henger sammen og må holdes i takt:
 3. **Kanten kontrollerer økten** mot prosjektets offentlige nøkler. Supabase
    signerer asymmetrisk, så ingen hemmelighet er involvert, og det går ingen
    forespørsel ut per fil. Nøklene hentes med flere forsøk når en ny instans
-   på kanten trenger dem (rett etter en utrulling er alle nye), og svarer
-   ikke Supabase et øyeblikk, brukes de sist hentede i høyst et døgn
-   (`src/auth/veggnokler.ts`). Ellers kunne en gyldig økt bli avvist, og
-   brukeren få «Fikk ikke hentet appen» rett etter en oppdatering.
+   på kanten trenger dem (rett etter en utrulling er alle nye), og de fornyes
+   etter fem minutter. Svarer ikke Supabase på fornyelsen, brukes de sist
+   hentede, men aldri når de er eldre enn ti minutter, som før. Supabase
+   spørres høyst hvert 30. sekund, også når et forsøk mislyktes eller et token
+   har et ukjent nøkkelnavn (`src/auth/veggnokler.ts`). Ellers kunne en gyldig
+   økt bli avvist, og brukeren få «Fikk ikke hentet appen» rett etter en
+   oppdatering.
 
 `npm run build` avslutter med `scripts/kontroller-vegg.mjs`. Den leser av
 byggingens kildekart hvilke moduler som faktisk havnet utenfor veggen, og

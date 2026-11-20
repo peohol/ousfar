@@ -16,7 +16,7 @@ import { Oppdateringsmelding } from '../components/Oppdateringsmelding'
 import { Hentefeil } from '../components/konto/Port'
 import { LAGRINGSNOKKEL, glemBildet, gjenopprettRulling, oppdaterOgTaVare } from '../oppdatering/bevaring'
 import { forbered, KLAR_I, lagKlargjoring, PAUSER, type Klargjoring } from '../oppdatering/forberedelse'
-import { IKKE_OFTERE_ENN, kanLastePaNytt, Lastefeil, lastPaNytt, NYLASTINGSNOKKEL } from '../oppdatering/nylasting'
+import { IKKE_OFTERE_ENN, Lastefeil, lastPaNytt, NYLASTINGSNOKKEL, reserverNylasting } from '../oppdatering/nylasting'
 import { hentUtlagtBygg, type Byggopplysninger } from '../oppdatering/versjon'
 
 const BYGG: Byggopplysninger = { bygg: 'nytt', versjon: '9.9.9', klinisk: 'assets/klinisk-abc.js' }
@@ -91,6 +91,18 @@ describe('å gjøre den nye versjonen klar', () => {
     })
     expect(await forbered(BYGG, { hent, harOkt: async () => true, frist: 5, ...utenVenting })).toBe(false)
     expect(lest).toBe(PAUSER.length)
+  })
+
+  it('går videre når oppslaget eller fornyelsen av økten aldri svarer', async () => {
+    const aldri = () => new Promise<never>(() => undefined)
+    // Oppslaget henger: pakken sjekkes likevel.
+    const hent = kant([200])
+    expect(await forbered(BYGG, { hent, harOkt: aldri, oktfrist: 5, ...utenVenting })).toBe(true)
+    expect(hent).toHaveBeenCalledOnce()
+    // Fornyelsen henger: forsøkene fortsetter, og svaret kommer.
+    const avvist = kant([401])
+    expect(await forbered(BYGG, { hent: avvist, harOkt: async () => true, fornyOkt: aldri, oktfrist: 5, ...utenVenting })).toBe(false)
+    expect(avvist).toHaveBeenCalledTimes(PAUSER.length)
   })
 
   it('tar i bruk et enda nyere bygg når fila alt er byttet ut', async () => {
@@ -218,15 +230,15 @@ describe('når appen ikke lot seg hente ved oppstarten', () => {
 
     const fornyOkt = vi.fn(async () => undefined)
     const lastInn = vi.fn()
-    expect(kanLastePaNytt()).toBe(true)
-    await lastPaNytt(new Lastefeil(new Error()), { fornyOkt, lastInn, naa: () => 1_000, ...utenVenting })
+    expect(reserverNylasting(1_000)).toBe(true)
+    expect(sessionStorage.getItem(NYLASTINGSNOKKEL)).toBe('1000')
+    await lastPaNytt(new Lastefeil(new Error()), { fornyOkt, lastInn, ...utenVenting })
     expect(fornyOkt).toHaveBeenCalledOnce()
     expect(lastInn).toHaveBeenCalledOnce()
     expect(sessionStorage.getItem(LAGRINGSNOKKEL)).toBe(bilde)
-    expect(sessionStorage.getItem(NYLASTINGSNOKKEL)).toBe('1000')
 
-    expect(kanLastePaNytt(1_000 + IKKE_OFTERE_ENN - 1)).toBe(false)
-    expect(kanLastePaNytt(1_000 + IKKE_OFTERE_ENN + 1)).toBe(true)
+    expect(reserverNylasting(1_000 + IKKE_OFTERE_ENN - 1)).toBe(false)
+    expect(reserverNylasting(1_000 + IKKE_OFTERE_ENN + 1)).toBe(true)
   })
 
   it('kaster det som ble tatt vare på, når appen feilet mens den ble tegnet opp', async () => {
@@ -235,11 +247,38 @@ describe('når appen ikke lot seg hente ved oppstarten', () => {
     expect(sessionStorage.getItem(LAGRINGSNOKKEL)).toBeNull()
   })
 
-  it('laster ikke på nytt av seg selv når fanen ikke kan huske at den gjorde det', () => {
-    const setItem = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+  it('laster ikke på nytt av seg selv når fanen ikke kan lese at den gjorde det', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('ingen lagring')
     })
-    expect(kanLastePaNytt()).toBe(false)
-    setItem.mockRestore()
+    expect(reserverNylasting()).toBe(false)
+  })
+
+  it('laster ikke på nytt av seg selv når fanen kan lese, men ikke skrive, så det aldri går i ring', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('full', 'QuotaExceededError')
+    })
+    // Hver oppstart ser ingen merke og ville prøvd igjen; uten et merke som står, blir det kortet.
+    expect(reserverNylasting(1_000)).toBe(false)
+    expect(reserverNylasting(2_000)).toBe(false)
+  })
+
+  it('laster ikke på nytt av seg selv når det som ble skrevet, ikke kan leses tilbake', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => undefined)
+    expect(reserverNylasting(1_000)).toBe(false)
+  })
+
+  it('viser kortet uten å laste på nytt når fanen ikke kan skrive', async () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('full', 'QuotaExceededError')
+    })
+    const provPaNytt = vi.fn(async () => undefined)
+    render(
+      <Hentefeil provPaNytt={provPaNytt}>
+        <Feiler feil={new Lastefeil(new Error())} />
+      </Hentefeil>,
+    )
+    expect(await screen.findByText('Fikk ikke hentet appen')).toBeTruthy()
+    expect(provPaNytt).not.toHaveBeenCalled()
   })
 })

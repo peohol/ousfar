@@ -5,7 +5,7 @@ import type { Tilgang } from '../../domain/tilgang'
 import { BEVEGELSE, TEMA } from '../../domain/systemvalg'
 import { useSystemvalg } from '../../hooks/useSystemvalg'
 import { Bevaringseier } from '../../oppdatering/Bevaring'
-import { kanLastePaNytt, Lastefeil, lastPaNytt } from '../../oppdatering/nylasting'
+import { Lastefeil, lastPaNytt, reserverNylasting } from '../../oppdatering/nylasting'
 import { Button } from '../Button'
 import { Temaknapp } from '../toppmeny/Temaknapp'
 import { Forstegangsoppsett } from './Forstegangsoppsett'
@@ -202,7 +202,7 @@ export class Hentefeil extends Component<
   }
 
   override componentDidCatch(feil: unknown) {
-    const { kanProve = kanLastePaNytt, provPaNytt = lastPaNytt } = this.props
+    const { kanProve = reserverNylasting, provPaNytt = lastPaNytt } = this.props
     if (!kanProve()) return
     this.setState({ feilet: true, provPaNytt: true })
     void provPaNytt(feil)

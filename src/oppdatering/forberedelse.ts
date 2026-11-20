@@ -30,6 +30,12 @@ export const PAUSER = [0, 1_000, 2_000, 4_000]
  */
 export const FORSOKSFRIST = 20_000
 
+/**
+ * Hvor lenge oppslaget og fornyelsen av økten kan ta. Svarer ikke Supabase,
+ * går sjekken videre i stedet for å la knappen stå på «Oppdaterer …».
+ */
+export const OKTFRIST = 5_000
+
 /** Hvor lenge en vellykket sjekk gjelder, før den gjøres på nytt. */
 export const KLAR_I = 60_000
 
@@ -40,7 +46,24 @@ export interface Klargjoringsavhengigheter {
   /** Fornyer økten, så informasjonskapselen veggen leser, er fersk. */
   fornyOkt?: () => Promise<void>
   vent?: (ms: number) => Promise<void>
+  /** Fristen for hvert forsøk på å hente pakken (`FORSOKSFRIST`). */
   frist?: number
+  /** Fristen for oppslaget og fornyelsen av økten (`OKTFRIST`). */
+  oktfrist?: number
+}
+
+/**
+ * Svaret fra `lofte`, eller `reserve` når det feiler eller ikke kommer innen
+ * `ms`. Det som henger, får henge for seg selv; den som venter, går videre.
+ */
+export function innen<T>(lofte: Promise<T>, ms: number, reserve: T): Promise<T> {
+  return new Promise<T>((ferdig) => {
+    const tidsfrist = setTimeout(() => ferdig(reserve), ms)
+    lofte.then(
+      (verdi) => ferdig(verdi),
+      () => ferdig(reserve),
+    ).finally(() => clearTimeout(tidsfrist))
+  })
 }
 
 async function harInnloggetOkt(): Promise<boolean> {
@@ -65,11 +88,14 @@ export async function forbered(
     fornyOkt = fornyInnloggetOkt,
     vent = (ms) => new Promise((ferdig) => setTimeout(ferdig, ms)),
     frist = FORSOKSFRIST,
+    oktfrist = OKTFRIST,
   }: Klargjoringsavhengigheter = {},
 ): Promise<boolean> {
   if (!bygg.klinisk) return true
-  // Lar det seg ikke avgjøre om noen er logget inn, sjekkes det likevel.
-  if (!(await harOkt().catch(() => true))) return true
+  // Lar det seg ikke avgjøre om noen er logget inn, også når svaret ikke
+  // kommer, sjekkes det likevel.
+  const innlogget = await innen(harOkt(), oktfrist, true)
+  if (!innlogget) return true
 
   const adresse = new URL(bygg.klinisk, document.baseURI)
   for (const pause of PAUSER) {
@@ -86,7 +112,7 @@ export async function forbered(
       }
       // Byttet ut av et enda nyere bygg: siden lastes på nytt med det.
       if (svar.status === 404) return true
-      if (svar.status === 401) await fornyOkt().catch(() => undefined)
+      if (svar.status === 401) await innen(fornyOkt(), oktfrist, undefined)
     } catch {
       // Uten nett, over fristen eller avbrutt underveis: prøver igjen.
     } finally {

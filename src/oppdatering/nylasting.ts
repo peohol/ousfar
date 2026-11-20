@@ -8,6 +8,8 @@
  * må fornyes. Da fornyes økten, og siden lastes på nytt én gang, med det
  * brukeren holdt på med i behold (`leggBildetTilbake`). Feiler den igjen
  * innen `IKKE_OFTERE_ENN`, får brukeren kortet, så siden aldri går i ring.
+ * Kan fanen ikke huske at den lastet på nytt — lagringen kan ikke leses
+ * eller skrives — lastes den ikke på nytt av seg selv i det hele tatt.
  *
  * Feilet appen mens den ble tegnet opp, og ikke mens den ble hentet, kan det
  * skyldes noe som ble tatt vare på fra forrige versjon. Da lastes den på nytt
@@ -15,15 +17,13 @@
  */
 import { erKonfigurert, klient } from '../auth/klient'
 import { LAGRINGSNOKKEL, leggBildetTilbake } from './bevaring'
+import { innen, OKTFRIST } from './forberedelse'
 
 /** Nøkkelen i `sessionStorage` for når appen sist ble lastet på nytt av seg selv. */
 export const NYLASTINGSNOKKEL = 'ousfar.nylasting'
 
 /** Appen lastes ikke på nytt av seg selv oftere enn dette. */
 export const IKKE_OFTERE_ENN = 60_000
-
-/** Hvor lenge fornyelsen av økten kan ta før siden lastes på nytt likevel. */
-const FORNY_HOYST = 5_000
 
 /** En pause før siden lastes på nytt, så det som feilet, får et øyeblikk. */
 const PAUSE = 1_000
@@ -36,11 +36,19 @@ export class Lastefeil extends Error {
   }
 }
 
-/** Sant når appen ikke er lastet på nytt av seg selv nylig. Uten lagring i fanen: aldri, så den ikke går i ring. */
-export function kanLastePaNytt(naa: number = Date.now()): boolean {
+/**
+ * Sant når appen kan lastes på nytt av seg selv nå: det er ikke gjort nylig,
+ * og fanen har skrevet ned at det gjøres nå, og lest det tilbake. Uten det
+ * kunne en feil som kommer igjen ved hver oppstart, laste siden på nytt i det
+ * uendelige; da får brukeren heller kortet.
+ */
+export function reserverNylasting(naa: number = Date.now()): boolean {
   try {
     const sist = Number(sessionStorage.getItem(NYLASTINGSNOKKEL))
-    return !(sist > 0 && naa - sist < IKKE_OFTERE_ENN)
+    if (sist > 0 && naa - sist < IKKE_OFTERE_ENN) return false
+    const merke = String(naa)
+    sessionStorage.setItem(NYLASTINGSNOKKEL, merke)
+    return sessionStorage.getItem(NYLASTINGSNOKKEL) === merke
   } catch {
     return false
   }
@@ -50,29 +58,30 @@ interface Nylastingsavhengigheter {
   fornyOkt?: () => Promise<unknown>
   lastInn?: () => void
   vent?: (ms: number) => Promise<void>
-  naa?: () => number
 }
 
 const vente = (ms: number) => new Promise<void>((ferdig) => setTimeout(ferdig, ms))
 
-/** Fornyer økten, legger tilbake det som ble tatt vare på (bare etter en `Lastefeil`), og laster siden på nytt. */
+/**
+ * Fornyer økten, legger tilbake det som ble tatt vare på (bare etter en
+ * `Lastefeil`), og laster siden på nytt. Kalles bare når
+ * `reserverNylasting` har sagt ja.
+ */
 export async function lastPaNytt(
   feil: unknown,
   {
     fornyOkt = async () => (erKonfigurert() ? klient().auth.refreshSession() : undefined),
     lastInn = () => window.location.reload(),
     vent = vente,
-    naa = Date.now,
   }: Nylastingsavhengigheter = {},
 ): Promise<void> {
   try {
-    sessionStorage.setItem(NYLASTINGSNOKKEL, String(naa()))
     if (feil instanceof Lastefeil) leggBildetTilbake()
     else sessionStorage.removeItem(LAGRINGSNOKKEL)
   } catch {
-    // `kanLastePaNytt` sier nei uten lagring, så hit kommer det ikke.
+    // Siden lastes på nytt likevel, bare uten å ta vare på noe.
   }
-  await Promise.race([fornyOkt().catch(() => undefined), vent(FORNY_HOYST)])
+  await innen(fornyOkt(), OKTFRIST, undefined)
   await vent(PAUSE)
   lastInn()
 }

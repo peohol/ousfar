@@ -10,28 +10,39 @@
  *
  * Derfor:
  *
- * - En instans uten nøkler prøver flere ganger før den gir opp.
- * - En instans med nøkler henter dem på nytt når de er eldre enn
- *   `FERSKE_I`, med ett forsøk. Svarer ikke Supabase, brukes nøklene den
- *   har, så lenge de ikke er eldre enn `BRUKBARE_I`.
+ * - En instans uten nøkler prøver flere ganger før den gir opp, og mislykkes
+ *   det, prøver den igjen tidligst etter `KALD_PAUSE`.
+ * - En instans med nøkler fornyer dem når de er eldre enn `FERSKE_I`, med ett
+ *   forsøk. Svarer ikke Supabase, brukes nøklene den har, men aldri når de er
+ *   eldre enn `BRUKBARE_I`: det er like lenge som biblioteket (jose) alltid
+ *   har brukt et hentet nøkkelsett uten å spørre igjen, så grensen for hvor
+ *   lenge en nøkkel Supabase har trukket tilbake kan godtas, er den samme som
+ *   før. Det som er nytt, er at fornyelsen begynner tidligere, så et øyeblikk
+ *   uten svar ikke stenger noen ute.
  * - Kommer et token med en nøkkel instansen ikke kjenner — Supabase har
- *   byttet nøkler — hentes settet på nytt, men ikke oftere enn `NY_NOKKEL_ETTER`.
- *
- * Nøklene er offentlige; det er signaturen på tokenet som slipper noen inn, og
- * den kontrolleres alltid. Det eneste de gamle nøklene kan gi, er at en nøkkel
- * Supabase nettopp har trukket tilbake, fortsatt godtas mens Supabase ikke
- * svarer, og høyst `BRUKBARE_I`.
+ *   byttet nøkler — hentes settet på nytt.
+ * - Uansett grunn spørres Supabase ikke oftere enn hvert `NY_HENTING_ETTER`
+ *   etter forrige forsøk, også når det mislyktes. Da kan verken et Supabase
+ *   som ikke svarer eller tokens med oppdiktede nøkkelnavn gi en strøm av
+ *   forespørsler, og forespørslene venter ikke på nye forsøk som ikke kan
+ *   lykkes.
  */
 import { createLocalJWKSet, errors, type JSONWebKeySet, type JWTVerifyGetKey } from 'jose'
 
-/** Hvor lenge et hentet nøkkelsett brukes uten å spørre Supabase igjen. */
-export const FERSKE_I = 10 * 60_000
+/** Hvor lenge et hentet nøkkelsett brukes før det fornyes. */
+export const FERSKE_I = 5 * 60_000
 
-/** Hvor lenge et nøkkelsett kan brukes når Supabase ikke svarer. */
-export const BRUKBARE_I = 24 * 60 * 60_000
+/**
+ * Hvor lenge et nøkkelsett høyst brukes, også når Supabase ikke svarer på
+ * fornyelsen: jose sin `cacheMaxAge`, som `createRemoteJWKSet` brukte før.
+ */
+export const BRUKBARE_I = 10 * 60_000
 
-/** Hvor ofte et ukjent nøkkelnavn får settet hentet på nytt. */
-export const NY_NOKKEL_ETTER = 30_000
+/** Supabase spørres ikke oftere enn dette etter forrige forsøk, når instansen har nøkler. */
+export const NY_HENTING_ETTER = 30_000
+
+/** Det samme for en instans uten nøkler, som ikke kan slippe noen inn før den får dem. */
+export const KALD_PAUSE = 5_000
 
 /** Forsøk når instansen ikke har noen nøkler ennå. */
 export const FORSOK_UTEN_NOKLER = 3
@@ -67,6 +78,7 @@ export function veggnokler(
 ): JWTVerifyGetKey {
   let lokale: { sett: ReturnType<typeof createLocalJWKSet>; hentet: number } | null = null
   let pagaende: Promise<void> | null = null
+  let sistForsokt = -Infinity
 
   async function lastNed(forsok: number): Promise<void> {
     let sisteFeil: unknown
@@ -89,30 +101,44 @@ export function veggnokler(
     throw sisteFeil
   }
 
-  /** Én nedlasting om gangen; forespørsler som kommer samtidig, venter på den samme. */
-  const oppdater = (forsok: number) =>
-    (pagaende ??= lastNed(forsok).finally(() => {
-      pagaende = null
-    }))
+  /**
+   * Henter settet, når det er lenge nok siden forrige forsøk. Én henting om
+   * gangen; forespørsler som kommer samtidig, venter på den samme. Sant når
+   * det ble forsøkt (eller et forsøk pågikk); feil kastes videre.
+   */
+  async function oppdater(forsok: number, pause: number): Promise<boolean> {
+    if (!pagaende) {
+      if (naa() - sistForsokt < pause) return false
+      sistForsokt = naa()
+      pagaende = lastNed(forsok).finally(() => {
+        pagaende = null
+      })
+    }
+    await pagaende
+    return true
+  }
 
   const alder = () => (lokale ? naa() - lokale.hentet : Infinity)
 
   return async (hode, token) => {
     if (alder() > FERSKE_I) {
       try {
-        await oppdater(lokale ? 1 : FORSOK_UTEN_NOKLER)
-      } catch (feil) {
-        if (alder() > BRUKBARE_I) throw feil
+        await (lokale ? oppdater(1, NY_HENTING_ETTER) : oppdater(FORSOK_UTEN_NOKLER, KALD_PAUSE))
+      } catch {
+        // Nøklene som finnes, kan fortsatt brukes, innen grensen under.
       }
     }
     const brukt = lokale
-    if (!brukt) throw new Error('Ingen nøkler å kontrollere økten med')
+    if (!brukt || alder() > BRUKBARE_I) throw new Error('Ingen gyldige nøkler å kontrollere økten med')
     try {
       return await brukt.sett(hode, token)
     } catch (feil) {
-      if (!(feil instanceof errors.JWKSNoMatchingKey) || alder() < NY_NOKKEL_ETTER) throw feil
-      await oppdater(FORSOK_UTEN_NOKLER)
-      return (lokale ?? brukt).sett(hode, token)
+      if (!(feil instanceof errors.JWKSNoMatchingKey)) throw feil
+      // Kanskje har Supabase byttet nøkler. Ett forsøk, og ikke for ofte.
+      if (!(await oppdater(1, NY_HENTING_ETTER).catch(() => false))) throw feil
+      const ny = lokale
+      if (!ny || ny === brukt) throw feil
+      return ny.sett(hode, token)
     }
   }
 }

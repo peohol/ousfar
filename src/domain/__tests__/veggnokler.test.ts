@@ -8,7 +8,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { exportJWK, generateKeyPair, jwtVerify, SignJWT, type JWK } from 'jose'
-import { BRUKBARE_I, FERSKE_I, FORSOK_UTEN_NOKLER, NY_NOKKEL_ETTER, veggnokler } from '../../auth/veggnokler'
+import { BRUKBARE_I, FERSKE_I, FORSOK_UTEN_NOKLER, KALD_PAUSE, NY_HENTING_ETTER, veggnokler } from '../../auth/veggnokler'
 
 const ADRESSE = new URL('https://eksempel.supabase.co/auth/v1/.well-known/jwks.json')
 
@@ -72,15 +72,24 @@ describe('veggnokler', () => {
     expect(s.antall()).toBe(FORSOK_UTEN_NOKLER)
   })
 
-  it('stenger når nøklene ikke lar seg hente i det hele tatt', async () => {
+  it('stenger når nøklene ikke lar seg hente, og prøver ikke igjen før pausen er over', async () => {
     const a = await nokkelpar('a')
-    const s = supabase(['feil'])
-    const nokler = veggnokler(ADRESSE, { hent: s.hent, ...utenVenting })
+    let tid = 0
+    const s = supabase(['feil', 'feil', 'feil', [a.offentlig]])
+    const nokler = veggnokler(ADRESSE, { hent: s.hent, naa: () => tid, ...utenVenting })
     expect(await gyldig(nokler, a.token)).toBe(false)
     expect(s.antall()).toBe(FORSOK_UTEN_NOKLER)
+
+    // Rett etterpå avvises det uten å spørre Supabase.
+    tid = KALD_PAUSE - 1
+    expect(await gyldig(nokler, a.token)).toBe(false)
+    expect(s.antall()).toBe(FORSOK_UTEN_NOKLER)
+
+    tid = KALD_PAUSE
+    expect(await gyldig(nokler, a.token)).toBe(true)
   })
 
-  it('bruker nøklene den har når Supabase ikke svarer på fornyelsen, men ikke for lenge', async () => {
+  it('bruker nøklene den har når Supabase ikke svarer på fornyelsen, men aldri lenger enn før', async () => {
     const a = await nokkelpar('a')
     let tid = 0
     const s = supabase([[a.offentlig], 'feil'])
@@ -92,6 +101,13 @@ describe('veggnokler', () => {
     // Fornyelsen med nøkler i hånden er ett forsøk, så forespørselen ikke venter lenge.
     expect(s.antall()).toBe(2)
 
+    // Den mislykte fornyelsen prøves ikke igjen ved hver forespørsel.
+    tid = FERSKE_I + NY_HENTING_ETTER
+    expect(await gyldig(nokler, a.token)).toBe(true)
+    expect(s.antall()).toBe(2)
+
+    // Grensen er den samme som jose sin `cacheMaxAge` (10 min), som gjaldt før.
+    expect(BRUKBARE_I).toBe(10 * 60_000)
     tid = BRUKBARE_I + 1
     expect(await gyldig(nokler, a.token)).toBe(false)
   })
@@ -104,13 +120,33 @@ describe('veggnokler', () => {
     const nokler = veggnokler(ADRESSE, { hent: s.hent, naa: () => tid, ...utenVenting })
     expect(await gyldig(nokler, a.token)).toBe(true)
 
-    // Rett etter en henting spørres det ikke på nytt for hvert ukjent nøkkelnavn.
+    // Rett etter en henting spørres det ikke på nytt for et ukjent nøkkelnavn.
     expect(await gyldig(nokler, b.token)).toBe(false)
     expect(s.antall()).toBe(1)
 
-    tid = NY_NOKKEL_ETTER + 1
+    tid = NY_HENTING_ETTER
     expect(await gyldig(nokler, b.token)).toBe(true)
     expect(s.antall()).toBe(2)
+  })
+
+  it('spør høyst én gang per pause for ukjente nøkkelnavn mens Supabase ikke svarer', async () => {
+    const a = await nokkelpar('a')
+    const ukjent = await nokkelpar('ukjent')
+    let tid = 0
+    const s = supabase([[a.offentlig], 'feil'])
+    const nokler = veggnokler(ADRESSE, { hent: s.hent, naa: () => tid, ...utenVenting })
+    expect(await gyldig(nokler, a.token)).toBe(true)
+
+    tid = NY_HENTING_ETTER
+    for (let i = 0; i < 20; i++) expect(await gyldig(nokler, ukjent.token)).toBe(false)
+    // Ett forsøk for alle tjue, og kjente nøkler slipper fortsatt inn.
+    expect(s.antall()).toBe(2)
+    expect(await gyldig(nokler, a.token)).toBe(true)
+    expect(s.antall()).toBe(2)
+
+    tid = 2 * NY_HENTING_ETTER
+    for (let i = 0; i < 20; i++) expect(await gyldig(nokler, ukjent.token)).toBe(false)
+    expect(s.antall()).toBe(3)
   })
 
   it('lar forespørsler som kommer samtidig, dele én henting', async () => {

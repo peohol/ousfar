@@ -18,7 +18,9 @@ Før siden lastes på nytt, henter appen den nye versjonens kliniske del, mens
 brukeren blir stående på siden (knappen viser «Oppdaterer …»). Det begynner
 alt når den nye versjonen er funnet, så det er som regel ferdig før brukeren
 trykker. Avviser innloggingsveggen økten, fornyes den, og det prøves igjen;
-faller nettet ut eller henger et forsøk, prøves det fire ganger, med en frist på 20 sekunder for hvert. Lar den nye
+faller nettet ut eller henger et forsøk, prøves det fire ganger, med en frist på 20 sekunder for hvert.
+Oppslaget og fornyelsen av økten har en frist på fem sekunder, så knappen
+aldri blir stående på «Oppdaterer …». Lar den nye
 versjonen seg ikke hente, blir den gamle stående, meldingen sier fra, og
 knappen blir «Prøv igjen». Brukeren havner altså ikke på «Fikk ikke hentet
 appen» fordi den nye versjonen ikke var å få tak i.
@@ -26,7 +28,9 @@ appen» fordi den nye versjonen ikke var å få tak i.
 Lot appen seg likevel ikke hente da siden startet på nytt, prøver den igjen
 av seg selv én gang: økten fornyes, og siden lastes på nytt med det brukeren
 holdt på med i behold. Brukeren ser bare at appen laster. Kortet «Fikk ikke
-hentet appen» kommer først når det skjer igjen innen et minutt. Feilet appen
+hentet appen» kommer først når det skjer igjen innen et minutt, eller med én
+gang når fanen ikke kan skrive ned og lese tilbake at den lastet på nytt (så
+siden aldri går i ring). Feilet appen
 mens den ble tegnet opp, lastes den på nytt uten det som ble tatt vare på,
 siden det kan være det som feilet.
 
@@ -73,7 +77,7 @@ helst nytt bygg, uansett side.
 | `src/components/Oppdateringsmelding.tsx` | Meldingen og oppdateringen i stillhet. Spør hvert minutt mens fanen er synlig, når fanen får fokus, og når en del av appen ikke lar seg laste |
 | `src/oppdatering/forberedelse.ts` | Henter den nye kliniske delen (stien står i `versjon.json` som `klinisk`) og fornyer økten før siden lastes på nytt. I stillhet oppdateres det bare når det alt har lyktes |
 | `src/oppdatering/nylasting.ts` | Det nye forsøket av seg selv når appen ikke lot seg hente ved oppstarten (`Hentefeil` i `Port.tsx`), høyst én gang i minuttet |
-| `src/auth/veggnokler.ts` | Nøklene innloggingsveggen kontrollerer øktene med: flere forsøk når en ny instans på kanten henter dem, og de sist hentede når Supabase ikke svarer et øyeblikk |
+| `src/auth/veggnokler.ts` | Nøklene innloggingsveggen kontrollerer øktene med: flere forsøk når en ny instans på kanten henter dem, fornyelse etter fem minutter, og de sist hentede når Supabase ikke svarer, høyst ti minutter gamle som før |
 | `src/oppdatering/bevaring.ts` | Bildet av det som tas vare på, i fanens `sessionStorage`, og rullingen tilbake |
 | `src/oppdatering/Bevaring.tsx` | `useBevart`, `Bevaringsomrade` og `Bevaringseier` (brukeren det hører til, satt i `Port.tsx`) |
 
