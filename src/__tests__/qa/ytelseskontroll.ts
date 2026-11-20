@@ -27,7 +27,7 @@ import { lokalSql, sikreAdministrator, sikreTestkonto, startLokalDatabase } from
 import { apneTestmiljo } from './testmiljo'
 import { KOBLEDE_SIDER, stoffnavn } from './ytelsesdata'
 import { renummereringer } from './ytelsesmal'
-import { apneMaleside, les, loggInn, lukk, ventPaMerke, type Profil } from './ytelsesside'
+import { apneMaleside, les, loggInn, lukk, nullstill, ventPaMerke, type Profil } from './ytelsesside'
 
 const { punkt, bilde, paa, oppsettFeilet, rapport, logg } = lagKontroll('ytelseskontroll')
 const MEDLEM = 'qa-p5-medlem'
@@ -58,13 +58,23 @@ async function innlogget(bruker: string, passord: string, profil: Profil = 'treg
   return side
 }
 
-/** FEST-svaret holdes tilbake `ms`, eller feiler med `status`. */
-const holdFest = (side: Side, valg: { ms?: number; status?: number }) =>
-  side.route(FEST, async (r: Side) => {
+/**
+ * FEST-svaret holdes tilbake `ms`, eller feiler med `status`. `forespurt` holdes
+ * når FEST blir spurt første gang, `sluppet` når svaret dit slippes.
+ */
+async function holdFest(side: Side, valg: { ms?: number; status?: number }) {
+  let spurt!: () => void
+  let slapp!: () => void
+  const fest = { forespurt: new Promise<void>((ok) => (spurt = ok)), sluppet: new Promise<void>((ok) => (slapp = ok)) }
+  await side.route(FEST, async (r: Side) => {
+    spurt()
     if (valg.ms) await vent(valg.ms)
+    slapp()
     if (valg.status) return r.fulfill({ status: valg.status, contentType: 'application/json', body: JSON.stringify({ code: 'XX000', message: 'Syntetisk feil i etterkontrollen.' }) })
     return r.fallback()
   })
+  return fest
+}
 
 const finnes = (side: Side, velger: string) => side.locator(velger).count().then((n: number) => n > 0)
 
@@ -118,14 +128,39 @@ try {
     }
   })
 
-  /** Åpner en koblet fagside med FEST holdt tilbake eller feilet, til alt er hentet; gir referanseforløpet. */
+  /**
+   * Åpner en koblet fagside med FEST holdt tilbake eller feilet, til alt er
+   * hentet; gir referanseforløpet. Tiden regnes fra fagsiden åpnes. Er svaret
+   * holdt tilbake, ses det etter, et halvt sekund før det slippes, at siden
+   * fortsatt sier at den henter og ikke er komplett.
+   */
   async function fagsideMedFest(valg: { ms?: number; status?: number }, nr: number) {
     const side = await innlogget(MEDLEM, pw)
     try {
-      await holdFest(side, valg)
+      const fest = await holdFest(side, valg)
+      await nullstill(side)
       await side.evaluate((slug: string) => (location.hash = `#/stoff/${slug}`), koblede[nr]!)
       await ventPaMerke(side, 'fagside_innhold')
-      const henterForSvaret = valg.ms ? await side.locator('.stoffside').getByText(/Henter [^.]*…/).first().isVisible() : null
+      let henterForSvaret: boolean | null = null
+      if (valg.ms) {
+        // Fra FEST blir spurt til svaret slippes: «Henter …» står hele tiden, og siden er ikke komplett.
+        await fest.forespurt
+        let sluppet = false
+        void fest.sluppet.then(() => (sluppet = true))
+        henterForSvaret = true
+        let sjekker = 0
+        while (!sluppet && henterForSvaret) {
+          const naa = await side.evaluate(() => ({
+            henter: [...document.querySelectorAll('.stoffside *')].some((e) => e.childElementCount === 0 && /Henter [^.]*…/.test(e.textContent ?? '') && (e as HTMLElement).offsetParent !== null),
+            komplett: (window as never as { __ytelse: { merker: Record<string, number> } }).__ytelse.merker.fagside_komplett !== undefined,
+          }))
+          // Svaret kan ha sluppet mens siden ble lest; da teller ikke lesingen.
+          if (!sluppet) henterForSvaret = naa.henter && !naa.komplett
+          sjekker++
+          await vent(100)
+        }
+        krev(sjekker >= 10, `nok kontroller mens svaret ble holdt tilbake (${sjekker})`)
+      }
       await ventPaMerke(side, 'fagside_komplett', { ms: 30_000 })
       await vent(500)
       const m = await les(side)
@@ -141,8 +176,8 @@ try {
     try {
       const omnummerert = renummereringer(m.referanser)
       krev(omnummerert === 0, `${omnummerert} referanser fikk et annet nummer underveis`)
-      krev(henterForSvaret, '«Henter …» står mens FEST-svaret venter')
-      krev(m.merker.fagside_komplett! >= SEN, `komplett først når FEST har svart (${Math.round(m.merker.fagside_komplett!)} ms)`)
+      krev(henterForSvaret, '«Henter …» står, og siden er ikke komplett, hele tiden til FEST svarer')
+      krev(m.merker.fagside_komplett! >= SEN, `komplett først når FEST har svart (${Math.round(m.merker.fagside_komplett!)} ms etter at fagsiden ble åpnet)`)
       await bilde(side, 'k3-sen-fest')
       return `${m.referanser.length} visninger av listen, 0 nye numre, komplett etter ${Math.round(m.merker.fagside_komplett!)} ms`
     } finally {

@@ -76,6 +76,13 @@ describe('referanselisten mens kildene kommer', () => {
     expect(referansestabilitet(forløp).nyttNummer).toBe(0)
     expect(renummereringer(forløp)).toBe(4)
   })
+  it('leser id-er med kolon, som FEST-referansene, uten å miste nummeret', () => {
+    const fest = 'referanse-fest:sertralin:ID_X'
+    const forløp = [vist(1, [1, fest], [2, 'referanse-a']), vist(2, [2, fest], [1, 'referanse-a'])]
+    expect(referansestabilitet(forløp)).toEqual({ referanser: 2, listevisninger: 2, nyttNummer: 2, lagtTil: 0 })
+    expect(renummereringer(forløp)).toBe(2)
+    expect(renummereringer([vist(1, [1, fest]), vist(2, [1, fest])])).toBe(0)
+  })
 })
 
 describe('endring', () => {

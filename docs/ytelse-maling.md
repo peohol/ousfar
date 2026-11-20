@@ -335,7 +335,9 @@ personer der ikke annet står.
 | `fagside_komplett` | (139) → 290 ms | (866) → 1,63 s | (708) → 632 ms | (2,94) → 3,06 s |
 
 - **Referansene:** 31 av 32 fikk nytt nummer før; nå 0, i alle gjentakelser,
-  begge profiler og begge veier inn. Listen vises én gang.
+  begge profiler og begge veier inn. Listen vises én gang. Tellingen leser
+  id-er med kolon riktig (FEST-referansene er `fest:…`); før- og etter-tallene
+  er regnet på nytt med den og er de samme.
 - **`fagside_komplett` er ikke sammenlignbar:** før kom merket før kallene
   til FEST og interaksjonene var startet; nå venter det på at alt er hentet.
   Det som er igjen, er rekkefølgen `les_stoff` → `les_legemidler` →
@@ -394,7 +396,7 @@ punktene besto 20.11.2026:
 | --- | --- |
 | K1 Utlogging mens en fagside og FEST-svaret (3 s for sent) laster | Innloggingssiden; ingenting av fagsiden eller toppmenyen etter at de sene svarene kom |
 | K2 Medlemskapet avsluttes mens appen laster | Appen stenger med beskjeden om avsluttet medlemskap etter 1,1 s; ingen fagside eller forside bak |
-| K3 FEST svarer 3 s for sent | Referanselisten vises én gang, 0 referanser får nytt nummer, «Henter …» står til svaret kommer |
+| K3 FEST svarer 3 s for sent | Referanselisten vises én gang og 0 referanser får nytt nummer; fra FEST blir spurt til svaret slippes, står «Henter …» hele tiden og siden er ikke komplett (sjekket hvert 0,1 s) |
 | K4 FEST feiler | 0 nye numre, og siden sier «Fikk ikke hentet preparatene» |
 | K5 Direkte lenke til en seksjon (`#/stoff/…/interaksjoner`) | Seksjonen står åpen og i synsfeltet |
 | K6 Koden til en side lar seg ikke hente (som etter en oppdatering) | Appen henter den på nytt, og gruppesiden vises i stedet for en tom side |

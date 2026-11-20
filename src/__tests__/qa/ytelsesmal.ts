@@ -119,9 +119,14 @@ export function tabell(hode: readonly string[], rader: readonly (readonly string
 
 type Referansevisning = readonly [number, number, string]
 
+/** `nummer:id` som `[id, nummer]`; id-en kan selv ha kolon (`referanse-fest:…`). */
+const referansepar = (x: string): [string, string] => {
+  const i = x.indexOf(':')
+  return [x.slice(i + 1), x.slice(0, i)]
+}
+
 /** Hver visning av referanselisten som id → nummer. */
-const referanselister = (visninger: readonly Referansevisning[]) =>
-  visninger.map(([, , avtrykk]) => new Map(avtrykk.split('|').filter(Boolean).map((x) => x.split(':').reverse() as [string, string])))
+const referanselister = (visninger: readonly Referansevisning[]) => visninger.map(([, , avtrykk]) => new Map(avtrykk.split('|').filter(Boolean).map(referansepar)))
 
 /**
  * Referanselisten på fagsiden mens kildene kommer: hver visning er
