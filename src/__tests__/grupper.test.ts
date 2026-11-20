@@ -691,6 +691,27 @@ describe('symbolet', () => {
     expect(await serBildet('dobbeltAB', bilde)).toBe(false)
   })
 
+  it('viser det gjeldende bildet til den som er invitert, så lenge invitasjonen står, og ikke andre bilder i mappen', async () => {
+    const bilde = nySti(tverrgruppe)
+    const annet = nySti(tverrgruppe)
+    await lastOpp('systemarkitekt', bilde)
+    await lastOpp('systemarkitekt', annet)
+    await sett('systemarkitekt', tverrgruppe, null, bilde)
+    expect(await serBildet('adminB', bilde)).toBe(false)
+
+    await inviter('systemarkitekt', tverrgruppe, 'adminB')
+    const invitasjon = (await mine('adminB')).invitasjoner.find((i) => i.gruppe.id === tverrgruppe)
+    expect((invitasjon?.gruppe as { symbol?: unknown } | undefined)?.symbol).toMatchObject({ bilde })
+    expect(await serBildet('adminB', bilde)).toBe(true)
+    expect(await serBildet('adminB', annet)).toBe(false)
+    // Heller ikke den inviterte kan slette det.
+    expect(await slett('adminB', bilde)).toBe(0)
+
+    // Avslått: borte igjen.
+    await svar('adminB', tverrgruppe, false)
+    expect(await serBildet('adminB', bilde)).toBe(false)
+  })
+
   it('lar verken en mislykket lagring eller to som bytter samtidig, ødelegge det bekreftede bildet', async () => {
     const forste = nySti(agruppe)
     await lastOpp('adminA', forste)

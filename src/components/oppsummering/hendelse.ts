@@ -1,3 +1,4 @@
+import type { Gruppe } from '../../grupper/modell'
 import type { Ikonnavn } from '../ikon/register'
 
 /**
@@ -28,6 +29,11 @@ interface Hendelsesinnhold {
   /** Stabil nøkkel for hendelsen, så samme hendelse ikke tegnes to ganger. */
   id: string
   ikon: Ikonnavn
+  /**
+   * Gruppen raden er (eller er en invitasjon til): da står gruppens symbol
+   * (`Gruppesymbol`) i stedet for ikonet, som overalt ellers gruppen står.
+   */
+  gruppe?: Pick<Gruppe, 'symbol'>
   /** Hva som har skjedd, eller navnet på det raden peker på. */
   tittel: string
   /** Hvor: gruppen, fagsiden eller «Appen», og hva slags ting det er. */
