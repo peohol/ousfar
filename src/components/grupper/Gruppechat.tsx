@@ -8,7 +8,7 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Gruppechatmelding, Ventendemelding } from './Gruppechatmelding'
 import { Gruppechatskriving, glemUtkastene } from './Gruppechatskriving'
-import { DIREKTE_LESERE, dagsnavn, dagsnokkel, henger, laastTekst, lesertekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
+import { dagsnavn, dagsnokkel, henger, laastTekst, nyeEtter, nyeMeldingerTekst } from './gruppechatvisning'
 import '../../styles/gruppechat.css'
 
 /** Det chatten trenger å vite om gruppen. */
@@ -22,8 +22,8 @@ const ELDRE_INNEN = 64
 const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
 
 /**
- * Chatten i en gruppe (docs/gruppechat.md, «Brukerflaten»): hvem som leser,
- * regelen om pasientopplysninger, meldingene etter dag og skrivefeltet.
+ * Chatten i en gruppe (docs/gruppechat.md, «Brukerflaten»): meldingene etter
+ * dag og skrivefeltet.
  *
  * Står brukeren nederst i lista, følger den nye meldinger; har hen rullet
  * opp, står den stille, og «N nye meldinger» tar hen ned. Eldre meldinger
@@ -33,8 +33,8 @@ const rolig = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matc
  * avgjør hver handling.
  *
  * En direktesamtale (`art="direkte"`, D5) vises med den samme komponenten:
- * `gruppe` er da samtalen med navnet på den andre, og bare lesertekstene, den
- * låste linjen og slettetekstene er andre.
+ * `gruppe` er da samtalen med navnet på den andre, og bare den låste linjen og
+ * slettetekstene er andre.
  */
 export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstand; gruppe: Chatgruppe; art?: Samtaletype }) {
   const overskrift = useId()
@@ -212,13 +212,6 @@ export function Gruppechat({ chat, gruppe, art = 'gruppe' }: { chat: Chattilstan
       <h2 id={overskrift} className="kun-skjermleser">
         Chat
       </h2>
-      <div className="gruppechat__om">
-        <p className="gruppechat__lesere">
-          <Ikon navn="user" storrelse="ui" />
-          {direkte ? DIREKTE_LESERE : lesertekst(chat.lesere)}
-        </p>
-      </div>
-
       {chat.tilkobling !== 'tilkoblet' && (
         <p className="gruppechat__tilkobling" role="status">
           Kobler til igjen …

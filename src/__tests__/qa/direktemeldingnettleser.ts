@@ -140,7 +140,6 @@ try {
     await meny(ada).getByRole('heading', { name: 'Bo' }).waitFor({ timeout: 10_000 })
     samtale = lokalSql(s, `select id from public.direktesamtaler where bruker_lav in ${begge} and bruker_hoy in ${begge}`)
     krev(samtale, 'samtalen finnes')
-    krev(await meny(ada).getByText('Bare dere to kan lese samtalen.').isVisible(), 'lesertekst')
   })
 
   await punkt('D3 sanntid begge veier gjennom dørklokken', async () => {

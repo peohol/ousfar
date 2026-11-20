@@ -111,15 +111,6 @@ afterEach(() => {
 })
 
 describe('det rene', () => {
-  it('sier hvem som leser, med og uten systemarkitektene', () => {
-    expect(visning.lesertekst({ medlemmer: 4, systemarkitekter: true })).toBe('Leses av de 4 medlemmene i gruppen og av systemarkitektene i OUSFAR.')
-    expect(visning.lesertekst({ medlemmer: 1, systemarkitekter: false })).toBe('Leses av det ene medlemmet i gruppen.')
-    // En arkivert gruppe har ingen aktive medlemmer og leses bare av systemarkitektene.
-    expect(visning.lesertekst({ medlemmer: 0, systemarkitekter: true })).toBe('Leses av systemarkitektene i OUSFAR.')
-    expect(visning.lesertekst({ medlemmer: 1, systemarkitekter: true })).toBe('Leses av det ene medlemmet i gruppen og av systemarkitektene i OUSFAR.')
-    expect(visning.lesertekst({ medlemmer: 0, systemarkitekter: false })).toBe('Ingen kan lese chatten nå.')
-  })
-
   it('teller bare nær grensen, og sier fra når det er for mye', () => {
     expect(visning.tegnteller('a'.repeat(89), 100)).toBeNull()
     expect(visning.tegnteller('a'.repeat(99), 100)).toEqual({ tekst: '1 tegn igjen', over: false })
@@ -148,9 +139,10 @@ describe('det rene', () => {
 })
 
 describe('chatten', () => {
-  it('viser hvem som leser og meldingene med avsender, klokkeslett og dag', () => {
+  it('viser meldingene med avsender, klokkeslett og dag, uten tekst om hvem som leser', () => {
     render(<Prove />)
-    expect(screen.getByText('Leses av de 3 medlemmene i gruppen og av systemarkitektene i OUSFAR.')).toBeTruthy()
+    // Peder 20.11.2026: teksten om hvem som leser er overflødig og er tatt bort.
+    expect(screen.queryByText(/^Leses av/)).toBeNull()
     const liste = logg()
     expect(liste.getAttribute('aria-live')).toBe('polite')
     expect(liste.getAttribute('aria-relevant')).toBe('additions')

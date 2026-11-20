@@ -80,10 +80,9 @@
   line-height: var(--linjehoyde-lesing);
 }
 
-/* «Åpne utkastet» er en lenke som ser ut som knappene ved siden av. */
+/* «Åpne utkastet» er en lenke som ser ut som knappene ved siden av (`a.knapp`). */
 .forslagsvisning a.knapp {
   color: var(--blekk);
-  text-decoration: none;
 }
 
 .behandling__konfliktvalg {
