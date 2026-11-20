@@ -32,9 +32,9 @@ const miljo = await apneTestmiljo()
 const symbolbildet = (gruppe: string) => lokalSql(s, `select coalesce(symbol_bilde, '') from public.grupper where id = '${gruppe}'`).trim()
 const finnes = (sti: string) => Number(lokalSql(s, `select count(*) from storage.objects where bucket_id = 'gruppesymboler' and name = '${sti}'`)) === 1
 
-/** Et syntetisk bilde (en fargeovergang med en sirkel), laget i nettleseren som PNG. */
-async function lagBilde(side: Side): Promise<Buffer> {
-  const data: string = await side.evaluate(() => {
+/** Et syntetisk bilde (en fargeovergang med en sirkel), laget i nettleseren som PNG (eller WebP, som bøtta tar). */
+async function lagBilde(side: Side, type = 'image/png'): Promise<Buffer> {
+  const data: string = await side.evaluate((type: string) => {
     const c = document.createElement('canvas')
     c.width = c.height = 400
     const x = c.getContext('2d')!
@@ -47,8 +47,8 @@ async function lagBilde(side: Side): Promise<Buffer> {
     x.beginPath()
     x.arc(200, 200, 90, 0, Math.PI * 2)
     x.fill()
-    return c.toDataURL('image/png')
-  })
+    return c.toDataURL(type)
+  }, type)
   return Buffer.from(data.split(',')[1]!, 'base64')
 }
 
@@ -175,14 +175,22 @@ try {
     for (const g of grupper) await rpc(adaK, 'send_gruppemelding', { gruppe: g, klient_id: crypto.randomUUID(), tekst: 'Syntetisk melding' })
     const invitert = await rpc<string>(admin, 'opprett_gruppe', { navn: `${PREFIKS}invitasjon ${tid}`, beskrivelse: 'Nettleserkontroll (syntetisk).', fagmiljo: null })
     await rpc(admin, 'sett_gruppesymbol', { gruppe: invitert, emoji: '💊', bilde: null })
-    await rpc(admin, 'inviter_til_gruppe', { gruppe: invitert, brukernavn: 'qa-chat-bo' })
+    // Og en med et bilde: den inviterte leser ikke gruppen ennå, men skal se bildet.
+    const bildeinvitasjon = `${PREFIKS}bildeinvitasjon ${tid}`
+    const invitertBilde = await rpc<string>(admin, 'opprett_gruppe', { navn: bildeinvitasjon, beskrivelse: 'Nettleserkontroll (syntetisk).', fagmiljo: null })
+    const sti = `${invitertBilde}/${crypto.randomUUID()}.webp`
+    const opplasting = await admin.storage.from('gruppesymboler').upload(sti, await lagBilde(bo, 'image/webp'), { contentType: 'image/webp' })
+    krev(!opplasting.error, `bildet er lastet opp (${opplasting.error?.message ?? ''})`)
+    await rpc(admin, 'sett_gruppesymbol', { gruppe: invitertBilde, emoji: null, bilde: sti })
+    for (const g of [invitert, invitertBilde]) await rpc(admin, 'inviter_til_gruppe', { gruppe: g, brukernavn: 'qa-chat-bo' })
     await bo.goto(`${miljo.url}/#/`)
     const panel = (navn: string) => bo.getByRole('region', { name: navn, exact: true })
     const mine = panel('Mine grupper').locator('.hendelse')
     await innen(20_000, 'emojien i Mine grupper', async () => (await mine.filter({ hasText: emojinavn }).locator('.gruppesymbol__emoji').innerText()) === '🧪')
     await innen(15_000, 'bildet i Mine grupper', () => bildetVises(mine.filter({ hasText: bildenavn })))
-    const invitasjon = panel('Aktuelt for deg').locator('.hendelse', { hasText: 'Invitasjon til' })
-    await innen(15_000, 'emojien ved invitasjonen', async () => (await invitasjon.locator('.gruppesymbol__emoji').innerText()) === '💊')
+    const invitasjon = (navn: string) => panel('Aktuelt for deg').locator('.hendelse', { hasText: `Invitasjon til ${navn}` })
+    await innen(15_000, 'emojien ved invitasjonen', async () => (await invitasjon(`${PREFIKS}invitasjon`).locator('.gruppesymbol__emoji').innerText()) === '💊')
+    await innen(15_000, 'bildet ved invitasjonen', () => bildetVises(invitasjon(bildeinvitasjon)))
     // Titlene står på linje: symbolet og ikonene har like bred kolonne.
     const venstre = await panel('Aktuelt for deg').locator('.hendelse__tittel').evaluateAll((t: Element[]) => [...new Set(t.map((e) => Math.round(e.getBoundingClientRect().left)))])
     krev(venstre.length === 1, `titlene i «Aktuelt for deg» står på linje (${venstre.join(', ')})`)
@@ -191,9 +199,10 @@ try {
     await bo.goto(`${miljo.url}/#/grupper`)
     await bo.reload()
     const inv = bo.getByRole('region', { name: 'Invitasjoner' })
-    await innen(15_000, 'emojien ved invitasjonen på Grupper', async () => (await inv.locator('.gruppesymbol__emoji').first().innerText()) === '💊')
+    await innen(15_000, 'emojien ved invitasjonen på Grupper', async () => (await inv.locator('li', { hasText: `${PREFIKS}invitasjon` }).locator('.gruppesymbol__emoji').innerText()) === '💊')
+    await innen(15_000, 'bildet ved invitasjonen på Grupper', () => bildetVises(inv.locator('li', { hasText: bildeinvitasjon })))
     await bilde(bo, '07c-invitasjon-pc')
-    await rpc(boK, 'svar_paa_gruppeinvitasjon', { gruppe: invitert, godta: false })
+    for (const g of [invitert, invitertBilde]) await rpc(boK, 'svar_paa_gruppeinvitasjon', { gruppe: g, godta: false })
     // Tilbake der S4 sluttet, så S6 starter likt.
     await bo.goto(`${miljo.url}/#/grupper/${emojigruppe}`)
   })

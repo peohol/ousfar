@@ -493,7 +493,8 @@ profilbildet eller initialene til den andre (`docs/direktemeldinger-personvern.m
 
 - **Hvem.** De som styrer gruppen (de ansvarlige og systemarkitektene), velger
   symbolet i gruppens innstillinger, så lenge gruppen er aktiv. Samme myndighet
-  som navnet (`intern.gruppeavslag`, «endre»). De som leser gruppen, ser det.
+  som navnet (`intern.gruppeavslag`, «endre»). De som leser gruppen, ser det,
+  og det gjør også den som har en synlig invitasjon til den.
 - **Emojien.** Nøyaktig én emoji (med variantvelger, hudfarge, høyst fire
   satt sammen med ZWJ, eller et flagg), av tegn fra emojiblokkene uten tall,
   bokstaver, punktskrift og bokstavlignende tegn, så symbolet ikke kan bære
@@ -508,7 +509,11 @@ profilbildet eller initialene til den andre (`docs/direktemeldinger-personvern.m
   for å endre en fil, så et bilde kan aldri overskrives. Reglene på
   `storage.objects`:
   - *Lese:* de som leser gruppen, ser bare det gjeldende bildet
-    (`mine_gruppesymbolbilder()`); de som styrer den, ser hele mappen.
+    (`mine_gruppesymbolbilder()`), og det samme gjør den som har en synlig
+    invitasjon til gruppen (samme vilkår som `mine_grupper()` bruker for å
+    vise invitasjonen, `20261120043000_gruppesymbol_invitasjoner.sql`), til
+    invitasjonen er besvart eller trukket tilbake; de som styrer den, ser hele
+    mappen.
   - *Laste opp:* de som styrer gruppen (`mine_styrte_grupper()`), på en ny
     sti i gruppens mappe.
   - *Slette:* de som styrer gruppen, men bare et bilde som ikke er gruppens
