@@ -122,6 +122,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.diskusjonskommentarer': SIDENOKKEL,
   'public.diskusjonshjerter': SIDENOKKEL,
   'public.diskusjon_skjulte_tekster': SIDENOKKEL,
+  'public.diskusjonsklokker': SIDENOKKEL,
   'public.ideer': IDE,
   'public.idekommentarer': IDE,
   'public.idehjerter': IDE,

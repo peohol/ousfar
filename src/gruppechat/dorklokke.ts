@@ -15,8 +15,11 @@ import { erObjekt, tall } from '../ideer/lesing'
 export type Kanalstatus = 'tilkoblet' | 'frakoblet'
 
 export interface Dorklokkevalg {
-  /** Noe er endret i gruppens chat; `sisteEndring` når hendelsen har den. */
-  vedRinging: (sisteEndring: number | null) => void
+  /**
+   * Noe er endret i gruppens chat; `sisteEndring` når hendelsen har den, og
+   * raden slik hendelsen ga den (uten tekst; diskusjonene leser tråden der).
+   */
+  vedRinging: (sisteEndring: number | null, rad?: Record<string, unknown> | null) => void
   vedStatus: (status: Kanalstatus) => void
 }
 
@@ -32,6 +35,11 @@ export type Abonner = (gruppe: string | null, valg: Dorklokkevalg) => () => void
 export interface Dorklokkekilde {
   tabell: string
   nokkel: string
+  /**
+   * Hendelsene med en nøkkel: bare `UPDATE` (standard) når raden finnes før
+   * noen lytter, `*` når den første endringen lager den.
+   */
+  hendelser?: 'UPDATE' | '*'
 }
 
 /** Gruppechattene: én rad per gruppe i `public.gruppechatter`. */
@@ -69,10 +77,11 @@ export const lagAbonner = (klient: () => SupabaseClient, kilde: Dorklokkekilde =
     lopenr += 1
     const denne: RealtimeChannel = klient()
       .channel(`${kilde.tabell}:${gruppe ?? 'alle'}:${lopenr}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: kilde.tabell, ...(gruppe ? { event: 'UPDATE', filter: `${kilde.nokkel}=eq.${gruppe}` } : {}) }, (hendelse) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: kilde.tabell, ...(gruppe ? { event: kilde.hendelser ?? 'UPDATE', filter: `${kilde.nokkel}=eq.${gruppe}` } : {}) }, (hendelse) => {
         if (stoppet || kanal !== denne) return
         const ny = (hendelse as { new?: unknown }).new
-        vedRinging(erObjekt(ny) && ny.siste_endring != null ? tall(ny.siste_endring) : null)
+        const rad = erObjekt(ny) ? ny : null
+        vedRinging(rad && rad.siste_endring != null ? tall(rad.siste_endring) : null, rad)
       })
     kanal = denne
     denne.subscribe((status) => {

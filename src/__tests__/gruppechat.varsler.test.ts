@@ -152,11 +152,12 @@ describe('chatten er ute av bjella (D4b)', () => {
 
 describe('dørklokken', () => {
   it('bare chatradene, uten tekst og avsender, er i publikasjonen sanntiden lytter på', async () => {
-    // Direktesamtalenes dørklokke står der også (D5); kolonnene den viser, prøves i direktemeldinger.test.ts.
+    // Direktesamtalenes dørklokke står der også (D5), og diskusjonenes (#517); kolonnene de viser,
+    // prøves i direktemeldinger.test.ts og diskusjoner.test.ts.
     const tabeller = (await db.query<{ tabell: string }>(
       `select schemaname || '.' || tablename as tabell from pg_publication_tables where pubname = 'supabase_realtime' order by 1`,
     )).rows
-    expect(tabeller).toEqual([{ tabell: 'public.direktesamtaler' }, { tabell: 'public.gruppechatter' }])
+    expect(tabeller).toEqual([{ tabell: 'public.direktesamtaler' }, { tabell: 'public.diskusjonsklokker' }, { tabell: 'public.gruppechatter' }])
     const kolonner = (await db.query<{ column_name: string }>(
       `select column_name from information_schema.columns where table_schema = 'public' and table_name = 'gruppechatter' order by ordinal_position`,
     )).rows.map((r) => r.column_name)

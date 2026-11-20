@@ -1,0 +1,13 @@
+{
+  "id": "20261120-115709-0d2022",
+  "semver": "minor",
+  "opprettet": "2026-11-20T11:57:09Z",
+  "sammendrag": "Diskusjonene oppdaterer seg selv, som chatten",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "En åpen diskusjonstråd viser nye kommentarer, hjerter og endringer fra andre med en gang, uten at siden må lastes på nytt.",
+    "Lista over trådene og tallet på diskusjonsboblen følger med på samme måte når andre lager tråder eller skriver i dem."
+  ]
+}

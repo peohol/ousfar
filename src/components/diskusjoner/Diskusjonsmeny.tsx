@@ -32,7 +32,10 @@ import {
   type Diskusjonstekster,
 } from '../../diskusjoner/modell'
 import { iSetning } from '../../domain/names'
+import { gjelderTraad, type Diskusjonsendring } from '../../diskusjoner/klokke'
+import { useDiskusjonsklokke } from '../../diskusjoner/useDiskusjonsklokke'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
+import { naarIkkeDrar } from '../../hooks/useSortering'
 import { useKantmeny } from '../../hooks/useKantmeny'
 import { useRestenInert } from '../../hooks/useRestenInert'
 import { merketall } from '../../varsler/modell'
@@ -353,15 +356,76 @@ function Diskusjonsflate({
   const [traadhode, setTraadhode] = useState<HTMLDivElement | null>(null)
   const sokId = useId()
 
+  /** Øker ved hver henting; et svar som kommer etter et nyere, overses. */
+  const sisteHenting = useRef(0)
+  /** Om den siste hentingen av lista lyktes. */
+  const listeOk = useRef(false)
   const hent = useCallback(async () => {
+    const nr = ++sisteHenting.current
     try {
-      setOversikt(await hentDiskusjoner(side))
+      const hentet = await hentDiskusjoner(side)
+      if (nr !== sisteHenting.current) return
+      listeOk.current = true
+      setOversikt(hentet)
       setFeil(null)
     } catch {
+      if (nr !== sisteHenting.current) return
+      listeOk.current = false
       setFeil('Fikk ikke hentet diskusjonene.')
     }
   }, [side])
-  useJevnligSjekk(useCallback(() => void hent(), [hent]))
+
+  // Sanntiden (docs/diskusjoner.md, «Sanntiden»): det andre endrer, hentes når
+  // dørklokken ringer. Tråden som står åpen, hentes på nytt når endringen
+  // gjelder den (`traadendring`); lista, og tallet på boblen, ellers. Står en
+  // tråd åpen foran lista, venter lista til den vises igjen eller menyen
+  // lukkes. Lukket meny: tråden hentes når menyen åpnes.
+  const [traadendring, setTraadendring] = useState(0)
+  const utdatert = useRef({ traad: false, liste: false })
+  const naa = useRef({ visning, apen })
+  naa.current = { visning, apen }
+  /** Tråden som står i menyen, når endringen gjelder den; gir om den står foran lista. */
+  const traadEndret = useCallback((endring: Diskusjonsendring) => {
+    const { visning: v, apen: a } = naa.current
+    const traad = v.side === 'traad' ? v.id : null
+    if (traad && gjelderTraad(endring, traad)) {
+      if (a) setTraadendring((n) => n + 1)
+      else utdatert.current.traad = true
+    }
+    return a && traad !== null
+  }, [])
+  /** Den første hentingen venter til sanntiden er klar (`vedKlar`), så ingen endring faller imellom. */
+  const startet = useRef(false)
+  const tilkoblet = useDiskusjonsklokke(side, {
+    vedEndring: (endring) => {
+      if (traadEndret(endring)) utdatert.current.liste = true
+      else naarIkkeDrar(() => void hent())
+    },
+    vedKlar: () => {
+      startet.current = true
+      traadEndret('alle')
+      void hent()
+    },
+  })
+  const traadForan = apen && visning.side === 'traad'
+  useEffect(() => {
+    if (apen && utdatert.current.traad) {
+      utdatert.current.traad = false
+      setTraadendring((n) => n + 1)
+    }
+    if (!traadForan && utdatert.current.liste) {
+      utdatert.current.liste = false
+      naarIkkeDrar(() => void hent())
+    }
+  }, [apen, traadForan, hent])
+  // Reserven når sanntiden ikke er tilkoblet, eller den siste hentingen feilet:
+  // jevnlig og ved fanebytte, som før.
+  useJevnligSjekk(
+    useCallback(() => {
+      if (!startet.current || (listeOk.current && tilkoblet())) return
+      void hent()
+    }, [hent, tilkoblet]),
+  )
 
   // Navnene og bildene til dem som skriver, hentes første gang menyen åpnes.
   const profilerHentet = useRef(false)
@@ -476,6 +540,7 @@ function Diskusjonsflate({
         onSlettet={tilListe}
         fremhev={fremhev}
         hode={traadhode}
+        endring={traadendring}
       />
     )
   } else if (visning.side === 'ny-traad') {

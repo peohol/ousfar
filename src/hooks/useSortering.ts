@@ -55,6 +55,27 @@ const LISTE = '[data-dnd-container]'
 /** Håndtaket en drag begynner fra med mus og finger. Tastaturet løfter hele raden. */
 export const HANDTAK = '.draghandtak'
 
+/** Dragene som er i gang nå, til dnd-kit har ryddet etter slippet, og det som venter på at de er over. */
+const pagaende = new Set<object>()
+let venter: (() => void)[] = []
+
+function dragOver(drag: object) {
+  if (!pagaende.delete(drag) || pagaende.size > 0) return
+  const klare = venter
+  venter = []
+  for (const f of klare) f()
+}
+
+/**
+ * Kjører `f` med en gang, eller når draget som er i gang, er helt ferdig.
+ * Det som tegner en liste på nytt fra noe utenfra (som diskusjonene i
+ * sanntid), venter med det, så React ikke tegner om det dnd-kit holder i.
+ */
+export function naarIkkeDrar(f: () => void): void {
+  if (pagaende.size === 0) f()
+  else venter.push(f)
+}
+
 /**
  * Dra-og-slipp i lister, med Smett (`@peohol/smett`) over dnd-kit: loddrett,
  * innenfor en liste og mellom lister. Diskusjonsmenyen sorterer kategoriene og
@@ -98,6 +119,8 @@ export function useSortering(
     let brett: SortableBoard | null = null
     let ferdig = false
     let stopp: (() => void) | undefined
+    /** Dette brettets drag i `pagaende`. */
+    const drag = {}
 
     void import('@peohol/smett')
       .then(({ SortableBoard, RestrictToVerticalAxis, Scroller, snapshotOrder, restoreOrder }) => {
@@ -174,6 +197,7 @@ export function useSortering(
           }),
           monitor.addEventListener('dragstart', () => {
             rekkefolge = snapshotOrder(lister())
+            pagaende.add(drag)
           }),
           monitor.addEventListener('dragmove', underveis),
           monitor.addEventListener('dragover', underveis),
@@ -185,6 +209,7 @@ export function useSortering(
               vakt?.()
               vakt = null
               if (brett && el && !ferdig) siste.current.veileder?.slipp?.(el, brett, liste)
+              dragOver(drag)
             })
           }),
         ]
@@ -199,6 +224,7 @@ export function useSortering(
       ferdig = true
       stopp?.()
       brett?.destroy()
+      dragOver(drag)
     }
   }, [rot, aktiv, rullInne, loddrett, handtak])
 }

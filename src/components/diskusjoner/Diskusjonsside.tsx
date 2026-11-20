@@ -58,7 +58,8 @@ const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', y
  * En arkivert tråd kan leses, men ikke endres, før den er hentet tilbake.
  *
  * Å åpne tråden merker den som sett. Kommentarene som var nye da den ble
- * åpnet, står merket som nye til man går ut av den.
+ * åpnet, står merket som nye til man går ut av den. Det andre skriver mens
+ * den står åpen, kommer opp av seg selv (`endring`), og merkes som sett.
  */
 export function Diskusjonsside({
   id,
@@ -72,6 +73,7 @@ export function Diskusjonsside({
   onSlettet,
   fremhev = null,
   hode = null,
+  endring = 0,
 }: {
   id: string
   /** Siden tråden står på. */
@@ -93,6 +95,8 @@ export function Diskusjonsside({
   fremhev?: Fremheving | null
   /** Plassen over det som rulles, der overskriften står fast. Uten den står den øverst i tråden. */
   hode?: HTMLElement | null
+  /** Øker når sanntiden sier at tråden er endret; da hentes den på nytt (docs/diskusjoner.md, «Sanntiden»). */
+  endring?: number
 }) {
   const { meg } = useForfatterkontekst()
   const [traad, setTraad] = useState<Diskusjonstraad | null>(null)
@@ -105,27 +109,48 @@ export function Diskusjonsside({
   const overskrift = useRef<HTMLHeadingElement>(null)
   const artikkel = useRef<HTMLElement>(null)
 
-  const hent = useCallback(async () => {
-    try {
-      const hentet = await hentDiskusjonstraad(id)
-      if (!hentet) setFeil('Tråden finnes ikke lenger.')
-      setTraad(hentet)
-      return hentet
-    } catch {
-      setFeil('Fikk ikke hentet tråden.')
-      return null
-    }
-  }, [id])
+  /** Øker ved hver henting; et svar som kommer etter et nyere, overses. */
+  const sisteHenting = useRef(0)
+  /** `stille`: en henting appen gjør selv (sanntiden), som ikke viser feil fra nettet. */
+  const hent = useCallback(
+    async (stille = false) => {
+      const nr = ++sisteHenting.current
+      try {
+        const hentet = await hentDiskusjonstraad(id)
+        if (nr !== sisteHenting.current) return null
+        if (!hentet) setFeil('Tråden finnes ikke lenger.')
+        setTraad(hentet)
+        return hentet
+      } catch {
+        if (!stille && nr === sisteHenting.current) setFeil('Fikk ikke hentet tråden.')
+        return null
+      }
+    },
+    [id],
+  )
 
-  useEffect(() => {
-    void hent().then((hentet) => {
+  // `onSett` følger lista og skal ikke hente tråden på nytt.
+  const varSett = useRef(onSett)
+  varSett.current = onSett
+  /** Henter tråden og merker den som sett slik den var. De nye fra første gang står merket til man går ut. */
+  const hentOgMerk = useCallback(
+    async (stille: boolean) => {
+      const hentet = await hent(stille)
       if (!hentet) return
       setSistSett((forrige) => (forrige === undefined ? hentet.sist_sett : forrige))
-      void merkDiskusjonSett(hentet).then(() => onSett(hentet.id), () => undefined)
-    })
-    // `onSett` følger lista og skal ikke hente tråden på nytt.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hent])
+      void merkDiskusjonSett(hentet).then(() => varSett.current(hentet.id), () => undefined)
+    },
+    [hent],
+  )
+  useEffect(() => {
+    void hentOgMerk(false)
+  }, [hentOgMerk])
+
+  // Sanntiden: andre har endret noe i tråden mens den står åpen.
+  const forsteEndring = useRef(endring)
+  useEffect(() => {
+    if (endring !== forsteEndring.current) void hentOgMerk(true)
+  }, [endring, hentOgMerk])
 
   // Fokus på overskriften når tråden er hentet, så skjermlesere leser hvor man er.
   const lastet = traad !== null
