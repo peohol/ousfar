@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-44794879151",
     "foresporsel_commit": "a1d8c06dd0c13f341a34e5492f55316ec9acbb48",
     "foresporsel_sha256": "51a3a3722141692b581f7b95ed68ec5245dd74a7d28d33f904e983ba6f206b8e",
     "kode_commit": "91e2344410acc26e86ef6794acac5039d9a16e8d",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/44794879151",
-    "startet_kl": "2026-11-20T18:40:13.791Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-20T18:40:15.862Z",
+    "ferdig_kl": "2026-11-20T18:40:26.797Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "fluvoksamin",
+      "levomepromazin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 337
+    }
+  ],
+  "stoffer": {
+    "fluvoksamin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fluvoksamin/funksjonstest.json"
+        }
+      }
+    },
+    "levomepromazin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/levomepromazin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
