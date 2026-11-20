@@ -1,13 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggPreparatvisning, type Preparatvisning } from '../../legemiddeldata/preparatmodell'
 import { useFaginnholdskilde } from './Faginnholdskilde'
+import { useKilde, type Kildetilstand } from './useKilde'
 
-export type Legemiddeltilstand =
-  | { status: 'ingen' }
-  | { status: 'laster' }
-  | { status: 'klar'; utvalg: Legemiddelutvalg; visning: Preparatvisning }
-  | { status: 'feil'; feil: string }
+export type Legemiddeltilstand = Kildetilstand<Legemiddelutvalg, Preparatvisning>
 
 /**
  * Legemiddeldataene for virkestoffene siden er koblet til, og preparatene
@@ -15,30 +11,5 @@ export type Legemiddeltilstand =
  * appen er satt opp uten legemiddeldataene.
  */
 export function useLegemidler(koblet: readonly string[]): Legemiddeltilstand {
-  const { legemidler } = useFaginnholdskilde()
-  const nokkel = koblet.join('\n')
-  const ider = useMemo(() => (nokkel ? nokkel.split('\n') : []), [nokkel])
-  const [tilstand, setTilstand] = useState<Legemiddeltilstand>({ status: 'ingen' })
-
-  useEffect(() => {
-    if (!legemidler || ider.length === 0) {
-      setTilstand({ status: 'ingen' })
-      return
-    }
-    let gjelder = true
-    setTilstand({ status: 'laster' })
-    legemidler
-      .les(ider)
-      .then((utvalg) => {
-        if (gjelder) setTilstand({ status: 'klar', utvalg, visning: byggPreparatvisning(utvalg, ider) })
-      })
-      .catch((e: Error) => {
-        if (gjelder) setTilstand({ status: 'feil', feil: e.message })
-      })
-    return () => {
-      gjelder = false
-    }
-  }, [legemidler, ider])
-
-  return tilstand
+  return useKilde(useFaginnholdskilde().legemidler, koblet, byggPreparatvisning).tilstand
 }

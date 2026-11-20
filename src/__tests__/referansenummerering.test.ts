@@ -19,6 +19,10 @@ import {
   referansetekst,
   sidereferanser,
   siteringer,
+  slaSammenAutomatiske,
+  ventendeKilder,
+  venterPaNummer,
+  type Automatiskekilder,
   type Referanse,
   type Sideelement,
   type Sidegrunnlag,
@@ -313,5 +317,93 @@ describe('automatiske referanser i samme univers', () => {
   it('skiller opphavet: uten `automatisk` er referansen redaksjonell', () => {
     expect(erAutomatisk(ref('x'))).toBe(false)
     expect(erAutomatisk(fest)).toBe(true)
+  })
+})
+
+describe('numrene står fast mens kildene hentes', () => {
+  // En side som en fagside: redaksjonelle referanser i alle panelene, og tre
+  // kilder som siterer i hver sine paneler midt på siden.
+  const panelrekkefolge = ['identitet', 'bivirkninger', 'tekst', 'preparater', 'interaksjoner', 'slutt']
+  const side = (automatiske: Automatiskekilder): Sidegrunnlag => ({
+    panelreferanser: { preparater: ['r4'], slutt: ['r1'] },
+    elementer: [
+      kort('a', 'identitet', 0, { data: tekst(sitering('r1')) }),
+      kort('b', 'bivirkninger', 0, { referanser: ['r2'] }),
+      kort('c', 'tekst', 0, { data: tekst(sitering('r3', 'r2')) }),
+      kort('d', 'preparater', 0, { data: tekst(sitering('r5')) }),
+      kort('e', 'interaksjoner', 0, { referanser: ['r6'] }),
+      kort('f', 'slutt', 0, { data: tekst(sitering('r7')) }),
+    ],
+    automatiske,
+  })
+  const kilder: Record<string, Automatiskekilder> = {
+    bivirkninger: { referanser: [ref('felles:1')], panelreferanser: { bivirkninger: ['felles:1'] } },
+    fest: {
+      referanser: [ref('fest:kilde'), ref('fest:1')],
+      panelreferanser: { preparater: ['fest:kilde'], interaksjoner: ['fest:kilde'] },
+      elementer: [{ panel: 'interaksjoner', id: 'i1', referanser: ['fest:1', 'r3'] }],
+    },
+    // Gir ingenting, som en kilde som feiler eller er tom.
+    tom: { referanser: [] },
+  }
+  const paneler: Record<string, string[]> = { bivirkninger: ['bivirkninger'], fest: ['preparater', 'interaksjoner'], tom: ['tekst'] }
+  const redaksjonelle = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7'].map((id) => ref(id))
+
+  /** Siden når `hentet` er kommet, og resten ennå hentes. */
+  function underveis(hentet: readonly string[]) {
+    const ventende = Object.keys(kilder).filter((k) => !hentet.includes(k))
+    const automatiske = slaSammenAutomatiske(
+      { referanser: [], ventende: ventende.flatMap((k) => paneler[k]!) },
+      ...hentet.map((k) => kilder[k]!),
+    )
+    return sidereferanser(side(automatiske), [...redaksjonelle, ...automatiske.referanser], panelrekkefolge)
+  }
+
+  function rekkefolger(liste: string[]): string[][] {
+    if (liste.length <= 1) return [liste]
+    return liste.flatMap((forste) => rekkefolger(liste.filter((k) => k !== forste)).map((rest) => [forste, ...rest]))
+  }
+
+  it('gir aldri et vist nummer et annet nummer, i hvilken rekkefølge kildene enn kommer', () => {
+    const ferdig = underveis(Object.keys(kilder))
+    expect(ferdig.komplett).toBe(true)
+    for (const rekkefolge of rekkefolger(Object.keys(kilder))) {
+      for (let i = 0; i <= rekkefolge.length; i += 1) {
+        const steg = underveis(rekkefolge.slice(0, i))
+        expect(steg.komplett).toBe(i === rekkefolge.length)
+        // Hvert nummer som vises underveis, er det samme som når alt er hentet.
+        for (const [id, nummer] of steg.nummerering) expect(ferdig.nummerering.get(id)).toBe(nummer)
+        // Og listen er begynnelsen av den ferdige listen, uten hull.
+        expect(steg.liste).toEqual(ferdig.liste.slice(0, steg.liste.length))
+      }
+    }
+  })
+
+  it('nummererer alt foran den første kilden som hentes, og ingenting etter', () => {
+    const { nummerering, komplett } = underveis([])
+    expect(komplett).toBe(false)
+    // Identiteten og bivirkningskortet står foran bivirkningskilden; panelets egne automatiske venter.
+    expect(Object.fromEntries(nummerering)).toEqual({ r1: 1, r2: 2 })
+    // Når bivirkningene er kommet, venter numrene på den tomme kilden i «tekst»:
+    // kortene i panelet står foran plassen dens, det som kommer etter, gjør det ikke.
+    expect(Object.fromEntries(underveis(['bivirkninger']).nummerering)).toEqual({ r1: 1, r2: 2, 'felles:1': 3, r3: 4 })
+  })
+
+  it('lar en referanse som går igjen etter en ventende plass, beholde nummeret fra før', () => {
+    const { nummerering } = underveis(['bivirkninger', 'tom'])
+    // r3 står i «tekst», foran FEST; den samme r3 i en interaksjon får ikke noe nytt nummer.
+    expect(nummerering.get('r3')).toBe(4)
+    expect(nummerering.has('fest:1')).toBe(false)
+    expect(venterPaNummer(['fest:1', 'r3'], nummerering, new Set(['r3']), false)).toBe(false)
+    expect(venterPaNummer(['r6'], nummerering, new Set(['r6']), false)).toBe(true)
+    expect(venterPaNummer(['r6'], nummerering, new Set(['r6']), true)).toBe(false)
+  })
+
+  it('venter bare på kildene som hentes', () => {
+    const laster = { status: 'laster' }
+    const klar = { status: 'klar' }
+    expect(ventendeKilder({ a: [klar], b: [klar, laster], c: [{ status: 'ingen' }], d: [{ status: 'feil' }] }).ventende).toEqual(['b'])
+    const sammen = slaSammenAutomatiske(ventendeKilder({ a: [laster] }), ventendeKilder({ a: [laster], b: [laster] }))
+    expect(sammen.ventende).toEqual(['a', 'b'])
   })
 })

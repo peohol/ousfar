@@ -14,9 +14,19 @@ export interface Referansekilde {
   referanser: ReadonlyMap<string, Referanse>
   /** Panelnøkkel → referansene i panelets referansefelt. */
   panelreferanser: Readonly<Record<string, readonly string[]>>
+  /**
+   * Usann mens en kilde som kan sitere på siden, ennå hentes: referanser uten
+   * nummer får det da senere, og listen er ikke hele ennå.
+   */
+  komplett: boolean
 }
 
-const Kontekst = createContext<Referansekilde>({ nummerering: new Map(), referanser: new Map(), panelreferanser: {} })
+const Kontekst = createContext<Referansekilde>({
+  nummerering: new Map(),
+  referanser: new Map(),
+  panelreferanser: {},
+  komplett: true,
+})
 
 const INGEN: Readonly<Record<string, readonly string[]>> = {}
 
@@ -24,16 +34,18 @@ export function Sidereferanser({
   nummerering,
   referanser,
   panelreferanser = INGEN,
+  komplett = true,
   children,
 }: {
   nummerering: Nummerering
   referanser: readonly Referanse[]
   panelreferanser?: Readonly<Record<string, readonly string[]>>
+  komplett?: boolean
   children: ReactNode
 }) {
   const verdi = useMemo(
-    () => ({ nummerering, referanser: new Map(referanser.map((r) => [r.id, r])), panelreferanser }),
-    [nummerering, referanser, panelreferanser],
+    () => ({ nummerering, referanser: new Map(referanser.map((r) => [r.id, r])), panelreferanser, komplett }),
+    [nummerering, referanser, panelreferanser, komplett],
   )
   return <Kontekst.Provider value={verdi}>{children}</Kontekst.Provider>
 }

@@ -4,6 +4,7 @@ import { kanGiRedaktoransvar, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
+import { useNaarLedig } from '../../hooks/useNaarLedig'
 import { senere } from '../../oppdatering/senere'
 import { NarApnet } from '../Senere'
 import { adminstatus, adminvalg, lyttEtterAdminpanel, ADMINVALG, type Adminpanel } from './adminvisning'
@@ -28,7 +29,7 @@ const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
 
 /**
  * Det som bør ses over, sjekket som idéene ser etter nye kommentarer: når
- * appen og fanen åpnes, jevnlig og når et vindu lukkes. `hent` gir det i korte
+ * appen er åpnet og ledig, når fanen åpnes, jevnlig og når et vindu lukkes. `hent` gir det i korte
  * tekster (tomt når ingenting venter), og bør ha fast identitet. En sjekk som
  * feiler, endrer ingenting, med mindre `vedFeil` er gitt: da står den teksten,
  * så «kunne ikke leses» aldri ser ut som «ingenting venter». Neste sjekk
@@ -36,12 +37,16 @@ const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
  */
 function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: string) {
   const [meldinger, setMeldinger] = useState<string[]>([])
+  // Første sjekk venter til appen er vist og ledig: prikken er ingen grunn
+  // til å konkurrere med det brukeren skal se først.
+  const [ledig, setLedig] = useState(false)
+  useNaarLedig(useCallback(() => setLedig(true), []))
   const sjekk = useCallback(() => {
-    if (!admin) return
+    if (!admin || !ledig) return
     hent().then(setMeldinger, () => {
       if (vedFeil) setMeldinger([vedFeil])
     })
-  }, [admin, hent, vedFeil])
+  }, [admin, ledig, hent, vedFeil])
   useJevnligSjekk(sjekk)
   return { meldinger, sjekk }
 }

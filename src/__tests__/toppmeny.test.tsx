@@ -978,7 +978,8 @@ describe('hovedmenyen', () => {
       endringer: [],
     }))
     render(<Hovedmeny admin={{ leser: { status, hentNa: vi.fn() } }} />)
-    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Farmakologiportalen bør ses over)'))
+    // Første sjekk venter til appen er ledig (jsdom har ikke `requestIdleCallback`: et sekund).
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Farmakologiportalen bør ses over)'), { timeout: 3000 })
     expect(status).toHaveBeenCalledWith(1)
     expect(menyknapp().querySelector('.toppmeny__prikk')).toBeTruthy()
     const meny = await apneMenyen()
@@ -1024,14 +1025,15 @@ describe('hovedmenyen', () => {
     const les = vi.fn(async (): Promise<Redaktoroversikt> => ({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: naa }))
     const fagsaker = { les, beslutt: vi.fn() }
     const { unmount } = render(<Hovedmeny admin={{ fagsaker }} />)
-    await waitFor(() => expect(les).toHaveBeenCalled())
+    // Første sjekk venter til appen er ledig (jsdom har ikke `requestIdleCallback`: et sekund).
+    await waitFor(() => expect(les).toHaveBeenCalled(), { timeout: 3000 })
     expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen')
     expect(menyknapp().querySelector('.toppmeny__prikk')).toBeNull()
     unmount()
 
     les.mockResolvedValue({ saker: [sak], teknisk: 'normal', sist_kontrollert_kl: naa })
     render(<Hovedmeny admin={{ fagsaker }} />)
-    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Én faglig sak venter på beslutning)'))
+    await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (Én faglig sak venter på beslutning)'), { timeout: 3000 })
     const liste = await administrasjonen(await apneMenyen())
     expect(within(liste).getByRole('img', { name: 'Én faglig sak venter på beslutning' })).toBeTruthy()
 

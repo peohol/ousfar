@@ -1,0 +1,17 @@
+{
+  "id": "20261120-081112-18c386",
+  "semver": "patch",
+  "opprettet": "2026-11-20T08:11:12Z",
+  "sammendrag": "Færre henteforespørsler når appen åpnes og når du kommer tilbake til fanen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Innstillingene dine (som tema, forsideoppsettet og chatmenyen) hentes nå samlet, i stedet for hver for seg.",
+    "Når du kommer tilbake til fanen, ser appen etter nytt én gang i stedet for to.",
+    "Når du bytter fagmiljø, henter forsiden ikke de samme panelene på nytt mens de fortsatt hentes.",
+    "Statusprikken for administrasjonen sjekkes først når siden er ferdig vist, så den ikke konkurrerer med det du skal se først."
+  ],
+  "utenVarsel": true
+}

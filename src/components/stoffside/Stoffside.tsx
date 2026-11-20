@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
+import { memo, useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
 import { PANELER } from '../../faginnhold/paneler'
@@ -22,41 +22,66 @@ import { ForslagsstedKilde, type Forslagsapning } from '../forslag/Forslagskilde
 import { forslagsreferanser, forslagsvalgForFagside } from '../../forslag/fagside'
 import { Kurateringsbanner } from '../kuratering/Utgavelister'
 import { Registerhandlingskilde } from '../stoffregister/Registerhandling'
-import { Identitetspanel } from './Identitetspanel'
-import { finnKobling, Preparatpanel, preparatsoketekster } from './Preparatpanel'
+import { Identitetspanel as IdentitetspanelRen } from './Identitetspanel'
+import { finnKobling, Preparatpanel as PreparatpanelRen, preparatsoketekster } from './Preparatpanel'
 import { useLegemidler } from './useLegemidler'
-import { Interaksjonspanel, interaksjonssoketekster } from './Interaksjonspanel'
+import { Interaksjonspanel as InteraksjonspanelRen, interaksjonssoketekster } from './Interaksjonspanel'
 import { useInteraksjoner } from './useInteraksjoner'
-import { Kortpanel, Mekanismepanel, Tabellpanel, Tekstpanel, type Panelkontekst } from './Paneler'
-import { ViktigeData } from './ViktigeData'
+import {
+  Kortpanel as KortpanelRen,
+  Mekanismepanel as MekanismepanelRen,
+  Tabellpanel as TabellpanelRen,
+  Tekstpanel as TekstpanelRen,
+  type Panelkontekst,
+} from './Paneler'
+import { ViktigeData as ViktigeDataRen } from './ViktigeData'
 import { Redigeringskilde } from './Redigeringskontekst'
 import { Redigeringshandlinger } from './Redigeringslinje'
 import { Sidesok } from './Sidesok'
 import { Uthevingskilde } from '../Uthev'
 import { festreferanser } from '../../legemiddeldata/referanser'
-import { slaSammenAutomatiske } from '../../faginnhold/referanser'
+import { slaSammenAutomatiske, ventendeKilder } from '../../faginnhold/referanser'
 import { clinpgxlitteratur, clinpgxreferanser } from '../../clinpgx/referanser'
 import { cpicreferanser } from '../../cpic/referanser'
 import { FARMAKOGENETIKKPANEL, kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
-import { Farmakogenetikkpanel, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
+import { Farmakogenetikkpanel as FarmakogenetikkpanelRen, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
 import { useBivirkninger, useCpic, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
 import { Konsentrasjonskilde, konsentrasjonIEnhet } from './Konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { finnNoder, NODER } from '../../faginnhold/riktekst'
-import { Kjemipanel } from './Kjemipanel'
-import { Laboratoriepanel } from './Laboratoriepanel'
-import { labsoketekster } from '../../farmakologiportalen/stoffside'
+import { Kjemipanel as KjemipanelRen } from './Kjemipanel'
+import { Laboratoriepanel as LaboratoriepanelRen } from './Laboratoriepanel'
+import { LABPANEL, labsoketekster } from '../../farmakologiportalen/stoffside'
 import { fpreferanser } from '../../farmakologiportalen/referanser'
-import { kjemisoketekster } from '../../kjemi/stoffside'
+import { KJEMIPANEL, kjemisoketekster } from '../../kjemi/stoffside'
 import { pubchemreferanser } from '../../kjemi/referanser'
-import { Bivirkningspanel, bivirkningssoketekster, harBivirkninger } from './Bivirkningspanel'
+import { Bivirkningspanel as BivirkningspanelRen, bivirkningssoketekster, harBivirkninger } from './Bivirkningspanel'
 import { BIVIRKNINGSPANEL, bivirkningsreferanser } from '../../bivirkninger/referanser'
 import { visningForKort } from '../../bivirkninger/stoffside'
 import type { Visning } from '../../bivirkninger/modell'
 import { useStoffside, type Sidemodus } from './useStoffside'
 import { cypinfoSynlig } from '../../cypinfo/stoffside'
+import { INTERAKSJONSPANEL, PREPARATPANEL } from '../../legemiddeldata/stoffside'
 import { useRettigheter } from '../../auth/rettigheter'
 import type { Stoff, Stoffregister } from '../../domain/stoffregister'
+
+/**
+ * Panelene tegnes bare på nytt når det de viser, endres: ikke hver gang en
+ * annen kilde kommer inn mens siden lastes. Alt de bruker, får de som
+ * egenskaper eller fra kontekstene rundt.
+ */
+const Identitetspanel = memo(IdentitetspanelRen)
+const Preparatpanel = memo(PreparatpanelRen)
+const Interaksjonspanel = memo(InteraksjonspanelRen)
+const ViktigeData = memo(ViktigeDataRen)
+const Tekstpanel = memo(TekstpanelRen)
+const Farmakogenetikkpanel = memo(FarmakogenetikkpanelRen)
+const Bivirkningspanel = memo(BivirkningspanelRen)
+const Kortpanel = memo(KortpanelRen)
+const Mekanismepanel = memo(MekanismepanelRen)
+const Tabellpanel = memo(TabellpanelRen)
+const Laboratoriepanel = memo(LaboratoriepanelRen)
+const Kjemipanel = memo(KjemipanelRen)
 
 export interface StoffsideProps {
   /** Stoffets nøkkel fra adressen (`#/stoff/<nøkkel>`). */
@@ -191,11 +216,20 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   // Visningen av bivirkningene styrer også hvilke kort søket på siden peker på.
   const [bivirkningsvisning, setBivirkningsvisning] = useBevart<Visning>('bivirkningsvisning', 'frekvens')
   // Redaksjonelle og automatiske referanser (FEST, ClinPGx, CPIC og preparatomtalene) nummereres sammen.
+  // Mens en kilde hentes, venter numrene fra panelet dens og utover, så ingen vist nummer endres når den kommer.
   const univers = useMemo(
     () =>
       referanseunivers(
         modell,
         slaSammenAutomatiske(
+          ventendeKilder({
+            [PREPARATPANEL]: [legemidler],
+            [INTERAKSJONSPANEL]: [legemidler, interaksjoner],
+            [FARMAKOGENETIKKPANEL]: [pgx, cpictilstand],
+            [BIVIRKNINGSPANEL]: [bivirkninger],
+            [LABPANEL]: [laboratorier],
+            [KJEMIPANEL]: [kjemi],
+          }),
           festreferanser(
             legemidler.status === 'klar' ? legemidler.utvalg : null,
             interaksjoner.status === 'klar' ? interaksjoner.oversikt : null,
@@ -227,22 +261,28 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
     },
     [maleenhet, molvekter],
   )
+  // Stedene treffene står, regnes først ut når det søkes på siden: ellers
+  // ville hele siden indekseres på nytt hver gang en kilde kommer inn mens
+  // den lastes, uten at noen ser resultatet.
+  const soker = sporring.trim() !== ''
   const dokumenter = useMemo(
     () =>
-      indekserSide(
-        stoffidentitet({ slug, navn, aliaser: kjent?.aliaser ?? [] }),
-        modell,
-        [
-          ...preparatsoketekster(legemidler),
-          ...interaksjonssoketekster(interaksjoner),
-          ...farmakogenetikksoketekster(pgx, cpictilstand),
-          ...bivirkningssoketekster(bivirkninger, bivirkningsvisning),
-          ...labsoketekster(laboratorier),
-          ...kjemisoketekster(kjemi),
-        ],
-        konsentrasjon,
-      ),
-    [slug, navn, kjent, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
+      soker
+        ? indekserSide(
+            stoffidentitet({ slug, navn, aliaser: kjent?.aliaser ?? [] }),
+            modell,
+            [
+              ...preparatsoketekster(legemidler),
+              ...interaksjonssoketekster(interaksjoner),
+              ...farmakogenetikksoketekster(pgx, cpictilstand),
+              ...bivirkningssoketekster(bivirkninger, bivirkningsvisning),
+              ...labsoketekster(laboratorier),
+              ...kjemisoketekster(kjemi),
+            ],
+            konsentrasjon,
+          )
+        : [],
+    [soker, slug, navn, kjent, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
   )
   // Det et forslag kan gjelde: det publiserte på siden, slik leseren ser det.
   const visesPublisert = modus === 'lese' && !utgave && side.status === 'klar' && side.tilstand === 'publisert'
@@ -262,7 +302,10 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   const sokeinnhold = useMemo(() => [side.data, konsentrasjon], [side.data, konsentrasjon])
   const ord = useMemo(() => sokeord(sporring), [sporring])
 
-  const kontekst: Panelkontekst = { modell, redigerer, handlinger, konsentrasjon }
+  const kontekst = useMemo<Panelkontekst>(
+    () => ({ modell, redigerer, handlinger, konsentrasjon }),
+    [modell, redigerer, handlinger, konsentrasjon],
+  )
   const redigeringsverdi = useMemo(
     () => ({
       redigerer,
@@ -274,8 +317,10 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   )
   // En side uten faginnhold er ikke faglig kuratert, selv om den viser data
   // OUSFAR henter selv (preparatene fra FEST, kjemien, laboratoriene).
+  // Det sies først når kildene som avgjør det, er hentet, så det aldri står feil et øyeblikk.
   const utenFaginnhold = !harFaginnhold(modell) && !harBivirkninger(bivirkninger)
   const harData = modell.paneler.size > 0 || kjemi.rader.some((r) => r.data) || laboratorier.tabeller.length > 0
+  const avgjort = ![bivirkninger, kjemi, laboratorier].some((kilde) => kilde.status === 'laster')
 
   // En side som åpnes, begynner øverst, med fokus på navnet — så tastaturet og
   // skjermleseren står der siden begynner, og ikke igjen i menyen eller modulen.
@@ -380,6 +425,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             nummerering={univers.nummerering}
             referanser={univers.referanser}
             panelreferanser={univers.panelreferanser}
+            komplett={univers.komplett}
           >
             <Redigeringskilde verdi={redigeringsverdi}>
               <Konsentrasjonskilde molvekter={molvekter} sideforbindelser={sideforbindelser}>
@@ -469,7 +515,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
                     }
                   })}
 
-                  {!redigerer && side.status === 'klar' && utenFaginnhold && (
+                  {!redigerer && side.status === 'klar' && avgjort && utenFaginnhold && (
                     <p className="stoffside__tom">
                       {harData
                         ? 'Denne siden har ikke fått faginnhold ennå og er ikke faglig kuratert. Det som står her, er hentet automatisk fra offentlige datakilder.'

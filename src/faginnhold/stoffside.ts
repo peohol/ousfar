@@ -55,6 +55,11 @@ export interface Referanseunivers {
   liste: Referanseoppforing[]
   /** Panelnøkkel → referansene i panelets referansefelt. Paneler uten er utelatt. */
   panelreferanser: Readonly<Record<string, readonly string[]>>
+  /**
+   * Usann mens en kilde som kan sitere på siden, ennå hentes: da har bare
+   * forekomstene foran den nummer, og listen er ikke hele (se `forekomster`).
+   */
+  komplett: boolean
 }
 
 export function tilReferanse(utgave: Utgave<Referanseinnhold>): Referanse {
@@ -125,14 +130,15 @@ export function referanseunivers(
     automatiske: {
       panelreferanser: bareKjentePaneler(automatiske.panelreferanser ?? {}),
       elementer: (automatiske.elementer ?? []).filter((e) => panelFor(e.panel)),
+      ventende: (automatiske.ventende ?? []).filter((panel) => panelFor(panel)),
     },
   }
   const referanser = [...modell.referanser, ...automatiske.referanser]
-  const { nummerering, liste } = sidereferanser(side, referanser, PANELREKKEFOLGE, sammenlignKort)
+  const { nummerering, liste, komplett } = sidereferanser(side, referanser, PANELREKKEFOLGE, sammenlignKort)
   const panelreferanser = Object.fromEntries(
     PANELREKKEFOLGE.map((panel) => [panel, feltreferanser(side, panel)] as const).filter(([, ider]) => ider.length > 0),
   )
-  return { referanser, nummerering, liste, panelreferanser }
+  return { referanser, nummerering, liste, panelreferanser, komplett }
 }
 
 /* --- Publiseringen -------------------------------------------------------- */
