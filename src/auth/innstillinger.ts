@@ -7,19 +7,40 @@ import { klient } from './klient'
 
 const FEIL = 'Kunne ikke nå brukerinnstillingene.'
 
+/** Nøklene som er bedt om, men ikke sendt ennå, og svaret de venter på. */
+let samling: { nokler: Set<string>; svar: Promise<Map<string, unknown>> } | null = null
+
 /**
  * Verdien brukeren har lagret under `nokkel`, eller `null` når vedkommende ikke
  * har valgt noe ennå. Kaster når tjenesten ikke svarer, så den som kaller kan
  * skille «ingenting lagret» fra «vet ikke».
+ *
+ * Mange deler av appen spør hver for sin nøkkel når den åpnes. Det som
+ * spørres om i samme omgang (før nettleseren gjør noe annet), sendes derfor
+ * som ett kall, og den samme nøkkelen bare én gang. Ingenting huskes etter
+ * svaret: neste spørsmål henter på nytt.
  */
-export async function hentInnstilling(nokkel: string): Promise<unknown> {
-  const { data, error } = await klient()
-    .from('brukerinnstillinger')
-    .select('verdi')
-    .eq('nokkel', nokkel)
-    .maybeSingle()
+export function hentInnstilling(nokkel: string): Promise<unknown> {
+  if (!samling) {
+    const nokler = new Set<string>()
+    // Etter det som kjører nå (en hel runde med effekter når en side
+    // monteres), men før nettleseren gjør noe annet: et travelt bilde skal
+    // ikke holde kallet tilbake.
+    const svar = Promise.resolve().then(() => {
+      samling = null
+      return hentInnstillinger([...nokler])
+    })
+    samling = { nokler, svar }
+  }
+  samling.nokler.add(nokkel)
+  return samling.svar.then((verdier) => verdier.get(nokkel) ?? null)
+}
+
+/** Verdiene under `nokler` i ett kall; nøkler uten lagret valg er ikke med. */
+async function hentInnstillinger(nokler: string[]): Promise<Map<string, unknown>> {
+  const { data, error } = await klient().from('brukerinnstillinger').select('nokkel, verdi').in('nokkel', nokler)
   if (error) throw new Error(FEIL)
-  return (data as { verdi?: unknown } | null)?.verdi ?? null
+  return new Map(((data ?? []) as { nokkel: string; verdi: unknown }[]).map((rad) => [rad.nokkel, rad.verdi]))
 }
 
 export async function lagreInnstilling(nokkel: string, verdi: unknown): Promise<void> {

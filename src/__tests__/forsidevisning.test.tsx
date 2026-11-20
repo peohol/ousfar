@@ -208,6 +208,23 @@ describe('Forsiden', () => {
     expect(vi.mocked(api.hentOppsummering).mock.calls.map(([m]) => m).sort()).toEqual(['aktuelt', 'fagsider', 'grupper', 'viktig_nytt'])
   })
 
+  it('venter på hentingen som alt er ute når forsiden settes opp på nytt, i stedet for å be om det samme igjen (#504)', async () => {
+    const grupper = utsatt<Oppsummering>()
+    vi.mocked(api.hentOppsummering).mockImplementation((modul: Databasemodul) => (modul === 'grupper' ? grupper.lovnad : Promise.resolve(TOM)))
+    const { unmount } = vis()
+    unmount()
+    // Som etter et fagmiljøbytte: forsiden monteres på nytt mens panelene ennå hentes.
+    vis()
+    expect(vi.mocked(api.hentOppsummering).mock.calls.filter(([m]) => m === 'grupper')).toHaveLength(1)
+    await act(async () => grupper.svar({ ...TOM, grupper: [gruppe('Delt gruppe')] }))
+    expect(within(panel('Mine grupper')).getByText('Delt gruppe')).toBeTruthy()
+
+    // Når hentingen er ferdig, henter en ny forside på nytt, som før.
+    cleanup()
+    vis()
+    await waitFor(() => expect(vi.mocked(api.hentOppsummering).mock.calls.filter(([m]) => m === 'grupper')).toHaveLength(2))
+  })
+
   it('bytter til det lagrede oppsettet når det er hentet, uten å flytte fokus', async () => {
     const lagret = utsatt<Forsideoppsett>()
     vi.mocked(api.hentOppsett).mockReturnValue(lagret.lovnad)

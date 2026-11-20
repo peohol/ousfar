@@ -65,6 +65,25 @@ function hentPanel(modul: Databasemodul): Promise<Panelsvar> {
   }))
 }
 
+/**
+ * Hentingene som er på vei, per bruker, fagmiljø og panel. Et panel som
+ * monteres mens den samme hentingen alt er ute (forsiden settes opp på nytt
+ * etter et fagmiljøbytte), venter på den i stedet for å be om det samme igjen.
+ */
+const underveis = new Map<string, Promise<Panelsvar>>()
+
+function hentDelt(nokkel: string, modul: Databasemodul): Promise<Panelsvar> {
+  const pagaende = underveis.get(nokkel)
+  if (pagaende) return pagaende
+  const henting = hentPanel(modul)
+  underveis.set(nokkel, henting)
+  const ferdig = () => {
+    if (underveis.get(nokkel) === henting) underveis.delete(nokkel)
+  }
+  henting.then(ferdig, ferdig)
+  return henting
+}
+
 /** Det en rad gjør når den trykkes, ut over å føre brukeren dit: merke det lest. */
 interface Lesing {
   varsel: (id: string, lest_kl: string) => void
@@ -162,7 +181,7 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
     if (fagmiljo === null) return
     const denne = (siste.current += 1)
     setTilstand((t) => (t.nokkel === nokkel ? { ...t, feil: false } : { nokkel, svar: hentet.get(nokkel) ?? null, feil: false }))
-    hentPanel(modul).then(
+    hentDelt(nokkel, modul).then(
       (svar) => {
         if (denne !== siste.current) return
         hentet.set(nokkel, svar)
