@@ -178,9 +178,11 @@ function buttonHasFocus(): boolean {
  *
  * Katalogen er laboratoriets egen og står i databasen per fagmiljø; appen har
  * ingen i klientpakken. Til den er hentet, tegnes ingenting opp, så
- * fortolkningen aldri rekker å vise noe uten den. Byttes fagmiljøet, settes
- * arbeidsflaten opp på nytt med det nye fagmiljøets katalog: ingenting fra det
- * forrige blir stående. Det som følger kontoen og ikke fagmiljøet
+ * fortolkningen aldri rekker å vise noe uten den. Byttes fagmiljøet, tas
+ * arbeidsflaten ned i det samme rettighetene for det nye kommer, og settes
+ * opp på nytt når det nye fagmiljøets katalog er hentet: ingenting fra det
+ * forrige vises under det nye, og ingenting fra det blir stående. Det som
+ * følger kontoen og ikke fagmiljøet
  * ({@link Kontoflate}), står gjennom byttet og hentes ikke på nytt. Kunne
  * katalogen ikke hentes, eller har fagmiljøet ingen, er den tom, og
  * fortolkningen sier fra i stedet for å fortolke.
@@ -200,21 +202,23 @@ export default function App() {
     () => (katalogtilstand.status === 'laster' ? null : katalogkildeFor(katalogtilstand)),
     [katalogtilstand],
   )
-  const katalogkontekst = useKatalogkontekst(kilde, arbeidskontekst)
+  // Katalogen fra et annet fagmiljø enn det rettighetene nå gjelder, vises
+  // ikke: til katalogen for det er hentet, står porten.
+  const gjeldende = useKatalogkontekst(kilde, arbeidskontekst) === arbeidskontekst ? kilde : null
   // Kontoflaten settes opp sammen med den første arbeidsflaten, så det den
   // henter, ikke konkurrerer med rettighetene og katalogen når appen åpnes.
   const [kontoenVises, setKontoenVises] = useState(false)
-  if (kilde && !kontoenVises) setKontoenVises(true)
+  if (gjeldende && !kontoenVises) setKontoenVises(true)
   if (!kontoenVises) return <div className="port" aria-busy="true" />
   return (
     <Kontoflate rettigheter={rettigheter} oppdaterRettigheter={oppdaterRettigheter} arbeidskontekst={arbeidskontekst} grupper={grupper}>
       {(konto) =>
-        kilde ? (
-          <AnalyttkatalogKilde verdi={kilde}>
+        gjeldende ? (
+          <AnalyttkatalogKilde verdi={gjeldende}>
             <Arbeidsflate
-              key={kilde.katalog.fagmiljo?.id ?? ''}
+              key={gjeldende.katalog.fagmiljo?.id ?? ''}
               rettigheter={rettigheter}
-              katalogkontekst={katalogkontekst}
+              arbeidskontekst={arbeidskontekst}
               grupper={grupper}
               konto={konto}
             />
@@ -228,11 +232,10 @@ export default function App() {
 }
 
 /**
- * Arbeidskonteksten katalogen `kilde` ble hentet i. Byttes fagmiljøet, står
- * den forrige til katalogen for det nye er hentet, så arbeidsflaten som ennå
- * viser den gamle katalogen, ikke henter det nye fagmiljøets regler like før
- * den settes opp på nytt med dem. Før rettighetene er kjent, er den `null`, og
- * den første kjente er den katalogen alt gjelder.
+ * Arbeidskonteksten katalogen `kilde` ble hentet i: den som gjaldt da
+ * katalogen kom. Byttes fagmiljøet, er den den forrige til katalogen for det
+ * nye er hentet. En katalog som kom før rettighetene var kjent (`null`), er
+ * hentet i den første kjente.
  */
 function useKatalogkontekst(kilde: Katalogkilde | null, arbeidskontekst: string | null): string | null {
   const [fulgt, setFulgt] = useState({ kilde, kontekst: arbeidskontekst })
@@ -388,13 +391,13 @@ function Kontoflate({
 
 function Arbeidsflate({
   rettigheter,
-  katalogkontekst,
+  arbeidskontekst,
   grupper,
   konto,
 }: {
   rettigheter: Rettigheter
-  /** Fagmiljøet katalogen ble hentet i ({@link useKatalogkontekst}), som reglene følger. */
-  katalogkontekst: string | null
+  /** Fagmiljøet fortolkningen gjelder, som det hentede følger (`arbeidskontekst`). */
+  arbeidskontekst: string | null
   grupper: Gruppekilde
   konto: Konto
 }) {
@@ -463,7 +466,7 @@ function Arbeidsflate({
   )
   // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
   // (arbeidskonteksten, P4b). Byttes det, også til ingen, tømmes reglene før de nye hentes.
-  const regelkontekst = katalogkontekst
+  const regelkontekst = arbeidskontekst
   const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
   const scenarioregler = useHentScenarioregler(

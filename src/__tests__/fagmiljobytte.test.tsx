@@ -8,6 +8,9 @@
  *   opp på nytt med den nye katalogen.
  * - Fortolkningsreglene hentes én gang per fagmiljø: ikke også for det nye
  *   fagmiljøet i arbeidsflaten som ennå viser det gamle.
+ * - Arbeidsflaten tegnes aldri med katalogen (og reglene) for et annet
+ *   fagmiljø enn det rettighetene gjelder: mens katalogen for det nye hentes,
+ *   står porten, også ved bytte til «uten fagmiljø» og når katalogen feiler.
  *
  * Innloggingen og databasen er erstattet; jsdom har ikke `requestIdleCallback`,
  * så «ledig» (fagsøket) er et sekund etter at appen er vist
@@ -18,7 +21,13 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 
 const databasen = vi.hoisted(() => ({
   kall: [] as string[],
-  fagmiljo: 'kf' as 'kf' | 'rt',
+  /** Fagmiljøet den innloggede arbeider i; `null` er ingen (som når det er arkivert). */
+  fagmiljo: 'kf' as 'kf' | 'rt' | null,
+  /** Katalogen svarer først når denne er innfridd. */
+  katalogVenter: null as Promise<void> | null,
+  katalogFeiler: false,
+  /** Hver gang forsidens overskrift tegnes: arbeidskonteksten, katalogens fagmiljø og om katalogen feilet. */
+  visninger: [] as { kontekst: string | null; katalog: string | null; feil: boolean }[],
 }))
 
 vi.mock('../auth/okt', () => ({
@@ -58,13 +67,17 @@ vi.mock('../auth/klient', async () => {
     klient: () => ({
       rpc: async (funksjon: string) => {
         databasen.kall.push(funksjon)
-        const fagmiljo = fagmiljoer[databasen.fagmiljo]
+        const fagmiljo = databasen.fagmiljo ? fagmiljoer[databasen.fagmiljo] : null
         if (funksjon === 'mine_rettigheter') {
           const mine = Object.values(fagmiljoer)
           return { data: { arbeidsfagmiljo: fagmiljo, mine_fagmiljoer: mine }, error: null }
         }
         if (funksjon === 'les_analyttkatalog') {
-          return { data: { ...OUS_KATALOGSVAR, fagmiljo: { id: fagmiljo.id, navn: fagmiljo.navn } }, error: null }
+          await databasen.katalogVenter
+          if (databasen.katalogFeiler) return { data: null, error: { code: '57014', message: 'tidsavbrudd', details: null, hint: null } }
+          return fagmiljo
+            ? { data: { ...OUS_KATALOGSVAR, fagmiljo: { id: fagmiljo.id, navn: fagmiljo.navn } }, error: null }
+            : { data: { ...OUS_KATALOGSVAR, oppforinger: [], fagmiljo: null }, error: null }
         }
         return { data: rader[funksjon] ?? null, error: null }
       },
@@ -76,6 +89,19 @@ vi.mock('../auth/klient', async () => {
   }
 })
 vi.mock('../components/konto/Kontomeny', () => ({ Kontomeny: () => null }))
+// Overskriften på forsiden noterer hva den tegnes med.
+vi.mock('../components/forside/Fagmiljooverskrift', async () => {
+  const { useArbeidskontekst } = await import('../auth/rettigheter')
+  const { useKatalogkilde } = await import('../katalog/Analyttkatalogkilde')
+  return {
+    Fagmiljooverskrift: () => {
+      const kontekst = useArbeidskontekst()
+      const { katalog, feil } = useKatalogkilde()
+      databasen.visninger.push({ kontekst, katalog: katalog.fagmiljo?.id ?? null, feil: feil !== null })
+      return <h1 className="forside__tittel">{kontekst}</h1>
+    },
+  }
+})
 
 const { default: App } = await import('../App')
 await (await import('./hjelp/sidekode')).hentSidene()
@@ -96,6 +122,9 @@ beforeEach(() => {
   window.location.hash = ''
   databasen.kall = []
   databasen.fagmiljo = 'kf'
+  databasen.katalogVenter = null
+  databasen.katalogFeiler = false
+  databasen.visninger = []
 })
 
 afterEach(cleanup)
@@ -106,6 +135,28 @@ const REGLENE = ['les_intervallregelsett', 'les_kommentarer', 'les_thc_regelsett
 const reglene = () => REGLENE.map(antall)
 /** Kallene til det som følger kontoen og ikke fagmiljøet. */
 const KONTOENS = ['les_stoffregister', 'les_stoffavoritter', 'from:autoerstatt_regler', 'sokedata_versjoner']
+
+/** Et løfte testen selv innfrir. */
+function utsatt() {
+  let innfri!: () => void
+  const lofte = new Promise<void>((r) => (innfri = r))
+  return { lofte, innfri }
+}
+
+/** Bytter fagmiljøet et annet sted; appen ser det når fanen får fokus. */
+async function byttTil(fagmiljo: 'kf' | 'rt' | null) {
+  const katalogkall = antall('les_analyttkatalog')
+  databasen.fagmiljo = fagmiljo
+  await act(async () => void window.dispatchEvent(new Event('focus')))
+  await waitFor(() => expect(antall('les_analyttkatalog')).toBe(katalogkall + 1))
+}
+
+const UTEN = 'uten-arbeidsfagmiljo'
+/** Om forsiden ble tegnet med katalogen for et annet fagmiljø enn rettighetene gjaldt. */
+const blandet = () =>
+  databasen.visninger.filter(
+    ({ kontekst, katalog, feil }) => kontekst !== null && !feil && katalog !== (kontekst === UTEN ? null : kontekst),
+  )
 
 async function visApp() {
   render(
@@ -129,10 +180,7 @@ describe('hentingen ved oppstart og fagmiljøbytte', { timeout: 20_000 }, () => 
     const forstegang = reglene()
     const konto = KONTOENS.map(antall)
 
-    // Fagmiljøet byttes et annet sted; appen ser det når fanen får fokus.
-    databasen.fagmiljo = 'rt'
-    await act(async () => void window.dispatchEvent(new Event('focus')))
-    await waitFor(() => expect(antall('les_analyttkatalog')).toBe(2))
+    await byttTil('rt')
     await waitFor(() => expect(document.querySelector('.port[aria-busy]')).toBeNull())
     // Den nye arbeidsflaten henter dem én gang; den gamle henter dem ikke for det nye fagmiljøet.
     await waitFor(() => expect(reglene()).toEqual(forstegang.map((n) => 2 * n)))
@@ -140,6 +188,38 @@ describe('hentingen ved oppstart og fagmiljøbytte', { timeout: 20_000 }, () => 
     expect(reglene()).toEqual(forstegang.map((n) => 2 * n))
 
     // Kontoens kilder står gjennom byttet.
+    expect(KONTOENS.map(antall)).toEqual(konto)
+  })
+
+  it('viser aldri katalogen og reglene for ett fagmiljø under et annet, heller ikke uten fagmiljø eller når katalogen feiler', async () => {
+    await visApp()
+    await waitFor(() => expect(antall('sokedata_versjoner')).toBe(1), { timeout: 3000 })
+    const konto = KONTOENS.map(antall)
+    const regler = reglene()
+    expect(databasen.visninger.at(-1)).toEqual({ kontekst: 'kf', katalog: 'kf', feil: false })
+
+    // Katalogen for det nye fagmiljøet lar vente på seg: imens står porten.
+    const katalog = utsatt()
+    databasen.katalogVenter = katalog.lofte
+    await byttTil('rt')
+    expect(document.querySelector('.port[aria-busy]')).not.toBeNull()
+    expect(document.querySelector('.forside')).toBeNull()
+    expect(reglene()).toEqual(regler)
+    await act(async () => katalog.innfri())
+    await waitFor(() => expect(databasen.visninger.at(-1)).toEqual({ kontekst: 'rt', katalog: 'rt', feil: false }))
+    await waitFor(() => expect(reglene()).toEqual(regler.map((n) => 2 * n)))
+
+    // Uten fagmiljø: ingen katalog, og ikke det forrige fagmiljøets.
+    databasen.katalogVenter = null
+    await byttTil(null)
+    await waitFor(() => expect(databasen.visninger.at(-1)).toEqual({ kontekst: UTEN, katalog: null, feil: false }))
+
+    // Katalogen kan ikke hentes: fortolkningen sier fra, og ingenting fra før står.
+    databasen.katalogFeiler = true
+    await byttTil('rt')
+    await waitFor(() => expect(databasen.visninger.at(-1)).toEqual({ kontekst: 'rt', katalog: null, feil: true }))
+
+    expect(blandet()).toEqual([])
     expect(KONTOENS.map(antall)).toEqual(konto)
   })
 })
