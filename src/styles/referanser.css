@@ -54,6 +54,14 @@
   background: var(--aksent);
 }
 
+/* Nummeret kommer når kilden foran er hentet: pillen holder plassen, dempet. */
+.referansepille--venter,
+.referansepille--venter:hover {
+  color: var(--blekk-dempet);
+  background: var(--aksent-flate);
+  cursor: default;
+}
+
 /* Boblen er tipsboblen, men den tar imot pekeren: lenkene i den skal kunne
    klikkes. Broen over luften holder den åpen på vei inn. */
 .tipsboble--interaktiv,
@@ -137,6 +145,11 @@
 
 .referanseliste__punkt {
   overflow-wrap: anywhere;
+}
+
+.referanseliste__venter {
+  margin: var(--rom-2) 0 0;
+  color: var(--blekk-dempet);
 }
 
 .referanseliste__punkt::marker {

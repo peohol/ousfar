@@ -1,5 +1,5 @@
 import type { Referanseniva } from '../../faginnhold/modell'
-import { numreFor } from '../../faginnhold/referanser'
+import { numreFor, venterPaNummer } from '../../faginnhold/referanser'
 import { useLaastMerknad } from './laas'
 import { Referansepille } from './Referansepille'
 import { useSidereferanser } from './Sidereferanser'
@@ -18,7 +18,8 @@ const GJELDER: Record<Exclude<Referanseniva, 'inline'>, string> = {
  * kontrollen — diskret ved siden av, i stedet for en løpende «Kilde: …» i
  * innholdet.
  *
- * Uten referanser siden kjenner, vises ingenting.
+ * Uten referanser siden kjenner, vises ingenting. Venter de på nummeret,
+ * står feltet med pillen som venter (se `Referansepille`).
  */
 export function Referansefelt({
   ider,
@@ -27,9 +28,9 @@ export function Referansefelt({
   ider: readonly string[]
   niva?: Exclude<Referanseniva, 'inline'>
 }) {
-  const { nummerering, referanser } = useSidereferanser()
+  const { nummerering, referanser, komplett } = useSidereferanser()
   const laast = useLaastMerknad()
-  if (numreFor(ider, nummerering).length === 0) return null
+  if (numreFor(ider, nummerering).length === 0 && !venterPaNummer(ider, nummerering, referanser, komplett)) return null
   const opphav = [
     ...new Set(ider.flatMap((id) => referanser.get(id)?.automatisk?.opphav ?? [])),
   ]

@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import type { Referanseniva } from '../../faginnhold/modell'
-import { formaterReferanse, komprimer, numreFor, type Referanse } from '../../faginnhold/referanser'
+import { formaterReferanse, komprimer, numreFor, venterPaNummer, type Referanse } from '../../faginnhold/referanser'
 import { useFestbarBoble } from '../../hooks/useFestbarBoble'
 import { useBobleplassering } from '../Tips'
 import { Referansetekst } from './Referansetekst'
@@ -25,10 +25,13 @@ export interface ReferansepilleProps {
  * mellomrom, og festes med et klikk, så lenkene kan nås (`useFestbarBoble`).
  *
  * Viser ingen av ID-ene til en referanse siden kjenner, vises ingenting.
+ * Venter en referanse på nummeret sitt mens en kilde foran den hentes, står
+ * «…» der nummeret kommer, så ingen nummer vises før det står fast.
  */
 export function Referansepille({ ider, niva = 'inline' }: ReferansepilleProps) {
-  const { nummerering, referanser } = useSidereferanser()
+  const { nummerering, referanser, komplett } = useSidereferanser()
   const numre = numreFor(ider, nummerering)
+  const venter = venterPaNummer(ider, nummerering, referanser, komplett)
   const oppforinger = numre.flatMap((nummer) => {
     const id = ider.find((i) => nummerering.get(i) === nummer)
     const referanse = id ? referanser.get(id) : undefined
@@ -38,15 +41,24 @@ export function Referansepille({ ider, niva = 'inline' }: ReferansepilleProps) {
   const bobleId = useId()
   const { apen, feste, knapp } = useFestbarBoble()
 
-  if (oppforinger.length === 0) return null
-  const tekst = komprimer(numre)
+  if (oppforinger.length === 0) {
+    if (!venter) return null
+    return (
+      <span className={`referansepille-feste referansepille-feste--${niva}`}>
+        <span className={`referansepille referansepille--${niva} referansepille--venter`} role="img" aria-label="Referanse, nummeret hentes">
+          …
+        </span>
+      </span>
+    )
+  }
+  const tekst = venter ? `${komprimer(numre)}, …` : komprimer(numre)
   return (
     <span {...feste} className={`referansepille-feste referansepille-feste--${niva}`}>
       <button
         {...knapp}
         type="button"
         className={`referansepille referansepille--${niva}`}
-        aria-label={`${oppforinger.length === 1 ? 'Referanse' : 'Referanser'} ${tekst}`}
+        aria-label={`${oppforinger.length === 1 && !venter ? 'Referanse' : 'Referanser'} ${komprimer(numre)}${venter ? ', flere nummer hentes' : ''}`}
         aria-controls={apen ? bobleId : undefined}
       >
         {tekst}

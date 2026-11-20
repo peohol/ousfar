@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useKilde, type Kildetilstand } from './useKilde'
 import type { Farmakogenetikkutvalg } from '../../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, type Farmakogenetikkvisning } from '../../clinpgx/stoffside'
 import { lagDiplotypeindeks, type Diplotypeindeks } from '../../cpic/diplotype'
@@ -15,58 +16,15 @@ import { byggKjemivisning, kjemicider, molvekter, type Kjemivisning } from '../.
 import type { Labutvalg } from '../../farmakologiportalen/lesing'
 import { byggLabvisning, labkomponenter, type Labvisning } from '../../farmakologiportalen/stoffside'
 
-/** Dataene fra én kilde for kjemikaliene siden er koblet til, og visningen bygd av dem. */
-export type Kildetilstand<U, V> =
-  | { status: 'ingen' }
-  | { status: 'laster' }
-  | { status: 'klar'; utvalg: U; visning: V }
-  | { status: 'feil'; feil: string }
+export type { Kildetilstand } from './useKilde'
 
 export type Farmakogenetikktilstand = Kildetilstand<Farmakogenetikkutvalg, Farmakogenetikkvisning>
 export type Cpictilstand = Kildetilstand<Cpicutvalg, Cpicvisning>
 export type Cypinfotilstand = Kildetilstand<Cypinfoutvalg, Cypinfovisning>
 export type Bivirkningstilstand = Kildetilstand<Bivirkningsdata, Bivirkningsvisning>
 
-/**
- * Leser dataene fra en kilde for ClinPGx-ID-ene siden er koblet til, og
- * bygger visningen av dem. `ingen` når siden ikke er koblet, eller appen er
- * satt opp uten kilden. `lesPaNytt` leser dem igjen, etter at en
- * administrator har hentet nye. `bygg` må være den samme funksjonen hver gang.
- */
-export function useKilde<U, V>(
-  leser: { les(ider: readonly string[]): Promise<U> } | undefined,
-  koblet: readonly string[],
-  bygg: (utvalg: U) => V,
-): { tilstand: Kildetilstand<U, V>; lesPaNytt: () => void } {
-  // Nøkkelen, og ikke lista, avgjør om koblingen er ny, som i `useLegemidler`.
-  const nokkel = koblet.join('\n')
-  const ider = useMemo(() => (nokkel ? nokkel.split('\n') : []), [nokkel])
-  const [tilstand, setTilstand] = useState<Kildetilstand<U, V>>({ status: 'ingen' })
-  const [runde, setRunde] = useState(0)
-
-  useEffect(() => {
-    if (!leser || ider.length === 0) {
-      setTilstand({ status: 'ingen' })
-      return
-    }
-    let gjelder = true
-    setTilstand((forrige) => (forrige.status === 'klar' ? forrige : { status: 'laster' }))
-    leser
-      .les(ider)
-      .then((utvalg) => {
-        if (gjelder) setTilstand({ status: 'klar', utvalg, visning: bygg(utvalg) })
-      })
-      .catch((e: Error) => {
-        if (gjelder) setTilstand({ status: 'feil', feil: e.message })
-      })
-    return () => {
-      gjelder = false
-    }
-  }, [leser, ider, bygg, runde])
-
-  const lesPaNytt = useCallback(() => setRunde((r) => r + 1), [])
-  return { tilstand, lesPaNytt }
-}
+/** En visning med om kilden bak den ennå hentes (`laster`), som teller med når referansene nummereres. */
+export type Medstatus<V> = V & { status: Kildetilstand<unknown, unknown>['status'] }
 
 /** ClinPGx-dataene for kjemikaliene siden er koblet til, ordnet slik seksjonen «Farmakogenetikk» viser dem. */
 export function useFarmakogenetikk(koblet: readonly string[]) {
@@ -114,11 +72,12 @@ const somDet = <T,>(utvalg: T) => utvalg
  * slik seksjonen «Kjemiske grunndata» viser dem. Forbindelsene står også når
  * dataene ikke er hentet ennå, eller appen er satt opp uten kilden.
  */
-export function useKjemi(stoff: string): Kjemivisning {
+export function useKjemi(stoff: string): Medstatus<Kjemivisning> {
   const cider = useMemo(() => kjemicider(stoff), [stoff])
   const { tilstand } = useKilde(useFaginnholdskilde().kjemi, cider, somDet<Kjemiutvalg>)
   const utvalg = tilstand.status === 'klar' ? tilstand.utvalg : null
-  return useMemo(() => byggKjemivisning(stoff, utvalg), [stoff, utvalg])
+  const { status } = tilstand
+  return useMemo(() => ({ ...byggKjemivisning(stoff, utvalg), status }), [stoff, utvalg, status])
 }
 
 /**
@@ -147,11 +106,12 @@ export function useMolvekter(kjemi: Kjemivisning, nevnte: readonly string[]): Re
  * laboratorier» viser dem. Molekylvektene omregningen bruker, er PubChems
  * (`kjemi`).
  */
-export function useLaboratorieanalyser(stoff: string, kjemi: Kjemivisning): Labvisning {
+export function useLaboratorieanalyser(stoff: string, kjemi: Kjemivisning): Medstatus<Labvisning> {
   const komponenter = useMemo(() => labkomponenter(stoff), [stoff])
   const { tilstand } = useKilde(useFaginnholdskilde().laboratorier, komponenter, somDet<Labutvalg>)
   const utvalg = tilstand.status === 'klar' ? tilstand.utvalg : null
-  return useMemo(() => byggLabvisning(stoff, utvalg, kjemi), [stoff, utvalg, kjemi])
+  const { status } = tilstand
+  return useMemo(() => ({ ...byggLabvisning(stoff, utvalg, kjemi), status }), [stoff, utvalg, kjemi, status])
 }
 
 /**

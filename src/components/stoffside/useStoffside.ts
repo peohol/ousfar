@@ -267,25 +267,31 @@ export function useStoffside(stoff: Pick<Stoff, 'slug' | 'navn'>, modus: Sidemod
     [endre, utkastet],
   )
 
-  return {
-    side,
-    /**
-     * Sant når utkastet er lest og kan endres. Mens det hentes etter at
-     * redigeringen er slått på, vises siden uten redigeringsknapper.
-     */
-    kanEndres: modus === 'rediger' && side.tilstand === 'utkast',
-    referansebase,
-    konflikt,
-    plan,
-    lastInn,
-    lagreElement,
-    fjernElement,
-    flyttElement,
-    lagrePanelreferanser,
-    opprettReferanse,
-    gjenopprett,
-    publiser,
-  }
+  // Det samme objektet så lenge ingenting i det endres, så panelene ikke
+  // tegnes på nytt når andre kilder på siden kommer inn.
+  const kanEndres = modus === 'rediger' && side.tilstand === 'utkast'
+  return useMemo(
+    () => ({
+      side,
+      /**
+       * Sant når utkastet er lest og kan endres. Mens det hentes etter at
+       * redigeringen er slått på, vises siden uten redigeringsknapper.
+       */
+      kanEndres,
+      referansebase,
+      konflikt,
+      plan,
+      lastInn,
+      lagreElement,
+      fjernElement,
+      flyttElement,
+      lagrePanelreferanser,
+      opprettReferanse,
+      gjenopprett,
+      publiser,
+    }),
+    [side, kanEndres, referansebase, konflikt, plan, lastInn, lagreElement, fjernElement, flyttElement, lagrePanelreferanser, opprettReferanse, gjenopprett, publiser],
+  )
 }
 
 export type Stoffsidehandlinger = ReturnType<typeof useStoffside>

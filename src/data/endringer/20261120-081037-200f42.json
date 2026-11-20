@@ -1,0 +1,14 @@
+{
+  "id": "20261120-081037-200f42",
+  "semver": "patch",
+  "opprettet": "2026-11-20T08:10:37Z",
+  "sammendrag": "Referansenumrene på fagsidene står fast mens siden lastes",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["stoff"],
+  "punkter": [
+    "Referansene på en fagside skifter ikke lenger nummer når preparatene, interaksjonene og de andre datakildene kommer inn etter selve teksten.",
+    "Mens en datakilde ennå hentes, står «…» i stedet for nummeret, og referanselisten sier at flere referanser hentes.",
+    "Siden sier ikke lenger et øyeblikk at den mangler faginnhold, eller at kjemiske grunndata først kommer ved neste oppdatering, mens dataene ennå hentes."
+  ]
+}
