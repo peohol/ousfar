@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-20T12:31:30.307Z",
+  "oppdatert_kl": "2026-11-20T13:26:11.731Z",
   "malt_kl": "2026-11-20T03:29:26.848Z",
   "antall": {
     "klar": 94,
@@ -150,23 +150,45 @@
   "til_gjennomgang": [],
   "blokkert": [
     {
-      "stoff": "fluoksetin",
+      "stoff": "amitriptylin",
       "blokkeringer": [
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
+          "kl": "2026-11-20T13:26:11.731Z",
           "kilde": "system"
         }
       ]
     },
     {
-      "stoff": "flupentiksol",
+      "stoff": "eplerenon",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
+          "kl": "2026-11-20T13:26:11.731Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "klorprotiksen",
       "blokkeringer": [
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
+          "kl": "2026-11-20T13:26:11.731Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "levomepromazin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, retting); den må avsluttes først.",
+          "kl": "2026-11-20T13:26:11.731Z",
           "kilde": "system"
         }
       ]
@@ -183,34 +205,12 @@
       ]
     },
     {
-      "stoff": "mianserin",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
-      "stoff": "mirtazapin",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
       "stoff": "nortriptylin",
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-20T13:26:11.731Z",
           "kilde": "system"
         }
       ]
@@ -227,12 +227,12 @@
       ]
     },
     {
-      "stoff": "sertralin",
+      "stoff": "spironolakton",
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-20T12:31:30.307Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-20T13:26:11.731Z",
           "kilde": "system"
         }
       ]
