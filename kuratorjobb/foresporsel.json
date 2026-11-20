@@ -1,0 +1,22 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "amisulprid",
+    "citalopram",
+    "duloksetin",
+    "fluoksetin",
+    "flupentiksol",
+    "fluvoksamin",
+    "mianserin",
+    "mirtazapin",
+    "olanzapin",
+    "paroksetin",
+    "sertindol",
+    "sertralin",
+    "ziprasidon",
+    "klorprotiksen"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
