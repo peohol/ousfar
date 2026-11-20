@@ -4,7 +4,7 @@
  * navnene på API-kallene.
  */
 import { describe, expect, it } from 'vitest'
-import { fordeling, hentetInnen, kallnavn, tabell, telling, visFordeling, type Ressurs } from './qa/ytelsesmal'
+import { fordeling, hentetInnen, endring, kallnavn, referansestabilitet, renummereringer, tabell, telling, visFordeling, type Ressurs } from './qa/ytelsesmal'
 
 describe('fordeling', () => {
   it('gir median, p95 (nærmeste rang), min og maks, og hopper over det som mangler', () => {
@@ -60,5 +60,35 @@ describe('kallnavn og telling', () => {
 
   it('lager en Markdown-tabell og beskytter loddrette streker', () => {
     expect(tabell(['A', 'B'], [['1', 'x|y']])).toBe('| A | B |\n| --- | --- |\n| 1 | x\\|y |')
+  })
+})
+
+describe('referanselisten mens kildene kommer', () => {
+  const vist = (t: number, ...par: [number, string][]) => [t, par.length, par.map(([nr, id]) => `${nr}:${id}`).join('|')] as const
+  it('teller referanser som fikk nytt nummer fra første til siste visning, og dem som kom til', () => {
+    const forløp = [vist(1, [1, 'a'], [2, 'b']), vist(2, [1, 'f'], [2, 'a'], [3, 'b'])]
+    expect(referansestabilitet(forløp)).toEqual({ referanser: 3, listevisninger: 2, nyttNummer: 2, lagtTil: 1 })
+    expect(referansestabilitet([vist(1, [1, 'a'], [2, 'b']), vist(2, [1, 'a'], [2, 'b'], [3, 'f'])])).toMatchObject({ nyttNummer: 0, lagtTil: 1 })
+    expect(referansestabilitet([])).toEqual({ referanser: 0, listevisninger: 0, nyttNummer: 0, lagtTil: 0 })
+  })
+  it('teller også en renummerering som rettes igjen', () => {
+    const forløp = [vist(1, [1, 'a'], [2, 'b']), vist(2, [1, 'b'], [2, 'a']), vist(3, [1, 'a'], [2, 'b'])]
+    expect(referansestabilitet(forløp).nyttNummer).toBe(0)
+    expect(renummereringer(forløp)).toBe(4)
+  })
+})
+
+describe('endring', () => {
+  it('viser før og etter med prosent, i enheten som er valgt', () => {
+    expect(endring(2800, 1460)).toBe('2800 ms → 1460 ms (−48 %)')
+    expect(endring(12_300, 2700)).toBe('12.3 s → 2700 ms (−78 %)')
+    expect(endring(39, 28, 'antall')).toBe('39 → 28 (−28 %)')
+    expect(endring(733 * 1024, 301 * 1024, 'byte')).toBe('733 kB → 301 kB (−59 %)')
+    expect(endring(100, 130)).toBe('100 ms → 130 ms (+30 %)')
+    expect(endring(5, 5, 'antall')).toBe('5 → 5 (±0 %)')
+  })
+  it('setter en strek for det som mangler, og regner ikke prosent fra 0', () => {
+    expect(endring(undefined, 300)).toBe('– → 300 ms')
+    expect(endring(0, 3, 'antall')).toBe('0 → 3')
   })
 })

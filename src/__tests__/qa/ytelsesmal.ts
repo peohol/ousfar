@@ -96,8 +96,62 @@ export function visFordeling(f: Fordeling | null, byte = false): string {
   return `${v(f.median)} (p95 ${v(f.p95)}; ${v(f.min)}–${v(f.maks)})`
 }
 
+/** Hva et tall måles i: tid, byte eller et antall. */
+export type Enhet = 'ms' | 'byte' | 'antall'
+const VIS: Record<Enhet, (x: number) => string> = { ms, byte: kb, antall: (x) => String(Math.round(x * 10) / 10) }
+
+/**
+ * Endringen fra før til etter: «2.8 s → 1460 ms (−48 %)». Mangler den ene,
+ * står en strek for den; prosenten regnes bare når før ikke er 0.
+ */
+export function endring(fr: number | null | undefined, etter: number | null | undefined, enhet: Enhet = 'ms'): string {
+  const v = (x: number | null | undefined) => (typeof x === 'number' ? VIS[enhet](x) : '–')
+  if (typeof fr !== 'number' || typeof etter !== 'number' || fr === 0) return `${v(fr)} → ${v(etter)}`
+  const p = Math.round(((etter - fr) / fr) * 100)
+  return `${v(fr)} → ${v(etter)} (${p > 0 ? '+' : p < 0 ? '−' : '±'}${Math.abs(p)} %)`
+}
+
 /** En Markdown-tabell. */
 export function tabell(hode: readonly string[], rader: readonly (readonly string[])[]): string {
   const linje = (celler: readonly string[]) => `| ${celler.map((c) => c.replace(/\|/g, '\\|')).join(' | ')} |`
   return [linje(hode), linje(hode.map(() => '---')), ...rader.map(linje)].join('\n')
+}
+
+type Referansevisning = readonly [number, number, string]
+
+/** Hver visning av referanselisten som id → nummer. */
+const referanselister = (visninger: readonly Referansevisning[]) =>
+  visninger.map(([, , avtrykk]) => new Map(avtrykk.split('|').filter(Boolean).map((x) => x.split(':').reverse() as [string, string])))
+
+/**
+ * Referanselisten på fagsiden mens kildene kommer: hver visning er
+ * `[tid, antall, avtrykk]`, der avtrykket er `nummer:id` for hver referanse,
+ * skilt med `|` (`ytelsesmaler.js`). Gir antallet til slutt, hvor mange
+ * ganger listen ble vist, hvor mange referanser fra den første visningen som
+ * fikk et annet nummer i den siste, og hvor mange som kom til etter den første.
+ */
+export function referansestabilitet(visninger: readonly Referansevisning[]): Record<'referanser' | 'listevisninger' | 'nyttNummer' | 'lagtTil', number> {
+  const lister = referanselister(visninger)
+  const forste = lister[0] ?? new Map<string, string>()
+  const siste = lister.at(-1) ?? new Map<string, string>()
+  return {
+    referanser: siste.size,
+    listevisninger: lister.length,
+    nyttNummer: [...forste].filter(([id, nr]) => siste.has(id) && siste.get(id) !== nr).length,
+    lagtTil: [...siste.keys()].filter((id) => !forste.has(id)).length,
+  }
+}
+
+/**
+ * Referanser som fikk et annet nummer mellom to visninger etter hverandre, i
+ * hele forløpet (ikke bare første mot siste): en renummerering som rettes
+ * igjen, telles også.
+ */
+export function renummereringer(visninger: readonly Referansevisning[]): number {
+  const lister = referanselister(visninger)
+  let antall = 0
+  for (let i = 1; i < lister.length; i++) {
+    for (const [id, nr] of lister[i - 1]!) if (lister[i]!.has(id) && lister[i]!.get(id) !== nr) antall++
+  }
+  return antall
 }

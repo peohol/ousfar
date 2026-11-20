@@ -11,7 +11,7 @@
  * - `YTELSE_UT=<mappe>`: rapporten (`ytelse-rapport.md`) og rådataene
  *   (`ytelse-malinger.json`); standard en midlertidig mappe.
  * - `YTELSE_GJENTAKELSER=5`: gjentakelser per scenario og profil.
- * - `YTELSE_PROFILER=rask,treg`: nettverks- og maskinprofilene ({@link PROFILER}).
+ * - `YTELSE_PROFILER=rask,treg`: nettverks- og maskinprofilene (`PROFILER` i `ytelsesside.ts`).
  * - `YTELSE_SCENARIER=kald,varm,…`: bare disse ({@link SCENARIER}).
  * - `YTELSE_PERSONER=50,500,5000`: personmengdene personsøket, «Brukere» og
  *   SQL-målingene kjøres for. De andre scenariene kjøres med den midterste.
@@ -19,6 +19,8 @@
  * - `YTELSE_BARE_RAPPORT=1`: lager bare rapporten av rådataene i `YTELSE_UT`.
  * - `YTELSE_FORTSETT=1`: fortsetter en avbrutt kjøring i den samme `YTELSE_UT`
  *   (rådataene lagres etter hver del).
+ * - `YTELSE_FOR=<ytelse-malinger.json>`: rapporten sammenligner med en
+ *   tidligere måling (median, p95, API-kall og JS innen hvert merke).
  *
  * Merkene og hva de betyr står i `ytelsesmaler.js`.
  */
@@ -26,45 +28,21 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { cpus, tmpdir, totalmem } from 'node:os'
 import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { arkiverTidligereGrupper, innen, klient, rpc, vent, type Side } from './kontroll'
+import { arkiverTidligereGrupper, klient, rpc, vent, type Side } from './kontroll'
 import { lokalSql, sikreAdministrator, slaPaFunksjoner, startLokalDatabase, type Status } from './lokalmiljo'
 import { apneTestmiljo, type Testmiljo } from './testmiljo'
-import { datamengde, KOBLEDE_SIDER, MALEBOERE, sikreYtelsesdata, somBruker, type Ytelsesdata } from './ytelsesdata'
-import { fordeling, hentetInnen, tabell, telling, visFordeling, type Ressurs } from './ytelsesmal'
+import { datamengde, KOBLEDE_SIDER, MALEBOERE, sikreYtelsesdata, somBruker, stoffnavn, type Ytelsesdata } from './ytelsesdata'
+import { endring, type Enhet, type Fordeling, fordeling, hentetInnen, referansestabilitet, tabell, telling, visFordeling } from './ytelsesmal'
+import { apneMaleside, GRENSE, les, loggInn, lukk, nullstill, type Profil, type Sidemaling, ventPaMerke } from './ytelsesside'
 
 const UT = process.env.YTELSE_UT ?? join(tmpdir(), 'ousfar-ytelse')
 const GJENTAKELSER = Number(process.env.YTELSE_GJENTAKELSER ?? 5)
 const SQL_GJENTAKELSER = Number(process.env.YTELSE_SQL_GJENTAKELSER ?? 5)
 const PERSONMENGDER = (process.env.YTELSE_PERSONER ?? '50,500,5000').split(',').map(Number)
 const HOVEDMENGDE = PERSONMENGDER[Math.floor((PERSONMENGDER.length - 1) / 2)]!
-const MALER = readFileSync(fileURLToPath(new URL('./ytelsesmaler.js', import.meta.url)), 'utf8')
 const VINDU = { viewport: { width: 1440, height: 900 } }
-const GRENSE = 60_000
-
-/**
- * Profilene. `rask`: maskinen og nettet i testmiljøet uten begrensning (det
- * beste tilfellet). `treg`: et vanlig sykehus-/mobilnett (80 ms ekstra per
- * forespørsel, 10/5 Mbit/s) og en maskin fire ganger tregere enn testmaskinen
- * (Chromiums CPU-struping), nærmere en eldre arbeidsstasjon eller mobil.
- */
-const PROFILER = {
-  rask: null,
-  treg: { latency: 80, downloadThroughput: (10e6 / 8) | 0, uploadThroughput: (5e6 / 8) | 0, cpu: 4 },
-} as const
-type Profil = keyof typeof PROFILER
 const PROFILVALG = (process.env.YTELSE_PROFILER ?? 'rask,treg').split(',') as Profil[]
-
-interface Sidemaling {
-  merker: Record<string, number>
-  t0: number
-  ressurser: Ressurs[]
-  lange: [number, number][]
-  referanser: [number, number, string][]
-  personsok: [number, string, string, string[]][]
-  tast: number | null
-}
 
 interface Kjoring {
   scenario: string
@@ -85,6 +63,8 @@ const serverkall: { scenario: string; profil: Profil; personer: number; kall: st
 /** Delene av kjøringen som er ferdige, så en avbrutt kjøring kan fortsette (`YTELSE_FORTSETT=1`). */
 const ferdige = new Set<string>()
 const MALINGSFIL = () => join(UT, 'ytelse-malinger.json')
+/** En tidligere måling å sammenligne med (`YTELSE_FOR`), lest før kjøringen så en feil sti stopper den med en gang. */
+const FOR = process.env.YTELSE_FOR ? { fil: process.env.YTELSE_FOR, rader: lesRader(process.env.YTELSE_FOR) } : undefined
 /** Delen av kjøringen en måling hører til: scenariet (personsøkene samlet), profilen og personmengden. */
 const delFor = (x: { scenario: string; profil: Profil; personer: number }) => `${x.scenario.startsWith('personsøk') ? 'personsøk' : x.scenario}:${x.profil}:${x.personer}`
 const logg = (t: string) => console.log(`[ytelse] ${t}`)
@@ -92,49 +72,8 @@ mkdirSync(UT, { recursive: true })
 
 // --- Siden -----------------------------------------------------------------------
 
-async function nySide(miljo: Testmiljo, profil: Profil): Promise<Side> {
-  const side = await miljo.maleside(VINDU)
-  await side.addInitScript({ content: MALER })
-  if (process.env.YTELSE_FEILSOK) {
-    side.on('console', (m: Side) => m.type() === 'error' && logg(`konsoll: ${m.text()}`))
-    side.on('response', (r: Side) => r.status() >= 400 && logg(`svar ${r.status()} ${r.url()}`))
-    side.on('requestfailed', (r: Side) => logg(`feilet ${r.url()} ${r.failure()?.errorText}`))
-  }
-  const p = PROFILER[profil]
-  if (p) {
-    const cdp = side.__cdp
-    await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: p.latency, downloadThroughput: p.downloadThroughput, uploadThroughput: p.uploadThroughput })
-    await cdp.send('Emulation.setCPUThrottlingRate', { rate: p.cpu })
-  }
-  return side
-}
-
-const lukk = (side: Side) => side.context().close().catch(() => undefined)
-
-async function merke(side: Side, navn: string, ms = GRENSE): Promise<number> {
-  try {
-    await innen(ms, `merket «${navn}»`, async () => (await side.evaluate((n: string) => (window as never as { __ytelse: { merker: Record<string, number> } }).__ytelse.merker[n] !== undefined, navn)) as boolean, 50)
-  } catch (e) {
-    await side.screenshot({ path: join(UT, `feil-${navn}-${Date.now()}.png`) }).catch(() => undefined)
-    throw e
-  }
-  return side.evaluate((n: string) => (window as never as { __ytelse: { merker: Record<string, number> } }).__ytelse.merker[n], navn)
-}
-
-const nullstill = (side: Side) => side.evaluate(() => (window as never as { __ytelse: { nullstill(): void } }).__ytelse.nullstill())
-
-async function les(side: Side): Promise<Sidemaling> {
-  return side.evaluate(() => {
-    const y = (window as never as { __ytelse: Sidemaling & { t0: number } }).__ytelse
-    const her = location.origin
-    const ressurser = performance.getEntriesByType('resource').map((e) => {
-      const r = e as PerformanceResourceTiming
-      const u = new URL(r.name)
-      return { sti: u.pathname, egen: u.origin === her, start: r.startTime, slutt: r.responseEnd, overfort: r.transferSize, kropp: r.encodedBodySize, utpakket: r.decodedBodySize }
-    })
-    return { merker: y.merker, t0: y.t0, ressurser, lange: y.lange, referanser: y.referanser, personsok: y.personsok, tast: y.tast }
-  })
-}
+const nySide = (miljo: Testmiljo, profil: Profil) => apneMaleside(miljo, profil, { vindu: VINDU, feilsok: Boolean(process.env.YTELSE_FEILSOK), logg })
+const merke = (side: Side, navn: string, ms?: number) => ventPaMerke(side, navn, { ms, feilbilder: UT })
 
 /** Fører kjøringen: merkene, og det som var hentet og blokkert innen hvert av dem. */
 function forKjoring(scenario: string, profil: Profil, personer: number, nr: number, m: Sidemaling, ekstra: Kjoring['ekstra'] = {}): Kjoring {
@@ -150,14 +89,6 @@ function forKjoring(scenario: string, profil: Profil, personer: number, nr: numb
   return k
 }
 
-async function loggInn(side: Side, url: string, brukernavn: string, passord: string) {
-  await side.goto(url)
-  await side.waitForSelector('input[name=username]', { timeout: GRENSE })
-  await side.fill('input[name=username]', brukernavn)
-  await side.fill('input[name=password]', passord)
-  await nullstill(side)
-  await side.click('button:has-text("Logg inn")')
-}
 
 /** Den første vellykkede handlingen: fagsøket (Ctrl + K) med et stoffnavn, til første treff. */
 async function fagsok(side: Side, stoffnavn: string) {
@@ -225,25 +156,12 @@ async function varmForside(k: Kontekst, profil: Profil): Promise<Side> {
 }
 
 const koblet = (k: Kontekst, nr: number) => k.data.fagsider[nr % KOBLEDE_SIDER]!
-const stoffnavn = (slug: string) => `Syntetisk stoff ${slug.replace('syntetisk-stoff-', '')}`
 
 /**
  * Referanselisten fra den først ble vist til den siste: hvor mange ganger den
  * ble vist på nytt, hvor mange referanser som fikk et annet nummer, og hvor
  * mange som kom til.
  */
-function referansestabilitet(m: Sidemaling): Record<string, number> {
-  const lister = m.referanser.map(([, , avtrykk]) => new Map(avtrykk.split('|').filter(Boolean).map((x) => x.split(':').reverse() as [string, string])))
-  const forste = lister[0] ?? new Map<string, string>()
-  const siste = lister.at(-1) ?? new Map<string, string>()
-  return {
-    referanser: siste.size,
-    listevisninger: lister.length,
-    nyttNummer: [...forste].filter(([id, nr]) => siste.has(id) && siste.get(id) !== nr).length,
-    lagtTil: [...siste.keys()].filter((id) => !forste.has(id)).length,
-  }
-}
-
 type Scenario = (k: Kontekst, profil: Profil, nr: number) => Promise<void>
 
 const SCENARIER: Record<string, Scenario> = {
@@ -286,7 +204,7 @@ const SCENARIER: Record<string, Scenario> = {
       await merke(side, 'fagside_komplett')
       await vent(1500)
       const m = await les(side)
-      forKjoring('fagside', profil, HOVEDMENGDE, nr, m, referansestabilitet(m))
+      forKjoring('fagside', profil, HOVEDMENGDE, nr, m, referansestabilitet(m.referanser))
     } finally {
       await lukk(side)
     }
@@ -301,7 +219,7 @@ const SCENARIER: Record<string, Scenario> = {
       await merke(side, 'fagside_komplett')
       await vent(1500)
       const m = await les(side)
-      forKjoring('direkte', profil, HOVEDMENGDE, nr, m, referansestabilitet(m))
+      forKjoring('direkte', profil, HOVEDMENGDE, nr, m, referansestabilitet(m.referanser))
     } finally {
       await lukk(side)
     }
@@ -610,11 +528,74 @@ const grupper = <T extends { profil: Profil; personer: number }>(liste: readonly
 const antall = (f: ReturnType<typeof fordeling>) => (f ? (f.n === 1 || f.min === f.maks ? String(f.median) : `${f.median} (${f.min}–${f.maks})`) : '–')
 const andel = (verdier: unknown[]) => `${verdier.filter((v) => v === true).length}/${verdier.length}`
 
-function rapport(miljoinfo: Record<string, unknown>, mengder: Record<number, Record<string, number>>): string {
+/** Rådataene i en måling (`ytelse-malinger.json`). */
+interface Rader {
+  miljoinfo: Record<string, unknown>
+  mengder: Record<number, Record<string, number>>
+  kjoringer: Kjoring[]
+  sqlMalinger: typeof sqlMalinger
+  serverkall: typeof serverkall
+}
+function lesRader(fil: string): Rader {
+  return JSON.parse(readFileSync(fil, 'utf8')) as Rader
+}
+
+/** Et nøkkeltall: verdien (median og p95) og, for merkene, API-kallene og JS-en innen merket. */
+interface Nokkeltall {
+  enhet: Enhet
+  verdi: Fordeling | null
+  kall?: Fordeling | null
+  js?: Fordeling | null
+}
+
+/**
+ * Nøkkeltallene i en måling, med en nøkkel som er lik i to målinger: tiden til
+ * hvert merke, svaret i personsøket, referansene som fikk nytt nummer og
+ * kjøretiden for hvert personsøk i databasen.
+ */
+function nokkeltall(d: Pick<Rader, 'kjoringer' | 'sqlMalinger'>): Map<string, Nokkeltall> {
+  const ut = new Map<string, Nokkeltall>()
+  const navn = (k: Kjoring, hva: string) => `${k.scenario} · ${k.profil} · ${k.personer} · ${hva}`
+  for (const l of grupper(d.kjoringer, (k) => `${k.scenario}|${k.profil}|${k.personer}`)) {
+    const k = l[0]!
+    const fra = (f: (k: Kjoring) => unknown) => fordeling(l.map((x) => f(x) as number | undefined))
+    for (const m of MERKER[k.scenario] ?? []) {
+      if (l.some((x) => x.merker[m] !== undefined)) ut.set(navn(k, m), { enhet: 'ms', verdi: fra((x) => x.merker[m]), kall: fra((x) => x.innen[m]?.api.length), js: fra((x) => x.innen[m]?.kodeUtpakket) })
+    }
+    if (k.scenario.startsWith('personsøk')) ut.set(navn(k, 'svar'), { enhet: 'ms', verdi: fra((x) => x.ekstra.svar), kall: fra((x) => x.ekstra.kall) })
+    if (l.some((x) => typeof x.ekstra.nyttNummer === 'number')) ut.set(navn(k, 'referanser med nytt nummer'), { enhet: 'antall', verdi: fra((x) => x.ekstra.nyttNummer) })
+  }
+  for (const m of d.sqlMalinger) ut.set(`SQL ${m.rpc} · ${m.hvem} · ${m.personer} · «${m.sok}»`, { enhet: 'ms', verdi: m.ms })
+  return ut
+}
+
+/** Før og etter for hvert nøkkeltall som finnes i minst én av målingene. */
+function sammenligning(fr: Map<string, Nokkeltall>, etter: Map<string, Nokkeltall>): string {
+  const rader = [...new Set([...etter.keys(), ...fr.keys()])].map((n) => {
+    const a = fr.get(n)
+    const b = etter.get(n)
+    const enhet = (b ?? a)!.enhet
+    return [
+      n,
+      endring(a?.verdi?.median, b?.verdi?.median, enhet),
+      endring(a?.verdi?.p95, b?.verdi?.p95, enhet),
+      a?.kall || b?.kall ? endring(a?.kall?.median, b?.kall?.median, 'antall') : '',
+      a?.js || b?.js ? endring(a?.js?.median, b?.js?.median, 'byte') : '',
+    ]
+  })
+  return tabell(['Scenario · profil · personer · merke', 'Median', 'p95', 'API-kall innen (median)', 'JS utpakket innen (median)'], rader)
+}
+
+function rapport(miljoinfo: Record<string, unknown>, mengder: Record<number, Record<string, number>>, fr?: { fil: string; rader: Rader }): string {
   const deler: string[] = []
   deler.push(`# Ytelsesmåling ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`)
   deler.push(`Miljø: \`${JSON.stringify(miljoinfo)}\``)
   deler.push(`Datagrunnlag per personmengde: \`${JSON.stringify(mengder)}\``)
+  if (fr) {
+    deler.push(`## Før og etter: \`${fr.fil}\` mot denne målingen`)
+    deler.push(`Miljøet før: \`${JSON.stringify(fr.rader.miljoinfo)}\`. Datagrunnlaget før: \`${JSON.stringify(fr.rader.mengder)}\`.`)
+    deler.push(sammenligning(nokkeltall(fr.rader), nokkeltall({ kjoringer, sqlMalinger })))
+  }
 
   const app = kjoringer.filter((k) => MERKER[k.scenario])
   const rader: string[][] = []
@@ -716,11 +697,11 @@ function rapport(miljoinfo: Record<string, unknown>, mengder: Record<number, Rec
 
 // Bare rapporten, fra rådataene i YTELSE_UT (også fra en kjøring som ikke er ferdig).
 if (process.env.YTELSE_BARE_RAPPORT) {
-  const fra = JSON.parse(readFileSync(MALINGSFIL(), 'utf8')) as { miljoinfo: Record<string, unknown>; mengder: Record<number, Record<string, number>>; kjoringer: Kjoring[]; sqlMalinger: typeof sqlMalinger; serverkall: typeof serverkall }
+  const fra = lesRader(MALINGSFIL())
   kjoringer.push(...fra.kjoringer)
   sqlMalinger.push(...fra.sqlMalinger)
   serverkall.push(...fra.serverkall)
-  writeFileSync(join(UT, 'ytelse-rapport.md'), rapport(fra.miljoinfo, fra.mengder))
+  writeFileSync(join(UT, 'ytelse-rapport.md'), rapport(fra.miljoinfo, fra.mengder, FOR))
   logg(`rapporten: ${join(UT, 'ytelse-rapport.md')}`)
   process.exit(0)
 }
@@ -807,7 +788,7 @@ try {
         })
     }
   }
-  const tekst = rapport(miljoinfo, mengder)
+  const tekst = rapport(miljoinfo, mengder, FOR)
   writeFileSync(join(UT, 'ytelse-rapport.md'), tekst)
   lagre()
   logg(`rapporten: ${join(UT, 'ytelse-rapport.md')}`)

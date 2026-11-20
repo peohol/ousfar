@@ -1,4 +1,4 @@
-# Ytelsesmåling: utgangspunktet (P0)
+# Ytelsesmåling: utgangspunktet (P0) og sluttkontrollen (P5)
 
 Måleverktøyet og før-tallene for ytelsesplanen
 ([docs/ytelse-synlig-innlasting.md](ytelse-synlig-innlasting.md), Issue
@@ -32,11 +32,16 @@ produksjonen. Hele kjøringen tar omtrent to timer på testmaskinen; bruk
 | `YTELSE_SQL_GJENTAKELSER` | 5 | Gjentakelser per SQL-kall (etter én oppvarming) |
 | `YTELSE_FORTSETT` | av | Fortsetter en avbrutt kjøring i den samme `YTELSE_UT` |
 | `YTELSE_BARE_RAPPORT` | av | Skriver bare rapporten på nytt fra rådataene i `YTELSE_UT` |
+| `YTELSE_FOR` | av | Rådataene fra en tidligere måling (`ytelse-malinger.json`): rapporten får før og etter for hvert merke, personsøk og SQL-kall |
 
 Filene:
 
 - `src/__tests__/qa/ytelse.ts`: scenariene, SQL-målingen og rapporten.
 - `src/__tests__/qa/ytelsesmaler.js`: måleren i siden (merkene under).
+- `src/__tests__/qa/ytelsesside.ts`: siden med måleren og profilen, felles
+  for målingen og etterkontrollen.
+- `src/__tests__/qa/ytelseskontroll.ts`: etterkontrollen (P5) av det som ble
+  raskere, under «Sluttkontrollen» nedenfor.
 - `src/__tests__/qa/ytelsesdata.ts`: det syntetiske datagrunnlaget.
 - `src/__tests__/qa/ytelsesmal.ts`: utregningene (prøvd i
   `src/__tests__/ytelsesmal.test.ts`).
@@ -295,3 +300,134 @@ tilgangsavgjørelsene bruker, ble planlagt på nytt ved hvert kall (en
 SQL-funksjon som gir en mengde, kalt fra en annen funksjon, i Postgres 17).
 Detaljene står i migrasjonen og i [fagmiljoer.md](fagmiljoer.md),
 «Personsøket».
+
+## Sluttkontrollen (#505)
+
+Hele målingen kjørt på nytt 20.11.2026 med koden på `main` etter alle
+leveransene (`91e23444`: A #516, B #515, C #513, #504 #514 og #525, og
+diskusjonstrådene live #522, som ikke hører til planen), på samme maskin, med
+de samme syntetiske dataene, profilene og fem gjentakelser. Hele rapporten,
+med før og etter for hvert merke (`YTELSE_FOR`):
+[docs/ytelse-maling-etter.md](ytelse-maling-etter.md). Median (p95), 500
+personer der ikke annet står.
+
+### Oppstart og første handling
+
+| Merke | Kald, rask | Varm, rask | Kald, treg | Varm, treg |
+| --- | --- | --- | --- | --- |
+| `skall` = `forside` | 679 → 408 ms (−40 %) | 454 → 175 ms (−61 %) | 2,80 → 1,51 s (−46 %) | 1,92 → 1,01 s (−47 %) |
+| `forside_tittel` | 801 → 544 ms (−32 %) | 588 → 206 ms (−65 %) | 2,80 → 1,51 s (−46 %) | 1,92 → 1,01 s (−47 %) |
+| `forside_paneler` | 1,05 → 0,82 s (−22 %) | 1,02 → 0,50 s (−51 %) | 3,64 → 2,56 s (−30 %) | 2,89 → 2,08 s (−28 %) |
+| `fagsok_svar` | 1,79 → 0,69 s (−62 %) | 1,06 → 0,95 s (−10 %) | 13,3 → 3,0 s (−77 %) | 12,3 → 3,8 s (−69 %) |
+
+- **Kode før skallet:** 733 → 304 kB overført (2,46 → 1,02 MB utpakket) i
+  kald oppstart; før panelene står 869 → 440 kB (2,92 → 1,47 MB).
+- **Kall før skallet:** 27 → 24 (rask) og 39 → 27 (treg).
+- p95 er like mye lavere: kald, treg 2,92 → 1,64 s for skallet og 13,6 →
+  3,6 s for fagsøket.
+
+### Fagsider
+
+| Merke | Fra forsiden, rask | Fra forsiden, treg | Direkte lenke, rask | Direkte lenke, treg |
+| --- | --- | --- | --- | --- |
+| `fagside_navn` | 55 → 64 ms | 577 → 323 ms (−44 %) | 679 → 373 ms (−45 %) | 2,68 → 1,68 s (−37 %) |
+| `fagside_innhold` | 139 → 162 ms | 866 → 616 ms (−29 %) | 708 → 450 ms (−36 %) | 2,94 → 1,93 s (−35 %) |
+| `fagside_komplett` | (139) → 290 ms | (866) → 1,63 s | (708) → 632 ms | (2,94) → 3,06 s |
+
+- **Referansene:** 31 av 32 fikk nytt nummer før; nå 0, i alle gjentakelser,
+  begge profiler og begge veier inn. Listen vises én gang.
+- **`fagside_komplett` er ikke sammenlignbar:** før kom merket før kallene
+  til FEST og interaksjonene var startet; nå venter det på at alt er hentet.
+  Det som er igjen, er rekkefølgen `les_stoff` → `les_legemidler` →
+  `les_interaksjoner` (hver venter på den forrige), om lag 1 s på treg profil
+  etter at innholdet står.
+- Fra forsiden på rask profil er navnet og innholdet 9 og 23 ms senere: koden
+  til fagsiden hentes nå når den trengs (45 kB) hvis appen ikke rakk å hente
+  den mens den var ledig. På treg profil veier det mindre enn at appen ellers
+  har mindre å gjøre.
+
+### Andre overganger
+
+| Overgang | Rask | Treg |
+| --- | --- | --- |
+| Forsiden → fortolkningen (søkefeltet / første treff) | 85 → 129 ms / 119 → 204 ms | 725 → 320 ms (−56 %) / 893 → 447 ms (−50 %) |
+| Bytte fagmiljø: panelene | 398 → 339 ms (−15 %) | 1,01 → 1,04 s (+4 %) |
+| Bytte fagmiljø: navnet | 112 → 288 ms | 412 → 904 ms |
+
+- **Fortolkningen på rask profil** er 45–85 ms senere, fordi fagsøket nå
+  gjøres klart i bakgrunnen i de samme sekundene (A, #501). Det er under det
+  man merker, og på treg profil er den halvert.
+- **Navnet ved fagmiljøbytte** var et feilsyn i målingen før: det nye navnet
+  sto ett bilde over det forrige fagmiljøets katalog, og så ble siden tom
+  til den nye katalogen var hentet (rettet i #525, fordi fortolkningen aldri
+  skal vises med et annet fagmiljøs katalog). Nå står navnet og panelene
+  sammen, og panelene, som er det brukeren kan bruke, kommer like tidlig
+  eller tidligere.
+
+### Personsøket og «Brukere»
+
+Ved 5 000 personer er svaret 78–87 % raskere i alle tre søkene og begge
+profiler (median og p95; gruppeinvitasjon 4,1 → 0,64 s, «Legg til medlem»
+2,7 → 0,41 s, ny direktemelding 2,0 → 0,43 s, rask profil). Ved 500 personer
+15–54 %. Treffene er de samme personene i samme rekkefølge som databasen gir
+direkte i alle radene, også feil, sene svar og rask skriving. I databasen
+(«johanssen», 5 000 personer): 1,8–6,2 s → 18–454 ms.
+
+«Brukere»: 5 000 personer 5,0 → 2,5 s (rask) og 7,6 → 4,0 s (treg); 500
+personer 715 → 542 ms (rask).
+Ved 50 personer ble «Brukere» 216 → 322 ms (rask) og 619 → 796 ms (treg)
+etter leveransene. Koden til vinduet hentes nå når den trengs (14 kB); for
+dem som kan åpne det, hentes den derfor nå når appen er ledig (denne PR-en).
+Det tok koden ut av klikket (286 og 757 ms, målt på nytt), men resten av
+forskjellen er der fortsatt, og den har ingen lange oppgaver eller ekstra
+kall: målingen åpner «Brukere» rett etter oppstarten, mens fagsøket hentes og
+gjøres klart i bakgrunnen, og trolig er det det vinduet venter bak. Den som
+åpner det noen sekunder etter innloggingen, venter ikke på det.
+
+### Kontrollen av det som ble raskere
+
+`npx vite-node src/__tests__/qa/ytelseskontroll.ts`, i det lokale testmiljøet
+med de samme syntetiske dataene, treg profil der ikke annet står. Alle
+punktene besto 20.11.2026:
+
+| Punkt | Resultat |
+| --- | --- |
+| K1 Utlogging mens en fagside og FEST-svaret (3 s for sent) laster | Innloggingssiden; ingenting av fagsiden eller toppmenyen etter at de sene svarene kom |
+| K2 Medlemskapet avsluttes mens appen laster | Appen stenger med beskjeden om avsluttet medlemskap etter 1,1 s; ingen fagside eller forside bak |
+| K3 FEST svarer 3 s for sent | Referanselisten vises én gang, 0 referanser får nytt nummer, «Henter …» står til svaret kommer |
+| K4 FEST feiler | 0 nye numre, og siden sier «Fikk ikke hentet preparatene» |
+| K5 Direkte lenke til en seksjon (`#/stoff/…/interaksjoner`) | Seksjonen står åpen og i synsfeltet |
+| K6 Koden til en side lar seg ikke hente (som etter en oppdatering) | Appen henter den på nytt, og gruppesiden vises i stedet for en tom side |
+| K7 Fagsøket med tastaturet rett etter innlogging | Ctrl + K, navnet, pil ned og Enter åpner riktig fagside |
+| K8 Mobil (412 px) | Ingen vannrett rulling på forsiden eller fagsiden |
+| K9 Navnene på forsiden ved 5 000 personer | 1 000 av 5 004 profiler hentes; resten får navnet «Noen» (fantes før planen, #530) |
+
+Ellers:
+
+- **Innloggingsveggen:** byggingen kontrollerer at all kode som ikke er
+  ført opp som åpen, ligger bak veggen (`scripts/kontroller-vegg.mjs`), og
+  `veggkontroll.test.ts` prøver at den svarer 401 uten gyldig økt.
+- **Fagmiljøbytte:** hvert bytte i målingen venter på det nye fagmiljøets
+  navn og paneler (20 bytter, annenhver vei), og `fagmiljobytte.test.tsx`
+  prøver at arbeidsflaten aldri vises med det forrige fagmiljøets katalog.
+- **Kliniske verdier og omregninger:** fortolkningen er med fra start og ble
+  ikke endret av leveransene; reglene og omregningene prøves i `npm test`.
+  Referansenumrene: K3, K4 og målingen (0 nye numre).
+- **Raske søk:** personsøket ga riktige treff i alle radene, også ved rask
+  skriving og sene svar på et gammelt søk.
+- De eksisterende nettleserkontrollene ble kjørt på nytt (listen står i
+  PR-en).
+
+### Uendret, tregere og videre arbeid
+
+- **Ingen tiltak er fjernet:** hvert tiltak har en målbar gevinst der det
+  var ment. Kostnadene er små og står over: fortolkningen på rask profil
+  (+45–85 ms), fagsiden fra forsiden på rask profil (+9 og +23 ms) og
+  «Brukere» ved 50 personer.
+- **Målene i planen** er nådd, med ett unntak: «Brukere» ved 500 personer
+  på rask profil ble 715 → 542 ms (−24 %), så vidt over målet på 540 ms.
+- **Uendret:** fagmiljøbytte på treg profil (panelene 1,01 → 1,04 s, innenfor
+  støyen), og fagsøket i varm oppstart på rask profil (−10 %, p95 uendret).
+- **Videre arbeid:** rekkefølgen `les_stoff` → `les_legemidler` →
+  `les_interaksjoner` på fagsidene (om lag 1 s av `fagside_komplett` på treg
+  profil), og navnene ved over 1 000 synlige profiler (#530).
