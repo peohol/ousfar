@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 /** Hvor lenge nettleseren høyst får vente med det før det gjøres likevel. */
 const LENGSTE_VENTETID_MS = 4000
@@ -18,4 +18,11 @@ export function useNaarLedig(gjor: () => void): void {
     const id = window.setTimeout(gjor, LENGSTE_VENTETID_MS / 4)
     return () => window.clearTimeout(id)
   }, [gjor])
+}
+
+/** Om nettleseren har hatt tid til overs siden komponenten ble vist ({@link useNaarLedig}). */
+export function useErLedig(): boolean {
+  const [ledig, setLedig] = useState(false)
+  useNaarLedig(useCallback(() => setLedig(true), []))
+  return ledig
 }

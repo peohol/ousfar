@@ -4,7 +4,7 @@ import { kanGiRedaktoransvar, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
-import { useNaarLedig } from '../../hooks/useNaarLedig'
+import { useErLedig } from '../../hooks/useNaarLedig'
 import { senere } from '../../oppdatering/senere'
 import { NarApnet } from '../Senere'
 import { adminstatus, adminvalg, lyttEtterAdminpanel, ADMINVALG, type Adminpanel } from './adminvisning'
@@ -39,8 +39,7 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
   const [meldinger, setMeldinger] = useState<string[]>([])
   // Første sjekk venter til appen er vist og ledig: prikken er ingen grunn
   // til å konkurrere med det brukeren skal se først.
-  const [ledig, setLedig] = useState(false)
-  useNaarLedig(useCallback(() => setLedig(true), []))
+  const ledig = useErLedig()
   const sjekk = useCallback(() => {
     if (!admin || !ledig) return
     hent().then(setMeldinger, () => {

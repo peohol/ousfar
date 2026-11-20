@@ -72,7 +72,22 @@ function hentPanel(modul: Databasemodul): Promise<Panelsvar> {
  */
 const underveis = new Map<string, Promise<Panelsvar>>()
 
+/**
+ * Hentingene `forhentPaneler` startet før forsiden ble satt opp på nytt. De
+ * står til panelet tar dem, også om de er ferdige før det, så panelet ikke
+ * henter det samme igjen.
+ */
+const forhentet = new Map<string, Promise<Panelsvar>>()
+
+/** Nøkkelen et panel hentes og holdes under: bruker, fagmiljø og panel. */
+const panelnokkel = (bruker: string, fagmiljo: string | null, modul: Databasemodul) => `${bruker}:${fagmiljo}:${modul}`
+
 function hentDelt(nokkel: string, modul: Databasemodul): Promise<Panelsvar> {
+  const tidlig = forhentet.get(nokkel)
+  if (tidlig) {
+    forhentet.delete(nokkel)
+    return tidlig
+  }
   const pagaende = underveis.get(nokkel)
   if (pagaende) return pagaende
   const henting = hentPanel(modul)
@@ -82,6 +97,26 @@ function hentDelt(nokkel: string, modul: Databasemodul): Promise<Panelsvar> {
   }
   henting.then(ferdig, ferdig)
   return henting
+}
+
+/** Panelene som står på forsiden nå, med brukeren de hentes for. */
+const viste = new Map<Databasemodul, string>()
+
+/**
+ * Begynner å hente panelene som står på forsiden, for arbeidskonteksten
+ * `fagmiljo` etter et bytte. Forsiden settes opp på nytt først når katalogen
+ * for det nye fagmiljøet er hentet; da er panelene alt på vei (eller hentet),
+ * og panelene tar de samme hentingene i stedet for å be om dem igjen.
+ */
+export function forhentPaneler(fagmiljo: string | null): void {
+  forhentet.clear()
+  if (fagmiljo === null) return
+  for (const [modul, bruker] of viste) {
+    const nokkel = panelnokkel(bruker, fagmiljo, modul)
+    const henting = hentDelt(nokkel, modul)
+    henting.catch(() => undefined)
+    forhentet.set(nokkel, henting)
+  }
 }
 
 /** Det en rad gjør når den trykkes, ut over å føre brukeren dit: merke det lest. */
@@ -166,7 +201,7 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
   const fagmiljo = useArbeidskontekst()
   const katalog = useAnalyttkatalog()
   const navn = useNavn()
-  const nokkel = `${meg.id}:${fagmiljo}:${modul}`
+  const nokkel = panelnokkel(meg.id, fagmiljo, modul)
   const [tilstand, setTilstand] = useState<{ nokkel: string; svar: Panelsvar | null; feil: boolean }>(() => ({
     nokkel,
     svar: hentet.get(nokkel) ?? null,
@@ -195,6 +230,10 @@ function Databasepanel({ modul }: { modul: Databasemodul }) {
 
   // Hentes når panelet kommer fram, og på nytt når fagmiljøet byttes.
   useEffect(hent, [hent])
+  useEffect(() => {
+    viste.set(modul, meg.id)
+    return () => void viste.delete(modul)
+  }, [modul, meg.id])
 
   const lest: Lesing = useMemo(() => {
     /** Gir `true` første gang, så det samme ikke lagres to ganger. */
