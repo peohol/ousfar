@@ -64,7 +64,7 @@ sender ingenting.
 | `fagside_navn` / `fagside_innhold` / `fagside_komplett` | Fagsidens navn; panelene hentet; ingen «Henter …» igjen (FEST, bivirkninger, kjemi og de andre kildene) |
 | `fortolkning` / `fortolkning_treff` | Søkefeltet i fortolkningen; første treff i analyttsøket |
 | `brukere` | Medlemslisten under Administrasjon → Brukere |
-| Personsøket | Fra siste tastetrykk til svaret står (treff, «Ingen treff.» eller feil), delt i pausen før kallet, kallet (nett og database) og visningen |
+| Personsøket | Fra siste tastetrykk til det første svaret etter det (treff, «Ingen treff.» eller feil), delt i pausen før kallet, kallet (nett og database) og visningen |
 
 For hvert merke føres også antall API-kall startet før det, koden som var
 hentet (overført og utpakket), og summen av lange oppgaver (over 50 ms, da
@@ -81,7 +81,7 @@ siden ikke svarer på tastene).
 | `fortolkning` | Fra forsiden til fortolkningen, og første treff i analyttsøket |
 | `fagmiljobytte` | Bytte arbeidsfagmiljø i kontomenyen (annenhver vei), til navnet og panelene står |
 | `brukere` | Administrasjon → Brukere, for hver personmengde |
-| `personsok` | Gruppeinvitasjon (systemarkitekt), «Legg til medlem» (systemarkitekt) og ny direktemelding (vanlig medlem), for hver personmengde: første søk, gjentatt søk, skrivefeil, aksenter og nordiske tegn, tomt treff, rask skriving, feil fra databasen, og et svar som kommer 2 s for sent mens et nytt søk er skrevet. Treffene sammenlignes med svaret databasen gir direkte |
+| `personsok` | Gruppeinvitasjon (systemarkitekt), «Legg til medlem» (systemarkitekt) og ny direktemelding (vanlig medlem), for hver personmengde: første søk, gjentatt søk, skrivefeil, aksenter og nordiske tegn, tomt treff, rask skriving, feil fra databasen, og et svar som kommer 2 s for sent mens et nytt søk er skrevet. Treffene sammenlignes, ved brukernavnet og i rekkefølge, med svaret databasen gir direkte, og et foreldet treff teller som feil selv om det bare står et øyeblikk |
 | `sql` | Personsøkene i databasen med `EXPLAIN (ANALYZE, BUFFERS)`, som systemarkitekt, lokal administrator og vanlig medlem |
 
 I tillegg leses serverens tid per kall (`pg_stat_statements`) for hvert
@@ -208,8 +208,10 @@ etter siste tastetrykk før det spør databasen; resten er kallet.
   3,8 s, 2,4 s og 1,7 s). Visningen etter svaret tar 5–35 ms.
 - Et **gjentatt søk** svarer på 5–90 ms (komponenten husker svaret), og
   **rask skriving** gir ett kall per pause.
-- **Riktig i alle 144 radene:** treffene er de samme, i samme rekkefølge, som
-  databasen gir direkte; en feil fra databasen gir en feilmelding; et svar
+- **Riktig i alle 144 radene:** treffene er de samme personene, i samme
+  rekkefølge, som databasen gir direkte (sammenlignet ved brukernavnet, fordi
+  navnene går igjen ved 5 000 personer; kontrollert på nytt slik for alle
+  søkene ved 5 000 på rask profil); en feil fra databasen gir en feilmelding; et svar
   som kommer 2 s for sent på et gammelt søk, vises aldri over det nye.
 
 ### Personsøket i databasen

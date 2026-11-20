@@ -370,11 +370,15 @@ interface Sokested {
   hvem: string
   /** Åpner søkefeltet og gir det. */
   apne(side: Side, k: Kontekst): Promise<Side>
-  /** Svaret databasen gir den innloggede for søket: navnene i rekkefølge. */
+  /** Svaret databasen gir den innloggede for søket: brukernavnene i rekkefølge. */
   fasit(k: Kontekst, sok: string): Promise<string[]>
 }
 
-const navnene = (treff: { first_name: string; last_name: string }[]) => treff.map((t) => `${t.first_name} ${t.last_name}`.trim())
+/**
+ * Personene i et svar, i rekkefølge, ved brukernavnet: det er entydig, mens
+ * navnene går igjen blant de syntetiske personene.
+ */
+const brukernavnene = (treff: { username: string }[]) => treff.map((t) => t.username)
 
 /**
  * Søkene, ett per gjentakelse, så hver gjentakelse er et nytt søk (komponenten
@@ -407,7 +411,7 @@ function sokesteder(k: Kontekst, klienter: { lokal: SupabaseClient; medlem: Supa
         await felt.waitFor({ timeout: GRENSE })
         return felt
       },
-      fasit: async (kk, sok) => navnene(await rpc(kk.admin.klient, 'sok_gruppekandidater', { gruppe: kk.gruppe, sok })),
+      fasit: async (kk, sok) => brukernavnene(await rpc(kk.admin.klient, 'sok_gruppekandidater', { gruppe: kk.gruppe, sok })),
     },
     {
       navn: 'medlemskandidater',
@@ -424,7 +428,7 @@ function sokesteder(k: Kontekst, klienter: { lokal: SupabaseClient; medlem: Supa
         await vindu.getByRole('button', { name: 'Legg til medlem' }).click({ timeout: GRENSE })
         return vindu.getByRole('combobox', { name: 'Legg til medlem' })
       },
-      fasit: async (kk, sok) => navnene(await rpc(kk.admin.klient, 'sok_medlemskandidater', { fagmiljo: standard, sok })),
+      fasit: async (kk, sok) => brukernavnene(await rpc(kk.admin.klient, 'sok_medlemskandidater', { fagmiljo: standard, sok })),
     },
     {
       navn: 'direktemelding',
@@ -437,17 +441,13 @@ function sokesteder(k: Kontekst, klienter: { lokal: SupabaseClient; medlem: Supa
         await felt.waitFor({ timeout: GRENSE })
         return felt
       },
-      fasit: async (_kk, sok) => navnene(await rpc(klienter.medlem, 'sok_direktemottakere', { sok })),
+      fasit: async (_kk, sok) => brukernavnene(await rpc(klienter.medlem, 'sok_direktemottakere', { sok })),
     },
   ]
 }
 
-/** Navnene personsøket viser nå. */
-const viste = async (side: Side): Promise<string[]> =>
-  ((await side.locator('.personsok__treff [role="option"] .personsok__navn').allInnerTexts()) as string[])
-    .map((t) => t.trim())
-    // Reservevalget for et nøyaktig brukernavn er ikke et treff fra databasen.
-    .filter((t) => !t.startsWith('Bruk brukernavnet «'))
+/** Personene personsøket viser nå, ved brukernavnet (lesingen står i måleren, `ytelsesmaler.js`). */
+const viste = (side: Side): Promise<string[]> => side.evaluate(() => (window as never as { __ytelse: { personer(): string[] } }).__ytelse.personer())
 
 /**
  * Ett søk: skriver `sok` (med `forsinkelse` mellom tastene), venter svaret og
@@ -488,11 +488,11 @@ async function personsok(k: Kontekst, profil: Profil, klienter: { lokal: Supabas
       await merke(side, 'skall')
       const felt = await sted.apne(side, k)
       const fasit = new Map<string, string[]>()
-      const riktig = async (sokeord: string) => {
+      const fasitFor = async (sokeord: string) => {
         if (!fasit.has(sokeord)) fasit.set(sokeord, await sted.fasit(k, sokeord))
-        const vist = await viste(side)
-        return JSON.stringify(vist) === JSON.stringify(fasit.get(sokeord))
+        return fasit.get(sokeord)!
       }
+      const riktig = async (sokeord: string) => JSON.stringify(await viste(side)) === JSON.stringify(await fasitFor(sokeord))
       for (let nr = 1; nr <= GJENTAKELSER; nr++) {
         const forste = nte(SOKENE.vanlig, nr)
         const tilfeller: [string, string, number][] = [
@@ -525,6 +525,8 @@ async function personsok(k: Kontekst, profil: Profil, klienter: { lokal: Supabas
         await side.unroute(`**/rest/v1/rpc/${sted.rpc}`)
         // Lang responstid: det første søket svarer 2 s for sent, og et nytt søk skrives før det.
         const [gammelt, nytt] = nte(SOKENE.foreldet, nr)
+        // Fasiten først, så hver visning av det nye søket kan sammenlignes med den.
+        const fasitNytt = await fasitFor(nytt)
         await side.route(`**/rest/v1/rpc/${sted.rpc}`, async (r: Side) => {
           const kropp = JSON.parse(r.request().postData() ?? '{}') as { sok?: string }
           if (kropp.sok === gammelt) await vent(2000)
@@ -540,10 +542,9 @@ async function personsok(k: Kontekst, profil: Profil, klienter: { lokal: Supabas
         const treg = await sok(side, felt, sted.rpc, nytt, 40)
         await vent(2300)
         const etter = await les(side)
-        const foreldet = etter.personsok.some(([, verdi, , navn]) => {
-          const treff = navn.filter((x) => !x.startsWith('Bruk brukernavnet «'))
-          return verdi === nytt && treff.length > 0 && JSON.stringify(treff) !== JSON.stringify(fasit.get(nytt) ?? treff)
-        })
+        const foreldet = etter.personsok.some(
+          ([, verdi, , treff]) => verdi === nytt && treff.length > 0 && JSON.stringify(treff) !== JSON.stringify(fasitNytt),
+        )
         const stod = await riktig(nytt)
         forKjoring(`personsøk ${sted.navn}: sent svar på forrige søk`, profil, k.data.personer, nr, treg.m, { svar: treg.tider.svar, kall: treg.tider.kall, riktig: stod && !foreldet })
         await side.unroute(`**/rest/v1/rpc/${sted.rpc}`)

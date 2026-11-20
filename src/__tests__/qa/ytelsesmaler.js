@@ -23,7 +23,8 @@
  *   `fagsok_svar` det som kommer først av de to.
  *
  * I tillegg: lange oppgaver (over 50 ms), referanselisten på fagsiden hver
- * gang den endres (antall og et fingeravtrykk), og personsøkets visninger.
+ * gang den endres (antall og et fingeravtrykk), og personsøkets visninger
+ * (brukernavnene i treffene, fra `personer()`).
  */
 ;(() => {
   const y = {
@@ -43,6 +44,15 @@
     },
   }
   window.__ytelse = y
+  /**
+   * Personene personsøket viser, i rekkefølge, ved brukernavnet (`@navn` først
+   * i linjen under navnet; navnene går igjen blant de syntetiske personene).
+   * Reservevalget for et nøyaktig brukernavn er ikke et treff fra databasen.
+   */
+  y.personer = () =>
+    [...document.querySelectorAll('.personsok__treff [role="option"]:not([data-art="brukernavn"]) .personsok__linje')].map((e) =>
+      e.textContent.trim().split(' · ')[0].replace(/^@/, ''),
+    )
   try {
     new PerformanceObserver((liste) => {
       for (const e of liste.getEntries()) y.lange.push([e.startTime, e.duration])
@@ -115,11 +125,11 @@
     }
     const ps = q('.personsok')
     if (ps) {
-      const navn = [...ps.querySelectorAll('.personsok__treff [role="option"] .personsok__navn')].map(tekst)
-      const tilstand = `${ps.querySelector('input')?.value}|${tekst(ps.querySelector('.personsok__melding'))}|${navn.join(',')}`
+      const treff = y.personer()
+      const tilstand = `${ps.querySelector('input')?.value}|${tekst(ps.querySelector('.personsok__melding'))}|${treff.join(',')}`
       if (tilstand !== forrigePs) {
         forrigePs = tilstand
-        y.personsok.push([t, ps.querySelector('input')?.value ?? '', tekst(ps.querySelector('.personsok__melding')), navn])
+        y.personsok.push([t, ps.querySelector('input')?.value ?? '', tekst(ps.querySelector('.personsok__melding')), treff])
       }
     }
   }

@@ -187,19 +187,42 @@ async function sikreMaleboere(s: Status): Promise<Pick<Ytelsesdata, 'passord' | 
   return { passord, ider }
 }
 
-/** Fagsidene: lages én gang (de tar noen minutter), og gjenbrukes til databasen bygges på nytt. */
+/** De første sidene som har en publisert FEST-kobling (`legemiddelkobling`). */
+const koblingerSql = `select count(*) from (
+    select objekt_id from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%' order by slug limit ${KOBLEDE_SIDER}
+  ) side
+  where exists (
+    select 1 from public.objektutgaver u
+    where u.tilstand = 'publisert' and u.innhold ->> 'elementtype' = 'legemiddelkobling' and u.innhold ->> 'infoside' = side.objekt_id::text
+  )`
+
+/**
+ * Fagsidene: lages én gang (de tar noen minutter), og gjenbrukes til databasen
+ * bygges på nytt. FEST-koblingene sjekkes og rettes for seg, så en kjøring som
+ * ble avbrutt mellom sidene og koblingene, ikke gjenbruker sider uten kobling.
+ */
 function sikreFagsider(s: Status, admin: string): string[] {
   const finnes = Number(lokalSql(s, `select count(*) from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%'`))
   if (finnes < PRODUKSJONSFORM.sider) {
     console.log(`[ytelsesdata] lager ${PRODUKSJONSFORM.sider} syntetiske fagsider (noen minutter første gang)`)
     lokalSql(s, `begin; ${somBruker(admin)} ${syntetiskeFagsiderSql(PRODUKSJONSFORM)} commit;`)
+  }
+  if (Number(lokalSql(s, koblingerSql)) < KOBLEDE_SIDER) {
     lokalSql(
       s,
       `begin; ${somBruker(admin)}
        do $kobling$
        declare side record; e record;
        begin
-         for side in select objekt_id from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%' order by slug limit ${KOBLEDE_SIDER} loop
+         for side in
+           select i.objekt_id from (
+             select objekt_id from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%' order by slug limit ${KOBLEDE_SIDER}
+           ) i
+           where not exists (
+             select 1 from public.objektutgaver u
+             where u.innhold ->> 'elementtype' = 'legemiddelkobling' and u.innhold ->> 'infoside' = i.objekt_id::text
+           )
+         loop
            perform public.opprett_utkast('innholdselement', jsonb_build_object(
              'infoside', side.objekt_id, 'panel', 'preparater', 'posisjon', 0, 'elementtype', 'legemiddelkobling',
              'data', jsonb_build_object('virkestoff', jsonb_build_array(jsonb_build_object('fest_id', '${VIRKESTOFF.fest_id}', 'navn', '${VIRKESTOFF.navn}')))));
@@ -216,8 +239,10 @@ function sikreFagsider(s: Status, admin: string): string[] {
        $kobling$;
        commit;`,
     )
-    lokalSql(s, 'analyze;')
+    const koblet = Number(lokalSql(s, koblingerSql))
+    if (koblet < KOBLEDE_SIDER) throw new Error(`Bare ${koblet} av ${KOBLEDE_SIDER} fagsider fikk FEST-kobling.`)
   }
+  if (finnes < PRODUKSJONSFORM.sider) lokalSql(s, 'analyze;')
   return lokalSql(s, `select slug from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%' order by slug`).split('\n')
 }
 
