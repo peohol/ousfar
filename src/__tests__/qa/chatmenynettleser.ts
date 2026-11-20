@@ -51,6 +51,19 @@ async function punkt(kode: string, arbeid: () => Promise<string | void>) {
 function krev(b: unknown, hva: string): asserts b {
   if (!b) throw new Error(hva)
 }
+/**
+ * Knappene i hjørnet (×, og «Utvid» på brede flater) står på samme linje som
+ * den første raden («Mine grupper» eller «Til alle samtaler»), uten å overlappe den.
+ */
+async function sammeLinje(meny: Side, rad: string) {
+  const r = await meny.locator(rad).first().boundingBox()
+  const k = await meny.locator('.chatpanel__topp').boundingBox()
+  const x = await meny.locator('.chatpanel__lukk').boundingBox()
+  krev(r && k && x, `fant ikke ${rad} eller knappene`)
+  const midt = (b: { y: number; height: number }) => b.y + b.height / 2
+  krev(Math.abs(midt(r) - midt(x)) <= 2, `${rad} står ikke på linje med × (${midt(r)} mot ${midt(x)})`)
+  krev(r.x + r.width <= k.x + 1, `${rad} går inn under knappene`)
+}
 async function innen(ms: number, hva: string, sjekk: () => Promise<boolean>) {
   const start = Date.now()
   while (Date.now() - start < ms) {
@@ -111,6 +124,7 @@ try {
     krev((await uleste()) === 2, `uleste i databasen etter åpning: ${await uleste()}`)
     const rader: string[] = await menyen.locator('.chatrad__navn').allInnerTexts()
     krev(rader[0] === sandnavn, `første rad er ${rader[0]}`)
+    await sammeLinje(menyen, '.chatgrupper__veksle')
     await bilde(ada, '02-meny-apen-pc')
   })
 
@@ -120,6 +134,7 @@ try {
     await innen(10_000, 'lest i databasen', async () => (await uleste()) === 0)
     await rpc(boK, 'send_gruppemelding', { gruppe: sandkasse, klient_id: crypto.randomUUID(), tekst: 'Syntetisk i sanntid' })
     await innen(10_000, 'ny melding vises', async () => (await menyen.getByText('Syntetisk i sanntid').count()) > 0)
+    await sammeLinje(menyen, '.chatsamtale__tilbake')
     await bilde(ada, '03-samtale-meny-pc')
   })
 
@@ -193,9 +208,11 @@ try {
     // Boblen, håndtaket og «Utvid» hører til de brede flatene.
     krev(!(await mobil.locator('.chatboble').isVisible()), 'ingen boble på mobil')
     krev(!(await m.getByRole('button', { name: 'Utvid' }).isVisible()), 'ingen Utvid på mobil')
+    await sammeLinje(m, '.chatgrupper__veksle')
     await bilde(mobil, '10-meny-mobil')
     await m.getByRole('button', { name: new RegExp(fagnavn) }).click()
     await m.getByRole('log').waitFor()
+    await sammeLinje(m, '.chatsamtale__tilbake')
     await bilde(mobil, '11-samtale-mobil')
     await mobil.keyboard.press('Escape')
     await innen(3_000, 'lukket', async () => !(await m.isVisible()))

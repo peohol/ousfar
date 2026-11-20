@@ -206,6 +206,50 @@
   color: var(--blekk);
 }
 
+/*
+ * I menyen (ikke helsiden) står knappene i hjørnet, på linje med den første
+ * raden under: «Mine grupper» i oversikten, «Til alle samtaler» ellers. Raden
+ * holder av plass til knappene (`--chatknapper`); lista ruller under dem.
+ */
+.chatmeny:not([data-helside]) {
+  --chatknapper: calc(2 * var(--hoyde-liten) + var(--rom-2));
+}
+
+/* Smalt er «Utvid» skjult, og bare lukkeknappen står igjen. */
+@media (max-width: 47.5em) {
+  .chatmeny:not([data-helside]) {
+    --chatknapper: var(--hoyde-liten);
+  }
+}
+
+.chatmeny:not([data-helside]) .chatpanel {
+  position: relative;
+}
+
+.chatmeny:not([data-helside]) .chatpanel__topp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: var(--rom-4) var(--rom-4) 0 0;
+}
+
+.chatmeny:not([data-helside]) .chatpanel__topp .chatpanel__knapp {
+  background: var(--flate);
+}
+
+.chatmeny:not([data-helside]) .chatpanel__topp .chatpanel__knapp:hover {
+  background: var(--flate-hevet);
+}
+
+.chatmeny:not([data-helside]) :is(.chatpanel__oversikt, .chatsamtale) {
+  padding-top: var(--rom-4);
+}
+
+.chatmeny:not([data-helside]) :is(.chatgrupper__hode, .chatny__topp, .chatsamtale > .chatsamtale__tilbake) {
+  margin-right: calc(var(--chatknapper) + var(--rom-2));
+}
+
 .chatmeny[data-helside] .chatpanel__topp {
   width: min(100%, var(--chathelside));
   margin-inline: auto;
