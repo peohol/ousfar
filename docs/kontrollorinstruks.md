@@ -37,7 +37,9 @@ Grunnreglene:
   fagansvarligs faste avgjørelse (krav 3 i protokollen). Et annet område i
   AGNP er ingen innvending mot det og ingen sak for fagansvarlig. Gir AGNP et
   område, kontroller at det står i TDM-kortet med årstall og prøvetidspunkt,
-  og aldri i viktige data.
+  og aldri i viktige data. Perioden for datainnsamlingen i
+  Referanseområdeprosjektet er 2005–2008, slik referansens egen tittel sier;
+  skriver teksten 2005–2007, er det en feil som skal rettes.
 - Det du skriver (`kommenter`, `lukk_kommentar`, `gjenapne_kommentar`,
   `vurder`), er gjort når OUSFAR har svart med resultatet. Uten et slikt svar
   er det ikke dokumentert før du har sett etter i grenen; se «Når et kall ikke

@@ -53,7 +53,12 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    harmoniseringsprosjektene (fagansvarligs faste avgjørelse 2026-10-23):
    AGNPs områder bygger på varierende doser og prøvetidspunkter og er ikke et
    godt sammenligningsgrunnlag. De nevnes i TDM-kortet med årstall og
-   prøvetidspunkt, men står aldri i viktige data. At AGNP eller en annen
+   prøvetidspunkt, men står aldri i viktige data. Datainnsamlingen i
+   Referanseområdeprosjektet gikk 2005–2008, slik referansens egen tittel sier
+   («Referanseområdeprosjektet 2005–2008: nasjonale kartleggings- og
+   harmoniseringsprosjekter innen klinisk farmakologi – antidepressiva og
+   antipsykotika»), og perioden skrives slik på fagsiden (fagansvarligs faste
+   avgjørelse 2026-11-20). At AGNP eller en annen
    internasjonal kilde gir et annet område, er derfor ingen grunn til å
    stoppe, sperre eller spørre fagansvarlig. Tyder en kilde ellers på at en
    beskyttet verdi er feil, stopper kuratoren og blokkerer stoffet i køen
@@ -539,3 +544,9 @@ holder dem i takt med modellen og piloten).
   vaktmesteren gjør den om til en ekte overskrift med de samme ordene (etter
   forslag fra kontrolløren). Ingen krav er svekket: ingen påstand eller
   sitering endres.
+- 2026-11-20: krav 3 (fagansvarligs faste avgjørelse): datainnsamlingen i
+  Referanseområdeprosjektet gikk 2005–2008, slik referansens egen tittel sier,
+  og perioden skrives slik på fagsidene. Flere publiserte sider skrev
+  2005–2007; vaktmesteren rettet dem. Ingen krav er svekket: ingen
+  referanseområde, persentil eller dose er endret, bare perioden teksten
+  oppgir for kilden.

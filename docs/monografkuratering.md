@@ -161,6 +161,9 @@ Redaksjonelle rammer for kuratoren:
   akuttmedisinsk behandling.
 - Referanseområdet i viktige data er alltid det norske; AGNPs område står
   bare i TDM-kortet (krav 3 i `docs/kuratorprotokoll.md`).
+- Perioden for datainnsamlingen i Referanseområdeprosjektet er 2005–2008, som
+  i referansens egen tittel – ikke 2005–2007 (krav 3 i
+  `docs/kuratorprotokoll.md`).
 - Tallene i viktige data (toksisk område, alvorlig/dødelig intoksikasjon)
   flyttes eller dupliseres ikke. Toksisitetskortene kan utdype dem og sette
   dem i kontekst, men er egne redaksjonelle elementer.

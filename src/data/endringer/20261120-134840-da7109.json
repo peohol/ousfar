@@ -1,0 +1,14 @@
+{
+  "id": "20261120-134840-da7109",
+  "semver": "patch",
+  "opprettet": "2026-11-20T13:48:40Z",
+  "sammendrag": "Perioden for Referanseområdeprosjektet er 2005–2008",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Instruksene for kurateringen sier nå at datainnsamlingen i Referanseområdeprosjektet gikk 2005–2008, slik referansens egen tittel sier, og at perioden skal stå slik på fagsidene. Flere publiserte sider skrev 2005–2007, og de er rettet i egne kurateringsgrener. Ingen referanseområde, persentil eller dose er endret."
+  ],
+  "utenVarsel": true
+}
