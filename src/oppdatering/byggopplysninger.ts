@@ -21,6 +21,13 @@ export interface Byggopplysninger {
    * fantes, og da kan en ny versjon berøre alle sider.
    */
   endringer?: Endringsomrade[]
+  /**
+   * Stien til den kliniske delen av bygget, ved siden av `index.html`. Bare i
+   * `versjon.json`: før siden lastes på nytt med en ny versjon, sjekker appen
+   * at den faktisk kan hentes (`forberedelse.ts`). Mangler i bygg fra før
+   * feltet fantes.
+   */
+  klinisk?: string
 }
 
 /** Fila bygget legger ut, ved siden av `index.html`. */

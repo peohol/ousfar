@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { useJevnligSjekk } from '../hooks/useJevnligSjekk'
 import { oppdaterOgTaVare } from '../oppdatering/bevaring'
+import { klargjoring as appensKlargjoring, type Klargjoring } from '../oppdatering/forberedelse'
 import { berortAvNyVersjon, gjeldendeSide, lyttEtterSide, vedRoligOyeblikk, ventPaaRo } from '../oppdatering/sider'
 import { hentUtlagtBygg, KJORER, nyVersjon, type Byggopplysninger } from '../oppdatering/versjon'
 import { Ikon } from './ikon/Ikon'
@@ -64,6 +65,13 @@ export function useOversteLag(aktiv: boolean): HTMLElement | null {
  * gang etterpå, og ikke noe vindu står åpent. Går brukeren til en side den
  * berører, og er i gang før versjonen er tatt i bruk, kommer meldingen.
  *
+ * Før siden lastes på nytt, sjekkes det at den nye versjonen faktisk kan
+ * hentes (`src/oppdatering/forberedelse.ts`), så brukeren kommer tilbake til
+ * siden og ikke til «Fikk ikke hentet appen». Sjekken begynner så snart den
+ * nye versjonen er funnet. Lar den seg ikke hente, blir den gamle versjonen
+ * stående, og meldingen sier fra og lar brukeren prøve igjen; i stillhet
+ * oppdateres det bare når sjekken alt har lyktes.
+ *
  * Meldingen forsvinner ikke av seg selv og kan ikke lukkes: den gamle
  * versjonen skal ikke brukes videre på en side den berører. «Oppdater nå»
  * tar vare på det brukeren holder på med — vinduer som står åpne, skjemaer som
@@ -80,6 +88,7 @@ export function Oppdateringsmelding({
   oppdater = oppdaterOgTaVare,
   oppdaterStille = oppdaterIStillhet,
   stilleEtter = STILLE_ETTER,
+  klargjoring = appensKlargjoring,
 }: {
   /** Av i utviklingsserveren, som ikke legger ut noen versjonsfil. */
   aktiv?: boolean
@@ -87,9 +96,15 @@ export function Oppdateringsmelding({
   oppdater?: () => void
   oppdaterStille?: () => void
   stilleEtter?: number
+  klargjoring?: Klargjoring
 }) {
   const [ny, setNy] = useState<Funnet | null>(null)
   const [oppdaterer, setOppdaterer] = useState(false)
+  /** Den nye versjonen lot seg ikke hente da brukeren trykket «Oppdater nå». */
+  const [ikkeHentet, setIkkeHentet] = useState(false)
+  const nyttBygg = ny?.bygg ?? null
+  const byggRef = useRef(nyttBygg)
+  byggRef.current = nyttBygg
   /** Et rolig øyeblikk er nettopp kommet, og appen venter på å oppdatere i stillhet. */
   const [venter, setVenter] = useState(false)
   const side = useSyncExternalStore(lyttEtterSide, gjeldendeSide)
@@ -120,6 +135,12 @@ export function Oppdateringsmelding({
     return () => window.removeEventListener('vite:preloadError', lastefeil)
   }, [spor])
 
+  // Sjekken av at den nye versjonen kan hentes, begynner med én gang, så den
+  // er ferdig når brukeren trykker, eller når et rolig øyeblikk kommer.
+  useEffect(() => {
+    if (nyttBygg) void klargjoring.start(nyttBygg)
+  }, [nyttBygg, klargjoring])
+
   // Når en ny versjon er funnet, tas den i bruk i stillhet i hvert rolige
   // øyeblikk der brukeren ikke er i gang igjen med én gang, og ikke noe vindu
   // står åpent. Det gjelder også når meldingen står.
@@ -134,8 +155,12 @@ export function Oppdateringsmelding({
         stilleEtter,
         () => {
           avbryt = null
-          if (document.querySelector('dialog[open]')) setVenter(false)
-          else oppdaterStille()
+          const bygg = byggRef.current
+          if (!document.querySelector('dialog[open]') && bygg && klargjoring.klar(bygg)) return oppdaterStille()
+          // Et vindu står åpent, eller den nye versjonen er ikke hentet ennå:
+          // neste rolige øyeblikk.
+          if (bygg) void klargjoring.start(bygg)
+          setVenter(false)
         },
         () => {
           avbryt = null
@@ -147,7 +172,7 @@ export function Oppdateringsmelding({
       stopp()
       avbryt?.()
     }
-  }, [harNy, oppdaterStille, stilleEtter])
+  }, [harNy, oppdaterStille, stilleEtter, klargjoring])
 
   const lag = useOversteLag(harNy)
   if (!ny || !lag) return null
@@ -156,11 +181,14 @@ export function Oppdateringsmelding({
   // Har brukeren trykket «Oppdater nå», blir meldingen stående til siden lastes.
   if (!oppdaterer && (venter || !berort)) return null
 
+  const bygg = ny.bygg
   return createPortal(
     <div className="oppdateringsmelding" role="alert">
       <p className="oppdateringsmelding__tekst">
-        <strong>En ny versjon av OUSFAR er klar{ny.bygg.versjon ? ` (${ny.bygg.versjon})` : ''}.</strong> Oppdater
-        for å ta den i bruk. Det du holder på med, blir stående.
+        <strong>En ny versjon av OUSFAR er klar{bygg.versjon ? ` (${bygg.versjon})` : ''}.</strong>{' '}
+        {ikkeHentet
+          ? 'Fikk ikke hentet den. Sjekk nettforbindelsen og prøv igjen. Det du holder på med, blir stående.'
+          : 'Oppdater for å ta den i bruk. Det du holder på med, blir stående.'}
       </p>
       <button
         type="button"
@@ -168,11 +196,16 @@ export function Oppdateringsmelding({
         disabled={oppdaterer}
         onClick={() => {
           setOppdaterer(true)
-          oppdater()
+          setIkkeHentet(false)
+          void klargjoring.start(bygg).then((klar) => {
+            if (klar) return oppdater()
+            setOppdaterer(false)
+            setIkkeHentet(true)
+          })
         }}
       >
         <Ikon navn="reset" storrelse="ui" />
-        {oppdaterer ? 'Oppdaterer …' : 'Oppdater nå'}
+        {oppdaterer ? 'Oppdaterer …' : ikkeHentet ? 'Prøv igjen' : 'Oppdater nå'}
       </button>
     </div>,
     lag,

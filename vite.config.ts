@@ -24,8 +24,8 @@ const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: 'virtual:ousfar-endrin
  * og ber brukeren oppdatere når en annen versjon er lagt ut
  * (`src/oppdatering/versjon.ts`). Bygget er commiten på Vercel; ellers
  * tidspunktet, så hvert lokale bygg er nytt. Fila sier også hvilke sider de
- * nyeste føringene gjelder; det trenger bare appen som spør, ikke den som
- * kjører.
+ * nyeste føringene gjelder, og hvor den kliniske delen av bygget ligger; det
+ * trenger bare appen som spør, ikke den som kjører.
  *
  * Versjonene til endringene med egen fil beregnes her, fra rekkefølgen de ble
  * slått sammen i `main` (`src/drift/endringshistorikk.ts`), og legges inn i
@@ -72,9 +72,12 @@ function versjonsfil(): Plugin {
         server.ws.send({ type: 'full-reload' })
       })
     },
-    generateBundle() {
+    generateBundle(_valg, pakker) {
       const { logg, bygg } = beregn()
-      const fil: Byggopplysninger = { ...bygg, endringer: endringsomrader(logg) }
+      const klinisk = Object.values(pakker).find(
+        (p) => p.type === 'chunk' && p.fileName.startsWith(`assets/${KLINISK_PAKKE}-`),
+      )?.fileName
+      const fil: Byggopplysninger = { ...bygg, endringer: endringsomrader(logg), ...(klinisk && { klinisk }) }
       this.emitFile({ type: 'asset', fileName: VERSJONSFIL, source: JSON.stringify(fil) })
     },
   }

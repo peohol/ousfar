@@ -151,6 +151,9 @@ interface Gjenopprettet {
 
 let gjenopprettet: Gjenopprettet | null = null
 
+/** Bildet slik det sto i fanen, til det må legges tilbake (`leggBildetTilbake`). */
+let raatt: string | null = null
+
 /** Leser bildet fanen fikk før oppdateringen, én gang, og sletter det straks. */
 function lesBildet(): Gjenopprettet {
   if (gjenopprettet) return gjenopprettet
@@ -159,6 +162,7 @@ function lesBildet(): Gjenopprettet {
     const tekst = sessionStorage.getItem(LAGRINGSNOKKEL)
     sessionStorage.removeItem(LAGRINGSNOKKEL)
     if (!tekst) return gjenopprettet
+    raatt = tekst
     const bilde = JSON.parse(tekst) as Partial<Oppdateringsbilde>
     if (typeof bilde.tatt !== 'number' || Date.now() - bilde.tatt > FORELDET_ETTER) return gjenopprettet
     gjenopprettet.eier = typeof bilde.eier === 'string' ? bilde.eier : null
@@ -257,9 +261,25 @@ export function gjenopprettRulling(hvem: string | null): () => void {
   }
 }
 
+/**
+ * Legger bildet tilbake i fanen, slik det kom, før siden lastes på nytt en
+ * gang til fordi den nye versjonen ikke lot seg hente (`Port.tsx`). Da er
+ * ingenting av det hentet ut ennå, og det skal komme tilbake når den gjør det.
+ * Etter de første to minuttene er det for sent, som ellers.
+ */
+export function leggBildetTilbake(): void {
+  if (!raatt || !gjenopprettet || !gyldig(gjenopprettet)) return
+  try {
+    sessionStorage.setItem(LAGRINGSNOKKEL, raatt)
+  } catch {
+    // Uten lagring i fanen lastes siden likevel på nytt.
+  }
+}
+
 /** Bare for testene: glemmer bildet, så det leses på nytt. */
 export function glemBildet(): void {
   gjenopprettet = null
+  raatt = null
   eier = null
   levende.clear()
 }

@@ -14,6 +14,26 @@ det. «Oppdater nå» laster siden på nytt, og det brukeren holdt på med komme
 tilbake: vinduene som sto åpne, skjemaer som var halvveis skrevet, valgene i
 fortolkningen, åpne seksjoner og hvor langt ned siden og vinduet var rullet.
 
+Før siden lastes på nytt, henter appen den nye versjonens kliniske del, mens
+brukeren blir stående på siden (knappen viser «Oppdaterer …»). Det begynner
+alt når den nye versjonen er funnet, så det er som regel ferdig før brukeren
+trykker. Avviser innloggingsveggen økten, fornyes den, og det prøves igjen;
+faller nettet ut eller henger et forsøk, prøves det fire ganger, med en frist på 20 sekunder for hvert.
+Oppslaget og fornyelsen av økten har en frist på fem sekunder, så knappen
+aldri blir stående på «Oppdaterer …». Lar den nye
+versjonen seg ikke hente, blir den gamle stående, meldingen sier fra, og
+knappen blir «Prøv igjen». Brukeren havner altså ikke på «Fikk ikke hentet
+appen» fordi den nye versjonen ikke var å få tak i.
+
+Lot appen seg likevel ikke hente da siden startet på nytt, prøver den igjen
+av seg selv én gang: økten fornyes, og siden lastes på nytt med det brukeren
+holdt på med i behold. Brukeren ser bare at appen laster. Kortet «Fikk ikke
+hentet appen» kommer først når det skjer igjen innen et minutt, eller med én
+gang når fanen ikke kan skrive ned og lese tilbake at den lastet på nytt (så
+siden aldri går i ring). Feilet appen
+mens den ble tegnet opp, lastes den på nytt uten det som ble tatt vare på,
+siden det kan være det som feilet.
+
 Oppdateringsmeldingen er teknisk og **ikke et varsel i bjella**. Vanlige
 versjonsendringer kan kreve oppdatering selv om de ikke bør gi eget
 funksjonsvarsel (se `docs/varsler.md`).
@@ -55,12 +75,16 @@ helst nytt bygg, uansett side.
 | `src/oppdatering/versjon.ts` | Leser `versjon.json` og avgjør om det er en ny versjon: når versjonen det skal oppdateres til, er en annen enn den som kjører |
 | `src/oppdatering/sider.ts` | Hvilke sider en ny versjon berører, siden brukeren er på (meldt av `App.tsx`), og de rolige øyeblikkene |
 | `src/components/Oppdateringsmelding.tsx` | Meldingen og oppdateringen i stillhet. Spør hvert minutt mens fanen er synlig, når fanen får fokus, og når en del av appen ikke lar seg laste |
+| `src/oppdatering/forberedelse.ts` | Henter den nye kliniske delen (stien står i `versjon.json` som `klinisk`) og fornyer økten før siden lastes på nytt. I stillhet oppdateres det bare når det alt har lyktes |
+| `src/oppdatering/nylasting.ts` | Det nye forsøket av seg selv når appen ikke lot seg hente ved oppstarten (`Hentefeil` i `Port.tsx`), høyst én gang i minuttet |
+| `src/auth/veggnokler.ts` | Nøklene innloggingsveggen kontrollerer øktene med: flere forsøk når en ny instans på kanten henter dem, fornyelse etter fem minutter, og de sist hentede når Supabase ikke svarer, høyst ti minutter gamle som før |
 | `src/oppdatering/bevaring.ts` | Bildet av det som tas vare på, i fanens `sessionStorage`, og rullingen tilbake |
 | `src/oppdatering/Bevaring.tsx` | `useBevart`, `Bevaringsomrade` og `Bevaringseier` (brukeren det hører til, satt i `Port.tsx`) |
 
 `versjon.json` ligger utenfor innloggingsveggen, sammen med meldingen, så den
 virker også på innloggingssiden. Fila sier bare hvilket bygg og hvilke
-versjoner som er lagt ut, og hvilke sider de nyeste føringene gjelder.
+versjoner som er lagt ut, hvilke sider de nyeste føringene gjelder, og hva
+den kliniske delen heter (ikke innholdet, som er bak veggen).
 
 ## Å ta vare på ny tilstand
 
