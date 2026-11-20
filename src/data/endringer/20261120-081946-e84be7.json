@@ -1,0 +1,14 @@
+{
+  "id": "20261120-081946-e84be7",
+  "semver": "patch",
+  "opprettet": "2026-11-20T08:19:46Z",
+  "sammendrag": "Raskere personsøk og raskere liste under «Brukere»",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Søket etter personer når du inviterer til en gruppe, legger til et medlem eller starter en direktemelding, svarer raskere, særlig når det er mange brukere.",
+    "Lista under Administrasjon → «Brukere» kommer raskere fram.",
+    "Treffene og rekkefølgen er de samme som før."
+  ],
+  "utenVarsel": true
+}

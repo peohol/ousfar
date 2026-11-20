@@ -87,6 +87,30 @@ describe('sammenligningen', () => {
     expect(await poeng('xyzw', 'Kari', 'Nordmann', 'kari.n')).toBeNull()
   })
 
+  // Triplene i en del slås opp i den (20261120090000) i stedet for å regnes
+  // ut: poengene skal være de samme som med den første definisjonen.
+  it('gir de samme poengene som når triplene i delen regnes ut', async () => {
+    const ord = ['hansen', 'hanssen', 'nordman', 'normdann', 'karl', 'kari', 'mann', 'ole', 'an', 'xyzw', 'bjorn', 'aas', 'sen', 'jo', 'kari.n', 'olsen', 'nils']
+    const deler = ['hanssen', 'hansen', 'nordmann', 'kari', 'karl', 'kari.n', 'ole', 'olsen', 'bjorn', 'as', 'aase', 'johansen', 'nilsen', 'jonas', 'n']
+    const { rows } = await db.query<{ o: string; d: string; ny: number | null; gammel: number | null }>(
+      `select o, d, intern.personsokpoeng(array[o], array[d]) as ny,
+         case
+           when d = o then 4
+           when starts_with(d, o) then 3
+           when strpos(d, o) > 0 then 2
+           when char_length(o) >= 4
+             and 2 * (select count(*) from unnest(intern.personsoktripler(o)) t where t = any(intern.personsoktripler(d)))
+               >= cardinality(intern.personsoktripler(o))
+           then 1
+         end as gammel
+       from unnest($1::text[]) o, unnest($2::text[]) d`,
+      [ord, deler],
+    )
+    expect(rows).toHaveLength(ord.length * deler.length)
+    expect(rows.filter((r) => r.ny !== r.gammel)).toEqual([])
+    expect(rows.some((r) => r.ny === 1)).toBe(true)
+  })
+
   it('krever at hvert ord i søket står i navnet', async () => {
     expect(await poeng('kari hansen', 'Kari', 'Nordmann', 'kari.n')).toBeNull()
   })
@@ -172,5 +196,37 @@ describe('kandidatene til et fagmiljø', () => {
     expect(
       await feil(() => verdi('systemarkitekt', 'select public.sok_medlemskandidater($1, $2)', ['00000000-0000-4000-8000-00000000dead', 'kari'])),
     ).toEqual({ kode: 'P0002', melding: 'Ukjent fagmiljø.' })
+  })
+})
+
+// Søkene sammenligner først og avgjør så hvem som kan velges, i rangert
+// rekkefølge (20261120090000): treffene skal være de 20 beste av dem som kan
+// velges, ikke de 20 beste av alle som passer.
+describe('de 20 beste av dem som kan velges', () => {
+  let gruppe: string
+
+  beforeAll(async () => {
+    // «Aaron» kommer før «Bea» i rekkefølgen, men uten tilgang kan ingen av
+    // dem være med i en gruppe. Systemarkitekten ser dem likevel.
+    for (let i = 1; i <= 22; i++) {
+      const nr = String(i).padStart(2, '0')
+      const aaron = await opprettBruker(db, { brukernavn: `topp.a${nr}`, fornavn: 'Aaron', etternavn: 'Toppesen', rolle: 'user' })
+      await db.query(`update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = $1 and status = 'aktiv'`, [aaron])
+      if (i <= 21) await opprettBruker(db, { brukernavn: `topp.b${nr}`, fornavn: 'Bea', etternavn: 'Toppesen', rolle: 'user' })
+    }
+    gruppe = await verdi<string>('systemarkitekt', 'select public.opprett_gruppe($1, $2, $3)', ['Toppgruppen', 'Syntetisk', fm('A')])
+  }, 180_000)
+
+  it('hopper over dem som passer best, men ikke kan velges', async () => {
+    const treff = navn(await gruppekandidater('systemarkitekt', 'toppesen', gruppe))
+    expect(treff).toEqual(Array.from({ length: 20 }, (_, i) => `topp.b${String(i + 1).padStart(2, '0')}`))
+    expect(navn(await gruppekandidater('systemarkitekt', 'aaron toppesen', gruppe))).toEqual([])
+  })
+
+  it('gir alle som kan velges når de er færre enn 20', async () => {
+    await verdi('systemarkitekt', 'select public.inviter_til_gruppe($1, $2)', [gruppe, 'topp.b01'])
+    await verdi('systemarkitekt', 'select public.inviter_til_gruppe($1, $2)', [gruppe, 'topp.b02'])
+    const treff = navn(await gruppekandidater('systemarkitekt', 'bea toppesen', gruppe))
+    expect(treff).toEqual(Array.from({ length: 19 }, (_, i) => `topp.b${String(i + 3).padStart(2, '0')}`))
   })
 })
