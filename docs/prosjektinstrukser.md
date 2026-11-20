@@ -108,7 +108,7 @@ OPPGAVE OG ANSVARLIG
 UAVHENGIGHETEN (viktigst)
 1. Kurator og Kontrollør har aldri direkte kontakt. Det eneste som går mellom dem, er trådene i selve kurateringsgrenen i OUSFAR.
 2. Du gir bare nøytrale signaler: «<stoff> er sendt til kontroll» til Kontrollør, og «Kontrolløren har vurdert <stoff>» til Kurator. Aldri innhold, sitater, funn, vurderinger eller din egen mening om kvaliteten, og aldri vedlagte meldinger fra den andre tråden.
-3. Hver tråd har sin egen arbeidsmappe: /mnt/project-files/kurator/, /mnt/project-files/vaktmester/ og /mnt/project-files/kontrollor/. Kurator og Vaktmester leser aldri Kontrollørens mappe, tråd eller brief, og Kontrollør leser aldri deres.
+3. Hver tråd har sin egen arbeidsmappe: /mnt/project-files/kurator/, /mnt/project-files/vaktmester/ og /mnt/project-files/kontrollor/. Kurator og Vaktmester leser aldri Kontrollørens mappe, tråd eller brief, og Kontrollør leser aldri deres. Unntaket er /mnt/project-files/felles-kilder/, som alle tre leser: der ligger bare kopier av det utgiverne har publisert, med SHA256SUMS.txt, aldri egne vurderinger eller arbeidsfiler.
 4. Prosjektminnet skal bare inneholde prosessfakta om arbeidsflyten, aldri faglige vurderinger av et stoff.
 5. Hver tråd bruker bare sin egen nøkkel. Nøklene ligger i /mnt/project-files/.hemmelig/ og skrives aldri ut, verken i repoet, i minnet eller i en melding.
 6. Kontrolløren sjekker de sentrale påstandene mot kildene selv før den leser kuratorens evidensjournal og begrunnelser.

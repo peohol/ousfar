@@ -19,6 +19,12 @@ Kontrolløren skal komme til sine egne funn, uten å bli farget av dine.
 - Det eneste som går mellom deg og kontrolløren, er trådene i grenen i OUSFAR.
 - Les aldri Kontrollør-tråden, briefen dens eller mappen
   `/mnt/project-files/kontrollor/`, og be ingen om innholdet.
+- `/mnt/project-files/felles-kilder/` er felles: både du og kontrolløren leser
+  den. Dit legges bare kopier av det utgiverne har publisert, med
+  SHA256SUMS.txt, slik at en påstand som bygger på en kilde du har lastet ned,
+  kan kontrolleres mot kilden selv. Egne vurderinger, utkast, notater,
+  evidensjournaler og dekningsmatriser hører aldri dit. Mappen gir dere samme
+  kilde, ikke samme vurdering.
 - Når du melder i din egen tråd at en gren er sendt til kontroll, skriv bare
   stoffet, grenen og revisjonen. Koordinatoren gir det videre som et nøytralt
   signal.

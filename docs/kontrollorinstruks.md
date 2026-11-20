@@ -73,7 +73,10 @@ teksten med kuratorprotokollen etter.
    konsentrasjoner, farmakokinetikk, grenser), de beskyttede norske dataene,
    det som er endret fra grunnversjonen, og bivirkningsimportene mot tabellene
    i punkt 4.8. Finn kildene selv (preparatomtalen, retningslinjene, LactMed og
-   de andre kildene protokollen nevner), og noter hva du fant, med kildested,
+   de andre kildene protokollen nevner). Er kilden ikke åpent tilgjengelig,
+   ligger forlagskopien i `/mnt/project-files/felles-kilder/`, med
+   SHA256SUMS.txt, så du leser samme fil som kuratoren. Noter hva du fant, med
+   kildested,
    i `/mnt/project-files/kontrollor/<stoff>/` før du går videre. Det du finner
    her, er kontrollen; kuratorens dokumentasjon er det du kontrollerer.
 4. **Kontroller kuratorens dokumentasjon.** Les så `les_dokument` for

@@ -79,6 +79,8 @@ kort til fagansvarlig.
   bare der. Verktøyene i `/mnt/project-files/kurator/verktoy/` og kildene
   kuratoren har lagret under `/mnt/project-files/kurator/<stoff>/kilder/` kan
   leses; `/mnt/project-files/kontrollor/` aldri.
+  `/mnt/project-files/felles-kilder/` er felles for alle tre: bare kopier av
+  det utgiverne har publisert, med SHA256SUMS.txt, aldri egne vurderinger.
 - Databasen tillater én aktiv gren per fagside. Åpne ikke en gren på en side
   der Kurator har en aktiv gren, og forkast aldri en gren du ikke har åpnet
   selv. Formålet til grenene dine begynner med «Vaktmester:», så alle ser
