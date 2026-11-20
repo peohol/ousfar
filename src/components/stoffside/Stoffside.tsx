@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
+import { memo, useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
 import { PANELER } from '../../faginnhold/paneler'
@@ -22,13 +22,19 @@ import { ForslagsstedKilde, type Forslagsapning } from '../forslag/Forslagskilde
 import { forslagsreferanser, forslagsvalgForFagside } from '../../forslag/fagside'
 import { Kurateringsbanner } from '../kuratering/Utgavelister'
 import { Registerhandlingskilde } from '../stoffregister/Registerhandling'
-import { Identitetspanel } from './Identitetspanel'
-import { finnKobling, Preparatpanel, preparatsoketekster } from './Preparatpanel'
+import { Identitetspanel as IdentitetspanelRen } from './Identitetspanel'
+import { finnKobling, Preparatpanel as PreparatpanelRen, preparatsoketekster } from './Preparatpanel'
 import { useLegemidler } from './useLegemidler'
-import { Interaksjonspanel, interaksjonssoketekster } from './Interaksjonspanel'
+import { Interaksjonspanel as InteraksjonspanelRen, interaksjonssoketekster } from './Interaksjonspanel'
 import { useInteraksjoner } from './useInteraksjoner'
-import { Kortpanel, Mekanismepanel, Tabellpanel, Tekstpanel, type Panelkontekst } from './Paneler'
-import { ViktigeData } from './ViktigeData'
+import {
+  Kortpanel as KortpanelRen,
+  Mekanismepanel as MekanismepanelRen,
+  Tabellpanel as TabellpanelRen,
+  Tekstpanel as TekstpanelRen,
+  type Panelkontekst,
+} from './Paneler'
+import { ViktigeData as ViktigeDataRen } from './ViktigeData'
 import { Redigeringskilde } from './Redigeringskontekst'
 import { Redigeringshandlinger } from './Redigeringslinje'
 import { Sidesok } from './Sidesok'
@@ -38,18 +44,18 @@ import { slaSammenAutomatiske, ventendeKilder } from '../../faginnhold/referanse
 import { clinpgxlitteratur, clinpgxreferanser } from '../../clinpgx/referanser'
 import { cpicreferanser } from '../../cpic/referanser'
 import { FARMAKOGENETIKKPANEL, kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
-import { Farmakogenetikkpanel, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
+import { Farmakogenetikkpanel as FarmakogenetikkpanelRen, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
 import { useBivirkninger, useCpic, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
 import { Konsentrasjonskilde, konsentrasjonIEnhet } from './Konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { finnNoder, NODER } from '../../faginnhold/riktekst'
-import { Kjemipanel } from './Kjemipanel'
-import { Laboratoriepanel } from './Laboratoriepanel'
+import { Kjemipanel as KjemipanelRen } from './Kjemipanel'
+import { Laboratoriepanel as LaboratoriepanelRen } from './Laboratoriepanel'
 import { LABPANEL, labsoketekster } from '../../farmakologiportalen/stoffside'
 import { fpreferanser } from '../../farmakologiportalen/referanser'
 import { KJEMIPANEL, kjemisoketekster } from '../../kjemi/stoffside'
 import { pubchemreferanser } from '../../kjemi/referanser'
-import { Bivirkningspanel, bivirkningssoketekster, harBivirkninger } from './Bivirkningspanel'
+import { Bivirkningspanel as BivirkningspanelRen, bivirkningssoketekster, harBivirkninger } from './Bivirkningspanel'
 import { BIVIRKNINGSPANEL, bivirkningsreferanser } from '../../bivirkninger/referanser'
 import { visningForKort } from '../../bivirkninger/stoffside'
 import type { Visning } from '../../bivirkninger/modell'
@@ -58,6 +64,24 @@ import { cypinfoSynlig } from '../../cypinfo/stoffside'
 import { INTERAKSJONSPANEL, PREPARATPANEL } from '../../legemiddeldata/stoffside'
 import { useRettigheter } from '../../auth/rettigheter'
 import type { Stoff, Stoffregister } from '../../domain/stoffregister'
+
+/**
+ * Panelene tegnes bare på nytt når det de viser, endres: ikke hver gang en
+ * annen kilde kommer inn mens siden lastes. Alt de bruker, får de som
+ * egenskaper eller fra kontekstene rundt.
+ */
+const Identitetspanel = memo(IdentitetspanelRen)
+const Preparatpanel = memo(PreparatpanelRen)
+const Interaksjonspanel = memo(InteraksjonspanelRen)
+const ViktigeData = memo(ViktigeDataRen)
+const Tekstpanel = memo(TekstpanelRen)
+const Farmakogenetikkpanel = memo(FarmakogenetikkpanelRen)
+const Bivirkningspanel = memo(BivirkningspanelRen)
+const Kortpanel = memo(KortpanelRen)
+const Mekanismepanel = memo(MekanismepanelRen)
+const Tabellpanel = memo(TabellpanelRen)
+const Laboratoriepanel = memo(LaboratoriepanelRen)
+const Kjemipanel = memo(KjemipanelRen)
 
 export interface StoffsideProps {
   /** Stoffets nøkkel fra adressen (`#/stoff/<nøkkel>`). */
@@ -278,7 +302,10 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   const sokeinnhold = useMemo(() => [side.data, konsentrasjon], [side.data, konsentrasjon])
   const ord = useMemo(() => sokeord(sporring), [sporring])
 
-  const kontekst: Panelkontekst = { modell, redigerer, handlinger, konsentrasjon }
+  const kontekst = useMemo<Panelkontekst>(
+    () => ({ modell, redigerer, handlinger, konsentrasjon }),
+    [modell, redigerer, handlinger, konsentrasjon],
+  )
   const redigeringsverdi = useMemo(
     () => ({
       redigerer,
