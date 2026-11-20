@@ -1,0 +1,16 @@
+{
+  "id": "20261120-115545-95e841",
+  "semver": "patch",
+  "opprettet": "2026-11-20T11:55:45Z",
+  "sammendrag": "Raskere bytte av fagmiljø",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Når du bytter fagmiljø, hentes ikke stoffregisteret, favorittene, fagsøket og innstillingene dine på nytt.",
+    "Når du bytter fagmiljø, hentes fortolkningsreglene for det nye fagmiljøet én gang i stedet for to.",
+    "Reglene for autoerstatt og ryddingen i papirkurven for fagsider venter til appen har tid til overs."
+  ],
+  "utenVarsel": true
+}

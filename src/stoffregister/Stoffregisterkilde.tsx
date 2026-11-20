@@ -3,6 +3,7 @@ import { byggStoffregister, STOFFREGISTERDATA, stoffslug, type Registerstruktur,
 import { erTomt, type Riktekstdokument } from '../faginnhold/riktekst'
 import { nyEndring, type Endringskontekst } from '../endringslogg/operasjon'
 import { useHenting } from '../hooks/useHenting'
+import { useErLedig } from '../hooks/useNaarLedig'
 import type { Registerlager } from './api'
 import { endreStruktur, type Registerdatabase, type Registerendring } from './modell'
 
@@ -18,9 +19,9 @@ import { endreStruktur, type Registerdatabase, type Registerendring } from './mo
  * vises, rettes av hentingen. Registeret hentes på nytt når fanen blir synlig
  * igjen, så endringer fra andre kommer med.
  *
- * Når registeret er hentet første gang av noen som kan endre det, ryddes
- * papirkurven for det som har ligget der i mer enn 30 dager
- * (`rydd_stoffpapirkurven`).
+ * Når appen er vist og nettleseren har tid til overs, ryddes papirkurven
+ * for det som har ligget der i mer enn 30 dager (`rydd_stoffpapirkurven`),
+ * for den som kan endre registeret.
  */
 /**
  * `oppsummering` er det brukeren skrev om endringen til endringsloggen, der
@@ -105,8 +106,10 @@ export function useLagStoffregisterkilde({ lager, admin, kanEndre, opprettSide }
     [hentPaNytt],
   )
 
+  // Ryddingen er skriving i bakgrunnen og venter til nettleseren har tid til overs.
+  const ledig = useErLedig()
   useEffect(() => {
-    if (!kanEndre) return
+    if (!kanEndre || !ledig) return
     let aktuell = true
     lager.rydd().then(
       (antall) => {
@@ -117,7 +120,7 @@ export function useLagStoffregisterkilde({ lager, admin, kanEndre, opprettSide }
     return () => {
       aktuell = false
     }
-  }, [lager, hentPaNytt, kanEndre])
+  }, [lager, hentPaNytt, kanEndre, ledig])
 
   useEffect(() => {
     const naarSynlig = () => {

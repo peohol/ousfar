@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useProfil } from './auth/okt'
 import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
@@ -112,6 +112,7 @@ import { inngangsvei, useRute } from './hooks/useRute'
 import {
   AnalyttkatalogKilde,
   katalogkildeFor,
+  type Katalogkilde,
   lesAnalyttkatalog,
   useAnalyttkatalog,
   useHentAnalyttkatalog,
@@ -178,9 +179,11 @@ function buttonHasFocus(): boolean {
  * Katalogen er laboratoriets egen og står i databasen per fagmiljø; appen har
  * ingen i klientpakken. Til den er hentet, tegnes ingenting opp, så
  * fortolkningen aldri rekker å vise noe uten den. Byttes fagmiljøet, settes
- * appen opp på nytt med det nye fagmiljøets katalog: ingenting fra det
- * forrige blir stående. Kunne den ikke hentes, eller har fagmiljøet ingen,
- * er katalogen tom, og fortolkningen sier fra i stedet for å fortolke.
+ * arbeidsflaten opp på nytt med det nye fagmiljøets katalog: ingenting fra det
+ * forrige blir stående. Det som følger kontoen og ikke fagmiljøet
+ * ({@link Kontoflate}), står gjennom byttet og hentes ikke på nytt. Kunne
+ * katalogen ikke hentes, eller har fagmiljøet ingen, er den tom, og
+ * fortolkningen sier fra i stedet for å fortolke.
  */
 export default function App() {
   const profil = useProfil()
@@ -197,97 +200,64 @@ export default function App() {
     () => (katalogtilstand.status === 'laster' ? null : katalogkildeFor(katalogtilstand)),
     [katalogtilstand],
   )
-  if (!kilde) return <div className="port" aria-busy="true" />
+  const katalogkontekst = useKatalogkontekst(kilde, arbeidskontekst)
+  // Kontoflaten settes opp sammen med den første arbeidsflaten, så det den
+  // henter, ikke konkurrerer med rettighetene og katalogen når appen åpnes.
+  const [kontoenVises, setKontoenVises] = useState(false)
+  if (kilde && !kontoenVises) setKontoenVises(true)
+  if (!kontoenVises) return <div className="port" aria-busy="true" />
   return (
-    <AnalyttkatalogKilde verdi={kilde}>
-      <Arbeidsflate
-        key={kilde.katalog.fagmiljo?.id ?? ''}
-        rettigheter={rettigheter}
-        oppdaterRettigheter={oppdaterRettigheter}
-        arbeidskontekst={arbeidskontekst}
-        grupper={grupper}
-      />
-    </AnalyttkatalogKilde>
+    <Kontoflate rettigheter={rettigheter} oppdaterRettigheter={oppdaterRettigheter} arbeidskontekst={arbeidskontekst} grupper={grupper}>
+      {(konto) =>
+        kilde ? (
+          <AnalyttkatalogKilde verdi={kilde}>
+            <Arbeidsflate
+              key={kilde.katalog.fagmiljo?.id ?? ''}
+              rettigheter={rettigheter}
+              katalogkontekst={katalogkontekst}
+              grupper={grupper}
+              konto={konto}
+            />
+          </AnalyttkatalogKilde>
+        ) : (
+          <div className="port" aria-busy="true" />
+        )
+      }
+    </Kontoflate>
   )
 }
 
-function Arbeidsflate({
-  rettigheter,
-  oppdaterRettigheter,
-  arbeidskontekst,
-  grupper,
-}: {
-  rettigheter: Rettigheter
-  oppdaterRettigheter: OppdaterRettigheter
-  /** Fagmiljøet fortolkningen gjelder, som det hentede følger (`arbeidskontekst`). */
-  arbeidskontekst: string | null
-  grupper: Gruppekilde
-}) {
-  // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
-  // egen katalog. Fagsidene er stoffenes, i stoffregisteret. De to er helt
-  // adskilte domener (docs/domener.md): ingen av dem lenker til eller leser
-  // fra den andre.
-  const katalog = useAnalyttkatalog()
-  // Fortolkningen overlever en oppdatering av appen, med analytten lest tilbake etter koden.
-  const fortolkningsformen = useMemo(() => fortolkningsform(katalog.fortolkninger), [katalog])
-  // Analyttene etter nøkkelen fortolkningssiden deres har i adressen.
-  const analyttEtterNokkel = useMemo(
-    () => new Map(katalog.fortolkninger.map((a) => [fortolkningsnokkel(a.kode), a])),
-    [katalog],
-  )
-  const [state, setState] = useBevart('fortolkning', initialState, fortolkningsformen)
-  const dispatch = useCallback((action: Action) => setState((forrige) => reducer(forrige, action)), [setState])
-  const [failedCopy, setFailedCopy] = useState<string | null>(null)
-  const profil = useProfil()
-  const tema = useKontovalg(TEMA, profil.id)
-  const bevegelse = useKontovalg(BEVEGELSE, profil.id)
+/**
+ * Arbeidskonteksten katalogen `kilde` ble hentet i. Byttes fagmiljøet, står
+ * den forrige til katalogen for det nye er hentet, så arbeidsflaten som ennå
+ * viser den gamle katalogen, ikke henter det nye fagmiljøets regler like før
+ * den settes opp på nytt med dem. Før rettighetene er kjent, er den `null`, og
+ * den første kjente er den katalogen alt gjelder.
+ */
+function useKatalogkontekst(kilde: Katalogkilde | null, arbeidskontekst: string | null): string | null {
+  const [fulgt, setFulgt] = useState({ kilde, kontekst: arbeidskontekst })
+  if (fulgt.kilde !== kilde || (fulgt.kontekst === null && arbeidskontekst !== null)) {
+    setFulgt({ kilde, kontekst: arbeidskontekst })
+    return arbeidskontekst
+  }
+  return fulgt.kontekst
+}
+
+/**
+ * Det som følger kontoen og ikke fagmiljøet fortolkningen gjelder:
+ * preferansene, stoffregisteret og fagsøket, favorittene og autoerstatt.
+ * Hentes én gang og står gjennom et bytte av fagmiljø.
+ */
+function useKonto(brukerId: string, rettigheter: Rettigheter) {
+  const tema = useKontovalg(TEMA, brukerId)
+  const bevegelse = useKontovalg(BEVEGELSE, brukerId)
   // Visualiseringen i THC-syremodulen, med den valgte eller alle
   // sikkerhetsmarginene, følger brukeren som de andre preferansene.
   const [thcVisning, settThcVisning] = useHusketValg(THC_VISNING.lagring, lesThcVisning, 'valgt')
-  const velgThcVisning = useKontosynk(THC_VISNING.konto, lesThcVisning, thcVisning, settThcVisning, profil.id)
+  const velgThcVisning = useKontosynk(THC_VISNING.konto, lesThcVisning, thcVisning, settThcVisning, brukerId)
   const thcVisualisering = useMemo(() => ({ visning: thcVisning, onVelg: velgThcVisning }), [thcVisning, velgThcVisning])
-  const copy = useClipboard()
-  const { flash, show } = useCopyFlash(BLINK)
-  /**
-   * Steget bildet henger igjen i mens kvitteringen starter der knappen sto —
-   * det steget kopieringen gikk ut fra. `null` når ingenting dveler. Se
-   * `STEGBYTTE` og `vist`.
-   */
-  const [dveler, setDveler] = useState<Stage | null>(null)
-  const stegbytte = useRef<number>()
-  /** Ruten båndknappen sto i — beviset i limsteget flyter opp fra den. */
-  const [bevisFra, setBevisFra] = useState<Rute | null>(null)
-
-  const stage = stageOf(state)
-  // Kopieringen svarer først etter en tur innom nettleseren, og skal legge
-  // kvitteringen i det steget den gikk ut fra. Refen holder det steget uten å
-  // binde `kopierOgGaaVidere` til en ny utgave for hver rendring.
-  const staaende = useRef(stage)
-  staaende.current = stage
-  // Søket dekker alt fagmiljøet kan fortolke, og filteret på hovedsiden
-  // smalner inn hva det kan finne.
-  const pool = useMemo(
-    () => filtrertPool(katalog.fortolkninger, state.metodefilter),
-    [katalog, state.metodefilter],
-  )
-
-  // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
-  const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
-  const regelvarsler = useMemo(() => lagRegelvarsellager(kallMot(klient())), [])
-  // Hva den innloggede får redigere: fagsidene (felles) og fortolkningen
-  // (lokalt), etter rettighetene i databasen (P2a), og regelsettene
-  // den innloggede er redaktør for (P5).
-  const lokalEndringsrett = useLokalEndringsrett(profil.id)
-  const mineRedaktoransvar = useMineRedaktoransvar(profil.id, rettigheter.redaktor)
-  const arbeidsfagmiljoId = rettigheter.arbeidsfagmiljo?.id ?? null
-  const redaktorensRegelsett = useMemo(
-    () => (mineRedaktoransvar === null ? null : redigerbareRegelsett(mineRedaktoransvar, arbeidsfagmiljoId)),
-    [mineRedaktoransvar, arbeidsfagmiljoId],
-  )
-  const redigering = useMemo(
-    () => redigeringsrett(rettigheter, lokalEndringsrett, redaktorensRegelsett),
-    [rettigheter, lokalEndringsrett, redaktorensRegelsett],
-  )
+  // Regelsettene den innloggede er redaktør for (P5), i alle fagmiljøer.
+  const mineRedaktoransvar = useMineRedaktoransvar(brukerId, rettigheter.redaktor)
   const faginnholdsklienter = useMemo(
     () => ({
       leser: lagFaginnholdsleser(klient()),
@@ -303,90 +273,27 @@ function Arbeidsflate({
     }),
     [],
   )
-  const faginnhold = useMemo<Faginnholdskilde>(
-    () => ({ ...faginnholdsklienter, kanRedigere: redigering.felles }),
-    [faginnholdsklienter, redigering.felles],
-  )
-  // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
-  // (arbeidskonteksten, P4b). Byttes det, også til ingen, tømmes reglene før de nye hentes.
-  const regelkontekst = arbeidskontekst
-  const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
-  // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
-  const scenarioregler = useHentScenarioregler(
-    useCallback(() => lesScenarioregler(klient()), []),
-    regelkontekst,
-  )
-  const hits = useMemo(() => search(state.query, pool), [state.query, pool])
-  // Tilfellene EtG-modulen velger mellom: scenariene i modulens regelsett.
-  const etgtilfeller = useMemo<Etgtilfeller | null>(() => {
-    const analytt = state.analyte
-    if (!analytt?.modul || !erEtgAnalytt(analytt)) return null
-    const modul = { id: analytt.modul.id, navn: analytt.navn }
-    return etgTilfeller(analytt, reglerForModul(scenarioregler.tilstand, modul, scenarioregler.provIgjen, regelfagmiljo))
-  }, [state.analyte, scenarioregler, regelfagmiljo])
-  const etgAlternativer = etgtilfeller?.status === 'klar' ? etgtilfeller.alternativer : INGEN_ALTERNATIVER
-
-  // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
-  // når appen åpnes. Referanseområdet for hver analytt står i fagmiljøets
-  // egen katalog. Steg 2 og tastene bruker det som gjelder analytten.
-  const hentRegler = useCallback(
-    async () => ({ regelsett: await lesPubliserteRegelsett(faginnhold.leser), referanseomrader: referanseomraderI(katalog) }),
-    [faginnhold.leser, katalog],
-  )
-  const regler = usePubliserteRegler(hentRegler, regelkontekst)
-
-  // THC-syremodulen fortolker med regelsettet og tekstene som er publisert.
-  const thc = useHenting(
-    useCallback(() => faginnhold.leser.lesThcRegelsett('publisert'), [faginnhold.leser]),
-    regelkontekst,
-  )
-  const { hentPaNytt: hentThcPaNytt } = thc
-  const thcRegler = useMemo(
-    () => thcReglerFra(thc.tilstand, hentThcPaNytt, regelfagmiljo),
-    [thc.tilstand, hentThcPaNytt, regelfagmiljo],
-  )
 
   // Stoffregisteret: datafilen, med navnene fagsidene i databasen har og
   // sidene registeret ikke kjenner, og inndelingen, arkivet og papirkurven.
   // Redaktørene ser også sidene som ikke er publisert, og lager nye.
   const registerlager = useMemo(() => lagRegisterlager(klient()), [])
-  const endringsloggleser = useMemo(() => lagEndringsloggleser(klient()), [])
   const opprettSide = useCallback(
     async (navn: string, slug: string, endring: Endringskontekst) => {
-      await lagerFor(faginnhold.lager, endring).opprettUtkast('infoside', { navn, slug })
+      await lagerFor(faginnholdsklienter.lager, endring).opprettUtkast('infoside', { navn, slug })
     },
-    [faginnhold.lager],
+    [faginnholdsklienter.lager],
   )
   // Utkastene og papirkurven er for systemarkitektene, inndelingen for dem
   // med rett til å endre registeret. En ny fagside krever begge deler og
-  // retten til å redigere faginnholdet.
+  // retten til å redigere faginnholdet, som er systemarkitektenes.
   const stoffregister = useLagStoffregisterkilde({
     lager: registerlager,
     admin: rettigheter.systemarkitekt,
     kanEndre: rettigheter.stoffregister,
-    ...(faginnhold.kanRedigere && rettigheter.systemarkitekt && rettigheter.stoffregister && { opprettSide }),
+    ...(rettigheter.systemarkitekt && rettigheter.stoffregister && { opprettSide }),
   })
-  const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
-  // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
-  const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
-  const [adresserute, gaaTil, tilbake] = useRute(apneFraAdressen, adressegrunnlag)
-  // En arbeidsflate i en gruppe (idéene, oppgavene) legger seg over siden den
-  // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
-  const flate = arbeidsflate(adresserute)
-  const rute = flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute
-  // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
-  const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
-  // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
-  // versjonen berører siden, og å gå til en annen side er et rolig øyeblikk
-  // der den kan tas i bruk i stillhet (`src/oppdatering/sider.ts`).
-  const side = sidesti(rute)
-  useEffect(() => meldSide(side), [side])
-  useEffect(() => () => meldSide(null), [])
-  // Redigeringen av reglene og kommentarene en fortolkning gir, for
-  // administratorene i fagmiljøet, på en egen adresse under fortolkningen.
-  const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
-  // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
-  const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
+  const { register } = stoffregister
   // Favorittene står både på stoffsidene og i menyen, med stoffets egen
   // nøkkel også for en gammel adresse til det.
   const favorittlager = useMemo(() => lagFavorittlager(klient()), [])
@@ -424,6 +331,197 @@ function Arbeidsflate({
   // Fagsidene er den vanligste veien videre fra forsiden og søket: koden
   // deres hentes når appen har tid til overs, så den første ikke venter på den.
   useNaarLedig(Stoffside.forhandslast)
+
+  return {
+    tema,
+    bevegelse,
+    thcVisualisering,
+    mineRedaktoransvar,
+    faginnholdsklienter,
+    stoffregister,
+    sokeindeks,
+    favorittlager,
+    autoerstattlager,
+    kanoniskStoff,
+  }
+}
+
+type Konto = ReturnType<typeof useKonto>
+
+/**
+ * Kildene som følger kontoen ({@link useKonto}), med rettighetene, gruppene og
+ * måleenheten, rundt arbeidsflaten. De står gjennom et bytte av fagmiljø.
+ */
+function Kontoflate({
+  rettigheter,
+  oppdaterRettigheter,
+  arbeidskontekst,
+  grupper,
+  children,
+}: {
+  rettigheter: Rettigheter
+  oppdaterRettigheter: OppdaterRettigheter
+  arbeidskontekst: string | null
+  grupper: Gruppekilde
+  children: (konto: Konto) => ReactNode
+}) {
+  const profil = useProfil()
+  const konto = useKonto(profil.id, rettigheter)
+  // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
+  // og det samme gjør rettighetene og gruppene.
+  return (
+    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter} arbeidskontekst={arbeidskontekst}>
+      <GruppekildeProvider verdi={grupper}>
+        <MaleenhetKilde brukerId={profil.id}>
+          <StoffregisterkildeProvider kilde={konto.stoffregister}>
+            <FavorittkildeProvider lager={konto.favorittlager} brukerId={profil.id} kanonisk={konto.kanoniskStoff}>
+              <AutoerstattProvider lager={konto.autoerstattlager} brukerId={profil.id}>
+                {children(konto)}
+              </AutoerstattProvider>
+            </FavorittkildeProvider>
+          </StoffregisterkildeProvider>
+        </MaleenhetKilde>
+      </GruppekildeProvider>
+    </RettigheterKilde>
+  )
+}
+
+function Arbeidsflate({
+  rettigheter,
+  katalogkontekst,
+  grupper,
+  konto,
+}: {
+  rettigheter: Rettigheter
+  /** Fagmiljøet katalogen ble hentet i ({@link useKatalogkontekst}), som reglene følger. */
+  katalogkontekst: string | null
+  grupper: Gruppekilde
+  konto: Konto
+}) {
+  // Laboratorieanalyttene og alt fortolkningen kan fortolke, i fagmiljøets
+  // egen katalog. Fagsidene er stoffenes, i stoffregisteret. De to er helt
+  // adskilte domener (docs/domener.md): ingen av dem lenker til eller leser
+  // fra den andre.
+  const katalog = useAnalyttkatalog()
+  // Fortolkningen overlever en oppdatering av appen, med analytten lest tilbake etter koden.
+  const fortolkningsformen = useMemo(() => fortolkningsform(katalog.fortolkninger), [katalog])
+  // Analyttene etter nøkkelen fortolkningssiden deres har i adressen.
+  const analyttEtterNokkel = useMemo(
+    () => new Map(katalog.fortolkninger.map((a) => [fortolkningsnokkel(a.kode), a])),
+    [katalog],
+  )
+  const [state, setState] = useBevart('fortolkning', initialState, fortolkningsformen)
+  const dispatch = useCallback((action: Action) => setState((forrige) => reducer(forrige, action)), [setState])
+  const [failedCopy, setFailedCopy] = useState<string | null>(null)
+  const profil = useProfil()
+  const { tema, bevegelse, thcVisualisering, faginnholdsklienter, stoffregister, sokeindeks, kanoniskStoff } = konto
+  const copy = useClipboard()
+  const { flash, show } = useCopyFlash(BLINK)
+  /**
+   * Steget bildet henger igjen i mens kvitteringen starter der knappen sto —
+   * det steget kopieringen gikk ut fra. `null` når ingenting dveler. Se
+   * `STEGBYTTE` og `vist`.
+   */
+  const [dveler, setDveler] = useState<Stage | null>(null)
+  const stegbytte = useRef<number>()
+  /** Ruten båndknappen sto i — beviset i limsteget flyter opp fra den. */
+  const [bevisFra, setBevisFra] = useState<Rute | null>(null)
+
+  const stage = stageOf(state)
+  // Kopieringen svarer først etter en tur innom nettleseren, og skal legge
+  // kvitteringen i det steget den gikk ut fra. Refen holder det steget uten å
+  // binde `kopierOgGaaVidere` til en ny utgave for hver rendring.
+  const staaende = useRef(stage)
+  staaende.current = stage
+  // Søket dekker alt fagmiljøet kan fortolke, og filteret på hovedsiden
+  // smalner inn hva det kan finne.
+  const pool = useMemo(
+    () => filtrertPool(katalog.fortolkninger, state.metodefilter),
+    [katalog, state.metodefilter],
+  )
+
+  // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
+  const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
+  const regelvarsler = useMemo(() => lagRegelvarsellager(kallMot(klient())), [])
+  // Hva den innloggede får redigere: fagsidene (felles) og fortolkningen
+  // (lokalt), etter rettighetene i databasen (P2a), og regelsettene
+  // den innloggede er redaktør for (P5).
+  const lokalEndringsrett = useLokalEndringsrett(profil.id)
+  const { mineRedaktoransvar } = konto
+  const arbeidsfagmiljoId = rettigheter.arbeidsfagmiljo?.id ?? null
+  const redaktorensRegelsett = useMemo(
+    () => (mineRedaktoransvar === null ? null : redigerbareRegelsett(mineRedaktoransvar, arbeidsfagmiljoId)),
+    [mineRedaktoransvar, arbeidsfagmiljoId],
+  )
+  const redigering = useMemo(
+    () => redigeringsrett(rettigheter, lokalEndringsrett, redaktorensRegelsett),
+    [rettigheter, lokalEndringsrett, redaktorensRegelsett],
+  )
+  const faginnhold = useMemo<Faginnholdskilde>(
+    () => ({ ...faginnholdsklienter, kanRedigere: redigering.felles }),
+    [faginnholdsklienter, redigering.felles],
+  )
+  // Fortolkningsreglene databasen gir, er fagmiljøets fortolkningen gjelder
+  // (arbeidskonteksten, P4b). Byttes det, også til ingen, tømmes reglene før de nye hentes.
+  const regelkontekst = katalogkontekst
+  const regelfagmiljo = rettigheter.arbeidsfagmiljo?.navn ?? null
+  // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
+  const scenarioregler = useHentScenarioregler(
+    useCallback(() => lesScenarioregler(klient()), []),
+    regelkontekst,
+  )
+  const hits = useMemo(() => search(state.query, pool), [state.query, pool])
+  // Tilfellene EtG-modulen velger mellom: scenariene i modulens regelsett.
+  const etgtilfeller = useMemo<Etgtilfeller | null>(() => {
+    const analytt = state.analyte
+    if (!analytt?.modul || !erEtgAnalytt(analytt)) return null
+    const modul = { id: analytt.modul.id, navn: analytt.navn }
+    return etgTilfeller(analytt, reglerForModul(scenarioregler.tilstand, modul, scenarioregler.provIgjen, regelfagmiljo))
+  }, [state.analyte, scenarioregler, regelfagmiljo])
+  const etgAlternativer = etgtilfeller?.status === 'klar' ? etgtilfeller.alternativer : INGEN_ALTERNATIVER
+
+  // Fortolkningsreglene er de publiserte regelsettene i databasen, hentet
+  // når appen åpnes. Referanseområdet for hver analytt står i fagmiljøets
+  // egen katalog. Steg 2 og tastene bruker det som gjelder analytten.
+  const hentRegler = useCallback(
+    async () => ({ regelsett: await lesPubliserteRegelsett(faginnhold.leser), referanseomrader: referanseomraderI(katalog) }),
+    [faginnhold.leser, katalog],
+  )
+  const regler = usePubliserteRegler(hentRegler, regelkontekst)
+
+  // THC-syremodulen fortolker med regelsettet og tekstene som er publisert.
+  const thc = useHenting(
+    useCallback(() => faginnhold.leser.lesThcRegelsett('publisert'), [faginnhold.leser]),
+    regelkontekst,
+  )
+  const { hentPaNytt: hentThcPaNytt } = thc
+  const thcRegler = useMemo(
+    () => thcReglerFra(thc.tilstand, hentThcPaNytt, regelfagmiljo),
+    [thc.tilstand, hentThcPaNytt, regelfagmiljo],
+  )
+  const endringsloggleser = useMemo(() => lagEndringsloggleser(klient()), [])
+  const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
+  // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
+  const adressegrunnlag = useMemo(() => ({ register, katalog }), [register, katalog])
+  const [adresserute, gaaTil, tilbake] = useRute(apneFraAdressen, adressegrunnlag)
+  // En arbeidsflate i en gruppe (idéene, oppgavene) legger seg over siden den
+  // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
+  const flate = arbeidsflate(adresserute)
+  const rute = flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute
+  // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
+  const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
+  // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
+  // versjonen berører siden, og å gå til en annen side er et rolig øyeblikk
+  // der den kan tas i bruk i stillhet (`src/oppdatering/sider.ts`).
+  const side = sidesti(rute)
+  useEffect(() => meldSide(side), [side])
+  useEffect(() => () => meldSide(null), [])
+  // Redigeringen av reglene og kommentarene en fortolkning gir, for
+  // administratorene i fagmiljøet, på en egen adresse under fortolkningen.
+  const redigererFortolkning = erRedigering(rute) && redigering.lokalt && state.analyte !== null
+  // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
+  const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
+
   // De arkiverte fagsidene og dem i papirkurven står ikke i søket.
   const sokbar = sokeindeks.tilstand
   const synligIndeks = useMemo(() => {
@@ -843,324 +941,308 @@ function Arbeidsflate({
 
   const app = (
     <ToppmenyKilde>
-      <StoffregisterkildeProvider kilde={stoffregister}>
-        <FavorittkildeProvider lager={favorittlager} brukerId={profil.id} kanonisk={kanoniskStoff}>
-          <AutoerstattProvider lager={autoerstattlager} brukerId={profil.id}>
-            <Direktelenkekilde sider={sider}>
-              <VerktoytilgangProvider value={visVerktoy}>
-                <div
-                  className="app"
-                  data-steg={vist}
-                  data-tomt={isIdle(state) && !fortolkningSkjult ? 'ja' : 'nei'}
-                  data-side={redigererFortolkning ? 'fortolkningsredigering' : rute.side}
-                >
-                  <Toppmeny
-                    meny={
-                      <Sidemeny register={register} />
-                    }
-                    sok={
-                      <Fagsok
-                        indeks={synligIndeks}
-                        onKrev={sokeindeks.krev}
-                        onProvIgjen={sokeindeks.provIgjen}
-                        sporring={rute.side === 'sok' ? rute.q : undefined}
-                        beskrivSide={beskrivSide}
-                        onGaaTil={gaaTilAdresse}
-                      />
-                    }
-                    verktoy={
-                      <>
-                        <Chatknapp />
-                        <Varselknapp />
-                      </>
-                    }
-                    konto={<Kontomeny tema={tema} bevegelse={bevegelse} />}
+      <Direktelenkekilde sider={sider}>
+        <VerktoytilgangProvider value={visVerktoy}>
+          <div
+            className="app"
+            data-steg={vist}
+            data-tomt={isIdle(state) && !fortolkningSkjult ? 'ja' : 'nei'}
+            data-side={redigererFortolkning ? 'fortolkningsredigering' : rute.side}
+          >
+            <Toppmeny
+              meny={
+                <Sidemeny register={register} />
+              }
+              sok={
+                <Fagsok
+                  indeks={synligIndeks}
+                  onKrev={sokeindeks.krev}
+                  onProvIgjen={sokeindeks.provIgjen}
+                  sporring={rute.side === 'sok' ? rute.q : undefined}
+                  beskrivSide={beskrivSide}
+                  onGaaTil={gaaTilAdresse}
+                />
+              }
+              verktoy={
+                <>
+                  <Chatknapp />
+                  <Varselknapp />
+                </>
+              }
+              konto={<Kontomeny tema={tema} bevegelse={bevegelse} />}
+            />
+
+            {!fortolkningSkjult && state.analyte && (
+              <ToppmenyInnhold spor="redigering">
+                {kanRedigeres && (
+                  <Ikonknapp
+                    ikon="edit"
+                    etikett="Rediger fortolkningen"
+                    onClick={() => state.analyte && gaaTil(redigeringsrute(state.analyte.kode))}
                   />
+                )}
+                {harRegler && (
+                  <Fortolkningsforslag
+                    key={state.analyte.kode}
+                    sidenavn={fortolkningssidenavn(state.analyte)}
+                    analytter={fortolkningsanalytter}
+                    leser={faginnhold.leser}
+                  />
+                )}
+              </ToppmenyInnhold>
+            )}
 
-                  {!fortolkningSkjult && state.analyte && (
-                    <ToppmenyInnhold spor="redigering">
-                      {kanRedigeres && (
-                        <Ikonknapp
-                          ikon="edit"
-                          etikett="Rediger fortolkningen"
-                          onClick={() => state.analyte && gaaTil(redigeringsrute(state.analyte.kode))}
-                        />
-                      )}
-                      {harRegler && (
-                        <Fortolkningsforslag
-                          key={state.analyte.kode}
-                          sidenavn={fortolkningssidenavn(state.analyte)}
-                          analytter={fortolkningsanalytter}
-                          leser={faginnhold.leser}
-                        />
-                      )}
-                    </ToppmenyInnhold>
-                  )}
+            {redigererFortolkning && state.analyte && (
+              <main className="scene scene--infoside">
+                <FaginnholdskildeProvider kilde={faginnhold}>
+                  <Senere>
+                    <Fortolkningsredigering
+                      key={state.analyte.kode}
+                      fortolkning={state.analyte}
+                      sted={rute.side === 'fortolkning' ? rute.sted : undefined}
+                      katalog={katalog}
+                      kanPublisere={redigering.publisere}
+                      regelsett={redigering.regelsett}
+                      onPublisert={reglerPublisert}
+                      onAvslutt={avsluttRedigering}
+                    />
+                  </Senere>
+                </FaginnholdskildeProvider>
+              </main>
+            )}
 
-                  {redigererFortolkning && state.analyte && (
-                    <main className="scene scene--infoside">
-                      <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Senere>
-                          <Fortolkningsredigering
-                            key={state.analyte.kode}
-                            fortolkning={state.analyte}
-                            sted={rute.side === 'fortolkning' ? rute.sted : undefined}
-                            katalog={katalog}
-                            kanPublisere={redigering.publisere}
-                            regelsett={redigering.regelsett}
-                            onPublisert={reglerPublisert}
-                            onAvslutt={avsluttRedigering}
-                          />
-                        </Senere>
-                      </FaginnholdskildeProvider>
-                    </main>
-                  )}
+            {rute.side === 'forside' && (
+              <main className="scene scene--forside">
+                <Forside onApneFortolkning={apneFortolkning} />
+              </main>
+            )}
 
-                  {rute.side === 'forside' && (
-                    <main className="scene scene--forside">
-                      <Forside onApneFortolkning={apneFortolkning} />
-                    </main>
-                  )}
+            {rute.side === 'ukjent' && (
+              <main className="scene scene--forside">
+                <Ukjentside onTilForsiden={tilForsiden} />
+              </main>
+            )}
 
-                  {rute.side === 'ukjent' && (
-                    <main className="scene scene--forside">
-                      <Ukjentside onTilForsiden={tilForsiden} />
-                    </main>
-                  )}
+            {rute.side === 'stoff' && (
+              <main className="scene scene--infoside">
+                <FaginnholdskildeProvider kilde={faginnhold}>
+                  <Senere>
+                    <Stoffside
+                      stoff={rute.stoff}
+                      sted={rute.sted}
+                      register={register}
+                      onLukk={lukkInfoside}
+                    />
+                  </Senere>
+                </FaginnholdskildeProvider>
+              </main>
+            )}
 
-                  {rute.side === 'stoff' && (
-                    <main className="scene scene--infoside">
-                      <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Senere>
-                          <Stoffside
-                            stoff={rute.stoff}
-                            sted={rute.sted}
-                            register={register}
-                            onLukk={lukkInfoside}
-                          />
-                        </Senere>
-                      </FaginnholdskildeProvider>
-                    </main>
-                  )}
-
-                  {(rute.side === 'versjon' || rute.side === 'kuratering') && (
-                    <main className="scene scene--infoside">
-                      <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Senere>
-                          {rute.side === 'versjon' ? (
-                            <Versjonsside stoff={rute.stoff} nr={rute.nr} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
-                          ) : (
-                            <Kurateringsside gren={rute.gren} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
-                          )}
-                        </Senere>
-                      </FaginnholdskildeProvider>
-                    </main>
-                  )}
-
-                  {rute.side === 'stoffregister' && (
-                    <main className="scene scene--stoffregister">
-                      <Senere>
-                        <Stoffregisterside onLukk={lukkInfoside} kuratering={faginnhold.kuratering} />
-                      </Senere>
-                    </main>
-                  )}
-
-                  {rute.side === 'verktoy' && visVerktoy && (
-                    <main className="scene scene--verktoy">
-                      <Senere>
-                        <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
-                      </Senere>
-                    </main>
-                  )}
-
-                  {rute.side === 'grupper' && (
-                    <main className="scene scene--infoside">
-                      <Senere>
-                        <Grupperside gruppe={rute.gruppe} fane={rute.fane} onLukk={lukkInfoside} />
-                      </Senere>
-                    </main>
-                  )}
-                  {flate && (
-                    <Suspense fallback={null}>
-                      <Gruppeflate key={flate.gruppe} {...flate} />
-                    </Suspense>
-                  )}
-
-                  {rute.side === 'forslag' && (
-                    <main className="scene scene--infoside">
-                      <FaginnholdskildeProvider kilde={faginnhold}>
-                        <Senere>
-                          <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
-                        </Senere>
-                      </FaginnholdskildeProvider>
-                    </main>
-                  )}
-
-                  {rute.side === 'sok' && (
-                    <main className="scene scene--sokeside">
-                      <Sokeside
-                        q={rute.q}
-                        indeks={synligIndeks}
-                        onKrev={sokeindeks.krev}
-                        onProvIgjen={sokeindeks.provIgjen}
-                        beskrivSide={beskrivSide}
-                        onLukk={lukkInfoside}
-                      />
-                    </main>
-                  )}
-
-                  {/* Fortolkningen blir stående bak en åpen stoffside, så det
-                      brukeren har fylt inn, er der når hen kommer tilbake. Tastene dens
-                      gjelder bare mens den vises og fokus står i den eller ingen
-                      steder — se `tastenGjelderFortolkningen`. */}
-                  <main
-                    className="scene"
-                    hidden={fortolkningSkjult}
-                    data-fortolkning={fortolkningSkjult ? SKJULT_FORTOLKNING : VIST_FORTOLKNING}
-                  >
-                    {/* Forsiden er ett klikk unna, men aldri ett Escape unna: søket er siste stopp. */}
-                    {vist === 'search' && (
-                      <Button variant="subtle" className="fortolkning__forsiden" icon={<Ikon navn="back" />} onClick={tilForsiden}>
-                        Til forsiden
-                      </Button>
+            {(rute.side === 'versjon' || rute.side === 'kuratering') && (
+              <main className="scene scene--infoside">
+                <FaginnholdskildeProvider kilde={faginnhold}>
+                  <Senere>
+                    {rute.side === 'versjon' ? (
+                      <Versjonsside stoff={rute.stoff} nr={rute.nr} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
+                    ) : (
+                      <Kurateringsside gren={rute.gren} register={register} onGaaTil={gaaTil} onLukk={lukkInfoside} />
                     )}
-                    {vist === 'search' && (
-                      <SearchStep
-                        query={state.query}
-                        hits={hits}
-                        metodefilter={state.metodefilter}
-                        onFilter={settMetodefilter}
-                        onQueryChange={setQuery}
-                        onSelect={velgAnalytt}
-                        onReset={reset}
-                        synlig={!fortolkningSkjult}
-                      />
-                    )}
+                  </Senere>
+                </FaginnholdskildeProvider>
+              </main>
+            )}
 
-                    {vist === 'band' && state.analyte && regeloppslag && (
-                      <BandStep
-                        analyte={state.analyte}
-                        regler={regeloppslag}
-                        valg={valgene}
-                        onPick={velgValg}
-                        onBack={back}
-                        onProvIgjen={hentPaNytt}
-                        failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
-                        fagmiljo={regelfagmiljo}
-                      />
-                    )}
+            {rute.side === 'stoffregister' && (
+              <main className="scene scene--stoffregister">
+                <Senere>
+                  <Stoffregisterside onLukk={lukkInfoside} kuratering={faginnhold.kuratering} />
+                </Senere>
+              </main>
+            )}
 
-                    {vist === 'kontroll' && kontrollvalg && (
-                      <KontrollStep
-                        valg={kontrollvalg}
-                        sporsmal={CUTOFF_SPORSMAL}
-                        onJa={bekreftKontroll}
-                        onNei={back}
-                        failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
-                      />
-                    )}
+            {rute.side === 'verktoy' && visVerktoy && (
+              <main className="scene scene--verktoy">
+                <Senere>
+                  <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
+                </Senere>
+              </main>
+            )}
 
-                    {vist === 'thc' && state.analyte && <ThcStep analyte={state.analyte} regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
+            {rute.side === 'grupper' && (
+              <main className="scene scene--infoside">
+                <Senere>
+                  <Grupperside gruppe={rute.gruppe} fane={rute.fane} onLukk={lukkInfoside} />
+                </Senere>
+              </main>
+            )}
+            {flate && (
+              <Suspense fallback={null}>
+                <Gruppeflate key={flate.gruppe} {...flate} />
+              </Suspense>
+            )}
 
-                    {vist === 'rus' && state.analyte && rusModul && (
-                      <RusStep
-                        // Modulen holder sine egne valg. Bytter analytten, skal de nulles,
-                        // og nøkkelen gir modulen en frisk tilstand i stedet for å måtte
-                        // rydde i den fra utsiden.
-                        key={rusModul.id}
-                        analyte={state.analyte}
-                        modul={rusModul}
-                        regler={reglerForModul(scenarioregler.tilstand, rusModul, scenarioregler.provIgjen, regelfagmiljo)}
-                        onBack={back}
-                        onFinish={reset}
-                        copy={copy}
-                        flashAt={show}
-                      />
-                    )}
+            {rute.side === 'forslag' && (
+              <main className="scene scene--infoside">
+                <FaginnholdskildeProvider kilde={faginnhold}>
+                  <Senere>
+                    <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
+                  </Senere>
+                </FaginnholdskildeProvider>
+              </main>
+            )}
 
-                    {(vist === 'etg' || (vist === 'etg-paste' && etgValgUtenTilfelle)) && state.analyte && etgtilfeller && (
-                      <EtgStep
-                        analyte={state.analyte}
-                        tilfeller={etgtilfeller}
-                        onPick={(alternativ) => void pickEtg(alternativ)}
-                        onBack={back}
-                        failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
-                      />
-                    )}
+            {rute.side === 'sok' && (
+              <main className="scene scene--sokeside">
+                <Sokeside
+                  q={rute.q}
+                  indeks={synligIndeks}
+                  onKrev={sokeindeks.krev}
+                  onProvIgjen={sokeindeks.provIgjen}
+                  beskrivSide={beskrivSide}
+                  onLukk={lukkInfoside}
+                />
+              </main>
+            )}
 
-                    {vist === 'etg-paste' && etgAlternativ && (
-                      <EtgPasteStep
-                        alternativ={etgAlternativ}
-                        fra={bevisFra}
-                        onBack={back}
-                        onFinish={reset}
-                        copy={copy}
-                        flashAt={show}
-                      />
-                    )}
+            {/* Fortolkningen blir stående bak en åpen stoffside, så det
+                brukeren har fylt inn, er der når hen kommer tilbake. Tastene dens
+                gjelder bare mens den vises og fokus står i den eller ingen
+                steder — se `tastenGjelderFortolkningen`. */}
+            <main
+              className="scene"
+              hidden={fortolkningSkjult}
+              data-fortolkning={fortolkningSkjult ? SKJULT_FORTOLKNING : VIST_FORTOLKNING}
+            >
+              {/* Forsiden er ett klikk unna, men aldri ett Escape unna: søket er siste stopp. */}
+              {vist === 'search' && (
+                <Button variant="subtle" className="fortolkning__forsiden" icon={<Ikon navn="back" />} onClick={tilForsiden}>
+                  Til forsiden
+                </Button>
+              )}
+              {vist === 'search' && (
+                <SearchStep
+                  query={state.query}
+                  hits={hits}
+                  metodefilter={state.metodefilter}
+                  onFilter={settMetodefilter}
+                  onQueryChange={setQuery}
+                  onSelect={velgAnalytt}
+                  onReset={reset}
+                  synlig={!fortolkningSkjult}
+                />
+              )}
 
-                    {vist === 'paste' && state.analyte && valgtValg && (
-                      <PasteStep
-                        analyte={state.analyte}
-                        valg={valgtValg}
-                        fra={bevisFra}
-                        onBack={back}
-                        onFinish={reset}
-                      />
-                    )}
-                  </main>
+              {vist === 'band' && state.analyte && regeloppslag && (
+                <BandStep
+                  analyte={state.analyte}
+                  regler={regeloppslag}
+                  valg={valgene}
+                  onPick={velgValg}
+                  onBack={back}
+                  onProvIgjen={hentPaNytt}
+                  failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
+                  fagmiljo={regelfagmiljo}
+                />
+              )}
 
-                  {diskusjonsside && (
-                    <Suspense fallback={null}>
-                      <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />
-                    </Suspense>
-                  )}
-                  <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
-                  <Chatvarselvakt brukerId={profil.id} />
-                  {/* Vinduene hovedmenyen åpner under «For hele appen». */}
-                  <Idelag />
-                  <Administrasjon />
+              {vist === 'kontroll' && kontrollvalg && (
+                <KontrollStep
+                  valg={kontrollvalg}
+                  sporsmal={CUTOFF_SPORSMAL}
+                  onJa={bekreftKontroll}
+                  onNei={back}
+                  failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
+                />
+              )}
 
-                  {endringsside && (
-                    <FaginnholdskildeProvider kilde={faginnhold}>
-                      <Innholdslogg
-                        side={endringsside}
-                        sidenavn={sidenavn}
-                        leser={endringsloggleser}
-                        admin={redigering.felles || redigering.lokalt}
-                      />
-                    </FaginnholdskildeProvider>
-                  )}
+              {vist === 'thc' && state.analyte && <ThcStep analyte={state.analyte} regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
 
-                  {/* Versjonen og veien inn til endringsloggen, fast nederst i hjørnet. */}
-                  <Versjonspille />
+              {vist === 'rus' && state.analyte && rusModul && (
+                <RusStep
+                  // Modulen holder sine egne valg. Bytter analytten, skal de nulles,
+                  // og nøkkelen gir modulen en frisk tilstand i stedet for å måtte
+                  // rydde i den fra utsiden.
+                  key={rusModul.id}
+                  analyte={state.analyte}
+                  modul={rusModul}
+                  regler={reglerForModul(scenarioregler.tilstand, rusModul, scenarioregler.provIgjen, regelfagmiljo)}
+                  onBack={back}
+                  onFinish={reset}
+                  copy={copy}
+                  flashAt={show}
+                />
+              )}
 
-                  {/* Kvitteringen ligger utenfor stegene, så den overlever stegbyttet. */}
-                  {flash && <CopyFlash key={flash.id} flash={flash} varighet={BLINK} />}
-                  {/* Blinket er visuelt; dette er den samme beskjeden for skjermlesere. */}
-                  <p className="kun-skjermleser" role="status">
-                    {flash ? 'Kommentaren er kopiert' : ''}
-                  </p>
+              {(vist === 'etg' || (vist === 'etg-paste' && etgValgUtenTilfelle)) && state.analyte && etgtilfeller && (
+                <EtgStep
+                  analyte={state.analyte}
+                  tilfeller={etgtilfeller}
+                  onPick={(alternativ) => void pickEtg(alternativ)}
+                  onBack={back}
+                  failed={failedCopy ? { message: KOPIFEIL, comment: failedCopy } : null}
+                />
+              )}
 
-                  {/* Meldingen når en direktelenke ikke kunne åpnes. */}
-                  <Lenkemelding />
-                </div>
-              </VerktoytilgangProvider>
-            </Direktelenkekilde>
-          </AutoerstattProvider>
-        </FavorittkildeProvider>
-      </StoffregisterkildeProvider>
+              {vist === 'etg-paste' && etgAlternativ && (
+                <EtgPasteStep
+                  alternativ={etgAlternativ}
+                  fra={bevisFra}
+                  onBack={back}
+                  onFinish={reset}
+                  copy={copy}
+                  flashAt={show}
+                />
+              )}
+
+              {vist === 'paste' && state.analyte && valgtValg && (
+                <PasteStep
+                  analyte={state.analyte}
+                  valg={valgtValg}
+                  fra={bevisFra}
+                  onBack={back}
+                  onFinish={reset}
+                />
+              )}
+            </main>
+
+            {diskusjonsside && (
+              <Suspense fallback={null}>
+                <Diskusjonsmeny side={diskusjonsside} emne={diskusjonsemne} sider={sider} />
+              </Suspense>
+            )}
+            <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
+            <Chatvarselvakt brukerId={profil.id} />
+            {/* Vinduene hovedmenyen åpner under «For hele appen». */}
+            <Idelag />
+            <Administrasjon />
+
+            {endringsside && (
+              <FaginnholdskildeProvider kilde={faginnhold}>
+                <Innholdslogg
+                  side={endringsside}
+                  sidenavn={sidenavn}
+                  leser={endringsloggleser}
+                  admin={redigering.felles || redigering.lokalt}
+                />
+              </FaginnholdskildeProvider>
+            )}
+
+            {/* Versjonen og veien inn til endringsloggen, fast nederst i hjørnet. */}
+            <Versjonspille />
+
+            {/* Kvitteringen ligger utenfor stegene, så den overlever stegbyttet. */}
+            {flash && <CopyFlash key={flash.id} flash={flash} varighet={BLINK} />}
+            {/* Blinket er visuelt; dette er den samme beskjeden for skjermlesere. */}
+            <p className="kun-skjermleser" role="status">
+              {flash ? 'Kommentaren er kopiert' : ''}
+            </p>
+
+            {/* Meldingen når en direktelenke ikke kunne åpnes. */}
+            <Lenkemelding />
+          </div>
+        </VerktoytilgangProvider>
+      </Direktelenkekilde>
     </ToppmenyKilde>
   )
-  // Måleenheten konsentrasjonene vises i, fra preferansene, gjelder overalt,
-  // og det samme gjør rettighetene og gruppene.
-  return (
-    <RettigheterKilde verdi={rettigheter} oppdater={oppdaterRettigheter} arbeidskontekst={arbeidskontekst}>
-      <GruppekildeProvider verdi={grupper}>
-        <MaleenhetKilde brukerId={profil.id}>
-          <ForslagskildeProvider>{app}</ForslagskildeProvider>
-        </MaleenhetKilde>
-      </GruppekildeProvider>
-    </RettigheterKilde>
-  )
+  return <ForslagskildeProvider>{app}</ForslagskildeProvider>
 }

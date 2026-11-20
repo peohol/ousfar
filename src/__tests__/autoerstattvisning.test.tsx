@@ -9,7 +9,7 @@ import type { Editor } from '@tiptap/core'
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState, type ReactNode } from 'react'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AutoerstattProvider } from '../autoerstatt/Autoerstattkilde'
 import type { Autoerstattlager } from '../autoerstatt/lagring'
 import type { Autoerstattregel } from '../autoerstatt/regler'
@@ -30,7 +30,19 @@ beforeAll(() => {
   }
 })
 
-afterEach(cleanup)
+// Kilden henter reglene når nettleseren har tid til overs; her med en gang.
+beforeEach(() => {
+  vi.stubGlobal('requestIdleCallback', (gjor: IdleRequestCallback) => {
+    gjor({ didTimeout: false, timeRemaining: () => 50 })
+    return 0
+  })
+  vi.stubGlobal('cancelIdleCallback', () => undefined)
+})
+
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 /** Et lager i minnet med de tre første reglene. */
 function minnelager(): Autoerstattlager & { regler: Autoerstattregel[] } {
