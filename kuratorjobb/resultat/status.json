@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-44738476928",
     "foresporsel_commit": "68e54576f229e7a5ee8497d36547a16502872a31",
     "foresporsel_sha256": "db25a6bd815a25c93f7d85f7f62fc90a41f5208939d15f5aa2578e11b53e3aa6",
     "kode_commit": "8857fe866c26bcd670b2a8a90257348b1c1b8de9",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/44738476928",
-    "startet_kl": "2026-11-20T12:46:07.544Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-20T12:46:09.674Z",
+    "ferdig_kl": "2026-11-20T12:46:21.559Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "mirtazapin",
+      "fluoksetin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 261
+    }
+  ],
+  "stoffer": {
+    "mirtazapin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/mirtazapin/funksjonstest.json"
+        }
+      }
+    },
+    "fluoksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fluoksetin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
