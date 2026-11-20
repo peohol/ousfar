@@ -4,7 +4,8 @@
  * merket for noe nytt, åpning og lukking med knappene, kategoriene og
  * trådene, en ny tråd med ny kategori, søket, arkivet, én tråd med det bare
  * forfatteren eller en administrator ser, sletting og flytting til en annen
- * side, en tråd åpnet fra et varsel, og menyen maksimert som helside.
+ * side, en tråd åpnet fra et varsel, menyen maksimert som helside, og
+ * sanntiden (det andre skriver, kommer opp av seg selv).
  *
  * Økten og kallene mot databasen er erstattet; det er skjermbildene som prøves.
  * Dra-og-slipp prøves ikke her: testmiljøet har ingen peker (se `useSortering`).
@@ -138,6 +139,27 @@ const api = vi.hoisted(() => ({
 }))
 
 vi.mock('../diskusjoner/api', () => api)
+
+/** Dørklokken: abonnementene menyen har, så testen kan ringe og si fra om kanalen. */
+const klokke = vi.hoisted(() => {
+  const abonnementer = new Set<{ side: string; valg: import('../gruppechat/dorklokke').Dorklokkevalg }>()
+  return {
+    abonnementer,
+    abonnerPaDiskusjoner: (side: string | null, valg: import('../gruppechat/dorklokke').Dorklokkevalg) => {
+      const a = { side: side ?? '', valg }
+      abonnementer.add(a)
+      return () => void abonnementer.delete(a)
+    },
+    /** Noe er endret i tråden (eller i flere, med `null`) på siden. */
+    ring: (diskusjon: string | null, side = 'stoff:litium') => {
+      for (const a of abonnementer) if (a.side === side) a.valg.vedRinging(1, { side, diskusjon_id: diskusjon })
+    },
+    status: (status: import('../gruppechat/dorklokke').Kanalstatus) => {
+      for (const a of abonnementer) a.valg.vedStatus(status)
+    },
+  }
+})
+vi.mock('../diskusjoner/sanntid', () => ({ abonnerPaDiskusjoner: klokke.abonnerPaDiskusjoner }))
 vi.mock('../auth/okt', () => ({ useProfil: () => tilstand.meg, useOkt: () => ({}) }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [KARI, OLA, ADMIN]) }))
@@ -803,5 +825,91 @@ describe('én tråd', () => {
     } finally {
       knapp.remove()
     }
+  })
+})
+
+describe('sanntiden', () => {
+  const NY: Diskusjonstraad['kommentarer'][number] = {
+    id: 'k3', forelder_id: null, forfatter_id: 'ola', tekst: DOK('Ny kommentar fra Ola.'), slettet: false, skjult: false,
+    opprettet_kl: KL, endret_kl: null, hjerter: 0, mitt_hjerte: false,
+  }
+
+  it('viser det andre skriver i tråden som står åpen, uten å laste siden, og merker det som sett', async () => {
+    const bruker = await apne()
+    await act(async () => klokke.status('tilkoblet'))
+    await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
+    await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
+    await waitFor(() => expect(api.merkDiskusjonSett).toHaveBeenCalledTimes(1))
+    const lista = api.hentDiskusjoner.mock.calls.length
+
+    api.hentDiskusjonstraad.mockResolvedValue({ ...TRAAD, kommentarer: [...TRAAD.kommentarer, NY], lest_kl: '2026-09-30T12:05:00Z' })
+    await act(async () => klokke.ring('t1'))
+    await within(panel()).findByText('Ny kommentar fra Ola.')
+    await waitFor(() => expect(api.merkDiskusjonSett).toHaveBeenLastCalledWith(expect.objectContaining({ lest_kl: '2026-09-30T12:05:00Z' })))
+    // En annen tråd på siden henter ikke denne på nytt, og lista bak tråden venter til den vises.
+    const traaden = api.hentDiskusjonstraad.mock.calls.length
+    await act(async () => klokke.ring('t2'))
+    await new Promise((r) => setTimeout(r, 400))
+    expect(api.hentDiskusjonstraad).toHaveBeenCalledTimes(traaden)
+    expect(api.hentDiskusjoner).toHaveBeenCalledTimes(lista)
+    await bruker.click(within(panel()).getByRole('button', { name: 'Alle tråder' }))
+    await waitFor(() => expect(api.hentDiskusjoner.mock.calls.length).toBeGreaterThan(lista))
+  })
+
+  it('samler ringinger som kommer tett, og oppdaterer tallet på boblen når menyen er lukket', async () => {
+    await vis()
+    await act(async () => klokke.status('tilkoblet'))
+    const for_ = api.hentDiskusjoner.mock.calls.length
+    api.hentDiskusjoner.mockResolvedValue({
+      ...OVERSIKT,
+      diskusjoner: OVERSIKT.diskusjoner.map((d) => (d.id === 't2' ? { ...d, usett: true } : d)),
+    })
+    await act(async () => {
+      klokke.ring('t2')
+      klokke.ring('t3')
+      klokke.ring(null)
+    })
+    await within(meny()).findByRole('button', { name: 'Vis diskusjoner om fagsiden til litium, 3 med nytt' })
+    expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_ + 1)
+  })
+
+  it('henter ikke mens fanen er skjult, men med en gang den blir synlig', async () => {
+    await vis()
+    await act(async () => klokke.status('tilkoblet'))
+    const for_ = api.hentDiskusjoner.mock.calls.length
+    const synlighet = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
+    try {
+      await act(async () => klokke.ring('t2'))
+      await new Promise((r) => setTimeout(r, 400))
+      expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_)
+      synlighet.mockReturnValue('visible')
+      await act(async () => document.dispatchEvent(new Event('visibilitychange')))
+      await waitFor(() => expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_ + 1))
+    } finally {
+      synlighet.mockRestore()
+    }
+  })
+
+  it('ser etter nytt ved fanebytte bare når sanntiden ikke er tilkoblet, og henter alt etter et brudd', async () => {
+    await vis()
+    await act(async () => klokke.status('tilkoblet'))
+    const for_ = api.hentDiskusjoner.mock.calls.length
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_)
+
+    await act(async () => klokke.status('frakoblet'))
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await waitFor(() => expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_ + 1))
+
+    // Tilbake: det som skjedde imens, hentes.
+    await act(async () => klokke.status('tilkoblet'))
+    await waitFor(() => expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_ + 2))
+  })
+
+  it('lytter bare på siden som står, og slutter når menyen tas bort', async () => {
+    const { unmount } = render(<Diskusjonsmeny side="stoff:valproat" emne="Valproat" sider={SIDER} />)
+    expect([...klokke.abonnementer].map((a) => a.side)).toEqual(['stoff:valproat'])
+    unmount()
+    expect(klokke.abonnementer.size).toBe(0)
   })
 })

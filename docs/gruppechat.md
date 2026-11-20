@@ -275,7 +275,10 @@ gjennom sanntidstjenesten.
   fra databasen og «Prøv igjen» (samme `klient_id`) og «Forkast».
 
 Publikasjonen: migrasjonen til tråd C legger `public.gruppechatter` i
-`supabase_realtime`. Ingen andre tabeller.
+`supabase_realtime`, og ingen andre tabeller for chatten. Senere har
+direktemeldingene (`public.direktesamtaler`) og diskusjonene
+(`public.diskusjonsklokker`, `docs/diskusjoner.md`, «Sanntiden») fått sine egne
+dørklokker der, med den samme dørklokken i appen.
 
 **I appen (C1).** `src/gruppechat/tilstand.ts` fletter meldingene (rene
 funksjoner), `dorklokke.ts` er abonnementet på dørklokken og `kall.ts`

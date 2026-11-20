@@ -10,6 +10,7 @@ de berører ikke den kliniske delen.
 | --- | --- |
 | `supabase/migrations/*_diskusjoner.sql` | Tabellene, radsikkerheten, rekkefølgen, funksjonene appen kaller, og varslene |
 | `src/diskusjoner/modell.ts` | Sidene, lesingen av svarene, grupperingen, flyttingene, reglene for navn og emoji, og søket (rene funksjoner) |
+| `src/diskusjoner/klokke.ts`, `sanntid.ts`, `useDiskusjonsklokke.ts` | Sanntiden: dørklokken for siden, og når appen henter på nytt (under, «Sanntiden») |
 | `src/diskusjoner/api.ts` | Kallene mot Supabase, om menyen står åpen og hvor bred den er (`diskusjoner.laast` og `diskusjoner.bredde` i brukerinnstillingene; nøkkelen for åpen har beholdt navnet fra da menyen kunne «holdes åpen») |
 | `src/components/diskusjoner/` | Menyen (`Diskusjonsmeny`), lista (`Diskusjonsoversikt`), én tråd (`Diskusjonsside`) og skjemaene |
 | `src/hooks/useSortering.ts`, `src/styles/sortering.css` | Dra-og-slipp, felles med redigeringen av stoffregisteret |
@@ -182,6 +183,45 @@ Det brukeren har åpent (tråd, skjema, søk, arkiv, helside) bevares med
 Nytt er som under idéene: en tråd er ny når noen andre har skrevet den og den
 aldri er åpnet, eller når andre har kommentert etter at den sist ble åpnet
 (`diskusjonsoversikt()`, `merk_diskusjon_sett()`).
+
+## Sanntiden
+
+En åpen tråd og lista i menyen oppdaterer seg selv når andre skriver, med
+samme mekanisme som chatten (`docs/gruppechat.md`, «Sanntiden»): en
+**dørklokke** uten innhold, og appen henter selv det som er nytt gjennom de
+vanlige funksjonene, som kontrollerer tilgangen på nytt.
+
+- **Dørklokken** er `public.diskusjonsklokker` (migrasjonen
+  `20261120120000_diskusjoner_sanntid.sql`): én rad per rom (side og
+  fagmiljø, som i «Rommene»), med en endringsteller og tråden den siste
+  endringen gjaldt. Ingen tekst, overskrift eller avsender. Den første
+  endringen i et rom lager raden.
+- **Utløsere** etter hver setning på trådene, kategoriene, kommentarene og
+  hjertene ringer den én gang per rom. En tråd som flyttes til en annen side,
+  ringer i begge. En setning over flere tråder i et rom (en kategori som løses
+  opp) og en endring i kategoriene ringer med tråden null: alt i rommet kan
+  være endret. Besøkene (`merk_diskusjon_sett`) ringer ikke.
+- **Radsikkerheten** på dørklokken er den samme som på trådene (`rekkevidde`
+  og aktivt medlemskap). Supabase sjekker den for hver hendelse og hver
+  abonnent, så den som ikke ser diskusjonene i rommet, eller mister tilgangen
+  (gruppen, fagmiljøet), får ingen hendelser.
+- **I appen** abonnerer menyen på `postgres_changes` på tabellen med
+  filteret `side=eq.<siden>` så lenge siden står (`useDiskusjonsklokke`, med
+  dørklokken fra chatten). Ringer det for tråden som står åpen, hentes den på
+  nytt og merkes som sett; ellers hentes lista, som også gir tallet på
+  boblen. Står en tråd åpen foran lista, venter lista til den vises igjen
+  eller menyen lukkes. Er menyen lukket med en tråd i, hentes tråden når den
+  åpnes.
+- **Lav belastning:** ringinger innen et kvart sekund gir én henting. Mens
+  fanen er skjult, hentes ingenting; det som ringte imens, hentes når den
+  blir synlig. Den jevnlige sjekken (hvert 5. minutt og ved fanebytte) brukes
+  bare når sanntiden ikke er tilkoblet. Etter et brudd hentes alt én gang.
+  Lista tegnes ikke om midt i et drag (`naarIkkeDrar` i `useSortering`).
+
+Prøvd i `src/__tests__/diskusjonsklokker.test.ts` (databasen),
+`diskusjonsklokke.test.ts` (lyttingen), `diskusjonsmeny.test.tsx` («sanntiden»)
+og med ekte Realtime i det lokale testmiljøet
+(`src/__tests__/qa/diskusjonssanntid.ts`; `docs/qa-testmiljo.md`).
 
 ## Søket
 

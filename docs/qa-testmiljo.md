@@ -74,6 +74,15 @@ kjøringen uten at passordet skrives inn.
   hendelser, mister samtalen fra lista og stenges ute. Bryteren for chatten slås på i den lokale databasen mens den
   går, og settes etterpå tilbake slik migrasjonene satte den
   (`slaPaFunksjoner()` i `lokalmiljo.ts`, som alle chatkontrollene bruker).
+- `npx vite-node src/__tests__/qa/diskusjonssanntid.ts` kontrollerer sanntiden
+  i diskusjonene uten nettleser (`docs/diskusjoner.md`, «Sanntiden»): to
+  syntetiske brukere (`qa-chat-ada`, `qa-chat-bo`) lytter på dørklokken med
+  den samme lyttingen som appen, på en felles side og i en gruppe, og den som
+  fjernes fra gruppen, får ingen flere hendelser og når ikke tråden.
+  `npx vite-node src/__tests__/qa/diskusjonsnettleser.ts` er
+  nettleserkontrollen: Bos kommentar og nye tråd kommer opp hos Ada uten at
+  siden lastes, og boblen får merket for noe nytt med menyen lukket.
+  `QA_SKJERMBILDER=<mappe>` lagrer skjermbildene.
 - `npx vite-node src/__tests__/qa/gruppechatnettleser.ts` er
   nettleserkontrollen av gruppechatten (`docs/p7-testplan.md`, N1–N10): Ada og
   Bo i hver sin nettleserkontekst, med de samme syntetiske kontoene og
