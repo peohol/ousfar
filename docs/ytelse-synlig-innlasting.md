@@ -2,6 +2,14 @@
 
 **Status:** Vedtatt gjennomføringsplan (20.11.2026). **Prosjekt:** OUSFAR Dev (`ansvar:dev`). **Ansvarlig systemarkitekt:** `peohol`. **Samleoppgave:** [#499](https://github.com/peohol/ousfar/issues/499).
 
+## Arbeidsoppgaver og avhengigheter
+- [#500 P0 – baseline og måleverktøy](https://github.com/peohol/ousfar/issues/500) – **først**, tar planfilen med i første PR.
+- [#501 P1 – appskall/kode per rute](https://github.com/peohol/ousfar/issues/501) – parallelt etter P0.
+- [#502 P2 – personsøk](https://github.com/peohol/ousfar/issues/502) – parallelt etter P0.
+- [#503 P3 – fagsider](https://github.com/peohol/ousfar/issues/503) – parallelt etter P0.
+- [#504 P4 – bakgrunnskall](https://github.com/peohol/ousfar/issues/504) – analyse parallelt, felles kode etter P1.
+- [#505 P5 – samlet etterkontroll](https://github.com/peohol/ousfar/issues/505) – til slutt, når P1–P4 er merget.
+
 ## 1. Formål og prioritet
 
 OUSFAR skal *oppleves rask*, ikke bare sende færre SQL-kall: innlogget bruker skal se relevant, korrekt innhold og kunne foreta sin neste handling så snart de nødvendige dataene er klare. Sider og paneler som ikke er synlige, skal som hovedregel ikke forsinke disse handlingene.
