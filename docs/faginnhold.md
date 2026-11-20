@@ -367,6 +367,18 @@ redaksjonelle i panelet, og automatiske panelreferanser etter panelets
 redaksjonelle. Redaksjonelt innhold kan ikke sitere en automatisk referanse;
 databasen kjenner dem ikke.
 
+**Mens kildene hentes** står numrene fast. Siden og de redaksjonelle
+referansene kommer først; de automatiske når kilden deres er hentet. Et
+panel der en kilde ennå hentes, er *ventende* (`ventendeKilder`), og
+nummereringen stopper ved den første ventende plassen i leserekkefølgen —
+der de automatiske ville stått. Alt foran den har det samme nummeret uansett
+hva kilden gir; resten får nummer når kilden er hentet eller har feilet.
+Et vist nummer endres derfor aldri av at en kilde kommer inn. En referanse
+som venter, står som en dempet pille med «…», og referanselisten viser
+referansene som alt har nummer, med «Henter referansene fra datakildene …»
+under. Kildenes tilstand regnes ut av hva som er lest for hvilke ID-er
+(`useKilde`), så den er «henter» alt i første tegning, ikke først etter.
+
 ## Kommentarer
 
 Kommentar og regel er ulike objekter (planen, avsnitt 10). En kommentar er

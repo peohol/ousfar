@@ -19,6 +19,13 @@
  * forsvinner av seg selv når kilden ikke lenger har dem. Begge nummereres,
  * vises og listes likt.
  *
+ * De automatiske kommer etter siden selv, når kilden er hentet. Et nummer
+ * som er vist, skal aldri endres av at en kilde kommer: mens en kilde hentes,
+ * er panelene den kan sitere i, *ventende*, og bare forekomstene foran den
+ * første ventende plassen i leserekkefølgen får nummer. De er de samme uansett
+ * hva kilden gir, så numrene står fast; resten nummereres når kilden er
+ * hentet (eller feilet).
+ *
  * Alt her er rene funksjoner uten DOM og uten database, samme modell som
  * `src/domain/references.ts` i Slaids.
  */
@@ -149,6 +156,8 @@ export interface Automatiskelement {
 export interface Automatiskegrunnlag {
   panelreferanser?: Readonly<Record<string, readonly string[]>>
   elementer?: readonly Automatiskelement[]
+  /** Panelene der en kilde som ennå hentes, kan sitere: numrene etter dem venter. */
+  ventende?: readonly string[]
 }
 
 /** De automatiske referansene på en side, og hvor de siteres. */
@@ -167,14 +176,35 @@ export function slaSammenAutomatiske(...kilder: readonly Automatiskekilder[]): A
   const referanser = new Map<string, Referanse>()
   const panelreferanser: Record<string, string[]> = {}
   const elementer: Automatiskelement[] = []
+  const ventende = new Set<string>()
   for (const k of kilder) {
     for (const r of k.referanser) if (!referanser.has(r.id)) referanser.set(r.id, r)
     for (const [panel, ider] of Object.entries(k.panelreferanser ?? {})) {
       panelreferanser[panel] = [...new Set([...(panelreferanser[panel] ?? []), ...ider])]
     }
     elementer.push(...(k.elementer ?? []))
+    for (const panel of k.ventende ?? []) ventende.add(panel)
   }
-  return { referanser: [...referanser.values()], panelreferanser, elementer }
+  return { referanser: [...referanser.values()], panelreferanser, elementer, ventende: [...ventende] }
+}
+
+/** Det nummereringen trenger å vite om en kilde: om den ennå hentes. */
+export interface Lastestatus {
+  status: string
+}
+
+/**
+ * Panelene der kildene som ennå hentes (`status: 'laster'`), kan sitere, som
+ * ventende plasser for `slaSammenAutomatiske`. `kilder` er panel → kildene
+ * som kan gi automatiske referanser der.
+ */
+export function ventendeKilder(kilder: Readonly<Record<string, readonly Lastestatus[]>>): Automatiskekilder {
+  return {
+    referanser: [],
+    ventende: Object.entries(kilder)
+      .filter(([, k]) => k.some((kilde) => kilde.status === 'laster'))
+      .map(([panel]) => panel),
+  }
 }
 
 /** Det på en side som kan sitere referanser. */
@@ -193,6 +223,11 @@ export interface Forekomst {
   automatisk?: boolean
   niva: 'panel' | 'element' | 'inline'
   ider: string[]
+  /**
+   * Sant for plassen der en kilde som ennå hentes, kan sitere (uten ID-er).
+   * Nummereringen stopper der, så ingen nummer etter den kan endres.
+   */
+  venter?: boolean
 }
 
 function sammenlignTekst(a: string, b: string): number {
@@ -212,7 +247,8 @@ function etterPosisjon(a: Sideelement, b: Sideelement): number {
  * etter posisjon og deretter ID, samme rekkefølge som databasen bruker, når
  * ikke annet er sagt (fagsidene gir `sammenlignKort`) — og så de automatiske.
  * Et kort siterer teksten sin før kortets egne referanser, og panelets
- * referanser kommer etter kortene: referansefeltet står nederst.
+ * referanser kommer etter kortene: referansefeltet står nederst. I et
+ * ventende panel står plassen som venter, der de automatiske ville stått.
  */
 export function forekomster(
   side: Sidegrunnlag,
@@ -223,6 +259,7 @@ export function forekomster(
   const automatiskePanel = side.automatiske?.panelreferanser ?? {}
   const perPanel = gruppert(side.elementer)
   const automatiskePerPanel = gruppert(side.automatiske?.elementer ?? [])
+  const ventende = new Set(side.automatiske?.ventende ?? [])
 
   const kjente = new Set(panelrekkefolge)
   const ovrige = [
@@ -231,6 +268,7 @@ export function forekomster(
       ...Object.keys(automatiskePanel),
       ...perPanel.keys(),
       ...automatiskePerPanel.keys(),
+      ...ventende,
     ]),
   ]
     .filter((panel) => !kjente.has(panel))
@@ -246,6 +284,7 @@ export function forekomster(
       for (const ider of siteringer(element.data)) legg({ panel, element: element.id, niva: 'inline', ider })
       legg({ panel, element: element.id, niva: 'element', ider: [...(element.referanser ?? [])] })
     }
+    if (ventende.has(panel)) resultat.push({ panel, element: null, niva: 'panel', ider: [], venter: true })
     for (const element of automatiskePerPanel.get(panel) ?? []) {
       legg({ panel, element: element.id, niva: 'element', ider: [...element.referanser], automatisk: true })
     }
@@ -282,14 +321,16 @@ export function feltreferanser(side: Pick<Sidegrunnlag, 'panelreferanser' | 'aut
  * neste nye, og så videre. En referanse som går igjen, beholder nummeret fra
  * første gang. ID-er som ikke er blant `kjente` — en referanse brukeren ikke
  * har tilgang til, eller som ikke finnes — får ikke nummer og hopper ikke over
- * noe.
+ * noe. Ved en plass som venter (`venter`), stopper nummereringen: det som står
+ * etter, får nummer først når kilden er hentet.
  */
 export function nummerer(
-  grupper: Iterable<{ ider: readonly string[] } | readonly string[]>,
+  grupper: Iterable<{ ider: readonly string[]; venter?: boolean } | readonly string[]>,
   kjente?: ReadonlySet<string>,
 ): Nummerering {
   const numre = new Map<string, number>()
   for (const gruppe of grupper) {
+    if ('venter' in gruppe && gruppe.venter) break
     const ider = 'ider' in gruppe ? gruppe.ider : gruppe
     for (const id of ider) {
       if (numre.has(id) || (kjente && !kjente.has(id))) continue
@@ -322,6 +363,19 @@ export function komprimer(numre: Iterable<number>): string {
 export function numreFor(ider: readonly string[], nummerering: Nummerering): number[] {
   const numre = ider.map((id) => nummerering.get(id)).filter((n): n is number => n !== undefined)
   return [...new Set(numre)].sort((a, b) => a - b)
+}
+
+/**
+ * Sant når en av ID-ene er en referanse siden kjenner, men som ennå ikke har
+ * nummer fordi en kilde foran den i leserekkefølgen hentes (`komplett` usann).
+ */
+export function venterPaNummer(
+  ider: readonly string[],
+  nummerering: Nummerering,
+  kjente: { has(id: string): boolean },
+  komplett: boolean,
+): boolean {
+  return !komplett && ider.some((id) => kjente.has(id) && !nummerering.has(id))
 }
 
 /** Teksten i pillen, f.eks. «1–3, 5». Tom når ingen av ID-ene har nummer. */
@@ -357,7 +411,8 @@ export function referanseoppforinger(
 /**
  * Alt en side trenger for å vise referansene sine: forekomstene i
  * leserekkefølge, numrene og listen nederst. Bare referansene i `referanser`
- * får nummer — det er dem brukeren kan se.
+ * får nummer — det er dem brukeren kan se. `komplett` er usann så lenge en
+ * plass venter på en kilde: da er numrene og listen bare begynnelsen.
  */
 export function sidereferanser(
   side: Sidegrunnlag,
@@ -371,6 +426,7 @@ export function sidereferanser(
     forekomster: alle,
     nummerering,
     liste: referanseoppforinger(nummerering, referanser),
+    komplett: !alle.some((f) => f.venter),
   }
 }
 

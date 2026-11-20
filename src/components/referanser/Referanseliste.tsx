@@ -17,10 +17,11 @@ export function listeId(referanse: string): string {
  * automatiske er merket, med sporbarheten og lenkene kilden krever (som
  * lisensen) under teksten. Det er det eneste
  * stedet hele referanseteksten står fast på siden. Uten referanser vises
- * ingenting.
+ * ingenting. Mens en kilde ennå hentes, står referansene som alt har fått
+ * nummer, og en linje om at flere kan komme: numrene endres ikke.
  */
 export function Referanseliste({ tittel = 'Referanser' }: { tittel?: string }) {
-  const { nummerering, referanser } = useSidereferanser()
+  const { nummerering, referanser, komplett } = useSidereferanser()
   const laast = useLaastMerknad()
   const overskrift = useId()
   const liste = referanseoppforinger(nummerering, referanser.values())
@@ -49,6 +50,11 @@ export function Referanseliste({ tittel = 'Referanser' }: { tittel?: string }) {
           </li>
         ))}
       </ol>
+      {!komplett && (
+        <p className="referanseliste__venter" role="status">
+          Henter referansene fra datakildene …
+        </p>
+      )}
     </section>
   )
 }

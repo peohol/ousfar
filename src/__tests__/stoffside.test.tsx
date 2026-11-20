@@ -1405,6 +1405,78 @@ describe('preparatene', () => {
   })
 })
 
+describe('referansene mens kildene hentes', () => {
+  const REF_C = utgave('cccccccc-0000-4000-8000-000000000003', { tittel: 'Tredje kilde', forfattere: 'Berg A', aar: '2022', lenke: '' })
+  /** En koblet side med en referanse etter preparatene, i «Dosering». */
+  function medDosering(tilstand: Tilstand): Stoffsidedata {
+    const data = medKobling(tilstand)
+    return {
+      ...data,
+      elementer: [
+        ...data.elementer,
+        utgave('dosering', {
+          infoside: 'hs',
+          panel: 'dosering',
+          posisjon: 0,
+          elementtype: 'riktekst',
+          data: {
+            dokument: {
+              type: 'doc',
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Doseres ' }, { type: SITERING, attrs: { referanser: [REF_C.id] } }] }],
+            },
+          },
+          referanser: [],
+        }),
+      ],
+      referanser: [...data.referanser, REF_C],
+    }
+  }
+  const listen = () =>
+    within(screen.getByRole('region', { name: 'Referanser', hidden: true }))
+      .getAllByRole('listitem', { hidden: true })
+      .map((li) => `${li.getAttribute('value')} ${li.textContent!.split(' · ')[0]}`)
+
+  it('gir ingen referanse et nummer som endres når legemiddeldataene kommer', async () => {
+    const k = kilde({ data: medDosering })
+    let svar: (utvalg: Legemiddelutvalg) => void = () => {}
+    k.legemidler.les = vi.fn(() => new Promise<Legemiddelutvalg>((r) => (svar = r)))
+    vis('amitriptylin', k)
+    await finnVerdi('10–20 nmol/L')
+
+    // Det foran preparatene har fått nummeret sitt; det etter venter, og listen sier fra.
+    expect(screen.getByRole('button', { name: 'Referanse 1' })).toBeTruthy()
+    expect(listen()).toEqual(['1 Første kilde', '2 Andre kilde'])
+    expect(screen.getByText('Henter referansene fra datakildene …').getAttribute('role')).toBe('status')
+    expect(screen.getAllByRole('img', { name: 'Referanse, nummeret hentes', hidden: true })).toHaveLength(1)
+
+    act(() => svar(UTVALG))
+    await waitFor(() => expect(screen.queryByText('Henter referansene fra datakildene …')).toBeNull())
+    const etter = listen()
+    // De samme numrene som før, og FEST og «Dosering» etter dem.
+    expect(etter.slice(0, 3)).toEqual(['1 Første kilde', '2 Andre kilde', '3 FEST – Forskrivnings- og ekspedisjonsstøtte'])
+    expect(etter[3]).toBe('4 Tredje kilde')
+    expect(screen.queryByRole('img', { name: 'Referanse, nummeret hentes', hidden: true })).toBeNull()
+  })
+
+  it('nummererer resten når kilden feiler, og sier ikke lenger at noe hentes', async () => {
+    const k = kilde({ data: medDosering })
+    k.legemidler.les = vi.fn(async () => {
+      throw new Error('Nettverksfeil')
+    })
+    vis('amitriptylin', k)
+    expect(await screen.findByText('Fikk ikke hentet preparatene')).toBeTruthy()
+    await waitFor(() => expect(listen()).toEqual(['1 Første kilde', '2 Andre kilde', '3 Tredje kilde']))
+    expect(screen.queryByText('Henter referansene fra datakildene …')).toBeNull()
+  })
+
+  it('sier ikke at siden er uten faginnhold før bivirkningene er hentet', async () => {
+    const k = { ...kilde({ data: bareKobling }), bivirkninger: { les: vi.fn(() => new Promise<never>(() => {})) } }
+    vis('amitriptylin', k)
+    await screen.findByText('3 preparater · 2 legemiddelformer · 3 styrker · 1 med godkjenningsfritak')
+    expect(screen.queryByText(/har ikke fått faginnhold/)).toBeNull()
+  })
+})
+
 describe('interaksjonene', () => {
   const skuffknapp = (navn: string) =>
     screen.getAllByRole('button', { name: navn, hidden: true }).find((b) => b.hasAttribute('aria-expanded'))!

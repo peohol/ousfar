@@ -21,7 +21,8 @@ export function Kjemipanel({
 }: {
   definisjon: Paneldefinisjon
   kontekst: Panelkontekst
-  visning: Kjemivisning
+  /** Med `status` sier rader uten data «Henter …» mens PubChem-dataene hentes. */
+  visning: Kjemivisning & { status?: string }
 }) {
   const overskrift = useId()
   return (
@@ -47,7 +48,7 @@ export function Kjemipanel({
             </thead>
             <tbody>
               {visning.rader.map((r) => (
-                <Rad key={r.forbindelse.nokkel} rad={r} />
+                <Rad key={r.forbindelse.nokkel} rad={r} henter={visning.status === 'laster'} />
               ))}
             </tbody>
           </table>
@@ -57,7 +58,7 @@ export function Kjemipanel({
   )
 }
 
-function Rad({ rad: { forbindelse: f, relasjon, status, data } }: { rad: Kjemirad }) {
+function Rad({ rad: { forbindelse: f, relasjon, status, data }, henter }: { rad: Kjemirad; henter: boolean }) {
   return (
     <tr id={elementAnker(kjemisted(f))}>
       <th scope="row">
@@ -88,7 +89,9 @@ function Rad({ rad: { forbindelse: f, relasjon, status, data } }: { rad: Kjemira
         <td colSpan={3} className="kjemi__mangler">
           {status === 'uavklart'
             ? 'Ikke koblet sikkert til en forbindelse i PubChem ennå.'
-            : 'Hentes fra PubChem ved neste oppdatering.'}
+            : henter
+              ? 'Henter fra PubChem …'
+              : 'Hentes fra PubChem ved neste oppdatering.'}
         </td>
       )}
     </tr>

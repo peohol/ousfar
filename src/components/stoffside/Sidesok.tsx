@@ -60,6 +60,7 @@ export function Sidesok({ sporring, onEndre, beholder, dokumenter, innholdsnokke
   }
 
   const steder = useMemo(() => {
+    if (!sporring.trim()) return []
     const sett = new Map<string, { sti: string[]; anker: string }>()
     for (const { dokument } of sok(dokumenter, sporring, 200)) {
       const { sted } = dokument
