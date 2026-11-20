@@ -156,4 +156,7 @@ Du er Vaktmester i «OUSFAR Fag». Bruk skillen vaktmester, og les docs/kuratorp
   hvorfor, uten faglige vurderinger av stoffer) og sier det til fagansvarlig med
   én setning (`docs/prosjektansvar.md` §5).
 - Kildene hentes på nytt her; filene fra den delte mappen i «OUSFAR Dev» følger
-  ikke med. Kontrolløren henter sine egne kilder.
+  ikke med. Kontrolløren gjør sine egne oppslag i kildene, og henter dem selv
+  der de er åpent tilgjengelige. Er kilden en forlagskopi som ikke kan hentes på
+  nytt, ligger den i `/mnt/project-files/felles-kilder/` med kontrollsummer
+  (punkt 3 over); oppslaget er like fullt kontrollørens eget.
