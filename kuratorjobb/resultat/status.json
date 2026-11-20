@@ -1,18 +1,69 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-44742453593",
     "foresporsel_commit": "0ff4b0a5664dd5189270cd6f857e52de6a62899b",
     "foresporsel_sha256": "a86ad85f0a66f9673e80a300f653676966839570ea0d5be88a904a4b99411015",
     "kode_commit": "8857fe866c26bcd670b2a8a90257348b1c1b8de9",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/44742453593",
-    "startet_kl": "2026-11-20T13:14:12.511Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-20T13:14:14.804Z",
+    "ferdig_kl": "2026-11-20T13:14:26.533Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "mianserin",
+      "flupentiksol",
+      "sertralin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 474
+    }
+  ],
+  "stoffer": {
+    "mianserin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/mianserin/funksjonstest.json"
+        }
+      }
+    },
+    "flupentiksol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/flupentiksol/funksjonstest.json"
+        }
+      }
+    },
+    "sertralin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/sertralin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
