@@ -215,7 +215,11 @@ vanlige funksjonene, som kontrollerer tilgangen på nytt.
 - **Lav belastning:** ringinger innen et kvart sekund gir én henting. Mens
   fanen er skjult, hentes ingenting; det som ringte imens, hentes når den
   blir synlig. Den jevnlige sjekken (hvert 5. minutt og ved fanebytte) brukes
-  bare når sanntiden ikke er tilkoblet. Etter et brudd hentes alt én gang.
+  bare når sanntiden ikke er tilkoblet, eller den siste hentingen feilet.
+  Etter et brudd hentes alt én gang.
+- **Første henting** venter til kanalen er tilkoblet (`vedKlar`), så ingen
+  endring faller mellom hentingen og abonnementet; uten kanal etter
+  1,5 sekunder hentes det likevel, og alt hentes på nytt når kanalen kommer.
   Lista tegnes ikke om midt i et drag (`naarIkkeDrar` i `useSortering`).
 
 Prøvd i `src/__tests__/diskusjonsklokker.test.ts` (databasen),

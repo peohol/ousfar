@@ -23,8 +23,18 @@ export const gjelderTraad = (endring: Diskusjonsendring, traad: string): boolean
 /** Hvor lenge ringinger samles før appen henter: en setning som berører mye, ringer ofte flere ganger. */
 export const SAMLE_MS = 250
 
+/** Hvor lenge appen venter på kanalen før den henter første gang likevel. */
+export const VENT_PAA_KANALEN_MS = 1500
+
 export interface Klokkevalg {
   vedEndring: (endring: Diskusjonsendring) => void
+  /**
+   * Tiden for å hente første gang: når kanalen er tilkoblet, så ingen endring
+   * faller mellom hentingen og abonnementet, eller etter `ventPaaKanalenMs`
+   * uten. Kommer kanalen først etter det, gis `alle` når den kommer.
+   */
+  vedKlar?: () => void
+  ventPaaKanalenMs?: number
   /** Om sanntiden er tilkoblet; uten den ser appen etter nytt jevnlig, som før. */
   vedStatus?: (tilkoblet: boolean) => void
   samleMs?: number
@@ -39,8 +49,9 @@ export interface Klokkevalg {
  * - Ringinger innen `samleMs` gir én endring.
  * - Mens fanen er skjult, hentes ingenting; det som har ringt imens, gis når
  *   den blir synlig.
+ * - Appen henter første gang når kanalen er tilkoblet (`vedKlar`), eller
+ *   etter en frist uten; da gis `alle` når kanalen kommer.
  * - Etter et brudd (kanalen er tilkoblet igjen) kan hva som helst være endret.
- *   Ved den første tilkoblingen ikke: appen har nettopp hentet alt.
  */
 export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: Klokkevalg): () => void {
   const dokument = valg.dokument === undefined ? (typeof document === 'undefined' ? null : document) : valg.dokument
@@ -51,6 +62,14 @@ export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: 
   let tilkoblet = false
   let harVaertTilkoblet = false
   let stoppet = false
+  let klar = false
+  const giKlar = () => {
+    if (klar || stoppet) return
+    klar = true
+    clearTimeout(frist)
+    valg.vedKlar?.()
+  }
+  const frist = setTimeout(giKlar, valg.ventPaaKanalenMs ?? VENT_PAA_KANALEN_MS)
 
   const gi = () => {
     tidtaker = null
@@ -76,7 +95,9 @@ export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: 
     vedRinging: (_endring, rad) => merk(typeof rad?.diskusjon_id === 'string' ? rad.diskusjon_id : null),
     vedStatus: (status) => {
       const na = status === 'tilkoblet'
-      if (na && !tilkoblet && harVaertTilkoblet) merk(null)
+      // Første gang: hent nå, eller (etter fristen) det som kan ha kommet imellom. Senere: alt etter bruddet.
+      if (na && !harVaertTilkoblet && !klar) giKlar()
+      else if (na && !tilkoblet) merk(null)
       if (na) harVaertTilkoblet = true
       if (na !== tilkoblet) {
         tilkoblet = na
@@ -88,6 +109,7 @@ export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: 
 
   return () => {
     stoppet = true
+    clearTimeout(frist)
     if (tidtaker) clearTimeout(tidtaker)
     dokument?.removeEventListener('visibilitychange', naarSynlig)
     stoppKlokke()

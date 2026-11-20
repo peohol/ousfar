@@ -148,6 +148,8 @@ const klokke = vi.hoisted(() => {
     abonnerPaDiskusjoner: (side: string | null, valg: import('../gruppechat/dorklokke').Dorklokkevalg) => {
       const a = { side: side ?? '', valg }
       abonnementer.add(a)
+      // Kanalen kobles til som i appen, rett etter at abonnementet er startet.
+      queueMicrotask(() => abonnementer.has(a) && valg.vedStatus('tilkoblet'))
       return () => void abonnementer.delete(a)
     },
     /** Noe er endret i tråden (eller i flere, med `null`) på siden. */
@@ -904,6 +906,21 @@ describe('sanntiden', () => {
     // Tilbake: det som skjedde imens, hentes.
     await act(async () => klokke.status('tilkoblet'))
     await waitFor(() => expect(api.hentDiskusjoner).toHaveBeenCalledTimes(for_ + 2))
+  })
+
+  it('prøver igjen ved fanebytte når den første hentingen feilet, også med sanntiden tilkoblet', async () => {
+    api.hentDiskusjoner.mockRejectedValueOnce(new Error('nettet'))
+    render(<Diskusjonsmeny side="stoff:litium" emne="Litium" sider={SIDER} />)
+    await waitFor(() => expect(api.hentDiskusjoner).toHaveBeenCalledTimes(1))
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await within(meny()).findByRole('button', { name: 'Vis diskusjoner om fagsiden til litium, 2 med nytt' })
+    expect(api.hentDiskusjoner).toHaveBeenCalledTimes(2)
+  })
+
+  it('henter første gang når sanntiden er klar, én gang', async () => {
+    await vis()
+    await new Promise((r) => setTimeout(r, 400))
+    expect(api.hentDiskusjoner).toHaveBeenCalledTimes(1)
   })
 
   it('lytter bare på siden som står, og slutter når menyen tas bort', async () => {

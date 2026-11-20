@@ -358,15 +358,20 @@ function Diskusjonsflate({
 
   /** Øker ved hver henting; et svar som kommer etter et nyere, overses. */
   const sisteHenting = useRef(0)
+  /** Om den siste hentingen av lista lyktes. */
+  const listeOk = useRef(false)
   const hent = useCallback(async () => {
     const nr = ++sisteHenting.current
     try {
       const hentet = await hentDiskusjoner(side)
       if (nr !== sisteHenting.current) return
+      listeOk.current = true
       setOversikt(hentet)
       setFeil(null)
     } catch {
-      if (nr === sisteHenting.current) setFeil('Fikk ikke hentet diskusjonene.')
+      if (nr !== sisteHenting.current) return
+      listeOk.current = false
+      setFeil('Fikk ikke hentet diskusjonene.')
     }
   }, [side])
 
@@ -379,20 +384,29 @@ function Diskusjonsflate({
   const utdatert = useRef({ traad: false, liste: false })
   const naa = useRef({ visning, apen })
   naa.current = { visning, apen }
-  const vedEndring = useCallback(
-    (endring: Diskusjonsendring) => {
-      const { visning: v, apen: a } = naa.current
-      const traad = v.side === 'traad' ? v.id : null
-      if (traad && gjelderTraad(endring, traad)) {
-        if (a) setTraadendring((n) => n + 1)
-        else utdatert.current.traad = true
-      }
-      if (a && traad) utdatert.current.liste = true
+  /** Tråden som står i menyen, når endringen gjelder den; gir om den står foran lista. */
+  const traadEndret = useCallback((endring: Diskusjonsendring) => {
+    const { visning: v, apen: a } = naa.current
+    const traad = v.side === 'traad' ? v.id : null
+    if (traad && gjelderTraad(endring, traad)) {
+      if (a) setTraadendring((n) => n + 1)
+      else utdatert.current.traad = true
+    }
+    return a && traad !== null
+  }, [])
+  /** Den første hentingen venter til sanntiden er klar (`vedKlar`), så ingen endring faller imellom. */
+  const startet = useRef(false)
+  const tilkoblet = useDiskusjonsklokke(side, {
+    vedEndring: (endring) => {
+      if (traadEndret(endring)) utdatert.current.liste = true
       else naarIkkeDrar(() => void hent())
     },
-    [hent],
-  )
-  const tilkoblet = useDiskusjonsklokke(side, vedEndring)
+    vedKlar: () => {
+      startet.current = true
+      traadEndret('alle')
+      void hent()
+    },
+  })
   const traadForan = apen && visning.side === 'traad'
   useEffect(() => {
     if (apen && utdatert.current.traad) {
@@ -404,12 +418,11 @@ function Diskusjonsflate({
       naarIkkeDrar(() => void hent())
     }
   }, [apen, traadForan, hent])
-  // Første henting, og reserven når sanntiden ikke er tilkoblet: jevnlig og ved fanebytte, som før.
-  const harHentet = useRef(false)
+  // Reserven når sanntiden ikke er tilkoblet, eller den siste hentingen feilet:
+  // jevnlig og ved fanebytte, som før.
   useJevnligSjekk(
     useCallback(() => {
-      if (harHentet.current && tilkoblet()) return
-      harHentet.current = true
+      if (!startet.current || (listeOk.current && tilkoblet())) return
       void hent()
     }, [hent, tilkoblet]),
   )

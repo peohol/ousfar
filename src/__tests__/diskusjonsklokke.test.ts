@@ -17,6 +17,7 @@ function oppsett() {
   }
   const endringer: Diskusjonsendring[] = []
   const status: boolean[] = []
+  const klar = vi.fn()
   const stopp = lyttPaDiskusjoner(
     (side, v) => {
       expect(side).toBe('stoff:litium')
@@ -24,11 +25,12 @@ function oppsett() {
       return stoppet
     },
     'stoff:litium',
-    { vedEndring: (e) => endringer.push(e), vedStatus: (s) => status.push(s), samleMs: 100, dokument: dokument as unknown as Document },
+    { vedEndring: (e) => endringer.push(e), vedKlar: klar, vedStatus: (s) => status.push(s), samleMs: 100, ventPaaKanalenMs: 1000, dokument: dokument as unknown as Document },
   )
   return {
     endringer,
     status,
+    klar,
     stopp,
     stoppet,
     lyttere,
@@ -70,17 +72,30 @@ describe('lyttingen på diskusjonene', () => {
     expect(k.endringer).toEqual([new Set(['t1'])])
   })
 
-  it('henter ikke ved den første tilkoblingen, men alt etter et brudd, og sier fra om tilkoblingen', () => {
+  it('henter første gang når kanalen er tilkoblet, alt etter et brudd, og sier fra om tilkoblingen', () => {
     const k = oppsett()
+    expect(k.klar).not.toHaveBeenCalled()
     k.kanal('tilkoblet')
-    vi.advanceTimersByTime(1000)
+    expect(k.klar).toHaveBeenCalledTimes(1)
+    vi.advanceTimersByTime(2000)
     expect(k.endringer).toEqual([])
+    expect(k.klar).toHaveBeenCalledTimes(1)
     k.kanal('frakoblet')
     k.kanal('frakoblet')
     k.kanal('tilkoblet')
     vi.advanceTimersByTime(100)
     expect(k.endringer).toEqual(['alle'])
     expect(k.status).toEqual([true, false, true])
+  })
+
+  it('henter etter fristen uten kanal, og alt når kanalen kommer etterpå', () => {
+    const k = oppsett()
+    vi.advanceTimersByTime(1000)
+    expect(k.klar).toHaveBeenCalledTimes(1)
+    k.kanal('tilkoblet')
+    vi.advanceTimersByTime(100)
+    expect(k.endringer).toEqual(['alle'])
+    expect(k.klar).toHaveBeenCalledTimes(1)
   })
 
   it('gir ingenting etter at den er stoppet, og stopper abonnementet', () => {
@@ -91,5 +106,6 @@ describe('lyttingen på diskusjonene', () => {
     expect(k.endringer).toEqual([])
     expect(k.stoppet).toHaveBeenCalledTimes(1)
     expect(k.lyttere.size).toBe(0)
+    expect(k.klar).not.toHaveBeenCalled()
   })
 })
