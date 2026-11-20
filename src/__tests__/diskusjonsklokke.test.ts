@@ -98,6 +98,15 @@ describe('lyttingen på diskusjonene', () => {
     expect(k.klar).toHaveBeenCalledTimes(1)
   })
 
+  it('henter med en gang når abonnementet ikke kan startes, uten å feile', () => {
+    const klar = vi.fn()
+    const stopp = lyttPaDiskusjoner(() => { throw new TypeError('ingen kanaler') }, 'stoff:litium', { vedEndring: () => {}, vedKlar: klar, dokument: null })
+    expect(klar).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(0)
+    expect(klar).toHaveBeenCalledTimes(1)
+    expect(() => stopp()).not.toThrow()
+  })
+
   it('gir ingenting etter at den er stoppet, og stopper abonnementet', () => {
     const k = oppsett()
     k.ring('t1')

@@ -52,6 +52,8 @@ export interface Klokkevalg {
  * - Appen henter første gang når kanalen er tilkoblet (`vedKlar`), eller
  *   etter en frist uten; da gis `alle` når kanalen kommer.
  * - Etter et brudd (kanalen er tilkoblet igjen) kan hva som helst være endret.
+ * - Kan ikke abonnementet startes, hentes det med en gang, og appen ser etter
+ *   nytt jevnlig som uten sanntid.
  */
 export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: Klokkevalg): () => void {
   const dokument = valg.dokument === undefined ? (typeof document === 'undefined' ? null : document) : valg.dokument
@@ -69,7 +71,7 @@ export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: 
     clearTimeout(frist)
     valg.vedKlar?.()
   }
-  const frist = setTimeout(giKlar, valg.ventPaaKanalenMs ?? VENT_PAA_KANALEN_MS)
+  let frist = setTimeout(giKlar, valg.ventPaaKanalenMs ?? VENT_PAA_KANALEN_MS)
 
   const gi = () => {
     tidtaker = null
@@ -91,20 +93,27 @@ export function lyttPaDiskusjoner(abonner: Abonner, side: Diskusjonsside, valg: 
   }
   const naarSynlig = () => planlegg()
 
-  const stoppKlokke = abonner(side, {
-    vedRinging: (_endring, rad) => merk(typeof rad?.diskusjon_id === 'string' ? rad.diskusjon_id : null),
-    vedStatus: (status) => {
-      const na = status === 'tilkoblet'
-      // Første gang: hent nå, eller (etter fristen) det som kan ha kommet imellom. Senere: alt etter bruddet.
-      if (na && !harVaertTilkoblet && !klar) giKlar()
-      else if (na && !tilkoblet) merk(null)
-      if (na) harVaertTilkoblet = true
-      if (na !== tilkoblet) {
-        tilkoblet = na
-        valg.vedStatus?.(na)
-      }
-    },
-  })
+  let stoppKlokke = () => {}
+  try {
+    stoppKlokke = abonner(side, {
+      vedRinging: (_endring, rad) => merk(typeof rad?.diskusjon_id === 'string' ? rad.diskusjon_id : null),
+      vedStatus: (status) => {
+        const na = status === 'tilkoblet'
+        // Første gang: hent nå, eller (etter fristen) det som kan ha kommet imellom. Senere: alt etter bruddet.
+        if (na && !harVaertTilkoblet && !klar) giKlar()
+        else if (na && !tilkoblet) merk(null)
+        if (na) harVaertTilkoblet = true
+        if (na !== tilkoblet) {
+          tilkoblet = na
+          valg.vedStatus?.(na)
+        }
+      },
+    })
+  } catch {
+    // Uten sanntid (f.eks. en klient uten kanaler): ikke vent på en kanal som ikke kommer.
+    clearTimeout(frist)
+    frist = setTimeout(giKlar, 0)
+  }
   dokument?.addEventListener('visibilitychange', naarSynlig)
 
   return () => {
