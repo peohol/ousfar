@@ -23,6 +23,10 @@ resonnementer. Derfor:
 - Les aldri Kurator-tråden, briefen dens, mappen `/mnt/project-files/kurator/`,
   overleveringer fra kuratoren eller notater fra tidligere oppsett, og be ingen
   om innholdet. Det gjelder også koordinatoren.
+- `/mnt/project-files/felles-kilder/` kan du lese. Der ligger bare kopier av
+  det utgiverne har publisert, med SHA256SUMS.txt, så du kan kontrollere en
+  påstand mot kilden selv der kilden ikke er åpent tilgjengelig. Finner du
+  kuratorens egne vurderinger, utkast eller notater der, skal de ikke leses.
 - **Selv først.** Slå opp de sentrale påstandene i kildene og noter funnene
   dine før du leser kuratorens evidensjournal, dekningsmatrise, selvtest og
   svar i trådene (instruksen, steg 3 og 4).
