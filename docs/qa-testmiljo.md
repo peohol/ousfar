@@ -2,6 +2,7 @@
 
 Gjelder skript som starter appen i en automatisert nettleser (Playwright):
 `src/__tests__/qa/appkontroll.ts`, målingen `src/__tests__/qa/maling.ts`,
+ytelsesmålingen `src/__tests__/qa/ytelse.ts`,
 P0-driveren `scripts/verktoy-p0-app.mjs` og nye skript av samme slag. Vanlige
 `npm test` berøres ikke.
 
@@ -123,6 +124,14 @@ kjøringen uten at passordet skrives inn.
   siderulling. Syntetiske kontoer `qa-d7-ada`, `qa-d7-bo` og `qa-d7-cy`;
   bryterne for chatten og direktemeldingene står på mens den går
   (`slaPaFunksjoner()`).
+- `npx vite-node src/__tests__/qa/ytelse.ts` er ytelsesmålingen
+  (`docs/ytelse-maling.md`): kald og varm oppstart, fagsider, fortolkningen,
+  «Brukere», fagmiljøbytte og personsøket, med syntetiske personer i flere
+  mengder og syntetiske fagsider (`ytelsesdata.ts`). Den bruker
+  `maleside()` i `testmiljo.ts`, som bare finnes lokalt: en kontekst med
+  nettleserens hurtigbuffer på, der produksjonsdatabasen stoppes av
+  nettleseren (`Network.setBlockedURLs`) i stedet for av avskjæringen, som
+  ellers slår av hurtigbufferen.
 - Det nettleserkontrollene kan dele (punktene og rapporten, skjermbildene,
   ventingen, de innloggede klientene, å lukke chatmenyen, å telle
   abonnementene i Realtime og å arkivere gamle syntetiske grupper), står i
