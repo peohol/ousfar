@@ -16,6 +16,7 @@
  * - `YTELSE_PERSONER=50,500,5000`: personmengdene personsøket, «Brukere» og
  *   SQL-målingene kjøres for. De andre scenariene kjøres med den midterste.
  * - `YTELSE_SQL_GJENTAKELSER=5`: gjentakelser per SQL-kall.
+ * - `YTELSE_BARE_RAPPORT=1`: lager bare rapporten av rådataene i `YTELSE_UT`.
  * - `YTELSE_FORTSETT=1`: fortsetter en avbrutt kjøring i den samme `YTELSE_UT`
  *   (rådataene lagres etter hver del).
  *
@@ -711,6 +712,17 @@ function rapport(miljoinfo: Record<string, unknown>, mengder: Record<number, Rec
 }
 
 // --- Kjøringen -------------------------------------------------------------------
+
+// Bare rapporten, fra rådataene i YTELSE_UT (også fra en kjøring som ikke er ferdig).
+if (process.env.YTELSE_BARE_RAPPORT) {
+  const fra = JSON.parse(readFileSync(MALINGSFIL(), 'utf8')) as { miljoinfo: Record<string, unknown>; mengder: Record<number, Record<string, number>>; kjoringer: Kjoring[]; sqlMalinger: typeof sqlMalinger; serverkall: typeof serverkall }
+  kjoringer.push(...fra.kjoringer)
+  sqlMalinger.push(...fra.sqlMalinger)
+  serverkall.push(...fra.serverkall)
+  writeFileSync(join(UT, 'ytelse-rapport.md'), rapport(fra.miljoinfo, fra.mengder))
+  logg(`rapporten: ${join(UT, 'ytelse-rapport.md')}`)
+  process.exit(0)
+}
 
 const s = await startLokalDatabase()
 const adminpassord = await sikreAdministrator(s)

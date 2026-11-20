@@ -16,8 +16,8 @@
  *   (ingen «Henter …» igjen på siden).
  * - `fortolkning`: søkefeltet i fortolkningen.
  * - `brukere`: listen over medlemmer under Administrasjon → Brukere.
- * - `personsok`: svaret i personsøket etter siste tastetrykk (treff, «Ingen
- *   treff.» eller en feil).
+ * - `personsok`: det første svaret i personsøket etter siste tastetrykk
+ *   (treff, «Ingen treff.» eller en feil).
  * - `fagsok`, `fortolkning_treff`: første treff i fagsøket / analyttsøket;
  *   `fagsok_feil` når fagsøket sier at fagstoffet ikke ble hentet, og
  *   `fagsok_svar` det som kommer først av de to.
@@ -50,7 +50,16 @@
   } catch {
     // Uten støtte for lange oppgaver.
   }
-  document.addEventListener('keydown', () => (y.tast = performance.now()), true)
+  // Personsøkets svar gjelder det som står etter siste tastetrykk: et svar som
+  // stod midt i skrivingen (et søk komponenten husket) teller ikke.
+  document.addEventListener(
+    'keydown',
+    () => {
+      y.tast = performance.now()
+      delete y.merker.personsok
+    },
+    true,
+  )
 
   const q = (s) => document.querySelector(s)
   const synlig = (e) => e && (e.checkVisibility ? e.checkVisibility() : e.offsetParent !== null)
