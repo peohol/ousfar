@@ -51,6 +51,19 @@ async function punkt(kode: string, arbeid: () => Promise<string | void>) {
 function krev(b: unknown, hva: string): asserts b {
   if (!b) throw new Error(hva)
 }
+/**
+ * Knappene i hjørnet (×, og «Utvid» på brede flater) står på samme linje som
+ * den første raden («Samtaler» eller «Til alle samtaler»), uten å overlappe den.
+ */
+async function sammeLinje(meny: Side, rad: string) {
+  const r = await meny.locator(rad).first().boundingBox()
+  const k = await meny.locator('.chatpanel__topp').boundingBox()
+  const x = await meny.locator('.chatpanel__lukk').boundingBox()
+  krev(r && k && x, `fant ikke ${rad} eller knappene`)
+  const midt = (b: { y: number; height: number }) => b.y + b.height / 2
+  krev(Math.abs(midt(r) - midt(x)) <= 2, `${rad} står ikke på linje med × (${midt(r)} mot ${midt(x)})`)
+  krev(r.x + r.width <= k.x + 1, `${rad} går inn under knappene`)
+}
 async function innen(ms: number, hva: string, sjekk: () => Promise<boolean>) {
   const start = Date.now()
   while (Date.now() - start < ms) {
@@ -111,7 +124,17 @@ try {
     krev((await uleste()) === 2, `uleste i databasen etter åpning: ${await uleste()}`)
     const rader: string[] = await menyen.locator('.chatrad__navn').allInnerTexts()
     krev(rader[0] === sandnavn, `første rad er ${rader[0]}`)
+    await sammeLinje(menyen, '.chatsamtaler__hode')
     await bilde(ada, '02-meny-apen-pc')
+    // ⚙ (når det finnes innstillinger): «Til alle samtaler» står også der på linje med knappene.
+    const innstillinger = menyen.getByRole('button', { name: 'Innstillinger for chatten' })
+    if ((await innstillinger.count()) > 0) {
+      await innstillinger.click()
+      await sammeLinje(menyen, '.chatny__topp')
+      await bilde(ada, '02b-innstillinger-pc')
+      await menyen.getByRole('button', { name: 'Til alle samtaler' }).click()
+      await menyen.getByRole('region', { name: 'Samtaler' }).waitFor()
+    }
   })
 
   await punkt('P3 samtalen i menyen merkes lest når den vises; sanntid inn', async () => {
@@ -120,6 +143,7 @@ try {
     await innen(10_000, 'lest i databasen', async () => (await uleste()) === 0)
     await rpc(boK, 'send_gruppemelding', { gruppe: sandkasse, klient_id: crypto.randomUUID(), tekst: 'Syntetisk i sanntid' })
     await innen(10_000, 'ny melding vises', async () => (await menyen.getByText('Syntetisk i sanntid').count()) > 0)
+    await sammeLinje(menyen, '.chatsamtale__tilbake')
     await bilde(ada, '03-samtale-meny-pc')
   })
 
@@ -193,9 +217,11 @@ try {
     // Boblen, håndtaket og «Utvid» hører til de brede flatene.
     krev(!(await mobil.locator('.chatboble').isVisible()), 'ingen boble på mobil')
     krev(!(await m.getByRole('button', { name: 'Utvid' }).isVisible()), 'ingen Utvid på mobil')
+    await sammeLinje(m, '.chatsamtaler__hode')
     await bilde(mobil, '10-meny-mobil')
     await m.getByRole('button', { name: new RegExp(fagnavn) }).click()
     await m.getByRole('log').waitFor()
+    await sammeLinje(m, '.chatsamtale__tilbake')
     await bilde(mobil, '11-samtale-mobil')
     await mobil.keyboard.press('Escape')
     await innen(3_000, 'lukket', async () => !(await m.isVisible()))
@@ -223,7 +249,7 @@ try {
     krev(brukt <= 60_000, `${brukt} ms`)
     await menyen.getByRole('button', { name: 'Til alle samtaler' }).click()
     await innen(15_000, 'borte fra samtalene', async () => (await menyen.locator('.chatrad__navn', { hasText: fagnavn }).count()) === 0)
-    await innen(15_000, 'borte fra Mine grupper', async () => (await menyen.getByText(fagnavn).count()) === 0)
+    await innen(15_000, 'borte fra menyen', async () => (await menyen.getByText(fagnavn).count()) === 0)
     await bilde(ada, '13-fjernet-pc')
     return `${(brukt / 1000).toFixed(1)} s`
   })

@@ -8,7 +8,6 @@ import { FORSIDE, gruppeadresse, type Rute, type Samtalenokkel } from '../../dom
 import { alleUleste, sokISamtaler, useGruppesamtaler, type Gruppesamtale } from '../../gruppechat/samtaler'
 import { useGruppechat } from '../../gruppechat/useGruppechat'
 import { useGrupper } from '../../grupper/kilde'
-import type { MinGruppe } from '../../grupper/modell'
 import type { Gruppesymbol as Gruppesymbolet } from '../../grupper/symbol'
 import { useEscapelag } from '../../hooks/lagstakk'
 import { useKantmeny } from '../../hooks/useKantmeny'
@@ -64,9 +63,9 @@ type Oversiktsvisning = 'liste' | 'ny' | 'innstillinger'
  *    toppmenyen, med tallet på uleste. På smale flater er inngangen
  *    chatknappen i toppmenyen (`Chatknapp`), og menyen fyller skjermen.
  * 2. Åpen er den et panel langs venstre kant, som resten av appen gir plass
- *    til (`--chatplass`). Øverst «Mine grupper», som lenker til gruppesidene,
- *    så «Samtaler»: én liste med gruppechattene og direktesamtalene, nyeste
- *    aktivitet først, med søk. Når direktemeldingene er slått på (D5,
+ *    til (`--chatplass`). Øverst «Samtaler»: én liste med gruppechattene og
+ *    direktesamtalene, nyeste aktivitet først, med søk. Gruppene selv har
+ *    sitt eget menyvalg (Peder 20.11.2026), ikke en liste her. Når direktemeldingene er slått på (D5,
  *    docs/direktemeldinger-personvern.md), står «Ny chat» ved overskriften.
  *    Innstillingene for chatten (`Chatinnstillinger`) ligger bak ⚙ nederst
  *    til høyre, de samme som i fanen Chat under Innstillinger. En valgt
@@ -412,7 +411,6 @@ export function Chatmeny({
                 <Innstillingsvisning onTilbake={tilOversikten} />
               ) : (
                 <>
-                  <Minegrupper grupper={grupper.grupper} onLenke={() => setMobilApen(false)} />
                   <Samtaleliste
                     samtaler={samtaler}
                     direkte={direkte}
@@ -464,43 +462,6 @@ export function Chatmeny({
           </div>
         </div>
       )}
-    </section>
-  )
-}
-
-/** «Mine grupper»: trekkspillet med gruppene den innloggede er med i, som lenker til gruppesidene. */
-function Minegrupper({ grupper, onLenke }: { grupper: readonly MinGruppe[]; onLenke: () => void }) {
-  const [apen, setApen] = useBevart('chat/minegrupper', true)
-  const id = useId()
-  const mine = useMemo(() => grupper.filter((g) => g.rolle !== null), [grupper])
-  const lenker = useGruppesymbollenker(mine)
-  return (
-    <section className="chatgrupper" aria-labelledby={`${id}-tittel`}>
-      <h3 id={`${id}-tittel`} className="chatgrupper__hode">
-        <button type="button" className="chatgrupper__veksle" aria-expanded={apen} aria-controls={`${id}-liste`} onClick={() => setApen(!apen)}>
-          <Ikon navn="grupper" storrelse="ui" />
-          <span className="chatgrupper__tittel">Mine grupper</span>
-          <Ikon navn="chev" storrelse="ui" className="chatgrupper__pil" />
-        </button>
-      </h3>
-      <div id={`${id}-liste`} hidden={!apen}>
-        {mine.length > 0 && (
-          <ul className="chatgrupper__liste">
-            {mine.map((g) => (
-              <li key={g.id}>
-                <a className="chatgrupper__lenke" href={gruppeadresse(g.id)} onClick={onLenke}>
-                  <Gruppesymbol gruppe={g} lenke={symbollenke(g, lenker)} storrelse="mini" />
-                  <span className="chatgrupper__navn">{g.navn}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-        <a className="chatgrupper__alle" href={gruppeadresse()} onClick={onLenke}>
-          Alle grupper
-          <Ikon navn="chev" storrelse="ui" />
-        </a>
-      </div>
     </section>
   )
 }
@@ -685,7 +646,7 @@ function Samtalevisning({
   const lenker = useGruppesymbollenker([symbolet])
   const utestengt = chat.status === 'ingen_tilgang'
   const tilgang = kjent && !utestengt
-  // Tilgangen er borte (fjernet fra gruppen eller fagmiljøet): «Mine grupper»
+  // Tilgangen er borte (fjernet fra gruppen eller fagmiljøet): gruppene
   // hentes på nytt med en gang, slik samtalelista gjør (kontrolleren varsler).
   const { oppdater: oppdaterGruppene } = useGrupper()
   useEffect(() => {
@@ -704,8 +665,11 @@ function Samtalevisning({
               Gruppechat{medlemmer !== undefined && ` · ${medlemmer === 1 ? '1 medlem' : `${medlemmer} medlemmer`}`}
             </p>
           </div>
-          <a className="chatsamtale__gruppen" href={gruppeadresse(gruppe.id)} onClick={onTilGruppen}>
-            Til gruppen
+          <a className="knapp knapp--kant chatsamtale__gruppen" href={gruppeadresse(gruppe.id)} onClick={onTilGruppen}>
+            <span className="knapp__ikon">
+              <Ikon navn="grupper" />
+            </span>
+            <span className="knapp__tekst">Til gruppen</span>
           </a>
         </div>
       )}

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /**
  * Chatmenyen (D4a, docs/gruppechat.md, «Chatmenyen»): boblen med uleste,
- * «Mine grupper» og samtalelista, en samtale i menyen og den samme samtalen
+ * samtalelista (uten «Mine grupper»), en samtale i menyen og den samme samtalen
  * på helsiden `#/chat`, «Gjenopprett», Escape gjennom lagstakken, at det å
  * åpne menyen ikke merker noe lest, og en samtale brukeren har mistet
  * tilgangen til. Direktemeldingene (D5) i samme meny: radene i samme liste,
@@ -161,14 +161,14 @@ describe('chatmenyen', () => {
     expect(screen.getByRole('button', { name: 'Chat (2 uleste meldinger)' })).toBeTruthy()
   })
 
-  it('åpner med «Mine grupper» og samtalene, nyeste først, uten å merke noe lest', async () => {
+  it('åpner med samtalene, nyeste først, uten «Mine grupper» og uten å merke noe lest', async () => {
     vis()
     await apneMenyen()
     expect(document.documentElement.dataset.chatmeny).toBe('apen')
     expect(tilstand.innstillinger.get('chat.apen')).toBe(true)
-    const grupper = within(meny()).getByRole('region', { name: /Mine grupper/ })
-    expect(within(grupper).getByRole('link', { name: /Sandkassegruppen/ }).getAttribute('href')).toBe(`#/grupper/${SANDKASSE}`)
-    expect(within(grupper).getByRole('link', { name: /Alle grupper/ }).getAttribute('href')).toBe('#/grupper')
+    // Gruppene har sitt eget menyvalg (Peder 20.11.2026); chatmenyen viser bare samtalene.
+    expect(within(meny()).queryByRole('region', { name: /Mine grupper/ })).toBeNull()
+    expect(within(meny()).queryByRole('link', { name: /Alle grupper/ })).toBeNull()
     const rader = within(within(meny()).getByRole('region', { name: 'Samtaler' })).getAllByRole('button')
     expect(rader.map((r) => r.textContent)).toEqual([
       expect.stringContaining('Sandkassegruppen'),
@@ -182,10 +182,7 @@ describe('chatmenyen', () => {
     vis()
     await apneMenyen()
     expect(within(meny()).getByRole('heading', { name: 'Grupper og samtaler' }).classList.contains('kun-skjermleser')).toBe(true)
-    const grupper = within(meny()).getByRole('region', { name: /Mine grupper/ })
-    expect(within(grupper).getByRole('button', { name: 'Mine grupper' }).querySelector('[data-ikon="grupper"]')).toBeTruthy()
-    expect(within(grupper).getByRole('link', { name: 'Sandkassegruppen' })).toBeTruthy()
-    expect(within(grupper).queryByText(/Sandkasse$|På tvers/)).toBeNull()
+    expect(within(meny()).queryByText(/Sandkasse$|På tvers/)).toBeNull()
     const samtaler = within(meny()).getByRole('region', { name: 'Samtaler' })
     expect(within(samtaler).getByRole('heading', { name: 'Samtaler' }).querySelector('[data-ikon="samtale"]')).toBeTruthy()
     expect(within(samtaler).getAllByText('Gruppechat')).toHaveLength(2)
@@ -199,8 +196,6 @@ describe('chatmenyen', () => {
     const grupper = { ...GRUPPER, grupper: GRUPPER.grupper.map((g) => (g.id === SANDKASSE ? { ...g, symbol: { emoji: '🧪' } } : g)) }
     render(<App start={{ side: 'forside' }} gaaTilSpion={vi.fn()} tilbakeSpion={vi.fn()} grupper={grupper} />)
     await apneMenyen()
-    const lenke = within(within(meny()).getByRole('region', { name: /Mine grupper/ })).getByRole('link', { name: 'Sandkassegruppen' })
-    expect(lenke.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
     const rad = within(within(meny()).getByRole('region', { name: 'Samtaler' })).getByRole('button', { name: /Sandkassegruppen/ })
     expect(rad.querySelector('.gruppesymbol')?.textContent).toBe('🧪')
     const uten = within(within(meny()).getByRole('region', { name: 'Samtaler' })).getByRole('button', { name: /Faglig utvikling/ })
@@ -242,8 +237,9 @@ describe('chatmenyen', () => {
     await apneMenyen()
     await userEvent.click(screen.getByRole('button', { name: /Sandkassegruppen/ }))
     const chat = meny()
-    // Hvem som leser, meldingene etter dag med avsender, og eldre meldinger.
-    expect(within(chat).getByText('Leses av de 3 medlemmene i gruppen og av systemarkitektene i OUSFAR.')).toBeTruthy()
+    // Meldingene etter dag med avsender, og eldre meldinger; ingen tekst om hvem som leser.
+    expect(within(chat).queryByText(/^Leses av/)).toBeNull()
+    expect(within(chat).getByRole('link', { name: 'Til gruppen' }).classList.contains('knapp')).toBe(true)
     const logg = within(chat).getByRole('log', { name: 'Meldinger i Sandkassegruppen' })
     expect(within(logg).getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(0)
     expect(logg.querySelectorAll('.chatmelding').length).toBe(5)
@@ -383,7 +379,7 @@ describe('chatmenyen', () => {
     tilstand.samtaler = tilstand.samtaler.filter((s) => s.gruppe.id !== SANDKASSE)
     const uten = { ...GRUPPER, grupper: GRUPPER.grupper.filter((g) => g.id !== SANDKASSE) }
     rerender(app(uten))
-    // «Mine grupper» hentes på nytt med en gang, én gang.
+    // Gruppene hentes på nytt med en gang, én gang.
     expect(oppdaterGruppene).toHaveBeenCalledTimes(1)
     expect(within(meny()).queryByRole('log')).toBeNull()
     expect(within(meny()).queryByRole('heading', { name: 'Sandkassegruppen' })).toBeNull()
@@ -401,8 +397,6 @@ describe('chatmenyen', () => {
     const helside = screen.getByRole('main', { name: 'Grupper og samtaler' })
     expect(within(helside).getByText('Gruppen er arkivert. Chatten kan leses, men ingen kan skrive i den.')).toBeTruthy()
     expect(within(helside).queryByRole('textbox', { name: /Melding til/ })).toBeNull()
-    // Arkivert, og ikke medlem: ikke blant «Mine grupper».
-    expect(within(helside).queryByRole('link', { name: /Sandkassegruppen/ })).toBeNull()
   })
 
   it('står ikke i appen når chatten er slått av', () => {
@@ -467,13 +461,13 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(screen.getByRole('button', { name: 'Vis chat (2 uleste meldinger)' })).toBeTruthy()
   })
 
-  it('viser samtalen med den andre øverst, hvem som leser og den låste linjen i stedet for skrivefeltet', async () => {
+  it('viser samtalen med den andre øverst og den låste linjen i stedet for skrivefeltet', async () => {
     vis()
     await apneMenyen()
     await userEvent.click(within(samtalelista()).getByRole('button', { name: /Kari/ }))
     expect(within(meny()).getByRole('heading', { name: 'Kari' })).toBeTruthy()
     expect(within(meny()).getByText('Direktemelding · @test.kari')).toBeTruthy()
-    expect(within(meny()).getByText('Bare dere to kan lese samtalen.')).toBeTruthy()
+    expect(within(meny()).queryByText('Bare dere to kan lese samtalen.')).toBeNull()
     expect(within(meny()).getByText('Kari kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.')).toBeTruthy()
     expect(within(meny()).queryByRole('textbox', { name: /Melding til/ })).toBeNull()
   })

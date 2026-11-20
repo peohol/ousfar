@@ -4,7 +4,7 @@
  * skrivefeltet (docs/gruppechat.md, «Brukerflaten»). Rene funksjoner, så de
  * kan prøves for seg.
  */
-import type { Chatlesere, Direktemeta, Gruppemelding } from '../../gruppechat/modell'
+import type { Direktemeta, Gruppemelding } from '../../gruppechat/modell'
 import { personnavn } from '../../direktemeldinger/modell'
 
 const KLOKKE = new Intl.DateTimeFormat('nb-NO', { hour: '2-digit', minute: '2-digit' })
@@ -63,18 +63,6 @@ export function henger(forrige: Gruppemelding | undefined, melding: Gruppemeldin
   if (dagsnokkel(forrige.skrevet_kl) !== dagsnokkel(melding.skrevet_kl)) return false
   const mellom = Date.parse(melding.skrevet_kl) - Date.parse(forrige.skrevet_kl)
   return mellom >= 0 && mellom <= SAMMENHENGENDE_MS
-}
-
-/** Hvem som kan lese en direktesamtale: bare de to (docs/direktemeldinger-personvern.md). */
-export const DIREKTE_LESERE = 'Bare dere to kan lese samtalen.'
-
-/** Hvem som kan lese chatten, øverst i den. */
-export function lesertekst({ medlemmer, systemarkitekter }: Chatlesere): string {
-  const hvem = [
-    medlemmer === 1 ? 'det ene medlemmet i gruppen' : medlemmer > 1 ? `de ${medlemmer} medlemmene i gruppen` : null,
-    systemarkitekter ? 'systemarkitektene i OUSFAR' : null,
-  ].filter(Boolean)
-  return hvem.length ? `Leses av ${hvem.join(' og av ')}.` : 'Ingen kan lese chatten nå.'
 }
 
 /**

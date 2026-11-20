@@ -1,0 +1,15 @@
+{
+  "id": "20261120-070942-f1f3f6",
+  "semver": "patch",
+  "opprettet": "2026-11-20T07:09:42Z",
+  "sammendrag": "Ryddigere chatmeny med mer plass til samtalene",
+  "typer": ["Design / layout"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "×-knappen står nå på samme linje som «Samtaler» og «Til alle samtaler», i stedet for på en egen linje.",
+    "«Mine grupper» er tatt ut av chatmenyen; gruppene finnes under menyvalget Grupper.",
+    "Teksten om hvem som kan lese samtalen er tatt bort.",
+    "«Til gruppen» over en gruppesamtale er nå en knapp."
+  ]
+}

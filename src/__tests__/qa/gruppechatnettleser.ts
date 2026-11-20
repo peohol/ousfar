@@ -323,7 +323,6 @@ try {
     await sa.getByText(/Gruppen er arkivert/).first().waitFor({ timeout: 30_000 })
     krev((await skrivefelt(sa, navn).count()) === 0, 'skrivefeltet er borte for systemarkitekten')
     const historikk = (await logglinjer(sa)).length
-    krev((await sa.getByText(/de 0 medlemmene/).count()) === 0, 'lesertekst uten «de 0 medlemmene» når ingen medlemmer leser')
     krev(historikk >= for_ - 1, `historikken står for systemarkitekten (${historikk} av ${for_})`)
     if (skjermbilder) await sa.screenshot({ path: join(skjermbilder, 'N4-systemarkitekt.png') })
     return `Adas åpne chat tømt etter ${Math.round(levende / 1000)} s (grense ${TILGANG_TAPT_MS / 1000} s); systemarkitekten leser ${historikk} meldinger`

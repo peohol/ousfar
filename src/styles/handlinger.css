@@ -63,6 +63,11 @@
     filter var(--fart-rask) var(--kurve);
 }
 
+/* En lenke som ser ut som en knapp, så den kan åpnes i en ny fane. */
+a.knapp {
+  text-decoration: none;
+}
+
 .knapp__ikon {
   display: grid;
   place-items: center;
