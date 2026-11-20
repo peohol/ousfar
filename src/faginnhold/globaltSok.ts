@@ -305,9 +305,17 @@ async function lesSokedata(
   }
 
   let base: Kunnskapsbase = { sider: [] }
+  // Når lesingen er avsluttet, endres ingenting mer: et svar som kommer
+  // etterpå (navnene), ville ellers gitt en delvis indeks etter den endelige.
+  let avsluttet = false
   const sett = (endring: Partial<Kunnskapsbase>) => {
+    if (avsluttet) return
     base = { ...base, ...endring }
     endret?.(base)
+  }
+  const avslutt = () => {
+    avsluttet = true
+    return base
   }
 
   /** Tilleggsdataene som er lagret for sidene slik de er nå. */
@@ -347,7 +355,7 @@ async function lesSokedata(
   )
   if ('feil' in sider) {
     sett({ mangler: { sider: sider.feil } })
-    return base
+    return avslutt()
   }
   if (sider.data !== base.sider) {
     base = { sider: sider.data }
@@ -373,7 +381,7 @@ async function lesSokedata(
       }
     }),
   )
-  return base
+  return avslutt()
 }
 
 /**

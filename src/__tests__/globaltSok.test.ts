@@ -20,7 +20,7 @@ import { manglertekst, visTreff } from '../components/sok/treffvisning'
 import type { Labsokedata } from '../farmakologiportalen/lesing'
 import { alleLabkomponenter, labsted } from '../farmakologiportalen/stoffside'
 import { FORBINDELSER } from '../kjemi/forbindelser'
-import { STOFFREGISTERDATA, STOFFREGISTER, byggStoffregister, stoffbeskrivelse, stoffslug, type Registerdata } from '../domain/stoffregister'
+import { STOFFREGISTERDATA, STOFFREGISTER, byggStoffregister, stoffbeskrivelse, stoffslug, type Registerdata, type Stoffoppforing } from '../domain/stoffregister'
 import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { byggSidemodell, publiseringsplan } from '../faginnhold/stoffside'
 import {
@@ -359,6 +359,21 @@ describe('lesingen av kunnskapsbasen', () => {
     const feiler = await lesSokeindeks({ sider: sideleser, stoffer: async () => Promise.reject(new Error('nede')), ventetider: [] })
     expect(feiler.mangler).toBeUndefined()
     expect(sokGlobalt(feiler, 'noradrenalin')).toHaveLength(1)
+  })
+
+  it('gir ingen delvis indeks etter den endelige når navnene kommer etter at sidene feilet', async () => {
+    let gi: (stoffer: Stoffoppforing[]) => void = () => {}
+    const navn = new Promise<Stoffoppforing[]>((ok) => (gi = ok))
+    const nede: Sideleser = { lesStoffsider: async () => Promise.reject(new Error('nede')) }
+    const delvise: Kunnskapsindeks[] = []
+    const indeks = await lesSokeindeks({ sider: nede, stoffer: () => navn, ventetider: [] }, {}, (d) => delvise.push(d))
+    expect(indeks.mangler?.sider).toBe('nede')
+    const forEtter = delvise.length
+    gi([{ slug: 'nortriptylin', navn: 'Nortriptylin' } as Stoffoppforing])
+    await new Promise((ok) => setTimeout(ok, 20))
+    // Søket er ferdig og viser feilen; et sent svar endrer det ikke.
+    expect(delvise).toHaveLength(forEtter)
+    expect(delvise.at(-1)?.mangler?.sider).toBe('nede')
   })
 
   it('leser søkedataene for mange sider i deler, med ett svar per side', async () => {
