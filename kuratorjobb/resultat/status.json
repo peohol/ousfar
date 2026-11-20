@@ -1,18 +1,169 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-44746147021",
     "foresporsel_commit": "e171b1d7a439e9e1bf1a58279a05c66f1c3b3ce2",
     "foresporsel_sha256": "964c66ce3f0a9a9424e647b0f909051873fd7cbfd91274d72cf75e2fa89c0cff",
     "kode_commit": "9d9a5448f466307885f2b34eea2dde0c3aae0c11",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/44746147021",
-    "startet_kl": "2026-11-20T13:39:27.827Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-20T13:39:29.994Z",
+    "ferdig_kl": "2026-11-20T13:40:01.347Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "amisulprid",
+      "citalopram",
+      "duloksetin",
+      "fluoksetin",
+      "flupentiksol",
+      "fluvoksamin",
+      "mianserin",
+      "mirtazapin",
+      "olanzapin",
+      "paroksetin",
+      "sertindol",
+      "sertralin",
+      "ziprasidon"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 215
+    }
+  ],
+  "stoffer": {
+    "amisulprid": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/amisulprid/funksjonstest.json"
+        }
+      }
+    },
+    "citalopram": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/citalopram/funksjonstest.json"
+        }
+      }
+    },
+    "duloksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/duloksetin/funksjonstest.json"
+        }
+      }
+    },
+    "fluoksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fluoksetin/funksjonstest.json"
+        }
+      }
+    },
+    "flupentiksol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/flupentiksol/funksjonstest.json"
+        }
+      }
+    },
+    "fluvoksamin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fluvoksamin/funksjonstest.json"
+        }
+      }
+    },
+    "mianserin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/mianserin/funksjonstest.json"
+        }
+      }
+    },
+    "mirtazapin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/mirtazapin/funksjonstest.json"
+        }
+      }
+    },
+    "olanzapin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/olanzapin/funksjonstest.json"
+        }
+      }
+    },
+    "paroksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/paroksetin/funksjonstest.json"
+        }
+      }
+    },
+    "sertindol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/sertindol/funksjonstest.json"
+        }
+      }
+    },
+    "sertralin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/sertralin/funksjonstest.json"
+        }
+      }
+    },
+    "ziprasidon": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/ziprasidon/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
