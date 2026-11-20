@@ -2,7 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { klient } from '../../auth/klient'
 import { tidspunkt } from '../../faginnhold/historikk'
 import { kallMot } from '../../legemiddeldata/lager'
-import { lagFagsaklager, type Fagsaklager } from '../../verktoy/overvaking/fagsak'
+import type { Fagsaklager } from '../../verktoy/overvaking/fagsak'
 import { ARTTEKST, KILDETEKST } from '../../verktoy/overvaking/modell'
 import {
   erApen,
@@ -20,12 +20,12 @@ import { Details } from '../Details'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
 import { Fagsaker } from './Fagsaker'
+import { fagsaklager } from './fagsaklager'
 
 /** Lageret appen bruker, mot databasen som den innloggede. */
 export const kildeovervakingslager = (): Kildeovervakingslager => lagKildeovervakingslager(kallMot(klient()))
 
 /** De faglige sakene for redaktøren, mot databasen som den innloggede. */
-export const fagsaklager = (): Fagsaklager => lagFagsaklager(kallMot(klient()))
 
 const REGLER = REGELSETTENE.flatMap((s) => s.regler)
 const regelnavn = (id: string, versjon: number) => `${REGLER.find((r) => r.id === id)?.tittel ?? id} (versjon ${versjon})`

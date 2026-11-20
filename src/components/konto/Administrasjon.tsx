@@ -1,21 +1,27 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { klient } from '../../auth/klient'
 import { kanGiRedaktoransvar, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
-import { Autoerstattregler } from './Autoerstattregler'
+import { senere } from '../../oppdatering/senere'
+import { NarApnet } from '../Senere'
 import { adminstatus, adminvalg, lyttEtterAdminpanel, ADMINVALG, type Adminpanel } from './adminvisning'
-import { Brukerliste } from './Brukerliste'
-import { Datakilder } from './Datakilder'
-import { Redaktorer } from './Redaktorer'
-import { Stillinger } from './Stillinger'
 import type { Kurateringsklient } from '../../kuratering/klient'
 import { redaktorvarsel, type Fagsaklager } from '../../verktoy/overvaking/fagsak'
 import type { Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
-import { Kurateringsoversikt } from '../kuratering/Utgavelister'
-import { fagsaklager, Kildeovervaking } from './Kildeovervaking'
-import { Verktoysperrer } from './Verktoysperrer'
+import { fagsaklager } from './fagsaklager'
+
+// Vinduene hentes første gang de åpnes; sjekkene under går uansett. Kildeovervåkingen
+// og nødstoppen tar med seg reglene til verktøyene, som ingen andre trenger ved oppstart.
+const Autoerstattregler = senere(() => import('./Autoerstattregler'), 'Autoerstattregler')
+const Brukerliste = senere(() => import('./Brukerliste'), 'Brukerliste')
+const Datakilder = senere(() => import('./Datakilder'), 'Datakilder')
+const Redaktorer = senere(() => import('./Redaktorer'), 'Redaktorer')
+const Stillinger = senere(() => import('./Stillinger'), 'Stillinger')
+const Kurateringsoversikt = senere(() => import('../kuratering/Utgavelister'), 'Kurateringsoversikt')
+const Kildeovervaking = senere(() => import('./Kildeovervaking'), 'Kildeovervaking')
+const Verktoysperrer = senere(() => import('./Verktoysperrer'), 'Verktoysperrer')
 
 /** Teksten ved prikken når kildeovervåkingen ikke kunne leses. */
 const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
@@ -121,24 +127,33 @@ export function Administrasjon({
   if (tillatt.size === 0) return null
   const apen = (navn: Adminpanel) => panel === navn && tillatt.has(navn)
 
+  // Hvert vindu er med først når det har vært åpnet (`NarApnet`).
+  const vindu = (navn: Adminpanel, innhold: ReactNode) => (
+    <NarApnet key={navn} apen={apen(navn)}>
+      {innhold}
+    </NarApnet>
+  )
   return (
     <>
-      <Brukerliste apen={apen('brukere')} onLukk={lukk.brukere} />
-      {redaktorer && <Redaktorer apen={apen('redaktorer')} onLukk={lukk.redaktorer} />}
+      {vindu('brukere', <Brukerliste apen={apen('brukere')} onLukk={lukk.brukere} />)}
+      {redaktorer && vindu('redaktorer', <Redaktorer apen={apen('redaktorer')} onLukk={lukk.redaktorer} />)}
       {admin && (
         <>
-          <Stillinger apen={apen('stillinger')} onLukk={lukk.stillinger} />
-          <Datakilder apen={apen('datakilder')} onLukk={lukk.datakilder} />
-          <Autoerstattregler apen={apen('autoerstatt')} onLukk={lukk.autoerstatt} />
-          <Kurateringsoversikt apen={apen('kurateringer')} klient={kuratering} onLukk={lukk.kurateringer} />
-          <Kildeovervaking
-            apen={apen('kildeovervaking')}
-            lager={kildelager}
-            fagsaker={fagsaker}
-            onNodstopp={() => setPanel('verktoysperrer')}
-            onLukk={lukk.kildeovervaking}
-          />
-          <Verktoysperrer apen={apen('verktoysperrer')} onLukk={lukk.verktoysperrer} />
+          {vindu('stillinger', <Stillinger apen={apen('stillinger')} onLukk={lukk.stillinger} />)}
+          {vindu('datakilder', <Datakilder apen={apen('datakilder')} onLukk={lukk.datakilder} />)}
+          {vindu('autoerstatt', <Autoerstattregler apen={apen('autoerstatt')} onLukk={lukk.autoerstatt} />)}
+          {vindu('kurateringer', <Kurateringsoversikt apen={apen('kurateringer')} klient={kuratering} onLukk={lukk.kurateringer} />)}
+          {vindu(
+            'kildeovervaking',
+            <Kildeovervaking
+              apen={apen('kildeovervaking')}
+              lager={kildelager}
+              fagsaker={fagsaker}
+              onNodstopp={() => setPanel('verktoysperrer')}
+              onLukk={lukk.kildeovervaking}
+            />,
+          )}
+          {vindu('verktoysperrer', <Verktoysperrer apen={apen('verktoysperrer')} onLukk={lukk.verktoysperrer} />)}
         </>
       )}
     </>

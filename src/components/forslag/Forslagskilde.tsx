@@ -1,7 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react'
+import { createContext, Suspense, useCallback, useContext, useMemo, type ReactNode } from 'react'
 import type { Forslagsvalg } from '../../forslag/modell'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { Forslagsskjema } from './Forslagsskjema'
+import { senere } from '../../oppdatering/senere'
+
+// Skjemaet, med teksteditoren, hentes første gang det åpnes.
+const Forslagsskjema = senere(() => import('./Forslagsskjema'), 'Forslagsskjema')
 
 /**
  * Det som åpner skjemaet «Foreslå endring»: hva forslaget kan gjelde der det
@@ -57,7 +60,9 @@ export function ForslagskildeProvider({ children }: { children: ReactNode }) {
       {children}
       {apning && apning.valg.length > 0 && (
         <Bevaringsomrade navn={`forslag:${nokkel}`}>
-          <Forslagsskjema apning={apning} onLukk={lukk} />
+          <Suspense fallback={null}>
+            <Forslagsskjema apning={apning} onLukk={lukk} />
+          </Suspense>
         </Bevaringsomrade>
       )}
     </Kontekst.Provider>

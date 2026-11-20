@@ -25,6 +25,7 @@ import { GRUNNSTRUKTUR } from './hjelp/registerstruktur'
 import { byggSidemodell, publiseringsplan } from '../faginnhold/stoffside'
 import {
   indekserKunnskapsbase,
+  indekserStykkevis,
   lagSideleser,
   lagVersjonsleser,
   lesKunnskapsbase,
@@ -35,6 +36,7 @@ import {
 } from '../faginnhold/globaltSok'
 import type { Mellomlager } from '../auth/mellomlager'
 import { lagFaginnholdslager } from '../faginnhold/lagring'
+import { lagRegisterlager } from '../stoffregister/api'
 import { lagFaginnholdsleser, type Faginnholdsleser, type Stoffsidedata } from '../faginnhold/lesing'
 import { SITERING } from '../faginnhold/referanser'
 import {
@@ -218,6 +220,21 @@ describe('lesingen av kunnskapsbasen', () => {
     expect(sokeadresse(treff!.dokument.sted)).toBe('#/stoff/kvetiapin')
   })
 
+  it('bygger den samme indeksen i strekk som i ett, også når hvert stoff er et eget strekk', async () => {
+    const base = await lesKunnskapsbase({ sider: sideleser, legemidler: legemiddelsok })
+    const iEtt = lagSokeindeks(indekserKunnskapsbase(base))
+    const vent = vi.spyOn(globalThis, 'setTimeout')
+    const iStrekk = await indekserStykkevis(base, {}, 0)
+    // Nettleseren slapp til mellom stoffene.
+    expect(vent.mock.calls.length).toBeGreaterThan(10)
+    vent.mockRestore()
+    expect(iStrekk.dokumenter).toEqual(iEtt.dokumenter)
+    expect(iStrekk.foldet).toEqual(iEtt.foldet)
+    expect(iStrekk.nokler).toEqual(iEtt.nokler)
+    expect(iStrekk.identitet).toEqual(iEtt.identitet)
+    expect(sokGlobalt(iStrekk, 'sarotex')).toEqual(sokGlobalt(iEtt, 'sarotex'))
+  })
+
   it('gir hver side de samme søkedokumentene som søket på siden selv', async () => {
     const base = await lesKunnskapsbase({ sider: sideleser, legemidler: legemiddelsok })
     const globale = indekserKunnskapsbase(base)
@@ -304,6 +321,44 @@ describe('lesingen av kunnskapsbasen', () => {
     expect(sokGlobalt(indeks, 'sarotex')).not.toEqual([])
     expect(sokGlobalt(indeks, 'doseringstekst')).toEqual(sokGlobalt(sa, 'doseringstekst'))
     expect(sokGlobalt(indeks, 'kvetiapin')).toEqual(sokGlobalt(forst, 'kvetiapin'))
+  })
+
+  it('finner fagsidene i databasen på navnet før sidene selv er lest, og bare de publiserte', async () => {
+    const registerlager = lagRegisterlager(kall.klientFor(admin))
+    // Utkastet står i registeret for en systemarkitekt, men ikke blant de publiserte.
+    expect((await registerlager.les('utkast')).sider.map((s) => s.slug)).toContain('upublisertmiddel')
+    let slipp = () => {}
+    const sene: Sideleser = {
+      lesStoffsider: async (tilstand) => {
+        await new Promise<void>((ok) => (slipp = ok))
+        return sideleser.lesStoffsider(tilstand)
+      },
+    }
+    const delvise: Kunnskapsindeks[] = []
+    const ferdig = lesSokeindeks(
+      { sider: sene, stoffer: async () => (await registerlager.les('publisert')).sider, ventetider: [] },
+      // Uten datafilen: navnet kan bare komme fra databasen.
+      { registerdata: { stoffer: [] } },
+      (d) => delvise.push(d),
+    )
+    const stoffer = (indeks: Kunnskapsindeks | undefined, q: string) => (indeks ? sokGlobalt(indeks, q).map((t) => t.dokument.sted.side.stoff) : [])
+    await vi.waitFor(() => expect(stoffer(delvise.at(-1), 'nortriptylin')).toEqual(['nortriptylin']))
+    expect(stoffer(delvise.at(-1), 'upublisertmiddel')).toEqual([])
+    // Innholdet kommer først med sidene.
+    expect(stoffer(delvise.at(-1), 'noradrenalin')).toEqual([])
+    slipp()
+    const indeks = await ferdig
+    expect(stoffer(indeks, 'nortriptylin')).toEqual(['nortriptylin'])
+    expect(stoffer(indeks, 'noradrenalin')).toEqual(['nortriptylin'])
+    expect(stoffer(indeks, 'upublisertmiddel')).toEqual([])
+  })
+
+  it('bruker sidene når de kommer før navnene, og et navn som feiler, endrer ingenting', async () => {
+    const forsinket = lesSokeindeks({ sider: sideleser, stoffer: () => new Promise(() => {}), ventetider: [] })
+    expect(sokGlobalt(await forsinket, 'noradrenalin')).toHaveLength(1)
+    const feiler = await lesSokeindeks({ sider: sideleser, stoffer: async () => Promise.reject(new Error('nede')), ventetider: [] })
+    expect(feiler.mangler).toBeUndefined()
+    expect(sokGlobalt(feiler, 'noradrenalin')).toHaveLength(1)
   })
 
   it('leser søkedataene for mange sider i deler, med ett svar per side', async () => {

@@ -158,9 +158,14 @@ Tre ting henger sammen og må holdes i takt:
 1. **Økten ligger i en informasjonskapsel**, ikke i nettleserens lokale lager.
    Det er det som gjør at kanten kan se den. Derfor bygges klienten med
    `createBrowserClient` fra `@supabase/ssr`.
-2. **Den kliniske delen er en egen fil.** `Port` henter `App` først når noen
-   er logget inn, og byggeoppsettet gir filen et fast navn. Rollup avgjør selv
-   hva som følger med: det innloggingssiden også bruker, blir liggende utenfor.
+2. **Den kliniske delen er egne filer.** `Port` henter `App` først når det
+   finnes en økt (mens profilen slås opp, men den vises ikke før tilgangen er
+   avklart), og sidene og vinduene som ikke vises når appen åpnes, hentes
+   først når de trengs (`src/oppdatering/senere.ts`, listen i `src/sidekode.ts`). Byggeoppsettet gir hver
+   fil med egen kode som ikke er ført opp som åpen, navnet `klinisk-…`, og
+   kanten slipper bare slike filer ut til en gyldig økt. Rollup avgjør selv
+   hva som følger med hvor: det innloggingssiden også bruker, blir liggende
+   utenfor.
 3. **Kanten kontrollerer økten** mot prosjektets offentlige nøkler. Supabase
    signerer asymmetrisk, så ingen hemmelighet er involvert, og det går ingen
    forespørsel ut per fil. Nøklene hentes med flere forsøk når en ny instans
@@ -175,7 +180,10 @@ Tre ting henger sammen og må holdes i takt:
 `npm run build` avslutter med `scripts/kontroller-vegg.mjs`. Den leser av
 byggingens kildekart hvilke moduler som faktisk havnet utenfor veggen, og
 krever at hver av dem står oppført i skriptet med en grunn. Alt annet feiler
-byggingen — også en helt ny modul ingen har rukket å tenke på. En modul er
+byggingen — også en helt ny modul ingen har rukket å tenke på, og en åpen fil
+som krever en klinisk for å kjøre (da ville innloggingssiden trengt noe bak
+veggen). Å hente en klinisk fil når appen eller en side skal vises
+(`import(…)`), er tillatt. En modul er
 dermed beskyttet fra den blir til, og det er bare veien ut som krever et
 bevisst valg. Kontrollen kjøres også av Vercel, slik at en slik feil stanser
 utleggingen i stedet for å legge appen ut åpen.

@@ -1,0 +1,15 @@
+{
+  "id": "20261120-082244-5445c7",
+  "semver": "patch",
+  "opprettet": "2026-11-20T08:22:44Z",
+  "sammendrag": "Appen åpner raskere, og fagsøket svarer tidligere",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Moderat omfang",
+  "gjelder": ["hele appen"],
+  "punkter": [
+    "Appen henter bare det som trengs for å vise forsiden når den åpnes. Fagsider, verktøy, grupper, kurateringen og vinduene i administrasjonen hentes først når de åpnes.",
+    "Appen begynner å hentes mens innloggingen sjekkes, i stedet for etterpå.",
+    "Fagsøket finner stoffene på navn før alle fagsidene er lest inn.",
+    "Mens fagsøket gjøres klart i bakgrunnen, svarer appen fortsatt med en gang på klikk og tastetrykk."
+  ]
+}

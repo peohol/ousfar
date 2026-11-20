@@ -16,9 +16,10 @@
  */
 
 /**
- * Filnavnet den kliniske pakken får.
+ * Begynnelsen på filnavnet de kliniske pakkene får: `App`, og sidene den
+ * henter når de vises.
  *
- * Byggeoppsettet navngir pakken etter dette, og veggen kjenner den igjen på
+ * Byggeoppsettet navngir pakkene etter dette, og veggen kjenner dem igjen på
  * det samme. Endres det ett sted, endres det begge steder.
  */
 export const KLINISK_PAKKE = 'klinisk'

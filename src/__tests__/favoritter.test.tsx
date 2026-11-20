@@ -68,6 +68,8 @@ vi.mock('../auth/klient', async () => {
 vi.mock('../components/konto/Kontomeny', () => ({ Kontomeny: () => null }))
 
 const { default: App } = await import('../App')
+// Sidene appen henter når de vises, hentes her, så testene ikke venter på dem.
+await (await import('./hjelp/sidekode')).hentSidene()
 const { TipsLag } = await import('../components/Tips')
 const { ShortcutVisibilityProvider } = await import('../hooks/useShortcutVisibility')
 

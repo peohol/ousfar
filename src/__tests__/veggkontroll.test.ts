@@ -8,7 +8,7 @@
  */
 import { describe, expect, it } from 'vitest'
 // @ts-expect-error - byggeskriptet er vanlig JavaScript uten typer.
-import { APNE_MODULER, kontroller, LABORATORIEDATA } from '../../scripts/kontroller-vegg.mjs'
+import { APNE_MODULER, kontroller, LABORATORIEDATA, statiskeKliniskeImporter } from '../../scripts/kontroller-vegg.mjs'
 import { STATISKE_RESSURSER } from './data/ressurskatalog'
 
 const KLINISK = 'klinisk-abc123.js'
@@ -76,6 +76,33 @@ describe('når noe annet er galt med delingen', () => {
     const feil = kjor([pakke(ALLE_APNE.filter((s) => s !== 'src/auth/bilde.ts'))])
     expect(feil).toHaveLength(1)
     expect(feil[0]).toContain('src/auth/bilde.ts')
+  })
+})
+
+describe('sidene som hentes når de vises (P1)', () => {
+  it('godtar flere kliniske pakker, én for hver side', () => {
+    expect(kjor([pakke(ALLE_APNE)], [KLINISK, 'klinisk-Stoffside-def456.js', 'klinisk-Verktoyside-0_9-x.js'])).toEqual([])
+  })
+
+  it('lar en åpen pakke hente den kliniske når appen skal vises', () => {
+    const innhold = 'const App=()=>import("./klinisk-abc123.js");p(()=>import("./klinisk-App-x.js"),["assets/klinisk-App-x.js"])'
+    expect(kjor([pakke(ALLE_APNE, innhold)])).toEqual([])
+  })
+
+  it('stanser en åpen pakke som krever en klinisk for å kjøre', () => {
+    for (const innhold of [
+      'import{a as b}from"./klinisk-abc123.js";',
+      'import"./klinisk-abc123.js";',
+      'import * as k from "./klinisk-abc123.js"',
+      'export{x}from"./klinisk-abc123.js"',
+    ]) {
+      const feil = kjor([pakke(ALLE_APNE, innhold)])
+      expect(feil, innhold).toEqual([`${APEN} krever ${KLINISK} for å kjøre, men den ligger bak veggen.`])
+    }
+  })
+
+  it('skiller importene en pakke krever, fra dem den henter senere', () => {
+    expect(statiskeKliniskeImporter('import{a}from"./klinisk-a.js";const b=()=>import("./klinisk-b.js");import"./riktekst-c.js"')).toEqual(['klinisk-a.js'])
   })
 })
 

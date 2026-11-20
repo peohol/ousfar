@@ -76,10 +76,12 @@ vi.mock('../components/konto/Kildeovervaking', async () => {
         </>
       ) : null
     },
-    // Ingen faglige saker, så prikken ikke står i de andre testene.
-    fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
   }
 })
+vi.mock('../components/konto/fagsaklager', () => ({
+  // Ingen faglige saker, så prikken ikke står i de andre testene.
+  fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
+}))
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
 }))
