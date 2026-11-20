@@ -7,7 +7,7 @@
  *
  * Punktene: den ansvarlige velger en emoji og laster opp et bilde i
  * gruppeinnstillingene; tekst avvises som emoji; medlemmet ser symbolene i
- * «Mine grupper», samtalelista, hodet på gruppechatten og gruppeoversikten,
+ * samtalelista i chatmenyen, hodet på gruppechatten og gruppeoversikten,
  * og på forsiden («Mine grupper» og invitasjonene), også på mobil og i mørkt
  * tema; å fjerne bildet gir gruppeikonet tilbake,
  * og medlemmet når ikke det gamle bildet lenger.
@@ -136,9 +136,6 @@ try {
     await bo.locator('.chatboble').click()
     const menyen = bo.getByRole('complementary', { name: 'Grupper og samtaler' })
     await menyen.getByRole('region', { name: 'Samtaler' }).waitFor()
-    const mine = menyen.locator('.chatgrupper__lenke')
-    await innen(15_000, 'emojien i Mine grupper', async () => (await mine.filter({ hasText: emojinavn }).locator('.gruppesymbol__emoji').innerText()) === '🧪')
-    await innen(15_000, 'bildet i Mine grupper', () => bildetVises(mine.filter({ hasText: bildenavn })))
     const rader = menyen.locator('.chatrad')
     await innen(15_000, 'emojien i samtalelista', async () => (await rader.filter({ hasText: emojinavn }).locator('.gruppesymbol__emoji').innerText()) === '🧪')
     await innen(15_000, 'bildet i samtalelista', () => bildetVises(rader.filter({ hasText: bildenavn })))

@@ -10,13 +10,6 @@
   gap: var(--rom-4);
 }
 
-.gruppechat__om {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-1);
-}
-
-.gruppechat__lesere,
 .gruppechat__laast,
 .gruppechat__tilstand {
   display: flex;

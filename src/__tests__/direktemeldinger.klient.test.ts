@@ -8,7 +8,7 @@
  * databasen i `direktemeldinger.test.ts`. Bare syntetiske personer.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DIREKTE_LESERE, laastTekst, slettetekster, slettettekst } from '../components/grupper/gruppechatvisning'
+import { laastTekst, slettetekster, slettettekst } from '../components/grupper/gruppechatvisning'
 import { lagDirekteapi } from '../direktemeldinger/kall'
 import {
   AVSLAATTE_CHATVALG,
@@ -131,10 +131,6 @@ describe('modellen', () => {
 
 describe('tekstene i samtalen', () => {
   const meta = (sperre: Direktemeta['sperre']): Direktemeta => ({ motpart: { ...kari }, sperre, dempet: false })
-
-  it('sier at bare de to leser', () => {
-    expect(DIREKTE_LESERE).toBe('Bare dere to kan lese samtalen.')
-  })
 
   it('gir den andre samme låste linje uansett grunn, og den innloggede sin egen', () => {
     expect(laastTekst(true, meta('mottaker'))).toBe('Kari Testesen kan ikke motta nye direktemeldinger. Samtalen kan fortsatt leses.')

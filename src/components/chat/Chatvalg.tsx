@@ -129,9 +129,9 @@ function Blokkerte({ onEndret }: { onEndret?: () => void }) {
 
   return (
     <div className="chatvalg__blokkerte">
-      <button type="button" className="chatgrupper__veksle" aria-expanded={apen} aria-controls={`${id}-liste`} onClick={() => setApen(!apen)}>
-        <Ikon navn="chev" storrelse="ui" className="chatgrupper__pil" />
-        <span className="chatgrupper__tittel">Blokkerte</span>
+      <button type="button" className="chatveksle" aria-expanded={apen} aria-controls={`${id}-liste`} onClick={() => setApen(!apen)}>
+        <Ikon navn="chev" storrelse="ui" className="chatveksle__pil" />
+        <span className="chatveksle__tittel">Blokkerte</span>
       </button>
       <div id={`${id}-liste`} hidden={!apen}>
         {blokkerte === null ? (

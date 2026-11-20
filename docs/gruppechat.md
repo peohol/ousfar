@@ -343,9 +343,9 @@ kriterium 1 og 4; `docs/qa-testmiljo.md`).
   «Åpne chat», som åpner samtalen i chatmenyen (`visGruppesamtale`) og lar
   gruppesiden stå (D4b; før det en egen chatside). Panelet vises bare når
   `samhandling.chat_uleste` ikke er `null`.
-- Øverst: hvem som kan lese chatten («Leses av de N medlemmene i gruppen og
-  av systemarkitektene i OUSFAR.»; i en arkivert gruppe uten aktive
-  medlemmer bare «Leses av systemarkitektene i OUSFAR.»). Ingen påminnelse
+- Ingen tekst om hvem som kan lese chatten (Peder 20.11.2026: overflødig;
+  før det «Leses av de N medlemmene …», og «Bare dere to kan lese
+  samtalen.» i en direktesamtale). Ingen påminnelse
   om pasientopplysninger (Peder 17.11.2026: brukerne er godt trent i
   personvern, og påminnelser blir støy); databasen avviser fortsatt tekst som
   ligner et fødselsnummer, og avvisningen vises som en sendefeil
@@ -429,9 +429,11 @@ gamle chatsiden» og «Uleste» under.
   hvor bred den er, følger brukeren (`chat.apen`, `chat.bredde` i
   brukerinnstillingene), som diskusjonsmenyen. Overskriften «Grupper og
   samtaler» står bare for skjermlesere (Peder 19.11.2026: gruppene og
-  samtalene sier selv hva menyen er). Øverst trekkspillet «Mine grupper»
-  (gruppeikonet foran) med lenker til gruppesidene og «Alle grupper», så
-  «Samtaler» (chatikonet foran): én liste, nyeste aktivitet først, med søk.
+  samtalene sier selv hva menyen er). Øverst «Samtaler» (chatikonet foran):
+  én liste, nyeste aktivitet først, med søk. Ingen liste over gruppene (Peder
+  20.11.2026: de har sitt eget menyvalg). Knappene «Utvid» og × står i
+  hjørnet, på linje med «Samtaler» eller «Til alle samtaler». Over en
+  gruppesamtale fører knappen «Til gruppen» til gruppesiden.
   Hver gruppe og gruppesamtale har gruppens symbol i en sirkel (emoji, bilde
   eller gruppeikonet; se «Gruppesymbolet» i `docs/fagmiljoer.md`), og en
   direktemelding profilbildet eller initialene til den andre.

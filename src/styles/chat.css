@@ -208,7 +208,7 @@
 
 /*
  * I menyen (ikke helsiden) står knappene i hjørnet, på linje med den første
- * raden under: «Mine grupper» i oversikten, «Til alle samtaler» ellers. Raden
+ * raden under: «Samtaler» i oversikten, «Til alle samtaler» ellers. Raden
  * holder av plass til knappene (`--chatknapper`); lista ruller under dem.
  */
 .chatmeny:not([data-helside]) {
@@ -246,7 +246,7 @@
   padding-top: var(--rom-4);
 }
 
-.chatmeny:not([data-helside]) :is(.chatgrupper__hode, .chatny__topp, .chatsamtale > .chatsamtale__tilbake) {
+.chatmeny:not([data-helside]) :is(.chatsamtaler__hode, .chatny__topp, .chatsamtale > .chatsamtale__tilbake) {
   margin-right: calc(var(--chatknapper) + var(--rom-2));
 }
 
@@ -367,19 +367,9 @@
   }
 }
 
-/* --- Mine grupper --------------------------------------------------------------- */
+/* --- Trekkspill (Blokkerte i chatinnstillingene) ------------------------------ */
 
-.chatgrupper {
-  padding-bottom: var(--rom-4);
-  border-bottom: var(--kant) solid var(--linje);
-}
-
-.chatgrupper__hode {
-  margin: 0;
-  font: inherit;
-}
-
-.chatgrupper__veksle {
+.chatveksle {
   display: flex;
   align-items: center;
   gap: var(--rom-2);
@@ -396,59 +386,22 @@
   cursor: pointer;
 }
 
-.chatgrupper__veksle:hover {
+.chatveksle:hover {
   background: var(--flate-hevet);
 }
 
-.chatgrupper__pil {
+.chatveksle__pil {
   transform: rotate(90deg);
   transition: transform var(--fart-rask) var(--kurve);
 }
 
-.chatgrupper__veksle[aria-expanded='false'] .chatgrupper__pil {
+.chatveksle[aria-expanded='false'] .chatveksle__pil {
   transform: none;
 }
 
-.chatgrupper__tittel {
+.chatveksle__tittel {
   flex: 1;
   text-align: left;
-}
-
-.chatgrupper__liste {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chatgrupper__lenke,
-.chatgrupper__alle {
-  display: flex;
-  align-items: center;
-  gap: var(--rom-3);
-  min-height: var(--hoyde-liten);
-  padding: 0 var(--rom-3);
-  font-size: var(--tekst-ui);
-  color: var(--blekk);
-  text-decoration: none;
-  border-radius: var(--runding-kort);
-}
-
-.chatgrupper__lenke:hover,
-.chatgrupper__alle:hover {
-  background: var(--flate-hevet);
-}
-
-.chatgrupper__navn {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.chatgrupper__alle {
-  justify-content: space-between;
-  color: var(--aksent);
 }
 
 /* --- Samtalene ------------------------------------------------------------------ */
@@ -659,10 +612,9 @@
   color: var(--blekk-dempet);
 }
 
+/* «Til gruppen»: en knapp med kant (`handlinger.css`), men en lenke, så den kan åpnes i en ny fane. */
 .chatsamtale__gruppen {
   flex: none;
-  font-size: var(--tekst-ui);
-  color: var(--aksent);
 }
 
 /* Gruppechatten fyller samtalen: lista ruller, skrivefeltet står under. */
@@ -690,6 +642,7 @@
 .chatsamtaler__hode {
   display: flex;
   align-items: center;
+  min-height: var(--hoyde-liten);
   justify-content: space-between;
   gap: var(--rom-2);
 }

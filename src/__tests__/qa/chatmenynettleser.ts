@@ -53,7 +53,7 @@ function krev(b: unknown, hva: string): asserts b {
 }
 /**
  * Knappene i hjørnet (×, og «Utvid» på brede flater) står på samme linje som
- * den første raden («Mine grupper» eller «Til alle samtaler»), uten å overlappe den.
+ * den første raden («Samtaler» eller «Til alle samtaler»), uten å overlappe den.
  */
 async function sammeLinje(meny: Side, rad: string) {
   const r = await meny.locator(rad).first().boundingBox()
@@ -124,7 +124,7 @@ try {
     krev((await uleste()) === 2, `uleste i databasen etter åpning: ${await uleste()}`)
     const rader: string[] = await menyen.locator('.chatrad__navn').allInnerTexts()
     krev(rader[0] === sandnavn, `første rad er ${rader[0]}`)
-    await sammeLinje(menyen, '.chatgrupper__veksle')
+    await sammeLinje(menyen, '.chatsamtaler__hode')
     await bilde(ada, '02-meny-apen-pc')
     // ⚙ (når det finnes innstillinger): «Til alle samtaler» står også der på linje med knappene.
     const innstillinger = menyen.getByRole('button', { name: 'Innstillinger for chatten' })
@@ -217,7 +217,7 @@ try {
     // Boblen, håndtaket og «Utvid» hører til de brede flatene.
     krev(!(await mobil.locator('.chatboble').isVisible()), 'ingen boble på mobil')
     krev(!(await m.getByRole('button', { name: 'Utvid' }).isVisible()), 'ingen Utvid på mobil')
-    await sammeLinje(m, '.chatgrupper__veksle')
+    await sammeLinje(m, '.chatsamtaler__hode')
     await bilde(mobil, '10-meny-mobil')
     await m.getByRole('button', { name: new RegExp(fagnavn) }).click()
     await m.getByRole('log').waitFor()
@@ -249,7 +249,7 @@ try {
     krev(brukt <= 60_000, `${brukt} ms`)
     await menyen.getByRole('button', { name: 'Til alle samtaler' }).click()
     await innen(15_000, 'borte fra samtalene', async () => (await menyen.locator('.chatrad__navn', { hasText: fagnavn }).count()) === 0)
-    await innen(15_000, 'borte fra Mine grupper', async () => (await menyen.getByText(fagnavn).count()) === 0)
+    await innen(15_000, 'borte fra menyen', async () => (await menyen.getByText(fagnavn).count()) === 0)
     await bilde(ada, '13-fjernet-pc')
     return `${(brukt / 1000).toFixed(1)} s`
   })
