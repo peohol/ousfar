@@ -1,13 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useErLedig } from '../hooks/useNaarLedig'
 import { lyttEtterTekstfelt } from './felt'
 import type { Autoerstattlager } from './lagring'
 import type { Autoerstattregel } from './regler'
 
 /**
- * Autoerstatt-reglene for hele appen, hentet én gang når appen er vist etter
- * innloggingen og på nytt når fanen blir synlig igjen, så endringer en
- * administrator har gjort, kommer med. Editorene leser reglene herfra, og kilden slår selv på
+ * Autoerstatt-reglene for hele appen, hentet én gang når brukeren logger inn
+ * og på nytt når fanen blir synlig igjen, så endringer en administrator har
+ * gjort, kommer med. Editorene leser reglene herfra, og kilden slår selv på
  * autoerstatt i alle vanlige tekstfelt i appen (`felt.ts`). Uten kilden (som
  * i testene) byttes ingenting ut.
  */
@@ -51,19 +50,14 @@ export function AutoerstattProvider({
     }
   }, [lager])
 
-  // Reglene trengs først når noen skriver, så den første hentingen venter
-  // til appen er vist og nettleseren har tid til overs.
-  const ledig = useErLedig()
   useEffect(() => {
-    if (ledig) void hent()
-  }, [brukerId, hent, ledig])
-  useEffect(() => {
+    void hent()
     const naarSynlig = () => {
       if (document.visibilityState === 'visible') void hent()
     }
     document.addEventListener('visibilitychange', naarSynlig)
     return () => document.removeEventListener('visibilitychange', naarSynlig)
-  }, [hent])
+  }, [brukerId, hent])
 
   const verdi = useMemo<Autoerstatt>(() => ({ regler, lager, hent }), [regler, lager, hent])
   return <Kontekst.Provider value={verdi}>{children}</Kontekst.Provider>

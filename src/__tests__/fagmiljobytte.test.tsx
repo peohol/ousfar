@@ -10,7 +10,7 @@
  *   fagmiljøet i arbeidsflaten som ennå viser det gamle.
  *
  * Innloggingen og databasen er erstattet; jsdom har ikke `requestIdleCallback`,
- * så «ledig» (fagsøket, autoerstatt) er et sekund etter at appen er vist
+ * så «ledig» (fagsøket) er et sekund etter at appen er vist
  * (`useNaarLedig`).
  */
 import { act, cleanup, render, waitFor } from '@testing-library/react'

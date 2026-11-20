@@ -10,7 +10,7 @@
   "punkter": [
     "Når du bytter fagmiljø, hentes ikke stoffregisteret, favorittene, fagsøket og innstillingene dine på nytt.",
     "Når du bytter fagmiljø, hentes fortolkningsreglene for det nye fagmiljøet én gang i stedet for to.",
-    "Reglene for autoerstatt og ryddingen i papirkurven for fagsider venter til appen har tid til overs."
+    "Ryddingen i papirkurven for fagsider venter til appen har tid til overs."
   ],
   "utenVarsel": true
 }
