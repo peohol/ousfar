@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-20T19:26:21.883Z. Stoffene sist lest fra databasen 2026-11-20T03:29:26.848Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-21T00:43:27.465Z. Stoffene sist lest fra databasen 2026-11-21T00:43:27.465Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 100 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
 
@@ -66,9 +66,9 @@ Ingen kurateringer venter.
 | 43 | kokain | de_novo | 365.4 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. |
 | 44 | moklobemid | de_novo | 365.4 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. |
 | 45 | trazodon | de_novo | 365.4 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 13 redaksjonelle seksjoner er tomme. |
-| 46 | mirtazapin | de_novo | 362.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 4 av 41 elementer har ingen kilde. |
-| 47 | eplerenon | de_novo | 362.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 4 av 43 elementer har ingen kilde. |
-| 48 | spironolakton | de_novo | 362 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 4 av 46 elementer har ingen kilde. |
+| 46 | eplerenon | de_novo | 362.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 4 av 43 elementer har ingen kilde. |
+| 47 | spironolakton | de_novo | 362 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 4 av 46 elementer har ingen kilde. |
+| 48 | mirtazapin | de_novo | 361.4 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 41 elementer har ingen kilde. |
 | 49 | venlafaksin | de_novo | 361 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 46 elementer har ingen kilde. |
 | 50 | dmt | de_novo | 359.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 1 av 31 elementer har ingen kilde. |
 | 51 | metylfenidat | de_novo | 359.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. 1 av 36 elementer har ingen kilde. |
@@ -97,22 +97,22 @@ Ingen kurateringer venter.
 | 74 | psilocybin | de_novo | 357.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. |
 | 75 | tapentadol | de_novo | 357.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. |
 | 76 | escitalopram | de_novo | 355.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 38 elementer har ingen kilde. |
-| 77 | sertralin | de_novo | 355.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 5 av 48 elementer har ingen kilde. |
-| 78 | paliperidon | de_novo | 353.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 54 elementer har ingen kilde. |
-| 79 | amitriptylin | de_novo | 353.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 55 elementer har ingen kilde. |
-| 80 | levomepromazin | de_novo | 353.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 47 elementer har ingen kilde. |
-| 81 | nortriptylin | de_novo | 353.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 49 elementer har ingen kilde. |
-| 82 | mianserin | de_novo | 353 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 50 elementer har ingen kilde. |
-| 83 | fluvoksamin | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 51 elementer har ingen kilde. |
-| 84 | klorprotiksen | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 52 elementer har ingen kilde. |
-| 85 | flupentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 53 elementer har ingen kilde. |
-| 86 | zuklopentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 53 elementer har ingen kilde. |
-| 87 | amisulprid | de_novo | 352.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 55 elementer har ingen kilde. |
-| 88 | olanzapin | de_novo | 352.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 56 elementer har ingen kilde. |
-| 89 | klozapin | de_novo | 352.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 58 elementer har ingen kilde. |
-| 90 | paroksetin | de_novo | 352.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 57 elementer har ingen kilde. |
-| 91 | fluoksetin | de_novo | 352.5 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 61 elementer har ingen kilde. |
-| 92 | ziprasidon | de_novo | 352.5 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 59 elementer har ingen kilde. |
+| 77 | paliperidon | de_novo | 353.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 54 elementer har ingen kilde. |
+| 78 | amitriptylin | de_novo | 353.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 56 elementer har ingen kilde. |
+| 79 | levomepromazin | de_novo | 353.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 47 elementer har ingen kilde. |
+| 80 | sertralin | de_novo | 353.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 48 elementer har ingen kilde. |
+| 81 | fluvoksamin | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 51 elementer har ingen kilde. |
+| 82 | klorprotiksen | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 52 elementer har ingen kilde. |
+| 83 | mianserin | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 51 elementer har ingen kilde. |
+| 84 | flupentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 53 elementer har ingen kilde. |
+| 85 | zuklopentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 54 elementer har ingen kilde. |
+| 86 | amisulprid | de_novo | 352.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 55 elementer har ingen kilde. |
+| 87 | olanzapin | de_novo | 352.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 56 elementer har ingen kilde. |
+| 88 | klozapin | de_novo | 352.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 58 elementer har ingen kilde. |
+| 89 | paroksetin | de_novo | 352.6 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 57 elementer har ingen kilde. |
+| 90 | fluoksetin | de_novo | 352.5 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 61 elementer har ingen kilde. |
+| 91 | ziprasidon | de_novo | 352.5 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 59 elementer har ingen kilde. |
+| 92 | nortriptylin | de_novo | 352 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 50 elementer har ingen kilde. |
 | 93 | trimipramin | de_novo | 351.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 59 elementer har ingen kilde. |
 | 94 | kodein | de_novo | 351.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 43 elementer har ingen kilde. |
 | 95 | duloksetin | de_novo | 351.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 45 elementer har ingen kilde. |
