@@ -187,6 +187,9 @@ async function sikreMaleboere(s: Status): Promise<Pick<Ytelsesdata, 'passord' | 
   return { passord, ider }
 }
 
+/** Navnet en syntetisk fagside har, fra nøkkelen (`syntetisk-stoff-007` → «Syntetisk stoff 007»). */
+export const stoffnavn = (slug: string) => `Syntetisk stoff ${slug.replace('syntetisk-stoff-', '')}`
+
 /** De første sidene som har en publisert FEST-kobling (`legemiddelkobling`). */
 const koblingerSql = `select count(*) from (
     select objekt_id from public.infosider where tilstand = 'publisert' and slug like 'syntetisk-stoff-%' order by slug limit ${KOBLEDE_SIDER}

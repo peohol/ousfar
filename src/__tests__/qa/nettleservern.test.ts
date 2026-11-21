@@ -24,7 +24,7 @@ const BIBLIOTEKER = ['playwright', 'playwright-core', '@playwright/test', 'puppe
 const NETTLESER = new RegExp(`['"\`](${BIBLIOTEKER.map((b) => b.replace(/[/@-]/g, '\\$&')).join('|')})(/[^'"\`]*)?['"\`]|\\bchromium\\s*\\.\\s*launch`)
 
 /** Skriptene `docs/qa-testmiljo.md` nevner ved navn. Alle er sjekket inn og må finnes. */
-const KJENTE_SKRIPT = ['src/__tests__/qa/appkontroll.ts', 'src/__tests__/qa/maling.ts', 'src/__tests__/qa/ytelse.ts', 'scripts/verktoy-p0-app.mjs']
+const KJENTE_SKRIPT = ['src/__tests__/qa/appkontroll.ts', 'src/__tests__/qa/maling.ts', 'src/__tests__/qa/ytelse.ts', 'src/__tests__/qa/ytelseskontroll.ts', 'scripts/verktoy-p0-app.mjs']
 
 function kodefiler(mappe: string): string[] {
   const full = join(ROT, mappe)

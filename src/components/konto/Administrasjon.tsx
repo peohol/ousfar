@@ -4,7 +4,7 @@ import { kanGiRedaktoransvar, useRettigheter } from '../../auth/rettigheter'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { kilderSomBorSesOver, lagDatakildeleser, type Datakildeleser } from '../../datakilder/status'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
-import { useErLedig } from '../../hooks/useNaarLedig'
+import { useErLedig, useNaarLedig } from '../../hooks/useNaarLedig'
 import { senere } from '../../oppdatering/senere'
 import { NarApnet } from '../Senere'
 import { adminstatus, adminvalg, lyttEtterAdminpanel, ADMINVALG, type Adminpanel } from './adminvisning'
@@ -127,6 +127,11 @@ export function Administrasjon({
       ) as Record<Adminpanel, () => void>,
     [setPanel, sjekkDatakilder, sjekkKilder],
   )
+
+  // «Brukere» er vinduet administratorene bruker mest: koden hentes når appen er
+  // ledig, så vinduet ikke venter på den første gang det åpnes.
+  const brukere = tillatt.has('brukere')
+  useNaarLedig(useCallback(() => void (brukere && Brukerliste.forhandslast()), [brukere]))
 
   if (tillatt.size === 0) return null
   const apen = (navn: Adminpanel) => panel === navn && tillatt.has(navn)

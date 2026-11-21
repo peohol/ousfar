@@ -1,0 +1,12 @@
+{
+  "id": "20261120-185257-8a7390",
+  "semver": "patch",
+  "opprettet": "2026-11-20T18:52:57Z",
+  "sammendrag": "«Brukere» i administrasjonen åpnes raskere første gang",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "For dem som administrerer brukere, hentes «Brukere» i bakgrunnen når appen er ledig, så vinduet ikke venter på det første gang det åpnes."
+  ]
+}

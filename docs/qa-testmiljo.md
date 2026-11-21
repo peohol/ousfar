@@ -2,7 +2,8 @@
 
 Gjelder skript som starter appen i en automatisert nettleser (Playwright):
 `src/__tests__/qa/appkontroll.ts`, målingen `src/__tests__/qa/maling.ts`,
-ytelsesmålingen `src/__tests__/qa/ytelse.ts`,
+ytelsesmålingen `src/__tests__/qa/ytelse.ts` og etterkontrollen
+`src/__tests__/qa/ytelseskontroll.ts`,
 P0-driveren `scripts/verktoy-p0-app.mjs` og nye skript av samme slag. Vanlige
 `npm test` berøres ikke.
 
@@ -141,6 +142,12 @@ kjøringen uten at passordet skrives inn.
   nettleserens hurtigbuffer på, der produksjonsdatabasen stoppes av
   nettleseren (`Network.setBlockedURLs`) i stedet for av avskjæringen, som
   ellers slår av hurtigbufferen.
+- `npx vite-node src/__tests__/qa/ytelseskontroll.ts` er etterkontrollen av
+  ytelsesplanen (#505): utlogging og avsluttet medlemskap mens appen laster,
+  sene og feilede kilder på fagsiden, direkte lenke til en seksjon, gammel
+  kode etter en oppdatering, fagsøket med tastaturet og mobil, på den trege
+  profilen og med dataene fra `ytelse.ts`. Siden med måleren og profilene
+  deler de to i `ytelsesside.ts`.
 - Det nettleserkontrollene kan dele (punktene og rapporten, skjermbildene,
   ventingen, de innloggede klientene, å lukke chatmenyen, å telle
   abonnementene i Realtime og å arkivere gamle syntetiske grupper), står i
