@@ -78,7 +78,7 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    kildene bærer (effektstørrelser, absolutte risikoer og begrensninger står
    der de trengs).
 8. **De automatiske lagene dupliseres ikke.** FEST (preparatene og
-   interaksjonene), ClinPGx og CPIC, PubChem, Farmakologiportalen og de
+   interaksjonene), ClinPGx, CYPinfo, PubChem, Farmakologiportalen og de
    strukturerte bivirkningene vises av appen selv. De kopieres ikke inn i
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
@@ -360,7 +360,7 @@ kategoriene:
   ultrarapid), og forskjellen betyr noe for påstanden, står skillet med
   genotypen eller aktivitetsverdien («økt CYP2C19-aktivitet (*17/*17)»).
 - Ordrette sitater og titlene på kildene står som kilden skrev dem. Det samme
-  gjør CPIC-dataene appen viser selv (`docs/cpic.md`).
+  gjør CYPinfos tekster appen viser selv (`docs/cypinfo-integrasjon.md`).
 
 ## Overskrifter
 

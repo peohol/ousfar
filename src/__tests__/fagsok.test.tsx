@@ -364,10 +364,10 @@ describe('søkesiden', () => {
 
   it('sier presist hva som ikke kom med i indeksen, og lar brukeren prøve igjen', async () => {
     const user = userEvent.setup()
-    const mangler = { interaksjoner: 'nede', cpic: 'nede' }
+    const mangler = { interaksjoner: 'nede', farmakogenetikk: 'nede' }
     const { onProvIgjen } = visSokeside('sertralin', { status: 'klar', indeks: { ...KLAR.indeks, mangler } })
     expect(screen.getByRole('note').textContent).toContain(
-      'Søket mangler nå interaksjonene fra FEST og anbefalingene fra CPIC, som ikke kunne hentes.',
+      'Søket mangler nå interaksjonene fra FEST og farmakogenetikken fra ClinPGx, som ikke kunne hentes.',
     )
     await user.click(screen.getByRole('button', { name: 'Prøv igjen' }))
     expect(onProvIgjen).toHaveBeenCalled()

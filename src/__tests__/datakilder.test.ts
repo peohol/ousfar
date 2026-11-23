@@ -109,8 +109,11 @@ describe('lesefunksjonen', () => {
     expect((await leser.status()).kjoringer).toHaveLength(5)
     // Prikken på adminmenyen trenger bare kjøringene, ikke endringene.
     expect((await leser.status(1)).endringer.map((e) => e.objekt_id)).toEqual(['PA166104981', 'anbefaling'])
-    expect(await leser.hentNa('cpic')).toEqual({ status: 'uendret' })
-    expect(kalt).toEqual([{ url: '/api/cpic-synk', init: { method: 'POST', headers: { authorization: 'Bearer tokenet' } } }])
+    expect(await leser.hentNa('pubchem')).toEqual({ status: 'uendret' })
+    expect(kalt).toEqual([{ url: '/api/pubchem-synk', init: { method: 'POST', headers: { authorization: 'Bearer tokenet' } } }])
+    // CPIC er stanset og endepunktet fjernet (#437): ingenting sendes.
+    await expect(leser.hentNa('cpic')).rejects.toThrow('CPIC kan ikke hentes lenger.')
+    expect(kalt).toHaveLength(1)
 
     const avvist = lagDatakildeleser(klient, (async () => new Response(JSON.stringify({ feil: 'Ikke tilgang.' }), { status: 401 })) as unknown as typeof fetch)
     await expect(avvist.hentNa('clinpgx')).rejects.toThrow('Ikke tilgang.')

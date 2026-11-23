@@ -5,12 +5,9 @@
  * forhåndsvisningene i eldre kurateringsrevisjoner. Innholdet er syntetisk.
  */
 import type { PGlite } from '@electric-sql/pglite'
-import { readFileSync } from 'node:fs'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { existsSync, readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { GET, POST } from '../../api/cpic-synk'
 import vercel from '../../vercel.json'
-import { lagCpicleserOmIBruk } from '../cpic/lesing'
 import { STANSEDE_KILDER, stansetSvar, stansFor, stansmelding } from '../datakilder/stans'
 import { kilderSomBorSesOver, kildeintervaller, vurderKilder, type Datakildestatus } from '../datakilder/status'
 import { uteblittForhandsvisning } from '../kuratering/modell'
@@ -29,12 +26,11 @@ describe('CPIC er stanset', () => {
     )
   })
 
-  it('endepunktet svarer 410 for både den planlagte jobben og administratorer, uten å hente', async () => {
-    for (const behandle of [GET, POST]) {
-      const svar = await behandle(new Request('https://ousfar.example/api/cpic-synk', { method: 'POST' }))
-      expect(svar.status).toBe(410)
-      expect(await svar.json()).toEqual({ status: 'stanset', feil: expect.stringMatching(/^Stanset 06\.11\.2026\./) })
+  it('endepunktet og CPIC-koden er fjernet (#437), og stansen virker for andre kilder', () => {
+    for (const fil of ['../../api/cpic-synk.ts', '../cpic/lesing.ts', '../components/stoffside/Cpicvisning.tsx']) {
+      expect(existsSync(new URL(fil, import.meta.url)), fil).toBe(false)
     }
+    expect(Object.keys(vercel.functions)).not.toContain('api/cpic-synk.ts')
     expect(stansetSvar('pubchem', 'PubChem')).toBeNull()
     expect(stansetSvar('cpic', 'CPIC', {})).toBeNull()
   })
@@ -42,12 +38,6 @@ describe('CPIC er stanset', () => {
   it('den ukentlige jobben er tatt ut av vercel.json, så CPIC har ikke noe intervall', () => {
     expect(vercel.crons.map((c) => c.path)).not.toContain('/api/cpic-synk')
     expect(kildeintervaller()).not.toHaveProperty('cpic')
-  })
-
-  it('appen får ingen CPIC-leser, så fagsidene, oppslaget, diplotypene og søket ikke leser noe', () => {
-    const klient = {} as SupabaseClient
-    expect(lagCpicleserOmIBruk(klient)).toBeUndefined()
-    expect(lagCpicleserOmIBruk(klient, {})).toMatchObject({ les: expect.any(Function), diplotyper: expect.any(Function) })
   })
 
   it('datakildene viser CPIC som stanset, uten å be noen se over den', () => {

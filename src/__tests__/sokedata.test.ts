@@ -244,7 +244,8 @@ describe('versjonene', () => {
     const versjoner = lagVersjonsleser(brukerklient)
     const forst = await versjoner()
     expect(forst.fest).toMatch(/^[1-9]\d*$/)
-    expect(Object.keys(forst).sort()).toEqual(['clinpgx', 'cpic', 'fest', 'laboratorier', 'sider'])
+    // `sokedata_versjoner` gir fortsatt `cpic` til skjemaet slettes, men søket leser ikke CPIC lenger (#437).
+    expect(Object.keys(forst).sort()).toEqual(['clinpgx', 'fest', 'laboratorier', 'sider'])
     // Ingen henting fra Farmakologiportalen er fullført her.
     expect(forst.laboratorier).toBe('0')
 

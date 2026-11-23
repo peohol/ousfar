@@ -12,7 +12,7 @@ import {
   type Preparatomtale,
   type Retningslinje,
 } from '../../clinpgx/modell'
-import { clinpgxForeldet, clinpgxlitteratur, litteraturreferanser } from '../../clinpgx/referanser'
+import { clinpgxForeldet, litteraturreferanser } from '../../clinpgx/referanser'
 import {
   annotasjonskort,
   annotasjonstittel,
@@ -38,59 +38,45 @@ import { useFaginnholdskilde } from './Faginnholdskilde'
 import { elementAnker, kortelementer, kortoppsummering, Panel, panelteksten, Paneltekst, Redaksjonskort, Redigerbar, type Panelkontekst } from './Paneler'
 import { ClinpgxkoblingSkjema } from './Skjemaer'
 import { Gruppe, Kildelenke } from './Farmakogenetikkdeler'
-import { cpictekster, oppsummerCpic } from '../../cpic/stoffside'
-import { Cpicvisning } from './Cpicvisning'
 import { oppsummerCypinfo } from '../../cypinfo/stoffside'
 import { Cypinfovisning } from './Cypinfovisning'
-import type { Cpictilstand, Cypinfotilstand, Farmakogenetikktilstand } from './useFarmakogenetikk'
+import type { Cypinfotilstand, Farmakogenetikktilstand } from './useFarmakogenetikk'
 import '../../styles/farmakogenetikk.css'
 
-/** Tekstene fra ClinPGx og CPIC søket på siden finner, med detaljkortet de står i. */
-export function farmakogenetikksoketekster(tilstand: Farmakogenetikktilstand, cpic: Cpictilstand): Tilleggstekst[] {
-  return [
-    ...(cpic.status === 'klar' ? cpictekster(cpic.visning) : []),
-    ...(tilstand.status === 'klar' ? farmakogenetikktekster(tilstand.visning) : []),
-  ]
+/** Tekstene fra ClinPGx søket på siden finner, med detaljkortet de står i. */
+export function farmakogenetikksoketekster(tilstand: Farmakogenetikktilstand): Tilleggstekst[] {
+  return tilstand.status === 'klar' ? farmakogenetikktekster(tilstand.visning) : []
 }
 
 /**
  * Seksjonen «Farmakogenetikk»: øverst redaksjonell fritekst og kort, som redigeres
  * her, så CYPinfos anbefalinger for legemidlene siden er koblet til i FEST
- * (`Cypinfovisning`, bare for dem som ser CYPinfo ennå), CPICs strukturerte anbefalinger for legemidlene siden er koblet til
- * (`Cpicvisning`), og under dem det OUSFARs kopi av ClinPGx har for de samme:
+ * (`Cypinfovisning`, bare for dem som ser CYPinfo ennå), og under dem det
+ * OUSFARs kopi av ClinPGx har for kjemikaliene siden er koblet til:
  * retningslinjene, preparatomtalene og de kliniske annotasjonene, hver i sitt
- * detaljkort. Dataene fra CPIC og ClinPGx er referanseinformasjon; de kan
- * ikke redigeres, og kildene står i seksjonens referansefelt (se
- * `src/cpic/referanser.ts` og `src/clinpgx/referanser.ts`). Koblingen står
- * her, i redigeringsmodus.
+ * detaljkort. Dataene fra ClinPGx er referanseinformasjon; de kan ikke
+ * redigeres, og kildene står i seksjonens referansefelt (se
+ * `src/clinpgx/referanser.ts`). Koblingen står her, i redigeringsmodus.
  */
 export function Farmakogenetikkpanel({
   definisjon,
   kontekst,
   tilstand,
-  cpic,
   cypinfo,
   grunnlag,
   sidenavn,
-  sted,
   onHentet,
-  onCpicHentet,
 }: {
   definisjon: Paneldefinisjon
   kontekst: Panelkontekst
   tilstand: Farmakogenetikktilstand
-  cpic: Cpictilstand
   /** CYPinfo for legemidlene siden er koblet til; `ingen` for den som ikke ser CYPinfo ennå. */
   cypinfo: Cypinfotilstand
   /** Sidens virkestoff i FEST, som forslagene i koblingen bygger på. */
   grunnlag: Koblingsgrunnlag
   sidenavn: string
-  /** Seksjonen og eventuelt detaljkortet adressen peker på. */
-  sted?: readonly string[]
   /** Etter at nye data er hentet fra ClinPGx, så siden leser dem. */
   onHentet: () => void
-  /** Etter at CPIC-dataene er hentet på nytt. */
-  onCpicHentet: () => void
 }) {
   const elementer = kortelementer(kontekst, definisjon.nokkel)
   const tekst = panelteksten(kontekst, definisjon.nokkel)
@@ -107,7 +93,6 @@ export function Farmakogenetikkpanel({
         !tekst.tomt && tekst.oppsummering,
         cypinfooppsummering,
         visning && oppsummerFarmakogenetikk(visning),
-        cpic.status === 'klar' && oppsummerCpic(cpic.visning),
         kortoppsummering(elementer),
       ])}
     >
@@ -123,16 +108,6 @@ export function Farmakogenetikkpanel({
         <Clinpgxkobling definisjon={definisjon} kontekst={kontekst} grunnlag={grunnlag} sidenavn={sidenavn} onHentet={onHentet} />
       )}
       <Cypinfovisning tilstand={cypinfo} />
-      {koblet && (
-        <Cpicvisning
-          tilstand={cpic}
-          kobling={kobling}
-          litteratur={clinpgxlitteratur(visning)}
-          redigerer={kontekst.redigerer}
-          malkort={sted?.[0] === definisjon.nokkel ? sted[1] : undefined}
-          onHentet={onCpicHentet}
-        />
-      )}
       {koblet && <Clinpgxvisning tilstand={tilstand} kobling={kobling} redigerer={kontekst.redigerer} />}
     </Panel>
   )
