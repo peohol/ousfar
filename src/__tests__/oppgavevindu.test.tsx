@@ -12,7 +12,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import type { Profil } from '@delt/profil'
 import type { Idetraad } from '../ideer/modell'
 import type { Oppgave, Oppgavedetaljer } from '../ideer/oppgaver'
-import { ENDRINGSLOGG } from '../data/endringslogg'
+import { hentHeleLoggen } from '../data/endringslogg'
+
+/** Hele loggen, slik byggingen delte den i sider. */
+const ENDRINGSLOGG = await hentHeleLoggen()
 
 function profil(id: string, fornavn: string, etternavn: string, ekstra: Partial<Profil> = {}): Profil {
   return {

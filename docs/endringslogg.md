@@ -242,6 +242,23 @@ ikke GitHub om noe.
 - Datoen i loggen er datoen (norsk tid) for commiten som tok endringen inn i
   `main`.
 
+## Slik får appen loggen
+
+Byggingen gir appen loggen i to deler (`src/drift/endringsmoduler.ts`), så
+den ikke lastes med appen hver gang:
+
+- **Fra start** har appen bare et merke per føring (versjon, ID, dato og
+  varselmerker) og de hele føringene som varsles i bjella. Det er nok til
+  versjonsnummeret, bjella, «Viktig nytt» og oppgavenes knapp til loggen.
+- **Selve føringene** er delt i sider på ti, hver i sin egen pakke, som hentes
+  først når loggen åpnes (`src/domain/endringssider.ts`). Loggvinduet viser de
+  ti nyeste, og «Vis flere» henter ti til. Åpnes det på en bestemt føring,
+  hentes alle fram til den. Sidene telles fra den eldste, så en ny føring
+  endrer bare den øverste pakken.
+
+Appen leser loggen gjennom `src/data/endringslogg.ts`, aldri arkivet direkte:
+byggingen stopper hvis arkivet havner i en pakke.
+
 ## Tilbakerulling og retting
 
 - En publisert føring fjernes aldri, og den får aldri nytt navn eller nytt ledd.

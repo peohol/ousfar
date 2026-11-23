@@ -104,6 +104,12 @@ kjøringen uten at passordet skrives inn.
   mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
   direktemeldingene står på i den lokale databasen mens den går, og valgene,
   blokkeringene og samtalen mellom de to fra før slettes først.
+- `npx vite-node src/__tests__/qa/endringsloggnettleser.ts` er
+  nettleserkontrollen av endringsloggen (`docs/endringslogg.md`, «Slik får
+  appen loggen»): ingen side av loggen hentes før den åpnes, den viser de ti
+  nyeste med fokus på den øverste, og «Vis flere» med tastaturet henter ti til
+  og flytter fokuset til den første av dem, på PC, mobil og i mørk modus. Bare
+  administratoren; `QA_SKJERMBILDER=<mappe>`.
 - `npx vite-node src/__tests__/qa/knappenettleser.ts` er nettleserkontrollen
   av knappene (`docs/designsystem.md`, «Knapper»): «Gå til
   gruppeoversikten», «Til gruppen», «Åpne hele stoffregisteret», «Tilbake til

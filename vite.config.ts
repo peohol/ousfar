@@ -9,6 +9,7 @@ import { systemvalgskript } from './src/domain/systemvalg'
 import { medInnholdsregler } from './src/drift/sikkerhetshoder'
 import { HISTORISKE_ENDRINGER } from './src/data/endringshistorikk'
 import { beregnNyeEndringer, ENDRINGSMAPPE } from './src/drift/endringshistorikk'
+import { ENDRINGSMODUL, registermodul, sidemodul, sidenummer } from './src/drift/endringsmoduler'
 import { endringsomrader, nyesteVersjon, oppdateringsversjon, type Endring } from './src/domain/versjon'
 import { settSammen } from './src/domain/versjonering'
 import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/byggopplysninger'
@@ -16,9 +17,16 @@ import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/byggopplys
 /**
  * Modulene appen leser bygget og de nummererte endringene fra. De er to, så
  * opplysningene om bygget kan nå innloggingssiden uten at endringsloggen
- * følger med utenfor innloggingsveggen.
+ * følger med utenfor innloggingsveggen. Endringsloggen har i tillegg én modul
+ * per side, som appen henter når den vises (`src/drift/endringsmoduler.ts`).
  */
-const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: 'virtual:ousfar-endringer' } as const
+const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: ENDRINGSMODUL } as const
+
+/** Det frosne arkivet over de eldre føringene, som bare byggingen leser. */
+const ARKIVFIL = '/src/data/endringshistorikk.ts'
+
+/** Sant for modulene byggingen lager selv. */
+const erVirtuell = (id: string) => Object.values(MODULER).includes(id as never) || sidenummer(id) !== null
 
 /**
  * Identiteten og versjonene til bygget, i appen som `BYGG` og i
@@ -40,7 +48,7 @@ function versjonsfil(): Plugin {
   // Uten det vanlige `\0` foran: da står modulene med navn i kildekartene, og
   // kontrollen av innloggingsveggen (`scripts/kontroller-vegg.mjs`) ser hvor de havnet.
   const virtuell = (id: string) => id
-  let beregnet: { nye: Endring[]; logg: Endring[]; bygg: Byggopplysninger } | undefined
+  let beregnet: { logg: Endring[]; bygg: Byggopplysninger } | undefined
   const beregn = () => {
     if (beregnet) return beregnet
     const nye = beregnNyeEndringer(rot)
@@ -50,15 +58,16 @@ function versjonsfil(): Plugin {
       versjon: nyesteVersjon(logg),
       oppdatering: oppdateringsversjon(logg),
     }
-    return (beregnet = { nye, logg, bygg })
+    return (beregnet = { logg, bygg })
   }
   return {
     name: 'ousfar-versjonsfil',
-    resolveId: (id) => (Object.values(MODULER).includes(id as never) ? virtuell(id) : undefined),
+    resolveId: (id) => (erVirtuell(id) ? virtuell(id) : undefined),
     load(id) {
       if (id === virtuell(MODULER.bygg)) return `export const BYGG = ${JSON.stringify(beregn().bygg)}\n`
-      if (id === virtuell(MODULER.endringer)) return `export const NYE_ENDRINGER = ${JSON.stringify(beregn().nye)}\n`
-      return undefined
+      if (id === virtuell(MODULER.endringer)) return registermodul(beregn().logg)
+      const side = sidenummer(id)
+      return side === null ? undefined : sidemodul(beregn().logg, side)
     },
     // I utviklingsserveren: en ny eller endret endringsfil gir ny nummerering med en gang.
     configureServer(server) {
@@ -67,15 +76,21 @@ function versjonsfil(): Plugin {
       server.watcher.on('all', (_hendelse, fil) => {
         if (!fil.startsWith(mappe)) return
         beregnet = undefined
-        for (const id of Object.values(MODULER)) {
-          const node = server.moduleGraph.getModuleById(virtuell(id))
-          if (node) server.moduleGraph.invalidateModule(node)
+        for (const node of server.moduleGraph.idToModuleMap.values()) {
+          if (node.id && erVirtuell(node.id)) server.moduleGraph.invalidateModule(node)
         }
         server.ws.send({ type: 'full-reload' })
       })
     },
     generateBundle(_valg, pakker) {
       const { logg, bygg } = beregn()
+      // Arkivet er stort, og appen skal få loggen bare gjennom sidene den
+      // henter når loggen vises. Importerer appen det direkte, er alt med.
+      for (const p of Object.values(pakker)) {
+        if (p.type === 'chunk' && p.moduleIds.some((id) => id.endsWith(ARKIVFIL))) {
+          this.error(`${ARKIVFIL} er med i ${p.fileName}. Appen skal lese endringsloggen gjennom src/data/endringslogg.ts.`)
+        }
+      }
       // Hoveddelen, den med `App`; sidene den henter senere, hentes når de vises.
       const klinisk = Object.values(pakker).find(
         (p) => p.type === 'chunk' && medApp(p.moduleIds),

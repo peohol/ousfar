@@ -105,6 +105,32 @@ export interface Endring extends HistoriskEndring {
   forelopig?: true
 }
 
+/** Merkene som avgjør om en føring varsles, og hvordan. */
+export type Varselmerker = Pick<Endringsinnhold, 'endrerFortolkning' | 'varsleFunksjonsendring' | 'kritiskFagligVarsel' | 'utenVarsel'>
+
+/** Navnene på varselmerkene, i den rekkefølgen de står i en føring. */
+export const VARSELMERKER = ['endrerFortolkning', 'varsleFunksjonsendring', 'kritiskFagligVarsel', 'utenVarsel'] as const satisfies readonly (keyof Varselmerker)[]
+
+/**
+ * Det appen alltid har om hver føring, uten å hente selve loggen: nok til
+ * versjonsnummeret, varslene og oppslagene fra oppgavene
+ * (`src/data/endringslogg.ts`). Teksten hentes først når loggen åpnes.
+ */
+export type Endringsmerke = Pick<Endring, 'id' | 'versjon' | 'dato'> & Varselmerker
+
+/** Merket til en føring: ID-en, versjonen, datoen og varselmerkene den har. */
+export function endringsmerke(endring: Endring): Endringsmerke {
+  const merke: Endringsmerke = { id: endring.id, versjon: endring.versjon, dato: endring.dato }
+  for (const navn of VARSELMERKER) if (endring[navn]) merke[navn] = true
+  return merke
+}
+
+/**
+ * Så mange føringer endringsloggen viser om gangen, og så mange hver av
+ * delene byggingen deler den i, har (`versjonsfil()` i `vite.config.ts`).
+ */
+export const ENDRINGER_PER_SIDE = 10
+
 /**
  * Versjonen appen kjører: den øverste føringen i endringsloggen.
  *
@@ -112,7 +138,7 @@ export interface Endring extends HistoriskEndring {
  * enn loggen gjør. Versjonen i `package.json` er en fast, intern verdi og
  * har ingenting med denne å gjøre.
  */
-export function nyesteVersjon(logg: readonly HistoriskEndring[]): string {
+export function nyesteVersjon(logg: readonly Pick<HistoriskEndring, 'versjon'>[]): string {
   const nyeste = logg[0]
   if (!nyeste) throw new Error('Endringsloggen er tom — appen har ingen versjon å vise')
   return nyeste.versjon
@@ -123,7 +149,7 @@ export function nyesteVersjon(logg: readonly HistoriskEndring[]): string {
  * oppdateringsmeldingen, ikke hva som vises i bjella.
  * Endret fortolkning og kritiske faglige meldinger går foran `utenVarsel`.
  */
-export function varsles(endring: Endringsinnhold): boolean {
+export function varsles(endring: Varselmerker): boolean {
   return !endring.utenVarsel || endring.endrerFortolkning === true || endring.kritiskFagligVarsel === true
 }
 
@@ -133,7 +159,7 @@ export function varsles(endring: Endringsinnhold): boolean {
  * Kritiske faglige meldinger og endret fortolkningsresultat kan ikke
  * undertrykkes av `utenVarsel`.
  */
-export function varslesIBjella(endring: Endringsinnhold): boolean {
+export function varslesIBjella(endring: Varselmerker): boolean {
   return (
     endring.endrerFortolkning === true ||
     endring.kritiskFagligVarsel === true ||
