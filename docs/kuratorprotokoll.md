@@ -61,9 +61,10 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    kortformen «2005-08» i kildelisten; «2005–2007» finnes ikke i dokumentet.
    Referansens egen tittel sier det samme. Kilden oppgir spennet som en del av
    prosjektets navn ved hver datalinje, og oppgir ingen annen periode; den
-   dokumenterer altså ikke i seg selv en egen datainnsamlingsperiode. Knytter
-   en setning på fagsiden årstallene til dataene, er det likevel 2005–2008 som
-   skrives, etter fagansvarligs avgjørelse. Skriver en fagside 2005–2007, er
+   dokumenterer altså ikke i seg selv når prøvene ble samlet inn. Årstallene
+   skrives derfor slik kilden oppgir dem, som en del av prosjektets navn («i
+   Referanseområdeprosjektet 2005–2008»), og aldri som en bekreftet
+   prøvetakings- eller innsamlingsperiode. Skriver en fagside 2005–2007, er
    det arvet fra importfilene (sak #528), ikke fra kilden. At AGNP eller en annen
    internasjonal kilde gir et annet område, er derfor ingen grunn til å
    stoppe, sperre eller spørre fagansvarlig. Tyder en kilde ellers på at en
@@ -615,9 +616,11 @@ holder dem i takt med modellen og piloten).
   sier det samme. 16 publiserte sider skrev 2005–2007, arvet fra importfilene
   (sak #528); vaktmesteren rettet dem. Ingen krav er svekket: ingen
   referanseområde, persentil eller dose er endret, bare perioden.
-  En tittel med et årstallsspenn er ellers ikke i seg selv belegg for en
-  datainnsamlingsperiode (ChatGPT-kontrollen av PR #527); her er belegget
-  kildedokumentet.
+  To forbehold fra ChatGPT-kontrollen av PR #527 står i regelen: en tittel med
+  et årstallsspenn er ikke i seg selv belegg for en datainnsamlingsperiode, og
+  kilden oppgir spennet som en del av prosjektets navn, ikke som en
+  prøvetakingsperiode. Årstallene skrives derfor som prosjektbetegnelse, slik
+  at regelen ikke tvinger fram en påstand kilden ikke dokumenterer.
 - 2026-11-23: krav 8 og «Farmakogenetikk i teksten» (fagansvarligs avgjørelse,
   sakene #533 og #437): CYPinfo er den eneste automatiske farmakogenetiske
   kilden, og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
