@@ -19,7 +19,7 @@ import {
   type Forbindelsesregister,
 } from '../kjemi/forbindelser'
 import { behandlePubchemSynk } from '../kjemi/endepunkt'
-import { kurerForbindelse, navnenokkel, type Uavhengig } from '../kjemi/kurering'
+import { gsrssok, gsrstreff, kurerForbindelse, navnenokkel, type Uavhengig } from '../kjemi/kurering'
 import { lagKjemilager } from '../kjemi/lager'
 import { lagKjemileser, lesKjemiutvalg, type Kjemileser } from '../kjemi/lesing'
 import { lagPubchemApi, lesPubchemrad, skjelett, type PubchemApi } from '../kjemi/pubchem'
@@ -254,7 +254,7 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
       uavklart: { grunn: 'Treffet i PubChem (Citalopram hydrobromide) er et salt eller en blanding.' },
     })
     expect(await kurerForbindelse(CITALOPRAM, kurering(pubchem({ citalopram: [2771] }), []))).toMatchObject({
-      uavklart: { grunn: 'Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Citalopram).', kandidater: [2771] },
+      uavklart: { grunn: 'Ingen uavhengig kilde (GSRS, ChEBI) bekrefter treffet i PubChem (Citalopram).', kandidater: [2771] },
     })
     expect(await kurerForbindelse(CITALOPRAM, kurering(pubchem({}), []))).toMatchObject({ uavklart: { kandidater: [] } })
     // En uavhengig kilde med en annen forbindelse er ingen bekreftelse.
@@ -288,6 +288,31 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
       },
     )
     expect(spurt).toEqual(['nordoxepin', 'desmethyldoxepin', 'Nordoxepin hydro'])
+  })
+
+  it('leser GSRS-treffene: bare kjemiske substanser med gyldig InChIKey, med UNII-koden som ID', () => {
+    // Syntetisk svar i formen GSRS gir (`content`, `approvalID`, `structure._inchiKey`).
+    const svar = {
+      total: 4,
+      content: [
+        { uuid: 'u1', approvalID: 'UC6VBE7V1Z', _name: 'Methadone', structure: { _inchiKey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' } },
+        { uuid: 'u2', approvalID: null, _name: 'Uten UNII', structure: { _inchiKey: 'AAAAAAAAAAAAAA-UHFFFAOYSA-N' } },
+        { uuid: 'u3', approvalID: 'PROTEIN001', _name: 'Et protein' },
+        { uuid: 'u4', approvalID: 'FEIL000001', structure: { _inchiKey: 'ikke-en-inchikey' } },
+      ],
+    }
+    expect(gsrstreff(svar)).toEqual([
+      { kilde: 'GSRS', id: 'UC6VBE7V1Z', inchikey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' },
+      { kilde: 'GSRS', id: 'u2', inchikey: 'AAAAAAAAAAAAAA-UHFFFAOYSA-N' },
+    ])
+    for (const tomt of [null, {}, { content: 'x' }, { content: [] }]) expect(gsrstreff(tomt)).toEqual([])
+  })
+
+  it('søker i GSRS bare på det nøyaktige navnet, uten tegn som kan endre spørringen', () => {
+    const url = new URL(gsrssok('O-desmethylvenlafaxine'))
+    expect(url.origin + url.pathname).toBe('https://gsrs.ncats.nih.gov/api/v1/substances/search')
+    expect(url.searchParams.get('q')).toBe('root_names_name:"^O-DESMETHYLVENLAFAXINE$"')
+    expect(new URL(gsrssok('a"b\\c')).searchParams.get('q')).toBe('root_names_name:"^ABC$"')
   })
 
   it('sammenligner navn uten ChEBIs HTML-merking og greske bokstaver', () => {

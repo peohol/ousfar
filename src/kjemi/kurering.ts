@@ -8,7 +8,7 @@
  *
  * 1. PubChem har nøyaktig én forbindelse med navnet, og den er én kovalent
  *    enhet (ikke et salt eller en blanding), med mindre forbindelsen er et salt;
- * 2. minst én uavhengig kilde — ClinPGx' henvisning til PubChem, eller ChEBI
+ * 2. minst én uavhengig kilde — FDAs stoffregister GSRS (UNII) eller ChEBI,
  *    med samme navn — har samme skjelett (første blokk i InChIKey); og
  *    navnene som slås opp der, er det engelske navnet, synonymene i datafilen
  *    og PubChems tittel på treffet; og
@@ -18,19 +18,15 @@
  *
  * Alt annet er uavklart, med grunnen og kandidatene, til noen har vurdert det.
  */
-import type { Forbindelse, Pubchemkobling, Uavklart } from './forbindelser.js'
+import { INCHIKEY, type Forbindelse, type Pubchemkobling, type Uavklart } from './forbindelser.js'
 import { lesPubchemrad, skjelett, type Pubchemdata, type PubchemApi } from './pubchem.js'
 
 /** En uavhengig kilde sitt bud på forbindelsen. */
 export interface Uavhengig {
-  kilde: 'ClinPGx' | 'ChEBI'
-  /** Kildens egen ID: PA… eller CHEBI:… */
+  kilde: 'GSRS' | 'ChEBI'
+  /** Kildens egen ID: UNII-koden i GSRS, eller CHEBI:… */
   id: string
   inchikey: string
-  /** CID-en kilden viser til, når den gjør det. */
-  cid?: number
-  /** Saltet kilden egentlig viser til, når `cid` er moderforbindelsen PubChem oppgir for det. */
-  salt?: number
 }
 
 export interface Kurering {
@@ -61,6 +57,28 @@ export function navnenokkel(navn: string): string {
 
 const likeNavn = (a: string, b: string) => navnenokkel(a) === navnenokkel(b)
 
+/**
+ * Treffene i et søk i GSRS (FDAs Global Substance Registration System) på
+ * nøyaktig ett navn ({@link gsrssok}): kjemiske substanser med struktur, med
+ * UNII-koden som ID. GSRS er kuratert av FDA og henter ikke strukturene fra
+ * PubChem, så det er en uavhengig kontroll.
+ */
+export function gsrstreff(svar: unknown): Uavhengig[] {
+  const innhold = (svar as { content?: unknown } | null)?.content
+  if (!Array.isArray(innhold)) return []
+  return innhold.flatMap((s: { uuid?: unknown; approvalID?: unknown; structure?: { _inchiKey?: unknown } }) => {
+    const inchikey = s.structure?._inchiKey
+    const id = typeof s.approvalID === 'string' && s.approvalID ? s.approvalID : s.uuid
+    return typeof inchikey === 'string' && INCHIKEY.test(inchikey) && typeof id === 'string' ? [{ kilde: 'GSRS' as const, id, inchikey }] : []
+  })
+}
+
+/** Søket i GSRS etter substansene som har nøyaktig dette navnet (alle navnene en substans har, uansett store og små bokstaver). */
+export function gsrssok(navn: string): string {
+  const sporring = `root_names_name:"^${navn.toUpperCase().replace(/["\\]/g, '')}$"`
+  return `https://gsrs.ncats.nih.gov/api/v1/substances/search?q=${encodeURIComponent(sporring)}&top=10`
+}
+
 export async function kurerForbindelse(
   f: Pick<Forbindelse, 'engelsk' | 'form' | 'synonymer'>,
   k: Kurering,
@@ -87,8 +105,7 @@ export async function kurerForbindelse(
     pubchem: { cid: p.cid, inchikey: p.inchikey, formel: p.formel, kontrollert: k.idag, grunnlag },
     data: p,
   })
-  const beskriv = (u: Uavhengig) =>
-    `${u.kilde} (${u.id}${u.salt ? `, saltet CID ${u.salt} med moderforbindelse CID ${u.cid}` : u.cid ? `, CID ${u.cid}` : ''})`
+  const beskriv = (u: Uavhengig) => `${u.kilde} (${u.id})`
 
   if (samme.length > 0) {
     return kobling(`Eneste treff i PubChem for «${f.engelsk}»; samme InChIKey hos ${samme.map(beskriv).join(' og ')}.`)
@@ -103,7 +120,7 @@ export async function kurerForbindelse(
     return {
       uavklart: {
         grunn: `${sammeSkjelett.map(beskriv).join(' og ')} har samme skjelett med en annen stereokjemi, og PubChem-treffet (${p.tittel}) er ikke PubChems post for navnet.`,
-        kandidater: [p.cid, ...sammeSkjelett.flatMap((u) => (u.cid ? [u.cid] : []))],
+        kandidater: [p.cid],
       },
     }
   }
@@ -111,11 +128,11 @@ export async function kurerForbindelse(
     return {
       uavklart: {
         grunn: `${uavhengige.map(beskriv).join(' og ')} har en annen forbindelse enn PubChem for «${f.engelsk}».`,
-        kandidater: [p.cid, ...uavhengige.flatMap((u) => (u.cid ? [u.cid] : []))],
+        kandidater: [p.cid],
       },
     }
   }
   return {
-    uavklart: { grunn: `Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (${p.tittel}).`, kandidater: [p.cid] },
+    uavklart: { grunn: `Ingen uavhengig kilde (GSRS, ChEBI) bekrefter treffet i PubChem (${p.tittel}).`, kandidater: [p.cid] },
   }
 }
