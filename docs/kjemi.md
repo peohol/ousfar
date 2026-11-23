@@ -78,18 +78,14 @@ koblingene som står, nevner fortsatt ClinPGx der det var den som bekreftet
 dem; koblingene er ikke endret. Kontrollen med GSRS og ChEBI av alle
 forbindelsene 23.11.2026 (`--alle`) ga 154 verifisert, 0 uavklart og 0 avvik
 fra koblingene som står: også de 21 som bare hadde ClinPGx som uavhengig
-kilde, bekreftes av GSRS, og GSRS bekrefter nå også de tre som var uavklart
-(tabellen under). De tre kobles i en egen endring med `--skriv`.
+kilde, bekreftes av GSRS.
 
 Kontrollert 8. oktober 2026: 135 av 136 forbindelser er koblet; psilocybin og
 psilocin ble koblet 21. oktober 2026. De 16 fagsidene for OUSFAR Verktøy fikk
-hver sin forbindelse 27. oktober 2026; 14 ble koblet. Uavklart:
-
-| Forbindelse | Hvorfor |
-| --- | --- |
-| Desmetylklomipramin | PubChem har én forbindelse for «desmethylclomipramine» (CID 622606, Norclomipramine), men verken ClinPGx eller ChEBI har den, så ingen uavhengig kilde bekrefter den |
-| Dosulepin | PubChem har «dosulepin» (CID 5284550), men verken ClinPGx eller ChEBI har stoffet under navnet |
-| Penfluridol | PubChem har «penfluridol» (CID 33630), men verken ClinPGx eller ChEBI har stoffet under navnet |
+hver sin forbindelse 27. oktober 2026; 14 ble koblet. De tre som sto uavklart
+fordi verken ClinPGx eller ChEBI hadde dem (desmetylklomipramin, dosulepin og
+penfluridol), ble koblet 23. november 2026: GSRS har samme InChIKey som
+PubChem for alle tre. Alle 154 forbindelser er nå koblet; ingen står uavklart.
 
 ## Synkroniseringen
 
