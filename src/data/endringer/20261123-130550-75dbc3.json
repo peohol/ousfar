@@ -1,0 +1,14 @@
+{
+  "id": "20261123-130550-75dbc3",
+  "semver": "patch",
+  "opprettet": "2026-11-23T13:05:50Z",
+  "sammendrag": "Klargjort for å stanse ClinPGx når overgangen til CYPinfo er godkjent",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring brukerne ser. Når ClinPGx senere stanses, er det én endring: da vises ingenting fra ClinPGx på fagsidene eller i søket, og seksjonen «Farmakogenetikk» viser bare det redaksjonelle og CYPinfo."
+  ],
+  "utenVarsel": true
+}

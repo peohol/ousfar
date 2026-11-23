@@ -57,6 +57,10 @@ export function farmakogenetikksoketekster(tilstand: Farmakogenetikktilstand): T
  * detaljkort. Dataene fra ClinPGx er referanseinformasjon; de kan ikke
  * redigeres, og kildene står i seksjonens referansefelt (se
  * `src/clinpgx/referanser.ts`). Koblingen står her, i redigeringsmodus.
+ *
+ * Når ClinPGx er stanset (`STANSEDE_KILDER`), har appen ingen leser for
+ * ClinPGx: da vises verken dataene eller koblingen, og seksjonen regnes som
+ * tom og oppsummeres uten ClinPGx, selv om siden fortsatt har koblingen.
  */
 export function Farmakogenetikkpanel({
   definisjon,
@@ -80,8 +84,9 @@ export function Farmakogenetikkpanel({
 }) {
   const elementer = kortelementer(kontekst, definisjon.nokkel)
   const tekst = panelteksten(kontekst, definisjon.nokkel)
+  const clinpgx = !!useFaginnholdskilde().farmakogenetikk
   const { kobling } = finnClinpgxkobling(kontekst.modell)
-  const koblet = kobling.kjemikalier.length > 0
+  const koblet = clinpgx && kobling.kjemikalier.length > 0
   const visning = tilstand.status === 'klar' ? tilstand.visning : null
   const cypinfooppsummering = cypinfo.status === 'klar' ? oppsummerCypinfo(cypinfo.visning) : null
   return (
@@ -104,7 +109,7 @@ export function Farmakogenetikkpanel({
         elementer={elementer}
         ettAlene={!koblet && !cypinfooppsummering && tekst.tomt}
       />
-      {kontekst.redigerer && (
+      {clinpgx && kontekst.redigerer && (
         <Clinpgxkobling definisjon={definisjon} kontekst={kontekst} grunnlag={grunnlag} sidenavn={sidenavn} onHentet={onHentet} />
       )}
       <Cypinfovisning tilstand={cypinfo} />

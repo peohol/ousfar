@@ -6,7 +6,7 @@
  * et nivå OUSFAR ikke kjenner, utelates i stedet for å vises halvt.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { STANSEDE_KILDER, stansFor } from '../datakilder/stans'
+import { omIBruk, STANSEDE_KILDER } from '../datakilder/stans'
 import { erObjekt } from '../datakilder/struktur'
 import { erNiva, type Genfenotype, type Genresultatdata, type Legemiddeldata, type Niva } from './modell'
 
@@ -89,5 +89,5 @@ export function lagCypinfoleser(klient: SupabaseClient): Cypinfoleser {
 
 /** Leseren, eller `undefined` når CYPinfo er stanset (`STANSEDE_KILDER`): da vises ingenting fra CYPinfo. */
 export function lagCypinfoleserOmIBruk(klient: SupabaseClient, stansede = STANSEDE_KILDER): Cypinfoleser | undefined {
-  return stansFor('cypinfo', stansede) ? undefined : lagCypinfoleser(klient)
+  return omIBruk('cypinfo', () => lagCypinfoleser(klient), stansede)
 }

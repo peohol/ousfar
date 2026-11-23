@@ -11,7 +11,7 @@
  * - `koblet_liste`: legemiddelet mangler FEST-ID i CYPinfo og er koblet i
  *   listen, etter en vurdering;
  * - `metabolitt`: siden er en metabolitt og kobles aldri til moderstoffets
- *   oppføring (de samme sidene som for ClinPGx, og Hydroksyrisperidon);
+ *   oppføring (`metabolittsider.ts`);
  * - `uavklart`: navnet eller et alias på siden er navnet på et legemiddel i
  *   CYPinfo som ikke er koblet noe sted. Det må vurderes, og testen feiler til
  *   det er gjort;
@@ -19,8 +19,8 @@
  *
  * Modulen brukes av testene og dokumentasjonen, ikke av appen.
  */
-import { UKOBLEDE_STOFFSIDER } from './clinpgxdekning'
 import { CYPINFOKOBLINGER, type Cypinfokobling } from './cypinfokoblinger'
+import { metabolittgrunn, METABOLITTSIDER } from './metabolittsider'
 
 export const CYPINFO_DEKNINGSSTATUSER = {
   koblet_fest: 'Koblet til CYPinfo med FEST-ID-en',
@@ -54,21 +54,9 @@ export interface Cypinfodekning {
   grunn: string
 }
 
-/** Metabolittsider ClinPGx-oversikten ikke har, med moderstoffet. */
-const EGNE_METABOLITTER: readonly { side: string; moderstoff: string; grunn: string }[] = [
-  {
-    side: 'Hydroksyrisperidon',
-    moderstoff: 'Risperidon',
-    grunn: 'Aktiv metabolitt av risperidon og samme stoff som paliperidon. CYPinfos oppføring for paliperidon står på Paliperidon.',
-  },
-]
-
-/** Metabolittsidene, med grunnen. */
+/** Metabolittsidene, med grunnen (`metabolittsider.ts`). */
 export function metabolittsider(): Map<string, string> {
-  const fraClinpgx = UKOBLEDE_STOFFSIDER.flatMap((u) =>
-    u.status === 'metabolitt' ? [[u.side, `Metabolitt${u.moderstoff.side ? ` av ${u.moderstoff.side.toLowerCase()}` : ''}.`] as const] : [],
-  )
-  return new Map([...fraClinpgx, ...EGNE_METABOLITTER.map((m) => [m.side, m.grunn] as const)])
+  return new Map(METABOLITTSIDER.map((m) => [m.side, metabolittgrunn(m)]))
 }
 
 /** Navnet slik det sammenlignes: små bokstaver, uten aksenter, parenteser og tegn. */

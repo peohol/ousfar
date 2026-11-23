@@ -18,6 +18,7 @@ import {
   type Dekning,
 } from '../faginnhold/clinpgxdekning'
 import { ALLE_CLINPGXKOBLINGER, CLINPGXKOBLINGSIMPORTER } from '../faginnhold/clinpgxkoblinger'
+import { METABOLITTSIDER } from '../faginnhold/metabolittsider'
 import { ELEMENTTYPER, lesClinpgxkobling } from '../faginnhold/paneler'
 import { kjorMigrasjoner, migrasjonsfiler, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
@@ -71,6 +72,14 @@ describe('dekningsoversikten', () => {
       if (moder?.status === 'krever_kuratering') {
         expect(moder.kandidater.map((k) => k.clinpgx_id), u.side).toContain(u.moderstoff.clinpgx_id)
       }
+    }
+  })
+
+  it('har de samme metabolittene og moderstoffene som den kildeuavhengige listen', () => {
+    // Listen i metabolittsider.ts står når ClinPGx avvikles (#437); til da må de to være like.
+    const felles = new Map(METABOLITTSIDER.map((m) => [m.side, m.moderstoff]))
+    for (const u of UKOBLEDE_STOFFSIDER) {
+      if (u.status === 'metabolitt') expect(felles.get(u.side), u.side).toBe(u.moderstoff.side)
     }
   })
 

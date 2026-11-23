@@ -1,7 +1,9 @@
 /**
  * Datakildene som er stanset på ubestemt tid: ingen henting kjøres, verken
  * planlagt eller av en administrator, og appen leser og viser ingenting fra
- * dem. Dataene er slettet fra databasen i samme omgang (`docs/datakilder.md`).
+ * dem (`docs/datakilder.md`). Om dataene slettes fra databasen, er en egen
+ * beslutning: CPICs ble slettet i samme omgang, mens ClinPGx' står til de
+ * slettes med Peders ja (#540).
  *
  * Å ta en kilde i bruk igjen er å fjerne den her og legge den planlagte
  * jobben tilbake; første henting laster da alt på nytt fra en tom kopi. CPIC
@@ -26,6 +28,15 @@ export const STANSEDE_KILDER: Readonly<Partial<Record<Datakilde, Stans>>> = {
 
 export function stansFor(kilde: Datakilde, stansede = STANSEDE_KILDER): Stans | null {
   return stansede[kilde] ?? null
+}
+
+/**
+ * Det `lag` gir, eller `undefined` når kilden er stanset. Appen bygger
+ * leserne for en kilde gjennom denne, så en stanset kilde verken leses eller
+ * vises: uten leser er kilden `ingen` på fagsidene og ute av søket.
+ */
+export function omIBruk<T>(kilde: Datakilde, lag: () => T, stansede = STANSEDE_KILDER): T | undefined {
+  return stansFor(kilde, stansede) ? undefined : lag()
 }
 
 /** «Stanset 06.11.2026. <grunn> Ingenting hentes eller vises fra <navn>.» */

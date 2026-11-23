@@ -2815,6 +2815,28 @@ describe('farmakogenetikken fra ClinPGx', () => {
     expect(k.farmakogenetikk.les).not.toHaveBeenCalled()
   })
 
+  it('viser verken dataene eller koblingen når ClinPGx er stanset, selv om siden er koblet', async () => {
+    // Uten leser for ClinPGx, slik appen settes opp når ClinPGx står i STANSEDE_KILDER.
+    vis('amitriptylin', kilde({ data: medPgx({ redaksjonelt: false }) }))
+    await finnVerdi('10–20 nmol/L')
+    expect(screen.queryByRole('region', { name: 'Farmakogenetikk' })).toBeNull()
+  })
+
+  it('oppsummerer og åpner det redaksjonelle kortet alene når ClinPGx er stanset, og skjuler koblingen i redigeringen', async () => {
+    const user = userEvent.setup()
+    vis('amitriptylin', kilde({ kanRedigere: true, data: medPgx() }))
+    await finnVerdi('10–20 nmol/L')
+    // Den lukkede seksjonen oppsummerer bare det redaksjonelle kortet.
+    expect(skuffen('Farmakogenetikk').closest('section')?.textContent).toContain('CYP-enzymer (substrat)')
+    await apneSkuff(user, 'Farmakogenetikk')
+    expect(skuffen('CYP-enzymer (substrat)').getAttribute('aria-expanded')).toBe('true')
+    expect(screen.getByRole('region', { name: 'Farmakogenetikk' }).textContent).not.toContain('ClinPGx')
+    await user.click(screen.getByRole('button', { name: 'Rediger' }))
+    await apneSkuff(user, 'Farmakogenetikk')
+    expect(screen.queryByRole('button', { name: 'Legg til: Koblingen til ClinPGx' })).toBeNull()
+    expect(screen.queryByText(/Koblet til ClinPGx/)).toBeNull()
+  })
+
   it('viser de redaksjonelle kortene først, så retningslinjene, preparatomtalene og de kliniske annotasjonene', async () => {
     const user = userEvent.setup()
     const k = pgxkilde({ data: medPgx() })

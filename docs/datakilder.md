@@ -200,7 +200,7 @@ En kilde kan stanses på ubestemt tid i `src/datakilder/stans.ts`
 (`STANSEDE_KILDER`, med dato og grunn). Da hentes ingenting: den planlagte
 jobben tas ut av `vercel.json` (eller arbeidsflyten), og endepunktet svarer
 410 med grunnen (`stansetSvar`), også for administratorer. Appen leser ingenting
-fra kilden, så den ikke vises noe sted, og funksjonstesten melder den som ikke
+fra kilden (leserne lages gjennom `omIBruk`), så den ikke vises noe sted, og funksjonstesten melder den som ikke
 aktuell. Panelet viser den som **Stanset** med grunnen.
 
 **CPIC er stanset fra 6.11.2026**, etter Peders beslutning: dataene skal
