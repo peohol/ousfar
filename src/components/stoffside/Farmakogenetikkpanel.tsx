@@ -38,14 +38,20 @@ import { useFaginnholdskilde } from './Faginnholdskilde'
 import { elementAnker, kortelementer, kortoppsummering, Panel, panelteksten, Paneltekst, Redaksjonskort, Redigerbar, type Panelkontekst } from './Paneler'
 import { ClinpgxkoblingSkjema } from './Skjemaer'
 import { Gruppe, Kildelenke } from './Farmakogenetikkdeler'
-import { oppsummerCypinfo } from '../../cypinfo/stoffside'
+import { cypinfosoketekster, oppsummerCypinfo } from '../../cypinfo/stoffside'
 import { Cypinfovisning } from './Cypinfovisning'
 import type { Cypinfotilstand, Farmakogenetikktilstand } from './useFarmakogenetikk'
 import '../../styles/farmakogenetikk.css'
 
-/** Tekstene fra ClinPGx søket på siden finner, med detaljkortet de står i. */
-export function farmakogenetikksoketekster(tilstand: Farmakogenetikktilstand): Tilleggstekst[] {
-  return tilstand.status === 'klar' ? farmakogenetikktekster(tilstand.visning) : []
+/**
+ * Tekstene fra CYPinfo og ClinPGx søket på siden finner, med detaljkortet de
+ * står i, i den rekkefølgen seksjonen viser dem.
+ */
+export function farmakogenetikksoketekster(tilstand: Farmakogenetikktilstand, cypinfo: Cypinfotilstand): Tilleggstekst[] {
+  return [
+    ...(cypinfo.status === 'klar' ? cypinfosoketekster(cypinfo.visning) : []),
+    ...(tilstand.status === 'klar' ? farmakogenetikktekster(tilstand.visning) : []),
+  ]
 }
 
 /**

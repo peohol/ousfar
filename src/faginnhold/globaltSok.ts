@@ -2,13 +2,17 @@
  * Grunnlaget for søket i hele kunnskapsbasen: alle de publiserte sidene,
  * lest i én omgang og indeksert med den samme koden som søket på én side.
  *
- * Dataene kommer fra fem kilder, som leses hver for seg (se {@link lesSokeindeks}):
+ * Dataene kommer fra seks kilder, som leses hver for seg (se {@link lesSokeindeks}):
  *
  * - **sider**: `les_stoffer` gir alle fagsidene på samme form som `les_stoff`.
  * - **preparater** og **interaksjoner**: `les_preparatsok` og
  *   `les_interaksjonssok` gir bare navnene søket finner — preparatnavnene per
  *   legemiddelform og det hver interaksjon er med — for hver side, med de
  *   samme preparatene og interaksjonene som seksjonene på siden viser.
+ * - **cypinfo**: `les_cypinfo` gir CYPinfos anbefalinger for alle
+ *   legemidlene sidene er koblet til, i noen få kall. Hver side får sin del
+ *   (`cypinfoFor`). Bare for dem som ser CYPinfo på fagsidene
+ *   (`CYPINFO_VISES_FOR`); for andre gis kilden ikke.
  * - **farmakogenetikk**: `les_farmakogenetikk_sok` gir dataene for alle
  *   kjemikaliene sidene er koblet til i ClinPGx. Hver side får sin del
  *   (`farmakogenetikkFor`).
@@ -55,12 +59,14 @@ import {
   preparattekster,
 } from '../legemiddeldata/stoffside'
 import { farmakogenetikkFor, type Farmakogenetikkleser, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
+import { cypinfoFor, slaSammenIder, type Cypinfosok, type Cypinfoutvalg } from '../cypinfo/lesing'
+import { byggCypinfovisning, cypinfoForesporsel, cypinfosoketekster } from '../cypinfo/stoffside'
 import { byggFarmakogenetikkvisning, farmakogenetikktekster, kobledeKjemikalier } from '../clinpgx/stoffside'
 import type { Labsokedata, Labsokleser } from '../farmakologiportalen/lesing'
 import { alleLabkomponenter, labsoketeksterFor } from '../farmakologiportalen/stoffside'
 
 /** Kildene søket leser, hver for seg. */
-export type Sokekilde = 'sider' | 'preparater' | 'interaksjoner' | 'farmakogenetikk' | 'laboratorier'
+export type Sokekilde = 'sider' | 'preparater' | 'interaksjoner' | 'cypinfo' | 'farmakogenetikk' | 'laboratorier'
 
 /** Kildene som ikke kunne leses, med feilen. */
 export type Manglende = Partial<Record<Sokekilde, string>>
@@ -80,6 +86,8 @@ export interface Kunnskapsbase {
   preparater?: Perkobling<Preparatsokerad> | null
   /** Interaksjonene på hver side. */
   interaksjoner?: Perkobling<Interaksjonssokerad> | null
+  /** CYPinfos anbefalinger for alle legemidlene sidene er koblet til. */
+  cypinfo?: Cypinfoutvalg | null
   /** ClinPGx-dataene for alle koblingene. */
   farmakogenetikk?: Farmakogenetikkutvalg | null
   /** Laboratorieanalysene fra Farmakologiportalen for alle forbindelsene i registeret. */
@@ -92,11 +100,12 @@ export interface Kunnskapsbase {
 export interface Sokedataversjoner {
   sider?: string
   fest?: string
+  cypinfo?: string
   clinpgx?: string
   laboratorier?: string
 }
 
-const VERSJONSNOKLER = ['sider', 'fest', 'clinpgx', 'laboratorier'] as const satisfies readonly (keyof Sokedataversjoner)[]
+const VERSJONSNOKLER = ['sider', 'fest', 'cypinfo', 'clinpgx', 'laboratorier'] as const satisfies readonly (keyof Sokedataversjoner)[]
 
 export interface Sideleser {
   /** Alle stoffsidene i én tilstand, alfabetisk. */
@@ -109,6 +118,8 @@ export interface Sokekilder {
   /** Navnene på de publiserte fagsidene, lest før sidene selv (stoffregisteret). */
   stoffer?: (() => Promise<readonly Stoffoppforing[]>) | null
   legemidler?: Legemiddelsok | null
+  /** CYPinfo, bare for dem som ser CYPinfo på fagsidene. */
+  cypinfo?: Cypinfosok | null
   farmakogenetikk?: Pick<Farmakogenetikkleser, 'les'> | null
   laboratorier?: Pick<Labsokleser, 'les'> | null
   /** Versjonene. Uten dem leses alt på nytt, og det lagrede brukes bare til det er lest. */
@@ -167,6 +178,7 @@ type Tillegg = Exclude<Sokekilde, 'sider'>
 interface Tilleggsdata {
   preparater: Perkobling<Preparatsokerad>
   interaksjoner: Perkobling<Interaksjonssokerad>
+  cypinfo: Cypinfoutvalg
   farmakogenetikk: Farmakogenetikkutvalg
   laboratorier: Labsokedata
 }
@@ -175,15 +187,20 @@ interface Tilleggskilde<K extends Tillegg> {
   /** Versjonen som sier om de lagrede dataene fortsatt gjelder. */
   versjon: keyof Sokedataversjoner
   /** Det dataene leses for: tom når ingen side er koblet til kilden. */
-  inndata(modeller: readonly Sidemodell[]): string[]
+  inndata(sider: readonly Stoffsidedata[]): string[]
   /** Lesingen, eller `null` når kilden ikke er gitt. */
   leser(kilder: Sokekilder): ((inndata: string[]) => Promise<Tilleggsdata[K]>) | null | undefined
 }
 
-const koblingene = (modeller: readonly Sidemodell[]) =>
-  [...new Set(modeller.map((m) => koblingsnokkel(koblede(m))).filter(Boolean))].sort()
+const koblingene = (sider: readonly Stoffsidedata[]) =>
+  [...new Set(sider.map((s) => koblingsnokkel(koblede(modellFor(s)))).filter(Boolean))].sort()
 
-const kjemikaliene = (modeller: readonly Sidemodell[]) => [...new Set(modeller.flatMap(kobledeKjemikalier))].sort()
+const kjemikaliene = (sider: readonly Stoffsidedata[]) => [...new Set(sider.flatMap((s) => kobledeKjemikalier(modellFor(s))))].sort()
+
+/** ID-ene CYPinfo leses for på siden, som på siden selv (`useCypinfo`): FEST-koblingen og koblingslisten for sidens navn. */
+const cypinfoiderFor = (side: Stoffsidedata) => slaSammenIder(cypinfoForesporsel(koblede(modellFor(side)), side.stoff?.navn ?? ''))
+
+const cypinfoidene = (sider: readonly Stoffsidedata[]) => [...new Set(sider.flatMap(cypinfoiderFor))].sort()
 
 /** Svaret for hver kobling, med koblingen som nøkkel. */
 async function perKobling<T>(
@@ -204,6 +221,11 @@ const TILLEGGSKILDER: { [K in Tillegg]: Tilleggskilde<K> } = {
     versjon: 'fest',
     inndata: koblingene,
     leser: ({ legemidler }) => legemidler && ((nokler) => perKobling(nokler, (s) => legemidler.interaksjoner(s))),
+  },
+  cypinfo: {
+    versjon: 'cypinfo',
+    inndata: cypinfoidene,
+    leser: ({ cypinfo }) => cypinfo && ((ider) => cypinfo.les(ider)),
   },
   farmakogenetikk: {
     versjon: 'clinpgx',
@@ -308,10 +330,9 @@ async function lesSokedata(
 
   /** Tilleggsdataene som er lagret for sidene slik de er nå. */
   async function lagredeTillegg(): Promise<Partial<Kunnskapsbase>> {
-    const modeller = base.sider.map(modellFor)
     const lagret = await Promise.all(
       tilleggskilder.map(async ({ kilde }) => {
-        const inndata = TILLEGGSKILDER[kilde].inndata(modeller)
+        const inndata = TILLEGGSKILDER[kilde].inndata(base.sider)
         return [kilde, inndata.length > 0 ? (await fraLager(kilde, JSON.stringify(inndata)))?.data : undefined] as const
       }),
     )
@@ -350,12 +371,11 @@ async function lesSokedata(
     sett(await lagredeTillegg())
   }
 
-  const modeller = base.sider.map(modellFor)
   const mangler: Manglende = {}
   await Promise.all(
     tilleggskilder.map(async ({ kilde, les }) => {
       const definisjon = TILLEGGSKILDER[kilde]
-      const liste = definisjon.inndata(modeller)
+      const liste = definisjon.inndata(base.sider)
       if (liste.length === 0) return
       const inndata = JSON.stringify(liste)
       const svar = await lesKilde(kilde, inndata, await fraLager(kilde, inndata), versjoner[definisjon.versjon], () =>
@@ -416,15 +436,22 @@ const farmakogenetikkteksteneFor = husket((utvalg: Farmakogenetikkutvalg, nokkel
   farmakogenetikktekster(byggFarmakogenetikkvisning(farmakogenetikkFor(utvalg, nokkel.split(' ')))),
 )
 
+const cypinfoteksteneFor = husket((utvalg: Cypinfoutvalg, nokkel: string) =>
+  cypinfosoketekster(byggCypinfovisning(cypinfoFor(utvalg, JSON.parse(nokkel) as string[]))),
+)
+
 const labteksteneFor = husket((sokedata: Labsokedata, stoff: string) => labsoketeksterFor(stoff, sokedata))
 
 /** Tekstene fra de andre kildene på én side, de samme som søket på siden får. */
-function tilleggstekster(base: Kunnskapsbase, modell: Sidemodell, stoff: string): Tilleggstekst[] {
+function tilleggstekster(base: Kunnskapsbase, side: Stoffsidedata, stoff: string): Tilleggstekst[] {
+  const modell = modellFor(side)
   const kobling = koblingsnokkel(koblede(modell))
   const kjemikalier = kobledeKjemikalier(modell).join(' ')
+  const cypinfoider = base.cypinfo ? cypinfoiderFor(side) : []
   return [
     ...(kobling && base.preparater ? preparatteksteneFor(base.preparater, kobling) : []),
     ...(kobling && base.interaksjoner ? interaksjonsteksteneFor(base.interaksjoner, kobling) : []),
+    ...(cypinfoider.length > 0 && base.cypinfo ? cypinfoteksteneFor(base.cypinfo, JSON.stringify(cypinfoider)) : []),
     ...(kjemikalier && base.farmakogenetikk ? farmakogenetikkteksteneFor(base.farmakogenetikk, kjemikalier) : []),
     ...labtekster(base, stoff),
   ]
@@ -472,7 +499,7 @@ function stoffdokumenter(base: Kunnskapsbase, { registerdata = STOFFREGISTERDATA
       const data = perSlug.get(stoff.slug)
       const modell = data ? modellFor(data) : TOM_MODELL
       const identitet = stoffidentitet(stoff)
-      return indekserSide(identitet, modell, data ? tilleggstekster(base, modell, stoff.slug) : labtekster(base, stoff.slug))
+      return indekserSide(identitet, modell, data ? tilleggstekster(base, data, stoff.slug) : labtekster(base, stoff.slug))
     },
   }
 }

@@ -42,6 +42,7 @@ import { Uthevingskilde } from '../Uthev'
 import { festreferanser } from '../../legemiddeldata/referanser'
 import { slaSammenAutomatiske, ventendeKilder } from '../../faginnhold/referanser'
 import { clinpgxreferanser } from '../../clinpgx/referanser'
+import { cypinforeferanser } from '../../cypinfo/referanser'
 import { kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
 import { Farmakogenetikkpanel as FarmakogenetikkpanelRen, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
 import { useBivirkninger, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
@@ -212,7 +213,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   const sideforbindelser = useMemo(() => kjemi.rader.map((r) => r.forbindelse), [kjemi])
   // Visningen av bivirkningene styrer også hvilke kort søket på siden peker på.
   const [bivirkningsvisning, setBivirkningsvisning] = useBevart<Visning>('bivirkningsvisning', 'frekvens')
-  // Redaksjonelle og automatiske referanser (FEST, ClinPGx og preparatomtalene) nummereres sammen.
+  // Redaksjonelle og automatiske referanser (FEST, CYPinfo, ClinPGx og de andre kildene) nummereres sammen.
   // Mens en kilde hentes, venter numrene fra panelet dens og utover, så ingen vist nummer endres når den kommer.
   const univers = useMemo(
     () =>
@@ -222,7 +223,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
           ventendeKilder({
             [PREPARATPANEL]: [legemidler],
             [INTERAKSJONSPANEL]: [legemidler, interaksjoner],
-            [FARMAKOGENETIKKPANEL]: [pgx],
+            [FARMAKOGENETIKKPANEL]: [cypinfo, pgx],
             [BIVIRKNINGSPANEL]: [bivirkninger],
             [LABPANEL]: [laboratorier],
             [KJEMIPANEL]: [kjemi],
@@ -231,13 +232,14 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             legemidler.status === 'klar' ? legemidler.utvalg : null,
             interaksjoner.status === 'klar' ? interaksjoner.oversikt : null,
           ),
+          cypinforeferanser(cypinfo.status === 'klar' ? cypinfo.visning : null),
           clinpgxreferanser(pgx.status === 'klar' ? pgx.utvalg : null, pgx.status === 'klar' ? pgx.visning : null),
           bivirkningsreferanser(bivirkninger.status === 'klar' ? bivirkninger.utvalg : null),
           fpreferanser(laboratorier),
           pubchemreferanser(kjemi),
         ),
       ),
-    [modell, legemidler, interaksjoner, pgx, bivirkninger, kjemi, laboratorier],
+    [modell, legemidler, interaksjoner, cypinfo, pgx, bivirkninger, kjemi, laboratorier],
   )
   const grunnlag = useMemo(
     () => koblingsgrunnlag(legemidler.status === 'klar' ? legemidler.utvalg : null, koblet),
@@ -266,7 +268,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             [
               ...preparatsoketekster(legemidler),
               ...interaksjonssoketekster(interaksjoner),
-              ...farmakogenetikksoketekster(pgx),
+              ...farmakogenetikksoketekster(pgx, cypinfo),
               ...bivirkningssoketekster(bivirkninger, bivirkningsvisning),
               ...labsoketekster(laboratorier),
               ...kjemisoketekster(kjemi),
@@ -274,7 +276,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             konsentrasjon,
           )
         : [],
-    [soker, slug, navn, kjent, modell, legemidler, interaksjoner, pgx, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
+    [soker, slug, navn, kjent, modell, legemidler, interaksjoner, cypinfo, pgx, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
   )
   // Det et forslag kan gjelde: det publiserte på siden, slik leseren ser det.
   const visesPublisert = modus === 'lese' && !utgave && side.status === 'klar' && side.tilstand === 'publisert'

@@ -3521,6 +3521,8 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     return { ...kilde({ data: bareKobling }), legemidler: legemiddelleser(), cypinfo }
   }
   const SYSTEMARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true }
+  /** Til den lukkede seksjonen sier hvilke gener CYPinfo har; romslig ventetid når mange tester kjører samtidig. */
+  const cypinfoHentet = () => screen.findByText(/CYPinfo: CYP2C19, CYP2D6/, {}, { timeout: 3000 })
 
   it('leser og viser ingenting fra CYPinfo for den som ikke er systemarkitekt', async () => {
     const k = cypinfokilde()
@@ -3536,11 +3538,11 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     vis('amitriptylin', k, { rettigheter: SYSTEMARKITEKT })
     await waitFor(() => expect(k.cypinfo.les).toHaveBeenCalledWith(['ID_AMI'], []))
     // Den lukkede seksjonen sier hvilke gener CYPinfo har.
-    expect(await screen.findByText(/CYPinfo: CYP2C19, CYP2D6/)).toBeTruthy()
+    await cypinfoHentet()
     await apneSkuff(user, 'Farmakogenetikk')
     expect(screen.getByRole('heading', { name: 'Anbefalinger fra CYPinfo' })).toBeTruthy()
     expect(screen.getByText(/Vises foreløpig bare for systemarkitekter/)).toBeTruthy()
-    expect(screen.getByRole('link', { name: /cypinfo\.no/ }).getAttribute('href')).toBe('https://cypinfo.no')
+    expect(within(screen.getByText(/For en pasients eget resultat/)).getByRole('link', { name: /cypinfo\.no/ }).getAttribute('href')).toBe('https://cypinfo.no')
     await apneSkuff(user, 'amitriptylin')
     const kort = document.getElementById(elementAnker('cypinfo-amitriptylin'))!
     expect(within(kort).getByText('CYP2C19 og CYP2D6 sammen')).toBeTruthy()
@@ -3553,5 +3555,46 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     expect(within(anbefalinger[1]!).getByText('Endret dosebehov eller bytte av legemiddel')).toBeTruthy()
     expect(within(anbefalinger[1]!).getByText('Andre avsnitt.')).toBeTruthy()
     expect(within(kort).getByText(/Kilde: CYPinfo, kontrollert/)).toBeTruthy()
+  })
+
+  it('står i referansefeltet til seksjonen for systemarkitektene, og ellers ikke', async () => {
+    const user = userEvent.setup()
+    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT })
+    await cypinfoHentet()
+    await apneSkuff(user, 'Farmakogenetikk')
+    const felt = skuffen('Farmakogenetikk').closest('section')!.querySelector('.referansefelt--panel')!
+    expect(felt.textContent).toMatch(/Anbefalinger fra CYPinfo, gjengitt uendret, sist kontrollert 18\. november 2026/)
+    const liste = screen.getByRole('region', { name: 'Referanser' })
+    const cypinfo = within(liste).getAllByRole('listitem').find((r) => r.textContent?.startsWith('CYPinfo'))!
+    expect(within(cypinfo).getByText('Automatisk fra CYPinfo')).toBeTruthy()
+    cleanup()
+
+    vis('amitriptylin', cypinfokilde())
+    await screen.findByText(/3 preparater|Preparater/)
+    expect(screen.queryByText(/Automatisk fra CYPinfo/)).toBeNull()
+  })
+
+  it('finnes av søket på siden for systemarkitektene, som åpner kortet treffet står i', async () => {
+    const user = userEvent.setup()
+    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT })
+    await cypinfoHentet()
+    await user.type(screen.getByRole('searchbox', { name: 'Søk på denne siden' }), 'Andre avsnitt{Enter}')
+    await waitFor(() => expect(skuffen('amitriptylin').getAttribute('aria-expanded')).toBe('true'))
+    expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('finnes ikke av søket på siden for andre', async () => {
+    const user = userEvent.setup()
+    const k = cypinfokilde()
+    vis('amitriptylin', k)
+    await waitFor(() => expect(k.legemidler.les).toHaveBeenCalled())
+    await user.type(screen.getByRole('searchbox', { name: 'Søk på denne siden' }), 'Andre avsnitt')
+    await waitFor(() => expect(screen.getByRole('status').textContent).toMatch(/Ingen treff/))
+  })
+
+  it('åpner kortet fra en direktelenke', async () => {
+    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT, sted: ['farmakogenetikk', 'cypinfo-amitriptylin'] })
+    await waitFor(() => expect(skuffen('amitriptylin').getAttribute('aria-expanded')).toBe('true'))
+    expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
   })
 })
