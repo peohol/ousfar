@@ -82,7 +82,12 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    strukturerte bivirkningene vises av appen selv. De kopieres ikke inn i
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
-   kvitteres aldri ut som bestått.
+   kvitteres aldri ut som bestått. **CYPinfo er en slik kontroll i dag:**
+   funksjonstesten leser FEST, ClinPGx, PubChem og de andre, ikke CYPinfo
+   (`src/kuratorjobb/funksjonstest.ts`), så en grønn funksjonstest bekrefter
+   ikke CYPinfo-visningen. Kontrollen av den står som gjenstående til
+   verifikasjonen er på plass i Dev-sporet (sak 437) og den faglige
+   akseptkontrollen av visningen er gjennomført.
    CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
    (fagansvarligs avgjørelse, sakene 533 og 437). ClinPGx, CPIC og DPWG er
    dermed ikke lenger automatiske lag, men vanlige vitenskapelige kilder, og
@@ -379,23 +384,30 @@ dekker 75 legemidler, og et forhold CYPinfo ikke har, vises ikke av appen i
 det hele tatt. Derfor kan et farmakogenetisk forhold omtales redaksjonelt, og
 det er ikke en duplisering av et automatisk lag.
 
-- **Når det skrives:** forholdet er klinisk vesentlig, dokumentasjonen er
-  tilstrekkelig, og CYPinfo dekker det ikke. Terskelen er en retningslinje med
-  en reell anbefaling (CPIC, DPWG og liknende), en preparatomtale der testing
-  er påkrevd eller anbefalt, eller en klinisk annotasjon på det høyeste
-  evidensnivået. At CPIC, ClinPGx eller DPWG omtaler et gen–legemiddel-par, er
-  ikke i seg selv grunn til å omtale det: en opplysning uten handling for
-  leseren er støy (fagansvarligs bestilling i sak #533).
-- **Hva som ikke skrives:** et forhold CYPinfo dekker for det samme
-  legemiddelet, og en systematisk gjengivelse av alt CPIC eller ClinPGx har.
-  Dekker CYPinfo ett gen for legemiddelet og en retningslinje et annet, gjelder
-  dette bare det andre genet, og teksten sier hvilket.
-  Dette gjelder **fra visningen av CYPinfo er slått på for alle brukere**
-  (`CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`, etappe E i
-  `docs/cypinfo-integrasjon.md`). Så lenge CYPinfo bare vises for
-  systemarkitektene, er det ingen grunn til å ta ut eller la være å skrive en
-  handlingsrettet tekst: klinikeren ser ikke laget ennå. Står teksten der fra
-  før, blir den stående.
+- **Når det skrives:** forholdet er klinisk vesentlig, og dokumentasjonen er
+  tilstrekkelig. Terskelen er en retningslinje med en reell anbefaling (CPIC,
+  DPWG og liknende), en preparatomtale der testing er påkrevd eller anbefalt,
+  eller en klinisk annotasjon på det høyeste evidensnivået. At CPIC, ClinPGx
+  eller DPWG omtaler et gen–legemiddel-par, er ikke i seg selv grunn til å
+  omtale det: en opplysning uten handling for leseren er støy, og skal ikke
+  inn i teksten (fagansvarligs bestilling i sak #533). Dette er et
+  utvalgskriterium kontrolløren håndhever, ikke et råd.
+- **Overlapp med CYPinfo avhenger av fasen.** Dette er den ene regelen om
+  overlapp, og kontrollørinstruksen gjentar den. Hvilken fase som gjelder,
+  leses av `CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts` (etappe E i
+  `docs/cypinfo-integrasjon.md`).
+  - **Mens CYPinfo bare vises for systemarkitektene** (`systemarkitekter`): at
+    CYPinfo dekker forholdet, er ingen grunn til å la teksten være. Klinikeren
+    ser ikke laget ennå, så terskelen over er det eneste som avgjør.
+  - **Fra visningen er slått på for alle** (`alle`): et forhold CYPinfo dekker
+    for det samme legemiddelet, skrives ikke på nytt. Dekker CYPinfo ett gen
+    for legemiddelet og en retningslinje et annet, gjelder dette bare det andre
+    genet, og teksten sier hvilket. Tekst som alt står der, blir stående ved
+    overgangen, men er fra da av en vaktmesteroppgave: den strykes, eller den
+    sier uttrykkelig hvem som sier hva, så siden ikke ser ut til å motsi seg
+    selv (krav 6).
+- **Hva som ikke skrives i noen fase:** en systematisk gjengivelse av alt CPIC
+  eller ClinPGx har.
 - **Hvordan:** kort tekst som skiller mellom hva genotypen eller varianten gjør
   med legemiddelresponsen, hva som gjøres når et prøvesvar alt finnes, og når
   det er grunn til å rekvirere en genetisk undersøkelse. Kilden er
@@ -593,3 +605,10 @@ holder dem i takt med modellen og piloten).
   svekket: kravene om kilde til hver påstand, om at ingenting finnes på, og om
   at et automatisk lag ikke dupliseres, gjelder uendret, og en opplysning uten
   handling for leseren skrives fortsatt ikke.
+- 2026-11-23: «Farmakogenetikk i teksten»: overlappen med CYPinfo står nå som
+  én faseavhengig regel, lest av `CYPINFO_VISES_FOR`, i stedet for ett vilkår
+  i terskelen og et unntak i punktet under. Krav 8 sier dessuten at
+  funksjonstesten ennå ikke dekker CYPinfo, så den kontrollen står som
+  gjenstående. Ingen krav er svekket: regelen er den samme i begge faser som
+  før, og utvalgskriteriet om handling for leseren er strammet, ikke løsnet,
+  ved at kontrolløren sperrer på det.

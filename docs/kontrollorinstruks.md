@@ -98,6 +98,9 @@ teksten med kuratorprotokollen etter.
      Farmakologiportalen og de strukturerte bivirkningene) kontrolleres med
      funksjonstesten, ikke mot originalkildene. Se at den er bestått, og at
      det den ikke dekker, står som gjenstående i evidensjournalen.
+     Funksjonstesten dekker ennå ikke CYPinfo, så en grønn funksjonstest er
+     ingen bekreftelse av CYPinfo-visningen. Se at den kontrollen står som
+     gjenstående, og kvitter den ikke ut (krav 8).
    - **Farmakogenetikk i teksten** (protokollen, «Farmakogenetikk i teksten»):
      CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden,
      og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
@@ -108,9 +111,14 @@ teksten med kuratorprotokollen etter.
      en kilde mangler en oppføring. At CYPinfo dekker det samme forholdet, er
      først en innvending når visningen av CYPinfo er slått på for alle
      brukere; til da ser ikke klinikeren laget, og en overlapp med
-     ClinPGx-kortene som fortsatt vises, er ventet i overgangen. En tekst uten
-     handling for leseren er en merknad, ikke en sperre, med mindre den er feil
-     eller ukildet.
+     ClinPGx-kortene som fortsatt vises, er ventet i overgangen. Fasen leses av
+     `CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`, og protokollen har den
+     samme regelen.
+     Handling for leseren er et **utvalgskriterium i protokollen**, ikke et
+     råd: gir teksten leseren ingenting å gjøre, er det et sperrende funn som
+     et annet brudd på terskelen. Det ene unntaket er teksten der handlingen
+     finnes, men er svak eller indirekte. Da er avveiningen kuratorens, og du
+     fester en merknad i stedet for å sperre.
    - **Konsentrasjonene** (protokollen, «Konsentrasjonene i teksten»):
      `npm run kontrollor -- konsentrasjoner <gren>` lister de merkede
      konsentrasjonene med det som hindrer omregningen, og tallene med en
