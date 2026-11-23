@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useKilde, type Kildetilstand } from './useKilde'
 import type { Farmakogenetikkutvalg } from '../../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, type Farmakogenetikkvisning } from '../../clinpgx/stoffside'
-import { lagDiplotypeindeks, type Diplotypeindeks } from '../../cpic/diplotype'
-import type { Cpicutvalg } from '../../cpic/lesing'
 import type { Cypinfoutvalg } from '../../cypinfo/lesing'
 import { byggCypinfovisning, cypinfoForesporsel, type Cypinfovisning } from '../../cypinfo/stoffside'
-import { byggCpicvisning, type Cpicvisning } from '../../cpic/stoffside'
 import { useFaginnholdskilde } from './Faginnholdskilde'
 import type { Bivirkningsdata } from '../../bivirkninger/modell'
 import { byggBivirkningsvisning, type Bivirkningsvisning } from '../../bivirkninger/stoffside'
@@ -19,7 +16,6 @@ import { byggLabvisning, labkomponenter, type Labvisning } from '../../farmakolo
 export type { Kildetilstand } from './useKilde'
 
 export type Farmakogenetikktilstand = Kildetilstand<Farmakogenetikkutvalg, Farmakogenetikkvisning>
-export type Cpictilstand = Kildetilstand<Cpicutvalg, Cpicvisning>
 export type Cypinfotilstand = Kildetilstand<Cypinfoutvalg, Cypinfovisning>
 export type Bivirkningstilstand = Kildetilstand<Bivirkningsdata, Bivirkningsvisning>
 
@@ -29,11 +25,6 @@ export type Medstatus<V> = V & { status: Kildetilstand<unknown, unknown>['status
 /** ClinPGx-dataene for kjemikaliene siden er koblet til, ordnet slik seksjonen «Farmakogenetikk» viser dem. */
 export function useFarmakogenetikk(koblet: readonly string[]) {
   return useKilde(useFaginnholdskilde().farmakogenetikk, koblet, byggFarmakogenetikkvisning)
-}
-
-/** CPIC-dataene for de samme kjemikaliene, etter ClinPGx-ID-en CPIC oppgir for legemidlene. */
-export function useCpic(koblet: readonly string[]) {
-  return useKilde(useFaginnholdskilde().cpic, koblet, byggCpicvisning)
 }
 
 /** Merket foran CYPinfo-ID-ene i listen `useKilde` får, så de skilles fra FEST-ID-ene. */
@@ -124,41 +115,4 @@ export function useBivirkninger(stoff: string) {
   const enKilde = useMemo(() => leser && { les: (nokler: readonly string[]) => leser.les(nokler[0]!) }, [leser])
   const nokler = useMemo(() => [stoff], [stoff])
   return useKilde(enKilde, nokler, byggBivirkningsvisning)
-}
-
-export type Diplotypetilstand =
-  | { status: 'ingen' }
-  | { status: 'laster' }
-  | { status: 'klar'; indeks: Diplotypeindeks }
-  | { status: 'feil'; feil: string }
-
-/**
- * CPICs tabell fra diplotype til resultat for genet, når `gen` er satt.
- * Hentes én gang per gen (leseren husker den); bare gensymbolet sendes.
- * `utgave` sier hvilke CPIC-data siden viser (`cpicutgave`): når den endres,
- * etter at en administrator har hentet fra CPIC, leses tabellen på nytt.
- */
-export function useDiplotyper(gen: string | null, utgave: string): Diplotypetilstand {
-  const leser = useFaginnholdskilde().cpic
-  const [tilstand, setTilstand] = useState<Diplotypetilstand>({ status: 'ingen' })
-  useEffect(() => {
-    if (!leser || !gen) {
-      setTilstand({ status: 'ingen' })
-      return
-    }
-    let gjelder = true
-    setTilstand({ status: 'laster' })
-    leser
-      .diplotyper(gen)
-      .then((grunnlag) => {
-        if (gjelder) setTilstand({ status: 'klar', indeks: lagDiplotypeindeks(grunnlag) })
-      })
-      .catch((e: Error) => {
-        if (gjelder) setTilstand({ status: 'feil', feil: e.message })
-      })
-    return () => {
-      gjelder = false
-    }
-  }, [leser, gen, utgave])
-  return tilstand
 }

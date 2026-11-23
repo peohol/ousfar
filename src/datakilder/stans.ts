@@ -4,7 +4,9 @@
  * dem. Dataene er slettet fra databasen i samme omgang (`docs/datakilder.md`).
  *
  * Å ta en kilde i bruk igjen er å fjerne den her og legge den planlagte
- * jobben tilbake; første henting laster da alt på nytt fra en tom kopi.
+ * jobben tilbake; første henting laster da alt på nytt fra en tom kopi. CPIC
+ * tas ikke i bruk igjen: koden er fjernet (#437), og den står her bare så
+ * «Datakilder» viser den som stanset til skjemaet er slettet.
  */
 import type { Datakilde } from './status'
 
