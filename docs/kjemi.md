@@ -56,11 +56,13 @@ uavhengige kilder (`src/kjemi/kurering.ts`). Et navnetreff alene er aldri nok:
 
 1. PubChem må ha **nøyaktig én** forbindelse med navnet, og den må være én
    kovalent enhet (ikke et salt eller en blanding), med mindre formen er `salt`.
-2. Minst én uavhengig kilde må ha samme InChIKey: ClinPGx' henvisning til
-   PubChem (et salt der byttes med moderforbindelsen PubChem oppgir), eller
-   ChEBI med samme navn. Navnene som slås opp der, er det engelske navnet,
-   `synonymer` i datafilen og PubChems tittel på treffet; HTML-merking og greske
-   bokstaver i ChEBIs navn regnes ikke med.
+2. Minst én uavhengig kilde må ha samme InChIKey: FDAs stoffregister GSRS
+   (Global Substance Registration System, med UNII-koden), der en substans har
+   nøyaktig navnet som ett av sine navn, eller ChEBI med samme navn. Navnene som
+   slås opp, er det engelske navnet, `synonymer` i datafilen og PubChems tittel
+   på treffet; HTML-merking og greske bokstaver i ChEBIs navn regnes ikke med.
+   GSRS er kuratert av FDA og henter ikke strukturene fra PubChem; en post
+   uten UNII-kode regnes ikke med.
 3. Har den uavhengige kilden samme skjelett (første blokk i InChIKey), men en
    annen stereokjemi eller protonering, godtas treffet bare når det er PubChems
    egen post for navnet (tittelen er navnet). Formelen og molekylvekten er da de
@@ -70,15 +72,20 @@ Alt annet blir `uavklart`, med grunnen og kandidatene, til noen har vurdert det.
 Skriptet endrer aldri en kobling som står; avviker kontrollen fra den, skrives
 avviket ut.
 
+Til 23.11.2026 var ClinPGx' henvisning til PubChem den andre uavhengige kilden.
+Den ble byttet med GSRS fordi ClinPGx avvikles (#437, #538). Grunnlaget i
+koblingene som står, nevner fortsatt ClinPGx der det var den som bekreftet
+dem; koblingene er ikke endret. Kontrollen med GSRS og ChEBI av alle
+forbindelsene 23.11.2026 (`--alle`) ga 154 verifisert, 0 uavklart og 0 avvik
+fra koblingene som står: også de 21 som bare hadde ClinPGx som uavhengig
+kilde, bekreftes av GSRS.
+
 Kontrollert 8. oktober 2026: 135 av 136 forbindelser er koblet; psilocybin og
 psilocin ble koblet 21. oktober 2026. De 16 fagsidene for OUSFAR Verktøy fikk
-hver sin forbindelse 27. oktober 2026; 14 ble koblet. Uavklart:
-
-| Forbindelse | Hvorfor |
-| --- | --- |
-| Desmetylklomipramin | PubChem har én forbindelse for «desmethylclomipramine» (CID 622606, Norclomipramine), men verken ClinPGx eller ChEBI har den, så ingen uavhengig kilde bekrefter den |
-| Dosulepin | PubChem har «dosulepin» (CID 5284550), men verken ClinPGx eller ChEBI har stoffet under navnet |
-| Penfluridol | PubChem har «penfluridol» (CID 33630), men verken ClinPGx eller ChEBI har stoffet under navnet |
+hver sin forbindelse 27. oktober 2026; 14 ble koblet. De tre som sto uavklart
+fordi verken ClinPGx eller ChEBI hadde dem (desmetylklomipramin, dosulepin og
+penfluridol), ble koblet 23. november 2026: GSRS har samme InChIKey som
+PubChem for alle tre. Alle 154 forbindelser er nå koblet; ingen står uavklart.
 
 ## Synkroniseringen
 

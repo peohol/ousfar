@@ -138,9 +138,10 @@ vi.mock('../components/ideer/idevisning', () => ({ visIde }))
 vi.mock('../components/endringsloggvisning', () => ({ visEndringslogg }))
 vi.mock('../components/diskusjoner/diskusjonsvisning', () => ({ visDiskusjon }))
 vi.mock('../components/grupper/gruppevisning', () => gruppevisning)
-vi.mock('../data/endringslogg', () => ({
-  ENDRINGSLOGG: [endring('2.1.0', 'Varsler i toppmenyen'), endring('2.0.0', 'Noe eldre')],
-}))
+vi.mock('../data/endringslogg', () => {
+  const logg = [endring('2.1.0', 'Varsler i toppmenyen'), endring('2.0.0', 'Noe eldre')]
+  return { ENDRINGSREGISTER: logg, VARSLEDE_ENDRINGER: logg }
+})
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
 const { merkEndringerLestIBjella } = await import('../varsler/bjella')

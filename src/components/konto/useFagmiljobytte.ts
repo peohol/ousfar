@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import {
+  arbeidskontekst,
   kanVelgeArbeidsfagmiljo,
   useOppdaterRettigheter,
   useRettigheter,
@@ -7,6 +8,7 @@ import {
   type Fagmiljoreferanse,
   type Rettigheter,
 } from '../../auth/rettigheter'
+import { forhentPaneler } from '../forside/Forsidepanel'
 
 /**
  * Byttet av fagmiljøet brukeren arbeider i (arbeidsfagmiljøet), felles for
@@ -14,6 +16,8 @@ import {
  * kontrollerer og lagrer valget, og rettighetene byttet gir, tas i bruk med en
  * gang, så appen aldri fortolker med det forrige fagmiljøet etter at serveren
  * har byttet. En systemarkitekt blir ikke medlem av et fagmiljø hen velger.
+ * Panelene på forsiden begynner å hentes for det nye fagmiljøet med det samme,
+ * mens katalogen for det hentes.
  */
 export function useFagmiljobytte(velg: (fagmiljo: string) => Promise<Rettigheter> = velgArbeidsfagmiljo) {
   const rettigheter = useRettigheter()
@@ -31,7 +35,9 @@ export function useFagmiljobytte(velg: (fagmiljo: string) => Promise<Rettigheter
       setBytter(f.id)
       setFeil(false)
       try {
-        oppdater(await velg(f.id))
+        const nye = await velg(f.id)
+        forhentPaneler(arbeidskontekst(nye, true))
+        oppdater(nye)
         return true
       } catch {
         setFeil(true)

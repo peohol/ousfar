@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
-import { PANELER } from '../../faginnhold/paneler'
+import { FARMAKOGENETIKKPANEL, PANELER } from '../../faginnhold/paneler'
 import { taRedigeringsonske } from '../../faginnhold/redigeringsonske'
 import { indekserSide, sokeord, stoffidentitet } from '../../faginnhold/sok'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
@@ -41,11 +41,10 @@ import { Sidesok } from './Sidesok'
 import { Uthevingskilde } from '../Uthev'
 import { festreferanser } from '../../legemiddeldata/referanser'
 import { slaSammenAutomatiske, ventendeKilder } from '../../faginnhold/referanser'
-import { clinpgxlitteratur, clinpgxreferanser } from '../../clinpgx/referanser'
-import { cpicreferanser } from '../../cpic/referanser'
-import { FARMAKOGENETIKKPANEL, kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
+import { clinpgxreferanser } from '../../clinpgx/referanser'
+import { kobledeKjemikalier, koblingsgrunnlag } from '../../clinpgx/stoffside'
 import { Farmakogenetikkpanel as FarmakogenetikkpanelRen, farmakogenetikksoketekster } from './Farmakogenetikkpanel'
-import { useBivirkninger, useCpic, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
+import { useBivirkninger, useCypinfo, useFarmakogenetikk, useKjemi, useLaboratorieanalyser, useMolvekter } from './useFarmakogenetikk'
 import { Konsentrasjonskilde, konsentrasjonIEnhet } from './Konsentrasjon'
 import { useMaleenhet } from '../../enheter/Maleenhet'
 import { finnNoder, NODER } from '../../faginnhold/riktekst'
@@ -200,8 +199,6 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   const kjemikalier = useMemo(() => kobledeKjemikalier(modell), [modell])
   const farmakogenetikk = useFarmakogenetikk(kjemikalier)
   const pgx = farmakogenetikk.tilstand
-  const cpic = useCpic(kjemikalier)
-  const cpictilstand = cpic.tilstand
   const cypinfo = useCypinfo(koblet, navn, cypinfoSynlig(useRettigheter())).tilstand
   const bivirkninger = useBivirkninger(slug).tilstand
   const kjemi = useKjemi(slug)
@@ -215,7 +212,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
   const sideforbindelser = useMemo(() => kjemi.rader.map((r) => r.forbindelse), [kjemi])
   // Visningen av bivirkningene styrer også hvilke kort søket på siden peker på.
   const [bivirkningsvisning, setBivirkningsvisning] = useBevart<Visning>('bivirkningsvisning', 'frekvens')
-  // Redaksjonelle og automatiske referanser (FEST, ClinPGx, CPIC og preparatomtalene) nummereres sammen.
+  // Redaksjonelle og automatiske referanser (FEST, ClinPGx og preparatomtalene) nummereres sammen.
   // Mens en kilde hentes, venter numrene fra panelet dens og utover, så ingen vist nummer endres når den kommer.
   const univers = useMemo(
     () =>
@@ -225,7 +222,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
           ventendeKilder({
             [PREPARATPANEL]: [legemidler],
             [INTERAKSJONSPANEL]: [legemidler, interaksjoner],
-            [FARMAKOGENETIKKPANEL]: [pgx, cpictilstand],
+            [FARMAKOGENETIKKPANEL]: [pgx],
             [BIVIRKNINGSPANEL]: [bivirkninger],
             [LABPANEL]: [laboratorier],
             [KJEMIPANEL]: [kjemi],
@@ -234,18 +231,13 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             legemidler.status === 'klar' ? legemidler.utvalg : null,
             interaksjoner.status === 'klar' ? interaksjoner.oversikt : null,
           ),
-          // CPIC står over ClinPGx i «Farmakogenetikk», og elementene nummereres i denne rekkefølgen.
-          cpicreferanser(
-            cpictilstand.status === 'klar' ? cpictilstand.visning : null,
-            clinpgxlitteratur(pgx.status === 'klar' ? pgx.visning : null),
-          ),
           clinpgxreferanser(pgx.status === 'klar' ? pgx.utvalg : null, pgx.status === 'klar' ? pgx.visning : null),
           bivirkningsreferanser(bivirkninger.status === 'klar' ? bivirkninger.utvalg : null),
           fpreferanser(laboratorier),
           pubchemreferanser(kjemi),
         ),
       ),
-    [modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, kjemi, laboratorier],
+    [modell, legemidler, interaksjoner, pgx, bivirkninger, kjemi, laboratorier],
   )
   const grunnlag = useMemo(
     () => koblingsgrunnlag(legemidler.status === 'klar' ? legemidler.utvalg : null, koblet),
@@ -274,7 +266,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             [
               ...preparatsoketekster(legemidler),
               ...interaksjonssoketekster(interaksjoner),
-              ...farmakogenetikksoketekster(pgx, cpictilstand),
+              ...farmakogenetikksoketekster(pgx),
               ...bivirkningssoketekster(bivirkninger, bivirkningsvisning),
               ...labsoketekster(laboratorier),
               ...kjemisoketekster(kjemi),
@@ -282,7 +274,7 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
             konsentrasjon,
           )
         : [],
-    [soker, slug, navn, kjent, modell, legemidler, interaksjoner, pgx, cpictilstand, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
+    [soker, slug, navn, kjent, modell, legemidler, interaksjoner, pgx, bivirkninger, bivirkningsvisning, kjemi, laboratorier, konsentrasjon],
   )
   // Det et forslag kan gjelde: det publiserte på siden, slik leseren ser det.
   const visesPublisert = modus === 'lese' && !utgave && side.status === 'klar' && side.tilstand === 'publisert'
@@ -482,13 +474,10 @@ function Innhold({ stoff: slug, sted, register, onLukk, utgave }: StoffsideProps
                             definisjon={definisjon}
                             kontekst={kontekst}
                             tilstand={pgx}
-                            cpic={cpictilstand}
                             cypinfo={cypinfo}
                             grunnlag={grunnlag}
                             sidenavn={navn}
-                            sted={sted}
                             onHentet={farmakogenetikk.lesPaNytt}
-                            onCpicHentet={cpic.lesPaNytt}
                           />
                         ) : definisjon.nokkel === BIVIRKNINGSPANEL ? (
                           <Bivirkningspanel

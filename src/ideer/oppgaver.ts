@@ -3,8 +3,8 @@
  * språkmodell skal utføre dem etter. Rene funksjoner; kallene står i `api.ts`
  * og reglene i migrasjonen `*_ideer_arkiv_og_oppgaver.sql`.
  */
-import { ENDRINGSLOGG } from '../data/endringslogg'
-import type { Endring } from '../domain/versjon'
+import { ENDRINGSREGISTER } from '../data/endringslogg'
+import type { Endringsmerke } from '../domain/versjon'
 import { finnEndring } from '../domain/versjonering'
 import { erObjekt, tallEllerNull, tekst, tekstEllerNull } from './lesing'
 import { erKategori, erOppgavestatus, type Idekategori, type Oppgavestatus } from './modell'
@@ -108,6 +108,6 @@ export function grupperOppgaver(oppgaver: readonly Oppgave[]): Oppgavegrupper {
  * eldre til versjonen. En oppgave kan være merket utført før endringen er
  * publisert; da finnes ingen føring å vise ennå.
  */
-export function publisertEndring(referanse: string | null): Endring | undefined {
-  return finnEndring(ENDRINGSLOGG, referanse)
+export function publisertEndring(referanse: string | null): Endringsmerke | undefined {
+  return finnEndring(ENDRINGSREGISTER, referanse)
 }

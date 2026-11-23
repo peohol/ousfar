@@ -19,8 +19,11 @@ export type Datakilde = (typeof DATAKILDER)[number]
 
 export interface Kildeoppsett {
   navn: string
-  /** Serverendepunktet som synkroniserer kilden, for cron og for administratorer. */
-  synk: string
+  /**
+   * Serverendepunktet som synkroniserer kilden, for cron og for administratorer.
+   * `null` for en stanset kilde der også endepunktet er fjernet: den kan ikke hentes.
+   */
+  synk: string | null
   /** Hva `versjon` i en kjøring er for kilden. */
   versjonsnavn: string
   /** Versjonen slik den vises, når den ikke skal stå som den er. */
@@ -71,8 +74,9 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     endringslogg: true,
     intervall: 7,
   },
-  // Stanset fra 6.11.2026 (`stans.ts`); jobben står ikke lenger i `vercel.json`.
-  cpic: { navn: 'CPIC', synk: '/api/cpic-synk', versjonsnavn: 'Skjemaversjon', etterFeil: null, endringslogg: true },
+  // Stanset fra 6.11.2026 (`stans.ts`), og endepunktet og koden er fjernet (#437).
+  // Kilden står igjen som «Stanset» i «Datakilder» til skjemaet `cpic` er slettet.
+  cpic: { navn: 'CPIC', synk: null, versjonsnavn: 'Skjemaversjon', etterFeil: null, endringslogg: true },
   // Alt som består kontrollen, byttes inn i én transaksjon (docs/kjemi.md).
   pubchem: { navn: 'PubChem', synk: '/api/pubchem-synk', versjonsnavn: 'Parserversjon', etterFeil: null, endringslogg: true },
   // Hele uttrekket byttes inn i én transaksjon, hver natt fra GitHub Actions
@@ -563,7 +567,9 @@ export function lagDatakildeleser(klient: SupabaseClient, hent: typeof fetch = (
       const { data } = await klient.auth.getSession()
       const token = data.session?.access_token
       if (!token) throw new Error('Du må være logget inn.')
-      return hentIOmganger(hent, KILDEOPPSETT[kilde].synk, token)
+      const { navn, synk } = KILDEOPPSETT[kilde]
+      if (!synk) throw new Error(`${navn} kan ikke hentes lenger.`)
+      return hentIOmganger(hent, synk, token)
     },
   }
 }

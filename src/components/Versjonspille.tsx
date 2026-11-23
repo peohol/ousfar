@@ -1,14 +1,18 @@
 import { useCallback, useEffect } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
-import { ENDRINGSLOGG } from '../data/endringslogg'
-import { nyesteVersjon } from '../domain/versjon'
+import { hentEndringer, VERSJON } from '../data/endringslogg'
+import { ENDRINGER_PER_SIDE } from '../domain/versjon'
 import { Endringslogg } from './Endringslogg'
 import { lyttEtterEndringslogg } from './endringsloggvisning'
 import { Ikon } from './ikon/Ikon'
 import { useTips } from './Tips'
 
-/** Versjonen appen kjører — den øverste føringen i endringsloggen. */
-export const VERSJON = nyesteVersjon(ENDRINGSLOGG)
+/**
+ * De nyeste føringene hentes alt når pekeren eller fokuset kommer til
+ * knappen, så loggen som regel står ferdig når den åpnes. Feiler det, prøver
+ * loggen igjen selv.
+ */
+const forhent = () => void hentEndringer(ENDRINGER_PER_SIDE).catch(() => undefined)
 
 /**
  * Versjonsnummeret med klokka, fast nederst til høyre i vinduet, og veien inn
@@ -49,6 +53,14 @@ export function Versjonspille() {
           setApen(true)
         }}
         {...tips.props}
+        onPointerEnter={() => {
+          forhent()
+          tips.props.onPointerEnter()
+        }}
+        onFocus={(e) => {
+          forhent()
+          tips.props.onFocus(e)
+        }}
       >
         <Ikon navn="history" storrelse={14} />v{VERSJON}
       </button>

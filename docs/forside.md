@@ -10,9 +10,13 @@ Forsiden (`#/`) er der appen åpner. Den har tre deler, ovenfra og ned:
 2. **Fortolkningen**, som den ene hovedhandlingen. «Åpne fortolkning» har fokus
    når siden åpnes, så `Enter` tar brukeren rett inn, og virker før panelene er
    hentet. Den kan ikke skjules eller flyttes.
-3. **Panelene** brukeren har valgt, to i bredden (ett på smal skjerm), hvert
-   med inntil tre hendelser i `Oppsummeringskort`
-   (`src/components/oppsummering/`). Hele raden fører til selve hendelsen:
+3. **Panelene** brukeren har valgt, i to uavhengige kolonner (én på smal
+   skjerm, under 56em): brukerens rekkefølge fordeles annethvert, første
+   øverst til venstre og andre øverst til høyre, og hvert panel står rett
+   under det forrige i sin kolonne, så et høyt panel ikke gir luft i
+   nabokolonnen (`useMurverk`). Panelene flyttes ikke i siden, så tastatur og
+   skjermleser følger brukerens rekkefølge. Hvert panel har inntil tre
+   hendelser i `Oppsummeringskort` (`src/components/oppsummering/`). Hele raden fører til selve hendelsen:
    idéen eller kommentaren, tråden, forslaget, oppgaven, gruppen eller delen av
    fagsiden, ikke til en liste.
 

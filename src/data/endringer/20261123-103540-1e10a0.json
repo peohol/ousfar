@@ -1,0 +1,14 @@
+{
+  "id": "20261123-103540-1e10a0",
+  "semver": "patch",
+  "opprettet": "2026-11-23T10:35:40Z",
+  "sammendrag": "Kontrollen av kjemiske forbindelser bruker FDAs stoffregister i stedet for ClinPGx",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Når en forbindelse kobles til PubChem, bekreftes koblingen nå av FDAs stoffregister (GSRS) og ChEBI i stedet for ClinPGx, som skal avvikles. Alle koblingene som står, er kontrollert på nytt og bekreftet. Ingenting endres på fagsidene."
+  ],
+  "utenVarsel": true
+}

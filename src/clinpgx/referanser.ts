@@ -12,13 +12,13 @@
  * Alt her er rene funksjoner.
  */
 import type { Automatiskekilder, Automatiskelement, Opphavslenke, Referanse } from '../faginnhold/referanser'
+import { FARMAKOGENETIKKPANEL } from '../faginnhold/paneler'
 import { dato, kontrollsum } from '../legemiddeldata/referanser'
 import type { Farmakogenetikkutvalg } from './lesing'
 import { CLINPGX_NETTSTED, type Litteratur } from './modell'
 import {
   annotasjonskort,
   CLINPGX_FORELDET_ETTER_DOGN,
-  FARMAKOGENETIKKPANEL,
   sistHentet,
   type Farmakogenetikkvisning,
 } from './stoffside'
@@ -106,11 +106,6 @@ export function litteraturreferanse(l: Litteratur): Referanse {
     lenke: l.lenke ?? '',
     automatisk: { kilde: CLINPGX },
   }
-}
-
-/** Publikasjonene retningslinjene og preparatomtalene på siden viser til. */
-export function clinpgxlitteratur(visning: Pick<Farmakogenetikkvisning, 'retningslinjer' | 'preparatomtaler'> | null): Litteratur[] {
-  return visning ? [...visning.retningslinjer, ...visning.preparatomtaler].flatMap((a) => a.litteratur) : []
 }
 
 /** Referanse-ID-ene til publikasjonene en annotasjon viser til, uten gjentakelser. */

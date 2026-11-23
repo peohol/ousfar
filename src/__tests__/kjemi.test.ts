@@ -16,10 +16,11 @@ import {
   byggForbindelsesregister,
   FORBINDELSER,
   kontrollerForbindelser,
+  type Forbindelse,
   type Forbindelsesregister,
 } from '../kjemi/forbindelser'
 import { behandlePubchemSynk } from '../kjemi/endepunkt'
-import { kurerForbindelse, navnenokkel, type Uavhengig } from '../kjemi/kurering'
+import { gsrssok, gsrstreff, kurerForbindelse, navnenokkel, type Uavhengig } from '../kjemi/kurering'
 import { lagKjemilager } from '../kjemi/lager'
 import { lagKjemileser, lesKjemiutvalg, type Kjemileser } from '../kjemi/lesing'
 import { lagPubchemApi, lesPubchemrad, skjelett, type PubchemApi } from '../kjemi/pubchem'
@@ -254,7 +255,7 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
       uavklart: { grunn: 'Treffet i PubChem (Citalopram hydrobromide) er et salt eller en blanding.' },
     })
     expect(await kurerForbindelse(CITALOPRAM, kurering(pubchem({ citalopram: [2771] }), []))).toMatchObject({
-      uavklart: { grunn: 'Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Citalopram).', kandidater: [2771] },
+      uavklart: { grunn: 'Ingen uavhengig kilde (GSRS, ChEBI) bekrefter treffet i PubChem (Citalopram).', kandidater: [2771] },
     })
     expect(await kurerForbindelse(CITALOPRAM, kurering(pubchem({}), []))).toMatchObject({ uavklart: { kandidater: [] } })
     // En uavhengig kilde med en annen forbindelse er ingen bekreftelse.
@@ -290,6 +291,31 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
     expect(spurt).toEqual(['nordoxepin', 'desmethyldoxepin', 'Nordoxepin hydro'])
   })
 
+  it('leser GSRS-treffene: bare kjemiske substanser med gyldig InChIKey og UNII-kode, med UNII-koden som ID', () => {
+    // Syntetisk svar i formen GSRS gir (`content`, `approvalID`, `structure._inchiKey`).
+    const svar = {
+      total: 5,
+      content: [
+        { uuid: 'u1', approvalID: 'UC6VBE7V1Z', _name: 'Methadone', structure: { _inchiKey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' } },
+        { uuid: 'u2', approvalID: null, _name: 'Uten UNII', structure: { _inchiKey: 'AAAAAAAAAAAAAA-UHFFFAOYSA-N' } },
+        { uuid: 'u3', approvalID: 'PROTEIN001', _name: 'Et protein' },
+        { uuid: 'u4', approvalID: 'FEIL000001', structure: { _inchiKey: 'ikke-en-inchikey' } },
+        { uuid: 'u5', approvalID: '  ', _name: 'Tom UNII', structure: { _inchiKey: 'BBBBBBBBBBBBBB-UHFFFAOYSA-N' } },
+      ],
+    }
+    expect(gsrstreff(svar)).toEqual([
+      { kilde: 'GSRS', id: 'UC6VBE7V1Z', inchikey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' },
+    ])
+    for (const tomt of [null, {}, { content: 'x' }, { content: [] }]) expect(gsrstreff(tomt)).toEqual([])
+  })
+
+  it('søker i GSRS bare på det nøyaktige navnet, uten tegn som kan endre spørringen', () => {
+    const url = new URL(gsrssok('O-desmethylvenlafaxine'))
+    expect(url.origin + url.pathname).toBe('https://gsrs.ncats.nih.gov/api/v1/substances/search')
+    expect(url.searchParams.get('q')).toBe('root_names_name:"^O-DESMETHYLVENLAFAXINE$"')
+    expect(new URL(gsrssok('a"b\\c')).searchParams.get('q')).toBe('root_names_name:"^ABC$"')
+  })
+
   it('sammenligner navn uten ChEBIs HTML-merking og greske bokstaver', () => {
     expect(navnenokkel('11-nor-9-carboxy-Δ<small><sup>9</small></sup>-tetrahydrocannabinol')).toBe(
       navnenokkel('11-nor-9-carboxy-delta9-tetrahydrocannabinol'),
@@ -301,10 +327,19 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
 
 /* --- Synkroniseringen --------------------------------------------------------- */
 
-/** Et register med forbindelsene i det ekte svaret, koblet slik datafilen kobler dem. */
+/**
+ * Desmetylklomipramin som uavklart (ikke koblet til PubChem), slik den sto før
+ * 23.11.2026. Syntetisk, så testene av de uavklarte ikke avhenger av at
+ * datafilen har noen.
+ */
+const UAVKLART: Forbindelse = (({ pubchem: _koblet, ...f }) => ({ ...f, uavklart: { grunn: 'Test.', kandidater: [622606] } }))(
+  FORBINDELSER.finn('desmetylklomipramin')!,
+)
+
+/** Et register med forbindelsene i det ekte svaret, koblet slik datafilen kobler dem, og en uavklart. */
 function testregister(nokler = ['citalopram', 'desmetylcitalopram', 'thc', 'thc-cooh', 'bupropion']): Forbindelsesregister {
   const valgte = nokler.map((n) => FORBINDELSER.finn(n)!)
-  return byggForbindelsesregister([...valgte, FORBINDELSER.finn('desmetylklomipramin')!])
+  return byggForbindelsesregister([...valgte, UAVKLART])
 }
 
 const falskApi = falskPubchemApi
@@ -521,7 +556,9 @@ describe('visningen på fagsidene', () => {
       ['Desmetylcitalopram', 'metabolitt', 'hentet', '310.4'],
     ])
     expect(kjemioppsummering(visning)).toBe('Citalopram 324,4 g/mol · Desmetylcitalopram 310,4 g/mol')
-    expect(byggKjemivisning('klomipramin', null).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'uavklart'])
+    expect(byggKjemivisning('klomipramin', null).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'ikke_hentet'])
+    const medUavklart = byggForbindelsesregister([FORBINDELSER.finn('klomipramin')!, UAVKLART])
+    expect(byggKjemivisning('klomipramin', null, medUavklart).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'uavklart'])
   })
 
   it('skriver formelen med senkede tall og ladningen hevet', () => {

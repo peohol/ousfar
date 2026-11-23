@@ -684,18 +684,19 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       }
     ],
     "form": "fri",
-    "uavklart": {
-      "grunn": "Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Norclomipramine).",
-      "kandidater": [
-        622606
-      ]
-    },
     "farmakologiportalen": {
-      "status": "usikker",
+      "status": "verifisert",
       "id": "800",
       "navn": "Desmetylklomipramin",
-      "kontrollert": "2026-10-08",
-      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Desmetylklomipramin», ID 800), men forbindelsen har ingen verifisert kobling til PubChem å kontrollere mot."
+      "kontrollert": "2026-11-23",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Desmetylklomipramin», ID 800); CAS-nummeret 303-48-0 er også PubChems (PubChem (CID 622606))."
+    },
+    "pubchem": {
+      "cid": 622606,
+      "inchikey": "VPIXQGUBUKFLRF-UHFFFAOYSA-N",
+      "formel": "C18H21ClN2",
+      "kontrollert": "2026-11-23",
+      "grunnlag": "Eneste treff i PubChem for «desmethylclomipramine»; samme InChIKey hos GSRS (01DN47PPQG)."
     }
   },
   {
@@ -891,18 +892,19 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       }
     ],
     "form": "fri",
-    "uavklart": {
-      "grunn": "Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Dosulepin).",
-      "kandidater": [
-        5284550
-      ]
-    },
     "farmakologiportalen": {
-      "status": "usikker",
+      "status": "verifisert",
       "id": "3207",
       "navn": "Dosulepin",
-      "kontrollert": "2026-10-27",
-      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Dosulepin», ID 3207), men forbindelsen har ingen verifisert kobling til PubChem å kontrollere mot."
+      "kontrollert": "2026-11-23",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Dosulepin», ID 3207); molekylvekten 295,45 g/mol stemmer med PubChem (CID 5284550) (295,4)."
+    },
+    "pubchem": {
+      "cid": 5284550,
+      "inchikey": "PHTUQLWOUWZIMZ-GZTJUZNOSA-N",
+      "formel": "C19H21NS",
+      "kontrollert": "2026-11-23",
+      "grunnlag": "Eneste treff i PubChem for «dosulepin»; samme InChIKey hos GSRS (W13O82Z7HL)."
     }
   },
   {
@@ -3146,17 +3148,18 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       }
     ],
     "form": "fri",
-    "uavklart": {
-      "grunn": "Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Penfluridol).",
-      "kandidater": [
-        33630
-      ]
-    },
     "farmakologiportalen": {
       "status": "uavklart",
       "grunn": "Ingen komponent i Farmakologiportalen har navnet «Penfluridol».",
       "kandidater": [],
       "kontrollert": "2026-10-27"
+    },
+    "pubchem": {
+      "cid": 33630,
+      "inchikey": "MDLAAYDRRZXJIF-UHFFFAOYSA-N",
+      "formel": "C28H27ClF5NO",
+      "kontrollert": "2026-11-23",
+      "grunnlag": "Eneste treff i PubChem for «penfluridol»; samme InChIKey hos GSRS (25TLU22Q8H)."
     }
   },
   {

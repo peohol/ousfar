@@ -144,17 +144,39 @@
   }
 }
 
-/* Panelene: to kolonner på PC, én på nettbrett og mobil. Høyden følger innholdet. */
+/* Panelene: én kolonne på nettbrett og mobil. Høyden følger innholdet. */
 .forside__paneler {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: var(--panelluft);
 }
 
-@media (max-width: 56em) {
+/* På PC to uavhengige kolonner («murverk», `useMurverk`): panelene står i
+   brukerens rekkefølge annethvert til venstre og høyre, og hvert står rett
+   under det forrige i sin kolonne, så et høyt panel ikke gir luft i
+   nabokolonnen. Radene er bare 1 px; hvert panel spenner over så mange som
+   høyden og luften krever. Panelene flyttes ikke i siden, så rekkefølgen for
+   tastatur og skjermleser er brukerens, og ingenting monteres på nytt når
+   bredden krysser grensen. */
+@media not all and (max-width: 56em) {
   .forside__paneler {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1px;
+    grid-auto-flow: row dense;
+    row-gap: 0;
+  }
+
+  .forside__paneler > * {
+    grid-row-end: span var(--spenn, 1);
+  }
+
+  .forside__paneler > :nth-child(odd) {
+    grid-column: 1;
+  }
+
+  .forside__paneler > :nth-child(even) {
+    grid-column: 2;
   }
 }
 

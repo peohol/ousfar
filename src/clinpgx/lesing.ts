@@ -7,6 +7,7 @@
  * (`src/clinpgx/endepunkt.ts`) med administratorens innlogging.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { omIBruk, STANSEDE_KILDER } from '../datakilder/stans'
 import {
   erObjekt,
   lesKlinisk,
@@ -205,4 +206,17 @@ export function lagFarmakogenetikkleser(klient: SupabaseClient, hent: typeof fet
       throw new Error((svar && 'feil' in svar && svar.feil) || `Serveren svarte ${res.status}.`)
     },
   }
+}
+
+/**
+ * Leserne appen bruker, eller `undefined` når ClinPGx er stanset
+ * (`STANSEDE_KILDER`): da leses og vises ingenting fra ClinPGx, verken på
+ * fagsidene, i søket eller i koblingsskjemaet.
+ */
+export function lagFarmakogenetikkleserOmIBruk(klient: SupabaseClient, stansede = STANSEDE_KILDER): Farmakogenetikkleser | undefined {
+  return omIBruk('clinpgx', () => lagFarmakogenetikkleser(klient), stansede)
+}
+
+export function lagFarmakogenetikksokOmIBruk(klient: SupabaseClient, stansede = STANSEDE_KILDER): Pick<Farmakogenetikkleser, 'les'> | undefined {
+  return omIBruk('clinpgx', () => lagFarmakogenetikksok(klient), stansede)
 }

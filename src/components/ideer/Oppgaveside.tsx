@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Felt } from '../konto/Felt'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { ENDRINGSLOGG } from '../../data/endringslogg'
-import { lesVersjon } from '../../domain/versjon'
+import { ENDRINGSREGISTER, hentHeleLoggen } from '../../data/endringslogg'
+import { lesVersjon, type Endring } from '../../domain/versjon'
 import {
   angreOppgaveUtfort,
   flyttOppgaveTilbake,
@@ -329,6 +329,21 @@ function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof M
   useEffect(() => {
     if (apen) velger.current?.focus()
   }, [apen])
+  // Valget viser versjonene med en gang, og hva hver føring sier når loggen er
+  // hentet; den er ikke med i appen fra start (`src/data/endringslogg.ts`).
+  const [logg, setLogg] = useState<readonly Endring[] | null>(null)
+  useEffect(() => {
+    if (!apen || logg) return
+    let gjelder = true
+    hentHeleLoggen().then(
+      (hele) => gjelder && setLogg(hele),
+      () => undefined,
+    )
+    return () => {
+      gjelder = false
+    }
+  }, [apen, logg])
+  const sammendrag = useMemo(() => new Map(logg?.map((e) => [e.id, e.sammendrag])), [logg])
 
   if (!apen) {
     return (
@@ -352,9 +367,9 @@ function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof M
           onChange={(e) => setVersjon(e.target.value)}
         >
           <option value="">Ingen føring</option>
-          {ENDRINGSLOGG.map((e) => (
+          {ENDRINGSREGISTER.map((e) => (
             <option key={e.id} value={e.id}>
-              {e.versjon} – {e.sammendrag}
+              {sammendrag.has(e.id) ? `${e.versjon} – ${sammendrag.get(e.id)}` : e.versjon}
             </option>
           ))}
         </select>

@@ -341,8 +341,8 @@ Referansene har to opphav i samme nummerering, samme bobler og samme liste:
 | Automatisk | Lages av data OUSFAR henter fra andre, hver gang siden vises (`automatisk` på `Referanse`) | Aldri: de er ikke objekter, kan ikke velges i referansevelgeren (der står de låst når søket treffer dem) og forsvinner av seg selv når kilden ikke lenger har dem |
 
 De automatiske kildene er FEST (`src/legemiddeldata/referanser.ts`),
-ClinPGx (`src/clinpgx/referanser.ts`, se `docs/clinpgx.md`), CPIC
-(`src/cpic/referanser.ts`) og preparatomtalene bivirkningene er importert
+ClinPGx (`src/clinpgx/referanser.ts`, se `docs/clinpgx.md`) og
+preparatomtalene bivirkningene er importert
 fra (`src/bivirkninger/referanser.ts`, se `docs/bivirkninger.md`). FEST:
 
 - **FEST selv** (ID `fest:kilde`) står i referansefeltet til «Preparater» og
@@ -683,14 +683,14 @@ analyttene det er koblet til, er bare andre veier dit (`stoffidentitet` i
 `#/stoff/bupropion`. Koden til en analytt stoffet bare er sekundært koblet til
 (AMTNORSUM på Nortriptylin), er en komponent, ikke et alias, så den ikke
 rangeres som stoffets eget navn.
-Dataene kommer fra seks kilder, hver lest i ett kall uansett antall sider
+Dataene kommer fra fem kilder, hver lest i ett kall uansett antall sider
 (migrasjonene `*_sokedata.sql` og `*_laboratoriesok.sql`): `les_stoffer` gir alle sidene på samme form
 som `les_stoff`, med referansene én gang; `les_preparatsok` og
 `les_interaksjonssok` gir bare preparatnavnene og interaksjonene hver side
 viser — de samme som seksjonene bygger av de fullstendige legemiddeldataene,
 som en test kontrollerer for hvert virkestoff i FEST-utdraget;
 `les_farmakogenetikk_sok` gir ClinPGx-dataene uten feltene søket ikke bruker,
-`les_cpic` CPIC-dataene, og `les_laboratoriesok` navnene og metodene i
+og `les_laboratoriesok` navnene og metodene i
 laboratorieanalysene fra Farmakologiportalen for alle forbindelsene i
 registeret, uten måleområdene, så hver side får de samme analysene som
 seksjonen viser (`velgAnalyser` i `src/farmakologiportalen/stoffside.ts`).

@@ -64,12 +64,14 @@ stoffmengde, og fagsiden sier fra.
 
 Kontrollert 8. oktober 2026: 134 verifisert, 2 usikre, ingen uavklart.
 Psilocybin og psilocin ble kontrollert 21. oktober 2026: psilocin er
-verifisert, psilocybin uavklart.
+verifisert, psilocybin uavklart. Desmetylklomipramin og dosulepin, som var
+usikre fordi de ikke var koblet til PubChem, ble verifisert 23. november 2026
+da de fikk koblingen (CAS-nummeret eller molekylvekten stemmer); penfluridol
+finnes ikke i portalen.
 
 | Forbindelse | Hvorfor usikker |
 | --- | --- |
 | 7-aminoflunitrazepam | Portalens CAS-nummer er 7-aminonitrazepams; molekylvekten er ikke oppgitt |
-| Desmetylklomipramin | Ikke koblet til PubChem (`docs/kjemi.md`), så verken CAS eller molekylvekt kan kontrolleres |
 
 | Forbindelse | Hvorfor uavklart |
 | --- | --- |

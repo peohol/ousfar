@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ENDRINGSLOGG } from '../../data/endringslogg'
+import { ENDRINGSREGISTER, VARSLEDE_ENDRINGER } from '../../data/endringslogg'
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { lyttEtterLesteEndringer } from '../../varsler/bjella'
 import {
@@ -83,7 +83,7 @@ export function useVarsler(): Varselstatus {
       (status) => {
         if (!gjelder) return
         if (status) return setLogg(status)
-        const start = startstatus(ENDRINGSLOGG)
+        const start = startstatus(ENDRINGSREGISTER)
         setLogg(start)
         void lagreEndringsloggstatus(start).catch(() => undefined)
       },
@@ -105,7 +105,7 @@ export function useVarsler(): Varselstatus {
     )
   }, [sjekk])
 
-  const endringer = useMemo(() => (logg ? endringsvarsler(ENDRINGSLOGG, logg) : []), [logg])
+  const endringer = useMemo(() => (logg ? endringsvarsler(VARSLEDE_ENDRINGER, logg) : []), [logg])
 
   /** Endrer hvor langt brukeren er kommet i endringsloggen, og lagrer det. */
   const endreLoggen = useCallback((versjoner: string[], endre: (status: Endringsloggstatus) => Endringsloggstatus) => {
@@ -119,7 +119,7 @@ export function useVarsler(): Varselstatus {
 
   // Føringer som er åpnet andre steder, som fra «Viktig nytt» på forsiden.
   useEffect(
-    () => lyttEtterLesteEndringer((versjoner) => endreLoggen([...versjoner], (status) => merkEndringerLest(ENDRINGSLOGG, status, versjoner))),
+    () => lyttEtterLesteEndringer((versjoner) => endreLoggen([...versjoner], (status) => merkEndringerLest(ENDRINGSREGISTER, status, versjoner))),
     [endreLoggen],
   )
 
@@ -149,7 +149,7 @@ export function useVarsler(): Varselstatus {
   const lesVarsler = useCallback(
     (uleste: readonly Varsel[]) => {
       const { versjoner, ider } = etterKilde(uleste)
-      endreLoggen(versjoner, (status) => merkEndringerLest(ENDRINGSLOGG, status, versjoner))
+      endreLoggen(versjoner, (status) => merkEndringerLest(ENDRINGSREGISTER, status, versjoner))
       endreIDatabasen(ider, { lest: true }, merkVarslerLest)
     },
     [endreLoggen, endreIDatabasen],
@@ -168,7 +168,7 @@ export function useVarsler(): Varselstatus {
   const arkiver = useCallback(
     (valgte: readonly Varsel[]) => {
       const { versjoner, ider } = etterKilde(valgte.filter((v) => !v.arkivert))
-      endreLoggen(versjoner, (status) => arkiverEndringer(ENDRINGSLOGG, status, versjoner))
+      endreLoggen(versjoner, (status) => arkiverEndringer(ENDRINGSREGISTER, status, versjoner))
       endreIDatabasen(ider, { lest: true, arkivert: true }, arkiverVarsler)
     },
     [endreLoggen, endreIDatabasen],

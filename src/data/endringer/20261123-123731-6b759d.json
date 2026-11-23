@@ -1,0 +1,14 @@
+{
+  "id": "20261123-123731-6b759d",
+  "semver": "patch",
+  "opprettet": "2026-11-23T12:37:31Z",
+  "sammendrag": "Kjemiske grunndata også for desmetylklomipramin, dosulepin og penfluridol",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Desmetylklomipramin, dosulepin og penfluridol er nå koblet til PubChem, bekreftet av FDAs stoffregister. Fagsidene viser dermed molekylvekt og formel for dem, og analysene for desmetylklomipramin og dosulepin ved norske laboratorier kan regnes om mellom masse og stoffmengde."
+  ],
+  "utenVarsel": true
+}

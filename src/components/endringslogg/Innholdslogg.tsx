@@ -161,17 +161,21 @@ function Loggvindu({
             ))}
           </ul>
         )}
-        {lasting.status === 'laster' && <p role="status">Henter endringene …</p>}
+        {lasting.status === 'laster' && (
+          <p className="logg__melding" role="status">
+            Henter endringene …
+          </p>
+        )}
         {lasting.status === 'feil' && (
-          <p className="innholdslogg__feil" role="alert">
+          <p className="logg__melding logg__melding--feil" role="alert">
             Fikk ikke hentet endringsloggen. {lasting.feil}
           </p>
         )}
         {lasting.status === 'klar' && lasting.endringer.length === 0 && (
-          <p className="innholdslogg__tom">Ingen endringer å vise ennå.</p>
+          <p className="logg__melding">Ingen endringer å vise ennå.</p>
         )}
         {lasting.status === 'klar' && lasting.flere && (
-          <div className="innholdslogg__flere">
+          <div className="logg__flere">
             <Button variant="subtle" onClick={() => void hentEldre()}>
               Vis eldre endringer
             </Button>

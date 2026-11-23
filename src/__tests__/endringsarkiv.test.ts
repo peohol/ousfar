@@ -11,9 +11,12 @@
  */
 import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
-import { ENDRINGSLOGG } from '../data/endringslogg'
+import { hentHeleLoggen } from '../data/endringslogg'
 import { HISTORISKE_ENDRINGER } from '../data/endringshistorikk'
 import { finnEndring } from '../domain/versjonering'
+
+/** Hele loggen, slik byggingen delte den i sider. */
+const ENDRINGSLOGG = await hentHeleLoggen()
 
 const sum = (data: unknown) => createHash('sha256').update(JSON.stringify(data)).digest('hex')
 

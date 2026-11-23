@@ -17,6 +17,7 @@ import {
   lesVersjon,
   OMFANG,
   SEMVERNIVAER,
+  VARSELMERKER,
   type Endring,
   type Endringsinnhold,
   type HistoriskEndring,
@@ -134,7 +135,7 @@ export function settSammen(nye: readonly Endring[], historiske: readonly Histori
  * Føringen en oppgave eller lenke viser til, med ID-en eller versjonen. Eldre
  * oppgaver har versjonen; nye har ID-en, som er kjent før versjonen er det.
  */
-export function finnEndring(logg: readonly Endring[], referanse: string | null | undefined): Endring | undefined {
+export function finnEndring<E extends Pick<Endring, 'id' | 'versjon'>>(logg: readonly E[], referanse: string | null | undefined): E | undefined {
   if (!referanse) return undefined
   return logg.find((e) => e.id === referanse) ?? logg.find((e) => e.versjon === referanse)
 }
@@ -153,7 +154,6 @@ const FELTER = new Set([
   'kritiskFagligVarsel',
   'utenVarsel',
 ])
-const MERKER = ['endrerFortolkning', 'varsleFunksjonsendring', 'kritiskFagligVarsel', 'utenVarsel'] as const
 
 function erTekstliste(verdi: unknown): verdi is string[] {
   return Array.isArray(verdi) && verdi.every((v) => typeof v === 'string' && v.trim() !== '')
@@ -181,6 +181,6 @@ export function lesEndringsforing(data: unknown, navn: string): Endringsforing {
   if (!erTekstliste(f.punkter) || f.punkter.length === 0) throw feil('`punkter` må ha minst ett punkt')
   if (f.gjelder !== undefined && (!erTekstliste(f.gjelder) || f.gjelder.length === 0))
     throw feil('`gjelder` må være en liste med minst ett område, eller utelates')
-  for (const merke of MERKER) if (f[merke] !== undefined && f[merke] !== true) throw feil(`\`${merke}\` kan bare være true`)
+  for (const merke of VARSELMERKER) if (f[merke] !== undefined && f[merke] !== true) throw feil(`\`${merke}\` kan bare være true`)
   return f as unknown as Endringsforing
 }

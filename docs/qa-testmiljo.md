@@ -2,7 +2,8 @@
 
 Gjelder skript som starter appen i en automatisert nettleser (Playwright):
 `src/__tests__/qa/appkontroll.ts`, målingen `src/__tests__/qa/maling.ts`,
-ytelsesmålingen `src/__tests__/qa/ytelse.ts`,
+ytelsesmålingen `src/__tests__/qa/ytelse.ts` og etterkontrollen
+`src/__tests__/qa/ytelseskontroll.ts`,
 P0-driveren `scripts/verktoy-p0-app.mjs` og nye skript av samme slag. Vanlige
 `npm test` berøres ikke.
 
@@ -103,6 +104,12 @@ kjøringen uten at passordet skrives inn.
   mobil og mørk modus, og fanen Chat i Innstillinger. Samme kontoer; bryterne for chatten og
   direktemeldingene står på i den lokale databasen mens den går, og valgene,
   blokkeringene og samtalen mellom de to fra før slettes først.
+- `npx vite-node src/__tests__/qa/endringsloggnettleser.ts` er
+  nettleserkontrollen av endringsloggen (`docs/endringslogg.md`, «Slik får
+  appen loggen»): ingen side av loggen hentes før den åpnes, den viser de ti
+  nyeste med fokus på den øverste, og «Vis flere» med tastaturet henter ti til
+  og flytter fokuset til den første av dem, på PC, mobil og i mørk modus. Bare
+  administratoren; `QA_SKJERMBILDER=<mappe>`.
 - `npx vite-node src/__tests__/qa/knappenettleser.ts` er nettleserkontrollen
   av knappene (`docs/designsystem.md`, «Knapper»): «Gå til
   gruppeoversikten», «Til gruppen», «Åpne hele stoffregisteret», «Tilbake til
@@ -141,6 +148,12 @@ kjøringen uten at passordet skrives inn.
   nettleserens hurtigbuffer på, der produksjonsdatabasen stoppes av
   nettleseren (`Network.setBlockedURLs`) i stedet for av avskjæringen, som
   ellers slår av hurtigbufferen.
+- `npx vite-node src/__tests__/qa/ytelseskontroll.ts` er etterkontrollen av
+  ytelsesplanen (#505): utlogging og avsluttet medlemskap mens appen laster,
+  sene og feilede kilder på fagsiden, direkte lenke til en seksjon, gammel
+  kode etter en oppdatering, fagsøket med tastaturet og mobil, på den trege
+  profilen og med dataene fra `ytelse.ts`. Siden med måleren og profilene
+  deler de to i `ytelsesside.ts`.
 - Det nettleserkontrollene kan dele (punktene og rapporten, skjermbildene,
   ventingen, de innloggede klientene, å lukke chatmenyen, å telle
   abonnementene i Realtime og å arkivere gamle syntetiske grupper), står i

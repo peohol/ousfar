@@ -12,7 +12,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { FARMAKOGENETIKKPANEL } from '../clinpgx/stoffside'
+import { FARMAKOGENETIKKPANEL } from '../faginnhold/paneler'
 import { gjeldendeClinpgxside, UKOBLEDE_STOFFSIDER } from '../faginnhold/clinpgxdekning'
 import {
   ALLE_CLINPGXKOBLINGER,
