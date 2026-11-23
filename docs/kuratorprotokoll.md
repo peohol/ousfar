@@ -78,11 +78,16 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    kildene bærer (effektstørrelser, absolutte risikoer og begrensninger står
    der de trengs).
 8. **De automatiske lagene dupliseres ikke.** FEST (preparatene og
-   interaksjonene), ClinPGx og CPIC, PubChem, Farmakologiportalen og de
+   interaksjonene), CYPinfo, PubChem, Farmakologiportalen og de
    strukturerte bivirkningene vises av appen selv. De kopieres ikke inn i
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
    kvitteres aldri ut som bestått.
+   CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
+   (fagansvarligs avgjørelse, sakene #533 og #437). ClinPGx, CPIC og DPWG er
+   dermed ikke lenger automatiske lag, men vanlige vitenskapelige kilder, og
+   et farmakogenetisk forhold de dokumenterer, omtales redaksjonelt etter
+   «Farmakogenetikk i teksten» under.
 9. **Seksjonene med faste kort følger reglene** i `docs/monografkuratering.md`
    («Seksjonene med faste kort»): et kort bare når det er relevant
    dokumentasjon, «Fenomenologi» bare for psykoaktive stoffer, behandlingen
@@ -360,7 +365,38 @@ kategoriene:
   ultrarapid), og forskjellen betyr noe for påstanden, står skillet med
   genotypen eller aktivitetsverdien («økt CYP2C19-aktivitet (*17/*17)»).
 - Ordrette sitater og titlene på kildene står som kilden skrev dem. Det samme
-  gjør CPIC-dataene appen viser selv (`docs/cpic.md`).
+  gjør anbefalingene appen viser selv fra CYPinfo
+  (`docs/cypinfo-integrasjon.md`); de bruker alt de norske uttrykkene.
+
+## Farmakogenetikk i teksten
+
+CYPinfo er den eneste automatiske farmakogenetiske kilden (krav 8). Det
+dekker 75 legemidler, og et forhold CYPinfo ikke har, vises ikke av appen i
+det hele tatt. Derfor kan et farmakogenetisk forhold omtales redaksjonelt, og
+det er ikke en duplisering av et automatisk lag.
+
+- **Når det skrives:** forholdet er klinisk vesentlig, dokumentasjonen er
+  tilstrekkelig, og CYPinfo dekker det ikke. Terskelen er en retningslinje med
+  en reell anbefaling (CPIC, DPWG og liknende), en preparatomtale der testing
+  er påkrevd eller anbefalt, eller en klinisk annotasjon på det høyeste
+  evidensnivået. At CPIC, ClinPGx eller DPWG omtaler et gen–legemiddel-par, er
+  ikke i seg selv grunn til å omtale det: en opplysning uten handling for
+  leseren er støy (fagansvarligs bestilling i sak #533).
+- **Hva som ikke skrives:** et forhold CYPinfo dekker for det samme
+  legemiddelet, og en systematisk gjengivelse av alt CPIC eller ClinPGx har.
+  Dekker CYPinfo ett gen for legemiddelet og en retningslinje et annet, gjelder
+  dette bare det andre genet, og teksten sier hvilket.
+- **Hvordan:** kort tekst som skiller mellom hva genotypen eller varianten gjør
+  med legemiddelresponsen, hva som gjøres når et prøvesvar alt finnes, og når
+  det er grunn til å rekvirere en genetisk undersøkelse. Kilden er
+  retningslinjen eller primærkilden selv, lest og sitert med forfatter og år;
+  ClinPGx' egen tekst kopieres aldri, og en ClinPGx-side er ikke kilden til en
+  klinisk påstand (krav 1 og 4).
+- **Manglende oppføring i CYPinfo betyr ikke at genetikk er uten betydning.**
+  Bare et uttrykkelig utsagn fra kilden om at det ikke finnes relevante gener,
+  gjengis slik.
+- Enzymaktivitet skrives som over. Et HLA-allel er bærerskap, ikke en
+  enzymfenotype, og beskrives slik.
 
 ## Overskrifter
 
@@ -539,3 +575,11 @@ holder dem i takt med modellen og piloten).
   vaktmesteren gjør den om til en ekte overskrift med de samme ordene (etter
   forslag fra kontrolløren). Ingen krav er svekket: ingen påstand eller
   sitering endres.
+- 2026-11-23: krav 8 og «Farmakogenetikk i teksten» (fagansvarligs avgjørelse,
+  sakene #533 og #437): CYPinfo er den eneste automatiske farmakogenetiske
+  kilden, og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
+  klinisk vesentlig farmakogenetisk forhold CYPinfo ikke dekker, omtales
+  derfor redaksjonelt, med terskelen og formen som står der. Ingen krav er
+  svekket: kravene om kilde til hver påstand, om at ingenting finnes på, og om
+  at et automatisk lag ikke dupliseres, gjelder uendret, og en opplysning uten
+  handling for leseren skrives fortsatt ikke.

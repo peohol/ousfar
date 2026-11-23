@@ -94,10 +94,20 @@ teksten med kuratorprotokollen etter.
      `original.pdf`, sidebildene (`sider/`) og teksten per side (`tekst/`).
      Funksjonstesten står i `kuratorjobb/resultat/<stoff>/funksjonstest.json`.
      Du kan også hente preparatomtalen selv fra DMP.
-   - **De automatiske lagene** (krav 8: FEST, ClinPGx, CPIC, PubChem,
+   - **De automatiske lagene** (krav 8: FEST, CYPinfo, PubChem,
      Farmakologiportalen og de strukturerte bivirkningene) kontrolleres med
      funksjonstesten, ikke mot originalkildene. Se at den er bestått, og at
      det den ikke dekker, står som gjenstående i evidensjournalen.
+   - **Farmakogenetikk i teksten** (protokollen, «Farmakogenetikk i teksten»):
+     CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden,
+     og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
+     farmakogenetisk kort er derfor ingen duplisering av et automatisk lag.
+     Kontroller i stedet at påstanden er lest i retningslinjen eller
+     primærkilden selv og sitert med forfatter og år (ClinPGx' egen side er
+     ikke kilden), at forholdet ikke alt er dekket av CYPinfo for det samme
+     legemiddelet, og at teksten ikke sier at genetikk er uten betydning fordi
+     en kilde mangler en oppføring. En tekst uten handling for leseren er en
+     merknad, ikke en sperre, med mindre den er feil eller ukildet.
    - **Konsentrasjonene** (protokollen, «Konsentrasjonene i teksten»):
      `npm run kontrollor -- konsentrasjoner <gren>` lister de merkede
      konsentrasjonene med det som hindrer omregningen, og tallene med en
