@@ -95,3 +95,16 @@ export const erStandard = (oppsett: Forsideoppsett): boolean =>
 
 /** Panelene som vises, i brukerens rekkefølge. */
 export const synligeModuler = (oppsett: Forsideoppsett): Forsidemodul[] => oppsett.filter((v) => v.synlig).map((v) => v.modul)
+
+/**
+ * Panelene fordelt på `antall` kolonner, annethvert: det første øverst til
+ * venstre, det andre øverst til høyre, det tredje under det første osv. Hver
+ * kolonne er uavhengig, så et høyt panel gir ingen luft i nabokolonnen, og et
+ * panel bytter aldri kolonne mens det laster. Gir alltid `antall` kolonner,
+ * også tomme, så bredden er den samme uansett hvor mange paneler som vises.
+ */
+export function iKolonner<T>(liste: readonly T[], antall: number): T[][] {
+  const kolonner = Array.from({ length: Math.max(1, Math.floor(antall)) }, (): T[] => [])
+  liste.forEach((element, i) => kolonner[i % kolonner.length]!.push(element))
+  return kolonner
+}

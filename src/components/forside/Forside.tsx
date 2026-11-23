@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef } from 'react'
-import { synligeModuler } from '../../forside/moduler'
+import { iKolonner, synligeModuler } from '../../forside/moduler'
+import { useMediesporring } from '../../hooks/useSystemvalg'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -7,6 +8,13 @@ import { Fagmiljooverskrift } from './Fagmiljooverskrift'
 import { Forsidepanel } from './Forsidepanel'
 import { Tilpassforsiden } from './Tilpassforsiden'
 import { useForsideoppsett } from './useForsideoppsett'
+
+/**
+ * Under denne bredden står panelene i én kolonne (nettbrett og mobil). Den
+ * står bare her: antallet kolonner avgjøres i koden, så rekkefølgen i siden
+ * (tastatur og skjermleser) alltid er den brukeren ser.
+ */
+const EN_KOLONNE = '(max-width: 56em)'
 
 /**
  * Den personlige forsiden (`#/`), der appen åpner (docs/forside.md,
@@ -32,6 +40,8 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
   }, [])
 
   const moduler = synligeModuler(oppsett)
+  const enKolonne = useMediesporring(EN_KOLONNE)
+  const kolonner = iKolonner(moduler, enKolonne ? 1 : 2)
 
   return (
     <div className="forside">
@@ -57,8 +67,12 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
       </section>
       {moduler.length > 0 && (
         <div className="forside__paneler">
-          {moduler.map((modul) => (
-            <Forsidepanel key={modul} modul={modul} />
+          {kolonner.map((kolonne, i) => (
+            <div key={i} className="forside__kolonne">
+              {kolonne.map((modul) => (
+                <Forsidepanel key={modul} modul={modul} />
+              ))}
+            </div>
           ))}
         </div>
       )}
