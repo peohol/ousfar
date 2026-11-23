@@ -108,14 +108,6 @@ function vis(rettigheter: Partial<Rettigheter> = {}, onApneFortolkning = vi.fn()
 
 const panel = (tittel: string) => screen.getByRole('region', { name: tittel })
 
-/** Panelenes titler, kolonne for kolonne, i rekkefølgen siden har dem. */
-const kolonner = () =>
-  Array.from(document.querySelectorAll<HTMLElement>('.forside__paneler > .forside__kolonne'), (k) =>
-    within(k)
-      .getAllByRole('region')
-      .map((r) => r.getAttribute('aria-label') ?? within(r).getAllByText(/./)[0]!.textContent),
-  )
-
 describe('Forsiden', () => {
   it('har fokus på «Åpne fortolkning», som virker før panelene er hentet', async () => {
     vi.mocked(api.hentOppsummering).mockReturnValue(new Promise(() => undefined))
@@ -275,40 +267,13 @@ describe('Forsiden', () => {
     expect(panel('Mine oppgaver')).toBeTruthy()
 
     await userEvent.click(within(dialog).getByRole('button', { name: 'Flytt Mine grupper opp' }))
-    // Annethvert i to uavhengige kolonner: 1., 3. og 5. til venstre, 2. og 4. til høyre.
-    expect(kolonner()).toEqual([
-      ['Viktig nytt', 'Aktuelt for deg', 'Mine oppgaver'],
-      ['Mine grupper', 'Oppdaterte fagsider'],
-    ])
+    const paneler = document.querySelector<HTMLElement>('.forside__paneler')!
+    const rekkefolge = within(paneler).getAllByRole('region').map((r) => r.getAttribute('aria-label') ?? within(r).getAllByText(/./)[0]!.textContent)
+    expect(rekkefolge.slice(0, 3)).toEqual(['Viktig nytt', 'Mine grupper', 'Aktuelt for deg'])
 
     await userEvent.click(gjenopprett)
     expect(api.lagreOppsett).toHaveBeenLastCalledWith(STANDARDOPPSETT)
     expect(screen.queryByRole('region', { name: 'Mine oppgaver' })).toBeNull()
-  })
-
-  it('har én kolonne i brukerens rekkefølge på smal skjerm, og to når skjermen blir bred (#534)', async () => {
-    const lyttere = new Set<() => void>()
-    const smal = { matches: true }
-    const opprinnelig = window.matchMedia
-    window.matchMedia = ((sporring: string) => ({
-      get matches() {
-        return sporring.includes('max-width') && smal.matches
-      },
-      addEventListener: (_: string, f: () => void) => lyttere.add(f),
-      removeEventListener: (_: string, f: () => void) => lyttere.delete(f),
-    })) as unknown as typeof window.matchMedia
-    try {
-      vis()
-      expect(kolonner()).toEqual([['Viktig nytt', 'Aktuelt for deg', 'Mine grupper', 'Oppdaterte fagsider']])
-      smal.matches = false
-      act(() => lyttere.forEach((f) => f()))
-      expect(kolonner()).toEqual([
-        ['Viktig nytt', 'Mine grupper'],
-        ['Aktuelt for deg', 'Oppdaterte fagsider'],
-      ])
-    } finally {
-      window.matchMedia = opprinnelig
-    }
   })
 
   it('merker en føring i endringsloggen lest i bjella når den åpnes fra «Viktig nytt»', async () => {

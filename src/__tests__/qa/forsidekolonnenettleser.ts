@@ -6,7 +6,9 @@
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/forsidekolonnenettleser.ts
  *
  * Oppsettet gjør høyre kolonne høy øverst: «Mine grupper» (tre grupper) står
- * som panel nr. 2, de korte panelene som nr. 1, 3 og 5.
+ * som panel nr. 2, de korte panelene som nr. 1, 3 og 5. Panelene flyttes ikke
+ * i siden, så tastaturet følger brukerens rekkefølge, og når bredden krysser
+ * grensen for én kolonne, står panelene og fokus (F6).
  */
 import { randomBytes } from 'node:crypto'
 import { arkiverTidligereGrupper, klient, krev, lagKontroll, rpc, vent, type Side } from './kontroll'
@@ -31,28 +33,28 @@ interface Panel {
   bunn: number
 }
 
-/** Panelene slik siden har dem, i rekkefølgen i dokumentet, med kolonnen de står i. */
+/** Panelene slik siden har dem, i rekkefølgen i dokumentet; kolonnen er nummeret på venstrekanten, fra venstre. */
 async function paneler(side: Side): Promise<Panel[]> {
   await side.locator('.forside__paneler section.oppsummering[aria-busy="false"]').first().waitFor({ timeout: 30_000 })
   await vent(800)
-  return side.locator('.forside__paneler section.oppsummering').evaluateAll((e: Element[]) =>
+  const p: Omit<Panel, 'kolonne'>[] = await side.locator('.forside__paneler section.oppsummering').evaluateAll((e: Element[]) =>
     e.map((s) => {
       const r = s.getBoundingClientRect()
-      const kolonne = s.closest('.forside__kolonne')
       return {
         tittel: document.getElementById(s.getAttribute('aria-labelledby') ?? '')?.textContent?.trim() ?? '',
-        kolonne: kolonne ? Array.from(kolonne.parentElement!.children).indexOf(kolonne) : -1,
         x: Math.round(r.left),
         topp: r.top,
         bunn: r.bottom,
       }
     }),
   )
+  const kanter = [...new Set(p.map((x) => x.x))].sort((a, b) => a - b)
+  return p.map((x) => ({ ...x, kolonne: kanter.indexOf(x.x) }))
 }
 
-/** Luften mellom panelene, slik stilarket setter den. */
+/** Luften mellom panelene, slik stilarket setter den (den samme i bredden og i høyden). */
 const luft = (side: Side): Promise<number> =>
-  side.locator('.forside__kolonne').first().evaluate((e: HTMLElement) => parseFloat(getComputedStyle(e).rowGap))
+  side.locator('.forside__paneler').evaluate((e: HTMLElement) => parseFloat(getComputedStyle(e).columnGap))
 
 const titler = (p: Panel[]) => p.map((x) => x.tittel)
 
@@ -108,13 +110,13 @@ try {
     return `${svar}; «Mine oppgaver» ${Math.round(g.bunn - venstre[1]!.topp)} px høyere opp enn før`
   })
 
-  await punkt('F2 PC: Tab går gjennom én kolonne om gangen, slik panelene står', async () => {
+  await punkt('F2 PC: rekkefølgen i siden (tastatur og skjermleser) er brukerens', async () => {
     paa(pc)
     const rekkefolge: string[] = await pc
       .locator('.forside__paneler section.oppsummering')
       .evaluateAll((e: Element[]) => e.map((s) => document.getElementById(s.getAttribute('aria-labelledby') ?? '')?.textContent?.trim() ?? ''))
     krev(
-      JSON.stringify(rekkefolge) === JSON.stringify(['Aktuelt for deg', 'Mine oppgaver', 'Favorittfagsider', 'Mine grupper', 'Viktig nytt']),
+      JSON.stringify(rekkefolge) === JSON.stringify(['Aktuelt for deg', 'Mine grupper', 'Mine oppgaver', 'Viktig nytt', 'Favorittfagsider']),
       `rekkefølgen i siden: ${rekkefolge}`,
     )
     return rekkefolge.join(' → ')
@@ -128,6 +130,30 @@ try {
     await bilde(pc, '02-forside-pc-moerkt')
     await pc.emulateMedia({ colorScheme: 'light' })
     return svar
+  })
+
+  await punkt('F6 bredden krysser grensen: panelene står, og fokus blir der det var', async () => {
+    paa(pc)
+    await pc.setViewportSize(PC.viewport)
+    await pc.goto(`${miljo.url}/#/`)
+    const rad = pc.locator('.forside__paneler section.oppsummering').nth(1).getByRole('link').first()
+    await rad.waitFor({ timeout: 30_000 })
+    await rad.evaluate((e: HTMLElement & { merke?: string }) => {
+      e.merke = 'samme'
+      e.focus()
+    })
+    const svar: string[] = []
+    for (const [navn, bredde] of [
+      ['smal', 800],
+      ['bred', 1440],
+    ] as const) {
+      await pc.setViewportSize({ width: bredde, height: 1000 })
+      await vent(500)
+      const fokus: string = await pc.evaluate(() => (document.activeElement as HTMLElement & { merke?: string })?.merke ?? 'ingen')
+      krev(fokus === 'samme', `fokus etter ${navn}: ${fokus}`)
+      svar.push(`${navn}: ${new Set((await paneler(pc)).map((x) => x.kolonne)).size} kolonne(r)`)
+    }
+    return `${svar.join(', ')}; samme element har fokus`
   })
 
   for (const [kode, navn, valg] of [

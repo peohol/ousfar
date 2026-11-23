@@ -4,7 +4,7 @@
  * og endringene i «Tilpass forsiden» er rene funksjoner.
  */
 import { describe, expect, it } from 'vitest'
-import { erStandard, flytt, iKolonner, lesOppsett, MODULREKKEFOLGE, settSynlig, STANDARDOPPSETT, synligeModuler } from '../forside/moduler'
+import { erStandard, flytt, lesOppsett, MODULREKKEFOLGE, settSynlig, STANDARDOPPSETT, synligeModuler } from '../forside/moduler'
 
 describe('Forsideoppsett', () => {
   it('har de fire standardpanelene på og de valgfrie av, i fast rekkefølge', () => {
@@ -57,17 +57,5 @@ describe('Forsideoppsett', () => {
     // Ytterst står panelet stille.
     expect(flytt(STANDARDOPPSETT, 'viktig_nytt', -1)).toBe(STANDARDOPPSETT)
     expect(flytt(STANDARDOPPSETT, 'favoritter', 1)).toBe(STANDARDOPPSETT)
-  })
-
-  it('fordeler panelene annethvert på kolonnene, i brukerens rekkefølge', () => {
-    expect(iKolonner(['a', 'b', 'c', 'd', 'e'], 2)).toEqual([
-      ['a', 'c', 'e'],
-      ['b', 'd'],
-    ])
-    expect(iKolonner(['a', 'b', 'c'], 1)).toEqual([['a', 'b', 'c']])
-    // Alltid like mange kolonner, så et enslig panel har samme bredde.
-    expect(iKolonner(['a'], 2)).toEqual([['a'], []])
-    expect(iKolonner([], 2)).toEqual([[], []])
-    expect(iKolonner(['a', 'b'], 0)).toEqual([['a', 'b']])
   })
 })

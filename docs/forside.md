@@ -14,8 +14,9 @@ Forsiden (`#/`) er der appen åpner. Den har tre deler, ovenfra og ned:
    skjerm, under 56em): brukerens rekkefølge fordeles annethvert, første
    øverst til venstre og andre øverst til høyre, og hvert panel står rett
    under det forrige i sin kolonne, så et høyt panel ikke gir luft i
-   nabokolonnen (`iKolonner`). Hvert panel har inntil tre hendelser i `Oppsummeringskort`
-   (`src/components/oppsummering/`). Hele raden fører til selve hendelsen:
+   nabokolonnen (`useMurverk`). Panelene flyttes ikke i siden, så tastatur og
+   skjermleser følger brukerens rekkefølge. Hvert panel har inntil tre
+   hendelser i `Oppsummeringskort` (`src/components/oppsummering/`). Hele raden fører til selve hendelsen:
    idéen eller kommentaren, tråden, forslaget, oppgaven, gruppen eller delen av
    fagsiden, ikke til en liste.
 
