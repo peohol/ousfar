@@ -14,9 +14,8 @@
  * Modulen brukes av skriptet som lager migrasjonen og av testene, ikke av
  * appen.
  */
-import { FARMAKOGENETIKKPANEL } from '../clinpgx/stoffside'
 import { innlogging, lit } from './import'
-import { ELEMENTTYPER } from './paneler'
+import { ELEMENTTYPER, FARMAKOGENETIKKPANEL } from './paneler'
 
 /**
  * Hva som stemmer med navnet:

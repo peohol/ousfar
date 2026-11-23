@@ -13,6 +13,10 @@ for et legemiddel, ikke råd for en bestemt pasient.
 > gitt faglig aksept av overgangen (#533); deretter stanses og fjernes den
 > etter planen i `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget.
 > ClinPGx kan fortsatt siteres som en vanlig kilde i redaksjonell tekst.
+> Stansen er klar (#539): med `clinpgx` i `STANSEDE_KILDER` får appen ingen
+> lesere for ClinPGx (fagsidene, søket og koblingsskjemaet), endepunktene
+> svarer 410, arbeidsflyten melder det uten å feile, og funksjonstesten melder
+> kilden som ikke aktuell. Dataene i databasen står.
 
 ## Kilden og lisensen
 

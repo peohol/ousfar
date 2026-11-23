@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
+import { stansFor } from '../../datakilder/stans'
+import { KILDEOPPSETT, type Datakilde } from '../../datakilder/status'
 import type { Rute } from '../../domain/rute'
 import { useHenting } from '../../hooks/useHenting'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
@@ -11,6 +13,16 @@ import { Bekreftknapp } from '../traad/Smadeler'
 import { useFaginnholdskilde } from '../stoffside/Faginnholdskilde'
 import type { StoffsideProps } from '../stoffside/Stoffside'
 import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
+
+/**
+ * Kildene en tidligere versjon viser data fra slik de er nå, uten dem som er
+ * stanset (`STANSEDE_KILDER`): «FEST, ClinPGx, PubChem og Farmakologiportalen».
+ */
+const NAVAERENDE_KILDER = new Intl.ListFormat('nb', { type: 'conjunction' }).format(
+  (['fest', 'clinpgx', 'pubchem', 'farmakologiportalen'] satisfies Datakilde[])
+    .filter((k) => !stansFor(k))
+    .map((k) => KILDEOPPSETT[k].navn),
+)
 
 export type Utgavesideprops = Pick<StoffsideProps, 'register'> & {
   /** Går til en annen side i appen. */
@@ -111,7 +123,7 @@ function Versjonsinnhold({ stoff, nr, onGaaTil, onLukk, ...props }: Utgavesidepr
       {versjon.versjon.endring?.oppsummering && <p className="utgavebanner__linje">{versjon.versjon.endring.oppsummering}</p>}
       {!erGjeldende && (
         <p className="utgavebanner__linje">
-          Slik siden var publisert da. Data fra FEST, ClinPGx, PubChem og Farmakologiportalen vises som nå.
+          Slik siden var publisert da. Data fra {NAVAERENDE_KILDER} vises som nå.
         </p>
       )}
       <div className="utgavebanner__handlinger">

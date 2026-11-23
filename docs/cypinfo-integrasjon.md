@@ -90,11 +90,11 @@ produksjonsdatabasen.
 | --- | --- | --- |
 | Synk | `.github/workflows/clinpgx-synk.yml` (mandag 02:30 UTC, OIDC, opptil seks omganger), `api/clinpgx-synk.ts`, `src/clinpgx/{endepunkt,synk,api,lager,struktur}.ts` | «Hent nå» på fagsiden og i «Datakilder» bruker det samme endepunktet |
 | Oppslag | `api/clinpgx-sok.ts` (bare systemarkitekter), `ClinpgxkoblingSkjema` i `Skjemaer.tsx` | Brukes når en side kobles i redigeringen |
-| Visning | `Farmakogenetikkpanel.tsx` (`Clinpgxvisning`, panelets `tomt`), `src/clinpgx/stoffside.ts`, `useFarmakogenetikk` | Leseren i `App.tsx` har ingen stansbryter ennå, ulikt CPIC og CYPinfo |
+| Visning | `Farmakogenetikkpanel.tsx` (`Clinpgxvisning`, panelets `tomt`), `src/clinpgx/stoffside.ts`, `useFarmakogenetikk` | Leserne i `App.tsx` går gjennom stansbryteren (`lagFarmakogenetikkleserOmIBruk`, `lagFarmakogenetikksokOmIBruk`, #539); uten leser er panelet tomt for ClinPGx og koblingen skjult |
 | Søk | Søket på siden (`farmakogenetikksoketekster`) og det globale søket (`globaltSok.ts`, versjonsnøkkelen `clinpgx`, `les_farmakogenetikk_sok`), `treffvisning.ts` | CYPinfo er ikke i noe søk ennå |
 | Referanser | `src/clinpgx/referanser.ts`: ClinPGx med lisensen (CC BY-SA 4.0) i referansefeltet og publikasjonene på hvert kort | Regnes ut ved visning, aldri lagret. Når de forsvinner, flyttes numrene fra «Farmakogenetikk» og utover på de koblede sidene; ingenting lagret brytes |
 | Redaksjonell kobling | Elementtypen `clinpgxkobling` i `innholdselementer` (en per side, publisert og utkast): 104 publiserte fagsider | 93 kom fra fire datamigrasjoner (generert av `scripts/lag-clinpgxkoblinger.ts` fra `clinpgxkoblinger.ts`), resten fra redigeringen. Dekningsregelen `clinpgxdekning.ts` krever en status for hver fagside |
-| Historiske versjoner | `Utgavevisning.tsx`, `Versjonsside.tsx` | En gammel versjon har bare koblingselementet, aldri ClinPGx-data; dataene vises slik de er nå. Etter avviklingen viser gamle versjoner ingen ClinPGx-data, og teksten på versjonssiden må si det |
+| Historiske versjoner | `Utgavevisning.tsx`, `Versjonsside.tsx` | En gammel versjon har bare koblingselementet, aldri ClinPGx-data; dataene vises slik de er nå. Etter avviklingen viser gamle versjoner ingen ClinPGx-data; teksten på versjonssiden nevner bare kildene som ikke er stanset (#539) |
 | Funksjonstesten | `src/kuratorjobb/funksjonstest.ts` (`clinpgx`, `farmakogenetikkvisning`) | |
 | Datakilder | `DATAKILDER`, `KILDEOPPSETT.clinpgx` (intervall 7), `datakilder_status`, endringsloggen (1 623 føringer) | |
 | Database | Skjemaet `clinpgx` (`kjemikalier` 105, `annotasjoner` 1 402, `kjemikalie_annotasjoner` 1 634, `synkroniseringer` 58; rundt 9 MB), `clinpgx_*`-funksjonene, `les_farmakogenetikk(_sok)`, `clinpgx_status`, `clinpgx.utvalg`, triggerne og `datakilder.clinpgx_*`; `sokedata_versjoner` og `datakilder_status` leser fra det | Ingen pg_cron, pg_net eller Edge-funksjon |
@@ -170,7 +170,10 @@ ChatGPT før sammenslåing. Fag-oppgavene står i #533.
    ClinPGx-koden fjernes, uten å senke kontrollkvaliteten: en annen uavhengig
    strukturkilde, eller ClinPGx' åpne API bare i dette skriptet, flyttet til
    `src/kjemi/`. Avgjøres med en kjøring av `--alle` uten `--skriv` mot de 21.
-3. **Gjøre ClinPGx-avviklingen klar bak brytere** (#539):
+3. **Gjøre ClinPGx-avviklingen klar bak brytere** (#539). Første del er gjort
+   (stansbryteren, panelet og versjonssiden, og det CYPinfo låner, er delt ut:
+   `FARMAKOGENETIKKPANEL` står i `paneler.ts`, metabolittene i
+   `metabolittsider.ts`); CYPinfo i referansene og søket gjenstår:
    - en stansbryter for ClinPGx som for CPIC (`lagFarmakogenetikkleserOmIBruk`
      og `stansetSvar` på begge endepunktene), så stansen er én linje i
      `STANSEDE_KILDER` og arbeidsflyten;
@@ -195,7 +198,8 @@ statusen står i #533.
    migrasjon, i samme endring, med føring i endringsloggen. Den kliniske
    aksepttesten føres i PR-en.
 2. **ClinPGx stanses** (egen PR, samtidig med eller rett etter 1): `clinpgx` i
-   `STANSEDE_KILDER`, planen tas ut av `clinpgx-synk.yml`, endepunktene svarer
+   `STANSEDE_KILDER` (arbeidsflyten `clinpgx-synk.yml` melder da 410 som
+   stanset uten å feile, og planen i den kan tas ut), endepunktene svarer
    410, appen leser og viser ingenting fra ClinPGx (heller ikke referansene og
    søket), koblingsskjemaet skjules, og funksjonstesten melder kilden som ikke
    aktuell. Dataene i databasen står urørt, så stansen kan oppheves.

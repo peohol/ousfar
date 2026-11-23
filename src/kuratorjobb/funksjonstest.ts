@@ -16,8 +16,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { lesBivirkningsdata } from '../bivirkninger/lesing'
 import { byggBivirkningsvisning } from '../bivirkninger/stoffside'
-import { lagFarmakogenetikkleser, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
+import { lagFarmakogenetikkleserOmIBruk, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, finnClinpgxkobling, kjemikaliestatuser } from '../clinpgx/stoffside'
+import { STANSEDE_KILDER, stansFor, stansmelding, type Stans } from '../datakilder/stans'
+import type { Datakilde } from '../datakilder/status'
 import { VISNINGSENHETER } from '../enheter/konsentrasjon'
 import { lagFaginnholdsleser, type Stoffsidedata } from '../faginnhold/lesing'
 import { forekomster } from '../faginnhold/referanser'
@@ -50,6 +52,8 @@ export interface Funksjonstestvalg {
   na?: () => Date
   /** Forbindelsene og koblingene deres; appen bruker alltid registeret i `src/data/forbindelser.ts`. */
   register?: Forbindelsesregister
+  /** De stansede kildene; appen bruker alltid `STANSEDE_KILDER`. */
+  stansede?: Readonly<Partial<Record<Datakilde, Stans>>>
 }
 
 /**
@@ -106,7 +110,7 @@ export async function kontrollerBruker(klient: SupabaseClient): Promise<Kontroll
 export async function funksjonstest(
   klient: SupabaseClient,
   stoff: string,
-  { na = () => new Date(), register = FORBINDELSER }: Funksjonstestvalg = {},
+  { na = () => new Date(), register = FORBINDELSER, stansede = STANSEDE_KILDER }: Funksjonstestvalg = {},
 ): Promise<Funksjonstestresultat> {
   const kontroller: Kontroll[] = []
   const legg = (k: Kontroll) => kontroller.push(k)
@@ -244,11 +248,15 @@ export async function funksjonstest(
 
   const kobling = modell ? finnClinpgxkobling(modell).kobling : null
   const kjemikalier = kobling?.kjemikalier.map((k) => k.clinpgx_id) ?? []
-  if (!modell) legg({ id: 'clinpgx', status: 'feil', melding: 'Kunne ikke lese koblingen til ClinPGx uten siden.' })
-  else if (kjemikalier.length === 0) {
+  // Den samme leseren som appen: ingen når ClinPGx er stanset.
+  const clinpgx = lagFarmakogenetikkleserOmIBruk(klient, stansede)
+  const clinpgxstans = stansFor('clinpgx', stansede)
+  if (clinpgxstans) legg({ id: 'clinpgx', status: 'ikke_aktuelt', melding: stansmelding(clinpgxstans, 'ClinPGx') })
+  else if (!modell) legg({ id: 'clinpgx', status: 'feil', melding: 'Kunne ikke lese koblingen til ClinPGx uten siden.' })
+  else if (kjemikalier.length === 0 || !clinpgx) {
     legg({ id: 'clinpgx', status: 'ikke_aktuelt', melding: 'Siden er ikke koblet til ClinPGx.' })
   } else {
-    const pgx = await kall<Farmakogenetikkutvalg>('clinpgx', 'les_farmakogenetikk', () => lagFarmakogenetikkleser(klient).les(kjemikalier), (u) => {
+    const pgx = await kall<Farmakogenetikkutvalg>('clinpgx', 'les_farmakogenetikk', () => clinpgx.les(kjemikalier), (u) => {
       const statuser = kjemikaliestatuser(u, kobling!)
       const ikkeHentet = statuser.filter((s) => !s.sist_hentet_kl).length
       const feilet = statuser.filter((s) => s.feil || !s.finnes).length

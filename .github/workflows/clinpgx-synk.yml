@@ -48,6 +48,12 @@ jobs:
               -d "$innhold" "$ADRESSE")
             echo "Omgang $omgang:"
             jq '{status, synk, kjemikalier, hentet, feilet, utsatt, feil}' svar.json || cat svar.json
+            # En stanset kilde (STANSEDE_KILDER i src/datakilder/stans.ts) svarer 410:
+            # da er det ingenting å hente, og jobben er ikke feilet.
+            if [ "$kode" = "410" ]; then
+              echo "::notice::ClinPGx er stanset; ingenting hentes. Se «Datakilder» i OUSFAR."
+              exit 0
+            fi
             if [ "$kode" != "200" ]; then
               echo "::error::Synkroniseringen svarte $kode. Kjemikalier som alt er hentet, er oppdatert; de andre står som før. Se «Datakilder» i OUSFAR."
               exit 1

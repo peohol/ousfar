@@ -8,7 +8,7 @@
  * treff peker på det samme stedet uansett hvilket søk som fant det.
  */
 import type { Sideelement, Sidemodell } from '../faginnhold/stoffside'
-import { ELEMENTTYPER, lesClinpgxkobling, type Clinpgxkoblingdata, type Panelnokkel } from '../faginnhold/paneler'
+import { ELEMENTTYPER, FARMAKOGENETIKKPANEL, lesClinpgxkobling, type Clinpgxkoblingdata } from '../faginnhold/paneler'
 import { antall, ramsOpp } from '../faginnhold/oppsummering'
 import type { Tilleggstekst } from '../faginnhold/sok'
 import { interaksjonsnokler } from '../legemiddeldata/interaksjoner'
@@ -23,9 +23,6 @@ import {
   type Preparatomtale,
   type Retningslinje,
 } from './modell'
-
-/** Seksjonen koblingen og ClinPGx-dataene står i. */
-export const FARMAKOGENETIKKPANEL: Panelnokkel = 'farmakogenetikk'
 
 /** Koblingen siden har til ClinPGx, og elementet den står i. */
 export function finnClinpgxkobling(modell: Sidemodell): { element: Sideelement | null; kobling: Clinpgxkoblingdata } {

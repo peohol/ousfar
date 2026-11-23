@@ -480,6 +480,17 @@ describe('funksjonstesten', () => {
     expect(Object.keys(resultat).sort()).toEqual(['kontroller', 'status', 'stoff'])
   })
 
+  it('melder ClinPGx som ikke aktuell, uten å lese noe, når kilden er stanset', async () => {
+    const stans = { fra: '2026-12-01', grunn: 'Syntetisk grunn.' }
+    const resultat = await funksjonstest(brukerklient, 'amitriptylin', { stansede: { clinpgx: stans } })
+    expect(resultat.kontroller.find((k) => k.id === 'clinpgx')).toEqual({
+      id: 'clinpgx',
+      status: 'ikke_aktuelt',
+      melding: 'Stanset 01.12.2026. Syntetisk grunn. Ingenting hentes eller vises fra ClinPGx.',
+    })
+    expect(resultat.kontroller.some((k) => k.id === 'farmakogenetikkvisning')).toBe(false)
+  })
+
   it('sier fra når en vanlig bruker ser utkastet', async () => {
     const resultat = await funksjonstest(kall.klientFor(admin), 'amitriptylin')
     expect(utfall(resultat.kontroller).utkast_skjult).toBe('feil')

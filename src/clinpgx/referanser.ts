@@ -12,13 +12,13 @@
  * Alt her er rene funksjoner.
  */
 import type { Automatiskekilder, Automatiskelement, Opphavslenke, Referanse } from '../faginnhold/referanser'
+import { FARMAKOGENETIKKPANEL } from '../faginnhold/paneler'
 import { dato, kontrollsum } from '../legemiddeldata/referanser'
 import type { Farmakogenetikkutvalg } from './lesing'
 import { CLINPGX_NETTSTED, type Litteratur } from './modell'
 import {
   annotasjonskort,
   CLINPGX_FORELDET_ETTER_DOGN,
-  FARMAKOGENETIKKPANEL,
   sistHentet,
   type Farmakogenetikkvisning,
 } from './stoffside'

@@ -167,6 +167,12 @@ export const PANELER = [
 
 export type Panelnokkel = (typeof PANELER)[number]['nokkel']
 
+/**
+ * Seksjonen «Farmakogenetikk»: den redaksjonelle teksten og kortene, og de
+ * automatiske dataene fra CYPinfo (og ClinPGx til det avvikles, #437).
+ */
+export const FARMAKOGENETIKKPANEL = 'farmakogenetikk' satisfies Panelnokkel
+
 /** Panelene i den rekkefølgen siden viser dem — også rekkefølgen referansene nummereres i. */
 export const PANELREKKEFOLGE: readonly string[] = PANELER.map((p) => p.nokkel)
 
