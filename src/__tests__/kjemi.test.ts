@@ -16,6 +16,7 @@ import {
   byggForbindelsesregister,
   FORBINDELSER,
   kontrollerForbindelser,
+  type Forbindelse,
   type Forbindelsesregister,
 } from '../kjemi/forbindelser'
 import { behandlePubchemSynk } from '../kjemi/endepunkt'
@@ -326,10 +327,19 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
 
 /* --- Synkroniseringen --------------------------------------------------------- */
 
-/** Et register med forbindelsene i det ekte svaret, koblet slik datafilen kobler dem. */
+/**
+ * Desmetylklomipramin som uavklart (ikke koblet til PubChem), slik den sto før
+ * 23.11.2026. Syntetisk, så testene av de uavklarte ikke avhenger av at
+ * datafilen har noen.
+ */
+const UAVKLART: Forbindelse = (({ pubchem: _koblet, ...f }) => ({ ...f, uavklart: { grunn: 'Test.', kandidater: [622606] } }))(
+  FORBINDELSER.finn('desmetylklomipramin')!,
+)
+
+/** Et register med forbindelsene i det ekte svaret, koblet slik datafilen kobler dem, og en uavklart. */
 function testregister(nokler = ['citalopram', 'desmetylcitalopram', 'thc', 'thc-cooh', 'bupropion']): Forbindelsesregister {
   const valgte = nokler.map((n) => FORBINDELSER.finn(n)!)
-  return byggForbindelsesregister([...valgte, FORBINDELSER.finn('desmetylklomipramin')!])
+  return byggForbindelsesregister([...valgte, UAVKLART])
 }
 
 const falskApi = falskPubchemApi
@@ -546,7 +556,9 @@ describe('visningen på fagsidene', () => {
       ['Desmetylcitalopram', 'metabolitt', 'hentet', '310.4'],
     ])
     expect(kjemioppsummering(visning)).toBe('Citalopram 324,4 g/mol · Desmetylcitalopram 310,4 g/mol')
-    expect(byggKjemivisning('klomipramin', null).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'uavklart'])
+    expect(byggKjemivisning('klomipramin', null).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'ikke_hentet'])
+    const medUavklart = byggForbindelsesregister([FORBINDELSER.finn('klomipramin')!, UAVKLART])
+    expect(byggKjemivisning('klomipramin', null, medUavklart).rader.map((r) => r.status)).toEqual(['ikke_hentet', 'uavklart'])
   })
 
   it('skriver formelen med senkede tall og ladningen hevet', () => {
