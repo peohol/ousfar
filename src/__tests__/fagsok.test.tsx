@@ -557,4 +557,21 @@ describe('indeksen fagsøket bruker', () => {
     expect(hent).toHaveBeenCalledTimes(2)
     await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks: ny }))
   })
+  it('hentes på nytt med én gang når det den hentes med, byttes (rettighetene endres)', async () => {
+    const ny = lagSokeindeks(DOKUMENTER.slice(0, 1))
+    const uten = vi.fn().mockResolvedValue(indeks)
+    const med = vi.fn().mockResolvedValue(ny)
+    const { result, rerender } = renderHook(({ hent }) => useSokeindeks(hent), { initialProps: { hent: uten } })
+    // Før den er hentet, hentes ingenting bare fordi den byttes.
+    rerender({ hent: med })
+    rerender({ hent: uten })
+    expect(uten).not.toHaveBeenCalled()
+    act(() => result.current.krev())
+    await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks }))
+
+    rerender({ hent: med })
+    await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks: ny }))
+    expect(med).toHaveBeenCalledOnce()
+    expect(uten).toHaveBeenCalledOnce()
+  })
 })

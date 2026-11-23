@@ -71,14 +71,15 @@ produksjonsdatabasen.
   `cpic.pagaende`, `cpic.kilde()`, og `cpic_*_synk`, `cpic_last_inn`,
   `cpic_status`, `les_cpic` og `les_cpic_diplotyper` i `public`;
   `datakilder.cpic_etter_bytte` og triggerne på tabellene. Rundt 0,5 MB.
-- **Levende avhengigheter i databasen:** tre funksjoner som ikke er CPICs,
-  leser fortsatt fra skjemaet: `sokedata_versjoner()` (`cpic.kilde()`, kalt ved
-  hvert globalt søk), `datakilder_status()` (`cpic.synkroniseringer`, siden
-  «Datakilder») og `datakilder.etikett()` (`cpic.legemiddel`, kalt av
+- **Levende avhengigheter i databasen:** to funksjoner som ikke er CPICs,
+  leser fortsatt fra skjemaet: `datakilder_status()` (`cpic.synkroniseringer`,
+  siden «Datakilder») og `datakilder.etikett()` (`cpic.legemiddel`, kalt av
   endringsloggen for alle kildene). Funksjonskroppene er tekst, så Postgres
   sporer ikke avhengigheten: en `drop schema cpic cascade` uten å skrive dem om
-  først ville ødelagt søket, «Datakilder» og endringsloggen for ClinPGx,
-  PubChem, Farmakologiportalen og CYPinfo.
+  først ville ødelagt «Datakilder» og endringsloggen for ClinPGx, PubChem,
+  Farmakologiportalen og CYPinfo. Den tredje, `sokedata_versjoner()`
+  (`cpic.kilde()`, kalt ved hvert globalt søk), er skrevet om uten CPIC i
+  migrasjonen `20261123150000_sokedata_versjon_cypinfo.sql` (#539).
 - **Historisk og redaksjonelt (beholdes):** CPIC sitert som kilde i
   redaksjonell tekst (i dag nevner 77 publiserte kort og tekster på 56 fagsider CPIC, ClinPGx eller PharmGKB),
   migrasjonsfilene og endringshistorikken. De automatiske CPIC-referansene ble
@@ -91,8 +92,8 @@ produksjonsdatabasen.
 | Synk | `.github/workflows/clinpgx-synk.yml` (mandag 02:30 UTC, OIDC, opptil seks omganger), `api/clinpgx-synk.ts`, `src/clinpgx/{endepunkt,synk,api,lager,struktur}.ts` | «Hent nå» på fagsiden og i «Datakilder» bruker det samme endepunktet |
 | Oppslag | `api/clinpgx-sok.ts` (bare systemarkitekter), `ClinpgxkoblingSkjema` i `Skjemaer.tsx` | Brukes når en side kobles i redigeringen |
 | Visning | `Farmakogenetikkpanel.tsx` (`Clinpgxvisning`, panelets `tomt`), `src/clinpgx/stoffside.ts`, `useFarmakogenetikk` | Leserne i `App.tsx` går gjennom stansbryteren (`lagFarmakogenetikkleserOmIBruk`, `lagFarmakogenetikksokOmIBruk`, #539); uten leser er panelet tomt for ClinPGx og koblingen skjult |
-| Søk | Søket på siden (`farmakogenetikksoketekster`) og det globale søket (`globaltSok.ts`, versjonsnøkkelen `clinpgx`, `les_farmakogenetikk_sok`), `treffvisning.ts` | CYPinfo er ikke i noe søk ennå |
-| Referanser | `src/clinpgx/referanser.ts`: ClinPGx med lisensen (CC BY-SA 4.0) i referansefeltet og publikasjonene på hvert kort | Regnes ut ved visning, aldri lagret. Når de forsvinner, flyttes numrene fra «Farmakogenetikk» og utover på de koblede sidene; ingenting lagret brytes |
+| Søk | Søket på siden (`farmakogenetikksoketekster`) og det globale søket (`globaltSok.ts`, versjonsnøkkelen `clinpgx`, `les_farmakogenetikk_sok`), `treffvisning.ts` | CYPinfo står i begge søkene ved siden av, for dem som ser CYPinfo (#539): kilden `cypinfo` i `globaltSok.ts`, med egen versjonsnøkkel. Når ClinPGx stanses, faller ClinPGx-kilden bort av seg selv (ingen leser) |
+| Referanser | `src/clinpgx/referanser.ts`: ClinPGx med lisensen (CC BY-SA 4.0) i referansefeltet og publikasjonene på hvert kort | Regnes ut ved visning, aldri lagret. Når de forsvinner, flyttes numrene fra «Farmakogenetikk» og utover på de koblede sidene; ingenting lagret brytes. CYPinfo står foran ClinPGx i det samme referansefeltet (`src/cypinfo/referanser.ts`, #539) |
 | Redaksjonell kobling | Elementtypen `clinpgxkobling` i `innholdselementer` (en per side, publisert og utkast): 104 publiserte fagsider | 93 kom fra fire datamigrasjoner (generert av `scripts/lag-clinpgxkoblinger.ts` fra `clinpgxkoblinger.ts`), resten fra redigeringen. Dekningsregelen `clinpgxdekning.ts` krever en status for hver fagside |
 | Historiske versjoner | `Utgavevisning.tsx`, `Versjonsside.tsx` | En gammel versjon har bare koblingselementet, aldri ClinPGx-data; dataene vises slik de er nå. Etter avviklingen viser gamle versjoner ingen ClinPGx-data; teksten på versjonssiden nevner bare kildene som ikke er stanset (#539) |
 | Funksjonstesten | `src/kuratorjobb/funksjonstest.ts` (`clinpgx`, `farmakogenetikkvisning`) | |
@@ -170,10 +171,11 @@ ChatGPT før sammenslåing. Fag-oppgavene står i #533.
    ClinPGx-koden fjernes, uten å senke kontrollkvaliteten: en annen uavhengig
    strukturkilde, eller ClinPGx' åpne API bare i dette skriptet, flyttet til
    `src/kjemi/`. Avgjøres med en kjøring av `--alle` uten `--skriv` mot de 21.
-3. **Gjøre ClinPGx-avviklingen klar bak brytere** (#539). Første del er gjort
-   (stansbryteren, panelet og versjonssiden, og det CYPinfo låner, er delt ut:
-   `FARMAKOGENETIKKPANEL` står i `paneler.ts`, metabolittene i
-   `metabolittsider.ts`); CYPinfo i referansene og søket gjenstår:
+3. **Gjøre ClinPGx-avviklingen klar bak brytere** (#539). Gjort i to deler:
+   først stansbryteren, panelet og versjonssiden, og det CYPinfo låner, delt
+   ut (`FARMAKOGENETIKKPANEL` står i `paneler.ts`, metabolittene i
+   `metabolittsider.ts`); så CYPinfo i referansene, søkene og direktelenkene
+   (se «Visningen»):
    - en stansbryter for ClinPGx som for CPIC (`lagFarmakogenetikkleserOmIBruk`
      og `stansetSvar` på begge endepunktene), så stansen er én linje i
      `STANSEDE_KILDER` og arbeidsflyten;
@@ -195,8 +197,9 @@ statusen står i #533.
 
 1. **CYPinfo for alle** (egen PR): `CYPINFO_VISES_FOR = 'alle'` og
    `les_cypinfo` tilbake til `intern.krev_aktivt_medlemskap()` i en ny
-   migrasjon, i samme endring, med føring i endringsloggen. Den kliniske
-   aksepttesten føres i PR-en.
+   migrasjon, i samme endring, med føring i endringsloggen. Referansen,
+   søkene og direktelenkene følger bryteren og trenger ingen egen endring.
+   Den kliniske aksepttesten føres i PR-en.
 2. **ClinPGx stanses** (egen PR, samtidig med eller rett etter 1): `clinpgx` i
    `STANSEDE_KILDER` (arbeidsflyten `clinpgx-synk.yml` melder da 410 som
    stanset uten å feile, og planen i den kan tas ut), endepunktene svarer
@@ -223,8 +226,9 @@ Egen oppgave (#540), først når ingen kode leser skjemaene:
    Eksporten er obligatorisk og kontrolleres (radtall) før punkt 3, og
    arkivet skal kunne åpnes av systemarkitektene. Hvor det ligger, avgjøres i
    #540.
-2. Skrive om `sokedata_versjoner`, `datakilder_status` og
-   `datakilder.etikett` uten `cpic` og `clinpgx`, i en vanlig migrasjon.
+2. Skrive om `sokedata_versjoner` (uten `clinpgx`; `cpic` er alt tatt ut,
+   #539), `datakilder_status` og `datakilder.etikett` uten `cpic` og
+   `clinpgx`, i en vanlig migrasjon.
    Etiketten for gamle føringer leses da fra kolonnen `etikett`, som alt er
    lagret på hver føring.
 3. En destruktiv migrasjon (`-- destruktiv-godkjent:` etter Peders ja for
@@ -769,9 +773,32 @@ aldri inn i dem.
 - Den lukkede seksjonen oppsummerer: «CYPinfo: CYP2C19, CYP2D6».
 - En side CYPinfo ikke har noe for, viser ingenting fra CYPinfo.
 
-Ikke med ennå: CYPinfo i referansefeltet, i søket på siden og i
-kunnskapsbasen, og direktelenker til kortene. De bygges bak den samme bryteren
-i fase B (#539).
+Bak den samme bryteren (#539), for dem som ser CYPinfo:
+
+- **Referansen.** CYPinfo står i referansefeltet til «Farmakogenetikk», foran
+  ClinPGx, og i referanselisten nederst, merket som automatisk: tittelen
+  «CYPinfo», utgiveren (Avdeling for farmakologi, Oslo universitetssykehus, med
+  St. Olavs hospital og Vestre Viken HF), lenken til cypinfo.no og «Anbefalinger
+  fra CYPinfo, gjengitt uendret, sist kontrollert <dato>»
+  (`src/cypinfo/referanser.ts`). CYPinfo oppgir ingen lisens, så referansen
+  nevner ingen. Den står bare når siden viser minst ett legemiddel fra CYPinfo.
+  Mens CYPinfo hentes, venter numrene fra «Farmakogenetikk» og utover
+  (`ventendeKilder`), så ingen vist nummer endres når den kommer.
+- **Søket på siden** finner navnet på legemiddelet, genene, fenotypene, nivået
+  og CYPinfos tekst (`cypinfosoketekster`), og åpner kortet treffet står i.
+- **Søket i hele kunnskapsbasen** finner det samme, med kilden `cypinfo` i
+  `globaltSok.ts`: `les_cypinfo` for alle legemidlene sidene er koblet til, i
+  kall på høyst 200 ID-er, og hver side får sin del med samme regel som siden
+  selv (`cypinfoFor`). Kilden gis bare når `cypinfoSynlig` er sann
+  (`App.tsx`), og indeksen hentes på nytt når det endres. `sokedata_versjoner`
+  har nøkkelen `cypinfo` (den siste fullførte hentingen), så det som er lagret
+  i nettleseren, bare leses på nytt når CYPinfo er endret.
+- **Direktelenker** til kortene: `#/stoff/<side>/farmakogenetikk/cypinfo-<navn>`
+  åpner seksjonen og kortet, som for de andre detaljkortene.
+
+En side CYPinfo ikke har noe for, en metabolittside og en side for den som ikke
+ser CYPinfo får ingen referanse og ingen treff. Et tomt resultat er aldri et
+faglig utsagn om at genene ikke betyr noe.
 
 ## Personvern, sporbarhet, feil og klinisk kontroll
 
@@ -881,7 +908,7 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
 ### E — Klinisk kontroll og visning for alle (nå fase C)
 
 Tatt inn i gjennomføringsplanen over: referansene, søket og direktelenkene
-bygges bak bryteren i fase B (#539), og aksepttesten og visningen for alle er
+er bygd bak bryteren i fase B (#539), og aksepttesten og visningen for alle er
 fase C. CPIC-laget fjernes alt nå (#537), uavhengig av E, etter den reviderte
 beslutningen i #437. Funnene meldes fortsatt til CYPinfo: warfarin VKORC1
 alene, kariprazins ATC, ATC-formen, FEST-ID for de 15, at `/api/result` feiler

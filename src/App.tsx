@@ -91,7 +91,8 @@ import { Fortolkningsforslag } from './components/forslag/Fortolkningsforslag'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleserOmIBruk, lagFarmakogenetikksokOmIBruk } from './clinpgx/lesing'
-import { lagCypinfoleserOmIBruk } from './cypinfo/lesing'
+import { lagCypinfoleserOmIBruk, lagCypinfosokOmIBruk } from './cypinfo/lesing'
+import { cypinfoSynlig } from './cypinfo/stoffside'
 import { lagBivirkningsleser } from './bivirkninger/lesing'
 import { lagKjemileser } from './kjemi/lesing'
 import { lagLableser, lagLabsokleser } from './farmakologiportalen/lesing'
@@ -307,6 +308,8 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
   // på de publiserte sidene leses derfra først, så et stoffnavn finnes før
   // innholdet er hentet. Søket viser selv at det henter, så hentingen står
   // ikke i lasteindikatoren.
+  // CYPinfo er med bare for dem som ser det på fagsidene (`CYPINFO_VISES_FOR`).
+  const cypinfoISoket = cypinfoSynlig(rettigheter)
   const hentSokeindeks = useCallback<Sokeindekshenter>(
     (delvis) => {
       const stille = iBakgrunnen(klient())
@@ -315,6 +318,7 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
           sider: lagSideleser(stille),
           stoffer: async () => (await lagRegisterlager(stille).les('publisert')).sider,
           legemidler: lagLegemiddelsok(stille),
+          cypinfo: cypinfoISoket ? lagCypinfosokOmIBruk(stille) : null,
           farmakogenetikk: lagFarmakogenetikksokOmIBruk(stille),
           laboratorier: lagLabsokleser(stille),
           versjoner: lagVersjonsleser(stille),
@@ -324,7 +328,7 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
         delvis,
       )
     },
-    [],
+    [cypinfoISoket],
   )
   const sokeindeks = useSokeindeks(hentSokeindeks)
 

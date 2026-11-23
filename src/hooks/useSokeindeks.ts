@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Manglende } from '../faginnhold/globaltSok'
 import type { Sokeindeks } from '../faginnhold/sok'
 
@@ -41,6 +41,11 @@ export type Sokeindekstilstand =
  * `foreld(true)` henter den nye med én gang, for det som alt viser indeksen og
  * ikke ber om den igjen (søkesiden), og `provIgjen` gjør det samme når
  * brukeren ber om det.
+ *
+ * Byttes `hent` (det søket leser fra, endres med rettighetene: CYPinfo er med
+ * bare for dem som ser det på fagsidene), er indeksen utdatert: en som alt er
+ * hentet, hentes på nytt med én gang, så den ikke viser mer eller mindre enn
+ * rettighetene nå gir.
  */
 export function useSokeindeks(hent: Sokeindekshenter): {
   tilstand: Sokeindekstilstand
@@ -92,6 +97,14 @@ export function useSokeindeks(hent: Sokeindekshenter): {
       },
     )
   }, [hent])
+
+  const hentetMed = useRef(hent)
+  useEffect(() => {
+    if (hentetMed.current === hent) return
+    hentetMed.current = hent
+    utdatert.current = true
+    if (status.current === 'klar') krev()
+  }, [hent, krev])
 
   const foreld = useCallback(
     (hentNaa = false) => {

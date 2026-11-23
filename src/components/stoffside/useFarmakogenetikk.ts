@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useKilde, type Kildetilstand } from './useKilde'
 import type { Farmakogenetikkutvalg } from '../../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, type Farmakogenetikkvisning } from '../../clinpgx/stoffside'
-import type { Cypinfoutvalg } from '../../cypinfo/lesing'
+import { delIder, slaSammenIder, type Cypinfoutvalg } from '../../cypinfo/lesing'
 import { byggCypinfovisning, cypinfoForesporsel, type Cypinfovisning } from '../../cypinfo/stoffside'
 import { useFaginnholdskilde } from './Faginnholdskilde'
 import type { Bivirkningsdata } from '../../bivirkninger/modell'
@@ -27,9 +27,6 @@ export function useFarmakogenetikk(koblet: readonly string[]) {
   return useKilde(useFaginnholdskilde().farmakogenetikk, koblet, byggFarmakogenetikkvisning)
 }
 
-/** Merket foran CYPinfo-ID-ene i listen `useKilde` får, så de skilles fra FEST-ID-ene. */
-const CYPINFO_ID = 'cypinfo:'
-
 /**
  * CYPinfo for legemidlene siden er koblet til: dem med en av FEST-ID-ene i
  * sidens FEST-kobling, og dem koblingslisten har for siden. `vis` er usann for
@@ -40,19 +37,14 @@ export function useCypinfo(festIder: readonly string[], side: string, vis: boole
   const delt = useMemo(
     () =>
       leser && {
-        les: (ider: readonly string[]) =>
-          leser.les(
-            ider.filter((i) => !i.startsWith(CYPINFO_ID)),
-            ider.filter((i) => i.startsWith(CYPINFO_ID)).map((i) => i.slice(CYPINFO_ID.length)),
-          ),
+        les: (ider: readonly string[]) => {
+          const { fest_ider, cypinfo_ider } = delIder(ider)
+          return leser.les(fest_ider, cypinfo_ider)
+        },
       },
     [leser],
   )
-  const ider = useMemo(() => {
-    if (!vis) return []
-    const { fest_ider, cypinfo_ider } = cypinfoForesporsel(festIder, side)
-    return [...fest_ider, ...cypinfo_ider.map((i) => CYPINFO_ID + i)]
-  }, [festIder, side, vis])
+  const ider = useMemo(() => (vis ? slaSammenIder(cypinfoForesporsel(festIder, side)) : []), [festIder, side, vis])
   return useKilde(delt, ider, byggCypinfovisning)
 }
 

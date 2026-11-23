@@ -87,7 +87,82 @@ export function lagCypinfoleser(klient: SupabaseClient): Cypinfoleser {
   }
 }
 
+/** Merket foran CYPinfo-ID-ene i en liste der de står sammen med FEST-ID-ene. */
+const CYPINFO_ID = 'cypinfo:'
+
+/** FEST-ID-ene og CYPinfo-ID-ene i én liste, med CYPinfo-ID-ene merket, så de skilles fra hverandre. */
+export function slaSammenIder(foresporsel: { fest_ider: readonly string[]; cypinfo_ider: readonly string[] }): string[] {
+  return [...foresporsel.fest_ider, ...foresporsel.cypinfo_ider.map((i) => CYPINFO_ID + i)]
+}
+
+/** Det motsatte av {@link slaSammenIder}. */
+export function delIder(ider: readonly string[]): { fest_ider: string[]; cypinfo_ider: string[] } {
+  return {
+    fest_ider: ider.filter((i) => !i.startsWith(CYPINFO_ID)),
+    cypinfo_ider: ider.filter((i) => i.startsWith(CYPINFO_ID)).map((i) => i.slice(CYPINFO_ID.length)),
+  }
+}
+
+/** Så mange ID-er tar `les_cypinfo` i ett kall. */
+export const CYPINFO_IDER_PER_KALL = 200
+
+/** Flere utvalg som ett, med hver rad én gang. */
+export function slaSammenCypinfoutvalg(utvalg: readonly Cypinfoutvalg[]): Cypinfoutvalg {
+  const unike = <T extends { id: string }>(rader: readonly T[]) => [...new Map(rader.map((r) => [r.id, r])).values()]
+  return {
+    kilde: utvalg[0]?.kilde ?? TOMT_CYPINFOUTVALG.kilde,
+    legemidler: unike(utvalg.flatMap((u) => u.legemidler)),
+    anbefalinger: unike(utvalg.flatMap((u) => u.anbefalinger)),
+    genresultater: unike(utvalg.flatMap((u) => u.genresultater)),
+  }
+}
+
+/**
+ * Den delen av utvalget én side får, med samme regel som `les_cypinfo`:
+ * legemidlene med en av FEST-ID-ene eller CYPinfo-ID-ene (som i
+ * {@link slaSammenIder}), anbefalingene for dem og gentabellen for genene deres.
+ */
+export function cypinfoFor(utvalg: Cypinfoutvalg, ider: readonly string[]): Cypinfoutvalg {
+  const { fest_ider, cypinfo_ider } = delIder(ider)
+  const fest = new Set(fest_ider)
+  const egne = new Set(cypinfo_ider)
+  const legemidler = utvalg.legemidler.filter((l) => egne.has(l.id) || l.data.fest.some((f) => fest.has(f)))
+  const valgte = new Set(legemidler.map((l) => l.id))
+  const gener = new Set(legemidler.flatMap((l) => l.data.gener))
+  return {
+    kilde: utvalg.kilde,
+    legemidler,
+    anbefalinger: utvalg.anbefalinger.filter((a) => valgte.has(a.legemiddel_id)),
+    genresultater: utvalg.genresultater.filter((g) => gener.has(g.data.gen_slug)),
+  }
+}
+
+/** Lesingen søket i hele kunnskapsbasen bruker: alle ID-ene på en gang, som i {@link slaSammenIder}. */
+export interface Cypinfosok {
+  les(ider: readonly string[]): Promise<Cypinfoutvalg>
+}
+
+/** Søkets lesing over `leser`: ID-ene i kall på høyst {@link CYPINFO_IDER_PER_KALL}, slått sammen. */
+export function lagCypinfosok(leser: Cypinfoleser, perKall = CYPINFO_IDER_PER_KALL): Cypinfosok {
+  return {
+    les: async (ider) => {
+      const deler: string[][] = []
+      for (let i = 0; i < ider.length; i += perKall) deler.push(ider.slice(i, i + perKall))
+      const svar = await Promise.all(deler.map((d) => {
+        const { fest_ider, cypinfo_ider } = delIder(d)
+        return leser.les(fest_ider, cypinfo_ider)
+      }))
+      return slaSammenCypinfoutvalg(svar)
+    },
+  }
+}
+
 /** Leseren, eller `undefined` når CYPinfo er stanset (`STANSEDE_KILDER`): da vises ingenting fra CYPinfo. */
 export function lagCypinfoleserOmIBruk(klient: SupabaseClient, stansede = STANSEDE_KILDER): Cypinfoleser | undefined {
   return omIBruk('cypinfo', () => lagCypinfoleser(klient), stansede)
+}
+
+/** Søkets lesing, eller `undefined` når CYPinfo er stanset. */
+export function lagCypinfosokOmIBruk(klient: SupabaseClient, stansede = STANSEDE_KILDER): Cypinfosok | undefined {
+  return omIBruk('cypinfo', () => lagCypinfosok(lagCypinfoleser(klient)), stansede)
 }

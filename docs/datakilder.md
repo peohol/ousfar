@@ -215,9 +215,9 @@ ikke i bruk igjen. Endepunktet, synkroniseringen, lesingen, visningen,
 oppslaget og søket er borte; `KILDEOPPSETT.cpic.synk` er `null`, så «Hent nå»
 ikke finnes. CPIC står fortsatt som **Stanset** i «Datakilder» til skjemaet
 `cpic` slettes. Skjemaet, de tomme tabellene og funksjonene står i databasen
-til da, fordi `sokedata_versjoner`, `datakilder_status` og
-`datakilder.etikett` fortsatt leser fra det; slettingen er en egen,
-destruktiv migrasjon som først skriver om de tre (se planen i
+til da, fordi `datakilder_status` og `datakilder.etikett` fortsatt leser
+fra det (`sokedata_versjoner` gjør det ikke lenger, #539); slettingen er en
+egen, destruktiv migrasjon som først skriver om de to (se planen i
 `docs/cypinfo-integrasjon.md`).
 
 ## Koden
