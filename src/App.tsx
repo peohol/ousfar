@@ -91,7 +91,6 @@ import { Fortolkningsforslag } from './components/forslag/Fortolkningsforslag'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
-import { lagCpicleserOmIBruk } from './cpic/lesing'
 import { lagCypinfoleserOmIBruk } from './cypinfo/lesing'
 import { lagBivirkningsleser } from './bivirkninger/lesing'
 import { lagKjemileser } from './kjemi/lesing'
@@ -267,7 +266,6 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
       lager: lagFaginnholdslager(klient()),
       legemidler: lagLegemiddelleser(klient()),
       farmakogenetikk: lagFarmakogenetikkleser(klient()),
-      cpic: lagCpicleserOmIBruk(klient()),
       cypinfo: lagCypinfoleserOmIBruk(klient()),
       bivirkninger: lagBivirkningsleser(klient()),
       kjemi: lagKjemileser(klient()),
@@ -318,7 +316,6 @@ function useKonto(brukerId: string, rettigheter: Rettigheter) {
           stoffer: async () => (await lagRegisterlager(stille).les('publisert')).sider,
           legemidler: lagLegemiddelsok(stille),
           farmakogenetikk: lagFarmakogenetikksok(stille),
-          cpic: lagCpicleserOmIBruk(stille),
           laboratorier: lagLabsokleser(stille),
           versjoner: lagVersjonsleser(stille),
           mellomlager: nettleserlager,

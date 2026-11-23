@@ -5,12 +5,15 @@ datamodellen, lesingen, eller visningen og oppslaget som bygger på dem.
 Mønsteret er det samme som for FEST (`docs/legemiddeldata.md`) og ClinPGx
 (`docs/clinpgx.md`), og det som står der om prinsippene, gjelder også her.
 
-> **Stanset fra 6.11.2026.** CPIC-dataene er slettet for å spare plass og skal
-> erstattes av norske farmakogenetiske data. Ingenting hentes, endepunktet svarer
-> 410, og appen leser og viser ingenting fra CPIC (`src/datakilder/stans.ts`,
-> `docs/datakilder.md` under «Stansede kilder»). Resten av dokumentet beskriver
-> laget slik det står klart til å tas i bruk igjen. Erstatningen, CYPinfo, er
-> kartlagt i `docs/cypinfo-integrasjon.md`.
+> **Avviklet. Historisk dokument.** CPIC ble stanset 6.11.2026 og dataene
+> slettet. Koden (synkroniseringen, endepunktet, lesingen, visningen, oppslaget
+> og søket) er fjernet 23.11.2026 (#437), og CPIC tas ikke i bruk igjen:
+> CYPinfo er OUSFARs eneste automatiske farmakogenetiske kilde
+> (`docs/cypinfo-integrasjon.md`). Det som står igjen i databasen (skjemaet
+> `cpic` med tomme tabeller og funksjonene), og planen for å slette det, står i
+> `docs/cypinfo-integrasjon.md`. Resten av dokumentet beskriver laget slik det
+> var, og filene det nevner, finnes bare i Git-historikken. CPIC kan fortsatt
+> siteres som en vanlig kilde i redaksjonell tekst.
 
 ClinPGx gir den brede kunnskapsoversikten på fagsiden (retningslinjer,
 preparatomtaler, kliniske annotasjoner). CPIC-laget gir det strukturerte:

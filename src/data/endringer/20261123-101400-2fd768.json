@@ -1,0 +1,13 @@
+{
+  "id": "20261123-101400-2fd768",
+  "semver": "patch",
+  "opprettet": "2026-11-23T10:14:00Z",
+  "sammendrag": "Den stansede CPIC-integrasjonen er ryddet bort",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "CPIC har vært stanset siden 6. november, og ingenting fra CPIC har vært vist siden. Nå er også koden bak fjernet: hentingen, visningen og oppslaget på fagsidene og CPIC i søket. CYPinfo blir OUSFARs eneste automatiske kilde for farmakogenetikk.",
+    "Ingenting endres på fagsidene. CPIC kan fortsatt siteres som en vanlig kilde i den redaksjonelle teksten, og under «Datakilder» står CPIC fortsatt som stanset."
+  ],
+  "utenVarsel": true
+}

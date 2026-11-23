@@ -11,7 +11,7 @@ import '../../styles/kuratering.css'
  * En utgave av en fagside som ikke er den gjeldende — en tidligere versjon
  * eller forhåndsvisningen av en kurateringsgren — vist som fagsiden selv, bare
  * til lesing. Siden og bivirkningene er utgavens; de automatiske dataene (FEST,
- * ClinPGx, CPIC, PubChem, Farmakologiportalen) er de samme som på siden nå.
+ * ClinPGx, CYPinfo, PubChem, Farmakologiportalen) er de samme som på siden nå.
  */
 export function Utgavevisning({
   utgave,

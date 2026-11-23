@@ -3,7 +3,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Uthev } from '../Uthev'
 
 /**
- * Byggeklossene «Farmakogenetikk» bruker for dataene fra ClinPGx og CPIC:
+ * Byggeklossene «Farmakogenetikk» bruker for dataene fra ClinPGx og CYPinfo:
  * gruppene med detaljkort og lenkene ut til kildene.
  */
 

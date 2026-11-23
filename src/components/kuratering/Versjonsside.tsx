@@ -111,7 +111,7 @@ function Versjonsinnhold({ stoff, nr, onGaaTil, onLukk, ...props }: Utgavesidepr
       {versjon.versjon.endring?.oppsummering && <p className="utgavebanner__linje">{versjon.versjon.endring.oppsummering}</p>}
       {!erGjeldende && (
         <p className="utgavebanner__linje">
-          Slik siden var publisert da. Data fra FEST, ClinPGx, CPIC, PubChem og Farmakologiportalen vises som nå.
+          Slik siden var publisert da. Data fra FEST, ClinPGx, PubChem og Farmakologiportalen vises som nå.
         </p>
       )}
       <div className="utgavebanner__handlinger">
