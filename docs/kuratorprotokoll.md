@@ -84,10 +84,14 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
    kvitteres aldri ut som bestått.
    CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
-   (fagansvarligs avgjørelse, sakene #533 og #437). ClinPGx, CPIC og DPWG er
+   (fagansvarligs avgjørelse, sakene 533 og 437). ClinPGx, CPIC og DPWG er
    dermed ikke lenger automatiske lag, men vanlige vitenskapelige kilder, og
    et farmakogenetisk forhold de dokumenterer, omtales redaksjonelt etter
-   «Farmakogenetikk i teksten» under.
+   «Farmakogenetikk i teksten» under. **I overgangen** viser appen fortsatt
+   ClinPGx-kort på sidene som er koblet, til den visningen er fjernet. Et
+   redaksjonelt kort skrives likevel, og overlappen i mellomtiden er ventet og
+   midlertidig; teksten står på sine egne kilder og viser aldri til
+   ClinPGx-kortet.
 9. **Seksjonene med faste kort følger reglene** i `docs/monografkuratering.md`
    («Seksjonene med faste kort»): et kort bare når det er relevant
    dokumentasjon, «Fenomenologi» bare for psykoaktive stoffer, behandlingen
@@ -386,6 +390,12 @@ det er ikke en duplisering av et automatisk lag.
   legemiddelet, og en systematisk gjengivelse av alt CPIC eller ClinPGx har.
   Dekker CYPinfo ett gen for legemiddelet og en retningslinje et annet, gjelder
   dette bare det andre genet, og teksten sier hvilket.
+  Dette gjelder **fra visningen av CYPinfo er slått på for alle brukere**
+  (`CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`, etappe E i
+  `docs/cypinfo-integrasjon.md`). Så lenge CYPinfo bare vises for
+  systemarkitektene, er det ingen grunn til å ta ut eller la være å skrive en
+  handlingsrettet tekst: klinikeren ser ikke laget ennå. Står teksten der fra
+  før, blir den stående.
 - **Hvordan:** kort tekst som skiller mellom hva genotypen eller varianten gjør
   med legemiddelresponsen, hva som gjøres når et prøvesvar alt finnes, og når
   det er grunn til å rekvirere en genetisk undersøkelse. Kilden er

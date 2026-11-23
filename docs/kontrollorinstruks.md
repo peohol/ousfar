@@ -104,10 +104,13 @@ teksten med kuratorprotokollen etter.
      farmakogenetisk kort er derfor ingen duplisering av et automatisk lag.
      Kontroller i stedet at påstanden er lest i retningslinjen eller
      primærkilden selv og sitert med forfatter og år (ClinPGx' egen side er
-     ikke kilden), at forholdet ikke alt er dekket av CYPinfo for det samme
-     legemiddelet, og at teksten ikke sier at genetikk er uten betydning fordi
-     en kilde mangler en oppføring. En tekst uten handling for leseren er en
-     merknad, ikke en sperre, med mindre den er feil eller ukildet.
+     ikke kilden), og at teksten ikke sier at genetikk er uten betydning fordi
+     en kilde mangler en oppføring. At CYPinfo dekker det samme forholdet, er
+     først en innvending når visningen av CYPinfo er slått på for alle
+     brukere; til da ser ikke klinikeren laget, og en overlapp med
+     ClinPGx-kortene som fortsatt vises, er ventet i overgangen. En tekst uten
+     handling for leseren er en merknad, ikke en sperre, med mindre den er feil
+     eller ukildet.
    - **Konsentrasjonene** (protokollen, «Konsentrasjonene i teksten»):
      `npm run kontrollor -- konsentrasjoner <gren>` lister de merkede
      konsentrasjonene med det som hindrer omregningen, og tallene med en
