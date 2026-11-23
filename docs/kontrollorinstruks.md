@@ -132,6 +132,17 @@ teksten med kuratorprotokollen etter.
      ikke kan endre noen klinisk vurdering, er det en sperrende tråd. Det er
      også et tall som er tatt ut selv om forskjellen kan ha betydning (krav 6).
      Er du i tvil, er det en merknad.
+   - **«Toksisk område»** (protokollen, «Toksisk område» skiller tre slags
+     tall): nøkkelfeltet tar bare målte toksiske konsentrasjoner. Står det en
+     laboratoriealarmgrense (AGNPs varslingsgrense) eller en beregnet verdi
+     der – for eksempel fire ganger øvre referansegrense, eller et tall
+     omregnet fra en annen enhet – er det en sperrende tråd, og det samme
+     gjelder grensene for alvorlig forgiftning og dødelig utgang. Står et
+     slikt tall i et kort, kontroller at teksten sier hvilken art det er, og
+     regnestykket når det er beregnet, og at det ikke står i samme setning som
+     en målt grense. Er feltet tomt fordi ingen målt konsentrasjon finnes,
+     kontroller at dekningsmatrisen fører området som `tomt_begrunnet` med hva
+     som er søkt.
    - **Enzymaktivitet** (protokollen, «Enzymaktivitet»): en fenotype skrevet
      som «omsetter», «metabolisør» eller UM/RM/NM/EM/IM/PM utenfor et ordrett
      sitat eller tittelen på en kilde, eller en kategori oversatt til feil
