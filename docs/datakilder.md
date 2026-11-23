@@ -7,8 +7,9 @@ endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
 `docs/farmakologiportalen.md` og `docs/cypinfo-integrasjon.md`.
 
 **Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
-farmakogenetiske kilden. CPIC er stanset og skal fjernes helt, og ClinPGx
-avvikles når OUSFAR Fag har godkjent overgangen. Planen, med hva som skjer med
+farmakogenetiske kilden. CPIC er stanset og fjernet. ClinPGx er stanset fra
+23.11.2026, og koden og dataene fjernes etter en arkivkopi (Peder
+23.11.2026). Planen, med hva som skjer med
 kildene i «Datakilder», endringsloggen og databasen, står i
 `docs/cypinfo-integrasjon.md`.
 

@@ -1,0 +1,15 @@
+{
+  "id": "20261123-202149-0c4acc",
+  "semver": "patch",
+  "opprettet": "2026-11-23T20:21:49Z",
+  "sammendrag": "Anbefalingene fra CYPinfo vises nå for alle under «Farmakogenetikk»",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Under «Farmakogenetikk» på fagsidene står det nå hva CYPinfo anbefaler ved de ulike fenotypene, for hvert legemiddel siden gjelder. Anbefalingene finnes også i søket på siden og i fagsøket, og CYPinfo står som kilde i referansene.",
+    "CYPinfo er nå eneste automatiske kilde for farmakogenetikk. Dataene fra ClinPGx vises ikke lenger. De redaksjonelle tekstene på sidene står som før.",
+    "Når CYPinfo sier at det er lite eller ingen informasjon om metabolismeveien for et legemiddel, står det slik i oppsummeringen, i stedet for «ingen relevante gener»."
+  ]
+}

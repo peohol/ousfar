@@ -561,7 +561,7 @@ describe('synkroniseringen', () => {
     ])
 
     const { data } = await kall.klientFor(admin).rpc('datakilder_status', {})
-    const vurdering = vurderKilder(lesDatakildestatus(data)).find((v) => v.kilde === 'clinpgx')!
+    const vurdering = vurderKilder(lesDatakildestatus(data), Date.now(), undefined, {}).find((v) => v.kilde === 'clinpgx')!
     expect(vurdering.tilstand).toBe('advarsel')
     expect(vurdering.melding).toContain('Siste henting var delvis')
     expect(vurdering.melding).toContain('levelOfEvidence mangler, ventet objekt')
@@ -671,7 +671,7 @@ describe('synkroniseringen', () => {
       ])
 
       const status = lesDatakildestatus((await kall.klientFor(admin).rpc('datakilder_status', {})).data)
-      const clinpgx = vurderKilder(status).find((v) => v.kilde === 'clinpgx')!
+      const clinpgx = vurderKilder(status, Date.now(), undefined, {}).find((v) => v.kilde === 'clinpgx')!
       expect(clinpgx.tilstand).toBe('feil')
       expect(clinpgx.melding).toContain('Kjemikalier som ble hentet før feilen, kan være oppdatert')
       expect(clinpgx.melding).not.toContain('Dataene fra siste vellykkede henting står')

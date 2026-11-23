@@ -8,15 +8,14 @@ står der om prinsippene, gjelder også her.
 Dataene er **referanseinformasjon**. OUSFAR viser hva ClinPGx har registrert
 for et legemiddel, ikke råd for en bestemt pasient.
 
-> **Avvikles (#437).** CYPinfo skal være OUSFARs eneste automatiske
-> farmakogenetiske kilde. ClinPGx står som beskrevet her til OUSFAR Fag har
-> gitt faglig aksept av overgangen (#533); deretter stanses og fjernes den
-> etter planen i `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget.
-> ClinPGx kan fortsatt siteres som en vanlig kilde i redaksjonell tekst.
-> Stansen er klar (#539): med `clinpgx` i `STANSEDE_KILDER` får appen ingen
-> lesere for ClinPGx (fagsidene, søket og koblingsskjemaet), endepunktene
-> svarer 410, arbeidsflyten melder det uten å feile, og funksjonstesten melder
-> kilden som ikke aktuell. Dataene i databasen står.
+> **Stanset 23.11.2026 (#437).** CYPinfo er OUSFARs eneste automatiske
+> farmakogenetiske kilde (Peder 23.11.2026). `clinpgx` står i
+> `STANSEDE_KILDER`: appen har ingen lesere for ClinPGx (fagsidene, søket og
+> koblingsskjemaet), endepunktene svarer 410, arbeidsflyten melder det uten å
+> feile, og funksjonstesten melder kilden som ikke aktuell. Koden fjernes og
+> dataene slettes etter en arkivkopi, etter planen i
+> `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget. ClinPGx kan
+> fortsatt siteres som en vanlig kilde i redaksjonell tekst.
 
 ## Kilden og lisensen
 
@@ -463,9 +462,9 @@ Seksjonen «Farmakogenetikk», i denne rekkefølgen:
 
 1. **De redaksjonelle kortene**, som før. Står det bare ett, åpnes det av seg
    selv bare når ClinPGx ikke har noe ved siden av.
-   Under dem står CYPinfos anbefalinger, foreløpig bare for
-   systemarkitektene (`docs/cypinfo-integrasjon.md`). CPIC-laget som stod
-   her, er fjernet (#437).
+   Under dem står CYPinfos anbefalinger, for alle fra 23.11.2026
+   (`docs/cypinfo-integrasjon.md`). CPIC-laget som stod her, er fjernet
+   (#437).
 2. **Retningslinjer**: ett detaljkort per retningslinje, CPIC først, så DPWG.
    Tittelen er organisasjonen og genene («CPIC · CYP2B6, CYP2C19»); kortet
    har sammendraget, organisasjonen, genene, merknadene, lenken til ClinPGx
