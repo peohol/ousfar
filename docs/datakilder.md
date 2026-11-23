@@ -6,6 +6,12 @@ endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
 `docs/legemiddeldata.md`, `docs/clinpgx.md`, `docs/cpic.md`, `docs/kjemi.md`,
 `docs/farmakologiportalen.md` og `docs/cypinfo-integrasjon.md`.
 
+**Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
+farmakogenetiske kilden. CPIC er stanset og skal fjernes helt, og ClinPGx
+avvikles når OUSFAR Fag har godkjent overgangen. Planen, med hva som skjer med
+kildene i «Datakilder», endringsloggen og databasen, står i
+`docs/cypinfo-integrasjon.md`.
+
 Formålet er at en administrator skal se om synkroniseringene går som de skal,
 og hva som faktisk er endret i kildene siden forrige vellykkede henting — og
 kunne spore en endring tilbake til kjøringen, releasen og kildens egen

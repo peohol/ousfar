@@ -8,6 +8,12 @@ står der om prinsippene, gjelder også her.
 Dataene er **referanseinformasjon**. OUSFAR viser hva ClinPGx har registrert
 for et legemiddel, ikke råd for en bestemt pasient.
 
+> **Avvikles (#437).** CYPinfo skal være OUSFARs eneste automatiske
+> farmakogenetiske kilde. ClinPGx står som beskrevet her til OUSFAR Fag har
+> gitt faglig aksept av overgangen (#533); deretter stanses og fjernes den
+> etter planen i `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget.
+> ClinPGx kan fortsatt siteres som en vanlig kilde i redaksjonell tekst.
+
 ## Kilden og lisensen
 
 | | |
