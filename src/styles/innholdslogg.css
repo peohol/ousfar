@@ -39,16 +39,6 @@
   cursor: pointer;
 }
 
-.innholdslogg__tom,
-.innholdslogg__feil {
-  margin: var(--rom-4) 0;
-  color: var(--blekk-dempet);
-}
-
-.innholdslogg__feil {
-  color: var(--alvorlig-blekk);
-}
-
 /* Hvem som gjorde endringen står først, med bildet, og tidspunktet etter. */
 .innholdslogg__utforer {
   display: flex;
@@ -152,8 +142,3 @@
   border-color: var(--blekk-dempet);
 }
 
-.innholdslogg__flere {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--rom-4);
-}

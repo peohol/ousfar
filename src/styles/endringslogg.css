@@ -47,6 +47,31 @@
   list-style: none;
 }
 
+/* Lista får fokus bare mens føringene hentes, og bare for å holde det borte
+   fra lukkeknappen; den skal ikke se valgt ut. */
+.logg__liste:focus {
+  outline: none;
+}
+
+/* Det som står i stedet for, eller under, føringene: at de hentes, at det
+   ikke gikk, eller at det ikke er noen. Felles for loggene i appen. */
+.logg__melding {
+  margin: var(--rom-4) 0;
+  color: var(--blekk-dempet);
+}
+
+.logg__melding--feil {
+  color: var(--alvorlig-blekk);
+}
+
+/* «Vis flere» under lista, midt i. */
+.logg__flere {
+  display: flex;
+  justify-content: center;
+  gap: var(--rom-3);
+  margin-top: var(--rom-4);
+}
+
 .loggskuff {
   background: transparent;
   border: var(--kant) solid transparent;
