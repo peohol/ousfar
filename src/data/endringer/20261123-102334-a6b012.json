@@ -1,0 +1,12 @@
+{
+  "id": "20261123-102334-a6b012",
+  "semver": "patch",
+  "opprettet": "2026-11-23T10:23:34Z",
+  "sammendrag": "Plan for CYPinfo som eneste kilde for farmakogenetikk",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Planen for farmakogenetikken er oppdatert: CYPinfo skal bli OUSFARs eneste automatiske kilde, CPIC fjernes helt, og ClinPGx avvikles først når den faglige vurderingen av hva som må bevares, er gjort. Planen viser hvilke fagsider som i dag har farmakogenetikk bare fra ClinPGx."
+  ],
+  "utenVarsel": true
+}

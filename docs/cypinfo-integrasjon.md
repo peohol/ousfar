@@ -1,28 +1,232 @@
-# CYPinfo som norsk farmakogenetisk kilde: kartlegging og plan
+# CYPinfo som OUSFARs eneste automatiske farmakogenetiske kilde
 
-Leses før noe som har med CYPinfo å gjøre bygges: koblingen til fagsidene,
-synkroniseringen av katalogen eller visningen i seksjonen «Farmakogenetikk».
-Dokumentet begynte som etappe A, kartleggingen; etappene står til slutt, med
-det som er bygd.
-Mønstrene for datakildene står i `docs/legemiddeldata.md`, `docs/clinpgx.md`,
-`docs/cpic.md` og `docs/datakilder.md`, og det som står der om prinsippene,
-gjelder også her.
+Leses før noe som har med farmakogenetikken på fagsidene å gjøre bygges eller
+fjernes: CYPinfo-koblingen, -synkroniseringen og -visningen, og avviklingen av
+CPIC og ClinPGx. Målet og gjennomføringsplanen står først; deretter
+kartleggingen av CYPinfo (API-et, datamodellen og koblingen), som fortsatt
+gjelder, og det som er bygd.
+Mønstrene for datakildene står i `docs/legemiddeldata.md`, `docs/datakilder.md`,
+`docs/clinpgx.md` og `docs/cpic.md` (historisk), og det som står der om
+prinsippene, gjelder også her.
 
-CYPinfo erstatter CPIC, som er stanset siden 6.11.2026 og skal erstattes av
-norske farmakogenetiske data (`src/datakilder/stans.ts`). Ingenting i denne
-kartleggingen tar CPIC i bruk igjen.
+**Mål (Peder 23.11.2026, Issue #437):** CYPinfo er OUSFARs eneste automatiske,
+strukturerte farmakogenetiske kilde på fagsidene. CPIC-importen er ryddet ut,
+og ClinPGx-importen avvikles. CPIC, ClinPGx og DPWG kan fortsatt siteres som
+vanlige, dokumenterte kilder i redaksjonell fritekst om klinisk vesentlige
+forhold CYPinfo ikke dekker, men aldri som en automatisk, parallell visning.
+Den faglige delen (hvilke mangler som er klinisk vesentlige, de redaksjonelle
+tekstene og den faglige aksepten av CYPinfo-visningen) eies av OUSFAR Fag i
+#533; alt teknisk eies av OUSFAR Dev i #437.
 
-**Status:** etappe A (kartleggingen), B (katalogen i OUSFAR) og D (visningen
-på fagsidene, bare for systemarkitektene) er bygd. Etappe C, oppslaget etter
-en pasients resultat, bygges ikke (se under). E gjenstår: den kliniske
-kontrollen og visningen for alle.
+**Status 23.11.2026:** CYPinfo-katalogen synkroniseres hver uke og vises på
+fagsidene, men bare for systemarkitektene. CPIC er stanset siden 6.11.2026 med
+dataene slettet, og koden fjernes i PR #537. ClinPGx er i full drift (ukentlig
+synk, visning, søk og referanser på 104 fagsider). Oppslaget etter en pasients
+resultat (den tidligere etappe C) bygges ikke.
 
 **Avklart av Peder 17.11.2026:** OUSFAR skal vise hvordan de ulike genotypene
 (fenotypene) påvirker legemidlene, slik CYPinfo beskriver det, og ikke være et
 verktøy der noen legger inn en pasients genotype; det er CYPinfo selv. Det
 trengs derfor ingen personvernvurdering, og ingen skriftlig tillatelse, siden
-CYPinfo driftes av Peders egen avdeling. CYPinfo vises for systemarkitektene
-først.
+CYPinfo driftes av Peders egen avdeling.
+
+## Prinsippene for overgangen
+
+- **Én automatisk kilde.** Fagsidene leser bare OUSFARs kopi av CYPinfo,
+  synkronisert fra CYPinfos API. Kopien er et uendret speil, ikke en egen,
+  redigerbar fagdatabase, og CYPinfos tekster endres aldri i OUSFAR.
+- **Ingen pasientopplysninger.** Ingen genotype legges inn, lagres eller sendes
+  noe sted; for en pasients resultat lenkes det til cypinfo.no.
+- **Mangler betyr ikke «ikke relevant».** At CYPinfo ikke har et legemiddel,
+  vises aldri som at farmakogenetikk er uten betydning. Bare CYPinfos egen,
+  eksplisitte tekst om at legemiddelet ikke har relevante gener, gjengis slik.
+- **Ingenting klinisk relevant forsvinner i stillhet.** ClinPGx-visningen
+  fjernes først når OUSFAR Fag har vurdert de klinisk vesentlige manglene og
+  gitt faglig aksept av CYPinfo-visningen (#533). Til da står ClinPGx som før,
+  og en stanset ClinPGx-synk merkes som foreldet på siden (`clinpgxForeldet`,
+  etter ti døgn), så foreldede data aldri vises umerket.
+- **Historikken står.** Publiserte og historiske versjoner av fagsidene, de
+  redaksjonelle henvisningene (også til CPIC og ClinPGx), endringsloggen og
+  migrasjonsfilene beholdes. Elementtypen `clinpgxkobling` og leseren av den
+  står, så gamle versjoner og sammenligninger kan åpnes.
+- **Databasen slettes sist.** Tabeller og skjemaer slettes først når ingen kode
+  leser dem, i en egen migrasjon med Peders særskilte ja.
+
+## Kartleggingen av CPIC og ClinPGx (23.11.2026)
+
+Gjort i kildekoden på `main` (59958b2) og skrivebeskyttet i
+produksjonsdatabasen.
+
+### CPIC
+
+- **Kode:** alt var allerede utkoblet: `lagCpicleserOmIBruk` gav ingen leser,
+  endepunktet svarte 410, og ingen arbeidsflyt eller cron kjørte. Ingenting i
+  `src/clinpgx/` eller `src/cypinfo/` bygde på `src/cpic/` (avhengigheten gikk
+  andre veien). Fjernes i PR #537: endepunktet, `src/cpic/`, visningen,
+  oppslaget, diplotypene, CPIC i søket, funksjonstesten og CSS-en, med testene.
+  `cpic` står igjen i `DATAKILDER` og `STANSEDE_KILDER` så «Datakilder» viser
+  den som stanset, med `synk: null`.
+- **Database:** skjemaet `cpic` med 15 tomme datatabeller, `entiteter` og
+  `henvisninger` (13 oppsettsrader hver), visningen `anbefalingsbetingelser`,
+  `cpic.pagaende`, `cpic.kilde()`, og `cpic_*_synk`, `cpic_last_inn`,
+  `cpic_status`, `les_cpic` og `les_cpic_diplotyper` i `public`;
+  `datakilder.cpic_etter_bytte` og triggerne på tabellene. Rundt 0,5 MB.
+- **Levende avhengigheter i databasen:** tre funksjoner som ikke er CPICs,
+  leser fortsatt fra skjemaet: `sokedata_versjoner()` (`cpic.kilde()`, kalt ved
+  hvert globalt søk), `datakilder_status()` (`cpic.synkroniseringer`, siden
+  «Datakilder») og `datakilder.etikett()` (`cpic.legemiddel`, kalt av
+  endringsloggen for alle kildene). Funksjonskroppene er tekst, så Postgres
+  sporer ikke avhengigheten: en `drop schema cpic cascade` uten å skrive dem om
+  først ville ødelagt søket, «Datakilder» og endringsloggen for ClinPGx,
+  PubChem, Farmakologiportalen og CYPinfo.
+- **Historisk og redaksjonelt (beholdes):** CPIC sitert som kilde i
+  redaksjonell tekst (i dag nevner 77 publiserte kort og tekster på 56 fagsider CPIC, ClinPGx eller PharmGKB),
+  migrasjonsfilene og endringshistorikken. De automatiske CPIC-referansene ble
+  regnet ut ved visning og aldri lagret, så ingen lagret versjon viser til dem.
+
+### ClinPGx
+
+| Del | Hvor | Merknad |
+| --- | --- | --- |
+| Synk | `.github/workflows/clinpgx-synk.yml` (mandag 02:30 UTC, OIDC, opptil seks omganger), `api/clinpgx-synk.ts`, `src/clinpgx/{endepunkt,synk,api,lager,struktur}.ts` | «Hent nå» på fagsiden og i «Datakilder» bruker det samme endepunktet |
+| Oppslag | `api/clinpgx-sok.ts` (bare systemarkitekter), `ClinpgxkoblingSkjema` i `Skjemaer.tsx` | Brukes når en side kobles i redigeringen |
+| Visning | `Farmakogenetikkpanel.tsx` (`Clinpgxvisning`, panelets `tomt`), `src/clinpgx/stoffside.ts`, `useFarmakogenetikk` | Leseren i `App.tsx` har ingen stansbryter ennå, ulikt CPIC og CYPinfo |
+| Søk | Søket på siden (`farmakogenetikksoketekster`) og det globale søket (`globaltSok.ts`, versjonsnøkkelen `clinpgx`, `les_farmakogenetikk_sok`), `treffvisning.ts` | CYPinfo er ikke i noe søk ennå |
+| Referanser | `src/clinpgx/referanser.ts`: ClinPGx med lisensen (CC BY-SA 4.0) i referansefeltet og publikasjonene på hvert kort | Regnes ut ved visning, aldri lagret. Når de forsvinner, flyttes numrene fra «Farmakogenetikk» og utover på de koblede sidene; ingenting lagret brytes |
+| Redaksjonell kobling | Elementtypen `clinpgxkobling` i `innholdselementer` (en per side, publisert og utkast): 104 publiserte fagsider | 93 kom fra fire datamigrasjoner (generert av `scripts/lag-clinpgxkoblinger.ts` fra `clinpgxkoblinger.ts`), resten fra redigeringen. Dekningsregelen `clinpgxdekning.ts` krever en status for hver fagside |
+| Historiske versjoner | `Utgavevisning.tsx`, `Versjonsside.tsx` | En gammel versjon har bare koblingselementet, aldri ClinPGx-data; dataene vises slik de er nå. Etter avviklingen viser gamle versjoner ingen ClinPGx-data, og teksten på versjonssiden må si det |
+| Funksjonstesten | `src/kuratorjobb/funksjonstest.ts` (`clinpgx`, `farmakogenetikkvisning`) | |
+| Datakilder | `DATAKILDER`, `KILDEOPPSETT.clinpgx` (intervall 7), `datakilder_status`, endringsloggen (1 623 føringer) | |
+| Database | Skjemaet `clinpgx` (`kjemikalier` 105, `annotasjoner` 1 402, `kjemikalie_annotasjoner` 1 634, `synkroniseringer` 58; rundt 9 MB), `clinpgx_*`-funksjonene, `les_farmakogenetikk(_sok)`, `clinpgx_status`, `clinpgx.utvalg`, triggerne og `datakilder.clinpgx_*`; `sokedata_versjoner` og `datakilder_status` leser fra det | Ingen pg_cron, pg_net eller Edge-funksjon |
+| Bruk utenfor farmakogenetikken | `scripts/kurer-forbindelser.ts` og `src/kjemi/kurering.ts` | Se under |
+
+**Kjemiske forbindelser.** `kurer-forbindelser` (kjøres for hånd når nye
+forbindelser legges til, `docs/kjemi.md`) godtar en PubChem-kobling bare når en
+uavhengig kilde har samme InChIKey: ClinPGx (`/data/chemical?name=` → PubChem-CID
+→ InChIKey) eller ChEBI. Av de 151 koblede forbindelsene i
+`src/data/forbindelser.ts` hviler 96 på begge, 34 bare på ChEBI og 21 bare på
+ClinPGx. Eksisterende koblinger skrives aldri om, så avviklingen endrer ingen
+av dem, men en ny kontroll (`--alle`) ville meldt de 21 som uavklarte, og nye
+forbindelser får én uavhengig kilde mindre. Kontrollkvaliteten skal ikke
+senkes; erstatningen avgjøres i en egen oppgave (#538).
+
+Ingenting annet bruker ClinPGx: ikke stoffregisteret, aliasene, ATC-koblingen
+eller andre søkefunksjoner.
+
+### Fagsidene med ClinPGx, og hva CYPinfo dekker
+
+Av de 104 publiserte fagsidene som viser ClinPGx i dag, har **44** også
+CYPinfo (FEST-koblingen eller koblingslisten), og **60** har bare ClinPGx.
+Tabellen viser hva ClinPGx har for de 60, som et teknisk utgangspunkt for Fags
+vurdering i #533. Antallet sier ikke noe om klinisk betydning: at et
+gen–legemiddel-par står i ClinPGx, er ikke i seg selv grunn til å omtale det.
+
+| Fagside (bare ClinPGx) | Retningslinjer (organisasjoner) | Preparatomtaler | Kliniske annotasjoner, nivå 1A/1B | Kliniske annotasjoner, alle |
+| --- | --- | --- | --- | --- |
+| Karbamazepin | 5 (CPIC/CPNDS/DPWG/RNPGx) | 6 | 2 | 52 |
+| Karvedilol | 4 (CPIC/DPWG) | 3 | 0 | 8 |
+| Okskarbazepin | 3 (CPIC/DPWG/RNPGx) | 4 | 1 | 20 |
+| Bisoprolol | 3 (CPIC/DPWG) | 0 | 0 | 2 |
+| O-desmetylvenlafaksin | 2 (CPIC) | 3 | 0 | 0 |
+| Oksykodon | 2 (CPIC/DPWG) | 1 | 0 | 21 |
+| Atenolol | 2 (CPIC/DPWG) | 0 | 0 | 44 |
+| Labetalol | 2 (CPIC) | 0 | 0 | 0 |
+| Metadon | 2 (CPIC) | 0 | 0 | 100 |
+| Lamotrigin | 1 (DPWG) | 2 | 1 | 17 |
+| Buprenorfin | 1 (CPIC) | 0 | 0 | 22 |
+| Fentanyl | 1 (CPIC) | 0 | 0 | 48 |
+| Flufenazin | 1 (DPWG) | 0 | 0 | 0 |
+| Morfin | 1 (CPIC) | 0 | 0 | 43 |
+| Valproat | 0 | 5 | 0 | 24 |
+| Hydroksyrisperidon | 0 | 4 | 0 | 4 |
+| GHB | 0 | 3 | 0 | 0 |
+| Diazepam | 0 | 2 | 0 | 1 |
+| Losartan | 0 | 1 | 0 | 11 |
+
+De andre 41 har ingen retningslinje, preparatomtale eller klinisk
+annotasjon på nivå 1A/1B i ClinPGx, bare annotasjoner på lavere nivå eller
+ingenting: Alprazolam, Amlodipin, Bendroflumetiazid, Bumetanid, DMT, Diltiazem, Doksazosin, Enalapril, Eplerenon, Fenobarbital, Flunitrazepam, Furosemid, Gabapentin, Hydroklortiazid, Irbesartan, Kandesartan, Ketobemidon, Klonazepam, LSD, Lerkanidipin, Levetiracetam, Lisinopril, Loksapin, MDMA, Maprotilin, Nifedipin, Nitrazepam, Oksazepam, Perisiazin, Petidin, Promazin, Ramipril, Spironolakton, Sulpirid, Telmisartan, Topiramat, Trifluoperazin, Valsartan, Verapamil, Zolpidem, Zopiklon.
+
+Tallene er fra produksjonen 23.11.2026; den skrivebeskyttede spørringen står i
+PR-en som la dem inn, og kan kjøres på nytt.
+
+## Gjennomføringsplanen
+
+Fasene følger #437. Hver leveranse er en egen PR med etiketten `ansvar:dev`,
+med #437 eller et deloppgave-Issue under «Arbeidsoppgave», og kontrolleres av
+ChatGPT før sammenslåing. Fag-oppgavene står i #533.
+
+### A. Kartlegging og plan (Dev og Fag parallelt)
+
+- Dev: kartleggingen over og dette dokumentet. **Ferdig med denne PR-en.**
+- Fag (#533): vurderer de klinisk vesentlige manglene risikobasert, med
+  tabellen over som teknisk utgangspunkt, og skriver eventuelle korte
+  redaksjonelle tekster etter kuratorprotokollen.
+
+### B. Forberedelser uten synlig endring (Dev, kan gjøres nå)
+
+1. **Fjerne CPIC-koden** (PR #537). Databasen røres ikke.
+2. **Erstatte ClinPGx i kontrollen av kjemiske forbindelser** (#538), før
+   ClinPGx-koden fjernes, uten å senke kontrollkvaliteten: en annen uavhengig
+   strukturkilde, eller ClinPGx' åpne API bare i dette skriptet, flyttet til
+   `src/kjemi/`. Avgjøres med en kjøring av `--alle` uten `--skriv` mot de 21.
+3. **Gjøre ClinPGx-avviklingen klar bak brytere** (#539):
+   - en stansbryter for ClinPGx som for CPIC (`lagFarmakogenetikkleserOmIBruk`
+     og `stansetSvar` på begge endepunktene), så stansen er én linje i
+     `STANSEDE_KILDER` og arbeidsflyten;
+   - CYPinfo i referansefeltet, i søket på siden og i det globale søket, og
+     direktelenker til kortene, bak `CYPINFO_VISES_FOR`, så det bare er synlig
+     for systemarkitektene til fase C;
+   - panelets `tomt` og oppsummering uten ClinPGx, og teksten på
+     versjonssiden;
+   - dele ut det `src/cypinfo/` og `src/faginnhold/cypinfodekning.ts` låner fra
+     ClinPGx (`FARMAKOGENETIKKPANEL`, metabolittlisten `UKOBLEDE_STOFFSIDER`),
+     så `src/clinpgx/` kan fjernes senere uten å røre CYPinfo.
+
+### C. Bytte fagsidene over til CYPinfo
+
+**Port:** Fag (#533) har gitt faglig aksept av CYPinfo-visningen (aksepttesten
+under) og meldt at de prioriterte manglene er behandlet eller akseptert, og
+Peder har godkjent det som er reservert ham. Dev starter ikke fase C før
+statusen står i #533.
+
+1. **CYPinfo for alle** (egen PR): `CYPINFO_VISES_FOR = 'alle'` og
+   `les_cypinfo` tilbake til `intern.krev_aktivt_medlemskap()` i en ny
+   migrasjon, i samme endring, med føring i endringsloggen. Den kliniske
+   aksepttesten føres i PR-en.
+2. **ClinPGx stanses** (egen PR, samtidig med eller rett etter 1): `clinpgx` i
+   `STANSEDE_KILDER`, planen tas ut av `clinpgx-synk.yml`, endepunktene svarer
+   410, appen leser og viser ingenting fra ClinPGx (heller ikke referansene og
+   søket), koblingsskjemaet skjules, og funksjonstesten melder kilden som ikke
+   aktuell. Dataene i databasen står urørt, så stansen kan oppheves.
+3. **Koden fjernes** når stansen har stått en stund uten feil: synken,
+   endepunktene, arbeidsflyten, visningen, referansene, søket, skjemaet,
+   `clinpgxkoblinger.ts` med generatoren og dekningsregelen
+   `clinpgxdekning.ts` (erstattet av `cypinfodekning.ts`). Elementtypen
+   `clinpgxkobling`, leseren og etiketten i endringshistorikken står, så gamle
+   versjoner kan åpnes. Koblingselementene på sidene slettes ikke; om de skal
+   avpubliseres redaksjonelt, avgjøres med Fag.
+4. Kontroll: alle publiserte fagsider åpnes; redigering, utkast,
+   publisering, kurateringshistorikken, søket, referansenumrene og
+   lesingene virker; en vanlig bruker ser CYPinfo og ingenting privilegert.
+
+### D. Slette databasedataene (til slutt, med Peders særskilte ja)
+
+Egen oppgave (#540), først når ingen kode leser skjemaene:
+
+1. Eksportere `clinpgx.*` og `datakilder.endringer` for ClinPGx til et arkiv
+   utenfor databasen, med kildeangivelsen (CC BY-SA 4.0), hvis det skal kunne
+   vises hva en side viste før.
+2. Skrive om `sokedata_versjoner`, `datakilder_status` og
+   `datakilder.etikett` uten `cpic` og `clinpgx`, i en vanlig migrasjon.
+3. En destruktiv migrasjon (`-- destruktiv-godkjent:` etter Peders ja for
+   nøyaktig den migrasjonen): `drop schema cpic` og `clinpgx` med funksjonene,
+   triggerne, `datakilder.cpic_*`/`clinpgx_*`, feltreglene og endringsloggen
+   for de to kildene; testkatalogene (`funksjonskontroller.ts`,
+   `ressurskatalog.ts`) oppdateres. Historiske migrasjonsfiler står.
+4. `cpic` og `clinpgx` tas ut av `DATAKILDER`, «Datakilder» og typene.
+
+Uten Peders ja står dataene, uten lesing og uten import.
 
 ## Kort oppsummert
 
@@ -45,7 +249,8 @@ først.
   gir et tomt svar), oversettelsesendepunktet feiler for 43 av 176 genotyper,
   ATC-kodene har formfeil og én feil kode, og API-et har ingen versjon, dato
   eller lisens.
-- Før visningen slås på for alle, kontrolleres den klinisk (etappe E).
+- Før visningen slås på for alle, kontrolleres den klinisk og aksepteres
+  faglig av OUSFAR Fag (#533; fase C i planen over).
 
 ## Kilden
 
@@ -252,7 +457,7 @@ alle 75 legemidlene, og for alle kombinasjoner av to gener der det trengs):
 - **Unntak, warfarin:** VKORC1 «Noe økt følsomhet» alene gir én anbefaling,
   `standard`, «Påviste genotyper tilsier normal dosering av warfarin», mens den
   samme VKORC1-fenotypen sammen med CYP2C9 Normal gir `medium`. Det må den
-  kliniske kontrollen se på (etappe E).
+  kliniske kontrollen se på (aksepttesten i fase C).
 - **Sertralin** har egne anbefalinger for CYP2C19 og CYP2B6 hver for seg, og en
   felles når begge sendes. Den felles erstatter da de to enkle. Svaret avhenger
   altså av hvilke gener som er sendt med, og OUSFAR kan ikke sette sammen
@@ -407,7 +612,9 @@ dem skal få fagside, er et faglig valg, ikke en del av denne integrasjonen.
   Hydroksybupropion, Norfluoksetin, O-desmetyltramadol, O-desmetylvenlafaksin;
 - legemidler med kjent farmakogenetikk i ClinPGx som CYPinfo ikke har i dag,
   f.eks. Imipramin, Karbamazepin og Okskarbazepin (HLA), Metadon, Oksykodon,
-  Diazepam, Dosulepin. For dem fortsetter ClinPGx-visningen som før;
+  Diazepam, Dosulepin. ClinPGx-visningen står for dem til OUSFAR Fag har
+  vurdert om noe er klinisk vesentlig og skal omtales redaksjonelt (#533; se
+  «Fagsidene med ClinPGx, og hva CYPinfo dekker» over);
 - resten (rusmidler, benzodiazepiner, antiepileptika, blodtrykksmidler …).
 
 ### Anbefalt koblingsmetode
@@ -524,7 +731,7 @@ databasen: `les_cypinfo` krever systemarkitekt (`intern.krev_systemarkitekt`)
 til visningen slås på for alle.
 
 CYPinfo får en egen gruppe, **«Anbefalinger fra CYPinfo»**, i seksjonen
-«Farmakogenetikk», under de redaksjonelle kortene og over CPIC og ClinPGx. De
+«Farmakogenetikk», under de redaksjonelle kortene og over ClinPGx (til ClinPGx er avviklet). De
 redaksjonelle kortene og panelteksten endres ikke, og CYPinfos tekst blandes
 aldri inn i dem.
 
@@ -548,8 +755,9 @@ aldri inn i dem.
 - Den lukkede seksjonen oppsummerer: «CYPinfo: CYP2C19, CYP2D6».
 - En side CYPinfo ikke har noe for, viser ingenting fra CYPinfo.
 
-Ikke med ennå, til visningen er for alle: CYPinfo i referansefeltet, i søket på
-siden og i kunnskapsbasen, og direktelenker til kortene.
+Ikke med ennå: CYPinfo i referansefeltet, i søket på siden og i
+kunnskapsbasen, og direktelenker til kortene. De bygges bak den samme bryteren
+i fase B (#539).
 
 ## Personvern, sporbarhet, feil og klinisk kontroll
 
@@ -575,15 +783,18 @@ rad som mangler noe, i stedet for å vise den halvt. CYPinfo kan stanses som CPI
 **Klinisk kontroll.** CYPinfos tekster er CYPinfo-redaksjonens kliniske
 vurderinger; OUSFAR gjengir dem uendret og kontrollerer dem ikke faglig.
 Kontrollen gjelder at OUSFAR viser riktig anbefaling for riktig legemiddel og
-fenotype, og ikke gir et inntrykk CYPinfo ikke gir. Den gjøres i etappe E av en
+fenotype, og ikke gir et inntrykk CYPinfo ikke gir. Den gjøres i fase C av en
 klinisk farmakolog (Peder eller den han peker ut), med testtilfellene under,
 før gruppen slås på for alle. Funn i CYPinfos innhold (warfarin over,
 ATC-feilen) meldes til CYPinfo, ikke rettes i OUSFAR.
 
-## Etappene B–E
+## Det som er bygd (etappene fra kartleggingen 16.11.2026)
 
-Alle etappene eies av OUSFAR Dev (`ansvar:dev`): datasynk, database, server,
-fagsidenes visning. Ingen endrer faginnholdet eller verktøymenyen.
+Kartleggingen 16.11.2026 delte arbeidet i etappene A (kartleggingen), B
+(katalogen), C (oppslaget), D (visningen) og E (klinisk kontroll og visning for
+alle). A, B og D er bygd, C bygges ikke, og E er tatt inn i fase C i
+gjennomføringsplanen over. Alt eies av OUSFAR Dev (`ansvar:dev`); ingen
+endrer faginnholdet eller verktøymenyen.
 
 ### B — Katalogen i OUSFAR
 
@@ -653,19 +864,15 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
   eller vises for andre enn systemarkitekter; kortet for systemarkitektene) og
   `cypinfo.test.ts` (tekstene lagres, ny lesing som metadata, `les_cypinfo`).
 
-### E — Klinisk kontroll og visning for alle
+### E — Klinisk kontroll og visning for alle (nå fase C)
 
-- Den kliniske aksepttesten (under), gjort av en klinisk farmakolog, med
-  resultatet ført i PR-en.
-- CYPinfo i referansefeltet, søket og direktelenkene.
-- Funnene meldes til CYPinfo: warfarin VKORC1 alene, kariprazins ATC, ATC-
-  formen, FEST-ID for de 15, at `/api/result` feiler for 43 genotyper, og
-  ønsket om en versjon eller dato og genene per legemiddel i katalogen.
-- Visningen for alle: `CYPINFO_VISES_FOR = 'alle'`, og `les_cypinfo` tilbake
-  til `intern.krev_aktivt_medlemskap()` i en ny migrasjon, i samme endring,
-  med varsel i endringsloggen.
-- Valget om CPIC-laget (skjemaet, koden og `Cpicoppslag.tsx`) skal fjernes når
-  CYPinfo er i bruk. Det er en egen opprydding etter at E er godkjent.
+Tatt inn i gjennomføringsplanen over: referansene, søket og direktelenkene
+bygges bak bryteren i fase B (#539), og aksepttesten og visningen for alle er
+fase C. CPIC-laget fjernes alt nå (#537), uavhengig av E, etter den reviderte
+beslutningen i #437. Funnene meldes fortsatt til CYPinfo: warfarin VKORC1
+alene, kariprazins ATC, ATC-formen, FEST-ID for de 15, at `/api/result` feiler
+for 43 genotyper, og ønsket om en versjon eller dato og genene per legemiddel i
+katalogen.
 
 ## Test- og godkjenningskriterier
 
@@ -685,8 +892,9 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
 - Fagsiden viser ingenting fra CYPinfo, og leser ingenting, for andre enn dem
   `CYPINFO_VISES_FOR` gjelder.
 
-**Klinisk aksepttest (E), med systemarkitektenes visning i produksjonen eller i
-det lokale testmiljøet:**
+**Klinisk aksepttest (fase C), med systemarkitektenes visning i produksjonen
+eller i det lokale testmiljøet. Resultatet føres i PR-en som slår visningen på
+for alle, og Fags aksept i #533:**
 
 | Fagside | Forventet |
 | --- | --- |
@@ -697,7 +905,9 @@ det lokale testmiljøet:**
 | Warfarin | «CYP2C9 og VKORC1 sammen», alle ni som på cypinfo.no |
 | Amfetamin | To legemidler, CYPinfos tekst om ikke relevant gen-legemiddelinteraksjon |
 | Ketamin | Esketamin |
-| Karbamazepin | Ingen CYPinfo-gruppe; ClinPGx som før |
+| De tre andre TCA-ene med CYP2C19 + CYP2D6 i CYPinfo | Som amitriptylin |
+| O-desmetylvenlafaksin (metabolitt) | Ingen CYPinfo-gruppe, og ingen tekst om at farmakogenetikk er uten betydning |
+| Karbamazepin, Metadon (uten CYPinfo) | Ingen CYPinfo-gruppe, og ingen tekst om at farmakogenetikk er uten betydning; eventuell redaksjonell tekst fra Fag står uendret |
 
 Godkjent når hver rad gir det samme som cypinfo.no for de samme fenotypene, den
 redaksjonelle teksten på sidene er uendret, og kilden og tidspunktet står i
