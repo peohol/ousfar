@@ -244,8 +244,10 @@ describe('versjonene', () => {
     const versjoner = lagVersjonsleser(brukerklient)
     const forst = await versjoner()
     expect(forst.fest).toMatch(/^[1-9]\d*$/)
-    // `sokedata_versjoner` gir fortsatt `cpic` til skjemaet slettes, men søket leser ikke CPIC lenger (#437).
-    expect(Object.keys(forst).sort()).toEqual(['clinpgx', 'fest', 'laboratorier', 'sider'])
+    // Søket leser ikke CPIC lenger, og `sokedata_versjoner` gir ingen versjon for det (#437).
+    expect(Object.keys(forst).sort()).toEqual(['clinpgx', 'cypinfo', 'fest', 'laboratorier', 'sider'])
+    // Ingen henting fra CYPinfo er fullført her.
+    expect(forst.cypinfo).toBe('0')
     // Ingen henting fra Farmakologiportalen er fullført her.
     expect(forst.laboratorier).toBe('0')
 
@@ -264,5 +266,16 @@ describe('versjonene', () => {
     await db.query(`update legemiddeldata.synkroniseringer set etag = null, parserversjon = parserversjon - 1`)
     await synkroniserUtdrag(db)
     expect((await versjoner()).fest).not.toBe(forst.fest)
+  })
+
+  it('endrer versjonen for CYPinfo bare når en henting har endret noe', async () => {
+    const versjoner = lagVersjonsleser(brukerklient)
+    const forst = await versjoner()
+    await db.query(`insert into cypinfo.synkroniseringer (status, avsluttet_kl) values ('uendret', now())`)
+    expect(await versjoner()).toEqual(forst)
+    await db.query(`insert into cypinfo.synkroniseringer (status, avsluttet_kl) values ('fullfort', now())`)
+    const etter = await versjoner()
+    expect(etter.cypinfo).not.toBe(forst.cypinfo)
+    expect({ ...etter, cypinfo: forst.cypinfo }).toEqual(forst)
   })
 })

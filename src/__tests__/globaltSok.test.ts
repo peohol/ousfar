@@ -17,6 +17,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { manglertekst, visTreff } from '../components/sok/treffvisning'
+import type { Cypinfoutvalg } from '../cypinfo/lesing'
 import type { Labsokedata } from '../farmakologiportalen/lesing'
 import { alleLabkomponenter, labsted } from '../farmakologiportalen/stoffside'
 import { FORBINDELSER } from '../kjemi/forbindelser'
@@ -521,6 +522,75 @@ describe('laboratorieanalysene fra Farmakologiportalen', () => {
     const igjen = await lesSokeindeks(kilder('1'))
     expect(les).toHaveBeenCalledOnce()
     expect(sokGlobalt(igjen, 'syntetisk laboratorium')).toHaveLength(1)
+    await lesSokeindeks(kilder('2'))
+    expect(les).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('CYPinfo', () => {
+  // Syntetiske tekster; bare formen er som i `les_cypinfo`.
+  const fenotype = { gen: 'CYP2D6', gen_slug: 'cyp2d6', fenotype_id: 'r', fenotype: 'Syntetisk fenotype' }
+  const utvalg: Cypinfoutvalg = {
+    kilde: { navn: 'CYPinfo', endret_kl: '2026-11-18T03:47:00Z', kontrollert_kl: '2026-11-18T03:47:00Z' },
+    legemidler: [
+      {
+        id: 'cyp-ami',
+        data: { navn: 'amitriptylin', atc: [], fest: [AMITRIPTYLIN], varenavn: [], kategori: null, terapiomrade: null, uten_relevante_gener: null, gener: ['cyp2d6'], gensett: [['cyp2d6']] },
+      },
+      {
+        id: 'cyp-annet',
+        data: { navn: 'annetmiddel', atc: [], fest: ['ID_INGEN-SIDE'], varenavn: [], kategori: null, terapiomrade: null, uten_relevante_gener: null, gener: ['cyp2d6'], gensett: [['cyp2d6']] },
+      },
+    ],
+    anbefalinger: [
+      { id: 'a1', legemiddel_id: 'cyp-ami', kombinasjoner: [fenotype], niva: 'high', avsnitt: ['Syntetisk cypinfotekst om dosen.'] },
+      { id: 'a2', legemiddel_id: 'cyp-annet', kombinasjoner: [fenotype], niva: 'high', avsnitt: ['Tekst for et legemiddel uten side.'] },
+    ],
+    genresultater: [{ id: 'g1', data: { gen: 'CYP2D6', gen_slug: 'cyp2d6', allel1: '*4', allel2: '*4', duplikasjon: false, fenotype_id: 'r', fenotype: 'Syntetisk fenotype' } }],
+  }
+
+  it('finner CYPinfos tekst på siden legemiddelet er koblet til, og peker på kortet', async () => {
+    const les = vi.fn(async () => utvalg)
+    const indeks = await lesSokeindeks({ sider: sideleser, cypinfo: { les }, ventetider: [] })
+    expect(les).toHaveBeenCalledOnce()
+    // FEST-ID-ene i sidenes koblinger, én gang og sortert.
+    expect(les).toHaveBeenCalledWith([AMITRIPTYLIN, KODEIN].sort())
+    expect(indeks.mangler).toBeUndefined()
+    const [treff] = sokGlobalt(indeks, 'syntetisk cypinfotekst')
+    expect(sti(treff!.dokument.sted)).toEqual(['Amitriptylin', 'Farmakogenetikk', 'amitriptylin'])
+    expect(sokeadresse(treff!.dokument.sted)).toBe('#/stoff/amitriptylin/farmakogenetikk/cypinfo-amitriptylin')
+    expect(sokGlobalt(indeks, 'syntetisk fenotype').map((t) => t.dokument.sted.side.stoff)).toEqual(['amitriptylin'])
+    // Et legemiddel ingen side er koblet til, gir ingen treff.
+    expect(sokGlobalt(indeks, 'uten side')).toEqual([])
+  })
+
+  it('er ikke med når kilden ikke er gitt (for den som ikke ser CYPinfo)', async () => {
+    const indeks = await lesSokeindeks({ sider: sideleser, ventetider: [] })
+    expect(sokGlobalt(indeks, 'syntetisk cypinfotekst')).toEqual([])
+  })
+
+  it('indekserer resten og sier fra når CYPinfo ikke kan leses', async () => {
+    const nede = { les: async () => Promise.reject(new Error('CYPinfo svarer ikke')) }
+    const indeks = await lesSokeindeks({ sider: sideleser, legemidler: legemiddelsok, cypinfo: nede, ventetider: [] })
+    expect(indeks.mangler).toEqual({ cypinfo: 'CYPinfo svarer ikke' })
+    expect(manglertekst(indeks.mangler)).toBe('Søket mangler nå anbefalingene fra CYPinfo, som ikke kunne hentes.')
+    expect(sokGlobalt(indeks, 'sarotex')).not.toEqual([])
+  })
+
+  it('leser CYPinfo på nytt bare når versjonen er endret', async () => {
+    const lager = minnelager()
+    const les = vi.fn(async () => utvalg)
+    const kilder = (versjon: string): Sokekilder => ({
+      sider: sideleser,
+      cypinfo: { les },
+      versjoner: async () => ({ sider: 's', cypinfo: versjon }),
+      mellomlager: lager,
+      ventetider: [],
+    })
+    await lesSokeindeks(kilder('1'))
+    const igjen = await lesSokeindeks(kilder('1'))
+    expect(les).toHaveBeenCalledOnce()
+    expect(sokGlobalt(igjen, 'syntetisk cypinfotekst')).toHaveLength(1)
     await lesSokeindeks(kilder('2'))
     expect(les).toHaveBeenCalledTimes(2)
   })

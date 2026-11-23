@@ -12,6 +12,8 @@
  * Alt her er rene funksjoner.
  */
 import { CYPINFOKOBLINGER, cypinfoIderForSide, type Cypinfokobling } from '../faginnhold/cypinfokoblinger'
+import { FARMAKOGENETIKKPANEL } from '../faginnhold/paneler'
+import type { Tilleggstekst } from '../faginnhold/sok'
 import type { Cypinfokilde, Cypinfoutvalg } from './lesing'
 import { NIVAER, type Niva } from './modell'
 
@@ -156,4 +158,30 @@ export function oppsummerCypinfo(visning: Cypinfovisning): string | null {
   if (visning.legemidler.length === 0) return null
   const gener = [...new Set(visning.legemidler.flatMap((l) => l.gensett.flatMap((s) => s.gener)))].sort(sammenlign)
   return `CYPinfo: ${gener.length > 0 ? gener.join(', ') : 'ingen relevante gener'}`
+}
+
+/**
+ * Tekstene fra CYPinfo søket på siden finner, med kortet de står i: navnet på
+ * legemiddelet, genene og fenotypene, nivået og CYPinfos tekst. Kortet åpnes
+ * når søket peker på det, med ankeret `elementAnker(l.kort)`.
+ */
+export function cypinfosoketekster(visning: Cypinfovisning): Tilleggstekst[] {
+  return visning.legemidler
+    .flatMap((l) => {
+      const legg = (felt: Tilleggstekst['felt'], tekst: string): Tilleggstekst => ({
+        panel: FARMAKOGENETIKKPANEL,
+        element: { id: l.kort, tittel: l.navn },
+        detaljkort: l.kort,
+        felt,
+        tekst,
+      })
+      const anbefalinger = [...(l.utenRelevanteGener ? [l.utenRelevanteGener] : []), ...l.gensett.flatMap((s) => s.rader)]
+      return [
+        legg('overskrift', l.navn),
+        ...l.gensett.map((s) => legg('overskrift', gensettittel(s.gener))),
+        ...l.gensett.flatMap((s) => s.rader.flatMap((r) => r.fenotyper.map((f) => legg('verdi', `${f.gen}: ${f.fenotype}`)))),
+        ...anbefalinger.flatMap((a) => [legg('verdi', a.nivatekst), ...a.avsnitt.map((t) => legg('fritekst', t))]),
+      ]
+    })
+    .filter((t) => t.tekst.trim())
 }

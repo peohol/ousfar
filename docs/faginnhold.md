@@ -683,12 +683,17 @@ analyttene det er koblet til, er bare andre veier dit (`stoffidentitet` i
 `#/stoff/bupropion`. Koden til en analytt stoffet bare er sekundært koblet til
 (AMTNORSUM på Nortriptylin), er en komponent, ikke et alias, så den ikke
 rangeres som stoffets eget navn.
-Dataene kommer fra fem kilder, hver lest i ett kall uansett antall sider
-(migrasjonene `*_sokedata.sql` og `*_laboratoriesok.sql`): `les_stoffer` gir alle sidene på samme form
+Dataene kommer fra seks kilder, hver lest i ett kall uansett antall sider
+(migrasjonene `*_sokedata.sql` og `*_laboratoriesok.sql`), utenom CYPinfo, som
+leses i kall på høyst 200 ID-er: `les_stoffer` gir alle sidene på samme form
 som `les_stoff`, med referansene én gang; `les_preparatsok` og
 `les_interaksjonssok` gir bare preparatnavnene og interaksjonene hver side
 viser — de samme som seksjonene bygger av de fullstendige legemiddeldataene,
 som en test kontrollerer for hvert virkestoff i FEST-utdraget;
+`les_cypinfo` gir CYPinfos anbefalinger for alle legemidlene sidene er
+koblet til, og hver side får sin del med samme regel som siden selv
+(`cypinfoFor`), bare for dem som ser CYPinfo på fagsidene (`CYPINFO_VISES_FOR`;
+for andre gis kilden ikke, og indeksen hentes på nytt når det endres);
 `les_farmakogenetikk_sok` gir ClinPGx-dataene uten feltene søket ikke bruker,
 og `les_laboratoriesok` navnene og metodene i
 laboratorieanalysene fra Farmakologiportalen for alle forbindelsene i

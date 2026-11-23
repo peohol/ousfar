@@ -1,0 +1,15 @@
+{
+  "id": "20261123-135126-b85bda",
+  "semver": "patch",
+  "opprettet": "2026-11-23T13:51:26Z",
+  "sammendrag": "CYPinfo i referansene og søket, foreløpig bare for systemarkitektene",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "For systemarkitektene står CYPinfo som kilde i referansefeltet til «Farmakogenetikk» og i referanselisten, og anbefalingene fra CYPinfo finnes i søket på siden og i fagsøket. En lenke kan peke rett på kortet for et legemiddel.",
+    "Andre ser ingen endring før CYPinfo slås på for alle."
+  ],
+  "utenVarsel": true
+}

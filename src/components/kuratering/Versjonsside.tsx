@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
-import { stansFor } from '../../datakilder/stans'
+import { useRettigheter } from '../../auth/rettigheter'
+import { cypinfoSynlig } from '../../cypinfo/stoffside'
+import { STANSEDE_KILDER, stansFor } from '../../datakilder/stans'
 import { KILDEOPPSETT, type Datakilde } from '../../datakilder/status'
 import type { Rute } from '../../domain/rute'
 import { useHenting } from '../../hooks/useHenting'
@@ -16,13 +18,16 @@ import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
 
 /**
  * Kildene en tidligere versjon viser data fra slik de er nå, uten dem som er
- * stanset (`STANSEDE_KILDER`): «FEST, ClinPGx, PubChem og Farmakologiportalen».
+ * stanset (`STANSEDE_KILDER`), og med CYPinfo bare for den som ser CYPinfo på
+ * fagsidene (`cypinfoSynlig`): «FEST, CYPinfo, ClinPGx, PubChem og
+ * Farmakologiportalen».
  */
-const NAVAERENDE_KILDER = new Intl.ListFormat('nb', { type: 'conjunction' }).format(
-  (['fest', 'clinpgx', 'pubchem', 'farmakologiportalen'] satisfies Datakilde[])
-    .filter((k) => !stansFor(k))
-    .map((k) => KILDEOPPSETT[k].navn),
-)
+export function navaerendeKilder(medCypinfo: boolean, stansede = STANSEDE_KILDER): string {
+  const kilder: Datakilde[] = ['fest', ...(medCypinfo ? (['cypinfo'] as const) : []), 'clinpgx', 'pubchem', 'farmakologiportalen']
+  return LISTE.format(kilder.filter((k) => !stansFor(k, stansede)).map((k) => KILDEOPPSETT[k].navn))
+}
+
+const LISTE = new Intl.ListFormat('nb', { type: 'conjunction' })
 
 export type Utgavesideprops = Pick<StoffsideProps, 'register'> & {
   /** Går til en annen side i appen. */
@@ -64,6 +69,7 @@ export function Versjonsside({ stoff, nr, ...props }: Utgavesideprops & { stoff:
 
 function Versjonsinnhold({ stoff, nr, onGaaTil, onLukk, ...props }: Utgavesideprops & { stoff: string; nr: number }) {
   const { kuratering, kanRedigere } = useFaginnholdskilde()
+  const kilder = navaerendeKilder(cypinfoSynlig(useRettigheter()))
   const hent = useCallback(async () => {
     if (!kuratering) throw new Error('Versjonene er ikke tilgjengelige her.')
     const [versjon, versjoner] = await Promise.all([kuratering.versjon(stoff, nr), kuratering.versjoner(stoff)])
@@ -123,7 +129,7 @@ function Versjonsinnhold({ stoff, nr, onGaaTil, onLukk, ...props }: Utgavesidepr
       {versjon.versjon.endring?.oppsummering && <p className="utgavebanner__linje">{versjon.versjon.endring.oppsummering}</p>}
       {!erGjeldende && (
         <p className="utgavebanner__linje">
-          Slik siden var publisert da. Data fra {NAVAERENDE_KILDER} vises som nå.
+          Slik siden var publisert da. Data fra {kilder} vises som nå.
         </p>
       )}
       <div className="utgavebanner__handlinger">

@@ -52,3 +52,13 @@ describe('stansbryteren for ClinPGx', () => {
     expect(behandlet).not.toHaveBeenCalled()
   })
 })
+
+describe('teksten på versjonssiden', () => {
+  it('nevner kildene som ikke er stanset, og CYPinfo bare for den som ser CYPinfo', async () => {
+    const { navaerendeKilder } = await import('../components/kuratering/Versjonsside')
+    expect(navaerendeKilder(false, {})).toBe('FEST, ClinPGx, PubChem og Farmakologiportalen')
+    expect(navaerendeKilder(true, {})).toBe('FEST, CYPinfo, ClinPGx, PubChem og Farmakologiportalen')
+    const stanset = { clinpgx: { fra: '2027-01-01', grunn: 'Avviklet' } }
+    expect(navaerendeKilder(true, stanset)).toBe('FEST, CYPinfo, PubChem og Farmakologiportalen')
+  })
+})
