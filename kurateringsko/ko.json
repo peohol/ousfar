@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-23T15:26:39.587Z",
+  "oppdatert_kl": "2026-11-23T16:27:06.610Z",
   "malt_kl": "2026-11-23T14:27:51.456Z",
   "teller": 82,
   "stoffer": {
@@ -3591,11 +3591,16 @@
     "klozapin": {
       "stoff": "klozapin",
       "navn": "Klozapin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 352.6,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "3 av 58 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-23T14:27:52.163Z",
@@ -3611,14 +3616,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-23T15:26:39.587Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
