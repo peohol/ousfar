@@ -102,7 +102,7 @@ vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
 vi.mock('../auth/api', () => ({ hentProfilkort: vi.fn(async () => [MEG, OLA]) }))
 vi.mock('../grupper/api', async (original) => ({ ...(await original<object>()), ...grupperApi }))
 vi.mock('../ideer/api', async (original) => ({ ...(await original<object>()), ...ideApi }))
-vi.mock('../data/endringslogg', () => ({ ENDRINGSLOGG: [] }))
+vi.mock('../data/endringslogg', () => ({ ENDRINGSREGISTER: [], VARSLEDE_ENDRINGER: [] }))
 
 const { Varselknapp } = await import('../components/varsler/Varselknapp')
 const { Gruppeflate } = await import('../components/grupper/Gruppeflate')

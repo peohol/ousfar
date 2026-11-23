@@ -10,7 +10,7 @@
  * Testen endrer ingenting. Den sammenligner ikke med noen fasit for
  * innholdet — det er kuratorens arbeid — men finner ut om appens faktiske
  * leseoperasjoner virker: `les_stoff`, legemiddeldataene fra FEST,
- * bivirkningene fra preparatomtalene, ClinPGx, CPIC, de kjemiske grunndataene
+ * bivirkningene fra preparatomtalene, ClinPGx, de kjemiske grunndataene
  * fra PubChem og laboratorieanalysene fra Farmakologiportalen.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -18,9 +18,6 @@ import { lesBivirkningsdata } from '../bivirkninger/lesing'
 import { byggBivirkningsvisning } from '../bivirkninger/stoffside'
 import { lagFarmakogenetikkleser, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, finnClinpgxkobling, kjemikaliestatuser } from '../clinpgx/stoffside'
-import { lagCpicleser } from '../cpic/lesing'
-import { stansFor, stansmelding } from '../datakilder/stans'
-import { byggCpicvisning } from '../cpic/stoffside'
 import { VISNINGSENHETER } from '../enheter/konsentrasjon'
 import { lagFaginnholdsleser, type Stoffsidedata } from '../faginnhold/lesing'
 import { forekomster } from '../faginnhold/referanser'
@@ -243,14 +240,13 @@ export async function funksjonstest(
     }
   }
 
-  /* --- ClinPGx og CPIC ---------------------------------------------------- */
+  /* --- ClinPGx ------------------------------------------------------------ */
 
   const kobling = modell ? finnClinpgxkobling(modell).kobling : null
   const kjemikalier = kobling?.kjemikalier.map((k) => k.clinpgx_id) ?? []
   if (!modell) legg({ id: 'clinpgx', status: 'feil', melding: 'Kunne ikke lese koblingen til ClinPGx uten siden.' })
   else if (kjemikalier.length === 0) {
     legg({ id: 'clinpgx', status: 'ikke_aktuelt', melding: 'Siden er ikke koblet til ClinPGx.' })
-    legg({ id: 'cpic', status: 'ikke_aktuelt', melding: 'Siden er ikke koblet til ClinPGx, som CPIC slås opp etter.' })
   } else {
     const pgx = await kall<Farmakogenetikkutvalg>('clinpgx', 'les_farmakogenetikk', () => lagFarmakogenetikkleser(klient).les(kjemikalier), (u) => {
       const statuser = kjemikaliestatuser(u, kobling!)
@@ -265,19 +261,6 @@ export async function funksjonstest(
     })
     if (pgx) bygg('farmakogenetikkvisning', 'Farmakogenetikkseksjonen', () => byggFarmakogenetikkvisning(pgx))
 
-    // Mens CPIC er stanset, leses ingenting derfra (`datakilder/stans.ts`).
-    const cpicstans = stansFor('cpic')
-    if (cpicstans) legg({ id: 'cpic', status: 'ikke_aktuelt', melding: stansmelding(cpicstans, 'CPIC') })
-    const cpic = cpicstans
-      ? undefined
-      : await kall('cpic', 'les_cpic', () => lagCpicleser(klient).les(kjemikalier), (u) => {
-          const antall = { legemidler: u.legemidler.length, par: u.par.length, retningslinjer: u.retningslinjer.length, anbefalinger: u.anbefalinger.length }
-          if (!u.kilde.release) return { status: 'advarsel', melding: 'CPIC-kopien har ingen release; den er kanskje aldri hentet.', antall }
-          return u.legemidler.length === 0
-            ? { status: 'ok', melding: `CPIC (release ${u.kilde.release}) har ingenting for kjemikaliene.`, antall }
-            : { status: 'ok', melding: `CPIC-dataene ble lest (release ${u.kilde.release}).`, antall }
-        })
-    if (cpic) bygg('cpicvisning', 'CPIC-visningen', () => byggCpicvisning(cpic))
   }
 
   /* --- Kjemiske grunndata og laboratorieanalysene ------------------------- */

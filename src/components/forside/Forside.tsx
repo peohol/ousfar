@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef } from 'react'
 import { synligeModuler } from '../../forside/moduler'
+import { useMurverk } from '../../hooks/useMurverk'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
@@ -32,6 +33,7 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
   }, [])
 
   const moduler = synligeModuler(oppsett)
+  const murverk = useMurverk()
 
   return (
     <div className="forside">
@@ -56,7 +58,7 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
         </Button>
       </section>
       {moduler.length > 0 && (
-        <div className="forside__paneler">
+        <div ref={murverk} className="forside__paneler">
           {moduler.map((modul) => (
             <Forsidepanel key={modul} modul={modul} />
           ))}

@@ -8,6 +8,12 @@ står der om prinsippene, gjelder også her.
 Dataene er **referanseinformasjon**. OUSFAR viser hva ClinPGx har registrert
 for et legemiddel, ikke råd for en bestemt pasient.
 
+> **Avvikles (#437).** CYPinfo skal være OUSFARs eneste automatiske
+> farmakogenetiske kilde. ClinPGx står som beskrevet her til OUSFAR Fag har
+> gitt faglig aksept av overgangen (#533); deretter stanses og fjernes den
+> etter planen i `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget.
+> ClinPGx kan fortsatt siteres som en vanlig kilde i redaksjonell tekst.
+
 ## Kilden og lisensen
 
 | | |
@@ -453,8 +459,9 @@ Seksjonen «Farmakogenetikk», i denne rekkefølgen:
 
 1. **De redaksjonelle kortene**, som før. Står det bare ett, åpnes det av seg
    selv bare når ClinPGx ikke har noe ved siden av.
-   Under dem står CPICs strukturerte anbefalinger for de samme kjemikaliene,
-   i en egen gruppe med egen kilde (se `docs/cpic.md`).
+   Under dem står CYPinfos anbefalinger, foreløpig bare for
+   systemarkitektene (`docs/cypinfo-integrasjon.md`). CPIC-laget som stod
+   her, er fjernet (#437).
 2. **Retningslinjer**: ett detaljkort per retningslinje, CPIC først, så DPWG.
    Tittelen er organisasjonen og genene («CPIC · CYP2B6, CYP2C19»); kortet
    har sammendraget, organisasjonen, genene, merknadene, lenken til ClinPGx
@@ -496,6 +503,7 @@ i de svakere. Et treff åpner seksjonen og detaljkortet
 ## Ikke bygd, og CPIC
 
 Bevisst utelatt her: velger for genotype eller diplotype, pasientspesifikke
-anbefalinger, doseringsbeslutninger og kobling til pasientdata. De
-strukturerte CPIC-dataene (allelfunksjon, diplotype → fenotype, anbefalinger)
-er et eget lag med egen synkronisering, beskrevet i `docs/cpic.md`.
+anbefalinger, doseringsbeslutninger og kobling til pasientdata. Det
+strukturerte CPIC-laget er fjernet (#437; historikken i `docs/cpic.md`), og
+ClinPGx skal også avvikles til fordel for CYPinfo; planen står i
+`docs/cypinfo-integrasjon.md`.

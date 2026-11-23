@@ -1,0 +1,14 @@
+{
+  "id": "20261123-094607-b5f2b2",
+  "semver": "patch",
+  "opprettet": "2026-11-23T09:46:07Z",
+  "sammendrag": "Endringsloggen viser ti føringer om gangen og hentes først når den åpnes",
+  "typer": ["Funksjonalitet"],
+  "omfang": "Mindre omfang",
+  "gjelder": ["vinduer"],
+  "punkter": [
+    "Endringsloggen viser de ti nyeste føringene når den åpnes. «Vis flere» henter ti til, bakover i tid.",
+    "Loggen lastes ikke lenger med resten av appen hver gang, så appen har mindre å hente når den åpnes.",
+    "Åpnes loggen fra en oppgave eller et varsel, står føringen det gjelder, åpen som før."
+  ]
+}

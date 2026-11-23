@@ -374,8 +374,8 @@ kategoriene:
   ultrarapid), og forskjellen betyr noe for påstanden, står skillet med
   genotypen eller aktivitetsverdien («økt CYP2C19-aktivitet (*17/*17)»).
 - Ordrette sitater og titlene på kildene står som kilden skrev dem. Det samme
-  gjør anbefalingene appen viser selv fra CYPinfo
-  (`docs/cypinfo-integrasjon.md`); de bruker alt de norske uttrykkene.
+  gjør CYPinfos tekster appen viser selv (`docs/cypinfo-integrasjon.md`); de
+  bruker alt de norske uttrykkene.
 
 ## Farmakogenetikk i teksten
 

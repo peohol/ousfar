@@ -3,7 +3,7 @@ import { visningsnavn, type Profilkort } from '@delt/profil'
 import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useArbeidskontekst } from '../../auth/rettigheter'
-import { ENDRINGSLOGG } from '../../data/endringslogg'
+import { ENDRINGSREGISTER, VARSLEDE_ENDRINGER } from '../../data/endringslogg'
 import { gruppeadresse } from '../../domain/rute'
 import { useFavoritter } from '../../favoritter/Favorittkilde'
 import { hentOppsummering, type Databasemodul } from '../../forside/api'
@@ -61,7 +61,7 @@ function hentPanel(modul: Databasemodul): Promise<Panelsvar> {
   if (modul !== 'viktig_nytt') return hentOppsummering(modul).then((oppsummering) => ({ oppsummering, endringer: [] }))
   return Promise.all([hentOppsummering(modul), hentEndringsloggstatus().catch(() => null)]).then(([oppsummering, status]) => ({
     oppsummering,
-    endringer: endringsvarsler(ENDRINGSLOGG, status ?? startstatus(ENDRINGSLOGG)).filter((v) => !v.arkivert),
+    endringer: endringsvarsler(VARSLEDE_ENDRINGER, status ?? startstatus(ENDRINGSREGISTER)).filter((v) => !v.arkivert),
   }))
 }
 

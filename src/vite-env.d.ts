@@ -15,9 +15,9 @@ interface ImportMeta {
 }
 
 /*
- * Bygget og endringene med egen fil, med versjonene byggingen beregnet fra
- * Git (`versjonsfil()` i `vite.config.ts`). Les dem gjennom
- * `src/oppdatering/versjon.ts` og `src/data/endringslogg.ts`.
+ * Bygget og endringsloggen, med versjonene byggingen beregnet fra Git
+ * (`versjonsfil()` i `vite.config.ts`, `src/drift/endringsmoduler.ts`). Les
+ * dem gjennom `src/oppdatering/versjon.ts` og `src/data/endringslogg.ts`.
  */
 declare module 'virtual:ousfar-bygg' {
   import type { Byggopplysninger } from 'src/oppdatering/byggopplysninger'
@@ -25,6 +25,11 @@ declare module 'virtual:ousfar-bygg' {
 }
 
 declare module 'virtual:ousfar-endringer' {
-  import type { Endring } from 'src/domain/versjon'
-  export const NYE_ENDRINGER: readonly Endring[]
+  import type { Endring, Endringsmerke } from 'src/domain/versjon'
+  /** Et merke per føring, nyest først. */
+  export const REGISTER: readonly Endringsmerke[]
+  /** Hele føringene som varsles i bjella, nyest først. */
+  export const VARSLEDE: readonly Endring[]
+  /** Hentingen av hver side, fra den eldste (`src/domain/endringssider.ts`). */
+  export const SIDER: readonly (() => Promise<{ ENDRINGER: readonly Endring[] }>)[]
 }

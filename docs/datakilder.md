@@ -6,6 +6,12 @@ endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
 `docs/legemiddeldata.md`, `docs/clinpgx.md`, `docs/cpic.md`, `docs/kjemi.md`,
 `docs/farmakologiportalen.md` og `docs/cypinfo-integrasjon.md`.
 
+**Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
+farmakogenetiske kilden. CPIC er stanset og skal fjernes helt, og ClinPGx
+avvikles når OUSFAR Fag har godkjent overgangen. Planen, med hva som skjer med
+kildene i «Datakilder», endringsloggen og databasen, står i
+`docs/cypinfo-integrasjon.md`.
+
 Formålet er at en administrator skal se om synkroniseringene går som de skal,
 og hva som faktisk er endret i kildene siden forrige vellykkede henting — og
 kunne spore en endring tilbake til kjøringen, releasen og kildens egen
@@ -182,7 +188,7 @@ femte minutt og når panelet lukkes. Per kilde:
   endring; kjøringene viser hvor mange rader som ble nye, endret og utgått;
 - «Hent nå», som gjør det samme som den planlagte jobben med
   administratorens innlogging (`POST /api/legemiddeldata-synk`,
-  `/api/clinpgx-synk`, `/api/cpic-synk`, `/api/pubchem-synk`,
+  `/api/clinpgx-synk`, `/api/pubchem-synk`,
   `/api/farmakologiportalen-synk` eller `/api/cypinfo`). Svarer serveren med `fortsett`
   (ClinPGx, som henter i omganger), ber knappen om neste omgang av den samme
   kjøringen til alt er hentet. `CRON_SECRET` og `SUPABASE_SECRET_KEY` blir på
@@ -201,9 +207,18 @@ aktuell. Panelet viser den som **Stanset** med grunnen.
 erstattes av norske farmakogenetiske data, og databasen var over kvoten.
 Dataene og endringsloggen for CPIC er slettet
 (`*_slett_cpic_og_gamle_forhandsvisninger.sql`); skjemaet, funksjonene og
-oppsettet står, med kontrollsummene nullstilt. Tas CPIC i bruk igjen: fjern den
-fra `STANSEDE_KILDER`, legg jobben tilbake i `vercel.json`, og la første
-henting laste alt på nytt (`docs/cpic.md`).
+oppsettet står, med kontrollsummene nullstilt.
+
+**CPIC-koden er fjernet 23.11.2026 (#437):** CYPinfo er OUSFARs eneste
+automatiske farmakogenetiske kilde (`docs/cypinfo-integrasjon.md`), så CPIC tas
+ikke i bruk igjen. Endepunktet, synkroniseringen, lesingen, visningen,
+oppslaget og søket er borte; `KILDEOPPSETT.cpic.synk` er `null`, så «Hent nå»
+ikke finnes. CPIC står fortsatt som **Stanset** i «Datakilder» til skjemaet
+`cpic` slettes. Skjemaet, de tomme tabellene og funksjonene står i databasen
+til da, fordi `sokedata_versjoner`, `datakilder_status` og
+`datakilder.etikett` fortsatt leser fra det; slettingen er en egen,
+destruktiv migrasjon som først skriver om de tre (se planen i
+`docs/cypinfo-integrasjon.md`).
 
 ## Koden
 
@@ -216,7 +231,7 @@ henting laste alt på nytt (`docs/cpic.md`).
 | `supabase/migrations/*_cypinfo.sql` | CYPinfo i reglene, loggen og `datakilder_status` |
 | `src/datakilder/status.ts` | Lesingen av statusen, vurderingen, tekstene for en endring, «Hent nå» |
 | `src/components/konto/Datakilder.tsx`, `src/styles/datakilder.css` | Panelet |
-| `src/__tests__/clinpgx.test.ts`, `cpic.test.ts`, `kjemi.test.ts`, `farmakologiportalen.test.ts`, `cypinfo.test.ts` | Endringsloggen, mot en ekte database, for hver kilde |
+| `src/__tests__/clinpgx.test.ts`, `kjemi.test.ts`, `farmakologiportalen.test.ts`, `cypinfo.test.ts` | Endringsloggen, mot en ekte database, for hver kilde |
 | `src/__tests__/datakilder.test.ts`, `datakildevisning.test.tsx` | Lesefunksjonen, tilgangen, vurderingen og panelet |
 | `src/__tests__/legemiddeldata.test.ts` | FEST-feil i statusen, og «Hent nå» for FEST |
 

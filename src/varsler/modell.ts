@@ -4,7 +4,7 @@
  * kallene står i `api.ts`, og hvordan databasen lager varslene, i migrasjonen
  * `*_varsler.sql` og i `docs/varsler.md`.
  */
-import { sammenlignVersjon, varslesIBjella, type Endring } from '../domain/versjon'
+import { sammenlignVersjon, varslesIBjella, type Endring, type Endringsmerke } from '../domain/versjon'
 import { PANELREKKEFOLGE, panelFor } from '../faginnhold/paneler'
 import { erObjekt, tekst, tekstEllerNull } from '../ideer/lesing'
 import { lesDiskusjonsside, type Diskusjonsside } from '../diskusjoner/modell'
@@ -269,7 +269,7 @@ export function lesEndringsloggstatus(verdi: unknown): Endringsloggstatus | null
  * resten er historie. Da får alle med seg det siste som er gjort, men ikke
  * hele loggen.
  */
-export function startstatus(logg: readonly Endring[]): Endringsloggstatus {
+export function startstatus(logg: readonly Endringsmerke[]): Endringsloggstatus {
   return { fra: logg.filter(varslesIBjella)[1]?.versjon ?? '0.0.0', lest: [], arkivert: [] }
 }
 
@@ -280,11 +280,11 @@ export function endringskategori(endring: Endring): 'kritisk_faglig' | 'fortolkn
 }
 
 /** Midt på dagen føringen er datert, så den sorteres med dagens andre varsler. */
-function endringstid(endring: Endring): string {
+function endringstid(endring: Pick<Endring, 'dato'>): string {
   return new Date(`${endring.dato}T12:00:00`).toISOString()
 }
 
-function erGammel(endring: Endring, naa: Date): boolean {
+function erGammel(endring: Pick<Endring, 'dato'>, naa: Date): boolean {
   return naa.getTime() - new Date(endringstid(endring)).getTime() > VARSELFRIST_DAGER * 86_400_000
 }
 
@@ -300,7 +300,8 @@ export interface Endringsvarsel {
 
 /**
  * Føringene som er varsler: de nyere enn `fra` som varsles, uleste, og leste
- * fra de siste 30 dagene.
+ * fra de siste 30 dagene. `logg` trenger bare ha føringene som varsles i
+ * bjella (`VARSLEDE_ENDRINGER`).
  */
 export function endringsvarsler(logg: readonly Endring[], status: Endringsloggstatus, naa: Date = new Date()): Endringsvarsel[] {
   return logg
@@ -323,7 +324,7 @@ export function endringsvarsler(logg: readonly Endring[], status: Endringsloggst
  * arkiverte ikke vokser.
  */
 export function merkEndringerLest(
-  logg: readonly Endring[],
+  logg: readonly Endringsmerke[],
   status: Endringsloggstatus,
   versjoner: readonly string[],
   naa: Date = new Date(),
@@ -342,7 +343,7 @@ export function merkEndringerLest(
 
 /** Statusen med `versjoner` lagt i arkivet, og dermed lest. */
 export function arkiverEndringer(
-  logg: readonly Endring[],
+  logg: readonly Endringsmerke[],
   status: Endringsloggstatus,
   versjoner: readonly string[],
   naa: Date = new Date(),

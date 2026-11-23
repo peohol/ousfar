@@ -6,17 +6,16 @@
  *
  * Uten `--alle` gjelder det bare forbindelsene som ikke er koblet ennå. Hver
  * forbindelse slås opp i PubChem på det engelske navnet og kontrolleres mot
- * ClinPGx og ChEBI (`src/kjemi/kurering.ts`). Resultatet skrives ut; med
+ * FDAs stoffregister GSRS og ChEBI (`src/kjemi/kurering.ts`). Resultatet skrives ut; med
  * `--skriv` lagres det i datafilen — en verifisert kobling, eller grunnen til at
  * forbindelsen er uavklart. En kobling som finnes, endres aldri av skriptet:
  * avviker den fra det kontrollen finner nå, skrives avviket ut til vurdering.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
-import { lagClinpgxApi } from '../src/clinpgx/api'
 import { FORBINDELSESDATA } from '../src/data/forbindelser'
 import type { Forbindelse } from '../src/kjemi/forbindelser'
-import { kurerForbindelse, navnenokkel, type Uavhengig } from '../src/kjemi/kurering'
-import { BRUKERAGENT, lagPubchemApi, lesPubchemrad } from '../src/kjemi/pubchem'
+import { gsrssok, gsrstreff, kurerForbindelse, navnenokkel, type Uavhengig } from '../src/kjemi/kurering'
+import { BRUKERAGENT, lagPubchemApi } from '../src/kjemi/pubchem'
 import { lagHofligHenting } from '../src/server/hofligHenting'
 
 const FIL = 'src/data/forbindelser.ts'
@@ -26,38 +25,12 @@ const skriv = argumenter.includes('--skriv')
 const bare = new Set(argumenter.filter((a) => !a.startsWith('--')))
 
 const pubchem = lagPubchemApi()
-const clinpgx = lagClinpgxApi()
+const gsrs = lagHofligHenting({ avstand: 500, hoder: { accept: 'application/json', 'user-agent': BRUKERAGENT } })
 const chebi = lagHofligHenting({ avstand: 300, hoder: { accept: 'application/json', 'user-agent': BRUKERAGENT } })
 
-/** Forbindelsene CID-ene står for. Et salt byttes med moderforbindelsen PubChem oppgir, når den er entydig. */
-async function forbindelserFor(cider: number[]): Promise<{ cid: number; inchikey: string; salt?: number }[]> {
-  const ut: { cid: number; inchikey: string; salt?: number }[] = []
-  for (const rad of cider.length ? await pubchem.egenskaper(cider) : []) {
-    const lest = lesPubchemrad(rad)
-    if (!('data' in lest)) continue
-    if (lest.data.enheter === 1) {
-      ut.push({ cid: lest.data.cid, inchikey: lest.data.inchikey })
-      continue
-    }
-    const moder = await pubchem.moderforbindelser(lest.data.cid)
-    if (moder.length !== 1) continue
-    for (const m of await forbindelserFor(moder)) if (!m.salt) ut.push({ ...m, salt: lest.data.cid })
-  }
-  return ut
-}
-
-async function fraClinpgx(navn: string): Promise<Uavhengig[]> {
-  const treff = (await clinpgx.liste('/data/chemical', { name: navn, view: 'max' })) as {
-    id?: string
-    linkOuts?: { resource?: string; resourceId?: string }[]
-  }[]
-  const ut: Uavhengig[] = []
-  for (const t of treff) {
-    if (!t.id) continue
-    const cider = (t.linkOuts ?? []).filter((l) => l.resource === 'PubChem Compound').map((l) => Number(l.resourceId))
-    for (const f of await forbindelserFor(cider)) ut.push({ kilde: 'ClinPGx', id: t.id, ...f })
-  }
-  return ut
+async function fraGsrs(navn: string): Promise<Uavhengig[]> {
+  const res = await gsrs(gsrssok(navn))
+  return res.ok ? gsrstreff(await res.json()) : []
 }
 
 async function fraChebi(navn: string): Promise<Uavhengig[]> {
@@ -83,7 +56,7 @@ for (const f of fil.forbindelser) {
     pubchem,
     uavhengige: async (navn) => {
       const treff = new Map<string, Uavhengig>()
-      for (const n of navn) for (const u of [...(await fraClinpgx(n)), ...(await fraChebi(n))]) treff.set(`${u.kilde} ${u.id} ${u.inchikey}`, u)
+      for (const n of navn) for (const u of [...(await fraGsrs(n)), ...(await fraChebi(n))]) treff.set(`${u.kilde} ${u.id} ${u.inchikey}`, u)
       return [...treff.values()]
     },
     idag,

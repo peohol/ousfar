@@ -13,7 +13,7 @@ import { STOFFREGISTER } from '../stoffregister'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { ENDRINGSLOGG } from '../../data/endringslogg'
+import { hentHeleLoggen } from '../../data/endringslogg'
 import { berorer, HELE_APPEN, VINDUER } from '../../oppdatering/sider'
 import { FORTOLKNINGSOPPFORINGER } from '../ouskatalog'
 import {
@@ -41,6 +41,9 @@ import {
   varslesIBjella,
   type Endring,
 } from '../versjon'
+
+/** Hele loggen, slik byggingen delte den i sider. */
+const ENDRINGSLOGG = await hentHeleLoggen()
 
 describe('formaterDato', () => {
   it('gir dd.mm.åååå', () => {
