@@ -13,7 +13,7 @@ import { HENTER_MER, visTreff } from '../components/sok/treffvisning'
 import { TipsLag } from '../components/Tips'
 import { lagSokeindeks, sok, sokeord, sokGlobalt, type Sokedokument, type Sokested } from '../faginnhold/sok'
 import { erBekreftelse, fokusIFagsok, lagLiggerOver, useKeyboard, VIST_FORTOLKNING } from '../hooks/useKeyboard'
-import { useSokeindeks, type Lestsokeindeks, type Sokeindekstilstand } from '../hooks/useSokeindeks'
+import { useSokeindeks, type Lestsokeindeks, type Sokeindekshenter, type Sokeindekstilstand } from '../hooks/useSokeindeks'
 import { erSidesokSnarvei } from '../components/stoffside/Sidesok'
 import { erFagsokSnarvei } from '../components/toppmeny/Fagsokfelt'
 
@@ -569,9 +569,36 @@ describe('indeksen fagsøket bruker', () => {
     act(() => result.current.krev())
     await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks }))
 
+    // Den gamle indeksen tas bort med én gang, før den nye er der.
     rerender({ hent: med })
+    expect(result.current.tilstand.status).toBe('laster')
     await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks: ny }))
     expect(med).toHaveBeenCalledOnce()
     expect(uten).toHaveBeenCalledOnce()
+  })
+
+  it('forkaster svaret på en henting som pågikk da det den hentes med, ble byttet', async () => {
+    const gammel = lagSokeindeks(DOKUMENTER.slice(0, 2))
+    const ny = lagSokeindeks(DOKUMENTER.slice(0, 1))
+    let svar: (verdi: Lestsokeindeks) => void = () => {}
+    let delvisGammel: (indeks: Lestsokeindeks) => void = () => {}
+    const forst = vi.fn((delvis: (indeks: Lestsokeindeks) => void) => {
+      delvisGammel = delvis
+      return new Promise<Lestsokeindeks>((r) => (svar = r))
+    })
+    const deretter = vi.fn().mockResolvedValue(ny)
+    const { result, rerender } = renderHook(({ hent }) => useSokeindeks(hent), { initialProps: { hent: forst as Sokeindekshenter } })
+    act(() => result.current.krev())
+    expect(result.current.tilstand.status).toBe('laster')
+
+    rerender({ hent: deretter as Sokeindekshenter })
+    expect(deretter).toHaveBeenCalledOnce()
+    await waitFor(() => expect(result.current.tilstand).toEqual({ status: 'klar', indeks: ny }))
+    // Det den gamle hentingen gir etterpå, delvis eller helt, slipper ikke til.
+    await act(async () => {
+      delvisGammel(gammel)
+      svar(gammel)
+    })
+    expect(result.current.tilstand).toEqual({ status: 'klar', indeks: ny })
   })
 })

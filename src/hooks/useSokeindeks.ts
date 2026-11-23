@@ -43,9 +43,10 @@ export type Sokeindekstilstand =
  * brukeren ber om det.
  *
  * Byttes `hent` (det søket leser fra, endres med rettighetene: CYPinfo er med
- * bare for dem som ser det på fagsidene), er indeksen utdatert: en som alt er
- * hentet, hentes på nytt med én gang, så den ikke viser mer eller mindre enn
- * rettighetene nå gir.
+ * bare for dem som ser det på fagsidene), gjelder verken indeksen eller en
+ * henting som pågår, lenger: indeksen tas bort med én gang, svaret på den
+ * gamle hentingen forkastes, og en ny hentes straks når den gamle var hentet
+ * eller ble hentet. Søket viser aldri mer enn rettighetene nå gir.
  */
 export function useSokeindeks(hent: Sokeindekshenter): {
   tilstand: Sokeindekstilstand
@@ -102,8 +103,14 @@ export function useSokeindeks(hent: Sokeindekshenter): {
   useEffect(() => {
     if (hentetMed.current === hent) return
     hentetMed.current = hent
-    utdatert.current = true
-    if (status.current === 'klar') krev()
+    const forrige = status.current
+    // Alt som ble hentet med den gamle, også et svar som ennå ikke er kommet, forkastes.
+    siste.current += 1
+    status.current = 'uhentet'
+    utdatert.current = false
+    hentet.current = { kl: 0, mangler: false }
+    setTilstand({ status: 'uhentet' })
+    if (forrige !== 'uhentet') krev()
   }, [hent, krev])
 
   const foreld = useCallback(
