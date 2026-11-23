@@ -7,6 +7,10 @@
     "Funksjonalitet"
   ],
   "omfang": "Mindre omfang",
+  "gjelder": [
+    "stoff",
+    "sok"
+  ],
   "punkter": [
     "Under «Farmakogenetikk» på fagsidene står det nå hva CYPinfo anbefaler ved de ulike fenotypene, for hvert legemiddel siden gjelder. Anbefalingene finnes også i søket på siden og i fagsøket, og CYPinfo står som kilde i referansene.",
     "CYPinfo er nå eneste automatiske kilde for farmakogenetikk. Dataene fra ClinPGx vises ikke lenger. De redaksjonelle tekstene på sidene står som før.",
