@@ -59,7 +59,11 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    `originaldata/Psykofarmaka.pdf` skriver «Referanseområdeprosjektet
    2005–2008 (Rapport fra Diakonhjemmet/St. Olavs)» ved hver datalinje, og
    kortformen «2005-08» i kildelisten; «2005–2007» finnes ikke i dokumentet.
-   Referansens egen tittel sier det samme. Skriver en fagside 2005–2007, er
+   Referansens egen tittel sier det samme. Kilden oppgir spennet som en del av
+   prosjektets navn ved hver datalinje, og oppgir ingen annen periode; den
+   dokumenterer altså ikke i seg selv en egen datainnsamlingsperiode. Knytter
+   en setning på fagsiden årstallene til dataene, er det likevel 2005–2008 som
+   skrives, etter fagansvarligs avgjørelse. Skriver en fagside 2005–2007, er
    det arvet fra importfilene (sak #528), ikke fra kilden. At AGNP eller en annen
    internasjonal kilde gir et annet område, er derfor ingen grunn til å
    stoppe, sperre eller spørre fagansvarlig. Tyder en kilde ellers på at en
