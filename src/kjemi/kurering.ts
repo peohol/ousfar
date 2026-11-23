@@ -61,15 +61,18 @@ const likeNavn = (a: string, b: string) => navnenokkel(a) === navnenokkel(b)
  * Treffene i et søk i GSRS (FDAs Global Substance Registration System) på
  * nøyaktig ett navn ({@link gsrssok}): kjemiske substanser med struktur, med
  * UNII-koden som ID. GSRS er kuratert av FDA og henter ikke strukturene fra
- * PubChem, så det er en uavhengig kontroll.
+ * PubChem, så det er en uavhengig kontroll. En post uten UNII (ikke tildelt
+ * av FDA) regnes ikke som bekreftelse.
  */
 export function gsrstreff(svar: unknown): Uavhengig[] {
   const innhold = (svar as { content?: unknown } | null)?.content
   if (!Array.isArray(innhold)) return []
-  return innhold.flatMap((s: { uuid?: unknown; approvalID?: unknown; structure?: { _inchiKey?: unknown } }) => {
+  return innhold.flatMap((s: { approvalID?: unknown; structure?: { _inchiKey?: unknown } }) => {
+    const { approvalID: id } = s
     const inchikey = s.structure?._inchiKey
-    const id = typeof s.approvalID === 'string' && s.approvalID ? s.approvalID : s.uuid
-    return typeof inchikey === 'string' && INCHIKEY.test(inchikey) && typeof id === 'string' ? [{ kilde: 'GSRS' as const, id, inchikey }] : []
+    return typeof inchikey === 'string' && INCHIKEY.test(inchikey) && typeof id === 'string' && id.trim()
+      ? [{ kilde: 'GSRS' as const, id, inchikey }]
+      : []
   })
 }
 

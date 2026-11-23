@@ -290,20 +290,20 @@ describe('kontrollen som kobler en forbindelse til PubChem', () => {
     expect(spurt).toEqual(['nordoxepin', 'desmethyldoxepin', 'Nordoxepin hydro'])
   })
 
-  it('leser GSRS-treffene: bare kjemiske substanser med gyldig InChIKey, med UNII-koden som ID', () => {
+  it('leser GSRS-treffene: bare kjemiske substanser med gyldig InChIKey og UNII-kode, med UNII-koden som ID', () => {
     // Syntetisk svar i formen GSRS gir (`content`, `approvalID`, `structure._inchiKey`).
     const svar = {
-      total: 4,
+      total: 5,
       content: [
         { uuid: 'u1', approvalID: 'UC6VBE7V1Z', _name: 'Methadone', structure: { _inchiKey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' } },
         { uuid: 'u2', approvalID: null, _name: 'Uten UNII', structure: { _inchiKey: 'AAAAAAAAAAAAAA-UHFFFAOYSA-N' } },
         { uuid: 'u3', approvalID: 'PROTEIN001', _name: 'Et protein' },
         { uuid: 'u4', approvalID: 'FEIL000001', structure: { _inchiKey: 'ikke-en-inchikey' } },
+        { uuid: 'u5', approvalID: '  ', _name: 'Tom UNII', structure: { _inchiKey: 'BBBBBBBBBBBBBB-UHFFFAOYSA-N' } },
       ],
     }
     expect(gsrstreff(svar)).toEqual([
       { kilde: 'GSRS', id: 'UC6VBE7V1Z', inchikey: 'USSIQXCVUWKGNF-UHFFFAOYSA-N' },
-      { kilde: 'GSRS', id: 'u2', inchikey: 'AAAAAAAAAAAAAA-UHFFFAOYSA-N' },
     ])
     for (const tomt of [null, {}, { content: 'x' }, { content: [] }]) expect(gsrstreff(tomt)).toEqual([])
   })

@@ -61,7 +61,8 @@ uavhengige kilder (`src/kjemi/kurering.ts`). Et navnetreff alene er aldri nok:
    nøyaktig navnet som ett av sine navn, eller ChEBI med samme navn. Navnene som
    slås opp, er det engelske navnet, `synonymer` i datafilen og PubChems tittel
    på treffet; HTML-merking og greske bokstaver i ChEBIs navn regnes ikke med.
-   GSRS er kuratert av FDA og henter ikke strukturene fra PubChem.
+   GSRS er kuratert av FDA og henter ikke strukturene fra PubChem; en post
+   uten UNII-kode regnes ikke med.
 3. Har den uavhengige kilden samme skjelett (første blokk i InChIKey), men en
    annen stereokjemi eller protonering, godtas treffet bare når det er PubChems
    egen post for navnet (tittelen er navnet). Formelen og molekylvekten er da de
