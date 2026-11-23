@@ -1,0 +1,13 @@
+{
+  "id": "20261123-095116-1e5bcb",
+  "semver": "patch",
+  "opprettet": "2026-11-23T09:51:16Z",
+  "sammendrag": "Panelene på forsiden står i to uavhengige kolonner, uten tom luft",
+  "typer": ["Design / layout"],
+  "omfang": "Minimalt omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "På bred skjerm står hvert panel rett under det forrige i samme kolonne, så et høyt panel til høyre ikke lenger gir tom luft under panelet til venstre.",
+    "Rekkefølgen fra «Tilpass forsiden» gjelder som før: det første panelet øverst til venstre, det andre øverst til høyre, og så videre annethvert."
+  ]
+}
