@@ -31,6 +31,8 @@ function sidehentinger(side: Side): string[] {
 const foringer = (side: Side) => side.locator('dialog[open] .logg__liste > li').count()
 
 async function apneLoggen(side: Side) {
+  // Et lag som står åpent fra før (det huskes), lukkes først.
+  if (await side.locator('dialog[open]').count()) await side.keyboard.press('Escape')
   await side.goto(`${miljo.url}/#/`)
   const pille = side.locator('.versjonspille')
   await pille.waitFor({ timeout: 30_000 })
