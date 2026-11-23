@@ -78,11 +78,25 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    kildene bærer (effektstørrelser, absolutte risikoer og begrensninger står
    der de trengs).
 8. **De automatiske lagene dupliseres ikke.** FEST (preparatene og
-   interaksjonene), ClinPGx, CYPinfo, PubChem, Farmakologiportalen og de
+   interaksjonene), CYPinfo, PubChem, Farmakologiportalen og de
    strukturerte bivirkningene vises av appen selv. De kopieres ikke inn i
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
-   kvitteres aldri ut som bestått.
+   kvitteres aldri ut som bestått. **CYPinfo er en slik kontroll i dag:**
+   funksjonstesten leser FEST, ClinPGx, PubChem og de andre, ikke CYPinfo
+   (`src/kuratorjobb/funksjonstest.ts`), så en grønn funksjonstest bekrefter
+   ikke CYPinfo-visningen. Kontrollen av den står som gjenstående til
+   verifikasjonen er på plass i Dev-sporet (sak 437) og den faglige
+   akseptkontrollen av visningen er gjennomført.
+   CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
+   (fagansvarligs avgjørelse, sakene 533 og 437). ClinPGx, CPIC og DPWG er
+   dermed ikke lenger automatiske lag, men vanlige vitenskapelige kilder, og
+   et farmakogenetisk forhold de dokumenterer, omtales redaksjonelt etter
+   «Farmakogenetikk i teksten» under. **I overgangen** viser appen fortsatt
+   ClinPGx-kort på sidene som er koblet, til den visningen er fjernet. Et
+   redaksjonelt kort skrives likevel, og overlappen i mellomtiden er ventet og
+   midlertidig; teksten står på sine egne kilder og viser aldri til
+   ClinPGx-kortet.
 9. **Seksjonene med faste kort følger reglene** i `docs/monografkuratering.md`
    («Seksjonene med faste kort»): et kort bare når det er relevant
    dokumentasjon, «Fenomenologi» bare for psykoaktive stoffer, behandlingen
@@ -360,7 +374,51 @@ kategoriene:
   ultrarapid), og forskjellen betyr noe for påstanden, står skillet med
   genotypen eller aktivitetsverdien («økt CYP2C19-aktivitet (*17/*17)»).
 - Ordrette sitater og titlene på kildene står som kilden skrev dem. Det samme
-  gjør CYPinfos tekster appen viser selv (`docs/cypinfo-integrasjon.md`).
+  gjør CYPinfos tekster appen viser selv (`docs/cypinfo-integrasjon.md`); de
+  bruker alt de norske uttrykkene.
+
+## Farmakogenetikk i teksten
+
+CYPinfo er den eneste automatiske farmakogenetiske kilden (krav 8). Det
+dekker 75 legemidler, og et forhold CYPinfo ikke har, vises ikke av appen i
+det hele tatt. Derfor kan et farmakogenetisk forhold omtales redaksjonelt, og
+det er ikke en duplisering av et automatisk lag.
+
+- **Når det skrives:** forholdet er klinisk vesentlig, og dokumentasjonen er
+  tilstrekkelig. Terskelen er en retningslinje med en reell anbefaling (CPIC,
+  DPWG og liknende), en preparatomtale der testing er påkrevd eller anbefalt,
+  eller en klinisk annotasjon på det høyeste evidensnivået. At CPIC, ClinPGx
+  eller DPWG omtaler et gen–legemiddel-par, er ikke i seg selv grunn til å
+  omtale det: en opplysning uten handling for leseren er støy, og skal ikke
+  inn i teksten (fagansvarligs bestilling i sak #533). Dette er et
+  utvalgskriterium kontrolløren håndhever, ikke et råd.
+- **Overlapp med CYPinfo avhenger av fasen.** Dette er den ene regelen om
+  overlapp, og kontrollørinstruksen gjentar den. Hvilken fase som gjelder,
+  leses av `CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts` (etappe E i
+  `docs/cypinfo-integrasjon.md`).
+  - **Mens CYPinfo bare vises for systemarkitektene** (`systemarkitekter`): at
+    CYPinfo dekker forholdet, er ingen grunn til å la teksten være. Klinikeren
+    ser ikke laget ennå, så terskelen over er det eneste som avgjør.
+  - **Fra visningen er slått på for alle** (`alle`): et forhold CYPinfo dekker
+    for det samme legemiddelet, skrives ikke på nytt. Dekker CYPinfo ett gen
+    for legemiddelet og en retningslinje et annet, gjelder dette bare det andre
+    genet, og teksten sier hvilket. Tekst som alt står der, blir stående ved
+    overgangen, men er fra da av en vaktmesteroppgave: den strykes, eller den
+    sier uttrykkelig hvem som sier hva, så siden ikke ser ut til å motsi seg
+    selv (krav 6).
+- **Hva som ikke skrives i noen fase:** en systematisk gjengivelse av alt CPIC
+  eller ClinPGx har.
+- **Hvordan:** kort tekst som skiller mellom hva genotypen eller varianten gjør
+  med legemiddelresponsen, hva som gjøres når et prøvesvar alt finnes, og når
+  det er grunn til å rekvirere en genetisk undersøkelse. Kilden er
+  retningslinjen eller primærkilden selv, lest og sitert med forfatter og år;
+  ClinPGx' egen tekst kopieres aldri, og en ClinPGx-side er ikke kilden til en
+  klinisk påstand (krav 1 og 4).
+- **Manglende oppføring i CYPinfo betyr ikke at genetikk er uten betydning.**
+  Bare et uttrykkelig utsagn fra kilden om at det ikke finnes relevante gener,
+  gjengis slik.
+- Enzymaktivitet skrives som over. Et HLA-allel er bærerskap, ikke en
+  enzymfenotype, og beskrives slik.
 
 ## Overskrifter
 
@@ -539,3 +597,18 @@ holder dem i takt med modellen og piloten).
   vaktmesteren gjør den om til en ekte overskrift med de samme ordene (etter
   forslag fra kontrolløren). Ingen krav er svekket: ingen påstand eller
   sitering endres.
+- 2026-11-23: krav 8 og «Farmakogenetikk i teksten» (fagansvarligs avgjørelse,
+  sakene #533 og #437): CYPinfo er den eneste automatiske farmakogenetiske
+  kilden, og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
+  klinisk vesentlig farmakogenetisk forhold CYPinfo ikke dekker, omtales
+  derfor redaksjonelt, med terskelen og formen som står der. Ingen krav er
+  svekket: kravene om kilde til hver påstand, om at ingenting finnes på, og om
+  at et automatisk lag ikke dupliseres, gjelder uendret, og en opplysning uten
+  handling for leseren skrives fortsatt ikke.
+- 2026-11-23: «Farmakogenetikk i teksten»: overlappen med CYPinfo står nå som
+  én faseavhengig regel, lest av `CYPINFO_VISES_FOR`, i stedet for ett vilkår
+  i terskelen og et unntak i punktet under. Krav 8 sier dessuten at
+  funksjonstesten ennå ikke dekker CYPinfo, så den kontrollen står som
+  gjenstående. Ingen krav er svekket: regelen er den samme i begge faser som
+  før, og utvalgskriteriet om handling for leseren er strammet, ikke løsnet,
+  ved at kontrolløren sperrer på det.

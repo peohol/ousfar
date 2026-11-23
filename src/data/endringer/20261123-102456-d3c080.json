@@ -1,0 +1,14 @@
+{
+  "id": "20261123-102456-d3c080",
+  "semver": "patch",
+  "opprettet": "2026-11-23T10:24:56Z",
+  "sammendrag": "CYPinfo er den eneste automatiske farmakogenetiske kilden i kurateringsinstruksene",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Instruksene for kurateringen sier nå at CYPinfo er den eneste automatiske farmakogenetiske kilden, og at ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et klinisk vesentlig farmakogenetisk forhold CYPinfo ikke dekker, kan derfor omtales i fagsidens egen tekst, med krav til kilde og til at opplysningen har betydning for leseren. Kontrollørinstruksen sier hva som kontrolleres i en slik tekst."
+  ],
+  "utenVarsel": true
+}
