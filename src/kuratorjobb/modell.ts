@@ -39,7 +39,7 @@ export type Oppgave = (typeof OPPGAVER)[number]
  * - `ok`: kontrollert og i orden.
  * - `advarsel`: virker, men noe bør ses på (f.eks. data som ikke er hentet på lenge).
  * - `feil`: virker ikke, eller ga et svar appen ikke kan bruke.
- * - `ikke_aktuelt`: gjelder ikke dette stoffet (f.eks. en side uten kobling til ClinPGx).
+ * - `ikke_aktuelt`: gjelder ikke dette stoffet (f.eks. en side uten noe legemiddel i CYPinfo).
  */
 export type Utfall = 'ok' | 'advarsel' | 'feil' | 'ikke_aktuelt'
 

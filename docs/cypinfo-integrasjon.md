@@ -49,8 +49,8 @@ CYPinfo driftes av Peders egen avdeling.
   etter ti døgn), så foreldede data aldri vises umerket.
 - **Historikken står.** Publiserte og historiske versjoner av fagsidene, de
   redaksjonelle henvisningene (også til CPIC og ClinPGx), endringsloggen og
-  migrasjonsfilene beholdes. Elementtypen `clinpgxkobling` og leseren av den
-  står, så gamle versjoner og sammenligninger kan åpnes.
+  migrasjonsfilene beholdes. Elementtypen `clinpgxkobling` og etiketten i
+  endringshistorikken står, så gamle versjoner og sammenligninger kan åpnes.
 - **Databasen slettes sist.** Tabeller og skjemaer slettes først når ingen kode
   leser dem, i en egen migrasjon med Peders særskilte ja.
 
@@ -201,7 +201,7 @@ statusen står i #533.
 Fase C og D gjennomføres da før Fags aksept i #533 er ferdig. Fag hadde meldt
 at de prioriterte manglene er behandlet; kurateringene som ennå er i kontroll,
 og aksepttesten under, fullføres av Fag etter overgangen. Punkt 1 og 2 er gjort
-i samme PR.
+i samme PR (#551), og punkt 3 i den neste, sammen med punkt 2 i fase D.
 
 1. **CYPinfo for alle** (egen PR): `CYPINFO_VISES_FOR = 'alle'` og
    `les_cypinfo` tilbake til `intern.krev_aktivt_medlemskap()` i en ny
@@ -218,9 +218,13 @@ i samme PR.
    endepunktene, arbeidsflyten, visningen, referansene, søket, skjemaet,
    `clinpgxkoblinger.ts` med generatoren og dekningsregelen
    `clinpgxdekning.ts` (erstattet av `cypinfodekning.ts`). Elementtypen
-   `clinpgxkobling`, leseren og etiketten i endringshistorikken står, så gamle
-   versjoner kan åpnes. Koblingselementene på sidene slettes ikke; om de skal
-   avpubliseres redaksjonelt, avgjøres med Fag.
+   `clinpgxkobling` og etiketten i endringshistorikken står, så gamle
+   versjoner kan åpnes; leseren av dataene i den (`lesClinpgxkobling`) er
+   fjernet, siden ingenting viser dem lenger. Koblingselementene på sidene
+   slettes ikke og vises ikke; om de skal avpubliseres redaksjonelt, avgjøres
+   med Fag. Funksjonstesten har en CYPinfo-kontroll (`cypinfo`,
+   `cypinfovisning`) i stedet for ClinPGx, og «Hent nå» henter i én omgang
+   (bare ClinPGx brukte omgangene).
 4. Kontroll: alle publiserte fagsider åpnes; redigering, utkast,
    publisering, kurateringshistorikken, søket, referansenumrene og
    lesingene virker; en vanlig bruker ser CYPinfo og ingenting privilegert.

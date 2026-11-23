@@ -169,7 +169,7 @@ export const INGEN_AUTOMATISKE: Automatiskekilder = { referanser: [] }
 
 /**
  * De automatiske referansene fra flere kilder på samme side, som FEST og
- * ClinPGx, slått sammen: hver referanse én gang, panelreferansene i kildenes
+ * CYPinfo, slått sammen: hver referanse én gang, panelreferansene i kildenes
  * rekkefølge og elementene etter hverandre.
  */
 export function slaSammenAutomatiske(...kilder: readonly Automatiskekilder[]): Automatiskekilder {

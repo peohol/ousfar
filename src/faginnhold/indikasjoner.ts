@@ -24,8 +24,7 @@ import { STOFFSIDE_DATASETT } from './stoffsider'
  * Stoffsidene indikasjonsimporten lager, fordi de ikke fantes fra før: GHB
  * (natriumoksybat) og ketamin (racemisk ketamin og esketamin). De har ingen
  * analyttkode og ingen referanseområder i kildene, så indikasjonen er det
- * første kortet på siden; preparatene og farmakogenetikken kobles etterpå
- * (`festkoblinger.ts`, `clinpgxkoblinger.ts`).
+ * første kortet på siden; preparatene kobles etterpå (`festkoblinger.ts`).
  */
 export const NYE_STOFFSIDER: readonly string[] = ['GHB', 'Ketamin']
 

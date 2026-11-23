@@ -8,14 +8,15 @@ står der om prinsippene, gjelder også her.
 Dataene er **referanseinformasjon**. OUSFAR viser hva ClinPGx har registrert
 for et legemiddel, ikke råd for en bestemt pasient.
 
-> **Stanset 23.11.2026 (#437).** CYPinfo er OUSFARs eneste automatiske
-> farmakogenetiske kilde (Peder 23.11.2026). `clinpgx` står i
-> `STANSEDE_KILDER`: appen har ingen lesere for ClinPGx (fagsidene, søket og
-> koblingsskjemaet), endepunktene svarer 410, arbeidsflyten melder det uten å
-> feile, og funksjonstesten melder kilden som ikke aktuell. Koden fjernes og
-> dataene slettes etter en arkivkopi, etter planen i
-> `docs/cypinfo-integrasjon.md`. Ikke bygg nytt på ClinPGx-laget. ClinPGx kan
-> fortsatt siteres som en vanlig kilde i redaksjonell tekst.
+> **Avviklet. Historisk dokument.** ClinPGx ble stanset 23.11.2026, og koden
+> (synkroniseringen, endepunktene, arbeidsflyten, visningen, referansene,
+> søket, koblingsskjemaet og koblingslistene) er fjernet (#437). CYPinfo er
+> OUSFARs eneste automatiske farmakogenetiske kilde
+> (`docs/cypinfo-integrasjon.md`), og ClinPGx tas ikke i bruk igjen. Dataene
+> er kopiert til et arkiv før de slettes fra databasen (#540). Resten av
+> dokumentet beskriver laget slik det var, og filene det nevner, finnes bare i
+> Git-historikken. ClinPGx kan fortsatt siteres som en vanlig kilde i
+> redaksjonell tekst.
 
 ## Kilden og lisensen
 

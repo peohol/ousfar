@@ -1,7 +1,7 @@
 /**
  * Referansen til CYPinfo i referansefeltet til «Farmakogenetikk», med når
  * kopien sist ble kontrollert mot CYPinfo. Automatisk, som referansene fra
- * FEST, ClinPGx og PubChem (`src/faginnhold/referanser.ts`): den lages av det
+ * FEST og PubChem (`src/faginnhold/referanser.ts`): den lages av det
  * siden har hentet, hver gang siden vises, og bare når siden viser
  * anbefalinger fra CYPinfo. Den som ikke ser CYPinfo ennå (`CYPINFO_VISES_FOR`),
  * får ingen referanse, fordi siden ikke henter noe for dem.

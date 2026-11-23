@@ -1,7 +1,7 @@
 /**
  * Referansen til Farmakologiportalen i seksjonen «Analyse ved norske
  * laboratorier», med når dataene sist ble kontrollert mot portalen.
- * Automatisk, som referansene fra FEST, ClinPGx og PubChem
+ * Automatisk, som referansene fra FEST, CYPinfo og PubChem
  * (`src/faginnhold/referanser.ts`): den lages av det siden har hentet, hver
  * gang siden vises.
  */

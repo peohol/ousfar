@@ -244,8 +244,10 @@ describe('versjonene', () => {
     const versjoner = lagVersjonsleser(brukerklient)
     const forst = await versjoner()
     expect(forst.fest).toMatch(/^[1-9]\d*$/)
-    // Søket leser ikke CPIC lenger, og `sokedata_versjoner` gir ingen versjon for det (#437).
-    expect(Object.keys(forst).sort()).toEqual(['clinpgx', 'cypinfo', 'fest', 'laboratorier', 'sider'])
+    // Søket leser ikke CPIC og ClinPGx lenger, og `sokedata_versjoner` gir ingen versjon for dem (#437).
+    expect(Object.keys(forst).sort()).toEqual(['cypinfo', 'fest', 'laboratorier', 'sider'])
+    const { data: ra } = await brukerklient.rpc('sokedata_versjoner', {})
+    expect(Object.keys(ra as object).sort()).toEqual(['cypinfo', 'fest', 'laboratorier', 'sider'])
     // Ingen henting fra CYPinfo er fullført her.
     expect(forst.cypinfo).toBe('0')
     // Ingen henting fra Farmakologiportalen er fullført her.

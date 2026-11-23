@@ -4,7 +4,7 @@
  *
  * Et legemiddel med FEST-ID kobles automatisk: en fagside viser det når sidens
  * publiserte FEST-kobling har ID-en. De som mangler den, kobles bare her, med
- * samme regel som for ClinPGx: navnet og minst ett uavhengig kjennetegn til
+ * samme regel som ClinPGx-koblingene fulgte: navnet og minst ett uavhengig kjennetegn til
  * (ATC-koden, etter normalisering). Et navn alene er aldri nok, og en
  * metabolitt kobles aldri til moderstoffets oppføring. Vurdert mot CYPinfo og
  * fagsidene i produksjonen 16. november 2026.

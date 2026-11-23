@@ -169,7 +169,7 @@ export type Panelnokkel = (typeof PANELER)[number]['nokkel']
 
 /**
  * Seksjonen «Farmakogenetikk»: den redaksjonelle teksten og kortene, og de
- * automatiske dataene fra CYPinfo (og ClinPGx til det avvikles, #437).
+ * automatiske dataene fra CYPinfo, OUSFARs eneste automatiske kilde (#437).
  */
 export const FARMAKOGENETIKKPANEL = 'farmakogenetikk' satisfies Panelnokkel
 
@@ -263,6 +263,7 @@ export const FJERNET = 'fjernet'
 
 export const ELEMENTTYPER = {
   legemiddelkobling: 'legemiddelkobling',
+  /** Koblingen til ClinPGx. ClinPGx er fjernet (#437): elementet vises ikke, men står i gamle versjoner og i historikken. */
   clinpgxkobling: 'clinpgxkobling',
   riktekst: 'riktekst',
   kinetikk: 'kinetikkort',
@@ -300,33 +301,6 @@ export function lesLegemiddelkobling(data: unknown): Legemiddelkoblingdata {
     if (fest_id && !sett.has(fest_id)) sett.set(fest_id, { fest_id, navn: tekst(v.navn) })
   }
   return { virkestoff: [...sett.values()] }
-}
-
-/* Panelet «Farmakogenetikk»: koblingen til ClinPGx. */
-
-/** Et kjemikalie i ClinPGx, med ClinPGx' accession-ID og navnet det hadde da det ble valgt. */
-export interface KobletKjemikalie {
-  clinpgx_id: string
-  navn: string
-}
-
-/**
- * Kjemikaliene i ClinPGx siden viser farmakogenetikken for. Koblingen er til
- * ClinPGx' stabile ID (PA…), ikke til navnet; navnet er med så koblingen kan
- * leses også om kjemikaliet forsvinner fra ClinPGx.
- */
-export interface Clinpgxkoblingdata {
-  kjemikalier: KobletKjemikalie[]
-}
-
-export function lesClinpgxkobling(data: unknown): Clinpgxkoblingdata {
-  const liste = erObjekt(data) && Array.isArray(data.kjemikalier) ? data.kjemikalier : []
-  const sett = new Map<string, KobletKjemikalie>()
-  for (const k of liste.filter(erObjekt)) {
-    const clinpgx_id = tekst(k.clinpgx_id)
-    if (/^PA\d+$/.test(clinpgx_id) && !sett.has(clinpgx_id)) sett.set(clinpgx_id, { clinpgx_id, navn: tekst(k.navn) })
-  }
-  return { kjemikalier: [...sett.values()] }
 }
 
 /* «Viktige data»: datakortene. */

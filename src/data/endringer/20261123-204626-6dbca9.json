@@ -1,0 +1,16 @@
+{
+  "id": "20261123-204626-6dbca9",
+  "semver": "patch",
+  "opprettet": "2026-11-23T20:46:26Z",
+  "sammendrag": "Det som hentet og viste data fra ClinPGx, er fjernet",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Ingen endring på fagsidene: ClinPGx ble tatt ut av visningen i forrige endring, og CYPinfo er eneste automatiske kilde for farmakogenetikk.",
+    "I «Datakilder» står ClinPGx og CPIC som stanset, med endringsloggen fra før, men uten kjøringene.",
+    "Funksjonstesten i kuratorjobbene kontrollerer CYPinfo i stedet for ClinPGx."
+  ],
+  "utenVarsel": true
+}

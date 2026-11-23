@@ -1,8 +1,8 @@
 /**
  * Strukturkontrollen av svar fra en ekstern kilde: et sikkerhetsnett mot at
  * kilden endrer formen på et objekt, så en tolerant lesing stille gir tomme
- * felt. Kravene står hos hver kilde (`src/clinpgx/struktur.ts`,
- * `src/cypinfo/struktur.ts`); her er bare kontrollen.
+ * felt. Kravene står hos hver kilde (`src/cypinfo/struktur.ts`); her er bare
+ * kontrollen.
  *
  * Et felt som finnes, men er tomt (en tom liste eller tekst), godtas alltid.
  * Et felt som er borte, eller har en helt annen type, er et avvik, med mindre
