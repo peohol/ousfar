@@ -142,12 +142,15 @@ teksten med kuratorprotokollen etter.
    - **«Toksisk område»** (protokollen, «Toksisk område» skiller tre slags
      tall): nøkkelfeltet tar bare målte toksiske konsentrasjoner. Står det en
      laboratoriealarmgrense (AGNPs varslingsgrense) eller en beregnet verdi
-     der – for eksempel fire ganger øvre referansegrense, eller et tall
-     omregnet fra en annen enhet – er det en sperrende tråd, og det samme
-     gjelder grensene for alvorlig forgiftning og dødelig utgang. Står et
-     slikt tall i et kort, kontroller at teksten sier hvilken art det er, og
-     regnestykket når det er beregnet, og at det ikke står i samme setning som
-     en målt grense. Er feltet tomt fordi ingen målt konsentrasjon finnes,
+     der – for eksempel fire ganger øvre referansegrense – er det en sperrende
+     tråd, og det samme gjelder grensene for alvorlig forgiftning og dødelig
+     utgang. En ren enhetsomregning er ingen beregnet verdi: er konsentrasjonen
+     målt, er den fortsatt målt og beholder nøkkelfeltet. Der står kildens eget
+     tall i kildens egen enhet, og appen regner om selv (krav 5); er
+     omregningen gal, rettes tallet mot kilden, og målingen forkastes ikke.
+     Står et slikt tall i et kort, kontroller at teksten sier hvilken art det
+     er, og regnestykket når det er beregnet, og at det ikke står i samme
+     setning som en målt grense. Er feltet tomt fordi ingen målt konsentrasjon finnes,
      kontroller at dekningsmatrisen fører området som `tomt_begrunnet` med hva
      som er søkt.
    - **Enzymaktivitet** (protokollen, «Enzymaktivitet»): en fenotype skrevet
