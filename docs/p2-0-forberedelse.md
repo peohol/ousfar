@@ -162,8 +162,8 @@ står her, så lista holdes oppdatert:
 
 | Gruppe | Funksjoner |
 | --- | --- |
-| Felles kildedata og fagsideversjoner (a), `felles-lesing` | `les_bivirkninger`, `les_cpic`, `les_cpic_diplotyper`, `les_farmakogenetikk`, `les_farmakogenetikk_sok`, `les_interaksjoner`, `les_interaksjonssok`, `les_kjemi`, `les_laboratorieanalyser`, `les_laboratoriesok`, `les_legemidler`, `les_preparatsok`, `les_sideversjon`, `les_sideversjon_bivirkninger`, `les_sideversjoner`, `sok_virkestoff`, `sokedata_versjoner` |
-| Status og forvaltning (d) | `clinpgx_status`, `cpic_status`, `legemiddeldata_status`, `les_kurateringer`, `les_verktoysperrer` |
+| Felles kildedata og fagsideversjoner (a), `felles-lesing` | `les_bivirkninger`, `les_cypinfo`, `les_interaksjoner`, `les_interaksjonssok`, `les_kjemi`, `les_laboratorieanalyser`, `les_laboratoriesok`, `les_legemidler`, `les_preparatsok`, `les_sideversjon`, `les_sideversjon_bivirkninger`, `les_sideversjoner`, `sok_virkestoff`, `sokedata_versjoner` |
+| Status og forvaltning (d) | `legemiddeldata_status`, `les_kurateringer`, `les_verktoysperrer` |
 | Innlogget, admin får mer | `les_endringslogg` (a), `les_stoffregister` (d) |
 | Samhandling (b), bare innlogging | `direktelenke`, `ideoversikt`, `idetraad`, `oppgave`, `oppgaveoversikt`, `les_regelvarsler`, `rydd_idearkiv` |
 | Egne varsler og besøk (b) | `mine_varsler`, `arkiver_varsler`, `gjenopprett_varsler`, `merk_varsler_lest`, `merk_diskusjon_sett`, `merk_ide_sett` |
