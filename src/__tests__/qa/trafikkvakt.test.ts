@@ -79,7 +79,7 @@ describe('grensene', () => {
 
 it('blokkerer fagsøkets bakgrunnslesinger, og ikke det verktøyene bruker', () => {
   const rpc = (f: string) => `https://x.supabase.co/rest/v1/rpc/${f}`
-  for (const f of ['les_stoffer', 'les_preparatsok', 'les_interaksjonssok', 'les_farmakogenetikk_sok', 'les_cpic', 'les_laboratoriesok']) expect(blokkeresIProduksjon(rpc(f))).toBe(true)
+  for (const f of ['les_stoffer', 'les_preparatsok', 'les_interaksjonssok', 'les_laboratoriesok']) expect(blokkeresIProduksjon(rpc(f))).toBe(true)
   for (const f of ['les_legemidler', 'les_verktoysperrer', 'les_stoff', 'les_stoffer_x', 'sokedata_versjoner']) expect(blokkeresIProduksjon(rpc(f))).toBe(false)
   expect(blokkeresIProduksjon('https://x.supabase.co/rest/v1/les_stoffer')).toBe(false)
 })

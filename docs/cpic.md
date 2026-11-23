@@ -9,9 +9,10 @@ Mønsteret er det samme som for FEST (`docs/legemiddeldata.md`) og ClinPGx
 > slettet. Koden (synkroniseringen, endepunktet, lesingen, visningen, oppslaget
 > og søket) er fjernet 23.11.2026 (#437), og CPIC tas ikke i bruk igjen:
 > CYPinfo er OUSFARs eneste automatiske farmakogenetiske kilde
-> (`docs/cypinfo-integrasjon.md`). Det som står igjen i databasen (skjemaet
-> `cpic` med tomme tabeller og funksjonene), og planen for å slette det, står i
-> `docs/cypinfo-integrasjon.md`. Resten av dokumentet beskriver laget slik det
+> (`docs/cypinfo-integrasjon.md`). Skjemaet `cpic` med de tomme tabellene og
+> funksjonene er slettet 23.11.2026 (#540,
+> `20261123230000_slett_cpic_og_clinpgx.sql`); oppsettsradene står i arkivet i
+> prosjektfilene (`arkiv/2026-11-23-cpic-clinpgx/`). Resten av dokumentet beskriver laget slik det
 > var, og filene det nevner, finnes bare i Git-historikken. CPIC kan fortsatt
 > siteres som en vanlig kilde i redaksjonell tekst.
 

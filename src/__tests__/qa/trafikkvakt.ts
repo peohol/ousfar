@@ -155,8 +155,6 @@ export const BLOKKERT_I_PRODUKSJON: readonly string[] = [
   'les_stoffer',
   'les_preparatsok',
   'les_interaksjonssok',
-  'les_farmakogenetikk_sok',
-  'les_cpic',
   'les_laboratoriesok',
 ]
 

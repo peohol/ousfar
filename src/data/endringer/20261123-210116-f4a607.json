@@ -1,0 +1,15 @@
+{
+  "id": "20261123-210116-f4a607",
+  "semver": "patch",
+  "opprettet": "2026-11-23T21:01:16Z",
+  "sammendrag": "De gamle dataene fra ClinPGx og CPIC er slettet fra databasen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Dataene fra ClinPGx og CPIC, som appen ikke lenger leser, er slettet fra databasen etter at en full kopi ble lagret i et arkiv.",
+    "Endringsloggen for de to kildene står og vises under «Datakilder» som før."
+  ],
+  "utenVarsel": true
+}
