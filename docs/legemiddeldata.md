@@ -2,8 +2,8 @@
 
 Leses når noe som har med preparater, virkestoff, pakninger eller andre
 legemiddelgrunndata på fagsidene å gjøre skal endres. Farmakogenetikken fra
-ClinPGx og CPIC følger det samme mønsteret og står i `docs/clinpgx.md` og
-`docs/cpic.md`. Planen står i
+ClinPGx og CYPinfo følger det samme mønsteret og står i `docs/clinpgx.md` og
+`docs/cypinfo-integrasjon.md` (CPIC er fjernet; historikken i `docs/cpic.md`). Planen står i
 `docs/stoffsider-og-redigering.md`; her står hvilke kilder som finnes, hva de
 faktisk inneholder, og hvilke valg OUSFAR har gjort.
 

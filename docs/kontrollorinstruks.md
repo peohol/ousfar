@@ -94,7 +94,7 @@ teksten med kuratorprotokollen etter.
      `original.pdf`, sidebildene (`sider/`) og teksten per side (`tekst/`).
      Funksjonstesten står i `kuratorjobb/resultat/<stoff>/funksjonstest.json`.
      Du kan også hente preparatomtalen selv fra DMP.
-   - **De automatiske lagene** (krav 8: FEST, ClinPGx, CPIC, PubChem,
+   - **De automatiske lagene** (krav 8: FEST, ClinPGx, CYPinfo, PubChem,
      Farmakologiportalen og de strukturerte bivirkningene) kontrolleres med
      funksjonstesten, ikke mot originalkildene. Se at den er bestått, og at
      det den ikke dekker, står som gjenstående i evidensjournalen.

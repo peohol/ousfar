@@ -156,7 +156,7 @@ skrives til (`scripts/agentvalg.ts`).
 
 ## Rutinene og de eksterne synkroniseringene
 
-Synkroniseringene av FEST, ClinPGx, CPIC, Farmakologiportalen og PubChem
+Synkroniseringene av FEST, ClinPGx, CYPinfo, Farmakologiportalen og PubChem
 skriver i egne tabeller, ikke i faginnholdet, og står derfor ikke i loggen.
 Det som endrer innhold uten en person bak — ryddingen av papirkurven og
 tjenester som kaller API-et uten innlogget bruker — føres på systemagentene
