@@ -214,17 +214,27 @@ statusen står i #533.
 
 Egen oppgave (#540), først når ingen kode leser skjemaene:
 
-1. Eksportere `clinpgx.*` og `datakilder.endringer` for ClinPGx til et arkiv
-   utenfor databasen, med kildeangivelsen (CC BY-SA 4.0), hvis det skal kunne
-   vises hva en side viste før.
+1. Eksportere `cpic.*` og `clinpgx.*`, med synkroniseringskjøringene, til et
+   arkiv utenfor databasen, med kildeangivelsen (CC BY-SA 4.0 for ClinPGx).
+   Eksporten er obligatorisk og kontrolleres (radtall) før punkt 3, og
+   arkivet skal kunne åpnes av systemarkitektene. Hvor det ligger, avgjøres i
+   #540.
 2. Skrive om `sokedata_versjoner`, `datakilder_status` og
    `datakilder.etikett` uten `cpic` og `clinpgx`, i en vanlig migrasjon.
+   Etiketten for gamle føringer leses da fra kolonnen `etikett`, som alt er
+   lagret på hver føring.
 3. En destruktiv migrasjon (`-- destruktiv-godkjent:` etter Peders ja for
    nøyaktig den migrasjonen): `drop schema cpic` og `clinpgx` med funksjonene,
-   triggerne, `datakilder.cpic_*`/`clinpgx_*`, feltreglene og endringsloggen
-   for de to kildene; testkatalogene (`funksjonskontroller.ts`,
-   `ressurskatalog.ts`) oppdateres. Historiske migrasjonsfiler står.
-4. `cpic` og `clinpgx` tas ut av `DATAKILDER`, «Datakilder» og typene.
+   triggerne, `datakilder.cpic_*`/`clinpgx_*` og feltreglene; testkatalogene
+   (`funksjonskontroller.ts`, `ressurskatalog.ts`) oppdateres. Historiske
+   migrasjonsfiler står.
+   **Endringsloggen står:** radene i `datakilder.endringer` for de to kildene
+   (før- og etterverdier, etikett, `synk_id`) slettes ikke. Tabellen har ingen
+   fremmednøkkel til kildeskjemaene, så den overlever slettingen urørt, og
+   `synk_id` kan slås opp i arkivet fra punkt 1. Migrasjonstesten kontrollerer
+   at antallet føringer er uendret.
+4. `cpic` og `clinpgx` blir stående i `DATAKILDER` som avviklede kilder, uten
+   henting, så endringsloggen deres fortsatt kan leses under «Datakilder».
 
 Uten Peders ja står dataene, uten lesing og uten import.
 
