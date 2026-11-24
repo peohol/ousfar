@@ -94,21 +94,19 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    strukturerte bivirkningene vises av appen selv. De kopieres ikke inn i
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
-   kvitteres aldri ut som bestått. **CYPinfo er en slik kontroll i dag:**
-   funksjonstesten leser FEST, ClinPGx, PubChem og de andre, ikke CYPinfo
-   (`src/kuratorjobb/funksjonstest.ts`), så en grønn funksjonstest bekrefter
-   ikke CYPinfo-visningen. Kontrollen av den står som gjenstående til
-   verifikasjonen er på plass i Dev-sporet (sak 437) og den faglige
-   akseptkontrollen av visningen er gjennomført.
+   kvitteres aldri ut som bestått. **Funksjonstesten dekker CYPinfo fra
+   23.11.2026** (sak 437): kontrollene `cypinfo` og `cypinfovisning` i
+   `src/kuratorjobb/funksjonstest.ts` leser sidens CYPinfo-utvalg og bygger
+   visningen, så en grønn funksjonstest bekrefter CYPinfo på samme måte som de
+   andre lagene. Den kontrollerer at visningen bygges, ikke at innholdet er
+   faglig riktig; det siste er gjort i den faglige akseptkontrollen 24.11.2026.
    CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
-   (fagansvarligs avgjørelse, sakene 533 og 437). ClinPGx, CPIC og DPWG er
-   dermed ikke lenger automatiske lag, men vanlige vitenskapelige kilder, og
-   et farmakogenetisk forhold de dokumenterer, omtales redaksjonelt etter
-   «Farmakogenetikk i teksten» under. **I overgangen** viser appen fortsatt
-   ClinPGx-kort på sidene som er koblet, til den visningen er fjernet. Et
-   redaksjonelt kort skrives likevel, og overlappen i mellomtiden er ventet og
-   midlertidig; teksten står på sine egne kilder og viser aldri til
-   ClinPGx-kortet.
+   (fagansvarligs avgjørelse, sakene 533 og 437), og visningen vises for alle
+   brukere. ClinPGx, CPIC og DPWG er dermed ikke lenger automatiske lag, men
+   vanlige vitenskapelige kilder, og et farmakogenetisk forhold de
+   dokumenterer, omtales redaksjonelt etter «Farmakogenetikk i teksten» under.
+   ClinPGx-visningen er fjernet fra appen, så det finnes ikke lenger et
+   ClinPGx-kort en redaksjonell tekst kan overlappe med.
 9. **Seksjonene med faste kort følger reglene** i `docs/monografkuratering.md`
    («Seksjonene med faste kort»): et kort bare når det er relevant
    dokumentasjon, «Fenomenologi» bare for psykoaktive stoffer, behandlingen
@@ -682,3 +680,13 @@ holder dem i takt med modellen og piloten).
   gjenstående. Ingen krav er svekket: regelen er den samme i begge faser som
   før, og utvalgskriteriet om handling for leseren er strammet, ikke løsnet,
   ved at kontrolløren sperrer på det.
+- 2026-11-24: krav 8 er rettet etter at Dev gjorde de to forholdene ferdig.
+  Funksjonstesten dekker nå CYPinfo (kontrollene `cypinfo` og `cypinfovisning`,
+  sak #437), så setningen om at den ikke gjør det, og den gjenstående
+  kontrollen den påla, er tatt ut. ClinPGx-visningen er fjernet fra appen, så
+  avsnittet om overlapp «i overgangen» er tatt ut; det beskrev en tilstand som
+  ikke finnes lenger. Ingen krav er svekket: kravet om at et automatisk lag
+  ikke dupliseres, gjelder uendret, og en grønn funksjonstest bekrefter at
+  visningen bygges, ikke at CYPinfos innhold er faglig riktig. Det siste er
+  avgjort én gang, i den faglige akseptkontrollen (sak #533), og kontrolleres
+  ikke per side.

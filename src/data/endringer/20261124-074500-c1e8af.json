@@ -1,0 +1,14 @@
+{
+  "id": "20261124-074500-c1e8af",
+  "semver": "patch",
+  "opprettet": "2026-11-24T07:45:00Z",
+  "sammendrag": "Kurateringsinstruksene er rettet etter at ClinPGx-visningen ble fjernet",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Instruksene for kurateringen og kontrollen sa fortsatt at funksjonstesten ikke dekker CYPinfo, og at appen viser ClinPGx-kort ved siden av en ny tekst. Begge er gjort ferdig: funksjonstesten kontrollerer nå CYPinfo, og ClinPGx-visningen er fjernet. Setningene er rettet, slik at en kontroll som er på plass, ikke står som gjenstående."
+  ],
+  "utenVarsel": true
+}
