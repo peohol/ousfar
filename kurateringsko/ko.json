@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T17:26:19.827Z",
+  "oppdatert_kl": "2026-11-24T17:31:25.950Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 83,
   "stoffer": {
@@ -3486,9 +3486,9 @@
         "okt": "kurateringsko/okt/20261124-155000",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T15:49:09.157Z",
-        "fornyet_kl": "2026-11-24T16:19:34.502Z",
-        "frist_kl": "2026-11-24T19:19:34.502Z",
-        "fase": "Blindfasen: kildeplanen lagret, fire av ni domener soekt",
+        "fornyet_kl": "2026-11-24T17:31:25.950Z",
+        "frist_kl": "2026-11-24T20:31:25.950Z",
+        "fase": "Avstemmingen: fire skrivinger lagret, panelene gjenstaar",
         "jobbgren": "kuratorjobb/klomipramin-0083",
         "kurateringsgren": "kuratering/klomipramin-0083",
         "pr": null,
@@ -3541,6 +3541,13 @@
           "oppgave": "klomipramin-0083",
           "okt": "kurateringsko/okt/20261124-155000",
           "melding": "Blindfasen: kildeplanen lagret, fire av ni domener soekt"
+        },
+        {
+          "kl": "2026-11-24T17:31:25.950Z",
+          "hendelse": "fornyet",
+          "oppgave": "klomipramin-0083",
+          "okt": "kurateringsko/okt/20261124-155000",
+          "melding": "Avstemmingen: fire skrivinger lagret, panelene gjenstaar"
         }
       ],
       "appgren": null
@@ -7816,30 +7823,31 @@
   "okter": {
     "kurateringsko/okt/20261124-155000": {
       "ider": [
+        "forny-3",
         "forny-2",
         "reserver-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-2",
-        "sha256": "0d6127e6b85070871f63072c76c753d01d62941c7952b35c6bec0c2a15841d51",
+        "id": "forny-3",
+        "sha256": "333cfd7fe33abe6e8c7c56934beec5aeafa493fd5a1c09e57f557bc9d7089368",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-2",
-          "foresporsel_sha256": "0d6127e6b85070871f63072c76c753d01d62941c7952b35c6bec0c2a15841d51",
+          "foresporsel_id": "forny-3",
+          "foresporsel_sha256": "333cfd7fe33abe6e8c7c56934beec5aeafa493fd5a1c09e57f557bc9d7089368",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av klomipramin varer til 2026-11-24T19:19:34.502Z.",
-          "behandlet_kl": "2026-11-24T16:19:34.502Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45435709026",
+          "melding": "Reservasjonen av klomipramin varer til 2026-11-24T20:31:25.950Z.",
+          "behandlet_kl": "2026-11-24T17:31:25.950Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45449445790",
           "oppgave": {
             "oppgave": "klomipramin-0083",
             "stoff": "klomipramin",
             "navn": "Klomipramin",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-24T19:19:34.502Z",
+            "frist_kl": "2026-11-24T20:31:25.950Z",
             "jobbgren": "kuratorjobb/klomipramin-0083",
             "kurateringsgren": "kuratering/klomipramin-0083",
             "pr": null,
@@ -7863,7 +7871,7 @@
         }
       },
       "besvart_commit": "7ac82f76aa305d3fc65c8b623be23290b7a7beb7",
-      "sist_brukt_kl": "2026-11-24T16:19:34.502Z"
+      "sist_brukt_kl": "2026-11-24T17:31:25.950Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-24T17:26:19.827Z",
+  "oppdatert_kl": "2026-11-24T17:31:25.950Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 99,
@@ -16,8 +16,8 @@
       "stoff": "klomipramin",
       "oppgave": "klomipramin-0083",
       "okt": "kurateringsko/okt/20261124-155000",
-      "frist_kl": "2026-11-24T19:19:34.502Z",
-      "fase": "Blindfasen: kildeplanen lagret, fire av ni domener soekt"
+      "frist_kl": "2026-11-24T20:31:25.950Z",
+      "fase": "Avstemmingen: fire skrivinger lagret, panelene gjenstaar"
     }
   ],
   "holdes_tilbake": null,
