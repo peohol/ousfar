@@ -105,9 +105,18 @@ teksten med kuratorprotokollen etter.
      Farmakologiportalen og de strukturerte bivirkningene) kontrolleres med
      funksjonstesten, ikke mot originalkildene. Se at den er bestått, og at
      det den ikke dekker, står som gjenstående i evidensjournalen.
-     Funksjonstesten dekker ennå ikke CYPinfo, så en grønn funksjonstest er
-     ingen bekreftelse av CYPinfo-visningen. Se at den kontrollen står som
-     gjenstående, og kvitter den ikke ut (krav 8).
+     Funksjonstesten dekker CYPinfo fra 23.11.2026, med kontrollene `cypinfo`
+     og `cypinfovisning` (krav 8). **Se etter `cypinfovisning`, ikke bare etter
+     at testen er grønn.** Er siden koblet, men oppslaget gir null legemidler,
+     blir `cypinfo` `ok` og `cypinfovisning` lages ikke, så testen er grønn
+     uten at visningen er kontrollert (sak 557). Står `cypinfo` med
+     `legemidler: 0` på en side som skal ha CYPinfo, er det et sperrende funn.
+     Testen bekrefter ellers at visningen bygges, ikke at CYPinfos innhold er
+     faglig riktig. Akseptkontrollen (sak #533) godkjente **gjengivelsen** mot
+     CYPinfos eget API, ikke kildens egne faglige anbefalinger. Du skal derfor
+     verken revalidere anbefalingene per side eller kvittere dem ut som
+     kontrollerte: de står på kildeeierens ansvar. Ser noe galt ut i selve
+     innholdet, er det en melding til CYPinfo, ikke et funn mot kuratoren.
    - **Farmakogenetikk i teksten** (protokollen, «Farmakogenetikk i teksten»):
      CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden,
      og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
