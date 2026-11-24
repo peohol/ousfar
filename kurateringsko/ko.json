@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T21:26:08.773Z",
+  "oppdatert_kl": "2026-11-24T21:45:22.537Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 85,
   "stoffer": {
@@ -1289,7 +1289,7 @@
     "doksazosin": {
       "stoff": "doksazosin",
       "navn": "Doksazosin",
-      "status": "reservert",
+      "status": "venter_godkjenning",
       "modus": "de_novo",
       "prioritet": {
         "poeng": 0,
@@ -1304,20 +1304,7 @@
         "referanser": 4,
         "elementer_uten_kilde": 4
       },
-      "reservasjon": {
-        "oppgave": "doksazosin-0085",
-        "okt": "kurateringsko/okt/20261124-200100",
-        "modus": "de_novo",
-        "reservert_kl": "2026-11-24T20:01:14.350Z",
-        "fornyet_kl": "2026-11-24T21:25:38.010Z",
-        "frist_kl": "2026-11-25T00:25:38.010Z",
-        "fase": "Seksjonene skrives",
-        "jobbgren": "kuratorjobb/doksazosin-0085",
-        "kurateringsgren": "kuratering/doksazosin-0085",
-        "pr": null,
-        "gren": "3a38012b-d7bb-4ff9-ae02-10b076117f4b",
-        "kunnskapsgrense": null
-      },
+      "reservasjon": null,
       "forsok": 1,
       "tidligst_kl": null,
       "gjenoppta": null,
@@ -1328,8 +1315,8 @@
         "oppgave": "doksazosin-0085",
         "okt": "kurateringsko/okt/20261124-200100",
         "startet_kl": "2026-11-24T20:01:14.350Z",
-        "avsluttet_kl": null,
-        "utfall": "reservert"
+        "avsluttet_kl": "2026-11-24T21:45:22.537Z",
+        "utfall": "fullfort"
       },
       "aktiv": true,
       "historikk": [
@@ -1364,9 +1351,33 @@
           "oppgave": "doksazosin-0085",
           "okt": "kurateringsko/okt/20261124-200100",
           "melding": "Seksjonene skrives"
+        },
+        {
+          "kl": "2026-11-24T21:45:22.537Z",
+          "hendelse": "fullfort",
+          "oppgave": "doksazosin-0085",
+          "okt": "kurateringsko/okt/20261124-200100",
+          "melding": "Kurateringsgrenen 3a38012b-d7bb-4ff9-ae02-10b076117f4b, kunnskapsgrense 2026-11-24."
+        },
+        {
+          "kl": "2026-11-24T21:45:22.537Z",
+          "hendelse": "gren_klar",
+          "oppgave": "doksazosin-0085",
+          "melding": "Grenen: klar, revisjon 11, kontrollrunde 1."
         }
       ],
-      "appgren": null
+      "appgren": {
+        "id": "3a38012b-d7bb-4ff9-ae02-10b076117f4b",
+        "oppgave": "doksazosin-0085",
+        "modus": "de_novo",
+        "runde": 2,
+        "kunnskapsgrense": "2026-11-24",
+        "jobbgren": "kuratorjobb/doksazosin-0085",
+        "registrert_kl": "2026-11-24T21:45:22.537Z",
+        "status": "klar",
+        "revisjon": 11,
+        "kontrollrunde": 1
+      }
     },
     "doksepin": {
       "stoff": "doksepin",
@@ -8001,53 +8012,27 @@
     },
     "kurateringsko/okt/20261124-200100": {
       "ider": [
+        "fullfort-1",
         "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-2",
-        "sha256": "99949e33675e50cdafd2af375ec49a4623ccb34397f3012c76bd8fa148c780ae",
+        "id": "fullfort-1",
+        "sha256": "13b75f55a4e5b6ca4f77f486b8b926b6e91ddd4fa6856732ef63b60673df1930",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-2",
-          "foresporsel_sha256": "99949e33675e50cdafd2af375ec49a4623ccb34397f3012c76bd8fa148c780ae",
-          "handling": "forny",
+          "foresporsel_id": "fullfort-1",
+          "foresporsel_sha256": "13b75f55a4e5b6ca4f77f486b8b926b6e91ddd4fa6856732ef63b60673df1930",
+          "handling": "fullfort",
           "utfall": "ok",
-          "melding": "Reservasjonen av doksazosin varer til 2026-11-25T00:25:38.010Z.",
-          "behandlet_kl": "2026-11-24T21:25:38.010Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45490925874",
-          "oppgave": {
-            "oppgave": "doksazosin-0085",
-            "stoff": "doksazosin",
-            "navn": "Doksazosin",
-            "modus": "de_novo",
-            "forsok": 1,
-            "frist_kl": "2026-11-25T00:25:38.010Z",
-            "jobbgren": "kuratorjobb/doksazosin-0085",
-            "kurateringsgren": "kuratering/doksazosin-0085",
-            "pr": null,
-            "gren": "3a38012b-d7bb-4ff9-ae02-10b076117f4b",
-            "gjenoppta": null,
-            "sist_kuratert": null,
-            "maal": {
-              "kl": "2026-11-24T11:26:22.246Z",
-              "side": true,
-              "elementer": 21,
-              "redaksjonelle_paneler": 13,
-              "paneler_med_innhold": 8,
-              "referanser": 4,
-              "elementer_uten_kilde": 4
-            },
-            "prioritet": {
-              "poeng": 0,
-              "grunner": []
-            }
-          }
+          "melding": "doksazosin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
+          "behandlet_kl": "2026-11-24T21:45:22.537Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45494193984"
         }
       },
       "besvart_commit": "d02e2a2b4316ac7439075165b2c1368e88b7b7c8",
-      "sist_brukt_kl": "2026-11-24T21:25:38.010Z"
+      "sist_brukt_kl": "2026-11-24T21:45:22.537Z"
     }
   }
 }

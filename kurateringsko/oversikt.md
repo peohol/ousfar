@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T21:26:08.773Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T21:45:22.537Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 97 · Reservert: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
+Klar: 97 · Venter på godkjenning: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **doksazosin** (doksazosin-0085), frist 2026-11-25T00:25:38.010Z: Seksjonene skrives
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **doksazosin**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 
