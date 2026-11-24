@@ -59,7 +59,8 @@ export const KONTROLLNAVN = 'Prosjektansvar'
 
 /** Alt som begynner slik, regnes som et forsøk på prosjektetikett, også en feilstavet. */
 const PREFIKS = 'ansvar:'
-/** GitHub godtar høyst så mange tegn i beskrivelsen av en etikett. */
+/** GitHub godtar høyst så mange tegn i navnet og beskrivelsen av en etikett. */
+const NAVN_MAKS = 50
 const BESKRIVELSE_MAKS = 100
 
 /**
@@ -76,7 +77,10 @@ export function lesRegler(tekst = readFileSync(new URL(`../${REGLER_STI}`, impor
   }
   const tekstfelt = (v, maks = Infinity) => typeof v === 'string' && v.trim().length > 0 && v.length <= maks
   const etiketter = ordbok(prosjekter, 'prosjekter', (p) => Boolean(p) && typeof p === 'object' && tekstfelt(p.navn) && /^[0-9a-f]{6}$/.test(p.farge) && tekstfelt(p.beskrivelse, BESKRIVELSE_MAKS))
-  for (const etikett of etiketter.keys()) if (!etikett.startsWith(PREFIKS)) throw new Error(`${REGLER_STI}: prosjektetiketten ${etikett} skal begynne med ${PREFIKS}.`)
+  for (const etikett of etiketter.keys()) {
+    if (!etikett.startsWith(PREFIKS)) throw new Error(`${REGLER_STI}: prosjektetiketten ${etikett} skal begynne med ${PREFIKS}.`)
+    if (etikett.length > NAVN_MAKS || etikett !== etikett.trim()) throw new Error(`${REGLER_STI}: prosjektetiketten ${etikett} kan ikke opprettes i GitHub (høyst ${NAVN_MAKS} tegn, uten mellomrom først eller sist).`)
+  }
   return {
     prosjekter: new Map([...etiketter].map(([etikett, p]) => [etikett, p.navn])),
     etiketter: new Map([...etiketter].map(([etikett, { navn, farge, beskrivelse }]) => [etikett, { navn, farge, beskrivelse }])),

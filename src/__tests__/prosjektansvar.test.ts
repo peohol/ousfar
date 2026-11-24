@@ -104,6 +104,10 @@ describe('reglene i .github/prosjektansvar.json', () => {
     expect(() => lesRegler(JSON.stringify({ prosjekter: dev }))).toThrow(/systemarkitekter/)
     expect(() => lesRegler(regelfil({}))).toThrow(/prosjekter/)
     expect(() => lesRegler(regelfil({ dev: oppforing('OUSFAR Dev') }))).toThrow(/ansvar:/)
+    // Navn GitHub ikke kan opprette som etikett, godtas ikke heller.
+    expect(() => lesRegler(regelfil({ [`ansvar:${'x'.repeat(44)}`]: oppforing('OUSFAR X') }))).toThrow(/høyst 50 tegn/)
+    expect(lesRegler(regelfil({ [`ansvar:${'x'.repeat(43)}`]: oppforing('OUSFAR X') })).prosjekter.size).toBe(1)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev ': oppforing('OUSFAR Dev') }))).toThrow(/uten mellomrom/)
     expect(() => lesRegler(regelfil(dev, ['peohol']))).toThrow(/systemarkitekter/)
     // Den gamle formen uten farge og beskrivelse, og feil i feltene, godtas ikke.
     expect(() => lesRegler(regelfil({ 'ansvar:dev': 'OUSFAR Dev' }))).toThrow(/ugyldig «prosjekter»: ansvar:dev/)
