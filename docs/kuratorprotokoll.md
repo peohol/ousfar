@@ -498,8 +498,54 @@ kontrolløren kommer dit. Reglene presiserer kravene over; de erstatter dem ikke
   med kilde i farmakokinetikkortene (t½, tₛₛ). Et nytt referanseområde eller en ny grense
   fra et forslag eller en enkelt studie legges ikke inn før et menneske har
   avgjort det. Kortet viser hvem som sier hva, og saken går som etter krav 3.
-- **AGNPs varslingsgrense** er laboratoriets alarmgrense, ikke en dokumentert
-  toksisk terskel, og omtales slik.
+- **«Toksisk område» skiller tre slags tall** (fagansvarligs avgjørelse
+  2026-11-23). En **målt** toksisk konsentrasjon er rapportert ved påvist
+  forgiftning, og er den eneste arten som kan fylle nøkkelfeltet «Toksisk
+  område» i viktige data. En **laboratoriealarmgrense** – AGNPs
+  varslingsgrense – er grensen laboratoriet varsler over, satt høyt over
+  referanseområdet uten at forgiftning er målt der. En **beregnet** verdi er
+  regnet ut av en annen størrelse, for eksempel fire ganger øvre
+  referansegrense. En ren enhetsomregning er ikke en beregnet verdi: er tallet
+  målt, er det fortsatt målt, og det beholder nøkkelfeltet. Der står kildens
+  eget tall i kildens egen enhet, og appen regner om selv («Tallet og enheten
+  er kildens», krav 5); er omregningen gal, rettes tallet mot kilden, og
+  målingen forkastes ikke. De to andre artene er ikke
+  dokumenterte toksiske konsentrasjoner, og fyller aldri nøkkelfeltet, verken
+  alene eller sammen med hverandre. De står i et redaksjonelt kort, med arten
+  sagt rett ut i teksten («laboratoriets alarmgrense fra AGNP 2017, ikke en
+  målt toksisk konsentrasjon») og med regnestykket når tallet er beregnet, og
+  omtales for seg, ikke i samme setning som en målt grense. Finnes det ingen
+  målt toksisk konsentrasjon, står nøkkelfeltet tomt, dekningsmatrisen fører
+  området som `tomt_begrunnet` med hva som er søkt, og kortet sier hva som
+  finnes i stedet. Det samme skillet gjelder grensene for alvorlig forgiftning
+  og dødelig utgang.
+- **Referanseområdets grunnlag beskrives som det er** (fagansvarligs
+  avgjørelse 2026-11-23). Flere av de norske referanseområdene er satt med
+  skjønn på grunnlag av 10- og 90-persentilen, ikke ved å runde dem av:
+  klozapin har persentilene 405–2270 nmol/L og området 300–2500 nmol/L.
+  Teksten sier derfor at området bygger på persentilene, og ikke at det er dem
+  «rundet av», med mindre tallene faktisk stemmer. Områdene selv står uendret
+  (krav 3).
+- **Dosekolonnen i dose–serum-tabellene er datamaterialets doser**
+  (fagansvarligs avgjørelse 2026-11-23). Tabellen gjengir hvilke doser
+  pasientene i undersøkelsen brukte, og kolonnen merkes slik at tallet ikke
+  leses som en doseringsanbefaling. Oppgir kilden en dose, står kildens dose,
+  selv om en rettingsfil har et annet tall; legemidlets doseringsintervall
+  settes aldri inn i stedet. Oppgir kilden ingen dose, står det i
+  dosekolonnen at dosene ikke er oppgitt, og legemidlets doseringsintervall
+  settes ikke der i stedet; skal intervallet nevnes, står det i kortets tekst,
+  merket som legemidlets doseringsintervall og ikke som dosene i materialet.
+  En rettingsfil brukes bare der kilden mangler en opplysning, aldri til å
+  erstatte et tall kilden oppgir.
+- **Tallet tilskrives kilden det faktisk står i** (fagansvarligs avgjørelse
+  2026-11-23). Står en grense i den norske oversikten TDM-importene er laget
+  fra, er det den som oppgis som kilde. En kilde som ikke oppgir tallet, føres
+  ikke på det, selv om den omtaler stoffet og tallet er riktig.
+- **Ingen tall uten kilde** (fagansvarligs avgjørelse 2026-11-23). At et tall
+  ikke er påvist feil, er ikke dekning. Et tall som bare står i importteksten,
+  uten at kilden kan leses, tas ut; kortet sier hva som er gjennomsøkt, og at
+  tallet kan settes inn igjen med kilde og årstall om dokumentasjonen kommer
+  til rette. Et forbehold erstatter ikke dekning.
 - **En referanse fjernes** fra kortet eller panelet når innholdet den støttet,
   er tatt ut (krav 4).
 - **Dokumentene følger avgjørelsene:** en avgjørelse fra fagansvarlig føres inn

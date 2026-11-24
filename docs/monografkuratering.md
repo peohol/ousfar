@@ -167,7 +167,10 @@ Redaksjonelle rammer for kuratoren:
   av prosjektets navn, ikke som en periode for prøvetakingen.
 - Tallene i viktige data (toksisk område, alvorlig/dødelig intoksikasjon)
   flyttes eller dupliseres ikke. Toksisitetskortene kan utdype dem og sette
-  dem i kontekst, men er egne redaksjonelle elementer.
+  dem i kontekst, men er egne redaksjonelle elementer. Unntaket er et tall som
+  ikke hører der: en laboratoriealarmgrense eller en beregnet verdi tas ut av
+  nøkkelfeltet og omtales i et kort, med arten sagt rett ut (se «Toksisk
+  område» skiller tre slags tall i `docs/kuratorprotokoll.md`).
 
 ## Hjelpefunksjonene
 
