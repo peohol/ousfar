@@ -1,25 +1,17 @@
 {
-  "oppdatert_kl": "2026-11-24T19:26:02.555Z",
+  "oppdatert_kl": "2026-11-24T19:59:06.094Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 99,
-    "reservert": 1,
+    "reservert": 0,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 0,
+    "venter_godkjenning": 1,
     "sammenslatt": 0,
     "publisert": 16,
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [
-    {
-      "stoff": "bumetanid",
-      "oppgave": "bumetanid-0084",
-      "okt": "kurateringsko/okt/20261124-181951",
-      "frist_kl": "2026-11-24T22:17:15.133Z",
-      "fase": "Blindfasen avsluttet, bivirkningstabellene importert, kortene skrives"
-    }
-  ],
+  "aktive": [],
   "holdes_tilbake": null,
   "neste": [
     {
@@ -155,7 +147,14 @@
       "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [],
+  "til_gjennomgang": [
+    {
+      "stoff": "bumetanid",
+      "gren": "54baa521-d80e-4790-8ace-fb5e1e8230df",
+      "grenstatus": "klar",
+      "status": "venter_godkjenning"
+    }
+  ],
   "blokkert": [
     {
       "stoff": "metamfetamin",

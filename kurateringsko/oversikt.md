@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T19:26:02.555Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T19:59:06.094Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 99 · Reservert: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
+Klar: 99 · Venter på godkjenning: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **bumetanid** (bumetanid-0084), frist 2026-11-24T22:17:15.133Z: Blindfasen avsluttet, bivirkningstabellene importert, kortene skrives
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **bumetanid**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 
