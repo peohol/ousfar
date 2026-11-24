@@ -2,9 +2,8 @@
  * Fagsidene som er en metabolitt (eller en analytisk komponent) av stoffet på
  * en annen fagside. De automatiske farmakogenetiske kildene kobles aldri til
  * moderstoffets oppføring på disse sidene: det moderstoffets oppføring sier,
- * gjelder moderstoffet. Listen er uavhengig av kilden, så den står når ClinPGx
- * avvikles (#437). Dekningsoversiktene for CYPinfo (`cypinfodekning.ts`) og
- * ClinPGx (`clinpgxdekning.ts`) bygger på den.
+ * gjelder moderstoffet. Dekningsoversikten for CYPinfo (`cypinfodekning.ts`)
+ * bygger på den.
  */
 export interface Metabolittside {
   side: string

@@ -1,7 +1,7 @@
 /**
  * Referansen til PubChem i seksjonen «Kjemiske grunndata», med når dataene
  * sist ble kontrollert mot PubChem. Automatisk, som referansene fra FEST og
- * ClinPGx (`src/faginnhold/referanser.ts`): den lages av det siden har hentet,
+ * CYPinfo (`src/faginnhold/referanser.ts`): den lages av det siden har hentet,
  * hver gang siden vises.
  */
 import type { Automatiskekilder, Referanse } from '../faginnhold/referanser'

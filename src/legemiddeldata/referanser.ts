@@ -96,8 +96,7 @@ function normalisert(tekst: string): string {
 
 /**
  * En kort, stabil kontrollsum av teksten (cyrb53). Den skal bare skille
- * referansene på én side fra hverandre, ikke være hemmelig. Brukes også av
- * de automatiske referansene fra ClinPGx.
+ * referansene på én side fra hverandre, ikke være hemmelig.
  */
 export function kontrollsum(tekst: string): string {
   let h1 = 0xdeadbeef

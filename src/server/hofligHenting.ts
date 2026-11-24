@@ -6,7 +6,7 @@
  * vente, venter alle.
  *
  * Brukes av synkroniseringene som henter fra åpne kilder uten nøkkel
- * (ClinPGx, PubChem, Farmakologiportalen). Kjøres bare på serveren og i
+ * (PubChem, Farmakologiportalen, CYPinfo). Kjøres bare på serveren og i
  * skriptene; nettleseren snakker aldri med kildene.
  */
 

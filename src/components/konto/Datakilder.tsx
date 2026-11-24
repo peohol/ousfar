@@ -43,7 +43,7 @@ const MAKS_ENDRINGER = 50
 
 /**
  * Driftstatusen for datakildene, for administratorer: hvordan siste henting
- * fra FEST, ClinPGx, CPIC, PubChem og Farmakologiportalen gikk, de siste kjøringene, og hva som er endret —
+ * fra FEST, CYPinfo, PubChem og Farmakologiportalen gikk (ClinPGx og CPIC står som stanset), de siste kjøringene, og hva som er endret —
  * i alle unntatt FEST de kliniske endringene først, metadataene på
  * forespørsel; i FEST antallet nye, endrede og utgåtte rader. «Hent nå» ber
  * serveren hente med en gang, som den planlagte jobben.
@@ -98,7 +98,7 @@ export function Datakilder({ apen, onLukk, leser: egenLeser }: { apen: boolean; 
   return (
     <Modallag apen={apen} tittel="Datakilder" ikon="reset" bred onLukk={onLukk}>
       <p className="datakilder__ingress">
-        Legemiddeldata fra FEST, farmakogenetiske data fra ClinPGx, CPIC og CYPinfo, kjemiske grunndata fra PubChem og
+        Legemiddeldata fra FEST, farmakogenetiske data fra CYPinfo, kjemiske grunndata fra PubChem og
         laboratorieanalyser fra Farmakologiportalen: hvordan
         siste henting gikk, og hva som er endret siden forrige. Ingenting her vises for andre enn administratorer.
       </p>

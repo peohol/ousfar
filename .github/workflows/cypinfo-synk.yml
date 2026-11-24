@@ -7,7 +7,7 @@ name: CYPinfo
 
 on:
   schedule:
-    # Onsdag 03:45 UTC: en annen dag enn ClinPGx (mandag), utenom de nattlige jobbene.
+    # Onsdag 03:45 UTC, utenom de nattlige jobbene.
     - cron: '45 3 * * 3'
   workflow_dispatch:
 

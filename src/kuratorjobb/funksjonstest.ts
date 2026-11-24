@@ -10,14 +10,14 @@
  * Testen endrer ingenting. Den sammenligner ikke med noen fasit for
  * innholdet — det er kuratorens arbeid — men finner ut om appens faktiske
  * leseoperasjoner virker: `les_stoff`, legemiddeldataene fra FEST,
- * bivirkningene fra preparatomtalene, ClinPGx, de kjemiske grunndataene
+ * bivirkningene fra preparatomtalene, CYPinfo, de kjemiske grunndataene
  * fra PubChem og laboratorieanalysene fra Farmakologiportalen.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { lesBivirkningsdata } from '../bivirkninger/lesing'
 import { byggBivirkningsvisning } from '../bivirkninger/stoffside'
-import { lagFarmakogenetikkleserOmIBruk, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
-import { byggFarmakogenetikkvisning, finnClinpgxkobling, kjemikaliestatuser } from '../clinpgx/stoffside'
+import { lagCypinfoleserOmIBruk, type Cypinfoutvalg } from '../cypinfo/lesing'
+import { byggCypinfovisning, cypinfoForesporsel } from '../cypinfo/stoffside'
 import { STANSEDE_KILDER, stansFor, stansmelding, type Stans } from '../datakilder/stans'
 import type { Datakilde } from '../datakilder/status'
 import { VISNINGSENHETER } from '../enheter/konsentrasjon'
@@ -38,9 +38,9 @@ import { offentligFeil, samletStatus, type Kontroll, type Utfall } from './model
 
 /**
  * Data som er eldre enn dette, gir en advarsel. Synkroniseringene går hver natt
- * (FEST, Farmakologiportalen) eller hver uke (ClinPGx, PubChem).
+ * (FEST, Farmakologiportalen) eller hver uke (CYPinfo, PubChem).
  */
-export const FERSKHET_DAGER = { fest: 3, clinpgx: 10, pubchem: 10, farmakologiportalen: 3 } as const
+export const FERSKHET_DAGER = { fest: 3, cypinfo: 10, pubchem: 10, farmakologiportalen: 3 } as const
 
 export interface Funksjonstestresultat {
   stoff: string
@@ -244,31 +244,24 @@ export async function funksjonstest(
     }
   }
 
-  /* --- ClinPGx ------------------------------------------------------------ */
+  /* --- CYPinfo ------------------------------------------------------------ */
 
-  const kobling = modell ? finnClinpgxkobling(modell).kobling : null
-  const kjemikalier = kobling?.kjemikalier.map((k) => k.clinpgx_id) ?? []
-  // Den samme leseren som appen: ingen når ClinPGx er stanset.
-  const clinpgx = lagFarmakogenetikkleserOmIBruk(klient, stansede)
-  const clinpgxstans = stansFor('clinpgx', stansede)
-  if (clinpgxstans) legg({ id: 'clinpgx', status: 'ikke_aktuelt', melding: stansmelding(clinpgxstans, 'ClinPGx') })
-  else if (!modell) legg({ id: 'clinpgx', status: 'feil', melding: 'Kunne ikke lese koblingen til ClinPGx uten siden.' })
-  else if (kjemikalier.length === 0 || !clinpgx) {
-    legg({ id: 'clinpgx', status: 'ikke_aktuelt', melding: 'Siden er ikke koblet til ClinPGx.' })
+  // Den samme leseren og de samme ID-ene som siden (`useCypinfo`): ingen leser når CYPinfo er stanset.
+  const cypinfo = lagCypinfoleserOmIBruk(klient, stansede)
+  const cypinfostans = stansFor('cypinfo', stansede)
+  const sporsmal = modell ? cypinfoForesporsel(virkestoff, side?.stoff?.navn ?? '') : null
+  if (cypinfostans) legg({ id: 'cypinfo', status: 'ikke_aktuelt', melding: stansmelding(cypinfostans, 'CYPinfo') })
+  else if (!sporsmal) legg({ id: 'cypinfo', status: 'feil', melding: 'Kunne ikke finne legemidlene i CYPinfo uten siden.' })
+  else if (!cypinfo || sporsmal.fest_ider.length + sporsmal.cypinfo_ider.length === 0) {
+    legg({ id: 'cypinfo', status: 'ikke_aktuelt', melding: 'Siden er ikke koblet til noe legemiddel CYPinfo kan ha.' })
   } else {
-    const pgx = await kall<Farmakogenetikkutvalg>('clinpgx', 'les_farmakogenetikk', () => clinpgx.les(kjemikalier), (u) => {
-      const statuser = kjemikaliestatuser(u, kobling!)
-      const ikkeHentet = statuser.filter((s) => !s.sist_hentet_kl).length
-      const feilet = statuser.filter((s) => s.feil || !s.finnes).length
-      const antall = { kjemikalier: statuser.length, retningslinjer: u.retningslinjer.length, preparatomtaler: u.preparatomtaler.length, kliniske: u.kliniske.length }
-      if (ikkeHentet > 0) return { status: 'advarsel', melding: `${ikkeHentet} av kjemikaliene er ikke hentet fra ClinPGx ennå.`, antall: { ...antall, ikke_hentet: ikkeHentet } }
-      if (feilet > 0) return { status: 'advarsel', melding: `${feilet} av kjemikaliene hadde feil ved siste henting, eller finnes ikke i ClinPGx.`, antall: { ...antall, feilet } }
-      const dager = alder(u.kontrollert_kl, na())
-      if (dager === null || dager > FERSKHET_DAGER.clinpgx) return { status: 'advarsel', melding: `ClinPGx ble sist synkronisert ${u.kontrollert_kl ?? 'aldri'}.`, antall }
-      return { status: 'ok', melding: `ClinPGx-dataene ble lest (synkronisert ${u.kontrollert_kl}).`, antall }
+    const utvalg = await kall<Cypinfoutvalg>('cypinfo', 'les_cypinfo', () => cypinfo.les(sporsmal.fest_ider, sporsmal.cypinfo_ider), (u) => {
+      const antall = { legemidler: u.legemidler.length, anbefalinger: u.anbefalinger.length }
+      const dager = alder(u.kilde.kontrollert_kl, na())
+      if (dager === null || dager > FERSKHET_DAGER.cypinfo) return { status: 'advarsel', melding: `CYPinfo ble sist kontrollert ${u.kilde.kontrollert_kl ?? 'aldri'}.`, antall }
+      return { status: 'ok', melding: `CYPinfo ble lest (kontrollert ${u.kilde.kontrollert_kl}).`, antall }
     })
-    if (pgx) bygg('farmakogenetikkvisning', 'Farmakogenetikkseksjonen', () => byggFarmakogenetikkvisning(pgx))
-
+    if (utvalg && utvalg.legemidler.length > 0) bygg('cypinfovisning', 'CYPinfo i «Farmakogenetikk»', () => byggCypinfovisning(utvalg))
   }
 
   /* --- Kjemiske grunndata og laboratorieanalysene ------------------------- */

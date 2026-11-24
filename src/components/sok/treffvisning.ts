@@ -48,7 +48,6 @@ const KILDENAVN: Record<Sokekilde, string> = {
   preparater: 'preparatene fra FEST',
   interaksjoner: 'interaksjonene fra FEST',
   cypinfo: 'anbefalingene fra CYPinfo',
-  farmakogenetikk: 'farmakogenetikken fra ClinPGx',
   laboratorier: 'laboratorieanalysene fra Farmakologiportalen',
 }
 

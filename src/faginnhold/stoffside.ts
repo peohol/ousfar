@@ -101,7 +101,7 @@ const DATAKOBLINGER: ReadonlySet<string> = new Set([ELEMENTTYPER.legemiddelkobli
 
 /**
  * Om siden har faginnhold: noe en fagperson har skrevet eller lagt inn, ikke
- * bare koblingene til legemiddeldataene og ClinPGx. En side uten er ikke
+ * bare koblingene til legemiddeldataene og (fra før) ClinPGx. En side uten er ikke
  * faglig kuratert, selv om den viser preparater.
  */
 export function harFaginnhold(modell: Pick<Sidemodell, 'paneler' | 'panelreferanser'>): boolean {

@@ -3,7 +3,8 @@
  * planlagt eller av en administrator, og appen leser og viser ingenting fra
  * dem (`docs/datakilder.md`). Om dataene slettes fra databasen, er en egen
  * beslutning: CPICs ble slettet i samme omgang; ClinPGx' slettes med Peders
- * ja fra 23.11.2026 (#540), etter at en kopi er lagt i arkivet.
+ * ja fra 23.11.2026 (#540), etter at en kopi er lagt i arkivet. Koden for
+ * begge er fjernet (#437).
  *
  * Å ta en kilde i bruk igjen er å fjerne den her og legge den planlagte
  * jobben tilbake; første henting laster da alt på nytt fra en tom kopi. CPIC
