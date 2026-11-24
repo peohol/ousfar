@@ -103,8 +103,12 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    grønn uten at visningen er kontrollert (sak 557). Står `cypinfo` med
    `legemidler: 0` på en side som skal ha CYPinfo, er det et funn, ikke en
    bestått kontroll. Og den bekrefter at visningen bygges, ikke at CYPinfos
-   innhold er faglig riktig; det er avgjort i den faglige akseptkontrollen
-   24.11.2026, én gang, ikke per side.
+   innhold er faglig riktig. **Akseptkontrollen 24.11.2026 (sak 533) godkjente
+   gjengivelsen**, kontrollert mot CYPinfos eget API: at riktig anbefaling
+   står for riktig legemiddel og fenotype, uendret. Den validerte **ikke**
+   CYPinfos egne faglige anbefalinger; de står på kildeeierens ansvar. Ingen av
+   delene skal revalideres per side: ser noe galt ut i selve innholdet, meldes
+   det til CYPinfo og rettes ikke i OUSFAR.
    CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
    (fagansvarligs avgjørelse, sakene 533 og 437), og visningen vises for alle
    brukere. ClinPGx, CPIC og DPWG er dermed ikke lenger automatiske lag, men
@@ -695,6 +699,9 @@ holder dem i takt med modellen og piloten).
   avsnittet om overlapp «i overgangen» er tatt ut; det beskrev en tilstand som
   ikke finnes lenger. Ingen krav er svekket: kravet om at et automatisk lag
   ikke dupliseres, gjelder uendret, og en grønn funksjonstest bekrefter at
-  visningen bygges, ikke at CYPinfos innhold er faglig riktig. Det siste er
-  avgjort én gang, i den faglige akseptkontrollen (sak #533), og kontrolleres
-  ikke per side.
+  visningen bygges, ikke at CYPinfos innhold er faglig riktig. Akseptkontrollen
+  (sak #533) godkjente **gjengivelsen** mot CYPinfos eget API, og validerte
+  ikke kildens egne anbefalinger; de står på kildeeierens ansvar, og en
+  mistanke om feil i innholdet meldes til CYPinfo. Kravet er dermed ikke
+  utvidet: kuratoren og kontrolløren kontrollerer det automatiske laget etter
+  krav 8, og revaliderer ikke kildeanbefalingene per side.

@@ -112,8 +112,11 @@ teksten med kuratorprotokollen etter.
      uten at visningen er kontrollert (sak 557). Står `cypinfo` med
      `legemidler: 0` på en side som skal ha CYPinfo, er det et sperrende funn.
      Testen bekrefter ellers at visningen bygges, ikke at CYPinfos innhold er
-     faglig riktig; det er avgjort én gang i den faglige akseptkontrollen,
-     ikke per side.
+     faglig riktig. Akseptkontrollen (sak #533) godkjente **gjengivelsen** mot
+     CYPinfos eget API, ikke kildens egne faglige anbefalinger. Du skal derfor
+     verken revalidere anbefalingene per side eller kvittere dem ut som
+     kontrollerte: de står på kildeeierens ansvar. Ser noe galt ut i selve
+     innholdet, er det en melding til CYPinfo, ikke et funn mot kuratoren.
    - **Farmakogenetikk i teksten** (protokollen, «Farmakogenetikk i teksten»):
      CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden,
      og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et
