@@ -19,7 +19,8 @@ const SQL = readFileSync(new URL(`../../supabase/migrations/${MIGRASJON}`, impor
 describe('CPIC er stanset', () => {
   it('stansen gjelder CPIC, med dato og grunn', () => {
     expect(stansFor('cpic')).toEqual({ fra: '2026-11-06', grunn: expect.stringContaining('norske farmakogenetiske data') })
-    expect(stansFor('clinpgx')).toBeNull()
+    // ClinPGx er stanset fra 23.11.2026 (#437).
+    expect(stansFor('clinpgx')).toMatchObject({ fra: '2026-11-23' })
     expect(stansmelding(STANSEDE_KILDER.cpic!, 'CPIC')).toBe(
       'Stanset 06.11.2026. CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske ' +
         'farmakogenetiske data. Ingenting hentes eller vises fra CPIC.',

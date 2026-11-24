@@ -34,8 +34,10 @@ describe('stansbryteren for ClinPGx', () => {
     expect(lagFarmakogenetikksokOmIBruk(klient, { clinpgx: STANS })).toBeUndefined()
     expect(lagFarmakogenetikkleserOmIBruk(klient, {})).toMatchObject({ les: expect.any(Function), sok: expect.any(Function), hent: expect.any(Function) })
     expect(lagFarmakogenetikksokOmIBruk(klient, {})).toMatchObject({ les: expect.any(Function) })
-    // ClinPGx er ikke stanset ennå: det skjer først etter Fags aksept (#533).
-    expect(stansFor('clinpgx')).toBeNull()
+    // ClinPGx er stanset fra 23.11.2026 (Peder, #437).
+    expect(stansFor('clinpgx')).toMatchObject({ fra: '2026-11-23' })
+    expect(lagFarmakogenetikkleserOmIBruk(klient)).toBeUndefined()
+    expect(lagFarmakogenetikksokOmIBruk(klient)).toBeUndefined()
   })
 
   it('svarer 410 fra synkroniseringen og oppslaget uten å kalle ClinPGx', async () => {

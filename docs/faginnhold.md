@@ -692,9 +692,10 @@ viser — de samme som seksjonene bygger av de fullstendige legemiddeldataene,
 som en test kontrollerer for hvert virkestoff i FEST-utdraget;
 `les_cypinfo` gir CYPinfos anbefalinger for alle legemidlene sidene er
 koblet til, og hver side får sin del med samme regel som siden selv
-(`cypinfoFor`), bare for dem som ser CYPinfo på fagsidene (`CYPINFO_VISES_FOR`;
-for andre gis kilden ikke, og indeksen hentes på nytt når det endres);
-`les_farmakogenetikk_sok` gir ClinPGx-dataene uten feltene søket ikke bruker,
+(`cypinfoFor`), for dem som ser CYPinfo på fagsidene (`CYPINFO_VISES_FOR`,
+alle fra 23.11.2026; ellers gis kilden ikke, og indeksen hentes på nytt når det
+endres); `les_farmakogenetikk_sok` ga ClinPGx-dataene, og leses ikke mens
+ClinPGx er stanset,
 og `les_laboratoriesok` navnene og metodene i
 laboratorieanalysene fra Farmakologiportalen for alle forbindelsene i
 registeret, uten måleområdene, så hver side får de samme analysene som

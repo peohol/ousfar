@@ -2,13 +2,14 @@
  * Datakildene som er stanset på ubestemt tid: ingen henting kjøres, verken
  * planlagt eller av en administrator, og appen leser og viser ingenting fra
  * dem (`docs/datakilder.md`). Om dataene slettes fra databasen, er en egen
- * beslutning: CPICs ble slettet i samme omgang, mens ClinPGx' står til de
- * slettes med Peders ja (#540).
+ * beslutning: CPICs ble slettet i samme omgang; ClinPGx' slettes med Peders
+ * ja fra 23.11.2026 (#540), etter at en kopi er lagt i arkivet.
  *
  * Å ta en kilde i bruk igjen er å fjerne den her og legge den planlagte
  * jobben tilbake; første henting laster da alt på nytt fra en tom kopi. CPIC
- * tas ikke i bruk igjen: koden er fjernet (#437), og den står her bare så
- * «Datakilder» viser den som stanset til skjemaet er slettet.
+ * og ClinPGx tas ikke i bruk igjen: CYPinfo er OUSFARs eneste automatiske
+ * farmakogenetiske kilde (#437), og de står her så «Datakilder» viser dem som
+ * stanset.
  */
 import type { Datakilde } from './status'
 
@@ -23,6 +24,10 @@ export const STANSEDE_KILDER: Readonly<Partial<Record<Datakilde, Stans>>> = {
   cpic: {
     fra: '2026-11-06',
     grunn: 'CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske farmakogenetiske data.',
+  },
+  clinpgx: {
+    fra: '2026-11-23',
+    grunn: 'CYPinfo er OUSFARs eneste automatiske kilde for farmakogenetikk.',
   },
 }
 

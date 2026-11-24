@@ -462,9 +462,8 @@ describe('funksjonstesten', () => {
       interaksjoner: 'ok',
       interaksjonsvisning: 'ok',
       bivirkninger: 'ikke_aktuelt',
-      // Kjemikaliet er koblet, men aldri hentet fra ClinPGx.
-      clinpgx: 'advarsel',
-      farmakogenetikkvisning: 'ok',
+      // ClinPGx er stanset (#540): ingenting leses derfra.
+      clinpgx: 'ikke_aktuelt',
       // PubChem og Farmakologiportalen er aldri hentet i denne databasen.
       kjemi: 'advarsel',
       kjemivisning: 'ok',
@@ -499,7 +498,7 @@ describe('funksjonstesten', () => {
 
   it('melder en side som ikke finnes, og hopper over det som trenger den', async () => {
     const resultat = await funksjonstest(brukerklient, 'finnes-ikke')
-    expect(utfall(resultat.kontroller)).toMatchObject({ les_stoff: 'feil', fest: 'feil', clinpgx: 'feil', stoffliste: 'feil' })
+    expect(utfall(resultat.kontroller)).toMatchObject({ les_stoff: 'feil', fest: 'feil', clinpgx: 'ikke_aktuelt', stoffliste: 'feil' })
     expect(resultat.status).toBe('feil')
   })
 
@@ -507,7 +506,7 @@ describe('funksjonstesten', () => {
     const klient = {
       rpc: async (funksjon: string, argumenter?: Record<string, unknown>) => {
         if (funksjon === 'les_legemidler') return { data: null, error: { message: 'Syntetisk hemmelig verdi', code: '22P02' } }
-        if (funksjon === 'les_farmakogenetikk') throw new TypeError('Syntetisk hemmelig verdi')
+        if (funksjon === 'les_farmakogenetikk') throw new Error('ClinPGx er stanset og skal ikke leses.')
         if (funksjon === 'les_cpic') throw new Error('CPIC er fjernet og skal ikke leses.')
         if (funksjon === 'les_bivirkninger') {
           return {
@@ -523,7 +522,7 @@ describe('funksjonstesten', () => {
     } as unknown as SupabaseClient
     const resultat = await funksjonstest(klient, 'amitriptylin')
     expect(resultat.kontroller.find((k) => k.id === 'fest')).toMatchObject({ status: 'feil', melding: 'les_legemidler feilet (uten kode; teksten publiseres ikke).' })
-    expect(resultat.kontroller.find((k) => k.id === 'clinpgx')).toMatchObject({ status: 'feil', melding: 'les_farmakogenetikk feilet (TypeError; teksten publiseres ikke).' })
+    expect(resultat.kontroller.find((k) => k.id === 'clinpgx')).toMatchObject({ status: 'ikke_aktuelt' })
     // CPIC er fjernet (#437): funksjonstesten har ingen CPIC-kontroll og leser ingenting derfra.
     expect(resultat.kontroller.some((k) => k.id === 'cpic' || k.id === 'cpicvisning')).toBe(false)
     // Teksten i feilene fra databasen og appen kommer aldri med i resultatet.
