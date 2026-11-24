@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T16:09:13.312Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T16:19:34.502Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 99 · Reservert: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **klomipramin** (klomipramin-0083), frist 2026-11-24T18:50:37.163Z: Gren aapnet, blindfasen begynt
+- **klomipramin** (klomipramin-0083), frist 2026-11-24T19:19:34.502Z: Blindfasen: kildeplanen lagret, fire av ni domener soekt
 
 ## Til gjennomgang
 
