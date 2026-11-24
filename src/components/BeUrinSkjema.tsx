@@ -9,6 +9,7 @@ import { kvotient, tomBeUrinProve, type BeUrinInndata, type BeUrinProve } from '
 import type { BeUrinModell } from '../domain/beUrinModell'
 import { formaterIrcak } from '../domain/thcTall'
 import { marginvalg } from '../domain/thcVisning'
+import { medEnhet, tallMedEnhet } from '../domain/beUrinVisning'
 
 export interface BeUrinSkjemaProps {
   inndata: BeUrinInndata
@@ -134,16 +135,16 @@ function Provefelter({
       <legend>{tittel}</legend>
       <div className="feltrad feltrad--par">
         <label className="skjemafelt">
-          <span>Benzoylekgonin ({enheter.benzoylekgonin})</span>
+          <span>{medEnhet('Benzoylekgonin', enheter.benzoylekgonin)}</span>
           <Tallfelt ref={forsteFelt} value={prove.benzoylekgonin} onChange={(v) => sett('benzoylekgonin', v)} />
         </label>
         <label className="skjemafelt">
-          <span>Kreatinin ({enheter.kreatinin})</span>
+          <span>{medEnhet('Kreatinin', enheter.kreatinin)}</span>
           <Tallfelt value={prove.kreatinin} onChange={(v) => sett('kreatinin', v)} />
         </label>
       </div>
       <p className="thc-beregnet" role="status">
-        Q (benzoylekgonin/kreatinin): <strong>{q === null ? '–' : `${formaterKvotient(q)} ${enheter.kvotient}`}</strong>
+        Q (benzoylekgonin/kreatinin): <strong>{q === null ? '–' : tallMedEnhet(formaterKvotient(q), enheter.kvotient)}</strong>
       </p>
       <label className="skjemafelt">
         <span>Prøvedato</span>

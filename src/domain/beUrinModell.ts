@@ -24,7 +24,11 @@ export interface BeUrinKurve extends Kurve {
 export interface BeUrinModell {
   /** Hvilken utgave av modellen dette er, slik den er godkjent. */
   versjon: string
-  /** Enhetene feltene tastes i, og kvotientenheten kurvenes amplituder står i. */
+  /**
+   * Enhetene feltene tastes i, og kvotientenheten kurvenes amplituder står i.
+   * Tom tekst betyr laboratoriets egne enheter uten noe navn i appen, som i
+   * THC-syremodulen: kurvene er da laget med de samme enhetene som tastes inn.
+   */
   enheter: { benzoylekgonin: string; kreatinin: string; kvotient: string }
   /**
    * Q = kvotientfaktor · benzoylekgonin / kreatinin, i kvotientenheten.
@@ -76,7 +80,8 @@ export function validerBeUrinModell(m: BeUrinModell): string[] {
   const feil: string[] = []
   if (!ikkeTom(m.versjon)) feil.push('Modellen mangler versjon.')
   for (const felt of ['benzoylekgonin', 'kreatinin', 'kvotient'] as const) {
-    if (!ikkeTom(m.enheter[felt])) feil.push(`Enheten for ${felt} mangler.`)
+    const enhet = m.enheter[felt]
+    if (typeof enhet !== 'string' || enhet !== enhet.trim()) feil.push(`Enheten for ${felt} er ugyldig.`)
   }
   if (!positivt(m.kvotientfaktor)) feil.push('Kvotientfaktoren må være et tall større enn 0.')
   if (!Array.isArray(m.kurver) || m.kurver.length !== 2) {

@@ -131,6 +131,15 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(screen.getAllByText(/Utskillelsesprofil 1/).length).toBeGreaterThan(0)
   })
 
+  it('viser ingen enhet når modellen bruker laboratoriets egne enheter uten navn', async () => {
+    vis({ ...MED_MODELL, modell: { ...SYNTETISK_MODELL, enheter: { benzoylekgonin: '', kreatinin: '', kvotient: '' } } })
+    await screen.findByRole('group', { name: 'Forrige prøve' })
+    expect(gruppe('Forrige prøve').getByLabelText('Benzoylekgonin')).toBeTruthy()
+    expect(gruppe('Forrige prøve').getByLabelText('Kreatinin')).toBeTruthy()
+    await fyll('Forrige prøve', '50', '2', '2026-01-01')
+    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Q (benzoylekgonin/kreatinin): 25')
+  })
+
   it('gjør ingenting på Enter eller mellomrom', async () => {
     const user = userEvent.setup()
     const skriv = vi.spyOn(navigator.clipboard ?? { writeText: async () => {} }, 'writeText')

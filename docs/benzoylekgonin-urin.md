@@ -8,12 +8,13 @@ laboratoriesvar. Den har ingen kommentar, ingen kopiering, ingen eksport og
 ingen kommentarmal. Serumfortolkningen av benzoylekgonin (scenarioet
 `benzoylekgonin`, BEZ1, SRUS) og THC-syremodulen er uendret.
 
-## Status: bygd, ikke aktivert
+## Status: bygd, avklart, aktiveres i en egen endring
 
 Koden, motoren, skjemaet, figuren og plassen i databasen er på plass og
 prøvd med syntetiske data. **Ingen ser modulen** før den aktiveres: databasen
-har ingen modell og ingen katalogoppføring for den. Aktiveringen venter på
-Peders kliniske avklaringer (under).
+har ingen modell og ingen katalogoppføring for den. Peder svarte på de
+kliniske spørsmålene og godkjente modellen 24.11.2026 (under); aktiveringen
+er en egen PR etter at denne koden er ute.
 
 ## Fremgangsmåten
 
@@ -105,7 +106,9 @@ dag tegnes ingen figur, bare beregningen.
 - **Versjonert.** Modellen har `versjon`, som databasen krever er den samme i
   kolonnen og i modellen. Den endres bare med en migrasjon; appen skriver
   ikke til den. Appen kontrollerer hele modellen før den brukes
-  (`validerBeUrinModell`: to navngitte profiler med positive tall, 0 < CV < 1,
+  (`validerBeUrinModell`: enhetene som tekst, der tom tekst betyr
+  laboratoriets egne enheter uten navn i appen, to navngitte profiler med
+  positive tall, 0 < CV < 1,
   marginene med z mot AS 241, standarden blant dem), og en modell som ikke
   består, brukes ikke.
 - **Søket.** Oppføringen er en vanlig katalogoppføring med typen `be_urin`
@@ -119,23 +122,27 @@ dag tegnes ingen figur, bare beregningen.
   hører til den innloggede (`Bevaringseier`). Ingen prøveverdier lagres,
   sendes, logges eller står i adressen.
 
-**Aktiveringen** er én egen migrasjon, etter Peders kliniske godkjenning, som
-legger inn modellen og oppføringen i OUS Klinisk farmakologi. Før den kan
-skrives, må Peder bekrefte:
+**Aktiveringen** er én egen migrasjon som legger inn modellen og oppføringen
+i OUS Klinisk farmakologi. Peders avklaringer (24.11.2026), og hva de blir:
 
-1. enhetene for benzoylekgonin og kreatinin og skalaen til
-   regresjonskvotienten (og dermed `kvotientfaktor`);
-2. den lokale urinkoden og analysemetoden. Katalogen har i dag ingen kode for
-   benzoylekgonin i urin: BEZ1 er serum (SRUS) og skal ikke omdefineres, og
-   urinmetodene er UCAK (THC-syre) og UETGHB (etanolmetabolitter);
-3. CV for benzoylekgonin og for kreatinin, metodespesifikke;
-4. hvordan det ekstrapolerte området skal håndteres (stoppgrense eller ikke);
-5. den eksakte modellversjonen etter kontroll.
+1. **Enhetene.** Kurvene viser benzoylekgonin/kreatinin i de samme enhetene
+   som brukeren taster inn: `kvotientfaktor` 1, og enhetene står tomme, så
+   feltene heter bare «Benzoylekgonin» og «Kreatinin», som i THC-syremodulen.
+2. **Koden.** Analysen hører til metoden URUS, som ikke var i appen før:
+   metoden URUS opprettes i katalogen, og analysen får koden UBEZ inntil
+   videre. BEZ1 (serum, SRUS) er urørt.
+3. **Måleusikkerheten** er den samme som THC-syreregelsettets (IRCAK): CV for
+   benzoylekgonin = THC-syrens CV, CV for kreatinin = kreatininens. Verdiene
+   tas fra det publiserte THC-syreregelsettet i OUS Klinisk farmakologi når
+   migrasjonen kjører, og står deretter fast i modellversjonen; en senere
+   endring av THC-syreregelsettet endrer ikke denne modellen.
+4. **Det ekstrapolerte området** behandles som i THC-syre: ekstrapolert
+   bakover, med merknaden i beregningen. Ingen stoppgrense.
+5. **Modellen er godkjent** av Peder.
 
 Oppføringens `navn` er det søketreffet viser. Serumoppføringen heter
-«Benzoylekgonin», så urinoppføringen må hete noe som skiller den, for
-eksempel «Benzoylekgonin i urin»; ellers skiller bare koden og fargen de to
-treffene.
+«Benzoylekgonin», så urinoppføringen heter «Benzoylekgonin i urin»; ellers
+skiller bare koden og fargen de to treffene.
 
 Nettleserkontrollen (`src/__tests__/qa/benzoylekgoninnettleser.ts`, lokalt
 testmiljø) legger selv inn en syntetisk modell og oppføring og tar dem bort

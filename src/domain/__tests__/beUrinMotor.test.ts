@@ -438,7 +438,8 @@ describe('modellen', () => {
     ['feil z', { sikkerhetsmarginer: [{ margin: 0.5, z: 0 }, { margin: 0.9, z: -1.2 }] }, 'z-verdien for 90 % stemmer ikke med marginen.'],
     ['standard utenfor', { standard_sikkerhetsmargin: 0.95 }, 'Standardmarginen må være en av sikkerhetsmarginene.'],
     ['kvotientfaktor 0', { kvotientfaktor: 0 }, 'Kvotientfaktoren må være et tall større enn 0.'],
-    ['uten enhet', { enheter: { benzoylekgonin: '', kreatinin: 'K', kvotient: 'Q' } }, 'Enheten for benzoylekgonin mangler.'],
+    ['enhet med mellomrom rundt', { enheter: { benzoylekgonin: ' B', kreatinin: 'K', kvotient: 'Q' } }, 'Enheten for benzoylekgonin er ugyldig.'],
+    ['enhet som ikke er tekst', { enheter: { benzoylekgonin: 'B', kreatinin: 1, kvotient: 'Q' } as unknown as BeUrinModell['enheter'] }, 'Enheten for kreatinin er ugyldig.'],
     ['uten versjon', { versjon: ' ' }, 'Modellen mangler versjon.'],
   ])('avviser %s', (_, endring, feil) => {
     expect(validerBeUrinModell({ ...SYNTETISK_MODELL, ...endring })).toContain(feil)

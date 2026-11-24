@@ -1,7 +1,7 @@
 import { logSd, type BeUrinSammenligning } from '../domain/beUrinMotor'
 import type { BeUrinModell } from '../domain/beUrinModell'
 import { prosentFor } from '../domain/beUrinPlot'
-import { antallDogn, formaterDogn, formaterRatio, konklusjonISetning } from '../domain/beUrinVisning'
+import { antallDogn, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
 import { formaterDatoNorsk, formaterIrcak } from '../domain/thcTall'
 import { hvorOfteForStor, marginvalg, somProsent } from '../domain/thcVisning'
@@ -77,10 +77,10 @@ export function BeUrinBeregning({
           <ul>
             <li>
               Referanseprøven er forrige prøve ({formaterDatoNorsk(forrigeDato)}): Q<sub>1</sub> ={' '}
-              {formaterIrcak(s.fra)} {enhet}.
+              {tallMedEnhet(formaterIrcak(s.fra), enhet)}.
             </li>
             <li>
-              Denne prøven ({formaterDatoNorsk(denneDato)}): Q<sub>2</sub> = {formaterIrcak(s.til)} {enhet}.
+              Denne prøven ({formaterDatoNorsk(denneDato)}): Q<sub>2</sub> = {tallMedEnhet(formaterIrcak(s.til), enhet)}.
             </li>
             <li>Tid mellom prøvene: d = {antallDogn(s.dager)} (kalenderdøgn).</li>
           </ul>
