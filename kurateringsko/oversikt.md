@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T17:31:25.950Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T18:17:32.060Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 99 · Reservert: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
+Klar: 99 · Venter på godkjenning: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **klomipramin** (klomipramin-0083), frist 2026-11-24T20:31:25.950Z: Avstemmingen: fire skrivinger lagret, panelene gjenstaar
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **klomipramin**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 

@@ -1,25 +1,17 @@
 {
-  "oppdatert_kl": "2026-11-24T17:31:25.950Z",
+  "oppdatert_kl": "2026-11-24T18:17:32.060Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 99,
-    "reservert": 1,
+    "reservert": 0,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 0,
+    "venter_godkjenning": 1,
     "sammenslatt": 0,
     "publisert": 16,
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [
-    {
-      "stoff": "klomipramin",
-      "oppgave": "klomipramin-0083",
-      "okt": "kurateringsko/okt/20261124-155000",
-      "frist_kl": "2026-11-24T20:31:25.950Z",
-      "fase": "Avstemmingen: fire skrivinger lagret, panelene gjenstaar"
-    }
-  ],
+  "aktive": [],
   "holdes_tilbake": null,
   "neste": [
     {
@@ -155,7 +147,14 @@
       "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [],
+  "til_gjennomgang": [
+    {
+      "stoff": "klomipramin",
+      "gren": "e328c55a-c60f-4af3-9fe8-e7285b76cd84",
+      "grenstatus": "klar",
+      "status": "venter_godkjenning"
+    }
+  ],
   "blokkert": [
     {
       "stoff": "metamfetamin",
