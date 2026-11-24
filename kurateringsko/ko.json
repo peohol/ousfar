@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T20:01:14.350Z",
+  "oppdatert_kl": "2026-11-24T20:02:37.568Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 85,
   "stoffer": {
@@ -1298,13 +1298,13 @@
         "okt": "kurateringsko/okt/20261124-200100",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T20:01:14.350Z",
-        "fornyet_kl": "2026-11-24T20:01:14.350Z",
-        "frist_kl": "2026-11-24T23:01:14.350Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-24T20:02:37.568Z",
+        "frist_kl": "2026-11-24T23:02:37.568Z",
+        "fase": "Grenen åpnet",
         "jobbgren": "kuratorjobb/doksazosin-0085",
         "kurateringsgren": "kuratering/doksazosin-0085",
         "pr": null,
-        "gren": null,
+        "gren": "3a38012b-d7bb-4ff9-ae02-10b076117f4b",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -1333,6 +1333,19 @@
           "oppgave": "doksazosin-0085",
           "okt": "kurateringsko/okt/20261124-200100",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-24T20:02:37.568Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "doksazosin-0085",
+          "melding": "Fant kurateringsgrenen 3a38012b-d7bb-4ff9-ae02-10b076117f4b."
+        },
+        {
+          "kl": "2026-11-24T20:02:37.568Z",
+          "hendelse": "fornyet",
+          "oppgave": "doksazosin-0085",
+          "okt": "kurateringsko/okt/20261124-200100",
+          "melding": "Grenen åpnet"
         }
       ],
       "appgren": null
@@ -7970,31 +7983,32 @@
     },
     "kurateringsko/okt/20261124-200100": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
+        "id": "forny-1",
+        "sha256": "2ee2a607b5c7a6a2bc8b3f6b0f42cf9eb279663ba81c6cb28a700465d4faed16",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "2ee2a607b5c7a6a2bc8b3f6b0f42cf9eb279663ba81c6cb28a700465d4faed16",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "doksazosin er reservert til 2026-11-24T23:01:14.350Z.",
-          "behandlet_kl": "2026-11-24T20:01:14.350Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45476260413",
+          "melding": "Reservasjonen av doksazosin varer til 2026-11-24T23:02:37.568Z.",
+          "behandlet_kl": "2026-11-24T20:02:37.568Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45476511606",
           "oppgave": {
             "oppgave": "doksazosin-0085",
             "stoff": "doksazosin",
             "navn": "Doksazosin",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-24T23:01:14.350Z",
+            "frist_kl": "2026-11-24T23:02:37.568Z",
             "jobbgren": "kuratorjobb/doksazosin-0085",
             "kurateringsgren": "kuratering/doksazosin-0085",
             "pr": null,
-            "gren": null,
+            "gren": "3a38012b-d7bb-4ff9-ae02-10b076117f4b",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -8007,21 +8021,14 @@
               "elementer_uten_kilde": 4
             },
             "prioritet": {
-              "poeng": 418,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "4 av 21 elementer har ingen kilde.",
-                "Bare 4 referanser."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-24T20:01:14.350Z"
+      "sist_brukt_kl": "2026-11-24T20:02:37.568Z"
     }
   }
 }
