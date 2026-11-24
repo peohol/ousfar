@@ -65,6 +65,25 @@ describe('migrasjonen som sletter CPIC og ClinPGx', () => {
     expect(await funksjoner()).toContain('clinpgx_status()')
   })
 
+  it('stopper uten å slette noe når noe utenfor skjemaene avhenger av dem', async () => {
+    for (const [avhengighet, navn] of [
+      [`create view public.syntetisk_visning as select clinpgx_id from clinpgx.kjemikalier`, 'rule _RETURN on view syntetisk_visning'],
+      [`create table public.syntetisk_tabell (k text references clinpgx.kjemikalier (clinpgx_id))`, 'constraint syntetisk_tabell_k_fkey'],
+    ] as const) {
+      const feil = await feilFra(() =>
+        db.transaction(async (tx) => {
+          await tx.exec(avhengighet)
+          await tx.exec(SQL)
+        }),
+      )
+      expect(feil?.message, navn).toMatch(/^Noe utenfor skjemaene cpic og clinpgx avhenger av dem \(.*: ingenting er slettet\.$/)
+      expect(feil?.message, navn).toContain(navn)
+    }
+    expect(await funksjoner()).toContain('clinpgx_status()')
+    const { rows } = await db.query(`select nspname from pg_namespace where nspname in ('cpic', 'clinpgx') order by 1`)
+    expect(rows).toEqual([{ nspname: 'clinpgx' }, { nspname: 'cpic' }])
+  })
+
   describe('etter migrasjonen', () => {
     beforeAll(async () => {
       await kjorMigrasjoner(db, { bare: [MIGRASJON] })

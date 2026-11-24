@@ -63,6 +63,48 @@ drop function public.cpic_status();
 drop function public.les_cpic(text[]);
 drop function public.les_cpic_diplotyper(text);
 
+-- Vern nummer to, rett før `cascade`: ingenting utenfor de to skjemaene kan
+-- avhenge av noe i dem (en visning, en fremmednøkkel, en kolonnetype, en
+-- funksjon, en standardverdi, en regel eller en tilgangsregel), ellers ville
+-- `cascade` slettet det i det stille. Sjekket i produksjonen 23.11.2026, men
+-- sjekkes på nytt her, i samme transaksjon som slettingen. Triggerne på
+-- tabellene i skjemaene hører til skjemaene og regnes ikke som utenfor.
+do $$
+declare
+  utenfor text;
+begin
+  with skjemaer as (
+    select oid from pg_namespace where nspname in ('cpic', 'clinpgx')
+  ), innenfor as (
+    select 'pg_namespace'::regclass klasse, oid from skjemaer
+    union all select 'pg_class'::regclass, oid from pg_class where relnamespace in (select oid from skjemaer)
+    union all select 'pg_type'::regclass, oid from pg_type where typnamespace in (select oid from skjemaer)
+    union all select 'pg_proc'::regclass, oid from pg_proc where pronamespace in (select oid from skjemaer)
+  ), avhengige as (
+    select distinct d.classid, d.objid, d.objsubid,
+      case d.classid
+        when 'pg_class'::regclass then (select relnamespace from pg_class where oid = d.objid)
+        when 'pg_type'::regclass then (select typnamespace from pg_type where oid = d.objid)
+        when 'pg_proc'::regclass then (select pronamespace from pg_proc where oid = d.objid)
+        when 'pg_constraint'::regclass then (select connamespace from pg_constraint where oid = d.objid)
+        when 'pg_trigger'::regclass then (select c.relnamespace from pg_trigger t join pg_class c on c.oid = t.tgrelid where t.oid = d.objid)
+        when 'pg_rewrite'::regclass then (select c.relnamespace from pg_rewrite r join pg_class c on c.oid = r.ev_class where r.oid = d.objid)
+        when 'pg_attrdef'::regclass then (select c.relnamespace from pg_attrdef a join pg_class c on c.oid = a.adrelid where a.oid = d.objid)
+        when 'pg_policy'::regclass then (select c.relnamespace from pg_policy p join pg_class c on c.oid = p.polrelid where p.oid = d.objid)
+      end skjema
+    from pg_depend d
+    join innenfor i on i.klasse = d.refclassid and i.oid = d.refobjid
+    where d.deptype in ('n', 'a', 'e')
+  )
+  select string_agg(pg_describe_object(classid, objid, objsubid), '; ' order by pg_describe_object(classid, objid, objsubid)) into utenfor
+  from avhengige
+  where skjema is null or skjema not in (select oid from skjemaer);
+  if utenfor is not null then
+    raise exception 'Noe utenfor skjemaene cpic og clinpgx avhenger av dem (%): ingenting er slettet.', utenfor;
+  end if;
+end
+$$;
+
 -- Skjemaene med tabellene, triggerne og hjelpefunksjonene sine.
 drop schema clinpgx cascade;
 drop schema cpic cascade;

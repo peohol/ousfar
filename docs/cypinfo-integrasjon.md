@@ -256,9 +256,13 @@ alle»):
    migrasjonsfiler står. **Gjort:** `20261123230000_slett_cpic_og_clinpgx.sql`.
    Den stopper først hvis noe er hentet fra ClinPGx eller CPIC etter at
    arkivet ble tatt, så ingenting slettes som ikke er arkivert; da tas et nytt
-   arkiv. Ingenting utenfor skjemaene avhenger av dem (sjekket i
-   produksjonen: ingen visninger, fremmednøkler, kolonnetyper, regler eller
-   planlagte jobber). Testen er `pgxsletting.test.ts`.
+   arkiv. Rett før `drop schema … cascade` stopper den også hvis noe utenfor
+   skjemaene avhenger av dem (`pg_depend`: visninger, fremmednøkler,
+   kolonnetyper, funksjoner, standardverdier, regler, tilgangsregler), så
+   `cascade` aldri sletter noe utenfor dem; i produksjonen var det ingen slike
+   23. og 24.11.2026. Testen er `pgxsletting.test.ts`. Arkivet er prøvd lagt
+   tilbake i en testdatabase 24.11.2026 med alle radene (`gjenopprett.test.ts`
+   og `LESMEG.md` i arkivet).
    **Endringsloggen står:** radene i `datakilder.endringer` for de to kildene
    (før- og etterverdier, etikett, `synk_id`) slettes ikke. Tabellen har ingen
    fremmednøkkel til kildeskjemaene, så den overlever slettingen urørt, og
