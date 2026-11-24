@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T15:49:09.157Z",
+  "oppdatert_kl": "2026-11-24T15:50:37.163Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 83,
   "stoffer": {
@@ -3486,13 +3486,13 @@
         "okt": "kurateringsko/okt/20261124-155000",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T15:49:09.157Z",
-        "fornyet_kl": "2026-11-24T15:49:09.157Z",
-        "frist_kl": "2026-11-24T18:49:09.157Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-24T15:50:37.163Z",
+        "frist_kl": "2026-11-24T18:50:37.163Z",
+        "fase": "Gren aapnet, blindfasen begynt",
         "jobbgren": "kuratorjobb/klomipramin-0083",
         "kurateringsgren": "kuratering/klomipramin-0083",
         "pr": null,
-        "gren": null,
+        "gren": "e328c55a-c60f-4af3-9fe8-e7285b76cd84",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -3521,6 +3521,19 @@
           "oppgave": "klomipramin-0083",
           "okt": "kurateringsko/okt/20261124-155000",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-24T15:50:37.163Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "klomipramin-0083",
+          "melding": "Fant kurateringsgrenen e328c55a-c60f-4af3-9fe8-e7285b76cd84."
+        },
+        {
+          "kl": "2026-11-24T15:50:37.163Z",
+          "hendelse": "fornyet",
+          "oppgave": "klomipramin-0083",
+          "okt": "kurateringsko/okt/20261124-155000",
+          "melding": "Gren aapnet, blindfasen begynt"
         }
       ],
       "appgren": null
@@ -7796,31 +7809,32 @@
   "okter": {
     "kurateringsko/okt/20261124-155000": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
+        "id": "forny-1",
+        "sha256": "b760fbc12f36bd990d5906b9cd3b7e64507a9d44e76b14cb35dc847f8444d159",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "b760fbc12f36bd990d5906b9cd3b7e64507a9d44e76b14cb35dc847f8444d159",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "klomipramin er reservert til 2026-11-24T18:49:09.157Z.",
-          "behandlet_kl": "2026-11-24T15:49:09.157Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45429832654",
+          "melding": "Reservasjonen av klomipramin varer til 2026-11-24T18:50:37.163Z.",
+          "behandlet_kl": "2026-11-24T15:50:37.163Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45430114962",
           "oppgave": {
             "oppgave": "klomipramin-0083",
             "stoff": "klomipramin",
             "navn": "Klomipramin",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-24T18:49:09.157Z",
+            "frist_kl": "2026-11-24T18:50:37.163Z",
             "jobbgren": "kuratorjobb/klomipramin-0083",
             "kurateringsgren": "kuratering/klomipramin-0083",
             "pr": null,
-            "gren": null,
+            "gren": "e328c55a-c60f-4af3-9fe8-e7285b76cd84",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -7833,20 +7847,14 @@
               "elementer_uten_kilde": 16
             },
             "prioritet": {
-              "poeng": 418.1,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "16 av 27 elementer har ingen kilde."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-24T15:49:09.157Z"
+      "sist_brukt_kl": "2026-11-24T15:50:37.163Z"
     }
   }
 }
