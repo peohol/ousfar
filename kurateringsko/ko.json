@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T15:50:37.163Z",
+  "oppdatert_kl": "2026-11-24T15:58:29.550Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 83,
   "stoffer": {
@@ -7813,48 +7813,21 @@
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-1",
-        "sha256": "b760fbc12f36bd990d5906b9cd3b7e64507a9d44e76b14cb35dc847f8444d159",
+        "id": "",
+        "sha256": "ca9aa6e508260b10d928e49517da22d5fee214ad351c5c46db6897766a33f5a1",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-1",
-          "foresporsel_sha256": "b760fbc12f36bd990d5906b9cd3b7e64507a9d44e76b14cb35dc847f8444d159",
-          "handling": "forny",
-          "utfall": "ok",
-          "melding": "Reservasjonen av klomipramin varer til 2026-11-24T18:50:37.163Z.",
-          "behandlet_kl": "2026-11-24T15:50:37.163Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45430114962",
-          "oppgave": {
-            "oppgave": "klomipramin-0083",
-            "stoff": "klomipramin",
-            "navn": "Klomipramin",
-            "modus": "de_novo",
-            "forsok": 1,
-            "frist_kl": "2026-11-24T18:50:37.163Z",
-            "jobbgren": "kuratorjobb/klomipramin-0083",
-            "kurateringsgren": "kuratering/klomipramin-0083",
-            "pr": null,
-            "gren": "e328c55a-c60f-4af3-9fe8-e7285b76cd84",
-            "gjenoppta": null,
-            "sist_kuratert": null,
-            "maal": {
-              "kl": "2026-11-24T11:26:22.246Z",
-              "side": true,
-              "elementer": 27,
-              "redaksjonelle_paneler": 13,
-              "paneler_med_innhold": 8,
-              "referanser": 8,
-              "elementer_uten_kilde": 16
-            },
-            "prioritet": {
-              "poeng": 0,
-              "grunner": []
-            }
-          }
+          "foresporsel_id": null,
+          "foresporsel_sha256": "ca9aa6e508260b10d928e49517da22d5fee214ad351c5c46db6897766a33f5a1",
+          "handling": null,
+          "utfall": "avvist",
+          "melding": "Forespørselen kan ikke brukes: Feltet gren hører ikke til handlingen frigi.",
+          "behandlet_kl": "2026-11-24T15:58:29.550Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45431577274"
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-24T15:50:37.163Z"
+      "sist_brukt_kl": "2026-11-24T15:58:29.550Z"
     }
   }
 }
