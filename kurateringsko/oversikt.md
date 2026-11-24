@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T21:46:23.301Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T21:47:22.113Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 96 · Reservert: 1 · Venter på godkjenning: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **perfenazin** (perfenazin-0086), frist 2026-11-25T00:46:23.301Z
+- **perfenazin** (perfenazin-0086), frist 2026-11-25T00:47:22.113Z: Grenen apnet
 
 ## Til gjennomgang
 

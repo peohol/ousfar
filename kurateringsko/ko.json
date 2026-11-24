@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T21:46:23.301Z",
+  "oppdatert_kl": "2026-11-24T21:47:22.113Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 86,
   "stoffer": {
@@ -5651,13 +5651,13 @@
         "okt": "kurateringsko/okt/20261124-214700",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T21:46:23.301Z",
-        "fornyet_kl": "2026-11-24T21:46:23.301Z",
-        "frist_kl": "2026-11-25T00:46:23.301Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-24T21:47:22.113Z",
+        "frist_kl": "2026-11-25T00:47:22.113Z",
+        "fase": "Grenen apnet",
         "jobbgren": "kuratorjobb/perfenazin-0086",
         "kurateringsgren": "kuratering/perfenazin-0086",
         "pr": null,
-        "gren": null,
+        "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -5686,6 +5686,19 @@
           "oppgave": "perfenazin-0086",
           "okt": "kurateringsko/okt/20261124-214700",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-24T21:47:22.113Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "perfenazin-0086",
+          "melding": "Fant kurateringsgrenen 6d9d7928-5e6c-404a-be7b-c8b269cecfba."
+        },
+        {
+          "kl": "2026-11-24T21:47:22.113Z",
+          "hendelse": "fornyet",
+          "oppgave": "perfenazin-0086",
+          "okt": "kurateringsko/okt/20261124-214700",
+          "melding": "Grenen apnet"
         }
       ],
       "appgren": null
@@ -8056,31 +8069,32 @@
     },
     "kurateringsko/okt/20261124-214700": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
+        "id": "forny-1",
+        "sha256": "ed1757004ee3d0e187e1a425bbac70a56335128504e0ab34427ef3e6f18b5523",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "ed1757004ee3d0e187e1a425bbac70a56335128504e0ab34427ef3e6f18b5523",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "perfenazin er reservert til 2026-11-25T00:46:23.301Z.",
-          "behandlet_kl": "2026-11-24T21:46:23.301Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45494384402",
+          "melding": "Reservasjonen av perfenazin varer til 2026-11-25T00:47:22.113Z.",
+          "behandlet_kl": "2026-11-24T21:47:22.113Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45494546485",
           "oppgave": {
             "oppgave": "perfenazin-0086",
             "stoff": "perfenazin",
             "navn": "Perfenazin",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T00:46:23.301Z",
+            "frist_kl": "2026-11-25T00:47:22.113Z",
             "jobbgren": "kuratorjobb/perfenazin-0086",
             "kurateringsgren": "kuratering/perfenazin-0086",
             "pr": null,
-            "gren": null,
+            "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -8093,20 +8107,14 @@
               "elementer_uten_kilde": 13
             },
             "prioritet": {
-              "poeng": 418,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "13 av 22 elementer har ingen kilde."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-24T21:46:23.301Z"
+      "sist_brukt_kl": "2026-11-24T21:47:22.113Z"
     }
   }
 }
