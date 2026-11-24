@@ -3,13 +3,18 @@
  * docs/benzoylekgonin-urin.md): én per fagmiljø, bare gjennom
  * `public.les_be_urin_modell()`, og bare arbeidskontekstens.
  *
- * Migrasjonene legger ikke inn noen modell eller katalogoppføring: modulen er
- * ikke aktivert for noen. Testene legger inn den syntetiske modellen selv.
+ * Aktiveringen (20261124143000_be_urin_aktivering.sql) legger inn modellen
+ * og oppføringen i OUS Klinisk farmakologi (A), med måleusikkerheten fra
+ * THC-syreregelsettet. Testene av tilgangen bytter den ut med den syntetiske
+ * modellen.
  */
 import type { PGlite } from '@electric-sql/pglite'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { tilBeUrinModell } from '../domain/beUrinModell'
-import { SYNTETISK_MODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
+import { tilBeUrinModell, type BeUrinModell } from '../domain/beUrinModell'
+import { BESTILTE_KURVER, MARGINER, SYNTETISK_MODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
+import THC_REGELSETT from '../domain/__tests__/fasit/thc-regelsett.json'
 import { lesAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 import { lesBeUrinModell } from '../katalog/beUrinModell'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
@@ -34,19 +39,74 @@ beforeAll(async () => {
   kall = faginnholdskall(db, g.id.systemarkitekt)
 }, 120_000)
 
-describe('etter migrasjonene', () => {
-  it('finnes ingen modell og ingen oppføring: modulen er ikke aktivert', async () => {
-    const { rows } = await db.query<{ modeller: number; oppforinger: number }>(`
-      select (select count(*)::int from public.be_urin_modeller) as modeller,
-             (select count(*)::int from public.analyttkatalog_oppforinger where type = 'be_urin') as oppforinger`)
-    expect(rows[0]).toEqual({ modeller: 0, oppforinger: 0 })
-    expect(await modellFor('vanligA')).toEqual({ fagmiljo: { id: g.fagmiljo.A, navn: 'OUS Klinisk farmakologi' }, modell: null })
-    expect(tilBeUrinModell((await modellFor('vanligA')).modell)).toBeNull()
+describe('etter aktiveringen', () => {
+  it('har OUS Klinisk farmakologi den godkjente modellen, som består kontrollen', async () => {
+    const svar = await modellFor('vanligA')
+    expect(svar.fagmiljo).toEqual({ id: g.fagmiljo.A, navn: 'OUS Klinisk farmakologi' })
+    const r = tilBeUrinModell(svar.modell)
+    expect(r?.ok).toBe(true)
+    if (!r?.ok) return
+    expect(r.modell.versjon).toBe('ous-kf-2026-11-24')
+    expect(r.modell.enheter).toEqual({ benzoylekgonin: '', kreatinin: '', kvotient: '' })
+    expect(r.modell.kvotientfaktor).toBe(1)
+    // Kurvene er bestillingens, med alle sifrene; marginene er THC-syrens.
+    expect(r.modell.kurver).toEqual(BESTILTE_KURVER)
+    expect(r.modell.sikkerhetsmarginer).toEqual(MARGINER)
+    expect(r.modell.standard_sikkerhetsmargin).toBe(0.9)
+  })
+
+  it('har måleusikkerheten fra THC-syreregelsettet, slik det ble importert', async () => {
+    const modell = (await modellFor('vanligA')).modell as BeUrinModell
+    expect(modell.maleusikkerhet).toEqual({
+      cv_benzoylekgonin: THC_REGELSETT.maleusikkerhet.cv_thc,
+      cv_kreatinin: THC_REGELSETT.maleusikkerhet.cv_kreatinin,
+    })
+  })
+
+  it('stopper aktiveringen når THC-syreregelsettet har en annen måleusikkerhet', async () => {
+    // Migrasjonen kjøres på nytt i en transaksjon som rulles tilbake, med et
+    // publisert regelsett som avviker (som i en produksjon der noen har endret det).
+    const sql = readFileSync(resolve(__dirname, '../../supabase/migrations/20261124143000_be_urin_aktivering.sql'), 'utf8')
+    const feil = await feilFra(() =>
+      db.transaction(async (tx) => {
+        await tx.query('delete from public.be_urin_modeller')
+        await tx.query(`delete from public.analyttkatalog_oppforinger where nokkel = 'be-urin'`)
+        await tx.query(`delete from public.analyttkatalog_metoder where kode = 'URUS'`)
+        // Bare raden migrasjonen ser på; objektet bak den trengs ikke her.
+        await tx.exec('set local session_replication_role = replica')
+        await tx.query(
+          `insert into public.thc_regelsett (objekt_id, tilstand, fagmiljo_id, konverteringsfaktor, cv_thc, cv_kreatinin,
+             faktor_under_cutoff, standard_sikkerhetsmargin, varsel_dager_mellom)
+           values (gen_random_uuid(), 'publisert', $1, 0.344451, 0.25, 0.05, 1.5, 0.9, 30)`,
+          [g.fagmiljo.A],
+        )
+        await tx.exec('set local session_replication_role = origin')
+        await tx.exec(sql)
+      }),
+    )
+    expect(feil?.message).toMatch(/annen måleusikkerhet/)
+    expect((await modellFor('vanligA')).modell).not.toBeNull()
+  })
+
+  it('finnes i søket under URUS med koden UBEZ, bare i OUS Klinisk farmakologi', async () => {
+    const a = await lesAnalyttkatalog(kall.klientFor(g.id.vanligA))
+    const modul = a.modulMedId('be-urin')
+    expect(modul?.modul?.type).toBe('be_urin')
+    expect(modul?.visningsnavn).toBe('Benzoylekgonin i urin')
+    expect(modul?.analysemetode).toBe('URUS')
+    expect(modul?.modul?.analytter).toEqual([{ kode: 'UBEZ', navn: 'Benzoylekgonin' }])
+    expect(a.metoder.map((m) => m.kode)).toContain('URUS')
+    // Serumoppføringen BEZ1 er urørt.
+    expect(a.modulMedId('benzoylekgonin')?.analysemetode).toBe('SRUS')
+    const b = await lesAnalyttkatalog(kall.klientFor(g.id.vanligB))
+    expect(b.modulMedId('be-urin')).toBeUndefined()
+    expect(await modellFor('vanligB')).toEqual({ fagmiljo: { id: g.fagmiljo.B, navn: expect.any(String) }, modell: null })
   })
 })
 
-describe('med en modell i OUS Klinisk farmakologi', () => {
+describe('med en annen modell i OUS Klinisk farmakologi', () => {
   beforeAll(async () => {
+    await db.query('delete from public.be_urin_modeller where fagmiljo_id = $1', [g.fagmiljo.A])
     await leggInn(g.fagmiljo.A, SYNTETISK_MODELL)
   })
 

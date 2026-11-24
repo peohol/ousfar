@@ -23,7 +23,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { analyttkatalogImportSql } from '../../scripts/analyttkatalog-import'
 import { etgImportSql } from '../../scripts/etg-import'
-import type { Analyttkatalog } from '../domain/analyttkatalog'
+import { byggKatalog, lesKatalogdata, type Analyttkatalog } from '../domain/analyttkatalog'
 import { etgTilfeller, type Etgtilfeller } from '../domain/etg'
 import { OUS_KATALOGDATA } from '../domain/ouskatalog'
 import { lesScenarioregler, reglerForModul, tilScenarioregler } from '../faginnhold/scenarioregler'
@@ -55,6 +55,30 @@ function kanonisk(verdi: unknown): unknown {
     )
   }
   return verdi
+}
+
+/**
+ * Det senere migrasjoner har lagt til i katalogen til A etter flyttingen.
+ * Pariteten med klientpakken gjelder resten, uendret; tilleggene prøves der
+ * de hører hjemme.
+ *
+ * - `20261124143000_be_urin_aktivering.sql`: metoden URUS og oppføringen
+ *   `be-urin` (benzoylekgonin i urin, `src/__tests__/beUrinModell.test.ts`).
+ */
+const LAGT_TIL_ETTER_FLYTTINGEN = { metoder: ['URUS'], oppforinger: ['be-urin'] }
+
+/** Katalogen personen får, uten det som er lagt til etter flyttingen. */
+async function katalogUtenTillegg(p: Person): Promise<Analyttkatalog> {
+  const { data, error } = await kall.klientFor(g.id[p]).rpc('les_analyttkatalog')
+  if (error) throw error
+  const alt = lesKatalogdata(data)
+  for (const kode of LAGT_TIL_ETTER_FLYTTINGEN.metoder) expect(alt.metoder.map((m) => m.kode)).toContain(kode)
+  for (const nokkel of LAGT_TIL_ETTER_FLYTTINGEN.oppforinger) expect(alt.oppforinger.map((o) => o.nokkel)).toContain(nokkel)
+  return byggKatalog({
+    ...alt,
+    metoder: alt.metoder.filter((m) => !LAGT_TIL_ETTER_FLYTTINGEN.metoder.includes(m.kode)),
+    oppforinger: alt.oppforinger.filter((o) => !LAGT_TIL_ETTER_FLYTTINGEN.oppforinger.includes(o.nokkel)),
+  })
 }
 
 const kontrollsum = (verdi: unknown) => createHash('sha256').update(JSON.stringify(kanonisk(verdi))).digest('hex')
@@ -125,8 +149,8 @@ describe('importene', () => {
 })
 
 describe('OUS Klinisk farmakologi', () => {
-  it('får katalogen som sto i klientpakken, uendret', async () => {
-    const katalog = await katalogFor('vanligA')
+  it('får katalogen som sto i klientpakken, uendret, med tilleggene etter flyttingen', async () => {
+    const katalog = await katalogUtenTillegg('vanligA')
     expect(katalog.fagmiljo).toEqual({ id: g.fagmiljo.A, navn: 'OUS Klinisk farmakologi' })
     expect(kontrollsum(katalog.fortolkninger.map(({ modul: _, ...a }) => a))).toBe(FOR_FLYTTINGEN.fortolkninger)
     expect(kontrollsum(katalog.metoder)).toBe(FOR_FLYTTINGEN.metoder)

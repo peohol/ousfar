@@ -1,0 +1,20 @@
+{
+  "id": "20261124-143325-cb430e",
+  "semver": "minor",
+  "opprettet": "2026-11-24T14:33:25Z",
+  "sammendrag": "Ny tentativ fortolkning av benzoylekgonin i urin",
+  "typer": [
+    "Funksjonalitet",
+    "Fag"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Benzoylekgonin i urin (UBEZ, metoden URUS) kan nå fortolkes i OUS Klinisk farmakologi. Søk etter «kokain» eller «UBEZ».",
+    "Fortolkningen sammenligner benzoylekgonin/kreatinin i to prøver mot to utskillelsesprofiler, med den samme sikkerhetsmarginen og måleusikkerheten som THC-syre, og sier «Nytt inntak», «Kan ikke fastslås» eller «Ikke nødvendigvis nytt inntak».",
+    "Modellen er tentativ og ikke klinisk validert. Den er intern beslutningsstøtte: den lager ingen kommentar og kan ikke kopieres."
+  ],
+  "varsleFunksjonsendring": true
+}
