@@ -129,7 +129,7 @@ describe('P2.0 er aktivert', () => {
   it('har kontrollen som første setning i hver funksjon fra restlisten i dokumentet', async () => {
     const restliste = DOKUMENT.slice(DOKUMENT.indexOf('**Restlisten'), DOKUMENT.indexOf('Når P2.0 ble bygd'))
     const navn = [...new Set([...restliste.matchAll(/`([a-z_]+)`/g)].map((m) => m[1]!))]
-    expect(navn.length).toBe(40)
+    expect(navn.length).toBe(35)
     const funksjoner = await funksjonsinnganger(db)
     for (const n of navn) {
       const f = funksjoner.find((x) => x.navn === n)

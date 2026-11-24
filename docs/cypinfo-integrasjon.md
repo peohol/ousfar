@@ -22,8 +22,8 @@ tekstene og den faglige aksepten av CYPinfo-visningen) eies av OUSFAR Fag i
 fagsidene for alle (Peder 23.11.2026, fase C). CPIC er stanset siden 6.11.2026
 med dataene slettet, og koden er fjernet (#537). ClinPGx er stanset fra
 23.11.2026: appen leser og viser ingenting derfra, og synken og endepunktene
-svarer 410. Koden fjernes og dataene slettes etter en arkivkopi (fase C3 og D,
-Peders ja 23.11.2026). Oppslaget etter en pasients resultat (den tidligere
+svarer 410. Koden er fjernet, og skjemaene `cpic` og `clinpgx` slettes etter
+en arkivkopi (fase C3 og D, Peders ja 23.11.2026). Oppslaget etter en pasients resultat (den tidligere
 etappe C) bygges ikke.
 
 **Avklart av Peder 17.11.2026:** OUSFAR skal vise hvordan de ulike genotypene
@@ -231,23 +231,38 @@ i samme PR (#551), og punkt 3 i den neste, sammen med punkt 2 i fase D.
 
 ### D. Slette databasedataene (til slutt, med Peders særskilte ja)
 
-Egen oppgave (#540), først når ingen kode leser skjemaene:
+Egen oppgave (#540), først når ingen kode leser skjemaene. Gjennomført
+23.11.2026 etter Peders ja («Slett de gamle dataene og slå på CYPinfo for
+alle»):
 
 1. Eksportere `cpic.*` og `clinpgx.*`, med synkroniseringskjøringene, til et
    arkiv utenfor databasen, med kildeangivelsen (CC BY-SA 4.0 for ClinPGx).
    Eksporten er obligatorisk og kontrolleres (radtall) før punkt 3, og
-   arkivet skal kunne åpnes av systemarkitektene. Hvor det ligger, avgjøres i
-   #540.
+   arkivet skal kunne åpnes av systemarkitektene. **Gjort:** i
+   prosjektfilene, `arkiv/2026-11-23-cpic-clinpgx/` (tatt 23.11.2026 kl. 20.27
+   UTC, med lesing alene): én JSON-fil per tabell med alle kolonnene, også
+   `raa`, `SHA256SUMS` og `LESMEG.md` med radtallene og kildeangivelsen.
+   Radtallene stemte med databasen. De tomme CPIC-tabellene er ikke med.
 2. Skrive om `sokedata_versjoner` (uten `clinpgx`; `cpic` er alt tatt ut,
    #539), `datakilder_status` og `datakilder.etikett` uten `cpic` og
-   `clinpgx`, i en vanlig migrasjon.
+   `clinpgx`, i en vanlig migrasjon. **Gjort:**
+   `20261123220000_clinpgx_cpic_ut_av_funksjonene.sql`.
    Etiketten for gamle føringer leses da fra kolonnen `etikett`, som alt er
    lagret på hver føring.
 3. En destruktiv migrasjon (`-- destruktiv-godkjent:` etter Peders ja for
    nøyaktig den migrasjonen): `drop schema cpic` og `clinpgx` med funksjonene,
    triggerne, `datakilder.cpic_*`/`clinpgx_*` og feltreglene; testkatalogene
    (`funksjonskontroller.ts`, `ressurskatalog.ts`) oppdateres. Historiske
-   migrasjonsfiler står.
+   migrasjonsfiler står. **Gjort:** `20261123230000_slett_cpic_og_clinpgx.sql`.
+   Den stopper først hvis noe er hentet fra ClinPGx eller CPIC etter at
+   arkivet ble tatt, så ingenting slettes som ikke er arkivert; da tas et nytt
+   arkiv. Rett før `drop schema … cascade` stopper den også hvis noe utenfor
+   skjemaene avhenger av dem (`pg_depend`: visninger, fremmednøkler,
+   kolonnetyper, funksjoner, standardverdier, regler, tilgangsregler), så
+   `cascade` aldri sletter noe utenfor dem; i produksjonen var det ingen slike
+   23. og 24.11.2026. Testen er `pgxsletting.test.ts`. Arkivet er prøvd lagt
+   tilbake i en testdatabase 24.11.2026 med alle radene (`gjenopprett.test.ts`
+   og `LESMEG.md` i arkivet).
    **Endringsloggen står:** radene i `datakilder.endringer` for de to kildene
    (før- og etterverdier, etikett, `synk_id`) slettes ikke. Tabellen har ingen
    fremmednøkkel til kildeskjemaene, så den overlever slettingen urørt, og
@@ -256,7 +271,8 @@ Egen oppgave (#540), først når ingen kode leser skjemaene:
 4. `cpic` og `clinpgx` blir stående i `DATAKILDER` som avviklede kilder, uten
    henting, så endringsloggen deres fortsatt kan leses under «Datakilder».
 
-Uten Peders ja står dataene, uten lesing og uten import.
+Når migrasjonen har kjørt, finnes ClinPGx- og CPIC-dataene bare i arkivet og
+i endringsloggen.
 
 ## Kort oppsummert
 

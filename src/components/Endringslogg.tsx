@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ENDRINGSREGISTER, hentedeEndringer, hentEndringer, plassI } from '../data/endringslogg'
 import { visningFor } from '../domain/endringssider'
 import { ENDRINGER_PER_SIDE, formaterDato, type Endring, type Endringstype } from '../domain/versjon'
@@ -93,10 +93,12 @@ export function Endringslogg({
   }, [mangler, onsket, forsok])
 
   // Fokuset som venter på føringene, går dit når de er hentet: til den
-  // loggen ble åpnet på, eller den første av dem «Vis flere» ga.
+  // loggen ble åpnet på, eller den første av dem «Vis flere» ga. Det flyttes
+  // i samme øyeblikk som føringene kommer på skjermen (`useLayoutEffect`), så
+  // det aldri står igjen på lista etter at de er der.
   const mal = valgt ? `[data-versjon="${valgt}"] ${FORSTE_FORING}` : FORSTE_FORING
   const harMal = valgt ? endringer.some((e) => e.versjon === valgt) : endringer.length > 0
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = liste.current
     if (!apen || !el) return
     const neste = nesteFokus.current

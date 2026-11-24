@@ -8,8 +8,9 @@ endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
 
 **Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
 farmakogenetiske kilden. CPIC og ClinPGx er stanset, og koden er fjernet
-(ClinPGx 23.11.2026). Dataene slettes fra databasen etter en arkivkopi (Peder
-23.11.2026, #540). Endringsloggen for begge står, og vises under «Datakilder»;
+(ClinPGx 23.11.2026). Skjemaene `cpic` og `clinpgx` er slettet fra databasen
+etter en arkivkopi (Peder 23.11.2026, #540,
+`*_slett_cpic_og_clinpgx.sql`). Endringsloggen for begge står, og vises under «Datakilder»;
 kjøringene deres vises ikke lenger (`datakilder_status`). Planen, med hva som skjer med
 kildene i «Datakilder», endringsloggen og databasen, står i
 `docs/cypinfo-integrasjon.md`.
@@ -21,8 +22,8 @@ merknad. Ingenting her vises for sluttbrukerne, og det sendes ingen varsler.
 
 ## Hva som logges
 
-Triggere på datatabellene i skjemaene `clinpgx`, `cpic`, `pubchem`,
-`farmakologiportalen` og `cypinfo` ser radene før og
+Triggere på datatabellene i skjemaene `pubchem`, `farmakologiportalen` og
+`cypinfo` (før 23.11.2026 også `clinpgx` og `cpic`) ser radene før og
 etter hvert bytte og skriver til `datakilder.endringer`
 (`supabase/migrations/*_datakilder_endringer.sql`). Synkroniseringsfunksjonene
 er ikke endret; alt som bytter inn data, logges likt. Triggerne kjører i samme
@@ -57,8 +58,8 @@ navnet), feltene som er endret, verdiene før og etter i de feltene, og `spor`:
   anbefaling er legemiddelet med genene og fenotypene, og for et genresultat
   genet, allelene og fenotypen.
 
-Rådataene ligger fortsatt i tabellene, og kjøringene i
-`clinpgx.synkroniseringer` og `cpic.synkroniseringer`.
+Rådataene ligger fortsatt i tabellene, og kjøringene i hver kildes
+`synkroniseringer`. For ClinPGx og CPIC står de bare i arkivet (#540).
 
 ## Klinisk eller metadata
 
@@ -96,6 +97,9 @@ Metadata er i dag:
 | Farmakologiportalen | analyse | `navn`, `kode`, `akkreditert`, `laboratorium`, `institusjon` |
 | CYPinfo | legemiddel | `varenavn`, `kategori`, `terapiomrade` |
 | CYPinfo | anbefaling | `legemiddel` (navnet, som også står på legemiddelet) |
+
+Reglene for ClinPGx og CPIC over er historiske: de er slettet sammen med
+skjemaene (#540), og føringene fra før har nivået lagret.
 
 Alt annet er klinisk: anbefalingene med betingelser, klassifisering,
 populasjon og kommentarer; genresultatene og diplotypene; allelfunksjonene;
@@ -212,12 +216,11 @@ oppsettet står, med kontrollsummene nullstilt.
 automatiske farmakogenetiske kilde (`docs/cypinfo-integrasjon.md`), så CPIC tas
 ikke i bruk igjen. Endepunktet, synkroniseringen, lesingen, visningen,
 oppslaget og søket er borte; `KILDEOPPSETT.cpic.synk` er `null`, så «Hent nå»
-ikke finnes. CPIC står fortsatt som **Stanset** i «Datakilder» til skjemaet
-`cpic` slettes. Skjemaet, de tomme tabellene og funksjonene står i databasen
-til da, fordi `datakilder_status` og `datakilder.etikett` fortsatt leser
-fra det (`sokedata_versjoner` gjør det ikke lenger, #539); slettingen er en
-egen, destruktiv migrasjon som først skriver om de to (se planen i
-`docs/cypinfo-integrasjon.md`).
+ikke finnes. CPIC står fortsatt som **Stanset** i «Datakilder», med endringsloggen.
+`datakilder_status`, `datakilder.etikett` og `sokedata_versjoner` er skrevet
+om uten CPIC og ClinPGx (`*_clinpgx_cpic_ut_av_funksjonene.sql`), og skjemaene
+er slettet i en egen, destruktiv migrasjon (`*_slett_cpic_og_clinpgx.sql`,
+#540; planen i `docs/cypinfo-integrasjon.md`).
 
 ## Koden
 

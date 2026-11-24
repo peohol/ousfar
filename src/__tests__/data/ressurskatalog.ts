@@ -180,10 +180,8 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   // Offentlige kilder.
   'legemiddeldata.*': OFFENTLIG_KILDE,
   'farmakologiportalen.*': OFFENTLIG_KILDE,
-  'clinpgx.*': OFFENTLIG_KILDE,
   'cypinfo.*': OFFENTLIG_KILDE,
   'pubchem.*': OFFENTLIG_KILDE,
-  'cpic.*': k('felles', 'Offentlig kilde (§3); stanset 06.11.2026'),
 }
 
 export interface StatiskKlassifisering extends Klassifisering {

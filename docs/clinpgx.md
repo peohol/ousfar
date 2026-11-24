@@ -13,7 +13,9 @@ for et legemiddel, ikke råd for en bestemt pasient.
 > søket, koblingsskjemaet og koblingslistene) er fjernet (#437). CYPinfo er
 > OUSFARs eneste automatiske farmakogenetiske kilde
 > (`docs/cypinfo-integrasjon.md`), og ClinPGx tas ikke i bruk igjen. Dataene
-> er kopiert til et arkiv før de slettes fra databasen (#540). Resten av
+> er kopiert til et arkiv i prosjektfilene (`arkiv/2026-11-23-cpic-clinpgx/`)
+> og slettet fra databasen sammen med skjemaet `clinpgx` (#540,
+> `20261123230000_slett_cpic_og_clinpgx.sql`); endringsloggen står. Resten av
 > dokumentet beskriver laget slik det var, og filene det nevner, finnes bare i
 > Git-historikken. ClinPGx kan fortsatt siteres som en vanlig kilde i
 > redaksjonell tekst.

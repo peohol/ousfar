@@ -183,8 +183,7 @@ I produksjon:
 - **Én innlogging**: senere forløp får innloggingen og det appen har lagret i
   nettleseren (også fagsøket) fra den første, i stedet for å logge inn på nytt.
 - **Fagsøkets bakgrunnslesinger blokkeres** (`les_stoffer`, `les_preparatsok`,
-  `les_interaksjonssok`, `les_farmakogenetikk_sok`, `les_cpic`,
-  `les_laboratoriesok`). Verktøyene bruker dem ikke, og `les_stoffer` er det
+  `les_interaksjonssok`, `les_laboratoriesok`). Verktøyene bruker dem ikke, og `les_stoffer` er det
   tyngste kallet appen gjør.
 - **Overbelastning stopper kjøringen**: første svar med 5xx, et kall som venter
   over grensen, eller for mange kall. Konteksten lukkes med én gang, alle nye
