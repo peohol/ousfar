@@ -1,0 +1,14 @@
+{
+  "id": "20261124-095603-e2b24a",
+  "semver": "patch",
+  "opprettet": "2026-11-24T09:56:03Z",
+  "sammendrag": "Tentativ fortolkning av benzoylekgonin i urin forberedt, ikke slått på",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen ennå. En enkel, tentativ fortolkning av benzoylekgonin i urin er bygd og prøvd med oppdiktede tall, men vises ikke for noen før enhetene, urinkoden og måleusikkerheten er bekreftet og modellen er godkjent."
+  ],
+  "utenVarsel": true
+}

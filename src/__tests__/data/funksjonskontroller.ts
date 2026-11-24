@@ -185,6 +185,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'les_interaksjonssok(sider jsonb)': 'felles-lesing',
   // P4c: analyttkatalogen til den innloggedes arbeidskontekst (docs/fagmiljoer.md).
   'les_analyttkatalog()': 'rekkevidde',
+  // #562: modellen for benzoylekgonin i urin i den innloggedes arbeidskontekst (docs/benzoylekgonin-urin.md).
+  'les_be_urin_modell()': 'rekkevidde',
   'les_intervallregelsett(sidetilstand objekttilstand)': 'radsikkerhet',
   'les_kildeovervaking(historikk integer)': 'systemarkitekt',
   'les_kjemi(cider integer[])': 'felles-lesing',

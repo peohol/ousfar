@@ -20,9 +20,9 @@ import type { Analyte, Analyttmodul, Antihypertensivgrenser, Interval, Measuring
  */
 
 /** Hvordan en oppføring fortolkes: med konsentrasjonsbånd eller i en egen modul. */
-export type Fortolkningstype = 'konsentrasjon' | 'scenario' | 'thc' | 'etg'
+export type Fortolkningstype = 'konsentrasjon' | 'scenario' | 'thc' | 'etg' | 'be_urin'
 
-export const FORTOLKNINGSTYPER: readonly Fortolkningstype[] = ['konsentrasjon', 'scenario', 'thc', 'etg']
+export const FORTOLKNINGSTYPER: readonly Fortolkningstype[] = ['konsentrasjon', 'scenario', 'thc', 'etg', 'be_urin']
 
 /** En analyttkode og navnet den står med i lister og menyer. */
 export interface Katalogkode {

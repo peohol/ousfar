@@ -112,6 +112,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.analyttkatalog_metoder': k('lokal', 'P4c: fagmiljøets analysemetoder, per rad'),
   'public.analyttkatalog_oppforinger': k('lokal', 'P4c: fagmiljøets analyttkatalog, per rad'),
   'public.analyttkatalog_koder': k('lokal', 'P4c: fagmiljøets analyttkoder, per rad'),
+  // #562: modellen for benzoylekgonin i urin, høyst én per fagmiljø. Bare gjennom
+  // `les_be_urin_modell()`, for arbeidskonteksten (docs/benzoylekgonin-urin.md).
+  'public.be_urin_modeller': k('lokal', '#562: fagmiljøets modell for benzoylekgonin i urin, per rad'),
   'public.maleenheter': k('felles', 'Felles oppslag (§2.7)'),
   'public.endringsagenter': k('felles', 'Felles oppslag (§2.7)'),
   'public.autoerstatt_regler': k('felles', 'Felles oppslag (§2.7)'),

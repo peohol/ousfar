@@ -691,6 +691,12 @@ describe('visualiseringen', () => {
     expect(ekstremt.xMaks / ekstremt.xSteg).toBeLessThan(20)
   })
 
+  it('har minst ett døgn mellom merkene, så få døgn ikke gir samme døgn flere ganger', () => {
+    for (const dager of [1, 3, 9]) {
+      expect(byggGraf({ forrige: 6.5, dager, korrigertEndring: -0.2 }, FIGURKURVER).xSteg).toBe(1)
+    }
+  })
+
   it('skriver prosent med ekte minustegn', () => {
     expect(formaterProsent(-73.6)).toBe('−74 %')
     expect(formaterProsent(0)).toBe('0 %')

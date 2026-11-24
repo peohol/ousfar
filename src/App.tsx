@@ -18,6 +18,7 @@ import { RusStep } from './components/RusStep'
 import { useHentScenarioregler } from './components/regler/Scenarioreglerkilde'
 import { Sidemeny, sidemenyenErApen } from './components/Sidemeny'
 import { ThcStep } from './components/ThcStep'
+import { BeUrinStep } from './components/BeUrinStep'
 import { CopyFlash } from './components/CopyFlash'
 import { Senere } from './components/Senere'
 import { ruteAv } from './components/Kopibevis'
@@ -81,6 +82,7 @@ import { stoffbeskrivelse } from './domain/stoffregister'
 import { Innholdslogg } from './components/endringslogg/Innholdslogg'
 import { lesScenarioregler, reglerForModul } from './faginnhold/scenarioregler'
 import { thcReglerFra } from './faginnhold/thcregler'
+import { lesBeUrinModell } from './katalog/beUrinModell'
 import { lagSideleser, lagVersjonsleser, lesSokeindeks } from './faginnhold/globaltSok'
 import { utenSider } from './faginnhold/sok'
 import { lagRegisterlager } from './stoffregister/api'
@@ -503,6 +505,8 @@ function Arbeidsflate({
     () => thcReglerFra(thc.tilstand, hentThcPaNytt, regelfagmiljo),
     [thc.tilstand, hentThcPaNytt, regelfagmiljo],
   )
+  // Modellen for benzoylekgonin i urin hentes av modulen selv, når den åpnes.
+  const hentBeUrinModell = useCallback(() => lesBeUrinModell(klient()), [])
   const endringsloggleser = useMemo(() => lagEndringsloggleser(klient()), [])
   const { register, hentPaNytt: hentStoffsiderPaNytt } = stoffregister
   // En gammel adresse til en analytt fører til fortolkningen, etter katalogen.
@@ -1160,6 +1164,9 @@ function Arbeidsflate({
               )}
 
               {vist === 'thc' && state.analyte && <ThcStep analyte={state.analyte} regler={thcRegler} onBack={back} copy={copy} flashAt={show} visualisering={thcVisualisering} />}
+              {vist === 'be_urin' && state.analyte && (
+                <BeUrinStep analyte={state.analyte} hentModell={hentBeUrinModell} kontekst={regelkontekst} onBack={back} />
+              )}
 
               {vist === 'rus' && state.analyte && rusModul && (
                 <RusStep
