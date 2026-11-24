@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T20:26:28.175Z",
+  "oppdatert_kl": "2026-11-24T21:25:38.010Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 85,
   "stoffer": {
@@ -649,8 +649,8 @@
     "bumetanid": {
       "stoff": "bumetanid",
       "navn": "Bumetanid",
-      "status": "venter_godkjenning",
-      "modus": "de_novo",
+      "status": "publisert",
+      "modus": null,
       "prioritet": {
         "poeng": 0,
         "grunner": []
@@ -665,12 +665,22 @@
         "elementer_uten_kilde": 4
       },
       "reservasjon": null,
-      "forsok": 1,
+      "forsok": 0,
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
       "blokkeringer": [],
-      "sist_kuratert": null,
+      "sist_kuratert": {
+        "kl": "2026-11-24T21:04:14.585066+00:00",
+        "modus": "de_novo",
+        "kunnskapsgrense": "2026-11-24",
+        "runde": 2,
+        "pr": null,
+        "gren": "54baa521-d80e-4790-8ace-fb5e1e8230df",
+        "kilde": "ko",
+        "utsatte": [],
+        "utsatt_kl": null
+      },
       "siste_kjoring": {
         "oppgave": "bumetanid-0084",
         "okt": "kurateringsko/okt/20261124-181951",
@@ -724,20 +734,21 @@
           "hendelse": "gren_klar",
           "oppgave": "bumetanid-0084",
           "melding": "Grenen: klar, revisjon 10, kontrollrunde 1."
+        },
+        {
+          "kl": "2026-11-24T21:25:38.010Z",
+          "hendelse": "gren_publisert",
+          "oppgave": "bumetanid-0084",
+          "melding": "Grenen: publisert, revisjon 13, kontrollrunde 2."
+        },
+        {
+          "kl": "2026-11-24T21:25:38.010Z",
+          "hendelse": "publisert",
+          "oppgave": "bumetanid-0084",
+          "melding": "Kurateringsgrenen er publisert (revisjon 13)."
         }
       ],
-      "appgren": {
-        "id": "54baa521-d80e-4790-8ace-fb5e1e8230df",
-        "oppgave": "bumetanid-0084",
-        "modus": "de_novo",
-        "runde": 2,
-        "kunnskapsgrense": "2026-11-24",
-        "jobbgren": "kuratorjobb/bumetanid-0084",
-        "registrert_kl": "2026-11-24T19:59:06.094Z",
-        "status": "klar",
-        "revisjon": 10,
-        "kontrollrunde": 1
-      }
+      "appgren": null
     },
     "buprenorfin": {
       "stoff": "buprenorfin",
@@ -1298,9 +1309,9 @@
         "okt": "kurateringsko/okt/20261124-200100",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T20:01:14.350Z",
-        "fornyet_kl": "2026-11-24T20:02:37.568Z",
-        "frist_kl": "2026-11-24T23:02:37.568Z",
-        "fase": "Grenen åpnet",
+        "fornyet_kl": "2026-11-24T21:25:38.010Z",
+        "frist_kl": "2026-11-25T00:25:38.010Z",
+        "fase": "Seksjonene skrives",
         "jobbgren": "kuratorjobb/doksazosin-0085",
         "kurateringsgren": "kuratering/doksazosin-0085",
         "pr": null,
@@ -1346,6 +1357,13 @@
           "oppgave": "doksazosin-0085",
           "okt": "kurateringsko/okt/20261124-200100",
           "melding": "Grenen åpnet"
+        },
+        {
+          "kl": "2026-11-24T21:25:38.010Z",
+          "hendelse": "fornyet",
+          "oppgave": "doksazosin-0085",
+          "okt": "kurateringsko/okt/20261124-200100",
+          "melding": "Seksjonene skrives"
         }
       ],
       "appgren": null
@@ -7983,28 +8001,29 @@
     },
     "kurateringsko/okt/20261124-200100": {
       "ider": [
+        "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-1",
-        "sha256": "2ee2a607b5c7a6a2bc8b3f6b0f42cf9eb279663ba81c6cb28a700465d4faed16",
+        "id": "forny-2",
+        "sha256": "99949e33675e50cdafd2af375ec49a4623ccb34397f3012c76bd8fa148c780ae",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-1",
-          "foresporsel_sha256": "2ee2a607b5c7a6a2bc8b3f6b0f42cf9eb279663ba81c6cb28a700465d4faed16",
+          "foresporsel_id": "forny-2",
+          "foresporsel_sha256": "99949e33675e50cdafd2af375ec49a4623ccb34397f3012c76bd8fa148c780ae",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av doksazosin varer til 2026-11-24T23:02:37.568Z.",
-          "behandlet_kl": "2026-11-24T20:02:37.568Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45476511606",
+          "melding": "Reservasjonen av doksazosin varer til 2026-11-25T00:25:38.010Z.",
+          "behandlet_kl": "2026-11-24T21:25:38.010Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45490925874",
           "oppgave": {
             "oppgave": "doksazosin-0085",
             "stoff": "doksazosin",
             "navn": "Doksazosin",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-24T23:02:37.568Z",
+            "frist_kl": "2026-11-25T00:25:38.010Z",
             "jobbgren": "kuratorjobb/doksazosin-0085",
             "kurateringsgren": "kuratering/doksazosin-0085",
             "pr": null,
@@ -8028,7 +8047,7 @@
         }
       },
       "besvart_commit": "26b5bcce554f4b38244a1ed76dfd291db6d78fb8",
-      "sist_brukt_kl": "2026-11-24T20:02:37.568Z"
+      "sist_brukt_kl": "2026-11-24T21:25:38.010Z"
     }
   }
 }
