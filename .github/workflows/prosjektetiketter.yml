@@ -1,0 +1,40 @@
+# Prosjektetikettene i GitHub (docs/prosjektansvar.md §6, punkt 10): gjør
+# etikettene like .github/prosjektansvar.json, som er fasiten for navn, farge og
+# beskrivelse. Kjører bare når fila er endret på main, alltid med fila og
+# skriptet slik de er der. Oppretter manglende etiketter og retter farge og
+# beskrivelse; sletter eller omdøper aldri en etikett. Kan bare endre etiketter
+# og Issues, ikke skrive commit-statuser eller check runs, så den kan ikke gi
+# «Prosjektansvar».
+name: Prosjektetiketter
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/prosjektansvar.json']
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: prosjektetiketter
+  cancel-in-progress: false
+
+jobs:
+  synk:
+    name: Synk prosjektetikettene
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            scripts/prosjektansvar.mjs
+            .github/prosjektansvar.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Opprett og rett prosjektetikettene
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/prosjektansvar.mjs etiketter

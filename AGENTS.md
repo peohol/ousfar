@@ -12,8 +12,8 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 
 ## Prosjektansvar og roller
 
-- Tre prosjekter, OUSFAR Dev, Fag og Verktøy, arbeider mot repoet i Claude Code og ChatGPT, for hver systemarkitekt. [docs/prosjektansvar.md](docs/prosjektansvar.md) er fasit for eierskap (etter formålet, ikke filene), ansvarlig person, arbeidsdeling, overlevering og PR-kontroll; prosjektinstruksene står i [docs/prosjektinstrukser.md](docs/prosjektinstrukser.md).
-- Hver oppgave er et GitHub Issue med nøyaktig én prosjektetikett (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`) og, før implementering, nøyaktig én assignee: systemarkitekten som har den. PR-en får de samme og viser til Issue-et under «Arbeidsoppgave» (kontrollen «Prosjektansvar» krever det). Utled aldri personen fra en bots konto, PR-forfatteren eller fritekst.
+- Fire prosjekter, OUSFAR Dev, Fag, Verktøy og Personal, arbeider mot repoet i Claude Code og ChatGPT, for hver systemarkitekt. [docs/prosjektansvar.md](docs/prosjektansvar.md) er fasit for eierskap (etter formålet, ikke filene), ansvarlig person, arbeidsdeling, overlevering og PR-kontroll; prosjektinstruksene står i [docs/prosjektinstrukser.md](docs/prosjektinstrukser.md).
+- Hver oppgave er et GitHub Issue med nøyaktig én prosjektetikett (`ansvar:*`) og, før implementering, nøyaktig én assignee: systemarkitekten som har den. PR-en får de samme og viser til Issue-et under «Arbeidsoppgave» (kontrollen «Prosjektansvar» krever det). Utled aldri personen fra en bots konto, PR-forfatteren eller fritekst.
 - Se etter åpne Issues og PR-er om det samme, uansett prosjekt og person, før du begynner; lag ingen konkurrerende implementering. Hører oppgaven til et annet prosjekt: si hvilket, overlever den som et Issue med mottakerens etikett, og begynn ikke selv.
 - **Implementerende agent (Claude Code):** gjør alt teknisk arbeid selv, også på GitHub. Merker PR-en «Til ChatGPT-kontroll – ikke merge» med HEAD-SHA og kjørte kontroller, og retter konkrete kontrollfunn uten å vente. Slår aldri sammen PR-er og kontrollerer ikke andre prosjekters.
 - **Kontrollerende agent (ChatGPT):** implementerer ikke og committer ikke til `main`. Følger [docs/chatgpt-pr-kontrollstandard.md](docs/chatgpt-pr-kontrollstandard.md) fullt ut ved hver PR-kontroll, også for produktformål, brukbarhet og informasjonsmengde; grønn CI er ikke nok. Kontrollerer og squash-merger bare PR-er med eget prosjekts etikett og egen «GitHub-ansvarlig» som assignee, og bare på brukerens forespørsel eller i en uttrykkelig aktiv kontrolljobb.
@@ -47,7 +47,7 @@ OUSFAR (FAR) fortolker og kommenterer farmakologiske analyser og har fagsider og
 - Kan en endring påvirke klinisk output, finn kildegrunnlaget og bevar sporbarheten. Eksplisitte klinikerinstruksjoner og utpekte kildeartefakter er premisser som kode og tester implementerer og kontrollerer.
 - Finn ikke på, normaliser, «forbedre» eller hent eksterne medisinske verdier for å fylle hull. Motstrid som kan endre klinisk betydning, gjøres tydelig i stedet for å avgjøres lydløst.
 - Test kliniske regler ved grenseverdiene og der små endringer kan endre fortolkningen.
-- Ingen pasientopplysninger i OUSFAR, heller ikke pseudonymiserte eller kasuistikker (`docs/pasientopplysninger.md`). Repoet og GitHub er offentlige: bare syntetiske data, ingen nøkler eller kurateringsvurderinger.
+- Ingen pasientopplysninger i OUSFAR, heller ikke pseudonymiserte eller kasuistikker (`docs/pasientopplysninger.md`). Repoet og GitHub er offentlige: bare syntetiske data, ingen nøkler, kurateringsvurderinger eller reelle personalopplysninger.
 
 ## PR-beskrivelse, versjon og endringslogg
 

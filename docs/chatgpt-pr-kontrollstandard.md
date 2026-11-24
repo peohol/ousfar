@@ -2,15 +2,15 @@
 
 **Gjelder:** Hver gang ChatGPT vurderer kode, design, kliniske regler, planer eller pull requests fra Claude Code i dette repoet. Skal også brukes når samtalen er ny og ingen tidligere chatthistorikk er tilgjengelig.  
 **Eier:** ChatGPT som uavhengig kontrollør på oppdrag fra systemarkitekten prosjektet tilhører.  
-**Oppdatert:** 19.11.2026 (ansvarlig systemarkitekt per oppgave).  
-**Hvilke PR-er:** bare PR-ene som har **både** etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`) **og** prosjektets egen systemarkitekt som eneste assignee, etter [prosjektansvar.md](prosjektansvar.md) §3 og §6. Hvem det er, står i prosjektinstruksens linje «GitHub-ansvarlig: <GitHub-bruker>». Mangler linjen, gjør prosjektet ingen ordinær kontroll eller sammenslåing før den er lagt inn, og sier det i én linje.  
+**Oppdatert:** 24.11.2026 (OUSFAR Personal som fjerde prosjekt; ikke-kliniske personalfunksjoner i 3.5).  
+**Hvilke PR-er:** bare PR-ene som har **både** etiketten til ChatGPT-prosjektet samtalen ligger i (`ansvar:dev`, `ansvar:fag`, `ansvar:verktoy` eller `ansvar:personal`) **og** prosjektets egen systemarkitekt som eneste assignee, etter [prosjektansvar.md](prosjektansvar.md) §3 og §6. Hvem det er, står i prosjektinstruksens linje «GitHub-ansvarlig: <GitHub-bruker>». Mangler linjen, gjør prosjektet ingen ordinær kontroll eller sammenslåing før den er lagt inn, og sier det i én linje.  
 **Viktig:** Dette er en arbeidsstandard i repoet, ikke en klinisk godkjenning, erstatning for de installerte PR-review-skill-instruksene eller et mandat til å begynne nye oppgaver.
 
 ## 1. Start alltid her – også i helt nye samtaler
 
 Når systemarkitekten ber om «se over PR», «sjekk igjen» eller lignende:
 
-1. Les repoets AGENTS.md (og AGENTS.md i undermapper PR-en endrer), [prosjektansvar.md](prosjektansvar.md) og dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
+1. Les repoets AGENTS.md (og AGENTS.md i undermapper PR-en endrer), [prosjektansvar.md](prosjektansvar.md) og dette dokumentet. For psykofarmakaverktøyene, les også [produktrevisjonsplanen](verktøy-produktrevisjon-2026-11.md), [klinisk leveranseplan](verktøy-klinisk-leveranseplan-2026-11.md), [brukervennlighetsplan](verktøy-brukervennlighet-2026-11.md), [K5-D-plan](verktøy-k5-dosefleksible-forlop.md) og ved behov [rettighetsvurderingen](verktøy-p3-rettigheter.md). For personalfunksjonene, les også [personal.md](personal.md). Dokumentene og oppdatert GitHub-tilstand er referansen, ikke hukommelse fra gamle samtaler.
 2. Bruk skills://github-pr-review og GitHub-koblingen. Finn nøyaktig PR-omfang, gjeldende HEAD-SHA, base, status, CI, tidligere ChatGPT-funn og diskusjoner **før** du vurderer. Ved «alle PR-er» hent hele køen med etiketter og assignees før kontroll og på nytt etterpå, og kontroller bare PR-ene med eget prosjekts etikett og egen «GitHub-ansvarlig» som assignee. En PR uten gyldig merking (ingen, flere, ukjent eller motstridende etikett eller assignee, eller rød kontroll «Prosjektansvar») får ikke ordinær kontroll og slås ikke sammen før den er rettet; en PR med et annet prosjekts etikett eller en annen systemarkitekt som assignee får ingen parallell kontroll herfra, bare en kort henvisning til riktig eier. Viser Issue-et entydig at en feilmerket PR hører til eget prosjekt og egen «GitHub-ansvarlig», kan du skrive en kort administrativ kommentar om hva som må rettes, som begynner med «Tilbakemelding fra ChatGPT», sier at den bare gjelder administrativ avklaring og ikke inneholder noen kode-, fag- eller klinisk vurdering ([prosjektansvar.md](prosjektansvar.md) §6, punkt 8); det er ingen ordinær kontroll. Kontroller at Issue-et under «Arbeidsoppgave» faktisk beskriver oppgaven PR-en løser.
 3. Sammenlign med sist vurderte eksakte SHA. Er PR-en overført fra en annen systemarkitekt, eller har den byttet etikett, gjelder ingen tidligere vurdering fra et annet ChatGPT-prosjekt: kontroller den i sin helhet på gjeldende HEAD. Ikke kopier gamle kommentarer eller anmeld samme endring uten grunn. Hvis HEAD er uendret: kontroller oppdatert base, CI og faktiske avhengigheter, men ikke lag en duplikatkodegjennomgang.
 4. Les relevant full diff **og omkringliggende kode, kliniske regler, kvalitetstester, kilder og faktisk brukerflyt**. PR-beskrivelsen er en påstand som skal kontrolleres, ikke et bevis. En velformulert dokumentasjon eller grønn CI er heller ikke bevis på produktnytte.
@@ -28,6 +28,8 @@ Spør og dokumenter eksplisitt:
 **C. Er grensesnittet så enkelt som forsvarlig?** Spør om hvert synlige felt, spørsmål, bekreftelse, advarsel og avsnitt: Er dette nødvendig *nå* for en klinisk beslutning eller sikkerhet? Kan det utledes av et allerede eksplisitt svar, slås sammen, flyttes til en valgfri detaljvisning eller helt utelates uten å endre mening? Lang tekst, gjentakelser og upraktiske formuleringer er også faktiske brukerfeil når de hindrer arbeidsoppgaven.
 
 **D. Hva får klinikeren faktisk ut?** Kontrollér **strategi, tidslinje, sluttmål og totalforløp**, ikke bare at dosene følger en intern formel. Ligner det forventede behandlingsregimet? Er det riktig kombinasjon/overlapp, start/slutt, opptrapping, oppfølging, reell norsk administrasjon og kopi? Se etter at skjerm og kopi er klinisk konsistente, men husk at begge kan gjenta den **samme feilaktige regelen**.
+
+For personalfunksjonene (OUSFAR Personal) gjelder de samme fire spørsmålene, med ansatte, vaktplanleggere og ledere som brukerne, **syntetiske ansatte** i stedet for syntetiske pasienter og planen, fordelingen eller oversikten de får ut i stedet for behandlingsforløpet; se 3.5.
 
 Disse fire spørsmålene må inngå i **alle relevante PR-beslutninger**, også når Claude sier at PR-en bare endrer brukerflate eller bare motor. Ved en ren dokumentasjons-PR skal man ikke kreve at senere planlagt kode allerede fungerer; bedøm om dokumentasjonen sannferdig identifiserer mangelen og gir realistiske tiltak.
 
@@ -63,6 +65,18 @@ Disse fire spørsmålene må inngå i **alle relevante PR-beslutninger**, også 
 - Klinisk tilgang for ordinære brukere endres ikke uten særskilt beslutning og produkt-/klinisk test.
 - Endrer PR-en `.github/workflows/` eller kontrollens egne filer, kontroller særskilt at ingen arbeidsflyt som kjører kode fra en gren eller PR kan etterligne eller omgå den påkrevde kontrollen «Prosjektansvar», som alltid kjøres fra `main` ([prosjektansvar.md](prosjektansvar.md) §6, punkt 5). Grønn «Prosjektansvar» er ikke bevis for at en slik endring er trygg.
 
+### 3.5 Ikke-kliniske personalfunksjoner
+
+Gjelder PR-er fra OUSFAR Personal (vaktplaner, vaktfordeling og vaktbytter, tilstedeværelse og fravær, personalkalender, intern arbeidsfordeling og arbeidsbelastning). Krav og avgrensning står i [personal.md](personal.md). Kliniske krav gjelder fortsatt fullt ut der en endring berører klinisk innhold.
+
+- **Produktformål:** svarer leveransen på det som er vedtatt i `docs/personal.md`, uten at det har glidd over i generell HR-funksjonalitet som ikke er bestilt?
+- **Representative arbeidsforløp med syntetiske ansatte:** gjennomfør minst ett realistisk forløp av det PR-en endrer, som å lage en plan, fordele vakter, bytte en vakt, justere manuelt, registrere fravær og publisere. Ta med negative tilfeller: konflikter, manglende bemanning, ugyldige bytter, deltid og lange fravær.
+- **Beregningsregler mot uavhengig fasit:** kontroller fordelings- og belastningsregler mot reglene som er vedtatt i `docs/personal.md` og mot en fasit regnet ut uavhengig av koden, ikke bare mot testene eller skjermen. Automatisk fordeling skal være forståelig og etterprøvbar, kunne justeres manuelt, og et beregnet forslag skal være tydelig skilt fra en godkjent eller publisert plan.
+- **Tilgang:** personalopplysninger er avgrenset til eget laboratorium eller fagmiljø, med minste nødvendige tilgang, håndhevet på serversiden. Kollegers innsyn, vaktplanleggerens redigering og administrativ myndighet er skilt, og appens systemarkitektrolle gir ikke i seg selv innsyn. Krev negative tester på tvers av laboratorier og roller.
+- **Personvern:** ingen reelle personalopplysninger i PR-en, testdata, skjermbilder, logger eller kommentarer. Det registreres planleggingsrelevant status og tid, ikke fraværsgrunn, diagnoser, helseopplysninger eller annen sensitiv fritekst. Et funn av reelle personalopplysninger blokkerer og omtales uten å gjenta dem. Pasientopplysningsforbudet gjelder uendret.
+- **Brukerflyt og konsekvenser for andre områder:** kontroller mobil, tastatur og lesbarhet som ellers, og virkninger på felles komponenter, dashboardet, tilgangsmodellen og databasen.
+- **Separate beslutninger:** teknisk PR-godkjenning er ingen produktaksept, og ingen personvern- eller arbeidstidsrettslig godkjenning. Bruk med reelle personalopplysninger krever først avklaring med ansvarlig virksomhet ([prosjektansvar.md](prosjektansvar.md) §7).
+
 ## 4. PR-beslutningen
 
 Før merge skriv kort i egen vurdering:
@@ -86,4 +100,4 @@ Før merge skriv kort i egen vurdering:
 - Ingen ny planlagt kontroll/automatisering uten at Peder ber om det; respekter en tidligere avsluttet oppfølging. En tom PR-kø er ikke i seg selv oppfordring til å starte mer implementering.
 - Ved rapportering til systemarkitekten: si hva som faktisk ble kontrollert/merget/kommentert og hvilke **menneskelige** problemer som gjenstår. Hold språket kort, presist og uten teknisk støy.
 
-**Kort kontrollspørsmål før enhver godkjenning:** «Er dette det vi skulle lage, er det faglig riktig, og kan en kliniker faktisk bruke det uten unødig arbeid eller tekst?»
+**Kort kontrollspørsmål før enhver godkjenning:** «Er dette det vi skulle lage, er det faglig riktig, og kan en kliniker faktisk bruke det uten unødig arbeid eller tekst?» For personalfunksjonene: «Er dette det vi skulle lage, regner det riktig og etterprøvbart, ser bare de som skal se det, og kan de ansatte og vaktplanleggeren bruke det uten unødig arbeid?»

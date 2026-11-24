@@ -1,0 +1,14 @@
+{
+  "id": "20261124-083909-2fa8f1",
+  "semver": "patch",
+  "opprettet": "2026-11-24T08:39:09Z",
+  "sammendrag": "Nytt prosjektområde for vaktplaner og intern arbeidsorganisering",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Arbeidet med vaktplaner, fravær og intern arbeidsorganisering har fått et eget prosjektområde, OUSFAR Personal, med egne regler for ansvar og personvern. Selve personalfunksjonene er ikke laget ennå."
+  ],
+  "utenVarsel": true
+}

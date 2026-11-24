@@ -3,8 +3,9 @@
  * prosjekt og én ansvarlig systemarkitekt, og de samme står på Issue-et med
  * arbeidsoppgaven.
  *
- * - Prosjektet er nøyaktig én prosjektetikett (`ansvar:dev`, `ansvar:fag` eller
- *   `ansvar:verktoy`). Den avgjør hvilket ChatGPT-prosjekt som kontrollerer.
+ * - Prosjektet er nøyaktig én prosjektetikett, en av `prosjekter` i
+ *   `.github/prosjektansvar.json`. Den avgjør hvilket ChatGPT-prosjekt som
+ *   kontrollerer.
  * - Personen er nøyaktig én assignee, en av systemarkitektene. Den avgjør
  *   hvem sitt ChatGPT-prosjekt det er. PR-forfatteren, grennavnet og navn i
  *   fritekst teller ikke.
@@ -15,8 +16,10 @@
  * som kontrollerer PR-en. Prosjektene og systemarkitektene står i
  * `.github/prosjektansvar.json`. Kravene om ansvarlig og arbeidsoppgave gjelder
  * PR-er som er opprettet etter at den fila kom på standardgrenen; eldre PR-er
- * får bare en advarsel, så de kan fullføres slik de ble startet. Fila må derfor
- * ikke flyttes.
+ * får bare en advarsel, så de kan fullføres slik de ble startet. Tidspunktet er
+ * den eldste commiten på standardgrenen som endret fila, så en ny prosjektetikett
+ * eller systemarkitekt flytter det ikke; fila må derfor ikke flyttes eller
+ * erstattes.
  *
  * **Betrodd kjøring.** Den påkrevde kontrollen kjøres av
  * `.github/workflows/prosjektansvar.yml`, alltid fra standardgrenen (hendelsene
@@ -37,6 +40,12 @@
  *   eller flyttet. Vurderer på nytt alle åpne PR-er som viser til det, så en
  *   grønn kontroll aldri blir stående på et foreldet grunnlag.
  *
+ * **Etikettene.** Regelfila er også fasiten for selve etikettene i GitHub
+ * (navn, farge og beskrivelse). `node scripts/prosjektansvar.mjs etiketter`,
+ * kjørt av `.github/workflows/prosjektetiketter.yml` når fila endres på `main`,
+ * oppretter manglende etiketter og retter farge og beskrivelse. Den sletter
+ * eller omdøper aldri en etikett som ikke lenger står i fila.
+ *
  * Vanlig JavaScript uten avhengigheter: arbeidsflytene trenger verken `npm ci`
  * eller hemmeligheter.
  */
@@ -48,21 +57,33 @@ export const REGLER_STI = '.github/prosjektansvar.json'
 /** Navnet på check run-en regelsettet på `main` krever. */
 export const KONTROLLNAVN = 'Prosjektansvar'
 
-/** Leser og sjekker `.github/prosjektansvar.json`. */
-export function lesRegler(tekst = readFileSync(new URL(`../${REGLER_STI}`, import.meta.url), 'utf8')) {
-  const { prosjekter, systemarkitekter } = JSON.parse(tekst)
-  const ordbok = (verdi, hva) => {
-    if (!verdi || typeof verdi !== 'object' || Array.isArray(verdi) || Object.keys(verdi).length === 0) throw new Error(`${REGLER_STI}: «${hva}» mangler eller er tom.`)
-    for (const [nøkkel, navn] of Object.entries(verdi)) if (!nøkkel.trim() || typeof navn !== 'string' || !navn.trim()) throw new Error(`${REGLER_STI}: ugyldig «${hva}»: ${nøkkel}.`)
-    return new Map(Object.entries(verdi))
-  }
-  const regler = { prosjekter: ordbok(prosjekter, 'prosjekter'), systemarkitekter: ordbok(systemarkitekter, 'systemarkitekter') }
-  for (const etikett of regler.prosjekter.keys()) if (!etikett.startsWith(PREFIKS)) throw new Error(`${REGLER_STI}: prosjektetiketten ${etikett} skal begynne med ${PREFIKS}.`)
-  return regler
-}
-
 /** Alt som begynner slik, regnes som et forsøk på prosjektetikett, også en feilstavet. */
 const PREFIKS = 'ansvar:'
+/** GitHub godtar høyst så mange tegn i beskrivelsen av en etikett. */
+const BESKRIVELSE_MAKS = 100
+
+/**
+ * Leser og sjekker `.github/prosjektansvar.json`.
+ * @returns {{ prosjekter: Map<string, string>, etiketter: Map<string, { navn: string, farge: string, beskrivelse: string }>, systemarkitekter: Map<string, string> }}
+ *   `prosjekter` gir prosjektnavnet for hver etikett, `etiketter` hele oppføringen.
+ */
+export function lesRegler(tekst = readFileSync(new URL(`../${REGLER_STI}`, import.meta.url), 'utf8')) {
+  const { prosjekter, systemarkitekter } = JSON.parse(tekst)
+  const ordbok = (verdi, hva, gyldig) => {
+    if (!verdi || typeof verdi !== 'object' || Array.isArray(verdi) || Object.keys(verdi).length === 0) throw new Error(`${REGLER_STI}: «${hva}» mangler eller er tom.`)
+    for (const [nøkkel, innhold] of Object.entries(verdi)) if (!nøkkel.trim() || !gyldig(innhold)) throw new Error(`${REGLER_STI}: ugyldig «${hva}»: ${nøkkel}.`)
+    return new Map(Object.entries(verdi))
+  }
+  const tekstfelt = (v, maks = Infinity) => typeof v === 'string' && v.trim().length > 0 && v.length <= maks
+  const etiketter = ordbok(prosjekter, 'prosjekter', (p) => Boolean(p) && typeof p === 'object' && tekstfelt(p.navn) && /^[0-9a-f]{6}$/.test(p.farge) && tekstfelt(p.beskrivelse, BESKRIVELSE_MAKS))
+  for (const etikett of etiketter.keys()) if (!etikett.startsWith(PREFIKS)) throw new Error(`${REGLER_STI}: prosjektetiketten ${etikett} skal begynne med ${PREFIKS}.`)
+  return {
+    prosjekter: new Map([...etiketter].map(([etikett, p]) => [etikett, p.navn])),
+    etiketter: new Map([...etiketter].map(([etikett, { navn, farge, beskrivelse }]) => [etikett, { navn, farge, beskrivelse }])),
+    systemarkitekter: ordbok(systemarkitekter, 'systemarkitekter', (navn) => tekstfelt(navn)),
+  }
+}
+
 const REGLER = lesRegler()
 /** De gyldige etikettene og prosjektet hver av dem gir ansvaret til. */
 export const PROSJEKTETIKETTER = REGLER.prosjekter
@@ -194,6 +215,7 @@ export function vurderPr({ pr, saker, aktivertKl, repo, etterligning = [], regle
 export const KONTROLLFILER = [
   '.github/workflows/prosjektansvar.yml',
   '.github/workflows/prosjektansvar-utloser.yml',
+  '.github/workflows/prosjektetiketter.yml',
   'scripts/prosjektansvar.mjs',
   REGLER_STI,
 ]
@@ -376,6 +398,31 @@ export async function vurderOgMeld(github, repo, rå, gren, lenke) {
   return { nummer: rå.number, ...v }
 }
 
+// ------------------------------------------------------------ Etikettene
+
+/**
+ * Gjør prosjektetikettene i GitHub like regelfila: oppretter en som mangler,
+ * og retter navnets store og små bokstaver, farge og beskrivelse på en som
+ * avviker. Sletter eller omdøper aldri en etikett som ikke står i fila, så
+ * eldre Issues og PR-er beholder sin.
+ * @returns {Promise<string[]>} Én linje per etikett om hva som ble gjort.
+ */
+export async function synkEtiketter(github, repo, regler = REGLER) {
+  const logg = []
+  for (const [navn, { farge, beskrivelse }] of regler.etiketter) {
+    const sti = `repos/${repo}/labels/${encodeURIComponent(navn)}`
+    const finnes = await github(sti, { finnes: true })
+    if (!finnes) {
+      await github(`repos/${repo}/labels`, { metode: 'POST', data: { name: navn, color: farge, description: beskrivelse } })
+      logg.push(`${navn}: opprettet.`)
+    } else if (finnes.name !== navn || finnes.color?.toLowerCase() !== farge || (finnes.description ?? '') !== beskrivelse) {
+      await github(sti, { metode: 'PATCH', data: { new_name: navn, color: farge, description: beskrivelse } })
+      logg.push(`${navn}: rettet etter ${REGLER_STI}.`)
+    } else logg.push(`${navn}: uendret.`)
+  }
+  return logg
+}
+
 // ---------------------------------------------------------------- Kjøring
 
 function oppsummer(tittel, linjer) {
@@ -383,10 +430,16 @@ function oppsummer(tittel, linjer) {
 }
 
 async function kjor() {
-  const hendelse = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
   const repo = process.env.GITHUB_REPOSITORY
-  const gren = hendelse.repository.default_branch
   const github = lagGithub({ token: process.env.GH_TOKEN })
+  if (process.argv[2] === 'etiketter') {
+    const logg = await synkEtiketter(github, repo)
+    for (const l of logg) console.log(l)
+    oppsummer('Prosjektetiketter', logg)
+    return
+  }
+  const hendelse = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
+  const gren = hendelse.repository.default_branch
   const navn = process.env.GITHUB_EVENT_NAME
 
   let prer
@@ -406,8 +459,9 @@ async function kjor() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const tittel = process.argv[2] === 'etiketter' ? 'Synken av prosjektetikettene feilet' : `Kontrollen «${KONTROLLNAVN}» feilet`
   kjor().catch((e) => {
-    for (const linje of e.message.split('\n')) console.log(`::error title=Kontrollen «Prosjektansvar» feilet::${linje}`)
+    for (const linje of e.message.split('\n')) console.log(`::error title=${tittel}::${linje}`)
     process.exitCode = 1
   })
 }

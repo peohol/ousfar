@@ -8,7 +8,7 @@ Kort sagt: avgjør om endringen er MAJOR, MINOR, PATCH eller stille, og skriv
 én føring i en egen, ny fil. Skriv aldri et versjonsnummer, og rør ikke
 `package.json` eller låsefila for å føre en versjon. Nummeret settes
 automatisk når PR-en er slått sammen og appen bygges. Reglene er de samme for
-OUSFAR Dev, Fag og Verktøy.
+alle prosjektene (`docs/prosjektansvar.md`).
 
 ## 0. Er det en stille designjustering?
 
