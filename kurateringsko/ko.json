@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T18:20:31.395Z",
+  "oppdatert_kl": "2026-11-24T18:21:43.788Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 84,
   "stoffer": {
@@ -669,13 +669,13 @@
         "okt": "kurateringsko/okt/20261124-181951",
         "modus": "de_novo",
         "reservert_kl": "2026-11-24T18:20:31.395Z",
-        "fornyet_kl": "2026-11-24T18:20:31.395Z",
-        "frist_kl": "2026-11-24T21:20:31.395Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-24T18:21:43.788Z",
+        "frist_kl": "2026-11-24T21:21:43.788Z",
+        "fase": "Grenen åpnet",
         "jobbgren": "kuratorjobb/bumetanid-0084",
         "kurateringsgren": "kuratering/bumetanid-0084",
         "pr": null,
-        "gren": null,
+        "gren": "54baa521-d80e-4790-8ace-fb5e1e8230df",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -704,6 +704,19 @@
           "oppgave": "bumetanid-0084",
           "okt": "kurateringsko/okt/20261124-181951",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-24T18:21:43.788Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "bumetanid-0084",
+          "melding": "Fant kurateringsgrenen 54baa521-d80e-4790-8ace-fb5e1e8230df."
+        },
+        {
+          "kl": "2026-11-24T18:21:43.788Z",
+          "hendelse": "fornyet",
+          "oppgave": "bumetanid-0084",
+          "okt": "kurateringsko/okt/20261124-181951",
+          "melding": "Grenen åpnet"
         }
       ],
       "appgren": null
@@ -7879,31 +7892,32 @@
     },
     "kurateringsko/okt/20261124-181951": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "563e58dfca001eb89912f7c67ef555b0d81cf9bdbbc99378bab2dc39c9f2da1e",
+        "id": "forny-1",
+        "sha256": "2051898a9c45bbf17fb69ffd0c3cc00ad7d19b4e6d52b3f30a6da38910476045",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "563e58dfca001eb89912f7c67ef555b0d81cf9bdbbc99378bab2dc39c9f2da1e",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "2051898a9c45bbf17fb69ffd0c3cc00ad7d19b4e6d52b3f30a6da38910476045",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "bumetanid er reservert til 2026-11-24T21:20:31.395Z.",
-          "behandlet_kl": "2026-11-24T18:20:31.395Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45458408305",
+          "melding": "Reservasjonen av bumetanid varer til 2026-11-24T21:21:43.788Z.",
+          "behandlet_kl": "2026-11-24T18:21:43.788Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45458636891",
           "oppgave": {
             "oppgave": "bumetanid-0084",
             "stoff": "bumetanid",
             "navn": "Bumetanid",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-24T21:20:31.395Z",
+            "frist_kl": "2026-11-24T21:21:43.788Z",
             "jobbgren": "kuratorjobb/bumetanid-0084",
             "kurateringsgren": "kuratering/bumetanid-0084",
             "pr": null,
-            "gren": null,
+            "gren": "54baa521-d80e-4790-8ace-fb5e1e8230df",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -7916,21 +7930,14 @@
               "elementer_uten_kilde": 4
             },
             "prioritet": {
-              "poeng": 418,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "4 av 21 elementer har ingen kilde.",
-                "Bare 4 referanser."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-24T18:20:31.395Z"
+      "sist_brukt_kl": "2026-11-24T18:21:43.788Z"
     }
   }
 }

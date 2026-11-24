@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T18:20:31.395Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T18:21:43.788Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 98 · Reservert: 1 · Venter på godkjenning: 1 · Publisert: 16 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **bumetanid** (bumetanid-0084), frist 2026-11-24T21:20:31.395Z
+- **bumetanid** (bumetanid-0084), frist 2026-11-24T21:21:43.788Z: Grenen åpnet
 
 ## Til gjennomgang
 
