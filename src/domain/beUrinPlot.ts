@@ -1,4 +1,4 @@
-import { penYAkse, velgXSteg } from './figurakser'
+import { penYAkse, velgDognsteg } from './figurakser'
 import { verdiPaaKurve } from './thcKurver'
 import type { BeUrinKurve } from './beUrinModell'
 import type { BeUrinSammenligning } from './beUrinMotor'
@@ -65,5 +65,5 @@ export function byggBeUrinGraf(s: BeUrinSammenligning, kurver: readonly BeUrinKu
     return { navn: p.navn, rolle: roller[i]!, punkter }
   })
   const alle = [...spor.flatMap((k) => k.punkter.map((p) => p.prosent)), ...denne]
-  return { xMaks: s.dager, xSteg: velgXSteg(s.dager), ...penYAkse(Math.min(...alle), Math.max(0, ...alle)), kurver: spor }
+  return { xMaks: s.dager, xSteg: velgDognsteg(s.dager), ...penYAkse(Math.min(...alle), Math.max(0, ...alle)), kurver: spor }
 }

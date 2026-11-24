@@ -17,12 +17,21 @@ export function pentSteg(grovt: number): number {
  * samme «pene steg» som y-aksen, så intervallet skalerer uansett hvor mange
  * dager det er mellom prøvene — appen setter ingen øvre grense på det lenger,
  * og et fast tak her ville gitt et rutenett med tusenvis av streker for en
- * gammel eller feiltastet dato. Tidsrommet er hele kalenderdøgn, så trinnet
- * er minst 1: et brøkdelstrinn ga samme døgn flere ganger under aksen
- * (0 0 0 1 1 1 …) når prøvene lå få døgn fra hverandre.
+ * gammel eller feiltastet dato.
  */
 export function velgXSteg(dager: number): number {
-  return Math.max(1, pentSteg(dager / 10))
+  return pentSteg(dager / 10)
+}
+
+/**
+ * Som `velgXSteg`, men aldri under ett døgn: tidsrommet er hele kalenderdøgn,
+ * og et brøkdelstrinn gir samme døgn flere ganger under aksen (0 0 0 1 1 1 …)
+ * når prøvene ligger få døgn fra hverandre. Brukes av benzoylekgonin i urin;
+ * THC-syremodulen bruker `velgXSteg` uendret, fordi figurene dens er låst av
+ * fasiten.
+ */
+export function velgDognsteg(dager: number): number {
+  return Math.max(1, velgXSteg(dager))
 }
 
 /**

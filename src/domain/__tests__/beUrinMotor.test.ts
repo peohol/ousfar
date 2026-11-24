@@ -403,6 +403,8 @@ describe('figuren', () => {
       expect(valgt.konklusjon).toBe(s.konklusjon)
       const graf = byggBeUrinGraf(s, MODELL.kurver, punkter.map((p) => prosentFor(p.korrigertRatio)))
       expect(graf.xMaks).toBe(d)
+      // Hele døgn under aksen: aldri et brøkdelstrinn som gir samme døgn flere ganger.
+      expect(graf.xSteg).toBe(1)
       graf.kurver.forEach((kurve, i) => {
         expect(kurve.punkter[0]).toEqual({ dag: 0, prosent: 0 })
         expect(kurve.punkter.at(-1)).toEqual({ dag: d, prosent: prosentFor(s.profiler[i]!.terskel) })
