@@ -1,8 +1,8 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T03:29:42.977Z. Stoffene sist lest fra databasen 2026-11-23T14:27:51.456Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-24T04:28:42.505Z. Stoffene sist lest fra databasen 2026-11-23T14:27:51.456Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 88 · Publisert: 15 · Blokkert: 15 · Utenfor køen: 1
+Klar: 85 · Publisert: 14 · Blokkert: 19 · Utenfor køen: 1
 
 ## Pågår
 
@@ -14,23 +14,29 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **amisulprid**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **amitriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **citalopram**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **duloksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **fluvoksamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **klozapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
+- **amisulprid**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **amitriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **citalopram**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **duloksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **escitalopram**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **fluoksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **fluvoksamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **klorprotiksen**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **klozapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
-- **nortriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
+- **nortriptylin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
-- **olanzapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **paroksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **sertralin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **venlafaksin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **ziprasidon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
-- **zuklopentiksol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.
+- **olanzapin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **paroksetin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **sertindol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **sertralin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **venlafaksin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **ziprasidon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **zuklopentiksol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
 
 ## Køen
+
+Neste stoff gis ikke ut nå: 17 kurateringsgrener venter på kontroll; et nytt stoff gis ut når færre enn 5 gjør det.
 
 | # | Stoff | Modus | Poeng | Hvorfor |
 | --- | --- | --- | --- | --- |
@@ -108,18 +114,15 @@ Ingen kurateringer venter.
 | 72 | etanol | de_novo | 357.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. |
 | 73 | psilocybin | de_novo | 357.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. |
 | 74 | tapentadol | de_novo | 357.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 13 redaksjonelle seksjoner er tomme. |
-| 75 | escitalopram | de_novo | 355.3 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 38 elementer har ingen kilde. |
-| 76 | paliperidon | de_novo | 353.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 54 elementer har ingen kilde. |
-| 77 | levomepromazin | de_novo | 353.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 47 elementer har ingen kilde. |
-| 78 | klorprotiksen | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 52 elementer har ingen kilde. |
-| 79 | mianserin | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 51 elementer har ingen kilde. |
-| 80 | flupentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 53 elementer har ingen kilde. |
-| 81 | fluoksetin | de_novo | 352.5 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 61 elementer har ingen kilde. |
-| 82 | trimipramin | de_novo | 351.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 59 elementer har ingen kilde. |
-| 83 | kodein | de_novo | 351.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 43 elementer har ingen kilde. |
-| 84 | bupropion | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 52 elementer har ingen kilde. |
-| 85 | gabapentin | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 49 elementer har ingen kilde. |
-| 86 | kvetiapin | de_novo | 74.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-05. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 51 elementer har ingen kilde. |
-| 87 | ketamin | de_novo | 64.7 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-04. 1 av 50 elementer har ingen kilde. |
-| 88 | thc | de_novo | 62.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-10. |
+| 75 | paliperidon | de_novo | 353.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 54 elementer har ingen kilde. |
+| 76 | levomepromazin | de_novo | 353.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 47 elementer har ingen kilde. |
+| 77 | mianserin | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 51 elementer har ingen kilde. |
+| 78 | flupentiksol | de_novo | 352.8 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 53 elementer har ingen kilde. |
+| 79 | trimipramin | de_novo | 351.7 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 2 av 59 elementer har ingen kilde. |
+| 80 | kodein | de_novo | 351.2 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 43 elementer har ingen kilde. |
+| 81 | bupropion | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 52 elementer har ingen kilde. |
+| 82 | gabapentin | de_novo | 351 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 49 elementer har ingen kilde. |
+| 83 | kvetiapin | de_novo | 74.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-05. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 51 elementer har ingen kilde. |
+| 84 | ketamin | de_novo | 65 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-04. 1 av 50 elementer har ingen kilde. |
+| 85 | thc | de_novo | 62.1 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-10. |
 

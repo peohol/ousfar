@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T03:29:42.977Z",
+  "oppdatert_kl": "2026-11-24T04:28:42.505Z",
   "malt_kl": "2026-11-23T14:27:51.456Z",
   "teller": 82,
   "stoffer": {
@@ -114,8 +114,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -157,8 +157,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -1037,8 +1037,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -1542,8 +1542,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -1646,16 +1646,11 @@
     "escitalopram": {
       "stoff": "escitalopram",
       "navn": "Escitalopram",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 355.3,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "4 av 38 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-23T14:27:52.163Z",
@@ -1671,7 +1666,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -2347,16 +2349,11 @@
     "fluoksetin": {
       "stoff": "fluoksetin",
       "navn": "Fluoksetin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 352.5,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 61 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-23T14:27:52.163Z",
@@ -2372,7 +2369,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -2452,8 +2456,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -3230,7 +3234,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 64.7,
+        "poeng": 65,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-04.",
@@ -3565,16 +3569,11 @@
     "klorprotiksen": {
       "stoff": "klorprotiksen",
       "navn": "Klorprotiksen",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 352.9,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "3 av 52 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-23T14:27:52.163Z",
@@ -3590,7 +3589,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3629,8 +3635,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -5136,8 +5142,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -5364,8 +5370,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -5448,8 +5454,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -5636,7 +5642,7 @@
     "sertindol": {
       "stoff": "sertindol",
       "navn": "Sertindol",
-      "status": "publisert",
+      "status": "blokkert",
       "modus": null,
       "prioritet": {
         "poeng": 0,
@@ -5656,7 +5662,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": {
         "kl": "2026-10-20T09:10:48.256956+00:00",
         "modus": "de_novo",
@@ -5893,8 +5906,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -6556,8 +6569,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -6869,8 +6882,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
@@ -6996,8 +7009,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-24T03:29:42.977Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-24T04:28:42.505Z",
           "kilde": "system"
         }
       ],
