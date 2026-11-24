@@ -68,7 +68,7 @@ export function ThcStep({ analyte, regler, onBack, copy, flashAt, visualisering 
 }
 
 /** Ikonet, koden og navnet øverst i modulen, med plass til en handling i hjørnet. */
-function Korthode({ analyte, children }: { analyte: Analyte; children?: ReactNode }) {
+export function Korthode({ analyte, children }: { analyte: Analyte; children?: ReactNode }) {
   return (
     <div className="thc-korthode">
       <span className="thc-korthode__ikon" data-ih="">

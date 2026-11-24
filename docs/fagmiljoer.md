@@ -1463,7 +1463,8 @@ til OUS Klinisk farmakologi) og `…230200_etg_regler_import.sql` (EtG og EtS).
 fargen og hurtigtasten), `analyttkatalog_oppforinger` (oppføringene i søket:
 navn, gruppe, metode, kategori, enhet, måleområde, grensene for
 antihypertensivene, søkeord og hvordan oppføringen fortolkes — med
-konsentrasjonsbånd, som scenariomodul, THC-syre eller EtG/EtS),
+konsentrasjonsbånd, som scenariomodul, THC-syre, EtG/EtS eller benzoylekgonin i
+urin, `be_urin`, se [benzoylekgonin-urin.md](benzoylekgonin-urin.md)),
 `analyttkatalog_koder` (analyttkodene hver oppføring dekker, hver kode høyst
 én gang per fagmiljø, med referanseområdet fortolkningen viser). Katalogen
 kjenner ingen stoffer eller fagsider (`docs/domener.md`). Tabellene

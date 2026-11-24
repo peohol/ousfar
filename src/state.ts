@@ -1,3 +1,4 @@
+import { erBeUrinAnalytt } from './domain/beUrinModell'
 import { erEtgAnalytt, type EtgValg } from './domain/etg'
 import { erRusAnalytt } from './domain/rus'
 import { erThcAnalytt } from './domain/thc'
@@ -24,6 +25,7 @@ export type Stage =
   | 'kontroll'
   | 'paste'
   | 'thc'
+  | 'be_urin'
   | 'rus'
   | 'etg'
   | 'etg-paste'
@@ -88,6 +90,7 @@ export type Action =
 export function stageOf(state: State): Stage {
   if (!state.analyte) return 'search'
   if (erThcAnalytt(state.analyte)) return 'thc'
+  if (erBeUrinAnalytt(state.analyte)) return 'be_urin'
   if (erRusAnalytt(state.analyte)) return 'rus'
   if (erEtgAnalytt(state.analyte)) return state.etgValg ? 'etg-paste' : 'etg'
   if (state.kontroll) return 'kontroll'
@@ -169,6 +172,7 @@ function stepBack(state: State): State {
       return { ...state, etgValg: null }
     case 'band':
     case 'thc':
+    case 'be_urin':
     case 'rus':
     case 'etg':
       return { ...state, analyte: null }

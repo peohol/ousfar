@@ -72,7 +72,7 @@ export interface Analyte {
   /**
    * Fortolkningsmodulen oppføringen åpner, når den ikke fortolkes med
    * konsentrasjonsbånd: en scenariomodul (stoffene med ruspotensial),
-   * THC-syre eller EtG og EtS. Satt av analyttkatalogen
+   * THC-syre, EtG og EtS eller benzoylekgonin i urin. Satt av analyttkatalogen
    * (`src/domain/analyttkatalog.ts`).
    */
   modul?: Analyttmodul
@@ -80,7 +80,7 @@ export interface Analyte {
 
 /** En fortolkningsmodul i analyttkatalogen og analyttkodene den dekker. */
 export interface Analyttmodul {
-  type: 'scenario' | 'thc' | 'etg'
+  type: 'scenario' | 'thc' | 'etg' | 'be_urin'
   /** Nøkkelen i katalogen, den samme som scenarioregelsettets `modul`. */
   id: string
   /** Kodene modulen dekker, med navnene, i rekkefølge. */

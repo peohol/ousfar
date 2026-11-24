@@ -291,6 +291,30 @@ function kurvefeil(r: ThcRegelsett): string[] {
 }
 
 /**
+ * Det som er galt med sikkerhetsmarginene og standardmarginen: hver margin
+ * minst 50 % og under 100 %, z lik Φ⁻¹(1 − margin) innenfor
+ * {@link Z_TOLERANSE}, stigende uten like, og standarden blant dem. Delt med
+ * andre modeller som arver beregningsprinsippet for sikkerhetsmarginen.
+ */
+export function sikkerhetsmarginfeil(marginer: readonly ThcSikkerhetsmargin[], standard: number): string[] {
+  const feil: string[] = []
+  if (marginer.length === 0) feil.push('Det må finnes minst én sikkerhetsmargin.')
+  marginer.forEach(({ margin, z }, i) => {
+    if (!(Number.isFinite(margin) && margin >= 0.5 && margin < 1)) {
+      feil.push('En sikkerhetsmargin må være minst 50 % og under 100 %.')
+    } else if (!(Number.isFinite(z) && Math.abs(z - normalkvantil(1 - margin)) <= Z_TOLERANSE)) {
+      feil.push(`z-verdien for ${margin * 100} % stemmer ikke med marginen.`)
+    }
+    const forrige = marginer[i - 1]
+    if (forrige && !(margin > forrige.margin)) feil.push('Sikkerhetsmarginene må stå stigende, uten like.')
+  })
+  if (!marginer.some((m) => m.margin === standard)) {
+    feil.push('Standardmarginen må være en av sikkerhetsmarginene.')
+  }
+  return feil
+}
+
+/**
  * Alt som er galt med regelsettet, i vanlig språk. Tom liste betyr at det kan
  * brukes. Dette er den eneste kontrollen: alt et regelsett må oppfylle, også
  * kurvenes rekkefølge, står her.
@@ -315,19 +339,7 @@ export function validerThcRegelsett(r: ThcRegelsett): string[] {
     feil.push('Faktoren for måleusikkerhet under cut-off må være minst 1.')
   }
 
-  if (r.sikkerhetsmarginer.length === 0) feil.push('Det må finnes minst én sikkerhetsmargin.')
-  r.sikkerhetsmarginer.forEach(({ margin, z }, i) => {
-    if (!(Number.isFinite(margin) && margin >= 0.5 && margin < 1)) {
-      feil.push('En sikkerhetsmargin må være minst 50 % og under 100 %.')
-    } else if (!(Number.isFinite(z) && Math.abs(z - normalkvantil(1 - margin)) <= Z_TOLERANSE)) {
-      feil.push(`z-verdien for ${margin * 100} % stemmer ikke med marginen.`)
-    }
-    const forrige = r.sikkerhetsmarginer[i - 1]
-    if (forrige && !(margin > forrige.margin)) feil.push('Sikkerhetsmarginene må stå stigende, uten like.')
-  })
-  if (!r.sikkerhetsmarginer.some((m) => m.margin === r.standard_sikkerhetsmargin)) {
-    feil.push('Standardmarginen må være en av sikkerhetsmarginene.')
-  }
+  feil.push(...sikkerhetsmarginfeil(r.sikkerhetsmarginer, r.standard_sikkerhetsmargin))
 
   const nivaer = r.konsentrasjonsnivaer
   if (nivaer.length === 0) feil.push('Det må finnes minst ett konsentrasjonsnivå.')
