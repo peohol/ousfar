@@ -1,10 +1,11 @@
 /**
  * Driftstatusen for datakildene — legemiddeldataene fra FEST, de
- * farmakogenetiske fra ClinPGx, CPIC og CYPinfo, de kjemiske fra PubChem og
+ * farmakogenetiske fra CYPinfo, de kjemiske fra PubChem og
  * laboratorieanalysene fra Farmakologiportalen — slik administratorene ser den: de
  * siste kjøringene, om noe er galt, og hva som er endret siden forrige henting.
+ * ClinPGx og CPIC er stanset og fjernet (#437); endringsloggen deres står.
  *
- * Endringene i ClinPGx, CPIC, PubChem, Farmakologiportalen og CYPinfo oppdages i databasen
+ * Endringene i PubChem, Farmakologiportalen og CYPinfo oppdages i databasen
  * (`*_datakilder_endringer.sql`, `docs/datakilder.md`); FEST har ingen
  * endringslogg, men hver kjøring teller nye, endrede og utgåtte rader. Alt
  * leses med `datakilder_status()`. Alt her er rene funksjoner, bortsett fra
@@ -29,11 +30,10 @@ export interface Kildeoppsett {
   /** Versjonen slik den vises, når den ikke skal stå som den er. */
   visVersjon?: (versjon: string) => string
   /**
-   * Hva som står etter en kjøring som feilet, når kilden ikke byttes inn
-   * samlet. `null`: alt byttes inn i én transaksjon, så dataene fra siste
-   * vellykkede henting står — med `beholdt` som teksten om det.
+   * Hva som står etter en kjøring som feilet. Alle kildene byttes inn i én
+   * transaksjon, så dataene fra siste vellykkede henting står; uten egen tekst
+   * sies det slik.
    */
-  etterFeil: string | null
   beholdt?: string
   /**
    * Om endringene logges i `datakilder.endringer`, som kliniske og metadata.
@@ -60,32 +60,22 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     synk: '/api/legemiddeldata-synk',
     versjonsnavn: 'Uttrekk fra DMP',
     visVersjon: dato,
-    etterFeil: null,
     beholdt: 'OUSFAR bruker fortsatt siste gyldige FEST-data; ingenting fra den feilede hentingen er tatt i bruk.',
     endringslogg: false,
   },
-  // Ett kjemikalie om gangen, hvert i sin transaksjon, hver uke fra GitHub
-  // Actions i så mange omganger som trengs (docs/clinpgx.md).
-  clinpgx: {
-    navn: 'ClinPGx',
-    synk: '/api/clinpgx-synk',
-    versjonsnavn: 'Parserversjon',
-    etterFeil: 'Kjemikalier som ble hentet før feilen, kan være oppdatert; de andre står som før.',
-    endringslogg: true,
-    intervall: 7,
-  },
-  // Stanset fra 6.11.2026 (`stans.ts`), og endepunktet og koden er fjernet (#437).
-  // Kilden står igjen som «Stanset» i «Datakilder» til skjemaet `cpic` er slettet.
-  cpic: { navn: 'CPIC', synk: null, versjonsnavn: 'Skjemaversjon', etterFeil: null, endringslogg: true },
+  // ClinPGx og CPIC er stanset (`stans.ts`), og endepunktene og koden er
+  // fjernet (#437). De står som «Stanset» i «Datakilder», så endringsloggen
+  // deres (`datakilder.endringer`) fortsatt kan leses.
+  clinpgx: { navn: 'ClinPGx', synk: null, versjonsnavn: 'Parserversjon', endringslogg: true },
+  cpic: { navn: 'CPIC', synk: null, versjonsnavn: 'Skjemaversjon', endringslogg: true },
   // Alt som består kontrollen, byttes inn i én transaksjon (docs/kjemi.md).
-  pubchem: { navn: 'PubChem', synk: '/api/pubchem-synk', versjonsnavn: 'Parserversjon', etterFeil: null, endringslogg: true },
+  pubchem: { navn: 'PubChem', synk: '/api/pubchem-synk', versjonsnavn: 'Parserversjon', endringslogg: true },
   // Hele uttrekket byttes inn i én transaksjon, hver natt fra GitHub Actions
   // (docs/farmakologiportalen.md).
   farmakologiportalen: {
     navn: 'Farmakologiportalen',
     synk: '/api/farmakologiportalen-synk',
     versjonsnavn: 'Parserversjon',
-    etterFeil: null,
     endringslogg: true,
     intervall: 1,
   },
@@ -95,7 +85,6 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     navn: 'CYPinfo',
     synk: '/api/cypinfo',
     versjonsnavn: 'Parserversjon',
-    etterFeil: null,
     beholdt: 'OUSFAR bruker fortsatt katalogen fra siste vellykkede henting; ingenting fra den feilede hentingen er tatt i bruk.',
     endringslogg: true,
     intervall: 7,
@@ -395,7 +384,7 @@ export function vurderKilder(
   stansede: Readonly<Partial<Record<Datakilde, Stans>>> = STANSEDE_KILDER,
 ): Kildevurdering[] {
   return DATAKILDER.map((kilde) => {
-    const { navn, etterFeil, beholdt: beholdtTekst, endringslogg } = KILDEOPPSETT[kilde]
+    const { navn, beholdt: beholdtTekst, endringslogg } = KILDEOPPSETT[kilde]
     const intervall = intervaller[kilde] ?? null
     const kjoringer = status.kjoringer.filter((k) => k.kilde === kilde).sort((a, b) => b.id - a.id)
     const endringer = status.endringer.filter((e) => e.kilde === kilde)
@@ -416,9 +405,7 @@ export function vurderKilder(
     const stans = stansede[kilde]
     if (stans) return vurdering('stanset', stansmelding(stans, navn))
     if (!siste) return vurdering('advarsel', `Ingen henting fra ${navn} er logget ennå.`)
-    const beholdt =
-      etterFeil ??
-      (sistVellykketKl ? (beholdtTekst ?? 'Dataene fra siste vellykkede henting står.') : 'Ingen henting har lyktes ennå.')
+    const beholdt = sistVellykketKl ? (beholdtTekst ?? 'Dataene fra siste vellykkede henting står.') : 'Ingen henting har lyktes ennå.'
     if (siste.status === 'feilet') {
       return vurdering('feil', `Siste henting feilet: ${setning(siste.feil ?? 'ukjent feil')}. ${beholdt}`)
     }
@@ -538,16 +525,7 @@ export function feltendringer(e: Endring): { felt: string; foer: string; etter: 
 export interface Hentingssvar {
   status: string
   feil?: string
-  /** Kjøringen serveren vil fortsette i en ny omgang (ClinPGx). */
-  fortsett?: number
 }
-
-/**
- * Høyst så mange omganger «Hent nå» ber om for én kjøring: seks på rundt fire
- * minutter holder hele kjøringen under halvtimen en henting kan stå uferdig.
- * Samme grense som jobben i GitHub Actions (`.github/workflows/clinpgx-synk.yml`).
- */
-export const MAKS_OMGANGER = 6
 
 export interface Datakildeleser {
   /** `antall`: flest endringer per kilde (databasen gir 200 uten). */
@@ -569,29 +547,12 @@ export function lagDatakildeleser(klient: SupabaseClient, hent: typeof fetch = (
       if (!token) throw new Error('Du må være logget inn.')
       const { navn, synk } = KILDEOPPSETT[kilde]
       if (!synk) throw new Error(`${navn} kan ikke hentes lenger.`)
-      return hentIOmganger(hent, synk, token)
+      const res = await hent(synk, { method: 'POST', headers: { authorization: `Bearer ${token}` } })
+      const svar = (await res.json().catch(() => null)) as Hentingssvar | { feil?: string } | null
+      if (!(svar && 'status' in svar && typeof svar.status === 'string')) {
+        throw new Error((svar && 'feil' in svar && svar.feil) || `Serveren svarte ${res.status}.`)
+      }
+      return svar
     },
-  }
-}
-
-/**
- * Ber serveren hente, og igjen med `{ fortsett }` så lenge svaret har det: en
- * kilde som ikke rekker alt i ett kall (ClinPGx), fortsetter den samme
- * kjøringen. Svaret er det fra siste omgang, med tellingen for hele kjøringen.
- */
-async function hentIOmganger(hent: typeof fetch, sti: string, token: string): Promise<Hentingssvar> {
-  let fortsett: number | undefined
-  for (let omgang = 1; ; omgang += 1) {
-    const res = await hent(sti, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${token}`, ...(fortsett !== undefined && { 'content-type': 'application/json' }) },
-      ...(fortsett !== undefined && { body: JSON.stringify({ fortsett }) }),
-    })
-    const svar = (await res.json().catch(() => null)) as Hentingssvar | { feil?: string } | null
-    if (!(svar && 'status' in svar && typeof svar.status === 'string')) {
-      throw new Error((svar && 'feil' in svar && svar.feil) || `Serveren svarte ${res.status}.`)
-    }
-    if (typeof svar.fortsett !== 'number' || omgang >= MAKS_OMGANGER) return svar
-    fortsett = svar.fortsett
   }
 }

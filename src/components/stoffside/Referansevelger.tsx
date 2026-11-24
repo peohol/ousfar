@@ -31,7 +31,7 @@ export interface ReferansevelgerProps {
  *
  * Kildene hentes fra den felles referansebasen, så samme referanse kan brukes
  * mange steder og rettes ett sted. Finnes den ikke, kan den legges inn her.
- * Arkiverte referanser kan ikke velges, og heller ikke automatiske (FEST, ClinPGx): de
+ * Arkiverte referanser kan ikke velges, og heller ikke automatiske (FEST, CYPinfo): de
  * siteres bare av dataene de kommer fra, og kan verken redigeres eller
  * fjernes her. De står likevel låst i treffene, så det er tydelig hvorfor. Rekkefølgen er den de velges i; numrene på siden regnes ut når
  * den vises.
@@ -43,7 +43,7 @@ export function Referansevelger({ tittel, valgte, onEndre }: ReferansevelgerProp
   const sokId = useId()
 
   const perId = useMemo(() => new Map(referansebase.map((r) => [r.id, r])), [referansebase])
-  // De automatiske (FEST, ClinPGx) som passer, står med i lista, låst: slik er det
+  // De automatiske (FEST, CYPinfo) som passer, står med i lista, låst: slik er det
   // tydelig at kilden finnes, men ikke kan velges eller endres her.
   const { forslag, laste } = useMemo(() => {
     const ord = sokeord(sporring)

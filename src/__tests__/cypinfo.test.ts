@@ -29,6 +29,7 @@ import { CYPINFOKOBLINGER } from '../faginnhold/cypinfokoblinger'
 import type { Githubsjekk } from '../server/tilgang'
 import { CYPINFO, falskCypinfoApi, legemiddelId, rapportFra } from './hjelp/cypinfo'
 import { kallSom } from './hjelp/fest'
+import { fjernAlleMedlemskap } from './hjelp/persongalleri'
 import { faginnholdskall, nyDatabase, opprettBruker } from './hjelp/testdatabase'
 
 type Rad = Record<string, unknown>
@@ -406,18 +407,17 @@ describe('synkroniseringen', () => {
     await expect(kallSom(db, 'anon')('les_cypinfo', { fest_ider: [] })).rejects.toThrow()
   })
 
-  it('gir systemarkitektene legemidlene, anbefalingene med nivå og tekst, og gentabellen, og avviser andre til E', async () => {
+  it('gir alle med aktivt medlemskap legemidlene, anbefalingene med nivå og tekst, og gentabellen', async () => {
     await synk()
     const admin = await opprettBruker(db, { brukernavn: `admin${Date.now()}`, fornavn: 'Ada', etternavn: 'Admin', rolle: 'admin', systemarkitekt: true })
     const bruker = await opprettBruker(db, { brukernavn: `leser${Date.now()}`, fornavn: 'Lea', etternavn: 'Leser', rolle: 'user' })
     const kariprazin = CYPINFOKOBLINGER.find((k) => k.side === 'Kariprazin')!
     const sporsmal = { fest_ider: ['ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43'], cypinfo_ider: [kariprazin.cypinfo_id] }
-    // Så lenge visningen bare er for systemarkitektene, håndheves det også i databasen.
-    expect(CYPINFO_VISES_FOR).toBe('systemarkitekter')
-    const avvist = await faginnholdskall(db, admin).klientFor(bruker).rpc('les_cypinfo', sporsmal)
-    expect(avvist.data).toBeNull()
-    expect(avvist.error?.message).toContain('bare for systemarkitektene')
-    const { data, error } = await faginnholdskall(db, admin).klientFor(admin).rpc('les_cypinfo', sporsmal)
+    // Visningen er for alle (23.11.2026), og databasen krever bare et aktivt medlemskap.
+    expect(CYPINFO_VISES_FOR).toBe('alle')
+    const somAdmin = await faginnholdskall(db, admin).klientFor(admin).rpc('les_cypinfo', sporsmal)
+    expect(somAdmin.error).toBeNull()
+    const { data, error } = await faginnholdskall(db, admin).klientFor(bruker).rpc('les_cypinfo', sporsmal)
     expect(error).toBeNull()
     const svar = data as {
       kilde: Rad
@@ -435,6 +435,11 @@ describe('synkroniseringen', () => {
     expect(visning.legemidler[0]!.gensett.map((s) => s.gener)).toEqual([['CYP2D6']])
     expect(new Set(svar.genresultater.map((g) => g.data.gen_slug))).toEqual(new Set(['cyp2d6']))
     expect(svar.kilde).toMatchObject({ navn: 'CYPinfo', endret_kl: expect.any(String) })
+    // Den som ikke lenger har et aktivt medlemskap, får ingenting.
+    await fjernAlleMedlemskap(db, bruker)
+    const avvist = await faginnholdskall(db, admin).klientFor(bruker).rpc('les_cypinfo', sporsmal)
+    expect(avvist.data).toBeNull()
+    expect(avvist.error).not.toBeNull()
 
     const status = lesDatakildestatus((await faginnholdskall(db, admin).klientFor(admin).rpc('datakilder_status', {})).data)
     const vurdering = vurderKilder(status).find((v) => v.kilde === 'cypinfo')!

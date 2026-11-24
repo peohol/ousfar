@@ -7,8 +7,10 @@ endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
 `docs/farmakologiportalen.md` og `docs/cypinfo-integrasjon.md`.
 
 **Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
-farmakogenetiske kilden. CPIC er stanset og skal fjernes helt, og ClinPGx
-avvikles når OUSFAR Fag har godkjent overgangen. Planen, med hva som skjer med
+farmakogenetiske kilden. CPIC og ClinPGx er stanset, og koden er fjernet
+(ClinPGx 23.11.2026). Dataene slettes fra databasen etter en arkivkopi (Peder
+23.11.2026, #540). Endringsloggen for begge står, og vises under «Datakilder»;
+kjøringene deres vises ikke lenger (`datakilder_status`). Planen, med hva som skjer med
 kildene i «Datakilder», endringsloggen og databasen, står i
 `docs/cypinfo-integrasjon.md`.
 
@@ -164,15 +166,14 @@ femte minutt og når panelet lukkes. Per kilde:
   eller når siste vellykkede henting er eldre enn intervallet og ett døgn til.
   Intervallet leses av cron-uttrykket i `vercel.json`: for FEST hver natt, så
   to døgn; for PubChem hver uke, så åtte døgn.
-  ClinPGx, Farmakologiportalen og CYPinfo kjøres av GitHub Actions og har intervallet i
-  `KILDEOPPSETT` (ClinPGx og CYPinfo hver uke, så åtte døgn; Farmakologiportalen hver
-  natt, så to døgn). Meldingen ved en feil
-  følger måten kilden byttes inn på (`etterFeil` og `beholdt` i
-  `KILDEOPPSETT`). I FEST og CPIC står dataene fra siste vellykkede henting;
-  for FEST sier panelet at OUSFAR fortsatt bruker siste gyldige FEST-data. I
-  ClinPGx kan kjemikalier som ble hentet før feilen, være oppdatert;
+  Farmakologiportalen og CYPinfo kjøres av GitHub Actions og har intervallet i
+  `KILDEOPPSETT` (CYPinfo hver uke, så åtte døgn; Farmakologiportalen hver
+  natt, så to døgn). Alle kildene byttes inn samlet, så ved en feil står
+  dataene fra siste vellykkede henting (med kildens egen tekst, `beholdt` i
+  `KILDEOPPSETT`); for FEST sier panelet at OUSFAR fortsatt bruker siste
+  gyldige FEST-data;
 - siste vellykkede henting, releasen (CPIC) og versjonen: parserversjonen
-  (ClinPGx, PubChem, Farmakologiportalen, CYPinfo), skjemaversjonen (CPIC) eller datoen DMP laget uttrekket (FEST);
+  (PubChem, Farmakologiportalen, CYPinfo) eller datoen DMP laget uttrekket (FEST);
 - «Til vurdering»: det siste vellykkede kjøring ikke kunne koble sikkert
   (`antall.uavklarte`), i PubChem forbindelsene uten verifisert kobling. For
   Farmakologiportalen også rapporten fra kjøringen (`antall.merknader`):
@@ -183,16 +184,14 @@ femte minutt og når panelet lukkes. Per kilde:
   legemidler uten anbefaling, ATC-koder som ikke kan leses;
 - de siste kjøringene, med hvem som utløste dem (den nattlige eller ukentlige
   jobben, eller en administrator);
-- ClinPGx, CPIC, PubChem, Farmakologiportalen og CYPinfo: de kliniske endringene, nyest først, med feltene, sporet og
+- PubChem, Farmakologiportalen og CYPinfo, og fra før ClinPGx og CPIC: de kliniske endringene, nyest først, med feltene, sporet og
   verdiene før og etter; metadataene når de slås på. FEST logger ikke hver
   endring; kjøringene viser hvor mange rader som ble nye, endret og utgått;
 - «Hent nå», som gjør det samme som den planlagte jobben med
   administratorens innlogging (`POST /api/legemiddeldata-synk`,
-  `/api/clinpgx-synk`, `/api/pubchem-synk`,
-  `/api/farmakologiportalen-synk` eller `/api/cypinfo`). Svarer serveren med `fortsett`
-  (ClinPGx, som henter i omganger), ber knappen om neste omgang av den samme
-  kjøringen til alt er hentet. `CRON_SECRET` og `SUPABASE_SECRET_KEY` blir på
-  serveren.
+  `/api/pubchem-synk`, `/api/farmakologiportalen-synk` eller `/api/cypinfo`).
+  ClinPGx og CPIC er stanset og har ingen knapp. `CRON_SECRET` og
+  `SUPABASE_SECRET_KEY` blir på serveren.
 
 ## Stansede kilder
 
@@ -231,7 +230,7 @@ egen, destruktiv migrasjon som først skriver om de to (se planen i
 | `supabase/migrations/*_cypinfo.sql` | CYPinfo i reglene, loggen og `datakilder_status` |
 | `src/datakilder/status.ts` | Lesingen av statusen, vurderingen, tekstene for en endring, «Hent nå» |
 | `src/components/konto/Datakilder.tsx`, `src/styles/datakilder.css` | Panelet |
-| `src/__tests__/clinpgx.test.ts`, `kjemi.test.ts`, `farmakologiportalen.test.ts`, `cypinfo.test.ts` | Endringsloggen, mot en ekte database, for hver kilde |
+| `src/__tests__/kjemi.test.ts`, `farmakologiportalen.test.ts`, `cypinfo.test.ts` | Endringsloggen, mot en ekte database, for hver kilde |
 | `src/__tests__/datakilder.test.ts`, `datakildevisning.test.tsx` | Lesefunksjonen, tilgangen, vurderingen og panelet |
 | `src/__tests__/legemiddeldata.test.ts` | FEST-feil i statusen, og «Hent nå» for FEST |
 

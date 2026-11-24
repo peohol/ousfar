@@ -18,9 +18,10 @@ import {
   type Cypinfoutvalg,
 } from '../cypinfo/lesing'
 import { CYPINFO_KILDE, cypinforeferanser } from '../cypinfo/referanser'
-import type { Anbefalingsdata, Genresultatdata, Legemiddeldata } from '../cypinfo/modell'
+import { NIVAER, type Anbefalingsdata, type Genresultatdata, type Legemiddeldata } from '../cypinfo/modell'
 import {
   byggCypinfovisning,
+  CYPINFO_VISES_FOR,
   cypinfoForesporsel,
   cypinfokort,
   cypinfoSynlig,
@@ -77,10 +78,12 @@ function utvalg(fest_ider: readonly string[], cypinfo_ider: readonly string[] = 
 const fagside = (side: string) => CYPINFO.fagsider.find((f) => f.side === side)!
 
 describe('hvem som ser CYPinfo', () => {
-  it('er systemarkitektene først, og alle når det slås på', () => {
+  it('er alle fra 23.11.2026, og bare systemarkitektene når bryteren settes tilbake', () => {
+    expect(CYPINFO_VISES_FOR).toBe('alle')
     expect(cypinfoSynlig({ systemarkitekt: true })).toBe(true)
-    expect(cypinfoSynlig({ systemarkitekt: false })).toBe(false)
-    expect(cypinfoSynlig({ systemarkitekt: false }, 'alle')).toBe(true)
+    expect(cypinfoSynlig({ systemarkitekt: false })).toBe(true)
+    expect(cypinfoSynlig({ systemarkitekt: false }, 'systemarkitekter')).toBe(false)
+    expect(cypinfoSynlig({ systemarkitekt: true }, 'systemarkitekter')).toBe(true)
   })
 })
 
@@ -148,6 +151,20 @@ describe('visningen', () => {
     expect(l.utenRelevanteGener?.avsnitt.length).toBeGreaterThan(0)
     expect(legemiddeloppsummering(l)).toBe('Ingen relevante gener')
     expect(oppsummerCypinfo(visning)).toBe('CYPinfo: ingen relevante gener')
+  })
+
+  it('sier ikke «ingen relevante gener» når CYPinfo sier noe annet (#544)', () => {
+    const uten = innhold.entiteter.legemiddel.rader.find((r) => (r.data as Legemiddeldata).uten_relevante_gener)!
+    const visning = byggCypinfovisning(utvalg([], [uten.id]))
+    const l = visning.legemidler[0]!
+    const lite = { ...l, utenRelevanteGener: { ...l.utenRelevanteGener!, niva: 'info' as const, nivatekst: NIVAER.info } }
+    expect(legemiddeloppsummering(lite)).toBe('Lite eller ingen informasjon om metabolismevei')
+    expect(oppsummerCypinfo({ ...visning, legemidler: [lite] })).toBe('CYPinfo: lite eller ingen informasjon om metabolismevei')
+    // To legemidler med hver sin tekst: begge nevnes, hver bare én gang.
+    expect(oppsummerCypinfo({ ...visning, legemidler: [l, lite, { ...lite, id: 'x' }] })).toBe(
+      'CYPinfo: ingen relevante gener; lite eller ingen informasjon om metabolismevei',
+    )
+    expect(legemiddeloppsummering({ ...l, utenRelevanteGener: null })).toBe('Ingen anbefalinger')
   })
 
   it('viser ingenting for en side CYPinfo ikke har', () => {

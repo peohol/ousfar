@@ -61,7 +61,7 @@ kjernen og stegene ikke henter noe fra faginnholdet selv.
 | `src/components/stoffside/` | Siden, panelene, skjemaene, editoren, referansevelgeren og søket |
 | `src/faginnhold/referanser.ts` | Siteringer, nummerering, piller og referanseliste, for redaksjonelle og automatiske referanser — rene funksjoner |
 | `src/legemiddeldata/referanser.ts` | De automatiske referansene fra FEST |
-| `src/clinpgx/referanser.ts` | De automatiske referansene fra ClinPGx (se `docs/clinpgx.md`) |
+| `src/cypinfo/referanser.ts` | Den automatiske referansen til CYPinfo (se `docs/cypinfo-integrasjon.md`) |
 | `src/bivirkninger/` | Bivirkningene fra preparatomtalene: modellen, importen, lesingen og referansene (se `docs/bivirkninger.md`) |
 | `src/components/referanser/` | Referansepillen med boblen, referansefeltet og referanselisten |
 | `src/__tests__/faginnhold.test.ts`, `referanser.test.ts`, `stoffsidelesing.test.ts`, `kommentarer.test.ts` | Reglene og lesingen, prøvd mot en ekte database |
@@ -341,7 +341,7 @@ Referansene har to opphav i samme nummerering, samme bobler og samme liste:
 | Automatisk | Lages av data OUSFAR henter fra andre, hver gang siden vises (`automatisk` på `Referanse`) | Aldri: de er ikke objekter, kan ikke velges i referansevelgeren (der står de låst når søket treffer dem) og forsvinner av seg selv når kilden ikke lenger har dem |
 
 De automatiske kildene er FEST (`src/legemiddeldata/referanser.ts`),
-ClinPGx (`src/clinpgx/referanser.ts`, se `docs/clinpgx.md`) og
+CYPinfo (`src/cypinfo/referanser.ts`, se `docs/cypinfo-integrasjon.md`) og
 preparatomtalene bivirkningene er importert
 fra (`src/bivirkninger/referanser.ts`, se `docs/bivirkninger.md`). FEST:
 
@@ -692,10 +692,9 @@ viser — de samme som seksjonene bygger av de fullstendige legemiddeldataene,
 som en test kontrollerer for hvert virkestoff i FEST-utdraget;
 `les_cypinfo` gir CYPinfos anbefalinger for alle legemidlene sidene er
 koblet til, og hver side får sin del med samme regel som siden selv
-(`cypinfoFor`), bare for dem som ser CYPinfo på fagsidene (`CYPINFO_VISES_FOR`;
-for andre gis kilden ikke, og indeksen hentes på nytt når det endres);
-`les_farmakogenetikk_sok` gir ClinPGx-dataene uten feltene søket ikke bruker,
-og `les_laboratoriesok` navnene og metodene i
+(`cypinfoFor`), for dem som ser CYPinfo på fagsidene (`CYPINFO_VISES_FOR`,
+alle fra 23.11.2026; ellers gis kilden ikke, og indeksen hentes på nytt når det
+endres); og `les_laboratoriesok` navnene og metodene i
 laboratorieanalysene fra Farmakologiportalen for alle forbindelsene i
 registeret, uten måleområdene, så hver side får de samme analysene som
 seksjonen viser (`velgAnalyser` i `src/farmakologiportalen/stoffside.ts`).

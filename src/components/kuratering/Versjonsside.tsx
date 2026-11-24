@@ -19,11 +19,11 @@ import { Sidesammenligning, Utgavevisning } from './Utgavevisning'
 /**
  * Kildene en tidligere versjon viser data fra slik de er nå, uten dem som er
  * stanset (`STANSEDE_KILDER`), og med CYPinfo bare for den som ser CYPinfo på
- * fagsidene (`cypinfoSynlig`): «FEST, CYPinfo, ClinPGx, PubChem og
- * Farmakologiportalen».
+ * fagsidene (`cypinfoSynlig`): «FEST, CYPinfo, PubChem og Farmakologiportalen».
+ * ClinPGx og CPIC er fjernet (#437).
  */
 export function navaerendeKilder(medCypinfo: boolean, stansede = STANSEDE_KILDER): string {
-  const kilder: Datakilde[] = ['fest', ...(medCypinfo ? (['cypinfo'] as const) : []), 'clinpgx', 'pubchem', 'farmakologiportalen']
+  const kilder: Datakilde[] = ['fest', ...(medCypinfo ? (['cypinfo'] as const) : []), 'pubchem', 'farmakologiportalen']
   return LISTE.format(kilder.filter((k) => !stansFor(k, stansede)).map((k) => KILDEOPPSETT[k].navn))
 }
 

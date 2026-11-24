@@ -49,7 +49,6 @@ import {
   type Legemiddelleser,
   type Legemiddelutvalg,
 } from '../legemiddeldata/lesing'
-import type { Farmakogenetikkleser, Farmakogenetikkutvalg } from '../clinpgx/lesing'
 import type { Bivirkningsleser } from '../bivirkninger/lesing'
 import { lesKjemiutvalg } from '../kjemi/lesing'
 import { lesLabutvalg } from '../farmakologiportalen/lesing'
@@ -2679,92 +2678,12 @@ describe('innhold hentet fra en kilde', () => {
   })
 })
 
-describe('farmakogenetikken fra ClinPGx', () => {
+describe('en gammel kobling til ClinPGx', () => {
   /** Lengre enn oppsummeringen av et lukket kort, så det redaksjonelle kortet kan åpnes. */
   const REDAKSJONELL =
     'Syntetisk redaksjonell tekst. Den er lengre enn det oppsummeringen av et lukket kort får plass til, så kortet har mer å vise når det åpnes og leses i sin helhet.'
-  const genref = (symbol: string) => ({ id: `PA-${symbol}`, symbol })
-  const grunnlag = {
-    navn: '',
-    gener: [] as { id: string; symbol: string }[],
-    legemidler: [{ id: 'PA1', navn: 'amitriptyline' }],
-    sammendrag: '',
-    dosering: false,
-    alternativ: false,
-    annen_veiledning: false,
-    barn: false,
-    litteratur: [],
-    kjemikalier: ['PA1'],
-  }
-  const klinisk = {
-    navn: '',
-    typer: ['Metabolism/PK'],
-    sykdommer: [],
-    fenotyper: [],
-    legemidler: [],
-    retningslinjer: [],
-    preparatomtaler: [],
-    kjemikalier: ['PA1'],
-  }
 
-  /** Syntetiske data i formen `les_farmakogenetikk` gir; tekstene er ikke kliniske. */
-  const UTVALG_PGX: Farmakogenetikkutvalg = {
-    kilde: 'ClinPGx',
-    kontrollert_kl: new Date().toISOString(),
-    kjemikalier: [
-      { id: 'PA1', navn: 'amitriptyline', finnes: true, sist_hentet_kl: new Date().toISOString(), feil: null, feil_kl: null },
-    ],
-    retningslinjer: [
-      {
-        ...grunnlag,
-        id: 'PA902',
-        navn: 'Syntetisk DPWG-retningslinje',
-        kilde: 'DPWG',
-        gener: [genref('CYP2D6')],
-        sammendrag: 'Syntetisk sammendrag fra DPWG.',
-      },
-      {
-        ...grunnlag,
-        id: 'PA901',
-        navn: 'Syntetisk CPIC-retningslinje',
-        kilde: 'CPIC',
-        gener: [genref('CYP2D6'), genref('CYP2C19')],
-        sammendrag: 'Syntetisk sammendrag fra CPIC.\n\nAndre avsnitt.',
-        dosering: true,
-        litteratur: [{ tittel: 'Syntetisk artikkel', aar: 2016, lenke: 'https://doi.org/10.0000/syntetisk', pmid: null, doi: '10.0000/syntetisk' }],
-      },
-    ],
-    preparatomtaler: [
-      { ...grunnlag, id: 'PA903', navn: 'Syntetisk preparatomtale', kilde: 'FDA', gener: [genref('CYP2D6')], sammendrag: 'Syntetisk omtale.', testing: 'Actionable PGx' },
-    ],
-    kliniske: [
-      { ...klinisk, id: 'PA911', nummer: '911', niva: '3', gener: [genref('ABCB1')], variant: 'rs0000001', rsid: 'rs0000001', poeng: 2 },
-      {
-        ...klinisk,
-        id: 'PA910',
-        nummer: '910',
-        niva: '1A',
-        gener: [genref('CYP2D6')],
-        variant: 'CYP2D6*1, CYP2D6*4',
-        rsid: null,
-        poeng: 100,
-        fenotyper: [{ allel: '*1/*1', fenotype: 'Syntetisk fenotype.' }],
-      },
-    ],
-  }
-
-  function pgxleser(utvalg: Farmakogenetikkutvalg = UTVALG_PGX): Farmakogenetikkleser {
-    return {
-      les: vi.fn(async () => utvalg),
-      sok: vi.fn(async () => [
-        { id: 'PA1', navn: 'amitriptyline', atc: ['N06AA09'], typer: ['Drug'] },
-        { id: 'PA2', navn: 'amitriptylinoxide', atc: [], typer: ['Drug'] },
-      ]),
-      hent: vi.fn(async () => ({ status: 'fullfort' as const, hentet: 1, feilet: 0 })),
-    }
-  }
-
-  /** Siden koblet til ClinPGx, med et redaksjonelt kort i «Farmakogenetikk». */
+  /** Siden med en kobling til ClinPGx fra før, med et redaksjonelt kort i «Farmakogenetikk». */
   function medPgx({ redaksjonelt = true, kjemikalier = [{ clinpgx_id: 'PA1', navn: 'amitriptyline' }] } = {}) {
     return (tilstand: Tilstand): Stoffsidedata => {
       const s = medKobling(tilstand)
@@ -2803,26 +2722,14 @@ describe('farmakogenetikken fra ClinPGx', () => {
     }
   }
 
-  function pgxkilde(opp: Parameters<typeof kilde>[0] = {}, leser = pgxleser()) {
-    return { ...kilde(opp), farmakogenetikk: leser }
-  }
-
-  it('leser ikke ClinPGx når siden ikke er koblet', async () => {
-    const k = pgxkilde({ data: medPgx({ kjemikalier: [], redaksjonelt: false }) })
-    vis('amitriptylin', k)
-    await finnVerdi('10–20 nmol/L')
-    expect(screen.queryByRole('region', { name: 'Farmakogenetikk' })).toBeNull()
-    expect(k.farmakogenetikk.les).not.toHaveBeenCalled()
-  })
-
-  it('viser verken dataene eller koblingen når ClinPGx er stanset, selv om siden er koblet', async () => {
-    // Uten leser for ClinPGx, slik appen settes opp når ClinPGx står i STANSEDE_KILDER.
+  it('viser ingenting av en gammel kobling til ClinPGx', async () => {
+    // ClinPGx er fjernet (#437); koblingselementet står på sider fra før, men vises ikke.
     vis('amitriptylin', kilde({ data: medPgx({ redaksjonelt: false }) }))
     await finnVerdi('10–20 nmol/L')
     expect(screen.queryByRole('region', { name: 'Farmakogenetikk' })).toBeNull()
   })
 
-  it('oppsummerer og åpner det redaksjonelle kortet alene når ClinPGx er stanset, og skjuler koblingen i redigeringen', async () => {
+  it('oppsummerer og åpner det redaksjonelle kortet alene, uten noen kobling til ClinPGx i redigeringen', async () => {
     const user = userEvent.setup()
     vis('amitriptylin', kilde({ kanRedigere: true, data: medPgx() }))
     await finnVerdi('10–20 nmol/L')
@@ -2835,125 +2742,6 @@ describe('farmakogenetikken fra ClinPGx', () => {
     await apneSkuff(user, 'Farmakogenetikk')
     expect(screen.queryByRole('button', { name: 'Legg til: Koblingen til ClinPGx' })).toBeNull()
     expect(screen.queryByText(/Koblet til ClinPGx/)).toBeNull()
-  })
-
-  it('viser de redaksjonelle kortene først, så retningslinjene, preparatomtalene og de kliniske annotasjonene', async () => {
-    const user = userEvent.setup()
-    const k = pgxkilde({ data: medPgx() })
-    vis('amitriptylin', k)
-    // Den lukkede seksjonen oppsummerer genene og organisasjonene, så de redaksjonelle kortene.
-    expect(await screen.findByText('CYP2D6 · CYP2C19 · CPIC + DPWG · CYP-enzymer (substrat)')).toBeTruthy()
-    expect(k.farmakogenetikk.les).toHaveBeenCalledWith(['PA1'])
-    await apneSkuff(user, 'Farmakogenetikk')
-    const seksjon = screen.getByRole('region', { name: 'Farmakogenetikk' })
-    // Det redaksjonelle kortet står ikke åpent alene når ClinPGx har noe ved siden av.
-    expect(skuffen('CYP-enzymer (substrat)').getAttribute('aria-expanded')).toBe('false')
-
-    const rekkefolge = [
-      skuffen('CYP-enzymer (substrat)'),
-      within(seksjon).getByRole('heading', { name: 'Retningslinjer' }),
-      skuffen('CPIC · CYP2D6, CYP2C19'),
-      skuffen('DPWG · CYP2D6'),
-      within(seksjon).getByRole('heading', { name: 'Farmakogenetiske preparatomtaler' }),
-      skuffen('FDA · CYP2D6'),
-      within(seksjon).getByRole('heading', { name: 'Kliniske annotasjoner' }),
-      skuffen('CYP2D6*1, CYP2D6*4'),
-      skuffen('Lavere evidensnivå'),
-    ]
-    for (let i = 1; i < rekkefolge.length; i += 1) {
-      expect(rekkefolge[i - 1]!.compareDocumentPosition(rekkefolge[i]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    }
-
-    await user.click(skuffen('CPIC · CYP2D6, CYP2C19'))
-    const cpic = screen.getByText('Syntetisk sammendrag fra CPIC.').closest('.interaksjon') as HTMLElement
-    expect(within(cpic).getByText('Andre avsnitt.')).toBeTruthy()
-    expect(within(cpic).getByText('CPIC')).toBeTruthy()
-    expect(within(cpic).getByText('Dosering')).toBeTruthy()
-    expect(within(cpic).getByRole('link', { name: /Les hele i ClinPGx/ }).getAttribute('href')).toBe(
-      'https://www.clinpgx.org/guidelineAnnotation/PA901',
-    )
-    // Publikasjonen ClinPGx oppgir, står i kortets referansefelt, og ClinPGx i seksjonens.
-    expect(within(cpic).getByRole('button', { name: /^Referanse \d+$/ })).toBeTruthy()
-    const liste = screen.getByRole('region', { name: 'Referanser' })
-    expect(within(liste).getAllByText('Automatisk fra ClinPGx').length).toBe(2)
-    expect(liste.textContent).toContain('Utdrag av farmakogenetiske data fra ClinPGx, omformet av OUSFAR, lisens CC BY-SA 4.0, sist hentet')
-    // Lisensen krever lenke til seg; bruksvilkårene står ved siden av.
-    expect(within(liste).getByRole('link', { name: 'Lisens: CC BY-SA 4.0' }).getAttribute('href')).toBe(
-      'https://creativecommons.org/licenses/by-sa/4.0/',
-    )
-    expect(within(liste).getByRole('link', { name: 'Bruksvilkår hos ClinPGx' }).getAttribute('href')).toBe(
-      'https://www.clinpgx.org/page/dataUsagePolicy',
-    )
-
-    await user.click(skuffen('Lavere evidensnivå'))
-    const lavere = within(seksjon).getByRole('table')
-    expect(within(lavere).getByRole('link', { name: /rs0000001/ }).getAttribute('href')).toBe(
-      'https://www.clinpgx.org/clinicalAnnotation/911',
-    )
-    expect(within(seksjon).getByText(/^Referanseinformasjon fra ClinPGx, ikke en anbefaling for den enkelte pasient · sist hentet/)).toBeTruthy()
-  })
-
-  it('sier fra når ClinPGx ikke har noe, når kjemikaliet ikke er hentet, og når lesingen feiler', async () => {
-    vis('amitriptylin', pgxkilde({ data: medPgx({ redaksjonelt: false }) }, pgxleser({ ...UTVALG_PGX, retningslinjer: [], preparatomtaler: [], kliniske: [] })))
-    expect(await screen.findByText(/ClinPGx har ingen retningslinjer, preparatomtaler eller kliniske annotasjoner for amitriptyline/)).toBeTruthy()
-    cleanup()
-
-    vis('amitriptylin', pgxkilde({ data: medPgx({ redaksjonelt: false }) }, pgxleser({ ...UTVALG_PGX, kjemikalier: [], retningslinjer: [], preparatomtaler: [], kliniske: [] })))
-    expect(await screen.findByText('amitriptyline (PA1) er ikke hentet fra ClinPGx ennå. Den ukentlige oppdateringen henter det.')).toBeTruthy()
-    cleanup()
-
-    const feil = pgxleser()
-    feil.les = vi.fn(async () => {
-      throw new Error('Nettverksfeil')
-    })
-    vis('amitriptylin', pgxkilde({ data: medPgx() }, feil))
-    expect(await screen.findByText(/Fikk ikke hentet farmakogenetikken fra ClinPGx\. Nettverksfeil/)).toBeTruthy()
-    // Det redaksjonelle står der fortsatt.
-    expect(screen.getAllByText(REDAKSJONELL).length).toBeGreaterThan(0)
-  })
-
-  it('finner gener og organisasjoner i søket på siden, og åpner kortet treffet står i', async () => {
-    const user = userEvent.setup()
-    vis('amitriptylin', pgxkilde({ data: medPgx() }))
-    await screen.findByText(/CPIC \+ DPWG/)
-    await user.type(screen.getByRole('searchbox', { name: 'Søk på denne siden' }), 'CYP2C19')
-    const steder = within(await screen.findByRole('list', { name: 'Hvor treffene står' }))
-    await user.click(steder.getAllByRole('button', { name: /Farmakogenetikk › CPIC · CYP2D6, CYP2C19/ })[0]!)
-    expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
-    expect(skuffen('CPIC · CYP2D6, CYP2C19').getAttribute('aria-expanded')).toBe('true')
-  })
-
-  it('åpner kortet adressen peker på', async () => {
-    vis('amitriptylin', pgxkilde({ data: medPgx() }), { sted: ['farmakogenetikk', 'clinpgx-klinisk-PA910'] })
-    await waitFor(() => expect(skuffen('CYP2D6*1, CYP2D6*4').getAttribute('aria-expanded')).toBe('true'))
-    expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
-    expect(screen.getByText('Syntetisk fenotype.')).toBeTruthy()
-  })
-
-  it('kobler siden med ID-en fra ClinPGx, foreslår på ATC-koden, og henter dataene etter lagringen', async () => {
-    const user = userEvent.setup()
-    const k = pgxkilde({ kanRedigere: true, data: medPgx({ kjemikalier: [] }) })
-    vis('amitriptylin', k)
-    await screen.findByText(/1 bør unngås/)
-    await user.click(screen.getByRole('button', { name: 'Rediger' }))
-    await apneSkuff(user, 'Farmakogenetikk')
-    await user.click(await screen.findByRole('button', { name: 'Legg til: Koblingen til ClinPGx' }))
-    const skjema = redigeringsvindu('Koblingen til ClinPGx')
-    // Søket begynner på det engelske navnet fra FEST.
-    expect((within(skjema).getByRole('searchbox', { name: 'Slå opp i ClinPGx' }) as HTMLInputElement).value).toBe('Amitriptyline')
-    await waitFor(() => expect(k.farmakogenetikk.sok).toHaveBeenCalledWith('Amitriptyline'), { timeout: 2000 })
-    expect(await within(skjema).findByText(/Forslag: samme ATC-kode som preparatene \(N06AA09\)/)).toBeTruthy()
-    // Et forslag er ikke en kobling: ingenting er lagret før det er valgt.
-    expect(within(skjema).getByText(/Siden er ikke koblet/)).toBeTruthy()
-    await user.click(within(skjema).getByRole('button', { name: 'Koble siden til amitriptyline i ClinPGx' }))
-    await user.click(within(skjema).getByRole('button', { name: 'Lagre utkast' }))
-    await waitFor(() => expect(k.lager.opprettUtkast).toHaveBeenCalledTimes(1))
-    expect(vi.mocked(k.lager.opprettUtkast).mock.calls[0]![1]).toMatchObject({
-      panel: 'farmakogenetikk',
-      elementtype: 'clinpgxkobling',
-      data: { kjemikalier: [{ clinpgx_id: 'PA1', navn: 'amitriptyline' }] },
-    })
-    await waitFor(() => expect(k.farmakogenetikk.hent).toHaveBeenCalledWith(['PA1']))
   })
 })
 
@@ -3520,28 +3308,20 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     const cypinfo: Cypinfoleser = { les: vi.fn(async () => UTVALG_CYPINFO) }
     return { ...kilde({ data: bareKobling }), legemidler: legemiddelleser(), cypinfo }
   }
-  const SYSTEMARKITEKT: Rettigheter = { ...INGEN_RETTIGHETER, systemarkitekt: true }
   /** Til den lukkede seksjonen sier hvilke gener CYPinfo har; romslig ventetid når mange tester kjører samtidig. */
   const cypinfoHentet = () => screen.findByText(/CYPinfo: CYP2C19, CYP2D6/, {}, { timeout: 3000 })
 
-  it('leser og viser ingenting fra CYPinfo for den som ikke er systemarkitekt', async () => {
-    const k = cypinfokilde()
-    vis('amitriptylin', k)
-    await waitFor(() => expect(k.legemidler.les).toHaveBeenCalled())
-    expect(k.cypinfo.les).not.toHaveBeenCalled()
-    expect(screen.queryByText('Anbefalinger fra CYPinfo')).toBeNull()
-  })
-
-  it('viser systemarkitektene CYPinfos anbefaling ved hver fenotype, etter sidens FEST-kobling', async () => {
+  it('viser alle CYPinfos anbefaling ved hver fenotype, etter sidens FEST-kobling', async () => {
     const user = userEvent.setup()
     const k = cypinfokilde()
-    vis('amitriptylin', k, { rettigheter: SYSTEMARKITEKT })
+    // En vanlig bruker, uten noen rettigheter (CYPinfo er for alle fra 23.11.2026).
+    vis('amitriptylin', k)
     await waitFor(() => expect(k.cypinfo.les).toHaveBeenCalledWith(['ID_AMI'], []))
     // Den lukkede seksjonen sier hvilke gener CYPinfo har.
     await cypinfoHentet()
     await apneSkuff(user, 'Farmakogenetikk')
     expect(screen.getByRole('heading', { name: 'Anbefalinger fra CYPinfo' })).toBeTruthy()
-    expect(screen.getByText(/Vises foreløpig bare for systemarkitekter/)).toBeTruthy()
+    expect(screen.queryByText(/Vises foreløpig bare for systemarkitekter/)).toBeNull()
     expect(within(screen.getByText(/For en pasients eget resultat/)).getByRole('link', { name: /cypinfo\.no/ }).getAttribute('href')).toBe('https://cypinfo.no')
     await apneSkuff(user, 'amitriptylin')
     const kort = document.getElementById(elementAnker('cypinfo-amitriptylin'))!
@@ -3557,9 +3337,9 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     expect(within(kort).getByText(/Kilde: CYPinfo, kontrollert/)).toBeTruthy()
   })
 
-  it('står i referansefeltet til seksjonen for systemarkitektene, og ellers ikke', async () => {
+  it('står i referansefeltet til seksjonen', async () => {
     const user = userEvent.setup()
-    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT })
+    vis('amitriptylin', cypinfokilde())
     await cypinfoHentet()
     await apneSkuff(user, 'Farmakogenetikk')
     const felt = skuffen('Farmakogenetikk').closest('section')!.querySelector('.referansefelt--panel')!
@@ -3567,33 +3347,19 @@ describe('CYPinfo i «Farmakogenetikk»', () => {
     const liste = screen.getByRole('region', { name: 'Referanser' })
     const cypinfo = within(liste).getAllByRole('listitem').find((r) => r.textContent?.startsWith('CYPinfo'))!
     expect(within(cypinfo).getByText('Automatisk fra CYPinfo')).toBeTruthy()
-    cleanup()
-
-    vis('amitriptylin', cypinfokilde())
-    await screen.findByText(/3 preparater|Preparater/)
-    expect(screen.queryByText(/Automatisk fra CYPinfo/)).toBeNull()
   })
 
-  it('finnes av søket på siden for systemarkitektene, som åpner kortet treffet står i', async () => {
+  it('finnes av søket på siden, som åpner kortet treffet står i', async () => {
     const user = userEvent.setup()
-    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT })
+    vis('amitriptylin', cypinfokilde())
     await cypinfoHentet()
     await user.type(screen.getByRole('searchbox', { name: 'Søk på denne siden' }), 'Andre avsnitt{Enter}')
     await waitFor(() => expect(skuffen('amitriptylin').getAttribute('aria-expanded')).toBe('true'))
     expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
   })
 
-  it('finnes ikke av søket på siden for andre', async () => {
-    const user = userEvent.setup()
-    const k = cypinfokilde()
-    vis('amitriptylin', k)
-    await waitFor(() => expect(k.legemidler.les).toHaveBeenCalled())
-    await user.type(screen.getByRole('searchbox', { name: 'Søk på denne siden' }), 'Andre avsnitt')
-    await waitFor(() => expect(screen.getByRole('status').textContent).toMatch(/Ingen treff/))
-  })
-
   it('åpner kortet fra en direktelenke', async () => {
-    vis('amitriptylin', cypinfokilde(), { rettigheter: SYSTEMARKITEKT, sted: ['farmakogenetikk', 'cypinfo-amitriptylin'] })
+    vis('amitriptylin', cypinfokilde(), { sted: ['farmakogenetikk', 'cypinfo-amitriptylin'] })
     await waitFor(() => expect(skuffen('amitriptylin').getAttribute('aria-expanded')).toBe('true'))
     expect(skuffen('Farmakogenetikk').getAttribute('aria-expanded')).toBe('true')
   })

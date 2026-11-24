@@ -19,7 +19,8 @@ const SQL = readFileSync(new URL(`../../supabase/migrations/${MIGRASJON}`, impor
 describe('CPIC er stanset', () => {
   it('stansen gjelder CPIC, med dato og grunn', () => {
     expect(stansFor('cpic')).toEqual({ fra: '2026-11-06', grunn: expect.stringContaining('norske farmakogenetiske data') })
-    expect(stansFor('clinpgx')).toBeNull()
+    // ClinPGx er stanset fra 23.11.2026, og koden er fjernet (#437).
+    expect(stansFor('clinpgx')).toMatchObject({ fra: '2026-11-23' })
     expect(stansmelding(STANSEDE_KILDER.cpic!, 'CPIC')).toBe(
       'Stanset 06.11.2026. CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske ' +
         'farmakogenetiske data. Ingenting hentes eller vises fra CPIC.',
@@ -27,10 +28,19 @@ describe('CPIC er stanset', () => {
   })
 
   it('endepunktet og CPIC-koden er fjernet (#437), og stansen virker for andre kilder', () => {
-    for (const fil of ['../../api/cpic-synk.ts', '../cpic/lesing.ts', '../components/stoffside/Cpicvisning.tsx']) {
+    for (const fil of [
+      '../../api/cpic-synk.ts',
+      '../cpic/lesing.ts',
+      '../components/stoffside/Cpicvisning.tsx',
+      '../../api/clinpgx-synk.ts',
+      '../../api/clinpgx-sok.ts',
+      '../clinpgx/lesing.ts',
+      '../../.github/workflows/clinpgx-synk.yml',
+    ]) {
       expect(existsSync(new URL(fil, import.meta.url)), fil).toBe(false)
     }
     expect(Object.keys(vercel.functions)).not.toContain('api/cpic-synk.ts')
+    expect(Object.keys(vercel.functions)).not.toContain('api/clinpgx-synk.ts')
     expect(stansetSvar('pubchem', 'PubChem')).toBeNull()
     expect(stansetSvar('cpic', 'CPIC', {})).toBeNull()
   })

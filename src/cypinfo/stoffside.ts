@@ -18,11 +18,12 @@ import type { Cypinfokilde, Cypinfoutvalg } from './lesing'
 import { NIVAER, type Niva } from './modell'
 
 /**
- * Hvem som ser CYPinfo på fagsidene. Systemarkitektene først (Peder 17.11.2026); `alle` slår det på for alle.
- * `les_cypinfo` håndhever det samme i databasen, så begge byttes i samme endring.
+ * Hvem som ser CYPinfo på fagsidene. Systemarkitektene først (Peder 17.11.2026), alle fra
+ * 23.11.2026 (Peder, #437). `les_cypinfo` håndhever det samme i databasen, så begge byttes i
+ * samme endring.
  */
 export type Cypinfopublikum = 'systemarkitekter' | 'alle'
-export const CYPINFO_VISES_FOR: Cypinfopublikum = 'systemarkitekter'
+export const CYPINFO_VISES_FOR: Cypinfopublikum = 'alle'
 
 /** Om den innloggede ser CYPinfo på fagsidene. */
 export const cypinfoSynlig = (r: { systemarkitekt: boolean }, publikum: Cypinfopublikum = CYPINFO_VISES_FOR): boolean =>
@@ -145,19 +146,38 @@ export function gensettittel(gener: readonly string[]): string {
   return `${gener.slice(0, -1).join(', ')} og ${gener.at(-1)} sammen`
 }
 
-/** Oppsummeringen av et legemiddels kort: genene, eller at de ikke er relevante. */
+/**
+ * Det CYPinfo sier om et legemiddel uten anbefalinger per gen: at ingen gener
+ * er relevante bare når kilden sier det (nivået `standard`), ellers kildens
+ * eget nivå, som «Lite eller ingen informasjon om metabolismevei» (#544).
+ * Oppsummeringen sier aldri mer enn kilden.
+ */
+function utenGenertekst(l: Cypinfolegemiddel): string {
+  const uten = l.utenRelevanteGener
+  if (!uten) return 'Ingen anbefalinger'
+  return uten.niva === 'standard' ? 'Ingen relevante gener' : uten.nivatekst
+}
+
+const forsteLiten = (t: string) => t.charAt(0).toLocaleLowerCase('nb') + t.slice(1)
+
+/** Oppsummeringen av et legemiddels kort: genene, eller det CYPinfo sier når det ikke har noen. */
 export function legemiddeloppsummering(l: Cypinfolegemiddel): string {
-  if (l.gensett.length === 0) return l.utenRelevanteGener ? 'Ingen relevante gener' : 'Ingen anbefalinger'
+  if (l.gensett.length === 0) return utenGenertekst(l)
   const gener = [...new Set(l.gensett.flatMap((s) => s.gener))]
   const antall = l.gensett.reduce((n, s) => n + s.rader.length, 0)
   return `${gener.join(', ')} · ${antall} ${antall === 1 ? 'anbefaling' : 'anbefalinger'}`
 }
 
-/** Det den lukkede seksjonen sier om CYPinfo: «CYPinfo: CYP2D6», eller ingenting uten legemidler. */
+/**
+ * Det den lukkede seksjonen sier om CYPinfo: «CYPinfo: CYP2D6», eller, uten
+ * gener, det CYPinfo sier om legemidlene («CYPinfo: ingen relevante gener»).
+ * Ingenting uten legemidler.
+ */
 export function oppsummerCypinfo(visning: Cypinfovisning): string | null {
   if (visning.legemidler.length === 0) return null
   const gener = [...new Set(visning.legemidler.flatMap((l) => l.gensett.flatMap((s) => s.gener)))].sort(sammenlign)
-  return `CYPinfo: ${gener.length > 0 ? gener.join(', ') : 'ingen relevante gener'}`
+  if (gener.length > 0) return `CYPinfo: ${gener.join(', ')}`
+  return `CYPinfo: ${[...new Set(visning.legemidler.map((l) => forsteLiten(utenGenertekst(l))))].join('; ')}`
 }
 
 /**

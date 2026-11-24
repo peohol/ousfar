@@ -19,10 +19,12 @@ tekstene og den faglige aksepten av CYPinfo-visningen) eies av OUSFAR Fag i
 #533; alt teknisk eies av OUSFAR Dev i #437.
 
 **Status 23.11.2026:** CYPinfo-katalogen synkroniseres hver uke og vises på
-fagsidene, men bare for systemarkitektene. CPIC er stanset siden 6.11.2026 med
-dataene slettet, og koden fjernes i PR #537. ClinPGx er i full drift (ukentlig
-synk, visning, søk og referanser på 104 fagsider). Oppslaget etter en pasients
-resultat (den tidligere etappe C) bygges ikke.
+fagsidene for alle (Peder 23.11.2026, fase C). CPIC er stanset siden 6.11.2026
+med dataene slettet, og koden er fjernet (#537). ClinPGx er stanset fra
+23.11.2026: appen leser og viser ingenting derfra, og synken og endepunktene
+svarer 410. Koden fjernes og dataene slettes etter en arkivkopi (fase C3 og D,
+Peders ja 23.11.2026). Oppslaget etter en pasients resultat (den tidligere
+etappe C) bygges ikke.
 
 **Avklart av Peder 17.11.2026:** OUSFAR skal vise hvordan de ulike genotypene
 (fenotypene) påvirker legemidlene, slik CYPinfo beskriver det, og ikke være et
@@ -47,8 +49,8 @@ CYPinfo driftes av Peders egen avdeling.
   etter ti døgn), så foreldede data aldri vises umerket.
 - **Historikken står.** Publiserte og historiske versjoner av fagsidene, de
   redaksjonelle henvisningene (også til CPIC og ClinPGx), endringsloggen og
-  migrasjonsfilene beholdes. Elementtypen `clinpgxkobling` og leseren av den
-  står, så gamle versjoner og sammenligninger kan åpnes.
+  migrasjonsfilene beholdes. Elementtypen `clinpgxkobling` og etiketten i
+  endringshistorikken står, så gamle versjoner og sammenligninger kan åpnes.
 - **Databasen slettes sist.** Tabeller og skjemaer slettes først når ingen kode
   leser dem, i en egen migrasjon med Peders særskilte ja.
 
@@ -195,6 +197,12 @@ under) og meldt at de prioriterte manglene er behandlet eller akseptert, og
 Peder har godkjent det som er reservert ham. Dev starter ikke fase C før
 statusen står i #533.
 
+**Peder 23.11.2026:** «Slett de gamle dataene og slå på CYPinfo for alle.»
+Fase C og D gjennomføres da før Fags aksept i #533 er ferdig. Fag hadde meldt
+at de prioriterte manglene er behandlet; kurateringene som ennå er i kontroll,
+og aksepttesten under, fullføres av Fag etter overgangen. Punkt 1 og 2 er gjort
+i samme PR (#551), og punkt 3 i den neste, sammen med punkt 2 i fase D.
+
 1. **CYPinfo for alle** (egen PR): `CYPINFO_VISES_FOR = 'alle'` og
    `les_cypinfo` tilbake til `intern.krev_aktivt_medlemskap()` i en ny
    migrasjon, i samme endring, med føring i endringsloggen. Referansen,
@@ -210,9 +218,13 @@ statusen står i #533.
    endepunktene, arbeidsflyten, visningen, referansene, søket, skjemaet,
    `clinpgxkoblinger.ts` med generatoren og dekningsregelen
    `clinpgxdekning.ts` (erstattet av `cypinfodekning.ts`). Elementtypen
-   `clinpgxkobling`, leseren og etiketten i endringshistorikken står, så gamle
-   versjoner kan åpnes. Koblingselementene på sidene slettes ikke; om de skal
-   avpubliseres redaksjonelt, avgjøres med Fag.
+   `clinpgxkobling` og etiketten i endringshistorikken står, så gamle
+   versjoner kan åpnes; leseren av dataene i den (`lesClinpgxkobling`) er
+   fjernet, siden ingenting viser dem lenger. Koblingselementene på sidene
+   slettes ikke og vises ikke; om de skal avpubliseres redaksjonelt, avgjøres
+   med Fag. Funksjonstesten har en CYPinfo-kontroll (`cypinfo`,
+   `cypinfovisning`) i stedet for ClinPGx, og «Hent nå» henter i én omgang
+   (bare ClinPGx brukte omgangene).
 4. Kontroll: alle publiserte fagsider åpnes; redigering, utkast,
    publisering, kurateringshistorikken, søket, referansenumrene og
    lesingene virker; en vanlig bruker ser CYPinfo og ingenting privilegert.
@@ -742,14 +754,15 @@ pasient noe sted, og fagsidene kaller aldri CYPinfo; de leser bare kopien.
 
 ## Visningen i «Farmakogenetikk»
 
-Bygd 17.11.2026, og foreløpig bare synlig for systemarkitektene
-(`CYPINFO_VISES_FOR` i `src/cypinfo/stoffside.ts`; `alle` slår den på for
-alle). For andre leses ingenting fra CYPinfo. Begrensningen håndheves også i
-databasen: `les_cypinfo` krever systemarkitekt (`intern.krev_systemarkitekt`)
-til visningen slås på for alle.
+Bygd 17.11.2026, først bare for systemarkitektene, og for alle fra
+23.11.2026 (`CYPINFO_VISES_FOR = 'alle'` i `src/cypinfo/stoffside.ts`;
+`systemarkitekter` setter den tilbake). Databasen følger bryteren:
+`les_cypinfo` krever et aktivt medlemskap (`20261123210000_cypinfo_for_alle.sql`);
+tilbake til bare systemarkitektene er `intern.krev_systemarkitekt` som i
+`20261117094000_cypinfo_visning.sql`, i samme endring som bryteren.
 
 CYPinfo får en egen gruppe, **«Anbefalinger fra CYPinfo»**, i seksjonen
-«Farmakogenetikk», under de redaksjonelle kortene og over ClinPGx (til ClinPGx er avviklet). De
+«Farmakogenetikk», under de redaksjonelle kortene. ClinPGx er stanset og vises ikke. De
 redaksjonelle kortene og panelteksten endres ikke, og CYPinfos tekst blandes
 aldri inn i dem.
 
@@ -901,9 +914,9 @@ Bygd 17.11.2026, beskrevet under «Visningen i «Farmakogenetikk»». Slik den e
   `Cypinfovisning.tsx` i `Farmakogenetikkpanel.tsx`.
 - Testene: `cypinfovisning.test.ts` (ordningen med hele utdraget: ett gen,
   TCA-ene med 25, sertralin med gen hver for seg og sammen, uten relevante
-  gener, en side uten CYPinfo, lesingen), `stoffside.test.tsx` (ingenting leses
-  eller vises for andre enn systemarkitekter; kortet for systemarkitektene) og
-  `cypinfo.test.ts` (tekstene lagres, ny lesing som metadata, `les_cypinfo`).
+  gener, en side uten CYPinfo, lesingen), `stoffside.test.tsx` (kortet for en
+  vanlig bruker, referansen og søket) og `cypinfo.test.ts` (tekstene lagres, ny
+  lesing som metadata, `les_cypinfo` for alle med aktivt medlemskap).
 
 ### E — Klinisk kontroll og visning for alle (nå fase C)
 
@@ -930,8 +943,9 @@ katalogen.
   gengruppe (i utdraget 25 + 9 + 20), så hver anbefaling har ID, nivå og tekst.
 - Et tomt svar, 5xx, tidsavbrudd og ny form stopper kjøringen, og katalogen fra
   før står.
-- Fagsiden viser ingenting fra CYPinfo, og leser ingenting, for andre enn dem
-  `CYPINFO_VISES_FOR` gjelder.
+- Fagsiden viser CYPinfo for alle (`CYPINFO_VISES_FOR = 'alle'`), og
+  oppsummeringen sier aldri «ingen relevante gener» når CYPinfo sier noe annet
+  (#544).
 
 **Klinisk aksepttest (fase C), med systemarkitektenes visning i produksjonen
 eller i det lokale testmiljøet. Resultatet føres i PR-en som slår visningen på

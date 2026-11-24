@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
 import { useKilde, type Kildetilstand } from './useKilde'
-import type { Farmakogenetikkutvalg } from '../../clinpgx/lesing'
-import { byggFarmakogenetikkvisning, type Farmakogenetikkvisning } from '../../clinpgx/stoffside'
 import { delIder, slaSammenIder, type Cypinfoutvalg } from '../../cypinfo/lesing'
 import { byggCypinfovisning, cypinfoForesporsel, type Cypinfovisning } from '../../cypinfo/stoffside'
 import { useFaginnholdskilde } from './Faginnholdskilde'
@@ -15,17 +13,11 @@ import { byggLabvisning, labkomponenter, type Labvisning } from '../../farmakolo
 
 export type { Kildetilstand } from './useKilde'
 
-export type Farmakogenetikktilstand = Kildetilstand<Farmakogenetikkutvalg, Farmakogenetikkvisning>
 export type Cypinfotilstand = Kildetilstand<Cypinfoutvalg, Cypinfovisning>
 export type Bivirkningstilstand = Kildetilstand<Bivirkningsdata, Bivirkningsvisning>
 
 /** En visning med om kilden bak den ennå hentes (`laster`), som teller med når referansene nummereres. */
 export type Medstatus<V> = V & { status: Kildetilstand<unknown, unknown>['status'] }
-
-/** ClinPGx-dataene for kjemikaliene siden er koblet til, ordnet slik seksjonen «Farmakogenetikk» viser dem. */
-export function useFarmakogenetikk(koblet: readonly string[]) {
-  return useKilde(useFaginnholdskilde().farmakogenetikk, koblet, byggFarmakogenetikkvisning)
-}
 
 /**
  * CYPinfo for legemidlene siden er koblet til: dem med en av FEST-ID-ene i

@@ -3,7 +3,7 @@ import { Ikon } from '../ikon/Ikon'
 import { Uthev } from '../Uthev'
 
 /**
- * Byggeklossene «Farmakogenetikk» bruker for dataene fra ClinPGx og CYPinfo:
+ * Byggeklossene «Farmakogenetikk» bruker for dataene fra CYPinfo:
  * gruppene med detaljkort og lenkene ut til kildene.
  */
 
@@ -11,17 +11,15 @@ import { Uthev } from '../Uthev'
 export function Gruppe({
   tittel,
   ingress,
-  dempet,
   children,
 }: {
   tittel: string
   /** En kort tekst under overskriften om hva gruppen er. */
   ingress?: ReactNode
-  dempet?: boolean
   children: ReactNode
 }) {
   return (
-    <div className="farmakogenetikk__gruppe" data-dempet={dempet || undefined}>
+    <div className="farmakogenetikk__gruppe">
       <p className="farmakogenetikk__gruppetittel" role="heading" aria-level={3}>
         <Uthev tekst={tittel} />
       </p>

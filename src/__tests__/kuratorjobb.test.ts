@@ -462,9 +462,8 @@ describe('funksjonstesten', () => {
       interaksjoner: 'ok',
       interaksjonsvisning: 'ok',
       bivirkninger: 'ikke_aktuelt',
-      // Kjemikaliet er koblet, men aldri hentet fra ClinPGx.
-      clinpgx: 'advarsel',
-      farmakogenetikkvisning: 'ok',
+      // Siden er koblet til FEST, men CYPinfo er aldri hentet i denne databasen.
+      cypinfo: 'advarsel',
       // PubChem og Farmakologiportalen er aldri hentet i denne databasen.
       kjemi: 'advarsel',
       kjemivisning: 'ok',
@@ -480,15 +479,33 @@ describe('funksjonstesten', () => {
     expect(Object.keys(resultat).sort()).toEqual(['kontroller', 'status', 'stoff'])
   })
 
-  it('melder ClinPGx som ikke aktuell, uten å lese noe, når kilden er stanset', async () => {
+  it('melder CYPinfo som ikke aktuell, uten å lese noe, når kilden er stanset', async () => {
     const stans = { fra: '2026-12-01', grunn: 'Syntetisk grunn.' }
-    const resultat = await funksjonstest(brukerklient, 'amitriptylin', { stansede: { clinpgx: stans } })
-    expect(resultat.kontroller.find((k) => k.id === 'clinpgx')).toEqual({
-      id: 'clinpgx',
+    const resultat = await funksjonstest(brukerklient, 'amitriptylin', { stansede: { cypinfo: stans } })
+    expect(resultat.kontroller.find((k) => k.id === 'cypinfo')).toEqual({
+      id: 'cypinfo',
       status: 'ikke_aktuelt',
-      melding: 'Stanset 01.12.2026. Syntetisk grunn. Ingenting hentes eller vises fra ClinPGx.',
+      melding: 'Stanset 01.12.2026. Syntetisk grunn. Ingenting hentes eller vises fra CYPinfo.',
     })
-    expect(resultat.kontroller.some((k) => k.id === 'farmakogenetikkvisning')).toBe(false)
+    expect(resultat.kontroller.some((k) => k.id === 'cypinfovisning')).toBe(false)
+    // ClinPGx er fjernet (#437): funksjonstesten har ingen ClinPGx-kontroll.
+    expect(resultat.kontroller.some((k) => k.id === 'clinpgx' || k.id === 'farmakogenetikkvisning')).toBe(false)
+  })
+
+  it('leser CYPinfo med de samme ID-ene som siden, og melder når kopien er fersk', async () => {
+    const sporsmal: unknown[] = []
+    const na = new Date().toISOString()
+    const klient = {
+      rpc: async (funksjon: string, argumenter?: Record<string, unknown>) => {
+        if (funksjon !== 'les_cypinfo') return brukerklient.rpc(funksjon, argumenter)
+        sporsmal.push(argumenter)
+        return { data: { kilde: { navn: 'CYPinfo', endret_kl: na, kontrollert_kl: na }, legemidler: [], anbefalinger: [], genresultater: [] }, error: null }
+      },
+    } as unknown as SupabaseClient
+    const resultat = await funksjonstest(klient, 'amitriptylin')
+    expect(resultat.kontroller.find((k) => k.id === 'cypinfo')).toMatchObject({ status: 'ok', rpc: 'les_cypinfo', antall: { legemidler: 0, anbefalinger: 0 } })
+    expect(sporsmal).toHaveLength(1)
+    expect((sporsmal[0] as { fest_ider: string[] }).fest_ider.length).toBeGreaterThan(0)
   })
 
   it('sier fra når en vanlig bruker ser utkastet', async () => {
@@ -499,7 +516,7 @@ describe('funksjonstesten', () => {
 
   it('melder en side som ikke finnes, og hopper over det som trenger den', async () => {
     const resultat = await funksjonstest(brukerklient, 'finnes-ikke')
-    expect(utfall(resultat.kontroller)).toMatchObject({ les_stoff: 'feil', fest: 'feil', clinpgx: 'feil', stoffliste: 'feil' })
+    expect(utfall(resultat.kontroller)).toMatchObject({ les_stoff: 'feil', fest: 'feil', cypinfo: 'feil', stoffliste: 'feil' })
     expect(resultat.status).toBe('feil')
   })
 
@@ -507,7 +524,8 @@ describe('funksjonstesten', () => {
     const klient = {
       rpc: async (funksjon: string, argumenter?: Record<string, unknown>) => {
         if (funksjon === 'les_legemidler') return { data: null, error: { message: 'Syntetisk hemmelig verdi', code: '22P02' } }
-        if (funksjon === 'les_farmakogenetikk') throw new TypeError('Syntetisk hemmelig verdi')
+        if (funksjon === 'les_cypinfo') throw new TypeError('Syntetisk hemmelig verdi')
+        if (funksjon === 'les_farmakogenetikk') throw new Error('ClinPGx er fjernet og skal ikke leses.')
         if (funksjon === 'les_cpic') throw new Error('CPIC er fjernet og skal ikke leses.')
         if (funksjon === 'les_bivirkninger') {
           return {
@@ -523,7 +541,7 @@ describe('funksjonstesten', () => {
     } as unknown as SupabaseClient
     const resultat = await funksjonstest(klient, 'amitriptylin')
     expect(resultat.kontroller.find((k) => k.id === 'fest')).toMatchObject({ status: 'feil', melding: 'les_legemidler feilet (uten kode; teksten publiseres ikke).' })
-    expect(resultat.kontroller.find((k) => k.id === 'clinpgx')).toMatchObject({ status: 'feil', melding: 'les_farmakogenetikk feilet (TypeError; teksten publiseres ikke).' })
+    expect(resultat.kontroller.find((k) => k.id === 'cypinfo')).toMatchObject({ status: 'feil', melding: 'les_cypinfo feilet (TypeError; teksten publiseres ikke).' })
     // CPIC er fjernet (#437): funksjonstesten har ingen CPIC-kontroll og leser ingenting derfra.
     expect(resultat.kontroller.some((k) => k.id === 'cpic' || k.id === 'cpicvisning')).toBe(false)
     // Teksten i feilene fra databasen og appen kommer aldri med i resultatet.

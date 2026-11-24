@@ -7,7 +7,7 @@ den tekniske hjelpen kuratoren får fra GitHub Actions under en kuratering
 - **Funksjonstesten** leser en fagside med de samme kallene og den samme koden
   appen bruker, som en vanlig innlogget bruker, og kontrollerer at hver del
   virker: `les_stoff`, legemiddeldataene fra FEST, bivirkningene fra
-  preparatomtalene, ClinPGx, de kjemiske grunndataene fra PubChem og
+  preparatomtalene, CYPinfo, de kjemiske grunndataene fra PubChem og
   laboratorieanalysene fra Farmakologiportalen. Kuratorens Supabase-tilkobling leser
   databasen direkte og kan ikke gjøre dette.
 - **SPC-hentingen** henter de originale preparatomtalene (PDF) fra DMP,
@@ -158,7 +158,7 @@ verste blant delene sine.
 | `ok` | Kontrollert og i orden |
 | `advarsel` | Virker, men noe bør ses på, f.eks. data som ikke er hentet på lenge |
 | `feil` | Virker ikke, eller ga et svar appen ikke kan bruke |
-| `ikke_aktuelt` | Gjelder ikke stoffet, f.eks. en side uten kobling til ClinPGx |
+| `ikke_aktuelt` | Gjelder ikke stoffet, f.eks. en side uten noe legemiddel i CYPinfo |
 
 En kontroll har `id`, `status`, `melding` (på norsk), og eventuelt `rpc`,
 `ms` og `antall`.
@@ -189,7 +189,7 @@ En kontroll har `id`, `status`, `melding` (på norsk), og eventuelt `rpc`,
 | `fest`, `preparatvisning` | `les_legemidler` for virkestoffene siden er koblet til, og preparatseksjonen. Advarsel når FEST-kopien er eldre enn tre døgn |
 | `interaksjoner`, `interaksjonsvisning` | `les_interaksjoner` og interaksjonsseksjonen |
 | `bivirkninger`, `bivirkningsvisning` | `les_bivirkninger`, og at appen viser alle radene den får (`antall.rader` mot `antall.rader_appen_viser`) |
-| `clinpgx`, `farmakogenetikkvisning` | `les_farmakogenetikk` for kjemikaliene siden er koblet til. Advarsel for et kjemikalie som ikke er hentet, har feil, eller når ClinPGx er eldre enn ti døgn |
+| `cypinfo`, `cypinfovisning` | `les_cypinfo` for de samme legemidlene som siden (FEST-koblingen og koblingslisten), og CYPinfo-kortene i «Farmakogenetikk». Ikke aktuell når siden ikke har noe CYPinfo kan ha, eller CYPinfo er stanset. Advarsel når kopien er eldre enn ti døgn eller aldri er hentet |
 | `kjemi`, `kjemivisning` | `les_kjemi` for forbindelsene stoffet har i registeret over forbindelser (`docs/kjemi.md`), og seksjonen «Kjemiske grunndata» med formel og molekylvekt. Feil når svaret har en forbindelse stoffet ikke er koblet til, når InChIKey eller formel i kopien ikke er den koblingen ble kontrollert mot, eller når appen forkaster rader. Advarsel for en forbindelse som ikke er hentet eller ikke er koblet sikkert, og når PubChem er eldre enn ti døgn |
 | `laboratorieanalyser`, `laboratorievisning` | `les_laboratorieanalyser` for komponentene i Farmakologiportalen forbindelsene er koblet til (`docs/farmakologiportalen.md`), og seksjonen «Analyse ved norske laboratorier» med måleområdene i hver enhet brukeren kan velge. Feil når en koblet komponent mangler i kopien eller er en gruppeanalyse, når appen forkaster rader, eller når en verifisert rad ikke regnes om selv om PubChem har molekylvekten. Advarsel når komponenten har fått et annet navn i portalen, og når kopien er eldre enn tre døgn eller aldri er hentet |
 
