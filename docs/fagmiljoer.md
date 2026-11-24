@@ -1475,6 +1475,20 @@ med fagmiljøets navn, og ingenting annet. Funksjonen tar ingen argumenter, så
 et annet fagmiljø kan ikke bes om. Katalogen endres med en ny migrasjon; appen
 skriver ikke til den.
 
+**Typene appen kjenner.** Appen avviser hele katalogen når den har en type
+den ikke kjenner. Den sender derfor typene den kjenner, i overskriften
+`x-far-fortolkningstyper` (kommaskilt, fra `FORTOLKNINGSTYPER`), og katalogen
+gir bare oppføringene av dem, og bare metodene som har noen av dem eller ingen
+oppføringer i det hele tatt
+(`20261124140000_analyttkatalog_etter_klientens_typer.sql`). En app uten
+overskriften er fra før den kom, og får de fire typene som fantes da
+(`konsentrasjon`, `scenario`, `thc`, `etg`). Slik beholder en fane med en eldre
+app katalogen sin når en ny type legges inn, også når fagmiljøet byttes, og en
+ny type kan aktiveres uten å vente på at alle har oppdatert. En ny type legges
+bare til i `FORTOLKNINGSTYPER`; listen for appene uten overskrift endres
+aldri. Utrullingen kan skje i hvilken som helst rekkefølge: en database uten
+endringen ser bort fra overskriften (`src/__tests__/analyttkatalogTyper.test.ts`).
+
 **Appen.** Katalogen hentes når appen åpnes, før noe tegnes opp
 (`src/katalog/Analyttkatalogkilde.tsx`, `App.tsx`), og settes opp på nytt når
 arbeidskonteksten byttes, så ingenting fra det forrige fagmiljøet blir

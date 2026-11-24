@@ -20,8 +20,8 @@
 -- Kurvene er bestillingens, med alle oppgitte sifre. Marginene og z er de
 -- samme som THC-syreregelsettets.
 --
--- Forutsetter at appen med typen `be_urin` (PR #564) er ute: en eldre app
--- ville avvist hele katalogen.
+-- En app uten typen `be_urin` får ikke oppføringen eller metoden URUS
+-- (20261124140000_analyttkatalog_etter_klientens_typer.sql).
 --
 -- Tilbakeføring: en ny migrasjon som sletter oppføringen `be-urin` (kodene
 -- følger med), metoden URUS og modellen i OUS Klinisk farmakologi. Ingen

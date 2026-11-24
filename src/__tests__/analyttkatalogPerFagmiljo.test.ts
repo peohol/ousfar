@@ -27,7 +27,7 @@ import { byggKatalog, lesKatalogdata, type Analyttkatalog } from '../domain/anal
 import { etgTilfeller, type Etgtilfeller } from '../domain/etg'
 import { OUS_KATALOGDATA } from '../domain/ouskatalog'
 import { lesScenarioregler, reglerForModul, tilScenarioregler } from '../faginnhold/scenarioregler'
-import { lesAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
+import { katalogkall, lesAnalyttkatalog } from '../katalog/Analyttkatalogkilde'
 import { byggPersongalleri, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { faginnholdskall, feilFra, nyDatabase, som, type Faginnholdskall } from './hjelp/testdatabase'
 
@@ -69,7 +69,7 @@ const LAGT_TIL_ETTER_FLYTTINGEN = { metoder: ['URUS'], oppforinger: ['be-urin'] 
 
 /** Katalogen personen får, uten det som er lagt til etter flyttingen. */
 async function katalogUtenTillegg(p: Person): Promise<Analyttkatalog> {
-  const { data, error } = await kall.klientFor(g.id[p]).rpc('les_analyttkatalog')
+  const { data, error } = await katalogkall(kall.klientFor(g.id[p]))
   if (error) throw error
   const alt = lesKatalogdata(data)
   for (const kode of LAGT_TIL_ETTER_FLYTTINGEN.metoder) expect(alt.metoder.map((m) => m.kode)).toContain(kode)

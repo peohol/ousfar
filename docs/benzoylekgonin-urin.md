@@ -149,5 +149,7 @@ Nettleserkontrollen (`src/__tests__/qa/benzoylekgoninnettleser.ts`, lokalt
 testmiljø) prøver den aktiverte oppføringen og modellen med oppdiktede
 prøveverdier.
 
-Appen må ha vært ute med denne koden før oppføringen legges inn: en eldre
-app kjenner ikke typen `be_urin` og ville avvist hele katalogen.
+En eldre app kjenner ikke typen `be_urin` og ville avvist hele katalogen.
+Katalogen gir derfor bare typene appen oppgir at den kjenner, og en app fra
+før dette får ikke oppføringen eller metoden URUS (docs/fagmiljoer.md,
+«Typene appen kjenner»).
