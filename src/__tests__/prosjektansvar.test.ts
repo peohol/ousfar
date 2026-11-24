@@ -7,6 +7,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
+  KONTROLLFILER,
   KONTROLLNAVN,
   PROSJEKTETIKETTER,
   REGLER_STI,
@@ -20,6 +21,7 @@ import {
   prerForSak,
   prerForSha,
   somSak,
+  synkEtiketter,
   vurderAnsvarlige,
   vurderEtiketter,
   vurderOgMeld,
@@ -35,6 +37,7 @@ const ARKITEKTER = SYSTEMARKITEKTER as Map<string, string>
 const ETIKETTER = [...PROSJEKTER.keys()]
 const REPO = 'peohol/ousfar'
 const les = (sti: string) => readFileSync(new URL(`../../${sti}`, import.meta.url), 'utf8')
+const oppramsing = (liste: string[]) => `${liste.slice(0, -1).join(', ')} eller ${liste.at(-1)}`
 const vurder = (etiketter: string[]) => vurderEtiketter(etiketter) as { ok: boolean; melding: string; etikett?: string; prosjekt?: string }
 
 /** Kravet om ansvarlig og arbeidsoppgave gjelder fra da; PR-ene under er opprettet senere med mindre annet er sagt. */
@@ -54,13 +57,41 @@ const sak = (felt: Partial<Sak> = {}): Sak => ({ erPr: false, etiketter: ['ansva
 const saker = (liste: Record<number, Sak | null> = { 477: sak() }) => new Map(Object.entries(liste).map(([n, s]) => [Number(n), s]))
 const vurderHele = (p = pr(), s = saker(), aktivertKl: string | null = AKTIVERT) => vurderPr({ pr: p, saker: s, aktivertKl, repo: REPO }) as Vurdering
 
+/** En gyldig prosjektoppføring i regelfila. */
+const oppforing = (navn: string, felt: Record<string, unknown> = {}) => ({ navn, farge: '1d76db', beskrivelse: `${navn} eier PR-en (docs/prosjektansvar.md)`, ...felt })
+const regelfil = (prosjekter: unknown, systemarkitekter: unknown = { peohol: 'Peder' }) => JSON.stringify({ prosjekter, systemarkitekter })
+type Regler = { prosjekter: Map<string, string>; etiketter: Map<string, { navn: string; farge: string; beskrivelse: string }>; systemarkitekter: Map<string, string> }
+const REGELFIL = lesRegler(les(REGLER_STI)) as Regler
+
 describe('reglene i .github/prosjektansvar.json', () => {
-  it('kjenner nøyaktig de tre prosjektene', () => {
+  it('kjenner nøyaktig de fire prosjektene', () => {
     expect(Object.fromEntries(PROSJEKTER)).toEqual({
       'ansvar:dev': 'OUSFAR Dev',
       'ansvar:fag': 'OUSFAR Fag',
       'ansvar:verktoy': 'OUSFAR Verktøy',
+      'ansvar:personal': 'OUSFAR Personal',
     })
+  })
+
+  it('er den samme fila kontrollen bruker: reglene skriptet laster, er de som står i fila', () => {
+    expect(PROSJEKTER).toEqual(REGELFIL.prosjekter)
+    expect(ARKITEKTER).toEqual(REGELFIL.systemarkitekter)
+    // Uten egne regler i kallet brukes fila, også for den nye etiketten.
+    expect(vurder(['ansvar:personal'])).toMatchObject({ ok: true, etikett: 'ansvar:personal', prosjekt: 'OUSFAR Personal' })
+  })
+
+  it('har farge og beskrivelse for hver etikett, som GitHub godtar, og ulike farger', () => {
+    expect([...REGELFIL.etiketter.keys()]).toEqual(ETIKETTER)
+    for (const [etikett, { navn, farge, beskrivelse }] of REGELFIL.etiketter) {
+      expect(farge, etikett).toMatch(/^[0-9a-f]{6}$/)
+      expect(beskrivelse.length, etikett).toBeLessThanOrEqual(100)
+      expect(beskrivelse, etikett).toMatch(new RegExp(`^${navn} eier PR-en`))
+    }
+    expect(new Set([...REGELFIL.etiketter.values()].map((e) => e.farge)).size).toBe(REGELFIL.etiketter.size)
+    // De eksisterende etikettene beholder fargen og beskrivelsen de har i GitHub i dag.
+    expect(REGELFIL.etiketter.get('ansvar:dev')).toMatchObject({ farge: '1d76db', beskrivelse: 'OUSFAR Dev eier PR-en: appens generelle UI, UX og infrastruktur (docs/prosjektansvar.md)' })
+    expect(REGELFIL.etiketter.get('ansvar:fag')).toMatchObject({ farge: '0e8a16' })
+    expect(REGELFIL.etiketter.get('ansvar:verktoy')).toMatchObject({ farge: 'd93f0b' })
   })
 
   it('kjenner systemarkitektene ved GitHub-brukeren, i dag Peder og Max', () => {
@@ -68,10 +99,23 @@ describe('reglene i .github/prosjektansvar.json', () => {
   })
 
   it('avviser en ufullstendig eller feil regelfil', () => {
-    expect(() => lesRegler('{"prosjekter":{"ansvar:dev":"OUSFAR Dev"}}')).toThrow(/systemarkitekter/)
-    expect(() => lesRegler('{"prosjekter":{},"systemarkitekter":{"peohol":"Peder"}}')).toThrow(/prosjekter/)
-    expect(() => lesRegler('{"prosjekter":{"dev":"OUSFAR Dev"},"systemarkitekter":{"peohol":"Peder"}}')).toThrow(/ansvar:/)
-    expect(() => lesRegler('{"prosjekter":{"ansvar:dev":"OUSFAR Dev"},"systemarkitekter":["peohol"]}')).toThrow(/systemarkitekter/)
+    const dev = { 'ansvar:dev': oppforing('OUSFAR Dev') }
+    expect(lesRegler(regelfil(dev)).prosjekter.get('ansvar:dev')).toBe('OUSFAR Dev')
+    expect(() => lesRegler(JSON.stringify({ prosjekter: dev }))).toThrow(/systemarkitekter/)
+    expect(() => lesRegler(regelfil({}))).toThrow(/prosjekter/)
+    expect(() => lesRegler(regelfil({ dev: oppforing('OUSFAR Dev') }))).toThrow(/ansvar:/)
+    // Navn GitHub ikke kan opprette som etikett, godtas ikke heller.
+    expect(() => lesRegler(regelfil({ [`ansvar:${'x'.repeat(44)}`]: oppforing('OUSFAR X') }))).toThrow(/høyst 50 tegn/)
+    expect(lesRegler(regelfil({ [`ansvar:${'x'.repeat(43)}`]: oppforing('OUSFAR X') })).prosjekter.size).toBe(1)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev ': oppforing('OUSFAR Dev') }))).toThrow(/uten mellomrom/)
+    expect(() => lesRegler(regelfil(dev, ['peohol']))).toThrow(/systemarkitekter/)
+    // Den gamle formen uten farge og beskrivelse, og feil i feltene, godtas ikke.
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': 'OUSFAR Dev' }))).toThrow(/ugyldig «prosjekter»: ansvar:dev/)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': oppforing(' ') }))).toThrow(/ugyldig «prosjekter»/)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': oppforing('OUSFAR Dev', { farge: '#1d76db' }) }))).toThrow(/ugyldig «prosjekter»/)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': oppforing('OUSFAR Dev', { farge: '1D76DB' }) }))).toThrow(/ugyldig «prosjekter»/)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': oppforing('OUSFAR Dev', { beskrivelse: 'x'.repeat(101) }) }))).toThrow(/ugyldig «prosjekter»/)
+    expect(() => lesRegler(regelfil({ 'ansvar:dev': oppforing('OUSFAR Dev', { beskrivelse: undefined }) }))).toThrow(/ugyldig «prosjekter»/)
   })
 })
 
@@ -87,16 +131,16 @@ describe('prosjektetiketten', () => {
       const v = vurder(etiketter)
       expect(v.ok).toBe(false)
       expect(v.melding).toMatch(/^PR-en mangler prosjektetikett\./)
-      expect(v.melding).toContain('ansvar:dev, ansvar:fag eller ansvar:verktoy')
+      expect(v.melding).toContain('ansvar:dev, ansvar:fag, ansvar:verktoy eller ansvar:personal')
       expect(v.melding).toContain('docs/prosjektansvar.md')
     }
   })
 
-  it('avviser to eller tre prosjektetiketter og navngir dem', () => {
+  it('avviser to eller flere prosjektetiketter og navngir dem', () => {
     const to = vurder(['ansvar:dev', 'ansvar:verktoy'])
     expect(to.ok).toBe(false)
     expect(to.melding).toContain('2 prosjektetiketter (ansvar:dev, ansvar:verktoy), men skal ha nøyaktig én')
-    expect(vurder(ETIKETTER)).toMatchObject({ ok: false, melding: expect.stringContaining('3 prosjektetiketter') })
+    expect(vurder(ETIKETTER)).toMatchObject({ ok: false, melding: expect.stringContaining(`${ETIKETTER.length} prosjektetiketter`) })
   })
 
   it('regner en ukjent eller feilstavet ansvar-etikett som prosjektetikett, men ikke som gyldig', () => {
@@ -247,6 +291,79 @@ describe('vurderingen av en PR (etter overgangen)', () => {
     expect(v.ok).toBe(false)
     expect(v.feil).toHaveLength(3)
     expect(v.melding.split('\n')).toHaveLength(3)
+  })
+})
+
+describe('OUSFAR Personal, for begge systemarkitektene', () => {
+  const PERSONAL = 'ansvar:personal'
+  const personalPr = (login: string, felt: Parameters<typeof pr>[0] = {}) => pr({ etiketter: [PERSONAL, 'Til ChatGPT-kontroll – ikke merge'], ansvarlige: [login], ...felt })
+  const personalSak = (login: string, felt: Partial<Sak> = {}) => sak({ etiketter: [PERSONAL], ansvarlige: [login], ...felt })
+
+  it.each(ETIKETTER.flatMap((etikett) => [...ARKITEKTER.keys()].map((login) => [etikett, login] as const)))('%s med %s: grønn, og rutet til riktig ChatGPT-prosjekt og person', (etikett, login) => {
+    const v = vurderHele(pr({ etiketter: [etikett], ansvarlige: [login] }), saker({ 477: sak({ etiketter: [etikett], ansvarlige: [login] }) }))
+    expect(v).toMatchObject({ ok: true, overgang: false, feil: [], advarsler: [] })
+    expect(v.melding).toContain(`${PROSJEKTER.get(etikett)} eier PR-en (${etikett}), og ${ARKITEKTER.get(login)} (${login}) er ansvarlig etter Issue #477`)
+    expect(v.melding).toContain(`ChatGPT-prosjektet ${PROSJEKTER.get(etikett)} med «GitHub-ansvarlig: ${login}»`)
+    // Isolert: ingen andre prosjekter eller personer nevnes.
+    for (const annen of ETIKETTER.filter((e) => e !== etikett)) expect(v.melding).not.toContain(annen)
+    for (const annen of [...ARKITEKTER.keys()].filter((l) => l !== login)) expect(v.melding).not.toContain(annen)
+  })
+
+  it.each([...ARKITEKTER.keys()])('avviser en Personal-PR for %s med manglende, ukjent eller flere prosjektetiketter', (login) => {
+    const issue = saker({ 477: personalSak(login) })
+    expect(vurderHele(personalPr(login, { etiketter: [] }), issue).feil).toEqual([expect.stringMatching(/^PR-en mangler prosjektetikett/)])
+    expect(vurderHele(personalPr(login, { etiketter: ['ansvar:personell'] }), issue).feil).toEqual([expect.stringContaining('«ansvar:personell» er ikke en gyldig prosjektetikett')])
+    expect(vurderHele(personalPr(login, { etiketter: ['Ansvar:Personal'] }), issue).ok).toBe(false)
+    expect(vurderHele(personalPr(login, { etiketter: [PERSONAL, 'ansvar:dev'] }), issue).feil).toEqual([expect.stringContaining('2 prosjektetiketter (ansvar:personal, ansvar:dev)')])
+    expect(vurderHele(personalPr(login), saker({ 477: personalSak(login, { etiketter: [] }) })).feil).toEqual([expect.stringMatching(/^Issue #477 mangler prosjektetikett/)])
+    expect(vurderHele(personalPr(login), saker({ 477: personalSak(login, { etiketter: [PERSONAL, 'ansvar:verktoy'] }) })).feil).toEqual([expect.stringContaining('Issue #477 har 2 prosjektetiketter')])
+  })
+
+  it.each([...ARKITEKTER.keys()])('avviser en Personal-PR for %s med manglende eller flere assignees, på PR-en eller Issue-et', (login) => {
+    const issue = saker({ 477: personalSak(login) })
+    expect(vurderHele(personalPr(login, { ansvarlige: [] }), issue).feil).toEqual([expect.stringMatching(/^PR-en har ingen ansvarlig/)])
+    expect(vurderHele(personalPr(login, { ansvarlige: ['peohol', 'maxhag'] }), issue).feil).toEqual([expect.stringContaining('2 ansvarlige (peohol, maxhag)')])
+    expect(vurderHele(personalPr(login), saker({ 477: personalSak(login, { ansvarlige: [] }) })).feil).toEqual([expect.stringMatching(/^Issue #477 har ingen ansvarlig/)])
+    expect(vurderHele(personalPr(login), saker({ 477: personalSak(login, { ansvarlige: ['peohol', 'maxhag'] }) })).feil).toEqual([expect.stringContaining('Issue #477 har 2 ansvarlige')])
+    expect(vurderHele(personalPr(login, { tekst: '## Sammendrag\nUten arbeidsoppgave.' }), saker({})).feil).toEqual([expect.stringMatching(/^PR-en viser ikke til en arbeidsoppgave/)])
+  })
+
+  it('avviser ulik prosjektetikett eller ulik ansvarlig på Issue og PR, begge veier', () => {
+    expect(vurderHele(personalPr('peohol'), saker({ 477: sak({ ansvarlige: ['peohol'] }) })).feil).toEqual([expect.stringContaining('Issue #477 har prosjektetiketten ansvar:dev, men PR-en ansvar:personal')])
+    expect(vurderHele(pr(), saker({ 477: personalSak('peohol') })).feil).toEqual([expect.stringContaining('Issue #477 har prosjektetiketten ansvar:personal, men PR-en ansvar:dev')])
+    expect(vurderHele(personalPr('maxhag'), saker({ 477: personalSak('peohol') })).feil).toEqual([expect.stringContaining('Issue #477 er tildelt peohol, men PR-en maxhag')])
+    expect(vurderHele(personalPr('peohol'), saker({ 477: personalSak('maxhag') })).feil).toEqual([expect.stringContaining('Issue #477 er tildelt maxhag, men PR-en peohol')])
+  })
+
+  it('en grønn Personal-PR blir rød når Issue-ets etikett eller ansvarlig endres etterpå', async () => {
+    let etiketter = [{ name: PERSONAL }]
+    let ansvarlige = [{ login: 'maxhag' }]
+    const { github } = falskGithub(vanlig({ 'GET repos/peohol/ousfar/issues/477': () => ghSak({ labels: etiketter, assignees: ansvarlige }) }))
+    const rå = ghPr({ labels: [{ name: PERSONAL }], assignees: [{ login: 'maxhag' }] })
+    expect(((await kontrollerPr(github, REPO, rå, 'main')) as Vurdering).ok).toBe(true)
+    etiketter = [{ name: 'ansvar:dev' }]
+    expect(((await kontrollerPr(github, REPO, rå, 'main')) as Vurdering).feil).toEqual([expect.stringContaining('Issue #477 har prosjektetiketten ansvar:dev, men PR-en ansvar:personal')])
+    etiketter = [{ name: PERSONAL }]
+    ansvarlige = [{ login: 'peohol' }]
+    expect(((await kontrollerPr(github, REPO, rå, 'main')) as Vurdering).feil).toEqual([expect.stringContaining('Issue #477 er tildelt peohol, men PR-en maxhag')])
+    // Og når PR-en selv får en etikett til.
+    ansvarlige = [{ login: 'maxhag' }]
+    expect(((await kontrollerPr(github, REPO, { ...rå, labels: [{ name: PERSONAL }, { name: 'ansvar:verktoy' }] }, 'main')) as Vurdering).ok).toBe(false)
+  })
+
+  it('gir en ny Personal-PR uten Issue og ansvarlig ingen overgang: skjæringstidspunktet står fast når regelfila endres', async () => {
+    // Fila er endret senere (som når Personal legges til), men den eldste commiten avgjør.
+    const { github } = falskGithub({
+      'GET repos/peohol/ousfar/commits?sha=main&path=.github%2Fprosjektansvar.json': [commit('2026-11-24T12:00:00Z'), commit('2026-11-21T00:00:00Z'), commit(AKTIVERT)],
+      'GET repos/peohol/ousfar/pulls/500/files': [{ filename: 'docs/personal.md', status: 'modified' }],
+    })
+    expect(await hentAktivering(github, REPO, 'main')).toBe(AKTIVERT)
+    const ny = ghPr({ created_at: '2026-11-25T08:00:00Z', body: '## Sammendrag\nUten arbeidsoppgave.', labels: [{ name: PERSONAL }], assignees: [] })
+    const v = (await kontrollerPr(github, REPO, ny, 'main')) as Vurdering
+    expect(v).toMatchObject({ ok: false, overgang: false })
+    expect(v.feil).toEqual([expect.stringMatching(/^PR-en har ingen ansvarlig/), expect.stringMatching(/^PR-en viser ikke til en arbeidsoppgave/)])
+    // En PR fra før skjæringstidspunktet beholder overgangen, uansett etikett.
+    expect(((await kontrollerPr(github, REPO, { ...ny, created_at: FOR }, 'main')) as Vurdering)).toMatchObject({ ok: true, overgang: true })
   })
 })
 
@@ -484,9 +601,53 @@ describe('den betrodde kjøringen', () => {
   })
 })
 
+describe('etikettene i GitHub', () => {
+  const regler = lesRegler(regelfil({ 'ansvar:dev': oppforing('OUSFAR Dev'), 'ansvar:personal': oppforing('OUSFAR Personal', { farge: '5319e7' }) })) as Regler
+  const sendt = (kall: string[]) => kall.filter((k) => !k.startsWith('GET'))
+
+  it('oppretter en etikett som mangler, med farge og beskrivelse fra regelfila', async () => {
+    const data: unknown[] = []
+    const { github, kall } = falskGithub({ 'GET repos/peohol/ousfar/labels/ansvar%3Adev': { name: 'ansvar:dev', color: '1d76db', description: 'OUSFAR Dev eier PR-en (docs/prosjektansvar.md)' }, 'POST repos/peohol/ousfar/labels': (n: number) => data.push(n) })
+    const logg = await synkEtiketter(github, REPO, regler)
+    expect(logg).toEqual(['ansvar:dev: uendret.', 'ansvar:personal: opprettet.'])
+    expect(sendt(kall)).toEqual(['POST repos/peohol/ousfar/labels'])
+    expect(kall).toContain('GET repos/peohol/ousfar/labels/ansvar%3Apersonal')
+  })
+
+  it('sender navn, farge og beskrivelse slik GitHub vil ha dem', async () => {
+    const sendtData: { sti: string; data: unknown }[] = []
+    const fetch = async (url: string, init: { method: string; body?: string }) => {
+      const sti = url.replace('https://api.github.com/', '')
+      if (init.method !== 'GET') sendtData.push({ sti, data: JSON.parse(init.body!) })
+      if (init.method === 'GET' && sti.endsWith('ansvar%3Adev')) return { ok: true, status: 200, text: async () => JSON.stringify({ name: 'Ansvar:Dev', color: 'FFFFFF', description: null }) }
+      if (init.method === 'GET') return { ok: false, status: 404, text: async () => '{}' }
+      return { ok: true, status: 200, text: async () => '{}' }
+    }
+    expect(await synkEtiketter(lagGithub({ token: 'x', fetch }), REPO, regler)).toEqual([`ansvar:dev: rettet etter ${REGLER_STI}.`, 'ansvar:personal: opprettet.'])
+    expect(sendtData).toEqual([
+      { sti: 'repos/peohol/ousfar/labels/ansvar%3Adev', data: { new_name: 'ansvar:dev', color: '1d76db', description: 'OUSFAR Dev eier PR-en (docs/prosjektansvar.md)' } },
+      { sti: 'repos/peohol/ousfar/labels', data: { name: 'ansvar:personal', color: '5319e7', description: 'OUSFAR Personal eier PR-en (docs/prosjektansvar.md)' } },
+    ])
+  })
+
+  it('lar etiketter som ikke står i fila, være, og sletter aldri noe', async () => {
+    const { github, kall } = falskGithub({ 'GET repos/peohol/ousfar/labels/': (n: number) => ({ name: n === 1 ? 'ansvar:dev' : 'ansvar:personal', color: n === 1 ? '1d76db' : '5319e7', description: n === 1 ? 'OUSFAR Dev eier PR-en (docs/prosjektansvar.md)' : 'OUSFAR Personal eier PR-en (docs/prosjektansvar.md)' }) })
+    expect(await synkEtiketter(github, REPO, regler)).toEqual(['ansvar:dev: uendret.', 'ansvar:personal: uendret.'])
+    expect(sendt(kall)).toEqual([])
+    expect(kall.some((k) => k.startsWith('DELETE') || k.includes('/labels?'))).toBe(false)
+  })
+
+  it('bruker regelfila når ingen regler er gitt, så den nye etiketten kommer med', async () => {
+    const { github, kall } = falskGithub({ 'POST repos/peohol/ousfar/labels': {} })
+    expect(await synkEtiketter(github, REPO)).toEqual(ETIKETTER.map((e) => `${e}: opprettet.`))
+    expect(kall.filter((k) => k.startsWith('GET')).map((k) => decodeURIComponent(k.split('/labels/')[1]!))).toEqual(ETIKETTER)
+  })
+})
+
 describe('arbeidsflytene', () => {
   const flyt = les('.github/workflows/prosjektansvar.yml')
   const utloser = les('.github/workflows/prosjektansvar-utloser.yml')
+  const etikettflyt = les('.github/workflows/prosjektetiketter.yml')
   const typer = (tekst: string, hendelse: string) => tekst.match(new RegExp(`${hendelse}:\\n(?:\\s+\\S.*\\n)*?\\s+types: \\[([^\\]]+)\\]`))?.[1]?.split(',').map((t) => t.trim())
   const PR_TYPER = ['opened', 'reopened', 'synchronize', 'edited', 'labeled', 'unlabeled', 'assigned', 'unassigned']
 
@@ -507,6 +668,20 @@ describe('arbeidsflytene', () => {
     expect(flyt).not.toMatch(/^ {4}name: Prosjektansvar$/m)
   })
 
+  it('etikettsynken kjører bare fra main når regelfila endres, og kan ikke gi «Prosjektansvar»', () => {
+    expect(etikettflyt).toMatch(/^on:\n {2}push:\n {4}branches: \[main\]\n {4}paths: \['\.github\/prosjektansvar\.json'\]\n\n/m)
+    expect(etikettflyt).not.toMatch(/pull_request|workflow_dispatch|merge_group|^\s*ref:/m)
+    expect(etikettflyt).toMatch(/^permissions:\n {2}contents: read\n {2}issues: write\n\n/m)
+    expect(etikettflyt).not.toMatch(/checks:|statuses:|write-all|secrets\./)
+    expect(etikettflyt).toContain(`sparse-checkout: |\n            scripts/prosjektansvar.mjs\n            ${REGLER_STI}\n`)
+    expect(etikettflyt).toContain('persist-credentials: false')
+    expect(etikettflyt).toContain('run: node scripts/prosjektansvar.mjs etiketter\n')
+    expect(etikettflyt).not.toMatch(new RegExp(`^\\s*(name: ${KONTROLLNAVN}|${KONTROLLNAVN}:)\\s*$`, 'm'))
+    expect(finnEtterligning([{ sti: '.github/workflows/prosjektetiketter.yml', innhold: etikettflyt }])).toEqual([])
+    // En PR som endrer den, får advarselen om at kontrollens egne filer er endret.
+    expect(KONTROLLFILER).toContain('.github/workflows/prosjektetiketter.yml')
+  })
+
   it('utløseren kjører ved alt på PR-en, men har ingen tilganger, sjekker ikke ut og heter noe annet', () => {
     expect(utloser).toMatch(/^name: Prosjektansvar – utløser$/m)
     expect(typer(utloser, 'pull_request')).toEqual(expect.arrayContaining(PR_TYPER))
@@ -524,7 +699,7 @@ describe('dokumentene sier det samme', () => {
   const agents = les('AGENTS.md')
   const blokker = [...instrukser.matchAll(/^## (Claude|ChatGPT) – (OUSFAR \S+)\n[\s\S]*?```text\n([\s\S]*?)```/gm)]
 
-  it('styringsdokumentet og malene nevner alle tre etikettene', () => {
+  it('styringsdokumentet og malene nevner alle etikettene', () => {
     for (const e of ETIKETTER) {
       expect(ansvar).toContain(`\`${e}\``)
       expect(mal).toContain(`\`${e}\``)
@@ -533,6 +708,33 @@ describe('dokumentene sier det samme', () => {
     expect(mal).toMatch(/## Ansvarlig prosjekt/)
     expect(mal).toMatch(/Avhengigheter/)
     expect(mal).toMatch(/utenfor/)
+    expect(standard).toContain(oppramsing(ETIKETTER.map((e) => `\`${e}\``)))
+    // Ingen styrende tekst sier lenger at det bare finnes tre prosjekter.
+    for (const [navn, tekst] of Object.entries({ ansvar, mal, sakmal, instrukser, standard, agents })) {
+      expect(tekst, navn).not.toMatch(/\b(tre|3) (prosjekt|prosjektområd|etikett)|alle tre prosjekt/i)
+    }
+  })
+
+  it('beskriver hvordan et nytt prosjekt legges til uten nye unntak, og at skjæringstidspunktet står fast', () => {
+    expect(ansvar).toMatch(/## 9\. Et nytt prosjektområde/)
+    expect(ansvar).toMatch(/Skjæringstidspunktet er den eldste commiten på `main` som endret fila/)
+    expect(ansvar).toContain('.github/workflows/prosjektetiketter.yml')
+    expect(ansvar).toMatch(/sletter eller omdøper\s+aldri en etikett/)
+  })
+
+  it('gir Personal et eget styringsdokument med ansvarsgrenser, personvern og overleveringen av vaktplanen', () => {
+    const personal = les('docs/personal.md')
+    expect(personal).toMatch(/Eies av OUSFAR Personal \(`ansvar:personal`\)/)
+    for (const del of ['## 2. Ansvarsområdet', '## 3. Personvern', '## 4. Produktprinsipper', '## 5. Produktaksept og kontroll', '## 6. Vedtatte regler', '## 7. Første arbeidsløp: vaktplanen']) expect(personal).toContain(del)
+    for (const krav of [/syntetiske ansatte/, /ikke\*\* fraværsgrunn, diagnoser, helseopplysninger/i, /systemarkitektrolle gir \*\*ikke i seg selv\*\* innsyn/, /håndhevet på serversiden/, /ingen personvern- eller arbeidstidsrettslig\s+godkjenning/i, /Ingen generell HR-plattform/, /beregnet forslag skal være\s+tydelig skilt fra en godkjent og publisert plan/]) expect(personal).toMatch(krav)
+    for (const premiss of [/Motsatte stillingsvekter for vakt 1 og vakt 2/, /prosent tilstedeværelse/, /avstand mellom\s+vakter/, /Overleger skal ha færre vakt 1\*\*, men ikke nødvendigvis færre vakter totalt/, /ikke et krav om eksakt algoritme/]) expect(personal).toMatch(premiss)
+    expect(personal).toMatch(/peohol\/vaktplan/)
+    expect(personal).toMatch(/arkiveres ikke nå/)
+    expect(personal).toMatch(/Ingen vaktplankode eller produksjonsmigrasjoner/)
+    // Lenket fra begge Personal-instruksene og fra fellesdokumentene.
+    for (const b of blokker.filter((b) => b[2] === 'OUSFAR Personal')) expect(b[3], b[1]).toContain('docs/personal.md')
+    expect(ansvar).toContain('(personal.md)')
+    expect(standard).toMatch(/### 3\.5 Ikke-kliniske personalfunksjoner/)
   })
 
   it('PR-malen begynner med sammendraget for mennesker, og AGENTS.md krever det', () => {
@@ -597,7 +799,7 @@ describe('dokumentene sier det samme', () => {
 
   it('lar Claude kreve et tildelt Issue og aldri gjette personen', () => {
     const claude = blokker.filter((b) => b[1] === 'Claude').map((b) => b[3]!)
-    expect(claude).toHaveLength(3)
+    expect(claude).toHaveLength(PROSJEKTER.size)
     for (const tekst of claude) {
       expect(tekst).toMatch(/^OPPGAVE OG ANSVARLIG$/m)
       expect(tekst).toMatch(/Ingen implementering uten et GitHub Issue med prosjektetiketten og nøyaktig én assignee/)
@@ -608,7 +810,7 @@ describe('dokumentene sier det samme', () => {
 
   it('lar ChatGPT bare kontrollere egen kombinasjon av etikett og systemarkitekt, og aldri en PR uten gyldig merking', () => {
     const chatgpt = blokker.filter((b) => b[1] === 'ChatGPT').map((b) => b[3]!)
-    expect(chatgpt).toHaveLength(3)
+    expect(chatgpt).toHaveLength(PROSJEKTER.size)
     for (const tekst of chatgpt) {
       expect(tekst).toMatch(/Gjennomfør ordinær kontroll bare for `ansvar:\S+` med angitt GitHub-ansvarlig som eneste assignee/)
       expect(tekst).toMatch(/ugyldig merking, feil assignee, motstridende Issue eller rød «Prosjektansvar»/)
@@ -648,5 +850,22 @@ describe('dokumentene sier det samme', () => {
     expect(standard).toMatch(/formell klinisk godkjenning, aktivering i appen/)
     const verktoy = instrukser.match(/^## Claude – OUSFAR Verktøy\n[\s\S]*?```text\n([\s\S]*?)```/m)?.[1] ?? ''
     expect(verktoy).toMatch(/Nye kliniske regler krever eksakt godkjenning/)
+  })
+
+  it('gir Personal personvernreglene i begge instruksene, og lar de andre prosjektene vise dit', () => {
+    const blokk = (agent: string, prosjekt: string) => blokker.find((b) => b[1] === agent && b[2] === prosjekt)?.[3] ?? ''
+    const claude = blokk('Claude', 'OUSFAR Personal')
+    expect(claude).toMatch(/^PERSONVERN \(viktigst\)$/m)
+    expect(claude).toMatch(/Aldri reelle ansattlister, vaktplaner, fraværsopplysninger/)
+    expect(claude).toMatch(/appens systemarkitektrolle gir ikke i seg selv innsyn/)
+    expect(claude).toMatch(/blir ikke Verktøys fordi den har en beregningsmotor/)
+    expect(claude).toMatch(/skill den ut som et GitHub Issue med etiketten ansvar:dev/)
+    const chatgpt = blokk('ChatGPT', 'OUSFAR Personal')
+    expect(chatgpt).toMatch(/^## PERSONVERN OG PRODUKTKONTROLL$/m)
+    expect(chatgpt).toMatch(/Skill alltid mellom teknisk PR-godkjenning, produktaksept og godkjenning for bruk med reelle personalopplysninger/)
+    expect(chatgpt).toMatch(/uavhengig fasit/)
+    // De andre instruksene sier at personalfunksjonene hører til Personal.
+    for (const [, agent, prosjekt, tekst] of blokker.filter((b) => b[2] !== 'OUSFAR Personal')) expect(tekst, `${agent} ${prosjekt}`).toContain('OUSFAR Personal')
+    expect(blokk('Claude', 'OUSFAR Dev')).toContain('ansvar:fag, ansvar:verktoy eller ansvar:personal')
   })
 })

@@ -1,8 +1,25 @@
 {
   "prosjekter": {
-    "ansvar:dev": "OUSFAR Dev",
-    "ansvar:fag": "OUSFAR Fag",
-    "ansvar:verktoy": "OUSFAR Verktøy"
+    "ansvar:dev": {
+      "navn": "OUSFAR Dev",
+      "farge": "1d76db",
+      "beskrivelse": "OUSFAR Dev eier PR-en: appens generelle UI, UX og infrastruktur (docs/prosjektansvar.md)"
+    },
+    "ansvar:fag": {
+      "navn": "OUSFAR Fag",
+      "farge": "0e8a16",
+      "beskrivelse": "OUSFAR Fag eier PR-en: kuratering og faglig kontroll av fagsidene (docs/prosjektansvar.md)"
+    },
+    "ansvar:verktoy": {
+      "navn": "OUSFAR Verktøy",
+      "farge": "d93f0b",
+      "beskrivelse": "OUSFAR Verktøy eier PR-en: verktøyene i verktøymenyen, faglig og teknisk (docs/prosjektansvar.md)"
+    },
+    "ansvar:personal": {
+      "navn": "OUSFAR Personal",
+      "farge": "5319e7",
+      "beskrivelse": "OUSFAR Personal eier PR-en: vaktplaner, fravær og intern arbeidsorganisering (docs/personal.md)"
+    }
   },
   "systemarkitekter": {
     "peohol": "Peder",

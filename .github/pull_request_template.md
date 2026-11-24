@@ -14,7 +14,7 @@
 
 ## Ansvarlig prosjekt
 
-<!-- Nøyaktig ett, etter oppgavens formål (docs/prosjektansvar.md), og den samme etiketten på PR-en: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`. -->
+<!-- Nøyaktig ett, etter oppgavens formål (docs/prosjektansvar.md), og den samme etiketten på PR-en: `ansvar:dev`, `ansvar:fag`, `ansvar:verktoy` eller `ansvar:personal`. -->
 
 - Prosjekt:
 - Avhengigheter: <!-- Andre oppgaver, Issues eller PR-er denne venter på eller som venter på den. «Ingen» hvis ingen. -->

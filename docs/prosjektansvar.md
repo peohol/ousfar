@@ -1,8 +1,8 @@
 # Prosjektansvar i OUSFAR
 
 **Felles fasit for hvem som eier hvilke oppgaver og PR-er** i prosjektene som
-arbeider mot `peohol/ousfar`: de tre prosjektområdene OUSFAR Dev, OUSFAR Fag og
-OUSFAR Verktøy, hvert av dem i Claude Code Projects og i ChatGPT, for hver
+arbeider mot `peohol/ousfar`: de fire prosjektområdene OUSFAR Dev, OUSFAR Fag,
+OUSFAR Verktøy og OUSFAR Personal, hvert av dem i Claude Code Projects og i ChatGPT, for hver
 systemarkitekt som utvikler (i dag Peder, `peohol`, og Max, `maxhag`).
 Prosjektinstruksene som limes inn i prosjektinnstillingene, står i
 [prosjektinstrukser.md](prosjektinstrukser.md) og peker hit; detaljreglene står
@@ -13,17 +13,23 @@ prosedyrer: kurateringen og den uavhengige kontrollen av fagsidene
 ([kuratering-prosjekt.md](kuratering-prosjekt.md),
 [kontrollorinstruks.md](kontrollorinstruks.md)), ChatGPTs
 [PR-kontrollstandard](chatgpt-pr-kontrollstandard.md), verktøyenes kliniske
-planer og reglene i `AGENTS.md` gjelder uendret ved siden av det. Eies av OUSFAR
+planer, personvernkravene til personalfunksjonene ([personal.md](personal.md))
+og reglene i `AGENTS.md` gjelder uendret ved siden av det. Eies av OUSFAR
 Dev (`ansvar:dev`); de andre prosjektene foreslår endringer som en oppgave til Dev
 (§5).
 
-## 1. De tre prosjektene
+## 1. De fire prosjektene
 
 | Prosjekt | Eier | Eier ikke | Etikett |
 | --- | --- | --- | --- |
-| **OUSFAR Fag** | Kuratering og faglig kontroll av innholdet på fagsidene (monografiene): Kurator, Kontrollør og Vaktmester, kuratorprotokollen, kontrollørinstruksen, skillene `monografikurator`, `monografikontrollor` og `vaktmester`, avgjørelser om nøkkeltall og beskyttede data, og nøklene til kurateringsagentene | Appens kode og utseende, kurateringsverktøyenes kode (som kurateringskøen og `npm run kurator`) og verktøyene i verktøymenyen | `ansvar:fag` |
-| **OUSFAR Verktøy** | Alt faglig og teknisk arbeid med verktøyene i verktøymenyen: kliniske regler, doseplanmotoren, spørsmålene og stoppene, verktøyenes UI og UX, kildeovervåkingen og QA av verktøyene, med planene i `docs/verktøy-*.md` | Fagsidenes innhold, appens felles UI og infrastruktur når endringen har et eget formål utenfor verktøyene (§2) | `ansvar:verktoy` |
-| **OUSFAR Dev** | Alt annet: appens generelle UI, UX og design (også fagsidenes oppsett og visning), søk, stoffregister, varsler, diskusjoner, brukere og tilgang, datasynkene (FEST, Farmakologiportalen og andre), database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (dette dokumentet, `AGENTS.md`-filene, PR-malen, endringsloggrutinen) | Faginnholdet på fagsidene og verktøyene | `ansvar:dev` |
+| **OUSFAR Fag** | Kuratering og faglig kontroll av innholdet på fagsidene (monografiene): Kurator, Kontrollør og Vaktmester, kuratorprotokollen, kontrollørinstruksen, skillene `monografikurator`, `monografikontrollor` og `vaktmester`, avgjørelser om nøkkeltall og beskyttede data, og nøklene til kurateringsagentene | Appens kode og utseende, kurateringsverktøyenes kode (som kurateringskøen og `npm run kurator`), verktøyene i verktøymenyen og personalfunksjonene | `ansvar:fag` |
+| **OUSFAR Verktøy** | Alt faglig og teknisk arbeid med verktøyene i verktøymenyen: kliniske regler, doseplanmotoren, spørsmålene og stoppene, verktøyenes UI og UX, kildeovervåkingen og QA av verktøyene, med planene i `docs/verktøy-*.md` | Fagsidenes innhold, personalfunksjonene, appens felles UI og infrastruktur når endringen har et eget formål utenfor verktøyene (§2) | `ansvar:verktoy` |
+| **OUSFAR Personal** | Arbeidsplanlegging og intern organisering: vaktplaner, vaktfordeling, vaktbytter, tilstedeværelse og fravær, personalkalender, intern fordeling av arbeidsoppgaver, statistikk over arbeidsbelastning og personalspesifikke dashboardmoduler, med funksjonalitet, regler, kode, UI og UX, tester, personalspesifikke migrasjoner og de styrende personalplanene ([personal.md](personal.md)) | Appens felles UI og infrastruktur (også det felles modulrammeverket for dashboardet, brukerkontoene og den generelle tilgangsstyringen), fagsidene, verktøyene i verktøymenyen og en generell HR-plattform | `ansvar:personal` |
+| **OUSFAR Dev** | Alt annet: appens generelle UI, UX og design (også fagsidenes oppsett og visning), designsystemet, navigasjonen, det felles modulrammeverket for dashboardet, søk, stoffregister, varsler, diskusjoner, brukerkontoer og generell tilgangsstyring, datasynkene (FEST, Farmakologiportalen og andre), database, migrasjoner, CI og arbeidsflyter, kurateringsverktøyenes kode, og de felles styringsdokumentene (dette dokumentet, `AGENTS.md`-filene, PR-malen, endringsloggrutinen) | Faginnholdet på fagsidene, verktøyene og personalfunksjonene | `ansvar:dev` |
+
+Prosjektene og etikettene står også maskinlesbart i
+[`.github/prosjektansvar.json`](../.github/prosjektansvar.json), som kontrollen
+og etikettene i GitHub bygger på (§6).
 
 Er det uklart hvilket prosjekt en oppgave hører til, avgjør Peder det; Claude
 eller ChatGPT gir én anbefaling med begrunnelse.
@@ -34,6 +40,13 @@ Prosjektet som eier en oppgave, er prosjektet som eier **formålet** med den,
 uansett hvilke filer endringen berører. En endring i planvisningen til
 nedtrappingsverktøyet tilhører Verktøy, også om den endrer felles CSS. Felles
 filer som endringsloggen, `package.json` og stilarkene gir ikke eierskap.
+
+Det samme gjelder Personal. Vaktplanens modul på dashboardet og reglene for hvem
+som ser og redigerer vaktplanen, tilhører Personal; det felles modulrammeverket
+og de generelle mekanismene for innlogging og tilgang tilhører Dev. En migrasjon
+som bare gjelder personalfunksjonene, kan tilhøre Personal. En personalfunksjon
+blir ikke Verktøys ansvar fordi den har en beregningsmotor eller ligger i en
+meny.
 
 Krever løsningen også en **selvstendig** endring av noe felles, som
 designsystemet, en felles komponent eller databasen, skilles den delen normalt ut
@@ -133,8 +146,8 @@ av et stoff hører ikke hjemme i GitHub, som er offentlig.
 
 **Overlevering.** Prosjektene kan ikke sende meldinger til hverandre, og
 systemarkitektene skal ikke formidle tekniske meldinger. Derfor overleveres en
-oppgave som et GitHub Issue med mottakerens etikett (`ansvar:dev`, `ansvar:fag`
-eller `ansvar:verktoy`): hva som trengs og hvorfor, avhengigheter og lenker.
+oppgave som et GitHub Issue med mottakerens etikett (§1): hva som trengs og
+hvorfor, avhengigheter og lenker.
 Issue-et får samme assignee som oppgaven det kom fra, når den som bestilte,
 skal ha det videre; ellers står det ufordelt (§3). Den som overleverer, gir
 systemarkitekten én setning: «Dette hører til OUSFAR X; jeg har laget issue
@@ -171,8 +184,8 @@ informasjonsutveksling.
 ## 6. PR-er: merking, kontroll og sammenslåing
 
 1. **Nøyaktig én prosjektetikett** på hver PR, også dokumentasjonsendringer og
-   små feilrettinger: `ansvar:dev`, `ansvar:fag` eller `ansvar:verktoy`, den
-   samme som på Issue-et. Claude setter den når PR-en opprettes.
+   små feilrettinger: en av etikettene i §1, den samme som på Issue-et. Claude
+   setter den når PR-en opprettes.
 2. **Nøyaktig én assignee**, den samme som på Issue-et (§3). Claude setter den
    når PR-en opprettes.
 3. **PR-beskrivelsen** følger malen (`.github/pull_request_template.md`): øverst
@@ -227,6 +240,10 @@ informasjonsutveksling.
      advarsel og kan fullføres slik de ble startet; kravet om prosjektetikett
      gjelder dem som før. Unntaket følger opprettelsestidspunktet og gjelder
      ingen nye PR-er.
+   - Skjæringstidspunktet er den eldste commiten på `main` som endret fila.
+     Senere endringer av den, som et nytt prosjekt eller en ny systemarkitekt,
+     flytter det derfor ikke og gir ingen ny overgang; fila flyttes eller
+     erstattes aldri.
 7. **Kontroll:** bare ChatGPT-prosjektet som eier etiketten, og som tilhører
    PR-ens assignee («GitHub-ansvarlig» i prosjektinstruksen), kontrollerer og
    slår sammen PR-en, etter [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md).
@@ -256,6 +273,12 @@ informasjonsutveksling.
    rekkefølgen PR-ene slås sammen. Ingen PR reserverer et nummer eller endrer
    `package.json` for å føre en versjon, så PR-er fra ulike prosjekter kan slås
    sammen i hvilken som helst rekkefølge uten konflikt i endringsloggen.
+10. **Etikettene i GitHub** følger `.github/prosjektansvar.json`, der hvert
+    prosjekt har etikett, navn, farge og beskrivelse. Når fila endres på
+    `main`, oppretter arbeidsflyten `.github/workflows/prosjektetiketter.yml`
+    etiketter som mangler, og retter farge og beskrivelse. Den kjører bare fra
+    `main`, kan ikke skrive statuser eller check runs, og sletter eller omdøper
+    aldri en etikett. Ingen lager eller endrer prosjektetiketter for hånd.
 
 ## 7. Felles regler for alle prosjektene
 
@@ -266,10 +289,12 @@ informasjonsutveksling.
 - Pasientopplysninger er ikke tillatt noe sted i OUSFAR, heller ikke
   pseudonymiserte eller som kasuistikk som kan knyttes til en person (Peder
   17.11.2026, [pasientopplysninger.md](pasientopplysninger.md)). Det gjelder
-  alle tre prosjektene og alt de lager: innhold, fritekst, filer, logger,
+  alle prosjektene og alt de lager: innhold, fritekst, filer, logger,
   varsler, eksport og tjenester utenfor.
 - Repoet er offentlig: bare syntetiske testdata, ingen nøkler eller faglige
-  vurderinger av stoffer fra kurateringen.
+  vurderinger av stoffer fra kurateringen, og ingen reelle personalopplysninger
+  (ansattlister, vaktplaner, fravær) i repoet, GitHub, testdata eller
+  agentkonteksten ([personal.md](personal.md)).
 - Ingen nye koordinatorer, godkjenningsledd eller automatiske kontrollrunder uten
   at Peder ber om det.
 - **Fire separate beslutninger.** Teknisk PR-godkjenning (ChatGPTs kontroll og
@@ -278,7 +303,10 @@ informasjonsutveksling.
   (der styringsdokumentene krever Peders ja, for eksakt versjon og avgrensning)
   og aktivering i appen er hver sin beslutning. Den ene gir ikke den andre: en
   teknisk sammenslåing aktiverer aldri en klinisk regel som ikke er formelt
-  godkjent, og grønn CI er ingen klinisk vurdering.
+  godkjent, og grønn CI er ingen klinisk vurdering. For personalfunksjonene er
+  en teknisk sammenslåing heller ingen personvern- eller arbeidstidsrettslig
+  godkjenning; bruk med reelle personalopplysninger krever først en avklaring
+  med ansvarlig virksomhet ([personal.md](personal.md)).
 - **Alvorlige faglige bekymringer.** Oppdager ChatGPT eller en annen agent
   utenfor kurateringen en mulig alvorlig faglig feil i et stoff som er under
   kuratering eller blindkontroll, skal den ikke undertrykkes, men heller ikke
@@ -303,7 +331,26 @@ Det trengs ingen nye etiketter, repoer eller personlige Claude-instrukser:
    for alle, og ChatGPT-instruksene får bare sin egen linje
    `GitHub-ansvarlig: <GitHub-bruker>` øverst.
 
-## 9. Kort sagt
+## 9. Et nytt prosjektområde
+
+Et nytt prosjekt er en oppgave til OUSFAR Dev, i én PR, og trenger ingen nye
+kontroller eller unntak:
+
+1. Prosjektet føres inn under `prosjekter` i
+   [`.github/prosjektansvar.json`](../.github/prosjektansvar.json) med etikett
+   (`ansvar:<navn>`), navn, farge og beskrivelse. Kontrollen og etiketten i
+   GitHub følger av det (§6, punkt 4 og 10), og skjæringstidspunktet i §6,
+   punkt 6, flyttes ikke.
+2. Ansvarsområdet står i §1–2, med grensene mot de andre prosjektene.
+3. [prosjektinstrukser.md](prosjektinstrukser.md) får en Claude- og en
+   ChatGPT-instruks for prosjektet, og de andre instruksene sier hva som går dit.
+4. Har prosjektet egne varige regler, står de i et eget styringsdokument i
+   `docs/`, som prosjektet eier.
+5. Systemarkitektene oppretter prosjektene i Claude Code Projects og ChatGPT med
+   de ferdige instruksene. PR-er fra det nye prosjektet åpnes først når PR-en
+   er slått sammen og etiketten finnes.
+
+## 10. Kort sagt
 
 - Ett prosjekt eier hver oppgave og hver PR, etter formålet; én systemarkitekt
   er ansvarlig, etter assignee.

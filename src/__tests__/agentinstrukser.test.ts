@@ -46,9 +46,9 @@ describe('agentinstruksene', () => {
     expect(les('AGENTS.md').length).toBeLessThan(8000)
   })
 
-  it('lar hver av de seks prosjektinstruksene peke til AGENTS.md', () => {
+  it('lar hver prosjektinstruks, én for Claude og én for ChatGPT per prosjekt, peke til AGENTS.md', () => {
     const blokker = [...les('docs/prosjektinstrukser.md').matchAll(/^(## .*)\n[\s\S]*?```text\n([\s\S]*?)```/gm)].map((b) => [b[1], b[2]])
-    expect(blokker).toHaveLength(6)
+    expect(blokker).toHaveLength(2 * Object.keys(JSON.parse(les('.github/prosjektansvar.json')).prosjekter).length)
     for (const [overskrift, tekst] of blokker) {
       expect(tekst).toMatch(/^(?:## )?LES\n+[^\n]*AGENTS\.md/m)
       expect(tekst).not.toContain('CLAUDE.md')
