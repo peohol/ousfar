@@ -113,7 +113,9 @@ dag tegnes ingen figur, bare beregningen.
   tilgangen følger katalogen som for de andre modulene. Den lenker ikke til
   fagsidene (`docs/domener.md`).
 - **Skjemaet** overlever en oppdatering av appen (`useBevart`,
-  `fortolkning/be-urin`), tømmes ved «Nullstill» og ved bytte av fagmiljø, og
+  `fortolkning/be-urin/<fagmiljø>/<modellversjon>`), men bare med samme
+  fagmiljø og modellversjon: følger en ny modell med oppdateringen, begynner
+  skjemaet tomt. Det tømmes ved «Nullstill» og ved bytte av fagmiljø, og
   hører til den innloggede (`Bevaringseier`). Ingen prøveverdier lagres,
   sendes, logges eller står i adressen.
 

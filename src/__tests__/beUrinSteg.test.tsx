@@ -8,11 +8,13 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { BeUrinStep } from '../components/BeUrinStep'
+import { BeUrinStep, beUrinBevaringsnavn } from '../components/BeUrinStep'
 import { TipsLag } from '../components/Tips'
 import { byggKatalog, type Katalogoppforing } from '../domain/analyttkatalog'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
 import { search } from '../domain/search'
+import { tomBeUrinInndata } from '../domain/beUrinMotor'
+import { LAGRINGSNOKKEL, glemBildet } from '../oppdatering/bevaring'
 import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { SYNTETISK_MODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
@@ -30,7 +32,11 @@ beforeAll(() => {
   medPekerhendelser()
 })
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  sessionStorage.clear()
+  glemBildet()
+})
 
 /** En syntetisk oppføring: den lokale urinkoden er ikke avklart (docs/benzoylekgonin-urin.md). */
 const OPPFORING: Katalogoppforing = {
@@ -182,6 +188,28 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     const forste = gruppe('Forrige prøve').getByLabelText(/^Benzoylekgonin/) as HTMLInputElement
     expect(forste.value).toBe('')
     expect(document.activeElement).toBe(forste)
+  })
+
+  it('tar tilbake skjemaet etter en oppdatering bare med samme fagmiljø og modellversjon', async () => {
+    const fylt = (be: string) => ({
+      ...tomBeUrinInndata(SYNTETISK_MODELL),
+      forrige: { benzoylekgonin: be, kreatinin: '2', dato: '2026-01-01' },
+    })
+    const bilde = (navn: string, be: string) =>
+      sessionStorage.setItem(LAGRINGSNOKKEL, JSON.stringify({ tatt: Date.now(), verdier: { [navn]: fylt(be) }, rulling: [] }))
+    const forsteFelt = async () =>
+      ((await screen.findByRole('group', { name: 'Forrige prøve' })).querySelector('input') as HTMLInputElement).value
+
+    // En annen modellversjon: de gamle verdiene fortolkes ikke med den nye modellen.
+    bilde(beUrinBevaringsnavn('a', 'en-eldre-versjon'), '77')
+    vis()
+    expect(await forsteFelt()).toBe('')
+    cleanup()
+    glemBildet()
+
+    bilde(beUrinBevaringsnavn('a', SYNTETISK_MODELL.versjon), '50')
+    vis()
+    expect(await forsteFelt()).toBe('50')
   })
 
   it('tømmer skjemaet når fagmiljøet byttes', async () => {

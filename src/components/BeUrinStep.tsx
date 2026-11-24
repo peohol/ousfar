@@ -34,6 +34,9 @@ import { useKortHopp } from '../hooks/useKortHopp'
 import { beUrinModellFra } from '../katalog/beUrinModell'
 import type { Analyte } from '../types'
 
+/** Navnet skjemaet tas vare på under når appen oppdateres: per fagmiljø og modellversjon. */
+export const beUrinBevaringsnavn = (fagmiljo: string, versjon: string) => `fortolkning/be-urin/${fagmiljo}/${versjon}`
+
 export interface BeUrinStepProps {
   analyte: Analyte
   /** Henter modellen for arbeidskonteksten. Kalles når modulen åpnes. */
@@ -60,7 +63,7 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
       <StepBar onEsc={onBack}>Bytt analytt</StepBar>
       {modell.status === 'klar' ? (
         // Nøkkelen tømmer skjemaet når fagmiljøet byttes.
-        <BeUrinFortolkning key={modell.fagmiljo} analyte={analyte} modell={modell.modell} />
+        <BeUrinFortolkning key={modell.fagmiljo} analyte={analyte} fagmiljo={modell.fagmiljo} modell={modell.modell} />
       ) : (
         <div className="thc">
           <Card align="start" className="analyttkort">
@@ -75,9 +78,22 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
   )
 }
 
-function BeUrinFortolkning({ analyte, modell }: { analyte: Analyte; modell: GodkjentBeUrinModell }) {
-  // Det som er fylt inn, overlever en oppdatering av appen, og bare det.
-  const [inndata, setInndata] = useBevart<BeUrinInndata>('fortolkning/be-urin', () => tomBeUrinInndata(modell))
+function BeUrinFortolkning({
+  analyte,
+  fagmiljo,
+  modell,
+}: {
+  analyte: Analyte
+  fagmiljo: string
+  modell: GodkjentBeUrinModell
+}) {
+  // Det som er fylt inn, overlever en oppdatering av appen, og bare det. Navnet
+  // binder verdiene til fagmiljøet og modellversjonen: kommer en annen modell
+  // med oppdateringen (andre enheter, kurver eller CV-er), begynner skjemaet
+  // tomt i stedet for å fortolke de gamle verdiene med den nye modellen.
+  const [inndata, setInndata] = useBevart<BeUrinInndata>(beUrinBevaringsnavn(fagmiljo, modell.versjon), () =>
+    tomBeUrinInndata(modell),
+  )
   const [alleMarginer, setAlleMarginer] = useBevart('fortolkning/be-urin/visning', false)
   const [fokusTeller, setFokusTeller] = useState(0)
   const forsteFelt = useRef<HTMLInputElement>(null)
