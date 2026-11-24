@@ -1,16 +1,14 @@
 /**
  * Datakildene som er stanset på ubestemt tid: ingen henting kjøres, verken
  * planlagt eller av en administrator, og appen leser og viser ingenting fra
- * dem (`docs/datakilder.md`). Om dataene slettes fra databasen, er en egen
- * beslutning: CPICs ble slettet i samme omgang; ClinPGx' slettes med Peders
- * ja fra 23.11.2026 (#540), etter at en kopi er lagt i arkivet. Koden for
- * begge er fjernet (#437).
+ * dem (`docs/datakilder.md`). En stanset kilde står i «Datakilder» som
+ * «Stanset».
  *
  * Å ta en kilde i bruk igjen er å fjerne den her og legge den planlagte
- * jobben tilbake; første henting laster da alt på nytt fra en tom kopi. CPIC
- * og ClinPGx tas ikke i bruk igjen: CYPinfo er OUSFARs eneste automatiske
- * farmakogenetiske kilde (#437), og de står her så «Datakilder» viser dem som
- * stanset.
+ * jobben tilbake; første henting laster da alt på nytt fra en tom kopi.
+ *
+ * En kilde som er tatt helt ut, står ikke her, men fjernes fra `DATAKILDER`
+ * (`status.ts`), som CPIC og ClinPGx (#437, #554).
  */
 import type { Datakilde } from './status'
 
@@ -21,16 +19,7 @@ export interface Stans {
   grunn: string
 }
 
-export const STANSEDE_KILDER: Readonly<Partial<Record<Datakilde, Stans>>> = {
-  cpic: {
-    fra: '2026-11-06',
-    grunn: 'CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske farmakogenetiske data.',
-  },
-  clinpgx: {
-    fra: '2026-11-23',
-    grunn: 'CYPinfo er OUSFARs eneste automatiske kilde for farmakogenetikk.',
-  },
-}
+export const STANSEDE_KILDER: Readonly<Partial<Record<Datakilde, Stans>>> = {}
 
 export function stansFor(kilde: Datakilde, stansede = STANSEDE_KILDER): Stans | null {
   return stansede[kilde] ?? null

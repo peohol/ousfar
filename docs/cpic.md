@@ -12,7 +12,8 @@ Mønsteret er det samme som for FEST (`docs/legemiddeldata.md`) og ClinPGx
 > (`docs/cypinfo-integrasjon.md`). Skjemaet `cpic` med de tomme tabellene og
 > funksjonene er slettet 23.11.2026 (#540,
 > `20261123230000_slett_cpic_og_clinpgx.sql`); oppsettsradene står i arkivet i
-> prosjektfilene (`arkiv/2026-11-23-cpic-clinpgx/`). Resten av dokumentet beskriver laget slik det
+> prosjektfilene (`arkiv/2026-11-23-cpic-clinpgx/`). Fra 24.11.2026 står CPIC ikke i
+> «Datakilder» (#554). Resten av dokumentet beskriver laget slik det
 > var, og filene det nevner, finnes bare i Git-historikken. CPIC kan fortsatt
 > siteres som en vanlig kilde i redaksjonell tekst.
 

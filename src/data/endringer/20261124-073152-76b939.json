@@ -1,0 +1,15 @@
+{
+  "id": "20261124-073152-76b939",
+  "semver": "patch",
+  "opprettet": "2026-11-24T07:31:52Z",
+  "sammendrag": "CPIC og ClinPGx står ikke lenger i «Datakilder»",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "«Datakilder» viser bare kildene som er i bruk: FEST, PubChem, Farmakologiportalen og CYPinfo. CPIC og ClinPGx er tatt ut, også som «Stanset».",
+    "Endringsloggen fra CPIC og ClinPGx er bevart i databasen og i arkivet, men vises ikke lenger i panelet."
+  ],
+  "utenVarsel": true
+}

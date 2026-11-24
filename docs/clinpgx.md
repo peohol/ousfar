@@ -15,7 +15,8 @@ for et legemiddel, ikke råd for en bestemt pasient.
 > (`docs/cypinfo-integrasjon.md`), og ClinPGx tas ikke i bruk igjen. Dataene
 > er kopiert til et arkiv i prosjektfilene (`arkiv/2026-11-23-cpic-clinpgx/`)
 > og slettet fra databasen sammen med skjemaet `clinpgx` (#540,
-> `20261123230000_slett_cpic_og_clinpgx.sql`); endringsloggen står. Resten av
+> `20261123230000_slett_cpic_og_clinpgx.sql`); endringsloggen står i databasen og
+> arkivet. Fra 24.11.2026 står ClinPGx ikke i «Datakilder» (#554). Resten av
 > dokumentet beskriver laget slik det var, og filene det nevner, finnes bare i
 > Git-historikken. ClinPGx kan fortsatt siteres som en vanlig kilde i
 > redaksjonell tekst.

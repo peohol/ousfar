@@ -2,8 +2,8 @@
  * Driftstatusen for datakildene: lesefunksjonen administratorene bruker, mot
  * en ekte database bygd av migrasjonene, og vurderingen og tekstene appen lager
  * av den. Selve endringsdeteksjonen prøves der synkroniseringene prøves
- * (`kjemi.test.ts`, `cypinfo.test.ts`). ClinPGx og CPIC er stanset og fjernet
- * (#437): endringsloggen deres står og leses, men de har ingen kjøringer.
+ * (`kjemi.test.ts`, `cypinfo.test.ts`). ClinPGx og CPIC er tatt helt ut
+ * (#437, #554): endringsloggen deres står i databasen, men sendes ikke.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -39,7 +39,7 @@ describe('lesefunksjonen', () => {
     kall = faginnholdskall(db, admin)
 
     // Kjøringer fra hver kilde, og endringer til dem. Føringen fra ClinPGx er
-    // fra før kilden ble fjernet, og har ingen kjøring lenger.
+    // fra før kilden ble tatt ut, og har ingen kjøring lenger.
     await db.exec(`
       insert into pubchem.synkroniseringer (status, utlost_av, startet_kl, avsluttet_kl, parserversjon, antall)
       values ('fullfort', 'cron', '2026-09-21T03:15:00Z', '2026-09-21T03:20:00Z', 1, '{"hentet": 2}'),
@@ -69,22 +69,26 @@ describe('lesefunksjonen', () => {
       ['pubchem', 1, 'fullfort'],
     ])
     expect(status.kjoringer[3]).toMatchObject({ utlost_av: 'manuell', versjon: '1', endringer: { klinisk: 1, metadata: 1, grunnlag: 0 } })
-    expect(status.kjoringer[2]).toMatchObject({ release: null, versjon: '2', endringer: { klinisk: 0, metadata: 0, grunnlag: 1 } })
-    // Endringsloggen for ClinPGx står og leses, også etter at kilden er fjernet.
-    expect(status.endringer.map((e) => e.objekt_id)).toEqual(['2161', '1447954390', '2160', 'legemiddel'])
-    // Siste kjente versjon står selv om siste kjøring ikke fikk den oppgitt; ClinPGx og CPIC har ingen kjøringer.
+    expect(status.kjoringer[2]).toMatchObject({ versjon: '2', endringer: { klinisk: 0, metadata: 0, grunnlag: 1 } })
+    // Endringsloggen for ClinPGx sendes ikke, men står i tabellen.
+    expect(status.endringer.map((e) => e.objekt_id)).toEqual(['2161', '2160', 'legemiddel'])
+    const raa = JSON.stringify((await kall.klientFor(admin).rpc('datakilder_status', {})).data)
+    expect(raa).not.toMatch(/clinpgx|cpic|"release"/)
+    const { rows } = await db.query<{ n: number }>(`select count(*)::int n from datakilder.endringer where kilde = 'clinpgx'`)
+    expect(rows[0]!.n).toBe(1)
+    // Siste kjente versjon står selv om siste kjøring ikke fikk den oppgitt.
     expect(status.kilder).toEqual({
-      pubchem: { release: null, versjon: '1', sist_vellykket_kl: expect.stringMatching(/^2026-09-26T08:04:00/) },
-      cypinfo: { release: null, versjon: '2', sist_vellykket_kl: expect.stringMatching(/^2026-09-26T10:00:05/) },
+      pubchem: { versjon: '1', sist_vellykket_kl: expect.stringMatching(/^2026-09-26T08:04:00/) },
+      cypinfo: { versjon: '2', sist_vellykket_kl: expect.stringMatching(/^2026-09-26T10:00:05/) },
     })
     expect(vurderKilder(status).find((v) => v.kilde === 'cypinfo')).toMatchObject({ versjon: '2' })
-    expect(vurderKilder(status).find((v) => v.kilde === 'clinpgx')).toMatchObject({ tilstand: 'stanset' })
+    expect(vurderKilder(status).map((v) => v.kilde)).toEqual(['fest', 'pubchem', 'farmakologiportalen', 'cypinfo'])
 
     // Grensen gjelder hver kilde for seg: mange nye føringer i den ene skyver ikke den andre ut.
     const { data } = await kall.klientFor(admin).rpc('datakilder_status', { antall: 1 })
     expect(JSON.stringify(data)).not.toContain('txid')
     expect(JSON.stringify(data)).not.toContain('"nr"')
-    expect(lesDatakildestatus(data).endringer.map((e) => e.objekt_id)).toEqual(['2161', '1447954390', 'legemiddel'])
+    expect(lesDatakildestatus(data).endringer.map((e) => e.objekt_id)).toEqual(['2161', 'legemiddel'])
   })
 
   it('er bare for administratorer, og ingen andre når tabellene', async () => {
@@ -111,13 +115,9 @@ describe('lesefunksjonen', () => {
     }) as unknown as typeof fetch)
     expect((await leser.status()).kjoringer).toHaveLength(5)
     // Prikken på adminmenyen trenger bare kjøringene, ikke endringene.
-    expect((await leser.status(1)).endringer.map((e) => e.objekt_id)).toEqual(['2161', '1447954390', 'legemiddel'])
+    expect((await leser.status(1)).endringer.map((e) => e.objekt_id)).toEqual(['2161', 'legemiddel'])
     expect(await leser.hentNa('pubchem')).toEqual({ status: 'uendret' })
     expect(kalt).toEqual([{ url: '/api/pubchem-synk', init: { method: 'POST', headers: { authorization: 'Bearer tokenet' } } }])
-    // CPIC og ClinPGx er stanset og endepunktene fjernet (#437): ingenting sendes.
-    await expect(leser.hentNa('cpic')).rejects.toThrow('CPIC kan ikke hentes lenger.')
-    await expect(leser.hentNa('clinpgx')).rejects.toThrow('ClinPGx kan ikke hentes lenger.')
-    expect(kalt).toHaveLength(1)
 
     const avvist = lagDatakildeleser(klient, (async () => new Response(JSON.stringify({ feil: 'Ikke tilgang.' }), { status: 401 })) as unknown as typeof fetch)
     await expect(avvist.hentNa('cypinfo')).rejects.toThrow('Ikke tilgang.')
@@ -148,7 +148,7 @@ describe('FEST i lesefunksjonen', () => {
     expect(status.kjoringer[2]).toMatchObject({ versjon: '2026-09-08T03:09:06', rader: { nye: 5, endrede: 10, utgatte: 1 } })
     expect(status.kjoringer[0]).toMatchObject({ feil: 'Strukturkontrollen stoppet FEST-uttrekket.', rader: null })
     expect(status.kilder).toEqual({
-      fest: { release: null, versjon: '2026-09-08T03:09:06', sist_vellykket_kl: expect.stringMatching(/^2026-09-25T04:15:05/) },
+      fest: { versjon: '2026-09-08T03:09:06', sist_vellykket_kl: expect.stringMatching(/^2026-09-25T04:15:05/) },
     })
   }, 60_000)
 
@@ -179,7 +179,7 @@ const NA = Date.parse('2026-09-26T12:00:00Z')
 
 function kjoring(kilde: Kjoring['kilde'], id: number, status: Kjoring['status'], startet: string, ekstra: Partial<Kjoring> = {}): Kjoring {
   return {
-    kilde, id, status, utlost_av: 'cron', startet_kl: startet, avsluttet_kl: startet, release: null, versjon: null, feil: null,
+    kilde, id, status, utlost_av: 'cron', startet_kl: startet, avsluttet_kl: startet, versjon: null, feil: null,
     endringer: { klinisk: 0, metadata: 0, grunnlag: 0 },
     ...ekstra,
   }
@@ -187,7 +187,7 @@ function kjoring(kilde: Kjoring['kilde'], id: number, status: Kjoring['status'],
 
 function endring(ekstra: Partial<Endring>): Endring {
   return {
-    id: 1, kilde: 'cpic', synk_id: 1, type: 'anbefaling', objekt_id: '1', kontekst: null, art: 'endret', niva: 'klinisk',
+    id: 1, kilde: 'cypinfo', synk_id: 1, type: 'anbefaling', objekt_id: '1', kontekst: null, art: 'endret', niva: 'klinisk',
     etikett: 'amitriptyline · CYP2C19 Poor Metabolizer', felt: [], foer: null, etter: null, spor: {}, registrert_kl: '2026-09-26T09:00:00Z',
     ...ekstra,
   }
@@ -204,7 +204,6 @@ describe('vurderingen', () => {
     expect(intervallDogn('30 2 * * 1')).toBe(7)
     expect(intervallDogn('15 4 * * *')).toBe(1)
     expect(intervallDogn('0 3 1 * *')).toBeNull()
-    // CPIC og ClinPGx er stanset, og har ingen planlagt jobb (cpicstans.test.ts).
     expect(kildeintervaller()).toEqual({ fest: 1, pubchem: 7, farmakologiportalen: 1, cypinfo: 7 })
     // Farmakologiportalen og CYPinfo hentes fra GitHub Actions, ikke Vercel: intervallet står i oppsettet.
     expect(kildeintervaller([])).toEqual({ farmakologiportalen: 1, cypinfo: 7 })
@@ -283,7 +282,7 @@ describe('vurderingen', () => {
 
     // Er den vellykkede eldre enn kjøringene som følger med, står den i det siste kjente om kilden.
     const eldre = vurder([kjoring('fest', 20, 'feilet', '2026-09-26T04:15:00Z', { feil: 'x' })], {
-      fest: { release: null, versjon: null, sist_vellykket_kl: '2026-09-10T04:16:00Z' },
+      fest: { versjon: null, sist_vellykket_kl: '2026-09-10T04:16:00Z' },
     }).fest!
     expect(eldre).toMatchObject({ sisteVellykkede: null, sistVellykketKl: '2026-09-10T04:16:00Z' })
     expect(eldre.melding).toBe('Siste henting feilet: x. ' + KILDEOPPSETT.fest.beholdt)
@@ -303,16 +302,16 @@ describe('vurderingen', () => {
       kjoring('cypinfo', 3, 'uendret', '2026-09-25T03:45:00Z'),
       kjoring('cypinfo', 2, 'fullfort', '2026-09-22T03:45:00Z', { versjon: '2' }),
     ])
-    expect(v.cypinfo).toMatchObject({ release: null, versjon: '2' })
-    expect(v.pubchem).toMatchObject({ release: null, versjon: null })
+    expect(v.cypinfo).toMatchObject({ versjon: '2' })
+    expect(v.pubchem).toMatchObject({ versjon: null })
   })
 
   it('leser svaret defensivt', () => {
     expect(lesDatakildestatus(null)).toEqual(TOM_DATAKILDESTATUS)
     expect(
       lesDatakildestatus({
-        kjoringer: [{ kilde: 'ukjent', id: 1, status: 'fullfort', startet_kl: 'x' }, { kilde: 'cpic', id: 2, status: 'rar', startet_kl: 'x' }],
-        endringer: [{ id: 1, kilde: 'cpic', art: 'endret', type: 'gen', objekt_id: 'CYP2D6', registrert_kl: 'x', felt: ['a', 3] }, 'tull'],
+        kjoringer: [{ kilde: 'ukjent', id: 1, status: 'fullfort', startet_kl: 'x' }, { kilde: 'cypinfo', id: 2, status: 'rar', startet_kl: 'x' }],
+        endringer: [{ id: 1, kilde: 'cypinfo', art: 'endret', type: 'genresultat', objekt_id: 'CYP2D6', registrert_kl: 'x', felt: ['a', 3] }, 'tull'],
       }),
     ).toEqual({
       kjoringer: [],
@@ -350,22 +349,19 @@ describe('tekstene for en endring', () => {
       felt: ['anbefaling', 'raa.version'],
       foer: { anbefaling: 'Gammel tekst', version: 1 },
       etter: { anbefaling: 'Ny tekst', version: 2 },
-      spor: { cpic_versjon: { foer: 1, etter: 2 } },
+      spor: { parserversjon: { foer: 1, etter: 2 } },
     })
     expect(endringstittel(e)).toBe('Endret · Anbefaling')
     expect(feltendringer(e)).toEqual([
       { felt: 'anbefaling', foer: 'Gammel tekst', etter: 'Ny tekst' },
       { felt: 'rådata: version', foer: '1', etter: '2' },
     ])
-    expect(sporlinje(e)).toBe('CPIC-versjon 1 → 2')
+    expect(sporlinje(e)).toBe('OUSFARs lesing endret (parserversjon 1 → 2)')
     expect(feltendringer(endring({ art: 'ny', felt: [] }))).toEqual([])
 
-    const clinpgx = endring({
-      kilde: 'clinpgx', type: 'klinisk', art: 'fjernet', kontekst: 'PA451333',
-      spor: { kildenotat: { dato: '2026-09-20T00:00:00-07:00', merknad: 'Downgraded' } },
-    })
-    expect(endringstittel(clinpgx)).toBe('Fjernet · Klinisk annotasjon')
-    expect(sporlinje(clinpgx)).toBe('for PA451333 · ClinPGx: Downgraded (2026-09-20)')
+    const analyse = endring({ kilde: 'farmakologiportalen', type: 'analyse', art: 'fjernet', kontekst: 'OUS', spor: { antall: 3 } })
+    expect(endringstittel(analyse)).toBe('Fjernet · Laboratorieanalyse')
+    expect(sporlinje(analyse)).toBe('for OUS · 3 rader')
     expect(sporlinje(endring({ art: 'grunnlag', spor: { antall: 2115 } }))).toBe('2115 rader')
     expect(endringstittel({ art: 'ny', type: 'noe_nytt' })).toBe('Ny · noe_nytt')
   })

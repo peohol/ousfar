@@ -22,8 +22,9 @@ tekstene og den faglige aksepten av CYPinfo-visningen) eies av OUSFAR Fag i
 fagsidene for alle (Peder 23.11.2026, fase C). CPIC er stanset siden 6.11.2026
 med dataene slettet, og koden er fjernet (#537). ClinPGx er stanset fra
 23.11.2026: appen leser og viser ingenting derfra, og synken og endepunktene
-svarer 410. Koden er fjernet, og skjemaene `cpic` og `clinpgx` slettes etter
-en arkivkopi (fase C3 og D, Peders ja 23.11.2026). Oppslaget etter en pasients resultat (den tidligere
+svarer 410. Koden er fjernet, og skjemaene `cpic` og `clinpgx` er slettet etter
+en arkivkopi (fase C3 og D, Peders ja 23.11.2026; i produksjonen 24.11.2026).
+Fra 24.11.2026 står de heller ikke i «Datakilder» (#554). Oppslaget etter en pasients resultat (den tidligere
 etappe C) bygges ikke.
 
 **Avklart av Peder 17.11.2026:** OUSFAR skal vise hvordan de ulike genotypene
@@ -66,8 +67,8 @@ produksjonsdatabasen.
   `src/clinpgx/` eller `src/cypinfo/` bygde på `src/cpic/` (avhengigheten gikk
   andre veien). Fjernes i PR #537: endepunktet, `src/cpic/`, visningen,
   oppslaget, diplotypene, CPIC i søket, funksjonstesten og CSS-en, med testene.
-  `cpic` står igjen i `DATAKILDER` og `STANSEDE_KILDER` så «Datakilder» viser
-  den som stanset, med `synk: null`.
+  `cpic` sto igjen i `DATAKILDER` og `STANSEDE_KILDER` som stanset til den ble
+  tatt ut av «Datakilder» 24.11.2026 (#554).
 - **Database:** skjemaet `cpic` med 15 tomme datatabeller, `entiteter` og
   `henvisninger` (13 oppsettsrader hver), visningen `anbefalingsbetingelser`,
   `cpic.pagaende`, `cpic.kilde()`, og `cpic_*_synk`, `cpic_last_inn`,
@@ -268,8 +269,12 @@ alle»):
    fremmednøkkel til kildeskjemaene, så den overlever slettingen urørt, og
    `synk_id` kan slås opp i arkivet fra punkt 1. Migrasjonstesten kontrollerer
    at antallet føringer er uendret.
-4. `cpic` og `clinpgx` blir stående i `DATAKILDER` som avviklede kilder, uten
-   henting, så endringsloggen deres fortsatt kan leses under «Datakilder».
+4. `cpic` og `clinpgx` tas ut av `DATAKILDER`, `KILDEOPPSETT` og
+   `STANSEDE_KILDER`, så de ikke står i «Datakilder», heller ikke som
+   «Stanset» (Peder 24.11.2026). **Gjort:** #554, med
+   `*_datakilder_uten_cpic_og_clinpgx.sql`, der `datakilder_status` bare sender
+   endringene for kildene i bruk. Endringsloggen deres står urørt i
+   `datakilder.endringer` og i arkivet.
 
 Når migrasjonen har kjørt, finnes ClinPGx- og CPIC-dataene bare i arkivet og
 i endringsloggen.

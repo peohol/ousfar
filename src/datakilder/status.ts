@@ -3,7 +3,8 @@
  * farmakogenetiske fra CYPinfo, de kjemiske fra PubChem og
  * laboratorieanalysene fra Farmakologiportalen — slik administratorene ser den: de
  * siste kjøringene, om noe er galt, og hva som er endret siden forrige henting.
- * ClinPGx og CPIC er stanset og fjernet (#437); endringsloggen deres står.
+ * ClinPGx og CPIC er tatt helt ut (#437, #554); endringsloggen deres står i
+ * databasen og i arkivet, men vises ikke her.
  *
  * Endringene i PubChem, Farmakologiportalen og CYPinfo oppdages i databasen
  * (`*_datakilder_endringer.sql`, `docs/datakilder.md`); FEST har ingen
@@ -15,16 +16,13 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import vercel from '../../vercel.json'
 import { STANSEDE_KILDER, stansmelding, type Stans } from './stans'
 
-export const DATAKILDER = ['fest', 'clinpgx', 'cpic', 'pubchem', 'farmakologiportalen', 'cypinfo'] as const
+export const DATAKILDER = ['fest', 'pubchem', 'farmakologiportalen', 'cypinfo'] as const
 export type Datakilde = (typeof DATAKILDER)[number]
 
 export interface Kildeoppsett {
   navn: string
-  /**
-   * Serverendepunktet som synkroniserer kilden, for cron og for administratorer.
-   * `null` for en stanset kilde der også endepunktet er fjernet: den kan ikke hentes.
-   */
-  synk: string | null
+  /** Serverendepunktet som synkroniserer kilden, for cron og for administratorer. */
+  synk: string
   /** Hva `versjon` i en kjøring er for kilden. */
   versjonsnavn: string
   /** Versjonen slik den vises, når den ikke skal stå som den er. */
@@ -63,11 +61,6 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     beholdt: 'OUSFAR bruker fortsatt siste gyldige FEST-data; ingenting fra den feilede hentingen er tatt i bruk.',
     endringslogg: false,
   },
-  // ClinPGx og CPIC er stanset (`stans.ts`), og endepunktene og koden er
-  // fjernet (#437). De står som «Stanset» i «Datakilder», så endringsloggen
-  // deres (`datakilder.endringer`) fortsatt kan leses.
-  clinpgx: { navn: 'ClinPGx', synk: null, versjonsnavn: 'Parserversjon', endringslogg: true },
-  cpic: { navn: 'CPIC', synk: null, versjonsnavn: 'Skjemaversjon', endringslogg: true },
   // Alt som består kontrollen, byttes inn i én transaksjon (docs/kjemi.md).
   pubchem: { navn: 'PubChem', synk: '/api/pubchem-synk', versjonsnavn: 'Parserversjon', endringslogg: true },
   // Hele uttrekket byttes inn i én transaksjon, hver natt fra GitHub Actions
@@ -115,8 +108,6 @@ export interface Kjoring {
   utlost_av: 'cron' | 'manuell'
   startet_kl: string
   avsluttet_kl: string | null
-  /** CPIC-releasen dataene kom fra. */
-  release: string | null
   versjon: string | null
   feil: string | null
   endringer: Endringstall
@@ -140,7 +131,7 @@ export interface Endring {
   synk_id: number | null
   type: string
   objekt_id: string
-  /** Kjemikaliet i ClinPGx en annotasjon kom til eller forsvant fra. */
+  /** Objektet en føring hører til, når kilden oppgir det («for …» i sporlinjen). */
   kontekst: string | null
   art: Endringsart
   niva: Endringsniva
@@ -154,7 +145,6 @@ export interface Endring {
 
 /** Det siste som er kjent om en kilde, også når siste kjøring ikke fikk det oppgitt. */
 export interface Kildefakta {
-  release: string | null
   versjon: string | null
   /** Når siste vellykkede henting var, også når den er eldre enn kjøringene som følger med. */
   sist_vellykket_kl?: string | null
@@ -221,7 +211,6 @@ function lesKjoring(o: unknown): Kjoring | null {
     utlost_av: o.utlost_av === 'manuell' ? 'manuell' : 'cron',
     startet_kl: startet,
     avsluttet_kl: tekst(o.avsluttet_kl),
-    release: tekst(o.release),
     versjon: tekst(o.versjon),
     feil: tekst(o.feil),
     endringer: { klinisk: tall(e.klinisk), metadata: tall(e.metadata), grunnlag: tall(e.grunnlag) },
@@ -274,7 +263,7 @@ export function lesDatakildestatus(svar: unknown): Datakildestatus {
     for (const kilde of DATAKILDER) {
       const k = svar.kilder[kilde]
       if (erObjekt(k)) {
-        kilder[kilde] = { release: tekst(k.release), versjon: tekst(k.versjon), sist_vellykket_kl: tekst(k.sist_vellykket_kl) }
+        kilder[kilde] = { versjon: tekst(k.versjon), sist_vellykket_kl: tekst(k.sist_vellykket_kl) }
       }
     }
   }
@@ -327,8 +316,7 @@ export interface Kildevurdering {
   sisteVellykkede: Kjoring | null
   /** Når siste vellykkede henting var, også når den er eldre enn kjøringene som er med. */
   sistVellykketKl: string | null
-  /** Siste kjente release og versjon, fra en vellykket kjøring. */
-  release: string | null
+  /** Siste kjente versjon, fra en vellykket kjøring. */
   versjon: string | null
   /** Døgn mellom de planlagte kjøringene, fra `vercel.json` eller kildeoppsettet. */
   intervall: number | null
@@ -391,15 +379,12 @@ export function vurderKilder(
     const siste = kjoringer[0] ?? null
     const vellykkede = kjoringer.filter((k) => VELLYKKET.includes(k.status))
     const sisteVellykkede = vellykkede[0] ?? null
-    const kjent = (felt: 'release' | 'versjon') =>
-      status.kilder?.[kilde]?.[felt] ?? vellykkede.find((k) => k[felt])?.[felt] ?? null
-    const release = kjent('release')
-    const versjon = kjent('versjon')
+    const versjon = status.kilder?.[kilde]?.versjon ?? vellykkede.find((k) => k.versjon)?.versjon ?? null
     const sistVellykketKl = sisteVellykkede
       ? (sisteVellykkede.avsluttet_kl ?? sisteVellykkede.startet_kl)
       : (status.kilder?.[kilde]?.sist_vellykket_kl ?? null)
     const vurdering = (tilstand: Tilstand, melding: string): Kildevurdering => ({
-      kilde, navn, tilstand, melding, siste, sisteVellykkede, sistVellykketKl, release, versjon, intervall, kjoringer, endringer,
+      kilde, navn, tilstand, melding, siste, sisteVellykkede, sistVellykketKl, versjon, intervall, kjoringer, endringer,
     })
 
     const stans = stansede[kilde]
@@ -449,22 +434,9 @@ const ARTSNAVN: Record<Endringsart, string> = {
 
 /** Hva typene heter på norsk, for kildene som har dem. Ukjente typer står som de er. */
 const TYPENAVN: Record<string, string> = {
-  kjemikalie: 'Legemiddel',
-  retningslinje: 'Retningslinje',
-  preparatomtale: 'Preparatomtale',
-  klinisk: 'Klinisk annotasjon',
   legemiddel: 'Legemiddel',
-  gen: 'Gen',
-  par: 'Gen–legemiddel-par',
   anbefaling: 'Anbefaling',
   genresultat: 'Genresultat',
-  genresultat_oppslag: 'Oppslag til genresultat',
-  diplotype: 'Diplotype',
-  allel: 'Allel',
-  alleldefinisjon: 'Alleldefinisjon',
-  publikasjon: 'Publikasjon',
-  term: 'Term',
-  endring: 'CPICs endringslogg',
   forbindelse: 'Kjemisk forbindelse',
   enhet: 'Enhet',
   provemateriale: 'Prøvemateriale',
@@ -484,18 +456,10 @@ export function feltnavn(felt: string): string {
   return felt.startsWith('raa.') ? `rådata: ${felt.slice(4)}` : felt.replace(/_/g, ' ')
 }
 
-/** Én linje om hvor endringen kom fra: kjøringen, kildens egen merknad, CPICs versjon for raden. */
+/** Én linje om hvor endringen kom fra: objektet den hører til, antallet rader og OUSFARs lesing. */
 export function sporlinje(e: Endring): string {
   const deler: string[] = []
   if (e.kontekst) deler.push(`for ${e.kontekst}`)
-  const notat = erObjekt(e.spor.kildenotat) ? e.spor.kildenotat : null
-  if (notat) {
-    const dato = tekst(notat.dato)?.slice(0, 10)
-    deler.push(['ClinPGx:', tekst(notat.merknad) ?? tekst(notat.type), dato && `(${dato})`].filter(Boolean).join(' '))
-  }
-  const versjon = e.spor.cpic_versjon
-  if (erObjekt(versjon)) deler.push(`CPIC-versjon ${String(versjon.foer ?? '–')} → ${String(versjon.etter ?? '–')}`)
-  else if (typeof versjon === 'number') deler.push(`CPIC-versjon ${versjon}`)
   if (typeof e.spor.antall === 'number') deler.push(`${e.spor.antall} rader`)
   const parser = e.spor.parserversjon
   if (erObjekt(parser)) deler.push(`OUSFARs lesing endret (parserversjon ${String(parser.foer ?? '–')} → ${String(parser.etter ?? '–')})`)
@@ -545,9 +509,7 @@ export function lagDatakildeleser(klient: SupabaseClient, hent: typeof fetch = (
       const { data } = await klient.auth.getSession()
       const token = data.session?.access_token
       if (!token) throw new Error('Du må være logget inn.')
-      const { navn, synk } = KILDEOPPSETT[kilde]
-      if (!synk) throw new Error(`${navn} kan ikke hentes lenger.`)
-      const res = await hent(synk, { method: 'POST', headers: { authorization: `Bearer ${token}` } })
+      const res = await hent(KILDEOPPSETT[kilde].synk, { method: 'POST', headers: { authorization: `Bearer ${token}` } })
       const svar = (await res.json().catch(() => null)) as Hentingssvar | { feil?: string } | null
       if (!(svar && 'status' in svar && typeof svar.status === 'string')) {
         throw new Error((svar && 'feil' in svar && svar.feil) || `Serveren svarte ${res.status}.`)

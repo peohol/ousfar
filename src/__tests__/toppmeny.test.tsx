@@ -969,7 +969,7 @@ describe('hovedmenyen', () => {
   it('har en prikk når en datakilde bør ses over, og ser etter på nytt når «Datakilder» lukkes', async () => {
     const na = new Date().toISOString()
     const kjoring = (kilde: Kjoring['kilde'], status: Kjoring['status']): Kjoring => ({
-      kilde, id: 1, status, utlost_av: 'cron', startet_kl: na, avsluttet_kl: na, release: null, versjon: null,
+      kilde, id: 1, status, utlost_av: 'cron', startet_kl: na, avsluttet_kl: na, versjon: null,
       feil: status === 'feilet' ? 'Portalen svarte 503' : null, endringer: { klinisk: 0, metadata: 0, grunnlag: 0 },
     })
     const iOrden = DATAKILDER.map((k) => kjoring(k, 'uendret'))
