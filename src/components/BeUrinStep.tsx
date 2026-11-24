@@ -25,6 +25,8 @@ import {
   BE_URIN_KONKLUSJONSFORKLARING,
   BE_URIN_KONKLUSJONSTEKST,
   BE_URIN_TENTATIV,
+  ekstrapolasjonsmerknad,
+  erEkstrapolert,
   konklusjonISetning,
 } from '../domain/beUrinVisning'
 import { formaterDatoNorsk } from '../domain/thcTall'
@@ -223,10 +225,14 @@ export function BeUrinUtfall({
           Hvor lang tid det har gått innen døgnet, er ukjent.
         </p>
       )}
-      {sammenligning.profiler.some((p) => p.ekstrapolert) && (
+      {erEkstrapolert(sammenligning) && (
         <p className="notis" role="note">
-          Forrige prøve ligger over startverdien til minst én utskillelsesprofil. Terskelen er regnet ved matematisk
-          ekstrapolasjon, et område modellen ikke er dokumentert for.
+          {ekstrapolasjonsmerknad('Forrige prøve')}
+        </p>
+      )}
+      {samlet?.treff && erEkstrapolert(samlet.treff.sammenligning) && (
+        <p className="notis" role="note">
+          Samlet vurdering: {ekstrapolasjonsmerknad(`Den tidligere prøven fra ${formaterDatoNorsk(samlet.treff.dato)}`)}
         </p>
       )}
     </>

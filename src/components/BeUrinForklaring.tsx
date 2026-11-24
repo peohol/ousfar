@@ -1,7 +1,7 @@
 import { logSd, type BeUrinSammenligning } from '../domain/beUrinMotor'
 import type { BeUrinModell } from '../domain/beUrinModell'
 import { prosentFor } from '../domain/beUrinPlot'
-import { antallDogn, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
+import { antallDogn, erEkstrapolert, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
 import { formaterDatoNorsk, formaterIrcak } from '../domain/thcTall'
 import { hvorOfteForStor, marginvalg, somProsent } from '../domain/thcVisning'
@@ -68,7 +68,7 @@ export function BeUrinBeregning({
   denneDato: string
 }) {
   const enhet = modell.enheter.kvotient
-  const ekstrapolert = s.profiler.some((p) => p.ekstrapolert)
+  const ekstrapolert = erEkstrapolert(s)
   return (
     <div className="thc-forklaring">
       <section className="thc-forklaring__bolk">

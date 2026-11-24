@@ -45,6 +45,19 @@ export function tallMedEnhet(tall: string, enhet: string): string {
   return enhet ? `${tall} ${enhet}` : tall
 }
 
+/** Om minst én av tersklene i sammenligningen er regnet ved ekstrapolasjon (referanseprøven over kurvens start). */
+export function erEkstrapolert(s: { profiler: readonly { ekstrapolert: boolean }[] }): boolean {
+  return s.profiler.some((p) => p.ekstrapolert)
+}
+
+/** Merknaden når referanseprøven ligger over startverdien til en profil, så terskelen er ekstrapolert. */
+export function ekstrapolasjonsmerknad(referanseprove: string): string {
+  return (
+    `${referanseprove} ligger over startverdien til minst én utskillelsesprofil. Terskelen er regnet ved matematisk ` +
+    'ekstrapolasjon, et område modellen ikke er dokumentert for.'
+  )
+}
+
 export function formaterRatio(ratio: number): string {
   return Number(ratio.toPrecision(4)).toString().replace('.', ',')
 }

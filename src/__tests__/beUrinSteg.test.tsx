@@ -188,6 +188,28 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(screen.queryByText('Kan ikke fastslås.')).toBeNull()
   })
 
+  it('sier fra når det samlede treffet er regnet ved ekstrapolasjon, og lar hovedresultatet stå', async () => {
+    const user = userEvent.setup()
+    vis({ ...MED_MODELL, modell: { ...SYNTETISK_MODELL, maleusikkerhet: { cv_benzoylekgonin: 0.2, cv_kreatinin: 0.05 } } })
+    await screen.findByRole('group', { name: 'Forrige prøve' })
+    await user.click(screen.getByLabelText('Samlet vurdering med enda tidligere prøver'))
+    // Q 25 → 18 etter 3 døgn: kan ikke fastslås, uten ekstrapolasjon. Den eldre prøven (Q 130)
+    // ligger over startverdien til begge profilene.
+    await fyll('Forrige prøve', '50', '2', '2026-01-10')
+    await fyll('Denne prøven', '36', '2', '2026-01-13')
+    await fyll('Tidligere prøve', '260', '2', '2025-12-04')
+    const resultat = screen.getByRole('heading', { name: 'Resultat' }).closest('.thc-resultat') as HTMLElement
+    expect(within(resultat).getByText('Kan ikke fastslås.')).toBeTruthy()
+    expect(resultat.textContent).toContain('Samlet vurdering: Nytt inntak etter 04.12.2025 (modellindikasjon).')
+    const merknader = within(resultat).getAllByRole('note').map((n) => n.textContent)
+    expect(merknader).toContain(
+      'Samlet vurdering: Den tidligere prøven fra 04.12.2025 ligger over startverdien til minst én utskillelsesprofil. ' +
+        'Terskelen er regnet ved matematisk ekstrapolasjon, et område modellen ikke er dokumentert for.',
+    )
+    // Hovedsammenligningen er ikke ekstrapolert, så den merknaden står ikke.
+    expect(merknader.some((t) => t?.startsWith('Forrige prøve ligger over'))).toBe(false)
+  })
+
   it('nullstiller skjemaet og setter fokus i første felt', async () => {
     const user = userEvent.setup()
     vis()
