@@ -1,9 +1,9 @@
 {
-  "oppdatert_kl": "2026-11-24T11:26:21.009Z",
+  "oppdatert_kl": "2026-11-24T15:49:09.157Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
-    "klar": 100,
-    "reservert": 0,
+    "klar": 99,
+    "reservert": 1,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
@@ -11,22 +11,17 @@
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [],
-  "holdes_tilbake": null,
-  "neste": [
+  "aktive": [
     {
       "stoff": "klomipramin",
-      "modus": "de_novo",
-      "poeng": 418.1,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "16 av 27 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
+      "oppgave": "klomipramin-0083",
+      "okt": "kurateringsko/okt/20261124-155000",
+      "frist_kl": "2026-11-24T18:49:09.157Z",
+      "fase": null
+    }
+  ],
+  "holdes_tilbake": null,
+  "neste": [
     {
       "stoff": "bumetanid",
       "modus": "de_novo",
@@ -135,6 +130,19 @@
     },
     {
       "stoff": "bendroflumetiazid",
+      "modus": "de_novo",
+      "poeng": 396,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 20 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "hydroklortiazid",
       "modus": "de_novo",
       "poeng": 396,
       "grunner": [
