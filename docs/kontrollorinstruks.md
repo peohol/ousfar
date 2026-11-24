@@ -106,10 +106,14 @@ teksten med kuratorprotokollen etter.
      funksjonstesten, ikke mot originalkildene. Se at den er bestått, og at
      det den ikke dekker, står som gjenstående i evidensjournalen.
      Funksjonstesten dekker CYPinfo fra 23.11.2026, med kontrollene `cypinfo`
-     og `cypinfovisning`, så en grønn funksjonstest bekrefter visningen på
-     samme måte som de andre lagene (krav 8). Den bekrefter at visningen
-     bygges, ikke at CYPinfos innhold er faglig riktig; det er avgjort én gang
-     i den faglige akseptkontrollen, ikke per side.
+     og `cypinfovisning` (krav 8). **Se etter `cypinfovisning`, ikke bare etter
+     at testen er grønn.** Er siden koblet, men oppslaget gir null legemidler,
+     blir `cypinfo` `ok` og `cypinfovisning` lages ikke, så testen er grønn
+     uten at visningen er kontrollert (sak 557). Står `cypinfo` med
+     `legemidler: 0` på en side som skal ha CYPinfo, er det et sperrende funn.
+     Testen bekrefter ellers at visningen bygges, ikke at CYPinfos innhold er
+     faglig riktig; det er avgjort én gang i den faglige akseptkontrollen,
+     ikke per side.
    - **Farmakogenetikk i teksten** (protokollen, «Farmakogenetikk i teksten»):
      CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden,
      og ClinPGx, CPIC og DPWG er vanlige vitenskapelige kilder. Et

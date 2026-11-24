@@ -8,7 +8,8 @@
   ],
   "omfang": "Minimalt omfang",
   "punkter": [
-    "Ingen endring i appen. Instruksene for kurateringen og kontrollen sa fortsatt at funksjonstesten ikke dekker CYPinfo, og at appen viser ClinPGx-kort ved siden av en ny tekst. Begge er gjort ferdig: funksjonstesten kontrollerer nå CYPinfo, og ClinPGx-visningen er fjernet. Setningene er rettet, slik at en kontroll som er på plass, ikke står som gjenstående."
+    "Ingen endring i appen. Instruksene for kurateringen og kontrollen sa fortsatt at funksjonstesten ikke dekker CYPinfo, og at appen viser ClinPGx-kort ved siden av en ny tekst. Begge er gjort ferdig: funksjonstesten kontrollerer nå CYPinfo, og ClinPGx-visningen er fjernet. Setningene er rettet, slik at en kontroll som er på plass, ikke står som gjenstående.",
+    "Instruksene sier samtidig hvor funksjonstesten ikke rekker: er en fagside koblet til et legemiddel, men oppslaget gir ingen treff, blir testen grønn uten at CYPinfo-visningen er kontrollert. Det er nå et sperrende forbehold i begge instruksene, og meldt som egen sak til apputviklingen."
   ],
   "utenVarsel": true
 }

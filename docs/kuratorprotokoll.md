@@ -95,11 +95,16 @@ Hvert krav kontrolleres i selvtesten og av kontrolløren.
    teksten, men kontrolleres produksjonsnært med funksjonstesten. En kontroll
    funksjonstesten ikke dekker, står som gjenstående i evidensjournalen og
    kvitteres aldri ut som bestått. **Funksjonstesten dekker CYPinfo fra
-   23.11.2026** (sak 437): kontrollene `cypinfo` og `cypinfovisning` i
-   `src/kuratorjobb/funksjonstest.ts` leser sidens CYPinfo-utvalg og bygger
-   visningen, så en grønn funksjonstest bekrefter CYPinfo på samme måte som de
-   andre lagene. Den kontrollerer at visningen bygges, ikke at innholdet er
-   faglig riktig; det siste er gjort i den faglige akseptkontrollen 24.11.2026.
+   23.11.2026** (sak 437), med kontrollene `cypinfo` og `cypinfovisning` i
+   `src/kuratorjobb/funksjonstest.ts`. To forbehold, og begge er sperrende:
+   den bekrefter visningen **bare når `cypinfovisning` står blant
+   kontrollene**. Er siden koblet, men oppslaget gir null legemidler, blir
+   `cypinfo` likevel `ok` og `cypinfovisning` lages ikke, så hele testen er
+   grønn uten at visningen er kontrollert (sak 557). Står `cypinfo` med
+   `legemidler: 0` på en side som skal ha CYPinfo, er det et funn, ikke en
+   bestått kontroll. Og den bekrefter at visningen bygges, ikke at CYPinfos
+   innhold er faglig riktig; det er avgjort i den faglige akseptkontrollen
+   24.11.2026, én gang, ikke per side.
    CYPinfo er fra 23.11.2026 den eneste automatiske farmakogenetiske kilden
    (fagansvarligs avgjørelse, sakene 533 og 437), og visningen vises for alle
    brukere. ClinPGx, CPIC og DPWG er dermed ikke lenger automatiske lag, men
@@ -683,7 +688,10 @@ holder dem i takt med modellen og piloten).
 - 2026-11-24: krav 8 er rettet etter at Dev gjorde de to forholdene ferdig.
   Funksjonstesten dekker nå CYPinfo (kontrollene `cypinfo` og `cypinfovisning`,
   sak #437), så setningen om at den ikke gjør det, og den gjenstående
-  kontrollen den påla, er tatt ut. ClinPGx-visningen er fjernet fra appen, så
+  kontrollen den påla, er tatt ut. Men den dekker den **ikke** når siden er
+  koblet og oppslaget gir null legemidler: da er testen grønn uten
+  visningskontroll (sak 557). Det står som et sperrende forbehold i kravet, og
+  er ikke et unntak kuratoren kan se bort fra. ClinPGx-visningen er fjernet fra appen, så
   avsnittet om overlapp «i overgangen» er tatt ut; det beskrev en tilstand som
   ikke finnes lenger. Ingen krav er svekket: kravet om at et automatisk lag
   ikke dupliseres, gjelder uendret, og en grønn funksjonstest bekrefter at
