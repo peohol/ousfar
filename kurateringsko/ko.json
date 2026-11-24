@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T22:39:01.478Z",
+  "oppdatert_kl": "2026-11-24T23:26:12.115Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 86,
   "stoffer": {
@@ -8141,7 +8141,7 @@
           }
         }
       },
-      "besvart_commit": "fdce8c504c28201aeb1b746026c100262a2972b8",
+      "besvart_commit": "fa720efac45cc28d8bc609451fa5636a46abe6c1",
       "sist_brukt_kl": "2026-11-24T22:39:01.478Z"
     }
   }
