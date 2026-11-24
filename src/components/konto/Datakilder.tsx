@@ -43,7 +43,7 @@ const MAKS_ENDRINGER = 50
 
 /**
  * Driftstatusen for datakildene, for administratorer: hvordan siste henting
- * fra FEST, CYPinfo, PubChem og Farmakologiportalen gikk (ClinPGx og CPIC står som stanset), de siste kjøringene, og hva som er endret —
+ * fra FEST, CYPinfo, PubChem og Farmakologiportalen gikk, de siste kjøringene, og hva som er endret —
  * i alle unntatt FEST de kliniske endringene først, metadataene på
  * forespørsel; i FEST antallet nye, endrede og utgåtte rader. «Hent nå» ber
  * serveren hente med en gang, som den planlagte jobben.
@@ -174,12 +174,6 @@ function Kilde({
           <dt>Siste vellykkede henting</dt>
           <dd>{v.sistVellykketKl ? tidspunkt(v.sistVellykketKl) : '–'}</dd>
         </div>
-        {v.kilde === 'cpic' && (
-          <div>
-            <dt>Release</dt>
-            <dd>{v.release ?? '–'}</dd>
-          </div>
-        )}
         <div>
           <dt>{versjonsnavn}</dt>
           <dd>{v.versjon ? (visVersjon?.(v.versjon) ?? v.versjon) : '–'}</dd>

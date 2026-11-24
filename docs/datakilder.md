@@ -1,24 +1,25 @@
 # Endringer og driftstatus for datakildene
 
 Leses når noe som har med endringsloggen for datakildene eller driftstatusen
-for FEST, ClinPGx, CPIC, PubChem, Farmakologiportalen og CYPinfo skal endres: hva som regnes som en klinisk
+for FEST, PubChem, Farmakologiportalen og CYPinfo skal endres: hva som regnes som en klinisk
 endring, hva som logges, eller panelet «Datakilder». Kildene selv står i
-`docs/legemiddeldata.md`, `docs/clinpgx.md`, `docs/cpic.md`, `docs/kjemi.md`,
-`docs/farmakologiportalen.md` og `docs/cypinfo-integrasjon.md`.
+`docs/legemiddeldata.md`, `docs/kjemi.md`, `docs/farmakologiportalen.md` og
+`docs/cypinfo-integrasjon.md`; de avviklede CPIC og ClinPGx i `docs/cpic.md` og
+`docs/clinpgx.md`.
 
 **Farmakogenetikken (#437):** CYPinfo skal være den eneste automatiske
-farmakogenetiske kilden. CPIC og ClinPGx er stanset, og koden er fjernet
-(ClinPGx 23.11.2026). Skjemaene `cpic` og `clinpgx` er slettet fra databasen
-etter en arkivkopi (Peder 23.11.2026, #540,
-`*_slett_cpic_og_clinpgx.sql`). Endringsloggen for begge står, og vises under «Datakilder»;
-kjøringene deres vises ikke lenger (`datakilder_status`). Planen, med hva som skjer med
-kildene i «Datakilder», endringsloggen og databasen, står i
+farmakogenetiske kilden. CPIC og ClinPGx er tatt helt ut: koden er fjernet,
+skjemaene `cpic` og `clinpgx` er slettet fra databasen etter en arkivkopi
+(Peder 23.11.2026, #540, `*_slett_cpic_og_clinpgx.sql`), og de står ikke
+lenger i «Datakilder» (Peder 24.11.2026, #554). Endringsloggen for begge står
+urørt i `datakilder.endringer` og i arkivet
+(`arkiv/2026-11-23-cpic-clinpgx/` i prosjektfilene), men `datakilder_status`
+sender den ikke, og panelet viser den ikke. Planen står i
 `docs/cypinfo-integrasjon.md`.
 
 Formålet er at en administrator skal se om synkroniseringene går som de skal,
 og hva som faktisk er endret i kildene siden forrige vellykkede henting — og
-kunne spore en endring tilbake til kjøringen, releasen og kildens egen
-merknad. Ingenting her vises for sluttbrukerne, og det sendes ingen varsler.
+kunne spore en endring tilbake til kjøringen og OUSFARs lesing av kilden. Ingenting her vises for sluttbrukerne, og det sendes ingen varsler.
 
 ## Hva som logges
 
@@ -32,21 +33,18 @@ sammen), etterlater ingenting i loggen.
 
 | Art | Når |
 | --- | --- |
-| `grunnlag` | Første gang noe hentes: et kjemikalie i ClinPGx, en type i CPIC, forbindelsene i PubChem. Én føring med antallet, ikke én per objekt |
-| `ny` | Et objekt som ikke fantes, eller som var utgått og er tilbake (`spor.tilbake`). I ClinPGx: en annotasjon som er kommet til et kjemikalie |
+| `grunnlag` | Første gang noe hentes, f.eks. forbindelsene i PubChem. Én føring med antallet, ikke én per objekt |
+| `ny` | Et objekt som ikke fantes, eller som var utgått og er tilbake (`spor.tilbake`) |
 | `endret` | Et objekt der noe er ulikt: de leste dataene, eller bare rådataene |
-| `fjernet` | Et objekt som er borte fra kilden (CPIC: merket utgått). I ClinPGx: en annotasjon som ikke lenger gjelder kjemikaliet |
+| `fjernet` | Et objekt som er borte fra kilden |
 
-Hver føring har kjøringen (`synk_id`), typen, kildens ID, i ClinPGx
-kjemikaliet den gjelder (`kontekst`), en etikett i klartekst (legemiddelet og
-genresultatene for en CPIC-anbefaling, genet og allelet for et allel, ellers
-navnet), feltene som er endret, verdiene før og etter i de feltene, og `spor`:
+Hver føring har kjøringen (`synk_id`), typen, kildens ID, objektet den hører
+til når kilden har det (`kontekst`), en etikett i klartekst, feltene som er
+endret, verdiene før og etter i de feltene, og `spor`. Føringene fra ClinPGx
+og CPIC (før 23.11.2026) har også kildens egen merknad (`spor.kildenotat`) og
+CPICs versjonsnummer (`spor.cpic_versjon`); formen deres står i `docs/clinpgx.md`
+og `docs/cpic.md`.
 
-- ClinPGx: kildens egen siste merknad om annotasjonen (`history` i svaret:
-  dato, type og tekst, f.eks. «Updated recommendation»);
-- CPIC: CPICs versjonsnummer for raden før og etter. Releasen og
-  skjemaversjonen står på kjøringen. CPICs egen endringslogg synkroniseres som
-  typen `endring`, og nye føringer der logges som metadata;
 - PubChem: parserversjonene før og etter, når OUSFARs lesing er endret. Er
   svaret fra PubChem det samme og bare lesingen ny, er endringen metadata.
 - Farmakologiportalen: det samme, med parserversjonene. Etiketten for en
@@ -148,11 +146,13 @@ borte — er en `fjernet`-føring, klinisk, og synes i panelet.
 ## Driftstatusen
 
 `datakilder_status(antall)` (bare administratorer; andre får 42501) gir de ti
-siste kjøringene per kilde (FEST, ClinPGx, CPIC, PubChem, Farmakologiportalen, CYPinfo) med antallet kliniske
-endringer, metadata og grunnlag (FEST: radene i `antall`), siste kjente release og versjon per kilde (fra en vellykket kjøring,
-også når den siste ikke fikk dem oppgitt), og de siste endringene per kilde
-(200 som standard, høyst 1000), så en stor release i den ene kilden ikke
-skyver den andre ut.
+siste kjøringene per kilde (FEST, PubChem, Farmakologiportalen, CYPinfo) med antallet kliniske
+endringer, metadata og grunnlag (FEST: radene i `antall`), siste kjente versjon per kilde (fra en vellykket kjøring,
+også når den siste ikke fikk den oppgitt), og de siste endringene per kilde
+(200 som standard, høyst 1000), så mange endringer i den ene kilden ikke
+skyver den andre ut. Endringene sendes bare for kildene som har kjøringer der,
+så føringene fra CPIC og ClinPGx blir i tabellen
+(`*_datakilder_uten_cpic_og_clinpgx.sql`, #554).
 
 I appen: hovedmenyen → «Administrasjon» → «Datakilder» (bare for
 systemarkitektene, `src/components/konto/Datakilder.tsx`). Er en kilde ikke i
@@ -176,7 +176,7 @@ femte minutt og når panelet lukkes. Per kilde:
   dataene fra siste vellykkede henting (med kildens egen tekst, `beholdt` i
   `KILDEOPPSETT`); for FEST sier panelet at OUSFAR fortsatt bruker siste
   gyldige FEST-data;
-- siste vellykkede henting, releasen (CPIC) og versjonen: parserversjonen
+- siste vellykkede henting og versjonen: parserversjonen
   (PubChem, Farmakologiportalen, CYPinfo) eller datoen DMP laget uttrekket (FEST);
 - «Til vurdering»: det siste vellykkede kjøring ikke kunne koble sikkert
   (`antall.uavklarte`), i PubChem forbindelsene uten verifisert kobling. For
@@ -188,13 +188,13 @@ femte minutt og når panelet lukkes. Per kilde:
   legemidler uten anbefaling, ATC-koder som ikke kan leses;
 - de siste kjøringene, med hvem som utløste dem (den nattlige eller ukentlige
   jobben, eller en administrator);
-- PubChem, Farmakologiportalen og CYPinfo, og fra før ClinPGx og CPIC: de kliniske endringene, nyest først, med feltene, sporet og
+- PubChem, Farmakologiportalen og CYPinfo: de kliniske endringene, nyest først, med feltene, sporet og
   verdiene før og etter; metadataene når de slås på. FEST logger ikke hver
   endring; kjøringene viser hvor mange rader som ble nye, endret og utgått;
 - «Hent nå», som gjør det samme som den planlagte jobben med
   administratorens innlogging (`POST /api/legemiddeldata-synk`,
   `/api/pubchem-synk`, `/api/farmakologiportalen-synk` eller `/api/cypinfo`).
-  ClinPGx og CPIC er stanset og har ingen knapp. `CRON_SECRET` og
+  En stanset kilde har ingen knapp. `CRON_SECRET` og
   `SUPABASE_SECRET_KEY` blir på serveren.
 
 ## Stansede kilder
@@ -206,21 +206,18 @@ jobben tas ut av `vercel.json` (eller arbeidsflyten), og endepunktet svarer
 fra kilden (leserne lages gjennom `omIBruk`), så den ikke vises noe sted, og funksjonstesten melder den som ikke
 aktuell. Panelet viser den som **Stanset** med grunnen.
 
-**CPIC er stanset fra 6.11.2026**, etter Peders beslutning: dataene skal
-erstattes av norske farmakogenetiske data, og databasen var over kvoten.
-Dataene og endringsloggen for CPIC er slettet
-(`*_slett_cpic_og_gamle_forhandsvisninger.sql`); skjemaet, funksjonene og
-oppsettet står, med kontrollsummene nullstilt.
+En kilde som er tatt helt ut, står ikke i `STANSEDE_KILDER`, men fjernes fra
+`DATAKILDER` og `KILDEOPPSETT` (`src/datakilder/status.ts`), og vises ikke i
+panelet. Ingen kilde er stanset nå.
 
-**CPIC-koden er fjernet 23.11.2026 (#437):** CYPinfo er OUSFARs eneste
-automatiske farmakogenetiske kilde (`docs/cypinfo-integrasjon.md`), så CPIC tas
-ikke i bruk igjen. Endepunktet, synkroniseringen, lesingen, visningen,
-oppslaget og søket er borte; `KILDEOPPSETT.cpic.synk` er `null`, så «Hent nå»
-ikke finnes. CPIC står fortsatt som **Stanset** i «Datakilder», med endringsloggen.
-`datakilder_status`, `datakilder.etikett` og `sokedata_versjoner` er skrevet
-om uten CPIC og ClinPGx (`*_clinpgx_cpic_ut_av_funksjonene.sql`), og skjemaene
-er slettet i en egen, destruktiv migrasjon (`*_slett_cpic_og_clinpgx.sql`,
-#540; planen i `docs/cypinfo-integrasjon.md`).
+**CPIC og ClinPGx er tatt ut.** CPIC ble stanset 6.11.2026 og dataene slettet
+(`*_slett_cpic_og_gamle_forhandsvisninger.sql`); ClinPGx ble stanset
+23.11.2026. Koden for begge er fjernet (#437), skjemaene er slettet
+(`*_slett_cpic_og_clinpgx.sql`, #540), og fra 24.11.2026 står de ikke lenger i
+«Datakilder» (#554). Det som er bevart: endringsloggen i `datakilder.endringer`,
+arkivet i prosjektfilene, kildehenvisningene i fagsidene og
+forbindelsesregisteret, og historikketiketten for koblingselementet
+`clinpgxkobling` i gamle fagsideversjoner.
 
 ## Koden
 
@@ -239,11 +236,6 @@ er slettet i en egen, destruktiv migrasjon (`*_slett_cpic_og_clinpgx.sql`,
 
 ## Begrensninger
 
-- En annotasjon i ClinPGx som endres, logges én gang, uten kjemikaliet; hvilke
-  legemidler den gjelder, står i dataene. At den kommer til eller forsvinner
-  fra et kjemikalie, logges per kjemikalie.
-- ClinPGx har ingen releaser. Sporet er kjøringen, tidspunktet og ClinPGx'
-  egen merknad om annotasjonen.
 - En regel om hva som er klinisk er et skjønn; ved tvil er feltet klinisk.
 - Loggen ryddes ikke. Den vokser bare når kildene endres.
 - FEST har ingen endringslogg per objekt; bare antallet nye, endrede og

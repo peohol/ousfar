@@ -1,33 +1,53 @@
 /**
- * CPIC er stanset fra 6.11.2026 (`src/datakilder/stans.ts`, `docs/datakilder.md`):
- * ingen henting, ingenting leses eller vises, og migrasjonen
- * `*_slett_cpic_og_gamle_forhandsvisninger.sql` sletter dataene og
- * forhåndsvisningene i eldre kurateringsrevisjoner. Innholdet er syntetisk.
+ * CPIC ble stanset 6.11.2026, og migrasjonen
+ * `*_slett_cpic_og_gamle_forhandsvisninger.sql` slettet dataene og
+ * forhåndsvisningene i eldre kurateringsrevisjoner. CPIC og ClinPGx er nå tatt
+ * helt ut (#437, #554): de står ikke i «Datakilder», og stansen
+ * (`src/datakilder/stans.ts`) virker for kildene som er igjen. Innholdet er
+ * syntetisk.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { existsSync, readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import vercel from '../../vercel.json'
-import { STANSEDE_KILDER, stansetSvar, stansFor, stansmelding } from '../datakilder/stans'
-import { kilderSomBorSesOver, kildeintervaller, vurderKilder, type Datakildestatus } from '../datakilder/status'
+import { STANSEDE_KILDER, stansetSvar, stansFor, stansmelding, type Stans } from '../datakilder/stans'
+import { DATAKILDER, KILDEOPPSETT, kildeintervaller, lesDatakildestatus, vurderKilder, type Datakildestatus } from '../datakilder/status'
 import { uteblittForhandsvisning } from '../kuratering/modell'
 import { feilFra, kjorMigrasjoner, nyDatabase } from './hjelp/testdatabase'
 
 const MIGRASJON = '20261106190000_slett_cpic_og_gamle_forhandsvisninger.sql'
 const SQL = readFileSync(new URL(`../../supabase/migrations/${MIGRASJON}`, import.meta.url), 'utf8')
 
-describe('CPIC er stanset', () => {
-  it('stansen gjelder CPIC, med dato og grunn', () => {
-    expect(stansFor('cpic')).toEqual({ fra: '2026-11-06', grunn: expect.stringContaining('norske farmakogenetiske data') })
-    // ClinPGx er stanset fra 23.11.2026, og koden er fjernet (#437).
-    expect(stansFor('clinpgx')).toMatchObject({ fra: '2026-11-23' })
-    expect(stansmelding(STANSEDE_KILDER.cpic!, 'CPIC')).toBe(
-      'Stanset 06.11.2026. CPIC-dataene er slettet for å spare plass i databasen, og skal erstattes av norske ' +
-        'farmakogenetiske data. Ingenting hentes eller vises fra CPIC.',
-    )
+const STANS: Stans = { fra: '2026-11-06', grunn: 'Syntetisk grunn.' }
+
+describe('CPIC og ClinPGx er tatt ut av «Datakilder»', () => {
+  it('står ikke blant kildene, i kildeoppsettet eller blant de stansede', () => {
+    expect(DATAKILDER).toEqual(['fest', 'pubchem', 'farmakologiportalen', 'cypinfo'])
+    expect(Object.keys(KILDEOPPSETT).sort()).toEqual([...DATAKILDER].sort())
+    expect(STANSEDE_KILDER).toEqual({})
+    expect(Object.keys(kildeintervaller()).every((k) => (DATAKILDER as readonly string[]).includes(k))).toBe(true)
   })
 
-  it('endepunktet og CPIC-koden er fjernet (#437), og stansen virker for andre kilder', () => {
+  it('viser verken kjøringer eller endringer fra dem, og endringsloggen fra de andre står', () => {
+    const kjoring = (kilde: string, id: number) => ({
+      kilde, id, status: 'fullfort', utlost_av: 'cron', startet_kl: '2026-11-20T02:00:00Z', avsluttet_kl: '2026-11-20T02:01:00Z',
+      versjon: '1', antall: {}, feil: null, endringer: { klinisk: 1, metadata: 0, grunnlag: 0 },
+    })
+    const endring = (kilde: string, id: number) => ({
+      id, kilde, synk_id: 1, type: 'legemiddel', objekt_id: `X${id}`, art: 'ny', niva: 'klinisk', etikett: 'Syntetisk', registrert_kl: '2026-11-20T02:00:30Z',
+    })
+    const status = lesDatakildestatus({
+      kjoringer: [kjoring('clinpgx', 1), kjoring('cpic', 2), kjoring('cypinfo', 3)],
+      endringer: [endring('clinpgx', 1), endring('cpic', 2), endring('cypinfo', 3)],
+      kilder: { clinpgx: { versjon: '9' }, cypinfo: { versjon: '1' } },
+    })
+    expect(status.kjoringer.map((k) => k.kilde)).toEqual(['cypinfo'])
+    expect(status.endringer.map((e) => e.kilde)).toEqual(['cypinfo'])
+    expect(Object.keys(status.kilder ?? {})).toEqual(['cypinfo'])
+    expect(vurderKilder(status).map((v) => v.navn)).toEqual(['FEST', 'PubChem', 'Farmakologiportalen', 'CYPinfo'])
+  })
+
+  it('endepunktene, koden og de planlagte jobbene for CPIC og ClinPGx er fjernet (#437)', () => {
     for (const fil of [
       '../../api/cpic-synk.ts',
       '../cpic/lesing.ts',
@@ -41,25 +61,33 @@ describe('CPIC er stanset', () => {
     }
     expect(Object.keys(vercel.functions)).not.toContain('api/cpic-synk.ts')
     expect(Object.keys(vercel.functions)).not.toContain('api/clinpgx-synk.ts')
-    expect(stansetSvar('pubchem', 'PubChem')).toBeNull()
-    expect(stansetSvar('cpic', 'CPIC', {})).toBeNull()
-  })
-
-  it('den ukentlige jobben er tatt ut av vercel.json, så CPIC har ikke noe intervall', () => {
     expect(vercel.crons.map((c) => c.path)).not.toContain('/api/cpic-synk')
-    expect(kildeintervaller()).not.toHaveProperty('cpic')
+  })
+})
+
+describe('stansen av en kilde', () => {
+  it('har dato og grunn, og sier at ingenting hentes eller vises', () => {
+    expect(stansFor('pubchem')).toBeNull()
+    expect(stansFor('pubchem', { pubchem: STANS })).toBe(STANS)
+    expect(stansmelding(STANS, 'PubChem')).toBe('Stanset 06.11.2026. Syntetisk grunn. Ingenting hentes eller vises fra PubChem.')
   })
 
-  it('datakildene viser CPIC som stanset, uten å be noen se over den', () => {
+  it('endepunktet svarer 410 for en stanset kilde', async () => {
+    expect(stansetSvar('pubchem', 'PubChem')).toBeNull()
+    const svar = stansetSvar('pubchem', 'PubChem', { pubchem: STANS })!
+    expect(svar.status).toBe(410)
+    expect(await svar.json()).toEqual({ status: 'stanset', feil: stansmelding(STANS, 'PubChem') })
+  })
+
+  it('«Datakilder» viser kilden som stanset, uten å be noen se over den', () => {
     const status: Datakildestatus = {
-      kjoringer: [{ kilde: 'cpic', id: 1, status: 'feilet', utlost_av: 'cron', startet_kl: '2026-11-01T02:45:00Z', avsluttet_kl: null, release: null, versjon: null, feil: 'x', endringer: { klinisk: 0, metadata: 0, grunnlag: 0 } }],
+      kjoringer: [{ kilde: 'pubchem', id: 1, status: 'feilet', utlost_av: 'cron', startet_kl: '2026-11-01T02:45:00Z', avsluttet_kl: null, versjon: null, feil: 'x', endringer: { klinisk: 0, metadata: 0, grunnlag: 0 } }],
       endringer: [],
     }
-    const cpic = vurderKilder(status).find((v) => v.kilde === 'cpic')!
-    expect(cpic).toMatchObject({ tilstand: 'stanset', melding: expect.stringMatching(/^Stanset 06\.11\.2026\./) })
-    expect(kilderSomBorSesOver(status)).not.toContain('CPIC')
+    const pubchem = vurderKilder(status, Date.now(), {}, { pubchem: STANS }).find((v) => v.kilde === 'pubchem')!
+    expect(pubchem).toMatchObject({ tilstand: 'stanset', melding: expect.stringMatching(/^Stanset 06\.11\.2026\./) })
     // Uten stansen vurderes den som før.
-    expect(vurderKilder(status, Date.now(), {}, {}).find((v) => v.kilde === 'cpic')!.tilstand).toBe('feil')
+    expect(vurderKilder(status, Date.now(), {}, {}).find((v) => v.kilde === 'pubchem')!.tilstand).toBe('feil')
   })
 
   it('en eldre revisjon uten forhåndsvisning sier hvorfor', () => {

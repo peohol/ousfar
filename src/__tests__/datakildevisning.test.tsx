@@ -2,7 +2,8 @@
 /**
  * Driftstatusen for datakildene slik administratorene ser den: kildene med
  * tilstanden, de kliniske endringene først, metadata på forespørsel, og
- * «Hent nå». Databasen er erstattet med en falsk leser.
+ * «Hent nå». CPIC og ClinPGx er tatt ut (#554) og vises ikke. Databasen er
+ * erstattet med en falsk leser.
  */
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -28,15 +29,7 @@ const STATUS: Datakildestatus = {
   kjoringer: [
     {
       kilde: 'cypinfo', id: 4, status: 'fullfort', utlost_av: 'cron', startet_kl: nylig, avsluttet_kl: nylig,
-      release: null, versjon: '2', feil: null, endringer: { klinisk: 1, metadata: 1, grunnlag: 0 },
-    },
-    {
-      kilde: 'cpic', id: 2, status: 'feilet', utlost_av: 'manuell', startet_kl: nylig, avsluttet_kl: nylig,
-      release: null, versjon: null, feil: 'CPIC svarte 500', endringer: { klinisk: 0, metadata: 0, grunnlag: 0 },
-    },
-    {
-      kilde: 'cpic', id: 1, status: 'fullfort', utlost_av: 'cron', startet_kl: nylig, avsluttet_kl: nylig,
-      release: 'v1.60.1', versjon: '82', feil: null, endringer: { klinisk: 0, metadata: 0, grunnlag: 13 },
+      versjon: '2', feil: null, endringer: { klinisk: 1, metadata: 1, grunnlag: 0 },
     },
   ],
   endringer: [
@@ -49,12 +42,6 @@ const STATUS: Datakildestatus = {
       id: 2, kilde: 'cypinfo', synk_id: 4, type: 'legemiddel', objekt_id: 'l1', kontekst: null, art: 'endret',
       niva: 'metadata', etikett: 'sertralin', felt: ['varenavn'],
       foer: { varenavn: 'A' }, etter: { varenavn: 'B' }, spor: {}, registrert_kl: nylig,
-    },
-    // Fra før ClinPGx ble fjernet: endringsloggen står og vises.
-    {
-      id: 1, kilde: 'clinpgx', synk_id: 9, type: 'retningslinje', objekt_id: 'PA166104980', kontekst: null, art: 'endret',
-      niva: 'klinisk', etikett: 'Annotation of CPIC Guideline for sertraline', felt: ['sammendrag'],
-      foer: { sammendrag: 'Gammel' }, etter: { sammendrag: 'Ny' }, spor: {}, registrert_kl: nylig,
     },
   ],
 }
@@ -76,19 +63,12 @@ describe('datakildene', () => {
     expect(within(cypinfo).queryByText('B')).toBeNull()
     expect(within(cypinfo).getByText('Ny anbefaling')).toBeTruthy()
 
-    // ClinPGx er stanset og fjernet (#437): ingenting kan hentes, men endringsloggen fra før står.
-    const clinpgx = screen.getByRole('region', { name: 'ClinPGx' })
-    expect(within(clinpgx).getByText('Stanset', { selector: '.merke' })).toBeTruthy()
-    expect(within(clinpgx).getByText(/^Stanset 23\.11\.2026\./)).toBeTruthy()
-    expect(within(clinpgx).queryByRole('button', { name: 'Hent fra ClinPGx nå' })).toBeNull()
-    expect(within(clinpgx).getByText('Annotation of CPIC Guideline for sertraline')).toBeTruthy()
-
-    // CPIC er stanset (datakilder/stans.ts): grunnen står i stedet for feilen, og ingenting kan hentes.
-    const cpic = screen.getByRole('region', { name: 'CPIC' })
-    expect(within(cpic).getByText('Stanset', { selector: '.merke' })).toBeTruthy()
-    expect(within(cpic).getByText(/^Stanset 06\.11\.2026\. CPIC-dataene er slettet/)).toBeTruthy()
-    expect(within(cpic).queryByRole('button', { name: 'Hent fra CPIC nå' })).toBeNull()
-    expect(within(cpic).getByText('v1.60.1')).toBeTruthy()
+    // CPIC og ClinPGx er tatt ut (#554): ingen av dem står i panelet, heller ikke som stanset.
+    const lag = screen.getByRole('dialog', { name: 'Datakilder' })
+    expect(screen.queryByRole('region', { name: 'ClinPGx' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'CPIC' })).toBeNull()
+    expect(within(lag).queryByText('Stanset', { selector: '.merke' })).toBeNull()
+    expect(lag.textContent).not.toMatch(/ClinPGx|CPIC|Release/)
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'Vis også endringer i metadata' }))
     expect(within(cypinfo).getByText('B')).toBeTruthy()
@@ -107,7 +87,7 @@ describe('datakildene', () => {
 describe('FEST sammen med de andre kildene', () => {
   const fest = (id: number, status: 'fullfort' | 'feilet', ekstra: Partial<Datakildestatus['kjoringer'][number]> = {}) => ({
     kilde: 'fest' as const, id, status, utlost_av: 'cron' as const, startet_kl: nylig, avsluttet_kl: nylig,
-    release: null, versjon: null, feil: null, endringer: { klinisk: 0, metadata: 0, grunnlag: 0 }, rader: null,
+    versjon: null, feil: null, endringer: { klinisk: 0, metadata: 0, grunnlag: 0 }, rader: null,
     ...ekstra,
   })
   const leserMed = (kjoringer: Datakildestatus['kjoringer']): Datakildeleser & { hentNa: ReturnType<typeof vi.fn> } => ({
@@ -121,8 +101,6 @@ describe('FEST sammen med de andre kildene', () => {
     const region = await screen.findByRole('region', { name: 'FEST' })
     expect(screen.getAllByRole('region').map((r) => r.getAttribute('aria-labelledby'))).toEqual([
       'datakilde-fest',
-      'datakilde-clinpgx',
-      'datakilde-cpic',
       'datakilde-pubchem',
       'datakilde-farmakologiportalen',
       'datakilde-cypinfo',
