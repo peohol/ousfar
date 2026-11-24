@@ -27,6 +27,10 @@
 -- følger med), metoden URUS og modellen i OUS Klinisk farmakologi. Ingen
 -- brukerdata er knyttet til dem.
 
+select intern.endring_start('claude-code', '20261124143000_be_urin_aktivering.sql',
+  'Tentativ fortolkning av benzoylekgonin i urin (UBEZ, metoden URUS) aktivert i OUS Klinisk farmakologi',
+  array['https://github.com/peohol/ousfar/pull/565']::text[]);
+
 do $$
 declare
   ous uuid;
