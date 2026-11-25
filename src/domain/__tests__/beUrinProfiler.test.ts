@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { tilBeUrinModell, validerBeUrinProfilmodell, type BeUrinProfil, type BeUrinProfilmodell } from '../beUrinModell'
-import { tomBeUrinInndata, type BeUrinInndata, type BeUrinProve } from '../beUrinMotor'
+import { SAMME_DAG_FEIL, tomBeUrinInndata, type BeUrinInndata, type BeUrinProve } from '../beUrinMotor'
 import { byggProfilgraf, prosentFor } from '../beUrinPlot'
 import {
   fortolkBeUrinProfiler,
@@ -115,15 +115,12 @@ describe('tersklene', () => {
     expect(terskel(s, 'ekstrem')).toBe(terskel(s, 'treg'))
   })
 
-  it('gir terskel 1 for alle profilene samme dag, og ukjent tidsrom i begge vurderingene', () => {
+  it('gir terskel 1 for alle profilene uten tid mellom prøvene', () => {
     const s = uten(100, 300, 0)
     for (const p of s.profiler) {
       expect(p.terskel, p.rolle).toBe(1)
       expect(p.logTerskel, p.rolle).toBe(0)
     }
-    expect(s.sporadisk).toBe('ukjent_tidsrom')
-    expect(s.kronisk).toBe('ukjent_tidsrom')
-    expect(samletAktuell(s)).toBe(true)
   })
 
   it('gir ratioEtter lik terskelen ved d, for alle profilene', () => {
@@ -249,7 +246,6 @@ describe('fortolkningen', () => {
     expect(r.sammenligning.dager).toBe(1)
     expect(r.sammenligning.margin).toBe(0.9)
     expect(r.sammenligning.korrigertRatio).toBeLessThan(0.8)
-    expect(r.sammeDag).toBe(false)
     expect(r.samlet).toBeNull()
   })
 
@@ -300,10 +296,11 @@ describe('den samlede vurderingen', () => {
     expect(vurdering(av).samlet).toBeNull()
   })
 
-  it('kjøres samme dag, siden tiden mellom prøvene er ukjent', () => {
-    const r = vurdering(samlet([prove(40, '2025-12-25')], prove(80, '2026-01-02')))
-    expect(r.sammeDag).toBe(true)
-    expect(r.samlet?.treff?.dato).toBe('2025-12-25')
+  it('sammenligner ikke prøver fra samme dag, heller ikke med den samlede vurderingen', () => {
+    const r = samlet([prove(40, '2025-12-25')], prove(80, '2026-01-02'))
+    expect(r.type === 'mangler' && r.mangler).toEqual([SAMME_DAG_FEIL])
+    // Ingen vurdering, så ingen høyere margin heller.
+    expect(mildereProfilutfall(inndata(forrige, prove(80, '2026-01-02'), 0.5), MODELL)).toEqual([])
   })
 
   it('gir mangler for en ugyldig tidligere prøve, eller en som ikke er før forrige', () => {

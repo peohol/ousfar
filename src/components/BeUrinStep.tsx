@@ -91,7 +91,7 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
 const SAMLET_INGRESS = {
   1: 'Gir sammenligningen med forrige prøve «kan ikke fastslås», sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
   2:
-    'Er vurderingen ved kronisk bruk uavklart, men endringen over moderat eller treg utskillelse, eller har prøvene samme dato, ' +
+    'Er vurderingen ved kronisk bruk uavklart, men endringen over moderat eller treg utskillelse, ' +
     'sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
 } as const
 

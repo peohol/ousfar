@@ -133,7 +133,7 @@ function monoterskel(p: BeUrinMonoprofil, dager: number): Terskel {
 function biterskel(p: BeUrinBiprofil, q: number, dager: number): Terskel | null {
   const tidspunkt = tidForVerdi(q, p)
   if (!Number.isFinite(tidspunkt) || !(Math.abs(verdiPaaKurve(tidspunkt, p) / q - 1) <= TIDSPUNKT_TOLERANSE)) return null
-  // Samme dato: ingen tid er regnet, og terskelen er nøyaktig 1.
+  // Uten tid mellom prøvene er terskelen nøyaktig 1.
   const logTerskel = dager === 0 ? 0 : logKurve(tidspunkt + dager, p) - Math.log(q)
   if (!Number.isFinite(logTerskel)) return null
   return { logTerskel, tidspunkt, ekstrapolert: q > verdiPaaKurve(0, p) }
@@ -152,10 +152,8 @@ export function ratioEtter(v: BeUrinProfilvurdering, fra: number, dag: number): 
 export const BE_URIN_SPORADISK = ['forenlig_enkeltinntak', 'forenlig_gjentatte_doser', 'sannsynlig', 'svaert_sannsynlig'] as const
 /** Vurderingen når kronisk bruk legges til grunn, fra mildest. */
 export const BE_URIN_KRONISK = ['uavklart', 'uavklart_uvanlig', 'sannsynlig', 'svaert_sannsynlig'] as const
-/** Begge vurderingene når prøvene har samme dato: tiden mellom dem er ukjent. */
-export const UKJENT_TIDSROM = 'ukjent_tidsrom'
-export type BeUrinSporadisk = (typeof BE_URIN_SPORADISK)[number] | typeof UKJENT_TIDSROM
-export type BeUrinKronisk = (typeof BE_URIN_KRONISK)[number] | typeof UKJENT_TIDSROM
+export type BeUrinSporadisk = (typeof BE_URIN_SPORADISK)[number]
+export type BeUrinKronisk = (typeof BE_URIN_KRONISK)[number]
 
 /** En sammenligning av denne prøven med en referanseprøve, med alle fem profilene. */
 export interface BeUrinProfilsammenligning {
@@ -185,7 +183,6 @@ export function profilFor(s: Pick<BeUrinProfilsammenligning, 'profiler'>, rolle:
 }
 
 function sporadiskFor(s: BeUrinProfilsammenligning): BeUrinSporadisk {
-  if (s.dager === 0) return UKJENT_TIDSROM
   const enkelt = profilFor(s, 'enkeltinntak').grad
   const gjentatt = profilFor(s, 'gjentatte_doser').grad
   if (!over(enkelt)) return 'forenlig_enkeltinntak'
@@ -194,7 +191,6 @@ function sporadiskFor(s: BeUrinProfilsammenligning): BeUrinSporadisk {
 }
 
 function kroniskFor(s: BeUrinProfilsammenligning): BeUrinKronisk {
-  if (s.dager === 0) return UKJENT_TIDSROM
   const ekstrem = profilFor(s, 'ekstrem').grad
   if (langtOver(ekstrem)) return 'svaert_sannsynlig'
   if (over(ekstrem)) return 'sannsynlig'
@@ -205,12 +201,10 @@ function kroniskFor(s: BeUrinProfilsammenligning): BeUrinKronisk {
 const overEkstrem = (s: BeUrinProfilsammenligning) => over(profilFor(s, 'ekstrem').grad)
 
 /**
- * Om den samlede vurderingen er aktuell: tiden mellom prøvene er ukjent (samme
- * dato), eller vurderingen ved kronisk bruk er uavklart mens endringen ligger
- * over minst én av moderat og treg utskillelse.
+ * Om den samlede vurderingen er aktuell: vurderingen ved kronisk bruk er
+ * uavklart mens endringen ligger over minst én av moderat og treg utskillelse.
  */
 export function samletAktuell(s: BeUrinProfilsammenligning): boolean {
-  if (s.dager === 0) return true
   return !overEkstrem(s) && (over(profilFor(s, 'moderat').grad) || over(profilFor(s, 'treg').grad))
 }
 
@@ -292,8 +286,6 @@ export type BeUrinProfilresultat =
       denne: BeUrinLestProve
       /** Mot forrige prøve: begge vurderingene, figuren og beregningen. */
       sammenligning: BeUrinProfilsammenligning
-      /** Prøvene har samme dato: d = 0, og tiden innen døgnet er ukjent. */
-      sammeDag: boolean
       /** Satt bare når den samlede vurderingen er slått på og aktuell ({@link samletAktuell}). */
       samlet: BeUrinProfilsamlet | null
     }
@@ -303,7 +295,8 @@ export type BeUrinProfilresultat =
  * eller er noe ugyldig, gis ingen vurdering og ingen graf: bare det som mangler.
  */
 export function fortolkBeUrinProfiler(inn: BeUrinInndata, m: GodkjentBeUrinProfilmodell): BeUrinProfilresultat {
-  const lest = lesBeUrinInndata(inn, m)
+  // Prøver fra samme dag sammenlignes ikke: tiden mellom dem er ukjent.
+  const lest = lesBeUrinInndata(inn, m, { avvisSammeDag: true })
   if (lest.type === 'mangler') return lest
   const { forrige, denne, dager, tidligere } = lest
   const hoved = sammenlignProfiler(m, forrige.q, denne.q, dager, inn.sikkerhetsmargin)
@@ -323,7 +316,7 @@ export function fortolkBeUrinProfiler(inn: BeUrinInndata, m: GodkjentBeUrinProfi
     samlet = { vurdert: tidligere.length, treff }
   }
 
-  return { type: 'vurdering', forrige, denne, sammenligning: hoved, sammeDag: dager === 0, samlet }
+  return { type: 'vurdering', forrige, denne, sammenligning: hoved, samlet }
 }
 
 /* --- Mildere vurdering med høyere margin ------------------------------------ */
@@ -344,22 +337,20 @@ export type BeUrinProfilMildere = {
 
 type Strenghet = readonly [number, number]
 
-/** Hvor streng vurderingen ved sporadisk bruk er, eller `null` når den ikke kan bli mildere. */
-function sporadiskStrenghet(r: Extract<BeUrinProfilresultat, { type: 'vurdering' }>): Strenghet | null {
-  const u = r.sammenligning.sporadisk
-  return u === UKJENT_TIDSROM ? null : [BE_URIN_SPORADISK.indexOf(u), 0]
+/** Hvor streng vurderingen ved sporadisk bruk er. */
+function sporadiskStrenghet(r: Extract<BeUrinProfilresultat, { type: 'vurdering' }>): Strenghet {
+  return [BE_URIN_SPORADISK.indexOf(r.sammenligning.sporadisk), 0]
 }
 
 /**
  * Hvor streng vurderingen ved kronisk bruk er. En indikasjon etter en enda
  * tidligere prøve ligger mellom «uvanlig» og «sannsynlig», og er mildere jo
- * eldre prøven er. Ukjent tidsrom er like mildt som uavklart.
+ * eldre prøven er.
  */
 function kroniskStrenghet(r: Extract<BeUrinProfilresultat, { type: 'vurdering' }>): Strenghet {
   const treff = r.samlet?.treff
   if (treff) return [1.5, -treff.sammenligning.dager]
-  const u = r.sammenligning.kronisk
-  return [u === UKJENT_TIDSROM ? 0 : BE_URIN_KRONISK.indexOf(u), 0]
+  return [BE_URIN_KRONISK.indexOf(r.sammenligning.kronisk), 0]
 }
 
 const mildere = (a: Strenghet, b: Strenghet) => a[0] < b[0] || (a[0] === b[0] && a[1] < b[1])
@@ -387,7 +378,7 @@ export function mildereProfilutfall(
     const alt = fortolkBeUrinProfiler({ ...inn, sikkerhetsmargin: margin }, m)
     if (alt.type !== 'vurdering') continue
     const sporadisk = sporadiskStrenghet(alt)
-    if (valgt.sporadisk && sporadisk && mildere(sporadisk, valgt.sporadisk)) {
+    if (mildere(sporadisk, valgt.sporadisk)) {
       const u = alt.sammenligning.sporadisk
       legg(`sporadisk|${u}`, margin, () => ({ vurdering: 'sporadisk', utfall: u, samletDato: null, marginer: [margin] }))
     }

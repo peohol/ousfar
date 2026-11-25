@@ -21,7 +21,6 @@ import {
   BE_URIN_KORTTITTEL,
   BE_URIN_KRONISK_TEKST,
   BE_URIN_LIKE_BI,
-  BE_URIN_SAMME_DAG,
   BE_URIN_SAMMENLIGNINGSGRUNNLAG,
   BE_URIN_SPORADISK_TEKST,
   marginsetning,
@@ -56,7 +55,6 @@ export function BeUrinProfilresultat({ inndata, modell, onVelgMargin }: BeUrinRe
       {resultat.type === 'vurdering' && (
         <BeUrinVisualisering
           margin={resultat.sammenligning.margin}
-          sammeDag={resultat.sammeDag}
           figur={(alle) => <BeUrinProfilPlot sammenligning={resultat.sammenligning} modell={modell} alleMarginer={alle} />}
           beregning={
             <BeUrinProfilberegning
@@ -108,7 +106,7 @@ function Profilutfall({
   mildere: { marginer: number[]; tekst: string }[]
   onVelgMargin: (margin: number) => void
 }) {
-  const { sammenligning: s, samlet, sammeDag } = resultat
+  const { sammenligning: s, samlet } = resultat
   return (
     <>
       <Panelhode ikon="interp">Resultat</Panelhode>
@@ -130,12 +128,7 @@ function Profilutfall({
           {samlet && <p className="be-vurdering__samlet">{samlettekst(samlet)}</p>}
         </section>
       </div>
-      {sammeDag && (
-        <p className="notis" role="note">
-          {BE_URIN_SAMME_DAG}
-        </p>
-      )}
-      {s.likeBi && !sammeDag && (
+      {s.likeBi && (
         <p className="notis" role="note">
           {BE_URIN_LIKE_BI}
         </p>

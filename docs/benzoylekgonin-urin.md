@@ -114,7 +114,7 @@ Rekkefølgen i listen spiller ingen rolle; ID-en er nøkkelen, ikke navnet.
 **Tersklene.** For de monoeksponentielle er R_i = e^(−k_i·d) direkte,
 uavhengig av Q1 og a. For de bieksponentielle er fremgangsmåten den samme som
 i form 1: t_i der C_i(t_i) = Q1, og R_i = C_i(t_i + d)/Q1, med merknaden om
-ekstrapolasjon når Q1 ligger over C_i(0). Samme dato gir R_i = 1 for alle.
+ekstrapolasjon når Q1 ligger over C_i(0). Prøver fra samme dato sammenlignes ikke i form 2 (under).
 Tersklene regnes også som logaritmer (log-sum-exp for de bieksponentielle), og
 F sammenlignes med logaritmene når R_i eller F ikke lenger er et vanlig
 flyttall. Et svært langt tidsrom gir derfor aldri en ugyldig vurdering, selv
@@ -158,9 +158,14 @@ kalibrerte sannsynligheter; må godkjennes uttrykkelig før aktiveringen):
   Det bemerkes likevel at en såpass ekstrem utskillelse anses svært uvanlig.»;
   ellers «Det kan ikke fastslås om et nytt inntak har skjedd basert på
   analyseresultatene alene.»
-- Samme dato (forslag): alle fem ratioene graderes mot 1 og forklaringen om
-  ukjent tid står, og begge kortene sier «Prøvene har samme dato, så tiden
-  mellom dem er ukjent. Et nytt inntak kan ikke fastslås ut fra prøvene alene.»
+- Samme dato (bestemt av Peder 25.11.2026): prøver fra samme dag
+  sammenlignes ikke, siden tiden mellom dem er ukjent. Det gis ingen kort,
+  figur eller beregning, bare meldingen «Forrige prøve og denne prøven er tatt
+  samme dag og kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere
+  dag.» (`SAMME_DAG_FEIL`, sammen med andre mangler). Eldre prøver i den
+  samlede vurderingen er alltid fra før forrige prøve, så de har aldri samme
+  dato som denne prøven. Form 1 sammenligner fortsatt samme dag, til den
+  fjernes.
 - Ved manglende eller ugyldige verdier og numeriske feil gis ingen kort og
   ingen sannsynlighetsutsagn, bare det som mangler.
 
@@ -179,13 +184,12 @@ treff er F_ekstrem > 1 for det paret (med parets egne treg/ekstrem), og vises
 under kortet for kronisk bruk med datoen og forbeholdet «indikasjon på nytt
 inntak etter den eldre prøven, ikke nødvendigvis etter forrige prøve».
 Kortene, figuren og beregningen for hovedparet endres ikke. Ugyldige eldre
-prøver gir mangler, som i form 1. Samme dato for hovedparet: tiden er ukjent,
-så den samlede vurderingen er alltid aktuell da (åpent spørsmål, under).
+prøver gir mangler, som i form 1.
 
 **Figuren** viser alle fem profilene samtidig på de samme aksene (prosentvis
 endring og døgn), hver med sin farge (`--be-profil-*` i tokens.css, lyst og
 mørkt tema, minst 3:1 mot kortet), sitt stiplingsmønster og navnet i
-legenden. Endepunktene er motorens terskler. Samme dag tegnes ingen figur.
+legenden. Endepunktene er motorens terskler.
 Den målte/korrigerte prøven og valget av margin er som i form 1; punktene for
 denne prøven er nøytrale, siden det ikke finnes én samlet konklusjon å farge
 dem etter. Beregningen viser Q med enhet, R_målt, R_korr, og for hver profil
@@ -196,10 +200,8 @@ merknad, og beregningen skriver ratioen som en tierpotens.
 ### Åpne faglige spørsmål (til godkjenningen)
 
 1. Kortreglene og tekstene over er forslag og må godkjennes uttrykkelig.
-2. Teksten på kortene ved samme dato er et forslag.
-3. Den samlede vurderingen når hovedparet har samme dato: her alltid aktuell
-   (tiden er ukjent), med det vanlige treffkriteriet F_ekstrem > 1. Alternativet
-   er å bruke kriteriet for d > 0 også da.
+
+Samme dato er avklart: prøvene sammenlignes ikke (over).
 
 ## Utrullingen av form 2
 

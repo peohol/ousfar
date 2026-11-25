@@ -4,7 +4,8 @@
  * (modellform 2, #570) i en nettleser i minnet, med den syntetiske modellen
  * av form 2: resultatpanelet med marginsetningen, gradene og de to
  * vurderingene, ingen fast merking om tentativ modell, figuren med alle fem
- * profilene, beregningen, høyere margin, samme dato og den samlede vurderingen.
+ * profilene, beregningen, høyere margin, at prøver fra samme dag ikke
+ * sammenlignes, og den samlede vurderingen.
  * Det finnes ingen kommentar eller kopiering.
  *
  * Tallene (CV 0,2 og 0,05, 90 % margin: R_korr = 0,6882 · R_målt):
@@ -15,6 +16,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
+import { SAMME_DAG_FEIL } from '../domain/beUrinMotor'
 import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
 import { BE_URIN_ROLLER } from '../domain/beUrinProfiler'
@@ -135,14 +137,13 @@ describe('resultatpanelet med fem profiler', () => {
     expect(tekst).not.toMatch(/Infinity|NaN/)
   })
 
-  it('tegner ingen figur samme dag, og sier at et nytt inntak ikke kan fastslås ut fra prøvene alene', async () => {
+  it('sammenligner ikke prøver fra samme dag, og sier fra om det', async () => {
     await visMedProver(['200', '2026-01-01'], ['400', '2026-01-01'])
+    expect(screen.getByText(SAMME_DAG_FEIL)).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Resultat' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Sporadisk bruk lagt til grunn' })).toBeNull()
     expect(screen.queryByRole('img', { name: /utskillelsesprofilene/ })).toBeNull()
-    for (const navn of ['Sporadisk bruk lagt til grunn', 'Kronisk bruk lagt til grunn']) {
-      expect(vurdering(navn).textContent).toContain('Et nytt inntak kan ikke fastslås ut fra prøvene alene.')
-    }
-    expect(resultatkort().textContent).toContain('alle tersklene er da 1')
-    expect(screen.getByRole('heading', { name: 'Beregningen' })).toBeTruthy()
+    expect(screen.queryByText('Beregningen')).toBeNull()
   })
 
   it('viser den samlede vurderingen under kronisk bruk, med datoen og forbeholdet', async () => {

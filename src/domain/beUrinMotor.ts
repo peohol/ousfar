@@ -243,6 +243,16 @@ function lesProve(prove: BeUrinProve, navn: string, m: BeUrinFellesmodell, mangl
 export const NUMERISK_FEIL =
   'Modellen kan ikke regne ut tersklene for disse verdiene. Kontroller tallene; det gis ingen konklusjon.'
 
+/** Meldingen når modellformen ikke sammenligner prøver fra samme dag. */
+export const SAMME_DAG_FEIL =
+  'Forrige prøve og denne prøven er tatt samme dag og kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere dag.'
+
+/** Hvordan en modellform leser inndataene. */
+export interface BeUrinLeseregler {
+  /** Prøver fra samme dag sammenlignes ikke: da gis bare {@link SAMME_DAG_FEIL}. */
+  avvisSammeDag?: boolean
+}
+
 /** Inndataene slik begge modellformene leser dem: alt som mangler, eller prøvene. */
 export type BeUrinLesteInndata =
   | { type: 'mangler'; mangler: string[] }
@@ -260,13 +270,17 @@ export type BeUrinLesteInndata =
  * Validerer inndataene: prøvene, datoene, de tidligere prøvene og marginen.
  * Mangler noe, eller er noe ugyldig, gis bare det som mangler.
  */
-export function lesBeUrinInndata(inn: BeUrinInndata, m: BeUrinFellesmodell): BeUrinLesteInndata {
+export function lesBeUrinInndata(
+  inn: BeUrinInndata,
+  m: BeUrinFellesmodell,
+  regler: BeUrinLeseregler = {},
+): BeUrinLesteInndata {
   const mangler: string[] = []
   const forrige = lesProve(inn.forrige, 'forrige prøve', m, mangler)
   const denne = lesProve(inn.denne, 'denne prøven', m, mangler)
-  if (forrige && denne && dagerMellom(forrige.dato, denne.dato) < 0) {
-    mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
-  }
+  const mellom = forrige && denne ? dagerMellom(forrige.dato, denne.dato) : null
+  if (mellom !== null && mellom < 0) mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
+  else if (mellom === 0 && regler.avvisSammeDag) mangler.push(SAMME_DAG_FEIL)
 
   const tidligere = inn.samletVurdering ? inn.tidligere : []
   if (inn.samletVurdering && tidligere.length === 0) {
@@ -292,7 +306,7 @@ export function lesBeUrinInndata(inn: BeUrinInndata, m: BeUrinFellesmodell): BeU
     type: 'lest',
     forrige,
     denne,
-    dager: dagerMellom(forrige.dato, denne.dato),
+    dager: mellom!,
     tidligere: (tidligereLest as BeUrinLestProve[])
       .map((p) => ({ ...p, dager: dagerMellom(p.dato, denne.dato) }))
       .sort((a, b) => a.dager - b.dager),

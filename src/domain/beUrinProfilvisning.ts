@@ -52,8 +52,6 @@ export const BE_URIN_KORTTITTEL = {
   kronisk: 'Kronisk bruk lagt til grunn',
 } as const
 
-const UKJENT_TIDSROM_TEKST =
-  'Prøvene har samme dato, så tiden mellom dem er ukjent. Et nytt inntak kan ikke fastslås ut fra prøvene alene.'
 const SANNSYNLIG = 'Det er sannsynlig at et nytt inntak har skjedd.'
 const SVAERT_SANNSYNLIG = 'Det er svært sannsynlig at et nytt inntak har skjedd.'
 const UAVKLART = 'Det kan ikke fastslås om et nytt inntak har skjedd basert på analyseresultatene alene.'
@@ -66,7 +64,6 @@ export const BE_URIN_SPORADISK_TEKST: Record<BeUrinSporadisk, string> = {
     'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom. Et nytt inntak kan ikke fastslås.',
   sannsynlig: SANNSYNLIG,
   svaert_sannsynlig: SVAERT_SANNSYNLIG,
-  ukjent_tidsrom: UKJENT_TIDSROM_TEKST,
 }
 
 /** Vurderingen på kortet for kronisk bruk. */
@@ -75,7 +72,6 @@ export const BE_URIN_KRONISK_TEKST: Record<BeUrinKronisk, string> = {
   uavklart_uvanlig: `${UAVKLART} Det bemerkes likevel at en såpass ekstrem utskillelse anses svært uvanlig.`,
   sannsynlig: SANNSYNLIG,
   svaert_sannsynlig: SVAERT_SANNSYNLIG,
-  ukjent_tidsrom: UKJENT_TIDSROM_TEKST,
 }
 
 /** Vurderingene kort, midt i en setning, til banneret om høyere margin. */
@@ -84,14 +80,12 @@ const SPORADISK_KORT: Record<BeUrinSporadisk, string> = {
   forenlig_gjentatte_doser: 'forenlig med utskillelse etter gjentatte doser',
   sannsynlig: 'sannsynlig nytt inntak',
   svaert_sannsynlig: 'svært sannsynlig nytt inntak',
-  ukjent_tidsrom: 'kan ikke fastslås (ukjent tidsrom)',
 }
 const KRONISK_KORT: Record<BeUrinKronisk, string> = {
   uavklart: 'kan ikke fastslås',
   uavklart_uvanlig: 'kan ikke fastslås, men svært uvanlig utskillelse',
   sannsynlig: 'sannsynlig nytt inntak',
   svaert_sannsynlig: 'svært sannsynlig nytt inntak',
-  ukjent_tidsrom: 'kan ikke fastslås (ukjent tidsrom)',
 }
 
 const VURDERINGEN = {
@@ -118,11 +112,6 @@ export function marginsetning(margin: number): string {
     ? `Konsentrasjonsendringene er ikke justert for måleusikkerhet (${somProsent(margin)} % sikkerhetsmargin).`
     : `Konsentrasjonsendringene er justert for måleusikkerhet med ${somProsent(margin)} % sikkerhetsmargin.`
 }
-
-/** Merknaden når prøvene har samme dato. */
-export const BE_URIN_SAMME_DAG =
-  'Prøvene har samme dato. Modellen regner med 0 døgn mellom dem, og alle tersklene er da 1 (ingen endring). ' +
-  'Hvor lang tid det har gått innen døgnet, er ukjent.'
 
 /** Merknaden når de to bieksponentielle profilene gir samme terskel. */
 export const BE_URIN_LIKE_BI =

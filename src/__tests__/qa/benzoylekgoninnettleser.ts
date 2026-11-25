@@ -11,6 +11,7 @@
  * syntetiske modellen av form 2 (fem profiler, #570) og setter den tilbake
  * etterpå; produksjonen har ikke den. Prøveverdiene er oppdiktede.
  */
+import { SAMME_DAG_FEIL } from '../../domain/beUrinMotor'
 import { PROFILMODELL } from '../../domain/__tests__/hjelp/beUrinTestmodell'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
 import { lokalSql, sikreAdministrator, startLokalDatabase } from './lokalmiljo'
@@ -192,13 +193,13 @@ try {
       return 'R, F og enhetene står'
     })
 
-    await punkt('B10 PC, form 2: samme dag og mørkt tema', async () => {
+    await punkt('B10 PC, form 2: samme dag sammenlignes ikke, og mørkt tema', async () => {
       paa(p2)
       await p2.getByRole('button', { name: 'Nullstill' }).click()
       await fyll(p2, 'Forrige prøve', '200', '2', '2026-01-10')
       await fyll(p2, 'Denne prøven', '300', '2', '2026-01-10')
       const r = await resultat(p2)
-      krev(r.includes('Et nytt inntak kan ikke fastslås ut fra prøvene alene.'), `samme dag: ${r}`)
+      krev(r.includes(SAMME_DAG_FEIL) && !r.includes('Sporadisk bruk lagt til grunn'), `samme dag: ${r}`)
       krev((await p2.locator('svg.thc-plot__figur').count()) === 0, 'figur samme dag')
       await p2.emulateMedia({ colorScheme: 'dark' })
       await fyll(p2, 'Denne prøven', '60', '2', '2026-01-20')
@@ -207,7 +208,7 @@ try {
       await p2.locator('svg.thc-plot__figur').scrollIntoViewIfNeeded()
       await bilde(p2, '12-form2-moerkt-figur-pc')
       await p2.emulateMedia({ colorScheme: 'light' })
-      return 'ingen figur samme dag; mørkt tema'
+      return 'samme dag sammenlignes ikke; mørkt tema'
     })
 
     await punkt('B11 PC, form 2: nær −100 % etter et langt tidsrom', async () => {

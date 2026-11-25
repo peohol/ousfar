@@ -24,16 +24,16 @@ export interface BeUrinResultatProps<M> {
 
 /**
  * Kortet med figuren og beregningen (d ≥ 1), eller bare beregningen samme
- * dag, delt mellom modellformene. Bryteren for alle marginene huskes.
+ * dag når modellformen vurderer det, delt mellom modellformene. Bryteren for alle marginene huskes.
  */
 export function BeUrinVisualisering({
   margin,
-  sammeDag,
+  sammeDag = false,
   figur,
   beregning,
 }: {
   margin: number
-  sammeDag: boolean
+  sammeDag?: boolean
   figur: (alleMarginer: boolean) => ReactNode
   beregning: ReactNode
 }) {
