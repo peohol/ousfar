@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T08:52:52.740Z",
+  "oppdatert_kl": "2026-11-25T09:28:45.910Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "teller": 91,
   "stoffer": {
@@ -2986,8 +2986,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-25T08:52:52.740Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-25T09:28:45.910Z",
           "kilde": "system"
         }
       ],
@@ -5826,7 +5826,7 @@
     "perfenazin": {
       "stoff": "perfenazin",
       "navn": "Perfenazin",
-      "status": "blokkert",
+      "status": "publisert",
       "modus": null,
       "prioritet": {
         "poeng": 0,
@@ -5846,14 +5846,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-25T08:52:52.740Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": {
         "kl": "2026-11-25T01:58:26.490946+00:00",
         "modus": "de_novo",
@@ -6086,9 +6079,9 @@
         "okt": "kurateringsko/okt/20261125-074952",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T07:50:28.183Z",
-        "fornyet_kl": "2026-11-25T08:52:20.078Z",
-        "frist_kl": "2026-11-25T11:52:20.078Z",
-        "fase": "Virkninger, graviditet og avhengighet skrevet, konsentrasjonsmerkingen kontrollert",
+        "fornyet_kl": "2026-11-25T09:28:45.910Z",
+        "frist_kl": "2026-11-25T12:28:45.910Z",
+        "fase": "Toksisitetskortene skrevet, bivirkningstabellene i fem preparatomtaler lest",
         "jobbgren": "kuratorjobb/risperidon-0091",
         "kurateringsgren": "kuratering/risperidon-0091",
         "pr": null,
@@ -6148,6 +6141,13 @@
           "oppgave": "risperidon-0091",
           "okt": "kurateringsko/okt/20261125-074952",
           "melding": "Virkninger, graviditet og avhengighet skrevet, konsentrasjonsmerkingen kontrollert"
+        },
+        {
+          "kl": "2026-11-25T09:28:45.910Z",
+          "hendelse": "fornyet",
+          "oppgave": "risperidon-0091",
+          "okt": "kurateringsko/okt/20261125-074952",
+          "melding": "Toksisitetskortene skrevet, bivirkningstabellene i fem preparatomtaler lest"
         }
       ],
       "appgren": null
@@ -8493,30 +8493,31 @@
     },
     "kurateringsko/okt/20261125-074952": {
       "ider": [
+        "forny-4",
         "forny-3",
         "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-3",
-        "sha256": "956cd88efdeb1d926d27d810e29ca18a9fe7b591043bd96200eb62dda46b4ee4",
+        "id": "forny-4",
+        "sha256": "cb45b1e77a7257a46a92240d824843b57f15f92d7e7a034f01ef63c2fad51661",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-3",
-          "foresporsel_sha256": "956cd88efdeb1d926d27d810e29ca18a9fe7b591043bd96200eb62dda46b4ee4",
+          "foresporsel_id": "forny-4",
+          "foresporsel_sha256": "cb45b1e77a7257a46a92240d824843b57f15f92d7e7a034f01ef63c2fad51661",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av risperidon varer til 2026-11-25T11:52:20.078Z.",
-          "behandlet_kl": "2026-11-25T08:52:20.078Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45580054432",
+          "melding": "Reservasjonen av risperidon varer til 2026-11-25T12:28:45.910Z.",
+          "behandlet_kl": "2026-11-25T09:28:45.910Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45585719310",
           "oppgave": {
             "oppgave": "risperidon-0091",
             "stoff": "risperidon",
             "navn": "Risperidon",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T11:52:20.078Z",
+            "frist_kl": "2026-11-25T12:28:45.910Z",
             "jobbgren": "kuratorjobb/risperidon-0091",
             "kurateringsgren": "kuratering/risperidon-0091",
             "pr": null,
@@ -8540,7 +8541,7 @@
         }
       },
       "besvart_commit": "05fca092cf8c679afb709ca21eee6a53a27bb7e6",
-      "sist_brukt_kl": "2026-11-25T08:52:20.078Z"
+      "sist_brukt_kl": "2026-11-25T09:28:45.910Z"
     }
   }
 }
