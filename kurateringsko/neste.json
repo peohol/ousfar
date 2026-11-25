@@ -1,46 +1,27 @@
 {
-  "oppdatert_kl": "2026-11-25T07:28:26.653Z",
+  "oppdatert_kl": "2026-11-25T07:50:28.183Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "antall": {
-    "klar": 95,
-    "reservert": 0,
+    "klar": 93,
+    "reservert": 1,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
-    "publisert": 20,
+    "publisert": 21,
     "blokkert": 3,
     "utenfor": 1
   },
-  "aktive": [],
-  "holdes_tilbake": null,
-  "neste": [
-    {
-      "stoff": "haloperidol",
-      "modus": "de_novo",
-      "poeng": 1416.7,
-      "grunner": [
-        "Fortsetter den avbrutte kurateringen haloperidol-0090.",
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "13 av 23 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
+  "aktive": [
     {
       "stoff": "risperidon",
-      "modus": "de_novo",
-      "poeng": 416.7,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "13 av 23 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
+      "oppgave": "risperidon-0091",
+      "okt": "kurateringsko/okt/20261125-074952",
+      "frist_kl": "2026-11-25T10:50:28.183Z",
+      "fase": null
+    }
+  ],
+  "holdes_tilbake": null,
+  "neste": [
     {
       "stoff": "enalapril",
       "modus": "de_novo",
@@ -144,6 +125,32 @@
         "3 av 21 elementer har ingen kilde."
       ],
       "tidligst_kl": null
+    },
+    {
+      "stoff": "diltiazem",
+      "modus": "de_novo",
+      "poeng": 395.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 21 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "furosemid",
+      "modus": "de_novo",
+      "poeng": 395.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 21 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
@@ -176,7 +183,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T07:28:26.653Z",
+          "kl": "2026-11-25T07:50:28.183Z",
           "kilde": "system"
         }
       ]
