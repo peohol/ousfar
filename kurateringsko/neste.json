@@ -1,9 +1,9 @@
 {
-  "oppdatert_kl": "2026-11-25T00:34:19.891Z",
+  "oppdatert_kl": "2026-11-25T00:35:33.357Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
-    "klar": 97,
-    "reservert": 0,
+    "klar": 96,
+    "reservert": 1,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
@@ -11,23 +11,17 @@
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [],
-  "holdes_tilbake": null,
-  "neste": [
+  "aktive": [
     {
       "stoff": "perfenazin",
-      "modus": "de_novo",
-      "poeng": 1418,
-      "grunner": [
-        "Fortsetter den avbrutte kurateringen perfenazin-0086.",
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "13 av 22 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
+      "oppgave": "perfenazin-0088",
+      "okt": "kurateringsko/okt/20261125-000951",
+      "frist_kl": "2026-11-25T03:35:33.357Z",
+      "fase": null
+    }
+  ],
+  "holdes_tilbake": null,
+  "neste": [
     {
       "stoff": "aripiprazol",
       "modus": "de_novo",
@@ -142,6 +136,19 @@
         "Ingen kuratering å regne alderen fra.",
         "5 av 13 redaksjonelle seksjoner er tomme.",
         "3 av 20 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "amlodipin",
+      "modus": "de_novo",
+      "poeng": 395.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 21 elementer har ingen kilde."
       ],
       "tidligst_kl": null
     }
