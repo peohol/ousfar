@@ -4,38 +4,22 @@
  * (docs/qa-testmiljo.md):
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/benzoylekgoninnettleser.ts
  *
- * Modulen er ikke aktivert, så kontrollen legger selv inn en SYNTETISK modell
- * (de bestilte kurvene, oppdiktede enheter og CV-er) og en syntetisk
- * katalogoppføring i OUS Klinisk farmakologi i den lokale databasen, og tar
- * dem bort igjen til slutt.
+ * Den lokale databasen er bygd av migrasjonene, så modulen er aktivert som i
+ * produksjonen (20261124143000_be_urin_aktivering.sql): metoden URUS, koden
+ * UBEZ og den godkjente modellen i OUS Klinisk farmakologi. Prøveverdiene er
+ * oppdiktede.
  */
-import { SYNTETISK_MODELL } from '../../domain/__tests__/hjelp/beUrinTestmodell'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
-import { lokalSql, sikreAdministrator, startLokalDatabase } from './lokalmiljo'
+import { sikreAdministrator, startLokalDatabase } from './lokalmiljo'
 import { apneTestmiljo } from './testmiljo'
 
 const { punkt, bilde, paa, oppsettFeilet, rapport } = lagKontroll('benzoylekgonin')
 const PC = { viewport: { width: 1440, height: 1000 } }
 const MOBIL = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
-const NOKKEL = 'be-urin-qa'
-const KODE = 'QABEU'
+const KODE = 'UBEZ'
 
 const s = await startLokalDatabase()
 await sikreAdministrator(s)
-const ous = `(select id from public.fagmiljoer where navn = 'OUS Klinisk farmakologi')`
-const rydd = () =>
-  lokalSql(
-    s,
-    `delete from public.analyttkatalog_oppforinger where nokkel = '${NOKKEL}'; delete from public.be_urin_modeller where versjon = '${SYNTETISK_MODELL.versjon}';`,
-  )
-rydd()
-lokalSql(
-  s,
-  `insert into public.be_urin_modeller (fagmiljo_id, versjon, modell) values (${ous}, '${SYNTETISK_MODELL.versjon}', '${JSON.stringify(SYNTETISK_MODELL)}'::jsonb);
-   insert into public.analyttkatalog_oppforinger (fagmiljo_id, nokkel, posisjon, type, navn, visningsnavn, gruppe, analysemetode, maleomrade, aliaser)
-     values (${ous}, '${NOKKEL}', 900000, 'be_urin', 'Benzoylekgonin i urin', 'Benzoylekgonin i urin (QA)', 'Rusmiddelanalyse', 'UCAK', '{"tekst":"","deler":[]}', '{kokain}');
-   insert into public.analyttkatalog_koder (fagmiljo_id, nokkel, posisjon, kode, navn) values (${ous}, '${NOKKEL}', 0, '${KODE}', 'Benzoylekgonin');`,
-)
 
 const miljo = await apneTestmiljo()
 
@@ -44,6 +28,9 @@ async function apne(side: Side) {
   const sok = side.getByRole('combobox', { name: 'Søk etter analytt eller kode' }).or(side.getByLabel('Søk etter analytt eller kode')).first()
   await sok.waitFor({ timeout: 30_000 })
   await sok.fill('kokain')
+  // Serumoppføringen (BEZ1) og urinoppføringen er to treff med hvert sitt navn.
+  await side.getByRole('button', { name: /Benzoylekgonin i urin/ }).waitFor({ timeout: 30_000 })
+  krev((await side.getByRole('button', { name: /BEZ1/ }).count()) === 1, 'serumoppføringen mangler i søket')
   await side.getByRole('button', { name: new RegExp(KODE) }).first().click()
   await side.getByRole('group', { name: 'Forrige prøve' }).waitFor({ timeout: 30_000 })
 }
@@ -64,9 +51,10 @@ try {
     paa(pc)
     await apne(pc)
     await fyll(pc, 'Forrige prøve', '50', '2', '2026-01-01')
-    await fyll(pc, 'Denne prøven', '52,5', '2', '2026-01-04')
+    await fyll(pc, 'Denne prøven', '60', '2', '2026-01-04')
     const q = await pc.getByRole('group', { name: 'Forrige prøve' }).getByRole('status').innerText()
-    krev(q.includes('25 enhet Q'), `Q: ${q}`)
+    krev(q === 'Q (benzoylekgonin/kreatinin): 25', `Q: ${q}`)
+    krev((await pc.getByRole('group', { name: 'Forrige prøve' }).getByLabel('Benzoylekgonin', { exact: true }).count()) === 1, 'feltet har en enhet')
     const r = await resultat(pc)
     krev(r.includes('Tentativ modell – ikke klinisk validert.'), 'merkingen mangler')
     krev(r.includes('Nytt inntak.'), `resultatet: ${r}`)
@@ -134,7 +122,7 @@ try {
     const side: Side = paa(await miljo.side(MOBIL))
     await apne(side)
     await fyll(side, 'Forrige prøve', '50', '2', '2026-01-01')
-    await fyll(side, 'Denne prøven', '52,5', '2', '2026-01-04')
+    await fyll(side, 'Denne prøven', '60', '2', '2026-01-04')
     const [bredde, vindu] = await side.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth])
     krev(bredde <= vindu, `siden er ${bredde} px bred i et vindu på ${vindu} px`)
     await bilde(side, '05-mobil')
@@ -146,6 +134,5 @@ try {
   oppsettFeilet(e)
 } finally {
   await miljo.avslutt()
-  rydd()
 }
 rapport()

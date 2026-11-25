@@ -8,13 +8,13 @@ laboratoriesvar. Den har ingen kommentar, ingen kopiering, ingen eksport og
 ingen kommentarmal. Serumfortolkningen av benzoylekgonin (scenarioet
 `benzoylekgonin`, BEZ1, SRUS) og THC-syremodulen er uendret.
 
-## Status: bygd, avklart, aktiveres i en egen endring
+## Status: aktivert i OUS Klinisk farmakologi
 
-Koden, motoren, skjemaet, figuren og plassen i databasen er på plass og
-prøvd med syntetiske data. **Ingen ser modulen** før den aktiveres: databasen
-har ingen modell og ingen katalogoppføring for den. Peder svarte på de
-kliniske spørsmålene og godkjente modellen 24.11.2026 (under); aktiveringen
-er en egen PR etter at denne koden er ute.
+Peder svarte på de kliniske spørsmålene og godkjente modellen 24.11.2026
+(under). Aktiveringen (`supabase/migrations/20261124143000_be_urin_aktivering.sql`)
+legger inn metoden URUS, oppføringen «Benzoylekgonin i urin» med koden UBEZ og
+modellen `ous-kf-2026-11-24` i OUS Klinisk farmakologi. Andre fagmiljøer har
+ingen modell og ingen oppføring.
 
 ## Fremgangsmåten
 
@@ -91,6 +91,7 @@ dag tegnes ingen figur, bare beregningen.
 | `src/components/BeUrinStep.tsx`, `BeUrinSkjema.tsx`, `BeUrinForklaring.tsx`, `BeUrinPlot.tsx` | Modulen |
 | `src/domain/figurakser.ts`, `src/components/Figurdeler.tsx` | Aksene, etikettene og klammen, delt med THC-syremodulen uten endring der |
 | `supabase/migrations/20261124095000_be_urin_modell.sql` | Tabellen, lesingen og oppføringstypen `be_urin` |
+| `supabase/migrations/20261124143000_be_urin_aktivering.sql` | Aktiveringen: URUS, UBEZ og modellen i OUS Klinisk farmakologi |
 | `src/domain/__tests__/beUrinMotor.test.ts`, `src/__tests__/beUrinModell.test.ts`, `beUrinSteg.test.tsx` | Testene |
 | `src/domain/__tests__/hjelp/beUrinTestmodell.ts` | De bestilte kurvene med syntetiske enheter og CV-er, bare for testene |
 
@@ -145,8 +146,10 @@ Oppføringens `navn` er det søketreffet viser. Serumoppføringen heter
 skiller bare koden og fargen de to treffene.
 
 Nettleserkontrollen (`src/__tests__/qa/benzoylekgoninnettleser.ts`, lokalt
-testmiljø) legger selv inn en syntetisk modell og oppføring og tar dem bort
-igjen.
+testmiljø) prøver den aktiverte oppføringen og modellen med oppdiktede
+prøveverdier.
 
-Appen må ha vært ute med denne koden før oppføringen legges inn: en eldre
-app kjenner ikke typen `be_urin` og ville avvist hele katalogen.
+En eldre app kjenner ikke typen `be_urin` og ville avvist hele katalogen.
+Katalogen gir derfor bare typene appen oppgir at den kjenner, og en app fra
+før dette får ikke oppføringen eller metoden URUS (docs/fagmiljoer.md,
+«Typene appen kjenner»).

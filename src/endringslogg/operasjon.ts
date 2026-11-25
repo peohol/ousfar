@@ -52,9 +52,14 @@ interface MedOverskrifter {
   setHeader?: (navn: string, verdi: string) => unknown
 }
 
+/** Kallet med overskriftene, når det kan få dem. */
+export function medOverskrifter<T extends MedOverskrifter>(kall: T, overskrifter: Record<string, string>): T {
+  if (typeof kall.setHeader !== 'function') return kall
+  for (const [navn, verdi] of Object.entries(overskrifter)) kall.setHeader(navn, verdi)
+  return kall
+}
+
 /** Kallet med overskriftene for handlingen, når det er en. */
 export function iEndring<T extends MedOverskrifter>(kall: T, endring: Endringskontekst | undefined): T {
-  if (!endring || typeof kall.setHeader !== 'function') return kall
-  for (const [navn, verdi] of Object.entries(endringsoverskrifter(endring))) kall.setHeader(navn, verdi)
-  return kall
+  return endring ? medOverskrifter(kall, endringsoverskrifter(endring)) : kall
 }

@@ -8,13 +8,17 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
-import { byggKatalog, lesKatalogdata, TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
+import { byggKatalog, katalogoverskrifter, lesKatalogdata, TOM_KATALOG, type Analyttkatalog } from '../domain/analyttkatalog'
+import { medOverskrifter } from '../endringslogg/operasjon'
 import { tilFeil } from '../faginnhold/lagring'
 import { useHenting } from '../hooks/useHenting'
 
+/** Kallet som henter katalogen, med typene appen kjenner. */
+export const katalogkall = (klient: SupabaseClient) => medOverskrifter(klient.rpc('les_analyttkatalog'), katalogoverskrifter())
+
 /** Katalogen for arbeidskonteksten til den innloggede. */
 export async function lesAnalyttkatalog(klient: SupabaseClient): Promise<Analyttkatalog> {
-  const { data, error } = await klient.rpc('les_analyttkatalog')
+  const { data, error } = await katalogkall(klient)
   if (error) throw tilFeil(error)
   return byggKatalog(lesKatalogdata(data))
 }

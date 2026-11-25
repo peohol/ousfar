@@ -24,6 +24,17 @@ export type Fortolkningstype = 'konsentrasjon' | 'scenario' | 'thc' | 'etg' | 'b
 
 export const FORTOLKNINGSTYPER: readonly Fortolkningstype[] = ['konsentrasjon', 'scenario', 'thc', 'etg', 'be_urin']
 
+/**
+ * Overskriften appen sender typene den kjenner i, kommaskilt. Katalogen gir
+ * bare oppføringene av dem, så en fane med en eldre app beholder sin katalog
+ * når en ny type legges inn (`les_analyttkatalog()`); uten overskriften får
+ * appen typene som fantes før den kom.
+ */
+export const TYPEOVERSKRIFT = 'x-far-fortolkningstyper'
+
+/** Overskriftene katalogen hentes med. */
+export const katalogoverskrifter = (): Record<string, string> => ({ [TYPEOVERSKRIFT]: FORTOLKNINGSTYPER.join(',') })
+
 /** En analyttkode og navnet den står med i lister og menyer. */
 export interface Katalogkode {
   kode: string
