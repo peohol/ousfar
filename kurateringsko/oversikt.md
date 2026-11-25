@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T01:51:24.807Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T02:04:13.827Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 95 · Reservert: 1 · Venter på godkjenning: 1 · Publisert: 19 · Blokkert: 2 · Utenfor køen: 1
+Klar: 95 · Reservert: 1 · Publisert: 20 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **aripiprazol** (aripiprazol-0089), frist 2026-11-25T04:51:24.807Z: Grenen åpnet
+- **aripiprazol** (aripiprazol-0089), frist 2026-11-25T05:04:13.827Z: Preparatomtalene hentet og lest; blindt kildesøk pågår
 
 ## Til gjennomgang
 
-- **perfenazin**: kurateringsgren i OUSFAR (klar), venter på godkjenning
+Ingen kurateringer venter.
 
 ## Blokkert
 

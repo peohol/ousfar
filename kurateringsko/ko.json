@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T01:51:24.807Z",
+  "oppdatert_kl": "2026-11-25T02:04:13.827Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 89,
   "stoffer": {
@@ -235,9 +235,9 @@
         "okt": "kurateringsko/okt/20261125-014902",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T01:49:42.568Z",
-        "fornyet_kl": "2026-11-25T01:51:24.807Z",
-        "frist_kl": "2026-11-25T04:51:24.807Z",
-        "fase": "Grenen åpnet",
+        "fornyet_kl": "2026-11-25T02:04:13.827Z",
+        "frist_kl": "2026-11-25T05:04:13.827Z",
+        "fase": "Preparatomtalene hentet og lest; blindt kildesøk pågår",
         "jobbgren": "kuratorjobb/aripiprazol-0089",
         "kurateringsgren": "kuratering/aripiprazol-0089",
         "pr": null,
@@ -283,6 +283,13 @@
           "oppgave": "aripiprazol-0089",
           "okt": "kurateringsko/okt/20261125-014902",
           "melding": "Grenen åpnet"
+        },
+        {
+          "kl": "2026-11-25T02:04:13.827Z",
+          "hendelse": "fornyet",
+          "oppgave": "aripiprazol-0089",
+          "okt": "kurateringsko/okt/20261125-014902",
+          "melding": "Preparatomtalene hentet og lest; blindt kildesøk pågår"
         }
       ],
       "appgren": null
@@ -5695,8 +5702,8 @@
     "perfenazin": {
       "stoff": "perfenazin",
       "navn": "Perfenazin",
-      "status": "venter_godkjenning",
-      "modus": "de_novo",
+      "status": "publisert",
+      "modus": null,
       "prioritet": {
         "poeng": 0,
         "grunner": []
@@ -5711,12 +5718,22 @@
         "elementer_uten_kilde": 13
       },
       "reservasjon": null,
-      "forsok": 1,
+      "forsok": 0,
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
       "blokkeringer": [],
-      "sist_kuratert": null,
+      "sist_kuratert": {
+        "kl": "2026-11-25T01:58:26.490946+00:00",
+        "modus": "de_novo",
+        "kunnskapsgrense": "2026-11-24",
+        "runde": 2,
+        "pr": null,
+        "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
+        "kilde": "ko",
+        "utsatte": [],
+        "utsatt_kl": null
+      },
       "siste_kjoring": {
         "oppgave": "perfenazin-0088",
         "okt": "kurateringsko/okt/20261125-000951",
@@ -5815,20 +5832,21 @@
           "hendelse": "gren_klar",
           "oppgave": "perfenazin-0088",
           "melding": "Grenen: klar, revisjon 16, kontrollrunde 3."
+        },
+        {
+          "kl": "2026-11-25T02:04:13.827Z",
+          "hendelse": "gren_publisert",
+          "oppgave": "perfenazin-0088",
+          "melding": "Grenen: publisert, revisjon 16, kontrollrunde 3."
+        },
+        {
+          "kl": "2026-11-25T02:04:13.827Z",
+          "hendelse": "publisert",
+          "oppgave": "perfenazin-0088",
+          "melding": "Kurateringsgrenen er publisert (revisjon 16)."
         }
       ],
-      "appgren": {
-        "id": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
-        "oppgave": "perfenazin-0088",
-        "modus": "de_novo",
-        "runde": 2,
-        "kunnskapsgrense": "2026-11-24",
-        "jobbgren": "kuratorjobb/perfenazin-0086",
-        "registrert_kl": "2026-11-25T01:06:44.379Z",
-        "status": "klar",
-        "revisjon": 16,
-        "kontrollrunde": 3
-      }
+      "appgren": null
     },
     "petidin": {
       "stoff": "petidin",
@@ -8246,28 +8264,29 @@
     },
     "kurateringsko/okt/20261125-014902": {
       "ider": [
+        "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-1",
-        "sha256": "aaef98b76b69920e76b422bbd63913094048bdc720b7ed27e85385c2b4c657db",
+        "id": "forny-2",
+        "sha256": "52c303d01bf655237b88f794ddc3d1aeecd2f7d7928ff2a15940e616948196c6",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-1",
-          "foresporsel_sha256": "aaef98b76b69920e76b422bbd63913094048bdc720b7ed27e85385c2b4c657db",
+          "foresporsel_id": "forny-2",
+          "foresporsel_sha256": "52c303d01bf655237b88f794ddc3d1aeecd2f7d7928ff2a15940e616948196c6",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av aripiprazol varer til 2026-11-25T04:51:24.807Z.",
-          "behandlet_kl": "2026-11-25T01:51:24.807Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45528745474",
+          "melding": "Reservasjonen av aripiprazol varer til 2026-11-25T05:04:13.827Z.",
+          "behandlet_kl": "2026-11-25T02:04:13.827Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45530255502",
           "oppgave": {
             "oppgave": "aripiprazol-0089",
             "stoff": "aripiprazol",
             "navn": "Aripiprazol",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T04:51:24.807Z",
+            "frist_kl": "2026-11-25T05:04:13.827Z",
             "jobbgren": "kuratorjobb/aripiprazol-0089",
             "kurateringsgren": "kuratering/aripiprazol-0089",
             "pr": null,
@@ -8291,7 +8310,7 @@
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-25T01:51:24.807Z"
+      "sist_brukt_kl": "2026-11-25T02:04:13.827Z"
     }
   }
 }

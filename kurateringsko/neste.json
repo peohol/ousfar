@@ -1,13 +1,13 @@
 {
-  "oppdatert_kl": "2026-11-25T01:51:24.807Z",
+  "oppdatert_kl": "2026-11-25T02:04:13.827Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 95,
     "reservert": 1,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 1,
+    "venter_godkjenning": 0,
     "sammenslatt": 0,
-    "publisert": 19,
+    "publisert": 20,
     "blokkert": 2,
     "utenfor": 1
   },
@@ -16,8 +16,8 @@
       "stoff": "aripiprazol",
       "oppgave": "aripiprazol-0089",
       "okt": "kurateringsko/okt/20261125-014902",
-      "frist_kl": "2026-11-25T04:51:24.807Z",
-      "fase": "Grenen åpnet"
+      "frist_kl": "2026-11-25T05:04:13.827Z",
+      "fase": "Preparatomtalene hentet og lest; blindt kildesøk pågår"
     }
   ],
   "holdes_tilbake": null,
@@ -153,14 +153,7 @@
       "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [
-    {
-      "stoff": "perfenazin",
-      "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
-      "grenstatus": "klar",
-      "status": "venter_godkjenning"
-    }
-  ],
+  "til_gjennomgang": [],
   "blokkert": [
     {
       "stoff": "metamfetamin",
