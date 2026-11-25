@@ -27,7 +27,10 @@ Les `kurateringsko/neste.json` på grenen `kurateringsko/tilstand`.
 
 ## 2. Reserver neste stoff
 
-1. Lag grenen `kurateringsko/okt/<ÅÅÅÅMMDD-TTMMSS>` (UTC-tiden nå) fra `main`.
+1. Lag grenen `kurateringsko/okt/<ÅÅÅÅMMDD-TTMMSS>` (UTC-tiden nå) fra `main`,
+   med skråstreker. Push alltid med fullt navn,
+   `git push origin HEAD:refs/heads/kurateringsko/okt/<ÅÅÅÅMMDD-TTMMSS>`: en
+   gren med et annet navn ser ikke køen, og den kan ikke slettes fra en tråd.
 2. Commit `kurateringsko/foresporsel.json` på den:
 
    ```json
