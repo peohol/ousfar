@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T06:11:05.973Z",
+  "oppdatert_kl": "2026-11-25T06:37:03.069Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 90,
   "stoffer": {
@@ -8410,7 +8410,7 @@
           "kjoring": "https://github.com/peohol/ousfar/actions/runs/45558688741"
         }
       },
-      "besvart_commit": "b552434ae99e1b6a50afda80687362e62664f351",
+      "besvart_commit": "d918a984a608a22aacc111948176a1dbb2737416",
       "sist_brukt_kl": "2026-11-25T06:11:05.973Z"
     }
   }
