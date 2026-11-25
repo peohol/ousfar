@@ -6,14 +6,15 @@
  *
  * Utrullingen prøves i alle rekkefølger:
  *
- * 1. Ny app mot modellen i dag (form 1): fortolker som før.
+ * 1. Ny app mot form-1-modellen fra #562: fortolker som før.
  * 2. Ny app mot form 2: får de fem profilene.
  * 3. Gammel app (uten overskriften) mot form 2: får en melding om å
  *    oppdatere, aldri fem profiler lest som to.
  * 4. Ny app mot en database uten denne endringen: overskriften ses bort fra.
  *
- * Aktiveringen er ikke en del av dette: OUS Klinisk farmakologi har fortsatt
- * modellen fra #562.
+ * Etter aktiveringen (20261125121500_be_urin_fem_profiler.sql) har OUS
+ * Klinisk farmakologi modellen av form 2: en ny app får den, en gammel app
+ * meldingen om å oppdatere.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { readFileSync } from 'node:fs'
@@ -25,7 +26,7 @@ import {
   type BeUrinModell,
   type BeUrinProfilmodell,
 } from '../domain/beUrinModell'
-import { BESTILTE_KURVER, PROFILMODELL, medProfil } from '../domain/__tests__/hjelp/beUrinTestmodell'
+import { BESTILTE_KURVER, FORM1_AKTIVERT, PROFILMODELL, medProfil } from '../domain/__tests__/hjelp/beUrinTestmodell'
 import { tilFeil } from '../faginnhold/lagring'
 import { lesBeUrinModell } from '../katalog/beUrinModell'
 import { medOverskrifter } from '../endringslogg/operasjon'
@@ -79,17 +80,30 @@ const leggInn = (fagmiljo: string, modell: unknown, versjon = (modell as { versj
 
 const OPPDATER = /krever en nyere utgave av appen/
 
-describe('før aktiveringen', () => {
-  it('har OUS Klinisk farmakologi fortsatt modellen fra #562, som både ny og gammel app leser', async () => {
-    const ny = await nyApp('vanligA')
-    const gammel = await gammelApp('vanligA')
-    expect(gammel).toEqual(ny)
-    const r = tilBeUrinModell(ny.modell)
+describe('med form-1-modellen fra #562', () => {
+  it('leser både ny og gammel app den', async () => {
+    await medModell(g.fagmiljo.A, FORM1_AKTIVERT, async () => {
+      const ny = await nyApp('vanligA')
+      const gammel = await gammelApp('vanligA')
+      expect(gammel).toEqual(ny)
+      const r = tilBeUrinModell(ny.modell)
+      expect(r?.ok).toBe(true)
+      if (!r?.ok) return
+      expect(r.modell.versjon).toBe('ous-kf-2026-11-24')
+      expect((r.modell as BeUrinModell).kurver).toEqual(BESTILTE_KURVER)
+      expect('form' in r.modell).toBe(false)
+    })
+  })
+})
+
+describe('etter aktiveringen', () => {
+  it('får den nye appen modellen av form 2, og den gamle meldingen om å oppdatere', async () => {
+    const r = tilBeUrinModell((await nyApp('vanligA')).modell)
     expect(r?.ok).toBe(true)
     if (!r?.ok) return
-    expect(r.modell.versjon).toBe('ous-kf-2026-11-24')
-    expect((r.modell as BeUrinModell).kurver).toEqual(BESTILTE_KURVER)
-    expect('form' in r.modell).toBe(false)
+    expect(r.modell.versjon).toBe('ous-kf-2026-11-25')
+    expect((r.modell as BeUrinProfilmodell).form).toBe(2)
+    expect((await feilFra(() => gammelApp('vanligA')))?.message).toMatch(OPPDATER)
   })
 })
 
@@ -181,7 +195,7 @@ describe('mot en database uten modellformene', () => {
       await db.exec(gammelFunksjon!.replace('create function', 'create or replace function'))
       const svar = await nyApp('vanligA')
       expect(tilBeUrinModell(svar.modell)?.ok).toBe(true)
-      expect((svar.modell as BeUrinModell).versjon).toBe('ous-kf-2026-11-24')
+      expect((svar.modell as BeUrinProfilmodell).versjon).toBe('ous-kf-2026-11-25')
     } finally {
       await db.exec(nyFunksjon!)
     }

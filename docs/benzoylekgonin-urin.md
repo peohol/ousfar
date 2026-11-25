@@ -16,13 +16,17 @@ ingen kommentarmal. Serumfortolkningen av benzoylekgonin (scenarioet
 
 ## Status
 
-**Form 1 er aktivert i OUS Klinisk farmakologi.**
+**Form 2 (fem profiler, #570) er aktivert i OUS Klinisk farmakologi.**
 
-Peder svarte på de kliniske spørsmålene og godkjente modellen 24.11.2026
+Peder svarte på de kliniske spørsmålene og godkjente form 1 24.11.2026
 (under). Aktiveringen (`supabase/migrations/20261124143000_be_urin_aktivering.sql`)
-legger inn metoden URUS, oppføringen «Benzoylekgonin i urin» med koden UBEZ og
-modellen `ous-kf-2026-11-24` i OUS Klinisk farmakologi. Andre fagmiljøer har
-ingen modell og ingen oppføring.
+la inn metoden URUS, oppføringen «Benzoylekgonin i urin» med koden UBEZ og
+modellen `ous-kf-2026-11-24` (form 1) i OUS Klinisk farmakologi. Peder
+godkjente kortreglene og tekstene for form 2 25.11.2026, og at prøver fra samme
+dag ikke sammenlignes. `supabase/migrations/20261125121500_be_urin_fem_profiler.sql`
+bytter modellen til `ous-kf-2026-11-25` (form 2); URUS, UBEZ og tilgangen er
+uendret. Andre fagmiljøer har ingen modell og ingen oppføring. Appen kan
+fortsatt lese form 1, til den ryddes bort.
 
 ## Form 1: to profiler (#562)
 
@@ -155,8 +159,8 @@ ekstrem under «Sammenlignet med det som kan ses ved kronisk bruk …», en
 skillelinje, og de to kortene side om side (under hverandre på smal skjerm):
 «Sporadisk bruk lagt til grunn» og «Kronisk bruk lagt til grunn».
 
-**Reglene for kortene** (foreslått i #570, kvalitative vurderinger, ikke
-kalibrerte sannsynligheter; må godkjennes uttrykkelig før aktiveringen):
+**Reglene for kortene** (fra #570, godkjent av Peder 25.11.2026; kvalitative vurderinger, ikke
+kalibrerte sannsynligheter):
 
 - Sporadisk: F_enkelt ≤ 1 → «Endringen er forenlig med utskillelse etter et
   enkeltinntak. Et nytt inntak kan ikke fastslås.»; ellers F_gjentatt ≤ 1 →
@@ -209,11 +213,11 @@ terskelen R, F og graden. En endring så stor at Q2/Q1 ikke er et vanlig
 flyttall, vurderes med logaritmene, men tegnes ikke: figuren erstattes av en
 merknad, og beregningen skriver ratioen som en tierpotens.
 
-### Åpne faglige spørsmål (til godkjenningen)
+### Godkjenningen
 
-1. Kortreglene og tekstene over er forslag og må godkjennes uttrykkelig.
-
-Samme dato er avklart: prøvene sammenlignes ikke (over).
+Peder godkjente kortreglene og tekstene over som foreslått 25.11.2026, og
+bestemte at prøver fra samme dato ikke sammenlignes (over). Ingen faglige
+spørsmål står åpne.
 
 ## Utrullingen av form 2
 
@@ -227,13 +231,20 @@ Samme dato er avklart: prøvene sammenlignes ikke (over).
    i OUS Klinisk farmakologi er uendret (form 1), og modulen ser ut og
    fortolker som før. Rekkefølgen spiller ingen rolle: en database uten
    endringen ser bort fra overskriften.
-2. **Aktiveringen (egen migrasjon, egen PR):** først når appen med form 2 er i
-   produksjonen og den eksakte modellversjonen og kortreglene er godkjent.
-   Den bytter bare OUS-modellen til form 2 med en ny versjon, beholder URUS,
-   UBEZ, CV-ene, marginene og tilgangen, har samme kontroll av måleusikkerheten
-   mot THC-syreregelsettet som 20261124143000, og `intern.endring_start`.
+2. **Aktiveringen** (`20261125121500_be_urin_fem_profiler.sql`, egen PR etter
+   at appen med form 2 var i produksjonen og reglene var godkjent): bytter
+   bare OUS-modellen fra `ous-kf-2026-11-24` (form 1) til `ous-kf-2026-11-25`
+   (form 2). De tre monoeksponentielle profilene står med alle sifrene i
+   migrasjonen; de to bieksponentielle tas uendret fra form-1-modellens kurver
+   (`bi_a` = utskillelsesprofil 1, `bi_b` = utskillelsesprofil 2), og
+   marginene fra den. Enhetene er nmol/L, mmol/L og nmol/mmol. Migrasjonen
+   stopper uten å endre noe hvis THC-syreregelsettet har en annen
+   måleusikkerhet enn 0,2 og 0,05, eller modellen i fagmiljøet ikke er
+   `ous-kf-2026-11-24` av form 1. URUS, UBEZ og tilgangen er uendret.
    Tilbakeføring: en ny migrasjon som legger inn form-1-modellen
-   `ous-kf-2026-11-24` igjen (den står i 20261124143000).
+   `ous-kf-2026-11-24` igjen (den står i 20261124143000, og som
+   `FORM1_AKTIVERT` i testene). En app fra før form 2 får meldingen om å
+   oppdatere.
 3. **Opprydding:** når form 2 er aktivert og ingen eldre app er i bruk, kan
    form 1 fjernes fra appen i en egen endring.
 
@@ -252,6 +263,7 @@ Samme dato er avklart: prøvene sammenlignes ikke (over).
 | `supabase/migrations/20261124095000_be_urin_modell.sql` | Tabellen, lesingen og oppføringstypen `be_urin` |
 | `supabase/migrations/20261124143000_be_urin_aktivering.sql` | Aktiveringen av form 1: URUS, UBEZ og modellen i OUS Klinisk farmakologi |
 | `supabase/migrations/20261125094800_be_urin_modellformer.sql` | Formkontrollen for begge formene og lesingen etter formene appen oppgir |
+| `supabase/migrations/20261125121500_be_urin_fem_profiler.sql` | Aktiveringen av form 2: modellen `ous-kf-2026-11-25` i OUS Klinisk farmakologi |
 | `src/domain/__tests__/beUrinMotor.test.ts`, `src/__tests__/beUrinModell.test.ts`, `beUrinSteg.test.tsx` | Testene av form 1 |
 | `src/domain/__tests__/beUrinProfiler.test.ts`, `src/__tests__/beUrinModellformer.test.ts`, `beUrinProfilSteg.test.tsx` | Testene av form 2, formkontrollen og eldre/nyere app mot eldre/nyere database |
 | `src/domain/__tests__/hjelp/beUrinTestmodell.ts`, `src/__tests__/hjelp/beUrinvisning.tsx` | De bestilte profilene med syntetiske enheter og CV-er for form 1, modellen for form 2 slik #570 oppgir den, og oppsettet for skjermtestene; bare for testene |
