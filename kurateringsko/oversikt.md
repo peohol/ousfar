@@ -1,8 +1,8 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T08:13:13.831Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T08:30:24.681Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 93 · Reservert: 1 · Publisert: 21 · Blokkert: 3 · Utenfor køen: 1
+Klar: 93 · Reservert: 1 · Publisert: 20 · Blokkert: 4 · Utenfor køen: 1
 
 ## Pågår
 
@@ -14,6 +14,7 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
+- **haloperidol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 - **perfenazin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.

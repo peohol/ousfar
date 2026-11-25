@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-25T08:13:13.831Z",
+  "oppdatert_kl": "2026-11-25T08:30:24.681Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "antall": {
     "klar": 93,
@@ -7,8 +7,8 @@
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
-    "publisert": 21,
-    "blokkert": 3,
+    "publisert": 20,
+    "blokkert": 4,
     "utenfor": 1
   },
   "aktive": [
@@ -156,6 +156,17 @@
   "til_gjennomgang": [],
   "blokkert": [
     {
+      "stoff": "haloperidol",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
+          "kl": "2026-11-25T08:30:24.681Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
       "stoff": "metamfetamin",
       "blokkeringer": [
         {
@@ -183,7 +194,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T08:13:13.831Z",
+          "kl": "2026-11-25T08:30:24.681Z",
           "kilde": "system"
         }
       ]
