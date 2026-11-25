@@ -170,7 +170,10 @@ prøve har benzoylekgonin, kreatinin og prøvedato; enheten står inne i feltet
 Tidligere prøver legges til med den diskrete knappen «+ Legg til tidligere
 prøve» under feltene og fjernes med «Fjern» på hver; fokuset går til den nye
 prøvens første felt, og til knappen når en fjernes. Det er ingen avkrysning for
-den samlede vurderingen: den er med så snart det står en tidligere prøve.
+den samlede vurderingen: den er med så snart det står en tidligere prøve. Et
+skjema tatt vare på over en oppdatering fra før #576, med tidligere prøver og
+den samlede vurderingen slått av, får ingen tidligere prøver
+(`lesBevartBeUrinInndata`), så de ikke plutselig er med.
 Mens skjemaet fylles ut, vises ingen liste over det som mangler, bare «Vurderingen
 vises når prøvene er fylt inn.» (`BE_URIN_VENTER`). Et ugyldig felt sies kort ved
 feltet (`feltfeil` i `beUrinMotor.ts`: «Må være et tall.», «Må være kvantifisert og

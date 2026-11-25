@@ -183,6 +183,23 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(await forsteFelt()).toBe('50')
   })
 
+  it('tar ikke med tidligere prøver som var slått av i et skjema fra før #576', async () => {
+    const gammelt = {
+      ...tomBeUrinInndata(SYNTETISK_MODELL),
+      forrige: { benzoylekgonin: '50', kreatinin: '2', dato: '2026-01-01' },
+      samletVurdering: false,
+      tidligere: [{ benzoylekgonin: '26', kreatinin: '2', dato: '2025-12-31' }],
+    }
+    sessionStorage.setItem(
+      LAGRINGSNOKKEL,
+      JSON.stringify({ tatt: Date.now(), verdier: { [beUrinBevaringsnavn('a', SYNTETISK_MODELL.versjon)]: gammelt }, rulling: [] }),
+    )
+    vis()
+    const forrige = await screen.findByRole('group', { name: 'Forrige prøve' })
+    expect((forrige.querySelector('input') as HTMLInputElement).value).toBe('50')
+    expect(screen.queryByRole('group', { name: /Tidligere prøve/ })).toBeNull()
+  })
+
   it('tømmer skjemaet når fagmiljøet byttes', async () => {
     const { rerender, steg } = vis()
     await screen.findByRole('group', { name: 'Forrige prøve' })

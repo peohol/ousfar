@@ -11,6 +11,7 @@ import {
   erGyldigDato,
   feltfeil,
   fortolkBeUrin,
+  lesBevartBeUrinInndata,
   konklusjonFor,
   korrigertRatio,
   kvotient,
@@ -320,6 +321,24 @@ describe('sikkerhetsmarginen', () => {
 
   it('foreslår ingenting uten en vurdering', () => {
     expect(mildereVedHoyereMargin(tomBeUrinInndata(MODELL), MODELL)).toEqual([])
+  })
+})
+
+describe('skjemaet tatt vare på over en oppdatering', () => {
+  const tidligere = [prove(9, '2026-01-09')]
+  const fylt = inndata(prove(10, '2026-01-10'), prove(8, '2026-01-11'))
+
+  it('tar ikke med tidligere prøver som var slått av før #576', () => {
+    expect(lesBevartBeUrinInndata({ ...fylt, samletVurdering: false, tidligere })).toEqual({ ...fylt, tidligere: [] })
+  })
+
+  it('beholder tidligere prøver som var slått på, og skjemaer fra etter #576', () => {
+    expect(lesBevartBeUrinInndata({ ...fylt, samletVurdering: true, tidligere })).toEqual({ ...fylt, tidligere })
+    expect(lesBevartBeUrinInndata({ ...fylt, tidligere })).toEqual({ ...fylt, tidligere })
+  })
+
+  it('godtar ikke noe som ikke er et skjema', () => {
+    for (const lagret of [null, 'x', [], { ...fylt, tidligere: 'x' }]) expect(lesBevartBeUrinInndata(lagret)).toBeUndefined()
   })
 })
 

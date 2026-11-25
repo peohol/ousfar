@@ -14,6 +14,7 @@ import { Korthode } from './ThcStep'
 import { Ikon } from './ikon/Ikon'
 import {
   fortolkBeUrin,
+  lesBevartBeUrinInndata,
   mildereVedHoyereMargin,
   tomBeUrinInndata,
   type BeUrinInndata,
@@ -87,6 +88,9 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
   )
 }
 
+/** Skjemaet over en oppdatering, også fra før #576 (`lesBevartBeUrinInndata`). */
+const BEVARINGSFORM = { lagre: (inndata: BeUrinInndata) => inndata, les: lesBevartBeUrinInndata }
+
 function BeUrinFortolkning({
   analyte,
   fagmiljo,
@@ -100,8 +104,10 @@ function BeUrinFortolkning({
   // binder verdiene til fagmiljøet og modellversjonen: kommer en annen modell
   // med oppdateringen (andre enheter, profiler eller CV-er), begynner skjemaet
   // tomt i stedet for å fortolke de gamle verdiene med den nye modellen.
-  const [inndata, setInndata] = useBevart<BeUrinInndata>(beUrinBevaringsnavn(fagmiljo, modell.versjon), () =>
-    tomBeUrinInndata(modell),
+  const [inndata, setInndata] = useBevart<BeUrinInndata>(
+    beUrinBevaringsnavn(fagmiljo, modell.versjon),
+    () => tomBeUrinInndata(modell),
+    BEVARINGSFORM,
   )
   // Visningsvalget i figuren eies her, ikke av figurkortet: kortet forsvinner
   // så lenge skjemaet er ufullstendig, og valget skal stå når det kommer

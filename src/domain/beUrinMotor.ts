@@ -64,6 +64,20 @@ export function tomBeUrinInndata(m: BeUrinFellesmodell): BeUrinInndata {
   }
 }
 
+/**
+ * Skjemaet slik det ble tatt vare på over en oppdatering av appen. Fra før
+ * #576 kunne det ha tidligere prøver med den samlede vurderingen slått av
+ * (`samletVurdering: false`); de var ikke med i fortolkningen, og tas derfor
+ * ikke med nå heller, der hver tidligere prøve er med. `undefined` når det
+ * lagrede ikke er et skjema.
+ */
+export function lesBevartBeUrinInndata(lagret: unknown): BeUrinInndata | undefined {
+  if (!lagret || typeof lagret !== 'object' || Array.isArray(lagret)) return undefined
+  const { samletVurdering, ...inndata } = lagret as BeUrinInndata & { samletVurdering?: unknown }
+  if (!Array.isArray(inndata.tidligere)) return undefined
+  return samletVurdering === false ? { ...inndata, tidligere: [] } : inndata
+}
+
 /** Sant for en ekte kalenderdato på formen datofeltet gir. */
 export function erGyldigDato(iso: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false
