@@ -43,6 +43,18 @@ export const SYNTETISK_MODELL: BeUrinModell = {
   standard_sikkerhetsmargin: 0.9,
 }
 
+/**
+ * Form-1-modellen som var aktivert i OUS Klinisk farmakologi fra #562 til
+ * #570 (20261124143000_be_urin_aktivering.sql): bestillingens kurver, uten
+ * enheter, med måleusikkerheten fra THC-syreregelsettet.
+ */
+export const FORM1_AKTIVERT: BeUrinModell = {
+  ...SYNTETISK_MODELL,
+  versjon: 'ous-kf-2026-11-24',
+  enheter: { benzoylekgonin: '', kreatinin: '', kvotient: '' },
+  maleusikkerhet: { cv_benzoylekgonin: 0.2, cv_kreatinin: 0.05 },
+}
+
 /** Modellen godkjent, eller en feil i testen. */
 export function godkjent(m: BeUrinModell = SYNTETISK_MODELL): GodkjentBeUrinModell {
   const r = godkjennBeUrinModell(m)

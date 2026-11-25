@@ -1,0 +1,21 @@
+{
+  "id": "20261125-121656-dd57b8",
+  "semver": "minor",
+  "opprettet": "2026-11-25T12:16:56Z",
+  "sammendrag": "Ny fortolkning av benzoylekgonin i urin med fem utskillelsesprofiler",
+  "typer": [
+    "Funksjonalitet",
+    "Fag"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Benzoylekgonin i urin (UBEZ) sammenlignes nå mot fem utskillelsesprofiler samtidig, hver med sin farge i figuren: etter enkeltinntak, etter gjentatte doser innenfor et kort tidsrom, moderat, treg og ekstrem utskillelse.",
+    "Resultatet gir to vurderinger side om side: én når sporadisk bruk legges til grunn, og én når kronisk bruk legges til grunn.",
+    "Benzoylekgonin oppgis i nmol/L og kreatinin i mmol/L. Prøver tatt samme dag sammenlignes ikke.",
+    "Den faste merkingen om tentativ modell er fjernet. Fortolkningen er fortsatt intern beslutningsstøtte uten kommentar eller kopiering, og forbeholdene står i beregningen."
+  ],
+  "endrerFortolkning": true
+}
