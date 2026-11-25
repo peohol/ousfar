@@ -1,0 +1,22 @@
+{
+  "id": "20261125-141611-7aa8c9",
+  "semver": "minor",
+  "opprettet": "2026-11-25T14:16:11Z",
+  "sammendrag": "Enklere fortolkning av benzoylekgonin i urin, med «Nytt inntak» som sterkeste vurdering",
+  "typer": [
+    "Funksjonalitet",
+    "Fag"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "De to vurderingene står rett under prøvene, med korte konklusjoner: «Nytt inntak.», «Sannsynlig nytt inntak.» eller «Nytt inntak kan ikke fastslås.».",
+    "Den sterkeste vurderingen er nå «Nytt inntak» i stedet for «Svært sannsynlig»: ved sporadisk bruk når endringen ligger mer enn fem ganger over det som forventes etter gjentatte doser, og ved kronisk bruk mer enn fem ganger over ekstrem utskillelse.",
+    "Tidligere prøver legges til med «+ Legg til tidligere prøve». Feil i et felt sies ved feltet, og sikkerhetsmarginen forklares bak et lite informasjonstegn.",
+    "Hva en høyere sikkerhetsmargin ville gitt, står kort under vurderingen den gjelder, i stedet for i et eget banner.",
+    "Profilene og figuren og en ny forklaring i vanlig språk ligger lukket under hver sin overskrift."
+  ],
+  "endrerFortolkning": true
+}

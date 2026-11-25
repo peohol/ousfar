@@ -46,44 +46,229 @@
   box-shadow: inset 0 0 0 1px var(--blekk);
 }
 
-.be-skille {
-  align-self: stretch;
+/* --- Skjemaet (#576) ---------------------------------------------------------
+   Prøvene uten ramme rundt, side om side når det er plass: overskriften og
+   luften skiller dem. Feltene er litt lavere enn ellers i appen, så en
+   vanlig fortolkning får plass på én skjerm. */
+.be-skjema {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
   width: 100%;
-  margin: 0;
-  border: 0;
-  border-top: 1px solid var(--linje);
 }
 
-.be-grader {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-2);
+.be-prover {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(17rem, calc((100% - var(--rom-8)) / 2))), 1fr));
+  gap: var(--rom-6) var(--rom-8);
+  width: 100%;
 }
 
-.be-grader__liste {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-2);
+.be-prove {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  /* Står prøven ved siden av en høyere (med en feil ved et felt), blir ekstra
+     høyde liggende under, ikke fordelt mellom radene. */
+  align-content: start;
+  align-items: baseline;
+  gap: var(--rom-3) var(--rom-4);
+  min-inline-size: 0;
   margin: 0;
   padding: 0;
-  list-style: none;
+  border: 0;
 }
 
-.be-grader__punkt {
-  display: flex;
-  align-items: baseline;
+/* `legend` legger seg ikke i et rutenett; `float` gjør at den gjør det. */
+.be-prove__tittel {
+  float: left;
+  padding: 0;
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.be-prove__fjern {
+  justify-self: end;
+  min-height: 0;
+  padding: 0 var(--rom-2);
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.be-prove__felt {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: start;
   gap: var(--rom-3);
 }
 
-.be-grader__punkt .be-legende__strek {
-  align-self: center;
+.be-prove .inndatafelt {
+  min-height: var(--hoyde-kontroll);
+  padding: 0 var(--rom-3);
+  font-size: var(--tekst-ui);
 }
 
-/* De to vurderingene side om side når det er plass, ellers under hverandre. */
+/* Enheten inne i feltet, til høyre. */
+.be-felt {
+  position: relative;
+  display: block;
+}
+
+/* Plass til enheten («nmol/L», «mmol/L») og litt luft før den. */
+.be-felt:has(.be-felt__enhet) .inndatafelt {
+  padding-right: 3.5rem;
+}
+
+.be-felt__enhet {
+  position: absolute;
+  top: 50%;
+  right: var(--rom-3);
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.be-prove .inndatafelt[aria-invalid='true'] {
+  border-color: var(--alvorlig);
+}
+
+.be-feltfeil {
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-tett);
+  color: var(--alvorlig-blekk);
+}
+
+.be-kvotient {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--tekst-liten);
+  font-variant-numeric: tabular-nums;
+  color: var(--blekk-dempet);
+}
+
+.be-kvotient strong {
+  margin-left: 0.4ch;
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+/* Smale skjermer: datoen på egen linje under de to tallfeltene. */
+@media (max-width: 30rem) {
+  .be-prove__felt {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .be-prove__felt > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Knappen for en tidligere prøve til venstre, marginen til høyre; under
+   hverandre når det ikke er plass. */
+.be-skjema__rad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rom-4) var(--rom-6);
+}
+
+.be-legg-til {
+  min-height: var(--hoyde-liten);
+  font-size: var(--tekst-liten);
+}
+
+.be-margin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+.be-margin__navn {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+/* Informasjonstegnet: en liten ring med «i». Trykkflaten er større enn ringen,
+   så den er lett å treffe med fingeren. */
+.be-info {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-liten);
+  font-style: italic;
+  font-weight: var(--vekt-halvfet);
+  line-height: 1;
+  color: var(--blekk-dempet);
+  background: none;
+  border: var(--kant) solid var(--linje-kontroll);
+  border-radius: 50%;
+  cursor: help;
+}
+
+.be-info::after {
+  position: absolute;
+  inset: -0.75rem;
+  content: '';
+}
+
+.be-info:hover,
+.be-info:focus-visible {
+  color: var(--blekk);
+  border-color: var(--blekk-dempet);
+}
+
+.be-marginforklaring {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  max-width: 26rem;
+}
+
+.be-marginforklaring p {
+  margin: 0;
+}
+
+.be-marginforklaring__valg {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--rom-1) var(--rom-4);
+  margin: 0;
+}
+
+.be-marginforklaring__valg > div {
+  display: contents;
+}
+
+.be-marginforklaring__valg dt {
+  font-weight: var(--vekt-halvfet);
+  white-space: nowrap;
+}
+
+.be-marginforklaring__valg dd {
+  margin: 0;
+}
+
+/* --- Resultatet ---------------------------------------------------------------
+   Vurderingene først, uten egne kort: overskriften er liten og dempet,
+   konklusjonen stor, og utdypingen og det en høyere margin gir står under i
+   mindre tekst. */
+.be-resultat {
+  gap: var(--rom-6);
+}
+
 .be-vurderinger {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: var(--rom-4);
+  gap: var(--rom-6) var(--rom-8);
   align-self: stretch;
   width: 100%;
 }
@@ -92,26 +277,115 @@
   display: flex;
   flex-direction: column;
   gap: var(--rom-2);
-  padding: var(--rom-4) var(--rom-5);
-  background: var(--flate-hevet);
-  border: 1px solid var(--linje);
-  border-radius: var(--runding-underkort);
 }
 
 .be-vurdering__tittel {
   margin: 0;
-  font-size: var(--tekst-etikett);
+  font-size: var(--tekst-liten);
   font-weight: var(--vekt-halvfet);
   color: var(--blekk-dempet);
 }
 
-.be-vurdering__tekst {
+.be-vurdering__konklusjon {
   margin: 0;
-  font-weight: var(--vekt-halvfet);
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+  color: var(--blekk);
 }
 
+.be-vurdering__utdyping,
 .be-vurdering__samlet {
   margin: 0;
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-ui);
+  text-wrap: pretty;
+}
+
+.be-vurdering__samlet--treff {
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+.be-vurdering__mildere {
+  margin: var(--rom-1) 0 0;
   font-size: var(--tekst-liten);
-  line-height: var(--linjehoyde-tett);
+  line-height: var(--linjehoyde-ui);
+  text-wrap: pretty;
+  color: var(--blekk-dempet);
+}
+
+.be-forbehold,
+.be-venter {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.be-feil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  font-size: var(--tekst-ui);
+  color: var(--alvorlig-blekk);
+}
+
+.be-feil p {
+  margin: 0;
+}
+
+.be-seksjoner {
+  align-self: stretch;
+}
+
+.be-profiler {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+}
+
+.be-alle-marginer {
+  align-self: flex-end;
+  min-height: var(--hoyde-liten);
+  font-size: var(--tekst-liten);
+  background: none;
+}
+
+/* Tabellen er tegnforklaringen til figuren: streken, navnet, den forventede
+   endringen og graden. */
+.be-profiltabell {
+  align-self: flex-start;
+  width: auto;
+  max-width: 100%;
+  font-size: var(--tekst-ui);
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+}
+
+.be-profiltabell th,
+.be-profiltabell td {
+  padding: var(--rom-2) var(--rom-7) var(--rom-2) 0;
+  font-weight: var(--vekt-normal);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.be-profiltabell thead th {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.be-profiltabell__gruppe th {
+  padding-top: var(--rom-4);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.be-profiltabell__navn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-3);
 }

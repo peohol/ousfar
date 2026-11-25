@@ -69,7 +69,7 @@ function inndata(forrige: BeUrinProve, denne: BeUrinProve, margin = 0.5, tillegg
 }
 
 function vurdering(r: BeUrinProfilresultat) {
-  if (r.type !== 'vurdering') throw new Error(`Ventet en vurdering, fikk: ${r.mangler.join(' ')}`)
+  if (r.type !== 'vurdering') throw new Error(`Ventet en vurdering, fikk: ${r.feil.join(' ')}`)
   return r
 }
 
@@ -180,7 +180,7 @@ describe('vurderingene', () => {
     [0.05, 'forenlig_enkeltinntak'],
     [0.5, 'forenlig_gjentatte_doser'],
     [1, 'sannsynlig'],
-    [4, 'svaert_sannsynlig'],
+    [4, 'nytt_inntak'],
   ] as const)('gir ved sporadisk bruk ratio %s → %s', (ratio, utfall) => {
     expect(uten(100, 100 * ratio, 1).sporadisk).toBe(utfall)
   })
@@ -190,19 +190,19 @@ describe('vurderingene', () => {
     [0.7, 'uavklart'],
     [0.8, 'uavklart_uvanlig'],
     [1, 'sannsynlig'],
-    [5, 'svaert_sannsynlig'],
+    [5, 'nytt_inntak'],
   ] as const)('gir ved kronisk bruk ratio %s → %s', (ratio, utfall) => {
     expect(uten(100, 100 * ratio, 1).kronisk).toBe(utfall)
   })
 
-  it('gir «sannsynlig» når F for gjentatte doser er nøyaktig 5, og «svært sannsynlig» rett over', () => {
+  it('gir «sannsynlig» når F for gjentatte doser er nøyaktig 5, og «nytt inntak» rett over', () => {
     // e^(−ln 2) er nøyaktig 0,5, så F = 2,5 / 0,5 = 5 nøyaktig.
     const m = godkjentProfilmodell({ profiler: medProfil({ id: 'gjentatte_doser', type: 'mono', a: 1, k: Math.LN2 }) })
     expect(Math.exp(-Math.LN2)).toBe(0.5)
     const pa = uten(1, 2.5, 1, m)
     expect(profilFor(pa, 'gjentatte_doser').f).toBe(5)
     expect(pa.sporadisk).toBe('sannsynlig')
-    expect(uten(1, nabo(2.5, 1), 1, m).sporadisk).toBe('svaert_sannsynlig')
+    expect(uten(1, nabo(2.5, 1), 1, m).sporadisk).toBe('nytt_inntak')
     // Nøyaktig 1: forenlig med gjentatte doser.
     const en = uten(1, 0.5, 1, m)
     expect(profilFor(en, 'gjentatte_doser').grad).toBe('paa_nivaa')
@@ -215,10 +215,68 @@ describe('vurderingene', () => {
     expect(f).toBeGreaterThan(1)
     expect(f).toBeLessThanOrEqual(5)
     expect(s.kronisk).toBe('sannsynlig')
-    // Rett over 5: svært sannsynlig.
+    // Rett over 5: nytt inntak.
     const ekstrem = terskel(s, 'ekstrem')
-    expect(uten(100, 100 * ekstrem * 5.000001, 1).kronisk).toBe('svaert_sannsynlig')
+    expect(uten(100, 100 * ekstrem * 5.000001, 1).kronisk).toBe('nytt_inntak')
     expect(uten(100, 100 * ekstrem * 4.999999, 1).kronisk).toBe('sannsynlig')
+  })
+
+  describe('på begge sider av F = 1, 5 og 10, med likhet i den mildere vurderingen', () => {
+    // Enkeltinntak e^(−2 ln 2) = 0,25 og gjentatte doser e^(−ln 2) = 0,5 nøyaktig etter ett døgn,
+    // så F for enkeltinntak er 4r og F for gjentatte doser 2r uten margin.
+    const m = godkjentProfilmodell({
+      profiler: medProfil(
+        { id: 'enkeltinntak', type: 'mono', a: 1, k: 2 * Math.LN2 },
+        medProfil({ id: 'gjentatte_doser', type: 'mono', a: 1, k: Math.LN2 }),
+      ),
+    })
+    const sporadisk = (r: number) => uten(1, r, 1, m)
+
+    it('har tersklene nøyaktig', () => {
+      const s = sporadisk(1)
+      expect([terskel(s, 'enkeltinntak'), terskel(s, 'gjentatte_doser')]).toEqual([0.25, 0.5])
+    })
+
+    it.each([
+      [nabo(0.25, -1), 'forenlig_enkeltinntak'],
+      [0.25, 'forenlig_enkeltinntak'], // F enkeltinntak = 1
+      [nabo(0.25, 1), 'forenlig_gjentatte_doser'],
+      [nabo(0.5, -1), 'forenlig_gjentatte_doser'],
+      [0.5, 'forenlig_gjentatte_doser'], // F gjentatte doser = 1
+      [nabo(0.5, 1), 'sannsynlig'],
+      [nabo(2.5, -1), 'sannsynlig'],
+      [2.5, 'sannsynlig'], // F gjentatte doser = 5
+      [nabo(2.5, 1), 'nytt_inntak'],
+      [nabo(5, -1), 'nytt_inntak'],
+      [5, 'nytt_inntak'], // F gjentatte doser = 10
+      [nabo(5, 1), 'nytt_inntak'],
+    ] as const)('sporadisk bruk: ratio %s → %s', (r, utfall) => {
+      expect(sporadisk(r).sporadisk).toBe(utfall)
+    })
+
+    it('gir samme F som grensen ved likhet', () => {
+      expect(profilFor(sporadisk(0.25), 'enkeltinntak').f).toBe(1)
+      expect(profilFor(sporadisk(0.5), 'gjentatte_doser').f).toBe(1)
+      expect(profilFor(sporadisk(2.5), 'gjentatte_doser').f).toBe(5)
+      expect(profilFor(sporadisk(5), 'gjentatte_doser').f).toBe(10)
+    })
+
+    // Samme dag er alle tersklene 1, så F for ekstrem er Q2/Q1 nøyaktig.
+    it.each([
+      [nabo(1, -1), 'uavklart'],
+      [1, 'uavklart'],
+      [nabo(1, 1), 'sannsynlig'],
+      [nabo(5, -1), 'sannsynlig'],
+      [5, 'sannsynlig'],
+      [nabo(5, 1), 'nytt_inntak'],
+      [nabo(10, -1), 'nytt_inntak'],
+      [10, 'nytt_inntak'],
+      [nabo(10, 1), 'nytt_inntak'],
+    ] as const)('kronisk bruk: F ekstrem %s → %s', (f, utfall) => {
+      const s = uten(1, f, 0)
+      expect(profilFor(s, 'ekstrem').f).toBe(f)
+      expect(s.kronisk).toBe(utfall)
+    })
   })
 
   it('gjør den samlede vurderingen aktuell bare når kronisk er uavklart og endringen er over moderat eller treg', () => {
@@ -230,22 +288,25 @@ describe('vurderingene', () => {
 })
 
 describe('fortolkningen', () => {
-  it('gir det som mangler, og ingen vurdering, ved tomme eller ugyldige felt', () => {
-    const r = fortolkBeUrinProfiler(inndata(prove('', '2026-01-01'), prove(0, '2026-13-01')), MODELL)
-    expect(r.type).toBe('mangler')
-    if (r.type !== 'mangler') return
-    expect(r.mangler).toContain('Fyll inn benzoylekgonin for forrige prøve.')
-    expect(r.mangler.some((m) => m.includes('kvantifisert og over 0'))).toBe(true)
-    expect(r.mangler).toContain('Prøvedatoen for denne prøven er ikke en gyldig dato.')
-    const for_ = fortolkBeUrinProfiler(inndata(prove(10, '2026-01-05'), prove(10, '2026-01-01')), MODELL)
-    expect(for_.type === 'mangler' && for_.mangler).toEqual(['Denne prøven kan ikke være tatt før forrige prøve.'])
+  it('gir ingen vurdering og ingen melding ved tomme eller ugyldige felt: de sies ved feltet', () => {
+    for (const [forrige, denne] of [
+      [prove('', '2026-01-01'), prove(80, '2026-01-02')],
+      [prove(100, '2026-01-01'), prove(0, '2026-01-02')],
+      [prove(100, '2026-01-01'), prove(80, '2026-13-01')],
+      [prove(100, '2026-01-01', 'x'), prove(80, '2026-01-02')],
+    ]) {
+      expect(fortolkBeUrinProfiler(inndata(forrige!, denne!), MODELL)).toEqual({ type: 'mangler', feil: [] })
+    }
+  })
+
+  it('sier fra når denne prøven er tatt før forrige', () => {
+    const r = fortolkBeUrinProfiler(inndata(prove(10, '2026-01-05'), prove(10, '2026-01-01')), MODELL)
+    expect(r).toEqual({ type: 'mangler', feil: ['Denne prøven kan ikke være tatt før forrige prøve.'] })
   })
 
   it('gir ingen vurdering med en margin modellen ikke har', () => {
     const r = fortolkBeUrinProfiler(inndata(prove(100, '2026-01-01'), prove(80, '2026-01-02'), 0.95), MODELL)
-    expect(r.type === 'mangler' && r.mangler).toEqual([
-      'Sikkerhetsmarginen finnes ikke i modellen. Velg en av marginene som tilbys.',
-    ])
+    expect(r.type === 'mangler' && r.feil).toEqual(['Sikkerhetsmarginen finnes ikke i modellen. Velg en av marginene som tilbys.'])
   })
 
   it('vurderer forrige og denne prøven med marginen', () => {
@@ -267,7 +328,7 @@ describe('den samlede vurderingen', () => {
   const forrige = prove(100, '2026-01-02')
   const denne = prove(80, '2026-01-03') // uavklart, uvanlig: aktuell
   const samlet = (tidligere: BeUrinProve[], d = denne) =>
-    fortolkBeUrinProfiler(inndata(forrige, d, 0.5, { samletVurdering: true, tidligere }), MODELL)
+    fortolkBeUrinProfiler(inndata(forrige, d, 0.5, { tidligere }), MODELL)
 
   it('finner den nyeste tidligere prøven endringen ligger over ekstrem utskillelse mot', () => {
     const treffer = prove(40, '2025-12-25')
@@ -293,32 +354,30 @@ describe('den samlede vurderingen', () => {
     expect(r.samlet).toEqual({ vurdert: 1, treff: null })
   })
 
-  it('kjøres ikke når den ikke er aktuell, eller ikke er slått på', () => {
+  it('kjøres ikke når den ikke er aktuell, eller uten tidligere prøver', () => {
     expect(vurdering(samlet([prove(40, '2025-12-25')], prove(50, '2026-01-03'))).samlet).toBeNull()
     expect(vurdering(samlet([prove(40, '2025-12-25')], prove(100, '2026-01-03'))).samlet).toBeNull()
-    const av = fortolkBeUrinProfiler(
-      inndata(forrige, denne, 0.5, { samletVurdering: false, tidligere: [prove(40, '2025-12-25')] }),
-      MODELL,
-    )
-    expect(vurdering(av).samlet).toBeNull()
+    expect(vurdering(samlet([])).samlet).toBeNull()
   })
 
   it('sammenligner ikke prøver fra samme dag, heller ikke med den samlede vurderingen', () => {
     const r = samlet([prove(40, '2025-12-25')], prove(80, '2026-01-02'))
-    expect(r.type === 'mangler' && r.mangler).toEqual([SAMME_DAG_FEIL])
+    expect(r.type === 'mangler' && r.feil).toEqual([SAMME_DAG_FEIL])
     // Ingen vurdering, så ingen høyere margin heller.
     expect(mildereProfilutfall(inndata(forrige, prove(80, '2026-01-02'), 0.5), MODELL)).toEqual([])
   })
 
-  it('gir mangler for en ugyldig tidligere prøve, eller en som ikke er før forrige', () => {
-    const ugyldig = samlet([prove('', '2025-12-25')])
-    expect(ugyldig.type === 'mangler' && ugyldig.mangler).toEqual(['Fyll inn benzoylekgonin for den tidligere prøven.'])
-    const etter = samlet([prove(40, '2026-01-02')])
-    expect(etter.type === 'mangler' && etter.mangler).toEqual(['Den tidligere prøven må være tatt før forrige prøve.'])
-    const ingen = samlet([])
-    expect(ingen.type === 'mangler' && ingen.mangler).toEqual([
-      'Legg til en tidligere prøve, eller slå av den samlede vurderingen.',
-    ])
+  it('gir ingen vurdering før en tidligere prøve er fylt ut, og sier fra når den ikke er før forrige', () => {
+    expect(samlet([prove('', '2025-12-25')])).toEqual({ type: 'mangler', feil: [] })
+    expect(samlet([prove(40, '2025-12-25'), prove(0, '2025-12-20')])).toEqual({ type: 'mangler', feil: [] })
+    expect(samlet([prove(40, '2026-01-02')])).toEqual({
+      type: 'mangler',
+      feil: ['Tidligere prøve må være tatt før forrige prøve.'],
+    })
+    expect(samlet([prove(40, '2025-12-25'), prove(40, '2026-01-03')])).toEqual({
+      type: 'mangler',
+      feil: ['Tidligere prøve 2 må være tatt før forrige prøve.'],
+    })
   })
 })
 
@@ -340,6 +399,16 @@ describe('høyere sikkerhetsmargin', () => {
     ])
   })
 
+  it('viser «sannsynlig nytt inntak» som mildere enn «nytt inntak», for begge vurderingene', () => {
+    const r = vurdering(fortolkBeUrinProfiler(inn(5, 0.5), MODELL))
+    expect([r.sammenligning.sporadisk, r.sammenligning.kronisk]).toEqual(['nytt_inntak', 'nytt_inntak'])
+    expect(mildereProfilutfall(inn(5, 0.5), MODELL)).toEqual([
+      { vurdering: 'kronisk', utfall: 'sannsynlig', samletDato: null, marginer: [0.9, 0.99] },
+      { vurdering: 'sporadisk', utfall: 'sannsynlig', samletDato: null, marginer: [0.99] },
+    ])
+    expect(mildereProfilutfall(inn(10, 0.5), MODELL)).toEqual([])
+  })
+
   it('prøver aldri lavere marginer, og er tom når ingenting blir mildere', () => {
     expect(mildereProfilutfall(inn(1.5, 0.99), MODELL)).toEqual([])
     expect(mildereProfilutfall(inn(0.9, 0.9), MODELL)).toEqual([])
@@ -349,10 +418,7 @@ describe('høyere sikkerhetsmargin', () => {
 
   it('tar med en indikasjon etter en eldre prøve som mildere enn «sannsynlig»', () => {
     const med = (margin: number) =>
-      inndata(prove(100, '2026-01-02'), prove(150, '2026-01-03'), margin, {
-        samletVurdering: true,
-        tidligere: [prove(30, '2025-12-25')],
-      })
+      inndata(prove(100, '2026-01-02'), prove(150, '2026-01-03'), margin, { tidligere: [prove(30, '2025-12-25')] })
     const valgt = vurdering(fortolkBeUrinProfiler(med(0.5), MODELL))
     expect(valgt.sammenligning.kronisk).toBe('sannsynlig')
     expect(valgt.samlet).toBeNull()
@@ -375,8 +441,8 @@ describe('svært lange tidsrom og store kvotienter', () => {
       expect(Number.isFinite(p.logF), p.rolle).toBe(true)
       expect(p.grad, p.rolle).toBe('svaert_langt_over')
     }
-    expect(s.sporadisk).toBe('svaert_sannsynlig')
-    expect(s.kronisk).toBe('svaert_sannsynlig')
+    expect(s.sporadisk).toBe('nytt_inntak')
+    expect(s.kronisk).toBe('nytt_inntak')
     expect(terskel(s, 'enkeltinntak')).toBe(0)
   })
 
@@ -462,8 +528,8 @@ describe('figuren', () => {
     const punkter = profilMarginpunkter(MODELL, s, MARGINER.map((m) => m.margin))
     const graf = profilgraf(s, BE_URIN_ROLLENAVN, punkter.map((p) => prosentFor(p.korrigertRatio)))
     expect(graf.kurver.map((k) => k.navn)).toEqual([
-      'Utskillelse etter enkeltinntak',
-      'Utskillelse etter gjentatte doser innenfor et kort tidsrom',
+      'Enkeltinntak',
+      'Gjentatte doser',
       'Moderat utskillelse',
       'Treg utskillelse',
       'Ekstrem utskillelse',
@@ -497,7 +563,7 @@ describe('figuren', () => {
     expect(Number.isFinite(denne)).toBe(true)
     expect(byggProfilgraf(s, BE_URIN_ROLLENAVN, [denne])).toBeNull()
     // Vurderingen gjelder likevel.
-    expect(s.kronisk).toBe('svaert_sannsynlig')
+    expect(s.kronisk).toBe('nytt_inntak')
   })
 
   it('gir punktene for denne prøven med motorens korreksjon', () => {

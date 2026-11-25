@@ -14,6 +14,7 @@ import { Korthode } from './ThcStep'
 import { Ikon } from './ikon/Ikon'
 import {
   fortolkBeUrin,
+  lesBevartBeUrinInndata,
   mildereVedHoyereMargin,
   tomBeUrinInndata,
   type BeUrinInndata,
@@ -87,13 +88,8 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
   )
 }
 
-/** Teksten over de tidligere prøvene i skjemaet, etter modellformen. */
-const SAMLET_INGRESS = {
-  1: 'Gir sammenligningen med forrige prøve «kan ikke fastslås», sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
-  2:
-    'Er vurderingen ved kronisk bruk uavklart, men endringen over moderat eller treg utskillelse, ' +
-    'sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
-} as const
+/** Skjemaet over en oppdatering, også fra før #576 (`lesBevartBeUrinInndata`). */
+const BEVARINGSFORM = { lagre: (inndata: BeUrinInndata) => inndata, les: lesBevartBeUrinInndata }
 
 function BeUrinFortolkning({
   analyte,
@@ -108,8 +104,10 @@ function BeUrinFortolkning({
   // binder verdiene til fagmiljøet og modellversjonen: kommer en annen modell
   // med oppdateringen (andre enheter, profiler eller CV-er), begynner skjemaet
   // tomt i stedet for å fortolke de gamle verdiene med den nye modellen.
-  const [inndata, setInndata] = useBevart<BeUrinInndata>(beUrinBevaringsnavn(fagmiljo, modell.versjon), () =>
-    tomBeUrinInndata(modell),
+  const [inndata, setInndata] = useBevart<BeUrinInndata>(
+    beUrinBevaringsnavn(fagmiljo, modell.versjon),
+    () => tomBeUrinInndata(modell),
+    BEVARINGSFORM,
   )
   // Visningsvalget i figuren eies her, ikke av figurkortet: kortet forsvinner
   // så lenge skjemaet er ufullstendig, og valget skal stå når det kommer
@@ -141,13 +139,7 @@ function BeUrinFortolkning({
             </Button>
           </div>
         </Korthode>
-        <BeUrinSkjema
-          inndata={inndata}
-          onEndre={sett}
-          modell={modell}
-          forsteFelt={forsteFelt}
-          samletIngress={SAMLET_INGRESS[erProfilmodell(modell) ? 2 : 1]}
-        />
+        <BeUrinSkjema inndata={inndata} onEndre={sett} modell={modell} forsteFelt={forsteFelt} />
       </Card>
       {erProfilmodell(modell) ? (
         <BeUrinProfilresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
@@ -197,7 +189,7 @@ export function BeUrinUtfall({
   mildere: BeUrinMildereUtfall[]
   onVelgMargin: (margin: number) => void
 }) {
-  if (resultat.type === 'mangler') return <BeUrinMangler mangler={resultat.mangler} />
+  if (resultat.type === 'mangler') return <BeUrinMangler feil={resultat.feil} />
 
   const { sammenligning, samlet, sammeDag } = resultat
   return (

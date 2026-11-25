@@ -1,61 +1,49 @@
-import { logSd, type BeUrinSammenligning } from '../domain/beUrinMotor'
+import type { BeUrinSammenligning } from '../domain/beUrinMotor'
 import type { BeUrinFellesmodell, BeUrinModell } from '../domain/beUrinModell'
-import { BE_URIN_GRADGRENSER, type BeUrinProfilsammenligning, type BeUrinProfilvurdering } from '../domain/beUrinProfiler'
-import {
-  BE_URIN_FORUTSETNING,
-  BE_URIN_GRADTEKST,
-  BE_URIN_LIKE_BI,
-  BE_URIN_ROLLENAVN,
-  formaterLogRatio,
-} from '../domain/beUrinProfilvisning'
+import type { BeUrinProfilresultat } from '../domain/beUrinProfiler'
+import { beUrinForklaring } from '../domain/beUrinProfilforklaring'
 import { prosentFor } from '../domain/beUrinPlot'
 import { antallDogn, erEkstrapolert, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
+import { INGEN_SIKKERHETSMARGIN } from '../domain/thcRegelsett'
 import { formaterDatoNorsk, formaterIrcak } from '../domain/thcTall'
-import { hvorOfteForStor, marginvalg, somProsent } from '../domain/thcVisning'
+import { hvorOfteForStor, marginvalg } from '../domain/thcVisning'
 
 /**
  * Forklaringene i fortolkningen av benzoylekgonin i urin: hva
- * sikkerhetsmarginen gjør med modellens egne CV-er, og beregningen bak
- * resultatet med tallene motoren brukte. Oppsettet er THC-syremodulens.
+ * sikkerhetsmarginen er, beregningen bak resultatet med form 1 (tallene
+ * motoren brukte), og forklaringen i vanlig språk med form 2 (#576).
  */
 
-/** «Hva er sikkerhetsmarginen?» under bryteren, med modellens måleusikkerhet. */
+/**
+ * Hva sikkerhetsmarginen er, bak informasjonstegnet ved «Sikkerhetsmargin»
+ * (#576): kort, uten formler, og tydelig på at marginen gjelder
+ * måleusikkerheten, ikke om fortolkningen er riktig.
+ */
 export function BeUrinMarginforklaring({ modell }: { modell: BeUrinFellesmodell }) {
-  const { cv_benzoylekgonin, cv_kreatinin } = modell.maleusikkerhet
   return (
-    <div className="thc-forklaring">
-      <section className="thc-forklaring__bolk">
-        <h3 className="thc-forklaring__tittel">Målinger ≠ sann verdi</h3>
-        <div className="thc-forklaring__kropp">
-          <p>
-            Både benzoylekgonin og kreatinin måles med en viss usikkerhet, og dermed også endringen i Q mellom
-            to prøver. Det er 50/50 om endringen måles høyere eller lavere enn den sanne.
-          </p>
-          <p>
-            Modellen legger til grunn CV {somProsent(cv_benzoylekgonin)}&nbsp;% for benzoylekgonin og CV{' '}
-            {somProsent(cv_kreatinin)}&nbsp;% for kreatinin. Det gir et log-standardavvik for ratioen mellom to
-            prøver på {formaterRatio(logSd(modell))} (√(2·(CV²<sub>BE</sub> + CV²<sub>kreatinin</sub>))).
-          </p>
-        </div>
-      </section>
-      <section className="thc-forklaring__bolk">
-        <h3 className="thc-forklaring__tittel">Hva marginen gjør</h3>
-        <div className="thc-forklaring__kropp">
-          <p>Den målte ratioen justeres ned, så vi er sikrere på at den ikke er for stor.</p>
-          <dl className="thc-marginvalg">
-            {modell.sikkerhetsmarginer.map(({ margin }) => (
-              <div key={margin}>
-                <dt>
-                  {marginvalg(margin)}
-                  {margin === modell.standard_sikkerhetsmargin && ' (standard)'}
-                </dt>
-                <dd>Ratioen som fortolkes, er for stor {hvorOfteForStor(margin)}.</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+    <div className="be-marginforklaring">
+      <p>
+        Målingene av benzoylekgonin og kreatinin er usikre, og derfor også endringen mellom to prøver. Med en høyere
+        sikkerhetsmargin legges en mer forsiktig endring til grunn, og det skal mer til før et nytt inntak vurderes
+        som sannsynlig.
+      </p>
+      <p>Marginen gjelder bare måleusikkerheten, ikke sannsynligheten for at selve fortolkningen er riktig.</p>
+      <dl className="be-marginforklaring__valg">
+        {modell.sikkerhetsmarginer.map(({ margin }) => (
+          <div key={margin}>
+            <dt>
+              {marginvalg(margin)}
+              {margin === modell.standard_sikkerhetsmargin && ' (standard)'}
+            </dt>
+            <dd>
+              {margin === INGEN_SIKKERHETSMARGIN
+                ? 'Den målte endringen fortolkes direkte.'
+                : `Endringen som fortolkes, er for stor ${hvorOfteForStor(margin)}.`}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   )
 }
@@ -123,16 +111,12 @@ function Provebolker({
     margin: number
     maltRatio: number
     korrigertRatio: number
-    logMalt?: number
-    logKorrigert?: number
   }
   enhet: string
   forrigeDato: string
   denneDato: string
 }) {
-  // Med logaritmene (form 2) skrives også en ratio utenfor flyttallene, og prosenten bare når den er et tall.
-  const ratio = (verdi: number, logVerdi: number | undefined) =>
-    `${logVerdi === undefined ? formaterRatio(verdi) : formaterLogRatio(logVerdi)}${prosentTekst(verdi)}`
+  const ratio = (verdi: number) => `${formaterRatio(verdi)}${prosentTekst(verdi)}`
   return (
     <>
       <section className="thc-forklaring__bolk">
@@ -155,10 +139,10 @@ function Provebolker({
         <div className="thc-forklaring__kropp">
           <ul>
             <li>
-              Målt ratio R<sub>målt</sub> = Q<sub>2</sub>/Q<sub>1</sub> = {ratio(s.maltRatio, s.logMalt)}.
+              Målt ratio R<sub>målt</sub> = Q<sub>2</sub>/Q<sub>1</sub> = {ratio(s.maltRatio)}.
             </li>
             <li>
-              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: R<sub>korr</sub> = {ratio(s.korrigertRatio, s.logKorrigert)}.
+              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: R<sub>korr</sub> = {ratio(s.korrigertRatio)}.
             </li>
           </ul>
         </div>
@@ -167,61 +151,40 @@ function Provebolker({
   )
 }
 
-/** Hvordan terskelen for en profil er regnet, med enhetene. */
-function terskelgrunnlag(v: BeUrinProfilvurdering): string {
-  const p = v.profil
-  if (p.type === 'mono') return `monoeksponentiell, R = e^(−k·d) med k = ${formaterRatio(p.k)} per døgn`
-  const navn = p.id === 'bi_a' ? 'A' : 'B'
-  return `bieksponentiell (profil ${navn}). Q₁ ligger ved t = ${formaterDogn(v.tidspunkt!)} døgn på profilen, og R = C(t + d)/Q₁`
-}
-
 /**
- * Beregningen bak resultatet med fem profiler (modellform 2): Q i begge
- * prøvene, døgnene, R_målt og R_korr, og for hver profil terskelen R, F og
- * graden. Tallene er motorens.
+ * Forklaringen bak vurderingene med fem profiler (#576), i fire korte bolker
+ * etter mønster fra THC-syremodulen: hvor stor endringen er, måleusikkerheten,
+ * hva som kunne ventes uten et nytt inntak, og hvorfor vurderingene ble som de
+ * ble. Teksten lages av resultatet (`beUrinProfilforklaring.ts`).
  */
-export function BeUrinProfilberegning({
-  sammenligning: s,
+export function BeUrinProfilforklaring({
+  resultat,
   modell,
-  forrigeDato,
-  denneDato,
+  tidligereProver,
 }: {
-  sammenligning: BeUrinProfilsammenligning
+  resultat: Extract<BeUrinProfilresultat, { type: 'vurdering' }>
   modell: BeUrinFellesmodell
-  forrigeDato: string
-  denneDato: string
+  tidligereProver: number
 }) {
-  const ekstrapolert = erEkstrapolert(s)
+  const f = beUrinForklaring(resultat, modell.enheter.kvotient, tidligereProver)
+  const bolker: [string, string[]][] = [
+    ['Hvor stor er endringen mellom prøvene?', f.endring],
+    ['Hvordan er det tatt hensyn til måleusikkerhet?', f.maleusikkerhet],
+    ['Hva kan forventes dersom det ikke har skjedd et nytt inntak?', f.forventet],
+    ['Hvorfor blir konklusjonen slik?', f.hvorfor],
+  ]
   return (
     <div className="thc-forklaring">
-      <Provebolker s={s} enhet={modell.enheter.kvotient} forrigeDato={forrigeDato} denneDato={denneDato} />
-      <section className="thc-forklaring__bolk">
-        <h3 className="thc-forklaring__tittel">Profilene</h3>
-        <div className="thc-forklaring__kropp">
-          <ul>
-            {s.profiler.map((v) => (
-              <li key={v.rolle}>
-                <strong>{BE_URIN_ROLLENAVN[v.rolle]}</strong>: {terskelgrunnlag(v)}. Etter {antallDogn(s.dager)} er
-                terskelen R = {formaterLogRatio(v.logTerskel)} ({formaterProsent(prosentFor(v.terskel))}). F = R
-                <sub>korr</sub>/R = {formaterLogRatio(v.logF)}: {BE_URIN_GRADTEKST[v.grad]}.
-              </li>
+      {bolker.map(([tittel, avsnitt]) => (
+        <section key={tittel} className="thc-forklaring__bolk">
+          <h3 className="thc-forklaring__tittel">{tittel}</h3>
+          <div className="thc-forklaring__kropp">
+            {avsnitt.map((a) => (
+              <p key={a}>{a}</p>
             ))}
-          </ul>
-          <p>
-            Hver profil vurderes for seg: under (F &lt; 1), på nivå med (F = 1), over (1 &lt; F ≤{' '}
-            {BE_URIN_GRADGRENSER.over}), langt over ({BE_URIN_GRADGRENSER.over} &lt; F ≤ {BE_URIN_GRADGRENSER.langtOver}) og
-            svært langt over (F &gt; {BE_URIN_GRADGRENSER.langtOver}). Hvilken av de to bieksponentielle profilene som er treg
-            og hvilken som er ekstrem, avgjøres for disse prøvene: den med høyest terskel er ekstrem.
-            {s.likeBi && ` ${BE_URIN_LIKE_BI}`}
-          </p>
-          <p>
-            t er punktet på profilen der Q<sub>1</sub> står, ikke tiden siden inntak.
-            {ekstrapolert &&
-              ' Q₁ ligger over startverdien til minst én bieksponentiell profil (t under 0). Terskelen er da regnet ved matematisk ekstrapolasjon av kurven, et område modellen ikke er dokumentert for.'}
-          </p>
-          <p>{BE_URIN_FORUTSETNING}</p>
-        </div>
-      </section>
+          </div>
+        </section>
+      ))}
     </div>
   )
 }

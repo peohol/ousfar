@@ -1,25 +1,31 @@
-import type { BeUrinGrad, BeUrinKronisk, BeUrinProfilsamlet, BeUrinRolle, BeUrinSporadisk } from './beUrinProfiler'
-import { formaterRatio } from './beUrinVisning'
+import {
+  type BeUrinGrad,
+  type BeUrinKronisk,
+  type BeUrinProfilMildere,
+  type BeUrinProfilsamlet,
+  type BeUrinRolle,
+  type BeUrinSporadisk,
+} from './beUrinProfiler'
 import { formaterDatoNorsk } from './thcTall'
-import { INGEN_SIKKERHETSMARGIN } from './thcRegelsett'
-import { somProsent } from './thcVisning'
+import { marginliste } from './thcVisning'
 
 /**
  * Det modulen skriver om fortolkningen med fem utskillelsesprofiler
- * (modellform 2, #570). Ordlyden er bestillingens. Modulen er intern
- * beslutningsstøtte: tekstene står i resultatet og kopieres ikke.
+ * (modellform 2, #570, forenklet i #576). Konklusjonene først og kort;
+ * begrunnelsen står i forklaringen (`beUrinProfilforklaring.ts`). Modulen er
+ * intern beslutningsstøtte: tekstene står i resultatet og kopieres ikke.
  */
 
-/** Navnet hver profil har i figuren, legenden og beregningen. */
+/** Navnet hver profil har i tabellen, figuren og forklaringen. */
 export const BE_URIN_ROLLENAVN: Record<BeUrinRolle, string> = {
-  enkeltinntak: 'Utskillelse etter enkeltinntak',
-  gjentatte_doser: 'Utskillelse etter gjentatte doser innenfor et kort tidsrom',
+  enkeltinntak: 'Enkeltinntak',
+  gjentatte_doser: 'Gjentatte doser',
   moderat: 'Moderat utskillelse',
   treg: 'Treg utskillelse',
   ekstrem: 'Ekstrem utskillelse',
 }
 
-/** Det endringen sammenlignes med for hver profil, etter graden: «over det som kan ses etter et enkeltinntak». */
+/** Det endringen sammenlignes med for hver profil: «det som kan ses etter et enkeltinntak». */
 export const BE_URIN_SAMMENLIGNINGSGRUNNLAG: Record<BeUrinRolle, string> = {
   enkeltinntak: 'det som kan ses etter et enkeltinntak',
   gjentatte_doser: 'det som forventes etter gjentatte doser innenfor et kort tidsrom',
@@ -36,115 +42,104 @@ export const BE_URIN_GRADTEKST: Record<BeUrinGrad, string> = {
   svaert_langt_over: 'svært langt over',
 }
 
-/** «over det som kan ses etter et enkeltinntak». */
-export const gradsetning = (grad: BeUrinGrad, rolle: BeUrinRolle) =>
-  `${BE_URIN_GRADTEKST[grad]} ${BE_URIN_SAMMENLIGNINGSGRUNNLAG[rolle]}`
+/** De to vurderingene. */
+export type BeUrinVurderingstype = 'sporadisk' | 'kronisk'
 
-/** Innledningen til gradene for hver vurdering. */
-export const BE_URIN_INNLEDNING = {
-  sporadisk: 'Sammenlignet med det som kan ses ved sporadisk bruk, ligger endringen mellom denne prøven og forrige prøve',
-  kronisk: 'Sammenlignet med det som kan ses ved kronisk bruk, ligger endringen',
-} as const
-
-/** Overskriftene på de to kortene. */
-export const BE_URIN_KORTTITTEL = {
+/** Overskriftene på de to vurderingene. */
+export const BE_URIN_KORTTITTEL: Record<BeUrinVurderingstype, string> = {
   sporadisk: 'Sporadisk bruk lagt til grunn',
   kronisk: 'Kronisk bruk lagt til grunn',
-} as const
-
-const SANNSYNLIG = 'Det er sannsynlig at et nytt inntak har skjedd.'
-const SVAERT_SANNSYNLIG = 'Det er svært sannsynlig at et nytt inntak har skjedd.'
-const UAVKLART = 'Det kan ikke fastslås om et nytt inntak har skjedd basert på analyseresultatene alene.'
-
-/** Vurderingen på kortet for sporadisk bruk. */
-export const BE_URIN_SPORADISK_TEKST: Record<BeUrinSporadisk, string> = {
-  forenlig_enkeltinntak:
-    'Endringen er forenlig med utskillelse etter et enkeltinntak. Et nytt inntak kan ikke fastslås.',
-  forenlig_gjentatte_doser:
-    'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom. Et nytt inntak kan ikke fastslås.',
-  sannsynlig: SANNSYNLIG,
-  svaert_sannsynlig: SVAERT_SANNSYNLIG,
 }
 
-/** Vurderingen på kortet for kronisk bruk. */
-export const BE_URIN_KRONISK_TEKST: Record<BeUrinKronisk, string> = {
-  uavklart: UAVKLART,
-  uavklart_uvanlig: `${UAVKLART} Det bemerkes likevel at en såpass ekstrem utskillelse anses svært uvanlig.`,
-  sannsynlig: SANNSYNLIG,
-  svaert_sannsynlig: SVAERT_SANNSYNLIG,
+/** En vurdering slik den står: den korte konklusjonen, og der det er relevant én setning til. */
+export interface BeUrinVurderingstekst {
+  konklusjon: string
+  utdyping?: string
 }
 
-/** Vurderingene kort, midt i en setning, til banneret om høyere margin. */
-const SPORADISK_KORT: Record<BeUrinSporadisk, string> = {
-  forenlig_enkeltinntak: 'forenlig med utskillelse etter et enkeltinntak',
-  forenlig_gjentatte_doser: 'forenlig med utskillelse etter gjentatte doser',
-  sannsynlig: 'sannsynlig nytt inntak',
-  svaert_sannsynlig: 'svært sannsynlig nytt inntak',
-}
-const KRONISK_KORT: Record<BeUrinKronisk, string> = {
-  uavklart: 'kan ikke fastslås',
-  uavklart_uvanlig: 'kan ikke fastslås, men svært uvanlig utskillelse',
-  sannsynlig: 'sannsynlig nytt inntak',
-  svaert_sannsynlig: 'svært sannsynlig nytt inntak',
-}
+const NYTT_INNTAK = 'Nytt inntak.'
+const SANNSYNLIG = 'Sannsynlig nytt inntak.'
+const KAN_IKKE = 'Nytt inntak kan ikke fastslås.'
 
-const VURDERINGEN = {
-  sporadisk: 'vurderingen når sporadisk bruk legges til grunn',
-  kronisk: 'vurderingen når kronisk bruk legges til grunn',
-} as const
-
-/** Et mildere utfall i banneret, etter marginene: «blir vurderingen når kronisk bruk legges til grunn «kan ikke fastslås».» */
-export function mildereTekst(
-  u: { vurdering: 'sporadisk'; utfall: BeUrinSporadisk } | { vurdering: 'kronisk'; utfall: BeUrinKronisk; samletDato: string | null },
-): string {
-  const utfall =
-    u.vurdering === 'sporadisk'
-      ? SPORADISK_KORT[u.utfall]
-      : u.samletDato
-        ? `indikasjon på nytt inntak etter den eldre prøven fra ${formaterDatoNorsk(u.samletDato)}`
-        : KRONISK_KORT[u.utfall]
-  return `blir ${VURDERINGEN[u.vurdering]} «${utfall}».`
+/** Vurderingen når sporadisk bruk legges til grunn. */
+export const BE_URIN_SPORADISK_TEKST: Record<BeUrinSporadisk, BeUrinVurderingstekst> = {
+  forenlig_enkeltinntak: {
+    konklusjon: KAN_IKKE,
+    utdyping: 'Endringen er forenlig med utskillelse etter et enkeltinntak.',
+  },
+  forenlig_gjentatte_doser: {
+    konklusjon: KAN_IKKE,
+    utdyping: 'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+  },
+  sannsynlig: { konklusjon: SANNSYNLIG },
+  nytt_inntak: { konklusjon: NYTT_INNTAK },
 }
 
-/** Første linje i resultatet: hvordan endringene er justert. */
-export function marginsetning(margin: number): string {
-  return margin === INGEN_SIKKERHETSMARGIN
-    ? `Konsentrasjonsendringene er ikke justert for måleusikkerhet (${somProsent(margin)} % sikkerhetsmargin).`
-    : `Konsentrasjonsendringene er justert for måleusikkerhet med ${somProsent(margin)} % sikkerhetsmargin.`
+/** Vurderingen når kronisk bruk legges til grunn. */
+export const BE_URIN_KRONISK_TEKST: Record<BeUrinKronisk, BeUrinVurderingstekst> = {
+  uavklart: { konklusjon: KAN_IKKE },
+  uavklart_uvanlig: {
+    konklusjon: KAN_IKKE,
+    utdyping: 'En såpass treg utskillelse anses likevel som svært uvanlig.',
+  },
+  sannsynlig: { konklusjon: SANNSYNLIG },
+  nytt_inntak: { konklusjon: NYTT_INNTAK },
 }
 
-/**
- * Forbeholdet i beregningen (#570): hva sammenligningene forutsetter, og hva
- * gradene og vurderingene ikke er. Ikke et fast banner.
- */
-export const BE_URIN_FORUTSETNING =
-  'Sammenligningene forutsetter at prøvene er tatt i eliminasjonsfasen, altså etter at opptaket fra et inntak er ' +
-  'avsluttet. Om eliminasjonsfasen har startet, kan ikke fastslås ut fra prøvene. Gradene og vurderingene er ' +
-  'kvalitative faglige sammenligninger med profilene, ikke kalibrerte sannsynligheter.'
+/** Vurderingen som én tekst: konklusjonen og utdypingen. */
+export function vurderingstekst(t: BeUrinVurderingstekst): string {
+  return t.utdyping ? `${t.konklusjon} ${t.utdyping}` : t.konklusjon
+}
 
-/** Merknaden når de to bieksponentielle profilene gir samme terskel. */
-export const BE_URIN_LIKE_BI =
-  'Treg og ekstrem utskillelse gir nøyaktig samme terskel for disse prøvene.'
+/** «Tidligere prøve fra 01.11.2026» midt i en setning: «prøven fra 01.11.2026». */
+const provenFra = (dato: string) => `prøven fra ${formaterDatoNorsk(dato)}`
 
-/** Den samlede vurderingen, under kortet for kronisk bruk. */
+/** Indikasjonen på nytt inntak etter en enda tidligere prøve, som utfall av den samlede vurderingen. */
+export function samletIndikasjon(dato: string): string {
+  return `Indikasjon på nytt inntak etter ${provenFra(dato)}, men ikke nødvendigvis etter forrige prøve.`
+}
+
+/** Den samlede vurderingen, under vurderingen for kronisk bruk. */
 export function samlettekst(samlet: BeUrinProfilsamlet): string {
-  if (!samlet.treff) {
-    return 'Samlet vurdering: mot ingen av de tidligere prøvene ligger endringen over det som kan ses ved ekstrem utskillelse.'
-  }
-  return (
-    `Samlet vurdering: mot den tidligere prøven fra ${formaterDatoNorsk(samlet.treff.dato)} ligger endringen over det ` +
-    'som kan ses ved ekstrem utskillelse. Det er en indikasjon på nytt inntak etter den eldre prøven, ikke nødvendigvis ' +
-    'etter forrige prøve.'
-  )
+  if (!samlet.treff) return 'Heller ikke sammenlignet med de tidligere prøvene er det indikasjon på nytt inntak.'
+  return `Sammenlignet med ${provenFra(samlet.treff.dato)} er det indikasjon på nytt inntak etter den prøven, men ikke nødvendigvis etter forrige prøve.`
+}
+
+/** Vurderingen slik den står nå, til å si hva en høyere margin endrer. */
+export interface BeUrinGjeldende {
+  tekst: BeUrinVurderingstekst
+  /** Den samlede vurderingen fant indikasjon på nytt inntak etter en eldre prøve. */
+  samletTreff: boolean
 }
 
 /**
- * En ratio med fire gjeldende siffer, også når den er for liten eller stor
- * for et vanlig tall: da som en tierpotens fra logaritmen («≈ 10^−412»).
+ * Et mildere utfall en høyere margin gir, med det som skiller det klinisk fra
+ * vurderingen som står: «Ved 99 % sikkerhetsmargin blir vurderingen ved
+ * sporadisk bruk: Nytt inntak kan ikke fastslås. Endringen er forenlig med
+ * utskillelse etter gjentatte doser innenfor et kort tidsrom.» Konklusjonen og
+ * utdypingen står alltid, så to marginer med samme konklusjon, men ulik
+ * utdyping, ikke ser like ut. Indikasjonen etter en eldre prøve står når
+ * utfallet har en, og at den faller bort når vurderingen som står har en.
  */
-export function formaterLogRatio(logVerdi: number): string {
-  const tier = logVerdi / Math.LN10
-  if (Math.abs(tier) < 12) return formaterRatio(Math.exp(logVerdi))
-  const eksponent = Math.round(tier)
-  return `≈ 10^${eksponent < 0 ? '−' : ''}${Math.abs(eksponent)}`
+export function mildereTekst(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende): string {
+  const tekst = u.vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST[u.utfall] : BE_URIN_KRONISK_TEKST[u.utfall]
+  const deler = [tekst.konklusjon]
+  if (tekst.utdyping) deler.push(tekst.utdyping)
+  // Samme konklusjon uten utdyping ved kronisk bruk: bemerkningen om svært
+  // uvanlig utskillelse faller bort, og det sies.
+  else if (tekst.konklusjon === gjeldende.tekst.konklusjon && gjeldende.tekst.utdyping) {
+    deler.push('Uten bemerkningen om svært uvanlig utskillelse.')
+  }
+  if (u.vurdering === 'kronisk' && u.samletDato) deler.push(samletIndikasjon(u.samletDato))
+  else if (gjeldende.samletTreff) deler.push('Ingen indikasjon på nytt inntak etter de tidligere prøvene.')
+  return `Ved ${marginliste(u.marginer)} sikkerhetsmargin blir vurderingen ved ${u.vurdering} bruk: ${deler.join(' ')}`
 }
+
+/** Forbeholdet under vurderingene: kort og diskret, ikke et banner. */
+export const BE_URIN_FORUTSETNING =
+  'Fortolkningen forutsetter at prøvene er tatt i eliminasjonsfasen, etter at opptaket fra et inntak er avsluttet.'
+
+/** Hva vurderingene er, i forklaringen. */
+export const BE_URIN_KVALITATIV =
+  'Vurderingene er kvalitative modellvurderinger, ikke statistisk kalibrerte sannsynligheter. «Nytt inntak» er ' +
+  'verktøyets sterkeste vurdering, ikke et matematisk bevis.'

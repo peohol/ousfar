@@ -9,7 +9,9 @@ import { lesBeUrinModellsvar, tilBeUrinModell, validerBeUrinModell, type BeUrinM
 import {
   BE_URIN_KONKLUSJONER,
   erGyldigDato,
+  feltfeil,
   fortolkBeUrin,
+  lesBevartBeUrinInndata,
   konklusjonFor,
   korrigertRatio,
   kvotient,
@@ -54,13 +56,14 @@ function inndata(
 }
 
 function vurdering(r: BeUrinResultat) {
-  if (r.type !== 'vurdering') throw new Error(`Ventet en vurdering, fikk: ${r.mangler.join(' ')}`)
+  if (r.type !== 'vurdering') throw new Error(`Ventet en vurdering, fikk: ${r.feil.join(' ')}`)
   return r
 }
 
+/** Det som er galt utover feltene; tom når skjemaet bare ikke er ferdig utfylt. */
 function mangler(r: BeUrinResultat): string[] {
   if (r.type !== 'mangler') throw new Error('Ventet mangler')
-  return r.mangler
+  return r.feil
 }
 
 describe('tersklene', () => {
@@ -217,35 +220,36 @@ describe('samme dag', () => {
 describe('det som mangler eller er ugyldig', () => {
   const gyldig = () => inndata(prove(10, '2026-01-01'), prove(5, '2026-01-04'))
 
-  it('gir ingen konklusjon før alt er fylt inn', () => {
-    const tom = mangler(fortolkBeUrin(tomBeUrinInndata(MODELL), MODELL))
-    expect(tom).toEqual([
-      'Fyll inn benzoylekgonin for forrige prøve.',
-      'Fyll inn kreatinin for forrige prøve.',
-      'Fyll inn prøvedato for forrige prøve.',
-      'Fyll inn benzoylekgonin for denne prøven.',
-      'Fyll inn kreatinin for denne prøven.',
-      'Fyll inn prøvedato for denne prøven.',
-    ])
+  it('gir ingen konklusjon, og ingen liste over det som mangler, før alt er fylt inn', () => {
+    expect(mangler(fortolkBeUrin(tomBeUrinInndata(MODELL), MODELL))).toEqual([])
+    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '') }, MODELL))).toEqual([])
   })
 
   it('vurderer ikke benzoylekgonin 0 eller ikke kvantifisert, og imputerer ingenting', () => {
-    for (const verdi of ['0', '0,0']) {
-      const m = mangler(fortolkBeUrin({ ...gyldig(), forrige: prove(verdi, '2026-01-01') }, MODELL))
-      expect(m).toEqual([
-        'Benzoylekgonin for forrige prøve må være kvantifisert og over 0. Modellen kan ikke vurdere prøver med benzoylekgonin 0, ikke påvist eller under kvantifiseringsgrensen.',
-      ])
+    for (const verdi of ['0', '0,0', '-1']) {
+      const inn = { ...gyldig(), forrige: prove(verdi, '2026-01-01') }
+      expect(mangler(fortolkBeUrin(inn, MODELL))).toEqual([])
+      expect(feltfeil(inn.forrige, 'benzoylekgonin')).toBe('Må være kvantifisert og over 0.')
     }
-    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove('0', '2026-01-04') }, MODELL))[0]).toMatch(/denne prøven må være kvantifisert/)
+  })
+
+  it('sier kort ved feltet hva som er galt, og ingenting om et tomt eller gyldig felt', () => {
+    const p = (benzoylekgonin: string, kreatinin: string, dato: string): BeUrinProve => ({ benzoylekgonin, kreatinin, dato })
+    expect(feltfeil(p('', '', ''), 'benzoylekgonin')).toBeNull()
+    expect(feltfeil(p(' ', '', ''), 'kreatinin')).toBeNull()
+    expect(feltfeil(p('', '', ''), 'dato')).toBeNull()
+    expect(feltfeil(p('1,5', '0.2', '2026-01-01'), 'benzoylekgonin')).toBeNull()
+    expect(feltfeil(p('1,5', '0.2', '2026-01-01'), 'kreatinin')).toBeNull()
+    expect(feltfeil(p('1,5', '0.2', '2026-01-01'), 'dato')).toBeNull()
+    expect(feltfeil(p('abc', '', ''), 'benzoylekgonin')).toBe('Må være et tall.')
+    expect(feltfeil(p('', '0', ''), 'kreatinin')).toBe('Må være over 0.')
+    expect(feltfeil(p('', 'x', ''), 'kreatinin')).toBe('Må være et tall.')
+    expect(feltfeil(p('', '', '2026-02-30'), 'dato')).toBe('Ugyldig dato.')
   })
 
   it('krever kreatinin over 0, gyldige datoer og riktig rekkefølge', () => {
-    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '2026-01-04', 0) }, MODELL))).toEqual([
-      'Kreatinin for denne prøven må være et tall større enn 0.',
-    ])
-    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '2026-02-30') }, MODELL))).toEqual([
-      'Prøvedatoen for denne prøven er ikke en gyldig dato.',
-    ])
+    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '2026-01-04', 0) }, MODELL))).toEqual([])
+    expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '2026-02-30') }, MODELL))).toEqual([])
     expect(mangler(fortolkBeUrin({ ...gyldig(), denne: prove(5, '2025-12-31') }, MODELL))).toEqual([
       'Denne prøven kan ikke være tatt før forrige prøve.',
     ])
@@ -320,13 +324,31 @@ describe('sikkerhetsmarginen', () => {
   })
 })
 
+describe('skjemaet tatt vare på over en oppdatering', () => {
+  const tidligere = [prove(9, '2026-01-09')]
+  const fylt = inndata(prove(10, '2026-01-10'), prove(8, '2026-01-11'))
+
+  it('tar ikke med tidligere prøver som var slått av før #576', () => {
+    expect(lesBevartBeUrinInndata({ ...fylt, samletVurdering: false, tidligere })).toEqual({ ...fylt, tidligere: [] })
+  })
+
+  it('beholder tidligere prøver som var slått på, og skjemaer fra etter #576', () => {
+    expect(lesBevartBeUrinInndata({ ...fylt, samletVurdering: true, tidligere })).toEqual({ ...fylt, tidligere })
+    expect(lesBevartBeUrinInndata({ ...fylt, tidligere })).toEqual({ ...fylt, tidligere })
+  })
+
+  it('godtar ikke noe som ikke er et skjema', () => {
+    for (const lagret of [null, 'x', [], { ...fylt, tidligere: 'x' }]) expect(lesBevartBeUrinInndata(lagret)).toBeUndefined()
+  })
+})
+
 describe('den samlede vurderingen', () => {
   // A: e^(−0,1·d), B: e^(−0,3·d). Forrige 10 → denne 8 etter ett døgn: kan ikke fastslås.
   const m = enkelModell(0.1, 0.3)
   const forrige = prove(10, '2026-01-10')
   const denne = prove(8, '2026-01-11')
   const samlet = (tidligere: BeUrinProve[], margin = 0.5) =>
-    fortolkBeUrin(inndata(forrige, denne, margin, { samletVurdering: true, tidligere }), m)
+    fortolkBeUrin(inndata(forrige, denne, margin, { tidligere }), m)
   const hoved = vurdering(fortolkBeUrin(inndata(forrige, denne), m)).sammenligning
 
   it('finner nytt inntak etter den nærmeste tidligere prøven, uansett rekkefølgen de er lagt inn i', () => {
@@ -354,27 +376,27 @@ describe('den samlede vurderingen', () => {
   })
 
   it('vurderes bare når hovedsammenligningen gir «kan ikke fastslås»', () => {
-    const r = vurdering(fortolkBeUrin(inndata(forrige, prove(9.9, '2026-01-11'), 0.5, { samletVurdering: true, tidligere: [prove(9, '2026-01-09')] }), m))
+    const r = vurdering(fortolkBeUrin(inndata(forrige, prove(9.9, '2026-01-11'), 0.5, { tidligere: [prove(9, '2026-01-09')] }), m))
     expect(r.sammenligning.konklusjon).toBe('nytt_inntak')
     expect(r.samlet).toBeNull()
   })
 
   it('fortolker ikke ugyldige tidligere prøver lydløst', () => {
-    expect(mangler(samlet([prove(9, '2026-01-09', '')]))).toEqual(['Fyll inn kreatinin for den tidligere prøven.'])
-    expect(mangler(samlet([prove(9, '2026-01-10')]))).toEqual(['Den tidligere prøven må være tatt før forrige prøve.'])
+    // En tom eller ugyldig tidligere prøve gir ingen vurdering før den er fylt ut eller fjernet.
+    expect(mangler(samlet([prove(9, '2026-01-09', '')]))).toEqual([])
+    expect(mangler(samlet([prove('', '')]))).toEqual([])
+    expect(mangler(samlet([prove(9, '2026-01-10')]))).toEqual(['Tidligere prøve må være tatt før forrige prøve.'])
     expect(mangler(samlet([prove(9, '2026-01-09'), prove(9, '2026-01-12')]))).toEqual(['Tidligere prøve 2 må være tatt før forrige prøve.'])
-    expect(mangler(samlet([]))).toEqual(['Legg til en tidligere prøve, eller slå av den samlede vurderingen.'])
   })
 
-  it('ser bort fra de tidligere prøvene når vurderingen er slått av', () => {
-    const r = vurdering(fortolkBeUrin(inndata(forrige, denne, 0.5, { samletVurdering: false, tidligere: [prove('', '')] }), m))
-    expect(r.samlet).toBeNull()
+  it('er ikke med uten tidligere prøver', () => {
+    expect(vurdering(samlet([])).samlet).toBeNull()
   })
 
   it('regner nytt inntak etter en eldre prøve som mildere enn nytt inntak etter forrige', () => {
     // Forrige 10 → denne 11,5: uten margin nytt inntak; med 99 % kan ikke fastslås, men nytt etter 09.01.
     const inn = (margin: number) =>
-      inndata(forrige, prove(11.5, '2026-01-11'), margin, { samletVurdering: true, tidligere: [prove(9, '2026-01-09')] })
+      inndata(forrige, prove(11.5, '2026-01-11'), margin, { tidligere: [prove(9, '2026-01-09')] })
     expect(vurdering(fortolkBeUrin(inn(0.5), m)).sammenligning.konklusjon).toBe('nytt_inntak')
     const r99 = vurdering(fortolkBeUrin(inn(0.99), m))
     expect(r99.sammenligning.konklusjon).toBe('kan_ikke_fastslaas')

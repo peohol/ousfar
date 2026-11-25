@@ -7,6 +7,7 @@ import {
   zFor,
   type BeUrinInndata,
   type BeUrinLestProve,
+  type BeUrinMangler,
 } from './beUrinMotor'
 import type {
   BeUrinBiprofil,
@@ -148,10 +149,13 @@ export function ratioEtter(v: BeUrinProfilvurdering, fra: number, dag: number): 
 
 /* --- Vurderingene ----------------------------------------------------------- */
 
-/** Vurderingen når sporadisk bruk legges til grunn, fra mildest. */
-export const BE_URIN_SPORADISK = ['forenlig_enkeltinntak', 'forenlig_gjentatte_doser', 'sannsynlig', 'svaert_sannsynlig'] as const
+/**
+ * Vurderingen når sporadisk bruk legges til grunn, fra mildest. Den sterkeste
+ * er «nytt inntak» (#576), ikke «svært sannsynlig».
+ */
+export const BE_URIN_SPORADISK = ['forenlig_enkeltinntak', 'forenlig_gjentatte_doser', 'sannsynlig', 'nytt_inntak'] as const
 /** Vurderingen når kronisk bruk legges til grunn, fra mildest. */
-export const BE_URIN_KRONISK = ['uavklart', 'uavklart_uvanlig', 'sannsynlig', 'svaert_sannsynlig'] as const
+export const BE_URIN_KRONISK = ['uavklart', 'uavklart_uvanlig', 'sannsynlig', 'nytt_inntak'] as const
 export type BeUrinSporadisk = (typeof BE_URIN_SPORADISK)[number]
 export type BeUrinKronisk = (typeof BE_URIN_KRONISK)[number]
 
@@ -187,12 +191,12 @@ function sporadiskFor(s: BeUrinProfilsammenligning): BeUrinSporadisk {
   const gjentatt = profilFor(s, 'gjentatte_doser').grad
   if (!over(enkelt)) return 'forenlig_enkeltinntak'
   if (!over(gjentatt)) return 'forenlig_gjentatte_doser'
-  return langtOver(gjentatt) ? 'svaert_sannsynlig' : 'sannsynlig'
+  return langtOver(gjentatt) ? 'nytt_inntak' : 'sannsynlig'
 }
 
 function kroniskFor(s: BeUrinProfilsammenligning): BeUrinKronisk {
   const ekstrem = profilFor(s, 'ekstrem').grad
-  if (langtOver(ekstrem)) return 'svaert_sannsynlig'
+  if (langtOver(ekstrem)) return 'nytt_inntak'
   if (over(ekstrem)) return 'sannsynlig'
   return over(profilFor(s, 'moderat').grad) && over(profilFor(s, 'treg').grad) ? 'uavklart_uvanlig' : 'uavklart'
 }
@@ -279,20 +283,20 @@ export interface BeUrinProfilsamlet {
 }
 
 export type BeUrinProfilresultat =
-  | { type: 'mangler'; mangler: string[] }
+  | BeUrinMangler
   | {
       type: 'vurdering'
       forrige: BeUrinLestProve
       denne: BeUrinLestProve
       /** Mot forrige prøve: begge vurderingene, figuren og beregningen. */
       sammenligning: BeUrinProfilsammenligning
-      /** Satt bare når den samlede vurderingen er slått på og aktuell ({@link samletAktuell}). */
+      /** Satt bare når det er lagt til tidligere prøver og den samlede vurderingen er aktuell ({@link samletAktuell}). */
       samlet: BeUrinProfilsamlet | null
     }
 
 /**
  * Validerer inndataene og fortolker med en modell av form 2. Mangler noe,
- * eller er noe ugyldig, gis ingen vurdering og ingen graf: bare det som mangler.
+ * eller er noe ugyldig, gis ingen vurdering og ingen graf ({@link BeUrinMangler}).
  */
 export function fortolkBeUrinProfiler(inn: BeUrinInndata, m: GodkjentBeUrinProfilmodell): BeUrinProfilresultat {
   // Prøver fra samme dag sammenlignes ikke: tiden mellom dem er ukjent.
@@ -300,14 +304,14 @@ export function fortolkBeUrinProfiler(inn: BeUrinInndata, m: GodkjentBeUrinProfi
   if (lest.type === 'mangler') return lest
   const { forrige, denne, dager, tidligere } = lest
   const hoved = sammenlignProfiler(m, forrige.q, denne.q, dager, inn.sikkerhetsmargin)
-  if (!hoved) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
+  if (!hoved) return { type: 'mangler', feil: [NUMERISK_FEIL] }
 
   let samlet: BeUrinProfilsamlet | null = null
   if (tidligere.length > 0 && samletAktuell(hoved)) {
     let treff: BeUrinProfilsamlet['treff'] = null
     for (const p of tidligere) {
       const s = sammenlignProfiler(m, p.q, denne.q, p.dager, inn.sikkerhetsmargin)
-      if (!s) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
+      if (!s) return { type: 'mangler', feil: [NUMERISK_FEIL] }
       if (overEkstrem(s)) {
         treff = { q: p.q, dato: p.dato, sammenligning: s }
         break
@@ -343,13 +347,13 @@ function sporadiskStrenghet(r: Extract<BeUrinProfilresultat, { type: 'vurdering'
 }
 
 /**
- * Hvor streng vurderingen ved kronisk bruk er. En indikasjon etter en enda
- * tidligere prøve ligger mellom «uvanlig» og «sannsynlig», og er mildere jo
- * eldre prøven er.
+ * Hvor streng vurderingen ved kronisk bruk er, fra mildest: uavklart,
+ * uavklart men uvanlig, indikasjon på nytt inntak etter en enda tidligere
+ * prøve (mildere jo eldre prøven er), sannsynlig nytt inntak og nytt inntak.
  */
 function kroniskStrenghet(r: Extract<BeUrinProfilresultat, { type: 'vurdering' }>): Strenghet {
   const treff = r.samlet?.treff
-  if (treff) return [1.5, -treff.sammenligning.dager]
+  if (treff) return [BE_URIN_KRONISK.indexOf('sannsynlig') - 0.5, -treff.sammenligning.dager]
   return [BE_URIN_KRONISK.indexOf(r.sammenligning.kronisk), 0]
 }
 

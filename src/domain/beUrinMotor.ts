@@ -40,11 +40,15 @@ export interface BeUrinInndata {
   forrige: BeUrinProve
   denne: BeUrinProve
   sikkerhetsmargin: number
-  /** Sammenlign også med {@link tidligere} når hovedsammenligningen gir «kan ikke fastslås». */
-  samletVurdering: boolean
-  /** Prøvene før forrige prøve, til den samlede vurderingen. */
+  /**
+   * Prøvene før forrige prøve, til den samlede vurderingen. Den er med så
+   * snart det er lagt til en tidligere prøve, og bare da.
+   */
   tidligere: BeUrinProve[]
 }
+
+/** Feltene i en prøve. */
+export type BeUrinFelt = keyof BeUrinProve
 
 export function tomBeUrinProve(): BeUrinProve {
   return { benzoylekgonin: '', kreatinin: '', dato: '' }
@@ -56,9 +60,22 @@ export function tomBeUrinInndata(m: BeUrinFellesmodell): BeUrinInndata {
     forrige: tomBeUrinProve(),
     denne: tomBeUrinProve(),
     sikkerhetsmargin: m.standard_sikkerhetsmargin,
-    samletVurdering: false,
     tidligere: [],
   }
+}
+
+/**
+ * Skjemaet slik det ble tatt vare på over en oppdatering av appen. Fra før
+ * #576 kunne det ha tidligere prøver med den samlede vurderingen slått av
+ * (`samletVurdering: false`); de var ikke med i fortolkningen, og tas derfor
+ * ikke med nå heller, der hver tidligere prøve er med. `undefined` når det
+ * lagrede ikke er et skjema.
+ */
+export function lesBevartBeUrinInndata(lagret: unknown): BeUrinInndata | undefined {
+  if (!lagret || typeof lagret !== 'object' || Array.isArray(lagret)) return undefined
+  const { samletVurdering, ...inndata } = lagret as BeUrinInndata & { samletVurdering?: unknown }
+  if (!Array.isArray(inndata.tidligere)) return undefined
+  return samletVurdering === false ? { ...inndata, tidligere: [] } : inndata
 }
 
 /** Sant for en ekte kalenderdato på formen datofeltet gir. */
@@ -66,6 +83,22 @@ export function erGyldigDato(iso: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false
   const tid = Date.parse(iso)
   return Number.isFinite(tid) && new Date(tid).toISOString().slice(0, 10) === iso
+}
+
+/**
+ * Det som er galt med verdien i ett felt, kort, til å stå ved feltet; `null`
+ * når feltet er tomt eller gyldig. Et tomt felt er ikke en feil: skjemaet er
+ * bare ikke ferdig utfylt.
+ */
+export function feltfeil(prove: BeUrinProve, felt: BeUrinFelt): string | null {
+  const verdi = prove[felt]
+  if (verdi.trim() === '') return null
+  if (felt === 'dato') return erGyldigDato(verdi) ? null : 'Ugyldig dato.'
+  const tall = lesTall(verdi)
+  if (tall === null) return 'Må være et tall.'
+  if (tall > 0) return null
+  // 0, ikke påvist og under kvantifiseringsgrensen kan modellen ikke vurdere.
+  return felt === 'benzoylekgonin' ? 'Må være kvantifisert og over 0.' : 'Må være over 0.'
 }
 
 /** Q for en prøve, eller `null` når feltene ikke gir en kvantifisert, positiv kvotient. */
@@ -198,7 +231,7 @@ export interface BeUrinSamlet {
 }
 
 export type BeUrinResultat =
-  | { type: 'mangler'; mangler: string[] }
+  | BeUrinMangler
   | {
       type: 'vurdering'
       forrige: BeUrinLestProve
@@ -211,41 +244,45 @@ export type BeUrinResultat =
       samlet: BeUrinSamlet | null
     }
 
-/** Navnet en tidligere prøve har i meldingene. */
+/** Navnet en tidligere prøve har i meldingene og i skjemaet. */
 export function tidligereNavn(antall: number, i: number): string {
-  return antall === 1 ? 'den tidligere prøven' : `tidligere prøve ${i + 1}`
+  return antall === 1 ? 'Tidligere prøve' : `Tidligere prøve ${i + 1}`
 }
 
-const stor = (tekst: string) => tekst.charAt(0).toUpperCase() + tekst.slice(1)
+/**
+ * Når ingen vurdering kan gis. `feil` er det som er galt utover det enkelte
+ * feltet (rekkefølgen på datoene, samme dag, en kvotient som ikke lar seg
+ * regne ut, en numerisk feil), kort, til å stå der vurderingen ellers står.
+ * Tomme felt gir ingen melding, og et ugyldig felt sies ved feltet
+ * ({@link feltfeil}): tom `feil` betyr at skjemaet ikke er ferdig utfylt.
+ */
+export interface BeUrinMangler {
+  type: 'mangler'
+  feil: string[]
+}
 
-/** Leser en prøve og legger det som mangler til `mangler`. */
-function lesProve(prove: BeUrinProve, navn: string, m: BeUrinFellesmodell, mangler: string[]): BeUrinLestProve | null {
-  const b = lesTall(prove.benzoylekgonin)
-  const k = lesTall(prove.kreatinin)
-  if (prove.benzoylekgonin.trim() === '') mangler.push(`Fyll inn benzoylekgonin for ${navn}.`)
-  else if (b === null) mangler.push(`Benzoylekgonin for ${navn} må være et tall.`)
-  else if (!(b > 0)) {
-    mangler.push(
-      `Benzoylekgonin for ${navn} må være kvantifisert og over 0. Modellen kan ikke vurdere prøver med ` +
-        'benzoylekgonin 0, ikke påvist eller under kvantifiseringsgrensen.',
-    )
-  }
-  if (prove.kreatinin.trim() === '') mangler.push(`Fyll inn kreatinin for ${navn}.`)
-  else if (k === null || !(k > 0)) mangler.push(`Kreatinin for ${navn} må være et tall større enn 0.`)
-  if (prove.dato === '') mangler.push(`Fyll inn prøvedato for ${navn}.`)
-  else if (!erGyldigDato(prove.dato)) mangler.push(`Prøvedatoen for ${navn} er ikke en gyldig dato.`)
+const smaa = (tekst: string) => tekst.charAt(0).toLowerCase() + tekst.slice(1)
+
+/**
+ * Leser en prøve. `null` når et felt er tomt eller ugyldig; en kvotient som
+ * ikke lar seg regne ut av gyldige tall, legges til `feil`.
+ */
+function lesProve(prove: BeUrinProve, navn: string, m: BeUrinFellesmodell, feil: string[]): BeUrinLestProve | null {
+  const felt: BeUrinFelt[] = ['benzoylekgonin', 'kreatinin', 'dato']
+  if (felt.some((f) => prove[f].trim() === '' || feltfeil(prove, f) !== null)) return null
   const q = kvotient(prove, m)
-  if (q === null && b !== null && b > 0 && k !== null && k > 0) mangler.push(`Kvotienten for ${navn} lar seg ikke regne ut.`)
-  return q !== null && erGyldigDato(prove.dato) ? { q, dato: prove.dato } : null
+  if (q === null) {
+    feil.push(`Kvotienten for ${smaa(navn)} lar seg ikke regne ut.`)
+    return null
+  }
+  return { q, dato: prove.dato }
 }
 
 /** Meldingen når tersklene ikke lar seg regne ut for verdiene. */
-export const NUMERISK_FEIL =
-  'Modellen kan ikke regne ut tersklene for disse verdiene. Kontroller tallene; det gis ingen konklusjon.'
+export const NUMERISK_FEIL = 'Modellen kan ikke regne ut en vurdering for disse verdiene. Kontroller tallene.'
 
 /** Meldingen når modellformen ikke sammenligner prøver fra samme dag. */
-export const SAMME_DAG_FEIL =
-  'Forrige prøve og denne prøven er tatt samme dag og kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere dag.'
+export const SAMME_DAG_FEIL = 'Prøver fra samme dag kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere dag.'
 
 /** Hvordan en modellform leser inndataene. */
 export interface BeUrinLeseregler {
@@ -253,55 +290,53 @@ export interface BeUrinLeseregler {
   avvisSammeDag?: boolean
 }
 
-/** Inndataene slik begge modellformene leser dem: alt som mangler, eller prøvene. */
+/** Inndataene slik begge modellformene leser dem: det som mangler, eller prøvene. */
 export type BeUrinLesteInndata =
-  | { type: 'mangler'; mangler: string[] }
+  | BeUrinMangler
   | {
       type: 'lest'
       forrige: BeUrinLestProve
       denne: BeUrinLestProve
       /** Kalenderdøgn fra forrige prøve til denne. */
       dager: number
-      /** De tidligere prøvene i den samlede vurderingen, nyeste først, med døgnene til denne prøven. Tom når den er slått av. */
+      /** De tidligere prøvene i den samlede vurderingen, nyeste først, med døgnene til denne prøven. Tom uten tidligere prøver. */
       tidligere: (BeUrinLestProve & { dager: number })[]
     }
 
 /**
  * Validerer inndataene: prøvene, datoene, de tidligere prøvene og marginen.
- * Mangler noe, eller er noe ugyldig, gis bare det som mangler.
+ * Er et felt tomt eller ugyldig, eller noe annet galt, gis ingen prøver,
+ * bare {@link BeUrinMangler}.
  */
 export function lesBeUrinInndata(
   inn: BeUrinInndata,
   m: BeUrinFellesmodell,
   regler: BeUrinLeseregler = {},
 ): BeUrinLesteInndata {
-  const mangler: string[] = []
-  const forrige = lesProve(inn.forrige, 'forrige prøve', m, mangler)
-  const denne = lesProve(inn.denne, 'denne prøven', m, mangler)
+  const feil: string[] = []
+  const forrige = lesProve(inn.forrige, 'Forrige prøve', m, feil)
+  const denne = lesProve(inn.denne, 'Denne prøven', m, feil)
   const mellom = forrige && denne ? dagerMellom(forrige.dato, denne.dato) : null
-  if (mellom !== null && mellom < 0) mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
-  else if (mellom === 0 && regler.avvisSammeDag) mangler.push(SAMME_DAG_FEIL)
+  if (mellom !== null && mellom < 0) feil.push('Denne prøven kan ikke være tatt før forrige prøve.')
+  else if (mellom === 0 && regler.avvisSammeDag) feil.push(SAMME_DAG_FEIL)
 
-  const tidligere = inn.samletVurdering ? inn.tidligere : []
-  if (inn.samletVurdering && tidligere.length === 0) {
-    mangler.push('Legg til en tidligere prøve, eller slå av den samlede vurderingen.')
-  }
+  const { tidligere } = inn
+  let utfylt = forrige !== null && denne !== null
   const tidligereLest = tidligere.map((prove, i) => {
     const navn = tidligereNavn(tidligere.length, i)
-    const lest = lesProve(prove, navn, m, mangler)
-    if (lest && forrige && !(dagerMellom(lest.dato, forrige.dato) > 0)) {
-      mangler.push(`${stor(navn)} må være tatt før forrige prøve.`)
-    }
+    const lest = lesProve(prove, navn, m, feil)
+    if (!lest) utfylt = false
+    else if (forrige && !(dagerMellom(lest.dato, forrige.dato) > 0)) feil.push(`${navn} må være tatt før forrige prøve.`)
     return lest
   })
 
   // Marginen kommer fra skjemaet, som kan leve lenger enn modellen det ble
   // fylt ut mot. En margin modellen ikke har, gir aldri en konklusjon.
   if (!m.sikkerhetsmarginer.some((s) => s.margin === inn.sikkerhetsmargin)) {
-    mangler.push('Sikkerhetsmarginen finnes ikke i modellen. Velg en av marginene som tilbys.')
+    feil.push('Sikkerhetsmarginen finnes ikke i modellen. Velg en av marginene som tilbys.')
   }
 
-  if (mangler.length > 0 || !forrige || !denne) return { type: 'mangler', mangler }
+  if (feil.length > 0 || !utfylt || !forrige || !denne) return { type: 'mangler', feil }
   return {
     type: 'lest',
     forrige,
@@ -322,14 +357,14 @@ export function fortolkBeUrin(inn: BeUrinInndata, m: GodkjentBeUrinModell): BeUr
   if (lest.type === 'mangler') return lest
   const { forrige, denne, dager, tidligere } = lest
   const hoved = sammenlign(m, forrige.q, denne.q, dager, inn.sikkerhetsmargin)
-  if (!hoved) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
+  if (!hoved) return { type: 'mangler', feil: [NUMERISK_FEIL] }
 
   let samlet: BeUrinSamlet | null = null
   if (hoved.konklusjon === 'kan_ikke_fastslaas' && tidligere.length > 0) {
     let treff: BeUrinSamlet['treff'] = null
     for (const p of tidligere) {
       const s = sammenlign(m, p.q, denne.q, p.dager, inn.sikkerhetsmargin)
-      if (!s) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
+      if (!s) return { type: 'mangler', feil: [NUMERISK_FEIL] }
       if (s.konklusjon === 'nytt_inntak') {
         treff = { q: p.q, dato: p.dato, sammenligning: s }
         break
