@@ -14,31 +14,35 @@
 import type { Greninfo } from '../kurateringsko/modell'
 import { JOBBGREN, JOBBGRENPREFIKS, OPPGAVER, type Jobbstatus } from './modell'
 
-const DOGN = 86_400_000
+const TIME = 3_600_000
+const DOGN = 24 * TIME
 
 /**
- * Fristene, i døgn. En gren slettes tidligst når fristen er gått, regnet fra
- * tidspunktet regelen sier.
+ * Fristene, i timer. En gren slettes tidligst når fristen er gått, regnet fra
+ * tidspunktet regelen sier. Oppryddingen kjører hver time.
  */
 export const RYDDEFRISTER = {
   /** En jobb som står som `kjorer` lenger enn dette, er avbrutt (jobben selv stoppes etter en time). */
-  kjorer: 1,
+  kjorer: 24,
   /** Etter at den siste kurateringen jobben ble brukt til, er publisert. */
-  etterPublisering: 1,
-  /** En bestått funksjonstest alene. */
-  funksjonstestOk: 1,
+  etterPublisering: 24,
+  /**
+   * En bestått funksjonstest alene. Ingen trenger resultatet etterpå: en
+   * pågående kuratering som viser til grenen, beholder den uansett.
+   */
+  funksjonstestOk: 3,
   /** En funksjonstest alene med advarsel eller feil, så den som ba om den, rekker å se den. */
-  funksjonstestAvvik: 3,
+  funksjonstestAvvik: 3 * 24,
   /** En forespørsel jobben avviste, så jobben ikke ga noe å bruke. */
-  avvist: 3,
+  avvist: 3 * 24,
   /** En avbrutt jobb, eller en gren uten resultat. */
-  avbrutt: 7,
+  avbrutt: 7 * 24,
   /**
    * En jobb med preparatomtaler ingen kuratering har brukt: ingen pågår, og
    * ingen er publisert etter jobben. Preparatomtalene kan hentes på nytt fra
    * DMP med en ny jobb.
    */
-  ubrukt: 30,
+  ubrukt: 30 * 24,
 } as const
 
 /**
@@ -107,6 +111,11 @@ const tid = (v: unknown): number => {
 
 const iso = (t: number) => new Date(t).toISOString()
 const dato = (t: number) => iso(t).slice(0, 10)
+/** Dato og klokkeslett i UTC, for fristene, som går ut i løpet av døgnet. */
+const tidspunkt = (t: number) => `${dato(t)} kl. ${iso(t).slice(11, 16)} UTC`
+
+/** En frist i timer, som tekst: «3 timer», «30 døgn». */
+export const varighet = (timer: number) => (timer % 24 === 0 ? `${timer / 24} døgn` : `${timer} ${timer === 1 ? 'time' : 'timer'}`)
 
 /** Navnet på en jobbgren først i en tekst, som i evidensjournalens `kuratorjobber` («kuratorjobb/x (preparatomtaler …)»). */
 export function jobbgrenI(tekst: unknown): string | null {
@@ -136,15 +145,15 @@ export function lesJobbstatus(v: unknown, gren: string) {
 }
 
 /** En vurdering der fristen er gått, eller en som beholder grenen til fristen. */
-function etterFrist(gren: string, kategori: Ryddekategori, fra: number, dogn: number, na: number, grunn: string, venter: string): Ryddevurdering {
-  const frist = fra + dogn * DOGN
+function etterFrist(gren: string, kategori: Ryddekategori, fra: number, timer: number, na: number, grunn: string, venter: string): Ryddevurdering {
+  const frist = fra + timer * TIME
   const sist = Number.isFinite(fra) ? iso(fra) : null
   if (Number.isFinite(frist) && frist <= na) return { gren, slett: true, kategori, grunn, tidligst_kl: null, sist_kl: sist }
   return {
     gren,
     slett: false,
     kategori: kategori === 'ferdig' || kategori === 'ubrukelig' ? 'venter' : kategori,
-    grunn: `${venter}; slettes tidligst ${Number.isFinite(frist) ? dato(frist) : 'når tidspunktet er kjent'}`,
+    grunn: `${venter}; slettes tidligst ${Number.isFinite(frist) ? tidspunkt(frist) : 'når tidspunktet er kjent'}`,
     tidligst_kl: Number.isFinite(frist) ? iso(frist) : null,
     sist_kl: sist,
   }
@@ -162,7 +171,7 @@ const liste = (navn: readonly string[]) => (navn.length <= 3 ? navn.join(', ') :
  * 2. Ubrukelig: en avbrutt jobb, en gren uten resultat eller med en ny
  *    forespørsel resultatet ikke gjelder, og en forespørsel jobben avviste,
  *    slettes etter fristen.
- * 3. Bare funksjonstest: slettes ett døgn etter en bestått test, tre døgn
+ * 3. Bare funksjonstest: slettes tre timer etter en bestått test, tre døgn
  *    etter en med avvik.
  * 4. Preparatomtaler: slettes når hvert av stoffene har en kuratering
  *    publisert etter jobben, og den siste er minst ett døgn gammel. Utfallet
@@ -213,7 +222,7 @@ export function vurderJobbgren(j: Jobbgren, g: Ryddegrunnlag): Ryddevurdering {
 
   if (s.status === 'kjorer') {
     const startet = Number.isFinite(s.startet) ? s.startet : commit
-    if (!(Number.isFinite(startet) && na - startet > RYDDEFRISTER.kjorer * DOGN)) return behold('i_bruk', 'jobben kjører', sist)
+    if (!(Number.isFinite(startet) && na - startet > RYDDEFRISTER.kjorer * TIME)) return behold('i_bruk', 'jobben kjører', sist)
     return etterFrist(j.navn, 'ubrukelig', startet, RYDDEFRISTER.avbrutt, na, 'jobben ble avbrutt og aldri fullført', 'jobben ble avbrutt')
   }
   if (s.stoffer.length === 0 && !s.alle) {
@@ -261,7 +270,7 @@ export function vurderJobbgren(j: Jobbgren, g: Ryddegrunnlag): Ryddevurdering {
     sist,
     RYDDEFRISTER.ubrukt,
     na,
-    `preparatomtalene ble ikke brukt i noen kuratering på ${RYDDEFRISTER.ubrukt} døgn (${liste(ubrukt)}), og ingen pågår`,
+    `preparatomtalene ble ikke brukt i noen kuratering på ${varighet(RYDDEFRISTER.ubrukt)} (${liste(ubrukt)}), og ingen pågår`,
     `venter på at kurateringen av ${liste(ubrukt)} starter`,
   )
 }

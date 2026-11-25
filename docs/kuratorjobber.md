@@ -48,8 +48,8 @@ er ferdig, skal grenen slettes automatisk etter reglene nedenfor.
 
 ## Automatisk opprydding av jobbgrener
 
-Arbeidsflyten `.github/workflows/rydd-kuratorjobbgrener.yml` går daglig fra
-`main`, kan startes for hånd (med «kun vis» for en forhåndsvisning uten
+Arbeidsflyten `.github/workflows/rydd-kuratorjobbgrener.yml` går hver time fra
+`main`, så en gren står høyst en time etter at fristen er gått, kan startes for hånd (med «kun vis» for en forhåndsvisning uten
 sletting), og starter også når arbeidsflyten eller reglene endres på `main`.
 Reglene står i `src/kuratorjobb/rydding.ts`, kjøringen i
 `src/kuratorjobb/ryddekjoring.ts`, med tester i
@@ -70,10 +70,10 @@ Grenene deles i fire grupper:
 | --- | --- | --- |
 | **I bruk** | Jobben kjører; en åpen PR kommer fra grenen; kurateringskøen har koblet grenen til en oppgave; GitHub beskytter grenen; en pågående kuratering av et av stoffene; eller en pågående kuratering (av hvilket som helst stoff) har grenen i evidensjournalens `kuratorjobber` | Beholdes, uansett alder |
 | **Venter** | Jobben er ferdig, men fristen nedenfor er ikke gått, eller preparatomtalene er ennå ikke brukt i noen kuratering | Beholdes til fristen; oversikten sier når |
-| **Ferdig** | Preparatomtaler: *hvert* av stoffene har en kuratering publisert *etter* jobben. Bare funksjonstest (også `"alle"`): testen er ferdig | Slettes ett døgn etter den siste publiseringen, ett døgn etter en bestått funksjonstest og tre døgn etter en med advarsel eller feil |
+| **Ferdig** | Preparatomtaler: *hvert* av stoffene har en kuratering publisert *etter* jobben. Bare funksjonstest (også `"alle"`): testen er ferdig | Slettes ett døgn etter den siste publiseringen, tre timer etter en bestått funksjonstest og tre døgn etter en med advarsel eller feil |
 | **Ubrukelig** | Forespørselen ble avvist (ingen kjente stoffer); jobben ble avbrutt (står som `kjorer` i over et døgn); grenen har aldri fått et gyldig resultat, eller resultatet gjelder en annen forespørsel enn den som står på grenen nå (`foresporsel_sha256`); eller preparatomtalene er ikke brukt på 30 døgn uten at noen kuratering pågår | Slettes tre døgn etter en avvist forespørsel, sju døgn etter en avbrutt jobb eller siste commit, og 30 døgn etter en ubrukt jobb |
 
-Fristene står i `RYDDEFRISTER`. Preparatomtalene som slettes med en gren, er
+Fristene står i `RYDDEFRISTER`, i timer. Preparatomtalene som slettes med en gren, er
 DMPs offentlige PDF-er; de hentes på nytt med en ny jobb om en senere
 kuratering trenger dem. Navnet på grenen står fortsatt i evidensjournalen.
 
@@ -94,7 +94,10 @@ på kjøringen, så en opprydding som «lykkes» uten å rydde blir synlig.
 
 Denne ordningen gjelder bare `kuratorjobb/`-grenene. Køens varige gren
 `kurateringsko/tilstand` må bevares; gamle `kurateringsko/okt/`-grener
-ryddes allerede separat av kurateringskøen etter dens egne regler.
+ryddes allerede separat av kurateringskøen etter dens egne regler. Grener med
+et navn som ligner, uten å følge mønsteret (som `kuratorjobb-…`), og andre
+grener ingen av dem kjenner, ryddes av oppryddingen av gamle grener
+([grenrydding.md](grenrydding.md)).
 Kurateringsgrenene **i OUSFAR-databasen** er noe annet enn GitHub-grenene:
 deres revisjoner, dokumentasjon og kontrollhistorikk bevares i OUSFAR.
 

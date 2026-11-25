@@ -27,6 +27,7 @@
     "kuratorjobb": "vite-node scripts/kuratorjobb.ts --",
     "kurateringsko": "vite-node scripts/kurateringsko.ts --",
     "rydd-kuratorjobbgrener": "vite-node scripts/rydd-kuratorjobbgrener.ts --",
+    "rydd-grener": "vite-node scripts/rydd-grener.ts --",
     "kurator": "vite-node scripts/kurateringsagent.ts -- kurator",
     "kontrollor": "vite-node scripts/kurateringsagent.ts -- kontrollor",
     "kontroller:migrasjoner": "vite-node scripts/kontroller-migrasjoner.ts --",

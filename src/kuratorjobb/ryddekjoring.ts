@@ -6,6 +6,7 @@
  * prøves uten nettverk.
  */
 import { createHash } from 'node:crypto'
+import { alleGrener, githubRest, grenNa, slettGren } from '../github/rest'
 import type { Greninfo } from '../kurateringsko/modell'
 import { FORESPORSELSFIL, JOBBGRENPREFIKS, STATUSFIL } from './modell'
 import { vurderAlle, type Jobbgren, type Ryddeoversikt } from './rydding'
@@ -138,31 +139,10 @@ export async function kjorRydding({ github, grener: lesGrener, kunVis, na, logg 
 
 /** `Ryddegithub` gjennom GitHubs REST-API med arbeidsflytens nøkkel. */
 export function lagRyddegithub(repo: string, token: string, hent: typeof fetch = fetch): Ryddegithub {
-  const hode = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
-  async function api(sti: string, metode = 'GET'): Promise<unknown> {
-    const svar = await hent(`https://api.github.com/repos/${repo}/${sti}`, { method: metode, headers: hode })
-    if (svar.status === 404) return null
-    if (!svar.ok) throw new Error(`GitHub svarte ${svar.status} på ${metode} ${sti.split('?')[0]}.`)
-    return svar.status === 204 ? null : svar.json()
-  }
-  const refsti = (navn: string) => navn.split('/').map(encodeURIComponent).join('/')
+  const api = githubRest(repo, token, hent)
   return {
-    async grener() {
-      const ut: { navn: string; sha: string; beskyttet: boolean }[] = []
-      for (let side = 1; ; side += 1) {
-        const rader = await api(`branches?per_page=100&page=${side}`)
-        if (!Array.isArray(rader)) throw new Error('Fikk ingen gyldig liste over grenene.')
-        for (const r of rader as { name: string; commit: { sha: string }; protected?: boolean }[]) ut.push({ navn: r.name, sha: r.commit.sha, beskyttet: r.protected === true })
-        if (rader.length < 100) return ut
-        if (side === 30) throw new Error('Over 3000 grener: avbryter for sikkerhets skyld.')
-      }
-    },
-    async gren(navn) {
-      // Hele navnet er én parameter i GitHubs API, også skråstreken.
-      const r = (await api(`branches/${encodeURIComponent(navn)}`)) as { commit?: { sha?: string; commit?: { committer?: { date?: string } } } } | null
-      if (!r?.commit?.sha) return null
-      return { sha: r.commit.sha, commit_kl: r.commit.commit?.committer?.date ?? null }
-    },
+    grener: () => alleGrener(api),
+    gren: (navn) => grenNa(api, navn),
     async fil(sti, ref) {
       const f = (await api(`contents/${sti}?ref=${encodeURIComponent(ref)}`)) as { type?: string; encoding?: string; content?: string } | null
       if (!f || f.type !== 'file' || f.encoding !== 'base64' || typeof f.content !== 'string') return null
@@ -179,7 +159,7 @@ export function lagRyddegithub(repo: string, token: string, hent: typeof fetch =
     },
     async slett(navn) {
       if (!navn.startsWith(JOBBGRENPREFIKS)) throw new Error(`Sletter bare jobbgrener, ikke ${navn}.`)
-      await api(`git/refs/heads/${refsti(navn)}`, 'DELETE')
+      await slettGren(api, navn)
     },
   }
 }

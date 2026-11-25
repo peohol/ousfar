@@ -70,6 +70,7 @@ describe('reglene', () => {
   })
 
   it('venter et døgn etter den siste publiseringen', () => {
+    expect(RYDDEFRISTER.etterPublisering).toBe(24)
     const v = vurderJobbgren(jobb('x', { stoffer: ['alfa', 'beta'] }), grunnlag({ grener: [gren('alfa', 'publisert', 5), gren('beta', 'publisert', 0.5)] }))
     expect(v).toMatchObject({ slett: false, kategori: 'venter', tidligst_kl: new Date(Date.parse(dogn(0.5)) + 86_400_000).toISOString() })
   })
@@ -81,8 +82,11 @@ describe('reglene', () => {
   })
 
   it('sletter ubrukte preparatomtaler først etter 30 døgn, når ingen kuratering pågår', () => {
-    expect(vurderJobbgren(jobb('x', { ferdig: RYDDEFRISTER.ubrukt - 1 }), grunnlag())).toMatchObject({ slett: false })
-    expect(vurderJobbgren(jobb('x', { ferdig: RYDDEFRISTER.ubrukt + 1 }), grunnlag())).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    expect(RYDDEFRISTER.ubrukt).toBe(30 * 24)
+    expect(vurderJobbgren(jobb('x', { ferdig: 29 }), grunnlag())).toMatchObject({ slett: false })
+    const v = vurderJobbgren(jobb('x', { ferdig: 31 }), grunnlag())
+    expect(v).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    expect(v.grunn).toContain('på 30 døgn')
   })
 
   it('beholder grenen så lenge en kuratering av et av stoffene pågår, hvor gammel jobben enn er', () => {
@@ -109,10 +113,13 @@ describe('reglene', () => {
     expect(vurderJobbgren({ ...jobb('x'), navn: 'main' }, g)).toMatchObject({ slett: false })
   })
 
-  it('sletter en funksjonstest alene etter ett døgn når den er bestått, og etter tre med avvik, også for alle sidene', () => {
+  it('sletter en funksjonstest alene tre timer etter at den er bestått, og tre døgn etter en med avvik, også for alle sidene', () => {
     const kun = { oppgaver: ['funksjonstest'] }
-    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 1.1 }), grunnlag())).toMatchObject({ slett: true, kategori: 'ferdig' })
-    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 0.5 }), grunnlag())).toMatchObject({ slett: false })
+    const time = 1 / 24
+    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 3.1 * time }), grunnlag())).toMatchObject({ slett: true, kategori: 'ferdig' })
+    const venter = vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 2 * time }), grunnlag())
+    expect(venter).toMatchObject({ slett: false, kategori: 'venter', tidligst_kl: new Date(Date.parse(NA) + time * 86_400_000).toISOString() })
+    expect(venter.grunn).toContain('slettes tidligst 2026-11-16 kl. 05:00 UTC')
     for (const s of ['advarsel', 'feil']) {
       expect(vurderJobbgren(jobb('x', { ...kun, status: s, ferdig: 2 }), grunnlag()), s).toMatchObject({ slett: false })
       expect(vurderJobbgren(jobb('x', { ...kun, status: s, ferdig: 3.1 }), grunnlag()), s).toMatchObject({ slett: true })

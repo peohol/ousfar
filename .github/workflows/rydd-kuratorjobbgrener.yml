@@ -15,8 +15,10 @@ on:
       - .github/workflows/rydd-kuratorjobbgrener.yml
       - src/kuratorjobb/rydding.ts
       - src/kuratorjobb/ryddekjoring.ts
+      - src/github/rest.ts
+  # Hver time, så en gren står høyst en time etter at fristen er gått.
   schedule:
-    - cron: '41 3 * * *'
+    - cron: '41 * * * *'
   workflow_dispatch:
     inputs:
       kun_vis:

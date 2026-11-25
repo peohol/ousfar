@@ -1,0 +1,16 @@
+{
+  "id": "20261125-191842-b85b85",
+  "semver": "patch",
+  "opprettet": "2026-11-25T19:18:42Z",
+  "sammendrag": "Gamle grener fra kurateringsarbeidet ryddes raskere og bredere",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Oppryddingen av kuratorjobbenes grener kjører hver time i stedet for én gang i døgnet, og en gren med en bestått funksjonstest slettes etter tre timer i stedet for ett døgn.",
+    "Kurateringskøens øktgrener slettes to døgn etter siste bruk i stedet for 14.",
+    "En ny opprydding hver time sletter grener ingen annen opprydding kjente: grener uten noe nytt, grener der alt allerede står i appen, grener etter en PR som er slått sammen eller lukket, og grener med feil navn. Grener med en åpen PR beholdes alltid."
+  ],
+  "utenVarsel": true
+}

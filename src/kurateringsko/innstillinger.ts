@@ -75,7 +75,8 @@ export const INNSTILLINGER: Koinnstillinger = {
   evidensovervaking_dager: 180,
   oppfolging_ventetid_dager: 7,
   maling_timer: 20,
-  okt_slettes_etter_dager: 14,
+  // En økt varer noen timer, og en med aktiv reservasjon beholdes uansett.
+  okt_slettes_etter_dager: 2,
   // Piloten for kurateringsgrenene (citalopram, lurasidon, GHB) er bestått
   // (docs/kurateringsgrener-fremdrift.md, fase F); de novo-runden går gjennom
   // hele registeret i prioritetsrekkefølge.
