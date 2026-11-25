@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T08:52:20.078Z",
+  "oppdatert_kl": "2026-11-25T08:52:52.740Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "teller": 91,
   "stoffer": {
@@ -2987,7 +2987,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-25T08:52:20.078Z",
+          "kl": "2026-11-25T08:52:52.740Z",
           "kilde": "system"
         }
       ],
@@ -5850,7 +5850,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
-          "kl": "2026-11-25T08:52:20.078Z",
+          "kl": "2026-11-25T08:52:52.740Z",
           "kilde": "system"
         }
       ],
@@ -8539,7 +8539,7 @@
           }
         }
       },
-      "besvart_commit": "7d58d83d7e04e3177d00257c0bdbe3f65096bd10",
+      "besvart_commit": "05fca092cf8c679afb709ca21eee6a53a27bb7e6",
       "sist_brukt_kl": "2026-11-25T08:52:20.078Z"
     }
   }
