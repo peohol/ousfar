@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T08:30:24.681Z",
+  "oppdatert_kl": "2026-11-25T08:52:20.078Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "teller": 91,
   "stoffer": {
@@ -2986,8 +2986,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, arbeid); den må avsluttes først.",
-          "kl": "2026-11-25T08:30:24.681Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.",
+          "kl": "2026-11-25T08:52:20.078Z",
           "kilde": "system"
         }
       ],
@@ -5849,8 +5849,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T08:30:24.681Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, godkjent); den må avsluttes først.",
+          "kl": "2026-11-25T08:52:20.078Z",
           "kilde": "system"
         }
       ],
@@ -6086,9 +6086,9 @@
         "okt": "kurateringsko/okt/20261125-074952",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T07:50:28.183Z",
-        "fornyet_kl": "2026-11-25T08:13:13.831Z",
-        "frist_kl": "2026-11-25T11:13:13.831Z",
-        "fase": "Blindfasen avsluttet, avstemming mot sidens innhold",
+        "fornyet_kl": "2026-11-25T08:52:20.078Z",
+        "frist_kl": "2026-11-25T11:52:20.078Z",
+        "fase": "Virkninger, graviditet og avhengighet skrevet, konsentrasjonsmerkingen kontrollert",
         "jobbgren": "kuratorjobb/risperidon-0091",
         "kurateringsgren": "kuratering/risperidon-0091",
         "pr": null,
@@ -6141,6 +6141,13 @@
           "oppgave": "risperidon-0091",
           "okt": "kurateringsko/okt/20261125-074952",
           "melding": "Blindfasen avsluttet, avstemming mot sidens innhold"
+        },
+        {
+          "kl": "2026-11-25T08:52:20.078Z",
+          "hendelse": "fornyet",
+          "oppgave": "risperidon-0091",
+          "okt": "kurateringsko/okt/20261125-074952",
+          "melding": "Virkninger, graviditet og avhengighet skrevet, konsentrasjonsmerkingen kontrollert"
         }
       ],
       "appgren": null
@@ -8486,29 +8493,30 @@
     },
     "kurateringsko/okt/20261125-074952": {
       "ider": [
+        "forny-3",
         "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-2",
-        "sha256": "34bcf7b9ac7af3b365b542925a9a283d82baf6f87fdf74b3afcd8e346e54b87b",
+        "id": "forny-3",
+        "sha256": "956cd88efdeb1d926d27d810e29ca18a9fe7b591043bd96200eb62dda46b4ee4",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-2",
-          "foresporsel_sha256": "34bcf7b9ac7af3b365b542925a9a283d82baf6f87fdf74b3afcd8e346e54b87b",
+          "foresporsel_id": "forny-3",
+          "foresporsel_sha256": "956cd88efdeb1d926d27d810e29ca18a9fe7b591043bd96200eb62dda46b4ee4",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av risperidon varer til 2026-11-25T11:13:13.831Z.",
-          "behandlet_kl": "2026-11-25T08:13:13.831Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45574326305",
+          "melding": "Reservasjonen av risperidon varer til 2026-11-25T11:52:20.078Z.",
+          "behandlet_kl": "2026-11-25T08:52:20.078Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45580054432",
           "oppgave": {
             "oppgave": "risperidon-0091",
             "stoff": "risperidon",
             "navn": "Risperidon",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T11:13:13.831Z",
+            "frist_kl": "2026-11-25T11:52:20.078Z",
             "jobbgren": "kuratorjobb/risperidon-0091",
             "kurateringsgren": "kuratering/risperidon-0091",
             "pr": null,
@@ -8532,7 +8540,7 @@
         }
       },
       "besvart_commit": "7d58d83d7e04e3177d00257c0bdbe3f65096bd10",
-      "sist_brukt_kl": "2026-11-25T08:13:13.831Z"
+      "sist_brukt_kl": "2026-11-25T08:52:20.078Z"
     }
   }
 }
