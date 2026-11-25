@@ -8,6 +8,7 @@
 import { act, cleanup, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { BE_URIN_VENTER } from '../components/BeUrinDeler'
 import { beUrinBevaringsnavn } from '../components/BeUrinStep'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
 import { search } from '../domain/search'
@@ -54,9 +55,9 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
   it('viser Q med enhetene, resultatet med merkingen, og ingen kommentar eller kopiering', async () => {
     vis()
     await screen.findByRole('group', { name: 'Forrige prøve' })
-    expect(screen.getByText('Fyll inn benzoylekgonin for forrige prøve.')).toBeTruthy()
+    expect(screen.getByText(BE_URIN_VENTER)).toBeTruthy()
     await fyll('Forrige prøve', '50', '2', '2026-01-01')
-    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Q (benzoylekgonin/kreatinin): 25 enhet Q')
+    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kvotient 25 enhet Q')
     expect(gruppe('Forrige prøve').getByLabelText('Benzoylekgonin (enhet B)')).toBeTruthy()
     await fyll('Denne prøven', '52,5', '2', '2026-01-04')
     const resultat = screen.getByRole('heading', { name: 'Resultat' }).closest('.thc-resultat') as HTMLElement
@@ -77,7 +78,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(gruppe('Forrige prøve').getByLabelText('Benzoylekgonin')).toBeTruthy()
     expect(gruppe('Forrige prøve').getByLabelText('Kreatinin')).toBeTruthy()
     await fyll('Forrige prøve', '50', '2', '2026-01-01')
-    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Q (benzoylekgonin/kreatinin): 25')
+    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kvotient 25')
   })
 
   it('gjør ingenting på Enter eller mellomrom', async () => {
@@ -112,8 +113,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     const user = userEvent.setup()
     vis()
     await screen.findByRole('group', { name: 'Forrige prøve' })
-    await user.click(screen.getByLabelText('Samlet vurdering med enda tidligere prøver'))
-    expect(screen.getByText('Fyll inn benzoylekgonin for den tidligere prøven.')).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
     // Forrige Q 25 → denne Q 18 etter 3 døgn: kan ikke fastslås. Mot Q 13 dagen før: over begge.
     await fyll('Forrige prøve', '50', '2', '2026-01-10')
     await fyll('Denne prøven', '36', '2', '2026-01-13')
@@ -124,7 +124,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(tekst).not.toContain('Nytt inntak.')
     // En tidligere prøve som ikke er før forrige prøve, fortolkes ikke.
     fireEvent.change(gruppe('Tidligere prøve').getByLabelText('Prøvedato'), { target: { value: '2026-01-10' } })
-    expect(screen.getByText('Den tidligere prøven må være tatt før forrige prøve.')).toBeTruthy()
+    expect(screen.getByRole('alert').textContent).toBe('Tidligere prøve må være tatt før forrige prøve.')
     expect(screen.queryByText('Kan ikke fastslås.')).toBeNull()
   })
 
@@ -132,7 +132,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     const user = userEvent.setup()
     vis({ ...MED_MODELL, modell: { ...SYNTETISK_MODELL, maleusikkerhet: { cv_benzoylekgonin: 0.2, cv_kreatinin: 0.05 } } })
     await screen.findByRole('group', { name: 'Forrige prøve' })
-    await user.click(screen.getByLabelText('Samlet vurdering med enda tidligere prøver'))
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
     // Q 25 → 18 etter 3 døgn: kan ikke fastslås, uten ekstrapolasjon. Den eldre prøven (Q 130)
     // ligger over startverdien til begge profilene.
     await fyll('Forrige prøve', '50', '2', '2026-01-10')

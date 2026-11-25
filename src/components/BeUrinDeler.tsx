@@ -10,8 +10,9 @@ import { marginliste, marginmerke, somProsent } from '../domain/thcVisning'
 
 /**
  * Delene modulen for benzoylekgonin i urin har felles for begge modellformene:
- * det som mangler, banneret om høyere margin og kortet med figuren og
- * beregningen.
+ * det som mangler og visningsvalget. Banneret om høyere margin og kortet med
+ * figuren og beregningen brukes bare av form 1; form 2 har sitt eget, enklere
+ * resultat (`BeUrinProfilresultat.tsx`, #576).
  */
 
 /** Valget mellom valgt og alle sikkerhetsmarginer i figuren. */
@@ -79,19 +80,22 @@ export function BeUrinVisualisering({
   )
 }
 
-/** Det som mangler før noe kan vurderes, delt mellom modellformene. */
-export function BeUrinMangler({ mangler }: { mangler: string[] }) {
+/** Teksten der vurderingen kommer, så lenge skjemaet ikke er ferdig utfylt. */
+export const BE_URIN_VENTER = 'Vurderingen vises når prøvene er fylt inn.'
+
+/**
+ * Det som står der vurderingen ellers står, delt mellom modellformene: det
+ * som er galt utover det enkelte feltet, kort, eller en stille linje mens
+ * skjemaet fylles ut. Ingen liste over tomme felt (#576).
+ */
+export function BeUrinMangler({ feil }: { feil: string[] }) {
+  if (feil.length === 0) return <p className="be-venter">{BE_URIN_VENTER}</p>
   return (
-    <>
-      <Panelhode ikon="fallback" tone="toksisk">
-        Mangler
-      </Panelhode>
-      <ul className="mangelliste">
-        {mangler.map((melding) => (
-          <li key={melding}>{melding}</li>
-        ))}
-      </ul>
-    </>
+    <div className="be-feil" role="alert">
+      {feil.map((melding) => (
+        <p key={melding}>{melding}</p>
+      ))}
+    </div>
   )
 }
 

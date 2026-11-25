@@ -19,8 +19,7 @@ import { marginvalg } from '../domain/thcVisning'
  */
 
 /** Merknaden i stedet for figuren når endringen er for stor til å tegnes, for begge modellformene. */
-export const FOR_STOR_TIL_FIGUR =
-  'Endringen mellom prøvene er for stor til å tegnes i figuren. Resultatet og beregningen gjelder som de står.'
+export const FOR_STOR_TIL_FIGUR = 'Endringen mellom prøvene er for stor til å tegnes i figuren. Vurderingen gjelder som den står.'
 
 /** Merknaden som står i stedet for figuren når aksene ikke kan tegnes. */
 export function Figurmerknad() {
@@ -126,12 +125,15 @@ export function BeUrinFigur<R>({
   kurveklasse,
   punkter,
   alleMarginer,
+  punktliste = true,
   beskrivelse,
 }: {
   graf: BeUrinGraf<R>
   kurveklasse: (kurve: BeUrinGraf<R>['kurver'][number]) => string
   punkter: Figurpunkt[]
   alleMarginer: boolean
+  /** Punktene som tekst under figuren. */
+  punktliste?: boolean
   beskrivelse: string
 }) {
   const venstre = MARG.venstre
@@ -199,17 +201,19 @@ export function BeUrinFigur<R>({
         </text>
       </svg>
 
-      <ul className="thc-marginpunkter" aria-label="Denne prøven med sikkerhetsmarginen">
-        {punkter.map((punkt) => (
-          <li key={punkt.margin} className="thc-marginpunkter__punkt">
-            <span
-              className={`thc-marginpunkter__prikk${punkt.tone ? ` thc-marginpunkter__prikk--${punkt.tone}` : ' thc-marginpunkter__prikk--noytral'}`}
-              aria-hidden="true"
-            />
-            {punkt.tekst}
-          </li>
-        ))}
-      </ul>
+      {punktliste && (
+        <ul className="thc-marginpunkter" aria-label="Denne prøven med sikkerhetsmarginen">
+          {punkter.map((punkt) => (
+            <li key={punkt.margin} className="thc-marginpunkter__punkt">
+              <span
+                className={`thc-marginpunkter__prikk${punkt.tone ? ` thc-marginpunkter__prikk--${punkt.tone}` : ' thc-marginpunkter__prikk--noytral'}`}
+                aria-hidden="true"
+              />
+              {punkt.tekst}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   )
 }

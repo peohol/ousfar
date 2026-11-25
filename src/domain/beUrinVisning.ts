@@ -35,11 +35,6 @@ export function konklusjonISetning(konklusjon: BeUrinKonklusjon, samletDato: str
 }
 
 /** En ratio med fire gjeldende siffer og norsk desimaltegn: «0,4123». */
-/** «Kreatinin (mmol/L)», eller bare «Kreatinin» når modellen ikke navngir enheten. */
-export function medEnhet(tekst: string, enhet: string): string {
-  return enhet ? `${tekst} (${enhet})` : tekst
-}
-
 /** «25 mmol/mol», eller bare «25» når modellen ikke navngir enheten. */
 export function tallMedEnhet(tall: string, enhet: string): string {
   return enhet ? `${tall} ${enhet}` : tall

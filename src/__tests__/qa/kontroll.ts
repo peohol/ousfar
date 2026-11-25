@@ -66,8 +66,9 @@ export function lagKontroll(merke: string) {
   // `QA_PUNKTER=N2,N4` kjører bare de punktene (oppsettet kjøres alltid).
   const bare = process.env.QA_PUNKTER?.split(',').map((p) => p.trim())
 
-  async function bilde(side: Side, navn: string) {
-    if (mappe) await side.screenshot({ path: join(mappe, `${navn}.png`) }).catch(() => undefined)
+  /** Skjermbilde av vinduet, eller av hele siden med `helSide`. */
+  async function bilde(side: Side, navn: string, helSide = false) {
+    if (mappe) await side.screenshot({ path: join(mappe, `${navn}.png`), fullPage: helSide }).catch(() => undefined)
   }
   function noter(punkt: string, ok: boolean, merknad: string) {
     utfall.push({ punkt, ok, merknad })

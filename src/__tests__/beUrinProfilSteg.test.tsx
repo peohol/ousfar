@@ -1,185 +1,280 @@
 // @vitest-environment jsdom
 /**
  * Fortolkningen av benzoylekgonin i urin med fem utskillelsesprofiler
- * (modellform 2, #570) i en nettleser i minnet, med den syntetiske modellen
- * av form 2: resultatpanelet med marginsetningen, gradene og de to
- * vurderingene, ingen fast merking om tentativ modell, figuren med alle fem
- * profilene, beregningen, høyere margin, at prøver fra samme dag ikke
- * sammenlignes, og den samlede vurderingen.
- * Det finnes ingen kommentar eller kopiering.
+ * (modellform 2, #570, forenklet i #576) i en nettleser i minnet, med den
+ * syntetiske modellen av form 2: skjemaet med feltene, kvotienten, de
+ * tidligere prøvene og sikkerhetsmarginen; de to vurderingene først, med det
+ * en høyere margin ville gitt; profiltabellen og figuren, og forklaringen,
+ * lukket under hver sin overskrift. Ingen bannere, ingen formler, ingen
+ * merknader om ekstrapolasjon, ingen kopiering.
  *
- * Tallene (CV 0,2 og 0,05, 90 % margin: R_korr = 0,6882 · R_målt):
- * Q 100 → 100 etter 1 døgn gir F ≈ 7,41 mot enkeltinntak, 1,107 mot gjentatte
- * doser, 0,919 mot moderat, 1,014 mot treg (B) og 0,742 mot ekstrem (A).
+ * Tallene (CV 0,2 og 0,05, 90 % margin: endringen som fortolkes er 0,6882 ·
+ * den målte): Q 100 → 100 etter 1 døgn gir F ≈ 7,41 mot enkeltinntak, 1,107
+ * mot gjentatte doser, 0,919 mot moderat, 1,014 mot treg og 0,742 mot ekstrem.
  */
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
+import { BE_URIN_VENTER } from '../components/BeUrinDeler'
+import { FOR_STOR_TIL_FIGUR } from '../components/BeUrinPlot'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
 import { SAMME_DAG_FEIL } from '../domain/beUrinMotor'
-import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
-import { BE_URIN_FORUTSETNING, BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
 import { BE_URIN_ROLLER } from '../domain/beUrinProfiler'
+import { BE_URIN_FORUTSETNING, BE_URIN_KVALITATIV, BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
+import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { PROFILMODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
-import { FOR_STOR_TIL_FIGUR } from '../components/BeUrinPlot'
-import { forberedBeUrinDom, fyll, visBeUrin } from './hjelp/beUrinvisning'
+import { forberedBeUrinDom, fyll, gruppe, visBeUrin } from './hjelp/beUrinvisning'
 
 forberedBeUrinDom()
 
 const MED_PROFILER: BeUrinModellsvar = { fagmiljo: { id: 'a', navn: 'OUS Klinisk farmakologi' }, modell: PROFILMODELL }
 
-const resultatkort = () => screen.getByRole('heading', { name: 'Resultat' }).closest('.thc-resultat') as HTMLElement
-const vurdering = (navn: string) => within(resultatkort()).getByRole('region', { name: navn })
+const SPORADISK = 'Sporadisk bruk lagt til grunn'
+const KRONISK = 'Kronisk bruk lagt til grunn'
+const vurdering = (navn: string) => screen.getByRole('region', { name: navn })
+const seksjon = (navn: string) => screen.getByText(navn, { selector: '.detalj__tekst' }).closest('details') as HTMLDetailsElement
 
-async function visMedProver(forrige: [string, string], denne: [string, string]) {
+async function vis() {
   visBeUrin(MED_PROFILER)
   await screen.findByRole('group', { name: 'Forrige prøve' })
+}
+
+async function visMedProver(forrige: [string, string], denne: [string, string]) {
+  await vis()
   await fyll('Forrige prøve', forrige[0], '2', forrige[1])
   await fyll('Denne prøven', denne[0], '2', denne[1])
 }
 
-describe('resultatpanelet med fem profiler', () => {
-  it('viser marginsetningen, gradene og begge vurderingene, uten merking om tentativ modell og uten kopiering', async () => {
+describe('resultatet med fem profiler', () => {
+  it('gir de to vurderingene først, kort, uten banner, marginsetning, merking om tentativ modell eller kopiering', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const kort = resultatkort()
-    const tekst = kort.textContent!
-    expect(tekst).toContain('Konsentrasjonsendringene er justert for måleusikkerhet med 90 % sikkerhetsmargin.')
-    expect(tekst).toContain('Sammenlignet med det som kan ses ved sporadisk bruk, ligger endringen mellom denne prøven og forrige prøve')
-    expect(tekst).toContain('Sammenlignet med det som kan ses ved kronisk bruk, ligger endringen')
-    const punkter = within(kort).getAllByRole('listitem').map((li) => li.textContent)
-    expect(punkter).toEqual(
-      expect.arrayContaining([
-        'langt over det som kan ses etter et enkeltinntak',
-        'over det som forventes etter gjentatte doser innenfor et kort tidsrom',
-        'under det som kan ses ved moderat utskillelse',
-        'over det som kan ses ved treg utskillelse',
-        'under det som kan ses ved ekstrem utskillelse',
-      ]),
-    )
-    expect(within(kort).getAllByRole('separator')).toHaveLength(3)
-    expect(vurdering('Sporadisk bruk lagt til grunn').textContent).toContain('Det er sannsynlig at et nytt inntak har skjedd.')
-    expect(vurdering('Kronisk bruk lagt til grunn').textContent).toContain(
-      'Det kan ikke fastslås om et nytt inntak har skjedd basert på analyseresultatene alene.',
-    )
+    expect(vurdering(SPORADISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Sannsynlig nytt inntak.')
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak kan ikke fastslås.')
+    // Ingen overskrift «Resultat», ingen merknad om justering, ingen banner.
+    expect(screen.queryByRole('heading', { name: 'Resultat' })).toBeNull()
+    expect(document.body.textContent).not.toMatch(/justert for måleusikkerhet|Konsentrasjonsendringene/)
+    expect(screen.queryByRole('note')).toBeNull()
     expect(screen.queryByText(BE_URIN_TENTATIV)).toBeNull()
     expect(screen.queryByText(/tentativ/i)).toBeNull()
     expect(screen.queryByRole('button', { name: /Kopier/ })).toBeNull()
+    // Vurderingene står før profilene og forklaringen.
+    const rekkefolge = [vurdering(SPORADISK), vurdering(KRONISK), seksjon('Utskillelsesprofiler og figur'), seksjon('Forklaring')]
+    for (let i = 1; i < rekkefolge.length; i++) {
+      expect(rekkefolge[i - 1]!.compareDocumentPosition(rekkefolge[i]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    }
+    // Forbeholdet om eliminasjonsfasen står kort under vurderingene.
+    expect(screen.getByText(BE_URIN_FORUTSETNING)).toBeTruthy()
   })
 
-  it('sier at endringene ikke er justert med 50 % margin', async () => {
-    await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    // Bryteren er et skyvefelt, som også styres med tastaturet.
-    fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '0' } })
-    expect(resultatkort().textContent).toContain(
-      'Konsentrasjonsendringene er ikke justert for måleusikkerhet (50 % sikkerhetsmargin).',
+  it('gir utdypingen når endringen er forenlig med enkeltinntak eller gjentatte doser', async () => {
+    await visMedProver(['200', '2026-01-01'], ['2', '2026-01-03'])
+    expect(vurdering(SPORADISK).textContent).toContain(
+      'Nytt inntak kan ikke fastslås.Endringen er forenlig med utskillelse etter et enkeltinntak.',
+    )
+    expect(vurdering(KRONISK).textContent).toBe(`${KRONISK}Nytt inntak kan ikke fastslås.`)
+  })
+
+  it('gir «Nytt inntak.» ved en stor økning, og bemerkningen om svært uvanlig utskillelse ved kronisk bruk', async () => {
+    await visMedProver(['200', '2026-01-01'], ['2000', '2026-01-02'])
+    expect(vurdering(SPORADISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak.')
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak.')
+    await fyll('Denne prøven', '250', '2', '2026-01-02')
+    expect(vurdering(KRONISK).textContent).toContain(
+      'Nytt inntak kan ikke fastslås.En såpass treg utskillelse anses likevel som svært uvanlig.',
     )
   })
 
-  it('foreslår en høyere margin som gir en mildere vurdering, med hvilken vurdering det gjelder, uten å bytte selv', async () => {
-    const user = userEvent.setup()
+  it('sier diskret hva en høyere margin ville gitt, uten å bytte selv', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const forslag = screen.getByRole('note', { name: 'Vurder høyere sikkerhetsmargin' })
-    expect(forslag.textContent).toContain(
-      'Med 99 % sikkerhetsmargin blir vurderingen når sporadisk bruk legges til grunn «forenlig med utskillelse etter gjentatte doser».',
+    const mildere = vurdering(SPORADISK).querySelector('.be-vurdering__mildere')!
+    expect(mildere.textContent).toBe('Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås.')
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__mildere')).toBeNull()
+    expect(screen.queryByRole('button', { name: /Bruk 99 %/ })).toBeNull()
+    // Med 99 % står den mildere vurderingen, og ingen setning om høyere margin.
+    fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '2' } })
+    expect(vurdering(SPORADISK).textContent).toContain(
+      'Nytt inntak kan ikke fastslås.Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
     )
-    expect(forslag.textContent).not.toContain('kronisk')
-    expect(vurdering('Sporadisk bruk lagt til grunn').textContent).toContain('sannsynlig')
-    await user.click(within(forslag).getByRole('button', { name: 'Bruk 99 % sikkerhetsmargin' }))
-    expect(vurdering('Sporadisk bruk lagt til grunn').textContent).toContain(
-      'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom. Et nytt inntak kan ikke fastslås.',
+    expect(document.querySelector('.be-vurdering__mildere')).toBeNull()
+  })
+
+  it('sier fra når «Nytt inntak» blir «Sannsynlig nytt inntak» med høyere margin', async () => {
+    await visMedProver(['200', '2026-01-01'], ['1600', '2026-01-02'])
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak.')
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__mildere')!.textContent).toBe(
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Sannsynlig nytt inntak.',
     )
-    expect(screen.queryByRole('note', { name: 'Vurder høyere sikkerhetsmargin' })).toBeNull()
   })
 
-  it('viser alle fem profilene i figuren og legenden, med hver sin strek', async () => {
+  it('har profiltabellen og figuren lukket, med alle fem profilene, hver med sin strek, og ett valg for alle marginer', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const figur = screen.getByRole('img', { name: /de fem utskillelsesprofilene/ })
-    const kurver = [...figur.querySelectorAll('polyline')].map((k) => k.getAttribute('class'))
-    expect(kurver).toEqual(BE_URIN_ROLLER.map((r) => `thc-plot__kurve be-kurve--${r}`))
-    const legende = within(screen.getByRole('list', { name: 'Utskillelsesprofilene' }))
-    for (const rolle of BE_URIN_ROLLER) expect(legende.getByText(BE_URIN_ROLLENAVN[rolle])).toBeTruthy()
-    // Endepunktene i legenden er motorens terskler.
-    expect(legende.getByText(BE_URIN_ROLLENAVN.enkeltinntak).closest('li')!.textContent).toContain('Etter 1 døgn: −91 %')
+    const profiler = seksjon('Utskillelsesprofiler og figur')
+    expect(profiler.open).toBe(false)
+    const tabell = within(profiler).getByRole('table')
+    const rader = within(tabell)
+      .getAllByRole('row')
+      .map((rad) => [...rad.querySelectorAll('th, td')].map((c) => c.textContent))
+    expect(rader).toEqual([
+      ['Utskillelsesprofil', 'Forventet endring etter 1 døgn', 'Endringen ligger'],
+      ['Sporadisk bruk'],
+      ['Enkeltinntak', '−91 %', 'langt over'],
+      ['Gjentatte doser', '−38 %', 'over'],
+      ['Kronisk bruk'],
+      ['Moderat utskillelse', '−25 %', 'under'],
+      ['Treg utskillelse', '−32 %', 'over'],
+      ['Ekstrem utskillelse', '−7 %', 'under'],
+    ])
+    for (const rolle of BE_URIN_ROLLER) {
+      const navn = within(tabell).getByText(BE_URIN_ROLLENAVN[rolle])
+      expect(navn.querySelector(`.be-kurve--${rolle}`)).toBeTruthy()
+    }
+    const figur = within(profiler).getByRole('img', { name: /de fem utskillelsesprofilene/ })
+    expect([...figur.querySelectorAll('polyline')].map((k) => k.getAttribute('class'))).toEqual(
+      BE_URIN_ROLLER.map((r) => `thc-plot__kurve be-kurve--${r}`),
+    )
+    // Ingen egen legende: tabellen er tegnforklaringen.
+    expect(screen.queryByRole('list', { name: 'Utskillelsesprofilene' })).toBeNull()
+    const alle = within(profiler).getByRole('checkbox', { name: 'Vis alle sikkerhetsmarginer' }) as HTMLInputElement
+    expect(alle.checked).toBe(false)
+    expect(screen.queryByRole('slider', { name: 'Visualisering' })).toBeNull()
   })
 
-  it('viser R_målt, R_korr, terskelen og F per profil i beregningen, med enhetene', async () => {
+  it('har forklaringen lukket, med de fire spørsmålene, uten formler eller ekstrapolasjon', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const beregning = screen.getByText('Beregningen').closest('details')!
-    const tekst = beregning.textContent!
-    expect(tekst).toContain('Q1 = 100 nmol/mmol')
-    expect(tekst).toMatch(/Rmålt = Q2\/Q1 = 1/)
-    expect(tekst).toContain('Rkorr = 0,6882')
-    expect(tekst).toContain('Ekstrem utskillelse: bieksponentiell (profil A)')
-    expect(tekst).toContain('Treg utskillelse: bieksponentiell (profil B)')
-    expect(tekst).toContain('Moderat utskillelse: monoeksponentiell, R = e^(−k·d) med k = 0,2891 per døgn')
-    expect(tekst).toMatch(/terskelen R = 0,09287 \(−91 %\)\. F = Rkorr\/R = 7,41: langt over/)
-    // Forbeholdet står i beregningen, ikke som et fast banner.
-    expect(tekst).toContain(BE_URIN_FORUTSETNING)
-    expect(resultatkort().textContent).not.toContain('eliminasjonsfasen')
+    const forklaring = seksjon('Forklaring')
+    expect(forklaring.open).toBe(false)
+    expect(within(forklaring).getAllByRole('heading').map((h) => h.textContent)).toEqual([
+      'Hvor stor er endringen mellom prøvene?',
+      'Hvordan er det tatt hensyn til måleusikkerhet?',
+      'Hva kan forventes dersom det ikke har skjedd et nytt inntak?',
+      'Hvorfor blir konklusjonen slik?',
+    ])
+    const tekst = forklaring.textContent!
+    expect(tekst).toContain('Kvotienten er 100 nmol/mmol i forrige prøve (01.01.2026) og 100 nmol/mmol i denne prøven')
+    expect(tekst).toContain('Med 90 % sikkerhetsmargin legges en mer forsiktig endring til grunn')
+    expect(tekst).toContain('Dersom sporadisk bruk legges til grunn, er et nytt inntak derfor sannsynlig.')
+    expect(tekst).toContain(BE_URIN_KVALITATIV)
+    expect(screen.queryByText('Beregningen')).toBeNull()
+    expect(document.body.textContent).not.toMatch(/ekstrapol|Rkorr|Rmålt|e\^|bieksponentiell|profil A|\bSD\b|logaritm/i)
   })
 
-  it('bytter navnene på de to bieksponentielle profilene med referanseprøven', async () => {
-    // Q 1 og Q 3,25 etter 1 døgn: profil A er ekstrem ved Q 1, profil B ved Q 3,25.
-    await visMedProver(['2', '2026-01-01'], ['2', '2026-01-02'])
-    const beregning = () => screen.getByText('Beregningen').closest('details')!.textContent!
-    expect(beregning()).toContain('Ekstrem utskillelse: bieksponentiell (profil A)')
-    await fyll('Forrige prøve', '6,5', '2', '2026-01-01')
-    await fyll('Denne prøven', '6,5', '2', '2026-01-02')
-    expect(beregning()).toContain('Ekstrem utskillelse: bieksponentiell (profil B)')
-    expect(beregning()).toContain('Treg utskillelse: bieksponentiell (profil A)')
+  it('viser ingen merknad om ekstrapolasjon, heller ikke etter svært lang tid', async () => {
+    await visMedProver(['200', '2025-01-01'], ['200', '2026-01-01'])
+    expect(vurdering(SPORADISK)).toBeTruthy()
+    expect(document.body.textContent).not.toMatch(/ekstrapol|utenfor (dataene|modellen)/i)
   })
 
   it('vurderer en endring for stor for flyttallene, uten å tegne en ødelagt figur', async () => {
     // Q 1e−10 → 1e300 etter 1 døgn: Q2/Q1 overflyter, men logaritmene gir vurderingen.
     await visMedProver(['0,0000000002', '2026-01-01'], [`2${'0'.repeat(300)}`, '2026-01-02'])
-    expect(vurdering('Sporadisk bruk lagt til grunn').textContent).toContain('Det er svært sannsynlig')
+    expect(vurdering(SPORADISK).textContent).toContain('Nytt inntak.')
     expect(screen.queryByRole('img', { name: /utskillelsesprofilene/ })).toBeNull()
     expect(screen.getByText(FOR_STOR_TIL_FIGUR)).toBeTruthy()
-    const tekst = screen.getByText('Beregningen').closest('details')!.textContent!
-    expect(tekst).toContain('Rmålt = Q2/Q1 = ≈ 10^310.')
+    const tekst = seksjon('Forklaring').textContent!
+    expect(tekst).toContain('en svært stor økning')
     expect(tekst).not.toMatch(/Infinity|NaN/)
+  })
+})
+
+describe('skjemaet', () => {
+  it('viser enhetene fra modellen i feltene og kvotienten diskret under', async () => {
+    await vis()
+    const forrige = screen.getByRole('group', { name: 'Forrige prøve' })
+    expect(within(forrige).getByLabelText('Benzoylekgonin (nmol/L)')).toBeTruthy()
+    expect(within(forrige).getByLabelText('Kreatinin (mmol/L)')).toBeTruthy()
+    expect(within(forrige).getByRole('status').textContent).toBe('Kvotient –')
+    await fyll('Forrige prøve', '200', '2', '2026-01-01')
+    expect(within(forrige).getByRole('status').textContent).toBe('Kvotient 100 nmol/mmol')
+  })
+
+  it('viser ingen liste over det som mangler, bare at vurderingen kommer', async () => {
+    await vis()
+    expect(screen.getByText(BE_URIN_VENTER)).toBeTruthy()
+    await fyll('Forrige prøve', '200', '2', '2026-01-01')
+    expect(screen.getByText(BE_URIN_VENTER)).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(document.body.textContent).not.toMatch(/Fyll inn/)
+  })
+
+  it('sier kort ved feltet hva som er ugyldig, og knytter det til feltet', async () => {
+    await visMedProver(['200', '2026-01-01'], ['0', '2026-01-02'])
+    const felt = gruppe('Denne prøven').getByLabelText(/^Benzoylekgonin/)
+    expect(felt.getAttribute('aria-invalid')).toBe('true')
+    expect(document.getElementById(felt.getAttribute('aria-describedby')!)!.textContent).toBe('Må være kvantifisert og over 0.')
+    expect(screen.queryByRole('region', { name: SPORADISK })).toBeNull()
+    fireEvent.change(gruppe('Denne prøven').getByLabelText(/^Kreatinin/), { target: { value: '0' } })
+    expect(gruppe('Denne prøven').getByText('Må være over 0.')).toBeTruthy()
+    fireEvent.change(felt, { target: { value: '100' } })
+    expect(felt.getAttribute('aria-invalid')).toBeNull()
   })
 
   it('sammenligner ikke prøver fra samme dag, og sier fra om det', async () => {
     await visMedProver(['200', '2026-01-01'], ['400', '2026-01-01'])
-    expect(screen.getByText(SAMME_DAG_FEIL)).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Resultat' })).toBeNull()
-    expect(screen.queryByRole('region', { name: 'Sporadisk bruk lagt til grunn' })).toBeNull()
+    expect(screen.getByRole('alert').textContent).toBe(SAMME_DAG_FEIL)
+    expect(screen.queryByRole('region', { name: SPORADISK })).toBeNull()
     expect(screen.queryByRole('img', { name: /utskillelsesprofilene/ })).toBeNull()
-    expect(screen.queryByText('Beregningen')).toBeNull()
+    expect(screen.queryByText('Forklaring')).toBeNull()
   })
 
-  it('viser den samlede vurderingen under kronisk bruk, med datoen og forbeholdet', async () => {
+  it('har informasjonstegnet ved sikkerhetsmarginen, med forklaringen for skjermlesere', async () => {
+    await vis()
+    const info = screen.getByRole('button', { name: 'Om sikkerhetsmarginen' })
+    const beskrivelse = document.getElementById(info.getAttribute('aria-describedby')!)!.textContent!
+    expect(beskrivelse).toContain('Marginen gjelder bare måleusikkerheten, ikke sannsynligheten for at selve fortolkningen er riktig.')
+    expect(beskrivelse).toContain('90 % (standard)')
+    expect(screen.queryByText('Hva er sikkerhetsmarginen?')).toBeNull()
+    const margin = screen.getByRole('slider', { name: 'Sikkerhetsmargin' })
+    expect(margin.getAttribute('aria-valuetext') ?? (margin as HTMLInputElement).value).toBeTruthy()
+  })
+
+  it('legger til og fjerner tidligere prøver med knapper, og flytter fokuset med', async () => {
     const user = userEvent.setup()
-    visBeUrin(MED_PROFILER)
-    await screen.findByRole('group', { name: 'Forrige prøve' })
-    await user.click(screen.getByLabelText('Samlet vurdering med enda tidligere prøver'))
-    expect(screen.getByText(/Er vurderingen ved kronisk bruk uavklart/)).toBeTruthy()
-    // Hovedparet er uavklart ved kronisk bruk, men over treg: den samlede vurderingen er aktuell.
-    await fyll('Forrige prøve', '200', '2', '2026-01-01')
-    await fyll('Denne prøven', '200', '2', '2026-01-02')
-    await fyll('Tidligere prøve', '100', '2', '2025-12-31')
-    const kronisk = vurdering('Kronisk bruk lagt til grunn').textContent!
-    expect(kronisk).toContain('Det kan ikke fastslås om et nytt inntak har skjedd basert på analyseresultatene alene.')
-    expect(kronisk).toContain(
-      'Samlet vurdering: mot den tidligere prøven fra 31.12.2025 ligger endringen over det som kan ses ved ekstrem ' +
-        'utskillelse. Det er en indikasjon på nytt inntak etter den eldre prøven, ikke nødvendigvis etter forrige prøve.',
-    )
-    // En tidligere prøve som ikke er før forrige prøve, gir mangler og ingen vurdering.
-    fireEvent.change(screen.getByRole('group', { name: 'Tidligere prøve' }).querySelector('input[type=date]')!, {
-      target: { value: '2026-01-01' },
-    })
-    expect(screen.getByText('Den tidligere prøven må være tatt før forrige prøve.')).toBeTruthy()
-    expect(screen.queryByRole('region', { name: 'Kronisk bruk lagt til grunn' })).toBeNull()
+    await vis()
+    expect(screen.queryByRole('checkbox', { name: /Samlet vurdering/ })).toBeNull()
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
+    expect(document.activeElement).toBe(gruppe('Tidligere prøve').getByLabelText(/^Benzoylekgonin/))
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
+    expect(screen.getByRole('group', { name: 'Tidligere prøve 1' })).toBeTruthy()
+    expect(document.activeElement).toBe(gruppe('Tidligere prøve 2').getByLabelText(/^Benzoylekgonin/))
+    await user.click(screen.getByRole('button', { name: 'Fjern tidligere prøve 1' }))
+    expect(screen.queryByRole('group', { name: 'Tidligere prøve 2' })).toBeNull()
+    expect(screen.getByRole('group', { name: 'Tidligere prøve' })).toBeTruthy()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
+    await user.click(screen.getByRole('button', { name: 'Fjern tidligere prøve' }))
+    expect(screen.queryByRole('group', { name: /Tidligere prøve/ })).toBeNull()
   })
 
-  it('viser enhetene fra modellen i feltene og Q', async () => {
-    visBeUrin(MED_PROFILER)
-    const forrige = await screen.findByRole('group', { name: 'Forrige prøve' })
-    expect(within(forrige).getByLabelText('Benzoylekgonin (nmol/L)')).toBeTruthy()
-    expect(within(forrige).getByLabelText('Kreatinin (mmol/L)')).toBeTruthy()
-    await fyll('Forrige prøve', '200', '2', '2026-01-01')
-    expect(within(forrige).getByRole('status').textContent).toBe('Q (benzoylekgonin/kreatinin): 100 nmol/mmol')
+  it('viser indikasjonen etter en eldre prøve rett under vurderingen ved kronisk bruk, med datoen', async () => {
+    const user = userEvent.setup()
+    // Hovedparet er uavklart ved kronisk bruk, men over treg: den samlede vurderingen er aktuell.
+    await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
+    // En tidligere prøve som ikke er fylt ut, gir ingen vurdering ennå, og ingen feilmelding.
+    expect(screen.queryByRole('region', { name: KRONISK })).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
+    await fyll('Tidligere prøve', '100', '2', '2025-12-31')
+    const samlet = vurdering(KRONISK).querySelector('.be-vurdering__samlet')!
+    expect(samlet.textContent).toBe(
+      'Sammenlignet med prøven fra 31.12.2025 er det indikasjon på nytt inntak etter den prøven, men ikke ' +
+        'nødvendigvis etter forrige prøve.',
+    )
+    expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak kan ikke fastslås.')
+    // En tidligere prøve som ikke er før forrige prøve, gir en kort feil og ingen vurdering.
+    fireEvent.change(gruppe('Tidligere prøve').getByLabelText('Prøvedato'), { target: { value: '2026-01-01' } })
+    expect(screen.getByRole('alert').textContent).toBe('Tidligere prøve må være tatt før forrige prøve.')
+    expect(screen.queryByRole('region', { name: KRONISK })).toBeNull()
+  })
+
+  it('tømmer skjemaet med Nullstill og gir fokuset til det første feltet', async () => {
+    const user = userEvent.setup()
+    await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
+    await user.click(screen.getByRole('button', { name: '+ Legg til tidligere prøve' }))
+    await user.click(screen.getByRole('button', { name: 'Nullstill' }))
+    await act(async () => {})
+    const forste = gruppe('Forrige prøve').getByLabelText(/^Benzoylekgonin/) as HTMLInputElement
+    expect(forste.value).toBe('')
+    expect(document.activeElement).toBe(forste)
+    expect(screen.queryByRole('group', { name: /Tidligere prøve/ })).toBeNull()
   })
 
   it('tømmer skjemaet når fagmiljøet byttes', async () => {

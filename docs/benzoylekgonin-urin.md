@@ -1,8 +1,9 @@
 # Benzoylekgonin i urin
 
 Leses når noe ved fortolkningen av benzoylekgonin i urin skal endres, eller
-når en ny modell skal aktiveres. Bestilt av Peder 24.11.2026 (#562) og utvidet
-med fem utskillelsesprofiler 25.11.2026 (#570).
+når en ny modell skal aktiveres. Bestilt av Peder 24.11.2026 (#562), utvidet
+med fem utskillelsesprofiler 25.11.2026 (#570), og forenklet med nye
+konklusjoner 25.11.2026 (#576).
 
 Modulen har to **modellformer**. Form 1 (#562, to profiler) er den som er
 aktivert i dag. Form 2 (#570, fem profiler og to vurderinger) er
@@ -70,20 +71,22 @@ det, uten å hevde at modellen er dokumentert der. Det empiriske
 gyldighetsområdet er ikke oppgitt; om det skal bli en stoppgrense, avklares
 før aktivering.
 
-**Sikkerhetsmarginen.** Bryteren, forklaringen («Hva er sikkerhetsmarginen?»,
-med modellens egne CV-er), figuren med valgt eller alle marginer og banneret
+**Skjemaet** er det samme for begge formene (#576, under «Form 2»).
+
+**Sikkerhetsmarginen.** Bryteren, figuren med valgt eller alle marginer og banneret
 «Vurder høyere sikkerhetsmargin» er THC-syremodulens. Banneret viser hver
 mildere konklusjon en høyere margin gir, også nytt inntak etter en eldre
 prøve; valgt margin endres bare når brukeren trykker.
 
-**Samlet vurdering.** «Samlet vurdering med enda tidligere prøver» legger til
+**Samlet vurdering.** «+ Legg til tidligere prøve» legger til
 prøver med de samme tre feltene; alle må være tatt før forrige prøve. Bare
 når hovedsammenligningen gir «Kan ikke fastslås», sammenlignes denne prøven
 med hver av dem, nyeste først, med samme margin og modell og hver prøves egen
 Q og tidsrom. Den første som overskrider begge profilene, vises for seg som
 «Nytt inntak etter [dato] (modellindikasjon)»; hovedkonklusjonen, figuren og
-beregningen står uendret. Ingen treff sies kort. En ugyldig tidligere prøve
-gir mangler, ikke en lydløs fortolkning. Det er ingen regel om automatisk
+beregningen står uendret. Ingen treff sies kort. En tom eller ugyldig tidligere
+prøve gir ingen konklusjon før den er fylt ut eller fjernet, ikke en lydløs
+fortolkning. Det er ingen regel om automatisk
 nytt inntak ved Q = 0 (som i THC).
 
 **Figuren** er THC-syremodulens: x er døgn siden forrige prøve, y er
@@ -124,13 +127,17 @@ referansepunkt. For alle fem profilene gjelder at sammenligningene forutsetter
 at prøvene er tatt i eliminasjonsfasen, etter at opptaket fra et inntak er
 avsluttet, og om eliminasjonsfasen har startet, kan ikke fastslås ut fra
 prøvene. Gradene og vurderingene er kvalitative faglige sammenligninger med
-profilene, ikke kalibrerte sannsynligheter. Dette står i den utvidbare
-beregningen (`BE_URIN_FORUTSETNING`), ikke som et fast banner.
+profilene, ikke kalibrerte sannsynligheter. Forbeholdet om eliminasjonsfasen
+står i én kort, diskret linje under vurderingene (`BE_URIN_FORUTSETNING`), og
+at vurderingene er kvalitative, i forklaringen (`BE_URIN_KVALITATIV`); ingen
+faste bannere.
 
 **Tersklene.** For de monoeksponentielle er R_i = e^(−k_i·d) direkte,
 uavhengig av Q1 og a. For de bieksponentielle er fremgangsmåten den samme som
-i form 1: t_i der C_i(t_i) = Q1, og R_i = C_i(t_i + d)/Q1, med merknaden om
-ekstrapolasjon når Q1 ligger over C_i(0). Prøver fra samme dato sammenlignes ikke i form 2 (under).
+i form 1: t_i der C_i(t_i) = Q1, og R_i = C_i(t_i + d)/Q1, også når Q1 ligger
+over C_i(0) (matematisk ekstrapolasjon). Fra #576 sier brukerflaten ingenting om
+ekstrapolasjon, heller ikke for de eldre prøvene; matematikken er uendret.
+Prøver fra samme dato sammenlignes ikke i form 2 (under).
 Tersklene regnes også som logaritmer (log-sum-exp for de bieksponentielle), og
 F sammenlignes med logaritmene når R_i eller F ikke lenger er et vanlig
 flyttall. Et svært langt tidsrom gir derfor aldri en ugyldig vurdering, selv
@@ -138,9 +145,10 @@ om figuren viser −100 %.
 
 **Treg og ekstrem.** For hver sammenligning (referanseprøven og d) er den av
 `bi_a` og `bi_b` med høyest R «Ekstrem utskillelse» og den andre «Treg
-utskillelse». Ved nøyaktig like terskler er `bi_a` ekstrem, og appen sier at
-de gir samme terskel. Navnene og fargene står fast gjennom resultatet, figuren,
-beregningen og alle marginene for den sammenligningen, og regnes på nytt for
+utskillelse». Ved nøyaktig like terskler er `bi_a` ekstrem (`likeBi` i motoren;
+fra #576 sies det ikke i resultatet). Navnene og fargene står fast gjennom
+vurderingene, tabellen, figuren, forklaringen og alle marginene for den
+sammenligningen, og regnes på nytt for
 en ny referanseprøve eller et nytt tidsrom (i den samlede vurderingen for hver
 eldre prøve for seg). Ingen rangering av de fem forutsettes.
 
@@ -149,75 +157,159 @@ eldre prøve for seg). Ingen rangering av de fem forutsettes.
 Nøyaktig 5 og 10 hører til den lavere graden. Hver profil vurderes for seg, i
 fast rekkefølge, og det telles ikke hvor mange profiler endringen ligger over.
 
-**Resultatpanelet.** Uten den faste merkingen «Tentativ modell – ikke klinisk
-validert …»; de andre forbeholdene står. Øverst «Konsentrasjonsendringene er
-justert for måleusikkerhet med {margin} % sikkerhetsmargin.» (50 %: «… er
-ikke justert for måleusikkerhet (50 % sikkerhetsmargin).»), så en skillelinje,
-gradene mot enkeltinntak og gjentatte doser under «Sammenlignet med det som
-kan ses ved sporadisk bruk …», en skillelinje, gradene mot moderat, treg og
-ekstrem under «Sammenlignet med det som kan ses ved kronisk bruk …», en
-skillelinje, og de to kortene side om side (under hverandre på smal skjerm):
-«Sporadisk bruk lagt til grunn» og «Kronisk bruk lagt til grunn».
+**Designprinsippet (#576).** Brukeren skal se det som trengs, ikke alt appen
+vet: konklusjonene før begrunnelsen, ingen bannere, ingen gjentakelser, ingen
+lange tekster, ingen ikoner, skillelinjer eller kort i kort. En vanlig
+fortolkning får plass på én PC-skjerm uten rulling.
 
-**Reglene for kortene** (fra #570, godkjent av Peder 25.11.2026; kvalitative vurderinger, ikke
-kalibrerte sannsynligheter):
+**Skjemaet** (`BeUrinSkjema.tsx`, felles for begge formene). Forrige prøve og
+denne prøven står side om side på bred skjerm, under hverandre på smal. Hver
+prøve har benzoylekgonin, kreatinin og prøvedato; enheten står inne i feltet
+(og i feltets navn for skjermlesere: «Benzoylekgonin (nmol/L)»), og
+«Kvotient 100 nmol/mmol» står diskret under («Kvotient –» før den kan regnes).
+Tidligere prøver legges til med den diskrete knappen «+ Legg til tidligere
+prøve» under feltene og fjernes med «Fjern» på hver; fokuset går til den nye
+prøvens første felt, og til knappen når en fjernes. Det er ingen avkrysning for
+den samlede vurderingen: den er med så snart det står en tidligere prøve.
+Mens skjemaet fylles ut, vises ingen liste over det som mangler, bare «Vurderingen
+vises når prøvene er fylt inn.» (`BE_URIN_VENTER`). Et ugyldig felt sies kort ved
+feltet (`feltfeil` i `beUrinMotor.ts`: «Må være et tall.», «Må være kvantifisert og
+over 0.», «Må være over 0.», «Ugyldig dato.»), knyttet til feltet med
+`aria-describedby`; et tomt felt er ikke en feil. Det som er galt utover det
+enkelte feltet, står kort der vurderingen ellers står (`BeUrinMangler.feil`):
+denne prøven før forrige, «Prøver fra samme dag kan ikke sammenlignes. Bruk en
+forrige prøve fra en tidligere dag.» (`SAMME_DAG_FEIL`), en tidligere prøve som
+ikke er før forrige, en kvotient som ikke lar seg regne ut, en margin modellen
+ikke har, og `NUMERISK_FEIL`. Nullstill og tastaturflyten er som før.
 
-- Sporadisk: F_enkelt ≤ 1 → «Endringen er forenlig med utskillelse etter et
-  enkeltinntak. Et nytt inntak kan ikke fastslås.»; ellers F_gjentatt ≤ 1 →
-  «Endringen er forenlig med utskillelse etter gjentatte doser innenfor et
-  kort tidsrom. Et nytt inntak kan ikke fastslås.»; ellers F_gjentatt ≤ 5 →
-  «Det er sannsynlig at et nytt inntak har skjedd.»; ellers «Det er svært
-  sannsynlig at et nytt inntak har skjedd.»
-- Kronisk: F_ekstrem > 5 → «Det er svært sannsynlig …»; ellers F_ekstrem > 1 →
-  «Det er sannsynlig …»; ellers F_moderat > 1 og F_treg > 1 → «Det kan ikke
-  fastslås om et nytt inntak har skjedd basert på analyseresultatene alene.
-  Det bemerkes likevel at en såpass ekstrem utskillelse anses svært uvanlig.»;
-  ellers «Det kan ikke fastslås om et nytt inntak har skjedd basert på
-  analyseresultatene alene.»
+**Sikkerhetsmarginen** er et kompakt valg «Ingen (50 %)», «90 %», «99 %»
+(standard 90 %) med navnet «Sikkerhetsmargin» og et lite informasjonstegn ved
+siden av. Forklaringen bak tegnet (`BeUrinMarginforklaring`) vises ved pekeren,
+ved tastaturfokus og ved et trykk på berøringsskjerm, og leses av skjermlesere
+fra tegnet. Den sier kort at målingene er usikre, at en høyere margin legger
+en mer forsiktig endring til grunn, og at marginen gjelder måleusikkerheten,
+ikke sannsynligheten for at fortolkningen er riktig.
+
+**Resultatet** (`BeUrinProfilresultat.tsx`) kommer rett etter skjemaet:
+
+1. De to vurderingene side om side på bred skjerm, under hverandre på smal,
+   uten egne kort med bakgrunn eller ramme: «Sporadisk bruk lagt til grunn» og
+   «Kronisk bruk lagt til grunn», hver med en kort konklusjon og eventuelt én
+   setning til (reglene under).
+2. Under vurderingen ved kronisk bruk: den samlede vurderingen, når den er
+   gjort (under).
+3. Under hver vurdering, diskret: det en høyere margin ville gitt, for
+   eksempel «Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk:
+   Nytt inntak kan ikke fastslås.» (`mildereTekst`). Brukeren velger selv; det
+   er ingen knapp og intet banner.
+4. Forbeholdet om eliminasjonsfasen, i én kort linje.
+5. «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard.
+
+Det står ingen setning om justering for måleusikkerhet, ingen grader i
+resultatet, ingen merknad om like terskler og ingen merknad om ekstrapolasjon.
+
+**Reglene for vurderingene** (#570, endret i #576; kvalitative vurderinger,
+ikke kalibrerte sannsynligheter). F er den usikkerhetskorrigerte ratioen delt
+på profilens terskel; likhet hører til den mildere vurderingen:
+
+- Sporadisk bruk lagt til grunn:
+  - F_enkelt ≤ 1 → «Nytt inntak kan ikke fastslås.» + «Endringen er forenlig
+    med utskillelse etter et enkeltinntak.» (`forenlig_enkeltinntak`)
+  - ellers F_gjentatt ≤ 1 → «Nytt inntak kan ikke fastslås.» + «Endringen er
+    forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.»
+    (`forenlig_gjentatte_doser`)
+  - ellers F_gjentatt ≤ 5 → «Sannsynlig nytt inntak.» (`sannsynlig`)
+  - ellers (F_gjentatt > 5) → «Nytt inntak.» (`nytt_inntak`)
+- Kronisk bruk lagt til grunn:
+  - F_ekstrem > 5 → «Nytt inntak.» (`nytt_inntak`)
+  - ellers F_ekstrem > 1 → «Sannsynlig nytt inntak.» (`sannsynlig`)
+  - ellers F_moderat > 1 og F_treg > 1 → «Nytt inntak kan ikke fastslås.» +
+    «En såpass treg utskillelse anses likevel som svært uvanlig.»
+    (`uavklart_uvanlig`)
+  - ellers «Nytt inntak kan ikke fastslås.» (`uavklart`)
+
+Den sterkeste vurderingen er «Nytt inntak», ikke «Svært sannsynlig» (#576).
+Det er verktøyets sterkeste kategori, ikke et matematisk bevis, og det sier
+forklaringen. Tersklene, profilene, måleusikkerheten og logikken for de eldre
+prøvene er uendret fra #570.
+
 - Samme dato (bestemt av Peder 25.11.2026): prøver fra samme dag
-  sammenlignes ikke, siden tiden mellom dem er ukjent. Det gis ingen kort,
-  figur eller beregning, bare meldingen «Forrige prøve og denne prøven er tatt
-  samme dag og kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere
-  dag.» (`SAMME_DAG_FEIL`, sammen med andre mangler). Eldre prøver i den
-  samlede vurderingen er alltid fra før forrige prøve, så de har aldri samme
-  dato som denne prøven. Form 1 sammenligner fortsatt samme dag, til den
+  sammenlignes ikke, siden tiden mellom dem er ukjent. Det gis ingen
+  vurderinger, figur eller forklaring, bare `SAMME_DAG_FEIL`. Eldre prøver i
+  den samlede vurderingen er alltid fra før forrige prøve, så de har aldri
+  samme dato som denne prøven. Form 1 sammenligner fortsatt samme dag, til den
   fjernes.
-- Ved manglende eller ugyldige verdier og numeriske feil gis ingen kort og
-  ingen sannsynlighetsutsagn, bare det som mangler.
+- Ved manglende eller ugyldige verdier og numeriske feil gis ingen
+  vurderinger og ingen sannsynlighetsutsagn (over).
 
 Tekstene står i `src/domain/beUrinProfilvisning.ts`, reglene i
 `src/domain/beUrinProfiler.ts`.
 
-**Høyere margin.** Begge kortene og gradene regnes med hver høyere margin i
-modellen. Banneret «Vurder høyere sikkerhetsmargin» viser hver mildere
-vurdering, og hvilken vurdering (sporadisk eller kronisk bruk) den gjelder.
-Marginen endres bare når brukeren trykker.
+**Høyere margin.** Begge vurderingene regnes med hver høyere margin i
+modellen. Strengheten, fra mildest, er ved sporadisk bruk forenlig med
+enkeltinntak, forenlig med gjentatte doser, sannsynlig og nytt inntak; ved
+kronisk bruk uavklart, uavklart men uvanlig, indikasjon på nytt inntak etter
+en eldre prøve (mildere jo eldre prøven er), sannsynlig og nytt inntak.
+Hver mildere vurdering står under vurderingen den gjelder, med marginene som
+gir den. Teksten er bare den nye konklusjonen når den er en annen; ellers sier
+den hva som skiller (utdypingen, indikasjonen etter en eldre prøve, «Ingen
+indikasjon på nytt inntak etter de tidligere prøvene.» eller «Uten
+bemerkningen om svært uvanlig utskillelse.»). Marginen endres bare når
+brukeren velger den.
 
-**Samlet vurdering.** Er den slått på, sammenlignes denne prøven med hver
-eldre prøve, nyeste først, når kortet for kronisk bruk er uavklart
-(F_ekstrem ≤ 1) men endringen ligger over minst én av moderat og treg. Et
-treff er F_ekstrem > 1 for det paret (med parets egne treg/ekstrem), og vises
-under kortet for kronisk bruk med datoen og forbeholdet «indikasjon på nytt
-inntak etter den eldre prøven, ikke nødvendigvis etter forrige prøve».
-Kortene, figuren og beregningen for hovedparet endres ikke. Ugyldige eldre
-prøver gir mangler, som i form 1.
+**Samlet vurdering.** Med minst én tidligere prøve sammenlignes denne prøven
+med hver eldre prøve, nyeste først, når vurderingen ved kronisk bruk er
+uavklart (F_ekstrem ≤ 1) men endringen ligger over minst én av moderat og
+treg. Et treff er F_ekstrem > 1 for det paret (med parets egne treg/ekstrem),
+og står rett under vurderingen ved kronisk bruk: «Sammenlignet med prøven fra
+{dato} er det indikasjon på nytt inntak etter den prøven, men ikke
+nødvendigvis etter forrige prøve.» Uten treff: «Heller ikke sammenlignet med
+de tidligere prøvene er det indikasjon på nytt inntak.» Indikasjonen
+graderes ikke. Vurderingene, figuren og forklaringen for hovedparet endres
+ikke.
 
-**Figuren** viser alle fem profilene samtidig på de samme aksene (prosentvis
-endring og døgn), hver med sin farge (`--be-profil-*` i tokens.css, lyst og
-mørkt tema, minst 3:1 mot kortet), sitt stiplingsmønster og navnet i
-legenden. Endepunktene er motorens terskler.
-Den målte/korrigerte prøven og valget av margin er som i form 1; punktene for
-denne prøven er nøytrale, siden det ikke finnes én samlet konklusjon å farge
-dem etter. Beregningen viser Q med enhet, R_målt, R_korr, og for hver profil
-terskelen R, F og graden. En endring så stor at Q2/Q1 ikke er et vanlig
-flyttall, vurderes med logaritmene, men tegnes ikke: figuren erstattes av en
-merknad, og beregningen skriver ratioen som en tierpotens.
+**Utskillelsesprofiler og figur** (lukket som standard). En kompakt tabell er
+både tegnforklaringen og oversikten: profilens strek (farge og
+stiplingsmønster som i figuren), det korte navnet (Enkeltinntak, Gjentatte
+doser, Moderat utskillelse, Treg utskillelse, Ekstrem utskillelse), forventet
+endring etter d døgn (motorens terskel i prosent) og hvor endringen ligger
+(graden), i gruppene «Sporadisk bruk» og «Kronisk bruk». Under den står
+avkrysningen «Vis alle sikkerhetsmarginer» og figuren med alle fem profilene
+på de samme aksene (prosentvis endring og døgn), hver med sin farge
+(`--be-profil-*` i tokens.css, lyst og mørkt tema, minst 3:1 mot kortet) og sitt
+stiplingsmønster. Endepunktene er motorens terskler. Punktene for denne
+prøven er nøytrale; med alle marginene står de også som en liste under
+figuren. En endring så stor at Q2/Q1 ikke er et vanlig flyttall, vurderes med
+logaritmene, men tegnes ikke: figuren erstattes av en merknad.
+
+**Forklaring** (lukket som standard, `beUrinProfilforklaring.ts`), i vanlig
+språk og uten formler, symboler, parametere, eksponentialer, logaritmer, SD
+eller regresjon, i stilen fra THC-syremodulen. Alt leses av motorens
+resultat, så forklaringen alltid stemmer med vurderingene:
+
+- «Hvor stor er endringen mellom prøvene?»: kvotienten i begge prøvene med
+  datoene, døgnene mellom dem og den målte endringen i prosent.
+- «Hvordan er det tatt hensyn til måleusikkerhet?»: målingene er usikre; med
+  margin legges en mer forsiktig endring til grunn slik at tvilen kommer
+  prøvegiver til gode, og endringen som fortolkes, oppgis; uten margin
+  sammenlignes den målte endringen direkte.
+- «Hva kan forventes dersom det ikke har skjedd et nytt inntak?»: at
+  utskillelsen varierer betydelig med bruksmønsteret, og hvor endringen ligger
+  mot hver av de fem profilene.
+- «Hvorfor blir konklusjonen slik?»: én setning per vurdering, etter utfallet
+  og om kvotienten har falt, er uendret eller har økt; den samlede vurderingen
+  (treff, ingen treff, eller hvorfor de tidligere prøvene ikke er brukt); og
+  at vurderingene er kvalitative modellvurderinger, ikke kalibrerte
+  sannsynligheter, og at «Nytt inntak» er verktøyets sterkeste vurdering, ikke
+  et matematisk bevis (`BE_URIN_KVALITATIV`).
 
 ### Godkjenningen
 
-Peder godkjente kortreglene og tekstene over som foreslått 25.11.2026, og
-bestemte at prøver fra samme dato ikke sammenlignes (over). Ingen faglige
-spørsmål står åpne.
+Peder godkjente kortreglene og tekstene for #570 som foreslått 25.11.2026, og
+bestemte at prøver fra samme dato ikke sammenlignes (over). Samme dag bestilte
+han forenklingen og de nye konklusjonene i #576 («Nytt inntak» i stedet for
+«Svært sannsynlig», og de korte tekstene over). Ingen faglige spørsmål står
+åpne.
 
 ## Utrullingen av form 2
 
@@ -254,18 +346,20 @@ spørsmål står åpne.
 | --- | --- |
 | `src/domain/beUrinModell.ts` | Modellen i begge formene, kontrollen av dem, svaret fra databasen og overskriften med formene |
 | `src/domain/beUrinMotor.ts` | Lesingen av inndataene (begge formene) og motoren for form 1: Q, tersklene, konklusjonen, samlet vurdering, mildere margin, punktene per margin |
-| `src/domain/beUrinProfiler.ts` | Motoren for form 2: tersklene, treg/ekstrem, gradene, kortene, samlet vurdering, mildere margin |
+| `src/domain/beUrinProfiler.ts` | Motoren for form 2: tersklene, treg/ekstrem, gradene, vurderingene, samlet vurdering, mildere margin |
 | `src/domain/beUrinPlot.ts`, `beUrinVisning.ts`, `beUrinProfilvisning.ts` | Figuren og ordlyden (form 2 i `beUrinProfilvisning.ts`) |
+| `src/domain/beUrinProfilforklaring.ts` | Forklaringen for form 2, i vanlig språk, lest av motorens resultat |
 | `src/katalog/beUrinModell.ts` | Hentingen (`les_be_urin_modell`, med formene) og meldingene når modellen mangler |
 | `src/components/BeUrinStep.tsx`, `BeUrinSkjema.tsx`, `BeUrinForklaring.tsx`, `BeUrinPlot.tsx`, `BeUrinDeler.tsx` | Modulen, delt mellom formene; resultatet for form 1 står i `BeUrinStep.tsx` |
-| `src/components/BeUrinProfilresultat.tsx`, `BeUrinProfilPlot.tsx`, `src/styles/beUrin.css` | Resultatpanelet, figuren og fargene for form 2 |
+| `src/components/BeUrinProfilresultat.tsx`, `BeUrinProfilPlot.tsx`, `src/styles/beUrin.css` | Resultatet, profiltabellen, figuren og fargene for form 2, og skjemaets utseende |
 | `src/domain/figurakser.ts`, `src/components/Figurdeler.tsx` | Aksene, etikettene og klammen, delt med THC-syremodulen uten endring der |
 | `supabase/migrations/20261124095000_be_urin_modell.sql` | Tabellen, lesingen og oppføringstypen `be_urin` |
 | `supabase/migrations/20261124143000_be_urin_aktivering.sql` | Aktiveringen av form 1: URUS, UBEZ og modellen i OUS Klinisk farmakologi |
 | `supabase/migrations/20261125094800_be_urin_modellformer.sql` | Formkontrollen for begge formene og lesingen etter formene appen oppgir |
 | `supabase/migrations/20261125121500_be_urin_fem_profiler.sql` | Aktiveringen av form 2: modellen `ous-kf-2026-11-25` i OUS Klinisk farmakologi |
 | `src/domain/__tests__/beUrinMotor.test.ts`, `src/__tests__/beUrinModell.test.ts`, `beUrinSteg.test.tsx` | Testene av form 1 |
-| `src/domain/__tests__/beUrinProfiler.test.ts`, `src/__tests__/beUrinModellformer.test.ts`, `beUrinProfilSteg.test.tsx` | Testene av form 2, formkontrollen og eldre/nyere app mot eldre/nyere database |
+| `src/domain/__tests__/beUrinProfiler.test.ts`, `beUrinProfilforklaring.test.ts`, `src/__tests__/beUrinModellformer.test.ts`, `beUrinProfilSteg.test.tsx`, `beUrinFigurvalg.test.tsx` | Testene av form 2 (også grensene F = 1, 5 og 10 og forklaringen), formkontrollen og eldre/nyere app mot eldre/nyere database |
+| `src/__tests__/qa/benzoylekgoninnettleser.ts` | Den lokale nettleserkontrollen av begge formene, med skjermbilder |
 | `src/domain/__tests__/hjelp/beUrinTestmodell.ts`, `src/__tests__/hjelp/beUrinvisning.tsx` | De bestilte profilene med syntetiske enheter og CV-er for form 1, modellen for form 2 slik #570 oppgir den, og oppsettet for skjermtestene; bare for testene |
 
 ## Konfigurasjonen, tilgangen og aktiveringen
@@ -311,7 +405,8 @@ i OUS Klinisk farmakologi. Peders avklaringer (24.11.2026), og hva de blir:
    migrasjonen kjører, og står deretter fast i modellversjonen; en senere
    endring av THC-syreregelsettet endrer ikke denne modellen.
 4. **Det ekstrapolerte området** behandles som i THC-syre: ekstrapolert
-   bakover, med merknaden i beregningen. Ingen stoppgrense.
+   bakover, med merknaden i beregningen (form 1). Ingen stoppgrense. Form 2
+   regner likt, men sier det ikke i brukerflaten (#576).
 5. **Modellen er godkjent** av Peder.
 
 Oppføringens `navn` er det søketreffet viser. Serumoppføringen heter
