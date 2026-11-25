@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T03:52:12.057Z",
+  "oppdatert_kl": "2026-11-25T04:28:43.521Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 89,
   "stoffer": {
@@ -215,11 +215,18 @@
     "aripiprazol": {
       "stoff": "aripiprazol",
       "navn": "Aripiprazol",
-      "status": "venter_godkjenning",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 1417.3,
+        "grunner": [
+          "Fortsetter den avbrutte kurateringen aripiprazol-0089.",
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "5 av 13 redaksjonelle seksjoner er tomme.",
+          "15 av 26 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-24T11:26:22.246Z",
@@ -231,9 +238,20 @@
         "elementer_uten_kilde": 15
       },
       "reservasjon": null,
-      "forsok": 1,
+      "forsok": 0,
       "tidligst_kl": null,
-      "gjenoppta": null,
+      "gjenoppta": {
+        "oppgave": "aripiprazol-0089",
+        "okt": "kurateringsko/okt/20261125-014902",
+        "avbrutt_kl": "2026-11-25T04:28:43.521Z",
+        "grunn": "Grenen er tilbake hos kuratoren.",
+        "fase": null,
+        "jobbgren": "kuratorjobb/aripiprazol-0089",
+        "kurateringsgren": null,
+        "pr": null,
+        "gren": "cc78982f-8415-48f0-bb5b-75be3ff3b718",
+        "kunnskapsgrense": "2026-11-25"
+      },
       "pr": null,
       "blokkeringer": [],
       "sist_kuratert": null,
@@ -311,20 +329,21 @@
           "hendelse": "gren_klar",
           "oppgave": "aripiprazol-0089",
           "melding": "Grenen: klar, revisjon 18, kontrollrunde 1."
+        },
+        {
+          "kl": "2026-11-25T04:28:43.521Z",
+          "hendelse": "gren_retting",
+          "oppgave": "aripiprazol-0089",
+          "melding": "Grenen: retting, revisjon 23, kontrollrunde 1."
+        },
+        {
+          "kl": "2026-11-25T04:28:43.521Z",
+          "hendelse": "retting",
+          "oppgave": "aripiprazol-0089",
+          "melding": "Grenen er tilbake hos kuratoren."
         }
       ],
-      "appgren": {
-        "id": "cc78982f-8415-48f0-bb5b-75be3ff3b718",
-        "oppgave": "aripiprazol-0089",
-        "modus": "de_novo",
-        "runde": 2,
-        "kunnskapsgrense": "2026-11-25",
-        "jobbgren": "kuratorjobb/aripiprazol-0089",
-        "registrert_kl": "2026-11-25T03:52:12.057Z",
-        "status": "klar",
-        "revisjon": 18,
-        "kontrollrunde": 1
-      }
+      "appgren": null
     },
     "atenolol": {
       "stoff": "atenolol",
@@ -3429,7 +3448,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 65,
+        "poeng": 65.2,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-04.",
@@ -8318,7 +8337,7 @@
           "kjoring": "https://github.com/peohol/ousfar/actions/runs/45542871790"
         }
       },
-      "besvart_commit": "03e3c4aa7592dabe98908ade92ff36f85855d77f",
+      "besvart_commit": "15ec56def10ed9702ed36f9bf904e17ca953f895",
       "sist_brukt_kl": "2026-11-25T03:52:12.057Z"
     }
   }

@@ -1,11 +1,11 @@
 {
-  "oppdatert_kl": "2026-11-25T03:52:12.057Z",
+  "oppdatert_kl": "2026-11-25T04:28:43.521Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
-    "klar": 95,
+    "klar": 96,
     "reservert": 0,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 1,
+    "venter_godkjenning": 0,
     "sammenslatt": 0,
     "publisert": 20,
     "blokkert": 2,
@@ -14,6 +14,20 @@
   "aktive": [],
   "holdes_tilbake": null,
   "neste": [
+    {
+      "stoff": "aripiprazol",
+      "modus": "de_novo",
+      "poeng": 1417.3,
+      "grunner": [
+        "Fortsetter den avbrutte kurateringen aripiprazol-0089.",
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "15 av 26 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
     {
       "stoff": "haloperidol",
       "modus": "de_novo",
@@ -130,29 +144,9 @@
         "3 av 21 elementer har ingen kilde."
       ],
       "tidligst_kl": null
-    },
-    {
-      "stoff": "atenolol",
-      "modus": "de_novo",
-      "poeng": 395.6,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "3 av 21 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [
-    {
-      "stoff": "aripiprazol",
-      "gren": "cc78982f-8415-48f0-bb5b-75be3ff3b718",
-      "grenstatus": "klar",
-      "status": "venter_godkjenning"
-    }
-  ],
+  "til_gjennomgang": [],
   "blokkert": [
     {
       "stoff": "metamfetamin",
