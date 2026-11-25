@@ -13,7 +13,7 @@ dokumentet der de overlapper. Prosjektinstruksene står i
 [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md) med avsnitt 3.5 om
 ikke-kliniske personalfunksjoner.
 
-**Status 24.11.2026:** ingen personalfunksjon er bygd. Dokumentet er rammen
+**Status 25.11.2026:** ingen personalfunksjon er bygd i OUSFAR; prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
 
 ## 1. Formål
@@ -187,6 +187,19 @@ reglene bak avklares med Peder i prosjekttråden.
 - Kalender med **dag, uke og måned**, **enkle statuser**, **manuelle
   justeringer** og en planlagt **visning på dashboardet**.
 
+Besluttet av Peder 25.11.2026, i prototypen i `peohol/vaktplan` (PR #5):
+
+- **Ingen arbeidsmønster eller stillingsandel.** Mønstrene varierer, og noen
+  i redusert stilling er til stede hver dag og kan ha vakt hver ukedag. Alle
+  aktive medarbeidere regnes som til stede på hverdager som ikke er
+  helligdager; fravær, også ved deltid, registreres i kalenderen. Prosent
+  tilstedeværelse i fordelingen regnes derfor ut fra kalenderen, ikke fra en
+  stillingsandel.
+- **Forskning, undervisning og ønske om fri regnes som borte** i
+  planleggingen.
+- **Hjemmekontor, forskning, undervisning, annen oppgave og ønske om fri
+  utelukker vakt 1 og vakt 2** samme dag.
+
 ### 7.3 Oppgaven
 
 Personal skal gjennomgå `peohol/vaktplan`, kartlegge eksisterende beslutninger
@@ -207,7 +220,54 @@ føres inn her. Planen skal minst ha:
 
 Ingen vaktplankode eller produksjonsmigrasjoner før planen er vedtatt.
 
-### 7.4 Issue-et for oppgaven
+### 7.4 Medarbeiderdata fra brukeroversikten (planlagt)
+
+Besluttet av Peder 25.11.2026 som retning; **ikke bygd ennå**, og ingenting
+bygges før integrasjonsplanen (§7.3) er vedtatt. Prototypen har sin egen
+medarbeiderliste med syntetiske ansatte til da.
+
+**Hva som hentes.** Tre felt per medlem av et fagmiljø skal komme fra
+fagmiljøets brukeroversikt i OUSFAR (`public.brukeroversikt()`,
+[fagmiljoer.md](fagmiljoer.md)), i stedet for å vedlikeholdes i vaktplanen:
+
+| Felt | Verdier | Merknad |
+| --- | --- | --- |
+| Stillingskategori | En liste per fagmiljø, for det første fagmiljøet LIS og overlege | Ikke hardkodet i den generelle motoren (§7.2) |
+| Aktiv i vaktplanen | Ja/nei | Et avsluttet eller sperret medlemskap gir alltid nei |
+| Kan ha vakt | Vakt 1 og/eller vakt 2, per vakttype i fagmiljøet | Vakttypene er fagmiljøets bemanningsbehov, ikke faste navn |
+
+Navnet kommer fra profilen. Ingen andre profilfelt leses (§3.2).
+
+**Regler.**
+
+- En endring gjelder **fra dagen den lagres** og fremover. Tidligere dager
+  vurderes etter det som gjaldt da, så historikk og tidligere vaktdekning
+  ikke skrives om (samme modell som i prototypen). Hver endring lagres derfor
+  med gyldighetsdato.
+- Feltene er planleggingsdata, ikke HR-data (§2).
+- Hvem som kan se og redigere feltene, følger §3.3 og vedtas før
+  implementering. Forslag: lokal administrator og vaktplanlegger i eget
+  fagmiljø redigerer, kolleger ser bare det vaktplanen viser.
+- Radsikkerhet på serversiden, med negative tester på tvers av fagmiljøer og
+  roller (§3.3).
+
+**Arbeidsdeling.** Brukeroversikten, medlemskapene og den generelle
+tilgangsstyringen eies av Dev; feltene og reglene for dem eies av Personal
+(§2).
+
+- **Dev** ([#572](https://github.com/peohol/ousfar/issues/572)): et
+  gjenbrukbart utvidelsespunkt i brukeroversikten der et prosjekt kan vise og
+  redigere egne felt per medlem, en stabil nøkkel per medlemskap og en
+  hjelper for tilgang som Personals radsikkerhet kan bruke, og at et avsluttet
+  medlemskap er synlig for Personal.
+- **Personal**: en egen tabell for feltene med gyldighetsdato, listen over
+  kategorier per fagmiljø, migrasjonene og testene, redigeringsfeltene i
+  utvidelsespunktet og vaktplanens bruk av dem.
+
+Personal venter på #572 før feltene bygges inn i OUSFAR. Trinnet blir en egen
+PR med `ansvar:personal` i integrasjonsplanen (§7.3 punkt 4).
+
+### 7.5 Issue-et for oppgaven
 
 Etter at etableringen er slått sammen og etiketten `ansvar:personal` finnes,
 opprettes (eller gjenbrukes) ett avgrenset planleggings-Issue med etiketten
