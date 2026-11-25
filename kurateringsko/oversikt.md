@@ -1,8 +1,8 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T11:11:56.244Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T11:26:19.115Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 93 · Publisert: 21 · Blokkert: 4 · Utenfor køen: 1
+Klar: 93 · Publisert: 22 · Blokkert: 3 · Utenfor køen: 1
 
 ## Pågår
 
@@ -14,10 +14,9 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **aripiprazol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
-- **doksazosin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
+- **risperidon**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
 
 ## Køen
 
