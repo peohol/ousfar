@@ -1,9 +1,9 @@
 {
-  "oppdatert_kl": "2026-11-25T04:58:59.455Z",
+  "oppdatert_kl": "2026-11-25T05:00:10.682Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
-    "klar": 95,
-    "reservert": 0,
+    "klar": 94,
+    "reservert": 1,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
@@ -11,22 +11,17 @@
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [],
-  "holdes_tilbake": null,
-  "neste": [
+  "aktive": [
     {
       "stoff": "haloperidol",
-      "modus": "de_novo",
-      "poeng": 416.7,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "13 av 23 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
+      "oppgave": "haloperidol-0090",
+      "okt": "kurateringsko/okt/20261125-045926",
+      "frist_kl": "2026-11-25T08:00:10.682Z",
+      "fase": null
+    }
+  ],
+  "holdes_tilbake": null,
+  "neste": [
     {
       "stoff": "risperidon",
       "modus": "de_novo",
@@ -133,6 +128,19 @@
     },
     {
       "stoff": "atenolol",
+      "modus": "de_novo",
+      "poeng": 395.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 21 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "diltiazem",
       "modus": "de_novo",
       "poeng": 395.6,
       "grunner": [
