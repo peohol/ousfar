@@ -6,7 +6,7 @@ import { lagLiggerOver, tastenGjelderFortolkningen } from './useKeyboard'
  * Ruller et kort pent på plass: vertikalt midtstilt i vinduet, eller til
  * toppen når kortet er høyere enn vinduet og en midtstilling ville gjemt
  * begynnelsen. Gjør ingenting når det ikke finnes noe å rulle. Brukes av
- * hoppingen her, av kortklikkene og av modulene som ruller selv.
+ * hoppingen her, av utfoldingene og av modulene som ruller selv.
  */
 export function rullTilKort(kort: Element | null | undefined, block: ScrollLogicalPosition = 'center') {
   if (!kort) return
