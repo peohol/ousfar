@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T07:50:28.183Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T07:52:26.734Z. Stoffene sist lest fra databasen 2026-11-25T07:28:26.653Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 93 · Reservert: 1 · Publisert: 21 · Blokkert: 3 · Utenfor køen: 1
 
 ## Pågår
 
-- **risperidon** (risperidon-0091), frist 2026-11-25T10:50:28.183Z
+- **risperidon** (risperidon-0091), frist 2026-11-25T10:52:26.734Z: Blindfase: leser kildene domene for domene
 
 ## Til gjennomgang
 
@@ -16,7 +16,7 @@ Ingen kurateringer venter.
 
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
-- **perfenazin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.
+- **perfenazin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, tilbakemelding); den må avsluttes først.
 
 ## Køen
 
