@@ -1,33 +1,19 @@
 {
-  "oppdatert_kl": "2026-11-25T10:27:12.742Z",
+  "oppdatert_kl": "2026-11-25T11:11:56.244Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "antall": {
-    "klar": 94,
+    "klar": 93,
     "reservert": 0,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
     "publisert": 21,
-    "blokkert": 3,
+    "blokkert": 4,
     "utenfor": 1
   },
   "aktive": [],
   "holdes_tilbake": null,
   "neste": [
-    {
-      "stoff": "risperidon",
-      "modus": "de_novo",
-      "poeng": 1416.7,
-      "grunner": [
-        "Fortsetter den avbrutte kurateringen risperidon-0091.",
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "13 av 23 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
     {
       "stoff": "enalapril",
       "modus": "de_novo",
@@ -144,17 +130,41 @@
         "3 av 21 elementer har ingen kilde."
       ],
       "tidligst_kl": null
+    },
+    {
+      "stoff": "furosemid",
+      "modus": "de_novo",
+      "poeng": 395.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "3 av 21 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
   "blokkert": [
     {
-      "stoff": "haloperidol",
+      "stoff": "aripiprazol",
       "blokkeringer": [
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T10:27:12.742Z",
+          "kl": "2026-11-25T11:11:56.244Z",
+          "kilde": "system"
+        }
+      ]
+    },
+    {
+      "stoff": "doksazosin",
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
+          "kl": "2026-11-25T11:11:56.244Z",
           "kilde": "system"
         }
       ]
