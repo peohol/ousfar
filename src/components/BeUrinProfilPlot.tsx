@@ -20,6 +20,10 @@ import { marginvalg } from '../domain/thcVisning'
  * referanseprøve eller et nytt tidsrom. Ingen rangering av de fem forutsettes.
  */
 
+/** Merknaden i stedet for figuren når endringen er for stor til å tegnes. */
+export const FOR_STOR_TIL_FIGUR =
+  'Endringen mellom prøvene er for stor til å tegnes i figuren. Vurderingene og beregningen gjelder som de står.'
+
 /** Streken i legenden: et lite utsnitt av kurven, med samme farge og stiplingsmønster. */
 export function Profilstrek({ rolle }: { rolle: BeUrinRolle }) {
   return (
@@ -42,10 +46,20 @@ export function BeUrinProfilPlot({
     () => profilMarginpunkter(modell, s, visningsmarginer(modell, s.margin, alleMarginer)),
     [modell, s, alleMarginer],
   )
+  // En endring utenfor flyttallene (Q2/Q1 overflyter) kan vurderes med
+  // logaritmene, men ikke tegnes: aksene ville fått uendelige grenser.
+  const tegnbar = denne.every((p) => Number.isFinite(prosentFor(p.korrigertRatio)))
   const graf = useMemo(
-    () => byggProfilgraf(s, BE_URIN_ROLLENAVN, denne.map((p) => prosentFor(p.korrigertRatio))),
-    [s, denne],
+    () => (tegnbar ? byggProfilgraf(s, BE_URIN_ROLLENAVN, denne.map((p) => prosentFor(p.korrigertRatio))) : null),
+    [s, denne, tegnbar],
   )
+  if (!graf) {
+    return (
+      <p className="notis" role="note">
+        {FOR_STOR_TIL_FIGUR}
+      </p>
+    )
+  }
 
   return (
     <>

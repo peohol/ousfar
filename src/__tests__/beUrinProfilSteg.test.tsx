@@ -19,6 +19,7 @@ import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
 import { BE_URIN_ROLLER } from '../domain/beUrinProfiler'
 import { PROFILMODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
+import { FOR_STOR_TIL_FIGUR } from '../components/BeUrinProfilPlot'
 import { forberedBeUrinDom, fyll, visBeUrin } from './hjelp/beUrinvisning'
 
 forberedBeUrinDom()
@@ -121,6 +122,17 @@ describe('resultatpanelet med fem profiler', () => {
     await fyll('Denne prøven', '6,5', '2', '2026-01-02')
     expect(beregning()).toContain('Ekstrem utskillelse: bieksponentiell (profil B)')
     expect(beregning()).toContain('Treg utskillelse: bieksponentiell (profil A)')
+  })
+
+  it('vurderer en endring for stor for flyttallene, uten å tegne en ødelagt figur', async () => {
+    // Q 1e−10 → 1e300 etter 1 døgn: Q2/Q1 overflyter, men logaritmene gir vurderingen.
+    await visMedProver(['0,0000000002', '2026-01-01'], [`2${'0'.repeat(300)}`, '2026-01-02'])
+    expect(vurdering('Sporadisk bruk lagt til grunn').textContent).toContain('Det er svært sannsynlig')
+    expect(screen.queryByRole('img', { name: /utskillelsesprofilene/ })).toBeNull()
+    expect(screen.getByText(FOR_STOR_TIL_FIGUR)).toBeTruthy()
+    const tekst = screen.getByText('Beregningen').closest('details')!.textContent!
+    expect(tekst).toContain('Rmålt = Q2/Q1 = ≈ 10^310.')
+    expect(tekst).not.toMatch(/Infinity|NaN/)
   })
 
   it('tegner ingen figur samme dag, og sier at et nytt inntak ikke kan fastslås ut fra prøvene alene', async () => {

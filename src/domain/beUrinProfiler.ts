@@ -167,6 +167,8 @@ export interface BeUrinProfilsammenligning {
   margin: number
   maltRatio: number
   korrigertRatio: number
+  /** ln R_målt. Endelig også når {@link maltRatio} ikke er det (Q2/Q1 utenfor flyttallene). */
+  logMalt: number
   /** ln R_korr. */
   logKorrigert: number
   /** I {@link BE_URIN_ROLLER}-rekkefølgen. */
@@ -227,7 +229,8 @@ export function sammenlignProfiler(
   if (z === undefined) throw new Error(`Sikkerhetsmarginen ${margin} finnes ikke i modellen.`)
   const maltRatio = til / fra
   const korrigert = korrigertRatio(m, maltRatio, margin)
-  const logKorrigert = Math.log(til) - Math.log(fra) + z * logSd(m)
+  const logMalt = Math.log(til) - Math.log(fra)
+  const logKorrigert = logMalt + z * logSd(m)
   if (!Number.isFinite(logKorrigert)) return null
 
   const terskler = new Map<BeUrinProfil, Terskel>()
@@ -261,6 +264,7 @@ export function sammenlignProfiler(
     margin,
     maltRatio,
     korrigertRatio: korrigert,
+    logMalt,
     logKorrigert,
     profiler,
     likeBi,

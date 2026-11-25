@@ -189,7 +189,9 @@ legenden. Endepunktene er motorens terskler. Samme dag tegnes ingen figur.
 Den målte/korrigerte prøven og valget av margin er som i form 1; punktene for
 denne prøven er nøytrale, siden det ikke finnes én samlet konklusjon å farge
 dem etter. Beregningen viser Q med enhet, R_målt, R_korr, og for hver profil
-terskelen R, F og graden.
+terskelen R, F og graden. En endring så stor at Q2/Q1 ikke er et vanlig
+flyttall, vurderes med logaritmene, men tegnes ikke: figuren erstattes av en
+merknad, og beregningen skriver ratioen som en tierpotens.
 
 ### Åpne faglige spørsmål (til godkjenningen)
 

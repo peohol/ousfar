@@ -97,6 +97,12 @@ export function BeUrinBeregning({
   )
 }
 
+/** « (−31 %)», eller ingenting når ratioen er utenfor flyttallene. */
+function prosentTekst(ratio: number): string {
+  const prosent = prosentFor(ratio)
+  return Number.isFinite(prosent) ? ` (${formaterProsent(prosent)})` : ''
+}
+
 /** Prøvene og ratioen, delt mellom formene. */
 function Provebolker({
   s,
@@ -104,12 +110,23 @@ function Provebolker({
   forrigeDato,
   denneDato,
 }: {
-  s: { fra: number; til: number; dager: number; margin: number; maltRatio: number; korrigertRatio: number; logKorrigert?: number }
+  s: {
+    fra: number
+    til: number
+    dager: number
+    margin: number
+    maltRatio: number
+    korrigertRatio: number
+    logMalt?: number
+    logKorrigert?: number
+  }
   enhet: string
   forrigeDato: string
   denneDato: string
 }) {
-  const korrigert = s.logKorrigert === undefined ? formaterRatio(s.korrigertRatio) : formaterLogRatio(s.logKorrigert)
+  // Med logaritmene (form 2) skrives også en ratio utenfor flyttallene, og prosenten bare når den er et tall.
+  const ratio = (verdi: number, logVerdi: number | undefined) =>
+    `${logVerdi === undefined ? formaterRatio(verdi) : formaterLogRatio(logVerdi)}${prosentTekst(verdi)}`
   return (
     <>
       <section className="thc-forklaring__bolk">
@@ -132,12 +149,10 @@ function Provebolker({
         <div className="thc-forklaring__kropp">
           <ul>
             <li>
-              Målt ratio R<sub>målt</sub> = Q<sub>2</sub>/Q<sub>1</sub> = {formaterRatio(s.maltRatio)} (
-              {formaterProsent(prosentFor(s.maltRatio))}).
+              Målt ratio R<sub>målt</sub> = Q<sub>2</sub>/Q<sub>1</sub> = {ratio(s.maltRatio, s.logMalt)}.
             </li>
             <li>
-              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: R<sub>korr</sub> = {korrigert} (
-              {formaterProsent(prosentFor(s.korrigertRatio))}).
+              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: R<sub>korr</sub> = {ratio(s.korrigertRatio, s.logKorrigert)}.
             </li>
           </ul>
         </div>
