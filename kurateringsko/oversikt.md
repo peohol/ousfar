@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T00:10:29.511Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T00:16:24.661Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 96 · Reservert: 1 · Venter på godkjenning: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **doksazosin** (doksazosin-0087), frist 2026-11-25T03:10:29.511Z
+- **doksazosin** (doksazosin-0087), frist 2026-11-25T03:16:24.661Z: Kontrollrunde 3 rettet; sendt til kontroll paa revisjon 16
 
 ## Til gjennomgang
 

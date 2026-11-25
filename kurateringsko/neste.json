@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-25T00:10:29.511Z",
+  "oppdatert_kl": "2026-11-25T00:16:24.661Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 96,
@@ -16,8 +16,8 @@
       "stoff": "doksazosin",
       "oppgave": "doksazosin-0087",
       "okt": "kurateringsko/okt/20261125-000951",
-      "frist_kl": "2026-11-25T03:10:29.511Z",
-      "fase": null
+      "frist_kl": "2026-11-25T03:16:24.661Z",
+      "fase": "Kontrollrunde 3 rettet; sendt til kontroll paa revisjon 16"
     }
   ],
   "holdes_tilbake": null,
