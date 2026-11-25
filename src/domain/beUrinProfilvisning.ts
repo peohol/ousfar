@@ -113,21 +113,26 @@ export interface BeUrinGjeldende {
 }
 
 /**
- * Et mildere utfall en høyere margin gir: «Ved 99 % sikkerhetsmargin blir
- * vurderingen ved sporadisk bruk: Sannsynlig nytt inntak.» Bare konklusjonen
- * når den er en annen enn den som står; ellers også det som skiller dem.
+ * Et mildere utfall en høyere margin gir, med det som skiller det klinisk fra
+ * vurderingen som står: «Ved 99 % sikkerhetsmargin blir vurderingen ved
+ * sporadisk bruk: Nytt inntak kan ikke fastslås. Endringen er forenlig med
+ * utskillelse etter gjentatte doser innenfor et kort tidsrom.» Konklusjonen og
+ * utdypingen står alltid, så to marginer med samme konklusjon, men ulik
+ * utdyping, ikke ser like ut. Indikasjonen etter en eldre prøve står når
+ * utfallet har en, og at den faller bort når vurderingen som står har en.
  */
 export function mildereTekst(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende): string {
-  let utfall: string
-  if (u.vurdering === 'kronisk' && u.samletDato) utfall = samletIndikasjon(u.samletDato)
-  else {
-    const tekst = u.vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST[u.utfall] : BE_URIN_KRONISK_TEKST[u.utfall]
-    if (tekst.konklusjon !== gjeldende.tekst.konklusjon) utfall = tekst.konklusjon
-    else if (tekst.utdyping) utfall = vurderingstekst(tekst)
-    else if (gjeldende.samletTreff) utfall = `${tekst.konklusjon} Ingen indikasjon på nytt inntak etter de tidligere prøvene.`
-    else utfall = `${tekst.konklusjon} Uten bemerkningen om svært uvanlig utskillelse.`
+  const tekst = u.vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST[u.utfall] : BE_URIN_KRONISK_TEKST[u.utfall]
+  const deler = [tekst.konklusjon]
+  if (tekst.utdyping) deler.push(tekst.utdyping)
+  // Samme konklusjon uten utdyping ved kronisk bruk: bemerkningen om svært
+  // uvanlig utskillelse faller bort, og det sies.
+  else if (tekst.konklusjon === gjeldende.tekst.konklusjon && gjeldende.tekst.utdyping) {
+    deler.push('Uten bemerkningen om svært uvanlig utskillelse.')
   }
-  return `Ved ${marginliste(u.marginer)} sikkerhetsmargin blir vurderingen ved ${u.vurdering} bruk: ${utfall}`
+  if (u.vurdering === 'kronisk' && u.samletDato) deler.push(samletIndikasjon(u.samletDato))
+  else if (gjeldende.samletTreff) deler.push('Ingen indikasjon på nytt inntak etter de tidligere prøvene.')
+  return `Ved ${marginliste(u.marginer)} sikkerhetsmargin blir vurderingen ved ${u.vurdering} bruk: ${deler.join(' ')}`
 }
 
 /** Forbeholdet under vurderingene: kort og diskret, ikke et banner. */

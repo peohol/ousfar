@@ -87,7 +87,10 @@ describe('resultatet med fem profiler', () => {
   it('sier diskret hva en høyere margin ville gitt, uten å bytte selv', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
     const mildere = vurdering(SPORADISK).querySelector('.be-vurdering__mildere')!
-    expect(mildere.textContent).toBe('Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås.')
+    expect(mildere.textContent).toBe(
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
+        'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+    )
     expect(vurdering(KRONISK).querySelector('.be-vurdering__mildere')).toBeNull()
     expect(screen.queryByRole('button', { name: /Bruk 99 %/ })).toBeNull()
     // Med 99 % står den mildere vurderingen, og ingen setning om høyere margin.
@@ -96,6 +99,22 @@ describe('resultatet med fem profiler', () => {
       'Nytt inntak kan ikke fastslås.Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
     )
     expect(document.querySelector('.be-vurdering__mildere')).toBeNull()
+  })
+
+  it('skiller de to «kan ikke fastslås» ved kronisk bruk med høyere margin, med utdypingen', async () => {
+    // BE 200 → 240 etter ett døgn uten margin: sannsynlig ved begge; 90 % gir «svært uvanlig», 99 % ikke.
+    await visMedProver(['200', '2026-01-01'], ['240', '2026-01-02'])
+    fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '0' } })
+    const linjer = (navn: string) => [...vurdering(navn).querySelectorAll('.be-vurdering__mildere')].map((p) => p.textContent)
+    expect(linjer(KRONISK)).toEqual([
+      'Ved 90 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås. ' +
+        'En såpass treg utskillelse anses likevel som svært uvanlig.',
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås.',
+    ])
+    expect(linjer(SPORADISK)).toEqual([
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
+        'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+    ])
   })
 
   it('sier fra når «Nytt inntak» blir «Sannsynlig nytt inntak» med høyere margin', async () => {
@@ -158,10 +177,19 @@ describe('resultatet med fem profiler', () => {
     expect(document.body.textContent).not.toMatch(/ekstrapol|Rkorr|Rmålt|e\^|bieksponentiell|profil A|\bSD\b|logaritm/i)
   })
 
-  it('viser ingen merknad om ekstrapolasjon, heller ikke etter svært lang tid', async () => {
+  it('viser ingen merknad om ekstrapolasjon når forrige prøve ligger over startverdien, heller ikke i forklaringen', async () => {
+    // BE 300 / kreatinin 2 gir Q 150, over startverdien til begge de bieksponentielle profilene
+    // (om lag 111 og 120): tersklene er ekstrapolert i motoren (testet i beUrinProfilforklaring.test.ts).
+    await visMedProver(['300', '2026-01-01'], ['250', '2026-01-03'])
+    expect(vurdering(SPORADISK)).toBeTruthy()
+    expect(seksjon('Forklaring').textContent).toContain('Hvorfor blir konklusjonen slik?')
+    expect(document.body.textContent).not.toMatch(/ekstrapol|startverdi|utenfor (dataene|modellen)|ikke dokumentert/i)
+  })
+
+  it('viser ingen merknad om ekstrapolasjon etter svært lang tid', async () => {
     await visMedProver(['200', '2025-01-01'], ['200', '2026-01-01'])
     expect(vurdering(SPORADISK)).toBeTruthy()
-    expect(document.body.textContent).not.toMatch(/ekstrapol|utenfor (dataene|modellen)/i)
+    expect(document.body.textContent).not.toMatch(/ekstrapol|startverdi|utenfor (dataene|modellen)|ikke dokumentert/i)
   })
 
   it('vurderer en endring for stor for flyttallene, uten å tegne en ødelagt figur', async () => {

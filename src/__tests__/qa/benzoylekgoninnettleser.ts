@@ -176,7 +176,7 @@ try {
     const vurdering = (side: Side, navn: string) => side.getByRole('region', { name: navn })
     const konklusjon = (side: Side, navn: string) => vurdering(side, navn).locator('.be-vurdering__konklusjon').innerText()
     const ingenEkstrapolasjon = async (side: Side) =>
-      krev(!/ekstrapol/i.test(await side.locator('body').innerText()), 'det står noe om ekstrapolasjon')
+      krev(!/ekstrapol|startverdi|ikke dokumentert/i.test(await side.locator('body').innerText()), 'det står noe om ekstrapolasjon')
 
     await punkt('B7 PC, form 2: vurderingene først, korte, side om side, og alt på én skjerm', async () => {
       paa(p2)
@@ -186,7 +186,12 @@ try {
       krev((await konklusjon(p2, 'Sporadisk bruk lagt til grunn')) === 'Sannsynlig nytt inntak.', 'sporadisk')
       krev((await konklusjon(p2, 'Kronisk bruk lagt til grunn')) === 'Nytt inntak kan ikke fastslås.', 'kronisk')
       const mildere = await vurdering(p2, 'Sporadisk bruk lagt til grunn').locator('.be-vurdering__mildere').innerText()
-      krev(mildere === 'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås.', mildere)
+      krev(
+        mildere ===
+          'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
+            'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+        mildere,
+      )
       const t = await tekst(p2)
       krev(!/tentativ|Konsentrasjonsendringene|Vurder høyere sikkerhetsmargin|Hva er sikkerhetsmarginen/i.test(t), `gammel tekst: ${t}`)
       krev((await p2.getByRole('note').count()) === 0, 'det står et banner')
@@ -322,15 +327,22 @@ try {
       return 'samme dag sammenlignes ikke; «Nytt inntak.» i mørkt tema'
     })
 
-    await punkt('B13 PC, form 2: ingen merknad om ekstrapolasjon etter et svært langt tidsrom', async () => {
+    await punkt('B13 PC, form 2: ingen merknad om ekstrapolasjon, når den faktisk skjer og etter et svært langt tidsrom', async () => {
       paa(p2)
-      await fyll(p2, 'Forrige prøve', '200', '2', '2025-01-01')
-      await fyll(p2, 'Denne prøven', '200', '2', '2026-01-01')
+      // Q 150 (BE 300, kreatinin 2) ligger over startverdien til begge de bieksponentielle
+      // profilene (om lag 111 og 120), så tersklene for treg og ekstrem er ekstrapolert.
+      await fyll(p2, 'Forrige prøve', '300', '2', '2026-01-01')
+      await fyll(p2, 'Denne prøven', '250', '2', '2026-01-03')
       await p2.getByText('Forklaring', { exact: true }).click()
       await p2.getByText('Utskillelsesprofiler og figur').click()
       await vent(700)
       await ingenEkstrapolasjon(p2)
-      return 'ingen'
+      await bilde(p2, '20-form2-over-startverdien-pc', true)
+      await fyll(p2, 'Forrige prøve', '200', '2', '2025-01-01')
+      await fyll(p2, 'Denne prøven', '200', '2', '2026-01-01')
+      await vent(300)
+      await ingenEkstrapolasjon(p2)
+      return 'ingen, verken ved Q 150 eller etter et år'
     })
 
     for (const [navn, tema] of [

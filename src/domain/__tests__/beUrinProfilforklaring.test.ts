@@ -147,6 +147,19 @@ describe('forklaringen', () => {
     expect(BE_URIN_KVALITATIV).toContain('ikke et matematisk bevis')
   })
 
+  it('sier ingenting om ekstrapolasjon når motoren faktisk har ekstrapolert', () => {
+    // BE 300 / kreatinin 2 = Q 150, over startverdien til begge de bieksponentielle profilene.
+    const r = vurdering({
+      forrige: { benzoylekgonin: '300', kreatinin: '2', dato: '2026-01-01' },
+      denne: { benzoylekgonin: '250', kreatinin: '2', dato: '2026-01-03' },
+      sikkerhetsmargin: 0.9,
+      tidligere: [{ benzoylekgonin: '400', kreatinin: '2', dato: '2025-12-20' }],
+    })
+    expect(r.forrige.q).toBe(150)
+    expect(r.sammenligning.profiler.filter((p) => p.ekstrapolert).map((p) => p.rolle).sort()).toEqual(['ekstrem', 'treg'])
+    expect(alt(r, 1)).not.toMatch(/ekstrapol|startverdi|ikke dokumentert/i)
+  })
+
   it('har ingen formler, parametere, logaritmer, SD, regresjon eller ekstrapolasjon', () => {
     // Også svært lange tidsrom, der tersklene ekstrapoleres i modellen.
     const lang = vurdering({ forrige: prove(50, '2025-01-01'), denne: prove(50, '2026-01-01'), sikkerhetsmargin: 0.9 })

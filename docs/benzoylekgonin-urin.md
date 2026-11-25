@@ -203,8 +203,9 @@ ikke sannsynligheten for at fortolkningen er riktig.
    gjort (under).
 3. Under hver vurdering, diskret: det en høyere margin ville gitt, for
    eksempel «Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk:
-   Nytt inntak kan ikke fastslås.» (`mildereTekst`). Brukeren velger selv; det
-   er ingen knapp og intet banner.
+   Nytt inntak kan ikke fastslås. Endringen er forenlig med utskillelse etter
+   gjentatte doser innenfor et kort tidsrom.» (`mildereTekst`). Brukeren
+   velger selv; det er ingen knapp og intet banner.
 4. Forbeholdet om eliminasjonsfasen, i én kort linje.
 5. «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard.
 
@@ -254,11 +255,21 @@ enkeltinntak, forenlig med gjentatte doser, sannsynlig og nytt inntak; ved
 kronisk bruk uavklart, uavklart men uvanlig, indikasjon på nytt inntak etter
 en eldre prøve (mildere jo eldre prøven er), sannsynlig og nytt inntak.
 Hver mildere vurdering står under vurderingen den gjelder, med marginene som
-gir den. Teksten er bare den nye konklusjonen når den er en annen; ellers sier
-den hva som skiller (utdypingen, indikasjonen etter en eldre prøve, «Ingen
-indikasjon på nytt inntak etter de tidligere prøvene.» eller «Uten
-bemerkningen om svært uvanlig utskillelse.»). Marginen endres bare når
-brukeren velger den.
+gir den. Teksten gir alltid hele det kliniske utfallet: konklusjonen,
+utdypingen når utfallet har en (forenlig med enkeltinntak eller gjentatte
+doser, svært uvanlig utskillelse), og indikasjonen etter en eldre prøve når
+utfallet har en. Slik ser to marginer med samme konklusjon, men ulik utdyping,
+aldri like ut (ChatGPT-kontrollen av #577: BE 200 → 240 etter ett døgn uten
+margin gir «… svært uvanlig» ved 90 % og bare «kan ikke fastslås» ved 99 %).
+Faller noe bort som står i vurderingen nå, sies det: «Uten bemerkningen om
+svært uvanlig utskillelse.» og «Ingen indikasjon på nytt inntak etter de
+tidligere prøvene.». Marginen endres bare når brukeren velger den.
+
+Ekstrapolasjon skjer når forrige prøve (eller en eldre prøve i den samlede
+vurderingen) har en kvotient over startverdien til en bieksponentiell profil
+(om lag 111 og 120 nmol/mmol), uansett tidsrommet; testene og
+nettleserkontrollen prøver dette med Q 150 og sjekker at ingenting om det står
+i brukerflaten.
 
 **Samlet vurdering.** Med minst én tidligere prøve sammenlignes denne prøven
 med hver eldre prøve, nyeste først, når vurderingen ved kronisk bruk er
