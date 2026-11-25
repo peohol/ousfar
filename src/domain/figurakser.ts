@@ -34,6 +34,22 @@ export function velgDognsteg(dager: number): number {
   return Math.max(1, velgXSteg(dager))
 }
 
+/** Høyst så mange merker på én akse. Flere betyr at aksen ikke kan tegnes. */
+export const MAKS_AKSEMERKER = 200
+
+/**
+ * Merkene fra `fra` til og med `til` med `steg`, regnet fra indeksen og ikke
+ * ved å legge sammen, så løkken alltid er begrenset. `null` når aksen ikke kan
+ * representeres: grenser eller steg som ikke er endelige, et steg som ikke er
+ * positivt, eller flere enn {@link MAKS_AKSEMERKER} merker.
+ */
+export function aksemerker(fra: number, til: number, steg: number): number[] | null {
+  if (![fra, til, steg].every(Number.isFinite) || !(steg > 0)) return null
+  const siste = Math.floor((til - fra) / steg + 1e-6)
+  if (!(siste >= 0 && siste < MAKS_AKSEMERKER)) return null
+  return Array.from({ length: siste + 1 }, (_, i) => fra + i * steg)
+}
+
 /**
  * Y-aksen der alle merkene — også topp og bunn — er runde tall: toppen rundes
  * opp og bunnen ned til nærmeste hele trinn. Bunnen går aldri under −100 %,

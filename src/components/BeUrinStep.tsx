@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
+import { BeUrinMangler, BeUrinVisualisering, MildereMargin, type BeUrinResultatProps } from './BeUrinDeler'
 import { BeUrinBeregning } from './BeUrinForklaring'
 import { BeUrinPlot } from './BeUrinPlot'
+import { BeUrinProfilresultat } from './BeUrinProfilresultat'
 import { BeUrinSkjema } from './BeUrinSkjema'
 import { Button } from './Button'
 import { Card } from './Card'
-import { Details } from './Details'
 import { Panelhode } from './Panelhode'
 import { Regelstatus } from './Regelstatus'
 import { StepBar } from './StepBar'
 import { Korthode } from './ThcStep'
-import { Trinnbryter } from './Trinnbryter'
 import { Ikon } from './ikon/Ikon'
 import {
   fortolkBeUrin,
@@ -20,7 +20,13 @@ import {
   type BeUrinMildereUtfall,
   type BeUrinResultat,
 } from '../domain/beUrinMotor'
-import type { BeUrinModellstatus, BeUrinModellsvar, GodkjentBeUrinModell } from '../domain/beUrinModell'
+import {
+  erProfilmodell,
+  type BeUrinModellstatus,
+  type BeUrinModellsvar,
+  type GodkjentBeUrinModell,
+  type GodkjentBeUrinModellutgave,
+} from '../domain/beUrinModell'
 import {
   BE_URIN_KONKLUSJONSFORKLARING,
   BE_URIN_KONKLUSJONSTEKST,
@@ -30,7 +36,6 @@ import {
   konklusjonISetning,
 } from '../domain/beUrinVisning'
 import { formaterDatoNorsk } from '../domain/thcTall'
-import { marginliste, marginmerke, somProsent } from '../domain/thcVisning'
 import { useHenting } from '../hooks/useHenting'
 import { useKortHopp } from '../hooks/useKortHopp'
 import { beUrinModellFra } from '../katalog/beUrinModell'
@@ -49,10 +54,12 @@ export interface BeUrinStepProps {
 }
 
 /**
- * Den tentative fortolkningen av benzoylekgonin i urin
- * (`docs/benzoylekgonin-urin.md`): intern beslutningsstøtte, uten kommentar
- * og uten kopiering. Den fortolker bare med fagmiljøets egen modell, og sier
- * fra i stedet når den ikke finnes eller ikke består kontrollen.
+ * Fortolkningen av benzoylekgonin i urin (`docs/benzoylekgonin-urin.md`):
+ * intern beslutningsstøtte, uten kommentar og uten kopiering. Den fortolker
+ * bare med fagmiljøets egen modell, og sier fra i stedet når den ikke finnes
+ * eller ikke består kontrollen. Modellform 1 (#562) gir resultatet med to
+ * profiler; form 2 (#570) gir fem profiler og de to vurderingene for
+ * sporadisk og kronisk bruk.
  */
 export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStepProps) {
   const seksjon = useRef<HTMLElement>(null)
@@ -80,6 +87,14 @@ export function BeUrinStep({ analyte, hentModell, kontekst, onBack }: BeUrinStep
   )
 }
 
+/** Teksten over de tidligere prøvene i skjemaet, etter modellformen. */
+const SAMLET_INGRESS = {
+  1: 'Gir sammenligningen med forrige prøve «kan ikke fastslås», sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
+  2:
+    'Er vurderingen ved kronisk bruk uavklart, men endringen over moderat eller treg utskillelse, ' +
+    'sammenlignes denne prøven også med prøvene under, fra den nærmeste og bakover.',
+} as const
+
 function BeUrinFortolkning({
   analyte,
   fagmiljo,
@@ -87,16 +102,19 @@ function BeUrinFortolkning({
 }: {
   analyte: Analyte
   fagmiljo: string
-  modell: GodkjentBeUrinModell
+  modell: GodkjentBeUrinModellutgave
 }) {
   // Det som er fylt inn, overlever en oppdatering av appen, og bare det. Navnet
   // binder verdiene til fagmiljøet og modellversjonen: kommer en annen modell
-  // med oppdateringen (andre enheter, kurver eller CV-er), begynner skjemaet
+  // med oppdateringen (andre enheter, profiler eller CV-er), begynner skjemaet
   // tomt i stedet for å fortolke de gamle verdiene med den nye modellen.
   const [inndata, setInndata] = useBevart<BeUrinInndata>(beUrinBevaringsnavn(fagmiljo, modell.versjon), () =>
     tomBeUrinInndata(modell),
   )
-  const [alleMarginer, setAlleMarginer] = useBevart('fortolkning/be-urin/visning', false)
+  // Visningsvalget i figuren eies her, ikke av figurkortet: kortet forsvinner
+  // så lenge skjemaet er ufullstendig, og valget skal stå når det kommer
+  // tilbake, også etter Nullstill.
+  const [alleMarginer, onAlleMarginer] = useBevart('fortolkning/be-urin/visning', false)
   const [fokusTeller, setFokusTeller] = useState(0)
   const forsteFelt = useRef<HTMLInputElement>(null)
 
@@ -104,15 +122,14 @@ function BeUrinFortolkning({
     forsteFelt.current?.focus()
   }, [fokusTeller])
 
-  const resultat = useMemo(() => fortolkBeUrin(inndata, modell), [inndata, modell])
-  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
-
   const sett = <K extends keyof BeUrinInndata>(felt: K, verdi: BeUrinInndata[K]) =>
     setInndata((forrige) => ({ ...forrige, [felt]: verdi }))
   const nullstill = () => {
     setInndata(tomBeUrinInndata(modell))
     setFokusTeller((t) => t + 1)
   }
+  const onVelgMargin = (margin: number) => sett('sikkerhetsmargin', margin)
+  const visning = { alleMarginer, onAlleMarginer }
 
   return (
     <div className="thc">
@@ -124,53 +141,49 @@ function BeUrinFortolkning({
             </Button>
           </div>
         </Korthode>
-        <BeUrinSkjema inndata={inndata} onEndre={sett} modell={modell} forsteFelt={forsteFelt} />
+        <BeUrinSkjema
+          inndata={inndata}
+          onEndre={sett}
+          modell={modell}
+          forsteFelt={forsteFelt}
+          samletIngress={SAMLET_INGRESS[erProfilmodell(modell) ? 2 : 1]}
+        />
       </Card>
+      {erProfilmodell(modell) ? (
+        <BeUrinProfilresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
+      ) : (
+        <BeUrinTobiresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
+      )}
+    </div>
+  )
+}
 
+/** Resultatet med modellform 1: de to bieksponentielle profilene (#562). */
+function BeUrinTobiresultat({ inndata, modell, onVelgMargin, visning }: BeUrinResultatProps<GodkjentBeUrinModell>) {
+  const resultat = useMemo(() => fortolkBeUrin(inndata, modell), [inndata, modell])
+  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
+  return (
+    <>
       <Card align="start" className="thc-resultat">
-        <BeUrinUtfall resultat={resultat} mildere={mildere} onVelgMargin={(margin) => sett('sikkerhetsmargin', margin)} />
+        <BeUrinUtfall resultat={resultat} mildere={mildere} onVelgMargin={onVelgMargin} />
       </Card>
-
-      {resultat.type === 'vurdering' && resultat.sammenligning.dager >= 1 && (
-        <Card align="start" className="thc-plot">
-          <Panelhode ikon="hl">Visualisering</Panelhode>
-          <div className="thc-visningsvalg">
-            <Trinnbryter<boolean>
-              etikett="Visualisering"
-              valg={[
-                {
-                  verdi: false,
-                  merke: `Visualiser med valgt sikkerhetsmargin (${somProsent(resultat.sammenligning.margin)} %)`,
-                },
-                { verdi: true, merke: 'Visualiser med alle sikkerhetsmarginer' },
-              ]}
-              verdi={alleMarginer}
-              onVelg={setAlleMarginer}
-            />
-          </div>
-          <BeUrinPlot sammenligning={resultat.sammenligning} modell={modell} alleMarginer={alleMarginer} />
-          <Details summary="Beregningen" ikon="fallback">
+      {resultat.type === 'vurdering' && (
+        <BeUrinVisualisering
+          margin={resultat.sammenligning.margin}
+          sammeDag={resultat.sammeDag}
+          visning={visning}
+          figur={(alle) => <BeUrinPlot sammenligning={resultat.sammenligning} modell={modell} alleMarginer={alle} />}
+          beregning={
             <BeUrinBeregning
               sammenligning={resultat.sammenligning}
               modell={modell}
               forrigeDato={resultat.forrige.dato}
               denneDato={resultat.denne.dato}
             />
-          </Details>
-        </Card>
+          }
+        />
       )}
-      {resultat.type === 'vurdering' && resultat.sammeDag && (
-        <Card align="start" className="thc-plot">
-          <Panelhode ikon="hl">Beregningen</Panelhode>
-          <BeUrinBeregning
-            sammenligning={resultat.sammenligning}
-            modell={modell}
-            forrigeDato={resultat.forrige.dato}
-            denneDato={resultat.denne.dato}
-          />
-        </Card>
-      )}
-    </div>
+    </>
   )
 }
 
@@ -184,20 +197,7 @@ export function BeUrinUtfall({
   mildere: BeUrinMildereUtfall[]
   onVelgMargin: (margin: number) => void
 }) {
-  if (resultat.type === 'mangler') {
-    return (
-      <>
-        <Panelhode ikon="fallback" tone="toksisk">
-          Mangler
-        </Panelhode>
-        <ul className="mangelliste">
-          {resultat.mangler.map((melding) => (
-            <li key={melding}>{melding}</li>
-          ))}
-        </ul>
-      </>
-    )
-  }
+  if (resultat.type === 'mangler') return <BeUrinMangler mangler={resultat.mangler} />
 
   const { sammenligning, samlet, sammeDag } = resultat
   return (
@@ -206,7 +206,15 @@ export function BeUrinUtfall({
       <p className="notis" role="note">
         {BE_URIN_TENTATIV}
       </p>
-      {mildere.length > 0 && <MildereMargin mildere={mildere} onVelg={onVelgMargin} />}
+      {mildere.length > 0 && (
+        <MildereMargin
+          utfall={mildere.map(({ marginer, konklusjon, samletDato }) => ({
+            marginer,
+            tekst: `endres resultatet til «${konklusjonISetning(konklusjon, samletDato)}».`,
+          }))}
+          onVelg={onVelgMargin}
+        />
+      )}
       <p className="kommentartekst">
         <strong>{BE_URIN_KONKLUSJONSTEKST[sammenligning.konklusjon]}</strong>
       </p>
@@ -236,36 +244,5 @@ export function BeUrinUtfall({
         </p>
       )}
     </>
-  )
-}
-
-/**
- * Banneret når en høyere sikkerhetsmargin enn den valgte gir en mildere
- * konklusjon, som i THC-syremodulen. Marginen endres bare når brukeren selv
- * trykker.
- */
-function MildereMargin({ mildere, onVelg }: { mildere: BeUrinMildereUtfall[]; onVelg: (margin: number) => void }) {
-  return (
-    <div className="notis thc-mildere" role="note" aria-label="Vurder høyere sikkerhetsmargin">
-      <p className="thc-mildere__hode">
-        <Ikon navn="advarsel" storrelse="1.25em" />
-        Vurder høyere sikkerhetsmargin
-      </p>
-      <ul className="thc-mildere__liste">
-        {mildere.map(({ marginer, konklusjon, samletDato }) => {
-          const laveste = marginer[0]!
-          return (
-            <li key={marginer.join('|')} className="thc-mildere__utfall">
-              <p>
-                Med {marginliste(marginer)} sikkerhetsmargin endres resultatet til «{konklusjonISetning(konklusjon, samletDato)}».
-              </p>
-              <Button variant="kant" aria-label={`Bruk ${marginmerke(laveste)} sikkerhetsmargin`} onClick={() => onVelg(laveste)}>
-                Bruk {marginmerke(laveste)}
-              </Button>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
   )
 }

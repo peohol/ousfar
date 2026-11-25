@@ -1,7 +1,7 @@
 import { tidForVerdi, verdiPaaKurve } from './thcKurver'
 import { INGEN_SIKKERHETSMARGIN } from './thcRegelsett'
 import { dagerMellom, lesTall } from './thcTall'
-import type { BeUrinKurve, BeUrinModell, GodkjentBeUrinModell } from './beUrinModell'
+import type { BeUrinFellesmodell, BeUrinKurve, BeUrinModell, GodkjentBeUrinModell } from './beUrinModell'
 
 /**
  * Fortolkningsmotoren for benzoylekgonin i urin (`docs/benzoylekgonin-urin.md`).
@@ -51,7 +51,7 @@ export function tomBeUrinProve(): BeUrinProve {
 }
 
 /** Et tomt skjema, med modellens standardmargin. */
-export function tomBeUrinInndata(m: BeUrinModell): BeUrinInndata {
+export function tomBeUrinInndata(m: BeUrinFellesmodell): BeUrinInndata {
   return {
     forrige: tomBeUrinProve(),
     denne: tomBeUrinProve(),
@@ -69,7 +69,7 @@ export function erGyldigDato(iso: string): boolean {
 }
 
 /** Q for en prøve, eller `null` når feltene ikke gir en kvantifisert, positiv kvotient. */
-export function kvotient(prove: BeUrinProve, m: BeUrinModell): number | null {
+export function kvotient(prove: BeUrinProve, m: BeUrinFellesmodell): number | null {
   const b = lesTall(prove.benzoylekgonin)
   const k = lesTall(prove.kreatinin)
   if (b === null || !(b > 0) || k === null || !(k > 0)) return null
@@ -80,7 +80,7 @@ export function kvotient(prove: BeUrinProve, m: BeUrinModell): number | null {
 /* --- Sammenligningen ------------------------------------------------------- */
 
 /** log-standardavviket for ratioen mellom to prøver: √(2 · (CV_BE² + CV_kreatinin²)). */
-export function logSd(m: BeUrinModell): number {
+export function logSd(m: BeUrinFellesmodell): number {
   const { cv_benzoylekgonin, cv_kreatinin } = m.maleusikkerhet
   return Math.sqrt(2 * (cv_benzoylekgonin ** 2 + cv_kreatinin ** 2))
 }
@@ -89,13 +89,13 @@ export function logSd(m: BeUrinModell): number {
  * z for marginen: modellens, eller 0 for «Ingen (50 %)» også når modellen
  * ikke har den (bare figuren bruker det). `undefined` for en ukjent margin.
  */
-export function zFor(m: BeUrinModell, margin: number): number | undefined {
+export function zFor(m: BeUrinFellesmodell, margin: number): number | undefined {
   const z = m.sikkerhetsmarginer.find((s) => s.margin === margin)?.z
   return z ?? (margin === INGEN_SIKKERHETSMARGIN ? 0 : undefined)
 }
 
 /** Den målte ratioen korrigert med marginen: R_målt · exp(z · logSD). */
-export function korrigertRatio(m: BeUrinModell, maltRatio: number, margin: number): number {
+export function korrigertRatio(m: BeUrinFellesmodell, maltRatio: number, margin: number): number {
   const z = zFor(m, margin)
   // En ukjent margin ville gitt NaN, og NaN ligger aldri over noen profil:
   // en stille konklusjon. Fortolkningen avviser den før dette.
@@ -219,7 +219,7 @@ export function tidligereNavn(antall: number, i: number): string {
 const stor = (tekst: string) => tekst.charAt(0).toUpperCase() + tekst.slice(1)
 
 /** Leser en prøve og legger det som mangler til `mangler`. */
-function lesProve(prove: BeUrinProve, navn: string, m: BeUrinModell, mangler: string[]): BeUrinLestProve | null {
+function lesProve(prove: BeUrinProve, navn: string, m: BeUrinFellesmodell, mangler: string[]): BeUrinLestProve | null {
   const b = lesTall(prove.benzoylekgonin)
   const k = lesTall(prove.kreatinin)
   if (prove.benzoylekgonin.trim() === '') mangler.push(`Fyll inn benzoylekgonin for ${navn}.`)
@@ -239,20 +239,48 @@ function lesProve(prove: BeUrinProve, navn: string, m: BeUrinModell, mangler: st
   return q !== null && erGyldigDato(prove.dato) ? { q, dato: prove.dato } : null
 }
 
-const NUMERISK_FEIL =
+/** Meldingen når tersklene ikke lar seg regne ut for verdiene. */
+export const NUMERISK_FEIL =
   'Modellen kan ikke regne ut tersklene for disse verdiene. Kontroller tallene; det gis ingen konklusjon.'
 
+/** Meldingen når modellformen ikke sammenligner prøver fra samme dag. */
+export const SAMME_DAG_FEIL =
+  'Forrige prøve og denne prøven er tatt samme dag og kan ikke sammenlignes. Bruk en forrige prøve fra en tidligere dag.'
+
+/** Hvordan en modellform leser inndataene. */
+export interface BeUrinLeseregler {
+  /** Prøver fra samme dag sammenlignes ikke: da gis bare {@link SAMME_DAG_FEIL}. */
+  avvisSammeDag?: boolean
+}
+
+/** Inndataene slik begge modellformene leser dem: alt som mangler, eller prøvene. */
+export type BeUrinLesteInndata =
+  | { type: 'mangler'; mangler: string[] }
+  | {
+      type: 'lest'
+      forrige: BeUrinLestProve
+      denne: BeUrinLestProve
+      /** Kalenderdøgn fra forrige prøve til denne. */
+      dager: number
+      /** De tidligere prøvene i den samlede vurderingen, nyeste først, med døgnene til denne prøven. Tom når den er slått av. */
+      tidligere: (BeUrinLestProve & { dager: number })[]
+    }
+
 /**
- * Validerer inndataene og fortolker. Mangler noe, eller er noe ugyldig, gis
- * ingen konklusjon og ingen graf: bare det som mangler.
+ * Validerer inndataene: prøvene, datoene, de tidligere prøvene og marginen.
+ * Mangler noe, eller er noe ugyldig, gis bare det som mangler.
  */
-export function fortolkBeUrin(inn: BeUrinInndata, m: GodkjentBeUrinModell): BeUrinResultat {
+export function lesBeUrinInndata(
+  inn: BeUrinInndata,
+  m: BeUrinFellesmodell,
+  regler: BeUrinLeseregler = {},
+): BeUrinLesteInndata {
   const mangler: string[] = []
   const forrige = lesProve(inn.forrige, 'forrige prøve', m, mangler)
   const denne = lesProve(inn.denne, 'denne prøven', m, mangler)
-  if (forrige && denne && dagerMellom(forrige.dato, denne.dato) < 0) {
-    mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
-  }
+  const mellom = forrige && denne ? dagerMellom(forrige.dato, denne.dato) : null
+  if (mellom !== null && mellom < 0) mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
+  else if (mellom === 0 && regler.avvisSammeDag) mangler.push(SAMME_DAG_FEIL)
 
   const tidligere = inn.samletVurdering ? inn.tidligere : []
   if (inn.samletVurdering && tidligere.length === 0) {
@@ -274,18 +302,32 @@ export function fortolkBeUrin(inn: BeUrinInndata, m: GodkjentBeUrinModell): BeUr
   }
 
   if (mangler.length > 0 || !forrige || !denne) return { type: 'mangler', mangler }
+  return {
+    type: 'lest',
+    forrige,
+    denne,
+    dager: mellom!,
+    tidligere: (tidligereLest as BeUrinLestProve[])
+      .map((p) => ({ ...p, dager: dagerMellom(p.dato, denne.dato) }))
+      .sort((a, b) => a.dager - b.dager),
+  }
+}
 
-  const dager = dagerMellom(forrige.dato, denne.dato)
+/**
+ * Validerer inndataene og fortolker med en modell av form 1. Mangler noe,
+ * eller er noe ugyldig, gis ingen konklusjon og ingen graf: bare det som mangler.
+ */
+export function fortolkBeUrin(inn: BeUrinInndata, m: GodkjentBeUrinModell): BeUrinResultat {
+  const lest = lesBeUrinInndata(inn, m)
+  if (lest.type === 'mangler') return lest
+  const { forrige, denne, dager, tidligere } = lest
   const hoved = sammenlign(m, forrige.q, denne.q, dager, inn.sikkerhetsmargin)
   if (!hoved) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
 
   let samlet: BeUrinSamlet | null = null
   if (hoved.konklusjon === 'kan_ikke_fastslaas' && tidligere.length > 0) {
-    const prover = (tidligereLest as BeUrinLestProve[])
-      .map((p) => ({ ...p, dager: dagerMellom(p.dato, denne.dato) }))
-      .sort((a, b) => a.dager - b.dager)
     let treff: BeUrinSamlet['treff'] = null
-    for (const p of prover) {
+    for (const p of tidligere) {
       const s = sammenlign(m, p.q, denne.q, p.dager, inn.sikkerhetsmargin)
       if (!s) return { type: 'mangler', mangler: [NUMERISK_FEIL] }
       if (s.konklusjon === 'nytt_inntak') {
@@ -293,7 +335,7 @@ export function fortolkBeUrin(inn: BeUrinInndata, m: GodkjentBeUrinModell): BeUr
         break
       }
     }
-    samlet = { vurdert: prover.length, treff }
+    samlet = { vurdert: tidligere.length, treff }
   }
 
   return { type: 'vurdering', forrige, denne, sammenligning: hoved, sammeDag: dager === 0, samlet }
@@ -367,7 +409,7 @@ export interface BeUrinMarginpunkt {
  * Marginene figuren viser: den valgte, eller alle modellens med «Ingen (50 %)»
  * i tillegg når modellen ikke har den. Stigende.
  */
-export function visningsmarginer(m: BeUrinModell, valgt: number, alle: boolean): number[] {
+export function visningsmarginer(m: BeUrinFellesmodell, valgt: number, alle: boolean): number[] {
   if (!alle) return [valgt]
   const marginer = m.sikkerhetsmarginer.map((s) => s.margin)
   if (!marginer.includes(INGEN_SIKKERHETSMARGIN)) marginer.push(INGEN_SIKKERHETSMARGIN)

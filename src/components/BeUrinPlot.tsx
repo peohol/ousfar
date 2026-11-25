@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Etikett, Klamme } from './Figurdeler'
 import { marginpunkter, visningsmarginer, type BeUrinKonklusjon, type BeUrinMarginpunkt, type BeUrinSammenligning } from '../domain/beUrinMotor'
 import type { BeUrinModell } from '../domain/beUrinModell'
-import { byggBeUrinGraf, prosentFor, type BeUrinTerskelrolle } from '../domain/beUrinPlot'
+import { byggBeUrinGraf, prosentFor, type BeUrinGraf, type BeUrinTerskelrolle } from '../domain/beUrinPlot'
 import { konklusjonISetning } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
 import { marginvalg } from '../domain/thcVisning'
@@ -17,6 +17,19 @@ import { marginvalg } from '../domain/thcVisning'
  * det er, siden rekkefølgen varierer: den nedre grønn, den øvre rød. Legenden
  * sier det samme med ord, og punktene står som tekst under figuren.
  */
+
+/** Merknaden i stedet for figuren når endringen er for stor til å tegnes, for begge modellformene. */
+export const FOR_STOR_TIL_FIGUR =
+  'Endringen mellom prøvene er for stor til å tegnes i figuren. Resultatet og beregningen gjelder som de står.'
+
+/** Merknaden som står i stedet for figuren når aksene ikke kan tegnes. */
+export function Figurmerknad() {
+  return (
+    <p className="notis" role="note">
+      {FOR_STOR_TIL_FIGUR}
+    </p>
+  )
+}
 
 const BREDDE = 900
 const HOYDE = 430
@@ -59,18 +72,7 @@ export function BeUrinPlot({
     () => byggBeUrinGraf(sammenligning, modell.kurver, denne.map((p) => prosentFor(p.korrigertRatio))),
     [sammenligning, modell, denne],
   )
-
-  const venstre = MARG.venstre
-  const hoyre = BREDDE - MARG.hoyre
-  const topp = MARG.topp
-  const bunn = HOYDE - MARG.bunn
-  const x = (dag: number) => venstre + (dag / graf.xMaks) * (hoyre - venstre)
-  const y = (prosent: number) => topp + ((graf.yTopp - prosent) / (graf.yTopp - graf.yBunn)) * (bunn - topp)
-
-  const yMerker: number[] = []
-  for (let v = graf.yBunn; v <= graf.yTopp + 1e-6; v += graf.ySteg) yMerker.push(v)
-  const xMerker: number[] = []
-  for (let dag = 0; dag <= graf.xMaks + 1e-6; dag += graf.xSteg) xMerker.push(dag)
+  if (!graf) return <Figurmerknad />
 
   return (
     <>
@@ -88,12 +90,63 @@ export function BeUrinPlot({
         ))}
       </ul>
 
-      <svg
-        className="thc-plot__figur"
-        viewBox={`0 0 ${BREDDE} ${HOYDE}`}
-        role="img"
-        aria-label="Prosentvis endring i Q etter de to utskillelsesprofilene, sammenlignet med denne prøven"
-      >
+      <BeUrinFigur
+        graf={graf}
+        kurveklasse={(kurve) => `thc-plot__kurve--${STREK[kurve.rolle]}`}
+        punkter={denne.map((punkt) => ({
+          margin: punkt.margin,
+          prosent: prosentFor(punkt.korrigertRatio),
+          tone: PUNKTTONE[punkt.konklusjon],
+          tekst: punkttekst(punkt),
+        }))}
+        alleMarginer={alleMarginer}
+        beskrivelse="Prosentvis endring i Q etter de to utskillelsesprofilene, sammenlignet med denne prøven"
+      />
+    </>
+  )
+}
+
+/** Et punkt for denne prøven i figuren: én margin. */
+export interface Figurpunkt {
+  margin: number
+  prosent: number
+  /** Fargen punktet har, eller den nøytrale. */
+  tone?: 'gronn' | 'gul' | 'rod'
+  /** Punktet med ord, i tipset og i listen under figuren. */
+  tekst: string
+}
+
+/**
+ * Selve figuren, delt mellom modellformene: aksene, profilene, forrige prøve
+ * ved 0 % og denne prøven ved d med én eller alle marginene, og punktene som
+ * tekst under. Fargen og streken på hver profil kommer fra `kurveklasse`.
+ */
+export function BeUrinFigur<R>({
+  graf,
+  kurveklasse,
+  punkter,
+  alleMarginer,
+  beskrivelse,
+}: {
+  graf: BeUrinGraf<R>
+  kurveklasse: (kurve: BeUrinGraf<R>['kurver'][number]) => string
+  punkter: Figurpunkt[]
+  alleMarginer: boolean
+  beskrivelse: string
+}) {
+  const venstre = MARG.venstre
+  const hoyre = BREDDE - MARG.hoyre
+  const topp = MARG.topp
+  const bunn = HOYDE - MARG.bunn
+  const x = (dag: number) => venstre + (dag / graf.xMaks) * (hoyre - venstre)
+  const y = (prosent: number) => topp + ((graf.yTopp - prosent) / (graf.yTopp - graf.yBunn)) * (bunn - topp)
+
+  const { xMerker, yMerker } = graf
+  const punktklasse = (p: Figurpunkt) => `thc-plot__punkt${p.tone ? ` thc-plot__punkt--${p.tone}` : ''}`
+
+  return (
+    <>
+      <svg className="thc-plot__figur" viewBox={`0 0 ${BREDDE} ${HOYDE}`} role="img" aria-label={beskrivelse}>
         {yMerker.map((verdi) => (
           <g key={`y${verdi}`}>
             <line className="thc-plot__rute" x1={venstre} y1={y(verdi)} x2={hoyre} y2={y(verdi)} />
@@ -113,7 +166,7 @@ export function BeUrinPlot({
         {graf.kurver.map((kurve) => (
           <polyline
             key={kurve.navn}
-            className={`thc-plot__kurve thc-plot__kurve--${STREK[kurve.rolle]}`}
+            className={`thc-plot__kurve ${kurveklasse(kurve)}`}
             points={kurve.punkter.map((p) => `${x(p.dag).toFixed(1)},${y(p.prosent).toFixed(1)}`).join(' ')}
           />
         ))}
@@ -123,27 +176,16 @@ export function BeUrinPlot({
           {['Forrige prøve']}
         </Etikett>
 
-        {denne.map((punkt) => (
-          <circle
-            key={punkt.margin}
-            className={`thc-plot__punkt thc-plot__punkt--${PUNKTTONE[punkt.konklusjon]}`}
-            cx={x(graf.xMaks)}
-            cy={y(prosentFor(punkt.korrigertRatio))}
-            r={7}
-          >
-            <title>{punkttekst(punkt)}</title>
+        {punkter.map((punkt) => (
+          <circle key={punkt.margin} className={punktklasse(punkt)} cx={x(graf.xMaks)} cy={y(punkt.prosent)} r={7}>
+            <title>{punkt.tekst}</title>
           </circle>
         ))}
         {alleMarginer ? (
-          <Klamme
-            x={x(graf.xMaks) - 12}
-            ys={denne.map((p) => y(prosentFor(p.korrigertRatio)))}
-            ovreGrense={topp}
-            nedreGrense={bunn}
-          />
+          <Klamme x={x(graf.xMaks) - 12} ys={punkter.map((p) => y(p.prosent))} ovreGrense={topp} nedreGrense={bunn} />
         ) : (
-          denne.map((punkt) => {
-            const py = y(prosentFor(punkt.korrigertRatio))
+          punkter.map((punkt) => {
+            const py = y(punkt.prosent)
             return (
               <Etikett key={punkt.margin} x={x(graf.xMaks) - 13} y={py + (py < topp + 24 ? 27 : -13)} anker="end">
                 {['Denne prøven']}
@@ -158,13 +200,13 @@ export function BeUrinPlot({
       </svg>
 
       <ul className="thc-marginpunkter" aria-label="Denne prøven med sikkerhetsmarginen">
-        {denne.map((punkt) => (
+        {punkter.map((punkt) => (
           <li key={punkt.margin} className="thc-marginpunkter__punkt">
             <span
-              className={`thc-marginpunkter__prikk thc-marginpunkter__prikk--${PUNKTTONE[punkt.konklusjon]}`}
+              className={`thc-marginpunkter__prikk${punkt.tone ? ` thc-marginpunkter__prikk--${punkt.tone}` : ' thc-marginpunkter__prikk--noytral'}`}
               aria-hidden="true"
             />
-            {punkttekst(punkt)}
+            {punkt.tekst}
           </li>
         ))}
       </ul>

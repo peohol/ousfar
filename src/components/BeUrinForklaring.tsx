@@ -1,5 +1,13 @@
 import { logSd, type BeUrinSammenligning } from '../domain/beUrinMotor'
-import type { BeUrinModell } from '../domain/beUrinModell'
+import type { BeUrinFellesmodell, BeUrinModell } from '../domain/beUrinModell'
+import { BE_URIN_GRADGRENSER, type BeUrinProfilsammenligning, type BeUrinProfilvurdering } from '../domain/beUrinProfiler'
+import {
+  BE_URIN_FORUTSETNING,
+  BE_URIN_GRADTEKST,
+  BE_URIN_LIKE_BI,
+  BE_URIN_ROLLENAVN,
+  formaterLogRatio,
+} from '../domain/beUrinProfilvisning'
 import { prosentFor } from '../domain/beUrinPlot'
 import { antallDogn, erEkstrapolert, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
@@ -13,7 +21,7 @@ import { hvorOfteForStor, marginvalg, somProsent } from '../domain/thcVisning'
  */
 
 /** «Hva er sikkerhetsmarginen?» under bryteren, med modellens måleusikkerhet. */
-export function BeUrinMarginforklaring({ modell }: { modell: BeUrinModell }) {
+export function BeUrinMarginforklaring({ modell }: { modell: BeUrinFellesmodell }) {
   const { cv_benzoylekgonin, cv_kreatinin } = modell.maleusikkerhet
   return (
     <div className="thc-forklaring">
@@ -67,10 +75,66 @@ export function BeUrinBeregning({
   forrigeDato: string
   denneDato: string
 }) {
-  const enhet = modell.enheter.kvotient
   const ekstrapolert = erEkstrapolert(s)
   return (
     <div className="thc-forklaring">
+      <Provebolker s={s} enhet={modell.enheter.kvotient} forrigeDato={forrigeDato} denneDato={denneDato} />
+      <section className="thc-forklaring__bolk">
+        <h3 className="thc-forklaring__tittel">Profilene</h3>
+        <div className="thc-forklaring__kropp">
+          <ul>
+            {s.profiler.map((p) => (
+              <li key={p.navn}>
+                {p.navn}: Q<sub>1</sub> ligger ved t = {formaterDogn(p.tidspunkt)} døgn på profilen. Etter{' '}
+                {antallDogn(s.dager)} er terskelen {formaterRatio(p.terskel)} ({formaterProsent(prosentFor(p.terskel))}).
+                Den korrigerte ratioen ligger {s.korrigertRatio > p.terskel ? 'over' : 'ikke over'} terskelen.
+              </li>
+            ))}
+          </ul>
+          <p>
+            t er punktet på profilen der Q<sub>1</sub> står, ikke tiden siden inntak.
+            {ekstrapolert &&
+              ' Q₁ ligger over startverdien til minst én profil (t under 0). Terskelen er da regnet ved matematisk ekstrapolasjon av kurven, et område modellen ikke er dokumentert for.'}
+          </p>
+          <p>Resultatet er «{konklusjonISetning(s.konklusjon, null)}».</p>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+/** « (−31 %)», eller ingenting når ratioen er utenfor flyttallene. */
+function prosentTekst(ratio: number): string {
+  const prosent = prosentFor(ratio)
+  return Number.isFinite(prosent) ? ` (${formaterProsent(prosent)})` : ''
+}
+
+/** Prøvene og ratioen, delt mellom formene. */
+function Provebolker({
+  s,
+  enhet,
+  forrigeDato,
+  denneDato,
+}: {
+  s: {
+    fra: number
+    til: number
+    dager: number
+    margin: number
+    maltRatio: number
+    korrigertRatio: number
+    logMalt?: number
+    logKorrigert?: number
+  }
+  enhet: string
+  forrigeDato: string
+  denneDato: string
+}) {
+  // Med logaritmene (form 2) skrives også en ratio utenfor flyttallene, og prosenten bare når den er et tall.
+  const ratio = (verdi: number, logVerdi: number | undefined) =>
+    `${logVerdi === undefined ? formaterRatio(verdi) : formaterLogRatio(logVerdi)}${prosentTekst(verdi)}`
+  return (
+    <>
       <section className="thc-forklaring__bolk">
         <h3 className="thc-forklaring__tittel">Prøvene</h3>
         <div className="thc-forklaring__kropp">
@@ -91,33 +155,71 @@ export function BeUrinBeregning({
         <div className="thc-forklaring__kropp">
           <ul>
             <li>
-              Målt ratio Q<sub>2</sub>/Q<sub>1</sub> = {formaterRatio(s.maltRatio)} ({formaterProsent(prosentFor(s.maltRatio))}).
+              Målt ratio R<sub>målt</sub> = Q<sub>2</sub>/Q<sub>1</sub> = {ratio(s.maltRatio, s.logMalt)}.
             </li>
             <li>
-              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: {formaterRatio(s.korrigertRatio)} (
-              {formaterProsent(prosentFor(s.korrigertRatio))}).
+              Korrigert med {marginvalg(s.margin)} sikkerhetsmargin: R<sub>korr</sub> = {ratio(s.korrigertRatio, s.logKorrigert)}.
             </li>
           </ul>
         </div>
       </section>
+    </>
+  )
+}
+
+/** Hvordan terskelen for en profil er regnet, med enhetene. */
+function terskelgrunnlag(v: BeUrinProfilvurdering): string {
+  const p = v.profil
+  if (p.type === 'mono') return `monoeksponentiell, R = e^(−k·d) med k = ${formaterRatio(p.k)} per døgn`
+  const navn = p.id === 'bi_a' ? 'A' : 'B'
+  return `bieksponentiell (profil ${navn}). Q₁ ligger ved t = ${formaterDogn(v.tidspunkt!)} døgn på profilen, og R = C(t + d)/Q₁`
+}
+
+/**
+ * Beregningen bak resultatet med fem profiler (modellform 2): Q i begge
+ * prøvene, døgnene, R_målt og R_korr, og for hver profil terskelen R, F og
+ * graden. Tallene er motorens.
+ */
+export function BeUrinProfilberegning({
+  sammenligning: s,
+  modell,
+  forrigeDato,
+  denneDato,
+}: {
+  sammenligning: BeUrinProfilsammenligning
+  modell: BeUrinFellesmodell
+  forrigeDato: string
+  denneDato: string
+}) {
+  const ekstrapolert = erEkstrapolert(s)
+  return (
+    <div className="thc-forklaring">
+      <Provebolker s={s} enhet={modell.enheter.kvotient} forrigeDato={forrigeDato} denneDato={denneDato} />
       <section className="thc-forklaring__bolk">
         <h3 className="thc-forklaring__tittel">Profilene</h3>
         <div className="thc-forklaring__kropp">
           <ul>
-            {s.profiler.map((p) => (
-              <li key={p.navn}>
-                {p.navn}: Q<sub>1</sub> ligger ved t = {formaterDogn(p.tidspunkt)} døgn på profilen. Etter{' '}
-                {antallDogn(s.dager)} er terskelen {formaterRatio(p.terskel)} ({formaterProsent(prosentFor(p.terskel))}).
-                Den korrigerte ratioen ligger {s.korrigertRatio > p.terskel ? 'over' : 'ikke over'} terskelen.
+            {s.profiler.map((v) => (
+              <li key={v.rolle}>
+                <strong>{BE_URIN_ROLLENAVN[v.rolle]}</strong>: {terskelgrunnlag(v)}. Etter {antallDogn(s.dager)} er
+                terskelen R = {formaterLogRatio(v.logTerskel)} ({formaterProsent(prosentFor(v.terskel))}). F = R
+                <sub>korr</sub>/R = {formaterLogRatio(v.logF)}: {BE_URIN_GRADTEKST[v.grad]}.
               </li>
             ))}
           </ul>
           <p>
+            Hver profil vurderes for seg: under (F &lt; 1), på nivå med (F = 1), over (1 &lt; F ≤{' '}
+            {BE_URIN_GRADGRENSER.over}), langt over ({BE_URIN_GRADGRENSER.over} &lt; F ≤ {BE_URIN_GRADGRENSER.langtOver}) og
+            svært langt over (F &gt; {BE_URIN_GRADGRENSER.langtOver}). Hvilken av de to bieksponentielle profilene som er treg
+            og hvilken som er ekstrem, avgjøres for disse prøvene: den med høyest terskel er ekstrem.
+            {s.likeBi && ` ${BE_URIN_LIKE_BI}`}
+          </p>
+          <p>
             t er punktet på profilen der Q<sub>1</sub> står, ikke tiden siden inntak.
             {ekstrapolert &&
-              ' Q₁ ligger over startverdien til minst én profil (t under 0). Terskelen er da regnet ved matematisk ekstrapolasjon av kurven, et område modellen ikke er dokumentert for.'}
+              ' Q₁ ligger over startverdien til minst én bieksponentiell profil (t under 0). Terskelen er da regnet ved matematisk ekstrapolasjon av kurven, et område modellen ikke er dokumentert for.'}
           </p>
-          <p>Resultatet er «{konklusjonISetning(s.konklusjon, null)}».</p>
+          <p>{BE_URIN_FORUTSETNING}</p>
         </div>
       </section>
     </div>

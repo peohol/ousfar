@@ -401,7 +401,7 @@ describe('figuren', () => {
       const valgt = punkter.find((p) => p.margin === 0.9)!
       expect(valgt.korrigertRatio).toBe(s.korrigertRatio)
       expect(valgt.konklusjon).toBe(s.konklusjon)
-      const graf = byggBeUrinGraf(s, MODELL.kurver, punkter.map((p) => prosentFor(p.korrigertRatio)))
+      const graf = byggBeUrinGraf(s, MODELL.kurver, punkter.map((p) => prosentFor(p.korrigertRatio)))!
       expect(graf.xMaks).toBe(d)
       // Hele døgn under aksen: aldri et brøkdelstrinn som gir samme døgn flere ganger.
       expect(graf.xSteg).toBe(1)
@@ -415,6 +415,15 @@ describe('figuren', () => {
         expect(p).toBeLessThanOrEqual(graf.yTopp)
       }
     }
+  })
+
+  it('tegnes ikke når aksens topp rundes opp utenfor flyttallene, selv om alle verdiene er endelige', () => {
+    const r = vurdering(fortolkBeUrin(inndata(prove(1, '2026-01-01'), prove(`175${'0'.repeat(304)}`, '2026-01-02'), 0.5), MODELL))
+    const s = r.sammenligning
+    const denne = prosentFor(s.korrigertRatio)
+    expect(Number.isFinite(denne)).toBe(true)
+    expect(byggBeUrinGraf(s, MODELL.kurver, [denne])).toBeNull()
+    expect(s.konklusjon).toBe('nytt_inntak')
   })
 
   it('farger etter terskelen, ikke etter profilen', () => {

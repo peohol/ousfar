@@ -3,16 +3,26 @@
  * den: fra databasen, for arbeidskonteksten til den innloggede
  * (`public.les_be_urin_modell()`), når modulen åpnes. Den lagres ikke i
  * nettleseren. Et fagmiljø uten modell får ingen, aldri et annet fagmiljøs.
+ *
+ * Kallet oppgir modellformene appen kjenner; en modell av en annen form gir
+ * databasen ikke, men en melding om å oppdatere appen.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { lesBeUrinModellsvar, tilBeUrinModell, type BeUrinModellstatus, type BeUrinModellsvar } from '../domain/beUrinModell'
+import {
+  lesBeUrinModellsvar,
+  modelloverskrifter,
+  tilBeUrinModell,
+  type BeUrinModellstatus,
+  type BeUrinModellsvar,
+} from '../domain/beUrinModell'
+import { medOverskrifter } from '../endringslogg/operasjon'
 import { tilFeil } from '../faginnhold/lagring'
 import { REGLENE_KUNNE_IKKE_HENTES } from '../faginnhold/scenarioregler'
 import type { Henting } from '../hooks/useHenting'
 import { iFagmiljoet } from '../regler/publiserte'
 
 export async function lesBeUrinModell(klient: SupabaseClient): Promise<BeUrinModellsvar> {
-  const { data, error } = await klient.rpc('les_be_urin_modell')
+  const { data, error } = await medOverskrifter(klient.rpc('les_be_urin_modell'), modelloverskrifter())
   if (error) throw tilFeil(error)
   return lesBeUrinModellsvar(data)
 }

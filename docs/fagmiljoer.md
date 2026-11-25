@@ -1488,6 +1488,8 @@ ny type kan aktiveres uten å vente på at alle har oppdatert. En ny type legges
 bare til i `FORTOLKNINGSTYPER`; listen for appene uten overskrift endres
 aldri. Utrullingen kan skje i hvilken som helst rekkefølge: en database uten
 endringen ser bort fra overskriften (`src/__tests__/analyttkatalogTyper.test.ts`).
+Modellen for benzoylekgonin i urin forhandles på samme måte, med formene appen
+kjenner (`x-far-be-urin-modellformer`, docs/benzoylekgonin-urin.md).
 
 **Appen.** Katalogen hentes når appen åpnes, før noe tegnes opp
 (`src/katalog/Analyttkatalogkilde.tsx`, `App.tsx`), og settes opp på nytt når
