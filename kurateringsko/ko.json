@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T05:00:10.682Z",
+  "oppdatert_kl": "2026-11-25T05:01:11.731Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 90,
   "stoffer": {
@@ -2983,13 +2983,13 @@
         "okt": "kurateringsko/okt/20261125-045926",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T05:00:10.682Z",
-        "fornyet_kl": "2026-11-25T05:00:10.682Z",
-        "frist_kl": "2026-11-25T08:00:10.682Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-25T05:01:11.731Z",
+        "frist_kl": "2026-11-25T08:01:11.731Z",
+        "fase": "Grenen åpnet",
         "jobbgren": "kuratorjobb/haloperidol-0090",
         "kurateringsgren": "kuratering/haloperidol-0090",
         "pr": null,
-        "gren": null,
+        "gren": "e504e7a6-1f4d-4e79-b974-0f21180b40e5",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -3018,6 +3018,19 @@
           "oppgave": "haloperidol-0090",
           "okt": "kurateringsko/okt/20261125-045926",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-25T05:01:11.731Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "haloperidol-0090",
+          "melding": "Fant kurateringsgrenen e504e7a6-1f4d-4e79-b974-0f21180b40e5."
+        },
+        {
+          "kl": "2026-11-25T05:01:11.731Z",
+          "hendelse": "fornyet",
+          "oppgave": "haloperidol-0090",
+          "okt": "kurateringsko/okt/20261125-045926",
+          "melding": "Grenen åpnet"
         }
       ],
       "appgren": null
@@ -8360,31 +8373,32 @@
     },
     "kurateringsko/okt/20261125-045926": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
+        "id": "forny-1",
+        "sha256": "e70a940327b8c70afcd6bf4459190ae2673d95133c6337c72e47fe7f4e0f8edd",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "e70a940327b8c70afcd6bf4459190ae2673d95133c6337c72e47fe7f4e0f8edd",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "haloperidol er reservert til 2026-11-25T08:00:10.682Z.",
-          "behandlet_kl": "2026-11-25T05:00:10.682Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45550485717",
+          "melding": "Reservasjonen av haloperidol varer til 2026-11-25T08:01:11.731Z.",
+          "behandlet_kl": "2026-11-25T05:01:11.731Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45550625140",
           "oppgave": {
             "oppgave": "haloperidol-0090",
             "stoff": "haloperidol",
             "navn": "Haloperidol",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T08:00:10.682Z",
+            "frist_kl": "2026-11-25T08:01:11.731Z",
             "jobbgren": "kuratorjobb/haloperidol-0090",
             "kurateringsgren": "kuratering/haloperidol-0090",
             "pr": null,
-            "gren": null,
+            "gren": "e504e7a6-1f4d-4e79-b974-0f21180b40e5",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -8397,20 +8411,14 @@
               "elementer_uten_kilde": 13
             },
             "prioritet": {
-              "poeng": 416.7,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "13 av 23 elementer har ingen kilde."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-25T05:00:10.682Z"
+      "sist_brukt_kl": "2026-11-25T05:01:11.731Z"
     }
   }
 }
