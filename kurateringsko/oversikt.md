@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-24T23:37:00.451Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T00:09:12.466Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 97 · Reservert: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
+Klar: 97 · Venter på godkjenning: 1 · Publisert: 18 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **perfenazin** (perfenazin-0086), frist 2026-11-25T02:37:00.451Z: Seksjonene skrevet; SPC-tabellen importert
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **perfenazin**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 

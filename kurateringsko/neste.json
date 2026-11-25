@@ -1,25 +1,17 @@
 {
-  "oppdatert_kl": "2026-11-24T23:37:00.451Z",
+  "oppdatert_kl": "2026-11-25T00:09:12.466Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 97,
-    "reservert": 1,
+    "reservert": 0,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 0,
+    "venter_godkjenning": 1,
     "sammenslatt": 0,
     "publisert": 18,
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [
-    {
-      "stoff": "perfenazin",
-      "oppgave": "perfenazin-0086",
-      "okt": "kurateringsko/okt/20261124-214700",
-      "frist_kl": "2026-11-25T02:37:00.451Z",
-      "fase": "Seksjonene skrevet; SPC-tabellen importert"
-    }
-  ],
+  "aktive": [],
   "holdes_tilbake": null,
   "neste": [
     {
@@ -155,7 +147,14 @@
       "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [],
+  "til_gjennomgang": [
+    {
+      "stoff": "perfenazin",
+      "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
+      "grenstatus": "klar",
+      "status": "venter_godkjenning"
+    }
+  ],
   "blokkert": [
     {
       "stoff": "metamfetamin",

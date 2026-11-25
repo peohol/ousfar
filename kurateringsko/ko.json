@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-24T23:37:00.451Z",
+  "oppdatert_kl": "2026-11-25T00:09:12.466Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 86,
   "stoffer": {
@@ -5651,7 +5651,7 @@
     "perfenazin": {
       "stoff": "perfenazin",
       "navn": "Perfenazin",
-      "status": "reservert",
+      "status": "venter_godkjenning",
       "modus": "de_novo",
       "prioritet": {
         "poeng": 0,
@@ -5666,20 +5666,7 @@
         "referanser": 7,
         "elementer_uten_kilde": 13
       },
-      "reservasjon": {
-        "oppgave": "perfenazin-0086",
-        "okt": "kurateringsko/okt/20261124-214700",
-        "modus": "de_novo",
-        "reservert_kl": "2026-11-24T21:46:23.301Z",
-        "fornyet_kl": "2026-11-24T23:37:00.451Z",
-        "frist_kl": "2026-11-25T02:37:00.451Z",
-        "fase": "Seksjonene skrevet; SPC-tabellen importert",
-        "jobbgren": "kuratorjobb/perfenazin-0086",
-        "kurateringsgren": "kuratering/perfenazin-0086",
-        "pr": null,
-        "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
-        "kunnskapsgrense": null
-      },
+      "reservasjon": null,
       "forsok": 1,
       "tidligst_kl": null,
       "gjenoppta": null,
@@ -5690,8 +5677,8 @@
         "oppgave": "perfenazin-0086",
         "okt": "kurateringsko/okt/20261124-214700",
         "startet_kl": "2026-11-24T21:46:23.301Z",
-        "avsluttet_kl": null,
-        "utfall": "reservert"
+        "avsluttet_kl": "2026-11-25T00:09:12.466Z",
+        "utfall": "fullfort"
       },
       "aktiv": true,
       "historikk": [
@@ -5733,9 +5720,33 @@
           "oppgave": "perfenazin-0086",
           "okt": "kurateringsko/okt/20261124-214700",
           "melding": "Seksjonene skrevet; SPC-tabellen importert"
+        },
+        {
+          "kl": "2026-11-25T00:09:12.466Z",
+          "hendelse": "fullfort",
+          "oppgave": "perfenazin-0086",
+          "okt": "kurateringsko/okt/20261124-214700",
+          "melding": "Kurateringsgrenen 6d9d7928-5e6c-404a-be7b-c8b269cecfba, kunnskapsgrense 2026-11-24."
+        },
+        {
+          "kl": "2026-11-25T00:09:12.466Z",
+          "hendelse": "gren_klar",
+          "oppgave": "perfenazin-0086",
+          "melding": "Grenen: klar, revisjon 12, kontrollrunde 1."
         }
       ],
-      "appgren": null
+      "appgren": {
+        "id": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
+        "oppgave": "perfenazin-0086",
+        "modus": "de_novo",
+        "runde": 2,
+        "kunnskapsgrense": "2026-11-24",
+        "jobbgren": "kuratorjobb/perfenazin-0086",
+        "registrert_kl": "2026-11-25T00:09:12.466Z",
+        "status": "klar",
+        "revisjon": 12,
+        "kontrollrunde": 1
+      }
     },
     "petidin": {
       "stoff": "petidin",
@@ -8103,54 +8114,28 @@
     },
     "kurateringsko/okt/20261124-214700": {
       "ider": [
+        "fullfort-1",
         "forny-3",
         "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-3",
-        "sha256": "331253f4d6a5c295c6c193db0ee4c29288f9806fc578159aca9d35b4528f1f4f",
+        "id": "fullfort-1",
+        "sha256": "4b1647addb201a95ef9ed6117553ea2bbab32d3f7c68d9fe9944f59087edb163",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-3",
-          "foresporsel_sha256": "331253f4d6a5c295c6c193db0ee4c29288f9806fc578159aca9d35b4528f1f4f",
-          "handling": "forny",
+          "foresporsel_id": "fullfort-1",
+          "foresporsel_sha256": "4b1647addb201a95ef9ed6117553ea2bbab32d3f7c68d9fe9944f59087edb163",
+          "handling": "fullfort",
           "utfall": "ok",
-          "melding": "Reservasjonen av perfenazin varer til 2026-11-25T02:37:00.451Z.",
-          "behandlet_kl": "2026-11-24T23:37:00.451Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45511441437",
-          "oppgave": {
-            "oppgave": "perfenazin-0086",
-            "stoff": "perfenazin",
-            "navn": "Perfenazin",
-            "modus": "de_novo",
-            "forsok": 1,
-            "frist_kl": "2026-11-25T02:37:00.451Z",
-            "jobbgren": "kuratorjobb/perfenazin-0086",
-            "kurateringsgren": "kuratering/perfenazin-0086",
-            "pr": null,
-            "gren": "6d9d7928-5e6c-404a-be7b-c8b269cecfba",
-            "gjenoppta": null,
-            "sist_kuratert": null,
-            "maal": {
-              "kl": "2026-11-24T11:26:22.246Z",
-              "side": true,
-              "elementer": 22,
-              "redaksjonelle_paneler": 13,
-              "paneler_med_innhold": 8,
-              "referanser": 7,
-              "elementer_uten_kilde": 13
-            },
-            "prioritet": {
-              "poeng": 0,
-              "grunner": []
-            }
-          }
+          "melding": "perfenazin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
+          "behandlet_kl": "2026-11-25T00:09:12.466Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45515762621"
         }
       },
       "besvart_commit": "fa720efac45cc28d8bc609451fa5636a46abe6c1",
-      "sist_brukt_kl": "2026-11-24T23:37:00.451Z"
+      "sist_brukt_kl": "2026-11-25T00:09:12.466Z"
     }
   }
 }
