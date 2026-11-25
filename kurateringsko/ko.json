@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T05:27:30.907Z",
+  "oppdatert_kl": "2026-11-25T05:45:06.286Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 90,
   "stoffer": {
@@ -2983,9 +2983,9 @@
         "okt": "kurateringsko/okt/20261125-045926",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T05:00:10.682Z",
-        "fornyet_kl": "2026-11-25T05:01:11.731Z",
-        "frist_kl": "2026-11-25T08:01:11.731Z",
-        "fase": "Grenen åpnet",
+        "fornyet_kl": "2026-11-25T05:45:06.286Z",
+        "frist_kl": "2026-11-25T08:45:06.286Z",
+        "fase": "Farmakodynamikk, virkninger og farmakokinetikk skrevet (revisjon 4)",
         "jobbgren": "kuratorjobb/haloperidol-0090",
         "kurateringsgren": "kuratering/haloperidol-0090",
         "pr": null,
@@ -3031,6 +3031,13 @@
           "oppgave": "haloperidol-0090",
           "okt": "kurateringsko/okt/20261125-045926",
           "melding": "Grenen åpnet"
+        },
+        {
+          "kl": "2026-11-25T05:45:06.286Z",
+          "hendelse": "fornyet",
+          "oppgave": "haloperidol-0090",
+          "okt": "kurateringsko/okt/20261125-045926",
+          "melding": "Farmakodynamikk, virkninger og farmakokinetikk skrevet (revisjon 4)"
         }
       ],
       "appgren": null
@@ -8373,28 +8380,29 @@
     },
     "kurateringsko/okt/20261125-045926": {
       "ider": [
+        "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-1",
-        "sha256": "e70a940327b8c70afcd6bf4459190ae2673d95133c6337c72e47fe7f4e0f8edd",
+        "id": "forny-2",
+        "sha256": "c9995eaa798bc30189de78456776e731129563df5fcc38a8a006bba90471490d",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-1",
-          "foresporsel_sha256": "e70a940327b8c70afcd6bf4459190ae2673d95133c6337c72e47fe7f4e0f8edd",
+          "foresporsel_id": "forny-2",
+          "foresporsel_sha256": "c9995eaa798bc30189de78456776e731129563df5fcc38a8a006bba90471490d",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av haloperidol varer til 2026-11-25T08:01:11.731Z.",
-          "behandlet_kl": "2026-11-25T05:01:11.731Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45550625140",
+          "melding": "Reservasjonen av haloperidol varer til 2026-11-25T08:45:06.286Z.",
+          "behandlet_kl": "2026-11-25T05:45:06.286Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45555675634",
           "oppgave": {
             "oppgave": "haloperidol-0090",
             "stoff": "haloperidol",
             "navn": "Haloperidol",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T08:01:11.731Z",
+            "frist_kl": "2026-11-25T08:45:06.286Z",
             "jobbgren": "kuratorjobb/haloperidol-0090",
             "kurateringsgren": "kuratering/haloperidol-0090",
             "pr": null,
@@ -8418,7 +8426,7 @@
         }
       },
       "besvart_commit": "b552434ae99e1b6a50afda80687362e62664f351",
-      "sist_brukt_kl": "2026-11-25T05:01:11.731Z"
+      "sist_brukt_kl": "2026-11-25T05:45:06.286Z"
     }
   }
 }
