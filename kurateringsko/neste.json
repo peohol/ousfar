@@ -1,25 +1,17 @@
 {
-  "oppdatert_kl": "2026-11-25T05:45:06.286Z",
+  "oppdatert_kl": "2026-11-25T06:11:05.973Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "antall": {
     "klar": 94,
-    "reservert": 1,
+    "reservert": 0,
     "fagarbeid_ferdig": 0,
-    "venter_godkjenning": 0,
+    "venter_godkjenning": 1,
     "sammenslatt": 0,
     "publisert": 21,
     "blokkert": 2,
     "utenfor": 1
   },
-  "aktive": [
-    {
-      "stoff": "haloperidol",
-      "oppgave": "haloperidol-0090",
-      "okt": "kurateringsko/okt/20261125-045926",
-      "frist_kl": "2026-11-25T08:45:06.286Z",
-      "fase": "Farmakodynamikk, virkninger og farmakokinetikk skrevet (revisjon 4)"
-    }
-  ],
+  "aktive": [],
   "holdes_tilbake": null,
   "neste": [
     {
@@ -153,7 +145,14 @@
       "tidligst_kl": null
     }
   ],
-  "til_gjennomgang": [],
+  "til_gjennomgang": [
+    {
+      "stoff": "haloperidol",
+      "gren": "e504e7a6-1f4d-4e79-b974-0f21180b40e5",
+      "grenstatus": "klar",
+      "status": "venter_godkjenning"
+    }
+  ],
   "blokkert": [
     {
       "stoff": "metamfetamin",

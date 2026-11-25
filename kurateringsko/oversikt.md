@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T05:45:06.286Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T06:11:05.973Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 94 · Reservert: 1 · Publisert: 21 · Blokkert: 2 · Utenfor køen: 1
+Klar: 94 · Venter på godkjenning: 1 · Publisert: 21 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **haloperidol** (haloperidol-0090), frist 2026-11-25T08:45:06.286Z: Farmakodynamikk, virkninger og farmakokinetikk skrevet (revisjon 4)
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **haloperidol**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 
