@@ -111,6 +111,10 @@ function BeUrinFortolkning({
   const [inndata, setInndata] = useBevart<BeUrinInndata>(beUrinBevaringsnavn(fagmiljo, modell.versjon), () =>
     tomBeUrinInndata(modell),
   )
+  // Visningsvalget i figuren eies her, ikke av figurkortet: kortet forsvinner
+  // så lenge skjemaet er ufullstendig, og valget skal stå når det kommer
+  // tilbake, også etter Nullstill.
+  const [alleMarginer, onAlleMarginer] = useBevart('fortolkning/be-urin/visning', false)
   const [fokusTeller, setFokusTeller] = useState(0)
   const forsteFelt = useRef<HTMLInputElement>(null)
 
@@ -125,6 +129,7 @@ function BeUrinFortolkning({
     setFokusTeller((t) => t + 1)
   }
   const onVelgMargin = (margin: number) => sett('sikkerhetsmargin', margin)
+  const visning = { alleMarginer, onAlleMarginer }
 
   return (
     <div className="thc">
@@ -145,16 +150,16 @@ function BeUrinFortolkning({
         />
       </Card>
       {erProfilmodell(modell) ? (
-        <BeUrinProfilresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} />
+        <BeUrinProfilresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
       ) : (
-        <BeUrinTobiresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} />
+        <BeUrinTobiresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
       )}
     </div>
   )
 }
 
 /** Resultatet med modellform 1: de to bieksponentielle profilene (#562). */
-function BeUrinTobiresultat({ inndata, modell, onVelgMargin }: BeUrinResultatProps<GodkjentBeUrinModell>) {
+function BeUrinTobiresultat({ inndata, modell, onVelgMargin, visning }: BeUrinResultatProps<GodkjentBeUrinModell>) {
   const resultat = useMemo(() => fortolkBeUrin(inndata, modell), [inndata, modell])
   const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
   return (
@@ -166,6 +171,7 @@ function BeUrinTobiresultat({ inndata, modell, onVelgMargin }: BeUrinResultatPro
         <BeUrinVisualisering
           margin={resultat.sammenligning.margin}
           sammeDag={resultat.sammeDag}
+          visning={visning}
           figur={(alle) => <BeUrinPlot sammenligning={resultat.sammenligning} modell={modell} alleMarginer={alle} />}
           beregning={
             <BeUrinBeregning

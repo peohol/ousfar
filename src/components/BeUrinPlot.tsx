@@ -18,6 +18,19 @@ import { marginvalg } from '../domain/thcVisning'
  * sier det samme med ord, og punktene står som tekst under figuren.
  */
 
+/** Merknaden i stedet for figuren når endringen er for stor til å tegnes, for begge modellformene. */
+export const FOR_STOR_TIL_FIGUR =
+  'Endringen mellom prøvene er for stor til å tegnes i figuren. Resultatet og beregningen gjelder som de står.'
+
+/** Merknaden som står i stedet for figuren når aksene ikke kan tegnes. */
+export function Figurmerknad() {
+  return (
+    <p className="notis" role="note">
+      {FOR_STOR_TIL_FIGUR}
+    </p>
+  )
+}
+
 const BREDDE = 900
 const HOYDE = 430
 const MARG = { topp: 26, hoyre: 100, bunn: 72, venstre: 24 }
@@ -59,6 +72,7 @@ export function BeUrinPlot({
     () => byggBeUrinGraf(sammenligning, modell.kurver, denne.map((p) => prosentFor(p.korrigertRatio))),
     [sammenligning, modell, denne],
   )
+  if (!graf) return <Figurmerknad />
 
   return (
     <>
@@ -127,10 +141,7 @@ export function BeUrinFigur<R>({
   const x = (dag: number) => venstre + (dag / graf.xMaks) * (hoyre - venstre)
   const y = (prosent: number) => topp + ((graf.yTopp - prosent) / (graf.yTopp - graf.yBunn)) * (bunn - topp)
 
-  const yMerker: number[] = []
-  for (let v = graf.yBunn; v <= graf.yTopp + 1e-6; v += graf.ySteg) yMerker.push(v)
-  const xMerker: number[] = []
-  for (let dag = 0; dag <= graf.xMaks + 1e-6; dag += graf.xSteg) xMerker.push(dag)
+  const { xMerker, yMerker } = graf
   const punktklasse = (p: Figurpunkt) => `thc-plot__punkt${p.tone ? ` thc-plot__punkt--${p.tone}` : ''}`
 
   return (

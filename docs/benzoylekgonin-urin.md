@@ -104,12 +104,24 @@ listen `profiler` med fem profiler, hver med fast ID og type:
 | ID | Type | Navn i appen | Parametre | Kilde |
 | --- | --- | --- | --- | --- |
 | `enkeltinntak` | mono | Utskillelse etter enkeltinntak | a = 1, k = 24·ln 2/7 = 2,3765046190626693 d⁻¹ | Cone et al. 2003, doi:10.1093/jat/27.7.386: egen log-lineær regresjon av 18 profiler, største t½ ≈ 6,95 h, rundet til 7 h |
-| `gjentatte_doser` | mono | Utskillelse etter gjentatte doser innenfor et kort tidsrom | a = 1, k = 24·ln 2/35 = 0,47530092381253386 d⁻¹ | Jufer et al. 2000, doi:10.1093/jat/24.7.467: 35 h er valgt fra største t½ 34,5 h; et valgt referansepunkt, ikke en dokumentert øvre grense |
+| `gjentatte_doser` | mono | Utskillelse etter gjentatte doser innenfor et kort tidsrom | a = 1, k = 24·ln 2/35 = 0,47530092381253386 d⁻¹ | Jufer et al. 2000, doi:10.1093/jat/24.7.467 (PMID 11043648): 35 h er valgt fra største t½ 34,5 h; et valgt referansepunkt, ikke en dokumentert øvre grense (se under) |
 | `moderat` | mono | Moderat utskillelse | a = 267,2691490332445, k = 0,2891162303589332 d⁻¹ (t½ = 57,54 h) | Log-lineær regresjon av 13 lokale kvotienter (R²(log) = 0,9053, RMSE(log) = 0,7242). Bare de avledede parametrene står her; rådataene skal aldri i repoet, testene eller dokumentasjonen |
 | `bi_a` | bi | Treg eller ekstrem, per sammenligning | C1 i form 1, alle sifre | #562 |
 | `bi_b` | bi | Treg eller ekstrem, per sammenligning | C2 i form 1, alle sifre | #562 |
 
 Rekkefølgen i listen spiller ingen rolle; ID-en er nøkkelen, ikke navnet.
+
+**Kildene og forbeholdene.** Jufer et al. 2000 gjaldt gjentatt
+høydoseadministrasjon av kokain i opptil 16 dager, og den terminale
+halveringstiden for benzoylekgonin ble beregnet med ARE-metoden (mengden som
+gjenstår å skilles ut). Studien gir altså ingen direkte etablert øvre grense
+for kreatininkorrigert utskillelse etter én kort sesjon; 35 h er et valgt
+referansepunkt. For alle fem profilene gjelder at sammenligningene forutsetter
+at prøvene er tatt i eliminasjonsfasen, etter at opptaket fra et inntak er
+avsluttet, og om eliminasjonsfasen har startet, kan ikke fastslås ut fra
+prøvene. Gradene og vurderingene er kvalitative faglige sammenligninger med
+profilene, ikke kalibrerte sannsynligheter. Dette står i den utvidbare
+beregningen (`BE_URIN_FORUTSETNING`), ikke som et fast banner.
 
 **Tersklene.** For de monoeksponentielle er R_i = e^(−k_i·d) direkte,
 uavhengig av Q1 og a. For de bieksponentielle er fremgangsmåten den samme som

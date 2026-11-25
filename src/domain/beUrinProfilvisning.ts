@@ -113,6 +113,15 @@ export function marginsetning(margin: number): string {
     : `Konsentrasjonsendringene er justert for måleusikkerhet med ${somProsent(margin)} % sikkerhetsmargin.`
 }
 
+/**
+ * Forbeholdet i beregningen (#570): hva sammenligningene forutsetter, og hva
+ * gradene og vurderingene ikke er. Ikke et fast banner.
+ */
+export const BE_URIN_FORUTSETNING =
+  'Sammenligningene forutsetter at prøvene er tatt i eliminasjonsfasen, altså etter at opptaket fra et inntak er ' +
+  'avsluttet. Om eliminasjonsfasen har startet, kan ikke fastslås ut fra prøvene. Gradene og vurderingene er ' +
+  'kvalitative faglige sammenligninger med profilene, ikke kalibrerte sannsynligheter.'
+
 /** Merknaden når de to bieksponentielle profilene gir samme terskel. */
 export const BE_URIN_LIKE_BI =
   'Treg og ekstrem utskillelse gir nøyaktig samme terskel for disse prøvene.'

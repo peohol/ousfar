@@ -18,10 +18,10 @@ import { describe, expect, it } from 'vitest'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
 import { SAMME_DAG_FEIL } from '../domain/beUrinMotor'
 import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
-import { BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
+import { BE_URIN_FORUTSETNING, BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
 import { BE_URIN_ROLLER } from '../domain/beUrinProfiler'
 import { PROFILMODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
-import { FOR_STOR_TIL_FIGUR } from '../components/BeUrinProfilPlot'
+import { FOR_STOR_TIL_FIGUR } from '../components/BeUrinPlot'
 import { forberedBeUrinDom, fyll, visBeUrin } from './hjelp/beUrinvisning'
 
 forberedBeUrinDom()
@@ -113,6 +113,9 @@ describe('resultatpanelet med fem profiler', () => {
     expect(tekst).toContain('Treg utskillelse: bieksponentiell (profil B)')
     expect(tekst).toContain('Moderat utskillelse: monoeksponentiell, R = e^(−k·d) med k = 0,2891 per døgn')
     expect(tekst).toMatch(/terskelen R = 0,09287 \(−91 %\)\. F = Rkorr\/R = 7,41: langt over/)
+    // Forbeholdet står i beregningen, ikke som et fast banner.
+    expect(tekst).toContain(BE_URIN_FORUTSETNING)
+    expect(resultatkort().textContent).not.toContain('eliminasjonsfasen')
   })
 
   it('bytter navnene på de to bieksponentielle profilene med referanseprøven', async () => {

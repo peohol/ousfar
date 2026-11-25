@@ -36,7 +36,12 @@ import { formaterDatoNorsk } from '../domain/thcTall'
  * side om side. Ingen fast merking om at modellen er tentativ, og ingen
  * kopiering: dette er intern beslutningsstøtte.
  */
-export function BeUrinProfilresultat({ inndata, modell, onVelgMargin }: BeUrinResultatProps<GodkjentBeUrinProfilmodell>) {
+export function BeUrinProfilresultat({
+  inndata,
+  modell,
+  onVelgMargin,
+  visning,
+}: BeUrinResultatProps<GodkjentBeUrinProfilmodell>) {
   const resultat = useMemo(() => fortolkBeUrinProfiler(inndata, modell), [inndata, modell])
   const mildere = useMemo(() => mildereProfilutfall(inndata, modell, resultat), [inndata, modell, resultat])
   return (
@@ -55,6 +60,7 @@ export function BeUrinProfilresultat({ inndata, modell, onVelgMargin }: BeUrinRe
       {resultat.type === 'vurdering' && (
         <BeUrinVisualisering
           margin={resultat.sammenligning.margin}
+          visning={visning}
           figur={(alle) => <BeUrinProfilPlot sammenligning={resultat.sammenligning} modell={modell} alleMarginer={alle} />}
           beregning={
             <BeUrinProfilberegning

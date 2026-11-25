@@ -48,6 +48,13 @@ function uten(fra: number, til: number, dager: number, m = MODELL) {
   return s
 }
 
+/** Figuren, som skal kunne tegnes. */
+function profilgraf(...a: Parameters<typeof byggProfilgraf>) {
+  const graf = byggProfilgraf(...a)
+  if (!graf) throw new Error('Ventet en figur.')
+  return graf
+}
+
 const terskel = (s: ReturnType<typeof uten>, rolle: BeUrinRolle) => profilFor(s, rolle).terskel
 const id = (s: ReturnType<typeof uten>, rolle: BeUrinRolle) => profilFor(s, rolle).profil.id
 
@@ -453,7 +460,7 @@ describe('figuren', () => {
   it('har alle fem profilene, fra 0 % til motorens terskler', () => {
     const s = uten(100, 80, 3)
     const punkter = profilMarginpunkter(MODELL, s, MARGINER.map((m) => m.margin))
-    const graf = byggProfilgraf(s, BE_URIN_ROLLENAVN, punkter.map((p) => prosentFor(p.korrigertRatio)))
+    const graf = profilgraf(s, BE_URIN_ROLLENAVN, punkter.map((p) => prosentFor(p.korrigertRatio)))
     expect(graf.kurver.map((k) => k.navn)).toEqual([
       'Utskillelse etter enkeltinntak',
       'Utskillelse etter gjentatte doser innenfor et kort tidsrom',
@@ -471,16 +478,26 @@ describe('figuren', () => {
   })
 
   it('tegner de monoeksponentielle profilene likt uansett Q1, og navnene følger sammenligningen', () => {
-    const graf = (q: number) => byggProfilgraf(uten(q, q, 2), BE_URIN_ROLLENAVN, [0])
+    const graf = (q: number) => profilgraf(uten(q, q, 2), BE_URIN_ROLLENAVN, [0])
     const [lav, hoy] = [graf(1), graf(100)]
     for (const rolle of ['enkeltinntak', 'gjentatte_doser', 'moderat'] as const) {
       expect(lav.kurver.find((k) => k.rolle === rolle)!.punkter).toEqual(hoy.kurver.find((k) => k.rolle === rolle)!.punkter)
     }
     const midt = uten(3.25, 3.25, 1)
     expect(id(midt, 'ekstrem')).toBe('bi_b')
-    const ekstrem = byggProfilgraf(midt, BE_URIN_ROLLENAVN, [0]).kurver.find((k) => k.rolle === 'ekstrem')!
+    const ekstrem = profilgraf(midt, BE_URIN_ROLLENAVN, [0]).kurver.find((k) => k.rolle === 'ekstrem')!
     expect(ekstrem.navn).toBe('Ekstrem utskillelse')
     expect(ekstrem.punkter.at(-1)!.prosent).toBe(prosentFor(terskel(midt, 'ekstrem')))
+  })
+
+  it('tegnes ikke når aksens topp rundes opp utenfor flyttallene, selv om alle verdiene er endelige', () => {
+    // Q 1 → 1,75e306 uten margin: denne prøven ved +1,75e308 %, men toppen ville blitt 9 · 2e307 = ∞.
+    const s = uten(1, 1.75e306, 1)
+    const denne = prosentFor(s.korrigertRatio)
+    expect(Number.isFinite(denne)).toBe(true)
+    expect(byggProfilgraf(s, BE_URIN_ROLLENAVN, [denne])).toBeNull()
+    // Vurderingen gjelder likevel.
+    expect(s.kronisk).toBe('svaert_sannsynlig')
   })
 
   it('gir punktene for denne prøven med motorens korreksjon', () => {

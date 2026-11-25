@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { useBevart } from '../oppdatering/Bevaring'
 import { Button } from './Button'
 import { Card } from './Card'
 import { Details } from './Details'
@@ -15,29 +14,41 @@ import { marginliste, marginmerke, somProsent } from '../domain/thcVisning'
  * beregningen.
  */
 
-/** Det resultatdelen av modulen får: inndataene, modellen og veien til å velge en margin. */
+/** Valget mellom valgt og alle sikkerhetsmarginer i figuren. */
+export interface BeUrinVisningsvalg {
+  alleMarginer: boolean
+  onAlleMarginer: (alle: boolean) => void
+}
+
+/**
+ * Det resultatdelen av modulen får: inndataene, modellen, veien til å velge en
+ * margin og visningsvalget. Visningsvalget eies av skallet, som lever gjennom
+ * et midlertidig ugyldig skjema, så det står når figuren kommer tilbake.
+ */
 export interface BeUrinResultatProps<M> {
   inndata: BeUrinInndata
   modell: M
   onVelgMargin: (margin: number) => void
+  visning: BeUrinVisningsvalg
 }
 
 /**
  * Kortet med figuren og beregningen (d ≥ 1), eller bare beregningen samme
- * dag når modellformen vurderer det, delt mellom modellformene. Bryteren for alle marginene huskes.
+ * dag når modellformen vurderer det, delt mellom modellformene.
  */
 export function BeUrinVisualisering({
   margin,
   sammeDag = false,
+  visning: { alleMarginer, onAlleMarginer },
   figur,
   beregning,
 }: {
   margin: number
   sammeDag?: boolean
+  visning: BeUrinVisningsvalg
   figur: (alleMarginer: boolean) => ReactNode
   beregning: ReactNode
 }) {
-  const [alleMarginer, setAlleMarginer] = useBevart('fortolkning/be-urin/visning', false)
   if (sammeDag) {
     return (
       <Card align="start" className="thc-plot">
@@ -57,7 +68,7 @@ export function BeUrinVisualisering({
             { verdi: true, merke: 'Visualiser med alle sikkerhetsmarginer' },
           ]}
           verdi={alleMarginer}
-          onVelg={setAlleMarginer}
+          onVelg={onAlleMarginer}
         />
       </div>
       {figur(alleMarginer)}

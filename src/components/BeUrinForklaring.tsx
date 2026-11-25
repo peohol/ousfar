@@ -1,7 +1,13 @@
 import { logSd, type BeUrinSammenligning } from '../domain/beUrinMotor'
 import type { BeUrinFellesmodell, BeUrinModell } from '../domain/beUrinModell'
 import { BE_URIN_GRADGRENSER, type BeUrinProfilsammenligning, type BeUrinProfilvurdering } from '../domain/beUrinProfiler'
-import { BE_URIN_GRADTEKST, BE_URIN_LIKE_BI, BE_URIN_ROLLENAVN, formaterLogRatio } from '../domain/beUrinProfilvisning'
+import {
+  BE_URIN_FORUTSETNING,
+  BE_URIN_GRADTEKST,
+  BE_URIN_LIKE_BI,
+  BE_URIN_ROLLENAVN,
+  formaterLogRatio,
+} from '../domain/beUrinProfilvisning'
 import { prosentFor } from '../domain/beUrinPlot'
 import { antallDogn, erEkstrapolert, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
@@ -206,13 +212,14 @@ export function BeUrinProfilberegning({
             {BE_URIN_GRADGRENSER.over}), langt over ({BE_URIN_GRADGRENSER.over} &lt; F ≤ {BE_URIN_GRADGRENSER.langtOver}) og
             svært langt over (F &gt; {BE_URIN_GRADGRENSER.langtOver}). Hvilken av de to bieksponentielle profilene som er treg
             og hvilken som er ekstrem, avgjøres for disse prøvene: den med høyest terskel er ekstrem.
-            {s.likeBi && s.dager > 0 && ` ${BE_URIN_LIKE_BI}`}
+            {s.likeBi && ` ${BE_URIN_LIKE_BI}`}
           </p>
           <p>
             t er punktet på profilen der Q<sub>1</sub> står, ikke tiden siden inntak.
             {ekstrapolert &&
               ' Q₁ ligger over startverdien til minst én bieksponentiell profil (t under 0). Terskelen er da regnet ved matematisk ekstrapolasjon av kurven, et område modellen ikke er dokumentert for.'}
           </p>
+          <p>{BE_URIN_FORUTSETNING}</p>
         </div>
       </section>
     </div>
