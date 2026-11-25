@@ -1,0 +1,696 @@
+-- Bivirkninger for fagsiden «risperidon» fra Preparatomtale (SPC) for Risperidon Sandoz 1 mg tablett, filmdrasjert.
+-- Laget av scripts/lag-bivirkningsimport.ts fra importfila; se docs/bivirkninger.md.
+select intern.endring_start('claude-monografkurator', '20261125100400_risperidon_sandoz_bivirkninger.sql', 'Bivirkninger lagt inn fra Preparatomtale (SPC) for Risperidon Sandoz 1 mg tablett, filmdrasjert');
+select bivirkninger.importer($import${
+  "format": "ousfar-bivirkninger/1",
+  "stoff": "risperidon",
+  "kilde": {
+    "nokkel": "risperidon-sandoz-tabletter",
+    "type": "spc",
+    "tittel": "Preparatomtale (SPC) for Risperidon Sandoz 1 mg tablett, filmdrasjert",
+    "preparat": "Risperidon Sandoz tablett, filmdrasjert",
+    "innehaver": "Sandoz AS",
+    "revisjonsdato": "2024-01-05",
+    "lenke": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3068.pdf",
+    "kontrollert": "2026-11-25",
+    "kontrollert_av": "claude-monografkurator",
+    "importert_av": "claude-monografkurator",
+    "merknad": "Punkt 4.8, tabellen lest ut av PDF-ens egne ordkoordinater. Denne preparatomtalen setter tabellen i tre kolonner (organklassesystem, frekvens, bivirkninger) i stedet for en frekvensmatrise; hver bivirkning står i den frekvensen den har i omtalen. Samme preparatomtale gjelder styrkene 1, 2, 3 og 4 mg. Omtalen er oversatt for seg og bruker andre norske termer enn Risperdal-omtalene; termene står ordrett, også der de avviker («unormal koordinering», «søvnapnésyndrom», «atonisk irissyndrom (perioperativt)», «hodetitubasjon»). Fotnote d er felles for åtte bivirkninger og er lengre enn feltet tar; hver bivirkning har den delen av fotnoten som gjelder den, ordrett."
+  },
+  "organsystemer": [
+    {
+      "organsystem": "infeksiose",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Pneumoni",
+            "bronkitt",
+            "øvre luftveisinfeksjon",
+            "sinusitt",
+            "urinveisinfeksjon",
+            "øreinfeksjon",
+            "influensa"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Luftveisinfeksjon",
+            "cystitt",
+            "øyeinfeksjon",
+            "tonsillitt",
+            "onykomykose",
+            "cellulitt",
+            "lokal infeksjon",
+            "virusinfeksjon",
+            "akarodermatitt"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Infeksjon"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "blod_lymfe",
+      "frekvenser": [
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Nøytropeni",
+            "redusert leukocyttall",
+            "trombocytopeni",
+            "anemi",
+            "redusert hematokritt",
+            "økt eosinofiltall"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            {
+              "tekst": "Agranulocytose",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "immunsystemet",
+      "frekvenser": [
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Hypersensitivitet"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            {
+              "tekst": "Anafylaktisk reaksjon",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "endokrine",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            {
+              "tekst": "Hyperprolaktinemi",
+              "fotnote": "Hyperprolaktinemi kan i enkelte tilfeller føre til gynekomasti, menstruasjonsforstyrrelser, amenoré, galaktoré."
+            }
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Uhensiktsmessig sekresjon av antidiuretisk hormon",
+            "glukose i urinen"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "stoffskifte",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Vektøkning",
+            "økt appetitt",
+            "redusert appetitt"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            {
+              "tekst": "Diabetes mellitus",
+              "fotnote": "I placebokontrollerte studier ble diabetes mellitus rapportert hos 0,18 % av de risperidonbehandlede forsøkspersonene sammenlignet med 0,11 % i placebogruppen. Samlet forekomst i alle kliniske studier var 0,43 % hos alle risperidonbehandlede forsøkspersoner."
+            },
+            "hyperglykemi",
+            "polydipsi",
+            "vekttap",
+            "anoreksi",
+            "økt nivå av kolesterol i blodet"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            {
+              "tekst": "Vannintoksikasjon",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            },
+            "hypoglykemi",
+            {
+              "tekst": "hyperinsulinemi",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            },
+            "økt nivå av triglyserider i blodet"
+          ]
+        },
+        {
+          "frekvens": "svaert_sjeldne",
+          "bivirkninger": [
+            "Diabetisk ketoacidose"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "psykiatriske",
+      "frekvenser": [
+        {
+          "frekvens": "svaert_vanlige",
+          "bivirkninger": [
+            {
+              "tekst": "Søvnløshet",
+              "fotnote": "Søvnløshet inkluderer: innsovningsvansker, intermediær søvnløshet."
+            }
+          ]
+        },
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Søvnforstyrrelser",
+            "agitasjon",
+            "depresjon",
+            "angst"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Mani",
+            "tilstand av forvirring",
+            "nedsatt libido",
+            "nervøsitet",
+            "mareritt"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Katatoni",
+            "somnambulisme",
+            "søvnrelatert spiseforstyrrelse",
+            "sløvet affekt",
+            "anorgasmi"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "nevrologiske",
+      "frekvenser": [
+        {
+          "frekvens": "svaert_vanlige",
+          "bivirkninger": [
+            "Sedasjon/søvnighet",
+            {
+              "tekst": "parkinsonisme",
+              "fotnote": "Ekstrapyramidale lidelser kan forekomme: Parkinsonisme (hypersekresjon av spytt, muskel-skjelettstivhet, parkinsonisme, sikling, tannhjulstivhet (cog wheel), bradykinesi, hypokinesi, maskeansikt, stramme muskler, akinesi, nakkestivhet, muskelstivhet, parkinson-gange og unormal glabellar refleks, parkinsonskjelvinger ved hvile)."
+            },
+            "hodepine"
+          ]
+        },
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            {
+              "tekst": "Akatisi",
+              "fotnote": "Ekstrapyramidale lidelser kan forekomme: akatisi (akatisi, rastløshet, hyperkinesi og ”restless legs”-syndrom)."
+            },
+            {
+              "tekst": "dystoni",
+              "fotnote": "Ekstrapyramidale lidelser kan forekomme: dystoni. Dystoni inkluderer dystoni, hypertoni, tortikollis, ufrivillige muskelkontraksjoner, muskelkontraktur, blefarospasme, oculogyrasjon, tungeparalyse, ansiktsspasmer, laryngospasmer, myotonia, opistotonus, orofaryngeal spasme, pleurotonus, tungespasme, og trismus. Det skal bemerkes at et bredere spektrum av symptomer er inkludert, som ikke nødvendigvis er ekstrapyramidale i opprinnelse."
+            },
+            "svimmelhet",
+            {
+              "tekst": "dyskinesi",
+              "fotnote": "Ekstrapyramidale lidelser kan forekomme: dyskinesi (dyskinesi, muskelrykninger, koreoateose, ateose og myoklonus)."
+            },
+            "skjelvinger"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Tardiv dyskinesi",
+            "cerebrovaskulær iskemi",
+            "passiv til stimuli",
+            "tap av bevissthet",
+            "redusert bevissthetsnivå",
+            {
+              "tekst": "kramper",
+              "fotnote": "Kramper inkluderer: Grand mal-kramper."
+            },
+            "synkope",
+            "psykomotorisk hyperaktivitet",
+            "balanseforstyrrelse",
+            "unormal koordinering",
+            "postural svimmelhet",
+            "oppmerksomhetsforstyrrelse",
+            "dysartri",
+            "dysgeusi",
+            "hypestesi",
+            "parestesi"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Malignt nevroleptikasyndrom",
+            "cerebrovaskulær lidelse",
+            "diabetisk koma",
+            "hodetitubasjon"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "oye",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Tåkesyn",
+            "konjunktivitt"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Fotofobi",
+            "tørre øyne",
+            "økt tåreflom",
+            "okulær hyperemi"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Glaukom",
+            "øyebevegelsesforstyrrelser",
+            "rullende øyne",
+            "skorpe på øyelokksranden",
+            {
+              "tekst": "atonisk irissyndrom (perioperativt)",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "ore_labyrint",
+      "frekvenser": [
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Vertigo",
+            "tinnitus",
+            "øresmerter"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "hjerte",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Takykardi"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Atrieflimmer",
+            "atrioventrikulærblokk",
+            "ledningsforstyrrelser",
+            "QT-forlengelse i elektrokardiogram",
+            "bradykardi",
+            "unormalt elektrokardiogram",
+            "palpitasjoner"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Sinusarytmi"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "kar",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Hypertensjon"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Hypotensjon",
+            "ortostatisk hypotensjon",
+            "rødming"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Lungeemboli",
+            "venetrombose"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "respirasjon",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Dyspné",
+            "faryngolaryngeal smerte",
+            "hoste",
+            "neseblødning",
+            "nesetetthet"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Aspirasjonspneumoni",
+            "lungestase",
+            "luftveiskongestion",
+            "ralling/pipende lyd i brystet",
+            "pipende pust",
+            "dysfoni",
+            "åndedrettsforstyrrelse"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Søvnapnésyndrom",
+            "hyperventilering"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "gastrointestinale",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Abdominal smerte",
+            "ubehag i magen",
+            "oppkast",
+            "kvalme",
+            "forstoppelse",
+            "diaré",
+            "dyspepsi",
+            "munntørrhet",
+            "tannpine"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Fekal inkontinens",
+            "fekalom",
+            "gastroenteritt",
+            "dysfagi",
+            "flatulens"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Pankreatitt",
+            "tarmobstruksjon",
+            "hoven tunge",
+            "cheilitt"
+          ]
+        },
+        {
+          "frekvens": "svaert_sjeldne",
+          "bivirkninger": [
+            "Ileus"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "lever_galle",
+      "frekvenser": [
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Økte transaminaser",
+            "økt gammaglutamyltransferase",
+            "økte leverenzymer"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Gulsott"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "hud",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Utslett",
+            "erytem"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Urtikaria",
+            "pruritus",
+            "håravfall",
+            "hyperkeratose",
+            "eksem",
+            "tørr hud",
+            "misfarget hud",
+            "akne",
+            "seboreisk dermatitt",
+            "hudsykdom",
+            "hudlesjoner"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Legemiddelutslett",
+            "flass"
+          ]
+        },
+        {
+          "frekvens": "svaert_sjeldne",
+          "bivirkninger": [
+            "Angioødem"
+          ]
+        },
+        {
+          "frekvens": "ikke_kjent",
+          "bivirkninger": [
+            {
+              "tekst": "Stevens-Johnson syndrom/toksisk epidermal nekrolyse",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "muskel_skjelett",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Muskelspasmer",
+            "muskel-skjelettsmerter",
+            "ryggsmerter",
+            "artralgi"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Økt kreatinkinase i blodet",
+            "unormal holdning",
+            "leddstivhet",
+            "leddhevelse",
+            "muskelsvakhet",
+            "nakkesmerter"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Rhabdomyolyse"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "nyre_urinveier",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Urininkontinens"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Pollakisuri",
+            "urinretensjon",
+            "dysuri"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "svangerskap",
+      "frekvenser": [
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            {
+              "tekst": "Legemiddelabstinenssymptomer hos nyfødte",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "kjonnsorganer_bryst",
+      "frekvenser": [
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Erektil dysfunksjon",
+            "ejakulasjonsforstyrrelser",
+            "amenoré",
+            {
+              "tekst": "menstruasjonsforstyrrelser",
+              "fotnote": "Menstruasjonsforstyrrelser inkluderer: Uregelmessig menstruasjon, oligomenoré."
+            },
+            "gynekomasti",
+            "galaktoré",
+            "seksuell dysfunksjon",
+            "smerter i brystene",
+            "ubehag i brystene",
+            "vaginal utflod"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            {
+              "tekst": "Priapisme",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            },
+            "forsinket menstruasjon",
+            "brystspreng",
+            "brystforstørrelse",
+            "utsondring fra brystene"
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "generelle",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            {
+              "tekst": "Ødem",
+              "fotnote": "Ødem inkluderer: generalisert ødem, perifert ødem, pitting ødem."
+            },
+            "pyreksi",
+            "brystsmerter",
+            "asteni",
+            "utmattelse",
+            "smerter"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Ansiktsødem",
+            "kuldegysninger",
+            "økt kroppstemperatur",
+            "forstyrrelse i ganglaget",
+            "tørste",
+            "ubehag i brystet",
+            "sykdomsfølelse",
+            "unormal følelse",
+            "ubehag"
+          ]
+        },
+        {
+          "frekvens": "sjeldne",
+          "bivirkninger": [
+            "Hypotermi",
+            "redusert kroppstemperatur",
+            "perifer kuldefølelse",
+            "legemiddelabstinenssyndrom",
+            {
+              "tekst": "indurasjon",
+              "fotnote": "Ikke observert i kliniske studier med risperidon, men observert etter markedsføring av risperidon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organsystem": "skader",
+      "frekvenser": [
+        {
+          "frekvens": "vanlige",
+          "bivirkninger": [
+            "Fall"
+          ]
+        },
+        {
+          "frekvens": "mindre_vanlige",
+          "bivirkninger": [
+            "Smerter ved medisinske prosedyrer"
+          ]
+        }
+      ]
+    }
+  ]
+}$import$::jsonb);
