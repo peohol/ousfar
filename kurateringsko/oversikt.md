@@ -1,16 +1,16 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T03:40:12.955Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T03:52:12.057Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
-Klar: 95 · Reservert: 1 · Publisert: 20 · Blokkert: 2 · Utenfor køen: 1
+Klar: 95 · Venter på godkjenning: 1 · Publisert: 20 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **aripiprazol** (aripiprazol-0089), frist 2026-11-25T06:40:12.955Z: Alle fagseksjoner skrevet; skriver dokumentene for fase 7
+Ingen kurateringer er reservert nå.
 
 ## Til gjennomgang
 
-Ingen kurateringer venter.
+- **aripiprazol**: kurateringsgren i OUSFAR (klar), venter på godkjenning
 
 ## Blokkert
 
