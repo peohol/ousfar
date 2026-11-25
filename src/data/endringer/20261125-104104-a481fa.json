@@ -1,0 +1,14 @@
+{
+  "id": "20261125-104104-a481fa",
+  "semver": "patch",
+  "opprettet": "2026-11-25T10:41:04Z",
+  "sammendrag": "Plan for medarbeiderdata fra brukeroversikten til vaktplanen",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Planen for vaktplanen beskriver nå at stillingskategori, aktiv eller ikke aktiv og hvem som kan ha vakt 1 og vakt 2, senere skal hentes fra brukeroversikten i fagmiljøet. Selve vaktplanen er ikke laget ennå."
+  ],
+  "utenVarsel": true
+}
