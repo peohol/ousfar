@@ -1,12 +1,12 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-25T03:31:10.770Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-25T03:40:12.955Z. Stoffene sist lest fra databasen 2026-11-24T11:26:21.009Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 95 · Reservert: 1 · Publisert: 20 · Blokkert: 2 · Utenfor køen: 1
 
 ## Pågår
 
-- **aripiprazol** (aripiprazol-0089), frist 2026-11-25T06:17:45.041Z: Virkninger og farmakodynamikk skrevet; skriver de gjenstaende seksjonene
+- **aripiprazol** (aripiprazol-0089), frist 2026-11-25T06:40:12.955Z: Alle fagseksjoner skrevet; skriver dokumentene for fase 7
 
 ## Til gjennomgang
 
