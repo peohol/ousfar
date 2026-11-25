@@ -33,7 +33,7 @@
 
 select intern.endring_start('claude-code', '20261125121500_be_urin_fem_profiler.sql',
   'Fortolkningen av benzoylekgonin i urin bruker fem utskillelsesprofiler i OUS Klinisk farmakologi',
-  array['https://github.com/peohol/ousfar/pull/571']::text[]);
+  array['https://github.com/peohol/ousfar/pull/575']::text[]);
 
 do $$
 declare
