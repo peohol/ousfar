@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T01:49:42.568Z",
+  "oppdatert_kl": "2026-11-25T01:51:24.807Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 89,
   "stoffer": {
@@ -235,13 +235,13 @@
         "okt": "kurateringsko/okt/20261125-014902",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T01:49:42.568Z",
-        "fornyet_kl": "2026-11-25T01:49:42.568Z",
-        "frist_kl": "2026-11-25T04:49:42.568Z",
-        "fase": null,
+        "fornyet_kl": "2026-11-25T01:51:24.807Z",
+        "frist_kl": "2026-11-25T04:51:24.807Z",
+        "fase": "Grenen åpnet",
         "jobbgren": "kuratorjobb/aripiprazol-0089",
         "kurateringsgren": "kuratering/aripiprazol-0089",
         "pr": null,
-        "gren": null,
+        "gren": "cc78982f-8415-48f0-bb5b-75be3ff3b718",
         "kunnskapsgrense": null
       },
       "forsok": 1,
@@ -270,6 +270,19 @@
           "oppgave": "aripiprazol-0089",
           "okt": "kurateringsko/okt/20261125-014902",
           "melding": "Forsøk 1, de_novo."
+        },
+        {
+          "kl": "2026-11-25T01:51:24.807Z",
+          "hendelse": "gren_funnet",
+          "oppgave": "aripiprazol-0089",
+          "melding": "Fant kurateringsgrenen cc78982f-8415-48f0-bb5b-75be3ff3b718."
+        },
+        {
+          "kl": "2026-11-25T01:51:24.807Z",
+          "hendelse": "fornyet",
+          "oppgave": "aripiprazol-0089",
+          "okt": "kurateringsko/okt/20261125-014902",
+          "melding": "Grenen åpnet"
         }
       ],
       "appgren": null
@@ -8233,31 +8246,32 @@
     },
     "kurateringsko/okt/20261125-014902": {
       "ider": [
+        "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "reserver-1",
-        "sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
+        "id": "forny-1",
+        "sha256": "aaef98b76b69920e76b422bbd63913094048bdc720b7ed27e85385c2b4c657db",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "reserver-1",
-          "foresporsel_sha256": "5d4bd7e55eab7657c34617161a1442f11182015156a3b164881d25b133af6ed0",
-          "handling": "reserver",
+          "foresporsel_id": "forny-1",
+          "foresporsel_sha256": "aaef98b76b69920e76b422bbd63913094048bdc720b7ed27e85385c2b4c657db",
+          "handling": "forny",
           "utfall": "ok",
-          "melding": "aripiprazol er reservert til 2026-11-25T04:49:42.568Z.",
-          "behandlet_kl": "2026-11-25T01:49:42.568Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45528526417",
+          "melding": "Reservasjonen av aripiprazol varer til 2026-11-25T04:51:24.807Z.",
+          "behandlet_kl": "2026-11-25T01:51:24.807Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45528745474",
           "oppgave": {
             "oppgave": "aripiprazol-0089",
             "stoff": "aripiprazol",
             "navn": "Aripiprazol",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T04:49:42.568Z",
+            "frist_kl": "2026-11-25T04:51:24.807Z",
             "jobbgren": "kuratorjobb/aripiprazol-0089",
             "kurateringsgren": "kuratering/aripiprazol-0089",
             "pr": null,
-            "gren": null,
+            "gren": "cc78982f-8415-48f0-bb5b-75be3ff3b718",
             "gjenoppta": null,
             "sist_kuratert": null,
             "maal": {
@@ -8270,20 +8284,14 @@
               "elementer_uten_kilde": 15
             },
             "prioritet": {
-              "poeng": 417.3,
-              "grunner": [
-                "De novo-kuratering i runden som gjelder.",
-                "Aldri kuratert.",
-                "Ingen kuratering å regne alderen fra.",
-                "5 av 13 redaksjonelle seksjoner er tomme.",
-                "15 av 26 elementer har ingen kilde."
-              ]
+              "poeng": 0,
+              "grunner": []
             }
           }
         }
       },
       "besvart_commit": null,
-      "sist_brukt_kl": "2026-11-25T01:49:42.568Z"
+      "sist_brukt_kl": "2026-11-25T01:51:24.807Z"
     }
   }
 }
