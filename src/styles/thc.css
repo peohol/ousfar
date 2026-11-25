@@ -356,7 +356,12 @@
   border-radius: var(--runding-pille);
 }
 
+/* Fargestreken og navnet side om side, også uten et tips rundt (som i
+   modulen for benzoylekgonin i urin): en tom span får ellers ingen bredde. */
 .thc-legende__punkt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-3);
   font-size: var(--tekst-etikett);
   font-weight: var(--vekt-halvfet);
 }
