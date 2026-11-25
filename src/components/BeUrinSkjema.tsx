@@ -6,7 +6,7 @@ import { Trinnbryter } from './Trinnbryter'
 import { Ikon } from './ikon/Ikon'
 import { BeUrinMarginforklaring } from './BeUrinForklaring'
 import { kvotient, tomBeUrinProve, type BeUrinInndata, type BeUrinProve } from '../domain/beUrinMotor'
-import type { BeUrinModell } from '../domain/beUrinModell'
+import type { BeUrinFellesmodell } from '../domain/beUrinModell'
 import { formaterIrcak } from '../domain/thcTall'
 import { marginvalg } from '../domain/thcVisning'
 import { medEnhet, tallMedEnhet } from '../domain/beUrinVisning'
@@ -14,7 +14,9 @@ import { medEnhet, tallMedEnhet } from '../domain/beUrinVisning'
 export interface BeUrinSkjemaProps {
   inndata: BeUrinInndata
   onEndre: <K extends keyof BeUrinInndata>(felt: K, verdi: BeUrinInndata[K]) => void
-  modell: BeUrinModell
+  modell: BeUrinFellesmodell
+  /** Når denne prøven sammenlignes med de tidligere prøvene, etter modellformen. */
+  samletIngress: string
   /** Feltet som står først, og som får fokus når skjemaet åpnes eller nullstilles. */
   forsteFelt?: Ref<HTMLInputElement>
 }
@@ -25,7 +27,7 @@ export interface BeUrinSkjemaProps {
  * sikkerhetsmarginen. Samme oppsett som THC-syremodulen, uten bruksmønster,
  * «ingen tidligere prøve» og kort tid.
  */
-export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkjemaProps) {
+export function BeUrinSkjema({ inndata, onEndre, modell, samletIngress, forsteFelt }: BeUrinSkjemaProps) {
   const marginer = modell.sikkerhetsmarginer.map(({ margin }) => ({ verdi: margin, merke: marginvalg(margin) }))
   const settTidligere = (prover: BeUrinProve[]) => onEndre('tidligere', prover)
 
@@ -59,10 +61,7 @@ export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkj
 
       {inndata.samletVurdering && (
         <div className="thc-tidligere">
-          <p className="thc-tidligere__ingress">
-            Gir sammenligningen med forrige prøve «kan ikke fastslås», sammenlignes denne prøven også med
-            prøvene under, fra den nærmeste og bakover. Prøvene må være tatt før forrige prøve.
-          </p>
+          <p className="thc-tidligere__ingress">{samletIngress} Prøvene må være tatt før forrige prøve.</p>
           <div className="thc-prover">
             {inndata.tidligere.map((prove, i) => {
               const tittel = inndata.tidligere.length === 1 ? 'Tidligere prøve' : `Tidligere prøve ${i + 1}`
@@ -122,7 +121,7 @@ function Provefelter({
 }: {
   tittel: string
   prove: BeUrinProve
-  modell: BeUrinModell
+  modell: BeUrinFellesmodell
   onEndre: (prove: BeUrinProve) => void
   onFjern?: () => void
   forsteFelt?: Ref<HTMLInputElement>

@@ -50,7 +50,7 @@ describe('etter aktiveringen', () => {
     expect(r.modell.enheter).toEqual({ benzoylekgonin: '', kreatinin: '', kvotient: '' })
     expect(r.modell.kvotientfaktor).toBe(1)
     // Kurvene er bestillingens, med alle sifrene; marginene er THC-syrens.
-    expect(r.modell.kurver).toEqual(BESTILTE_KURVER)
+    expect((r.modell as BeUrinModell).kurver).toEqual(BESTILTE_KURVER)
     expect(r.modell.sikkerhetsmarginer).toEqual(MARGINER)
     expect(r.modell.standard_sikkerhetsmargin).toBe(0.9)
   })

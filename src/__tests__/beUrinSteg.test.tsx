@@ -1,88 +1,28 @@
 // @vitest-environment jsdom
 /**
- * Fortolkningen av benzoylekgonin i urin i en nettleser i minnet (#562), med
+ * Fortolkningen av benzoylekgonin i urin med modellform 1 i en nettleser i minnet (#562), med
  * en syntetisk katalogoppføring og den syntetiske modellen: henting, felt,
  * Q, resultatet med merkingen, marginen, den samlede vurderingen,
  * nullstillingen, og at det ikke finnes noen kommentar eller kopiering.
  */
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { BeUrinStep, beUrinBevaringsnavn } from '../components/BeUrinStep'
-import { TipsLag } from '../components/Tips'
-import { byggKatalog, type Katalogoppforing } from '../domain/analyttkatalog'
+import { describe, expect, it, vi } from 'vitest'
+import { beUrinBevaringsnavn } from '../components/BeUrinStep'
 import type { BeUrinModellsvar } from '../domain/beUrinModell'
 import { search } from '../domain/search'
 import { tomBeUrinInndata } from '../domain/beUrinMotor'
 import { LAGRINGSNOKKEL, glemBildet } from '../oppdatering/bevaring'
 import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { SYNTETISK_MODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
-import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
 import { initialState, reducer, stageOf } from '../state'
-import { medPekerhendelser } from './hjelp/pekerhendelser'
+import { ANALYTT, KATALOG, forberedBeUrinDom, fyll, gruppe, visBeUrin } from './hjelp/beUrinvisning'
 
-beforeAll(() => {
-  globalThis.ResizeObserver ??= class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  }
-  Element.prototype.scrollIntoView ??= function () {}
-  window.scrollBy = () => {}
-  medPekerhendelser()
-})
-
-afterEach(() => {
-  cleanup()
-  sessionStorage.clear()
-  glemBildet()
-})
-
-/** En syntetisk oppføring: den lokale urinkoden er ikke avklart (docs/benzoylekgonin-urin.md). */
-const OPPFORING: Katalogoppforing = {
-  nokkel: 'be-urin-test',
-  type: 'be_urin',
-  navn: 'Benzoylekgonin',
-  visningsnavn: 'Benzoylekgonin i urin',
-  undertittel: null,
-  komponenter: [],
-  gruppe: 'Rusmiddelanalyse',
-  analysemetode: 'TESTU',
-  kategori: '',
-  enhet: '',
-  maleomrade: { tekst: '', deler: [] },
-  antihypertensiv: null,
-  aliaser: ['kokain'],
-  koder: [{ kode: 'TESTBEU', navn: 'Benzoylekgonin', referanseomrade: null }],
-}
-const KATALOG = byggKatalog({ fagmiljo: null, metoder: [{ kode: 'TESTU', beskrivelse: 'Test i urin' }], oppforinger: [OPPFORING] })
-const ANALYTT = KATALOG.modulMedId('be-urin-test')!
+forberedBeUrinDom()
 
 const MED_MODELL: BeUrinModellsvar = { fagmiljo: { id: 'a', navn: 'OUS Klinisk farmakologi' }, modell: SYNTETISK_MODELL }
 
-function vis(svar: BeUrinModellsvar | Error = MED_MODELL, kontekst: string | null = 'a') {
-  const hent = vi.fn(async () => {
-    if (svar instanceof Error) throw svar
-    return svar
-  })
-  const utfall = render(
-    <TipsLag>
-      <ShortcutVisibilityProvider>
-        <BeUrinStep analyte={ANALYTT} hentModell={hent} kontekst={kontekst} onBack={vi.fn()} />
-      </ShortcutVisibilityProvider>
-    </TipsLag>,
-  )
-  return { hent, ...utfall }
-}
-
-const gruppe = (navn: string) => within(screen.getByRole('group', { name: navn }))
-
-async function fyll(navn: string, be: string, kreatinin: string, dato: string) {
-  const g = gruppe(navn)
-  fireEvent.change(g.getByLabelText(/^Benzoylekgonin/), { target: { value: be } })
-  fireEvent.change(g.getByLabelText(/^Kreatinin/), { target: { value: kreatinin } })
-  fireEvent.change(g.getByLabelText('Prøvedato'), { target: { value: dato } })
-}
+const vis = (svar: BeUrinModellsvar | Error = MED_MODELL, kontekst: string | null = 'a') => visBeUrin(svar, kontekst)
 
 describe('oppføringen', () => {
   it('åpner sin egen modul fra søket, også med «kokain»', () => {
@@ -244,17 +184,11 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
   })
 
   it('tømmer skjemaet når fagmiljøet byttes', async () => {
-    const { rerender, hent } = vis()
+    const { rerender, steg } = vis()
     await screen.findByRole('group', { name: 'Forrige prøve' })
     await fyll('Forrige prøve', '50', '2', '2026-01-01')
     await act(async () => {
-      rerender(
-        <TipsLag>
-          <ShortcutVisibilityProvider>
-            <BeUrinStep analyte={ANALYTT} hentModell={hent} kontekst="b" onBack={vi.fn()} />
-          </ShortcutVisibilityProvider>
-        </TipsLag>,
-      )
+      rerender(steg('b'))
     })
     const felt = (await screen.findByRole('group', { name: 'Forrige prøve' })).querySelector('input') as HTMLInputElement
     expect(felt.value).toBe('')

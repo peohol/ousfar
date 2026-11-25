@@ -1,4 +1,13 @@
-import { godkjennBeUrinModell, type BeUrinKurve, type BeUrinModell, type GodkjentBeUrinModell } from '../../beUrinModell'
+import {
+  godkjennBeUrinModell,
+  godkjennBeUrinProfilmodell,
+  type BeUrinKurve,
+  type BeUrinModell,
+  type BeUrinProfil,
+  type BeUrinProfilmodell,
+  type GodkjentBeUrinModell,
+  type GodkjentBeUrinProfilmodell,
+} from '../../beUrinModell'
 
 /**
  * Modellene testene av benzoylekgonin i urin bruker. Bare for testene.
@@ -54,4 +63,50 @@ export function enkelModell(k1: number, k2: number, overstyr: Partial<BeUrinMode
     ],
     ...overstyr,
   })
+}
+
+/* --- Form 2: fem profiler (#570) ------------------------------------------ */
+
+/**
+ * De fem profilene slik #570 oppgir dem, med alle sifre: k for de to
+ * litteraturprofilene er 24·ln 2 / t½ (7 h og 35 h), moderat er den lokale
+ * regresjonen (bare de avledede parametrene; rådataene står ikke i repoet), og
+ * de to bieksponentielle er uendret fra #562.
+ */
+export const BESTILTE_PROFILER: BeUrinProfil[] = [
+  { id: 'enkeltinntak', type: 'mono', a: 1, k: 2.3765046190626693 },
+  { id: 'gjentatte_doser', type: 'mono', a: 1, k: 0.47530092381253386 },
+  { id: 'moderat', type: 'mono', a: 267.2691490332445, k: 0.2891162303589332 },
+  ...(['bi_a', 'bi_b'] as const).map((id, i): BeUrinProfil => {
+    const { a1, k1, a2, k2 } = BESTILTE_KURVER[i]!
+    return { id, type: 'bi', a1, k1, a2, k2 }
+  }),
+]
+
+/**
+ * En modell av form 2 med profilene, enhetene og måleusikkerheten fra #570
+ * (CV 0,2 og 0,05, som THC-syreregelsettet). Bare for testene; den kliniske
+ * modellen legges inn av aktiveringen.
+ */
+export const PROFILMODELL: BeUrinProfilmodell = {
+  form: 2,
+  versjon: 'syntetisk-test-2',
+  enheter: { benzoylekgonin: 'nmol/L', kreatinin: 'mmol/L', kvotient: 'nmol/mmol' },
+  kvotientfaktor: 1,
+  profiler: BESTILTE_PROFILER,
+  maleusikkerhet: { cv_benzoylekgonin: 0.2, cv_kreatinin: 0.05 },
+  sikkerhetsmarginer: MARGINER,
+  standard_sikkerhetsmargin: 0.9,
+}
+
+/** Modellen av form 2 godkjent, med det som er overstyrt, eller en feil i testen. */
+export function godkjentProfilmodell(overstyr: Partial<BeUrinProfilmodell> = {}): GodkjentBeUrinProfilmodell {
+  const r = godkjennBeUrinProfilmodell({ ...PROFILMODELL, ...overstyr })
+  if (!r.ok) throw new Error(r.feil.join(' '))
+  return r.modell
+}
+
+/** Profilene med én byttet ut. */
+export function medProfil(profil: BeUrinProfil, profiler: BeUrinProfil[] = BESTILTE_PROFILER): BeUrinProfil[] {
+  return profiler.map((p) => (p.id === profil.id ? profil : p))
 }

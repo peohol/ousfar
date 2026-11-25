@@ -231,6 +231,14 @@
   --under-flate: #e1ecf7;
   --under-blekk: #1d4e86;
   --under-kant: #3f7fc2;
+  /* De fem utskillelsesprofilene i fortolkningen av benzoylekgonin i urin
+     (beUrin.css): én farge per profil, minst 3:1 mot kortet, og alltid med
+     eget stiplingsmønster og navn, aldri farge alene. */
+  --be-profil-enkeltinntak: #2f6fb3;
+  --be-profil-gjentatte-doser: #0b7f7f;
+  --be-profil-moderat: #7a4b9e;
+  --be-profil-treg: #a85c08;
+  --be-profil-ekstrem: #b3261e;
 
   /* Farmakodynamikken (docs/farmakodynamikk-ikoner.md). Virkningen på målet
      er et trafikklys: øker, øker litt, reduserer eller snur, og ingen eller
@@ -329,6 +337,11 @@
   --under-flate: #14233a;
   --under-blekk: #a9ccf5;
   --under-kant: #7fb4ee;
+  --be-profil-enkeltinntak: #7fb4ee;
+  --be-profil-gjentatte-doser: #5cc6c0;
+  --be-profil-moderat: #c3a6f0;
+  --be-profil-treg: #f0a35e;
+  --be-profil-ekstrem: #f08576;
 
   --virkning-okt: var(--referanse);
   --virkning-delvis: var(--toksisk);

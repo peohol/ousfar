@@ -1,0 +1,15 @@
+{
+  "id": "20261125-100231-9db8e9",
+  "semver": "patch",
+  "opprettet": "2026-11-25T10:02:31Z",
+  "sammendrag": "Fortolkningen av benzoylekgonin i urin er gjort klar for en ny modell",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Appen kan nå bruke en ny utgave av fortolkningen av benzoylekgonin i urin, med fem utskillelsesprofiler og hver sin vurdering for sporadisk og kronisk bruk.",
+    "Fortolkningen er uendret til den nye utgaven er godkjent og tatt i bruk."
+  ],
+  "utenVarsel": true
+}

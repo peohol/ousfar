@@ -1,0 +1,117 @@
+/* Fortolkningen av benzoylekgonin i urin med fem utskillelsesprofiler
+   (#570). Resten av modulen bruker THC-syremodulens klasser (thc.css). */
+
+/* Hver profil har sin farge og sitt stiplingsmønster, det samme i figuren,
+   legenden og ved gradene. Navnene «treg» og «ekstrem» følger
+   sammenligningen, ikke en bestemt kurve. */
+.be-kurve--enkeltinntak {
+  stroke: var(--be-profil-enkeltinntak);
+  stroke-dasharray: 1 7;
+}
+
+.be-kurve--gjentatte_doser {
+  stroke: var(--be-profil-gjentatte-doser);
+  stroke-dasharray: 9 6;
+}
+
+.be-kurve--moderat {
+  stroke: var(--be-profil-moderat);
+  stroke-dasharray: 14 6 2 6;
+}
+
+.be-kurve--treg {
+  stroke: var(--be-profil-treg);
+  stroke-dasharray: 22 7;
+}
+
+.be-kurve--ekstrem {
+  stroke: var(--be-profil-ekstrem);
+}
+
+/* Utsnittet av kurven i legenden og ved gradene: samme strek, i skjermpunkter. */
+.be-legende__strek {
+  flex: none;
+  width: 40px;
+  height: 8px;
+  overflow: visible;
+}
+
+.be-legende__strek .thc-plot__kurve {
+  stroke-width: 3;
+}
+
+/* Punktene for denne prøven har ingen samlet konklusjon å farges etter. */
+.thc-marginpunkter__prikk--noytral {
+  background: var(--blekk-sterk);
+  box-shadow: inset 0 0 0 1px var(--blekk);
+}
+
+.be-skille {
+  align-self: stretch;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--linje);
+}
+
+.be-grader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.be-grader__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.be-grader__punkt {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rom-3);
+}
+
+.be-grader__punkt .be-legende__strek {
+  align-self: center;
+}
+
+/* De to vurderingene side om side når det er plass, ellers under hverandre. */
+.be-vurderinger {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--rom-4);
+  align-self: stretch;
+  width: 100%;
+}
+
+.be-vurdering {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  padding: var(--rom-4) var(--rom-5);
+  background: var(--flate-hevet);
+  border: 1px solid var(--linje);
+  border-radius: var(--runding-underkort);
+}
+
+.be-vurdering__tittel {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.be-vurdering__tekst {
+  margin: 0;
+  font-weight: var(--vekt-halvfet);
+}
+
+.be-vurdering__samlet {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-tett);
+}
