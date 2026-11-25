@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T09:29:18.862Z",
+  "oppdatert_kl": "2026-11-25T09:52:47.897Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "teller": 91,
   "stoffer": {
@@ -2987,7 +2987,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T09:29:18.862Z",
+          "kl": "2026-11-25T09:52:47.897Z",
           "kilde": "system"
         }
       ],
@@ -6059,7 +6059,7 @@
     "risperidon": {
       "stoff": "risperidon",
       "navn": "Risperidon",
-      "status": "reservert",
+      "status": "venter_godkjenning",
       "modus": "de_novo",
       "prioritet": {
         "poeng": 0,
@@ -6074,20 +6074,7 @@
         "referanser": 11,
         "elementer_uten_kilde": 13
       },
-      "reservasjon": {
-        "oppgave": "risperidon-0091",
-        "okt": "kurateringsko/okt/20261125-074952",
-        "modus": "de_novo",
-        "reservert_kl": "2026-11-25T07:50:28.183Z",
-        "fornyet_kl": "2026-11-25T09:28:45.910Z",
-        "frist_kl": "2026-11-25T12:28:45.910Z",
-        "fase": "Toksisitetskortene skrevet, bivirkningstabellene i fem preparatomtaler lest",
-        "jobbgren": "kuratorjobb/risperidon-0091",
-        "kurateringsgren": "kuratering/risperidon-0091",
-        "pr": null,
-        "gren": "532ff89e-795e-4c60-8b32-f5771b766c56",
-        "kunnskapsgrense": null
-      },
+      "reservasjon": null,
       "forsok": 1,
       "tidligst_kl": null,
       "gjenoppta": null,
@@ -6098,8 +6085,8 @@
         "oppgave": "risperidon-0091",
         "okt": "kurateringsko/okt/20261125-074952",
         "startet_kl": "2026-11-25T07:50:28.183Z",
-        "avsluttet_kl": null,
-        "utfall": "reservert"
+        "avsluttet_kl": "2026-11-25T09:52:47.897Z",
+        "utfall": "fullfort"
       },
       "aktiv": true,
       "historikk": [
@@ -6148,9 +6135,33 @@
           "oppgave": "risperidon-0091",
           "okt": "kurateringsko/okt/20261125-074952",
           "melding": "Toksisitetskortene skrevet, bivirkningstabellene i fem preparatomtaler lest"
+        },
+        {
+          "kl": "2026-11-25T09:52:47.897Z",
+          "hendelse": "fullfort",
+          "oppgave": "risperidon-0091",
+          "okt": "kurateringsko/okt/20261125-074952",
+          "melding": "Kurateringsgrenen 532ff89e-795e-4c60-8b32-f5771b766c56, kunnskapsgrense 2026-11-25."
+        },
+        {
+          "kl": "2026-11-25T09:52:47.897Z",
+          "hendelse": "gren_klar",
+          "oppgave": "risperidon-0091",
+          "melding": "Grenen: klar, revisjon 12, kontrollrunde 1."
         }
       ],
-      "appgren": null
+      "appgren": {
+        "id": "532ff89e-795e-4c60-8b32-f5771b766c56",
+        "oppgave": "risperidon-0091",
+        "modus": "de_novo",
+        "runde": 2,
+        "kunnskapsgrense": "2026-11-25",
+        "jobbgren": "kuratorjobb/risperidon-0091",
+        "registrert_kl": "2026-11-25T09:52:47.897Z",
+        "status": "klar",
+        "revisjon": 12,
+        "kontrollrunde": 1
+      }
     },
     "sertindol": {
       "stoff": "sertindol",
@@ -8493,6 +8504,7 @@
     },
     "kurateringsko/okt/20261125-074952": {
       "ider": [
+        "fullfort-1",
         "forny-4",
         "forny-3",
         "forny-2",
@@ -8500,48 +8512,21 @@
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-4",
-        "sha256": "cb45b1e77a7257a46a92240d824843b57f15f92d7e7a034f01ef63c2fad51661",
+        "id": "fullfort-1",
+        "sha256": "7cdd1d87a5d3f9051ec9fe937d0d8647af38927bdf54620117f75b8ba8212b4b",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-4",
-          "foresporsel_sha256": "cb45b1e77a7257a46a92240d824843b57f15f92d7e7a034f01ef63c2fad51661",
-          "handling": "forny",
+          "foresporsel_id": "fullfort-1",
+          "foresporsel_sha256": "7cdd1d87a5d3f9051ec9fe937d0d8647af38927bdf54620117f75b8ba8212b4b",
+          "handling": "fullfort",
           "utfall": "ok",
-          "melding": "Reservasjonen av risperidon varer til 2026-11-25T12:28:45.910Z.",
-          "behandlet_kl": "2026-11-25T09:28:45.910Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45585719310",
-          "oppgave": {
-            "oppgave": "risperidon-0091",
-            "stoff": "risperidon",
-            "navn": "Risperidon",
-            "modus": "de_novo",
-            "forsok": 1,
-            "frist_kl": "2026-11-25T12:28:45.910Z",
-            "jobbgren": "kuratorjobb/risperidon-0091",
-            "kurateringsgren": "kuratering/risperidon-0091",
-            "pr": null,
-            "gren": "532ff89e-795e-4c60-8b32-f5771b766c56",
-            "gjenoppta": null,
-            "sist_kuratert": null,
-            "maal": {
-              "kl": "2026-11-24T11:26:22.246Z",
-              "side": true,
-              "elementer": 23,
-              "redaksjonelle_paneler": 13,
-              "paneler_med_innhold": 8,
-              "referanser": 11,
-              "elementer_uten_kilde": 13
-            },
-            "prioritet": {
-              "poeng": 0,
-              "grunner": []
-            }
-          }
+          "melding": "risperidon er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
+          "behandlet_kl": "2026-11-25T09:52:47.897Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45589536789"
         }
       },
       "besvart_commit": "97a0bf8c2408b04b8e64c111aee676955586f379",
-      "sist_brukt_kl": "2026-11-25T09:28:45.910Z"
+      "sist_brukt_kl": "2026-11-25T09:52:47.897Z"
     }
   }
 }
