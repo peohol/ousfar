@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T02:30:16.399Z",
+  "oppdatert_kl": "2026-11-25T03:17:45.041Z",
   "malt_kl": "2026-11-24T11:26:21.009Z",
   "teller": 89,
   "stoffer": {
@@ -235,9 +235,9 @@
         "okt": "kurateringsko/okt/20261125-014902",
         "modus": "de_novo",
         "reservert_kl": "2026-11-25T01:49:42.568Z",
-        "fornyet_kl": "2026-11-25T02:27:21.190Z",
-        "frist_kl": "2026-11-25T05:27:21.190Z",
-        "fase": "Blindfasen avsluttet; avstemming og skriving pågår",
+        "fornyet_kl": "2026-11-25T03:17:45.041Z",
+        "frist_kl": "2026-11-25T06:17:45.041Z",
+        "fase": "Virkninger og farmakodynamikk skrevet; skriver de gjenstaende seksjonene",
         "jobbgren": "kuratorjobb/aripiprazol-0089",
         "kurateringsgren": "kuratering/aripiprazol-0089",
         "pr": null,
@@ -297,6 +297,13 @@
           "oppgave": "aripiprazol-0089",
           "okt": "kurateringsko/okt/20261125-014902",
           "melding": "Blindfasen avsluttet; avstemming og skriving pågår"
+        },
+        {
+          "kl": "2026-11-25T03:17:45.041Z",
+          "hendelse": "fornyet",
+          "oppgave": "aripiprazol-0089",
+          "okt": "kurateringsko/okt/20261125-014902",
+          "melding": "Virkninger og farmakodynamikk skrevet; skriver de gjenstaende seksjonene"
         }
       ],
       "appgren": null
@@ -8271,30 +8278,31 @@
     },
     "kurateringsko/okt/20261125-014902": {
       "ider": [
+        "forny-4",
         "forny-3",
         "forny-2",
         "forny-1",
         "reserver-1"
       ],
       "siste": {
-        "id": "forny-3",
-        "sha256": "93f4bb62212e7cea4160e05c860d0525abf5b2dbb90419df4eb6607e45270711",
+        "id": "forny-4",
+        "sha256": "d2f0c1e539521ef5dba8664fe9345c4dca57a9c381fdad1136d7c3029fa2f858",
         "svar": {
           "versjon": 1,
-          "foresporsel_id": "forny-3",
-          "foresporsel_sha256": "93f4bb62212e7cea4160e05c860d0525abf5b2dbb90419df4eb6607e45270711",
+          "foresporsel_id": "forny-4",
+          "foresporsel_sha256": "d2f0c1e539521ef5dba8664fe9345c4dca57a9c381fdad1136d7c3029fa2f858",
           "handling": "forny",
           "utfall": "ok",
-          "melding": "Reservasjonen av aripiprazol varer til 2026-11-25T05:27:21.190Z.",
-          "behandlet_kl": "2026-11-25T02:27:21.190Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45533019757",
+          "melding": "Reservasjonen av aripiprazol varer til 2026-11-25T06:17:45.041Z.",
+          "behandlet_kl": "2026-11-25T03:17:45.041Z",
+          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45538927344",
           "oppgave": {
             "oppgave": "aripiprazol-0089",
             "stoff": "aripiprazol",
             "navn": "Aripiprazol",
             "modus": "de_novo",
             "forsok": 1,
-            "frist_kl": "2026-11-25T05:27:21.190Z",
+            "frist_kl": "2026-11-25T06:17:45.041Z",
             "jobbgren": "kuratorjobb/aripiprazol-0089",
             "kurateringsgren": "kuratering/aripiprazol-0089",
             "pr": null,
@@ -8318,7 +8326,7 @@
         }
       },
       "besvart_commit": "1272353d3d5ab298ffd6dc4bfccaba7271106120",
-      "sist_brukt_kl": "2026-11-25T02:27:21.190Z"
+      "sist_brukt_kl": "2026-11-25T03:17:45.041Z"
     }
   }
 }
