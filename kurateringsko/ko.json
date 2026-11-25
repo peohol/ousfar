@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-25T09:28:45.910Z",
+  "oppdatert_kl": "2026-11-25T09:29:18.862Z",
   "malt_kl": "2026-11-25T07:28:26.653Z",
   "teller": 91,
   "stoffer": {
@@ -2987,7 +2987,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (kuratering, klar); den må avsluttes først.",
-          "kl": "2026-11-25T09:28:45.910Z",
+          "kl": "2026-11-25T09:29:18.862Z",
           "kilde": "system"
         }
       ],
@@ -8540,7 +8540,7 @@
           }
         }
       },
-      "besvart_commit": "05fca092cf8c679afb709ca21eee6a53a27bb7e6",
+      "besvart_commit": "97a0bf8c2408b04b8e64c111aee676955586f379",
       "sist_brukt_kl": "2026-11-25T09:28:45.910Z"
     }
   }
