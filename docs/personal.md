@@ -432,8 +432,8 @@ reglene bak avklares med Peder i prosjekttråden.
 ### 7.2 Produktpremisser som er besluttet
 
 - **Motsatte stillingsvekter for vakt 1 og vakt 2.**
-- Fordelingen tar hensyn til ~~**prosent tilstedeværelse** og~~ **avstand
-  mellom vakter**. Prosent tilstedeværelse er erstattet 26.11.2026 av
+- Fordelingen tar hensyn til ~~**prosent tilstedeværelse** og~~
+  **avstand mellom vakter**. Prosent tilstedeværelse er erstattet 26.11.2026 av
   vaktandel og vaktfritak (§6.2).
 - **Overleger skal ha færre vakt 1**, men ikke nødvendigvis færre vakter totalt.
 - Excel-arket er **ikke et krav om eksakt algoritme**; det viser hensikten.
