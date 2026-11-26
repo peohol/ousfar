@@ -272,8 +272,10 @@ vaktbelastning.
 der fritaksfaktoren er 0 på en dag med vaktfritak og ellers 1. Bare aktive
 medarbeidere som er kvalifisert for vakttypen, er med. Hver dags vakter
 fordeles forholdsmessig etter vektene, og forventet antall er summen over
-perioden. Kalenderstatusene avgjør bare **hvor** vaktene kan legges, ikke
-hvor mange en medarbeider skal ha. Én felles beregning brukes av fordelingen
+perioden. Statuser uten vaktfritak avgjør bare **hvor** vaktene kan legges,
+ikke hvor mange en medarbeider skal ha. Statuser med vaktfritak (Ferie,
+Opplæring og «Borte» med innvilget administrativt fritak) gir fritaksfaktor 0
+de dagene og reduserer derfor forventet antall. Én felles beregning brukes av fordelingen
 og oversikten; oversikten bygger på registrerte vakter, fordelingen i
 tillegg på bemanningsbehovet for dagene som fordeles.
 
@@ -325,12 +327,12 @@ avviket.
 
 **Fasit (syntetiske medarbeidere):**
 
-1. A har stillingsvekt 100 % og vaktandel 100 %, B 60 % og 60 %, C 100 % og
-   60 %, alle i samme kategori. Hver dag er vektene 1 : 0,6 : 1 (stillingsvekten
-   er kategoriens og er lik for alle tre; Bs reduserte stilling ligger i
-   vaktandelen og trekkes ikke fra to ganger). 52 vakter gir
-   52 · 1/2,6 = **20**, 52 · 0,6/2,6 = **12** og **20**, uansett hva
-   kalenderen ellers inneholder.
+1. A, B og C er i samme stillingskategori (lik stillingsvekt), og ingen har
+   vaktfritak. Vaktandel: A 100 %, B 60 %, C 100 %. Ledige arbeidsdager:
+   A 100 %, B 60 % (registrerte fridager uten vaktfritak), C 60 % (andre
+   oppgaver). Hver dag er vektene 1 : 0,6 : 1, så 52 vakter gir
+   52 · 1/2,6 = **20**, 52 · 0,6/2,6 = **12** og **20**. B reduseres ikke en
+   gang til for fridagene, og C reduseres ikke for de andre oppgavene.
 2. A og B er likt stilt. 10 vakter på 10 dager, og A har ferie 4 av dagene.
    De 4 dagene får B hele vekten, de 6 andre deles likt: A 6 · ½ = **3**,
    B 4 + 6 · ½ = **7**. Det samme gjelder opplæring og «Borte» med
@@ -352,7 +354,9 @@ avviket.
 Systemarkitektrollen alene gir ingen tilgang på tvers av fagmiljøer.
 Myndigheten håndheves på serversiden (radnivåsikkerhet og serverside
 validering i kommandoene), ikke bare ved å skjule knapper, og testes
-negativt, også for forsøk på å gi seg selv vaktfritak.
+negativt, også for forsøk på å gi seg selv vaktfritak uten slik myndighet.
+De som har myndighet etter tabellen, kan gi fritak, også på egne
+registreringer.
 
 **Fremtidig datamodell i OUSFAR** (ikke bygd; integrasjonen planlegges etter
 §7.3):
