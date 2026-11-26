@@ -15,6 +15,9 @@ ikke-kliniske personalfunksjoner.
 
 **Status 26.11.2026:** ingen personalfunksjon er bygd i OUSFAR; prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
+Integrasjonsplanen, akseptkriteriene og rekkefølgen står i §8, og
+sjekklisten over prototypens funksjonalitet i
+[personal-akseptmatrise.md](personal-akseptmatrise.md).
 
 ## 1. Formål
 
@@ -159,6 +162,9 @@ Hver PR som endrer en personalfunksjon, viser i beskrivelsen:
    roller (§3.3).
 5. **Virkninger utenfor Personal:** felles komponenter, dashboardet,
    tilgangsmodellen og databasen.
+
+6. **Akseptkriteriene:** hvilke ID-er i [personal-akseptmatrise.md](personal-akseptmatrise.md)
+   (`A-…`) og §8 (`K-…`) PR-en oppfyller.
 
 Teknisk PR-godkjenning, produktaksept og godkjenning for bruk med reelle
 opplysninger (§3.4) er separate beslutninger.
@@ -390,8 +396,8 @@ Uten fritak er forventet ½ og ½, med fritak 0 og 1. Derfor gjelder:
 Prototypen i `peohol/vaktplan` demonstrerer skjermingen (uten ekte
 servertilgangskontroll). Ingen produksjonsimplementering nå.
 
-**Fremtidig datamodell i OUSFAR** (ikke bygd; integrasjonen planlegges etter
-§7.3):
+**Fremtidig datamodell i OUSFAR** (ikke bygd; integrasjonen planlegges i
+§8, særlig §8.7):
 
 - En tabell for vaktandel per medlemskap i fagmiljøet: ordinære verdier med
   gyldig-fra-dato og midlertidige perioder med fra- og tildato og prosent,
@@ -530,90 +536,505 @@ vakten. Jonas regnes som borte, og Vakt 1 er udekket.
 
 ### 7.3 Oppgaven
 
-Personal skal gjennomgå `peohol/vaktplan`, kartlegge eksisterende beslutninger
-og logikk, og lage en konkret, trinnvis integrasjonsplan for OUSFAR, som
-føres inn her. Planen skal minst ha:
-
-1. Kartleggingen av regnearkene (strukturen, ikke innholdet) og hvilke regler
-   de uttrykker, med syntetiske eksempler.
-2. Fordelingsreglene formulert som vedtak for §6, med premissene i §7.2 og en
-   uavhengig fasit.
-3. Datamodellen og tilgangsmodellen etter §3, med hva som trengs fra Dev
-   (modulrammeverket, rollene) som egne Issues.
-4. Trinnene, hver som én avgrenset PR med `ansvar:personal`, fra kalender og
-   manuell plan til automatisk forslag og dashboardmodul.
-5. Hva som må avklares med ansvarlig virksomhet før bruk med reelle
-   opplysninger (§3.4).
-6. Når vaktplanrepoet kan arkiveres: først etter verifisert integrasjon.
-
+Personal skulle gjennomgå `peohol/vaktplan`, kartlegge beslutningene og logikken
+og lage en trinnvis integrasjonsplan ([#561](https://github.com/peohol/ousfar/issues/561)).
+Planen står i §8. Kartleggingen av regnearkene (det opprinnelige punkt 1) er
+erstattet av vedtakene i §6 og §7.2 og av akseptmatrisen
+([personal-akseptmatrise.md](personal-akseptmatrise.md)); regnearkene er
+fjernet fra prototypen og rekonstrueres ikke (§8.2).
 Ingen vaktplankode eller produksjonsmigrasjoner før planen er vedtatt.
 
-### 7.4 Medarbeiderdata fra brukeroversikten (planlagt)
+### 7.4 Medarbeiderinnstillingene i kalenderen (planlagt)
 
-Besluttet av Peder 25.11.2026 som retning; **ikke bygd ennå**, og ingenting
-bygges før integrasjonsplanen (§7.3) er vedtatt. Prototypen har sin egen
-medarbeiderliste med syntetiske ansatte til da.
+Besluttet av Peder 25.11.2026 som retning og **revidert 26.11.2026**: feltene
+redigeres i kalenderens eget grensesnitt (Medarbeidere), **ikke** i
+fagmiljøets brukeroversikt eller administratorenes brukermeny. Den
+opprinnelige planen om et utvidelsespunkt i brukeroversikten utgår
+([#572](https://github.com/peohol/ousfar/issues/572), avgrenset på nytt).
+**Ikke bygd ennå**; trinnet er P2c i §8.11.
 
-**Hva som hentes.** Tre felt per medlem av et fagmiljø skal komme fra
-fagmiljøets brukeroversikt i OUSFAR (`public.brukeroversikt()`,
-[fagmiljoer.md](fagmiljoer.md)), i stedet for å vedlikeholdes i vaktplanen:
+**Én app, ikke en tilleggsfunksjon** (vedtatt av Peder 26.11.2026). Det er
+et **1:1-forhold** mellom medlemmene av fagmiljøet og medarbeiderne i
+kalenderen, og mellom stillingene i appen («Stillinger»,
+[stillinger.md](stillinger.md)) og stillingskategoriene i kalenderen.
+Kalenderen henter begge automatisk; ingen brukere eller stillinger legges inn
+på nytt. Navnet og stillingen kommer fra profilen; ingen andre profilfelt
+leses (§3.2). Det kalenderen selv eier per medarbeider:
 
 | Felt | Verdier | Merknad |
 | --- | --- | --- |
-| Stillingskategori | En liste per fagmiljø, for det første fagmiljøet LIS og overlege | Ikke hardkodet i den generelle motoren (§7.2) |
-| Aktiv i vaktplanen | Ja/nei | Et avsluttet eller sperret medlemskap gir alltid nei |
-| Kan ha vakt | Vakt 1 og/eller vakt 2, per vakttype i fagmiljøet | Vakttypene er fagmiljøets bemanningsbehov, ikke faste navn |
+| Stillingskategori | Profilens stilling, hentet automatisk | Stillingsvekten per stilling står i fagmiljøets bemanningsoppgaver (§8.6). En endring av stillingen gjelder fra dagen den gjøres, og kalenderen husker hvilken stilling som gjaldt hver dag |
+| Kvalifikasjoner | Per bemanningsoppgave i fagmiljøet (for det første fagmiljøet vakt 1 og/eller vakt 2) | Oppgavene er fagmiljøets bemanningsbehov, ikke faste navn. Ingen kvalifikasjon som standard, så ingen får vakter før det er satt |
+| Vaktandel | Som i §6.2 | Personals eget felt, med tilgangen i §6.2 |
 
-Navnet kommer fra profilen. Ingen andre profilfelt leses (§3.2).
+Aktiv i kalenderen er den som har aktivt medlemskap i fagmiljøet; det finnes
+ikke noe eget felt for det.
 
 **Regler.**
 
 - En endring gjelder **fra dagen den lagres** og fremover. Tidligere dager
   vurderes etter det som gjaldt da, så historikk og tidligere vaktdekning
-  ikke skrives om (samme modell som i prototypen). Hver endring lagres derfor
-  med gyldighetsdato.
+  ikke skrives om. Hver endring lagres derfor med gyldighetsdato.
 - Feltene er planleggingsdata, ikke HR-data (§2).
-- Hvem som kan se og redigere feltene, følger §3.3 og vedtas før
-  implementering. Forslag: lokal administrator og vaktplanansvarlig i eget
-  fagmiljø redigerer, kolleger ser bare det vaktplanen viser. Vaktandelen
-  (§6.2) er Personals eget felt og følger tilgangen i §6.2.
+- Kvalifikasjoner og vaktandel redigeres av vaktplanansvarlig og lokal
+  administrator (vedtatt 26.11.2026, §8.4); kolleger ser bare det
+  kalenderen viser. Stillingen endres der den alltid har vært endret, i
+  profilen og i «Brukere» (§8.12, B14).
 - Radsikkerhet på serversiden, med negative tester på tvers av fagmiljøer og
   roller (§3.3).
 
-**Arbeidsdeling.** Brukeroversikten, medlemskapene og den generelle
-tilgangsstyringen eies av Dev; feltene og reglene for dem eies av Personal
-(§2).
+**Arbeidsdeling.** Medlemskapene og den generelle tilgangsstyringen eies av
+Dev; feltene, tabellene, migrasjonene, testene og redigeringen i kalenderen
+eies av Personal (§2). Fra Dev trengs hjelperen for eget medlemskap uten
+systemarkitektunntak ([#572](https://github.com/peohol/ousfar/issues/572))
+og en datert historikk over stillingen ([#602](https://github.com/peohol/ousfar/issues/602)).
 
-- **Dev** ([#572](https://github.com/peohol/ousfar/issues/572)): et
-  gjenbrukbart utvidelsespunkt i brukeroversikten der et prosjekt kan vise og
-  redigere egne felt per medlem, en stabil nøkkel per medlemskap og en
-  hjelper for tilgang som Personals radsikkerhet kan bruke, og at et avsluttet
-  medlemskap er synlig for Personal.
-- **Personal**: en egen tabell for feltene med gyldighetsdato, listen over
-  kategorier per fagmiljø, migrasjonene og testene, redigeringsfeltene i
-  utvidelsespunktet og vaktplanens bruk av dem.
+## 8. Integrasjonsplan: personalkalenderen i OUSFAR
 
-Personal venter på #572 før feltene bygges inn i OUSFAR. Trinnet blir en egen
-PR med `ansvar:personal` i integrasjonsplanen (§7.3 punkt 4).
+Planen for å bygge personalkalenderen og vaktfordelingen fra prototypen inn i
+OUSFAR ([#561](https://github.com/peohol/ousfar/issues/561)). Den bygger på
+Peders bestilling 26.11.2026, ChatGPTs planforslag i
+[#561](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)
+og kartleggingen av OUSFAR og prototypen. Ingen kode eller
+produksjonsmigrasjon bygges før planen er slått sammen og designretningen er
+valgt (§8.12, B1).
 
-### 7.5 Issue-et for oppgaven
+**Status for innholdet.** Det som står som **vedtatt**, er avgjort av Peder
+(§§3, 6, 7.2, eller bestillingen 26.11.2026, merket «bestilt»). Det som står
+som **forslag**, er Personals anbefaling og venter på Peders avgjørelse i
+§8.12. Uten avgjørelse gjelder anbefalingen som arbeidsgrunnlag, men den
+regnes ikke som vedtatt før den er ført inn i §6.
 
-Etter at etableringen er slått sammen og etiketten `ansvar:personal` finnes,
-opprettes (eller gjenbrukes) ett avgrenset planleggings-Issue med etiketten
-`ansvar:personal`, med henvisning til
-[#558](https://github.com/peohol/ousfar/issues/558) og `peohol/vaktplan`, og
-med assignee etter de vanlige reglene ([prosjektansvar.md](prosjektansvar.md)
-§3; ingen automatisk overføring). Teksten kan være:
+### 8.1 Mål og avgrensning
 
-```text
-Tittel: OUSFAR Personal: integrasjonsplan for vaktplanen fra peohol/vaktplan
+Vedtatt (bestilt):
 
-Hva og hvorfor
-Lag en konkret, trinnvis plan for å bygge vaktplanen inn i OUSFAR, etter docs/personal.md §7. Gjennomgå peohol/vaktplan som referanse, kartlegg beslutningene og logikken i regnearkene (bare strukturen, aldri innholdet, som må regnes som reelle personalopplysninger), og før planen og de foreslåtte reglene inn i docs/personal.md. Ingen vaktplankode eller produksjonsmigrasjoner i denne oppgaven.
+- Et **generelt, konfigurerbart planleggingssystem** som ikke er laget for
+  leger eller ett fagmiljø. Første fagmiljø er **OUS Klinisk farmakologi**.
+- **Svært enkelt grensesnitt** med minst mulig tekst og ingen tekniske
+  detaljer, forankret i OUSFARs design, ikke en egen app.
+- **All relevant funksjonalitet fra prototypen bevares** (§8.2), og
+  domenekoden, beregningsmotoren og testene gjenbrukes der det passer.
+- **Medlemmene av fagmiljøet knyttes automatisk til kalenderen**, og alle
+  planleggingsinnstillinger for medarbeiderne håndteres i kalenderen, ikke i
+  administratorenes brukermeny (§7.4).
+- **Skjermet for andre enn systemarkitektene** til kalenderen er godkjent for
+  ordinær bruk, per fagmiljø (§8.3).
 
-Avhengigheter
-Bygger på #558. Selvstendige behov i felles infrastruktur (modulrammeverket, rollene) skilles ut som egne Issues til ansvar:dev.
+Utenfor (som før, §2): HR-plattform, lønn, arbeidstidskontroll, faktisk
+oppmøte, eksport av kollegers fravær, flere samtidige statuser per dag og
+nattevakter. Behov for nye modeller avklares når et fagmiljø trenger dem.
 
-Må et menneske avgjøre noe?
-Ja: fordelingsreglene og tilgangsnivåene vedtas før implementering, og bruk med reelle opplysninger krever avklaring med ansvarlig virksomhet (docs/personal.md §3.4).
-```
+### 8.2 Referanse og regresjonsvern
+
+- **Referansen** er prototypen i `peohol/vaktplan` på v0.11 (commit
+  `10bc89fab8d8065140de1b41aa3721970f56b82e`, PR #17), med
+  designspesifikasjonen, `docs/arkitektur.md`, `docs/testing.md` og
+  PR-ene #1, #3, #5, #6, #8, #11, #13, #15 og #17.
+- **Akseptmatrisen** i [personal-akseptmatrise.md](personal-akseptmatrise.md)
+  er sjekklisten over funksjonaliteten og produktreglene som skal bevares,
+  med stabil ID per krav (`A-…`), kilden, om det er vedtatt eller
+  prototypens valg, og om koden overføres direkte, tilpasses eller
+  erstattes. Hver implementerings-PR sier hvilke ID-er den dekker, og
+  produktaksepten (P7) går gjennom alle.
+- **Nyere vedtak går foran eldre**; matrisen følger gjeldende vedtak, ikke
+  historikken.
+- **Regnearkene rekonstrueres ikke.** De ble fjernet fra prototypen i
+  vaktplan#8, og prinsippene de uttrykte, er vedtatt i §6 og §7.2. Punkt 1 i
+  den opprinnelige oppgaven (kartlegging av regnearkene) er derfor erstattet
+  av §6 og akseptmatrisen. Regnearkene, prototypens Git-historikk og gamle
+  utrullinger leses ikke.
+- **Det som overføres:** den rene domenekoden (`src/domain/`, særlig
+  `allocation/`) og testene, med fasitene i §6.1 og §6.2. Prototypens
+  lokale lagring, migreringer av demodata, demoroller og eget visuelle
+  uttrykk overføres ikke; prinsippene gjør. Prototypens tall for de myke
+  målene (vektene) er startverdier, ikke vedtak.
+
+### 8.3 Skjerming under utvikling
+
+Vedtatt (bestilt 26.11.2026). Gjelder gjennom alle trinnene, også etter at
+PR-ene er slått sammen og publisert:
+
+| ID | Krav |
+| --- | --- |
+| K-SKJ-1 | Til kalenderen er godkjent for ordinær bruk i et fagmiljø, er personalfunksjonene der bare tilgjengelige for **systemarkitekter som selv er aktive medlemmer** av fagmiljøet |
+| K-SKJ-2 | Andre ser **ingen spor**: ingen meny, ingen modul på forsiden eller i «Tilpass forsiden», ingen varselinnstilling, ingen føring i endringsloggen som røper funksjonen, og adressen gir «Siden finnes ikke», som en ukjent adresse |
+| K-SKJ-3 | Begrensningen **håndheves på serversiden**: alle funksjoner svarer som om funksjonen ikke fantes, også ved direkte kall med gyldig token |
+| K-SKJ-4 | Systemarkitektene kan prøve **hele** funksjonaliteten med **syntetiske medarbeidere**, også ulike roller (`Vis som`, K-SKJ-7) |
+| K-SKJ-5 | Systemarkitektrollen gir **ikke i seg selv** tilgang til reelle personalopplysninger (§3.3) |
+| K-SKJ-6 | **Aktiveringen** for ordinære brukere gjøres **per fagmiljø, uten kodeendring**, etter Peders uttrykkelige produktgodkjenning og avklaringen i §3.4 |
+| K-SKJ-7 | **Vis som** (forslag): i et testmiljø kan en systemarkitekt se og bruke kalenderen som kollega, vaktplanansvarlig, lokal administrator eller én bestemt medarbeider. Simuleringen kan bare redusere rettighetene, og serveren håndhever den |
+| K-SKJ-8 | Koden for personalfunksjonene lastes bare for dem som har tilgang |
+
+**Mekanismen.** OUSFAR har i dag bare globale brytere som byttes med en
+migrasjon, og en synlighetskonstant i klienten for verktøyene. Personal
+bruker derfor en ny, felles mekanisme fra Dev:
+
+- **Funksjonsbrytere per fagmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):
+  `av` (standard), `utprøving` (bare systemarkitekter med eget medlemskap)
+  og `på` (alle med eget medlemskap), endret i appen av en systemarkitekt
+  med begrunnelse og logget i `tilgangslogg`. Personals funksjon heter
+  `personal`.
+- **Testmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):
+  Sandkasse er merket som testmiljø. **Bare i et testmiljø kan det finnes
+  syntetiske medarbeidere** uten konto, og bare der virker `Vis som`.
+- **Gangen:** Sandkasse står på `utprøving` under hele utviklingen, med
+  syntetiske medarbeidere. OUS Klinisk farmakologi står på `av` til Peder
+  har godkjent produktet og §3.4 er avklart. Da settes den til `på` uten ny
+  kode (P7). Andre fagmiljøer står av.
+- **Uten spor i endringsloggen** ([#601](https://github.com/peohol/ousfar/issues/601)):
+  føringer for personalfunksjonene vises bare for systemarkitektene. Til det
+  finnes, er føringene nøytrale og uten varsel.
+- **Forsiden** ([#599](https://github.com/peohol/ousfar/issues/599)) og
+  **varslene på enheten** ([#600](https://github.com/peohol/ousfar/issues/600))
+  viser personalmodulene og -valgene bare for dem som har funksjonen.
+
+### 8.4 Roller og tilgang
+
+Rollene gjelder per fagmiljø og bygger på eget aktivt medlemskap. Den
+felles hjelperen for eget medlemskap uten systemarkitektunntak kommer fra Dev
+([#572](https://github.com/peohol/ousfar/issues/572)); lokal administrator
+uten unntak finnes (`intern.administrerte_fagmiljoer`).
+
+| Rolle | Hvem | Kan | Status |
+| --- | --- | --- | --- |
+| Medarbeider (kollega) | Aktivt medlem | Se kalenderen med den **publiserte** planen, Dagen i dag og egne vakter; **registrere og endre sine egne statuser** fortløpende (ikke vakter og ikke vaktfritak); ser bare «Borte» for administrativt fritak; faktiske vakttall | Vedtatt (§6.2; egne statuser og publisert plan 26.11.2026) |
+| Vaktplanansvarlig | Utpekt av lokal administrator; **flere kan ha rollen samtidig** | I tillegg: tildele vakter, redigere hele kalenderen, kvalifikasjoner og vaktandel, lage vaktplankladd med automatisk fordeling, låse og publisere | Vedtatt (§6.2 og 26.11.2026) |
+| Lokal administrator | Lokal administratortildeling i fagmiljøet | I tillegg: administrativt vaktfritak, utpeke og fjerne vaktplanansvarlige, regelsett, bemanningsbehov og vekter | Vedtatt for fritak (§6.2) og utpekingen (26.11.2026); regelsettet forslag (B3) |
+| Systemarkitekt med lokal myndighet | Systemarkitekt som også er aktivt medlem **og** lokal administrator i fagmiljøet | Som lokal administrator | Forslag til definisjon (B2) |
+| Systemarkitekt uten eget medlemskap | | Ingenting | Vedtatt (§3.3, §6.2) |
+
+Krav:
+
+| ID | Krav |
+| --- | --- |
+| K-TIL-1 | Alle opplysninger avgrenses til eget fagmiljø; valg av fagmiljø viser aldri tilgang til andre fagmiljøer |
+| K-TIL-2 | Rollene håndheves i databasen (radsikkerhet og kontroll i hver kommando), aldri bare ved å skjule knapper |
+| K-TIL-3 | Negative tester for hver rolle og hvert fagmiljø: annet fagmiljø, kollega uten planleggerrolle, vaktplanansvarlig som prøver å gi fritak (også seg selv), systemarkitekt uten medlemskap, avsluttet medlemskap, og bytte av fagmiljø |
+| K-TIL-4 | Lesemodellen for fritak (§6.2) gjelder alle svar: kalender, endringshistorikk, statistikk, forklaringer, forslag, varsler og logg. Samme kalender med og uten fritak gir likt svar for roller uten myndighet |
+| K-TIL-5 | Vaktplanansvarlig er en egen rolle i Personal, uavhengig av redaktørrollene; flere kan ha den samtidig; utpekingen og fjerningen logges |
+| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et vaktfritak, og aldri andres. En status på en dag med egen publisert vakt avvises, og vakten står (B15). Prøvd negativt på serveren |
+
+### 8.5 Medarbeidere og medlemskap
+
+Utdyper §7.4 (vedtatt av Peder 26.11.2026: feltene i kalenderen, og 1:1 med
+medlemmene og stillingene i appen).
+
+- **Identiteten** er medlemskapet: paret (fagmiljø, bruker) og navnet fra
+  profilen. Ingen egen konto og ingen dobbeltregistrering. I et testmiljø
+  kan det i tillegg finnes syntetiske medarbeidere uten konto.
+- **Alle aktive medlemmer er med** i kalenderen, automatisk og uten noen
+  handling, med navnet og stillingen fra profilen. Det finnes ingen egen
+  medarbeiderliste og ingen «ikke med». Systemet gjetter ikke
+  kvalifikasjoner: uten kvalifikasjon får ingen vakter.
+- **Planleggingsinnstillingene** per medarbeider: kvalifikasjoner per
+  bemanningsoppgave og vaktandel med perioder (§6.2). Begge med
+  gyldighetsdato; endringer gjelder fra i dag (§7.4).
+- **Uten stilling** i profilen vises medarbeideren i kalenderen som andre, og
+  regnes med stillingsvekt 1 i fordelingen (som en kategori uten vekt i
+  prototypen); planleggeren ser at stillingen mangler (forslag, B14).
+- **Avsluttet eller sperret medlemskap** stopper tilgang, varsler og
+  fremtidig planlegging fra den dagen. Historikken bevares innenfor
+  oppbevaringstiden (§3.4). Hva som skjer når en konto slettes, avgjøres i
+  §3.4 (forslag: navnet erstattes med «Tidligere medarbeider», så andres
+  vaktbelastning ikke endres; B9).
+- Planleggingsinnstillingene er skilt fra HR-data og fra kontorollene.
+
+| ID | Krav |
+| --- | --- |
+| K-MED-1 | Et nytt aktivt medlem vises i kalenderen samme dag uten noen handling, med navnet og stillingen fra profilen; medlemmene i kalenderen er nøyaktig fagmiljøets aktive medlemmer |
+| K-MED-5 | Stillingskategoriene i kalenderen er nøyaktig stillingene i appen; en ny eller endret stilling i profilen vises uten handling i kalenderen, og forventet vaktbelastning bruker stillingen som gjaldt hver dag |
+| K-MED-2 | Innstillingene redigeres bare i kalenderen, av rollene i §8.4, og aldri bakover i tid |
+| K-MED-3 | Avsluttet medlemskap fjerner personen fra fremtidig planlegging og stopper tilgang og varsler samme dag, uten å skrive om historikken |
+| K-MED-4 | Syntetiske medarbeidere kan bare finnes i et testmiljø; databasen avviser dem ellers |
+
+### 8.6 Generell modell og konfigurasjon
+
+Motoren er generell; fagmiljøets oppsett er **data**, versjonert med
+gyldighetsdato og validert på serveren (vedtatt i prinsippet, §7.2 og
+bestillingen):
+
+| Oppsett per fagmiljø | Pilot (OUS Klinisk farmakologi) |
+| --- | --- |
+| Stillingskategorier | Appens stillinger (1:1, §7.4); stillingsvekt settes for LIS og overlege |
+| Statuskatalog: navn, ikon, kategori (på kontoret / ikke på kontoret), vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (forslag, B16) |
+| Bemanningsoppgaver: hvilke statuser som bemannes, antall per ukedag og helligdag, kvalifikasjonskrav, stillingsvekt per stilling, belastning | Vakt 1 og vakt 2, én hver per arbeidsdag, motsatte stillingsvekter (startverdi 2 : 1) |
+| Fordelingsvekter, tidshorisont og grensen for utjevning | §6.1 med prototypens startverdier |
+| Tidssone og helligdagskalender | Europe/Oslo, norske helligdager |
+
+- **Bare oppgaver med bemanningsbehov fordeles automatisk.** Referent,
+  Opplæring og lignende kan være manuelle statuser.
+- **Ingen hardkodede navn** (LIS, overlege, vakt 1, vakt 2) utenfor
+  pilotoppsettet.
+- **Generalitet bevises med test (K-KON-2), ikke loves.** Krever et
+  fremtidig fagmiljø nattevakter, samtidige oppgaver eller flere statuser
+  per dag, avklares det da.
+- **Det som må gjøres generelt i P2a** (kartleggingen §5): statuskategoriene
+  blir data med egenskapen «regnes som til stede» i stedet for de to faste
+  kategoriene; ikoner og fargetoner hentes fra OUSFARs ikonregister og
+  fargetokens; helligdagskalenderen og tidssonen blir en del av oppsettet,
+  og «i dag» regnes i fagmiljøets tidssone på serveren; rollene avledes på
+  serveren; stabilitetsvekten i ny plan blir en innstilling.
+- **Vanlige innstillinger står i kalenderen**; avanserte (regelsett, vekter)
+  under lokal administrasjon i kalenderen, skjult som standard.
+- **LLM-assistert oppsett** (forslag, senere): et fagmiljø beskriver behovet
+  med syntetiske eksempler, en agent foreslår et deklarativt oppsett med
+  tester, og en lokal ansvarlig godkjenner en forhåndsvisning før
+  aktivering. Ingen LLM i den løpende fordelingen og ingen produksjonsdata i
+  eksterne agenter. Ikke med i første leveranse.
+
+| ID | Krav |
+| --- | --- |
+| K-KON-1 | Pilotoppsettet gir samme resultater som prototypen for fasitene i §6.1 og §6.2 |
+| K-KON-2 | Et annet syntetisk fagmiljø med andre navn, tre kategorier, andre bemanningsoppgaver, en annen bemanningskalender og mer enn én person per oppgave og dag virker uten endring i motoren eller grensesnittet |
+| K-KON-3 | En endring i oppsettet gjelder fra dagen den lagres; tidligere dager vurderes etter oppsettet som gjaldt da, og konsekvensen vises før lagring |
+| K-KON-4 | Et ugyldig oppsett kan ikke lagres (serveren validerer) |
+
+### 8.7 Data, server og samtidighet
+
+Forslag til teknisk utforming, innenfor vedtakene i §3 og §6.2:
+
+**Lagring.** Tabellene ligger i et eget skjema, `personal`, uten direkte
+rettigheter for nettleseren. Nettleseren når dem bare gjennom funksjoner i
+`public` med prefikset `personal_`, som kontrollerer aktivt medlemskap,
+funksjonsbryteren og rollen, og som gir lesemodellen for fritak (§6.2). Hver
+ny tabell og funksjon følger katalogvaktene (rekkevidde i ressurskatalogen og
+kontroll av aktivt medlemskap, `docs/fagmiljoer.md`).
+
+| Del | Innhold |
+| --- | --- |
+| Oppsett | Fagmiljøets versjonerte oppsett (§8.6) med gyldighetsdato |
+| Medarbeidere | Paret (fagmiljø, bruker), eller syntetisk navn i et testmiljø |
+| Medarbeiderinnstillinger | Kvalifikasjoner med gyldighetsdato; stillingen per dag fra profilens daterte historikk (#602) |
+| Vaktandel | Som i §6.2, med databasebegrensningene der |
+| Roller | Vaktplanansvarlige med fra og til, og hvem som utpekte |
+| Kalenderoppføringer | Én per medarbeider og dato: status, valgfritt tidsrom, merknad, lås, administrativt vaktfritak (ja/nei), regelversjon og en versjon for samtidighetskontrollen |
+| Vaktplankladd | Vaktene planleggerne har lagt inn eller godtatt fra fordelingen for dager som ikke er publisert, adskilt fra den publiserte planen, med avtrykket av grunnlaget |
+| Publisering | Til og med hvilken dato planen er publisert, med historikk |
+| Forslag | Forslaget fra fordelingen med avtrykket av alt det bygger på; slettes etter kort tid |
+| Endringslogg | Minimalt revisjonsspor (hvem, når, før og etter), fritaket bare for roller med myndighet |
+| Dørklokke | Én rad per fagmiljø og periode for sanntid, uten innhold |
+| Påminnelsesvalg | Per bruker, fagmiljø og oppgavetype |
+| Visningsvalg | Valgt visning, dato og filtre i de eksisterende brukerinnstillingene |
+
+**Regler på serveren.** De harde invariantene (høyst én status per
+medarbeider og dato, høyst det bemannede antallet per oppgave og dato) står
+som begrensninger i databasen. Regelmotorens kontroller (aktiv medarbeider,
+aktiv status, kvalifikasjon, arbeidsdag, gyldig tidsrom, merknaden og
+overtakelse) gjøres i kommandoene på serveren. Den samme regelmotoren i delt
+TypeScript gir umiddelbar tilbakemelding i grensesnittet, og en test kjører
+de samme fasitene mot begge, slik OUSFAR alt gjør for brukernavn og
+fødselsnummer.
+
+**Delt kode.** Domenekoden fra prototypen flyttes til
+`supabase/functions/_delt/personal/` (ren TypeScript uten avhengigheter),
+som appen leser gjennom `@delt/...` og serveren bruker direkte.
+
+**Fordelingen kjøres på serveren**, fordi den leser fritaket, som
+vaktplanansvarlig ikke skal se. Et forslag for et helt år tok om lag
+4,5 sekunder i prototypen, mer enn CPU-tiden en Edge-funksjon får. Standard
+er derfor et serverendepunkt i Vercel med den samme delte koden, som
+kontrollerer innloggingen og rollen i databasen før det leser noe, og som har
+en fast tidsgrense. Plasseringen og grensen fastsettes etter måling i P4. Forslaget lagres med
+avtrykket, og godtas med én kommando som avviser det hvis noe det bygger på,
+er endret. Svaret til rollen følger lesemodellen.
+
+**Vaktplankladden** (vedtatt av Peder 26.11.2026: medarbeiderne
+registrerer egne statuser, bare planleggerne lager vakter automatisk, og de
+andre ser bare det som er publisert). Forslag til hvordan kladden holdes
+riktig:
+
+- **To lag.** Den publiserte planen er det alle ser. Vakter planleggerne
+  legger inn eller godtar fra fordelingen for dager som ikke er publisert,
+  står i **kladden**, som bare planleggerne ser. Medarbeidernes egne
+  statuser står alltid i kalenderen og er synlige med en gang. Én status per
+  medarbeider og dag gjelder for kalenderen og kladden sammen.
+- **Medarbeiderens status går foran kladden.** Setter en medarbeider en
+  status på en dag der kladden gir vedkommende en vakt, lagres statusen som
+  vanlig, uten at medarbeideren får vite noe om kladden. Kladdevakten
+  markeres som i konflikt, plassen telles som udekket, og planleggerne ser
+  det i kladden.
+- **Kladden kontrolleres hele tiden** mot gjeldende statuser, regler og
+  medlemskap: i konflikt, udekket og om grunnlaget for fordelingen er endret
+  siden kladden ble laget (avtrykket). «Oppdater vaktplan» retter kladden med
+  færrest mulige endringer.
+- **Publisering krever en gyldig kladd.** Serveren kontrollerer hele kladden
+  på nytt i samme transaksjon som publiseringen og avviser den hvis en
+  kladdevakt er i konflikt. Er grunnlaget endret uten konflikt (for eksempel
+  en ny ferie som endrer forventet antall), sier publiseringen fra og tilbyr
+  å oppdatere først.
+- **Etter publisering** står en publisert vakt. Velger en medarbeider en
+  status på en dag med egen publisert vakt, avvises det, og medarbeideren
+  får beskjed om å ta det med vaktplanansvarlig (vedtatt, B15). Vaktbytter
+  går gjennom planleggerne; forespørsel om vaktbytte kan komme senere.
+
+**Samtidighet.**
+
+- Hver endring er én kommando som lagres atomisk med en gang, med den
+  versjonen av cellene klienten så. Har noen andre endret dem imens, avvises
+  endringen med konflikt (som `forventet_revisjon` og `PT409` i
+  redigeringen), og kalenderen hentes på nytt. Ingen endring overskriver en
+  annen lydløst.
+- **Angre og gjør om er nye, validerte endringer** mot gjeldende kalender,
+  med samme rettighetskrav som endringen (fritaket, vaktandelen bakover i
+  tid). De gjenoppretter aldri en gammel kalender.
+- **Sanntid** med en dørklokke uten innhold, som i chatten og diskusjonene:
+  den som har kalenderen åpen, henter det endrede tidsrommet på nytt. Ingen
+  polling.
+
+**Ytelse.** Kalenderen henter bare tidsrommet som vises (dag, uke, måned eller
+helår), med indeks på fagmiljø og dato. Ingen henting av hele historikken.
+
+| ID | Krav |
+| --- | --- |
+| K-DAT-1 | Klienten får aldri fritaksfeltet eller fritaksavhengige tall uten myndighet, heller ikke i underliggende data |
+| K-DAT-2 | Hver kommando validerer på nytt på serveren og lagres atomisk; regelparitetstesten mellom server og klient er grønn |
+| K-DAT-3 | Samtidige endringer av samme celle gir konflikt, aldri tap; prøvd med to forbindelser mot ekte Postgres 17 |
+| K-DAT-4 | Angre og gjør om respekterer rettighetene og vaktandelens historikk, også over midnatt |
+| K-DAT-5 | Et forslag laget før en endring i grunnlaget kan ikke godtas |
+| K-DAT-6 | Helårsvisningen for 30 medarbeidere hentes på under ett sekund i produksjonslik database |
+| K-KLA-1 | Ingen andre enn planleggerne ser kladden: verken i kalenderen, Dagen i dag, Mine vakter, varsler, statistikk eller svar fra serveren |
+| K-KLA-2 | En medarbeiders nye status på en dag med egen kladdevakt lagres, og kladdevakten markeres som i konflikt og regnes som udekket |
+| K-KLA-3 | En kladd med konflikt kan ikke publiseres; serveren kontrollerer på nytt ved publisering, også når to planleggere publiserer samtidig |
+| K-KLA-4 | Endret grunnlag uten konflikt vises før publisering, og «Oppdater vaktplan» gir en gyldig kladd med færrest mulige endringer |
+
+### 8.8 Brukerflatene
+
+Vedtatt (bestilt): dag-, uke-, måneds- og helårsvisning, statusboblen og
+direkte redigering, medarbeiderinnstillinger, vaktfordeling og
+vaktbelastning, egne kommende vakter, påminnelser, Dagen i dag øverst på
+forsiden, desktop og mobil, lyst og mørkt tema, tastatur og berøring.
+Designretningen velges blant tre klikkbare forslag (B1). Forslag til
+oppbygning:
+
+- **Ett menyvalg**, Kalender (`#/kalender`), i hovedmenyen. Inne i den:
+  kalenderen, og for planleggerne Vaktfordeling og Medarbeidere.
+  Innstillinger etter myndighet.
+- **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dagens
+  bemannede oppgaver og manuelle oppgaver som Referent tydelig, så de andre på kontoret, de som arbeider
+  annet sted og de som er borte eller fri, gruppert etter status, uten
+  dobbelttelling. Udekkede oppgaver vises. Et trykk åpner kalenderen på
+  dagen. Ingen status betyr planlagt til stede, ikke registrert oppmøte.
+  Bare den publiserte planen, aldri kladden eller et forslag (vedtatt
+  26.11.2026).
+- **Mine vakter**: egne kommende vakter og oppgaver, med lenke til dagen.
+- Valgt visning, dato og filtre huskes; utkast og skjemaer bruker
+  `useBevart`. Små skjermer får en lesbar dagsvisning med lett tilgjengelig
+  redigering, ikke en sammenpresset tabell.
+- Ingen tekniske opplysninger eller forklaringer av motoren i vanlig
+  visning. Ikon og kort tekst, tilgjengelige navn, og hovering, fokus og
+  berøring for informasjonsboblene.
+
+| ID | Krav |
+| --- | --- |
+| K-UI-1 | Alle A-kravene i akseptmatrisen (også A-NY-radene, som K-kravene her utdyper) er oppfylt i den valgte designretningen |
+| K-UI-2 | Hele arbeidsforløpet går med bare tastatur og med bare berøring |
+| K-UI-3 | Lyst og mørkt tema og smal skjerm er kontrollert for alle flatene |
+| K-UI-4 | Dagen i dag viser bare det rollen kan se, for fagmiljøet man arbeider i, og bare den publiserte planen |
+
+### 8.9 Varsler
+
+- **Påminnelser** om egne vakter og oppgaver, slått på av den enkelte per
+  oppgavetype og tidspunkt (for eksempel Vakt 1 dagen før kl. 15, Referent
+  samme dag kl. 08). Bare oppgavetypene som finnes i fagmiljøet, vises.
+- Bare **egne, publiserte** tildelinger, aldri forslag eller kladd. En endring eller et bytte avlyser det gamle varselet og
+  planlegger et nytt. Tilgangen og tildelingen kontrolleres på nytt rett før
+  utsending. Fagmiljøets tidssone gjelder, også ved sommertid.
+- **Varsel ved endring i egen publisert plan** er et eget valg (B10).
+- **Låseskjermen** viser aldri kollegers navn, fravær, merknader eller
+  fritak. Hva den viser om ens egen oppgave, avgjøres i B7.
+- Utlogging, sperring og avsluttet medlemskap stopper varslene.
+- Infrastrukturen er Devs felles varsler på enheten
+  ([#600](https://github.com/peohol/ousfar/issues/600)); Personal lager
+  ingen egen. Chatvalg styrer ikke kalendervalg.
+
+| ID | Krav |
+| --- | --- |
+| K-VAR-1 | Et varsel sendes én gang, til rett tid, også ved sommertid, og ikke etter en endring som fjerner tildelingen |
+| K-VAR-2 | Ingen varsler om forslag, upubliserte vakter eller andres opplysninger |
+| K-VAR-3 | Varslene stopper ved utlogging, avsluttet medlemskap og når valget slås av; chatvarslene virker som før |
+| K-VAR-4 | Virker med appen lukket på PC/Mac og Android, og på iPhone/iPad fra Hjem-skjermen |
+
+### 8.10 Avhengigheter til OUSFAR Dev
+
+| Issue | Hva | Trengs før |
+| --- | --- | --- |
+| [#572](https://github.com/peohol/ousfar/issues/572) | Hjelper for eget medlemskap uten systemarkitektunntak (avgrenset på nytt 26.11.2026; utvidelsespunktet i brukeroversikten utgår) | P2b |
+| [#598](https://github.com/peohol/ousfar/issues/598) | Funksjonsbrytere per fagmiljø og testmiljø-markering | P2b |
+| [#599](https://github.com/peohol/ousfar/issues/599) | Forsiden: paneler med tilgang, felt øverst og lasting ved behov | P5 |
+| [#600](https://github.com/peohol/ousfar/issues/600) | Varsler på enheten for flere formål, med utsending på et tidspunkt | P6 |
+| [#601](https://github.com/peohol/ousfar/issues/601) | Føringer i endringsloggen bare for systemarkitekter | P2b (nøytrale føringer til da) |
+| [#602](https://github.com/peohol/ousfar/issues/602) | Datert stillingshistorikk på profilen, lesbar per dag på serveren | P4 |
+
+Personal eier selv menyvalget, sidene, modulenes innhold, tabellene,
+migrasjonene, rollene og reglene for kalenderen (§2). Sanntiden bruker det
+eksisterende mønsteret med dørklokke og trenger ingen ny felles mekanisme.
+
+### 8.11 Rekkefølge
+
+Hvert trinn er én avgrenset PR med `ansvar:personal` (P2 kan deles), merket
+«Til ChatGPT-kontroll – ikke merge», med A- og K-ID-ene den dekker, og med
+arbeidsforløp og negative tilfeller med syntetiske ansatte (§5). Dev-trinnene
+går parallelt.
+
+| Trinn | Innhold | Avhenger av | Ferdig når |
+| --- | --- | --- | --- |
+| **P0** | Denne planen, akseptmatrisen, Dev-Issue-ene og produktbeslutningene | | Slått sammen |
+| **P1** | Tre klikkbare designforslag i et beskyttet forhåndsvisningsmiljø med syntetiske data; Peder og ChatGPT vurderer og Peder velger (B1). Ingen kode i OUSFAR | | B1 avgjort |
+| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0 | K-KON-1, K-KON-2, fasitene i §6 grønne |
+| **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-TIL-1–5, K-MED-4, K-DAT-1–4, K-KON-3–4 |
+| **P2c** | Medarbeidere i kalenderen (automatisk tilknytning 1:1 med medlemmene og stillingene, kvalifikasjoner, vaktandel, vaktplanansvarlige) og `Vis som`, med menyvalget | P2b, B2 | K-MED-1–5, K-SKJ-7–8 |
+| **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-kravene for kalenderen, K-UI-1–3, K-DAT-6, K-TIL-6 |
+| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-kravene for fordelingen, K-KLA-1–4, K-DAT-5, K-TIL-4 |
+| **P5** | Dagen i dag og Mine vakter | P4, #599 | K-UI-4 |
+| **P6** | Påminnelser og varsel ved endring | P4, #600, B7, B10 | K-VAR-1–4 |
+| **P7** | Samlet produktaksept med syntetiske data i Sandkasse og det lokale testmiljøet, negativ tilgangskontroll, ytelse og mobil. Deretter avklaringen i §3.4 og, etter Peders ja, `på` for OUS Klinisk farmakologi. Første plan starter fra blanke ark | P1–P6 | Hele akseptmatrisen; §3.4 ført inn; Peders ja |
+| **P8** | Avvikling av prototypen, etter verifisert pilot og særskilt beslutning, med kontroll av gamle utrullinger og historikk uten å gjengi innhold | P7 | Peders beslutning |
+
+Teknisk sammenslåing, produktaksept og godkjenning for reell bruk er
+separate beslutninger (§5). Hvert trinn etter P2b kan slås sammen og
+publiseres uten at noen andre enn systemarkitektene merker det.
+
+### 8.12 Beslutninger for Peder
+
+Vedtatt fra før og ikke til ny vurdering: §3, §6.1, §6.2, §7.2 og
+bestillingen 26.11.2026 (§8.1 og §8.3).
+
+**Avgjort av Peder 26.11.2026** (i prosjektets samtale og på beslutningskort):
+
+| Nr. | Spørsmål | Avgjørelse |
+| --- | --- | --- |
+| B3 | Hvem utpeker vaktplanansvarlige? | Lokal administrator. Flere kan være vaktplanansvarlige samtidig |
+| B4 | Hvem endrer kvalifikasjoner og vaktandel? | Vaktplanansvarlig og lokal administrator |
+| B5 | Hva ser de andre av plan som ikke er publisert? | Bare det som er publisert, aldri kladden. Bare planleggerne lager vakter automatisk, og systemet sikrer at kladden blir riktig når medarbeidere endrer statuser før publisering (§8.7) |
+| B6 | Kan medarbeiderne selv registrere statuser? | Ja, fortløpende, som i dagens regneark. Vaktplanansvarlig tildeler vakter, men legger ikke inn andres ferieønsker og lignende |
+| B13 | Stillingskategori og medarbeidere | 1:1 med stillingene i appen og med medlemmene i fagmiljøet, hentet automatisk; kalenderen er en integrert del av appen, ikke en tilleggsfunksjon (§7.4) |
+| B15 | Kan en medarbeider sette en status på en dag med egen publisert vakt? | Nei. Det avvises, vakten står, og medarbeideren får beskjed om å ta det med vaktplanansvarlig. Forespørsel om vaktbytte kan komme senere |
+
+**Venter på Peder:**
+
+| Nr. | Spørsmål | Anbefaling |
+| --- | --- | --- |
+| B1 | Hvilken designretning? | Velges etter prøving av de tre forslagene (P1) |
+| B2 | Hva er «systemarkitekt med lokal myndighet»? | En systemarkitekt som også er aktivt medlem og lokal administrator i fagmiljøet. Systemarkitektrollen alene teller ikke |
+| B3b | Hvem endrer regelsett, bemanningsbehov og vekter? | Lokal administrator (og B2) |
+| B7 | Hva kan stå på låseskjermen om egen oppgave? | Oppgaven og dagen («Vakt 1 i morgen»), aldri andre opplysninger. Strengere alternativ: «Du har en planlagt oppgave i morgen» |
+| B8 | Hvem slår på kalenderen for et fagmiljø? | En systemarkitekt i appen, med begrunnelse, etter Peders ja og §3.4 |
+| B9 | Hva skjer med historikken når en konto slettes? | Avgjøres i §3.4; forslag: navnet erstattes med «Tidligere medarbeider» innenfor oppbevaringstiden |
+| B10 | Varsel når egen publisert plan endres? | Eget valg, av som standard |
+| B11 | Rekkefølgen i §8.11 og at P2a starter før Dev-oppgavene er ferdige? | Ja |
+| B12 | Holde første versjon til én status per dag og dagbaserte oppgaver? | Ja; nye modeller avklares når et fagmiljø trenger dem |
+| B14 | Stillingen styrer nå forventet antall vakter, og i dag kan hver bruker endre sin egen stilling. Skal det endres? | Ja: i et fagmiljø der kalenderen er på, endres stillingen bare av lokal administrator eller systemarkitekt, og endringen gjelder fra i dag. Uten stilling regnes vekt 1, og planleggeren ser at den mangler |
+| B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei: egne endringer gjelder fra i dag og fremover, og tidligere dager rettes av vaktplanansvarlig |
+| B16 | Hvilke statuser kan medarbeideren sette selv? | Alle uten bemanningsbehov (også Ferie, som gir vaktfritak etter §6.2), aldri vakter, lås eller administrativt vaktfritak. Kan begrenses per status i fagmiljøets oppsett |
+
+Avgjørelsene føres inn i §6 (regler) eller her, med dato.
+
+### 8.13 Før bruk med reelle opplysninger
+
+I tillegg til punktene i §3.4 avklares med ansvarlig virksomhet før `på` i et
+virkelig fagmiljø: formålet og dataminimeringen, rollene i §8.4,
+oppbevaringstid og sletting (også B9), revisjonssporet og hvem som ser det,
+innholdet i varslene (B7) og hvem i virksomheten som er ansvarlig. Ingen
+import av regneark eller syntetisk historikk; første plan starter fra blanke
+ark. Prototypen arkiveres eller slettes først etter P8.
