@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { lagGrensletter } from '../github/gitslett'
 
 /** Den som står på commitene køen lager. */
 export const KOBRUKER = { navn: 'github-actions[bot]', epost: '41898282+github-actions[bot]@users.noreply.github.com' }
@@ -98,6 +99,6 @@ export function lagGit(mappe: string, miljo: NodeJS.ProcessEnv = process.env): G
       }
     },
     skyv: (commit, gren) => proev(['push', '-q', 'origin', `${commit}:refs/heads/${gren}`]),
-    slett: (gren, commit) => proev(['push', '-q', `--force-with-lease=refs/heads/${gren}:${commit}`, 'origin', `:refs/heads/${gren}`]),
+    slett: lagGrensletter(mappe, env),
   }
 }

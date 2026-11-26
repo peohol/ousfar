@@ -27,9 +27,9 @@ Reglene, i rekkefølge:
 | Gren | Hva skjer |
 | --- | --- |
 | Hovedgrenen, `kurateringsko/tilstand`, gyldige jobb- og øktgrener | Røres aldri; de andre oppryddingene eier dem |
-| Beskyttet i GitHub, eller en åpen PR kommer fra den | Beholdes, uansett alder |
+| Beskyttet i GitHub, eller en åpen PR kommer fra den eller skal slås sammen inn i den (også fra et annet repo) | Beholdes, uansett alder |
 | Ingen commits utover `main` | Slettes med en gang |
-| Alt grenen endrer, står likt på `main` (hver fil med samme innhold, og det den fjerner, borte) | Slettes med en gang |
+| Alt grenen endrer, står likt på `main`: hver sti der grenen avviker fra der den skilte lag med `main`, har samme innhold, type og modus på `main` (også det den fjerner, borte) | Slettes med en gang |
 | Navnet ligner en jobb- eller øktgren uten å følge mønsteret (som `kurateringsko-okt-…` eller `kuratorjobb-…`) | Slettes ett døgn etter den siste commiten |
 | Den siste PR-en fra grenen er slått sammen eller lukket | Slettes tre døgn etter den siste commiten eller etter at PR-en ble avsluttet, det som kom sist |
 | Ingen PR ennå | Beholdes: det kan være arbeid som pågår. Etter 30 døgn uten commits vises en advarsel |
@@ -40,9 +40,18 @@ uansett.
 
 **Stopp ved usikkerhet:** Alt leses før noe slettes. Kan grenene, PR-ene eller
 en sammenligning ikke leses, stopper kjøringen uten å slette noe og feiler
-synlig. Gir GitHub ikke hele fillisten for en gren (over 300 filer) eller
-hele filtreet på `main`, regnes grenen ikke som lik `main`. En gren som er
-endret mens kjøringen pågikk, slettes ikke.
+synlig. Gir GitHub ikke hele filtreet for grenen, skillepunktet eller `main`,
+regnes grenen ikke som lik `main`.
+
+**Ingen sletting av noe som ikke er vurdert:** Rett før hver sletting leses de
+åpne PR-ene på nytt (en PR kan åpnes eller gjenåpnes uten at grenen får en ny
+commit), og slettingen går gjennom git med
+`--force-with-lease=refs/heads/<gren>:<commit>` (`src/github/gitslett.ts`), så
+GitHub avviser den atomisk om noen har pushet til grenen siden den ble
+vurdert. Grenen beholdes da, og oversikten sier hvorfor. Den samme slettingen
+brukes av oppryddingen av kuratorjobbgrener og av kurateringskøen. Arbeidsflyten
+kjører koden fra en klone uten legitimasjon og sletter gjennom en egen klone
+der ingenting kjøres.
 
 **Oversikten:** Hver kjøring skriver en tabell i oppsummeringen i GitHub
 Actions med hver gren den vurderte, om den er slettet eller beholdt, og

@@ -1,7 +1,8 @@
 /**
  * GitHubs REST-API med arbeidsflytens nøkkel, for oppryddingene av grener
  * (`src/kuratorjobb/ryddekjoring.ts`, `src/grenrydding/kjoring.ts`). Her står
- * bare det de deler: kallet, grenene og slettingen av én gren.
+ * bare det de deler: kallet og grenene. Slettingen går gjennom git, så den
+ * krever at grenen står uendret (`./gitslett`).
  */
 
 /** Ett kall mot repoet (en tom sti er selve repoet); `null` for 404 og 204. */
@@ -41,9 +42,4 @@ export async function grenNa(api: Restkall, navn: string): Promise<{ sha: string
   const r = (await api(`branches/${encodeURIComponent(navn)}`)) as { commit?: { sha?: string; commit?: { committer?: { date?: string } } } } | null
   if (!r?.commit?.sha) return null
   return { sha: r.commit.sha, commit_kl: r.commit.commit?.committer?.date ?? null }
-}
-
-/** Sletter grenen. Den som kaller, avgjør om den kan slettes. */
-export async function slettGren(api: Restkall, navn: string): Promise<void> {
-  await api(`git/refs/heads/${navn.split('/').map(encodeURIComponent).join('/')}`, 'DELETE')
 }

@@ -16,6 +16,7 @@ on:
       - src/kuratorjobb/rydding.ts
       - src/kuratorjobb/ryddekjoring.ts
       - src/github/rest.ts
+      - src/github/gitslett.ts
   # Hver time, så en gren står høyst en time etter at fristen er gått.
   schedule:
     - cron: '41 * * * *'
@@ -49,10 +50,14 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       # Kurateringsgrenene, uten fagtekst; serveren slipper bare inn denne arbeidsflyten og køen på main.
       OUSFAR_KO_ADRESSE: https://ousfar.vercel.app/api/kuratering-ko
+    defaults:
+      run:
+        working-directory: kode
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          path: kode
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -62,7 +67,15 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
+      # Klonen grenene slettes gjennom, bare når de står på commiten som ble vurdert. Ingenting fra den kjøres.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: git
+          sparse-checkout: README.md
+          sparse-checkout-cone-mode: false
+
       - name: Rydd jobbgrenene
         env:
           KUN_VIS: ${{ inputs.kun_vis && '--kun-vis' || '' }}
-        run: npm run -s rydd-kuratorjobbgrener -- $KUN_VIS
+        run: npm run -s rydd-kuratorjobbgrener -- ../git $KUN_VIS

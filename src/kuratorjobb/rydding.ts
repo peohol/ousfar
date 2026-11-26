@@ -307,7 +307,10 @@ const KATEGORINAVN: Readonly<Record<Ryddekategori, string>> = {
 }
 
 /** Oversikten som Markdown, for kjøringens oppsummering i GitHub Actions. */
-export function ryddeMarkdown(o: Ryddeoversikt, { kunVis, slettet, alleGrener }: { kunVis: boolean; slettet: ReadonlySet<string>; alleGrener: number }): string {
+export function ryddeMarkdown(
+  o: Ryddeoversikt,
+  { kunVis, slettet, underveis = new Map(), alleGrener }: { kunVis: boolean; slettet: ReadonlySet<string>; underveis?: ReadonlyMap<string, string>; alleGrener: number },
+): string {
   const rad = (v: Ryddevurdering, handling: string) => `| \`${v.gren}\` | ${handling} | ${KATEGORINAVN[v.kategori]} | ${v.grunn.replace(/\|/g, '\\|')} |`
   const slettetNa = o.slettes.filter((v) => slettet.has(v.gren))
   const ikkeSlettet = o.slettes.filter((v) => !slettet.has(v.gren))
@@ -323,7 +326,7 @@ export function ryddeMarkdown(o: Ryddeoversikt, { kunVis, slettet, alleGrener }:
     o.advarsler.length > 0 ? '' : '',
     '| Gren | Handling | Gruppe | Hvorfor |',
     '| --- | --- | --- | --- |',
-    ...o.slettes.map((v) => rad(v, kunVis ? 'ville slettet' : slettet.has(v.gren) ? 'slettet' : 'beholdt: endret underveis')),
+    ...o.slettes.map((v) => rad(v, kunVis ? 'ville slettet' : slettet.has(v.gren) ? 'slettet' : `beholdt: ${underveis.get(v.gren) ?? 'endret underveis'}`)),
     ...o.beholdes.map((v) => rad(v, 'beholdt')),
     '',
   ]

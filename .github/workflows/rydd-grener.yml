@@ -4,8 +4,9 @@
 # følge mønsteret. Reglene står i src/grenrydding/regler.ts, med tester.
 #
 # Hovedgrenen, kurateringskøens grener, kuratorjobbenes grener, beskyttede
-# grener og grener med en åpen PR røres aldri. Kan noe ikke leses, slettes
-# ingenting, og kjøringen feiler synlig.
+# grener og grener en åpen PR kommer fra eller skal inn i, røres aldri. Kan noe
+# ikke leses, slettes ingenting, og kjøringen feiler synlig. En gren slettes
+# bare om den fortsatt står på commiten som ble vurdert.
 name: Rydd gamle grener
 
 on:
@@ -15,6 +16,7 @@ on:
       - .github/workflows/rydd-grener.yml
       - src/grenrydding/**
       - src/github/rest.ts
+      - src/github/gitslett.ts
   schedule:
     - cron: '11 * * * *'
   workflow_dispatch:
@@ -43,10 +45,14 @@ jobs:
       pull-requests: read
     env:
       GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        working-directory: kode
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          path: kode
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -56,7 +62,15 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
+      # Klonen grenene slettes gjennom, bare når de står på commiten som ble vurdert. Ingenting fra den kjøres.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: git
+          sparse-checkout: README.md
+          sparse-checkout-cone-mode: false
+
       - name: Rydd grenene
         env:
           KUN_VIS: ${{ inputs.kun_vis && '--kun-vis' || '' }}
-        run: npm run -s rydd-grener -- $KUN_VIS
+        run: npm run -s rydd-grener -- ../git $KUN_VIS

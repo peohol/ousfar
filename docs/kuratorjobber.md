@@ -84,7 +84,7 @@ en liste, tom når evidensjournalen ikke viser til noen) på hver gren. Svarer
 OUSFAR uten dette, også om appen er rullet ut før databasen har fått
 migrasjonen, prøver kjøringen igjen (ti forsøk med et minutts mellomrom).
 Går det fortsatt ikke, eller mangler køens tilstand, har ukjent form eller er
-eldre enn ett døgn, stopper kjøringen uten å slette noe og feiler synlig. En gren som er endret mens kjøringen pågikk, slettes ikke. Bare
+eldre enn ett døgn, stopper kjøringen uten å slette noe og feiler synlig. Rett før hver sletting leses de åpne PR-ene på nytt, og grenen slettes gjennom git bare om den fortsatt står på commiten som ble vurdert (`--force-with-lease`, `src/github/gitslett.ts`); ellers beholdes den. Bare
 grener under `kuratorjobb/` kan slettes.
 
 **Oversikten:** Hver kjøring skriver en tabell i oppsummeringen i GitHub

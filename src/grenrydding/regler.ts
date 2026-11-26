@@ -43,10 +43,16 @@ export interface Grenvurderingsgrunnlag {
   commit_kl: string | null
   /** Commits på grenen som ikke står på hovedgrenen; `null` når det ikke kunne avgjøres. */
   foran: number | null
-  /** Om alt grenen endrer (fra der den skilte lag med hovedgrenen), står likt på hovedgrenen nå; `null` når det ikke kunne avgjøres. */
+  /**
+   * Om alt grenen endrer (fra der den skilte lag med hovedgrenen), står likt
+   * på hovedgrenen nå, med innhold, type og modus; `null` når det ikke kunne
+   * avgjøres.
+   */
   likPaHovedgrenen: boolean | null
   /** PR-ene fra grenen, i dette repoet. */
   prer: readonly Prinfo[]
+  /** De åpne PR-ene (også fra andre repoer) som skal slås sammen inn i grenen. */
+  baseFor: readonly number[]
 }
 
 export interface Grenvurdering {
@@ -84,7 +90,8 @@ const PRTILSTAND: Readonly<Record<Prinfo['tilstand'], string>> = { apen: 'åpen'
  * Om én gren kan slettes. Reglene, i rekkefølge:
  *
  * 1. Beholdes alltid: en gren en annen opprydding eier, en gren GitHub
- *    beskytter, og en gren en åpen PR kommer fra.
+ *    beskytter, en gren en åpen PR kommer fra, og en gren en åpen PR skal
+ *    slås sammen inn i.
  * 2. Slettes med en gang: en gren uten commits utover hovedgrenen, og en gren
  *    der alt den endrer, alt står likt på hovedgrenen. Ingenting går tapt.
  * 3. Slettes etter fristen: en gren med et navn som ligner en jobb- eller
@@ -112,6 +119,7 @@ export function vurderGren(g: Grenvurderingsgrunnlag, { na, hovedgren }: { na: s
   if (g.beskyttet) return behold('grenen er beskyttet i GitHub')
   const apne = g.prer.filter((p) => p.tilstand === 'apen')
   if (apne.length > 0) return behold(`en åpen PR kommer fra grenen (${apne.map((p) => `#${p.nummer}`).join(', ')})`)
+  if (g.baseFor.length > 0) return behold(`en åpen PR skal slås sammen inn i grenen (${g.baseFor.map((n) => `#${n}`).join(', ')})`)
 
   if (g.foran === 0) return slett(`ingen commits utover ${hovedgren}`)
   if (g.likPaHovedgrenen === true) return slett(`alt grenen endrer, står likt på ${hovedgren}`)
@@ -154,9 +162,13 @@ export function vurderGrener(grener: readonly Grenvurderingsgrunnlag[], valg: { 
 }
 
 /** Oversikten som Markdown, for kjøringens oppsummering i GitHub Actions. */
-export function grenMarkdown(o: Grenoversikt, { kunVis, slettet, alleGrener }: { kunVis: boolean; slettet: ReadonlySet<string>; alleGrener: number }): string {
+export function grenMarkdown(
+  o: Grenoversikt,
+  { kunVis, slettet, underveis = new Map(), alleGrener }: { kunVis: boolean; slettet: ReadonlySet<string>; underveis?: ReadonlyMap<string, string>; alleGrener: number },
+): string {
   const rad = (v: Grenvurdering, handling: string) => `| \`${v.gren}\` | ${handling} | ${v.grunn.replace(/\|/g, '\\|')} |`
-  const handling = (v: Grenvurdering) => (!v.slett ? 'beholdt' : kunVis ? 'ville slettet' : slettet.has(v.gren) ? 'slettet' : 'beholdt: endret underveis')
+  const handling = (v: Grenvurdering) =>
+    !v.slett ? 'beholdt' : kunVis ? 'ville slettet' : slettet.has(v.gren) ? 'slettet' : `beholdt: ${underveis.get(v.gren) ?? 'endret underveis'}`
   const antallSlettet = kunVis ? o.slettes.length : o.slettes.filter((v) => slettet.has(v.gren)).length
   const linjer = [
     '## Opprydding av gamle grener',
