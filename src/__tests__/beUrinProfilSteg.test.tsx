@@ -87,7 +87,7 @@ describe('resultatet med fem profiler', () => {
 
   it('viser i en snakkeboble ved marginen hva en høyere margin ville gitt, uten å bytte selv', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås'] }])
+    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser'] }])
     expect(marginbeskrivelse()).toEqual([
       'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
         'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
@@ -114,14 +114,20 @@ describe('resultatet med fem profiler', () => {
         'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
       'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås.',
     ])
-    // Boblene sier konklusjonen kort, og «kan ikke fastslås» ved kronisk bruk står bare ved 90 %.
+    // Boblene skiller de to «kan ikke fastslås» ved kronisk bruk synlig, ikke bare for skjermlesere.
     expect(marginbobler()).toEqual([
-      { side: 'over', margin: '90 %', linjer: ['Kronisk: Kan ikke fastslås'] },
-      { side: 'under', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås'] },
+      { side: 'over', margin: '90 %', linjer: ['Kronisk: Kan ikke fastslås – svært uvanlig utskillelse'] },
+      { side: 'under', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', 'Kronisk: Kan ikke fastslås'] },
     ])
-    // Ved 90 % er kronisk alt «kan ikke fastslås»: at bemerkningen faller bort ved 99 %, gir ingen boble.
+    // Ved 90 % er kronisk alt «kan ikke fastslås»: at bemerkningen faller bort ved 99 %, står synlig i boblen.
     fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '1' } })
-    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås'] }])
+    expect(marginbobler()).toEqual([
+      {
+        side: 'over',
+        margin: '99 %',
+        linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', 'Kronisk: Kan ikke fastslås, uten «svært uvanlig utskillelse»'],
+      },
+    ])
     expect(marginbeskrivelse()).toEqual([
       'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
         'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
@@ -304,7 +310,10 @@ describe('skjemaet', () => {
       {
         side: 'over',
         margin: '99 %',
-        linjer: ['Sporadisk: Kan ikke fastslås', 'Kronisk: Ingen indikasjon etter tidligere prøve'],
+        linjer: [
+          'Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser',
+          'Kronisk: Kan ikke fastslås, uten indikasjon etter tidligere prøve',
+        ],
       },
     ])
     // En tidligere prøve som ikke er før forrige prøve, gir en kort feil og ingen vurdering.

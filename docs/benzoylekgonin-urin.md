@@ -210,7 +210,8 @@ ikke sannsynligheten for at fortolkningen er riktig.
 
 Det en høyere margin ville gitt, står ikke i resultatet, men i snakkebobler
 ved bryteren for sikkerhetsmarginen i skjemaet (#588, som i THC-syre), for
-eksempel «Sporadisk: Kan ikke fastslås» ved 99 % (`beMildereMarginer`).
+eksempel «Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser» ved
+99 % (`beMildereMarginer`).
 Brukeren velger selv; det er ingen knapp og intet banner.
 
 Det står ingen setning om justering for måleusikkerhet, ingen grader i
@@ -259,13 +260,17 @@ enkeltinntak, forenlig med gjentatte doser, sannsynlig og nytt inntak; ved
 kronisk bruk uavklart, uavklart men uvanlig, indikasjon på nytt inntak etter
 en eldre prøve (mildere jo eldre prøven er), sannsynlig og nytt inntak.
 Hver mildere vurdering får en snakkeboble som peker på den laveste marginen
-som gir den, med vurderingen og konklusjonen kort («Kronisk: Sannsynlig nytt
-inntak», og «(indikasjon etter 01.06.2026)» når en høyere margin gir
-indikasjon etter en eldre prøve). Vurderinger ved samme margin står i samme
-boble; en linje som alt står ved en lavere margin, gjentas ikke. Boblen sier
-bare det som endres: gir en høyere margin samme konklusjon og bare en annen
-utdyping, får den ingen boble; faller bare indikasjonen etter en eldre prøve
-bort, står «Kronisk: Ingen indikasjon etter tidligere prøve». Den første
+som gir den, med hele det kliniske utfallet kort (`boblelinje`): vurderingen,
+konklusjonen og utdypingen («Sporadisk: Kan ikke fastslås – forenlig med
+enkeltinntak», «Kronisk: Kan ikke fastslås – svært uvanlig utskillelse»), og
+«(indikasjon etter 01.06.2026)» når en høyere margin gir indikasjon etter en
+eldre prøve. Har utfallet samme konklusjon som vurderingen som står, men uten
+bemerkningen om svært uvanlig utskillelse, står «uten «svært uvanlig
+utskillelse»»; faller indikasjonen etter en eldre prøve bort, står «uten
+indikasjon etter tidligere prøve». Klinisk ulike utfall får dermed alltid
+ulike linjer, synlig og ikke bare for skjermlesere (ChatGPT-kontrollen av
+#589). Utfall ved samme margin står i samme boble; bare en identisk linje som
+alt står ved en lavere margin, gjentas ikke. Den første
 boblen står over bryteren, den neste under. Skjermlesere får hele teksten for
 hvert utfall som beskrivelse av bryteren (`mildereTekst`). Den gir alltid
 hele det kliniske utfallet: konklusjonen,

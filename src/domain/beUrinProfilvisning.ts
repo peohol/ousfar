@@ -143,13 +143,19 @@ const KORT_KONKLUSJON: Record<string, string> = {
   [NYTT_INNTAK]: 'Nytt inntak',
 }
 
+/** Utdypingene kort, så hvert klinisk utfall får sin egen linje i boblene. */
+const KORT_UTDYPING = new Map<string | undefined, string>([
+  [BE_URIN_SPORADISK_TEKST.forenlig_enkeltinntak.utdyping, 'forenlig med enkeltinntak'],
+  [BE_URIN_SPORADISK_TEKST.forenlig_gjentatte_doser.utdyping, 'forenlig med gjentatte doser'],
+  [BE_URIN_KRONISK_TEKST.uavklart_uvanlig.utdyping, 'svært uvanlig utskillelse'],
+])
+
 const KORT_VURDERING: Record<BeUrinVurderingstype, string> = { sporadisk: 'Sporadisk', kronisk: 'Kronisk' }
 
 /**
  * Det høyere marginer ville gitt (#588): boblene ved sikkerhetsmarginen med
- * vurderingen og konklusjonen kort, «Sporadisk: Kan ikke fastslås», og datoen
- * når en høyere margin gir indikasjon etter en tidligere prøve; og hele
- * setningen ({@link mildereTekst}) for hvert utfall.
+ * hvert mildere utfall kort ({@link boblelinje}), og hele setningen
+ * ({@link mildereTekst}) for hvert utfall.
  */
 export function beMildereMarginer(
   resultat: Extract<BeUrinProfilresultat, { type: 'vurdering' }>,
@@ -160,29 +166,30 @@ export function beMildereMarginer(
     sporadisk: { tekst: BE_URIN_SPORADISK_TEKST[s.sporadisk], samletTreff: false },
     kronisk: { tekst: BE_URIN_KRONISK_TEKST[s.kronisk], samletTreff: Boolean(samlet?.treff) },
   }
-  const bobler = marginbobler(mildere.flatMap((u) => boblelinje(u, gjeldende[u.vurdering])))
-  return { bobler, tekster: mildere.map((u) => mildereTekst(u, gjeldende[u.vurdering])) }
+  return {
+    bobler: marginbobler(mildere.map((u) => ({ marginer: u.marginer, linje: boblelinje(u, gjeldende[u.vurdering]) }))),
+    tekster: mildere.map((u) => mildereTekst(u, gjeldende[u.vurdering])),
+  }
 }
 
-const kortKonklusjon = (t: BeUrinVurderingstekst) => KORT_KONKLUSJON[t.konklusjon] ?? t.konklusjon
-
 /**
- * Linjen et mildere utfall får i boblene. Boblen sier bare det som endres:
- * har utfallet samme konklusjon som vurderingen som står, og skiller seg bare i
- * utdypingen, får det ingen linje (hele setningen står for skjermleser); faller
- * bare indikasjonen etter en tidligere prøve bort, sier linjen det.
+ * Et mildere utfall kort, i samme rekkefølge som {@link mildereTekst}, så
+ * klinisk ulike utfall aldri får samme linje: «Kronisk: Kan ikke fastslås –
+ * svært uvanlig utskillelse», «Sporadisk: Kan ikke fastslås – forenlig med
+ * gjentatte doser». Faller bare bemerkningen om svært uvanlig utskillelse bort,
+ * sies det («uten …»); indikasjonen etter en eldre prøve står med datoen, og at
+ * den faller bort, sies også.
  */
-function boblelinje(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende): { marginer: readonly number[]; linje: string }[] {
+export function boblelinje(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende): string {
   const tekst = u.vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST[u.utfall] : BE_URIN_KRONISK_TEKST[u.utfall]
-  const konklusjon = kortKonklusjon(tekst)
-  const samletDato = u.vurdering === 'kronisk' ? u.samletDato : null
-  const lik = konklusjon === kortKonklusjon(gjeldende.tekst)
-  let linje: string
-  if (samletDato) linje = `${konklusjon} (indikasjon etter ${formaterDatoNorsk(samletDato)})`
-  else if (lik && gjeldende.samletTreff) linje = 'Ingen indikasjon etter tidligere prøve'
-  else if (lik) return []
-  else linje = konklusjon
-  return [{ marginer: u.marginer, linje: `${KORT_VURDERING[u.vurdering]}: ${linje}` }]
+  let linje = `${KORT_VURDERING[u.vurdering]}: ${KORT_KONKLUSJON[tekst.konklusjon] ?? tekst.konklusjon}`
+  const utdyping = KORT_UTDYPING.get(tekst.utdyping)
+  const bortfalt = KORT_UTDYPING.get(gjeldende.tekst.utdyping)
+  if (utdyping) linje += ` – ${utdyping}`
+  else if (tekst.konklusjon === gjeldende.tekst.konklusjon && bortfalt) linje += `, uten «${bortfalt}»`
+  if (u.vurdering === 'kronisk' && u.samletDato) linje += ` (indikasjon etter ${formaterDatoNorsk(u.samletDato)})`
+  else if (gjeldende.samletTreff) linje += ', uten indikasjon etter tidligere prøve'
+  return linje
 }
 
 /** Forbeholdet under vurderingene: kort og diskret, ikke et banner. */
