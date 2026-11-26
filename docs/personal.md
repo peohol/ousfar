@@ -86,15 +86,25 @@ kontrollerer, omtaler funnet uten å sitere dem.
   fritekst. Et eventuelt kommentarfelt avgrenses til ikke-sensitive
   planleggingsopplysninger og har samme stille avvisning av fødselsnummerlignende
   tekst som resten av appen.
+- **Vaktfritak** registreres bare som ja/nei på en registrering, aldri med
+  grunn. Administrativt vaktfritak på «Borte» brukes for eksempel ved
+  sykefravær, men systemet registrerer aldri sykdom eller hvorfor fritaket er
+  gitt, og andre enn dem som kan gi det, ser bare «Borte» (§6.2).
+- **Vaktandel** er en planleggingsstørrelse (relativ vaktbelastning), ikke
+  stillingsprosent, og lagres uten begrunnelse.
 - Behov for mer detaljerte personalopplysninger avklares før noe bygges (§3.4).
 
 ### 3.3 Tilgang
 
 - Personalopplysninger avgrenses som hovedregel til **eget laboratorium eller
   fagmiljø**.
-- Tre nivåer holdes atskilt: **kollegers innsyn** (se planen), **vaktplanleggerens
+- Tre nivåer holdes atskilt: **kollegers innsyn** (se planen), **vaktplanansvarliges
   redigering** (lage, endre og publisere) og **administrativ myndighet** (hvem
-  som er vaktplanlegger). Hvem som har hvilket nivå, vedtas før implementering.
+  som er vaktplanansvarlig, regler og vaktfritak). Fordelingen av nivåene er
+  vedtatt for vaktandel og vaktfritak (§6.2); ellers vedtas den før
+  implementering.
+- **Vaktplanansvarlig** er en egen rolle for vanlige brukere, uavhengig av
+  redaktørrollene i OUSFAR.
 - Appens globale systemarkitektrolle gir **ikke i seg selv** innsyn i ansattes
   opplysninger.
 - Minste nødvendige tilgang, **håndhevet på serversiden** (radnivåsikkerhet i
@@ -180,26 +190,26 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   365 dager bakover fra slutten av perioden som fordeles.
 - **Vakt 1 og vakt 2 utjevnes hver for seg.** En oppdatering av vaktplanen
   beholder tildelinger som fortsatt er gyldige.
-- **Forventet antall** regnes ut fra stillingskategori, vekter,
-  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag.
-  *Midlertidig beregningsregel (prototypen v0.10, `expected.ts`):* For hver
-  medarbeider og vakttype summeres vekten for kategorien over dagene i
-  tidsrommet der vedkommende var til stede, aktiv og kvalifisert, og der
-  vakttypen hadde vakter. Det samlede antallet vakter i tidsrommet fordeles
-  så etter forholdet mellom disse summene (ikke dag for dag). Eksempel: A og
-  B har lik vekt, ti dager har én vakt hver, og A er borte fire av dagene.
-  Da er forventet A 10 · 6/16 = 3,75 og B 10 · 10/16 = 6,25. Regelen
-  erstattes av en egen modell med individuell vaktandel, årsaksnøytralt
-  vaktfritak og fordeling dag for dag, som vedtas i en egen PR.
+- **Forventet antall** regnes med modellen i §6.2: stillingsvekt ×
+  vaktandel × fritaksfaktor, dag for dag, etter reglene som gjaldt hver dag.
+  ~~Midlertidig beregningsregel (prototypen v0.10): vekten summert over dagene
+  personen var til stede, og vaktene fordelt etter forholdet mellom summene.~~
+  Erstattet 26.11.2026 av §6.2: tilstedeværelse i kalenderen reduserer ikke
+  lenger forventet antall.
   For tidligere dager teller bare de
   vaktene som faktisk er registrert i kalenderen den dagen. **En dag uten
   registrert vakt av typen gir derfor ingen forventning til noen**, og
   manglende historikk gjør ikke i seg selv at noen ser ut til å ha for få
   vakter. Det gjelder også ved første gangs bruk, når ingen vakter er
   registrert bakover. En medarbeider får bare forventning fra og med dagen
-  vedkommende ble aktiv. Er en vakt registrert på en dag der en medarbeider
-  egentlig var borte, men fraværet mangler, regnes vedkommende som til stede
-  den dagen. Slike feil rettes ved å registrere fraværet.
+  vedkommende ble aktiv. Mangler et fravær med vaktfritak (for eksempel
+  ferie) for en dag med registrert vakt, får medarbeideren forventning den
+  dagen. Slike feil rettes ved å registrere fraværet.
+- **Utjevningen gir ikke en urimelig tett plan.** I én plan kan en
+  medarbeider få høyst en viss andel mer eller mindre enn sin rettferdige
+  andel av perioden for å jevne ut tidligere skjevhet (standard 50 %,
+  justerbart i regelsettet); resten jevnes ut i senere planer. I fasiten
+  under er A og B innenfor grensen.
 - **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
   medarbeider og vakttype antall, forventet antall og avvik over et valgt
   tidsrom. Med et forslag vises også antall i forslaget, samlet etter
@@ -233,6 +243,133 @@ tidligere vakter 4 og 6 nye, og uten tidligere vakter gir den 5 og 5.
 Avstand mellom vaktene og jevn belastning velger hvilke dager vaktene
 legges på, men endrer ikke antallene.
 
+### 6.2 Vaktandel og vaktfritak i forventet vaktbelastning
+
+Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
+([vaktplan#16](https://github.com/peohol/vaktplan/issues/16),
+[#596](https://github.com/peohol/ousfar/issues/596)). Erstatter den
+midlertidige beregningsregelen i §6.1 og premisset om prosent
+tilstedeværelse i §7.2.
+
+**Fire uavhengige størrelser.** Forventet vaktbelastning utledes ikke av
+tilgjengeligheten i kalenderen:
+
+| Størrelse | Hva den er |
+| --- | --- |
+| Stillingsvekt | Kategoriens vekt per vakttype (som før, f.eks. LIS og overlege motsatt for vakt 1 og vakt 2) |
+| Vaktandel | Medarbeiderens individuelle, relative vaktbelastning. Standard 100 %, **ikke** det samme som stillingsprosent |
+| Vaktfritak | Dager uten vaktgjeld |
+| Tilgjengelighet | Hvilke dager medarbeideren faktisk kan få vakt |
+
+Å fylle kalenderen med andre oppgaver skal ikke redusere forventet
+vaktbelastning.
+
+**Beregningen.** For hver medarbeider, vakttype og dato:
+
+> vekt = stillingsvekt × vaktandel × fritaksfaktor
+
+der fritaksfaktoren er 0 på en dag med vaktfritak og ellers 1. Bare aktive
+medarbeidere som er kvalifisert for vakttypen, er med. Hver dags vakter
+fordeles forholdsmessig etter vektene, og forventet antall er summen over
+perioden. Kalenderstatusene avgjør bare **hvor** vaktene kan legges, ikke
+hvor mange en medarbeider skal ha. Én felles beregning brukes av fordelingen
+og oversikten; oversikten bygger på registrerte vakter, fordelingen i
+tillegg på bemanningsbehovet for dagene som fordeles.
+
+**Vaktandel.**
+
+- Settes per medarbeider: en ordinær vaktandel (0–100 %) fra en gitt dato og
+  på ubestemt tid, og en eller flere midlertidige perioder (fra og med, til
+  og med) med en annen vaktandel. Periodene kan ikke overlappe. Etter en
+  midlertidig periode gjelder den ordinære vaktandelen som gjelder da.
+- Tidligere, gjeldende og fremtidige vaktandeler vises. Endringer gjelder
+  bare fra i dag og fremover, så tidligere forventet belastning aldri skrives
+  om.
+- 0 % utelukker automatisk vakttildeling (manuell tildeling er fortsatt
+  mulig).
+
+**Status, tilgjengelighet og vaktfritak.** Fortsatt én status per
+medarbeider per dag (§7.2). Ny status **Ferie** under «Ikke på kontoret»,
+som også omfatter ulønnet ekstraferie.
+
+| Status | Tilgjengelig for ny vakt | Vaktfritak |
+| --- | --- | --- |
+| Ingen status | Ja | Nei |
+| Vakt 1, Vakt 2, Referent | Nei | Nei |
+| Opplæring | Nei | Ja |
+| Ferie | Nei | Ja |
+| Borte | Nei | Nei, med mindre administrativt vaktfritak er gitt |
+| Hjemmekontor, Forskning, Undervisning, Avspasering, Fri, Ønske om fri | Nei | Nei |
+
+- **Administrativt vaktfritak** på «Borte» kan gis av lokale administratorer
+  og systemarkitekter med lokal myndighet i fagmiljøet. Det brukes for
+  eksempel ved sykefravær, men systemet registrerer aldri sykdom eller grunn
+  (§3.2). Andre ser bare «Borte».
+- Fritaket kan **ikke gis indirekte** av noen uten myndighet: det følger
+  aldri med når en status flyttes, byttes, kopieres eller settes på mange
+  dager, og en angring eller gjentakelse som gir eller fjerner et fritak,
+  krever samme myndighet.
+
+**Utjevning over tid** (§6.1) gjelder med denne modellen, vakt 1 og vakt 2
+hver for seg. Gyldig vaktfritak gir ingen senere kompensasjon. En skjevhet
+som skyldes vanlig redusert tilgjengelighet (for eksempel mye forskning),
+jevnes ut senere. Avstand mellom vakter og jevn belastning gjelder fortsatt,
+og manglende historiske registreringer gir ingen kunstig vaktgjeld.
+
+**Oversikten over vaktbelastning** viser per medarbeider vaktandel (ett tall,
+eller spennet når den varierer i tidsrommet), praktisk tilgjengelighet
+(dager med vakt der medarbeideren var ledig, av dagene vedkommende kunne hatt
+vakten), forventet og faktisk antall, avvik, og hvordan et forslag endrer
+avviket.
+
+**Fasit (syntetiske medarbeidere):**
+
+1. A har stillingsvekt 100 % og vaktandel 100 %, B 60 % og 60 %, C 100 % og
+   60 %, alle i samme kategori. Hver dag er vektene 1 : 0,6 : 1 (stillingsvekten
+   er kategoriens og er lik for alle tre; Bs reduserte stilling ligger i
+   vaktandelen og trekkes ikke fra to ganger). 52 vakter gir
+   52 · 1/2,6 = **20**, 52 · 0,6/2,6 = **12** og **20**, uansett hva
+   kalenderen ellers inneholder.
+2. A og B er likt stilt. 10 vakter på 10 dager, og A har ferie 4 av dagene.
+   De 4 dagene får B hele vekten, de 6 andre deles likt: A 6 · ½ = **3**,
+   B 4 + 6 · ½ = **7**. Det samme gjelder opplæring og «Borte» med
+   administrativt vaktfritak.
+3. Som 2, men A har forskning de 4 dagene i stedet for ferie. Forskning gir
+   ikke vaktfritak, så forventet er **5 og 5**. Kan A ikke få 5 fordi A er
+   opptatt, er skjevheten synlig i oversikten og jevnes ut i senere planer.
+
+**Tilgang til vaktandel og vaktfritak** (§3.3, gjelder også i OUSFAR):
+
+| Rolle | Vaktandel | Administrativt vaktfritak |
+| --- | --- | --- |
+| Kollega (leser) | Ser | Ser bare «Borte» |
+| Vaktplanansvarlig (egen rolle for vanlige brukere) | Endrer | Kan ikke gi eller fjerne |
+| Lokal administrator i fagmiljøet | Endrer | Gir og fjerner |
+| Systemarkitekt med lokal myndighet i fagmiljøet | Endrer | Gir og fjerner |
+| Systemarkitekt uten lokal myndighet | Ingen tilgang | Ingen tilgang |
+
+Systemarkitektrollen alene gir ingen tilgang på tvers av fagmiljøer.
+Myndigheten håndheves på serversiden (radnivåsikkerhet og serverside
+validering i kommandoene), ikke bare ved å skjule knapper, og testes
+negativt, også for forsøk på å gi seg selv vaktfritak.
+
+**Fremtidig datamodell i OUSFAR** (ikke bygd; integrasjonen planlegges etter
+§7.3):
+
+- En tabell for vaktandel per medlemskap i fagmiljøet: ordinære verdier med
+  gyldig-fra-dato og midlertidige perioder med fra- og tildato og prosent,
+  med databasebegrensninger for 0–100 og mot overlapp, og uten endring av
+  dager før i dag.
+- Et ja/nei-felt for administrativt vaktfritak på kalenderregistreringen,
+  uten grunn eller fritekst, og som bare kan settes på statuser som tillater
+  det. Hvem som satte det og når, hører til revisjonssporet (§3.4).
+- Vaktfritak per status (alltid, administrativt eller aldri) som en egenskap
+  i fagmiljøets statuskatalog, ikke hardkodet.
+- Radsikkerhet: lesing for medlemmer av fagmiljøet; skriving av vaktandel
+  for vaktplanansvarlig, lokal administrator og systemarkitekt med lokal
+  myndighet; skriving av vaktfritak bare for de to siste. Ingen tilgang for
+  andre fagmiljøer eller for systemarkitektrollen alene.
+
 ## 7. Første arbeidsløp: vaktplanen
 
 ### 7.1 Utgangspunktet
@@ -254,8 +391,9 @@ reglene bak avklares med Peder i prosjekttråden.
 ### 7.2 Produktpremisser som er besluttet
 
 - **Motsatte stillingsvekter for vakt 1 og vakt 2.**
-- Fordelingen tar hensyn til **prosent tilstedeværelse** og **avstand mellom
-  vakter**.
+- Fordelingen tar hensyn til ~~**prosent tilstedeværelse** og~~ **avstand
+  mellom vakter**. Prosent tilstedeværelse er erstattet 26.11.2026 av
+  vaktandel og vaktfritak (§6.2).
 - **Overleger skal ha færre vakt 1**, men ikke nødvendigvis færre vakter totalt.
 - Excel-arket er **ikke et krav om eksakt algoritme**; det viser hensikten.
 - Kalender med **dag, uke og måned**, **enkle statuser**, **manuelle
@@ -266,11 +404,14 @@ Besluttet av Peder 25.11.2026, i prototypen i `peohol/vaktplan` (PR #5):
 - **Ingen arbeidsmønster eller stillingsandel.** Mønstrene varierer, og noen
   i redusert stilling er til stede hver dag og kan ha vakt hver ukedag. Alle
   aktive medarbeidere regnes som til stede på hverdager som ikke er
-  helligdager; fravær, også ved deltid, registreres i kalenderen. Prosent
-  tilstedeværelse i fordelingen regnes derfor ut fra kalenderen, ikke fra en
-  stillingsandel.
+  helligdager; fravær, også ved deltid, registreres i kalenderen.
+  ~~Prosent tilstedeværelse i fordelingen regnes derfor ut fra kalenderen,
+  ikke fra en stillingsandel.~~ Erstattet 26.11.2026: redusert
+  vaktbelastning uttrykkes med vaktandel, og kalenderen avgjør bare
+  plasseringen (§6.2).
 - **Forskning, undervisning og ønske om fri regnes som borte** i
-  planleggingen.
+  planleggingen (de gjør medarbeideren opptatt, men gir ikke vaktfritak,
+  §6.2).
 - ~~Hjemmekontor, forskning, undervisning, annen oppgave og ønske om fri
   utelukker vakt 1 og vakt 2 samme dag.~~ Erstattet 26.11.2026 av regelen om
   én status per dag nedenfor, som gjør egne eksklusjonsregler unødvendige.
@@ -287,8 +428,8 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Standardoppsettet har to kategorier**, hver status med et ikon fra ett
   felles ikonbibliotek (ingen emojier):
   - *På kontoret:* Vakt 1, Vakt 2, Referent og Opplæring.
-  - *Ikke på kontoret:* Borte, Hjemmekontor, Forskning, Undervisning,
-    Avspasering, Fri og Ønske om fri.
+  - *Ikke på kontoret:* Borte, Ferie (fra 26.11.2026, §6.2), Hjemmekontor,
+    Forskning, Undervisning, Avspasering, Fri og Ønske om fri.
 
   Statusene skal senere kunne konfigureres per fagmiljø, men det bygges
   ikke noe administrasjonsgrensesnitt for dem nå. Borte registreres uten
@@ -324,14 +465,13 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   flyttingen med årsak, også når målcellen er tom. Overtakelse skjer bare
   ved å velge vakten i cellen (punktet over).
 - **Tilstedeværelse og tilgjengelighet er atskilt i vaktfordelingen:**
-  - *Til stede* (grunnlaget for prosent tilstedeværelse) er den som er uten
-    status eller har en status på kontoret.
+  - *Til stede* er den som er uten status eller har en status på kontoret.
   - *Ledig for en ny vakt* er bare den som er uten status og oppfyller
     kravene til vakten.
 
   Ønske om fri regnes som fravær, men vises annerledes enn innvilget fri.
-  Motsatte stillingsvekter, prosent tilstedeværelse og avstand mellom
-  vaktene gjelder uendret.
+  Motsatte stillingsvekter og avstand mellom vaktene gjelder uendret.
+  Tilstedeværelse påvirker ikke lenger forventet antall vakter (§6.2).
 - **Eldre data migreres uten stille tap.** Hadde en medarbeider flere
   statuser samme dag, beholdes den viktigste (fravær før vakt før andre
   oppgaver). En eksisterende merknad beholdes uavkortet. De andre statusene
@@ -393,8 +533,9 @@ Navnet kommer fra profilen. Ingen andre profilfelt leses (§3.2).
   med gyldighetsdato.
 - Feltene er planleggingsdata, ikke HR-data (§2).
 - Hvem som kan se og redigere feltene, følger §3.3 og vedtas før
-  implementering. Forslag: lokal administrator og vaktplanlegger i eget
-  fagmiljø redigerer, kolleger ser bare det vaktplanen viser.
+  implementering. Forslag: lokal administrator og vaktplanansvarlig i eget
+  fagmiljø redigerer, kolleger ser bare det vaktplanen viser. Vaktandelen
+  (§6.2) er Personals eget felt og følger tilgangen i §6.2.
 - Radsikkerhet på serversiden, med negative tester på tvers av fagmiljøer og
   roller (§3.3).
 
