@@ -205,11 +205,18 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   vedkommende ble aktiv. Mangler et fravær med vaktfritak (for eksempel
   ferie) for en dag med registrert vakt, får medarbeideren forventning den
   dagen. Slike feil rettes ved å registrere fraværet.
-- **Utjevningen gir ikke en urimelig tett plan.** I én plan kan den som
-  skal ta igjen, få høyst en viss andel flere vakter enn sin rettferdige
-  andel av perioden (standard 50 %, justerbart i regelsettet). Den som har
-  hatt for mange, kan få ned til ingen vakter i perioden, aldri mindre.
-  Resten jevnes ut i senere planer. I fasiten under er A og B innenfor
+- **Utjevningen gir ikke en urimelig tett plan.** I én plan er målet for
+  den som skal ta igjen, høyst en viss andel flere vakter enn sin
+  rettferdige andel av perioden (foreløpig standard 50 %, justerbar i
+  regelsettet; ikke en vedtatt arbeidstidsgrense). Målet for den som har
+  hatt for mange, kan gå ned til ingen vakter i perioden, aldri lavere.
+  Resten jevnes ut i senere planer. Grensen begrenser ønsket kompensasjon,
+  ikke faktisk antall vakter: dekning, låste og publiserte vakter,
+  tilgjengelighet og avrunding går foran, så faktisk antall kan bli høyere,
+  og planen skal da vise det. Prioritetsrekkefølgen over gjelder uendret,
+  og ingen ny hard regel ofrer dekning. Eksempel: to likt stilte, ti vakter,
+  den ene opptatt alle dagene uten vaktfritak. Begge forventes å ha 5, men
+  den ledige får 10 for å dekke behovet. I fasiten under er A og B innenfor
   grensen.
 - **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
   medarbeider og vakttype antall, forventet antall og avvik over et valgt
@@ -307,7 +314,7 @@ som også omfatter ulønnet ekstraferie.
 - **Administrativt vaktfritak** på «Borte» kan gis av lokale administratorer
   og systemarkitekter med lokal myndighet i fagmiljøet. Det brukes for
   eksempel ved sykefravær, men systemet registrerer aldri sykdom eller grunn
-  (§3.2). Andre ser bare «Borte».
+  (§3.2). Andre ser bare «Borte» (se lesemodellen under).
 - Fritaket kan **ikke gis indirekte** av noen uten myndighet: det følger
   aldri med når en status flyttes, byttes, kopieres eller settes på mange
   dager, og en angring eller gjentakelse som gir eller fjerner et fritak,
@@ -323,7 +330,8 @@ og manglende historiske registreringer gir ingen kunstig vaktgjeld.
 eller spennet når den varierer i tidsrommet), praktisk tilgjengelighet
 (dager med vakt der medarbeideren var ledig, av dagene vedkommende kunne hatt
 vakten), forventet og faktisk antall, avvik, og hvordan et forslag endrer
-avviket.
+avviket. Forventet antall og avvik vises bare for roller med
+fritaksmyndighet (se lesemodellen under).
 
 **Fasit (syntetiske medarbeidere):**
 
@@ -358,6 +366,30 @@ negativt, også for forsøk på å gi seg selv vaktfritak uten slik myndighet.
 De som har myndighet etter tabellen, kan gi fritak, også på egne
 registreringer.
 
+**Lesemodell for administrativt vaktfritak.** Radnivåsikkerhet alene er
+ikke nok: den avgjør hvilke rader en bruker ser, ikke hvilke felt i en
+lesbar rad. Fritaket kan dessuten leses ut av eksakte tall. Syntetisk
+eksempel: to likt stilte, én vakt 1 på én dato, A er Borte og B har vakten.
+Uten fritak er forventet ½ og ½, med fritak 0 og 1. Derfor gjelder:
+
+- En **serverstyrt lesemodell** (egne visninger eller funksjoner på
+  serversiden) gir roller uten fritaksmyndighet kalenderregistreringen uten
+  fritaksfeltet, også i endringshistorikk og i alle svar fra API-er.
+- **Statistikk og forklaringer** som avhenger av fritaket (forventet antall,
+  avvik, største avvik, vurderingen av hver kandidat og hvem som er over
+  målet for utjevning), gis bare til roller med fritaksmyndighet. Andre får
+  vanlig kalenderinnsyn og faktiske vakttall, og utvalget av medarbeidere i
+  oversikter avhenger ikke av fritak. Tall som vises, er aldri bevisst feil.
+- Meldinger og varsler om fritak går bare til dem med myndighet.
+- Negative tilgangstester dekker også statistikk og API-svar: samme
+  kalender med og uten fritak gir likt svar for roller uten myndighet.
+- Dette hindrer direkte avsløring gjennom systemet. At noen kan trekke
+  slutninger av en ferdig vaktplan (hvem som fikk vaktene), kan ikke
+  utelukkes og er ikke en del av kravet.
+
+Prototypen i `peohol/vaktplan` demonstrerer skjermingen (uten ekte
+servertilgangskontroll). Ingen produksjonsimplementering nå.
+
 **Fremtidig datamodell i OUSFAR** (ikke bygd; integrasjonen planlegges etter
 §7.3):
 
@@ -373,7 +405,11 @@ registreringer.
 - Radsikkerhet: lesing for medlemmer av fagmiljøet; skriving av vaktandel
   for vaktplanansvarlig, lokal administrator og systemarkitekt med lokal
   myndighet; skriving av vaktfritak bare for de to siste. Ingen tilgang for
-  andre fagmiljøer eller for systemarkitektrollen alene.
+  andre fagmiljøer eller for systemarkitektrollen alene. Fritaksfeltet og
+  fritaksavhengig statistikk leses bare gjennom lesemodellen over.
+- Historikken for vaktandel beskyttes også ved angre, gjenoppretting og
+  andre overganger: ingen operasjon endrer vaktandelen for en dag før
+  datoen den utføres.
 
 ## 7. Første arbeidsløp: vaktplanen
 
