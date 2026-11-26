@@ -206,7 +206,8 @@ ikke sannsynligheten for at fortolkningen er riktig.
 2. Under vurderingen ved kronisk bruk: den samlede vurderingen, når den er
    gjort (under).
 3. Forbeholdet om eliminasjonsfasen, i én kort linje.
-4. «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard.
+4. Profiltabellen og figuren, alltid åpne og uten overskrift (#592), og
+   «Forklaring», lukket som standard.
 
 Det en høyere margin ville gitt, står ikke i resultatet, men i snakkebobler
 ved bryteren for sikkerhetsmarginen i skjemaet (#588, som i THC-syre), for
@@ -300,7 +301,7 @@ de tidligere prøvene er det indikasjon på nytt inntak.» Indikasjonen
 graderes ikke. Vurderingene, figuren og forklaringen for hovedparet endres
 ikke.
 
-**Utskillelsesprofiler og figur** (lukket som standard). En kompakt tabell er
+**Profiltabellen og figuren** (alltid åpne, uten overskrift, #592). En kompakt tabell er
 både tegnforklaringen og oversikten: profilens strek (farge og
 stiplingsmønster som i figuren), det korte navnet (Enkeltinntak, Gjentatte
 doser, Moderat utskillelse, Treg utskillelse, Ekstrem utskillelse), forventet

@@ -19,6 +19,7 @@
  */
 import { thcRegelsettutgave } from '../hjelp/thcgrunnlag'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
+import { seksjonsluft, somLuft } from './seksjonsluft'
 import { marginbobler, somTekst } from './marginbobler'
 import { apneTestmiljo } from './testmiljo'
 
@@ -121,20 +122,23 @@ try {
     await feltenePaaLinje(pc, 'IRCAK')
     await innenforRammene(pc)
     await valgeneIKanten(pc)
-    // Kopiknappen står rett under kommentaren, og de lukkede overskriftene under den.
+    // Kopiknappen står rett under kommentaren, og profilene med figuren under den.
+    const kopier = pc.getByRole('button', { name: /Kopier kommentar/ })
     const [kTop, knappTop, seksjonTop] = await Promise.all([
       pc.locator('.kommentartekst').evaluate((e: Element) => e.getBoundingClientRect().bottom),
-      pc.getByRole('button', { name: /Kopier kommentar/ }).evaluate((e: Element) => e.getBoundingClientRect().top),
+      kopier.evaluate((e: Element) => e.getBoundingClientRect().top),
       pc.locator('.be-seksjoner').evaluate((e: Element) => e.getBoundingClientRect().top),
     ])
     krev(kTop <= knappTop && knappTop < seksjonTop, 'kopiknappen står ikke rett under kommentaren')
-    const bunn = await pc.locator('.be-seksjoner').evaluate((e: Element) => e.getBoundingClientRect().bottom + window.scrollY)
+    // Kommentaren og kopiknappen får plass uten rulling; profilene og figuren, som
+    // alltid står åpne (#592), følger under.
+    const bunn = await kopier.evaluate((e: Element) => e.getBoundingClientRect().bottom + window.scrollY)
     const hoyde = await pc.evaluate(() => window.innerHeight)
-    krev(bunn <= hoyde, `resultatet slutter ${Math.round(bunn)} px ned i et vindu på ${hoyde} px`)
+    krev(bunn <= hoyde, `kopiknappen står ${Math.round(bunn)} px ned i et vindu på ${hoyde} px`)
     await bortMedFokus(pc)
     await vent(300)
     await bilde(pc, '01-resultat-pc')
-    return `slutter ${Math.round(bunn)} av ${hoyde} px`
+    return `kopiknappen slutter ${Math.round(bunn)} av ${hoyde} px`
   })
 
   await punkt('T2 PC: tastaturet til informasjonstegnet, og den forklarte marginen', async () => {
@@ -214,14 +218,13 @@ try {
     }
   })
 
-  await punkt('T5 PC: profiltabellen og figuren, og alle marginer, lukket til den åpnes', async () => {
+  await punkt('T5 PC: profiltabellen og figuren alltid åpne, uten overskrift, og alle marginer', async () => {
     paa(pc)
     await fyll(pc, 'Forrige prøve', '120', '2026-01-01')
     await fyll(pc, 'Denne prøven', '80', '2026-01-08')
-    const seksjon = pc.locator('details').filter({ hasText: 'Utskillelsesprofiler og figur' })
-    krev(!(await seksjon.evaluate((d: HTMLDetailsElement) => d.open)), 'profilene er åpne fra start')
-    await pc.getByText('Utskillelsesprofiler og figur').click()
-    await vent(700)
+    const seksjon = pc.locator('.be-profiler')
+    krev((await pc.getByText('Utskillelsesprofiler og figur').count()) === 0, 'overskriften står')
+    krev((await seksjon.locator('xpath=ancestor::details').count()) === 0, 'profilene ligger i en skuff')
     const rader = await seksjon.locator('tbody tr').count()
     krev(rader >= 3, `bare ${rader} rader`)
     krev((await seksjon.locator('svg.thc-plot__figur').count()) === 1, 'figuren mangler')
@@ -229,10 +232,9 @@ try {
     await seksjon.getByLabel('Vis alle sikkerhetsmarginer').check()
     await vent(300)
     await bilde(pc, '06-alle-marginer-pc', true)
+    const luft = await seksjonsluft(pc)
     await seksjon.getByLabel('Vis alle sikkerhetsmarginer').uncheck()
-    await pc.getByText('Utskillelsesprofiler og figur').click()
-    await vent(500)
-    return `${rader} rader`
+    return `${rader} rader; ${somLuft(luft)}`
   })
 
   await punkt('T6 PC: forklaringen med de fire spørsmålene, uten formler', async () => {
@@ -244,10 +246,12 @@ try {
     krev(overskrifter.length === 4, `overskriftene: ${overskrifter.join(' | ')}`)
     const t = await seksjon.innerText()
     krev(!/=|√|\bln\b|forholdstall|kvotient/i.test(t), `formler: ${t}`)
+    const apen = await seksjonsluft(pc)
     await bilde(pc, '07-forklaring-pc', true)
     await pc.getByText('Forklaring', { exact: true }).click()
     await vent(500)
-    return overskrifter.join(' | ')
+    const lukket = await seksjonsluft(pc)
+    return `${overskrifter.join(' | ')}; åpen: ${somLuft(apen)}; lukket: ${somLuft(lukket)}`
   })
 
   await punkt('T7 PC: feil ved feltet, og feil på tvers', async () => {
@@ -336,10 +340,7 @@ try {
     await bortMedFokus(pc)
     await vent(300)
     await bilde(pc, '14-moerkt-pc')
-    await pc.getByText('Utskillelsesprofiler og figur').click()
-    await vent(700)
     await bilde(pc, '15-moerkt-profiler-pc', true)
-    await pc.getByText('Utskillelsesprofiler og figur').click()
     await pc.emulateMedia({ colorScheme: 'light' })
     return 'tatt'
   })

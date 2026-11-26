@@ -250,7 +250,7 @@ function ThcFortolkning({
       </Card>
 
       {/* Kommentaren rett etter skjemaet, med kopieringen rett under, og
-          profilene, figuren og forklaringen lukket under (#586). */}
+          profilene og figuren åpne og forklaringen lukket under (#586, #592). */}
       <Card ref={resultatkort} align="start" className="thc-resultat be-resultat">
         <ThcKommentar
           resultat={resultat}

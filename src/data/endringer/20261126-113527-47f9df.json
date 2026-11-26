@@ -2,7 +2,7 @@
   "id": "20261126-113527-47f9df",
   "semver": "patch",
   "opprettet": "2026-11-26T11:35:27Z",
-  "sammendrag": "Snakkeboblene ved sikkerhetsmarginen er oransje og pulserer raskere",
+  "sammendrag": "Utskillelsesprofilene og figuren står alltid åpne, og snakkeboblene ved sikkerhetsmarginen er oransje og pulserer raskere",
   "typer": [
     "Design / layout"
   ],
@@ -11,6 +11,8 @@
     "fortolkning"
   ],
   "punkter": [
-    "Snakkeboblene som viser hva en høyere sikkerhetsmargin ville gitt (THC-syre og benzoylekgonin i urin), er oransje i stedet for appens grønnblå farge og pulserer én gang i sekundet, så de er lettere å legge merke til."
+    "Profiltabellen og figuren står alltid åpne under resultatet, uten egen overskrift, i fortolkningen av THC-syre og benzoylekgonin i urin.",
+    "Snakkeboblene som viser hva en høyere sikkerhetsmargin ville gitt (THC-syre og benzoylekgonin i urin), er oransje i stedet for appens grønnblå farge og pulserer én gang i sekundet, så de er lettere å legge merke til.",
+    "Jevnere luft rundt «Forklaring»: like mye over som under skillelinjen, og ingen ekstra luft under."
   ]
 }

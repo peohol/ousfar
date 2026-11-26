@@ -34,6 +34,8 @@ const SPORADISK = 'Sporadisk bruk lagt til grunn'
 const KRONISK = 'Kronisk bruk lagt til grunn'
 const vurdering = (navn: string) => screen.getByRole('region', { name: navn })
 const seksjon = (navn: string) => screen.getByText(navn, { selector: '.detalj__tekst' }).closest('details') as HTMLDetailsElement
+/** Profilene med figuren: alltid åpne, uten overskrift (#592). */
+const profilene = () => document.querySelector('.be-profiler') as HTMLElement
 
 async function vis() {
   visBeUrin(MED_PROFILER)
@@ -59,7 +61,7 @@ describe('resultatet med fem profiler', () => {
     expect(screen.queryByText(/tentativ/i)).toBeNull()
     expect(screen.queryByRole('button', { name: /Kopier/ })).toBeNull()
     // Vurderingene står før profilene og forklaringen.
-    const rekkefolge = [vurdering(SPORADISK), vurdering(KRONISK), seksjon('Utskillelsesprofiler og figur'), seksjon('Forklaring')]
+    const rekkefolge = [vurdering(SPORADISK), vurdering(KRONISK), profilene(), seksjon('Forklaring')]
     for (let i = 1; i < rekkefolge.length; i++) {
       expect(rekkefolge[i - 1]!.compareDocumentPosition(rekkefolge[i]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     }
@@ -143,10 +145,12 @@ describe('resultatet med fem profiler', () => {
     expect(marginbeskrivelse()).toEqual(['Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Sannsynlig nytt inntak.'])
   })
 
-  it('har profiltabellen og figuren lukket, med alle fem profilene, hver med sin strek, og ett valg for alle marginer', async () => {
+  it('har profiltabellen og figuren alltid åpne, uten overskrift, med alle fem profilene, hver med sin strek, og ett valg for alle marginer', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const profiler = seksjon('Utskillelsesprofiler og figur')
-    expect(profiler.open).toBe(false)
+    const profiler = profilene()
+    expect(profiler.closest('details')).toBeNull()
+    expect(screen.queryByText('Utskillelsesprofiler og figur')).toBeNull()
+    expect(seksjon('Forklaring').open).toBe(false)
     const tabell = within(profiler).getByRole('table')
     const rader = within(tabell)
       .getAllByRole('row')

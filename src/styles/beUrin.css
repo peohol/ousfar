@@ -477,8 +477,27 @@
   margin: 0;
 }
 
+/* Profilene og figuren står alltid; under dem «Forklaring» (#592). Skillelinjen
+   over «Forklaring» har like mye luft over som overskriften har over seg, og
+   under «Forklaring» er det ingen luft utover kortets: luften mellom
+   overskriften og forklaringen ligger inne i skuffen og glir bort med den. */
 .be-seksjoner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
   align-self: stretch;
+}
+
+.be-seksjoner > .detalj > .detalj__tittel {
+  padding-bottom: 0;
+}
+
+.be-seksjoner > .detalj > .detalj__kropp > .detalj__inner > :first-child {
+  margin-top: var(--rom-5);
+}
+
+.be-seksjoner > .detalj > .detalj__kropp > .detalj__inner > :last-child {
+  margin-bottom: 0;
 }
 
 .be-profiler {

@@ -336,8 +336,10 @@ marginen om den høyere måleusikkerheten, bare når den faktisk brukes (en
 margin som korrigerer, og en beregnet IRCAK over 0 i forrige prøve). Står skjemaet på en margin
 et nytt regelsett ikke har, gir motoren en mangel og ingen kommentar.
 
-Kommentaren står rett etter skjemaet, med kopiknappen rett under, og under
-den to lukkede seksjoner: «Utskillelsesprofiler og figur» og «Forklaring».
+Kommentaren står rett etter skjemaet, med kopiknappen rett under. Under den
+står profiltabellen og figuren, alltid åpne og uten overskrift (#592), og
+under dem «Forklaring», lukket. Skillelinjen over «Forklaring» har like mye
+luft over som under seg, og under «Forklaring» er det bare kortets egen luft.
 Kopieringen kvitteres som før, med manuell kopiering når utklippstavlen ikke
 kan brukes, og tilbudet om å nullstille med Enter. Skjemaet som er fylt inn,
 overlever en oppdatering av appen, også fra før #586
