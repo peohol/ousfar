@@ -264,7 +264,7 @@ Resten av grensesnitteksten:
 | Fagsøket | «↑ ↓ velg · Enter åpne · Esc lukk», «Vis alle treff (N)», «Ingen treff i fagstoffet.» |
 | Søkesiden | «Søk i fagstoff», fanene «Alle», «Stoff», «Preparater», «Tekst», «Referanser», og gruppen «I teksten» |
 | Toppmenyen, høyre side | chatknappen (bare på smale flater), bjella og kontomenyen med «Endre navn og profilbilde», «Fagmiljø», «Mine forslag», «Til behandling», «Mitt redaktøransvar», «Innstillinger» og «Logg ut» |
-| Hovedmenyen | «Forsiden», «Fortolkning», «Grupper», «Chat», «Endringsforslag»; «For hele appen»: «Idéer for appen», «Planlagte oppgaver», «Administrasjon»; fanene «Stoffregister» og «Verktøy» |
+| Hovedmenyen | «Meny», «Forsiden», «Fortolkning», «Fag» («Stoffregister» med «Søk i stoffregisteret», «Hele stoffregisteret», «Stoffkategorier» og «Vis underkategorier»; «Verktøy» med «Verktøyoversikten»; «Favoritter»), «Personal», «Grupper», «Chat», «Endringsforslag», «Apputvikling» («Idéer for appen», «Planlagte oppgaver»), «Administrasjon»; «Tilbake til …», «Til hovedmenyen», «Lukk menyen» |
 | Innstillinger | fanen «Visning»: «Vis hurtigtaster», «Tema» med Lyst, Mørkt og Følg system, «Reduser bevegelse» med Ja, Nei og Følg system, vist som «System», og «Måleenhet» |
 | Versjonspillen | klokka og versjonen, «Vis endringslogg» |
 
@@ -503,28 +503,34 @@ knappene i dokken har trykkstørrelse. Dokken selv er den samme på alle bredder
 
 ### Hovedmenyen
 
-`src/components/Sidemeny.tsx` (Ctrl + M) har øverst navigasjonsblokken
-(`src/components/Menynavigasjon.tsx`, D6; skisse 19 og 29): Forsiden,
-Fortolkning, Grupper (med invitasjonene), Chat (med uleste, når chatten er
-slått på), Endringsforslag (med det som venter på deg), og «For hele appen»:
+`src/components/Sidemeny.tsx` (Ctrl + M) er et panel med menynivåer
+(Issue #604): et valg med undermeny erstatter innholdet i panelet med
+nivået under. Strukturen, arkitekturen og tastaturet står i
+`docs/navigasjon.md`, «Hovedmenyen».
 
-- **Idéer for appen** og, bare for systemarkitektene, **Planlagte oppgaver**.
-  Vinduene eies av `src/components/ideer/Idelag.tsx`, som også henter
-  tallet på idéer med nye kommentarer (`idestatus`). Menyen åpner dem med
-  `apneIdelag` (`idevisning.ts`).
-- **Administrasjon**, bare for dem som har noe der (`harAdministrasjon`), en
-  skuff med valgene etter rollen (`ADMINVALG` i `konto/adminvisning.ts`):
-  brukerne, redaktørene, datakildene, kurateringene, kildeovervåkingen,
-  nødstoppen for de kliniske verktøyene («Kliniske verktøy»,
-  `docs/verktøy-p11-publisering.md`) og autoerstatt. Vinduene og det som bør
-  ses over, eies av `konto/Administrasjon.tsx` (`adminstatus`); menyen åpner
-  dem med `apneAdminpanel`.
+- **Toppfeltet** står fast: «Tilbake til …» (ikonet `back`) og, fra nivå to
+  og dypere, «Til hovedmenyen» (`menu`) til venstre, nivåets navn i serif, og
+  «Lukk menyen» (`close`) i motsatt hjørne. Knappene er `Ikonknapp`.
+- **Under** står ett rulleområde i hele høyden. Et valg er en rad med ikonet,
+  navnet i halvfet grotesk, eventuelt en linje under (verktøyene), tallet
+  eller merknaden dempet til høyre, og pilen `chev` når valget fører til en
+  undermeny. Mellomoverskrifter (som «Stoffkategorier» og underkategoriene)
+  står i dempet kursiv serif; avsnitt uten overskrift skilles med en
+  hårlinje. Siden brukeren står på, har aksentfarge på hevet flate, og
+  valgene som fører ned til den, aksentfarge alene.
+- **Søket** er en pille som søket i chatmenyen, og blir stående øverst mens
+  lista ruller.
+- **Prikken** (`nyprikk`) står ved det som venter og ved valgene over det,
+  og på menyknappen.
+- Ikonene er appens egne: `fag` (en åpen bok) for Fag, `kalender` for
+  Personal, `ideoppgaver` for Apputvikling, `shield` for Administrasjon,
+  `helside` for «Hele stoffregisteret» og «Verktøyoversikten», og
+  kategoriikonene for stoffkategoriene.
 
-Det som før hadde en prikk i toppmenyen (en invitasjon, nye kommentarer på
-idéene, det som bør ses over i administrasjonen), gir en prikk på
-menyknappen, med teksten i navnet. Valgene lukker menyen og gir fokus
-tilbake til menyknappen før vinduet åpnes. Under blokken står fanene
-Stoffregister og Verktøy som før. Blokken ruller for seg når vinduet er lavt.
+Valgene som åpner et vindu (idéene, de planlagte oppgavene og
+administrasjonens vinduer), lukker menyen og gir fokus tilbake til
+menyknappen før vinduet åpnes. Vinduene eies av `ideer/Idelag.tsx` og
+`konto/Administrasjon.tsx`, som åpnes med `apneIdelag` og `apneAdminpanel`.
 
 ### Kontoen
 

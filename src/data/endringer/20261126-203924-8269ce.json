@@ -1,0 +1,22 @@
+{
+  "id": "20261126-203924-8269ce",
+  "semver": "minor",
+  "opprettet": "2026-11-26T20:39:24Z",
+  "sammendrag": "Hovedmenyen har fått undermenyer og et søk i stoffregisteret",
+  "typer": [
+    "Funksjonalitet",
+    "Design / layout"
+  ],
+  "omfang": "Moderat omfang",
+  "gjelder": [
+    "hele appen"
+  ],
+  "punkter": [
+    "Hovedmenyen (Ctrl + M) er ordnet i nivåer: Forsiden, Fortolkning, Fag, Grupper, Chat, Endringsforslag, Apputvikling og Administrasjon. Et valg med pil mot høyre åpner undermenyen i det samme panelet, og knappen øverst til venstre går tilbake.",
+    "Stoffregisteret, verktøyene og favorittene ligger under Fag. Fanene nederst i menyen er borte.",
+    "Stoffregisteret i menyen har et søkefelt øverst som finner stoffet på navnet eller et annet navn. En kategori viser stoffene med underkategoriene som mellomoverskrifter, eller i én liste med «Vis underkategorier» av.",
+    "Idéer for appen og Planlagte oppgaver ligger under Apputvikling, og administrasjonens valg under Administrasjon. En prikk viser fortsatt hvor noe nytt venter, også på valget over.",
+    "Menyen åpnes igjen der du var, og husker hvor langt du hadde rullet når du går tilbake. «Til hovedmenyen» øverst tar deg rett tilbake fra dypere nivåer.",
+    "Piltastene går mellom valgene: høyre åpner en undermeny og venstre går tilbake. På mobil fyller menyen hele skjermen, med større trykkflater."
+  ]
+}

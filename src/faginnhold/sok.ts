@@ -86,6 +86,16 @@ export function sokeord(sporring: string): string[] {
 }
 
 /**
+ * Om hvert av ordene i et søk ({@link sokeord}) er begynnelsen på et ord i
+ * teksten, uansett store bokstaver og aksenter. Navnesøkene i verktøyene og i
+ * menyen bruker det.
+ */
+export function begynnerOrd(ord: readonly string[], tekst: string): boolean {
+  const ordene = fold(tekst).split(/[^\p{L}\p{N}]+/u)
+  return ord.every((o) => ordene.some((w) => w.startsWith(o)))
+}
+
+/**
  * Hvor ordene står i teksten, som [start, slutt) i originalen, sortert og
  * uten overlapp.
  */

@@ -7,8 +7,8 @@
  *
  * Punktene: forsiden («Gå til gruppeoversikten», «Alle varsler», «Tilpass
  * forsiden»), gruppesiden («Tilbake til …», «Vis medlemmer», «Åpne …»),
- * samtalen i chatten («Til gruppen», «Gjenopprett», «Ny chat»), sidemenyen
- * («Åpne hele stoffregisteret») og fortolkningen («Til forsiden»), på PC, på
+ * samtalen i chatten («Til gruppen», «Gjenopprett», «Ny chat»), hovedmenyen
+ * (menyvalgene er ikke knapper) og fortolkningen («Til forsiden»), på PC, på
  * mobil og i mørkt tema.
  */
 import { randomBytes } from 'node:crypto'
@@ -114,20 +114,24 @@ try {
     return svar.join(', ')
   })
 
-  await punkt('K4 sidemenyen: «Åpne hele stoffregisteret» er en knapp; menyvalgene er som før', async () => {
+  await punkt('K4 hovedmenyen: menyvalgene er menyvalg, uten knappeflate, også «Hele stoffregisteret»', async () => {
     paa(pc)
     await pc.goto(`${miljo.url}/#/`)
     await pc.locator('button.menyknapp').click()
     const meny = pc.getByRole('navigation', { name: 'Meny' })
-    await meny.getByRole('tab', { name: 'Stoffregister' }).click()
+    // Den hierarkiske menyen (Issue #604): «Hele stoffregisteret» er et valg i Fag › Stoffregister.
+    if (await meny.getByRole('button', { name: 'Til hovedmenyen' }).count()) await meny.getByRole('button', { name: 'Til hovedmenyen' }).click()
+    else if (await meny.getByRole('button', { name: /^Tilbake til/ }).count()) await meny.getByRole('button', { name: /^Tilbake til/ }).click()
+    await meny.getByRole('button', { name: /^Fag/ }).click()
+    await meny.getByRole('button', { name: /^Stoffregister/ }).click()
     await vent(500)
-    const svar = await serUtSomKnapp(pc, 'Åpne hele stoffregisteret', 'link')
-    // Et menyvalg er ikke en knapp: kategoriene beholder utseendet.
-    const kategori = await meny.locator('.menyskuff__tittel').first().evaluate((e: HTMLElement) => getComputedStyle(e).backgroundColor)
-    krev(kategori === 'rgba(0, 0, 0, 0)', `menyvalgene har fått flate (${kategori})`)
+    const flater = await meny
+      .locator('.menyvalg')
+      .evaluateAll((v: HTMLElement[]) => v.filter((e) => !e.matches(':hover, [aria-current]')).map((e) => getComputedStyle(e).backgroundColor))
+    krev(flater.every((f: string) => f === 'rgba(0, 0, 0, 0)'), `menyvalgene har fått flate (${flater.join(', ')})`)
     await bilde(pc, '04-sidemeny-pc')
     await pc.keyboard.press('Escape')
-    return svar
+    return `${flater.length} menyvalg uten flate`
   })
 
   await punkt('K5 fortolkningen: «Til forsiden» er en knapp', async () => {
