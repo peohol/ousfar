@@ -101,7 +101,13 @@ export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaPro
 
       <div className="be-prover">
         {!ingen && (
-          <Provefelter tittel="Forrige prøve" prove={forrigeProve(inndata)} onEndre={endreForrige} forsteFelt={forsteFelt} />
+          <Provefelter
+            tittel="Forrige prøve"
+            prove={forrigeProve(inndata)}
+            onEndre={endreForrige}
+            forsteFelt={forsteFelt}
+            verdienVurderes={vurderes}
+          />
         )}
 
         <Provegruppe tittel="Denne prøven">
@@ -227,6 +233,7 @@ function Tallinndata({
   onEndre,
   feltRef,
   smal = false,
+  vurderes = true,
 }: {
   navn: string
   verdi: string
@@ -235,9 +242,11 @@ function Tallinndata({
   feltRef?: Ref<HTMLInputElement> | undefined
   /** IRCAK: aldri mer enn fire siffer, så feltet er smalt. */
   smal?: boolean
+  /** Brukes verdien ikke i fortolkningen, sies det heller ingen feil ved den. */
+  vurderes?: boolean
 }) {
   const id = useId()
-  const feil = thcFeltfeil(verdi, krav)
+  const feil = vurderes ? thcFeltfeil(verdi, krav) : null
   return (
     <label className="skjemafelt">
       <span id={`${id}-navn`}>{navn}</span>
@@ -270,12 +279,19 @@ function Provefelter({
   onEndre,
   onFjern,
   forsteFelt,
+  verdienVurderes = true,
 }: {
   tittel: string
   prove: ThcProve
   onEndre: <K extends keyof ThcProve>(felt: K, verdi: ThcProve[K]) => void
   onFjern?: () => void
   forsteFelt?: Ref<HTMLInputElement> | undefined
+  /**
+   * Usann når prøvene ikke sammenlignes (kort tid): motoren leser da ikke
+   * verdien, så feltene sier ingen feil. Verdiene og datoen står, så
+   * sammenligningen kan tas opp igjen.
+   */
+  verdienVurderes?: boolean
 }) {
   const beregnetIrcak = prove.underCutoff ? beregnIrcak(prove.ucak, prove.nkre) : null
   return (
@@ -304,8 +320,15 @@ function Provefelter({
               krav="ikke_negativ"
               onEndre={(verdi) => onEndre('ucak', verdi)}
               feltRef={forsteFelt}
+              vurderes={verdienVurderes}
             />
-            <Tallinndata navn="NKRE (kreatinin)" verdi={prove.nkre} krav="over_null" onEndre={(verdi) => onEndre('nkre', verdi)} />
+            <Tallinndata
+              navn="NKRE (kreatinin)"
+              verdi={prove.nkre}
+              krav="over_null"
+              onEndre={(verdi) => onEndre('nkre', verdi)}
+              vurderes={verdienVurderes}
+            />
           </>
         ) : (
           <Tallinndata
@@ -315,6 +338,7 @@ function Provefelter({
             krav="ikke_negativ"
             onEndre={(verdi) => onEndre('verdi', verdi)}
             feltRef={forsteFelt}
+            vurderes={verdienVurderes}
           />
         )}
         <Datofelt verdi={prove.dato} onEndre={(verdi) => onEndre('dato', verdi)} />

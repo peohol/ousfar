@@ -33,7 +33,7 @@ import { Thcregler } from '../components/regler/Thcregler'
 import { ThcStep } from '../components/ThcStep'
 import { TipsLag } from '../components/Tips'
 import { renskTall } from '../domain/tallfelt'
-import { fortolkThc, lagThcModell, type ThcInndata, type ThcModell, type ThcResultat } from '../domain/thcMotor'
+import { fortolkThc, lagThcModell, tomThcInndata, type ThcInndata, type ThcModell, type ThcResultat } from '../domain/thcMotor'
 import { byggGraf, figurkurver } from '../domain/thcPlot'
 import { thcReglerFra, thcUtkastFra, tilThcModell } from '../faginnhold/thcregler'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
@@ -255,6 +255,58 @@ function avvikPaaSkjermen(rot: () => HTMLElement): string[] {
   })
 }
 
+/**
+ * Når prøvene ikke sammenlignes fordi det er kort tid imellom, leser motoren
+ * ikke verdiene i forrige prøve, og da markeres de heller ikke som feil. Ved
+ * en sammenligning igjen (haken tatt bort, eller datoene endret) kommer
+ * feilen tilbake. Fra kontrollen av #587.
+ */
+function kortTidUtenFeilIForrige(rot: () => HTMLElement) {
+  const KORT_TID = 'Ikke sammenlign prøvene (kort tid)'
+  const inn: ThcInndata = {
+    ...tomThcInndata(THC_MODELL.regler),
+    forrigeUnderCutoff: true,
+    forrigeUcak: '1',
+    forrigeNkre: '0',
+    forrigeDato: '2026-02-06',
+    aktuellVerdi: '80',
+    aktuellDato: '2026-02-08',
+  }
+  settAvkryssing(rot(), 'Ingen tidligere prøve tilgjengelig', false)
+  settAvkryssing(rot(), 'Under cut-off', true)
+  settFelt(rot(), 'Forrige prøve', 'UCAK (THC-syre)', inn.forrigeUcak)
+  settFelt(rot(), 'Forrige prøve', 'NKRE (kreatinin)', inn.forrigeNkre)
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', inn.forrigeDato)
+  settFelt(rot(), 'Denne prøven', 'IRCAK', inn.aktuellVerdi)
+  settFelt(rot(), 'Denne prøven', 'Prøvedato', inn.aktuellDato)
+  settAvkryssing(rot(), 'Legg kronisk bruk til grunn', inn.kronisk)
+  const trinn = String(MARGINER.indexOf(inn.sikkerhetsmargin))
+  fireEvent.change(rot().querySelector<HTMLInputElement>('.trinnbryter__felt')!, { target: { value: trinn } })
+  const nkreFeil = { feltfeil: ['Forrige prøve: NKRE (kreatinin)'], feil: [], venter: true }
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  settAvkryssing(rot(), KORT_TID, true)
+  const r = fortolkThc({ ...inn, kortTid: true }, THC_MODELL)
+  expect(r.type).toBe('kommentar')
+  expect(vist(rot())).toEqual({ kommentar: r.type === 'kommentar' ? r.kommentar : null, varsel: false })
+  expect(rot().querySelectorAll('[aria-invalid="true"]')).toHaveLength(0)
+  expect(rot().querySelector('.be-feltfeil')).toBeNull()
+  // Verdiene står, så sammenligningen kan tas opp igjen.
+  expect(within(feltgruppe(rot(), 'Forrige prøve')).getByLabelText<HTMLInputElement>('NKRE (kreatinin)').value).toBe('0')
+
+  settAvkryssing(rot(), KORT_TID, false)
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  settAvkryssing(rot(), KORT_TID, true)
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', '2026-02-01')
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  // Tilbake til et skjema uten haken, så neste tilfelle begynner rent.
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', inn.forrigeDato)
+  settAvkryssing(rot(), KORT_TID, false)
+  settAvkryssing(rot(), 'Under cut-off', false)
+}
+
 describe('THC-syre på skjermen før og etter flyttingen', () => {
   it('har et utvalg med hvert utfall og hver margin i fasiten', () => {
     const utfall = new Set(FASIT.tilfeller.map(([, u]) => JSON.stringify(u)))
@@ -282,6 +334,7 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     )
     const modul = () => screen.getByRole('region', { name: 'Fortolk THC-syre i urin' })
     expect(avvikPaaSkjermen(modul).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(modul)
   }, 60_000)
 
   it('viser den samme kommentaren i simulatoren i seksjonen', () => {
@@ -294,6 +347,7 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Prøv reglene' }))
     const simulator = () => document.querySelector<HTMLElement>('.simulator')!
     expect(avvikPaaSkjermen(simulator).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(simulator)
   }, 60_000)
 
   it('viser den samme kommentaren i simulatoren i redigeringen, når ingenting er endret', () => {
@@ -314,5 +368,6 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     fireEvent.click(within(skjema).getByRole('button', { name: 'Prøv reglene' }))
     const simulator = () => skjema.querySelector<HTMLElement>('.simulator')!
     expect(avvikPaaSkjermen(simulator).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(simulator)
   }, 60_000)
 })

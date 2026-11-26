@@ -85,9 +85,11 @@ kort linje («Det er bare 2 dager mellom prøvene.») med avkryssingen «Ikke
 sammenlign prøvene (kort tid)», som ikke er huket av.
 Hukes den av, vurderes ikke prøvene mot hverandre: det blir ingen
 sammenligning, ingen margin og ingen tallgrunnlag, konklusjonen er som uten
-forrige prøve, og kommentaren er «Kort tid mellom prøvene». Står
+forrige prøve, og kommentaren er «Kort tid mellom prøvene». Verdiene i
+forrige prøve leses da ikke, og feltene deres sier ingen feil; de står, så
+sammenligningen kan tas opp igjen. Står
 avkryssingen igjen etter at datoene er endret så det er lenger imellom,
-gjelder den ikke.
+gjelder den ikke, og en feil i forrige prøve vises igjen.
 
 **Samlet vurdering.** Med «+ Legg til tidligere prøve» kan brukeren legge inn
 flere prøver før forrige prøve (IRCAK eller UCAK og NKRE, og dato), og fjerne
