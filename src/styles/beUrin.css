@@ -214,6 +214,11 @@
   cursor: help;
 }
 
+/* Skriftens linjebokser sentrerer ikke selve tegnet: «i»-en løftes så blekket ligger midt i sirkelen. */
+.be-info > span {
+  transform: translate(-0.01em, -0.04em);
+}
+
 .be-info::after {
   position: absolute;
   inset: -0.75rem;
