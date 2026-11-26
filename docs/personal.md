@@ -13,7 +13,7 @@ dokumentet der de overlapper. Prosjektinstruksene står i
 [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md) med avsnitt 3.5 om
 ikke-kliniske personalfunksjoner.
 
-**Status 25.11.2026:** ingen personalfunksjon er bygd i OUSFAR; prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
+**Status 26.11.2026:** ingen personalfunksjon er bygd i OUSFAR; prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
 
 ## 1. Formål
@@ -197,8 +197,81 @@ Besluttet av Peder 25.11.2026, i prototypen i `peohol/vaktplan` (PR #5):
   stillingsandel.
 - **Forskning, undervisning og ønske om fri regnes som borte** i
   planleggingen.
-- **Hjemmekontor, forskning, undervisning, annen oppgave og ønske om fri
-  utelukker vakt 1 og vakt 2** samme dag.
+- ~~Hjemmekontor, forskning, undervisning, annen oppgave og ønske om fri
+  utelukker vakt 1 og vakt 2 samme dag.~~ Erstattet 26.11.2026 av regelen om
+  én status per dag nedenfor, som gjør egne eksklusjonsregler unødvendige.
+
+Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
+([vaktplan#12](https://github.com/peohol/vaktplan/issues/12),
+[#590](https://github.com/peohol/ousfar/issues/590)):
+
+- **Én status per medarbeider per dag.** Statusene utelukker hverandre,
+  uansett klokkeslett. Det finnes derfor ingen kombinasjons- eller
+  eksklusjonsregler. **Ingen status betyr til stede** på ordinære
+  arbeidsdager. Datamodellen håndhever regelen (høyst én status per
+  medarbeider og dato, og høyst én medarbeider per vakttype og dato).
+- **Standardoppsettet har to kategorier**, hver status med et ikon fra ett
+  felles ikonbibliotek (ingen emojier):
+  - *På kontoret:* Vakt 1, Vakt 2, Referent og Opplæring.
+  - *Ikke på kontoret:* Borte, Hjemmekontor, Forskning, Undervisning,
+    Avspasering, Fri og Ønske om fri.
+
+  Statusene skal senere kunne konfigureres per fagmiljø, men det bygges
+  ikke noe administrasjonsgrensesnitt for dem nå. Borte registreres uten
+  grunn.
+- **Samme redigeringsboble i alle visninger.** I dag-, uke- og
+  månedsvisningen åpner et klikk på en status eller et navn boblen direkte
+  for den medarbeideren og datoen, uten omvei om dagsvisningen. Viser en
+  linje i månedsvisningen flere medarbeidere, velger man først hvem.
+- **Endringer lagres med en gang og kan angres.** En status settes ved å
+  velge den og fjernes med slett, ved et nytt klikk på den valgte statusen
+  eller ved dobbeltklikk på statusen direkte i kalenderen.
+- **Statuser på kontoret gjelder arbeidsdager.** Vakt krever kvalifikasjon
+  for akkurat den vakttypen.
+- **Merknad er valgfritt på alle statuser** og skal bare inneholde
+  ikke-sensitive planleggingsopplysninger (§3.2). Merknaden og klokkeslettet
+  beholdes når statusen byttes.
+- **Merknad og klokkeslett vises ved statusen.** Dagsvisningen viser dem
+  direkte. Uke-, måneds- og helårsvisningen viser et merknadsikon og
+  opplysningene i en informasjonsboble, som også kan nås med tastatur og
+  berøring.
+- **Klokkeslett er bare tilleggsinformasjon.** Standard er «hele dagen». Et
+  tidsrom kan oppgis, men påvirker verken tilstedeværelse eller
+  vaktfordeling. Et ugyldig tidsrom kan ikke lagres.
+- **Overtakelse av vakt.** Velger man en vakt som en annen har samme dag,
+  spørres det: «Vakt 1 er allerede tildelt [navn]. Vil du overta vakten?»
+  med valgene Avbryt og Overta vakten. Statusen som blir erstattet, vises
+  før bekreftelsen. Overtakelsen er én samlet endring som kan angres.
+- **Flytting.** En status flyttes direkte til en celle uten status. Har
+  målet en status, velger man mellom «Bytt statusene», «Flytt og erstatt
+  eksisterende status» og «Avbryt». Merknad og klokkeslett følger statusen,
+  og den siste endringen kan angres. En flytting tar aldri over en vakt:
+  har en annen medarbeider allerede samme vakt på måldatoen, avvises
+  flyttingen med årsak, også når målcellen er tom. Overtakelse skjer bare
+  ved å velge vakten i cellen (punktet over).
+- **Tilstedeværelse og tilgjengelighet er atskilt i vaktfordelingen:**
+  - *Til stede* (grunnlaget for prosent tilstedeværelse) er den som er uten
+    status eller har en status på kontoret.
+  - *Ledig for en ny vakt* er bare den som er uten status og oppfyller
+    kravene til vakten.
+
+  Ønske om fri regnes som fravær, men vises annerledes enn innvilget fri.
+  Motsatte stillingsvekter, prosent tilstedeværelse og avstand mellom
+  vaktene gjelder uendret.
+- **Eldre data migreres uten stille tap.** Hadde en medarbeider flere
+  statuser samme dag, beholdes den viktigste (fravær før vakt før andre
+  oppgaver). En eksisterende merknad beholdes uavkortet. De andre statusene
+  kan oppsummeres i merknaden innenfor lengdegrensen, og alle oppføringer
+  som tas ut, bevares uendret. Brukeren får beskjed om hva som er endret.
+  Dette er praksisen i prototypen med syntetiske data. Det er ikke en
+  godkjenning av migrering av reelle personalopplysninger, som krever egen
+  beslutning etter §3.4.
+
+Syntetisk eksempel (fasit): Jonas Vik har Vakt 1 tirsdag og Maja Holte har
+Vakt 2. Planleggeren velger Vakt 1 for Maja og bekrefter overtakelsen. Da
+har Maja Vakt 1, Jonas har ingen status (til stede og ledig), og Vakt 2 er
+udekket. Velger planleggeren i stedet Borte for Jonas, erstatter Borte
+vakten. Jonas regnes som borte, og Vakt 1 er udekket.
 
 ### 7.3 Oppgaven
 
