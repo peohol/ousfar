@@ -157,7 +157,51 @@ opplysninger (§3.4) er separate beslutninger.
 
 Konkrete regler for vaktfordeling, arbeidstid og tilgang føres inn her når de er
 vedtatt, med dato, hvem som vedtok og eksempler med syntetiske ansatte som
-fasit. Inntil videre gjelder bare produktpremissene i §7.2.
+fasit. Ellers gjelder produktpremissene i §7.2.
+
+### 6.1 Rettferdig vaktfordeling over tid
+
+Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
+([vaktplan#14](https://github.com/peohol/vaktplan/issues/14),
+[#594](https://github.com/peohol/ousfar/issues/594)).
+
+- **Historisk utjevning går foran rettferdighet i perioden isolert sett.**
+  Fordelingen jevner ut skjevheter fra tidligere vakter, og vurderer ikke
+  bare den nye perioden alene. Rekkefølgen er:
+  1. Harde krav (kvalifikasjon, fravær, høyst én status per dag) og best
+     mulig dekning.
+  2. Historisk utjevning: høy vekt.
+  3. Avstand mellom vakter og jevn belastning over tid: høy vekt.
+  4. Rettferdighet i den nye perioden isolert sett: lavere vekt.
+  5. Variasjon i ukedager: lavere vekt.
+- **Historisk utjevning og rettferdighet i perioden har hver sin vekt**, og
+  begge kan justeres i regelsettet.
+- **Tidshorisonten for historisk utjevning kan stilles.** Standard er
+  365 dager bakover fra slutten av perioden som fordeles.
+- **Vakt 1 og vakt 2 utjevnes hver for seg.** En oppdatering av vaktplanen
+  beholder tildelinger som fortsatt er gyldige.
+- **Forventet antall** regnes ut fra stillingskategori, vekter,
+  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag. For
+  tidligere dager bygger det på vaktene som faktisk står i kalenderen.
+  **Manglende historikk gjør derfor ikke i seg selv at noen ser ut til å ha
+  for få vakter**, for eksempel en nyansatt eller en periode uten
+  registreringer.
+- **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
+  medarbeider og vakttype antall, forventet antall og avvik over et valgt
+  tidsrom. Med et forslag vises også antall i forslaget, samlet etter
+  godkjenning og avviket etterpå, over det samme tidsrommet. En vakt som
+  flyttes til en annen, telles bare én gang.
+
+**Fasit (syntetiske medarbeidere A og B):**
+
+| | Tidligere vakter | Ny periode | Samlet | Forventet samlet |
+| --- | --- | --- | --- | --- |
+| A | 12 | 3 | 15 | 15 |
+| B | 8 | 7 | 15 | 15 |
+
+Begge har forventet 10 tidligere vakter og 5 i den nye perioden. Fordelingen
+3 og 7 er et godt resultat, selv om den er skjev sett isolert for den nye
+perioden.
 
 ## 7. Første arbeidsløp: vaktplanen
 
