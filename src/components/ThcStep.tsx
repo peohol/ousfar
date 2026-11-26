@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
 import { Button } from './Button'
 import { Card } from './Card'
@@ -7,14 +7,12 @@ import { StepBar } from './StepBar'
 import { ManualCopy } from './ManualCopy'
 import { Shortcut } from './Shortcut'
 import { ThcSkjema } from './ThcSkjema'
-import { ThcKommentar, ThcSeksjoner, type ThcVisualiseringsvalg } from './ThcUtfall'
+import { ThcKommentar, ThcSeksjoner, useThcFortolkning, type ThcVisualiseringsvalg } from './ThcUtfall'
 import { Ikon } from './ikon/Ikon'
 import type { Analyte } from '../types'
 import { Regelstatus } from './Regelstatus'
 import {
-  fortolkThc,
   lesBevartThcInndata,
-  mildereVedHoyereMargin,
   tomThcInndata,
   type ThcInndata,
   type ThcModell,
@@ -134,8 +132,7 @@ function ThcFortolkning({
     forsteFelt.current?.focus()
   }, [fokusTeller])
 
-  const resultat = useMemo(() => fortolkThc(inndata, modell), [inndata, modell])
-  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
+  const { resultat, mildere } = useThcFortolkning(inndata, modell)
   const kommentar = resultat.type === 'kommentar' ? resultat.kommentar : null
 
   // Reserveteksten for manuell kopiering gjelder kommentaren slik den var da
@@ -249,7 +246,7 @@ function ThcFortolkning({
             )}
           </div>
         </Korthode>
-        <ThcSkjema inndata={inndata} onEndre={sett} regler={regler} forsteFelt={forsteFelt} />
+        <ThcSkjema inndata={inndata} onEndre={sett} regler={regler} forsteFelt={forsteFelt} mildere={mildere} />
       </Card>
 
       {/* Kommentaren rett etter skjemaet, med kopieringen rett under, og
@@ -257,8 +254,6 @@ function ThcFortolkning({
       <Card ref={resultatkort} align="start" className="thc-resultat be-resultat">
         <ThcKommentar
           resultat={resultat}
-          mildere={mildere}
-          medTidligere={(inndata.tidligere ?? []).length > 0}
           handling={
             <>
               <div className="handlingsrad handlingsrad--start">

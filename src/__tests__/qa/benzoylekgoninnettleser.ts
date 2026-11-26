@@ -20,6 +20,7 @@ import { SAMME_DAG_FEIL } from '../../domain/beUrinMotor'
 import { FORM1_AKTIVERT, PROFILMODELL } from '../../domain/__tests__/hjelp/beUrinTestmodell'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
 import { lokalSql, sikreAdministrator, startLokalDatabase } from './lokalmiljo'
+import { marginbobler, somTekst } from './marginbobler'
 import { apneTestmiljo } from './testmiljo'
 
 const { punkt, bilde, paa, oppsettFeilet, rapport } = lagKontroll('benzoylekgonin')
@@ -185,13 +186,10 @@ try {
       await fyll(p2, 'Denne prøven', '200', '2', '2026-01-02')
       krev((await konklusjon(p2, 'Sporadisk bruk lagt til grunn')) === 'Sannsynlig nytt inntak.', 'sporadisk')
       krev((await konklusjon(p2, 'Kronisk bruk lagt til grunn')) === 'Nytt inntak kan ikke fastslås.', 'kronisk')
-      const mildere = await vurdering(p2, 'Sporadisk bruk lagt til grunn').locator('.be-vurdering__mildere').innerText()
-      krev(
-        mildere ===
-          'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
-            'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
-        mildere,
-      )
+      // Det en høyere margin gir, står i en snakkeboble ved marginen (#588), ikke ved vurderingen.
+      const mildere = somTekst(await marginbobler(p2))
+      krev(mildere === 'over 99 %: Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', `boblene: ${mildere}`)
+      krev(!(await p2.locator('.be-resultat').innerText()).includes('sikkerhetsmargin'), 'det står en tekst om marginen ved vurderingen')
       const t = await tekst(p2)
       krev(!/tentativ|Konsentrasjonsendringene|Vurder høyere sikkerhetsmargin|Hva er sikkerhetsmarginen/i.test(t), `gammel tekst: ${t}`)
       krev((await p2.getByRole('note').count()) === 0, 'det står et banner')
@@ -242,7 +240,7 @@ try {
         (await vurdering(p2, 'Sporadisk bruk lagt til grunn').innerText()).includes('forenlig med utskillelse etter gjentatte doser'),
         'pil høyre ga ikke 99 %',
       )
-      krev((await p2.locator('.be-vurdering__mildere').count()) === 0, 'det står fortsatt en høyere margin')
+      krev((await marginbobler(p2)).length === 0, 'det står fortsatt en boble om en høyere margin')
       await p2.keyboard.press('ArrowLeft')
       return `Tab: felt → legg til → info (boblen vises) → ${rolle}; pil høyre gir 99 %`
     })
@@ -290,6 +288,13 @@ try {
       await fyll(p2, 'Tidligere prøve', '100', '2', '2025-12-31')
       const kronisk = await vurdering(p2, 'Kronisk bruk lagt til grunn').innerText()
       krev(kronisk.includes('Sammenlignet med prøven fra 31.12.2025 er det indikasjon på nytt inntak etter den prøven'), kronisk)
+      const bobler = somTekst(await marginbobler(p2))
+      krev(
+        bobler ===
+          'over 99 %: Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser / ' +
+            'Kronisk: Kan ikke fastslås, uten indikasjon etter tidligere prøve',
+        `boblene: ${bobler}`,
+      )
       await p2.locator('body').click({ position: { x: 5, y: 600 } })
       await vent(300)
       await bilde(p2, '12-form2-tidligere-pc')
@@ -362,6 +367,30 @@ try {
         await felt.fill('12345')
         const [innhold, synlig] = await felt.evaluate((e: HTMLInputElement) => [e.scrollWidth, e.clientWidth])
         krev(innhold! <= synlig!, `«12345» får ikke plass: ${innhold} av ${synlig} px`)
+        // 200 → 240: klinisk ulike mildere utfall står synlig i hver sin linje, og får plass på mobil.
+        await felt.fill('240')
+        await side.locator('.trinnbryter__valg', { hasText: 'Ingen' }).tap()
+        await vent(500)
+        const ingen = somTekst(await marginbobler(side))
+        krev(
+          ingen ===
+            'over 90 %: Kronisk: Kan ikke fastslås – svært uvanlig utskillelse; ' +
+              'under 99 %: Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser / Kronisk: Kan ikke fastslås',
+          `boblene ved Ingen: ${ingen}`,
+        )
+        await bilde(side, tema === 'light' ? '21-form2-mobil-bobler' : '22-form2-mobil-bobler-moerkt')
+        await side.locator('.trinnbryter__valg', { hasText: '90' }).tap()
+        await vent(500)
+        const ved90 = somTekst(await marginbobler(side))
+        krev(
+          ved90 ===
+            'over 99 %: Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser / ' +
+              'Kronisk: Kan ikke fastslås, uten «svært uvanlig utskillelse»',
+          `boblene ved 90 %: ${ved90}`,
+        )
+        const [etter] = await side.evaluate(() => [document.documentElement.scrollWidth])
+        krev(etter! <= vindu!, `siden er ${etter} px bred med boblene`)
+        if (tema === 'light') await bilde(side, '23-form2-mobil-bobler-90')
         await felt.fill('200')
         if (tema === 'dark') {
           await side.getByRole('button', { name: 'Om sikkerhetsmarginen' }).tap()

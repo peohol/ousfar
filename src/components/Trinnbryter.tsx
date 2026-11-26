@@ -20,6 +20,8 @@ export interface TrinnbryterProps<T> {
   /** Står den på en verdi som ikke er blant valgene, står knotten på ingen av dem. */
   verdi: T
   onVelg: (verdi: T) => void
+  /** Id-en til en tekst som beskriver valget nærmere for skjermlesere (`aria-describedby`). */
+  beskrivelse?: string | undefined
 }
 
 /** Hvor mange piksler pekeren må flytte seg før et trykk blir et drag. */
@@ -63,7 +65,7 @@ interface Grep {
  *
  * Bevegelsene følger fartstokenene, så de står stille ved redusert bevegelse.
  */
-export function Trinnbryter<T>({ etikett, valg, verdi, onVelg }: TrinnbryterProps<T>) {
+export function Trinnbryter<T>({ etikett, valg, verdi, onVelg, beskrivelse }: TrinnbryterProps<T>) {
   const felt = useRef<HTMLInputElement>(null)
   const grep = useRef<Grep | null>(null)
   // Hvor knotten står mens den dras, i piksler fra første valg. Ellers står den på valget.
@@ -144,6 +146,7 @@ export function Trinnbryter<T>({ etikett, valg, verdi, onVelg }: TrinnbryterProp
         step={1}
         value={valgt}
         aria-label={etikett}
+        aria-describedby={beskrivelse}
         aria-valuetext={valg[valgt] && (valg[valgt].navn ?? valg[valgt].merke)}
         onChange={(e) => velg(Number(e.target.value))}
         onKeyDown={() => setPekerfokus(false)}

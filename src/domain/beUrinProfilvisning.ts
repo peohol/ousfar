@@ -2,12 +2,13 @@ import {
   type BeUrinGrad,
   type BeUrinKronisk,
   type BeUrinProfilMildere,
+  type BeUrinProfilresultat,
   type BeUrinProfilsamlet,
   type BeUrinRolle,
   type BeUrinSporadisk,
 } from './beUrinProfiler'
 import { formaterDatoNorsk } from './thcTall'
-import { marginliste } from './thcVisning'
+import { marginbobler, marginliste, type MildereMarginer } from './thcVisning'
 
 /**
  * Det modulen skriver om fortolkningen med fem utskillelsesprofiler
@@ -133,6 +134,62 @@ export function mildereTekst(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende)
   if (u.vurdering === 'kronisk' && u.samletDato) deler.push(samletIndikasjon(u.samletDato))
   else if (gjeldende.samletTreff) deler.push('Ingen indikasjon på nytt inntak etter de tidligere prøvene.')
   return `Ved ${marginliste(u.marginer)} sikkerhetsmargin blir vurderingen ved ${u.vurdering} bruk: ${deler.join(' ')}`
+}
+
+/** Konklusjonene kort, i snakkeboblene ved sikkerhetsmarginen. */
+const KORT_KONKLUSJON: Record<string, string> = {
+  [KAN_IKKE]: 'Kan ikke fastslås',
+  [SANNSYNLIG]: 'Sannsynlig nytt inntak',
+  [NYTT_INNTAK]: 'Nytt inntak',
+}
+
+/** Utdypingene kort, så hvert klinisk utfall får sin egen linje i boblene. */
+const KORT_UTDYPING = new Map<string | undefined, string>([
+  [BE_URIN_SPORADISK_TEKST.forenlig_enkeltinntak.utdyping, 'forenlig med enkeltinntak'],
+  [BE_URIN_SPORADISK_TEKST.forenlig_gjentatte_doser.utdyping, 'forenlig med gjentatte doser'],
+  [BE_URIN_KRONISK_TEKST.uavklart_uvanlig.utdyping, 'svært uvanlig utskillelse'],
+])
+
+const KORT_VURDERING: Record<BeUrinVurderingstype, string> = { sporadisk: 'Sporadisk', kronisk: 'Kronisk' }
+
+/**
+ * Det høyere marginer ville gitt (#588): boblene ved sikkerhetsmarginen med
+ * hvert mildere utfall kort ({@link boblelinje}), og hele setningen
+ * ({@link mildereTekst}) for hvert utfall.
+ */
+export function beMildereMarginer(
+  resultat: Extract<BeUrinProfilresultat, { type: 'vurdering' }>,
+  mildere: readonly BeUrinProfilMildere[],
+): MildereMarginer {
+  const { sammenligning: s, samlet } = resultat
+  const gjeldende: Record<BeUrinVurderingstype, BeUrinGjeldende> = {
+    sporadisk: { tekst: BE_URIN_SPORADISK_TEKST[s.sporadisk], samletTreff: false },
+    kronisk: { tekst: BE_URIN_KRONISK_TEKST[s.kronisk], samletTreff: Boolean(samlet?.treff) },
+  }
+  return {
+    bobler: marginbobler(mildere.map((u) => ({ marginer: u.marginer, linje: boblelinje(u, gjeldende[u.vurdering]) }))),
+    tekster: mildere.map((u) => mildereTekst(u, gjeldende[u.vurdering])),
+  }
+}
+
+/**
+ * Et mildere utfall kort, i samme rekkefølge som {@link mildereTekst}, så
+ * klinisk ulike utfall aldri får samme linje: «Kronisk: Kan ikke fastslås –
+ * svært uvanlig utskillelse», «Sporadisk: Kan ikke fastslås – forenlig med
+ * gjentatte doser». Faller bare bemerkningen om svært uvanlig utskillelse bort,
+ * sies det («uten …»); indikasjonen etter en eldre prøve står med datoen, og at
+ * den faller bort, sies også.
+ */
+export function boblelinje(u: BeUrinProfilMildere, gjeldende: BeUrinGjeldende): string {
+  const tekst = u.vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST[u.utfall] : BE_URIN_KRONISK_TEKST[u.utfall]
+  let linje = `${KORT_VURDERING[u.vurdering]}: ${KORT_KONKLUSJON[tekst.konklusjon] ?? tekst.konklusjon}`
+  const utdyping = KORT_UTDYPING.get(tekst.utdyping)
+  const bortfalt = KORT_UTDYPING.get(gjeldende.tekst.utdyping)
+  if (utdyping) linje += ` – ${utdyping}`
+  else if (tekst.konklusjon === gjeldende.tekst.konklusjon && bortfalt) linje += `, uten «${bortfalt}»`
+  if (u.vurdering === 'kronisk' && u.samletDato) linje += ` (indikasjon etter ${formaterDatoNorsk(u.samletDato)})`
+  else if (gjeldende.samletTreff) linje += ', uten indikasjon etter tidligere prøve'
+  return linje
 }
 
 /** Forbeholdet under vurderingene: kort og diskret, ikke et banner. */

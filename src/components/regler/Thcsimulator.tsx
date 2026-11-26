@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
-import { fortolkThc, mildereVedHoyereMargin, tomThcInndata, type ThcModell } from '../../domain/thcMotor'
+import { useState } from 'react'
+import { tomThcInndata, type ThcModell } from '../../domain/thcMotor'
 import { THC_TEKSTBOLKER } from '../../domain/thcTekster'
 import { Button } from '../Button'
-import { ThcKommentar, ThcSeksjoner } from '../ThcUtfall'
+import { ThcKommentar, ThcSeksjoner, useThcFortolkning } from '../ThcUtfall'
 import { ThcSkjema } from '../ThcSkjema'
 import { Detaljkort } from '../seksjoner/Seksjon'
 
@@ -15,8 +15,7 @@ import { Detaljkort } from '../seksjoner/Seksjon'
 export function Thcsimulator({ modell }: { modell: ThcModell }) {
   const { regler } = modell
   const [inndata, setInndata] = useState(() => tomThcInndata(regler))
-  const resultat = useMemo(() => fortolkThc(inndata, modell), [inndata, modell])
-  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
+  const { resultat, mildere } = useThcFortolkning(inndata, modell)
   const sett = <K extends keyof typeof inndata>(felt: K, verdi: (typeof inndata)[K]) =>
     setInndata((forrige) => ({ ...forrige, [felt]: verdi }))
 
@@ -33,18 +32,14 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
       className="simulator"
     >
       <p className="regler__ingress">Fyll inn slik som i fortolkningen. Kommentaren regnes ut med reglene over.</p>
-      <ThcSkjema
-        inndata={inndata}
-        regler={regler}
-        onEndre={sett}
-      />
+      <ThcSkjema inndata={inndata} regler={regler} onEndre={sett} mildere={mildere} />
       <div className="simulator__resultat">
         {resultat.type === 'kommentar' && (
           <p className="simulator__scenario" role="status">
             Satt sammen av: {resultat.bolker.map((nokkel) => THC_TEKSTBOLKER[nokkel].tittel).join(', ')}.
           </p>
         )}
-        <ThcKommentar resultat={resultat} mildere={mildere} medTidligere={(inndata.tidligere ?? []).length > 0} />
+        <ThcKommentar resultat={resultat} />
         <ThcSeksjoner resultat={resultat} regler={regler} />
       </div>
     </Detaljkort>

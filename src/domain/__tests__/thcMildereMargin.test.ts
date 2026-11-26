@@ -10,7 +10,7 @@ import {
   type ThcModell,
 } from '../thcMotor'
 import { normalkvantil, type ThcRegelsett } from '../thcRegelsett'
-import { konklusjonsnavn, konklusjonsnavnISetning, marginliste, mildereMargintekst } from '../thcVisning'
+import { konklusjonsnavn, konklusjonsnavnISetning, marginbobler, marginliste, thcMildereMarginer } from '../thcVisning'
 import { THC_MODELL, THC_REGELSETT, THC_TEKSTER } from '../../__tests__/hjelp/thcgrunnlag'
 
 /**
@@ -230,14 +230,40 @@ describe('mildere konklusjon med høyere sikkerhetsmargin', () => {
  * det faller bort. Lærdommen fra kontrollen av #577: to utfall skal aldri se
  * like ut.
  */
-describe('teksten om en mildere konklusjon ved kommentaren', () => {
-  /** Tekstene modulen viser for inndataene, slik `ThcKommentar` lager dem. */
-  const tekster = (inn: ThcInndata) => {
+describe('snakkeboblene ved sikkerhetsmarginen og setningene til skjermlesere (#588)', () => {
+  /** Det modulen viser for inndataene, slik `useThcFortolkning` lager det. */
+  const mildere = (inn: ThcInndata) => {
     const r = fortolkThc(inn, THC_MODELL)
     if (r.type !== 'kommentar') throw new Error('Tilfellet skal gi en kommentar.')
     const medTidligere = (inn.tidligere ?? []).length > 0
-    return mildereVedHoyereMargin(inn, THC_MODELL, r).map((u) => mildereMargintekst(u, { samlet: r.samlet, medTidligere }))
+    return thcMildereMarginer(mildereVedHoyereMargin(inn, THC_MODELL, r), { samlet: r.samlet, medTidligere })
   }
+  const tekster = (inn: ThcInndata) => mildere(inn).tekster
+  const bobler = (inn: ThcInndata) => mildere(inn).bobler
+
+  it('peker på den laveste marginen som gir hvert utfall, med konklusjonens navn', () => {
+    expect(bobler(eksempel(0.5))).toEqual([
+      { margin: 0.9, linjer: ['Kan ikke fastslås'] },
+      { margin: 0.99, linjer: ['Ikke nødvendigvis nytt'] },
+    ])
+    expect(bobler(eksempel(0.9))).toEqual([{ margin: 0.99, linjer: ['Ikke nødvendigvis nytt'] }])
+    expect(bobler(eksempel(0.99))).toEqual([])
+  })
+
+  it('samler linjene ved samme margin, og gjentar ikke en linje som alt står ved en lavere margin', () => {
+    expect(
+      marginbobler([
+        { marginer: [0.99], linje: 'B' },
+        { marginer: [0.9, 0.99], linje: 'A' },
+        { marginer: [0.9], linje: 'C' },
+        { marginer: [0.99], linje: 'A' },
+        { marginer: [], linje: 'D' },
+      ]),
+    ).toEqual([
+      { margin: 0.9, linjer: ['A', 'C'] },
+      { margin: 0.99, linjer: ['B'] },
+    ])
+  })
 
   it('sier hva hver høyere margin gir, med Peders ordlyd for «kan ikke fastslås»', () => {
     expect(tekster(eksempel(0.5))).toEqual([
@@ -256,6 +282,10 @@ describe('teksten om en mildere konklusjon ved kommentaren', () => {
     expect(tekster(inn)).toEqual([
       'Ved 90 % sikkerhetsmargin kan et nytt inntak etter forrige prøve ikke fastslås, men det har skjedd minst ett inntak etter prøven tatt 01.06.2026.',
       'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
+    ])
+    expect(bobler(inn)).toEqual([
+      { margin: 0.9, linjer: ['Nytt inntak etter tidligere prøve 01.06.2026'] },
+      { margin: 0.99, linjer: ['Ikke nødvendigvis nytt'] },
     ])
     // Med 90 % står nytt inntak etter den tidligere prøven i kommentaren; at
     // den ikke vurderes med 99 %, sies.

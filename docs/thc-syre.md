@@ -112,17 +112,26 @@ mildere enn den valgte marginen gir, med marginene som gir den. Strengheten
 er, fra mildest: «ikke nødvendigvis nytt», «kan ikke fastslås», nytt inntak
 etter en enda tidligere prøve (samlet vurdering; jo eldre prøve, desto
 mildere, siden inntaket da kan ha skjedd før forrige prøve) og nytt inntak
-etter forrige prøve. Modulen og simulatoren sier det i én kort linje per
-utfall under kopiknappen (`mildereMargintekst`, #586), uten banner og uten
-knapp: «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke fastslås.» Et
-utfall som knytter inntaket til en tidligere prøve, nevner den med datoen
-(«… men det har skjedd minst ett inntak etter prøven tatt 01.06.2026.»), og
-står det tidligere prøver i skjemaet, sies det om de heller ikke gir nytt
-inntak eller ikke vurderes. Konklusjonen med den valgte marginen gjentas
-ikke; den står i kommentaren. Lavere marginer prøves aldri, og linjen står
-ikke uten en vurdering mot forrige prøve (ingen tidligere prøve, kort tid,
-IRCAK 0 i forrige prøve). Kommentaren endres bare når brukeren selv bytter
-margin.
+etter forrige prøve. Modulen og simulatoren viser det i snakkebobler ved
+bryteren for sikkerhetsmarginen (#588, `thcMildereMarginer`), uten banner og
+uten knapp. Hver boble peker på den laveste marginen som gir utfallet, og
+sier kort konklusjonens navn, som i figuren: «Kan ikke fastslås», «Ikke
+nødvendigvis nytt» eller «Nytt inntak etter tidligere prøve 01.06.2026».
+Utfall ved samme margin står i samme boble, og en linje som alt står ved en
+lavere margin, gjentas ikke (`marginbobler`). Den første boblen står over
+bryteren, den neste under, så de ikke dekker hverandre; står marginen
+ytterst, legger boblen seg innover fra kanten med pilen fortsatt på
+marginen. Boblene gløder svakt, og står stille ved redusert bevegelse.
+Skjermlesere får hele setningen for hvert utfall som beskrivelse av bryteren
+(`mildereMargintekst`): «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke
+fastslås.» Et utfall som knytter inntaket til en tidligere prøve, nevner den
+med datoen («… men det har skjedd minst ett inntak etter prøven tatt
+01.06.2026.»), og står det tidligere prøver i skjemaet, sies det om de
+heller ikke gir nytt inntak eller ikke vurderes. Konklusjonen med den valgte
+marginen gjentas ikke; den står i kommentaren. Lavere marginer prøves aldri,
+og boblene står ikke uten en vurdering mot forrige prøve (ingen tidligere
+prøve, kort tid, IRCAK 0 i forrige prøve). Kommentaren endres bare når
+brukeren selv bytter margin.
 
 ## Regler og tekster er adskilt
 

@@ -15,6 +15,7 @@ import {
 import type { BeUrinFellesmodell } from '../domain/beUrinModell'
 import { formaterIrcak } from '../domain/thcTall'
 import { tallMedEnhet } from '../domain/beUrinVisning'
+import type { MildereMarginer } from '../domain/thcVisning'
 
 export interface BeUrinSkjemaProps {
   inndata: BeUrinInndata
@@ -22,6 +23,8 @@ export interface BeUrinSkjemaProps {
   modell: BeUrinFellesmodell
   /** Feltet som står først, og som får fokus når skjemaet åpnes eller nullstilles. */
   forsteFelt?: Ref<HTMLInputElement>
+  /** Det høyere marginer ville gitt, i snakkebobler ved sikkerhetsmarginen (#588). */
+  mildere?: MildereMarginer | undefined
 }
 
 /**
@@ -31,7 +34,7 @@ export interface BeUrinSkjemaProps {
  * forklaringen bak et lite informasjonstegn. Et ugyldig felt sies ved feltet;
  * et tomt felt sies ikke.
  */
-export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkjemaProps) {
+export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt, mildere }: BeUrinSkjemaProps) {
   const { tidligere } = inndata
   const settTidligere = (prover: BeUrinProve[]) => onEndre('tidligere', prover)
 
@@ -96,6 +99,7 @@ export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkj
           onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
           maalinger="benzoylekgonin og kreatinin"
           merSkalTil="et nytt inntak vurderes som sannsynlig"
+          mildere={mildere}
         />
       </div>
     </div>

@@ -48,6 +48,53 @@ export function marginliste(marginer: readonly number[]): string {
 }
 
 /**
+ * En snakkeboble ved sikkerhetsmarginen (#588): marginen den peker på, og
+ * hva fortolkningen blir der, kort («Kan ikke fastslås»).
+ */
+export interface Marginboble {
+  margin: number
+  linjer: string[]
+}
+
+/** Det en høyere margin ville gitt: boblene, og de samme utfallene som hele setninger for skjermlesere. */
+export interface MildereMarginer {
+  bobler: readonly Marginboble[]
+  tekster: readonly string[]
+}
+
+/**
+ * Boblene for de mildere utfallene høyere marginer gir: hvert utfall peker på
+ * den laveste marginen som gir det, utfall ved samme margin står i samme
+ * boble, og en linje som alt står ved en lavere margin, gjentas ikke.
+ * Stigende margin.
+ */
+export function marginbobler(utfall: readonly { marginer: readonly number[]; linje: string }[]): Marginboble[] {
+  const bobler = new Map<number, string[]>()
+  const vist = new Set<string>()
+  const ordnet = utfall.flatMap((u) => (u.marginer.length > 0 ? [{ margin: Math.min(...u.marginer), linje: u.linje }] : []))
+  for (const { margin, linje } of ordnet.sort((a, b) => a.margin - b.margin)) {
+    if (vist.has(linje)) continue
+    vist.add(linje)
+    bobler.set(margin, [...(bobler.get(margin) ?? []), linje])
+  }
+  return [...bobler].map(([margin, linjer]) => ({ margin, linjer }))
+}
+
+/**
+ * Det høyere marginer ville gitt for THC-syre: boblene med konklusjonens navn,
+ * som i figuren, og hele setningen ({@link mildereMargintekst}) for hvert utfall.
+ */
+export function thcMildereMarginer(
+  mildere: readonly ThcMildereUtfall[],
+  gjeldende: { samlet: ThcSamletVurdering | null; medTidligere: boolean },
+): MildereMarginer {
+  return {
+    bobler: marginbobler(mildere.map((u) => ({ marginer: u.marginer, linje: konklusjonsnavn(u.konklusjon, u.samlet) }))),
+    tekster: mildere.map((u) => mildereMargintekst(u, gjeldende)),
+  }
+}
+
+/**
  * Navnet på en konklusjon slik modulen viser den: situasjonens tittel, og for
  * den samlede vurderingen nytt inntak etter den tidligere prøven den fant.
  */

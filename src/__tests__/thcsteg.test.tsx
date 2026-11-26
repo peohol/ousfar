@@ -19,6 +19,7 @@ import { thcReglerFra } from '../faginnhold/thcregler'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
 import { formaterProsent } from '../domain/thcPlot'
 import { THC_SAMLET_UTEN_TREFF, THC_VENTER, marginvalg } from '../domain/thcVisning'
+import { marginbeskrivelse, marginbobler } from './hjelp/marginbobler'
 import { medPekerhendelser, trykkPaaValg } from './hjelp/pekerhendelser'
 import { THC_MODELL, THC_REGELSETT, THC_TEKSTER, thcRegelsettutgave } from './hjelp/thcgrunnlag'
 import { THC_ANALYTT } from '../domain/ouskatalog'
@@ -167,29 +168,36 @@ describe('fortolkningsmodulen for THC-syre', () => {
     expect(kommentarer.size).toBeGreaterThan(1)
   })
 
-  it('sier kort ved kommentaren hva en høyere sikkerhetsmargin gir, uten banner og uten knapp', async () => {
+  it('viser i snakkebobler ved marginen hva en høyere sikkerhetsmargin gir, uten banner og uten knapp', async () => {
     const user = userEvent.setup()
     visSteg({ status: 'klar', modell: THC_MODELL })
     // Kronisk, 50 → 40 på tre døgn: 50 % gir nytt inntak, 90 % «kan ikke fastslås», 99 % «ikke nødvendigvis nytt».
     await fyllInn(user, { forrige: ['50', '2026-07-04'], denne: ['40', '2026-07-07'] })
-    const merknader = () => [...document.querySelectorAll('.thc-merknader p')].map((p) => p.textContent)
 
-    expect(merknader()).toEqual(['Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.'])
+    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Ikke nødvendigvis nytt'] }])
+    expect(marginbeskrivelse()).toEqual([
+      'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
+    ])
     expect(screen.queryByText('Vurder høyere sikkerhetsmargin')).toBeNull()
     expect(screen.queryByRole('button', { name: /^Bruk / })).toBeNull()
+    // Det står ikke lenger noe om marginen ved kommentaren.
+    expect(document.querySelector('.thc-merknader')).toBeNull()
 
+    // To bobler: den første over bryteren, den neste under, hver ved sin margin.
     trykkPaaValg(marginvalg(0.5))
-    expect(merknader()).toEqual([
+    expect(marginbobler()).toEqual([
+      { side: 'over', margin: '90 %', linjer: ['Kan ikke fastslås'] },
+      { side: 'under', margin: '99 %', linjer: ['Ikke nødvendigvis nytt'] },
+    ])
+    expect(marginbeskrivelse()).toEqual([
       'Ved 90 % sikkerhetsmargin kan et nytt inntak ikke fastslås.',
       'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
     ])
-    // Merknadene står under kopieringsknappen, ikke mellom den og kommentaren.
-    const knapp = screen.getByRole('button', { name: /Kopier kommentar/ })
-    expect(knapp.compareDocumentPosition(document.querySelector('.thc-merknader')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
 
     // Brukeren velger selv; på den høyeste marginen er det ingenting mildere å si.
     trykkPaaValg(marginvalg(0.99))
-    expect(document.querySelector('.thc-merknader')).toBeNull()
+    expect(marginbobler()).toEqual([])
+    expect(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }).getAttribute('aria-describedby')).toBeNull()
   })
 
   it('forklarer sikkerhetsmarginen kort bak informasjonstegnet, med marginene i regelsettet', async () => {

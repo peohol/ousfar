@@ -23,6 +23,7 @@ import { BE_URIN_ROLLER } from '../domain/beUrinProfiler'
 import { BE_URIN_FORUTSETNING, BE_URIN_KVALITATIV, BE_URIN_ROLLENAVN } from '../domain/beUrinProfilvisning'
 import { BE_URIN_TENTATIV } from '../domain/beUrinVisning'
 import { PROFILMODELL } from '../domain/__tests__/hjelp/beUrinTestmodell'
+import { marginbeskrivelse, marginbobler } from './hjelp/marginbobler'
 import { forberedBeUrinDom, fyll, gruppe, visBeUrin } from './hjelp/beUrinvisning'
 
 forberedBeUrinDom()
@@ -84,45 +85,62 @@ describe('resultatet med fem profiler', () => {
     )
   })
 
-  it('sier diskret hva en høyere margin ville gitt, uten å bytte selv', async () => {
+  it('viser i en snakkeboble ved marginen hva en høyere margin ville gitt, uten å bytte selv', async () => {
     await visMedProver(['200', '2026-01-01'], ['200', '2026-01-02'])
-    const mildere = vurdering(SPORADISK).querySelector('.be-vurdering__mildere')!
-    expect(mildere.textContent).toBe(
+    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser'] }])
+    expect(marginbeskrivelse()).toEqual([
       'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
         'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
-    )
-    expect(vurdering(KRONISK).querySelector('.be-vurdering__mildere')).toBeNull()
+    ])
     expect(screen.queryByRole('button', { name: /Bruk 99 %/ })).toBeNull()
-    // Med 99 % står den mildere vurderingen, og ingen setning om høyere margin.
+    // Ingenting om marginen ved vurderingene.
+    expect(vurdering(SPORADISK).textContent).not.toContain('sikkerhetsmargin')
+    // Med 99 % står den mildere vurderingen, og ingen boble.
     fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '2' } })
     expect(vurdering(SPORADISK).textContent).toContain(
       'Nytt inntak kan ikke fastslås.Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
     )
-    expect(document.querySelector('.be-vurdering__mildere')).toBeNull()
+    expect(marginbobler()).toEqual([])
   })
 
-  it('skiller de to «kan ikke fastslås» ved kronisk bruk med høyere margin, med utdypingen', async () => {
+  it('legger to bobler over og under bryteren, og skiller de to «kan ikke fastslås» ved kronisk bruk for skjermlesere', async () => {
     // BE 200 → 240 etter ett døgn uten margin: sannsynlig ved begge; 90 % gir «svært uvanlig», 99 % ikke.
     await visMedProver(['200', '2026-01-01'], ['240', '2026-01-02'])
     fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '0' } })
-    const linjer = (navn: string) => [...vurdering(navn).querySelectorAll('.be-vurdering__mildere')].map((p) => p.textContent)
-    expect(linjer(KRONISK)).toEqual([
+    expect(marginbeskrivelse()).toEqual([
       'Ved 90 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås. ' +
         'En såpass treg utskillelse anses likevel som svært uvanlig.',
-      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås.',
-    ])
-    expect(linjer(SPORADISK)).toEqual([
       'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
         'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås.',
+    ])
+    // Boblene skiller de to «kan ikke fastslås» ved kronisk bruk synlig, ikke bare for skjermlesere.
+    expect(marginbobler()).toEqual([
+      { side: 'over', margin: '90 %', linjer: ['Kronisk: Kan ikke fastslås – svært uvanlig utskillelse'] },
+      { side: 'under', margin: '99 %', linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', 'Kronisk: Kan ikke fastslås'] },
+    ])
+    // Ved 90 % er kronisk alt «kan ikke fastslås»: at bemerkningen faller bort ved 99 %, står synlig i boblen.
+    fireEvent.change(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }), { target: { value: '1' } })
+    expect(marginbobler()).toEqual([
+      {
+        side: 'over',
+        margin: '99 %',
+        linjer: ['Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', 'Kronisk: Kan ikke fastslås, uten «svært uvanlig utskillelse»'],
+      },
+    ])
+    expect(marginbeskrivelse()).toEqual([
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk: Nytt inntak kan ikke fastslås. ' +
+        'Endringen er forenlig med utskillelse etter gjentatte doser innenfor et kort tidsrom.',
+      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås. ' +
+        'Uten bemerkningen om svært uvanlig utskillelse.',
     ])
   })
 
   it('sier fra når «Nytt inntak» blir «Sannsynlig nytt inntak» med høyere margin', async () => {
     await visMedProver(['200', '2026-01-01'], ['1600', '2026-01-02'])
     expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak.')
-    expect(vurdering(KRONISK).querySelector('.be-vurdering__mildere')!.textContent).toBe(
-      'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Sannsynlig nytt inntak.',
-    )
+    expect(marginbobler()).toEqual([{ side: 'over', margin: '99 %', linjer: ['Kronisk: Sannsynlig nytt inntak'] }])
+    expect(marginbeskrivelse()).toEqual(['Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Sannsynlig nytt inntak.'])
   })
 
   it('har profiltabellen og figuren lukket, med alle fem profilene, hver med sin strek, og ett valg for alle marginer', async () => {
@@ -287,6 +305,17 @@ describe('skjemaet', () => {
         'nødvendigvis etter forrige prøve.',
     )
     expect(vurdering(KRONISK).querySelector('.be-vurdering__konklusjon')!.textContent).toBe('Nytt inntak kan ikke fastslås.')
+    // Ved kronisk bruk endrer en høyere margin bare indikasjonen etter den tidligere prøven, og boblen sier det.
+    expect(marginbobler()).toEqual([
+      {
+        side: 'over',
+        margin: '99 %',
+        linjer: [
+          'Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser',
+          'Kronisk: Kan ikke fastslås, uten indikasjon etter tidligere prøve',
+        ],
+      },
+    ])
     // En tidligere prøve som ikke er før forrige prøve, gir en kort feil og ingen vurdering.
     fireEvent.change(gruppe('Tidligere prøve').getByLabelText('Prøvedato'), { target: { value: '2026-01-01' } })
     expect(screen.getByRole('alert').textContent).toBe('Tidligere prøve må være tatt før forrige prøve.')

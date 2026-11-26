@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest'
 import { tomBeUrinInndata, type BeUrinProve } from '../beUrinMotor'
 import { fortolkBeUrinProfiler, mildereProfilutfall, type BeUrinProfilMildere } from '../beUrinProfiler'
-import { BE_URIN_KRONISK_TEKST, BE_URIN_SPORADISK_TEKST, mildereTekst } from '../beUrinProfilvisning'
+import { BE_URIN_KRONISK_TEKST, BE_URIN_SPORADISK_TEKST, boblelinje, mildereTekst } from '../beUrinProfilvisning'
 import { godkjentProfilmodell } from './hjelp/beUrinTestmodell'
 
 const MODELL = godkjentProfilmodell()
@@ -73,6 +73,41 @@ describe('høyere sikkerhetsmargin i tekst', () => {
     expect(mildereTekst(u, { tekst: BE_URIN_KRONISK_TEKST.uavklart_uvanlig, samletTreff: true })).toBe(
       'Ved 99 % sikkerhetsmargin blir vurderingen ved kronisk bruk: Nytt inntak kan ikke fastslås. ' +
         'En såpass treg utskillelse anses likevel som svært uvanlig. Ingen indikasjon på nytt inntak etter de tidligere prøvene.',
+    )
+  })
+})
+
+describe('høyere sikkerhetsmargin i snakkeboblene', () => {
+  const u = (vurdering: 'sporadisk' | 'kronisk', utfall: string, samletDato: string | null = null) =>
+    ({ vurdering, utfall, samletDato, marginer: [0.99] }) as BeUrinProfilMildere
+
+  it('gir klinisk ulike utfall ulike linjer, uansett hvilken vurdering som står', () => {
+    const utfall = {
+      sporadisk: Object.keys(BE_URIN_SPORADISK_TEKST),
+      kronisk: Object.keys(BE_URIN_KRONISK_TEKST),
+    } as const
+    for (const vurdering of ['sporadisk', 'kronisk'] as const) {
+      const tekster = vurdering === 'sporadisk' ? BE_URIN_SPORADISK_TEKST : BE_URIN_KRONISK_TEKST
+      for (const tekst of Object.values(tekster)) {
+        for (const samletTreff of [false, true]) {
+          const linjer = utfall[vurdering].map((x) => boblelinje(u(vurdering, x), { tekst, samletTreff }))
+          expect(new Set(linjer).size).toBe(linjer.length)
+        }
+      }
+    }
+  })
+
+  it('sier utdypingen kort, at bemerkningen faller bort, og indikasjonen etter en eldre prøve med datoen', () => {
+    const uvanlig = { tekst: BE_URIN_KRONISK_TEKST.uavklart_uvanlig, samletTreff: false }
+    expect(boblelinje(u('sporadisk', 'forenlig_enkeltinntak'), { tekst: BE_URIN_SPORADISK_TEKST.nytt_inntak, samletTreff: false })).toBe(
+      'Sporadisk: Kan ikke fastslås – forenlig med enkeltinntak',
+    )
+    expect(boblelinje(u('kronisk', 'uavklart'), uvanlig)).toBe('Kronisk: Kan ikke fastslås, uten «svært uvanlig utskillelse»')
+    expect(boblelinje(u('kronisk', 'uavklart_uvanlig', '2025-12-25'), { tekst: BE_URIN_KRONISK_TEKST.sannsynlig, samletTreff: false })).toBe(
+      'Kronisk: Kan ikke fastslås – svært uvanlig utskillelse (indikasjon etter 25.12.2025)',
+    )
+    expect(boblelinje(u('kronisk', 'uavklart'), { ...uvanlig, samletTreff: true })).toBe(
+      'Kronisk: Kan ikke fastslås, uten «svært uvanlig utskillelse», uten indikasjon etter tidligere prøve',
     )
   })
 })

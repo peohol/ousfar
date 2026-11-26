@@ -1,14 +1,14 @@
 import { useId, useMemo, type ReactNode } from 'react'
 import { Card } from './Card'
 import { Details } from './Details'
-import { BeUrinMangler, type BeUrinResultatProps, type BeUrinVisningsvalg } from './BeUrinDeler'
+import { BeUrinMangler, type BeUrinVisningsvalg } from './BeUrinDeler'
 import { BeUrinProfilforklaring } from './BeUrinForklaring'
 import { BeUrinProfilPlot, BeUrinProfiltabell } from './BeUrinProfilPlot'
-import type { GodkjentBeUrinProfilmodell } from '../domain/beUrinModell'
+import { erProfilmodell, type GodkjentBeUrinModellutgave, type GodkjentBeUrinProfilmodell } from '../domain/beUrinModell'
+import type { BeUrinInndata } from '../domain/beUrinMotor'
 import {
   fortolkBeUrinProfiler,
   mildereProfilutfall,
-  type BeUrinProfilMildere,
   type BeUrinProfilresultat as Resultat,
 } from '../domain/beUrinProfiler'
 import {
@@ -16,34 +16,55 @@ import {
   BE_URIN_KORTTITTEL,
   BE_URIN_KRONISK_TEKST,
   BE_URIN_SPORADISK_TEKST,
-  mildereTekst,
+  beMildereMarginer,
   samlettekst,
   type BeUrinVurderingstekst,
   type BeUrinVurderingstype,
 } from '../domain/beUrinProfilvisning'
+import type { MildereMarginer } from '../domain/thcVisning'
+
+/**
+ * Fortolkningen med modellform 2, og det høyere marginer ville gitt (#588),
+ * som skjemaet viser i snakkebobler ved sikkerhetsmarginen. `null` med
+ * modellform 1, som har sitt eget resultat.
+ */
+export function useBeUrinProfilfortolkning(
+  inndata: BeUrinInndata,
+  modell: GodkjentBeUrinModellutgave,
+): { resultat: Resultat; mildere: MildereMarginer | undefined } | null {
+  return useMemo(() => {
+    if (!erProfilmodell(modell)) return null
+    const resultat = fortolkBeUrinProfiler(inndata, modell)
+    const mildere =
+      resultat.type === 'vurdering' ? beMildereMarginer(resultat, mildereProfilutfall(inndata, modell, resultat)) : undefined
+    return { resultat, mildere }
+  }, [inndata, modell])
+}
 
 /**
  * Resultatet med modellform 2 (#570, forenklet i #576): de to vurderingene
- * først, side om side, med det en høyere margin ville endret rett under, så
- * et kort forbehold, og profilene med figuren og forklaringen lukket under
- * hver sin overskrift. Ingen bannere, ingen kopiering: dette er intern
- * beslutningsstøtte.
+ * først, side om side, så et kort forbehold, og profilene med figuren og
+ * forklaringen lukket under hver sin overskrift. Det en høyere margin ville
+ * endret, står ved sikkerhetsmarginen (#588). Ingen bannere, ingen kopiering:
+ * dette er intern beslutningsstøtte.
  */
-export function BeUrinProfilresultat({ inndata, modell, visning }: BeUrinResultatProps<GodkjentBeUrinProfilmodell>) {
-  const resultat = useMemo(() => fortolkBeUrinProfiler(inndata, modell), [inndata, modell])
-  const mildere = useMemo(() => mildereProfilutfall(inndata, modell, resultat), [inndata, modell, resultat])
+export function BeUrinProfilresultat({
+  resultat,
+  modell,
+  tidligereProver,
+  visning,
+}: {
+  resultat: Resultat
+  modell: GodkjentBeUrinProfilmodell
+  tidligereProver: number
+  visning: BeUrinVisningsvalg
+}) {
   return (
     <Card align="start" className="be-resultat">
       {resultat.type === 'mangler' ? (
         <BeUrinMangler feil={resultat.feil} />
       ) : (
-        <Profilutfall
-          resultat={resultat}
-          mildere={mildere}
-          modell={modell}
-          tidligereProver={inndata.tidligere.length}
-          visning={visning}
-        />
+        <Profilutfall resultat={resultat} modell={modell} tidligereProver={tidligereProver} visning={visning} />
       )}
     </Card>
   )
@@ -51,29 +72,21 @@ export function BeUrinProfilresultat({ inndata, modell, visning }: BeUrinResulta
 
 function Profilutfall({
   resultat,
-  mildere,
   modell,
   tidligereProver,
   visning,
 }: {
   resultat: Extract<Resultat, { type: 'vurdering' }>
-  mildere: BeUrinProfilMildere[]
   modell: GodkjentBeUrinProfilmodell
   tidligereProver: number
   visning: BeUrinVisningsvalg
 }) {
   const { sammenligning: s, samlet } = resultat
-  const mildereFor = (type: BeUrinVurderingstype) => mildere.filter((u) => u.vurdering === type)
   return (
     <>
       <div className="be-vurderinger">
-        <Vurdering type="sporadisk" tekst={BE_URIN_SPORADISK_TEKST[s.sporadisk]} mildere={mildereFor('sporadisk')} />
-        <Vurdering
-          type="kronisk"
-          tekst={BE_URIN_KRONISK_TEKST[s.kronisk]}
-          mildere={mildereFor('kronisk')}
-          samletTreff={Boolean(samlet?.treff)}
-        >
+        <Vurdering type="sporadisk" tekst={BE_URIN_SPORADISK_TEKST[s.sporadisk]} />
+        <Vurdering type="kronisk" tekst={BE_URIN_KRONISK_TEKST[s.kronisk]}>
           {samlet && (
             <p className={samlet.treff ? 'be-vurdering__samlet be-vurdering__samlet--treff' : 'be-vurdering__samlet'}>
               {samlettekst(samlet)}
@@ -101,19 +114,14 @@ function Profilutfall({
   )
 }
 
-/** Én vurdering: overskriften, den korte konklusjonen, utdypingen og det en høyere margin ville gitt. */
+/** Én vurdering: overskriften, den korte konklusjonen og utdypingen. */
 function Vurdering({
   type,
   tekst,
-  mildere,
-  samletTreff = false,
   children,
 }: {
   type: BeUrinVurderingstype
   tekst: BeUrinVurderingstekst
-  mildere: BeUrinProfilMildere[]
-  /** Den samlede vurderingen står under, med indikasjon etter en eldre prøve. */
-  samletTreff?: boolean
   children?: ReactNode
 }) {
   const id = useId()
@@ -125,11 +133,6 @@ function Vurdering({
       <p className="be-vurdering__konklusjon">{tekst.konklusjon}</p>
       {tekst.utdyping && <p className="be-vurdering__utdyping">{tekst.utdyping}</p>}
       {children}
-      {mildere.map((u) => (
-        <p key={`${u.utfall}|${u.samletDato ?? ''}`} className="be-vurdering__mildere">
-          {mildereTekst(u, { tekst, samletTreff })}
-        </p>
-      ))}
     </section>
   )
 }

@@ -205,13 +205,14 @@ ikke sannsynligheten for at fortolkningen er riktig.
    setning til (reglene under).
 2. Under vurderingen ved kronisk bruk: den samlede vurderingen, når den er
    gjort (under).
-3. Under hver vurdering, diskret: det en høyere margin ville gitt, for
-   eksempel «Ved 99 % sikkerhetsmargin blir vurderingen ved sporadisk bruk:
-   Nytt inntak kan ikke fastslås. Endringen er forenlig med utskillelse etter
-   gjentatte doser innenfor et kort tidsrom.» (`mildereTekst`). Brukeren
-   velger selv; det er ingen knapp og intet banner.
-4. Forbeholdet om eliminasjonsfasen, i én kort linje.
-5. «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard.
+3. Forbeholdet om eliminasjonsfasen, i én kort linje.
+4. «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard.
+
+Det en høyere margin ville gitt, står ikke i resultatet, men i snakkebobler
+ved bryteren for sikkerhetsmarginen i skjemaet (#588, som i THC-syre), for
+eksempel «Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser» ved
+99 % (`beMildereMarginer`).
+Brukeren velger selv; det er ingen knapp og intet banner.
 
 Det står ingen setning om justering for måleusikkerhet, ingen grader i
 resultatet, ingen merknad om like terskler og ingen merknad om ekstrapolasjon.
@@ -258,8 +259,21 @@ modellen. Strengheten, fra mildest, er ved sporadisk bruk forenlig med
 enkeltinntak, forenlig med gjentatte doser, sannsynlig og nytt inntak; ved
 kronisk bruk uavklart, uavklart men uvanlig, indikasjon på nytt inntak etter
 en eldre prøve (mildere jo eldre prøven er), sannsynlig og nytt inntak.
-Hver mildere vurdering står under vurderingen den gjelder, med marginene som
-gir den. Teksten gir alltid hele det kliniske utfallet: konklusjonen,
+Hver mildere vurdering får en snakkeboble som peker på den laveste marginen
+som gir den, med hele det kliniske utfallet kort (`boblelinje`): vurderingen,
+konklusjonen og utdypingen («Sporadisk: Kan ikke fastslås – forenlig med
+enkeltinntak», «Kronisk: Kan ikke fastslås – svært uvanlig utskillelse»), og
+«(indikasjon etter 01.06.2026)» når en høyere margin gir indikasjon etter en
+eldre prøve. Har utfallet samme konklusjon som vurderingen som står, men uten
+bemerkningen om svært uvanlig utskillelse, står «uten «svært uvanlig
+utskillelse»»; faller indikasjonen etter en eldre prøve bort, står «uten
+indikasjon etter tidligere prøve». Klinisk ulike utfall får dermed alltid
+ulike linjer, synlig og ikke bare for skjermlesere (ChatGPT-kontrollen av
+#589). Utfall ved samme margin står i samme boble; bare en identisk linje som
+alt står ved en lavere margin, gjentas ikke. Den første
+boblen står over bryteren, den neste under. Skjermlesere får hele teksten for
+hvert utfall som beskrivelse av bryteren (`mildereTekst`). Den gir alltid
+hele det kliniske utfallet: konklusjonen,
 utdypingen når utfallet har en (forenlig med enkeltinntak eller gjentatte
 doser, svært uvanlig utskillelse), og indikasjonen etter en eldre prøve når
 utfallet har en. Slik ser to marginer med samme konklusjon, men ulik utdyping,

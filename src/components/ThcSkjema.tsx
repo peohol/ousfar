@@ -17,7 +17,7 @@ import {
 } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
 import { beregnIrcak, dagerMellom, formaterIrcak } from '../domain/thcTall'
-import { kortTidtekst, langTidtekst, underCutofftekst } from '../domain/thcVisning'
+import { kortTidtekst, langTidtekst, underCutofftekst, type MildereMarginer } from '../domain/thcVisning'
 
 export interface ThcSkjemaProps {
   inndata: ThcInndata
@@ -26,6 +26,8 @@ export interface ThcSkjemaProps {
   regler: ThcRegelsett
   /** Feltet som står først, og som får fokus når skjemaet åpnes eller nullstilles. */
   forsteFelt?: Ref<HTMLInputElement>
+  /** Det høyere marginer ville gitt, i snakkebobler ved sikkerhetsmarginen (`useThcFortolkning`). */
+  mildere?: MildereMarginer
 }
 
 /**
@@ -41,7 +43,7 @@ export interface ThcSkjemaProps {
  * de spør på samme måte. Den samlede vurderingen er med så snart det står en
  * tidligere prøve: `samletVurdering` holdes lik det.
  */
-export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaProps) {
+export function ThcSkjema({ inndata, onEndre, regler, forsteFelt, mildere }: ThcSkjemaProps) {
   const ingen = inndata.ingenTidligere
   // Avkryssingen står inne i «Forrige prøve», så den gjelder bare når det
   // finnes en forrige prøve å fortolke.
@@ -201,6 +203,7 @@ export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaPro
               onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
               maalinger="THC-syre og kreatinin"
               merSkalTil="kommentaren sier at cannabis har vært inntatt etter forrige prøve. Tvilen kommer prøvegiver til gode"
+              mildere={mildere}
             />
             {storreUsikkerhet && (
               <p className="thc-margin__merknad">{underCutofftekst(regler.maleusikkerhet.faktor_under_cutoff)}</p>

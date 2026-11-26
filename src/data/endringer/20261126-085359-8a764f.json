@@ -1,0 +1,18 @@
+{
+  "id": "20261126-085359-8a764f",
+  "semver": "patch",
+  "opprettet": "2026-11-26T08:53:59Z",
+  "sammendrag": "Hva en høyere sikkerhetsmargin ville gitt, vises i snakkebobler ved marginen i fortolkningen av THC-syre og benzoylekgonin i urin",
+  "typer": [
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Gir en høyere sikkerhetsmargin en mildere konklusjon, peker en snakkeboble på den marginen og sier kort hva konklusjonen blir der, for eksempel «Kan ikke fastslås» eller «Ikke nødvendigvis nytt».",
+    "Trengs det to bobler, står den ene over bryteren og den andre under. Boblene gløder svakt.",
+    "Teksten om høyere margin under kommentaren (THC-syre) og under vurderingene (benzoylekgonin i urin) er borte. Kommentarene og vurderingene er de samme som før."
+  ]
+}
