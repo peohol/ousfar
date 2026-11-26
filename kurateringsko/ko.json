@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-26T21:25:54.888Z",
+  "oppdatert_kl": "2026-11-26T23:26:22.633Z",
   "malt_kl": "2026-11-26T03:29:16.767Z",
   "teller": 91,
   "stoffer": {
@@ -8337,30 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261124-200100": {
-      "ider": [
-        "fullfort-1",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "13b75f55a4e5b6ca4f77f486b8b926b6e91ddd4fa6856732ef63b60673df1930",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "13b75f55a4e5b6ca4f77f486b8b926b6e91ddd4fa6856732ef63b60673df1930",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "doksazosin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-24T21:45:22.537Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45494193984"
-        }
-      },
-      "besvart_commit": "5dd5ac7266717b2f5ef8a4843e5ff836492f5820",
-      "sist_brukt_kl": "2026-11-24T21:45:22.537Z"
-    },
     "kurateringsko/okt/20261124-214700": {
       "ider": [
         "fullfort-1",
