@@ -223,6 +223,12 @@
   /* Den gule i et trafikklys, gulere enn `--toksisk`: til punkter som står
      mellom en grønn og en rød grense, som i THC-syrefiguren. */
   --trafikklys-gul: #e8b500;
+  /* Signal: oransje som skal fange blikket uten å være en klinisk farge, til
+     snakkeboblene ved sikkerhetsmarginen. Tekst i `--blekk` står på flaten
+     og på `-gloed` (toppen av gløden); `--signal` er kanten og gløden. */
+  --signal: #d4620e;
+  --signal-flate: #fde6d2;
+  --signal-gloed: #fbc89a;
   --alvorlig: #d2493a;
   --alvorlig-flate: #f8e0da;
   --alvorlig-blekk: #9e2a1e;
@@ -329,6 +335,9 @@
   --toksisk-blekk: #f4cb7a;
   --toksisk-kant: #efbe5e;
   --trafikklys-gul: #f5d23a;
+  --signal: #ff9b52;
+  --signal-flate: #47290f;
+  --signal-gloed: #7f4515;
   --alvorlig: #f08576;
   --alvorlig-flate: #2d1a1c;
   --alvorlig-blekk: #f7a195;

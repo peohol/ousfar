@@ -121,7 +121,8 @@ Utfall ved samme margin står i samme boble, og en linje som alt står ved en
 lavere margin, gjentas ikke (`marginbobler`). Den første boblen står over
 bryteren, den neste under, så de ikke dekker hverandre; står marginen
 ytterst, legger boblen seg innover fra kanten med pilen fortsatt på
-marginen. Boblene gløder svakt, og står stille ved redusert bevegelse.
+marginen. Boblene er oransje og pulserer én gang i sekundet, så de skiller seg
+fra appens egen farge; de står stille ved redusert bevegelse.
 Skjermlesere får hele setningen for hvert utfall som beskrivelse av bryteren
 (`mildereMargintekst`): «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke
 fastslås.» Et utfall som knytter inntaket til en tidligere prøve, nevner den

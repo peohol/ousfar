@@ -101,6 +101,10 @@ const KRAV: [string, string, number, string][] = [
   ['--aksent-2', '--flate', 4.5, 'merket «Admin»'],
   ['--toksisk-blekk', '--flate', 4.5, 'advarselen ved det midlertidige passordet'],
   ['--blekk', '--flate-bunn', 4.5, 'tekst i skjemafelt'],
+  // Snakkeboblene ved sikkerhetsmarginen gløder mellom flaten og `-gloed`.
+  ['--blekk', '--signal-flate', 4.5, 'tekst i snakkeboblene ved sikkerhetsmarginen'],
+  ['--blekk', '--signal-gloed', 4.5, 'tekst i snakkeboblene på toppen av gløden'],
+  ['--signal', '--flate', 3, 'kant rundt snakkeboblene på kort'],
   // Analysemetodepillen bærer metodens egen farge og ikke et token; den
   // kontrastmåles i `domain/__tests__/optionColours.test.ts`.
 ]

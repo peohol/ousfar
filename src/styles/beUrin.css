@@ -265,10 +265,11 @@
   line-height: var(--linjehoyde-tett);
   color: var(--blekk);
   text-align: center;
-  background: var(--aksent-flate);
-  border: var(--kant) solid var(--aksent);
+  background: var(--signal-flate);
+  border: var(--kant) solid var(--signal);
   border-radius: var(--runding-merke);
-  animation: marginboble-glod 2.6s var(--kurve) infinite alternate;
+  /* Én puls i sekundet: inn og ut på et halvt sekund hver vei. */
+  animation: marginboble-glod 0.5s ease-in-out infinite alternate;
 }
 
 /* Ytterst til venstre eller høyre: boblen innover fra kanten, pilen midt på marginen. */
@@ -313,13 +314,13 @@
 
 @keyframes marginboble-glod {
   from {
-    background-color: var(--aksent-flate);
+    background-color: var(--signal-flate);
     box-shadow: 0 0 0 0 transparent;
   }
 
   to {
-    background-color: color-mix(in srgb, var(--aksent-flate), var(--aksent) 22%);
-    box-shadow: 0 0 0.6rem 0.05rem color-mix(in srgb, var(--aksent), transparent 55%);
+    background-color: var(--signal-gloed);
+    box-shadow: 0 0 0.7rem 0.1rem color-mix(in srgb, var(--signal), transparent 40%);
   }
 }
 
