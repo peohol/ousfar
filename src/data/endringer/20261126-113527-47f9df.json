@@ -1,0 +1,16 @@
+{
+  "id": "20261126-113527-47f9df",
+  "semver": "patch",
+  "opprettet": "2026-11-26T11:35:27Z",
+  "sammendrag": "Snakkeboblene ved sikkerhetsmarginen er oransje og pulserer raskere",
+  "typer": [
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Snakkeboblene som viser hva en høyere sikkerhetsmargin ville gitt (THC-syre og benzoylekgonin i urin), er oransje i stedet for appens grønnblå farge og pulserer én gang i sekundet, så de er lettere å legge merke til."
+  ]
+}
