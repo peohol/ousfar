@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-26T19:25:57.077Z",
+  "oppdatert_kl": "2026-11-26T21:25:54.888Z",
   "malt_kl": "2026-11-26T03:29:16.767Z",
   "teller": 91,
   "stoffer": {
@@ -8337,30 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261124-181951": {
-      "ider": [
-        "fullfort-1",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "1cee4eeec0f6414093ff129978de358c1ebcef553026a4587ed61365c5b5c37d",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "1cee4eeec0f6414093ff129978de358c1ebcef553026a4587ed61365c5b5c37d",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "bumetanid er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-24T19:59:06.094Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45475882161"
-        }
-      },
-      "besvart_commit": "55e313714e10024cc7b10f60077e9db70d72a589",
-      "sist_brukt_kl": "2026-11-24T19:59:06.094Z"
-    },
     "kurateringsko/okt/20261124-200100": {
       "ider": [
         "fullfort-1",
