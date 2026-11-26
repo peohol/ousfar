@@ -219,6 +219,9 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   Statusene skal senere kunne konfigureres per fagmiljø, men det bygges
   ikke noe administrasjonsgrensesnitt for dem nå. Borte registreres uten
   grunn.
+- **Endringer lagres med en gang og kan angres.** En status settes ved å
+  velge den og fjernes med slett, ved et nytt klikk på den valgte statusen
+  eller ved dobbeltklikk på statusen direkte i kalenderen.
 - **Statuser på kontoret gjelder arbeidsdager.** Vakt krever kvalifikasjon
   for akkurat den vakttypen.
 - **Merknad er valgfritt på alle statuser** og skal bare inneholde
