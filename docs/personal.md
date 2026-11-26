@@ -181,11 +181,17 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Vakt 1 og vakt 2 utjevnes hver for seg.** En oppdatering av vaktplanen
   beholder tildelinger som fortsatt er gyldige.
 - **Forventet antall** regnes ut fra stillingskategori, vekter,
-  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag. For
-  tidligere dager bygger det på vaktene som faktisk står i kalenderen.
-  **Manglende historikk gjør derfor ikke i seg selv at noen ser ut til å ha
-  for få vakter**, for eksempel en nyansatt eller en periode uten
-  registreringer.
+  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag:
+  vaktene en dag fordeles på dem som var til stede, aktive og kvalifiserte,
+  i forhold til vekten for kategorien. For tidligere dager teller bare de
+  vaktene som faktisk er registrert i kalenderen den dagen. **En dag uten
+  registrert vakt av typen gir derfor ingen forventning til noen**, og
+  manglende historikk gjør ikke i seg selv at noen ser ut til å ha for få
+  vakter. Det gjelder også ved første gangs bruk, når ingen vakter er
+  registrert bakover. En medarbeider får bare forventning fra og med dagen
+  vedkommende ble aktiv. Er en vakt registrert på en dag der en medarbeider
+  egentlig var borte, men fraværet mangler, regnes vedkommende som til stede
+  den dagen. Slike feil rettes ved å registrere fraværet.
 - **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
   medarbeider og vakttype antall, forventet antall og avvik over et valgt
   tidsrom. Med et forslag vises også antall i forslaget, samlet etter
@@ -194,14 +200,30 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 
 **Fasit (syntetiske medarbeidere A og B):**
 
+Inndata:
+- A og B har samme stillingskategori og samme vekt for vakt 1, begge er
+  kvalifisert for vakt 1, og begge er aktive og til stede alle arbeidsdagene
+  nedenfor, uten registrert fravær.
+- Tidligere: 20 arbeidsdager med nøyaktig én registrert vakt 1 hver dag. A
+  har 12 av dem og B 8.
+- Ny periode: 10 arbeidsdager som hver trenger én vakt 1. Ingen vakter er
+  låst eller publisert.
+- Tidshorisonten dekker alle de 30 dagene. Vakt 2 er ikke med.
+
+Forventet antall: hver dag fordeles likt på to, så tidligere er forventet
+20 · ½ = 10 hver, i den nye perioden 10 · ½ = 5 hver, og samlet 15 hver.
+Full historisk utjevning gir A 15 − 12 = 3 og B 15 − 8 = 7 nye vakter.
+
 | | Tidligere vakter | Ny periode | Samlet | Forventet samlet |
 | --- | --- | --- | --- | --- |
 | A | 12 | 3 | 15 | 15 |
 | B | 8 | 7 | 15 | 15 |
 
-Begge har forventet 10 tidligere vakter og 5 i den nye perioden. Fordelingen
-3 og 7 er et godt resultat, selv om den er skjev sett isolert for den nye
-perioden.
+Fordelingen 3 og 7 er riktig resultat, selv om den er skjev sett isolert for
+den nye perioden (forventet 5 og 5). Med de samme inndataene gir 11 og 9
+tidligere vakter 4 og 6 nye, og uten tidligere vakter gir den 5 og 5.
+Avstand mellom vaktene og jevn belastning velger hvilke dager vaktene
+legges på, men endrer ikke antallene.
 
 ## 7. Første arbeidsløp: vaktplanen
 
