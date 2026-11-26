@@ -5,7 +5,7 @@
  */
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -138,7 +138,11 @@ const HOVEDTRE = new Map([
 ])
 const hex = (navn: string, versjon = 0) => createHash('sha1').update(`${navn}:${versjon}`).digest('hex')
 
-function falskGithub(grener: Falsk[], prer: Pr[] = [], endring: { underveis?: (f: { pushet: Set<string>; apne: Pr[] }) => void; treFeiler?: boolean } = {}) {
+function falskGithub(
+  grener: Falsk[],
+  prer: Pr[] = [],
+  endring: { underveis?: (f: { pushet: Set<string>; apne: Pr[] }) => void; treFeiler?: boolean; slettFeiler?: string[] } = {},
+) {
   const slettet: string[] = []
   const pushet = new Set<string>()
   const apne = prer.filter((p) => p.tilstand === 'apen')
@@ -172,10 +176,12 @@ function falskGithub(grener: Falsk[], prer: Pr[] = [], endring: { underveis?: (f
       return t
     },
     async slett(navn, forventet) {
-      // Som `--force-with-lease`: bare når grenen fortsatt står på commiten.
-      if (!finn(navn) || sha(navn) !== forventet) return false
+      // Som `lagGrensletter`: bare når grenen fortsatt står på commiten, og en driftsfeil kastes.
+      if ((endring.slettFeiler ?? []).includes(navn)) throw new Error('Git kunne ikke slette')
+      if (!finn(navn)) return 'borte'
+      if (sha(navn) !== forventet) return 'endret'
       slettet.push(navn)
-      return true
+      return 'slettet'
     },
   }
   return { github, slettet }
@@ -270,6 +276,30 @@ describe('kjøringen', () => {
     await expect(kjor(f)).rejects.toThrow('502')
     expect(f.slettet).toEqual([])
   })
+  it('stopper slettingen ved en driftsfeil, uten å forsøke flere grener', async () => {
+    const f = falskGithub([{ navn: 'claude/a', foran: 0 }, { navn: 'claude/b', foran: 0 }], [], { slettFeiler: ['claude/a'] })
+    const utfall = await kjor(f)
+    expect(f.slettet).toEqual([])
+    expect(utfall.feil).toBe('Git kunne ikke slette')
+    expect(Object.fromEntries(utfall.underveis)).toEqual({ 'claude/a': 'slettingen feilet', 'claude/b': 'ikke forsøkt etter feilen' })
+  })
+
+  it('stopper slettingen når de åpne PR-ene ikke kan leses på nytt', async () => {
+    const f = falskGithub([{ navn: 'claude/a', foran: 0 }])
+    f.github.apnePr = async () => {
+      throw new Error('Fikk ingen gyldig liste over PR-ene.')
+    }
+    const utfall = await kjor(f)
+    expect(f.slettet).toEqual([])
+    expect(utfall.feil).toContain('PR-ene')
+  })
+
+  it('melder en gren noen andre har slettet underveis, uten å regne den som slettet', async () => {
+    const f = falskGithub([{ navn: 'claude/a', foran: 0 }], [], { underveis: () => f.slettet.push('claude/a') })
+    const utfall = await kjor(f)
+    expect(utfall.slettet.size).toBe(0)
+    expect(utfall.underveis.get('claude/a')).toBe('slettet av noen andre underveis')
+  })
 })
 
 describe('sletting gjennom git', () => {
@@ -281,29 +311,51 @@ describe('sletting gjennom git', () => {
       .toString()
       .trim()
 
-  it('sletter grenen bare når den fortsatt står på commiten som ble vurdert', () => {
+  function oppsett() {
     const rot = mkdtempSync(join(tmpdir(), 'gitslett-'))
-    try {
-      const origin = join(rot, 'origin.git')
-      const klone = join(rot, 'klone')
-      execFileSync('git', ['init', '-q', '--bare', origin])
-      execFileSync('git', ['clone', '-q', origin, klone], { stdio: 'ignore' })
-      git(klone, 'commit', '-q', '--allow-empty', '-m', 'en')
+    const origin = join(rot, 'origin.git')
+    const klone = join(rot, 'klone')
+    execFileSync('git', ['init', '-q', '--bare', origin])
+    execFileSync('git', ['clone', '-q', origin, klone], { stdio: 'ignore' })
+    const commit = (melding: string) => {
+      git(klone, 'commit', '-q', '--allow-empty', '-m', melding)
       git(klone, 'push', '-q', 'origin', 'HEAD:refs/heads/claude/x')
-      const vurdert = git(klone, 'rev-parse', 'HEAD')
-      git(klone, 'commit', '-q', '--allow-empty', '-m', 'to')
-      git(klone, 'push', '-q', 'origin', 'HEAD:refs/heads/claude/x')
-      const ny = git(klone, 'rev-parse', 'HEAD')
+      return git(klone, 'rev-parse', 'HEAD')
+    }
+    return { rot, origin, klone, commit }
+  }
 
-      const slett = lagGrensletter(klone)
-      expect(slett('claude/x', vurdert)).toBe(false)
-      expect(git(origin, 'rev-parse', 'refs/heads/claude/x')).toBe(ny)
-      expect(slett('claude/x', ny)).toBe(true)
-      expect(git(origin, 'for-each-ref', 'refs/heads/claude/')).toBe('')
-      expect(slett('claude/x', ny)).toBe(false)
+  it('sletter grenen bare når den fortsatt står på commiten som ble vurdert, og skiller en avvist lease fra en gren som er borte', () => {
+    const o = oppsett()
+    try {
+      const vurdert = o.commit('en')
+      const ny = o.commit('to')
+      const slett = lagGrensletter(o.klone)
+      expect(slett('claude/x', vurdert)).toBe('endret')
+      expect(git(o.origin, 'rev-parse', 'refs/heads/claude/x')).toBe(ny)
+      expect(slett('claude/x', ny)).toBe('slettet')
+      expect(git(o.origin, 'for-each-ref', 'refs/heads/claude/')).toBe('')
+      expect(slett('claude/x', ny)).toBe('borte')
       expect(() => slett('claude/x', 'ikke-en-sha')).toThrow('Ugyldig commit')
     } finally {
-      rmSync(rot, { recursive: true, force: true })
+      rmSync(o.rot, { recursive: true, force: true })
+    }
+  })
+
+  it('kaster en driftsfeil når git avviser slettingen av en uendret gren, eller grenen ikke kan leses', () => {
+    const o = oppsett()
+    try {
+      const sha = o.commit('en')
+      // GitHub-regler eller manglende skrivetilgang: fjernrepoet avviser alt.
+      writeFileSync(join(o.origin, 'hooks', 'pre-receive'), '#!/bin/sh\necho "hemmelig-token" >&2\nexit 1\n', { mode: 0o755 })
+      const slett = lagGrensletter(o.klone)
+      expect(() => slett('claude/x', sha)).toThrow('selv om grenen står uendret')
+      expect(() => slett('claude/x', sha)).not.toThrow('hemmelig-token')
+      expect(git(o.origin, 'rev-parse', 'refs/heads/claude/x')).toBe(sha)
+      git(o.klone, 'remote', 'set-url', 'origin', join(o.rot, 'finnes-ikke.git'))
+      expect(() => slett('claude/x', sha)).toThrow('kunne ikke leses etterpå')
+    } finally {
+      rmSync(o.rot, { recursive: true, force: true })
     }
   })
 })
@@ -348,6 +400,16 @@ describe('GitHub', () => {
     await expect(gh.tre('m')).resolves.toEqual(new Map([['b', '100755 blob x']]))
   })
 
+  it('feiler i stedet for å gi en ufullstendig PR-liste', async () => {
+    const gh404 = lagGrengithub('eier/repo', 't', ingenSletting, falskFetch({}).hent)
+    await expect(gh404.apnePr()).rejects.toThrow('Fikk ingen gyldig liste over PR-ene.')
+    const full = Array.from({ length: 100 }, (_, i) => ({ number: i, state: 'open', head: { ref: `g${i}`, repo: { full_name: 'eier/repo' } }, base: { ref: 'main' } }))
+    const ghMange = lagGrengithub('eier/repo', 't', ingenSletting, falskFetch({ [`GET ${R}/pulls`]: full }).hent)
+    await expect(ghMange.prer()).rejects.toThrow('avbryter for sikkerhets skyld')
+    const ghUtenNummer = lagGrengithub('eier/repo', 't', ingenSletting, falskFetch({ [`GET ${R}/pulls`]: [{ state: 'open' }] }).hent)
+    await expect(ghUtenNummer.apnePr()).rejects.toThrow('uten nummer')
+  })
+
   it('godtar ikke et ufullstendig tre', async () => {
     const { hent } = falskFetch({ [`GET ${R}/git/trees/a`]: { truncated: true, tree: [] }, [`GET ${R}/git/trees/b`]: { truncated: false, tree: [{ path: 'x', type: 'blob', sha: 's' }] } })
     const gh = lagGrengithub('eier/repo', 't', ingenSletting, hent)
@@ -358,11 +420,11 @@ describe('GitHub', () => {
   it('sletter aldri grener andre oppryddinger eier, og ingenting før hovedgrenen er lest', async () => {
     const { hent } = falskFetch({ [`GET ${R}`]: { default_branch: 'main' } })
     const slettet: string[] = []
-    const gh = lagGrengithub('eier/repo', 't', (gren, sha) => slettet.push(`${gren}@${sha}`) > 0, hent)
+    const gh = lagGrengithub('eier/repo', 't', (gren, sha) => (slettet.push(`${gren}@${sha}`), 'slettet'), hent)
     await expect(gh.slett('claude/a', 's')).rejects.toThrow('Hovedgrenen er ikke lest')
     await gh.hovedgren()
     for (const navn of ['main', 'kurateringsko/tilstand', 'kuratorjobb/a', 'kurateringsko/okt/20261125-000951']) await expect(gh.slett(navn, 's'), navn).rejects.toThrow('Sletter ikke')
-    await expect(gh.slett('claude/a', 's')).resolves.toBe(true)
+    await expect(gh.slett('claude/a', 's')).resolves.toBe('slettet')
     expect(slettet).toEqual(['claude/a@s'])
   })
 })

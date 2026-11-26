@@ -106,7 +106,7 @@ describe('reglene', () => {
 
   it('beholder alltid en gren med en åpen PR, en kobling i køen, GitHub-beskyttelse eller et ugyldig navn', () => {
     const g = grunnlag({ grener: [gren('alfa', 'publisert', 5)] })
-    expect(vurderJobbgren(jobb('x'), { ...g, apnePr: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, grunn: 'en åpen PR kommer fra grenen' })
+    expect(vurderJobbgren(jobb('x'), { ...g, apnePr: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, grunn: 'en åpen PR kommer fra eller skal inn i grenen' })
     expect(vurderJobbgren(jobb('x'), { ...g, iKoen: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, kategori: 'i_bruk' })
     expect(vurderJobbgren(jobb('x', { beskyttet: true }), g)).toMatchObject({ slett: false, grunn: 'grenen er beskyttet i GitHub' })
     expect(vurderJobbgren({ ...jobb('x'), navn: 'kurateringsko/tilstand' }, g)).toMatchObject({ slett: false })
@@ -199,10 +199,11 @@ function falskGithub(jobber: Jobbgren[], ko: unknown, endring: Partial<Ryddegith
     apnePr: async () => [],
     // Som `--force-with-lease`: bare når grenen fortsatt står på commiten.
     slett: async (navn, sha) => {
-      if (shaer.get(navn) !== sha) return false
+      if (!shaer.has(navn)) return 'borte'
+      if (shaer.get(navn) !== sha) return 'endret'
       slettet.push(navn)
       shaer.delete(navn)
-      return true
+      return 'slettet'
     },
     ...endring,
   }
@@ -344,7 +345,7 @@ describe('kjøringen', () => {
     const gh = lagRyddegithub(
       'eier/repo',
       't',
-      (gren, sha) => slettet.push(`${gren}@${sha}`) > 0,
+      (gren, sha) => (slettet.push(`${gren}@${sha}`), 'slettet'),
       async (adresse, valg) => {
         kall.push(`${valg?.method} ${adresse}`)
         return new Response(null, { status: 204 })
@@ -352,10 +353,49 @@ describe('kjøringen', () => {
     )
     await expect(gh.slett('kurateringsko/tilstand', 's')).rejects.toThrow('Sletter bare jobbgrener')
     await expect(gh.slett('main', 's')).rejects.toThrow('Sletter bare jobbgrener')
-    await expect(gh.slett('kuratorjobb/a', 's')).resolves.toBe(true)
+    await expect(gh.slett('kuratorjobb/a', 's')).resolves.toBe('slettet')
     await gh.gren('kuratorjobb/a')
     expect(slettet).toEqual(['kuratorjobb/a@s'])
     expect(kall).toEqual(['GET https://api.github.com/repos/eier/repo/branches/kuratorjobb%2Fa'])
+  })
+
+  it('regner en jobbgren som i bruk når en åpen PR kommer fra den eller skal inn i den, også fra et annet repo, og feiler ved en ufullstendig liste', async () => {
+    const svar = (rader: unknown) => async () => (rader === null ? new Response(null, { status: 404 }) : Response.json(rader))
+    const ingen = () => 'slettet' as const
+    const gh = lagRyddegithub(
+      'eier/repo',
+      't',
+      ingen,
+      svar([
+        { number: 1, state: 'open', head: { ref: 'kuratorjobb/fra', repo: { full_name: 'eier/repo' } }, base: { ref: 'main' } },
+        { number: 2, state: 'open', head: { ref: 'kuratorjobb/fork', repo: { full_name: 'andre/repo' } }, base: { ref: 'kuratorjobb/inn' } },
+      ]),
+    )
+    expect((await gh.apnePr()).sort()).toEqual(['kuratorjobb/fra', 'kuratorjobb/inn', 'main'])
+    await expect(lagRyddegithub('eier/repo', 't', ingen, svar(null)).apnePr()).rejects.toThrow('Fikk ingen gyldig liste over PR-ene.')
+    const full = Array.from({ length: 100 }, (_, i) => ({ number: i, state: 'open', head: { ref: `g${i}`, repo: { full_name: 'eier/repo' } }, base: { ref: 'main' } }))
+    await expect(lagRyddegithub('eier/repo', 't', ingen, svar(full)).apnePr()).rejects.toThrow('avbryter for sikkerhets skyld')
+  })
+
+  it('stopper slettingen ved en driftsfeil, og når de åpne PR-ene ikke kan leses på nytt', async () => {
+    const toFerdige = [medSha(jobb('ferdig')), medSha(jobb('ferdig2'))]
+    const f = falskGithub(toFerdige, KO)
+    f.github.slett = async () => {
+      throw new Error('Git kunne ikke slette')
+    }
+    const u = await kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} })
+    expect(u.feil).toBe('Git kunne ikke slette')
+    expect(Object.fromEntries(u.underveis)).toEqual({ 'kuratorjobb/ferdig': 'slettingen feilet', 'kuratorjobb/ferdig2': 'ikke forsøkt etter feilen' })
+
+    const g = falskGithub(toFerdige, KO)
+    let lesinger = 0
+    g.github.apnePr = async () => {
+      if (++lesinger === 1) return []
+      throw new Error('Fikk ingen gyldig liste over PR-ene.')
+    }
+    const v = await kjorRydding({ github: g.github, grener, kunVis: false, na: NA, logg: () => {} })
+    expect(g.slettet).toEqual([])
+    expect(v.feil).toContain('PR-ene')
   })
 })
 

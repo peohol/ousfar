@@ -32,6 +32,8 @@ try {
   oppsummer(grenMarkdown(utfall.oversikt, { kunVis, slettet: utfall.slettet, underveis: utfall.underveis, alleGrener: utfall.alleGrener }))
   // Advarslene vises på kjøringen i GitHub, ikke bare i loggen.
   for (const a of utfall.oversikt.advarsler) console.log(`::warning title=${TITTEL}::${a}`)
+  // En feil under slettingen stopper resten, og kjøringen feiler synlig.
+  if (utfall.feil) throw new Error(utfall.feil)
   const antall = kunVis ? utfall.oversikt.slettes.length : utfall.slettet.size
   console.log(`${kunVis ? 'Ville slettet' : 'Slettet'}: ${antall} / beholdt: ${utfall.oversikt.vurderinger.length - antall}`)
 } catch (e) {

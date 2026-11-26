@@ -60,10 +60,12 @@ try {
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${tekst}\n`)
   // Advarslene vises på kjøringen i GitHub, ikke bare i loggen.
   for (const a of utfall.oversikt.advarsler) console.log(`::warning title=Opprydding av kuratorjobbgrener::${a}`)
+  // En feil under slettingen stopper resten, og kjøringen feiler synlig.
+  if (utfall.feil) throw new Error(utfall.feil)
   console.log(`${kunVis ? 'Ville slettet' : 'Slettet'}: ${kunVis ? utfall.oversikt.slettes.length : utfall.slettet.size} / beholdt: ${utfall.oversikt.vurderinger.length - (kunVis ? utfall.oversikt.slettes.length : utfall.slettet.size)}`)
 } catch (e) {
   const melding = e instanceof Error ? e.message : String(e)
   console.log(`::error title=Opprydding av kuratorjobbgrener::${melding}`)
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Opprydding av kuratorjobbgrener\n\n**Stoppet uten å slette noe:** ${melding}\n`)
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Opprydding av kuratorjobbgrener\n\n**Stoppet:** ${melding}\n`)
   process.exitCode = 1
 }

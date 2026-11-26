@@ -6,8 +6,9 @@
  * prøves uten nettverk.
  */
 import { createHash } from 'node:crypto'
-import type { Grensletter } from '../github/gitslett'
-import { alleGrener, githubRest, grenNa } from '../github/rest'
+import type { Grensletter, Slettutfall } from '../github/gitslett'
+import { alleGrener, githubRest, grenerIBruk, grenNa, lesPrer } from '../github/rest'
+import { slettRunde } from '../github/slettrunde'
 import type { Greninfo } from '../kurateringsko/modell'
 import { FORESPORSELSFIL, JOBBGRENPREFIKS, STATUSFIL } from './modell'
 import { vurderAlle, type Jobbgren, type Ryddeoversikt } from './rydding'
@@ -27,10 +28,10 @@ export interface Ryddegithub {
   gren(navn: string): Promise<{ sha: string; commit_kl: string | null } | null>
   /** En fil på en gren, eller `null` når den mangler. */
   fil(sti: string, gren: string): Promise<Buffer | null>
-  /** Grenene i dette repoet som åpne PR-er kommer fra. */
+  /** Grenene åpne PR-er kommer fra eller skal inn i (også fra et annet repo). Feiler heller enn å gi en ufullstendig liste. */
   apnePr(): Promise<string[]>
-  /** Sletter grenen bare om den fortsatt står på commiten; `false` ellers. */
-  slett(navn: string, sha: string): Promise<boolean>
+  /** Sletter grenen bare om den fortsatt står på commiten; kaster ved en driftsfeil. */
+  slett(navn: string, sha: string): Promise<Slettutfall>
 }
 
 export interface Ryddevalg {
@@ -47,6 +48,8 @@ export interface Ryddeutfall {
   slettet: Set<string>
   /** Grener reglene ville slettet, men som ble beholdt fordi noe endret seg underveis, med hvorfor. */
   underveis: Map<string, string>
+  /** Feilen som stoppet slettingen, eller `null`. */
+  feil: string | null
   alleGrener: number
 }
 
@@ -119,27 +122,16 @@ export async function kjorRydding({ github, grener: lesGrener, kunVis, na, logg 
   }
 
   const oversikt = vurderAlle(jobber, { na, apnePr: new Set(apnePr), iKoen: jobbgrenerIKoen(ko), grener: kurateringsgrener })
-  const slettet = new Set<string>()
-  const underveis = new Map<string, string>()
-  for (const v of oversikt.slettes) {
-    const sha = jobber.find((j) => j.navn === v.gren)!.sha
-    if (kunVis) {
-      logg(`VILLE SLETTET: ${v.gren} (${v.grunn})`)
-      continue
-    }
-    // En PR åpnet etter den første lesingen; ellers slettes grenen bare om den står på commiten som ble vurdert.
-    const grunn = (await github.apnePr()).includes(v.gren) ? 'en PR ble åpnet underveis' : (await github.slett(v.gren, sha)) ? null : 'endret underveis'
-    if (grunn) {
-      underveis.set(v.gren, grunn)
-      logg(`BEHOLDT: ${v.gren} (${grunn})`)
-      continue
-    }
-    slettet.add(v.gren)
-    logg(`SLETTET: ${v.gren} (${v.grunn})`)
-  }
+  const runde = await slettRunde({
+    grener: oversikt.slettes.map((v) => ({ gren: v.gren, sha: jobber.find((j) => j.navn === v.gren)!.sha, grunn: v.grunn })),
+    kunVis,
+    iBruk: async () => new Set(await github.apnePr()),
+    slett: (gren, sha) => github.slett(gren, sha),
+    logg,
+  })
   for (const v of oversikt.beholdes) logg(`BEHOLDT: ${v.gren} (${v.grunn})`)
   for (const a of oversikt.advarsler) logg(`ADVARSEL: ${a}`)
-  return { oversikt, slettet, underveis, alleGrener: alle.length }
+  return { oversikt, ...runde, alleGrener: alle.length }
 }
 
 /** `Ryddegithub` gjennom GitHubs REST-API med arbeidsflytens nøkkel; slettingen gjennom git (`../github/gitslett`). */
@@ -153,15 +145,7 @@ export function lagRyddegithub(repo: string, token: string, sletter: Grensletter
       if (!f || f.type !== 'file' || f.encoding !== 'base64' || typeof f.content !== 'string') return null
       return Buffer.from(f.content.replace(/\s/g, ''), 'base64')
     },
-    async apnePr() {
-      const ut: string[] = []
-      for (let side = 1; side <= 20; side += 1) {
-        const rader = ((await api(`pulls?state=open&per_page=100&page=${side}`)) ?? []) as { head?: { ref?: string; repo?: { full_name?: string } | null } }[]
-        for (const r of rader) if (r.head?.repo?.full_name === repo && r.head.ref) ut.push(r.head.ref)
-        if (rader.length < 100) break
-      }
-      return ut
-    },
+    apnePr: async () => [...grenerIBruk(await lesPrer(api, repo, 'open'))],
     async slett(navn, sha) {
       if (!navn.startsWith(JOBBGRENPREFIKS)) throw new Error(`Sletter bare jobbgrener, ikke ${navn}.`)
       return sletter(navn, sha)

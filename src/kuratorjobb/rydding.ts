@@ -94,7 +94,7 @@ export interface Jobbgren {
 /** Det som er felles for alle grenene i én kjøring. */
 export interface Ryddegrunnlag {
   na: string
-  /** Grenene åpne PR-er kommer fra. */
+  /** Grenene åpne PR-er kommer fra eller skal inn i. */
   apnePr: ReadonlySet<string>
   /** Jobbgrenene kurateringskøen har koblet til en oppgave, et gjenopptak, en kurateringsgren eller en PR. */
   iKoen: ReadonlySet<string>
@@ -194,7 +194,7 @@ export function vurderJobbgren(j: Jobbgren, g: Ryddegrunnlag): Ryddevurdering {
 
   if (!j.navn.startsWith(JOBBGRENPREFIKS) || !JOBBGREN.test(j.navn)) return behold('i_bruk', 'ikke et gyldig navn på en jobbgren')
   if (j.beskyttet) return behold('i_bruk', 'grenen er beskyttet i GitHub')
-  if (g.apnePr.has(j.navn)) return behold('i_bruk', 'en åpen PR kommer fra grenen')
+  if (g.apnePr.has(j.navn)) return behold('i_bruk', 'en åpen PR kommer fra eller skal inn i grenen')
   if (g.iKoen.has(j.navn)) return behold('i_bruk', 'kurateringskøen har koblet grenen til en oppgave')
 
   const aktive = g.grener.filter(erAktiv)

@@ -48,8 +48,15 @@ regnes grenen ikke som lik `main`.
 commit), og slettingen går gjennom git med
 `--force-with-lease=refs/heads/<gren>:<commit>` (`src/github/gitslett.ts`), så
 GitHub avviser den atomisk om noen har pushet til grenen siden den ble
-vurdert. Grenen beholdes da, og oversikten sier hvorfor. Den samme slettingen
-brukes av oppryddingen av kuratorjobbgrener og av kurateringskøen. Arbeidsflyten
+vurdert. Grenen beholdes da, og oversikten sier hvorfor. Avviser git
+slettingen mens grenen står uendret (manglende tilgang, en regel i GitHub,
+nettverket), eller kan grenen ikke leses etterpå, er det en driftsfeil:
+ingen flere grener forsøkes slettet, og kjøringen feiler synlig, uten
+git-utskriften. PR-listen leses alltid helt; et ufullstendig svar stopper
+også slettingen. Den samme slettingen (`src/github/slettrunde.ts`) brukes av
+oppryddingen av kuratorjobbgrener; kurateringskøen bruker den samme
+lease-slettingen, men beholder som før grenen ved enhver feil og prøver igjen
+ved neste kjøring. Arbeidsflyten
 kjører koden fra en klone uten legitimasjon og sletter gjennom en egen klone
 der ingenting kjøres.
 
