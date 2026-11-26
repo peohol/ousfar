@@ -181,9 +181,17 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Vakt 1 og vakt 2 utjevnes hver for seg.** En oppdatering av vaktplanen
   beholder tildelinger som fortsatt er gyldige.
 - **Forventet antall** regnes ut fra stillingskategori, vekter,
-  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag:
-  vaktene en dag fordeles på dem som var til stede, aktive og kvalifiserte,
-  i forhold til vekten for kategorien. For tidligere dager teller bare de
+  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag.
+  *Midlertidig beregningsregel (prototypen v0.10, `expected.ts`):* For hver
+  medarbeider og vakttype summeres vekten for kategorien over dagene i
+  tidsrommet der vedkommende var til stede, aktiv og kvalifisert, og der
+  vakttypen hadde vakter. Det samlede antallet vakter i tidsrommet fordeles
+  så etter forholdet mellom disse summene (ikke dag for dag). Eksempel: A og
+  B har lik vekt, ti dager har én vakt hver, og A er borte fire av dagene.
+  Da er forventet A 10 · 6/16 = 3,75 og B 10 · 10/16 = 6,25. Regelen
+  erstattes av en egen modell med individuell vaktandel, årsaksnøytralt
+  vaktfritak og fordeling dag for dag, som vedtas i en egen PR.
+  For tidligere dager teller bare de
   vaktene som faktisk er registrert i kalenderen den dagen. **En dag uten
   registrert vakt av typen gir derfor ingen forventning til noen**, og
   manglende historikk gjør ikke i seg selv at noen ser ut til å ha for få
