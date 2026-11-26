@@ -101,10 +101,10 @@ describe('fortolkningsmodulen for THC-syre', () => {
 
     const forventet = kommentarFor({ forrigeVerdi: '120', forrigeDato: '2026-02-01', aktuellVerdi: '80', aktuellDato: '2026-02-08' })
     expect(screen.getByText(forventet.kommentar)).toBeTruthy()
-    // Profilene med figuren og forklaringen står lukket under kommentaren (#586).
-    for (const navn of ['Utskillelsesprofiler og figur', 'Forklaring']) {
-      expect(screen.getByText(navn).closest('details')!.open).toBe(false)
-    }
+    // Profilene med figuren står alltid åpne, uten overskrift, og forklaringen lukket under (#586, #592).
+    expect(screen.queryByText('Utskillelsesprofiler og figur')).toBeNull()
+    expect(document.querySelector('.be-profiler .thc-plot__figur')!.closest('details')).toBeNull()
+    expect(screen.getByText('Forklaring').closest('details')!.open).toBe(false)
     // Ingen overskrifter, bannere eller paneler rundt kommentaren.
     expect(screen.queryByText('Kommentar')).toBeNull()
     expect(screen.queryByText('Visualisering')).toBeNull()
@@ -343,7 +343,6 @@ describe('fortolkningsmodulen for THC-syre', () => {
     const uten = { ...THC_REGELSETT, sikkerhetsmarginer: THC_REGELSETT.sikkerhetsmarginer.filter((m) => m.margin !== 0.5) }
     visSteg({ status: 'klar', modell: modell(uten) })
     await fyllInn(user, { forrige: ['120', '2026-02-01'], denne: ['80', '2026-02-08'] })
-    await user.click(screen.getByText('Utskillelsesprofiler og figur'))
 
     const figur = () => document.querySelector('.thc-plot__figur')!
     const kurver = () => [...figur().querySelectorAll('.thc-plot__kurve')].map((k) => k.getAttribute('class'))

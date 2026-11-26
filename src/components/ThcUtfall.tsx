@@ -11,9 +11,9 @@ import { THC_SAMLET_UTEN_TREFF, THC_VENTER, thcMildereMarginer, type MildereMarg
 /**
  * Utfallet av en THC-fortolkning, slik fortolkningsmodulen og simulatoren på
  * redigeringssiden viser det (#586): kommentaren rett etter skjemaet, med det
- * som står under den (kopieringen i modulen), en kort merknad, og
- * «Utskillelsesprofiler og figur» og «Forklaring» lukket under hver sin
- * overskrift. Mens skjemaet ikke er ferdig, står bare en stille linje, eller
+ * som står under den (kopieringen i modulen), en kort merknad, profilene
+ * med figuren, alltid åpne og uten overskrift (#592), og «Forklaring» lukket
+ * under. Mens skjemaet ikke er ferdig, står bare en stille linje, eller
  * det som er galt utover det enkelte feltet.
  */
 
@@ -86,8 +86,8 @@ export interface ThcVisualiseringsvalg {
 }
 
 /**
- * «Utskillelsesprofiler og figur» og «Forklaring», lukket som standard, når
- * det er noe å tegne. Tabellen over figuren er tegnforklaringen; under den
+ * Profilene med figuren, alltid åpne og uten overskrift (#592), og
+ * «Forklaring», lukket som standard, når det er noe å tegne. Tabellen over figuren er tegnforklaringen; under den
  * velges om denne prøven vises med den valgte sikkerhetsmarginen eller med
  * alle. Uten `valg` holder den valget selv, som i simulatoren.
  */
@@ -107,20 +107,18 @@ export function ThcSeksjoner({
   if (!graf) return null
   return (
     <div className="be-seksjoner">
-      <Details summary="Utskillelsesprofiler og figur">
-        <div className="be-profiler">
-          <ThcProfiltabell grunnlag={graf.grunnlag} regler={regler} />
-          <label className="avkryssing be-alle-marginer">
-            <input
-              type="checkbox"
-              checked={visning === 'alle'}
-              onChange={(e) => velg(e.target.checked ? 'alle' : 'valgt')}
-            />
-            Vis alle sikkerhetsmarginer
-          </label>
-          <ThcPlot grunnlag={graf.grunnlag} regler={regler} alleMarginer={visning === 'alle'} />
-        </div>
-      </Details>
+      <div className="be-profiler">
+        <ThcProfiltabell grunnlag={graf.grunnlag} regler={regler} />
+        <label className="avkryssing be-alle-marginer">
+          <input
+            type="checkbox"
+            checked={visning === 'alle'}
+            onChange={(e) => velg(e.target.checked ? 'alle' : 'valgt')}
+          />
+          Vis alle sikkerhetsmarginer
+        </label>
+        <ThcPlot grunnlag={graf.grunnlag} regler={regler} alleMarginer={visning === 'alle'} />
+      </div>
       <Details summary="Forklaring">
         <ThcForklaring
           grunnlag={graf.grunnlag}

@@ -43,8 +43,8 @@ export function useBeUrinProfilfortolkning(
 
 /**
  * Resultatet med modellform 2 (#570, forenklet i #576): de to vurderingene
- * først, side om side, så et kort forbehold, og profilene med figuren og
- * forklaringen lukket under hver sin overskrift. Det en høyere margin ville
+ * først, side om side, så et kort forbehold, profilene med figuren, alltid
+ * åpne og uten overskrift (#592), og forklaringen lukket under. Det en høyere margin ville
  * endret, står ved sikkerhetsmarginen (#588). Ingen bannere, ingen kopiering:
  * dette er intern beslutningsstøtte.
  */
@@ -96,16 +96,14 @@ function Profilutfall({
       </div>
       <p className="be-forbehold">{BE_URIN_FORUTSETNING}</p>
       <div className="be-seksjoner">
-        <Details summary="Utskillelsesprofiler og figur">
-          <div className="be-profiler">
-            <BeUrinProfiltabell sammenligning={s} />
-            <label className="avkryssing be-alle-marginer">
-              <input type="checkbox" checked={visning.alleMarginer} onChange={(e) => visning.onAlleMarginer(e.target.checked)} />
-              Vis alle sikkerhetsmarginer
-            </label>
-            <BeUrinProfilPlot sammenligning={s} modell={modell} alleMarginer={visning.alleMarginer} />
-          </div>
-        </Details>
+        <div className="be-profiler">
+          <BeUrinProfiltabell sammenligning={s} />
+          <label className="avkryssing be-alle-marginer">
+            <input type="checkbox" checked={visning.alleMarginer} onChange={(e) => visning.onAlleMarginer(e.target.checked)} />
+            Vis alle sikkerhetsmarginer
+          </label>
+          <BeUrinProfilPlot sammenligning={s} modell={modell} alleMarginer={visning.alleMarginer} />
+        </div>
         <Details summary="Forklaring">
           <BeUrinProfilforklaring resultat={resultat} modell={modell} tidligereProver={tidligereProver} />
         </Details>

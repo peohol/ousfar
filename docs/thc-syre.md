@@ -121,7 +121,8 @@ Utfall ved samme margin står i samme boble, og en linje som alt står ved en
 lavere margin, gjentas ikke (`marginbobler`). Den første boblen står over
 bryteren, den neste under, så de ikke dekker hverandre; står marginen
 ytterst, legger boblen seg innover fra kanten med pilen fortsatt på
-marginen. Boblene gløder svakt, og står stille ved redusert bevegelse.
+marginen. Boblene er oransje og pulserer én gang i sekundet, så de skiller seg
+fra appens egen farge; de står stille ved redusert bevegelse.
 Skjermlesere får hele setningen for hvert utfall som beskrivelse av bryteren
 (`mildereMargintekst`): «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke
 fastslås.» Et utfall som knytter inntaket til en tidligere prøve, nevner den
@@ -335,8 +336,10 @@ marginen om den høyere måleusikkerheten, bare når den faktisk brukes (en
 margin som korrigerer, og en beregnet IRCAK over 0 i forrige prøve). Står skjemaet på en margin
 et nytt regelsett ikke har, gir motoren en mangel og ingen kommentar.
 
-Kommentaren står rett etter skjemaet, med kopiknappen rett under, og under
-den to lukkede seksjoner: «Utskillelsesprofiler og figur» og «Forklaring».
+Kommentaren står rett etter skjemaet, med kopiknappen rett under. Under den
+står profiltabellen og figuren, alltid åpne og uten overskrift (#592), og
+under dem «Forklaring», lukket. Skillelinjen over «Forklaring» har like mye
+luft over som under seg, og under «Forklaring» er det bare kortets egen luft.
 Kopieringen kvitteres som før, med manuell kopiering når utklippstavlen ikke
 kan brukes, og tilbudet om å nullstille med Enter. Skjemaet som er fylt inn,
 overlever en oppdatering av appen, også fra før #586

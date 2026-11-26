@@ -20,6 +20,7 @@ import { SAMME_DAG_FEIL } from '../../domain/beUrinMotor'
 import { FORM1_AKTIVERT, PROFILMODELL } from '../../domain/__tests__/hjelp/beUrinTestmodell'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
 import { lokalSql, sikreAdministrator, startLokalDatabase } from './lokalmiljo'
+import { seksjonsluft, somLuft } from './seksjonsluft'
 import { marginbobler, somTekst } from './marginbobler'
 import { apneTestmiljo } from './testmiljo'
 
@@ -189,7 +190,7 @@ try {
       // Det en høyere margin gir, står i en snakkeboble ved marginen (#588), ikke ved vurderingen.
       const mildere = somTekst(await marginbobler(p2))
       krev(mildere === 'over 99 %: Sporadisk: Kan ikke fastslås – forenlig med gjentatte doser', `boblene: ${mildere}`)
-      krev(!(await p2.locator('.be-resultat').innerText()).includes('sikkerhetsmargin'), 'det står en tekst om marginen ved vurderingen')
+      krev(!(await p2.locator('.be-vurderinger').innerText()).includes('sikkerhetsmargin'), 'det står en tekst om marginen ved vurderingen')
       const t = await tekst(p2)
       krev(!/tentativ|Konsentrasjonsendringene|Vurder høyere sikkerhetsmargin|Hva er sikkerhetsmarginen/i.test(t), `gammel tekst: ${t}`)
       krev((await p2.getByRole('note').count()) === 0, 'det står et banner')
@@ -204,10 +205,11 @@ try {
       const [innhold, synlig] = await felt.evaluate((e: HTMLInputElement) => [e.scrollWidth, e.clientWidth])
       krev(innhold! <= synlig!, `«12345» får ikke plass: ${innhold} av ${synlig} px`)
       await felt.fill('200')
-      // En vanlig fortolkning, med begge de lukkede overskriftene, får plass uten rulling.
-      const bunn = await p2.locator('.be-seksjoner').evaluate((e: Element) => e.getBoundingClientRect().bottom + window.scrollY)
+      // Vurderingene og forbeholdet får plass uten rulling; profilene og figuren,
+      // som alltid står åpne (#592), følger under.
+      const bunn = await p2.locator('.be-forbehold').evaluate((e: Element) => e.getBoundingClientRect().bottom + window.scrollY)
       const hoyde = await p2.evaluate(() => window.innerHeight)
-      krev(bunn <= hoyde, `resultatet slutter ${Math.round(bunn)} px ned i et vindu på ${hoyde} px`)
+      krev(bunn <= hoyde, `vurderingene slutter ${Math.round(bunn)} px ned i et vindu på ${hoyde} px`)
       await p2.locator('body').click({ position: { x: 5, y: 600 } })
       await vent(300)
       await bilde(p2, '07-form2-resultat-pc')
@@ -245,12 +247,11 @@ try {
       return `Tab: felt → legg til → info (boblen vises) → ${rolle}; pil høyre gir 99 %`
     })
 
-    await punkt('B9 PC, form 2: profiltabellen, figuren og alle marginer, lukket til den åpnes', async () => {
+    await punkt('B9 PC, form 2: profiltabellen og figuren alltid åpne, uten overskrift, og alle marginer', async () => {
       paa(p2)
-      const seksjon = p2.locator('details').filter({ hasText: 'Utskillelsesprofiler og figur' })
-      krev(!(await seksjon.evaluate((d: HTMLDetailsElement) => d.open)), 'profilene er åpne fra start')
-      await p2.getByText('Utskillelsesprofiler og figur').click()
-      await vent(700)
+      const seksjon = p2.locator('.be-profiler')
+      krev((await p2.getByText('Utskillelsesprofiler og figur').count()) === 0, 'overskriften står')
+      krev((await seksjon.locator('xpath=ancestor::details').count()) === 0, 'profilene ligger i en skuff')
       krev((await seksjon.locator('tbody tr:not(.be-profiltabell__gruppe)').count()) === 5, 'ikke fem rader')
       krev((await seksjon.locator('svg.thc-plot__figur polyline').count()) === 5, 'figuren har ikke fem profiler')
       await bilde(p2, '09-form2-profiler-pc', true)
@@ -258,10 +259,9 @@ try {
       await vent(300)
       krev((await seksjon.locator('.thc-marginpunkter__punkt').count()) === 3, 'ikke tre punkter')
       await bilde(p2, '10-form2-alle-marginer-pc', true)
+      const luft = await seksjonsluft(p2)
       await seksjon.getByLabel('Vis alle sikkerhetsmarginer').uncheck()
-      await p2.getByText('Utskillelsesprofiler og figur').click()
-      await vent(500)
-      return 'fem rader, fem kurver, tre punkter med alle marginer'
+      return `fem rader, fem kurver, tre punkter med alle marginer; ${somLuft(luft)}`
     })
 
     await punkt('B10 PC, form 2: forklaringen med de fire spørsmålene, uten formler', async () => {
@@ -274,10 +274,12 @@ try {
       const t = await seksjon.innerText()
       krev(!/=|√|\bln\b|\blog\b|\bSD\b|regresjon|bieksponentiell|ekstrapol/i.test(t), `formler: ${t}`)
       krev(t.includes('ikke et matematisk bevis'), 'forbeholdet om «Nytt inntak» mangler')
+      const apen = await seksjonsluft(p2)
       await bilde(p2, '11-form2-forklaring-pc', true)
       await p2.getByText('Forklaring', { exact: true }).click()
       await vent(500)
-      return overskrifter.join(' | ')
+      const lukket = await seksjonsluft(p2)
+      return `${overskrifter.join(' | ')}; åpen: ${somLuft(apen)}; lukket: ${somLuft(lukket)}`
     })
 
     await punkt('B11 PC, form 2: tidligere prøve, indikasjonen under kronisk bruk, og feil ved feltet', async () => {
@@ -323,11 +325,7 @@ try {
       await vent(300)
       krev((await konklusjon(p2, 'Kronisk bruk lagt til grunn')) === 'Nytt inntak.', 'kronisk ved stor økning')
       await bilde(p2, '15-form2-moerkt-pc')
-      await p2.getByText('Utskillelsesprofiler og figur').click()
-      await vent(700)
       await bilde(p2, '16-form2-moerkt-profiler-pc', true)
-      await p2.getByText('Utskillelsesprofiler og figur').click()
-      await vent(500)
       await p2.emulateMedia({ colorScheme: 'light' })
       return 'samme dag sammenlignes ikke; «Nytt inntak.» i mørkt tema'
     })
@@ -339,7 +337,6 @@ try {
       await fyll(p2, 'Forrige prøve', '300', '2', '2026-01-01')
       await fyll(p2, 'Denne prøven', '250', '2', '2026-01-03')
       await p2.getByText('Forklaring', { exact: true }).click()
-      await p2.getByText('Utskillelsesprofiler og figur').click()
       await vent(700)
       await ingenEkstrapolasjon(p2)
       await bilde(p2, '20-form2-over-startverdien-pc', true)
