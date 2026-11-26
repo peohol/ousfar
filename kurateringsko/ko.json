@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-26T17:26:19.801Z",
+  "oppdatert_kl": "2026-11-26T19:25:57.077Z",
   "malt_kl": "2026-11-26T03:29:16.767Z",
   "teller": 91,
   "stoffer": {
@@ -8337,32 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261124-155000": {
-      "ider": [
-        "fullfort-1",
-        "forny-3",
-        "forny-2",
-        "reserver-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "ed610e15d23d8f5590207564acc4c0e3756c864e9dc4f19a8ff3fbcb5b558767",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "ed610e15d23d8f5590207564acc4c0e3756c864e9dc4f19a8ff3fbcb5b558767",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "klomipramin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-24T18:17:32.060Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45457854358"
-        }
-      },
-      "besvart_commit": "6247e78e5c8a33927e1098f59a9d436e03ff6ebf",
-      "sist_brukt_kl": "2026-11-24T18:17:32.060Z"
-    },
     "kurateringsko/okt/20261124-181951": {
       "ider": [
         "fullfort-1",
