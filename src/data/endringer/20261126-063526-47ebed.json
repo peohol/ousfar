@@ -16,6 +16,8 @@
     "Tidligere prøver legges til med «+ Legg til tidligere prøve». Feil i et felt sies ved feltet, og det står ingen liste over det som mangler.",
     "Kort og lang tid mellom prøvene sies i én kort linje, med valget «Ikke sammenlign prøvene (kort tid)» eller knappen «Fortolk uten forrige prøve».",
     "Sikkerhetsmarginen forklares bak et lite informasjonstegn. Hva en høyere margin ville gitt, står kort under kommentaren i stedet for i et eget banner.",
-    "Utskillelsesprofilene med figuren og en ny forklaring i vanlig språk ligger lukket under hver sin overskrift. Det samme gjelder simulatoren på redigeringssiden."
+    "Utskillelsesprofilene med figuren og en ny forklaring i vanlig språk ligger lukket under hver sin overskrift. Det samme gjelder simulatoren på redigeringssiden.",
+    "Hver prøve står i en ramme, både for THC-syre og benzoylekgonin i urin, og feltene i prøvene ved siden av hverandre står på samme høyde. Tidligere prøver fjernes med en rød ✕, og feltene for IRCAK og prøvedato er smalere.",
+    "For benzoylekgonin i urin heter tallet under feltene nå «Kreatinin-normalisert konsentrasjon»."
   ]
 }

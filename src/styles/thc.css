@@ -76,35 +76,65 @@
 }
 
 .thc-valg .avkryssing,
-.thc-prove__valg .avkryssing,
+.thc-skjema .be-prove__valg .avkryssing,
 .thc-tidsrom .avkryssing {
   font-size: var(--tekst-liten);
   font-weight: var(--vekt-medium);
 }
 
-/* «Under cut-off» og «Fjern» til høyre for prøvens overskrift. */
-.thc-prove__valg {
-  display: flex;
-  align-items: baseline;
-  justify-self: end;
-  gap: var(--rom-4);
+/* IRCAK og prøvedatoen så smale de kan være: IRCAK har aldri mer enn fire
+   siffer, og datoen er like bred som i benzoylekgonin i urin. Kolonnene
+   følger feltene, og en feil ved et felt brytes under det i stedet for å
+   gjøre kolonnen bredere. Med klassen fra beUrin.css i velgeren, så de vinner
+   over de tre kolonnene der uansett rekkefølgen stilarkene lastes i. */
+.thc-skjema {
+  --thc-ircakbredde: calc(4ch + 2 * var(--rom-3) + 2 * var(--kant) + 0.25rem);
 }
 
-/* Med klassen fra beUrin.css i velgeren, så de vinner over de tre
-   kolonnene der uansett rekkefølgen stilarkene lastes i. */
 .be-prove__felt.thc-prove__felt--to {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-columns: repeat(2, min-content);
+  justify-content: start;
 }
 
 .be-prove__felt.thc-prove__felt--en {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: min-content;
 }
 
-/* Smale skjermer: to tallfelt og datoen gir to kolonner med datoen under
-   (beUrin.css); med ett tallfelt står datoen ved siden av. */
+/* Under cut-off: UCAK og NKRE så brede som ledetekstene, så de står på én
+   linje og feltene på høyde med feltene i prøven ved siden av. Feltene selv
+   bidrar ikke til bredden (bredde 0, minst hele kolonnen), så det er
+   ledeteksten som bestemmer den. Er det ikke plass til datoen på samme linje,
+   brytes den under i stedet for å gå ut av rammen. */
+.be-prove__felt.thc-prove__felt--tre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.thc-prove__felt--tre .skjemafelt > span:first-child {
+  white-space: nowrap;
+}
+
+.thc-prove__felt--tre .inndatafelt:not([type='date']) {
+  inline-size: 0;
+  min-inline-size: 100%;
+}
+
+.thc-prove__felt--to .thc-ircak,
+.thc-prove__felt--en .thc-ircak {
+  inline-size: var(--thc-ircakbredde);
+}
+
+/* Smale skjermer: beUrin.css legger datoen på egen linje under to tallfelt;
+   med ett tallfelt er det plass ved siden av. */
 @media (max-width: 30rem) {
   .be-prove__felt.thc-prove__felt--to > :last-child {
     grid-column: auto;
+  }
+
+  .be-prove__felt.thc-prove__felt--tre {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

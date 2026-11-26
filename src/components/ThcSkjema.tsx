@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type Ref } from 'react'
 import { Button } from './Button'
 import { Sikkerhetsmargin } from './Sikkerhetsmargin'
+import { Fjernknapp, Provegruppe } from './Provegruppe'
 import { Tallfelt } from './Tallfelt'
 import {
   FORRIGE_PROVEFELT,
@@ -103,11 +104,11 @@ export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaPro
           <Provefelter tittel="Forrige prøve" prove={forrigeProve(inndata)} onEndre={endreForrige} forsteFelt={forsteFelt} />
         )}
 
-        <fieldset className="be-prove">
-          <legend className="be-prove__tittel">Denne prøven</legend>
+        <Provegruppe tittel="Denne prøven">
           <div className={`be-prove__felt ${ingen ? 'thc-prove__felt--en' : 'thc-prove__felt--to'}`}>
             <Tallinndata
               navn="IRCAK"
+              smal
               verdi={inndata.aktuellVerdi}
               krav="over_null"
               onEndre={(verdi) => onEndre('aktuellVerdi', verdi)}
@@ -117,7 +118,7 @@ export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaPro
                 og da skal den heller ikke fylles ut. */}
             {!ingen && <Datofelt verdi={inndata.aktuellDato} onEndre={(verdi) => onEndre('aktuellDato', verdi)} />}
           </div>
-        </fieldset>
+        </Provegruppe>
 
         {vurderes &&
           tidligere.map((prove, i) => {
@@ -225,12 +226,15 @@ function Tallinndata({
   krav,
   onEndre,
   feltRef,
+  smal = false,
 }: {
   navn: string
   verdi: string
   krav: ThcFeltkrav
   onEndre: (verdi: string) => void
   feltRef?: Ref<HTMLInputElement> | undefined
+  /** IRCAK: aldri mer enn fire siffer, så feltet er smalt. */
+  smal?: boolean
 }) {
   const id = useId()
   const feil = thcFeltfeil(verdi, krav)
@@ -241,6 +245,7 @@ function Tallinndata({
         ref={feltRef}
         value={verdi}
         onChange={onEndre}
+        className={smal ? 'thc-ircak' : undefined}
         aria-labelledby={`${id}-navn`}
         aria-invalid={feil ? true : undefined}
         aria-describedby={feil ? `${id}-feil` : undefined}
@@ -274,24 +279,23 @@ function Provefelter({
 }) {
   const beregnetIrcak = prove.underCutoff ? beregnIrcak(prove.ucak, prove.nkre) : null
   return (
-    <fieldset className="be-prove">
-      <legend className="be-prove__tittel">{tittel}</legend>
-      <div className="thc-prove__valg">
-        {/* Var urinen så fortynnet at THC-syre havnet under
-            påvisningsgrensen, svarer labsystemet «ikke påvist» og regner
-            ingen IRCAK. De to interne tallene tastes da i stedet, og IRCAK
-            regnes ut av dem. */}
-        <label className="avkryssing avkryssing--felt">
-          <input type="checkbox" checked={prove.underCutoff} onChange={(e) => onEndre('underCutoff', e.target.checked)} />
-          Under cut-off
-        </label>
-        {onFjern && (
-          <Button variant="subtle" className="be-prove__fjern" aria-label={`Fjern ${tittel.toLowerCase()}`} onClick={onFjern}>
-            Fjern
-          </Button>
-        )}
-      </div>
-      <div className={`be-prove__felt ${prove.underCutoff ? '' : 'thc-prove__felt--to'}`}>
+    <Provegruppe
+      tittel={tittel}
+      valg={
+        <>
+          {/* Var urinen så fortynnet at THC-syre havnet under
+              påvisningsgrensen, svarer labsystemet «ikke påvist» og regner
+              ingen IRCAK. De to interne tallene tastes da i stedet, og IRCAK
+              regnes ut av dem. */}
+          <label className="avkryssing avkryssing--felt">
+            <input type="checkbox" checked={prove.underCutoff} onChange={(e) => onEndre('underCutoff', e.target.checked)} />
+            Under cut-off
+          </label>
+          {onFjern && <Fjernknapp etikett={`Fjern ${tittel.toLowerCase()}`} onClick={onFjern} />}
+        </>
+      }
+    >
+      <div className={`be-prove__felt ${prove.underCutoff ? 'thc-prove__felt--tre' : 'thc-prove__felt--to'}`}>
         {prove.underCutoff ? (
           <>
             <Tallinndata
@@ -306,6 +310,7 @@ function Provefelter({
         ) : (
           <Tallinndata
             navn="IRCAK"
+            smal
             verdi={prove.verdi}
             krav="ikke_negativ"
             onEndre={(verdi) => onEndre('verdi', verdi)}
@@ -319,6 +324,6 @@ function Provefelter({
           Beregnet IRCAK <strong>{beregnetIrcak === null ? '–' : formaterIrcak(beregnetIrcak)}</strong>
         </p>
       )}
-    </fieldset>
+    </Provegruppe>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type Ref } from 'react'
 import { Button } from './Button'
 import { Tallfelt } from './Tallfelt'
+import { Fjernknapp, Provegruppe } from './Provegruppe'
 import { Sikkerhetsmargin } from './Sikkerhetsmargin'
 import {
   feltfeil,
@@ -180,21 +181,18 @@ function Provefelter({
   }
 
   return (
-    <fieldset className="be-prove">
-      <legend className="be-prove__tittel">{tittel}</legend>
-      {onFjern && (
-        <Button variant="subtle" className="be-prove__fjern" aria-label={`Fjern ${tittel.toLowerCase()}`} onClick={onFjern}>
-          Fjern
-        </Button>
-      )}
+    <Provegruppe
+      tittel={tittel}
+      valg={onFjern && <Fjernknapp etikett={`Fjern ${tittel.toLowerCase()}`} onClick={onFjern} />}
+    >
       <div className="be-prove__felt">
         {felt('benzoylekgonin', enheter.benzoylekgonin)}
         {felt('kreatinin', enheter.kreatinin)}
         {felt('dato', '')}
       </div>
       <p className="be-kvotient" role="status">
-        Kvotient <strong>{q === null ? '–' : tallMedEnhet(formaterIrcak(q), enheter.kvotient)}</strong>
+        Kreatinin-normalisert konsentrasjon <strong>{q === null ? '–' : tallMedEnhet(formaterIrcak(q), enheter.kvotient)}</strong>
       </p>
-    </fieldset>
+    </Provegruppe>
   )
 }

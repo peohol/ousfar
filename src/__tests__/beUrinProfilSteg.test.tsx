@@ -210,9 +210,9 @@ describe('skjemaet', () => {
     const forrige = screen.getByRole('group', { name: 'Forrige prøve' })
     expect(within(forrige).getByLabelText('Benzoylekgonin (nmol/L)')).toBeTruthy()
     expect(within(forrige).getByLabelText('Kreatinin (mmol/L)')).toBeTruthy()
-    expect(within(forrige).getByRole('status').textContent).toBe('Kvotient –')
+    expect(within(forrige).getByRole('status').textContent).toBe('Kreatinin-normalisert konsentrasjon –')
     await fyll('Forrige prøve', '200', '2', '2026-01-01')
-    expect(within(forrige).getByRole('status').textContent).toBe('Kvotient 100 nmol/mmol')
+    expect(within(forrige).getByRole('status').textContent).toBe('Kreatinin-normalisert konsentrasjon 100 nmol/mmol')
   })
 
   it('viser ingen liste over det som mangler, bare at vurderingen kommer', async () => {

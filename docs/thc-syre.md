@@ -36,6 +36,7 @@ som fasit i testene (se [Redigeringen](#redigeringen)).
 | `src/faginnhold/thcregler.ts` | Fra det databasen gir til en kontrollert modell, eller feilen modulen viser |
 | `src/components/ThcStep.tsx`, `ThcSkjema.tsx`, `ThcUtfall.tsx`, `ThcPlot.tsx`, `ThcForklaring.tsx` | Modulen: skjemaet, kommentaren, profiltabellen med figuren og forklaringen, delt med simulatoren |
 | `src/components/Sikkerhetsmargin.tsx` | Bryteren for sikkerhetsmarginen med informasjonstegnet, delt med benzoylekgonin i urin |
+| `src/components/Provegruppe.tsx` | Rammen rundt hver prøve med valgene i kanten, og den røde ✕-en som fjerner en tidligere prøve, delt med benzoylekgonin i urin |
 | `src/components/regler/Thcregler.tsx`, `Thckommentarer.tsx`, `Thcsimulator.tsx` | Reglene, kommentarene og simulatoren på redigeringssiden for fortolkningen, som seksjon med detaljkort |
 | `src/components/regler/Thcredigering.tsx`, `Thckommentarer.tsx` | Redigeringen av reglene og tekstene |
 | `src/domain/__tests__/hjelp/thcOpprinnelig.ts` | Den opprinnelige modulen, med regnearkets konstanter i koden. Bare fasit i testene |
@@ -90,7 +91,7 @@ gjelder den ikke.
 
 **Samlet vurdering.** Med «+ Legg til tidligere prøve» kan brukeren legge inn
 flere prøver før forrige prøve (IRCAK eller UCAK og NKRE, og dato), og fjerne
-hver med «Fjern». Den samlede vurderingen gjøres så snart det står en
+hver med den røde ✕-en i rammen. Den samlede vurderingen gjøres så snart det står en
 tidligere prøve (`samletVurdering` holdes lik det). Gir sammenligningen med forrige prøve «kan ikke fastslås»,
 sammenlignes denne prøven med hver av dem, fra den nærmeste og bakover, med
 den samme fremgangsmåten. Den nærmeste som gir nytt inntak (eller har IRCAK
@@ -296,7 +297,13 @@ klassene (`beUrin.css`, og `thc.css` for det som bare gjelder THC-syre):
 vis det som trengs, og la en vanlig fortolkning med kommentaren og
 kopiknappen få plass på én PC-skjerm. Øverst står «Legg kronisk bruk til
 grunn» og «Ingen tidligere prøve tilgjengelig» diskret, så forrige og denne
-prøven side om side (under hverandre på mobil). Under cut-off viser
+prøven side om side (under hverandre på mobil). Hver prøve står i en ramme
+med navnet i kanten (`Provegruppe`, delt med benzoylekgonin i urin), og
+valgene for prøven («Under cut-off», og en rød ✕ som fjerner en tidligere
+prøve) står i kanten til høyre, så feltene i prøvene ved siden av hverandre
+står på samme høyde også under cut-off. IRCAK-feltet er så smalt som fire
+siffer krever, og datofeltet like smalt som i benzoylekgonin i urin (akkurat
+nok til «dd.mm.åååå»). Under cut-off viser
 «Beregnet IRCAK» tallet fra UCAK og NKRE mens de fylles inn. Et felt motoren
 avviser, får en kort feil ved feltet (`thcFeltfeil`, etter samme regel som
 motoren); et tomt felt sies ikke, og det står ingen liste over det som

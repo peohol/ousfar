@@ -55,6 +55,45 @@ async function fyll(side: Side, gruppe: string, ircak: string, dato?: string) {
 const kommentar = (side: Side): Promise<string> => side.locator('.kommentartekst').innerText()
 const bortMedFokus = (side: Side) => side.locator('body').click({ position: { x: 5, y: 880 } })
 
+/** Toppen av et element, i skjermpunkter. */
+const topp = (l: Side): Promise<number> => l.evaluate((e: Element) => Math.round(e.getBoundingClientRect().top))
+
+/** Feltene i forrige og denne prøve står på samme høyde, uansett «Under cut-off». */
+async function feltenePaaLinje(side: Side, forsteIForrige: string) {
+  const a = await topp(side.getByRole('group', { name: 'Forrige prøve' }).getByLabel(forsteIForrige, { exact: true }))
+  const b = await topp(side.getByRole('group', { name: 'Denne prøven' }).getByLabel('IRCAK', { exact: true }))
+  krev(a === b, `feltene står ikke på linje: ${a} og ${b} px`)
+}
+
+/** Ingen felt, ledetekst eller valg går ut av rammen rundt prøven sin. */
+async function innenforRammene(side: Side) {
+  const utenfor = await side.locator('fieldset.be-prove').evaluateAll((rammer: Element[]) =>
+    rammer.flatMap((f) => {
+      const r = f.getBoundingClientRect()
+      return [...f.querySelectorAll('input, .skjemafelt > span, .be-prove__valg')]
+        .filter((e) => {
+          const b = e.getBoundingClientRect()
+          return b.width > 0 && (b.left < r.left - 0.5 || b.right > r.right + 0.5)
+        })
+        .map((e) => `${f.querySelector('legend')?.textContent}: ${e.textContent || e.getAttribute('type')}`)
+    }),
+  )
+  krev(utenfor.length === 0, `utenfor rammen: ${utenfor.join('; ')}`)
+}
+
+/** Valgene i kanten av rammen står midt på linje med navnet i den andre enden. */
+async function valgeneIKanten(side: Side) {
+  const [navn, valg] = await side
+    .getByRole('group', { name: 'Forrige prøve' })
+    .evaluate((f: Element) =>
+      [f.querySelector('legend')!, f.querySelector('.be-prove__valg')!].map((e) => {
+        const r = e.getBoundingClientRect()
+        return r.top + r.height / 2
+      }),
+    )
+  krev(Math.abs(navn! - valg!) <= 2, `valgene står ${Math.round(valg! - navn!)} px fra midten av navnet`)
+}
+
 /** Siden ruller ikke sideveis. */
 async function utenSideveisRulling(side: Side) {
   const [bredde, vindu] = await side.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth])
@@ -78,6 +117,9 @@ try {
     krev((await pc.getByRole('note').count()) === 0, 'det står et banner')
     const [forrige, denne] = await pc.locator('.be-prove').evaluateAll((k: Element[]) => k.map((e) => e.getBoundingClientRect().top))
     krev(forrige === denne, 'prøvene står ikke side om side på PC')
+    await feltenePaaLinje(pc, 'IRCAK')
+    await innenforRammene(pc)
+    await valgeneIKanten(pc)
     // Kopiknappen står rett under kommentaren, og de lukkede overskriftene under den.
     const [kTop, knappTop, seksjonTop] = await Promise.all([
       pc.locator('.kommentartekst').evaluate((e: Element) => e.getBoundingClientRect().bottom),
@@ -238,6 +280,8 @@ try {
     await fyll(pc, 'Denne prøven', '0,2', '2026-01-08')
     const beregnet = await forrige.getByRole('status').innerText()
     krev(/Beregnet IRCAK/.test(beregnet), `beregnet: ${beregnet}`)
+    await feltenePaaLinje(pc, 'UCAK (THC-syre)')
+    await innenforRammene(pc)
     const merknad = await pc.locator('.thc-margin__merknad').innerText()
     krev(merknad.includes('under cut-off'), `merknaden: ${merknad}`)
     await bortMedFokus(pc)
@@ -313,6 +357,16 @@ try {
       const svar = await utenSideveisRulling(side)
       const [a, b] = await side.locator('.be-prove').evaluateAll((k: Element[]) => k.map((e) => e.getBoundingClientRect().top))
       krev(a! < b!, 'prøvene står ikke under hverandre på mobil')
+      await innenforRammene(side)
+      if (tema === 'light') {
+        // Under cut-off får også plass, med datoen under de to tallfeltene.
+        const forrige = side.getByRole('group', { name: 'Forrige prøve' })
+        await forrige.getByLabel('Under cut-off').check()
+        await utenSideveisRulling(side)
+        await innenforRammene(side)
+        await bilde(side, '17-mobil-under-cutoff', true)
+        await forrige.getByLabel('Under cut-off').uncheck()
+      }
       if (tema === 'dark') {
         await side.getByRole('button', { name: 'Om sikkerhetsmarginen' }).tap()
         await vent(300)

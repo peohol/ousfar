@@ -48,10 +48,13 @@
 
 /* --- Skjemaet (#576) ---------------------------------------------------------
    Delt med THC-syremodulen (#586, thc.css).
-   Prøvene uten ramme rundt, side om side når det er plass: overskriften og
-   luften skiller dem. Feltene er litt lavere enn ellers i appen, så en
-   vanlig fortolkning får plass på én skjerm. */
+   Hver prøve i en ramme (`Provegruppe`: `feltgruppe` med navnet i kanten),
+   side om side når det er plass. Feltene er litt lavere enn ellers i appen,
+   så en vanlig fortolkning får plass på én skjerm. */
 .be-skjema {
+  /* Akkurat nok til «dd.mm.åååå» og kalendertegnet, i feltets egen skrift. */
+  --be-datobredde: calc(10ch + 2rem + 2 * var(--rom-3));
+
   display: flex;
   flex-direction: column;
   gap: var(--rom-6);
@@ -60,48 +63,74 @@
 
 .be-prover {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(17rem, calc((100% - var(--rom-8)) / 2))), 1fr));
-  gap: var(--rom-6) var(--rom-8);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(17rem, calc((100% - var(--rom-4)) / 2))), 1fr));
+  /* Står prøven ved siden av en høyere (med en feil ved et felt), strekkes
+     ikke rammen. */
+  align-items: start;
+  gap: var(--rom-4);
   width: 100%;
 }
 
-.be-prove {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  /* Står prøven ved siden av en høyere (med en feil ved et felt), blir ekstra
-     høyde liggende under, ikke fordelt mellom radene. */
-  align-content: start;
-  align-items: baseline;
-  gap: var(--rom-3) var(--rom-4);
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
+.feltgruppe.be-prove {
+  position: relative;
+  gap: var(--rom-3);
+  padding: var(--rom-2) var(--rom-3) var(--rom-4);
 }
 
-/* `legend` legger seg ikke i et rutenett; `float` gjør at den gjør det. */
-.be-prove__tittel {
-  float: left;
-  padding: 0;
-  font-size: var(--tekst-etikett);
-  font-weight: var(--vekt-halvfet);
-  color: var(--blekk);
-}
-
-.be-prove__fjern {
-  justify-self: end;
-  min-height: 0;
+/* Valgene for prøven («Under cut-off», ✕) i kanten til høyre, på linje med
+   navnet til venstre, så de ikke skyver feltene ned. Flaten bak bryter
+   hårlinjen slik `legend` gjør. Plasseringen regnes fra under navnet (der
+   rammens innhold begynner), opp til midten av det. */
+.be-prove__valg {
+  position: absolute;
+  top: calc(var(--tekst-lesing) * var(--linjehoyde-tett) / -2);
+  right: var(--rom-3);
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
   padding: 0 var(--rom-2);
-  font-size: var(--tekst-liten);
-  color: var(--blekk-dempet);
+  background: var(--flate);
+  transform: translateY(-50%);
 }
 
+/* Den røde ✕-en som fjerner en tidligere prøve. */
+.be-prove__fjern {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+  line-height: 1;
+  color: var(--alvorlig);
+  background: transparent;
+  border: var(--kant) solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--fart-rask) var(--kurve), border-color var(--fart-rask) var(--kurve);
+}
+
+.be-prove__fjern:hover,
+.be-prove__fjern:focus-visible {
+  background: var(--alvorlig-flate);
+  border-color: var(--alvorlig-kant);
+}
+
+/* Benzoylekgonin får litt mer plass enn kreatinin: det kan ha fem-seks
+   siffer, kreatinin har sjelden mer enn tre tegn. Slik får begge plass med
+   enheten i en ramme ved siden av en annen. */
 .be-prove__felt {
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  /* Datoen så bred som feltet sitt (`auto`): `ch` i bredden regnes i feltets
+     egen skrift bare når den brukes på feltet selv. */
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) auto;
   align-items: start;
-  gap: var(--rom-3);
+  gap: var(--rom-2);
+}
+
+.be-prove .inndatafelt[type='date'] {
+  inline-size: var(--be-datobredde);
 }
 
 .be-prove .inndatafelt {
@@ -118,7 +147,7 @@
 
 /* Plass til enheten («nmol/L», «mmol/L») og litt luft før den. */
 .be-felt:has(.be-felt__enhet) .inndatafelt {
-  padding-right: 3.5rem;
+  padding-right: calc(var(--rom-3) + 3rem);
 }
 
 .be-felt__enhet {
@@ -142,7 +171,6 @@
 }
 
 .be-kvotient {
-  grid-column: 1 / -1;
   margin: 0;
   font-size: var(--tekst-liten);
   font-variant-numeric: tabular-nums;

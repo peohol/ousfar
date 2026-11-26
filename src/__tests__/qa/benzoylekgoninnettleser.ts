@@ -86,7 +86,7 @@ try {
       await fyll(pc, 'Forrige prøve', '50', '2', '2026-01-01')
       await fyll(pc, 'Denne prøven', '60', '2', '2026-01-04')
       const q = await pc.getByRole('group', { name: 'Forrige prøve' }).getByRole('status').innerText()
-      krev(q === 'Kvotient 25', `kvotienten: ${q}`)
+      krev(q === 'Kreatinin-normalisert konsentrasjon 25', `den kreatinin-normaliserte konsentrasjonen: ${q}`)
       krev((await pc.getByRole('group', { name: 'Forrige prøve' }).getByLabel('Benzoylekgonin', { exact: true }).count()) === 1, 'feltet har en enhet')
       const r = await resultat(pc)
       krev(r.includes('Tentativ modell – ikke klinisk validert.'), 'merkingen mangler')
