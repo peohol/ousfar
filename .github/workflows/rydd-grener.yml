@@ -1,0 +1,76 @@
+# Rydder gamle grener ingen annen opprydding kjenner (docs/grenrydding.md):
+# grener uten noe nytt, grener etter en PR som er slått sammen eller lukket,
+# og grener med et navn som ligner kuratorjobbenes og kurateringskøens uten å
+# følge mønsteret. Reglene står i src/grenrydding/regler.ts, med tester.
+#
+# Hovedgrenen, kurateringskøens grener, kuratorjobbenes grener, beskyttede
+# grener og grener en åpen PR kommer fra eller skal inn i, røres aldri. Kan noe
+# ikke leses, slettes ingenting, og kjøringen feiler synlig. En gren slettes
+# bare om den fortsatt står på commiten som ble vurdert.
+name: Rydd gamle grener
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/rydd-grener.yml
+      - src/grenrydding/**
+      - src/github/rest.ts
+      - src/github/gitslett.ts
+  schedule:
+    - cron: '11 * * * *'
+  workflow_dispatch:
+    inputs:
+      kun_vis:
+        description: 'Vis hva som ville blitt slettet, uten å slette'
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: rydd-grener
+  cancel-in-progress: false
+
+jobs:
+  rydd:
+    name: Rydd gamle grener
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # For å lese og slette grenene.
+      contents: write
+      # For å beholde grener en åpen PR kommer fra, og se når den siste PR-en ble avsluttet.
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        working-directory: kode
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: kode
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - run: npm ci --ignore-scripts
+
+      # Klonen grenene slettes gjennom, bare når de står på commiten som ble vurdert. Ingenting fra den kjøres.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: git
+          sparse-checkout: README.md
+          sparse-checkout-cone-mode: false
+
+      - name: Rydd grenene
+        env:
+          KUN_VIS: ${{ inputs.kun_vis && '--kun-vis' || '' }}
+        run: npm run -s rydd-grener -- ../git $KUN_VIS

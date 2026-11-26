@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { lagGrensletter } from '../github/gitslett'
 
 /** Den som står på commitene køen lager. */
 export const KOBRUKER = { navn: 'github-actions[bot]', epost: '41898282+github-actions[bot]@users.noreply.github.com' }
@@ -43,6 +44,7 @@ export function lagGit(mappe: string, miljo: NodeJS.ProcessEnv = process.env): G
     execFileSync('git', ['-C', mappe, ...args], { env: { ...env, ...ekstra.env }, input: ekstra.input, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 256 * 1024 * 1024 })
   const tekst = (args: string[], ekstra?: Parameters<typeof git>[1]) => git(args, ekstra).toString('utf8').trim()
   const lokal = (gren: string) => `refs/kurateringsko-hentet/${gren}`
+  const sletter = lagGrensletter(mappe, env)
   const proev = (args: string[]) => {
     try {
       git(args)
@@ -98,6 +100,13 @@ export function lagGit(mappe: string, miljo: NodeJS.ProcessEnv = process.env): G
       }
     },
     skyv: (commit, gren) => proev(['push', '-q', 'origin', `${commit}:refs/heads/${gren}`]),
-    slett: (gren, commit) => proev(['push', '-q', `--force-with-lease=refs/heads/${gren}:${commit}`, 'origin', `:refs/heads/${gren}`]),
+    // Som før: køen beholder grenen ved enhver feil og prøver igjen ved neste kjøring.
+    slett(gren, commit) {
+      try {
+        return sletter(gren, commit) === 'slettet'
+      } catch {
+        return false
+      }
+    },
   }
 }

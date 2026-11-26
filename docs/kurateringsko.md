@@ -288,7 +288,7 @@ committes oppå den, på samme gren.
 | `bare_forrang` | av | Køen gir bare ut stoffene i `forrang` (og kurateringer som fortsettes), mens en pilot pågår. Av siden piloten ble bestått 2026-10-16; de novo-runden går gjennom hele registeret |
 | `utelatt` | `teststoff` | Stoffer køen ikke gir ut, som testsiden |
 | `maling_timer` | 20 | Hvor ofte sidene måles |
-| `okt_slettes_etter_dager` | 14 | Øktgrener uten aktiv reservasjon slettes etter så lenge |
+| `okt_slettes_etter_dager` | 2 | Øktgrener uten aktiv reservasjon slettes etter så lenge, regnet fra siste forespørsel. En økt varer noen timer |
 
 ## Kjøringen
 

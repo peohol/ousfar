@@ -70,6 +70,7 @@ describe('reglene', () => {
   })
 
   it('venter et døgn etter den siste publiseringen', () => {
+    expect(RYDDEFRISTER.etterPublisering).toBe(24)
     const v = vurderJobbgren(jobb('x', { stoffer: ['alfa', 'beta'] }), grunnlag({ grener: [gren('alfa', 'publisert', 5), gren('beta', 'publisert', 0.5)] }))
     expect(v).toMatchObject({ slett: false, kategori: 'venter', tidligst_kl: new Date(Date.parse(dogn(0.5)) + 86_400_000).toISOString() })
   })
@@ -81,8 +82,11 @@ describe('reglene', () => {
   })
 
   it('sletter ubrukte preparatomtaler først etter 30 døgn, når ingen kuratering pågår', () => {
-    expect(vurderJobbgren(jobb('x', { ferdig: RYDDEFRISTER.ubrukt - 1 }), grunnlag())).toMatchObject({ slett: false })
-    expect(vurderJobbgren(jobb('x', { ferdig: RYDDEFRISTER.ubrukt + 1 }), grunnlag())).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    expect(RYDDEFRISTER.ubrukt).toBe(30 * 24)
+    expect(vurderJobbgren(jobb('x', { ferdig: 29 }), grunnlag())).toMatchObject({ slett: false })
+    const v = vurderJobbgren(jobb('x', { ferdig: 31 }), grunnlag())
+    expect(v).toMatchObject({ slett: true, kategori: 'ubrukelig' })
+    expect(v.grunn).toContain('på 30 døgn')
   })
 
   it('beholder grenen så lenge en kuratering av et av stoffene pågår, hvor gammel jobben enn er', () => {
@@ -102,17 +106,20 @@ describe('reglene', () => {
 
   it('beholder alltid en gren med en åpen PR, en kobling i køen, GitHub-beskyttelse eller et ugyldig navn', () => {
     const g = grunnlag({ grener: [gren('alfa', 'publisert', 5)] })
-    expect(vurderJobbgren(jobb('x'), { ...g, apnePr: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, grunn: 'en åpen PR kommer fra grenen' })
+    expect(vurderJobbgren(jobb('x'), { ...g, apnePr: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, grunn: 'en åpen PR kommer fra eller skal inn i grenen' })
     expect(vurderJobbgren(jobb('x'), { ...g, iKoen: new Set(['kuratorjobb/x']) })).toMatchObject({ slett: false, kategori: 'i_bruk' })
     expect(vurderJobbgren(jobb('x', { beskyttet: true }), g)).toMatchObject({ slett: false, grunn: 'grenen er beskyttet i GitHub' })
     expect(vurderJobbgren({ ...jobb('x'), navn: 'kurateringsko/tilstand' }, g)).toMatchObject({ slett: false })
     expect(vurderJobbgren({ ...jobb('x'), navn: 'main' }, g)).toMatchObject({ slett: false })
   })
 
-  it('sletter en funksjonstest alene etter ett døgn når den er bestått, og etter tre med avvik, også for alle sidene', () => {
+  it('sletter en funksjonstest alene tre timer etter at den er bestått, og tre døgn etter en med avvik, også for alle sidene', () => {
     const kun = { oppgaver: ['funksjonstest'] }
-    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 1.1 }), grunnlag())).toMatchObject({ slett: true, kategori: 'ferdig' })
-    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 0.5 }), grunnlag())).toMatchObject({ slett: false })
+    const time = 1 / 24
+    expect(vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 3.1 * time }), grunnlag())).toMatchObject({ slett: true, kategori: 'ferdig' })
+    const venter = vurderJobbgren(jobb('x', { ...kun, status: 'ok', ferdig: 2 * time }), grunnlag())
+    expect(venter).toMatchObject({ slett: false, kategori: 'venter', tidligst_kl: new Date(Date.parse(NA) + time * 86_400_000).toISOString() })
+    expect(venter.grunn).toContain('slettes tidligst 2026-11-16 kl. 05:00 UTC')
     for (const s of ['advarsel', 'feil']) {
       expect(vurderJobbgren(jobb('x', { ...kun, status: s, ferdig: 2 }), grunnlag()), s).toMatchObject({ slett: false })
       expect(vurderJobbgren(jobb('x', { ...kun, status: s, ferdig: 3.1 }), grunnlag()), s).toMatchObject({ slett: true })
@@ -190,9 +197,13 @@ function falskGithub(jobber: Jobbgren[], ko: unknown, endring: Partial<Ryddegith
       return sti === FORESPORSELSFIL ? Buffer.from(FORESPORSEL) : null
     },
     apnePr: async () => [],
-    slett: async (navn) => {
+    // Som `--force-with-lease`: bare når grenen fortsatt står på commiten.
+    slett: async (navn, sha) => {
+      if (!shaer.has(navn)) return 'borte'
+      if (shaer.get(navn) !== sha) return 'endret'
       slettet.push(navn)
       shaer.delete(navn)
+      return 'slettet'
     },
     ...endring,
   }
@@ -225,19 +236,24 @@ describe('kjøringen', () => {
     expect(u.oversikt.slettes.map((v) => v.gren)).toEqual(['kuratorjobb/ferdig'])
   })
 
-  it('sletter ikke en gren som er endret siden den ble vurdert', async () => {
-    const f = falskGithub(jobber, KO)
-    let kall = 0
-    const gren0 = f.github.gren
-    f.github.gren = async (navn) => {
-      const g = await gren0(navn)
-      // Det andre oppslaget, rett før slettingen, ser en ny commit.
-      if (navn === 'kuratorjobb/ferdig' && ++kall === 2) return { ...g!, sha: 'ny' }
-      return g
+  it('sletter ikke en gren noen har pushet til, eller en PR er åpnet fra, etter vurderingen', async () => {
+    // Rett før slettingen leses de åpne PR-ene på nytt; her pushes det til grenen, eller en PR åpnes.
+    for (const [underveis, grunn] of [
+      [(f: ReturnType<typeof falskGithub>) => f.shaer.set('kuratorjobb/ferdig', 'ny'), 'endret underveis'],
+      [() => {}, 'en PR ble åpnet underveis'],
+    ] as const) {
+      const f = falskGithub(jobber, KO)
+      let lesinger = 0
+      f.github.apnePr = async () => {
+        if (++lesinger === 1) return []
+        underveis(f)
+        return grunn === 'en PR ble åpnet underveis' ? ['kuratorjobb/ferdig'] : []
+      }
+      const u = await kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} })
+      expect(f.slettet).toEqual([])
+      expect(u.underveis.get('kuratorjobb/ferdig')).toBe(grunn)
+      expect(ryddeMarkdown(u.oversikt, { kunVis: false, slettet: u.slettet, underveis: u.underveis, alleGrener: u.alleGrener })).toContain(`beholdt: ${grunn}`)
     }
-    const u = await kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} })
-    expect(f.slettet).toEqual([])
-    expect(ryddeMarkdown(u.oversikt, { kunVis: false, slettet: u.slettet, alleGrener: u.alleGrener })).toContain('beholdt: endret underveis')
   })
 
   it('stopper uten å slette når køen mangler eller er gammel, eller kurateringsgrenene ikke kan leses', async () => {
@@ -323,17 +339,63 @@ describe('kjøringen', () => {
     expect(jobbgrenerIKoen(null).size).toBe(0)
   })
 
-  it('slår opp en gren med hele navnet som én parameter, og sletter bare grener under kuratorjobb/', async () => {
+  it('slår opp en gren med hele navnet som én parameter, og sletter bare grener under kuratorjobb/, med commiten', async () => {
     const kall: string[] = []
-    const gh = lagRyddegithub('eier/repo', 't', async (adresse, valg) => {
-      kall.push(`${valg?.method} ${adresse}`)
-      return new Response(null, { status: 204 })
-    })
-    await expect(gh.slett('kurateringsko/tilstand')).rejects.toThrow('Sletter bare jobbgrener')
-    await expect(gh.slett('main')).rejects.toThrow('Sletter bare jobbgrener')
-    await gh.slett('kuratorjobb/a b')
+    const slettet: string[] = []
+    const gh = lagRyddegithub(
+      'eier/repo',
+      't',
+      (gren, sha) => (slettet.push(`${gren}@${sha}`), 'slettet'),
+      async (adresse, valg) => {
+        kall.push(`${valg?.method} ${adresse}`)
+        return new Response(null, { status: 204 })
+      },
+    )
+    await expect(gh.slett('kurateringsko/tilstand', 's')).rejects.toThrow('Sletter bare jobbgrener')
+    await expect(gh.slett('main', 's')).rejects.toThrow('Sletter bare jobbgrener')
+    await expect(gh.slett('kuratorjobb/a', 's')).resolves.toBe('slettet')
     await gh.gren('kuratorjobb/a')
-    expect(kall).toEqual(['DELETE https://api.github.com/repos/eier/repo/git/refs/heads/kuratorjobb/a%20b', 'GET https://api.github.com/repos/eier/repo/branches/kuratorjobb%2Fa'])
+    expect(slettet).toEqual(['kuratorjobb/a@s'])
+    expect(kall).toEqual(['GET https://api.github.com/repos/eier/repo/branches/kuratorjobb%2Fa'])
+  })
+
+  it('regner en jobbgren som i bruk når en åpen PR kommer fra den eller skal inn i den, også fra et annet repo, og feiler ved en ufullstendig liste', async () => {
+    const svar = (rader: unknown) => async () => (rader === null ? new Response(null, { status: 404 }) : Response.json(rader))
+    const ingen = () => 'slettet' as const
+    const gh = lagRyddegithub(
+      'eier/repo',
+      't',
+      ingen,
+      svar([
+        { number: 1, state: 'open', head: { ref: 'kuratorjobb/fra', repo: { full_name: 'eier/repo' } }, base: { ref: 'main' } },
+        { number: 2, state: 'open', head: { ref: 'kuratorjobb/fork', repo: { full_name: 'andre/repo' } }, base: { ref: 'kuratorjobb/inn' } },
+      ]),
+    )
+    expect((await gh.apnePr()).sort()).toEqual(['kuratorjobb/fra', 'kuratorjobb/inn', 'main'])
+    await expect(lagRyddegithub('eier/repo', 't', ingen, svar(null)).apnePr()).rejects.toThrow('Fikk ingen gyldig liste over PR-ene.')
+    const full = Array.from({ length: 100 }, (_, i) => ({ number: i, state: 'open', head: { ref: `g${i}`, repo: { full_name: 'eier/repo' } }, base: { ref: 'main' } }))
+    await expect(lagRyddegithub('eier/repo', 't', ingen, svar(full)).apnePr()).rejects.toThrow('avbryter for sikkerhets skyld')
+  })
+
+  it('stopper slettingen ved en driftsfeil, og når de åpne PR-ene ikke kan leses på nytt', async () => {
+    const toFerdige = [medSha(jobb('ferdig')), medSha(jobb('ferdig2'))]
+    const f = falskGithub(toFerdige, KO)
+    f.github.slett = async () => {
+      throw new Error('Git kunne ikke slette')
+    }
+    const u = await kjorRydding({ github: f.github, grener, kunVis: false, na: NA, logg: () => {} })
+    expect(u.feil).toBe('Git kunne ikke slette')
+    expect(Object.fromEntries(u.underveis)).toEqual({ 'kuratorjobb/ferdig': 'slettingen feilet', 'kuratorjobb/ferdig2': 'ikke forsøkt etter feilen' })
+
+    const g = falskGithub(toFerdige, KO)
+    let lesinger = 0
+    g.github.apnePr = async () => {
+      if (++lesinger === 1) return []
+      throw new Error('Fikk ingen gyldig liste over PR-ene.')
+    }
+    const v = await kjorRydding({ github: g.github, grener, kunVis: false, na: NA, logg: () => {} })
+    expect(g.slettet).toEqual([])
+    expect(v.feil).toContain('PR-ene')
   })
 })
 
@@ -344,7 +406,7 @@ describe('arbeidsflyten', () => {
     expect(flyt).toContain("if: github.ref == 'refs/heads/main'")
     expect(flyt).toMatch(/^permissions: \{\}$/m)
     for (const t of ['contents: write', 'pull-requests: read', 'id-token: write']) expect(flyt).toContain(t)
-    expect(flyt).toContain('npm run -s rydd-kuratorjobbgrener -- $KUN_VIS')
+    expect(flyt).toContain('npm run -s rydd-kuratorjobbgrener -- ../git $KUN_VIS')
     expect(flyt).toContain("inputs.kun_vis && '--kun-vis'")
     expect(flyt).not.toContain('secrets.')
   })
