@@ -157,7 +157,81 @@ opplysninger (§3.4) er separate beslutninger.
 
 Konkrete regler for vaktfordeling, arbeidstid og tilgang føres inn her når de er
 vedtatt, med dato, hvem som vedtok og eksempler med syntetiske ansatte som
-fasit. Inntil videre gjelder bare produktpremissene i §7.2.
+fasit. Ellers gjelder produktpremissene i §7.2.
+
+### 6.1 Rettferdig vaktfordeling over tid
+
+Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
+([vaktplan#14](https://github.com/peohol/vaktplan/issues/14),
+[#594](https://github.com/peohol/ousfar/issues/594)).
+
+- **Historisk utjevning går foran rettferdighet i perioden isolert sett.**
+  Fordelingen jevner ut skjevheter fra tidligere vakter, og vurderer ikke
+  bare den nye perioden alene. Rekkefølgen er:
+  1. Harde krav (kvalifikasjon, fravær, høyst én status per dag) og best
+     mulig dekning.
+  2. Historisk utjevning: høy vekt.
+  3. Avstand mellom vakter og jevn belastning over tid: høy vekt.
+  4. Rettferdighet i den nye perioden isolert sett: lavere vekt.
+  5. Variasjon i ukedager: lavere vekt.
+- **Historisk utjevning og rettferdighet i perioden har hver sin vekt**, og
+  begge kan justeres i regelsettet.
+- **Tidshorisonten for historisk utjevning kan stilles.** Standard er
+  365 dager bakover fra slutten av perioden som fordeles.
+- **Vakt 1 og vakt 2 utjevnes hver for seg.** En oppdatering av vaktplanen
+  beholder tildelinger som fortsatt er gyldige.
+- **Forventet antall** regnes ut fra stillingskategori, vekter,
+  kvalifikasjoner og tilstedeværelse, etter reglene som gjaldt hver dag.
+  *Midlertidig beregningsregel (prototypen v0.10, `expected.ts`):* For hver
+  medarbeider og vakttype summeres vekten for kategorien over dagene i
+  tidsrommet der vedkommende var til stede, aktiv og kvalifisert, og der
+  vakttypen hadde vakter. Det samlede antallet vakter i tidsrommet fordeles
+  så etter forholdet mellom disse summene (ikke dag for dag). Eksempel: A og
+  B har lik vekt, ti dager har én vakt hver, og A er borte fire av dagene.
+  Da er forventet A 10 · 6/16 = 3,75 og B 10 · 10/16 = 6,25. Regelen
+  erstattes av en egen modell med individuell vaktandel, årsaksnøytralt
+  vaktfritak og fordeling dag for dag, som vedtas i en egen PR.
+  For tidligere dager teller bare de
+  vaktene som faktisk er registrert i kalenderen den dagen. **En dag uten
+  registrert vakt av typen gir derfor ingen forventning til noen**, og
+  manglende historikk gjør ikke i seg selv at noen ser ut til å ha for få
+  vakter. Det gjelder også ved første gangs bruk, når ingen vakter er
+  registrert bakover. En medarbeider får bare forventning fra og med dagen
+  vedkommende ble aktiv. Er en vakt registrert på en dag der en medarbeider
+  egentlig var borte, men fraværet mangler, regnes vedkommende som til stede
+  den dagen. Slike feil rettes ved å registrere fraværet.
+- **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
+  medarbeider og vakttype antall, forventet antall og avvik over et valgt
+  tidsrom. Med et forslag vises også antall i forslaget, samlet etter
+  godkjenning og avviket etterpå, over det samme tidsrommet. En vakt som
+  flyttes til en annen, telles bare én gang.
+
+**Fasit (syntetiske medarbeidere A og B):**
+
+Inndata:
+- A og B har samme stillingskategori og samme vekt for vakt 1, begge er
+  kvalifisert for vakt 1, og begge er aktive og til stede alle arbeidsdagene
+  nedenfor, uten registrert fravær.
+- Tidligere: 20 arbeidsdager med nøyaktig én registrert vakt 1 hver dag. A
+  har 12 av dem og B 8.
+- Ny periode: 10 arbeidsdager som hver trenger én vakt 1. Ingen vakter er
+  låst eller publisert.
+- Tidshorisonten dekker alle de 30 dagene. Vakt 2 er ikke med.
+
+Forventet antall: hver dag fordeles likt på to, så tidligere er forventet
+20 · ½ = 10 hver, i den nye perioden 10 · ½ = 5 hver, og samlet 15 hver.
+Full historisk utjevning gir A 15 − 12 = 3 og B 15 − 8 = 7 nye vakter.
+
+| | Tidligere vakter | Ny periode | Samlet | Forventet samlet |
+| --- | --- | --- | --- | --- |
+| A | 12 | 3 | 15 | 15 |
+| B | 8 | 7 | 15 | 15 |
+
+Fordelingen 3 og 7 er riktig resultat, selv om den er skjev sett isolert for
+den nye perioden (forventet 5 og 5). Med de samme inndataene gir 11 og 9
+tidligere vakter 4 og 6 nye, og uten tidligere vakter gir den 5 og 5.
+Avstand mellom vaktene og jevn belastning velger hvilke dager vaktene
+legges på, men endrer ikke antallene.
 
 ## 7. Første arbeidsløp: vaktplanen
 
