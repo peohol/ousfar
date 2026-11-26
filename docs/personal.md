@@ -234,7 +234,10 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Flytting.** En status flyttes direkte til en celle uten status. Har
   målet en status, velger man mellom «Bytt statusene», «Flytt og erstatt
   eksisterende status» og «Avbryt». Merknad og klokkeslett følger statusen,
-  og den siste endringen kan angres.
+  og den siste endringen kan angres. En flytting tar aldri over en vakt:
+  har en annen medarbeider allerede samme vakt på måldatoen, avvises
+  flyttingen med årsak, også når målcellen er tom. Overtakelse skjer bare
+  ved å velge vakten i cellen (punktet over).
 - **Tilstedeværelse og tilgjengelighet er atskilt i vaktfordelingen:**
   - *Til stede* (grunnlaget for prosent tilstedeværelse) er den som er uten
     status eller har en status på kontoret.
