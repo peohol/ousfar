@@ -1,0 +1,17 @@
+{
+  "id": "20261125-182226-df89a5",
+  "semver": "patch",
+  "opprettet": "2026-11-25T18:22:26Z",
+  "sammendrag": "Fortolkningen ruller ikke lenger når du klikker på et kort",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Et museklikk på et kort i fortolkningen lar siden ligge der den er. Før ble kortet rullet fram til midten av vinduet.",
+    "Piltastene opp og ned hopper fortsatt mellom kortene."
+  ]
+}
