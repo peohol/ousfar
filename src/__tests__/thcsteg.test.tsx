@@ -309,7 +309,10 @@ describe('fortolkningsmodulen for THC-syre', () => {
     const tekst = 'Forrige prøve er under cut-off, så det er lagt til grunn 50\u00a0% høyere måleusikkerhet. Det gjør fortolkningen mer forsiktig.'
     await user.click(gruppe('Forrige prøve').getByRole('checkbox', { name: 'Under cut-off' }))
     expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Beregnet IRCAK –')
+    // Ikke før UCAK og NKRE gir en IRCAK å fortolke.
+    expect(merknad()).toBeNull()
     await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'UCAK (THC-syre)' }), '6')
+    expect(merknad()).toBeNull()
     await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'NKRE (kreatinin)' }), '4')
     expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Beregnet IRCAK 1,5')
     expect(merknad()).toBe(tekst)

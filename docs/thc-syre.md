@@ -314,7 +314,7 @@ ved «Sikkerhetsmargin» sier kort at en høyere margin gir en mer forsiktig
 fortolkning, og at marginen gjelder måleusikkerheten, ikke sannsynligheten
 for at fortolkningen er riktig. Under cut-off står en kort merknad ved
 marginen om den høyere måleusikkerheten, bare når den faktisk brukes (en
-margin som korrigerer, og en forrige prøve over 0). Står skjemaet på en margin
+margin som korrigerer, og en beregnet IRCAK over 0 i forrige prøve). Står skjemaet på en margin
 et nytt regelsett ikke har, gir motoren en mangel og ingen kommentar.
 
 Kommentaren står rett etter skjemaet, med kopiknappen rett under, og under

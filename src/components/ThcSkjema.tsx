@@ -53,12 +53,11 @@ export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaPro
   // vurderes mot hverandre.
   const vurderes = !ingen && !(kortTid && inndata.kortTid)
   // Merknaden om større måleusikkerhet gjelder bare når den faktisk brukes:
-  // med en margin som korrigerer, og en forrige prøve over 0.
+  // med en margin som korrigerer, og en beregnet IRCAK over 0 i forrige prøve
+  // (ikke mens UCAK og NKRE ennå ikke gir en).
+  const beregnetForrige = underCutoff ? beregnIrcak(inndata.forrigeUcak, inndata.forrigeNkre) : null
   const storreUsikkerhet =
-    vurderes &&
-    underCutoff &&
-    !erUtenMargin(inndata.sikkerhetsmargin) &&
-    beregnIrcak(inndata.forrigeUcak, inndata.forrigeNkre) !== 0
+    vurderes && !erUtenMargin(inndata.sikkerhetsmargin) && beregnetForrige !== null && beregnetForrige > 0
 
   const endreForrige = <K extends keyof ThcProve>(felt: K, verdi: ThcProve[K]) =>
     onEndre(FORRIGE_PROVEFELT[felt], verdi as unknown as ThcInndata[(typeof FORRIGE_PROVEFELT)[K]])
