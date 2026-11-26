@@ -205,11 +205,12 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   vedkommende ble aktiv. Mangler et fravær med vaktfritak (for eksempel
   ferie) for en dag med registrert vakt, får medarbeideren forventning den
   dagen. Slike feil rettes ved å registrere fraværet.
-- **Utjevningen gir ikke en urimelig tett plan.** I én plan kan en
-  medarbeider få høyst en viss andel mer eller mindre enn sin rettferdige
-  andel av perioden for å jevne ut tidligere skjevhet (standard 50 %,
-  justerbart i regelsettet); resten jevnes ut i senere planer. I fasiten
-  under er A og B innenfor grensen.
+- **Utjevningen gir ikke en urimelig tett plan.** I én plan kan den som
+  skal ta igjen, få høyst en viss andel flere vakter enn sin rettferdige
+  andel av perioden (standard 50 %, justerbart i regelsettet). Den som har
+  hatt for mange, kan få ned til ingen vakter i perioden, aldri mindre.
+  Resten jevnes ut i senere planer. I fasiten under er A og B innenfor
+  grensen.
 - **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
   medarbeider og vakttype antall, forventet antall og avvik over et valgt
   tidsrom. Med et forslag vises også antall i forslaget, samlet etter
