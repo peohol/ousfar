@@ -3,7 +3,7 @@ import { useBevart } from '../oppdatering/Bevaring'
 import { BeUrinMangler, BeUrinVisualisering, MildereMargin, type BeUrinResultatProps } from './BeUrinDeler'
 import { BeUrinBeregning } from './BeUrinForklaring'
 import { BeUrinPlot } from './BeUrinPlot'
-import { BeUrinProfilresultat } from './BeUrinProfilresultat'
+import { BeUrinProfilresultat, useBeUrinProfilfortolkning } from './BeUrinProfilresultat'
 import { BeUrinSkjema } from './BeUrinSkjema'
 import { Button } from './Button'
 import { Card } from './Card'
@@ -128,6 +128,7 @@ function BeUrinFortolkning({
   }
   const onVelgMargin = (margin: number) => sett('sikkerhetsmargin', margin)
   const visning = { alleMarginer, onAlleMarginer }
+  const profil = useBeUrinProfilfortolkning(inndata, modell)
 
   return (
     <div className="thc">
@@ -139,10 +140,17 @@ function BeUrinFortolkning({
             </Button>
           </div>
         </Korthode>
-        <BeUrinSkjema inndata={inndata} onEndre={sett} modell={modell} forsteFelt={forsteFelt} />
+        <BeUrinSkjema inndata={inndata} onEndre={sett} modell={modell} forsteFelt={forsteFelt} mildere={profil?.mildere} />
       </Card>
       {erProfilmodell(modell) ? (
-        <BeUrinProfilresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
+        profil && (
+          <BeUrinProfilresultat
+            resultat={profil.resultat}
+            modell={modell}
+            tidligereProver={inndata.tidligere.length}
+            visning={visning}
+          />
+        )
       ) : (
         <BeUrinTobiresultat inndata={inndata} modell={modell} onVelgMargin={onVelgMargin} visning={visning} />
       )}

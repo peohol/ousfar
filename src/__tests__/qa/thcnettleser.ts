@@ -19,6 +19,7 @@
  */
 import { thcRegelsettutgave } from '../hjelp/thcgrunnlag'
 import { krev, lagKontroll, vent, type Side } from './kontroll'
+import { marginbobler, somTekst } from './marginbobler'
 import { apneTestmiljo } from './testmiljo'
 
 const { punkt, bilde, paa, oppsettFeilet, rapport } = lagKontroll('thc')
@@ -155,17 +156,35 @@ try {
     return 'felt → legg til → info, boblen vises'
   })
 
-  await punkt('T3 PC: en høyere margin gir et mildere utfall, sagt kort ved kommentaren', async () => {
+  await punkt('T3 PC: en høyere margin gir et mildere utfall, vist i snakkebobler ved marginen', async () => {
     paa(pc)
-    // 30 → 20 på 7 døgn ved kronisk bruk (standard): en mildere konklusjon ved 99 %.
-    await fyll(pc, 'Forrige prøve', '30', '2026-01-01')
-    await fyll(pc, 'Denne prøven', '20', '2026-01-08')
-    const merknad = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
-    krev(/^Ved 99\s%\ssikkerhetsmargin .+\.$/.test(merknad), `merknaden: ${merknad}`)
-    krev((await pc.getByRole('button', { name: /Bruk \d+/ }).count()) === 0, 'det står en knapp for marginen')
-    await bortMedFokus(pc)
-    await bilde(pc, '03-mildere-pc')
-    return merknad
+    // 50 → 40 på tre døgn ved kronisk bruk (standard): 50 % gir nytt inntak, 90 % «kan ikke fastslås», 99 % «ikke nødvendigvis nytt».
+    await fyll(pc, 'Forrige prøve', '50', '2026-07-04')
+    await fyll(pc, 'Denne prøven', '40', '2026-07-07')
+    try {
+      const en = await marginbobler(pc)
+      krev(somTekst(en) === 'over 99 %: Ikke nødvendigvis nytt', `med 90 %: ${somTekst(en)}`)
+      krev((await pc.locator('.thc-merknader').count()) === 0, 'det står fortsatt en tekst om marginen ved kommentaren')
+      krev((await pc.getByRole('button', { name: /Bruk \d+/ }).count()) === 0, 'det står en knapp for marginen')
+      await pc.locator('.trinnbryter__valg', { hasText: 'Ingen' }).click()
+      const to = await marginbobler(pc)
+      krev(
+        somTekst(to) === 'over 90 %: Kan ikke fastslås; under 99 %: Ikke nødvendigvis nytt',
+        `med ingen margin: ${somTekst(to)}`,
+      )
+      await bortMedFokus(pc)
+      await vent(500)
+      await bilde(pc, '03-mildere-pc')
+      await pc.emulateMedia({ colorScheme: 'dark' })
+      await vent(300)
+      await bilde(pc, '03-mildere-moerkt-pc')
+      await pc.emulateMedia({ colorScheme: 'light' })
+      await pc.locator('.trinnbryter__valg', { hasText: '99' }).click()
+      krev((await marginbobler(pc)).length === 0, 'det står bobler på den høyeste marginen')
+      return `${somTekst(en)} | ${somTekst(to)}`
+    } finally {
+      await pc.getByRole('button', { name: 'Nullstill' }).click()
+    }
   })
 
   await punkt('T4 PC: tidligere prøver, og det mildere utfallet knyttet til riktig prøve', async () => {
@@ -178,12 +197,12 @@ try {
       krev(fokus === 'Tidligere prøve', `fokuset står i ${fokus}`)
       await fyll(pc, 'Tidligere prøve', '3', '2026-06-28')
       krev((await kommentar(pc)).includes('28.06.2026'), `kommentaren: ${await kommentar(pc)}`)
-      const en = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
-      krev(en.includes('heller ikke mot de tidligere prøvene'), `én tidligere prøve: ${en}`)
+      const en = somTekst(await marginbobler(pc))
+      krev(en === 'over 99 %: Kan ikke fastslås', `én tidligere prøve: ${en}`)
       await pc.getByRole('button', { name: '+ Legg til tidligere prøve' }).click()
       await fyll(pc, 'Tidligere prøve 2', '2', '2026-06-01')
-      const to = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
-      krev(to.includes('etter prøven tatt 01.06.2026'), `to tidligere prøver: ${to}`)
+      const to = somTekst(await marginbobler(pc))
+      krev(to === 'over 99 %: Nytt inntak etter tidligere prøve 01.06.2026', `to tidligere prøver: ${to}`)
       await bortMedFokus(pc)
       await bilde(pc, '04-tidligere-pc', true)
       await pc.getByRole('button', { name: 'Fjern tidligere prøve 2' }).click()
@@ -339,10 +358,11 @@ try {
     await sim.getByRole('group', { name: 'Denne prøven' }).getByLabel('Prøvedato').fill('2026-01-08')
     const t = await sim.innerText()
     krev(t.includes('Satt sammen av'), 'kommentarbolkene mangler')
-    krev(/Ved 99\s%\ssikkerhetsmargin/.test(t), 'den mildere teksten mangler')
+    const bobler = somTekst(await marginbobler(pc, '.simulator'))
+    krev(bobler.startsWith('over 99 %:'), `boblene i simulatoren: ${bobler}`)
     await sim.scrollIntoViewIfNeeded()
     await bilde(pc, '16-simulator-pc', true)
-    return 'kommentarbolkene og den mildere teksten står'
+    return `kommentarbolkene står; ${bobler}`
   })
 
   for (const [navn, tema] of [
@@ -352,9 +372,14 @@ try {
     await punkt(navn, async () => {
       const side: Side = paa(await miljo.side({ ...MOBIL, colorScheme: tema }))
       await apne(side)
-      await fyll(side, 'Forrige prøve', '30', '2026-01-01')
-      await fyll(side, 'Denne prøven', '20', '2026-01-08')
-      const svar = await utenSideveisRulling(side)
+      // Som i T3: uten margin to bobler, over og under bryteren.
+      await fyll(side, 'Forrige prøve', '50', '2026-07-04')
+      await fyll(side, 'Denne prøven', '40', '2026-07-07')
+      await side.locator('.trinnbryter__valg', { hasText: 'Ingen' }).tap()
+      await vent(500)
+      const bobler = somTekst(await marginbobler(side))
+      krev(bobler === 'over 90 %: Kan ikke fastslås; under 99 %: Ikke nødvendigvis nytt', `boblene på mobil: ${bobler}`)
+      const svar = `${await utenSideveisRulling(side)}; ${bobler}`
       const [a, b] = await side.locator('.be-prove').evaluateAll((k: Element[]) => k.map((e) => e.getBoundingClientRect().top))
       krev(a! < b!, 'prøvene står ikke under hverandre på mobil')
       await innenforRammene(side)

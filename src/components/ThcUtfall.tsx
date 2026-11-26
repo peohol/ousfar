@@ -1,33 +1,48 @@
-import { useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { BeUrinMangler } from './BeUrinDeler'
 import { Details } from './Details'
 import { ThcForklaring } from './ThcForklaring'
 import { ThcPlot, ThcProfiltabell } from './ThcPlot'
-import type { ThcMildereUtfall, ThcResultat } from '../domain/thcMotor'
+import { fortolkThc, mildereVedHoyereMargin, type ThcInndata, type ThcModell, type ThcResultat } from '../domain/thcMotor'
 import type { ThcVisning } from '../domain/thcPlot'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
-import { THC_SAMLET_UTEN_TREFF, THC_VENTER, mildereMargintekst } from '../domain/thcVisning'
+import { THC_SAMLET_UTEN_TREFF, THC_VENTER, thcMildereMarginer, type MildereMarginer } from '../domain/thcVisning'
 
 /**
  * Utfallet av en THC-fortolkning, slik fortolkningsmodulen og simulatoren på
  * redigeringssiden viser det (#586): kommentaren rett etter skjemaet, med det
- * som står under den (kopieringen i modulen), korte merknader, og
+ * som står under den (kopieringen i modulen), en kort merknad, og
  * «Utskillelsesprofiler og figur» og «Forklaring» lukket under hver sin
  * overskrift. Mens skjemaet ikke er ferdig, står bare en stille linje, eller
  * det som er galt utover det enkelte feltet.
  */
 
+/**
+ * Fortolkningen av skjemaet, og det høyere marginer ville gitt (#588), som
+ * skjemaet viser i snakkebobler ved sikkerhetsmarginen. Delt av modulen og
+ * simulatoren.
+ */
+export function useThcFortolkning(inndata: ThcInndata, modell: ThcModell): {
+  resultat: ThcResultat
+  mildere: MildereMarginer
+} {
+  const resultat = useMemo(() => fortolkThc(inndata, modell), [inndata, modell])
+  const mildere = useMemo(
+    () =>
+      thcMildereMarginer(mildereVedHoyereMargin(inndata, modell, resultat), {
+        samlet: resultat.type === 'kommentar' ? resultat.samlet : null,
+        medTidligere: (inndata.tidligere ?? []).length > 0,
+      }),
+    [inndata, modell, resultat],
+  )
+  return { resultat, mildere }
+}
+
 export function ThcKommentar({
   resultat,
-  mildere = [],
-  medTidligere = false,
   handling,
 }: {
   resultat: ThcResultat
-  /** De mildere utfallene høyere marginer gir ({@link mildereVedHoyereMargin}). */
-  mildere?: ThcMildereUtfall[]
-  /** Det står tidligere prøver i skjemaet, så den samlede vurderingen gjøres ved «kan ikke fastslås». */
-  medTidligere?: boolean
   /** Det som står rett under kommentaren, som kopiknappen. */
   handling?: ReactNode
 }) {
@@ -37,19 +52,12 @@ export function ThcKommentar({
     <>
       <p className="kommentartekst">{resultat.kommentar}</p>
       {handling}
-      {(resultat.samletUtenNyttInntak || mildere.length > 0) && (
+      {/* Den samlede vurderingen endret ikke noe, så kommentaren sier ikke
+          noe om den; brukeren skal likevel vite at den ble gjort. Det en
+          høyere margin ville gitt, står ved sikkerhetsmarginen (#588). */}
+      {resultat.samletUtenNyttInntak && (
         <div className="thc-merknader">
-          {/* Den samlede vurderingen endret ikke noe, så kommentaren sier ikke
-              noe om den; brukeren skal likevel vite at den ble gjort. */}
-          {resultat.samletUtenNyttInntak && <p>{THC_SAMLET_UTEN_TREFF}</p>}
-          {/* Det en høyere margin ville gitt. Brukeren velger selv; det er
-              ingen knapp, og det sies aldri at en lavere margin gir noe
-              strengere. */}
-          {mildere.map((u) => (
-            <p key={`${u.konklusjon}|${u.samlet?.dato ?? ''}`}>
-              {mildereMargintekst(u, { samlet: resultat.samlet, medTidligere })}
-            </p>
-          ))}
+          <p>{THC_SAMLET_UTEN_TREFF}</p>
         </div>
       )}
     </>

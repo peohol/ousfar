@@ -222,6 +222,107 @@
   color: var(--blekk-dempet);
 }
 
+/* --- Snakkeboblene ved sikkerhetsmarginen (#588) -----------------------------
+   Gir en høyere margin en mildere fortolkning, peker en boble på den. Boblene
+   står i et rutenett med like mange kolonner som valgene på bryteren, over og
+   under den, så hver boble står ved sin margin. Raden er en beholder, så
+   pilen kan stå midt på en ytterste margin mens boblen legger seg innover
+   fra kanten (`cqi`), og boblene gjør ikke bryteren bredere. Boblene gløder
+   svakt; ved redusert bevegelse står de stille (base.css). */
+.be-margin__bryter {
+  display: inline-grid;
+  max-width: 100%;
+}
+
+.be-margin__bobler {
+  --pil: 0.5rem;
+
+  display: grid;
+  grid-template-columns: repeat(var(--antall), minmax(0, 1fr));
+  container-type: inline-size;
+}
+
+.be-margin__bobler--over {
+  margin-bottom: calc(var(--pil) / 2 + var(--rom-1));
+}
+
+.be-margin__bobler--under {
+  margin-top: calc(var(--pil) / 2 + var(--rom-1));
+}
+
+.be-marginboble {
+  --pil-x: 50%;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  width: max-content;
+  max-width: 15rem;
+  padding: var(--rom-1) var(--rom-3);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-tett);
+  color: var(--blekk);
+  text-align: center;
+  background: var(--aksent-flate);
+  border: var(--kant) solid var(--aksent);
+  border-radius: var(--runding-merke);
+  animation: marginboble-glod 2.6s var(--kurve) infinite alternate;
+}
+
+/* Ytterst til venstre eller høyre: boblen innover fra kanten, pilen midt på marginen. */
+.be-marginboble--start {
+  --pil-x: calc(50cqi / var(--antall));
+
+  justify-self: start;
+}
+
+.be-marginboble--slutt {
+  --pil-x: calc(100% - 50cqi / var(--antall));
+
+  justify-self: end;
+}
+
+/* Pilen: et lite kvadrat på høykant med boblens flate og kant på to sider. */
+.be-marginboble::after {
+  position: absolute;
+  left: var(--pil-x);
+  width: var(--pil);
+  height: var(--pil);
+  content: '';
+  background: inherit;
+  border: inherit;
+  border-radius: 0 0 0.125rem;
+}
+
+.be-margin__bobler--over .be-marginboble::after {
+  bottom: calc(var(--pil) / -2 - var(--kant) / 2);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.be-margin__bobler--under .be-marginboble::after {
+  top: calc(var(--pil) / -2 - var(--kant) / 2);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 0.125rem 0 0;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes marginboble-glod {
+  from {
+    background-color: var(--aksent-flate);
+    box-shadow: 0 0 0 0 transparent;
+  }
+
+  to {
+    background-color: color-mix(in srgb, var(--aksent-flate), var(--aksent) 22%);
+    box-shadow: 0 0 0.6rem 0.05rem color-mix(in srgb, var(--aksent), transparent 55%);
+  }
+}
+
 /* Informasjonstegnet: en liten ring med «i». Trykkflaten er større enn ringen,
    så den er lett å treffe med fingeren. */
 .be-info {
@@ -354,14 +455,6 @@
 .be-vurdering__samlet--treff {
   font-weight: var(--vekt-medium);
   color: var(--blekk);
-}
-
-.be-vurdering__mildere {
-  margin: var(--rom-1) 0 0;
-  font-size: var(--tekst-liten);
-  line-height: var(--linjehoyde-ui);
-  text-wrap: pretty;
-  color: var(--blekk-dempet);
 }
 
 .be-forbehold,
