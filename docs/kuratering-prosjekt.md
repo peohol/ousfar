@@ -147,6 +147,30 @@ Du er Vaktmester i «OUSFAR Fag». Bruk skillen vaktmester, og les docs/kuratorp
 - Spør Peder med valgkort om det bare han kan avgjøre.
 ```
 
+## Grenene i GitHub
+
+Trådene kan ikke slette grener i GitHub (git-proxyen avviser det), og GitHub
+sletter selv bare grenen til en PR som slås sammen. En gren som ingen
+opprydding kjenner, blir derfor stående. Trådene lager bare disse:
+
+| Gren | Når | Slettes |
+| --- | --- | --- |
+| `kuratorjobb/…` | En kuratorjobb (preparatomtaler, funksjonstest) | Automatisk etter reglene i `docs/kuratorjobber.md` |
+| `kurateringsko/okt/<ÅÅÅÅMMDD-TTMMSS>` | Én per kjøring mot kurateringskøen (`docs/kurateringsko-instruks.md`) | Automatisk av køen (`docs/kurateringsko.md`) |
+| Trådens egen `claude/…`-gren | Bare for en PR, som en instruksendring | Av GitHub når PR-en slås sammen |
+
+- Push alltid med fullt grennavn, `git push origin HEAD:refs/heads/<navn>`,
+  aldri `git push origin HEAD` fra en lokal gren med et annet navn.
+- Funksjonstesten etter en publiseringsrunde kjøres samlet for sidene som ble
+  publisert (stoffene kommaseparert), ikke én jobb per side. Hver jobb kan
+  omfatte høyst `MAKS_STOFFER` stoffer (`src/kuratorjobb/foresporsel.ts`, for
+  tiden 25), så en større runde deles i så få jobber som mulig. En ny kjøring
+  for de samme sidene bruker den samme jobbgrenen.
+- Push ikke mer til trådens gren etter at PR-en er slått sammen eller lukket,
+  med mindre en ny PR skal åpnes fra den. En lukket PR får grenen sin stående.
+  Fagtekst og bivirkningsimporter for en side som kureres, hører i
+  kurateringsgrenen i OUSFAR, aldri i en PR.
+
 ## Hva som hører hjemme hvor
 
 - Kurateringen, kontrollen og avgjørelsene om faginnholdet hører hjemme her.

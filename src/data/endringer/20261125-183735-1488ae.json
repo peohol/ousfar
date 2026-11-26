@@ -1,0 +1,15 @@
+{
+  "id": "20261125-183735-1488ae",
+  "semver": "patch",
+  "opprettet": "2026-11-25T18:37:35Z",
+  "sammendrag": "Kurateringsinstruksene gir færre grener som blir liggende i repoet",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Kurator, Kontrollør og Vaktmester kan ikke slette grener i GitHub, så en gren ingen opprydding kjenner, ble stående. Instruksene sier nå hvilke grener trådene lager, at de alltid pushes med fullt navn, og at trådens egen gren ikke brukes etter at PR-en er avsluttet.",
+    "Funksjonstesten etter en publiseringsrunde kjøres samlet for sidene som ble publisert, høyst 25 sider per jobb og i så få jobber som mulig, i stedet for én jobb per side. Hver jobb gir en gren, og det var opptil 40 i døgnet. Den raskere automatiske oppryddingen er en egen sak til apputviklingen."
+  ],
+  "utenVarsel": true
+}

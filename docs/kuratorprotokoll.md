@@ -198,8 +198,10 @@ Kuratoren melder hva den gjør med `aktivitet` (med seksjonen og kortet), så
    publiserer ingenting.
 10. **Publiseringen.** Når den siste revisjonen er godkjent og ingenting
     hindrer det, publiserer kuratoren (`publiser`). Etterpå kjøres
-    funksjonstesten mot den publiserte siden, og det som gjensto, står i
-    evidensjournalen.
+    funksjonstesten mot den publiserte siden, samlet for sidene som er
+    publisert i samme runde: høyst `MAKS_STOFFER` (for tiden 25) per jobb, og
+    så få jobber som mulig (`docs/kuratering-prosjekt.md`, «Grenene i
+    GitHub»). Det som gjensto, står i evidensjournalen.
 
 ## Dokumentene
 
@@ -705,3 +707,9 @@ holder dem i takt med modellen og piloten).
   mistanke om feil i innholdet meldes til CYPinfo. Kravet er dermed ikke
   utvidet: kuratoren og kontrolløren kontrollerer det automatiske laget etter
   krav 8, og revaliderer ikke kildeanbefalingene per side.
+- 2026-11-25: funksjonstesten etter publiseringen kjøres samlet for sidene som
+  er publisert i samme runde, høyst `MAKS_STOFFER` (for tiden 25) per jobb og i
+  så få jobber som mulig (arbeidsflyten, steg 10), fordi hver jobb gir en gren
+  i repoet. Grenreglene for trådene står i
+  `docs/kuratering-prosjekt.md`, «Grenene i GitHub» (sak #581). Ingen krav er
+  endret.

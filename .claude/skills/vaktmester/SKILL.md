@@ -119,6 +119,8 @@ For hver fagside (flere sider kan være til kontroll samtidig):
    forslag føres i `faglige-funn.md`.
 7. **Publiseringen.** Når den siste revisjonen er godkjent: `publiser`, og
    funksjonstesten med `kuratorjobb.yml` (`docs/kuratorjobber.md`) for sidene
-   som er publisert.
+   som er publisert, samlet for sidene i samme runde: høyst `MAKS_STOFFER`
+   (for tiden 25) per jobb, og så få jobber som mulig
+   (`docs/kuratering-prosjekt.md`, «Grenene i GitHub»).
 8. **Til fagansvarlig.** Kort hva som er gjort og hva som venter på hvem, uten
    fagtekst.
