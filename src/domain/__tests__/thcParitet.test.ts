@@ -83,7 +83,8 @@ describe('den nye motoren mot den opprinnelige modulen', () => {
               : 'ikke_nodvendigvis'
       const likt =
         gammel.type === 'mangler' || ny.type === 'mangler'
-          ? JSON.stringify(gammel) === JSON.stringify(ny)
+          ? // `feil` skiller ut manglene som gjelder flere felt (#586); manglene er de samme.
+            JSON.stringify(gammel) === JSON.stringify(ny.type === 'mangler' ? { type: ny.type, mangler: ny.mangler } : ny)
           : ny.kommentar ===
               forventetKommentar(
                 fasitniva(lesTall(inn.aktuellVerdi)!),
@@ -97,7 +98,10 @@ describe('den nye motoren mot den opprinnelige modulen', () => {
             (ny.grunnlag === null ||
               ny.grunnlag.dager < 1 ||
               JSON.stringify(byggGraf(ny.grunnlag, figurkurver(REGELSETT))) === JSON.stringify(byggGraf(ny.grunnlag, FIGURKURVER)))
-      if (!likt) avvik.push(JSON.stringify(inn))
+      // Feilene på tvers er alltid blant manglene, i samme rekkefølge.
+      const feilBlantMangler =
+        ny.type !== 'mangler' || JSON.stringify(ny.mangler.filter((m) => ny.feil.includes(m))) === JSON.stringify(ny.feil)
+      if (!likt || !feilBlantMangler) avvik.push(JSON.stringify(inn))
     }
     expect(avvik).toEqual([])
   })

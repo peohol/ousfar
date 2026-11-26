@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { THC_MODELL, THC_REGELSETT } from '../../__tests__/hjelp/thcgrunnlag'
+import { THC_REGELSETT } from '../../__tests__/hjelp/thcgrunnlag'
 import type { ThcRegelsett } from '../thcRegelsett'
-import { fortolkThc, tomThcInndata } from '../thcMotor'
 import {
-  MARGINEKSEMPEL,
+  antallDager,
   endringsfrase,
+  kortTidtekst,
+  langTidtekst,
+  underCutofftekst,
   forventetNedgang,
   hvorOfteForStor,
-  margineksempel,
   marginmerke,
   marginvalg,
   nivabeskrivelse,
@@ -56,36 +57,20 @@ describe('det fortolkningen viser om THC-syreregelsettet', () => {
     expect(hvorOfteForStor(0.95)).toBe('i 1 av 20 tilfeller')
   })
 
+  it('skriver kort og lang tid mellom prøvene og merknaden under cut-off kort (#586)', () => {
+    expect(antallDager(1)).toBe('1 dag')
+    expect(kortTidtekst(0)).toBe('Prøvene er tatt samme dag.')
+    expect(kortTidtekst(2)).toBe('Det er bare 2 dager mellom prøvene.')
+    expect(langTidtekst(45)).toBe('Det er 45 dager mellom prøvene. Vurder å fortolke uten å sammenligne med forrige prøve.')
+    expect(underCutofftekst(THC_REGELSETT.maleusikkerhet.faktor_under_cutoff)).toBe(
+      'Forrige prøve er under cut-off, så det er lagt til grunn 50\u00a0% høyere måleusikkerhet. Det gjør fortolkningen mer forsiktig.',
+    )
+  })
+
   it('skriver endringen i ord, avrundet til hele prosent', () => {
     expect(endringsfrase(-0.745)).toBe('en nedgang på 75 %')
     expect(endringsfrase(0.05)).toBe('en økning på 5 %')
     expect(endringsfrase(0)).toBe('ingen endring')
   })
 
-  it('fortolker eksempelet med hver margin nøyaktig som fortolkningen gjør', () => {
-    const { forrige, aktuell, dager, kronisk } = MARGINEKSEMPEL
-    const eksempel = margineksempel(THC_REGELSETT)
-    expect(eksempel.map((e) => e.margin)).toEqual(THC_REGELSETT.sikkerhetsmarginer.map((m) => m.margin))
-    for (const { margin, endring, utfall } of eksempel) {
-      const res = fortolkThc(
-        {
-          ...tomThcInndata(THC_REGELSETT),
-          kronisk,
-          forrigeVerdi: String(forrige),
-          forrigeDato: '2026-02-01',
-          aktuellVerdi: String(aktuell),
-          aktuellDato: `2026-02-0${1 + dager}`,
-          sikkerhetsmargin: margin,
-        },
-        THC_MODELL,
-      )
-      if (res.type !== 'kommentar' || !res.grunnlag) throw new Error('Eksempelet skal gi en kommentar.')
-      expect(endring).toBe(res.grunnlag.korrigertEndring)
-      expect(utfall).toBe(res.konklusjon)
-    }
-    // Med de publiserte reglene viser eksempelet tre ulike konklusjoner, fra den strengeste til den mildeste.
-    expect(eksempel.map((e) => e.utfall)).toEqual(['nytt_inntak', 'vanskelig', 'ikke_nodvendigvis'])
-    // Uten margin er det den målte endringen som fortolkes.
-    expect(eksempel[0]!.endring).toBeCloseTo(aktuell / forrige - 1, 12)
-  })
 })

@@ -10,7 +10,7 @@ import {
   type ThcModell,
 } from '../thcMotor'
 import { normalkvantil, type ThcRegelsett } from '../thcRegelsett'
-import { konklusjonsnavn, konklusjonsnavnISetning, marginliste } from '../thcVisning'
+import { konklusjonsnavn, konklusjonsnavnISetning, marginliste, mildereMargintekst } from '../thcVisning'
 import { THC_MODELL, THC_REGELSETT, THC_TEKSTER } from '../../__tests__/hjelp/thcgrunnlag'
 
 /**
@@ -220,5 +220,81 @@ describe('mildere konklusjon med høyere sikkerhetsmargin', () => {
     expect(konklusjonsnavnISetning('vanskelig', { dato: '01.06.2026', ircak: 0, dager: 36 })).toBe(
       'nytt inntak etter tidligere prøve 01.06.2026',
     )
+  })
+})
+
+/**
+ * Teksten ved kommentaren (#586) i stedet for banneret: hele det kliniske
+ * utfallet en høyere margin gir, også hvilken tidligere prøve et nytt inntak
+ * knyttes til, og at de tidligere prøvene ikke gir eller ikke vurderes når
+ * det faller bort. Lærdommen fra kontrollen av #577: to utfall skal aldri se
+ * like ut.
+ */
+describe('teksten om en mildere konklusjon ved kommentaren', () => {
+  /** Tekstene modulen viser for inndataene, slik `ThcKommentar` lager dem. */
+  const tekster = (inn: ThcInndata) => {
+    const r = fortolkThc(inn, THC_MODELL)
+    if (r.type !== 'kommentar') throw new Error('Tilfellet skal gi en kommentar.')
+    const medTidligere = (inn.tidligere ?? []).length > 0
+    return mildereVedHoyereMargin(inn, THC_MODELL, r).map((u) => mildereMargintekst(u, { samlet: r.samlet, medTidligere }))
+  }
+
+  it('sier hva hver høyere margin gir, med Peders ordlyd for «kan ikke fastslås»', () => {
+    expect(tekster(eksempel(0.5))).toEqual([
+      'Ved 90 % sikkerhetsmargin kan et nytt inntak ikke fastslås.',
+      'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
+    ])
+    expect(tekster(eksempel(0.9))).toEqual([
+      'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
+    ])
+    expect(tekster(eksempel(0.99))).toEqual([])
+  })
+
+  it('knytter nytt inntak til den tidligere prøven det gjelder, og sier når de tidligere prøvene faller bort', () => {
+    const tidligere = [{ ...tomThcProve(), verdi: '0', dato: '2026-06-01' }]
+    const inn = eksempel(0.5, { samletVurdering: true, tidligere })
+    expect(tekster(inn)).toEqual([
+      'Ved 90 % sikkerhetsmargin kan et nytt inntak etter forrige prøve ikke fastslås, men det har skjedd minst ett inntak etter prøven tatt 01.06.2026.',
+      'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.',
+    ])
+    // Med 90 % står nytt inntak etter den tidligere prøven i kommentaren; at
+    // den ikke vurderes med 99 %, sies.
+    expect(tekster({ ...inn, sikkerhetsmargin: 0.9 })).toEqual([
+      'Ved 99 % sikkerhetsmargin har cannabis ikke nødvendigvis vært inntatt etter forrige prøve. De tidligere prøvene vurderes da ikke.',
+    ])
+  })
+
+  /** 6,5 → 2,5 på 23 døgn: «kan ikke fastslås» mot forrige prøve med alle marginene. */
+  const vanskelig = (margin: number, tidligere: ThcInndata['tidligere']) =>
+    eksempel(margin, {
+      forrigeVerdi: '6,5',
+      forrigeDato: '2026-07-04',
+      aktuellVerdi: '2,5',
+      aktuellDato: '2026-07-27',
+      samletVurdering: true,
+      tidligere,
+    })
+
+  it('sier at heller ikke de tidligere prøvene gir nytt inntak når det faller bort', () => {
+    const inn = vanskelig(0.9, [{ ...tomThcProve(), verdi: '3', dato: '2026-06-28' }])
+    expect([0.9, 0.99].map((m) => fortolkThc({ ...inn, sikkerhetsmargin: m }, THC_MODELL))).toMatchObject([
+      { konklusjon: 'vanskelig', samlet: { dato: '28.06.2026' } },
+      { konklusjon: 'vanskelig', samlet: null, samletUtenNyttInntak: true },
+    ])
+    expect(tekster(inn)).toEqual(['Ved 99 % sikkerhetsmargin kan et nytt inntak ikke fastslås, heller ikke mot de tidligere prøvene.'])
+  })
+
+  it('skiller nytt inntak etter to ulike tidligere prøver med datoen', () => {
+    const inn = vanskelig(0.9, [
+      { ...tomThcProve(), verdi: '3', dato: '2026-06-28' },
+      { ...tomThcProve(), verdi: '2', dato: '2026-06-01' },
+    ])
+    expect([0.9, 0.99].map((m) => fortolkThc({ ...inn, sikkerhetsmargin: m }, THC_MODELL))).toMatchObject([
+      { samlet: { dato: '28.06.2026' } },
+      { samlet: { dato: '01.06.2026' } },
+    ])
+    expect(tekster(inn)).toEqual([
+      'Ved 99 % sikkerhetsmargin kan et nytt inntak etter forrige prøve ikke fastslås, men det har skjedd minst ett inntak etter prøven tatt 01.06.2026.',
+    ])
   })
 })

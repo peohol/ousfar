@@ -74,7 +74,8 @@ før aktivering.
 **Skjemaet** er det samme for begge formene (#576, under «Form 2»).
 
 **Sikkerhetsmarginen.** Bryteren, figuren med valgt eller alle marginer og banneret
-«Vurder høyere sikkerhetsmargin» er THC-syremodulens. Banneret viser hver
+«Vurder høyere sikkerhetsmargin» (`MildereMargin`) er slik THC-syremodulen hadde
+dem før #586; THC-syre bruker nå den korte teksten ved kommentaren. Banneret viser hver
 mildere konklusjon en høyere margin gir, også nytt inntak etter en eldre
 prøve; valgt margin endres bare når brukeren trykker.
 
@@ -164,11 +165,14 @@ fortolkning får plass på én PC-skjerm uten rulling.
 
 **Skjemaet** (`BeUrinSkjema.tsx`, felles for begge formene). Forrige prøve og
 denne prøven står side om side på bred skjerm, under hverandre på smal. Hver
-prøve har benzoylekgonin, kreatinin og prøvedato; enheten står inne i feltet
+prøve står i en ramme med navnet i kanten (`Provegruppe`, delt med THC-syre).
+Hver prøve har benzoylekgonin, kreatinin og prøvedato; enheten står inne i feltet
 (og i feltets navn for skjermlesere: «Benzoylekgonin (nmol/L)»), og
-«Kvotient 100 nmol/mmol» står diskret under («Kvotient –» før den kan regnes).
-Tidligere prøver legges til med den diskrete knappen «+ Legg til tidligere
-prøve» under feltene og fjernes med «Fjern» på hver; fokuset går til den nye
+«Kreatinin-normalisert konsentrasjon 100 nmol/mmol» står diskret under
+(«… –» før den kan regnes). Benzoylekgonin får litt bredere felt enn kreatinin,
+så et femsifret tall får plass, og datofeltet er akkurat bredt nok til
+«dd.mm.åååå». Tidligere prøver legges til med den diskrete knappen «+ Legg til tidligere
+prøve» under feltene og fjernes med en rød ✕ i kanten av rammen; fokuset går til den nye
 prøvens første felt, og til knappen når en fjernes. Det er ingen avkrysning for
 den samlede vurderingen: den er med så snart det står en tidligere prøve. Et
 skjema tatt vare på over en oppdatering fra før #576, med tidligere prøver og
@@ -187,7 +191,7 @@ ikke har, og `NUMERISK_FEIL`. Nullstill og tastaturflyten er som før.
 
 **Sikkerhetsmarginen** er et kompakt valg «Ingen (50 %)», «90 %», «99 %»
 (standard 90 %) med navnet «Sikkerhetsmargin» og et lite informasjonstegn ved
-siden av. Forklaringen bak tegnet (`BeUrinMarginforklaring`) vises ved pekeren,
+siden av. Forklaringen bak tegnet (`Sikkerhetsmargin`, delt med THC-syre fra #586) vises ved pekeren,
 ved tastaturfokus og ved et trykk på berøringsskjerm, og leses av skjermlesere
 fra tegnet. Den sier kort at målingene er usikre, at en høyere margin legger
 en mer forsiktig endring til grunn, og at marginen gjelder måleusikkerheten,
@@ -365,6 +369,7 @@ han forenklingen og de nye konklusjonene i #576 («Nytt inntak» i stedet for
 | `src/domain/beUrinProfilforklaring.ts` | Forklaringen for form 2, i vanlig språk, lest av motorens resultat |
 | `src/katalog/beUrinModell.ts` | Hentingen (`les_be_urin_modell`, med formene) og meldingene når modellen mangler |
 | `src/components/BeUrinStep.tsx`, `BeUrinSkjema.tsx`, `BeUrinForklaring.tsx`, `BeUrinPlot.tsx`, `BeUrinDeler.tsx` | Modulen, delt mellom formene; resultatet for form 1 står i `BeUrinStep.tsx` |
+| `src/components/Provegruppe.tsx` | Rammen rundt hver prøve og den røde ✕-en som fjerner en tidligere prøve, delt med THC-syre |
 | `src/components/BeUrinProfilresultat.tsx`, `BeUrinProfilPlot.tsx`, `src/styles/beUrin.css` | Resultatet, profiltabellen, figuren og fargene for form 2, og skjemaets utseende |
 | `src/domain/figurakser.ts`, `src/components/Figurdeler.tsx` | Aksene, etikettene og klammen, delt med THC-syremodulen uten endring der |
 | `supabase/migrations/20261124095000_be_urin_modell.sql` | Tabellen, lesingen og oppføringstypen `be_urin` |

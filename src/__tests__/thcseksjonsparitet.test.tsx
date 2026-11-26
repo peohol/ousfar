@@ -15,7 +15,8 @@
  *   med de samme tallene og figurene helt ned til siste siffer.
  * - På skjermen gir fortolkningsmodulen, simulatoren i seksjonen og simulatoren
  *   i redigeringen den samme kommentaren, det samme varselet og de samme
- *   manglene som fasiten, for ett tilfelle av hvert utfall fasiten har.
+ *   manglene som fasiten (som feil ved feltene og feil på tvers, #586), for
+ *   ett tilfelle av hvert utfall fasiten har.
  */
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -32,7 +33,7 @@ import { Thcregler } from '../components/regler/Thcregler'
 import { ThcStep } from '../components/ThcStep'
 import { TipsLag } from '../components/Tips'
 import { renskTall } from '../domain/tallfelt'
-import { fortolkThc, lagThcModell, type ThcInndata, type ThcModell, type ThcResultat } from '../domain/thcMotor'
+import { fortolkThc, lagThcModell, tomThcInndata, type ThcInndata, type ThcModell, type ThcResultat } from '../domain/thcMotor'
 import { byggGraf, figurkurver } from '../domain/thcPlot'
 import { thcReglerFra, thcUtkastFra, tilThcModell } from '../faginnhold/thcregler'
 import { ShortcutVisibilityProvider } from '../hooks/useShortcutVisibility'
@@ -198,22 +199,44 @@ function fyllInn(rot: HTMLElement, inn: FasitInndata, marginer: readonly number[
 }
 
 /**
- * Det skjermen viser: kommentaren og varselet om lang tid mellom prøvene,
- * eller manglene. Meldingen om kort tid mellom prøvene er ikke del av fasiten.
+ * Det skjermen viser: kommentaren og forslaget om å fortolke uten forrige
+ * prøve ved lang tid mellom dem, eller — mens skjemaet ikke er ferdig — feltene
+ * som er markert feil, og meldingene om feil som gjelder flere felt (#586).
+ * Meldingen om kort tid mellom prøvene er ikke del av fasiten.
  */
 function vist(rot: HTMLElement): unknown {
-  const mangler = [...rot.querySelectorAll('.mangelliste li')].map((li) => li.textContent)
-  if (mangler.length > 0) return { mangler }
-  return {
-    kommentar: rot.querySelector('.kommentartekst')?.textContent ?? null,
-    varsel: rot.querySelector('.notis--handling:not(.thc-korttid)') !== null,
-  }
+  const kommentar = rot.querySelector('.kommentartekst')?.textContent ?? null
+  if (kommentar !== null) return { kommentar, varsel: rot.querySelector('.thc-tidsrom--langt') !== null }
+  const feltfeil = [...rot.querySelectorAll<HTMLInputElement>('input[aria-invalid="true"]')]
+    .map((felt) => {
+      const gruppe = felt.closest('fieldset')?.querySelector('legend')?.textContent
+      const navn = document.getElementById(felt.getAttribute('aria-labelledby') ?? '')?.textContent
+      return `${gruppe}: ${navn}`
+    })
+    .sort()
+  const feil = [...rot.querySelectorAll('.be-feil p')].map((p) => p.textContent)
+  return { feltfeil, feil, venter: rot.querySelector('.be-venter') !== null }
 }
 
-/** Det fasiten sier at skjermen skal vise for tilfellet. */
+const FELTFEIL = /^(.+) for (denne|forrige) prøve(?:n)? må være et tall/
+
+/**
+ * Det fasiten sier at skjermen skal vise for tilfellet. Manglene i fasiten
+ * vises nå slik: det som ikke er fylt inn, står ikke i noen liste; et tall
+ * motoren avviser, markeres ved feltet; resten er feil som gjelder flere felt.
+ */
 function forventet(indeks: number): unknown {
   const [, utfall] = FASIT.tilfeller[indeks]!
-  if (utfall[0] === 'm') return { mangler: utfall[1] }
+  if (utfall[0] === 'm') {
+    const mangler = utfall[1] as string[]
+    const feltfeil = mangler
+      .map((m) => FELTFEIL.exec(m))
+      .filter((m) => m !== null)
+      .map(([, navn, hvilken]) => `${hvilken === 'denne' ? 'Denne prøven' : 'Forrige prøve'}: ${navn}`)
+      .sort()
+    const feil = mangler.filter((m) => !m.startsWith('Fyll inn ') && !FELTFEIL.test(m))
+    return { feltfeil, feil, venter: feil.length === 0 }
+  }
   const [, nr, langt] = utfall as [string, number, number]
   return { kommentar: FASIT.kommentarer[nr], varsel: langt === 1 }
 }
@@ -232,6 +255,58 @@ function avvikPaaSkjermen(rot: () => HTMLElement): string[] {
   })
 }
 
+/**
+ * Når prøvene ikke sammenlignes fordi det er kort tid imellom, leser motoren
+ * ikke verdiene i forrige prøve, og da markeres de heller ikke som feil. Ved
+ * en sammenligning igjen (haken tatt bort, eller datoene endret) kommer
+ * feilen tilbake. Fra kontrollen av #587.
+ */
+function kortTidUtenFeilIForrige(rot: () => HTMLElement) {
+  const KORT_TID = 'Ikke sammenlign prøvene (kort tid)'
+  const inn: ThcInndata = {
+    ...tomThcInndata(THC_MODELL.regler),
+    forrigeUnderCutoff: true,
+    forrigeUcak: '1',
+    forrigeNkre: '0',
+    forrigeDato: '2026-02-06',
+    aktuellVerdi: '80',
+    aktuellDato: '2026-02-08',
+  }
+  settAvkryssing(rot(), 'Ingen tidligere prøve tilgjengelig', false)
+  settAvkryssing(rot(), 'Under cut-off', true)
+  settFelt(rot(), 'Forrige prøve', 'UCAK (THC-syre)', inn.forrigeUcak)
+  settFelt(rot(), 'Forrige prøve', 'NKRE (kreatinin)', inn.forrigeNkre)
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', inn.forrigeDato)
+  settFelt(rot(), 'Denne prøven', 'IRCAK', inn.aktuellVerdi)
+  settFelt(rot(), 'Denne prøven', 'Prøvedato', inn.aktuellDato)
+  settAvkryssing(rot(), 'Legg kronisk bruk til grunn', inn.kronisk)
+  const trinn = String(MARGINER.indexOf(inn.sikkerhetsmargin))
+  fireEvent.change(rot().querySelector<HTMLInputElement>('.trinnbryter__felt')!, { target: { value: trinn } })
+  const nkreFeil = { feltfeil: ['Forrige prøve: NKRE (kreatinin)'], feil: [], venter: true }
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  settAvkryssing(rot(), KORT_TID, true)
+  const r = fortolkThc({ ...inn, kortTid: true }, THC_MODELL)
+  expect(r.type).toBe('kommentar')
+  expect(vist(rot())).toEqual({ kommentar: r.type === 'kommentar' ? r.kommentar : null, varsel: false })
+  expect(rot().querySelectorAll('[aria-invalid="true"]')).toHaveLength(0)
+  expect(rot().querySelector('.be-feltfeil')).toBeNull()
+  // Verdiene står, så sammenligningen kan tas opp igjen.
+  expect(within(feltgruppe(rot(), 'Forrige prøve')).getByLabelText<HTMLInputElement>('NKRE (kreatinin)').value).toBe('0')
+
+  settAvkryssing(rot(), KORT_TID, false)
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  settAvkryssing(rot(), KORT_TID, true)
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', '2026-02-01')
+  expect(vist(rot())).toEqual(nkreFeil)
+
+  // Tilbake til et skjema uten haken, så neste tilfelle begynner rent.
+  settFelt(rot(), 'Forrige prøve', 'Prøvedato', inn.forrigeDato)
+  settAvkryssing(rot(), KORT_TID, false)
+  settAvkryssing(rot(), 'Under cut-off', false)
+}
+
 describe('THC-syre på skjermen før og etter flyttingen', () => {
   it('har et utvalg med hvert utfall og hver margin i fasiten', () => {
     const utfall = new Set(FASIT.tilfeller.map(([, u]) => JSON.stringify(u)))
@@ -241,6 +316,12 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     expect(new Set(UTVALG.map(({ indeks }) => FASIT.tilfeller[indeks]![1][0]))).toEqual(
       new Set(['m', 'uten_forrige', 'ikke_nodvendigvis', 'vanskelig', 'nytt_inntak']),
     )
+    // Manglene gir både feil ved feltene, feil på tvers og den stille linjen.
+    const mangler = UTVALG.map(({ indeks }) => forventet(indeks)).filter((v) => 'feltfeil' in (v as object))
+    const som = mangler as { feltfeil: string[]; feil: string[]; venter: boolean }[]
+    expect(som.some((v) => v.feltfeil.length > 0)).toBe(true)
+    expect(som.some((v) => v.feil.length > 0)).toBe(true)
+    expect(som.some((v) => v.venter && v.feltfeil.length === 0)).toBe(true)
   })
 
   it('viser fasiten i fortolkningsmodulen', () => {
@@ -253,6 +334,7 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     )
     const modul = () => screen.getByRole('region', { name: 'Fortolk THC-syre i urin' })
     expect(avvikPaaSkjermen(modul).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(modul)
   }, 60_000)
 
   it('viser den samme kommentaren i simulatoren i seksjonen', () => {
@@ -265,6 +347,7 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Prøv reglene' }))
     const simulator = () => document.querySelector<HTMLElement>('.simulator')!
     expect(avvikPaaSkjermen(simulator).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(simulator)
   }, 60_000)
 
   it('viser den samme kommentaren i simulatoren i redigeringen, når ingenting er endret', () => {
@@ -285,5 +368,6 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     fireEvent.click(within(skjema).getByRole('button', { name: 'Prøv reglene' }))
     const simulator = () => skjema.querySelector<HTMLElement>('.simulator')!
     expect(avvikPaaSkjermen(simulator).slice(0, 3)).toEqual([])
+    kortTidUtenFeilIForrige(simulator)
   }, 60_000)
 })

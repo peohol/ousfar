@@ -57,7 +57,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     await screen.findByRole('group', { name: 'Forrige prøve' })
     expect(screen.getByText(BE_URIN_VENTER)).toBeTruthy()
     await fyll('Forrige prøve', '50', '2', '2026-01-01')
-    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kvotient 25 enhet Q')
+    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kreatinin-normalisert konsentrasjon 25 enhet Q')
     expect(gruppe('Forrige prøve').getByLabelText('Benzoylekgonin (enhet B)')).toBeTruthy()
     await fyll('Denne prøven', '52,5', '2', '2026-01-04')
     const resultat = screen.getByRole('heading', { name: 'Resultat' }).closest('.thc-resultat') as HTMLElement
@@ -78,7 +78,7 @@ describe('fortolkningsmodulen for benzoylekgonin i urin', () => {
     expect(gruppe('Forrige prøve').getByLabelText('Benzoylekgonin')).toBeTruthy()
     expect(gruppe('Forrige prøve').getByLabelText('Kreatinin')).toBeTruthy()
     await fyll('Forrige prøve', '50', '2', '2026-01-01')
-    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kvotient 25')
+    expect(gruppe('Forrige prøve').getByRole('status').textContent).toBe('Kreatinin-normalisert konsentrasjon 25')
   })
 
   it('gjør ingenting på Enter eller mellomrom', async () => {

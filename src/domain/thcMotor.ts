@@ -333,6 +333,33 @@ export function kortTidMellomProvene(r: ThcRegelsett, inn: ThcInndata): boolean 
 }
 
 /**
+ * Sant når det er flere døgn mellom prøvene enn regelsettets varselgrense.
+ * Fortolkningen skjer som normalt; skjemaet foreslår bare å fortolke uten
+ * forrige prøve.
+ */
+export function langtMellomProvene(r: ThcRegelsett, inn: ThcInndata): boolean {
+  const dager = dagerMellomProvene(inn)
+  return dager !== null && dager > r.varsel_dager_mellom
+}
+
+/**
+ * Skjemaet slik det er tatt vare på over en oppdatering av appen (#586). Fra
+ * før #586 kunne det ha tidligere prøver med den samlede vurderingen slått av
+ * (`samletVurdering: false`). De var ikke med i fortolkningen, og tas derfor
+ * ikke med nå heller, der hver tidligere prøve i skjemaet er med; og en
+ * samlet vurdering uten prøver slås av. Skjemaet holder siden
+ * `samletVurdering` lik «det finnes tidligere prøver». `undefined` når det
+ * lagrede ikke er et skjema.
+ */
+export function lesBevartThcInndata(lagret: unknown): ThcInndata | undefined {
+  if (!lagret || typeof lagret !== 'object' || Array.isArray(lagret)) return undefined
+  const inn = lagret as ThcInndata
+  if (typeof inn.aktuellVerdi !== 'string' || typeof inn.sikkerhetsmargin !== 'number') return undefined
+  const tidligere = Array.isArray(inn.tidligere) && inn.samletVurdering === true ? inn.tidligere : []
+  return { ...inn, tidligere, samletVurdering: tidligere.length > 0 }
+}
+
+/**
  * Grunnlaget visualiseringen tegnes fra, når fortolkningen bruker forrige
  * prøve.
  */
@@ -366,7 +393,18 @@ export interface ThcSamletVurdering {
 }
 
 export type ThcResultat =
-  | { type: 'mangler'; mangler: string[] }
+  | {
+      type: 'mangler'
+      /** Alt som mangler eller er galt, slik fasiten har det. */
+      mangler: string[]
+      /**
+       * Det av {@link mangler} som er galt utover det enkelte feltet, som
+       * datoer i feil rekkefølge. Et tomt eller ugyldig felt er ikke med: det
+       * første er bare et skjema som ikke er ferdig, og det andre sies ved
+       * feltet ({@link thcFeltfeil}).
+       */
+      feil: string[]
+    }
   | {
       type: 'kommentar'
       kommentar: string
@@ -398,6 +436,23 @@ export type ThcResultat =
       langtMellomProvene: boolean
     }
 
+/** Hva et tallfelt må være: IRCAK i denne prøven og NKRE over 0, de andre ikke negative. */
+export type ThcFeltkrav = 'over_null' | 'ikke_negativ'
+
+/**
+ * Det som er galt med verdien i ett tallfelt, kort, til å stå ved feltet;
+ * `null` når feltet er tomt eller gyldig. Et tomt felt er ikke en feil:
+ * skjemaet er bare ikke ferdig utfylt. Det er den samme regelen motoren
+ * avviser feltet etter.
+ */
+export function thcFeltfeil(verdi: string, krav: ThcFeltkrav): string | null {
+  if (verdi.trim() === '') return null
+  const tall = lesTall(verdi)
+  if (tall === null) return 'Må være et tall.'
+  if (krav === 'over_null' ? !(tall > 0) : tall < 0) return krav === 'over_null' ? 'Må være over 0.' : 'Kan ikke være negativ.'
+  return null
+}
+
 /**
  * Leser IRCAK i en prøve og legger det som mangler til `mangler`, med
  * prøvens navn: «forrige prøve», «tidligere prøve 1». IRCAK er `null` når det
@@ -406,16 +461,14 @@ export type ThcResultat =
 function lesProve(prove: ThcProve, navn: string, mangler: string[]): number | null {
   let ircak: number | null
   if (prove.underCutoff) {
-    const thcSyre = lesTall(prove.ucak)
-    const kreatinin = lesTall(prove.nkre)
     if (prove.ucak.trim() === '') {
       mangler.push(`Fyll inn UCAK (THC-syre) for ${navn}.`)
-    } else if (thcSyre === null || thcSyre < 0) {
+    } else if (thcFeltfeil(prove.ucak, 'ikke_negativ') !== null) {
       mangler.push(`UCAK (THC-syre) for ${navn} må være et tall som ikke er negativt.`)
     }
     if (prove.nkre.trim() === '') {
       mangler.push(`Fyll inn NKRE (kreatinin) for ${navn}.`)
-    } else if (kreatinin === null || !(kreatinin > 0)) {
+    } else if (thcFeltfeil(prove.nkre, 'over_null') !== null) {
       mangler.push(`NKRE (kreatinin) for ${navn} må være et tall større enn 0.`)
     }
     ircak = beregnIrcak(prove.ucak, prove.nkre)
@@ -423,7 +476,7 @@ function lesProve(prove: ThcProve, navn: string, mangler: string[]): number | nu
     ircak = lesTall(prove.verdi)
     if (prove.verdi.trim() === '') {
       mangler.push(`Fyll inn IRCAK for ${navn}.`)
-    } else if (ircak === null || ircak < 0) {
+    } else if (thcFeltfeil(prove.verdi, 'ikke_negativ') !== null) {
       mangler.push(`IRCAK for ${navn} må være et tall som ikke er negativt.`)
     }
   }
@@ -443,10 +496,16 @@ function tidligereNavn(antall: number, i: number): string {
 export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
   const { regler: r } = modell
   const mangler: string[] = []
+  // Det som er galt utover det enkelte feltet; står også i `mangler`.
+  const feil: string[] = []
+  const tverrfeil = (melding: string) => {
+    mangler.push(melding)
+    feil.push(melding)
+  }
 
   const aktuell = lesTall(inn.aktuellVerdi)
   if (inn.aktuellVerdi.trim() === '') mangler.push('Fyll inn IRCAK for denne prøven.')
-  else if (aktuell === null || !(aktuell > 0)) mangler.push('IRCAK for denne prøven må være et tall større enn 0.')
+  else if (thcFeltfeil(inn.aktuellVerdi, 'over_null') !== null) mangler.push('IRCAK for denne prøven må være et tall større enn 0.')
 
   // Avkryssingen står inne i «Forrige prøve», så den betyr ingenting når det
   // ikke finnes en forrige prøve å fortolke.
@@ -465,18 +524,18 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
     if (!kortTid) forrige = lesProve(forrigeProve(inn), 'forrige prøve', mangler)
 
     if (inn.forrigeDato !== '' && inn.aktuellDato !== '' && dagerMellom(inn.forrigeDato, inn.aktuellDato) < 0) {
-      mangler.push('Denne prøven kan ikke være tatt før forrige prøve.')
+      tverrfeil('Denne prøven kan ikke være tatt før forrige prøve.')
     }
 
     if (!kortTid && inn.samletVurdering && tidligere.length === 0) {
-      mangler.push('Legg til en tidligere prøve, eller slå av den samlede vurderingen.')
+      tverrfeil('Legg til en tidligere prøve, eller slå av den samlede vurderingen.')
     }
     tidligere.forEach((prove, i) => {
       const navn = tidligereNavn(tidligere.length, i)
       tidligereIrcak.push(lesProve(prove, navn, mangler))
       if (prove.dato !== '' && inn.forrigeDato !== '' && dagerMellom(prove.dato, inn.forrigeDato) < 0) {
         const stor = navn.charAt(0).toUpperCase() + navn.slice(1)
-        mangler.push(`${stor} kan ikke være tatt etter forrige prøve.`)
+        tverrfeil(`${stor} kan ikke være tatt etter forrige prøve.`)
       }
     })
   }
@@ -484,10 +543,10 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
   // Marginen kommer fra skjemaet, som kan leve lenger enn regelsettet det ble
   // fylt ut mot. En margin regelsettet ikke har, gir aldri en konklusjon.
   if (zFor(r, inn.sikkerhetsmargin) === undefined) {
-    mangler.push('Sikkerhetsmarginen finnes ikke i regelsettet. Velg en av marginene som tilbys.')
+    tverrfeil('Sikkerhetsmarginen finnes ikke i regelsettet. Velg en av marginene som tilbys.')
   }
 
-  if (mangler.length > 0) return { type: 'mangler', mangler }
+  if (mangler.length > 0) return { type: 'mangler', mangler, feil }
 
   const aktuellIrcak = aktuell as number
   const niva = konsentrasjonsniva(r, aktuellIrcak)
@@ -530,7 +589,7 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
   // Prøvene vurderes ikke mot hverandre; varselet om lang tid gjelder ikke.
   if (kortTid) return resultat('uten_forrige', forrigeDato, null, false, { kortTid: true })
 
-  const langt = dager > r.varsel_dager_mellom
+  const langt = langtMellomProvene(r, inn)
   const forrigeIrcak = forrige as number
 
   // Ingen THC-syre i forrige prøve: da finnes det ingen utskillelse å regne

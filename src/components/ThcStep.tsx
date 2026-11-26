@@ -7,14 +7,16 @@ import { StepBar } from './StepBar'
 import { ManualCopy } from './ManualCopy'
 import { Shortcut } from './Shortcut'
 import { ThcSkjema } from './ThcSkjema'
-import { ThcKommentar, ThcVisualisering, type ThcVisualiseringsvalg } from './ThcUtfall'
+import { ThcKommentar, ThcSeksjoner, type ThcVisualiseringsvalg } from './ThcUtfall'
 import { Ikon } from './ikon/Ikon'
 import type { Analyte } from '../types'
 import { Regelstatus } from './Regelstatus'
 import {
   fortolkThc,
+  lesBevartThcInndata,
   mildereVedHoyereMargin,
   tomThcInndata,
+  type ThcInndata,
   type ThcModell,
   type ThcRegler,
 } from '../domain/thcMotor'
@@ -83,6 +85,9 @@ export function Korthode({ analyte, children }: { analyte: Analyte; children?: R
   )
 }
 
+/** Skjemaet over en oppdatering, også fra før #586. */
+const BEVARINGSFORM = { lagre: (inndata: ThcInndata) => inndata, les: lesBevartThcInndata }
+
 /**
  * Selve fortolkningen, med reglene klare. I motsetning til
  * kommentarkopieringen for psykofarmaka brukes den gjerne mange prøver på
@@ -106,8 +111,9 @@ function ThcFortolkning({
   visualisering: ThcStepProps['visualisering']
 }) {
   const { regler } = modell
-  // Det som er fylt inn, overlever en oppdatering av appen.
-  const [inndata, setInndata] = useBevart('fortolkning/thc', () => tomThcInndata(regler))
+  // Det som er fylt inn, overlever en oppdatering av appen, også fra før #586
+  // ({@link lesBevartThcInndata}).
+  const [inndata, setInndata] = useBevart<ThcInndata>('fortolkning/thc', () => tomThcInndata(regler), BEVARINGSFORM)
   const [failedCopy, setFailedCopy] = useState<string | null>(null)
   /** Sant rett etter en kopiering: tilbudet om å nullstille med Enter står. */
   const [nullstillTips, setNullstillTips] = useState(false)
@@ -246,27 +252,26 @@ function ThcFortolkning({
         <ThcSkjema inndata={inndata} onEndre={sett} regler={regler} forsteFelt={forsteFelt} />
       </Card>
 
-      <Card ref={resultatkort} align="start" className="thc-resultat">
+      {/* Kommentaren rett etter skjemaet, med kopieringen rett under, og
+          profilene, figuren og forklaringen lukket under (#586). */}
+      <Card ref={resultatkort} align="start" className="thc-resultat be-resultat">
         <ThcKommentar
           resultat={resultat}
-          regler={regler}
-          onIngenTidligere={() => sett('ingenTidligere', true)}
-          marginsjekk={{
-            mildere,
-            onVelg: (margin) => sett('sikkerhetsmargin', margin),
-          }}
+          mildere={mildere}
+          medTidligere={(inndata.tidligere ?? []).length > 0}
           handling={
-            <div className="handlingsrad handlingsrad--start">
-              <Button ref={kopierKnapp} type="submit" icon={<Ikon navn="copy" />} shortcut="↵">
-                Kopier kommentar
-              </Button>
-            </div>
+            <>
+              <div className="handlingsrad handlingsrad--start">
+                <Button ref={kopierKnapp} type="submit" icon={<Ikon navn="copy" />} shortcut="↵">
+                  Kopier kommentar
+                </Button>
+              </div>
+              {failedCopy && <ManualCopy comment={failedCopy} />}
+            </>
           }
         />
-        {failedCopy && <ManualCopy comment={failedCopy} />}
+        <ThcSeksjoner resultat={resultat} regler={regler} valg={visualisering} />
       </Card>
-
-      <ThcVisualisering resultat={resultat} regler={regler} valg={visualisering} />
     </form>
   )
 }

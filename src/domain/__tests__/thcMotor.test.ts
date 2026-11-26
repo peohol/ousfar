@@ -19,6 +19,9 @@ import {
   kortTidMellomProvene,
   kurverOver,
   lagThcModell,
+  langtMellomProvene,
+  lesBevartThcInndata,
+  thcFeltfeil,
   tomThcInndata,
   tomThcProve,
   velgKommentar,
@@ -385,10 +388,13 @@ describe('samlet vurdering mot tidligere prøver', () => {
     expect(fortolk({ ...grunn, samletVurdering: true, tidligere: [] })).toEqual({
       type: 'mangler',
       mangler: ['Legg til en tidligere prøve, eller slå av den samlede vurderingen.'],
+      feil: ['Legg til en tidligere prøve, eller slå av den samlede vurderingen.'],
     })
     expect(fortolk(samlet(prove('', '')))).toEqual({
       type: 'mangler',
       mangler: ['Fyll inn IRCAK for den tidligere prøven.', 'Fyll inn prøvedato for den tidligere prøven.'],
+      // Tomme felt er bare et skjema som ikke er ferdig.
+      feil: [],
     })
     expect(fortolk(samlet(prove('1', '2026-06-01'), prove('-1', '2026-07-10')))).toEqual({
       type: 'mangler',
@@ -396,12 +402,74 @@ describe('samlet vurdering mot tidligere prøver', () => {
         'IRCAK for tidligere prøve 2 må være et tall som ikke er negativt.',
         'Tidligere prøve 2 kan ikke være tatt etter forrige prøve.',
       ],
+      // Det ugyldige feltet sies ved feltet, datoene som ikke henger sammen, for seg.
+      feil: ['Tidligere prøve 2 kan ikke være tatt etter forrige prøve.'],
     })
   })
 
   it('ser bort fra de tidligere prøvene når samlet vurdering er slått av', () => {
     const r = fortolk({ ...samlet(prove('', '')), samletVurdering: false })
     expect(kommentar(r).kommentar).toBe(kommentar(fortolk(grunn)).kommentar)
+  })
+})
+
+describe('skjemaet fra før #586 og feilene ved feltene', () => {
+  const fylt: ThcInndata = {
+    ...tomThcInndata(REGELSETT),
+    aktuellVerdi: '2,5',
+    aktuellDato: '2026-07-27',
+    forrigeVerdi: '6,5',
+    forrigeDato: '2026-07-04',
+  }
+  const tidligere = [{ ...tomThcProve(), verdi: '0,5', dato: '2026-06-01' }]
+
+  it('tar ikke med tidligere prøver brukeren hadde slått av, og fortolker som før', () => {
+    const av = { ...fylt, samletVurdering: false, tidligere }
+    const lest = lesBevartThcInndata(av)!
+    expect(lest).toEqual({ ...fylt, samletVurdering: false, tidligere: [] })
+    // Fortolkningen er den samme som med skjemaet fra før: de tidligere prøvene var ikke med.
+    expect(fortolkThc(lest, MODELL)).toEqual(fortolkThc(av, MODELL))
+    // Slått på, med prøver: de står, og den samlede vurderingen gjøres.
+    const paa = { ...fylt, samletVurdering: true, tidligere }
+    expect(lesBevartThcInndata(paa)).toEqual(paa)
+    expect(fortolkThc(lesBevartThcInndata(paa)!, MODELL)).toEqual(fortolkThc(paa, MODELL))
+    // Slått på uten prøver: slås av, i stedet for en mangel skjemaet ikke lenger kan rette.
+    expect(lesBevartThcInndata({ ...fylt, samletVurdering: true, tidligere: [] })).toEqual({ ...fylt, samletVurdering: false, tidligere: [] })
+    // Et skjema uten feltene for den samlede vurderingen.
+    const { samletVurdering: _s, tidligere: _t, ...gammelt } = fylt
+    expect(lesBevartThcInndata(gammelt)).toEqual({ ...fylt, samletVurdering: false, tidligere: [] })
+    for (const ikke of [null, 'tekst', [], {}, { aktuellVerdi: 1 }]) expect(lesBevartThcInndata(ikke)).toBeUndefined()
+  })
+
+  it('sier feilen ved feltet etter samme regel som motoren', () => {
+    expect(thcFeltfeil('', 'over_null')).toBeNull()
+    expect(thcFeltfeil('0', 'over_null')).toBe('Må være over 0.')
+    expect(thcFeltfeil('0', 'ikke_negativ')).toBeNull()
+    expect(thcFeltfeil('-1', 'ikke_negativ')).toBe('Kan ikke være negativ.')
+    expect(thcFeltfeil('1,2,3', 'ikke_negativ')).toBe('Må være et tall.')
+    expect(thcFeltfeil('0,001', 'over_null')).toBeNull()
+    // Hvert felt motoren avviser, har en feil ved feltet, og bare det.
+    for (const [verdi, krav, melding] of [
+      ['0', 'over_null', 'IRCAK for denne prøven må være et tall større enn 0.'],
+      ['5,', 'over_null', 'IRCAK for denne prøven må være et tall større enn 0.'],
+      ['5', 'over_null', null],
+    ] as const) {
+      const r = fortolkThc({ ...fylt, aktuellVerdi: verdi }, MODELL)
+      expect(thcFeltfeil(verdi, krav) !== null).toBe(melding !== null)
+      if (melding) expect(r).toEqual({ type: 'mangler', mangler: [melding], feil: [] })
+    }
+  })
+
+  it('foreslår å fortolke uten forrige prøve etter varselgrensen, som motoren varsler', () => {
+    const dato = (dager: number) => new Date(Date.parse('2026-07-04') + dager * 86_400_000).toISOString().slice(0, 10)
+    for (const dager of [0, 29, 30, 31, 90]) {
+      const inn = { ...fylt, aktuellDato: dato(dager) }
+      const r = fortolkThc(inn, MODELL)
+      expect(langtMellomProvene(REGELSETT, inn)).toBe(dager > REGELSETT.varsel_dager_mellom)
+      if (r.type === 'kommentar') expect(r.langtMellomProvene).toBe(langtMellomProvene(REGELSETT, inn))
+    }
+    expect(langtMellomProvene(REGELSETT, { ...fylt, aktuellDato: dato(90), ingenTidligere: true })).toBe(false)
+    expect(langtMellomProvene(REGELSETT, { ...fylt, aktuellDato: '' })).toBe(false)
   })
 })
 
@@ -554,6 +622,7 @@ describe('et redigert regelsett', () => {
       expect(fortolk(inn, m)).toEqual({
         type: 'mangler',
         mangler: ['Sikkerhetsmarginen finnes ikke i regelsettet. Velg en av marginene som tilbys.'],
+        feil: ['Sikkerhetsmarginen finnes ikke i regelsettet. Velg en av marginene som tilbys.'],
       })
     }
     expect(() => korreksjonsfaktor(REGELSETT, 0.95)).toThrow(/0.95 finnes ikke/)

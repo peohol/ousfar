@@ -2,14 +2,15 @@ import { useMemo, useState } from 'react'
 import { fortolkThc, mildereVedHoyereMargin, tomThcInndata, type ThcModell } from '../../domain/thcMotor'
 import { THC_TEKSTBOLKER } from '../../domain/thcTekster'
 import { Button } from '../Button'
-import { ThcKommentar, ThcKurvebilde } from '../ThcUtfall'
+import { ThcKommentar, ThcSeksjoner } from '../ThcUtfall'
 import { ThcSkjema } from '../ThcSkjema'
 import { Detaljkort } from '../seksjoner/Seksjon'
 
 /**
- * Fortolkningsmodulen i det små: det samme skjemaet og den samme kommentaren,
- * med reglene som vises over, og hvilke tekster kommentaren ble satt sammen
- * av. Det er ingenting å kopiere.
+ * Fortolkningsmodulen i det små: det samme skjemaet, den samme kommentaren
+ * og de samme sammenleggbare seksjonene som modulen (#586), med reglene som
+ * vises over, og hvilke tekster kommentaren ble satt sammen av. Det er
+ * ingenting å kopiere.
  */
 export function Thcsimulator({ modell }: { modell: ThcModell }) {
   const { regler } = modell
@@ -43,16 +44,8 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
             Satt sammen av: {resultat.bolker.map((nokkel) => THC_TEKSTBOLKER[nokkel].tittel).join(', ')}.
           </p>
         )}
-        <ThcKommentar
-          resultat={resultat}
-          regler={regler}
-          onIngenTidligere={() => sett('ingenTidligere', true)}
-          marginsjekk={{
-            mildere,
-            onVelg: (margin) => sett('sikkerhetsmargin', margin),
-          }}
-        />
-        <ThcKurvebilde resultat={resultat} regler={regler} />
+        <ThcKommentar resultat={resultat} mildere={mildere} medTidligere={(inndata.tidligere ?? []).length > 0} />
+        <ThcSeksjoner resultat={resultat} regler={regler} />
       </div>
     </Detaljkort>
   )
