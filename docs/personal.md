@@ -579,7 +579,8 @@ ikke noe eget felt for det.
 - Kvalifikasjoner og vaktandel redigeres av vaktplanansvarlig og lokal
   administrator (vedtatt 26.11.2026, §8.4); kolleger ser bare det
   kalenderen viser. Stillingen endres der den alltid har vært endret, i
-  profilen og i «Brukere» (§8.12, B14).
+  profilen og i «Brukere», men i et fagmiljø med kalenderen på bare av den
+  som har lokal administrativ myndighet (vedtatt, §8.12, B14).
 - Radsikkerhet på serversiden, med negative tester på tvers av fagmiljøer og
   roller (§3.3).
 
@@ -597,14 +598,15 @@ Peders bestilling 26.11.2026, ChatGPTs planforslag i
 [#561](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)
 og kartleggingen av OUSFAR og prototypen. Ingen kode eller
 produksjonsmigrasjon bygges før planen er slått sammen og designretningen er
-valgt (§8.12, B1). Om domenekoden uten database og visning (P2a) kan
-starte før designvalget, avgjør Peder i B11.
+valgt (§8.12, B1). Unntaket er domenekoden uten database og visning
+(P2a), som kan bygges parallelt med designarbeidet når planen er godkjent
+(vedtatt, B11).
 
 **Status for innholdet.** Det som står som **vedtatt**, er avgjort av Peder
-(§§3, 6, 7.2, eller bestillingen 26.11.2026, merket «bestilt»). Det som står
-som **forslag**, er Personals anbefaling og venter på Peders avgjørelse i
-§8.12. Uten avgjørelse gjelder anbefalingen som arbeidsgrunnlag, men den
-regnes ikke som vedtatt før den er ført inn i §6.
+(§§3, 6, 7.2, bestillingen 26.11.2026, merket «bestilt», eller
+beslutningene i §8.12). Det som står som **forslag**, er Personals
+tekniske utforming eller anbefaling. Den gjelder som arbeidsgrunnlag, men
+regnes ikke som vedtatt før den er ført inn i §6 eller §8.12.
 
 ### 8.1 Mål og avgrensning
 
@@ -719,8 +721,8 @@ uten unntak finnes (`intern.administrerte_fagmiljoer`).
 | --- | --- | --- | --- |
 | Medarbeider (kollega) | Aktivt medlem | Se kalenderen med den **publiserte** planen, Dagen i dag og egne vakter; **registrere og endre sine egne statuser** fortløpende (ikke vakter og ikke vaktfritak); ser bare «Borte» for administrativt fritak; faktiske vakttall | Vedtatt (§6.2; egne statuser og publisert plan 26.11.2026) |
 | Vaktplanansvarlig | Utpekt av lokal administrator; **flere kan ha rollen samtidig** | I tillegg: tildele vakter, redigere hele kalenderen, kvalifikasjoner og vaktandel, lage vaktplankladd med automatisk fordeling, låse og publisere | Vedtatt (§6.2 og 26.11.2026) |
-| Lokal administrator | Lokal administratortildeling i fagmiljøet | I tillegg: administrativt vaktfritak, utpeke og fjerne vaktplanansvarlige, regelsett, bemanningsbehov og vekter | Vedtatt for fritak (§6.2) og utpekingen (26.11.2026); regelsettet forslag (B3) |
-| Systemarkitekt med lokal myndighet | Systemarkitekt som også er aktivt medlem **og** lokal administrator i fagmiljøet | Som lokal administrator | Forslag til definisjon (B2) |
+| Lokal administrator | Lokal administratortildeling i fagmiljøet | I tillegg: administrativt vaktfritak, utpeke og fjerne vaktplanansvarlige, regelsett, bemanningsbehov og vekter | Vedtatt (§6.2 og 26.11.2026; B3 og B3b) |
+| Systemarkitekt med lokal myndighet | Systemarkitekt som også er aktivt medlem **og** lokal administrator i fagmiljøet | Som lokal administrator | Vedtatt 26.11.2026 (B2); den globale rollen gir ikke i seg selv tilgang |
 | Systemarkitekt uten eget medlemskap | | Ingenting | Vedtatt (§3.3, §6.2) |
 
 **Fritaket i forslag og kladd.** Fordelingen bruker fritaket (§6.2), så selve
@@ -744,7 +746,7 @@ Krav:
 | K-TIL-3 | Negative tester for hver rolle og hvert fagmiljø: annet fagmiljø, kollega uten planleggerrolle, vaktplanansvarlig som prøver å gi fritak (også seg selv), systemarkitekt uten medlemskap, avsluttet medlemskap, og bytte av fagmiljø |
 | K-TIL-4 | Lesemodellen for fritak (§6.2) gjelder kalenderen, endringshistorikken, loggen og alle API-svar: samme kalender med og uten fritak gir likt svar for roller uten myndighet |
 | K-TIL-5 | Vaktplanansvarlig er en egen rolle i Personal, uavhengig av redaktørrollene; flere kan ha den samtidig; utpekingen og fjerningen logges |
-| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et administrativt vaktfritak, og aldri andres. En status som selv gir vaktfritak etter §6.2, som Ferie, er tillatt. En status på en dag med egen publisert vakt avvises, og vakten står (B15). En kollega kan aldri fjerne eller endre en egen publisert vakt, heller ikke med slett, flytting, flervalg eller angre, og kan ikke overta en vakt; overtakelse er planleggernes (A-OVT). Prøvd negativt på serveren |
+| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et administrativt vaktfritak, og aldri andres. En status som selv gir vaktfritak etter §6.2, som Ferie, er tillatt. En status på en dag med egen publisert vakt avvises, og vakten står (B15). Egne endringer gjelder fra i dag og fremover; tidligere dager rettes av vaktplanansvarlig (B15b). En kollega kan aldri fjerne eller endre en egen publisert vakt, heller ikke med slett, flytting, flervalg eller angre, og kan ikke overta en vakt; overtakelse er planleggernes (A-OVT). Prøvd negativt på serveren |
 | K-TIL-7 | I forslag og kladd er alt utenom selve planresultatet likt med og uten fritak for roller uten myndighet: statistikk, forklaringer, poeng og rangering, avtrykk, årsak til foreldelse og konfliktmeldinger. Negative API-tester også for forslag, konfliktmeldinger og historikk |
 
 ### 8.5 Medarbeidere og medlemskap
@@ -765,18 +767,21 @@ medlemmene og stillingene i appen).
   gyldighetsdato; endringer gjelder fra i dag (§7.4).
 - **Uten stilling** i profilen vises medarbeideren i kalenderen som andre, og
   regnes med stillingsvekt 1 i fordelingen (som en kategori uten vekt i
-  prototypen); planleggeren ser at stillingen mangler (forslag, B14).
+  prototypen); planleggeren ser at stillingen mangler (vedtatt, B14).
 - **Avsluttet eller sperret medlemskap** stopper tilgang, varsler og
   fremtidig planlegging fra den dagen. Historikken bevares innenfor
-  oppbevaringstiden (§3.4). Hva som skjer når en konto slettes, avgjøres i
-  §3.4 (forslag: navnet erstattes med «Tidligere medarbeider», så andres
-  vaktbelastning ikke endres; B9).
+  oppbevaringstiden (§3.4). Hva som skjer med historikken når en konto
+  slettes, avgjøres med ansvarlig virksomhet før ordinær bruk (§3.4, B9).
+  Ingen ordning for anonymisering eller sletting er valgt ennå.
 - **Stillingen er felles** for hele profilen, mens vekten per stilling er
   fagmiljøets oppsett. En endring gjelder fra dagen den lagres, uansett
   hvilket fagmiljø den gjøres fra, og skriver aldri om tidligere dager. En
   stilling som slettes eller erstattes i katalogen, beholdes i historikken,
-  så tidligere vekter står (#602). Hvem som kan endre stillingen (B14), må
-  gjelde uansett hvilket fagmiljø endringen gjøres fra.
+  så tidligere vekter står (#602). En endring som påvirker vaktbelastningen,
+  krever lokal administrativ myndighet (§8.4, B2) i hvert fagmiljø med
+  kalenderen på der personen er aktivt medlem, uansett hvilket fagmiljø
+  endringen gjøres fra; personen selv kan ikke endre den der (vedtatt,
+  B14). Ingen utvidelse av den globale systemarkitekttilgangen.
 - Planleggingsinnstillingene er skilt fra HR-data og fra kontorollene.
 
 | ID | Krav |
@@ -797,7 +802,7 @@ bestillingen):
 | Oppsett per fagmiljø | Pilot (OUS Klinisk farmakologi) |
 | --- | --- |
 | Stillingskategorier | Appens stillinger (1:1, §7.4); stillingsvekt settes for LIS og overlege |
-| Statuskatalog: navn, ikon, kategori (på kontoret / ikke på kontoret), vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (forslag, B16) |
+| Statuskatalog: navn, ikon, kategori (på kontoret / ikke på kontoret), vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (vedtatt, B16) |
 | Bemanningsoppgaver: hvilke statuser som bemannes, antall per ukedag og helligdag, kvalifikasjonskrav, stillingsvekt per stilling, belastning | Vakt 1 og vakt 2, én hver per arbeidsdag, motsatte stillingsvekter (startverdi 2 : 1) |
 | Fordelingsvekter, tidshorisont og grensen for utjevning | §6.1 med prototypens startverdier |
 | Tidssone og helligdagskalender | Europe/Oslo, norske helligdager |
@@ -994,9 +999,11 @@ oppbygning:
 - Bare **egne, publiserte** tildelinger, aldri forslag eller kladd. En endring eller et bytte avlyser det gamle varselet og
   planlegger et nytt. Tilgangen og tildelingen kontrolleres på nytt rett før
   utsending. Fagmiljøets tidssone gjelder, også ved sommertid.
-- **Varsel ved endring i egen publisert plan** er et eget valg (B10).
+- **Varsel ved endring i egen publisert plan** er et eget valg, av som
+  standard (vedtatt, B10).
 - **Låseskjermen** viser aldri kollegers navn, fravær, merknader eller
-  fritak. Hva den viser om ens egen oppgave, avgjøres i B7.
+  fritak. Den kan vise egen oppgave og dag («Vakt 1 i morgen»), forutsatt at
+  avklaringen i §3.4 tillater det (vedtatt, B7).
 - Utlogging, sperring og avsluttet medlemskap stopper varslene.
 - Infrastrukturen er Devs felles varsler på enheten
   ([#600](https://github.com/peohol/ousfar/issues/600)); Personal lager
@@ -1035,7 +1042,7 @@ går parallelt.
 | --- | --- | --- | --- |
 | **P0** | Denne planen, akseptmatrisen, Dev-Issue-ene og produktbeslutningene | | Slått sammen |
 | **P1** | Tre klikkbare designforslag i et beskyttet forhåndsvisningsmiljø med syntetiske data; Peder og ChatGPT vurderer og Peder velger (B1). Ingen kode i OUSFAR | | B1 avgjort |
-| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0, B1 (eller B11) | K-KON-1, K-KON-2, fasitene i §6 grønne |
+| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0 (B11) | K-KON-1, K-KON-2, fasitene i §6 grønne |
 | **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-SKJ-9–10, K-TIL-1–5, K-MED-4, K-DAT-1–3, K-KON-3–4 |
 | **P2c** | Medarbeidere i kalenderen (automatisk tilknytning 1:1 med medlemmene og stillingene, kvalifikasjoner, vaktandel, vaktplanansvarlige) og `Vis som`, med menyvalget | P2b, B2 | K-MED-1–5, K-SKJ-7–8 |
 | **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-gruppene STA, KAL, DAG, BOB, MRK, OVT, FLY, FLT, ANG, MED, VAN, FRI og TIL; K-UI-1–3, K-KON-5, K-DAT-4, K-DAT-6, K-TIL-6 |
@@ -1054,33 +1061,36 @@ publiseres uten at noen andre enn systemarkitektene merker det.
 Vedtatt fra før og ikke til ny vurdering: §3, §6.1, §6.2, §7.2 og
 bestillingen 26.11.2026 (§8.1 og §8.3).
 
-**Avgjort av Peder 26.11.2026** (i prosjektets samtale og på beslutningskort):
+**Avgjort av Peder 26.11.2026.** B3–B6, B13 og B15 i prosjektets samtale og
+på beslutningskort; de øvrige bekreftet av Peder etter ChatGPT-kontrollen og
+formidlet i PR #603. B7, B9 og aktiveringen for ordinære brukere krever
+fortsatt avklaringen med ansvarlig virksomhet (§3.4, §8.13).
 
 | Nr. | Spørsmål | Avgjørelse |
 | --- | --- | --- |
+| B2 | Hva er «systemarkitekt med lokal myndighet»? | En systemarkitekt som også er aktivt medlem og lokal administrator i fagmiljøet. Den globale rollen gir ikke i seg selv tilgang |
 | B3 | Hvem utpeker vaktplanansvarlige? | Lokal administrator. Flere kan være vaktplanansvarlige samtidig |
+| B3b | Hvem endrer regelsett, bemanningsbehov og vekter? | Lokal administrator (og B2) |
 | B4 | Hvem endrer kvalifikasjoner og vaktandel? | Vaktplanansvarlig og lokal administrator |
 | B5 | Hva ser de andre av plan som ikke er publisert? | Bare det som er publisert, aldri kladden. Bare planleggerne lager vakter automatisk, og systemet sikrer at kladden blir riktig når medarbeidere endrer statuser før publisering (§8.7) |
 | B6 | Kan medarbeiderne selv registrere statuser? | Ja, fortløpende, som i dagens regneark. Vaktplanansvarlig tildeler vakter, men legger ikke inn andres ferieønsker og lignende |
-| B13 | Stillingskategori og medarbeidere | 1:1 med stillingene i appen og med medlemmene i fagmiljøet, hentet automatisk; kalenderen er en integrert del av appen, ikke en tilleggsfunksjon (§7.4) |
-| B15 | Kan en medarbeider sette en status på en dag med egen publisert vakt? | Nei. Det avvises, vakten står, og medarbeideren får beskjed om å ta det med vaktplanansvarlig. Forespørsel om vaktbytte kan komme senere |
-
-**Venter på Peder:**
-
-| Nr. | Spørsmål | Anbefaling |
-| --- | --- | --- |
-| B1 | Hvilken designretning? | Velges etter prøving av de tre forslagene (P1) |
-| B2 | Hva er «systemarkitekt med lokal myndighet»? | En systemarkitekt som også er aktivt medlem og lokal administrator i fagmiljøet. Systemarkitektrollen alene teller ikke |
-| B3b | Hvem endrer regelsett, bemanningsbehov og vekter? | Lokal administrator (og B2) |
-| B7 | Hva kan stå på låseskjermen om egen oppgave? | Oppgaven og dagen («Vakt 1 i morgen»), aldri andre opplysninger. Strengere alternativ: «Du har en planlagt oppgave i morgen» |
-| B8 | Hvem slår på kalenderen for et fagmiljø? | En systemarkitekt i appen, med begrunnelse, etter Peders ja og §3.4 |
-| B9 | Hva skjer med historikken når en konto slettes? | Avgjøres i §3.4; forslag: navnet erstattes med «Tidligere medarbeider» innenfor oppbevaringstiden |
+| B7 | Hva kan stå på låseskjermen om egen oppgave? | Egen oppgave og dag («Vakt 1 i morgen»), forutsatt at avklaringen i §3.4 tillater det; aldri andres opplysninger |
+| B8 | Hvem slår på kalenderen for et fagmiljø? | En systemarkitekt i appen, etter Peders uttrykkelige produktgodkjenning og avklaringen med ansvarlig virksomhet (§3.4) |
+| B9 | Hva skjer med historikken når en konto slettes? | Avgjøres med ansvarlig virksomhet før ordinær bruk (§3.4). Ingen ordning for anonymisering eller sletting er godkjent nå |
 | B10 | Varsel når egen publisert plan endres? | Eget valg, av som standard |
-| B11 | Godtar du rekkefølgen i §8.11, og kan P2a (domenekoden uten database og visning) starte før designretningen er valgt og før Dev-oppgavene er ferdige? | Ja. P2a avhenger ikke av designet. Til du har sagt ja, venter P2a på B1 |
+| B11 | Rekkefølgen i §8.11, og når kan P2a starte? | Rekkefølgen står. P2a (domenekoden uten database og visning) kan bygges parallelt med designarbeidet når P0 er godkjent, uten å vente på B1 eller Dev-leveranser den ikke trenger |
 | B12 | Holde første versjon til én status per dag og dagbaserte oppgaver? | Ja; nye modeller avklares når et fagmiljø trenger dem |
-| B14 | Stillingen styrer nå forventet antall vakter, og i dag kan hver bruker endre sin egen stilling. Skal det endres? | Ja: i et fagmiljø der kalenderen er på, endres stillingen bare av lokal administrator i det fagmiljøet eller systemarkitekt, også når endringen gjøres fra et annet fagmiljø, og endringen gjelder fra i dag. Uten stilling regnes vekt 1, og planleggeren ser at den mangler |
-| B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei: egne endringer gjelder fra i dag og fremover, og tidligere dager rettes av vaktplanansvarlig |
-| B16 | Hvilke statuser kan medarbeideren sette selv? | Alle uten bemanningsbehov (også Ferie, som gir vaktfritak etter §6.2), aldri vakter, lås eller administrativt vaktfritak. Kan begrenses per status i fagmiljøets oppsett |
+| B13 | Stillingskategori og medarbeidere | 1:1 med stillingene i appen og med medlemmene i fagmiljøet, hentet automatisk; kalenderen er en integrert del av appen, ikke en tilleggsfunksjon (§7.4) |
+| B14 | Hvem kan endre stillingen, som styrer forventet antall vakter? | En endring som påvirker vaktbelastningen, krever lokal administrativ myndighet i hvert fagmiljø med kalenderen på der personen er medlem (§8.5); endringen gjelder fra i dag; uten stilling regnes vekt 1, og planleggeren ser at den mangler. Ingen utvidelse av den globale systemarkitekttilgangen |
+| B15 | Kan en medarbeider sette en status på en dag med egen publisert vakt? | Nei. Det avvises, vakten står, og medarbeideren får beskjed om å ta det med vaktplanansvarlig. Forespørsel om vaktbytte kan komme senere |
+| B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei. Egne endringer gjelder fra i dag og fremover; vaktplanansvarlig kan rette tidligere dager |
+| B16 | Hvilke statuser kan medarbeideren sette selv? | Alle uten bemanningsbehov, også Ferie og Opplæring med automatisk vaktfritak etter §6.2; aldri vakter, lås eller administrativt vaktfritak. Vernet av publiserte vakter (B15) står |
+
+**Gjenstår:**
+
+| Nr. | Spørsmål | Når |
+| --- | --- | --- |
+| B1 | Hvilken designretning? | Velges etter gjennomgang av de tre klikkbare forslagene (P1) |
 
 Avgjørelsene føres inn i §6 (regler) eller her, med dato.
 
