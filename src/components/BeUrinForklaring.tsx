@@ -5,48 +5,14 @@ import { beUrinForklaring } from '../domain/beUrinProfilforklaring'
 import { prosentFor } from '../domain/beUrinPlot'
 import { antallDogn, erEkstrapolert, formaterDogn, formaterRatio, konklusjonISetning, tallMedEnhet } from '../domain/beUrinVisning'
 import { formaterProsent } from '../domain/thcPlot'
-import { INGEN_SIKKERHETSMARGIN } from '../domain/thcRegelsett'
 import { formaterDatoNorsk, formaterIrcak } from '../domain/thcTall'
-import { hvorOfteForStor, marginvalg } from '../domain/thcVisning'
+import { marginvalg } from '../domain/thcVisning'
 
 /**
- * Forklaringene i fortolkningen av benzoylekgonin i urin: hva
- * sikkerhetsmarginen er, beregningen bak resultatet med form 1 (tallene
+ * Forklaringene i fortolkningen av benzoylekgonin i urin: beregningen bak
+ * resultatet med form 1 (tallene
  * motoren brukte), og forklaringen i vanlig språk med form 2 (#576).
  */
-
-/**
- * Hva sikkerhetsmarginen er, bak informasjonstegnet ved «Sikkerhetsmargin»
- * (#576): kort, uten formler, og tydelig på at marginen gjelder
- * måleusikkerheten, ikke om fortolkningen er riktig.
- */
-export function BeUrinMarginforklaring({ modell }: { modell: BeUrinFellesmodell }) {
-  return (
-    <div className="be-marginforklaring">
-      <p>
-        Målingene av benzoylekgonin og kreatinin er usikre, og derfor også endringen mellom to prøver. Med en høyere
-        sikkerhetsmargin legges en mer forsiktig endring til grunn, og det skal mer til før et nytt inntak vurderes
-        som sannsynlig.
-      </p>
-      <p>Marginen gjelder bare måleusikkerheten, ikke sannsynligheten for at selve fortolkningen er riktig.</p>
-      <dl className="be-marginforklaring__valg">
-        {modell.sikkerhetsmarginer.map(({ margin }) => (
-          <div key={margin}>
-            <dt>
-              {marginvalg(margin)}
-              {margin === modell.standard_sikkerhetsmargin && ' (standard)'}
-            </dt>
-            <dd>
-              {margin === INGEN_SIKKERHETSMARGIN
-                ? 'Den målte endringen fortolkes direkte.'
-                : `Endringen som fortolkes, er for stor ${hvorOfteForStor(margin)}.`}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  )
-}
 
 /**
  * Beregningen bak resultatet: Q i begge prøvene, døgnene, den målte og den

@@ -1,12 +1,12 @@
 /**
- * Fortolkningsmodulen for THC-syre i urin, fra Atlas (`ThcModule`): uendret
- * mekanikk og rekkefølge, nytt skall. Inndatapanelet med feltgruppene og
- * sikkerhetsmarginen, resultatpanelet og visualiseringen. Skjemaprimitivene
- * står i `skjema.css`, panelene og kommentaren i `flater.css`.
+ * Fortolkningsmodulen for THC-syre i urin, forenklet i #586 etter mønster fra
+ * benzoylekgonin i urin: inndatapanelet og resultatpanelet med kommentaren,
+ * profilene, figuren og forklaringen. Skjemaprimitivene står i `skjema.css`,
+ * panelene og kommentaren i `flater.css`, og det de to modulene deler, i
+ * `beUrin.css`.
  */
 
-/* Modulen er ett skjema fra topp til bunn: inndatapanelet, resultatpanelet og
-   visualiseringen. */
+/* Modulen er ett skjema fra topp til bunn: inndatapanelet og resultatpanelet. */
 .thc {
   display: flex;
   flex-direction: column;
@@ -63,82 +63,124 @@
   color: var(--blekk-dempet);
 }
 
-.thc-skjema {
+/* --- Skjemaet (#586) ----------------------------------------------------------
+   Etter mønster fra benzoylekgonin i urin: prøvene, feltene, knappen for en
+   tidligere prøve og sikkerhetsmarginen bruker `be-*`-klassene (beUrin.css).
+   Her står bare det THC-syremodulen har i tillegg. */
+
+/* Bruksmønsteret og «ingen tidligere prøve»: to diskrete avkryssinger øverst. */
+.thc-valg {
   display: flex;
-  flex-direction: column;
-  gap: var(--rom-5);
-  width: 100%;
+  flex-wrap: wrap;
+  gap: var(--rom-2) var(--rom-7);
 }
 
-/* Prøvene to og to side ved side når det er plass, under hverandre når det
-   ikke er. Hver kolonne er minst halve bredden, så det blir aldri mer enn to,
-   og `auto-fill` holder den tomme kolonnen: en prøve som står alene, får samme
-   bredde som når de er to. */
-.thc-prover {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(min(100%, max(18rem, calc((100% - var(--rom-5)) / 2))), 1fr)
-  );
-  gap: var(--rom-5);
-  width: 100%;
+.thc-valg .avkryssing,
+.thc-prove__valg .avkryssing,
+.thc-tidsrom .avkryssing {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-medium);
 }
 
-/* IRCAK regnet ut av UCAK og NKRE, rett under feltene den kommer fra. */
-.thc-beregnet {
-  font-size: var(--tekst-ui);
-  font-variant-numeric: tabular-nums;
-  color: var(--blekk-dempet);
-}
-
-.thc-beregnet strong {
-  font-weight: var(--vekt-fet);
-  color: var(--blekk);
-}
-
-/* De tidligere prøvene i den samlede vurderingen, under forrige og denne
-   prøven, med samme felt. */
-.thc-tidligere {
+/* «Under cut-off» og «Fjern» til høyre for prøvens overskrift. */
+.thc-prove__valg {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  justify-self: end;
   gap: var(--rom-4);
-  width: 100%;
 }
 
-.thc-tidligere__ingress {
-  font-size: var(--tekst-ui);
-  text-align: left;
+/* Med klassen fra beUrin.css i velgeren, så de vinner over de tre
+   kolonnene der uansett rekkefølgen stilarkene lastes i. */
+.be-prove__felt.thc-prove__felt--to {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+}
+
+.be-prove__felt.thc-prove__felt--en {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Smale skjermer: to tallfelt og datoen gir to kolonner med datoen under
+   (beUrin.css); med ett tallfelt står datoen ved siden av. */
+@media (max-width: 30rem) {
+  .be-prove__felt.thc-prove__felt--to > :last-child {
+    grid-column: auto;
+  }
+}
+
+/* Kort eller lang tid mellom prøvene: én kort linje med valget ved, uten
+   banner. */
+.thc-tidsrom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2) var(--rom-5);
+  font-size: var(--tekst-liten);
   color: var(--blekk-dempet);
 }
 
-/* Sikkerhetsmarginen, nederst i inndatapanelet: overskriften og bryteren
-   midtstilt i en hevet flate (Atlas `MarginScale`), og forklaringen under. */
+.thc-tidsrom p {
+  margin: 0;
+}
+
+/* Sikkerhetsmarginen til høyre, med merknaden om under cut-off rett under. */
 .thc-margin {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--rom-4);
-  width: 100%;
-  padding: var(--rom-6) var(--rom-6) var(--rom-5);
-  background: var(--flate-hevet);
-  border-radius: var(--runding-felt-gruppe);
+  align-items: flex-end;
+  gap: var(--rom-2);
+  margin-left: auto;
 }
 
-/* Banneret over skalaen når forrige prøve fortolkes under påvisningsgrensen.
-   Det skal ikke gå an å stille på marginen uten å ha sett at fortolkningen alt
-   regner med større måleusikkerhet. */
-.thc-margin > .notis {
-  align-self: stretch;
-  background: var(--flate);
+.thc-margin__merknad {
+  max-width: 28rem;
+  margin: 0;
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-ui);
+  text-align: right;
+  text-wrap: pretty;
+  color: var(--blekk-dempet);
 }
 
-.thc-margin__hode {
-  font-size: var(--tekst-ui);
-  font-weight: var(--vekt-halvfet);
+@media (max-width: 40rem) {
+  .thc-margin {
+    align-items: flex-start;
+    margin-left: 0;
+  }
+
+  .thc-margin__merknad {
+    text-align: left;
+  }
 }
 
-/* Banneret over kommentaren når en høyere sikkerhetsmargin gir en mildere
-   konklusjon: midtstilt i kortet, med overskriften og varseltrekanten øverst
+/* --- Kommentaren (#586) -------------------------------------------------------
+   Kommentaren er det viktigste: den står først i resultatet, med kopieringen
+   rett under og korte, dempede merknader etter. */
+.thc-merknader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-ui);
+  text-wrap: pretty;
+  color: var(--blekk-dempet);
+}
+
+.thc-merknader p {
+  margin: 0;
+}
+
+/* Kurven som ikke brukes ved bruksmønsteret, står dempet i tabellen. */
+.thc-profiltabell__ubrukt {
+  color: var(--blekk-dempet);
+}
+
+.be-legende__strek .thc-plot__kurve--ubrukt {
+  stroke-width: 1.5;
+}
+
+/* Banneret i modellform 1 av benzoylekgonin i urin når en høyere
+   sikkerhetsmargin gir en mildere konklusjon: midtstilt i kortet, med overskriften og varseltrekanten øverst
    og hvert mildere utfall under en skillelinje, med knappen under teksten. */
 .thc-mildere {
   display: flex;
@@ -279,7 +321,8 @@
   fill: var(--blekk);
 }
 
-/* Bryteren for visualiseringen står midt over figuren. */
+/* Bryteren for visualiseringen står midt over figuren (modellform 1 av
+   benzoylekgonin i urin; THC-syremodulen har avkryssingen i tabellens sted). */
 .thc-visningsvalg {
   display: flex;
   justify-content: center;
@@ -326,9 +369,9 @@
   background: var(--alvorlig-kant);
 }
 
-/* Legenden står i vanlig HTML over figuren, så hvert kurvenavn kan bære et
-   tips om hva profilen står for. Hver kurve har sin egen linje: en liten
-   pille, og ved siden av hva kurven skiller i fortolkningen. */
+/* Legenden i modellform 1 av benzoylekgonin i urin, i vanlig HTML over
+   figuren. Hver kurve har sin egen linje: en liten pille, og ved siden av hva
+   kurven skiller i fortolkningen. THC-syremodulen har tabellen i stedet (#586). */
 .thc-legende {
   display: flex;
   flex-direction: column;
@@ -356,8 +399,7 @@
   border-radius: var(--runding-pille);
 }
 
-/* Fargestreken og navnet side om side, også uten et tips rundt (som i
-   modulen for benzoylekgonin i urin): en tom span får ellers ingen bredde. */
+/* Fargestreken og navnet side om side: en tom span får ellers ingen bredde. */
 .thc-legende__punkt {
   display: inline-flex;
   align-items: center;
@@ -438,51 +480,6 @@
   gap: var(--rom-2);
   padding-left: 1.4em;
   list-style: disc;
-}
-
-/* Hva hver sikkerhetsmargin gjør, i forklaringen under bryteren: marginen
-   som overskrift på sin egen linje, og teksten under. */
-.thc-marginvalg {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-4);
-}
-
-.thc-marginvalg dt {
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-etikett);
-  font-weight: var(--vekt-halvfet);
-}
-
-/* Eksempelet: én rad per margin, med endringen og konklusjonen den gir. */
-.thc-margineksempel {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--skrift-ui);
-  font-size: var(--tekst-etikett);
-  line-height: var(--linjehoyde-ui);
-  font-variant-numeric: tabular-nums;
-}
-
-.thc-margineksempel th,
-.thc-margineksempel td {
-  padding: var(--rom-2) var(--rom-3) var(--rom-2) 0;
-  text-align: left;
-  vertical-align: top;
-  border-bottom: var(--kant) solid var(--linje);
-}
-
-.thc-margineksempel thead th {
-  font-weight: var(--vekt-medium);
-  color: var(--blekk-dempet);
-}
-
-.thc-margineksempel tbody th {
-  font-weight: var(--vekt-halvfet);
-}
-
-.thc-margineksempel td:nth-child(2) {
-  white-space: nowrap;
 }
 
 @media (max-width: 47.5em) {

@@ -84,12 +84,13 @@ export function BeUrinVisualisering({
 export const BE_URIN_VENTER = 'Vurderingen vises når prøvene er fylt inn.'
 
 /**
- * Det som står der vurderingen ellers står, delt mellom modellformene: det
- * som er galt utover det enkelte feltet, kort, eller en stille linje mens
- * skjemaet fylles ut. Ingen liste over tomme felt (#576).
+ * Det som står der vurderingen ellers står, delt mellom modellformene og med
+ * THC-syremodulen (#586): det som er galt utover det enkelte feltet, kort,
+ * eller en stille linje mens skjemaet fylles ut. Ingen liste over tomme felt
+ * (#576).
  */
-export function BeUrinMangler({ feil }: { feil: string[] }) {
-  if (feil.length === 0) return <p className="be-venter">{BE_URIN_VENTER}</p>
+export function BeUrinMangler({ feil, venter = BE_URIN_VENTER }: { feil: string[]; venter?: string }) {
+  if (feil.length === 0) return <p className="be-venter">{venter}</p>
   return (
     <div className="be-feil" role="alert">
       {feil.map((melding) => (

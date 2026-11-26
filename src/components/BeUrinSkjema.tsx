@@ -1,9 +1,7 @@
 import { useEffect, useId, useRef, useState, type Ref } from 'react'
 import { Button } from './Button'
 import { Tallfelt } from './Tallfelt'
-import { useTips } from './Tips'
-import { Trinnbryter } from './Trinnbryter'
-import { BeUrinMarginforklaring } from './BeUrinForklaring'
+import { Sikkerhetsmargin } from './Sikkerhetsmargin'
 import {
   feltfeil,
   kvotient,
@@ -15,7 +13,6 @@ import {
 } from '../domain/beUrinMotor'
 import type { BeUrinFellesmodell } from '../domain/beUrinModell'
 import { formaterIrcak } from '../domain/thcTall'
-import { marginvalg } from '../domain/thcVisning'
 import { tallMedEnhet } from '../domain/beUrinVisning'
 
 export interface BeUrinSkjemaProps {
@@ -34,10 +31,6 @@ export interface BeUrinSkjemaProps {
  * et tomt felt sies ikke.
  */
 export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkjemaProps) {
-  const marginer = modell.sikkerhetsmarginer.map(({ margin }) => ({
-    verdi: margin,
-    merke: marginvalg(margin),
-  }))
   const { tidligere } = inndata
   const settTidligere = (prover: BeUrinProve[]) => onEndre('tidligere', prover)
 
@@ -95,37 +88,16 @@ export function BeUrinSkjema({ inndata, onEndre, modell, forsteFelt }: BeUrinSkj
           + Legg til tidligere prøve
         </Button>
 
-        <div className="be-margin">
-          <span className="be-margin__navn" aria-hidden="true">
-            Sikkerhetsmargin
-          </span>
-          <Marginforklaring modell={modell} />
-          <Trinnbryter
-            etikett="Sikkerhetsmargin"
-            valg={marginer}
-            verdi={inndata.sikkerhetsmargin}
-            onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
-          />
-        </div>
+        <Sikkerhetsmargin
+          marginer={modell.sikkerhetsmarginer.map(({ margin }) => margin)}
+          standard={modell.standard_sikkerhetsmargin}
+          verdi={inndata.sikkerhetsmargin}
+          onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
+          maalinger="benzoylekgonin og kreatinin"
+          merSkalTil="et nytt inntak vurderes som sannsynlig"
+        />
       </div>
     </div>
-  )
-}
-
-/**
- * Informasjonstegnet ved «Sikkerhetsmargin»: forklaringen vises ved pekeren,
- * ved tastaturfokus og ved et trykk på berøringsskjerm, og leses av
- * skjermlesere fra tegnet.
- */
-function Marginforklaring({ modell }: { modell: BeUrinFellesmodell }) {
-  const tips = useTips(<BeUrinMarginforklaring modell={modell} />)
-  return (
-    <>
-      <button type="button" className="be-info" aria-label="Om sikkerhetsmarginen" {...tips.props}>
-        <span aria-hidden="true">i</span>
-      </button>
-      {tips.forklaring}
-    </>
   )
 }
 

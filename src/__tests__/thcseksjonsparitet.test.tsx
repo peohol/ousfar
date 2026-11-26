@@ -15,7 +15,8 @@
  *   med de samme tallene og figurene helt ned til siste siffer.
  * - På skjermen gir fortolkningsmodulen, simulatoren i seksjonen og simulatoren
  *   i redigeringen den samme kommentaren, det samme varselet og de samme
- *   manglene som fasiten, for ett tilfelle av hvert utfall fasiten har.
+ *   manglene som fasiten (som feil ved feltene og feil på tvers, #586), for
+ *   ett tilfelle av hvert utfall fasiten har.
  */
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
@@ -198,22 +199,44 @@ function fyllInn(rot: HTMLElement, inn: FasitInndata, marginer: readonly number[
 }
 
 /**
- * Det skjermen viser: kommentaren og varselet om lang tid mellom prøvene,
- * eller manglene. Meldingen om kort tid mellom prøvene er ikke del av fasiten.
+ * Det skjermen viser: kommentaren og forslaget om å fortolke uten forrige
+ * prøve ved lang tid mellom dem, eller — mens skjemaet ikke er ferdig — feltene
+ * som er markert feil, og meldingene om feil som gjelder flere felt (#586).
+ * Meldingen om kort tid mellom prøvene er ikke del av fasiten.
  */
 function vist(rot: HTMLElement): unknown {
-  const mangler = [...rot.querySelectorAll('.mangelliste li')].map((li) => li.textContent)
-  if (mangler.length > 0) return { mangler }
-  return {
-    kommentar: rot.querySelector('.kommentartekst')?.textContent ?? null,
-    varsel: rot.querySelector('.notis--handling:not(.thc-korttid)') !== null,
-  }
+  const kommentar = rot.querySelector('.kommentartekst')?.textContent ?? null
+  if (kommentar !== null) return { kommentar, varsel: rot.querySelector('.thc-tidsrom--langt') !== null }
+  const feltfeil = [...rot.querySelectorAll<HTMLInputElement>('input[aria-invalid="true"]')]
+    .map((felt) => {
+      const gruppe = felt.closest('fieldset')?.querySelector('legend')?.textContent
+      const navn = document.getElementById(felt.getAttribute('aria-labelledby') ?? '')?.textContent
+      return `${gruppe}: ${navn}`
+    })
+    .sort()
+  const feil = [...rot.querySelectorAll('.be-feil p')].map((p) => p.textContent)
+  return { feltfeil, feil, venter: rot.querySelector('.be-venter') !== null }
 }
 
-/** Det fasiten sier at skjermen skal vise for tilfellet. */
+const FELTFEIL = /^(.+) for (denne|forrige) prøve(?:n)? må være et tall/
+
+/**
+ * Det fasiten sier at skjermen skal vise for tilfellet. Manglene i fasiten
+ * vises nå slik: det som ikke er fylt inn, står ikke i noen liste; et tall
+ * motoren avviser, markeres ved feltet; resten er feil som gjelder flere felt.
+ */
 function forventet(indeks: number): unknown {
   const [, utfall] = FASIT.tilfeller[indeks]!
-  if (utfall[0] === 'm') return { mangler: utfall[1] }
+  if (utfall[0] === 'm') {
+    const mangler = utfall[1] as string[]
+    const feltfeil = mangler
+      .map((m) => FELTFEIL.exec(m))
+      .filter((m) => m !== null)
+      .map(([, navn, hvilken]) => `${hvilken === 'denne' ? 'Denne prøven' : 'Forrige prøve'}: ${navn}`)
+      .sort()
+    const feil = mangler.filter((m) => !m.startsWith('Fyll inn ') && !FELTFEIL.test(m))
+    return { feltfeil, feil, venter: feil.length === 0 }
+  }
   const [, nr, langt] = utfall as [string, number, number]
   return { kommentar: FASIT.kommentarer[nr], varsel: langt === 1 }
 }
@@ -241,6 +264,12 @@ describe('THC-syre på skjermen før og etter flyttingen', () => {
     expect(new Set(UTVALG.map(({ indeks }) => FASIT.tilfeller[indeks]![1][0]))).toEqual(
       new Set(['m', 'uten_forrige', 'ikke_nodvendigvis', 'vanskelig', 'nytt_inntak']),
     )
+    // Manglene gir både feil ved feltene, feil på tvers og den stille linjen.
+    const mangler = UTVALG.map(({ indeks }) => forventet(indeks)).filter((v) => 'feltfeil' in (v as object))
+    const som = mangler as { feltfeil: string[]; feil: string[]; venter: boolean }[]
+    expect(som.some((v) => v.feltfeil.length > 0)).toBe(true)
+    expect(som.some((v) => v.feil.length > 0)).toBe(true)
+    expect(som.some((v) => v.venter && v.feltfeil.length === 0)).toBe(true)
   })
 
   it('viser fasiten i fortolkningsmodulen', () => {

@@ -34,7 +34,8 @@ som fasit i testene (se [Redigeringen](#redigeringen)).
 | `src/domain/thcVisning.ts` | Det modulen og redigeringssiden skriver om reglene: nivåene, marginene og kurvene per bruksmønster |
 | `src/domain/thc.ts` | Koden, analysemetoden og søkeoppføringen |
 | `src/faginnhold/thcregler.ts` | Fra det databasen gir til en kontrollert modell, eller feilen modulen viser |
-| `src/components/ThcStep.tsx`, `ThcSkjema.tsx`, `ThcUtfall.tsx` | Modulen: skjemaet, kommentaren og kurvene, delt med simulatoren |
+| `src/components/ThcStep.tsx`, `ThcSkjema.tsx`, `ThcUtfall.tsx`, `ThcPlot.tsx`, `ThcForklaring.tsx` | Modulen: skjemaet, kommentaren, profiltabellen med figuren og forklaringen, delt med simulatoren |
+| `src/components/Sikkerhetsmargin.tsx` | Bryteren for sikkerhetsmarginen med informasjonstegnet, delt med benzoylekgonin i urin |
 | `src/components/regler/Thcregler.tsx`, `Thckommentarer.tsx`, `Thcsimulator.tsx` | Reglene, kommentarene og simulatoren på redigeringssiden for fortolkningen, som seksjon med detaljkort |
 | `src/components/regler/Thcredigering.tsx`, `Thckommentarer.tsx` | Redigeringen av reglene og tekstene |
 | `src/domain/__tests__/hjelp/thcOpprinnelig.ts` | Den opprinnelige modulen, med regnearkets konstanter i koden. Bare fasit i testene |
@@ -48,6 +49,7 @@ som fasit i testene (se [Redigeringen](#redigeringen)).
 | `src/__tests__/thcsteg.test.tsx`, `thcregler.test.tsx` | Modulen og redigeringssiden med reglene de får |
 | `src/__tests__/thcredigering.test.tsx`, `thcredigeringslagring.test.ts` | Redigeringen, og lagringen og publiseringen av den mot en ekte database |
 | `src/__tests__/thcseksjonsparitet.test.tsx` | Pariteten for seksjonen: samme modell og samme kliniske output som modulen og fasiten |
+| `src/__tests__/qa/thcnettleser.ts` | Nettleserkontrollen i det lokale testmiljøet: PC og mobil, lyst og mørkt (#586) |
 
 ## Fremgangsmåten
 
@@ -78,22 +80,24 @@ Kilden er regnearket `originaldata/THC-COOH.xlsm`, med eierens senere tillegg.
 
 **Kort tid mellom prøvene.** Er prøvene tatt samme dag eller med færre døgn
 imellom enn regelsettets grense (`kort_tid_dager`, 3), viser skjemaet en
-melding med avkryssingen «Kort tid mellom prøvene», som ikke er huket av.
+kort linje («Det er bare 2 dager mellom prøvene.») med avkryssingen «Ikke
+sammenlign prøvene (kort tid)», som ikke er huket av.
 Hukes den av, vurderes ikke prøvene mot hverandre: det blir ingen
 sammenligning, ingen margin og ingen tallgrunnlag, konklusjonen er som uten
 forrige prøve, og kommentaren er «Kort tid mellom prøvene». Står
 avkryssingen igjen etter at datoene er endret så det er lenger imellom,
 gjelder den ikke.
 
-**Samlet vurdering.** Med «Samlet vurdering med enda tidligere prøver» kan
-brukeren legge inn flere prøver før forrige prøve (IRCAK eller UCAK og NKRE,
-og dato). Gir sammenligningen med forrige prøve «kan ikke fastslås»,
+**Samlet vurdering.** Med «+ Legg til tidligere prøve» kan brukeren legge inn
+flere prøver før forrige prøve (IRCAK eller UCAK og NKRE, og dato), og fjerne
+hver med «Fjern». Den samlede vurderingen gjøres så snart det står en
+tidligere prøve (`samletVurdering` holdes lik det). Gir sammenligningen med forrige prøve «kan ikke fastslås»,
 sammenlignes denne prøven med hver av dem, fra den nærmeste og bakover, med
 den samme fremgangsmåten. Den nærmeste som gir nytt inntak (eller har IRCAK
 0), gir kommentaren «Samlet vurdering av flere tidligere prøver» med datoen
 dens, også når forrige prøve lå under cut-off. Gir ingen nytt inntak, er
-kommentaren den vanlige mot forrige prøve, og en melding over kommentaren
-sier at ingen av de tidligere prøvene ga «nytt inntak»
+kommentaren den vanlige mot forrige prøve, og en kort merknad under
+kopiknappen sier at ingen av de tidligere prøvene ga «nytt inntak»
 (`samletUtenNyttInntak`). Konklusjonen og tallgrunnlaget er alltid
 sammenligningen med forrige prøve. En tidligere prøve må være tatt før
 forrige prøve.
@@ -105,15 +109,17 @@ mildere enn den valgte marginen gir, med marginene som gir den. Strengheten
 er, fra mildest: «ikke nødvendigvis nytt», «kan ikke fastslås», nytt inntak
 etter en enda tidligere prøve (samlet vurdering; jo eldre prøve, desto
 mildere, siden inntaket da kan ha skjedd før forrige prøve) og nytt inntak
-etter forrige prøve. Modulen og simulatoren viser et midtstilt banner,
-«Vurder høyere sikkerhetsmargin» med varseltrekant, øverst i kommentaren.
-Under en skillelinje per utfall står «Med {marginer} sikkerhetsmargin endres
-konklusjonen til «…»» og en knapp «Bruk {margin}» for den laveste marginen som
-gir det. Konklusjonen med den valgte marginen gjentas ikke; den står i
-kommentaren rett under. Lavere marginer prøves aldri, og
-banneret står ikke uten en vurdering mot forrige prøve (ingen tidligere
-prøve, kort tid, IRCAK 0 i forrige prøve). Kommentaren endres bare når
-brukeren selv bytter margin.
+etter forrige prøve. Modulen og simulatoren sier det i én kort linje per
+utfall under kopiknappen (`mildereMargintekst`, #586), uten banner og uten
+knapp: «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke fastslås.» Et
+utfall som knytter inntaket til en tidligere prøve, nevner den med datoen
+(«… men det har skjedd minst ett inntak etter prøven tatt 01.06.2026.»), og
+står det tidligere prøver i skjemaet, sies det om de heller ikke gir nytt
+inntak eller ikke vurderes. Konklusjonen med den valgte marginen gjentas
+ikke; den står i kommentaren. Lavere marginer prøves aldri, og linjen står
+ikke uten en vurdering mot forrige prøve (ingen tidligere prøve, kort tid,
+IRCAK 0 i forrige prøve). Kommentaren endres bare når brukeren selv bytter
+margin.
 
 ## Regler og tekster er adskilt
 
@@ -285,42 +291,79 @@ setter dem sammen til modellen motoren bruker. Modulen gir ingen kommentar før
 de er hentet, og sier fra i stedet om de ikke kunne hentes, ikke finnes eller
 ikke består kontrollen. Mens de hentes på nytt, står de gamle.
 
+**Utformingen** (#586) følger benzoylekgonin i urin (#576), med de samme
+klassene (`beUrin.css`, og `thc.css` for det som bare gjelder THC-syre):
+vis det som trengs, og la en vanlig fortolkning med kommentaren og
+kopiknappen få plass på én PC-skjerm. Øverst står «Legg kronisk bruk til
+grunn» og «Ingen tidligere prøve tilgjengelig» diskret, så forrige og denne
+prøven side om side (under hverandre på mobil). Under cut-off viser
+«Beregnet IRCAK» tallet fra UCAK og NKRE mens de fylles inn. Et felt motoren
+avviser, får en kort feil ved feltet (`thcFeltfeil`, etter samme regel som
+motoren); et tomt felt sies ikke, og det står ingen liste over det som
+mangler. Feil som gjelder flere felt (datoene i feil rekkefølge, en margin
+regelsettet ikke har) står for seg (`feil` i motorens mangler). Til
+kommentaren kan vises, står bare «Kommentaren vises når prøvene er fylt
+inn.». Lang tid mellom prøvene gir en kort linje med knappen «Fortolk uten
+forrige prøve», som huker av «Ingen tidligere prøve tilgjengelig».
+
 Alt modulen viser om reglene kommer fra regelsettet: varselgrensen, nivåene,
 grensene per bruksmønster og faktoren under cut-off i forklaringen, og valgene
-på bryteren for sikkerhetsmarginen (`Trinnbryter`, med «Ingen (50 %)» for
-ingen margin). Under bryteren forklarer «Hva er sikkerhetsmarginen?»
-(`ThcMarginforklaring`) hva marginene gjør, med et eksempel som fortolkes med
-hver margin av `sammenlignMedForrige`, det samme steget fortolkningen bruker.
-Står skjemaet på en margin et nytt regelsett ikke har, gir motoren en mangel
-og ingen kommentar.
+på bryteren for sikkerhetsmarginen (`Sikkerhetsmargin`, delt med
+benzoylekgonin i urin, med «Ingen (50 %)» for ingen margin). Informasjonstegnet
+ved «Sikkerhetsmargin» sier kort at en høyere margin gir en mer forsiktig
+fortolkning, og at marginen gjelder måleusikkerheten, ikke sannsynligheten
+for at fortolkningen er riktig. Under cut-off står en kort merknad ved
+marginen om den høyere måleusikkerheten, bare når den faktisk brukes (en
+margin som korrigerer, og en forrige prøve over 0). Står skjemaet på en margin
+et nytt regelsett ikke har, gir motoren en mangel og ingen kommentar.
 
-**Visualiseringen** (`ThcPlot`, Peders bestilling 10.11.2026) farger kurvene
-etter terskelen de er for bruksmønsteret (`terskler`), ikke etter rollen:
-kurven i `vanskelig_over` er grønn, den i `nytt_inntak_over` rød, og den
-tredje tynn, grå og stiplet med «Brukes ikke i fortolkningen …». Legenden har
-én linje per kurve, med hva den skiller ved siden av. Punktet for denne prøven
-får fargen konklusjonen mot forrige prøve gir for marginen (`marginpunkter`,
-med motorens `korrigertEndring` og `konklusjon`): grønt, gult eller rødt.
-Det gule punktet er trafikklysgult (`--trafikklys-gul`) med kant i
-`--toksisk-kant`.
+Kommentaren står rett etter skjemaet, med kopiknappen rett under, og under
+den to lukkede seksjoner: «Utskillelsesprofiler og figur» og «Forklaring».
+Kopieringen kvitteres som før, med manuell kopiering når utklippstavlen ikke
+kan brukes, og tilbudet om å nullstille med Enter. Skjemaet som er fylt inn,
+overlever en oppdatering av appen, også fra før #586
+(`lesBevartThcInndata`): tidligere prøver som var slått av med den gamle
+avkryssingen, tas ikke med.
 
-Bryteren midt over figuren velger den valgte marginen eller alle
-regelsettets, med «Ingen (50 %)» i tillegg når regelsettet ikke har den (den
-målte endringen, z = 0). Med alle samler en klamme punktene, og de står også
-som en liste under figuren, for tastatur, berøring, skjermleser og punkter
-som ligger oppå hverandre. I modulen lagres valget på brukeren
+**Profilene og figuren** (`ThcProfiltabell` og `ThcPlot`, Peders bestilling
+10.11.2026 og #586). Tabellen er tegnforklaringen: én rad per kurve med
+streken (farge og stipling), navnet, forventet endring etter tidsrommet og hva
+kurven betyr for fortolkningen. Kurvene farges etter terskelen de er for
+bruksmønsteret (`terskler`), ikke etter rollen: kurven i `vanskelig_over` er
+grønn, den i `nytt_inntak_over` rød, og den tredje tynn, grå og stiplet med
+«Brukes ikke i fortolkningen …». Punktet for denne prøven får fargen
+konklusjonen mot forrige prøve gir for marginen (`marginpunkter`, med
+motorens `korrigertEndring` og `konklusjon`): grønt, gult eller rødt. Det gule
+punktet er trafikklysgult (`--trafikklys-gul`) med kant i `--toksisk-kant`.
+Merkene på tidsaksen står aldri tettere enn ett døgn; trinnet i
+tallgrunnlaget (`xSteg`) er uendret.
+
+Avkryssingen «Vis alle sikkerhetsmarginer» under tabellen viser punktet for
+hver av regelsettets marginer, med «Ingen (50 %)» i tillegg når regelsettet
+ikke har den (den målte endringen, z = 0). Da samler en klamme punktene, og
+de står også som en liste under figuren, for tastatur, berøring, skjermleser
+og punkter som ligger oppå hverandre. I modulen lagres valget på brukeren
 (`thc_visualisering` i brukerinnstillingene, husket i nettleseren og synket
 med `useKontosynk` i `App`); simulatoren holder sitt eget. `byggGraf` gir de
 samme tallene som før når den ikke får flere punkter, så tallgrunnlaget i
 fasiten er uendret.
+
+**Forklaringen** (`ThcForklaring`) har fire korte bolker: «Hvor stor er
+endringen mellom prøvene?», «Hvordan er det tatt hensyn til
+måleusikkerhet?», «Hva kan forventes dersom det ikke har skjedd et nytt
+inntak?» og «Hvorfor blir konklusjonen slik?». Den bruker prosentvis endring
+og vanlig språk, ikke forholdstall eller formler, og tar med under cut-off,
+den samlede vurderingen og konsentrasjonsnivået. Tallene er motorens og
+grensene regelsettets.
 
 Redigeringssiden for IRCAK (`#/fortolkning/ircak/rediger`, se
 `docs/fortolkningsregler.md`) har seksjonen med oversikten over reglene,
 detaljkortet «Kommentarene» med de felles setningene og hver situasjon, når
 den brukes og kommentaren ferdig satt sammen for hver gruppe av nivåer
 (`Thckommentarer`), og detaljkortet `simulator`. Simulatoren bruker det
-samme skjemaet, den samme kommentaren og de samme kurvene som modulen, og
-viser hvilke tekster kommentaren ble satt sammen av. Det er utkastet som
+samme skjemaet, den samme kommentaren med de samme korte merknadene, og de
+samme lukkede seksjonene som modulen, uten kopieringen, og viser hvilke
+tekster kommentaren ble satt sammen av. Det er utkastet som
 vises.
 
 Seksjonen er bygd som konsentrasjonsreglene og scenarioreglene

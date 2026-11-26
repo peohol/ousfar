@@ -118,7 +118,7 @@ const FORTOLKNINGSSTEGENE = [
   'src/components/ThcUtfall.tsx',
   'src/components/ThcForklaring.tsx',
   'src/components/ThcPlot.tsx',
-  'src/components/ThcMarginforklaring.tsx',
+  'src/components/Sikkerhetsmargin.tsx',
   'src/components/Trinnbryter.tsx',
   'src/components/EtgStep.tsx',
   'src/components/EtgPasteStep.tsx',

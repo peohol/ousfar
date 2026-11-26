@@ -1,227 +1,264 @@
-import type { Ref } from 'react'
+import { useEffect, useId, useRef, useState, type Ref } from 'react'
 import { Button } from './Button'
-import { Details } from './Details'
+import { Sikkerhetsmargin } from './Sikkerhetsmargin'
 import { Tallfelt } from './Tallfelt'
-import { ThcMarginforklaring } from './ThcMarginforklaring'
-import { Trinnbryter } from './Trinnbryter'
-import { Ikon } from './ikon/Ikon'
 import {
   FORRIGE_PROVEFELT,
+  erUtenMargin,
   forrigeProve,
   kortTidMellomProvene,
+  langtMellomProvene,
+  thcFeltfeil,
   tomThcProve,
+  type ThcFeltkrav,
   type ThcInndata,
   type ThcProve,
 } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
 import { beregnIrcak, dagerMellom, formaterIrcak } from '../domain/thcTall'
-import { marginvalg } from '../domain/thcVisning'
-
-/**
- * Banneret over sikkerhetsmarginen når forrige prøve fortolkes under
- * påvisningsgrensen. Ordlyden er eierens egen.
- */
-const UNDER_CUTOFF_BANNER =
-  'Fordi vi nå fortolker konsentrasjoner under påvisningsgrensen, legges større måleusikkerhet til grunn. ' +
-  'Dette gjør fortolkningen mer forsiktig.'
+import { kortTidtekst, langTidtekst, underCutofftekst } from '../domain/thcVisning'
 
 export interface ThcSkjemaProps {
   inndata: ThcInndata
   onEndre: <K extends keyof ThcInndata>(felt: K, verdi: ThcInndata[K]) => void
-  /** Reglene skjemaet fylles ut mot: sikkerhetsmarginene står der. */
+  /** Reglene skjemaet fylles ut mot: sikkerhetsmarginene og grensene for kort og lang tid står der. */
   regler: ThcRegelsett
   /** Feltet som står først, og som får fokus når skjemaet åpnes eller nullstilles. */
   forsteFelt?: Ref<HTMLInputElement>
 }
 
 /**
- * Feltene i THC-syrefortolkningen: bruksmønsteret, forrige og denne prøven,
- * kort tid mellom dem, de tidligere prøvene i den samlede vurderingen og
- * sikkerhetsmarginen. Brukes både i fortolkningsmodulen og i simulatoren på
- * stoffsiden, så de spør på samme måte.
+ * Feltene i THC-syrefortolkningen (#586, etter mønster fra benzoylekgonin i
+ * urin, #576): bruksmønsteret og «ingen tidligere prøve» diskret øverst,
+ * forrige og denne prøven side om side, de tidligere prøvene i den samlede
+ * vurderingen under dem, lagt til og fjernet med hver sin knapp, kort eller
+ * lang tid mellom prøvene i én kort linje med valget ved, og
+ * sikkerhetsmarginen med forklaringen bak et lite informasjonstegn. Et
+ * ugyldig felt sies ved feltet; et tomt felt sies ikke.
+ *
+ * Brukes både i fortolkningsmodulen og i simulatoren på redigeringssiden, så
+ * de spør på samme måte. Den samlede vurderingen er med så snart det står en
+ * tidligere prøve: `samletVurdering` holdes lik det.
  */
 export function ThcSkjema({ inndata, onEndre, regler, forsteFelt }: ThcSkjemaProps) {
+  const ingen = inndata.ingenTidligere
   // Avkryssingen står inne i «Forrige prøve», så den gjelder bare når det
   // finnes en forrige prøve å fortolke.
-  const underCutoff = !inndata.ingenTidligere && inndata.forrigeUnderCutoff
+  const underCutoff = !ingen && inndata.forrigeUnderCutoff
   const kortTid = kortTidMellomProvene(regler, inndata)
+  const langt = langtMellomProvene(regler, inndata)
+  const dager = dagerMellom(inndata.forrigeDato, inndata.aktuellDato)
   const tidligere = inndata.tidligere ?? []
-  // Den samlede vurderingen og de tidligere prøvene betyr ingenting når
-  // prøvene ikke vurderes mot hverandre.
-  const vurderes = !inndata.ingenTidligere && !(kortTid && inndata.kortTid)
-
-  // Valgene på bryteren er regelsettets marginer, fra ingen margin til den
-  // strengeste. Står skjemaet på en margin regelsettet ikke har, står bryteren
-  // på ingen av dem, og fortolkningen sier fra.
-  const marginer = regler.sikkerhetsmarginer.map(({ margin }) => ({
-    verdi: margin,
-    merke: marginvalg(margin),
-  }))
+  // De tidligere prøvene og marginen betyr ingenting når prøvene ikke
+  // vurderes mot hverandre.
+  const vurderes = !ingen && !(kortTid && inndata.kortTid)
+  // Merknaden om større måleusikkerhet gjelder bare når den faktisk brukes:
+  // med en margin som korrigerer, og en forrige prøve over 0.
+  const storreUsikkerhet =
+    vurderes &&
+    underCutoff &&
+    !erUtenMargin(inndata.sikkerhetsmargin) &&
+    beregnIrcak(inndata.forrigeUcak, inndata.forrigeNkre) !== 0
 
   const endreForrige = <K extends keyof ThcProve>(felt: K, verdi: ThcProve[K]) =>
     onEndre(FORRIGE_PROVEFELT[felt], verdi as unknown as ThcInndata[(typeof FORRIGE_PROVEFELT)[K]])
-  const settTidligere = (prover: ThcProve[]) => onEndre('tidligere', prover)
+  const settTidligere = (prover: ThcProve[]) => {
+    onEndre('tidligere', prover)
+    onEndre('samletVurdering', prover.length > 0)
+  }
+
+  // En ny tidligere prøve får fokus i det første feltet; når en fjernes, går
+  // fokuset til knappen som legger til en ny, og når forslaget om å fortolke
+  // uten forrige prøve tas, til avkryssingen det huket av. Fokuset forsvinner
+  // aldri med knappen som ble trykket.
+  const [fokus, setFokus] = useState<{ til: 'ny' | 'legg' | 'ingen'; teller: number } | null>(null)
+  const nyttFelt = useRef<HTMLInputElement>(null)
+  const leggTil = useRef<HTMLButtonElement>(null)
+  const ingenBoks = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    const mal = { ny: nyttFelt, legg: leggTil, ingen: ingenBoks }[fokus?.til ?? 'ny']
+    if (fokus) mal.current?.focus()
+  }, [fokus])
+  const flyttFokus = (til: 'ny' | 'legg' | 'ingen') => setFokus((f) => ({ til, teller: (f?.teller ?? 0) + 1 }))
 
   return (
-    <div className="thc-skjema">
-      <div className="avkryssinger">
-        <label className="avkryssing">
-          <input
-            type="checkbox"
-            checked={inndata.kronisk}
-            onChange={(e) => onEndre('kronisk', e.target.checked)}
-          />
+    <div className="be-skjema thc-skjema">
+      <div className="thc-valg">
+        <label className="avkryssing avkryssing--felt">
+          <input type="checkbox" checked={inndata.kronisk} onChange={(e) => onEndre('kronisk', e.target.checked)} />
           Legg kronisk bruk til grunn
         </label>
-        <label className="avkryssing">
+        <label className="avkryssing avkryssing--felt">
           <input
+            ref={ingenBoks}
             type="checkbox"
-            checked={inndata.ingenTidligere}
+            checked={ingen}
             onChange={(e) => onEndre('ingenTidligere', e.target.checked)}
           />
           Ingen tidligere prøve tilgjengelig
         </label>
-        {vurderes && (
-          <label className="avkryssing">
-            <input
-              type="checkbox"
-              checked={inndata.samletVurdering ?? false}
-              onChange={(e) => {
-                onEndre('samletVurdering', e.target.checked)
-                // Den første tidligere prøven står klar når vurderingen slås på.
-                if (e.target.checked && tidligere.length === 0) settTidligere([tomThcProve()])
-              }}
-            />
-            Samlet vurdering med enda tidligere prøver
-          </label>
-        )}
       </div>
 
-      <div className="thc-prover">
-        {!inndata.ingenTidligere && (
-          <Provefelter
-            tittel="Forrige prøve"
-            prove={forrigeProve(inndata)}
-            onEndre={endreForrige}
-            forsteFelt={forsteFelt}
-          />
+      <div className="be-prover">
+        {!ingen && (
+          <Provefelter tittel="Forrige prøve" prove={forrigeProve(inndata)} onEndre={endreForrige} forsteFelt={forsteFelt} />
         )}
 
-        <fieldset className="feltgruppe">
-          <legend>Denne prøven</legend>
-          <label className="skjemafelt">
-            <span>IRCAK</span>
-            <Tallfelt
-              ref={inndata.ingenTidligere ? forsteFelt : undefined}
-              value={inndata.aktuellVerdi}
-              onChange={(verdi) => onEndre('aktuellVerdi', verdi)}
+        <fieldset className="be-prove">
+          <legend className="be-prove__tittel">Denne prøven</legend>
+          <div className={`be-prove__felt ${ingen ? 'thc-prove__felt--en' : 'thc-prove__felt--to'}`}>
+            <Tallinndata
+              navn="IRCAK"
+              verdi={inndata.aktuellVerdi}
+              krav="over_null"
+              onEndre={(verdi) => onEndre('aktuellVerdi', verdi)}
+              feltRef={ingen ? forsteFelt : undefined}
             />
-          </label>
-          {/* Uten en tidligere prøve å telle døgn mot brukes ikke datoen,
-              og da skal den heller ikke fylles ut. */}
-          {!inndata.ingenTidligere && (
-            <label className="skjemafelt">
-              <span>Prøvedato</span>
-              <input
-                className="inndatafelt"
-                type="date"
-                value={inndata.aktuellDato}
-                onChange={(e) => onEndre('aktuellDato', e.target.value)}
-              />
-            </label>
-          )}
+            {/* Uten en tidligere prøve å telle døgn mot brukes ikke datoen,
+                og da skal den heller ikke fylles ut. */}
+            {!ingen && <Datofelt verdi={inndata.aktuellDato} onEndre={(verdi) => onEndre('aktuellDato', verdi)} />}
+          </div>
         </fieldset>
+
+        {vurderes &&
+          tidligere.map((prove, i) => {
+            const tittel = tidligere.length === 1 ? 'Tidligere prøve' : `Tidligere prøve ${i + 1}`
+            return (
+              <Provefelter
+                key={i}
+                tittel={tittel}
+                prove={prove}
+                forsteFelt={i === tidligere.length - 1 ? nyttFelt : undefined}
+                onEndre={(felt, verdi) => settTidligere(tidligere.map((p, j) => (j === i ? { ...p, [felt]: verdi } : p)))}
+                onFjern={() => {
+                  settTidligere(tidligere.filter((_, j) => j !== i))
+                  flyttFokus('legg')
+                }}
+              />
+            )
+          })}
       </div>
 
       {/* Prøvene ble tatt så tett at de kanskje ikke bør vurderes mot
-          hverandre. Brukeren avgjør; avkryssingen er av til den hukes av. */}
+          hverandre. Brukeren avgjør; avkryssingen er av til den hukes av, og
+          gjelder bare så lenge datoene sier at det er kort tid. */}
       {kortTid && (
-        <div className="notis notis--handling thc-korttid" role="note">
-          <p>{kortTidtekst(inndata)}</p>
-          <label className="avkryssing">
+        <div className="thc-tidsrom">
+          <p>{kortTidtekst(dager)}</p>
+          <label className="avkryssing avkryssing--felt">
             <input
               type="checkbox"
               checked={inndata.kortTid ?? false}
               onChange={(e) => onEndre('kortTid', e.target.checked)}
             />
-            Kort tid mellom prøvene
+            Ikke sammenlign prøvene (kort tid)
           </label>
         </div>
       )}
-
-      {vurderes && inndata.samletVurdering && (
-        <div className="thc-tidligere">
-          <p className="thc-tidligere__ingress">
-            Gir sammenligningen med forrige prøve «kan ikke fastslås», sammenlignes denne prøven også med
-            prøvene under, fra den nærmeste og bakover.
-          </p>
-          <div className="thc-prover">
-            {tidligere.map((prove, i) => (
-              <Provefelter
-                key={i}
-                tittel={tidligere.length === 1 ? 'Tidligere prøve' : `Tidligere prøve ${i + 1}`}
-                prove={prove}
-                onEndre={(felt, verdi) =>
-                  settTidligere(tidligere.map((p, j) => (j === i ? { ...p, [felt]: verdi } : p)))
-                }
-                onFjern={() => settTidligere(tidligere.filter((_, j) => j !== i))}
-              />
-            ))}
-          </div>
-          <div className="handlingsrad handlingsrad--start">
-            <Button
-              variant="kant"
-              icon={<Ikon navn="plus" />}
-              onClick={() => settTidligere([...tidligere, tomThcProve()])}
-            >
-              Legg til tidligere prøve
-            </Button>
-          </div>
+      {!ingen && langt && (
+        <div className="thc-tidsrom thc-tidsrom--langt">
+          <p>{langTidtekst(dager)}</p>
+          <Button
+            variant="kant"
+            className="be-legg-til"
+            onClick={() => {
+              onEndre('ingenTidligere', true)
+              flyttFokus('ingen')
+            }}
+          >
+            Fortolk uten forrige prøve
+          </Button>
         </div>
       )}
 
       {/* Sikkerhetsmarginen gjelder bare sammenligningen mot forrige
-          prøve, så uten en slik prøve er den ikke noe å ta stilling
+          prøve, så uten en slik sammenligning er den ikke noe å ta stilling
           til — samme grunn som datoene skjules av. */}
       {vurderes && (
-        <div className="thc-margin">
-          {underCutoff && (
-            <p className="notis" role="note">
-              {UNDER_CUTOFF_BANNER}
-            </p>
-          )}
-          <p className="thc-margin__hode" aria-hidden="true">
-            Sikkerhetsmargin
-          </p>
-          <Trinnbryter
-            etikett="Sikkerhetsmargin"
-            valg={marginer}
-            verdi={inndata.sikkerhetsmargin}
-            onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
-          />
-          <Details summary="Hva er sikkerhetsmarginen?" ikon="fallback">
-            <ThcMarginforklaring regler={regler} />
-          </Details>
+        <div className="be-skjema__rad">
+          <Button
+            ref={leggTil}
+            variant="kant"
+            className="be-legg-til"
+            onClick={() => {
+              settTidligere([...tidligere, tomThcProve()])
+              flyttFokus('ny')
+            }}
+          >
+            + Legg til tidligere prøve
+          </Button>
+          <div className="thc-margin">
+            <Sikkerhetsmargin
+              marginer={regler.sikkerhetsmarginer.map(({ margin }) => margin)}
+              standard={regler.standard_sikkerhetsmargin}
+              verdi={inndata.sikkerhetsmargin}
+              onVelg={(margin) => onEndre('sikkerhetsmargin', margin)}
+              maalinger="THC-syre og kreatinin"
+              merSkalTil="kommentaren sier at cannabis har vært inntatt etter forrige prøve. Tvilen kommer prøvegiver til gode"
+            />
+            {storreUsikkerhet && (
+              <p className="thc-margin__merknad">{underCutofftekst(regler.maleusikkerhet.faktor_under_cutoff)}</p>
+            )}
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-/** Banneret om kort tid: «Prøvene er tatt samme dag.» eller «Det er bare 2 dager mellom prøvene.» */
-function kortTidtekst(inndata: ThcInndata): string {
-  const dager = dagerMellom(inndata.forrigeDato, inndata.aktuellDato)
-  const mellom = dager === 0 ? 'Prøvene er tatt samme dag.' : `Det er bare ${dager === 1 ? '1 dag' : `${dager} dager`} mellom prøvene.`
+/** Datofeltet i en prøve. */
+function Datofelt({ verdi, onEndre }: { verdi: string; onEndre: (verdi: string) => void }) {
   return (
-    `${mellom} Er det så kort tid at prøvene ikke kan vurderes mot hverandre, huk av for kort tid. ` +
-    'Da sammenlignes de ikke, og kommentaren sier det.'
+    <label className="skjemafelt">
+      <span>Prøvedato</span>
+      <input className="inndatafelt" type="date" value={verdi} onChange={(e) => onEndre(e.target.value)} />
+    </label>
+  )
+}
+
+/**
+ * Et tallfelt med ledeteksten over og en kort feil under når verdien er
+ * ugyldig ({@link thcFeltfeil}). Navnet er ledeteksten alene, ikke feilen.
+ */
+function Tallinndata({
+  navn,
+  verdi,
+  krav,
+  onEndre,
+  feltRef,
+}: {
+  navn: string
+  verdi: string
+  krav: ThcFeltkrav
+  onEndre: (verdi: string) => void
+  feltRef?: Ref<HTMLInputElement> | undefined
+}) {
+  const id = useId()
+  const feil = thcFeltfeil(verdi, krav)
+  return (
+    <label className="skjemafelt">
+      <span id={`${id}-navn`}>{navn}</span>
+      <Tallfelt
+        ref={feltRef}
+        value={verdi}
+        onChange={onEndre}
+        aria-labelledby={`${id}-navn`}
+        aria-invalid={feil ? true : undefined}
+        aria-describedby={feil ? `${id}-feil` : undefined}
+      />
+      {feil && (
+        <span className="be-feltfeil" id={`${id}-feil`}>
+          {feil}
+        </span>
+      )}
+    </label>
   )
 }
 
 /**
  * Feltene for én tidligere prøve: IRCAK, eller UCAK og NKRE når den lå under
- * cut-off, og prøvedatoen. Brukes for forrige prøve og for prøvene i den
- * samlede vurderingen.
+ * cut-off, med IRCAK regnet ut av dem diskret under, og prøvedatoen. Brukes
+ * for forrige prøve og for prøvene i den samlede vurderingen.
  */
 function Provefelter({
   tittel,
@@ -234,61 +271,54 @@ function Provefelter({
   prove: ThcProve
   onEndre: <K extends keyof ThcProve>(felt: K, verdi: ThcProve[K]) => void
   onFjern?: () => void
-  forsteFelt?: Ref<HTMLInputElement>
+  forsteFelt?: Ref<HTMLInputElement> | undefined
 }) {
   const beregnetIrcak = prove.underCutoff ? beregnIrcak(prove.ucak, prove.nkre) : null
   return (
-    <fieldset className="feltgruppe">
-      <legend>{tittel}</legend>
-      {/* Var urinen så fortynnet at THC-syre havnet under
-          påvisningsgrensen, svarer labsystemet «ikke påvist» og
-          regner ingen IRCAK. De to interne tallene tastes da i
-          stedet, og IRCAK regnes ut av dem. */}
-      <label className="avkryssing avkryssing--felt">
-        <input
-          type="checkbox"
-          checked={prove.underCutoff}
-          onChange={(e) => onEndre('underCutoff', e.target.checked)}
-        />
-        Under cut-off
-      </label>
-      {prove.underCutoff ? (
-        <>
-          <div className="feltrad feltrad--par">
-            <label className="skjemafelt">
-              <span>UCAK (THC-syre)</span>
-              <Tallfelt ref={forsteFelt} value={prove.ucak} onChange={(verdi) => onEndre('ucak', verdi)} />
-            </label>
-            <label className="skjemafelt">
-              <span>NKRE (kreatinin)</span>
-              <Tallfelt value={prove.nkre} onChange={(verdi) => onEndre('nkre', verdi)} />
-            </label>
-          </div>
-          <p className="thc-beregnet" role="status">
-            Beregnet IRCAK: <strong>{beregnetIrcak === null ? '–' : formaterIrcak(beregnetIrcak)}</strong>
-          </p>
-        </>
-      ) : (
-        <label className="skjemafelt">
-          <span>IRCAK</span>
-          <Tallfelt ref={forsteFelt} value={prove.verdi} onChange={(verdi) => onEndre('verdi', verdi)} />
+    <fieldset className="be-prove">
+      <legend className="be-prove__tittel">{tittel}</legend>
+      <div className="thc-prove__valg">
+        {/* Var urinen så fortynnet at THC-syre havnet under
+            påvisningsgrensen, svarer labsystemet «ikke påvist» og regner
+            ingen IRCAK. De to interne tallene tastes da i stedet, og IRCAK
+            regnes ut av dem. */}
+        <label className="avkryssing avkryssing--felt">
+          <input type="checkbox" checked={prove.underCutoff} onChange={(e) => onEndre('underCutoff', e.target.checked)} />
+          Under cut-off
         </label>
-      )}
-      <label className="skjemafelt">
-        <span>Prøvedato</span>
-        <input
-          className="inndatafelt"
-          type="date"
-          value={prove.dato}
-          onChange={(e) => onEndre('dato', e.target.value)}
-        />
-      </label>
-      {onFjern && (
-        <div className="handlingsrad handlingsrad--start">
-          <Button variant="subtle" icon={<Ikon navn="close" />} onClick={onFjern}>
-            Fjern {tittel.toLowerCase()}
+        {onFjern && (
+          <Button variant="subtle" className="be-prove__fjern" aria-label={`Fjern ${tittel.toLowerCase()}`} onClick={onFjern}>
+            Fjern
           </Button>
-        </div>
+        )}
+      </div>
+      <div className={`be-prove__felt ${prove.underCutoff ? '' : 'thc-prove__felt--to'}`}>
+        {prove.underCutoff ? (
+          <>
+            <Tallinndata
+              navn="UCAK (THC-syre)"
+              verdi={prove.ucak}
+              krav="ikke_negativ"
+              onEndre={(verdi) => onEndre('ucak', verdi)}
+              feltRef={forsteFelt}
+            />
+            <Tallinndata navn="NKRE (kreatinin)" verdi={prove.nkre} krav="over_null" onEndre={(verdi) => onEndre('nkre', verdi)} />
+          </>
+        ) : (
+          <Tallinndata
+            navn="IRCAK"
+            verdi={prove.verdi}
+            krav="ikke_negativ"
+            onEndre={(verdi) => onEndre('verdi', verdi)}
+            feltRef={forsteFelt}
+          />
+        )}
+        <Datofelt verdi={prove.dato} onEndre={(verdi) => onEndre('dato', verdi)} />
+      </div>
+      {prove.underCutoff && (
+        <p className="be-kvotient" role="status">
+          Beregnet IRCAK <strong>{beregnetIrcak === null ? '–' : formaterIrcak(beregnetIrcak)}</strong>
+        </p>
       )}
     </fieldset>
   )

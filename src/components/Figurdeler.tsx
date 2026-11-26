@@ -63,3 +63,15 @@ export function Klamme({ x, ys, ovreGrense, nedreGrense }: { x: number; ys: numb
     </>
   )
 }
+
+/**
+ * Et lite utsnitt av en kurve, med samme farge og stiplingsmønster som i
+ * figuren: streken i tabellene som er tegnforklaringen til figurene.
+ */
+export function Kurvestrek({ klasse }: { klasse: string }) {
+  return (
+    <svg className="be-legende__strek" viewBox="0 0 40 8" aria-hidden="true">
+      <line className={klasse} x1={3} y1={4} x2={37} y2={4} />
+    </svg>
+  )
+}

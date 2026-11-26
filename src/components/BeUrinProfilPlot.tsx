@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { BeUrinFigur, Figurmerknad } from './BeUrinPlot'
+import { Kurvestrek } from './Figurdeler'
 import { visningsmarginer } from '../domain/beUrinMotor'
 import type { BeUrinFellesmodell } from '../domain/beUrinModell'
 import { byggProfilgraf, prosentFor } from '../domain/beUrinPlot'
@@ -29,11 +30,7 @@ import { marginvalg } from '../domain/thcVisning'
 
 /** Streken i tabellen: et lite utsnitt av kurven, med samme farge og stiplingsmønster. */
 export function Profilstrek({ rolle }: { rolle: BeUrinRolle }) {
-  return (
-    <svg className="be-legende__strek" viewBox="0 0 40 8" aria-hidden="true">
-      <line className={`thc-plot__kurve be-kurve--${rolle}`} x1={3} y1={4} x2={37} y2={4} />
-    </svg>
-  )
+  return <Kurvestrek klasse={`thc-plot__kurve be-kurve--${rolle}`} />
 }
 
 /** Gruppene i tabellen: profilene den sporadiske og den kroniske vurderingen bygger på. */

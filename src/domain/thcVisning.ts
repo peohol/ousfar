@@ -1,7 +1,7 @@
 import {
-  sammenlignMedForrige,
   type ThcForventet,
   type ThcKonklusjon,
+  type ThcMildereUtfall,
   type ThcSamletVurdering,
 } from './thcMotor'
 import { INGEN_SIKKERHETSMARGIN, KURVEFARGE, type ThcKonsentrasjonsniva, type ThcRegelsett } from './thcRegelsett'
@@ -61,6 +61,78 @@ export function konklusjonsnavnISetning(konklusjon: ThcKonklusjon, samlet: ThcSa
   return navn.charAt(0).toLowerCase() + navn.slice(1)
 }
 
+/* --- Det modulen skriver ved skjemaet og kommentaren (#586) ------------------ */
+
+/** Teksten der kommentaren kommer, så lenge skjemaet ikke er ferdig utfylt. */
+export const THC_VENTER = 'Kommentaren vises når prøvene er fylt inn.'
+
+/** «1 dag», «3 dager». */
+export function antallDager(dager: number): string {
+  return dager === 1 ? '1 dag' : `${dager} dager`
+}
+
+/** Meldingen om kort tid mellom prøvene: «Prøvene er tatt samme dag.» eller «Det er bare 2 dager mellom prøvene.» */
+export function kortTidtekst(dager: number): string {
+  return dager === 0 ? 'Prøvene er tatt samme dag.' : `Det er bare ${antallDager(dager)} mellom prøvene.`
+}
+
+/** Meldingen om lang tid mellom prøvene, med forslaget om å fortolke uten forrige prøve. */
+export function langTidtekst(dager: number): string {
+  return `Det er ${antallDager(dager)} mellom prøvene. Vurder å fortolke uten å sammenligne med forrige prøve.`
+}
+
+/**
+ * Merknaden ved sikkerhetsmarginen når forrige prøve fortolkes under
+ * cut-off og marginen faktisk korrigerer for måleusikkerheten. Meningen er
+ * eierens: større måleusikkerhet legges til grunn, og det gjør fortolkningen
+ * mer forsiktig.
+ */
+export function underCutofftekst(faktor: number): string {
+  return (
+    `Forrige prøve er under cut-off, så det er lagt til grunn ${Math.round((faktor - 1) * 100)}\u00a0% høyere ` +
+    'måleusikkerhet. Det gjør fortolkningen mer forsiktig.'
+  )
+}
+
+/** Merknaden når den samlede vurderingen ble gjort, men ingen tidligere prøve ga nytt inntak. */
+export const THC_SAMLET_UTEN_TREFF = 'Ingen av de tidligere prøvene ga «nytt inntak».'
+
+/**
+ * Et mildere utfall en høyere margin gir, kort ved kommentaren (#586):
+ * «Ved 99 % sikkerhetsmargin kan et nytt inntak ikke fastslås.» Teksten gir
+ * hele det kliniske utfallet, så to utfall aldri ser like ut: nytt inntak
+ * etter en enda tidligere prøve med datoen for den prøven, og at de tidligere
+ * prøvene ikke gir nytt inntak, eller ikke vurderes, når det står i
+ * fortolkningen nå og faller bort med den høyere marginen.
+ *
+ * `gjeldende` er fortolkningen med den valgte marginen: den tidligere prøven
+ * den samlede vurderingen fant nytt inntak etter, og om denne prøven
+ * sammenlignes med tidligere prøver når forrige prøve gir «kan ikke
+ * fastslås» (det står tidligere prøver i skjemaet).
+ */
+export function mildereMargintekst(
+  u: ThcMildereUtfall,
+  gjeldende: { samlet: ThcSamletVurdering | null; medTidligere: boolean },
+): string {
+  const ved = `Ved ${marginliste(u.marginer)} sikkerhetsmargin`
+  if (u.samlet) {
+    return (
+      `${ved} kan et nytt inntak etter forrige prøve ikke fastslås, men det har skjedd minst ett inntak ` +
+      `etter prøven tatt ${u.samlet.dato}.`
+    )
+  }
+  if (u.konklusjon === 'vanskelig') {
+    return gjeldende.medTidligere
+      ? `${ved} kan et nytt inntak ikke fastslås, heller ikke mot de tidligere prøvene.`
+      : `${ved} kan et nytt inntak ikke fastslås.`
+  }
+  // «Ikke nødvendigvis nytt»: de tidligere prøvene vurderes bare ved «kan ikke fastslås».
+  return (
+    `${ved} har cannabis ikke nødvendigvis vært inntatt etter forrige prøve.` +
+    (gjeldende.samlet ? ' De tidligere prøvene vurderes da ikke.' : '')
+  )
+}
+
 /** «en nedgang på 74 %», «en økning på 5 %» eller «ingen endring». */
 export function endringsfrase(endring: number): string {
   const ord = ordEndring(endring)
@@ -75,21 +147,6 @@ export function endringsfrase(endring: number): string {
 export function hvorOfteForStor(margin: number): string {
   const n = Math.round(1 / (1 - margin))
   return n === 2 ? 'i annethvert tilfelle' : `i 1 av ${n} tilfeller`
-}
-
-/**
- * De to prøvene i eksempelet på hva sikkerhetsmarginen gjør. Tallene er
- * oppdiktede og valgt fordi hver margin i de publiserte reglene gir en egen
- * konklusjon for dem; konklusjonene regnes likevel av reglene som gjelder.
- */
-export const MARGINEKSEMPEL = { forrige: 50, aktuell: 40, dager: 3, kronisk: true } as const
-
-/** Eksempelet fortolket med hver margin i regelsettet: endringen som fortolkes, og konklusjonen. */
-export function margineksempel(r: ThcRegelsett): { margin: number; endring: number; utfall: ThcKonklusjon }[] {
-  return r.sikkerhetsmarginer.map(({ margin }) => {
-    const { korrigert, utfall } = sammenlignMedForrige(r, { ...MARGINEKSEMPEL, margin, usikkerhet: 1 })
-    return { margin, endring: korrigert, utfall }
-  })
 }
 
 /** Hvert konsentrasjonsnivå med området det dekker: «under 20», «20–40», «40 eller mer». */

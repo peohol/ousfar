@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Etikett, Klamme } from './Figurdeler'
+import { Etikett, Klamme, Kurvestrek } from './Figurdeler'
 import { Tips } from './Tips'
 import {
   byggGraf,
@@ -14,7 +14,8 @@ import {
 } from '../domain/thcPlot'
 import type { ThcGrunnlag } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
-import { konklusjonsnavnISetning, marginvalg } from '../domain/thcVisning'
+import { antallDager, konklusjonsnavnISetning, marginvalg } from '../domain/thcVisning'
+import { THC_KURVEROLLER } from '../domain/thcRegelsett'
 
 /**
  * Visualiseringen av en fortolkning mot forrige prøve: de tre
@@ -24,8 +25,8 @@ import { konklusjonsnavnISetning, marginvalg } from '../domain/thcVisning'
  *
  * Ren SVG i appens egne farger, så figuren følger temaet. Bare rutenett —
  * ingen ramme eller akselinjer — og tallene på y-aksen står til høyre.
- * Legenden ligger utenfor figuren, i vanlig HTML, slik at hvert kurvenavn
- * kan bære et tips om hva profilen står for.
+ * Tegnforklaringen er tabellen over figuren ({@link ThcProfiltabell}, #586),
+ * der hvert kurvenavn bærer et tips om hva profilen står for.
  *
  * Punktet for denne prøven flytter seg med sikkerhetsmarginen, siden det er
  * den korrigerte endringen som sammenlignes med kurvene. Med `alleMarginer`
@@ -43,7 +44,7 @@ const HOYDE = 430
 /** Luft rundt tegneflaten: dagene under, prosentene til høyre. */
 const MARG = { topp: 26, hoyre: 100, bunn: 72, venstre: 24 }
 
-/** Hva hver utskillelsesprofil står for — vises som tips på legenden. */
+/** Hva hver utskillelsesprofil står for — vises som tips på navnet i tabellen. */
 const PROFILTIPS: Record<'gronn' | 'gul' | 'rod', string> = {
   gronn:
     'Denne utskillelsesprofilen anses å være relativt representativ for brukere flest ved moderat bruk av cannabis, dog tregere enn det som vanligvis sees etter et enkeltinntak.',
@@ -58,7 +59,7 @@ const PUNKTTONE: Record<ThcPunktutfall, 'gronn' | 'gul' | 'rod'> = {
   nytt_inntak: 'rod',
 }
 
-/** Det som står ved siden av legenden for hver terskel. */
+/** Betydningen hver kurve har for fortolkningen, i tabellen. */
 function terskeltekst(terskel: ThcTerskel, kronisk: boolean): string {
   const navn = (k: ThcPunktutfall) => `«${konklusjonsnavnISetning(k, null)}»`
   if (terskel === 'nedre') return `Skiller ${navn('ikke_nodvendigvis')} fra ${navn('vanskelig')}`
@@ -71,6 +72,43 @@ function terskeltekst(terskel: ThcTerskel, kronisk: boolean): string {
 /** «Ingen (50 %) sikkerhetsmargin: −34 %, nytt inntak» — tipset på punktet og linjen under figuren. */
 function punkttekst({ margin, prosent, utfall }: Marginpunkt): string {
   return `${marginvalg(margin)} sikkerhetsmargin: ${formaterProsent(prosent)}, ${konklusjonsnavnISetning(utfall, null)}`
+}
+
+/**
+ * Tabellen over figuren (#586), etter mønster fra benzoylekgonin i urin: både
+ * tegnforklaringen og oversikten. For hver utskillelsesprofil streken slik den
+ * står i figuren (farge og stiplingsmønster etter terskelen den er for
+ * bruksmønsteret), navnet, forventet endring etter like mange dager som
+ * mellom prøvene, og hva kurven betyr for fortolkningen. Kurven som ikke
+ * brukes ved det valgte bruksmønsteret, står dempet.
+ */
+export function ThcProfiltabell({ grunnlag, regler }: { grunnlag: ThcGrunnlag; regler: ThcRegelsett }) {
+  const terskel = terskler(regler, grunnlag.kronisk)
+  return (
+    <table className="be-profiltabell thc-profiltabell">
+      <thead>
+        <tr>
+          <th scope="col">Utskillelsesprofil</th>
+          <th scope="col">Forventet endring etter {antallDager(grunnlag.dager)}</th>
+          <th scope="col">Betydning for fortolkningen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {THC_KURVEROLLER.map((rolle) => (
+          <tr key={rolle} className={terskel[rolle] === 'ubrukt' ? 'thc-profiltabell__ubrukt' : undefined}>
+            <th scope="row">
+              <span className="be-profiltabell__navn">
+                <Kurvestrek klasse={`thc-plot__kurve thc-plot__kurve--${terskel[rolle]}`} />
+                <Tips forklaring={PROFILTIPS[rolle]}>{regler.kurver[rolle].navn}</Tips>
+              </span>
+            </th>
+            <td>{formaterProsent(grunnlag.forventet[rolle] * 100)}</td>
+            <td>{terskeltekst(terskel[rolle], grunnlag.kronisk)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
 }
 
 export function ThcPlot({
@@ -112,32 +150,16 @@ export function ThcPlot({
   const yMerker: number[] = []
   for (let v = graf.yBunn; v <= graf.yTopp + 1e-6; v += graf.ySteg) yMerker.push(v)
 
+  // Tidsrommet er hele døgn, så merkene står aldri tettere enn ett døgn
+  // (`velgDognsteg`, som i benzoylekgonin i urin): et brøkdelstrinn ga samme
+  // døgn to ganger under aksen. `graf.xSteg` står urørt, siden tallgrunnlaget
+  // i fasiten er låst.
+  const xSteg = Math.max(1, graf.xSteg)
   const xMerker: number[] = []
-  for (let dag = 0; dag <= graf.xMaks + 1e-6; dag += graf.xSteg) xMerker.push(dag)
+  for (let dag = 0; dag <= graf.xMaks + 1e-6; dag += xSteg) xMerker.push(dag)
 
   return (
     <>
-      <ul className="thc-legende">
-        {graf.kurver.map((kurve) => (
-          <li key={kurve.tone} className="thc-legende__rad">
-            {/* Boblen spenner over hele legenden, ikke bare over navnet den
-                hører til, så den lange forklaringen får plass å stå på. */}
-            <span className="thc-legende__oppforing">
-              <Tips forklaring={PROFILTIPS[kurve.tone]} className="thc-legende__punkt">
-                <span
-                  className={`thc-legende__strek thc-legende__strek--${terskel[kurve.tone]}`}
-                  aria-hidden="true"
-                />
-                <span className="tipsanker__navn">{kurve.navn}</span>
-              </Tips>
-            </span>
-            <span className="thc-legende__terskel">
-              {terskeltekst(terskel[kurve.tone], grunnlag.kronisk)}
-            </span>
-          </li>
-        ))}
-      </ul>
-
       <svg
         className="thc-plot__figur"
         viewBox={`0 0 ${BREDDE} ${HOYDE}`}

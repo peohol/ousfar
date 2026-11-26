@@ -74,7 +74,8 @@ før aktivering.
 **Skjemaet** er det samme for begge formene (#576, under «Form 2»).
 
 **Sikkerhetsmarginen.** Bryteren, figuren med valgt eller alle marginer og banneret
-«Vurder høyere sikkerhetsmargin» er THC-syremodulens. Banneret viser hver
+«Vurder høyere sikkerhetsmargin» (`MildereMargin`) er slik THC-syremodulen hadde
+dem før #586; THC-syre bruker nå den korte teksten ved kommentaren. Banneret viser hver
 mildere konklusjon en høyere margin gir, også nytt inntak etter en eldre
 prøve; valgt margin endres bare når brukeren trykker.
 
@@ -187,7 +188,7 @@ ikke har, og `NUMERISK_FEIL`. Nullstill og tastaturflyten er som før.
 
 **Sikkerhetsmarginen** er et kompakt valg «Ingen (50 %)», «90 %», «99 %»
 (standard 90 %) med navnet «Sikkerhetsmargin» og et lite informasjonstegn ved
-siden av. Forklaringen bak tegnet (`BeUrinMarginforklaring`) vises ved pekeren,
+siden av. Forklaringen bak tegnet (`Sikkerhetsmargin`, delt med THC-syre fra #586) vises ved pekeren,
 ved tastaturfokus og ved et trykk på berøringsskjerm, og leses av skjermlesere
 fra tegnet. Den sier kort at målingene er usikre, at en høyere margin legger
 en mer forsiktig endring til grunn, og at marginen gjelder måleusikkerheten,

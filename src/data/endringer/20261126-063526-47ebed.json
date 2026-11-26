@@ -1,0 +1,21 @@
+{
+  "id": "20261126-063526-47ebed",
+  "semver": "patch",
+  "opprettet": "2026-11-26T06:35:26Z",
+  "sammendrag": "Enklere fortolkning av THC-syre i urin, med samme utforming som benzoylekgonin i urin",
+  "typer": [
+    "Design / layout",
+    "Funksjonalitet"
+  ],
+  "omfang": "Moderat omfang",
+  "gjelder": [
+    "fortolkning"
+  ],
+  "punkter": [
+    "Forrige og denne prøven står side om side, og kommentaren med kopiknappen står rett under. Kommentarene er de samme som før.",
+    "Tidligere prøver legges til med «+ Legg til tidligere prøve». Feil i et felt sies ved feltet, og det står ingen liste over det som mangler.",
+    "Kort og lang tid mellom prøvene sies i én kort linje, med valget «Ikke sammenlign prøvene (kort tid)» eller knappen «Fortolk uten forrige prøve».",
+    "Sikkerhetsmarginen forklares bak et lite informasjonstegn. Hva en høyere margin ville gitt, står kort under kommentaren i stedet for i et eget banner.",
+    "Utskillelsesprofilene med figuren og en ny forklaring i vanlig språk ligger lukket under hver sin overskrift. Det samme gjelder simulatoren på redigeringssiden."
+  ]
+}

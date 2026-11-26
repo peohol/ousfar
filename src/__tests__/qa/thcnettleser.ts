@@ -1,0 +1,332 @@
+/**
+ * Nettleserkontrollen av THC-syrefortolkningen etter forenklingen (#586,
+ * docs/thc-syre.md), etter mønster fra benzoylekgonin i urin
+ * (benzoylekgoninnettleser.ts). I det lokale testmiljøet (docs/qa-testmiljo.md):
+ *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/thcnettleser.ts
+ *
+ * Prøver at en vanlig fortolkning med kommentaren og kopiknappen får plass på
+ * én PC-skjerm, prøvene side om side, feil ved feltet uten en liste over det
+ * som mangler, den korte teksten ved en høyere margin, informasjonstegnet,
+ * profiltabellen og figuren, forklaringen, de tidligere prøvene, kort og lang
+ * tid, under cut-off, kopieringen med tastaturet, simulatoren på
+ * redigeringssiden, mørkt tema og mobil. Prøveverdiene er oppdiktede.
+ *
+ * Den lokale databasen har ikke THC-syrereglene: importen i migrasjonene
+ * legges bare inn av administratoren som bestilte den, og den finnes ikke
+ * lokalt. Siden får derfor de publiserte reglene og tekstene fra fasiten
+ * (`thcRegelsettutgave`, de samme som `thcRegelsettlagring.test.ts` viser at
+ * databasen gir) i svaret på lesingen av dem; alt annet går til databasen.
+ */
+import { thcRegelsettutgave } from '../hjelp/thcgrunnlag'
+import { krev, lagKontroll, vent, type Side } from './kontroll'
+import { apneTestmiljo } from './testmiljo'
+
+const { punkt, bilde, paa, oppsettFeilet, rapport } = lagKontroll('thc')
+const PC = { viewport: { width: 1440, height: 900 } }
+const MOBIL = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
+
+const miljo = await apneTestmiljo()
+const UTGAVE = thcRegelsettutgave()
+const THC_KOMMENTARER = new Set(UTGAVE.kommentarer.map((k) => k.id))
+
+/** Svarer på lesingen av THC-syrereglene og kommentarene deres med fasitens; resten går videre. */
+async function medThcRegler(side: Side) {
+  const json = (body: unknown) => ({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+  await side.route('**/rest/v1/rpc/les_thc_regelsett*', (r: Side) => r.fulfill(json(UTGAVE.regelsett)))
+  await side.route('**/rest/v1/rpc/les_kommentarer*', (r: Side) => {
+    const ider = (r.request().postDataJSON()?.ider ?? []) as string[]
+    if (ider.length === 0 || !ider.every((id) => THC_KOMMENTARER.has(id))) return r.continue()
+    return r.fulfill(json(UTGAVE.kommentarer.filter((k) => ider.includes(k.id))))
+  })
+}
+
+async function apne(side: Side) {
+  await medThcRegler(side)
+  await side.goto(`${miljo.url}/#/fortolkning/ircak`)
+  await side.getByRole('group', { name: 'Forrige prøve' }).waitFor({ timeout: 30_000 })
+}
+
+async function fyll(side: Side, gruppe: string, ircak: string, dato?: string) {
+  const g = side.getByRole('group', { name: gruppe })
+  await g.getByLabel('IRCAK', { exact: true }).fill(ircak)
+  if (dato) await g.getByLabel('Prøvedato').fill(dato)
+}
+
+const kommentar = (side: Side): Promise<string> => side.locator('.kommentartekst').innerText()
+const bortMedFokus = (side: Side) => side.locator('body').click({ position: { x: 5, y: 880 } })
+
+/** Siden ruller ikke sideveis. */
+async function utenSideveisRulling(side: Side) {
+  const [bredde, vindu] = await side.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth])
+  krev(bredde! <= vindu!, `siden er ${bredde} px bred i et vindu på ${vindu} px`)
+  return `${bredde} px av ${vindu}`
+}
+
+try {
+  const pc: Side = paa(await miljo.side(PC))
+
+  await punkt('T1 PC: en vanlig fortolkning, prøvene side om side, og alt på én skjerm', async () => {
+    paa(pc)
+    await apne(pc)
+    krev((await pc.locator('.be-venter').innerText()) === 'Kommentaren vises når prøvene er fylt inn.', 'den stille linjen mangler')
+    await fyll(pc, 'Forrige prøve', '120', '2026-01-01')
+    await fyll(pc, 'Denne prøven', '80', '2026-01-08')
+    const k = await kommentar(pc)
+    krev(k.length > 40, `kommentaren: ${k}`)
+    const t = await pc.locator('main').innerText()
+    krev(!/Fyll inn|Vurder høyere sikkerhetsmargin|Samlet vurdering med enda tidligere/i.test(t), `gammel tekst: ${t}`)
+    krev((await pc.getByRole('note').count()) === 0, 'det står et banner')
+    const [forrige, denne] = await pc.locator('.be-prove').evaluateAll((k: Element[]) => k.map((e) => e.getBoundingClientRect().top))
+    krev(forrige === denne, 'prøvene står ikke side om side på PC')
+    // Kopiknappen står rett under kommentaren, og de lukkede overskriftene under den.
+    const [kTop, knappTop, seksjonTop] = await Promise.all([
+      pc.locator('.kommentartekst').evaluate((e: Element) => e.getBoundingClientRect().bottom),
+      pc.getByRole('button', { name: /Kopier kommentar/ }).evaluate((e: Element) => e.getBoundingClientRect().top),
+      pc.locator('.be-seksjoner').evaluate((e: Element) => e.getBoundingClientRect().top),
+    ])
+    krev(kTop <= knappTop && knappTop < seksjonTop, 'kopiknappen står ikke rett under kommentaren')
+    const bunn = await pc.locator('.be-seksjoner').evaluate((e: Element) => e.getBoundingClientRect().bottom + window.scrollY)
+    const hoyde = await pc.evaluate(() => window.innerHeight)
+    krev(bunn <= hoyde, `resultatet slutter ${Math.round(bunn)} px ned i et vindu på ${hoyde} px`)
+    await bortMedFokus(pc)
+    await vent(300)
+    await bilde(pc, '01-resultat-pc')
+    return `slutter ${Math.round(bunn)} av ${hoyde} px`
+  })
+
+  await punkt('T2 PC: tastaturet til informasjonstegnet, og den forklarte marginen', async () => {
+    paa(pc)
+    await pc.getByRole('group', { name: 'Denne prøven' }).getByLabel('Prøvedato').focus()
+    let knapp: string | undefined
+    for (let i = 0; i < 4 && knapp !== '+ Legg til tidligere prøve'; i++) {
+      await pc.keyboard.press('Tab')
+      knapp = await pc.evaluate(() => (document.activeElement?.tagName === 'BUTTON' ? document.activeElement.textContent?.trim() : undefined))
+    }
+    krev(knapp === '+ Legg til tidligere prøve', `Tab gikk til ${knapp}`)
+    await pc.keyboard.press('Tab')
+    const info = await pc.evaluate(() => document.activeElement?.getAttribute('aria-label'))
+    krev(info === 'Om sikkerhetsmarginen', `Tab gikk til ${info}`)
+    await vent(300)
+    const boble = await pc.locator('.tipsboble__innhold').innerText()
+    krev(boble.includes('Marginen gjelder bare måleusikkerheten'), `boblen: ${boble}`)
+    await bilde(pc, '02-info-pc')
+    return 'felt → legg til → info, boblen vises'
+  })
+
+  await punkt('T3 PC: en høyere margin gir et mildere utfall, sagt kort ved kommentaren', async () => {
+    paa(pc)
+    // 30 → 20 på 7 døgn ved kronisk bruk (standard): en mildere konklusjon ved 99 %.
+    await fyll(pc, 'Forrige prøve', '30', '2026-01-01')
+    await fyll(pc, 'Denne prøven', '20', '2026-01-08')
+    const merknad = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
+    krev(/^Ved 99\s%\ssikkerhetsmargin .+\.$/.test(merknad), `merknaden: ${merknad}`)
+    krev((await pc.getByRole('button', { name: /Bruk \d+/ }).count()) === 0, 'det står en knapp for marginen')
+    await bortMedFokus(pc)
+    await bilde(pc, '03-mildere-pc')
+    return merknad
+  })
+
+  await punkt('T4 PC: tidligere prøver, og det mildere utfallet knyttet til riktig prøve', async () => {
+    paa(pc)
+    await fyll(pc, 'Forrige prøve', '6,5', '2026-07-04')
+    await fyll(pc, 'Denne prøven', '2,5', '2026-07-27')
+    try {
+      await pc.getByRole('button', { name: '+ Legg til tidligere prøve' }).click()
+      const fokus = await pc.evaluate(() => document.activeElement?.closest('fieldset')?.querySelector('legend')?.textContent)
+      krev(fokus === 'Tidligere prøve', `fokuset står i ${fokus}`)
+      await fyll(pc, 'Tidligere prøve', '3', '2026-06-28')
+      krev((await kommentar(pc)).includes('28.06.2026'), `kommentaren: ${await kommentar(pc)}`)
+      const en = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
+      krev(en.includes('heller ikke mot de tidligere prøvene'), `én tidligere prøve: ${en}`)
+      await pc.getByRole('button', { name: '+ Legg til tidligere prøve' }).click()
+      await fyll(pc, 'Tidligere prøve 2', '2', '2026-06-01')
+      const to = await pc.locator('.thc-merknader').innerText({ timeout: 5000 })
+      krev(to.includes('etter prøven tatt 01.06.2026'), `to tidligere prøver: ${to}`)
+      await bortMedFokus(pc)
+      await bilde(pc, '04-tidligere-pc', true)
+      await pc.getByRole('button', { name: 'Fjern tidligere prøve 2' }).click()
+      const etter = await pc.evaluate(() => document.activeElement?.textContent?.trim())
+      krev(etter === '+ Legg til tidligere prøve', `fokuset etter fjerning: ${etter}`)
+      return `${en} / ${to}`
+    } finally {
+      await pc.getByRole('button', { name: 'Nullstill' }).click()
+    }
+  })
+
+  await punkt('T5 PC: profiltabellen og figuren, og alle marginer, lukket til den åpnes', async () => {
+    paa(pc)
+    await fyll(pc, 'Forrige prøve', '120', '2026-01-01')
+    await fyll(pc, 'Denne prøven', '80', '2026-01-08')
+    const seksjon = pc.locator('details').filter({ hasText: 'Utskillelsesprofiler og figur' })
+    krev(!(await seksjon.evaluate((d: HTMLDetailsElement) => d.open)), 'profilene er åpne fra start')
+    await pc.getByText('Utskillelsesprofiler og figur').click()
+    await vent(700)
+    const rader = await seksjon.locator('tbody tr').count()
+    krev(rader >= 3, `bare ${rader} rader`)
+    krev((await seksjon.locator('svg.thc-plot__figur').count()) === 1, 'figuren mangler')
+    await bilde(pc, '05-profiler-pc', true)
+    await seksjon.getByLabel('Vis alle sikkerhetsmarginer').check()
+    await vent(300)
+    await bilde(pc, '06-alle-marginer-pc', true)
+    await seksjon.getByLabel('Vis alle sikkerhetsmarginer').uncheck()
+    await pc.getByText('Utskillelsesprofiler og figur').click()
+    await vent(500)
+    return `${rader} rader`
+  })
+
+  await punkt('T6 PC: forklaringen med de fire spørsmålene, uten formler', async () => {
+    paa(pc)
+    await pc.getByText('Forklaring', { exact: true }).click()
+    await vent(700)
+    const seksjon = pc.locator('details').filter({ hasText: 'Hvorfor blir konklusjonen slik?' })
+    const overskrifter = await seksjon.locator('h3').allInnerTexts()
+    krev(overskrifter.length === 4, `overskriftene: ${overskrifter.join(' | ')}`)
+    const t = await seksjon.innerText()
+    krev(!/=|√|\bln\b|forholdstall|kvotient/i.test(t), `formler: ${t}`)
+    await bilde(pc, '07-forklaring-pc', true)
+    await pc.getByText('Forklaring', { exact: true }).click()
+    await vent(500)
+    return overskrifter.join(' | ')
+  })
+
+  await punkt('T7 PC: feil ved feltet, og feil på tvers', async () => {
+    paa(pc)
+    await fyll(pc, 'Denne prøven', '0')
+    await vent(200)
+    krev((await pc.getByText('Må være over 0.').count()) === 1, 'feilen ved feltet mangler')
+    krev((await pc.locator('.kommentartekst').count()) === 0, 'kommentar med ugyldig felt')
+    await bortMedFokus(pc)
+    await bilde(pc, '08-feltfeil-pc')
+    await fyll(pc, 'Denne prøven', '80', '2025-12-01')
+    const feil = await pc.getByRole('alert').innerText()
+    krev(feil === 'Denne prøven kan ikke være tatt før forrige prøve.', `feilen: ${feil}`)
+    await bilde(pc, '09-tverrfeil-pc')
+    return feil
+  })
+
+  await punkt('T8 PC: kort tid gir et valg, lang tid et forslag', async () => {
+    paa(pc)
+    await fyll(pc, 'Denne prøven', '80', '2026-01-02')
+    await pc.getByText('Det er bare 1 dag mellom prøvene.').waitFor({ timeout: 5000 })
+    const valg = pc.getByLabel('Ikke sammenlign prøvene (kort tid)')
+    krev(!(await valg.isChecked()), 'valget er huket av fra start')
+    await bortMedFokus(pc)
+    await bilde(pc, '10-kort-tid-pc')
+    await valg.check()
+    await vent(200)
+    krev((await pc.getByRole('button', { name: '+ Legg til tidligere prøve' }).count()) === 0, 'tidligere prøver ved kort tid')
+    await valg.uncheck()
+    await fyll(pc, 'Denne prøven', '80', '2026-03-01')
+    await pc.locator('.thc-tidsrom--langt').waitFor({ timeout: 5000 })
+    await bortMedFokus(pc)
+    await bilde(pc, '11-lang-tid-pc')
+    await pc.getByRole('button', { name: 'Fortolk uten forrige prøve' }).click()
+    krev(await pc.getByLabel('Ingen tidligere prøve tilgjengelig').isChecked(), 'forslaget ble ikke tatt')
+    const fokus = await pc.evaluate(() => document.activeElement?.parentElement?.textContent?.trim())
+    krev(fokus === 'Ingen tidligere prøve tilgjengelig', `fokuset: ${fokus}`)
+    await pc.getByLabel('Ingen tidligere prøve tilgjengelig').uncheck()
+    return 'valget av ved kort tid; forslaget tar «ingen tidligere prøve»'
+  })
+
+  await punkt('T9 PC: under cut-off, med beregnet IRCAK og merknaden ved marginen', async () => {
+    paa(pc)
+    const forrige = pc.getByRole('group', { name: 'Forrige prøve' })
+    await forrige.getByLabel('Under cut-off').check()
+    await forrige.getByLabel('UCAK (THC-syre)').fill('3')
+    await forrige.getByLabel('NKRE (kreatinin)').fill('10')
+    await forrige.getByLabel('Prøvedato').fill('2026-01-01')
+    await fyll(pc, 'Denne prøven', '0,2', '2026-01-08')
+    const beregnet = await forrige.getByRole('status').innerText()
+    krev(/Beregnet IRCAK/.test(beregnet), `beregnet: ${beregnet}`)
+    const merknad = await pc.locator('.thc-margin__merknad').innerText()
+    krev(merknad.includes('under cut-off'), `merknaden: ${merknad}`)
+    await bortMedFokus(pc)
+    await bilde(pc, '12-under-cutoff-pc')
+    await forrige.getByLabel('Under cut-off').uncheck()
+    return `${beregnet}; ${merknad}`
+  })
+
+  await punkt('T10 PC: Enter kopierer, og Enter igjen nullstiller', async () => {
+    paa(pc)
+    await fyll(pc, 'Forrige prøve', '120', '2026-01-01')
+    await fyll(pc, 'Denne prøven', '80', '2026-01-08')
+    const k = await kommentar(pc)
+    await pc.getByRole('group', { name: 'Denne prøven' }).getByLabel('IRCAK', { exact: true }).focus()
+    await pc.keyboard.press('Enter')
+    await vent(400)
+    const utklipp = await pc.evaluate(() => navigator.clipboard.readText())
+    krev(utklipp === k, `utklippstavlen: ${utklipp}`)
+    await pc.locator('.thc-nullstilltips').waitFor({ timeout: 5000 })
+    await bilde(pc, '13-kopiert-pc')
+    await pc.keyboard.press('Enter')
+    await vent(400)
+    const verdi = await pc.getByRole('group', { name: 'Forrige prøve' }).getByLabel('IRCAK', { exact: true }).inputValue()
+    krev(verdi === '', `feltet etter nullstilling: ${verdi}`)
+    return 'kopiert og nullstilt med Enter'
+  })
+
+  await punkt('T11 PC: mørkt tema', async () => {
+    paa(pc)
+    await pc.emulateMedia({ colorScheme: 'dark' })
+    await fyll(pc, 'Forrige prøve', '30', '2026-01-01')
+    await fyll(pc, 'Denne prøven', '20', '2026-01-08')
+    await bortMedFokus(pc)
+    await vent(300)
+    await bilde(pc, '14-moerkt-pc')
+    await pc.getByText('Utskillelsesprofiler og figur').click()
+    await vent(700)
+    await bilde(pc, '15-moerkt-profiler-pc', true)
+    await pc.getByText('Utskillelsesprofiler og figur').click()
+    await pc.emulateMedia({ colorScheme: 'light' })
+    return 'tatt'
+  })
+
+  await punkt('T12 PC: simulatoren på redigeringssiden viser det samme', async () => {
+    paa(pc)
+    await pc.goto(`${miljo.url}/#/fortolkning/ircak/rediger`)
+    await pc.reload()
+    await pc.getByRole('button', { name: 'Fortolkningsregler' }).click({ timeout: 30_000 })
+    await pc.getByRole('button', { name: 'Prøv reglene' }).first().click()
+    const sim = pc.locator('.simulator').first()
+    await sim.getByRole('group', { name: 'Forrige prøve' }).waitFor({ timeout: 30_000 })
+    await sim.getByRole('group', { name: 'Forrige prøve' }).getByLabel('IRCAK', { exact: true }).fill('30')
+    await sim.getByRole('group', { name: 'Forrige prøve' }).getByLabel('Prøvedato').fill('2026-01-01')
+    await sim.getByRole('group', { name: 'Denne prøven' }).getByLabel('IRCAK', { exact: true }).fill('20')
+    await sim.getByRole('group', { name: 'Denne prøven' }).getByLabel('Prøvedato').fill('2026-01-08')
+    const t = await sim.innerText()
+    krev(t.includes('Satt sammen av'), 'kommentarbolkene mangler')
+    krev(/Ved 99\s%\ssikkerhetsmargin/.test(t), 'den mildere teksten mangler')
+    await sim.scrollIntoViewIfNeeded()
+    await bilde(pc, '16-simulator-pc', true)
+    return 'kommentarbolkene og den mildere teksten står'
+  })
+
+  for (const [navn, tema] of [
+    ['T13 mobil: lyst tema, under hverandre, uten sideveis rulling', 'light'],
+    ['T14 mobil: mørkt tema, og informasjonstegnet ved et trykk', 'dark'],
+  ] as const) {
+    await punkt(navn, async () => {
+      const side: Side = paa(await miljo.side({ ...MOBIL, colorScheme: tema }))
+      await apne(side)
+      await fyll(side, 'Forrige prøve', '30', '2026-01-01')
+      await fyll(side, 'Denne prøven', '20', '2026-01-08')
+      const svar = await utenSideveisRulling(side)
+      const [a, b] = await side.locator('.be-prove').evaluateAll((k: Element[]) => k.map((e) => e.getBoundingClientRect().top))
+      krev(a! < b!, 'prøvene står ikke under hverandre på mobil')
+      if (tema === 'dark') {
+        await side.getByRole('button', { name: 'Om sikkerhetsmarginen' }).tap()
+        await vent(300)
+        krev((await side.locator('.tipsboble__innhold').count()) === 1, 'boblen kom ikke ved et trykk')
+        await bilde(side, '18-mobil-info-moerkt')
+        await side.touchscreen.tap(5, 300)
+      }
+      await bilde(side, tema === 'light' ? '17-mobil' : '19-mobil-moerkt', true)
+      return svar
+    })
+  }
+} catch (e) {
+  oppsettFeilet(e)
+} finally {
+  await miljo.avslutt()
+}
+rapport()
