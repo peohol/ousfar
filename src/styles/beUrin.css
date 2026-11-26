@@ -214,9 +214,23 @@
   cursor: help;
 }
 
-/* Skriftens linjebokser sentrerer ikke selve tegnet: «i»-en løftes så blekket ligger midt i sirkelen. */
+/* «i»-en midtstilles som figur, etter blekket og ikke etter linjeboksen.
+   Boksen kuttes til grunnlinjen og versalhøyden, så nettleserens linjehøyde og
+   avrunding ikke spiller inn. Forskyvningen er avstanden fra boksens midtpunkt
+   til midtpunktet av blekket i Newsreader kursiv (vekt 600, optisk størrelse
+   13): kursiven skyver det mot høyre, prikken løfter det. */
 .be-info > span {
-  transform: translate(-0.01em, -0.04em);
+  --be-info-x: -0.036em;
+  --be-info-y: 0.021em;
+  text-box: trim-both cap alphabetic;
+  transform: translate(var(--be-info-x), var(--be-info-y));
+}
+
+/* Uten kutting er boksen skriftens hele linjehøyde, med luft under grunnlinjen. */
+@supports not (text-box: trim-both cap alphabetic) {
+  .be-info > span {
+    --be-info-y: 0.121em;
+  }
 }
 
 .be-info::after {
