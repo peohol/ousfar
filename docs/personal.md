@@ -664,8 +664,10 @@ PR-ene er slått sammen og publisert:
 | K-SKJ-4 | Systemarkitektene kan prøve **hele** funksjonaliteten med **syntetiske medarbeidere**, også ulike roller (`Vis som`, K-SKJ-7) |
 | K-SKJ-5 | Systemarkitektrollen gir **ikke i seg selv** tilgang til reelle personalopplysninger (§3.3) |
 | K-SKJ-6 | **Aktiveringen** for ordinære brukere gjøres **per fagmiljø, uten kodeendring**, etter Peders uttrykkelige produktgodkjenning og avklaringen i §3.4 |
-| K-SKJ-7 | **Vis som** (forslag): i et testmiljø kan en systemarkitekt se og bruke kalenderen som kollega, vaktplanansvarlig, lokal administrator eller én bestemt medarbeider. Simuleringen kan bare redusere rettighetene, og serveren håndhever den |
+| K-SKJ-7 | **Vis som** (forslag): i et testmiljø kan en systemarkitekt se og bruke kalenderen som kollega, vaktplanansvarlig, lokal administrator eller én bestemt syntetisk medarbeider. Simuleringen kan bare redusere rettighetene, og serveren håndhever den |
 | K-SKJ-8 | Koden for personalfunksjonene lastes bare for dem som har tilgang |
+| K-SKJ-9 | I et testmiljø består kalenderen **bare av syntetiske medarbeidere**: ingen innlogget konto blir medarbeider der, og ingen navn eller stilling hentes fra profilene. Den innloggede handler med sin virkelige rolle i fagmiljøet, eventuelt redusert med `Vis som` |
+| K-SKJ-10 | Et fagmiljø som ikke er testmiljø, kan ikke settes til `utprøving` eller `på` før §3.4 er avklart for det og Peder har sagt ja. Testmerkingen kan ikke fjernes mens det finnes syntetiske medarbeidere, og syntetiske medarbeidere, kalender og historikk overføres aldri til et virkelig fagmiljø |
 
 **Mekanismen.** OUSFAR har i dag bare globale brytere som byttes med en
 migrasjon, og en synlighetskonstant i klienten for verktøyene. Personal
@@ -679,6 +681,22 @@ bruker derfor en ny, felles mekanisme fra Dev:
 - **Testmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):
   Sandkasse er merket som testmiljø. **Bare i et testmiljø kan det finnes
   syntetiske medarbeidere** uten konto, og bare der virker `Vis som`.
+- **Syntetisk utprøving.** I et testmiljø består kalenderen bare av
+  syntetiske medarbeidere. 1:1-regelen i §8.5 gjelder ordinær drift, ikke
+  testmiljøet: systemarkitektene og testbrukerne i Sandkasse er vanlige
+  kontoer med virkelige navn, og de blir ikke medarbeidere i kalenderen.
+  Den innloggede er den som handler, med sin virkelige rolle i fagmiljøet
+  (i Sandkasse lokal administrator), og kan med `Vis som` redusere rollen
+  eller handle som én bestemt syntetisk medarbeider, for eksempel for å
+  prøve egne statuser. Slik prøves de virkelige innloggingsrollene, mens
+  alle medarbeiderne i kalenderen er syntetiske. 1:1-tilknytningen prøves
+  med syntetiske kontoer i testdatabasen.
+- **Bryteren og testmerkingen åpner aldri reelle opplysninger.** Et
+  fagmiljø som ikke er testmiljø, kan bare stå på `av` til §3.4 er avklart
+  for det og Peder har sagt ja. Testmerkingen kan ikke fjernes mens det
+  finnes syntetiske medarbeidere. Ved aktivering av et virkelig fagmiljø
+  overføres aldri syntetiske medarbeidere, kalender eller historikk; den
+  første planen starter fra blanke ark (A-FOR-19).
 - **Gangen:** Sandkasse står på `utprøving` under hele utviklingen, med
   syntetiske medarbeidere. OUS Klinisk farmakologi står på `av` til Peder
   har godkjent produktet og §3.4 er avklart. Da settes den til `på` uten ny
@@ -705,6 +723,18 @@ uten unntak finnes (`intern.administrerte_fagmiljoer`).
 | Systemarkitekt med lokal myndighet | Systemarkitekt som også er aktivt medlem **og** lokal administrator i fagmiljøet | Som lokal administrator | Forslag til definisjon (B2) |
 | Systemarkitekt uten eget medlemskap | | Ingenting | Vedtatt (§3.3, §6.2) |
 
+**Fritaket i forslag og kladd.** Fordelingen bruker fritaket (§6.2), så selve
+planresultatet, altså hvem som får hvilken vakt i et forslag eller en kladd,
+kan bli et annet med enn uten fritak. Det er tillatt, slik det er for en
+ferdig plan i §6.2. Alt annet en planlegger uten fritaksmyndighet ser, skal
+være likt med og uten fritak: kalenderen, historikken, statistikk,
+forklaringer og årsaker, poeng og rangering av kandidater, avtrykket, hvorfor
+et forslag er foreldet, konfliktmeldinger og varsler. Et forslag som blir
+foreldet fordi et fritak er endret, får den samme generelle årsaken som ved
+andre endringer i grunnlaget. Restrisikoen, at noen sammenligner forslag
+eller ser at et forslag ble foreldet uten synlig endring og slutter seg til
+fritaket, kan ikke utelukkes helt og vurderes i §3.4.
+
 Krav:
 
 | ID | Krav |
@@ -712,9 +742,10 @@ Krav:
 | K-TIL-1 | Alle opplysninger avgrenses til eget fagmiljø; valg av fagmiljø viser aldri tilgang til andre fagmiljøer |
 | K-TIL-2 | Rollene håndheves i databasen (radsikkerhet og kontroll i hver kommando), aldri bare ved å skjule knapper |
 | K-TIL-3 | Negative tester for hver rolle og hvert fagmiljø: annet fagmiljø, kollega uten planleggerrolle, vaktplanansvarlig som prøver å gi fritak (også seg selv), systemarkitekt uten medlemskap, avsluttet medlemskap, og bytte av fagmiljø |
-| K-TIL-4 | Lesemodellen for fritak (§6.2) gjelder alle svar: kalender, endringshistorikk, statistikk, forklaringer, forslag, varsler og logg. Samme kalender med og uten fritak gir likt svar for roller uten myndighet |
+| K-TIL-4 | Lesemodellen for fritak (§6.2) gjelder kalenderen, endringshistorikken, loggen og alle API-svar: samme kalender med og uten fritak gir likt svar for roller uten myndighet |
 | K-TIL-5 | Vaktplanansvarlig er en egen rolle i Personal, uavhengig av redaktørrollene; flere kan ha den samtidig; utpekingen og fjerningen logges |
-| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et administrativt vaktfritak, og aldri andres. En status som selv gir vaktfritak etter §6.2, som Ferie, er tillatt. En status på en dag med egen publisert vakt avvises, og vakten står (B15). Prøvd negativt på serveren |
+| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et administrativt vaktfritak, og aldri andres. En status som selv gir vaktfritak etter §6.2, som Ferie, er tillatt. En status på en dag med egen publisert vakt avvises, og vakten står (B15). En kollega kan aldri fjerne eller endre en egen publisert vakt, heller ikke med slett, flytting, flervalg eller angre, og kan ikke overta en vakt; overtakelse er planleggernes (A-OVT). Prøvd negativt på serveren |
+| K-TIL-7 | I forslag og kladd er alt utenom selve planresultatet likt med og uten fritak for roller uten myndighet: statistikk, forklaringer, poeng og rangering, avtrykk, årsak til foreldelse og konfliktmeldinger. Negative API-tester også for forslag, konfliktmeldinger og historikk |
 
 ### 8.5 Medarbeidere og medlemskap
 
@@ -722,9 +753,10 @@ Utdyper §7.4 (vedtatt av Peder 26.11.2026: feltene i kalenderen, og 1:1 med
 medlemmene og stillingene i appen).
 
 - **Identiteten** er medlemskapet: paret (fagmiljø, bruker) og navnet fra
-  profilen. Ingen egen konto og ingen dobbeltregistrering. I et testmiljø
-  kan det i tillegg finnes syntetiske medarbeidere uten konto.
-- **Alle aktive medlemmer er med** i kalenderen, automatisk og uten noen
+  profilen. Ingen egen konto og ingen dobbeltregistrering. Et testmiljø
+  har i stedet bare syntetiske medarbeidere uten konto, og ingen medlemmer
+  hentes inn der (§8.3).
+- **Alle aktive medlemmer er med** i kalenderen i ordinær drift, automatisk og uten noen
   handling, med navnet og stillingen fra profilen. Det finnes ingen egen
   medarbeiderliste og ingen «ikke med». Systemet gjetter ikke
   kvalifikasjoner: uten kvalifikasjon får ingen vakter.
@@ -739,16 +771,22 @@ medlemmene og stillingene i appen).
   oppbevaringstiden (§3.4). Hva som skjer når en konto slettes, avgjøres i
   §3.4 (forslag: navnet erstattes med «Tidligere medarbeider», så andres
   vaktbelastning ikke endres; B9).
+- **Stillingen er felles** for hele profilen, mens vekten per stilling er
+  fagmiljøets oppsett. En endring gjelder fra dagen den lagres, uansett
+  hvilket fagmiljø den gjøres fra, og skriver aldri om tidligere dager. En
+  stilling som slettes eller erstattes i katalogen, beholdes i historikken,
+  så tidligere vekter står (#602). Hvem som kan endre stillingen (B14), må
+  gjelde uansett hvilket fagmiljø endringen gjøres fra.
 - Planleggingsinnstillingene er skilt fra HR-data og fra kontorollene.
 
 | ID | Krav |
 | --- | --- |
-| K-MED-1 | Et nytt aktivt medlem vises i kalenderen samme dag uten noen handling, med navnet og stillingen fra profilen; medlemmene i kalenderen er nøyaktig fagmiljøets aktive medlemmer |
-| K-MED-5 | Stillingskategoriene i kalenderen er nøyaktig stillingene i appen; en ny eller endret stilling i profilen vises uten handling i kalenderen |
-| K-MED-6 | Forventet vaktbelastning bruker stillingen som gjaldt hver enkelt dag, så et stillingsbytte ikke skriver om tidligere dager (#602) |
+| K-MED-1 | Utenfor testmiljø vises et nytt aktivt medlem i kalenderen samme dag uten noen handling, med navnet og stillingen fra profilen; medlemmene i kalenderen er nøyaktig fagmiljøets aktive medlemmer. Prøves med syntetiske kontoer i testdatabasen |
 | K-MED-2 | Innstillingene redigeres bare i kalenderen, av rollene i §8.4, og aldri bakover i tid |
 | K-MED-3 | Avsluttet medlemskap fjerner personen fra fremtidig planlegging og stopper tilgang og varsler samme dag, uten å skrive om historikken |
-| K-MED-4 | Syntetiske medarbeidere kan bare finnes i et testmiljø; databasen avviser dem ellers |
+| K-MED-4 | Syntetiske medarbeidere kan bare finnes i et testmiljø, og et testmiljø har bare syntetiske medarbeidere; databasen avviser begge brudd |
+| K-MED-5 | Stillingskategoriene i kalenderen er nøyaktig stillingene i appen; en ny eller endret stilling i profilen vises uten handling i kalenderen |
+| K-MED-6 | Forventet vaktbelastning bruker stillingen som gjaldt hver enkelt dag, så et stillingsbytte ikke skriver om tidligere dager, også når stillingen endres fra et annet fagmiljø eller stillingen arkiveres eller erstattes i katalogen; prøvd med medlemskap i flere fagmiljøer (#602) |
 
 ### 8.6 Generell modell og konfigurasjon
 
@@ -788,9 +826,10 @@ bestillingen):
 | ID | Krav |
 | --- | --- |
 | K-KON-1 | Pilotoppsettet gir samme resultater som prototypen for fasitene i §6.1 og §6.2 |
-| K-KON-2 | Et annet syntetisk fagmiljø med andre navn, tre kategorier, andre bemanningsoppgaver, en annen bemanningskalender og mer enn én person per oppgave og dag virker uten endring i motoren eller grensesnittet |
+| K-KON-2 | Et annet syntetisk fagmiljø med andre navn, tre kategorier, andre bemanningsoppgaver, en annen bemanningskalender og mer enn én person per oppgave og dag virker uten endring i motoren |
 | K-KON-3 | En endring i oppsettet gjelder fra dagen den lagres; tidligere dager vurderes etter oppsettet som gjaldt da, og konsekvensen vises før lagring |
 | K-KON-4 | Et ugyldig oppsett kan ikke lagres (serveren validerer) |
+| K-KON-5 | Det samme fagmiljøet virker uten endring i grensesnittet |
 
 ### 8.7 Data, server og samtidighet
 
@@ -806,7 +845,7 @@ kontroll av aktivt medlemskap, `docs/fagmiljoer.md`).
 | Del | Innhold |
 | --- | --- |
 | Oppsett | Fagmiljøets versjonerte oppsett (§8.6) med gyldighetsdato |
-| Medarbeidere | Paret (fagmiljø, bruker), eller syntetisk navn i et testmiljø |
+| Medarbeidere | Paret (fagmiljø, bruker) i ordinær drift; bare syntetiske navn i et testmiljø |
 | Medarbeiderinnstillinger | Kvalifikasjoner med gyldighetsdato; stillingen per dag fra profilens daterte historikk (#602) |
 | Vaktandel | Som i §6.2, med databasebegrensningene der |
 | Roller | Vaktplanansvarlige med fra og til, og hvem som utpekte |
@@ -846,16 +885,20 @@ registrerer egne statuser, bare planleggerne lager vakter automatisk, og de
 andre ser bare det som er publisert). Forslag til hvordan kladden holdes
 riktig:
 
-- **To lag.** Den publiserte planen er det alle ser. Vakter planleggerne
+- **To lag.** Kalenderen holder medarbeidernes egne statuser og de
+  publiserte vaktene. Det er dette alle ser, og her gjelder én status per
+  medarbeider og dag som begrensning i databasen. Vakter planleggerne
   legger inn eller godtar fra fordelingen for dager som ikke er publisert,
-  står i **kladden**, som bare planleggerne ser. Medarbeidernes egne
-  statuser står alltid i kalenderen og er synlige med en gang. Én status per
-  medarbeider og dag gjelder for kalenderen og kladden sammen.
+  står i **kladden**, som bare planleggerne ser. En kladdevakt er en
+  **kandidat**, ikke en tildeling: bare en gyldig kladdevakt teller i
+  planleggernes dekning, og bare den kan publiseres. Ved publisering flyttes
+  de gyldige kladdevaktene inn i kalenderen i samme transaksjon, og
+  begrensningen gjelder da som for alt annet.
 - **Medarbeiderens status går foran kladden.** Setter en medarbeider en
   status på en dag der kladden gir vedkommende en vakt, lagres statusen som
   vanlig, uten at medarbeideren får vite noe om kladden. Kladdevakten
-  markeres som i konflikt, plassen telles som udekket, og planleggerne ser
-  det i kladden.
+  markeres som i konflikt, teller ikke, plassen telles som udekket, og
+  planleggerne ser det i kladden.
 - **Kladden kontrolleres hele tiden** mot gjeldende statuser, regler og
   medlemskap: i konflikt, udekket og om grunnlaget for fordelingen er endret
   siden kladden ble laget (avtrykket). «Oppdater vaktplan» retter kladden med
@@ -867,8 +910,16 @@ riktig:
   å oppdatere først.
 - **Etter publisering** står en publisert vakt. Velger en medarbeider en
   status på en dag med egen publisert vakt, avvises det, og medarbeideren
-  får beskjed om å ta det med vaktplanansvarlig (vedtatt, B15). Vaktbytter
-  går gjennom planleggerne; forespørsel om vaktbytte kan komme senere.
+  får beskjed om å ta det med vaktplanansvarlig (vedtatt, B15). Det samme
+  gjelder slett, flytting, flervalg og angre. Vaktbytter går gjennom
+  planleggerne; forespørsel om vaktbytte kan komme senere.
+- **Endring i publisert plan** gjør bare planleggerne, manuelt (også
+  overtakelse, A-OVT og fasiten A-FAS-10) eller ved å godta et forslag med
+  «Tillat endringer i publisert vaktplan» (A-PUB-06). Endringen er én
+  kommando som kontrollerer versjonen av hver berørt celle og avtrykket, og
+  som lagres og publiseres i samme transaksjon. Har en medarbeider imens
+  endret en egen status i en berørt celle, avvises hele endringen med
+  konflikt, og forslaget må oppdateres. Det blir aldri en halv endring.
 
 **Samtidighet.**
 
@@ -896,9 +947,10 @@ helår), med indeks på fagmiljø og dato. Ingen henting av hele historikken.
 | K-DAT-5 | Et forslag laget før en endring i grunnlaget kan ikke godtas |
 | K-DAT-6 | Helårsvisningen for 30 medarbeidere hentes på under ett sekund i produksjonslik database |
 | K-KLA-1 | Ingen andre enn planleggerne ser kladden: verken i kalenderen, Dagen i dag, Mine vakter, varsler, statistikk eller svar fra serveren |
-| K-KLA-2 | En medarbeiders nye status på en dag med egen kladdevakt lagres, og kladdevakten markeres som i konflikt og regnes som udekket |
+| K-KLA-2 | En medarbeiders nye status på en dag med egen kladdevakt lagres, og kladdevakten markeres som i konflikt, teller ikke i dekningen og regnes som udekket; bare gyldige kladdevakter kan publiseres |
 | K-KLA-3 | En kladd med konflikt kan ikke publiseres; serveren kontrollerer på nytt ved publisering, også når to planleggere publiserer samtidig |
 | K-KLA-4 | Endret grunnlag uten konflikt vises før publisering, og «Oppdater vaktplan» gir en gyldig kladd med færrest mulige endringer |
+| K-KLA-5 | Endring i publisert plan (manuelt, overtakelse eller godtatt forslag) er atomisk med versjonskontroll per celle; en samtidig egen statusendring gir konflikt for hele endringen, prøvd med to forbindelser mot ekte Postgres 17 |
 
 ### 8.8 Brukerflatene
 
@@ -929,7 +981,7 @@ oppbygning:
 
 | ID | Krav |
 | --- | --- |
-| K-UI-1 | Alle A-kravene i akseptmatrisen (også A-NY-radene, som K-kravene her utdyper) er oppfylt i den valgte designretningen |
+| K-UI-1 | A-kravene som trinnet dekker (§8.11), er oppfylt i den valgte designretningen; hele akseptmatrisen, også A-NY-radene, kontrolleres samlet i P7 |
 | K-UI-2 | Hele arbeidsforløpet går med bare tastatur og med bare berøring |
 | K-UI-3 | Lyst og mørkt tema og smal skjerm er kontrollert for alle flatene |
 | K-UI-4 | Dagen i dag viser bare det rollen kan se, for fagmiljøet man arbeider i, og bare den publiserte planen |
@@ -953,7 +1005,7 @@ oppbygning:
 | ID | Krav |
 | --- | --- |
 | K-VAR-1 | Et varsel sendes én gang, til rett tid, også ved sommertid, og ikke etter en endring som fjerner tildelingen |
-| K-VAR-2 | Ingen varsler om forslag, upubliserte vakter eller andres opplysninger |
+| K-VAR-2 | Ingen varsler om forslag, upubliserte vakter, fritak eller andres opplysninger |
 | K-VAR-3 | Varslene stopper ved utlogging, avsluttet medlemskap og når valget slås av; chatvarslene virker som før |
 | K-VAR-4 | Virker med appen lukket på PC/Mac og Android, og på iPhone/iPad fra Hjem-skjermen |
 
@@ -965,7 +1017,7 @@ oppbygning:
 | [#598](https://github.com/peohol/ousfar/issues/598) | Funksjonsbrytere per fagmiljø og testmiljø-markering | P2b |
 | [#599](https://github.com/peohol/ousfar/issues/599) | Forsiden: paneler med tilgang, felt øverst og lasting ved behov | P5 |
 | [#600](https://github.com/peohol/ousfar/issues/600) | Varsler på enheten for flere formål, med utsending på et tidspunkt | P6 |
-| [#601](https://github.com/peohol/ousfar/issues/601) | Føringer i endringsloggen bare for systemarkitekter | P2b (nøytrale føringer til da) |
+| [#601](https://github.com/peohol/ousfar/issues/601) | Føringer i endringsloggen bare for systemarkitekter | P7 (til da er føringene nøytrale, så K-SKJ-2 holder uten) |
 | [#602](https://github.com/peohol/ousfar/issues/602) | Datert stillingshistorikk på profilen, lesbar per dag på serveren | P4 |
 
 Personal eier selv menyvalget, sidene, modulenes innhold, tabellene,
@@ -984,12 +1036,12 @@ går parallelt.
 | **P0** | Denne planen, akseptmatrisen, Dev-Issue-ene og produktbeslutningene | | Slått sammen |
 | **P1** | Tre klikkbare designforslag i et beskyttet forhåndsvisningsmiljø med syntetiske data; Peder og ChatGPT vurderer og Peder velger (B1). Ingen kode i OUSFAR | | B1 avgjort |
 | **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0, B1 (eller B11) | K-KON-1, K-KON-2, fasitene i §6 grønne |
-| **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-TIL-1–5, K-MED-4, K-DAT-1–4, K-KON-3–4 |
+| **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-SKJ-9–10, K-TIL-1–5, K-MED-4, K-DAT-1–3, K-KON-3–4 |
 | **P2c** | Medarbeidere i kalenderen (automatisk tilknytning 1:1 med medlemmene og stillingene, kvalifikasjoner, vaktandel, vaktplanansvarlige) og `Vis som`, med menyvalget | P2b, B2 | K-MED-1–5, K-SKJ-7–8 |
-| **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-kravene for kalenderen, K-UI-1–3, K-DAT-6, K-TIL-6 |
-| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-kravene for fordelingen, K-MED-6, K-KLA-1–4, K-DAT-5, K-TIL-4 |
-| **P5** | Dagen i dag og Mine vakter | P4, #599 | K-UI-4 |
-| **P6** | Påminnelser og varsel ved endring | P4, #600, B7, B10 | K-VAR-1–4 |
+| **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-gruppene STA, KAL, DAG, BOB, MRK, OVT, FLY, FLT, ANG, MED, VAN, FRI og TIL; K-UI-1–3, K-KON-5, K-DAT-4, K-DAT-6, K-TIL-6 |
+| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-gruppene REG, FOR, PUB, FKL og BEL; K-UI-1, K-MED-6, K-TIL-7, K-KLA-1–5, K-DAT-5 |
+| **P5** | Dagen i dag og Mine vakter | P4, #599 | A-NY-09 og A-NY-10; K-UI-1, K-UI-4 |
+| **P6** | Påminnelser og varsel ved endring | P4, #600, B7, B10 | A-NY-11; K-UI-1, K-VAR-1–4 |
 | **P7** | Samlet produktaksept med syntetiske data i Sandkasse og det lokale testmiljøet, negativ tilgangskontroll, ytelse og mobil. Deretter avklaringen i §3.4 og, etter Peders ja, `på` for OUS Klinisk farmakologi. Første plan starter fra blanke ark | P1–P6 | Hele akseptmatrisen; §3.4 ført inn; Peders ja |
 | **P8** | Avvikling av prototypen, etter verifisert pilot og særskilt beslutning, med kontroll av gamle utrullinger og historikk uten å gjengi innhold | P7 | Peders beslutning |
 
@@ -1026,7 +1078,7 @@ bestillingen 26.11.2026 (§8.1 og §8.3).
 | B10 | Varsel når egen publisert plan endres? | Eget valg, av som standard |
 | B11 | Godtar du rekkefølgen i §8.11, og kan P2a (domenekoden uten database og visning) starte før designretningen er valgt og før Dev-oppgavene er ferdige? | Ja. P2a avhenger ikke av designet. Til du har sagt ja, venter P2a på B1 |
 | B12 | Holde første versjon til én status per dag og dagbaserte oppgaver? | Ja; nye modeller avklares når et fagmiljø trenger dem |
-| B14 | Stillingen styrer nå forventet antall vakter, og i dag kan hver bruker endre sin egen stilling. Skal det endres? | Ja: i et fagmiljø der kalenderen er på, endres stillingen bare av lokal administrator eller systemarkitekt, og endringen gjelder fra i dag. Uten stilling regnes vekt 1, og planleggeren ser at den mangler |
+| B14 | Stillingen styrer nå forventet antall vakter, og i dag kan hver bruker endre sin egen stilling. Skal det endres? | Ja: i et fagmiljø der kalenderen er på, endres stillingen bare av lokal administrator i det fagmiljøet eller systemarkitekt, også når endringen gjøres fra et annet fagmiljø, og endringen gjelder fra i dag. Uten stilling regnes vekt 1, og planleggeren ser at den mangler |
 | B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei: egne endringer gjelder fra i dag og fremover, og tidligere dager rettes av vaktplanansvarlig |
 | B16 | Hvilke statuser kan medarbeideren sette selv? | Alle uten bemanningsbehov (også Ferie, som gir vaktfritak etter §6.2), aldri vakter, lås eller administrativt vaktfritak. Kan begrenses per status i fagmiljøets oppsett |
 
