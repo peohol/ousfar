@@ -161,12 +161,11 @@ opprydding kjenner, blir derfor stående. Trådene lager bare disse:
 
 - Push alltid med fullt grennavn, `git push origin HEAD:refs/heads/<navn>`,
   aldri `git push origin HEAD` fra en lokal gren med et annet navn.
-- Funksjonstesten etter en publiseringsrunde kjøres i én jobb for alle sidene
-  som ble publisert (stoffene kommaseparert), ikke én jobb per side. En jobb
-  tar høyst så mange stoffer som `MAKS_STOFFER` i
-  `src/kuratorjobb/foresporsel.ts` tillater; en større runde deles i så få
-  jobber som mulig. En ny kjøring for de samme sidene bruker den samme
-  jobbgrenen.
+- Funksjonstesten etter en publiseringsrunde kjøres samlet for sidene som ble
+  publisert (stoffene kommaseparert), ikke én jobb per side. Hver jobb kan
+  omfatte høyst `MAKS_STOFFER` stoffer (`src/kuratorjobb/foresporsel.ts`, for
+  tiden 25), så en større runde deles i så få jobber som mulig. En ny kjøring
+  for de samme sidene bruker den samme jobbgrenen.
 - Push ikke mer til trådens gren etter at PR-en er slått sammen eller lukket,
   med mindre en ny PR skal åpnes fra den. En lukket PR får grenen sin stående.
   Fagtekst og bivirkningsimporter for en side som kureres, hører i
