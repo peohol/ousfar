@@ -219,6 +219,10 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   Statusene skal senere kunne konfigureres per fagmiljø, men det bygges
   ikke noe administrasjonsgrensesnitt for dem nå. Borte registreres uten
   grunn.
+- **Samme redigeringsboble i alle visninger.** I dag-, uke- og
+  månedsvisningen åpner et klikk på en status eller et navn boblen direkte
+  for den medarbeideren og datoen, uten omvei om dagsvisningen. Viser en
+  linje i månedsvisningen flere medarbeidere, velger man først hvem.
 - **Endringer lagres med en gang og kan angres.** En status settes ved å
   velge den og fjernes med slett, ved et nytt klikk på den valgte statusen
   eller ved dobbeltklikk på statusen direkte i kalenderen.
@@ -227,6 +231,10 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Merknad er valgfritt på alle statuser** og skal bare inneholde
   ikke-sensitive planleggingsopplysninger (§3.2). Merknaden og klokkeslettet
   beholdes når statusen byttes.
+- **Merknad og klokkeslett vises ved statusen.** Dagsvisningen viser dem
+  direkte. Uke-, måneds- og helårsvisningen viser et merknadsikon og
+  opplysningene i en informasjonsboble, som også kan nås med tastatur og
+  berøring.
 - **Klokkeslett er bare tilleggsinformasjon.** Standard er «hele dagen». Et
   tidsrom kan oppgis, men påvirker verken tilstedeværelse eller
   vaktfordeling. Et ugyldig tidsrom kan ikke lagres.
@@ -252,8 +260,12 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   vaktene gjelder uendret.
 - **Eldre data migreres uten stille tap.** Hadde en medarbeider flere
   statuser samme dag, beholdes den viktigste (fravær før vakt før andre
-  oppgaver), og de andre står i merknaden og tas vare på uendret. Brukeren
-  får beskjed om hva som er endret.
+  oppgaver). En eksisterende merknad beholdes uavkortet. De andre statusene
+  kan oppsummeres i merknaden innenfor lengdegrensen, og alle oppføringer
+  som tas ut, bevares uendret. Brukeren får beskjed om hva som er endret.
+  Dette er praksisen i prototypen med syntetiske data. Det er ikke en
+  godkjenning av migrering av reelle personalopplysninger, som krever egen
+  beslutning etter §3.4.
 
 Syntetisk eksempel (fasit): Jonas Vik har Vakt 1 tirsdag og Maja Holte har
 Vakt 2. Planleggeren velger Vakt 1 for Maja og bekrefter overtakelsen. Da
