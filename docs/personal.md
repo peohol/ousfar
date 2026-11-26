@@ -597,7 +597,8 @@ Peders bestilling 26.11.2026, ChatGPTs planforslag i
 [#561](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)
 og kartleggingen av OUSFAR og prototypen. Ingen kode eller
 produksjonsmigrasjon bygges før planen er slått sammen og designretningen er
-valgt (§8.12, B1).
+valgt (§8.12, B1). Om domenekoden uten database og visning (P2a) kan
+starte før designvalget, avgjør Peder i B11.
 
 **Status for innholdet.** Det som står som **vedtatt**, er avgjort av Peder
 (§§3, 6, 7.2, eller bestillingen 26.11.2026, merket «bestilt»). Det som står
@@ -713,7 +714,7 @@ Krav:
 | K-TIL-3 | Negative tester for hver rolle og hvert fagmiljø: annet fagmiljø, kollega uten planleggerrolle, vaktplanansvarlig som prøver å gi fritak (også seg selv), systemarkitekt uten medlemskap, avsluttet medlemskap, og bytte av fagmiljø |
 | K-TIL-4 | Lesemodellen for fritak (§6.2) gjelder alle svar: kalender, endringshistorikk, statistikk, forklaringer, forslag, varsler og logg. Samme kalender med og uten fritak gir likt svar for roller uten myndighet |
 | K-TIL-5 | Vaktplanansvarlig er en egen rolle i Personal, uavhengig av redaktørrollene; flere kan ha den samtidig; utpekingen og fjerningen logges |
-| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et vaktfritak, og aldri andres. En status på en dag med egen publisert vakt avvises, og vakten står (B15). Prøvd negativt på serveren |
+| K-TIL-6 | En medarbeider kan bare endre **sine egne** statuser, aldri en vakt eller et administrativt vaktfritak, og aldri andres. En status som selv gir vaktfritak etter §6.2, som Ferie, er tillatt. En status på en dag med egen publisert vakt avvises, og vakten står (B15). Prøvd negativt på serveren |
 
 ### 8.5 Medarbeidere og medlemskap
 
@@ -743,7 +744,8 @@ medlemmene og stillingene i appen).
 | ID | Krav |
 | --- | --- |
 | K-MED-1 | Et nytt aktivt medlem vises i kalenderen samme dag uten noen handling, med navnet og stillingen fra profilen; medlemmene i kalenderen er nøyaktig fagmiljøets aktive medlemmer |
-| K-MED-5 | Stillingskategoriene i kalenderen er nøyaktig stillingene i appen; en ny eller endret stilling i profilen vises uten handling i kalenderen, og forventet vaktbelastning bruker stillingen som gjaldt hver dag |
+| K-MED-5 | Stillingskategoriene i kalenderen er nøyaktig stillingene i appen; en ny eller endret stilling i profilen vises uten handling i kalenderen |
+| K-MED-6 | Forventet vaktbelastning bruker stillingen som gjaldt hver enkelt dag, så et stillingsbytte ikke skriver om tidligere dager (#602) |
 | K-MED-2 | Innstillingene redigeres bare i kalenderen, av rollene i §8.4, og aldri bakover i tid |
 | K-MED-3 | Avsluttet medlemskap fjerner personen fra fremtidig planlegging og stopper tilgang og varsler samme dag, uten å skrive om historikken |
 | K-MED-4 | Syntetiske medarbeidere kan bare finnes i et testmiljø; databasen avviser dem ellers |
@@ -981,11 +983,11 @@ går parallelt.
 | --- | --- | --- | --- |
 | **P0** | Denne planen, akseptmatrisen, Dev-Issue-ene og produktbeslutningene | | Slått sammen |
 | **P1** | Tre klikkbare designforslag i et beskyttet forhåndsvisningsmiljø med syntetiske data; Peder og ChatGPT vurderer og Peder velger (B1). Ingen kode i OUSFAR | | B1 avgjort |
-| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0 | K-KON-1, K-KON-2, fasitene i §6 grønne |
+| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0, B1 (eller B11) | K-KON-1, K-KON-2, fasitene i §6 grønne |
 | **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-TIL-1–5, K-MED-4, K-DAT-1–4, K-KON-3–4 |
 | **P2c** | Medarbeidere i kalenderen (automatisk tilknytning 1:1 med medlemmene og stillingene, kvalifikasjoner, vaktandel, vaktplanansvarlige) og `Vis som`, med menyvalget | P2b, B2 | K-MED-1–5, K-SKJ-7–8 |
 | **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-kravene for kalenderen, K-UI-1–3, K-DAT-6, K-TIL-6 |
-| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-kravene for fordelingen, K-KLA-1–4, K-DAT-5, K-TIL-4 |
+| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-kravene for fordelingen, K-MED-6, K-KLA-1–4, K-DAT-5, K-TIL-4 |
 | **P5** | Dagen i dag og Mine vakter | P4, #599 | K-UI-4 |
 | **P6** | Påminnelser og varsel ved endring | P4, #600, B7, B10 | K-VAR-1–4 |
 | **P7** | Samlet produktaksept med syntetiske data i Sandkasse og det lokale testmiljøet, negativ tilgangskontroll, ytelse og mobil. Deretter avklaringen i §3.4 og, etter Peders ja, `på` for OUS Klinisk farmakologi. Første plan starter fra blanke ark | P1–P6 | Hele akseptmatrisen; §3.4 ført inn; Peders ja |
@@ -1022,7 +1024,7 @@ bestillingen 26.11.2026 (§8.1 og §8.3).
 | B8 | Hvem slår på kalenderen for et fagmiljø? | En systemarkitekt i appen, med begrunnelse, etter Peders ja og §3.4 |
 | B9 | Hva skjer med historikken når en konto slettes? | Avgjøres i §3.4; forslag: navnet erstattes med «Tidligere medarbeider» innenfor oppbevaringstiden |
 | B10 | Varsel når egen publisert plan endres? | Eget valg, av som standard |
-| B11 | Rekkefølgen i §8.11 og at P2a starter før Dev-oppgavene er ferdige? | Ja |
+| B11 | Godtar du rekkefølgen i §8.11, og kan P2a (domenekoden uten database og visning) starte før designretningen er valgt og før Dev-oppgavene er ferdige? | Ja. P2a avhenger ikke av designet. Til du har sagt ja, venter P2a på B1 |
 | B12 | Holde første versjon til én status per dag og dagbaserte oppgaver? | Ja; nye modeller avklares når et fagmiljø trenger dem |
 | B14 | Stillingen styrer nå forventet antall vakter, og i dag kan hver bruker endre sin egen stilling. Skal det endres? | Ja: i et fagmiljø der kalenderen er på, endres stillingen bare av lokal administrator eller systemarkitekt, og endringen gjelder fra i dag. Uten stilling regnes vekt 1, og planleggeren ser at den mangler |
 | B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei: egne endringer gjelder fra i dag og fremover, og tidligere dager rettes av vaktplanansvarlig |
