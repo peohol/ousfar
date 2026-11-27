@@ -475,8 +475,19 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   uansett klokkeslett. Det finnes derfor ingen kombinasjons- eller
   eksklusjonsregler. **Ingen status betyr til stede** på ordinære
   arbeidsdager. Datamodellen håndhever regelen (høyst én status per
-  medarbeider og dato, og høyst det konfigurerte antallet medarbeidere
-  per bemanningsoppgave og dato).
+  medarbeider og dato, høyst én medarbeider per dato for statuser som er
+  «én per dag», og høyst det konfigurerte antallet medarbeidere per annen
+  bemanningsoppgave og dato).
+- **Én medarbeider per vakt og én referent** (Peder 27.11.2026). I
+  pilotoppsettet er Vakt 1, Vakt 2 og Referent «én per dag», uansett om
+  statusen settes manuelt, ved flytting eller bytte eller ved automatisk
+  fordeling. Referent er fortsatt en manuell oppgave og fordeles ikke. Å gi
+  en av dem til en annen samme dag er en uttrykkelig overtakelse, aldri to
+  og aldri lydløst; kolleger kan aldri overta andres status. I andre
+  fagmiljøer kan en oppgave ha flere plasser (K-KON-2), og da håndheves det
+  konfigurerte antallet: en tredje avvises når behovet er to. Senkes behovet
+  etter at plassene er fylt, blir de som står, vist som overskudd, men
+  antallet kan ikke økes.
 - **Standardoppsettet har tre visningsgrupper** (revidert 27.11.2026),
   hver status med et ikon fra ett felles ikonbibliotek (ingen emojier):
   - *Til stede:* Vakt 1, Vakt 2, Referent og Opplæring; også ingen status.
@@ -815,7 +826,7 @@ bestillingen):
 | --- | --- |
 | Stillingskategorier | Appens stillinger (1:1, §7.4); stillingsvekt settes for LIS og overlege |
 | Statuskatalog: navn, ikon, visningsgruppe, regnes som fysisk til stede, fremhevet oppgave, vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (vedtatt, B16) |
-| Bemanningsoppgaver: hvilke statuser som bemannes, antall per ukedag og helligdag, kvalifikasjonskrav, stillingsvekt per stilling, belastning | Vakt 1 og vakt 2, én hver per arbeidsdag, motsatte stillingsvekter (startverdi 2 : 1) |
+| Bemanningsoppgaver: hvilke statuser som bemannes, antall per ukedag og helligdag, kvalifikasjonskrav, stillingsvekt per stilling, belastning | Vakt 1 og vakt 2, én hver per arbeidsdag, motsatte stillingsvekter (startverdi 2 : 1). Referent er én per dag, men manuell (§7.2) |
 | Fordelingsvekter, tidshorisont og grensen for utjevning | §6.1 med prototypens startverdier |
 | Tidssone, arbeidsdager, helligdagskalender og standard for helgefilter | Europe/Oslo, vanlige hverdager, norske helligdager |
 
@@ -875,7 +886,8 @@ kontroll av aktivt medlemskap, `docs/fagmiljoer.md`).
 | Visningsvalg | Valgt visning, dato, filtre, kategorisering og sortering per bruker og fagmiljø i de eksisterende brukerinnstillingene |
 
 **Regler på serveren.** De harde invariantene (høyst én status per
-medarbeider og dato, høyst det bemannede antallet per oppgave og dato) står
+medarbeider og dato, høyst én per dato for statuser som er «én per dag», og
+høyst det bemannede antallet per annen oppgave og dato, jf. §7.2) står
 som begrensninger i databasen. Regelmotorens kontroller (aktiv medarbeider,
 aktiv status, kvalifikasjon, arbeidsdag, gyldig tidsrom, merknaden og
 overtakelse) gjøres i kommandoene på serveren. Den samme regelmotoren i delt
