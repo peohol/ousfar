@@ -169,6 +169,26 @@ $$;
 
 revoke all on function personal.krev_tilgang(uuid, text) from public, anon, authenticated, service_role;
 
+-- Porten for kommandoene som endrer noe. Tar først den felles tilgangslåsen
+-- delt (som direktemeldingene, `intern.las_tilgang` tar den eksklusivt), så
+-- kommandoen venter på en samtidig endring av medlemskap og roller, og en slik
+-- endring venter på kommandoen. Kontrollen kjøres etter låsen, i en ny
+-- setning, og ser derfor det siste som er lagret i `read committed`, som
+-- data-API-et bruker. Gir rollen.
+create function personal.krev_skrivetilgang(fagmiljo uuid, handling text)
+returns text
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform pg_advisory_xact_lock_shared(hashtextextended('ousfar.tilgang', 0));
+  return personal.krev_tilgang(krev_skrivetilgang.fagmiljo, krev_skrivetilgang.handling);
+end;
+$$;
+
+revoke all on function personal.krev_skrivetilgang(uuid, text) from public, anon, authenticated, service_role;
+
 -- --- Oppsettet ------------------------------------------------------------------
 
 -- Tekst som ligner et fødselsnummer: OUSFARs felles gjenkjenning og i tillegg
@@ -887,7 +907,7 @@ declare
   ny personal.oppsett;
   fjernet text;
 begin
-  perform personal.krev_tilgang(personal_lagre_oppsett.fagmiljo, 'editRules');
+  perform personal.krev_skrivetilgang(personal_lagre_oppsett.fagmiljo, 'editRules');
   aktor := (select auth.uid());
   if jsonb_typeof(personal_lagre_oppsett.oppsett) is distinct from 'object'
      or (select array_agg(k order by k) from jsonb_object_keys(personal_lagre_oppsett.oppsett) k) is distinct from array['enhet', 'regler'] then
@@ -964,6 +984,8 @@ begin
   end if;
   perform intern.las_tilgang(aktor, case when personal_sett_vaktplanansvarlig.ansvarlig
     then 'Personal: utpekt som vaktplanansvarlig' else 'Personal: ikke lenger vaktplanansvarlig' end);
+  -- På nytt med låsen holdt: en samtidig fjerning av rollen er nå lagret.
+  perform personal.krev_tilgang(personal_sett_vaktplanansvarlig.fagmiljo, 'managePlanners');
   if personal_sett_vaktplanansvarlig.ansvarlig then
     if not intern.er_eget_medlem_i(personal_sett_vaktplanansvarlig.fagmiljo, personal_sett_vaktplanansvarlig.bruker) then
       raise exception 'Bare et aktivt medlem av fagmiljøet kan være vaktplanansvarlig.' using errcode = '22023';

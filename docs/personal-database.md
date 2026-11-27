@@ -48,6 +48,14 @@ personal.krev_tilgang(fagmiljø, handling)
   for ett bestemt fagmiljø gis bare med en egen migrasjon fra Personal etter
   Peders ja og avklaringen i personal.md §3.4; deretter slår en systemarkitekt
   den på i appen uten kodeendring.
+- **Samtidige tilgangsendringer.** Kommandoene som endrer noe går gjennom
+  `personal.krev_skrivetilgang`, som tar den felles tilgangslåsen delt før
+  porten (som direktemeldingene). Utpekingen av vaktplanansvarlige endrer selv
+  tilgang, tar låsen eksklusivt (`intern.las_tilgang`) og kontrollerer rollen
+  på nytt etter den. En kommando som kjøres mens noen avslutter medlemskapet
+  eller fjerner rollen til den som handler, venter derfor på endringen og
+  avvises etterpå. Det gjelder i `read committed`, som data-API-et bruker for
+  hver forespørsel.
 
 ### Rollene
 
@@ -154,3 +162,9 @@ syntetisk Sandkasse (`src/__tests__/personal/database.ts`):
 - oppsettet: paritet med `validateRules` for alle feiltyper, grensene,
   formfeilene, versjonene og lagring mot en foreldet versjon (`PT409`);
 - medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse.
+
+`src/__tests__/personal.samtidighet.test.ts`, på ekte Postgres med hele
+databasestrukturen (kjøres når `OUSFAR_POSTGRES_URL` er satt, og i CI): to
+som lagrer oppsettet fra den samme versjonen samtidig, i `read committed` og
+`repeatable read`, og utpeking og lagring mens rollen til den som handler
+fjernes.
