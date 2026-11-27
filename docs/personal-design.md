@@ -22,6 +22,12 @@ Ingen aktivering med reelle data før §3.4 og P7.
 
 ## 2. Felles regler og utseende
 
+- **Svært kort, enkel tekst** (Peder 27.11.2026): ingen innledning når
+  valget sier seg selv; knappen sier hva som skjer; under et valg står bare
+  én konsekvens, eller hvorfor valget ikke går.
+- **Samme mekanismer i dag, uke, måned og helår** (Peder 27.11.2026): slipp,
+  valgbobler, statusbobler, forklaringer, datoetiketter og slippmål er
+  felles, så samme handling oppfører seg likt i alle visninger.
 - Slå sammen statusene Fri og Ferie til **Ferie**, med solikon. Ferie betyr
   faktisk ferie, også ulønnet ferie, og gir automatisk vaktfritak.
   Ordinære arbeidsfrie dager ved deltid registreres som Borte uten fritak;
@@ -103,7 +109,8 @@ Ingen aktivering med reelle data før §3.4 og P7.
   juster etter praktisk test og skjermkant). Det visuelt angitte målet og
   faktisk slippmål må være det samme, også ved automatisk rulling.
   Markering av mål med mer enn bare farge. Bevar langt trykk, vanlig
-  berøringsrulling, tastaturalternativ og Escape.
+  berøringsrulling, tastaturalternativ og Escape. Den vanlige musepekeren
+  skjules mens noe dras med presisjonsmarkøren (Peder 27.11.2026).
 - Det dratte kortet beholder form og innhold, med delvis gjennomsiktig
   bakgrunn og backdrop-blur ca. 3 px (justerbar designverdi).
 - Forklarende tekst under dra-og-slipp vises bare når slippet **ikke** er
@@ -187,10 +194,14 @@ Ingen aktivering med reelle data før §3.4 og P7.
   A Vakt 1 mandag, B Vakt 1 torsdag → ved bytte B mandag og A torsdag;
   ved overtakelse ingen mandag og A torsdag. Avbryt: ingen endring.
   Merknader følger respektive vakt, ikke bare teksten mellom personer.
-- Uke-/helårsvisningens eksplisitte målcelle (person og dato) beholder
-  vanlig celleflytting/bytte. Månedens eksplisitte vakt-overtakelse
-  erstatter den gamle regelen som alltid avviste slipp på full vakttype;
-  andre visninger skal ikke lydløst overta en tredjepersons vakt.
+- Slipp rett på en annens status er et forsøk på å bytte de to statusene
+  (Peder 27.11.2026); slipp ellers på en dato flytter personen med statusen.
+- Slippet tolkes likt i dag, uke, måned og helår (Peder 27.11.2026). Et
+  slipp på egen rad en annen dag, eller rett på en annens samme vakt en
+  annen dag, der vakten er tatt, gir de samme valgene som i måneden
+  («Bytt vaktdager» / «X overtar vakten til Y»); det erstatter den tidligere
+  avvisningen i uke og helår. Et slipp i en tredje persons tomme celle der
+  vakten er tatt, avvises fortsatt med årsak; ingen vakt overtas lydløst.
 
 ### Helår
 
@@ -198,7 +209,9 @@ Ingen aktivering med reelle data før §3.4 og P7.
   i den eksisterende v0.11-prototypen.
 - ISO-ukenummer venstrejustert i én celle som dekker alle viste dager i
   uken (segmenter ved nødvendige tabellgrenser viser riktig ukenummer);
-  tydeligere ukegrenser, også med helg skjult. Markering av inneværende
+  tydeligere ukegrenser, også med helg skjult. Måneden markeres bare med en
+  kort strek i månedsoverskriften der måneden begynner, ikke med loddrette
+  linjer nedover i rutenettet (Peder 27.11.2026). Markering av inneværende
   uke og dagens dato. Månedens sticky overskrift stanser nøyaktig til
   høyre for navnekolonnen, ikke bak den.
 - Klikk måned/uke/dag i overskriftene navigerer til tilsvarende visning
