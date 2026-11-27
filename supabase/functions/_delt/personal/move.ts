@@ -216,14 +216,18 @@ function isDutyType(state: PlannerState, statusId: string, date: IsoDate, today:
   return !!statusIndex(rules).get(statusId)?.uniquePerDay || requiredCount(rules, statusId, date) > 0;
 }
 
-/** De andre som har statusen på datoen, når den er en vakt (én per dag) eller behovet er fullt. */
+/**
+ * De andre som har statusen på datoen, når den er en vakt (én per dag) eller
+ * behovet er fullt uten personen selv. Har personen alt samme status den
+ * dagen, trengs ingen ny plass: da er det et vanlig bytte mellom personens to
+ * celler, og ingen andres vakt berøres.
+ */
 function fullCounterparts(state: PlannerState, entry: CalendarEntry, date: IsoDate, today: IsoDate): CalendarEntry[] {
-  const s = atDate(state, date, today);
-  const def = statusIndex(s.rules).get(entry.statusId);
-  if (!def) return [];
-  const others = (entriesByDate(state.entries).get(date) ?? []).filter((e) => e.statusId === entry.statusId && e.personId !== entry.personId);
-  if (!others.length) return [];
-  if (def.uniquePerDay) return others;
+  const def = statusIndex(atDate(state, date, today).rules).get(entry.statusId);
+  const onDate = entriesByDate(state.entries).get(date) ?? [];
+  if (!def || onDate.some((e) => e.personId === entry.personId && e.statusId === entry.statusId)) return [];
+  const others = onDate.filter((e) => e.statusId === entry.statusId);
+  if (!others.length || def.uniquePerDay) return others;
   const slot = dayCoverage(state, date, today).find((sl) => sl.status.id === entry.statusId);
   return slot && slot.required > 0 && slot.valid.length >= slot.required ? others : [];
 }

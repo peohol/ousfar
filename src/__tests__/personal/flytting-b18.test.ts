@@ -15,7 +15,7 @@ import {
   describeMove,
   presenceDraggable,
 } from '@delt/personal/move';
-import { entryAt, entryProblems, isDutyExempt } from '@delt/personal/rules';
+import { dayCoverage, entryAt, entryProblems, isDutyExempt } from '@delt/personal/rules';
 import type { PlannerState } from '@delt/personal/types';
 
 /**
@@ -248,6 +248,41 @@ describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.1
       expect(seen(exempt)).toEqual(seen(base));
       expect(seen(exempt).outcome).toBe('same');
     }
+  });
+
+  describe('flere plasser: fullt behov telles uten personen selv (felles fasit med prototypen)', () => {
+    /** Referent med behov 2 på hverdager. */
+    const twoReferents = () => {
+      const s = makeState();
+      return { ...s, rules: setStaffing(s.rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false }) };
+    };
+    const referents = (s: PlannerState) => dayCoverage(s, THU, TODAY).find((c) => c.status.id === S.referent)!.assigned.length;
+
+    it('har personen alt samme oppgave på måldatoen, er det et vanlig bytte mellom personens to celler, og ingen andres vakt berøres', () => {
+      let s = added(twoReferents(), d('f1', MON, S.referent, { note: 'A mandag' }));
+      s = added(added(s, d('f1', THU, S.referent, { note: 'A torsdag' })), d('f3', THU, S.referent));
+      for (const target of [{ personId: 'f1', date: THU }, { date: THU }]) {
+        const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), target, TODAY);
+        expect(a.counterparts).toEqual([]);
+        expect(a.options.map((o) => o.kind)).toEqual(['swap', 'replace']);
+      }
+      const r = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, 'swap', undefined, TODAY).state;
+      expect(cell(r, 'f1', THU)).toMatchObject({ statusId: S.referent, note: 'A mandag' });
+      expect(cell(r, 'f1', MON)).toMatchObject({ statusId: S.referent, note: 'A torsdag' });
+      expect(cell(r, 'f3', THU)!.statusId).toBe(S.referent);
+    });
+
+    it('er begge plassene fylt av andre og personen har en annen status der, tilbys bare bytt vaktdager eller overta, aldri overbemanning', () => {
+      let s = added(added(twoReferents(), d('f3', THU, S.referent)), d('f5', THU, S.referent));
+      s = added(added(s, d('f1', MON, S.referent)), d('f1', THU, S.homeOffice));
+      const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, TODAY);
+      expect(a.counterparts.map((e) => e.personId).sort()).toEqual(['f3', 'f5']);
+      expect([...new Set(a.options.map((o) => o.kind))].sort()).toEqual(['swapDates', 'takeOver']);
+      for (const o of a.options) {
+        expect(referents(o.state)).toBe(2);
+        expect(o.removed.map((e) => e.statusId)).toContain(S.homeOffice);
+      }
+    });
   });
 
   it('Til stede sluppet på en status bytter dem, i alle visninger', () => {
