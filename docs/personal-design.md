@@ -47,7 +47,7 @@ Ingen aktivering med reelle data før §3.4 og P7.
   ankeret. Ingen scrollbar forårsaket av pilspissen; begrens og rull bare
   det indre innholdet når nødvendig. Tilgjengelig på tastatur og berøring.
 - Alle flater fungerer på PC og mobil, i lyst og mørkt tema, med tastatur
-  og berøring; ingen status- eller bevegelsesanimasjon som distraherer.
+  og berøring; ingen dekorative statusanimasjoner; presisjonsmarkøren ved flytting beholdes.
 
 ## 3. Forsiden (B)
 
@@ -201,7 +201,7 @@ Vedtatt arbeidsflyt (erstatter «Lag forslag → Godta → Publiser → Publiser
    kan straks se og justere forslagets vakter i kalenderen, merket med
    stiplet ramme. Ikke endre operativ plan. Vis tydelig hva kladden
    erstatter, også fjernede tildelinger, uten å dobbeltregistrere dem.
-   Manuel vaktredigering innen forslagets tidsrom gjøres i kladden;
+   Manuell vaktredigering innen forslagets tidsrom gjøres i kladden;
    vanlige kollegers egne statuser og øvrige operative registreringer
    er ikke en del av kladden. Kladdens arbeidsflyt, statistikk og
    angre/gjør om holdes atskilt fra operativ kalender.
