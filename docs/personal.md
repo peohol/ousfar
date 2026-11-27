@@ -137,7 +137,7 @@ med syntetiske data.
 - **Automatisk vaktfordeling er et forslag.** Den skal være forståelig og
   etterprøvbar (det skal gå an å se hvorfor en vakt havnet der den gjorde),
   støtte manuelle justeringer og vaktbytter, og et beregnet forslag skal være
-  tydelig skilt fra en godkjent og publisert plan.
+  tydelig skilt fra den operative, publiserte planen. Godkjenning og publisering er én handling (B19).
 - **Reglene vedtas før de bygges.** Konkrete fordelings- og arbeidstidsregler
   forankres i §6 før implementering, med eksempler som gir en uavhengig fasit.
 - **Enkelt først.** Kalender med dag, uke og måned, enkle statuser og manuelle
@@ -305,8 +305,10 @@ tillegg på bemanningsbehovet for dagene som fordeles.
   mulig).
 
 **Status, tilgjengelighet og vaktfritak.** Fortsatt én status per
-medarbeider per dag (§7.2). Ny status **Ferie** under «Ikke på kontoret»,
-som også omfatter ulønnet ekstraferie.
+medarbeider per dag (§7.2). **Ferie** (solikon) omfatter faktisk ferie, også ulønnet ekstraferie.
+Fra 27.11.2026 utgår Fri som nytt valg (B17). Ordinære arbeidsfrie dager
+ved deltid registreres som Borte uten fritak, for å unngå dobbel
+reduksjon. Historiske Fri-registreringer beholder sin tidligere betydning.
 
 | Status | Tilgjengelig for ny vakt | Vaktfritak |
 | --- | --- | --- |
@@ -315,7 +317,7 @@ som også omfatter ulønnet ekstraferie.
 | Opplæring | Nei | Ja |
 | Ferie | Nei | Ja |
 | Borte | Nei | Nei, med mindre administrativt vaktfritak er gitt |
-| Hjemmekontor, Forskning, Undervisning, Avspasering, Fri, Ønske om fri | Nei | Nei |
+| Hjemmekontor, Forskning, Undervisning, Avspasering, Ønske om fri | Nei | Nei |
 
 - **Administrativt vaktfritak** på «Borte» kan gis av lokale administratorer
   og systemarkitekter med lokal myndighet i fagmiljøet. Det brukes for
@@ -343,7 +345,7 @@ fritaksmyndighet (se lesemodellen under).
 
 1. A, B og C er i samme stillingskategori (lik stillingsvekt), og ingen har
    vaktfritak. Vaktandel: A 100 %, B 60 %, C 100 %. Ledige arbeidsdager:
-   A 100 %, B 60 % (registrerte fridager uten vaktfritak), C 60 % (andre
+   A 100 %, B 60 % (registrert Borte uten vaktfritak), C 60 % (andre
    oppgaver). Hver dag er vektene 1 : 0,6 : 1, så 52 vakter gir
    52 · 1/2,6 = **20**, 52 · 0,6/2,6 = **12** og **20**. B reduseres ikke en
    gang til for fridagene, og C reduseres ikke for de andre oppgavene.
@@ -472,24 +474,29 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   eksklusjonsregler. **Ingen status betyr til stede** på ordinære
   arbeidsdager. Datamodellen håndhever regelen (høyst én status per
   medarbeider og dato, og høyst én medarbeider per vakttype og dato).
-- **Standardoppsettet har to kategorier**, hver status med et ikon fra ett
-  felles ikonbibliotek (ingen emojier):
-  - *På kontoret:* Vakt 1, Vakt 2, Referent og Opplæring.
-  - *Ikke på kontoret:* Borte, Ferie (fra 26.11.2026, §6.2), Hjemmekontor,
-    Forskning, Undervisning, Avspasering, Fri og Ønske om fri.
+- **Standardoppsettet har tre visningsgrupper** (revidert 27.11.2026),
+  hver status med et ikon fra ett felles ikonbibliotek (ingen emojier):
+  - *Til stede:* Vakt 1, Vakt 2, Referent og Opplæring; også ingen status.
+  - *Jobber et annet sted:* Hjemmekontor, Forskning og Undervisning.
+  - *Fraværende:* Borte, Ferie (solikon), Avspasering og Ønske om fri.
+  Gruppetilhørighet, fysisk tilstedeværelse og fremhevede oppgaver er
+  konfigurasjon per fagmiljø, uavhengig av vaktfritak (§6.2).
 
   Statusene skal senere kunne konfigureres per fagmiljø, men det bygges
   ikke noe administrasjonsgrensesnitt for dem nå. Borte registreres uten
   grunn.
 - **Samme redigeringsboble i alle visninger.** I dag-, uke- og
   månedsvisningen åpner et klikk på en status eller et navn boblen direkte
-  for den medarbeideren og datoen, uten omvei om dagsvisningen. Viser en
-  linje i månedsvisningen flere medarbeidere, velger man først hvem.
+  for den medarbeideren og datoen, uten omvei om dagsvisningen. I månedsvisningen har hver medarbeider eget ikon og navn i ett kort;
+  klikk på dato/uke navigerer, og plussknappen legger til status.
+  Forsiden er alltid en leseflate, jf. personal-design.md.
 - **Endringer lagres med en gang og kan angres.** En status settes ved å
   velge den og fjernes med slett, ved et nytt klikk på den valgte statusen
   eller ved dobbeltklikk på statusen direkte i kalenderen.
-- **Statuser på kontoret gjelder arbeidsdager.** Vakt krever kvalifikasjon
-  for akkurat den vakttypen.
+- **Statuser som krever tilstedeværelse gjelder arbeidsdager** etter
+  fagmiljøets arbeids- og bemanningskalender, også helg/helligdag der
+  dette er konfigurert. Visningsfilteret påvirker aldri reglene. Vakt
+  krever kvalifikasjon for akkurat den vakttypen.
 - **Merknad er valgfritt på alle statuser** og skal bare inneholde
   ikke-sensitive planleggingsopplysninger (§3.2). Merknaden og klokkeslettet
   beholdes når statusen byttes.
@@ -507,16 +514,18 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Flytting.** En status flyttes direkte til en celle uten status. Har
   målet en status, velger man mellom «Bytt statusene», «Flytt og erstatt
   eksisterende status» og «Avbryt». Merknad og klokkeslett følger statusen,
-  og den siste endringen kan angres. En flytting tar aldri over en vakt:
-  har en annen medarbeider allerede samme vakt på måldatoen, avvises
-  flyttingen med årsak, også når målcellen er tom. Overtakelse skjer bare
-  ved å velge vakten i cellen (punktet over).
+  og den siste endringen kan angres. Til stede uten status kan dras
+  som en virtuell celle og byttes med en status. I månedsvisningen
+  flyttes personen med statusen til ny dato; ved full vakttype tilbys
+  eksplisitt bytte av vaktdager eller overtakelse, med alle konsekvenser
+  og atomisk validering. Ingen flytting overtar en tredjepersons vakt
+  lydløst. Se [personal-design.md](personal-design.md) §4.
 - **Tilstedeværelse og tilgjengelighet er atskilt i vaktfordelingen:**
-  - *Til stede* er den som er uten status eller har en status på kontoret.
+  - *Til stede* er den som er uten status eller har en status som regnes som fysisk til stede.
   - *Ledig for en ny vakt* er bare den som er uten status og oppfyller
     kravene til vakten.
 
-  Ønske om fri regnes som fravær, men vises annerledes enn innvilget fri.
+  Ønske om fri regnes som fravær, men vises annerledes enn registrert ferie eller annet fravær.
   Motsatte stillingsvekter og avstand mellom vaktene gjelder uendret.
   Tilstedeværelse påvirker ikke lenger forventet antall vakter (§6.2).
 - **Eldre data migreres uten stille tap.** Hadde en medarbeider flere
@@ -538,7 +547,8 @@ vakten. Jonas regnes som borte, og Vakt 1 er udekket.
 
 Personal skulle gjennomgå `peohol/vaktplan`, kartlegge beslutningene og logikken
 og lage en trinnvis integrasjonsplan ([#561](https://github.com/peohol/ousfar/issues/561)).
-Planen står i §8. Kartleggingen av regnearkene (det opprinnelige punkt 1) er
+Planen står i §8. Detaljert vedtatt design og arbeidsflyt 27.11.2026
+står i [personal-design.md](personal-design.md). Kartleggingen av regnearkene (det opprinnelige punkt 1) er
 erstattet av vedtakene i §6 og §7.2 og av akseptmatrisen
 ([personal-akseptmatrise.md](personal-akseptmatrise.md)); regnearkene er
 fjernet fra prototypen og rekonstrueres ikke (§8.2).
@@ -558,8 +568,10 @@ et **1:1-forhold** mellom medlemmene av fagmiljøet og medarbeiderne i
 kalenderen, og mellom stillingene i appen («Stillinger»,
 [stillinger.md](stillinger.md)) og stillingskategoriene i kalenderen.
 Kalenderen henter begge automatisk; ingen brukere eller stillinger legges inn
-på nytt. Navnet og stillingen kommer fra profilen; ingen andre profilfelt
-leses (§3.2). Det kalenderen selv eier per medarbeider:
+på nytt. Navn, stilling og eksisterende tillatt profilbilde (bare for
+visning, med initialer som reserve) kommer fra profilen; ingen andre
+profilfelt leses (§3.2 og B1). Testmiljøet bruker bare syntetiske
+avatarer. Reell bruk krever §3.4. Det kalenderen selv eier per medarbeider:
 
 | Felt | Verdier | Merknad |
 | --- | --- | --- |
@@ -802,10 +814,10 @@ bestillingen):
 | Oppsett per fagmiljø | Pilot (OUS Klinisk farmakologi) |
 | --- | --- |
 | Stillingskategorier | Appens stillinger (1:1, §7.4); stillingsvekt settes for LIS og overlege |
-| Statuskatalog: navn, ikon, kategori (på kontoret / ikke på kontoret), vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (vedtatt, B16) |
+| Statuskatalog: navn, ikon, visningsgruppe, regnes som fysisk til stede, fremhevet oppgave, vaktfritak (alltid / administrativt / aldri), om den er et ønske, om medarbeideren kan sette den selv, aktiv | §7.2 og §6.2; alle statuser uten bemanningsbehov kan settes av medarbeideren selv (vedtatt, B16) |
 | Bemanningsoppgaver: hvilke statuser som bemannes, antall per ukedag og helligdag, kvalifikasjonskrav, stillingsvekt per stilling, belastning | Vakt 1 og vakt 2, én hver per arbeidsdag, motsatte stillingsvekter (startverdi 2 : 1) |
 | Fordelingsvekter, tidshorisont og grensen for utjevning | §6.1 med prototypens startverdier |
-| Tidssone og helligdagskalender | Europe/Oslo, norske helligdager |
+| Tidssone, arbeidsdager, helligdagskalender og standard for helgefilter | Europe/Oslo, vanlige hverdager, norske helligdager |
 
 - **Bare oppgaver med bemanningsbehov fordeles automatisk.** Referent,
   Opplæring og lignende kan være manuelle statuser.
@@ -815,8 +827,8 @@ bestillingen):
   fremtidig fagmiljø nattevakter, samtidige oppgaver eller flere statuser
   per dag, avklares det da.
 - **Det som må gjøres generelt i P2a** (kartleggingen §5): statuskategoriene
-  blir data med egenskapen «regnes som til stede» i stedet for de to faste
-  kategoriene; ikoner og fargetoner hentes fra OUSFARs ikonregister og
+  blir data med egenskapen «regnes som til stede», visningsgruppe og
+  fremhevet oppgave, uavhengig av vaktfritak og bemanningsbehov; ikoner og fargetoner hentes fra OUSFARs ikonregister og
   fargetokens; helligdagskalenderen og tidssonen blir en del av oppsettet,
   og «i dag» regnes i fagmiljøets tidssone på serveren; rollene avledes på
   serveren; stabilitetsvekten i ny plan blir en innstilling.
@@ -855,13 +867,12 @@ kontroll av aktivt medlemskap, `docs/fagmiljoer.md`).
 | Vaktandel | Som i §6.2, med databasebegrensningene der |
 | Roller | Vaktplanansvarlige med fra og til, og hvem som utpekte |
 | Kalenderoppføringer | Én per medarbeider og dato: status, valgfritt tidsrom, merknad, lås, administrativt vaktfritak (ja/nei), regelversjon og en versjon for samtidighetskontrollen |
-| Vaktplankladd | Vaktene planleggerne har lagt inn eller godtatt fra fordelingen for dager som ikke er publisert, adskilt fra den publiserte planen, med avtrykket av grunnlaget |
-| Publisering | Til og med hvilken dato planen er publisert, med historikk |
-| Forslag | Forslaget fra fordelingen med avtrykket av alt det bygger på; slettes etter kort tid |
+| Forslag / vaktplankladd | Én aktiv, delt kladd per fagmiljø med avtrykk, periode, manuelle vaktjusteringer og eventuelle uttrykkelig tillatte endringer i publisert plan; atskilt fra operativ kalender |
+| Publisering | Publisert omfang, tidspunkt, revisjoner og nødvendige før-/etter-opplysninger for sikker tilbaketrekking av siste publisering innen 24 timer (§3.4, B19) |
 | Endringslogg | Minimalt revisjonsspor (hvem, når, før og etter), fritaket bare for roller med myndighet |
 | Dørklokke | Én rad per fagmiljø og periode for sanntid, uten innhold |
 | Påminnelsesvalg | Per bruker, fagmiljø og oppgavetype |
-| Visningsvalg | Valgt visning, dato og filtre i de eksisterende brukerinnstillingene |
+| Visningsvalg | Valgt visning, dato, filtre, kategorisering og sortering per bruker og fagmiljø i de eksisterende brukerinnstillingene |
 
 **Regler på serveren.** De harde invariantene (høyst én status per
 medarbeider og dato, høyst det bemannede antallet per oppgave og dato) står
@@ -882,49 +893,44 @@ vaktplanansvarlig ikke skal se. Et forslag for et helt år tok om lag
 er derfor et serverendepunkt i Vercel med den samme delte koden, som
 kontrollerer innloggingen og rollen i databasen før det leser noe, og som har
 en fast tidsgrense. Plasseringen og grensen fastsettes etter måling i P4. Forslaget lagres med
-avtrykket, og godtas med én kommando som avviser det hvis noe det bygger på,
-er endret. Svaret til rollen følger lesemodellen.
+avtrykket som redigerbar kladd. «Publiser forslag» validerer og godtar/
+publiserer i én kommando. Endret grunnlag må vurderes på nytt.
+Svaret til rollen følger lesemodellen.
 
-**Vaktplankladden** (vedtatt av Peder 26.11.2026: medarbeiderne
-registrerer egne statuser, bare planleggerne lager vakter automatisk, og de
-andre ser bare det som er publisert). Forslag til hvordan kladden holdes
-riktig:
+**Vaktplankladden** (revidert 27.11.2026, B19). Detaljert arbeidsflyt
+står i [personal-design.md](personal-design.md) §5:
 
-- **To lag.** Kalenderen holder medarbeidernes egne statuser og de
-  publiserte vaktene. Det er dette alle ser, og her gjelder én status per
-  medarbeider og dag som begrensning i databasen. Vakter planleggerne
-  legger inn eller godtar fra fordelingen for dager som ikke er publisert,
-  står i **kladden**, som bare planleggerne ser. En kladdevakt er en
-  **kandidat**, ikke en tildeling: bare en gyldig kladdevakt teller i
-  planleggernes dekning, og bare den kan publiseres. Ved publisering flyttes
-  de gyldige kladdevaktene inn i kalenderen i samme transaksjon, og
-  begrensningen gjelder da som for alt annet.
-- **Medarbeiderens status går foran kladden.** Setter en medarbeider en
-  status på en dag der kladden gir vedkommende en vakt, lagres statusen som
-  vanlig, uten at medarbeideren får vite noe om kladden. Kladdevakten
-  markeres som i konflikt, teller ikke, plassen telles som udekket, og
-  planleggerne ser det i kladden.
-- **Kladden kontrolleres hele tiden** mot gjeldende statuser, regler og
-  medlemskap: i konflikt, udekket og om grunnlaget for fordelingen er endret
-  siden kladden ble laget (avtrykket). «Oppdater vaktplan» retter kladden med
-  færrest mulige endringer.
-- **Publisering krever en gyldig kladd.** Serveren kontrollerer hele kladden
-  på nytt i samme transaksjon som publiseringen og avviser den hvis en
-  kladdevakt er i konflikt. Er grunnlaget endret uten konflikt (for eksempel
-  en ny ferie som endrer forventet antall), sier publiseringen fra og tilbyr
-  å oppdatere først.
-- **Etter publisering** står en publisert vakt. Velger en medarbeider en
-  status på en dag med egen publisert vakt, avvises det, og medarbeideren
-  får beskjed om å ta det med vaktplanansvarlig (vedtatt, B15). Det samme
-  gjelder slett, flytting, flervalg og angre. Vaktbytter går gjennom
-  planleggerne; forespørsel om vaktbytte kan komme senere.
-- **Endring i publisert plan** gjør bare planleggerne, manuelt (også
-  overtakelse, A-OVT og fasiten A-FAS-10) eller ved å godta et forslag med
-  «Tillat endringer i publisert vaktplan» (A-PUB-06). Endringen er én
-  kommando som kontrollerer versjonen av hver berørt celle og avtrykket, og
-  som lagres og publiseres i samme transaksjon. Har en medarbeider imens
-  endret en egen status i en berørt celle, avvises hele endringen med
-  konflikt, og forslaget må oppdateres. Det blir aldri en halv endring.
+- **To lag.** Operativ kalender med medarbeideres statuser og publiserte
+  vakter (én status per person og dag), og én aktiv, delt redigerbar kladd
+  per fagmiljø. Lag forslag oppretter kladden direkte; manuelle
+  vaktjusteringer i forslaget inngår i kladden. Bare planleggerne ser den.
+  En kandidat er ikke en operativ tildeling. Eksisterende publisert plan
+  står uendret til publisering; endringer der må tillates uttrykkelig.
+- **Medarbeiderens status går foran kladden.** En egen status på dag med
+  kladdevakt lagres uten å røpe kladden; kandidaten markeres i konflikt,
+  teller ikke i kladddekningen, og plassen regnes som udekket.
+- **Kladden kontrolleres hele tiden** mot gjeldende statuser, regler,
+  medlemskap og beregningsgrunnlag. Oppdater reparerer med færrest
+  mulige endringer. Endret grunnlag må vurderes på nytt, uten å røpe
+  administrativt fritak.
+- **Publiser forslag** er én atomisk godkjenning og publisering. Ugyldige
+  kandidater og samtidighetskonflikter blokkerer; faktiske udekkede
+  behov kan publiseres med tydelig advarsel og bekreftelse. Før commit
+  vises ingen foreslått tildeling i operativ kalender, Dagen i dag, Mine
+  vakter eller varsler. Avbryt forkaster bare kladden, aldri nye
+  medarbeiderstatuser eller operativ plan.
+- **Etter publisering** står en publisert vakt. En kollega kan aldri
+  endre den, heller ikke ved slett, flytting, flervalg eller angre
+  (B15). VPA/admin kan korrigere manuelt utenfor kladdarbeidet som
+  én validert operativ endring. I et aktivt forslag inngår vakter
+  i forslagets tidsrom i kladden.
+- **Trekk tilbake siste publisering** er en ny validert, atomisk
+  gjenoppretting av forrige operative plan i berørt omfang innen 24
+  timer, aldri av avviklede vaktdager. Avvis hvis senere relevante
+  endringer eller konflikter hindrer sikker gjenoppretting; ingen
+  overskriving av nye statuser eller nyere tildelinger. Varsler og
+  påminnelser revideres etter B7/B10. Oppbevaring av revisjonsspor
+  avgjøres etter §3.4.
 
 **Samtidighet.**
 
@@ -949,13 +955,17 @@ helår), med indeks på fagmiljø og dato. Ingen henting av hele historikken.
 | K-DAT-2 | Hver kommando validerer på nytt på serveren og lagres atomisk; regelparitetstesten mellom server og klient er grønn |
 | K-DAT-3 | Samtidige endringer av samme celle gir konflikt, aldri tap; prøvd med to forbindelser mot ekte Postgres 17 |
 | K-DAT-4 | Angre og gjør om respekterer rettighetene og vaktandelens historikk, også over midnatt |
-| K-DAT-5 | Et forslag laget før en endring i grunnlaget kan ikke godtas |
+| K-DAT-5 | Et forslag med foreldet beregningsgrunnlag kan ikke publiseres uten ny gyldig vurdering |
 | K-DAT-6 | Helårsvisningen for 30 medarbeidere hentes på under ett sekund i produksjonslik database |
-| K-KLA-1 | Ingen andre enn planleggerne ser kladden: verken i kalenderen, Dagen i dag, Mine vakter, varsler, statistikk eller svar fra serveren |
+| K-KLA-1 | Bare planleggerne ser kladden i eksplisitte planleggerflater; Dagen i dag, Mine vakter, ordinær statistikk og varsler viser operativ plan for alle roller; ingen kladd i kollegers API-svar |
 | K-KLA-2 | En medarbeiders nye status på en dag med egen kladdevakt lagres, og kladdevakten markeres som i konflikt, teller ikke i dekningen og regnes som udekket; bare gyldige kladdevakter kan publiseres |
 | K-KLA-3 | En kladd med konflikt kan ikke publiseres; serveren kontrollerer på nytt ved publisering, også når to planleggere publiserer samtidig |
-| K-KLA-4 | Endret grunnlag uten konflikt vises før publisering, og «Oppdater vaktplan» gir en gyldig kladd med færrest mulige endringer |
-| K-KLA-5 | Endring i publisert plan (manuelt, overtakelse eller godtatt forslag) er atomisk med versjonskontroll per celle; en samtidig egen statusendring gir konflikt for hele endringen, prøvd med to forbindelser mot ekte Postgres 17 |
+| K-KLA-4 | Endret grunnlag uten konflikt vises før publisering, og «Oppdater» gir en gyldig kladd med færrest mulige endringer |
+| K-KLA-5 | Endring i publisert plan (manuelt, overtakelse eller publisert forslag) er atomisk med versjonskontroll per celle; en samtidig egen statusendring gir konflikt for hele endringen, prøvd med to forbindelser mot ekte Postgres 17 |
+
+| K-KLA-6 | Lag forslag oppretter delt kladd direkte, manuelle vaktendringer inngår, og Avbryt forkaster kun kladden; operativ plan og nye medarbeiderstatuser bevares, også ved samtidig redigering |
+| K-KLA-7 | Publiser forslag godtar og publiserer atomisk; ingen separat Godta; faktisk udekket behov krever advarsel/bekreftelse; ved feil rulles hele transaksjonen tilbake |
+| K-KLA-8 | Bare siste publisering kan trekkes tilbake innen 24 timer, med validert atomisk gjenoppretting av forrige plan; test grensen, avviklede dager, senere endringer, tilgang og varsler |
 
 ### 8.8 Brukerflatene
 
@@ -963,21 +973,23 @@ Vedtatt (bestilt): dag-, uke-, måneds- og helårsvisning, statusboblen og
 direkte redigering, medarbeiderinnstillinger, vaktfordeling og
 vaktbelastning, egne kommende vakter, påminnelser, Dagen i dag øverst på
 forsiden, desktop og mobil, lyst og mørkt tema, tastatur og berøring.
-Designretningen velges blant tre klikkbare forslag (B1). Forslag til
-oppbygning:
+Designretningen er valgt 27.11.2026 (B1): forsiden fra B, resten fra A,
+med endringene i [personal-design.md](personal-design.md), som er
+bindende detaljspesifikasjon.
 
-- **Ett menyvalg**, Kalender (`#/kalender`), i hovedmenyen. Inne i den:
+- **Kalender** (`#/kalender`) under Personal i hovedmenyen (#606). Inne i den:
   kalenderen, og for planleggerne Vaktfordeling og Medarbeidere.
   Innstillinger etter myndighet.
-- **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dagens
-  bemannede oppgaver og manuelle oppgaver som Referent tydelig, så de andre på kontoret, de som arbeider
-  annet sted og de som er borte eller fri, gruppert etter status, uten
-  dobbelttelling. Udekkede oppgaver vises. Et trykk åpner kalenderen på
-  dagen. Ingen status betyr planlagt til stede, ikke registrert oppmøte.
-  Bare den publiserte planen, aldri kladden eller et forslag (vedtatt
-  26.11.2026).
+- **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dato med
+  symmetriske datopiler, kompakte fremhevede oppgaver (inkl. Referent),
+  Til stede gruppert etter stilling, Jobber et annet sted og Fraværende
+  med status under navnet; alfabetisk sortering, avatarer og ingen
+  dobbelttelling. Ren leseflate for alle roller; kun merknadsboble ved
+  behov. «I kalenderen» er en ordinær knapp til valgt dato. Ingen status
+  betyr planlagt til stede, ikke registrert oppmøte. Bare operativ plan,
+  aldri kladd; skill udekket fra upublisert.
 - **Mine vakter**: egne kommende vakter og oppgaver, med lenke til dagen.
-- Valgt visning, dato og filtre huskes; utkast og skjemaer bruker
+- Valgt visning, dato, filtre, kategorisering og sortering huskes per bruker; utkast og skjemaer bruker
   `useBevart`. Små skjermer får en lesbar dagsvisning med lett tilgjengelig
   redigering, ikke en sammenpresset tabell.
 - Ingen tekniske opplysninger eller forklaringer av motoren i vanlig
@@ -1041,13 +1053,13 @@ går parallelt.
 | Trinn | Innhold | Avhenger av | Ferdig når |
 | --- | --- | --- | --- |
 | **P0** | Denne planen, akseptmatrisen, Dev-Issue-ene og produktbeslutningene | | Slått sammen |
-| **P1** | Tre klikkbare designforslag i et beskyttet forhåndsvisningsmiljø med syntetiske data; Peder og ChatGPT vurderer og Peder velger (B1). Ingen kode i OUSFAR | | B1 avgjort |
-| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0 (B11) | K-KON-1, K-KON-2, fasitene i §6 grønne |
+| **P1** | Tre forslag er vurdert og B1 er avgjort. Revider prototype-PR vaktplan#18 til én samlet klikkbar design i beskyttet forhåndsvisning; syntetiske data. Ingen appkode i OUSFAR | | Samlet prototype akseptert mot personal-design.md |
+| **P2a** | Domenekoden og testene fra prototypen til `_delt/personal/`, med pilotoppsettet og et syntetisk andre fagmiljø. Ingen database eller visning | P0 (B11) | K-KON-1, K-KON-2, fasitene i §6 grønne; oppdatert katalog og flytteregler (B17/B18) |
 | **P2b** | Skjemaet `personal`: tabellene, lesemodellen, kommandoene med validering og samtidighet, funksjonsbryteren og testmiljøet, syntetiske medarbeidere i Sandkasse | P2a, #572, #598 | K-SKJ-1–6, K-SKJ-9–10, K-TIL-1–5, K-MED-4, K-DAT-1–3, K-KON-3–4 |
 | **P2c** | Medarbeidere i kalenderen (automatisk tilknytning 1:1 med medlemmene og stillingene, kvalifikasjoner, vaktandel, vaktplanansvarlige) og `Vis som`, med menyvalget | P2b, B2 | K-MED-1–5, K-SKJ-7–8 |
-| **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, B1, B15b, B16 | A-gruppene STA, KAL, DAG, BOB, MRK, OVT, FLY, FLT, ANG, MED, VAN, FRI og TIL; K-UI-1–3, K-KON-5, K-DAT-4, K-DAT-6, K-TIL-6 |
-| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, forslag, godkjenning og publisering, kontrollert mot prototypen og fasiten | P3, #602 | A-gruppene REG, FOR, PUB, FKL og BEL; K-UI-1, K-MED-6, K-TIL-7, K-KLA-1–5, K-DAT-5 |
-| **P5** | Dagen i dag og Mine vakter | P4, #599 | A-NY-09 og A-NY-10; K-UI-1, K-UI-4 |
+| **P3** | Kalenderens fire visninger og manuell planlegging: statusboblen, flervalg, filtre, flytting og bytte, overtakelse, merknader og klokkeslett, angre, sanntid, og medarbeidernes egne statuser | P2c, P1, B15b, B16, B17, B18 | A-gruppene STA, KAL, DAG, BOB, MRK, OVT, FLY, FLT, ANG, MED, VAN, FRI, TIL og relevante A-UX; K-UI-1–3, K-KON-5, K-DAT-4, K-DAT-6, K-TIL-6 |
+| **P4** | Vaktplankladden, vaktfordelingen på serveren, vaktbelastningen, lås, redigerbart forslag, samlet publisering og trygg tilbaketrekking (B19), kontrollert mot prototypen og fasiten | P3, #602 | A-gruppene REG, FOR, PUB, FKL og BEL; K-UI-1, K-MED-6, K-TIL-7, K-KLA-1–8, K-DAT-5 |
+| **P5** | Dagen i dag og Mine vakter | P4, #599 | A-NY-09 og A-NY-10 og relevante A-UX; K-UI-1, K-UI-4 |
 | **P6** | Påminnelser og varsel ved endring | P4, #600, B7, B10 | A-NY-11; K-UI-1, K-VAR-1–4 |
 | **P7** | Samlet produktaksept med syntetiske data i Sandkasse og det lokale testmiljøet, negativ tilgangskontroll, ytelse og mobil. Deretter avklaringen i §3.4 og, etter Peders ja, `på` for OUS Klinisk farmakologi. Første plan starter fra blanke ark | P1–P6 | Hele akseptmatrisen; §3.4 ført inn; Peders ja |
 | **P8** | Avvikling av prototypen, etter verifisert pilot og særskilt beslutning, med kontroll av gamle utrullinger og historikk uten å gjengi innhold | P7 | Peders beslutning |
@@ -1086,11 +1098,14 @@ fortsatt avklaringen med ansvarlig virksomhet (§3.4, §8.13).
 | B15b | Kan en medarbeider endre egne statuser bakover i tid? | Nei. Egne endringer gjelder fra i dag og fremover; vaktplanansvarlig kan rette tidligere dager |
 | B16 | Hvilke statuser kan medarbeideren sette selv? | Alle uten bemanningsbehov, også Ferie og Opplæring med automatisk vaktfritak etter §6.2; aldri vakter, lås eller administrativt vaktfritak. Vernet av publiserte vakter (B15) står |
 
-**Gjenstår:**
+**Avgjort av Peder 27.11.2026** etter utprøving og drøfting med ChatGPT:
 
-| Nr. | Spørsmål | Når |
+| Nr. | Spørsmål | Avgjørelse |
 | --- | --- | --- |
-| B1 | Hvilken designretning? | Velges etter gjennomgang av de tre klikkbare forslagene (P1) |
+| B1 | Hvilken designretning? | Forsiden fra B, resten fra A; én samlet prototype med alle endringene i personal-design.md. Designvalg er ikke endelig produktaksept. |
+| B17 | Ferie/Fri og tilstedeværelse? | Slå sammen Ferie og Fri til Ferie med solikon. Ferie gir fritak, ordinær deltidsfri registreres som Borte uten fritak; historikk beholder betydning. Tre konfigurerbare visningsgrupper, jf. §6.2 og §7.2. |
+| B18 | Flytting og navigasjon? | Virtuell Til stede-draggable; månedsdrag flytter person med status mellom datoer, med eksplisitt bytte/overtakelse. Alle fire visninger og detaljene i personal-design.md §4. |
+| B19 | Fra forslag til publisering? | Ett aktivt, delt redigerbart forslag per fagmiljø; Lag forslag → Publiser forslag eller Avbryt. Tidligere publisert plan uendret til atomisk publisering. Sikker, validert tilbaketrekking av siste publisering i 24 timer, jf. §8.7 og personal-design.md §5. |
 
 Avgjørelsene føres inn i §6 (regler) eller her, med dato.
 
@@ -1099,6 +1114,7 @@ Avgjørelsene føres inn i §6 (regler) eller her, med dato.
 I tillegg til punktene i §3.4 avklares med ansvarlig virksomhet før `på` i et
 virkelig fagmiljø: formålet og dataminimeringen, rollene i §8.4,
 oppbevaringstid og sletting (også B9), revisjonssporet og hvem som ser det,
-innholdet i varslene (B7) og hvem i virksomheten som er ansvarlig. Ingen
+innholdet i varslene (B7), visning av eksisterende profilbilde innenfor
+fagmiljøet, revisjonsspor for tilbaketrekking og hvem i virksomheten som er ansvarlig. Ingen
 import av regneark eller syntetisk historikk; første plan starter fra blanke
 ark. Prototypen arkiveres eller slettes først etter P8.
