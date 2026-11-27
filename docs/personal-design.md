@@ -165,7 +165,12 @@ Ingen aktivering med reelle data før §3.4 og P7.
   vakter bytter dato; overta = kildens person tar vakten på måldatoen,
   kildedatoen blir udekket og måldatoens tidligere vakt fjernes. Vis også
   eventuelle andre statuser som må erstattes, og hvilke plasser blir
-  udekket; ingen tredje tildeling forsvinner lydløst. For oppgave med flere
+  udekket; ingen tredje tildeling forsvinner lydløst. Boblen er kort
+  (Peder 27.11.2026): ingen tekst øverst, bare valgene. «Bytt vaktdager»
+  uten forklaring under. «Tobias overtar vakten til Jonas» (fornavn, med
+  etternavnsinitial bare når de to har samme fornavn), med «Noen andre må
+  overta vakten til Tobias.» under. Deretter Avbryt. Ellers står det under
+  et valg bare hvorfor det ikke går, eller hvilke statuser som erstattes. For oppgave med flere
   plasser: velg konkret motpart kun når nødvendig for et faktisk bytte,
   aldri hvem som skal motta den dratte statusen. Konflikt på kildens
   person/måldato håndteres eksplisitt. Begge datocellene og alle berørte
