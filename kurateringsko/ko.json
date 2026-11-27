@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-27T00:44:45.658Z",
+  "oppdatert_kl": "2026-11-27T01:26:54.788Z",
   "malt_kl": "2026-11-27T00:44:45.658Z",
   "teller": 91,
   "stoffer": {
@@ -8337,31 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261124-214700": {
-      "ider": [
-        "fullfort-1",
-        "forny-3",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "4b1647addb201a95ef9ed6117553ea2bbab32d3f7c68d9fe9944f59087edb163",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "4b1647addb201a95ef9ed6117553ea2bbab32d3f7c68d9fe9944f59087edb163",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "perfenazin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-25T00:09:12.466Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45515762621"
-        }
-      },
-      "besvart_commit": "10a31458cfab4104d45d417fc31c68a139422237",
-      "sist_brukt_kl": "2026-11-25T00:09:12.466Z"
-    },
     "kurateringsko/okt/20261125-000951": {
       "ider": [
         "fullfort-2",
