@@ -271,17 +271,17 @@ Alle eksempler bruker syntetiske medarbeidere. Revidert 27.11.2026 etter B1 og B
 | A-NY-19 | **1:1 mellom stillingene i brukermenyen og kalenderen:** kalenderens stillingskategorier er nøyaktig stillingene i OUSFARs stillingskatalog, importert automatisk, og medarbeiderens stilling hentes fra profilen. Rollevekter i bemanningsbehovet settes per stilling. Følger: et stillingsbytte må få gyldighetsdato, så tidligere forventet vaktbelastning ikke skrives om (A-MED-03); en medarbeider uten oppgitt stilling vises og teller med standard rollevekt 1; stillinger uten rollevekt teller 1; en endring som påvirker vaktbelastningen, krever lokal administrativ myndighet (B14 i personal.md §8.12). | Peder 26.11.2026 (prosjekttråden; B14) | Vedtatt av Peder 26.11.2026 | Erstattes: stillingskatalogen (Dev); datert stillingshistorikk kan kreve Dev-endring | u: allocation «rollevektene er konfigurasjon», «kategoribytte …» |
 | A-NY-20 | Egen status på kladddag går foran kandidaten, som beholdes i konflikt uten å telle i dekningen. Endret grunnlag markeres; Oppdater reparerer med færrest endringer. Serveren validerer kladden og publiserer atomisk; ingen skjult lekkasje av fritak. Publiserte vakter vernes etter B15. | §8.7, B19 | Vedtatt 27.11.2026 | Tilpasses/nytt | u: allocation + server- og arbeidsflyttest |
 
-## Startverdier som ikke er vedtatt
-
-Rollevekt (LIS 2 / overlege 1 for vakt 1, omvendt for vakt 2), belastning (1,5 / 1), vektene 20 / 1 / 6 / 2 / 0,5 / 3, kort vindu 42 dager, største ekstra utjevning 50 %, stabilitet 0,5, søkegrenser og periodegrenser. Se kartleggingen §3. Beholdes som justerbare standarder i pilotoppsettet; ingen av dem er vedtak.
-
 ### UX – Designvedtak 27.11.2026
 
 | ID | Krav | Kilde | Vedtatt eller prototypens valg | I OUSFAR | Prototypens tester |
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- |
 | A-UX-01 | Én samlet klikkbar prototype: B-forside, A for resten; alle detaljer i personal-design.md, syntetisk og beskyttet. | B1 | Vedtatt | Tilpasses | P1-produktaksept |
 | A-UX-02 | Statusikonene animeres ikke; ordinære knapper ser ut som knapper; like forrige/neste-piler; felles OUSFAR-rullefelt. Ingen opphopning av toasts. | personal-design.md §2–4 | Vedtatt | Tilpasses | Visuell kontroll og arbeidsflyt |
 | A-UX-03 | Ferie gir automatisk fritak (inkl. ulønnet ferie); Borte ved ordinære arbeidsfrie dager gir ikke fritak. Fri er ikke nytt valg. Historisk Fri får ikke tilbakevirkende fritak. Fasit A-FAS-03/04 står. | B17, §6.2 | Vedtatt | Tilpasses | u: exemption, historikk |
 | A-UX-04 | Månedsdrag med A Vakt 1 mandag og B Vakt 1 torsdag: bytte gir B mandag/A torsdag; overtakelse gir udekket mandag/A torsdag; avbryt ingen endring. Respektive merknader følger sine vakter, ingen delvis endring. | B18, personal-design.md §4 | Vedtatt | Tilpasses | Ny u/e-fasit |
 | A-UX-05 | Forsideavatarer: bare eksisterende tillatt profilbilde i eget fagmiljø, ellers initialer; syntetiske avatarer i test. Ingen ny bildelagring, ingen utvidelse av tilgang. | B1, personal-design.md §3, §3.4 | Vedtatt | Tilpasses | Negativ tilgangstest |
 | A-UX-06 | Arbeids- og bemanningskalender, gruppe/fysisk tilstedeværelse og fremhevede oppgaver varierer per fagmiljø, uavhengig av visningsfilter. Prøv annet syntetisk fagmiljø med helgebemanning og annen oppgavekonfigurasjon. | B17, §8.6 | Vedtatt | Tilpasses | K-KON-2/K-KON-5 |
+
+## Startverdier som ikke er vedtatt
+
+Rollevekt (LIS 2 / overlege 1 for vakt 1, omvendt for vakt 2), belastning (1,5 / 1), vektene 20 / 1 / 6 / 2 / 0,5 / 3, kort vindu 42 dager, største ekstra utjevning 50 %, stabilitet 0,5, søkegrenser og periodegrenser. Se kartleggingen §3. Beholdes som justerbare standarder i pilotoppsettet; ingen av dem er vedtak.

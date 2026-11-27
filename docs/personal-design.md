@@ -31,8 +31,9 @@ Ingen aktivering med reelle data før §3.4 og P7.
   reell import/migrering er godkjent.
 - Bruk Til stede, ikke På kontoret. Pilotens visningsgrupper er Til stede,
   Jobber et annet sted og Fraværende. Gruppetilhørighet, fysisk
-  tilstedeværelse, tilgjengelighet, fritak, fremhevede oppgaver og
-  bemanningsbehov er konfigurasjon per fagmiljø; ikke utled beregninger fra
+  tilstedeværelse, fritak, fremhevede oppgaver og
+  bemanningsbehov er konfigurasjon per fagmiljø (ledig for ny vakt er
+  fortsatt bare den uten status, personal.md §7.2); ikke utled beregninger fra
   tekstetiketter eller visningsfilter. Forskning/undervisning kan ha annen
   gruppetilhørighet andre steder. Ingen status = planlagt til stede på
   arbeidsdager, ikke faktisk oppmøte.
@@ -241,7 +242,10 @@ For manuelle vakter før det finnes et automatisk forslag opprettes/utvides
 kladden i det upubliserte tidsrommet; når det finnes én aktiv kladd, må et
 nytt periodevalg ikke lydløst forkaste den. VPA kan fremdeles korrigere
 en publisert vakt manuelt utenfor kladdarbeidet gjennom eksisterende
-atomiske kommando med tydelig bekreftelse på operativ endring. Dette er
+atomiske kommando med tydelig bekreftelse på operativ endring. En vakt på
+en publisert dag inngår i kladden bare når forslaget uttrykkelig tillater
+endringer i publisert plan (punkt 1); ellers er en manuell endring der en
+slik operativ korrigering. Dette er
 ikke en ny generell publiseringsflyt. Vanlige kolleger ser aldri kladden,
 heller ikke via Dagen i dag, Mine vakter, varsler, statistikk eller API.
 

@@ -452,15 +452,17 @@ Besluttet av Peder 25.11.2026, i prototypen i `peohol/vaktplan` (PR #5):
 
 - **Ingen arbeidsmønster eller stillingsandel.** Mønstrene varierer, og noen
   i redusert stilling er til stede hver dag og kan ha vakt hver ukedag. Alle
-  aktive medarbeidere regnes som til stede på hverdager som ikke er
-  helligdager; fravær, også ved deltid, registreres i kalenderen.
+  aktive medarbeidere regnes som til stede på fagmiljøets arbeidsdager
+  (i piloten hverdager som ikke er helligdager, B17); fravær, også ved
+  deltid, registreres i kalenderen.
   ~~Prosent tilstedeværelse i fordelingen regnes derfor ut fra kalenderen,
   ikke fra en stillingsandel.~~ Erstattet 26.11.2026: redusert
   vaktbelastning uttrykkes med vaktandel, og kalenderen avgjør bare
   plasseringen (§6.2).
-- **Forskning, undervisning og ønske om fri regnes som borte** i
+- **Forskning, undervisning og ønske om fri regnes ikke som til stede** i
   planleggingen (de gjør medarbeideren opptatt, men gir ikke vaktfritak,
-  §6.2).
+  §6.2). I visningen står forskning og undervisning under «Jobber et annet
+  sted» og ønske om fri under «Fraværende» (B17).
 - ~~Hjemmekontor, forskning, undervisning, annen oppgave og ønske om fri
   utelukker vakt 1 og vakt 2 samme dag.~~ Erstattet 26.11.2026 av regelen om
   én status per dag nedenfor, som gjør egne eksklusjonsregler unødvendige.
@@ -920,7 +922,8 @@ står i [personal-design.md](personal-design.md) §5:
   endre den, heller ikke ved slett, flytting, flervalg eller angre
   (B15). VPA/admin kan korrigere manuelt utenfor kladdarbeidet som
   én validert operativ endring. I et aktivt forslag inngår vakter
-  i forslagets tidsrom i kladden.
+  i forslagets tidsrom i kladden; på publiserte dager bare når forslaget
+  uttrykkelig tillater endringer i publisert plan (A-PUB-05/06).
 - **Trekk tilbake siste publisering** er en ny validert, atomisk
   gjenoppretting av forrige operative plan i berørt omfang innen 24
   timer, aldri av avviklede vaktdager. Avvis hvis senere relevante
@@ -1066,8 +1069,8 @@ publiseres uten at noen andre enn systemarkitektene merker det.
 
 ### 8.12 Beslutninger for Peder
 
-Vedtatt fra før og ikke til ny vurdering: §3, §6.1, §6.2, §7.2 og
-bestillingen 26.11.2026 (§8.1 og §8.3).
+Vedtatt fra før og ikke til ny vurdering: §3, §6.1, §6.2, §7.2 (med
+revisjonene 27.11.2026, B17–B19) og bestillingen 26.11.2026 (§8.1 og §8.3).
 
 **Avgjort av Peder 26.11.2026.** B3–B6, B13 og B15 i prosjektets samtale og
 på beslutningskort; de øvrige bekreftet av Peder etter ChatGPT-kontrollen og
