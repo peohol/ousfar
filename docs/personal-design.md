@@ -52,7 +52,10 @@ Ingen aktivering med reelle data før §3.4 og P7.
   fortsatt på cellen når innholdet vokser; får ikke alt plass, ruller
   innholdet. «Merknad» åpner merknadsfeltet og «Hele dagen» øverst, rett
   under verktøylinjen og over statusgruppene, synlig i visningsområdet,
-  og merknadsfeltet får fokus (Peder 27.11.2026).
+  og merknadsfeltet får fokus (Peder 27.11.2026). Når innholdet ruller,
+  står toppen med navn, profilbilde og dato fast øverst i boblen. Pilen
+  tegnes bare som sin ytre halvdel, så innhold som ruller under den ikke
+  danner en rute (Peder 27.11.2026).
 - Korte forklaringer på knapper og ikoner (f.eks. «Legg til status») vises
   som en liten snakkeboble over elementet, med en gang ved hover eller
   tastaturfokus, aldri som nettleserens forsinkede title-tekst. Ingen
