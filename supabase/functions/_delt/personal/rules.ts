@@ -74,6 +74,14 @@ export function rulesForDate(state: PlannerState, date: IsoDate, today: IsoDate 
   return inEffect([...state.ruleVersions, state.rules], date);
 }
 
+/** Regelsettene som gjaldt minst én dag i tidsrommet, det som gjaldt første dag først. */
+export function rulesInPeriod(state: PlannerState, from: IsoDate, to: IsoDate, today: IsoDate = todayIn(state.unit.timeZone)): RuleSet[] {
+  const sets = new Set<RuleSet>([rulesForDate(state, from, today)]);
+  for (const r of state.ruleVersions) if (r.effectiveFrom > from && r.effectiveFrom <= to) sets.add(rulesForDate(state, r.effectiveFrom, today));
+  if (to >= today) sets.add(state.rules);
+  return [...sets];
+}
+
 /** Regelsettet med et bestemt versjonsnummer, f.eks. versjonen en registrering ble lagret under. */
 export function ruleSetByVersion(state: PlannerState, version: number): RuleSet | undefined {
   return state.rules.version === version ? state.rules : state.ruleVersions.find((r) => r.version === version);
@@ -352,9 +360,11 @@ export type Presence = 'present' | 'away' | 'off';
 export function presenceOf(state: PlannerState, personId: string, date: IsoDate, today: IsoDate = todayIn(state.unit.timeZone)): Presence {
   const s = atDate(state, date, today);
   const entry = entryAt(s, personId, date);
+  const kind = dayKind(personById(s, personId), date, s.rules);
+  if (kind === 'inactive' || kind === 'unregistered') return 'off';
   const def = entry ? statusIndex(s.rules).get(entry.statusId) : undefined;
   if (def && !def.present) return 'away';
-  return dayKind(personById(s, personId), date, s.rules) === 'work' ? 'present' : 'off';
+  return kind === 'work' ? 'present' : 'off';
 }
 
 /**

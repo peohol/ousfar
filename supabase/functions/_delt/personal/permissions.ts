@@ -1,4 +1,4 @@
-import type { PlannerState, Role } from './types.ts';
+import type { CalendarEntry, PlannerState, Role } from './types.ts';
 
 /**
  * Demonstrerte roller (OUSFAR docs/personal.md §3.3 og §6.2). Prototypen har
@@ -138,3 +138,20 @@ export function exemptionsRemoved(from: PlannerState, to: PlannerState): boolean
  * kalenderinnsyn, antall vakter og det å lage og godta planer er likt for alle.
  */
 export const seesExemptionDetails = (role: Role): boolean => can(role, 'manageExemption');
+
+/** Registreringen uten administrativt vaktfritak, slik roller uten myndighet ser den. */
+export function withoutExemption<E extends CalendarEntry | undefined>(entry: E): E {
+  if (!entry?.exempt) return entry;
+  const { exempt: _exempt, ...rest } = entry;
+  return rest as E;
+}
+
+/**
+ * Kalenderen slik rollen får se den: uten administrativt vaktfritak når
+ * rollen ikke har myndighet over det (`seesExemptionDetails`). Serveren gir
+ * aldri ut tilstanden uten å gå gjennom denne.
+ */
+export function calendarView(state: PlannerState, role: Role): PlannerState {
+  if (seesExemptionDetails(role) || !state.entries.some((e) => e.exempt)) return state;
+  return { ...state, entries: state.entries.map((e) => withoutExemption(e)) };
+}

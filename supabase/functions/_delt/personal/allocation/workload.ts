@@ -4,6 +4,7 @@ import { dutyScheduleOf, dutyShareTimeline, type DutyShareSegment } from '../dut
 import type { IsoDate, PlannerState } from '../types.ts';
 import { dayNumber, expectedIn, shareTable, type Window } from './expected.ts';
 import { allocatedTypes } from './model.ts';
+import { rulesInPeriod } from '../rules.ts';
 
 /**
  * Oversikt over vaktbelastning: for hver vakttype og medarbeider
@@ -95,10 +96,20 @@ export function checkWorkloadPeriod(from: IsoDate, to: IsoDate): string | null {
   return null;
 }
 
+/**
+ * Vakttypene i oversikten: de som har bemanningsbehov i et av regelsettene
+ * som gjaldt i tidsrommet, så tidligere vakter ikke forsvinner fra
+ * oversikten når et behov senere fjernes.
+ */
+export function workloadTypes(state: PlannerState, from: IsoDate, to: IsoDate, today: IsoDate = todayIn(state.unit.timeZone)): string[] {
+  const ids = rulesInPeriod(state, from, to, today).flatMap((rules) => allocatedTypes({ ...state, rules }).map((r) => r.statusId));
+  return [...new Set(ids)];
+}
+
 export function workload(state: PlannerState, from: IsoDate, to: IsoDate, today: IsoDate = todayIn(state.unit.timeZone), { proposal, exemptionDetails = true }: WorkloadOptions = {}): Workload {
   const error = checkWorkloadPeriod(from, to);
   if (error) throw new DomainError(error);
-  const types = allocatedTypes(state).map((r) => r.statusId);
+  const types = workloadTypes(state, from, to, today);
   const people = state.people;
   const personIndex = new Map(people.map((p, i) => [p.id, i]));
   const window: Window = { start: dayNumber(from), end: dayNumber(to) };

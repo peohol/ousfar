@@ -1,6 +1,6 @@
 import { DomainError, newId } from '../commands.ts';
 import { formatDateNo, isIsoDate, todayIn } from '../dates.ts';
-import { assertCan } from '../permissions.ts';
+import { assertCan, calendarView, seesExemptionDetails, withoutExemption } from '../permissions.ts';
 import { personById, rulesForDate, statusIndex, type Violation } from '../rules.ts';
 import type { CalendarEntry, IsoDate, PlannerState, Role } from '../types.ts';
 import { type Breakdown } from './cost.ts';
@@ -79,6 +79,12 @@ export function aboveCatchUpGoal(p: Pick<Proposal, 'fairness'>): FairnessRow[] {
   return p.fairness.filter((r) => r.historyCount - r.historyGoal >= 1 - 1e-9);
 }
 
+/**
+ * Forslaget slik motoren lager det. Serverintern: `base`, `fingerprint`,
+ * `problem` og `solution` inneholder hele kalenderen med administrativt
+ * vaktfritak og brukes bare til foreldelseskontroll, godkjenning og
+ * forklaring på serveren. Klienten får `proposalView`.
+ */
 export interface Proposal {
   request: AllocationRequest;
   base: PlannerState;
@@ -331,6 +337,40 @@ export function proposeAllocation(state: PlannerState, role: Role, request: Allo
     localOptimum,
     problem: pr,
     solution: sol,
+  };
+}
+
+/** Forslaget slik en rolle får se det (`proposalView`). */
+export interface ProposalView {
+  request: AllocationRequest;
+  today: IsoDate;
+  state: PlannerState;
+  changes: ProposalChange[];
+  uncovered: UncoveredSlot[];
+  /** Forventet antall og mål avhenger av vaktfritak: null uten myndighet over det. */
+  fairness: FairnessRow[] | null;
+  notes: string[];
+  localOptimum: boolean;
+}
+
+/**
+ * Lesemodellen for et forslag: uten de serverinterne delene, og uten
+ * administrativt vaktfritak og tall som avhenger av det for roller uten
+ * myndighet (personal.md §6.2). Forklaringen av en plass gis med
+ * `explainSlot(..., { detailed: seesExemptionDetails(role) })`.
+ */
+export function proposalView(p: Proposal, role: Role): ProposalView {
+  const sees = seesExemptionDetails(role);
+  const change = (c: ProposalChange): ProposalChange => (sees ? c : { ...c, before: withoutExemption(c.before), after: withoutExemption(c.after) });
+  return {
+    request: p.request,
+    today: p.today,
+    state: calendarView(p.state, role),
+    changes: p.changes.map(change),
+    uncovered: p.uncovered,
+    fairness: sees ? p.fairness : null,
+    notes: p.notes,
+    localOptimum: p.localOptimum,
   };
 }
 

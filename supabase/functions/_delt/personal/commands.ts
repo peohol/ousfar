@@ -1,4 +1,4 @@
-import { ALLOCATION_FIELD_LIMITS, DEFAULT_ALLOCATION, isAllocationLimitedField } from './catalog.ts';
+import { ALLOCATION_FIELD_LIMITS, DEFAULT_ALLOCATION, isAllocationLimitedField, workCalendarOf } from './catalog.ts';
 import { addDays, todayIn } from './dates.ts';
 import { assertCan } from './permissions.ts';
 import {
@@ -314,6 +314,10 @@ export function validateRules(rules: RuleSet): string[] {
     if (!def.present) errors.push(`«${def.name}» brukes i bemanningsbehov og må regnes som fysisk til stede.`);
     const max = def.uniquePerDay ? 1 : 20;
     if (s.perWeekday.length !== 7 || s.perWeekday.some((n) => !Number.isInteger(n) || n < 0 || n > max)) errors.push(`Bemanningsbehovet for «${def.name}» må være hele tall mellom 0 og ${max}.`);
+    // Et behov på en dag som ikke er arbeidsdag, kunne aldri dekkes: statuser som er til stede, gjelder bare arbeidsdager.
+    const cal = workCalendarOf(rules);
+    if (s.perWeekday.some((n, i) => n > 0 && cal.weekdays[i] === false)) errors.push(`Bemanningsbehovet for «${def.name}» gjelder en ukedag som ikke er arbeidsdag i arbeidskalenderen.`);
+    if (s.onHolidays && !cal.holidays && cal.holidayCalendar !== 'none') errors.push(`Bemanningsbehovet for «${def.name}» gjelder helligdager, men helligdager er ikke arbeidsdager i arbeidskalenderen.`);
     if (Object.values(s.categoryWeights ?? {}).some((w) => !(Number.isFinite(w) && w >= 0 && w <= 10))) errors.push('Rollevekter må være tall mellom 0 og 10.');
     if (s.load !== undefined && !(Number.isFinite(s.load) && s.load >= 0.1 && s.load <= 10)) errors.push('Belastning må være et tall mellom 0,1 og 10.');
   }
