@@ -14,6 +14,7 @@ import {
   kanEndreTestmiljo,
   lesFunksjonsoversikt,
   tillatteTilstander,
+  type Funksjonsbeskrivelse,
   type Funksjonsbryterlager,
   type Funksjonsoversikt,
   type Funksjonstilstand,
@@ -57,7 +58,7 @@ function minnelager(): Funksjonsbryterlager & { data: Funksjonsoversikt } {
       const m = data.fagmiljoer.find((x) => x.id === fagmiljo)!
       if (!tillatteTilstander(f, m).includes(tilstand)) throw new Error('Funksjonen er ikke godkjent for virkelige fagmiljøer ennå.')
       const brytere = f.brytere.filter((b) => b.fagmiljo !== fagmiljo)
-      ;(f as { brytere: unknown[] }).brytere =
+      ;(f as { brytere: Funksjonsbeskrivelse['brytere'] }).brytere =
         tilstand === 'av' ? brytere : [...brytere, { fagmiljo, tilstand, endretKl: '2026-11-27T19:00:00Z', endretAv: 'Aria Arkitekt' }]
     }),
     settTestmiljo: vi.fn(async (fagmiljo: string, testmiljo: boolean) => {

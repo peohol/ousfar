@@ -102,11 +102,15 @@ describe('funksjonene som krever systemarkitekt', () => {
       [
         'beslutt_fagsak',
         'datakilder_status',
+        // #598: funksjonsbryterne og testmiljøene.
+        'funksjonsoversikt',
         'kuratering_admin',
         'les_fagsaker',
         'les_kildeovervaking',
         'opphev_verktoysperre',
         'opprett_fagmiljo',
+        'sett_funksjonsbryter',
+        'sett_testmiljo',
         'sett_verktoysperre',
         'slett_stoff_for_godt',
         'tom_stoffpapirkurven',
