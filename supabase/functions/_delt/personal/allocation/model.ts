@@ -2,7 +2,7 @@ import { allocationSettings } from '../catalog.ts';
 import { diffDays, formatDateNo, isIsoDate, todayIn, weekdayIndex } from '../dates.ts';
 import { DomainError } from '../commands.ts';
 import { dutyShareAt } from '../dutyShare.ts';
-import { entryProblems, freeForNew, personById, requiredCount, rulesForDate, statusIndex, type EntryDraft, type Violation } from '../rules.ts';
+import { entryProblems, freeForNew, personById, requiredCount, rulesForDate, staffingCap, statusIndex, type EntryDraft, type Violation } from '../rules.ts';
 import type { AllocationSettings, CalendarEntry, IsoDate, Person, PlannerState, StaffingRequirement } from '../types.ts';
 import { dateOfDay, dayNumber, expectedIn, possibleDay, shareTable, type Window } from './expected.ts';
 
@@ -65,6 +65,12 @@ export interface Slot {
   incumbent?: CalendarEntry;
   /** Personindekser som oppfyller alle harde krav for plassen. */
   candidates: number[];
+  /**
+   * Plassen trengs for dekningen, men det er ikke fysisk plass til en til
+   * (tildelinger som står fast, fyller grensen). Den har ingen kandidater og
+   * vises som udekket med denne årsaken.
+   */
+  blocked?: string;
 }
 
 export interface Problem {
@@ -156,6 +162,14 @@ export function allocationPeriodError(from: IsoDate, to: IsoDate, today: IsoDate
 function checkRequest(request: AllocationRequest, today: IsoDate): void {
   const error = allocationPeriodError(request.from, request.to, today);
   if (error) throw new DomainError(error);
+}
+
+/** Årsaken til at en plass ikke kan fylles fordi grensen alt er nådd av tildelinger som står fast. */
+function fullReason(rules: PlannerState['rules'], statusId: string, cap: number): string {
+  const name = statusIndex(rules).get(statusId)?.name ?? 'Oppgaven';
+  return cap === 1
+    ? `${name} er alt tildelt en som ikke kan endres (låst eller publisert), selv om tildelingen bryter reglene.`
+    : `Alle ${cap} plassene for ${name.toLowerCase()} er i bruk, også av tildelinger som ikke kan endres (låste eller publiserte).`;
 }
 
 /** Vakttypene som fordeles: statuser med bemanningsbehov minst én ukedag. */
@@ -253,6 +267,7 @@ export function buildProblem(base: PlannerState, request: AllocationRequest, tod
       const assigned = dayEntries.filter((e) => e.statusId === statusId);
       const fixedValid: CalendarEntry[] = [];
       const openValid: CalendarEntry[] = [];
+      let fixedInvalid = 0;
       for (const e of assigned) {
         const problems = entryProblems(base, e, today);
         const isFree = isOpen(base, e, request, start, typeIds);
@@ -260,7 +275,10 @@ export function buildProblem(base: PlannerState, request: AllocationRequest, tod
           if (isFree) {
             invalid.push({ entry: e, problems });
             open.push(e);
-          } else untouchedInvalid.push(e);
+          } else {
+            untouchedInvalid.push(e);
+            fixedInvalid++;
+          }
         } else (isFree ? openValid : fixedValid).push(e);
       }
       const need = Math.max(0, required - fixedValid.length);
@@ -268,11 +286,20 @@ export function buildProblem(base: PlannerState, request: AllocationRequest, tod
         publishedGaps += need;
         return;
       }
-      for (let k = 0; k < need; k++) {
+      // Fysisk plass skilles fra gyldig dekning: alt som står fast, også ugyldige låste eller publiserte
+      // tildelinger, tar plass under grensen. Søket lager aldri flere plasser enn det er rom for, så et
+      // forslag kan alltid lagres. Er datoen alt over grensen (behovet er senket), står de åpne
+      // tildelingene urørt, og overskuddet øker aldri.
+      const cap = staffingCap(rules, statusId, date) ?? required;
+      const room = cap - fixedValid.length - fixedInvalid;
+      const usable = fixedValid.length + fixedInvalid + openValid.length > cap ? 0 : Math.min(need, Math.max(0, room));
+      for (let k = 0; k < usable; k++) {
         const incumbent = openValid[k];
         if (incumbent) open.push(incumbent);
         slots.push({ index: slots.length, date, day, type, ...(incumbent ? { incumbent } : {}), candidates: [] });
       }
+      const blocked = need - usable - Math.max(0, openValid.length - usable);
+      for (let k = 0; k < blocked; k++) slots.push({ index: slots.length, date, day, type, candidates: [], blocked: fullReason(rules, statusId, cap) });
       // Gyldige tildelinger utover behovet står urørt.
     });
   }
@@ -288,6 +315,7 @@ export function buildProblem(base: PlannerState, request: AllocationRequest, tod
     const statusId = types[slot.type]!;
     const inc = incumbentOf(slot);
     people.forEach((p, i) => {
+      if (slot.blocked) return;
       if (i === inc || allocationBlockers(cleared, { personId: p.id, date: slot.date, statusId }, today).length === 0) slot.candidates.push(i);
     });
   }

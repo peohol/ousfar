@@ -214,6 +214,8 @@ export function explainSlot(p: Pick<Proposal, 'problem' | 'solution'>, slotIndex
 }
 
 function uncoveredReasons(p: Pick<Proposal, 'problem' | 'solution'>, slotIndex: number): string[] {
+  const blocked = p.problem.slots[slotIndex]!.blocked;
+  if (blocked) return [blocked];
   const groups = new Map<string, string[]>();
   for (const c of explainSlot(p, slotIndex)) {
     if (c.verdict !== 'busy' && c.verdict !== 'blocked') continue;

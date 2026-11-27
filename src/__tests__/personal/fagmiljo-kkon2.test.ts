@@ -3,12 +3,12 @@ import './hjelp';
 import { added, d } from './fixtures';
 import { createPostState, POST_IDS as P, postRules } from './annetFagmiljo';
 import { defaultRuleSet, statusesByGroup } from '@delt/personal/catalog';
-import { assertInvariants, commitRules, DomainError, setStatus, validateRules } from '@delt/personal/commands';
+import { assertInvariants, commitRules, DomainError, setStatus, upsertPerson, validateRules } from '@delt/personal/commands';
 import { eachDay, holidayName, weekdayIndex } from '@delt/personal/dates';
 import { analyzeDateMove, commitDateMove } from '@delt/personal/move';
 import { dayKind, isScheduledWorkday } from '@delt/personal/people';
 import { dayCoverage, entryAt, entryProblems, isDutyExempt, presenceOf, requiredCount } from '@delt/personal/rules';
-import { acceptProposal, proposeAllocation } from '@delt/personal/allocation/proposal';
+import { acceptProposal, proposeAllocation, setEntryLocked } from '@delt/personal/allocation/proposal';
 import type { PlannerState } from '@delt/personal/types';
 
 /**
@@ -137,5 +137,51 @@ describe('vaktfordelingen i det andre fagmiljøet', () => {
     const next = proposeAllocation(weekdaysOnly, 'planner', { from: FROM, to: TO, mode: 'new' }, TODAY).state;
     expect(next.entries.length).toBeGreaterThan(0);
     expect(next.entries.filter((e) => weekdayIndex(e.date) >= 5 || holidayName(e.date, 'no'))).toEqual([]);
+  });
+});
+
+describe('bemanningsgrensen i fordelingssøket', () => {
+  const D = '2026-12-02';
+  const medicationOn = (s: PlannerState) => s.entries.filter((e) => e.date === D && e.statusId === P.medication);
+  const withNeed = (s: PlannerState, n: number): PlannerState =>
+    commitRules(s, 'localAdmin', { ...s.rules, staffing: s.rules.staffing.map((r) => (r.statusId === P.medication ? { ...r, perWeekday: [n, n, n, n, n, n, n] as typeof r.perWeekday } : r)) }, TODAY);
+
+  it('en låst tildeling som er blitt ugyldig, tar plass: forslaget fyller bare den ene ledige plassen og kan lagres', () => {
+    let s = added(createPostState(), d('q4', D, P.medication));
+    s = setEntryLocked(s, 'planner', entryAt(s, 'q4', D)!.id, true);
+    // Kvalifikasjonen fjernes etter låsingen: tildelingen står, men dekker ikke.
+    s = upsertPerson(s, 'planner', { ...s.people.find((x) => x.id === 'q4')!, qualifications: [] }, TODAY);
+    expect(slot(s, D, P.medication)).toMatchObject({ required: 2, missing: 2 });
+    const p = proposeAllocation(s, 'planner', { from: D, to: D, mode: 'new' }, TODAY);
+    expect(p.uncovered).toEqual([{ date: D, statusId: P.medication, reasons: [expect.stringContaining('Alle 2 plassene for medisinansvar er i bruk')] }]);
+    const next = acceptProposal(s, 'planner', p, TODAY);
+    expect(medicationOn(next)).toHaveLength(2);
+    expect(entryAt(next, 'q4', D)).toMatchObject({ statusId: P.medication, locked: true });
+    expect(slot(next, D, P.medication)).toMatchObject({ missing: 1 });
+  });
+
+  it('etter at behovet er senket fra 3 til 2, står de tre urørt: forslaget øker aldri overskuddet og kan lagres', () => {
+    let s = withNeed(createPostState(), 3);
+    s = added(added(added(s, d('q1', D, P.medication)), d('q6', D, P.medication)), d('q7', D, P.medication));
+    s = withNeed(s, 2);
+    expect(slot(s, D, P.medication)).toMatchObject({ required: 2, surplus: 1 });
+    for (const mode of ['new', 'repair'] as const) {
+      const p = proposeAllocation(s, 'planner', { from: D, to: D, mode }, TODAY);
+      expect(p.uncovered).toEqual([]);
+      const next = acceptProposal(s, 'planner', p, TODAY);
+      expect(medicationOn(next).map((e) => e.personId).sort()).toEqual(['q1', 'q6', 'q7']);
+      expect(() => assertInvariants(next, [D], TODAY, s)).not.toThrow();
+    }
+  });
+
+  it('negativt: et forslag gir aldri flere enn behovet, heller ikke over flere dager med ledige folk', () => {
+    const s = createPostState();
+    const next = acceptProposal(s, 'planner', proposeAllocation(s, 'planner', { from: FROM, to: TO, mode: 'new' }, TODAY), TODAY);
+    for (const date of eachDay(FROM, TO)) {
+      expect(next.entries.filter((e) => e.date === date && e.statusId === P.medication)).toHaveLength(2);
+      expect(next.entries.filter((e) => e.date === date && e.statusId === P.teamLead)).toHaveLength(1);
+    }
+    // Alt som står fast, er med i grunnlaget, så forslaget kan lagres uten avvik.
+    expect(() => assertInvariants(next, eachDay(FROM, TO), TODAY, s)).not.toThrow();
   });
 });
