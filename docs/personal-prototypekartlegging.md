@@ -2,6 +2,8 @@
 
 Kartleggingen i P0 for [#561](https://github.com/peohol/ousfar/issues/561) (planforslaget i [kommentar 7201302691](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)), laget 26.11.2026 av Claude (OUSFAR Personal). Bakgrunn for akseptmatrisen ([personal-akseptmatrise.md](personal-akseptmatrise.md)) og integrasjonsplanen ([personal.md](personal.md) §8): hva som skal bevares, hvilken kode og hvilke tester som kan overføres, og hva som må tilpasses.
 
+**Historisk kartlegging:** Denne filen beskriver grunnlaget 26.11.2026, ikke nye produktvedtak. Vedtak 27.11.2026 i [personal-design.md](personal-design.md), [personal.md](personal.md) og den oppdaterte [akseptmatrisen](personal-akseptmatrise.md) går foran alle eldre krav her, særlig statuskatalog, månedsflytting og publisering. Eksisterende tester som uttrykker erstattede regler tilpasses.
+
 **Grunnlag:** `peohol/vaktplan` på `main` = `10bc89fab8d8065140de1b41aa3721970f56b82e` (v0.11, sammenslåingen av #17): designspesifikasjonen v0.11, `docs/arkitektur.md`, `docs/testing.md`, README, LES-MEG, all kode i `src/` og alle tester, og beskrivelsene av PR #1, #3, #5, #6, #8, #11, #13, #15 og #17. I OUSFAR: `AGENTS.md`, `docs/personal.md` (på `1a812ed`) og integrasjonsplanen. Enhetstestene er kjørt på grunnlaget: 378 av 378 grønne.
 
 **Ikke lest:** regneark, Git-historikk med tidligere innhold, Vercel-utrullinger og reelle personalopplysninger. Alle navn under er syntetiske.

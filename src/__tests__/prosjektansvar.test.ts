@@ -726,7 +726,7 @@ describe('dokumentene sier det samme', () => {
     const personal = les('docs/personal.md')
     expect(personal).toMatch(/Eies av OUSFAR Personal \(`ansvar:personal`\)/)
     for (const del of ['## 2. Ansvarsområdet', '## 3. Personvern', '## 4. Produktprinsipper', '## 5. Produktaksept og kontroll', '## 6. Vedtatte regler', '## 7. Første arbeidsløp: vaktplanen']) expect(personal).toContain(del)
-    for (const krav of [/syntetiske ansatte/, /ikke\*\* fraværsgrunn, diagnoser, helseopplysninger/i, /systemarkitektrolle gir \*\*ikke i seg selv\*\* innsyn/, /håndhevet på serversiden/, /ingen personvern- eller arbeidstidsrettslig\s+godkjenning/i, /Ingen generell HR-plattform/, /beregnet forslag skal være\s+tydelig skilt fra en godkjent og publisert plan/]) expect(personal).toMatch(krav)
+    for (const krav of [/syntetiske ansatte/, /ikke\*\* fraværsgrunn, diagnoser, helseopplysninger/i, /systemarkitektrolle gir \*\*ikke i seg selv\*\* innsyn/, /håndhevet på serversiden/, /ingen personvern- eller arbeidstidsrettslig\s+godkjenning/i, /Ingen generell HR-plattform/, /beregnet forslag skal være\s+tydelig skilt fra den operative, publiserte planen/]) expect(personal).toMatch(krav)
     for (const premiss of [/Motsatte stillingsvekter for vakt 1 og vakt 2/, /prosent tilstedeværelse/, /avstand mellom\s+vakter/, /Overleger skal ha færre vakt 1\*\*, men ikke nødvendigvis færre vakter totalt/, /ikke et krav om eksakt algoritme/]) expect(personal).toMatch(premiss)
     expect(personal).toMatch(/peohol\/vaktplan/)
     expect(personal).toMatch(/arkiveres ikke nå/)

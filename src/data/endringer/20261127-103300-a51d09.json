@@ -1,0 +1,14 @@
+{
+  "id": "20261127-103300-a51d09",
+  "semver": "patch",
+  "opprettet": "2026-11-27T10:33:00Z",
+  "sammendrag": "Interne planer oppdatert",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Interne planer for kommende arbeid er oppdatert."
+  ],
+  "utenVarsel": true
+}
