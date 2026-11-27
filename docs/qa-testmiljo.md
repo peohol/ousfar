@@ -112,19 +112,29 @@ kjøringen uten at passordet skrives inn.
   administratoren; `QA_SKJERMBILDER=<mappe>`.
 - `npx vite-node src/__tests__/qa/knappenettleser.ts` er nettleserkontrollen
   av knappene (`docs/designsystem.md`, «Knapper»): «Gå til
-  gruppeoversikten», «Til gruppen», «Åpne hele stoffregisteret», «Tilbake til
-  …» og de andre handlingene som før så ut som lenker eller tekst, har flate
-  eller kant og ingen strek under, på PC, mobil og i mørk modus, mens
-  menyvalgene i sidemenyen er som før.
+  gruppeoversikten», «Til gruppen», «Tilbake til …» og de andre handlingene
+  som før så ut som lenker eller tekst, har flate eller kant og ingen strek
+  under, på PC, mobil og i mørk modus, mens menyvalgene i hovedmenyen (også
+  «Hele stoffregisteret») er menyvalg uten flate.
 - `npx vite-node src/__tests__/qa/gruppesymbolnettleser.ts` er
   nettleserkontrollen av gruppesymbolene (`docs/fagmiljoer.md`,
   «Gruppesymbolet»): Ada som ansvarlig velger en emoji og laster opp et bilde
   i gruppeinnstillingene, tekst avvises, Bo ser symbolene i chatmenyen, i
   hodet på gruppechatten og i gruppeoversikten (også mobil og mørk modus), og
   å fjerne bildet gjør at medlemmet ikke når det lenger. Samme kontoer og bryter som chatmenyen.
+- `npx vite-node src/__tests__/qa/hovedmenynettleser.ts` er
+  nettleserkontrollen av den hierarkiske hovedmenyen (`docs/navigasjon.md`,
+  «Hovedmenyen»): ingen stoffliste i siden før menyen åpnes, strukturen for
+  systemarkitekten og for en vanlig bruker (`qa-meny-vanlig`), Fag ›
+  Stoffregister med søket, kategoriene med og uten underkategoriene, ett
+  rulleområde og ingen vannrett rulling, rulleplassen etter Tilbake, at et
+  valg lukker menyen og legger bare siden i historikken, piltastene og
+  fokuset, vinduene under Apputvikling og Administrasjon, en direktelenke,
+  mørkt tema, og en liten telefon stående og liggende.
+  `QA_SKJERMBILDER=<mappe>` lagrer skjermbildene.
 - `npx vite-node src/__tests__/qa/menynettleser.ts` er nettleserkontrollen av
   menyene (D6): toppmenyen uten idéer og administrasjon, hovedmenyen med
-  navigasjonen og «For hele appen» for en systemarkitekt og for en vanlig
+  undermenyene for en systemarkitekt og for en vanlig
   bruker (`qa-meny-vanlig`), administrasjonens vinduer, Escape og fokus,
   kontomenyen og Innstillinger, oversikten over endringsforslag, dokken og
   hovedmenyen på mobil, og mørkt tema. `QA_SKJERMBILDER=<mappe>` lagrer

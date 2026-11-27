@@ -75,14 +75,14 @@ try {
     await innen(3_000, 'menyen åpen', () => hovedmenyApen(admin))
     for (const navn of ['Forsiden', 'Fortolkning', 'Grupper', 'Endringsforslag'])
       krev(await meny.getByRole('link', { name: new RegExp(`^${navn}`) }).isVisible(), `lenken ${navn}`)
-    for (const navn of ['Idéer for appen', 'Planlagte oppgaver', 'Administrasjon'])
+    // Undermenyene (Issue #604); den hierarkiske menyen kontrolleres i hovedmenynettleser.ts.
+    for (const navn of ['Fag', 'Apputvikling', 'Administrasjon'])
       krev(await meny.getByRole('button', { name: new RegExp(`^${navn}`) }).isVisible(), `valget ${navn}`)
-    krev(await meny.getByRole('tab', { name: 'Stoffregister' }).isVisible(), 'fanene står under')
     await bilde(admin, '01-hovedmeny-pc')
     return knapper.join(' | ')
   })
 
-  await punkt('M2 administrasjonen folder ut, åpner samme vindu, og Escape gir fokus tilbake til menyknappen', async () => {
+  await punkt('M2 administrasjonen er en undermeny, åpner samme vindu, og Escape gir fokus tilbake til menyknappen', async () => {
     await meny.getByRole('button', { name: /^Administrasjon/ }).click()
     const brukere = meny.getByRole('button', { name: 'Brukere' })
     await brukere.waitFor({ timeout: 3_000 })
@@ -99,6 +99,9 @@ try {
   await punkt('M3 idéene fra hovedmenyen; Escape i hovedmenyen lukker den', async () => {
     await admin.keyboard.press('Control+m')
     await innen(3_000, 'menyen åpen', () => hovedmenyApen(admin))
+    // Menyen åpnes der den sto (Administrasjon); idéene står under Apputvikling.
+    await meny.getByRole('button', { name: 'Tilbake til hovedmenyen' }).click()
+    await meny.getByRole('button', { name: /^Apputvikling/ }).click()
     await meny.getByRole('button', { name: /^Idéer for appen/ }).click()
     await admin.getByRole('dialog', { name: 'Idéer' }).waitFor({ timeout: 10_000 })
     await admin.keyboard.press('Escape')
@@ -159,10 +162,11 @@ try {
     await vanlig.keyboard.press('Control+m')
     const m = vanlig.getByRole('navigation', { name: 'Meny' })
     await innen(3_000, 'menyen åpen', () => hovedmenyApen(vanlig))
-    krev(await m.getByRole('button', { name: /^Idéer for appen/ }).isVisible(), 'idéene')
-    krev((await m.getByRole('button', { name: /^Planlagte oppgaver/ }).count()) === 0, 'Planlagte oppgaver vises')
     krev((await m.getByRole('button', { name: /^Administrasjon/ }).count()) === 0, 'Administrasjon vises')
     await bilde(vanlig, '08-hovedmeny-vanlig-pc')
+    await m.getByRole('button', { name: /^Apputvikling/ }).click()
+    krev(await m.getByRole('button', { name: /^Idéer for appen/ }).isVisible(), 'idéene')
+    krev((await m.getByRole('button', { name: /^Planlagte oppgaver/ }).count()) === 0, 'Planlagte oppgaver vises')
     await vanlig.keyboard.press('Escape')
   })
 

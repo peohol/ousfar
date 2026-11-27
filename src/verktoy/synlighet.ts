@@ -1,5 +1,5 @@
 /**
- * Hvem som ser OUSFAR Verktøy i appen: fanen i sidemenyen, treffene i søket
+ * Hvem som ser OUSFAR Verktøy i appen: Fag › Verktøy i hovedmenyen, treffene i søket
  * og verktøysidene (`#/verktoy`). Inntil verktøyene er klare til bruk, ser
  * bare administratorene dem; for alle andre finnes de ikke i appen, og
  * adressen fører til fortolkningen.

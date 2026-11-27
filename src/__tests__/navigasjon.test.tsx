@@ -6,8 +6,8 @@
  * - En fagside er alltid en stoffside, med stoffets nøkkel i adressen
  *   (`#/stoff/bupropion`). En analyttkode som HBUP er aldri en side, en
  *   sidetittel eller en adresse på fagsidene.
- * - Sidemenyen er stoffregisteret. Den fører til stoffsidene, ikke til
- *   fortolkningen, viser ingen analysekoder og filtrerer ikke søket.
+ * - Stoffregisteret i hovedmenyen (Fag › Stoffregister) fører til stoffsidene,
+ *   ikke til fortolkningen, viser ingen analysekoder og filtrerer ikke søket.
  * - Ingen lenker, knapper eller koder fører mellom fortolkningen og
  *   fagsidene: kodene i fortolkningen er tekst, og fagsidene har ingen
  *   «Åpne fortolkning».
@@ -203,82 +203,187 @@ async function stoffsideFor(navn: string) {
   return screen.findByRole('heading', { level: 1, name: navn })
 }
 
+/** Hovedmenyen, og veien ned gjennom undermenyene med disse navnene fra nivået den står på. */
+async function iMenyen(user: ReturnType<typeof userEvent.setup>, ...navn: string[]) {
+  const meny = screen.getByRole('navigation', { name: 'Meny' })
+  for (const n of navn) await user.click(within(meny).getByRole('button', { name: new RegExp(`^${n}`) }))
+  return meny
+}
+
+/** Navnet på nivået menyen står på. */
+const nivaet = (meny: HTMLElement) => within(meny).getByRole('heading', { level: 2 }).textContent
+
 // Hele appen tegnes opp og klikkes gjennom; alene tar det rundt fem sekunder,
 // så standardgrensen på fem gir ingen margin på en travel CI-maskin.
-describe('sidemenyen', { timeout: 20_000 }, () => {
-  it('er stoffregisteret, og lenker hvert stoff til stoffsiden etter nøkkelen, uten analysekodene', async () => {
+describe('stoffregisteret i hovedmenyen', { timeout: 20_000 }, () => {
+  it('står under Fag, og lenker hvert stoff til stoffsiden etter nøkkelen, uten analysekodene', async () => {
     const user = userEvent.setup()
     await visApp()
+    const historikk = window.history.length
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
-    // Stoffregisteret er fanen menyen åpner med.
-    expect(screen.getByRole('tab', { name: 'Stoffregister' }).getAttribute('aria-selected')).toBe('true')
-    const meny = screen.getByRole('tabpanel', { name: 'Stoffregister' })
+    const meny = await iMenyen(user, 'Fag', 'Stoffregister')
+    expect(nivaet(meny)).toBe('Stoffregister')
     // Søket i fortolkningen filtreres fra hovedsiden, ikke herfra.
     expect(within(meny).queryByRole('radio')).toBeNull()
-    // Hver lenke i registeret går til en stoffside, aldri til en analyttkode.
-    const adresser = [...meny.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')!)
-    expect(adresser.length).toBeGreaterThan(20)
-    // Utenom den ene lenken til hele stoffregisteret.
-    expect(adresser.filter((a) => !/^#\/stoff\/[a-z0-9]+(-[a-z0-9]+)*$/.test(a))).toEqual(['#/stoffregister'])
-    expect(within(meny).getByRole('link', { name: 'Åpne hele stoffregisteret' })).toBeTruthy()
+    // Helsiden først, så kategoriene, med antallet stoffer.
+    expect(within(meny).getByRole('link', { name: 'Hele stoffregisteret' }).getAttribute('href')).toBe('#/stoffregister')
+    expect(within(meny).getByRole('heading', { name: 'Stoffkategorier' })).toBeTruthy()
+    expect(within(meny).getByRole('button', { name: /^Antidepressiver\s*\d+ stoffer$/ })).toBeTruthy()
 
-    await user.click(within(meny).getByRole('button', { name: /^Antidepressiver/ }))
+    // En kategori erstatter kategorilista med stoffene, med underkategoriene som mellomoverskrifter.
+    await iMenyen(user, 'Antidepressiver')
+    expect(nivaet(meny)).toBe('Antidepressiver')
+    expect(within(meny).queryByRole('link', { name: 'Hele stoffregisteret' })).toBeNull()
     expect(within(meny).getByRole('heading', { name: 'TCA' })).toBeTruthy()
+    // Hver lenke går til en stoffside, aldri til en analyttkode.
+    const adresser = [...meny.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')!)
+    expect(adresser.length).toBeGreaterThan(5)
+    expect(adresser.filter((a) => !/^#\/stoff\/[a-z0-9]+(-[a-z0-9]+)*$/.test(a))).toEqual([])
+    // Fortolkningens koder står ikke i registeret (docs/domener.md).
+    expect(meny.textContent).not.toMatch(/HBUP|AMTNORSUM/)
+    // Uten underkategoriene står de samme stoffene i én bolk.
+    await user.click(within(meny).getByRole('switch', { name: 'Vis underkategorier' }))
+    expect(within(meny).queryByRole('heading', { name: 'TCA' })).toBeNull()
+    expect([...meny.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')).sort()).toEqual([...adresser].sort())
+    await user.click(within(meny).getByRole('switch', { name: 'Vis underkategorier' }))
+
     const bupropion = within(meny).getByRole('link', { name: /^Bupropion/ })
     expect(bupropion.getAttribute('href')).toBe('#/stoff/bupropion')
     expect(bupropion.textContent).toBe('Bupropion')
-    // Fortolkningens koder står ikke i registeret (docs/domener.md).
-    expect(meny.textContent).not.toMatch(/HBUP|AMTNORSUM/)
-
     await user.click(bupropion)
     await stoffsideFor('Bupropion')
     expect(window.location.hash).toBe('#/stoff/bupropion')
     expect(fortolkningen().hidden).toBe(true)
+    expect(meny.getAttribute('data-apen')).toBe('nei')
     // Siden starter med fokus på navnet, ikke igjen i menyen.
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
+    // Nivåene i menyen la ingenting i historikken; bare stoffsiden gjorde det.
+    expect(window.history.length).toBe(historikk + 1)
+
+    // Ctrl + M åpner menyen igjen på nivået den sto, med stoffet merket.
+    await user.keyboard('{Control>}m{/Control}')
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+    expect(nivaet(meny)).toBe('Antidepressiver')
+    expect(within(meny).getByRole('link', { name: /^Bupropion/ }).getAttribute('aria-current')).toBe('page')
+    // Og valgene som fører hit, har et svakere merke.
+    await user.click(within(meny).getByRole('button', { name: 'Tilbake til Stoffregister' }))
+    expect(within(meny).getByRole('button', { name: /^Antidepressiver/ }).getAttribute('data-gjeldende')).toBe('under')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Antidepressiver/ }))
+    // Rett til hovedmenyen fra et dypere nivå.
+    await user.click(within(meny).getByRole('button', { name: 'Til hovedmenyen' }))
+    expect(nivaet(meny)).toBe('Meny')
+    expect(within(meny).getByRole('button', { name: /^Fag/ }).getAttribute('data-gjeldende')).toBe('under')
+    await user.keyboard('{Escape}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
   })
 
-  it('har verktøyene i en egen fane, med piltastene, og åpner et verktøy på sin egen adresse', async () => {
-    okt.rolle = 'admin'
+  it('har et søk øverst som finner stoffene på navnet og de andre navnene, og lukkes ikke av Escape mens det står noe i det', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    const meny = await iMenyen(user, 'Fag', 'Stoffregister')
+    const sok = within(meny).getByRole('searchbox', { name: 'Søk i stoffregisteret' })
+    await user.type(sok, 'bupro')
+    expect(within(meny).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(['#/stoff/bupropion'])
+    expect(within(meny).queryByRole('heading', { name: 'Stoffkategorier' })).toBeNull()
+    // Et annet navn for stoffet står ved siden av, uansett store bokstaver.
+    await user.clear(sok)
+    await user.type(sok, 'benzoyl')
+    expect(within(meny).getByRole('link', { name: /^Kokain/ }).textContent).toBe('KokainBenzoylekgonin')
+    // Piltasten går fra feltet til det første treffet.
+    await user.keyboard('{ArrowDown}')
+    expect(document.activeElement).toBe(within(meny).getByRole('link', { name: /^Kokain/ }))
+    await user.click(sok)
+    await user.clear(sok)
+    await user.type(sok, 'qqqq')
+    expect(within(meny).getByRole('status').textContent).toBe('Ingen stoffer passer med søket.')
+    // Første Escape tømmer feltet, neste lukker menyen.
+    await user.keyboard('{Escape}')
+    expect((sok as HTMLInputElement).value).toBe('')
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+    await user.keyboard('{Escape}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+  })
+
+  it('finner et annet navn med bindestrek, og treffet åpner fagsiden til stoffet', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    const meny = await iMenyen(user, 'Fag', 'Stoffregister')
+    await user.type(within(meny).getByRole('searchbox', { name: 'Søk i stoffregisteret' }), 'THC-COOH')
+    const thc = within(meny).getByRole('link', { name: /^THC/ })
+    expect(thc.textContent).toBe('THCTHC-COOH')
+    expect(thc.getAttribute('href')).toBe('#/stoff/thc')
+    await user.click(thc)
+    await stoffsideFor('THC')
+    expect(window.location.hash).toBe('#/stoff/thc')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+  })
+
+  it('går mellom nivåene med piltastene, med fokus der det hører hjemme', async () => {
     const user = userEvent.setup()
     await visApp()
     await user.keyboard('{Control>}m{/Control}')
     const meny = screen.getByRole('navigation', { name: 'Meny' })
-    expect(meny.getAttribute('data-apen')).toBe('ja')
-    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister', 'Verktøy'])
-
-    // Piltastene flytter mellom fanene; bare den valgte nås med tabulator.
-    within(meny).getByRole('tab', { name: 'Stoffregister' }).focus()
+    // Fra panelet, som har fokus når menyen åpnes, går pil ned til det første valget.
+    await user.keyboard('{ArrowDown}')
+    expect(document.activeElement).toBe(within(meny).getByRole('link', { name: 'Forsiden' }))
+    await user.keyboard('{ArrowDown}{ArrowDown}')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Fag/ }))
+    // Høyre går inn, med fokus på det første feltet på nivået.
     await user.keyboard('{ArrowRight}')
-    const fane = within(meny).getByRole('tab', { name: 'Verktøy' })
-    expect(fane.getAttribute('aria-selected')).toBe('true')
-    expect(document.activeElement).toBe(fane)
-    expect(fane.tabIndex).toBe(0)
-    expect(within(meny).getByRole('tab', { name: 'Stoffregister' }).tabIndex).toBe(-1)
-    expect(within(meny).queryByRole('tabpanel', { name: 'Stoffregister' })).toBeNull()
-    const verktoy = within(meny).getByRole('tabpanel', { name: 'Verktøy' })
-    expect([...verktoy.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'))).toEqual([
+    expect(nivaet(meny)).toBe('Fag')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Stoffregister/ }))
+    // Enter gjør det samme som høyre.
+    await user.keyboard('{Enter}')
+    expect(nivaet(meny)).toBe('Stoffregister')
+    expect(document.activeElement).toBe(within(meny).getByRole('searchbox', { name: 'Søk i stoffregisteret' }))
+    // Venstre i søkefeltet flytter markøren; fra et valg går den tilbake.
+    await user.keyboard('{ArrowLeft}')
+    expect(nivaet(meny)).toBe('Stoffregister')
+    await user.keyboard('{ArrowDown}')
+    expect(document.activeElement).toBe(within(meny).getByRole('link', { name: 'Hele stoffregisteret' }))
+    await user.keyboard('{ArrowLeft}')
+    expect(nivaet(meny)).toBe('Fag')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Stoffregister/ }))
+    await user.keyboard('{ArrowLeft}')
+    expect(nivaet(meny)).toBe('Meny')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Fag/ }))
+    // På hovedmenyen er det ingen vei tilbake.
+    await user.keyboard('{ArrowLeft}')
+    expect(nivaet(meny)).toBe('Meny')
+    expect(within(meny).queryByRole('button', { name: /^Tilbake/ })).toBeNull()
+  })
+
+  it('har verktøyene under Fag for den som skal se dem, og åpner et verktøy på sin egen adresse', async () => {
+    okt.rolle = 'admin'
+    const user = userEvent.setup()
+    await visApp()
+    await user.keyboard('{Control>}m{/Control}')
+    const meny = await iMenyen(user, 'Fag')
+    expect([...meny.querySelectorAll('.menyvalg__navn')].map((n) => n.textContent)).toEqual(['Stoffregister', 'Verktøy', 'Favoritter'])
+    await iMenyen(user, 'Verktøy')
+    expect([...meny.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'))).toEqual([
+      '#/verktoy',
       '#/verktoy/trappe-ned-antidepressiv',
       '#/verktoy/bytte-antidepressiv',
       '#/verktoy/bytte-antipsykotikum',
       '#/verktoy/kombinere-stemningsstabiliserende',
-      '#/verktoy',
     ])
-    // Tabulator går rundt i de synlige feltene, ikke inn i den skjulte fanen.
-    await user.keyboard('{Shift>}{Tab}{/Shift}')
-    expect(document.activeElement?.closest('[role="tabpanel"]')?.hasAttribute('hidden') ?? false).toBe(false)
+    expect(within(meny).getByRole('link', { name: 'Verktøyoversikten' })).toBeTruthy()
 
-    await user.click(within(verktoy).getByRole('link', { name: /^Bytte antidepressiv/ }))
+    await user.click(within(meny).getByRole('link', { name: /^Bytte antidepressiv/ }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeTruthy()
     expect(window.location.hash).toBe('#/verktoy/bytte-antidepressiv')
     expect(meny.getAttribute('data-apen')).toBe('nei')
     expect(fortolkningen().hidden).toBe(true)
     await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 })))
 
-    // Ctrl M åpner menyen igjen på fanen som sist var valgt.
+    // Ctrl M åpner menyen igjen på verktøyene.
     await user.keyboard('{Control>}m{/Control}')
     expect(meny.getAttribute('data-apen')).toBe('ja')
-    expect(within(meny).getByRole('tab', { name: 'Verktøy' }).getAttribute('aria-selected')).toBe('true')
+    expect(nivaet(meny)).toBe('Verktøy')
+    expect(within(meny).getByRole('link', { name: /^Bytte antidepressiv/ }).getAttribute('aria-current')).toBe('page')
     await user.keyboard('{Escape}')
     expect(meny.getAttribute('data-apen')).toBe('nei')
 
@@ -287,23 +392,38 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
     await waitFor(() => expect(fortolkningen().hidden).toBe(false))
   })
 
+  it('lukkes ikke av en lenke som åpnes i en ny fane', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    const meny = screen.getByRole('navigation', { name: 'Meny' })
+    const forsiden = within(meny).getByRole('link', { name: 'Forsiden' })
+    // Klikket med Ctrl åpner lenken et annet sted; jsdom følger den ikke.
+    forsiden.addEventListener('click', (e) => e.preventDefault(), { once: true })
+    await user.keyboard('{Control>}')
+    await user.click(forsiden)
+    await user.keyboard('{/Control}')
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+  })
+
   it('lar filteret for søket stå som det er', async () => {
     const user = userEvent.setup()
     await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
-    // Alt + tall setter filteret på hovedsiden, men ikke mens registeret står åpent.
+    // Alt + tall setter filteret på hovedsiden, men ikke mens menyen står åpen.
     await user.keyboard('{Alt>}1{/Alt}')
     await user.keyboard('{Escape}')
     expect(screen.queryByText('Søket er begrenset til')).toBeNull()
   })
 })
 
-// Som sidemenyen: hele appen tegnes opp og klikkes gjennom.
+// Som stoffregisteret i menyen: hele appen tegnes opp og klikkes gjennom.
 describe('stoffene uten analyttkode', { timeout: 20_000 }, () => {
   it('står i registeret, og fører til siden etter nøkkelen', async () => {
     const user = userEvent.setup()
     await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    await iMenyen(user, 'Fag', 'Stoffregister')
     // Teststoffet står ikke i registeret, og havner derfor i «Andre stoffer».
     await user.click(await screen.findByRole('button', { name: /^Andre stoffer/ }))
     // En vanlig bruker kan ikke lage nye sider.
@@ -553,7 +673,7 @@ describe('gamle adresser etter analyttkoden', () => {
   })
 })
 
-// Som i sidemenyen: hele appen, med god margin på tiden.
+// Som stoffregisteret i menyen: hele appen, med god margin på tiden.
 describe('redigeringen av fortolkningen', { timeout: 20_000 }, () => {
   it('åpnes med «Rediger fortolkningen» for administratorer, og går tilbake til samme modul', async () => {
     okt.rolle = 'admin'
@@ -609,7 +729,7 @@ describe('kodene i fortolkningen', () => {
   })
 })
 
-// Som i sidemenyen: hele appen, med god margin på tiden.
+// Som stoffregisteret i menyen: hele appen, med god margin på tiden.
 describe('fortolkningen og fagsidene er adskilt', { timeout: 20_000 }, () => {
   it('har ingen «Åpne fagside» mens en modul fortolkes', async () => {
     const user = userEvent.setup()
@@ -747,7 +867,7 @@ describe('fagsøket i hele appen', () => {
     expect(await overskrift('Trappe ned antidepressiv')).toBeTruthy()
   }, 20_000)
 
-  it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir forsiden', async () => {
+  it('skjuler verktøyene for den som ikke er administrator: ingen menyvalg, ingen treff, og adressen gir forsiden', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/verktoy/bytte-antidepressiv'
     await visApp()
@@ -757,9 +877,8 @@ describe('fagsøket i hele appen', () => {
     expect(screen.queryByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeNull()
 
     await user.keyboard('{Control>}m{/Control}')
-    const meny = screen.getByRole('navigation', { name: 'Meny' })
-    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister'])
-    expect(within(meny).queryByRole('tabpanel', { name: 'Verktøy' })).toBeNull()
+    const meny = await iMenyen(user, 'Fag')
+    expect(within(meny).queryByRole('button', { name: /^Verktøy/ })).toBeNull()
     expect(meny.querySelector('a[href^="#/verktoy"]')).toBeNull()
     await user.keyboard('{Escape}')
 

@@ -1381,6 +1381,26 @@ const REGISTER = {
       G([P('M8.5 9.8h7M8.5 12.8h4.5', 'l', 'i-ink')], 'pop'),
     ],
   },
+  // Fag i hovedmenyen (stoffregisteret, verktøyene og favorittene): en åpen bok.
+  fag: {
+    vb: 24,
+    parts: [
+      P('M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5z', 'f1', 'accent'),
+      P('M12 6.5c2-1.5 5-2 8.5-1.5v13c-3.5-.5-6.5 0-8.5 1.5z', 'f2', 'accent'),
+      P('M12 6.5v13', 'l', 'i-ink'),
+      G([P('M6 9.5h3M6 12.5h3M15 9.5h3M15 12.5h3', 'l', 'i-ink')], 'pop'),
+    ],
+  },
+  // Personalfunksjonene og kalenderen: et kalenderark med én dag merket.
+  kalender: {
+    vb: 24,
+    parts: [
+      R(3.5, 5, 17, 15.5, 2.5, 'f1', 'accent'),
+      P('M3.5 9.5h17', 'l', 'i-ink'),
+      P('M8 3v4M16 3v4', 'l', 'i-ink'),
+      G([R(13.5, 12.5, 4, 4, 1, 'f2', 'warn')], 'pop'),
+    ],
+  },
   // --- Stoffregisteret og kategoriene (se over REGISTER) ---
   // Et register med faner i kanten.
   stoffregister: {

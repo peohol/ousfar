@@ -959,7 +959,7 @@ function Arbeidsflate({
           >
             <Toppmeny
               meny={
-                <Sidemeny register={register} />
+                <Sidemeny register={register} rute={rute} />
               }
               sok={
                 <Fagsok
@@ -1223,7 +1223,7 @@ function Arbeidsflate({
             )}
             <Chatmeny rute={rute} gaaTil={gaaTil} tilbake={tilbake} />
             <Chatvarselvakt brukerId={profil.id} />
-            {/* Vinduene hovedmenyen åpner under «For hele appen». */}
+            {/* Vinduene hovedmenyen åpner under Apputvikling og Administrasjon. */}
             <Idelag />
             <Administrasjon />
 

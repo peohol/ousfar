@@ -23,7 +23,7 @@ type Vindu = { lag: 'ideer'; ide?: string; kommentar?: string; nr?: number } | {
 /**
  * Idéer for hele appen og Planlagte oppgaver: vinduene, og tallet på idéer
  * med kommentarer brukeren ikke har sett (`idestatus`). Veien inn er
- * hovedmenyen, under «For hele appen» (`apneIdelag`); Planlagte oppgaver er
+ * hovedmenyen, under Apputvikling (`apneIdelag`); Planlagte oppgaver er
  * bare for systemarkitektene (D8). Tallet sjekkes når appen og fanen åpnes,
  * etter vinduet og jevnlig.
  *

@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 /**
  * Appskallet fra designsystemet: ikonene, den faste toppmenyen med plassene
- * sidene fyller, fagsøkfeltets snarvei, hovedmenyen med «For hele appen»
- * (idéene, de planlagte oppgavene og administrasjonen), kontomenyen og
+ * sidene fyller, fagsøkfeltets snarvei, hovedmenyen med nivåene sine
+ * (Apputvikling og Administrasjon med vinduene sine), kontomenyen og
  * Innstillinger (D6).
  */
 import { readFileSync } from 'node:fs'
@@ -746,7 +746,7 @@ describe('kontomenyen', () => {
   })
 })
 
-/** Hovedmenyen slik appen setter den sammen: menyen, og vinduene den åpner under «For hele appen». */
+/** Hovedmenyen slik appen setter den sammen: menyen, og vinduene den åpner under Apputvikling og Administrasjon. */
 function Hovedmeny({ admin, grupper = {} }: { admin?: Parameters<typeof Administrasjon>[0]; grupper?: Partial<Gruppekilde> }) {
   return (
     <Ramme>
@@ -762,9 +762,14 @@ function Hovedmeny({ admin, grupper = {} }: { admin?: Parameters<typeof Administ
 const menyknapp = () => screen.getByRole('button', { name: /^Vis menyen/ })
 const hovedmenyen = () => screen.getByRole('navigation', { name: 'Meny' })
 
-/** Navnene på valgene i navigasjonsblokken, uten tallene og merknadene. */
-const navnene = (liste: HTMLElement) =>
-  [...liste.querySelectorAll(':scope > li > .menysnarveier__lenke .menysnarveier__navn')].map((n) => n.textContent)
+/** Navnene på valgene i en liste, uten tallene og merknadene. */
+const navnene = (liste: Element) => [...liste.querySelectorAll(':scope > li > .menyvalg .menyvalg__navn')].map((n) => n.textContent)
+
+/** Listene i nivået menyen står på, ett per avsnitt. */
+const listene = (meny: HTMLElement) => [...meny.querySelectorAll<HTMLElement>('.menyavsnitt__liste')]
+
+/** Navnet på nivået menyen står på. */
+const nivaet = (meny: HTMLElement) => within(meny).getByRole('heading', { level: 2 }).textContent
 
 async function apneMenyen() {
   await userEvent.click(menyknapp())
@@ -773,12 +778,16 @@ async function apneMenyen() {
   return meny
 }
 
-/** Folder ut «Administrasjon» i hovedmenyen og gir valgene der. */
-async function administrasjonen(meny: HTMLElement) {
-  const knapp = within(meny).getByRole('button', { name: /^Administrasjon/ })
-  if (knapp.getAttribute('aria-expanded') !== 'true') await userEvent.click(knapp)
-  return document.getElementById(knapp.getAttribute('aria-controls')!)!
+/** Går til hovedmenyen og derfra ned gjennom undermenyene med disse navnene, og gir nivået. */
+async function gaaTil(meny: HTMLElement, ...navn: string[]) {
+  const rot = within(meny).queryByRole('button', { name: 'Til hovedmenyen' }) ?? within(meny).queryByRole('button', { name: /^Tilbake til/ })
+  if (rot) await userEvent.click(rot)
+  for (const n of navn) await userEvent.click(within(meny).getByRole('button', { name: new RegExp(`^${n}`) }))
+  return meny.querySelector<HTMLElement>('.menyniva')!
 }
+
+/** Administrasjonen i hovedmenyen, med valgene der. */
+const administrasjonen = (meny: HTMLElement) => gaaTil(meny, 'Administrasjon')
 
 async function velgAdmin(valg: string) {
   const liste = await administrasjonen(await apneMenyen())
@@ -786,16 +795,57 @@ async function velgAdmin(valg: string) {
 }
 
 describe('hovedmenyen', () => {
-  it('har navigasjonen og «For hele appen» over fanene, for en systemarkitekt med alt', async () => {
+  it('har Forsiden, Fortolkning, Fag, Grupper og Endringsforslag, og Apputvikling og Administrasjon under, for en systemarkitekt med alt', async () => {
     const meny = (render(<Hovedmeny />), await apneMenyen())
-    const [navigasjon, helApp] = [...meny.querySelectorAll<HTMLElement>('.menynavigasjon > .menysnarveier')]
-    expect(navnene(navigasjon!)).toEqual(['Forsiden', 'Fortolkning', 'Grupper', 'Endringsforslag'])
-    expect(within(navigasjon!).getByRole('link', { name: /^Grupper/ }).getAttribute('href')).toBe('#/grupper')
-    expect(within(navigasjon!).getByRole('link', { name: /^Endringsforslag/ }).getAttribute('href')).toBe('#/forslag')
-    expect(navnene(helApp!)).toEqual(['Idéer for appen', 'Planlagte oppgaver', 'Administrasjon'])
-    expect(within(helApp!).getByText('Systemarkitekt')).toBeTruthy()
-    // Fanene står uendret under.
-    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister'])
+    expect(nivaet(meny)).toBe('Meny')
+    const [hoved, appen] = listene(meny)
+    // Personal har ingen valg ennå, og vises ikke (Issue #604).
+    expect(navnene(hoved!)).toEqual(['Forsiden', 'Fortolkning', 'Fag', 'Grupper', 'Endringsforslag'])
+    expect(within(hoved!).getByRole('link', { name: /^Grupper/ }).getAttribute('href')).toBe('#/grupper')
+    expect(within(hoved!).getByRole('link', { name: /^Endringsforslag/ }).getAttribute('href')).toBe('#/forslag')
+    expect(navnene(appen!)).toEqual(['Apputvikling', 'Administrasjon'])
+    // Ingen faner og ingen skuffer: undermenyene erstatter innholdet.
+    expect(within(meny).queryAllByRole('tab')).toEqual([])
+    expect(meny.querySelector('[aria-expanded]')).toBeNull()
+    // Valgene med undermeny har pilen mot høyre.
+    expect(within(appen!).getByRole('button', { name: /^Apputvikling/ }).querySelector('.menyvalg__pil')).not.toBeNull()
+
+    const apputvikling = await gaaTil(meny, 'Apputvikling')
+    expect(nivaet(meny)).toBe('Apputvikling')
+    expect(navnene(listene(apputvikling)[0]!)).toEqual(['Idéer for appen', 'Planlagte oppgaver'])
+    expect(within(apputvikling).getByText('Systemarkitekt')).toBeTruthy()
+    // Fag har stoffregisteret; verktøyene og favorittene krever sin egen tilgang.
+    const fag = await gaaTil(meny, 'Fag')
+    expect(navnene(listene(fag)[0]!)).toEqual(['Stoffregister'])
+  })
+
+  it('erstatter innholdet med undermenyen, med Tilbake og Lukk, uten nye steg i historikken, og åpnes igjen der den sto', async () => {
+    render(<Hovedmeny />)
+    const historikk = window.history.length
+    const meny = await apneMenyen()
+    expect(within(meny).queryByRole('button', { name: /^Tilbake/ })).toBeNull()
+    expect(within(meny).getByRole('button', { name: 'Lukk menyen' })).toBeTruthy()
+    await userEvent.click(within(meny).getByRole('button', { name: /^Administrasjon/ }))
+    expect(nivaet(meny)).toBe('Administrasjon')
+    // Bare ett nivå står i panelet.
+    expect(within(meny).queryByRole('link', { name: 'Forsiden' })).toBeNull()
+    expect(meny.querySelectorAll('.menyniva')).toHaveLength(1)
+    // Fra pekeren får navnet på nivået fokus, så skjermlesere sier hvor brukeren er.
+    expect(document.activeElement).toBe(within(meny).getByRole('heading', { level: 2 }))
+    expect(within(meny).queryByRole('button', { name: 'Til hovedmenyen' })).toBeNull()
+    expect(within(meny).getByRole('button', { name: 'Lukk menyen' })).toBeTruthy()
+    expect(window.history.length).toBe(historikk)
+
+    // Lukket og åpnet igjen: samme nivå.
+    await userEvent.keyboard('{Escape}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+    await apneMenyen()
+    expect(nivaet(meny)).toBe('Administrasjon')
+
+    await userEvent.click(within(meny).getByRole('button', { name: 'Tilbake til hovedmenyen' }))
+    expect(nivaet(meny)).toBe('Meny')
+    expect(document.activeElement).toBe(within(meny).getByRole('button', { name: /^Administrasjon/ }))
+    expect(window.history.length).toBe(historikk)
   })
 
   it('har chatten med uleste når den er slått på, og «Chat» åpner chatmenyen', async () => {
@@ -836,12 +886,13 @@ describe('hovedmenyen', () => {
       systemarkitekt.verdi = false
       render(<Hovedmeny />)
       const meny = await apneMenyen()
-      const helApp = meny.querySelectorAll<HTMLElement>('.menynavigasjon > .menysnarveier')[1]!
-      expect(navnene(helApp), r).toEqual(['Idéer for appen'])
-      expect(within(meny).queryByRole('button', { name: /Planlagte oppgaver/ }), r).toBeNull()
+      expect(navnene(listene(meny)[1]!), r).toEqual(['Apputvikling'])
       expect(within(meny).queryByRole('button', { name: /^Administrasjon/ }), r).toBeNull()
       // Den som ikke behandler forslag, får bare egne forslag i tallet.
       await waitFor(() => expect(within(meny).getByRole('link', { name: /^Endringsforslag/ }).textContent).toBe('Endringsforslag1 til deg'))
+      const apputvikling = await gaaTil(meny, 'Apputvikling')
+      expect(navnene(listene(apputvikling)[0]!), r).toEqual(['Idéer for appen'])
+      expect(within(meny).queryByRole('button', { name: /Planlagte oppgaver/ }), r).toBeNull()
       cleanup()
     }
   })
@@ -857,6 +908,7 @@ describe('hovedmenyen', () => {
   it('åpner idéene og de planlagte oppgavene, går mellom lagene med bare ett åpent, og gir fokus tilbake til menyknappen', async () => {
     render(<Hovedmeny />)
     const meny = await apneMenyen()
+    await gaaTil(meny, 'Apputvikling')
     await userEvent.click(within(meny).getByRole('button', { name: /^Idéer for appen/ }))
     expect(screen.getByText('Idéene')).toBeTruthy()
     expect(meny.getAttribute('data-apen')).toBe('nei')
@@ -865,6 +917,7 @@ describe('hovedmenyen', () => {
     expect(screen.getByText('Oppgavene o1')).toBeTruthy()
     expect(screen.queryByText('Idéene')).toBeNull()
 
+    // Menyen åpnes igjen i Apputvikling, der den sto.
     await userEvent.click(within(await apneMenyen()).getByRole('button', { name: /^Planlagte oppgaver/ }))
     expect(screen.getByText('Oppgavene')).toBeTruthy()
     await userEvent.click(screen.getByRole('button', { name: 'Til idéene' }))
@@ -878,7 +931,10 @@ describe('hovedmenyen', () => {
       await waitFor(() => expect(menyknapp().getAttribute('aria-label')).toBe('Vis menyen (nye kommentarer på 2 idéer)'))
       expect(menyknapp().querySelector('.toppmeny__prikk')).not.toBeNull()
       const meny = await apneMenyen()
-      expect(within(meny).getByRole('img', { name: 'nye kommentarer på 2 idéer' })).toBeTruthy()
+      // Prikken står også på Apputvikling, som idéene ligger under.
+      expect(within(meny).getByRole('button', { name: /^Apputvikling/ }).querySelector('.nyprikk')?.getAttribute('aria-label')).toBe('nye kommentarer på 2 idéer')
+      await gaaTil(meny, 'Apputvikling')
+      expect(within(meny).getByRole('button', { name: /^Idéer for appen/ }).querySelector('.nyprikk')?.getAttribute('aria-label')).toBe('nye kommentarer på 2 idéer')
       ideerMedNytt.antall = 1
       await act(async () => {
         window.dispatchEvent(new Event('focus'))
@@ -920,14 +976,14 @@ describe('hovedmenyen', () => {
     expect(document.activeElement).toBe(menyknapp())
   })
 
-  it('folder ut administrasjonen med bare «Brukere» og «Redaktører» for en lokal administrator, også med den gamle adminrollen', async () => {
+  it('har bare «Brukere» og «Redaktører» i administrasjonen for en lokal administrator, også med den gamle adminrollen', async () => {
     for (const r of ['user', 'admin']) {
       rolle.verdi = r
       systemarkitekt.verdi = false
       rett.verdi = { ...INGEN_RETTIGHETER, administrerer: [{ id: 'a', nokkel: 'ous-klinisk-farmakologi', navn: 'OUS Klinisk farmakologi', standard: true, apent: true, ikon: 'laboratorium' }], opprettBrukerI: ['a'] }
       render(<Hovedmeny />)
       const liste = await administrasjonen(await apneMenyen())
-      expect(navnene(liste), r).toEqual(['Brukere', 'Redaktører'])
+      expect(navnene(listene(liste)[0]!), r).toEqual(['Brukere', 'Redaktører'])
       await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
       expect(screen.getByText('Brukerlista')).toBeTruthy()
       // Et vindu den lokale administratoren ikke har, åpnes ikke selv om det bes om.
@@ -942,7 +998,7 @@ describe('hovedmenyen', () => {
     rolle.verdi = 'user'
     render(<Hovedmeny />)
     const liste = await administrasjonen(await apneMenyen())
-    expect(navnene(liste)).toEqual(['Brukere', 'Redaktører', 'Stillinger', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+    expect(navnene(listene(liste)[0]!)).toEqual(['Brukere', 'Redaktører', 'Stillinger', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
     await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
     expect(hovedmenyen().getAttribute('data-apen')).toBe('nei')

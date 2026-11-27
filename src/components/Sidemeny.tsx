@@ -1,71 +1,37 @@
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
-import { Bryter } from './Bryter'
-import { Knappelenke } from './Button'
-import { Fanevalg, fanepanelId, faneId, type Fanedefinisjon } from './Fanevalg'
-import { Menynavigasjon, useHovedmenyen } from './Menynavigasjon'
-import { Shortcut } from './Shortcut'
-import { Ikon } from './ikon/Ikon'
-import { kategoriikon } from './ikon/register'
-import { useTips } from './Tips'
-import { STOFFREGISTERADRESSE, stoffadresse, verktoyadresse } from '../domain/rute'
-import { useFavoritter, type Favoritter } from '../favoritter/Favorittkilde'
-import type { Registerkategori, Registerstoff, Stoffregister } from '../domain/stoffregister'
+import { lesRute, type Rute } from '../domain/rute'
+import type { Stoffregister } from '../domain/stoffregister'
 import { fokusIFagsok, lagLiggerOver } from '../hooks/useKeyboard'
 import { useEscapelag } from '../hooks/lagstakk'
-import { rullefart } from '../hooks/useKortHopp'
 import { useTrykkUtenfor } from '../hooks/useTrykkUtenfor'
-import { VERKTOY } from '../verktoy/register'
-import { useVerktoyeneVises } from '../verktoy/synlighet'
+import { Ikonknapp } from './Ikonknapp'
+import { HOVEDMENYEN, useHovedmenyen } from './Menynavigasjon'
+import { MENYVALG, Menyniva } from './meny/Menyniva'
+import { folgSti, type Menypunkt } from './meny/menytre'
+import { Shortcut } from './Shortcut'
+import { Ikon } from './ikon/Ikon'
+import { useTips } from './Tips'
 
 /**
- * Hovedmenyen (sidemenyen): øverst navigasjonen og «For hele appen»
- * (`Menynavigasjon`, D6), under den to faner, Stoffregister og Verktøy (P6.2 i
- * `docs/verktøy-utviklingsplan.md`). Fanen som sist var valgt, står valgt
- * når menyen åpnes igjen, også etter en oppdatering av appen. Piltastene
- * bytter fane, som i andre fanelister.
+ * Hovedmenyen (sidemenyen): et panel som glir inn fra venstre over appen, med
+ * menytreet fra `useHovedmenyen` (Issue #604; `docs/navigasjon.md`,
+ * «Hovedmenyen»). Et valg med undermeny erstatter innholdet i panelet med
+ * nivået under; toppfeltet har nivåets navn, Tilbake og Lukk, og under det
+ * står ett rulleområde i hele høyden.
  *
- * Verktøyfanen har verktøyene fra verktøyregisteret (`src/verktoy/register.ts`)
- * som lenker til sidene deres, og lenken til oversikten. Den står bare for
- * dem som skal se verktøyene (`src/verktoy/synlighet.ts`); for andre har
- * menyen bare stoffregisteret.
- *
- * Stoffregisterfanen er veien inn til stoffsiden for hvert stoff, ordnet etter
- * farmakologisk klasse (`src/domain/stoffregister.ts`). Hvert stoff lenker
- * alltid til `#/stoff/<nøkkel>`, uten laboratoriets analyttkoder: de hører
- * til fortolkningen (`docs/domener.md`). Søket i fortolkningen filtreres ikke
- * herfra, men fra hovedsiden (`Filterbytte`).
- *
- * Innholdet er stoffregisteret, med stoffsidene i databasen som registeret
- * ikke kjenner, så lista ikke kan komme i utakt med det appen har sider for.
- * Stoffene er lenker, så de også kan åpnes i en ny fane. Nederst står lenken
- * til helsiden (`#/stoffregister`), der registeret redigeres og nye fagsider
- * lages; menyen selv redigeres ikke.
- *
- * Øverst, fast over lista, står brukerens favoritter i en egen skuff, lukket
- * til den åpnes. Den lukkes ikke av kategoriene, og de ikke av den.
+ * Hvor brukeren står i treet (stien), og søket i nivået, tas vare på med
+ * `useBevart`, så menyen åpnes igjen der den sto, også etter en oppdatering.
+ * Nivåene legger ingenting i nettleserens historikk. Rulleplassen på nivået
+ * brukeren gikk fra, står der igjen når hen går tilbake.
  *
  * Menyen er et lag over appen, på linje med endringsloggen: `data-lag` sier
  * fra til `lagLiggerOver()`, slik at appens egne taster holder seg i ro mens
- * den står åpen.
+ * den står åpen, og Escape går gjennom lagstakken.
  */
-
-/** Hvor lenge det ventes før en nyåpnet skuff hentes fram i bildet. */
-const ETTER_GLIDNING = 300
 
 /** Tasten som åpner og lukker menyen. */
 const MENY_SNARVEI = 'Ctrl + M'
-
-/** Navnet på menyen for skjermlesere. */
-const TITTEL = 'Meny'
-
-/** Fanene i menyen, i rekkefølgen de står. */
-const FANER = [
-  { id: 'stoffregister', navn: 'Stoffregister', ikon: 'stoffregister' },
-  { id: 'verktoy', navn: 'Verktøy', ikon: 'verktoy' },
-] as const satisfies readonly Fanedefinisjon[]
-
-type Fane = (typeof FANER)[number]['id']
 
 /** Merket menyen bærer som `data-lag` mens den står åpen. */
 const MENY_LAG = 'meny'
@@ -78,40 +44,41 @@ export function sidemenyenErApen(): boolean {
 /** Alt som kan få fokus i panelet. */
 const FOKUSERBART = 'button, input, [href], [tabindex]:not([tabindex="-1"])'
 
-/**
- * Feltene i panelet som faktisk kan nås nå.
- *
- * Innholdet i en lukket skuff er satt `visibility: hidden`, og den arves, så
- * det holder å lese den av for å utelate hele skuffen.
- */
-function naabare(panel: HTMLElement | null): HTMLElement[] {
-  if (!panel) return []
-  return [...panel.querySelectorAll<HTMLElement>(FOKUSERBART)].filter(
+/** Feltene i et element som faktisk kan nås nå (ikke i et lukket panel). */
+function naabare(omrade: HTMLElement | null): HTMLElement[] {
+  if (!omrade) return []
+  return [...omrade.querySelectorAll<HTMLElement>(FOKUSERBART)].filter(
     (el) => !el.closest('[hidden]') && getComputedStyle(el).visibility !== 'hidden',
   )
 }
 
+/** Hvor fokus skal etter et bytte av nivå: nivåets navn, det første feltet, eller valget brukeren kom fra. */
+type Fokusmal = 'tittel' | 'forste' | { valg: string }
+
+/** Hvilken vei nivået kom fra, for den korte glidningen. */
+type Retning = 'fram' | 'tilbake'
+
 export interface SidemenyProps {
   /** Stoffregisteret med fagsidene og inndelingen i databasen (`byggStoffregister`). */
   register: Stoffregister
+  /** Siden brukeren står på (`useRute`). Uten den leses adressen. */
+  rute?: Rute
 }
 
-export function Sidemeny({ register }: SidemenyProps) {
+export function Sidemeny({ register, rute }: SidemenyProps) {
   const [apen, setApen] = useBevart('sidemeny', false)
-  /** Av gjemmer underkategoriene og lister stoffene i hver kategori i én alfabetisk bolk. */
-  const [visUnderkategorier, setVisUnderkategorier] = useState(true)
-  /** Kategorien med åpen skuff — bare én av gangen. */
-  const [apenSkuff, setApenSkuff] = useBevart<string | null>('sidemeny/skuff', null)
-  const favoritter = useFavoritter()
-  const [favoritterApen, setFavoritterApen] = useBevart('sidemeny/favoritter', false)
-  const visVerktoy = useVerktoyeneVises()
-  const faner = visVerktoy ? FANER : FANER.filter((f) => f.id !== 'verktoy')
-  const [valgtFane, setFane] = useBevart<Fane>('sidemeny/fane', 'stoffregister')
-  // En fane som er valgt fra før, men ikke vises, gir den første.
-  const fane = faner.some((f) => f.id === valgtFane) ? valgtFane : faner[0]!.id
+  const [sti, setSti] = useBevart<string[]>('sidemeny/sti', [])
+  const [sporring, setSporring] = useBevart('sidemeny/sok', '')
+  const [retning, setRetning] = useState<Retning | null>(null)
   const panelId = useId()
+  const tittelId = useId()
   const panel = useRef<HTMLElement>(null)
+  const innhold = useRef<HTMLDivElement>(null)
+  const tittel = useRef<HTMLHeadingElement>(null)
   const knapp = useRef<HTMLButtonElement | null>(null)
+  /** Rulleplassen på hvert nivå brukeren har gått videre fra, etter stien. */
+  const rulling = useRef(new Map<string, number>())
+  const fokus = useRef<Fokusmal | null>(null)
 
   const apne = useCallback(() => setApen(true), [])
 
@@ -122,7 +89,40 @@ export function Sidemeny({ register }: SidemenyProps) {
   }, [])
   const trykkUtenfor = useTrykkUtenfor<HTMLDivElement>(lukk)
 
-  const meny = useHovedmenyen(apen, lukk)
+  const meny = useHovedmenyen({ apen, lukk, rute: rute ?? lesRute(window.location.hash), register })
+
+  // Stien slik den finnes nå: et nivå brukeren ikke (lenger) har, er borte fra den.
+  const nivaene = folgSti(meny.rot, sti)
+  const gyldig = nivaene.slice(1).map((n) => n.punkt!.id)
+  const { niva } = nivaene[nivaene.length - 1]!
+  const forelder = nivaene[nivaene.length - 2]?.niva
+  const nokkel = gyldig.join('/')
+
+  /** Bytter nivå: rulleplassen der brukeren står, tas vare på, og søket tømmes. */
+  const bytt = (ny: string[], vei: Retning, mal: Fokusmal) => {
+    rulling.current.set(nokkel, innhold.current?.scrollTop ?? 0)
+    fokus.current = mal
+    setRetning(vei)
+    setSporring('')
+    setSti(ny)
+  }
+  const gaaInn = (punkt: Menypunkt, tastatur: boolean) => bytt([...gyldig, punkt.id], 'fram', tastatur ? 'forste' : 'tittel')
+  const tilbake = () => bytt(gyldig.slice(0, -1), 'tilbake', { valg: gyldig[gyldig.length - 1]! })
+  const tilRoten = () => bytt([], 'tilbake', { valg: gyldig[0]! })
+
+  // Etter et bytte: et nytt nivå begynner øverst, et nivå brukeren går tilbake
+  // til, står der det sto, og fokus flyttes dit det hører hjemme.
+  useLayoutEffect(() => {
+    const mal = fokus.current
+    const el = innhold.current
+    if (!mal || !el) return
+    fokus.current = null
+    el.scrollTop = retning === 'tilbake' ? (rulling.current.get(nokkel) ?? 0) : 0
+    if (mal === 'tittel') tittel.current?.focus()
+    else if (mal === 'forste') naabare(el)[0]?.focus()
+    else [...el.querySelectorAll<HTMLElement>('[data-menyvalg]')].find((v) => v.dataset.menyvalg === mal.valg)?.focus({ preventScroll: true })
+  }, [nokkel, retning])
+
   const knappenavn = 'Vis menyen'
   const knappetips = useTips(knappenavn, { skjermleser: false })
   // Tipset og fokuset skal på det samme elementet, så de to ref-ene slås sammen.
@@ -187,7 +187,7 @@ export function Sidemeny({ register }: SidemenyProps) {
     }
     window.addEventListener('keydown', paaTast)
     return () => window.removeEventListener('keydown', paaTast)
-  }, [apen, lukk])
+  }, [apen])
 
   // Fokus følger med inn i panelet, ellers ville det blitt stående på
   // menyknappen som nå ligger skjult bak det. Panelet selv tar imot fokuset,
@@ -196,10 +196,35 @@ export function Sidemeny({ register }: SidemenyProps) {
     if (apen) panel.current?.focus()
   }, [apen])
 
-  // Ikke `lukk()`: stoffsiden tar fokus selv, og skal ikke få det revet
+  /**
+   * Piltastene i panelet: opp og ned flytter mellom valgene (og søkefeltet),
+   * også fra panelet selv rett etter åpning; høyre går inn i en undermeny og
+   * venstre tilbake ett nivå. I søkefeltet flytter venstre og høyre markøren
+   * som ellers.
+   */
+  const paaPil = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+    const mal = event.target as HTMLElement
+    const iFelt = mal instanceof HTMLInputElement
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      const valg = naabare(innhold.current).filter((el) => el.classList.contains(MENYVALG) || el.matches('input[type="search"]'))
+      const her = valg.indexOf(mal)
+      const neste = valg[event.key === 'ArrowDown' ? her + 1 : her < 0 ? valg.length - 1 : her - 1]
+      if (!neste) return
+      event.preventDefault()
+      neste.focus()
+    } else if (event.key === 'ArrowRight' && !iFelt && mal.hasAttribute('data-undermeny')) {
+      event.preventDefault()
+      mal.click()
+    } else if (event.key === 'ArrowLeft' && !iFelt && gyldig.length > 0) {
+      event.preventDefault()
+      tilbake()
+    }
+  }
+
+  // Ikke `lukk()`: siden som åpnes, tar fokus selv, og skal ikke få det revet
   // tilbake til menyknappen. Lenken gjør resten.
   const velg = useCallback(() => setApen(false), [])
-  const veksle = useCallback((skuff: string) => setApenSkuff((forrige) => (forrige === skuff ? null : skuff)), [])
 
   return (
     <>
@@ -233,323 +258,37 @@ export function Sidemeny({ register }: SidemenyProps) {
         ref={panel}
         id={panelId}
         className="sidemeny"
-        aria-label={TITTEL}
+        aria-label={HOVEDMENYEN}
         data-apen={apen ? 'ja' : 'nei'}
         tabIndex={-1}
+        onKeyDown={paaPil}
       >
-        {/* Forsiden, fortolkningen og resten av appen er én handling unna fra hvor som helst. */}
-        <Menynavigasjon meny={meny} apen={apen} onGaa={velg} />
-
-        <div className="sidemeny__topp">
-          <Fanevalg
-            faner={faner}
-            fane={fane}
-            felles={panelId}
-            etikett="Menyvalg"
-            className="sidemeny__faner"
-            faneklasse="sidemeny__fanevalg"
-            onVelg={setFane}
-          />
-          <button
-            type="button"
-            className="sidemeny__lukk"
-            aria-label="Lukk menyen"
-            onClick={lukk}
-          >
-            <Ikon navn="close" storrelse="ui" />
-          </button>
-        </div>
-
-        <div
-          id={fanepanelId(panelId, 'stoffregister')}
-          role="tabpanel"
-          aria-labelledby={faneId(panelId, 'stoffregister')}
-          className="sidemeny__fane"
-          hidden={fane !== 'stoffregister'}
-        >
-          {/* Bryteren gjelder hele lista, og står fast øverst i stedet for å
-              rulle bort med den. */}
-          <Bryter className="menyveksle" pa={visUnderkategorier} onEndre={setVisUnderkategorier}>
-            Vis underkategorier
-          </Bryter>
-
-          {/* Favorittene står også fast, under bryteren og over kategoriene. */}
-          {favoritter && (
-            <ul className="menyfavoritter">
-              <Favorittskuff
-                favoritter={favoritter}
-                register={register}
-                apen={favoritterApen}
-                onVeksle={() => setFavoritterApen((apen) => !apen)}
-                onVelg={velg}
-              />
-            </ul>
+        <div className="sidemeny__topp" data-dybde={Math.min(gyldig.length, 2)}>
+          {forelder && (
+            <Ikonknapp
+              ikon="back"
+              etikett={`Tilbake til ${forelder.navn === HOVEDMENYEN ? 'hovedmenyen' : forelder.navn}`}
+              variant="stille"
+              className="sidemeny__tilbake"
+              onClick={tilbake}
+            />
           )}
-
-          <ul className="menyliste">
-            {register.kategorier.map((kategori) => (
-              <Kategoriskuff
-                key={kategori.navn}
-                kategori={kategori}
-                apen={apenSkuff === kategori.navn}
-                visUnderkategorier={visUnderkategorier}
-                onVeksle={() => veksle(kategori.navn)}
-                onVelg={velg}
-              />
-            ))}
-          </ul>
-
-          {/* Helsiden har hele registeret, med arkivet og redigeringen. Menyen holdes ryddig. */}
-          <Menyhelside href={STOFFREGISTERADRESSE} onVelg={velg}>
-            Åpne hele stoffregisteret
-          </Menyhelside>
+          {gyldig.length > 1 && (
+            <Ikonknapp ikon="menu" etikett="Til hovedmenyen" variant="stille" className="sidemeny__rot" onClick={tilRoten} />
+          )}
+          <h2 ref={tittel} id={tittelId} className="sidemeny__tittel" tabIndex={-1}>
+            {niva.navn}
+          </h2>
+          <Ikonknapp ikon="close" etikett="Lukk menyen" className="sidemeny__lukk" onClick={lukk} />
         </div>
 
-        {visVerktoy && (
-          <div
-            id={fanepanelId(panelId, 'verktoy')}
-            role="tabpanel"
-            aria-labelledby={faneId(panelId, 'verktoy')}
-            className="sidemeny__fane"
-            hidden={fane !== 'verktoy'}
-          >
-            <ul className="menyverktoy">
-              {VERKTOY.map((v) => (
-                <li key={v.id}>
-                  <a className="menyverktoy__lenke" href={verktoyadresse(v.id)} onClick={velg}>
-                    <Ikon navn={v.ikon} storrelse="ui" className="menyskuff__ikon" />
-                    <span className="menyverktoy__tekst">
-                      <span className="menyverktoy__navn">{v.navn}</span>
-                      <span className="menyverktoy__beskrivelse">{v.beskrivelse}</span>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <Menyhelside href={verktoyadresse()} onVelg={velg}>
-              Åpne verktøyoversikten
-            </Menyhelside>
+        {/* Det ene rulleområdet i panelet. */}
+        <div ref={innhold} className="sidemeny__innhold">
+          <div key={nokkel} className="menyniva" data-retning={retning ?? undefined} role="group" aria-labelledby={tittelId}>
+            <Menyniva niva={niva} sporring={sporring} onSok={setSporring} onInn={gaaInn} onLenke={velg} />
           </div>
-        )}
+        </div>
       </nav>
     </>
-  )
-}
-
-/**
- * Knappen nederst i en fane til helsiden med alt, som «Åpne hele
- * stoffregisteret»: en sekundærknapp, ikke et menyvalg, så den skiller seg fra
- * lista over.
- */
-function Menyhelside({ href, onVelg, children }: { href: string; onVelg: () => void; children: ReactNode }) {
-  return (
-    <div className="menyhelside">
-      <Knappelenke href={href} onClick={onVelg} icon={<Ikon navn="chev" />}>
-        {children}
-      </Knappelenke>
-    </div>
-  )
-}
-
-/** Én kategori: tittelen som åpner skuffen, og stoffene i den, med eller uten underkategoriene. */
-function Kategoriskuff({
-  kategori,
-  apen,
-  visUnderkategorier,
-  onVeksle,
-  onVelg,
-}: {
-  kategori: Registerkategori
-  apen: boolean
-  visUnderkategorier: boolean
-  onVeksle: () => void
-  onVelg: () => void
-}) {
-  const underkategorier = visUnderkategorier ? kategori.underkategorier : []
-  // Står noen stoffer direkte i kategorien ved siden av underkategoriene, står
-  // de først, uten overskrift.
-  const iUnder = new Set(underkategorier.flatMap((u) => u.stoffer.map((s) => s.slug)))
-  const direkte = underkategorier.length > 0 ? kategori.stoffer.filter((s) => !iUnder.has(s.slug)) : kategori.stoffer
-
-  return (
-    <Skuff
-      apen={apen}
-      onVeksle={onVeksle}
-      tittel={
-        <>
-          <Ikon navn={kategoriikon(kategori.ikon)} storrelse="ui" className="menyskuff__ikon" />
-          <span className="menyskuff__beskrivelse">{kategori.navn}</span>
-          <span className="menyskuff__antall" aria-label={`${kategori.stoffer.length} stoffer`}>
-            {kategori.stoffer.length}
-          </span>
-        </>
-      }
-    >
-      {direkte.length > 0 && <Stoffer stoffer={direkte} onVelg={onVelg} />}
-      {underkategorier.map((u) => (
-        <section className="menykategori" key={u.navn}>
-          <h3 className="menykategori__navn">{u.navn}</h3>
-          <Stoffer stoffer={u.stoffer} onVelg={onVelg} />
-        </section>
-      ))}
-    </Skuff>
-  )
-}
-
-/**
- * Brukerens favoritter, alfabetisk, hver med en knapp som fjerner den. Et stoff
- * registeret ikke kjenner (lenger), står med nøkkelen, så det fortsatt kan
- * fjernes.
- */
-function Favorittskuff({
-  favoritter,
-  register,
-  apen,
-  onVeksle,
-  onVelg,
-}: {
-  favoritter: Favoritter
-  register: Stoffregister
-  apen: boolean
-  onVeksle: () => void
-  onVelg: () => void
-}) {
-  // En fagside i papirkurven står ikke her; hentes den tilbake, er den her igjen.
-  const stoffer = favoritter.stoffer
-    .filter((slug) => register.status(slug) !== 'papirkurv')
-    .map((slug): Registerstoff => register.menystoff(slug) ?? ukjentStoff(slug))
-    .sort((a, b) => a.navn.localeCompare(b.navn, 'nb'))
-
-  return (
-    <Skuff
-      apen={apen}
-      onVeksle={onVeksle}
-      rullInn={false}
-      tittel={
-        <>
-          <Ikon navn="star" storrelse="ui" className="menyskuff__ikon menyskuff__ikon--fylt" />
-          <span className="menyskuff__beskrivelse">Favoritter</span>
-          <span className="menyskuff__antall" aria-label={`${stoffer.length} stoffer`}>
-            {stoffer.length}
-          </span>
-        </>
-      }
-    >
-      {stoffer.length === 0 ? (
-        <p className="menyfavoritter__tom">Trykk på stjernen på en fagside for å legge den til her.</p>
-      ) : (
-        <Stoffer
-          stoffer={stoffer}
-          onVelg={onVelg}
-          handling={(stoff) => (
-            <button
-              type="button"
-              className="menyanalytt__fjern"
-              aria-label={`Fjern ${stoff.navn} fra favoritter`}
-              onClick={() => favoritter.sett(stoff.slug, false)}
-            >
-              <Ikon navn="close" storrelse="ui" />
-            </button>
-          )}
-        />
-      )}
-    </Skuff>
-  )
-}
-
-/** Et stoff registeret ikke kjenner (lenger), med nøkkelen som navn. */
-const ukjentStoff = (slug: string): Registerstoff => ({
-  slug,
-  navn: slug,
-  side: false,
-  innhold: false,
-})
-
-/**
- * En skuff i menyen: tittelen som åpner skuffen, og innholdet.
- *
- * Selve skuffen glir opp og igjen med `grid-template-rows: 0fr ↔ 1fr`, som
- * ellers i appen. Lukket innhold settes usynlig når glidningen er over, så det
- * heller ikke nås med tabulator eller skjermleser.
- */
-function Skuff({
-  apen,
-  onVeksle,
-  rullInn = true,
-  tittel,
-  children,
-}: {
-  apen: boolean
-  onVeksle: () => void
-  /** Hentes fram i lista når den åpnes. Av for en skuff som står fast. */
-  rullInn?: boolean
-  tittel: ReactNode
-  children: ReactNode
-}) {
-  const id = useId()
-  const rad = useRef<HTMLLIElement>(null)
-
-  // En skuff som åpnes nederst i lista skal ikke bli stående utenfor bildet.
-  // Rullingen venter til glidningen er over — først da vet vi hvor høy den ble.
-  useEffect(() => {
-    if (!apen || !rullInn) return
-    const el = rad.current
-    if (!el) return
-    const frist = window.setTimeout(
-      // Øverst i lista: da er hele skuffen i bildet, uansett hvor i menyen den
-      // står.
-      () => el.scrollIntoView({ behavior: rullefart(), block: 'start' }),
-      ETTER_GLIDNING,
-    )
-    return () => window.clearTimeout(frist)
-  }, [apen, rullInn])
-
-  return (
-    <li ref={rad} className="menyskuff" data-apen={apen ? 'ja' : 'nei'}>
-      <div className="menyskuff__hode">
-        <button
-          type="button"
-          className="menyskuff__tittel"
-          aria-expanded={apen}
-          aria-controls={id}
-          onClick={onVeksle}
-        >
-          {tittel}
-          <Ikon navn="chev" className="menyskuff__pil" />
-        </button>
-      </div>
-
-      <div id={id} className="menyskuff__kropp">
-        <div className="menyskuff__inner">{children}</div>
-      </div>
-    </li>
-  )
-}
-
-/**
- * Stoffene i en kategori eller underkategori, alfabetisk, som lenker til
- * stoffsidene. `handling` er en knapp ved siden av hvert stoff, som den som
- * fjerner en favoritt.
- */
-function Stoffer({
-  stoffer,
-  onVelg,
-  handling,
-}: {
-  stoffer: readonly Registerstoff[]
-  onVelg: () => void
-  handling?: (stoff: Registerstoff) => ReactNode
-}) {
-  return (
-    <ul className="menyanalytter">
-      {stoffer.map((stoff) => (
-        <li key={stoff.slug} className={handling && 'menyanalytter__rad'}>
-          <a className="menyanalytt" href={stoffadresse(stoff.slug)} onClick={onVelg}>
-            <span className="menyanalytt__navn">{stoff.navn}</span>
-          </a>
-          {handling?.(stoff)}
-        </li>
-      ))}
-    </ul>
   )
 }

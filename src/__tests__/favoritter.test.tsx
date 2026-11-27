@@ -1,12 +1,11 @@
 // @vitest-environment jsdom
 /**
- * Favorittene i hele appen: stjernen på fagsiden og skuffen «Favoritter» i
- * stoffregisteret.
+ * Favorittene i hele appen: stjernen på fagsiden og «Favoritter» under Fag i
+ * hovedmenyen.
  *
- * - Skuffen står fast mellom «Vis underkategorier» og den første kategorien,
- *   og er lukket til den åpnes.
- * - Stjernen legger stoffet til og fjerner det igjen, og skuffen viser det med
- *   en gang. Krysset ved en favoritt i skuffen fjerner den også.
+ * - Favorittene er en undermeny under Fag, med antallet ved valget.
+ * - Stjernen legger stoffet til og fjerner det igjen, og menyen viser det med
+ *   en gang. Krysset ved en favoritt i menyen fjerner den også.
  * - En favoritt merket under et gammelt navn for stoffet står som stoffet, og
  *   fjernes med det.
  * - Sier databasen nei, vises det databasen faktisk har.
@@ -110,43 +109,37 @@ function menyen() {
   return screen.getByRole('navigation', { name: 'Meny' })
 }
 
-function favorittskuffen() {
-  return within(menyen()).getByRole('button', { name: /^Favoritter/ })
+/** Går fra hovedmenyen til Fag › Favoritter. */
+async function tilFavorittene(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(within(menyen()).getByRole('button', { name: /^Fag/ }))
+  await user.click(within(menyen()).getByRole('button', { name: /^Favoritter/ }))
 }
 
-/** Innholdet i favorittskuffen. */
+/** Nivået menyen står på. */
 function favorittene() {
-  return document.getElementById(favorittskuffen().getAttribute('aria-controls')!)!
+  return menyen().querySelector<HTMLElement>('.menyniva')!
 }
 
-describe('favorittskuffen i stoffregisteret', { timeout: 20_000 }, () => {
-  it('står lukket mellom bryteren og den første kategorien, og sier hvordan en favoritt legges til', async () => {
+describe('favorittene i hovedmenyen', { timeout: 20_000 }, () => {
+  it('står under Fag med antallet, og sier hvordan en favoritt legges til', async () => {
     const user = userEvent.setup()
     await visApp()
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
-    const skuff = favorittskuffen()
-    expect(skuff.getAttribute('aria-expanded')).toBe('false')
-    expect(skuff.textContent).toContain('0')
+    await user.click(within(menyen()).getByRole('button', { name: /^Fag/ }))
+    expect([...menyen().querySelectorAll('.menyvalg__navn')].map((n) => n.textContent)).toEqual(['Stoffregister', 'Favoritter'])
+    expect(within(menyen()).getByRole('button', { name: /^Favoritter/ }).textContent).toContain('0')
 
-    // Rekkefølgen i menyen: bryteren, favorittene, så kategoriene.
-    const bryter = within(menyen()).getByRole('switch', { name: 'Vis underkategorier' })
-    const forsteKategori = menyen().querySelector('.menyliste .menyskuff__tittel')!
-    expect(bryter.compareDocumentPosition(skuff) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    expect(skuff.compareDocumentPosition(forsteKategori) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    // Favorittene står utenfor lista som ruller.
-    expect(skuff.closest('.menyliste')).toBeNull()
-
-    await user.click(skuff)
-    expect(skuff.getAttribute('aria-expanded')).toBe('true')
+    await user.click(within(menyen()).getByRole('button', { name: /^Favoritter/ }))
+    expect(within(menyen()).getByRole('heading', { level: 2 }).textContent).toBe('Favoritter')
     expect(favorittene().textContent).toContain('Trykk på stjernen på en fagside')
   })
 })
 
 // Hele appen tegnes opp og klikkes gjennom; alene tar det rundt fire sekunder,
 // så standardgrensen på fem gir ingen margin på en travel CI-maskin. Det
-// samme gjelder skuffen over.
+// samme gjelder testen over.
 describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
-  it('legger stoffet til i favorittene og fjerner det igjen, og skuffen følger med', async () => {
+  it('legger stoffet til i favorittene og fjerner det igjen, og menyen følger med', async () => {
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
     await visApp()
@@ -157,11 +150,11 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     await waitFor(() => expect(databasen.favoritter).toEqual(['bupropion']))
 
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
-    await user.click(favorittskuffen())
+    await tilFavorittene(user)
     const lenke = within(favorittene()).getByRole('link', { name: /^Bupropion/ })
     expect(lenke.getAttribute('href')).toBe('#/stoff/bupropion')
 
-    // Stjernen skrus av igjen: favoritten forsvinner fra skuffen.
+    // Stjernen skrus av igjen: favoritten forsvinner fra menyen.
     await user.keyboard('{Escape}')
     await user.click(screen.getByRole('button', { name: 'Fjern fra favoritter' }))
     expect(screen.getByRole('button', { name: 'Legg til i favoritter' })).toBeTruthy()
@@ -169,7 +162,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     await waitFor(() => expect(databasen.favoritter).toEqual([]))
   })
 
-  it('er av igjen når favoritten fjernes med krysset i skuffen', async () => {
+  it('er av igjen når favoritten fjernes med krysset i menyen', async () => {
     databasen.favoritter = ['nortriptylin', 'bupropion']
     const user = userEvent.setup()
     window.location.hash = '#/stoff/bupropion'
@@ -177,7 +170,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     await screen.findByRole('button', { name: 'Fjern fra favoritter' })
 
     await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
-    await user.click(favorittskuffen())
+    await tilFavorittene(user)
     // Alfabetisk, som resten av menyen.
     expect(within(favorittene()).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
       '#/stoff/bupropion',

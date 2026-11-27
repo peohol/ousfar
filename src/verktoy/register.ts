@@ -1,7 +1,7 @@
 /**
  * Verktøyregisteret for OUSFAR Verktøy (P6.1 i `docs/verktøy-utviklingsplan.md`):
  * hvert verktøy med stabil ID, norsk navn, søkealiaser, adresse og
- * virkestoffene som kan velges i det. Sidemenyen, søket og verktøysidene
+ * virkestoffene som kan velges i det. Hovedmenyen, søket og verktøysidene
  * leser alle herfra, så et nytt verktøy legges til med én oppføring.
  *
  * Virkestoffene er de kildetabellen har som eget virkestoff i P1-kartleggingen
@@ -11,7 +11,7 @@
  */
 import kartleggingsfil from '../data/verktoy/virkestoffkartlegging.json'
 import type { Ikonnavn } from '../components/ikon/register'
-import { fold, sokeord } from '../faginnhold/sok'
+import { begynnerOrd, fold, navneord } from '../faginnhold/sok'
 import { erSperret, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import type { Tabell_id } from './kildetabeller'
 
@@ -157,12 +157,9 @@ export interface Verktoytreff {
  * registerets.
  */
 export function sokVerktoy(sporring: string, register: readonly Verktoy[] = VERKTOY): Verktoytreff[] {
-  const ord = sokeord(sporring)
+  const ord = navneord(sporring)
   if (ord.length === 0) return []
-  const passer = (tekst: string) => {
-    const ordene = fold(tekst).split(/[^\p{L}\p{N}]+/u)
-    return ord.every((o) => ordene.some((w) => w.startsWith(o)))
-  }
+  const passer = (tekst: string) => begynnerOrd(ord, tekst)
   return register.flatMap((verktoy): Verktoytreff[] => {
     if (passer(verktoy.navn)) return [{ verktoy }]
     const alias = verktoy.aliaser.find(passer)
