@@ -504,6 +504,11 @@ export async function taKopi(valg: TaValg): Promise<Kopi> {
   if (valg.prosjekt && !valg.token) throw new Stopp('Med --prosjekt kreves SUPABASE_ACCESS_TOKEN, for Auth-innstillingene og navnene på hemmelighetene.')
   // En nøkkel som ikke kan signere, skal stoppe kopien før den tas, ikke etter.
   signer('kontroll', '', '', valg.signeringsnokkel)
+  // Bitene til en kopi er kryptert for den og bundet til den med summene i signaturen. En bit fra en
+  // tidligere kopi i samme mappe skal aldri overskrives eller slettes, så hver kopi får en tom mappe.
+  if (existsSync(delmappe(valg.ut)) && readdirSync(delmappe(valg.ut)).length) {
+    throw new Stopp(`${delmappe(valg.ut)} har alt biter fra en annen kopi. Bruk en ny, tom mappe for hver kopi, så den eldre ikke blir ugjenopprettelig.`)
+  }
   const maks = valg.forsok ?? 3
   for (let forsok = 1; ; forsok++) {
     try {
@@ -565,6 +570,7 @@ async function hentBiter(dbUrl: string, bilde: string, nye: readonly { t: DeltTa
       const linjer = await tellLinjer(fil)
       if (linjer !== Number(b.rader)) throw new Stopp(`En bit i ${t.tabell} fikk ${linjer} rader, men planen har ${b.rader}.`)
       const kryptert = delfil(ut, b.identitet)
+      if (existsSync(kryptert)) throw new Stopp(`${kryptert} finnes alt og overskrives ikke.`)
       skrevet.push(kryptert)
       execFileSync('age', [...mottakere.flatMap((m) => ['-r', m]), '-o', kryptert, fil], { stdio: ['ignore', 'ignore', 'pipe'] })
       rmSync(fil)

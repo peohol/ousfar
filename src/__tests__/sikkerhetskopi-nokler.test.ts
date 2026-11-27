@@ -5,13 +5,14 @@
  * kopiene; og kopijobben godtar bare offentlige `age`-nøkler.
  */
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
 import { bech32, lagKopinokler, nokkelfil, offentligFraNokkelfil } from '../drift/sikkerhetskopi/nokler'
 import { lesMottakere } from '../drift/sikkerhetskopi/natt'
-import { lesSignatur, offentligNokkel, signer } from '../drift/sikkerhetskopi/signatur'
+import { lesSignatur, offentligNokkel, signer, lagSigneringsnokler } from '../drift/sikkerhetskopi/signatur'
+import { taKopi } from '../drift/sikkerhetskopi/kopi'
 
 const harAge = (() => {
   try {
@@ -60,5 +61,27 @@ describe('nøklene til kopiene', () => {
     expect(() => lesMottakere(a.identitet)).toThrow(/privat nøkkel/)
     expect(() => lesMottakere(a.identitet.toLowerCase())).toThrow(/privat nøkkel/)
     expect(() => lesMottakere(' ')).toThrow(/ingen/)
+  })
+
+  it('bygger en nøkkelside som ikke henter noe fra nettet', () => {
+    const side = join(mappe, 'side.html')
+    execFileSync('npx', ['vite-node', 'scripts/nokkelside.ts', '--', side], { stdio: 'ignore' })
+    const html = readFileSync(side, 'utf8')
+    expect(html).toContain('lagKopinokler')
+    expect(html).not.toMatch(/<link\b|<img\b|<iframe\b|\bsrc=|@import|url\(/i)
+    expect(html).not.toMatch(/\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|localStorage|indexedDB/)
+    // Den eneste adressen er lenken til miljøene i GitHub, som brukeren selv åpner.
+    expect([...html.matchAll(/https?:\/\/[^\s"'<>`]+/g)].map((m) => m[0])).toEqual(['https://github.com/peohol/ousfar/settings/environments'])
+  }, 60_000)
+
+  it('tar ingen kopi i en mappe som alt har biter fra en annen kopi', async () => {
+    const ut = mkdtempSync(join(mappe, 'ut-'))
+    mkdirSync(join(ut, 'deler'))
+    writeFileSync(join(ut, 'deler', `${'a'.repeat(64)}.age`), 'eldre kopi')
+    const { mottaker } = await lagKopinokler()
+    await expect(
+      taKopi({ dbUrl: 'postgresql://ingen', apiUrl: 'http://ingen', nokkel: 'x', referanse: { versjoner: {}, objekter: [] } as never, mottakere: [mottaker], ut, migrasjoner: ut, signeringsnokkel: lagSigneringsnokler().privat }),
+    ).rejects.toThrow(/ny, tom mappe/)
+    expect(readFileSync(join(ut, 'deler', `${'a'.repeat(64)}.age`), 'utf8')).toBe('eldre kopi')
   })
 })

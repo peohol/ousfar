@@ -5,8 +5,8 @@
  *
  *   npm run sikkerhetskopi:nokkelside -- <ut.html>
  *
- * Siden har ingen nettverkskall og lagrer ingenting; nøklene finnes bare i
- * fanen til den lukkes.
+ * Siden har ingen nettverkskall (heller ikke skrifter) og lagrer ingenting;
+ * nøklene finnes bare i fanen til den lukkes. En test holder den slik.
  */
 import { writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -35,15 +35,14 @@ const MILJO = 'https://github.com/peohol/ousfar/settings/environments'
 
 const side = /* html */ `<title>Kopinøklene til OUSFAR</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   /* Én smal spalte med nummererte steg; nøklene står i monospace-felt med en kopiknapp hver. */
   :root {
     --bg: #f5f8f8; --flate: #ffffff; --tekst: #15282b; --dempet: #5a6d70; --kant: #d3dfe0;
     --aksent: #0b7f86; --aksent-tekst: #ffffff; --varsel: #8a4b00; --varsel-bg: #fdf3e4;
-    --tekstfont: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --monofont: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    /* Systemskrifter: siden henter ingenting fra nettet, heller ikke skrifter. */
+    --tekstfont: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --monofont: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --bg: #0f1a1c; --flate: #16272a; --tekst: #e3eeef; --dempet: #9db1b4; --kant: #2b4246;
