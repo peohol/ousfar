@@ -98,7 +98,9 @@ Ingen aktivering med reelle data før §3.4 og P7.
   medarbeiderkort, uansett rolle. Bare der det finnes merknad: en
   informasjonsboble med status og merknad ved hovering/fokus/berøring.
   «I kalenderen» åpner valgt dato i dagsvisningen. Mine vakter viser bare
-  egne publiserte/operative oppgaver.
+  egne publiserte/operative oppgaver. «Alle mine vakter» er en vanlig knapp
+  med kant og pil etter teksten, i samme stil som de andre knappene, ikke en
+  tekstlenke (Peder 27.11.2026).
 
 ## 4. Kalenderen (A)
 
