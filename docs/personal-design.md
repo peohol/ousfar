@@ -53,6 +53,11 @@ Ingen aktivering med reelle data før §3.4 og P7.
   innholdet. «Merknad» åpner merknadsfeltet og «Hele dagen» øverst, rett
   under verktøylinjen og over statusgruppene, synlig i visningsområdet,
   og merknadsfeltet får fokus (Peder 27.11.2026).
+- Korte forklaringer på knapper og ikoner (f.eks. «Legg til status») vises
+  som en liten snakkeboble over elementet, med en gang ved hover eller
+  tastaturfokus, aldri som nettleserens forsinkede title-tekst. Ingen
+  forklaring mens noe dras, og ingen der den bare ville gjentatt navnet,
+  heller ikke på tomme Til stede-celler (Peder 27.11.2026).
 - Alle flater fungerer på PC og mobil, i lyst og mørkt tema, med tastatur
   og berøring; ingen dekorative statusanimasjoner; presisjonsmarkøren ved flytting beholdes.
 
@@ -150,7 +155,7 @@ Ingen aktivering med reelle data før §3.4 og P7.
 
 - Klikk på datotallet åpner dagsvisningen for datoen; klikk på ukenummeret
   åpner den ISO-uken. Plussknapp horisontalt midtstilt på datolinjen når
-  datocellen har hover/fokus (synlig/tilgjengelig med berøring). Tooltip
+  datocellen har hover/fokus (synlig/tilgjengelig med berøring). Kort snakkeboble
   «Legg til status»; åpner person-/statusvalg for datoen, ikke navigasjon.
 - Hver status/person er ett kompakt kort som akkurat omslutter ikon og
   navn. Også ved flere med samme status har hver sitt ikon og navn som
