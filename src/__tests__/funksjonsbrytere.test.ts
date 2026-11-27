@@ -256,6 +256,16 @@ describe('i testmiljøet', () => {
     ])
   })
 
+  it('oppretter og logger ingenting når en funksjon uten bryter slås av', async () => {
+    const A = galleri.fagmiljo.A
+    const logg = async () =>
+      (await db.query(`select 1 from public.tilgangslogg where handling like 'funksjonsbrytere.%' and fagmiljo_id = $1`, [A])).rows.length
+    const forut = await logg()
+    expect(await settBryter('systemarkitekt', A, 'av')).toEqual({ funksjon: FUNKSJON, fagmiljo: A, tilstand: 'av' })
+    expect(await logg()).toBe(forut)
+    expect((await db.query('select 1 from public.funksjonsbrytere where fagmiljo_id = $1', [A])).rows).toEqual([])
+  })
+
   it('slår av igjen, og da kan testmerkingen fjernes', async () => {
     await settBryter('systemarkitekt', T, 'av')
     expect(await hvemHar(T)).toEqual([])

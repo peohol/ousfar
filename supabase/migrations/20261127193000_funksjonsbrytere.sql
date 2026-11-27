@@ -422,11 +422,15 @@ begin
     raise exception '%', avslag using errcode = '23514';
   end if;
 
-  insert into public.funksjonsbrytere as b (funksjon, fagmiljo_id, tilstand, endret_av)
-  values (sett_funksjonsbryter.funksjon, sett_funksjonsbryter.fagmiljo, sett_funksjonsbryter.tilstand, aktor)
-  on conflict on constraint funksjonsbrytere_pkey do update
-    set tilstand = excluded.tilstand, endret_kl = now(), endret_av = excluded.endret_av
-    where b.tilstand is distinct from excluded.tilstand;
+  -- Uten rad er funksjonen alt av: da er det ingenting å endre eller logge.
+  if sett_funksjonsbryter.tilstand <> 'av'
+     or exists (select 1 from public.funksjonsbrytere b where b.funksjon = sett_funksjonsbryter.funksjon and b.fagmiljo_id = sett_funksjonsbryter.fagmiljo) then
+    insert into public.funksjonsbrytere as b (funksjon, fagmiljo_id, tilstand, endret_av)
+    values (sett_funksjonsbryter.funksjon, sett_funksjonsbryter.fagmiljo, sett_funksjonsbryter.tilstand, aktor)
+    on conflict on constraint funksjonsbrytere_pkey do update
+      set tilstand = excluded.tilstand, endret_kl = now(), endret_av = excluded.endret_av
+      where b.tilstand is distinct from excluded.tilstand;
+  end if;
 
   return jsonb_build_object('funksjon', sett_funksjonsbryter.funksjon, 'fagmiljo', sett_funksjonsbryter.fagmiljo, 'tilstand', sett_funksjonsbryter.tilstand);
 end;
