@@ -1,0 +1,14 @@
+{
+  "id": "20261127-115832-50c311",
+  "semver": "patch",
+  "opprettet": "2026-11-27T11:58:32Z",
+  "sammendrag": "Grunnlaget for personalkalenderen er lagt inn, ikke slått på",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen ennå. Reglene for personalkalenderen (statuser, vaktdekning, flytting og vaktfordeling) er lagt inn og prøvd med oppdiktede medarbeidere, men brukes ikke av noen side før kalenderen er bygd og godkjent."
+  ],
+  "utenVarsel": true
+}
