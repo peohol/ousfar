@@ -166,7 +166,9 @@ Uansett vei inn, også rett i tabellen:
 tar en liste med opptil 500 endringer `{medarbeider, dato, revisjon, status,
 tid, merknad}`. Alt lagres samlet eller ingenting (K-DAT-2):
 
-1. formen på alle endringene, og ingen celle to ganger;
+1. formen på alle endringene, og ingen celle to ganger. `revisjon` og
+   `status` må alltid stå der; bare en uttrykkelig `status: null` fjerner
+   registreringen;
 2. låsen på hver dato, i fast rekkefølge;
 3. revisjonene: hver celle må ha revisjonen klienten så (null for en tom
    celle), ellers `PT409`;

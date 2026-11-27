@@ -632,6 +632,11 @@ begin
      or exists (select 1 from jsonb_object_keys(e) k where k not in ('medarbeider', 'dato', 'revisjon', 'status', 'tid', 'merknad')) then
     return false;
   end if;
+  -- Revisjonen og statusen må stå der, også som null: en manglende status
+  -- skal ikke kunne leses som å fjerne registreringen.
+  if not (e ? 'revisjon' and e ? 'status') then
+    return false;
+  end if;
   if jsonb_typeof(e -> 'medarbeider') is distinct from 'string'
      or (e ->> 'medarbeider') !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
      or personal.som_dato(case when jsonb_typeof(e -> 'dato') = 'string' then e ->> 'dato' end) is null then

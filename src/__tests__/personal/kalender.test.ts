@@ -411,11 +411,18 @@ describe('kalenderreglene på serveren (K-DAT-2)', () => {
       [{ ...gyldig, tid: { start: 1, end: 2, x: 3 } }],
       [{ ...gyldig, tid: { start: '08:00', end: '09:00' } }],
       [{ ...gyldig, merknad: 5 }],
+      [{ medarbeider: gyldig.medarbeider, dato, revisjon: null }],
+      [{ medarbeider: gyldig.medarbeider, dato, status: S_ID.away }],
     ]) {
       expect((await endreFeil('systemarkitekt', endringer))?.code, JSON.stringify(endringer)?.slice(0, 80)).toBe('22023')
     }
     expect((await endreFeil('systemarkitekt', [{ ...gyldig, medarbeider: '00000000-0000-4000-8000-000000000000' }]))?.message).toBe('Ukjent medarbeider.')
     expect((await endreFeil('systemarkitekt', [{ ...gyldig, dato: '2025-12-31' }]))?.message).toBe('Alma Berg var ikke registrert som medarbeider denne dagen.')
+    // En manglende status fjerner ikke registreringen; bare en uttrykkelig null gjør det.
+    await sett('systemarkitekt', 'Alma Berg', dato, S_ID.away)
+    const { revisjon } = (await celle('Alma Berg', dato))!
+    expect((await endreFeil('systemarkitekt', [{ medarbeider: gyldig.medarbeider, dato, revisjon }]))?.code).toBe('22023')
+    expect((await celle('Alma Berg', dato))?.status).toBe(S_ID.away)
   })
 
   it('avviser en endring mot en celle som er endret siden den ble hentet', async () => {
