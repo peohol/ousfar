@@ -1,6 +1,7 @@
 import { STOFFREGISTERADRESSE, stoffadresse, verktoyadresse, type Rute } from '../../domain/rute'
 import type { Registerkategori, Registerstoff, Stoffregister } from '../../domain/stoffregister'
-import { begynnerOrd, sokeord } from '../../faginnhold/sok'
+import { navnenokkel } from '../../domain/sokenavn'
+import { begynnerOrd, navneord } from '../../faginnhold/sok'
 import type { Favoritter } from '../../favoritter/Favorittkilde'
 import type { Verktoy } from '../../verktoy/register'
 import { kategoriikon } from '../ikon/register'
@@ -100,21 +101,27 @@ function kategoripunkt(kategori: Registerkategori, k: Fagkilder): Menypunkt {
 }
 
 /**
- * Stoffene et søk finner på navnet eller et annet navn (alias): hvert ord må
- * være begynnelsen på et ord i det. Treff på navnet står først, og et treff
- * på et annet navn viser det navnet ved siden av.
+ * Stoffene et søk finner på navnet eller et annet navn (alias): hvert ord i
+ * søket må være begynnelsen på et ord i det, med søk og navn delt likt på
+ * bindestrek, komma og andre skilletegn ({@link navneord}). Som i fagsøket
+ * treffer søket også når navnenøkkelen til navnet begynner med søkets, så
+ * «THCCOOH», «kvetiapin» og «Δ9-THC» finner det samme som «THC-COOH»,
+ * «quetiapin» og «delta-9-THC». Treff på navnet står først, og et treff på et
+ * annet navn viser det navnet ved siden av.
  */
 export function stoffsok(k: Pick<Fagkilder, 'register' | 'rute'>, sporring: string): Menyavsnitt[] {
-  const ord = sokeord(sporring)
+  const ord = navneord(sporring)
   if (ord.length === 0) return []
+  const nokkel = navnenokkel(sporring)
+  const passer = (navn: string) => begynnerOrd(ord, navn) || (nokkel !== '' && navnenokkel(navn).startsWith(nokkel))
   const paNavn: Menypunkt[] = []
   const paAlias: Menypunkt[] = []
   for (const stoff of k.register.stoffer) {
     const vist = k.register.menystoff(stoff.slug)
     if (!vist) continue
-    if (begynnerOrd(ord, stoff.navn)) paNavn.push(stoffpunkt(vist, k.rute))
+    if (passer(stoff.navn)) paNavn.push(stoffpunkt(vist, k.rute))
     else {
-      const alias = stoff.aliaser.find((a) => begynnerOrd(ord, a))
+      const alias = stoff.aliaser.find(passer)
       if (alias) paAlias.push({ ...stoffpunkt(vist, k.rute), hint: alias })
     }
   }

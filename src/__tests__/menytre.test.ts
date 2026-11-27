@@ -142,6 +142,26 @@ describe('Fag i hovedmenyen', () => {
     expect(treff('propion')).toEqual([])
   })
 
+  it('finner andre navn med bindestrek og komma, skrevet helt eller som begynnelsen, og ikke noe annet', () => {
+    const forste = (q: string) => stoffsok(kilder(), q).flatMap((a) => a.punkter.map((p) => [p.id, p.hint]))[0]
+    // Navnene slik de står i stoffregisteret.
+    expect(forste('THC-syre')).toEqual(['thc', 'THC-syre'])
+    expect(forste('THC-COOH')).toEqual(['thc', 'THC-COOH'])
+    expect(forste('N-desmetyldiazepam')).toEqual(['diazepam', 'N-desmetyldiazepam'])
+    expect(forste('9-hydroksyrisperidon')).toEqual(['paliperidon', '9-hydroksyrisperidon'])
+    expect(forste('3,4-metylendioksymetamfetamin')).toEqual(['mdma', '3,4-metylendioksymetamfetamin'])
+    // Begynnelsen, uten bindestrek eller med en annen skrivemåte.
+    expect(forste('thc-co')).toEqual(['thc', 'THC-COOH'])
+    expect(forste('thc cooh')).toEqual(['thc', 'THC-COOH'])
+    expect(forste('thccooh')?.[0]).toBe('thc')
+    expect(forste('3,4-metylendioks')?.[0]).toBe('mdma')
+    expect(forste('Δ9-THC')?.[0]).toBe('thc')
+    // Ett ord som ikke passer, gir ikke treff.
+    expect(stoffsok(kilder(), 'thc-xyz')).toEqual([])
+    expect(stoffsok(kilder(), 'n-desmetylzzz')).toEqual([])
+    expect(stoffsok(kilder(), 'syre-thc-kokain')).toEqual([])
+  })
+
   it('har favorittene alfabetisk, uten dem i papirkurven, med en knapp som fjerner hver', () => {
     const fjernet: string[] = []
     const favoritter = { stoffer: ['sertralin', 'bupropion', 'ukjent-stoff'], erFavoritt: () => true, sett: (s: string) => void fjernet.push(s) }

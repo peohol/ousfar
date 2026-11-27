@@ -111,6 +111,12 @@ describe('Søket etter verktøy', () => {
     expect(ider('sertralin')).toEqual([])
     expect(ider('  ')).toEqual([])
   })
+
+  it('deler søket på skilletegn som navnene, så de samme treffene kommer med og uten bindestrek', () => {
+    expect(ider('trappe-ned')).toEqual(ider('trappe ned'))
+    expect(ider('bytte, antipsyk')).toEqual(['bytte-antipsykotikum'])
+    expect(ider('bytte-sertralin')).toEqual([])
+  })
 })
 
 /** Reglene K1 ga en ny versjon med avslutning, til faglig kontroll (`regler/k1.ts`). */

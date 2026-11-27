@@ -305,6 +305,21 @@ describe('stoffregisteret i hovedmenyen', { timeout: 20_000 }, () => {
     expect(meny.getAttribute('data-apen')).toBe('nei')
   })
 
+  it('finner et annet navn med bindestrek, og treffet åpner fagsiden til stoffet', async () => {
+    const user = userEvent.setup()
+    await visApp()
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    const meny = await iMenyen(user, 'Fag', 'Stoffregister')
+    await user.type(within(meny).getByRole('searchbox', { name: 'Søk i stoffregisteret' }), 'THC-COOH')
+    const thc = within(meny).getByRole('link', { name: /^THC/ })
+    expect(thc.textContent).toBe('THCTHC-COOH')
+    expect(thc.getAttribute('href')).toBe('#/stoff/thc')
+    await user.click(thc)
+    await stoffsideFor('THC')
+    expect(window.location.hash).toBe('#/stoff/thc')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+  })
+
   it('går mellom nivåene med piltastene, med fokus der det hører hjemme', async () => {
     const user = userEvent.setup()
     await visApp()

@@ -11,7 +11,7 @@
  */
 import kartleggingsfil from '../data/verktoy/virkestoffkartlegging.json'
 import type { Ikonnavn } from '../components/ikon/register'
-import { begynnerOrd, fold, sokeord } from '../faginnhold/sok'
+import { begynnerOrd, fold, navneord } from '../faginnhold/sok'
 import { erSperret, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import type { Tabell_id } from './kildetabeller'
 
@@ -157,7 +157,7 @@ export interface Verktoytreff {
  * registerets.
  */
 export function sokVerktoy(sporring: string, register: readonly Verktoy[] = VERKTOY): Verktoytreff[] {
-  const ord = sokeord(sporring)
+  const ord = navneord(sporring)
   if (ord.length === 0) return []
   const passer = (tekst: string) => begynnerOrd(ord, tekst)
   return register.flatMap((verktoy): Verktoytreff[] => {

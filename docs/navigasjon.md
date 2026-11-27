@@ -213,9 +213,13 @@ Meny
 ### Stoffregisteret i menyen
 
 Søkefeltet øverst finner stoffene på begynnelsen av ordene i navnet og de
-andre navnene (`begynnerOrd` i `faginnhold/sok.ts`, det samme som
-verktøysøket), uten å hente noe; treff på et annet navn viser det navnet
-ved siden av. Kategoriene står med ikonet og antallet stoffer. En kategori
+andre navnene (`navneord` og `begynnerOrd` i `faginnhold/sok.ts`, det samme
+som verktøysøket), uten å hente noe; søket og navnene deles likt på
+bindestrek, komma og andre skilletegn, så «THC-COOH» og
+«3,4-metylendioksymetamfetamin» treffer. Som i fagsøket treffer søket også
+når navnenøkkelen (`domain/sokenavn.ts`) til navnet begynner med søkets, så
+«THCCOOH» og «kvetiapin» finner det samme som «THC-COOH» og «quetiapin».
+Treff på et annet navn viser det navnet ved siden av. Kategoriene står med ikonet og antallet stoffer. En kategori
 viser stoffene med underkategoriene (som SSRI, SNRI og TCA) som
 mellomoverskrifter, eller i én bolk med «Vis underkategorier» av. Hvert stoff
 lenker til fagsiden; laboratoriets koder står aldri her

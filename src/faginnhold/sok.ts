@@ -86,12 +86,21 @@ export function sokeord(sporring: string): string[] {
 }
 
 /**
- * Om hvert av ordene i et søk ({@link sokeord}) er begynnelsen på et ord i
+ * Ordene i et navn, eller i et søk på navn: foldet og delt på alt som ikke er
+ * bokstaver eller tall, så «THC-COOH» og «3,4-metylendioksymetamfetamin» deles
+ * likt i søket og i navnet.
+ */
+export function navneord(tekst: string): string[] {
+  return [...new Set(fold(tekst).split(/[^\p{L}\p{N}]+/u).filter(Boolean))]
+}
+
+/**
+ * Om hvert av ordene i et søk ({@link navneord}) er begynnelsen på et ord i
  * teksten, uansett store bokstaver og aksenter. Navnesøkene i verktøyene og i
  * menyen bruker det.
  */
 export function begynnerOrd(ord: readonly string[], tekst: string): boolean {
-  const ordene = fold(tekst).split(/[^\p{L}\p{N}]+/u)
+  const ordene = navneord(tekst)
   return ord.every((o) => ordene.some((w) => w.startsWith(o)))
 }
 
