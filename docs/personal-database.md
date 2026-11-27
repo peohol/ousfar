@@ -10,10 +10,12 @@ hvilke tester som viser det. Domenekoden er `supabase/functions/_delt/personal/`
 
 P2b leveres i to deler:
 
-1. **Grunnmuren** (denne PR-en): funksjonen, rollene og vaktplanansvarlige,
-   oppsettet, medarbeiderne og kvalifikasjonene, og Sandkasse.
-2. **Kalenderen**: oppføringene med invariantene, kommandoene, lesemodellen
-   for fritak, endringsloggen og samtidigheten.
+1. **Grunnmuren** (`*_personal_grunnmur.sql`, `*_personal_utproving.sql`):
+   funksjonen, rollene og vaktplanansvarlige, oppsettet, medarbeiderne og
+   kvalifikasjonene, og Sandkasse.
+2. **Kalenderen** (`*_personal_kalender.sql`): oppføringene med
+   invariantene, kommandoene, lesemodellen for fritak, endringsloggen og
+   samtidigheten.
 
 Brukerflatene kommer i P3 og senere; P2b endrer ingenting i appen.
 
@@ -134,6 +136,90 @@ P2c) eller et syntetisk navn og en stilling (testmiljø), aldri begge.
 oppføringene: rollen, dagens dato i fagmiljøet, enheten, alle versjonene av
 oppsettet, stillingene, medarbeiderne og de vaktplanansvarlige.
 
+## Kalenderen (K-DAT-1–3, K-TIL-4)
+
+`personal.oppforinger` har én rad per medarbeider og dato (personal.md §8.7):
+statusen, et valgfritt tidsrom i minutter fra midnatt, merknaden, låsen, det
+administrative fritaket, regelversjonen og revisjonene. Ingen årsak eller
+fritekst ut over den kontrollerte merknaden. Medarbeideren og fagmiljøet
+henger sammen (fremmednøkkel på paret), og en oppføring kan ikke flyttes til
+en annen dato eller medarbeider; en flytting er å fjerne og legge inn.
+
+### Invariantene i databasen
+
+Uansett vei inn, også rett i tabellen:
+
+- **én status per medarbeider og dato** (unik);
+- **høyst én per dato** for en status som er «én per dag», og **høyst
+  bemanningsbehovet** for en annen bemannet oppgave (`staffingCap`). En dato
+  som alt var over grensen fordi behovet er senket etterpå, kan endres så
+  lenge antallet ikke øker (`invariantErrors`). Antallet før transaksjonen
+  huskes når den først rører statusen og datoen, og grensen kontrolleres ved
+  slutten av transaksjonen (`personal.kontroller_bemanning`, en utsatt
+  utløser);
+- **fritaket** bare på en status med `dutyExemption: 'administrative'`, og det
+  følger aldri en ny status.
+
+### Kommandoene
+
+`public.personal_endre_kalender(fagmiljø, endringer)` krever `editCalendar` og
+tar en liste med opptil 500 endringer `{medarbeider, dato, revisjon, status,
+tid, merknad}`. Alt lagres samlet eller ingenting (K-DAT-2):
+
+1. formen på alle endringene, og ingen celle to ganger;
+2. låsen på hver dato, i fast rekkefølge;
+3. revisjonene: hver celle må ha revisjonen klienten så (null for en tom
+   celle), ellers `PT409`;
+4. endringene én etter én, kontrollert med de samme reglene og meldingene som
+   `planSet` i rules.ts (`personal.statusbrudd`): medarbeideren registrert
+   dagen, statusen kjent og aktiv etter reglene som gjaldt dagen,
+   kvalifikasjonen, arbeidsdagen etter arbeidskalenderen og de norske
+   helligdagene, tidsrommet, merknaden (`checkNote`), og om vakten eller alle
+   plassene alt er tatt. En vakt tas over ved å fjerne den hos den som har
+   den først i samme endring. Brudd gir `22023` med meldingen og hvilken
+   endring det gjelder.
+
+Samme status i cellen beholder registreringen (låsen, fritaket og
+regelversjonen); en ny status er en ny registrering (`entryFromPlan`).
+
+`public.personal_sett_fritak(...)` krever `manageExemption` (lokal
+administrator), revisjonen og fritaksrevisjonen klienten så, og en status som
+kan ha administrativt fritak. Vaktplanansvarlige kan ikke gi fritak, heller
+ikke på egne registreringer.
+
+Kollegaens egne statuser (B6, B15, B15b, B16, K-TIL-6) hører til P3; i P2b
+endrer bare planleggerne kalenderen.
+
+### Lesemodellen for fritak (K-TIL-4, K-DAT-1)
+
+`public.personal_kalender(fagmiljø, fra, til)` (høyst 400 dager) gir
+oppføringene for rollen. Fritaket og fritaksrevisjonen er bare med for
+`manageExemption`. Fritaket har sin egen revisjon fra en egen sekvens, og en
+endring av bare fritaket endrer verken revisjonen, ID-en eller tidspunktet
+andre ser. Kalenderen, svarene fra kommandoene og historikken er derfor
+nøyaktig like med og uten fritak for alle andre roller.
+
+### Endringsloggen
+
+`personal.endringer` får en rad per endring: hvem, når, før og etter. Ingen
+rad kan endres eller fjernes. `public.personal_historikk(fagmiljø, fra, til)`
+gir den til rollene som redigerer kalenderen (antakelse: kollegaer ser den
+ikke). Uten `manageExemption` er fritaket tatt ut, og en endring av bare
+fritaket er borte.
+
+### Samtidighet (K-DAT-3)
+
+Hver endring låser datoen i `personal.dager` før den leser kalenderen, så to
+endringer av samme dato prøves etter hverandre: i `read committed` får den
+andre `PT409` eller regelbruddet, i `repeatable read` `40001`. Ingen endring
+overskriver en annen. Det samme gjelder fritaket mot en samtidig
+statusendring, og to lagringer av oppsettet (`PT409`).
+
+Endringen og fritaket går gjennom `personal.krev_skrivetilgang`, som tar den
+felles tilgangslåsen delt før porten («Samtidige tilgangsendringer» over). En
+endring som kjøres mens medlemskapet eller rollen til den som handler
+avsluttes, venter på det og avvises etterpå.
+
 ## Sandkasse
 
 Migrasjonen `*_personal_utproving.sql` gjør Sandkasse klar til utprøving,
@@ -163,8 +249,30 @@ syntetisk Sandkasse (`src/__tests__/personal/database.ts`):
   formfeilene, versjonene og lagring mot en foreldet versjon (`PT409`);
 - medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse.
 
-`src/__tests__/personal.samtidighet.test.ts`, på ekte Postgres med hele
-databasestrukturen (kjøres når `OUSFAR_POSTGRES_URL` er satt, og i CI): to
-som lagrer oppsettet fra den samme versjonen samtidig, i `read committed` og
-`repeatable read`, og utpeking og lagring mens rollen til den som handler
-fjernes.
+`src/__tests__/personal/kalender.test.ts`, med Sandkasse og et andre
+syntetisk testmiljø:
+
+- tilgangen for hver rolle og hvert fagmiljø: uten medlemskap, utenfor
+  fagmiljøet, i virkelige fagmiljøer, under utprøving, kollega,
+  vaktplanansvarlig som prøver å gi fritak, avsluttet og nytt medlemskap, og
+  medarbeidere og data fra det andre testmiljøet (K-TIL-1–3);
+- regelpariteten: over 500 kombinasjoner av medarbeider, status, dag, tid og
+  merknad gir de samme bruddene som `planSet`, og helligdagene (2000–2099),
+  dagtypene, bemanningsbehovet og merknadskontrollen er like domenets;
+- overtakelse, bytte, alt eller ingenting, formfeil og revisjonskonflikter;
+- grensene i databasen, også rett i tabellen og med overskudd etter et senket
+  behov, og tidligere dager etter oppsettet som gjaldt da;
+- fritaket: likt svar med og uten for kollega og vaktplanansvarlig, også i
+  historikken;
+- endringsloggen.
+
+`src/__tests__/personal.samtidighet.test.ts` kjører de samtidige endringene
+med to forbindelser mot ekte Postgres med hele databasestrukturen (kjøres når
+`OUSFAR_POSTGRES_URL` er satt, og i CI med Postgres 17):
+
+- i `read committed` og `repeatable read`: to som lagrer oppsettet fra den
+  samme versjonen, to som endrer den samme cellen, den samme vakten til to,
+  grensen rett i tabellen, og fritaket mot en statusendring;
+- i `read committed`, som data-API-et bruker: utpeking, lagring av oppsettet,
+  endring i kalenderen og fritak mens rollen eller medlemskapet til den som
+  handler fjernes.

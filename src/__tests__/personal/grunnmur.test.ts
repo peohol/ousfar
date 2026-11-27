@@ -7,13 +7,13 @@
  * Akseptkriteriene (docs/personal.md §8): K-SKJ-1–6, K-SKJ-9–10, K-TIL-1–3 og
  * K-TIL-5, K-MED-4, K-KON-3–4.
  */
-import { ALLOCATION_FIELD_LIMITS, DEFAULT_ALLOCATION, defaultRuleSet, STATUS_IDS as S_ID } from '@delt/personal/catalog'
+import { ALLOCATION_FIELD_LIMITS, DEFAULT_ALLOCATION, STATUS_IDS as S_ID } from '@delt/personal/catalog'
 import { validateRules } from '@delt/personal/commands'
 import { can, ROLES, type Action } from '@delt/personal/permissions'
 import type { RuleSet } from '@delt/personal/types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { avsluttMedlemskap, opprettMedlem, type Person } from '../hjelp/persongalleri'
-import { byggPersonaldatabase, grunnlag, migrasjon, type Personaldatabase } from './database'
+import { byggPersonaldatabase, grunnlag, migrasjon, PILOT, type Personaldatabase } from './database'
 
 let p: Personaldatabase
 
@@ -24,11 +24,6 @@ beforeAll(async () => {
 afterAll(async () => {
   await p.db.close()
 })
-
-const PILOT = (() => {
-  const { version: _v, effectiveFrom: _e, ...regler } = defaultRuleSet()
-  return regler
-})()
 
 const grunnlagsfeil = (person: Person | string, fagmiljo: string) => p.feilkode(person, 'select public.personal_grunnlag($1)', [fagmiljo])
 const settBryter = (fagmiljo: string, tilstand: string) =>

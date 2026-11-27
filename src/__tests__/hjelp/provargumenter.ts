@@ -30,6 +30,7 @@ export async function provargumenter(d: PGlite): Promise<Map<string, string[]>> 
             when 'boolean' then 'false'
             when 'jsonb' then '''{}''::jsonb'
             when 'timestamp with time zone' then 'now()'
+            when 'date' then 'current_date'
           end
         end
         from unnest(p.proargtypes::oid[]) with ordinality a(typ, nr)
