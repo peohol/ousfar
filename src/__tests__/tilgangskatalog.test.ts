@@ -55,6 +55,8 @@ describe('katalogvaktene', () => {
       'medlemsoversikt(fagmiljo uuid)',
       'min_medlemskapsstatus()',
       'mine_administrerte_fagmiljoer()',
+      // #572: fagmiljøene den innloggede selv er aktivt medlem av, uten systemarkitektunntak.
+      'mine_egne_fagmiljoer()',
       'mine_lesbare_fagmiljoer()',
       // P5: fagmiljøene den innloggede selv kan endre utkastene i.
       'mine_redigerbare_fagmiljoer()',

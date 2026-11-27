@@ -2,12 +2,23 @@
  * De felles hjelperne for tilgang per fagmiljø (P2a–d,
  * `supabase/migrations/20261114113500_rettighetshjelpere.sql`,
  * docs/fagmiljoer.md «Hjelperne for tilgang per fagmiljø»), prøvd for hver
- * person i persongalleriet mot begge fagmiljøene.
+ * person i persongalleriet mot begge fagmiljøene. Hjelperne for eget
+ * medlemskap uten systemarkitektunntak (#572,
+ * `supabase/migrations/20261127190000_eget_medlemskap.sql`) står for seg sist.
  */
 import type { PGlite } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { byggPersongalleri, opprettFagmiljo, PERSONER, type Fagmiljo, type Person, type Persongalleri } from './hjelp/persongalleri'
-import { nyDatabase, som } from './hjelp/testdatabase'
+import {
+  aktiveI,
+  byggPersongalleri,
+  gjorTilSystemarkitekt,
+  opprettFagmiljo,
+  PERSONER,
+  type Fagmiljo,
+  type Person,
+  type Persongalleri,
+} from './hjelp/persongalleri'
+import { nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 let db: PGlite
 let galleri: Persongalleri
@@ -161,5 +172,104 @@ describe('funksjonene radsikkerhetsreglene og appen bruker', () => {
     ]) {
       expect(await feil(galleri.id.systemarkitekt, sql), sql).toBe('42501')
     }
+  })
+})
+
+describe('eget medlemskap uten systemarkitektunntak (#572)', () => {
+  /** De egne fagmiljøene etter galleriet: bare de aktive medlemskapene, også for systemarkitektene. */
+  const egne = (p: Person): Fagmiljo[] => aktiveI(p).sort()
+  const egneFagmiljoer = (bruker: string) =>
+    som(db, bruker, async (tx) => [...(await tx.query<{ f: string[] }>('select public.mine_egne_fagmiljoer() as f')).rows[0]!.f].sort())
+
+  it('svarer etter de aktive medlemskapene alene, og gir systemarkitekten ingenting der hen ikke er medlem', async () => {
+    for (const p of PERSONLISTE) {
+      for (const f of ['A', 'B'] as const) {
+        const args = [galleri.fagmiljo[f], galleri.id[p]]
+        expect(await svar('select intern.er_eget_medlem_i($1, $2)', args), `${p} eget medlem i ${f}`).toBe(egne(p).includes(f))
+      }
+    }
+    // Systemarkitekten er «medlem» av B etter den gamle hjelperen, men ikke selv.
+    const sbB = [galleri.fagmiljo.B, galleri.id.systemarkitekt]
+    expect(await svar('select intern.er_medlem_i($1, $2)', sbB)).toBe(true)
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', sbB)).toBe(false)
+    const aaA = [galleri.fagmiljo.A, galleri.id.arkitektB]
+    expect(await svar('select intern.er_lokal_admin_i($1, $2)', aaA)).toBe(true)
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', aaA)).toBe(false)
+  })
+
+  it('svarer likt med intern.er_medlem_i for alle som ikke er systemarkitekter', async () => {
+    for (const p of PERSONLISTE.filter((p) => (PERSONER[p] as { systemarkitekt?: boolean }).systemarkitekt !== true)) {
+      for (const f of ['A', 'B'] as const) {
+        const args = [galleri.fagmiljo[f], galleri.id[p]]
+        expect(await svar('select intern.er_eget_medlem_i($1, $2)', args), `${p} i ${f}`).toBe(
+          await svar('select intern.er_medlem_i($1, $2)', args),
+        )
+      }
+    }
+  })
+
+  it('gir den innloggede bare sine egne aktive fagmiljøer, også som systemarkitekt', async () => {
+    for (const p of PERSONLISTE) {
+      expect(await egneFagmiljoer(galleri.id[p]), p).toEqual(egne(p).map((f) => galleri.fagmiljo[f]).sort())
+    }
+  })
+
+  it('bruker den innloggede når brukeren ikke er oppgitt, og gir nei uten fagmiljø eller bruker', async () => {
+    const somInnlogget = (bruker: string, fagmiljo: string) =>
+      db.transaction(async (tx) => {
+        await tx.query(`select set_config('request.jwt.claims', $1, true)`, [JSON.stringify({ sub: bruker, role: 'authenticated' })])
+        return (await tx.query<{ e: boolean }>('select intern.er_eget_medlem_i($1) as e', [fagmiljo])).rows[0]!.e
+      })
+    expect(await somInnlogget(galleri.id.systemarkitekt, galleri.fagmiljo.A)).toBe(true)
+    expect(await somInnlogget(galleri.id.systemarkitekt, galleri.fagmiljo.B)).toBe(false)
+    expect(await somInnlogget(galleri.id.vanligB, galleri.fagmiljo.B)).toBe(true)
+    expect(await svar('select intern.er_eget_medlem_i(null, $1)', [galleri.id.vanligA])).toBe(false)
+    expect(await svar('select intern.er_eget_medlem_i($1, null)', [galleri.fagmiljo.A])).toBe(false)
+    expect(await svar('select intern.er_eget_medlem_i($1)', [galleri.fagmiljo.A])).toBe(false)
+  })
+
+  it('teller ikke et invitert medlemskap, heller ikke for en systemarkitekt', async () => {
+    const invitert = await opprettBruker(db, { brukernavn: 'test.invitert572', fornavn: 'Inge', etternavn: 'Invitert', rolle: 'user' })
+    const arkitekt = await opprettBruker(db, { brukernavn: 'test.arkitekt572', fornavn: 'Aria', etternavn: 'Arkitekt', rolle: 'user' })
+    await gjorTilSystemarkitekt(db, arkitekt)
+    await db.transaction(async (tx) => {
+      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Test: invitert medlemskap (syntetisk)', true)`)
+      for (const bruker of [invitert, arkitekt]) {
+        await tx.query(`insert into public.medlemskap (bruker_id, fagmiljo_id, status) values ($1, $2, 'invitert')`, [bruker, galleri.fagmiljo.B])
+      }
+    })
+    for (const bruker of [invitert, arkitekt]) {
+      expect(await svar('select intern.er_eget_medlem_i($1, $2)', [galleri.fagmiljo.B, bruker])).toBe(false)
+      expect(await egneFagmiljoer(bruker)).not.toContain(galleri.fagmiljo.B)
+    }
+    // Systemarkitekten er fortsatt «medlem» etter den gamle hjelperen.
+    expect(await svar('select intern.er_medlem_i($1, $2)', [galleri.fagmiljo.B, arkitekt])).toBe(true)
+  })
+
+  it('teller ikke et arkivert fagmiljø, og ikke et avsluttet medlemskap', async () => {
+    const nytt = await opprettFagmiljo(db, { nokkel: 'test-eget-d', navn: 'Testmiljø D', administrator: galleri.id.arkitektB })
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', [nytt, galleri.id.arkitektB])).toBe(true)
+    expect(await egneFagmiljoer(galleri.id.arkitektB)).toContain(nytt)
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', [nytt, galleri.id.systemarkitekt])).toBe(false)
+
+    await db.transaction(async (tx) => {
+      await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Test: arkivert fagmiljø (syntetisk)', true)`)
+      await tx.query(`update public.fagmiljoer set status = 'arkivert' where id = $1`, [nytt])
+    })
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', [nytt, galleri.id.arkitektB])).toBe(false)
+    expect(await egneFagmiljoer(galleri.id.arkitektB)).toEqual([galleri.fagmiljo.B])
+    // avsluttetA har avsluttet medlemskapet i A.
+    expect(await svar('select intern.er_eget_medlem_i($1, $2)', [galleri.fagmiljo.A, galleri.id.avsluttetA])).toBe(false)
+  })
+
+  it('kan ikke kalles uten innlogging, og intern.er_eget_medlem_i kan ikke kalles fra nettleseren', async () => {
+    const feil = (bruker: string | null, sql: string) =>
+      som(db, bruker, (tx) => tx.query(sql)).then(
+        () => null,
+        (e: { code?: string }) => e.code,
+      )
+    expect(await feil(null, 'select public.mine_egne_fagmiljoer()')).toBe('42501')
+    expect(await feil(galleri.id.systemarkitekt, 'select intern.er_eget_medlem_i(gen_random_uuid())')).toBe('42501')
+    expect(await feil(galleri.id.vanligA, 'select intern.er_eget_medlem_i(gen_random_uuid())')).toBe('42501')
   })
 })
