@@ -47,6 +47,12 @@ Ingen aktivering med reelle data før §3.4 og P7.
 - Snakkeboblens pil ligger utenfor selve boblen både over og under
   ankeret. Ingen scrollbar forårsaket av pilspissen; begrens og rull bare
   det indre innholdet når nødvendig. Tilgjengelig på tastatur og berøring.
+- Statusboblen dekker aldri cellen den hører til. Den velger side (over
+  eller under) én gang når den åpnes, og pilen bytter ikke side og peker
+  fortsatt på cellen når innholdet vokser; får ikke alt plass, ruller
+  innholdet. «Merknad» åpner merknadsfeltet og «Hele dagen» øverst, rett
+  under verktøylinjen og over statusgruppene, synlig i visningsområdet,
+  og merknadsfeltet får fokus (Peder 27.11.2026).
 - Alle flater fungerer på PC og mobil, i lyst og mørkt tema, med tastatur
   og berøring; ingen dekorative statusanimasjoner; presisjonsmarkøren ved flytting beholdes.
 
