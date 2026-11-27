@@ -953,8 +953,10 @@ egen variant. Bygg nye regler og funksjoner på disse:
 | --- | --- |
 | `intern.er_medlem_i(fagmiljo, bruker default auth.uid())` | Aktivt medlemskap i det aktive fagmiljøet, eller systemarkitekt. Nei for et tomt fagmiljø eller en tom bruker |
 | `intern.kan_lese_omfang(omfang, fagmiljo, bruker default auth.uid())` | `felles`: aktivt medlemskap (`intern.har_aktivt_medlemskap`). `fagmiljo`: `intern.er_medlem_i`. `gruppe`: bare systemarkitekter til gruppene finnes (P6). Alt annet: nei |
+| `intern.er_eget_medlem_i(fagmiljo, bruker default auth.uid())` | Eget aktivt medlemskap i det aktive fagmiljøet, **uten** systemarkitektunntak (#572). Nei for et invitert eller avsluttet medlemskap, et arkivert fagmiljø, et tomt fagmiljø og en tom bruker |
 | `intern.er_lokal_admin_i(fagmiljo, bruker default auth.uid())` | Administrerer fagmiljøet nå (`intern.administrerte_fagmiljoer`: aktiv tildeling, aktivt medlemskap, aktivt fagmiljø), eller systemarkitekt. Den gamle adminrollen teller ikke |
 | `public.mine_lesbare_fagmiljoer()` | Fagmiljøene den innloggede kan lese lokalt innhold i: de aktive medlemskapene i aktive fagmiljøer, alle for en systemarkitekt, ingen uten aktivt medlemskap |
+| `public.mine_egne_fagmiljoer()` | Fagmiljøene den innloggede selv er aktivt medlem av (`intern.er_eget_medlem_i`), også for en systemarkitekt; ingen uten aktivt medlemskap |
 | `public.mine_administrerte_fagmiljoer()` | Fagmiljøene den innloggede administrerer nå (`intern.er_lokal_admin_i`), alle for en systemarkitekt, ingen uten aktivt medlemskap |
 | `public.er_systemarkitekt()` | Om den innloggede er systemarkitekt; nei uten aktivt medlemskap |
 | `intern.arbeidsfagmiljo(bruker)` | Arbeidskonteksten (P4b, [under](#fortolkningen-per-fagmiljø)): fagmiljøet en systemarkitekt har valgt å se (når det er aktivt), ellers det aktive primærmedlemskapet i et aktivt fagmiljø, ellers null |
@@ -968,7 +970,12 @@ svarer bare om den innloggede selv, og appen bruker dem til å vise det
 brukeren får gjøre.
 
 Systemarkitekten er «medlem» av alle fagmiljøer her, fordi rettighetsmatrisen
-(P0 §5.2) lar systemarkitekten lese alt. Ingenting er tatt i bruk av
+(P0 §5.2) lar systemarkitekten lese alt. Det som ikke skal gi
+systemarkitektene noe ekstra, som personalfunksjonene (`docs/personal.md`
+§3.3) og funksjonsbryterne per fagmiljø, bygger i stedet på
+`intern.er_eget_medlem_i` og `public.mine_egne_fagmiljoer()`
+(`supabase/migrations/20261127190000_eget_medlemskap.sql`, #572). En lokal
+administrator uten unntak er `intern.administrerte_fagmiljoer`. Ingenting er tatt i bruk av
 migrasjonen selv; rettighetene endres i P2a–d (faginnholdet: under). Testene står i
 `src/__tests__/rettighetshjelpere.test.ts`.
 

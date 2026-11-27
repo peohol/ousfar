@@ -43,6 +43,8 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'min_profil()': null,
   'mine_administrerte_fagmiljoer()': [],
   'mine_lesbare_fagmiljoer()': [],
+  // #572: fagmiljøene den innloggede selv er aktivt medlem av.
+  'mine_egne_fagmiljoer()': [],
   // P6: gruppene den innloggede kan lese.
   'mine_lesbare_grupper()': [],
   // Gruppesymbolene: gruppene den innloggede styrer.

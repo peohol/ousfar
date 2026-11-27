@@ -229,6 +229,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // P2.0: den innloggedes egen status for beskjeden i appen (docs/fagmiljoer.md).
   'min_medlemskapsstatus()': 'eier',
   'mine_administrerte_fagmiljoer()': 'eier',
+  // #572: fagmiljøene den innloggede selv er aktivt medlem av, uten systemarkitektunntak.
+  'mine_egne_fagmiljoer()': 'eier',
   'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).

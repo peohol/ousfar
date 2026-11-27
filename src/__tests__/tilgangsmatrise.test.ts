@@ -34,7 +34,7 @@ type Utfall = 'tilgang' | 'avvist'
 type Etappe = (typeof HOLDER)[number]
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b', 'P5'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b', 'P5', '#572'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -71,6 +71,9 @@ const nevner = (k: Kontekst, kall: string, id: string, parametre: unknown[] = []
 
 const lesKommentar = (tilstand: 'publisert' | 'utkast', hvilken: keyof Testdata) => (k: Kontekst) =>
   nevner(k, `public.les_kommentarer($1, array[$2]::uuid[])`, k.d[hvilken], [tilstand, k.d[hvilken]])
+
+/** Om fagmiljøet er blant den innloggedes egne (#572). */
+const egetFagmiljo = (f: 'A' | 'B') => (k: Kontekst) => verdi(k, 'select $1 = any (public.mine_egne_fagmiljoer())', [k.g.fagmiljo[f]])
 
 const SCENARIOER: readonly Scenario[] = [
   // --- P2.0: gyldig token, men ingen aktive medlemskap ---------------------
@@ -260,6 +263,17 @@ const SCENARIOER: readonly Scenario[] = [
   { navn: 'gir nasjonalt redaktøransvar før B2 er slått på', person: 'systemarkitekt', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.tildel_redaktoransvar($1, 'fagsider')`, [k.g.id.redaktorNasjonal]) },
   { navn: 'leser redaktøroversikten for A som lokal admin i B', person: 'adminB', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.les_redaktoransvar($1)', [k.g.fagmiljo.A]) },
   { navn: 'leser redaktøransvarene direkte i tabellen', person: 'adminA', etappe: 'P5', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.redaktoransvar') },
+
+  // --- #572: eget medlemskap, uten systemarkitektunntak (docs/fagmiljoer.md) ---
+  { navn: 'har A blant egne fagmiljøer som medlem', person: 'systemarkitekt', etappe: '#572', idag: 'tilgang', mal: 'tilgang', prov: egetFagmiljo('A') },
+  { navn: 'har B blant egne fagmiljøer uten medlemskap', person: 'systemarkitekt', etappe: '#572', idag: 'avvist', mal: 'avvist', prov: egetFagmiljo('B') },
+  { navn: 'har A blant egne fagmiljøer som lokal admin bare i B', person: 'arkitektB', etappe: '#572', idag: 'avvist', mal: 'avvist', prov: egetFagmiljo('A') },
+  { navn: 'har B blant egne fagmiljøer', person: 'vanligA', etappe: '#572', idag: 'avvist', mal: 'avvist', prov: egetFagmiljo('B') },
+  { navn: 'har A blant egne fagmiljøer etter avsluttet medlemskap', person: 'avsluttetA', etappe: '#572', idag: 'avvist', mal: 'avvist', prov: egetFagmiljo('A') },
+  { navn: 'har B blant egne fagmiljøer som medlem', person: 'avsluttetA', etappe: '#572', idag: 'tilgang', mal: 'tilgang', prov: egetFagmiljo('B') },
+  ...(['utenMedlemskap', 'tidligereAdmin'] as const).map((person): Scenario => (
+    { navn: 'har noe blant egne fagmiljøer', person, etappe: '#572', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select cardinality(public.mine_egne_fagmiljoer()) > 0') }
+  )),
 ]
 
 /** Scenarioene der målet ikke er nådd ennå, per etappe. */

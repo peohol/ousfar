@@ -88,6 +88,8 @@ export const REKKEVIDDEHJELPERE = [
   'kan_lese_omfang',
   'er_medlem_i',
   'er_lokal_admin_i',
+  // #572: eget aktivt medlemskap, uten systemarkitektunntak (supabase/migrations/*_eget_medlemskap.sql).
+  'er_eget_medlem_i',
   // P2b: diskusjonene (supabase/migrations/*_samhandling_per_fagmiljo.sql).
   'kan_lese_diskusjonsside',
   'lesbar_diskusjon',
@@ -131,7 +133,7 @@ export const REKKEVIDDEHJELPERE = [
   'las_gruppechat',
 ] as const
 const KALLER_REKKEVIDDEKONTROLL = new RegExp(
-  `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_lesbare_fagmiljoer\\s*\\(`,
+  `\\bintern\\s*\\.\\s*(${REKKEVIDDEHJELPERE.join('|')})\\s*\\(|\\bmine_(lesbare|egne)_fagmiljoer\\s*\\(`,
 )
 
 /** Det som må stemme med funksjonen for at kontrollen den er erklært med, kan være riktig. */
