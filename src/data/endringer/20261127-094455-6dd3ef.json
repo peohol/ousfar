@@ -1,0 +1,18 @@
+{
+  "id": "20261127-094455-6dd3ef",
+  "semver": "patch",
+  "opprettet": "2026-11-27T09:44:55Z",
+  "sammendrag": "Pene rullefelt som holder seg inne i kortene",
+  "typer": [
+    "Design / layout"
+  ],
+  "omfang": "Moderat omfang",
+  "gjelder": [
+    "hele appen"
+  ],
+  "punkter": [
+    "Rullefeltene i hele appen ser ut som på mobil: bare et tynt håndtak i den turkise aksentfargen, uten piler og uten grå bakgrunn.",
+    "Håndtaket er litt gjennomsiktig i ro og blir helt dekkende og litt bredere når du holder pekeren over det eller drar i det.",
+    "I kort og paneler holder rullefeltet seg innenfor de avrundede hjørnene i stedet for å legge seg over dem."
+  ]
+}
