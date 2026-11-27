@@ -227,7 +227,7 @@ Vedtatt av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
 - **Vaktbelastningen skal kunne etterprøves.** En oversikt viser per
   medarbeider og vakttype antall, forventet antall og avvik over et valgt
   tidsrom. Med et forslag vises også antall i forslaget, samlet etter
-  godkjenning og avviket etterpå, over det samme tidsrommet. En vakt som
+  publisering og avviket etterpå, over det samme tidsrommet. En vakt som
   flyttes til en annen, telles bare én gang.
 
 **Fasit (syntetiske medarbeidere A og B):**
@@ -473,7 +473,8 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   uansett klokkeslett. Det finnes derfor ingen kombinasjons- eller
   eksklusjonsregler. **Ingen status betyr til stede** på ordinære
   arbeidsdager. Datamodellen håndhever regelen (høyst én status per
-  medarbeider og dato, og høyst én medarbeider per vakttype og dato).
+  medarbeider og dato, og høyst det konfigurerte antallet medarbeidere
+  per bemanningsoppgave og dato).
 - **Standardoppsettet har tre visningsgrupper** (revidert 27.11.2026),
   hver status med et ikon fra ett felles ikonbibliotek (ingen emojier):
   - *Til stede:* Vakt 1, Vakt 2, Referent og Opplæring; også ingen status.
@@ -609,8 +610,8 @@ OUSFAR ([#561](https://github.com/peohol/ousfar/issues/561)). Den bygger på
 Peders bestilling 26.11.2026, ChatGPTs planforslag i
 [#561](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)
 og kartleggingen av OUSFAR og prototypen. Ingen kode eller
-produksjonsmigrasjon bygges før planen er slått sammen og designretningen er
-valgt (§8.12, B1). Unntaket er domenekoden uten database og visning
+produksjonsmigrasjon utover P2a bygges før planen er slått sammen og
+P1 er akseptert (§8.11–8.12). Unntaket er domenekoden uten database og visning
 (P2a), som kan bygges parallelt med designarbeidet når planen er godkjent
 (vedtatt, B11).
 
@@ -962,7 +963,6 @@ helår), med indeks på fagmiljø og dato. Ingen henting av hele historikken.
 | K-KLA-3 | En kladd med konflikt kan ikke publiseres; serveren kontrollerer på nytt ved publisering, også når to planleggere publiserer samtidig |
 | K-KLA-4 | Endret grunnlag uten konflikt vises før publisering, og «Oppdater» gir en gyldig kladd med færrest mulige endringer |
 | K-KLA-5 | Endring i publisert plan (manuelt, overtakelse eller publisert forslag) er atomisk med versjonskontroll per celle; en samtidig egen statusendring gir konflikt for hele endringen, prøvd med to forbindelser mot ekte Postgres 17 |
-
 | K-KLA-6 | Lag forslag oppretter delt kladd direkte, manuelle vaktendringer inngår, og Avbryt forkaster kun kladden; operativ plan og nye medarbeiderstatuser bevares, også ved samtidig redigering |
 | K-KLA-7 | Publiser forslag godtar og publiserer atomisk; ingen separat Godta; faktisk udekket behov krever advarsel/bekreftelse; ved feil rulles hele transaksjonen tilbake |
 | K-KLA-8 | Bare siste publisering kan trekkes tilbake innen 24 timer, med validert atomisk gjenoppretting av forrige plan; test grensen, avviklede dager, senere endringer, tilgang og varsler |
