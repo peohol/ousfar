@@ -921,7 +921,8 @@ står i [personal-design.md](personal-design.md) §5:
 - **Etter publisering** står en publisert vakt. En kollega kan aldri
   endre den, heller ikke ved slett, flytting, flervalg eller angre
   (B15). VPA/admin kan korrigere manuelt utenfor kladdarbeidet som
-  én validert operativ endring. I et aktivt forslag inngår vakter
+  én validert operativ endring, uten egen bekreftelsesdialog; den gjelder
+  med en gang og kan angres (Peder 27.11.2026). I et aktivt forslag inngår vakter
   i forslagets tidsrom i kladden; på publiserte dager bare når forslaget
   uttrykkelig tillater endringer i publisert plan (A-PUB-05/06).
 - **Trekk tilbake siste publisering** er en ny validert, atomisk

@@ -92,6 +92,10 @@ Ingen aktivering med reelle data før §3.4 og P7.
   berøringsrulling, tastaturalternativ og Escape.
 - Det dratte kortet beholder form og innhold, med delvis gjennomsiktig
   bakgrunn og backdrop-blur ca. 3 px (justerbar designverdi).
+- Forklarende tekst under dra-og-slipp vises bare når slippet **ikke** er
+  mulig: som en snakkeboble over målet (feltet man forsøker å slippe på),
+  med «Ikke mulig» og årsaken. Ingen tekst følger pekeren, heller ikke
+  «Flytt hit» eller «Samme sted» (Peder 27.11.2026).
 - Til stede er en **virtuell** draggable, bare på dager personen er aktiv
   og planlagt til stede uten registrert status; subtil halvtransparent
   kontur uten fyll. Ikke lagre en ekstra status. Når en tom tilstede-celle
@@ -242,7 +246,9 @@ For manuelle vakter før det finnes et automatisk forslag opprettes/utvides
 kladden i det upubliserte tidsrommet; når det finnes én aktiv kladd, må et
 nytt periodevalg ikke lydløst forkaste den. VPA kan fremdeles korrigere
 en publisert vakt manuelt utenfor kladdarbeidet gjennom eksisterende
-atomiske kommando med tydelig bekreftelse på operativ endring. En vakt på
+atomiske kommando, uten egen bekreftelsesdialog («Endre publisert
+vaktplan?»): vaktplanansvarlig forstår at endringen er operativ, den gjelder
+med en gang og kan angres (Peder 27.11.2026). En vakt på
 en publisert dag inngår i kladden bare når forslaget uttrykkelig tillater
 endringer i publisert plan (punkt 1); ellers er en manuell endring der en
 slik operativ korrigering. Dette er
