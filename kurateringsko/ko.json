@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-27T08:29:51.870Z",
+  "oppdatert_kl": "2026-11-27T12:32:18.274Z",
   "malt_kl": "2026-11-27T00:44:45.658Z",
   "teller": 91,
   "stoffer": {
@@ -8336,33 +8336,5 @@
       ]
     }
   },
-  "okter": {
-    "kurateringsko/okt/20261125-074952": {
-      "ider": [
-        "fullfort-2",
-        "fullfort-1",
-        "forny-4",
-        "forny-3",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-2",
-        "sha256": "b45b6f088c4765f573e54285b0768335f1382d309463e533bdc2f17aa5a8136e",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-2",
-          "foresporsel_sha256": "b45b6f088c4765f573e54285b0768335f1382d309463e533bdc2f17aa5a8136e",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "risperidon er alt ført som publisert fra kurateringsgrenen 532ff89e-795e-4c60-8b32-f5771b766c56.",
-          "behandlet_kl": "2026-11-25T11:11:56.244Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45602133535"
-        }
-      },
-      "besvart_commit": "ffc562c071d62fdb1eecf6c184e1a30c84843a94",
-      "sist_brukt_kl": "2026-11-25T11:11:56.244Z"
-    }
-  }
+  "okter": {}
 }
