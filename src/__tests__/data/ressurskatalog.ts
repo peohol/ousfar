@@ -180,6 +180,7 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'intern.kontosperrer': k('tilgang', 'P3: kontoene som er sperret i Auth fordi de står uten aktivt medlemskap'),
   'public.funksjoner': k('tilgang', '#598: funksjonene som kan slås av og på per fagmiljø; leses bare gjennom funksjonene'),
   'public.funksjonsbrytere': k('tilgang', '#598: tilstanden til hver funksjon per fagmiljø; leses bare gjennom funksjonene'),
+  'public.funksjonsgodkjenninger': k('tilgang', '#598: fagmiljøene en funksjon er godkjent for ordinær bruk i; endres bare med migrasjon fra eierprosjektet'),
   'public.redaktoransvar': k('forvaltning', 'P5: redaktøransvaret for en ressurs, fortolkningen i et fagmiljø eller fagsidene; leses bare gjennom funksjonene'),
 
   // Offentlige kilder.

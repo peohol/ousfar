@@ -47,7 +47,7 @@ const miljo = (id: string, navn: string, testmiljo: boolean, standard = false) =
 /** Et lager i minnet med det samme vernet som databasen. */
 function minnelager(): Funksjonsbryterlager & { data: Funksjonsoversikt } {
   const data: Funksjonsoversikt = {
-    funksjoner: [{ nokkel: 'testfunksjon', navn: 'Testfunksjon', beskrivelse: 'Syntetisk funksjon.', virkeligeFagmiljoer: false, brytere: [] }],
+    funksjoner: [{ nokkel: 'testfunksjon', navn: 'Testfunksjon', beskrivelse: 'Syntetisk funksjon.', godkjenteFagmiljoer: [], brytere: [] }],
     fagmiljoer: [miljo('a', 'Fagmiljø A', false, true), miljo('t', 'Testmiljø T', true)],
   }
   return {
@@ -56,7 +56,7 @@ function minnelager(): Funksjonsbryterlager & { data: Funksjonsoversikt } {
     settBryter: vi.fn(async (funksjon: string, fagmiljo: string, tilstand: Funksjonstilstand) => {
       const f = data.funksjoner.find((x) => x.nokkel === funksjon)!
       const m = data.fagmiljoer.find((x) => x.id === fagmiljo)!
-      if (!tillatteTilstander(f, m).includes(tilstand)) throw new Error('Funksjonen er ikke godkjent for virkelige fagmiljøer ennå.')
+      if (!tillatteTilstander(f, m).includes(tilstand)) throw new Error('Funksjonen er ikke godkjent for dette fagmiljøet.')
       const brytere = f.brytere.filter((b) => b.fagmiljo !== fagmiljo)
       ;(f as { brytere: Funksjonsbeskrivelse['brytere'] }).brytere =
         tilstand === 'av' ? brytere : [...brytere, { fagmiljo, tilstand, endretKl: '2026-11-27T19:00:00Z', endretAv: 'Aria Arkitekt' }]
@@ -75,9 +75,9 @@ describe('funksjonsbryterne i administrasjonsmenyen', () => {
     const lager = minnelager()
     render(<Funksjoner apen onLukk={() => {}} lager={lager} />)
     expect(await screen.findByText('Testfunksjon')).toBeTruthy()
-    expect(screen.getByText('Bare godkjent for testmiljøer.')).toBeTruthy()
+    expect(screen.getByText('Ikke godkjent for ordinær bruk i noe fagmiljø ennå.')).toBeTruthy()
 
-    // Det virkelige fagmiljøet kan bare stå av.
+    // Et fagmiljø som verken er testmiljø eller godkjent, kan bare stå av.
     const virkelig = screen.getByRole('combobox', { name: 'Testfunksjon i Fagmiljø A' }) as HTMLSelectElement
     expect(virkelig.disabled).toBe(true)
     expect([...virkelig.options].map((o) => o.value)).toEqual(['av'])
@@ -114,6 +114,21 @@ describe('funksjonsbryterne i administrasjonsmenyen', () => {
     expect(lager.settTestmiljo).not.toHaveBeenCalled()
   })
 
+  it('tilbyr alle tilstandene bare i fagmiljøet funksjonen er godkjent for, og sier hvor det er', async () => {
+    const lager = minnelager()
+    lager.data.fagmiljoer = [...lager.data.fagmiljoer, miljo('b', 'Fagmiljø B', false)]
+    ;(lager.data.funksjoner[0] as { godkjenteFagmiljoer: readonly string[] }).godkjenteFagmiljoer = ['b']
+    render(<Funksjoner apen onLukk={() => {}} lager={lager} />)
+    expect(await screen.findByText('Godkjent for ordinær bruk i Fagmiljø B.')).toBeTruthy()
+    const godkjent = screen.getByRole('combobox', { name: 'Testfunksjon i Fagmiljø B' }) as HTMLSelectElement
+    expect(godkjent.disabled).toBe(false)
+    expect([...godkjent.options].map((o) => o.value)).toEqual(['av', 'utprøving', 'på'])
+    expect(godkjent.closest('label')!.textContent).toContain('Fagmiljø B (godkjent)')
+    // Godkjenningen i B gjelder ikke i A.
+    const ikke = screen.getByRole('combobox', { name: 'Testfunksjon i Fagmiljø A' }) as HTMLSelectElement
+    expect([...ikke.options].map((o) => o.value)).toEqual(['av'])
+  })
+
   it('sier fra når ingen funksjoner er ført inn', async () => {
     const lager = minnelager()
     lager.data.funksjoner = []
@@ -145,7 +160,7 @@ describe('svarene fra databasen', () => {
           nokkel: 'personal',
           navn: 'Personal',
           beskrivelse: 'Syntetisk',
-          virkelige_fagmiljoer: false,
+          godkjente_fagmiljoer: ['a', 3],
           brytere: [
             { fagmiljo: 't', tilstand: 'utprøving', endret_kl: '2026-11-27T19:00:00Z', endret_av: null },
             { fagmiljo: 'a', tilstand: 'av' },
@@ -157,6 +172,7 @@ describe('svarene fra databasen', () => {
       fagmiljoer: [{ id: 't', nokkel: 't', navn: 'T', testmiljo: true }, { navn: 'Feil' }],
     })
     expect(o.funksjoner).toHaveLength(1)
+    expect(o.funksjoner[0]!.godkjenteFagmiljoer).toEqual(['a'])
     expect(o.funksjoner[0]!.brytere).toEqual([{ fagmiljo: 't', tilstand: 'utprøving', endretKl: '2026-11-27T19:00:00Z', endretAv: null }])
     expect(o.fagmiljoer).toEqual([expect.objectContaining({ id: 't', testmiljo: true })])
     expect(lesFunksjonsoversikt(null)).toEqual({ funksjoner: [], fagmiljoer: [] })

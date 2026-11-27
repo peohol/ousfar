@@ -284,6 +284,8 @@ const SCENARIOER: readonly Scenario[] = [
   ]),
   { navn: 'leser funksjonsoversikten', person: 'arkitektB', etappe: '#598', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select public.funksjonsoversikt()') },
   { navn: 'leser funksjonskatalogen i tabellen', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.funksjoner') },
+  { navn: 'leser godkjenningene i tabellen', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.funksjonsgodkjenninger') },
+  { navn: 'godkjenner en funksjon for eget fagmiljø', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `insert into public.funksjonsgodkjenninger (funksjon, fagmiljo_id, grunnlag) values ('personal', $1, 'Prøver uten myndighet')`, [k.g.fagmiljo.A]) },
   { navn: 'har en funksjon uten at noen er slått på', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.mine_funksjoner()) > 0`) },
 ]
 

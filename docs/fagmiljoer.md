@@ -110,7 +110,7 @@ migrasjon.
 | `medlemskap` | Hvem som tilhører hvor: `status` (`aktiv`, `invitert`, `deaktivert`), `primaer`, `fra`/`til`. Høyst ett aktivt primærmedlemskap per konto og ett gjeldende per fagmiljø |
 | `systemroller` | Systemarkitektene, knyttet til konto-ID-en. Tilbakekalles med `tilbakekalt_kl` |
 | `fagmiljoadministratorer` | Lokale administratorer. Aktiv så lenge `til` står tom |
-| `tilgangslogg` | Hver endring i de fire tabellene over, i `ressursomfang` og i funksjonsbryterne (`funksjoner`, `funksjonsbrytere`), med aktør, før og etter og begrunnelse |
+| `tilgangslogg` | Hver endring i de fire tabellene over, i `ressursomfang` og i funksjonsbryterne (`funksjoner`, `funksjonsbrytere`, `funksjonsgodkjenninger`), med aktør, før og etter og begrunnelse |
 | `ressursomfang` | Rekkevidden til hvert redigerbare objekt (P4a, under) |
 
 Alle ligger i `public` med radsikkerhet på. Nettleseren kan bare lese sine
@@ -1004,8 +1004,16 @@ Et invitert eller avsluttet medlemskap gir ingenting.
 
 **Katalogen.** `public.funksjoner` har nøkkelen, navnet og beskrivelsen til
 hver funksjon. Eierprosjektet fører inn sin funksjon med en migrasjon.
-`virkelige_fagmiljoer` står av til eierprosjektet har fått de beslutningene
-det krever, og endres bare med en migrasjon.
+
+**Godkjenningene.** `public.funksjonsgodkjenninger` har én rad for hvert
+fagmiljø en funksjon er godkjent for ordinær bruk i, med en henvisning til
+beslutningen (`grunnlag`). Eierprosjektet fører inn og fjerner rader bare med
+en migrasjon, først når det har fått de beslutningene det krever for akkurat
+det fagmiljøet (for personalfunksjonene: §3.4 avklart for fagmiljøet og
+Peders ja, K-SKJ-10). Godkjenningen er adskilt fra bryteren: ingen funksjon i
+nettleseren kan gi eller trekke den, heller ikke for systemarkitektene, og en
+godkjenning i ett fagmiljø gjelder ikke i et annet. Det finnes ingen felles
+godkjenning for alle fagmiljøer.
 
 **Testmiljøene.** `fagmiljoer.testmiljo` merker fagmiljøer for utprøving med
 oppdiktede data. Sandkasse er merket av migrasjonen. Standardfagmiljøet kan
@@ -1014,11 +1022,12 @@ aldri være testmiljø.
 **Vernet.** Databasen håndhever det uansett hvem som endrer
 (`intern.kontroller_funksjonsbrytere`, SQLSTATE `23514`):
 
-1. En funksjon som ikke er godkjent for virkelige fagmiljøer, kan bare stå på
-   `utprøving` eller `på` i et aktivt testmiljø.
-2. Testmerkingen kan ikke fjernes, og godkjenningen ikke trekkes, mens det
-   ville latt en funksjon stå på i et virkelig fagmiljø; den må slås av
-   først. Ingenting slås av i det stille.
+1. En funksjon kan bare stå på `utprøving` eller `på` i et aktivt fagmiljø
+   som er testmiljø, eller som den er godkjent for.
+2. Testmerkingen kan ikke fjernes, og en godkjenning ikke trekkes, mens det
+   ville latt en funksjon stå på i et fagmiljø den ikke er godkjent for; den
+   må slås av først. Fagmiljøet en godkjenning gjelder, står fast. Ingenting
+   slås av i det stille.
 3. Et fagmiljø kan arkiveres som før; bryterne der gjelder da ikke.
 
 Endringene tar den felles låsen og føres i `tilgangslogg` som de andre
@@ -1043,16 +1052,19 @@ det er et grensesnitt, og hver funksjon kontrollerer på nytt på serveren.
 **I appen.** Administrasjon → Funksjoner (`src/components/konto/Funksjoner.tsx`)
 er bare for systemarkitektene (`public.funksjonsoversikt`,
 `public.sett_funksjonsbryter`, `public.sett_testmiljo`). Hver endring krever en
-begrunnelse på 5–500 tegn, og et valg databasen vil avvise, tilbys ikke. En
+begrunnelse på 5–500 tegn, og et valg databasen vil avvise, tilbys ikke.
+Vinduet viser hvilke fagmiljøer hver funksjon er godkjent for. En
 endring som alt er gjort, gir det samme svaret uten å endre noe.
 
 **Tilbakeføring.** En ny migrasjon som setter `public.mine_rettigheter()`
-tilbake og fjerner funksjonene, tabellene og kolonnen `testmiljo`, når ingen
+tilbake og fjerner funksjonene, de tre tabellene og kolonnen `testmiljo`, når ingen
 funksjon bruker dem.
 
 **Testene.** `src/__tests__/funksjonsbrytere.test.ts`: hver tilstand med
 systemarkitekt med og uten eget medlemskap, vanlig medlem, invitert og avsluttet
-medlemskap, arkivert fagmiljø, virkelige fagmiljøer, testmerkingen, loggen og
+medlemskap, arkivert fagmiljø, godkjenning for ett fagmiljø (A godkjent, B
+ikke, gjennom funksjonene og direkte i tabellene), at godkjenningen ikke kan
+trekkes eller flyttes mens funksjonen står på, testmerkingen, loggen og
 gjentakelse; `funksjonsbryterpanel.test.tsx`: vinduet og svarene i appen;
 `tilgangsmatrise.test.ts`: etappen `#598`.
 

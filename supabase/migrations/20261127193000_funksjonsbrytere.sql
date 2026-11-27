@@ -7,19 +7,23 @@
 -- docs/fagmiljoer.md, «Funksjonsbrytere per fagmiljø».
 --
 -- - `public.funksjoner` er katalogen. Eierprosjektet fører inn sin funksjon
---   med en migrasjon. `virkelige_fagmiljoer` står av til eierprosjektet har
---   fått de beslutningene det krever (for personalfunksjonene Peders
---   produktgodkjenning og avklaringen i docs/personal.md §3.4), og endres
---   bare med en migrasjon.
+--   med en migrasjon.
+-- - `public.funksjonsgodkjenninger` er godkjenningen for ordinær bruk, per
+--   funksjon og fagmiljø. Eierprosjektet fører inn en rad med en migrasjon
+--   først når det har fått de beslutningene det krever for akkurat det
+--   fagmiljøet (for personalfunksjonene Peders ja og avklaringen i
+--   docs/personal.md §3.4). Godkjenningen er adskilt fra bryteren: ingen
+--   funksjon i nettleseren, heller ikke for systemarkitektene, kan gi eller
+--   trekke den, og en godkjenning i ett fagmiljø gjelder ikke i et annet.
 -- - `public.funksjonsbrytere` er tilstanden per funksjon og fagmiljø: `av`
 --   (også uten rad, for en ukjent funksjon og for et arkivert fagmiljø),
 --   `utprøving` (systemarkitekter som selv er aktive medlemmer) og `på`
 --   (alle aktive medlemmer). Systemarkitektrollen alene gir aldri noe
 --   (`intern.er_eget_medlem_i`, #572).
 -- - `fagmiljoer.testmiljo` merker fagmiljøer for syntetisk utprøving.
---   Sandkasse er det eneste. Så lenge en funksjon ikke er godkjent for
---   virkelige fagmiljøer, kan den bare stå på `utprøving` eller `på` i et
---   testmiljø, og testmerkingen kan ikke fjernes mens den gjør det.
+--   Sandkasse er det eneste. En funksjon kan bare stå på `utprøving` eller
+--   `på` i et testmiljø eller i et fagmiljø den er godkjent for der, og
+--   verken testmerkingen eller godkjenningen kan fjernes mens den gjør det.
 -- - En systemarkitekt endrer bryterne og testmerkingen i appen
 --   (Administrasjon → Funksjoner), med en begrunnelse. Alt føres i
 --   `tilgangslogg`, som de andre tilgangsendringene, og tar den felles låsen.
@@ -32,7 +36,7 @@
 -- Ingen funksjon føres inn og ingen bryter slås på her.
 --
 -- Tilbakeføring: en ny migrasjon som setter `public.mine_rettigheter()`
--- tilbake og fjerner funksjonene, tabellene og kolonnen `testmiljo`, når
+-- tilbake og fjerner funksjonene, de tre tabellene og kolonnen `testmiljo`, når
 -- ingen funksjon bruker dem. Bryterne og loggføringene er ingen
 -- personalopplysninger.
 
@@ -52,9 +56,6 @@ create table public.funksjoner (
   nokkel text primary key,
   navn text not null,
   beskrivelse text not null,
-  -- Om funksjonen kan stå på `utprøving` eller `på` i fagmiljøer som ikke er
-  -- testmiljøer. Settes bare i en migrasjon fra eierprosjektet.
-  virkelige_fagmiljoer boolean not null default false,
   opprettet_kl timestamptz not null default now(),
   constraint funksjoner_nokkel_form check (char_length(nokkel) <= 60 and nokkel ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   constraint funksjoner_navn_form check (navn = btrim(navn) and char_length(navn) between 2 and 80),
@@ -87,6 +88,27 @@ create index funksjonsbrytere_fagmiljo_idx on public.funksjonsbrytere (fagmiljo_
 alter table public.funksjonsbrytere enable row level security;
 revoke all on table public.funksjonsbrytere from public, anon, authenticated;
 
+-- --- Godkjenningene for ordinær bruk ------------------------------------------
+
+create table public.funksjonsgodkjenninger (
+  funksjon text not null references public.funksjoner (nokkel),
+  fagmiljo_id uuid not null references public.fagmiljoer (id),
+  -- Beslutningen godkjenningen bygger på, som en henvisning (f.eks. oppgaven
+  -- med Peders ja). Ingen personalopplysninger.
+  grunnlag text not null,
+  godkjent_kl timestamptz not null default now(),
+  primary key (funksjon, fagmiljo_id),
+  constraint funksjonsgodkjenninger_grunnlag_form check (grunnlag = btrim(grunnlag) and char_length(grunnlag) between 5 and 500)
+);
+
+comment on table public.funksjonsgodkjenninger is
+  'Fagmiljøene der en funksjon er godkjent for ordinær bruk (#598). Føres inn og fjernes bare med en migrasjon fra eierprosjektet. Se docs/fagmiljoer.md.';
+
+create index funksjonsgodkjenninger_fagmiljo_idx on public.funksjonsgodkjenninger (fagmiljo_id);
+
+alter table public.funksjonsgodkjenninger enable row level security;
+revoke all on table public.funksjonsgodkjenninger from public, anon, authenticated;
+
 -- Som de andre tilgangstabellene: én endring om gangen, og alt i loggen.
 create trigger funksjoner_serialiser
 before insert or update or delete on public.funksjoner
@@ -94,6 +116,10 @@ for each statement execute function intern.serialiser_tilgang();
 
 create trigger funksjonsbrytere_serialiser
 before insert or update or delete on public.funksjonsbrytere
+for each statement execute function intern.serialiser_tilgang();
+
+create trigger funksjonsgodkjenninger_serialiser
+before insert or update or delete on public.funksjonsgodkjenninger
 for each statement execute function intern.serialiser_tilgang();
 
 create trigger funksjoner_logg
@@ -104,6 +130,10 @@ create trigger funksjonsbrytere_logg
 after insert or update or delete on public.funksjonsbrytere
 for each row execute function intern.loggfor_tilgang();
 
+create trigger funksjonsgodkjenninger_logg
+after insert or update or delete on public.funksjonsgodkjenninger
+for each row execute function intern.loggfor_tilgang();
+
 create trigger funksjoner_faste_felter
 before update on public.funksjoner
 for each row execute function intern.tilgang_faste_felter('nokkel', 'opprettet_kl');
@@ -112,11 +142,16 @@ create trigger funksjonsbrytere_faste_felter
 before update on public.funksjonsbrytere
 for each row execute function intern.tilgang_faste_felter('funksjon', 'fagmiljo_id');
 
--- --- Vernet for virkelige fagmiljøer -----------------------------------------
+create trigger funksjonsgodkjenninger_faste_felter
+before update on public.funksjonsgodkjenninger
+for each row execute function intern.tilgang_faste_felter('funksjon', 'fagmiljo_id', 'godkjent_kl');
+
+-- --- Vernet for fagmiljøene som ikke er godkjent ------------------------------
 
 -- Gir avslaget når funksjonen ikke kan stå på `tilstand` i fagmiljøet, ellers
--- null: en funksjon som ikke er godkjent for virkelige fagmiljøer, kan bare
--- prøves ut eller slås på i et aktivt testmiljø. `av` er alltid lov.
+-- null: `utprøving` og `på` bare i et aktivt fagmiljø som er testmiljø, eller
+-- som funksjonen er godkjent for (`public.funksjonsgodkjenninger`). `av` er
+-- alltid lov.
 create function intern.funksjonsbryteravslag(funksjon text, fagmiljo uuid, tilstand text)
 returns text
 language sql
@@ -129,20 +164,20 @@ as $$
     when not exists (
       select 1 from public.fagmiljoer f where f.id = funksjonsbryteravslag.fagmiljo and f.status = 'aktiv'
     ) then 'Et arkivert fagmiljø kan bare ha funksjonene av.'
-    when not exists (
-      select 1
-      from public.funksjoner k
-      join public.fagmiljoer f on f.id = funksjonsbryteravslag.fagmiljo
-      where k.nokkel = funksjonsbryteravslag.funksjon and (k.virkelige_fagmiljoer or f.testmiljo)
-    ) then 'Funksjonen er ikke godkjent for virkelige fagmiljøer ennå, og kan bare prøves ut eller slås på i et testmiljø.'
+    when exists (select 1 from public.fagmiljoer f where f.id = funksjonsbryteravslag.fagmiljo and f.testmiljo) then null
+    when exists (
+      select 1 from public.funksjonsgodkjenninger g
+      where g.funksjon = funksjonsbryteravslag.funksjon and g.fagmiljo_id = funksjonsbryteravslag.fagmiljo
+    ) then null
+    else 'Funksjonen er ikke godkjent for dette fagmiljøet, og kan bare prøves ut eller slås på i et testmiljø eller et fagmiljø den er godkjent for.'
   end
 $$;
 
 revoke all on function intern.funksjonsbryteravslag(text, uuid, text) from public, anon, authenticated, service_role;
 
 -- Holder vernet uansett hvem som endrer: en bryter, testmerkingen eller
--- statusen til et fagmiljø, eller godkjenningen av en funksjon. Det som ikke
--- lenger kan stå, stopper endringen; ingenting slås av i det stille.
+-- statusen til et fagmiljø, eller en godkjenning. Det som ikke lenger kan
+-- stå, stopper endringen; ingenting slås av i det stille.
 create function intern.kontroller_funksjonsbrytere()
 returns trigger
 language plpgsql
@@ -150,12 +185,10 @@ security definer
 set search_path = ''
 as $$
 declare
-  rad constant jsonb := to_jsonb(new);
-  -- Bryterne endringen kan gjelde: én bryter, et fagmiljø eller en funksjon.
-  bare_funksjon constant text := case tg_table_name
-    when 'funksjonsbrytere' then rad ->> 'funksjon' when 'funksjoner' then rad ->> 'nokkel' end;
-  bare_fagmiljo constant uuid := (case tg_table_name
-    when 'funksjonsbrytere' then rad ->> 'fagmiljo_id' when 'fagmiljoer' then rad ->> 'id' end)::uuid;
+  rad constant jsonb := case tg_op when 'DELETE' then to_jsonb(old) else to_jsonb(new) end;
+  -- Bryterne endringen kan gjelde: én bryter eller godkjenning, eller et fagmiljø.
+  bare_funksjon constant text := case when tg_table_name <> 'fagmiljoer' then rad ->> 'funksjon' end;
+  bare_fagmiljo constant uuid := (case when tg_table_name = 'fagmiljoer' then rad ->> 'id' else rad ->> 'fagmiljo_id' end)::uuid;
   avslag text;
 begin
   -- Bryterne i et arkivert fagmiljø gjelder ikke (`intern.funksjonstilstand`)
@@ -171,7 +204,7 @@ begin
     raise exception '%', case tg_table_name
       when 'funksjonsbrytere' then avslag
       when 'fagmiljoer' then 'Slå av funksjonene som prøves ut eller er på i fagmiljøet først. ' || avslag
-      else 'Slå av funksjonen i fagmiljøene som ikke er testmiljøer først.'
+      else 'Slå av funksjonen i fagmiljøet først, så den ikke står på uten godkjenning.'
     end using errcode = '23514';
   end if;
   return null;
@@ -190,8 +223,8 @@ create trigger fagmiljoer_funksjonsvern
 after update of testmiljo, status on public.fagmiljoer
 for each row execute function intern.kontroller_funksjonsbrytere();
 
-create trigger funksjoner_vern
-after update of virkelige_fagmiljoer on public.funksjoner
+create trigger funksjonsgodkjenninger_vern
+after update or delete on public.funksjonsgodkjenninger
 for each row execute function intern.kontroller_funksjonsbrytere();
 
 -- --- Hvem som har en funksjon -------------------------------------------------
@@ -348,8 +381,8 @@ $$;
 revoke all on function intern.funksjonsbegrunnelse(text) from public, anon, authenticated, service_role;
 
 -- Det systemarkitektene ser i Administrasjon → Funksjoner: katalogen med
--- tilstanden i hvert fagmiljø (`av` uten rad), og fagmiljøene med
--- testmerkingen.
+-- tilstanden i hvert fagmiljø (`av` uten rad) og de aktive fagmiljøene den
+-- er godkjent for, og fagmiljøene med testmerkingen.
 create function public.funksjonsoversikt()
 returns jsonb
 language sql
@@ -364,7 +397,12 @@ as $$
         'nokkel', k.nokkel,
         'navn', k.navn,
         'beskrivelse', k.beskrivelse,
-        'virkelige_fagmiljoer', k.virkelige_fagmiljoer,
+        'godkjente_fagmiljoer', coalesce((
+          select jsonb_agg(g.fagmiljo_id order by g.fagmiljo_id)
+          from public.funksjonsgodkjenninger g
+          join public.fagmiljoer f on f.id = g.fagmiljo_id and f.status = 'aktiv'
+          where g.funksjon = k.nokkel
+        ), '[]'::jsonb),
         'brytere', coalesce((
           select jsonb_agg(jsonb_build_object(
             'fagmiljo', b.fagmiljo_id,

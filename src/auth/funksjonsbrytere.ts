@@ -36,8 +36,12 @@ export interface Funksjonsbeskrivelse {
   nokkel: string
   navn: string
   beskrivelse: string
-  /** Kan prøves ut eller slås på i fagmiljøer som ikke er testmiljøer. */
-  virkeligeFagmiljoer: boolean
+  /**
+   * De aktive fagmiljøene funksjonen er godkjent for ordinær bruk i, der den
+   * kan prøves ut eller slås på uten å være testmiljø. Gis bare med en
+   * migrasjon fra eierprosjektet.
+   */
+  godkjenteFagmiljoer: readonly string[]
   /** Bryterne som ikke står på av. */
   brytere: readonly Funksjonsbryter[]
 }
@@ -67,7 +71,7 @@ export function lesFunksjonsoversikt(svar: unknown): Funksjonsoversikt {
         nokkel: f.nokkel as string,
         navn: f.navn as string,
         beskrivelse: typeof f.beskrivelse === 'string' ? f.beskrivelse : '',
-        virkeligeFagmiljoer: f.virkelige_fagmiljoer === true,
+        godkjenteFagmiljoer: liste(f.godkjente_fagmiljoer).filter((v): v is string => typeof v === 'string'),
         brytere: liste(f.brytere)
           .map(objekt)
           .filter((b) => typeof b.fagmiljo === 'string' && erTilstand(b.tilstand) && b.tilstand !== 'av')
@@ -89,22 +93,25 @@ export function lesFunksjonsoversikt(svar: unknown): Funksjonsoversikt {
 export const tilstandI = (f: Funksjonsbeskrivelse, fagmiljo: string): Funksjonstilstand =>
   f.brytere.find((b) => b.fagmiljo === fagmiljo)?.tilstand ?? 'av'
 
+/** Om funksjonen er godkjent for ordinær bruk i fagmiljøet. */
+export const erGodkjentI = (f: Funksjonsbeskrivelse, fagmiljo: string): boolean => f.godkjenteFagmiljoer.includes(fagmiljo)
+
 /**
  * Tilstandene funksjonen kan få i fagmiljøet, som databasen avgjør det
- * (`intern.funksjonsbryteravslag`): alle i et testmiljø og for en funksjon
- * som er godkjent for virkelige fagmiljøer, ellers bare av.
+ * (`intern.funksjonsbryteravslag`): alle i et testmiljø og i et fagmiljø
+ * funksjonen er godkjent for, ellers bare av.
  */
 export const tillatteTilstander = (f: Funksjonsbeskrivelse, fagmiljo: Funksjonsfagmiljo): readonly Funksjonstilstand[] =>
-  f.virkeligeFagmiljoer || fagmiljo.testmiljo ? FUNKSJONSTILSTANDER : ['av']
+  fagmiljo.testmiljo || erGodkjentI(f, fagmiljo.id) ? FUNKSJONSTILSTANDER : ['av']
 
 /**
  * Om testmerkingen kan endres for fagmiljøet: standardfagmiljøet er aldri et
- * testmiljø, og merket kan ikke fjernes mens en funksjon som bare gjelder
- * testmiljøer, prøves ut eller er på der.
+ * testmiljø, og merket kan ikke fjernes mens en funksjon som ikke er godkjent
+ * der, prøves ut eller er på der.
  */
 export function kanEndreTestmiljo(o: Funksjonsoversikt, fagmiljo: Funksjonsfagmiljo): boolean {
   if (!fagmiljo.testmiljo) return !fagmiljo.standard
-  return o.funksjoner.every((f) => f.virkeligeFagmiljoer || tilstandI(f, fagmiljo.id) === 'av')
+  return o.funksjoner.every((f) => erGodkjentI(f, fagmiljo.id) || tilstandI(f, fagmiljo.id) === 'av')
 }
 
 export interface Funksjonsbryterlager {

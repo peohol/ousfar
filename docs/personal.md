@@ -703,10 +703,13 @@ bruker derfor en ny, felles mekanisme fra Dev:
   og `på` (alle med eget medlemskap), endret i appen av en systemarkitekt
   med begrunnelse og logget i `tilgangslogg`. Personals funksjon heter
   `personal`. Mekanismen står i `docs/fagmiljoer.md`, «Funksjonsbrytere per
-  fagmiljø». P2b fører inn `personal` i katalogen med
-  `virkelige_fagmiljoer = false`, så databasen selv nekter `utprøving` og
-  `på` utenfor testmiljøene (K-SKJ-10) til en egen migrasjon etter Peders ja
-  og §3.4 endrer det. Kalendertabellene bruker
+  fagmiljø». P2b fører inn `personal` i katalogen uten noen godkjenning, så
+  databasen selv nekter `utprøving` og `på` i alle fagmiljøer som ikke er
+  testmiljøer (K-SKJ-10). Først når §3.4 er avklart for et bestemt fagmiljø
+  og Peder har sagt ja, fører en egen migrasjon fra Personal inn en rad i
+  `public.funksjonsgodkjenninger` for akkurat det fagmiljøet; den gjelder
+  ikke for noe annet fagmiljø, og ingen systemarkitekt kan gi den i appen.
+  Kalendertabellene bruker
   `public.mine_fagmiljoer_med_funksjon('personal')` i radsikkerheten og
   `intern.krev_funksjon('personal', fagmiljø)` i kommandoene.
 - **Testmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):

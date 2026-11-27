@@ -8,11 +8,13 @@
  * standard; utprøving bare for systemarkitekter med eget aktivt medlemskap;
  * på for alle egne medlemmer; aldri for systemarkitektrollen alene; håndhevet
  * på serveren; ingen spor for dem uten funksjonen; og ingen funksjon på i et
- * virkelig fagmiljø før eierprosjektet har godkjent det.
+ * fagmiljø som ikke er testmiljø, før eierprosjektet har godkjent den for
+ * akkurat det fagmiljøet (K-SKJ-10).
  */
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
+  aktiveI,
   avsluttMedlemskap,
   byggPersongalleri,
   opprettFagmiljo,
@@ -120,8 +122,8 @@ describe('uten bryter', () => {
   })
 })
 
-describe('vernet for virkelige fagmiljøer', () => {
-  it('lar ingen funksjon prøves ut eller slås på i et fagmiljø som ikke er testmiljø', async () => {
+describe('vernet for fagmiljøene funksjonen ikke er godkjent for', () => {
+  it('lar ingen funksjon prøves ut eller slås på i et fagmiljø som ikke er testmiljø eller godkjent', async () => {
     for (const f of [galleri.fagmiljo.A, galleri.fagmiljo.B]) {
       for (const t of ['utprøving', 'på']) {
         expect(await feilkode('systemarkitekt', 'select public.sett_funksjonsbryter($1, $2, $3, $4)', [FUNKSJON, f, t, GRUNN])).toBe('23514')
@@ -148,6 +150,7 @@ describe('administrasjonen', () => {
       expect(await feilkode(p, 'select public.funksjonsoversikt()'), p).toBe('42501')
       expect(await feilkode(p, 'select * from public.funksjonsbrytere'), p).toBe('42501')
       expect(await feilkode(p, 'select * from public.funksjoner'), p).toBe('42501')
+      expect(await feilkode(p, 'select * from public.funksjonsgodkjenninger'), p).toBe('42501')
     }
     expect(await feilkode(null, 'select public.mine_funksjoner()')).toBe('42501')
     expect(await feilkode(null, 'select public.funksjonsoversikt()')).toBe('42501')
@@ -174,11 +177,11 @@ describe('administrasjonen', () => {
   })
 
   it('viser systemarkitekten katalogen, bryterne og testmerkingen', async () => {
-    const oversikt = await kall<{ funksjoner: { nokkel: string; virkelige_fagmiljoer: boolean; brytere: unknown[] }[]; fagmiljoer: { id: string; testmiljo: boolean }[] }>(
+    const oversikt = await kall<{ funksjoner: { nokkel: string; godkjente_fagmiljoer: string[]; brytere: unknown[] }[]; fagmiljoer: { id: string; testmiljo: boolean }[] }>(
       'arkitektB',
       'select public.funksjonsoversikt()',
     )
-    expect(oversikt.funksjoner).toEqual([expect.objectContaining({ nokkel: FUNKSJON, navn: 'Testfunksjon', virkelige_fagmiljoer: false, brytere: [] })])
+    expect(oversikt.funksjoner).toEqual([expect.objectContaining({ nokkel: FUNKSJON, navn: 'Testfunksjon', godkjente_fagmiljoer: [], brytere: [] })])
     expect(oversikt.fagmiljoer.find((f) => f.id === T)).toMatchObject({ testmiljo: true, navn: 'Testmiljø T' })
     expect(oversikt.fagmiljoer.find((f) => f.id === galleri.fagmiljo.A)).toMatchObject({ testmiljo: false })
   })
@@ -288,16 +291,66 @@ describe('i testmiljøet', () => {
   })
 })
 
-describe('når eierprosjektet har godkjent funksjonen for virkelige fagmiljøer', () => {
-  it('kan den slås på der, og godkjenningen kan ikke trekkes mens den er på', async () => {
-    await somServer((tx) => tx.query('update public.funksjoner set virkelige_fagmiljoer = true where nokkel = $1', [FUNKSJON]))
-    await settBryter('systemarkitekt', galleri.fagmiljo.B, 'på')
-    expect(await hvemHar(galleri.fagmiljo.B)).toEqual(['adminB', 'arkitektB', 'avsluttetA', 'dobbeltAB', 'vanligB'].sort())
-    expect(await hvemHar(galleri.fagmiljo.A)).toEqual([])
-    expect((await feilFra(() => somServer((tx) => tx.query('update public.funksjoner set virkelige_fagmiljoer = false where nokkel = $1', [FUNKSJON]))))?.code).toBe('23514')
+describe('når eierprosjektet har godkjent funksjonen for ett fagmiljø', () => {
+  const A = () => galleri.fagmiljo.A
+  const B = () => galleri.fagmiljo.B
+  const MIGRASJONSGRUNNLAG = 'Syntetisk godkjenning i testen'
+  const godkjenn = (fagmiljo: string) =>
+    somServer((tx) => tx.query('insert into public.funksjonsgodkjenninger (funksjon, fagmiljo_id, grunnlag) values ($1, $2, $3)', [FUNKSJON, fagmiljo, MIGRASJONSGRUNNLAG]))
+  const trekk = (fagmiljo: string) =>
+    somServer((tx) => tx.query('delete from public.funksjonsgodkjenninger where funksjon = $1 and fagmiljo_id = $2', [FUNKSJON, fagmiljo]))
+  const egneMedlemmerI = (f: 'A' | 'B') => PERSONLISTE.filter((p) => aktiveI(p).includes(f)).sort()
 
-    await settBryter('systemarkitekt', galleri.fagmiljo.B, 'av')
-    await somServer((tx) => tx.query('update public.funksjoner set virkelige_fagmiljoer = false where nokkel = $1', [FUNKSJON]))
-    expect(await hvemHar(galleri.fagmiljo.B)).toEqual([])
+  it('kan ingen gi eller lese godkjenningen fra nettleseren, heller ikke en systemarkitekt', async () => {
+    for (const p of ['systemarkitekt', 'arkitektB', 'adminA', 'vanligA'] as const) {
+      expect(await feilkode(p, 'select * from public.funksjonsgodkjenninger'), p).toBe('42501')
+      expect(await feilkode(p, `insert into public.funksjonsgodkjenninger (funksjon, fagmiljo_id, grunnlag) values ($1, $2, 'Prøver uten myndighet')`, [FUNKSJON, A()]), p).toBe('42501')
+    }
+  })
+
+  it('kan den prøves ut og slås på i det godkjente fagmiljøet, og bare der', async () => {
+    await godkjenn(A())
+    await settBryter('systemarkitekt', A(), 'utprøving')
+    expect(await hvemHar(A())).toEqual(egneMedlemmerI('A').filter((p) => ['systemarkitekt', 'arkitektB'].includes(p)))
+    await settBryter('systemarkitekt', A(), 'på')
+    expect(await hvemHar(A())).toEqual(egneMedlemmerI('A'))
+
+    // B er ikke godkjent: verken utprøving eller på, gjennom funksjonen eller direkte.
+    for (const t of ['utprøving', 'på']) {
+      expect(await feilkode('systemarkitekt', 'select public.sett_funksjonsbryter($1, $2, $3, $4)', [FUNKSJON, B(), t, GRUNN]), t).toBe('23514')
+      expect((await feilFra(() => somServer((tx) => tx.query('insert into public.funksjonsbrytere (funksjon, fagmiljo_id, tilstand) values ($1, $2, $3)', [FUNKSJON, B(), t]))))?.code, t).toBe('23514')
+    }
+    expect(await tilstand(B())).toBe('av')
+    expect(await hvemHar(B())).toEqual([])
+    for (const p of egneMedlemmerI('B')) {
+      expect(await mineFunksjoner(p), p).not.toContainEqual(expect.objectContaining({ fagmiljo: B() }))
+      expect(await medFunksjon(p), p).not.toContain(B())
+    }
+    expect(await mineFunksjoner('vanligB')).toEqual([])
+
+    // Oversikten viser godkjenningen, og panelet tilbyr bare det databasen tillater.
+    const oversikt = await kall<{ funksjoner: { godkjente_fagmiljoer: string[] }[] }>('systemarkitekt', 'select public.funksjonsoversikt()')
+    expect(oversikt.funksjoner[0]!.godkjente_fagmiljoer).toEqual([A()])
+  })
+
+  it('kan godkjenningen ikke trekkes eller flyttes mens funksjonen prøves ut eller er på', async () => {
+    expect((await feilFra(() => trekk(A())))?.code).toBe('23514')
+    // Fagmiljøet en godkjenning gjelder, står fast.
+    expect((await feilFra(() => somServer((tx) => tx.query('update public.funksjonsgodkjenninger set fagmiljo_id = $2 where funksjon = $1', [FUNKSJON, B()]))))?.code).toBe('42501')
+    await settBryter('systemarkitekt', A(), 'utprøving')
+    expect((await feilFra(() => trekk(A())))?.code).toBe('23514')
+    expect(await tilstand(A())).toBe('utprøving')
+  })
+
+  it('kan godkjenningen trekkes når funksjonen er av, og da kan den ikke slås på igjen', async () => {
+    await settBryter('systemarkitekt', A(), 'av')
+    await trekk(A())
+    expect(await feilkode('systemarkitekt', 'select public.sett_funksjonsbryter($1, $2, $3, $4)', [FUNKSJON, A(), 'på', GRUNN])).toBe('23514')
+    expect(await hvemHar(A())).toEqual([])
+    const { rows } = await db.query<{ handling: string }>(
+      `select handling from public.tilgangslogg where handling like 'funksjonsgodkjenninger.%' and fagmiljo_id = $1 order by id`,
+      [A()],
+    )
+    expect(rows.map((r) => r.handling)).toEqual(['funksjonsgodkjenninger.insert', 'funksjonsgodkjenninger.delete'])
   })
 })

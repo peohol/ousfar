@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { klient } from '../../auth/klient'
 import {
+  erGodkjentI,
   kanEndreTestmiljo,
   lagFunksjonsbryterlager,
   MINSTE_BEGRUNNELSE,
   TILSTANDER,
   tilstandI,
   tillatteTilstander,
+  type Funksjonsbeskrivelse,
   type Funksjonsbryterlager,
+  type Funksjonsfagmiljo,
   type Funksjonsoversikt,
   type Funksjonstilstand,
 } from '../../auth/funksjonsbrytere'
@@ -16,6 +19,12 @@ import { tidspunkt } from '../../faginnhold/historikk'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { Modallag } from '../Modallag'
 import { Felt } from './Felt'
+
+/** Hvor funksjonen er godkjent for ordinær bruk, som eierprosjektet har avgjort. */
+function godkjenning(f: Funksjonsbeskrivelse, fagmiljoer: readonly Funksjonsfagmiljo[]): string {
+  const navn = fagmiljoer.filter((m) => erGodkjentI(f, m.id)).map((m) => m.navn)
+  return navn.length ? `Godkjent for ordinær bruk i ${navn.join(', ')}.` : 'Ikke godkjent for ordinær bruk i noe fagmiljø ennå.'
+}
 
 /**
  * Funksjonsbryterne per fagmiljø og testmiljøene, for systemarkitektene (#598,
@@ -73,8 +82,8 @@ export function Funksjoner({ apen, onLukk, lager: egetLager }: { apen: boolean; 
     <Modallag apen={apen} tittel="Funksjoner" ikon="gears" bred onLukk={onLukk}>
       <p className="autoerstatt__ingress">
         Funksjoner som bygges inn trinnvis, slås av og på her for hvert fagmiljø, uten en ny versjon av appen. Utprøving gir funksjonen bare til systemarkitekter som selv er
-        medlemmer av fagmiljøet; på gir den til alle medlemmene. Den som ikke har funksjonen, ser ingenting av den. Så lenge en funksjon bare er godkjent for testmiljøer, kan
-        den bare prøves ut eller slås på der. Hver endring føres i tilgangsloggen med begrunnelsen.
+        medlemmer av fagmiljøet; på gir den til alle medlemmene. Den som ikke har funksjonen, ser ingenting av den. En funksjon kan bare prøves ut eller slås på i et testmiljø
+        og i fagmiljøene prosjektet som eier den, har godkjent den for. Hver endring føres i tilgangsloggen med begrunnelsen.
       </p>
 
       {feil && (
@@ -105,7 +114,7 @@ export function Funksjoner({ apen, onLukk, lager: egetLager }: { apen: boolean; 
                   <li key={f.nokkel} className="autoerstatt__rad autoerstatt__rad--skjema">
                     <p className="verktoysperrer__mal">{f.navn}</p>
                     <p className="verktoysperrer__grunn">{f.beskrivelse}</p>
-                    <p className="felt__hjelp">{f.virkeligeFagmiljoer ? 'Godkjent for alle fagmiljøer.' : 'Bare godkjent for testmiljøer.'}</p>
+                    <p className="felt__hjelp">{godkjenning(f, fagmiljoer)}</p>
                     {fagmiljoer.map((m) => {
                       const tilstand = tilstandI(f, m.id)
                       const tillatt = tillatteTilstander(f, m)
@@ -114,7 +123,7 @@ export function Funksjoner({ apen, onLukk, lager: egetLager }: { apen: boolean; 
                         <label key={m.id} className="felt">
                           <span className="felt__merkelapp">
                             {m.navn}
-                            {m.testmiljo && ' (testmiljø)'}
+                            {m.testmiljo ? ' (testmiljø)' : erGodkjentI(f, m.id) && ' (godkjent)'}
                           </span>
                           <select
                             aria-label={`${f.navn} i ${m.navn}${m.testmiljo ? ' (testmiljø)' : ''}`}
@@ -150,7 +159,7 @@ export function Funksjoner({ apen, onLukk, lager: egetLager }: { apen: boolean; 
             <h3 id={`${id}-testmiljo`}>Testmiljøer</h3>
             <p className="felt__hjelp">
               Et testmiljø er et fagmiljø for utprøving med oppdiktede data, som Sandkasse. Standardfagmiljøet kan ikke være et testmiljø, og merket kan ikke fjernes mens en
-              funksjon som bare er godkjent for testmiljøer, prøves ut eller er på der.
+              funksjon som ikke er godkjent der, prøves ut eller er på der.
             </p>
             <ul className="autoerstatt__liste">
               {fagmiljoer.map((m) => (
