@@ -919,18 +919,24 @@ begin
       using errcode = '22023';
   end if;
 
-  insert into personal.oppsett (fagmiljo_id, versjon, gjelder_fra, tidssone, arbeidsaar_start, skjul_helg, regler, lagret_av)
-  values (
-    personal_lagre_oppsett.fagmiljo,
-    coalesce(forrige.versjon, 0) + 1,
-    (now() at time zone coalesce(forrige.tidssone, enhet ->> 'timeZone'))::date,
-    enhet ->> 'timeZone',
-    (enhet ->> 'workYearStartMonth')::smallint,
-    (enhet -> 'hideWeekendsByDefault')::boolean,
-    regler,
-    aktor
-  )
-  returning * into ny;
+  -- I `repeatable read` ser kommandoen ikke en versjon som er lagret imens, og
+  -- møter den først som en ny versjon med samme nummer: også det er en konflikt.
+  begin
+    insert into personal.oppsett (fagmiljo_id, versjon, gjelder_fra, tidssone, arbeidsaar_start, skjul_helg, regler, lagret_av)
+    values (
+      personal_lagre_oppsett.fagmiljo,
+      coalesce(forrige.versjon, 0) + 1,
+      (now() at time zone coalesce(forrige.tidssone, enhet ->> 'timeZone'))::date,
+      enhet ->> 'timeZone',
+      (enhet ->> 'workYearStartMonth')::smallint,
+      (enhet -> 'hideWeekendsByDefault')::boolean,
+      regler,
+      aktor
+    )
+    returning * into ny;
+  exception when unique_violation then
+    raise exception 'Oppsettet er endret av en annen. Hent det på nytt.' using errcode = 'PT409';
+  end;
   return personal.regelsett(ny);
 end;
 $$;
