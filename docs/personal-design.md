@@ -206,6 +206,9 @@ Ingen aktivering med reelle data før §3.4 og P7.
 - Statuskort med avrundede hjørner inni cellen, som v0.11, også under
   dragging. Kandidater i kladden har stiplet ramme (og tilgjengelig
   tekst); operative vakter har ikke kladdmerking.
+- Celler der personen er til stede uten status, ser tomme ut. Den stiplede
+  Til stede-konturen vises bare ved hover, tastaturfokus og når cellen er
+  slippmål; cellen kan fortsatt dras fra (Peder 27.11.2026).
 - Fast navnekolonne har jevn liten padding og er bare så bred som
   nødvendig. Vis fornavn; ved like fornavn etternavnsinitial, og
   tilstrekkelig videre disambiguering hvis også initial er lik. Fullt
