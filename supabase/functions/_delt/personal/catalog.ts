@@ -51,7 +51,8 @@ const status = (s: StatusData): StatusDefinition => ({ uniquePerDay: false, requ
 export const DEFAULT_STATUSES: StatusDefinition[] = [
   status({ id: S.duty1, name: 'Vakt 1', group: G.present, present: true, highlighted: true, icon: 'shield', tone: 'green', uniquePerDay: true, requiresQualification: true, description: 'Førstevakt.' }),
   status({ id: S.duty2, name: 'Vakt 2', group: G.present, present: true, highlighted: true, icon: 'shield', tone: 'blue', uniquePerDay: true, requiresQualification: true, description: 'Andrevakt.' }),
-  status({ id: S.referent, name: 'Referent', group: G.present, present: true, highlighted: true, icon: 'pencil', tone: 'violet' }),
+  // Én referent per dag (Peder 27.11.2026), fortsatt satt manuelt: Referent har ikke bemanningsbehov og fordeles ikke.
+  status({ id: S.referent, name: 'Referent', group: G.present, present: true, highlighted: true, icon: 'pencil', tone: 'violet', uniquePerDay: true }),
   status({ id: S.training, name: 'Opplæring', group: G.present, present: true, icon: 'bulb', tone: 'teal', dutyExemption: 'always', description: 'Gir vaktfritak: ingen forventede vakter disse dagene.' }),
   status({ id: S.homeOffice, name: 'Hjemmekontor', group: G.elsewhere, present: false, icon: 'house', tone: 'slate' }),
   status({ id: S.research, name: 'Forskning', group: G.elsewhere, present: false, icon: 'microscope', tone: 'rose' }),

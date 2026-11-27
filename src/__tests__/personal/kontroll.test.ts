@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { added, d, makeState, newStatus } from './fixtures';
+import { createPostState, POST_IDS as P } from './annetFagmiljo';
 import { TEST_TODAY } from './hjelp';
 import { STATUS_IDS as S } from '@delt/personal/catalog';
 import { applyToCells, carryRuleVersionSeq, commitRules, DomainError, ruleImpact, setStaffing, setStatus, updateDetails, upsertPerson, validateRules } from '@delt/personal/commands';
@@ -216,10 +217,14 @@ describe('4. Vaktdekning og konsekvenser', () => {
     expect(slot(s, FUTURE, S.duty1)).toMatchObject({ assigned: [expect.anything()], valid: [], missing: 1 });
   });
 
-  it('overbemanning av en status som kan ha flere, vises som overskudd, ikke som manglende', () => {
-    let s = withOldRules();
-    s = added(added(s, d('f3', FUTURE, S.referent)), d('f2', FUTURE, S.referent));
-    expect(slot(s, FUTURE, S.referent)).toMatchObject({ missing: 0, surplus: 1 });
+  it('overbemanning etter at behovet er senket, vises som overskudd, ikke som manglende, og kan ikke økes', () => {
+    // Det andre fagmiljøet: to med medisinansvar, så senkes behovet til én.
+    const s0 = added(added(createPostState(), d('q1', FUTURE, P.medication)), d('q6', FUTURE, P.medication));
+    const s = commitRules(s0, 'localAdmin', { ...s0.rules, staffing: s0.rules.staffing.map((r) => (r.statusId === P.medication ? { ...r, perWeekday: [1, 1, 1, 1, 1, 1, 1] } : r)) }, TEST_TODAY);
+    expect(slot(s, FUTURE, P.medication)).toMatchObject({ required: 1, missing: 0, surplus: 1 });
+    // Datoen kan fortsatt endres så lenge antallet ikke øker, men ingen får en tredje plass.
+    expect(setStatus(s, 'planner', d('q2', FUTURE, P.secondment), { today: TEST_TODAY }).applied).toBe(true);
+    expect(setStatus(s, 'planner', d('q7', FUTURE, P.medication), { today: TEST_TODAY }).plan.violations.map((v) => v.code)).toEqual(['staffingFull']);
   });
 
   it('flytting til en person som ikke kan ta vakten, avvises og beholder den opprinnelige tildelingen', () => {

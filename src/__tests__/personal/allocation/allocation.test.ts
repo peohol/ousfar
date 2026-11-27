@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import '../hjelp';
-import { added, d, makeState, onlyDuties, person, withHistory as withHistoryOn, workdays } from '../fixtures';
+import { added, d, makeState, newStatus, onlyDuties, person, withHistory as withHistoryOn, workdays } from '../fixtures';
 import { DEFAULT_ALLOCATION, DEFAULT_STATUSES, STATUS_IDS as S } from '@delt/personal/catalog';
 import { addDays, diffDays } from '@delt/personal/dates';
 import { PermissionError } from '@delt/personal/permissions';
@@ -505,10 +505,11 @@ describe('harde krav og dekning', () => {
 
 describe('søkets grenser og trekk', () => {
   it('mange plasser samme dag: søket er begrenset, dekker alt og sier fra om grensen', () => {
-    // Hver vakt finnes én gang per dag; her har i tillegg referent fire plasser per dag, til sammen seks.
+    // Hver vakt finnes én gang per dag; her har i tillegg en syntetisk oppgave fire plasser per dag, til sammen seks.
     const people = ['a', 'b', 'c', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'].map((id, n) => person(id, n % 2 ? 'lis' : 'overlege'));
     const base = stateWith(people);
-    const s = { ...base, rules: { ...base.rules, staffing: [...base.rules.staffing, { statusId: S.referent, perWeekday: [4, 4, 4, 4, 4, 0, 0] as StaffingRequirement['perWeekday'], onHolidays: false }] } };
+    const task = newStatus('oppgave');
+    const s = { ...base, rules: { ...base.rules, statuses: [...base.rules.statuses, task], staffing: [...base.rules.staffing, { statusId: task.id, perWeekday: [4, 4, 4, 4, 4, 0, 0] as StaffingRequirement['perWeekday'], onHolidays: false }] } };
     const started = performance.now();
     const p = propose(s, { from: '2027-01-04', to: '2027-01-08' });
     expect(performance.now() - started).toBeLessThan(5000);

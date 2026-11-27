@@ -15,7 +15,6 @@ import {
   planSet,
   presenceOf,
   rulesForDate,
-  statusIndex,
   type Cell,
   type CoverageEffect,
   type EntryDraft,
@@ -64,9 +63,9 @@ export interface SetOptions {
 }
 
 /** Kontroller modellens faste krav for datoene som er endret. Kaster ved brudd (programfeil, ikke brukerfeil). */
-export function assertInvariants(next: PlannerState, dates: Iterable<IsoDate>, today: IsoDate = todayIn(next.unit.timeZone)): PlannerState {
+export function assertInvariants(next: PlannerState, dates: Iterable<IsoDate>, today: IsoDate = todayIn(next.unit.timeZone), before?: PlannerState): PlannerState {
   for (const date of new Set(dates)) {
-    const errors = invariantErrors(entriesByDate(next.entries).get(date) ?? [], statusIndex(rulesForDate(next, date, today)));
+    const errors = invariantErrors(entriesByDate(next.entries).get(date) ?? [], rulesForDate(next, date, today), date, before ? (entriesByDate(before.entries).get(date) ?? []) : []);
     if (errors.length) throw new DomainError(`Endringen kan ikke lagres: ${errors.join(' ')}`);
   }
   return next;
@@ -83,7 +82,7 @@ export function setStatus(state: PlannerState, role: Role, draft: EntryDraft, op
   const today = opts.today ?? todayIn(state.unit.timeZone);
   const plan = planSet(state, draft, today);
   if (plan.violations.length || (plan.takesOver && !opts.takeOver)) return { state, plan, applied: false, uncovered: [] };
-  const next = assertInvariants(applyPlan(state, plan, entryFromPlan(state, plan, () => newId('e'), today)), [draft.date], today);
+  const next = assertInvariants(applyPlan(state, plan, entryFromPlan(state, plan, () => newId('e'), today)), [draft.date], today, state);
   return { state: next, plan, applied: true, uncovered: coverageEffects(state, next, [draft.date], today) };
 }
 

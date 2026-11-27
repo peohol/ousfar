@@ -3,7 +3,7 @@ import './hjelp';
 import { added, d } from './fixtures';
 import { createPostState, POST_IDS as P, postRules } from './annetFagmiljo';
 import { defaultRuleSet, statusesByGroup } from '@delt/personal/catalog';
-import { commitRules, setStatus, validateRules } from '@delt/personal/commands';
+import { assertInvariants, commitRules, DomainError, setStatus, validateRules } from '@delt/personal/commands';
 import { eachDay, holidayName, weekdayIndex } from '@delt/personal/dates';
 import { analyzeDateMove, commitDateMove } from '@delt/personal/move';
 import { dayKind, isScheduledWorkday } from '@delt/personal/people';
@@ -58,13 +58,18 @@ describe('oppsettet', () => {
 });
 
 describe('flere personer per oppgave og dag', () => {
-  it('to med medisinansvar dekker behovet; en tredje er overskudd, ikke en overtakelse', () => {
+  it('to med medisinansvar dekker behovet; en tredje avvises, uten lydløs overtakelse', () => {
     let s = added(createPostState(), d('q1', SAT, P.medication));
     expect(slot(s, SAT, P.medication)).toMatchObject({ required: 2, missing: 1 });
     s = added(s, d('q6', SAT, P.medication));
     expect(slot(s, SAT, P.medication)).toMatchObject({ missing: 0, surplus: 0 });
-    s = added(s, d('q7', SAT, P.medication));
-    expect(slot(s, SAT, P.medication)).toMatchObject({ missing: 0, surplus: 1 });
+    const third = setStatus(s, 'planner', d('q7', SAT, P.medication), { today: TODAY, takeOver: true });
+    expect(third.applied).toBe(false);
+    expect(third.plan.violations.map((v) => v.code)).toEqual(['staffingFull']);
+    expect(third.plan.takesOver).toBeUndefined();
+    // Modellens faste krav stopper også en tredje som kommer utenom kommandoene.
+    const forced: PlannerState = { ...s, entries: [...s.entries, { ...s.entries[0]!, id: 'x', personId: 'q7' }] };
+    expect(() => assertInvariants(forced, [SAT], TODAY, s)).toThrow(DomainError);
     expect(s.entries.every((e) => entryProblems(s, e, TODAY).length === 0)).toBe(true);
   });
 

@@ -7,8 +7,9 @@ import type { CalendarEntry, IsoDate, Person, PlannerState, RuleSet, StatusDefin
 /**
  * Regelmotoren for kalenderen. Rene funksjoner uten UI-avhengigheter.
  *
- * Grunnmodellen er enkel: en medarbeider har høyst én status per dag, og en
- * status med `uniquePerDay` (vaktene) har høyst én medarbeider per dag. Alle
+ * Grunnmodellen er enkel: en medarbeider har høyst én status per dag, en
+ * status med `uniquePerDay` (vaktene og Referent) har høyst én medarbeider
+ * per dag, og en annen bemannet oppgave har høyst bemanningsbehovet (`staffingCap`). Alle
  * endringer i kalenderen planlegges av `planSet`, som sier hva endringen
  * erstatter i cellen, om den tar over en vakt fra en annen, og om den bryter
  * et krav (kvalifikasjon, arbeidsdag, klokkeslett, merknad). Den samme
@@ -29,6 +30,8 @@ export type ViolationCode =
   | 'occupied'
   /** Vakttypen er alt tildelt en annen samme dag (bare der overtakelse ikke er lov). */
   | 'dutyTaken'
+  /** Alle plassene for en bemannet oppgave med flere plasser er fylt samme dag. */
+  | 'staffingFull'
   /** Vaktandel 0 %: tildeles ikke vakt automatisk (bare i vaktfordelingen). */
   | 'noDutyShare';
 
@@ -194,25 +197,39 @@ export function timeText(entry: { time?: TimeRange }): string | null {
 }
 
 /**
- * Feil i modellens to faste krav for et sett registreringer: høyst én status
- * per medarbeider og dato, og høyst én medarbeider per dato for statuser med
- * `uniquePerDay`. Tom liste betyr at kravene holder.
+ * Høyeste antall medarbeidere med statusen på datoen: 1 for en status som er
+ * «én per dag», ellers bemanningsbehovet den dagen for en bemannet oppgave
+ * (personal.md §7.2), og ingen grense (`undefined`) for andre statuser.
  */
-export function invariantErrors(entries: CalendarEntry[], statuses: Map<string, StatusDefinition>): string[] {
+export function staffingCap(rules: RuleSet, statusId: string, date: IsoDate): number | undefined {
+  if (statusIndex(rules).get(statusId)?.uniquePerDay) return 1;
+  return rules.staffing.some((r) => r.statusId === statusId) ? requiredCount(rules, statusId, date) : undefined;
+}
+
+/**
+ * Feil i modellens faste krav for registreringene på én dato: høyst én status
+ * per medarbeider, og høyst `staffingCap` medarbeidere per oppgave. `before`
+ * er datoens registreringer før endringen: en dato som alt var over grensen
+ * (fordi behovet er senket etterpå), kan endres så lenge antallet ikke øker.
+ * Tom liste betyr at kravene holder.
+ */
+export function invariantErrors(entries: CalendarEntry[], rules: RuleSet, date: IsoDate, before: readonly CalendarEntry[] = []): string[] {
   const errors: string[] = [];
   const cells = new Set<string>();
-  const unique = new Set<string>();
+  const counts = new Map<string, number>();
   for (const e of entries) {
     const cell = cellKey(e.personId, e.date);
     if (cells.has(cell)) errors.push(`To statuser for samme medarbeider ${e.date}.`);
     cells.add(cell);
-    const def = statuses.get(e.statusId);
-    if (!def?.uniquePerDay) continue;
-    const key = `${e.date}|${e.statusId}`;
-    if (unique.has(key)) errors.push(`${def.name} er tildelt flere ${e.date}.`);
-    unique.add(key);
+    counts.set(e.statusId, (counts.get(e.statusId) ?? 0) + 1);
   }
-  return [...new Set(errors)];
+  for (const [statusId, n] of counts) {
+    const cap = staffingCap(rules, statusId, date);
+    if (cap === undefined || n <= Math.max(cap, before.filter((e) => e.statusId === statusId).length)) continue;
+    const name = statusIndex(rules).get(statusId)?.name ?? 'Oppgaven';
+    errors.push(cap === 1 ? `${name} er tildelt flere ${date}.` : `${name} har flere enn ${cap} ${date}.`);
+  }
+  return errors;
 }
 
 // ---------------------------------------------------------------------------
@@ -308,9 +325,13 @@ export function planSet(state: PlannerState, draft: EntryDraft, today: IsoDate =
     !person && known
       ? [{ code: 'unknownPerson' as const, message: `${known.name} var ikke registrert som medarbeider denne dagen.` }]
       : statusProblems(s.rules, person, def, draft, true).filter((v) => !same || DETAIL_CODES.has(v.code));
-  const takesOver = def?.uniquePerDay
-    ? (entriesByDate(state.entries).get(draft.date) ?? []).find((e) => e.statusId === def.id && e.personId !== draft.personId && !ignore.has(e.id))
-    : undefined;
+  const holders = def ? (entriesByDate(state.entries).get(draft.date) ?? []).filter((e) => e.statusId === def.id && e.personId !== draft.personId && !ignore.has(e.id)) : [];
+  const takesOver = def?.uniquePerDay ? holders[0] : undefined;
+  // Flere plasser: når alle er fylt, er det ingen å ta over fra uten et uttrykkelig valg av motpart (flyttingen).
+  const cap = def && !def.uniquePerDay && !same ? staffingCap(s.rules, def.id, draft.date) : undefined;
+  if (cap !== undefined && holders.length >= cap) {
+    violations.push({ code: 'staffingFull', message: cap === 0 ? `${def!.name} har ikke bemanningsbehov denne dagen.` : `Alle ${cap} plassene for ${def!.name.toLowerCase()} er fylt samme dag.` });
+  }
   return { draft: normalize(draft), ...(replaces ? { replaces } : {}), ...(takesOver ? { takesOver } : {}), violations };
 }
 

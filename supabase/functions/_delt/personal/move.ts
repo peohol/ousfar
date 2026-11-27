@@ -114,7 +114,7 @@ function result(state: PlannerState, kind: MoveKind, remove: CalendarEntry[], ad
   const ids = new Set(remove.map((e) => e.id));
   const next = { ...state, entries: [...state.entries.filter((e) => !ids.has(e.id)), ...add] };
   const dates = [...remove, ...add].map((e) => e.date);
-  return { kind, state: assertInvariants(next, dates, today), ...parts, uncovered: coverageEffects(state, next, dates, today) };
+  return { kind, state: assertInvariants(next, dates, today, state), ...parts, uncovered: coverageEffects(state, next, dates, today) };
 }
 
 /**

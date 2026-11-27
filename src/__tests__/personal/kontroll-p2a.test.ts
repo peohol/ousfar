@@ -3,7 +3,7 @@ import './hjelp';
 import { added, d, makeState, onlyDuties, person, withHistory, workdays } from './fixtures';
 import { createPostState } from './annetFagmiljo';
 import { STATUS_IDS as S } from '@delt/personal/catalog';
-import { commitRules, DomainError, setExemption, upsertPerson, validateRules } from '@delt/personal/commands';
+import { assertInvariants, commitRules, DomainError, setExemption, setStaffing, setStatus, upsertPerson, validateRules } from '@delt/personal/commands';
 import { calendarView, PermissionError } from '@delt/personal/permissions';
 import { entryAt, presenceOf } from '@delt/personal/rules';
 import { proposeAllocation, proposalView } from '@delt/personal/allocation/proposal';
@@ -94,5 +94,31 @@ describe('belastningsoversikten for et tidligere tidsrom', () => {
     expect(duty1.rows.map((r) => [r.personId, r.before.count])).toEqual([['a', 12], ['b', 8]]);
     // Fremover har vakttypen ikke lenger bemanningsbehov.
     expect(workload(s1, FUTURE, '2026-12-31', TODAY).types).toEqual([]);
+  });
+});
+
+describe('én medarbeider per vakt og én referent (Peder 27.11.2026)', () => {
+  it.each([S.duty1, S.duty2, S.referent])('negativt: %s kan ikke gis til en til samme dag uten en uttrykkelig overtakelse', (id) => {
+    const s = added(makeState(), d('f1', FUTURE, id));
+    const second = setStatus(s, 'planner', d('f4', FUTURE, id), { today: TODAY });
+    expect(second.applied).toBe(false);
+    expect(second.plan.takesOver?.personId).toBe('f1');
+    const taken = setStatus(s, 'planner', d('f4', FUTURE, id), { today: TODAY, takeOver: true }).state;
+    expect(taken.entries.filter((e) => e.date === FUTURE && e.statusId === id).map((e) => e.personId)).toEqual(['f4']);
+    expect(() => assertInvariants({ ...s, entries: [...s.entries, { ...s.entries[0]!, id: 'x', personId: 'f4' }] }, [FUTURE], TODAY, s)).toThrow(DomainError);
+  });
+
+  it('Referent er fortsatt manuell: oppsettet har ikke bemanningsbehov for den, og fordelingen gir den aldri', () => {
+    const s = makeState();
+    expect(s.rules.staffing.map((r) => r.statusId)).not.toContain(S.referent);
+    expect(validateRules(s.rules)).toEqual([]);
+    const p = proposeAllocation(s, 'planner', { from: FUTURE, to: '2026-12-11', mode: 'new' }, TODAY);
+    expect(p.state.entries.length).toBeGreaterThan(0);
+    expect(p.state.entries.filter((e) => e.statusId === S.referent)).toEqual([]);
+  });
+
+  it('negativt: regelvalideringen avviser behov for mer enn én referent per dag', () => {
+    const rules = setStaffing(makeState().rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false });
+    expect(validateRules(rules).join(' ')).toContain('mellom 0 og 1');
   });
 });

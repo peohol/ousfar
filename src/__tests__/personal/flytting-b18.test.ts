@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import './hjelp';
 import { added, d, makeState } from './fixtures';
+import { createPostState, POST_IDS as P } from './annetFagmiljo';
 import { STATUS_IDS as S } from '@delt/personal/catalog';
-import { setStaffing, setExemption, DomainError } from '@delt/personal/commands';
+import { setExemption, DomainError } from '@delt/personal/commands';
 import { setEntryLocked } from '@delt/personal/allocation/index';
 import { PermissionError } from '@delt/personal/permissions';
 import {
@@ -139,18 +140,16 @@ describe('månedsvisningen: personen med statusen til en ny dato (A-UX-04, A-FLY
   });
 
   it('flere plasser: motparten velges konkret, aldri hvem som mottar den flyttede statusen', () => {
-    let s = makeState();
-    s = { ...s, rules: setStaffing(s.rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false }) };
-    s = added(s, d('f1', MON, S.referent, { note: 'Morgenmøtet' }));
-    s = added(s, d('f3', THU, S.referent));
-    s = added(s, d('f5', THU, S.referent));
-    const a = analyzeDateMove(s, 'planner', idAt(s, 'f1', MON), THU, TODAY);
-    expect(a.counterparts.map((e) => e.personId).sort()).toEqual(['f3', 'f5']);
+    // Det andre fagmiljøet: to med medisinansvar hver dag.
+    let s = added(createPostState(), d('q1', MON, P.medication, { note: 'Morgenmøtet' }));
+    s = added(added(s, d('q6', THU, P.medication)), d('q7', THU, P.medication));
+    const a = analyzeDateMove(s, 'planner', idAt(s, 'q1', MON), THU, TODAY);
+    expect(a.counterparts.map((e) => e.personId).sort()).toEqual(['q6', 'q7']);
     expect(a.options).toHaveLength(4);
-    const r = commitDateMove(s, 'planner', idAt(s, 'f1', MON), THU, 'swapDates', idAt(s, 'f5', THU), TODAY);
-    expect(cell(r.state, 'f5', MON)!.statusId).toBe(S.referent);
-    expect(cell(r.state, 'f3', THU)!.statusId).toBe(S.referent);
-    expect(cell(r.state, 'f1', THU)).toMatchObject({ statusId: S.referent, note: 'Morgenmøtet' });
+    const r = commitDateMove(s, 'planner', idAt(s, 'q1', MON), THU, 'swapDates', idAt(s, 'q7', THU), TODAY);
+    expect(cell(r.state, 'q7', MON)!.statusId).toBe(P.medication);
+    expect(cell(r.state, 'q6', THU)!.statusId).toBe(P.medication);
+    expect(cell(r.state, 'q1', THU)).toMatchObject({ statusId: P.medication, note: 'Morgenmøtet' });
   });
 
   it('negativt: leser og systemarkitekt uten lokal myndighet kan ikke flytte', () => {
@@ -175,15 +174,13 @@ describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.1
   });
 
   it('slipp rett på en annens samme vakt en annen dag er et bytte av vaktdager med akkurat den personen', () => {
-    let s = makeState();
-    s = { ...s, rules: setStaffing(s.rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false }) };
-    s = added(added(added(s, d('f1', MON, S.referent)), d('f3', THU, S.referent)), d('f5', THU, S.referent));
-    const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, TODAY);
-    expect(a.counterparts.map((e) => e.personId)).toEqual(['f5']);
-    const r = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, 'swapDates', undefined, TODAY);
-    expect(cell(r.state, 'f5', MON)!.statusId).toBe(S.referent);
-    expect(cell(r.state, 'f1', THU)!.statusId).toBe(S.referent);
-    expect(cell(r.state, 'f3', THU)!.statusId).toBe(S.referent);
+    let s = added(added(added(createPostState(), d('q1', MON, P.medication)), d('q6', THU, P.medication)), d('q7', THU, P.medication));
+    const a = analyzeDrop(s, 'planner', src(s, 'q1', MON), { personId: 'q7', date: THU }, TODAY);
+    expect(a.counterparts.map((e) => e.personId)).toEqual(['q7']);
+    const r = commitDrop(s, 'planner', src(s, 'q1', MON), { personId: 'q7', date: THU }, 'swapDates', undefined, TODAY);
+    expect(cell(r.state, 'q7', MON)!.statusId).toBe(P.medication);
+    expect(cell(r.state, 'q1', THU)!.statusId).toBe(P.medication);
+    expect(cell(r.state, 'q6', THU)!.statusId).toBe(P.medication);
   });
 
   it('slipp rett på en annens status er et forsøk på å bytte de to statusene, også i måneden', () => {
@@ -251,38 +248,55 @@ describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.1
   });
 
   describe('flere plasser: fullt behov telles uten personen selv (felles fasit med prototypen)', () => {
-    /** Referent med behov 2 på hverdager. */
-    const twoReferents = () => {
-      const s = makeState();
-      return { ...s, rules: setStaffing(s.rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false }) };
-    };
-    const referents = (s: PlannerState) => dayCoverage(s, THU, TODAY).find((c) => c.status.id === S.referent)!.assigned.length;
+    // Det andre fagmiljøet: to med medisinansvar hver dag. q1 (A), q6 (C) og q7 (E) er kvalifisert.
+    const medication = (s: PlannerState) => dayCoverage(s, THU, TODAY).find((c) => c.status.id === P.medication)!.assigned.length;
 
     it('har personen alt samme oppgave på måldatoen, er det et vanlig bytte mellom personens to celler, og ingen andres vakt berøres', () => {
-      let s = added(twoReferents(), d('f1', MON, S.referent, { note: 'A mandag' }));
-      s = added(added(s, d('f1', THU, S.referent, { note: 'A torsdag' })), d('f3', THU, S.referent));
-      for (const target of [{ personId: 'f1', date: THU }, { date: THU }]) {
-        const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), target, TODAY);
+      let s = added(createPostState(), d('q1', MON, P.medication, { note: 'A mandag' }));
+      s = added(added(s, d('q1', THU, P.medication, { note: 'A torsdag' })), d('q6', THU, P.medication));
+      for (const target of [{ personId: 'q1', date: THU }, { date: THU }]) {
+        const a = analyzeDrop(s, 'planner', src(s, 'q1', MON), target, TODAY);
         expect(a.counterparts).toEqual([]);
         expect(a.options.map((o) => o.kind)).toEqual(['swap', 'replace']);
       }
-      const r = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, 'swap', undefined, TODAY).state;
-      expect(cell(r, 'f1', THU)).toMatchObject({ statusId: S.referent, note: 'A mandag' });
-      expect(cell(r, 'f1', MON)).toMatchObject({ statusId: S.referent, note: 'A torsdag' });
-      expect(cell(r, 'f3', THU)!.statusId).toBe(S.referent);
+      const r = commitDrop(s, 'planner', src(s, 'q1', MON), { personId: 'q1', date: THU }, 'swap', undefined, TODAY).state;
+      expect(cell(r, 'q1', THU)).toMatchObject({ statusId: P.medication, note: 'A mandag' });
+      expect(cell(r, 'q1', MON)).toMatchObject({ statusId: P.medication, note: 'A torsdag' });
+      expect(cell(r, 'q6', THU)!.statusId).toBe(P.medication);
     });
 
     it('er begge plassene fylt av andre og personen har en annen status der, tilbys bare bytt vaktdager eller overta, aldri overbemanning', () => {
-      let s = added(added(twoReferents(), d('f3', THU, S.referent)), d('f5', THU, S.referent));
-      s = added(added(s, d('f1', MON, S.referent)), d('f1', THU, S.homeOffice));
-      const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, TODAY);
-      expect(a.counterparts.map((e) => e.personId).sort()).toEqual(['f3', 'f5']);
+      let s = added(added(createPostState(), d('q6', THU, P.medication)), d('q7', THU, P.medication));
+      s = added(added(s, d('q1', MON, P.medication)), d('q1', THU, P.secondment));
+      const a = analyzeDrop(s, 'planner', src(s, 'q1', MON), { personId: 'q1', date: THU }, TODAY);
+      expect(a.counterparts.map((e) => e.personId).sort()).toEqual(['q6', 'q7']);
       expect([...new Set(a.options.map((o) => o.kind))].sort()).toEqual(['swapDates', 'takeOver']);
       for (const o of a.options) {
-        expect(referents(o.state)).toBe(2);
-        expect(o.removed.map((e) => e.statusId)).toContain(S.homeOffice);
+        expect(medication(o.state)).toBe(2);
+        expect(o.removed.map((e) => e.statusId)).toContain(P.secondment);
       }
     });
+
+    it('negativt: til en tredje persons tomme celle når plassene er fylt, avvises det med grunn; ingen får en tredje plass', () => {
+      const s = added(added(added(createPostState(), d('q1', MON, P.medication)), d('q6', THU, P.medication)), d('q7', THU, P.medication));
+      const a = analyzeDrop(s, 'planner', src(s, 'q1', MON), { personId: 'q4', date: THU }, TODAY);
+      expect(a.outcome).toBe('rejected');
+      expect(a.options).toEqual([]);
+      expect(a.reasons.join(' ')).toContain('Alle 2 plassene for medisinansvar er fylt');
+    });
+  });
+
+  it('negativt: Vakt 1, Vakt 2 og Referent kan aldri bli to samme dag ved flytting; en tredje persons celle avvises', () => {
+    for (const id of [S.duty1, S.duty2, S.referent]) {
+      const s = added(added(makeState(), d('f1', MON, id)), d('f4', THU, id));
+      const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, TODAY);
+      expect(a.outcome).toBe('rejected');
+      expect(a.options).toEqual([]);
+      // På egen rad: bare de uttrykkelige valgene, og ingen av dem gir to samme dag.
+      const own = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, TODAY);
+      expect(own.options.map((o) => o.kind).sort()).toEqual(['swapDates', 'takeOver']);
+      for (const o of own.options) expect(o.state.entries.filter((e) => e.date === THU && e.statusId === id)).toHaveLength(1);
+    }
   });
 
   it('Til stede sluppet på en status bytter dem, i alle visninger', () => {

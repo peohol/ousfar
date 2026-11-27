@@ -39,14 +39,14 @@ describe('statuskatalogen', () => {
     expect(rules.statuses.filter((x) => x.present).every((x) => x.group === G.present)).toBe(true);
   });
 
-  it('vaktene er grønn og blå, finnes én gang per dag og krever kvalifikasjon; Borte er rød; Ønske om fri er merket som ønske', () => {
+  it('vaktene er grønn og blå, finnes én gang per dag og krever kvalifikasjon; Referent er én per dag; Borte er rød; Ønske om fri er merket som ønske', () => {
     const idx = statusIndex(defaultRuleSet());
     expect(idx.get(S.duty1)).toMatchObject({ tone: 'green', uniquePerDay: true, requiresQualification: true });
     expect(idx.get(S.duty2)).toMatchObject({ tone: 'blue', uniquePerDay: true, requiresQualification: true });
     expect(idx.get(S.away)).toMatchObject({ tone: 'red', group: G.absent, present: false });
     expect(idx.get(S.wishOff)).toMatchObject({ wish: true, group: G.absent, present: false });
     expect(idx.get(S.vacation)).toMatchObject({ icon: 'sun', dutyExemption: 'always', group: G.absent });
-    expect(defaultRuleSet().statuses.filter((x) => x.uniquePerDay).map((x) => x.id)).toEqual([S.duty1, S.duty2]);
+    expect(defaultRuleSet().statuses.filter((x) => x.uniquePerDay).map((x) => x.id)).toEqual([S.duty1, S.duty2, S.referent]);
   });
 
   it('regelsettet har ingen kombinasjons- eller eksklusjonsregler', () => {
@@ -70,11 +70,11 @@ describe('én status per medarbeider per dag', () => {
     expect(next.entries).toEqual([{ id: 'r1', personId: 'f1', date: TUE, statusId: S.referent, note: 'Morgenmøtet', time: { start: 480, end: 540 }, ruleVersion: 1, locked: true }]);
   });
 
-  it('invariantene oppdager to statuser i en celle og to av samme vakt samme dag', () => {
-    const statuses = statusIndex(defaultRuleSet());
-    expect(invariantErrors([entry('f1', TUE, S.referent), entry('f1', TUE, S.training)], statuses)).toHaveLength(1);
-    expect(invariantErrors([entry('f1', TUE, S.duty1), entry('f4', TUE, S.duty1)], statuses)).toHaveLength(1);
-    expect(invariantErrors([entry('f1', TUE, S.referent), entry('f4', TUE, S.referent), entry('f2', TUE, S.duty2)], statuses)).toEqual([]);
+  it('invariantene oppdager to statuser i en celle og to av samme vakt eller referent samme dag', () => {
+    const rules = defaultRuleSet();
+    expect(invariantErrors([entry('f1', TUE, S.referent), entry('f1', TUE, S.training)], rules, TUE)).toHaveLength(1);
+    for (const id of [S.duty1, S.duty2, S.referent]) expect(invariantErrors([entry('f1', TUE, id), entry('f4', TUE, id)], rules, TUE)).toHaveLength(1);
+    expect(invariantErrors([entry('f1', TUE, S.referent), entry('f4', TUE, S.duty1), entry('f2', TUE, S.duty2), entry('f3', TUE, S.training), entry('f5', TUE, S.training)], rules, TUE)).toEqual([]);
   });
 
   it('cellen har høyst én registrering i oppslaget', () => {

@@ -69,7 +69,7 @@ export interface StatusDefinition {
   highlighted?: boolean;
   icon: StatusIcon;
   tone: StatusTone;
-  /** Bare én medarbeider kan ha statusen samme dag (vakttypene). */
+  /** Bare én medarbeider kan ha statusen samme dag (vaktene og Referent i piloten). Uavhengig av om den fordeles automatisk. */
   uniquePerDay: boolean;
   /** Krever kvalifikasjon for akkurat denne statusen (f.eks. vakttype). */
   requiresQualification: boolean;
@@ -202,7 +202,8 @@ export interface Person {
 
 /**
  * Statusen til én medarbeider én dag. Det finnes høyst én registrering per
- * medarbeider og dato, og høyst én per dato for statuser med `uniquePerDay`.
+ * medarbeider og dato, høyst én per dato for statuser med `uniquePerDay`, og
+ * høyst bemanningsbehovet for en annen bemannet oppgave (`staffingCap`).
  */
 export interface CalendarEntry {
   id: string;
