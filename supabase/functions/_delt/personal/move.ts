@@ -1,6 +1,6 @@
 import { assertInvariants, DomainError } from './commands.ts';
 import { formatDateNo, todayIn } from './dates.ts';
-import { assertCan, seesExemptionDetails } from './permissions.ts';
+import { assertCan } from './permissions.ts';
 import { dayKind } from './people.ts';
 import { atDate, coverageEffects, dayCoverage, entriesByDate, entryAt, personById, planSet, requiredCount, rulesForDate, statusIndex, type Cell, type CoverageEffect, type EntryDraft, type SetPlan } from './rules.ts';
 import type { CalendarEntry, IsoDate, PlannerState, Role } from './types.ts';
@@ -118,14 +118,14 @@ function result(state: PlannerState, kind: MoveKind, remove: CalendarEntry[], ad
 }
 
 /**
- * To registreringer med helt likt innhold slik rollen ser dem: status,
- * merknad, klokkeslett og lås, og vaktfritak bare for roller med myndighet
- * over det (`seesExemptionDetails`). Uten myndighet avgjøres likheten uten
- * fritaket, så utfallet av en flytting aldri røper et skjult fritak.
+ * To registreringer med helt likt innhold: status, merknad, klokkeslett og
+ * lås, uansett person og dato. Vaktfritak teller ikke: det følger aldri en
+ * flytting og er skjult for de fleste roller, så utfallet er det samme for
+ * alle og røper aldri et fritak (personal-design.md §4).
  */
-export function identicalEntries(a: CalendarEntry, b: CalendarEntry, withExemption: boolean): boolean {
+export function identicalEntries(a: CalendarEntry, b: CalendarEntry): boolean {
   const time = (e: CalendarEntry) => (e.time ? `${e.time.start}-${e.time.end}` : '');
-  return a.statusId === b.statusId && (a.note ?? '') === (b.note ?? '') && time(a) === time(b) && !!a.locked === !!b.locked && (!withExemption || !!a.exempt === !!b.exempt);
+  return a.statusId === b.statusId && (a.note ?? '') === (b.note ?? '') && time(a) === time(b) && !!a.locked === !!b.locked;
 }
 
 /**
@@ -141,7 +141,7 @@ export function analyzeMove(state: PlannerState, role: Role, entryId: string, to
   if (entry.personId === to.personId && entry.date === to.date) return { ...base, outcome: 'same' };
   const origin: Cell = { personId: entry.personId, date: entry.date };
   const blocker = entryAt(state, to.personId, to.date);
-  if (blocker && (blocker.date === entry.date || blocker.personId === entry.personId) && identicalEntries(blocker, entry, seesExemptionDetails(role))) return { ...base, outcome: 'same', blocker };
+  if (blocker && (blocker.date === entry.date || blocker.personId === entry.personId) && identicalEntries(blocker, entry)) return { ...base, outcome: 'same', blocker };
 
   if (!blocker) {
     const reasons = planReasons(state, planSet(state, draftAt(entry, to), today, new Set([entry.id])), today);
