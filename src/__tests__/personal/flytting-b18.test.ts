@@ -7,7 +7,8 @@ import { setEntryLocked } from '@delt/personal/allocation/index';
 import { PermissionError } from '@delt/personal/permissions';
 import {
   analyzeDateMove,
-  analyzeMove,
+  analyzeDrop,
+  commitDrop,
   analyzePresenceMove,
   commitDateMove,
   commitPresenceMove,
@@ -160,13 +161,55 @@ describe('månedsvisningen: personen med statusen til en ny dato (A-UX-04, A-FLY
   });
 });
 
-describe('rutenettet (uke og helår): slipp på en full vakt avvises med grunn (A-FLY-03)', () => {
-  it('å legge As vakt i As celle torsdag, der B har vakten, avvises; Bs vakt tas aldri over lydløst', () => {
+describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.11.2026)', () => {
+  const src = (s: PlannerState, personId: string, date: string) => ({ kind: 'entry' as const, entryId: idAt(s, personId, date) });
+
+  it('slipp på egen rad en annen dag gir de samme valgene som i måneden', () => {
     const s = fasit();
-    const a = analyzeMove(s, 'planner', idAt(s, 'f1', MON), { personId: 'f1', date: THU }, TODAY);
+    const month = analyzeDrop(s, 'planner', src(s, 'f1', MON), { date: THU }, TODAY);
+    const grid = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, TODAY);
+    expect(grid.options.map((o) => o.kind).sort()).toEqual(['swapDates', 'takeOver']);
+    expect(grid.options.map((o) => o.state)).toEqual(month.options.map((o) => o.state));
+    const r = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f1', date: THU }, 'takeOver', undefined, TODAY);
+    expect(r.uncovered.map((u) => [u.date, u.statusId])).toEqual([[MON, S.duty1]]);
+  });
+
+  it('slipp rett på en annens samme vakt en annen dag er et bytte av vaktdager med akkurat den personen', () => {
+    let s = makeState();
+    s = { ...s, rules: setStaffing(s.rules, { statusId: S.referent, perWeekday: [2, 2, 2, 2, 2, 0, 0], onHolidays: false }) };
+    s = added(added(added(s, d('f1', MON, S.referent)), d('f3', THU, S.referent)), d('f5', THU, S.referent));
+    const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, TODAY);
+    expect(a.counterparts.map((e) => e.personId)).toEqual(['f5']);
+    const r = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, 'swapDates', undefined, TODAY);
+    expect(cell(r.state, 'f5', MON)!.statusId).toBe(S.referent);
+    expect(cell(r.state, 'f1', THU)!.statusId).toBe(S.referent);
+    expect(cell(r.state, 'f3', THU)!.statusId).toBe(S.referent);
+  });
+
+  it('slipp rett på en annens status er et forsøk på å bytte de to statusene, også i måneden', () => {
+    let s = added(makeState(), d('f1', TUE, S.duty1, { note: 'A' }));
+    s = added(s, d('f4', THU, S.homeOffice, { note: 'B' }));
+    const a = analyzeDrop(s, 'planner', src(s, 'f1', TUE), { personId: 'f4', date: THU }, TODAY);
+    expect(a.outcome).toBe('conflict');
+    expect(a.options.map((o) => o.kind)).toEqual(['swap', 'replace']);
+    const r = commitDrop(s, 'planner', src(s, 'f1', TUE), { personId: 'f4', date: THU }, 'swap', undefined, TODAY);
+    expect(cell(r.state, 'f4', THU)).toMatchObject({ statusId: S.duty1, note: 'A' });
+    expect(cell(r.state, 'f1', TUE)).toMatchObject({ statusId: S.homeOffice, note: 'B' });
+  });
+
+  it('til en tredje persons tomme celle der vakten er tatt, avvises det med grunn; ingen vakt tas lydløst', () => {
+    const s = fasit();
+    const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f5', date: THU }, TODAY);
     expect(a.outcome).toBe('rejected');
     expect(a.options).toEqual([]);
     expect(a.reasons.join(' ')).toContain('alt tildelt Per Hansen');
+  });
+
+  it('Til stede sluppet på en status bytter dem, i alle visninger', () => {
+    const s = added(makeState(), d('f4', TUE, S.homeOffice));
+    const a = analyzeDrop(s, 'planner', { kind: 'presence', cell: { personId: 'f1', date: TUE } }, { personId: 'f4', date: TUE }, TODAY);
+    expect(a.outcome).toBe('ok');
+    expect(a.counterparts).toEqual([]);
   });
 });
 

@@ -8,15 +8,17 @@ import type { CalendarEntry, IsoDate, PlannerState, Role } from './types.ts';
 /**
  * Flytting av en status til en annen medarbeider eller dato, med dra-og-slipp
  * eller tastatur. UI-uavhengig: alle visninger bruker de samme funksjonene
- * (docs/personal-design.md §4, B18).
+ * (docs/personal-design.md §4, B18). Visningene tolker et slipp med
+ * `analyzeDrop`, likt i dag, uke, måned og helår.
  *
- * Med en eksplisitt målcelle (person og dato, i dag-, uke- og helårsvisningen):
+ * `analyzeMove`, flytting til en bestemt celle (person og dato):
  * - Til en celle uten status flyttes statusen direkte.
  * - Har mottakeren en status, kan de to byttes («Bytt statusene»), eller den
  *   flyttede kan erstatte mottakerens («Flytt og erstatt»). Bare alternativer
  *   som gir en gyldig plan, tilbys.
- * - En flytting tar aldri over en vakt fra en tredje person: er vakten alt
- *   tildelt en annen på måldatoen, avvises den med årsak.
+ * - En flytting til en annen persons celle tar aldri over en vakt fra en
+ *   tredje person. Er vakten tatt på måldatoen, avvises den med årsak. Til
+ *   egen rad gir `analyzeDrop` i stedet de samme valgene som i måneden.
  *
  * «Til stede» uten status kan dras som en virtuell celle (`analyzePresenceMove`):
  * slippes den på en celle med status, flyttes den statusen til den tomme
@@ -220,11 +222,11 @@ function fullCounterparts(state: PlannerState, entry: CalendarEntry, date: IsoDa
  * følger hver sin vakt; administrativt vaktfritak følger aldri med. Alle
  * berørte celler valideres samlet; bare gyldige valg tilbys.
  */
-export function analyzeDateMove(state: PlannerState, role: Role, entryId: string, toDate: IsoDate, today: IsoDate = todayIn(state.unit.timeZone)): DateMoveAnalysis {
+export function analyzeDateMove(state: PlannerState, role: Role, entryId: string, toDate: IsoDate, today: IsoDate = todayIn(state.unit.timeZone), counterpartPersonId?: string): DateMoveAnalysis {
   const entry = entryById(state, entryId);
   const to: Cell = { personId: entry.personId, date: toDate };
   const plain = analyzeMove(state, role, entryId, to, today);
-  const counterparts = plain.outcome === 'same' ? [] : fullCounterparts(state, entry, toDate, today);
+  const counterparts = plain.outcome === 'same' ? [] : fullCounterparts(state, entry, toDate, today).filter((e) => counterpartPersonId === undefined || e.personId === counterpartPersonId);
   if (!counterparts.length) return { ...plain, counterparts };
 
   const ownThere = entryAt(state, entry.personId, toDate);
@@ -272,4 +274,50 @@ export function describeMove(state: PlannerState, a: Pick<MoveAnalysis, 'entry' 
   if (kind === 'swap' && a.blocker) return `${name(a.entry)} og ${name(a.blocker)} byttet mellom ${who(a.entry.personId)} og ${where}`;
   if (kind === 'replace' && a.blocker) return `${name(a.entry)} flyttet til ${where} og erstattet ${name(a.blocker)}`;
   return `${name(a.entry)} flyttet til ${where}`;
+}
+
+// ---------------------------------------------------------------------------
+// Ett felles slipp for dag, uke, måned og helår (Peder 27.11.2026)
+// ---------------------------------------------------------------------------
+
+/** Det som dras: en status, eller den virtuelle «Til stede» i en tom celle. */
+export type DropSource = { kind: 'entry'; entryId: string } | { kind: 'presence'; cell: Cell };
+
+/** Der det slippes: en dato (måned) eller en persons celle (dag, uke, helår). */
+export interface DropTarget {
+  personId?: string;
+  date: IsoDate;
+}
+
+/**
+ * Tolker et slipp likt i alle visningene, både for markeringen under dra og
+ * for selve lagringen:
+ *
+ * - En status sluppet på en dato (måned), på sin egen rad, eller på en annens
+ *   celle med samme status en annen dag, flytter personen med statusen til
+ *   datoen. Er vakten tatt, tilbys «Bytt vaktdager» og overtakelse
+ *   (`analyzeDateMove`); i det siste tilfellet bare med personen i cellen
+ *   som motpart.
+ * - Ellers flyttes statusen til cellen, med bytte eller erstatning når
+ *   cellen har en annen status (`analyzeMove`). Sluppet rett på en annens
+ *   status er det et forsøk på å bytte de to statusene.
+ * - Til stede sluppet på en status bytter dem (`analyzePresenceMove`).
+ *
+ * Svaret har alltid `counterparts`; tom liste når det ikke er en datoflytting.
+ */
+export function analyzeDrop(state: PlannerState, role: Role, source: DropSource, target: DropTarget, today: IsoDate = todayIn(state.unit.timeZone)): DateMoveAnalysis {
+  if (source.kind === 'presence') {
+    const cell: Cell = { personId: target.personId ?? source.cell.personId, date: target.date };
+    return { ...analyzePresenceMove(state, role, source.cell, cell, today), counterparts: [] };
+  }
+  const entry = entryById(state, source.entryId);
+  if (!target.personId || target.personId === entry.personId) return analyzeDateMove(state, role, entry.id, target.date, today);
+  const there = entryAt(state, target.personId, target.date);
+  if (there && there.statusId === entry.statusId && target.date !== entry.date) return analyzeDateMove(state, role, entry.id, target.date, today, target.personId);
+  return { ...analyzeMove(state, role, entry.id, { personId: target.personId, date: target.date }, today), counterparts: [] };
+}
+
+/** Lagre et slipp med valgt alternativ, vurdert på nytt mot gjeldende kalender. */
+export function commitDrop(current: PlannerState, role: Role, source: DropSource, target: DropTarget, kind: MoveKind, counterpartId?: string, today: IsoDate = todayIn(current.unit.timeZone)): MoveOption {
+  return chosen(analyzeDrop(current, role, source, target, today), kind, counterpartId);
 }
