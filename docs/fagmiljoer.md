@@ -36,7 +36,9 @@ søkeordene, modulene og koblingene til stoffene — og EtG/EtS-tekstene fra
 klientpakken til databasen per fagmiljø
 ([Analyttkatalogen per fagmiljø](#analyttkatalogen-per-fagmiljø)). P6 gir
 **gruppene**: grupper i ett fagmiljø og på tvers, med egne diskusjoner bare
-medlemmene ser ([Gruppene](#gruppene)). Alle bygger på de felles hjelperne
+medlemmene ser ([Gruppene](#gruppene)). #598 gir **funksjonsbrytere per
+fagmiljø** og **testmiljøer**
+([Funksjonsbrytere per fagmiljø](#funksjonsbrytere-per-fagmiljø)). Alle bygger på de felles hjelperne
 ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
 
 ## Fagmiljøene
@@ -108,7 +110,7 @@ migrasjon.
 | `medlemskap` | Hvem som tilhører hvor: `status` (`aktiv`, `invitert`, `deaktivert`), `primaer`, `fra`/`til`. Høyst ett aktivt primærmedlemskap per konto og ett gjeldende per fagmiljø |
 | `systemroller` | Systemarkitektene, knyttet til konto-ID-en. Tilbakekalles med `tilbakekalt_kl` |
 | `fagmiljoadministratorer` | Lokale administratorer. Aktiv så lenge `til` står tom |
-| `tilgangslogg` | Hver endring i de fire tabellene over og i `ressursomfang`, med aktør, før og etter og begrunnelse |
+| `tilgangslogg` | Hver endring i de fire tabellene over, i `ressursomfang` og i funksjonsbryterne (`funksjoner`, `funksjonsbrytere`, `funksjonsgodkjenninger`), med aktør, før og etter og begrunnelse |
 | `ressursomfang` | Rekkevidden til hvert redigerbare objekt (P4a, under) |
 
 Alle ligger i `public` med radsikkerhet på. Nettleseren kan bare lese sine
@@ -978,6 +980,93 @@ systemarkitektene noe ekstra, som personalfunksjonene (`docs/personal.md`
 administrator uten unntak er `intern.administrerte_fagmiljoer`. Ingenting er tatt i bruk av
 migrasjonen selv; rettighetene endres i P2a–d (faginnholdet: under). Testene står i
 `src/__tests__/rettighetshjelpere.test.ts`.
+
+## Funksjonsbrytere per fagmiljø
+
+`supabase/migrations/20261127193000_funksjonsbrytere.sql` (#598) lar en
+funksjon som bygges inn trinnvis, være helt usynlig til den er godkjent, og
+slås på per fagmiljø uten kodeendring. Mekanismen er generell; reglene for en
+bestemt funksjon og beslutningen om å slå den på hører til prosjektet som
+eier den (for personalkalenderen `docs/personal.md` §8.3).
+
+**Tilstandene.** Hver funksjon har en tilstand i hvert fagmiljø
+(`public.funksjonsbrytere`):
+
+| Tilstand | Hvem har funksjonen |
+| --- | --- |
+| `av` | Ingen. Standard: også uten rad, for en ukjent funksjon og i et arkivert fagmiljø |
+| `utprøving` | Systemarkitekter som **selv** er aktive medlemmer av fagmiljøet |
+| `på` | Alle som selv er aktive medlemmer av fagmiljøet |
+
+Systemarkitektrollen alene gir aldri en funksjon: alt bygger på
+`intern.er_eget_medlem_i` ([Hjelperne](#hjelperne-for-tilgang-per-fagmiljø)).
+Et invitert eller avsluttet medlemskap gir ingenting.
+
+**Katalogen.** `public.funksjoner` har nøkkelen, navnet og beskrivelsen til
+hver funksjon. Eierprosjektet fører inn sin funksjon med en migrasjon.
+
+**Godkjenningene.** `public.funksjonsgodkjenninger` har én rad for hvert
+fagmiljø en funksjon er godkjent for ordinær bruk i, med en henvisning til
+beslutningen (`grunnlag`). Eierprosjektet fører inn og fjerner rader bare med
+en migrasjon, først når det har fått de beslutningene det krever for akkurat
+det fagmiljøet (for personalfunksjonene: §3.4 avklart for fagmiljøet og
+Peders ja, K-SKJ-10). Godkjenningen er adskilt fra bryteren: ingen funksjon i
+nettleseren kan gi eller trekke den, heller ikke for systemarkitektene, og en
+godkjenning i ett fagmiljø gjelder ikke i et annet. Det finnes ingen felles
+godkjenning for alle fagmiljøer.
+
+**Testmiljøene.** `fagmiljoer.testmiljo` merker fagmiljøer for utprøving med
+oppdiktede data. Sandkasse er merket av migrasjonen. Standardfagmiljøet kan
+aldri være testmiljø.
+
+**Vernet.** Databasen håndhever det uansett hvem som endrer
+(`intern.kontroller_funksjonsbrytere`, SQLSTATE `23514`):
+
+1. En funksjon kan bare stå på `utprøving` eller `på` i et aktivt fagmiljø
+   som er testmiljø, eller som den er godkjent for.
+2. Testmerkingen kan ikke fjernes, og en godkjenning ikke trekkes, mens det
+   ville latt en funksjon stå på i et fagmiljø den ikke er godkjent for; den
+   må slås av først. Fagmiljøet en godkjenning gjelder, står fast. Ingenting
+   slås av i det stille.
+3. Et fagmiljø kan arkiveres som før; bryterne der gjelder da ikke.
+
+Endringene tar den felles låsen og føres i `tilgangslogg` som de andre
+tilgangsendringene.
+
+**Hjelperne.**
+
+| Funksjon | Svarer |
+| --- | --- |
+| `intern.funksjonstilstand(funksjon, fagmiljo)` | Tilstanden som gjelder; `av` når vernet ikke holder |
+| `intern.funksjon_tilgjengelig(funksjon, fagmiljo, bruker default auth.uid())` | Den ene avgjørelsen etter tabellen over |
+| `intern.krev_funksjon(funksjon, fagmiljo)` | Porten for funksjonene som bygges på en bryter: stopper med `P0002` «Finnes ikke.» (404 i data-API-et), det samme som for noe som ikke finnes, når den innloggede ikke har funksjonen |
+| `public.mine_fagmiljoer_med_funksjon(funksjon)` | Til radsikkerheten: `fagmiljo_id = any ((select public.mine_fagmiljoer_med_funksjon('<nøkkel>')))`. Tom for en ukjent funksjon |
+| `public.mine_funksjoner()` | Funksjonene den innloggede har, som `[{funksjon, fagmiljo}]`; også `funksjoner` i `public.mine_rettigheter()` |
+
+Den som ikke har en funksjon, får ingenting om den: ikke i rettighetene, ikke
+i katalogen eller bryterne (som nettleseren ikke kan lese), og samme svar fra
+porten som for noe som ikke finnes. Appen viser meny, forside og innstillinger
+etter `harFunksjon` og `fagmiljoerMedFunksjon` (`src/auth/rettigheter.tsx`);
+det er et grensesnitt, og hver funksjon kontrollerer på nytt på serveren.
+
+**I appen.** Administrasjon → Funksjoner (`src/components/konto/Funksjoner.tsx`)
+er bare for systemarkitektene (`public.funksjonsoversikt`,
+`public.sett_funksjonsbryter`, `public.sett_testmiljo`). Hver endring krever en
+begrunnelse på 5–500 tegn, og et valg databasen vil avvise, tilbys ikke.
+Vinduet viser hvilke fagmiljøer hver funksjon er godkjent for. En
+endring som alt er gjort, gir det samme svaret uten å endre noe.
+
+**Tilbakeføring.** En ny migrasjon som setter `public.mine_rettigheter()`
+tilbake og fjerner funksjonene, de tre tabellene og kolonnen `testmiljo`, når ingen
+funksjon bruker dem.
+
+**Testene.** `src/__tests__/funksjonsbrytere.test.ts`: hver tilstand med
+systemarkitekt med og uten eget medlemskap, vanlig medlem, invitert og avsluttet
+medlemskap, arkivert fagmiljø, godkjenning for ett fagmiljø (A godkjent, B
+ikke, gjennom funksjonene og direkte i tabellene), at godkjenningen ikke kan
+trekkes eller flyttes mens funksjonen står på, testmerkingen, loggen og
+gjentakelse; `funksjonsbryterpanel.test.tsx`: vinduet og svarene i appen;
+`tilgangsmatrise.test.ts`: etappen `#598`.
 
 ## Profiler og profilbilder
 

@@ -231,6 +231,13 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'mine_administrerte_fagmiljoer()': 'eier',
   // #572: fagmiljøene den innloggede selv er aktivt medlem av, uten systemarkitektunntak.
   'mine_egne_fagmiljoer()': 'eier',
+  // #598: funksjonene den innloggede har, og fagmiljøene der hen har én (radsikkerheten).
+  'mine_funksjoner()': 'eier',
+  'mine_fagmiljoer_med_funksjon(funksjon text)': 'eier',
+  // #598: funksjonsbryterne og testmiljøene, bare for systemarkitektene.
+  'funksjonsoversikt()': 'systemarkitekt',
+  'sett_funksjonsbryter(funksjon text, fagmiljo uuid, tilstand text, begrunnelse text)': 'systemarkitekt',
+  'sett_testmiljo(fagmiljo uuid, testmiljo boolean, begrunnelse text)': 'systemarkitekt',
   'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).

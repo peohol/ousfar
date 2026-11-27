@@ -1,0 +1,15 @@
+{
+  "id": "20261127-191957-96c6dc",
+  "semver": "minor",
+  "opprettet": "2026-11-27T19:19:57Z",
+  "sammendrag": "Systemarkitektene kan slå funksjoner av og på per fagmiljø",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Under Administrasjon har systemarkitektene fått «Funksjoner», der nye funksjoner kan stå av, prøves ut eller slås på for hvert fagmiljø uten en ny versjon av appen. Hver endring krever en begrunnelse og logges.",
+    "Fagmiljøer kan merkes som testmiljøer for utprøving med oppdiktede data. Sandkasse er merket. Andre brukere merker ingen endring."
+  ],
+  "utenVarsel": true
+}

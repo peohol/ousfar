@@ -88,6 +88,9 @@ vi.mock('../components/konto/Verktoysperrer', () => ({
 vi.mock('../components/konto/Stillinger', () => ({
   Stillinger: ({ apen }: { apen: boolean }) => (apen ? <p>Stillingslista</p> : null),
 }))
+vi.mock('../components/konto/Funksjoner', () => ({
+  Funksjoner: ({ apen }: { apen: boolean }) => (apen ? <p>Funksjonsbryterne</p> : null),
+}))
 vi.mock('../components/konto/Autoerstattregler', () => ({
   Autoerstattregler: ({ apen }: { apen: boolean }) => (apen ? <p>Autoerstatt-reglene</p> : null),
 }))
@@ -994,11 +997,11 @@ describe('hovedmenyen', () => {
     }
   })
 
-  it('fører til brukerne, redaktørene, stillingene, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene', async () => {
+  it('fører til brukerne, redaktørene, stillingene, funksjonsbryterne, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene', async () => {
     rolle.verdi = 'user'
     render(<Hovedmeny />)
     const liste = await administrasjonen(await apneMenyen())
-    expect(navnene(listene(liste)[0]!)).toEqual(['Brukere', 'Redaktører', 'Stillinger', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
+    expect(navnene(listene(liste)[0]!)).toEqual(['Brukere', 'Redaktører', 'Stillinger', 'Funksjoner', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
     await userEvent.click(within(liste).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
     expect(hovedmenyen().getAttribute('data-apen')).toBe('nei')
@@ -1006,6 +1009,8 @@ describe('hovedmenyen', () => {
 
     await velgAdmin('Stillinger')
     expect(screen.getByText('Stillingslista')).toBeTruthy()
+    await velgAdmin('Funksjoner')
+    expect(screen.getByText('Funksjonsbryterne')).toBeTruthy()
     await velgAdmin('Datakilder')
     expect(screen.getByText('Datakildene')).toBeTruthy()
     await velgAdmin('Kurateringer')

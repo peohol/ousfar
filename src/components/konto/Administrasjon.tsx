@@ -20,6 +20,7 @@ const Brukerliste = senere(() => import('./Brukerliste'), 'Brukerliste')
 const Datakilder = senere(() => import('./Datakilder'), 'Datakilder')
 const Redaktorer = senere(() => import('./Redaktorer'), 'Redaktorer')
 const Stillinger = senere(() => import('./Stillinger'), 'Stillinger')
+const Funksjoner = senere(() => import('./Funksjoner'), 'Funksjoner')
 const Kurateringsoversikt = senere(() => import('../kuratering/Utgavelister'), 'Kurateringsoversikt')
 const Kildeovervaking = senere(() => import('./Kildeovervaking'), 'Kildeovervaking')
 const Verktoysperrer = senere(() => import('./Verktoysperrer'), 'Verktoysperrer')
@@ -56,7 +57,7 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
  * i hovedmenyen (`adminvisning.ts`, D6). Systemarkitektene får brukerne,
  * driftstatusen for datakildene, kurateringene, kildeovervåkingen og
  * nødstoppen for de kliniske verktøyene, autoerstatt-reglene i
- * teksteditorene og stillingslista (docs/stillinger.md). En lokal administrator får «Brukere», der vedkommende kan
+ * teksteditorene, stillingslista (docs/stillinger.md) og funksjonsbryterne per fagmiljø (#598). En lokal administrator får «Brukere», der vedkommende kan
  * gi nytt passord og opprette brukere etter myndigheten sin, og «Redaktører»,
  * der vedkommende gir og tar tilbake redaktøransvar i eget fagmiljø (P5).
  * Andre får ingenting. Det er et grensesnitt, ikke en tilgangskontroll:
@@ -149,6 +150,7 @@ export function Administrasjon({
       {admin && (
         <>
           {vindu('stillinger', <Stillinger apen={apen('stillinger')} onLukk={lukk.stillinger} />)}
+          {vindu('funksjoner', <Funksjoner apen={apen('funksjoner')} onLukk={lukk.funksjoner} />)}
           {vindu('datakilder', <Datakilder apen={apen('datakilder')} onLukk={lukk.datakilder} />)}
           {vindu('autoerstatt', <Autoerstattregler apen={apen('autoerstatt')} onLukk={lukk.autoerstatt} />)}
           {vindu('kurateringer', <Kurateringsoversikt apen={apen('kurateringer')} klient={kuratering} onLukk={lukk.kurateringer} />)}

@@ -57,6 +57,8 @@ describe('katalogvaktene', () => {
       'mine_administrerte_fagmiljoer()',
       // #572: fagmiljøene den innloggede selv er aktivt medlem av, uten systemarkitektunntak.
       'mine_egne_fagmiljoer()',
+      // #598: fagmiljøene der den innloggede selv har en funksjon.
+      'mine_fagmiljoer_med_funksjon(funksjon text)',
       'mine_lesbare_fagmiljoer()',
       // P5: fagmiljøene den innloggede selv kan endre utkastene i.
       'mine_redigerbare_fagmiljoer()',
@@ -65,6 +67,9 @@ describe('katalogvaktene', () => {
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
+      // #598: funksjonsbryterne og testmiljøene, bare for systemarkitektene.
+      'sett_funksjonsbryter(funksjon text, fagmiljo uuid, tilstand text, begrunnelse text)',
+      'sett_testmiljo(fagmiljo uuid, testmiljo boolean, begrunnelse text)',
       // Personsøket: hvem administratoren kan legge til (`medlemskapsmyndighet`).
       'sok_medlemskandidater(fagmiljo uuid, sok text)',
       'tildel_redaktoransvar(bruker uuid, omrade text, ressurs uuid, fagmiljo uuid, merknad text)',

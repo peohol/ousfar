@@ -702,7 +702,16 @@ bruker derfor en ny, felles mekanisme fra Dev:
   `av` (standard), `utprøving` (bare systemarkitekter med eget medlemskap)
   og `på` (alle med eget medlemskap), endret i appen av en systemarkitekt
   med begrunnelse og logget i `tilgangslogg`. Personals funksjon heter
-  `personal`.
+  `personal`. Mekanismen står i `docs/fagmiljoer.md`, «Funksjonsbrytere per
+  fagmiljø». P2b fører inn `personal` i katalogen uten noen godkjenning, så
+  databasen selv nekter `utprøving` og `på` i alle fagmiljøer som ikke er
+  testmiljøer (K-SKJ-10). Først når §3.4 er avklart for et bestemt fagmiljø
+  og Peder har sagt ja, fører en egen migrasjon fra Personal inn en rad i
+  `public.funksjonsgodkjenninger` for akkurat det fagmiljøet; den gjelder
+  ikke for noe annet fagmiljø, og ingen systemarkitekt kan gi den i appen.
+  Kalendertabellene bruker
+  `public.mine_fagmiljoer_med_funksjon('personal')` i radsikkerheten og
+  `intern.krev_funksjon('personal', fagmiljø)` i kommandoene.
 - **Testmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):
   Sandkasse er merket som testmiljø. **Bare i et testmiljø kan det finnes
   syntetiske medarbeidere** uten konto, og bare der virker `Vis som`.
@@ -1045,8 +1054,8 @@ bindende detaljspesifikasjon.
 
 | Issue | Hva | Trengs før |
 | --- | --- | --- |
-| [#572](https://github.com/peohol/ousfar/issues/572) | Hjelper for eget medlemskap uten systemarkitektunntak (avgrenset på nytt 26.11.2026; utvidelsespunktet i brukeroversikten utgår) | P2b |
-| [#598](https://github.com/peohol/ousfar/issues/598) | Funksjonsbrytere per fagmiljø og testmiljø-markering | P2b |
+| [#572](https://github.com/peohol/ousfar/issues/572) | Hjelper for eget medlemskap uten systemarkitektunntak (avgrenset på nytt 26.11.2026; utvidelsespunktet i brukeroversikten utgår): `intern.er_eget_medlem_i`, `public.mine_egne_fagmiljoer()` | P2b |
+| [#598](https://github.com/peohol/ousfar/issues/598) | Funksjonsbrytere per fagmiljø og testmiljø-markering (`docs/fagmiljoer.md`, «Funksjonsbrytere per fagmiljø»; Sandkasse er merket som testmiljø) | P2b |
 | [#599](https://github.com/peohol/ousfar/issues/599) | Forsiden: paneler med tilgang, felt øverst og lasting ved behov | P5 |
 | [#600](https://github.com/peohol/ousfar/issues/600) | Varsler på enheten for flere formål, med utsending på et tidspunkt | P6 |
 | [#601](https://github.com/peohol/ousfar/issues/601) | Føringer i endringsloggen bare for systemarkitekter | P7 (til da er føringene nøytrale, så K-SKJ-2 holder uten) |
