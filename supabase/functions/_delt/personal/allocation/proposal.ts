@@ -96,9 +96,11 @@ export interface Proposal {
   uncovered: UncoveredSlot[];
   fairness: FairnessRow[];
   score: Delta;
-  /** Kompromisser og begrensninger brukeren bør vite om. */
+  /** Kompromisser og begrensninger brukeren bør vite om. Avhenger ikke av vaktfritak. */
   notes: string[];
+  /** Om søket endte i et lokalt optimum, og teksten om det. Avhenger av kostnaden, og dermed av vaktfritak. */
   localOptimum: boolean;
+  searchNote: string;
   problem: Problem;
   solution: Solution;
 }
@@ -317,11 +319,9 @@ export function proposeAllocation(state: PlannerState, role: Role, request: Allo
       ? `Dekningen er kontrollert dag for dag, men ${cutDays} ${cutDays === 1 ? 'dag' : 'dager'} hadde for mange kombinasjoner til å prøve alle. Der er dekningen den beste søket fant, ikke bevist høyest mulig.`
       : 'Dekningen er den høyest mulige, kontrollert dag for dag.',
   );
-  notes.push(
-    localOptimum
-      ? 'Fordelingen er et lokalt optimum: ingen enkelt flytting eller ombytting gir en bedre plan. Det er ikke bevist at ingen bedre plan finnes.'
-      : 'Søket etter bedre fordeling stoppet etter største antall gjennomganger; planen kan forbedres.',
-  );
+  const searchNote = localOptimum
+    ? 'Fordelingen er et lokalt optimum: ingen enkelt flytting eller ombytting gir en bedre plan. Det er ikke bevist at ingen bedre plan finnes.'
+    : 'Søket etter bedre fordeling stoppet etter største antall gjennomganger; planen kan forbedres.';
 
   return {
     request,
@@ -335,6 +335,7 @@ export function proposeAllocation(state: PlannerState, role: Role, request: Allo
     score: sol.score(),
     notes,
     localOptimum,
+    searchNote,
     problem: pr,
     solution: sol,
   };
@@ -350,7 +351,9 @@ export interface ProposalView {
   /** Forventet antall og mål avhenger av vaktfritak: null uten myndighet over det. */
   fairness: FairnessRow[] | null;
   notes: string[];
-  localOptimum: boolean;
+  /** Avhenger av den fritaksavhengige kostnaden: null uten myndighet over vaktfritak. */
+  localOptimum: boolean | null;
+  searchNote: string | null;
 }
 
 /**
@@ -360,6 +363,8 @@ export interface ProposalView {
  * `explainSlot(..., { detailed: seesExemptionDetails(role) })`.
  */
 export function proposalView(p: Proposal, role: Role): ProposalView {
+  // Forslag er planleggernes; leser og systemarkitekt uten lokal myndighet får ingen.
+  assertCan(role, 'editCalendar');
   const sees = seesExemptionDetails(role);
   const change = (c: ProposalChange): ProposalChange => (sees ? c : { ...c, before: withoutExemption(c.before), after: withoutExemption(c.after) });
   return {
@@ -370,7 +375,8 @@ export function proposalView(p: Proposal, role: Role): ProposalView {
     uncovered: p.uncovered,
     fairness: sees ? p.fairness : null,
     notes: p.notes,
-    localOptimum: p.localOptimum,
+    localOptimum: sees ? p.localOptimum : null,
+    searchNote: sees ? p.searchNote : null,
   };
 }
 

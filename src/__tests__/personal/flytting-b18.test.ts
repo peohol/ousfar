@@ -221,6 +221,35 @@ describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.1
     expect(analyzeDrop(other, 'planner', src(other, 'f1', TUE), { personId: 'f5', date: TUE }, TODAY).outcome).toBe('conflict');
   });
 
+  it('samme status hos en annen person en annen dag er et vanlig bytte når statusen ikke er en vakttype', () => {
+    let s = added(makeState(), d('f1', MON, S.homeOffice, { note: 'A' }));
+    s = added(s, d('f4', THU, S.homeOffice, { note: 'B' }));
+    const a = analyzeDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f4', date: THU }, TODAY);
+    expect(a.outcome).toBe('conflict');
+    expect(a.counterparts).toEqual([]);
+    expect(a.options.map((o) => o.kind)).toEqual(['swap', 'replace']);
+    const swap = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f4', date: THU }, 'swap', undefined, TODAY).state;
+    expect(cell(swap, 'f4', THU)).toMatchObject({ statusId: S.homeOffice, note: 'A' });
+    expect(cell(swap, 'f1', MON)).toMatchObject({ statusId: S.homeOffice, note: 'B' });
+    expect([cell(swap, 'f1', THU), cell(swap, 'f4', MON)]).toEqual([undefined, undefined]);
+    const replace = commitDrop(s, 'planner', src(s, 'f1', MON), { personId: 'f4', date: THU }, 'replace', undefined, TODAY).state;
+    expect(cell(replace, 'f4', THU)).toMatchObject({ statusId: S.homeOffice, note: 'A' });
+    expect([cell(replace, 'f1', MON), cell(replace, 'f1', THU), cell(replace, 'f4', MON)]).toEqual([undefined, undefined, undefined]);
+  });
+
+  it('negativt: utfallet for vaktplanansvarlig er det samme med og uten et skjult administrativt fritak', () => {
+    const base = added(added(makeState(), d('f1', TUE, S.away)), d('f4', TUE, S.away));
+    const exempt = setExemption(base, 'localAdmin', idAt(base, 'f1', TUE), true, TODAY);
+    const seen = (s: PlannerState, role: 'planner' | 'localAdmin') => {
+      const a = analyzeDrop(s, role, src(s, 'f1', TUE), { personId: 'f4', date: TUE }, TODAY);
+      return { outcome: a.outcome, kinds: a.options.map((o) => o.kind), reasons: a.reasons };
+    };
+    expect(seen(exempt, 'planner')).toEqual(seen(base, 'planner'));
+    expect(seen(base, 'planner').outcome).toBe('same');
+    // Lokal administrator ser fritaket, og da er de to statusene ikke helt like.
+    expect(seen(exempt, 'localAdmin').outcome).toBe('conflict');
+  });
+
   it('Til stede sluppet på en status bytter dem, i alle visninger', () => {
     const s = added(makeState(), d('f4', TUE, S.homeOffice));
     const a = analyzeDrop(s, 'planner', { kind: 'presence', cell: { personId: 'f1', date: TUE } }, { personId: 'f4', date: TUE }, TODAY);

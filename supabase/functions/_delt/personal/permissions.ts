@@ -152,6 +152,7 @@ export function withoutExemption<E extends CalendarEntry | undefined>(entry: E):
  * aldri ut tilstanden uten å gå gjennom denne.
  */
 export function calendarView(state: PlannerState, role: Role): PlannerState {
+  assertCan(role, 'view');
   if (seesExemptionDetails(role) || !state.entries.some((e) => e.exempt)) return state;
   return { ...state, entries: state.entries.map((e) => withoutExemption(e)) };
 }

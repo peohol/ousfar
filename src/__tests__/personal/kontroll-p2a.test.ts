@@ -4,7 +4,7 @@ import { added, d, makeState, onlyDuties, person, withHistory, workdays } from '
 import { createPostState } from './annetFagmiljo';
 import { STATUS_IDS as S } from '@delt/personal/catalog';
 import { commitRules, DomainError, setExemption, upsertPerson, validateRules } from '@delt/personal/commands';
-import { calendarView } from '@delt/personal/permissions';
+import { calendarView, PermissionError } from '@delt/personal/permissions';
 import { entryAt, presenceOf } from '@delt/personal/rules';
 import { proposeAllocation, proposalView } from '@delt/personal/allocation/proposal';
 import { workload } from '@delt/personal/allocation/workload';
@@ -27,18 +27,25 @@ describe('administrativt vaktfritak i lesemodellen for kalender og forslag', () 
   }
   const hasExempt = (value: unknown) => JSON.stringify(value).includes('"exempt"');
 
-  it('negativt: vaktplanansvarlig og leser får forslaget og kalenderen uten fritak og uten tall som avhenger av det', () => {
+  it('negativt: vaktplanansvarlig får forslaget og kalenderen uten fritak og uten noe som avhenger av det', () => {
     const { s, p } = withProposal();
     expect(hasExempt(p.state)).toBe(true);
-    for (const role of ['planner', 'reader'] as const) {
-      const view = proposalView(p, role);
-      expect(hasExempt(view)).toBe(false);
-      expect(view.fairness).toBeNull();
-      for (const key of ['base', 'fingerprint', 'problem', 'solution']) expect(view).not.toHaveProperty(key);
-      expect(hasExempt(calendarView(s, role))).toBe(false);
-      // Borte står fortsatt; bare fritaket er skjult.
-      expect(entryAt(view.state, 'f1', FUTURE)!.statusId).toBe(S.away);
-    }
+    const view = proposalView(p, 'planner');
+    expect(hasExempt(view)).toBe(false);
+    expect(view.fairness).toBeNull();
+    expect(view.localOptimum).toBeNull();
+    expect(view.searchNote).toBeNull();
+    expect(view.notes.join(' ')).not.toContain('optimum');
+    for (const key of ['base', 'fingerprint', 'problem', 'solution']) expect(view).not.toHaveProperty(key);
+    for (const role of ['planner', 'reader'] as const) expect(hasExempt(calendarView(s, role))).toBe(false);
+    // Borte står fortsatt; bare fritaket er skjult.
+    expect(entryAt(view.state, 'f1', FUTURE)!.statusId).toBe(S.away);
+  });
+
+  it('negativt: leser og systemarkitekt uten lokal myndighet får ingen forslag, og systemarkitekten ingen kalender', () => {
+    const { s, p } = withProposal();
+    for (const role of ['reader', 'outsideArchitect'] as const) expect(() => proposalView(p, role)).toThrow(PermissionError);
+    expect(() => calendarView(s, 'outsideArchitect')).toThrow(PermissionError);
   });
 
   it('lokal administrator ser fritaket og tallene', () => {
@@ -46,6 +53,7 @@ describe('administrativt vaktfritak i lesemodellen for kalender og forslag', () 
     const view = proposalView(p, 'localAdmin');
     expect(entryAt(view.state, 'f1', FUTURE)!.exempt).toBe(true);
     expect(view.fairness).toEqual(p.fairness);
+    expect([view.localOptimum, view.searchNote]).toEqual([p.localOptimum, p.searchNote]);
     expect(calendarView(s, 'localAdmin')).toBe(s);
   });
 });

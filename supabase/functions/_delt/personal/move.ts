@@ -1,8 +1,8 @@
 import { assertInvariants, DomainError } from './commands.ts';
 import { formatDateNo, todayIn } from './dates.ts';
-import { assertCan } from './permissions.ts';
+import { assertCan, seesExemptionDetails } from './permissions.ts';
 import { dayKind } from './people.ts';
-import { atDate, coverageEffects, dayCoverage, entriesByDate, entryAt, personById, planSet, rulesForDate, statusIndex, type Cell, type CoverageEffect, type EntryDraft, type SetPlan } from './rules.ts';
+import { atDate, coverageEffects, dayCoverage, entriesByDate, entryAt, personById, planSet, requiredCount, rulesForDate, statusIndex, type Cell, type CoverageEffect, type EntryDraft, type SetPlan } from './rules.ts';
 import type { CalendarEntry, IsoDate, PlannerState, Role } from './types.ts';
 
 /**
@@ -117,10 +117,15 @@ function result(state: PlannerState, kind: MoveKind, remove: CalendarEntry[], ad
   return { kind, state: assertInvariants(next, dates, today), ...parts, uncovered: coverageEffects(state, next, dates, today) };
 }
 
-/** To registreringer med helt likt innhold: status, merknad, klokkeslett, lås og vaktfritak, uansett person og dato. */
-export function identicalEntries(a: CalendarEntry, b: CalendarEntry): boolean {
+/**
+ * To registreringer med helt likt innhold slik rollen ser dem: status,
+ * merknad, klokkeslett og lås, og vaktfritak bare for roller med myndighet
+ * over det (`seesExemptionDetails`). Uten myndighet avgjøres likheten uten
+ * fritaket, så utfallet av en flytting aldri røper et skjult fritak.
+ */
+export function identicalEntries(a: CalendarEntry, b: CalendarEntry, withExemption: boolean): boolean {
   const time = (e: CalendarEntry) => (e.time ? `${e.time.start}-${e.time.end}` : '');
-  return a.statusId === b.statusId && (a.note ?? '') === (b.note ?? '') && time(a) === time(b) && !!a.locked === !!b.locked && !!a.exempt === !!b.exempt;
+  return a.statusId === b.statusId && (a.note ?? '') === (b.note ?? '') && time(a) === time(b) && !!a.locked === !!b.locked && (!withExemption || !!a.exempt === !!b.exempt);
 }
 
 /**
@@ -136,7 +141,7 @@ export function analyzeMove(state: PlannerState, role: Role, entryId: string, to
   if (entry.personId === to.personId && entry.date === to.date) return { ...base, outcome: 'same' };
   const origin: Cell = { personId: entry.personId, date: entry.date };
   const blocker = entryAt(state, to.personId, to.date);
-  if (blocker && (blocker.date === entry.date || blocker.personId === entry.personId) && identicalEntries(blocker, entry)) return { ...base, outcome: 'same', blocker };
+  if (blocker && (blocker.date === entry.date || blocker.personId === entry.personId) && identicalEntries(blocker, entry, seesExemptionDetails(role))) return { ...base, outcome: 'same', blocker };
 
   if (!blocker) {
     const reasons = planReasons(state, planSet(state, draftAt(entry, to), today, new Set([entry.id])), today);
@@ -204,6 +209,12 @@ export function commitPresenceMove(current: PlannerState, role: Role, from: Cell
 // ---------------------------------------------------------------------------
 // Månedsvisningen: personen med statusen til en ny dato (B18)
 // ---------------------------------------------------------------------------
+
+/** Er statusen en vakttype på datoen: én per dag eller med bemanningsbehov? */
+function isDutyType(state: PlannerState, statusId: string, date: IsoDate, today: IsoDate): boolean {
+  const rules = atDate(state, date, today).rules;
+  return !!statusIndex(rules).get(statusId)?.uniquePerDay || requiredCount(rules, statusId, date) > 0;
+}
 
 /** De andre som har statusen på datoen, når den er en vakt (én per dag) eller behovet er fullt. */
 function fullCounterparts(state: PlannerState, entry: CalendarEntry, date: IsoDate, today: IsoDate): CalendarEntry[] {
@@ -324,7 +335,8 @@ export function analyzeDrop(state: PlannerState, role: Role, source: DropSource,
   const entry = entryById(state, source.entryId);
   if (!target.personId || target.personId === entry.personId) return analyzeDateMove(state, role, entry.id, target.date, today);
   const there = entryAt(state, target.personId, target.date);
-  if (there && there.statusId === entry.statusId && target.date !== entry.date) return analyzeDateMove(state, role, entry.id, target.date, today, target.personId);
+  // Bare for vakttyper (én per dag eller med bemanningsbehov): ellers er det et vanlig bytte mellom de to cellene.
+  if (there && there.statusId === entry.statusId && target.date !== entry.date && isDutyType(state, entry.statusId, target.date, today)) return analyzeDateMove(state, role, entry.id, target.date, today, target.personId);
   return { ...analyzeMove(state, role, entry.id, { personId: target.personId, date: target.date }, today), counterparts: [] };
 }
 
