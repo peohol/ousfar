@@ -126,6 +126,10 @@ Ingen aktivering med reelle data før §3.4 og P7.
   eksisterende statusen flyttes tilbake til kilden, målet blir uten status.
   Vis resultatet og krev samme kvalifikasjoner/rettigheter som ved
   ordinært bytte. Tom til tom gjør ingenting. Ingen skjult sletting.
+- Et bytte mellom to helt like statuser (samme status, merknad, tid, lås og
+  fritak, samme dag eller hos samme person), også Til stede mot Til stede,
+  og et slipp på samme sted gjør ingenting: målet markeres ikke, og ingen
+  tekst eller advarsel vises (Peder 27.11.2026).
 - Fremhev og Alle medarbeidere: fest Nullstill, Vis alle og Skjul alle
   øverst i menyene; listen kan rulles separat. Filtre endrer aldri dekning
   eller fordelingsgrunnlag.
