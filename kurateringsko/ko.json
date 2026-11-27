@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-27T05:28:04.645Z",
+  "oppdatert_kl": "2026-11-27T07:28:19.362Z",
   "malt_kl": "2026-11-27T00:44:45.658Z",
   "teller": 91,
   "stoffer": {
@@ -8337,30 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261125-045926": {
-      "ider": [
-        "fullfort-1",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "9dd58168c68d78033e29c479389dc4bdfcfbbf0eaf304d032d8e8185c86ae18c",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "9dd58168c68d78033e29c479389dc4bdfcfbbf0eaf304d032d8e8185c86ae18c",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "haloperidol er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-25T06:11:05.973Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45558688741"
-        }
-      },
-      "besvart_commit": "d918a984a608a22aacc111948176a1dbb2737416",
-      "sist_brukt_kl": "2026-11-25T06:11:05.973Z"
-    },
     "kurateringsko/okt/20261125-074952": {
       "ider": [
         "fullfort-2",
