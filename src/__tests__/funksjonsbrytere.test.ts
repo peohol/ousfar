@@ -181,7 +181,11 @@ describe('administrasjonen', () => {
       'arkitektB',
       'select public.funksjonsoversikt()',
     )
-    expect(oversikt.funksjoner).toEqual([expect.objectContaining({ nokkel: FUNKSJON, navn: 'Testfunksjon', godkjente_fagmiljoer: [], brytere: [] })])
+    // Katalogen har også personalkalenderen (#616), uten godkjenning og uten bryter i en ny database.
+    expect(oversikt.funksjoner).toEqual([
+      expect.objectContaining({ nokkel: 'personal', godkjente_fagmiljoer: [], brytere: [] }),
+      expect.objectContaining({ nokkel: FUNKSJON, navn: 'Testfunksjon', godkjente_fagmiljoer: [], brytere: [] }),
+    ])
     expect(oversikt.fagmiljoer.find((f) => f.id === T)).toMatchObject({ testmiljo: true, navn: 'Testmiljø T' })
     expect(oversikt.fagmiljoer.find((f) => f.id === galleri.fagmiljo.A)).toMatchObject({ testmiljo: false })
   })
@@ -329,8 +333,8 @@ describe('når eierprosjektet har godkjent funksjonen for ett fagmiljø', () => 
     expect(await mineFunksjoner('vanligB')).toEqual([])
 
     // Oversikten viser godkjenningen, og panelet tilbyr bare det databasen tillater.
-    const oversikt = await kall<{ funksjoner: { godkjente_fagmiljoer: string[] }[] }>('systemarkitekt', 'select public.funksjonsoversikt()')
-    expect(oversikt.funksjoner[0]!.godkjente_fagmiljoer).toEqual([A()])
+    const oversikt = await kall<{ funksjoner: { nokkel: string; godkjente_fagmiljoer: string[] }[] }>('systemarkitekt', 'select public.funksjonsoversikt()')
+    expect(oversikt.funksjoner.find((f) => f.nokkel === FUNKSJON)!.godkjente_fagmiljoer).toEqual([A()])
   })
 
   it('kan godkjenningen ikke trekkes eller flyttes mens funksjonen prøves ut eller er på', async () => {

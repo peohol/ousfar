@@ -172,6 +172,8 @@ describe.each<Rolle>(['admin', 'user'])('tilbakefyllingen med maxhag som %s fra 
       { handling: 'fagmiljoer.insert', n: 2, uten_grunn: 0, med_aktor: 0 },
       // Åpningen av OUS Rettstoksikologi (startporten S2).
       { handling: 'fagmiljoer.update', n: 1, uten_grunn: 0, med_aktor: 0 },
+      // #616: funksjonen `personal` i katalogen, uten noen godkjenning.
+      { handling: 'funksjoner.insert', n: 1, uten_grunn: 0, med_aktor: 0 },
       // Her kjøres tilbakefyllingen etter de senere migrasjonene, så kontoene
       // står uten medlemskap til den kommer: P3 sperrer dem, og
       // tilbakefyllingen opphever sperren (i produksjonen kom den først).

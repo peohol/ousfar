@@ -12,9 +12,13 @@ import type { CalendarEntry, PlannerState, Role } from './types.ts';
  *   kalenderen, medarbeiderne og vaktandelene, og lager, godtar og
  *   publiserer vaktplanen.
  * - Lokal administrator (også systemarkitekt med myndighet i fagmiljøet): det
- *   samme, og i tillegg regler og administrativt vaktfritak.
+ *   samme, og i tillegg regler, administrativt vaktfritak og hvem som er
+ *   vaktplanansvarlig.
  * - Systemarkitekt uten lokal myndighet: ingen tilgang. Systemarkitektrollen
  *   gir ikke i seg selv innsyn i personalopplysninger i et fagmiljø.
+ *
+ * I OUSFAR håndhever databasen den samme tabellen (`personal.kan`, P2b), og en
+ * test holder dem like.
  */
 
 export type Action =
@@ -26,13 +30,15 @@ export type Action =
   | 'editRules'
   /** Se og innvilge (eller trekke tilbake) administrativt vaktfritak ved Borte. */
   | 'manageExemption'
+  /** Utpeke og fjerne vaktplanansvarlige (B3, docs/personal.md §8.4). */
+  | 'managePlanners'
   /** Tilbakestille hele prototypen til eksempeldata. Demooperasjon som bare finnes i prototypen. */
   | 'resetDemo';
 
 const MATRIX: Record<Role, ReadonlySet<Action>> = {
   reader: new Set(['view']),
   planner: new Set(['view', 'editCalendar', 'editPeople', 'editDutyShare', 'resetDemo']),
-  localAdmin: new Set(['view', 'editCalendar', 'editPeople', 'editDutyShare', 'editRules', 'manageExemption', 'resetDemo']),
+  localAdmin: new Set(['view', 'editCalendar', 'editPeople', 'editDutyShare', 'editRules', 'manageExemption', 'managePlanners', 'resetDemo']),
   outsideArchitect: new Set([]),
 };
 
@@ -79,6 +85,7 @@ const ACTION_TEXT: Record<Action, string> = {
   editDutyShare: 'endre vaktandeler',
   editRules: 'endre statuser og regler',
   manageExemption: 'innvilge eller trekke tilbake administrativt vaktfritak',
+  managePlanners: 'utpeke vaktplanansvarlige',
   resetDemo: 'tilbakestille prototypen',
 };
 

@@ -29,6 +29,8 @@ export const REKKEVIDDER = {
   forvaltning: 'felles forvaltning',
   /** Tilgangsmodellen selv: kontoer, fagmiljøer, roller, rekkevidder og loggen. */
   tilgang: 'tilgang',
+  /** Hver rad hører til fagmiljøet den står med (`fagmiljo_id`), og når ingen andre. */
+  fagmiljo: 'per fagmiljø',
 } as const
 
 export type Rekkevidde = keyof typeof REKKEVIDDER
@@ -182,6 +184,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.funksjonsbrytere': k('tilgang', '#598: tilstanden til hver funksjon per fagmiljø; leses bare gjennom funksjonene'),
   'public.funksjonsgodkjenninger': k('tilgang', '#598: fagmiljøene en funksjon er godkjent for ordinær bruk i; endres bare med migrasjon fra eierprosjektet'),
   'public.redaktoransvar': k('forvaltning', 'P5: redaktøransvaret for en ressurs, fortolkningen i et fagmiljø eller fagsidene; leses bare gjennom funksjonene'),
+
+  // Personalkalenderen (#616, docs/personal-database.md).
+  'personal.*': k('fagmiljo', '#616: personalkalenderen; bare gjennom funksjonene, med funksjonen `personal` og rollen i fagmiljøet'),
 
   // Offentlige kilder.
   'legemiddeldata.*': OFFENTLIG_KILDE,

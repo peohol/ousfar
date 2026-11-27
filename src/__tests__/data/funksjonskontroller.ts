@@ -81,6 +81,13 @@ export const KONTROLLER = [
    * for systemarkitekter og lokale administratorer (docs/stillinger.md).
    */
   'stillingsmyndighet',
+  /**
+   * `security definer` for personalkalenderen (#616, docs/personal-database.md):
+   * krever funksjonen `personal` i fagmiljøet og rollen der
+   * (`personal.krev_tilgang`). Systemarkitekt- og adminrollen gir ingenting
+   * ekstra (K-TIL-2).
+   */
+  'personal',
 ] as const
 
 export type Kontroll = (typeof KONTROLLER)[number]
@@ -238,6 +245,10 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'funksjonsoversikt()': 'systemarkitekt',
   'sett_funksjonsbryter(funksjon text, fagmiljo uuid, tilstand text, begrunnelse text)': 'systemarkitekt',
   'sett_testmiljo(fagmiljo uuid, testmiljo boolean, begrunnelse text)': 'systemarkitekt',
+  // #616: personalkalenderen, etter funksjonen og rollen i kalenderen.
+  'personal_grunnlag(fagmiljo uuid)': 'personal',
+  'personal_lagre_oppsett(fagmiljo uuid, oppsett jsonb, forventet_versjon integer)': 'personal',
+  'personal_sett_vaktplanansvarlig(fagmiljo uuid, bruker uuid, ansvarlig boolean)': 'personal',
   'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).

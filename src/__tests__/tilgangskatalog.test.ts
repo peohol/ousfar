@@ -66,6 +66,10 @@ describe('katalogvaktene', () => {
       'mitt_arbeidsfagmiljo()',
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
+      // #616: personalkalenderen i ett fagmiljø, etter funksjonen og rollen der (`personal`).
+      'personal_grunnlag(fagmiljo uuid)',
+      'personal_lagre_oppsett(fagmiljo uuid, oppsett jsonb, forventet_versjon integer)',
+      'personal_sett_vaktplanansvarlig(fagmiljo uuid, bruker uuid, ansvarlig boolean)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
       // #598: funksjonsbryterne og testmiljøene, bare for systemarkitektene.
       'sett_funksjonsbryter(funksjon text, fagmiljo uuid, tilstand text, begrunnelse text)',
@@ -78,7 +82,7 @@ describe('katalogvaktene', () => {
     ])
     expect(FUNKSJONSKONTROLLER['velg_arbeidsfagmiljo(fagmiljo uuid)']).toBe('eier')
     for (const s of signaturer.filter((s) => /fagmilj|medlemskap/.test(s) && !/^(har_|min_|mine_|mitt_|velg_)/.test(s))) {
-      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|redaktormyndighet|systemarkitekt)$/)
+      expect(FUNKSJONSKONTROLLER[s], s).toMatch(/^(medlemskapsmyndighet|gruppemyndighet|redaktormyndighet|systemarkitekt|personal)$/)
     }
   })
 
