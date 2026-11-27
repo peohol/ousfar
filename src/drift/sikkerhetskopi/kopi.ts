@@ -22,6 +22,17 @@
  * størrelsen og md5-summen øyeblikksbildet har for dem, og er en fil endret
  * eller borte, forkastes forsøket og tas på nytt (høyst tre ganger).
  *
+ * **I biter.** Dataene i OUSFARs tabeller med primærnøkkel ligger ikke i
+ * `data.sql`, men i biter ved siden av kopien (`deler/<identitet>.age`, hver
+ * kryptert for seg; `deler.ts`). En bit kopilageret alt har, hentes ikke ut av
+ * databasen på nytt. Signaturen lister bitene med sha256 og md5, og manifestet
+ * inne i kopien lister dem med tabellen og kolonnene.
+ *
+ * **Utelatt.** Tabellene i `UTELATTE_TABELLER` (direktemeldingene og
+ * samtalene deres, og de flyktige varselkøene) tas aldri med og leses ikke.
+ * Viser en tabell som tas med, til en utelatt, stopper kopien: da ville den
+ * gjenopprettede databasen hatt referanser til rader som ikke finnes.
+ *
  * **Strømmet.** Pakking, kryptering, dekryptering og utpakking går rett fra
  * prosess til prosess (`tar | age`), uten at kopien er i minnet, så størrelsen
  * begrenses bare av disken.
@@ -52,8 +63,32 @@ import {
 } from './tilpasninger'
 import { SUPABASE_CLI } from '../supabaseCli'
 import { Endret, Stopp } from './feil'
-import { signer, verifiser } from './signatur'
-import { KRYPTERTE_FAKTORER_SQL, PLATTFORMTABELLER, TABELLER_SQL, sammenlign, tabellsumSql, type Fil, type Manifest, type Tabellsum } from './manifest'
+import { signer, verifiser, type Delfil } from './signatur'
+import {
+  EGNE_SKJEMAER_SQL,
+  KRYPTERTE_FAKTORER_SQL,
+  PLATTFORMTABELLER,
+  TABELLER_SQL,
+  TOM_SUM,
+  UTELATTE_TABELLER,
+  sammenlign,
+  tabellsumSql,
+  type Fil,
+  type Manifest,
+  type Tabellsum,
+} from './manifest'
+import {
+  FASTE_INNSTILLINGER,
+  delplanSql,
+  delteTabellerSql,
+  henteskript,
+  nyeBiter,
+  sekvensSql,
+  tilbakeskript,
+  type Bit,
+  type DeltTabell,
+  type Sekvens,
+} from './deler'
 
 
 /** Produksjonsprosjektet. En gjenoppretting går aldri dit: et reelt tap gjenopprettes i et nytt prosjekt. */
@@ -75,11 +110,14 @@ function psql(dbUrl: string, argumenter: string[]): string {
 
 /**
  * Radene fra en spørring som JSON. Med `bilde` leses de i det eksporterte
- * øyeblikksbildet, slik dumpene leser dataene.
+ * øyeblikksbildet, slik dumpene leser dataene. Øktinnstillingene teksten til
+ * en rad avhenger av, er faste (`FASTE_INNSTILLINGER`), så kontrollsummene
+ * blir de samme i kilden og i et mål med andre standardinnstillinger.
  */
 export function sporring<T = Record<string, unknown>>(dbUrl: string, sql: string, bilde?: string): T[] {
   const i = bilde ? `begin isolation level repeatable read read only; set transaction snapshot '${bilde.replaceAll("'", '')}'; ` : ''
-  const ut = psql(dbUrl, ['-At', '-c', `${i}select coalesce(json_agg(x), '[]'::json) from (${sql}) x`])
+  const faste = FASTE_INNSTILLINGER.map((x) => `${x}; `).join('')
+  const ut = psql(dbUrl, ['-At', '-c', `${i}${faste}select coalesce(json_agg(x), '[]'::json) from (${sql}) x`])
   return JSON.parse(ut.trim() || '[]') as T[]
 }
 
@@ -92,9 +130,12 @@ export function fingeravtrykk(dbUrl: string, bilde?: string): Fingeravtrykk {
   return { versjoner, objekter: somObjekter(sporring(dbUrl, FINGERAVTRYKK_SQL, bilde)) }
 }
 
-export function tabellsummer(dbUrl: string, bilde?: string): Tabellsum[] {
+/** Radtall og kontrollsum per tabell. De utelatte leses ikke; de skal være tomme etter en gjenoppretting. */
+export function tabellsummer(dbUrl: string, bilde?: string, utelatt: readonly string[] = []): Tabellsum[] {
   const tabeller = sporring<{ tabell: string }>(dbUrl, TABELLER_SQL, bilde).map((r) => r.tabell)
+  const ute = new Set(utelatt)
   return tabeller.map((t) => {
+    if (ute.has(t)) return { tabell: t, rader: 0, sum: TOM_SUM }
     const [rad] = sporring<Tabellsum>(dbUrl, tabellsumSql(t), bilde)
     return { tabell: t, rader: Number(rad!.rader), sum: rad!.sum }
   })
@@ -155,7 +196,7 @@ export function utenSkrivetilgang(dbUrl: string): string[] {
     dbUrl,
     `select n.nspname || '.' || c.relname as tabell from pg_class c join pg_namespace n on n.oid = c.relnamespace
      where n.nspname in ('auth', 'storage') and c.relkind in ('r', 'p')
-       and not has_table_privilege(c.oid, 'insert') order by 1`,
+       and not has_table_privilege('postgres', c.oid, 'insert') order by 1`,
   ).map((r) => r.tabell)
 }
 
@@ -193,10 +234,13 @@ export async function kjorDumpskript(skript: string, fil: string): Promise<void>
   const bilde = process.env.KOPI_PG_BILDE
   const ut = openSync(fil, 'w', 0o600)
   try {
+    // Uten passord i adressen setter CLI-en et tomt `PGPASSWORD`; da gjelder det i miljøet (den midlertidige rollen, prosjekt.ts).
+    const kjores = skript.replace(/^export PGPASSWORD=""\n/m, '')
+    const miljo = ['PGPASSWORD', 'PGSSLMODE'].filter((n) => process.env[n]).flatMap((n) => ['-e', n])
     const prosess = bilde
-      ? spawn('docker', ['run', '--rm', '-i', '--network', 'host', '--entrypoint', 'bash', bilde, '-s'], { stdio: ['pipe', ut, 'pipe'] })
+      ? spawn('docker', ['run', '--rm', '-i', '--network', 'host', ...miljo, '--entrypoint', 'bash', bilde, '-s'], { stdio: ['pipe', ut, 'pipe'] })
       : spawn('bash', ['-s'], { stdio: ['pipe', ut, 'pipe'] })
-    prosess.stdin!.end(skript)
+    prosess.stdin!.end(kjores)
     await ferdig(prosess, 'pg_dump')
   } finally {
     closeSync(ut)
@@ -423,6 +467,12 @@ export interface TaValg {
    * krever signaturen, kontrollert mot den offentlige nøkkelen.
    */
   signeringsnokkel: string
+  /**
+   * Bitene kopilageret alt har, etter identiteten, fra innholdslisten til
+   * forrige kopi (signaturen). De hentes ikke på nytt; den nye kopien viser
+   * til dem med de samme summene.
+   */
+  kjente?: ReadonlyMap<string, Delfil>
   /** Kalles i hvert forsøk etter dumpene og før filene hentes. Bare for prøvene. */
   underveis?: (forsok: number) => Promise<void>
   /** Høyst så mange forsøk når kilden endres underveis. Standard 3. */
@@ -433,8 +483,20 @@ export interface Kopi {
   fil: string
   /** Signaturen, `<fil>.sig`. */
   signatur: string
+  /** Kopipunktet, som i manifestet og signaturen. */
+  laget: string
   forsok: number
+  /** Alle bitene kopien består av, også de lageret alt har. */
+  deler: Delfil[]
+  /** Identitetene til bitene som er nye i denne kopien; filene ligger i `<ut>/deler/`. */
+  nye: string[]
+  /** Omtrent hvor mange byte som ble hentet ut av databasen og Storage (for kvoten). */
+  hentet: number
 }
+
+/** Mappen bitene ligger i, ved siden av kopien, og fila til én bit. */
+export const delmappe = (ut: string) => join(ut, 'deler')
+export const delfil = (ut: string, identitet: string) => join(delmappe(ut), `${identitet}.age`)
 
 export async function taKopi(valg: TaValg): Promise<Kopi> {
   if (!valg.mottakere.length) throw new Stopp('Kopien må krypteres: oppgi minst én mottaker (offentlig age-nøkkel).')
@@ -445,8 +507,7 @@ export async function taKopi(valg: TaValg): Promise<Kopi> {
   const maks = valg.forsok ?? 3
   for (let forsok = 1; ; forsok++) {
     try {
-      const fil = await taEttForsok(valg, forsok)
-      return { fil, signatur: `${fil}.sig`, forsok }
+      return { ...(await taEttForsok(valg, forsok)), forsok }
     } catch (e) {
       if (!(e instanceof Endret) || forsok >= maks) {
         if (e instanceof Endret) throw new Stopp(`Kilden ble endret under alle ${maks} forsøkene: ${e.message}. Ingen kopi er lagret.`)
@@ -457,11 +518,100 @@ export async function taKopi(valg: TaValg): Promise<Kopi> {
   }
 }
 
-async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
+/** Summene til en kryptert fil, lest i én omgang. */
+export function summerAv(fil: string): Promise<{ sha256: string; md5: string; bytes: number }> {
+  return new Promise((ok, avvis) => {
+    const s = createHash('sha256')
+    const m = createHash('md5')
+    let bytes = 0
+    createReadStream(fil)
+      .on('data', (d) => {
+        s.update(d)
+        m.update(d)
+        bytes += d.length
+      })
+      .on('end', () => ok({ sha256: s.digest('hex'), md5: m.digest('hex'), bytes }))
+      .on('error', avvis)
+  })
+}
+
+/** Antall linjeskift i en fil, lest som strøm. */
+async function tellLinjer(fil: string): Promise<number> {
+  let n = 0
+  for await (const d of createReadStream(fil) as AsyncIterable<Buffer>) for (let i = d.indexOf(10); i >= 0; i = d.indexOf(10, i + 1)) n++
+  return n
+}
+
+/**
+ * Henter de nye bitene i øyeblikksbildet til hver sin fil i en privat mappe,
+ * krypterer hver til `<ut>/deler/<identitet>.age` og sletter den ukrypterte.
+ * Gir summene til de krypterte filene.
+ */
+async function hentBiter(dbUrl: string, bilde: string, nye: readonly { t: DeltTabell; b: Bit }[], ut: string, mottakere: readonly string[], skrevet: string[]): Promise<Map<string, Delfil>> {
+  const resultat = new Map<string, Delfil>()
+  if (!nye.length) return resultat
+  const mappe = mkdtempSync(join(tmpdir(), 'ousfar-deler-'))
+  chmodSync(mappe, 0o700)
+  try {
+    const filer = nye.map((n, i) => ({ ...n, fil: join(mappe, `${i}.copy`) }))
+    await new Promise<void>((ok, avvis) => {
+      const p = spawn('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', dbUrl], { stdio: ['pipe', 'ignore', 'pipe'] })
+      ferdig(p, 'psql (bitene)').then(ok, avvis)
+      p.stdin!.end(henteskript(bilde, filer))
+    })
+    mkdirSync(delmappe(ut), { recursive: true, mode: 0o700 })
+    for (const { t, b, fil } of filer) {
+      // COPY skriver én linje per rad (linjeskift i verdiene skrives som \n), så linjene skal være radene i planen.
+      const linjer = await tellLinjer(fil)
+      if (linjer !== Number(b.rader)) throw new Stopp(`En bit i ${t.tabell} fikk ${linjer} rader, men planen har ${b.rader}.`)
+      const kryptert = delfil(ut, b.identitet)
+      skrevet.push(kryptert)
+      execFileSync('age', [...mottakere.flatMap((m) => ['-r', m]), '-o', kryptert, fil], { stdio: ['ignore', 'ignore', 'pipe'] })
+      rmSync(fil)
+      resultat.set(b.identitet, { identitet: b.identitet, ...(await summerAv(kryptert)) })
+    }
+    return resultat
+  } finally {
+    rmSync(mappe, { recursive: true, force: true })
+  }
+}
+
+/** Fremmednøklene fra en tabell som tas med, til en som er utelatt (`liste` er en SQL-tabell med navnene). */
+export const utelattReferanseSql = (liste: string) => /* sql */ `
+  select distinct fn.nspname || '.' || f.relname as fra, tn.nspname || '.' || t.relname as til
+  from pg_constraint c
+  join pg_class f on f.oid = c.conrelid join pg_namespace fn on fn.oid = f.relnamespace
+  join pg_class t on t.oid = c.confrelid join pg_namespace tn on tn.oid = t.relnamespace
+  where c.contype = 'f'
+    and tn.nspname || '.' || t.relname = any (${liste})
+    and fn.nspname || '.' || f.relname <> all (${liste})
+`
+
+/** Stopper hvis en utelatt tabell ikke finnes: da er den omdøpt eller fjernet, og unntaket må følge med. */
+function krevUtelatte(dbUrl: string, bilde: string): string[] {
+  const navn = Object.keys(UTELATTE_TABELLER)
+  const mangler = sporring<{ tabell: string; finnes: boolean }>(
+    dbUrl,
+    navn.map((t) => `select '${t}' as tabell, to_regclass('${t}') is not null as finnes`).join(' union all '),
+    bilde,
+  ).filter((r) => !r.finnes)
+  if (mangler.length) {
+    throw new Stopp(`Tabellene som ikke skal være med i kopien, finnes ikke: ${mangler.map((r) => r.tabell).join(', ')}. Oppdater UTELATTE_TABELLER før en kopi tas.`)
+  }
+  const liste = `array[${navn.map((t) => `'${t}'`).join(', ')}]::text[]`
+  const avhengige = sporring<{ fra: string; til: string }>(dbUrl, utelattReferanseSql(liste), bilde)
+  if (avhengige.length) {
+    throw new Stopp(`Tabeller i kopien viser til tabeller som ikke er med: ${avhengige.map((r) => `${r.fra} → ${r.til}`).join(', ')}. Utelat dem også, eller ta med den de viser til.`)
+  }
+  return navn
+}
+
+async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'forsok'>> {
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-kopi-'))
   chmodSync(mappe, 0o700)
   const bilde = await holdOyeblikksbilde(valg.dbUrl)
   let fil: string | undefined
+  const skrevet: string[] = []
   try {
     // Tilpasningene, dekningen og alt som skrives, leses i det samme øyeblikksbildet.
     const kilde = fingeravtrykk(valg.dbUrl, bilde.navn)
@@ -474,17 +624,37 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
     const mangler = manglendeDekning(f.tilpasninger, fraMigrasjoner)
     if (mangler.length) throw new Stopp(`Objekter fra migrasjonene finnes ikke blant tilpasningene: ${mangler.join(', ')}`)
 
+    const utelatt = krevUtelatte(valg.dbUrl, bilde.navn)
+    const delte = sporring<DeltTabell>(valg.dbUrl, delteTabellerSql(EGNE_SKJEMAER_SQL, utelatt), bilde.navn)
+
     logg(`forsøk ${forsok}: tar struktur, data og historikk i øyeblikksbildet ${bilde.navn}`)
     const dump = (navn: string, ...v: string[]) => kjorDumpskript(dumpskript(valg.dbUrl, bilde.navn, v), join(mappe, navn))
     // Rollefila tas med som dokumentasjon; den kjøres ikke ved gjenoppretting (se gjenopprett()).
-    execFileSync('npx', [...SUPABASE_CLI, 'db', 'dump', '--db-url', valg.dbUrl, '--role-only', '-f', join(mappe, 'roller.sql')], { stdio: 'ignore' })
+    // Skriptet CLI-en ville kjørt, kjørt her som de andre, så det ikke trengs et eget bilde; rollene er ikke i øyeblikksbildet.
+    await kjorDumpskript(
+      execFileSync('npx', [...SUPABASE_CLI, 'db', 'dump', '--db-url', valg.dbUrl, '--dry-run', '--role-only'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }),
+      join(mappe, 'roller.sql'),
+    )
     await dump('struktur.sql')
-    await dump('data.sql', '--data-only', '--use-copy', ...utenSkrivetilgang(valg.dbUrl).flatMap((t) => ['-x', t]))
+    // De delte tabellene ligger i bitene, de utelatte er ikke med i det hele tatt.
+    const utenfor = [...utenSkrivetilgang(valg.dbUrl), ...utelatt, ...delte.map((t) => t.tabell)]
+    await dump('data.sql', '--data-only', '--use-copy', ...utenfor.flatMap((t) => ['-x', t]))
     await dump('historikk_struktur.sql', '--schema', 'supabase_migrations')
     await dump('historikk_data.sql', '--data-only', '--use-copy', '--schema', 'supabase_migrations')
     writeFileSync(join(mappe, 'tilpasninger.sql'), tilpasningsskript(f.tilpasninger))
     logg(`${f.tilpasninger.length} tilpasninger i auth, storage og på rollene`)
-    const tabeller = tabellsummer(valg.dbUrl, bilde.navn)
+
+    // Bitene: identitetene regnes ut i databasen, og bare de nye hentes.
+    const plan = delte.flatMap((t) => sporring<Bit>(valg.dbUrl, delplanSql(t), bilde.navn).map((b) => ({ t, b })))
+    const kjente = valg.kjente ?? new Map<string, Delfil>()
+    const nye = nyeBiter(plan.map((p) => ({ ...p, identitet: p.b.identitet })), new Set(kjente.keys()))
+    logg(`${plan.length} biter i ${delte.length} tabeller; ${nye.length} nye, ${plan.length - nye.length} finnes alt i lageret`)
+    const hentetBiter = await hentBiter(valg.dbUrl, bilde.navn, nye, valg.ut, valg.mottakere, skrevet)
+    const deler = [...new Map(plan.map(({ b }) => [b.identitet, hentetBiter.get(b.identitet) ?? kjente.get(b.identitet)!])).values()]
+    const sekvensnavn = [...new Set(delte.flatMap((t) => t.sekvenser))]
+    const sekvenser = sekvensnavn.length ? sporring<Sekvens>(valg.dbUrl, sekvensnavn.map(sekvensSql).join(' union all '), bilde.navn) : []
+
+    const tabeller = tabellsummer(valg.dbUrl, bilde.navn, utelatt)
     const krypterteFaktorer = sporring(valg.dbUrl, KRYPTERTE_FAKTORER_SQL, bilde.navn).length
     if (krypterteFaktorer) logg(`${krypterteFaktorer} tofaktornøkler er kryptert av plattformen og må meldes inn på nytt etter en gjenoppretting`)
 
@@ -514,6 +684,9 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
       tilpasninger: f.tilpasninger,
       oyeblikksbilde: bilde.navn,
       forsok,
+      utelatt,
+      deler: plan.map(({ t, b }) => ({ tabell: t.tabell, kolonner: t.kolonner, nr: b.nr, rader: Number(b.rader), identitet: b.identitet })),
+      sekvenser,
     }
     writeFileSync(join(mappe, 'manifest.json'), JSON.stringify(manifest, null, 2))
     const pakket = await innholdssummer(mappe)
@@ -523,12 +696,19 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<string> {
     await pakk(mappe, fil, ['age', ...valg.mottakere.flatMap((m) => ['-r', m])])
     if (!statSync(fil).size) throw new Stopp('Den krypterte kopien er tom.')
     if (valg.kontrollnokkel) await provArkivet(fil, valg.kontrollnokkel, pakket)
-    writeFileSync(`${fil}.sig`, JSON.stringify(signer(basename(fil), await filsum(fil), manifest.laget, valg.signeringsnokkel), null, 2))
-    logg(`kopien er kryptert${valg.kontrollnokkel ? ' og prøvd' : ''}: ${fil} (${tabeller.length} tabeller, ${filer.length} filer)`)
-    return fil
+    const summer = await summerAv(fil)
+    writeFileSync(`${fil}.sig`, JSON.stringify(signer(basename(fil), summer.sha256, manifest.laget, valg.signeringsnokkel, { md5: summer.md5, bytes: summer.bytes, deler }), null, 2))
+    logg(`kopien er kryptert${valg.kontrollnokkel ? ' og prøvd' : ''}: ${fil} (${tabeller.length} tabeller, ${deler.length} biter, ${filer.length} filer)`)
+    const ukryptert = (n: string) => (existsSync(join(mappe, n)) ? statSync(join(mappe, n)).size : 0)
+    const hentet =
+      ['struktur.sql', 'data.sql', 'historikk_struktur.sql', 'historikk_data.sql'].reduce((sum, n) => sum + ukryptert(n), 0) +
+      nye.reduce((sum, n) => sum + Number(n.b.bytes), 0) +
+      filer.reduce((sum, f) => sum + f.bytes, 0)
+    return { fil, signatur: `${fil}.sig`, laget: manifest.laget, deler, nye: [...hentetBiter.keys()], hentet }
   } catch (e) {
-    // En kopi som ikke ble ferdig, blir ikke liggende.
+    // En kopi som ikke ble ferdig, blir ikke liggende, heller ikke bitene den hentet.
     if (fil) for (const f of [fil, `${fil}.sig`]) rmSync(f, { force: true })
+    for (const f of skrevet) rmSync(f, { force: true })
     throw e
   } finally {
     await bilde.slipp()
@@ -563,6 +743,8 @@ export interface GjenopprettValg {
   avsender: string
   /** Signaturfila; standard `<kopi>.sig`. */
   signatur?: string
+  /** Mappen med bitene (`<identitet>.age`); standard `deler/` ved siden av kopien. */
+  deler?: string
   dbUrl: string
   apiUrl: string
   /** Hemmelig nøkkel (service role) for Storage i målet. */
@@ -625,6 +807,17 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
     }
     const signert = verifiser(sig, basename(valg.kopi), await filsum(kopi), valg.avsender)
     logg(`signaturen er gyldig: kopien ble laget ${signert.laget} av kopijobben`)
+    // Bitene kopieres og kontrolleres mot signaturen før noe dekrypteres.
+    const biter = join(mappe, 'biter')
+    mkdirSync(biter, { mode: 0o700 })
+    const fra = valg.deler ?? delmappe(dirname(valg.kopi))
+    for (const d of signert.deler ?? []) {
+      const kilde = join(fra, `${d.identitet}.age`)
+      if (!existsSync(kilde)) throw new Stopp(`Biten ${d.identitet} mangler i ${fra}. Ingenting er gjenopprettet.`)
+      copyFileSync(kilde, join(biter, `${d.identitet}.age`))
+      const sum = await summerAv(join(biter, `${d.identitet}.age`))
+      if (sum.sha256 !== d.sha256 || sum.bytes !== d.bytes) throw new Stopp(`Biten ${d.identitet} er ikke den som ble signert. Ingenting er gjenopprettet.`)
+    }
     const innhold = join(mappe, 'innhold')
     mkdirSync(innhold, { mode: 0o700 })
     await pakkUt(kopi, innhold, ['age', '-d', '-i', valg.identitet])
@@ -633,6 +826,9 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
       referanse: Fingeravtrykk
       tilpasninger: Objekt[]
     }
+    const iManifestet = [...new Set((manifest.deler ?? []).map((d) => d.identitet))].sort()
+    const iSignaturen = (signert.deler ?? []).map((d) => d.identitet).sort()
+    if (iManifestet.join() !== iSignaturen.join()) throw new Stopp('Bitene i manifestet er ikke de signaturen lister. Ingenting er gjenopprettet.')
 
     const krypterte = manifest.krypterteFaktorer ?? 0
     if (krypterte && valg.krypterteFaktorer !== 'fjern') {
@@ -653,11 +849,16 @@ export async function gjenopprett(valg: GjenopprettValg): Promise<Resultat> {
     const fil = (n: string) => join(innhold, n)
     // `roller.sql` kjøres ikke: den har bare Supabases egne innstillinger, som
     // målet alt har. OUSFARs endringer på rollene er blant tilpasningene.
+    // Bitene dekrypteres til hver sin fil og legges inn etter data.sql, i den samme transaksjonen.
+    const lagt = (manifest.deler ?? []).map((d) => ({ ...d, fil: join(biter, `${d.identitet}.${d.tabell}.${d.nr}.copy`) }))
+    for (const d of lagt) execFileSync('age', ['-d', '-i', valg.identitet, '-o', d.fil, join(biter, `${d.identitet}.age`)], { stdio: ['ignore', 'ignore', 'pipe'] })
+    writeFileSync(join(biter, 'deler.sql'), tilbakeskript(lagt, manifest.sekvenser ?? []))
     psql(valg.dbUrl, [
       '--single-transaction',
       '-f', fil('struktur.sql'),
       '-c', 'set session_replication_role = replica',
       '-f', fil('data.sql'),
+      '-f', join(biter, 'deler.sql'),
     ])
     logg('legger inn tilpasningene i auth og storage')
     psql(valg.dbUrl, ['-f', fil('tilpasninger.sql')])

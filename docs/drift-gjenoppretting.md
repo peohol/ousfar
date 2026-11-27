@@ -2,9 +2,11 @@
 
 Rutinen for sikkerhetskopi av databasen etter Peders valg 15.11.2026 (D7a):
 egne, krypterte kopier på gratisplanen (`docs/s4-pilotplan.md` §3.2 valg b).
-Denne fila beskriver verktøyet (tiltak 2) og prøven av det. Kopien er
-**ikke** satt i drift ennå. Det er tiltak 3, og der bestemmer Peder hvor
-kopiene lagres og hvem som har nøkkelen.
+Denne fila beskriver verktøyet (tiltak 2), prøven av det og kopiene i drift
+(tiltak 3, issue #615, se «Kopiene i drift»). Lageret er Backblaze B2 i EU.
+Kopieringen av produksjonen står **av** til Peder har avgjort hvem som har
+nøkkelen, og godkjent behandlingen på GitHubs maskiner
+([sikkerhetskopi-personvern.md](sikkerhetskopi-personvern.md)).
 
 ## Mål
 
@@ -29,7 +31,8 @@ i repoet og aldri ukryptert. Ved siden av ligger signaturen,
 | Filene i Storage (profilbildene) | Hentet med Storage-API-et, med sjekksum per fil |
 | Auth-innstillingene | Fra Management API-et, uten felt som kan være hemmelige (bare med `--prosjekt`) |
 | Navnene på Edge-hemmelighetene | Bare navnene, aldri verdiene (bare med `--prosjekt`) |
-| `manifest.json` | Radtall og kontrollsum per tabell, filene, versjonene av Auth og Storage, referansen og tilpasningene |
+| `manifest.json` | Radtall og kontrollsum per tabell, filene, versjonene av Auth og Storage, referansen og tilpasningene, og bitene og sekvensene (se «Bare det som er endret») |
+| Ikke med | Direktemeldingene og samtalene deres (Peders beslutning 3, 18.11.2026; valgene og blokkeringene er med) og de flyktige køene for chatvarsler. Listen står i `UTELATTE_TABELLER` (`manifest.ts`); de står med null rader i manifestet, og innholdet leses aldri. Kopien stopper hvis en av dem er omdøpt, eller hvis en tabell som er med, viser til en av dem |
 
 ## Ett kopipunkt, også når appen er i bruk
 
@@ -181,7 +184,153 @@ Ved et reelt tap: lag et nytt prosjekt i samme region, gjenopprett dit, sett
 Auth-innstillingene fra `auth-innstillinger.json`, gi beskjed til brukerne
 verktøyet lister med fjernede tofaktorfaktorer, sett hemmelighetene i
 manifestet på nytt, rull ut Edge-funksjonene og pek Vercel og GitHub til det
-nye prosjektet. Hvem som kan sette i gang dette, avgjøres sammen med tiltak 3.
+nye prosjektet. Hvem som kan sette i gang dette, avgjør Peder før kopieringen
+slås på (se «Kopiene i drift»).
+
+## Kopiene i drift
+
+Jobben `.github/workflows/sikkerhetskopi.yml` tar kopien hver natt klokka
+02:15 UTC (03:15 i Oslo om vinteren, 04:15 om sommeren) med koden i
+`src/drift/sikkerhetskopi/` (`natt.ts`, `lager.ts`, `deler.ts`) og kommandoen
+`npm run sikkerhetskopi -- natt`. Innstillingene står samlet i `drift.ts`.
+
+**Av til avklaringene er gjort.** `PRODUKSJONSKOPI_PA` i `drift.ts` står av.
+Da gjør nattjobben bare kontrollen av nøkkelen og lageret (`kontroll`, under)
+og rører ikke produksjonen, også om noen starter den med modus `kopi`. Den
+slås på i en egen PR når Peder har avgjort hvem som har nøkkelen, og
+godkjent behandlingen på GitHubs maskiner.
+
+### Bare det som er endret
+
+En full kopi hver natt ville sendt hele databasen ut av Supabase hver gang:
+over 600 MB tekst 27.11.2026, og om lag 19 GB i måneden mot 5 GB i
+gratisplanen, delt med appen. Det meste endres aldri (revisjonene og
+dokumentene i kurateringen legges bare til). Derfor deles dataene i OUSFARs
+egne tabeller med primærnøkkel i **biter** på databasens side
+(`deler.ts`):
+
+- Radene sorteres etter nøkkelen. En rad avslutter en bit med sannsynlighet
+  `radens størrelse / 2 MiB`, avgjort av en hash av nøkkelen alene. Grensene
+  avhenger bare av radene selv, så en ny, endret eller slettet rad endrer bare
+  biten den ligger i.
+- Hver bit får en identitet: sha256 av formatet, tabellen, kolonnene og
+  sha256 av hver rad, regnet ut i databasen i det samme øyeblikksbildet som
+  resten av kopien. Bare identitetene går over nettet.
+- Biter lageret alt har, hentes ikke. De nye hentes med `COPY` i
+  øyeblikksbildet, krypteres hver for seg (`deler/<identitet>.age`) og
+  kontrolleres mot radtallet i planen.
+- Resten (strukturen, `auth`, `storage`, de små tabellene) tas som før, i den
+  vanlige kopifila. Signaturen lister kopifila og hver bit med sha256, md5 og
+  størrelse; gjenopprettingen bruker bare bitene signaturen lister, og legger
+  dem tilbake med `COPY` i samme transaksjon som resten, med sekvensene.
+
+Referansen lages på nytt hver natt: en ren Supabase med nøyaktig de samme
+versjonene av Postgres, Auth og Storage som produksjonen, startet på GitHubs
+maskin (`referanse.ts`).
+
+### Lageret
+
+Backblaze B2 i EU (`eu-central-003`), bøtta `ousfar-backup`, privat, med
+versjoner og Object Lock. Jobben bruker S3-API-et direkte (`s3.ts`), uten
+avhengigheter.
+
+| Hva | Hvordan |
+| --- | --- |
+| Nøkkelen | Kontrolleres mot Backblaze hver gang, uten å vises: den gjelder bare `ousfar-backup`, uten filprefiks, på adressen i `drift.ts`, har rettighetene i `RETTIGHETER.kreves` og ingen av `RETTIGHETER.forbudt` (blant dem `bypassGovernance`). Ellers stopper jobben |
+| Lås | Hver fil legges inn låst i Governance-modus i 7 døgn. Jobben har ikke rett til å oppheve låsen, så en låst fil kan ikke slettes eller forkortes av den, heller ikke av den som får tak i nøkkelen |
+| Rekkefølge | Først forlenges låsen på den nyeste hele kopien, så den siste gode kopien aldri går ut mens kopieringen feiler. Så nye biter, kopifila, forlenget lås på bitene som gjenbrukes, og til sist signaturen. Først når signaturen ligger der, er kopien hel |
+| Kontroll | Etterpå leses kopien på nytt fra lageret: signaturen er ekte, hver fil finnes, er låst lenge nok, og kopifila og de nye bitene hentes tilbake og har nøyaktig innholdet som ble sendt |
+| Versjoner | Den riktige versjonen av hver fil velges etter md5 og størrelse i signaturen, så en fil noen har lagt over, aldri brukes. En signatur som ikke er signert med jobbens nøkkel, regnes ikke som en kopi |
+
+### Opprydding
+
+Først når den nye kopien er hel og kontrollert, ryddes det (`oppryddingsplan`):
+
+- Det ryddes ikke i det hele tatt uten en hel kopi fra de siste 26 timene.
+- Den nyeste hele kopien beholdes alltid, uansett alder, med alle bitene den
+  bruker. Det samme gjør hver hel kopi fra de siste 7 døgnene.
+- Det som er yngre enn 2 døgn, røres ikke (en kopi under arbeid, en prøve).
+- Ingenting utenfor mappene `kopier/`, `deler/` og `prove/` røres.
+- En fil som fortsatt er låst, står til neste natt.
+
+En bit som ingen kopi lenger bruker, er dermed borte om lag 8 døgn etter at
+raden ble endret eller slettet.
+
+### Varsler og kvoter
+
+En rød kjøring betyr at noe er galt; GitHub varsler da eieren av repoet, som
+for de andre nattjobbene. Nattjobben blir rød når kopien ikke kunne tas eller
+ikke er hel i lageret, og når forbruket nærmer seg en gratiskvote
+(`KVOTER`): når lageret har brukt 70 % av 10 GB i Backblaze, og når kopiene
+alene, regnet fra nattens trafikk, ville brukt 30 % av de 5 GB Supabase gir
+i måneden. Klokka 06:45 UTC kontrollerer jobben (`tilsyn`) at det finnes en
+hel kopi fra de siste 26 timene; ellers blir den rød. Oppsummeringen av hver
+kjøring viser tall og filnavn, aldri innhold eller nøkler.
+
+Målt 27.11.2026: databasen er 510 MB, kopien om lag 640 MB tekst før
+komprimering, og den vokser med om lag 130 MB i uka. Første kopi henter alt;
+deretter bare de nye bitene.
+
+### Tilgangen og hemmelighetene
+
+Bare koden på `main` kjører med hemmelighetene: miljøet `backup` er
+begrenset til `main`, jobben kjører bare på `main`, og aldri for en PR.
+Actions og Postgres-bildet er låst til faste versjoner, og bare én kjøring
+går om gangen.
+
+| Hemmelighet i `backup` | Hva |
+| --- | --- |
+| `B2_KEY_ID`, `B2_APPLICATION_KEY` | Nøkkelen for bøtta, med rettighetene over |
+| `KOPI_MOTTAKERE` | Den offentlige `age`-nøkkelen (eller flere, skilt med mellomrom). Jobben stopper om det står en privat nøkkel der |
+| `KOPI_SIGNERINGSNOKKEL` | Den private signeringsnøkkelen (PEM) |
+| `KOPI_SUPABASE_TOKEN` | Et eget token for Management API-et med bare: *Database* skrive (for den midlertidige rollen), *Auth config*, *Edge Function secrets*, *API keys* og *API key secrets*, og *Connection pooling* lese, for produksjonsprosjektet |
+
+Databasen leses med en midlertidig, skrivebeskyttet innloggingsrolle fra
+Management API-et, den samme Supabase-CLI-en bruker. Passordet varer i fem
+minutter, fornyes mens kopien tas og slettes til slutt; det finnes intet fast
+databasepassord hos jobben (`prosjekt.ts`). Passord og nøkler maskeres i
+loggen med en gang de er hentet.
+
+### Nøklene
+
+Den private `age`-nøkkelen og den offentlige signeringsnøkkelen ligger
+**aldri** i GitHub eller Backblaze, og går aldri gjennom Claude. Nøkkeleieren
+lager dem på nøkkelsiden (`npm run sikkerhetskopi:nokkelside -- side.html`,
+koden i `nokler.ts`), i sin egen nettleser, uten nettverkskall:
+
+1. Siden lager et `age`-par og et Ed25519-par.
+2. Nøkkeleieren tar vare på nøkkelfila (den private `age`-nøkkelen og den
+   offentlige signeringsnøkkelen) to uavhengige steder, for eksempel i
+   passordbehandleren og hos den som har beredskapen.
+3. Nøkkeleieren legger `KOPI_MOTTAKERE` og `KOPI_SIGNERINGSNOKKEL` i `backup`.
+
+Nøkkelfila kan brukes som den er: som `--identitet` og som `--avsender`.
+Hvem som er nøkkeleier, hvor den uavhengige kopien ligger, og hvem som kan
+sette i gang en gjenoppretting, avgjør Peder før kopieringen slås på.
+
+### Kontrollen av lageret
+
+`npm run sikkerhetskopi -- kontroll` (modus `kontroll` i jobben, og hver natt
+til kopieringen er slått på) bruker ingen produksjonsdata: den kontrollerer
+nøkkelen, at bøtta har Object Lock, legger inn en syntetisk prøvefil låst i
+24 timer, henter den tilbake, og krever at slettingen av den blir nektet.
+Ellers verner ikke låsen kopiene, og jobben stopper. Gamle prøvefiler ryddes.
+
+### Gjenopprette fra lageret
+
+```
+# Henter den nyeste hele kopien (eller --kopi <fil>), kontrollert mot signaturen
+B2_KEY_ID=… B2_APPLICATION_KEY=… npm run sikkerhetskopi -- hent --avsender <nøkkelfila> --ut <mappe>
+
+# Gjenoppretter til et nytt, tomt prosjekt; bitene leses fra <mappe>/deler
+KOPI_SECRET_KEY=… npm run sikkerhetskopi -- gjenopprett --kopi <mappe>/<fil.tar.age> \
+  --identitet <nøkkelfila> --avsender <nøkkelfila> --db-url <mål> --api-url <mål>
+```
+
+Resten er som under «Bruk». Etter en gjenoppretting må det som var slettet
+etter at kopien ble tatt, slettes på nytt (se
+[pasientopplysninger.md](pasientopplysninger.md)). Gjenopprettingsprøven med
+en ekte kopi (tiltak 4) krever Peders ja.
 
 ## Prøven i det lokale testmiljøet
 
@@ -231,3 +380,9 @@ nytt med det nye bildet.
 
 Prøven med en ekte kopi av produksjonen (tiltak 4) er ikke gjort; den krever
 Peders ja (D7b) og at kopien er i drift (tiltak 3).
+
+Kopiene i drift prøves i CI uten Docker: lageret mot et falskt S3-lager med
+versjoner og Object Lock (`src/__tests__/sikkerhetskopi-lager.test.ts`),
+bitene på ekte Postgres 17 (`sikkerhetskopi.deler.test.ts`, også mot
+databasen migrasjonene bygger) og nøklene mot `age`
+(`sikkerhetskopi-nokler.test.ts`).

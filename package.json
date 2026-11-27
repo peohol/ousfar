@@ -23,6 +23,7 @@
     "gruppechat:lagringstid": "vite-node scripts/gruppechat-lagringstid.ts",
     "sikkerhetskopi": "vite-node scripts/sikkerhetskopi.ts --",
     "sikkerhetskopi:prove": "vite-node scripts/sikkerhetskopi-prove.ts",
+    "sikkerhetskopi:nokkelside": "vite-node scripts/nokkelside.ts --",
     "verktoy:overvaking": "vite-node scripts/verktoy-overvaking.ts --",
     "kuratorjobb": "vite-node scripts/kuratorjobb.ts --",
     "kurateringsko": "vite-node scripts/kurateringsko.ts --",

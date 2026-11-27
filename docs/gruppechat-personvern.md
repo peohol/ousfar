@@ -66,11 +66,10 @@ og kan gjøres uten eget ja, men skal skrives her.
 
 ## Kjente begrensninger
 
-- **Sikkerhetskopier.** En slettet melding finnes i en sikkerhetskopi til
-  kopien er utløpt. Kopiene er ikke satt i drift ennå
-  (`docs/drift-gjenoppretting.md`, tiltak 3); når de er det, gjelder
-  lagringstiden for kopiene også for chatten, og en gjenoppretting må fjerne
-  det som var slettet etter at kopien ble tatt.
+- **Sikkerhetskopier.** En slettet eller endret melding finnes i
+  sikkerhetskopiene til de er ryddet, normalt om lag 8 døgn
+  ([sikkerhetskopi-personvern.md](sikkerhetskopi-personvern.md)), og en
+  gjenoppretting må fjerne det som var slettet etter at kopien ble tatt.
 - **Arkiverte grupper.** I en arkivert gruppe kan bare systemarkitektene
   slette meldinger, så noe som ikke hører hjemme der, kan fjernes uten å åpne
   gruppen igjen. Idéene og oppgavene i en arkivert gruppe er fortsatt frosset
