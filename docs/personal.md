@@ -519,9 +519,10 @@ Besluttet av Peder 26.11.2026, i prototypen i `peohol/vaktplan`
   eksisterende status» og «Avbryt». Merknad og klokkeslett følger statusen,
   og den siste endringen kan angres. Til stede uten status kan dras
   som en virtuell celle og byttes med en status. I månedsvisningen
-  flyttes personen med statusen til ny dato; ved full vakttype tilbys
+  flyttes personen med statusen til ny dato. Ved full vakttype tilbys
   eksplisitt bytte av vaktdager eller overtakelse, med alle konsekvenser
-  og atomisk validering. Ingen flytting overtar en tredjepersons vakt
+  og atomisk validering, likt i dag, uke, måned og helår (Peder
+  27.11.2026). Ingen flytting overtar en tredjepersons vakt
   lydløst. Se [personal-design.md](personal-design.md) §4.
 - **Tilstedeværelse og tilgjengelighet er atskilt i vaktfordelingen:**
   - *Til stede* er den som er uten status eller har en status som regnes som fysisk til stede.
