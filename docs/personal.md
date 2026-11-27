@@ -609,11 +609,7 @@ Planen for å bygge personalkalenderen og vaktfordelingen fra prototypen inn i
 OUSFAR ([#561](https://github.com/peohol/ousfar/issues/561)). Den bygger på
 Peders bestilling 26.11.2026, ChatGPTs planforslag i
 [#561](https://github.com/peohol/ousfar/issues/561#issuecomment-7201302691)
-og kartleggingen av OUSFAR og prototypen. Ingen kode eller
-produksjonsmigrasjon utover P2a bygges før planen er slått sammen og
-P1 er akseptert (§8.11–8.12). Unntaket er domenekoden uten database og visning
-(P2a), som kan bygges parallelt med designarbeidet når planen er godkjent
-(vedtatt, B11).
+og kartleggingen av OUSFAR og prototypen. Implementering følger avhengighetene i §8.11. P2a kan bygges parallelt med P1; P2b/P2c følger sine tekniske avhengigheter, og kalenderens brukerflater (P3–P5) bygger på den aksepterte samlede prototypen. B1 er avgjort 27.11.2026.
 
 **Status for innholdet.** Det som står som **vedtatt**, er avgjort av Peder
 (§§3, 6, 7.2, bestillingen 26.11.2026, merket «bestilt», eller
