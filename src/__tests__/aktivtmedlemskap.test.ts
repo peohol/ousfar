@@ -45,6 +45,9 @@ const SVARER_OM_SEG_SELV: Readonly<Record<string, boolean | string | readonly st
   'mine_lesbare_fagmiljoer()': [],
   // #572: fagmiljøene den innloggede selv er aktivt medlem av.
   'mine_egne_fagmiljoer()': [],
+  // #598: funksjonene den innloggede har, og fagmiljøene der hen har én.
+  'mine_funksjoner()': [],
+  'mine_fagmiljoer_med_funksjon(funksjon text)': [],
   // P6: gruppene den innloggede kan lese.
   'mine_lesbare_grupper()': [],
   // Gruppesymbolene: gruppene den innloggede styrer.

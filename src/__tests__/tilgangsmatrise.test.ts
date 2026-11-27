@@ -34,7 +34,7 @@ type Utfall = 'tilgang' | 'avvist'
 type Etappe = (typeof HOLDER)[number]
 
 /** Etappene som er slått sammen: kontrollene deres skal alt holde. */
-const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b', 'P5', '#572'] as const
+const HOLDER = ['P1.1', 'P1.2a', 'P2.0', 'P2a', 'P2b', 'P2c', 'P2d', 'P4b', 'P5', '#572', '#598'] as const
 
 interface Kontekst {
   tx: Transaction
@@ -274,6 +274,17 @@ const SCENARIOER: readonly Scenario[] = [
   ...(['utenMedlemskap', 'tidligereAdmin'] as const).map((person): Scenario => (
     { navn: 'har noe blant egne fagmiljøer', person, etappe: '#572', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select cardinality(public.mine_egne_fagmiljoer()) > 0') }
   )),
+
+  // --- #598: funksjonsbryterne per fagmiljø (docs/fagmiljoer.md); resten i funksjonsbrytere.test.ts ---
+  ...(['vanligA', 'adminA', 'adminB', 'utenMedlemskap'] as const).flatMap((person): Scenario[] => [
+    { navn: 'leser funksjonsoversikten', person, etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, 'select public.funksjonsoversikt()') },
+    { navn: 'slår av en funksjon i eget fagmiljø', person, etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.sett_funksjonsbryter('personal', $1, 'av', 'Prøver uten myndighet')`, [k.g.fagmiljo.A]) },
+    { navn: 'merker eget fagmiljø som testmiljø', person, etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => lykkes(k, `select public.sett_testmiljo($1, true, 'Prøver uten myndighet')`, [k.g.fagmiljo.B]) },
+    { navn: 'leser funksjonsbryterne i tabellen', person, etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.funksjonsbrytere') },
+  ]),
+  { navn: 'leser funksjonsoversikten', person: 'arkitektB', etappe: '#598', idag: 'tilgang', mal: 'tilgang', prov: (k) => verdi(k, 'select public.funksjonsoversikt()') },
+  { navn: 'leser funksjonskatalogen i tabellen', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => rader(k, 'select 1 from public.funksjoner') },
+  { navn: 'har en funksjon uten at noen er slått på', person: 'systemarkitekt', etappe: '#598', idag: 'avvist', mal: 'avvist', prov: (k) => verdi(k, `select jsonb_array_length(public.mine_funksjoner()) > 0`) },
 ]
 
 /** Scenarioene der målet ikke er nådd ennå, per etappe. */

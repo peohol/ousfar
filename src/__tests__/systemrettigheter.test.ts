@@ -214,6 +214,8 @@ describe('mine_rettigheter()', () => {
       opprett_bruker_i: [],
       redaktor: false,
       behandler_forslag: false,
+      // #598: funksjonene den innloggede har; ingen er slått på i galleriet (funksjonsbrytere.test.ts).
+      funksjoner: [],
     }
     // En systemarkitekt administrerer alle fagmiljøene (`public.mine_administrerte_fagmiljoer`).
     const alle = (

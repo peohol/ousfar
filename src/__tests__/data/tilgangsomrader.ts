@@ -8,7 +8,7 @@
  * - `c` profiler og bilder (alt i Supabase sitt `storage`), og det andre som bare er brukerens eget
  *   (innstillinger, favoritter);
  * - `d` stoffregisteret og administrasjon: synker, kildesaker, verktøysperrer,
- *   kuratering, fagmiljøer og tilgang.
+ *   kuratering, fagmiljøer og tilgang, med funksjonsbryterne og testmiljøene (#598).
  *
  * Inngangene er tabellene og visningene nettleseren når, og funksjonene den
  * kan kalle. Reglene gjelder navnet (`skjema.tabell` eller funksjonens
@@ -29,7 +29,7 @@ export const OMRADEREGLER: readonly (readonly [Omrade, RegExp])[] = [
   ['c', /^(public\.profiles|public\.brukerinnstillinger)\b|^storage\.|^profiles_|^(min_profil|mine_synlige_profiler|brukeroversikt|profilkortdetaljer)\(|stoffavoritt|stilling/],
   ['b', /diskusjon|(^|[_.])ide(er|kommentarer|hjerter|besok|oversikt|traad|arkiv|_|\()|oppgave|varsl|direktelenke|grupp|^forsideoppsummering\(|direkte|chatvalg|chataktivitet|blokker|aktive_motparter|pushabonnement/],
   ['d', /stoffkategori|stoffplassering|stoffstatus|stoffregister|stoffpapirkurv|plasser_stoff|(arkiver|slett|gjenopprett)_stoff/],
-  ['d', /fagmiljo|medlemskap|systemrolle|systemarkitekt|tilgang|administrator|passord|konto|(sett|endre)_rolle|redaktoransvar/],
+  ['d', /fagmiljo|medlemskap|systemrolle|systemarkitekt|tilgang|administrator|passord|konto|(sett|endre)_rolle|redaktoransvar|funksjon|testmiljo/],
   ['d', /datakilder|_status\(|fagsak|kildeovervak|verktoysperre|kuratering|autoerstatt|endringsagent|brukernavn|intern_auth_domene|er_admin|rettigheter/],
   [
     'a',

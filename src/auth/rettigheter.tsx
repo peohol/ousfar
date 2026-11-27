@@ -35,6 +35,18 @@ export const STANDARD_FAGMILJOIKON: Ikonnavn = 'laboratorium'
 const fagmiljoikon = (v: unknown): Ikonnavn =>
   typeof v === 'string' && Object.hasOwn(IKONER, v) ? (v as Ikonnavn) : STANDARD_FAGMILJOIKON
 
+/**
+ * En funksjon den innloggede har i et fagmiljø, etter funksjonsbryterne
+ * (`public.mine_funksjoner()`, docs/fagmiljoer.md, «Funksjonsbrytere per
+ * fagmiljø»). Bare de den innloggede har, kommer med.
+ */
+export interface Funksjonstilgang {
+  /** Funksjonens nøkkel i katalogen, som `personal`. */
+  funksjon: string
+  /** Fagmiljøets id. */
+  fagmiljo: string
+}
+
 export interface Rettigheter {
   /** Kan alt som gjelder hele OUSFAR: datakildene, kildesakene, nødstoppen, kurateringene, autoerstatt og papirkurven. */
   systemarkitekt: boolean
@@ -66,6 +78,8 @@ export interface Rettigheter {
   behandlerForslag: boolean
   /** Har et redaktøransvar som gjelder nå (`redaktor`, docs/redaktorer-og-forslag.md). */
   redaktor: boolean
+  /** Funksjonene den innloggede har, per fagmiljø (`funksjoner`); tom uten noen. */
+  funksjoner: readonly Funksjonstilgang[]
 }
 
 export const INGEN_RETTIGHETER: Rettigheter = {
@@ -78,6 +92,7 @@ export const INGEN_RETTIGHETER: Rettigheter = {
   opprettBrukerI: [],
   behandlerForslag: false,
   redaktor: false,
+  funksjoner: [],
 }
 
 /**
@@ -103,6 +118,15 @@ export function lesFagmiljo(v: unknown): Fagmiljoreferanse | null {
 const lesFagmiljoer = (v: unknown): Fagmiljoreferanse[] =>
   Array.isArray(v) ? v.map(lesFagmiljo).filter((f): f is Fagmiljoreferanse => f !== null) : []
 
+/** Funksjonene i svaret, uten dem som har feil form. */
+const lesFunksjoner = (v: unknown): Funksjonstilgang[] =>
+  Array.isArray(v)
+    ? v
+        .filter((f): f is Record<string, unknown> => typeof f === 'object' && f !== null)
+        .filter((f) => typeof f.funksjon === 'string' && typeof f.fagmiljo === 'string')
+        .map((f) => ({ funksjon: f.funksjon as string, fagmiljo: f.fagmiljo as string }))
+    : []
+
 /** Svaret fra databasen, der alt som mangler eller har feil form, regnes som nei. */
 export function lesRettigheter(svar: unknown): Rettigheter {
   const r = typeof svar === 'object' && svar !== null ? (svar as Record<string, unknown>) : {}
@@ -122,6 +146,7 @@ export function lesRettigheter(svar: unknown): Rettigheter {
     behandlerForslag:
       'behandler_forslag' in r ? r.behandler_forslag === true : systemarkitekt || administrerer.length > 0,
     redaktor: r.redaktor === true,
+    funksjoner: lesFunksjoner(r.funksjoner),
   }
 }
 
@@ -174,6 +199,19 @@ export const kanGiRedaktoransvar = (r: Rettigheter): boolean => r.systemarkitekt
  */
 export const kanPublisereFortolkningen = (r: Rettigheter): boolean =>
   r.systemarkitekt || (r.arbeidsfagmiljo !== null && r.administrerer.some((f) => f.id === r.arbeidsfagmiljo!.id))
+
+/**
+ * Fagmiljøene der den innloggede har funksjonen (id-ene). En funksjon som er
+ * av, som hen ikke har tilgang til eller som ikke finnes, gir ingen; appen
+ * viser da ingenting av den. Et grensesnitt, ikke en kontroll: funksjonen
+ * kontrollerer på nytt på serveren (`intern.krev_funksjon`).
+ */
+export const fagmiljoerMedFunksjon = (r: Rettigheter, funksjon: string): string[] =>
+  r.funksjoner.filter((f) => f.funksjon === funksjon).map((f) => f.fagmiljo)
+
+/** Om den innloggede har funksjonen, i `fagmiljo` eller, uten det, i et fagmiljø. */
+export const harFunksjon = (r: Rettigheter, funksjon: string, fagmiljo?: string): boolean =>
+  r.funksjoner.some((f) => f.funksjon === funksjon && (fagmiljo === undefined || f.fagmiljo === fagmiljo))
 
 /** Om den innloggede har noe å gjøre i administrasjonen (hovedmenyen). */
 export const harAdministrasjon = (r: Rettigheter): boolean =>
