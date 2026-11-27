@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-27T04:29:28.941Z",
+  "oppdatert_kl": "2026-11-27T05:28:04.645Z",
   "malt_kl": "2026-11-27T00:44:45.658Z",
   "teller": 91,
   "stoffer": {
@@ -8337,33 +8337,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261125-014902": {
-      "ider": [
-        "fullfort-1",
-        "forny-5",
-        "forny-4",
-        "forny-3",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "8cefab8ac1e959fa978fc60d04fb4e1a853fabc556c32169b020eca959e40eb5",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "8cefab8ac1e959fa978fc60d04fb4e1a853fabc556c32169b020eca959e40eb5",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "aripiprazol er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-11-25T03:52:12.057Z",
-          "kjoring": "https://github.com/peohol/ousfar/actions/runs/45542871790"
-        }
-      },
-      "besvart_commit": "15ec56def10ed9702ed36f9bf904e17ca953f895",
-      "sist_brukt_kl": "2026-11-25T03:52:12.057Z"
-    },
     "kurateringsko/okt/20261125-045926": {
       "ider": [
         "fullfort-1",
