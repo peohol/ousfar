@@ -117,7 +117,17 @@ function result(state: PlannerState, kind: MoveKind, remove: CalendarEntry[], ad
   return { kind, state: assertInvariants(next, dates, today), ...parts, uncovered: coverageEffects(state, next, dates, today) };
 }
 
-/** Vurder å flytte en status til en celle. Endrer ingenting. */
+/** To registreringer med helt likt innhold: status, merknad, klokkeslett, lås og vaktfritak, uansett person og dato. */
+export function identicalEntries(a: CalendarEntry, b: CalendarEntry): boolean {
+  const time = (e: CalendarEntry) => (e.time ? `${e.time.start}-${e.time.end}` : '');
+  return a.statusId === b.statusId && (a.note ?? '') === (b.note ?? '') && time(a) === time(b) && !!a.locked === !!b.locked && !!a.exempt === !!b.exempt;
+}
+
+/**
+ * Vurder å flytte en status til en celle. Endrer ingenting. Et bytte mellom
+ * to helt like statuser samme dag eller hos samme person endrer ingenting og
+ * gir `same`, uten markering eller advarsel (Peder 27.11.2026).
+ */
 export function analyzeMove(state: PlannerState, role: Role, entryId: string, to: Cell, today: IsoDate = todayIn(state.unit.timeZone)): MoveAnalysis {
   assertCan(role, 'editCalendar');
   const entry = entryById(state, entryId);
@@ -126,6 +136,7 @@ export function analyzeMove(state: PlannerState, role: Role, entryId: string, to
   if (entry.personId === to.personId && entry.date === to.date) return { ...base, outcome: 'same' };
   const origin: Cell = { personId: entry.personId, date: entry.date };
   const blocker = entryAt(state, to.personId, to.date);
+  if (blocker && (blocker.date === entry.date || blocker.personId === entry.personId) && identicalEntries(blocker, entry)) return { ...base, outcome: 'same', blocker };
 
   if (!blocker) {
     const reasons = planReasons(state, planSet(state, draftAt(entry, to), today, new Set([entry.id])), today);

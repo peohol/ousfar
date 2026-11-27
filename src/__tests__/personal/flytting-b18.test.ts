@@ -205,6 +205,22 @@ describe('ett felles slipp i dag, uke, måned og helår (analyzeDrop, Peder 27.1
     expect(a.reasons.join(' ')).toContain('alt tildelt Per Hansen');
   });
 
+  it('et bytte mellom to helt like statuser gjør ingenting: samme dag, samme person og Til stede mot Til stede', () => {
+    let s = added(makeState(), d('f1', TUE, S.homeOffice, { note: 'Rapport' }));
+    s = added(added(s, d('f4', TUE, S.homeOffice, { note: 'Rapport' })), d('f1', THU, S.homeOffice, { note: 'Rapport' }));
+    for (const target of [{ personId: 'f4', date: TUE }, { personId: 'f1', date: THU }, { date: THU }]) {
+      const a = analyzeDrop(s, 'planner', src(s, 'f1', TUE), target, TODAY);
+      expect(a.outcome).toBe('same');
+      expect(a.options).toEqual([]);
+      expect(a.reasons).toEqual([]);
+    }
+    const empty = analyzeDrop(s, 'planner', { kind: 'presence', cell: { personId: 'f5', date: TUE } }, { personId: 'f3', date: TUE }, TODAY);
+    expect(empty.outcome).toBe('same');
+    // Ulik merknad er ikke helt likt: da er det et vanlig bytte.
+    const other = added(s, d('f5', TUE, S.homeOffice, { note: 'Møte' }));
+    expect(analyzeDrop(other, 'planner', src(other, 'f1', TUE), { personId: 'f5', date: TUE }, TODAY).outcome).toBe('conflict');
+  });
+
   it('Til stede sluppet på en status bytter dem, i alle visninger', () => {
     const s = added(makeState(), d('f4', TUE, S.homeOffice));
     const a = analyzeDrop(s, 'planner', { kind: 'presence', cell: { personId: 'f1', date: TUE } }, { personId: 'f4', date: TUE }, TODAY);
