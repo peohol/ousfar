@@ -126,6 +126,20 @@
   --avatar-liten: 1.9rem; /* 30 – lite profilbilde eller gruppesymbol ved en rad */
   --ikon-panel: 1.625rem; /* 26 – foran paneloverskrifter og i limkortet */
 
+  /* --- Rullefelt (se `base.css`) -----------------------------------------
+     Som på mobil: bare håndtaket synes. `--rullefelt-luft` er den
+     gjennomsiktige kanten rundt det, og blir `-luft-aktiv` når det holdes
+     over eller dras, så det vokser litt. `--rullefelt-innrykk` trekker
+     skinnen inn fra endene, så håndtaket holder seg innenfor hjørnene på
+     kort og paneler opp til `--runding-panel`. `--rullefelt-dekning` er hvor
+     mye av aksentfargen håndtaket har i ro, og holder 3:1 mot flatene
+     (`palette.test.ts`). */
+  --rullefelt-bredde: 0.625rem; /* 10 */
+  --rullefelt-luft: 2px;
+  --rullefelt-luft-aktiv: 1px;
+  --rullefelt-innrykk: var(--runding-kort);
+  --rullefelt-dekning: 75%;
+
   /* --- Toppmeny og dokk ----------------------------------------------------
      Den ene faste toppmenyen svever over innholdet. `--toppmeny-offset` er
      hvor mye av vinduet den tar øverst: innhold, ankere og scrollIntoView

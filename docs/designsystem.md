@@ -30,6 +30,11 @@ har ingen egne tall. Mangler en verdi, legges den inn der på riktig nivå.
 - **Ikoner:** `--ikon-ui`, `-panel`, `-underpunkt`, `-seksjon`, `-form`,
   `-konsept` og `-plot`, og `--ikon-sirkel` (`-smal` på mobil) for sirkelen rundt
   seksjonsikonet.
+- **Rullefelt:** `--rullefelt-bredde`, `-luft`, `-luft-aktiv`, `-innrykk` og
+  `-dekning`. Alle rullefelt i appen tegnes likt fra `base.css`: et tynt
+  håndtak i `--aksent` uten piler og skinne, trukket inn fra endene så det
+  holder seg innenfor hjørnene på kortet det ruller i. Egne rullefelt skal
+  ikke styles per komponent.
 - **Lag:** `--lag-innhold` (det som flyter over siden, under toppmenyen og
   mørkleggingen bak sidemenyen), `--lag-toppmeny`, `--lag-popover` og
   `--lag-modal`.
@@ -76,7 +81,7 @@ Logomerket (`src/components/konto/Logomerke.tsx`) er pynt og tegnes med
 Hvert område har sitt eget stilark i `src/styles/`, så parallelle endringer
 ikke møtes i én stor fil. De felles står i `main.tsx`, i denne rekkefølgen:
 
-- `tokens.css` og `base.css`: verdiene, og siden, scenen og stegkolonnen.
+- `tokens.css` og `base.css`: verdiene, og siden, scenen, stegkolonnen og rullefeltene.
 - `handlinger.css`: knappene og hurtigtastmerket.
 - `flater.css`: panelet, panelhodet, metalinjen, pillene, kommentarteksten,
   varselet, mangellista, de sammenleggbare seksjonene og kopiering for hånd.

@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { contrastRatio } from '../../domain/contrast'
+import { contrastRatio, overlagt } from '../../domain/contrast'
 
 const css = readFileSync(fileURLToPath(new URL('../tokens.css', import.meta.url)), 'utf8')
 
@@ -132,5 +132,17 @@ describe('tokens', () => {
     const redusert = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'))
     const blokken = redusert.slice(0, redusert.indexOf('}\n}'))
     for (const navn of varigheter) expect(blokken, navn).toContain(`${navn}: 0ms`)
+  })
+})
+
+// Rullefeltets håndtak er aksentfargen med `--rullefelt-dekning` i ro
+// (`base.css`), og skal likevel skille seg fra flatene det ruller over.
+describe.each(Object.entries(TEMAER))('rullefeltet i %s tema', (_navn, palett) => {
+  const dekning = Number.parseFloat(palett['--rullefelt-dekning'] ?? '') / 100
+  it.each(['--flate-bunn', '--flate', '--flate-hevet'])('håndtaket i ro mot %s ≥ 3:1', (flate) => {
+    const bakgrunn = palett[flate] as string
+    const haandtak = overlagt(palett['--aksent'] as string, bakgrunn, dekning)
+    expect(dekning).toBeGreaterThan(0)
+    expect(contrastRatio(haandtak, bakgrunn)).toBeGreaterThanOrEqual(3)
   })
 })

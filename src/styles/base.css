@@ -76,6 +76,60 @@ ul {
   }
 }
 
+/* --- Rullefelt -------------------------------------------------------------
+   Som på mobil, i hele appen: bare håndtaket synes, i aksentfargen, litt
+   gjennomsiktig i ro og helt dekkende når det holdes over eller dras. Ingen
+   piler og ingen skinne. Skinnen trekkes inn fra endene, så håndtaket aldri
+   legger seg over de avrundede hjørnene på kortet det ruller i. Verdiene står
+   i `tokens.css`.
+
+   Chromium og Safari tegner rullefeltet etter ::-webkit-scrollbar. Firefox
+   kjenner ikke dem og får standardegenskapene i stedet; de står bak
+   @supports fordi Chromium ellers lar dem overstyre pseudo-elementene. */
+::-webkit-scrollbar {
+  width: var(--rullefelt-bredde);
+  height: var(--rullefelt-bredde);
+  background: transparent;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  margin: var(--rullefelt-innrykk);
+}
+
+/* Sidens eget rullefelt står mot vinduskanten, ikke i et kort. */
+:root::-webkit-scrollbar-track {
+  margin: 0;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--aksent) var(--rullefelt-dekning), transparent);
+  background-clip: padding-box;
+  border: var(--rullefelt-luft) solid transparent;
+  border-radius: var(--runding-pille);
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--aksent);
+  border-width: var(--rullefelt-luft-aktiv);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--aksent) var(--rullefelt-dekning), transparent) transparent;
+  }
+}
+
 /* --- Sidelayout ---------------------------------------------------------
    Én skjermfylt scene med innholdet sentrert. Stegene bytter innhold i
    stedet for å legge til høyde. Det er dokumentet som ruller når innholdet

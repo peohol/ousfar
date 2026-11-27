@@ -65,3 +65,18 @@ export function contrastRatio(a: string, b: string): number {
   const [lys, moerk] = la > lb ? [la, lb] : [lb, la]
   return (lys + 0.05) / (moerk + 0.05)
 }
+
+/**
+ * Fargen en delvis gjennomsiktig forgrunn får lagt over en bakgrunn, som
+ * `color-mix(… forgrunn andel, transparent)` tegnet på bakgrunnen. `andel`
+ * er fra 0 til 1.
+ */
+export function overlagt(forgrunn: string, bakgrunn: string, andel: number): string {
+  const f = parseFarge(forgrunn)
+  const b = parseFarge(bakgrunn)
+  const kanal = (x: number, y: number) =>
+    Math.round((x * andel + y * (1 - andel)) * 255)
+      .toString(16)
+      .padStart(2, '0')
+  return `#${kanal(f.r, b.r)}${kanal(f.g, b.g)}${kanal(f.b, b.b)}`
+}
