@@ -45,10 +45,13 @@ type Medarbeider = Grunnlag['medarbeidere'][number] & {
   perioder: { fra: string; til: string | null }[]
   revisjon: number
   vaktandel: DutyShareSchedule
+  /** Bare for dem som ser kvalifikasjonene. */
+  ny?: boolean
 }
 interface Innstillinger {
   id: string
   revisjon: number
+  ny: boolean
   kvalifikasjoner: { status: string; fra: string; til: string | null }[]
   vaktandel: DutyShareSchedule
 }
@@ -264,9 +267,12 @@ describe('medarbeiderne 1:1 med medlemmene (B13, K-MED-1, K-MED-3, K-MED-5)', ()
       await tx.query(`set local session_replication_role = replica`)
       await tx.query(`update personal.medarbeiderperioder set fra = $2, til = $3 where medarbeider_id = $1`, [nils.id, addDays(iDag, -10), addDays(iDag, -4)])
       await tx.query(`update personal.kvalifikasjoner set fra = $2, til = $3 where medarbeider_id = $1`, [nils.id, addDays(iDag, -10), addDays(iDag, -4)])
+      await tx.query(`update personal.medarbeidere set vakter_valgt = $2 where id = $1`, [nils.id, addDays(iDag, -10)])
     })
-    // Han kommer tilbake i dag, mens funksjonen fortsatt er av: en ny periode, uten kvalifikasjonen.
+    expect((await p.db.query<{ ny: boolean }>('select personal.er_ny(m) as ny from personal.medarbeidere m where id = $1', [nils.id])).rows[0]!.ny).toBe(false)
+    // Han kommer tilbake i dag, mens funksjonen fortsatt er av: en ny periode, uten kvalifikasjonen, og ny igjen.
     await opprettMedlem(p.db, konto.nyR, R, { primaer: true })
+    expect((await p.db.query<{ ny: boolean }>('select personal.er_ny(m) as ny from personal.medarbeidere m where id = $1', [nils.id])).rows[0]!.ny).toBe(true)
     expect(await perioderFor(konto.nyR)).toEqual([
       { fra: addDays(iDag, -10), til: addDays(iDag, -4) },
       { fra: iDag, til: null },
@@ -478,6 +484,41 @@ describe('medarbeiderinnstillingene (K-MED-2, B4)', () => {
         const sql = (await p.db.query<{ f: boolean }>('select personal.vaktandel_endrer_fortid($1, $2, $3) as f', [JSON.stringify(a), JSON.stringify(b), iDag])).rows[0]!.f
         expect(sql, `${JSON.stringify(a)} → ${JSON.stringify(b)}`).toBe(changesPast(a, b, iDag))
       }
+    }
+  })
+})
+
+describe('«Ny» i medarbeiderne (§8.8)', () => {
+  it('er ny til vaktene er valgt i perioden, også uten vakter, og bare planleggerne ser det', async () => {
+    const ola = await opprettBruker(p.db, { brukernavn: 'test.olar', fornavn: 'Ola', etternavn: 'Testesen', rolle: 'user' })
+    await opprettMedlem(p.db, ola, R, { primaer: true })
+    try {
+      const m = await medarbeiderI(konto.adminR, R, 'Ola Testesen')
+      expect(m.ny).toBe(true)
+      // En kollega ser verken kvalifikasjonene eller «Ny».
+      expect(await medarbeiderI(konto.kollegaR, R, 'Ola Testesen')).not.toHaveProperty('ny')
+      // Et valg uten vakter kvitterer: revisjonen øker, og valget logges.
+      const svar = await settKvalifikasjoner(konto.adminR, R, m.id, [], m.revisjon)
+      expect(svar).toMatchObject({ ny: false, revisjon: m.revisjon + 1, kvalifikasjoner: [] })
+      expect((await medarbeiderI(konto.adminR, R, 'Ola Testesen')).ny).toBe(false)
+      const logg = await p.db.query<{ foer: unknown; etter: unknown }>(`select foer, etter from personal.innstillingslogg where medarbeider_id = $1 and hva = 'kvalifikasjoner'`, [m.id])
+      expect(logg.rows).toEqual([{ foer: null, etter: [] }])
+      // Det samme valget igjen endrer ingenting.
+      expect((await settKvalifikasjoner(konto.adminR, R, m.id, [], svar.revisjon)).revisjon).toBe(svar.revisjon)
+      // Den gamle revisjonen gir konflikt, også for et valg uten vakter.
+      expect(await kode(() => settKvalifikasjoner(konto.adminR, R, m.id, [], m.revisjon))).toBe('PT409')
+    } finally {
+      await avsluttMedlemskap(p.db, ola, R)
+    }
+  })
+
+  it('følger kvalifikasjonene i Sandkasse: de syntetiske med vakter er ikke nye', async () => {
+    const g = await grunnlag(p, 'arkitektB', p.S)
+    const ny = new Map(g.medarbeidere.map((m) => [m.navn, (m as Medarbeider).ny]))
+    expect(ny.get('Alma Berg')).toBe(false)
+    for (const m of g.medarbeidere) {
+      const kv = m.kvalifikasjoner ?? []
+      if (kv.length > 0) expect((m as Medarbeider).ny, m.navn).toBe(false)
     }
   })
 })

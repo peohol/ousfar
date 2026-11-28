@@ -10,7 +10,10 @@
  *   personalsiden hentes ikke;
  * - `qa-admin` etter bytte til Sandkasse (testmiljø, funksjonen på
  *   `utprøving`): Kalender under Personal, siden med fagmiljøet og fanene,
- *   koden hentes først nå, og en direkte adresse til en fane;
+ *   koden hentes først nå, og en direkte adresse til fanen Medarbeidere med
+ *   de syntetiske medarbeiderne, også etter ny innlasting;
+ * - «Vis som» (K-SKJ-7): som kollega forsvinner fanen Medarbeidere, også
+ *   etter ny innlasting, og «Avslutt» gir den virkelige rollen tilbake;
  * - bytte tilbake fra kalenderen: siden blir «Siden finnes ikke», og menyen
  *   mister Personal.
  *
@@ -65,6 +68,8 @@ async function innen(ms: number, hva: string, sjekk: () => Promise<boolean>) {
 }
 
 const SANDKASSE = 'Sandkasse'
+/** En av de syntetiske medarbeiderne i Sandkasse (`*_personal_utproving.sql`). */
+const SYNTETISK = 'Alma Berg'
 const STANDARD = 'OUS Klinisk farmakologi'
 const GRUNN = 'QA: personalkalenderen i det lokale testmiljøet (syntetisk)'
 
@@ -244,10 +249,29 @@ try {
     await innen(15_000, 'fanen Medarbeidere', async () =>
       (await admin.getByRole('navigation', { name: 'Kalender' }).getByRole('link', { name: 'Medarbeidere' }).getAttribute('aria-current')) === 'page',
     )
-    krev(await admin.getByText('Medarbeiderne kommer her.').isVisible(), 'innholdet i fanen')
+    const rad = admin.getByRole('row').filter({ has: admin.getByRole('rowheader', { name: SYNTETISK }) })
+    await innen(15_000, `${SYNTETISK} i tabellen`, () => rad.isVisible())
+    krev(await rad.getByRole('button', { name: new RegExp(SYNTETISK) }).isVisible(), 'knappen for å endre medarbeideren')
+    await bilde(admin, '04-medarbeidere')
+    await admin.reload()
+    await innen(15_000, `${SYNTETISK} etter ny innlasting`, () => rad.isVisible())
     await admin.emulateMedia({ colorScheme: 'dark' })
     await bilde(admin, '04-medarbeidere-moerkt')
     await admin.emulateMedia({ colorScheme: 'light' })
+  })
+
+  await punkt('P5b «Vis som» i Sandkasse: som kollega forsvinner Medarbeidere, og valget avsluttes igjen', async () => {
+    const visSom = admin.getByRole('group', { name: 'Vis som' })
+    const rolle = visSom.getByRole('combobox', { name: 'Rolle' })
+    const medarbeiderfaner = () => admin.getByRole('link', { name: 'Medarbeidere' }).count()
+    await rolle.selectOption({ label: 'Kollega' })
+    await innen(15_000, 'Medarbeidere borte som kollega', async () => (await rolle.inputValue()) === 'reader' && (await medarbeiderfaner()) === 0)
+    await bilde(admin, '04b-vis-som-kollega')
+    // Serveren håndhever valget: kalenderen svarer som for en kollega, også etter ny innlasting.
+    await admin.reload()
+    await innen(15_000, 'kollega etter ny innlasting', async () => (await rolle.inputValue()) === 'reader' && (await medarbeiderfaner()) === 0)
+    await visSom.getByRole('button', { name: 'Avslutt' }).click()
+    await innen(15_000, 'tilbake som lokal administrator', async () => (await rolle.inputValue()) === 'localAdmin' && (await medarbeiderfaner()) === 1)
   })
 
   await punkt('P6 bytte tilbake fra kalenderen: siden blir ukjent, og menyen mister Personal', async () => {
