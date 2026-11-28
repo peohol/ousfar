@@ -175,7 +175,10 @@ Uansett vei inn, også rett i tabellen:
   huskes i datoraden (`personal.dager.foer`, merket med transaksjonen) når den
   først rører statusen og datoen, så klienten ikke kan påvirke det, og
   grensen kontrolleres ved slutten av transaksjonen
-  (`personal.kontroller_bemanning`, en utsatt utløser);
+  (`personal.kontroller_bemanning`, en utsatt utløser) for hver oppføring som
+  legges inn eller får en ny status. En endring som beholder statusen, som en
+  merknad, et fritak eller kontoslettingens nulling av hvem som endret, endrer
+  ikke antallet og kontrolleres ikke;
 - **statusen kjent** i reglene som gjelder datoen (`23514` ellers);
 - **fritaket** bare på en status med `dutyExemption: 'administrative'`, og det
   følger aldri en ny status. En ny versjon av oppsettet kan ikke ta fritaket
@@ -304,8 +307,8 @@ syntetisk testmiljø:
 - fritaket: likt svar med og uten for kollega og vaktplanansvarlig, også i
   historikken, og at oppsettet ikke kan ta fritaket fra en status som har det
   fremover;
-- endringsloggen, og kontosletting av en planlegger som har endret kalenderen
-  og gitt fritak;
+- endringsloggen, og kontosletting av en planlegger som har endret kalenderen,
+  gitt fritak og fylt en dag som senere er over et senket behov;
 - en ukjent status og den gamle innstillingen `personal.foer` rett i tabellen.
 
 `src/__tests__/personal.samtidighet.test.ts` kjører de samtidige endringene

@@ -400,6 +400,8 @@ for each row execute function personal.for_oppforing();
 
 -- Ved slutten av transaksjonen: høyst `tak` med statusen på datoen, eller
 -- høyst antallet før transaksjonen når det alt var over (`invariantErrors`).
+-- En endring som beholder statusen (merknaden, fritaket, kontoslettingens
+-- nulling av `endret_av`), endrer ikke antallet og kontrolleres ikke.
 create function personal.kontroller_bemanning()
 returns trigger
 language plpgsql
@@ -429,9 +431,15 @@ end;
 $$;
 
 create constraint trigger oppforinger_bemanning
-after insert or update on personal.oppforinger
+after insert on personal.oppforinger
 deferrable initially deferred
 for each row execute function personal.kontroller_bemanning();
+
+create constraint trigger oppforinger_bemanning_ny_status
+after update on personal.oppforinger
+deferrable initially deferred
+for each row when (new.status_id is distinct from old.status_id)
+execute function personal.kontroller_bemanning();
 
 -- Oppføringen som JSON i endringsloggen.
 create function personal.loggrad(o personal.oppforinger)

@@ -88,6 +88,23 @@ const lagreOppsett = async (regler: Omit<RuleSet, 'version' | 'effectiveFrom'>) 
   ])
 }
 
+const POLIKLINIKK: StatusDefinition = { id: 'poliklinikk', name: 'Poliklinikk', group: 'tilstede', present: true, icon: 'house', tone: 'teal', uniquePerDay: false, requiresQualification: false, active: true }
+/** Reglene med poliklinikk og et behov på `antall` hver hverdag. */
+const medPoliklinikk = (antall: number, regler: Omit<RuleSet, 'version' | 'effectiveFrom'> = PILOT): Omit<RuleSet, 'version' | 'effectiveFrom'> => ({
+  ...regler,
+  statuses: [...regler.statuses.filter((x) => x.id !== POLIKLINIKK.id), POLIKLINIKK],
+  staffing: [
+    ...regler.staffing.filter((b) => b.statusId !== POLIKLINIKK.id),
+    { statusId: POLIKLINIKK.id, perWeekday: [antall, antall, antall, antall, antall, 0, 0], onHolidays: false },
+  ],
+})
+
+/** Reglene i den gjeldende versjonen av oppsettet, klare til å lagres på nytt. */
+const gjeldende = async (): Promise<Omit<RuleSet, 'version' | 'effectiveFrom'>> => {
+  const { version: _v, effectiveFrom: _e, ...regler } = (await grunnlag(p, 'arkitektB')).regelsett.at(-1) as unknown as RuleSet
+  return regler
+}
+
 beforeAll(async () => {
   p = await byggPersonaldatabase()
   await p.kall('systemarkitekt', `select public.sett_funksjonsbryter('personal', $1, 'på', 'Testmiljø i testen')`, [p.S])
@@ -514,12 +531,6 @@ describe('fritaket (K-TIL-4, K-DAT-1)', () => {
 })
 
 describe('bemanningsgrensene og oppsettet over tid (K-KON-3)', () => {
-  const POLIKLINIKK: StatusDefinition = { id: 'poliklinikk', name: 'Poliklinikk', group: 'tilstede', present: true, icon: 'house', tone: 'teal', uniquePerDay: false, requiresQualification: false, active: true }
-  const medPoliklinikk = (antall: number): Omit<RuleSet, 'version' | 'effectiveFrom'> => ({
-    ...PILOT,
-    statuses: [...PILOT.statuses, POLIKLINIKK],
-    staffing: [...PILOT.staffing, { statusId: POLIKLINIKK.id, perWeekday: [antall, antall, antall, antall, antall, 0, 0], onHolidays: false }],
-  })
   const tidligere = () => addDays(uke(-4), 0)
   const kode = (arbeid: Promise<unknown>) =>
     arbeid.then(
@@ -637,10 +648,6 @@ describe('endringsloggen', () => {
 })
 
 describe('fritaket når oppsettet endres (K-TIL-4)', () => {
-  const gjeldende = async (): Promise<Omit<RuleSet, 'version' | 'effectiveFrom'>> => {
-    const { version: _v, effectiveFrom: _e, ...regler } = (await grunnlag(p, 'arkitektB')).regelsett.at(-1) as unknown as RuleSet
-    return regler
-  }
   const utenAdgang = (regler: Omit<RuleSet, 'version' | 'effectiveFrom'>) => ({
     ...regler,
     statuses: regler.statuses.map((x) => {
@@ -698,21 +705,43 @@ describe('kontosletting (docs/brukere.md)', () => {
     await opprettMedlem(p.db, konto, p.S)
     await p.somServer((tx) => tx.query('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [konto, p.S]))
     const dato = addDays(uke(9), 0)
+    const celler: [string, string, string][] = [['Live Rønning', dato, S_ID.away]]
     await p.kall(konto, ENDRE, [p.S, JSON.stringify([{ medarbeider: id('Live Rønning'), dato, revisjon: null, status: S_ID.away }])])
     const for_ = (await celle('Live Rønning', dato))!
     await p.kall(konto, FRITAK, [p.S, id('Live Rønning'), dato, true, for_.revisjon, for_.fritak_revisjon])
+
+    // Kontoen fyller begge plassene en dag, og behovet senkes etterpå til én: et lovlig overskudd.
+    const regler = await gjeldende()
+    const full = addDays(uke(9), 1)
+    await lagreOppsett(medPoliklinikk(2, regler))
+    for (const navn of ['Sanna Myhre', 'Emil Østby']) {
+      await p.kall(konto, ENDRE, [p.S, JSON.stringify([{ medarbeider: id(navn), dato: full, revisjon: null, status: POLIKLINIKK.id }])])
+      celler.push([navn, full, POLIKLINIKK.id])
+    }
+    await lagreOppsett(medPoliklinikk(1, regler))
+
+    type Logg = { aktor: string | null; etter: unknown }
+    type Rad = { endret_av: string | null; revisjon: string; fritak: boolean; status_id: string }
     const logg = async () =>
-      (await p.db.query<{ aktor: string | null; etter: unknown }>('select aktor, etter from personal.endringer where medarbeider_id = $1 and dato = $2 order by id', [id('Live Rønning'), dato])).rows
-    expect((await logg()).map((r) => r.aktor)).toEqual([konto, konto])
-    const rad = async () =>
-      (await p.db.query<{ endret_av: string | null; revisjon: string; fritak: boolean }>('select endret_av, revisjon, fritak from personal.oppforinger where medarbeider_id = $1 and dato = $2', [id('Live Rønning'), dato])).rows[0]!
-    const foer = await rad()
-    expect(foer.endret_av).toBe(konto)
+      (
+        await Promise.all(
+          celler.map(async ([navn, d]) => (await p.db.query<Logg>('select aktor, etter from personal.endringer where medarbeider_id = $1 and dato = $2 order by id', [id(navn), d])).rows),
+        )
+      ).flat()
+    const rader = async () =>
+      Promise.all(
+        celler.map(async ([navn, d]) => (await p.db.query<Rad>('select endret_av, revisjon, fritak, status_id from personal.oppforinger where medarbeider_id = $1 and dato = $2', [id(navn), d])).rows[0]!),
+      )
+    const foer = await rader()
+    const foerLogg = await logg()
+    expect(foer.map((r) => [r.endret_av, r.status_id])).toEqual(celler.map(([, , status]) => [konto, status]))
+    expect(foerLogg.map((r) => r.aktor)).toEqual([konto, konto, konto, konto])
 
     expect(await feilFra(() => p.somServer((tx) => tx.query('delete from auth.users where id = $1', [konto])))).toBeNull()
 
-    expect((await logg()).map((r) => r.aktor)).toEqual([null, null])
-    expect(await rad()).toEqual({ ...foer, endret_av: null })
+    // Bare hvem som endret, er nullet: registreringene, revisjonene og historikken står.
+    expect(await logg()).toEqual(foerLogg.map((r) => ({ ...r, aktor: null })))
+    expect(await rader()).toEqual(foer.map((r) => ({ ...r, endret_av: null })))
     // Loggen kan fortsatt ikke endres, heller ikke til tomt for en konto som finnes.
     for (const sql of ['update personal.endringer set aktor = null where aktor is not null', 'update personal.endringer set etter = null where aktor is null']) {
       expect((await feilFra(() => p.somServer((tx) => tx.query(sql))))?.code, sql).toBe('42501')
