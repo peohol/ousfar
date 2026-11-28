@@ -210,11 +210,11 @@ som andre migrasjoner med risiko for tap av data (`AGENTS.md`).
 **4. Kopiene utenfor databasen:**
 
 - **Sikkerhetskopier:** Supabases gratisplan tar ingen daglige kopier. OUSFARs
-  egne krypterte kopier ([drift-gjenoppretting.md](drift-gjenoppretting.md))
-  er ikke satt i drift ennå. Når de er det, lever en kopi så lenge
-  lagringsregelen for kopiene sier (avgjøres med tiltak 3); en tekst som er
-  fjernet, finnes i kopiene til de er utløpt, og må fjernes på nytt om en kopi
-  blir gjenopprettet.
+  egne krypterte kopier ([drift-gjenoppretting.md](drift-gjenoppretting.md),
+  «Kopiene i drift») holdes i 7 døgn. En tekst som er fjernet, finnes i
+  kopiene til de er ryddet, normalt om lag 8 døgn etter at den ble fjernet,
+  og må fjernes på nytt om en kopi blir gjenopprettet. Direktemeldingene er
+  ikke med ([sikkerhetskopi-personvern.md](sikkerhetskopi-personvern.md)).
 - **Logger:** appen skriver ikke brukernes tekst i loggene. Supabase og
   Vercel har egne logger med kort oppbevaring på gratisplanene; de har
   forespørslene, ikke innholdet i innsendte skjemaer.

@@ -37,6 +37,9 @@ export interface Objekt {
   ddl: string
 }
 
+/** De midlertidige innloggingsrollene fra Management API-et (`POST /cli/login-role`), som regulært uttrykk. */
+export const MIDLERTIDIG_ROLLE = '^cli_login_'
+
 const skjemaliste = PLATTFORMSKJEMAER.map((s) => `'${s}'`).join(', ')
 
 /**
@@ -48,6 +51,10 @@ const skjemaliste = PLATTFORMSKJEMAER.map((s) => `'${s}'`).join(', ')
  * `db dump --role-only` har bare Supabases egne innstillinger og kjøres ikke
  * ved gjenoppretting. OUSFAR har én slik tilpasning: tidsgrensen for
  * `service_role` (`20260923092108_legemiddeldata.sql`).
+ *
+ * De midlertidige innloggingsrollene Supabase lager for CLI-en og kopijobben
+ * (`cli_login_…`, `prosjekt.ts`), er ikke OUSFARs og er ikke med, heller ikke
+ * medlemskapene og innstillingene deres, som CLI-en selv utelater dem.
  */
 export const FINGERAVTRYKK_SQL = /* sql */ `
   with skjema as (
@@ -68,7 +75,7 @@ export const FINGERAVTRYKK_SQL = /* sql */ `
         case when r.rolcanlogin then 'login' else 'nologin' end, case when r.rolinherit then 'inherit' else 'noinherit' end,
         case when r.rolcreaterole then 'createrole' else 'nocreaterole' end, case when r.rolcreatedb then 'createdb' else 'nocreatedb' end,
         case when r.rolbypassrls then 'bypassrls' else 'nobypassrls' end) as ddl
-    from pg_roles r where r.rolname not like 'pg\_%'
+    from pg_roles r where r.rolname not like 'pg\_%' and r.rolname !~ '${MIDLERTIDIG_ROLLE}'
   ),
   rollemedlemskap as (
     select 'rollemedlemskap', concat_ws('|', g.rolname, m.rolname),
@@ -76,12 +83,13 @@ export const FINGERAVTRYKK_SQL = /* sql */ `
       format('grant %I to %I%s;', g.rolname, m.rolname, case when a.admin_option then ' with admin option' else '' end)
     from pg_auth_members a join pg_roles g on g.oid = a.roleid join pg_roles m on m.oid = a.member
     where g.rolname not like 'pg\_%' and m.rolname not like 'pg\_%'
+      and g.rolname !~ '${MIDLERTIDIG_ROLLE}' and m.rolname !~ '${MIDLERTIDIG_ROLLE}'
   ),
   rolleinnstillinger as (
     select 'rolleinnstilling', concat_ws('|', r.rolname, split_part(c, '=', 1)), substr(c, strpos(c, '=') + 1),
       format('alter role %I set %s = %L;', r.rolname, split_part(c, '=', 1), substr(c, strpos(c, '=') + 1))
     from pg_db_role_setting s join pg_roles r on r.oid = s.setrole, unnest(s.setconfig) c
-    where s.setdatabase = 0
+    where s.setdatabase = 0 and r.rolname !~ '${MIDLERTIDIG_ROLLE}'
   ),
   utlosere as (
     select 'utloser' as art,

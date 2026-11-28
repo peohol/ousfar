@@ -1,0 +1,88 @@
+# Sikkerhetskopiene av produksjonen til Backblaze B2 i EU (tiltak 3,
+# docs/drift-gjenoppretting.md, «Kopiene i drift»; issue #615).
+#
+# - Hver natt (02:15 UTC: 03:15 i Oslo om vinteren, 04:15 om sommeren) tas
+#   en kryptert, signert kopi. Bare bitene som er endret siden forrige kopi,
+#   hentes ut av Supabase; alt legges i lageret låst i 7 døgn (Governance),
+#   kontrolleres der, og først da ryddes det som er utløpt.
+# - Om morgenen kontrolleres det at det finnes en hel kopi fra det siste døgnet.
+# - Til kopiering av produksjonen er slått på (PRODUKSJONSKOPI_PA i
+#   src/drift/sikkerhetskopi/drift.ts, i en egen PR), gjør nattjobben bare
+#   kontrollen av nøkkelen og lageret med en syntetisk fil, og ingenting med
+#   produksjonsdataene.
+#
+# Bare koden på main kjører med hemmelighetene (miljøet `backup` er begrenset
+# til main), aldri kode fra en PR. Actions og bildet er låst til faste
+# versjoner. Ingen nøkler eller data skrives ut, og ingenting lastes opp som
+# artefakt; kopien ligger bare kryptert i lageret. En rød kjøring betyr en
+# manglende kopi, et varsel om kvotene eller en feil; GitHub varsler da
+# eieren av repoet.
+name: Sikkerhetskopi
+
+on:
+  schedule:
+    - cron: '15 2 * * *'
+    - cron: '45 6 * * *'
+  workflow_dispatch:
+    inputs:
+      modus:
+        description: 'kontroll: nøkkelen og lageret, uten produksjonsdata. kopi: en kopi av produksjonen nå (bare når den er slått på). tilsyn: om det finnes en ny, hel kopi.'
+        type: choice
+        options: [kontroll, kopi, tilsyn]
+        default: kontroll
+
+permissions: {}
+
+concurrency:
+  group: sikkerhetskopi
+  cancel-in-progress: false
+
+jobs:
+  kopi:
+    name: Sikkerhetskopi (${{ github.event.inputs.modus || (github.event.schedule == '45 6 * * *' && 'tilsyn') || 'kopi' }})
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    environment: backup
+    permissions:
+      contents: read
+    env:
+      MODUS: ${{ github.event.inputs.modus || (github.event.schedule == '45 6 * * *' && 'tilsyn') || 'kopi' }}
+      # pg_dump må ha minst produksjonens hovedversjon (17); bildet er låst til en fast versjon.
+      KOPI_PG_BILDE: postgres:17.7@sha256:2006493727bd5277eece187319af1ef82b4cf82cf4fc1ed00da0775b646ac2a4
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      # Uten installasjonsskript, og før hemmelighetene er i miljøet.
+      - run: npm ci --ignore-scripts
+
+      # age fra Ubuntus signerte pakkearkiv; psql for spørringene.
+      - name: Verktøyene
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq age postgresql-client
+          age --version
+          psql --version
+
+      - name: Kopien
+        env:
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          KOPI_SIGNERINGSNOKKEL: ${{ secrets.KOPI_SIGNERINGSNOKKEL }}
+          KOPI_MOTTAKERE: ${{ secrets.KOPI_MOTTAKERE }}
+          # Et eget token med bare rettighetene kopien trenger, ikke det jobbene ellers bruker.
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.KOPI_SUPABASE_TOKEN }}
+        run: |
+          case "$MODUS" in
+            kontroll) npm run -s sikkerhetskopi -- kontroll ;;
+            kopi) npm run -s sikkerhetskopi -- natt ;;
+            tilsyn) npm run -s sikkerhetskopi -- tilsyn ;;
+            *) echo "Ukjent modus" >&2; exit 1 ;;
+          esac

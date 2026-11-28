@@ -32,6 +32,24 @@ export const KONTROLLKOLONNER: Readonly<Record<string, readonly string[]>> = {
   'storage.objects': ['bucket_id', 'name'],
 }
 
+/**
+ * Tabellene som aldri tas med i en kopi, med grunnen. Manifestet fører dem
+ * med null rader, så en gjenoppretting er kontrollert lik kilden med dem
+ * tomme. Innholdet leses aldri, heller ikke til kontrollsummen. Finnes en av
+ * dem ikke i kilden (omdøpt eller fjernet), stopper kopien, så unntaket ikke
+ * kan forsvinne i stillhet.
+ */
+export const UTELATTE_TABELLER: Readonly<Record<string, string>> = {
+  'public.direktemeldinger':
+    'Meldingene i direktemeldingene tas ikke med i kopiene (Peder, beslutning 3, 18.11.2026, docs/direktemeldinger-personvern.md). Samtalene, lest-statusen, valgene (chatvalg) og blokkeringene tas med, så de står etter et datatap, uten meldinger',
+  'intern.chatvarselko': 'Flyktig kø for chatvarsler (bare ID-er, høyst ti minutter gammel). Et varsel om en gammel melding etter en gjenoppretting ville vært feil',
+  'intern.chatvarselutsendinger': 'Flyktig kø for chatvarsler som venter på push-tjenesten. Samme grunn',
+}
+
+/** Sant for en tabell (`n`, `c`) i OUSFARs egne skjemaer. */
+export const EGNE_SKJEMAER_SQL = `n.nspname <> all (array[${IKKE_EGNE_SKJEMAER.map((s) => `'${s}'`).join(', ')}])
+    and n.nspname not like 'pg\\_temp%' and n.nspname not like 'pg\\_toast%'`
+
 /** Tabellene manifestet dekker, som `skjema.tabell`, sortert. */
 export const TABELLER_SQL = /* sql */ `
   select n.nspname || '.' || c.relname as tabell
@@ -42,6 +60,9 @@ export const TABELLER_SQL = /* sql */ `
     and n.nspname not like 'pg\\_temp%' and n.nspname not like 'pg\\_toast%'
   order by 1
 `
+
+/** Summen for en tom tabell; den en utelatt tabell har i manifestet og etter en gjenoppretting. */
+export const TOM_SUM = 'd41d8cd98f00b204e9800998ecf8427e'
 
 const sitert = (tabell: string) => tabell.split('.').map((d) => `"${d.replaceAll('"', '""')}"`).join('.')
 
@@ -78,6 +99,12 @@ export interface Manifest {
   filer: Fil[]
   /** Navnene på hemmelighetene som må settes på nytt, aldri verdiene. */
   hemmeligheter: string[]
+  /** Tabellene som ikke er med ({@link UTELATTE_TABELLER}); de står med null rader. */
+  utelatt?: string[]
+  /** Bitene dataene i de delte tabellene ligger i (`deler.ts`), i rekkefølge. */
+  deler?: { tabell: string; kolonner: string[]; nr: number; rader: number; identitet: string }[]
+  /** Sekvensene de delte tabellene eier, med verdien i kopipunktet. */
+  sekvenser?: { navn: string; verdi: string; kalt: boolean }[]
   /**
    * Tofaktornøkler Auth har kryptert med en nøkkel bare plattformen har. De
    * kan ikke leses i et nytt prosjekt (se `KRYPTERTE_FAKTORER_SQL`).

@@ -22,6 +22,17 @@
  *    bruker opprettes gjennom adminflyten (Edge-funksjonen `opprett-bruker`) og får profil og
  *    medlemskap; en bruker uten myndighet avvises; profilbildereglene holder;
  *    og skrivingen under kopieringen ga ett sammenhengende kopipunkt.
+ * 5. Nattens kopi slik GitHub-jobben tar den (`kjorNatt`), mot et falskt
+ *    lager med versjoner og Object Lock, fire «netter» med klokka spolt fram:
+ *    den første kopien, en ny der bare biten med en endret rad hentes, en
+ *    etter at mottakernøkkelen er byttet (alt krypteres på nytt), og en
+ *    etter oppbevaringstiden, som rydder bort kopiene med den gamle nøkkelen.
+ *    Kopiene hentes fra lageret og gjenopprettes hver i sin nye, rene
+ *    Supabase, den siste med bare den nye nøkkelen og etter oppryddingen.
+ *    Kilden har en direktemelding med en kjent tekst: den finnes ikke i noe
+ *    kopien har (alt dekrypteres og letes gjennom), mens samtalen,
+ *    lest-statusen, valgene og blokkeringen står etter gjenopprettingen.
+ *    Den midlertidige innloggingsrollen (`cli_login_…`) blir ikke en tilpasning.
  *
  * Ingen produksjonsdata er med. Alt ligger i en midlertidig mappe som
  * slettes, og databasen stoppes uten å lagre noe.
@@ -29,15 +40,20 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { execFileSync, spawn } from 'node:child_process'
 import { createHash, createHmac, randomBytes } from 'node:crypto'
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { internAuthAdresse } from '@delt/brukernavn'
 import { genererMidlertidigPassord } from '@delt/passord'
 import { SUPABASE_CLI } from '../src/drift/supabaseCli'
-import { Stopp, filsum, gjenopprett, lagReferanse, pakk, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
+import { Stopp, fingeravtrykk, filsum, gjenopprett, lagReferanse, pakk, summerAv, taKopi, ventPaTjenestene } from '../src/drift/sikkerhetskopi/kopi'
 import { lagSigneringsnokler, signer } from '../src/drift/sikkerhetskopi/signatur'
+import { forskjell } from '../src/drift/sikkerhetskopi/tilpasninger'
+import { kjorNatt, type Nattrapport } from '../src/drift/sikkerhetskopi/natt'
+import { hentKopi, lesLageret, tilsyn } from '../src/drift/sikkerhetskopi/lager'
+import { S3 } from '../src/drift/sikkerhetskopi/s3'
+import { FalskS3 } from '../src/__tests__/hjelp/falskS3'
 import { lokaltOppsett, sikreDocker, UTELATT, valgteMigrasjoner } from '../src/__tests__/qa/lokalmiljo'
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -218,6 +234,56 @@ const tellinger = (dbUrl: string) => {
   return { a, maksA, b, maksB }
 }
 
+const psql = (dbUrl: string, sql: string) => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '--dbname', dbUrl, '-c', sql], { encoding: 'utf8' }).trim()
+
+/** Teksten i direktemeldingen i kilden. Den skal ikke finnes i noe en kopi har. */
+const DM_TEKST = `DMPROVE${randomBytes(8).toString('hex')}`
+
+/**
+ * En direktesamtale mellom de to, med én melding med `DM_TEKST`, lest-status,
+ * valgene og en blokkering, lagt rett i tabellene.
+ */
+function leggInnDirektemeldinger(dbUrl: string, a: string, b: string) {
+  psql(dbUrl, `
+    insert into public.chatvalg (bruker_id, tillat_direktemeldinger) values ('${a}', true), ('${b}', true);
+    with s as (
+      insert into public.direktesamtaler (bruker_lav, bruker_hoy, opprettet_av, siste_nr, siste_endring, siste_melding_kl)
+      values (least('${a}'::uuid, '${b}'::uuid), greatest('${a}'::uuid, '${b}'::uuid), '${a}', 1, 1, now()) returning id
+    ), m as (
+      insert into public.direktemeldinger (samtale_id, nr, forfatter_id, klient_id, tekst, endring)
+      select id, 1, '${a}', gen_random_uuid(), '${DM_TEKST}', 1 from s returning samtale_id
+    )
+    insert into public.direktesamtale_status (samtale_id, bruker_id, lest_til_nr) select samtale_id, '${a}', 1 from m;
+    insert into public.direktemelding_blokkeringer (blokkerer, blokkert) values ('${b}', '${a}');`)
+}
+
+/** Det som skal stå etter en gjenoppretting av direktemeldingene: alt uten meldingene. */
+const direkte = (dbUrl: string) =>
+  psql(dbUrl, `select (select count(*) from public.direktemeldinger) || ',' || (select count(*) from public.direktesamtaler) || ',' ||
+    (select count(*) from public.direktesamtale_status) || ',' || (select count(*) from public.chatvalg) || ',' || (select count(*) from public.direktemelding_blokkeringer)`)
+
+/** Om noe i en kopi (hovedfila og hver bit, dekryptert med `identitet`) har teksten. */
+function harTekst(kopi: string, identitet: string, tekst: string): boolean {
+  const deler = join(dirname(kopi), 'deler')
+  const filer = [kopi, ...readdirSync(deler).map((n) => join(deler, n))]
+  return filer.some((f) => execFileSync('age', ['-d', '-i', identitet, f], { maxBuffer: 1024 * 1024 * 1024 }).includes(tekst))
+}
+
+/** Om ingen av filene i en kopi kan dekrypteres med `identitet`. */
+function stengtFor(kopi: string, identitet: string): boolean {
+  const deler = join(dirname(kopi), 'deler')
+  return [kopi, ...readdirSync(deler).map((n) => join(deler, n))].every((f) => {
+    try {
+      execFileSync('age', ['-d', '-i', identitet, '-o', '/dev/null', f], { stdio: 'ignore' })
+      return false
+    } catch {
+      return true
+    }
+  })
+}
+
+const DOGN = 24 * 3600 * 1000
+
 const punkter: { punkt: string; ok: boolean; detalj?: string }[] = []
 function sjekk(punkt: string, ok: boolean, detalj?: string) {
   punkter.push({ punkt, ok, detalj })
@@ -229,6 +295,9 @@ async function prove(): Promise<void> {
   execFileSync('age-keygen', ['-o', join(MAPPE, 'nokkel.txt')], { stdio: 'ignore' })
   const mottaker = execFileSync('age-keygen', ['-y', join(MAPPE, 'nokkel.txt')], { encoding: 'utf8' }).trim()
   const jobben = lagSigneringsnokler()
+  // Den nye mottakernøkkelen etter byttet i natt 3.
+  execFileSync('age-keygen', ['-o', join(MAPPE, 'ny-nokkel.txt')], { stdio: 'ignore' })
+  const nyMottaker = execFileSync('age-keygen', ['-y', join(MAPPE, 'ny-nokkel.txt')], { encoding: 'utf8' }).trim()
   stopp()
 
   logg('1. ren Supabase: referansen')
@@ -256,6 +325,14 @@ async function prove(): Promise<void> {
   // En eTag som ikke er en md5-sum (som ved flerdelsopplasting): da må versjonen avsløre et bytte av like stor fil.
   execFileSync('psql', ['-X', '-q', '-v', 'ON_ERROR_STOP=1', '--dbname', kilde.DB_URL, '-c',
     `update storage.objects set metadata = jsonb_set(metadata, '{eTag}', '"\\"0123456789abcdef-2\\""') where bucket_id = 'avatarer'`])
+  leggInnDirektemeldinger(kilde.DB_URL, adminId, brukerId)
+  const direkteIKilden = direkte(kilde.DB_URL)
+  // Slik Management API-et lager innloggingsrollen kopijobben bruker: den er ikke en tilpasning.
+  // Som plattformens administrator, som Management API-et: bare den kan gi medlemskap i `postgres`.
+  execFileSync('docker', ['exec', 'supabase_db_ousfar-kopiprove', 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-U', 'supabase_admin', '-d', 'postgres', '-c',
+    `create role cli_login_kopiprove login noinherit; grant postgres to cli_login_kopiprove; alter role cli_login_kopiprove set statement_timeout = '1min';`], { stdio: ['ignore', 'ignore', 'pipe'] })
+  const midlertidig = forskjell(fingeravtrykk(kilde.DB_URL), referanse).tilpasninger.filter((o) => o.nokkel.includes('cli_login'))
+  sjekk('den midlertidige innloggingsrollen, medlemskapet og innstillingen er ikke tilpasninger', midlertidig.length === 0, midlertidig.map((o) => `${o.art} ${o.nokkel}`).join(', ') || undefined)
   // pg_dump må ha minst serverens versjon; Postgres-bildet til miljøet har den.
   process.env.KOPI_PG_BILDE ??= execFileSync('docker', ['inspect', '--format', '{{.Config.Image}}', 'supabase_db_ousfar-kopiprove'], { encoding: 'utf8' }).trim()
   const skriver = samtidigSkriver(kilde.DB_URL)
@@ -280,6 +357,57 @@ async function prove(): Promise<void> {
   await skriver.stopp()
   const iKilden = tellinger(kilde.DB_URL)
   const kopi = fraKilden.fil
+  sjekk('direktemeldingene: teksten finnes ikke i noe kopien har', !harTekst(kopi, join(MAPPE, 'nokkel.txt'), DM_TEKST))
+
+  logg('5. nattens kopi mot et lager med lås: fire netter, nøkkelbytte og opprydding')
+  const lager = await new FalskS3().start()
+  const s3 = new S3({ ...lager.oppsett(), naa: () => lager.naa })
+  const start0 = Date.now()
+  const natt = (dogn: number, mottakere: string[]): Promise<Nattrapport> => {
+    lager.naa = new Date(start0 + dogn * DOGN)
+    return kjorNatt({
+      s3, dbUrl: kilde.DB_URL, apiUrl: kilde.API_URL, nokkel: kilde.SECRET_KEY, referanse, mottakere,
+      migrasjoner: join(REPO, 'supabase/migrations'), signeringsnokkel: jobben.privat, naa: () => lager.naa,
+    })
+  }
+  const hentet: Record<string, string> = {}
+  const hent = async (navn: string, fil: string) => {
+    const ut = join(MAPPE, 'hentet', navn)
+    hentet[navn] = (await hentKopi(s3, jobben.offentlig, ut, summerAv, fil)).kopi
+  }
+  let nettene: Nattrapport[] = []
+  try {
+    const n1 = await natt(0, [mottaker])
+    sjekk('natt 1: den første kopien i lageret har alle bitene', n1.forste && n1.nye === n1.biter && n1.biter > 1, `${n1.biter} biter`)
+    await hent('natt1', n1.kopi)
+    psql(kilde.DB_URL, `update public.profiles set first_name = 'Endret' where id = '${brukerId}'`)
+    const n2 = await natt(1, [mottaker])
+    sjekk('natt 2: bare bitene med endrede rader hentes; resten gjenbrukes fra natt 1', !n2.forste && !n2.nyeMottakere && n2.nye >= 1 && n2.nye < n2.biter, `${n2.nye} av ${n2.biter} biter nye`)
+    await hent('natt2', n2.kopi)
+    const n3 = await natt(2, [nyMottaker])
+    sjekk('natt 3: med ny mottakernøkkel krypteres alle bitene på nytt, ingen gjenbrukes', n3.nyeMottakere && n3.nye === n3.biter, `${n3.nye} av ${n3.biter} biter nye`)
+    const etterBytte = await lesLageret(s3, jobben.offentlig)
+    sjekk(
+      'tilsynet: den nyeste kopien er kryptert til den nye nøkkelen, ikke den gamle',
+      tilsyn(etterBytte, lager.naa, [nyMottaker]).ok && !tilsyn(etterBytte, lager.naa, [mottaker]).ok,
+    )
+    const n4 = await natt(10, [nyMottaker])
+    const igjen = await lesLageret(s3, jobben.offentlig)
+    const hele = igjen.kopier.filter((k) => k.hel).map((k) => k.signatur.fil)
+    sjekk(
+      'natt 4, etter oppbevaringstiden: kopiene med den gamle nøkkelen er ryddet, den forrige står låst, og bitene gjenbrukes',
+      n4.rydding.slettet > 0 && !hele.includes(n1.kopi) && !hele.includes(n2.kopi) && hele[0] === n4.kopi && hele.includes(n3.kopi) && n4.nye < n4.biter,
+      `${n4.rydding.slettet} filer ryddet, ${n4.rydding.last} låst; hele kopier: ${hele.length}; ${n4.nye} av ${n4.biter} biter nye`,
+    )
+    await hent('natt4', n4.kopi)
+    sjekk('natt 4: ingen fil i kopien kan åpnes med den gamle nøkkelen', stengtFor(hentet.natt4!, join(MAPPE, 'nokkel.txt')))
+    nettene = [n1, n2, n3, n4]
+    for (const [navn, identitet] of [['natt1', 'nokkel.txt'], ['natt2', 'nokkel.txt'], ['natt4', 'ny-nokkel.txt']] as const) {
+      sjekk(`${navn}: teksten i direktemeldingen finnes ikke i noe kopien har`, !harTekst(hentet[navn]!, join(MAPPE, identitet), DM_TEKST))
+    }
+  } finally {
+    await lager.stopp()
+  }
   stopp()
 
   logg('3. ny, ren Supabase: gjenopprettingen')
@@ -378,6 +506,36 @@ async function prove(): Promise<void> {
     sjekk('7: den nye brukeren kan fjerne sitt eget', !fjern.error && (fjern.data?.length ?? 0) === 1)
   }
   sjekk(`8: tid fra start av gjenopprettingen til kontrollert: ${r.sekunder} s`, true)
+  sjekk('direktemeldingene: samtalen, lest-statusen, valgene og blokkeringen står, uten meldingen', direkte(mal.DB_URL) === direkteIKilden.replace(/^1,/, '0,'), direkte(mal.DB_URL))
+  stopp()
+
+  logg('6. kopiene fra lageret, hver i en ny, ren Supabase')
+  if (nettene.length !== 4) return
+  for (const [navn, identitet, fornavn] of [
+    ['natt1', 'nokkel.txt', 'Syntetisk'],
+    ['natt2', 'nokkel.txt', 'Endret'],
+    ['natt4', 'ny-nokkel.txt', 'Endret'],
+  ] as const) {
+    const nyttMal = await start([])
+    const svar = await gjenopprett({
+      kopi: hentet[navn]!, identitet: join(MAPPE, identitet), avsender: jobben.offentlig,
+      dbUrl: nyttMal.DB_URL, apiUrl: nyttMal.API_URL, nokkel: nyttMal.SECRET_KEY, krypterteFaktorer: 'fjern',
+    }).catch((e: Error) => e)
+    if (svar instanceof Error) {
+      sjekk(`${navn}: gjenopprettet fra lageret`, false, svar.message.slice(0, 200))
+      stopp()
+      continue
+    }
+    sjekk(`${navn}: signaturen holder, og tabeller, kontrollsummer, filer og tilpasninger er like kopien`, svar.avvik.length === 0, svar.avvik.join('; ') || undefined)
+    const inn = await innlogget(nyttMal, 'kopi-admin', adminPassord).catch((e: Error) => e)
+    sjekk(`${navn}: administratoren logger inn med sitt gamle passord`, !(inn instanceof Error))
+    const brukerInn = await innlogget(nyttMal, 'kopi-bruker', brukerPassord)
+    const bildet = await brukerInn.storage.from('avatarer').download(`${brukerId}/avatar.webp`)
+    sjekk(`${navn}: profilbildet kan hentes av eieren`, !bildet.error && sha(new Uint8Array(await bildet.data!.arrayBuffer())) === sha(NYTT_BILDE))
+    sjekk(`${navn}: radene er som da kopien ble tatt`, psql(nyttMal.DB_URL, `select first_name from public.profiles where id = '${brukerId}'`) === fornavn)
+    sjekk(`${navn}: direktemeldingene: samtalen, lest-statusen, valgene og blokkeringen står, uten meldingen`, direkte(nyttMal.DB_URL) === direkteIKilden.replace(/^1,/, '0,'), direkte(nyttMal.DB_URL))
+    stopp()
+  }
 }
 
 /** `KOPIPROVE_BEHOLD=ja` lar miljøet stå etter prøven, for feilsøking; `npx supabase stop --no-backup --workdir <mappe>/miljo` rydder. */
