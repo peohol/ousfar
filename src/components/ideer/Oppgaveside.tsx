@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Felt } from '../konto/Felt'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { ENDRINGSREGISTER, hentHeleLoggen } from '../../data/endringslogg'
 import { lesVersjon, type Endring } from '../../domain/versjon'
 import {
   angreOppgaveUtfort,
@@ -18,6 +17,7 @@ import { PROMPT_MEST, publisertEndring, type Oppgavedetaljer } from '../../ideer
 import { Forlatvarsel } from '../stoffside/Skjemaer'
 import { Button } from '../Button'
 import { visEndringslogg } from '../endringsloggvisning'
+import { useEndringslogg } from '../useEndringslogg'
 import { Ikon } from '../ikon/Ikon'
 import { useForfatterkontekst } from '../traad/Forfatterkontekst'
 import { Ideside } from './Ideside'
@@ -64,6 +64,7 @@ export function Oppgaveside({
   onEndret: () => void
 }) {
   const { systemarkitekt } = useForfatterkontekst()
+  const { register } = useEndringslogg()
   const [oppgave, setOppgave] = useState<Oppgavedetaljer | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
@@ -121,7 +122,7 @@ export function Oppgaveside({
   const utfort = oppgave.status === 'utfort'
   const handteres = oppgave.status === 'haandteres'
   const redigerer = systemarkitekt && !utfort && !handteres
-  const publisert = publisertEndring(oppgave.endringslogg)
+  const publisert = publisertEndring(oppgave.endringslogg, register)
   const kanGjoresOm = systemarkitekt && oppgave.merket_utfort
   const merkUtfort = (versjon: string | null) => utfor(() => merkOppgaveUtfort(oppgave.id, versjon))
 
@@ -331,18 +332,19 @@ function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof M
   }, [apen])
   // Valget viser versjonene med en gang, og hva hver føring sier når loggen er
   // hentet; den er ikke med i appen fra start (`src/data/endringslogg.ts`).
+  const endringslogg = useEndringslogg()
   const [logg, setLogg] = useState<readonly Endring[] | null>(null)
   useEffect(() => {
-    if (!apen || logg) return
+    if (!apen || (logg && logg.length === endringslogg.register.length)) return
     let gjelder = true
-    hentHeleLoggen().then(
+    endringslogg.hentHele().then(
       (hele) => gjelder && setLogg(hele),
       () => undefined,
     )
     return () => {
       gjelder = false
     }
-  }, [apen, logg])
+  }, [apen, logg, endringslogg])
   const sammendrag = useMemo(() => new Map(logg?.map((e) => [e.id, e.sammendrag])), [logg])
 
   if (!apen) {
@@ -367,7 +369,7 @@ function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof M
           onChange={(e) => setVersjon(e.target.value)}
         >
           <option value="">Ingen føring</option>
-          {ENDRINGSREGISTER.map((e) => (
+          {endringslogg.register.map((e) => (
             <option key={e.id} value={e.id}>
               {sammendrag.has(e.id) ? `${e.versjon} – ${sammendrag.get(e.id)}` : e.versjon}
             </option>

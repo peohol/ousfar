@@ -1,18 +1,12 @@
 import { useCallback, useEffect } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
-import { hentEndringer, VERSJON } from '../data/endringslogg'
+import { VERSJON } from '../data/endringslogg'
 import { ENDRINGER_PER_SIDE } from '../domain/versjon'
 import { Endringslogg } from './Endringslogg'
 import { lyttEtterEndringslogg } from './endringsloggvisning'
+import { useEndringslogg } from './useEndringslogg'
 import { Ikon } from './ikon/Ikon'
 import { useTips } from './Tips'
-
-/**
- * De nyeste føringene hentes alt når pekeren eller fokuset kommer til
- * knappen, så loggen som regel står ferdig når den åpnes. Feiler det, prøver
- * loggen igjen selv.
- */
-const forhent = () => void hentEndringer(ENDRINGER_PER_SIDE).catch(() => undefined)
 
 /**
  * Versjonsnummeret med klokka, fast nederst til høyre i vinduet, og veien inn
@@ -39,6 +33,11 @@ export function Versjonspille() {
   // Teksten er allerede en del av knappens navn, og skal ikke leses to ganger.
   const tips = useTips('Vis endringslogg', { skjermleser: false })
   const lukk = useCallback(() => setApen(false), [])
+  const logg = useEndringslogg()
+  // De nyeste føringene hentes alt når pekeren eller fokuset kommer til
+  // knappen, så loggen som regel står ferdig når den åpnes. Feiler det,
+  // prøver loggen igjen selv.
+  const forhent = () => void logg.hent(ENDRINGER_PER_SIDE).catch(() => undefined)
 
   return (
     <>
@@ -65,7 +64,7 @@ export function Versjonspille() {
         <Ikon navn="history" storrelse={14} />v{VERSJON}
       </button>
 
-      <Endringslogg apen={apen} versjon={versjon} onLukk={lukk} />
+      <Endringslogg apen={apen} versjon={versjon} logg={logg} onLukk={lukk} />
     </>
   )
 }

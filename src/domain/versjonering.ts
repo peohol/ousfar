@@ -22,6 +22,7 @@ import {
   type Endringsinnhold,
   type HistoriskEndring,
   type Semverniva,
+  UTPROVING,
 } from './versjon'
 
 /** En endring slik den står i sin egen fil, `src/data/endringer/<id>.json`. */
@@ -102,21 +103,39 @@ function somEndring(foring: Endringsforing, versjon: string, dato: string, semve
  * og så etter ID. Tidspunktet de ble skrevet, avgjør ellers ingenting. De som
  * ikke er slått sammen ennå (et lokalt bygg med en ny fil), kommer etter, med
  * foreløpige numre.
+ *
+ * En føring under utprøving (`bareSystemarkitekter`) øker ingen versjon, så
+ * versjonen alle andre ser, er den samme som uten den. Den får versjonen den
+ * står etter, med nummeret sitt der: `1.160.0+utproving.1`, `…+utproving.2`
+ * (`UTPROVING`).
  */
 export function nummerer(start: string, publiserte: readonly Publisering[], upubliserte: readonly Endringsforing[] = []): Endring[] {
   if (!lesVersjon(start)) throw new Error(`Ugyldig startversjon: ${start}`)
   const nummerert: Endring[] = []
   let versjon = start
+  let utproving = 0
+  const neste = (foring: Endringsforing, semver: Semverniva): string => {
+    if (foring.bareSystemarkitekter) return `${versjon}${UTPROVING}${++utproving}`
+    utproving = 0
+    return (versjon = nesteVersjon(versjon, semver))
+  }
   const iRekkefolge = [...publiserte].sort((a, b) => a.rekkefolge - b.rekkefolge || etterOpprettet(a.foring, b.foring))
   for (const p of iRekkefolge) {
-    versjon = nesteVersjon(versjon, p.semver)
-    nummerert.push(somEndring(p.foring, versjon, oslodato(p.tidspunkt), p.semver))
+    nummerert.push(somEndring(p.foring, neste(p.foring, p.semver), oslodato(p.tidspunkt), p.semver))
   }
   for (const foring of [...upubliserte].sort(etterOpprettet)) {
-    versjon = nesteVersjon(versjon, foring.semver)
-    nummerert.push({ ...somEndring(foring, versjon, oslodato(foring.opprettet), foring.semver), forelopig: true })
+    nummerert.push({ ...somEndring(foring, neste(foring, foring.semver), oslodato(foring.opprettet), foring.semver), forelopig: true })
   }
   return nummerert.reverse()
+}
+
+/**
+ * Loggen delt i det alle ser, og føringene under utprøving, som bare
+ * systemarkitektene ser (`bareSystemarkitekter`). Begge nyest først;
+ * `flettUtproving` setter dem sammen igjen.
+ */
+export function delLogg<E extends Pick<Endring, 'bareSystemarkitekter'>>(logg: readonly E[]): { offentlig: E[]; utproving: E[] } {
+  return { offentlig: logg.filter((e) => !e.bareSystemarkitekter), utproving: logg.filter((e) => e.bareSystemarkitekter) }
 }
 
 /** Den øverste versjonen i arkivet, som de nye endringene nummereres fra. */
@@ -153,6 +172,7 @@ const FELTER = new Set([
   'varsleFunksjonsendring',
   'kritiskFagligVarsel',
   'utenVarsel',
+  'bareSystemarkitekter',
 ])
 
 function erTekstliste(verdi: unknown): verdi is string[] {
@@ -182,5 +202,11 @@ export function lesEndringsforing(data: unknown, navn: string): Endringsforing {
   if (f.gjelder !== undefined && (!erTekstliste(f.gjelder) || f.gjelder.length === 0))
     throw feil('`gjelder` må være en liste med minst ett område, eller utelates')
   for (const merke of VARSELMERKER) if (f[merke] !== undefined && f[merke] !== true) throw feil(`\`${merke}\` kan bare være true`)
+  if (f.bareSystemarkitekter !== undefined) {
+    if (f.bareSystemarkitekter !== true) throw feil('`bareSystemarkitekter` kan bare være true')
+    const merker = VARSELMERKER.filter((m) => f[m] !== undefined)
+    if (merker.length) throw feil(`en føring som bare systemarkitektene ser, gir ingen varsler og kan ikke ha ${merker.join(', ')}`)
+    if (f.gjelder !== undefined) throw feil('en føring som bare systemarkitektene ser, ber ingen oppdatere og kan ikke ha `gjelder`')
+  }
   return f as unknown as Endringsforing
 }

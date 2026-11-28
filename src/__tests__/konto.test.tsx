@@ -32,6 +32,12 @@ vi.mock('../auth/okt', () => ({
   useProfil: () => okt.profil,
 }))
 vi.mock('../auth/avatarer', () => ({ useAvatarlenker: () => new Map() }))
+// Versjonspillen spør om den innloggede er systemarkitekt (føringene under
+// utprøving); her er ingen det.
+vi.mock('../auth/systemrolle', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../auth/systemrolle')>()),
+  useSystemarkitekt: () => false,
+}))
 // Personsøket: hvem som kan legges til, per fagmiljø.
 const kandidater = vi.hoisted(() => ({
   fagmiljo: [] as string[],

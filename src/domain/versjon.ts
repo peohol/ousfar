@@ -76,6 +76,15 @@ export interface Endringsinnhold {
    * Mangler den, kan endringen gjelde alle sider.
    */
   gjelder?: readonly Sideomrade[]
+  /**
+   * Føringen gjelder en funksjon under utprøving og vises bare for
+   * systemarkitektene. For andre finnes den ikke: den er ikke i loggen, gir
+   * ingen ny versjon, intet varsel og ingen melding om å oppdatere, og den kan
+   * derfor ikke ha varselmerkene eller `gjelder`. Den settes når føringen
+   * skrives og kan ikke endres etter at den er publisert
+   * (`docs/endringslogg.md`, «Funksjoner under utprøving»).
+   */
+  bareSystemarkitekter?: true
 }
 
 /** En føring i det frosne arkivet over endringene fra før hver fikk sin egen fil. */
@@ -116,13 +125,47 @@ export const VARSELMERKER = ['endrerFortolkning', 'varsleFunksjonsendring', 'kri
  * versjonsnummeret, varslene og oppslagene fra oppgavene
  * (`src/data/endringslogg.ts`). Teksten hentes først når loggen åpnes.
  */
-export type Endringsmerke = Pick<Endring, 'id' | 'versjon' | 'dato'> & Varselmerker
+export type Endringsmerke = Pick<Endring, 'id' | 'versjon' | 'dato' | 'bareSystemarkitekter'> & Varselmerker
 
 /** Merket til en føring: ID-en, versjonen, datoen og varselmerkene den har. */
 export function endringsmerke(endring: Endring): Endringsmerke {
   const merke: Endringsmerke = { id: endring.id, versjon: endring.versjon, dato: endring.dato }
   for (const navn of VARSELMERKER) if (endring[navn]) merke[navn] = true
+  if (endring.bareSystemarkitekter) merke.bareSystemarkitekter = true
   return merke
+}
+
+/**
+ * Det som skiller versjonen til en føring under utprøving fra versjonen den
+ * står etter: `1.160.0+utproving.2` er den andre etter 1.160.0. Det er
+ * byggemetadata i SemVer, som ikke er en ny versjon: for alle andre enn
+ * systemarkitektene er appen fortsatt 1.160.0.
+ */
+export const UTPROVING = '+utproving.'
+
+/** Versjonen føringen står etter: seg selv for en vanlig føring, `1.160.0` for `1.160.0+utproving.2`. */
+export function grunnversjon(versjon: string): string {
+  const slutt = versjon.indexOf(UTPROVING)
+  return slutt === -1 ? versjon : versjon.slice(0, slutt)
+}
+
+/**
+ * Loggen systemarkitektene ser: `utproving`, føringene under utprøving, hver
+ * rett over versjonen den står etter, flettet inn i `offentlig`, loggen alle
+ * ser. Begge er nyest først. En føring hvis versjon ikke er i `offentlig`,
+ * havner øverst, så ingen blir borte.
+ */
+export function flettUtproving<T extends Pick<Endring, 'versjon'>>(offentlig: readonly T[], utproving: readonly T[]): T[] {
+  if (utproving.length === 0) return [...offentlig]
+  const etter = new Map<string, T[]>()
+  for (const e of utproving) {
+    const grunn = grunnversjon(e.versjon)
+    etter.set(grunn, [...(etter.get(grunn) ?? []), e])
+  }
+  const kjente = new Set(offentlig.map((e) => e.versjon))
+  const ut: T[] = utproving.filter((e) => !kjente.has(grunnversjon(e.versjon)))
+  for (const e of offentlig) ut.push(...(etter.get(e.versjon) ?? []), e)
+  return ut
 }
 
 /**
@@ -148,8 +191,10 @@ export function nyesteVersjon(logg: readonly Pick<HistoriskEndring, 'versjon'>[]
  * Om endringen krever en ny appversjon hos brukeren. Dette styrer
  * oppdateringsmeldingen, ikke hva som vises i bjella.
  * Endret fortolkning og kritiske faglige meldinger går foran `utenVarsel`.
+ * En føring under utprøving krever det aldri (`bareSystemarkitekter`).
  */
-export function varsles(endring: Varselmerker): boolean {
+export function varsles(endring: Varselmerker & Pick<Endringsinnhold, 'bareSystemarkitekter'>): boolean {
+  if (endring.bareSystemarkitekter) return false
   return !endring.utenVarsel || endring.endrerFortolkning === true || endring.kritiskFagligVarsel === true
 }
 
@@ -159,7 +204,8 @@ export function varsles(endring: Varselmerker): boolean {
  * Kritiske faglige meldinger og endret fortolkningsresultat kan ikke
  * undertrykkes av `utenVarsel`.
  */
-export function varslesIBjella(endring: Varselmerker): boolean {
+export function varslesIBjella(endring: Varselmerker & Pick<Endringsinnhold, 'bareSystemarkitekter'>): boolean {
+  if (endring.bareSystemarkitekter) return false
   return (
     endring.endrerFortolkning === true ||
     endring.kritiskFagligVarsel === true ||

@@ -47,10 +47,10 @@ function lagRepo(): string {
   return rot
 }
 
-function skrivEndring(rot: string, id: string, semver: Semverniva, opprettet: string, sammendrag = `Endring ${id}`): void {
+function skrivEndring(rot: string, id: string, semver: Semverniva, opprettet: string, sammendrag = `Endring ${id}`, ekstra: Record<string, unknown> = {}): void {
   const fil = join(rot, ENDRINGSMAPPE, `${id}.json`)
   mkdirSync(dirname(fil), { recursive: true })
-  const foring = { id, semver, opprettet, sammendrag, typer: ['Funksjonalitet'], omfang: 'Mindre omfang', punkter: ['Endret'] }
+  const foring = { id, semver, opprettet, sammendrag, typer: ['Funksjonalitet'], omfang: 'Mindre omfang', punkter: ['Endret'], ...ekstra }
   writeFileSync(fil, `${JSON.stringify(foring, null, 2)}\n`)
 }
 
@@ -177,6 +177,37 @@ describe('publiserte versjoner står fast', () => {
     skrivEndring(rot, A, 'major', '2026-11-16T10:00:00Z')
     commit(rot, 'Endre leddet')
     expect(() => versjoner(rot)).toThrow(/publisert som patch, men fila sier nå major/)
+  })
+
+  it('stopper når en publisert endring skjules eller vises for alle etterpå: det ville endret numrene', () => {
+    const rot = trePr()
+    squash(rot, 'a')
+    squash(rot, 'b')
+    skrivEndring(rot, A, 'patch', '2026-11-16T10:00:00Z', `Endring ${A}`, { bareSystemarkitekter: true })
+    commit(rot, 'Skjul a')
+    expect(() => versjoner(rot)).toThrow(/publisert for alle, men fila sier nå bare for systemarkitektene/)
+  })
+
+  it('stopper når en føring under utprøving gjøres synlig for alle etterpå: en ny føring forteller det', () => {
+    const rot = lagRepo()
+    skrivEndring(rot, A, 'minor', '2026-11-16T10:00:00Z', 'Under utprøving', { bareSystemarkitekter: true })
+    commit(rot, 'Utprøving')
+    expect(versjoner(rot)).toEqual({ [A]: '1.134.4+utproving.1' })
+    skrivEndring(rot, A, 'minor', '2026-11-16T10:00:00Z', 'Under utprøving')
+    commit(rot, 'Vis a')
+    expect(() => versjoner(rot)).toThrow(/publisert bare for systemarkitektene, men fila sier nå for alle.*ny føring/)
+  })
+
+  it('gir føringer under utprøving plass uten å flytte numrene til dem alle ser', () => {
+    const rot = trePr()
+    squash(rot, 'a')
+    git(rot, 'checkout', '-q', '-b', 's', 'main')
+    skrivEndring(rot, C, 'major', '2026-11-16T11:00:00Z', 'Under utprøving', { bareSystemarkitekter: true })
+    commit(rot, 'PR s')
+    git(rot, 'checkout', '-q', 'main')
+    squash(rot, 's')
+    squash(rot, 'b')
+    expect(versjoner(rot)).toEqual({ [A]: '1.134.5', [C]: '1.134.5+utproving.1', [B]: '1.135.0' })
   })
 })
 

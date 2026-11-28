@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
+  delLogg,
   ENDRINGS_ID,
   finnEndring,
   lagEndringsId,
@@ -17,7 +18,7 @@ import {
   type Endringsforing,
   type Publisering,
 } from '../versjonering'
-import type { HistoriskEndring, Semverniva } from '../versjon'
+import { flettUtproving, grunnversjon, oppdateringsversjon, varsles, varslesIBjella, type HistoriskEndring, type Semverniva } from '../versjon'
 
 const foring = (id: string, semver: Semverniva, opprettet = '2026-11-16T10:00:00Z', ekstra: Partial<Endringsforing> = {}): Endringsforing => ({
   id,
@@ -208,5 +209,86 @@ describe('lesEndringsforing', () => {
   it('nekter malen fra `npm run endring` til tekstene er fylt ut', () => {
     const mal = { id: '20261116-100000-aaaaaa', semver: 'patch', opprettet: '2026-11-16T10:00:00Z', sammendrag: '', typer: [], omfang: 'Mindre omfang', gjelder: [], punkter: [''] }
     expect(les(mal)).toThrow(/sammendrag/)
+  })
+})
+
+describe('føringer under utprøving (bareSystemarkitekter)', () => {
+  const skjult = { bareSystemarkitekter: true } as const
+  const A = foring('20261128-100000-aaaaaa', 'minor', '2026-11-28T10:00:00Z')
+  const S1 = foring('20261128-100100-bbbbbb', 'minor', '2026-11-28T10:01:00Z', skjult)
+  const S2 = foring('20261128-100200-cccccc', 'patch', '2026-11-28T10:02:00Z', skjult)
+  const B = foring('20261128-100300-dddddd', 'patch', '2026-11-28T10:03:00Z')
+  const S3 = foring('20261128-100400-eeeeee', 'major', '2026-11-28T10:04:00Z', skjult)
+  const logg = nummerer('1.150.0', [publisert(A, 1), publisert(S1, 2), publisert(S2, 3), publisert(B, 4), publisert(S3, 5)])
+
+  it('øker ingen versjon: de andre får de samme numrene som uten dem', () => {
+    const uten = nummerer('1.150.0', [publisert(A, 1), publisert(B, 4)])
+    const { offentlig } = delLogg(logg)
+    expect(versjoner(offentlig)).toEqual(versjoner(uten))
+    expect(offentlig[0]!.versjon).toBe('1.151.1')
+  })
+
+  it('får versjonen de står etter, med nummeret sitt der', () => {
+    expect(versjoner(logg)).toMatchObject({
+      [S1.id]: '1.151.0+utproving.1',
+      [S2.id]: '1.151.0+utproving.2',
+      [S3.id]: '1.151.1+utproving.1',
+    })
+    expect(grunnversjon('1.151.0+utproving.2')).toBe('1.151.0')
+    expect(grunnversjon('1.151.0')).toBe('1.151.0')
+  })
+
+  it('kan ikke forveksles med en vanlig versjon eller med hverandre', () => {
+    const alle = logg.map((e) => e.versjon)
+    expect(new Set(alle).size).toBe(alle.length)
+    expect(finnEndring(logg, '1.151.0')!.id).toBe(A.id)
+  })
+
+  it('får foreløpige numre etter de publiserte i et lokalt bygg, uten å øke versjonen', () => {
+    const S4 = foring('20261128-110000-ffffff', 'minor', '2026-11-28T11:00:00Z', skjult)
+    const lokalt = nummerer('1.150.0', [publisert(A, 1)], [S4])
+    expect(lokalt[0]).toMatchObject({ id: S4.id, versjon: '1.151.0+utproving.1', forelopig: true, bareSystemarkitekter: true })
+    expect(delLogg(lokalt).offentlig[0]!.versjon).toBe('1.151.0')
+  })
+
+  it('deles fra loggen alle ser og flettes inn igjen der de hørte hjemme', () => {
+    const { offentlig, utproving } = delLogg(logg)
+    expect(offentlig.some((e) => e.bareSystemarkitekter)).toBe(false)
+    expect(utproving.map((e) => e.id)).toEqual([S3.id, S2.id, S1.id])
+    expect(flettUtproving(offentlig, utproving)).toEqual(logg)
+    expect(flettUtproving(offentlig, [])).toEqual(offentlig)
+  })
+
+  it('setter en føring hvis versjon ikke finnes i loggen, øverst, så den ikke blir borte', () => {
+    const { offentlig, utproving } = delLogg(logg)
+    expect(flettUtproving(offentlig.slice(1), utproving)[0]!.id).toBe(S3.id)
+  })
+
+  it('gir ingen melding om å oppdatere og intet varsel, uansett merker', () => {
+    const tvunget = { bareSystemarkitekter: true, endrerFortolkning: true, kritiskFagligVarsel: true, varsleFunksjonsendring: true } as const
+    expect(varsles(tvunget)).toBe(false)
+    expect(varslesIBjella(tvunget)).toBe(false)
+    const { offentlig } = delLogg(logg)
+    expect(oppdateringsversjon(logg as HistoriskEndring[])).toBe(oppdateringsversjon(offentlig as HistoriskEndring[]))
+  })
+
+  describe('i fila', () => {
+    const gyldig = { ...foring('20261116-100000-aaaaaa', 'minor'), bareSystemarkitekter: true }
+    const les = (endring: Record<string, unknown>) => () => lesEndringsforing(endring, '20261116-100000-aaaaaa')
+
+    it('godtas uten varselmerker og uten sider', () => {
+      expect(les(gyldig)()).toEqual(gyldig)
+    })
+
+    it.each([
+      ['false', { bareSystemarkitekter: false }, /bareSystemarkitekter/],
+      ['endret fortolkning', { endrerFortolkning: true }, /ingen varsler.*endrerFortolkning/],
+      ['funksjonsvarsel', { varsleFunksjonsendring: true }, /ingen varsler.*varsleFunksjonsendring/],
+      ['kritisk varsel', { kritiskFagligVarsel: true }, /ingen varsler.*kritiskFagligVarsel/],
+      ['utenVarsel', { utenVarsel: true }, /ingen varsler.*utenVarsel/],
+      ['sider', { gjelder: ['kalender'] }, /gjelder/],
+    ])('nekter %s', (_hva, endring, feil) => {
+      expect(les({ ...gyldig, ...endring })).toThrow(feil)
+    })
   })
 })

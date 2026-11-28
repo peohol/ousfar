@@ -33,3 +33,9 @@ declare module 'virtual:ousfar-endringer' {
   /** Hentingen av hver side, fra den eldste (`src/domain/endringssider.ts`). */
   export const SIDER: readonly (() => Promise<{ ENDRINGER: readonly Endring[] }>)[]
 }
+
+declare module 'virtual:ousfar-endringer/utproving' {
+  import type { Endring } from 'src/domain/versjon'
+  /** Føringene under utprøving, som bare systemarkitektene ser, hele og nyest først. */
+  export const UTPROVING: readonly Endring[]
+}

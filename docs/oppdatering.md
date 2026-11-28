@@ -61,8 +61,9 @@ er for gammel til å stå blant de nyeste føringene i fila, eller en versjon so
 er trukket tilbake. Endringer i `vinduer` gir meldingen bare mens et vindu
 står åpent, og på innloggingssiden gir bare `hele appen` meldingen.
 
-En stille designjustering (uten føring) eller en føring med `utenVarsel` gir
-ingen melding og ingen oppdatering i stillhet; brukeren får den neste gang
+En stille designjustering (uten føring), en føring med `utenVarsel` eller en
+føring under utprøving (`bareSystemarkitekter`, som ikke engang gir ny
+versjon) gir ingen melding og ingen oppdatering i stillhet; brukeren får den neste gang
 siden lastes. Unntaket er når en del av appen ikke lar seg laste fordi filene
 til bygget som kjører, er byttet ut: da kommer meldingen for et hvilket som
 helst nytt bygg, uansett side.

@@ -169,7 +169,9 @@ siste endringen alltid lagres sist.
 ## Endringsloggen
 
 Føringene i endringsloggen (`src/data/endringslogg.ts`) er varsler i appen, ikke i databasen:
-de kommer med appen selv. Hvor langt brukeren er kommet, lagres i
+de kommer med appen selv. En føring under utprøving (`bareSystemarkitekter`,
+`docs/endringslogg.md` steg 4b) er aldri et varsel, heller ikke for
+systemarkitektene. Hvor langt brukeren er kommet, lagres i
 `brukerinnstillinger` under `varsler.endringslogg`: `fra` (føringene til og
 med denne er historie), `lest` (de nyere som er lest) og `arkivert` (de av
 dem som er lagt i arkivet). De er versjonsnumre; et publisert nummer endres

@@ -12,10 +12,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import type { Profil } from '@delt/profil'
 import type { Idetraad } from '../ideer/modell'
 import type { Oppgave, Oppgavedetaljer } from '../ideer/oppgaver'
-import { hentHeleLoggen } from '../data/endringslogg'
+import { hentHeleLoggen, hentUtproving } from '../data/endringslogg'
 
 /** Hele loggen, slik byggingen delte den i sider. */
 const ENDRINGSLOGG = await hentHeleLoggen()
+/** Føringene under utprøving, som systemarkitektene også kan velge. */
+const UTPROVING = await hentUtproving()
 
 function profil(id: string, fornavn: string, etternavn: string, ekstra: Partial<Profil> = {}): Profil {
   return {
@@ -397,7 +399,8 @@ describe('merke en oppgave utført i appen', () => {
     const velger = screen.getByRole('combobox', { name: 'Føringen i endringsloggen' }) as HTMLSelectElement
     expect(document.activeElement).toBe(velger)
     expect(velger.value).toBe('')
-    expect(velger.options).toHaveLength(ENDRINGSLOGG.length + 1)
+    // Systemarkitekten kan også velge føringene under utprøving.
+    await waitFor(() => expect(velger.options).toHaveLength(ENDRINGSLOGG.length + UTPROVING.length + 1))
 
     // Avbryt lukker valget uten å merke noe.
     await bruker.click(screen.getByRole('button', { name: 'Avbryt' }))

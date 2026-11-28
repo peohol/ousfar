@@ -180,6 +180,15 @@
   border-color: var(--linje-sterk);
 }
 
+/* En føring under utprøving, som bare systemarkitektene ser: nøytral, med
+   stiplet kant, så den skilles fra omfanget uten å ligne de kliniske fargene. */
+.loggmerke--utproving {
+  color: var(--blekk-dempet);
+  background: transparent;
+  border-color: var(--linje-sterk);
+  border-style: dashed;
+}
+
 /* Glidningen mot en ukjent høyde, som ellers i appen. Her holder ren CSS:
    skuffen styres av tilstand, og innholdet fjernes aldri. */
 .loggskuff__kropp {
