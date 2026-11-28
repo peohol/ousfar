@@ -8,8 +8,8 @@
  * Bryteren for kopiering av produksjonen. Står den av, gjør jobben bare
  * kontrollen av lageret (`kontroll`) og ingenting med produksjonsdataene,
  * også om noen starter den med modus `kopi`. Den slås på i en egen PR når
- * Peder har avgjort hvem som har nøkkelen og godkjent behandlingen på
- * GitHubs maskiner (`docs/sikkerhetskopi-personvern.md`).
+ * nøkkeleieren (Peder, 28.11.2026) har lagt nøklene og tokenet i miljøet
+ * `backup` (`docs/sikkerhetskopi-personvern.md`).
  */
 export const PRODUKSJONSKOPI_PA = false
 

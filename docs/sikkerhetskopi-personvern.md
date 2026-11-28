@@ -3,7 +3,7 @@
 Vurderingen før kopiene av produksjonen settes i drift (tiltak 3, issue
 #615, [drift-gjenoppretting.md](drift-gjenoppretting.md), «Kopiene i drift»).
 Kopieringen står av (`PRODUKSJONSKOPI_PA` i `src/drift/sikkerhetskopi/drift.ts`)
-til Peder har avgjort punktene under «Det Peder avgjør».
+til nøklene er laget og lagt inn (se «Det Peder avgjør»; avgjort 28.11.2026).
 
 ## Hva som behandles, og hvor
 
@@ -64,12 +64,13 @@ overføring, er en egen maskin i EU alternativet; koden er den samme.
 
 ## Det Peder avgjør
 
-1. **Nøkkeleier:** hvem som lager og har den private nøkkelen (nøkkelsiden),
-   og hvor den uavhengige kopien ligger.
-2. **Beredskap:** hvem som kan sette i gang en gjenoppretting om databasen
-   går tapt, og hvem som har nøkkelen om nøkkeleieren ikke er tilgjengelig.
-3. **GitHubs maskiner:** om kopien kan lages der (anbefalt over), eller på en
-   egen maskin i EU.
+1. **Nøkkeleier:** Peder (avgjort 28.11.2026). Han lager nøklene på
+   nøkkelsiden og tar vare på nøkkelfila to uavhengige steder.
+2. **Beredskap:** den uavhengige kopien av nøkkelfila legges hos den som skal
+   kunne sette i gang en gjenoppretting om databasen går tapt mens Peder ikke
+   er tilgjengelig. Hvem det er, skrives her når Peder har gitt den videre.
+3. **GitHubs maskiner:** godkjent (Peder, 28.11.2026). Kopien lages på GitHubs
+   maskiner som beskrevet over.
 
 Backblaze er en ny databehandler for krypterte persondata.
 Databehandleravtalen deres bør aksepteres på kontoen og føres i oversikten.

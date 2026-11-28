@@ -4,9 +4,9 @@ Rutinen for sikkerhetskopi av databasen etter Peders valg 15.11.2026 (D7a):
 egne, krypterte kopier på gratisplanen (`docs/s4-pilotplan.md` §3.2 valg b).
 Denne fila beskriver verktøyet (tiltak 2), prøven av det og kopiene i drift
 (tiltak 3, issue #615, se «Kopiene i drift»). Lageret er Backblaze B2 i EU.
-Kopieringen av produksjonen står **av** til Peder har avgjort hvem som har
-nøkkelen, og godkjent behandlingen på GitHubs maskiner
-([sikkerhetskopi-personvern.md](sikkerhetskopi-personvern.md)).
+Peder er nøkkeleier og har godkjent behandlingen på GitHubs maskiner
+(28.11.2026, [sikkerhetskopi-personvern.md](sikkerhetskopi-personvern.md)).
+Kopieringen av produksjonen står **av** til nøklene er laget og lagt inn.
 
 ## Mål
 
@@ -197,8 +197,8 @@ Jobben `.github/workflows/sikkerhetskopi.yml` tar kopien hver natt klokka
 **Av til avklaringene er gjort.** `PRODUKSJONSKOPI_PA` i `drift.ts` står av.
 Da gjør nattjobben bare kontrollen av nøkkelen og lageret (`kontroll`, under)
 og rører ikke produksjonen, også om noen starter den med modus `kopi`. Den
-slås på i en egen PR når Peder har avgjort hvem som har nøkkelen, og
-godkjent behandlingen på GitHubs maskiner.
+slås på i en egen PR når nøklene og tokenet ligger i miljøet `backup`
+(avklaringene er gjort 28.11.2026).
 
 ### Bare det som er endret
 
