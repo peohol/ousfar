@@ -45,20 +45,7 @@ export function Oppsummeringskort({ tittel, ikon, innhold, tomtekst, visAlle, ch
       <Panelhode ikon={ikon} id={tittelId}>
         {tittel}
       </Panelhode>
-      {innhold.status === 'laster' && (
-        <p className="oppsummering__tom oppsummering__laster">
-          <Lastesirkel /> Henter …
-        </p>
-      )}
-      {innhold.status === 'feil' && (
-        <div className="oppsummering__feil" role="status">
-          <p className="oppsummering__tom">Kunne ikke hente dette nå.</p>
-          <Button variant="kant" onClick={innhold.provIgjen}>
-            Prøv igjen
-          </Button>
-        </div>
-      )}
-      {innhold.status === 'klar' && <Hendelsesliste hendelser={innhold.hendelser} tomtekst={tomtekst} />}
+      {innhold.status === 'klar' ? <Hendelsesliste hendelser={innhold.hendelser} tomtekst={tomtekst} /> : <Panelstatus innhold={innhold} />}
       {children}
       {visAlle && innhold.status === 'klar' && innhold.hendelser.length > 0 && (
         <Maallenke maal={visAlle} className={knappeklasse('sekundar', 'oppsummering__alle')}>
@@ -66,5 +53,26 @@ export function Oppsummeringskort({ tittel, ikon, innhold, tomtekst, visAlle, ch
         </Maallenke>
       )}
     </section>
+  )
+}
+
+/**
+ * At et panel hentes, eller ikke kunne hentes, med «Prøv igjen». Det samme i
+ * alle panelene, også dem et eierprosjekt har registrert på forsiden.
+ */
+export function Panelstatus({ innhold }: { innhold: Exclude<Panelinnhold, { status: 'klar' }> }) {
+  if (innhold.status === 'laster')
+    return (
+      <p className="oppsummering__tom oppsummering__laster">
+        <Lastesirkel /> Henter …
+      </p>
+    )
+  return (
+    <div className="oppsummering__feil" role="status">
+      <p className="oppsummering__tom">Kunne ikke hente dette nå.</p>
+      <Button variant="kant" onClick={innhold.provIgjen}>
+        Prøv igjen
+      </Button>
+    </div>
   )
 }

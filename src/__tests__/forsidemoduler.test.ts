@@ -4,7 +4,8 @@
  * og endringene i «Tilpass forsiden» er rene funksjoner.
  */
 import { describe, expect, it } from 'vitest'
-import { erStandard, flytt, lesOppsett, MODULREKKEFOLGE, settSynlig, STANDARDOPPSETT, synligeModuler } from '../forside/moduler'
+import { erStandard, flytt, INNEBYGDE_MODULER, lesOppsett, MODULREKKEFOLGE, settSynlig, STANDARDOPPSETT, synligeModuler } from '../forside/moduler'
+import { REGISTRERTE_MODULER } from '../forside/registrerte'
 
 describe('Forsideoppsett', () => {
   it('har de fire standardpanelene på og de valgfrie av, i fast rekkefølge', () => {
@@ -57,5 +58,17 @@ describe('Forsideoppsett', () => {
     // Ytterst står panelet stille.
     expect(flytt(STANDARDOPPSETT, 'viktig_nytt', -1)).toBe(STANDARDOPPSETT)
     expect(flytt(STANDARDOPPSETT, 'favoritter', 1)).toBe(STANDARDOPPSETT)
+  })
+
+  it('har registrerte paneler med eget navn og innhold, etter forsidens egne (#599)', () => {
+    const registrerte = Object.entries(REGISTRERTE_MODULER) as [string, { innhold?: unknown; plass?: string }][]
+    for (const [modul, definisjon] of registrerte) {
+      expect(Object.hasOwn(INNEBYGDE_MODULER, modul), modul).toBe(false)
+      expect(typeof definisjon.innhold, modul).toBe('function')
+      expect(['paneler', 'topp', undefined], modul).toContain(definisjon.plass)
+    }
+    expect(MODULREKKEFOLGE).toEqual([...Object.keys(INNEBYGDE_MODULER), ...registrerte.map(([m]) => m)])
+    // Forsidens egne paneler finnes for alle og viser innholdet selv.
+    for (const definisjon of Object.values(INNEBYGDE_MODULER)) expect(definisjon).not.toHaveProperty('funksjon')
   })
 })

@@ -8,7 +8,7 @@ import {
   type Fagmiljoreferanse,
   type Rettigheter,
 } from '../../auth/rettigheter'
-import { forhentPaneler } from '../forside/Forsidepanel'
+import { forhentPaneler } from '../forside/usePanelhenting'
 
 /**
  * Byttet av fagmiljøet brukeren arbeider i (arbeidsfagmiljøet), felles for
