@@ -13,6 +13,7 @@ import { can, ROLES, type Action } from '@delt/personal/permissions'
 import type { RuleSet } from '@delt/personal/types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { avsluttMedlemskap, opprettMedlem, type Person } from '../hjelp/persongalleri'
+import { feilFra, opprettBruker } from '../hjelp/testdatabase'
 import { byggPersonaldatabase, grunnlag, migrasjon, PILOT, type Personaldatabase } from './database'
 
 let p: Personaldatabase
@@ -409,5 +410,66 @@ describe('oppsettet', () => {
       )
       .then(() => null, (x: { code: string }) => x.code)
     expect(e).toBe('23514')
+  })
+})
+
+describe('kontosletting (docs/brukere.md)', () => {
+  const tabell = <R>(sql: string, parametre: unknown[] = []) => p.db.query<R>(sql, parametre).then((r) => r.rows)
+  const server = (sql: string, parametre: unknown[] = []) => feilFra(() => p.somServer((tx) => tx.query(sql, parametre))).then((e) => e?.code ?? null)
+
+  it('lar en administrator som har lagret oppsettet og utpekt vaktplanansvarlige, slettes som før, og loggen står', async () => {
+    const konto = await opprettBruker(p.db, { brukernavn: 'test.personalsletting', fornavn: 'Test', etternavn: 'Personalsletting', rolle: 'user' })
+    await opprettMedlem(p.db, konto, p.S)
+    await p.somServer((tx) => tx.query('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [konto, p.S]))
+    await settBryter(p.S, 'på')
+    try {
+      const forrige = (await grunnlag(p, konto)).regelsett.at(-1)!.version
+      const { version } = await lagre(konto, PILOT, forrige)
+      const sett = (bruker: Person, ansvarlig: boolean) => p.kall(konto, 'select public.personal_sett_vaktplanansvarlig($1, $2, $3)', [p.S, p.id(bruker), ansvarlig])
+      await sett('systemarkitekt', true)
+      await sett('systemarkitekt', false)
+      await sett('adminB', true)
+
+      const ider = (await tabell<{ id: string }>('select id from personal.vaktplanansvarlige where $1 in (tildelt_av, avsluttet_av) order by fra', [konto])).map((r) => r.id)
+      expect(ider).toHaveLength(2)
+
+      expect(await server('delete from auth.users where id = $1', [konto])).toBeNull()
+
+      expect(await tabell('select versjon, lagret_av from personal.oppsett where fagmiljo_id = $1 and versjon = $2', [p.S, version])).toEqual([{ versjon: version, lagret_av: null }])
+      const utpekinger = await tabell('select bruker_id, tildelt_av, avsluttet_av, til is null as aktiv from personal.vaktplanansvarlige where id = any ($1) order by fra', [ider])
+      expect(utpekinger).toEqual([
+        { bruker_id: p.id('systemarkitekt'), tildelt_av: null, avsluttet_av: null, aktiv: false },
+        { bruker_id: p.id('adminB'), tildelt_av: null, avsluttet_av: null, aktiv: true },
+      ])
+      expect((await grunnlag(p, 'adminB')).rolle).toBe('planner')
+    } finally {
+      await settBryter(p.S, 'utprøving')
+    }
+  })
+
+  it('lar fortsatt ingen endre det som står fast, heller ikke til tomt', async () => {
+    for (const sql of [
+      'update personal.oppsett set lagret_av = null where fagmiljo_id = $1 and lagret_av is not null',
+      'update personal.oppsett set lagret_av = (select id from public.profiles limit 1) where fagmiljo_id = $1 and lagret_av is null',
+      'update personal.vaktplanansvarlige set tildelt_av = null where fagmiljo_id = $1 and tildelt_av is not null',
+      'update personal.vaktplanansvarlige set tildelt_av = (select id from public.profiles limit 1) where fagmiljo_id = $1 and tildelt_av is null',
+      'update personal.vaktplanansvarlige set avsluttet_av = null, til = null where fagmiljo_id = $1 and til is not null',
+    ]) {
+      expect(await server(sql, [p.S]), sql).toBe('42501')
+    }
+  })
+})
+
+describe('isolasjonsnivået', () => {
+  it('stopper endringer i repeatable read heller enn å avgjøre dem på gamle data', async () => {
+    const alma = (await p.db.query<{ id: string }>(`select id from personal.medarbeidere where syntetisk_navn = 'Alma Berg'`)).rows[0]!.id
+    const e = await feilFra(() =>
+      p.db.transaction(async (tx) => {
+        await tx.query('set transaction isolation level repeatable read')
+        await tx.query(`select set_config('ousfar.tilgangsgrunn', 'Test: personalkalenderen (syntetisk)', true)`)
+        await tx.query(`insert into personal.kvalifikasjoner (medarbeider_id, status_id, fra) values ($1, 'vakt1', '2099-01-01')`, [alma])
+      }),
+    )
+    expect(e).toMatchObject({ code: '25001' })
   })
 })

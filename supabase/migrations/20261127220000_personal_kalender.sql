@@ -215,15 +215,20 @@ create sequence personal.fritaksrevisjoner as bigint;
 
 -- Én rad per fagmiljø og dato som er endret: låsen alle endringer av datoen tar
 -- før de leser kalenderen, så to endringer av samme dato prøves etter hverandre.
+-- Raden husker også antallet per status før transaksjonen som holder låsen,
+-- endret noe den dagen (`foer`, for transaksjonen `foer_xid`), som grensen for
+-- bemanningen trenger. Bare databasen selv skriver her.
 create table personal.dager (
   fagmiljo_id uuid not null references public.fagmiljoer (id),
   dato date not null,
   endringer bigint not null default 1,
+  foer jsonb not null default '{}',
+  foer_xid xid8 not null default pg_current_xact_id(),
   primary key (fagmiljo_id, dato)
 );
 
 comment on table personal.dager is
-  'Låsen per fagmiljø og dato i personalkalenderen (docs/personal-database.md). Uten innhold.';
+  'Låsen per fagmiljø og dato i personalkalenderen, med antallet per status før transaksjonen som holder den (docs/personal-database.md).';
 
 -- Kalenderoppføringene (personal.md §8.7): én per medarbeider og dato, med
 -- statusen, valgfritt tidsrom (minutter fra midnatt), merknaden, låsen, det
@@ -279,7 +284,8 @@ comment on table personal.endringer is
 
 -- --- Invariantene -----------------------------------------------------------------
 
--- Låser datoen i fagmiljøet til transaksjonen er ferdig.
+-- Låser datoen i fagmiljøet til transaksjonen er ferdig. Første gang
+-- transaksjonen låser den, glemmes antallene en tidligere transaksjon husket.
 create function personal.las_dag(fagmiljo uuid, dato date)
 returns void
 language sql
@@ -287,31 +293,47 @@ security definer
 set search_path = ''
 as $$
   insert into personal.dager as d (fagmiljo_id, dato) values (las_dag.fagmiljo, las_dag.dato)
-  on conflict (fagmiljo_id, dato) do update set endringer = d.endringer + 1
+  on conflict (fagmiljo_id, dato) do update set
+    endringer = d.endringer + 1,
+    foer = case when d.foer_xid = pg_current_xact_id() then d.foer else '{}' end,
+    foer_xid = pg_current_xact_id()
 $$;
 
--- Antallet med statusen på datoen før transaksjonen endret det, husket i
--- transaksjonen (`personal.foer`, et JSON-objekt per nøkkel), eller null.
-create function personal.foer_nokkel(fagmiljo uuid, dato date, status text)
-returns text
+-- Husker antallet med statusen på den låste datoen, første gang transaksjonen
+-- rører statusen der.
+create function personal.husk_foer(fagmiljo uuid, dato date, status text)
+returns void
 language sql
-immutable
+security definer
 set search_path = ''
 as $$
-  select fagmiljo::text || '|' || dato::text || '|' || status
+  update personal.dager d
+  set foer = d.foer || jsonb_build_object(husk_foer.status, (
+    select count(*) from personal.oppforinger o
+    where o.fagmiljo_id = husk_foer.fagmiljo and o.dato = husk_foer.dato and o.status_id = husk_foer.status
+  ))
+  where d.fagmiljo_id = husk_foer.fagmiljo and d.dato = husk_foer.dato
+    and d.foer_xid = pg_current_xact_id() and not d.foer ? husk_foer.status
 $$;
 
-create function personal.foer_antall()
-returns jsonb
+-- Antallet transaksjonen husket for statusen på datoen, eller 0.
+create function personal.foer_antall(fagmiljo uuid, dato date, status text)
+returns integer
 language sql
 stable
+security definer
 set search_path = ''
 as $$
-  select coalesce(nullif(current_setting('personal.foer', true), ''), '{}')::jsonb
+  select coalesce((
+    select (d.foer ->> foer_antall.status)::integer from personal.dager d
+    where d.fagmiljo_id = foer_antall.fagmiljo and d.dato = foer_antall.dato and d.foer_xid = pg_current_xact_id()
+  ), 0)
 $$;
 
--- Før hver endring: låser datoen, husker antallet med statusen(e) før
--- transaksjonen rørte dem, og fører revisjonene og hvem som endret.
+-- Før hver endring: låser oppsettet delt og datoen, husker antallet med
+-- statusen(e) før transaksjonen rørte dem, kontrollerer at statusen finnes i
+-- reglene for dagen, og fører revisjonene og hvem som endret. Slettingen av en
+-- konto nuller bare `endret_av` (`personal.bare_kontosletting`).
 create function personal.for_oppforing()
 returns trigger
 language plpgsql
@@ -321,32 +343,30 @@ as $$
 declare
   rad personal.oppforinger := coalesce(new, old);
   status text;
-  nokkel text;
-  foer jsonb;
   def jsonb;
 begin
+  if tg_op = 'UPDATE' and personal.bare_kontosletting(to_jsonb(old), to_jsonb(new), array['endret_av']) then
+    return new;
+  end if;
   if tg_op = 'UPDATE' and (new.fagmiljo_id, new.medarbeider_id, new.dato) is distinct from (old.fagmiljo_id, old.medarbeider_id, old.dato) then
     raise exception 'En oppføring kan ikke flyttes. Fjern den og legg den inn på nytt.' using errcode = '42501';
   end if;
+  perform personal.las_oppsett(rad.fagmiljo_id);
   perform personal.las_dag(rad.fagmiljo_id, rad.dato);
   foreach status in array array_remove(array[old.status_id, new.status_id], null) loop
-    nokkel := personal.foer_nokkel(rad.fagmiljo_id, rad.dato, status);
-    foer := personal.foer_antall();
-    if not foer ? nokkel then
-      perform set_config('personal.foer', (foer || jsonb_build_object(nokkel, (
-        select count(*) from personal.oppforinger o
-        where o.fagmiljo_id = rad.fagmiljo_id and o.dato = rad.dato and o.status_id = status
-      )))::text, true);
-    end if;
+    perform personal.husk_foer(rad.fagmiljo_id, rad.dato, status);
   end loop;
   if tg_op = 'DELETE' then
     return old;
   end if;
 
+  def := personal.statusdef(personal.regler_for(new.fagmiljo_id, new.dato), new.status_id);
+  if def is null and (tg_op = 'INSERT' or new.status_id <> old.status_id) then
+    raise exception 'Ukjent status.' using errcode = '23514';
+  end if;
   -- Et administrativt fritak hører til én registrering av en status som kan ha
   -- det, og følger aldri en ny status.
   if new.fritak then
-    def := personal.statusdef(personal.regler_for(new.fagmiljo_id, new.dato), new.status_id);
     if (def ->> 'dutyExemption') is distinct from 'administrative' or (tg_op = 'UPDATE' and new.status_id <> old.status_id) then
       raise exception 'Statusen kan ikke ha administrativt vaktfritak.' using errcode = '23514';
     end if;
@@ -398,7 +418,7 @@ begin
   end if;
   select count(*) into antall from personal.oppforinger o
   where o.fagmiljo_id = new.fagmiljo_id and o.dato = new.dato and o.status_id = new.status_id;
-  foer := coalesce((personal.foer_antall() ->> personal.foer_nokkel(new.fagmiljo_id, new.dato, new.status_id))::integer, 0);
+  foer := personal.foer_antall(new.fagmiljo_id, new.dato, new.status_id);
   if antall > greatest(tak, foer) then
     navn := coalesce(personal.statusdef(regler, new.status_id) ->> 'name', 'Oppgaven');
     raise exception '%', case when tak = 1 then format('%s er tildelt flere %s.', navn, new.dato) else format('%s har flere enn %s %s.', navn, tak, new.dato) end
@@ -452,12 +472,17 @@ create trigger oppforinger_logg
 after insert or update or delete on personal.oppforinger
 for each row execute function personal.logg_oppforing();
 
+-- Loggen står: bare slettingen av en konto nuller `aktor`.
 create function personal.kontroller_endring()
 returns trigger
 language plpgsql
+security definer
 set search_path = ''
 as $$
 begin
+  if tg_op = 'UPDATE' and personal.bare_kontosletting(to_jsonb(old), to_jsonb(new), array['aktor']) then
+    return new;
+  end if;
   raise exception 'Endringsloggen kan ikke endres.' using errcode = '42501';
 end;
 $$;
@@ -482,6 +507,41 @@ as $$
   union
   select o.status_id from personal.oppforinger o where o.fagmiljo_id = statuser_i_bruk.fagmiljo
 $$;
+
+-- En ny versjon av oppsettet kan ikke ta fra en status adgangen til
+-- administrativt vaktfritak mens registreringer den skal gjelde for, har
+-- fritaket: da ville en ellers lik endring av dem feile bare der fritaket står,
+-- og røpe det (K-TIL-4). Fritaket fjernes først. Tidligere dager vurderes
+-- fortsatt etter versjonen som gjaldt da, og røres ikke. Bare den som kan
+-- endre oppsettet, og som også ser fritaket, får meldingen.
+create function personal.kontroller_fritak_i_oppsett()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  hvilken text;
+begin
+  perform personal.las_oppsett(new.fagmiljo_id, eksklusiv => true);
+  select coalesce(personal.statusdef(new.regler, o.status_id) ->> 'name', o.status_id) into hvilken
+  from personal.oppforinger o
+  where o.fagmiljo_id = new.fagmiljo_id and o.dato >= new.gjelder_fra and o.fritak
+    and (personal.statusdef(new.regler, o.status_id) ->> 'dutyExemption') is distinct from 'administrative'
+  order by o.dato, o.status_id
+  limit 1;
+  if hvilken is not null then
+    raise exception '«%» har administrativt vaktfritak i kalenderen fra og med %, og kan ikke miste adgangen til det. Fjern fritaket først.',
+      hvilken, to_char(new.gjelder_fra, 'DD.MM.YYYY')
+      using errcode = '22023';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger oppsett_fritak
+before insert on personal.oppsett
+for each row execute function personal.kontroller_fritak_i_oppsett();
 
 -- --- Lesemodellen -----------------------------------------------------------------
 
@@ -799,7 +859,9 @@ begin
     raise exception 'Samme celle er med flere ganger.' using errcode = '22023';
   end if;
 
-  -- Datoene låses i fast rekkefølge, så to kommandoer ikke venter på hverandre.
+  -- Oppsettet låses delt og datoene i fast rekkefølge, før radene, så ingen
+  -- kommandoer venter på hverandre i ring, og reglene ikke endres underveis.
+  perform personal.las_oppsett(personal_endre_kalender.fagmiljo);
   perform personal.las_dag(personal_endre_kalender.fagmiljo, s.d)
   from (select distinct (x ->> 'dato')::date as d from jsonb_array_elements(endringer) x order by 1) s;
 
@@ -885,6 +947,12 @@ begin
   if personal_sett_fritak.fritak is null then
     raise exception 'Fritaket må være ja eller nei.' using errcode = '22023';
   end if;
+  if personal_sett_fritak.dato is null then
+    raise exception 'Fant ikke registreringen.' using errcode = '22023';
+  end if;
+  -- Låsene i samme rekkefølge som endringene: oppsettet, datoen, så raden.
+  perform personal.las_oppsett(personal_sett_fritak.fagmiljo);
+  perform personal.las_dag(personal_sett_fritak.fagmiljo, personal_sett_fritak.dato);
   select * into o from personal.oppforinger x
   where x.fagmiljo_id = personal_sett_fritak.fagmiljo and x.medarbeider_id = personal_sett_fritak.medarbeider
     and x.dato = personal_sett_fritak.dato

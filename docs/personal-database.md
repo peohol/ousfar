@@ -56,8 +56,20 @@ personal.krev_tilgang(fagmiljø, handling)
   tilgang, tar låsen eksklusivt (`intern.las_tilgang`) og kontrollerer rollen
   på nytt etter den. En kommando som kjøres mens noen avslutter medlemskapet
   eller fjerner rollen til den som handler, venter derfor på endringen og
-  avvises etterpå. Det gjelder i `read committed`, som data-API-et bruker for
-  hver forespørsel.
+  avvises etterpå.
+- **Bare i `read committed`.** Alt som endrer kalenderen eller oppsettet,
+  krever `read committed`, som data-API-et bruker for hver forespørsel
+  (`personal.krev_ferske_data`, `25001` ellers). Kontrollene etter en lås ser
+  da det siste som er lagret, også det en annen transaksjon lagret mens denne
+  ventet. I `repeatable read` ville de sett tilstanden fra før ventingen, så
+  der stoppes endringen, som tilgangsendringene (`intern.las_tilgang`).
+- **Kontosletting.** En konto kan slettes som før (`docs/brukere.md`), også
+  når den har lagret oppsettet, utpekt og avsluttet vaktplanansvarlige, endret
+  kalenderen eller gitt fritak. Fremmednøklene nuller da `lagret_av`,
+  `tildelt_av`, `avsluttet_av`, `endret_av` og `aktor` i endringsloggen, og de
+  uforanderlige radene slipper bare den endringen gjennom
+  (`personal.bare_kontosletting`: bare de feltene, bare til tomt, og bare når
+  kontoen ikke finnes lenger). Alt annet står fast som før.
 
 ### Rollene
 
@@ -95,7 +107,11 @@ vaktfordelingen), og kolonnene er enheten (`Unit`: tidssone, arbeidsåret og
 helgefilteret).
 
 - **Bare nye versjoner.** Ingen versjon endres eller fjernes, og hver ny
-  følger rett etter den forrige (`personal.kontroller_oppsett`).
+  følger rett etter den forrige (`personal.kontroller_oppsett`). En ny
+  versjon tar låsen for fagmiljøets oppsett eksklusivt (`personal.las_oppsett`);
+  det som leser reglene for å endre noe, tar den delt. En status kan derfor
+  ikke fjernes samtidig som den tas i bruk: den som kommer sist, venter og ser
+  den andres endring.
 - **Gjelder fra dagen den lagres**, i fagmiljøets tidssone.
   `personal.oppsett_for(fagmiljø, dato)` gir versjonen som gjaldt en dato, så
   tidligere dager vurderes etter reglene som gjaldt da.
@@ -125,7 +141,9 @@ P2c) eller et syntetisk navn og en stilling (testmiljø), aldri begge.
   virkelige (`personal.kontroller_testmiljo`). Fagmiljøet og slaget kan ikke
   endres, så ingenting overføres fra et testmiljø til et virkelig fagmiljø.
 - **Kvalifikasjonene** (`personal.kvalifikasjoner`) har gyldighetsdatoer uten
-  overlapp per medarbeider og status. Bare planleggerne ser dem i
+  overlapp per medarbeider og status. Kontrollen låser medarbeideren og kjøres
+  etter låsen i `read committed`, så to samtidige endringer prøves etter
+  hverandre og den andre ser den første. Bare planleggerne ser dem i
   lesemodellen.
 - **En konto som slettes,** stoppes så lenge den er medarbeider: ordningen
   for historikken avgjøres før ordinær bruk (B9).
@@ -154,11 +172,16 @@ Uansett vei inn, også rett i tabellen:
   bemanningsbehovet** for en annen bemannet oppgave (`staffingCap`). En dato
   som alt var over grensen fordi behovet er senket etterpå, kan endres så
   lenge antallet ikke øker (`invariantErrors`). Antallet før transaksjonen
-  huskes når den først rører statusen og datoen, og grensen kontrolleres ved
-  slutten av transaksjonen (`personal.kontroller_bemanning`, en utsatt
-  utløser);
+  huskes i datoraden (`personal.dager.foer`, merket med transaksjonen) når den
+  først rører statusen og datoen, så klienten ikke kan påvirke det, og
+  grensen kontrolleres ved slutten av transaksjonen
+  (`personal.kontroller_bemanning`, en utsatt utløser);
+- **statusen kjent** i reglene som gjelder datoen (`23514` ellers);
 - **fritaket** bare på en status med `dutyExemption: 'administrative'`, og det
-  følger aldri en ny status.
+  følger aldri en ny status. En ny versjon av oppsettet kan ikke ta fritaket
+  fra en status som har fritak fra og med datoen versjonen gjelder fra
+  (`personal.kontroller_fritak_i_oppsett`, `22023`): fritaket må fjernes
+  først, så det aldri står igjen skjult og påvirker vaktbelastningen.
 
 ### Kommandoene
 
@@ -211,11 +234,21 @@ fritaket er borte.
 
 ### Samtidighet (K-DAT-3)
 
-Hver endring låser datoen i `personal.dager` før den leser kalenderen, så to
-endringer av samme dato prøves etter hverandre: i `read committed` får den
-andre `PT409` eller regelbruddet, i `repeatable read` `40001`. Ingen endring
-overskriver en annen. Det samme gjelder fritaket mot en samtidig
-statusendring, og to lagringer av oppsettet (`PT409`).
+Alle endringer, også rett i tabellen, tar låsene i den samme rekkefølgen, så
+ingen venter i ring:
+
+1. tilgangslåsen, delt (bare kommandoene);
+2. låsen for fagmiljøets oppsett (`personal.las_oppsett`): delt for
+   kalenderen og kvalifikasjonene, eksklusiv for en ny versjon av oppsettet.
+   En status kan derfor ikke fjernes fra oppsettet samtidig som den tas i
+   bruk;
+3. datoen i `personal.dager`, i fast rekkefølge når flere datoer endres;
+4. raden. Også fritaket tar datoen før raden.
+
+Endringer av samme dato prøves derfor etter hverandre, og den andre får
+`PT409` eller regelbruddet. Ingen endring overskriver en annen. Det samme
+gjelder fritaket mot en samtidig statusendring, og to lagringer av oppsettet
+(`PT409`). Alt dette krever `read committed` («Bare i `read committed`» over).
 
 Endringen og fritaket går gjennom `personal.krev_skrivetilgang`, som tar den
 felles tilgangslåsen delt før porten («Samtidige tilgangsendringer» over). En
@@ -249,7 +282,11 @@ syntetisk Sandkasse (`src/__tests__/personal/database.ts`):
   medlemskap;
 - oppsettet: paritet med `validateRules` for alle feiltyper, grensene,
   formfeilene, versjonene og lagring mot en foreldet versjon (`PT409`);
-- medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse.
+- medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse;
+- kontosletting: en lokal administrator som har lagret oppsettet og utpekt
+  og avsluttet vaktplanansvarlige, slettes som før, radene står med tomme
+  felt, og ingen annen endring slipper gjennom;
+- `repeatable read` stopper endringene.
 
 `src/__tests__/personal/kalender.test.ts`, med Sandkasse og et andre
 syntetisk testmiljø:
@@ -265,16 +302,21 @@ syntetisk testmiljø:
 - grensene i databasen, også rett i tabellen og med overskudd etter et senket
   behov, og tidligere dager etter oppsettet som gjaldt da;
 - fritaket: likt svar med og uten for kollega og vaktplanansvarlig, også i
-  historikken;
-- endringsloggen.
+  historikken, og at oppsettet ikke kan ta fritaket fra en status som har det
+  fremover;
+- endringsloggen, og kontosletting av en planlegger som har endret kalenderen
+  og gitt fritak;
+- en ukjent status og den gamle innstillingen `personal.foer` rett i tabellen.
 
 `src/__tests__/personal.samtidighet.test.ts` kjører de samtidige endringene
 med to forbindelser mot ekte Postgres med hele databasestrukturen (kjøres når
 `OUSFAR_POSTGRES_URL` er satt, og i CI med Postgres 17):
 
-- i `read committed` og `repeatable read`: to som lagrer oppsettet fra den
+- i `read committed`, som data-API-et bruker: to som lagrer oppsettet fra den
   samme versjonen, to som endrer den samme cellen, den samme vakten til to,
-  grensen rett i tabellen, og fritaket mot en statusendring;
-- i `read committed`, som data-API-et bruker: utpeking, lagring av oppsettet,
-  endring i kalenderen og fritak mens rollen eller medlemskapet til den som
-  handler fjernes.
+  grensen rett i tabellen, fritaket mot en statusendring og mot flere celler
+  samme dag i begge rekkefølger, at fritaket tar datoen før raden, og en status
+  som fjernes fra oppsettet mens den tas i bruk, i begge rekkefølger;
+- i `read committed`: utpeking, lagring av oppsettet, endring i kalenderen og
+  fritak mens rollen eller medlemskapet til den som handler fjernes;
+- i `repeatable read`: alle endringene stoppes med `25001`.

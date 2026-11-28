@@ -20,7 +20,7 @@ import { planSet, requiredCount, rulesForDate, staffingCap, statusIndex } from '
 import type { RuleSet, StatusDefinition } from '@delt/personal/types'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { avsluttMedlemskap, opprettFagmiljo, opprettMedlem, type Person } from '../hjelp/persongalleri'
-import { som } from '../hjelp/testdatabase'
+import { feilFra, opprettBruker, som } from '../hjelp/testdatabase'
 import { byggPersonaldatabase, grunnlag, kalender, PILOT, tilstand, type Oppforing, type Personaldatabase } from './database'
 
 let p: Personaldatabase
@@ -578,6 +578,20 @@ describe('bemanningsgrensene og oppsettet over tid (K-KON-3)', () => {
       )
     await ny('Alma Berg', S_ID.duty1)
     expect(await kode(ny('Tobias Lunde', S_ID.duty1))).toBe(`23514 Vakt 1 er tildelt flere ${dato}.`)
+    // Antallet før transaksjonen ligger i databasen, ikke i en innstilling noen kan sette selv.
+    expect(
+      await kode(
+        p.somServer(async (tx) => {
+          await tx.query(`select set_config('personal.foer', $1, true)`, [JSON.stringify({ [S_ID.duty1]: 9, [`${p.S}|${dato}|${S_ID.duty1}`]: 9 })])
+          await tx.query(
+            `insert into personal.oppforinger (fagmiljo_id, medarbeider_id, dato, status_id, regelversjon) values ($1, $2, $3, $4, 3)`,
+            [p.S, id('Tobias Lunde'), dato, S_ID.duty1],
+          )
+        }),
+      ),
+    ).toBe(`23514 Vakt 1 er tildelt flere ${dato}.`)
+    // En status som ikke finnes i reglene for dagen, kan heller ikke legges inn.
+    expect(await kode(ny('Tobias Lunde', 'ukjent-status'))).toBe('23514 Ukjent status.')
     await ny('Alma Berg', POLIKLINIKK.id).catch(() => undefined)
     await ny('Jonas Vik', POLIKLINIKK.id)
     expect(await kode(ny('Emil Østby', POLIKLINIKK.id))).toBe(`23514 Poliklinikk er tildelt flere ${dato}.`)
@@ -619,6 +633,90 @@ describe('endringsloggen', () => {
       expect(await p.somServer((tx) => tx.query(sql)).then(() => null, (e: { code: string }) => e.code), sql).toBe('42501')
     }
     expect(await p.feilkode('systemarkitekt', 'select public.personal_historikk($1, $2, $3)', [p.S, '2026-01-01', '2027-12-31'])).toBe('22023')
+  })
+})
+
+describe('fritaket når oppsettet endres (K-TIL-4)', () => {
+  const gjeldende = async (): Promise<Omit<RuleSet, 'version' | 'effectiveFrom'>> => {
+    const { version: _v, effectiveFrom: _e, ...regler } = (await grunnlag(p, 'arkitektB')).regelsett.at(-1) as unknown as RuleSet
+    return regler
+  }
+  const utenAdgang = (regler: Omit<RuleSet, 'version' | 'effectiveFrom'>) => ({
+    ...regler,
+    statuses: regler.statuses.map((x) => {
+      if (x.id !== S_ID.away) return x
+      const { dutyExemption: _d, ...uten } = x
+      return uten
+    }),
+  })
+  /** Det planleggeren ser av cellen, uten det som skiller to medarbeidere. */
+  const synlig = (o: Oppforing | null | undefined) => {
+    const { id: _i, medarbeider: _m, revisjon: _r, ...resten } = o!
+    return resten
+  }
+  /** Det planleggeren ser i historikken for medarbeideren, uten tidspunktene. */
+  const historikk = async (navn: string, dato: string) =>
+    (await p.kall<{ medarbeider: string; foer?: unknown; etter?: unknown }[]>('systemarkitekt', 'select public.personal_historikk($1, $2, $3)', [p.S, dato, dato]))
+      .filter((h) => h.medarbeider === id(navn))
+      .map((h) => [h.foer ?? null, h.etter ?? null])
+  const merknad = async (navn: string, dato: string, tekst: string) =>
+    synlig((await sett('systemarkitekt', navn, dato, S_ID.away, { merknad: tekst })).oppforinger[0]!.oppforing)
+
+  it('gir den samme endringen det samme svaret med og uten fritak, før og etter en endring av oppsettet', async () => {
+    const dato = addDays(uke(8), 2)
+    const forbi = addDays(uke(-3), 2)
+    // To ellers like registreringer, den ene med fritak, i dag og fremover og på en dag som er passert.
+    for (const d of [dato, forbi]) {
+      for (const navn of ['Henrik Dahl', 'Ingrid Falk']) await sett('systemarkitekt', navn, d, S_ID.away, { merknad: 'Hjemme' })
+      await settFritak('arkitektB', 'Ingrid Falk', d, true, (await celle('Ingrid Falk', d))!)
+    }
+
+    // Oppsettet kan ikke ta fra Borte fritaket mens en registrering fra i dag har det.
+    const regler = await gjeldende()
+    const fra = `${iDag.slice(8, 10)}.${iDag.slice(5, 7)}.${iDag.slice(0, 4)}`
+    expect((await feilFra(() => lagreOppsett(utenAdgang(regler))))?.message).toBe(
+      `«Borte» har administrativt vaktfritak i kalenderen fra og med ${fra}, og kan ikke miste adgangen til det. Fjern fritaket først.`,
+    )
+    expect(await merknad('Henrik Dahl', dato, 'Rom 2')).toEqual(await merknad('Ingrid Falk', dato, 'Rom 2'))
+
+    // Uten fritaket fremover kan oppsettet endres; den passerte dagen vurderes etter reglene som gjaldt da.
+    await settFritak('arkitektB', 'Ingrid Falk', dato, false, (await celle('Ingrid Falk', dato))!)
+    await lagreOppsett(utenAdgang(regler))
+    for (const d of [dato, forbi]) {
+      expect(await merknad('Henrik Dahl', d, 'Rom 3'), d).toEqual(await merknad('Ingrid Falk', d, 'Rom 3'))
+      expect(await historikk('Henrik Dahl', d), d).toEqual(await historikk('Ingrid Falk', d))
+    }
+    expect((await celle('Ingrid Falk', forbi))!.fritak).toBe(true)
+    expect(await p.feilkode('arkitektB', FRITAK, [p.S, id('Henrik Dahl'), dato, true, (await celle('Henrik Dahl', dato))!.revisjon, (await celle('Henrik Dahl', dato))!.fritak_revisjon])).toBe('22023')
+    await lagreOppsett(regler)
+  })
+})
+
+describe('kontosletting (docs/brukere.md)', () => {
+  it('lar en administrator som har endret kalenderen og gitt fritak, slettes som før, og loggen står', async () => {
+    const konto = await opprettBruker(p.db, { brukernavn: 'test.kalendersletting', fornavn: 'Test', etternavn: 'Kalendersletting', rolle: 'user' })
+    await opprettMedlem(p.db, konto, p.S)
+    await p.somServer((tx) => tx.query('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [konto, p.S]))
+    const dato = addDays(uke(9), 0)
+    await p.kall(konto, ENDRE, [p.S, JSON.stringify([{ medarbeider: id('Live Rønning'), dato, revisjon: null, status: S_ID.away }])])
+    const for_ = (await celle('Live Rønning', dato))!
+    await p.kall(konto, FRITAK, [p.S, id('Live Rønning'), dato, true, for_.revisjon, for_.fritak_revisjon])
+    const logg = async () =>
+      (await p.db.query<{ aktor: string | null; etter: unknown }>('select aktor, etter from personal.endringer where medarbeider_id = $1 and dato = $2 order by id', [id('Live Rønning'), dato])).rows
+    expect((await logg()).map((r) => r.aktor)).toEqual([konto, konto])
+    const rad = async () =>
+      (await p.db.query<{ endret_av: string | null; revisjon: string; fritak: boolean }>('select endret_av, revisjon, fritak from personal.oppforinger where medarbeider_id = $1 and dato = $2', [id('Live Rønning'), dato])).rows[0]!
+    const foer = await rad()
+    expect(foer.endret_av).toBe(konto)
+
+    expect(await feilFra(() => p.somServer((tx) => tx.query('delete from auth.users where id = $1', [konto])))).toBeNull()
+
+    expect((await logg()).map((r) => r.aktor)).toEqual([null, null])
+    expect(await rad()).toEqual({ ...foer, endret_av: null })
+    // Loggen kan fortsatt ikke endres, heller ikke til tomt for en konto som finnes.
+    for (const sql of ['update personal.endringer set aktor = null where aktor is not null', 'update personal.endringer set etter = null where aktor is null']) {
+      expect((await feilFra(() => p.somServer((tx) => tx.query(sql))))?.code, sql).toBe('42501')
+    }
   })
 })
 
