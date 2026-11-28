@@ -5,7 +5,7 @@ import { Ikon } from '../../components/ikon/Ikon'
 import { Merke } from '../../components/Merke'
 import { useBevart } from '../../oppdatering/Bevaring'
 import type { Faneinnhold } from '../faner'
-import { iFanen, erNy, kvalifisertI, lesMedarbeidergrunnlag, vaktandelI } from './modell'
+import { erNy, iFanen, kanEndreMedarbeidere, kvalifisertI, lesMedarbeidergrunnlag, serKvalifikasjoner, vaktandelI } from './modell'
 import { Personredigering } from './Personredigering'
 import { Vaktplanansvarlige } from './Vaktplanansvarlige'
 
@@ -15,20 +15,25 @@ import { Vaktplanansvarlige } from './Vaktplanansvarlige'
  * det nøyaktig de aktive medlemmene, med navnet og stillingen fra profilen;
  * ingen legges inn her. Nye står øverst, merket «Ny», til vaktene er valgt.
  * Kvalifikasjonene og vaktandelen endres fra i dag (K-MED-2), og den lokale
- * administratoren velger de vaktplanansvarlige under tabellen.
+ * administratoren velger de vaktplanansvarlige under tabellen. En kollega ser
+ * medarbeiderne, stillingen og vaktandelen, men ikke vaktene og ingen knapper.
  */
 export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
   const g = useMemo(() => lesMedarbeidergrunnlag(grunnlag), [grunnlag])
   const folk = iFanen(g)
   // Den som redigeres, overlever en oppdatering av appen.
   const [redigerer, setRedigerer] = useBevart<string | null>(`personal-medarbeider-${fagmiljo.id}`, null)
-  const valgt = folk.find((m) => m.id === redigerer) ?? null
+  const vakter = serKvalifikasjoner(g.rolle)
+  const endrer = kanEndreMedarbeidere(g.rolle)
+  const valgt = endrer ? (folk.find((m) => m.id === redigerer) ?? null) : null
+  const oppgaver = vakter ? g.oppgaver : []
   const stilling = (id: string | null) => (id ? g.stillinger.find((s) => s.id === id)?.name : undefined)
 
   return (
     <div className="gruppeside__del personalmedarbeidere">
       <p className="gruppeside__ingress">
-        Medarbeiderne er medlemmene i fagmiljøet, med navnet og stillingen fra profilen. Her velges hvilke vakter hver kan ta, og vaktandelen. Endringene gjelder fra i dag.
+        Medarbeiderne er medlemmene i fagmiljøet, med navnet og stillingen fra profilen.
+        {endrer && ' Her velges hvilke vakter hver kan ta, og vaktandelen. Endringene gjelder fra i dag.'}
       </p>
       {folk.length === 0 ? (
         <p className="personaltomt">Ingen medarbeidere ennå.</p>
@@ -39,7 +44,7 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
               <tr>
                 <th scope="col">Medarbeider</th>
                 <th scope="col">Stilling</th>
-                {g.oppgaver.map((s) => (
+                {oppgaver.map((s) => (
                   <th key={s.id} scope="col" className="personaltabell__midt">
                     {s.name}
                   </th>
@@ -47,14 +52,16 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
                 <th scope="col" className="personaltabell__tall">
                   Vaktandel
                 </th>
-                <th scope="col">
-                  <span className="kun-skjermleser">Endre</span>
-                </th>
+                {endrer && (
+                  <th scope="col">
+                    <span className="kun-skjermleser">Endre</span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
               {folk.map((m) => {
-                const ny = erNy(m)
+                const ny = vakter && erNy(m)
                 const kan = kvalifisertI(m, g.iDag)
                 const andel = vaktandelI(m, g.iDag)
                 const navn = stilling(m.stilling)
@@ -67,7 +74,7 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
                       </span>
                     </th>
                     <td>{navn ?? <span className="personaltabell__mangler">Mangler stilling</span>}</td>
-                    {g.oppgaver.map((s) => (
+                    {oppgaver.map((s) => (
                       <td key={s.id} className="personaltabell__midt">
                         {kan.includes(s.id) ? (
                           <Ikon navn="yes" etikett="Ja" />
@@ -80,11 +87,13 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
                       </td>
                     ))}
                     <td className="personaltabell__tall">{andel === 100 ? <span className="personaltabell__dempet">100 %</span> : <strong>{andel} %</strong>}</td>
-                    <td className="personaltabell__hoyre">
-                      <Button variant={ny ? 'sekundar' : 'kant'} icon={ny ? undefined : <Ikon navn="edit" />} onClick={() => setRedigerer(m.id)} aria-label={`${ny ? 'Velg vakter for' : 'Endre'} ${m.navn}`}>
-                        {ny ? 'Velg vakter' : 'Endre'}
-                      </Button>
-                    </td>
+                    {endrer && (
+                      <td className="personaltabell__hoyre">
+                        <Button variant={ny ? 'sekundar' : 'kant'} icon={ny ? undefined : <Ikon navn="edit" />} onClick={() => setRedigerer(m.id)} aria-label={`${ny ? 'Velg vakter for' : 'Endre'} ${m.navn}`}>
+                          {ny ? 'Velg vakter' : 'Endre'}
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -92,17 +101,7 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
           </table>
         </div>
       )}
-      {valgt && (
-        <Personredigering
-          key={valgt.id}
-          fagmiljo={fagmiljo.id}
-          medarbeider={valgt}
-          stilling={stilling(valgt.stilling)}
-          grunnlag={g}
-          onEndret={hentPaNytt}
-          onLukk={() => setRedigerer(null)}
-        />
-      )}
+      {valgt && <Personredigering key={valgt.id} fagmiljo={fagmiljo.id} medarbeider={valgt} stilling={stilling(valgt.stilling)} grunnlag={g} onEndret={hentPaNytt} onLukk={() => setRedigerer(null)} />}
       {can(g.rolle, 'managePlanners') && <Vaktplanansvarlige fagmiljo={fagmiljo.id} onEndret={hentPaNytt} />}
     </div>
   )

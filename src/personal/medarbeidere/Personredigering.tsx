@@ -1,3 +1,4 @@
+import { can } from '@delt/personal/permissions'
 import { useId, useState } from 'react'
 import { Button } from '../../components/Button'
 import { Modallag } from '../../components/Modallag'
@@ -52,7 +53,10 @@ export function Personredigering({
     }
   }
 
-  const endret = [...kan].sort().join() !== fraFor.join()
+  // Hver del vises bare for den som kan endre den; serveren kontrollerer det igjen.
+  const vakter = can(grunnlag.rolle, 'editPeople')
+  const andel = can(grunnlag.rolle, 'editDutyShare')
+  const endret = vakter && [...kan].sort().join() !== fraFor.join()
   const lagreVakter = async () => {
     if (!endret) return onLukk()
     if (await lagre(() => settKvalifikasjoner(fagmiljo, m.id, kan, m.revisjon))) onLukk()
@@ -71,9 +75,11 @@ export function Personredigering({
           <Button variant="subtle" onClick={onLukk}>
             Avbryt
           </Button>
-          <Button onClick={() => void lagreVakter()} disabled={arbeider}>
-            Lagre
-          </Button>
+          {vakter && (
+            <Button onClick={() => void lagreVakter()} disabled={arbeider}>
+              Lagre
+            </Button>
+          )}
         </>
       }
     >
@@ -82,30 +88,27 @@ export function Personredigering({
           {feil}
         </p>
       )}
-      <fieldset className="personalfelt">
-        <legend className="felt__merkelapp">Kan ta</legend>
-        {grunnlag.oppgaver.length === 0 ? (
-          <p className="felt__hjelp">Fagmiljøet har ingen oppgaver som krever kvalifikasjon.</p>
-        ) : (
-          <div className="avkryssinger" aria-describedby={`${id}-kan`}>
-            {grunnlag.oppgaver.map((s) => (
-              <label key={s.id} className="avkryssing">
-                <input
-                  type="checkbox"
-                  checked={kan.includes(s.id)}
-                  disabled={arbeider}
-                  onChange={(e) => setKan((k) => (e.target.checked ? [...k, s.id] : k.filter((x) => x !== s.id)))}
-                />
-                {s.name}
-              </label>
-            ))}
-          </div>
-        )}
-        <p className="felt__hjelp" id={`${id}-kan`}>
-          Gjelder fra i dag. Uten noen valgt får medarbeideren ingen vakter.
-        </p>
-      </fieldset>
-      <Vaktandel fagmiljo={fagmiljo} medarbeider={m} grunnlag={grunnlag} arbeider={arbeider} onLagre={lagre} />
+      {vakter && (
+        <fieldset className="personalfelt">
+          <legend className="felt__merkelapp">Kan ta</legend>
+          {grunnlag.oppgaver.length === 0 ? (
+            <p className="felt__hjelp">Fagmiljøet har ingen oppgaver som krever kvalifikasjon.</p>
+          ) : (
+            <div className="avkryssinger" aria-describedby={`${id}-kan`}>
+              {grunnlag.oppgaver.map((s) => (
+                <label key={s.id} className="avkryssing">
+                  <input type="checkbox" checked={kan.includes(s.id)} disabled={arbeider} onChange={(e) => setKan((k) => (e.target.checked ? [...k, s.id] : k.filter((x) => x !== s.id)))} />
+                  {s.name}
+                </label>
+              ))}
+            </div>
+          )}
+          <p className="felt__hjelp" id={`${id}-kan`}>
+            Gjelder fra i dag. Uten noen valgt får medarbeideren ingen vakter.
+          </p>
+        </fieldset>
+      )}
+      {andel && <Vaktandel fagmiljo={fagmiljo} medarbeider={m} grunnlag={grunnlag} arbeider={arbeider} onLagre={lagre} />}
     </Modallag>
   )
 }

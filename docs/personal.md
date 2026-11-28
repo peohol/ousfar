@@ -1030,7 +1030,10 @@ bindende detaljspesifikasjon.
   øverst, merket «Ny», til vaktene er valgt. «Endre» åpner medarbeideren:
   vaktene lagres med «Lagre», vaktandelen (ordinær fra en dato og
   midlertidige perioder) med hver endring, regnet med domenefunksjonene
-  først, så en dag før i dag avvises før noe sendes. Hver lagring sender
+  først, så en dag før i dag avvises før noe sendes. Tidligere, gjeldende og
+  fremtidige vaktandeler vises (§6.2); bare det som ikke har begynt, kan
+  fjernes. Fanen og knappene vises bare for dem som kan endre medarbeiderne,
+  og en kollega ser ikke vaktene. Hver lagring sender
   revisjonen som ble vist; har noen andre endret medarbeideren imens,
   vises serverens melding, og grunnlaget hentes på nytt. Under tabellen
   velger den lokale administratoren de vaktplanansvarlige blant medlemmene.

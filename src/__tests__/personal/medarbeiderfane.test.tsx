@@ -7,9 +7,11 @@
  *   profilen («Mangler stilling» uten), vaktene og vaktandelen i dag;
  * - vaktene lagres som hele lista med revisjonen som ble vist, og vaktandelen
  *   som hele planen, regnet med domenefunksjonene, så en dag før i dag
- *   avvises før noe sendes;
+ *   avvises før noe sendes; tidligere, gjeldende og fremtidige ordinære
+ *   vaktandeler vises, og bare de fremtidige kan fjernes;
  * - serverens avvisning (en konflikt) vises, og grunnlaget hentes på nytt;
- * - bare den lokale administratoren velger de vaktplanansvarlige;
+ * - en kollega ser medarbeiderne og vaktandelen, men ikke vaktene og ingen
+ *   knapper, og bare den lokale administratoren velger de vaktplanansvarlige;
  * - «Vis som» finnes bare med en simulering fra databasen, og gir bare
  *   rollene til og med den virkelige.
  *
@@ -198,6 +200,41 @@ describe('Medarbeidere-fanen', () => {
     const andre = kallTil('personal_lagre_vaktandel')[1] as { vaktandel: { temporary: { from: string; to: string; percent: number; id: string }[] }; forventet_revisjon: number }
     expect(andre.forventet_revisjon).toBe(4)
     expect(andre.vaktandel.temporary).toEqual([{ id: expect.any(String), from: '2027-02-01', to: '2027-02-28', percent: 50 }])
+  })
+
+  it('viser tidligere, gjeldende og fremtidige ordinære vaktandeler, og lar bare de fremtidige fjernes', async () => {
+    const vaktandel = {
+      ordinary: [
+        { from: '2027-03-01', percent: 50 },
+        { from: '2026-01-01', percent: 100 },
+        { from: '2026-06-01', percent: 80 },
+      ],
+      temporary: [],
+    }
+    const g = grunnlag('planner')
+    const medarbeidere = (g.svar.medarbeidere as Record<string, unknown>[]).map((m) => (m.id === 'alma' ? { ...m, vaktandel } : m))
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={{ ...g, svar: { ...g.svar, medarbeidere } }} hentPaNytt={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    const liste = within(screen.getByRole('dialog')).getByRole('list', { name: 'Ordinær vaktandel' })
+    const rader = within(liste).getAllByRole('listitem')
+    expect(rader.map((r) => r.textContent)).toEqual(['1. jan. 2026–31. mai 2026100 %Tidligere', '1. juni 2026–28. feb. 202780 %Gjelder nå', 'Fra 1. mars 202750 %Fjern'])
+    expect(within(liste).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Fjern vaktandelen fra 1. mars 2027'])
+    await userEvent.click(within(liste).getByRole('button'))
+    await waitFor(() => expect(kallTil('personal_lagre_vaktandel')).toHaveLength(1))
+    expect((kallTil('personal_lagre_vaktandel')[0] as { vaktandel: { ordinary: { from: string }[] } }).vaktandel.ordinary.map((o) => o.from).sort()).toEqual(['2026-01-01', '2026-06-01'])
+  })
+
+  it('viser en kollega medarbeiderne og vaktandelen, men ikke vaktene og ingen knapper', () => {
+    // Lesemodellen gir ikke en kollega kvalifikasjonene, så ingen står som nye.
+    const uten = grunnlag('reader')
+    const medarbeidere = (uten.svar.medarbeidere as Record<string, unknown>[]).map((m) => ({ ...m, kvalifikasjoner: [] }))
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={{ ...uten, svar: { ...uten.svar, medarbeidere } }} hentPaNytt={() => {}} />)
+    const tabell = screen.getByRole('table')
+    expect(within(tabell).getAllByRole('columnheader').map((c) => c.textContent)).toEqual(['Medarbeider', 'Stilling', 'Vaktandel'])
+    expect(within(tabell).getAllByRole('rowheader').map((r) => r.textContent)).toEqual(['Alma Berg', 'Nora Ny'])
+    expect(screen.queryAllByRole('button')).toEqual([])
+    expect(screen.queryByText(/Her velges/)).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Vaktplanansvarlige' })).toBeNull()
   })
 
   it('lar bare den lokale administratoren velge de vaktplanansvarlige blant medlemmene', async () => {

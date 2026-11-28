@@ -5,11 +5,12 @@ import { Ikon } from '../../components/ikon/Ikon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { lagreVaktandel } from '../kommandoer'
 import { kortDato } from '../datoer'
-import { endreVaktandel, vaktandelI, type Innstillinger, type Medarbeider, type Medarbeidergrunnlag, type Vaktandelendring } from './modell'
+import { endreVaktandel, ordinaerePerioder, vaktandelI, type Innstillinger, type Medarbeider, type Medarbeidergrunnlag, type Vaktandelendring } from './modell'
 
 /**
  * Vaktandelen (§6.2): ordinær fra en dato, og midlertidige perioder, bare fra
- * i dag og fremover. Endringen regnes med domenefunksjonene først, så feilen
+ * i dag og fremover. Tidligere, gjeldende og fremtidige vises; bare det som
+ * ikke har begynt, kan fjernes. Endringen regnes med domenefunksjonene først, så feilen
  * vises før noe sendes, og så lagres hele vaktandelen; serveren kontrollerer
  * den på nytt (`personal_lagre_vaktandel`).
  */
@@ -44,7 +45,7 @@ export function Vaktandel({
     return onLagre(() => lagreVaktandel(fagmiljo, m.id, plan, m.revisjon))
   }
   const prosent = (tekst: string) => (tekst.trim() === '' ? Number.NaN : Number(tekst))
-  const fremtidige = m.vaktandel.ordinary.filter((o) => o.from > iDag)
+  const ordinaere = ordinaerePerioder(m, iDag)
 
   return (
     <section className="personalvaktandel" aria-labelledby={`${id}-tittel`}>
@@ -58,15 +59,21 @@ export function Vaktandel({
         </p>
       )}
 
-      {fremtidige.length > 0 && (
-        <ul className="personalvaktandel__liste" aria-label="Ordinær vaktandel fremover">
-          {fremtidige.map((o) => (
-            <li key={o.from}>
-              <span>Fra {kortDato(o.from)}</span>
-              <strong>{o.percent} %</strong>
-              <Button variant="kant" icon={<Ikon navn="trash" />} disabled={arbeider} onClick={() => void bruk({ slag: 'fjern-ordinaer', fra: o.from })} aria-label={`Fjern vaktandelen fra ${kortDato(o.from)}`}>
-                Fjern
-              </Button>
+      {ordinaere.length > 0 && (
+        <ul className="personalvaktandel__liste" aria-label="Ordinær vaktandel">
+          {ordinaere.map((o) => (
+            <li key={o.fra}>
+              <span>
+                {o.til ? `${kortDato(o.fra)}–${kortDato(o.til)}` : `Fra ${kortDato(o.fra)}`}
+              </span>
+              <strong>{o.prosent} %</strong>
+              {o.tid === 'future' ? (
+                <Button variant="kant" icon={<Ikon navn="trash" />} disabled={arbeider} onClick={() => void bruk({ slag: 'fjern-ordinaer', fra: o.fra })} aria-label={`Fjern vaktandelen fra ${kortDato(o.fra)}`}>
+                  Fjern
+                </Button>
+              ) : (
+                <span className="personaltabell__dempet">{o.tid === 'current' ? 'Gjelder nå' : 'Tidligere'}</span>
+              )}
             </li>
           ))}
         </ul>

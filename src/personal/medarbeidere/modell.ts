@@ -8,7 +8,9 @@
  * Grunnlaget er det databasen avgjør. Det som står her, er bare visningen;
  * hver endring kontrolleres på nytt på serveren (K-TIL-2).
  */
-import { dutySharePercentAt, removeOrdinaryDutyShare, removeTemporaryDutyShare, setOrdinaryDutyShare, upsertTemporaryDutyShare } from '@delt/personal/dutyShare'
+import { can } from '@delt/personal/permissions'
+import { addDays } from '@delt/personal/dates'
+import { dutySharePercentAt, periodTense, removeOrdinaryDutyShare, removeTemporaryDutyShare, setOrdinaryDutyShare, upsertTemporaryDutyShare } from '@delt/personal/dutyShare'
 import type { DutyShareSchedule, IsoDate, PlannerState, Role, StaffCategory, StatusDefinition } from '@delt/personal/types'
 import type { Personalgrunnlag } from '../grunnlag'
 
@@ -127,16 +129,48 @@ export function kvalifisertI(m: Medarbeider, iDag: IsoDate): string[] {
   return [...new Set(m.kvalifikasjoner.filter((k) => k.fra <= iDag && (k.til === null || iDag <= k.til)).map((k) => k.status))].sort()
 }
 
+/** Lesemodellen gir kvalifikasjonene bare dem som planlegger (`editCalendar`, som `personal_grunnlag`). */
+export const serKvalifikasjoner = (rolle: Role): boolean => can(rolle, 'editCalendar')
+
+/** Om rollen kan åpne en medarbeider og endre noe; serveren kontrollerer hver endring. */
+export const kanEndreMedarbeidere = (rolle: Role): boolean => can(rolle, 'editPeople') || can(rolle, 'editDutyShare')
+
 /** Ny i kalenderen: har aldri fått noen kvalifikasjon, så en planlegger bør velge vaktene (§8.5). */
 export const erNy = (m: Medarbeider): boolean => m.kvalifikasjoner.length === 0
 
-/** Medarbeiderne fanen viser: de som er med fremover, de nye først, ellers i rekkefølgen fra databasen. */
+/**
+ * Medarbeiderne fanen viser: de som er med fremover, for planleggerne de nye
+ * først, ellers i rekkefølgen fra databasen.
+ */
 export function iFanen(g: Medarbeidergrunnlag): Medarbeider[] {
   const med = g.medarbeidere.filter((m) => erMedFremover(m, g.iDag))
+  if (!serKvalifikasjoner(g.rolle)) return med
   return [...med.filter(erNy), ...med.filter((m) => !erNy(m))]
 }
 
 export const vaktandelI = (m: Medarbeider, dag: IsoDate): number => dutySharePercentAt(m.vaktandel, dag)
+
+/** En ordinær vaktandel som periode: til dagen før den neste begynner. */
+export interface OrdinaerPeriode {
+  fra: IsoDate
+  til: IsoDate | null
+  prosent: number
+  tid: 'past' | 'current' | 'future'
+}
+
+/**
+ * Den ordinære vaktandelen som perioder, tidligere, gjeldende og fremtidige
+ * (§6.2), med når hver gjelder etter `periodTense`. Bare de fremtidige kan
+ * fjernes; de andre står som historikk.
+ */
+export function ordinaerePerioder(m: Medarbeider, iDag: IsoDate): OrdinaerPeriode[] {
+  const sortert = [...m.vaktandel.ordinary].sort((a, b) => a.from.localeCompare(b.from))
+  return sortert.map((o, i) => {
+    const neste = sortert[i + 1]
+    const til = neste ? addDays(neste.from, -1) : null
+    return { fra: o.from, til, prosent: o.percent, tid: periodTense({ from: o.from, to: til ?? undefined }, iDag) }
+  })
+}
 
 /**
  * En endring av vaktandelen, gjort med domenefunksjonene på denne ene
