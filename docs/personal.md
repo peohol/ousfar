@@ -569,14 +569,16 @@ erstattet av vedtakene i §6 og §7.2 og av akseptmatrisen
 fjernet fra prototypen og rekonstrueres ikke (§8.2).
 Ingen vaktplankode eller produksjonsmigrasjoner før planen er vedtatt.
 
-### 7.4 Medarbeiderinnstillingene i kalenderen (planlagt)
+### 7.4 Medarbeiderinnstillingene i kalenderen
 
 Besluttet av Peder 25.11.2026 som retning og **revidert 26.11.2026**: feltene
 redigeres i kalenderens eget grensesnitt (Medarbeidere), **ikke** i
 fagmiljøets brukeroversikt eller administratorenes brukermeny. Den
 opprinnelige planen om et utvidelsespunkt i brukeroversikten utgår
 ([#572](https://github.com/peohol/ousfar/issues/572), avgrenset på nytt).
-**Ikke bygd ennå**; trinnet er P2c i §8.11.
+Bygd i P2c ([#620](https://github.com/peohol/ousfar/issues/620)); hvordan
+står i [personal-database.md](personal-database.md) («1:1 med medlemmene»,
+«Innstillingene» og «Vis som»).
 
 **Én app, ikke en tilleggsfunksjon** (vedtatt av Peder 26.11.2026). Det er
 et **1:1-forhold** mellom medlemmene av fagmiljøet og medarbeiderne i

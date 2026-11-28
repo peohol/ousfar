@@ -253,6 +253,11 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'personal_historikk(fagmiljo uuid, fra date, til date)': 'personal',
   'personal_endre_kalender(fagmiljo uuid, endringer jsonb)': 'personal',
   'personal_sett_fritak(fagmiljo uuid, medarbeider uuid, dato date, fritak boolean, forventet_revisjon bigint, forventet_fritak_revisjon bigint)': 'personal',
+  // #620 (P2c): medarbeiderinnstillingene, medlemmene for utpekingen og «Vis som».
+  'personal_sett_kvalifikasjoner(fagmiljo uuid, medarbeider uuid, statuser jsonb, forventet_revisjon bigint)': 'personal',
+  'personal_lagre_vaktandel(fagmiljo uuid, medarbeider uuid, vaktandel jsonb, forventet_revisjon bigint)': 'personal',
+  'personal_medlemmer(fagmiljo uuid)': 'personal',
+  'personal_vis_som(fagmiljo uuid, rolle text, medarbeider uuid)': 'personal',
   'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).

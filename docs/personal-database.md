@@ -17,7 +17,10 @@ P2b leveres i to deler:
    invariantene, kommandoene, lesemodellen for fritak, endringsloggen og
    samtidigheten.
 
-Brukerflatene kommer i P3 og senere; P2b endrer ingenting i appen.
+P2c ([#620](https://github.com/peohol/ousfar/issues/620)) legger til
+**medarbeiderne 1:1 med medlemmene**, **innstillingene** (kvalifikasjonene og
+vaktandelen) og **«Vis som»** (`*_personal_medarbeidere.sql`), med
+brukerflatene for dem. Kalenderens visninger kommer i P3.
 
 ## Skjerming og tilgang
 
@@ -148,11 +151,82 @@ P2c) eller et syntetisk navn og en stilling (testmiljø), aldri begge.
 - **En konto som slettes,** stoppes så lenge den er medarbeider: ordningen
   for historikken avgjøres før ordinær bruk (B9).
 
+### 1:1 med medlemmene (P2c: K-MED-1, K-MED-3, K-MED-5, B13)
+
+Utenfor et testmiljø, når funksjonen ikke står av, er medarbeiderne nøyaktig
+fagmiljøets aktive medlemmer (`personal.knytter_medlemmer`). Ingen legger dem
+inn: utløsere på `public.medlemskap`, `public.funksjonsbrytere` og
+`public.fagmiljoer` kjører `personal.synk_medarbeider` i transaksjonen som
+endrer medlemskapet, bryteren eller testmerkingen.
+
+- **Periodene** (`personal.medarbeiderperioder`) sier hvilke dager
+  medarbeideren er med: fra dagen medlemskapet blir aktivt, til og med dagen
+  det avsluttes. Et nytt medlemskap samme dag gjenåpner perioden; senere gir
+  det en ny. Perioder kan ikke slettes, begynne bakover i tid, endres bakover
+  eller overlappe, og syntetiske medarbeidere har ingen (de bruker aktiv fra
+  og til). `personal.aktiv_paa(medarbeider, dag)` er det kalenderen spør.
+- **Avsluttet medlemskap** stopper den fremtidige planleggingen fra dagen
+  etter: registreringene etter dagen fjernes (og står i kalenderens logg, så
+  dekningen viser hullet), kvalifikasjonene avsluttes, så et nytt medlemskap
+  senere begynner uten, og ingen ny registrering eller ny status kan legges
+  på en dag utenfor periodene, heller ikke rett i tabellen. Alt til og med
+  dagen står. Tilgangen stopper samme dag (rollen krever aktivt medlemskap).
+- **Mens funksjonen står av** følges ikke medlemskapene; de tas igjen når
+  den slås på.
+- **Navnet og stillingen** leses fra profilen hver gang, og stillingene er
+  appens stillinger (K-MED-5). Stilling per dag kommer med Dev
+  ([#602](https://github.com/peohol/ousfar/issues/602), før P4).
+- **Til B14** gir `personal.stilling_styrer_vakter(bruker)` fagmiljøene der
+  brukerens stilling styrer vaktene, så kontrollen av stillingsendringer i
+  #602 kan kreve lokal administrativ myndighet i hvert av dem.
+- `personal.innstillingslogg` fører hver endring av medlemskapet,
+  kvalifikasjonene og vaktandelen, med hvem, når, før og etter. Loggen kan
+  ikke endres.
+
+### Innstillingene (P2c: K-MED-2, §6.2)
+
+Hver medarbeider har en `revisjon` som klienten sender med; har noen endret
+innstillingene imens, avvises endringen med `PT409`. En medarbeider som ikke
+lenger er med etter i dag, kan ikke endres («… er ikke lenger medarbeider.»).
+
+- `public.personal_sett_kvalifikasjoner(fagmiljø, medarbeider, statuser,
+  revisjon)` krever `editPeople`. `statuser` er hele lista som skal gjelde:
+  en ny kvalifikasjon gjelder fra i dag, en som fjernes, til og med i går.
+  Bare oppgaver som krever kvalifikasjon og er aktive i dagens oppsett, kan
+  legges til.
+- `public.personal_lagre_vaktandel(fagmiljø, medarbeider, vaktandel,
+  revisjon)` krever `editDutyShare` og lagrer hele planen
+  (`DutyShareSchedule`). `personal.vaktandelfeil` gir de samme meldingene som
+  `validateDutySchedule`, og `personal.vaktandel_endrer_fortid` det samme
+  svaret som `changesPast`; begge håndheves også rett i tabellen
+  (`personal.vaktandeler`).
+- `public.personal_medlemmer(fagmiljø)` gir den lokale administratoren de
+  aktive medlemmene å velge vaktplanansvarlige blant (`managePlanners`).
+- Lesemodellen gir alle rollene periodene, revisjonen og vaktandelen;
+  kvalifikasjonene bare planleggerne, som før.
+
+### «Vis som» (P2c: K-SKJ-7)
+
+Bare i et testmiljø kan den innloggede prøve kalenderen med en lavere rolle
+(`reader`, `planner`, `localAdmin`) og som én syntetisk medarbeider
+(`public.personal_vis_som(fagmiljø, rolle, medarbeider)`, begge tomme
+avslutter). Valget lagres i `personal.vis_som` og håndheves på serveren:
+`personal.rolle` er den laveste av den virkelige rollen og den valgte, så alle
+kommandoene og lesemodellen følger den, og `personal.meg` er den valgte
+syntetiske medarbeideren. En høyere rolle avvises (`42501`). Utenfor et
+testmiljø finnes ikke funksjonen («Finnes ikke.»), tabellen avviser rader
+der, valget gjelder ikke der selv om en rad skulle finnes, og radene fjernes
+når testmerkingen tas bort. Under utprøving har bare systemarkitektene
+tilgang, så bare de kan bruke det.
+
 ## Lesemodellen
 
 `public.personal_grunnlag(fagmiljø)` gir det kalenderen trenger før selve
 oppføringene: rollen, dagens dato i fagmiljøet, enheten, alle versjonene av
-oppsettet, stillingene, medarbeiderne og de vaktplanansvarlige.
+oppsettet, stillingene, medarbeiderne og de vaktplanansvarlige. Fra P2c også
+om fagmiljøet er testmiljø, hvem den innloggede er i kalenderen (`meg`),
+simuleringen (`simulering`), og per medarbeider periodene, revisjonen og
+vaktandelen.
 
 ## Kalenderen (K-DAT-1–3, K-TIL-4)
 
@@ -258,6 +332,13 @@ felles tilgangslåsen delt før porten («Samtidige tilgangsendringer» over). E
 endring som kjøres mens medlemskapet eller rollen til den som handler
 avsluttes, venter på det og avvises etterpå.
 
+Innstillingene (P2c) tar de samme låsene: tilgangslåsen delt, oppsettet delt
+og så medarbeideren (`personal.las_medarbeider`). En endring av medlemskapet
+tar tilgangslåsen eksklusivt og oppsettet eksklusivt
+(`personal.synk_medarbeider`), så en registrering eller kvalifikasjon som ble
+lagret like før, ryddes av avslutningen, og en som venter, avvises etter den,
+også rett i tabellen, der bare oppsettet låses.
+
 ## Sandkasse
 
 Migrasjonen `*_personal_utproving.sql` gjør Sandkasse klar til utprøving,
@@ -322,4 +403,25 @@ med to forbindelser mot ekte Postgres med hele databasestrukturen (kjøres når
   som fjernes fra oppsettet mens den tas i bruk, i begge rekkefølger;
 - i `read committed`: utpeking, lagring av oppsettet, endring i kalenderen og
   fritak mens rollen eller medlemskapet til den som handler fjernes;
-- i `repeatable read`: alle endringene stoppes med `25001`.
+- i `read committed`, i et fagmiljø der medlemmene er medarbeiderne (P2c):
+  registreringen og kvalifikasjonene mot et medlemskap som avsluttes, i begge
+  rekkefølger og rett i tabellen, og to endringer av innstillingene fra den
+  samme revisjonen;
+- i `repeatable read`: alle endringene stoppes med `25001`, også
+  innstillingene og et avsluttet medlemskap.
+
+`src/__tests__/personal/medarbeidere.test.ts` (P2c), med et syntetisk
+fagmiljø R som ikke er testmiljø og har en syntetisk godkjenning i
+testdatabasen:
+
+- 1:1: ingen medarbeidere før funksjonen er på, alle aktive medlemmer når den
+  slås på, et nytt medlem og en invitasjon som tas imot, stillingen fra
+  profilen, avsluttet og nytt medlemskap samme dag og senere, vernet av
+  periodene, funksjonen av og på igjen, andre fagmiljøer og Sandkasse;
+- innstillingene: rollene, kvalifikasjonene fra i dag, formfeil, foreldet
+  revisjon, synligheten, vaktandelen fra i dag og vernet av tidligere dager
+  rett i tabellen, og pariteten med `validateDutySchedule` og `changesPast`;
+- «Vis som»: lavere rolle håndhevet, aldri høyere, syntetisk identitet, aldri
+  i et virkelig fagmiljø (heller ikke med en rad lagt inn forbi funksjonen),
+  og fjernet når testmerkingen tas bort;
+- vaktplanansvarlige: medlemmene den lokale administratoren velger blant.
