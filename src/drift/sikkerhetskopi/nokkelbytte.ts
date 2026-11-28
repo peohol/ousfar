@@ -3,38 +3,41 @@
  * `docs/drift-gjenoppretting.md`, «Nøkkelen til lageret»). Nettsiden til
  * Backblaze kan ikke lage en nøkkel uten `bypassGovernance`,
  * `writeBucketRetentions` og `writeBuckets`, og nøkkeleieren bruker ingen
- * terminal. Derfor lager GitHub-jobben nøkkelen selv:
+ * terminal. Derfor lager GitHub-jobben nøkkelen:
  *
  * 1. Med en midlertidig nøkkel som kan lage nøkler (hovednøkkelen), lagt i
  *    miljøet `backup` av nøkkeleieren, lages en nøkkel som bare gjelder
  *    kopibøtta, med nøyaktig `RETTIGHETER.ny`.
  * 2. Den nye nøkkelen kontrolleres med den samme kontrollen kopijobben gjør
  *    (`kontrollerNokkel`); bestås den ikke, slettes den igjen.
- * 3. Den legges rett i miljøet som `B2_KEY_ID` og `B2_APPLICATION_KEY`,
- *    forseglet til miljøets nøkkel (`forsegling.ts`). Den vises aldri.
- * 4. Den gamle nøkkelen og eldre nøkler fra byttet slettes i Backblaze.
- * 5. Uansett utfall slettes de midlertidige hemmelighetene i miljøet, den
- *    midlertidige nøkkelen i Backblaze (er den ikke hovednøkkelen) og
- *    GitHub-tokenet trekkes tilbake.
+ * 3. Den legges som ett par i én hemmelighet (`NOKKELBYTTE.hemmeligheter.par`),
+ *    forseglet til miljøets nøkkel (`forsegling.ts`), så ID og nøkkel byttes
+ *    samlet. Den vises aldri.
+ * 4. Utfallet er `byttet`, `uendret` (GitHub avviste lagringen; den nye
+ *    nøkkelen slettes) eller `uavklart` (GitHub svarte ikke sikkert; ingen
+ *    nøkkel slettes, og kontrollen viser hvilken som er i bruk).
+ * 5. Bare etter `byttet` slettes den gamle nøkkelen, nøkler fra tidligere
+ *    bytter og de to gamle hemmelighetene.
+ * 6. Til slutt slettes en midlertidig nøkkel som ikke er hovednøkkelen.
+ *
+ * De midlertidige hemmelighetene og tokenet ryddes av ryddesteget i
+ * arbeidsflyten, som kjører også når denne delen feiler eller blir avbrutt. Hovednøkkelen trekkes tilbake av
+ * nøkkeleieren med en ny hovednøkkel etter hver kjøring.
  *
  * Alt jobben skriver, er faste tekster og tall (`logg.ts`).
  */
 import { OffentligStopp } from './feil'
 import { forsegl } from './forsegling'
-import { kontrollerNokkel } from './lager'
+import { kontrollerNokkel, nokkelpar } from './lager'
 import { feiltekst, lagLogg, masker, settTrinn } from './logg'
 import { LAGER, NOKKELBYTTE, RETTIGHETER } from './drift'
 
 export interface Bytteoppsett {
-  /**
-   * Den midlertidige nøkkelen som kan lage nøkler (`writeKeys`, `listKeys`,
-   * `deleteKeys`, `listBuckets`). Den og tokenet kan mangle: da byttes
-   * ingenting, men det som finnes, ryddes likevel.
-   */
+  /** Den midlertidige nøkkelen som kan lage nøkler (`writeKeys`, `listKeys`, `deleteKeys`, `listBuckets`). */
   oppsett: { id?: string; nokkel?: string }
-  /** ID-en til nøkkelen kopijobben har nå, som skal slettes etter byttet. */
+  /** ID-en til nøkkelen kopijobben har nå, som slettes etter et vellykket bytte. */
   gammelId?: string
-  /** Et token som kan skrive og slette hemmelighetene i miljøet; trekkes tilbake etterpå. */
+  /** Et token som kan skrive hemmelighetene i miljøet (ryddesteget trekker det tilbake). */
   github: { token?: string; repo: string }
   b2Adresse?: string
   githubAdresse?: string
@@ -43,14 +46,15 @@ export interface Bytteoppsett {
   vent?: (ms: number) => Promise<void>
 }
 
+/** `byttet`: kopijobben har den nye nøkkelen. `uendret`: den har den gamle. `uavklart`: GitHub svarte ikke sikkert. */
+export type Bytteutfall = 'byttet' | 'uendret' | 'uavklart'
+
 export interface Bytteresultat {
-  /** Hvorfor byttet stoppet (fast tekst), eller `null` når den nye nøkkelen er i bruk. */
+  utfall: Bytteutfall
+  /** Hvorfor byttet stoppet eller ikke ble fullført (fast tekst), eller `null`. */
   stopp: string | null
-  nyId: string
   slettedeNokler: number
-  midlertidigeSlettet: string[]
   oppsettsnokkel: 'slettet' | 'hovednøkkel' | 'ikke slettet'
-  tokenTrukketTilbake: boolean
   funn: string[]
 }
 
@@ -112,10 +116,15 @@ function githubMiljo(g: Bytteoppsett['github'], adresse: string) {
       const k = (await svar.json()) as { key_id: string; key: string }
       return { id: k.key_id, nokkel: new Uint8Array(Buffer.from(k.key, 'base64')) }
     },
-    async skriv(navn: string, verdi: string, mottaker: { id: string; nokkel: Uint8Array }): Promise<void> {
+    /**
+     * `lagret` ved 2xx, `avvist` ved 4xx (GitHub har ikke lagret noe), og
+     * `uavklart` ved 5xx eller når svaret uteble: da kan verdien være lagret.
+     */
+    async skriv(navn: string, verdi: string, mottaker: { id: string; nokkel: Uint8Array }): Promise<'lagret' | 'avvist' | 'uavklart'> {
       const boks = forsegl(new TextEncoder().encode(verdi), mottaker.nokkel)
-      const svar = await kall('PUT', navn, { encrypted_value: Buffer.from(boks).toString('base64'), key_id: mottaker.id })
-      if (!svar.ok) throw new OffentligStopp(`GitHub lagret ikke ${navn} (${svar.status}).`)
+      const svar = await kall('PUT', navn, { encrypted_value: Buffer.from(boks).toString('base64'), key_id: mottaker.id }).catch(() => null)
+      if (svar?.ok) return 'lagret'
+      return svar && svar.status < 500 ? 'avvist' : 'uavklart'
     },
     /** Sletter hemmeligheten; `true` også når den ikke fantes. */
     async slett(navn: string): Promise<boolean> {
@@ -125,24 +134,15 @@ function githubMiljo(g: Bytteoppsett['github'], adresse: string) {
   }
 }
 
-/** Trekker tokenet tilbake hos GitHub (uten innlogging, slik GitHub krever for dette kallet). */
-async function trekkTilbake(token: string, adresse: string): Promise<boolean> {
-  const svar = await fetch(`${adresse}/credentials/revoke`, {
-    method: 'POST',
-    headers: { accept: 'application/vnd.github+json', 'content-type': 'application/json', 'user-agent': 'ousfar-nokkelbytte' },
-    body: JSON.stringify({ credentials: [token] }),
-  }).catch(() => null)
-  return svar?.status === 202
-}
-
-/** Byttet; se fila. Ryddingen gjøres også når byttet stopper, og resultatet sier hva som ble gjort. */
+/** Byttet; se fila. Resultatet sier sikkert hvilken nøkkel kopijobben har, og hva som ble ryddet i Backblaze. */
 export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
   const b2Adresse = valg.b2Adresse ?? 'https://api.backblazeb2.com'
   const githubAdresse = valg.githubAdresse ?? 'https://api.github.com'
   const vent = valg.vent ?? sov
   const naa = valg.naa ?? new Date()
   const github = githubMiljo(valg.github, githubAdresse)
-  const r: Bytteresultat = { stopp: null, nyId: '', slettedeNokler: 0, midlertidigeSlettet: [], oppsettsnokkel: 'ikke slettet', tokenTrukketTilbake: false, funn: [] }
+  const h = NOKKELBYTTE.hemmeligheter
+  const r: Bytteresultat = { utfall: 'uendret', stopp: null, slettedeNokler: 0, oppsettsnokkel: 'ikke slettet', funn: [] }
   let konto: B2Konto | null = null
 
   async function bytt(): Promise<void> {
@@ -153,7 +153,7 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
       [valg.oppsett.nokkel, m.nokkel],
       [valg.github.token, m.github],
     ].flatMap(([verdi, navn]) => (verdi ? [] : [navn!]))
-    if (tomme.length) throw new OffentligStopp(`Mangler ${tomme.join(', ')} i miljøet ${NOKKELBYTTE.miljo}. Ingenting er byttet.`)
+    if (tomme.length) throw new OffentligStopp(`Mangler ${tomme.join(', ')} i miljøet ${NOKKELBYTTE.miljo}.`)
     const k = (konto = await loggInn(valg.oppsett.id!, valg.oppsett.nokkel!, b2Adresse))
     const mangler = ['writeKeys', 'listKeys', 'deleteKeys', 'listBuckets'].filter((x) => !k.rettigheter.includes(x))
     if (mangler.length) throw new OffentligStopp(`Den midlertidige nøkkelen kan ikke lage og slette nøkler (mangler ${mangler.join(', ')}). Bruk hovednøkkelen (Master Application Key).`)
@@ -181,6 +181,11 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
     })
     masker(ny.applicationKey)
     logg(`Ny nøkkel ${navn} laget for ${LAGER.bucket}.`)
+    const slettNy = (hvorfor: string) =>
+      b2(k, 'b2_delete_key', { applicationKeyId: ny.applicationKeyId }).then(
+        () => logg(`Nøkkelen ${navn} er slettet igjen (${hvorfor}).`),
+        () => r.funn.push(`Nøkkelen ${navn} (${hvorfor}) kunne ikke slettes; slett den i Backblaze.`),
+      )
 
     settTrinn('kontrollen av den nye nøkkelen')
     try {
@@ -195,18 +200,30 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
         }
       }
     } catch (e) {
-      await b2(k, 'b2_delete_key', { applicationKeyId: ny.applicationKeyId }).catch(() => r.funn.push(`Nøkkelen ${navn} besto ikke kontrollen og kunne ikke slettes; slett den i Backblaze.`))
+      await slettNy('besto ikke kontrollen')
       throw e
     }
     logg('Den nye nøkkelen besto kontrollen: bare kopibøtta, rettighetene jobben trenger og ingen den aldri skal ha.')
 
-    settTrinn('hemmelighetene i GitHub')
-    await github.skriv(NOKKELBYTTE.hemmeligheter.nokkel, ny.applicationKey, mottaker)
-    await github.skriv(NOKKELBYTTE.hemmeligheter.id, ny.applicationKeyId, mottaker)
-    r.nyId = ny.applicationKeyId
-    logg(`${NOKKELBYTTE.hemmeligheter.id} og ${NOKKELBYTTE.hemmeligheter.nokkel} er byttet i miljøet ${NOKKELBYTTE.miljo}.`)
+    // Én hemmelighet, så ID og nøkkel aldri kan komme ut av takt.
+    settTrinn('hemmeligheten i GitHub')
+    const lagring = await github.skriv(h.par, nokkelpar(ny.applicationKeyId, ny.applicationKey), mottaker)
+    if (lagring === 'avvist') {
+      await slettNy('GitHub avviste lagringen')
+      throw new OffentligStopp(`GitHub avviste lagringen av ${h.par}; kopijobben har fortsatt den gamle nøkkelen.`)
+    }
+    if (lagring === 'uavklart') {
+      // Kan være lagret: verken den nye eller den gamle nøkkelen slettes, så kopijobben har en nøkkel som virker.
+      r.utfall = 'uavklart'
+      throw new OffentligStopp(`GitHub svarte ikke sikkert på lagringen av ${h.par}. Ingen nøkkel er slettet; kjør kontrollen for å se hvilken som er i bruk, og så byttet på nytt.`)
+    }
+    r.utfall = 'byttet'
+    logg(`${h.par} er byttet i miljøet ${NOKKELBYTTE.miljo}.`)
 
     settTrinn('de gamle nøklene')
+    for (const gammel of Object.values(h.gamle)) {
+      if (!(await github.slett(gammel).catch(() => false))) r.funn.push(`Den gamle hemmeligheten ${gammel} kunne ikke slettes i miljøet ${NOKKELBYTTE.miljo}; slett den i GitHub.`)
+    }
     const { keys } = await b2<{ keys: { applicationKeyId: string; keyName: string; bucketId?: string | null; bucketIds?: string[] | null }[] }>(k, 'b2_list_keys', {
       accountId: k.kontoId,
       maxKeyCount: 1000,
@@ -230,53 +247,44 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
     if (valg.gammelId && !gamle.some((n) => n.applicationKeyId === valg.gammelId)) r.funn.push('Den gamle nøkkelen ble ikke funnet som en nøkkel for kopibøtta alene, og ble ikke slettet.')
   }
 
-  /** De midlertidige hemmelighetene er bare til ett bytte: de fjernes uansett utfall. */
-  async function rydd(): Promise<void> {
-    settTrinn('ryddingen')
-    for (const navn of Object.values(NOKKELBYTTE.midlertidige)) {
-      if (valg.github.token && (await github.slett(navn).catch(() => false))) r.midlertidigeSlettet.push(navn)
-      else r.funn.push(`${navn} kunne ikke slettes i miljøet ${NOKKELBYTTE.miljo}${valg.github.token ? '' : ' (uten tokenet)'}; slett den i GitHub.`)
-    }
-    // Stoppet byttet før innloggingen (en hemmelighet manglet), logges det inn nå, bare for å rydde.
-    if (!konto && valg.oppsett.id && valg.oppsett.nokkel) konto = await loggInn(valg.oppsett.id, valg.oppsett.nokkel, b2Adresse).catch(() => null)
-    if (konto && valg.oppsett.id === konto.kontoId) r.oppsettsnokkel = 'hovednøkkel'
-    else if (konto) {
-      const slettet = await b2(konto, 'b2_delete_key', { applicationKeyId: valg.oppsett.id }).then(
-        () => true,
-        () => false,
-      )
-      r.oppsettsnokkel = slettet ? 'slettet' : 'ikke slettet'
-    }
-    if (valg.github.token) r.tokenTrukketTilbake = await trekkTilbake(valg.github.token, githubAdresse)
-  }
-
   try {
     await bytt()
   } catch (e) {
     r.stopp = e instanceof OffentligStopp ? e.message : `Nøkkelbyttet stoppet (${feiltekst(e)}).`
   }
-  await rydd()
+  // En midlertidig nøkkel som ikke er hovednøkkelen, slettes; hovednøkkelen trekkes tilbake av nøkkeleieren.
+  settTrinn('den midlertidige nøkkelen i Backblaze')
+  if (!konto && valg.oppsett.id && valg.oppsett.nokkel) konto = await loggInn(valg.oppsett.id, valg.oppsett.nokkel, b2Adresse).catch(() => null)
+  if (konto && valg.oppsett.id === konto.kontoId) r.oppsettsnokkel = 'hovednøkkel'
+  else if (konto) {
+    const slettet = await b2(konto, 'b2_delete_key', { applicationKeyId: valg.oppsett.id }).then(
+      () => true,
+      () => false,
+    )
+    r.oppsettsnokkel = slettet ? 'slettet' : 'ikke slettet'
+  }
   return r
 }
 
-/** Oppsummeringen til GitHub: hva som ble gjort, og hva som eventuelt står igjen for nøkkeleieren. */
+/** Oppsummeringen til GitHub: hvilken nøkkel kopijobben har, og hva nøkkeleieren må gjøre. */
 export function bytterapport(r: Bytteresultat): string {
+  const utfall = {
+    byttet: `Byttet: kopijobben har en ny nøkkel som bare gjelder ${LAGER.bucket}, med nøyaktig rettighetene den trenger (${RETTIGHETER.ny.join(', ')}).`,
+    uendret: 'Uendret: kopijobben har fortsatt den gamle nøkkelen.',
+    uavklart: 'Uavklart: GitHub svarte ikke sikkert, så det er ukjent om kopijobben har den nye eller den gamle nøkkelen. Begge virker fortsatt.',
+  }[r.utfall]
   const oppsett = {
     slettet: 'Den midlertidige nøkkelen er slettet i Backblaze.',
-    hovednøkkel: 'Den midlertidige nøkkelen var hovednøkkelen, som ikke kan slettes. Lag en ny hovednøkkel i Backblaze, så slutter den som lå i GitHub, å virke.',
-    'ikke slettet': 'Den midlertidige nøkkelen ble ikke slettet i Backblaze; slett den der.',
+    hovednøkkel: 'Den midlertidige nøkkelen var hovednøkkelen, som ikke kan slettes. Lag en ny hovednøkkel i Backblaze nå, så slutter den som lå i GitHub, å virke.',
+    'ikke slettet': 'Den midlertidige nøkkelen ble ikke slettet i Backblaze. Slett den der nå (eller lag en ny hovednøkkel, var det hovednøkkelen).',
   }[r.oppsettsnokkel]
   return [
     '## Nøkkelbyttet for kopilageret',
     '',
-    r.nyId
-      ? `- Kopijobben har en ny nøkkel som bare gjelder ${LAGER.bucket}, med nøyaktig rettighetene den trenger (${RETTIGHETER.ny.join(', ')}).`
-      : '- Kopijobben har ikke fått en ny nøkkel; den gamle er urørt.',
+    `- ${utfall}`,
     ...(r.stopp ? [`- Stoppet: ${r.stopp}`] : []),
     `- ${r.slettedeNokler} gamle nøkler slettet i Backblaze.`,
-    `- Midlertidige hemmeligheter slettet i miljøet ${NOKKELBYTTE.miljo}: ${r.midlertidigeSlettet.join(', ') || 'ingen'}.`,
     `- ${oppsett}`,
-    `- ${r.tokenTrukketTilbake ? 'GitHub-tokenet er trukket tilbake.' : 'GitHub-tokenet ble ikke trukket tilbake; slett det i GitHub (Settings, Developer settings, Personal access tokens).'}`,
     ...r.funn.map((f) => `- ${f}`),
   ].join('\n')
 }

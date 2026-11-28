@@ -255,32 +255,69 @@ nøkkel for én bøtte med «Read and Write» får alltid også `bypassGovernanc
 `writeBucketRetentions` og `writeBuckets` (sett i den første kontrollen
 28.11.2026), og kontrollen stopper på dem. Nøkkeleieren bruker ingen
 terminal, så GitHub lager nøkkelen (`.github/workflows/lagernokkel.yml`,
-`nokkelbytte.ts`):
+`nokkelbytte.ts`). Det krever hovednøkkelen, som #615 ellers holder utenfor
+GitHub; se «Beslutningen om hovednøkkelen» under.
 
 1. Nøkkeleieren legger tre midlertidige hemmeligheter i miljøet `backup`:
-   hovednøkkelen fra Backblaze (*Generate New Master Application Key*) som
-   `B2_OPPSETT_ID` og `B2_OPPSETT_NOKKEL`, og et finkornet GitHub-token som
-   bare gjelder `ousfar`, med *Environments* og *Secrets* skrive, som
-   `KOPI_GITHUB_TOKEN`. Så startes «Nøkkelbytte for kopilageret».
+   - hovednøkkelen fra Backblaze (*Generate New Master Application Key*), som
+     `B2_OPPSETT_ID` og `B2_OPPSETT_NOKKEL`
+   - et finkornet GitHub-token som bare gjelder `ousfar`, med *Environments*
+     og *Secrets* skrive og høyst 7 døgns levetid, som `KOPI_GITHUB_TOKEN`
+
+   Så startes «Nøkkelbytte for kopilageret» for hånd.
 2. Jobben lager en nøkkel som bare gjelder `ousfar-backup`, med nøyaktig
    `RETTIGHETER.ny`, og kontrollerer den med den samme kontrollen kopijobben
-   gjør. Bestås den ikke, slettes den igjen, og ingenting byttes.
-3. Nøkkelen legges forseglet rett i `B2_KEY_ID` og `B2_APPLICATION_KEY`
-   (`forsegling.ts`, libsodiums `crypto_box_seal`, som GitHub krever). Den
-   vises aldri, heller ikke for nøkkeleieren.
-4. Den gamle nøkkelen og nøkler fra tidligere bytter slettes i Backblaze;
-   bare nøkler som gjelder kopibøtta alene, røres.
-5. Uansett utfall slettes de tre midlertidige hemmelighetene, en midlertidig
-   nøkkel som ikke er hovednøkkelen, slettes i Backblaze, og tokenet trekkes
-   tilbake hos GitHub. Hovednøkkelen kan ikke slettes; nøkkeleieren lager en
-   ny hovednøkkel etterpå (uten å ta vare på den), så den som lå i GitHub,
-   slutter å virke.
-6. Gikk byttet bra, startes kontrollen av lageret med den nye nøkkelen.
+   gjør. Består den ikke kontrollen, slettes den igjen.
+3. Nøkkelen legges forseglet som ett par, `keyID:nøkkel`, i én hemmelighet,
+   `B2_LAGERNOKKEL` (`forsegling.ts`, libsodiums `crypto_box_seal`, som
+   GitHub krever). ID og nøkkel kan dermed ikke komme ut av takt. Nøkkelen
+   vises aldri, heller ikke for nøkkeleieren. Utfallet står i oppsummeringen:
 
-Oppsummeringen av byttet sier hva som ble gjort, og hva som eventuelt står
-igjen. Feiler byttet etter at bare den ene hemmeligheten er skrevet, virker
-ikke kopijobben før byttet er kjørt på nytt; den gamle nøkkelen slettes bare
-når begge er skrevet.
+   | Utfall | Når | Hva jobben gjør |
+   | --- | --- | --- |
+   | Byttet | GitHub bekreftet lagringen (2xx) | Sletter den gamle nøkkelen, nøkler fra tidligere bytter (bare nøkler som gjelder kopibøtta alene) og de gamle hemmelighetene `B2_KEY_ID` og `B2_APPLICATION_KEY`, og starter kontrollen av lageret |
+   | Uendret | Kontrollen eller GitHub avviste (4xx) | Sletter den nye nøkkelen igjen; kopijobben har fortsatt den gamle |
+   | Uavklart | GitHub svarte 5xx eller ikke i det hele tatt | Sletter ingen nøkkel, så den som er lagret, virker. Kjør kontrollen for å se hvilken som er i bruk, og så byttet på nytt; det rydder de overflødige |
+
+4. En midlertidig nøkkel som ikke er hovednøkkelen, slettes i Backblaze.
+5. **Ryddesteget** kjører til slutt, også når byttet feiler eller jobben
+   avbrytes. Det trenger verken checkout eller npm, så det kjører også når
+   de stegene feilet. Det sletter de tre midlertidige hemmelighetene og
+   trekker tokenet tilbake hos GitHub. Lykkes ikke det, blir kjøringen rød,
+   og oppsummeringen sier hva som må slettes for hånd.
+
+Ryddingen kan ikke garanteres: GitHub kan stoppe en kjøring uten at
+ryddesteget kjører, og hovednøkkelen kan ikke slettes, bare erstattes.
+Derfor gjelder dette etter hver kjøring, uansett utfall:
+
+- Nøkkeleieren lager en ny hovednøkkel i Backblaze (uten å ta vare på den).
+  Da slutter den som lå i GitHub, å virke. Det er den eneste måten å trekke
+  den tilbake på.
+- Mangler «Ryddingen etter nøkkelbyttet» i oppsummeringen, eller er den
+  rød, slettes `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL` og `KOPI_GITHUB_TOKEN`
+  for hånd i miljøet `backup`, og tokenet under *Settings → Developer
+  settings → Personal access tokens*. Tokenet utløper uansett etter høyst 7
+  døgn.
+
+#### Beslutningen om hovednøkkelen
+
+Issue #615 sier «ingen master-nøkkel». Nøkkelbyttet avviker fra det: i
+minuttene mellom innleggingen og den nye hovednøkkelen ligger
+hovednøkkelen, som gjelder hele Backblaze-kontoen, i GitHub-miljøet
+`backup`. Den er bare tilgjengelig for koden på `main` i dette miljøet, og
+bare dette steget leser den. Begrunnelsen:
+
+- Alternativet uten hovednøkkel er å bruke nøkkelen fra nettsiden. Da må
+  `bypassGovernance`, `writeBucketRetentions` og `writeBuckets` tillates for
+  kopijobben for alltid, og låsen gjøres til Compliance, som ingen kan
+  oppheve, heller ikke nøkkeleieren ved en feil eller et misbruk.
+- Nøkkelbyttet gir kopijobben en nøkkel med nøyaktig det den trenger, og
+  hovednøkkelen trekkes tilbake etterpå.
+
+Avviket krever Peders uttrykkelige ja. Uten det startes nøkkelbyttet ikke.
+Jobben startes bare for hånd og aktiverer ingenting av seg selv.
+
+- Peders beslutning: *venter* (spurt 28.11.2026).
 
 ### Opprydding
 
@@ -324,8 +361,8 @@ går om gangen.
 
 | Hemmelighet i `backup` | Hva |
 | --- | --- |
-| `B2_KEY_ID`, `B2_APPLICATION_KEY` | Nøkkelen for bøtta, med rettighetene over |
-| `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL`, `KOPI_GITHUB_TOKEN` | Bare under nøkkelbyttet (over); jobben sletter dem etterpå |
+| `B2_LAGERNOKKEL` | Nøkkelen for bøtta som `keyID:nøkkel`, med rettighetene over, fra nøkkelbyttet. Før det første byttet: `B2_KEY_ID` og `B2_APPLICATION_KEY`, som byttet sletter |
+| `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL`, `KOPI_GITHUB_TOKEN` | Bare under nøkkelbyttet (over); ryddesteget sletter dem |
 | `KOPI_MOTTAKERE` | Den offentlige `age`-nøkkelen (eller flere, skilt med mellomrom). Jobben stopper om det står en privat nøkkel der |
 | `KOPI_SIGNERINGSNOKKEL` | Den private signeringsnøkkelen (PEM) |
 | `KOPI_SUPABASE_TOKEN` | Et eget token for Management API-et med bare: *Database* skrive (for den midlertidige rollen), *Auth config*, *Edge Function secrets*, *API keys* og *API key secrets*, og *Connection pooling* lese, for produksjonsprosjektet |

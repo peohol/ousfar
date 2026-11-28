@@ -73,6 +73,8 @@ jobs:
 
       - name: Kopien
         env:
+          # Nøkkelen til lageret som ett par fra nøkkelbyttet (lagernokkel.yml); de to gamle bare når paret mangler.
+          B2_LAGERNOKKEL: ${{ secrets.B2_LAGERNOKKEL }}
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           KOPI_SIGNERINGSNOKKEL: ${{ secrets.KOPI_SIGNERINGSNOKKEL }}

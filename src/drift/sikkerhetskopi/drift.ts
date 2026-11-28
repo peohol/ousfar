@@ -72,11 +72,16 @@ export const RETTIGHETER = {
 /**
  * Nøkkelbyttet (`.github/workflows/lagernokkel.yml`): GitHub-miljøet med
  * hemmelighetene, navnet de nye nøklene får i Backblaze, og de midlertidige
- * hemmelighetene byttet bruker og sletter etterpå, uansett utfall.
+ * hemmelighetene byttet bruker og som ryddesteget sletter etterpå.
+ *
+ * Nøkkelen til lageret ligger som ett par, `keyID:nøkkel`, i én hemmelighet
+ * (`par`), så ID og nøkkel alltid byttes samlet. `gamle` er de to
+ * hemmelighetene paret erstatter; de leses fortsatt når paret mangler
+ * (en nøkkel laget for hånd ved en gjenoppretting), og slettes etter et bytte.
  */
 export const NOKKELBYTTE = {
   miljo: 'backup',
   navnPrefiks: 'ousfar-kopijobben-',
-  hemmeligheter: { id: 'B2_KEY_ID', nokkel: 'B2_APPLICATION_KEY' },
+  hemmeligheter: { par: 'B2_LAGERNOKKEL', gamle: { id: 'B2_KEY_ID', nokkel: 'B2_APPLICATION_KEY' } },
   midlertidige: { id: 'B2_OPPSETT_ID', nokkel: 'B2_OPPSETT_NOKKEL', github: 'KOPI_GITHUB_TOKEN' },
 } as const

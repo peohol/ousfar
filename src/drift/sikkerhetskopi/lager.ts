@@ -24,7 +24,7 @@ import { OffentligStopp, Stopp } from './feil'
 import { feiltekst, lagLogg } from './logg'
 import { lesSignatur, sammeMottakere, type Delfil, type Signatur } from './signatur'
 import { S3, type Versjon } from './s3'
-import { KVOTER, LAGER, MAKS_ALDER_TIMER, OPPBEVARING_DOGN, PREFIKS, PROVE_LAS_TIMER, RETTIGHETER, URORT_DOGN } from './drift'
+import { KVOTER, LAGER, MAKS_ALDER_TIMER, NOKKELBYTTE, OPPBEVARING_DOGN, PREFIKS, PROVE_LAS_TIMER, RETTIGHETER, URORT_DOGN } from './drift'
 
 const logg = lagLogg('kopilageret')
 const DOGN = 24 * 3600 * 1000
@@ -320,6 +320,28 @@ export interface Rettigheter {
   s3Adresse: string
   rettigheter: string[]
   ekstra: string[]
+}
+
+/** Paret slik det ligger i `NOKKELBYTTE.hemmeligheter.par`: `keyID:nøkkel` (ingen av dem har kolon). */
+export const nokkelpar = (id: string, nokkel: string) => `${id}:${nokkel}`
+
+/**
+ * Nøkkelen til lageret fra miljøet: paret i `B2_LAGERNOKKEL`, ellers
+ * `B2_KEY_ID` og `B2_APPLICATION_KEY`; `null` når ingen av dem er satt.
+ */
+export function lagernokkelFraMiljo(miljo: Record<string, string | undefined> = process.env): { id: string; nokkel: string } | null {
+  const h = NOKKELBYTTE.hemmeligheter
+  const par = miljo[h.par]
+  if (par) {
+    const i = par.indexOf(':')
+    if (i < 1 || i === par.length - 1) throw new OffentligStopp(`${h.par} skal være «keyID:nøkkel».`)
+    return { id: par.slice(0, i), nokkel: par.slice(i + 1) }
+  }
+  const id = miljo[h.gamle.id]
+  const nokkel = miljo[h.gamle.nokkel]
+  if (id && nokkel) return { id, nokkel }
+  if (id || nokkel) throw new OffentligStopp(`Bare den ene av ${h.gamle.id} og ${h.gamle.nokkel} er satt.`)
+  return null
 }
 
 /**
