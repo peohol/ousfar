@@ -192,7 +192,7 @@ describe('med personalfunksjonen i fagmiljøet', () => {
     await visApp('#/kalender/medarbeidere')
     const faner = await screen.findByRole('navigation', { name: 'Kalender' })
     expect(within(faner).getByRole('link', { name: 'Medarbeidere' }).getAttribute('aria-current')).toBe('page')
-    expect(screen.getByText('Medarbeiderne kommer her.')).toBeTruthy()
+    expect(await screen.findByText('Ingen medarbeidere ennå.')).toBeTruthy()
     expect(window.location.hash).toBe('#/kalender/medarbeidere')
   })
 
@@ -203,7 +203,7 @@ describe('med personalfunksjonen i fagmiljøet', () => {
     expect(await screen.findByText('Kalenderen kommer her.')).toBeTruthy()
     await waitFor(() => expect(window.location.hash).toBe('#/kalender'))
     expect(screen.queryByRole('navigation', { name: 'Kalender' })).toBeNull()
-    expect(screen.queryByText('Medarbeiderne kommer her.')).toBeNull()
+    expect(screen.queryByText('Ingen medarbeidere ennå.')).toBeNull()
   })
 
   it.each(['P0002', '42501'])('er en ukjent adresse, også i menyen, når databasen svarer %s for kalenderen', async (kode) => {

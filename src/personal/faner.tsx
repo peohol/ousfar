@@ -14,6 +14,7 @@ import type { Role } from '@delt/personal/types'
 import type { Fagmiljoreferanse } from '../auth/rettigheter'
 import type { Kalenderfane } from '../domain/rute'
 import type { Personalgrunnlag } from './grunnlag'
+import { Medarbeidere } from './medarbeidere/Medarbeidere'
 
 /** Det hver fane får: fagmiljøet og grunnlaget for kalenderen der. */
 export interface Faneinnhold {
@@ -36,14 +37,9 @@ function Kalenderen() {
   return <p className="gruppeside__ingress">Kalenderen kommer her.</p>
 }
 
-/** Medarbeiderinnstillingene kommer i P2c (K-MED-1–5). */
-function Medarbeiderne() {
-  return <p className="gruppeside__ingress">Medarbeiderne kommer her.</p>
-}
-
 export const KALENDERFANEDEFINISJONER: readonly Kalenderfanedefinisjon[] = [
   { id: undefined, navn: 'Kalender', vis: (rolle) => can(rolle, 'view'), Innhold: Kalenderen },
-  { id: 'medarbeidere', navn: 'Medarbeidere', vis: (rolle) => can(rolle, 'editPeople'), Innhold: Medarbeiderne },
+  { id: 'medarbeidere', navn: 'Medarbeidere', vis: (rolle) => can(rolle, 'editPeople'), Innhold: Medarbeidere },
 ]
 
 /** Fanene rollen ser. Selve kalenderen ser alle som ser siden. */

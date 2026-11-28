@@ -13,7 +13,7 @@ dokumentet der de overlapper. Prosjektinstruksene står i
 [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md) med avsnitt 3.5 om
 ikke-kliniske personalfunksjoner.
 
-**Status 28.11.2026:** domenekoden (P2a) og databasen (P2b, [personal-database.md](personal-database.md)) er på plass, og P2c bygges. Kalender står under Personal i hovedmenyen (#606), men bare for den som har funksjonen i fagmiljøet hen arbeider i; funksjonen er bare på `utprøving` i Sandkasse, så andre ser ingenting. Prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
+**Status 28.11.2026:** domenekoden (P2a) og databasen (P2b, [personal-database.md](personal-database.md)) er på plass, og P2c (medarbeiderne, innstillingene og «Vis som») er bygd. Kalender står under Personal i hovedmenyen (#606), men bare for den som har funksjonen i fagmiljøet hen arbeider i; funksjonen er bare på `utprøving` i Sandkasse, så andre ser ingenting. Prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
 Integrasjonsplanen, akseptkriteriene og rekkefølgen står i §8, og
 sjekklisten over prototypens funksjonalitet i
@@ -578,8 +578,8 @@ opprinnelige planen om et utvidelsespunkt i brukeroversikten utgår
 ([#572](https://github.com/peohol/ousfar/issues/572), avgrenset på nytt).
 Databasedelen er bygd i P2c ([#620](https://github.com/peohol/ousfar/issues/620));
 hvordan står i [personal-database.md](personal-database.md) («1:1 med
-medlemmene», «Innstillingene» og «Vis som»). Brukerflaten kommer i en egen
-PR i P2c.
+medlemmene», «Innstillingene» og «Vis som»), og brukerflaten i fanen
+Medarbeidere og «Vis som» i kalenderhodet (§8.8).
 
 **Én app, ikke en tilleggsfunksjon** (vedtatt av Peder 26.11.2026). Det er
 et **1:1-forhold** mellom medlemmene av fagmiljøet og medarbeiderne i
@@ -1022,8 +1022,31 @@ bindende detaljspesifikasjon.
   `#/kalender/medarbeidere`) og rollene som ser den, etter rollen
   `public.personal_grunnlag` gir: Kalender for alle, Medarbeidere for
   vaktplanansvarlige og lokale administratorer. En fane rollen ikke har,
-  blir kalenderen. Visningene (P3) og medarbeiderinnstillingene (P2c)
-  fylles inn i fanene.
+  blir kalenderen. Visningene (P3) fylles inn i kalenderfanen.
+- **Medarbeidere** (P2c, `src/personal/medarbeidere/`, etter prototypens
+  `design/app/Medarbeidere.tsx`): én tabell over dem som er med i
+  kalenderen fremover, med navnet og stillingen fra profilen («Mangler
+  stilling» uten, B14), vaktene de kan ta og vaktandelen i dag, med
+  forbokstavene ved navnet (profilbilder venter på §8.13). Nye står øverst,
+  merket «Ny», til vaktene er valgt i perioden; «Lagre» kvitterer også uten
+  vakter. Et utkast til vakter som noen andre har endret imens, eller laget
+  før en ny periode, forkastes for godt med en melding, så det aldri lagres
+  over endringen, heller ikke om vaktene blir som før. «Endre» åpner medarbeideren:
+  vaktene lagres med «Lagre», vaktandelen (ordinær fra en dato og
+  midlertidige perioder) med hver endring, regnet med domenefunksjonene
+  først, så en dag før i dag avvises før noe sendes. Tidligere, gjeldende og
+  fremtidige vaktandeler vises (§6.2); bare det som ikke har begynt, kan
+  fjernes. Fanen og knappene vises bare for dem som kan endre medarbeiderne,
+  og en kollega ser ikke vaktene. Hver lagring sender
+  revisjonen som ble vist; har noen andre endret medarbeideren imens,
+  vises serverens melding, og grunnlaget hentes på nytt. Under tabellen
+  velger den lokale administratoren de vaktplanansvarlige blant medlemmene.
+- **Vis som** (K-SKJ-7) står i hodet på kalenderen, bare når databasen gir
+  en simulering, altså bare i et testmiljø: en lavere rolle og/eller én
+  syntetisk medarbeider, og «Avslutt». Valget lagres og håndheves på
+  serveren, så fanene og alt annet følger rollen databasen gir. Til
+  kalenderen er hentet med den nye rollen, er valgene låst og fanene fra den
+  forrige skjult; feiler hentingen, kan den prøves igjen.
 - **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dato med
   symmetriske datopiler, kompakte fremhevede oppgaver (inkl. Referent),
   Til stede gruppert etter stilling, Jobber et annet sted og Fraværende
