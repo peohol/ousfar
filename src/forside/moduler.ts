@@ -190,10 +190,17 @@ export function erStandard(oppsett: Forsideoppsett, tilgang: Tilgang = ALLE): bo
   return mine.length === standard.length && mine.every((v, i) => v.modul === standard[i]!.modul && v.synlig === standard[i]!.synlig)
 }
 
-/** Standarden for panelene brukeren har; valget for dem hen ikke har, står. */
+/**
+ * Standarden for panelene brukeren har, i plassene de har i oppsettet. Panelene
+ * hen ikke har, står der de sto, med valget hen hadde, så rekkefølgen er den
+ * samme når de kommer tilbake.
+ */
 export function gjenopprettStandard(oppsett: Forsideoppsett, tilgang: Tilgang = ALLE): Forsideoppsett {
-  const nytt = STANDARDOPPSETT.map((v) => (tilgang(v.modul) ? v : (oppsett.find((o) => o.modul === v.modul) ?? v)))
-  return nytt.every((v, i) => v === STANDARDOPPSETT[i]) ? STANDARDOPPSETT : nytt
+  const standard = tilgjengeligeValg(STANDARDOPPSETT, tilgang)
+  let neste = 0
+  const nytt = oppsett.map((v) => (tilgang(v.modul) && neste < standard.length ? standard[neste++]! : v))
+  nytt.push(...standard.slice(neste))
+  return nytt.length === STANDARDOPPSETT.length && nytt.every((v, i) => v === STANDARDOPPSETT[i]) ? STANDARDOPPSETT : nytt
 }
 
 /** Om panelet vises: brukeren har det, og har valgt det, eller det kan ikke skjules. */

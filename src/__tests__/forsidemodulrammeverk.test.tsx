@@ -234,6 +234,16 @@ describe('oppsettet med paneler som hører til en funksjon', () => {
     expect(gjenopprettet.find((v) => v.modul === PANEL)?.synlig).toBe(false)
     expect(gjenopprettStandard(endret, tilgangMed('syntetisk'))).toBe(STANDARDOPPSETT)
   })
+
+  it('lar panelene brukeren ikke har, stå på plassen sin når standarden gjenopprettes', () => {
+    // Panelet er flyttet øverst og skjult, og brukeren har ikke funksjonen nå.
+    const oppsett = [1, 2, 3, 4, 5, 6, 7, 8, 9].reduce((o) => flytt(o, PANEL, -1), settSynlig(settSynlig(STANDARDOPPSETT, PANEL, false), 'grupper', false))
+    expect(oppsett[0]!.modul).toBe(PANEL)
+    const gjenopprettet = gjenopprettStandard(oppsett, uten)
+    expect(gjenopprettet[0]).toEqual({ modul: PANEL, synlig: false })
+    expect(tilgjengeligeValg(gjenopprettet, uten)).toEqual(tilgjengeligeValg(STANDARDOPPSETT, uten))
+    expect(gjenopprettet).toHaveLength(STANDARDOPPSETT.length)
+  })
 })
 
 describe('forsiden med paneler som hører til en funksjon', () => {
