@@ -145,6 +145,11 @@
 }
 
 /* Panelene: én kolonne på nettbrett og mobil. Høyden følger innholdet. */
+/* Feltet øverst, under fortolkningen: ett panel fra fagmiljøet i hele bredden. */
+.forside__topp {
+  min-width: 0;
+}
+
 .forside__paneler {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -201,6 +206,11 @@
 .tilpass__rad--fast {
   grid-template-columns: minmax(0, 1fr) auto;
   color: var(--blekk-dempet);
+}
+
+/* Et panel i feltet øverst: bryter, På/Av og «Øverst» i stedet for opp/ned. */
+.tilpass__rad--topp {
+  grid-template-columns: minmax(0, 1fr) auto auto;
 }
 
 .tilpass__status {

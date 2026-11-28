@@ -7,13 +7,15 @@ import { Ikon } from '../ikon/Ikon'
 import { Fagmiljooverskrift } from './Fagmiljooverskrift'
 import { Forsidepanel } from './Forsidepanel'
 import { Tilpassforsiden } from './Tilpassforsiden'
-import { useForsideoppsett } from './useForsideoppsett'
+import { useForsideoppsett, useModultilgang } from './useForsideoppsett'
 
 /**
  * Den personlige forsiden (`#/`), der appen åpner (docs/forside.md,
  * `docs/design/d0-dashboard-chat/`, skisse 01–05 og 24): fagmiljøets navn, veien
- * inn til fortolkningen som den ene hovedhandlingen, og panelene brukeren har
- * valgt, hvert med inntil tre hendelser.
+ * inn til fortolkningen som den ene hovedhandlingen, feltet øverst for et
+ * panel som hører til fagmiljøet, og panelene brukeren har valgt, hvert med
+ * inntil tre hendelser. Paneler brukeren ikke har (`useModultilgang`), finnes
+ * ikke her.
  *
  * Fokus står på «Åpne fortolkning» når siden åpnes, så `Enter` tar brukeren
  * rett inn i fortolkningen, like raskt som da den var startsiden. Knappen
@@ -32,7 +34,9 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
     knapp.current?.focus({ preventScroll: true })
   }, [])
 
-  const moduler = synligeModuler(oppsett)
+  const tilgang = useModultilgang()
+  const topp = synligeModuler(oppsett, tilgang, 'topp')
+  const paneler = synligeModuler(oppsett, tilgang, 'paneler')
   const murverk = useMurverk()
 
   return (
@@ -57,14 +61,17 @@ export function Forside({ onApneFortolkning }: { onApneFortolkning: () => void }
           Åpne fortolkning
         </Button>
       </section>
-      {moduler.length > 0 && (
+      {topp.map((modul) => (
+        <Forsidepanel key={modul} modul={modul} />
+      ))}
+      {paneler.length > 0 && (
         <div ref={murverk} className="forside__paneler">
-          {moduler.map((modul) => (
+          {paneler.map((modul) => (
             <Forsidepanel key={modul} modul={modul} />
           ))}
         </div>
       )}
-      <Tilpassforsiden apen={tilpass} onLukk={lukkTilpass} oppsett={oppsett} onEndre={endreOppsett} />
+      <Tilpassforsiden apen={tilpass} onLukk={lukkTilpass} oppsett={oppsett} tilgang={tilgang} onEndre={endreOppsett} />
     </div>
   )
 }

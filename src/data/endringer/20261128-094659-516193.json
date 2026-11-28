@@ -1,0 +1,14 @@
+{
+  "id": "20261128-094659-516193",
+  "semver": "patch",
+  "opprettet": "2026-11-28T09:46:59Z",
+  "sammendrag": "Forsiden er klargjort for flere slags paneler",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "utenVarsel": true,
+  "punkter": [
+    "Forsiden kan nå få paneler som bare vises for dem som har bruk for dem, og et felt øverst under fortolkningen. Ingen merker noen endring ennå."
+  ]
+}

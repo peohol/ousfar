@@ -59,6 +59,7 @@ import { erEtgAnalytt, etgTilfeller, type EtgAlternativ, type Etgtilfeller } fro
 import type { Rute } from './domain/flytting'
 import { erRedigering, FORSIDE, fortolkningsnokkel, fortolkningsrute, lesRute, redigeringsrute, sidesti } from './domain/rute'
 import { Forside } from './components/forside/Forside'
+import { useGlemPanelerUtenTilgang } from './components/forside/useForsideoppsett'
 import { Ukjentside } from './components/forside/Ukjentside'
 import { rusModulFor } from './domain/rus'
 import { erThcAnalytt } from './domain/thc'
@@ -528,6 +529,8 @@ function Arbeidsflate({
     [personalAvvist, rettigheter],
   )
   const personal = personalfagmiljo(synligeRettigheter)
+  // Det som er hentet til et forsidepanel brukeren mister, glemmes (#599).
+  useGlemPanelerUtenTilgang(synligeRettigheter)
   const oppdaterRettigheter = useOppdaterRettigheter()
   const rettighetskontekst = useArbeidskontekst()
   const avvisPersonal = useCallback(() => {

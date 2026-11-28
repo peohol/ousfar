@@ -1,6 +1,6 @@
 # Den personlige forsiden
 
-Forsiden (`#/`) er der appen åpner. Den har tre deler, ovenfra og ned:
+Forsiden (`#/`) er der appen åpner. Den har fire deler, ovenfra og ned:
 
 1. **Fagmiljøet** brukeren arbeider i, som overskrift, med «Tilpass forsiden»
    til høyre. Den runde pila ved navnet har de samme valgene som «Fagmiljø» i
@@ -10,7 +10,11 @@ Forsiden (`#/`) er der appen åpner. Den har tre deler, ovenfra og ned:
 2. **Fortolkningen**, som den ene hovedhandlingen. «Åpne fortolkning» har fokus
    når siden åpnes, så `Enter` tar brukeren rett inn, og virker før panelene er
    hentet. Den kan ikke skjules eller flyttes.
-3. **Panelene** brukeren har valgt, i to uavhengige kolonner (én på smal
+3. **Feltet øverst**, under fortolkningen og over panelene, i hele bredden,
+   for et panel som hører til fagmiljøet (som Personals «Dagen i dag»). Det
+   står bare der når brukeren har et slikt panel og ikke har skjult det
+   (se «Paneler fra et eierprosjekt»).
+4. **Panelene** brukeren har valgt, i to uavhengige kolonner (én på smal
    skjerm, under 56em): brukerens rekkefølge fordeles annethvert, første
    øverst til venstre og andre øverst til høyre, og hvert panel står rett
    under det forrige i sin kolonne, så et høyt panel ikke gir luft i
@@ -48,6 +52,69 @@ føring i endringsloggen har ingen egen adresse; raden åpner endringsloggen med
 føringen og merker den lest i bjella (`merkEndringerLestIBjella`), som
 varselvinduet gjør. «Alle varsler» åpner varselvinduet (`apneVarsler`). Kritiske
 meldinger står i bjella uansett om «Viktig nytt» er skrudd av.
+
+## Paneler fra et eierprosjekt
+
+Et annet prosjekt (som OUSFAR Personal) kan registrere et panel på forsiden
+uten å endre rammeverket: én oppføring i `REGISTRERTE_MODULER`
+(`src/forside/registrerte.ts`) med tittel, ikon, standard, eventuelt funksjon
+og plass, og innholdet. Eierprosjektet eier innholdet, dataene og reglene for
+hvem som ser hva; rammeverket eier resten (#599, `docs/prosjektansvar.md` §2).
+
+| Felt | Betyr |
+| --- | --- |
+| `tittel`, `ikon` | Navnet i «Tilpass forsiden» og på panelet. I feltet øverst er tittelen navnet på området, ikke en synlig overskrift |
+| `standard` | Vist når brukeren ikke har valgt noe |
+| `funksjon` | Funksjonen i katalogen over funksjoner (funksjonsbryterne, `docs/fagmiljoer.md`). Panelet finnes da bare for den som har funksjonen i fagmiljøet hen arbeider i |
+| `plass` | `topp` for feltet øverst; ellers blant panelene |
+| `fast` | Kan ikke skjules: står alltid der når brukeren har panelet |
+| `innhold` | Komponenten, registrert med `senere(() => import(…), 'Navn')`, så koden hentes først når panelet vises |
+
+**Bare for den som har det.** Hvem som har et panel, følger rettighetene
+(`useModultilgang`, `tilgangFor` i `src/forside/moduler.ts`): et panel uten
+funksjon har alle, et med funksjon bare den som har funksjonen der hen
+arbeider (`public.mine_funksjoner()`), og et registrert panel krever et
+fagmiljø å arbeide i. For alle andre finnes panelet ikke: verken på forsiden,
+i «Tilpass forsiden» (heller ikke i «Gjenopprett standard») eller i koden som
+hentes. Det er et grensesnitt, ikke en kontroll; det eierprosjektet henter,
+kontrollerer tilgangen på nytt på serveren.
+
+**Valget står.** Oppsettet har med panelene brukeren ikke har nå, med valget
+hen hadde, så det tåler at funksjonen forsvinner og kommer tilbake:
+opp/ned flytter bare blant panelene brukeren har, og «Gjenopprett standard»
+gjelder bare dem. Et panel med funksjon som mangler i det lagrede, får
+standardvalget sitt, for det er nytt fordi funksjonen er det; et vanlig nytt
+panel legges skjult nederst som før.
+
+**Feltet øverst.** Står rett under fortolkningen, over panelene. I «Tilpass
+forsiden» står det under «Fortolkning», merket «Øverst», med bryter men uten
+opp/ned. Forslaget for kalenderen er standard på og mulig å skjule
+(#599); skal det ikke kunne skjules, settes `fast`.
+
+**Innholdet** får `fagmiljo` (fagmiljøet brukeren arbeider i), `tittel` og
+`ikon` (`Modulinnholdprops`). Rammeverket gir hvert registrert panel det
+samme som forsidens egne:
+
+- Mens koden hentes, står panelet som et panel som henter. Feiler koden eller
+  innholdet, feiler bare panelet, med «Prøv igjen» (`Panelstatus`).
+- Innholdet settes opp på nytt for hvert fagmiljø, så det aldri viser det
+  forrige fagmiljøets. Ellers holder det sin egen tilstand (som en valgt
+  dato), også når forsiden tegnes på nytt.
+- `usePanelhenting(modul, hent, utsnitt?)` henter med de samme reglene som
+  forsidens egne paneler: ingenting før fagmiljøet er kjent, det hentede
+  holdes per bruker, fagmiljø og panel (og `utsnitt`, som en dato), en
+  henting som er ute deles, panelene hentes alt under et fagmiljøbytte
+  (`forhentPaneler`, bare for panelene de nye rettighetene gir), og «Prøv
+  igjen» henter bare panelet.
+- Feiler en ny henting, også når serveren avviser tilgangen, vises feilen og
+  ikke det som var hentet før, og det glemmes. Mister brukeren et panel,
+  glemmes det som er hentet til det (`useGlemPanelerUtenTilgang` i `App`),
+  så det aldri vises når panelet kommer tilbake.
+- Blant panelene tegner innholdet hele kortet, gjerne med
+  `Oppsummeringskort`; i feltet øverst tegner det alt inne i området.
+
+Er eierprosjektets kode skjermet, som personalkoden (K-SKJ-8 i
+`docs/personal.md`), må importgrensetesten deres godta denne ene lastingen.
 
 ## Databasen: `forsideoppsummering(modul)`
 
@@ -96,9 +163,14 @@ det nye hentes.
 
 ## Filene
 
-- `src/forside/` — panelene, oppsettet og kallene (rene funksjoner og API)
-- `src/components/forside/` — forsiden, panelene, overskriften og «Tilpass forsiden»
+- `src/forside/` — panelene, oppsettet og kallene (rene funksjoner og API);
+  `registrerte.ts` har panelene fra eierprosjektene
+- `src/components/forside/` — forsiden, panelene, overskriften og «Tilpass
+  forsiden»; `Registrertmodul.tsx` og `usePanelhenting.ts` er rammeverket for
+  panelene fra eierprosjektene
 - `src/styles/forside.css`
 - `supabase/migrations/20261118211000_forsideoppsummering.sql`
 - Tester: `forside.test.ts` (databasen), `forsidemoduler.test.ts` (oppsettet),
-  `forsidevisning.test.tsx` (visningen)
+  `forsidevisning.test.tsx` (visningen), `forsidemodulrammeverk.test.tsx`
+  (paneler med funksjon, feltet øverst og lasting ved behov, med oppdiktede
+  paneler)

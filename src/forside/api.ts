@@ -4,11 +4,11 @@
  */
 import { hentInnstilling, lagreSisteValg } from '../auth/innstillinger'
 import { klient } from '../auth/klient'
-import { lesOppsett, OPPSETTNOKKEL, type Forsidemodul, type Forsideoppsett } from './moduler'
+import { lesOppsett, OPPSETTNOKKEL, type Forsideoppsett, type Innebygdmodul } from './moduler'
 import { lesOppsummering, type Oppsummering } from './oppsummering'
 
-/** Modulene databasen oppsummerer; favorittene har appen selv. */
-export type Databasemodul = Exclude<Forsidemodul, 'favoritter'>
+/** Forsidens egne paneler som databasen oppsummerer; favorittene har appen selv. */
+export type Databasemodul = Exclude<Innebygdmodul, 'favoritter'>
 
 export async function hentOppsummering(modul: Databasemodul): Promise<Oppsummering> {
   const { data, error } = await klient().rpc('forsideoppsummering', { modul })
