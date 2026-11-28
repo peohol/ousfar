@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter, useOppdaterRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useArbeidskontekst, useMineRettigheter, useOppdaterRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { redigerbareRegelsett } from './redaktorer/ansvar'
 import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
@@ -146,7 +146,7 @@ import type { Analyte } from './types'
 import { lagVerktoysperrelager } from './verktoy/sperrer'
 import { lagRegelvarsellager } from './verktoy/overvaking/regelvarsler'
 import { VerktoytilgangProvider, verktoyeneVisesFor } from './verktoy/synlighet'
-import { personalfagmiljo, synligRute } from './personaltilgang'
+import { personalfagmiljo, synligRute, utenPersonal } from './personaltilgang'
 
 // Åpnes appen på en slik side (en direkte lenke, eller siden som sto før en
 // oppdatering), hentes koden til den sammen med appen, ikke etter den.
@@ -519,11 +519,17 @@ function Arbeidsflate({
   const flate = arbeidsflate(adresserute)
   // Personalfunksjonene finnes bare for dem som har dem i fagmiljøet de
   // arbeider i; for alle andre er adressen en ukjent adresse (K-SKJ-2). Har
-  // databasen avvist kalenderen (`avvisPersonal`), er den det også her, til
-  // fagmiljøet byttes eller appen åpnes på nytt.
+  // databasen avvist kalenderen (`avvisPersonal`), regner arbeidsflaten med
+  // rettighetene uten personalfunksjonen, også i menyen, til fagmiljøet
+  // byttes eller appen åpnes på nytt.
   const [personalAvvist, setPersonalAvvist] = useState(false)
-  const personal = personalAvvist ? null : personalfagmiljo(rettigheter)
+  const synligeRettigheter = useMemo(
+    () => (personalAvvist ? utenPersonal(rettigheter) : rettigheter),
+    [personalAvvist, rettigheter],
+  )
+  const personal = personalfagmiljo(synligeRettigheter)
   const oppdaterRettigheter = useOppdaterRettigheter()
+  const rettighetskontekst = useArbeidskontekst()
   const avvisPersonal = useCallback(() => {
     setPersonalAvvist(true)
     oppdaterRettigheter()
@@ -1283,5 +1289,9 @@ function Arbeidsflate({
       </Direktelenkekilde>
     </ToppmenyKilde>
   )
-  return <ForslagskildeProvider>{app}</ForslagskildeProvider>
+  return (
+    <RettigheterKilde verdi={synligeRettigheter} oppdater={oppdaterRettigheter} arbeidskontekst={rettighetskontekst}>
+      <ForslagskildeProvider>{app}</ForslagskildeProvider>
+    </RettigheterKilde>
+  )
 }

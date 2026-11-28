@@ -33,6 +33,17 @@ export function personalfagmiljo(r: Rettigheter): Fagmiljoreferanse | null {
 }
 
 /**
+ * Rettighetene uten personalfunksjonen, når databasen har svart at
+ * kalenderen ikke finnes for den innloggede, før de nye rettighetene er
+ * hentet (K-SKJ-2). Uten funksjonen er de de samme.
+ */
+export function utenPersonal(r: Rettigheter): Rettigheter {
+  return r.funksjoner.some((f) => f.funksjon === PERSONALFUNKSJON)
+    ? { ...r, funksjoner: r.funksjoner.filter((f) => f.funksjon !== PERSONALFUNKSJON) }
+    : r
+}
+
+/**
  * Ruten slik appen viser den: en personalside er en ukjent adresse for den
  * som ikke har funksjonen, med adressen slik den sto (K-SKJ-2). Alt som
  * følger ruten — siden, tittelen, menyen, diskusjonene og meldingen om en ny

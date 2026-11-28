@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
 import { INGEN_RETTIGHETER, type Fagmiljoreferanse, type Rettigheter } from '../../auth/rettigheter'
 import { adresse, KALENDERFANER, lesRute, sidesti, type Rute } from '../../domain/rute'
 import { KALENDERFANEDEFINISJONER, fanerFor } from '../../personal/faner'
-import { personalfagmiljo, personalvalg, synligRute } from '../../personaltilgang'
+import { personalfagmiljo, personalvalg, synligRute, utenPersonal } from '../../personaltilgang'
 
 const fagmiljo = (id: string, navn: string): Fagmiljoreferanse => ({ id, nokkel: id, navn, standard: false, apent: true, ikon: 'laboratorium' })
 const SANDKASSE = fagmiljo('sandkasse', 'Sandkasse')
@@ -56,6 +56,16 @@ describe('hvem som ser personalfunksjonene', () => {
     expect(personalfagmiljo(rettigheter(SANDKASSE, []))).toBeNull()
     expect(personalfagmiljo(rettigheter(SANDKASSE, ['sandkasse'], 'noe-annet'))).toBeNull()
     expect(personalfagmiljo(INGEN_RETTIGHETER)).toBeNull()
+  })
+
+  it('tar bort bare personalfunksjonen når databasen har avvist kalenderen', () => {
+    const r = { ...rettigheter(SANDKASSE, ['sandkasse', 'annet']), funksjoner: [{ funksjon: 'personal', fagmiljo: 'sandkasse' }, { funksjon: 'noe-annet', fagmiljo: 'sandkasse' }] }
+    const uten = utenPersonal(r)
+    expect(uten.funksjoner).toEqual([{ funksjon: 'noe-annet', fagmiljo: 'sandkasse' }])
+    expect(personalfagmiljo(uten)).toBeNull()
+    expect({ ...uten, funksjoner: r.funksjoner }).toEqual(r)
+    // Uten funksjonen er rettighetene de samme.
+    expect(utenPersonal(INGEN_RETTIGHETER)).toBe(INGEN_RETTIGHETER)
   })
 
   it('gjør kalenderen til en ukjent adresse, med adressen slik den sto, for den uten tilgang', () => {
