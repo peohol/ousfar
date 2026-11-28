@@ -9,18 +9,10 @@
  * noen som har det, og aldri på forhånd. Et panel med `funksjon` finnes bare
  * for dem som har funksjonen i fagmiljøet de arbeider i.
  *
- * Eksempel:
- *
- * ```ts
- * dagen: {
- *   tittel: 'Dagen i dag',
- *   ikon: 'kalender',
- *   standard: true,
- *   funksjon: 'personal',
- *   plass: 'topp',
- *   innhold: senere(() => import('../personal/forside/Dagen'), 'Dagen'),
- * },
- * ```
+ * En oppføring har `tittel`, `ikon`, `standard`, eventuelt `funksjon`,
+ * `plass: 'topp'` eller `fast`, og `innhold` (se `Moduldefinisjon`), for
+ * eksempel «Dagen i dag» med funksjonen `personal` i feltet øverst. Feltene
+ * står i docs/forside.md, «Paneler fra et eierprosjekt».
  */
 import type { Moduldefinisjon } from './moduler'
 
