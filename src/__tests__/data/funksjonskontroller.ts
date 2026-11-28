@@ -249,6 +249,10 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   'personal_grunnlag(fagmiljo uuid)': 'personal',
   'personal_lagre_oppsett(fagmiljo uuid, oppsett jsonb, forventet_versjon integer)': 'personal',
   'personal_sett_vaktplanansvarlig(fagmiljo uuid, bruker uuid, ansvarlig boolean)': 'personal',
+  'personal_kalender(fagmiljo uuid, fra date, til date)': 'personal',
+  'personal_historikk(fagmiljo uuid, fra date, til date)': 'personal',
+  'personal_endre_kalender(fagmiljo uuid, endringer jsonb)': 'personal',
+  'personal_sett_fritak(fagmiljo uuid, medarbeider uuid, dato date, fritak boolean, forventet_revisjon bigint, forventet_fritak_revisjon bigint)': 'personal',
   'mine_grupper()': 'gruppemyndighet',
   'mine_lesbare_fagmiljoer()': 'eier',
   // P2c: den innloggedes egen, hele profil (docs/fagmiljoer.md, «Profiler og profilbilder»).
