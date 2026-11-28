@@ -108,6 +108,16 @@ export { CHATADRESSE, chatadresse, SAMTALETYPER, type Samtalenokkel, type Samtal
  *   #/forslag/til-behandling
  *   #/forslag/<forslags-ID>
  *
+ * Personalkalenderen (OUSFAR Personal, docs/personal.md §8.8) har sin side,
+ * med fanene etter {@link KALENDERFANER}:
+ *
+ *   #/kalender
+ *   #/kalender/medarbeidere
+ *
+ * Bare den som har personalfunksjonen i fagmiljøet hen arbeider i, ser den.
+ * For alle andre er adressen nøyaktig som en ukjent adresse
+ * (`src/personaltilgang.ts`, K-SKJ-2).
+ *
  * En adresse appen ikke kjenner, er siden «Siden finnes ikke», med adressen
  * slik den sto. Den tolkes aldri som fortolkningen eller forsiden, så en feil
  * i en lenke ikke sender brukeren et sted hen ikke ba om.
@@ -181,6 +191,19 @@ export type Rute =
       /** Fanen på oversikten: «Til behandling». Utelatt for «Mine forslag». */
       fane?: Forslagsfane
     }
+
+  | {
+      side: 'kalender'
+      /** Fanen i personalkalenderen. Utelatt for selve kalenderen. */
+      fane?: Kalenderfane
+    }
+
+/**
+ * Fanene i personalkalenderen utenom selve kalenderen, slik de står i
+ * adressen. Hvem som ser hver av dem, står ved fanene (`src/personal/faner.tsx`).
+ */
+export const KALENDERFANER = ['medarbeidere'] as const
+export type Kalenderfane = (typeof KALENDERFANER)[number]
 
 /** Fanene på forslagsoversikten utenom «Mine forslag». */
 export type Forslagsfane = 'behandling'
@@ -270,6 +293,13 @@ const TIL_BEHANDLING = 'til-behandling'
 
 const FORSLAG = new RegExp(`^#\\/forslag(?:\\/(${ID}|${TIL_BEHANDLING}))?\\/?$`, 'i')
 
+const KALENDER = new RegExp(`^#\\/kalender(?:\\/(${KALENDERFANER.join('|')}))?\\/?$`, 'i')
+
+/** Adressen til personalkalenderen, eller til en fane i den. */
+export function kalenderadresse(fane?: Kalenderfane): string {
+  return fane ? `#/kalender/${fane}` : '#/kalender'
+}
+
 /** Adressen til helsiden for stoffregisteret. */
 export const STOFFREGISTERADRESSE = '#/stoffregister'
 
@@ -321,6 +351,8 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER, k
     if (!ledd) return { side: 'forslag' }
     return ledd === TIL_BEHANDLING ? { side: 'forslag', fane: 'behandling' } : { side: 'forslag', forslag: ledd }
   }
+  const kalender = KALENDER.exec(hash)
+  if (kalender) return kalender[1] ? { side: 'kalender', fane: kalender[1].toLowerCase() as Kalenderfane } : { side: 'kalender' }
   const fortolkning = FORTOLKNINGSSIDE.exec(hash)
   if (fortolkning?.[1]) {
     const analytt = fortolkning[1].toLowerCase()
@@ -420,6 +452,8 @@ export function adresse(rute: Rute): string {
       return forslagsadresse(rute.forslag, rute.fane)
     case 'chat':
       return chatadresse(rute.samtale)
+    case 'kalender':
+      return kalenderadresse(rute.fane)
     default:
       if (!rute.analytt) return FORTOLKNINGSADRESSE
       if (!rute.rediger) return `#/fortolkning/${rute.analytt}`
@@ -469,7 +503,7 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
  * Siden ruten står på, uten stedet på den og uten søket: `forside`, `ukjent`, `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
  * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3`, `kuratering/<gren-ID>`,
- * `grupper`, `grupper/<gruppe-ID>`, `chat`, `forslag`, `forslag/til-behandling` og `forslag/<forslags-ID>`. Det er formen områdene i endringsloggen skrives på
+ * `grupper`, `grupper/<gruppe-ID>`, `chat`, `forslag`, `forslag/til-behandling`, `forslag/<forslags-ID>`, `kalender` og `kalender/<fane>`. Det er formen områdene i endringsloggen skrives på
  * (`src/oppdatering/sider.ts`), og det som skifter når brukeren går til en
  * annen side — ikke når en seksjon åpnes eller søket skrives om.
  */
@@ -486,6 +520,7 @@ export function sidesti(rute: Rute): string {
     case 'grupper':
       return rute.gruppe ? `grupper/${rute.gruppe}` : 'grupper'
     case 'forslag':
+    case 'kalender':
       return adresse(rute).slice(2)
     case 'fortolkning':
       return ['fortolkning', rute.analytt, rute.rediger ? REDIGER : undefined].filter(Boolean).join('/')
