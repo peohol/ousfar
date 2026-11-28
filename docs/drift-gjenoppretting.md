@@ -242,11 +242,82 @@ avhengigheter.
 
 | Hva | Hvordan |
 | --- | --- |
-| Nøkkelen | Kontrolleres mot Backblaze hver gang, uten å vises: den gjelder bare `ousfar-backup`, uten filprefiks, på adressen i `drift.ts`, har rettighetene i `RETTIGHETER.kreves` og ingen av `RETTIGHETER.forbudt` (blant dem `bypassGovernance`). Ellers stopper jobben |
+| Nøkkelen | Kontrolleres mot Backblaze hver gang, uten å vises: den gjelder bare `ousfar-backup`, uten filprefiks, på adressen i `drift.ts`, har rettighetene i `RETTIGHETER.kreves` og ingen av `RETTIGHETER.forbudt` (blant dem `bypassGovernance`). Ellers stopper jobben. Nøkkelen lages av nøkkelbyttet (under) |
 | Lås | Hver fil legges inn låst i Governance-modus i 7 døgn. Jobben har ikke rett til å oppheve låsen, så en låst fil kan ikke slettes eller forkortes av den, heller ikke av den som får tak i nøkkelen |
 | Rekkefølge | Først forlenges låsen på den nyeste hele kopien, så den siste gode kopien aldri går ut mens kopieringen feiler. Så nye biter, kopifila, forlenget lås på bitene som gjenbrukes, og til sist signaturen. Først når signaturen ligger der, er kopien hel |
 | Kontroll | Etterpå leses kopien på nytt fra lageret: signaturen er ekte, hver fil finnes, er låst lenge nok, og kopifila og de nye bitene hentes tilbake og har nøyaktig innholdet som ble sendt |
 | Versjoner | Den riktige versjonen av hver fil velges etter md5 og størrelse i signaturen, så en fil noen har lagt over, aldri brukes. En signatur som ikke er signert med jobbens nøkkel, regnes ikke som en kopi |
+
+### Nøkkelen til lageret
+
+Nettsiden til Backblaze kan ikke lage en nøkkel med færre rettigheter: en
+nøkkel for én bøtte med «Read and Write» får alltid også `bypassGovernance`,
+`writeBucketRetentions` og `writeBuckets` (sett i den første kontrollen
+28.11.2026), og kontrollen stopper på dem. Nøkkeleieren bruker ingen
+terminal, så GitHub lager nøkkelen (`.github/workflows/lagernokkel.yml`,
+`nokkelbytte.ts`). Det krever hovednøkkelen, som #615 ellers holder utenfor
+GitHub; se «Beslutningen om hovednøkkelen» under.
+
+1. Nøkkeleieren legger tre midlertidige hemmeligheter i miljøet `backup`:
+   - hovednøkkelen fra Backblaze (*Generate New Master Application Key*), som
+     `B2_OPPSETT_ID` og `B2_OPPSETT_NOKKEL`
+   - et finkornet GitHub-token som bare gjelder `ousfar`, med *Environments*
+     og *Secrets* skrive og høyst 7 døgns levetid, som `KOPI_GITHUB_TOKEN`
+
+   Så startes «Nøkkelbytte for kopilageret» for hånd.
+2. Jobben lager en nøkkel som bare gjelder `ousfar-backup`, med nøyaktig
+   `RETTIGHETER.ny`, og kontrollerer den med den samme kontrollen kopijobben
+   gjør. Består den ikke kontrollen, slettes den igjen.
+3. Nøkkelen legges forseglet som ett par, `keyID:nøkkel`, i én hemmelighet,
+   `B2_LAGERNOKKEL` (`forsegling.ts`, libsodiums `crypto_box_seal`, som
+   GitHub krever). ID og nøkkel kan dermed ikke komme ut av takt. Nøkkelen
+   vises aldri, heller ikke for nøkkeleieren. Utfallet står i oppsummeringen:
+
+   | Utfall | Når | Hva jobben gjør |
+   | --- | --- | --- |
+   | Byttet | GitHub bekreftet lagringen (2xx) | Sletter den gamle nøkkelen, nøkler fra tidligere bytter (bare nøkler som gjelder kopibøtta alene) og de gamle hemmelighetene `B2_KEY_ID` og `B2_APPLICATION_KEY`, og starter kontrollen av lageret |
+   | Uendret | Kontrollen eller GitHub avviste (4xx) | Sletter den nye nøkkelen igjen; kopijobben har fortsatt den gamle |
+   | Uavklart | GitHub svarte 5xx eller ikke i det hele tatt | Sletter ingen nøkkel, så den som er lagret, virker. Kjør kontrollen for å se hvilken som er i bruk, og så byttet på nytt; det rydder de overflødige |
+
+4. En midlertidig nøkkel som ikke er hovednøkkelen, slettes i Backblaze.
+5. **Ryddesteget** kjører til slutt, også når byttet feiler eller jobben
+   avbrytes. Det trenger verken checkout eller npm, så det kjører også når
+   de stegene feilet. Det sletter de tre midlertidige hemmelighetene og
+   trekker tokenet tilbake hos GitHub. Lykkes ikke det, blir kjøringen rød,
+   og oppsummeringen sier hva som må slettes for hånd.
+
+Ryddingen kan ikke garanteres: GitHub kan stoppe en kjøring uten at
+ryddesteget kjører, og hovednøkkelen kan ikke slettes, bare erstattes.
+Derfor gjelder dette etter hver kjøring, uansett utfall:
+
+- Nøkkeleieren lager en ny hovednøkkel i Backblaze (uten å ta vare på den).
+  Da slutter den som lå i GitHub, å virke. Det er den eneste måten å trekke
+  den tilbake på.
+- Mangler «Ryddingen etter nøkkelbyttet» i oppsummeringen, eller er den
+  rød, slettes `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL` og `KOPI_GITHUB_TOKEN`
+  for hånd i miljøet `backup`, og tokenet under *Settings → Developer
+  settings → Personal access tokens*. Tokenet utløper uansett etter høyst 7
+  døgn.
+
+#### Beslutningen om hovednøkkelen
+
+Issue #615 sier «ingen master-nøkkel». Nøkkelbyttet avviker fra det: i
+minuttene mellom innleggingen og den nye hovednøkkelen ligger
+hovednøkkelen, som gjelder hele Backblaze-kontoen, i GitHub-miljøet
+`backup`. Den er bare tilgjengelig for koden på `main` i dette miljøet, og
+bare dette steget leser den. Begrunnelsen:
+
+- Alternativet uten hovednøkkel er å bruke nøkkelen fra nettsiden. Da må
+  `bypassGovernance`, `writeBucketRetentions` og `writeBuckets` tillates for
+  kopijobben for alltid, og låsen gjøres til Compliance, som ingen kan
+  oppheve, heller ikke nøkkeleieren ved en feil eller et misbruk.
+- Nøkkelbyttet gir kopijobben en nøkkel med nøyaktig det den trenger, og
+  hovednøkkelen trekkes tilbake etterpå.
+
+Avviket krever Peders uttrykkelige ja. Uten det startes nøkkelbyttet ikke.
+Jobben startes bare for hånd og aktiverer ingenting av seg selv.
+
+- Peders beslutning 28.11.2026: **ja**, hovednøkkelen kan ligge i GitHub i noen minutter under nøkkelbyttet, mot at han lager en ny hovednøkkel rett etterpå (valgt fremfor Compliance-låsen med nøkkelen fra nettsiden).
 
 ### Opprydding
 
@@ -290,7 +361,8 @@ går om gangen.
 
 | Hemmelighet i `backup` | Hva |
 | --- | --- |
-| `B2_KEY_ID`, `B2_APPLICATION_KEY` | Nøkkelen for bøtta, med rettighetene over |
+| `B2_LAGERNOKKEL` | Nøkkelen for bøtta som `keyID:nøkkel`, med rettighetene over, fra nøkkelbyttet. Før det første byttet: `B2_KEY_ID` og `B2_APPLICATION_KEY`, som byttet sletter |
+| `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL`, `KOPI_GITHUB_TOKEN` | Bare under nøkkelbyttet (over); ryddesteget sletter dem |
 | `KOPI_MOTTAKERE` | Den offentlige `age`-nøkkelen (eller flere, skilt med mellomrom). Jobben stopper om det står en privat nøkkel der |
 | `KOPI_SIGNERINGSNOKKEL` | Den private signeringsnøkkelen (PEM) |
 | `KOPI_SUPABASE_TOKEN` | Et eget token for Management API-et med bare: *Database* skrive (for den midlertidige rollen), *Auth config*, *Edge Function secrets*, *API keys* og *API key secrets*, og *Connection pooling* lese, for produksjonsprosjektet |

@@ -15,9 +15,11 @@
  *   npm run sikkerhetskopi -- kontroll     nøkkelen og lageret, uten produksjonsdata
  *   npm run sikkerhetskopi -- natt         nattens kopi av produksjonen til lageret
  *   npm run sikkerhetskopi -- tilsyn       om det finnes en hel kopi fra det siste døgnet
+ *   npm run sikkerhetskopi -- nokkelbytte  ny nøkkel til lageret (`.github/workflows/lagernokkel.yml`)
  *   npm run sikkerhetskopi -- hent --avsender <nøkkelfila eller den offentlige signeringsnøkkelen> --ut <mappe> [--kopi <fil.tar.age>]
  *
- * De fire leser nøkkelen til lageret fra `B2_KEY_ID` og `B2_APPLICATION_KEY`.
+ * De fire leser nøkkelen til lageret fra `B2_LAGERNOKKEL` (`keyID:nøkkel`), eller
+ * fra `B2_KEY_ID` og `B2_APPLICATION_KEY` (`lagernokkelFraMiljo`).
  * `natt` og `tilsyn` leser også `KOPI_SIGNERINGSNOKKEL`, og `natt` leser
  * `KOPI_MOTTAKERE` (de offentlige age-nøklene, skilt med mellomrom eller
  * komma) og `SUPABASE_ACCESS_TOKEN`. `natt` gjør ingenting før
@@ -46,8 +48,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Stopp, gjenopprett, lagReferanse, lesReferanse, summerAv, taKopi } from '../src/drift/sikkerhetskopi/kopi'
-import { LAGER, PRODUKSJONSKOPI_PA } from '../src/drift/sikkerhetskopi/drift'
-import { forbruk, hentKopi, kontrollerNokkel, lesLageret, provLageret, ryddProver, tilsyn } from '../src/drift/sikkerhetskopi/lager'
+import { LAGER, NOKKELBYTTE, PRODUKSJONSKOPI_PA } from '../src/drift/sikkerhetskopi/drift'
+import { byttNokkel, bytterapport } from '../src/drift/sikkerhetskopi/nokkelbytte'
+import { forbruk, hentKopi, kontrollerNokkel, lagernokkelFraMiljo, lesLageret, provLageret, ryddProver, tilsyn } from '../src/drift/sikkerhetskopi/lager'
 import { kjorNatt, lesMottakere, rapporttekst } from '../src/drift/sikkerhetskopi/natt'
 import { apneProsjekt } from '../src/drift/sikkerhetskopi/prosjekt'
 import { aktiverTryggLogg, avsluttMedFeil, masker, oppsummer, settTrinn, skriv } from '../src/drift/sikkerhetskopi/logg'
@@ -86,8 +89,9 @@ const signeringsnokkel = () => fraMiljo('KOPI_SIGNERINGSNOKKEL', 'den private si
 /** Lageret, etter at nøkkelen er kontrollert: bare kopibøtta, de riktige rettighetene og ingen farlige. */
 async function apneLager(): Promise<{ s3: S3; ekstra: string[] }> {
   settTrinn('nøkkelen til lageret')
-  const nokkelId = fraMiljo('B2_KEY_ID', 'ID-en til nøkkelen for kopilageret')
-  const hemmelig = fraMiljo('B2_APPLICATION_KEY', 'nøkkelen for kopilageret')
+  const par = lagernokkelFraMiljo()
+  if (!par) throw new OffentligStopp(`Mangler nøkkelen til kopilageret (${NOKKELBYTTE.hemmeligheter.par}).`)
+  const { id: nokkelId, nokkel: hemmelig } = par
   masker(hemmelig)
   const r = await kontrollerNokkel(nokkelId, hemmelig)
   return { s3: new S3({ endepunkt: r.s3Adresse, region: LAGER.region, bucket: r.bucket, nokkelId, nokkel: hemmelig }), ekstra: r.ekstra }
@@ -117,7 +121,7 @@ async function kontroll(): Promise<void> {
 }
 
 /** Kommandoene GitHub-jobben kjører; loggen deres er offentlig og får bare det jobben selv setter sammen (`logg.ts`). */
-const DRIFTSKOMMANDOER = new Set(['kontroll', 'natt', 'tilsyn'])
+const DRIFTSKOMMANDOER = new Set(['kontroll', 'natt', 'tilsyn', 'nokkelbytte'])
 
 async function main(argv: string[]): Promise<void> {
   const [kommando, ...resten] = argv
@@ -213,6 +217,25 @@ async function main(argv: string[]): Promise<void> {
     oppsummer(`## Tilsyn med kopiene\n\n- ${t.melding}\n- ${innhold.kopier.filter((k) => k.hel).length} hele kopier i lageret.${f.varsler.map((v) => `\n- ${v}`).join('')}`)
     if (!t.ok) throw new OffentligStopp(t.melding)
     if (f.varsler.length) throw new OffentligStopp(f.varsler.join('\n'))
+  } else if (kommando === 'nokkelbytte') {
+    settTrinn('de midlertidige nøklene')
+    // Ikke `fraMiljo`: mangler en av dem, stopper byttNokkel før noe lages, og ryddesteget i arbeidsflyten rydder resten.
+    const m = NOKKELBYTTE.midlertidige
+    const oppsett = { id: process.env[m.id] || undefined, nokkel: process.env[m.nokkel] || undefined }
+    const token = process.env[m.github] || undefined
+    for (const v of [oppsett.nokkel, token]) if (v) masker(v)
+    // Bare ID-en til den gamle nøkkelen brukes, til å slette den etter byttet.
+    const gammel = (() => {
+      try {
+        return lagernokkelFraMiljo()
+      } catch {
+        return null
+      }
+    })()
+    if (gammel) masker(gammel.nokkel)
+    const r = await byttNokkel({ oppsett, gammelId: gammel?.id, github: { token, repo: fraMiljo('GITHUB_REPOSITORY', 'repoet') } })
+    oppsummer(bytterapport(r))
+    if (r.stopp) throw new OffentligStopp(r.stopp)
   } else if (kommando === 'hent') {
     const ut = ett('ut', resten)
     mkdirSync(ut, { recursive: true, mode: 0o700 })
@@ -220,7 +243,7 @@ async function main(argv: string[]): Promise<void> {
     const r = await hentKopi(s3, offentligFraNokkelfil(readFileSync(ett('avsender', resten), 'utf8')), ut, summerAv, valg('kopi', resten)[0])
     console.log(`Kopien fra ${r.laget} er hentet og kontrollert: ${r.kopi}. Gjenopprett med «gjenopprett --kopi ${r.kopi}».`)
   } else {
-    throw new Stopp('Bruk: signeringsnokler | referanse | ta | gjenopprett | kontroll | natt | tilsyn | hent (se docs/drift-gjenoppretting.md).')
+    throw new Stopp('Bruk: signeringsnokler | referanse | ta | gjenopprett | kontroll | natt | tilsyn | nokkelbytte | hent (se docs/drift-gjenoppretting.md).')
   }
 }
 

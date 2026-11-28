@@ -1,0 +1,14 @@
+{
+  "id": "20261128-085509-ee8df4",
+  "semver": "patch",
+  "opprettet": "2026-11-28T08:55:10Z",
+  "sammendrag": "Nøkkelen til sikkerhetskopiene lages nå automatisk med bare de rettighetene den trenger",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen endring i appen. Nøkkelen sikkerhetskopiene bruker, lages og byttes nå automatisk, uten at noen ser den."
+  ],
+  "utenVarsel": true
+}
