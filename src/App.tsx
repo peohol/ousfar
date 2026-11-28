@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useMineRettigheter, useOppdaterRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { redigerbareRegelsett } from './redaktorer/ansvar'
 import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
@@ -518,8 +518,16 @@ function Arbeidsflate({
   // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
   const flate = arbeidsflate(adresserute)
   // Personalfunksjonene finnes bare for dem som har dem i fagmiljøet de
-  // arbeider i; for alle andre er adressen en ukjent adresse (K-SKJ-2).
-  const personal = personalfagmiljo(rettigheter)
+  // arbeider i; for alle andre er adressen en ukjent adresse (K-SKJ-2). Har
+  // databasen avvist kalenderen (`avvisPersonal`), er den det også her, til
+  // fagmiljøet byttes eller appen åpnes på nytt.
+  const [personalAvvist, setPersonalAvvist] = useState(false)
+  const personal = personalAvvist ? null : personalfagmiljo(rettigheter)
+  const oppdaterRettigheter = useOppdaterRettigheter()
+  const avvisPersonal = useCallback(() => {
+    setPersonalAvvist(true)
+    oppdaterRettigheter()
+  }, [oppdaterRettigheter])
   const rute = synligRute(flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute, personal)
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
   const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
@@ -1113,7 +1121,7 @@ function Arbeidsflate({
                     fane={rute.fane}
                     onGaaTil={gaaTil}
                     onLukk={lukkInfoside}
-                    onTilForsiden={tilForsiden}
+                    onFinnesIkke={avvisPersonal}
                   />
                 </Senere>
               </main>

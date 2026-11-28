@@ -10,8 +10,8 @@
  *   et annet fagmiljø.
  * - Med funksjonen står Kalender under Personal, siden viser fagmiljøet og
  *   fanene rollen databasen gir, og en fane rollen ikke har, blir kalenderen.
- * - Svarer databasen «Finnes ikke.» (funksjonen er slått av siden), er siden
- *   igjen som en ukjent adresse.
+ * - Svarer databasen «Finnes ikke.» (funksjonen er slått av siden), er siden,
+ *   tittelen og menyen igjen som for en ukjent adresse.
  *
  * Testene som viser at koden ikke er hentet, står først: når den først er
  * hentet, blir den værende i testkjøringen.
@@ -205,13 +205,21 @@ describe('med personalfunksjonen i fagmiljøet', () => {
     expect(screen.queryByText('Medarbeiderne kommer her.')).toBeNull()
   })
 
-  it('er en ukjent adresse når databasen svarer at kalenderen ikke finnes', async () => {
+  it.each(['P0002', '42501'])('er en ukjent adresse, også i menyen, når databasen svarer %s for kalenderen', async (kode) => {
     db.personal = ['sandkasse']
-    db.grunnlag = { feil: 'P0002' }
+    db.grunnlag = { feil: kode }
     await visApp('#/kalender')
-    expect(await screen.findByRole('heading', { level: 1, name: 'Siden finnes ikke' })).toBeTruthy()
-    expect(document.title).toBe('Siden finnes ikke – OUSFAR')
+    const rettighetskall = () => db.kall.filter((k) => k.funksjon === 'mine_rettigheter').length
+    const forAvvisningen = rettighetskall()
+    await somUkjentAdresse('#/kalender')
     expect(screen.queryByRole('heading', { level: 1, name: 'Kalender' })).toBeNull()
+    // Rettighetene hentes på nytt, og menyen har ikke Personal, selv om de
+    // gamle rettighetene fortsatt sier at funksjonen finnes.
+    await waitFor(() => expect(rettighetskall()).toBeGreaterThan(forAvvisningen))
+    const { navn } = await hovedvalgene()
+    expect(navn.some((n) => n.startsWith('Personal'))).toBe(false)
+    // Grunnlaget hentes ikke igjen for den samme siden.
+    expect(db.kall.filter((k) => k.funksjon === 'personal_grunnlag')).toHaveLength(1)
   })
 
   it('viser feilen med Prøv igjen når grunnlaget ikke kunne hentes', async () => {

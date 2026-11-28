@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useId } from 'react'
 import type { Fagmiljoreferanse } from '../auth/rettigheter'
 import { Button } from '../components/Button'
-import { Ukjentside } from '../components/forside/Ukjentside'
 import { useFanetittel } from '../components/grupper/gruppedeler'
 import { Lukkeknapp } from '../components/Lukkeknapp'
 import { ToppmenyInnhold } from '../components/toppmeny/Toppmenykilde'
@@ -21,20 +20,23 @@ type Svar = { finnes: true; grunnlag: Personalgrunnlag } | { finnes: false }
  * har personalfunksjonen i fagmiljøet hen arbeider i (`src/personaltilgang.ts`);
  * rollen kommer fra databasen. Svarer databasen at kalenderen ikke finnes —
  * funksjonen er slått av siden rettighetene ble hentet, eller medlemskapet er
- * avsluttet — er siden den samme som for en ukjent adresse (K-SKJ-2).
+ * avsluttet — sier siden fra med `onFinnesIkke`. Appen gjør da ruten om til
+ * en ukjent adresse og henter rettighetene på nytt, så siden, tittelen,
+ * sidestien og menyen blir som for en adresse den ikke kjenner (K-SKJ-2).
  */
 export function Personalside({
   fagmiljo,
   fane,
   onGaaTil,
   onLukk,
-  onTilForsiden,
+  onFinnesIkke,
 }: {
   fagmiljo: Fagmiljoreferanse
   fane?: Kalenderfane
   onGaaTil: (rute: Rute, valg?: { erstatt?: boolean }) => void
   onLukk: () => void
-  onTilForsiden: () => void
+  /** Databasen svarer at kalenderen ikke finnes for den innloggede. */
+  onFinnesIkke: () => void
 }) {
   const hent = useCallback(
     (): Promise<Svar> =>
@@ -46,7 +48,11 @@ export function Personalside({
   )
   const { tilstand, hentPaNytt } = useHenting(hent, fagmiljo.id)
 
-  if (tilstand.status === 'klar' && !tilstand.data.finnes) return <Ukjentside onTilForsiden={onTilForsiden} />
+  const finnesIkke = tilstand.status === 'klar' && !tilstand.data.finnes
+  useEffect(() => {
+    if (finnesIkke) onFinnesIkke()
+  }, [finnesIkke, onFinnesIkke])
+  if (finnesIkke) return null
   return (
     <Kalenderflate
       fagmiljo={fagmiljo}
