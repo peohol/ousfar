@@ -54,9 +54,29 @@ export const KVOTER = {
 /**
  * Nøkkelrettighetene kopijobben trenger i Backblaze, og de den aldri skal ha.
  * `bypassGovernance` ville latt den som har nøkkelen, slette låste kopier.
+ * Nettsiden til Backblaze gir en nøkkel for én bøtte alltid også
+ * `bypassGovernance`, `writeBucketRetentions` og `writeBuckets` (sett i den
+ * første kontrollen 28.11.2026), så nøkkelen lages av nøkkelbyttet
+ * (`nokkelbytte.ts`) med nøyaktig `ny`.
  */
+const KREVES = ['listFiles', 'readFiles', 'writeFiles', 'deleteFiles', 'readFileRetentions', 'writeFileRetentions', 'readBucketRetentions'] as const
+
 export const RETTIGHETER = {
-  kreves: ['listFiles', 'readFiles', 'writeFiles', 'deleteFiles', 'readFileRetentions', 'writeFileRetentions'],
+  kreves: KREVES,
+  /** Det nøkkelbyttet ber Backblaze om: det som kreves, og å finne og lese bøtta. */
+  ny: [...KREVES, 'listBuckets', 'readBuckets'],
   /** Med en av disse stopper jobben: nøkkelen kan da slette låste kopier, endre låsen eller bøtta, eller lage nye nøkler. */
   forbudt: ['bypassGovernance', 'writeBucketRetentions', 'writeKeys', 'deleteKeys', 'deleteBuckets', 'writeBuckets'],
+} as const
+
+/**
+ * Nøkkelbyttet (`.github/workflows/lagernokkel.yml`): GitHub-miljøet med
+ * hemmelighetene, navnet de nye nøklene får i Backblaze, og de midlertidige
+ * hemmelighetene byttet bruker og sletter etterpå, uansett utfall.
+ */
+export const NOKKELBYTTE = {
+  miljo: 'backup',
+  navnPrefiks: 'ousfar-kopijobben-',
+  hemmeligheter: { id: 'B2_KEY_ID', nokkel: 'B2_APPLICATION_KEY' },
+  midlertidige: { id: 'B2_OPPSETT_ID', nokkel: 'B2_OPPSETT_NOKKEL', github: 'KOPI_GITHUB_TOKEN' },
 } as const

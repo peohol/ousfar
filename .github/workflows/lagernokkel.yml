@@ -1,0 +1,65 @@
+# Nøkkelbyttet for kopilageret (docs/drift-gjenoppretting.md, «Nøkkelen til
+# lageret»; src/drift/sikkerhetskopi/nokkelbytte.ts). Nettsiden til Backblaze
+# kan ikke lage en nøkkel uten rettighetene kopijobben aldri skal ha, så denne
+# jobben lager den:
+#
+# - Nøkkeleieren legger en midlertidig nøkkel som kan lage nøkler
+#   (B2_OPPSETT_ID og B2_OPPSETT_NOKKEL) og et GitHub-token som kan skrive
+#   hemmelighetene i miljøet (KOPI_GITHUB_TOKEN) i miljøet `backup`, og
+#   starter jobben.
+# - Jobben lager en nøkkel som bare gjelder kopibøtta, med nøyaktig
+#   rettighetene jobben trenger, kontrollerer den, legger den i B2_KEY_ID og
+#   B2_APPLICATION_KEY og sletter de gamle nøklene i Backblaze.
+# - Uansett utfall slettes de tre midlertidige hemmelighetene, den midlertidige
+#   nøkkelen i Backblaze (er den ikke hovednøkkelen) og tokenet trekkes
+#   tilbake. Gikk byttet bra, startes kontrollen av lageret.
+#
+# Bare koden på main kjører med hemmelighetene, og ingen nøkkel skrives ut.
+name: Nøkkelbytte for kopilageret
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: sikkerhetskopi
+  cancel-in-progress: false
+
+jobs:
+  bytte:
+    name: Nøkkelbytte
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: backup
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      # Uten installasjonsskript, og før hemmelighetene er i miljøet.
+      - run: npm ci --ignore-scripts
+
+      - name: Byttet
+        env:
+          B2_OPPSETT_ID: ${{ secrets.B2_OPPSETT_ID }}
+          B2_OPPSETT_NOKKEL: ${{ secrets.B2_OPPSETT_NOKKEL }}
+          KOPI_GITHUB_TOKEN: ${{ secrets.KOPI_GITHUB_TOKEN }}
+          # Bare ID-en til den gamle nøkkelen, så den kan slettes; ikke selve nøkkelen.
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+        run: npm run -s sikkerhetskopi -- nokkelbytte
+
+      # Kontrollen av lageret med den nye nøkkelen (den venter til denne jobben er ferdig).
+      - name: Kontrollen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sikkerhetskopi.yml --repo "$GITHUB_REPOSITORY" --ref main -f modus=kontroll

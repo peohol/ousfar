@@ -242,11 +242,45 @@ avhengigheter.
 
 | Hva | Hvordan |
 | --- | --- |
-| Nøkkelen | Kontrolleres mot Backblaze hver gang, uten å vises: den gjelder bare `ousfar-backup`, uten filprefiks, på adressen i `drift.ts`, har rettighetene i `RETTIGHETER.kreves` og ingen av `RETTIGHETER.forbudt` (blant dem `bypassGovernance`). Ellers stopper jobben |
+| Nøkkelen | Kontrolleres mot Backblaze hver gang, uten å vises: den gjelder bare `ousfar-backup`, uten filprefiks, på adressen i `drift.ts`, har rettighetene i `RETTIGHETER.kreves` og ingen av `RETTIGHETER.forbudt` (blant dem `bypassGovernance`). Ellers stopper jobben. Nøkkelen lages av nøkkelbyttet (under) |
 | Lås | Hver fil legges inn låst i Governance-modus i 7 døgn. Jobben har ikke rett til å oppheve låsen, så en låst fil kan ikke slettes eller forkortes av den, heller ikke av den som får tak i nøkkelen |
 | Rekkefølge | Først forlenges låsen på den nyeste hele kopien, så den siste gode kopien aldri går ut mens kopieringen feiler. Så nye biter, kopifila, forlenget lås på bitene som gjenbrukes, og til sist signaturen. Først når signaturen ligger der, er kopien hel |
 | Kontroll | Etterpå leses kopien på nytt fra lageret: signaturen er ekte, hver fil finnes, er låst lenge nok, og kopifila og de nye bitene hentes tilbake og har nøyaktig innholdet som ble sendt |
 | Versjoner | Den riktige versjonen av hver fil velges etter md5 og størrelse i signaturen, så en fil noen har lagt over, aldri brukes. En signatur som ikke er signert med jobbens nøkkel, regnes ikke som en kopi |
+
+### Nøkkelen til lageret
+
+Nettsiden til Backblaze kan ikke lage en nøkkel med færre rettigheter: en
+nøkkel for én bøtte med «Read and Write» får alltid også `bypassGovernance`,
+`writeBucketRetentions` og `writeBuckets` (sett i den første kontrollen
+28.11.2026), og kontrollen stopper på dem. Nøkkeleieren bruker ingen
+terminal, så GitHub lager nøkkelen (`.github/workflows/lagernokkel.yml`,
+`nokkelbytte.ts`):
+
+1. Nøkkeleieren legger tre midlertidige hemmeligheter i miljøet `backup`:
+   hovednøkkelen fra Backblaze (*Generate New Master Application Key*) som
+   `B2_OPPSETT_ID` og `B2_OPPSETT_NOKKEL`, og et finkornet GitHub-token som
+   bare gjelder `ousfar`, med *Environments* og *Secrets* skrive, som
+   `KOPI_GITHUB_TOKEN`. Så startes «Nøkkelbytte for kopilageret».
+2. Jobben lager en nøkkel som bare gjelder `ousfar-backup`, med nøyaktig
+   `RETTIGHETER.ny`, og kontrollerer den med den samme kontrollen kopijobben
+   gjør. Bestås den ikke, slettes den igjen, og ingenting byttes.
+3. Nøkkelen legges forseglet rett i `B2_KEY_ID` og `B2_APPLICATION_KEY`
+   (`forsegling.ts`, libsodiums `crypto_box_seal`, som GitHub krever). Den
+   vises aldri, heller ikke for nøkkeleieren.
+4. Den gamle nøkkelen og nøkler fra tidligere bytter slettes i Backblaze;
+   bare nøkler som gjelder kopibøtta alene, røres.
+5. Uansett utfall slettes de tre midlertidige hemmelighetene, en midlertidig
+   nøkkel som ikke er hovednøkkelen, slettes i Backblaze, og tokenet trekkes
+   tilbake hos GitHub. Hovednøkkelen kan ikke slettes; nøkkeleieren lager en
+   ny hovednøkkel etterpå (uten å ta vare på den), så den som lå i GitHub,
+   slutter å virke.
+6. Gikk byttet bra, startes kontrollen av lageret med den nye nøkkelen.
+
+Oppsummeringen av byttet sier hva som ble gjort, og hva som eventuelt står
+igjen. Feiler byttet etter at bare den ene hemmeligheten er skrevet, virker
+ikke kopijobben før byttet er kjørt på nytt; den gamle nøkkelen slettes bare
+når begge er skrevet.
 
 ### Opprydding
 
@@ -291,6 +325,7 @@ går om gangen.
 | Hemmelighet i `backup` | Hva |
 | --- | --- |
 | `B2_KEY_ID`, `B2_APPLICATION_KEY` | Nøkkelen for bøtta, med rettighetene over |
+| `B2_OPPSETT_ID`, `B2_OPPSETT_NOKKEL`, `KOPI_GITHUB_TOKEN` | Bare under nøkkelbyttet (over); jobben sletter dem etterpå |
 | `KOPI_MOTTAKERE` | Den offentlige `age`-nøkkelen (eller flere, skilt med mellomrom). Jobben stopper om det står en privat nøkkel der |
 | `KOPI_SIGNERINGSNOKKEL` | Den private signeringsnøkkelen (PEM) |
 | `KOPI_SUPABASE_TOKEN` | Et eget token for Management API-et med bare: *Database* skrive (for den midlertidige rollen), *Auth config*, *Edge Function secrets*, *API keys* og *API key secrets*, og *Connection pooling* lese, for produksjonsprosjektet |

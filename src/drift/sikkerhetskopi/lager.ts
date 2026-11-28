@@ -345,7 +345,7 @@ export async function kontrollerNokkel(nokkelId: string, nokkel: string, adresse
   if (mangler.length) throw new OffentligStopp(`Nøkkelen mangler rettighetene ${mangler.join(', ')}.`)
   const forbudt = RETTIGHETER.forbudt.filter((r) => rettigheter.includes(r))
   if (forbudt.length) throw new OffentligStopp(`Nøkkelen har rettigheter kopijobben aldri skal ha: ${forbudt.join(', ')}. Lag en ny nøkkel uten dem.`)
-  const kjente = new Set<string>([...RETTIGHETER.kreves, 'readBucketRetentions', 'listBuckets', 'readBuckets', 'readBucketEncryption'])
+  const kjente = new Set<string>([...RETTIGHETER.ny, 'readBucketEncryption'])
   return { bucket: LAGER.bucket, s3Adresse: LAGER.endepunkt, rettigheter, ekstra: rettigheter.filter((r) => !kjente.has(r)) }
 }
 
