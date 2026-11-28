@@ -11,7 +11,15 @@
  * oppsettet, og oppsettet mot kalenderen gir det samme. En kommando som kjøres
  * mens en annen fjerner tilgangen til den som handler, venter på
  * tilgangsendringen og kontrolleres etter den. I `repeatable read` stoppes
- * endringene (`25001`). Bare syntetiske medarbeidere i et syntetisk Sandkasse.
+ * endringene (`25001`).
+ *
+ * P2c (#620): i et syntetisk fagmiljø som ikke er testmiljø, der medlemmene er
+ * medarbeiderne, ryddes en registrering eller kvalifikasjon som ble lagret like
+ * før medlemskapet ble avsluttet, og en som venter på avslutningen, avvises,
+ * også rett i tabellen. To endringer av innstillingene fra den samme revisjonen
+ * gir konflikt. «Vis som» tas som en tilgangsendring: en lagring som er i
+ * gang, blir ferdig først, og en som venter, kontrolleres mot den nye rollen.
+ * Bare syntetiske kontoer og medarbeidere, i syntetiske fagmiljøer.
  */
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { addDays, holidaysForYear, todayIn, weekdayIndex } from '@delt/personal/dates'
@@ -26,9 +34,13 @@ const KONTO = {
   admin: '00000000-0000-4000-8000-0000000000e1',
   planlegger1: '00000000-0000-4000-8000-0000000000e2',
   planlegger2: '00000000-0000-4000-8000-0000000000e3',
+  kollega: '00000000-0000-4000-8000-0000000000e4',
 } as const
 
 const S = `(select id from public.fagmiljoer where nokkel = 'sandkasse')`
+/** Et syntetisk fagmiljø som ikke er testmiljø, der medlemmene er medarbeiderne (P2c, #620). */
+const R = `(select id from public.fagmiljoer where nokkel = 'test-reelt')`
+const ENHET = { timeZone: 'Europe/Oslo', workYearStartMonth: 1, hideWeekendsByDefault: false }
 const UTPROVING = (() => {
   const mappe = resolve(__dirname, '../../supabase/migrations')
   return readFileSync(resolve(mappe, readdirSync(mappe).find((f) => f.endsWith('_personal_utproving.sql'))!), 'utf8')
@@ -49,7 +61,7 @@ const OPPSETT = /* sql */ `
   ${startportSql('sandkasse')}
   insert into public.fagmiljoer (nokkel, navn, apent_for_medlemmer) values ('sandkasse', 'Sandkasse', true);
   update public.fagmiljoer set testmiljo = true where nokkel = 'sandkasse';
-  insert into public.medlemskap (bruker_id, fagmiljo_id) select id, ${S} from auth.users where id in (${Object.values(KONTO).map((k) => `'${k}'`).join(', ')});
+  insert into public.medlemskap (bruker_id, fagmiljo_id) select id, ${S} from auth.users where id in ('${KONTO.admin}', '${KONTO.planlegger1}', '${KONTO.planlegger2}');
   insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ('${KONTO.admin}', ${S});
   commit;
   begin;
@@ -61,6 +73,20 @@ const OPPSETT = /* sql */ `
   select set_config('role', 'authenticated', true), set_config('request.jwt.claims', '{"sub":"${KONTO.admin}","role":"authenticated"}', true);
   select public.personal_sett_vaktplanansvarlig(${S}, '${KONTO.planlegger1}', true);
   select public.personal_sett_vaktplanansvarlig(${S}, '${KONTO.planlegger2}', true);
+  commit;
+  begin;
+  select set_config('ousfar.tilgangsgrunn', 'Syntetisk fagmiljø med en syntetisk godkjenning for samtidighetstesten', true);
+  ${startportSql('test-reelt')}
+  insert into public.fagmiljoer (nokkel, navn, apent_for_medlemmer) values ('test-reelt', 'Fagmiljø R', true);
+  insert into public.medlemskap (bruker_id, fagmiljo_id) select id, ${R} from auth.users where id in (${Object.values(KONTO).map((k) => `'${k}'`).join(', ')});
+  insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ('${KONTO.admin}', ${R});
+  insert into public.funksjonsgodkjenninger (funksjon, fagmiljo_id, grunnlag) values ('personal', ${R}, 'Syntetisk godkjenning i samtidighetstesten');
+  insert into public.funksjonsbrytere (funksjon, fagmiljo_id, tilstand) values ('personal', ${R}, 'på');
+  select set_config('ousfar.regler', (select regler::text from personal.oppsett where fagmiljo_id = ${S} and versjon = 1), true);
+  select set_config('role', 'authenticated', true), set_config('request.jwt.claims', '{"sub":"${KONTO.admin}","role":"authenticated"}', true);
+  select public.personal_lagre_oppsett(${R}, jsonb_build_object('enhet', '${JSON.stringify(ENHET)}'::jsonb, 'regler', current_setting('ousfar.regler')::jsonb), null);
+  select public.personal_sett_vaktplanansvarlig(${R}, '${KONTO.planlegger1}', true);
+  select public.personal_sett_vaktplanansvarlig(${R}, '${KONTO.planlegger2}', true);
   commit;
 `
 
@@ -80,6 +106,8 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
   const mal = `ousfar_personalkalender_${process.pid}_${Date.now()}`
   const databaser: string[] = []
   let ider: Record<string, string> = {}
+  /** Medarbeiderne i R, etter kontoen. */
+  let iR: Record<string, string> = {}
   const dato = tirsdag()
 
   beforeAll(() => {
@@ -87,7 +115,8 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
     databaser.push(mal)
     psql(mal, strukturskript())
     psql(mal, OPPSETT)
-    ider = JSON.parse(psql(mal, 'select json_object_agg(syntetisk_navn, id) from personal.medarbeidere'))
+    ider = JSON.parse(psql(mal, 'select json_object_agg(syntetisk_navn, id) from personal.medarbeidere where syntetisk_navn is not null'))
+    iR = JSON.parse(psql(mal, `select json_object_agg(bruker_id, id) from personal.medarbeidere where fagmiljo_id = ${R}`))
   }, 180_000)
 
   afterAll(() => {
@@ -153,11 +182,14 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
     const regler = psql(db, `select regler from personal.oppsett where fagmiljo_id = ${S} and versjon = 1`)
     return (bruker: string) =>
       `${som(bruker)} select public.personal_lagre_oppsett(${S}, '${JSON.stringify({
-        enhet: { timeZone: 'Europe/Oslo', workYearStartMonth: 1, hideWeekendsByDefault: false },
+        enhet: ENHET,
         regler: JSON.parse(regler),
       })}', 1);`
   }
   const versjoner = (db: string) => psql(db, `select string_agg(versjon::text, ',' order by versjon) from personal.oppsett where fagmiljo_id = ${S}`)
+  /** «Vis som» i Sandkasse (K-SKJ-7): en lavere rolle for den innloggede. */
+  const visSom = (bruker: string, rolle: string) => `${som(bruker)} select public.personal_vis_som(${S}, '${rolle}', null);`
+  const simuleringer = (db: string) => psql(db, `select count(*) from personal.vis_som`)
 
   describe('i read committed, som data-API-et bruker', () => {
     it('gir konflikt når to lagrer oppsettet fra den samme versjonen', async () => {
@@ -277,7 +309,7 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
         const regler = JSON.parse(psql(db, `select regler from personal.oppsett where fagmiljo_id = ${S} and versjon = 1`))
         regler.statuses = regler.statuses.filter((x: { id: string }) => x.id !== 'hjemmekontor')
         return `${som(KONTO.admin)} select public.personal_lagre_oppsett(${S}, '${JSON.stringify({
-          enhet: { timeZone: 'Europe/Oslo', workYearStartMonth: 1, hideWeekendsByDefault: false },
+          enhet: ENHET,
           regler,
         })}', 1);`
       }
@@ -311,6 +343,106 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
     })
   })
 
+  // P2c (#620): medarbeiderne i R følger medlemskapene (B13, K-MED-3), og
+  // innstillingene har en revisjon per medarbeider (K-MED-2).
+  describe('når medlemskapet eller innstillingene endres samtidig, i et fagmiljø der medlemmene er medarbeiderne', () => {
+    const kollega = () => iR[KONTO.kollega]!
+    const endreR = (bruker: string, status: string, revisjon: number | null = null) =>
+      `${som(bruker)} select public.personal_endre_kalender(${R}, '${JSON.stringify([{ medarbeider: kollega(), dato, revisjon, status }])}');`
+    const direkteR = () =>
+      `insert into personal.oppforinger (fagmiljo_id, medarbeider_id, dato, status_id, regelversjon) values (${R}, '${kollega()}', '${dato}', 'borte', 1);`
+    /** Det `avslutt_medlemskap` gjør, for kollegaen i R. */
+    const avsluttKollega = `select intern.las_tilgang(null, 'Syntetisk test: medlemskap avsluttet');
+      update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = '${KONTO.kollega}' and fagmiljo_id = ${R} and status <> 'deaktivert';`
+    const cellerR = (db: string) =>
+      psql(db, `select coalesce(string_agg(status_id, ',' order by dato), '') from personal.oppforinger where medarbeider_id = '${kollega()}'`)
+    const aapen = (db: string) => psql(db, `select count(*) from personal.medarbeiderperioder where medarbeider_id = '${kollega()}' and til is null`)
+    const revisjon = (db: string) => Number(psql(db, `select revisjon from personal.medarbeidere where id = '${kollega()}'`))
+    const kvalifikasjoner = (bruker: string, statuser: string[], rev: number) =>
+      `${som(bruker)} select public.personal_sett_kvalifikasjoner(${R}, '${kollega()}', '${JSON.stringify(statuser)}', ${rev});`
+    const vaktandel = (bruker: string, prosent: number, rev: number) =>
+      `${som(bruker)} select public.personal_lagre_vaktandel(${R}, '${kollega()}', '${JSON.stringify({ ordinary: [{ from: dato, percent: prosent }], temporary: [] })}', ${rev});`
+    const aktiveKvalifikasjoner = (db: string) =>
+      psql(db, `select coalesce(string_agg(status_id, ',' order by status_id), '') from personal.kvalifikasjoner where medarbeider_id = '${kollega()}' and til is null`)
+
+    it('rydder en registrering som ble lagret like før medlemskapet ble avsluttet', async () => {
+      const db = nyDatabase()
+      const r = await samtidig(db, 'read committed', endreR(KONTO.planlegger1, 'borte'), avsluttKollega)
+      expect(r).toEqual({ steg: '00000', commit: '00000' })
+      expect(cellerR(db)).toBe('')
+      expect(aapen(db)).toBe('0')
+    }, 30_000)
+
+    it('avviser en registrering som venter på at medlemskapet avsluttes', async () => {
+      const db = nyDatabase()
+      const r = await samtidig(db, 'read committed', avsluttKollega, endreR(KONTO.planlegger1, 'borte'))
+      // «… var ikke registrert som medarbeider denne dagen.»
+      expect(r.steg).toBe('22023')
+      expect(cellerR(db)).toBe('')
+    }, 30_000)
+
+    it('holder det samme rett i tabellen, der bare oppsettet låses', async () => {
+      const direkte = direkteR()
+      const db = nyDatabase()
+      expect(await samtidig(db, 'read committed', direkte, avsluttKollega)).toEqual({ steg: '00000', commit: '00000' })
+      expect(cellerR(db)).toBe('')
+      const db2 = nyDatabase()
+      expect((await samtidig(db2, 'read committed', avsluttKollega, direkte)).steg).toBe('23514')
+      expect(cellerR(db2)).toBe('')
+    }, 60_000)
+
+    it('avviser en endring av innstillingene som venter på at medlemskapet avsluttes', async () => {
+      for (const [hva, endring] of [
+        ['kvalifikasjonene', (rev: number) => kvalifikasjoner(KONTO.planlegger1, ['vakt1'], rev)],
+        ['vaktandelen', (rev: number) => vaktandel(KONTO.planlegger1, 50, rev)],
+      ] as const) {
+        const db = nyDatabase()
+        const r = await samtidig(db, 'read committed', avsluttKollega, endring(revisjon(db)))
+        // «… er ikke lenger medarbeider.», ikke en konflikt.
+        expect(r.steg, hva).toBe('22023')
+        expect(aktiveKvalifikasjoner(db), hva).toBe('')
+        expect(psql(db, `select count(*) from personal.vaktandeler where medarbeider_id = '${kollega()}'`), hva).toBe('0')
+      }
+    }, 60_000)
+
+    it('avslutter kvalifikasjonene som ble satt like før medlemskapet ble avsluttet', async () => {
+      const db = nyDatabase()
+      const r = await samtidig(db, 'read committed', kvalifikasjoner(KONTO.planlegger1, ['vakt1'], revisjon(db)), avsluttKollega)
+      expect(r).toEqual({ steg: '00000', commit: '00000' })
+      expect(aktiveKvalifikasjoner(db)).toBe('')
+    }, 30_000)
+
+    it('gir konflikt, ikke tap, når to endrer innstillingene fra den samme revisjonen', async () => {
+      for (const [hva, forst, andre, resultat] of [
+        [
+          'kvalifikasjonene',
+          (rev: number) => kvalifikasjoner(KONTO.planlegger1, ['vakt1'], rev),
+          (rev: number) => kvalifikasjoner(KONTO.planlegger2, ['vakt2'], rev),
+          (db: string) => aktiveKvalifikasjoner(db),
+        ],
+        [
+          'vaktandelen',
+          (rev: number) => vaktandel(KONTO.planlegger1, 50, rev),
+          (rev: number) => vaktandel(KONTO.planlegger2, 80, rev),
+          (db: string) => psql(db, `select plan -> 'ordinary' -> 0 ->> 'percent' from personal.vaktandeler where medarbeider_id = '${kollega()}'`),
+        ],
+        [
+          'kvalifikasjonene mot vaktandelen',
+          (rev: number) => kvalifikasjoner(KONTO.planlegger1, ['vakt1'], rev),
+          (rev: number) => vaktandel(KONTO.planlegger2, 80, rev),
+          (db: string) => `${aktiveKvalifikasjoner(db)}|${psql(db, `select count(*) from personal.vaktandeler where medarbeider_id = '${kollega()}'`)}`,
+        ],
+      ] as const) {
+        const db = nyDatabase()
+        const rev = revisjon(db)
+        const r = await samtidig(db, 'read committed', forst(rev), andre(rev))
+        expect(r.steg, hva).toBe('PT409')
+        expect(resultat(db), hva).toBe(hva === 'vaktandelen' ? '50' : hva === 'kvalifikasjonene' ? 'vakt1' : 'vakt1|0')
+        expect(revisjon(db), hva).toBe(rev + 1)
+      }
+    }, 90_000)
+  })
+
   // Kontrollene etter en lås ville sett tilstanden fra før ventingen (`personal.krev_ferske_data`).
   describe('i repeatable read', () => {
     /** Det som endrer kalenderen eller oppsettet, med navnet i testen. */
@@ -321,6 +453,10 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       ['endring i kalenderen', endre(KONTO.planlegger1, [{ navn: 'Alma Berg', status: 'borte' }])],
       ['fritak', `${som(KONTO.admin)} select public.personal_sett_fritak(${S}, '${ider['Alma Berg']}', '${dato}', true, 1, 1);`],
       ['oppføring rett i tabellen', `insert into personal.oppforinger (fagmiljo_id, medarbeider_id, dato, status_id, regelversjon) values (${S}, '${ider['Alma Berg']}', '${dato}', 'borte', 1);`],
+      ['kvalifikasjonene', `${som(KONTO.planlegger1)} select public.personal_sett_kvalifikasjoner(${R}, '${iR[KONTO.kollega]}', '["vakt1"]', 1);`],
+      ['vaktandelen', `${som(KONTO.planlegger1)} select public.personal_lagre_vaktandel(${R}, '${iR[KONTO.kollega]}', '{"ordinary":[{"from":"${dato}","percent":50}],"temporary":[]}', 1);`],
+      ['avsluttet medlemskap', `update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = '${KONTO.kollega}' and fagmiljo_id = ${R};`],
+      ['«Vis som»', visSom(KONTO.admin, 'reader')],
     ]
 
     it('stopper endringene heller enn å avgjøre dem på gamle data', async () => {
@@ -336,6 +472,8 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       }
       expect(versjoner(db)).toBe('1')
       expect(celler(db)).toEqual([])
+      expect(psql(db, `select count(*) from personal.medarbeiderperioder where medarbeider_id = '${iR[KONTO.kollega]}' and til is null`)).toBe('1')
+      expect(simuleringer(db)).toBe('0')
     }, 30_000)
   })
 
@@ -346,7 +484,7 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       giAdmin(db, KONTO.planlegger1)
       const r = await samtidig(db, 'read committed', fjernAdmin(KONTO.admin), `${som(KONTO.admin)} select public.personal_sett_vaktplanansvarlig(${S}, '${KONTO.planlegger2}', false);`)
       expect(r.steg).toBe('42501')
-      expect(psql(db, `select count(*) from personal.vaktplanansvarlige where bruker_id = '${KONTO.planlegger2}' and til is null`)).toBe('1')
+      expect(psql(db, `select count(*) from personal.vaktplanansvarlige where bruker_id = '${KONTO.planlegger2}' and fagmiljo_id = ${S} and til is null`)).toBe('1')
     }, 30_000)
 
     it('venter med lagringen av oppsettet, og avviser den når administratorrollen er fjernet', async () => {
@@ -379,5 +517,40 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       expect(r.steg).toBe('42501')
       expect(celler(db).map((c) => c.fritak)).toEqual([false])
     }, 30_000)
+  })
+
+  // «Vis som» endrer rollen alle kommandoene kontrollerer, og tas som de andre tilgangsendringene.
+  describe('når «Vis som» endres samtidig', () => {
+    it('lar en lagring som er i gang bli ferdig før rollen senkes', async () => {
+      const db = nyDatabase()
+      const r = await samtidig(db, 'read committed', lagre(db)(KONTO.admin), visSom(KONTO.admin, 'reader'))
+      expect(r).toEqual({ steg: '00000', commit: '00000' })
+      expect(versjoner(db)).toBe('1,2')
+      expect(psql(db, `select rolle from personal.vis_som where bruker_id = '${KONTO.admin}'`)).toBe('reader')
+    }, 30_000)
+
+    it('avviser en lagring som venter på at rollen senkes', async () => {
+      for (const [hva, endring] of [
+        ['oppsettet', (db: string) => lagre(db)(KONTO.admin)],
+        ['kalenderen', () => endre(KONTO.planlegger1, [{ navn: 'Alma Berg', status: 'borte' }])],
+      ] as const) {
+        const db = nyDatabase()
+        const bruker = hva === 'oppsettet' ? KONTO.admin : KONTO.planlegger1
+        const r = await samtidig(db, 'read committed', visSom(bruker, 'reader'), endring(db))
+        expect(r.steg, hva).toBe('42501')
+        expect(versjoner(db), hva).toBe('1')
+        expect(celler(db), hva).toEqual([])
+      }
+    }, 60_000)
+
+    it('venter på at tilgangen fjernes, og kontrollerer valget mot rollen etterpå', async () => {
+      const db = nyDatabase()
+      giAdmin(db, KONTO.planlegger1)
+      // Uten administratorrollen er administratoren en kollega, og «Vis som» kan ikke gi mer.
+      expect((await samtidig(db, 'read committed', fjernAdmin(KONTO.admin), visSom(KONTO.admin, 'planner'))).steg).toBe('42501')
+      // Uten medlemskap finnes ikke funksjonen for brukeren (K-SKJ-3).
+      expect((await samtidig(db, 'read committed', avsluttMedlemskap(KONTO.planlegger2), visSom(KONTO.planlegger2, 'reader'))).steg).toBe('P0002')
+      expect(simuleringer(db)).toBe('0')
+    }, 60_000)
   })
 })

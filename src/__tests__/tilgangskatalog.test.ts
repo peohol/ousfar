@@ -72,8 +72,12 @@ describe('katalogvaktene', () => {
       'personal_historikk(fagmiljo uuid, fra date, til date)',
       'personal_kalender(fagmiljo uuid, fra date, til date)',
       'personal_lagre_oppsett(fagmiljo uuid, oppsett jsonb, forventet_versjon integer)',
+      'personal_lagre_vaktandel(fagmiljo uuid, medarbeider uuid, vaktandel jsonb, forventet_revisjon bigint)',
+      'personal_medlemmer(fagmiljo uuid)',
       'personal_sett_fritak(fagmiljo uuid, medarbeider uuid, dato date, fritak boolean, forventet_revisjon bigint, forventet_fritak_revisjon bigint)',
+      'personal_sett_kvalifikasjoner(fagmiljo uuid, medarbeider uuid, statuser jsonb, forventet_revisjon bigint)',
       'personal_sett_vaktplanansvarlig(fagmiljo uuid, bruker uuid, ansvarlig boolean)',
+      'personal_vis_som(fagmiljo uuid, rolle text, medarbeider uuid)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
       // #598: funksjonsbryterne og testmiljøene, bare for systemarkitektene.
       'sett_funksjonsbryter(funksjon text, fagmiljo uuid, tilstand text, begrunnelse text)',
