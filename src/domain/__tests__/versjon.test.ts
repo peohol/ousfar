@@ -13,7 +13,7 @@ import { STOFFREGISTER } from '../stoffregister'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { hentHeleLoggen } from '../../data/endringslogg'
+import { hentHeleLoggen, hentUtproving, loggMed } from '../../data/endringslogg'
 import { berorer, HELE_APPEN, VINDUER } from '../../oppdatering/sider'
 import { FORTOLKNINGSOPPFORINGER } from '../ouskatalog'
 import {
@@ -45,6 +45,9 @@ import {
 
 /** Hele loggen, slik byggingen delte den i sider. */
 const ENDRINGSLOGG = await hentHeleLoggen()
+/** Føringene under utprøving, som bare systemarkitektene ser, og loggen deres. */
+const UTPROVING = await hentUtproving()
+const SYSTEMARKITEKTENES = await loggMed(UTPROVING).hentHele()
 
 describe('formaterDato', () => {
   it('gir dd.mm.åååå', () => {
@@ -246,6 +249,20 @@ describe('områdene en føring gjelder', () => {
 describe('endringsloggen', () => {
   it('har minst én føring', () => {
     expect(ENDRINGSLOGG.length).toBeGreaterThan(0)
+  })
+
+  it('har føringene under utprøving bare i loggen systemarkitektene ser, hver rett over versjonen den kom etter', () => {
+    expect(ENDRINGSLOGG.filter((e) => e.bareSystemarkitekter)).toEqual([])
+    expect(UTPROVING.every((e) => e.bareSystemarkitekter && !varsles(e) && !e.gjelder)).toBe(true)
+    expect(SYSTEMARKITEKTENES).toHaveLength(ENDRINGSLOGG.length + UTPROVING.length)
+    expect(SYSTEMARKITEKTENES.filter((e) => !e.bareSystemarkitekter)).toEqual(ENDRINGSLOGG)
+    const versjoner = SYSTEMARKITEKTENES.map((e) => e.versjon)
+    expect(new Set(versjoner).size).toBe(versjoner.length)
+    for (const e of UTPROVING) {
+      const grunn = e.versjon.split('+')[0]!
+      const neste = SYSTEMARKITEKTENES.slice(SYSTEMARKITEKTENES.indexOf(e) + 1).find((n) => !n.bareSystemarkitekter)
+      expect(neste?.versjon, e.id).toBe(grunn)
+    }
   })
 
   it('står nyest først, med strengt synkende versjoner', () => {

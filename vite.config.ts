@@ -9,9 +9,9 @@ import { systemvalgskript } from './src/domain/systemvalg'
 import { medInnholdsregler } from './src/drift/sikkerhetshoder'
 import { HISTORISKE_ENDRINGER } from './src/data/endringshistorikk'
 import { beregnNyeEndringer, ENDRINGSMAPPE } from './src/drift/endringshistorikk'
-import { ENDRINGSMODUL, registermodul, sidemodul, sidenummer } from './src/drift/endringsmoduler'
+import { ENDRINGSMODUL, registermodul, sidemodul, sidenummer, UTPROVINGSMODUL, utprovingsmodul } from './src/drift/endringsmoduler'
 import { endringsomrader, nyesteVersjon, oppdateringsversjon, type Endring } from './src/domain/versjon'
-import { settSammen } from './src/domain/versjonering'
+import { delLogg, settSammen } from './src/domain/versjonering'
 import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/byggopplysninger'
 
 /**
@@ -20,7 +20,7 @@ import { VERSJONSFIL, type Byggopplysninger } from './src/oppdatering/byggopplys
  * følger med utenfor innloggingsveggen. Endringsloggen har i tillegg én modul
  * per side, som appen henter når den vises (`src/drift/endringsmoduler.ts`).
  */
-const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: ENDRINGSMODUL } as const
+const MODULER = { bygg: 'virtual:ousfar-bygg', endringer: ENDRINGSMODUL, utproving: UTPROVINGSMODUL } as const
 
 /** Det frosne arkivet over de eldre føringene, som bare byggingen leser. */
 const ARKIVFIL = '/src/data/endringshistorikk.ts'
@@ -48,17 +48,19 @@ function versjonsfil(): Plugin {
   // Uten det vanlige `\0` foran: da står modulene med navn i kildekartene, og
   // kontrollen av innloggingsveggen (`scripts/kontroller-vegg.mjs`) ser hvor de havnet.
   const virtuell = (id: string) => id
-  let beregnet: { logg: Endring[]; bygg: Byggopplysninger } | undefined
+  // `logg` er loggen alle ser; føringene under utprøving står for seg
+  // (`delLogg`), så versjonen, varslene og oppdateringen er som uten dem.
+  let beregnet: { logg: Endring[]; utproving: Endring[]; bygg: Byggopplysninger } | undefined
   const beregn = () => {
     if (beregnet) return beregnet
     const nye = beregnNyeEndringer(rot)
-    const logg = settSammen(nye, HISTORISKE_ENDRINGER)
+    const { offentlig: logg, utproving } = delLogg(settSammen(nye, HISTORISKE_ENDRINGER))
     const bygg: Byggopplysninger = {
       bygg: process.env.VERCEL_GIT_COMMIT_SHA || Date.now().toString(36),
       versjon: nyesteVersjon(logg),
       oppdatering: oppdateringsversjon(logg),
     }
-    return (beregnet = { logg, bygg })
+    return (beregnet = { logg, utproving, bygg })
   }
   return {
     name: 'ousfar-versjonsfil',
@@ -66,6 +68,7 @@ function versjonsfil(): Plugin {
     load(id) {
       if (id === virtuell(MODULER.bygg)) return `export const BYGG = ${JSON.stringify(beregn().bygg)}\n`
       if (id === virtuell(MODULER.endringer)) return registermodul(beregn().logg)
+      if (id === virtuell(MODULER.utproving)) return utprovingsmodul(beregn().utproving)
       const side = sidenummer(id)
       return side === null ? undefined : sidemodul(beregn().logg, side)
     },

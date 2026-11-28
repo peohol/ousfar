@@ -106,8 +106,10 @@ export function grupperOppgaver(oppgaver: readonly Oppgave[]): Oppgavegrupper {
  * Føringen oppgaven viser til, når den står i endringsloggen appen har. Nye
  * oppgaver viser til ID-en til endringen, som er kjent før PR-en slås sammen;
  * eldre til versjonen. En oppgave kan være merket utført før endringen er
- * publisert; da finnes ingen føring å vise ennå.
+ * publisert; da finnes ingen føring å vise ennå. `register` er loggen den
+ * innloggede ser (`useEndringslogg`), med føringene under utprøving for
+ * systemarkitektene.
  */
-export function publisertEndring(referanse: string | null): Endringsmerke | undefined {
-  return finnEndring(ENDRINGSREGISTER, referanse)
+export function publisertEndring(referanse: string | null, register: readonly Endringsmerke[] = ENDRINGSREGISTER): Endringsmerke | undefined {
+  return finnEndring(register, referanse)
 }

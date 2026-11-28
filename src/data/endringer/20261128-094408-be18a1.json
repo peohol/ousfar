@@ -1,0 +1,16 @@
+{
+  "id": "20261128-094408-be18a1",
+  "semver": "minor",
+  "opprettet": "2026-11-28T09:44:08Z",
+  "sammendrag": "Føringer i endringsloggen for funksjoner under utprøving",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "punkter": [
+    "Endringsloggen kan nå ha føringer som bare systemarkitektene ser. De er merket «Under utprøving» og står rett etter versjonen de kom etter.",
+    "For alle andre finnes de ikke: de gir ingen ny versjon, intet varsel og ingen melding om å oppdatere.",
+    "Når en funksjon tas i bruk for alle, får den en ny, vanlig føring. De gamle føringene står urørt."
+  ],
+  "bareSystemarkitekter": true
+}

@@ -38,7 +38,8 @@ for punktet om endringsloggen, og hopp over resten av denne protokollen.
 
 Appen ber bare brukerne oppdatere når versjonen de skal oppdatere til — den
 nyeste føringen som varsles — er ny (`docs/oppdatering.md`). En stille PR
-endrer ikke den, og det gjør heller ikke en føring med `utenVarsel`.
+endrer ikke den, og det gjør heller ikke en føring med `utenVarsel` eller en
+føring under utprøving (`bareSystemarkitekter`, steg 4b).
 
 ## 1. Har denne grenen alt en føring?
 
@@ -82,6 +83,7 @@ UTC og seks tilfeldige tegn) og `opprettet`, og tomme tekstfelt. Fyll den ut:
 - `semver` er leddet endringen øker (steg 3). **Ingen `versjon` og ingen
   dato:** versjonen og datoen i loggen får endringen når den slås sammen.
 - `gjelder` utelates for en føring med `utenVarsel` (steg 4).
+- `bareSystemarkitekter` settes bare for en funksjon under utprøving (steg 4b).
 - Feil form, et ukjent felt eller et tomt felt stopper testene og byggingen
   med en melding om hva som er galt.
 
@@ -182,6 +184,40 @@ Sett så mange områder som trengs. Gjelder endringen noe som står på alle sid
 eller er du i tvil, bruk `hele appen`. En test kontrollerer at hvert område
 finnes, så en skrivefeil ikke lar brukerne stå på en gammel versjon.
 
+## 4b. Funksjoner under utprøving
+
+En PR for en funksjon som ennå bare er slått på for systemarkitektene (som
+personalkalenderen, `docs/personal.md` §8.3), fører det den gjør, med
+`"bareSystemarkitekter": true` (`npm run endring -- minor --utproving`). Føringen skrives ellers som vanlig, med ledd,
+typer, omfang og punkter, og kan si rett ut hva funksjonen gjør.
+
+For alle andre enn systemarkitektene finnes føringen ikke:
+
+- Den står ikke i loggen deres, og teksten er ikke med i noe de henter: den
+  ligger i en egen pakke som bare hentes for systemarkitektene.
+- Den øker ingen versjon. Versjonsnummeret, meldingen om å oppdatere og
+  `versjon.json` er de samme som uten den, og numrene til de andre føringene
+  får ingen hull.
+- Den gir intet varsel og ingen telling i bjella eller på forsiden, og den kan
+  derfor ikke ha varselmerkene (`endrerFortolkning`, `varsleFunksjonsendring`,
+  `kritiskFagligVarsel`, `utenVarsel`) eller `gjelder`. Testene og byggingen
+  stopper på en slik føring.
+
+Systemarkitektene ser den i loggen med merket «Under utprøving», rett over
+versjonen den kom etter, som `1.160.0+utproving.1` (den første etter 1.160.0),
+og de kan velge den for en planlagt oppgave. Leddet (`semver`) skrives som for
+en vanlig føring, men brukes ikke til versjonen.
+
+**Når funksjonen tas i bruk** for vanlige brukere, skrives én ny, vanlig føring
+som oppsummerer det de får, med ledd og eventuelle varselmerker etter
+reglene over. De gamle føringene under utprøving står urørt og vises
+fortsatt bare for systemarkitektene. Feltet settes når føringen skrives og kan
+ikke legges til, tas bort eller endres etter at den er publisert: det ville
+endret versjonsnumrene, og byggingen stopper på det.
+
+Repoet er offentlig, så føringen er ikke hemmelig; skjermingen gjelder appen.
+Skriv den derfor uten personopplysninger, som alt annet her.
+
 **Omfang** — ett merke, vurdert skjønnsmessig. Beskrivelsene er veiledende:
 
 | Merke | Omtrent |
@@ -241,6 +277,11 @@ ikke GitHub om noe.
   i arbeidstreet, ikke i en commit, får foreløpige numre etter de andre.
 - Datoen i loggen er datoen (norsk tid) for commiten som tok endringen inn i
   `main`.
+- **Under utprøving:** en føring med `bareSystemarkitekter` øker ingen
+  versjon. Den får versjonen den står etter, med nummeret sitt der
+  (`1.160.0+utproving.2`), og byggingen deler loggen i den alle ser og
+  føringene under utprøving (`delLogg` i `src/domain/versjonering.ts`).
+  Byggingen stopper hvis feltet er endret etter at føringen ble publisert.
 
 ## Slik får appen loggen
 
@@ -256,12 +297,18 @@ den ikke lastes med appen hver gang:
   hentes alle fram til den. Sidene telles fra den eldste, så en ny føring
   endrer bare den øverste pakken.
 
+- **Føringene under utprøving** er en egen pakke uten noe av det andre, som
+  bare hentes når databasen har svart at den innloggede er systemarkitekt
+  (`useEndringslogg`). De flettes da inn i loggen hen ser (`loggMed`); alle
+  andre har bare loggen uten dem (`OFFENTLIG_LOGG`).
+
 Appen leser loggen gjennom `src/data/endringslogg.ts`, aldri arkivet direkte:
 byggingen stopper hvis arkivet havner i en pakke.
 
 ## Tilbakerulling og retting
 
-- En publisert føring fjernes aldri, og den får aldri nytt navn eller nytt ledd.
+- En publisert føring fjernes aldri, og den får aldri nytt navn, nytt ledd
+  eller ny `bareSystemarkitekter`.
   En tilbakerulling er en ny endring med sin egen føring, som sier hva som er
   tatt bort. Byggingen stopper på en PR som sletter en publisert føring, som en
   ren «Revert» i GitHub gjør; legg da fila tilbake og skriv en ny føring.

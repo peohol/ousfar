@@ -12,7 +12,7 @@
  *
  * Byggingen stopper med en tydelig feil i stedet for å gjette når
  * historikken ikke kan leses helt, når en publisert endring er slettet, eller
- * når leddet den økte, er endret etterpå.
+ * når leddet den økte eller hvem den vises for, er endret etterpå.
  */
 import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
@@ -192,7 +192,7 @@ export function lesEndringsfiler(rot: string): Map<string, Endringsforing> {
 /**
  * Endringene som er slått sammen, i rekkefølge, og dem som bare finnes i
  * arbeidstreet. Teksten i en publisert endring kan rettes senere; at den
- * finnes og hvilket ledd den økte, kan ikke.
+ * finnes, hvilket ledd den økte og hvem den vises for, kan ikke.
  */
 export function lesEndringshistorikk(rot: string, miljo: Miljo = process.env, logg?: (linje: string) => void): Endringshistorikk {
   sikreHelHistorikk(rot, miljo, logg)
@@ -215,6 +215,13 @@ export function lesEndringshistorikk(rot: string, miljo: Miljo = process.env, lo
         `endringen ${navn} ble publisert som ${da.semver}, men fila sier nå ${naa.semver}. Leddet en publisert endring økte, kan ikke endres.`,
       )
     }
+    if ((naa.bareSystemarkitekter === true) !== (da.bareSystemarkitekter === true)) {
+      const hvem = (f: Endringsforing) => (f.bareSystemarkitekter ? 'bare for systemarkitektene' : 'for alle')
+      throw new Versjoneringsfeil(
+        `endringen ${navn} ble publisert ${hvem(da)}, men fila sier nå ${hvem(naa)}. Hvem en publisert endring vises for, kan ikke endres; ` +
+          'skriv en ny føring for alle når funksjonen tas i bruk (docs/endringslogg.md).',
+      )
+    }
     publiserte.push({ foring: naa, semver: da.semver, commit: t.commit, tidspunkt: t.tidspunkt, rekkefolge: t.rekkefolge })
   }
   const upubliserte = [...iTreet.values()].filter((f) => !tillegg.has(f.id))
@@ -229,8 +236,10 @@ export function beregnNyeEndringer(rot: string, miljo: Miljo = process.env, logg
   const { publiserte, upubliserte } = lesEndringshistorikk(rot, miljo, logg)
   const start = startversjon(HISTORISKE_ENDRINGER)
   const nye = nummerer(start, publiserte, upubliserte)
-  const versjon = nye[0]?.versjon ?? start
+  const versjon = nye.find((e) => !e.bareSystemarkitekter)?.versjon ?? start
   const forelopige = upubliserte.length ? `, ${upubliserte.length} ikke slått sammen ennå (foreløpige numre)` : ''
-  logg(`Versjon ${versjon}: ${nye.length} endringer etter ${start}${forelopige}`)
+  const utproving = nye.filter((e) => e.bareSystemarkitekter).length
+  const skjulte = utproving ? `, ${utproving} av dem bare for systemarkitektene` : ''
+  logg(`Versjon ${versjon}: ${nye.length} endringer etter ${start}${skjulte}${forelopige}`)
   return nye
 }

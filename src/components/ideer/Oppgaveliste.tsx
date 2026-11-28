@@ -2,6 +2,7 @@ import { useId, useMemo } from 'react'
 import { OPPGAVESTATUSNAVN, oppgavekode } from '../../ideer/modell'
 import { grupperOppgaver, publisertEndring, type Oppgave } from '../../ideer/oppgaver'
 import { visEndringslogg } from '../endringsloggvisning'
+import { useEndringslogg } from '../useEndringslogg'
 import { Ikon } from '../ikon/Ikon'
 import { Ikonknapp } from '../Ikonknapp'
 import { Forfatterbilde, useForfatternavn } from '../traad/Forfatterkontekst'
@@ -29,6 +30,7 @@ export function Oppgaveliste({
   onVeksleSkuff: (navn: string) => void
 }) {
   const { aktive, utforte } = useMemo(() => grupperOppgaver(oppgaver), [oppgaver])
+  const { register } = useEndringslogg()
 
   return (
     <div className="ideliste">
@@ -47,7 +49,7 @@ export function Oppgaveliste({
         ) : (
           <ul className="idekortliste">
             {utforte.map((oppgave) => {
-              const endring = publisertEndring(oppgave.endringslogg)
+              const endring = publisertEndring(oppgave.endringslogg, register)
               return (
                 <li key={oppgave.id} className="oppgaverad">
                   <Oppgavekort oppgave={oppgave} onApne={() => onApne(oppgave.id)} />

@@ -740,8 +740,11 @@ bruker derfor en ny, felles mekanisme fra Dev:
   har godkjent produktet og §3.4 er avklart. Da settes den til `på` uten ny
   kode (P7). Andre fagmiljøer står av.
 - **Uten spor i endringsloggen** ([#601](https://github.com/peohol/ousfar/issues/601)):
-  føringer for personalfunksjonene vises bare for systemarkitektene. Til det
-  finnes, er føringene nøytrale og uten varsel.
+  føringer for personalfunksjonene får `"bareSystemarkitekter": true` og vises
+  bare for systemarkitektene, uten ny versjon, varsel eller melding om å
+  oppdatere for andre (`docs/endringslogg.md` steg 4b). Når kalenderen tas i
+  bruk (P7), skrives én ny føring for alle; de gamle står urørt. Føringene fra
+  før feltet fantes, er nøytrale og står som de er.
 - **Forsiden** ([#599](https://github.com/peohol/ousfar/issues/599)) og
   **varslene på enheten** ([#600](https://github.com/peohol/ousfar/issues/600))
   viser personalmodulene og -valgene bare for dem som har funksjonen.

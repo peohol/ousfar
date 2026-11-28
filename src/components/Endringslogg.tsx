@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ENDRINGSREGISTER, hentedeEndringer, hentEndringer, plassI } from '../data/endringslogg'
+import { OFFENTLIG_LOGG, type Endringslogg as Logg } from '../data/endringslogg'
 import { visningFor } from '../domain/endringssider'
 import { ENDRINGER_PER_SIDE, formaterDato, type Endring, type Endringstype } from '../domain/versjon'
 import { useBevart } from '../oppdatering/Bevaring'
@@ -14,6 +14,9 @@ import { Modallag } from './Modallag'
  * gangen: de nyeste, og flere bakover i tid med «Vis flere»
  * (`src/data/endringslogg.ts`). Åpnes loggen på en bestemt føring, hentes
  * alle fram til den.
+ *
+ * `logg` er loggen den innloggede ser (`useEndringslogg`): for
+ * systemarkitektene med føringene under utprøving, merket som det.
  *
  * Merk at appens egne taster fortsatt hører etter på vinduet mens laget står
  * åpent. Vakten mot det ligger i `lagLiggerOver()` i `hooks/useKeyboard.ts`.
@@ -38,9 +41,12 @@ const LISTE = '.logg__liste'
 export function Endringslogg({
   apen,
   versjon = null,
+  logg = OFFENTLIG_LOGG,
   onLukk,
 }: {
   apen: boolean
+  /** Loggen som vises; uten den, loggen alle ser. */
+  logg?: Logg
   /**
    * Føringen som foldes ut og hentes fram når loggen åpnes, som fra en utført
    * oppgave: versjonen eller ID-en til endringen.
@@ -63,10 +69,11 @@ export function Endringslogg({
 
   // Åpnet på en føring: den står utfoldet og fram i bildet, og alle fram til
   // den er med.
-  const plass = plassI(versjon)
-  const valgt = plass === null ? null : ENDRINGSREGISTER[plass]!.versjon
-  const onsket = Math.min(Math.max(vist, plass === null ? 0 : visningFor(plass)), ENDRINGSREGISTER.length)
-  const endringer = apen ? hentedeEndringer(onsket) : []
+  const { register } = logg
+  const plass = logg.plassI(versjon)
+  const valgt = plass === null ? null : register[plass]!.versjon
+  const onsket = Math.min(Math.max(vist, plass === null ? 0 : visningFor(plass)), register.length)
+  const endringer = apen ? logg.hentede(onsket) : []
   const mangler = apen && endringer.length < onsket
 
   // Lukket lag: neste åpning skal begynne på toppen, med de nyeste og alle
@@ -83,14 +90,14 @@ export function Endringslogg({
     if (!mangler) return
     let gjelder = true
     setFeil(false)
-    hentEndringer(onsket).then(
+    logg.hent(onsket).then(
       () => gjelder && setHentet((n) => n + 1),
       () => gjelder && setFeil(true),
     )
     return () => {
       gjelder = false
     }
-  }, [mangler, onsket, forsok])
+  }, [logg, mangler, onsket, forsok])
 
   // Fokuset som venter på føringene, går dit når de er hentet: til den
   // loggen ble åpnet på, eller den første av dem «Vis flere» ga. Det flyttes
@@ -157,7 +164,7 @@ export function Endringslogg({
           </p>
         )
       )}
-      {!feil && endringer.length > 0 && (mangler || onsket < ENDRINGSREGISTER.length) && (
+      {!feil && endringer.length > 0 && (mangler || onsket < register.length) && (
         <div className="logg__flere">
           <Button variant="subtle" aria-disabled={mangler} onClick={visFlere}>
             {mangler ? 'Henter …' : 'Vis flere'}
@@ -168,7 +175,10 @@ export function Endringslogg({
   )
 }
 
-/** Én føring: datoen og versjonen, sammendraget, typene og punktene. */
+/**
+ * Én føring: datoen og versjonen, sammendraget, typene og punktene. En føring
+ * under utprøving, som bare systemarkitektene ser, er merket med det.
+ */
 function Skuff({
   endring,
   apen,
@@ -191,6 +201,7 @@ function Skuff({
       sammendrag={endring.sammendrag}
       merker={
         <>
+          {endring.bareSystemarkitekter && <span className="loggmerke loggmerke--utproving">Under utprøving</span>}
           {endring.typer.map((type) => (
             <span key={type} className={`loggmerke loggmerke--${TONE[type]}`}>
               {type}
