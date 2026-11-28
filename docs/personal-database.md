@@ -19,9 +19,9 @@ P2b leveres i to deler:
 
 P2c ([#620](https://github.com/peohol/ousfar/issues/620)) legger til
 **medarbeiderne 1:1 med medlemmene**, **innstillingene** (kvalifikasjonene og
-vaktandelen) og **«Vis som»** (`*_personal_medarbeidere.sql`). Dette er
-databasedelen; brukerflatene for dem kommer i en egen PR i P2c, og
-kalenderens visninger i P3.
+vaktandelen) og **«Vis som»** (`*_personal_medarbeidere.sql`), med
+brukerflatene i `src/personal/` (docs/personal.md §7.4). Kalenderens
+visninger kommer i P3.
 
 ## Skjerming og tilgang
 
@@ -181,11 +181,13 @@ eller testmerkingen.
   medlemskapet var avsluttet. Et fagmiljø der funksjonen aldri har vært i
   bruk, får ingen medarbeidere og ingen rader.
 - **Navnet og stillingen** leses fra profilen hver gang, og stillingene er
-  appens stillinger (K-MED-5). Stilling per dag kommer med Dev
-  ([#602](https://github.com/peohol/ousfar/issues/602), før P4).
+  appens stillinger (K-MED-5). Stillingen per dag leses med
+  `intern.stillingsperioder` eller `intern.stilling_pa_dag` fra Dev
+  ([#602](https://github.com/peohol/ousfar/issues/602), `docs/stillinger.md`,
+  «Stilling per dag»).
 - **Til B14** gir `personal.stilling_styrer_vakter(bruker)` fagmiljøene der
-  brukerens stilling styrer vaktene, så kontrollen av stillingsendringer i
-  #602 kan kreve lokal administrativ myndighet i hvert av dem.
+  brukerens stilling styrer vaktene; `intern.stillingsavslag` krever lokal
+  administrativ myndighet i hvert av dem (`docs/stillinger.md`).
 - `personal.innstillingslogg` fører hver endring av medlemskapet,
   kvalifikasjonene og vaktandelen, med hvem, når, før og etter. Loggen kan
   ikke endres.
@@ -209,6 +211,12 @@ lenger er med etter i dag, kan ikke endres («… er ikke lenger medarbeider.»)
   (`personal.vaktandeler`).
 - `public.personal_medlemmer(fagmiljø)` gir den lokale administratoren de
   aktive medlemmene å velge vaktplanansvarlige blant (`managePlanners`).
+- **«Ny»** (`*_personal_ny_medarbeider.sql`): en medarbeider er ny til
+  vaktene er valgt i den gjeldende perioden (`personal.er_ny`). Et valg med
+  `personal_sett_kvalifikasjoner` kvitterer, også uten vakter: det setter
+  `personal.medarbeidere.vakter_valgt`, øker revisjonen og logges. Den som
+  kommer tilbake etter å ha sluttet, er ny igjen. Lesemodellen gir `ny`
+  sammen med kvalifikasjonene.
 - Lesemodellen gir alle rollene periodene, revisjonen og vaktandelen;
   kvalifikasjonene bare planleggerne, som før.
 
@@ -435,6 +443,8 @@ testdatabasen:
   profilen, avsluttet og nytt medlemskap samme dag og senere, vernet av
   periodene, medlemskapene som følges mens funksjonen står av, et fagmiljø
   der funksjonen aldri har vært i bruk, andre fagmiljøer og Sandkasse;
+- «Ny»: kvittert med et valg uten vakter, revisjonen og loggen, ny igjen
+  etter en ny periode, og skjult for en kollega;
 - innstillingene: rollene, kvalifikasjonene fra i dag, formfeil, foreldet
   revisjon, synligheten, vaktandelen fra i dag og vernet av tidligere dager
   rett i tabellen, og pariteten med `validateDutySchedule` og `changesPast`;

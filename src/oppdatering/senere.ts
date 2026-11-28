@@ -45,7 +45,7 @@ export function senere<M extends Record<K, Komponent>, K extends keyof M & strin
 ): Senerekomponent<M[K]> {
   let lastet: M[K] | null = null
   let lasting: Promise<M[K]> | null = null
-  // Feilen en visning ventet på, til den vises; en feilet forhåndslasting gir ingen.
+  // Feilen en visning ventet på, til den er vist; en feilet forhåndslasting gir ingen.
   let feil: unknown = null
   const last = () =>
     (lasting ??= hent().then(
@@ -58,8 +58,14 @@ export function senere<M extends Record<K, Komponent>, K extends keyof M & strin
   function Senerekomponent(egenskaper: ComponentProps<M[K]>) {
     if (lastet) return createElement(lastet, egenskaper)
     if (feil) {
+      // Feilen står til React har gitt den til feilgrensen: React prøver en
+      // feilet visning på nytt med en gang, og fant den da ingen feil, ville
+      // den hente koden på nytt i det uendelige. Neste forsøk etter det henter
+      // koden på nytt.
       const grunn = feil
-      feil = null
+      setTimeout(() => {
+        if (feil === grunn) feil = null
+      }, 0)
       throw grunn
     }
     // Suspense viser ventefeltet til koden er hentet, og prøver så igjen.

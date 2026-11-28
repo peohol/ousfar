@@ -10,7 +10,14 @@
  *   personalsiden hentes ikke;
  * - `qa-admin` etter bytte til Sandkasse (testmiljø, funksjonen på
  *   `utprøving`): Kalender under Personal, siden med fagmiljøet og fanene,
- *   koden hentes først nå, og en direkte adresse til en fane;
+ *   koden hentes først nå, og en direkte adresse til fanen Medarbeidere med
+ *   de syntetiske medarbeiderne, også etter ny innlasting;
+ * - «Vis som» (K-SKJ-7): som kollega forsvinner fanen Medarbeidere, også
+ *   etter ny innlasting, og «Avslutt» gir den virkelige rollen tilbake;
+ * - hele forløpet i Medarbeidere (K-UI-2/3): «Ny» kvittert med tastaturet og
+ *   uten vakter, vakter og vaktandel som står etter ny innlasting, konflikten
+ *   mellom to faner, en vaktplanansvarlig utpekt og fjernet, og smal skjerm
+ *   med redigeringen åpen; alt gjøres om igjen, så kjøringen kan gjentas;
  * - bytte tilbake fra kalenderen: siden blir «Siden finnes ikke», og menyen
  *   mister Personal.
  *
@@ -21,6 +28,7 @@
  * kontrollene ser den som før.
  *   QA_SKJERMBILDER=<mappe> npx vite-node src/__tests__/qa/personalnettleser.ts
  */
+import { addDays, todayIn } from '@delt/personal/dates'
 import { randomBytes } from 'node:crypto'
 import { mkdirSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -47,9 +55,9 @@ async function punkt(kode: string, arbeid: () => Promise<string | void>) {
     utfall.push({ punkt: kode, ok: true, merknad: m })
     logg(`  ok ${m}`)
   } catch (e) {
-    const m = e instanceof Error ? e.message.split('\n')[0]! : String(e)
-    utfall.push({ punkt: kode, ok: false, merknad: m })
-    logg(`  FEIL ${m}`)
+    const linjer = e instanceof Error ? e.message.split('\n') : [String(e)]
+    utfall.push({ punkt: kode, ok: false, merknad: linjer[0]! })
+    logg(`  FEIL ${linjer.slice(0, 8).join('\n       ')}`)
   }
 }
 function krev(b: unknown, hva: string): asserts b {
@@ -65,6 +73,8 @@ async function innen(ms: number, hva: string, sjekk: () => Promise<boolean>) {
 }
 
 const SANDKASSE = 'Sandkasse'
+/** En av de syntetiske medarbeiderne i Sandkasse (`*_personal_utproving.sql`). */
+const SYNTETISK = 'Alma Berg'
 const STANDARD = 'OUS Klinisk farmakologi'
 const GRUNN = 'QA: personalkalenderen i det lokale testmiljøet (syntetisk)'
 
@@ -162,6 +172,182 @@ async function byttFagmiljo(side: Side, til: string) {
   await innen(10_000, `arbeider i ${til}`, async () => (await side.locator('.forside__tittel').first().innerText()) === til)
 }
 
+/** Åpner Medarbeidere i Sandkasse, hentet på nytt, og venter på tabellen. */
+async function tilMedarbeidere(side: Side) {
+  await side.goto(`${miljo.url}/#/kalender/medarbeidere`)
+  // Bare adressen etter # endres fra en annen fane i kalenderen; grunnlaget hentes først ved en ny innlasting.
+  await side.reload()
+  await innen(15_000, 'tabellen i Medarbeidere', () => side.getByRole('table').isVisible())
+}
+const raden = (side: Side, navn: string) => side.getByRole('row').filter({ has: side.getByRole('rowheader', { name: new RegExp(navn) }) })
+/** Vaktene raden viser som valgt, som «Ja» per oppgave. */
+const vakterI = async (side: Side, navn: string) => (await raden(side, navn).getByRole('img', { name: 'Ja' }).count()) as number
+async function apneRedigering(side: Side, navn: string) {
+  await raden(side, navn).getByRole('button').click()
+  const dialog = side.getByRole('dialog')
+  await innen(5_000, `redigeringen av ${navn}`, () => dialog.isVisible())
+  return dialog
+}
+async function lukkRedigering(side: Side) {
+  await side.keyboard.press('Escape')
+  await innen(5_000, 'redigeringen lukket', async () => (await side.getByRole('dialog').count()) === 0)
+}
+/** Trykker Tab til knappen med navnet har fokus, og trykker Enter, som med tastaturet alene. */
+async function medTastaturet(side: Side, knapp: string) {
+  for (let i = 0; i < 40; i++) {
+    const navn: string = await side.evaluate(() => document.activeElement?.textContent?.trim() ?? '')
+    if (navn === knapp) return side.keyboard.press('Enter')
+    await side.keyboard.press('Tab')
+  }
+  throw new Error(`fant ikke ${knapp} med Tab`)
+}
+
+/**
+ * Hele forløpet i Medarbeidere som lokal administrator i Sandkasse (K-UI-2/3):
+ * kvittere «Ny» med tastaturet og uten vakter, endre vakter og vaktandel og se
+ * dem etter ny innlasting, utpeke og fjerne en vaktplanansvarlig, konflikten
+ * mellom to faner, og smal skjerm med redigeringen åpen. Alt gjøres om igjen,
+ * så kjøringen kan gjentas.
+ */
+async function medarbeiderforlopet(admin: Side) {
+  await punkt('P7 «Ny» kvitteres med tastaturet, også uten vakter, og står etter ny innlasting', async () => {
+    const navn = `Nora Q${randomBytes(3).toString('hex').replace(/\d/g, 'x')}`
+    lokalSql(s, `begin; select set_config('ousfar.tilgangsgrunn', '${GRUNN}', true);
+      insert into personal.medarbeidere (fagmiljo_id, syntetisk_navn, aktiv_fra) values ('${sandkasse}', '${navn}', current_date); commit;`)
+    await tilMedarbeidere(admin)
+    const rad = raden(admin, navn)
+    await innen(15_000, `${navn} merket «Ny»`, () => rad.getByText('Ny', { exact: true }).isVisible())
+    await rad.getByRole('button', { name: `Velg vakter for ${navn}` }).focus()
+    await admin.keyboard.press('Enter')
+    await innen(5_000, 'redigeringen', () => admin.getByRole('dialog').isVisible())
+    const fokus: string = await admin.evaluate(() => (document.activeElement as HTMLInputElement | null)?.type ?? '')
+    krev(fokus === 'checkbox', `fokus i redigeringen: ${fokus}`)
+    await medTastaturet(admin, 'Lagre')
+    await innen(10_000, 'redigeringen lukket', async () => (await admin.getByRole('dialog').count()) === 0)
+    await innen(10_000, '«Ny» borte', async () => (await rad.getByText('Ny', { exact: true }).count()) === 0)
+    await admin.reload()
+    await innen(15_000, `${navn} etter ny innlasting`, () => rad.isVisible())
+    krev((await rad.getByText('Ny', { exact: true }).count()) === 0, '«Ny» tilbake etter ny innlasting')
+    // Den syntetiske medarbeideren slutter i dag, så den ikke står i fanen ved neste kjøring (loggen beholder den).
+    lokalSql(s, `begin; select set_config('ousfar.tilgangsgrunn', '${GRUNN}', true);
+      update personal.medarbeidere set aktiv_til = current_date where fagmiljo_id = '${sandkasse}' and syntetisk_navn = '${navn}'; commit;`)
+    return navn
+  })
+
+  await punkt('P8 vakter og vaktandel lagres og står etter ny innlasting; tidligere og fremtidige vises', async () => {
+    await tilMedarbeidere(admin)
+    const for_ = await vakterI(admin, SYNTETISK)
+    let dialog = await apneRedigering(admin, SYNTETISK)
+    const forste = dialog.getByRole('checkbox').first()
+    const var_ = await forste.isChecked()
+    await forste.setChecked(!var_)
+    await dialog.getByRole('button', { name: 'Lagre' }).click()
+    await innen(10_000, 'redigeringen lukket', async () => (await admin.getByRole('dialog').count()) === 0)
+    const etter = for_ + (var_ ? -1 : 1)
+    await innen(10_000, 'vaktene i tabellen', async () => (await vakterI(admin, SYNTETISK)) === etter)
+    await admin.reload()
+    await innen(15_000, 'vaktene etter ny innlasting', async () => (await vakterI(admin, SYNTETISK)) === etter)
+
+    const prosent = String(51 + (randomBytes(1)[0]! % 39))
+    const fra = addDays(todayIn('Europe/Oslo'), 30)
+    dialog = await apneRedigering(admin, SYNTETISK)
+    const skjema = dialog.getByRole('form', { name: 'Ordinær vaktandel' })
+    await skjema.getByLabel('Ordinær fra').fill(fra)
+    await skjema.getByLabel('Prosent').fill(prosent)
+    await skjema.getByRole('button', { name: 'Sett' }).click()
+    const liste = dialog.getByRole('list', { name: 'Ordinær vaktandel' })
+    const ny = liste.getByRole('listitem').filter({ hasText: `${prosent} %` }).filter({ has: admin.getByRole('button', { name: /Fjern/ }) })
+    await innen(10_000, 'den nye vaktandelen i lista', () => ny.isVisible())
+    await bilde(admin, '06-redigering')
+    await lukkRedigering(admin)
+    await admin.reload()
+    await innen(15_000, 'tabellen etter ny innlasting', () => admin.getByRole('table').isVisible())
+    dialog = await apneRedigering(admin, SYNTETISK)
+    await innen(10_000, 'vaktandelen etter ny innlasting', () => ny.isVisible())
+    const tider: string[] = await liste.getByRole('listitem').allInnerTexts()
+    krev(tider.some((t) => /Gjelder nå|Tidligere/.test(t)) || tider.length === 1, `lista: ${tider.join(' / ')}`)
+    // Tilbake som før: vaktandelen fjernes og vaktene settes som de var.
+    await ny.getByRole('button', { name: /Fjern/ }).click()
+    await innen(10_000, 'vaktandelen fjernet', async () => (await ny.count()) === 0)
+    await dialog.getByRole('checkbox').first().setChecked(var_)
+    await dialog.getByRole('button', { name: 'Lagre' }).click()
+    await innen(10_000, 'vaktene som før', async () => (await vakterI(admin, SYNTETISK)) === for_)
+    return `vaktandel ${prosent} % fra ${fra}`
+  })
+
+  await punkt('P9 to faner: den som lagrer på gamle vakter, får konflikt og ser de nye', async () => {
+    await tilMedarbeidere(admin)
+    const annen: Side = await admin.context().newPage()
+    try {
+      await tilMedarbeidere(annen)
+      const d1 = await apneRedigering(admin, SYNTETISK)
+      const d2 = await apneRedigering(annen, SYNTETISK)
+      const v1 = await d1.getByRole('checkbox').first().isChecked()
+      await d1.getByRole('checkbox').first().setChecked(!v1)
+      await d1.getByRole('button', { name: 'Lagre' }).click()
+      await innen(10_000, 'lagret i den første fanen', async () => (await admin.getByRole('dialog').count()) === 0)
+      const v2 = await d2.getByRole('checkbox').last().isChecked()
+      await d2.getByRole('checkbox').last().setChecked(!v2)
+      await d2.getByRole('button', { name: 'Lagre' }).click()
+      await innen(10_000, 'konflikten', () => d2.getByRole('alert').isVisible())
+      await innen(10_000, 'meldingen om at vaktene er endret', () => d2.getByRole('status').filter({ hasText: 'endret av noen andre' }).isVisible())
+      krev((await d2.getByRole('checkbox').first().isChecked()) === !v1, 'de nye vaktene vises ikke')
+      await bilde(annen, '07-konflikt')
+      // Tilbake som før.
+      await lukkRedigering(annen)
+      const d = await apneRedigering(admin, SYNTETISK)
+      await d.getByRole('checkbox').first().setChecked(v1)
+      await d.getByRole('button', { name: 'Lagre' }).click()
+      await innen(10_000, 'tilbake som før', async () => (await admin.getByRole('dialog').count()) === 0)
+    } finally {
+      await annen.close()
+    }
+  })
+
+  await punkt('P10 vaktplanansvarlig utpekes og fjernes, og står etter ny innlasting', async () => {
+    await tilMedarbeidere(admin)
+    const boks = () => admin.getByRole('checkbox', { name: 'Vilde Vanlig' })
+    await innen(15_000, 'medlemmene å velge blant', () => boks().isVisible())
+    const var_ = await boks().isChecked()
+    // Avkryssingen følger serveren: den står først når valget er lagret.
+    const velg = async (valgt: boolean) => {
+      await boks().click()
+      await innen(10_000, 'valget lagret', async () => (await boks().isChecked()) === valgt && (await boks().isEnabled()))
+    }
+    await velg(!var_)
+    await admin.reload()
+    await innen(15_000, 'valget etter ny innlasting', async () => (await boks().isChecked()) === !var_)
+    await velg(var_)
+    await admin.reload()
+    await innen(15_000, 'tilbake etter ny innlasting', async () => (await boks().isChecked()) === var_)
+  })
+
+  await punkt('P11 smal skjerm med redigeringen åpen: ingen sidelengs rulling, og vinduet får plass', async () => {
+    await admin.setViewportSize({ width: 390, height: 844 })
+    try {
+      await tilMedarbeidere(admin)
+      await bilde(admin, '08-smal-tabell')
+      const tabellside: { side: number; bredde: number } = await admin.evaluate(() => ({ side: document.documentElement.scrollWidth, bredde: window.innerWidth }))
+      krev(tabellside.side <= tabellside.bredde, `siden ruller sidelengs med tabellen: ${tabellside.side} > ${tabellside.bredde}`)
+      const dialog = await apneRedigering(admin, SYNTETISK)
+      await vent(300)
+      const mal: { side: number; bredde: number; boks: number } = await admin.evaluate(() => ({
+        side: document.documentElement.scrollWidth,
+        bredde: window.innerWidth,
+        boks: Math.round(document.querySelector('dialog[open]')?.querySelector('*')?.getBoundingClientRect().width ?? 0),
+      }))
+      await bilde(admin, '09-smal-redigering')
+      krev(mal.side <= mal.bredde, `siden ruller sidelengs: ${mal.side} > ${mal.bredde}`)
+      krev(mal.boks <= mal.bredde, `vinduet er bredere enn skjermen: ${mal.boks}`)
+      krev(await dialog.getByRole('button', { name: 'Lagre' }).isVisible(), '«Lagre» synlig')
+      await lukkRedigering(admin)
+      return `${mal.boks} av ${mal.bredde} px`
+    } finally {
+      await admin.setViewportSize({ width: 1440, height: 900 })
+    }
+  })
+}
+
 const s = await startLokalDatabase()
 const adminpassord = await sikreAdministrator(s)
 const adminId = lokalSql(s, `select id from public.profiles where username = 'qa-admin'`)
@@ -244,11 +430,36 @@ try {
     await innen(15_000, 'fanen Medarbeidere', async () =>
       (await admin.getByRole('navigation', { name: 'Kalender' }).getByRole('link', { name: 'Medarbeidere' }).getAttribute('aria-current')) === 'page',
     )
-    krev(await admin.getByText('Medarbeiderne kommer her.').isVisible(), 'innholdet i fanen')
+    const rad = admin.getByRole('row').filter({ has: admin.getByRole('rowheader', { name: SYNTETISK }) })
+    await innen(15_000, `${SYNTETISK} i tabellen`, () => rad.isVisible())
+    krev(await rad.getByRole('button', { name: new RegExp(SYNTETISK) }).isVisible(), 'knappen for å endre medarbeideren')
+    await bilde(admin, '04-medarbeidere')
+    await admin.reload()
+    await innen(15_000, `${SYNTETISK} etter ny innlasting`, () => rad.isVisible())
     await admin.emulateMedia({ colorScheme: 'dark' })
     await bilde(admin, '04-medarbeidere-moerkt')
     await admin.emulateMedia({ colorScheme: 'light' })
   })
+
+  await punkt('P5b «Vis som» i Sandkasse: som kollega forsvinner Medarbeidere, og valget avsluttes igjen', async () => {
+    const visSom = admin.getByRole('group', { name: 'Vis som' })
+    const rolle = visSom.getByRole('combobox', { name: 'Rolle' })
+    const medarbeiderfaner = () => admin.getByRole('link', { name: 'Medarbeidere' }).count()
+    await rolle.selectOption({ label: 'Kollega' })
+    await innen(15_000, 'Medarbeidere borte som kollega', async () => (await rolle.inputValue()) === 'reader' && (await medarbeiderfaner()) === 0)
+    await bilde(admin, '04b-vis-som-kollega')
+    // Serveren håndhever valget: kalenderen svarer som for en kollega, også etter ny innlasting.
+    await admin.reload()
+    await innen(15_000, 'kollega etter ny innlasting', async () => (await rolle.inputValue()) === 'reader' && (await medarbeiderfaner()) === 0)
+    // En direkte adresse til fanen er selve kalenderen for en kollega.
+    await tilAdressen(admin, '#/kalender/medarbeidere')
+    await innen(10_000, 'adressen skrevet om til #/kalender', async () => (await admin.evaluate(() => location.hash)) === '#/kalender')
+    krev((await admin.getByRole('table').count()) === 0, 'tabellen vises for en kollega')
+    await visSom.getByRole('button', { name: 'Avslutt' }).click()
+    await innen(15_000, 'tilbake som lokal administrator', async () => (await rolle.inputValue()) === 'localAdmin' && (await medarbeiderfaner()) === 1)
+  })
+
+  await medarbeiderforlopet(admin)
 
   await punkt('P6 bytte tilbake fra kalenderen: siden blir ukjent, og menyen mister Personal', async () => {
     await byttFagmiljo(admin, STANDARD)

@@ -1,0 +1,16 @@
+{
+  "id": "20261128-052559-ae2f20",
+  "semver": "minor",
+  "opprettet": "2026-11-28T05:25:59Z",
+  "sammendrag": "Videre utvikling av en funksjon under utprøving",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "kalender"
+  ],
+  "punkter": [
+    "Funksjonen som er under utprøving, kan mer. Den vises fortsatt bare for dem som prøver den ut. Andre brukere merker ingen endring."
+  ]
+}
