@@ -181,11 +181,13 @@ eller testmerkingen.
   medlemskapet var avsluttet. Et fagmiljø der funksjonen aldri har vært i
   bruk, får ingen medarbeidere og ingen rader.
 - **Navnet og stillingen** leses fra profilen hver gang, og stillingene er
-  appens stillinger (K-MED-5). Stilling per dag kommer med Dev
-  ([#602](https://github.com/peohol/ousfar/issues/602), før P4).
+  appens stillinger (K-MED-5). Stillingen per dag leses med
+  `intern.stillingsperioder` eller `intern.stilling_pa_dag` fra Dev
+  ([#602](https://github.com/peohol/ousfar/issues/602), `docs/stillinger.md`,
+  «Stilling per dag»).
 - **Til B14** gir `personal.stilling_styrer_vakter(bruker)` fagmiljøene der
-  brukerens stilling styrer vaktene, så kontrollen av stillingsendringer i
-  #602 kan kreve lokal administrativ myndighet i hvert av dem.
+  brukerens stilling styrer vaktene; `intern.stillingsavslag` krever lokal
+  administrativ myndighet i hvert av dem (`docs/stillinger.md`).
 - `personal.innstillingslogg` fører hver endring av medlemskapet,
   kvalifikasjonene og vaktandelen, med hvem, når, før og etter. Loggen kan
   ikke endres.

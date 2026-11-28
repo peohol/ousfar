@@ -1,0 +1,14 @@
+{
+  "id": "20261128-094456-08b8a4",
+  "semver": "patch",
+  "opprettet": "2026-11-28T09:44:56Z",
+  "sammendrag": "Stillingen huskes nå dag for dag",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Når stillingen endres, lagres datoen, så det står hvilken stilling hver bruker hadde tidligere. Du endrer stillingen som før."
+  ],
+  "utenVarsel": true
+}
