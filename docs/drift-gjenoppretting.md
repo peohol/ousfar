@@ -317,7 +317,7 @@ bare dette steget leser den. Begrunnelsen:
 Avviket krever Peders uttrykkelige ja. Uten det startes nøkkelbyttet ikke.
 Jobben startes bare for hånd og aktiverer ingenting av seg selv.
 
-- Peders beslutning: *venter* (spurt 28.11.2026).
+- Peders beslutning 28.11.2026: **ja**, hovednøkkelen kan ligge i GitHub i noen minutter under nøkkelbyttet, mot at han lager en ny hovednøkkel rett etterpå (valgt fremfor Compliance-låsen med nøkkelen fra nettsiden).
 
 ### Opprydding
 
