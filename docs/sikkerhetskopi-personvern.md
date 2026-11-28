@@ -66,9 +66,9 @@ overføring, er en egen maskin i EU alternativet; koden er den samme.
 
 1. **Nøkkeleier:** Peder (avgjort 28.11.2026). Han lager nøklene på
    nøkkelsiden og tar vare på nøkkelfila to uavhengige steder.
-2. **Beredskap:** den uavhengige kopien av nøkkelfila legges hos den som skal
-   kunne sette i gang en gjenoppretting om databasen går tapt mens Peder ikke
-   er tilgjengelig. Hvem det er, skrives her når Peder har gitt den videre.
+2. **Beredskap:** den uavhengige kopien av nøkkelfila ligger hos den andre
+   systemarkitekten (`maxhag`, Peder 28.11.2026), som kan sette i gang en
+   gjenoppretting om databasen går tapt mens Peder ikke er tilgjengelig.
 3. **GitHubs maskiner:** godkjent (Peder, 28.11.2026). Kopien lages på GitHubs
    maskiner som beskrevet over.
 
