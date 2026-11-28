@@ -26,12 +26,16 @@ import { feiltekst, lagLogg, masker, settTrinn } from './logg'
 import { LAGER, NOKKELBYTTE, RETTIGHETER } from './drift'
 
 export interface Bytteoppsett {
-  /** Den midlertidige nøkkelen som kan lage nøkler (`writeKeys`, `listKeys`, `deleteKeys`, `listBuckets`). */
-  oppsett: { id: string; nokkel: string }
+  /**
+   * Den midlertidige nøkkelen som kan lage nøkler (`writeKeys`, `listKeys`,
+   * `deleteKeys`, `listBuckets`). Den og tokenet kan mangle: da byttes
+   * ingenting, men det som finnes, ryddes likevel.
+   */
+  oppsett: { id?: string; nokkel?: string }
   /** ID-en til nøkkelen kopijobben har nå, som skal slettes etter byttet. */
   gammelId?: string
   /** Et token som kan skrive og slette hemmelighetene i miljøet; trekkes tilbake etterpå. */
-  github: { token: string; repo: string }
+  github: { token?: string; repo: string }
   b2Adresse?: string
   githubAdresse?: string
   naa?: Date
@@ -143,7 +147,14 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
 
   async function bytt(): Promise<void> {
     settTrinn('den midlertidige nøkkelen')
-    const k = (konto = await loggInn(valg.oppsett.id, valg.oppsett.nokkel, b2Adresse))
+    const m = NOKKELBYTTE.midlertidige
+    const tomme = [
+      [valg.oppsett.id, m.id],
+      [valg.oppsett.nokkel, m.nokkel],
+      [valg.github.token, m.github],
+    ].flatMap(([verdi, navn]) => (verdi ? [] : [navn!]))
+    if (tomme.length) throw new OffentligStopp(`Mangler ${tomme.join(', ')} i miljøet ${NOKKELBYTTE.miljo}. Ingenting er byttet.`)
+    const k = (konto = await loggInn(valg.oppsett.id!, valg.oppsett.nokkel!, b2Adresse))
     const mangler = ['writeKeys', 'listKeys', 'deleteKeys', 'listBuckets'].filter((x) => !k.rettigheter.includes(x))
     if (mangler.length) throw new OffentligStopp(`Den midlertidige nøkkelen kan ikke lage og slette nøkler (mangler ${mangler.join(', ')}). Bruk hovednøkkelen (Master Application Key).`)
 
@@ -223,9 +234,11 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
   async function rydd(): Promise<void> {
     settTrinn('ryddingen')
     for (const navn of Object.values(NOKKELBYTTE.midlertidige)) {
-      if (await github.slett(navn).catch(() => false)) r.midlertidigeSlettet.push(navn)
-      else r.funn.push(`${navn} kunne ikke slettes i miljøet ${NOKKELBYTTE.miljo}; slett den i GitHub.`)
+      if (valg.github.token && (await github.slett(navn).catch(() => false))) r.midlertidigeSlettet.push(navn)
+      else r.funn.push(`${navn} kunne ikke slettes i miljøet ${NOKKELBYTTE.miljo}${valg.github.token ? '' : ' (uten tokenet)'}; slett den i GitHub.`)
     }
+    // Stoppet byttet før innloggingen (en hemmelighet manglet), logges det inn nå, bare for å rydde.
+    if (!konto && valg.oppsett.id && valg.oppsett.nokkel) konto = await loggInn(valg.oppsett.id, valg.oppsett.nokkel, b2Adresse).catch(() => null)
     if (konto && valg.oppsett.id === konto.kontoId) r.oppsettsnokkel = 'hovednøkkel'
     else if (konto) {
       const slettet = await b2(konto, 'b2_delete_key', { applicationKeyId: valg.oppsett.id }).then(
@@ -234,7 +247,7 @@ export async function byttNokkel(valg: Bytteoppsett): Promise<Bytteresultat> {
       )
       r.oppsettsnokkel = slettet ? 'slettet' : 'ikke slettet'
     }
-    r.tokenTrukketTilbake = await trekkTilbake(valg.github.token, githubAdresse)
+    if (valg.github.token) r.tokenTrukketTilbake = await trekkTilbake(valg.github.token, githubAdresse)
   }
 
   try {

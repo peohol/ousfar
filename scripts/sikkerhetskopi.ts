@@ -217,11 +217,11 @@ async function main(argv: string[]): Promise<void> {
     if (f.varsler.length) throw new OffentligStopp(f.varsler.join('\n'))
   } else if (kommando === 'nokkelbytte') {
     settTrinn('de midlertidige nøklene')
+    // Ikke `fraMiljo`: mangler én av dem, skal de andre likevel ryddes (byttNokkel stopper og rydder).
     const m = NOKKELBYTTE.midlertidige
-    const oppsett = { id: fraMiljo(m.id, 'ID-en til den midlertidige nøkkelen i Backblaze'), nokkel: fraMiljo(m.nokkel, 'den midlertidige nøkkelen i Backblaze') }
-    const token = fraMiljo(m.github, 'GitHub-tokenet for hemmelighetene i miljøet')
-    masker(oppsett.nokkel)
-    masker(token)
+    const oppsett = { id: process.env[m.id] || undefined, nokkel: process.env[m.nokkel] || undefined }
+    const token = process.env[m.github] || undefined
+    for (const v of [oppsett.nokkel, token]) if (v) masker(v)
     const r = await byttNokkel({ oppsett, gammelId: process.env.B2_KEY_ID || undefined, github: { token, repo: fraMiljo('GITHUB_REPOSITORY', 'repoet') } })
     oppsummer(bytterapport(r))
     if (r.stopp) throw new OffentligStopp(r.stopp)

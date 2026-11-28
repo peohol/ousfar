@@ -222,4 +222,23 @@ describe('nøkkelbyttet', () => {
     expect(r).toMatchObject({ oppsettsnokkel: 'ikke slettet', tokenTrukketTilbake: true })
     expect(r.stopp).toMatch(/godtok ikke den midlertidige nøkkelen \(401\)/)
   })
+
+  it('rydder det som finnes, også når en av de midlertidige hemmelighetene mangler', async () => {
+    hemmeligheter.delete(NOKKELBYTTE.midlertidige.nokkel)
+    let r = await byttNokkel(valg({ oppsett: { id: KONTO } }))
+    expect(r.stopp).toMatch(new RegExp(`Mangler ${NOKKELBYTTE.midlertidige.nokkel}`))
+    expect(opprettede).toEqual([])
+    expect(hemmeligheter.size).toBe(0)
+    expect(tilbaketrukket).toEqual([{ autorisert: false, tokens: [TOKEN] }])
+
+    // Uten tokenet: hemmelighetene kan ikke slettes, men en midlertidig nøkkel som ikke er hovednøkkelen, slettes likevel.
+    const midlertidig: Nokkel = { id: 'midlertidig', hemmelig: 'm', navn: 'bytte', rettigheter: alle, bucketId: null }
+    nokler.push(midlertidig)
+    r = await byttNokkel(valg({ oppsett: { id: midlertidig.id, nokkel: midlertidig.hemmelig }, github: { repo: 'peohol/ousfar' } }))
+    expect(r.stopp).toMatch(new RegExp(`Mangler ${NOKKELBYTTE.midlertidige.github}`))
+    expect(r).toMatchObject({ oppsettsnokkel: 'slettet', tokenTrukketTilbake: false, midlertidigeSlettet: [] })
+    expect(r.funn.join(' ')).toMatch(/uten tokenet/)
+    expect(ider()).not.toContain(midlertidig.id)
+    expect(opprettede).toEqual([])
+  })
 })
