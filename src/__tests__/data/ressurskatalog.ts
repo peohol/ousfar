@@ -169,6 +169,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   // Stillingslista: felles for alle fagmiljøer, endres bare av systemarkitektene (docs/stillinger.md).
   'public.stillingskategorier': k('forvaltning', 'Stillingslista; endres av systemarkitektene'),
   'public.stillinger': k('forvaltning', 'Stillingslista; endres av systemarkitektene'),
+  // Stillingen per dag (#602): følger profilen, leses bare av serverens funksjoner.
+  'intern.stillingshistorikk': k('tilgang', 'Kontoene: stillingen til hver bruker per dag; bare gjennom serverens funksjoner'),
+  'intern.fjernede_stillinger': k('forvaltning', 'Stillingslista: stillinger som er fjernet, men står i stillingshistorikken'),
   'public.kontoreservasjoner': k('tilgang', 'Kontoene'),
   'public.fagmiljoer': k('tilgang', 'P1.1'),
   'public.medlemskap': k('tilgang', 'P1.1'),
