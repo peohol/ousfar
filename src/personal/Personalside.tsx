@@ -9,7 +9,9 @@ import { useHenting } from '../hooks/useHenting'
 import { useLukkMedEscape } from '../hooks/useLukkMedEscape'
 import { fanerFor } from './faner'
 import { FinnesIkke, hentGrunnlag, type Personalgrunnlag } from './grunnlag'
+import { VisSom } from './VisSom'
 import '../styles/grupper.css'
+import './personal.css'
 
 /** Grunnlaget, eller at kalenderen ikke finnes for den innloggede. */
 type Svar = { finnes: true; grunnlag: Personalgrunnlag } | { finnes: false }
@@ -110,6 +112,7 @@ function Kalenderflate({
         <h1 id={overskrift} className="gruppeside__tittel" tabIndex={-1}>
           Kalender
         </h1>
+        {grunnlag && <VisSom fagmiljo={fagmiljo.id} grunnlag={grunnlag} onEndret={hentPaNytt} />}
         {faner.length > 1 && (
           <nav aria-label="Kalender">
             <ul className="gruppeside__faner">

@@ -19,9 +19,9 @@ P2b leveres i to deler:
 
 P2c ([#620](https://github.com/peohol/ousfar/issues/620)) legger til
 **medarbeiderne 1:1 med medlemmene**, **innstillingene** (kvalifikasjonene og
-vaktandelen) og **«Vis som»** (`*_personal_medarbeidere.sql`). Dette er
-databasedelen; brukerflatene for dem kommer i en egen PR i P2c, og
-kalenderens visninger i P3.
+vaktandelen) og **«Vis som»** (`*_personal_medarbeidere.sql`), med
+brukerflatene i `src/personal/` (docs/personal.md §7.4). Kalenderens
+visninger kommer i P3.
 
 ## Skjerming og tilgang
 

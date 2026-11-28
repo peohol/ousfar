@@ -1,0 +1,173 @@
+/**
+ * Personalkalenderen (`src/personal/`): Medarbeidere-fanen, redigeringen av
+ * én medarbeider og «Vis som». Lastes bare med personalkoden (K-SKJ-8).
+ * Rammen er gruppesidens (`grupper.css`), feltene og avkryssingene skjemaets
+ * (`skjema.css`); her står bare det som er eget.
+ */
+
+.personaltomt {
+  margin: 0;
+  color: var(--blekk-dempet);
+}
+
+/* Tabellen over medarbeiderne ruller sidelengs på smale flater, ikke siden. */
+.personaltabell__ramme {
+  overflow-x: auto;
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+  background: var(--flate-hevet);
+}
+
+.personaltabell {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+}
+
+.personaltabell th,
+.personaltabell td {
+  padding: var(--rom-3) var(--rom-4);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: var(--kant) solid var(--linje);
+  white-space: nowrap;
+}
+
+.personaltabell tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.personaltabell thead th {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.personaltabell tbody th {
+  font-weight: var(--vekt-medium);
+}
+
+.personaltabell__ny {
+  background: var(--aksent-flate);
+}
+
+.personaltabell__person {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.personaltabell .personaltabell__midt {
+  text-align: center;
+}
+
+.personaltabell .personaltabell__tall {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.personaltabell .personaltabell__hoyre {
+  text-align: right;
+}
+
+.personaltabell__dempet,
+.personaltabell__mangler {
+  color: var(--blekk-dempet);
+}
+
+.personaltabell__mangler {
+  font-style: italic;
+}
+
+/* Redigeringen av én medarbeider. */
+.personalfelt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0 0 var(--rom-5);
+  padding: 0;
+  border: 0;
+}
+
+.personalfelt--smal {
+  max-width: 7rem;
+}
+
+.personalvaktandel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  padding-top: var(--rom-4);
+  border-top: var(--kant) solid var(--linje);
+}
+
+.personalvaktandel__hode {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+  font-size: var(--tekst-lesing);
+  font-weight: var(--vekt-medium);
+}
+
+.personalvaktandel__hode strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.personalvaktandel__rad {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--rom-3);
+}
+
+.personalvaktandel__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.personalvaktandel__liste li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+.personalvaktandel__liste li > span:first-child {
+  flex: 1;
+}
+
+.personalansvarlige {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  margin-top: var(--rom-5);
+}
+
+/* «Vis som» i hodet på kalenderen, bare i et testmiljø. */
+.personalvissom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2) var(--rom-3);
+  font-size: var(--tekst-ui);
+}
+
+.personalvissom__tittel {
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.personalvissom__valg .felt__inndata {
+  width: auto;
+}
+
+.personalvissom .skjemafeil {
+  flex-basis: 100%;
+  margin: 0;
+}
