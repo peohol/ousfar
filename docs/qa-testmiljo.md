@@ -139,6 +139,16 @@ kjøringen uten at passordet skrives inn.
   kontomenyen og Innstillinger, oversikten over endringsforslag, dokken og
   hovedmenyen på mobil, og mørkt tema. `QA_SKJERMBILDER=<mappe>` lagrer
   skjermbildene.
+- `npx vite-node src/__tests__/qa/personalnettleser.ts` er
+  nettleserkontrollen av inngangen til personalkalenderen (#606,
+  `docs/personal.md` §8.8): en vanlig bruker (`qa-personal-vanlig`), også i
+  Sandkasse, og systemarkitekten i et fagmiljø uten funksjonen ser ingen
+  Personal i menyen, `#/kalender` er «Siden finnes ikke», og koden til
+  personalsiden hentes ikke; etter bytte til Sandkasse står Kalender under
+  Personal, siden viser fagmiljøet og fanene, og koden hentes først da; en
+  direkte adresse til en fane, og bytte tilbake. Skriptet lager et syntetisk
+  Sandkasse lokalt (testmiljø, migrasjonen `personal_utproving`).
+  `QA_SKJERMBILDER=<mappe>` lagrer skjermbildene.
 - `npx vite-node src/__tests__/qa/helhetnettleser.ts` er den helhetlige
   kontrollen fra D7 (`docs/d7-kontroll.md`): forsiden (panelene, «Tilpass
   forsiden» på to maskiner, feil i ett panel, fagmiljøbytte uten gamle data,

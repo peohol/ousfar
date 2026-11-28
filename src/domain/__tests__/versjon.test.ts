@@ -20,6 +20,7 @@ import {
   FORSIDE,
   FORTOLKNING,
   fortolkningsrute,
+  KALENDERFANER,
   lesRute,
   redigeringsrute,
   sidesti,
@@ -200,6 +201,9 @@ const ALLE_SIDER = [
   lesRute(STOFFREGISTERADRESSE),
   { side: 'verktoy' } satisfies Rute,
   ...VERKTOY.map((v): Rute => ({ side: 'verktoy', verktoy: v.id })),
+  // Personalkalenderen og fanene i den (`KALENDERFANER`).
+  { side: 'kalender' } satisfies Rute,
+  ...KALENDERFANER.map((fane): Rute => ({ side: 'kalender', fane })),
 ].map(sidesti)
 
 /**
@@ -214,10 +218,10 @@ function kjentOmrade(omrade: string): boolean {
 describe('områdene en føring gjelder', () => {
   it('kjennes igjen når de er sider, og ikke ellers', () => {
     const kjente = ['hele appen', 'vinduer', 'forside', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering', 'grupper', 'forslag']
-    for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister', 'verktoy', 'verktoy/bytte-antidepressiv']) {
+    for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister', 'verktoy', 'verktoy/bytte-antidepressiv', 'kalender', 'kalender/medarbeidere']) {
       expect(kjentOmrade(omrade), omrade).toBe(true)
     }
-    const ukjente = ['alt', 'stoff/finnes-ikke', 'verktoy/finnes-ikke', 'fortolkning/xyz', 'sok/kvetiapin', 'fortolkning/hbup/endre']
+    const ukjente = ['alt', 'kalender/finnes-ikke', 'stoff/finnes-ikke', 'verktoy/finnes-ikke', 'fortolkning/xyz', 'sok/kvetiapin', 'fortolkning/hbup/endre']
     for (const omrade of [...ukjente, 'stoff/bupropion/farmakokinetikk', '']) {
       expect(kjentOmrade(omrade), omrade).toBe(false)
     }

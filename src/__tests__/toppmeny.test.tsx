@@ -802,7 +802,7 @@ describe('hovedmenyen', () => {
     const meny = (render(<Hovedmeny />), await apneMenyen())
     expect(nivaet(meny)).toBe('Meny')
     const [hoved, appen] = listene(meny)
-    // Personal har ingen valg ennå, og vises ikke (Issue #604).
+    // Uten personalfunksjonen i arbeidsfagmiljøet har Personal ingen valg, og vises ikke (#604, #606).
     expect(navnene(hoved!)).toEqual(['Forsiden', 'Fortolkning', 'Fag', 'Grupper', 'Endringsforslag'])
     expect(within(hoved!).getByRole('link', { name: /^Grupper/ }).getAttribute('href')).toBe('#/grupper')
     expect(within(hoved!).getByRole('link', { name: /^Endringsforslag/ }).getAttribute('href')).toBe('#/forslag')

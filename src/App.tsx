@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useProfil } from './auth/okt'
-import { RettigheterKilde, useMineRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
+import { RettigheterKilde, useArbeidskontekst, useMineRettigheter, useOppdaterRettigheter, type OppdaterRettigheter, type Rettigheter } from './auth/rettigheter'
 import { kanRedigereKodene, redigeringsrett, useLokalEndringsrett } from './faginnhold/redigeringsrett'
 import { redigerbareRegelsett } from './redaktorer/ansvar'
 import { useMineRedaktoransvar } from './redaktorer/useMineRedaktoransvar'
@@ -132,6 +132,7 @@ import {
   Gruppeflate,
   Grupperside,
   Kurateringsside,
+  Personalside,
   sidekodeFor,
   Stoffregisterside,
   Stoffside,
@@ -145,6 +146,7 @@ import type { Analyte } from './types'
 import { lagVerktoysperrelager } from './verktoy/sperrer'
 import { lagRegelvarsellager } from './verktoy/overvaking/regelvarsler'
 import { VerktoytilgangProvider, verktoyeneVisesFor } from './verktoy/synlighet'
+import { personalfagmiljo, synligRute, utenPersonal } from './personaltilgang'
 
 // Åpnes appen på en slik side (en direkte lenke, eller siden som sto før en
 // oppdatering), hentes koden til den sammen med appen, ikke etter den.
@@ -515,7 +517,24 @@ function Arbeidsflate({
   // En arbeidsflate i en gruppe (idéene, oppgavene) legger seg over siden den
   // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
   const flate = arbeidsflate(adresserute)
-  const rute = flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute
+  // Personalfunksjonene finnes bare for dem som har dem i fagmiljøet de
+  // arbeider i; for alle andre er adressen en ukjent adresse (K-SKJ-2). Har
+  // databasen avvist kalenderen (`avvisPersonal`), regner arbeidsflaten med
+  // rettighetene uten personalfunksjonen, også i menyen, til fagmiljøet
+  // byttes eller appen åpnes på nytt.
+  const [personalAvvist, setPersonalAvvist] = useState(false)
+  const synligeRettigheter = useMemo(
+    () => (personalAvvist ? utenPersonal(rettigheter) : rettigheter),
+    [personalAvvist, rettigheter],
+  )
+  const personal = personalfagmiljo(synligeRettigheter)
+  const oppdaterRettigheter = useOppdaterRettigheter()
+  const rettighetskontekst = useArbeidskontekst()
+  const avvisPersonal = useCallback(() => {
+    setPersonalAvvist(true)
+    oppdaterRettigheter()
+  }, [oppdaterRettigheter])
+  const rute = synligRute(flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute, personal)
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
   const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
   // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
@@ -1099,6 +1118,21 @@ function Arbeidsflate({
               </main>
             )}
 
+            {rute.side === 'kalender' && personal && (
+              <main className="scene scene--infoside">
+                <Senere>
+                  <Personalside
+                    key={personal.id}
+                    fagmiljo={personal}
+                    fane={rute.fane}
+                    onGaaTil={gaaTil}
+                    onLukk={lukkInfoside}
+                    onFinnesIkke={avvisPersonal}
+                  />
+                </Senere>
+              </main>
+            )}
+
             {rute.side === 'sok' && (
               <main className="scene scene--sokeside">
                 <Sokeside
@@ -1255,5 +1289,9 @@ function Arbeidsflate({
       </Direktelenkekilde>
     </ToppmenyKilde>
   )
-  return <ForslagskildeProvider>{app}</ForslagskildeProvider>
+  return (
+    <RettigheterKilde verdi={synligeRettigheter} oppdater={oppdaterRettigheter} arbeidskontekst={rettighetskontekst}>
+      <ForslagskildeProvider>{app}</ForslagskildeProvider>
+    </RettigheterKilde>
+  )
 }

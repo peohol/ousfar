@@ -13,7 +13,7 @@ dokumentet der de overlapper. Prosjektinstruksene står i
 [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md) med avsnitt 3.5 om
 ikke-kliniske personalfunksjoner.
 
-**Status 27.11.2026:** domenekoden (P2a) og databasen (P2b, [personal-database.md](personal-database.md)) bygges; ingenting vises i appen, og funksjonen er bare på `utprøving` i Sandkasse. Prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
+**Status 28.11.2026:** domenekoden (P2a) og databasen (P2b, [personal-database.md](personal-database.md)) er på plass, og P2c bygges. Kalender står under Personal i hovedmenyen (#606), men bare for den som har funksjonen i fagmiljøet hen arbeider i; funksjonen er bare på `utprøving` i Sandkasse, så andre ser ingenting. Prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
 Integrasjonsplanen, akseptkriteriene og rekkefølgen står i §8, og
 sjekklisten over prototypens funksjonalitet i
@@ -1003,6 +1003,24 @@ bindende detaljspesifikasjon.
 - **Kalender** (`#/kalender`) under Personal i hovedmenyen (#606). Inne i den:
   kalenderen, og for planleggerne Vaktfordeling og Medarbeidere.
   Innstillinger etter myndighet.
+- **Inngangen** (#606, P2c). Menyvalget og siden gjelder fagmiljøet den
+  innloggede arbeider i, og vises bare når hen har funksjonen `personal`
+  der (`harFunksjon`, `src/personaltilgang.ts`); funksjonen i et annet
+  fagmiljø gir ingenting før hen bytter til det (K-TIL-1). For alle andre
+  er `#/kalender` og fanene nøyaktig som en ukjent adresse: samme side,
+  tittel og sidesti, ingen kall til databasen (K-SKJ-2). Svarer databasen
+  «Finnes ikke.» (funksjonen slått av siden rettighetene ble hentet, eller
+  avsluttet medlemskap), er siden det samme. Koden ligger i `src/personal/`
+  og hentes bare gjennom `Personalside` i `src/sidekode.ts`, aldri på
+  forhånd (K-SKJ-8); en test følger importtreet fra inngangen og hver
+  side og feiler på en statisk import av personalkoden.
+- **Fanene** står i `src/personal/faner.tsx`, én oppføring per fane, med
+  leddet i adressen (`KALENDERFANER` i `src/domain/rute.ts`,
+  `#/kalender/medarbeidere`) og rollene som ser den, etter rollen
+  `public.personal_grunnlag` gir: Kalender for alle, Medarbeidere for
+  vaktplanansvarlige og lokale administratorer. En fane rollen ikke har,
+  blir kalenderen. Visningene (P3) og medarbeiderinnstillingene (P2c)
+  fylles inn i fanene.
 - **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dato med
   symmetriske datopiler, kompakte fremhevede oppgaver (inkl. Referent),
   Til stede gruppert etter stilling, Jobber et annet sted og Fraværende

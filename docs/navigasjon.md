@@ -169,10 +169,14 @@ Meny
   et valg er ingen tilgangskontroll: databasen, Edge-funksjonene og sidene
   kontrollerer selv (adressen til et verktøy fører fortsatt til forsiden for
   den som ikke ser verktøyene).
-- **Personal** har ingen valg ennå og vises derfor ikke. OUSFAR Personal
-  legger Kalender inn i `PERSONALVALG` når den bygges, bare synlig for
-  systemarkitektene til personalfunksjonene er godkjent og senere bak
-  funksjonsbryterne per fagmiljø (#598, `docs/personal.md`).
+- **Personal** har Kalender (`#/kalender`, #606), og vises bare for den som
+  har funksjonen `personal` i fagmiljøet hen arbeider i, etter
+  funksjonsbryterne per fagmiljø (#598). Under utprøvingen er det
+  systemarkitekter som selv er medlemmer av Sandkasse. Valgene og hvem som
+  ser dem står i `src/personaltilgang.ts` (OUSFAR Personal). For alle andre
+  vises ikke grenen, og adressen er nøyaktig som en ukjent adresse; koden i
+  `src/personal/` hentes først når siden vises for noen med tilgang
+  (`docs/personal.md` §8.3, K-SKJ-2 og K-SKJ-8).
 - Det som venter (`nytt`), gir en prikk ved valget, ved alle valgene som
   fører ned til det, og på menyknappen, med teksten i navnet. Et valg med
   et tall (`merke`, som «2 invitasjoner») får ikke prikk i tillegg. Chatten

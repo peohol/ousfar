@@ -18,7 +18,17 @@ export const Forslagsside = senere(() => import('./components/forslag/Forslagssi
 export const Fortolkningsredigering = senere(() => import('./components/regler/Fortolkningsredigering'), 'Fortolkningsredigering')
 export const Diskusjonsmeny = senere(() => import('./components/diskusjoner/Diskusjonsmeny'), 'Diskusjonsmeny')
 
-/** Alle sidene over, i den rekkefølgen de er ført opp. */
+/**
+ * Personalkalenderen (OUSFAR Personal). Den eneste veien inn til koden i
+ * `src/personal/`, som hentes først når siden vises for noen med
+ * personalfunksjonen (`src/personaltilgang.ts`, K-SKJ-8). Den står derfor
+ * ikke blant {@link SENERE_SIDER} og forhåndslastes aldri: adressen alene
+ * sier ingenting om tilgangen, og rettighetene er ikke kjent når appen
+ * åpnes. Et kontrollert importtre i testene holder resten av appen fri for den.
+ */
+export const Personalside = senere(() => import('./personal/Personalside'), 'Personalside')
+
+/** Alle sidene over unntatt {@link Personalside}, i den rekkefølgen de er ført opp. */
 export const SENERE_SIDER = [
   Stoffside,
   Versjonsside,
@@ -32,7 +42,7 @@ export const SENERE_SIDER = [
   Diskusjonsmeny,
 ] as const
 
-/** Koden siden en adresse peker på, trenger. */
+/** Koden siden en adresse peker på, trenger, utenom personalsidene (se {@link Personalside}). */
 export function sidekodeFor(rute: Rute) {
   switch (rute.side) {
     case 'stoff':
