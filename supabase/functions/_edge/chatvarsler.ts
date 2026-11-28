@@ -6,19 +6,14 @@
  * her krypteres og sendes det, og svaret fra push-tjenesten føres tilbake
  * (`chatvarsel_kvitter`).
  */
-import { chatvarselemne, chatvarselinnhold, erPushtjeneste, SAMTALETYPER, type Chatvarselgrunnlag } from '../_delt/chatvarsel.ts'
-import { sendPush, vapidnokkel, type Pushabonnement, type Pushutfall, type Vapidnokler } from './webpush.ts'
+import { chatvarselemne, chatvarselinnhold, SAMTALETYPER, type Chatvarselgrunnlag } from '../_delt/chatvarsel.ts'
+import { sendFraKilde, type Utsendingsvalg, type Varselkilde } from './enhetsvarsler.ts'
+import type { Pushabonnement, Vapidnokler } from './webpush.ts'
 
-/** Hvor lenge push-tjenesten holder på et varsel for en enhet som er av: et døgn. */
-export const LEVETID_SEKUNDER = 24 * 60 * 60
+export { LEVETID_SEKUNDER, MAKS_RUNDER, type Utsending, type Varseldatabase } from './enhetsvarsler.ts'
 
 /** Navnene på hemmelighetene i miljøet til Edge-funksjonen. */
 export const VAPID_MILJO = { offentlig: 'CHATVARSEL_VAPID_OFFENTLIG', privat: 'CHATVARSEL_VAPID_PRIVAT' } as const
-
-/** Det som trengs av databaseklienten: funksjonskall. */
-export interface Varseldatabase {
-  rpc(navn: string, argumenter: Record<string, unknown>): PromiseLike<{ data: unknown; error: unknown }>
-}
 
 /** VAPID-nøklene fra miljøet, eller `null` når de ikke er satt. */
 export function vapidFraMiljo(les: (navn: string) => string | undefined): Vapidnokler | null {
@@ -83,66 +78,19 @@ export function lesVarsler(data: unknown): Varsel[] {
   })
 }
 
-/** Hva som skjedde med varslene: `hoppet` er endepunkter utenfor de kjente push-tjenestene. */
-export type Utsending = Record<Pushutfall | 'hoppet', number>
-
-/** Hvor mange runder én utsending går: nye meldinger underveis og nye forsøk etter feil. */
-export const MAKS_RUNDER = 4
-
-const sov = (ms: number) => new Promise<void>((ferdig) => setTimeout(ferdig, ms))
+/** Chatvarslene: ett varsel per enhet og samtale, med antallet uleste. */
+export const CHATVARSELKILDE: Varselkilde<Varsel> = {
+  hent: 'chatvarsel_hent',
+  kvitter: 'chatvarsel_kvitter',
+  les: lesVarsler,
+  innhold: chatvarselinnhold,
+  emne: (v) => chatvarselemne(v.samtale),
+  kvittering: (v) => ({ slag: v.slag, samtale: v.samtale, kl: v.kl }),
+}
 
 /**
- * Sender varslene som venter (`chatvarsel_hent`), og fører svaret fra
- * push-tjenesten (`chatvarsel_kvitter`): sendte slettes, borte abonnementer
- * slettes, og en midlertidig feil prøves igjen i neste runde, etter 1, 4, 9
- * sekunder (som `neste_kl` i databasen). Hver enhet får ett varsel per
- * samtale; to utsendinger samtidig sender aldri det samme, fordi databasen
- * holder et varsel mens det sendes.
+ * Sender chatvarslene som venter (`chatvarsel_hent`), og fører svaret fra
+ * push-tjenesten (`chatvarsel_kvitter`), med den felles utsendingen
+ * (`sendFraKilde`). Hver enhet får ett varsel per samtale.
  */
-export async function sendChatvarsler({
-  db,
-  nokler,
-  kontakt,
-  hent = fetch,
-  vent = sov,
-}: {
-  db: Varseldatabase
-  nokler: Vapidnokler
-  kontakt: string
-  hent?: typeof fetch
-  vent?: (ms: number) => Promise<void>
-}): Promise<Utsending> {
-  const totalt: Utsending = { sendt: 0, borte: 0, feil: 0, hoppet: 0 }
-  let signering: CryptoKey | null = null
-
-  for (let runde = 1; runde <= MAKS_RUNDER; runde++) {
-    const { data, error } = await db.rpc('chatvarsel_hent', {})
-    if (error) throw error
-    const varsler = lesVarsler(data)
-    if (varsler.length === 0) break
-
-    signering ??= await vapidnokkel(nokler)
-    const nokkel = signering
-    const svar = await Promise.all(
-      varsler.map(async (v) => {
-        const utfall: Pushutfall | 'hoppet' = !erPushtjeneste(v.endepunkt)
-          ? 'hoppet'
-          : await sendPush(
-              v,
-              chatvarselinnhold(v),
-              nokler,
-              nokkel,
-              { levetid: LEVETID_SEKUNDER, emne: chatvarselemne(v.samtale), kontakt, haster: true },
-              hent,
-            )
-        return { endepunkt: v.endepunkt, slag: v.slag, samtale: v.samtale, kl: v.kl, svar: utfall }
-      }),
-    )
-    for (const r of svar) totalt[r.svar] += 1
-
-    const { error: kvitteringsfeil } = await db.rpc('chatvarsel_kvitter', { utfall: svar })
-    if (kvitteringsfeil) throw kvitteringsfeil
-    if (svar.some((r) => r.svar === 'feil') && runde < MAKS_RUNDER) await vent(runde * runde * 1000)
-  }
-  return totalt
-}
+export const sendChatvarsler = (valg: Utsendingsvalg) => sendFraKilde(CHATVARSELKILDE, valg)

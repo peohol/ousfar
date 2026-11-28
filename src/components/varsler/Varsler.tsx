@@ -6,6 +6,7 @@ import { hentProfilkort } from '../../auth/api'
 import { useProfil } from '../../auth/okt'
 import { useRettigheter } from '../../auth/rettigheter'
 import { forslagsadresse, stoffadresse } from '../../domain/rute'
+import type { Varselstart } from '../../varsler/bjella'
 import { formaterDato } from '../../domain/versjon'
 import { useBevart } from '../../oppdatering/Bevaring'
 import {
@@ -54,13 +55,14 @@ import type { Ikonnavn } from '../ikon/register'
 import { Ikonknapp } from '../Ikonknapp'
 import { Modallag } from '../Modallag'
 import { Skuff } from '../Skuff'
+import { Enhetsvarsler } from './Enhetsvarsler'
 import type { Varselstatus } from './useVarsler'
 import '../../styles/varsler.css'
 
 /** Flest publiserte objekter som står i et fortolkningsvarsel før resten telles opp. */
 const FLEST_OBJEKTER = 5
 
-type Side = 'liste' | 'innstillinger'
+type Varselside = Varselstart
 
 /**
  * Varselvinduet, fra bjella i toppmenyen: varslene brukeren har valgt, de
@@ -71,17 +73,28 @@ type Side = 'liste' | 'innstillinger'
  * den står på, stoffsiden med reglene eller føringen i endringsloggen — og
  * er lest når man går dit, eller når det merkes lest her.
  */
-export function Varsler({ apen, onLukk, status }: { apen: boolean; onLukk: () => void; status: Varselstatus }) {
-  const [side, setSide] = useState<Side>('liste')
+export function Varsler({
+  apen,
+  onLukk,
+  status,
+  startside = 'liste',
+}: {
+  apen: boolean
+  onLukk: () => void
+  status: Varselstatus
+  /** Siden vinduet åpnes på: lista, eller innstillingene (som fra chatinnstillingene). */
+  startside?: Varselside
+}) {
+  const [side, setSide] = useState<Varselside>(startside)
   const [profiler, setProfiler] = useState<Profilkort[]>([])
   const { hent } = status
 
   useEffect(() => {
     if (!apen) return
-    setSide('liste')
+    setSide(startside)
     hent()
     void hentProfilkort().then(setProfiler, () => undefined)
-  }, [apen, hent])
+  }, [apen, hent, startside])
 
   const uleste = status.varsler?.some((v) => !v.lest) ?? false
 
@@ -463,13 +476,16 @@ const GRUPPEIKON: Record<Varselgruppe, Ikonnavn> = {
 }
 
 /**
- * Hvilke kategorier brukeren får varsel om, gruppert etter hva de gjelder,
- * med ikon og overskrift. De obligatoriske står på og kan ikke slås av.
+ * Varslene på denne enheten øverst (`Enhetsvarsler`, docs/enhetsvarsler.md),
+ * så hvilke kategorier brukeren får varsel om i bjella, gruppert etter hva de
+ * gjelder, med ikon og overskrift. De obligatoriske står på og kan ikke slås
+ * av.
  */
 function Innstillinger({ status }: { status: Varselstatus }) {
   const behandler = useRettigheter().behandlerForslag
   return (
     <div className="varselinnstillinger">
+      <Enhetsvarsler />
       <p className="varselinnstillinger__ingress">Velg hva du vil få varsel om. Endringer i fortolkningen, kritiske faglige meldinger og svar til deg får alle.</p>
       {kategorierIGrupper(behandler).map(({ gruppe, kategorier }) => (
         <Innstillingsgruppe key={gruppe} gruppe={gruppe}>

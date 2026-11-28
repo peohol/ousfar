@@ -1,0 +1,18 @@
+{
+  "id": "20261128-100056-a53e50",
+  "semver": "minor",
+  "opprettet": "2026-11-28T10:00:56Z",
+  "sammendrag": "Varslene på mobilen og PC-en står nå i varselinnstillingene",
+  "typer": [
+    "Funksjonalitet",
+    "Design / layout"
+  ],
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "hele appen"
+  ],
+  "punkter": [
+    "Bryteren «Varsler på denne enheten» er flyttet til varselinnstillingene (bjella og tannhjulet). Chatinnstillingene har en knapp dit.",
+    "Under bryteren kan du velge bort varsler om chatmeldinger uten å slå av varslene på enheten. Det står på som før."
+  ]
+}

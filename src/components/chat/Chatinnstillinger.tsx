@@ -1,13 +1,16 @@
 import { direktemeldingene } from '../../direktemeldinger/useDirekte'
+import { apneVarsler } from '../../varsler/bjella'
+import { Button } from '../Button'
+import { Ikon } from '../ikon/Ikon'
 import { useChatstatus } from './chatstyring'
 import { Chatvalg } from './Chatvalg'
-import { Chatvarslervalg } from './Chatvarslervalg'
 
 /**
  * Innstillingene for chatten, ett sted: bak ⚙ nederst til høyre i
  * chatmenyen og i fanen Chat under Konto → Innstillinger (samme komponent,
- * samme kontoinnstillinger). Øverst varslene på denne enheten
- * (`Chatvarslervalg`, docs/chatvarsler.md), så valgene for direktemeldingene
+ * samme kontoinnstillinger). Øverst veien til varslene på denne enheten, som
+ * står i varselinnstillingene sammen med varslene for de andre formålene
+ * (`Enhetsvarsler`, docs/enhetsvarsler.md), så valgene for direktemeldingene
  * (`Chatvalg`: «Tillat direktemeldinger», «Vis når jeg er aktiv» og
  * «Blokkerte»); nye chatinnstillinger legges til her, så begge stedene får
  * dem.
@@ -21,9 +24,28 @@ export function Chatinnstillinger() {
   if (!useHarChatinnstillinger()) return null
   return (
     <>
-      <Chatvarslervalg />
+      <Chatvarselvei />
       {direkte && <Chatvalg valg={direkte.valg} onEndre={direkte.settValg} onBlokkeringEndret={direkte.oppdater} />}
     </>
+  )
+}
+
+/** «Varsler på denne enheten»: knappen åpner varselinnstillingene, der bryteren står. */
+function Chatvarselvei() {
+  return (
+    <section className="chatvalg chatvarselvei" aria-label="Varsler">
+      <ul className="chatvalg__liste">
+        <li className="chatvalg__rad">
+          <span className="chatvalg__tekst">
+            <span className="chatvalg__navn">Varsler på denne enheten</span>
+            <span className="chatvalg__forklaring">Slå på og velg hva du vil ha varsel om, i varselinnstillingene.</span>
+          </span>
+          <Button variant="kant" className="knapp--kompakt" icon={<Ikon navn="bell" />} onClick={() => apneVarsler('innstillinger')}>
+            Varselinnstillinger
+          </Button>
+        </li>
+      </ul>
+    </section>
   )
 }
 

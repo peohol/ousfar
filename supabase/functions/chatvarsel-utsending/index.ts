@@ -1,8 +1,11 @@
 /**
- * Utsendingen av varslene om nye chatmeldinger (docs/chatvarsler.md).
+ * Utsendingen av varslene på enheten: om nye chatmeldinger
+ * (docs/chatvarsler.md) og de planlagte varslene for de andre formålene
+ * (docs/enhetsvarsler.md, #600). Navnet er fra den gang den bare sendte
+ * chatvarsler.
  *
- * Kalles bare av databasen: utløseren på en ny melding ber om utsendingen med
- * pg_net etter at meldingen er lagret (`intern.chatvarsel_vekk`), med den
+ * Kalles bare av databasen: utløseren på en ny melding og klokken for de
+ * planlagte varslene ber om utsendingen med pg_net (`intern.chatvarsel_vekk`), med den
  * hemmelige nøkkelen i hodet `x-chatvarsel-utloser`. Uten den svarer
  * funksjonen 401 før noe annet skjer. Kallet har ingen innhold; hvem som får
  * varsel og hva det står, avgjøres i databasen (`chatvarsel_hent`).
@@ -13,6 +16,7 @@
  */
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { erUtloser, sendChatvarsler, UTLOSER_HODE, UTLOSER_MILJO, vapidFraMiljo } from '../_edge/chatvarsler.ts'
+import { sendEnhetsvarsler } from '../_edge/enhetsvarsler.ts'
 
 /** Litt lenger enn `intern.chatvarsel_ventetid()`. */
 const VENT_MS = 2000
@@ -36,9 +40,13 @@ Deno.serve(async (request) => {
   const db = createClient(adresse, hemmelig, { auth: { persistSession: false, autoRefreshToken: false } })
   const arbeid = (async () => {
     await new Promise((ferdig) => setTimeout(ferdig, VENT_MS))
-    const utfall = await sendChatvarsler({ db, nokler, kontakt })
-    console.log('Chatvarsler:', JSON.stringify(utfall))
-  })().catch((feil: unknown) => console.error('Chatvarsler feilet:', feil instanceof Error ? feil.message : String(feil)))
+    const valg = { db, nokler, kontakt }
+    const [chat, planlagte] = await Promise.allSettled([sendChatvarsler(valg), sendEnhetsvarsler(valg)])
+    for (const [navn, utfall] of [['Chatvarsler', chat], ['Planlagte varsler', planlagte]] as const) {
+      if (utfall.status === 'fulfilled') console.log(`${navn}:`, JSON.stringify(utfall.value))
+      else console.error(`${navn} feilet:`, utfall.reason instanceof Error ? utfall.reason.message : String(utfall.reason))
+    }
+  })().catch((feil: unknown) => console.error('Varslene feilet:', feil instanceof Error ? feil.message : String(feil)))
 
   if (typeof EdgeRuntime !== 'undefined') {
     EdgeRuntime.waitUntil(arbeid)

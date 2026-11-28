@@ -9,7 +9,13 @@
  * Varselet sier aldri hva som er skrevet eller hvem som skrev det
  * (docs/gruppechat-personvern.md, docs/direktemeldinger-personvern.md): bare
  * gruppens navn eller «Direktemelding», og hvor mange uleste det er.
+ *
+ * Det som er felles med de andre formålene (docs/enhetsvarsler.md), står i
+ * `enhetsvarsel.ts`.
  */
+import { pushemne, type Enhetsvarselinnhold } from './enhetsvarsel.ts'
+
+export { erPushtjeneste, PUSHTJENESTER } from './enhetsvarsel.ts'
 
 /** Slagene samtaler i chatten, slik de står i adressen: gruppechatter og direktesamtaler (D5). */
 export const SAMTALETYPER = ['gruppe', 'direkte'] as const
@@ -40,14 +46,7 @@ export interface Chatvarselgrunnlag {
 }
 
 /** Innholdet i varselet, slik tjenestearbeideren viser det. */
-export interface Chatvarselinnhold {
-  tittel: string
-  tekst: string
-  /** Adressen i appen et trykk på varselet åpner. */
-  sti: string
-  /** Et nyere varsel om den samme samtalen erstatter det forrige. */
-  merke: string
-}
+export type Chatvarselinnhold = Enhetsvarselinnhold
 
 const flertall = (n: number, en: string, flere: string) => (n === 1 ? en : `${n} ${flere}`)
 
@@ -65,37 +64,5 @@ export function chatvarselinnhold(v: Chatvarselgrunnlag): Chatvarselinnhold {
   }
 }
 
-/**
- * Push-tjenestene nettleserne bruker. Et abonnement med et annet endepunkt
- * får ingen varsler, så funksjonen aldri sender noe til en adresse en bruker
- * har funnet på.
- */
-export const PUSHTJENESTER = [
-  'fcm.googleapis.com',
-  'android.googleapis.com',
-  'push.services.mozilla.com',
-  'push.apple.com',
-  'notify.windows.com',
-] as const
-
-/** Om endepunktet er en HTTPS-adresse hos en av push-tjenestene. */
-export function erPushtjeneste(endepunkt: string): boolean {
-  let url: URL
-  try {
-    url = new URL(endepunkt)
-  } catch {
-    return false
-  }
-  if (url.protocol !== 'https:' || url.port !== '' || url.username !== '' || url.password !== '') return false
-  const vert = url.hostname.toLowerCase()
-  return PUSHTJENESTER.some((t) => vert === t || vert.endsWith(`.${t}`))
-}
-
-/**
- * Emnet push-tjenesten slår sammen ventende varsler på (`Topic`): ett per
- * samtale, så en enhet som har vært av, får bare det siste. Høyst 32 tegn fra
- * base64url-alfabetet; en UUID uten bindestreker er det.
- */
-export function chatvarselemne(samtale: string): string {
-  return samtale.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32)
-}
+/** Emnet push-tjenesten slår sammen ventende varsler på: ett per samtale ({@link pushemne}). */
+export const chatvarselemne = (samtale: string): string => pushemne(samtale)

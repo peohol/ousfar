@@ -1,19 +1,23 @@
 /*
- * Tjenestearbeideren for varslene om nye chatmeldinger (docs/chatvarsler.md).
+ * Tjenestearbeideren for varslene på enheten: om nye chatmeldinger
+ * (docs/chatvarsler.md) og for de andre formålene (docs/enhetsvarsler.md).
+ * Navnet er fra den gang den bare viste chatvarsler.
  *
  * Den gjør bare to ting: viser et varsel som kommer fra push-tjenesten, og
- * åpner samtalen når brukeren trykker på det. Den mellomlagrer ingenting og
+ * åpner adressen i appen når brukeren trykker på det. Den mellomlagrer ingenting og
  * svarer ikke på noen forespørsler, så appen lastes som før.
  *
  * Varselet er kryptert for denne nettleseren og har bare tittel, tekst,
- * adressen til samtalen og et merke (`supabase/functions/_delt/chatvarsel.ts`).
+ * adressen i appen og et merke (`supabase/functions/_delt/enhetsvarsel.ts`).
  * Hver push viser et varsel: abonnementet er laget med `userVisibleOnly`, og
  * nettlesere som ikke får se et varsel, viser sitt eget eller slutter å levere.
  * Har mottakeren alt lest meldingen, sendes det ikke noe.
  */
 
-/** Adressene et varsel kan åpne: chatten, med eller uten en samtale. */
-const CHATSTI = /^#\/chat(\/(gruppe|direkte)\/[0-9a-f-]{36})?$/i
+/** Adressene et varsel kan åpne: en adresse i appen (`VARSELSTI` og `MAKS_STI` i `_delt/enhetsvarsel.ts`). */
+const STI = /^#\/[A-Za-z0-9_./-]*$/
+const MAKS_STI = 300
+const erSti = (sti) => typeof sti === 'string' && sti.length <= MAKS_STI && STI.test(sti)
 
 /** Det appen lytter etter (`src/chatvarsler/enhet.ts`). */
 const MELDING = 'ousfar-chatvarsel-apne'
@@ -26,13 +30,13 @@ self.addEventListener('activate', (hendelse) => hendelse.waitUntil(self.clients.
 function lesVarsel(data) {
   try {
     const v = data && data.json()
-    if (v && typeof v.tittel === 'string' && typeof v.tekst === 'string' && CHATSTI.test(v.sti)) {
-      return { tittel: v.tittel, tekst: v.tekst, sti: v.sti, merke: typeof v.merke === 'string' ? v.merke : 'chat' }
+    if (v && typeof v.tittel === 'string' && typeof v.tekst === 'string' && erSti(v.sti)) {
+      return { tittel: v.tittel, tekst: v.tekst, sti: v.sti, merke: typeof v.merke === 'string' ? v.merke : 'ousfar' }
     }
   } catch {
     // Ukjent innhold: varselet under sier bare at det er noe nytt.
   }
-  return { tittel: 'OUSFAR', tekst: 'Ny melding i chatten', sti: '#/chat', merke: 'chat' }
+  return { tittel: 'OUSFAR', tekst: 'Du har et nytt varsel', sti: '#/', merke: 'ousfar' }
 }
 
 async function vis(hendelse) {
@@ -49,9 +53,9 @@ async function vis(hendelse) {
 
 self.addEventListener('push', (hendelse) => hendelse.waitUntil(vis(hendelse)))
 
-/** Åpner samtalen: i et vindu med appen som alt er åpent, ellers i et nytt. */
+/** Åpner adressen i appen: i et vindu med appen som alt er åpent, ellers i et nytt. */
 async function apne(sti) {
-  const trygg = CHATSTI.test(sti) ? sti : '#/chat'
+  const trygg = erSti(sti) ? sti : '#/'
   const adresse = new URL(self.registration.scope)
   adresse.hash = trygg
   const vinduer = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })

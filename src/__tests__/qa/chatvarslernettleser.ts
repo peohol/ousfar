@@ -11,7 +11,8 @@
  * når det kommer fra push-tjenesten. Krypteringen og sendingen er prøvd i
  * `chatvarsler.test.ts` og `chatvarsler.webpush.test.ts`.
  *
- * Punktene: bryteren står av i Innstillinger → Chat; å slå på lagrer
+ * Punktene: bryteren står av i varselinnstillingene (bjella → ⚙), med
+ * «Chatmeldinger» under, og veien dit fra Innstillinger → Chat; å slå på lagrer
  * abonnementet; en ny direktemelding legges i køen og gir varsel til Ada; hver
  * push viser et varsel, også mens appen er i bruk, med tittel og tekst uten
  * meldingen; trykk åpner samtalen i vinduet som er åpent; mobil og
@@ -137,27 +138,30 @@ try {
   }, falskt)
   await ada.reload()
 
-  async function aapneChatfanen(side: Side) {
+  /** Varselinnstillingene, slik man kommer dit fra chatinnstillingene: Innstillinger → Chat → «Varselinnstillinger». */
+  async function aapneVarselinnstillinger(side: Side) {
     await side.goto(`${miljo.url}/#/`)
     await side.getByRole('button', { name: /^Kontoen din/ }).click({ timeout: 30_000 })
     await side.getByRole('button', { name: 'Innstillinger' }).click()
-    const vindu = side.getByRole('dialog', { name: 'Innstillinger' })
-    await vindu.getByRole('tab', { name: 'Chat' }).click()
-    return vindu
+    const innstillinger = side.getByRole('dialog', { name: 'Innstillinger' })
+    await innstillinger.getByRole('tab', { name: 'Chat' }).click()
+    await innstillinger.getByRole('button', { name: 'Varselinnstillinger' }).click()
+    return side.getByRole('dialog', { name: 'Varselinnstillinger' })
   }
   const bryter = (vindu: Side) => vindu.getByRole('switch', { name: /Varsler på denne enheten/ })
 
-  await punkt('V1 bryteren står av i Innstillinger → Chat, over de andre chatvalgene', async () => {
-    const vindu = await aapneChatfanen(ada)
+  await punkt('V1 bryteren står av i varselinnstillingene, med «Chatmeldinger» på under', async () => {
+    const vindu = await aapneVarselinnstillinger(ada)
     await bryter(vindu).waitFor({ timeout: 15_000 })
     await bilde(ada, '01-innstillinger-av-pc')
     krev(!(await bryter(vindu).isChecked()), 'står på')
-    const tekst = await vindu.locator('.chatvarslervalg').textContent()
-    krev(tekst?.includes('Ingen varsler om nye meldinger på denne enheten.'), `forklaringen: ${tekst}`)
+    const tekst = await vindu.locator('.enhetsvarsler').textContent()
+    krev(tekst?.includes('Ingen varsler på denne enheten.'), `forklaringen: ${tekst}`)
+    krev(await vindu.getByRole('switch', { name: /Chatmeldinger/ }).isChecked(), '«Chatmeldinger» står ikke på')
   })
 
   await punkt('V2 å slå på registrerer tjenestearbeideren og lagrer abonnementet', async () => {
-    const vindu = ada.getByRole('dialog', { name: 'Innstillinger' })
+    const vindu = ada.getByRole('dialog', { name: 'Varselinnstillinger' })
     await bryter(vindu).click({ force: true })
     await innen(20_000, 'på eller feil', async () => (await bryter(vindu).isChecked()) || (await vindu.locator('.skjemafeil').count()) > 0)
     const feil = await vindu.locator('.skjemafeil').textContent().catch(() => null)
@@ -246,7 +250,7 @@ try {
 
   await punkt('V7 mobil og mørkt tema', async () => {
     const mobil: Side = await miljo.brukerside('qa-chat-bo', pw.bo, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })
-    const vindu = await aapneChatfanen(mobil)
+    const vindu = await aapneVarselinnstillinger(mobil)
     await bryter(vindu).waitFor({ timeout: 15_000 })
     await bilde(mobil, '04-innstillinger-mobil')
     await mobil.emulateMedia({ colorScheme: 'dark' })

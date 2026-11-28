@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { chatadresse } from '@delt/chatvarsel'
+import { MAKS_STI, VARSELSTI } from '@delt/enhetsvarsel'
 import { APNE_MELDING, EIERNOKKEL, lagChatvarsler, TJENESTEARBEIDER, type Lagretabonnement, type Varselserver } from '../chatvarsler/enhet'
 
 const NOKKEL = 'BP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A8'
@@ -190,19 +191,42 @@ describe('ved innlogging', () => {
 
 describe('tjenestearbeideren', () => {
   const kilde = readFileSync(resolve(__dirname, '../../public/chatvarsler.js'), 'utf8')
-  const chatsti = new RegExp(/const CHATSTI = \/(.+)\/i/.exec(kilde)![1]!, 'i')
+  const sti = new RegExp(/const STI = \/(.+)\/\n/.exec(kilde)![1]!)
+  const maks = Number(/const MAKS_STI = (\d+)/.exec(kilde)![1])
 
   it('sender meldingen appen lytter etter', () => {
     expect(kilde).toContain(`const MELDING = '${APNE_MELDING}'`)
   })
 
-  it('åpner adressene varslene har, og ingen andre', () => {
+  it('åpner de samme adressene som databasen og Edge-funksjonen godtar, og ingen andre', () => {
+    expect(sti.source).toBe(VARSELSTI.source)
+    expect(maks).toBe(MAKS_STI)
     const id = '0f8e3c1a-1111-4222-8333-944445555666'
-    for (const type of ['gruppe', 'direkte'] as const) expect(chatsti.test(chatadresse({ type, id }))).toBe(true)
-    expect(chatsti.test(chatadresse())).toBe(true)
-    for (const fremmed of ['#/grupper', 'https://evil.example/#/chat', '#/chat/gruppe/x', `#/chat/gruppe/${id}/mer`]) {
-      expect(chatsti.test(fremmed), fremmed).toBe(false)
+    for (const type of ['gruppe', 'direkte'] as const) expect(sti.test(chatadresse({ type, id }))).toBe(true)
+    expect(sti.test(chatadresse())).toBe(true)
+    for (const fremmed of ['https://evil.example/#/chat', 'javascript:alert(1)', '#/chat?x=1', '#/chat gruppe', '//evil.example', '']) {
+      expect(sti.test(fremmed), fremmed).toBe(false)
     }
+  })
+
+  it('lar seg kjøre, og åpner adressen i varselet eller forsiden når adressen ikke er godkjent', async () => {
+    const lyttere: Record<string, (h: unknown) => void> = {}
+    const apnet: string[] = []
+    const self = {
+      registration: { scope: 'https://ousfar.example/' },
+      clients: { matchAll: async () => [], openWindow: async (url: string) => apnet.push(url), claim: async () => undefined },
+      skipWaiting: async () => undefined,
+      addEventListener: (navn: string, f: (h: unknown) => void) => (lyttere[navn] = f),
+    }
+    new Function('self', kilde)(self)
+    const trykk = async (sti: unknown) => {
+      let venter: Promise<unknown> = Promise.resolve()
+      lyttere.notificationclick!({ notification: { close: () => undefined, data: { sti } }, waitUntil: (p: Promise<unknown>) => (venter = p) })
+      await venter
+    }
+    await trykk('#/chat/gruppe/0f8e3c1a-1111-4222-8333-944445555666')
+    await trykk('javascript:alert(1)')
+    expect(apnet).toEqual(['https://ousfar.example/#/chat/gruppe/0f8e3c1a-1111-4222-8333-944445555666', 'https://ousfar.example/#/'])
   })
 
   it('mellomlagrer ingenting og svarer ikke på forespørsler', () => {
