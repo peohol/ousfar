@@ -2,7 +2,8 @@
 -- §8.5, docs/personal-database.md «Medarbeiderne» og «Vis som»).
 --
 -- - Medarbeiderne 1:1 med medlemmene (B13, K-MED-1, K-MED-3). Utenfor et
---   testmiljø, der funksjonen `personal` ikke står av, er medarbeiderne i
+--   testmiljø, fra den første dagen funksjonen `personal` ikke står av der
+--   (og videre, også om den slås av igjen), er medarbeiderne i
 --   kalenderen nøyaktig fagmiljøets aktive medlemmer, uten noen handling: et
 --   nytt aktivt medlemskap gir en aktiv periode fra i dag, og et avsluttet
 --   medlemskap avslutter perioden i dag. Etter den dagen er personen ute av
@@ -30,6 +31,7 @@
 -- Tilbakeføring: en ny migrasjon som fjerner utløserne på `public.medlemskap`,
 -- `public.funksjonsbrytere` og `public.fagmiljoer`, de nye funksjonene i
 -- `public` og tabellene `personal.medarbeiderperioder`, `personal.vaktandeler`,
+-- `personal.tilknyttede_fagmiljoer`,
 -- `personal.innstillingslogg` og `personal.vis_som`, og setter
 -- `personal.rolle`, `personal.statusbrudd` og `public.personal_grunnlag`
 -- tilbake.
@@ -205,12 +207,70 @@ as $$
     and intern.funksjonstilstand('personal', knytter_medlemmer.fagmiljo) <> 'av'
 $$;
 
+-- Fagmiljøene der kalenderen har knyttet medlemmene til seg, fra den første
+-- dagen funksjonen ikke sto av. Derfra følges medlemskapene uten opphold, også
+-- om funksjonen slås av igjen, så periodene alltid er de faktiske og ingen
+-- avslutning eller ny innmelding går tapt mens den står av. Et fagmiljø der
+-- funksjonen aldri har vært i bruk, får ingen rad og ingen medarbeidere. Bare
+-- nye rader; hva som skjer med historikken senere, avgjøres med B9.
+create table personal.tilknyttede_fagmiljoer (
+  fagmiljo_id uuid primary key references public.fagmiljoer (id),
+  fra date not null,
+  kl timestamptz not null default now()
+);
+
+comment on table personal.tilknyttede_fagmiljoer is
+  'Fagmiljøene der personalkalenderen følger medlemskapene, fra den første dagen funksjonen ikke sto av (docs/personal-database.md, «1:1 med medlemmene»).';
+
+create function personal.kontroller_tilknytning()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'Tilknytningen kan ikke endres eller fjernes.' using errcode = '42501';
+end;
+$$;
+
+create trigger tilknyttede_fagmiljoer_uendret
+before update or delete on personal.tilknyttede_fagmiljoer
+for each row execute function personal.kontroller_tilknytning();
+
+-- Fører fagmiljøet inn som tilknyttet, første gang funksjonen ikke står av der.
+create function personal.tilknytt(fagmiljo uuid)
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
+  insert into personal.tilknyttede_fagmiljoer (fagmiljo_id, fra)
+  select tilknytt.fagmiljo, personal.i_dag(tilknytt.fagmiljo)
+  where personal.knytter_medlemmer(tilknytt.fagmiljo)
+  on conflict (fagmiljo_id) do nothing
+$$;
+
+-- Følger kalenderen medlemskapene i fagmiljøet? Utenfor et testmiljø, når
+-- funksjonen ikke står av eller har vært i bruk der før.
+create function personal.folger_medlemmer(fagmiljo uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select personal.knytter_medlemmer(folger_medlemmer.fagmiljo)
+    or (
+      coalesce((select not f.testmiljo from public.fagmiljoer f where f.id = folger_medlemmer.fagmiljo), false)
+      and exists (select 1 from personal.tilknyttede_fagmiljoer t where t.fagmiljo_id = folger_medlemmer.fagmiljo)
+    )
+$$;
+
 -- Bringer medarbeideren for brukeren i fagmiljøet i takt med medlemskapet:
 -- aktivt medlemskap gir en åpen periode fra i dag; uten aktivt medlemskap
 -- avsluttes en åpen periode i dag, registreringene etter dagen fjernes og
--- kvalifikasjonene avsluttes. Gjør ingenting der kalenderen ikke knytter
--- medlemmene til seg. Kjøres fra utløserne under, i transaksjonen som endrer
--- medlemskapet, bryteren eller testmerkingen. Oppsettet låses eksklusivt, så
+-- kvalifikasjonene avsluttes. Gjør ingenting der kalenderen ikke følger
+-- medlemskapene (`personal.folger_medlemmer`). Kjøres fra utløserne under, i
+-- transaksjonen som endrer medlemskapet, bryteren eller testmerkingen. Oppsettet låses eksklusivt, så
 -- endringene i kalenderen og innstillingene, som tar det delt, venter på
 -- medlemskapsendringen og kontrolleres mot den, eller er ferdige før den og
 -- ryddes av den. Det holder også når medlemskapet endres uten den felles
@@ -227,11 +287,12 @@ declare
   m personal.medarbeidere;
   siste personal.medarbeiderperioder;
 begin
-  if not personal.knytter_medlemmer(synk_medarbeider.fagmiljo) then
+  if not personal.folger_medlemmer(synk_medarbeider.fagmiljo) then
     return;
   end if;
   perform personal.las_oppsett(synk_medarbeider.fagmiljo, true);
   dag := personal.i_dag(synk_medarbeider.fagmiljo);
+  perform personal.tilknytt(synk_medarbeider.fagmiljo);
   aktiv := intern.er_eget_medlem_i(synk_medarbeider.fagmiljo, synk_medarbeider.bruker);
   select * into m from personal.medarbeidere x
   where x.fagmiljo_id = synk_medarbeider.fagmiljo and x.bruker_id = synk_medarbeider.bruker
@@ -284,6 +345,7 @@ language sql
 security definer
 set search_path = ''
 as $$
+  select personal.tilknytt(synk_fagmiljo.fagmiljo);
   select personal.synk_medarbeider(synk_fagmiljo.fagmiljo, b.bruker_id)
   from (
     select m.bruker_id from public.medlemskap m where m.fagmiljo_id = synk_fagmiljo.fagmiljo and m.status = 'aktiv'
@@ -979,6 +1041,12 @@ declare
   aktor constant uuid := (select auth.uid());
   reell text;
 begin
+  -- Valget endrer rollen alle kommandoene kontrollerer, så det tas som de
+  -- andre tilgangsendringene: med den felles tilgangslåsen eksklusivt og bare
+  -- i read committed (`25001` ellers). Kommandoene tar låsen delt før porten,
+  -- så en som er i gang, er ferdig først, og en som venter, kontrolleres mot
+  -- den nye rollen. Tilgangen, testmiljøet og rollen kontrolleres etter låsen.
+  perform intern.las_tilgang(aktor, 'Personal: «Vis som» endret');
   perform personal.krev_tilgang(personal_vis_som.fagmiljo, 'view');
   if not coalesce((select f.testmiljo from public.fagmiljoer f where f.id = personal_vis_som.fagmiljo), false) then
     raise exception 'Finnes ikke.' using errcode = 'P0002';

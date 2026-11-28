@@ -154,11 +154,12 @@ P2c) eller et syntetisk navn og en stilling (testmiljø), aldri begge.
 
 ### 1:1 med medlemmene (P2c: K-MED-1, K-MED-3, K-MED-5, B13)
 
-Utenfor et testmiljø, når funksjonen ikke står av, er medarbeiderne nøyaktig
-fagmiljøets aktive medlemmer (`personal.knytter_medlemmer`). Ingen legger dem
-inn: utløsere på `public.medlemskap`, `public.funksjonsbrytere` og
-`public.fagmiljoer` kjører `personal.synk_medarbeider` i transaksjonen som
-endrer medlemskapet, bryteren eller testmerkingen.
+Utenfor et testmiljø er medarbeiderne nøyaktig fagmiljøets aktive medlemmer
+fra den dagen funksjonen første gang tas i bruk der
+(`personal.knytter_medlemmer`). Ingen legger dem inn: utløsere på
+`public.medlemskap`, `public.funksjonsbrytere` og `public.fagmiljoer` kjører
+`personal.synk_medarbeider` i transaksjonen som endrer medlemskapet, bryteren
+eller testmerkingen.
 
 - **Periodene** (`personal.medarbeiderperioder`) sier hvilke dager
   medarbeideren er med: fra dagen medlemskapet blir aktivt, til og med dagen
@@ -172,8 +173,13 @@ endrer medlemskapet, bryteren eller testmerkingen.
   senere begynner uten, og ingen ny registrering eller ny status kan legges
   på en dag utenfor periodene, heller ikke rett i tabellen. Alt til og med
   dagen står. Tilgangen stopper samme dag (rollen krever aktivt medlemskap).
-- **Mens funksjonen står av** følges ikke medlemskapene; de tas igjen når
-  den slås på.
+- **Tilknytningen** (`personal.tilknyttede_fagmiljoer`) føres første gang
+  funksjonen tas i bruk i et fagmiljø som ikke er testmiljø, og kan ikke
+  endres eller fjernes. Fra da følges medlemskapene hele tiden
+  (`personal.folger_medlemmer`), også mens funksjonen står av, så periodene
+  er de faktiske når den slås på igjen, og ingen kan registreres på en dag der
+  medlemskapet var avsluttet. Et fagmiljø der funksjonen aldri har vært i
+  bruk, får ingen medarbeidere og ingen rader.
 - **Navnet og stillingen** leses fra profilen hver gang, og stillingene er
   appens stillinger (K-MED-5). Stilling per dag kommer med Dev
   ([#602](https://github.com/peohol/ousfar/issues/602), før P4).
@@ -214,7 +220,12 @@ Bare i et testmiljø kan den innloggede prøve kalenderen med en lavere rolle
 avslutter). Valget lagres i `personal.vis_som` og håndheves på serveren:
 `personal.rolle` er den laveste av den virkelige rollen og den valgte, så alle
 kommandoene og lesemodellen følger den, og `personal.meg` er den valgte
-syntetiske medarbeideren. En høyere rolle avvises (`42501`). Utenfor et
+syntetiske medarbeideren. En høyere rolle avvises (`42501`). Valget endrer
+rollen alle kommandoene kontrollerer, så det tas som de andre
+tilgangsendringene (`intern.las_tilgang`): tilgangslåsen eksklusivt, bare i
+`read committed` (`25001` ellers), og tilgangen, testmiljøet og rollen
+kontrolleres etter låsen. En lagring som er i gang, blir ferdig først; en som
+venter, kontrolleres mot den nye rollen. Utenfor et
 testmiljø finnes ikke funksjonen («Finnes ikke.»), tabellen avviser rader
 der, valget gjelder ikke der selv om en rad skulle finnes, og radene fjernes
 når testmerkingen tas bort. Under utprøving har bare systemarkitektene
@@ -338,7 +349,8 @@ og så medarbeideren (`personal.las_medarbeider`). En endring av medlemskapet
 tar tilgangslåsen eksklusivt og oppsettet eksklusivt
 (`personal.synk_medarbeider`), så en registrering eller kvalifikasjon som ble
 lagret like før, ryddes av avslutningen, og en som venter, avvises etter den,
-også rett i tabellen, der bare oppsettet låses.
+også rett i tabellen, der bare oppsettet låses. «Vis som» tar tilgangslåsen
+eksklusivt, som de andre tilgangsendringene.
 
 ## Sandkasse
 
@@ -408,8 +420,11 @@ med to forbindelser mot ekte Postgres med hele databasestrukturen (kjøres når
   registreringen og kvalifikasjonene mot et medlemskap som avsluttes, i begge
   rekkefølger og rett i tabellen, og to endringer av innstillingene fra den
   samme revisjonen;
+- i `read committed`: «Vis som» mot en lagring av oppsettet eller kalenderen i
+  begge rekkefølger, og mot en administratorrolle eller et medlemskap som
+  fjernes;
 - i `repeatable read`: alle endringene stoppes med `25001`, også
-  innstillingene og et avsluttet medlemskap.
+  innstillingene, et avsluttet medlemskap og «Vis som».
 
 `src/__tests__/personal/medarbeidere.test.ts` (P2c), med et syntetisk
 fagmiljø R som ikke er testmiljø og har en syntetisk godkjenning i
@@ -418,7 +433,8 @@ testdatabasen:
 - 1:1: ingen medarbeidere før funksjonen er på, alle aktive medlemmer når den
   slås på, et nytt medlem og en invitasjon som tas imot, stillingen fra
   profilen, avsluttet og nytt medlemskap samme dag og senere, vernet av
-  periodene, funksjonen av og på igjen, andre fagmiljøer og Sandkasse;
+  periodene, medlemskapene som følges mens funksjonen står av, et fagmiljø
+  der funksjonen aldri har vært i bruk, andre fagmiljøer og Sandkasse;
 - innstillingene: rollene, kvalifikasjonene fra i dag, formfeil, foreldet
   revisjon, synligheten, vaktandelen fra i dag og vernet av tidligere dager
   rett i tabellen, og pariteten med `validateDutySchedule` og `changesPast`;

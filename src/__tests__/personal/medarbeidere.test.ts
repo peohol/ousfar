@@ -81,8 +81,9 @@ afterAll(async () => {
 
 describe('medarbeiderne 1:1 med medlemmene (B13, K-MED-1, K-MED-3, K-MED-5)', () => {
   it('knytter ikke medlemmene til seg før funksjonen er på i fagmiljøet', async () => {
-    const { rows } = await p.db.query('select 1 from personal.medarbeidere where fagmiljo_id = $1', [R])
-    expect(rows).toEqual([])
+    for (const tabell of ['personal.medarbeidere', 'personal.tilknyttede_fagmiljoer']) {
+      expect((await p.db.query(`select 1 from ${tabell} where fagmiljo_id = $1`, [R])).rows, tabell).toEqual([])
+    }
   })
 
   it('gjør de aktive medlemmene, og bare dem, til medarbeidere når funksjonen slås på, uten noen handling', async () => {
@@ -240,16 +241,85 @@ describe('medarbeiderne 1:1 med medlemmene (B13, K-MED-1, K-MED-3, K-MED-5)', ()
     expect(await sql('insert into personal.medarbeiderperioder (medarbeider_id, fra) values ($1, $2)', [alma, iDag])).toBe('23514')
   })
 
-  it('følger ikke medlemskapene mens funksjonen er av, og tar dem igjen når den slås på', async () => {
+  it('følger medlemskapene videre mens funksjonen er av, så periodene er de faktiske når den slås på igjen', async () => {
+    const perioderFor = async (bruker: string) =>
+      (
+        await p.db.query<{ fra: string; til: string | null }>(
+          `select p.fra::text, p.til::text from personal.medarbeiderperioder p join personal.medarbeidere m on m.id = p.medarbeider_id
+           where m.bruker_id = $1 and m.fagmiljo_id = $2 order by p.fra`,
+          [bruker, R],
+        )
+      ).rows
+    const nils = await medarbeiderI(konto.adminR, R, 'Nils Testesen')
+    await settKvalifikasjoner(konto.adminR, R, nils.id, [S_ID.duty1], nils.revisjon)
+    // R ble tatt i bruk tidligere i dag og står som tilknyttet derfra.
+    expect((await p.db.query('select fra::text from personal.tilknyttede_fagmiljoer where fagmiljo_id = $1', [R])).rows).toEqual([{ fra: iDag }])
+
     await settBryter(R, 'av')
+    // Nils slutter mens funksjonen er av: perioden og kvalifikasjonen slutter den dagen.
     await avsluttMedlemskap(p.db, konto.nyR, R)
-    const { rows } = await p.db.query<{ til: string | null }>(
-      `select p.til::text from personal.medarbeiderperioder p join personal.medarbeidere m on m.id = p.medarbeider_id where m.bruker_id = $1`,
-      [konto.nyR],
-    )
-    expect(rows).toEqual([{ til: null }])
+    expect(await perioderFor(konto.nyR)).toEqual([{ fra: iDag, til: iDag }])
+    // Som om han var medarbeider fra for ti dager siden og sluttet for fire dager siden.
+    await p.somServer(async (tx) => {
+      await tx.query(`set local session_replication_role = replica`)
+      await tx.query(`update personal.medarbeiderperioder set fra = $2, til = $3 where medarbeider_id = $1`, [nils.id, addDays(iDag, -10), addDays(iDag, -4)])
+      await tx.query(`update personal.kvalifikasjoner set fra = $2, til = $3 where medarbeider_id = $1`, [nils.id, addDays(iDag, -10), addDays(iDag, -4)])
+    })
+    // Han kommer tilbake i dag, mens funksjonen fortsatt er av: en ny periode, uten kvalifikasjonen.
+    await opprettMedlem(p.db, konto.nyR, R, { primaer: true })
+    expect(await perioderFor(konto.nyR)).toEqual([
+      { fra: addDays(iDag, -10), til: addDays(iDag, -4) },
+      { fra: iDag, til: null },
+    ])
+    // Ivar slutter og kommer ikke tilbake; en ny konto blir medlem mens funksjonen er av.
+    await avsluttMedlemskap(p.db, konto.invitertR, R)
+    const sen = await opprettBruker(p.db, { brukernavn: 'test.senr', fornavn: 'Siv', etternavn: 'Testesen', rolle: 'user' })
+    await opprettMedlem(p.db, sen, R, { primaer: true })
+
     await settBryter(R, 'på')
-    expect((await medarbeiderI(konto.adminR, R, 'Nils Testesen')).perioder).toEqual([{ fra: iDag, til: iDag }])
+    // Påslaget endrer ingenting: periodene er de faktiske.
+    expect(await perioderFor(konto.nyR)).toEqual([
+      { fra: addDays(iDag, -10), til: addDays(iDag, -4) },
+      { fra: iDag, til: null },
+    ])
+    expect(await perioderFor(konto.invitertR)).toEqual([{ fra: iDag, til: iDag }])
+    expect(await perioderFor(sen)).toEqual([{ fra: iDag, til: null }])
+    // I gapet var Nils ikke medarbeider: ingen registrering, heller ikke rett i tabellen, og ingen kvalifikasjon.
+    for (const dato of [addDays(iDag, -3), addDays(iDag, -1)]) {
+      expect((await feilFra(() => endre(konto.adminR, R, [{ medarbeider: nils.id, dato, revisjon: null, status: S_ID.vacation }])))?.message).toBe(
+        'Nils Testesen var ikke registrert som medarbeider denne dagen.',
+      )
+      const direkte = await feilFra(() =>
+        p.somServer((tx) =>
+          tx.query(`insert into personal.oppforinger (fagmiljo_id, medarbeider_id, dato, status_id, regelversjon) values ($1, $2, $3, $4, 1)`, [R, nils.id, dato, S_ID.vacation]),
+        ),
+      )
+      expect(direkte?.code).toBe('23514')
+      expect((await p.db.query<{ k: string[] }>('select personal.kvalifikasjoner_paa($1, $2) as k', [nils.id, dato])).rows[0]!.k).toEqual([])
+    }
+    // Før og etter gapet går det.
+    for (const dato of [addDays(iDag, -5), iDag]) {
+      await endre(konto.adminR, R, [{ medarbeider: nils.id, dato, revisjon: null, status: S_ID.vacation }])
+    }
+    expect((await p.db.query<{ k: string[] }>('select personal.kvalifikasjoner_paa($1, $2) as k', [nils.id, addDays(iDag, -5)])).rows[0]!.k).toEqual([S_ID.duty1])
+    expect((await medarbeiderI(konto.adminR, R, 'Nils Testesen')).kvalifikasjoner!.filter((k) => k.til === null || k.til >= iDag)).toEqual([])
+  })
+
+  it('følger ingen medlemskap i et fagmiljø der funksjonen aldri har vært i bruk', async () => {
+    const Q = await opprettFagmiljo(p.db, { nokkel: 'test-reelt-q', navn: 'Fagmiljø Q', administrator: konto.planR })
+    await opprettMedlem(p.db, konto.kollegaR, Q)
+    await avsluttMedlemskap(p.db, konto.kollegaR, Q)
+    await opprettMedlem(p.db, konto.kollegaR, Q)
+    // Godkjent, men aldri slått på: fortsatt ingenting.
+    await p.somServer((tx) =>
+      tx.query(`insert into public.funksjonsgodkjenninger (funksjon, fagmiljo_id, grunnlag) values ('personal', $1, 'Syntetisk godkjenning i testen')`, [Q]),
+    )
+    await settBryter(Q, 'av')
+    for (const tabell of ['personal.medarbeidere', 'personal.tilknyttede_fagmiljoer']) {
+      expect((await p.db.query(`select 1 from ${tabell} where fagmiljo_id = $1`, [Q])).rows, tabell).toEqual([])
+    }
+    // Tilknytningen står fast.
+    expect(await kode(() => p.somServer((tx) => tx.query('delete from personal.tilknyttede_fagmiljoer where fagmiljo_id = $1', [R])))).toBe('42501')
   })
 
   it('gjør ingen fra andre fagmiljøer til medarbeidere, og holder R skjult for dem (K-TIL-1, K-TIL-3)', async () => {
@@ -492,13 +562,17 @@ describe('«Vis som» (K-SKJ-7)', () => {
 describe('vaktplanansvarlige i medarbeiderne (B3, K-TIL-5)', () => {
   it('gir den lokale administratoren medlemmene å velge blant, og bare den', async () => {
     const medlemmer = await p.kall<{ bruker: string; navn: string; vaktplanansvarlig: boolean }[]>(konto.adminR, 'select public.personal_medlemmer($1)', [R])
-    expect(medlemmer.map((m) => m.navn)).toEqual(['Ada Testesen', 'Ivar Testesen', 'Kari Testesen', 'Pia Testesen'])
+    // De aktive medlemmene i R, slik de står etter de foregående testene.
+    const aktive = await p.db.query<{ bruker_id: string }>(`select bruker_id from public.medlemskap where fagmiljo_id = $1 and status = 'aktiv'`, [R])
+    expect(aktive.rows.length).toBeGreaterThan(1)
+    expect(medlemmer.map((m) => m.bruker).sort()).toEqual(aktive.rows.map((r) => r.bruker_id).sort())
+    expect(medlemmer.map((m) => m.navn)).toEqual([...medlemmer.map((m) => m.navn)].sort((a, b) => a.localeCompare(b, 'nb')))
     await p.kall(konto.adminR, 'select public.personal_sett_vaktplanansvarlig($1, $2, true)', [R, konto.planR])
     expect((await p.kall<{ bruker: string; vaktplanansvarlig: boolean }[]>(konto.adminR, 'select public.personal_medlemmer($1)', [R])).find((m) => m.bruker === konto.planR)!.vaktplanansvarlig).toBe(true)
     expect((await grunnlag(p, konto.planR, R)).rolle).toBe('planner')
     expect(await p.feilkode(konto.planR, 'select public.personal_medlemmer($1)', [R])).toBe('42501')
     // Planleggeren endrer innstillingene til en kollega i eget fagmiljø.
-    const ivar = await medarbeiderI(konto.planR, R, 'Ivar Testesen')
-    expect((await settKvalifikasjoner(konto.planR, R, ivar.id, [S_ID.duty2], ivar.revisjon)).kvalifikasjoner).toEqual([{ status: S_ID.duty2, fra: iDag, til: null }])
+    const kari = await medarbeiderI(konto.planR, R, 'Kari Testesen')
+    expect((await settKvalifikasjoner(konto.planR, R, kari.id, [S_ID.duty2], kari.revisjon)).kvalifikasjoner).toContainEqual({ status: S_ID.duty2, fra: iDag, til: null })
   })
 })

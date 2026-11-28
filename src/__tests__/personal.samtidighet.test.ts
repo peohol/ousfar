@@ -17,8 +17,9 @@
  * medarbeiderne, ryddes en registrering eller kvalifikasjon som ble lagret like
  * før medlemskapet ble avsluttet, og en som venter på avslutningen, avvises,
  * også rett i tabellen. To endringer av innstillingene fra den samme revisjonen
- * gir konflikt. Bare syntetiske kontoer og medarbeidere, i syntetiske
- * fagmiljøer.
+ * gir konflikt. «Vis som» tas som en tilgangsendring: en lagring som er i
+ * gang, blir ferdig først, og en som venter, kontrolleres mot den nye rollen.
+ * Bare syntetiske kontoer og medarbeidere, i syntetiske fagmiljøer.
  */
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { addDays, holidaysForYear, todayIn, weekdayIndex } from '@delt/personal/dates'
@@ -186,6 +187,9 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       })}', 1);`
   }
   const versjoner = (db: string) => psql(db, `select string_agg(versjon::text, ',' order by versjon) from personal.oppsett where fagmiljo_id = ${S}`)
+  /** «Vis som» i Sandkasse (K-SKJ-7): en lavere rolle for den innloggede. */
+  const visSom = (bruker: string, rolle: string) => `${som(bruker)} select public.personal_vis_som(${S}, '${rolle}', null);`
+  const simuleringer = (db: string) => psql(db, `select count(*) from personal.vis_som`)
 
   describe('i read committed, som data-API-et bruker', () => {
     it('gir konflikt når to lagrer oppsettet fra den samme versjonen', async () => {
@@ -452,6 +456,7 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       ['kvalifikasjonene', `${som(KONTO.planlegger1)} select public.personal_sett_kvalifikasjoner(${R}, '${iR[KONTO.kollega]}', '["vakt1"]', 1);`],
       ['vaktandelen', `${som(KONTO.planlegger1)} select public.personal_lagre_vaktandel(${R}, '${iR[KONTO.kollega]}', '{"ordinary":[{"from":"${dato}","percent":50}],"temporary":[]}', 1);`],
       ['avsluttet medlemskap', `update public.medlemskap set status = 'deaktivert', til = now() where bruker_id = '${KONTO.kollega}' and fagmiljo_id = ${R};`],
+      ['«Vis som»', visSom(KONTO.admin, 'reader')],
     ]
 
     it('stopper endringene heller enn å avgjøre dem på gamle data', async () => {
@@ -468,6 +473,7 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       expect(versjoner(db)).toBe('1')
       expect(celler(db)).toEqual([])
       expect(psql(db, `select count(*) from personal.medarbeiderperioder where medarbeider_id = '${iR[KONTO.kollega]}' and til is null`)).toBe('1')
+      expect(simuleringer(db)).toBe('0')
     }, 30_000)
   })
 
@@ -511,5 +517,40 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
       expect(r.steg).toBe('42501')
       expect(celler(db).map((c) => c.fritak)).toEqual([false])
     }, 30_000)
+  })
+
+  // «Vis som» endrer rollen alle kommandoene kontrollerer, og tas som de andre tilgangsendringene.
+  describe('når «Vis som» endres samtidig', () => {
+    it('lar en lagring som er i gang bli ferdig før rollen senkes', async () => {
+      const db = nyDatabase()
+      const r = await samtidig(db, 'read committed', lagre(db)(KONTO.admin), visSom(KONTO.admin, 'reader'))
+      expect(r).toEqual({ steg: '00000', commit: '00000' })
+      expect(versjoner(db)).toBe('1,2')
+      expect(psql(db, `select rolle from personal.vis_som where bruker_id = '${KONTO.admin}'`)).toBe('reader')
+    }, 30_000)
+
+    it('avviser en lagring som venter på at rollen senkes', async () => {
+      for (const [hva, endring] of [
+        ['oppsettet', (db: string) => lagre(db)(KONTO.admin)],
+        ['kalenderen', () => endre(KONTO.planlegger1, [{ navn: 'Alma Berg', status: 'borte' }])],
+      ] as const) {
+        const db = nyDatabase()
+        const bruker = hva === 'oppsettet' ? KONTO.admin : KONTO.planlegger1
+        const r = await samtidig(db, 'read committed', visSom(bruker, 'reader'), endring(db))
+        expect(r.steg, hva).toBe('42501')
+        expect(versjoner(db), hva).toBe('1')
+        expect(celler(db), hva).toEqual([])
+      }
+    }, 60_000)
+
+    it('venter på at tilgangen fjernes, og kontrollerer valget mot rollen etterpå', async () => {
+      const db = nyDatabase()
+      giAdmin(db, KONTO.planlegger1)
+      // Uten administratorrollen er administratoren en kollega, og «Vis som» kan ikke gi mer.
+      expect((await samtidig(db, 'read committed', fjernAdmin(KONTO.admin), visSom(KONTO.admin, 'planner'))).steg).toBe('42501')
+      // Uten medlemskap finnes ikke funksjonen for brukeren (K-SKJ-3).
+      expect((await samtidig(db, 'read committed', avsluttMedlemskap(KONTO.planlegger2), visSom(KONTO.planlegger2, 'reader'))).steg).toBe('P0002')
+      expect(simuleringer(db)).toBe('0')
+    }, 60_000)
   })
 })
