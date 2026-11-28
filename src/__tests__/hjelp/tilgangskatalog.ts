@@ -190,6 +190,10 @@ function kontrollFeil(f: KallbarFunksjon, kontroll: Kontroll): string | null {
       if (!f.definer) return 'er ikke security definer'
       if (KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) || KALLER_ADMINKONTROLL.test(f.kilde)) return 'gir systemarkitekter eller administratorer noe ekstra'
       return /\bintern\s*\.\s*krev_direktemeldinger\s*\(/.test(f.kilde) ? null : 'bruker ikke intern.krev_direktemeldinger'
+    case 'personal':
+      if (!f.definer) return 'er ikke security definer'
+      if (KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) || KALLER_ADMINKONTROLL.test(f.kilde)) return 'gir systemarkitekter eller administratorer noe ekstra'
+      return /\bpersonal\s*\.\s*krev_(?:skrive)?tilgang\s*\(/.test(f.kilde) ? null : 'bruker ikke personal.krev_tilgang'
     case 'systemarkitekt':
       if (!f.definer) return 'er ikke security definer'
       return KALLER_SYSTEMARKITEKTKONTROLL.test(f.kilde) ? null : 'krever ingen systemarkitekt'

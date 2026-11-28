@@ -13,7 +13,7 @@ dokumentet der de overlapper. Prosjektinstruksene står i
 [PR-kontrollstandarden](chatgpt-pr-kontrollstandard.md) med avsnitt 3.5 om
 ikke-kliniske personalfunksjoner.
 
-**Status 26.11.2026:** ingen personalfunksjon er bygd i OUSFAR; prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
+**Status 27.11.2026:** domenekoden (P2a) og databasen (P2b, [personal-database.md](personal-database.md)) bygges; ingenting vises i appen, og funksjonen er bare på `utprøving` i Sandkasse. Prototypen i `peohol/vaktplan` er referanse (§7.1). Dokumentet er rammen
 den bygges innenfor; konkrete regler legges til her når de er vedtatt (§6).
 Integrasjonsplanen, akseptkriteriene og rekkefølgen står i §8, og
 sjekklisten over prototypens funksjonalitet i
@@ -709,9 +709,10 @@ bruker derfor en ny, felles mekanisme fra Dev:
   og Peder har sagt ja, fører en egen migrasjon fra Personal inn en rad i
   `public.funksjonsgodkjenninger` for akkurat det fagmiljøet; den gjelder
   ikke for noe annet fagmiljø, og ingen systemarkitekt kan gi den i appen.
-  Kalendertabellene bruker
-  `public.mine_fagmiljoer_med_funksjon('personal')` i radsikkerheten og
-  `intern.krev_funksjon('personal', fagmiljø)` i kommandoene.
+  Kalendertabellene har ingen rettigheter for nettleseren; alle
+  `public.personal_*`-funksjonene går gjennom `personal.krev_tilgang`, som
+  kaller `intern.krev_funksjon('personal', fagmiljø)` og kontrollerer rollen
+  ([personal-database.md](personal-database.md)).
 - **Testmiljø** ([#598](https://github.com/peohol/ousfar/issues/598)):
   Sandkasse er merket som testmiljø. **Bare i et testmiljø kan det finnes
   syntetiske medarbeidere** uten konto, og bare der virker `Vis som`.

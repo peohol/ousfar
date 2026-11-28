@@ -45,7 +45,7 @@ describe('roller', () => {
     expect(can('localAdmin', 'editDutyShare')).toBe(true);
     expect(can('localAdmin', 'manageExemption')).toBe(true);
     // Systemarkitektrollen gir ikke i seg selv innsyn i et fagmiljø.
-    for (const a of ['view', 'editCalendar', 'editPeople', 'editDutyShare', 'editRules', 'manageExemption', 'resetDemo'] as const) expect(can('outsideArchitect', a)).toBe(false);
+    for (const a of ['view', 'editCalendar', 'editPeople', 'editDutyShare', 'editRules', 'manageExemption', 'managePlanners', 'resetDemo'] as const) expect(can('outsideArchitect', a)).toBe(false);
     // Eldre demorolle fra lagrede preferanser er ikke lenger gyldig.
     expect(can('ruleAdmin' as Role, 'editRules')).toBe(false);
     expect(() => assertCan('reader', 'editCalendar')).toThrow(PermissionError);
