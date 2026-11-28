@@ -10,6 +10,9 @@
  *   avvises før noe sendes; tidligere, gjeldende og fremtidige ordinære
  *   vaktandeler vises, og bare de fremtidige kan fjernes;
  * - serverens avvisning (en konflikt) vises, og grunnlaget hentes på nytt;
+ *   et utkast til vakter som noen andre har endret, eller som er fra før en
+ *   ny periode, forkastes for godt, også etter A → B → A og over en
+ *   oppdatering, men står ved en egen vaktandel;
  * - en kollega ser medarbeiderne og vaktandelen, men ikke vaktene og ingen
  *   knapper, og bare den lokale administratoren velger de vaktplanansvarlige;
  * - «Vis som» finnes bare med en simulering fra databasen, og gir bare
@@ -229,6 +232,86 @@ describe('Medarbeidere-fanen', () => {
     await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
     await waitFor(() => expect(kallTil('personal_sett_kvalifikasjoner')).toHaveLength(2))
     expect(kallTil('personal_sett_kvalifikasjoner')[1]).toEqual({ fagmiljo: 'f1', medarbeider: 'alma', statuser: ['vakt2', 'vakt1'], forventet_revisjon: 5 })
+  })
+
+  it('forkaster utkastet for godt: vaktene endret fra A til B og tilbake til A i samme åpne vindu gir ikke utkastet tilbake', async () => {
+    const medVakter = (statuser: string[], revisjon: number, ekstra: Record<string, unknown> = {}): Personalgrunnlag => {
+      const g = grunnlag('planner')
+      return {
+        ...g,
+        svar: {
+          ...g.svar,
+          medarbeidere: (g.svar.medarbeidere as Record<string, unknown>[]).map((m) =>
+            m.id === 'alma' ? { ...m, revisjon, kvalifikasjoner: statuser.map((status) => ({ status, fra: '2026-01-01', til: null })), ...ekstra } : m,
+          ),
+        },
+      }
+    }
+    const vis = (g: Personalgrunnlag) => <Medarbeidere fagmiljo={FAGMILJO} grunnlag={g} hentPaNytt={() => {}} />
+    const { rerender } = render(vis(medVakter(['vakt1'], 3)))
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    const dialog = screen.getByRole('dialog')
+    const avkrysset = () => ['Vakt 1', 'Vakt 2'].filter((n) => (within(dialog).getByRole('checkbox', { name: n }) as HTMLInputElement).checked)
+    // Utkastet, ut fra A (Vakt 1): Vakt 1 og Vakt 2.
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Vakt 2' }))
+    // En annen endrer vaktene til B, og så tilbake til A.
+    rerender(vis(medVakter([], 4)))
+    await waitFor(() => expect(within(dialog).getByRole('status').textContent).toMatch(/endret av noen andre/))
+    expect(avkrysset()).toEqual([])
+    rerender(vis(medVakter(['vakt1'], 5)))
+    expect(avkrysset()).toEqual(['Vakt 1'])
+    expect(within(dialog).getByRole('status').textContent).toMatch(/endret av noen andre/)
+    // «Lagre» sender ikke det gamle utkastet.
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(kallTil('personal_sett_kvalifikasjoner')).toEqual([])
+  })
+
+  it('forkaster utkastet når medarbeideren får en ny periode, også med de samme vaktene', async () => {
+    const iPerioder = (perioder: { fra: string; til: string | null }[]): Personalgrunnlag => {
+      const g = grunnlag('planner')
+      return {
+        ...g,
+        svar: { ...g.svar, medarbeidere: (g.svar.medarbeidere as Record<string, unknown>[]).map((m) => (m.id === 'alma' ? { ...m, syntetisk: false, perioder } : m)) },
+      }
+    }
+    const vis = (g: Personalgrunnlag) => <Medarbeidere fagmiljo={FAGMILJO} grunnlag={g} hentPaNytt={() => {}} />
+    const { rerender } = render(vis(iPerioder([{ fra: '2026-01-01', til: null }])))
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    const dialog = screen.getByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Vakt 2' }))
+    // Medlemskapet avsluttes og begynner på nytt; vaktene er de samme.
+    rerender(vis(iPerioder([{ fra: '2026-01-01', til: '2026-11-20' }, { fra: I_DAG, til: null }])))
+    await waitFor(() => expect(within(dialog).getByRole('status').textContent).toMatch(/endret av noen andre/))
+    expect((within(dialog).getByRole('checkbox', { name: 'Vakt 2' }) as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('forkaster et utkast bevart over en oppdatering når vaktene er endret siden, og bruker det når de ikke er det', async () => {
+    const { LAGRINGSNOKKEL, glemBildet } = await import('../../oppdatering/bevaring')
+    const bevar = (fra: string[]) => {
+      glemBildet()
+      sessionStorage.setItem(
+        LAGRINGSNOKKEL,
+        JSON.stringify({ tatt: Date.now(), eier: null, verdier: { 'personal-kan-alma': { fra, periode: '2026-01-01', kan: ['vakt1', 'vakt2'] } }, rulling: [] }),
+      )
+    }
+    const avkrysset = (dialog: HTMLElement) => ['Vakt 1', 'Vakt 2'].filter((n) => (within(dialog).getByRole('checkbox', { name: n }) as HTMLInputElement).checked)
+
+    bevar([])
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={grunnlag('planner')} hentPaNytt={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    let dialog = screen.getByRole('dialog')
+    await waitFor(() => expect(within(dialog).getByRole('status').textContent).toMatch(/endret av noen andre/))
+    expect(avkrysset(dialog)).toEqual(['Vakt 1'])
+    cleanup()
+
+    bevar(['vakt1'])
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={grunnlag('planner')} hentPaNytt={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    dialog = screen.getByRole('dialog')
+    expect(within(dialog).queryByRole('status')).toBeNull()
+    expect(avkrysset(dialog)).toEqual(['Vakt 1', 'Vakt 2'])
+    glemBildet()
   })
 
   it('lar utkastet til vakter stå når en egen vaktandel lagres imens', async () => {

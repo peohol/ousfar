@@ -1,15 +1,16 @@
 import { can } from '@delt/personal/permissions'
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Button } from '../../components/Button'
 import { Modallag } from '../../components/Modallag'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { settKvalifikasjoner } from '../kommandoer'
-import { kvalifisertI, type Innstillinger, type Medarbeider, type Medarbeidergrunnlag } from './modell'
+import { kvalifisertI, periodestart, type Innstillinger, type Medarbeider, type Medarbeidergrunnlag } from './modell'
 import { Vaktandel } from './Vaktandel'
 
-/** Vaktene som er valgt, og vaktene de ble valgt ut fra. */
+/** Vaktene som er valgt, og det de ble valgt ut fra: vaktene og perioden. */
 interface Vaktutkast {
   fra: string[]
+  periode: string
   kan: string[]
 }
 
@@ -22,11 +23,12 @@ const sammeVakter = (a: string[], b: string[]) => [...a].sort().join() === [...b
  * sender revisjonen som ble vist; har noen andre endret medarbeideren imens,
  * avviser serveren den, og grunnlaget hentes på nytt.
  *
- * Utkastet til vaktene er bundet til vaktene det ble laget fra (K-MED-2). Har
- * noen andre endret dem siden, forkastes utkastet: de nye vises, med en
- * melding, og må velges på nytt. Det gjelder også et utkast som er bevart over
- * en oppdatering av appen. En endring som ikke rører vaktene, som en
- * vaktandel lagret her, lar utkastet stå.
+ * Utkastet til vaktene er bundet til vaktene og perioden det ble laget fra
+ * (K-MED-2). Har noen andre endret vaktene siden, eller har medarbeideren fått
+ * en ny periode, forkastes utkastet for godt: de nye vises, med en melding, og
+ * må velges på nytt, også om vaktene senere blir som før. Det gjelder også et
+ * utkast som er bevart over en oppdatering av appen. En endring som ikke rører
+ * vaktene, som en vaktandel lagret her, lar utkastet stå.
  */
 export function Personredigering({
   fagmiljo,
@@ -47,11 +49,22 @@ export function Personredigering({
   const [lagret, setLagret] = useState<Innstillinger | null>(null)
   const m: Medarbeider = lagret && lagret.revisjon >= medarbeider.revisjon ? { ...medarbeider, ...lagret } : medarbeider
   const fraFor = kvalifisertI(m, grunnlag.iDag)
+  const periode = periodestart(m)
   const [utkast, setUtkast] = useBevart<Vaktutkast | null>(`personal-kan-${m.id}`, null)
-  const gjelder = utkast !== null && sammeVakter(utkast.fra, fraFor)
+  const gjelder = utkast !== null && utkast.periode === periode && sammeVakter(utkast.fra, fraFor)
   const kan = gjelder ? utkast.kan : fraFor
-  const endretImens = utkast !== null && !gjelder
-  const velg = (status: string, valgt: boolean) => setUtkast({ fra: fraFor, kan: valgt ? [...kan, status] : kan.filter((x) => x !== status) })
+  // Et utkast som ikke lenger gjelder, forkastes med en gang, så det ikke kan bli gjeldende igjen.
+  const [endretImens, setEndretImens] = useState(false)
+  const foreldet = utkast !== null && !gjelder
+  useEffect(() => {
+    if (!foreldet) return
+    setUtkast(null)
+    setEndretImens(true)
+  }, [foreldet, setUtkast])
+  const velg = (status: string, valgt: boolean) => {
+    setEndretImens(false)
+    setUtkast({ fra: fraFor, periode, kan: valgt ? [...kan, status] : kan.filter((x) => x !== status) })
+  }
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
   const id = useId()

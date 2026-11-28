@@ -129,6 +129,14 @@ export function erMedFremover(m: Medarbeider, iDag: IsoDate): boolean {
   return m.perioder.some((p) => p.til === null || p.til > iDag)
 }
 
+/**
+ * Begynnelsen av medarbeiderens gjeldende periode, som databasen
+ * (`personal.er_ny`): den siste medlemskapsperioden, eller `aktiv_fra`.
+ */
+export function periodestart(m: Medarbeider): IsoDate {
+  return m.perioder.reduce((siste, p) => (p.fra > siste ? p.fra : siste), m.perioder.length ? '' : m.aktivFra)
+}
+
 /** Kvalifikasjonene som gjelder i dag. */
 export function kvalifisertI(m: Medarbeider, iDag: IsoDate): string[] {
   return [...new Set(m.kvalifikasjoner.filter((k) => k.fra <= iDag && (k.til === null || iDag <= k.til)).map((k) => k.status))].sort()

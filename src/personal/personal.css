@@ -10,8 +10,14 @@
   color: var(--blekk-dempet);
 }
 
-/* Tabellen over medarbeiderne ruller sidelengs på smale flater, ikke siden. */
+/*
+ * Tabellen over medarbeiderne ruller sidelengs på smale flater, ikke siden.
+ * Bredden tas fra siden, ikke fra tabellen, og teksten bare for skjermlesere
+ * (plassert absolutt) holdes inni rammen, så ingen av dem gjør siden bredere.
+ */
 .personaltabell__ramme {
+  position: relative;
+  contain: inline-size;
   overflow-x: auto;
   border: var(--kant) solid var(--linje);
   border-radius: var(--runding-kort);

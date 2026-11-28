@@ -1029,8 +1029,9 @@ bindende detaljspesifikasjon.
   stilling» uten, B14), vaktene de kan ta og vaktandelen i dag, med
   forbokstavene ved navnet (profilbilder venter på §8.13). Nye står øverst,
   merket «Ny», til vaktene er valgt i perioden; «Lagre» kvitterer også uten
-  vakter. Et utkast til vakter som noen andre har endret imens, forkastes
-  med en melding, så det aldri lagres over endringen. «Endre» åpner medarbeideren:
+  vakter. Et utkast til vakter som noen andre har endret imens, eller laget
+  før en ny periode, forkastes for godt med en melding, så det aldri lagres
+  over endringen, heller ikke om vaktene blir som før. «Endre» åpner medarbeideren:
   vaktene lagres med «Lagre», vaktandelen (ordinær fra en dato og
   midlertidige perioder) med hver endring, regnet med domenefunksjonene
   først, så en dag før i dag avvises før noe sendes. Tidligere, gjeldende og
