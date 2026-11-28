@@ -67,8 +67,12 @@ describe('katalogvaktene', () => {
       'opprett_fagmiljo(navn text)',
       'opprett_gruppe(navn text, beskrivelse text, fagmiljo uuid)',
       // #616: personalkalenderen i ett fagmiljø, etter funksjonen og rollen der (`personal`).
+      'personal_endre_kalender(fagmiljo uuid, endringer jsonb)',
       'personal_grunnlag(fagmiljo uuid)',
+      'personal_historikk(fagmiljo uuid, fra date, til date)',
+      'personal_kalender(fagmiljo uuid, fra date, til date)',
       'personal_lagre_oppsett(fagmiljo uuid, oppsett jsonb, forventet_versjon integer)',
+      'personal_sett_fritak(fagmiljo uuid, medarbeider uuid, dato date, fritak boolean, forventet_revisjon bigint, forventet_fritak_revisjon bigint)',
       'personal_sett_vaktplanansvarlig(fagmiljo uuid, bruker uuid, ansvarlig boolean)',
       'sett_fagmiljoadministrator(bruker uuid, fagmiljo uuid, administrator boolean)',
       // #598: funksjonsbryterne og testmiljøene, bare for systemarkitektene.

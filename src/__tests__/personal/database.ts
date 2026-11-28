@@ -16,6 +16,8 @@
  *
  * Alle medarbeiderne i kalenderen er syntetiske (K-SKJ-9).
  */
+import { defaultRuleSet } from '@delt/personal/catalog'
+import type { PlannerState, RuleSet } from '@delt/personal/types'
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -23,6 +25,15 @@ import { byggPersongalleri, opprettFagmiljo, opprettMedlem, type Person, type Pe
 import { feilFra, nyDatabase, som } from '../hjelp/testdatabase'
 
 const MIGRASJONER = resolve(__dirname, '../../../supabase/migrations')
+
+/** Pilotoppsettet uten versjon og gyldighetsdato, slik `personal_lagre_oppsett` tar imot det. */
+export const PILOT: Omit<RuleSet, 'version' | 'effectiveFrom'> = (() => {
+  const { version: _v, effectiveFrom: _e, ...regler } = defaultRuleSet()
+  return regler
+})()
+
+/** Feilen databasen ga, med SQLSTATE-koden. */
+export type Databasefeil = NonNullable<Awaited<ReturnType<typeof feilFra>>>
 
 /** Innholdet i migrasjonen som slutter med `navn`. */
 export function migrasjon(navn: string): string {
@@ -43,11 +54,11 @@ export interface Personaldatabase {
   /** SQLSTATE for kallet, eller null når det gikk bra. */
   feilkode: (person: Person | string, sql: string, parametre?: unknown[]) => Promise<string | null>
   /** Feilen kallet ga, eller null. */
-  feil: (person: Person | string, sql: string, parametre?: unknown[]) => Promise<{ code: string; message: string } | null>
+  feil: (person: Person | string, sql: string, parametre?: unknown[]) => Promise<Databasefeil | null>
   /** Som superbruker (serveren eller en migrasjon), med begrunnelsen tilgangsloggen krever. */
   somServer: <R>(arbeid: (tx: Transaction) => Promise<R>) => Promise<R>
   /** Som `kall`, men rullet tilbake etterpå: svaret eller feilen, uten at noe lagres. */
-  prov: <R = unknown>(person: Person | string, sql: string, parametre?: unknown[]) => Promise<{ ok: R } | { feil: { code: string; message: string; detail?: string } }>
+  prov: <R = unknown>(person: Person | string, sql: string, parametre?: unknown[]) => Promise<{ ok: R } | { feil: Databasefeil }>
 }
 
 /** Kastes for å rulle tilbake en transaksjon i `prov`. */
@@ -71,14 +82,14 @@ export async function byggPersonaldatabase(): Promise<Personaldatabase> {
   const feil = (person: Person | string, sql: string, parametre: unknown[] = []) => feilFra(() => kall(person, sql, parametre))
   const feilkode = async (person: Person | string, sql: string, parametre: unknown[] = []) => (await feil(person, sql, parametre))?.code ?? null
   const prov = async <R = unknown>(person: Person | string, sql: string, parametre: unknown[] = []) => {
-    let svar: { ok: R } | { feil: { code: string; message: string; detail?: string } } | undefined
+    let svar: { ok: R } | { feil: Databasefeil } | undefined
     try {
       await som(db, id(person), async (tx) => {
         try {
           const rad = (await tx.query<Record<string, R>>(sql, parametre)).rows[0]
           svar = { ok: rad ? Object.values(rad)[0]! : (null as R) }
         } catch (e) {
-          svar = { feil: e as { code: string; message: string; detail?: string } }
+          svar = { feil: e as Databasefeil }
         }
         throw new Tilbake()
       })
@@ -117,3 +128,53 @@ export interface Grunnlag {
 export const grunnlag = (p: Personaldatabase, person: Person | string, fagmiljo = p.S) =>
   p.kall<Grunnlag>(person, 'select public.personal_grunnlag($1)', [fagmiljo])
 
+/** En kalenderoppføring slik `public.personal_kalender` gir den. */
+export interface Oppforing {
+  id: string
+  medarbeider: string
+  dato: string
+  status: string
+  tid?: { start: number; end: number }
+  merknad?: string
+  laast?: true
+  regelversjon: number
+  revisjon: number
+  fritak?: boolean
+  fritak_revisjon?: number
+}
+
+export const kalender = (p: Personaldatabase, person: Person | string, fra: string, til: string, fagmiljo = p.S) =>
+  p.kall<{ fra: string; til: string; oppforinger: Oppforing[] }>(person, 'select public.personal_kalender($1, $2, $3)', [fagmiljo, fra, til])
+
+/** Kalenderen som domenets tilstand (`PlannerState`), slik appen vil bygge den. */
+export function tilstand(g: Grunnlag, oppforinger: readonly Oppforing[]): PlannerState {
+  const [rules, ...eldre] = [...g.regelsett].reverse() as unknown as RuleSet[]
+  return {
+    unit: g.enhet!,
+    categories: g.kategorier,
+    people: g.medarbeidere.map((m) => ({
+      id: m.id,
+      name: m.navn,
+      categoryId: m.stilling ?? '',
+      qualifications: (m.kvalifikasjoner ?? []).filter((k) => k.fra <= g.i_dag && (k.til === null || k.til >= g.i_dag)).map((k) => k.status),
+      active: true,
+    })),
+    rules: rules!,
+    ruleVersions: eldre.reverse(),
+    ruleVersionSeq: rules!.version,
+    peopleFrom: '2000-01-01',
+    peopleHistory: [],
+    entries: oppforinger.map((o) => ({
+      id: o.id,
+      personId: o.medarbeider,
+      date: o.dato,
+      statusId: o.status,
+      ...(o.tid ? { time: o.tid } : {}),
+      ...(o.merknad ? { note: o.merknad } : {}),
+      ruleVersion: o.regelversjon,
+      ...(o.laast ? { locked: true } : {}),
+      ...(o.fritak ? { exempt: true } : {}),
+    })),
+    dutyShares: {},
+  }
+}
