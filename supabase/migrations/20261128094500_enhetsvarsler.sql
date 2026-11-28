@@ -399,10 +399,13 @@ begin
         data = excluded.data,
         kl = excluded.kl,
         senest_kl = excluded.senest_kl,
-        neste_kl = excluded.kl,
+        -- Samme tidspunkt: utsendingen fortsetter som før. En utsending som
+        -- pågår, beholder reservasjonen (`neste_kl`), så en annen ikke sender
+        -- det samme samtidig; feiler den, sendes det nye innholdet etterpå.
+        neste_kl = case when v.kl = excluded.kl then v.neste_kl else excluded.kl end,
         versjon = v.versjon + 1,
         tidsversjon = case when v.kl = excluded.kl then v.tidsversjon else v.versjon + 1 end,
-        forsok = 0,
+        forsok = case when v.kl = excluded.kl then v.forsok else 0 end,
         -- Samme tidspunkt: enhetene som alt har fått det, får det ikke igjen.
         sendt_til = case when v.kl = excluded.kl then v.sendt_til else '{}' end,
         ferdig_kl = null,
@@ -695,7 +698,10 @@ comment on function public.enhetsvarsel_bekreft(jsonb) is
 --   sendt, hoppet – enheten har fått det (eller skal ikke ha det);
 --   feil          – prøves igjen etter 1, 4, 9 … sekunder, høyst
 --                   `chatvarsel_maks_forsok()` ganger;
---   borte         – abonnementet finnes ikke lenger og slettes.
+--   borte         – abonnementet finnes ikke lenger og slettes;
+--   stoppet       – den siste kontrollen stoppet det (`enhetsvarsel_bekreft`):
+--                   ingenting er sendt, og varselet slippes med en gang, så
+--                   den neste hentingen avgjør det.
 -- Et varsel er ferdig når alle mottakerens enheter har fått det. Et svar på en
 -- eldre versjon med det samme tidspunktet gjelder (enheten har fått varselet
 -- til det tidspunktet); et svar fra før tidspunktet ble endret, gjelder ikke.
@@ -708,7 +714,7 @@ set search_path = ''
 as $$
   select x.id, x.versjon, x.endepunkt, x.svar
   from jsonb_to_recordset(enhetsvarselsvar.utfall) as x(id uuid, versjon integer, endepunkt text, svar text)
-  where x.svar in ('sendt', 'hoppet', 'feil', 'borte') and x.id is not null and x.endepunkt is not null
+  where x.svar in ('sendt', 'hoppet', 'feil', 'borte', 'stoppet') and x.id is not null and x.endepunkt is not null
 $$;
 
 revoke all on function intern.enhetsvarselsvar(jsonb) from public, anon, authenticated, service_role;

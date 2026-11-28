@@ -26,6 +26,9 @@ export interface Varseldatabase {
  */
 export type Utsending = Record<Pushutfall | 'hoppet' | 'stoppet', number>
 
+/** Det som trekkes fra tiden til fristen for krypteringen og push-kallet etter den siste kontrollen. */
+export const MARGIN_SEKUNDER = 1
+
 /** Hvor mange runder én utsending går: nye varsler underveis og nye forsøk etter feil. */
 export const MAKS_RUNDER = 4
 
@@ -56,7 +59,8 @@ export interface Varselkilde<V extends Pushabonnement> {
    * der varsler kan avlyses eller byttes ut etter `hent`: får
    * `{ varsler: [{ nr, ...kvittering, endepunkt }] }` og gir dem som
    * fortsatt skal sendes, med sekundene til fristen (`[{ nr, levetid }]`).
-   * Uten den sendes alt fra `hent`, med {@link LEVETID_SEKUNDER}.
+   * Det som ikke skal sendes, kvitteres med svaret `stoppet`. Uten den sendes
+   * alt fra `hent`, med {@link LEVETID_SEKUNDER}.
    */
   bekreft?: string
 }
@@ -82,9 +86,10 @@ export function lesBekreftelse(data: unknown): Map<number, number> {
  *
  * Har kilden `bekreft`, kontrolleres varslene på nytt rett før push-kallene,
  * og hvert varsel får levetiden hos push-tjenesten begrenset til tiden som er
- * igjen til fristen, regnet fra kontrollen. Det som endres etter kontrollen,
- * kan ikke stoppe et push-kall som alt er i gang (docs/enhetsvarsler.md,
- * «Hva som kan garanteres»).
+ * igjen til fristen: regnet fra før kontrollen, minus {@link MARGIN_SEKUNDER}
+ * for krypteringen og kallet. Det som endres etter kontrollen, kan ikke
+ * stoppe et push-kall som alt er i gang (docs/enhetsvarsler.md, «Hva som kan
+ * garanteres»).
  */
 export async function sendFraKilde<V extends Pushabonnement>(
   kilde: Varselkilde<V>,
@@ -101,13 +106,16 @@ export async function sendFraKilde<V extends Pushabonnement>(
 
     signering ??= await vapidnokkel(nokler)
     const nokkel = signering
+    const kontrollKl = Date.now()
     const levetider = kilde.bekreft ? await bekreft(db, kilde, kilde.bekreft, varsler) : null
-    const bekreftetKl = Date.now()
     const svar = await Promise.all(
       varsler.map(async (v, nr) => {
-        if (!erPushtjeneste(v.endepunkt)) return { ...kilde.kvittering(v), endepunkt: v.endepunkt, svar: 'hoppet' as const }
-        const igjen = levetider ? (levetider.get(nr) ?? 0) - Math.ceil((Date.now() - bekreftetKl) / 1000) : LEVETID_SEKUNDER
-        if (igjen < 1) return null
+        const kvittering = { ...kilde.kvittering(v), endepunkt: v.endepunkt }
+        if (!erPushtjeneste(v.endepunkt)) return { ...kvittering, svar: 'hoppet' as const }
+        const igjen = levetider
+          ? (levetider.get(nr) ?? 0) - Math.ceil((Date.now() - kontrollKl) / 1000) - MARGIN_SEKUNDER
+          : LEVETID_SEKUNDER
+        if (igjen < 1) return { ...kvittering, svar: 'stoppet' as const }
         const utfall = await sendPush(
           v,
           kilde.innhold(v),
@@ -116,13 +124,12 @@ export async function sendFraKilde<V extends Pushabonnement>(
           { levetid: Math.min(igjen, LEVETID_SEKUNDER), emne: kilde.emne(v), kontakt, haster: true },
           hent,
         )
-        return { ...kilde.kvittering(v), endepunkt: v.endepunkt, svar: utfall }
+        return { ...kvittering, svar: utfall }
       }),
-    ).then((alle) => alle.filter((r) => r !== null))
-    totalt.stoppet += varsler.length - svar.length
+    )
     for (const r of svar) totalt[r.svar] += 1
-    if (svar.length === 0) continue
 
+    // Også det som ble stoppet, kvitteres, så databasen slipper varselet med en gang.
     const { error: kvitteringsfeil } = await db.rpc(kilde.kvitter, {
       utfall: svar,
     })

@@ -641,6 +641,82 @@ describe('utsendingen fra Edge-funksjonen', () => {
     })
   })
 
+  describe('to utsendinger som overlapper, ved utbytting til samme tidspunkt', () => {
+    /** Utsending A, der det første push-kallet venter til `slipp` med statusen. */
+    const holdtUtsending = () => {
+      const push = pushtjeneste()
+      let slipp!: (status: number) => void
+      let startet!: () => void
+      const iGang = new Promise<void>((ferdig) => (startet = ferdig))
+      const svar = new Promise<number>((ferdig) => (slipp = ferdig))
+      let forste = true
+      const hentPush = (async (url: string, init: RequestInit) => {
+        if (!forste) return push.hent(url, init)
+        forste = false
+        startet()
+        const status = await svar
+        return pushtjeneste(() => status)
+          .hent(url, init)
+          .then((r) => (push.mottatt.push({ url, hoder: init.headers as Record<string, string>, kropp: init.body as Bytes, status }), r))
+      }) as unknown as typeof fetch
+      return { push, iGang, slipp, hent: hentPush }
+    }
+    const utsending = (hent: typeof fetch) =>
+      sendEnhetsvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent, vent })
+    let nokler: Awaited<ReturnType<typeof nyeVapidnokler>>
+    let kl: string
+
+    beforeEach(async () => {
+      nokler = await nyeVapidnokler()
+      await lagre('arkitektB', enheter.arkitektB)
+      await planlegg([varsel('arkitektB', 'a', await om(-5))])
+      kl = (await db.query<{ t: string }>('select kl::text as t from intern.enhetsvarsler')).rows[0]!.t
+    })
+
+    it('sender bare én gang når den andre starter mens den første venter på push-tjenesten', async () => {
+      const a = holdtUtsending()
+      const forste = utsending(a.hent)
+      await a.iGang
+      await planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Byttet mens A sender' })])
+      const b = pushtjeneste()
+      expect(await utsending(b.hent)).toMatchObject({ sendt: 0 })
+      a.slipp(201)
+      await forste
+      expect(b.mottatt).toEqual([])
+      expect(await tekster(a.push)).toEqual(['Syntetisk påminnelse'])
+      expect(await rader()).toMatchObject([{ nokkel: 'a', versjon: 2, ferdig: true }])
+    })
+
+    it('sender det nye innholdet etterpå når den første feiler', async () => {
+      const a = holdtUtsending()
+      const forste = utsending(a.hent)
+      await a.iGang
+      await planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Byttet mens A sender' })])
+      const b = pushtjeneste()
+      await utsending(b.hent)
+      a.slipp(503)
+      await forste
+      expect(b.mottatt).toEqual([])
+      expect(a.push.mottatt.map((m) => m.status)).toEqual([503, 201])
+      expect((await tekster(a.push))[1]).toBe('Byttet mens A sender')
+      expect(await rader()).toMatchObject([{ nokkel: 'a', ferdig: true }])
+    })
+
+    it('sender det nye innholdet når reservasjonen er utløpt uten svar', async () => {
+      const a = holdtUtsending()
+      const forste = utsending(a.hent)
+      await a.iGang
+      await planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Byttet mens A henger' })])
+      await db.exec(`update intern.enhetsvarsler set neste_kl = now() - interval '1 second'`)
+      const b = pushtjeneste()
+      expect(await utsending(b.hent)).toMatchObject({ sendt: 1 })
+      expect(await tekster(b)).toEqual(['Byttet mens A henger'])
+      a.slipp(201)
+      await forste
+      expect(await rader()).toMatchObject([{ nokkel: 'a', ferdig: true }])
+    })
+  })
+
   it('gir push-tjenesten høyst tiden som er igjen til fristen', async () => {
     await lagre('arkitektB', enheter.arkitektB)
     await planlegg([varsel('arkitektB', 'a', await om(-5), { senest: await om(600) })])
