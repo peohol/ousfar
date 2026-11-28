@@ -225,6 +225,24 @@ describe('stillingen per dag', () => {
     }
   })
 
+  it('lar kontoen som gjorde en tidligere endring, slettes uten å endre stillingen', async () => {
+    const vikar = await opprettBruker(p.db, { brukernavn: 'test.hist.vikar', fornavn: 'Vera', etternavn: 'Testesen', rolle: 'user' })
+    await p.somServer((tx) => tx.query('insert into public.fagmiljoadministratorer (bruker_id, fagmiljo_id) values ($1, $2)', [vikar, A]))
+    const dag = (await p.db.query<{ d: string }>(`select intern.stillingsdag()::text as d`)).rows[0]!.d
+    await sett(vikar, k.kari, await stillingId('Kjemiker'))
+    await vedDag(addDays(dag, 1))
+    const endretAv = async () =>
+      (await p.db.query<{ a: string | null }>('select endret_av as a from intern.stillingshistorikk where bruker_id = $1 and fra = $2', [k.kari, dag])).rows[0]!.a
+    expect(await endretAv()).toBe(vikar)
+    // Bare `endret_av` kan tømmes, og bare når kontoen er borte.
+    expect(await kode(() => p.somServer((tx) => tx.query('update intern.stillingshistorikk set endret_av = null where bruker_id = $1 and fra = $2', [k.kari, dag])))).toBe('42501')
+    await p.somServer((tx) => tx.query('delete from auth.users where id = $1', [vikar]))
+    expect(await endretAv()).toBeNull()
+    expect(await paDag(k.kari, dag)).toBe(await stillingId('Kjemiker'))
+    // Som før for resten av testene: Kari uten stilling fra i dag.
+    await sett(k.kari, k.kari, null)
+  })
+
   it('går med kontoen når den slettes', async () => {
     await sett(k.slett, k.slett, await stillingId('Kjemiker'))
     expect((await rader(k.slett)).length).toBe(2)

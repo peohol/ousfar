@@ -114,6 +114,13 @@ begin
     end if;
     raise exception 'Stillingshistorikken kan ikke endres bakover i tid.' using errcode = '42501';
   end if;
+  -- Slettes kontoen som gjorde en endring, tømmer fremmednøkkelen `endret_av`
+  -- (`on delete set null`); det endrer ikke hvilken stilling som gjaldt.
+  if tg_op = 'UPDATE' and new.endret_av is null
+    and (new.bruker_id, new.fra, new.stilling_id, new.endret_kl) is not distinct from (old.bruker_id, old.fra, old.stilling_id, old.endret_kl)
+    and not exists (select 1 from public.profiles p where p.id = old.endret_av) then
+    return new;
+  end if;
   if tg_op = 'UPDATE' and (
     old.fra is distinct from dag or new.fra is distinct from old.fra or new.bruker_id <> old.bruker_id
   ) then
