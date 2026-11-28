@@ -132,6 +132,7 @@ import {
   Gruppeflate,
   Grupperside,
   Kurateringsside,
+  Personalside,
   sidekodeFor,
   Stoffregisterside,
   Stoffside,
@@ -145,6 +146,7 @@ import type { Analyte } from './types'
 import { lagVerktoysperrelager } from './verktoy/sperrer'
 import { lagRegelvarsellager } from './verktoy/overvaking/regelvarsler'
 import { VerktoytilgangProvider, verktoyeneVisesFor } from './verktoy/synlighet'
+import { personalfagmiljo, synligRute } from './personaltilgang'
 
 // Åpnes appen på en slik side (en direkte lenke, eller siden som sto før en
 // oppdatering), hentes koden til den sammen med appen, ikke etter den.
@@ -515,7 +517,10 @@ function Arbeidsflate({
   // En arbeidsflate i en gruppe (idéene, oppgavene) legger seg over siden den
   // ble åpnet fra; appen viser den siden bak flaten (`components/grupper/arbeidsflate.ts`).
   const flate = arbeidsflate(adresserute)
-  const rute = flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute
+  // Personalfunksjonene finnes bare for dem som har dem i fagmiljøet de
+  // arbeider i; for alle andre er adressen en ukjent adresse (K-SKJ-2).
+  const personal = personalfagmiljo(rettigheter)
+  const rute = synligRute(flate ? flatebakgrunn(adresserute, inngangsvei(), adressegrunnlag) : adresserute, personal)
   // Fagsidene, også en tidligere versjon eller en kurateringsgren av en.
   const paaInfoside = rute.side === 'stoff' || rute.side === 'versjon' || rute.side === 'kuratering'
   // Siden brukeren er på, for meldingen om en ny versjon: den står bare når
@@ -1096,6 +1101,21 @@ function Arbeidsflate({
                     <Forslagsside forslag={rute.forslag} fane={rute.fane} onLukk={lukkInfoside} />
                   </Senere>
                 </FaginnholdskildeProvider>
+              </main>
+            )}
+
+            {rute.side === 'kalender' && personal && (
+              <main className="scene scene--infoside">
+                <Senere>
+                  <Personalside
+                    key={personal.id}
+                    fagmiljo={personal}
+                    fane={rute.fane}
+                    onGaaTil={gaaTil}
+                    onLukk={lukkInfoside}
+                    onTilForsiden={tilForsiden}
+                  />
+                </Senere>
               </main>
             )}
 

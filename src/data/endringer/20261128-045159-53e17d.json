@@ -1,0 +1,14 @@
+{
+  "id": "20261128-045159-53e17d",
+  "semver": "patch",
+  "opprettet": "2026-11-28T04:51:59Z",
+  "sammendrag": "Intern forberedelse i appen, ingen synlig endring",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Ingen synlig endring i appen. Den har fått en intern forberedelse som ikke er tatt i bruk."
+  ],
+  "utenVarsel": true
+}

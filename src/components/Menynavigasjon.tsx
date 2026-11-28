@@ -7,6 +7,7 @@ import { useFavoritter } from '../favoritter/Favorittkilde'
 import { hentForslagTilMeg } from '../forslag/behandling'
 import { useGrupper } from '../grupper/kilde'
 import { useBevart } from '../oppdatering/Bevaring'
+import { personalvalg } from '../personaltilgang'
 import { VERKTOY } from '../verktoy/register'
 import { useVerktoyeneVises } from '../verktoy/synlighet'
 import { CHATIKON } from './chat/chatvisning'
@@ -21,14 +22,6 @@ const flertall = (antall: number, en: string, flere: string) => `${antall} ${ant
 
 /** Navnet på hovedmenyens øverste nivå, i toppfeltet og for skjermlesere. */
 export const HOVEDMENYEN = 'Meny'
-
-/**
- * OUSFAR Personals valg i hovedmenyen, som Kalender. Under utviklingen er
- * de bare for systemarkitektene, og senere per fagmiljø bak funksjonsbryterne
- * (#598, `docs/personal.md`); tilgangen kontrolleres alltid på serveren.
- * Grenen «Personal» vises ikke før den har et valg.
- */
-const PERSONALVALG: readonly Menypunkt[] = []
 
 export interface Hovedmenyvalg {
   /** Om menyen står åpen: da hentes tallet på forslag som venter. */
@@ -103,7 +96,15 @@ export function useHovedmenyen({ apen, lukk, rute, register }: Hovedmenyvalg) {
     { id: 'forside', navn: 'Forsiden', ikon: 'hjem', adresse: FORSIDEADRESSE, gjeldende: rute.side === 'forside' },
     { id: 'fortolkning', navn: 'Fortolkning', ikon: 'interp', adresse: FORTOLKNINGSADRESSE, gjeldende: rute.side === 'fortolkning' },
     fag,
-    { id: 'personal', navn: 'Personal', ikon: 'kalender', undermeny: { navn: 'Personal', avsnitt: [{ id: 'personal', punkter: PERSONALVALG }] } },
+    // OUSFAR Personals valg, som Kalender, bare for dem med personalfunksjonen
+    // i fagmiljøet de arbeider i (`src/personaltilgang.ts`, #606). Uten valg
+    // vises ikke grenen.
+    {
+      id: 'personal',
+      navn: 'Personal',
+      ikon: 'kalender',
+      undermeny: { navn: 'Personal', avsnitt: [{ id: 'personal', punkter: personalvalg(rettigheter, rute) }] },
+    },
     {
       id: 'grupper',
       navn: 'Grupper',

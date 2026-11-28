@@ -131,7 +131,7 @@ try {
     const valg = await valgene(pc)
     for (const n of ['Forsiden', 'Fortolkning', 'Fag', 'Grupper', 'Endringsforslag', 'Apputvikling', 'Administrasjon'])
       krev(valg.includes(n), `mangler ${n}: ${valg.join(' | ')}`)
-    krev(!valg.includes('Personal'), 'Personal vises uten valg')
+    krev(!valg.includes('Personal'), 'Personal vises uten personalfunksjonen i fagmiljøet (#606)')
     krev((await meny.getByRole('tab').count()) === 0, 'faner')
     krev((await meny.locator('[aria-expanded]').count()) === 0, 'skuffer')
     krev((await meny.locator('.menyvalg[data-undermeny] .menyvalg__pil').count()) >= 3, 'pilene mot høyre')
