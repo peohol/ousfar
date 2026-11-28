@@ -576,9 +576,10 @@ redigeres i kalenderens eget grensesnitt (Medarbeidere), **ikke** i
 fagmiljøets brukeroversikt eller administratorenes brukermeny. Den
 opprinnelige planen om et utvidelsespunkt i brukeroversikten utgår
 ([#572](https://github.com/peohol/ousfar/issues/572), avgrenset på nytt).
-Bygd i P2c ([#620](https://github.com/peohol/ousfar/issues/620)); hvordan
-står i [personal-database.md](personal-database.md) («1:1 med medlemmene»,
-«Innstillingene» og «Vis som»).
+Databasedelen er bygd i P2c ([#620](https://github.com/peohol/ousfar/issues/620));
+hvordan står i [personal-database.md](personal-database.md) («1:1 med
+medlemmene», «Innstillingene» og «Vis som»). Brukerflaten kommer i en egen
+PR i P2c.
 
 **Én app, ikke en tilleggsfunksjon** (vedtatt av Peder 26.11.2026). Det er
 et **1:1-forhold** mellom medlemmene av fagmiljøet og medarbeiderne i
