@@ -16,7 +16,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { SUPABASE_CLI } from '../supabaseCli'
-import { Stopp } from './feil'
+import { OffentligStopp } from './feil'
 import { lagReferanse } from './kopi'
 import type { Fingeravtrykk } from './tilpasninger'
 
@@ -27,7 +27,7 @@ const UTEN = 'studio,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-me
 const gyldig = (v: string) => /^v?\d+(\.\d+){1,3}$/.test(v)
 
 export function lagReferanseMedVersjoner(versjoner: { auth: string; storage: string; postgres: string }): Fingeravtrykk {
-  for (const [tjeneste, v] of Object.entries(versjoner)) if (!gyldig(v)) throw new Stopp(`Ukjent versjon for ${tjeneste}: «${v}».`)
+  for (const [tjeneste, v] of Object.entries(versjoner)) if (!gyldig(v)) throw new OffentligStopp(`Ukjent versjon for ${tjeneste}: «${v}».`)
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-referanse-'))
   const cli = (...a: string[]) =>
     execFileSync('npx', [...SUPABASE_CLI, ...a, '--workdir', mappe], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 })
@@ -39,8 +39,9 @@ export function lagReferanseMedVersjoner(versjoner: { auth: string; storage: str
     writeFileSync(join(mappe, 'supabase/.temp/postgres-version'), versjoner.postgres.replace(/^v/, ''))
     try {
       cli('start', '-x', UTEN)
-    } catch (e) {
-      throw new Stopp(`En ren Supabase med versjonene ${JSON.stringify(versjoner)} kunne ikke startes: ${String((e as { stderr?: string }).stderr ?? e).slice(-600)}`)
+    } catch {
+      // Utskriften fra CLI-en står ikke i den offentlige loggen; versjonene sier nok til å prøve det samme lokalt.
+      throw new OffentligStopp(`En ren Supabase med versjonene ${JSON.stringify(versjoner)} kunne ikke startes; finnes bildene for dem? Prøv lokalt med de samme versjonene.`)
     }
     const status = JSON.parse(cli('status', '-o', 'json')) as { DB_URL: string }
     return lagReferanse(status.DB_URL)

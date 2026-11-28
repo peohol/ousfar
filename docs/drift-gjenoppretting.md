@@ -32,7 +32,7 @@ i repoet og aldri ukryptert. Ved siden av ligger signaturen,
 | Auth-innstillingene | Fra Management API-et, uten felt som kan være hemmelige (bare med `--prosjekt`) |
 | Navnene på Edge-hemmelighetene | Bare navnene, aldri verdiene (bare med `--prosjekt`) |
 | `manifest.json` | Radtall og kontrollsum per tabell, filene, versjonene av Auth og Storage, referansen og tilpasningene, og bitene og sekvensene (se «Bare det som er endret») |
-| Ikke med | Direktemeldingene og samtalene deres (Peders beslutning 3, 18.11.2026; valgene og blokkeringene er med) og de flyktige køene for chatvarsler. Listen står i `UTELATTE_TABELLER` (`manifest.ts`); de står med null rader i manifestet, og innholdet leses aldri. Kopien stopper hvis en av dem er omdøpt, eller hvis en tabell som er med, viser til en av dem |
+| Ikke med | Meldingene i direktemeldingene (Peders beslutning 3, 18.11.2026; samtalene uten tekst, lest-statusen, valgene og blokkeringene er med) og de flyktige køene for chatvarsler. Listen står i `UTELATTE_TABELLER` (`manifest.ts`); de står med null rader i manifestet, og innholdet leses aldri. Kopien stopper hvis en av dem er omdøpt, eller hvis en tabell som er med, viser til en av dem |
 
 ## Ett kopipunkt, også når appen er i bruk
 
@@ -184,8 +184,8 @@ Ved et reelt tap: lag et nytt prosjekt i samme region, gjenopprett dit, sett
 Auth-innstillingene fra `auth-innstillinger.json`, gi beskjed til brukerne
 verktøyet lister med fjernede tofaktorfaktorer, sett hemmelighetene i
 manifestet på nytt, rull ut Edge-funksjonene og pek Vercel og GitHub til det
-nye prosjektet. Hvem som kan sette i gang dette, avgjør Peder før kopieringen
-slås på (se «Kopiene i drift»).
+nye prosjektet. Det kan Peder sette i gang, og den andre systemarkitekten,
+som har den uavhengige kopien av nøkkelfila (se «Kopiene i drift», «Nøklene»).
 
 ## Kopiene i drift
 
@@ -223,6 +223,12 @@ egne tabeller med primærnøkkel i **biter** på databasens side
   vanlige kopifila. Signaturen lister kopifila og hver bit med sha256, md5 og
   størrelse; gjenopprettingen bruker bare bitene signaturen lister, og legger
   dem tilbake med `COPY` i samme transaksjon som resten, med sekvensene.
+- Signaturen lister også **mottakerne**, de offentlige `age`-nøklene kopien og
+  bitene er kryptert til. Biter gjenbrukes bare fra en kopi med nøyaktig de
+  samme mottakerne. Er `KOPI_MOTTAKERE` byttet, eller en nøkkel lagt til,
+  hentes og krypteres alt på nytt den natten, så den nye kopien kan åpnes med
+  hver nøkkel den nevner. Tilsynet blir rødt hvis den nyeste kopien er
+  kryptert til andre nøkler enn dem jobben har.
 
 Referansen lages på nytt hver natt: en ren Supabase med nøyaktig de samme
 versjonene av Postgres, Auth og Storage som produksjonen, startet på GitHubs
@@ -252,6 +258,10 @@ Først når den nye kopien er hel og kontrollert, ryddes det (`oppryddingsplan`)
 - Det som er yngre enn 2 døgn, røres ikke (en kopi under arbeid, en prøve).
 - Ingenting utenfor mappene `kopier/`, `deler/` og `prove/` røres.
 - En fil som fortsatt er låst, står til neste natt.
+- Finnes det en signatur fra de siste 7 døgnene som jobben ikke kan
+  kontrollere (for eksempel fordi signeringsnøkkelen er byttet), ryddes
+  ingenting før den er eldre. Kopiene med den gamle nøkkelen står da hele
+  oppbevaringstiden.
 
 En bit som ingen kopi lenger bruker, er dermed borte om lag 8 døgn etter at
 raden ble endret eller slettet.
@@ -286,10 +296,35 @@ går om gangen.
 | `KOPI_SUPABASE_TOKEN` | Et eget token for Management API-et med bare: *Database* skrive (for den midlertidige rollen), *Auth config*, *Edge Function secrets*, *API keys* og *API key secrets*, og *Connection pooling* lese, for produksjonsprosjektet |
 
 Databasen leses med en midlertidig, skrivebeskyttet innloggingsrolle fra
-Management API-et, den samme Supabase-CLI-en bruker. Passordet varer i fem
-minutter, fornyes mens kopien tas og slettes til slutt; det finnes intet fast
-databasepassord hos jobben (`prosjekt.ts`). Passord og nøkler maskeres i
-loggen med en gang de er hentet.
+Management API-et, den samme Supabase-CLI-en bruker. Den lages først når
+referansen er bygget (det tar flere minutter, og byggingen holder prosessen),
+passordet varer i fem minutter, fornyes hvert tredjedel av levetiden mens
+kopien tas, og rollen slettes til slutt; det finnes intet fast
+databasepassord hos jobben (`prosjekt.ts`). Feiler en fornying, stopper
+jobben. Rollen (`cli_login_…`) er ikke en tilpasning og kommer ikke med i
+kopien. Passord og nøkler maskeres i loggen med en gang de er hentet.
+
+### Loggen
+
+Loggene i GitHub Actions er offentlige, og maskeringen skjuler bare kjente
+hemmeligheter, ikke data. Kommandoene jobben kjører (`kontroll`, `natt`,
+`tilsyn`), slår derfor på den trygge loggen (`logg.ts`) før noe annet:
+
+- Bare linjene jobben selv setter sammen av faste tekster, tall, tidspunkter
+  og filnavn i lageret, kommer i loggen og oppsummeringen. Alt annet som
+  skrives, også fra biblioteker og direkte til stdout og stderr, forsvinner.
+- Ved en feil, også en ingen fanget, står bare trinnet og hva slags feil det
+  var (for eksempel `kopilageret svarte 503 SlowDown`), aldri meldingen:
+  feilmeldinger fra databasen, Storage og `psql` kan ha data, filstier og
+  verdier. Bare feil med faste tekster (`OffentligStopp`: en manglende
+  hemmelighet, en feil nøkkel, et varsel om kvotene, navnene på
+  tilpasningene som ikke kan skilles ut) står med meldingen.
+- Et forsøk som forkastes fordi kilden ble endret, logges uten grunnen.
+
+Testen `sikkerhetskopi-logg.test.ts` kjører med syntetiske markører (en
+filsti, en SQL- og en HTTP-feil, utskrift fra `psql`, en hemmelighet) og
+krever at ingen av dem når loggen eller oppsummeringen. Lokalt, og ved en
+gjenoppretting, skrives hele feilen som før.
 
 ### Nøklene
 
@@ -305,8 +340,14 @@ koden i `nokler.ts`), i sin egen nettleser, uten nettverkskall:
 3. Nøkkeleieren legger `KOPI_MOTTAKERE` og `KOPI_SIGNERINGSNOKKEL` i `backup`.
 
 Nøkkelfila kan brukes som den er: som `--identitet` og som `--avsender`.
-Hvem som er nøkkeleier, hvor den uavhengige kopien ligger, og hvem som kan
-sette i gang en gjenoppretting, avgjør Peder før kopieringen slås på.
+Nøkkeleier er Peder; den uavhengige kopien av nøkkelfila ligger hos den andre
+systemarkitekten, som kan sette i gang en gjenoppretting (Peder, 28.11.2026).
+
+**Nye nøkler.** Lages nye nøkler på nøkkelsiden, tas den gamle nøkkelfila vare
+på (begge steder) til kopiene med den er eldre enn 7 døgn: den trengs for å
+åpne dem og for å kontrollere signaturene deres. Natten etter krypteres alt
+til den nye `age`-nøkkelen (over), og med en ny signeringsnøkkel ryddes ingen
+kopi med den gamle før oppbevaringstiden er ute.
 
 ### Kontrollen av lageret
 
@@ -370,10 +411,28 @@ mange rader i begge tabellene, uten hull, og færre enn kilden fikk), og at
 første forsøk ble forkastet fordi profilbildet ble byttet, og kopien tatt på
 nytt med det nye bildet.
 
+Så tar prøven nattens kopi slik GitHub-jobben gjør (`kjorNatt`), mot et falskt
+lager med versjoner og Object Lock, fire «netter» med klokka spolt fram: den
+første kopien; en ny etter at én rad er endret, der bare bitene med endrede
+rader hentes; en etter at mottakernøkkelen er byttet, der alt krypteres på
+nytt; og en etter oppbevaringstiden, som rydder kopiene med den gamle
+nøkkelen og lar den forrige stå låst. Kopiene fra natt 1, 2 og 4 hentes fra
+lageret og gjenopprettes hver i sin nye, rene Supabase, natt 4 med bare den
+nye nøkkelen og etter oppryddingen: signaturen, tabellene, kontrollsummene,
+filene og tilpasningene, innloggingen, profilbildet og radene slik de var da
+kopien ble tatt. Ingen fil i natt 4 kan åpnes med den gamle nøkkelen.
+
+Kilden har en direktemelding med en kjent tekst. Alt kopiene har (kopifila og
+hver bit) dekrypteres og letes gjennom: teksten finnes ikke. Etter hver
+gjenoppretting står samtalen, lest-statusen, valgene og blokkeringen, uten
+meldingen. En innloggingsrolle slik Management API-et lager den
+(`cli_login_…`, med medlemskap og innstilling), blir ikke en tilpasning.
+
 ### Resultater
 
 | Dato | Miljø | Resultat | Tid |
 | --- | --- | --- | --- |
+| 28.11.2026, kopiene i drift (PR #617) | Det lokale testmiljøet (Supabase-CLI 2.120.0), syntetiske brukere, falskt lager med versjoner og Object Lock | Alle 49 punktene i orden. Den direkte kopien som før: 153 tabeller og 1 fil like kilden, 264 skrivinger i kopien og 472 i kilden, to forsøk, begge forfalskninger avvist. Natt 1: 34 biter. Natt 2: 1 av 34 nye etter én endret rad. Natt 3, ny mottakernøkkel: 34 av 34 nye, og tilsynet godtar bare den nye. Natt 4, etter 10 døgn: 39 filer ryddet, den forrige kopien sto låst, 0 nye biter, og ingen fil kunne åpnes med den gamle nøkkelen. Natt 1, 2 og 4 hentet fra lageret og gjenopprettet hver i sin rene Supabase (natt 4 med bare den nye nøkkelen): like kopien, gammel innlogging, profilbildet og radene som da kopien ble tatt. Teksten i direktemeldingen fantes ikke i noen av kopiene; samtalen, lest-statusen, begge valgene og blokkeringen sto. Innloggingsrollen ble ikke en tilpasning (10 tilpasninger, som uten den). Punkt 6 som under | 12 s for gjenopprettingen |
 | 15.11.2026, etter andre kontroll | Som under, med et like stort profilbilde uten md5-eTag og to forfalskede kopier | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 207 skrivinger i kopien og 360 i kilden da skrivingen stoppet; byttet av det like store bildet ble avslørt av versjonen, og kopien tatt på nytt; begge forfalskede kopier avvist før noe ble åpnet, med målet urørt; tofaktor som under. Punkt 6 som over | 13 s for gjenopprettingen |
 | 15.11.2026, etter kontrollen | Som over, med samtidig skriving, et byttet profilbilde og tofaktor | Alle punktene 1–8 i orden: 147 tabeller og 1 fil like kilden, 206 skrivinger i kopien og 362 i kilden da skrivingen stoppet (ett sammenhengende punkt), første forsøk forkastet og kopien tatt på nytt med det nye bildet, kopien pakket ut og prøvd før den ble godtatt. Administratoren nådde `aal2` med sin gamle nøkkel; uten valget ble gjenopprettingen stoppet med målet urørt, med valget ble den krypterte faktoren fjernet og brukeren listet. Punkt 6 som over | 13 s for gjenopprettingen |
 | 15.11.2026 | Det lokale testmiljøet (Supabase-CLI 2.120.0), syntetiske brukere | Alle punktene 1–8 i orden: 145 tabeller og 1 fil like kilden, 7 tilpasninger på plass og ingen ekstra, gammel innlogging virker, ny bruker får profil og medlemskap, uten myndighet avvist, profilbildereglene holder. Punkt 6 brukte databasekallene `opprett-bruker` gjør, fordi Edge-kjøretøyet i skymiljøet ikke når npm-registeret; prøven bruker selve funksjonen der den kan starte | 14 s for gjenopprettingen |

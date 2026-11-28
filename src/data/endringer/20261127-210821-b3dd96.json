@@ -8,7 +8,7 @@
   ],
   "omfang": "Minimalt omfang",
   "punkter": [
-    "Ingen endring i appen. Databasen kan kopieres kryptert hver natt til et lager i EU der kopiene er låst i sju dager, med kontroll av hver kopi og varsel når en kopi mangler eller en gratiskvote nærmer seg. Kopieringen slås på når det er avklart hvem som har nøkkelen. Direktemeldingene tas ikke med."
+    "Ingen endring i appen. Databasen kan kopieres kryptert hver natt til et lager i EU der kopiene er låst i sju dager, med kontroll av hver kopi og varsel når en kopi mangler eller en gratiskvote nærmer seg. Kopieringen slås på i en egen endring. Meldingene i direktemeldingene tas ikke med; samtalene, valgene og blokkeringene gjør det."
   ],
   "utenVarsel": true
 }

@@ -14,7 +14,7 @@ import { createHash, createHmac } from 'node:crypto'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import { Stopp } from './feil'
+import { OffentligStopp, Stopp } from './feil'
 
 export interface S3Oppsett {
   /** For eksempel `https://s3.eu-central-003.backblazeb2.com`. */
@@ -134,7 +134,7 @@ export class S3 {
     try {
       svar = await fetch(s.url, init)
     } catch (e) {
-      throw new Stopp(`Kopilageret svarer ikke (${metode} ${navn || this.o.bucket}): ${(e as Error).message}`)
+      throw new OffentligStopp(`Kopilageret svarer ikke (${metode}).`)
     }
     return svar
   }

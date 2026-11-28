@@ -49,8 +49,13 @@ describe('nøklene til kopiene', () => {
     expect(offentligNokkel(n.signeringPrivat)).toBe(n.signeringOffentlig)
     const fraFila = offentligFraNokkelfil(nokkelfil(n, '2026-11-27'))
     expect(fraFila).toBe(n.signeringOffentlig)
-    const s = signer('ousfar-kopi-x.tar.age', 'a'.repeat(64), '2026-11-27T02:15:00.000Z', n.signeringPrivat, { md5: 'b'.repeat(32), bytes: 1, deler: [] })
-    expect(lesSignatur(JSON.parse(JSON.stringify(s)), fraFila).fil).toBe('ousfar-kopi-x.tar.age')
+    const s = signer('ousfar-kopi-x.tar.age', 'a'.repeat(64), '2026-11-27T02:15:00.000Z', n.signeringPrivat, { md5: 'b'.repeat(32), bytes: 1, deler: [], mottakere: [n.mottaker] })
+    expect(lesSignatur(JSON.parse(JSON.stringify(s)), fraFila)).toMatchObject({ fil: 'ousfar-kopi-x.tar.age', mottakere: [n.mottaker] })
+    // Mottakerne er signert: en kopi kan ikke gis ut for å være kryptert til en annen nøkkel.
+    const annen = (await lagKopinokler()).mottaker
+    expect(() => lesSignatur({ ...s, mottakere: [annen] }, fraFila)).toThrow(/ikke laget med nøkkelen/)
+    expect(() => lesSignatur({ ...s, mottakere: [] }, fraFila)).toThrow(/ugyldig/)
+    expect(() => signer('x', 'a'.repeat(64), 'y', n.signeringPrivat, { md5: 'b'.repeat(32), bytes: 1, deler: [], mottakere: [n.identitet] })).toThrow(/offentlige age-nøkler/)
     expect(offentligFraNokkelfil(n.signeringOffentlig)).toBe(n.signeringOffentlig)
     expect(() => offentligFraNokkelfil(n.identitet)).toThrow(/offentlig signeringsnøkkel/)
   })

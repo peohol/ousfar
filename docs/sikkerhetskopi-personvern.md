@@ -43,15 +43,16 @@ overføring, er en egen maskin i EU alternativet; koden er den samme.
 
 ## Direktemeldingene, gruppechatten og sletting
 
-- **Direktemeldingene** er ikke med (Peders beslutning 3, 18.11.2026):
-  hverken meldingene (`direktemeldinger`) eller samtalene (`direktesamtaler`,
-  hvem som skriver med hvem, og når) eller lest-statusen deres
-  (`direktesamtale_status`). Uten meldingene ville samtalene vært tomme, så
-  kopien tar ikke med mer om de private samtalene enn den må. Valgene
-  (`chatvalg`) og blokkeringene er med, så en gjenoppretting ikke opphever en
-  blokkering. Ingen annen tabell har tekst fra direktemeldingene; det
-  kontrolleres i testene mot databasen migrasjonene bygger, og kopien
-  stopper hvis en tabell som er med, viser til en som er utelatt.
+- **Meldingene i direktemeldingene** (`direktemeldinger`) er ikke med
+  (Peders beslutning 3, 18.11.2026). Som vedtatt står resten: samtalene
+  (`direktesamtaler`, hvem som har en samtale med hvem, uten tekst),
+  lest-statusen (`direktesamtale_status`), valgene (`chatvalg`) og
+  blokkeringene. Etter en gjenoppretting er samtalene der, men tomme, og en
+  blokkering er ikke opphevet. Ingen annen tabell har tekst fra
+  direktemeldingene: testene kontrollerer det mot databasen migrasjonene
+  bygger, og prøven legger en kjent tekst i en direktemelding og leter etter
+  den i alt kopien inneholder. Kopien stopper hvis en tabell som er med,
+  viser til en som er utelatt.
 - **Køene for chatvarsler** er ikke med; de er flyktige.
 - **Gruppechatten, diskusjonene og resten** er med. En slettet eller endret
   tekst finnes i kopiene til de er ryddet: en bit ingen kopi bruker lenger,

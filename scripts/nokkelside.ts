@@ -104,6 +104,7 @@ const side = /* html */ `<title>Kopinøklene til OUSFAR</title>
         <li>Legg en kopi et annet sted som ikke henger sammen med det første, for eksempel skrevet ut og lagt i en safe, eller i passordbehandleren til den som har beredskapen.</li>
       </ol>
       <p class="merknad">Aldri i e-post, chat, GitHub, Backblaze eller en vanlig fil på maskinen.</p>
+      <p class="liten">Lager du nye nøkler senere, tar du vare på den gamle fila i minst 7 døgn til: kopiene fra før byttet kan bare åpnes med den.</p>
     </section>
 
     <section class="steg">

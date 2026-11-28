@@ -42,14 +42,16 @@
  * de kan ikke leses i et nytt prosjekt, så faktorene fjernes etter kontrollen,
  * og brukerne som må melde inn tofaktor på nytt, skrives ut.
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Stopp, gjenopprett, lagReferanse, lesReferanse, summerAv, taKopi } from '../src/drift/sikkerhetskopi/kopi'
 import { LAGER, PRODUKSJONSKOPI_PA } from '../src/drift/sikkerhetskopi/drift'
 import { forbruk, hentKopi, kontrollerNokkel, lesLageret, provLageret, ryddProver, tilsyn } from '../src/drift/sikkerhetskopi/lager'
 import { kjorNatt, lesMottakere, rapporttekst } from '../src/drift/sikkerhetskopi/natt'
-import { apneProsjekt, masker } from '../src/drift/sikkerhetskopi/prosjekt'
+import { apneProsjekt } from '../src/drift/sikkerhetskopi/prosjekt'
+import { aktiverTryggLogg, avsluttMedFeil, masker, oppsummer, settTrinn, skriv } from '../src/drift/sikkerhetskopi/logg'
+import { OffentligStopp } from '../src/drift/sikkerhetskopi/feil'
 import { PROSJEKT } from '../src/drift/managementApi'
 import { lagReferanseMedVersjoner } from '../src/drift/sikkerhetskopi/referanse'
 import { offentligFraNokkelfil } from '../src/drift/sikkerhetskopi/nokler'
@@ -74,21 +76,16 @@ function ett(navn: string, argv: string[]): string {
 
 function fraMiljo(navn: string, hva: string): string {
   const v = process.env[navn]
-  if (!v) throw new Stopp(`Mangler ${navn} (${hva}).`)
+  if (!v) throw new OffentligStopp(`Mangler ${navn} (${hva}).`)
   return v
 }
 
 const nokkel = () => fraMiljo('KOPI_SECRET_KEY', 'hemmelig nøkkel for Storage i prosjektet')
 const signeringsnokkel = () => fraMiljo('KOPI_SIGNERINGSNOKKEL', 'den private signeringsnøkkelen, PEM')
 
-/** Til oppsummeringen av jobben i GitHub, og til loggen ellers. */
-function oppsummer(tekst: string): void {
-  console.log(tekst)
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${tekst}\n`)
-}
-
 /** Lageret, etter at nøkkelen er kontrollert: bare kopibøtta, de riktige rettighetene og ingen farlige. */
 async function apneLager(): Promise<{ s3: S3; ekstra: string[] }> {
+  settTrinn('nøkkelen til lageret')
   const nokkelId = fraMiljo('B2_KEY_ID', 'ID-en til nøkkelen for kopilageret')
   const hemmelig = fraMiljo('B2_APPLICATION_KEY', 'nøkkelen for kopilageret')
   masker(hemmelig)
@@ -99,6 +96,7 @@ async function apneLager(): Promise<{ s3: S3; ekstra: string[] }> {
 /** Nøkkelen og lageret, med en syntetisk prøvefil; ingen produksjonsdata. */
 async function kontroll(): Promise<void> {
   const { s3, ekstra } = await apneLager()
+  settTrinn('prøven av lageret')
   const funn = await provLageret(s3)
   const ryddet = await ryddProver(s3)
   const linjer = [
@@ -118,8 +116,12 @@ async function kontroll(): Promise<void> {
   oppsummer(linjer.join('\n'))
 }
 
+/** Kommandoene GitHub-jobben kjører; loggen deres er offentlig og får bare det jobben selv setter sammen (`logg.ts`). */
+const DRIFTSKOMMANDOER = new Set(['kontroll', 'natt', 'tilsyn'])
+
 async function main(argv: string[]): Promise<void> {
   const [kommando, ...resten] = argv
+  if (DRIFTSKOMMANDOER.has(kommando ?? '')) aktiverTryggLogg()
   if (kommando === 'signeringsnokler') {
     const ut = ett('ut', resten)
     const privat = join(ut, 'signering.privat.pem')
@@ -170,19 +172,24 @@ async function main(argv: string[]): Promise<void> {
   } else if (kommando === 'natt') {
     if (!PRODUKSJONSKOPI_PA) {
       // Til den er slått på, kontrollerer nattjobben bare lageret og rører ikke produksjonen.
-      console.log('Kopiering av produksjonen er ikke slått på (PRODUKSJONSKOPI_PA i src/drift/sikkerhetskopi/drift.ts). Bare lageret kontrolleres.')
+      skriv('Kopiering av produksjonen er ikke slått på (PRODUKSJONSKOPI_PA i src/drift/sikkerhetskopi/drift.ts). Bare lageret kontrolleres.')
       return kontroll()
     }
     const mottakere = lesMottakere(fraMiljo('KOPI_MOTTAKERE', 'de offentlige age-nøklene'))
     const privat = signeringsnokkel()
     const { s3 } = await apneLager()
+    settTrinn('prosjektet')
     const prosjekt = await apneProsjekt()
+    settTrinn('referansen')
+    // Referansen bygges før databaserollen lages: den bygges synkront og kan vare lenger enn passordet.
+    const referanse = lagReferanseMedVersjoner(prosjekt.versjoner)
+    settTrinn('databasen')
+    const db = await prosjekt.apneDatabase()
     let rapport
     try {
-      const referanse = lagReferanseMedVersjoner(prosjekt.versjoner)
       rapport = await kjorNatt({
         s3,
-        dbUrl: prosjekt.dbUrl,
+        dbUrl: db.dbUrl,
         apiUrl: prosjekt.apiUrl,
         nokkel: prosjekt.nokkel,
         referanse,
@@ -193,19 +200,19 @@ async function main(argv: string[]): Promise<void> {
         signeringsnokkel: privat,
       })
     } finally {
-      await prosjekt.lukk()
+      await db.lukk()
     }
     oppsummer(rapporttekst(rapport))
-    if (rapport.forbruk.varsler.length) throw new Stopp(`Kopien er tatt, men med varsler:\n- ${rapport.forbruk.varsler.join('\n- ')}`)
+    if (rapport.forbruk.varsler.length) throw new OffentligStopp(`Kopien er tatt, men med varsler:\n- ${rapport.forbruk.varsler.join('\n- ')}`)
   } else if (kommando === 'tilsyn') {
     if (!PRODUKSJONSKOPI_PA) return oppsummer('Kopiering av produksjonen er ikke slått på ennå; det er ingen kopier å holde tilsyn med.')
     const { s3 } = await apneLager()
     const innhold = await lesLageret(s3, offentligNokkel(signeringsnokkel()))
-    const t = tilsyn(innhold, new Date())
+    const t = tilsyn(innhold, new Date(), process.env.KOPI_MOTTAKERE ? lesMottakere(process.env.KOPI_MOTTAKERE) : undefined)
     const f = forbruk(innhold.versjoner, 0)
     oppsummer(`## Tilsyn med kopiene\n\n- ${t.melding}\n- ${innhold.kopier.filter((k) => k.hel).length} hele kopier i lageret.${f.varsler.map((v) => `\n- ${v}`).join('')}`)
-    if (!t.ok) throw new Stopp(t.melding)
-    if (f.varsler.length) throw new Stopp(f.varsler.join('\n'))
+    if (!t.ok) throw new OffentligStopp(t.melding)
+    if (f.varsler.length) throw new OffentligStopp(f.varsler.join('\n'))
   } else if (kommando === 'hent') {
     const ut = ett('ut', resten)
     mkdirSync(ut, { recursive: true, mode: 0o700 })
@@ -217,7 +224,4 @@ async function main(argv: string[]): Promise<void> {
   }
 }
 
-main(process.argv.slice(2)).catch((feil: unknown) => {
-  console.error(feil instanceof Stopp ? feil.message : feil)
-  process.exit(1)
-})
+main(process.argv.slice(2)).catch(avsluttMedFeil)

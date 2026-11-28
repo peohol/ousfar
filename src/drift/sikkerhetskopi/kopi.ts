@@ -28,8 +28,8 @@
  * databasen på nytt. Signaturen lister bitene med sha256 og md5, og manifestet
  * inne i kopien lister dem med tabellen og kolonnene.
  *
- * **Utelatt.** Tabellene i `UTELATTE_TABELLER` (direktemeldingene og
- * samtalene deres, og de flyktige varselkøene) tas aldri med og leses ikke.
+ * **Utelatt.** Tabellene i `UTELATTE_TABELLER` (meldingene i
+ * direktemeldingene og de flyktige varselkøene) tas aldri med og leses ikke.
  * Viser en tabell som tas med, til en utelatt, stopper kopien: da ville den
  * gjenopprettede databasen hatt referanser til rader som ikke finnes.
  *
@@ -62,7 +62,8 @@ import {
   type Objekt,
 } from './tilpasninger'
 import { SUPABASE_CLI } from '../supabaseCli'
-import { Endret, Stopp } from './feil'
+import { Endret, OffentligStopp, Stopp } from './feil'
+import { lagLogg, settTrinn } from './logg'
 import { signer, verifiser, type Delfil } from './signatur'
 import {
   EGNE_SKJEMAER_SQL,
@@ -94,7 +95,7 @@ import {
 /** Produksjonsprosjektet. En gjenoppretting går aldri dit: et reelt tap gjenopprettes i et nytt prosjekt. */
 export const PRODUKSJONSREF = 'jfzqowsmjtthpbipnxnf'
 
-const logg = (tekst: string) => console.log(`[sikkerhetskopi] ${tekst}`)
+const logg = lagLogg('sikkerhetskopi')
 
 export { Endret, Stopp }
 
@@ -477,6 +478,8 @@ export interface TaValg {
   underveis?: (forsok: number) => Promise<void>
   /** Høyst så mange forsøk når kilden endres underveis. Standard 3. */
   forsok?: number
+  /** Klokka kopipunktet stemples med; en annen enn den virkelige bare i prøvene, som spoler fram i tid. */
+  naa?: () => Date
 }
 
 export interface Kopi {
@@ -518,7 +521,8 @@ export async function taKopi(valg: TaValg): Promise<Kopi> {
         if (e instanceof Endret) throw new Stopp(`Kilden ble endret under alle ${maks} forsøkene: ${e.message}. Ingen kopi er lagret.`)
         throw e
       }
-      logg(`forsøk ${forsok} forkastet: ${e.message}; prøver på nytt`)
+      // Grunnen kan nevne tabeller og filer i kilden; den skrives ikke i loggen.
+      logg(`forsøk ${forsok} forkastet fordi kilden ble endret underveis; prøver på nytt`)
     }
   }
 }
@@ -615,6 +619,7 @@ function krevUtelatte(dbUrl: string, bilde: string): string[] {
 async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'forsok'>> {
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-kopi-'))
   chmodSync(mappe, 0o700)
+  settTrinn('kopien: øyeblikksbildet og tilpasningene')
   const bilde = await holdOyeblikksbilde(valg.dbUrl)
   let fil: string | undefined
   const skrevet: string[] = []
@@ -622,17 +627,22 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
     // Tilpasningene, dekningen og alt som skrives, leses i det samme øyeblikksbildet.
     const kilde = fingeravtrykk(valg.dbUrl, bilde.navn)
     const f = forskjell(kilde, valg.referanse)
-    const feil = avvik(f)
-    if (feil.length) throw new Stopp(`Tilpasningene kan ikke skilles ut mot referansen:\n- ${feil.join('\n- ')}`)
+    if (avvik(f).length) {
+      // Bare navnene i den offentlige loggen; definisjonene kan ha verdier (innstillinger på rollene).
+      const navn = [...f.versjonsavvik.map((v) => `versjonen av ${v}`), ...[...f.endret.map((e) => e.kilde), ...f.fjernet].map((o) => `${o.art} ${o.nokkel}`)]
+      throw new OffentligStopp(`Tilpasningene kan ikke skilles ut mot referansen (${navn.length} avvik): ${navn.slice(0, 20).join(', ')}${navn.length > 20 ? ', …' : ''}`)
+    }
     const fraMigrasjoner = objekterFraMigrasjoner(
       readdirSync(valg.migrasjoner).filter((n) => n.endsWith('.sql')).sort().map((n) => readFileSync(join(valg.migrasjoner, n), 'utf8')),
     )
     const mangler = manglendeDekning(f.tilpasninger, fraMigrasjoner)
-    if (mangler.length) throw new Stopp(`Objekter fra migrasjonene finnes ikke blant tilpasningene: ${mangler.join(', ')}`)
+    if (mangler.length) throw new OffentligStopp(`Objekter fra migrasjonene finnes ikke blant tilpasningene: ${mangler.join(', ')}`)
 
+    settTrinn('kopien: tabellene som deles')
     const utelatt = krevUtelatte(valg.dbUrl, bilde.navn)
     const delte = sporring<DeltTabell>(valg.dbUrl, delteTabellerSql(EGNE_SKJEMAER_SQL, utelatt), bilde.navn)
 
+    settTrinn('kopien: struktur, data og historikk')
     logg(`forsøk ${forsok}: tar struktur, data og historikk i øyeblikksbildet ${bilde.navn}`)
     const dump = (navn: string, ...v: string[]) => kjorDumpskript(dumpskript(valg.dbUrl, bilde.navn, v), join(mappe, navn))
     // Rollefila tas med som dokumentasjon; den kjøres ikke ved gjenoppretting (se gjenopprett()).
@@ -650,6 +660,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
     writeFileSync(join(mappe, 'tilpasninger.sql'), tilpasningsskript(f.tilpasninger))
     logg(`${f.tilpasninger.length} tilpasninger i auth, storage og på rollene`)
 
+    settTrinn('kopien: bitene')
     // Bitene: identitetene regnes ut i databasen, og bare de nye hentes.
     const plan = delte.flatMap((t) => sporring<Bit>(valg.dbUrl, delplanSql(t), bilde.navn).map((b) => ({ t, b })))
     const kjente = valg.kjente ?? new Map<string, Delfil>()
@@ -665,6 +676,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
     if (krypterteFaktorer) logg(`${krypterteFaktorer} tofaktornøkler er kryptert av plattformen og må meldes inn på nytt etter en gjenoppretting`)
 
     await valg.underveis?.(forsok)
+    settTrinn('kopien: filene i Storage')
     logg('henter filene i Storage')
     const filer = await hentFiler(valg.dbUrl, bilde.navn, valg.apiUrl, valg.nokkel, mappe)
 
@@ -679,7 +691,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
     }
 
     const manifest: Manifest & { referanse: Fingeravtrykk; tilpasninger: Objekt[]; oyeblikksbilde: string; forsok: number } = {
-      laget: new Date().toISOString(),
+      laget: (valg.naa?.() ?? new Date()).toISOString(),
       kilde: new URL(valg.apiUrl).host,
       versjoner: kilde.versjoner as Record<string, string | null>,
       tabeller,
@@ -694,6 +706,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
       deler: plan.map(({ t, b }) => ({ tabell: t.tabell, kolonner: t.kolonner, nr: b.nr, rader: Number(b.rader), identitet: b.identitet })),
       sekvenser,
     }
+    settTrinn('kopien: pakking og kryptering')
     writeFileSync(join(mappe, 'manifest.json'), JSON.stringify(manifest, null, 2))
     const pakket = await innholdssummer(mappe)
 
@@ -703,7 +716,7 @@ async function taEttForsok(valg: TaValg, forsok: number): Promise<Omit<Kopi, 'fo
     if (!statSync(fil).size) throw new Stopp('Den krypterte kopien er tom.')
     if (valg.kontrollnokkel) await provArkivet(fil, valg.kontrollnokkel, pakket)
     const summer = await summerAv(fil)
-    writeFileSync(`${fil}.sig`, JSON.stringify(signer(basename(fil), summer.sha256, manifest.laget, valg.signeringsnokkel, { md5: summer.md5, bytes: summer.bytes, deler }), null, 2))
+    writeFileSync(`${fil}.sig`, JSON.stringify(signer(basename(fil), summer.sha256, manifest.laget, valg.signeringsnokkel, { md5: summer.md5, bytes: summer.bytes, deler, mottakere: valg.mottakere }), null, 2))
     logg(`kopien er kryptert${valg.kontrollnokkel ? ' og prøvd' : ''}: ${fil} (${tabeller.length} tabeller, ${deler.length} biter, ${filer.length} filer)`)
     const ukryptert = (n: string) => (existsSync(join(mappe, n)) ? statSync(join(mappe, n)).size : 0)
     const hentet =

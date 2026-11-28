@@ -41,10 +41,7 @@ export const KONTROLLKOLONNER: Readonly<Record<string, readonly string[]>> = {
  */
 export const UTELATTE_TABELLER: Readonly<Record<string, string>> = {
   'public.direktemeldinger':
-    'Meldingene i direktemeldingene tas ikke med i kopiene (Peder, beslutning 3, 18.11.2026, docs/direktemeldinger-personvern.md). Valgene (chatvalg) og blokkeringene tas med',
-  'public.direktesamtaler':
-    'Hvem som har en samtale med hvem, og når det sist kom en melding. Uten meldingene er samtalene tomme, så kopien tar ikke med mer om de private samtalene enn den må (docs/sikkerhetskopi-personvern.md)',
-  'public.direktesamtale_status': 'Lest-status og demping per samtale; hører til samtalene over',
+    'Meldingene i direktemeldingene tas ikke med i kopiene (Peder, beslutning 3, 18.11.2026, docs/direktemeldinger-personvern.md). Samtalene, lest-statusen, valgene (chatvalg) og blokkeringene tas med, så de står etter et datatap, uten meldinger',
   'intern.chatvarselko': 'Flyktig kø for chatvarsler (bare ID-er, høyst ti minutter gammel). Et varsel om en gammel melding etter en gjenoppretting ville vært feil',
   'intern.chatvarselutsendinger': 'Flyktig kø for chatvarsler som venter på push-tjenesten. Samme grunn',
 }

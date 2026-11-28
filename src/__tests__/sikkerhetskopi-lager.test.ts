@@ -35,8 +35,12 @@ import { lagSigneringsnokler, signer, type Delfil } from '../drift/sikkerhetskop
 import { summerAv } from '../drift/sikkerhetskopi/kopi'
 import { KVOTER, LAGER, OPPBEVARING_DOGN } from '../drift/sikkerhetskopi/drift'
 import { FalskS3 } from './hjelp/falskS3'
+import { bech32 } from '../drift/sikkerhetskopi/nokler'
 
 const DOGN = 24 * 3600 * 1000
+/** Offentlige age-nøkler med riktig form; ingen trenger å åpne noe her. */
+const mottaker = () => bech32('age', randomBytes(32))
+const MOTTAKERE = [mottaker()]
 
 describe('signeringen av forespørslene (SigV4)', () => {
   // Eksemplene i AWS' dokumentasjon av SigV4 for S3, med nøklene der.
@@ -109,7 +113,7 @@ describe('lageret med lås og versjoner', () => {
 
   // En hel kopi i lageret, lagt inn på tiden den ble laget og signert av jobben.
   const jobben = lagSigneringsnokler()
-  async function lagKopi(laget: string, biter: string[], { utenSig = false, nokkel = jobben.privat } = {}) {
+  async function lagKopi(laget: string, biter: string[], { utenSig = false, nokkel = jobben.privat, mottakere = MOTTAKERE } = {}) {
     const klokka = lager.naa
     lager.naa = new Date(laget)
     const deler: Delfil[] = []
@@ -122,7 +126,7 @@ describe('lageret med lås og versjoner', () => {
     const navn = `ousfar-kopi-${laget.replace(/[:.]/g, '-')}.tar.age`
     const k = await fil(navn, `kopi ${laget}`)
     await s3.leggInn(kopinavn(navn), k, lasTil(laget))
-    if (!utenSig) await s3.leggInn(signaturnavn(navn), await fil(`${navn}.sig`, JSON.stringify(signer(navn, k.sha256, laget, nokkel, { md5: k.md5, bytes: k.bytes, deler }))), lasTil(laget))
+    if (!utenSig) await s3.leggInn(signaturnavn(navn), await fil(`${navn}.sig`, JSON.stringify(signer(navn, k.sha256, laget, nokkel, { md5: k.md5, bytes: k.bytes, deler, mottakere }))), lasTil(laget))
     lager.naa = klokka
     return { navn, deler }
   }
@@ -159,7 +163,7 @@ describe('lageret med lås og versjoner', () => {
     const navn = `ousfar-kopi-${laget.replace(/[:.]/g, '-')}.tar.age`
     const k = await fil(navn, 'ny kopi')
     const deler = [forrige.deler[0]!, ny]
-    writeFileSync(`${k.fil}.sig`, JSON.stringify(signer(navn, k.sha256, laget, jobben.privat, { md5: k.md5, bytes: k.bytes, deler })))
+    writeFileSync(`${k.fil}.sig`, JSON.stringify(signer(navn, k.sha256, laget, jobben.privat, { md5: k.md5, bytes: k.bytes, deler, mottakere: MOTTAKERE })))
     await leggInnKopi(s3, { fil: k.fil, ut, laget, deler, nye: [nyIdentitet], sha256: k.sha256, md5: k.md5, bytes: k.bytes }, forHand, summerAv)
     const gjenbrukt = lager.versjoner.find((v) => v.navn === delnavn(forrige.deler[0]!.identitet))!
     expect(gjenbrukt.las?.til).toBe(lasTil(laget))
@@ -236,11 +240,32 @@ describe('lageret med lås og versjoner', () => {
     for (const v of nyesteHele.filer) expect(p.slett).not.toContainEqual(v)
   })
 
-  it('sier fra når den nyeste hele kopien er for gammel, eller ingen finnes', async () => {
+  it('sier fra når den nyeste hele kopien er for gammel, ingen finnes, eller den er kryptert til andre nøkler', async () => {
     expect(tilsyn(await lesLageret(s3, jobben.offentlig), lager.naa).ok).toBe(false)
     await lagKopi('2026-11-30T02:15:00.000Z', ['1'])
-    expect(tilsyn(await lesLageret(s3, jobben.offentlig), new Date('2026-12-01T03:00:00Z')).ok).toBe(true)
-    expect(tilsyn(await lesLageret(s3, jobben.offentlig), new Date('2026-12-01T05:00:00Z'))).toMatchObject({ ok: false, melding: expect.stringMatching(/27 timer/) })
+    const innhold = await lesLageret(s3, jobben.offentlig)
+    expect(tilsyn(innhold, new Date('2026-12-01T03:00:00Z')).ok).toBe(true)
+    expect(tilsyn(innhold, new Date('2026-12-01T03:00:00Z'), [...MOTTAKERE].reverse()).ok).toBe(true)
+    expect(tilsyn(innhold, new Date('2026-12-01T05:00:00Z'))).toMatchObject({ ok: false, melding: expect.stringMatching(/27 timer/) })
+    // KOPI_MOTTAKERE er byttet, eller en nøkkel er lagt til: den nyeste kopien kan ikke åpnes med alle.
+    for (const nye of [[mottaker()], [...MOTTAKERE, mottaker()]]) {
+      expect(tilsyn(innhold, new Date('2026-12-01T03:00:00Z'), nye)).toMatchObject({ ok: false, melding: expect.stringMatching(/andre nøkler/) })
+    }
+  })
+
+  it('rydder ingenting mens en kopi signert med en annen nøkkel er innenfor oppbevaringstiden', async () => {
+    // Signeringsnøkkelen er byttet: den gamle kopien kan ikke kontrolleres, men skal stå i 7 døgn.
+    const gammel = await lagKopi('2026-11-28T02:15:00.000Z', ['1', '2'], { nokkel: lagSigneringsnokler().privat })
+    await lagKopi('2026-12-01T02:15:00.000Z', ['3'])
+    lager.naa = new Date('2026-12-01T03:00:00Z')
+    const plan = oppryddingsplan(await lesLageret(s3, jobben.offentlig), lager.naa)
+    expect(plan).toMatchObject({ slett: [], stopp: expect.stringMatching(/kan ikke kontrolleres/) })
+    // Når den er eldre enn oppbevaringstiden, ryddes den som før.
+    lager.naa = new Date('2026-12-05T03:00:00Z')
+    await lagKopi('2026-12-05T02:15:00.000Z', ['3'])
+    const senere = oppryddingsplan(await lesLageret(s3, jobben.offentlig), lager.naa)
+    expect(senere.stopp).toBeUndefined()
+    expect(senere.slett.map((v) => v.navn)).toEqual(expect.arrayContaining([kopinavn(gammel.navn), signaturnavn(gammel.navn), ...gammel.deler.map((d) => delnavn(d.identitet))]))
   })
 
   it('prøver lageret med en syntetisk, låst fil som ikke kan slettes', async () => {

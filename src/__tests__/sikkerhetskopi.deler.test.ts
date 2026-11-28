@@ -14,6 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { holdOyeblikksbilde, sporring, utelattReferanseSql } from '../drift/sikkerhetskopi/kopi'
 import { DELMAL, delplanSql, delteTabellerSql, henteskript, nyeBiter, sekvensSql, tilbakeskript, type Bit, type DeltTabell, type Sekvens } from '../drift/sikkerhetskopi/deler'
 import { EGNE_SKJEMAER_SQL, UTELATTE_TABELLER } from '../drift/sikkerhetskopi/manifest'
+import { FINGERAVTRYKK_SQL } from '../drift/sikkerhetskopi/tilpasninger'
 import { psql, SERVER, slettDatabaser, url } from './hjelp/ektepostgres'
 import { nyDatabase } from './hjelp/migrasjonskjoring'
 
@@ -127,6 +128,20 @@ describe.skipIf(!SERVER)('kopien i deler (ekte Postgres)', () => {
     expect(etter.filter((i) => for_.includes(i)).length).toBeGreaterThanOrEqual(for_.length - 3)
   }, 60_000)
 
+  it('regner ikke den midlertidige innloggingsrollen kopijobben får, med medlemskap og innstilling, som en tilpasning', () => {
+    const rolle = `cli_login_test_${process.pid}`
+    const gruppe = `ousfar_test_gruppe_${process.pid}`
+    psql(kilde, `create role ${gruppe} nologin; create role ${rolle} login; grant ${gruppe} to ${rolle}; alter role ${rolle} set statement_timeout = '1min';`)
+    try {
+      const rader = sporring<{ art: string; nokkel: string }>(url(kilde), FINGERAVTRYKK_SQL)
+      expect(rader.filter((r) => r.nokkel.includes('cli_login'))).toEqual([])
+      // En vanlig rolle er med, så filteret ikke skjuler for mye.
+      expect(rader.some((r) => r.art === 'rolle' && r.nokkel === gruppe)).toBe(true)
+    } finally {
+      psql(kilde, `drop role ${rolle}; drop role ${gruppe};`)
+    }
+  })
+
 })
 
 describe('det som ikke tas med, i databasen migrasjonene bygger', () => {
@@ -149,6 +164,9 @@ describe('det som ikke tas med, i databasen migrasjonene bygger', () => {
       expect(delte).toContain('kuratering.grenrevisjoner')
       expect(delte).toContain('public.direktemelding_blokkeringer')
       expect(delte).toContain('public.chatvalg')
+      // Som vedtatt (beslutning 3): samtalene og lest-statusen er med, uten meldingene.
+      expect(delte).toContain('public.direktesamtaler')
+      expect(delte).toContain('public.direktesamtale_status')
       for (const t of Object.keys(UTELATTE_TABELLER)) expect(delte).not.toContain(t)
     } finally {
       await db.close()

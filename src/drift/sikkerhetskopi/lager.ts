@@ -20,12 +20,13 @@ import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync 
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { createHash, randomBytes } from 'node:crypto'
-import { Stopp } from './feil'
-import { lesSignatur, type Delfil, type Signatur } from './signatur'
+import { OffentligStopp, Stopp } from './feil'
+import { feiltekst, lagLogg } from './logg'
+import { lesSignatur, sammeMottakere, type Delfil, type Signatur } from './signatur'
 import { S3, type Versjon } from './s3'
 import { KVOTER, LAGER, MAKS_ALDER_TIMER, OPPBEVARING_DOGN, PREFIKS, PROVE_LAS_TIMER, RETTIGHETER, URORT_DOGN } from './drift'
 
-const logg = (tekst: string) => console.log(`[kopilageret] ${tekst}`)
+const logg = lagLogg('kopilageret')
 const DOGN = 24 * 3600 * 1000
 
 export const kopinavn = (fil: string) => `${PREFIKS.kopier}${fil}`
@@ -149,7 +150,7 @@ export async function leggInnKopi(s3: S3, o: Opplasting, innhold: Lagerinnhold, 
   // Bitene kopien gjenbruker, må være låst minst like lenge som den.
   const gjenbrukt = o.deler.filter((d) => !nye.has(d.identitet)).map((d) => {
     const v = velgVersjon(innhold.versjoner, delnavn(d.identitet), d.md5, d.bytes)
-    if (!v) throw new Stopp(`Biten ${d.identitet} skulle finnes i lageret, men gjør ikke det. Ingen signatur er lagt inn.`)
+    if (!v) throw new OffentligStopp(`Biten ${d.identitet} skulle finnes i lageret, men gjør ikke det. Ingen signatur er lagt inn.`)
     return v
   })
   logg(`låsen på ${await forlengLas(s3, gjenbrukt, til)} av ${gjenbrukt.length} gjenbrukte biter forlenget til ${til}`)
@@ -226,6 +227,11 @@ export interface Oppryddingsplan {
  * oppbevaringstiden viser til, beholdes alltid, og det samme gjør alt som er
  * yngre enn `URORT_DOGN` og alt utenfor kopiens mapper. Låste versjoner står
  * på lista, men lageret nekter å slette dem til låsen er ute.
+ *
+ * En signatur jobben ikke kan kontrollere (for eksempel fra før
+ * signeringsnøkkelen ble byttet), kan ikke si hvilke filer den trenger. Er
+ * en slik signatur yngre enn oppbevaringstiden, ryddes ingenting, så en
+ * kopi med den gamle nøkkelen står hele oppbevaringstiden.
  */
 export function oppryddingsplan(innhold: Lagerinnhold, naa: Date): Oppryddingsplan {
   const mapper = Object.values(PREFIKS)
@@ -236,6 +242,10 @@ export function oppryddingsplan(innhold: Lagerinnhold, naa: Date): Oppryddingspl
     return { slett: [], ukjente, stopp: 'Ingen hel kopi fra det siste døgnet; ingenting ryddes før kopieringen virker igjen.' }
   }
   const grense = naa.getTime() - OPPBEVARING_DOGN * DOGN
+  const ukjentSignatur = innhold.ugyldige.find((v) => new Date(v.endret).getTime() >= grense)
+  if (ukjentSignatur) {
+    return { slett: [], ukjente, stopp: 'En signatur fra de siste 7 døgnene kan ikke kontrolleres med signeringsnøkkelen jobben har (byttet nøkkel?); ingenting ryddes før den er eldre.' }
+  }
   const beholdes = new Set<string>()
   const nokkel = (v: Versjon) => `${v.navn}\u0000${v.versjon}`
   for (const k of hele.filter((x) => x === nyeste || new Date(x.signatur.laget).getTime() >= grense)) {
@@ -287,11 +297,17 @@ export function forbruk(versjoner: readonly Versjon[], trafikkBytes: number): Fo
   return { lagerBytes, filer: versjoner.length, trafikkBytes, trafikkManed, varsler }
 }
 
-/** Om den nyeste hele kopien er ny nok; ellers hva som er galt. */
-export function tilsyn(innhold: Lagerinnhold, naa: Date): { ok: boolean; melding: string; siste?: string } {
+/**
+ * Om den nyeste hele kopien er ny nok, og (med `mottakere`) kryptert til de
+ * offentlige nøklene jobben bruker nå; ellers hva som er galt.
+ */
+export function tilsyn(innhold: Lagerinnhold, naa: Date, mottakere?: readonly string[]): { ok: boolean; melding: string; siste?: string } {
   const siste = innhold.kopier.find((k) => k.hel)
   if (!siste) return { ok: false, melding: 'Det finnes ingen hel kopi i lageret.' }
   const timer = (naa.getTime() - new Date(siste.signatur.laget).getTime()) / 3600_000
+  if (mottakere && !sammeMottakere(siste.signatur.mottakere, mottakere)) {
+    return { ok: false, melding: `Den nyeste hele kopien (fra ${siste.signatur.laget}) er kryptert til andre nøkler enn KOPI_MOTTAKERE; neste kopi krypteres til de nye.`, siste: siste.signatur.laget }
+  }
   return timer > MAKS_ALDER_TIMER
     ? { ok: false, melding: `Den nyeste hele kopien er ${Math.round(timer)} timer gammel (fra ${siste.signatur.laget}).`, siste: siste.signatur.laget }
     : { ok: true, melding: `Den nyeste hele kopien er fra ${siste.signatur.laget}.`, siste: siste.signatur.laget }
@@ -313,22 +329,22 @@ export interface Rettigheter {
  */
 export async function kontrollerNokkel(nokkelId: string, nokkel: string, adresse = 'https://api.backblazeb2.com/b2api/v4/b2_authorize_account'): Promise<Rettigheter> {
   const svar = await fetch(adresse, { headers: { authorization: `Basic ${Buffer.from(`${nokkelId}:${nokkel}`).toString('base64')}` } })
-  if (!svar.ok) throw new Stopp(`Backblaze godtok ikke nøkkelen (${svar.status}).`)
+  if (!svar.ok) throw new OffentligStopp(`Backblaze godtok ikke nøkkelen (${svar.status}).`)
   const k = (await svar.json()) as {
     apiInfo?: { storageApi?: { s3ApiUrl?: string; allowed?: { buckets?: { id: string; name: string | null }[] | null; capabilities?: string[]; namePrefix?: string | null } } }
   }
   const lager = k.apiInfo?.storageApi
   const tillatt = lager?.allowed
   const bøtter = tillatt?.buckets ?? null
-  if (!bøtter || bøtter.length !== 1) throw new Stopp('Nøkkelen gjelder ikke bare én bøtte. Kopijobben skal ha en nøkkel som bare gjelder kopibøtta (ingen hovednøkkel).')
-  if (bøtter[0]!.name !== LAGER.bucket) throw new Stopp(`Nøkkelen gjelder bøtta «${bøtter[0]!.name}», ikke «${LAGER.bucket}». Jobben gjetter ikke; rett navnet i drift.ts eller nøkkelen.`)
-  if (tillatt?.namePrefix) throw new Stopp('Nøkkelen er begrenset til et filprefiks; kopijobben trenger hele bøtta.')
-  if ((lager?.s3ApiUrl ?? '').replace(/\/$/, '') !== LAGER.endepunkt) throw new Stopp(`Bøtta ligger på ${lager?.s3ApiUrl}, ikke ${LAGER.endepunkt}.`)
+  if (!bøtter || bøtter.length !== 1) throw new OffentligStopp('Nøkkelen gjelder ikke bare én bøtte. Kopijobben skal ha en nøkkel som bare gjelder kopibøtta (ingen hovednøkkel).')
+  if (bøtter[0]!.name !== LAGER.bucket) throw new OffentligStopp(`Nøkkelen gjelder bøtta «${bøtter[0]!.name}», ikke «${LAGER.bucket}». Jobben gjetter ikke; rett navnet i drift.ts eller nøkkelen.`)
+  if (tillatt?.namePrefix) throw new OffentligStopp('Nøkkelen er begrenset til et filprefiks; kopijobben trenger hele bøtta.')
+  if ((lager?.s3ApiUrl ?? '').replace(/\/$/, '') !== LAGER.endepunkt) throw new OffentligStopp(`Bøtta ligger på ${lager?.s3ApiUrl}, ikke ${LAGER.endepunkt}.`)
   const rettigheter = [...(tillatt?.capabilities ?? [])].sort()
   const mangler = RETTIGHETER.kreves.filter((r) => !rettigheter.includes(r))
-  if (mangler.length) throw new Stopp(`Nøkkelen mangler rettighetene ${mangler.join(', ')}.`)
+  if (mangler.length) throw new OffentligStopp(`Nøkkelen mangler rettighetene ${mangler.join(', ')}.`)
   const forbudt = RETTIGHETER.forbudt.filter((r) => rettigheter.includes(r))
-  if (forbudt.length) throw new Stopp(`Nøkkelen har rettigheter kopijobben aldri skal ha: ${forbudt.join(', ')}. Lag en ny nøkkel uten dem.`)
+  if (forbudt.length) throw new OffentligStopp(`Nøkkelen har rettigheter kopijobben aldri skal ha: ${forbudt.join(', ')}. Lag en ny nøkkel uten dem.`)
   const kjente = new Set<string>([...RETTIGHETER.kreves, 'readBucketRetentions', 'listBuckets', 'readBuckets', 'readBucketEncryption'])
   return { bucket: LAGER.bucket, s3Adresse: LAGER.endepunkt, rettigheter, ekstra: rettigheter.filter((r) => !kjente.has(r)) }
 }
@@ -342,10 +358,10 @@ export async function kontrollerNokkel(nokkelId: string, nokkel: string, adresse
 export async function provLageret(s3: S3, naa = new Date()): Promise<string[]> {
   const funn: string[] = []
   const oppsett = await s3.laseoppsett().catch((e: Error) => {
-    funn.push(`Låseoppsettet kunne ikke leses: ${e.message}`)
+    funn.push(`Låseoppsettet kunne ikke leses (${feiltekst(e)}).`)
     return null
   })
-  if (oppsett && !oppsett.pa) throw new Stopp('Bøtta har ikke Object Lock. Kopiene kan da slettes av den som har nøkkelen.')
+  if (oppsett && !oppsett.pa) throw new OffentligStopp('Bøtta har ikke Object Lock. Kopiene kan da slettes av den som har nøkkelen.')
   if (oppsett?.standard) funn.push(`Bøtta har standardlås ${oppsett.standard.modus} ${oppsett.standard.dager ?? ''}${oppsett.standard.dager ? ' døgn' : ''}${oppsett.standard.ar ? `${oppsett.standard.ar} år` : ''}.`)
   const mappe = mkdtempSync(join(tmpdir(), 'ousfar-lagerprove-'))
   try {
@@ -358,11 +374,11 @@ export async function provLageret(s3: S3, naa = new Date()): Promise<string[]> {
     const til = new Date(naa.getTime() + PROVE_LAS_TIMER * 3600 * 1000).toISOString()
     const versjon = await s3.leggInn(navn, { fil, sha256, md5, bytes: innhold.length }, til)
     const las = await s3.las(navn, versjon)
-    if (!las || las.modus !== 'GOVERNANCE' || las.til < til) throw new Stopp(`Prøvefila ble ikke låst som den skulle (${JSON.stringify(las)}).`)
+    if (!las || las.modus !== 'GOVERNANCE' || las.til < til) throw new OffentligStopp(`Prøvefila ble ikke låst som den skulle (${JSON.stringify(las)}).`)
     const tilbake = join(mappe, 'tilbake')
     await s3.hent(navn, versjon, tilbake)
-    if (createHash('sha256').update(readFileSync(tilbake)).digest('hex') !== sha256) throw new Stopp('Prøvefila kom ikke tilbake uendret.')
-    if ((await s3.slett(navn, versjon)) !== 'last') throw new Stopp('Den låste prøvefila kunne slettes. Låsen verner ikke kopiene; ingen kopi tas.')
+    if (createHash('sha256').update(readFileSync(tilbake)).digest('hex') !== sha256) throw new OffentligStopp('Prøvefila kom ikke tilbake uendret.')
+    if ((await s3.slett(navn, versjon)) !== 'last') throw new OffentligStopp('Den låste prøvefila kunne slettes. Låsen verner ikke kopiene; ingen kopi tas.')
     return funn
   } finally {
     rmSync(mappe, { recursive: true, force: true })
