@@ -6,15 +6,21 @@ endres: hva de viser, hvem som får dem, og hvordan de sendes. Peder ba om dem
 mobil hvis man får nye meldinger i chatten. Hvis man trykker på varslet, skal
 man komme direkte til den aktuelle chatten.»
 
+Infrastrukturen brukes nå også av de andre formålene, med planlagte varsler
+([enhetsvarsler.md](enhetsvarsler.md), #600). Det som står her om
+abonnementene, krypteringen, tjenestearbeideren og nøklene, gjelder dem alle.
+
 ## Kort fortalt
 
 - Hver bruker slår dem på selv, **per enhet**: bryteren «Varsler på denne
-  enheten» øverst i chatinnstillingene (`Chatinnstillinger`: bak ⚙ nederst i
-  chatmenyen og i Konto → Innstillinger → Chat). Den står av til man slår den
-  på, og gjelder bare nettleseren den slås på i.
+  enheten» øverst i varselinnstillingene (bjella → ⚙, `Enhetsvarsler`), med
+  valget «Chatmeldinger» under. Chatinnstillingene (bak ⚙ nederst i
+  chatmenyen og i Konto → Innstillinger → Chat) har en knapp dit. Bryteren
+  står av til man slår den på, og gjelder bare nettleseren den slås på i;
+  «Chatmeldinger» står på til man slår det av.
 - Et varsel kommer når noen andre skriver i en gruppechat man er aktivt
   medlem av, eller sender en direktemelding man kan motta (bryteren på, ikke
-  blokkert, samtalen ikke dempet).
+  blokkert, samtalen ikke dempet), og «Chatmeldinger» står på.
 - Varselet sier **aldri hva som er skrevet eller hvem som skrev det**: bare
   gruppens navn eller «Direktemelding», og hvor mange uleste det er.
   Trykk på varselet åpner samtalen (`#/chat/gruppe/<id>` eller
@@ -68,7 +74,8 @@ eller avsendernavn krever et nytt ja fra Peder.
 2. **Køen.** Utløserne `gruppemeldinger_chatvarsel` og
    `direktemeldinger_chatvarsel` legger en ny melding i køen når minst én
    mottaker har et abonnement. Mottakerne avgjøres av
-   `intern.chatvarselmottakere`, som også brukes når varslene hentes.
+   `intern.chatvarselmottakere`, som også brukes når varslene hentes, og som
+   krever valget «Chatmeldinger» (`intern.enhetsvarselvalg_pa('chat', …)`).
 3. **Utsendingen.** Den samme utløseren ber Edge-funksjonen
    `chatvarsel-utsending` sende (`intern.chatvarsel_vekk`). pg_net sender
    kallet etter at meldingen er lagret, med adressen og en hemmelig nøkkel fra
@@ -83,9 +90,11 @@ eller avsendernavn krever et nytt ja fra Peder.
      `intern.chatvarselmottakere`: medlemskapet, gruppen, «Tillat
      direktemeldinger», blokkering og demping), får ikke noe, og varselet
      slettes. Det prøves ved hvert forsøk.
-   - Den krypterer og sender hvert varsel (`_edge/webpush.ts`,
+   - Den krypterer og sender hvert varsel (`_edge/webpush.ts`, den felles
+     `sendFraKilde` i `_edge/enhetsvarsler.ts` med `CHATVARSELKILDE` fra
      `_edge/chatvarsler.ts`), bare til kjente push-tjenester (`PUSHTJENESTER`
-     i `_delt/chatvarsel.ts`), og fører svaret (`chatvarsel_kvitter`).
+     i `_delt/enhetsvarsel.ts`), og fører svaret (`chatvarsel_kvitter`). Den
+     samme kjøringen sender de planlagte varslene for de andre formålene.
    - Et sendt varsel slettes. Svarer push-tjenesten 404 eller 410, slettes
      abonnementet. En midlertidig feil prøves igjen etter 1, 4 og 9 sekunder,
      og ellers ved neste utsending, høyst fem ganger og aldri etter ti
@@ -93,9 +102,10 @@ eller avsendernavn krever et nytt ja fra Peder.
    - Mens et varsel sendes, holder databasen det, så to utsendinger samtidig
      aldri sender det samme. Kommer en ny melding i samme samtale underveis,
      sendes varselet igjen etterpå, med det nye antallet.
-4. **Visningen.** Tjenestearbeideren viser hvert varsel, og åpner samtalen ved
-   trykk. Mens appen er åpen, sender den adressen til vinduet, som bytter side
-   uten å laste på nytt (`Chatvarselvakt`).
+4. **Visningen.** Tjenestearbeideren viser hvert varsel, og åpner adressen ved
+   trykk (bare adresser i appen, `VARSELSTI`). Mens appen er åpen, sender den
+   adressen til vinduet, som bytter side uten å laste på nytt
+   (`Chatvarselvakt`).
 
 Ingen i appen kan velge hvem som får varsel eller hva det står: det avgjøres
 i databasen, og bare databasen ber om utsendingen. Går et varsel tapt fordi
@@ -146,6 +156,8 @@ Endres `favicon.svg`, lages de på nytt.
 - `src/__tests__/chatvarsler.webpush.test.ts`: krypteringen mot eksempelet i
   RFC 8291 og VAPID-signaturen.
 - `src/__tests__/chatvarsler.enhet.test.ts`: enheten med en falsk nettleser, og
-  at tjenestearbeideren og appen er enige.
+  at tjenestearbeideren, databasen og appen er enige om adressene.
+- `src/__tests__/enhetsvarsler.valg.test.tsx`: bryteren og «Chatmeldinger» i
+  varselinnstillingene, og knappen dit fra chatinnstillingene.
 - `src/__tests__/qa/chatvarslernettleser.ts`: tjenestearbeideren i en ekte
   nettleser i det lokale testmiljøet (varselet vises og åpner samtalen).

@@ -571,11 +571,11 @@ describe('direktemeldingene i chatmenyen', () => {
     expect(within(helside).queryByRole('heading', { name: 'Kari' })).toBeNull()
     expect(within(helside).getByText('Velg en samtale.')).toBeTruthy()
     expect(direktemeldingene.les()).toBeNull()
-    // Gruppechatten står, så ⚙ har varslene på enheten, og bare dem.
+    // Gruppechatten står, så ⚙ har veien til varslene på enheten, og bare den.
     await userEvent.click(within(helside).getByRole('button', { name: 'Innstillinger for chatten' }))
     const innstillinger = within(helside).getByRole('region', { name: 'Innstillinger for chatten' })
-    const brytere = await within(innstillinger).findAllByRole('switch')
-    expect(brytere.map((b) => b.closest('label')?.textContent ?? '')).toEqual([expect.stringMatching(/^Varsler på denne enheten/)])
+    expect(within(innstillinger).getByRole('button', { name: 'Varselinnstillinger' })).toBeTruthy()
+    expect(within(innstillinger).queryAllByRole('switch')).toEqual([])
     expect(within(innstillinger).queryByRole('button', { name: 'Blokkerte' })).toBeNull()
   })
 

@@ -49,11 +49,24 @@ export const CHATVARSELKO_KONTROLL_SQL = `
     (select floor(extract(epoch from intern.chatvarsel_frist()) / 60)::int) || ' minutter' as frist
 `
 
+/** Sletter de planlagte varslene på enheten som har stått et døgn etter fristen (docs/enhetsvarsler.md). */
+export const ENHETSVARSEL_RYDD_SQL = 'select intern.rydd_enhetsvarsler() as slettet'
+
+/** Planlagte varsler som skulle vært slettet, og hvor lenge de står etter fristen. Bare antall og alder. */
+export const ENHETSVARSEL_KONTROLL_SQL = `
+  select
+    (select count(*) from intern.enhetsvarsler v where v.senest_kl < now() - intern.enhetsvarsel_oppbevaring())::int as gjenstar,
+    (select floor(extract(epoch from now() - min(v.kl)) / 86400)::int from intern.enhetsvarsler v) as eldste_dager,
+    (select floor(extract(epoch from intern.enhetsvarsel_oppbevaring()) / 86400)::int) as frist_dager,
+    'et døgn etter fristen' as frist
+`
+
 /** Det jobben rydder, i rekkefølge: navnet i rapporten, de to spørringene og hva radene er. */
 export const LAGRINGSJOBBER = [
   { navn: 'Gruppechat', rydd: RYDD_SQL, kontroll: KONTROLL_SQL, hva: 'meldinger' },
   { navn: 'Direktemeldinger', rydd: DIREKTE_RYDD_SQL, kontroll: DIREKTE_KONTROLL_SQL, hva: 'meldinger' },
   { navn: 'Køen for chatvarsler', rydd: CHATVARSELKO_RYDD_SQL, kontroll: CHATVARSELKO_KONTROLL_SQL, hva: 'meldinger i køen' },
+  { navn: 'Planlagte varsler på enheten', rydd: ENHETSVARSEL_RYDD_SQL, kontroll: ENHETSVARSEL_KONTROLL_SQL, hva: 'varsler' },
 ] as const
 
 export interface Ryddesvar {

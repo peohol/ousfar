@@ -36,7 +36,7 @@ interface Panelsvar {
 
 /** Teksten når panelet er tomt, og knappen til resten. */
 const TOMTEKST = 'Ingen nye hendelser.'
-const ALLE_VARSLER = { tekst: 'Alle varsler', ved: apneVarsler }
+const ALLE_VARSLER = { tekst: 'Alle varsler', ved: () => apneVarsler() }
 
 const PANELTEKST: Record<Forsidemodul, { tomtekst: string; visAlle?: OppsummeringskortProps['visAlle'] }> = {
   viktig_nytt: { tomtekst: TOMTEKST, visAlle: ALLE_VARSLER },

@@ -6,10 +6,16 @@
  */
 import { lagSignal } from '../domain/signal'
 
-const apne = lagSignal()
+/** Siden varselvinduet åpnes på; som `Varselside` i `Varsler.tsx`. */
+export type Varselstart = 'liste' | 'innstillinger'
 
-/** Åpner varselvinduet, som «Alle varsler» på forsiden. */
-export const apneVarsler = () => apne.send()
+const apne = lagSignal<Varselstart>()
+
+/**
+ * Åpner varselvinduet, som «Alle varsler» på forsiden, eller rett på
+ * innstillingene, som fra chatinnstillingene.
+ */
+export const apneVarsler = (side: Varselstart = 'liste') => apne.send(side === 'innstillinger' ? side : 'liste')
 export const lyttEtterApning = apne.lytt
 
 const lesteEndringer = lagSignal<readonly string[]>()

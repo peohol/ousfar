@@ -379,4 +379,8 @@ export const FUNKSJONSKONTROLLER: Readonly<Record<string, Kontroll>> = {
   // Varslene om nye chatmeldinger på enheten (supabase/migrations/*_chatvarsler.sql).
   'lagre_pushabonnement(endepunkt text, p256dh text, auth text)': 'eier',
   'slett_pushabonnement(endepunkt text)': 'eier',
+  // Valgene per formål for varslene på enheten (supabase/migrations/*_enhetsvarsler.sql, #600):
+  // bare formål den innloggede selv har, gjennom funksjonsbryterne.
+  'mine_enhetsvarselformal()': 'eier',
+  'sett_enhetsvarselvalg(formal text, pa boolean)': 'eier',
 }

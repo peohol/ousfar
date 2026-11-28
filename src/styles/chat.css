@@ -748,3 +748,10 @@
 .chatny__av p {
   margin: 0;
 }
+
+/* «Varsler på denne enheten» i chatinnstillingene: navnet og forklaringen over hverandre, knappen til høyre. */
+.chatvalg__tekst {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

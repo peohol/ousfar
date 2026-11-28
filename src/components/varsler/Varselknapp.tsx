@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useBevart } from '../../oppdatering/Bevaring'
-import { lyttEtterApning } from '../../varsler/bjella'
+import { lyttEtterApning, type Varselstart } from '../../varsler/bjella'
 import { merketall } from '../../varsler/modell'
 import { Ikonknapp } from '../Ikonknapp'
 import { useVarsler } from './useVarsler'
@@ -14,10 +14,18 @@ import { Varsler } from './Varsler'
 export function Varselknapp() {
   const status = useVarsler()
   const [apen, setApen] = useBevart('varsler', false)
+  const [startside, setStartside] = useState<Varselstart>('liste')
   // Fast identitet: `Modallag` kobler den til lukkehendelsen på dialogen.
   const lukk = useCallback(() => setApen(false), [])
   // «Alle varsler» andre steder i appen, som på forsiden (`apneVarsler`).
-  useEffect(() => lyttEtterApning(() => setApen(true)), [setApen])
+  useEffect(
+    () =>
+      lyttEtterApning((side) => {
+        setStartside(side)
+        setApen(true)
+      }),
+    [setApen],
+  )
   const { antall } = status
 
   return (
@@ -28,14 +36,17 @@ export function Varselknapp() {
         variant="stille"
         storrelse="liten"
         aria-haspopup="dialog"
-        onClick={() => setApen(true)}
+        onClick={() => {
+          setStartside('liste')
+          setApen(true)
+        }}
       />
       {antall > 0 && (
         <span className="varselmerke" aria-hidden="true">
           {merketall(antall)}
         </span>
       )}
-      <Varsler apen={apen} onLukk={lukk} status={status} />
+      <Varsler apen={apen} onLukk={lukk} status={status} startside={startside} />
     </div>
   )
 }

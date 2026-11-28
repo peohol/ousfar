@@ -44,6 +44,8 @@ export const UTELATTE_TABELLER: Readonly<Record<string, string>> = {
     'Meldingene i direktemeldingene tas ikke med i kopiene (Peder, beslutning 3, 18.11.2026, docs/direktemeldinger-personvern.md). Samtalene, lest-statusen, valgene (chatvalg) og blokkeringene tas med, så de står etter et datatap, uten meldinger',
   'intern.chatvarselko': 'Flyktig kø for chatvarsler (bare ID-er, høyst ti minutter gammel). Et varsel om en gammel melding etter en gjenoppretting ville vært feil',
   'intern.chatvarselutsendinger': 'Flyktig kø for chatvarsler som venter på push-tjenesten. Samme grunn',
+  'intern.enhetsvarsler':
+    'Flyktige planlagte varsler på enheten (høyst to døgn gamle, docs/enhetsvarsler.md). Eierprosjektet planlegger dem på nytt; et gammelt varsel etter en gjenoppretting ville vært feil',
 }
 
 /** Sant for en tabell (`n`, `c`) i OUSFARs egne skjemaer. */
