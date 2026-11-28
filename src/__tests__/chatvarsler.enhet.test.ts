@@ -209,6 +209,26 @@ describe('tjenestearbeideren', () => {
     }
   })
 
+  it('lar seg kjøre, og åpner adressen i varselet eller forsiden når adressen ikke er godkjent', async () => {
+    const lyttere: Record<string, (h: unknown) => void> = {}
+    const apnet: string[] = []
+    const self = {
+      registration: { scope: 'https://ousfar.example/' },
+      clients: { matchAll: async () => [], openWindow: async (url: string) => apnet.push(url), claim: async () => undefined },
+      skipWaiting: async () => undefined,
+      addEventListener: (navn: string, f: (h: unknown) => void) => (lyttere[navn] = f),
+    }
+    new Function('self', kilde)(self)
+    const trykk = async (sti: unknown) => {
+      let venter: Promise<unknown> = Promise.resolve()
+      lyttere.notificationclick!({ notification: { close: () => undefined, data: { sti } }, waitUntil: (p: Promise<unknown>) => (venter = p) })
+      await venter
+    }
+    await trykk('#/chat/gruppe/0f8e3c1a-1111-4222-8333-944445555666')
+    await trykk('javascript:alert(1)')
+    expect(apnet).toEqual(['https://ousfar.example/#/chat/gruppe/0f8e3c1a-1111-4222-8333-944445555666', 'https://ousfar.example/#/'])
+  })
+
   it('mellomlagrer ingenting og svarer ikke på forespørsler', () => {
     expect(kilde).not.toMatch(/addEventListener\('fetch'|caches\./)
   })

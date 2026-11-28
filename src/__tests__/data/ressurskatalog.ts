@@ -145,6 +145,9 @@ export const TABELLER: Readonly<Record<string, Klassifisering>> = {
   'public.pushabonnementer': k('personlig', 'Varslene om nye chatmeldinger: brukerens egne enheter; bare gjennom funksjonene'),
   'intern.chatvarselko': k('personlig', 'Varslene om nye chatmeldinger: ID-ene til nye meldinger som skal varsles, brukes aldri etter ti minutter; bare for Edge-funksjonen'),
   'intern.chatvarselutsendinger': k('personlig', 'Varslene om nye chatmeldinger som venter på push-tjenesten: endepunkt, samtale og forsøk, brukes aldri etter ti minutter; bare for Edge-funksjonen'),
+  'intern.enhetsvarselformal': k('forvaltning', 'Varsler på enheten: formålene, med funksjonen, tilgangen og kontrollen hvert formål har; bare gjennom funksjonene'),
+  'public.enhetsvarselvalg': k('personlig', 'Varsler på enheten: brukerens eget valg per formål; bare gjennom funksjonene'),
+  'intern.enhetsvarsler': k('personlig', 'Varsler på enheten: planlagte varsler til den enkelte, ryddes ett døgn etter fristen; bare for formålene og Edge-funksjonen'),
 
   // Personlig.
   'public.brukerinnstillinger': k('personlig', 'Innstillinger (§3)'),

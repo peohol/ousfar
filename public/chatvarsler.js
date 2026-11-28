@@ -53,7 +53,9 @@ async function vis(hendelse) {
 
 self.addEventListener('push', (hendelse) => hendelse.waitUntil(vis(hendelse)))
 
-XX
+/** Åpner adressen i appen: i et vindu med appen som alt er åpent, ellers i et nytt. */
+async function apne(sti) {
+  const trygg = erSti(sti) ? sti : '#/'
   const adresse = new URL(self.registration.scope)
   adresse.hash = trygg
   const vinduer = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
