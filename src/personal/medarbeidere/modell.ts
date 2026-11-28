@@ -33,6 +33,8 @@ export interface Medarbeider {
   vaktandel: DutyShareSchedule
   /** Bare for planleggerne; ellers tom. */
   kvalifikasjoner: Kvalifikasjonsperiode[]
+  /** Vaktene er ikke valgt i den gjeldende perioden (`personal.er_ny`); bare for planleggerne. */
+  ny: boolean
 }
 
 /** Innstillingene slik kommandoene gir dem tilbake. */
@@ -41,6 +43,7 @@ export interface Innstillinger {
   revisjon: number
   kvalifikasjoner: Kvalifikasjonsperiode[]
   vaktandel: DutyShareSchedule
+  ny: boolean
 }
 
 const tekst = (v: unknown): string | null => (typeof v === 'string' ? v : null)
@@ -83,6 +86,7 @@ function lesMedarbeider(v: unknown): Medarbeider | null {
     revisjon: typeof o.revisjon === 'number' ? o.revisjon : 0,
     vaktandel: lesVaktandel(o.vaktandel),
     kvalifikasjoner: lesKvalifikasjoner(o.kvalifikasjoner),
+    ny: o.ny === true,
   }
 }
 
@@ -93,6 +97,7 @@ export function lesInnstillinger(v: unknown): Innstillinger {
     revisjon: typeof o.revisjon === 'number' ? o.revisjon : 0,
     kvalifikasjoner: lesKvalifikasjoner(o.kvalifikasjoner),
     vaktandel: lesVaktandel(o.vaktandel),
+    ny: o.ny === true,
   }
 }
 
@@ -135,8 +140,12 @@ export const serKvalifikasjoner = (rolle: Role): boolean => can(rolle, 'editCale
 /** Om rollen kan åpne en medarbeider og endre noe; serveren kontrollerer hver endring. */
 export const kanEndreMedarbeidere = (rolle: Role): boolean => can(rolle, 'editPeople') || can(rolle, 'editDutyShare')
 
-/** Ny i kalenderen: har aldri fått noen kvalifikasjon, så en planlegger bør velge vaktene (§8.5). */
-export const erNy = (m: Medarbeider): boolean => m.kvalifikasjoner.length === 0
+/**
+ * Ny i kalenderen: vaktene er ikke valgt i den gjeldende perioden, så en
+ * planlegger bør velge dem (§8.5). Databasen avgjør det (`personal.er_ny`), og
+ * et valg uten vakter kvitterer også.
+ */
+export const erNy = (m: Medarbeider): boolean => m.ny
 
 /**
  * Medarbeiderne fanen viser: de som er med fremover, for planleggerne de nye

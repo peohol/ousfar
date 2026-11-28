@@ -1026,8 +1026,11 @@ bindende detaljspesifikasjon.
 - **Medarbeidere** (P2c, `src/personal/medarbeidere/`, etter prototypens
   `design/app/Medarbeidere.tsx`): én tabell over dem som er med i
   kalenderen fremover, med navnet og stillingen fra profilen («Mangler
-  stilling» uten, B14), vaktene de kan ta og vaktandelen i dag. Nye står
-  øverst, merket «Ny», til vaktene er valgt. «Endre» åpner medarbeideren:
+  stilling» uten, B14), vaktene de kan ta og vaktandelen i dag, med
+  forbokstavene ved navnet (profilbilder venter på §8.13). Nye står øverst,
+  merket «Ny», til vaktene er valgt i perioden; «Lagre» kvitterer også uten
+  vakter. Et utkast til vakter som noen andre har endret imens, forkastes
+  med en melding, så det aldri lagres over endringen. «Endre» åpner medarbeideren:
   vaktene lagres med «Lagre», vaktandelen (ordinær fra en dato og
   midlertidige perioder) med hver endring, regnet med domenefunksjonene
   først, så en dag før i dag avvises før noe sendes. Tidligere, gjeldende og
@@ -1040,7 +1043,9 @@ bindende detaljspesifikasjon.
 - **Vis som** (K-SKJ-7) står i hodet på kalenderen, bare når databasen gir
   en simulering, altså bare i et testmiljø: en lavere rolle og/eller én
   syntetisk medarbeider, og «Avslutt». Valget lagres og håndheves på
-  serveren, så fanene og alt annet følger rollen databasen gir.
+  serveren, så fanene og alt annet følger rollen databasen gir. Til
+  kalenderen er hentet med den nye rollen, er valgene låst og fanene fra den
+  forrige skjult; feiler hentingen, kan den prøves igjen.
 - **Dagen i dag** øverst på forsiden i fagmiljøet man arbeider i: dato med
   symmetriske datopiler, kompakte fremhevede oppgaver (inkl. Referent),
   Til stede gruppert etter stilling, Jobber et annet sted og Fraværende

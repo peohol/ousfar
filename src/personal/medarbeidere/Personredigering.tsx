@@ -7,12 +7,26 @@ import { settKvalifikasjoner } from '../kommandoer'
 import { kvalifisertI, type Innstillinger, type Medarbeider, type Medarbeidergrunnlag } from './modell'
 import { Vaktandel } from './Vaktandel'
 
+/** Vaktene som er valgt, og vaktene de ble valgt ut fra. */
+interface Vaktutkast {
+  fra: string[]
+  kan: string[]
+}
+
+const sammeVakter = (a: string[], b: string[]) => [...a].sort().join() === [...b].sort().join()
+
 /**
  * Det kalenderen eier for én medarbeider: hvilke vakter hen kan ta, og
  * vaktandelen (§7.4). Navnet og stillingen kommer fra profilen og endres der.
  * Vaktene lagres med «Lagre», vaktandelen med hver endring. Hver lagring
  * sender revisjonen som ble vist; har noen andre endret medarbeideren imens,
  * avviser serveren den, og grunnlaget hentes på nytt.
+ *
+ * Utkastet til vaktene er bundet til vaktene det ble laget fra (K-MED-2). Har
+ * noen andre endret dem siden, forkastes utkastet: de nye vises, med en
+ * melding, og må velges på nytt. Det gjelder også et utkast som er bevart over
+ * en oppdatering av appen. En endring som ikke rører vaktene, som en
+ * vaktandel lagret her, lar utkastet stå.
  */
 export function Personredigering({
   fagmiljo,
@@ -33,7 +47,11 @@ export function Personredigering({
   const [lagret, setLagret] = useState<Innstillinger | null>(null)
   const m: Medarbeider = lagret && lagret.revisjon >= medarbeider.revisjon ? { ...medarbeider, ...lagret } : medarbeider
   const fraFor = kvalifisertI(m, grunnlag.iDag)
-  const [kan, setKan] = useBevart<string[]>(`personal-kan-${m.id}`, fraFor)
+  const [utkast, setUtkast] = useBevart<Vaktutkast | null>(`personal-kan-${m.id}`, null)
+  const gjelder = utkast !== null && sammeVakter(utkast.fra, fraFor)
+  const kan = gjelder ? utkast.kan : fraFor
+  const endretImens = utkast !== null && !gjelder
+  const velg = (status: string, valgt: boolean) => setUtkast({ fra: fraFor, kan: valgt ? [...kan, status] : kan.filter((x) => x !== status) })
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
   const id = useId()
@@ -56,9 +74,10 @@ export function Personredigering({
   // Hver del vises bare for den som kan endre den; serveren kontrollerer det igjen.
   const vakter = can(grunnlag.rolle, 'editPeople')
   const andel = can(grunnlag.rolle, 'editDutyShare')
-  const endret = vakter && [...kan].sort().join() !== fraFor.join()
+  const endret = vakter && !sammeVakter(kan, fraFor)
   const lagreVakter = async () => {
-    if (!endret) return onLukk()
+    // For en ny medarbeider kvitterer «Lagre» valget, også uten vakter.
+    if (!endret && !m.ny) return onLukk()
     if (await lagre(() => settKvalifikasjoner(fagmiljo, m.id, kan, m.revisjon))) onLukk()
   }
 
@@ -88,6 +107,11 @@ export function Personredigering({
           {feil}
         </p>
       )}
+      {vakter && endretImens && (
+        <p className="notis" role="status">
+          Vaktene er endret av noen andre siden du begynte. Her er de som gjelder nå; velg på nytt om du vil endre dem.
+        </p>
+      )}
       {vakter && (
         <fieldset className="personalfelt">
           <legend className="felt__merkelapp">Kan ta</legend>
@@ -97,7 +121,7 @@ export function Personredigering({
             <div className="avkryssinger" aria-describedby={`${id}-kan`}>
               {grunnlag.oppgaver.map((s) => (
                 <label key={s.id} className="avkryssing">
-                  <input type="checkbox" checked={kan.includes(s.id)} disabled={arbeider} onChange={(e) => setKan((k) => (e.target.checked ? [...k, s.id] : k.filter((x) => x !== s.id)))} />
+                  <input type="checkbox" checked={kan.includes(s.id)} disabled={arbeider} onChange={(e) => velg(s.id, e.target.checked)} />
                   {s.name}
                 </label>
               ))}

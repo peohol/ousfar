@@ -1,14 +1,17 @@
 {
   "id": "20261128-052559-ae2f20",
-  "semver": "patch",
+  "semver": "minor",
   "opprettet": "2026-11-28T05:25:59Z",
-  "sammendrag": "Videre intern forberedelse, ingen endring i appen",
+  "sammendrag": "Videre utvikling av en funksjon under utprøving",
   "typer": [
     "Funksjonalitet"
   ],
-  "omfang": "Minimalt omfang",
+  "omfang": "Mindre omfang",
+  "gjelder": [
+    "kalender"
+  ],
   "punkter": [
-    "Ingen endring i appen for brukerne. Mer intern forberedelse som ikke er tatt i bruk."
+    "Funksjonen som er under utprøving, kan mer. Den vises fortsatt bare for dem som prøver den ut. Andre brukere merker ingen endring."
   ],
   "utenVarsel": true
 }

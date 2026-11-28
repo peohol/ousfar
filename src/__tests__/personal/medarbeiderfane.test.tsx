@@ -13,7 +13,9 @@
  * - en kollega ser medarbeiderne og vaktandelen, men ikke vaktene og ingen
  *   knapper, og bare den lokale administratoren velger de vaktplanansvarlige;
  * - «Vis som» finnes bare med en simulering fra databasen, og gir bare
- *   rollene til og med den virkelige.
+ *   rollene til og med den virkelige; til kalenderen er hentet med den nye
+ *   rollen, er valgene låst og fanene fra den forrige skjult, også når
+ *   hentingen feiler, og den kan prøves igjen.
  *
  * Serveren håndhever alt dette selv (src/__tests__/personal/medarbeidere.test.ts).
  */
@@ -27,20 +29,22 @@ const db = vi.hoisted(() => ({
   kall: [] as { funksjon: string; argumenter: Record<string, unknown> }[],
   /** Svaret per funksjon: data, eller en feil med kode og melding. */
   svar: {} as Record<string, { data?: unknown; feil?: { code: string; message: string } }>,
+  /** Et svar som kommer når testen sier det, per funksjon. */
+  senere: {} as Record<string, () => Promise<{ data?: unknown; feil?: { code: string; message: string } }>>,
 }))
 
 vi.mock('../../auth/klient', () => ({
   klient: () => ({
     rpc: async (funksjon: string, argumenter: Record<string, unknown> = {}) => {
       db.kall.push({ funksjon, argumenter })
-      const s = db.svar[funksjon]
+      const s = db.senere[funksjon] ? await db.senere[funksjon]() : db.svar[funksjon]
       return s?.feil ? { data: null, error: s.feil } : { data: s?.data ?? null, error: null }
     },
   }),
 }))
 
 const { Medarbeidere } = await import('../../personal/medarbeidere/Medarbeidere')
-const { VisSom } = await import('../../personal/VisSom')
+const { Personalside } = await import('../../personal/Personalside')
 
 const I_DAG = '2026-12-01'
 const FAGMILJO = { id: 'f1', nokkel: 'sandkasse', navn: 'Sandkasse', standard: false, apent: true, ikon: 'sandkasse' } as const
@@ -61,6 +65,7 @@ const medarbeider = (id: string, navn: string, ekstra: Record<string, unknown> =
   revisjon: 3,
   vaktandel: { ordinary: [], temporary: [] },
   kvalifikasjoner: [{ status: 'vakt1', fra: '2026-01-01', til: null }],
+  ny: false,
   ...ekstra,
 })
 
@@ -74,7 +79,7 @@ function grunnlag(rolle: 'reader' | 'planner' | 'localAdmin', ekstra: Record<str
       kategorier: [{ id: 'lis', name: 'LIS', short: 'LIS' }],
       medarbeidere: [
         medarbeider('alma', 'Alma Berg', { vaktandel: { ordinary: [{ from: '2026-06-01', percent: 80 }], temporary: [] } }),
-        medarbeider('ny', 'Nora Ny', { kvalifikasjoner: [], stilling: null }),
+        medarbeider('ny', 'Nora Ny', { kvalifikasjoner: [], ny: true, stilling: null }),
         medarbeider('borte', 'Bent Borte', { aktiv_til: '2026-11-15' }),
         medarbeider('siste', 'Siri Siste', { aktiv_til: I_DAG }),
       ],
@@ -101,12 +106,20 @@ beforeEach(() => {
     personal_lagre_vaktandel: { data: { id: 'alma', revisjon: 4, kvalifikasjoner: [], vaktandel: { ordinary: [], temporary: [] } } },
     personal_medlemmer: { data: [{ bruker: 'b1', navn: 'Pia Plan', vaktplanansvarlig: true }, { bruker: 'b2', navn: 'Kari Kollega', vaktplanansvarlig: false }] },
   }
+  db.senere = {}
   sessionStorage.clear()
 })
 
 afterEach(() => {
   cleanup()
 })
+
+/** Teksten slik en skjermleser får den: uten det som er skjult for den. */
+function lest(el: HTMLElement): string {
+  const kopi = el.cloneNode(true) as HTMLElement
+  kopi.querySelectorAll('[aria-hidden="true"]').forEach((n) => n.remove())
+  return kopi.textContent ?? ''
+}
 
 const kallTil = (funksjon: string) => db.kall.filter((k) => k.funksjon === funksjon).map((k) => k.argumenter)
 
@@ -118,7 +131,9 @@ describe('Medarbeidere-fanen', () => {
     // Bare oppgavene som krever kvalifikasjon og er aktive i dagens oppsett.
     expect(kolonner).toEqual(['Medarbeider', 'Stilling', 'Vakt 1', 'Vakt 2', 'Vaktandel', 'Endre'])
     const rader = within(tabell).getAllByRole('row').slice(1)
-    expect(rader.map((r) => within(r).getByRole('rowheader').textContent)).toEqual(['Nora NyNy', 'Alma Berg'])
+    expect(rader.map((r) => lest(within(r).getByRole('rowheader')))).toEqual(['Nora NyNy', 'Alma Berg'])
+    // Forbokstavene står ved navnet, for øyet.
+    expect(rader.map((r) => r.querySelector('.avatar')?.textContent)).toEqual(['NN', 'AB'])
     const [nora, alma] = rader as [HTMLElement, HTMLElement]
     expect(within(nora).getByText('Mangler stilling')).toBeTruthy()
     expect(within(nora).getByRole('button', { name: 'Velg vakter for Nora Ny' })).toBeTruthy()
@@ -144,6 +159,17 @@ describe('Medarbeidere-fanen', () => {
     expect(hentPaNytt).toHaveBeenCalled()
   })
 
+  it('kvitterer «Ny» også når ingen vakter velges, med revisjonen som ble vist', async () => {
+    const hentPaNytt = vi.fn()
+    db.svar.personal_sett_kvalifikasjoner = { data: { id: 'ny', revisjon: 4, ny: false, kvalifikasjoner: [], vaktandel: { ordinary: [], temporary: [] } } }
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={grunnlag('planner')} hentPaNytt={hentPaNytt} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Velg vakter for Nora Ny' }))
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Lagre' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(kallTil('personal_sett_kvalifikasjoner')).toEqual([{ fagmiljo: 'f1', medarbeider: 'ny', statuser: [], forventet_revisjon: 3 }])
+    expect(hentPaNytt).toHaveBeenCalled()
+  })
+
   it('viser serverens avvisning i redigeringen, og henter grunnlaget på nytt', async () => {
     const hentPaNytt = vi.fn()
     const melding = 'Medarbeideren er endret av en annen siden den ble hentet. Hent den på nytt.'
@@ -157,6 +183,74 @@ describe('Medarbeidere-fanen', () => {
     expect((await within(dialog).findByRole('alert')).textContent).toBe(melding)
     expect(screen.getByRole('dialog')).toBeTruthy()
     expect(hentPaNytt).toHaveBeenCalled()
+  })
+
+  it('forkaster et utkast til vakter når noen andre har endret dem, også etter en konflikt, men ikke etter en egen vaktandel', async () => {
+    const melding = 'Medarbeideren er endret av en annen siden den ble hentet. Hent den på nytt.'
+    db.svar.personal_sett_kvalifikasjoner = { feil: { code: 'PT409', message: melding } }
+    // Grunnlaget slik serveren gir det etter at en annen har gitt Alma bare Vakt 2.
+    const endret = (g: Personalgrunnlag): Personalgrunnlag => ({
+      ...g,
+      svar: {
+        ...g.svar,
+        medarbeidere: (g.svar.medarbeidere as Record<string, unknown>[]).map((m) => (m.id === 'alma' ? { ...m, revisjon: 5, kvalifikasjoner: [{ status: 'vakt2', fra: I_DAG, til: null }] } : m)),
+      },
+    })
+    const forst = grunnlag('planner')
+    let gjeldende = forst
+    const hentPaNytt = vi.fn(() => {
+      gjeldende = endret(forst)
+    })
+    const { rerender } = render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={gjeldende} hentPaNytt={hentPaNytt} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    let dialog = screen.getByRole('dialog')
+    // A velger Vakt 2 i tillegg, ut fra Vakt 1.
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Vakt 2' }))
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
+    expect((await within(dialog).findByRole('alert')).textContent).toBe(melding)
+    expect(hentPaNytt).toHaveBeenCalledTimes(1)
+    rerender(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={gjeldende} hentPaNytt={hentPaNytt} />)
+    dialog = screen.getByRole('dialog')
+    // Utkastet er forkastet: de nye vaktene vises, med en melding.
+    expect(within(dialog).getByRole('status').textContent).toMatch(/endret av noen andre/)
+    expect((within(dialog).getByRole('checkbox', { name: 'Vakt 1' }) as HTMLInputElement).checked).toBe(false)
+    expect((within(dialog).getByRole('checkbox', { name: 'Vakt 2' }) as HTMLInputElement).checked).toBe(true)
+    // «Lagre» uten et nytt valg sender ingenting som kunne overskrive endringen.
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(kallTil('personal_sett_kvalifikasjoner')).toHaveLength(1)
+
+    // Et nytt valg ut fra de nye vaktene sendes med den nye revisjonen.
+    db.svar.personal_sett_kvalifikasjoner = { data: { id: 'alma', revisjon: 6, kvalifikasjoner: [], vaktandel: { ordinary: [], temporary: [] } } }
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    dialog = screen.getByRole('dialog')
+    expect(within(dialog).queryByRole('status')).toBeNull()
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Vakt 1' }))
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
+    await waitFor(() => expect(kallTil('personal_sett_kvalifikasjoner')).toHaveLength(2))
+    expect(kallTil('personal_sett_kvalifikasjoner')[1]).toEqual({ fagmiljo: 'f1', medarbeider: 'alma', statuser: ['vakt2', 'vakt1'], forventet_revisjon: 5 })
+  })
+
+  it('lar utkastet til vakter stå når en egen vaktandel lagres imens', async () => {
+    db.svar.personal_lagre_vaktandel = {
+      data: { id: 'alma', revisjon: 4, kvalifikasjoner: [{ status: 'vakt1', fra: '2026-01-01', til: null }], vaktandel: { ordinary: [{ from: '2026-06-01', percent: 80 }, { from: '2027-01-01', percent: 60 }], temporary: [] } },
+    }
+    render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={grunnlag('planner')} hentPaNytt={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Endre Alma Berg' }))
+    const dialog = screen.getByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Vakt 2' }))
+    const ordinaer = within(dialog).getByRole('form', { name: 'Ordinær vaktandel' })
+    await userEvent.clear(within(ordinaer).getByLabelText('Ordinær fra'))
+    await userEvent.type(within(ordinaer).getByLabelText('Ordinær fra'), '2027-01-01')
+    await userEvent.clear(within(ordinaer).getByLabelText('Prosent'))
+    await userEvent.type(within(ordinaer).getByLabelText('Prosent'), '60')
+    await userEvent.click(within(ordinaer).getByRole('button', { name: 'Sett' }))
+    await waitFor(() => expect(kallTil('personal_lagre_vaktandel')).toHaveLength(1))
+    expect(within(dialog).queryByRole('status')).toBeNull()
+    expect((within(dialog).getByRole('checkbox', { name: 'Vakt 2' }) as HTMLInputElement).checked).toBe(true)
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Lagre' }))
+    await waitFor(() => expect(kallTil('personal_sett_kvalifikasjoner')).toHaveLength(1))
+    expect(kallTil('personal_sett_kvalifikasjoner')[0]).toEqual({ fagmiljo: 'f1', medarbeider: 'alma', statuser: ['vakt1', 'vakt2'], forventet_revisjon: 4 })
   })
 
   it('lagrer vaktandelen som hele planen, og avviser en dag før i dag før noe sendes', async () => {
@@ -231,7 +325,7 @@ describe('Medarbeidere-fanen', () => {
     render(<Medarbeidere fagmiljo={FAGMILJO} grunnlag={{ ...uten, svar: { ...uten.svar, medarbeidere } }} hentPaNytt={() => {}} />)
     const tabell = screen.getByRole('table')
     expect(within(tabell).getAllByRole('columnheader').map((c) => c.textContent)).toEqual(['Medarbeider', 'Stilling', 'Vaktandel'])
-    expect(within(tabell).getAllByRole('rowheader').map((r) => r.textContent)).toEqual(['Alma Berg', 'Nora Ny'])
+    expect(within(tabell).getAllByRole('rowheader').map(lest)).toEqual(['Alma Berg', 'Nora Ny'])
     expect(screen.queryAllByRole('button')).toEqual([])
     expect(screen.queryByText(/Her velges/)).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Vaktplanansvarlige' })).toBeNull()
@@ -253,41 +347,112 @@ describe('«Vis som»', () => {
   const simulering = (reell: string, vis: Record<string, unknown> | null = null) => ({
     simulering: { rolle: (vis?.rolle as string) ?? reell, reell_rolle: reell, vis_som: vis, meg: null },
   })
+  /** Grunnlaget slik serveren gir det, med rollen «Vis som» gir. */
+  const svar = (reell: 'reader' | 'planner' | 'localAdmin', vis: Record<string, unknown> | null = null) => {
+    const rolle = (vis?.rolle as 'reader' | 'planner' | 'localAdmin' | undefined) ?? reell
+    return grunnlag(rolle, simulering(reell, vis)).svar
+  }
+  /** Et svar på `personal_grunnlag` som kommer når testen sier det. */
+  function ventende() {
+    let slipp: (s: { data?: unknown; feil?: { code: string; message: string } }) => void = () => {}
+    db.senere.personal_grunnlag = () => new Promise((ok) => (slipp = ok))
+    return (s: { data?: unknown; feil?: { code: string; message: string } }) => {
+      delete db.senere.personal_grunnlag
+      db.svar.personal_grunnlag = s
+      slipp(s)
+    }
+  }
+  const side = (fane?: 'medarbeidere') => render(<Personalside fagmiljo={FAGMILJO} fane={fane} onGaaTil={() => {}} onLukk={() => {}} onFinnesIkke={() => {}} />)
+  const fanene = () => screen.queryAllByRole('link').map((a) => a.textContent)
 
-  it('finnes ikke uten en simulering fra databasen, som utenfor et testmiljø', () => {
-    const { container } = render(<VisSom fagmiljo="f1" grunnlag={grunnlag('localAdmin', { simulering: null })} onEndret={() => {}} />)
-    expect(container.textContent).toBe('')
+  it('finnes ikke uten en simulering fra databasen, som utenfor et testmiljø', async () => {
+    db.svar.personal_grunnlag = { data: grunnlag('localAdmin', { simulering: null }).svar }
+    side()
+    await screen.findByRole('link', { name: 'Medarbeidere' })
+    expect(screen.queryByRole('group', { name: 'Vis som' })).toBeNull()
   })
 
   it('gir bare rollene til og med den virkelige, og lagrer valget på serveren', async () => {
-    const onEndret = vi.fn()
-    render(<VisSom fagmiljo="f1" grunnlag={grunnlag('planner', simulering('planner'))} onEndret={onEndret} />)
-    const rolle = screen.getByLabelText('Rolle')
+    db.svar.personal_grunnlag = { data: svar('planner') }
+    side()
+    const rolle = await screen.findByLabelText('Rolle')
     expect(within(rolle).getAllByRole('option').map((o) => o.textContent)).toEqual(['Kollega', 'Vaktplanansvarlig (din rolle)'])
+    db.svar.personal_vis_som = { data: simulering('planner', { rolle: 'reader', medarbeider: null }).simulering }
+    db.svar.personal_grunnlag = { data: svar('planner', { rolle: 'reader', medarbeider: null }) }
     await userEvent.selectOptions(rolle, 'reader')
-    await waitFor(() => expect(kallTil('personal_vis_som')).toEqual([{ fagmiljo: 'f1', rolle: 'reader', medarbeider: null }]))
-    expect(onEndret).toHaveBeenCalled()
+    await waitFor(() => expect(fanene()).toEqual([]))
+    expect(kallTil('personal_vis_som')).toEqual([{ fagmiljo: 'f1', rolle: 'reader', medarbeider: null }])
   })
 
-  it('velger en syntetisk medarbeider, og avslutter med begge tomme', async () => {
-    render(<VisSom fagmiljo="f1" grunnlag={grunnlag('localAdmin', simulering('localAdmin', { rolle: 'reader', medarbeider: null }))} onEndret={() => {}} />)
-    const som = screen.getByLabelText('Som medarbeider')
-    expect(within(som).getAllByRole('option').map((o) => o.textContent)).toEqual(['Ikke som medarbeider', 'Alma Berg', 'Nora Ny', 'Bent Borte', 'Siri Siste'])
-    await userEvent.selectOptions(som, 'alma')
+  it('låser valgene og skjuler fanene fra den forrige rollen til kalenderen er hentet med den nye', async () => {
+    db.svar.personal_grunnlag = { data: svar('localAdmin') }
+    side('medarbeidere')
+    await screen.findByRole('table')
+    expect(fanene()).toEqual(['Kalender', 'Medarbeidere'])
+    db.svar.personal_vis_som = { data: simulering('localAdmin', { rolle: 'reader', medarbeider: null }).simulering }
+    const slipp = ventende()
+    await userEvent.selectOptions(screen.getByLabelText('Rolle'), 'reader')
+    // Serveren har bekreftet kollega, men kalenderen er ikke hentet ennå.
+    await screen.findByText(/Kalenderen hentes med valget/)
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(fanene()).toEqual([])
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).value).toBe('reader')
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).disabled).toBe(true)
+    expect((screen.getByLabelText('Som medarbeider') as HTMLSelectElement).disabled).toBe(true)
+    expect((screen.getByRole('button', { name: 'Avslutt' }) as HTMLButtonElement).disabled).toBe(true)
+    slipp({ data: svar('localAdmin', { rolle: 'reader', medarbeider: null }) })
+    await waitFor(() => expect(screen.queryByText(/Kalenderen hentes med valget/)).toBeNull())
+    // Som kollega finnes ikke Medarbeidere.
+    expect(fanene()).toEqual([])
+    expect(screen.queryByRole('table')).toBeNull()
+    expect((screen.getByLabelText('Som medarbeider') as HTMLSelectElement).disabled).toBe(false)
+
+    // Et valg av medarbeider bygger på kollega, ikke på den forrige rollen.
+    db.svar.personal_vis_som = { data: simulering('localAdmin', { rolle: 'reader', medarbeider: 'alma' }).simulering }
+    db.svar.personal_grunnlag = { data: svar('localAdmin', { rolle: 'reader', medarbeider: 'alma' }) }
+    await userEvent.selectOptions(screen.getByLabelText('Som medarbeider'), 'alma')
+    await waitFor(() => expect((screen.getByLabelText('Som medarbeider') as HTMLSelectElement).disabled).toBe(false))
+    db.svar.personal_vis_som = { data: simulering('localAdmin').simulering }
+    db.svar.personal_grunnlag = { data: svar('localAdmin') }
     await userEvent.click(screen.getByRole('button', { name: 'Avslutt' }))
-    await waitFor(() =>
-      expect(kallTil('personal_vis_som')).toEqual([
-        { fagmiljo: 'f1', rolle: 'reader', medarbeider: 'alma' },
-        { fagmiljo: 'f1', rolle: null, medarbeider: null },
-      ]),
-    )
+    await waitFor(() => expect(fanene()).toEqual(['Kalender', 'Medarbeidere']))
+    expect(kallTil('personal_vis_som')).toEqual([
+      { fagmiljo: 'f1', rolle: 'reader', medarbeider: null },
+      { fagmiljo: 'f1', rolle: 'reader', medarbeider: 'alma' },
+      { fagmiljo: 'f1', rolle: null, medarbeider: null },
+    ])
   })
 
-  it('viser serverens avvisning', async () => {
+  it('viser ingenting fra den forrige rollen når kalenderen ikke kan hentes, og lar hentingen prøves igjen', async () => {
+    db.svar.personal_grunnlag = { data: svar('localAdmin') }
+    side('medarbeidere')
+    await screen.findByRole('table')
+    db.svar.personal_vis_som = { data: simulering('localAdmin', { rolle: 'reader', medarbeider: null }).simulering }
+    db.svar.personal_grunnlag = { feil: { code: '08006', message: 'Forbindelsen ble brutt.' } }
+    await userEvent.selectOptions(screen.getByLabelText('Rolle'), 'reader')
+    expect((await screen.findByRole('alert')).textContent).toBe('Kalenderen kunne ikke hentes med valget i «Vis som».')
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(fanene()).toEqual([])
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).disabled).toBe(true)
+    db.svar.personal_grunnlag = { data: svar('localAdmin', { rolle: 'reader', medarbeider: null }) }
+    await userEvent.click(screen.getByRole('button', { name: 'Prøv igjen' }))
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull())
+    expect(fanene()).toEqual([])
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).value).toBe('reader')
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).disabled).toBe(false)
+  })
+
+  it('viser serverens avvisning, og henter kalenderen på nytt', async () => {
+    db.svar.personal_grunnlag = { data: svar('localAdmin') }
+    side()
+    await screen.findByLabelText('Rolle')
     db.svar.personal_vis_som = { feil: { code: '42501', message: 'Med «Vis som» kan du bare få færre rettigheter enn du har.' } }
-    render(<VisSom fagmiljo="f1" grunnlag={grunnlag('localAdmin', simulering('localAdmin'))} onEndret={() => {}} />)
+    const for_ = kallTil('personal_grunnlag').length
     await userEvent.selectOptions(screen.getByLabelText('Rolle'), 'planner')
     expect((await screen.findByRole('alert')).textContent).toBe('Med «Vis som» kan du bare få færre rettigheter enn du har.')
+    expect(kallTil('personal_grunnlag').length).toBe(for_ + 1)
+    await waitFor(() => expect((screen.getByLabelText('Rolle') as HTMLSelectElement).disabled).toBe(false))
+    expect((screen.getByLabelText('Rolle') as HTMLSelectElement).value).toBe('localAdmin')
   })
 })
 

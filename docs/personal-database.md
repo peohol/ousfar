@@ -209,6 +209,12 @@ lenger er med etter i dag, kan ikke endres («… er ikke lenger medarbeider.»)
   (`personal.vaktandeler`).
 - `public.personal_medlemmer(fagmiljø)` gir den lokale administratoren de
   aktive medlemmene å velge vaktplanansvarlige blant (`managePlanners`).
+- **«Ny»** (`*_personal_ny_medarbeider.sql`): en medarbeider er ny til
+  vaktene er valgt i den gjeldende perioden (`personal.er_ny`). Et valg med
+  `personal_sett_kvalifikasjoner` kvitterer, også uten vakter: det setter
+  `personal.medarbeidere.vakter_valgt`, øker revisjonen og logges. Den som
+  kommer tilbake etter å ha sluttet, er ny igjen. Lesemodellen gir `ny`
+  sammen med kvalifikasjonene.
 - Lesemodellen gir alle rollene periodene, revisjonen og vaktandelen;
   kvalifikasjonene bare planleggerne, som før.
 
@@ -435,6 +441,8 @@ testdatabasen:
   profilen, avsluttet og nytt medlemskap samme dag og senere, vernet av
   periodene, medlemskapene som følges mens funksjonen står av, et fagmiljø
   der funksjonen aldri har vært i bruk, andre fagmiljøer og Sandkasse;
+- «Ny»: kvittert med et valg uten vakter, revisjonen og loggen, ny igjen
+  etter en ny periode, og skjult for en kollega;
 - innstillingene: rollene, kvalifikasjonene fra i dag, formfeil, foreldet
   revisjon, synligheten, vaktandelen fra i dag og vernet av tidligere dager
   rett i tabellen, og pariteten med `validateDutySchedule` og `changesPast`;

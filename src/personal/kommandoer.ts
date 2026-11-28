@@ -11,6 +11,7 @@ import { klient } from '../auth/klient'
 import { lesbarFeil } from '../auth/databasefeil'
 import { FinnesIkke } from './grunnlag'
 import { lesInnstillinger, type Innstillinger } from './medarbeidere/modell'
+import { tolkSimulering, type Simulering } from './simulering'
 
 async function kall<T>(funksjon: string, argumenter: Record<string, unknown>, les: (svar: unknown) => T): Promise<T> {
   const { data, error } = await klient().rpc(funksjon, argumenter)
@@ -36,6 +37,9 @@ export const hentMedlemmer = (fagmiljo: string): Promise<Medlem[]> =>
 export const settVaktplanansvarlig = (fagmiljo: string, bruker: string, ansvarlig: boolean): Promise<void> =>
   kall('personal_sett_vaktplanansvarlig', { fagmiljo, bruker, ansvarlig }, () => undefined)
 
-/** «Vis som» i et testmiljø: en lavere rolle og/eller én syntetisk medarbeider; begge tomme avslutter. */
-export const visSom = (fagmiljo: string, rolle: Role | null, medarbeider: string | null): Promise<void> =>
-  kall('personal_vis_som', { fagmiljo, rolle, medarbeider }, () => undefined)
+/**
+ * «Vis som» i et testmiljø: en lavere rolle og/eller én syntetisk medarbeider;
+ * begge tomme avslutter. Gir simuleringen slik serveren bekreftet den.
+ */
+export const visSom = (fagmiljo: string, rolle: Role | null, medarbeider: string | null): Promise<Simulering | null> =>
+  kall('personal_vis_som', { fagmiljo, rolle, medarbeider }, tolkSimulering)

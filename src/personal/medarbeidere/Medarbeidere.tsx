@@ -2,6 +2,7 @@ import { can } from '@delt/personal/permissions'
 import { useMemo } from 'react'
 import { Button } from '../../components/Button'
 import { Ikon } from '../../components/ikon/Ikon'
+import { Avatar } from '../../components/konto/Avatar'
 import { Merke } from '../../components/Merke'
 import { useBevart } from '../../oppdatering/Bevaring'
 import type { Faneinnhold } from '../faner'
@@ -18,6 +19,15 @@ import { Vaktplanansvarlige } from './Vaktplanansvarlige'
  * administratoren velger de vaktplanansvarlige under tabellen. En kollega ser
  * medarbeiderne, stillingen og vaktandelen, men ikke vaktene og ingen knapper.
  */
+/**
+ * Navnet som profilen avataren viser forbokstavene fra. Bare forbokstavene:
+ * profilbilder i kalenderen venter på §8.13.
+ */
+function navneprofil(navn: string) {
+  const deler = navn.trim().split(/\s+/)
+  return { first_name: deler[0] ?? '', last_name: deler.length > 1 ? deler[deler.length - 1]! : '', username: navn, avatar_path: null }
+}
+
 export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
   const g = useMemo(() => lesMedarbeidergrunnlag(grunnlag), [grunnlag])
   const folk = iFanen(g)
@@ -69,6 +79,7 @@ export function Medarbeidere({ fagmiljo, grunnlag, hentPaNytt }: Faneinnhold) {
                   <tr key={m.id} className={ny ? 'personaltabell__ny' : undefined}>
                     <th scope="row">
                       <span className="personaltabell__person">
+                        <Avatar profil={navneprofil(m.navn)} storrelse="liten" />
                         {m.navn}
                         {ny && <Merke>Ny</Merke>}
                       </span>

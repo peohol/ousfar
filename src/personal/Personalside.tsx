@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId } from 'react'
+import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import type { Fagmiljoreferanse } from '../auth/rettigheter'
 import { Button } from '../components/Button'
 import { useFanetittel } from '../components/grupper/gruppedeler'
@@ -9,6 +9,10 @@ import { useHenting } from '../hooks/useHenting'
 import { useLukkMedEscape } from '../hooks/useLukkMedEscape'
 import { fanerFor } from './faner'
 import { FinnesIkke, hentGrunnlag, type Personalgrunnlag } from './grunnlag'
+import { visSom } from './kommandoer'
+import { lesMedarbeidergrunnlag } from './medarbeidere/modell'
+import type { Kalenderrolle } from './roller'
+import { lesSimulering, type Simulering } from './simulering'
 import { VisSom } from './VisSom'
 import '../styles/grupper.css'
 import './personal.css'
@@ -25,6 +29,10 @@ type Svar = { finnes: true; grunnlag: Personalgrunnlag } | { finnes: false }
  * avsluttet — sier siden fra med `onFinnesIkke`. Appen gjør da ruten om til
  * en ukjent adresse og henter rettighetene på nytt, så siden, tittelen,
  * sidestien og menyen blir som for en adresse den ikke kjenner (K-SKJ-2).
+ *
+ * Et valg i «Vis som» endrer rollen hele siden bygger på. Til kalenderen er
+ * hentet på nytt med den nye rollen, vises ingen fane og intet innhold fra den
+ * forrige, og valgene er låst; feiler hentingen, kan den prøves igjen.
  */
 export function Personalside({
   fagmiljo,
@@ -82,21 +90,44 @@ function Kalenderflate({
   /** `null` til grunnlaget er hentet, eller når det ikke kunne hentes (`feil`). */
   grunnlag: Personalgrunnlag | null
   feil: string | null
-  hentPaNytt: () => void
+  hentPaNytt: () => Promise<boolean>
   onGaaTil: (rute: Rute, valg?: { erstatt?: boolean }) => void
   onLukk: () => void
 }) {
   const overskrift = useId()
+  // Et valg i «Vis som» som venter på at kalenderen hentes med den nye rollen, eller som ikke fikk hentet den.
+  const [bytte, setBytte] = useState<'venter' | 'feil' | null>(null)
+  // Simuleringen serveren bekreftet, til den står i grunnlaget.
+  const [bekreftet, setBekreftet] = useState<Simulering | null>(null)
+  const hentMedNyRolle = useCallback(async () => {
+    setBytte('venter')
+    const ok = await hentPaNytt()
+    setBytte(ok ? null : 'feil')
+    if (ok) setBekreftet(null)
+  }, [hentPaNytt])
+  const velgVisSom = useCallback(
+    async (rolle: Kalenderrolle | null, medarbeider: string | null) => {
+      setBytte('venter')
+      try {
+        setBekreftet(await visSom(fagmiljo.id, rolle, medarbeider))
+      } finally {
+        // Også etter en avvisning: rollen kan være endret et annet sted imens.
+        await hentMedNyRolle()
+      }
+    },
+    [fagmiljo.id, hentMedNyRolle],
+  )
+  const syntetiske = useMemo(() => (grunnlag ? lesMedarbeidergrunnlag(grunnlag).medarbeidere.filter((m) => m.syntetisk) : []), [grunnlag])
   useLukkMedEscape(onLukk)
   useFanetittel('Kalender')
   useEffect(() => {
     document.getElementById(overskrift)?.focus({ preventScroll: true })
   }, [overskrift])
 
-  const faner = grunnlag ? fanerFor(grunnlag.rolle) : []
+  const faner = grunnlag && !bytte ? fanerFor(grunnlag.rolle) : []
   const valgt = faner.find((f) => f.id === fane)
   // En fane rollen ikke ser, er selve kalenderen, og adressen skrives om til den.
-  const ikkeForRollen = grunnlag !== null && fane !== undefined && !valgt
+  const ikkeForRollen = grunnlag !== null && !bytte && fane !== undefined && !valgt
   useEffect(() => {
     if (ikkeForRollen) onGaaTil({ side: 'kalender' }, { erstatt: true })
   }, [ikkeForRollen, onGaaTil])
@@ -112,7 +143,7 @@ function Kalenderflate({
         <h1 id={overskrift} className="gruppeside__tittel" tabIndex={-1}>
           Kalender
         </h1>
-        {grunnlag && <VisSom fagmiljo={fagmiljo.id} grunnlag={grunnlag} onEndret={hentPaNytt} />}
+        {grunnlag && <VisSom simulering={bekreftet ?? lesSimulering(grunnlag)} medarbeidere={syntetiske} last={bytte !== null} onVelg={velgVisSom} />}
         {faner.length > 1 && (
           <nav aria-label="Kalender">
             <ul className="gruppeside__faner">
@@ -134,6 +165,23 @@ function Kalenderflate({
           </p>
           <div>
             <Button variant="kant" onClick={hentPaNytt}>
+              Prøv igjen
+            </Button>
+          </div>
+        </div>
+      )}
+      {bytte === 'venter' && (
+        <p className="gruppeside__ingress" role="status">
+          Kalenderen hentes med valget i «Vis som» …
+        </p>
+      )}
+      {bytte === 'feil' && (
+        <div className="gruppeside__del">
+          <p className="skjemafeil" role="alert">
+            Kalenderen kunne ikke hentes med valget i «Vis som».
+          </p>
+          <div>
+            <Button variant="kant" onClick={() => void hentMedNyRolle()}>
               Prøv igjen
             </Button>
           </div>
