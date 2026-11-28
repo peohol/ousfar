@@ -483,6 +483,7 @@ describe('utsendingen fra Edge-funksjonen', () => {
       borte: 0,
       feil: 0,
       hoppet: 0,
+      stoppet: 0,
     })
     const [rad] = (await db.query<{ id: string }>('select id from intern.enhetsvarsler')).rows
     for (const e of [enheter.arkitektB, enheter.arkitektB2]) {
@@ -510,7 +511,7 @@ describe('utsendingen fra Edge-funksjonen', () => {
       hent: push.hent,
       vent,
     })
-    expect(utfall).toEqual({ sendt: 2, borte: 0, feil: 2, hoppet: 0 })
+    expect(utfall).toEqual({ sendt: 2, borte: 0, feil: 2, hoppet: 0, stoppet: 0 })
     expect(
       push.mottatt
         .filter((m) => m.status === 201)
@@ -556,6 +557,114 @@ describe('utsendingen fra Edge-funksjonen', () => {
     ])
     expect(await rader()).toMatchObject([{ nokkel: 'a', versjon: 2, ferdig: false, sendt_til: [] }])
     expect((await sendAlt()).map((v) => v.tekst)).toEqual(['Byttet underveis'])
+  })
+
+  /** En utsending der `endring` skjer rett etter hentingen, før den siste kontrollen og push-kallene. */
+  const etterHenting = (endring: () => Promise<unknown>): Varseldatabase => {
+    const klient = tjenesteklient()
+    let gjort = false
+    return {
+      rpc: async (navn, argumenter) => {
+        const svar = await klient.rpc(navn, argumenter)
+        if (navn === 'enhetsvarsel_hent' && !gjort && Array.isArray(svar.data) && svar.data.length > 0) {
+          gjort = true
+          await endring()
+        }
+        return svar
+      },
+    }
+  }
+  const send = async (db: Varseldatabase, push = pushtjeneste()) => ({
+    utfall: await sendEnhetsvarsler({ db, nokler: await nyeVapidnokler(), kontakt: 'https://ousfar.example', hent: push.hent, vent }),
+    push,
+  })
+  const tekster = async (push: ReturnType<typeof pushtjeneste>) =>
+    Promise.all(push.mottatt.map(async (m) => (JSON.parse(await dekrypter(m.kropp, enheter.arkitektB)) as { tekst: string }).tekst))
+
+  describe('endringer etter hentingen, før push-kallet', () => {
+    beforeEach(async () => {
+      await lagre('arkitektB', enheter.arkitektB)
+      await planlegg([varsel('arkitektB', 'a', await om(-5))])
+    })
+
+    it.each<[string, () => Promise<unknown>]>([
+      ['avlyst', () => avlys(['a'])],
+      ['ikke lenger tillatt (grunnlaget borte)', () => db.exec(`delete from intern.provegrunnlag where nokkel = 'a'`)],
+      ['funksjonen slått av', () => kall('arkitektB', 'select public.sett_funksjonsbryter($1, $2, $3, $4)', [FUNKSJON, T, 'av', GRUNN])],
+      ['formålet slått av', () => kall('arkitektB', 'select public.sett_enhetsvarselvalg($1, false)', [FORMAL])],
+      ['logget ut', () => kall('arkitektB', 'select public.slett_pushabonnement($1)', [enheter.arkitektB.abonnement.endepunkt])],
+      [
+        'fristen passert',
+        () => db.exec(`update intern.enhetsvarsler set kl = now() - interval '1 hour', senest_kl = now() - interval '1 minute'`),
+      ],
+    ])('sender ikke når varselet er %s', async (_, endring) => {
+      const { utfall, push } = await send(etterHenting(endring))
+      expect(push.mottatt).toEqual([])
+      expect(utfall).toMatchObject({ sendt: 0, stoppet: 1 })
+    })
+
+    it('sender bare det nye når varselet er byttet ut til et nytt tidspunkt', async () => {
+      const kl = await om(-1)
+      const { utfall, push } = await send(etterHenting(() => planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Nytt tidspunkt' })])))
+      expect(await tekster(push)).toEqual(['Nytt tidspunkt'])
+      expect(utfall).toMatchObject({ sendt: 1, stoppet: 1 })
+      expect(await rader()).toMatchObject([{ nokkel: 'a', versjon: 2, ferdig: true }])
+    })
+
+    it('sender bare det nye, én gang, når innholdet er byttet ut til samme tidspunkt', async () => {
+      const kl = (await db.query<{ t: string }>('select kl::text as t from intern.enhetsvarsler')).rows[0]!.t
+      const { push } = await send(etterHenting(() => planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Samme tid, ny tekst' })])))
+      expect(await tekster(push)).toEqual(['Samme tid, ny tekst'])
+      expect(await rader()).toMatchObject([{ nokkel: 'a', versjon: 2, ferdig: true }])
+    })
+
+    it('sender ikke en gang til når innholdet byttes ut til samme tidspunkt mens push-kallet pågår', async () => {
+      const kl = (await db.query<{ t: string }>('select kl::text as t from intern.enhetsvarsler')).rows[0]!.t
+      const push = pushtjeneste()
+      let byttet = false
+      const hentPush = (async (url: string, init: RequestInit) => {
+        if (!byttet) {
+          byttet = true
+          await planlegg([varsel('arkitektB', 'a', kl, { tekst: 'Byttet under push-kallet' })])
+        }
+        return push.hent(url, init)
+      }) as unknown as typeof fetch
+      await sendEnhetsvarsler({
+        db: tjenesteklient(),
+        nokler: await nyeVapidnokler(),
+        kontakt: 'https://ousfar.example',
+        hent: hentPush,
+        vent,
+      })
+      expect(await tekster(push)).toEqual(['Syntetisk påminnelse'])
+      expect(await rader()).toMatchObject([{ nokkel: 'a', versjon: 2, ferdig: true }])
+    })
+  })
+
+  it('gir push-tjenesten høyst tiden som er igjen til fristen', async () => {
+    await lagre('arkitektB', enheter.arkitektB)
+    await planlegg([varsel('arkitektB', 'a', await om(-5), { senest: await om(600) })])
+    const { push } = await send(tjenesteklient())
+    const ttl = Number(push.mottatt[0]!.hoder.TTL)
+    expect(ttl).toBeGreaterThan(590)
+    expect(ttl).toBeLessThanOrEqual(600)
+  })
+
+  it('den siste kontrollen gir bare varsler som skal sendes, og tåler feil form', async () => {
+    await lagre('arkitektB', enheter.arkitektB)
+    await planlegg([varsel('arkitektB', 'a', await om(-5), { senest: await om(300) })])
+    const [v] = await hent()
+    const bekreft = async (varsler: unknown) =>
+      (await somTjeneste((tx) => tx.query<{ v: unknown }>('select public.enhetsvarsel_bekreft($1) as v', [JSON.stringify(varsler)])))
+        .rows[0]!.v
+    const gyldig = { nr: 0, id: v!.id, versjon: v!.versjon, endepunkt: v!.endepunkt }
+    expect(await bekreft([gyldig])).toEqual([{ nr: 0, levetid: expect.any(Number) }])
+    expect(await bekreft([{ ...gyldig, versjon: 2 }])).toEqual([])
+    expect(await bekreft([{ ...gyldig, endepunkt: enheter.vanligB.abonnement.endepunkt }])).toEqual([])
+    expect(await bekreft({ ikke: 'en liste' })).toEqual([])
+    await kvitter([{ ...gyldig, svar: 'sendt' }])
+    expect(await bekreft([gyldig])).toEqual([])
+    expect(await feilkode('arkitektB', 'select public.enhetsvarsel_bekreft($1)', ['[]'])).toBe('42501')
   })
 
   it('leser bare varsler med riktig form', () => {

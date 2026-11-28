@@ -142,9 +142,12 @@ revoke all on function intern.enhetsvarsler_sti() from public, anon, authenticat
 
 -- Ett varsel per formål, mottaker og nøkkel. Nøkkelen velger eierprosjektet
 -- (for eksempel `vakt:<tildeling>:dagen-for`); med den byttes varselet ut
--- eller avlyses. `versjon` øker hver gang det byttes ut, så et svar fra en
--- utsending som pågikk da, aldri gjelder det nye. `sendt_til` er enhetene
--- (endepunktene) den gjeldende versjonen er sendt til; `ferdig_kl` står når
+-- eller avlyses. `versjon` øker hver gang det byttes ut, så det som sendes,
+-- alltid er den gjeldende versjonen (`enhetsvarsel_bekreft`). `tidsversjon`
+-- er den første versjonen med det gjeldende tidspunktet: et svar på en
+-- versjon fra og med den gjelder, så en enhet aldri får to varsler til samme
+-- tidspunkt. `sendt_til` er enhetene (endepunktene) som har fått varselet til
+-- det gjeldende tidspunktet; `ferdig_kl` står når
 -- varselet er sendt eller stoppet, og raden blir stående til
 -- `enhetsvarsel_oppbevaring()` etter fristen, så det samme varselet aldri
 -- sendes to ganger om det planlegges på nytt.
@@ -162,6 +165,7 @@ create table intern.enhetsvarsler (
   kl timestamptz not null,
   senest_kl timestamptz not null,
   versjon integer not null default 1,
+  tidsversjon integer not null default 1,
   forsok integer not null default 0,
   neste_kl timestamptz not null,
   sendt_til text[] not null default '{}',
@@ -397,6 +401,7 @@ begin
         senest_kl = excluded.senest_kl,
         neste_kl = excluded.kl,
         versjon = v.versjon + 1,
+        tidsversjon = case when v.kl = excluded.kl then v.tidsversjon else v.versjon + 1 end,
         forsok = 0,
         -- Samme tidspunkt: enhetene som alt har fått det, får det ikke igjen.
         sendt_til = case when v.kl = excluded.kl then v.sendt_til else '{}' end,
@@ -645,6 +650,46 @@ grant execute on function public.enhetsvarsel_hent() to service_role;
 comment on function public.enhetsvarsel_hent() is
   'Gir de planlagte varslene på enheten som skal sendes nå, etter kontrollen, og holder dem mens de sendes (#600). Bare for Edge-funksjonen chatvarsel-utsending. Se docs/enhetsvarsler.md.';
 
+-- Den siste kontrollen, rett før push-kallene (`sendFraKilde`): gir de av
+-- varslene fra `enhetsvarsel_hent` (`[{nr, id, versjon, endepunkt}]`) som
+-- fortsatt skal sendes, med hvor mange sekunder det er igjen til fristen
+-- (`[{nr, levetid}]`), så push-tjenesten aldri leverer et varsel etter
+-- fristen. Et varsel skal fortsatt sendes når det ikke er avlyst, ferdig
+-- eller byttet ut (samme versjon), fristen ikke er passert, enheten ikke har
+-- fått det og fortsatt er abonnementet til mottakeren, og
+-- `intern.enhetsvarsel_tillatt` sier ja. Det som ikke skal sendes, røres
+-- ikke: `enhetsvarsel_hent` avgjør det neste gang.
+create function public.enhetsvarsel_bekreft(varsler jsonb)
+returns jsonb
+language sql
+security definer
+set search_path = ''
+as $$
+  with onsket as (
+    select x.nr, x.id, x.versjon, x.endepunkt
+    from jsonb_to_recordset(case when jsonb_typeof(enhetsvarsel_bekreft.varsler) = 'array' then enhetsvarsel_bekreft.varsler else '[]' end)
+      as x(nr integer, id uuid, versjon integer, endepunkt text)
+    where x.nr is not null and x.id is not null and x.endepunkt is not null
+  ), gjeldende as materialized (
+    select v.id, v.versjon, v.bruker_id, v.sendt_til,
+           floor(extract(epoch from v.senest_kl - now()))::integer as levetid
+    from intern.enhetsvarsler v
+    where v.id in (select o.id from onsket o)
+      and v.ferdig_kl is null and v.kl <= now() and v.senest_kl >= now() + interval '1 second'
+      and intern.enhetsvarsel_tillatt(v)
+  )
+  select coalesce(jsonb_agg(jsonb_build_object('nr', o.nr, 'levetid', g.levetid) order by o.nr), '[]'::jsonb)
+  from onsket o
+  join gjeldende g on g.id = o.id and g.versjon = o.versjon and o.endepunkt <> all (g.sendt_til)
+  where exists (select 1 from public.pushabonnementer p where p.bruker_id = g.bruker_id and p.endepunkt = o.endepunkt)
+$$;
+
+revoke all on function public.enhetsvarsel_bekreft(jsonb) from public, anon, authenticated, service_role;
+grant execute on function public.enhetsvarsel_bekreft(jsonb) to service_role;
+
+comment on function public.enhetsvarsel_bekreft(jsonb) is
+  'Den siste kontrollen rett før push-kallene: gir de planlagte varslene som fortsatt skal sendes, med sekundene til fristen (#600). Bare for Edge-funksjonen chatvarsel-utsending. Se docs/enhetsvarsler.md.';
+
 -- Hva push-tjenesten svarte på hvert varsel fra `enhetsvarsel_hent`
 -- (`[{id, versjon, endepunkt, svar}]`, `svar` som for chatvarslene):
 --   sendt, hoppet – enheten har fått det (eller skal ikke ha det);
@@ -652,7 +697,8 @@ comment on function public.enhetsvarsel_hent() is
 --                   `chatvarsel_maks_forsok()` ganger;
 --   borte         – abonnementet finnes ikke lenger og slettes.
 -- Et varsel er ferdig når alle mottakerens enheter har fått det. Et svar på en
--- eldre versjon (varselet er byttet ut underveis) gjelder ikke.
+-- eldre versjon med det samme tidspunktet gjelder (enheten har fått varselet
+-- til det tidspunktet); et svar fra før tidspunktet ble endret, gjelder ikke.
 -- Svarene fra Edge-funksjonen som rader; ukjente svar tas ikke med.
 create function intern.enhetsvarselsvar(utfall jsonb)
 returns table (id uuid, versjon integer, endepunkt text, svar text)
@@ -682,11 +728,11 @@ as $$
     select coalesce(array_agg(distinct e order by e), '{}')
     from unnest(v.sendt_til || array(
       select r.endepunkt from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r
-      where r.id = v.id and r.versjon = v.versjon and r.svar in ('sendt', 'hoppet')
+      where r.id = v.id and r.versjon between v.tidsversjon and v.versjon and r.svar in ('sendt', 'hoppet')
     )) e
   )
   where v.ferdig_kl is null
-    and exists (select 1 from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r where r.id = v.id and r.versjon = v.versjon);
+    and exists (select 1 from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r where r.id = v.id and r.versjon between v.tidsversjon and v.versjon);
 
   update intern.enhetsvarsler v
   set ferdig_kl = case when not exists (
@@ -696,12 +742,12 @@ as $$
       neste_kl = case
         when exists (
           select 1 from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r
-          where r.id = v.id and r.versjon = v.versjon and r.svar = 'feil'
+          where r.id = v.id and r.versjon between v.tidsversjon and v.versjon and r.svar = 'feil'
         ) then now() + v.forsok * v.forsok * interval '1 second'
         else now()
       end
   where v.ferdig_kl is null
-    and exists (select 1 from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r where r.id = v.id and r.versjon = v.versjon);
+    and exists (select 1 from intern.enhetsvarselsvar(enhetsvarsel_kvitter.utfall) r where r.id = v.id and r.versjon between v.tidsversjon and v.versjon);
 $$;
 
 revoke all on function public.enhetsvarsel_kvitter(jsonb) from public, anon, authenticated, service_role;

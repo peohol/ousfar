@@ -11,7 +11,7 @@
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { chatvarselemne, chatvarselinnhold, erPushtjeneste } from '@delt/chatvarsel'
-import { erUtloser, MAKS_RUNDER, sendChatvarsler, vapidFraMiljo, VAPID_MILJO, type Varseldatabase } from '../../supabase/functions/_edge/chatvarsler'
+import { erUtloser, LEVETID_SEKUNDER, MAKS_RUNDER, sendChatvarsler, vapidFraMiljo, VAPID_MILJO, type Varseldatabase } from '../../supabase/functions/_edge/chatvarsler'
 import type { Bytes, Pushabonnement } from '../../supabase/functions/_edge/webpush'
 import { byggPersongalleri, fjernAlleMedlemskap, type Person, type Persongalleri } from './hjelp/persongalleri'
 import { feilFra, nyDatabase, som } from './hjelp/testdatabase'
@@ -407,11 +407,12 @@ describe('utsendingen fra Edge-funksjonen', () => {
 
     const push = pushtjeneste((url) => (url === enheter.dobbeltAB.abonnement.endepunkt ? 410 : 201))
     const utfall = await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent: push.hent, vent })
-    expect(utfall).toEqual({ sendt: 1, borte: 1, feil: 0, hoppet: 0 })
+    expect(utfall).toEqual({ sendt: 1, borte: 1, feil: 0, hoppet: 0, stoppet: 0 })
     expect(push.mottatt).toHaveLength(2)
 
     const tilA = push.mottatt.find((m) => m.url === enheter.vanligA.abonnement.endepunkt)!
     expect(tilA.hoder.Topic).toBe(chatvarselemne(agruppe))
+    expect(tilA.hoder.TTL).toBe(String(LEVETID_SEKUNDER))
     expect(tilA.hoder.Authorization).toMatch(new RegExp(`^vapid t=.+, k=${nokler.offentlig}$`))
     const innhold = JSON.parse(await dekrypter(tilA.kropp, enheter.vanligA))
     expect(innhold).toEqual({
@@ -440,7 +441,7 @@ describe('utsendingen fra Edge-funksjonen', () => {
       hent: push.hent,
       vent: async (ms) => void (ventet.push(ms), await tidenGaar()),
     })
-    expect(utfall).toEqual({ sendt: 2, borte: 0, feil: 2, hoppet: 0 })
+    expect(utfall).toEqual({ sendt: 2, borte: 0, feil: 2, hoppet: 0, stoppet: 0 })
     expect(ventet).toEqual([1000, 4000])
     expect(push.mottatt.filter((m) => m.status === 201).map((m) => m.url).sort()).toEqual(
       [enheter.vanligA.abonnement.endepunkt, enheter.dobbeltAB.abonnement.endepunkt].sort(),
@@ -456,7 +457,7 @@ describe('utsendingen fra Edge-funksjonen', () => {
     await tidenGaar()
     const push = pushtjeneste(() => 500)
     const forste = await sendChatvarsler({ db: tjenesteklient(), nokler, kontakt: 'https://ousfar.example', hent: push.hent, vent })
-    expect(forste).toEqual({ sendt: 0, borte: 0, feil: MAKS_RUNDER, hoppet: 0 })
+    expect(forste).toEqual({ sendt: 0, borte: 0, feil: MAKS_RUNDER, hoppet: 0, stoppet: 0 })
     expect(await utsendinger()).toEqual([{ endepunkt: enheter.vanligA.abonnement.endepunkt, forsok: MAKS_RUNDER }])
     // Neste utsending (en ny melding et annet sted) tar det femte og siste forsøket.
     await tidenGaar()
@@ -502,6 +503,7 @@ describe('utsendingen fra Edge-funksjonen', () => {
       borte: 0,
       feil: 0,
       hoppet: 1,
+      stoppet: 0,
     })
     expect(push.mottatt).toEqual([])
     expect(await utsendinger()).toEqual([])

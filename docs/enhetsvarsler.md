@@ -87,7 +87,9 @@ Reglene:
   `('2027-03-27'::date + time '15:00') at time zone 'Europe/Oslo'`.
 - **Utbytting.** Samme mottaker og nøkkel gir det samme varselet. Et nytt
   innhold eller tidspunkt bytter det ut (`versjon` øker), så det aldri blir to.
-  Et uendret varsel skriver ingenting.
+  Et uendret varsel skriver ingenting. En enhet som alt har fått varselet til
+  et tidspunkt, får det ikke igjen når bare innholdet byttes ut
+  (`tidsversjon`); et nytt tidspunkt gir et nytt varsel.
 - **Sendt er sendt.** Et varsel som alt er sendt, røres ikke når det planlegges
   på nytt til samme tidspunkt, og kan ikke avlyses; det blir stående et døgn
   etter fristen nettopp for at det ikke skal sendes igjen. Et nytt tidspunkt
@@ -123,16 +125,50 @@ Reglene:
    mottakerens enheter, kryptert for den ene nettleseren, med emnet (`Topic`)
    fra varselets ID. Mens det sendes, holder databasen varselet, så to
    utsendinger aldri sender det samme.
+   - **Den siste kontrollen.** Rett før push-kallene kontrollerer
+     `public.enhetsvarsel_bekreft(varsler)` alt på nytt for hvert varsel og
+     hver enhet. Varselet må ikke være avlyst, ferdig eller byttet ut (samme
+     `versjon`), og fristen må ikke være passert. Enheten må ikke ha fått det,
+     og den må fortsatt være mottakerens abonnement. Til slutt må
+     `intern.enhetsvarsel_tillatt` si ja. Det som ikke består, sendes ikke
+     (`stoppet`), og `enhetsvarsel_hent` avgjør det neste gang. Et varsel som
+     er byttet ut, sendes i neste runde med det nye innholdet.
+   - **Levetiden hos push-tjenesten** (`TTL`) er tiden som er igjen til
+     fristen, regnet fra den siste kontrollen. En enhet som er av, får derfor
+     aldri et planlagt varsel etter fristen. Chatvarslene beholder ett døgn
+     (`LEVETID_SEKUNDER`).
 4. **Kvitteringen.** `public.enhetsvarsel_kvitter(utfall)` fører hver enhet som
    har fått det (`sendt_til`). Varselet er ferdig når alle mottakerens enheter
    har fått det. En midlertidig feil prøves igjen bare for de enhetene som
    mangler, etter 1, 4, 9 … sekunder, høyst fem ganger. Svarer push-tjenesten
-   at et abonnement er borte, slettes det. Et svar på en eldre versjon (varselet
-   ble byttet ut underveis) gjelder ikke den nye.
+   at et abonnement er borte, slettes det. Et svar på en eldre versjon med det
+   samme tidspunktet gjelder, fordi enheten har fått varselet til det
+   tidspunktet, så det ikke sendes en gang til. Et svar fra før tidspunktet ble
+   endret, gjelder ikke.
 5. **Visningen.** Tjenestearbeideren (`public/chatvarsler.js`) viser varselet og
    åpner adressen ved trykk. Adressen må ha den felles formen
    (`VARSELSTI` i `supabase/functions/_delt/enhetsvarsel.ts`), som databasen,
    Edge-funksjonen og tjenestearbeideren alle kontrollerer.
+
+### Hva som kan garanteres
+
+- **Ingen push startes etter at en endring er lagret.** Det gjelder avlysning,
+  utbytting, fristen, tilgangen, valget og utlogging. Push-kallet startes bare
+  for det den siste kontrollen godtok. Det som avlyses eller byttes ut før den
+  kontrollen, sendes ikke.
+- **Det som alt er sendt, kan ikke trekkes tilbake.** En endring som lagres
+  mens den siste kontrollen og push-kallet pågår, kan ikke stoppe det. Det tar
+  normalt millisekunder: krypteringen og selve kallet til push-tjenesten. Da
+  har enheten fått det gamle varselet. Er innholdet byttet ut til samme
+  tidspunkt, får enheten ikke det nye i tillegg. Er tidspunktet endret,
+  kommer det nye til sin tid og erstatter det gamle på enheten, fordi de har
+  samme merke. Et avlyst varsel som alt er levert, blir stående på enheten.
+- **Ingen levering etter fristen**, heller ikke til en enhet som har vært av,
+  fordi levetiden hos push-tjenesten slutter ved fristen.
+- **Høyst ett varsel per enhet og tidspunkt**, så lenge push-tjenesten svarer.
+  Får Edge-funksjonen ikke svar (tidsavbrudd), prøves det igjen. Har
+  push-tjenesten likevel levert det første, viser enheten det samme varselet
+  på nytt i stedet for det forrige (samme merke).
 
 **Ryddingen.** Ved hver henting og i nattjobben
 (`.github/workflows/gruppechat-lagringstid.yml`, «Planlagte varsler på
@@ -172,7 +208,11 @@ det av, ikke får flere chatvarsler, heller ikke dem som venter.
   (til rett tid og én gang, utbytting, avlysning med nøkler og prefiks, mange i
   én operasjon, erstatning, fristen, feil form), kontrollen før utsending
   (grunnlaget borte, kontrollen feiler, funksjonen av, medlemskapet avsluttet,
-  valget av, utlogget), utsendingen ende til ende med en falsk push-tjeneste,
+  valget av, utlogget), den siste kontrollen med endringer etter hentingen og
+  før push-kallet (avlyst, ikke lenger tillatt, funksjonen eller valget av,
+  utlogget, fristen passert, byttet ut til nytt eller samme tidspunkt, og
+  byttet ut mens push-kallet pågår), levetiden hos push-tjenesten,
+  utsendingen ende til ende med en falsk push-tjeneste,
   chatvalget, klokken og nattjobben, mot testdatabasen med et syntetisk formål.
 - `src/__tests__/enhetsvarsler.valg.test.tsx`: bryteren for enheten, valgene
   per formål og veien fra chatinnstillingene.
