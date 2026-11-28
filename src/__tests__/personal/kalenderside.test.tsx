@@ -124,7 +124,8 @@ async function visApp(adresse: string) {
 async function somUkjentAdresse(adresse: string) {
   expect(await screen.findByRole('heading', { level: 1, name: 'Siden finnes ikke' })).toBeTruthy()
   expect(window.location.hash).toBe(adresse)
-  expect(document.title).toBe('Siden finnes ikke – OUSFAR')
+  // Tittelen settes når siden er vist, og kan komme litt etter overskriften.
+  await waitFor(() => expect(document.title).toBe('Siden finnes ikke – OUSFAR'))
   expect(document.querySelector('.app')?.getAttribute('data-side')).toBe('ukjent')
 }
 
