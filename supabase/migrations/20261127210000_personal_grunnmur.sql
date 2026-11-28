@@ -97,9 +97,37 @@ create trigger vaktplanansvarlige_logg
 after insert or update or delete on personal.vaktplanansvarlige
 for each row execute function intern.loggfor_tilgang();
 
+-- Hvem, hvor, fra når og hvem som utpekte står fast; en avsluttet utpeking
+-- står som den ble avsluttet. Bare slettingen av en konto nuller
+-- `tildelt_av` og `avsluttet_av`.
+create function personal.kontroller_vaktplanansvarlig()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  felt text;
+begin
+  if personal.bare_kontosletting(to_jsonb(old), to_jsonb(new), array['tildelt_av', 'avsluttet_av']) then
+    return new;
+  end if;
+  foreach felt in array array['id', 'fagmiljo_id', 'bruker_id', 'fra', 'tildelt_av']
+    || case when old.til is not null then array['til', 'avsluttet_av'] else '{}'::text[] end
+  loop
+    if to_jsonb(new) -> felt is distinct from to_jsonb(old) -> felt then
+      raise exception 'Feltet % kan ikke endres. Avslutt raden og lag en ny.', felt using errcode = '42501';
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+
+revoke all on function personal.kontroller_vaktplanansvarlig() from public, anon, authenticated, service_role;
+
 create trigger vaktplanansvarlige_faste_felter
 before update on personal.vaktplanansvarlige
-for each row execute function intern.tilgang_faste_felter('id', 'fagmiljo_id', 'bruker_id', 'fra', 'tildelt_av');
+for each row execute function personal.kontroller_vaktplanansvarlig();
 
 -- Er brukeren utpekt som vaktplanansvarlig i fagmiljøet nå? En utpeking
 -- gjelder bare i medlemskapet den ble gitt i: et medlemskap som avsluttes og
@@ -169,6 +197,70 @@ $$;
 
 revoke all on function personal.krev_tilgang(uuid, text) from public, anon, authenticated, service_role;
 
+-- Alt som endrer personalkalenderen, kjøres i `read committed`, som
+-- data-API-et bruker. Kontrollene etter en lås ser da det siste som er lagret,
+-- også det en annen transaksjon lagret mens denne ventet. I `repeatable read`
+-- og strengere ville de sett tilstanden fra før ventingen, så der stoppes
+-- endringen heller enn å avgjøres på gamle data (som `intern.las_tilgang`).
+create function personal.krev_ferske_data()
+returns void
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if current_setting('transaction_isolation') <> 'read committed' then
+    raise exception 'Personalkalenderen må endres i read committed.' using errcode = '25001';
+  end if;
+end;
+$$;
+
+revoke all on function personal.krev_ferske_data() from public, anon, authenticated, service_role;
+
+-- Låsen for fagmiljøets oppsett. En ny versjon tar den eksklusivt; det som
+-- leser reglene for å endre noe (kvalifikasjonene, og kalenderen i neste del),
+-- tar den delt. En status kan da ikke fjernes mens den tas i bruk, eller tas i
+-- bruk mens den fjernes: den som kommer sist, venter og ser den andres endring.
+create function personal.las_oppsett(fagmiljo uuid, eksklusiv boolean default false)
+returns void
+language plpgsql
+set search_path = ''
+as $$
+begin
+  perform personal.krev_ferske_data();
+  if las_oppsett.eksklusiv then
+    perform pg_advisory_xact_lock(hashtextextended('personal.oppsett:' || las_oppsett.fagmiljo::text, 0));
+  else
+    perform pg_advisory_xact_lock_shared(hashtextextended('personal.oppsett:' || las_oppsett.fagmiljo::text, 0));
+  end if;
+end;
+$$;
+
+revoke all on function personal.las_oppsett(uuid, boolean) from public, anon, authenticated, service_role;
+
+-- Når en konto slettes, nuller fremmednøklene `on delete set null` feltene som
+-- pekte på den. Er det den eneste forskjellen mellom radene, er oppdateringen
+-- følgen av slettingen og ikke en redigering: da slipper de uforanderlige
+-- radene den gjennom, så kontoen kan slettes som før (docs/brukere.md).
+create function personal.bare_kontosletting(gammel jsonb, ny jsonb, felt text[])
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select gammel is distinct from ny and not exists (
+    select 1 from jsonb_each(gammel) g
+    where g.value is distinct from ny -> g.key
+      and not case
+        when g.key = any (bare_kontosletting.felt) and ny -> g.key = 'null'::jsonb
+          then not exists (select 1 from public.profiles p where p.id = (g.value #>> '{}')::uuid)
+        else false
+      end
+  )
+$$;
+
+revoke all on function personal.bare_kontosletting(jsonb, jsonb, text[]) from public, anon, authenticated, service_role;
+
 -- Porten for kommandoene som endrer noe. Tar først den felles tilgangslåsen
 -- delt (som direktemeldingene, `intern.las_tilgang` tar den eksklusivt), så
 -- kommandoen venter på en samtidig endring av medlemskap og roller, og en slik
@@ -182,6 +274,7 @@ security definer
 set search_path = ''
 as $$
 begin
+  perform personal.krev_ferske_data();
   perform pg_advisory_xact_lock_shared(hashtextextended('ousfar.tilgang', 0));
   return personal.krev_tilgang(krev_skrivetilgang.fagmiljo, krev_skrivetilgang.handling);
 end;
@@ -556,13 +649,16 @@ as $$
 declare
   forrige personal.oppsett;
 begin
+  if tg_op = 'UPDATE' and personal.bare_kontosletting(to_jsonb(old), to_jsonb(new), array['lagret_av']) then
+    return new;
+  end if;
   if tg_op <> 'INSERT' then
     raise exception 'Et lagret oppsett kan ikke endres. Lagre en ny versjon.' using errcode = '42501';
   end if;
   if not exists (select 1 from pg_catalog.pg_timezone_names z where z.name = new.tidssone) then
     raise exception 'Ukjent tidssone.' using errcode = '22023';
   end if;
-  perform pg_advisory_xact_lock(hashtextextended('personal.oppsett:' || new.fagmiljo_id::text, 0));
+  perform personal.las_oppsett(new.fagmiljo_id, eksklusiv => true);
   select o.* into forrige from personal.oppsett o where o.fagmiljo_id = new.fagmiljo_id order by o.versjon desc limit 1;
   if new.versjon <> coalesce(forrige.versjon, 0) + 1 then
     raise exception 'Oppsettet er endret av en annen. Hent det på nytt.' using errcode = 'PT409';
@@ -702,14 +798,21 @@ comment on table personal.kvalifikasjoner is
   'Kvalifikasjonene til en medarbeider per bemanningsoppgave, med gyldighet (docs/personal.md §7.4).';
 
 -- Kvalifikasjonsperiodene for samme medarbeider og oppgave overlapper ikke.
--- Låsen på medarbeideren gjør at to samtidige endringer prøves etter hverandre.
+-- Låsen på medarbeideren gjør at to samtidige endringer prøves etter hverandre,
+-- og kontrollen etter den ser den andres endring (`read committed`,
+-- `personal.krev_ferske_data`). Oppsettet låses delt, så en status som er i
+-- bruk i kvalifikasjonene, ikke kan fjernes samtidig.
 create function personal.kontroller_kvalifikasjon()
 returns trigger
 language plpgsql
 security definer
 set search_path = ''
 as $$
+declare
+  fagmiljo uuid;
 begin
+  select m.fagmiljo_id into fagmiljo from personal.medarbeidere m where m.id = new.medarbeider_id;
+  perform personal.las_oppsett(fagmiljo);
   perform 1 from personal.medarbeidere m where m.id = new.medarbeider_id for update;
   if exists (
     select 1 from personal.kvalifikasjoner k
@@ -925,7 +1028,7 @@ begin
     raise exception '%', array_to_string(feil, ' ') using errcode = '22023';
   end if;
 
-  perform pg_advisory_xact_lock(hashtextextended('personal.oppsett:' || personal_lagre_oppsett.fagmiljo::text, 0));
+  perform personal.las_oppsett(personal_lagre_oppsett.fagmiljo, eksklusiv => true);
   forrige := personal.gjeldende_oppsett(personal_lagre_oppsett.fagmiljo);
   if forrige.versjon is distinct from personal_lagre_oppsett.forventet_versjon then
     raise exception 'Oppsettet er endret av en annen. Hent det på nytt.' using errcode = 'PT409';

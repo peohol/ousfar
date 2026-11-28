@@ -4,10 +4,10 @@
  * Se `fagmiljoer.samtidighet.test.ts` for oppsettet.
  *
  * To som lagrer oppsettet fra den samme versjonen samtidig: den andre venter
- * og får konflikt (`PT409`, eller `40001` i `repeatable read`), og ingen
- * versjon går tapt. En kommando som kjøres mens en annen fjerner tilgangen til
- * den som handler, venter på tilgangsendringen og kontrolleres etter den. Bare
- * syntetiske medarbeidere i et syntetisk Sandkasse.
+ * og får konflikt (`PT409`), og ingen versjon går tapt. En kommando som kjøres
+ * mens en annen fjerner tilgangen til den som handler, venter på
+ * tilgangsendringen og kontrolleres etter den. I `repeatable read` stoppes
+ * endringene (`25001`). Bare syntetiske medarbeidere i et syntetisk Sandkasse.
  */
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
 import { readdirSync, readFileSync } from 'node:fs'
@@ -126,15 +126,37 @@ describe.skipIf(!SERVER)('samtidige endringer i personalkalenderen (ekte Postgre
   }
   const versjoner = (db: string) => psql(db, `select string_agg(versjon::text, ',' order by versjon) from personal.oppsett where fagmiljo_id = ${S}`)
 
-  describe.each(['read committed', 'repeatable read'])('i %s', (isolasjon) => {
-    const avvist = isolasjon === 'read committed' ? ['PT409'] : ['PT409', '40001']
-
+  describe('i read committed, som data-API-et bruker', () => {
     it('gir konflikt når to lagrer oppsettet fra den samme versjonen', async () => {
       const db = nyDatabase()
       giAdmin(db, KONTO.planlegger1)
-      const r = await samtidig(db, isolasjon, lagre(db)(KONTO.admin), lagre(db)(KONTO.planlegger1))
-      expect(avvist).toContain(r.steg)
+      const r = await samtidig(db, 'read committed', lagre(db)(KONTO.admin), lagre(db)(KONTO.planlegger1))
+      expect(r.steg).toBe('PT409')
       expect(versjoner(db)).toBe('1,2')
+    }, 30_000)
+  })
+
+  // Kontrollene etter en lås ville sett tilstanden fra før ventingen (`personal.krev_ferske_data`).
+  describe('i repeatable read', () => {
+    /** Det som endrer kalenderen eller oppsettet, med navnet i testen. */
+    const endringer = (db: string): [string, string][] => [
+      ['lagring av oppsettet', lagre(db)(KONTO.admin)],
+      ['utpeking', `${som(KONTO.admin)} select public.personal_sett_vaktplanansvarlig(${S}, '${KONTO.planlegger1}', true);`],
+      ['kvalifikasjon rett i tabellen', `insert into personal.kvalifikasjoner (medarbeider_id, status_id, fra) select id, 'vakt1', '2099-01-01' from personal.medarbeidere limit 1;`],
+    ]
+
+    it('stopper endringene heller enn å avgjøre dem på gamle data', async () => {
+      const db = nyDatabase()
+      for (const [hva, sql] of endringer(db)) {
+        const okt = new Okt(db)
+        try {
+          expect(await okt.kjor('begin isolation level repeatable read;')).toBe('00000')
+          expect(await okt.kjor(sql), hva).toBe('25001')
+        } finally {
+          okt.avslutt()
+        }
+      }
+      expect(versjoner(db)).toBe('1')
     }, 30_000)
   })
 

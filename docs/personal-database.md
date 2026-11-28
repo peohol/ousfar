@@ -54,8 +54,19 @@ personal.krev_tilgang(fagmiljø, handling)
   tilgang, tar låsen eksklusivt (`intern.las_tilgang`) og kontrollerer rollen
   på nytt etter den. En kommando som kjøres mens noen avslutter medlemskapet
   eller fjerner rollen til den som handler, venter derfor på endringen og
-  avvises etterpå. Det gjelder i `read committed`, som data-API-et bruker for
-  hver forespørsel.
+  avvises etterpå.
+- **Bare i `read committed`.** Alt som endrer kalenderen eller oppsettet,
+  krever `read committed`, som data-API-et bruker for hver forespørsel
+  (`personal.krev_ferske_data`, `25001` ellers). Kontrollene etter en lås ser
+  da det siste som er lagret, også det en annen transaksjon lagret mens denne
+  ventet. I `repeatable read` ville de sett tilstanden fra før ventingen, så
+  der stoppes endringen, som tilgangsendringene (`intern.las_tilgang`).
+- **Kontosletting.** En konto kan slettes som før (`docs/brukere.md`), også
+  når den har lagret oppsettet eller utpekt og avsluttet vaktplanansvarlige.
+  Fremmednøklene nuller da `lagret_av`, `tildelt_av` og `avsluttet_av`, og de
+  uforanderlige radene slipper bare den endringen gjennom
+  (`personal.bare_kontosletting`: bare de feltene, bare til tomt, og bare når
+  kontoen ikke finnes lenger). Alt annet står fast som før.
 
 ### Rollene
 
@@ -93,7 +104,11 @@ vaktfordelingen), og kolonnene er enheten (`Unit`: tidssone, arbeidsåret og
 helgefilteret).
 
 - **Bare nye versjoner.** Ingen versjon endres eller fjernes, og hver ny
-  følger rett etter den forrige (`personal.kontroller_oppsett`).
+  følger rett etter den forrige (`personal.kontroller_oppsett`). En ny
+  versjon tar låsen for fagmiljøets oppsett eksklusivt (`personal.las_oppsett`);
+  det som leser reglene for å endre noe, tar den delt. En status kan derfor
+  ikke fjernes samtidig som den tas i bruk: den som kommer sist, venter og ser
+  den andres endring.
 - **Gjelder fra dagen den lagres**, i fagmiljøets tidssone.
   `personal.oppsett_for(fagmiljø, dato)` gir versjonen som gjaldt en dato, så
   tidligere dager vurderes etter reglene som gjaldt da.
@@ -123,7 +138,9 @@ P2c) eller et syntetisk navn og en stilling (testmiljø), aldri begge.
   virkelige (`personal.kontroller_testmiljo`). Fagmiljøet og slaget kan ikke
   endres, så ingenting overføres fra et testmiljø til et virkelig fagmiljø.
 - **Kvalifikasjonene** (`personal.kvalifikasjoner`) har gyldighetsdatoer uten
-  overlapp per medarbeider og status. Bare planleggerne ser dem i
+  overlapp per medarbeider og status. Kontrollen låser medarbeideren og kjøres
+  etter låsen i `read committed`, så to samtidige endringer prøves etter
+  hverandre og den andre ser den første. Bare planleggerne ser dem i
   lesemodellen.
 - **En konto som slettes,** stoppes så lenge den er medarbeider: ordningen
   for historikken avgjøres før ordinær bruk (B9).
@@ -161,10 +178,14 @@ syntetisk Sandkasse (`src/__tests__/personal/database.ts`):
   medlemskap;
 - oppsettet: paritet med `validateRules` for alle feiltyper, grensene,
   formfeilene, versjonene og lagring mot en foreldet versjon (`PT409`);
-- medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse.
+- medarbeiderne: K-MED-4 begge veier, testmerkingen og Sandkasse;
+- kontosletting: en lokal administrator som har lagret oppsettet og utpekt
+  og avsluttet vaktplanansvarlige, slettes som før, radene står med tomme
+  felt, og ingen annen endring slipper gjennom;
+- `repeatable read` stopper endringene.
 
 `src/__tests__/personal.samtidighet.test.ts`, på ekte Postgres med hele
 databasestrukturen (kjøres når `OUSFAR_POSTGRES_URL` er satt, og i CI): to
-som lagrer oppsettet fra den samme versjonen samtidig, i `read committed` og
-`repeatable read`, og utpeking og lagring mens rollen til den som handler
-fjernes.
+som lagrer oppsettet fra den samme versjonen samtidig, utpeking og lagring
+mens rollen til den som handler fjernes, og at endringene stoppes i
+`repeatable read`.
