@@ -67,7 +67,8 @@ const { Forside } = await import('../components/forside/Forside')
 const { INGEN_RETTIGHETER, RettigheterKilde } = await import('../auth/rettigheter')
 const moduler = await import('../forside/moduler')
 const { Oppsummeringskort, Panelstatus } = await import('../components/oppsummering/Oppsummeringskort')
-const { usePanelhenting } = await import('../components/forside/usePanelhenting')
+const { forhentPaneler, usePanelhenting } = await import('../components/forside/usePanelhenting')
+const { paneltilgang, useGlemPanelerUtenTilgang } = await import('../components/forside/useForsideoppsett')
 const { ALLE, STANDARDOPPSETT, erStandard, flytt, gjenopprettStandard, lesOppsett, settSynlig, synligeModuler, tilgangFor, tilgjengeligeValg } = moduler
 
 const TOPP = 'syntetisk_topp' as Forsidemodul
@@ -133,9 +134,16 @@ const rettigheter = (arbeid: Fagmiljoreferanse | null, funksjoner: [string, stri
 
 const MED_SYNTETISK = rettigheter(KF, [['syntetisk', 'kf']])
 
+/** Som i `App`: det som er hentet til et panel brukeren mister, glemmes når rettighetene endres. */
+function Glemmer({ rettigheter: r }: { rettigheter: Rettigheter }) {
+  useGlemPanelerUtenTilgang(r)
+  return null
+}
+
 function vis(verdi: Rettigheter) {
   const tegn = (r: Rettigheter) => (
     <RettigheterKilde verdi={r} oppdater={vi.fn()}>
+      <Glemmer rettigheter={r} />
       <Forside onApneFortolkning={vi.fn()} />
     </RettigheterKilde>
   )
@@ -379,5 +387,68 @@ describe('forsiden med paneler som hører til en funksjon', () => {
     await userEvent.click(within(panel).getByRole('button', { name: 'Prøv igjen' }))
     expect(await within(panel).findByText('panel kf 0')).toBeTruthy()
     expect(kall).toEqual(['panel'])
+  })
+
+  it('henter på forhånd under et fagmiljøbytte bare panelene de nye rettighetene gir', async () => {
+    const kall: string[] = []
+    kode.hent = (hva, fagmiljo, dag) => {
+      kall.push(`${hva} ${fagmiljo}`)
+      return Promise.resolve(`${hva} ${fagmiljo} ${dag}`)
+    }
+    vis(MED_SYNTETISK)
+    expect(await within(await screen.findByRole('region', { name: 'Syntetisk panel' })).findByText('panel kf 0')).toBeTruthy()
+    vi.mocked(api.hentOppsummering).mockClear()
+
+    // Til et fagmiljø uten funksjonen: forsidens egne paneler hentes, de med funksjonen ikke.
+    forhentPaneler('rt', paneltilgang(rettigheter(RT)))
+    expect(kall.filter((k) => k.endsWith(' rt'))).toEqual([])
+    expect(vi.mocked(api.hentOppsummering).mock.calls.map(([m]) => m).sort()).toEqual(['aktuelt', 'fagsider', 'grupper', 'viktig_nytt'])
+
+    // Med funksjonen der, hentes de også.
+    forhentPaneler('rt', paneltilgang(rettigheter(RT, [['syntetisk', 'rt']])))
+    expect(kall.filter((k) => k.endsWith(' rt')).sort()).toEqual(['panel rt', 'topp rt'])
+    forhentPaneler(null, () => true)
+  })
+
+  it('viser feilen, ikke det som var hentet før, når en ny henting avvises', async () => {
+    const { unmount } = vis(MED_SYNTETISK)
+    expect(await within(await screen.findByRole('region', { name: 'Syntetisk panel' })).findByText('panel kf 0')).toBeTruthy()
+    unmount()
+
+    // Forsiden åpnes igjen, og serveren avviser nå hentingen (som når tilgangen er borte).
+    let avvis!: (grunn: Error) => void
+    const avslag = new Promise<string>((_, nei) => {
+      avvis = nei
+    })
+    kode.hent = (hva, fagmiljo, dag) => (hva === 'panel' ? avslag : Promise.resolve(`${hva} ${fagmiljo} ${dag}`))
+    vis(MED_SYNTETISK)
+    const panel = () => omrade('Syntetisk panel')!
+    // Det hentede står mens den nye hentingen er ute, så forsiden ikke blinker.
+    expect(within(panel()).getByText('panel kf 0')).toBeTruthy()
+    await act(async () => avvis(new Error('Finnes ikke.')))
+    await waitFor(() => expect(within(panel()).getByText('Kunne ikke hente dette nå.')).toBeTruthy())
+    expect(within(panel()).queryByText('panel kf 0')).toBeNull()
+    expect(within(panel()).getByRole('button', { name: 'Prøv igjen' })).toBeTruthy()
+
+    // Heller ikke neste gang forsiden åpnes.
+    cleanup()
+    kode.hent = () => new Promise(() => undefined)
+    vis(MED_SYNTETISK)
+    expect(within(omrade('Syntetisk panel')!).queryByText('panel kf 0')).toBeNull()
+    expect(within(omrade('Syntetisk panel')!).getByText(/Henter/)).toBeTruthy()
+  })
+
+  it('glemmer det som er hentet når tilgangen forsvinner, så det ikke vises når den kommer tilbake', async () => {
+    const { bytt } = vis(MED_SYNTETISK)
+    expect(await within(await screen.findByRole('region', { name: 'Syntetisk panel' })).findByText('panel kf 0')).toBeTruthy()
+
+    bytt(rettigheter(KF))
+    expect(omrade('Syntetisk panel')).toBeNull()
+
+    kode.hent = () => new Promise(() => undefined)
+    bytt(MED_SYNTETISK)
+    const panel = await screen.findByRole('region', { name: 'Syntetisk panel' })
+    expect(within(panel).queryByText('panel kf 0')).toBeNull()
+    expect(within(panel).getByText(/Henter/)).toBeTruthy()
   })
 })

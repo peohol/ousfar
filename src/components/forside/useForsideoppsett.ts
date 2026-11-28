@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProfil } from '../../auth/okt'
-import { harFunksjon, useRettigheter } from '../../auth/rettigheter'
+import { harFunksjon, useRettigheter, type Rettigheter } from '../../auth/rettigheter'
 import { hentOppsett, lagreOppsett } from '../../forside/api'
-import { STANDARDOPPSETT, tilgangFor, type Forsideoppsett, type Tilgang } from '../../forside/moduler'
+import { erForsidemodul, STANDARDOPPSETT, tilgangFor, type Forsideoppsett, type Tilgang } from '../../forside/moduler'
+import { glemPanelerUtenTilgang, type Paneltilgang } from './usePanelhenting'
 
 /** Det siste oppsettet appen kjenner for brukeren, så forsiden står som sist når brukeren kommer tilbake. */
 let sistKjent: { bruker: string; oppsett: Forsideoppsett } | null = null
@@ -50,11 +51,31 @@ export function useForsideoppsett(
 }
 
 /**
- * Panelene den innloggede har nå: de med en funksjon bare når hen har den i
- * fagmiljøet hen arbeider i (`public.mine_funksjoner()`). Følger rettighetene,
- * så et panel forsvinner og kommer tilbake med funksjonen og fagmiljøbyttet.
+ * Panelene rettighetene `r` gir: de med en funksjon bare når den innloggede
+ * har den i fagmiljøet hen arbeider i (`public.mine_funksjoner()`).
+ */
+export const modultilgang = (r: Rettigheter): Tilgang => tilgangFor(r.arbeidsfagmiljo, (funksjon, fagmiljo) => harFunksjon(r, funksjon, fagmiljo))
+
+/** Det samme for hentingen, som kjenner panelene bare ved navn. */
+export function paneltilgang(r: Rettigheter): Paneltilgang {
+  const tilgang = modultilgang(r)
+  return (modul) => erForsidemodul(modul) && tilgang(modul)
+}
+
+/**
+ * Panelene den innloggede har nå. Følger rettighetene, så et panel forsvinner
+ * og kommer tilbake med funksjonen og fagmiljøbyttet.
  */
 export function useModultilgang(): Tilgang {
   const rettigheter = useRettigheter()
-  return useMemo(() => tilgangFor(rettigheter.arbeidsfagmiljo, (funksjon, fagmiljo) => harFunksjon(rettigheter, funksjon, fagmiljo)), [rettigheter])
+  return useMemo(() => modultilgang(rettigheter), [rettigheter])
+}
+
+/**
+ * Glemmer det som er hentet til panelene rettighetene ikke lenger gir, hver
+ * gang de endres, også når forsiden ikke vises (brukt i `App`). Et panel som
+ * kommer tilbake, henter da på nytt i stedet for å vise det gamle.
+ */
+export function useGlemPanelerUtenTilgang(rettigheter: Rettigheter): void {
+  useEffect(() => glemPanelerUtenTilgang(paneltilgang(rettigheter)), [rettigheter])
 }

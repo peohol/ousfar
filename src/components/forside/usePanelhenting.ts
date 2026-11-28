@@ -14,9 +14,17 @@ import { useArbeidskontekst } from '../../auth/rettigheter'
  *   mens det nye hentes.
  * - En henting som alt er ute, deles i stedet for å be om det samme igjen,
  *   og etter et fagmiljøbytte er panelene alt på vei ({@link forhentPaneler}).
- * - Panelet feiler for seg, og «Prøv igjen» henter bare det på nytt.
+ * - Panelet feiler for seg, og «Prøv igjen» henter bare det på nytt. Feiler
+ *   en ny henting (også når serveren avviser tilgangen), vises feilen, ikke
+ *   det som var hentet før, og det glemmes.
+ * - Mister brukeren et panel, glemmes det som er hentet til det
+ *   ({@link glemPanelerUtenTilgang}), og et panel brukeren ikke har, hentes
+ *   ikke på forhånd.
  */
 export type Panelhenting<T> = { status: 'laster' } | { status: 'feil'; provIgjen: () => void } | { status: 'klar'; svar: T }
+
+/** Hvilke paneler (nøkkelen i `FORSIDEMODULER`) brukeren har nå. */
+export type Paneltilgang = (modul: string) => boolean
 
 /** Det som hentes: for arbeidskonteksten `fagmiljo` (fagmiljøets id, eller at brukeren ikke arbeider i noe). */
 export type Panelhenter<T> = (fagmiljo: string) => Promise<T>
@@ -34,8 +42,11 @@ const forhentet = new Map<string, Promise<unknown>>()
 /** Det som er hentet, per nøkkel, mens appen står åpen. */
 const hentet = new Map<string, unknown>()
 
+/** Panelet (`modul`) hver nøkkel over hører til, så det som er hentet til et panel brukeren mister, kan glemmes. */
+const nokkelpanel = new Map<string, string>()
+
 /** Panelene som står på forsiden nå, med brukeren og hentingen deres. */
-const viste = new Map<string, { bruker: string; panel: string; hent: Panelhenter<unknown> }>()
+const viste = new Map<string, { bruker: string; modul: string; panel: string; hent: Panelhenter<unknown> }>()
 
 /**
  * Nøkkelen et panel hentes og holdes under: bruker, fagmiljø og panel, og for
@@ -43,7 +54,8 @@ const viste = new Map<string, { bruker: string; panel: string; hent: Panelhenter
  */
 const panelnokkel = (bruker: string, fagmiljo: string | null, panel: string) => `${bruker}:${fagmiljo}:${panel}`
 
-function hentDelt<T>(nokkel: string, hent: () => Promise<T>): Promise<T> {
+function hentDelt<T>(nokkel: string, modul: string, hent: () => Promise<T>): Promise<T> {
+  nokkelpanel.set(nokkel, modul)
   const tidlig = forhentet.get(nokkel)
   if (tidlig) {
     forhentet.delete(nokkel)
@@ -61,17 +73,35 @@ function hentDelt<T>(nokkel: string, hent: () => Promise<T>): Promise<T> {
 }
 
 /**
+ * Glemmer alt som er hentet eller hentes til panelene brukeren ikke har nå,
+ * så et panel som kommer tilbake, aldri viser det som ble hentet før
+ * tilgangen forsvant. Kalles når rettighetene endres
+ * (`useGlemPanelerUtenTilgang`).
+ */
+export function glemPanelerUtenTilgang(tilgang: Paneltilgang): void {
+  for (const [nokkel, modul] of nokkelpanel) {
+    if (tilgang(modul)) continue
+    hentet.delete(nokkel)
+    underveis.delete(nokkel)
+    forhentet.delete(nokkel)
+    nokkelpanel.delete(nokkel)
+  }
+}
+
+/**
  * Begynner å hente panelene som står på forsiden, for arbeidskonteksten
- * `fagmiljo` etter et bytte. Forsiden settes opp på nytt først når katalogen
+ * `fagmiljo` etter et bytte, men bare dem brukeren har med de nye
+ * rettighetene (`tilgang`). Forsiden settes opp på nytt først når katalogen
  * for det nye fagmiljøet er hentet; da er panelene alt på vei (eller hentet),
  * og panelene tar de samme hentingene i stedet for å be om dem igjen.
  */
-export function forhentPaneler(fagmiljo: string | null): void {
+export function forhentPaneler(fagmiljo: string | null, tilgang: Paneltilgang): void {
   forhentet.clear()
   if (fagmiljo === null) return
-  for (const { bruker, panel, hent } of viste.values()) {
+  for (const { bruker, modul, panel, hent } of viste.values()) {
+    if (!tilgang(modul)) continue
     const nokkel = panelnokkel(bruker, fagmiljo, panel)
-    const henting = hentDelt(nokkel, () => hent(fagmiljo))
+    const henting = hentDelt(nokkel, modul, () => hent(fagmiljo))
     henting.catch(() => undefined)
     forhentet.set(nokkel, henting)
   }
@@ -103,27 +133,36 @@ export function usePanelhenting<T>(modul: string, hent: Panelhenter<T>, utsnitt?
     setTilstand((t) =>
       t.nokkel === nokkel ? { ...t, feil: false } : { nokkel, svar: hentet.get(nokkel) as T | undefined, har: hentet.has(nokkel), feil: false },
     )
-    hentDelt(nokkel, () => henter.current(fagmiljo)).then(
+    hentDelt(nokkel, modul, () => henter.current(fagmiljo)).then(
       (svar) => {
         if (denne !== siste.current) return
         hentet.set(nokkel, svar)
         setTilstand({ nokkel, svar, har: true, feil: false })
       },
       () => {
-        if (denne === siste.current) setTilstand((t) => ({ ...t, feil: true }))
+        if (denne !== siste.current) return
+        // Det som var hentet før, vises ikke lenger: svaret kan være at tilgangen er borte.
+        hentet.delete(nokkel)
+        setTilstand({ nokkel, svar: undefined, har: false, feil: true })
       },
     )
-  }, [nokkel, fagmiljo])
+  }, [nokkel, modul, fagmiljo])
 
-  // Hentes når panelet kommer fram, og på nytt når fagmiljøet eller utsnittet byttes.
-  useEffect(last, [last])
+  // Hentes når panelet kommer fram, og på nytt når fagmiljøet eller utsnittet
+  // byttes. Et svar som kommer etter at panelet er tatt bort, tas ikke i bruk.
   useEffect(() => {
-    const post = { bruker, panel, hent: (f: string) => henter.current(f) }
+    last()
+    return () => {
+      siste.current += 1
+    }
+  }, [last])
+  useEffect(() => {
+    const post = { bruker, modul, panel, hent: (f: string) => henter.current(f) }
     viste.set(panel, post)
     return () => {
       if (viste.get(panel) === post) viste.delete(panel)
     }
-  }, [bruker, panel])
+  }, [bruker, modul, panel])
 
   // Det som er hentet for et annet fagmiljø, vises aldri, heller ikke mens det nye hentes.
   const gjelder = tilstand.nokkel === nokkel

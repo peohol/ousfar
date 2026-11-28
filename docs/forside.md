@@ -104,7 +104,12 @@ samme som forsidens egne:
   forsidens egne paneler: ingenting før fagmiljøet er kjent, det hentede
   holdes per bruker, fagmiljø og panel (og `utsnitt`, som en dato), en
   henting som er ute deles, panelene hentes alt under et fagmiljøbytte
-  (`forhentPaneler`), og «Prøv igjen» henter bare panelet.
+  (`forhentPaneler`, bare for panelene de nye rettighetene gir), og «Prøv
+  igjen» henter bare panelet.
+- Feiler en ny henting, også når serveren avviser tilgangen, vises feilen og
+  ikke det som var hentet før, og det glemmes. Mister brukeren et panel,
+  glemmes det som er hentet til det (`useGlemPanelerUtenTilgang` i `App`),
+  så det aldri vises når panelet kommer tilbake.
 - Blant panelene tegner innholdet hele kortet, gjerne med
   `Oppsummeringskort`; i feltet øverst tegner det alt inne i området.
 

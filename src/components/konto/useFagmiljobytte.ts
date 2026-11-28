@@ -9,6 +9,7 @@ import {
   type Rettigheter,
 } from '../../auth/rettigheter'
 import { forhentPaneler } from '../forside/usePanelhenting'
+import { paneltilgang } from '../forside/useForsideoppsett'
 
 /**
  * Byttet av fagmiljøet brukeren arbeider i (arbeidsfagmiljøet), felles for
@@ -36,7 +37,8 @@ export function useFagmiljobytte(velg: (fagmiljo: string) => Promise<Rettigheter
       setFeil(false)
       try {
         const nye = await velg(f.id)
-        forhentPaneler(arbeidskontekst(nye, true))
+        // Bare panelene de nye rettighetene gir, hentes på forhånd.
+        forhentPaneler(arbeidskontekst(nye, true), paneltilgang(nye))
         oppdater(nye)
         return true
       } catch {
