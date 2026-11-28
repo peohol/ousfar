@@ -65,16 +65,51 @@ describe('senere', () => {
   })
 
   it('gir en lastefeil når koden ikke kan hentes, så appen lastes på nytt i stedet for å stå tom', async () => {
-    const Side = senere(async () => Promise.reject<ReturnType<typeof modul>>(new Error('404')), 'Side')
+    const hent = vi.fn(async () => Promise.reject<ReturnType<typeof modul>>(new Error('404')))
+    const Side = senere(hent, 'Side')
     vi.spyOn(console, 'error').mockImplementation(() => {})
-    render(
-      <Grense>
-        <Suspense fallback={<p>laster</p>}>
-          <Side tekst="Siden" />
-        </Suspense>
-      </Grense>,
-    )
+    const vis = () =>
+      render(
+        <Grense>
+          <Suspense fallback={<p>laster</p>}>
+            <Side tekst="Siden" />
+          </Suspense>
+        </Grense>,
+      )
+    // Flere ganger etter hverandre: løkken viste seg først etter en tidligere visning.
+    for (let gang = 0; gang < 3; gang++) {
+      hent.mockClear()
+      vis()
+      expect(await screen.findByText('lastefeil')).toBeTruthy()
+      // React prøver en feilet visning på nytt med en gang; den får samme feil i stedet for å hente igjen.
+      expect(hent.mock.calls.length).toBeLessThanOrEqual(2)
+      await act(async () => {})
+      expect(hent.mock.calls.length).toBeLessThanOrEqual(2)
+      cleanup()
+    }
+    vi.restoreAllMocks()
+  })
+
+  it('henter koden på nytt ved neste visning etter en lastefeil', async () => {
+    const hent = vi.fn().mockRejectedValueOnce(new Error('404')).mockResolvedValue(modul())
+    const Side = senere(hent as () => Promise<ReturnType<typeof modul>>, 'Side')
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const vis = () =>
+      render(
+        <Grense>
+          <Suspense fallback={<p>laster</p>}>
+            <Side tekst="Andre forsøk" />
+          </Suspense>
+        </Grense>,
+      )
+    vis()
     expect(await screen.findByText('lastefeil')).toBeTruthy()
+    // Feilen glemmes når React har gitt den videre: neste visning henter koden på nytt.
+    await act(() => new Promise((ferdig) => setTimeout(ferdig, 0)))
+    cleanup()
+    vis()
+    expect(await screen.findByText('Andre forsøk')).toBeTruthy()
+    expect(hent).toHaveBeenCalledTimes(2)
     vi.restoreAllMocks()
   })
 

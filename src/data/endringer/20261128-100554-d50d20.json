@@ -1,0 +1,14 @@
+{
+  "id": "20261128-100554-d50d20",
+  "semver": "patch",
+  "opprettet": "2026-11-28T10:05:54Z",
+  "sammendrag": "Appen lastes på nytt når en del av den ikke kan hentes",
+  "typer": [
+    "Funksjonalitet"
+  ],
+  "omfang": "Minimalt omfang",
+  "punkter": [
+    "Lar en side eller et vindu seg ikke hente, som kan skje rett etter en oppdatering, lastes appen på nytt med det du holdt på med i behold. Før kunne appen i stedet bli stående med «laster» og prøve igjen og igjen."
+  ],
+  "utenVarsel": true
+}
